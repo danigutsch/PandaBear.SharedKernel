@@ -5,6 +5,7 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Publishes verified roadmap changes to GitHub through the REST API as a signed-off commit, branch, and pull request.</summary>
 internal sealed class RoadmapGitHubPublisher
 {
     private const string ApiVersion = "2022-11-28";
@@ -19,11 +20,13 @@ internal sealed class RoadmapGitHubPublisher
     private readonly string _rootPath;
     private readonly TimeProvider _timeProvider;
 
+    /// <summary>Creates a publisher for the checkout at <paramref name="rootPath"/> that uses the system clock for its publication timeout.</summary>
     public RoadmapGitHubPublisher(string rootPath, HttpClient httpClient)
         : this(rootPath, httpClient, TimeProvider.System)
     {
     }
 
+    /// <summary>Creates a publisher with an injected <paramref name="timeProvider"/> so the publication timeout can be controlled.</summary>
     internal RoadmapGitHubPublisher(
         string rootPath,
         HttpClient httpClient,
@@ -63,6 +66,7 @@ internal sealed class RoadmapGitHubPublisher
             files.Select(file => file.Path).ToArray());
     }
 
+    /// <summary>Creates a tree, commit, branch, and pull request from the verified change set, rechecking that the default branch has not moved, and returns the pull request URL and commit SHA.</summary>
     public async Task<RoadmapGitHubPublication> Publish(
         RoadmapAutomationPlan plan,
         string baseSha,

@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Planned updates to the GitHub references stored in roadmap item files.</summary>
 internal sealed class GitHubRoadmapReferencePlan
 {
     private GitHubRoadmapReferencePlan(RoadmapProject project, IReadOnlyList<AtomicFileWrite> writes, IReadOnlyList<string> diagnostics)
@@ -12,21 +13,27 @@ internal sealed class GitHubRoadmapReferencePlan
         Diagnostics = diagnostics;
     }
 
+    /// <summary>Roadmap project after the planned updates.</summary>
     public RoadmapProject Project
     {
         get;
     }
 
+    /// <summary>File writes that apply the planned updates.</summary>
     public IReadOnlyList<AtomicFileWrite> Writes
     {
         get;
     }
 
+    /// <summary>Diagnostics found while planning.</summary>
     public IReadOnlyList<string> Diagnostics
     {
         get;
     }
 
+    /// <summary>Plans reference updates for every item of the project from the snapshot.</summary>
+    /// <param name="project">Roadmap project.</param>
+    /// <param name="snapshot">GitHub issue snapshot.</param>
     public static GitHubRoadmapReferencePlan Create(RoadmapProject project, GitHubRoadmapReconcileSnapshot snapshot)
     {
         List<AtomicFileWrite> writes = [];

@@ -6,12 +6,15 @@ using System.Xml.Linq;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Creates a GitHub dependency snapshot for a repository.</summary>
 internal static class DependencySnapshotCommand
 {
     private const int MaximumInputBytes = 64 * 1024 * 1024;
+    /// <summary>Largest snapshot output size, in bytes.</summary>
     internal const int MaximumOutputBytes = 32 * 1024 * 1024;
     private const int MaximumEdgeVisits = 1_000_000;
 
+    /// <summary>Validates the options, writes the dependency snapshot, and returns the exit code.</summary>
     public static async Task<int> Run(DependencySnapshotOptions options, TextWriter output, TextWriter error, CancellationToken cancellationToken)
     {
         try

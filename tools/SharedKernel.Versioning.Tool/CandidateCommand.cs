@@ -5,8 +5,10 @@ using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tool;
 
+/// <summary>Creates release candidate evidence and verifies that the candidate packages are consumable.</summary>
 internal static class CandidateCommand
 {
+    /// <summary>Creates the candidate manifest, then consumes it into the same location.</summary>
     public static async Task Run(
         string root, string? version, string? baselineVersion, bool aot, TextWriter output, TextWriter error, TimeProvider timeProvider, CancellationToken ct)
     {
@@ -14,6 +16,7 @@ internal static class CandidateCommand
         await Consume(root, manifest, manifest, aot, output, error, ct).ConfigureAwait(false);
     }
 
+    /// <summary>Requires a clean working tree, packs the candidate, and returns the path of the candidate manifest.</summary>
     public static async Task<string> Create(
         string root, string? version, string? baselineVersion, TextWriter output, TimeProvider timeProvider, CancellationToken ct)
     {
@@ -69,6 +72,7 @@ internal static class CandidateCommand
         return manifest;
     }
 
+    /// <summary>Verifies the manifest and installs and runs the listed packages on the current platform, recording the result in the evidence at <paramref name="destination"/>.</summary>
     public static async Task Consume(
         string root, string manifest, string destination, bool aot, TextWriter output, TextWriter error, CancellationToken ct)
     {

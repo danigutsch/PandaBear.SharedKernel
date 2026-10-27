@@ -5,6 +5,7 @@ using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tool;
 
+/// <summary>Runs external processes and captures their output.</summary>
 internal static class CommandRunner
 {
     private static readonly TimeSpan TerminationTimeout = TimeSpan.FromSeconds(2);
@@ -90,6 +91,7 @@ internal static class CommandRunner
         }
     }
 
+    /// <summary>Runs a process like Run, but returns an empty string when it fails with an invalid operation and cancellation was not requested.</summary>
     public static async Task<string> RunOrDefault(string fileName, IEnumerable<string> arguments, string? workingDirectory, CancellationToken ct)
     {
         try

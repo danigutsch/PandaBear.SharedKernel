@@ -4,6 +4,7 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Reads the roadmap-relevant state of GitHub issues for reconciliation.</summary>
 internal sealed class GitHubRoadmapReconcileClient
 {
     private const int MaxConnectionPages = 100;
@@ -42,11 +43,16 @@ internal sealed class GitHubRoadmapReconcileClient
     private readonly HttpClient _httpClient;
     private readonly TimeProvider _timeProvider;
 
+    /// <summary>Creates a client that uses the system clock.</summary>
+    /// <param name="httpClient">Authenticated GitHub client.</param>
     public GitHubRoadmapReconcileClient(HttpClient httpClient)
         : this(httpClient, TimeProvider.System)
     {
     }
 
+    /// <summary>Creates a client with an explicit time source.</summary>
+    /// <param name="httpClient">Authenticated GitHub client.</param>
+    /// <param name="timeProvider">Time source for retry delays.</param>
     internal GitHubRoadmapReconcileClient(HttpClient httpClient, TimeProvider timeProvider)
     {
         ArgumentNullException.ThrowIfNull(httpClient);
@@ -55,6 +61,12 @@ internal sealed class GitHubRoadmapReconcileClient
         _timeProvider = timeProvider;
     }
 
+    /// <summary>Reads the open and required issues of the repository, optionally resolving references that moved.</summary>
+    /// <param name="repository">Repository in <c>owner/name</c> form.</param>
+    /// <param name="requiredIssueNumbers">Numbers of issues that must be included.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <param name="project">Roadmap project whose references are resolved, if any.</param>
+    /// <param name="resolveExternalReferences">Whether to resolve issue references that live in other repositories.</param>
     public async Task<GitHubRoadmapReconcileSnapshot> ReadSnapshot(
         string repository,
         int[] requiredIssueNumbers,

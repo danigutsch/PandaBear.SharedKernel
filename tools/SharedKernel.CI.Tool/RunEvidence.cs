@@ -11,6 +11,7 @@ namespace PandaBear.CI.Tool;
 /// </summary>
 internal static class RunEvidence
 {
+    /// <summary>Writes the evidence record describing which slices and projects an execution ran.</summary>
     public static async Task Write(
         string execution,
         string name,

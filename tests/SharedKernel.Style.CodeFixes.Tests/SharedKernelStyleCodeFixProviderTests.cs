@@ -1580,7 +1580,8 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 Analyzers.StyleDiagnosticIds.DomainEventSuffix,
                 Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod,
                 Analyzers.StyleDiagnosticIds.DirectCurrentTime,
-                Analyzers.StyleDiagnosticIds.CaseInsensitiveJsonContext
+                Analyzers.StyleDiagnosticIds.CaseInsensitiveJsonContext,
+                Analyzers.StyleDiagnosticIds.FileNameMismatch
             ]);
     }
 
