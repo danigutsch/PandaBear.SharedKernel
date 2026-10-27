@@ -37,7 +37,6 @@ public sealed class AssertionUserMessageOverloadAnalyzerTests
         "public static Task ShouldBeProblem(this string actual, string? detail = null, CancellationToken cancellationToken = default) => Task.CompletedTask;",
         "ShouldBeProblem",
         "(string, string?, CancellationToken)")]
-    /// <summary>Verifies that when the rule is enabled each sample public assertion (plain, generic, params, optional-parameter, async) gets exactly one Warning at its name with the message naming its signature as lacking a userMessage overload.</summary>
     [InlineData("public static async Task<int> ShouldFinish(this Task<int> actual) => await actual;", "ShouldFinish", "(Task<int>)")]
     public async Task Assertion_without_a_user_message_overload_reports_SKTEST017(string member, string name, string signature)
     {
@@ -85,7 +84,6 @@ public sealed class AssertionUserMessageOverloadAnalyzerTests
         public static void ShouldMatchShape(this object actual, dynamic expected) { }
         public static void ShouldMatchShape(this object actual, object expected, string userMessage) { }
         """)]
-    /// <summary>Verifies that assertions already having an optional userMessage parameter, or a matching overload with userMessage (generic, optional-parameter, params, tuple-name and dynamic variants), are not reported.</summary>
     public async Task Covered_assertions_do_not_report_SKTEST017(string members)
     {
         // Arrange
@@ -117,7 +115,6 @@ public sealed class AssertionUserMessageOverloadAnalyzerTests
         [SuppressMessage("Testing", "SKTEST017:Public assertions should have a userMessage overload", Justification = "The sample keeps its shape.")]
         public static void ShouldBeReady(this int actual) { }
         """)]
-    /// <summary>Verifies that internal types and methods, non-extension methods, names not starting a Should assertion, bool-returning methods, obsolete or suppressed methods and generated files are not reported.</summary>
     [InlineData("public static void ShouldBeReady(this int actual) { }", "", "SampleAssertions.g.cs")]
     public async Task Methods_that_are_not_assertions_do_not_report_SKTEST017(string members, string declarations = "", string path = "TestSource.cs")
     {
@@ -422,7 +419,6 @@ public sealed class AssertionUserMessageOverloadAnalyzerTests
         "public static void ShouldContainItems(this IEnumerable<object?> actual, params object?[] expected) { }",
         "ShouldContainItems(IEnumerable<object?>, params object?[])",
         "existing calls that pass a string as the last of its 'params' values would bind to the overload")]
-    /// <summary>Verifies that assertions for which a userMessage overload cannot be generated (name clashes, lambda-uncapturable parameters, unforwardable results, attributes, analyzer-required parameters, binding ambiguities) are reported with the specific reason text.</summary>
     public async Task Blocked_assertions_report_SKTEST017_with_the_reason(string members, string signature, string reason)
     {
         // Arrange

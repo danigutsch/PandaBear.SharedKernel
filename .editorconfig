@@ -270,6 +270,55 @@ sharedkernel_style_document_public_members = true
 dotnet_diagnostic.SKSTYLE004.severity = suggestion
 dotnet_diagnostic.SKSTYLE017.severity = suggestion
 
+# Documented test projects: undocumented members fail the build.
+[tests/SharedKernel.ApiVersioning.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Aspire.Analyzers.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Aspire.CodeFixes.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.AuditTrail.GeneratorTests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Branding.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.BuildingBlocks.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.DocumentRendering.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.IO.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Idempotency.Abstractions.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.ImageProcessing.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Messaging.IntegrationEvents.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Observability.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Style.CodeFixes.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Testing.Analyzers.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Testing.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
 # Reqnroll discovers binding and generated test support types by reflection.
 # Owner: behavior-test maintainers. Remove when unused binding types can be internalized safely.
 [*]

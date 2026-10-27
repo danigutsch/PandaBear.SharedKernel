@@ -1,7 +1,7 @@
 namespace PandaBear.Testing.Tests;
 
+/// <summary>Tests the scoped helpers that temporarily change process-wide resources such as environment variables.</summary>
 [Collection("Environment variables")]
-/// <summary>Tests the disposable test scopes that temporarily set environment variables and create temporary directories.</summary>
 public sealed class ResourceScopeTests
 {
     [Fact]

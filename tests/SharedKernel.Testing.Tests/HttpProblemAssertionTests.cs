@@ -28,7 +28,7 @@ public sealed class HttpProblemAssertionTests
     }
 
     [Theory]
-    [InlineData(200,"application/problem+json", "{\"status\":400,\"errors\":{\"Id\":[\"required\"]}}")]
+    [InlineData(200, "application/problem+json", "{\"status\":400,\"errors\":{\"Id\":[\"required\"]}}")]
     [InlineData(400, "application/json", "{\"status\":400,\"errors\":{\"Id\":[\"required\"]}}")]
     [InlineData(400, "application/problem+json", "{\"status\":422,\"errors\":{\"Id\":[\"required\"]}}")]
     public async Task Validation_problem_rejects_inconsistent_status_or_media_type(int status, string mediaType, string json)
