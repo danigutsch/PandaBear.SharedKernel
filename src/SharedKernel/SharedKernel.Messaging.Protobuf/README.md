@@ -30,16 +30,23 @@ services.AddSingleton<IIntegrationEventSerializer>(
 
 The outbox records `SerializePayload`'s payload, encoding, and content type on each row. JSON stays the default: a serializer that only implements `Serialize` yields `application/json` with `EventPayloadEncoding.Json`. Without a fallback, an event that is not a Protobuf message fails with a `NotSupportedException` naming the event type. `ProtobufIntegrationEventSerializer.Deserialize<TIntegrationEvent>` reads a payload back; it throws `ArgumentException` for invalid base64 and `InvalidProtocolBufferException` for bytes that are not a valid message.
 
-### Consuming Protobuf events
+### Producing and consuming with the source generator
 
-The generated inbox dispatcher deserializes JSON, so register Protobuf events explicitly. The event type must implement `IIntegrationEvent` and `IMessage<T>` and have a public parameterless constructor, which a protoc-generated message does:
+The integration event source generator (`SharedKernel.Messaging.IntegrationEvents.SourceGenerator`) understands Protobuf messages, detected by name as `Google.Protobuf.IMessage`, so no `JsonTypeInfo<T>` is needed for them:
+
+- **Producing.** An `[IntegrationEventMapping]` that returns a Protobuf message is serialized by the generated `IIntegrationEventSerializer` as base64 with `EventPayloadEncoding.Base64` and `application/protobuf`; its `SerializePayload` reports that, and JSON events keep `application/json`. An explicit `AddIntegrationEventContract<T>` (JSON) registration of the same type keeps it on JSON.
+- **Consuming.** Register the consumer with `AddProtobufIntegrationEventConsumer`. The generator recognizes the call and emits a delivery branch in the generated `IEventEnvelopePublisher`: it matches the event type, `EventPayloadEncoding.Base64` and the `application/protobuf` content type, builds the message with `new T()` and `MessageExtensions.MergeFrom`, and runs the single discovered `IIntegrationEventHandler<T>` (SKMSG001/SKMSG002 apply as for JSON consumers). The event type must implement `IMessage` and have a public parameterless constructor, which a protoc-generated message does; otherwise the generator reports SKMSG006. SKMSG003 compares consumer event types per format, so a JSON and a Protobuf consumer of one event type can coexist.
 
 ```csharp
-services.AddGeneratedIntegrationEvents();                       // JSON consumers, if any
+services.AddGeneratedIntegrationEvents();
 services.AddProtobufIntegrationEventConsumer<TourCreated, TourCreatedHandler>();
 ```
 
-The first call replaces the unkeyed `IEventEnvelopePublisher` with one that delivers envelopes with `EventPayloadEncoding.Base64` and `datacontenttype` `application/protobuf` to the handler registered for their event type, and passes every other envelope to the publisher registered before it (with its original lifetime, as a keyed service). Call it after `AddGeneratedIntegrationEvents`; called earlier, a JSON envelope fails with a `NotSupportedException` that names this requirement. A Protobuf envelope whose event type has no consumer, or a second consumer for one event type, fails with an actionable error too. The deserialization is typed and uses no reflection; the replacement is a plain `ServiceDescriptor` swap.
+The generated `AddGeneratedIntegrationEvents` registers a `ProtobufGeneratedConsumer` marker for each generated Protobuf consumer, so the runtime registration below hands those envelopes to the generated publisher instead of handling them a second time. Call `AddProtobufIntegrationEventConsumer` after `AddGeneratedIntegrationEvents`; called earlier, a JSON envelope or a generator-covered Protobuf envelope fails with a `NotSupportedException` that names this requirement.
+
+### Consuming without the generator
+
+`AddProtobufIntegrationEventConsumer<TEvent, THandler>()` also works in hosts that do not run the generator. The event type must implement `IIntegrationEvent` and `IMessage<T>` and have a public parameterless constructor. The first call replaces the unkeyed `IEventEnvelopePublisher` with one that delivers envelopes with `EventPayloadEncoding.Base64` and `datacontenttype` `application/protobuf` to the handler registered for their event type, and passes every other envelope to the publisher registered before it (with its original lifetime, as a keyed service). A Protobuf envelope whose event type has no runtime consumer goes to that earlier publisher, or fails with an actionable error when there is none; a second consumer for one event type fails at registration. The deserialization is typed and uses no reflection; the replacement is a plain `ServiceDescriptor` swap.
 
 ## Event format: `application/cloudevents+protobuf`
 
