@@ -1,13 +1,13 @@
 using Google.Protobuf.WellKnownTypes;
 using PandaBear.Messaging.IntegrationEvents;
 
-namespace PandaBear.Messaging.Protobuf.Tests;
+namespace PandaBear.Messaging.Protobuf.TestContracts;
 
-/// <summary>The integration event contract of the <c>TourCreated</c> message that protoc generates from <c>Protos/tour_created.proto</c>.</summary>
-internal sealed partial class TourCreated : IIntegrationEvent
+/// <summary>The integration event contract of the <c>OrderPlaced</c> message that protoc generates from <c>Protos/order_placed.proto</c>.</summary>
+public sealed partial class OrderPlaced : IIntegrationEvent
 {
-    /// <summary>Gets the event type "test.tour.created".</summary>
-    public static string EventType => "test.tour.created";
+    /// <summary>Gets the event type "test.order.placed".</summary>
+    public static string EventType => "test.order.placed";
 
     /// <summary>Gets the event version 1.</summary>
     public static int EventVersion => 1;
@@ -21,13 +21,13 @@ internal sealed partial class TourCreated : IIntegrationEvent
     /// <summary>Creates an event from its CLR values.</summary>
     /// <param name="eventId">The event identifier.</param>
     /// <param name="occurredAt">The time the event occurred.</param>
-    /// <param name="name">The name of the created tour.</param>
+    /// <param name="orderNumber">The number of the placed order.</param>
     /// <returns>The event.</returns>
-    public static TourCreated Create(Guid eventId, DateTimeOffset occurredAt, string name) =>
+    public static OrderPlaced Create(Guid eventId, DateTimeOffset occurredAt, string orderNumber) =>
         new()
         {
             Id = eventId.ToString("D"),
             Occurred = Timestamp.FromDateTimeOffset(occurredAt),
-            Name = name
+            OrderNumber = orderNumber
         };
 }

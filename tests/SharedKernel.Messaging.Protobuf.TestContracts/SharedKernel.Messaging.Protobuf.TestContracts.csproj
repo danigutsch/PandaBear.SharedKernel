@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RootNamespace>PandaBear.Messaging.Protobuf.TestContracts</RootNamespace>
+        <IsPackable>false</IsPackable>
+        <!-- Test-support library: protoc generates the Protobuf integration events that the generator, serializer and consumer tests share. -->
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Google.Protobuf" />
+        <PackageReference Include="Grpc.Tools">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="Protos\order_placed.proto" GrpcServices="None" />
+        <Protobuf Include="Protos\tour_created.proto" GrpcServices="None" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Messaging.IntegrationEvents\SharedKernel.Messaging.IntegrationEvents.csproj" />
+    </ItemGroup>
+
+</Project>

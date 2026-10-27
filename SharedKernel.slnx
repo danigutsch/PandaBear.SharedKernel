@@ -106,6 +106,7 @@
   <Project Path="tests/SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests/SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests.csproj" />
   <Project Path="tests/SharedKernel.Messaging.IntegrationEvents.GeneratorTests/SharedKernel.Messaging.IntegrationEvents.GeneratorTests.csproj" />
   <Project Path="tests/SharedKernel.Messaging.IntegrationEvents.Tests/SharedKernel.Messaging.IntegrationEvents.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Messaging.Protobuf.TestContracts/SharedKernel.Messaging.Protobuf.TestContracts.csproj" />
   <Project Path="tests/SharedKernel.Messaging.Protobuf.Tests/SharedKernel.Messaging.Protobuf.Tests.csproj" />
   <Project Path="tests/SharedKernel.Messaging.Tests/SharedKernel.Messaging.Tests.csproj" />
   <Project Path="tests/SharedKernel.Npgsql.Testing/SharedKernel.Npgsql.Testing.csproj" />

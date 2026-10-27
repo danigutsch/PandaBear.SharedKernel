@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="PandaBear.Messaging.Protobuf.TestContracts" />
         <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>
@@ -14,20 +15,14 @@
         <PackageReference Include="coverlet.MTP">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Grpc.Tools">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
         <PackageReference Include="xunit.v3.mtp-v2" />
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="Protos\tour_created.proto" GrpcServices="None" Access="Internal" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Messaging.Protobuf\SharedKernel.Messaging.Protobuf.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\SharedKernel.Messaging.Protobuf.TestContracts\SharedKernel.Messaging.Protobuf.TestContracts.csproj" />
     </ItemGroup>
 
 </Project>
