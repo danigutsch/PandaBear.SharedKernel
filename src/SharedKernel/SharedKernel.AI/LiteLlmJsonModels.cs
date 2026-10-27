@@ -57,11 +57,13 @@ internal sealed record LiteLlmSchema(
 /// <summary>Schema of a single response field.</summary>
 internal sealed record LiteLlmSchemaProperty
 {
+    /// <summary>Creates a schema property with a single JSON schema type.</summary>
     public LiteLlmSchemaProperty(string type)
     {
         Type = type;
     }
 
+    /// <summary>Creates a schema property that accepts any of several JSON schema types.</summary>
     public LiteLlmSchemaProperty(IReadOnlyList<string> type)
     {
         Type = type;
@@ -91,6 +93,7 @@ internal sealed record LiteLlmResponseMessage(string? Content);
 /// <param name="Caption">Optional visible caption, or null when none applies.</param>
 internal sealed record GeneratedImageText(string AltText, string? Caption);
 
+/// <summary>Source-generated JSON serialization context for the LiteLLM request and response models, so serialization stays trim and AOT safe.</summary>
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(LiteLlmChatCompletionRequest))]
 [JsonSerializable(typeof(LiteLlmChatCompletionResponse))]

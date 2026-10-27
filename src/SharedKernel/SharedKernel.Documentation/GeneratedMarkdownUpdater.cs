@@ -96,6 +96,7 @@ internal sealed class GeneratedMarkdownUpdater(string rootPath, string docsRelat
         return changed.Select(update => RepositoryRelativePath(update.Path)).ToList();
     }
 
+    /// <summary>Writes the content to a temporary file and moves it over the target, so a failure never leaves a half-written document.</summary>
     internal static void WriteAtomically(string path, string content)
     {
         var directoryPath = Path.GetDirectoryName(path)

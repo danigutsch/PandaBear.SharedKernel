@@ -13,6 +13,12 @@ internal sealed class EfIntegrationEventOutbox<TContext> : IIntegrationEventOutb
     private readonly TimeProvider timeProvider;
     private readonly IIntegrationEventSerializer serializer;
 
+    /// <summary>
+    /// Creates an outbox over the given context.
+    /// </summary>
+    /// <param name="dbContext">Context whose unit of work receives the messages.</param>
+    /// <param name="timeProvider">Clock that stamps the enqueue time.</param>
+    /// <param name="serializer">Serializer for the event payload.</param>
     public EfIntegrationEventOutbox(
         TContext dbContext,
         TimeProvider timeProvider,

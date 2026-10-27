@@ -3,6 +3,10 @@ using Npgsql;
 
 namespace PandaBear.Observability.Npgsql;
 
+/// <summary>
+/// Background service that periodically collects index health from every registered database.
+/// </summary>
+/// <param name="registration">Connection strings and options to monitor.</param>
 internal sealed class PostgreSqlIndexHealthHostedService(
     PostgreSqlIndexHealthMonitoringRegistration registration) : BackgroundService
 {

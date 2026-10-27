@@ -42,6 +42,7 @@ public static class ApiAuthenticationServiceCollectionExtensions
             registerBearerAuthentication: null);
     }
 
+    /// <summary>Registers API security with an explicit authentication switch, so tests can force authentication on or off independent of the OpenAPI generation mode.</summary>
     internal static AuthorizationBuilder AddApiSecurity(
         this IServiceCollection services,
         IConfiguration configuration,
@@ -134,6 +135,7 @@ public static class ApiAuthenticationServiceCollectionExtensions
         return AddApiSecurity(services, configuration, environment, schemes, registerBearerAuthentication: null);
     }
 
+    /// <summary>Registers API security with an explicit authentication switch, so tests can force authentication on or off independent of the OpenAPI generation mode.</summary>
     internal static AuthorizationBuilder AddApiSecurity(
         this IServiceCollection services,
         IConfiguration configuration,
@@ -235,6 +237,7 @@ public static class ApiAuthenticationServiceCollectionExtensions
                 .Build());
     }
 
+    /// <summary>Applies the audience, authority, and token validation settings shared by all JWT bearer registrations.</summary>
     internal static void ConfigureBearerOptions(
         JwtBearerOptions options,
         string audience,

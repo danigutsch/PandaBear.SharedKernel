@@ -1,5 +1,6 @@
 namespace PandaBear.Documentation;
 
+/// <summary>Requirement that a method be invoked a given number of times with given arguments in a C# source file.</summary>
 internal sealed class DocumentationInvocationRequirement
 {
     /// <summary>Repository-relative C# file that is searched for invocations.</summary>

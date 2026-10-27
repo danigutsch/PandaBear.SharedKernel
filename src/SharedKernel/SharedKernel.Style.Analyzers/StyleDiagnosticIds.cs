@@ -75,6 +75,6 @@ public static class StyleDiagnosticIds
     /// <summary>Diagnostic emitted when a file's single top-level type does not match the file name.</summary>
     public const string FileNameMismatch = "SKSTYLE016";
 
-    /// <summary>Diagnostic emitted for a class or record property that lacks XML documentation.</summary>
-    public const string UndocumentedProperty = "SKSTYLE017";
+    /// <summary>Diagnostic emitted for an internal type or member that lacks XML documentation.</summary>
+    public const string UndocumentedMember = "SKSTYLE017";
 }

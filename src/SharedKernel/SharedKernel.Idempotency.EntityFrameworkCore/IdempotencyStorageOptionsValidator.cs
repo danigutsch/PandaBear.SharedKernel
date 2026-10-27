@@ -2,8 +2,10 @@ using Microsoft.Extensions.Options;
 
 namespace PandaBear.Idempotency.EntityFrameworkCore;
 
+/// <summary>Rejects idempotency storage options whose schema or table name is not a valid unquoted PostgreSQL identifier.</summary>
 internal sealed class IdempotencyStorageOptionsValidator : IValidateOptions<IdempotencyStorageOptions>
 {
+    /// <inheritdoc />
     public ValidateOptionsResult Validate(string? name, IdempotencyStorageOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);

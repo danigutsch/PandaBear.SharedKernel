@@ -1,5 +1,10 @@
 namespace PandaBear.Observability.Npgsql;
 
+/// <summary>
+/// Carries the monitored connection strings and their shared options to the hosted service.
+/// </summary>
+/// <param name="connectionStrings">Connection strings of the monitored databases.</param>
+/// <param name="options">Options applied to every connection string.</param>
 internal sealed class PostgreSqlIndexHealthMonitoringRegistration(
     IReadOnlyList<string> connectionStrings,
     PostgreSqlIndexHealthMonitoringOptions options)

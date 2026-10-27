@@ -21,6 +21,7 @@ public static class HttpOutcomeMapper
 
     private const string EmptyBodyMessage = "HTTP response body was empty.";
     private const string MalformedBodyMessage = "HTTP response body was malformed.";
+    /// <summary>Largest JSON response body, in bytes, that the mapper reads before treating it as malformed.</summary>
     internal const int MaximumJsonResponseBodyBytes = 1024 * 1024;
     private const int ResponseReadBufferBytes = 16 * 1024;
     private const string TimedOutMessage = "HTTP request timed out.";
@@ -32,6 +33,7 @@ public static class HttpOutcomeMapper
     private const string MethodTag = "http.request.method";
     private const string OutcomeKindTag = "http.outcome.kind";
     private const string StatusCodeTag = "http.response.status_code";
+    /// <summary>Activity source for outcome mapping spans.</summary>
     internal static readonly ActivitySource OutcomeActivitySource = new(ActivitySourceName);
 
     /// <summary>
@@ -387,6 +389,7 @@ public static class HttpOutcomeMapper
         }
     }
 
+    /// <summary>Reads the response body up to <paramref name="responseBodyLimit" /> bytes and reports whether it was malformed or the transport failed while reading.</summary>
     internal static async Task<(string? Content, bool Malformed, bool TransportFailed)> ReadResponseBody(
         HttpContent content,
         int responseBodyLimit,
@@ -500,6 +503,7 @@ public static class HttpOutcomeMapper
         activity?.SetTag(OutcomeKindTag, kind.ToString());
     }
 
+    /// <summary>Returns whether the content declares the application/json media type.</summary>
     internal static bool HasJsonContentType(HttpContent content)
     {
         var mediaType = content.Headers.ContentType?.MediaType;

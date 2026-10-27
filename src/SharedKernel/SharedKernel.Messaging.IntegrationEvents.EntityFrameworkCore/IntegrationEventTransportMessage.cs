@@ -5,12 +5,22 @@ namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 /// </summary>
 internal sealed class IntegrationEventTransportMessage : EventEnvelope, IIntegrationEventInboxMessage
 {
+    /// <summary>Maximum stored length of the last consume error; longer text is truncated.</summary>
     internal const int LastConsumeErrorMaxLength = 2000;
 
+    /// <summary>Maximum stored length of the claim owner name; longer names are truncated.</summary>
     internal const int ClaimOwnerMaxLength = 100;
 
+    /// <summary>Maximum stored length of the consumer name.</summary>
     internal const int ConsumerNameMaxLength = 200;
 
+    /// <summary>
+    /// Creates a transport message that wraps the received envelope for one consumer.
+    /// </summary>
+    /// <param name="id">Identifier of the transport row.</param>
+    /// <param name="consumerName">Name of the consumer the message is addressed to.</param>
+    /// <param name="envelope">Envelope copied into the message.</param>
+    /// <param name="receivedAt">When the message was stored.</param>
     public IntegrationEventTransportMessage(
         Guid id,
         string consumerName,
@@ -114,6 +124,10 @@ internal sealed class IntegrationEventTransportMessage : EventEnvelope, IIntegra
         get; private set;
     }
 
+    /// <summary>
+    /// Marks the message as consumed and clears retry and claim state.
+    /// </summary>
+    /// <param name="processedAt">When consumption succeeded.</param>
     public void MarkProcessed(DateTimeOffset processedAt)
     {
         ProcessedAt = processedAt;
@@ -150,6 +164,12 @@ internal sealed class IntegrationEventTransportMessage : EventEnvelope, IIntegra
         NextConsumeAttemptAt = releasedAt;
     }
 
+    /// <summary>
+    /// Records a failed consume attempt, truncates the error, and releases the claim so the message is retried.
+    /// </summary>
+    /// <param name="attemptedAt">When the attempt failed.</param>
+    /// <param name="nextAttemptAt">When the message becomes eligible again.</param>
+    /// <param name="error">The failure description.</param>
     public void MarkConsumeFailed(DateTimeOffset attemptedAt, DateTimeOffset nextAttemptAt, string error)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(error);

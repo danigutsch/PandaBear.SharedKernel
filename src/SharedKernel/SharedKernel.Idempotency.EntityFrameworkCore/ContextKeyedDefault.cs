@@ -11,12 +11,14 @@ namespace PandaBear.Idempotency.EntityFrameworkCore;
 internal static class ContextKeyedDefault<TService>
     where TService : class
 {
+    /// <summary>Records the context type as a candidate for the service and registers a scoped default that resolves it, so a single registered context needs no explicit choice.</summary>
     public static void Register(IServiceCollection services, Type contextType, string chooseMethodName)
     {
         services.AddSingleton(new Registration(contextType));
         services.TryAddScoped(serviceProvider => Resolve(serviceProvider, chooseMethodName));
     }
 
+    /// <summary>Records the context type as the explicit default for the service, which takes precedence when several contexts are registered.</summary>
     public static void Choose(IServiceCollection services, Type contextType) =>
         services.AddSingleton(new Choice(contextType));
 

@@ -1,5 +1,6 @@
 namespace PandaBear.Documentation;
 
+/// <summary>Configuration file model for the documentation generator.</summary>
 internal sealed class DocumentationGeneratorConfig
 {
     /// <summary>Repository-relative directory that contains the Markdown documents the generator may update.</summary>

@@ -6,6 +6,7 @@ namespace Aspire.Hosting.ApplicationModel;
 /// <param name="name">The name of the resource.</param>
 public sealed class TempoResource([ResourceName] string name) : ContainerResource(name)
 {
+    /// <summary>Name of the OTLP gRPC endpoint that receives traces.</summary>
     internal const string OtlpGrpcEndpointName = "otlp-grpc";
 
     private EndpointReference? _primaryEndpoint;

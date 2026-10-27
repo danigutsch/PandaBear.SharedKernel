@@ -39,6 +39,7 @@ public static class AnalyzerTestHarness
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
     }
 
+    /// <summary>Returns the cached metadata references for the runtime's trusted platform assemblies.</summary>
     internal static ImmutableArray<MetadataReference> GetTrustedPlatformReferences() => TrustedPlatformReferences.Value;
 
     private static IEnumerable<MetadataReference> GetMetadataReferences(IEnumerable<Assembly>? additionalReferenceAssemblies)

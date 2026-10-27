@@ -2,8 +2,10 @@ using Microsoft.Extensions.Options;
 
 namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
+/// <summary>Rejects integration event storage options whose schemas or table names are not valid unquoted PostgreSQL identifiers.</summary>
 internal sealed class IntegrationEventStorageOptionsValidator : IValidateOptions<IntegrationEventStorageOptions>
 {
+    /// <inheritdoc />
     public ValidateOptionsResult Validate(string? name, IntegrationEventStorageOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);

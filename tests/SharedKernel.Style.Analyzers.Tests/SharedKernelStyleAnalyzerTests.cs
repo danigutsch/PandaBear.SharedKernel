@@ -29,7 +29,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             StyleDiagnosticIds.DirectCurrentTime,
             StyleDiagnosticIds.CaseInsensitiveJsonContext,
             StyleDiagnosticIds.FileNameMismatch,
-            StyleDiagnosticIds.UndocumentedProperty,
+            StyleDiagnosticIds.UndocumentedMember,
         ];
 
         // Act

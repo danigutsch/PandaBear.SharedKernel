@@ -3,6 +3,7 @@ using System.Text.Json;
 
 namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
+/// <summary>Builds outbox rows from integration events.</summary>
 internal static class IntegrationEventOutboxMessageFactory
 {
     private const string JsonContentType = "application/json";
@@ -10,6 +11,7 @@ internal static class IntegrationEventOutboxMessageFactory
     private const string TraceParentExtensionAttribute = "traceparent";
     private const string TraceStateExtensionAttribute = "tracestate";
 
+    /// <summary>Serializes the event into a CloudEvents-style outbox message and carries the current trace context so the relay can continue the trace.</summary>
     public static IntegrationEventOutboxMessage Create<TIntegrationEvent>(
         TIntegrationEvent integrationEvent,
         IIntegrationEventSerializer serializer,

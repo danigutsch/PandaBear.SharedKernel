@@ -1,5 +1,6 @@
 namespace PandaBear.Documentation;
 
+/// <summary>One configured comparison between a fact list marked in a Markdown document and the C# source that is its source of truth.</summary>
 internal sealed class DocumentationFactCheck
 {
     /// <summary>Check name used in failure messages.</summary>

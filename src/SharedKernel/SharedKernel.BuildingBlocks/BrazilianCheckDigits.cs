@@ -1,7 +1,9 @@
 namespace PandaBear.BuildingBlocks;
 
+/// <summary>Check digit arithmetic shared by the Brazilian CPF and CNPJ value objects.</summary>
 internal static class BrazilianCheckDigits
 {
+    /// <summary>Computes one modulo-11 check digit from the digits in <paramref name="value" />, weighting from <paramref name="initialWeight" /> down to 2 and wrapping back to 9.</summary>
     internal static int Calculate(ReadOnlySpan<char> value, int initialWeight)
     {
         var sum = 0;

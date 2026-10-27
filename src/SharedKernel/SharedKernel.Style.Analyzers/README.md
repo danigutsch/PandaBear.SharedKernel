@@ -31,7 +31,7 @@ the default .NET analyzer set.
 | `SKSTYLE014` | Warning | Use TimeProvider for wall-clock reads. |
 | `SKSTYLE015` | Disabled | Require `PropertyNameCaseInsensitive = true` on API JSON serializer contexts. |
 | `SKSTYLE016` | Warning | Name a file after its single top-level type; a generic type may use `Name{T}.cs`. |
-| `SKSTYLE017` | Warning | Document class and record properties that `CS1591` does not cover. |
+| `SKSTYLE017` | Warning | Document internal types and members, which `CS1591` does not cover. |
 
 ## Configuration
 
@@ -294,11 +294,13 @@ scoped `.editorconfig` exception with an owner and removal condition.
 
 ## SKSTYLE017
 
-`CS1591` covers externally visible members. `SKSTYLE017` covers the rest: any class or record property that is internal or
-private needs XML documentation, so it is not silently exempt. A property is documented by any XML documentation comment on
-it, or, for a property synthesized from a positional record parameter, by the matching `<param name="...">` element on the
-record. Overrides, explicit interface implementations, indexers, struct and interface members, and generated code are not
-checked; `<inheritdoc />` counts as documentation. Enable both rules everywhere through `.editorconfig`:
+`CS1591` covers externally visible types and members. `SKSTYLE017` extends the same requirement to the internal surface:
+types, methods, constructors, properties, fields, enum members, and events that are internal, or public inside an internal
+type. Private members are not checked. Any XML documentation comment satisfies the rule, including `<inheritdoc />`. A
+property synthesized from a positional record parameter is documented by the matching `<param name="...">` element on the
+record, and a partial type or method is documented when any part is. Overrides, explicit interface implementations,
+indexers, accessors, compiler-generated members, and generated code are not checked. Enable both rules everywhere through
+`.editorconfig`:
 
 ```ini
 [*.cs]

@@ -1,5 +1,6 @@
 namespace PandaBear.Observability;
 
+/// <summary>Decides which telemetry attribute names carry data that must be redacted.</summary>
 internal static class TelemetryPrivacyAttributeClassifier
 {
     /// <summary>Telemetry attribute names whose values may carry personal data, credentials, or storage identifiers and must be redacted.</summary>
@@ -66,6 +67,7 @@ internal static class TelemetryPrivacyAttributeClassifier
         "messaging.message.id"
     };
 
+    /// <summary>Returns whether the attribute name is a known sensitive name or a database query parameter.</summary>
     public static bool IsSensitive(string name)
     {
         return SensitiveAttributeNames.Contains(name)

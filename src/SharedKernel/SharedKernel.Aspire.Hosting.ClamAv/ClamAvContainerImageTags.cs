@@ -1,5 +1,6 @@
 namespace Aspire.Hosting;
 
+/// <summary>Pinned container image coordinates for the ClamAV resource.</summary>
 internal static class ClamAvContainerImageTags
 {
     /// <remarks>docker.io</remarks>

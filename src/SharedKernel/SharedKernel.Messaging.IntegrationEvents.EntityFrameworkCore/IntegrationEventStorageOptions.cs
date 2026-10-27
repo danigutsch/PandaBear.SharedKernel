@@ -7,7 +7,9 @@ namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 /// </summary>
 public sealed class IntegrationEventStorageOptions
 {
+    /// <summary>Outbox table name used when the options do not set one.</summary>
     internal const string DefaultOutboxTableName = "outbox_messages";
+    /// <summary>Transport table name used when the options do not set one.</summary>
     internal const string DefaultTransportTableName = "transport_messages";
 
     /// <summary>

@@ -9,6 +9,7 @@ public sealed class PostgreSqlIndexHealthMonitoringOptions
     /// <summary>Gets or sets the maximum duration of one read-only PostgreSQL command.</summary>
     public TimeSpan CommandTimeout { get; set; } = TimeSpan.FromSeconds(30);
 
+    /// <summary>Throws when the polling interval or command timeout is outside its supported range.</summary>
     internal void Validate()
     {
         if (PollingInterval < TimeSpan.FromMinutes(1)

@@ -15,6 +15,10 @@ public readonly struct Result<T> : IEquatable<Result<T>>
     private const string SuccessfulResultMustContainValueMessage = "Successful results must contain a value.";
     private const string FailedResultMustContainErrorDetailsMessage = "Failed results must contain error details.";
 
+    /// <summary>Creates a result and enforces that success carries a value and failure carries error details.</summary>
+    /// <param name="status">The outcome status.</param>
+    /// <param name="value">The value, required for a successful status.</param>
+    /// <param name="error">The error details, required for a failed status.</param>
     internal Result(ResultStatus status, T? value, ResultError? error)
     {
         Status = status;

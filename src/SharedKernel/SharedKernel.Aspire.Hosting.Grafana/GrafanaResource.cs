@@ -6,6 +6,7 @@ namespace Aspire.Hosting.ApplicationModel;
 /// <param name="name">The name of the resource.</param>
 public sealed class GrafanaResource([ResourceName] string name) : ContainerResource(name)
 {
+    /// <summary>Name of the HTTP endpoint that serves the Grafana dashboards.</summary>
     internal const string HttpEndpointName = "http";
 
     private EndpointReference? _primaryEndpoint;

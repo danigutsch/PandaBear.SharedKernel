@@ -1,5 +1,6 @@
 namespace PandaBear.Documentation;
 
+/// <summary>One generated block: its marker name and the document it is written into.</summary>
 internal sealed class DocumentationGeneratorBlock
 {
     /// <summary>Marker name of the generated block inside the target document.</summary>

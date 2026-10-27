@@ -11,6 +11,9 @@ public readonly struct Option<T> : IEquatable<Option<T>>
 {
     private readonly T? value;
 
+    /// <summary>Creates an option from a value and whether it is present; callers go through the public factories.</summary>
+    /// <param name="value">The wrapped value, ignored when <paramref name="hasValue"/> is <see langword="false"/>.</param>
+    /// <param name="hasValue">Whether the option holds a value.</param>
     internal Option(T? value, bool hasValue)
     {
         this.value = value;

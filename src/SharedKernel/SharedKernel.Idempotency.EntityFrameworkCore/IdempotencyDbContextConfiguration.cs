@@ -13,10 +13,15 @@ internal sealed class IdempotencyDbContextConfiguration<TContext> : IDbContextCo
 {
     private readonly IOptionsMonitor<IdempotencyStorageOptions>? storageOptions;
 
+    /// <summary>Creates a configuration that uses the default idempotency storage options.</summary>
     public IdempotencyDbContextConfiguration()
     {
     }
 
+    /// <summary>
+    /// Creates a configuration that reads the context's named idempotency storage options.
+    /// </summary>
+    /// <param name="storageOptions">Monitor that supplies the per-context storage options.</param>
     public IdempotencyDbContextConfiguration(IOptionsMonitor<IdempotencyStorageOptions> storageOptions)
     {
         ArgumentNullException.ThrowIfNull(storageOptions);

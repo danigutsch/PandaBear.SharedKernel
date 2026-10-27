@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 namespace PandaBear.AspNetCore;
 
+/// <summary>
+/// Outgoing HTTP handler that replaces X-Forwarded-For with the client address already resolved for the current request, so downstream services see the real caller.
+/// </summary>
+/// <param name="contextAccessor">Accessor for the current request context.</param>
 internal sealed class ResolvedClientIpForwardingHandler(IHttpContextAccessor contextAccessor) : DelegatingHandler
 {
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)

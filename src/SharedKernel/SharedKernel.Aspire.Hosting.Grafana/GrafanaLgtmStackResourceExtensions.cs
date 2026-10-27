@@ -49,6 +49,7 @@ public static class GrafanaLgtmStackResourceExtensions
         return collector.ExcludeFromManifest();
     }
 
+    /// <summary>Points the resource's OTLP exporter endpoint at the collector endpoint that matches its configured protocol, and waits until the collector is healthy.</summary>
     internal static IResourceBuilder<T> ConfigureOpenTelemetryCollectorRouting<T>(
         IResourceBuilder<T> builder,
         IResourceBuilder<OpenTelemetryCollectorResource> collector)

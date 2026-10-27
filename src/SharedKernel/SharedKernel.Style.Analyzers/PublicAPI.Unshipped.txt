@@ -20,4 +20,4 @@ const PandaBear.Style.Analyzers.StyleDiagnosticIds.InvalidGovernedLiteralCatalog
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.DirectCurrentTime = "SKSTYLE014" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.CaseInsensitiveJsonContext = "SKSTYLE015" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.FileNameMismatch = "SKSTYLE016" -> string!
-const PandaBear.Style.Analyzers.StyleDiagnosticIds.UndocumentedProperty = "SKSTYLE017" -> string!
+const PandaBear.Style.Analyzers.StyleDiagnosticIds.UndocumentedMember = "SKSTYLE017" -> string!

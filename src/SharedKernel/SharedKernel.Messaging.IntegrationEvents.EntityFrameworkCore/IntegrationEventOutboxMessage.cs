@@ -5,8 +5,10 @@ namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 /// </summary>
 internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegrationEventOutboxMessage
 {
+    /// <summary>Maximum stored length of the last publish error; longer text is truncated.</summary>
     internal const int LastPublishErrorMaxLength = 2000;
 
+    /// <summary>Maximum stored length of the claim owner name; longer names are truncated.</summary>
     internal const int ClaimOwnerMaxLength = 100;
 
     /// <summary>
@@ -151,6 +153,11 @@ internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegratio
         ClaimedUntil = null;
     }
 
+    /// <summary>
+    /// Marks the message as claimed by a relay until the lease expires, so other relays skip it.
+    /// </summary>
+    /// <param name="claimedBy">Name of the claiming relay.</param>
+    /// <param name="claimedUntil">When the claim lapses.</param>
     public void MarkClaimed(string claimedBy, DateTimeOffset claimedUntil)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(claimedBy);

@@ -2,8 +2,10 @@ using Npgsql;
 
 namespace PandaBear.EventSourcing.Npgsql;
 
+/// <summary>Resolves and quotes the PostgreSQL schema name used by event sourcing.</summary>
 internal static class PostgreSqlNames
 {
+    /// <summary>Returns the configured schema name quoted for safe use in SQL text.</summary>
     public static string Schema(PostgreSqlEventSourcingOptions? options)
     {
         var schema = SchemaName(options);
@@ -11,6 +13,7 @@ internal static class PostgreSqlNames
         return commandBuilder.QuoteIdentifier(schema);
     }
 
+    /// <summary>Returns the configured schema name, or the default when no options are given, after checking it is a valid identifier.</summary>
     public static string SchemaName(PostgreSqlEventSourcingOptions? options)
     {
         var schema = options?.Schema ?? new PostgreSqlEventSourcingOptions().Schema;
