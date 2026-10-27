@@ -14,8 +14,8 @@ namespace PandaBear.AspNetCore.Tests;
 /// <summary>Builds a service provider with the security-event telemetry, a recording logger and a metric collector.</summary>
 internal sealed class SecurityEventTestFixture : IDisposable
 {
-    /// <summary>A bearer token that must never appear in any log record or metric tag.</summary>
-    public const string Token = "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJzZWNyZXQtc3ViamVjdCJ9.signature";
+    /// <summary>A bearer credential sentinel that must never appear in any log record or metric tag.</summary>
+    public const string Token = "canary-bearer-credential";
 
     private readonly ServiceProvider _provider;
 
