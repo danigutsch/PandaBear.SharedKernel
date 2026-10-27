@@ -73,3 +73,27 @@ const PandaBear.AspNetCore.HostEnvironmentVariableNames.DotNetEnvironment = "DOT
 const PandaBear.AspNetCore.ApiAuthenticationDefaults.SubjectClaimType = "sub" -> string!
 PandaBear.AspNetCore.ClaimsPrincipalExtensions
 static PandaBear.AspNetCore.ClaimsPrincipalExtensions.GetSubjectId(this System.Security.Claims.ClaimsPrincipal! principal) -> string?
+PandaBear.AspNetCore.AspNetCoreServiceCollectionExtensions
+static PandaBear.AspNetCore.AspNetCoreServiceCollectionExtensions.AddUnhandledExceptionHandler(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static PandaBear.AspNetCore.AspNetCoreServiceCollectionExtensions.AddSecurityEventTelemetry(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.AspNetCore.AspNetCoreTelemetry
+const PandaBear.AspNetCore.AspNetCoreTelemetry.MeterName = "PandaBear.AspNetCore" -> string!
+const PandaBear.AspNetCore.AspNetCoreTelemetry.UnhandledExceptionsCounterName = "unhandled_exceptions_total" -> string!
+const PandaBear.AspNetCore.AspNetCoreTelemetry.AuthenticationEventsCounterName = "authentication_events_total" -> string!
+const PandaBear.AspNetCore.AspNetCoreTelemetry.RateLimitRejectionsCounterName = "rate_limit_rejections_total" -> string!
+const PandaBear.AspNetCore.AspNetCoreTelemetry.ErrorTypeTag = "error_type" -> string!
+const PandaBear.AspNetCore.AspNetCoreTelemetry.RouteTemplateTag = "route_template" -> string!
+const PandaBear.AspNetCore.AspNetCoreTelemetry.HandledTag = "handled" -> string!
+const PandaBear.AspNetCore.AspNetCoreTelemetry.EventTag = "event" -> string!
+const PandaBear.AspNetCore.AspNetCoreTelemetry.ReasonTag = "reason" -> string!
+const PandaBear.AspNetCore.AspNetCoreTelemetry.SchemeTag = "scheme" -> string!
+const PandaBear.AspNetCore.AspNetCoreTelemetry.PolicyTag = "policy" -> string!
+const PandaBear.AspNetCore.AspNetCoreTelemetry.UnmatchedRoute = "unmatched" -> string!
+const PandaBear.AspNetCore.AspNetCoreTelemetry.NoPolicy = "none" -> string!
+const PandaBear.AspNetCore.AspNetCoreTelemetry.UnhandledExceptionEventId = 4001 -> int
+const PandaBear.AspNetCore.AspNetCoreTelemetry.AuthenticationEventId = 4101 -> int
+const PandaBear.AspNetCore.AspNetCoreTelemetry.RateLimitRejectionEventId = 4102 -> int
+PandaBear.AspNetCore.UnhandledExceptionReporter
+PandaBear.AspNetCore.UnhandledExceptionReporter.UnhandledExceptionReporter(Microsoft.Extensions.Logging.ILogger<PandaBear.AspNetCore.UnhandledExceptionReporter!>! logger, System.Diagnostics.Metrics.IMeterFactory! meterFactory) -> void
+PandaBear.AspNetCore.UnhandledExceptionReporter.Report(Microsoft.AspNetCore.Http.HttpContext! httpContext, System.Exception! exception, bool handled) -> void
+PandaBear.AspNetCore.UnhandledExceptionReporter.Report(System.Exception! exception, string? routeTemplate, int statusCode, string? traceId, bool handled) -> void

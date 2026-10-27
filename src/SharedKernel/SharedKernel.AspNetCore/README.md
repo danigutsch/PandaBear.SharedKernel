@@ -33,6 +33,15 @@ Use `HostEnvironmentVariableNames.AspNetCoreEnvironment` and
 These constants name host integration inputs without choosing an environment or application policy.
 Their canonical ownership is registered in the [governed-literal catalog](../SharedKernel.Style.Analyzers/GovernedLiterals.txt).
 
+## Error and security telemetry
+
+Opt in with `services.AddUnhandledExceptionHandler()` (and `app.UseExceptionHandler()`) for a
+`traceId`-only RFC 9457 error body plus one log event and the `unhandled_exceptions_total` counter, and with
+`services.AddSecurityEventTelemetry()` for bounded JWT bearer failure, challenge and forbidden events and rate-limit
+rejections. Exception messages, tokens and claims never reach the response, log or metric tags. See
+[ASP.NET Core error and security telemetry](../../../docs/aspnetcore-error-and-security-telemetry.md) for names, tags
+and alerting guidance.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.AspNetCore`. C# namespace: `PandaBear.AspNetCore`. Assembly/project identity: `SharedKernel.AspNetCore`.

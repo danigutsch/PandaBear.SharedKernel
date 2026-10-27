@@ -14,6 +14,7 @@
 - [Package development and validation](package-development.md)
 - [API contract versioning](API_VERSIONING.md)
 - [Exception documentation](EXCEPTION_DOCUMENTATION.md)
+- [ASP.NET Core error and security telemetry](aspnetcore-error-and-security-telemetry.md)
 - [Warning policy](ci/warning-policy.md)
 - [Action and image pin review](ci/pin-update-review.md)
 
