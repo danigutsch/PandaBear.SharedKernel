@@ -18,6 +18,7 @@ internal static class SliceRun
 
     private const string Redaction = "[redacted]";
 
+    /// <summary>Runs the selected test slices and writes their results.</summary>
     public static async Task Run(
         string root,
         string selection,

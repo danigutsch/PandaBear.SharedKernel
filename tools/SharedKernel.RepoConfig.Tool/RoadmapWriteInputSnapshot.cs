@@ -3,6 +3,7 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Snapshot of the roadmap input files that detects any change between planning and writing.</summary>
 internal sealed class RoadmapWriteInputSnapshot
 {
     private readonly Dictionary<string, string> _files;
@@ -15,11 +16,13 @@ internal sealed class RoadmapWriteInputSnapshot
         Digest = ComputeDigest();
     }
 
+    /// <summary>Digest over the captured input paths and contents.</summary>
     public string Digest
     {
         get;
     }
 
+    /// <summary>Reads all roadmap input files under <paramref name="rootPath"/> into a snapshot.</summary>
     public static RoadmapWriteInputSnapshot Capture(string rootPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
@@ -31,12 +34,14 @@ internal sealed class RoadmapWriteInputSnapshot
         return new RoadmapWriteInputSnapshot(normalizedRoot, files);
     }
 
+    /// <summary>Returns the captured content of the file at <paramref name="path"/>, or null when it was not part of the snapshot.</summary>
     public string? GetExpectedContent(string path)
     {
         var normalizedPath = Path.GetFullPath(path);
         return _files.TryGetValue(normalizedPath, out var content) ? content : null;
     }
 
+    /// <summary>Throws when any input file was added, removed, or modified since capture.</summary>
     public void Verify()
     {
         var comparer = OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;

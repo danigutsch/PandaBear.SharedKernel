@@ -2,8 +2,12 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Reads the GitHub issue reference of a roadmap item.</summary>
 internal static class GitHubRoadmapItemReference
 {
+    /// <summary>Returns the item updated with the GitHub integration data found in the item JSON.</summary>
+    /// <param name="item">Item to update.</param>
+    /// <param name="root">Root JSON element of the item file.</param>
     public static RoadmapItemSnapshot Read(RoadmapItemSnapshot item, JsonElement root)
     {
         if (!root.TryGetProperty("integrations", out var integrations)
