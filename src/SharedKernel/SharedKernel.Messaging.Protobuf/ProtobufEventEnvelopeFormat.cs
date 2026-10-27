@@ -29,7 +29,7 @@ public static class ProtobufEventEnvelopeFormat
     /// <returns>The encoded event, to be sent with the <see cref="ProtobufContentTypes.EventFormat"/> media type.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="envelope"/> is null.</exception>
     /// <exception cref="NotSupportedException">Thrown when the envelope specification is not CloudEvents 1.0.</exception>
-    /// <exception cref="JsonException">Thrown when the extension attributes are not a JSON object of string values.</exception>
+    /// <exception cref="JsonException">Thrown when the extension attributes are not a JSON object of string values: malformed JSON, or a value that is not a string, including null.</exception>
     public static byte[] Encode(IEventEnvelope envelope)
     {
         ArgumentNullException.ThrowIfNull(envelope);
@@ -60,8 +60,12 @@ public static class ProtobufEventEnvelopeFormat
             using var document = JsonDocument.Parse(extensionAttributesJson);
             foreach (var property in document.RootElement.EnumerateObject())
             {
-                cloudEvent[CloudEventAttribute.CreateExtension(property.Name, CloudEventAttributeType.String)] = property.Value.GetString()
-                    ?? throw new JsonException($"Extension attribute '{property.Name}' must be a JSON string.");
+                if (property.Value.ValueKind != JsonValueKind.String)
+                {
+                    throw new JsonException($"Extension attribute '{property.Name}' must be a JSON string.");
+                }
+
+                cloudEvent[CloudEventAttribute.CreateExtension(property.Name, CloudEventAttributeType.String)] = property.Value.GetString()!;
             }
         }
 

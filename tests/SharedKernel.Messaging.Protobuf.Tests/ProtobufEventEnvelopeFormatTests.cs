@@ -1,3 +1,4 @@
+using System.Text.Json;
 using CloudNative.CloudEvents;
 using CloudNative.CloudEvents.Protobuf;
 
@@ -104,7 +105,7 @@ public sealed class ProtobufEventEnvelopeFormatTests
         Func<object?> act = () => ProtobufEventEnvelopeFormat.Encode(envelope);
 
         // Act, Assert
-        act.ShouldThrow<InvalidOperationException>();
+        act.ShouldThrow<JsonException>();
     }
 
     [Fact]
@@ -115,5 +116,37 @@ public sealed class ProtobufEventEnvelopeFormatTests
 
         // Act, Assert
         act.ShouldThrow<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Encode_withnullextensionattribute_throwsjsonexception()
+    {
+        // Arrange
+        var envelope = ProtobufTestEnvelopes.Create(null, EventPayloadEncoding.Json, null, """{"attempt":null}""");
+        Func<object?> act = () => ProtobufEventEnvelopeFormat.Encode(envelope);
+
+        // Act, Assert
+        act.ShouldThrow<JsonException>();
+    }
+
+    [Fact]
+    public void Decode_withprotodata_throwsnotsupportedexception()
+    {
+        // Arrange
+        var cloudEvent = new CloudEvent
+        {
+            Id = "id",
+            Source = new Uri("urn:test"),
+            Type = "test.proto.data",
+            Data = new Google.Protobuf.WellKnownTypes.StringValue { Value = "Alps" },
+        };
+        var message = new ProtobufEventFormatter().EncodeStructuredModeMessage(cloudEvent, out _);
+        Func<object?> act = () => ProtobufEventEnvelopeFormat.Decode(message);
+
+        // Act
+        var exception = act.ShouldThrow<NotSupportedException>();
+
+        // Assert
+        exception.Message.ShouldContain("proto_data", StringComparison.Ordinal);
     }
 }
