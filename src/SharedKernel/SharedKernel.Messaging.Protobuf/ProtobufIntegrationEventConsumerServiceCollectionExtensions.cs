@@ -79,6 +79,7 @@ public static class ProtobufIntegrationEventConsumerServiceCollectionExtensions
         services.AddScoped<IEventEnvelopePublisher>(provider => new ProtobufEventEnvelopePublisher(
             provider.GetRequiredService<IServiceScopeFactory>(),
             provider.GetServices<ProtobufConsumerRegistration>(),
+            provider.GetServices<ProtobufGeneratedConsumer>(),
             hasInner ? provider.GetRequiredKeyedService<IEventEnvelopePublisher>(InnerPublisherKey) : null));
     }
 

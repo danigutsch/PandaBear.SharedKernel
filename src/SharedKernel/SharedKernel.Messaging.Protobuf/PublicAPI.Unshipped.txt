@@ -12,3 +12,7 @@ static PandaBear.Messaging.Protobuf.ProtobufEventEnvelopeFormat.Encode(PandaBear
 static PandaBear.Messaging.Protobuf.ProtobufIntegrationEventSerializer.Deserialize<TIntegrationEvent>(string! payload) -> TIntegrationEvent
 PandaBear.Messaging.Protobuf.ProtobufIntegrationEventConsumerServiceCollectionExtensions
 static PandaBear.Messaging.Protobuf.ProtobufIntegrationEventConsumerServiceCollectionExtensions.AddProtobufIntegrationEventConsumer<TIntegrationEvent, THandler>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer
+PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.EventType.get -> string!
+PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.EventType.init -> void
+PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.ProtobufGeneratedConsumer(string! EventType) -> void

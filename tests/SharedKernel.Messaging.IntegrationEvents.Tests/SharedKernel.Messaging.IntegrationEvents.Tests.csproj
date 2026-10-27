@@ -27,6 +27,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Messaging.Protobuf\SharedKernel.Messaging.Protobuf.csproj" />
         <ProjectReference Include="..\SharedKernel.Messaging.Protobuf.TestContracts\SharedKernel.Messaging.Protobuf.TestContracts.csproj" />
     </ItemGroup>
 

@@ -7,10 +7,12 @@ namespace PandaBear.Messaging.Protobuf;
 /// </summary>
 /// <param name="scopeFactory">Creates the scope in which a handler runs.</param>
 /// <param name="registrations">The registered Protobuf consumers.</param>
+/// <param name="generatedConsumers">The Protobuf event types whose delivery the source generator already emits in <paramref name="inner"/>.</param>
 /// <param name="inner">The publisher for non-Protobuf envelopes, such as the generated JSON publisher, or null when none is registered.</param>
 internal sealed class ProtobufEventEnvelopePublisher(
     IServiceScopeFactory scopeFactory,
     IEnumerable<ProtobufConsumerRegistration> registrations,
+    IEnumerable<ProtobufGeneratedConsumer> generatedConsumers,
     IEventEnvelopePublisher? inner) : IEventEnvelopePublisher
 {
     /// <inheritdoc />
@@ -23,10 +25,19 @@ internal sealed class ProtobufEventEnvelopePublisher(
             && string.Equals(envelope.DataContentType, ProtobufContentTypes.Payload, StringComparison.OrdinalIgnoreCase);
         if (isProtobuf)
         {
-            var registration = registrations.FirstOrDefault(candidate => string.Equals(candidate.EventType, envelope.EventType, StringComparison.Ordinal))
-                ?? throw new NotSupportedException(
-                    $"No Protobuf consumer is registered for integration event type '{envelope.EventType}'. Register it with AddProtobufIntegrationEventConsumer.");
-            return registration.Handle(scopeFactory, envelope, ct);
+            var registration = registrations.FirstOrDefault(candidate => string.Equals(candidate.EventType, envelope.EventType, StringComparison.Ordinal));
+            var generated = generatedConsumers.Any(candidate => string.Equals(candidate.EventType, envelope.EventType, StringComparison.Ordinal));
+            if (registration is not null && !generated)
+            {
+                return registration.Handle(scopeFactory, envelope, ct);
+            }
+
+            if (inner is null)
+            {
+                throw new NotSupportedException(
+                    $"No Protobuf consumer is delivered for integration event type '{envelope.EventType}'. Register it with AddProtobufIntegrationEventConsumer"
+                    + (generated ? ", after AddGeneratedIntegrationEvents, which supplies the generated publisher." : "."));
+            }
         }
 
         if (inner is not null)

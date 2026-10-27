@@ -86,5 +86,6 @@ internal static class GeneratorTestHarness
         MetadataReference.CreateFromFile(typeof(IServiceCollection).Assembly.Location),
         MetadataReference.CreateFromFile(typeof(Google.Protobuf.IMessage).Assembly.Location),
         MetadataReference.CreateFromFile(typeof(Protobuf.TestContracts.TourCreated).Assembly.Location),
+        MetadataReference.CreateFromFile(typeof(Protobuf.ProtobufGeneratedConsumer).Assembly.Location),
     ];
 }
