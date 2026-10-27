@@ -14,6 +14,9 @@ internal sealed class UnreapedProcess : IDisposable
         Process = process;
     }
 
+    /// <summary>
+    /// Gets the background sleep process.
+    /// </summary>
     public Process Process
     {
         get;
@@ -53,6 +56,9 @@ internal sealed class UnreapedProcess : IDisposable
         }
     }
 
+    /// <summary>
+    /// Disposes the process and kills its parent shell.
+    /// </summary>
     public void Dispose()
     {
         Process.Dispose();

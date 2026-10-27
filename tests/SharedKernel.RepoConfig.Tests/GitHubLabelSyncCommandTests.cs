@@ -8,6 +8,7 @@ using static PandaBear.RepoConfig.Tests.GitHubLabelSyncTestOperations;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the <c>github sync-labels</c> command.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class GitHubLabelSyncCommandTests

@@ -2,11 +2,17 @@ using System.Text;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Disposable temporary Git repository with an isolated Git environment and helpers to stage, store, corrupt, and inspect repository state for RepoConfig tool tests.
+/// </summary>
 internal sealed class TemporaryGitRepository : IDisposable
 {
     private readonly IReadOnlyDictionary<string, string?> _gitEnvironment;
     private readonly List<string> _linkedWorktreePaths = [];
 
+    /// <summary>
+    /// Creates the temporary directory and an isolated Git environment that ignores system and global configuration.
+    /// </summary>
     public TemporaryGitRepository()
     {
         RootPath = Path.Combine(Path.GetTempPath(), "sharedkernel-repo-config-git-tests", Guid.NewGuid().ToString("N"));
@@ -23,17 +29,26 @@ internal sealed class TemporaryGitRepository : IDisposable
         };
     }
 
+    /// <summary>
+    /// Gets the absolute path of the repository root.
+    /// </summary>
     public string RootPath
     {
         get;
     }
 
+    /// <summary>
+    /// Runs git init and disables core.autocrlf.
+    /// </summary>
     public async Task Initialize(CancellationToken cancellationToken)
     {
         await RunGitChecked(["init", "--quiet"], cancellationToken);
         await RunGitChecked(["config", "core.autocrlf", "false"], cancellationToken);
     }
 
+    /// <summary>
+    /// Tries to initialize the repository with the SHA-256 object format and returns false when this Git version does not support it.
+    /// </summary>
     public async Task<bool> TryInitializeSha256(CancellationToken cancellationToken)
     {
         var result = await RunGit(["init", "--quiet", "--object-format=sha256"], cancellationToken);
@@ -46,6 +61,9 @@ internal sealed class TemporaryGitRepository : IDisposable
         return false;
     }
 
+    /// <summary>
+    /// Adds a detached linked worktree at HEAD and returns its path.
+    /// </summary>
     public async Task<string> CreateLinkedWorktree(CancellationToken cancellationToken)
     {
         var linkedRoot = RootPath + "-linked-" + Guid.NewGuid().ToString("N");
@@ -56,6 +74,9 @@ internal sealed class TemporaryGitRepository : IDisposable
         return linkedRoot;
     }
 
+    /// <summary>
+    /// Writes raw bytes to a repository-relative path, creating missing directories.
+    /// </summary>
     public void WriteBytes(string relativePath, ReadOnlySpan<byte> content)
     {
         var path = Path.Combine(RootPath, relativePath);
@@ -63,26 +84,44 @@ internal sealed class TemporaryGitRepository : IDisposable
         File.WriteAllBytes(path, content);
     }
 
+    /// <summary>
+    /// Writes UTF-8 encoded text to a repository-relative path.
+    /// </summary>
     public void WriteText(string relativePath, string content) =>
         WriteBytes(relativePath, Encoding.UTF8.GetBytes(content));
 
+    /// <summary>
+    /// Deletes a working tree file.
+    /// </summary>
     public void Delete(string relativePath) =>
         File.Delete(Path.Combine(RootPath, relativePath));
 
+    /// <summary>
+    /// Stages a path using a literal pathspec.
+    /// </summary>
     public async Task Stage(string relativePath, CancellationToken cancellationToken) =>
         await RunGitChecked(["add", "--", $":(literal){Normalize(relativePath)}"], cancellationToken);
 
+    /// <summary>
+    /// Writes the file as a Git blob without staging it and returns the object ID.
+    /// </summary>
     public async Task<string> StoreBlob(string relativePath, CancellationToken cancellationToken)
     {
         var result = await RunGitChecked(["hash-object", "-w", "--", Normalize(relativePath)], cancellationToken);
         return result.StandardOutput.Trim();
     }
 
+    /// <summary>
+    /// Adds an index entry with the given mode and object ID without touching the working tree.
+    /// </summary>
     public async Task SetIndexEntry(string mode, string objectId, string relativePath, CancellationToken cancellationToken) =>
         await RunGitChecked(
             ["update-index", "--add", "--cacheinfo", $"{mode},{objectId},{Normalize(relativePath)}"],
             cancellationToken);
 
+    /// <summary>
+    /// Runs the RepoConfig tool in process with the isolated Git environment plus any extra environment variables, defaulting the working directory to the repository root.
+    /// </summary>
     public async Task<CommandResult> RunCommand(
         IReadOnlyList<string> arguments,
         CancellationToken cancellationToken,
@@ -124,14 +163,23 @@ internal sealed class TemporaryGitRepository : IDisposable
         }
     }
 
+    /// <summary>
+    /// Runs the git executable in the repository root with the isolated Git environment.
+    /// </summary>
     public async Task<CiTestSelectionTestProcess.ProcessResult> RunGit(
         IReadOnlyList<string> arguments,
         CancellationToken cancellationToken) =>
         await CiTestSelectionTestProcess.Run("git", RootPath, arguments, cancellationToken, _gitEnvironment);
 
+    /// <summary>
+    /// Overwrites the Git index with invalid bytes.
+    /// </summary>
     public void CorruptIndex() =>
         File.WriteAllBytes(Path.Combine(RootPath, ".git", "index"), [0x00, 0xFF, 0x00]);
 
+    /// <summary>
+    /// Copies the Git index to a file in the repository root and returns the copy's path.
+    /// </summary>
     public string CopyIndex(string fileName)
     {
         var copyPath = Path.Combine(RootPath, fileName);
@@ -139,6 +187,9 @@ internal sealed class TemporaryGitRepository : IDisposable
         return copyPath;
     }
 
+    /// <summary>
+    /// Writes the content to .git/info/attributes.
+    /// </summary>
     public void WriteInfoAttributes(string content)
     {
         var path = Path.Combine(RootPath, ".git", "info", "attributes");
@@ -146,6 +197,9 @@ internal sealed class TemporaryGitRepository : IDisposable
         File.WriteAllText(path, content);
     }
 
+    /// <summary>
+    /// Writes a global attributes file and a Git config pointing core.attributesFile at it, and returns the config path.
+    /// </summary>
     public string CreateGlobalAttributesConfig(string attributes)
     {
         var attributesPath = Path.Combine(RootPath, "global-attributes");
@@ -157,6 +211,9 @@ internal sealed class TemporaryGitRepository : IDisposable
         return configPath;
     }
 
+    /// <summary>
+    /// Creates a POSIX shell git wrapper that misbehaves according to the TEXT_ENCODING_GIT_SHIM_MODE variable, and returns a PATH value that puts it first.
+    /// </summary>
     public string CreateGitShim()
     {
         if (OperatingSystem.IsWindows())
@@ -218,12 +275,18 @@ internal sealed class TemporaryGitRepository : IDisposable
         return shimDirectory + Path.PathSeparator + Environment.GetEnvironmentVariable("PATH");
     }
 
+    /// <summary>
+    /// Deletes the loose object file for the object ID.
+    /// </summary>
     public void DeleteLooseObject(string objectId)
     {
         var objectPath = Path.Combine(RootPath, ".git", "objects", objectId[..2], objectId[2..]);
         TemporaryRepositoryDirectory.DeleteFile(objectPath);
     }
 
+    /// <summary>
+    /// Deletes linked worktrees and the repository directory.
+    /// </summary>
     public void Dispose()
     {
         foreach (var linkedWorktreePath in _linkedWorktreePaths)
@@ -250,5 +313,11 @@ internal sealed class TemporaryGitRepository : IDisposable
     private static string Normalize(string path) =>
         path.Replace(Path.DirectorySeparatorChar, '/').Replace(Path.AltDirectorySeparatorChar, '/');
 
+    /// <summary>
+    /// Exit code and captured output of an in-process tool invocation.
+    /// </summary>
+    /// <param name="ExitCode">The process exit code.</param>
+    /// <param name="StandardOutput">The text written to standard output.</param>
+    /// <param name="StandardError">The text written to standard error.</param>
     internal readonly record struct CommandResult(int ExitCode, string StandardOutput, string StandardError);
 }

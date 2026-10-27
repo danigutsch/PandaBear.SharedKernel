@@ -3,6 +3,9 @@ namespace PandaBear.Versioning.Tests;
 /// <summary>Writes the tool settings file that a framework-dependent .NET tool package carries.</summary>
 internal static class DotnetToolSettings
 {
+    /// <summary>
+    /// Path of the tool settings file inside a net10.0 .NET tool package.
+    /// </summary>
     public const string EntryPath = "tools/net10.0/any/DotnetToolSettings.xml";
 
     /// <summary>Returns tool settings that declare <paramref name="commands" />, each run by <c>dotnet</c> from <c>Probe.Tool.dll</c>.</summary>

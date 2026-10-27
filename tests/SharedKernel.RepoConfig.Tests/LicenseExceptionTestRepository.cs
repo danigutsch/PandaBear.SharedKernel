@@ -1,10 +1,15 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Creates Git repositories with an approval, a candidate pin, and lock files for the license exception tests.</summary>
 internal static class LicenseExceptionTestRepository
 {
+    /// <summary>The approved candidate package version.</summary>
     public const string ApprovedVersion = "0.1.0-alpha.94.1";
+    /// <summary>The approved library revision.</summary>
     public const string ApprovedRevision = "d08008cd3e8901c304377edcc4683de7c3a85ecb";
+    /// <summary>The GitHub output line that lists the approved package URLs.</summary>
     public const string ApprovedPackages = "packages=pkg:nuget/StreamJsonRpc@2.25.29,pkg:nuget/Magick.NET-Q8-AnyCPU@15.0.0";
+    /// <summary>The repository configuration that approves the candidate version, the library revision, and the exception packages.</summary>
     public const string Configuration = """
         {
           "version": 1,

@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests how roadmap import and reconcile treat references to issues in other repositories.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubRoadmapReferenceTests
 {

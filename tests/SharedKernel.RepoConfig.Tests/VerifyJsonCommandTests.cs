@@ -2,6 +2,9 @@ using System.Text;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Tests the verify-json command against seeded Git repositories of JSON and JSONC files.
+/// </summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class VerifyJsonCommandTests

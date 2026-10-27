@@ -3,6 +3,7 @@ using System.Text;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Creates repositories and workspaces, and runs commands, for the link and line-ending verification tests.</summary>
 internal static class LinkTestRepository
 {
     /// <summary>Creates a Git repository, seeded with <see cref="LinkCorpus"/> when <paramref name="seedCorpus"/> is set.</summary>
@@ -35,6 +36,7 @@ internal static class LinkTestRepository
         return workspace;
     }
 
+    /// <summary>Runs the tool with the given arguments in the workspace and returns its exit code, output, and error.</summary>
     public static async Task<TemporaryGitRepository.CommandResult> Run(
         TemporaryRepoConfigWorkspace workspace,
         IReadOnlyList<string> arguments,

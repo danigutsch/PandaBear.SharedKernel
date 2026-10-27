@@ -1,5 +1,6 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests that the Git change guard accepts only digest-bound changes under <c>roadmap/</c> and rejects unsafe paths, links, submodules, copies, and malformed status.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RoadmapGitChangeGuardTests
 {

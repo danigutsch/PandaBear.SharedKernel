@@ -5,6 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Extracts the versioning tool command lines that workflows and the README run or document, and parses them for tests.
+/// </summary>
 internal static partial class CallerCommandLine
 {
     private const string VersioningProject = "--project tools/SharedKernel.Versioning.Tool ";
@@ -24,6 +27,9 @@ internal static partial class CallerCommandLine
         ("\"$PACKAGE_VERSION\"", "1.3.0-alpha.7.1"),
     ];
 
+    /// <summary>
+    /// Returns the tool arguments of every workflow line that runs the versioning project through dotnet run.
+    /// </summary>
     public static string[] ReadWorkflowCommandLines(string workflowPath) =>
         [.. File.ReadAllLines(workflowPath)
             .Where(static line => line.Contains(VersioningProject, StringComparison.Ordinal))
@@ -76,6 +82,9 @@ internal static partial class CallerCommandLine
                 : [synopsis.Command])];
     }
 
+    /// <summary>
+    /// Splits a command line into arguments, substituting sample values for known shell variables first.
+    /// </summary>
     public static string[] Split(string commandLine)
     {
         ArgumentNullException.ThrowIfNull(commandLine);

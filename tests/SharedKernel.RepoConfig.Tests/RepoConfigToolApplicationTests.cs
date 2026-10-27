@@ -5,6 +5,7 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Runs the repo-config tool end to end in temporary workspaces, covering init, verify, get, set and the GitHub sync, import and project integration.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class RepoConfigToolApplicationTests

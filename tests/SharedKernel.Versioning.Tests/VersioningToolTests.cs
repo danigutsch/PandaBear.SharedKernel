@@ -6,6 +6,9 @@ using PandaBear.Versioning.Tool;
 
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests the versioning tool library: release calculation, API compatibility, packing, release preparation, package metadata validation, and process handling.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VersioningToolTests
 {
