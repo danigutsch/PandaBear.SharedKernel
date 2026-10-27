@@ -3,8 +3,10 @@ using PandaBear.Tooling;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Implements the security command: verifies the security baseline policy and optionally runs the secret scan.</summary>
 internal static class SecurityCommand
 {
+    /// <summary>Verifies the baseline, then scans for secrets when a report destination is given, and returns the process exit code (0 clean, 1 findings or baseline issues, 2 invalid input, 3 scanner failure).</summary>
     public static async Task<int> Run(string root, string? destination, TextWriter output, TextWriter error, CancellationToken cancellationToken)
     {
         try

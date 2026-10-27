@@ -5,16 +5,26 @@ using PandaBear.Tooling;
 
 namespace PandaBear.PlaywrightMcp.Tool;
 
+/// <summary>Runs the Playwright MCP container commands against the selected container engine.</summary>
+/// <param name="getEnvironmentVariable">Reads an environment variable by name.</param>
+/// <param name="resolveExecutable">Finds an executable on the path by command name.</param>
+/// <param name="runProcess">Starts a process and returns its result.</param>
 internal sealed class PlaywrightMcpApplication(
     Func<string, string?> getEnvironmentVariable,
     Func<string, string?> resolveExecutable,
     Func<ProcessStartInfo, TextWriter?, CancellationToken, Task<ProcessResult>> runProcess)
 {
+    /// <summary>Starts the Playwright MCP container server and returns its exit code.</summary>
+    /// <param name="error">Writer for diagnostics.</param>
+    /// <param name="ct">Cancellation token.</param>
     public Task<int> Serve(TextWriter error, CancellationToken ct)
     {
         return Run(error, RunServer, ct);
     }
 
+    /// <summary>Pulls the Playwright MCP container image and returns the exit code.</summary>
+    /// <param name="error">Writer for diagnostics.</param>
+    /// <param name="ct">Cancellation token.</param>
     public Task<int> Prepare(TextWriter error, CancellationToken ct)
     {
         return Run(
@@ -23,6 +33,9 @@ internal sealed class PlaywrightMcpApplication(
             ct);
     }
 
+    /// <summary>Removes the Playwright MCP container image and returns the exit code.</summary>
+    /// <param name="error">Writer for diagnostics.</param>
+    /// <param name="ct">Cancellation token.</param>
     public Task<int> Clean(TextWriter error, CancellationToken ct)
     {
         return Run(
@@ -323,6 +336,7 @@ internal sealed class PlaywrightMcpApplication(
         return string.Empty;
     }
 
+    /// <summary>Resolves a command to an executable path using the <c>PATH</c> environment variable, or returns <see langword="null" /> when it is not found.</summary>
     internal static string? ResolveExecutable(string command) =>
         ExecutableResolver.Resolve(command, Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows());
 }
