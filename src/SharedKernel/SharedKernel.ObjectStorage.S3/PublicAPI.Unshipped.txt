@@ -1,4 +1,5 @@
 #nullable enable
+const PandaBear.ObjectStorage.S3.S3ObjectStoreTelemetry.Name = "SharedKernel.ObjectStorage.S3" -> string!
 PandaBear.ObjectStorage.S3.S3ObjectStore
 PandaBear.ObjectStorage.S3.S3ObjectStore.CreateUploadUrl(PandaBear.ObjectStorage.ObjectUploadRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectUploadTicket!>
 PandaBear.ObjectStorage.S3.S3ObjectStore.Delete(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
@@ -32,4 +33,5 @@ PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.S3ObjectStoreOptions() -> void
 PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.SecretKey.get -> string!
 PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.SecretKey.set -> void
 PandaBear.ObjectStorage.S3.S3ObjectStoreServiceCollectionExtensions
+PandaBear.ObjectStorage.S3.S3ObjectStoreTelemetry
 static PandaBear.ObjectStorage.S3.S3ObjectStoreServiceCollectionExtensions.AddS3ObjectStore(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<PandaBear.ObjectStorage.S3.S3ObjectStoreOptions!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

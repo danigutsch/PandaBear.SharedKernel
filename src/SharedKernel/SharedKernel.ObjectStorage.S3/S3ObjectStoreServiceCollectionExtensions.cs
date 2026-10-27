@@ -40,9 +40,7 @@ public static class S3ObjectStoreServiceCollectionExtensions
         });
         services.AddOpenTelemetry()
             .WithMetrics(metrics => metrics.AddAWSInstrumentation())
-            .WithTracing(tracing => tracing
-                .AddAWSInstrumentation(options => options.SuppressDownstreamInstrumentation = true)
-                .AddProcessor(new S3SensitiveAttributeRedactionProcessor()));
+            .WithTracing(tracing => tracing.AddSource(S3ObjectStoreTelemetry.Name));
         services.TryAddSingleton(TimeProvider.System);
         services.AddSingleton<IObjectStore, S3ObjectStore>();
 
