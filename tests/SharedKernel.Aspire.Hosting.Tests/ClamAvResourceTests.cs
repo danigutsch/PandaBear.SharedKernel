@@ -3,6 +3,7 @@ using Aspire.Hosting.ApplicationModel;
 
 namespace PandaBear.Aspire.Hosting.Tests;
 
+/// <summary>Tests the ClamAV container resource builder: image, endpoint, health check, definition storage, update daemon and consumer references.</summary>
 public sealed class ClamAvResourceTests
 {
     private const string DefinitionsFolder = "/var/lib/clamav";

@@ -1,6 +1,5 @@
 namespace PandaBear.Versioning.Tool;
 
-/// <summary>Detects breaking-change markers in the git history.</summary>
 internal static class BreakingChangeMarkerCommand
 {
     /// <summary>Returns whether a commit in <paramref name="range" /> has a breaking-change marker.</summary>

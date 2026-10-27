@@ -2,11 +2,8 @@ using System.Net.Http.Headers;
 
 namespace PandaBear.RepoConfig.Tool;
 
-/// <summary>Creates authenticated HTTP clients for the GitHub API.</summary>
 internal static class GitHubHttpClient
 {
-    /// <summary>Creates a client authenticated with <c>GH_TOKEN</c> or <c>GITHUB_TOKEN</c>.</summary>
-    /// <param name="operation">Description of the operation, used in the missing-token message.</param>
     public static HttpClient Create(string operation)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(operation);
@@ -15,8 +12,6 @@ internal static class GitHubHttpClient
         return Create(token, $"Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub {operation}.");
     }
 
-    /// <summary>Creates a client authenticated with <c>GITHUB_TOKEN</c>.</summary>
-    /// <param name="operation">Description of the operation, used in the missing-token message.</param>
     public static HttpClient CreateFromGitHubToken(string operation)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(operation);

@@ -2,13 +2,10 @@ using System.Diagnostics;
 
 namespace PandaBear.PlaywrightMcp.Tool;
 
-/// <summary>Builds the process start information for each container command that runs Playwright MCP.</summary>
 internal static class PlaywrightMcpCommand
 {
-    /// <summary>Digest-pinned Playwright MCP container image reference.</summary>
     internal const string Image = "mcr.microsoft.com/playwright/mcp:v0.0.78@sha256:3d871c22ea2d4cca0966e2cfb1860e1cb03eb7353725a3d6cffd133296fb04eb";
 
-    /// <summary>Creates the start information that shows the active Docker context.</summary>
     public static ProcessStartInfo CreateDockerContextShowStartInfo(PlaywrightMcpOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -24,7 +21,6 @@ internal static class PlaywrightMcpCommand
         return startInfo;
     }
 
-    /// <summary>Creates the start information that probes the Docker context for its endpoint.</summary>
     public static ProcessStartInfo CreateDockerContextProbeStartInfo(PlaywrightMcpOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -48,7 +44,6 @@ internal static class PlaywrightMcpCommand
         return startInfo;
     }
 
-    /// <summary>Creates the start information that runs the Playwright MCP container on the selected engine.</summary>
     public static ProcessStartInfo CreateRuntimeStartInfo(
         PlaywrightMcpOptions options,
         string containerName)
@@ -127,7 +122,6 @@ internal static class PlaywrightMcpCommand
         return startInfo;
     }
 
-    /// <summary>Creates the start information that pulls the Playwright MCP image.</summary>
     public static ProcessStartInfo CreatePullStartInfo(PlaywrightMcpOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -139,7 +133,6 @@ internal static class PlaywrightMcpCommand
         return startInfo;
     }
 
-    /// <summary>Creates the start information that removes the Playwright MCP image.</summary>
     public static ProcessStartInfo CreateImageRemoveStartInfo(PlaywrightMcpOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -151,7 +144,6 @@ internal static class PlaywrightMcpCommand
         return startInfo;
     }
 
-    /// <summary>Creates the start information that removes the named container.</summary>
     public static ProcessStartInfo CreateContainerCleanupStartInfo(
         PlaywrightMcpOptions options,
         string containerName)
@@ -172,7 +164,6 @@ internal static class PlaywrightMcpCommand
         return startInfo;
     }
 
-    /// <summary>Creates the start information that checks whether the named container exists.</summary>
     public static ProcessStartInfo CreateContainerExistenceProbeStartInfo(
         PlaywrightMcpOptions options,
         string containerName)
@@ -192,7 +183,6 @@ internal static class PlaywrightMcpCommand
         return startInfo;
     }
 
-    /// <summary>Creates the start information that checks whether Podman runs rootless.</summary>
     public static ProcessStartInfo CreatePodmanRootlessProbeStartInfo(PlaywrightMcpOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -208,7 +198,6 @@ internal static class PlaywrightMcpCommand
         return startInfo;
     }
 
-    /// <summary>Returns whether the Docker endpoint refers to a local Unix socket or Windows named pipe.</summary>
     public static bool IsLocalDockerEndpoint(string? endpoint)
     {
         return endpoint?.Trim() is { } value

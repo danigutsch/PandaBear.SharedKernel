@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 
 namespace PandaBear.AI.Tests;
 
+/// <summary>Tests the request shape and error handling of the LiteLLM image text generator against a stubbed HTTP handler.</summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ImageTextGenerationCapability)]
 public sealed class LiteLlmImageTextGeneratorTests
 {

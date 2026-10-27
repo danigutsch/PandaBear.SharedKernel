@@ -2,6 +2,7 @@ using System.Net;
 
 namespace PandaBear.HttpClients.Tests;
 
+/// <summary>Tests that consumer customization of the default HTTP client resilience cannot turn on retries that would replay unsafe or streamed requests.</summary>
 [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
 public sealed class HttpClientResilienceCustomizationTests
 {

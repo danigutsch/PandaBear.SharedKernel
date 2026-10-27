@@ -3,6 +3,7 @@ using Aspire.Hosting.ApplicationModel;
 
 namespace PandaBear.Aspire.Hosting.Tests;
 
+/// <summary>Tests the individual Grafana, Loki, Prometheus and Tempo container resource builders.</summary>
 public sealed class GrafanaLgtmStackResourceTests
 {
     private static readonly string ConfigurationRoot = Path.Combine(Path.GetTempPath(), "grafana-lgtm-test");

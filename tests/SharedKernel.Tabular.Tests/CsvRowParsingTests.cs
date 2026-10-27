@@ -1,5 +1,6 @@
 namespace PandaBear.Tabular.Tests;
 
+/// <summary>Tests for <see cref="CsvRow"/> parsing, value trimming and index bounds.</summary>
 public class CsvRowParsingTests
 {
     [Fact]

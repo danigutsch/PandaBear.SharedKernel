@@ -2,10 +2,8 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
-/// <summary>Verifies the repository roadmap configuration, item files, and item graph.</summary>
 internal static class RepoConfigVerifier
 {
-    /// <summary>Checks the repository structure, configuration, and roadmap items under <paramref name="rootPath"/> and returns every issue found.</summary>
     public static IReadOnlyList<RepoConfigIssue> Verify(string rootPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
@@ -200,7 +198,6 @@ internal static class RepoConfigVerifier
         }
     }
 
-    /// <summary>Checks roadmap items for dangling references, parent cycles, and inconsistent blocker links.</summary>
     internal static IReadOnlyList<RepoConfigIssue> VerifyItemGraph(IReadOnlyCollection<RoadmapItemSnapshot> items)
     {
         List<RepoConfigIssue> issues = [];
@@ -1108,7 +1105,6 @@ internal static class RepoConfigVerifier
         return values;
     }
 
-    /// <summary>Parses the JSON file at <paramref name="path"/>, adding an issue and returning null when it cannot be read or parsed.</summary>
     internal static JsonDocument? TryParseJsonFile(string rootPath, string path, List<RepoConfigIssue> issues, Func<string, string>? readFile = null)
     {
         try

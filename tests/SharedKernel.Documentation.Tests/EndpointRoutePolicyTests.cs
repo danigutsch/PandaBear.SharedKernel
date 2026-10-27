@@ -1,5 +1,6 @@
 namespace PandaBear.Documentation.Tests;
 
+/// <summary>Tests that the endpoint route table takes audiences and endpoint-name methods from configuration instead of built-in application policy.</summary>
 public sealed class EndpointRoutePolicyTests
 {
     [Fact]

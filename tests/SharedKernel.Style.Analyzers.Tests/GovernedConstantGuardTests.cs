@@ -2,6 +2,9 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace PandaBear.Style.Analyzers.Tests;
 
+/// <summary>
+/// Tests for GovernedConstantGuard, which validates that catalogued literals have one canonical const owner across compilations.
+/// </summary>
 public sealed class GovernedConstantGuardTests
 {
     [Theory]

@@ -6,6 +6,7 @@ using PandaBear.HttpCaching.AspNetCore;
 
 namespace PandaBear.AspNetCore.Tests;
 
+/// <summary>Tests the no-store response middleware and the endpoint-group scoping of the no-store policy.</summary>
 public sealed class NoStoreResponseMiddlewareTests
 {
     [Theory]

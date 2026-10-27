@@ -9,7 +9,6 @@ internal static class EncString
     private const int IvLength = 16;
     private const int MacLength = 32;
 
-    /// <summary>Encrypts <paramref name="plaintext"/> with a fresh random IV and returns the type 2 encrypted string.</summary>
     public static string Encrypt(ReadOnlySpan<byte> plaintext, SymmetricKeys keys)
     {
         byte[] iv = RandomNumberGenerator.GetBytes(IvLength);

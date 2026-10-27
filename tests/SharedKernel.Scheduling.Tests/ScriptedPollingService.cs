@@ -14,11 +14,13 @@ internal sealed class ScriptedPollingService(
     private readonly Queue<object> pending = new(script);
     private readonly TaskCompletionSource scriptConsumed = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
+    /// <summary>Number of times the batch has been executed.</summary>
     public int BatchCalls
     {
         get; private set;
     }
 
+    /// <summary>Task that completes once the script has been fully consumed.</summary>
     public Task ScriptConsumed => scriptConsumed.Task;
 
     protected override ValueTask<int> ExecuteBatch(CancellationToken stoppingToken)

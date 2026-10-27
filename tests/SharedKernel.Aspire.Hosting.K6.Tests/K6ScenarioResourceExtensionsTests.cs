@@ -3,10 +3,12 @@ using Aspire.Hosting.ApplicationModel;
 
 namespace PandaBear.Aspire.Hosting.K6.Tests;
 
+/// <summary>Tests the K6 scenario resource builder: image pinning, mounts, arguments, log-file preparation, client credentials and the bundled library scripts.</summary>
 public sealed class K6ScenarioResourceExtensionsTests : IDisposable
 {
     private readonly string _root = Directory.CreateTempSubdirectory("k6-host-tests").FullName;
 
+    /// <summary>Deletes the temporary directory tree the tests used.</summary>
     public void Dispose() => Directory.Delete(_root, recursive: true);
 
     [Fact]

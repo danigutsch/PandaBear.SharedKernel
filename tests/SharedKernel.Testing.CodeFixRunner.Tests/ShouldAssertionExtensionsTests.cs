@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace PandaBear.Testing.CodeFixRunner.Tests;
 
+/// <summary>Tests the Should assertion extensions, including their user-message overloads and failure types.</summary>
 public sealed class ShouldAssertionExtensionsTests
 {
     [Fact]

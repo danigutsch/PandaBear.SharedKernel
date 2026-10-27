@@ -1,6 +1,5 @@
 namespace PandaBear.RepoConfig.Tool;
 
-/// <summary>Runs the roadmap maintenance workflow steps: plan, validate, apply, seal, verify, and publish.</summary>
 internal sealed class RoadmapAutomationService
 {
     private const string PlanRelativePath = "artifacts/roadmap-maintenance/roadmap-plan.json";
@@ -9,7 +8,6 @@ internal sealed class RoadmapAutomationService
     private readonly HttpClient? _httpClient;
     private readonly string _rootPath;
 
-    /// <summary>Creates the service for the checkout at <paramref name="rootPath"/>, optionally with injected HTTP and git dependencies.</summary>
     public RoadmapAutomationService(
         string rootPath,
         HttpClient? httpClient = null,
@@ -21,21 +19,18 @@ internal sealed class RoadmapAutomationService
         _gitRepository = gitRepository ?? new RoadmapGitRepository();
     }
 
-    /// <summary>Returns the full path of the plan artifact under <paramref name="rootPath"/>.</summary>
     public static string GetPlanPath(string rootPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
         return Path.GetFullPath(Path.Combine(rootPath, PlanRelativePath));
     }
 
-    /// <summary>Returns the full path of the result seal artifact under <paramref name="rootPath"/>.</summary>
     public static string GetResultSealPath(string rootPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
         return Path.GetFullPath(Path.Combine(rootPath, ResultSealRelativePath));
     }
 
-    /// <summary>Reads the GitHub snapshot against a clean checkout of the current default branch, writes the plan artifact, and returns the plan.</summary>
     public async Task<RoadmapAutomationPlan> CreatePlan(
         long runId,
         string expectedRepository,
@@ -86,7 +81,6 @@ internal sealed class RoadmapAutomationService
         return plan;
     }
 
-    /// <summary>Throws unless the stored plan matches the expected digest and repository and is still current for a clean checkout.</summary>
     public async Task ValidatePlan(
         string expectedPlanDigest,
         string expectedRepository,
@@ -99,7 +93,6 @@ internal sealed class RoadmapAutomationService
             cancellationToken).ConfigureAwait(false);
     }
 
-    /// <summary>Validates the stored plan, then adds its required closed transitions to the reconciliation manifest.</summary>
     public async Task ApplyPlan(
         string expectedPlanDigest,
         string expectedRepository,
@@ -126,7 +119,6 @@ internal sealed class RoadmapAutomationService
             validation.InputSnapshot.Verify);
     }
 
-    /// <summary>Validates the applied result, then writes and returns the seal binding it to the plan and the expected artifact digest.</summary>
     public async Task<RoadmapAutomationResultSeal> SealResult(
         string expectedPlanDigest,
         string expectedArtifactDigest,
@@ -148,7 +140,6 @@ internal sealed class RoadmapAutomationService
         return seal;
     }
 
-    /// <summary>Throws unless the stored seal and the current working tree still match the expected plan, artifact, and result digests.</summary>
     public async Task VerifyResult(
         string expectedPlanDigest,
         string expectedArtifactDigest,
@@ -189,7 +180,6 @@ internal sealed class RoadmapAutomationService
             .ConfigureAwait(false);
     }
 
-    /// <summary>Validates the sealed result and publishes its changes to GitHub as a pull request.</summary>
     public async Task<RoadmapGitHubPublication> PublishResult(
         string expectedPlanDigest,
         string expectedArtifactDigest,

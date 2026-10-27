@@ -1,5 +1,6 @@
 namespace PandaBear.Documentation.Tests;
 
+/// <summary>Tests that the documentation conformance checker rejects configurations and documents whose governed content, fact lists or source facts are missing, unbalanced or inconsistent.</summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
 [Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class DocumentationConformanceCheckerTests

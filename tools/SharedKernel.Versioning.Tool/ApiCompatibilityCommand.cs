@@ -1,9 +1,7 @@
 namespace PandaBear.Versioning.Tool;
 
-/// <summary>Packs SharedKernel with package validation and writes an API compatibility report.</summary>
 internal static class ApiCompatibilityCommand
 {
-    /// <summary>Checks the public API baselines, packs against the optional baseline version, appends the output to the report, and rethrows pack failures unless the release phase treats them as report-only.</summary>
     public static async Task Run(ApiCompatibilityOptions options, TextWriter output, CancellationToken ct)
     {
         await PublicApiBaselineCommand.Run(options.RepoRoot, TextWriter.Null).ConfigureAwait(false);

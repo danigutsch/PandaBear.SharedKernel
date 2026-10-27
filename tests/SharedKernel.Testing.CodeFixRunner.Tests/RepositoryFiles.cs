@@ -3,6 +3,9 @@ namespace PandaBear.Testing.CodeFixRunner.Tests;
 /// <summary>Locates the repository root and the tool command lines that repository files document.</summary>
 internal static class RepositoryFiles
 {
+    /// <summary>Walks up from the test assembly directory to the first directory containing <c>SharedKernel.slnx</c>.</summary>
+    /// <returns>The full path of the repository root.</returns>
+    /// <exception cref="InvalidOperationException">No parent directory contains <c>SharedKernel.slnx</c>.</exception>
     public static string GetRootPath()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

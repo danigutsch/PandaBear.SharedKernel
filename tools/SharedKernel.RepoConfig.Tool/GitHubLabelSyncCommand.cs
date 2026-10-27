@@ -35,7 +35,6 @@ internal static class GitHubLabelSyncCommand
         CancellationToken cancellationToken) =>
         Run(rootPath, repository, force, httpClient, TimeProvider.System, output, cancellationToken);
 
-    /// <summary>Synchronizes the configured labels to a GitHub repository and returns the exit code.</summary>
     internal static async Task<int> Run(
         string rootPath,
         string repository,

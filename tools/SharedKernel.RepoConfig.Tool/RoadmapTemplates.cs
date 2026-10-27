@@ -1,9 +1,7 @@
 namespace PandaBear.RepoConfig.Tool;
 
-/// <summary>Starter file contents written when a repository roadmap structure is initialized.</summary>
 internal static class RoadmapTemplates
 {
-    /// <summary>Content of the roadmap folder README.</summary>
     public const string RoadmapReadme = """
         # Roadmap
 
@@ -22,7 +20,6 @@ internal static class RoadmapTemplates
         ```
         """;
 
-    /// <summary>Default roadmap configuration JSON.</summary>
     public const string ConfigJson = """
         {
           "$schema": "./schema/roadmap-config.schema.json",
@@ -76,7 +73,6 @@ internal static class RoadmapTemplates
         }
         """;
 
-    /// <summary>JSON schema for the roadmap configuration file.</summary>
     public const string ConfigSchemaJson = """
         {
           "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -274,7 +270,6 @@ internal static class RoadmapTemplates
         }
         """;
 
-    /// <summary>Default roadmap order file listing the starter item.</summary>
     public const string OrderJson = """
         {
           "ordering": "lower order values are higher priority",
@@ -284,7 +279,6 @@ internal static class RoadmapTemplates
         }
         """;
 
-    /// <summary>JSON schema for roadmap item files.</summary>
     public const string ItemSchemaJson = """
         {
           "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -566,7 +560,6 @@ internal static class RoadmapTemplates
         }
         """;
 
-    /// <summary>Default theme JSON for repository operations.</summary>
     public const string DefaultThemeJson = """
         {
           "id": "repo-operations",
@@ -575,7 +568,6 @@ internal static class RoadmapTemplates
         }
         """;
 
-    /// <summary>Default starter roadmap item JSON.</summary>
     public const string DefaultItemJson = """
         {
           "$schema": "../schema/roadmap-item.schema.json",

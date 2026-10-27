@@ -3,8 +3,14 @@ using System.Reflection;
 
 namespace PandaBear.OpenApi.Tests;
 
+/// <summary>Reflection and document-building helpers for the multipart request body transformer tests.</summary>
 internal static class MultipartFormRequestBodyDocumentTransformerTestsHelpers
 {
+    /// <summary>
+    /// Calls a private static Task-returning method on the transformer by name and awaits it, failing if it is missing or not Task-returning.
+    /// </summary>
+    /// <param name="methodName">The name of the non-public static method.</param>
+    /// <param name="arguments">The arguments passed to the method.</param>
     public static async Task InvokePrivateStaticTaskMethod(string methodName, object?[] arguments)
     {
         var method = typeof(MultipartFormRequestBodyDocumentTransformer).GetMethod(
@@ -18,6 +24,10 @@ internal static class MultipartFormRequestBodyDocumentTransformerTestsHelpers
         await task;
     }
 
+    /// <summary>
+    /// Builds an OpenAPI document whose POST multipart/form-data schema is malformed, with one empty allOf entry and null properties.
+    /// </summary>
+    /// <param name="path">The path under which the operation is registered.</param>
     public static OpenApiDocument CreateMalformedMultipartDocument(string path)
     {
         return new OpenApiDocument
@@ -51,6 +61,11 @@ internal static class MultipartFormRequestBodyDocumentTransformerTestsHelpers
         };
     }
 
+    /// <summary>
+    /// Returns the multipart/form-data request body schema of the POST operation at the path, asserting that each part exists.
+    /// </summary>
+    /// <param name="document">The OpenAPI document to inspect.</param>
+    /// <param name="path">The path of the operation.</param>
     public static OpenApiSchema GetMultipartSchema(OpenApiDocument document, string path)
     {
         document.Paths.TryGetValue(path, out var pathItem).ShouldBeTrue($"Expected OpenAPI path '{path}' to exist.");

@@ -2,6 +2,7 @@ using System.Globalization;
 
 namespace PandaBear.Style.Analyzers.Tests;
 
+/// <summary>Tests for the SKSTYLE017 rule that requires XML documentation on internal types and members.</summary>
 public sealed class MemberDocumentationAnalyzerTests
 {
     [Theory]
@@ -87,6 +88,9 @@ public sealed class MemberDocumentationAnalyzerTests
             private int _count;
         }
         """)]
+    /// <summary>
+    /// Fully documented internal types and their constructors, properties, methods, fields, events, nested types, record parameters, and enum members report no SKSTYLE017.
+    /// </summary>
     public async Task Documented_internal_symbols_do_not_report_skstyle017(string source)
     {
         // Act

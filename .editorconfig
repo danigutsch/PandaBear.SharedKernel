@@ -251,6 +251,11 @@ dotnet_diagnostic.CA1716.severity = none
 [src/SharedKernel/SharedKernel.Results/Option*.cs]
 dotnet_diagnostic.CA1716.severity = none
 
+# Staged rollout of SKSTYLE017 outside shipped libraries; src/ is enforced at warning.
+# Owner: SharedKernel maintainers. Tracked by #3; raise to warning once these scopes are documented.
+[{tools,benchmarks}/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = suggestion
+
 [tests/**.cs]
 dotnet_diagnostic.CA2007.severity = none
 dotnet_diagnostic.CA5394.severity = none

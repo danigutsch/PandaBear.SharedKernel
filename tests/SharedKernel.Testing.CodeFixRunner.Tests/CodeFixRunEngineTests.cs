@@ -2,6 +2,7 @@ using System.Globalization;
 
 namespace PandaBear.Testing.CodeFixRunner.Tests;
 
+/// <summary>Tests that <c>CodeFixRunEngine.Run</c> applies, skips and reports code fixes against temporary project files.</summary>
 public sealed class CodeFixRunEngineTests : IDisposable
 {
     private readonly TemporaryProjectDirectory projectDirectory = TemporaryProjectDirectory.Create();
@@ -228,6 +229,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         exception.Message.ShouldContain("Expected a .csproj, .sln, or .slnx path.", StringComparison.Ordinal);
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
         projectDirectory.Dispose();

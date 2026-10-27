@@ -1,15 +1,19 @@
 namespace PandaBear.HttpClients.Tests;
 
+/// <summary>Non-seekable stream whose reads never complete until cancelled, used to test cancellation while a body is being read.</summary>
+/// <param name="onReadStarted">An optional callback invoked once when the first read begins.</param>
 internal sealed class BlockingReadStream(Action? onReadStarted = null) : Stream
 {
     private readonly TaskCompletionSource _readStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private Action? _onReadStarted = onReadStarted;
 
+    /// <summary>Gets a value indicating whether the stream has been disposed.</summary>
     public bool IsDisposed
     {
         get; private set;
     }
 
+    /// <summary>Gets a task that completes when the first read begins.</summary>
     public Task ReadStarted => _readStarted.Task;
 
     public override bool CanRead => !IsDisposed;

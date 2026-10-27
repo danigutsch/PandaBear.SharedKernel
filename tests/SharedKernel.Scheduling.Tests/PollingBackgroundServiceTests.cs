@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PandaBear.Scheduling.Tests;
 
+/// <summary>
+/// Tests for PollingBackgroundService batch draining, failure logging, shutdown, and constructor validation.
+/// </summary>
 public sealed class PollingBackgroundServiceTests
 {
     private static readonly TimeSpan ShortInterval = TimeSpan.FromMilliseconds(10);
