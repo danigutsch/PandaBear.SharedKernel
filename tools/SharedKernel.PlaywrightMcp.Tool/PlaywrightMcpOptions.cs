@@ -1,12 +1,5 @@
 namespace PandaBear.PlaywrightMcp.Tool;
 
-/// <summary>Resolved settings for running the Playwright MCP container.</summary>
-/// <param name="Engine">Container engine to use.</param>
-/// <param name="ExecutablePath">Path of the container engine executable.</param>
-/// <param name="NetworkAccess">Whether the container may access the network.</param>
-/// <param name="ImageResponses">How the server returns images.</param>
-/// <param name="DockerContext">Docker context name.</param>
-/// <param name="DockerEndpoint">Docker endpoint of the active context, or <see langword="null" /> when unknown.</param>
 internal sealed record PlaywrightMcpOptions(
     ContainerEngine Engine,
     string ExecutablePath,
@@ -15,7 +8,6 @@ internal sealed record PlaywrightMcpOptions(
     string DockerContext = "default",
     string? DockerEndpoint = null)
 {
-    /// <summary>Reads the environment and available executables to choose a container engine and build the options.</summary>
     public static PlaywrightMcpOptions Parse(
         Func<string, string?> getEnvironmentVariable,
         Func<string, string?> resolveExecutable)

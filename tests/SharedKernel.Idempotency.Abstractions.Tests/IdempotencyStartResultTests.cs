@@ -2,6 +2,9 @@ using System.Globalization;
 
 namespace PandaBear.Idempotency.Tests;
 
+/// <summary>
+/// Tests the IdempotencyStartResult factory methods.
+/// </summary>
 public sealed class IdempotencyStartResultTests
 {
     [Fact]

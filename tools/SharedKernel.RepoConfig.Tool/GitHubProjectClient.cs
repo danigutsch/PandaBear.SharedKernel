@@ -4,8 +4,6 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace PandaBear.RepoConfig.Tool;
 
-/// <summary>GraphQL client for the GitHub Projects v2 API.</summary>
-/// <param name="httpClient">Authenticated GitHub client.</param>
 internal sealed class GitHubProjectClient(HttpClient httpClient)
 {
     // One client serves one sync run, so field definitions and item membership are read once per target and reused.
@@ -13,9 +11,6 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
     private IReadOnlyList<GitHubProjectResponse.ProjectField>? _fields;
     private Dictionary<string, string>? _itemIdsByIssueId;
 
-    /// <summary>Verifies that the project target exists with the expected owner and number.</summary>
-    /// <param name="target">Project to verify.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task VerifyTarget(GitHubProjectTarget target, CancellationToken cancellationToken)
     {
         const string Query = "query($id:ID!){node(id:$id){... on ProjectV2{id number owner{... on User{login} ... on Organization{login}}}}}";
@@ -32,10 +27,6 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
         }
     }
 
-    /// <summary>Returns the GraphQL node ID of an issue.</summary>
-    /// <param name="repository">Repository in <c>owner/name</c> form.</param>
-    /// <param name="issueNumber">Issue number.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task<string> GetIssueNodeId(string repository, int issueNumber, CancellationToken cancellationToken)
     {
         var parts = repository.Split('/');
@@ -53,10 +44,6 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
             : issueId;
     }
 
-    /// <summary>Adds the issue to the project and returns the project item ID.</summary>
-    /// <param name="target">Project to add to.</param>
-    /// <param name="issueId">Issue node ID.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task<string> AddIssue(GitHubProjectTarget target, string issueId, CancellationToken cancellationToken)
     {
         const string Query = "mutation($projectId:ID!,$contentId:ID!){addProjectV2ItemById(input:{projectId:$projectId,contentId:$contentId}){item{id}}}";
@@ -71,10 +58,6 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
             : RememberItem(target, issueId, itemId);
     }
 
-    /// <summary>Returns the project item ID of the issue, or <see langword="null" /> when the project does not contain it.</summary>
-    /// <param name="target">Project to search.</param>
-    /// <param name="issueId">Issue node ID.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task<string?> FindItemId(GitHubProjectTarget target, string issueId, CancellationToken cancellationToken)
     {
         ResetCacheForOtherProject(target);
@@ -138,9 +121,6 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
         _itemIdsByIssueId = null;
     }
 
-    /// <summary>Returns the fields of the project.</summary>
-    /// <param name="target">Project to read.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task<IReadOnlyList<GitHubProjectResponse.ProjectField>> GetFields(GitHubProjectTarget target, CancellationToken cancellationToken)
     {
         ResetCacheForOtherProject(target);
@@ -156,9 +136,6 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
         return _fields;
     }
 
-    /// <summary>Returns the field values of the project item.</summary>
-    /// <param name="itemId">Project item ID.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task<IReadOnlyList<GitHubProjectItemResponse.FieldValue>> GetFieldValues(string itemId, CancellationToken cancellationToken)
     {
         const string Query = "query($id:ID!){node(id:$id){... on ProjectV2Item{fieldValues(first:100){nodes{... on ProjectV2ItemFieldNumberValue{number field{... on ProjectV2FieldCommon{id name}}} ... on ProjectV2ItemFieldTextValue{text field{... on ProjectV2FieldCommon{id name}}} ... on ProjectV2ItemFieldSingleSelectValue{optionId field{... on ProjectV2FieldCommon{id name}}}}}}}}";
@@ -167,36 +144,18 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
             ?? throw new InvalidOperationException("GitHub Project field values could not be read.");
     }
 
-    /// <summary>Sets a number field of the project item.</summary>
-    /// <param name="target">Project containing the item.</param>
-    /// <param name="itemId">Project item ID.</param>
-    /// <param name="fieldId">Field ID.</param>
-    /// <param name="value">New number.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task UpdateNumber(GitHubProjectTarget target, string itemId, string fieldId, decimal value, CancellationToken cancellationToken)
     {
         const string Query = "mutation($projectId:ID!,$itemId:ID!,$fieldId:ID!,$value:Float!){updateProjectV2ItemFieldValue(input:{projectId:$projectId,itemId:$itemId,fieldId:$fieldId,value:{number:$value}}){projectV2Item{id}}}";
         await UpdateField(Query, target, itemId, fieldId, writer => writer.WriteNumber("value", value), cancellationToken).ConfigureAwait(false);
     }
 
-    /// <summary>Sets a text field of the project item.</summary>
-    /// <param name="target">Project containing the item.</param>
-    /// <param name="itemId">Project item ID.</param>
-    /// <param name="fieldId">Field ID.</param>
-    /// <param name="value">New text.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task UpdateText(GitHubProjectTarget target, string itemId, string fieldId, string value, CancellationToken cancellationToken)
     {
         const string Query = "mutation($projectId:ID!,$itemId:ID!,$fieldId:ID!,$value:String!){updateProjectV2ItemFieldValue(input:{projectId:$projectId,itemId:$itemId,fieldId:$fieldId,value:{text:$value}}){projectV2Item{id}}}";
         await UpdateField(Query, target, itemId, fieldId, writer => writer.WriteString("value", value), cancellationToken).ConfigureAwait(false);
     }
 
-    /// <summary>Sets a single-select field of the project item.</summary>
-    /// <param name="target">Project containing the item.</param>
-    /// <param name="itemId">Project item ID.</param>
-    /// <param name="fieldId">Field ID.</param>
-    /// <param name="optionId">ID of the option to select.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task UpdateSingleSelect(GitHubProjectTarget target, string itemId, string fieldId, string optionId, CancellationToken cancellationToken)
     {
         const string Query = "mutation($projectId:ID!,$itemId:ID!,$fieldId:ID!,$optionId:String!){updateProjectV2ItemFieldValue(input:{projectId:$projectId,itemId:$itemId,fieldId:$fieldId,value:{singleSelectOptionId:$optionId}}){projectV2Item{id}}}";

@@ -76,7 +76,6 @@ internal static class ExecutableResolver
         }
     }
 
-    /// <summary>Returns whether the file mode grants execute permission to the user, group, or others.</summary>
     internal static bool HasUnixExecutePermission(UnixFileMode mode) =>
         (mode & (UnixFileMode.UserExecute | UnixFileMode.GroupExecute | UnixFileMode.OtherExecute)) != 0;
 }

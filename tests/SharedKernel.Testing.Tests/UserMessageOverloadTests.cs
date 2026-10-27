@@ -8,6 +8,7 @@ using PandaBear.Testing.Playwright;
 
 namespace PandaBear.Testing.Tests;
 
+/// <summary>Tests the assertion overloads that accept a user message, which is prepended to the underlying failure.</summary>
 public sealed class UserMessageOverloadTests
 {
     private const string Reason = "Deleted orders stay deleted.";

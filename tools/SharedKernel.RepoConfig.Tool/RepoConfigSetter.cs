@@ -4,10 +4,8 @@ using System.Text.Json.Nodes;
 
 namespace PandaBear.RepoConfig.Tool;
 
-/// <summary>Updates supported keys of the roadmap configuration file.</summary>
 internal static class RepoConfigSetter
 {
-    /// <summary>Configuration key that holds the GitHub repository.</summary>
     public const string GitHubRepositoryKey = "github.repository";
 
     private static readonly JsonWriterOptions WriterOptions = new()
@@ -15,10 +13,6 @@ internal static class RepoConfigSetter
         Indented = true
     };
 
-    /// <summary>Sets the configuration key to the value in the configuration file.</summary>
-    /// <param name="rootPath">Repository root.</param>
-    /// <param name="key">Configuration key.</param>
-    /// <param name="value">New value.</param>
     public static void Set(string rootPath, string key, string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);

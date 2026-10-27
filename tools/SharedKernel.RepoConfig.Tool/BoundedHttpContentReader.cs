@@ -1,13 +1,7 @@
 namespace PandaBear.RepoConfig.Tool;
 
-/// <summary>Reads HTTP content while enforcing a maximum size.</summary>
 internal static class BoundedHttpContentReader
 {
-    /// <summary>Reads the content into a byte array and throws with the given message when it exceeds the limit.</summary>
-    /// <param name="content">Content to read.</param>
-    /// <param name="maxBytes">Maximum number of bytes allowed.</param>
-    /// <param name="limitMessage">Message of the exception thrown when the limit is exceeded.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
     public static async Task<byte[]> Read(
         HttpContent content,
         int maxBytes,

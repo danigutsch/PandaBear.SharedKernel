@@ -1,5 +1,8 @@
 namespace PandaBear.IO.Tests;
 
+/// <summary>
+/// Tests SeekableContent.Create, which copies non-seekable input into seekable memory or file-backed content.
+/// </summary>
 public sealed class SeekableContentTests
 {
     [Theory]

@@ -5,7 +5,6 @@ using System.CommandLine.Parsing;
 
 namespace PandaBear.Testing.CodeFixRunner;
 
-/// <summary>Command line of the code fix runner tool.</summary>
 internal static class CodeFixRunnerCommandLine
 {
     private const int LoadFailureExitCode = 2;

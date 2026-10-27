@@ -2,6 +2,9 @@ using ImageMagick;
 
 namespace PandaBear.ImageProcessing.Tests;
 
+/// <summary>
+/// Tests MagickImageProcessor.Process, which validates requests and produces resized, metadata-free image variants.
+/// </summary>
 public sealed class MagickImageProcessorTests
 {
     [Fact]

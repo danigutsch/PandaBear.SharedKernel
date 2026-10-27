@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace PandaBear.Testing.Analyzers.Tests;
 
+/// <summary>Tests the SKTEST016 rule against constructing the system under test in the Act section, and the SKTEST010 rule on activity listener predicates.</summary>
 public sealed class TestIsolationDiagnosticTests
 {
     [Theory]

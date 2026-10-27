@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 
 namespace PandaBear.Testing.Analyzers.Tests;
 
+/// <summary>Tests the SKTEST001 to SKTEST009 xUnit test conventions enforced by SharedKernelTestingAnalyzer.</summary>
 public sealed class SharedKernelTestingAnalyzerTests
 {
     [Fact]

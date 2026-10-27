@@ -3,6 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace PandaBear.Messaging.IntegrationEvents.Tests;
 
+/// <summary>
+/// A service provider with scoped capturing handlers, JSON consumers for both test events and the generated integration event registrations, used to test generated dispatch.
+/// </summary>
 internal sealed class GeneratedIntegrationEventConsumerHost : IDisposable
 {
     private readonly ServiceProvider provider;
@@ -16,10 +19,19 @@ internal sealed class GeneratedIntegrationEventConsumerHost : IDisposable
         this.handlers = handlers;
     }
 
+    /// <summary>
+    /// Gets every handler instance created by the provider, one per resolved scope and event type.
+    /// </summary>
     public IReadOnlyList<CapturingIntegrationEventHandler> Handlers => handlers;
 
+    /// <summary>
+    /// Gets the integration event serializer resolved from the provider.
+    /// </summary>
     public IIntegrationEventSerializer Serializer => provider.GetRequiredService<IIntegrationEventSerializer>();
 
+    /// <summary>
+    /// Builds a host with scope validation enabled, handlers for both test events, consumers for both event types and the generated registrations.
+    /// </summary>
     public static GeneratedIntegrationEventConsumerHost Create()
     {
         var services = new ServiceCollection();
@@ -54,11 +66,15 @@ internal sealed class GeneratedIntegrationEventConsumerHost : IDisposable
         return new GeneratedIntegrationEventConsumerHost(provider, handlers);
     }
 
+    /// <summary>
+    /// Opens a new delivery scope that resolves the event envelope publisher.
+    /// </summary>
     public GeneratedIntegrationEventConsumerScope OpenDelivery()
     {
         return new GeneratedIntegrationEventConsumerScope(provider);
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
         provider.Dispose();

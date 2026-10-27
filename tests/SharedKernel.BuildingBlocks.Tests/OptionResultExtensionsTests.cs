@@ -2,6 +2,9 @@ using PandaBear.Results;
 
 namespace PandaBear.BuildingBlocks.Tests;
 
+/// <summary>
+/// Tests ToNotFoundResult, which converts an Option into a Result.
+/// </summary>
 public sealed class OptionResultExtensionsTests
 {
     [Fact]

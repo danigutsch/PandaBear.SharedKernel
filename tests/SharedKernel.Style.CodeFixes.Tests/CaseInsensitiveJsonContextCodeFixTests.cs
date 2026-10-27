@@ -1,5 +1,6 @@
 namespace PandaBear.Style.CodeFixes.Tests;
 
+/// <summary>Tests the SKSTYLE015 code fix that makes a JSON serializer context case-insensitive for property names.</summary>
 public sealed class CaseInsensitiveJsonContextCodeFixTests
 {
     private const string DiagnosticId = "SKSTYLE015";

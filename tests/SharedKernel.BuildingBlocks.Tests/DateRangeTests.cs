@@ -2,6 +2,9 @@ using PandaBear.Results;
 
 namespace PandaBear.BuildingBlocks.Tests;
 
+/// <summary>
+/// Tests DateRange creation, duration and equality.
+/// </summary>
 public sealed class DateRangeTests
 {
     [Fact]

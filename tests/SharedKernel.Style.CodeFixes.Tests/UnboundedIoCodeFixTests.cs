@@ -1,5 +1,6 @@
 namespace PandaBear.Style.CodeFixes.Tests;
 
+/// <summary>Tests that the SKSTYLE011 unbounded I/O diagnostic has no automatic fix.</summary>
 public sealed class UnboundedIoCodeFixTests
 {
     private const string DiagnosticId = "SKSTYLE011";

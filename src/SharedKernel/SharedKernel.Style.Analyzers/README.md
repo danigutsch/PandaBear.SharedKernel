@@ -288,8 +288,8 @@ or use a normal diagnostic suppression. The code fix adds the attribute, adds th
 A file that declares exactly one top-level type must be named after it: `Result.cs` for `Result`, and `Result{T}.cs` for
 `Result<T>`, so a generic type and its non-generic sibling never share a path. Type-name suffixes that repeat arity are
 reported separately by `SKSTYLE005`. Partial types, files with several top-level types (`SKSTYLE004`), nested types, files without a
-path, and generated files are not checked. The code fix renames the file in place and is not offered when the target name is
-taken. Types that share a name across namespaces and cannot share a file name take a
+path, and generated files are not checked. The diagnostic has no code fix because a rename or move changes the project
+layout and every path that refers to it. Types that share a name across namespaces and cannot share a file name take a
 scoped `.editorconfig` exception with an owner and removal condition.
 
 ## SKSTYLE017

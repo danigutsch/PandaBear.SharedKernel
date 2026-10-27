@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 
 namespace PandaBear.Testing.Analyzers.Tests;
 
+/// <summary>Tests the code actions SharedKernelTestingCodeFixProvider offers for the testing diagnostics, and the diagnostics it advertises as fixable.</summary>
 public sealed class SharedKernelTestingCodeFixProviderTests
 {
     private const string WarningSuppressionDiagnosticId = TestingDiagnosticIds.TestMethodWarningSuppression;

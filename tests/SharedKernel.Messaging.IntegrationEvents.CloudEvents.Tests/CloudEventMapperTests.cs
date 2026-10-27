@@ -1,6 +1,9 @@
 
 namespace PandaBear.Messaging.IntegrationEvents.CloudEvents.Tests;
 
+/// <summary>
+/// Tests CloudEventMapper.ToCloudEvent, which wraps an integration event in a CloudEvents envelope.
+/// </summary>
 public sealed class CloudEventMapperTests
 {
     [Fact]

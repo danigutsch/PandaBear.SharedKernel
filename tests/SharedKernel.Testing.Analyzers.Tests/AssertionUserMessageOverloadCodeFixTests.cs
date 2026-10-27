@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis;
 
 namespace PandaBear.Testing.Analyzers.Tests;
 
+/// <summary>Tests the code fix that adds a forwarding userMessage overload for SKTEST017.</summary>
 public sealed class AssertionUserMessageOverloadCodeFixTests
 {
     private const string DiagnosticId = "SKTEST017";
@@ -95,6 +96,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
         "public static void ShouldHaveIdentity<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this T first, T second, string userMessage)",
         "where T : class =>",
         "WithUserMessage(userMessage, () => first.ShouldHaveIdentity(second));")]
+    /// <summary>Verifies that for plain, generic, params, optional-parameter, async and annotated assertions the fix titled 'Add userMessage overload' inserts an overload after the original that forwards through WithUserMessage, compiles without errors and clears SKTEST017.</summary>
     public async Task Fix_adds_a_forwarding_overload_after_the_assertion(string members, string marker, params string[] fragments)
     {
         // Arrange
@@ -272,6 +274,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
         }
         """,
         "ShouldMatch(this")]
+    /// <summary>Verifies that when the original assertion has no param documentation the overload gets only the ArgumentNullException tag and no userMessage param tag, with no compiler warnings.</summary>
     public async Task Fix_documents_only_the_exception_when_the_assertion_documents_no_parameters(string members, string marker)
     {
         // Arrange
@@ -341,6 +344,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
             /// </exception>
             public static void ShouldInclude(this string[] actual, string expected, string userMessage) =>
         """)]
+    /// <summary>Verifies that when the original already has an ArgumentNullException tag the generated documentation extends it for userMessage and ends with exactly two exception tags.</summary>
     public async Task Fix_adds_the_user_message_to_an_existing_argument_null_exception_tag(string members, string expected)
     {
         // Arrange
@@ -462,6 +466,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
             ) =>
                 WithUserMessage(userMessage, () => actual.ShouldBeBelow(expected));
         """)]
+    /// <summary>Verifies that trailing comments, block comments, where-clause comments and one-parameter-per-line layout in the original signature are preserved in the generated overload, with userMessage added as its own parameter.</summary>
     public async Task Fix_keeps_the_comments_and_line_breaks_of_the_parameter_list(string members, string marker, string expectedOverload)
     {
         // Arrange
@@ -573,6 +578,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
     [InlineData(
         "public static IEnumerable<int> ShouldAllBePositive(this IEnumerable<int> actual) => System.Linq.Enumerable.Select(actual, static value => value > 0 ? value : throw new InvalidOperationException());",
         "ShouldAllBePositive(this")]
+    /// <summary>Verifies that no code action is offered for assertions the analyzer reports as blocked, such as signature clashes, in parameters, ref structs, ValueTask or iterator results, DoesNotReturn, AllowNull, suppression attributes and RS0027 or CA13xx conflicts.</summary>
     [InlineData("public static void ShouldBeDefault<T>(this T actual) where T : allows ref struct { }", "ShouldBeDefault<T>(this")]
     [InlineData("public static T ShouldConvert<T>(this int actual) where T : allows ref struct => throw new InvalidOperationException();", "ShouldConvert<T>(this")]
     [InlineData("[DoesNotReturn] public static void ShouldNotBeReached(this string reason) => throw new InvalidOperationException(reason);", "ShouldNotBeReached(this")]
@@ -613,6 +619,7 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
         """,
         "ShouldComplete(this",
         AssertionUserMessageOverloadCodeFixTestSource.HelperWithoutTaskShapes)]
+    /// <summary>Verifies that no code action is offered when the file has no WithUserMessage helper, or when its helper lacks the Task shapes needed by a Task-returning assertion.</summary>
     public async Task Fix_is_not_offered_without_a_user_message_helper(string members, string marker, string helper)
     {
         // Arrange

@@ -2,6 +2,7 @@ extern alias testingcodefixes;
 
 namespace PandaBear.Testing.Analyzers.Tests;
 
+/// <summary>Tests how the SKTEST002 test-name rule treats canonical technical keywords such as API, HTTP2 and ValueTask.</summary>
 public sealed class TestMethodKeywordTests
 {
     [Theory]

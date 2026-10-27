@@ -1,10 +1,7 @@
 namespace PandaBear.RepoConfig.Tool;
 
-/// <summary>Validates GitHub repository names.</summary>
 internal static class GitHubRepositoryName
 {
-    /// <summary>Returns whether the value is a valid <c>owner/name</c> repository name.</summary>
-    /// <param name="value">Value to check.</param>
     public static bool IsValid(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -15,8 +12,6 @@ internal static class GitHubRepositoryName
             && IsValidRepository(parts[1]);
     }
 
-    /// <summary>Returns whether the value is a valid GitHub owner login.</summary>
-    /// <param name="value">Value to check.</param>
     internal static bool IsValidOwner(string value) => value.Length is > 0 and <= 39
         && value[0] != '-'
         && value[^1] != '-'

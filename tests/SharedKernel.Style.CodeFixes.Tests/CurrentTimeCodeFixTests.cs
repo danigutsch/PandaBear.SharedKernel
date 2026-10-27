@@ -1,5 +1,6 @@
 namespace PandaBear.Style.CodeFixes.Tests;
 
+/// <summary>Tests the SKSTYLE014 code fix that replaces static clock reads with a TimeProvider found in scope.</summary>
 public sealed class CurrentTimeCodeFixTests
 {
     [Theory]

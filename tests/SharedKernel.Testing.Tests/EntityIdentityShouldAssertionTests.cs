@@ -1,5 +1,6 @@
 namespace PandaBear.Testing.Tests;
 
+/// <summary>Tests the UUID version 7 and generated-identity assertions for entity ids.</summary>
 public sealed class EntityIdentityShouldAssertionTests
 {
     [Theory]

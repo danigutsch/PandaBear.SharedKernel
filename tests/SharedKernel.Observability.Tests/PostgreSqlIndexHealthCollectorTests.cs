@@ -3,6 +3,7 @@ using PandaBear.Testing;
 
 namespace PandaBear.Observability.Npgsql.Tests;
 
+/// <summary>Unit tests for <see cref="PostgreSqlIndexHealthCollector"/> argument validation and cancellation.</summary>
 [Trait(TestTraitNames.ScopeName, TestTraits.UnitScope)]
 [Trait(TestTraits.ComponentName, TestTraits.PostgreSqlObservabilityComponent)]
 public sealed class PostgreSqlIndexHealthCollectorTests

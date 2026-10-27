@@ -13,7 +13,6 @@ using PandaBear.Testing.Analyzers;
 
 namespace PandaBear.Mediator.Benchmarks;
 
-/// <summary>Collects or checks analyzer performance baselines for the mediator analyzers.</summary>
 internal static class AnalyzerRegressionCommand
 {
     private const int SourceCount = 100;
@@ -21,9 +20,6 @@ internal static class AnalyzerRegressionCommand
     private const int Iterations = 5;
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
-    /// <summary>Collects a new baseline or checks current measurements against an existing one, returning the process exit code.</summary>
-    /// <param name="mode">Either <c>collect</c> or <c>check</c>.</param>
-    /// <param name="path">Path of the baseline JSON file to write or read.</param>
     public static async Task<int> Run(string mode, string path)
     {
         if (mode is not ("collect" or "check"))

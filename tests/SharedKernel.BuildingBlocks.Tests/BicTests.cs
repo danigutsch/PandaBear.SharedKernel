@@ -2,6 +2,9 @@ using PandaBear.Results;
 
 namespace PandaBear.BuildingBlocks.Tests;
 
+/// <summary>
+/// Tests creation and validation of Bic business identifier codes.
+/// </summary>
 [Trait("Scope", "Unit")]
 [Trait("Capability", "PaymentIdentifiers")]
 public sealed class BicTests

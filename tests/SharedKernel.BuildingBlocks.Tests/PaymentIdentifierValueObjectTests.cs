@@ -1,5 +1,8 @@
 namespace PandaBear.BuildingBlocks.Tests;
 
+/// <summary>
+/// Tests equality, hashing and redaction shared by the payment identifier value objects Iban, Bic, Cpf, Cnpj and PixKey.
+/// </summary>
 [Trait("Scope", "Unit")]
 [Trait("Capability", "PaymentIdentifiers")]
 public sealed class PaymentIdentifierValueObjectTests

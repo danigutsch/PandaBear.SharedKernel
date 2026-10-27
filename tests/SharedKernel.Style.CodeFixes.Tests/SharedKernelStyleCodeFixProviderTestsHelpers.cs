@@ -6,8 +6,13 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace PandaBear.Style.CodeFixes.Tests;
 
+/// <summary>Reflection and Roslyn workspace helpers for testing internal parts of the style code fix provider.</summary>
 internal static class SharedKernelStyleCodeFixProviderTestsHelpers
 {
+    /// <summary>Calls the non-public IsRenamedMethodMatch of RemoveAsyncSuffixCodeFix by reflection and returns its result.</summary>
+    /// <param name="candidateSymbol">Method symbol being tested as the renamed method.</param>
+    /// <param name="originalSymbol">Symbol of the method before renaming.</param>
+    /// <param name="updatedName">Name the method received after renaming.</param>
     public static bool InvokeIsRenamedMethodMatch(IMethodSymbol candidateSymbol, ISymbol originalSymbol, string updatedName)
     {
         var codeFixType = typeof(SharedKernelStyleCodeFixProvider).Assembly.GetType("PandaBear.Style.CodeFixes.RemoveAsyncSuffixCodeFix");
@@ -17,6 +22,11 @@ internal static class SharedKernelStyleCodeFixProviderTestsHelpers
         return method.Invoke(null, [candidateSymbol, originalSymbol, updatedName]).ShouldBeOfType<bool>();
     }
 
+    /// <summary>Builds an ad hoc workspace project holding one Test0.cs document with the source and references to all trusted platform assemblies, returning the project and the document id.</summary>
+    /// <param name="workspace">Workspace receiving the project.</param>
+    /// <param name="source">Source text of the single document.</param>
+    /// <param name="documentId">Receives the id of the created document.</param>
+    /// <param name="assemblyName">Project and assembly name.</param>
     public static Project CreateProject(AdhocWorkspace workspace, string source, out DocumentId documentId, string assemblyName = "SharedKernel.Style.CodeFixes.Tests.Organizer")
     {
         var projectId = ProjectId.CreateNewId(assemblyName);
@@ -47,6 +57,12 @@ internal static class SharedKernelStyleCodeFixProviderTestsHelpers
         return workspace.CurrentSolution.GetProject(projectId).ShouldBeOfType<Project>();
     }
 
+    /// <summary>Calls the public Organize method of MethodOverloadGroupOrganizer by reflection and returns the resulting solution.</summary>
+    /// <param name="solution">Solution containing the document.</param>
+    /// <param name="documentId">Document holding the method.</param>
+    /// <param name="targetMethod">Method declaration being renamed.</param>
+    /// <param name="updatedName">New name of the method.</param>
+    /// <param name="ct">Token to cancel the operation.</param>
     public static async Task<Solution> OrganizeOverloads(
             Solution solution,
             DocumentId documentId,
@@ -62,6 +78,9 @@ internal static class SharedKernelStyleCodeFixProviderTestsHelpers
         return await task.ConfigureAwait(false);
     }
 
+    /// <summary>Returns the current text of the given document in the solution.</summary>
+    /// <param name="solution">Solution containing the document.</param>
+    /// <param name="documentId">Id of the document to read.</param>
     public static async Task<string> ReadDocumentText(Solution solution, DocumentId documentId)
     {
         var document = solution.GetDocument(documentId).ShouldBeOfType<Document>();

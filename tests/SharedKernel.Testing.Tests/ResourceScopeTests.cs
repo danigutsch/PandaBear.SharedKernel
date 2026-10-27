@@ -1,6 +1,7 @@
 namespace PandaBear.Testing.Tests;
 
 [Collection("Environment variables")]
+/// <summary>Tests the disposable test scopes that temporarily set environment variables and create temporary directories.</summary>
 public sealed class ResourceScopeTests
 {
     [Fact]

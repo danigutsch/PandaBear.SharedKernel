@@ -4,7 +4,6 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
-/// <summary>Immutable, digest-sealed plan describing one roadmap maintenance run: the GitHub snapshot it was based on and the closed-item transitions it requires.</summary>
 internal sealed class RoadmapAutomationPlan
 {
     private const int CurrentSchemaVersion = 1;
@@ -41,91 +40,76 @@ internal sealed class RoadmapAutomationPlan
         PlanDigest = planDigest;
     }
 
-    /// <summary>Digest of the baseline closed transitions merged with the required ones.</summary>
     public string ApprovedClosedTransitionsDigest
     {
         get;
     }
 
-    /// <summary>Commit SHA of the base the plan was created against.</summary>
     public string BaseSha
     {
         get;
     }
 
-    /// <summary>Digest of the closed transitions already recorded in the reconciliation manifest.</summary>
     public string BaselineClosedTransitionsDigest
     {
         get;
     }
 
-    /// <summary>Name of the branch the run publishes its changes to.</summary>
     public string BranchName
     {
         get;
     }
 
-    /// <summary>Object id of the default branch head when the plan was created.</summary>
     public string DefaultBranchOid
     {
         get;
     }
 
-    /// <summary>Whether the run changes anything, either the snapshot or closed transitions.</summary>
     public bool HasChanges
     {
         get;
     }
 
-    /// <summary>Digest over the whole plan content, used to bind later steps to this plan.</summary>
     public string PlanDigest
     {
         get;
     }
 
-    /// <summary>Repository-relative path of the reconciliation manifest.</summary>
     public string ReconciliationManifest
     {
         get;
     }
 
-    /// <summary>Closed-item transitions that must be added to the manifest, ordered by issue number.</summary>
     public IReadOnlyList<RoadmapClosedItemTransition> RequiredClosedTransitions
     {
         get;
     }
 
-    /// <summary>Owner and name of the GitHub repository the plan targets.</summary>
     public string Repository
     {
         get;
     }
 
-    /// <summary>Digest of the repository files the plan was computed from.</summary>
     public string RepositoryInputDigest
     {
         get;
     }
 
-    /// <summary>Identifier of the workflow run that created the plan.</summary>
     public long RunId
     {
         get;
     }
 
-    /// <summary>Digest of the GitHub roadmap snapshot the plan was computed from.</summary>
     public string SnapshotDigest
     {
         get;
     }
 
-    /// <summary>Whether the GitHub snapshot differs from the repository content.</summary>
     public bool SnapshotChanged
     {
         get;
     }
 
-    /// <summary>Validates the inputs, orders and merges the closed transitions, derives the branch name, and returns the plan sealed with its digest.</summary>
     public static RoadmapAutomationPlan Create(
         string repository,
         long runId,
@@ -173,7 +157,6 @@ internal sealed class RoadmapAutomationPlan
         return unsigned.WithPlanDigest(unsigned.ComputePlanDigest());
     }
 
-    /// <summary>Reads the plan file at <paramref name="path"/>, strictly validates its shape, and returns it only when its digest equals <paramref name="expectedPlanDigest"/>.</summary>
     public static RoadmapAutomationPlan Load(string path, string expectedPlanDigest)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
@@ -271,7 +254,6 @@ internal sealed class RoadmapAutomationPlan
         return plan;
     }
 
-    /// <summary>Writes the plan as indented JSON to <paramref name="path"/> through a rollback-safe atomic write.</summary>
     public void Write(string path)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
@@ -290,7 +272,6 @@ internal sealed class RoadmapAutomationPlan
             [new AtomicFileWrite(path, content, ExpectedContent: null)]);
     }
 
-    /// <summary>Returns the lowercase SHA-256 hex digest of the transitions serialized as JSON in issue order.</summary>
     internal static string ComputeTransitionsDigest(IEnumerable<RoadmapClosedItemTransition> transitions)
     {
         ArgumentNullException.ThrowIfNull(transitions);
@@ -313,7 +294,6 @@ internal sealed class RoadmapAutomationPlan
         return Convert.ToHexStringLower(SHA256.HashData(stream.ToArray()));
     }
 
-    /// <summary>Throws when <paramref name="roadmapItem"/> is not a valid roadmap item id.</summary>
     internal static void ValidateRoadmapItemId(string roadmapItem)
     {
         if (string.IsNullOrWhiteSpace(roadmapItem)
@@ -484,7 +464,6 @@ internal sealed class RoadmapAutomationPlan
         return path;
     }
 
-    /// <summary>Returns <paramref name="value"/> when it is a 40-character lowercase hex SHA, otherwise throws naming <paramref name="name"/>.</summary>
     internal static string ValidateSha(string value, string name)
     {
         if (!IsLowerHex(value, 40))

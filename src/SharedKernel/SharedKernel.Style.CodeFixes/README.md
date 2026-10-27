@@ -19,7 +19,6 @@ This Roslyn component provides focused, safe code fixes for the diagnostics in
   declaration in the containing executable scope.
 - `SKSTYLE003` can remove safe `CancellationToken` default values.
 - `SKSTYLE005` can rename generic types that repeat generic arity in the type name.
-- `SKSTYLE016` can rename the file to `Type.cs`, or `Type{T}.cs` for a generic type when `Type.cs` is taken. It is not offered when both names exist in the project. Fix All is not offered.
 - `SKSTYLE006` can replace broad cancellation filters with `ShouldHandleAsFailure(ct)` when the
   operation token is available.
 - `SKSTYLE008` can append the `DomainEvent` suffix to domain event types when the target name is
