@@ -50,16 +50,7 @@ public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
         foreach (var relativeProjectPath in PackageProjects)
         {
             var projectPath = Path.Combine(RepositoryRoot, relativeProjectPath);
-            _ = await DotNetCli.Run(
-                RepositoryRoot,
-                "pack",
-                projectPath,
-                "-c",
-                "Release",
-                $"-p:PackageVersion={PackageVersion}",
-                "-o",
-                FeedPath,
-                "--nologo");
+            _ = await DotNetCli.Pack(RepositoryRoot, projectPath, PackageVersion, FeedPath);
         }
     }
 

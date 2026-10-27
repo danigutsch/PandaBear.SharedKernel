@@ -69,17 +69,7 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
     private async Task Pack(string relativeProjectPath)
     {
         var projectPath = Path.Combine(RepositoryRoot, relativeProjectPath);
-        await DotNetCli.Run(
-                RepositoryRoot,
-                "pack",
-                projectPath,
-                "-c",
-                "Release",
-                "-p:PackageVersion=" + PackageVersion,
-                "-o",
-                FeedPath,
-                "--nologo")
-            .ConfigureAwait(false);
+        await DotNetCli.Pack(RepositoryRoot, projectPath, PackageVersion, FeedPath).ConfigureAwait(false);
     }
 
     private string ReadCentralPackageVersion(string packageId)
