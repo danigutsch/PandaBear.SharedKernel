@@ -14,7 +14,8 @@ independent of the authenticated endpoint. Presigned PUT tickets sign `Content-T
 `Content-Length`, and last at most seven days.
 
 Traces come from the `SharedKernel.ObjectStorage.S3` activity source and carry only the operation name; bucket, object
-key, URL and request identifiers are never tagged, and AWS SDK tracing is not registered.
+key, URL and request identifiers are never tagged. AWS SDK tracing is not registered, and HttpClient instrumentation is
+suppressed while an operation runs, so path-style URLs cannot reach exporters.
 Hosting a local SeaweedFS container belongs to `SharedKernel.Aspire.Hosting.SeaweedFs`.
 
 ## Package identity and availability

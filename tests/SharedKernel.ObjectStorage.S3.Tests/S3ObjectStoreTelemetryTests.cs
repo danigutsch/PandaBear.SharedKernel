@@ -31,4 +31,19 @@ public sealed class S3ObjectStoreTelemetryTests
             .Any(static tag => tag.Key != "object_storage.operation" || $"{tag.Value}".Contains("customer", StringComparison.Ordinal))
             .ShouldBe(false);
     }
+
+    [Fact]
+    public async Task Operations_suppress_downstream_http_instrumentation_and_restore_it()
+    {
+        // Arrange
+        using var client = new FakeAmazonS3Client();
+        var store = S3ObjectStoreTestFactory.CreateStore(client, autoProvisionBucket: false);
+
+        // Act
+        _ = await store.Exists("private/customer/image.jpg", TestContext.Current.CancellationToken);
+
+        // Assert
+        client.SuppressedDuringMetadataLookup.ShouldBe(true);
+        OpenTelemetry.Sdk.SuppressInstrumentation.ShouldBe(false);
+    }
 }

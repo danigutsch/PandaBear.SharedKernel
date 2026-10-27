@@ -22,7 +22,7 @@ public sealed class S3ObjectStore(
     /// <inheritdoc />
     public async ValueTask<ObjectWriteResult> Put(ObjectWriteRequest request, CancellationToken ct)
     {
-        using var activity = S3ObjectStoreTelemetry.Start("put");
+        using var operation = S3ObjectStoreTelemetry.Start("put");
         ArgumentNullException.ThrowIfNull(request);
         ValidateKey(request.ObjectKey);
         await EnsureBucketProvisioned(ct).ConfigureAwait(false);
@@ -56,7 +56,7 @@ public sealed class S3ObjectStore(
     /// <inheritdoc />
     public async ValueTask<ObjectReadResult> OpenRead(string objectKey, CancellationToken ct)
     {
-        using var activity = S3ObjectStoreTelemetry.Start("open_read");
+        using var operation = S3ObjectStoreTelemetry.Start("open_read");
         ValidateKey(objectKey);
         await EnsureBucketProvisioned(ct).ConfigureAwait(false);
 
@@ -75,7 +75,7 @@ public sealed class S3ObjectStore(
     /// <inheritdoc />
     public async ValueTask<bool> Exists(string objectKey, CancellationToken ct)
     {
-        using var activity = S3ObjectStoreTelemetry.Start("exists");
+        using var operation = S3ObjectStoreTelemetry.Start("exists");
         ValidateKey(objectKey);
         await EnsureBucketProvisioned(ct).ConfigureAwait(false);
 
@@ -93,7 +93,7 @@ public sealed class S3ObjectStore(
     /// <inheritdoc />
     public async ValueTask<IReadOnlyList<string>> ListKeys(string prefix, CancellationToken ct)
     {
-        using var activity = S3ObjectStoreTelemetry.Start("list");
+        using var operation = S3ObjectStoreTelemetry.Start("list");
         var objects = await List(prefix, ct).ConfigureAwait(false);
         return objects.Select(static item => item.Key).ToArray();
     }
@@ -101,7 +101,7 @@ public sealed class S3ObjectStore(
     /// <inheritdoc />
     public async ValueTask<IReadOnlyList<ObjectInventoryItem>> ListObjects(string prefix, CancellationToken ct)
     {
-        using var activity = S3ObjectStoreTelemetry.Start("list");
+        using var operation = S3ObjectStoreTelemetry.Start("list");
         var objects = await List(prefix, ct).ConfigureAwait(false);
         return objects.Select(static item => new ObjectInventoryItem(item.Key, ToUtcDateTimeOffset(item.LastModified.GetValueOrDefault()))).ToArray();
     }
@@ -109,7 +109,7 @@ public sealed class S3ObjectStore(
     /// <inheritdoc />
     public async ValueTask<ObjectUploadTicket> CreateUploadUrl(ObjectUploadRequest request, CancellationToken ct)
     {
-        using var activity = S3ObjectStoreTelemetry.Start("create_upload_url");
+        using var operation = S3ObjectStoreTelemetry.Start("create_upload_url");
         ArgumentNullException.ThrowIfNull(request);
         ct.ThrowIfCancellationRequested();
         ValidateKey(request.ObjectKey);
@@ -161,7 +161,7 @@ public sealed class S3ObjectStore(
     /// <inheritdoc />
     public async ValueTask Delete(string objectKey, CancellationToken ct)
     {
-        using var activity = S3ObjectStoreTelemetry.Start("delete");
+        using var operation = S3ObjectStoreTelemetry.Start("delete");
         ValidateKey(objectKey);
         await EnsureBucketProvisioned(ct).ConfigureAwait(false);
         await client.DeleteObjectAsync(new DeleteObjectRequest { BucketName = options.Bucket, Key = objectKey }, ct).ConfigureAwait(false);

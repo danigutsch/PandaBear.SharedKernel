@@ -13,6 +13,11 @@ internal sealed class FakeAmazonS3Client : AmazonS3Client
 
     public List<string> Operations { get; } = [];
 
+    public bool? SuppressedDuringMetadataLookup
+    {
+        get; private set;
+    }
+
     public PutObjectRequest? LastPutObjectRequest
     {
         get; private set;
@@ -79,6 +84,7 @@ internal sealed class FakeAmazonS3Client : AmazonS3Client
     public override Task<GetObjectMetadataResponse> GetObjectMetadataAsync(GetObjectMetadataRequest request, CancellationToken cancellationToken = default)
     {
         Operations.Add($"GetObjectMetadata:{request.BucketName}/{request.Key}");
+        SuppressedDuringMetadataLookup = OpenTelemetry.Sdk.SuppressInstrumentation;
         if (GetObjectMetadataException is not null)
         {
             throw GetObjectMetadataException;
