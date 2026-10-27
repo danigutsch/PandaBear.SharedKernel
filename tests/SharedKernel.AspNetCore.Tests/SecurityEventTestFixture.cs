@@ -42,17 +42,22 @@ internal sealed class SecurityEventTestFixture : IDisposable
     public IServiceProvider Services => _provider;
 
     /// <summary>Creates the fixture; the optional callbacks configure the JWT bearer and rate limiter options before telemetry is registered.</summary>
-    public static SecurityEventTestFixture Create(Action<JwtBearerOptions>? jwt = null, Action<RateLimiterOptions>? rateLimiter = null)
+    public static SecurityEventTestFixture Create(Action<JwtBearerOptions>? jwt = null, Action<RateLimiterOptions>? rateLimiter = null,
+        ILogger<SecurityEventReporter>? logger = null, IMeterFactory? meterFactory = null, int telemetryRegistrations = 1)
     {
         var meters = new MeterCollector();
-        var logger = new RecordingLogger<SecurityEventReporter>();
+        var recording = new RecordingLogger<SecurityEventReporter>();
         var services = new ServiceCollection();
-        services.AddSingleton<IMeterFactory>(meters);
-        services.AddSingleton<ILogger<SecurityEventReporter>>(logger);
+        services.AddSingleton(meterFactory ?? meters);
+        services.AddSingleton(logger ?? recording);
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => jwt?.Invoke(options));
         services.AddRateLimiter(options => rateLimiter?.Invoke(options));
-        services.AddSecurityEventTelemetry();
-        return new SecurityEventTestFixture(services.BuildServiceProvider(), meters, logger);
+        for (var i = 0; i < telemetryRegistrations; i++)
+        {
+            services.AddSecurityEventTelemetry();
+        }
+
+        return new SecurityEventTestFixture(services.BuildServiceProvider(), meters, recording);
     }
 
     /// <summary>Gets the JWT bearer options of the default scheme.</summary>

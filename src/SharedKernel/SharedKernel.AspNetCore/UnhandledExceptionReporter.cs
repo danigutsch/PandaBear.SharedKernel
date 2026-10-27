@@ -10,6 +10,10 @@ namespace PandaBear.AspNetCore;
 /// status code and the trace identifier. The exception message, stack and object never reach the log or the counter.
 /// </summary>
 /// <remarks>
+/// Reporting never throws: a failing logger, meter factory or listener is written to standard error as the failure type
+/// only. Exceptions raised after the response started are not passed to exception handlers by the framework, so they are
+/// not counted automatically; call <see cref="Report(HttpContext, Exception, bool)" /> with <c>handled</c> set to
+/// <see langword="false" /> from your own catch block when you need them counted.
 /// <see cref="AspNetCoreServiceCollectionExtensions.AddUnhandledExceptionHandler" /> registers this reporter. Another
 /// host component, such as a Blazor circuit error handler, can resolve it and call <see cref="Report(Exception, string?, int, string?, bool)" />
 /// with <c>handled</c> set to <see langword="true" /> after it recovered.
@@ -17,7 +21,7 @@ namespace PandaBear.AspNetCore;
 public sealed partial class UnhandledExceptionReporter
 {
     private readonly ILogger<UnhandledExceptionReporter> _logger;
-    private readonly Counter<long> _counter;
+    private Counter<long>? _counter;
 
     /// <summary>Initializes a new instance of the <see cref="UnhandledExceptionReporter" /> class.</summary>
     /// <param name="logger">The logger that receives the single event per exception.</param>
@@ -29,11 +33,11 @@ public sealed partial class UnhandledExceptionReporter
         ArgumentNullException.ThrowIfNull(meterFactory);
 
         _logger = logger;
-        _counter = CreateMeter(meterFactory)
+        TelemetryGuard.Run(() => _counter = CreateMeter(meterFactory)
             .CreateCounter<long>(
                 AspNetCoreTelemetry.UnhandledExceptionsCounterName,
                 unit: "{exception}",
-                description: "Unhandled exceptions by exception type and route template.");
+                description: "Unhandled exceptions by exception type and route template."));
     }
 
     /// <summary>Reports an exception raised while serving an HTTP request.</summary>
@@ -43,18 +47,19 @@ public sealed partial class UnhandledExceptionReporter
     public void Report(HttpContext httpContext, Exception exception, bool handled)
     {
         ArgumentNullException.ThrowIfNull(httpContext);
+        ArgumentNullException.ThrowIfNull(exception);
 
-        Report(
+        TelemetryGuard.Run(() => Report(
             exception,
             TelemetryHttpContext.RouteTemplate(httpContext),
             httpContext.Response.StatusCode,
             TelemetryHttpContext.TraceId(httpContext),
-            handled);
+            handled));
     }
 
     /// <summary>Reports an exception without an HTTP request, for example one raised inside a Blazor circuit.</summary>
-    /// <param name="exception">The exception; only its type name is used.</param>
-    /// <param name="routeTemplate">The route template, or <see langword="null" /> when unknown.</param>
+    /// <param name="exception">The exception; only its type name is used, after unwrapping <see cref="AggregateException" /> and <see cref="System.Reflection.TargetInvocationException" />.</param>
+    /// <param name="routeTemplate">The route template such as <c>/orders/{id}</c>, never a URL; a query string or fragment is dropped, and a value that looks like a URI, is blank or is too long is reported as <c>unmatched</c>.</param>
     /// <param name="statusCode">The status code of the response, or zero when there is none.</param>
     /// <param name="traceId">The trace identifier, or <see langword="null" /> when unknown.</param>
     /// <param name="handled">Whether a handler recovered from the exception.</param>
@@ -62,15 +67,27 @@ public sealed partial class UnhandledExceptionReporter
     {
         ArgumentNullException.ThrowIfNull(exception);
 
-        var errorType = exception.GetType().FullName ?? exception.GetType().Name;
-        var route = string.IsNullOrWhiteSpace(routeTemplate) ? AspNetCoreTelemetry.UnmatchedRoute : routeTemplate;
+        var errorType = ErrorType(exception);
+        var route = RouteTemplateNormalizer.Normalize(routeTemplate);
+        var trace = traceId ?? string.Empty;
 
-        LogUnhandledException(_logger, errorType, route, statusCode, traceId ?? string.Empty);
-        _counter.Add(
+        TelemetryGuard.Run(() => LogUnhandledException(_logger, errorType, route, statusCode, trace));
+        TelemetryGuard.Run(() => _counter?.Add(
             1,
             new KeyValuePair<string, object?>(AspNetCoreTelemetry.ErrorTypeTag, errorType),
             new KeyValuePair<string, object?>(AspNetCoreTelemetry.RouteTemplateTag, route),
-            new KeyValuePair<string, object?>(AspNetCoreTelemetry.HandledTag, handled));
+            new KeyValuePair<string, object?>(AspNetCoreTelemetry.HandledTag, handled)));
+    }
+
+    private static string ErrorType(Exception exception)
+    {
+        // Wrappers hide the real fault; report the first inner exception so the tag stays bounded and meaningful.
+        while (exception is AggregateException or System.Reflection.TargetInvocationException && exception.InnerException is { } inner)
+        {
+            exception = inner;
+        }
+
+        return exception.GetType().Name;
     }
 
     [LoggerMessage(

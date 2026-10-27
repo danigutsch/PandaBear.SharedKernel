@@ -15,6 +15,11 @@ internal sealed class JwtBearerSecurityEventsPostConfigureOptions : IPostConfigu
     /// <summary>The event tag value for a forbidden response.</summary>
     public const string Forbidden = "forbidden";
 
+    /// <summary>The reason for a challenge that carried no token.</summary>
+    public const string MissingToken = "missing_token";
+
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<JwtBearerEvents, object> Wrapped = new();
+
     /// <inheritdoc />
     public void PostConfigure(string? name, JwtBearerOptions options)
     {
@@ -26,25 +31,31 @@ internal sealed class JwtBearerSecurityEventsPostConfigureOptions : IPostConfigu
             return;
         }
 
-        var scheme = name ?? JwtBearerDefaults.AuthenticationScheme;
         var events = options.Events ??= new JwtBearerEvents();
+
+        // A host may share one events instance across schemes; wrap it once.
+        if (!Wrapped.TryAdd(events, true))
+        {
+            return;
+        }
+
         var failed = events.OnAuthenticationFailed;
         var challenge = events.OnChallenge;
         var forbidden = events.OnForbidden;
 
         events.OnAuthenticationFailed = context =>
         {
-            Report(context.HttpContext, AuthenticationFailed, Reason(context.Exception), scheme);
+            Report(context.HttpContext, AuthenticationFailed, Reason(context.Exception), context.Scheme.Name);
             return failed(context);
         };
         events.OnChallenge = context =>
         {
-            Report(context.HttpContext, Challenge, context.AuthenticateFailure is null ? "missing_token" : Reason(context.AuthenticateFailure), scheme);
+            Report(context.HttpContext, Challenge, context.AuthenticateFailure is null ? MissingToken : Reason(context.AuthenticateFailure), context.Scheme.Name);
             return challenge(context);
         };
         events.OnForbidden = context =>
         {
-            Report(context.HttpContext, Forbidden, "insufficient_permission", scheme);
+            Report(context.HttpContext, Forbidden, "insufficient_permission", context.Scheme.Name);
             return forbidden(context);
         };
     }
@@ -64,5 +75,5 @@ internal sealed class JwtBearerSecurityEventsPostConfigureOptions : IPostConfigu
     };
 
     private static void Report(Microsoft.AspNetCore.Http.HttpContext httpContext, string securityEvent, string reason, string scheme) =>
-        httpContext.RequestServices.GetService<SecurityEventReporter>()?.ReportAuthentication(httpContext, securityEvent, reason, scheme);
+        TelemetryGuard.Run(() => httpContext.RequestServices.GetService<SecurityEventReporter>()?.ReportAuthentication(httpContext, securityEvent, reason, scheme));
 }

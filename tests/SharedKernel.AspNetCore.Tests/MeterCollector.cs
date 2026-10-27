@@ -27,6 +27,11 @@ internal sealed class MeterCollector : IMeterFactory
         };
         _listener.SetMeasurementEventCallback<long>((instrument, value, tags, _) =>
         {
+            if (ThrowOnMeasurement)
+            {
+                throw new InvalidOperationException("listener-secret");
+            }
+
             var map = new Dictionary<string, object?>(StringComparer.Ordinal);
             foreach (var tag in tags)
             {
@@ -39,6 +44,12 @@ internal sealed class MeterCollector : IMeterFactory
             }
         });
         _listener.Start();
+    }
+
+    /// <summary>Gets or sets a value indicating whether the measurement callback throws, to simulate a faulty listener.</summary>
+    public bool ThrowOnMeasurement
+    {
+        get; set;
     }
 
     /// <summary>Gets the measurements captured so far.</summary>

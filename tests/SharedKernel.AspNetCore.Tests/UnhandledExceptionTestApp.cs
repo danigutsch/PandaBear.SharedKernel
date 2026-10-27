@@ -1,6 +1,7 @@
 using System.Diagnostics.Metrics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -26,6 +27,7 @@ internal static class UnhandledExceptionTestApp
         var app = builder.Build();
         app.UseExceptionHandler();
         app.MapGet("/orders/{id}", string (string id) => throw new InvalidOperationException(SensitiveMessage));
+        app.MapPost("/upload", string () => throw new BadHttpRequestException(SensitiveMessage, StatusCodes.Status413PayloadTooLarge));
         await app.StartAsync(TestContext.Current.CancellationToken);
         return app;
     }

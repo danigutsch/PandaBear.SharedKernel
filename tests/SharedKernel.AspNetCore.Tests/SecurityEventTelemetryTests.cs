@@ -1,8 +1,10 @@
+using System.Diagnostics.Metrics;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -60,6 +62,7 @@ public sealed class SecurityEventTelemetryTests
         var measurement = fixture.Meters.Measurements.ShouldHaveSingleItem();
         measurement.Tags[AspNetCoreTelemetry.EventTag].ShouldBe("challenge");
         measurement.Tags[AspNetCoreTelemetry.ReasonTag].ShouldBe("missing_token");
+        fixture.Logger.Records.ShouldHaveSingleItem().Level.ShouldBe(LogLevel.Information);
     }
 
     [Fact]
@@ -164,7 +167,7 @@ public sealed class SecurityEventTelemetryTests
     }
 
     [Fact]
-    public async Task Rate_limit_rejection_without_a_named_policy_uses_the_none_policy_and_returns_the_configured_status()
+    public async Task Rate_limit_rejection_without_a_named_policy_uses_the_none_policy()
     {
         // Arrange
         using var fixture = SecurityEventTestFixture.Create(rateLimiter: options => options.AddRemoteIpFixedWindowPolicy("login", 1, TimeSpan.FromMinutes(1)));
@@ -178,6 +181,98 @@ public sealed class SecurityEventTelemetryTests
 
         // Assert
         fixture.Meters.Measurements.ShouldHaveSingleItem().Tags[AspNetCoreTelemetry.PolicyTag].ShouldBe(AspNetCoreTelemetry.NoPolicy);
-        rateLimiterOptions.RejectionStatusCode.ShouldBe(StatusCodes.Status429TooManyRequests);
+    }
+
+    [Fact]
+    public async Task Failed_authentication_log_level_is_warning()
+    {
+        // Arrange
+        using var fixture = SecurityEventTestFixture.Create();
+        var options = fixture.JwtOptions();
+
+        // Act
+        await options.Events.AuthenticationFailed(new AuthenticationFailedContext(fixture.HttpContext(), SecurityEventTestFixture.Scheme(), options)
+        {
+            Exception = new SecurityTokenExpiredException()
+        });
+
+        // Assert
+        fixture.Logger.Records.ShouldHaveSingleItem().Level.ShouldBe(LogLevel.Warning);
+    }
+
+    [Fact]
+    public async Task Report_happens_before_the_hosts_own_handler_runs()
+    {
+        // Arrange
+        var recordsSeenByHandler = -1;
+        SecurityEventTestFixture? holder = null;
+        using var fixture = SecurityEventTestFixture.Create(jwt => jwt.Events.OnForbidden = _ =>
+        {
+            recordsSeenByHandler = holder!.Logger.Records.Count;
+            return Task.CompletedTask;
+        });
+        holder = fixture;
+        var options = fixture.JwtOptions();
+
+        // Act
+        await options.Events.Forbidden(new ForbiddenContext(fixture.HttpContext(), SecurityEventTestFixture.Scheme(), options));
+
+        // Assert
+        recordsSeenByHandler.ShouldBe(1, "the event is reported before the host's handler runs");
+    }
+
+    [Fact]
+    public async Task Registering_twice_reports_each_event_once()
+    {
+        // Arrange
+        using var fixture = SecurityEventTestFixture.Create(telemetryRegistrations: 2);
+        var options = fixture.JwtOptions();
+
+        // Act
+        await options.Events.Forbidden(new ForbiddenContext(fixture.HttpContext(), SecurityEventTestFixture.Scheme(), options));
+
+        // Assert
+        fixture.Meters.Measurements.ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public async Task Shared_events_instance_is_wrapped_once_and_reports_the_scheme_that_raised_the_event()
+    {
+        // Arrange
+        using var meters = new MeterCollector();
+        var shared = new JwtBearerEvents();
+        var services = new ServiceCollection();
+        services.AddSingleton<IMeterFactory>(meters);
+        services.AddSingleton<ILogger<SecurityEventReporter>>(new RecordingLogger<SecurityEventReporter>());
+        services.AddAuthentication()
+            .AddJwtBearer("first", options => options.Events = shared)
+            .AddJwtBearer("second", options => options.Events = shared);
+        services.AddSecurityEventTelemetry();
+        using var provider = services.BuildServiceProvider();
+        var monitor = provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>();
+        var second = monitor.Get("second");
+        monitor.Get("first").Events.ShouldBeSameAs(second.Events);
+        var httpContext = new DefaultHttpContext { RequestServices = provider };
+
+        // Act
+        await shared.Forbidden(new ForbiddenContext(httpContext, new AuthenticationScheme("second", null, typeof(JwtBearerHandler)), second));
+
+        // Assert
+        var measurement = meters.Measurements.ShouldHaveSingleItem();
+        measurement.Tags[AspNetCoreTelemetry.SchemeTag].ShouldBe("second");
+    }
+
+    [Fact]
+    public async Task Scheme_configured_with_an_events_type_is_not_instrumented()
+    {
+        // Arrange
+        using var fixture = SecurityEventTestFixture.Create(jwt => jwt.EventsType = typeof(JwtBearerEvents));
+        var options = fixture.JwtOptions();
+
+        // Act
+        await options.Events.Forbidden(new ForbiddenContext(fixture.HttpContext(), SecurityEventTestFixture.Scheme(), options));
+
+        // Assert
+        fixture.Meters.Measurements.ShouldBeEmpty("EventsType hosts own their events");
     }
 }

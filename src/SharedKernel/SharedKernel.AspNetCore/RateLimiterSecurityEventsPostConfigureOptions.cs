@@ -16,10 +16,13 @@ internal sealed class RateLimiterSecurityEventsPostConfigureOptions : IPostConfi
         var inner = options.OnRejected;
         options.OnRejected = (context, cancellationToken) =>
         {
-            var policy = context.HttpContext.GetEndpoint()?.Metadata.GetMetadata<EnableRateLimitingAttribute>()?.PolicyName
-                ?? AspNetCoreTelemetry.NoPolicy;
-            context.HttpContext.RequestServices.GetService<SecurityEventReporter>()
-                ?.ReportRateLimitRejection(context.HttpContext, policy);
+            TelemetryGuard.Run(() =>
+            {
+                var policy = context.HttpContext.GetEndpoint()?.Metadata.GetMetadata<EnableRateLimitingAttribute>()?.PolicyName
+                    ?? AspNetCoreTelemetry.NoPolicy;
+                context.HttpContext.RequestServices.GetService<SecurityEventReporter>()
+                    ?.ReportRateLimitRejection(context.HttpContext, policy);
+            });
             return inner is null ? ValueTask.CompletedTask : inner(context, cancellationToken);
         };
     }

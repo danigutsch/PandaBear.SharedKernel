@@ -9,8 +9,8 @@ namespace PandaBear.AspNetCore;
 internal sealed partial class SecurityEventReporter
 {
     private readonly ILogger<SecurityEventReporter> _logger;
-    private readonly Counter<long> _authenticationEvents;
-    private readonly Counter<long> _rateLimitRejections;
+    private Counter<long>? _authenticationEvents;
+    private Counter<long>? _rateLimitRejections;
 
     /// <summary>Initializes the reporter and creates its instruments.</summary>
     /// <param name="logger">The logger.</param>
@@ -19,15 +19,18 @@ internal sealed partial class SecurityEventReporter
     public SecurityEventReporter(ILogger<SecurityEventReporter> logger, IMeterFactory meterFactory)
     {
         _logger = logger;
-        var meter = CreateMeter(meterFactory);
-        _authenticationEvents = meter.CreateCounter<long>(
-            AspNetCoreTelemetry.AuthenticationEventsCounterName,
-            unit: "{event}",
-            description: "JWT bearer authentication failures, challenges and forbidden results.");
-        _rateLimitRejections = meter.CreateCounter<long>(
-            AspNetCoreTelemetry.RateLimitRejectionsCounterName,
-            unit: "{request}",
-            description: "Requests rejected by a rate-limit policy.");
+        TelemetryGuard.Run(() =>
+        {
+            var meter = CreateMeter(meterFactory);
+            _authenticationEvents = meter.CreateCounter<long>(
+                AspNetCoreTelemetry.AuthenticationEventsCounterName,
+                unit: "{event}",
+                description: "JWT bearer authentication failures, challenges and forbidden results.");
+            _rateLimitRejections = meter.CreateCounter<long>(
+                AspNetCoreTelemetry.RateLimitRejectionsCounterName,
+                unit: "{request}",
+                description: "Requests rejected by a rate-limit policy.");
+        });
     }
 
     /// <summary>Logs and counts an authentication event.</summary>
@@ -37,18 +40,21 @@ internal sealed partial class SecurityEventReporter
     /// <param name="scheme">The authentication scheme name.</param>
     public void ReportAuthentication(HttpContext httpContext, string securityEvent, string reason, string scheme)
     {
-        LogAuthenticationEvent(
-            _logger,
-            securityEvent,
-            reason,
-            scheme,
-            TelemetryHttpContext.RouteTemplate(httpContext),
-            TelemetryHttpContext.TraceId(httpContext));
-        _authenticationEvents.Add(
+        // A challenge without a token is routine anonymous traffic; every other event is a failure worth a warning.
+        var level = securityEvent == JwtBearerSecurityEventsPostConfigureOptions.Challenge && reason == JwtBearerSecurityEventsPostConfigureOptions.MissingToken
+            ? LogLevel.Information
+            : LogLevel.Warning;
+        TelemetryGuard.Run(() =>
+        {
+            var route = TelemetryHttpContext.RouteTemplate(httpContext);
+            var trace = TelemetryHttpContext.TraceId(httpContext);
+            LogAuthenticationEvent(_logger, level, securityEvent, reason, scheme, route, trace);
+        });
+        TelemetryGuard.Run(() => _authenticationEvents?.Add(
             1,
             new KeyValuePair<string, object?>(AspNetCoreTelemetry.EventTag, securityEvent),
             new KeyValuePair<string, object?>(AspNetCoreTelemetry.ReasonTag, reason),
-            new KeyValuePair<string, object?>(AspNetCoreTelemetry.SchemeTag, scheme));
+            new KeyValuePair<string, object?>(AspNetCoreTelemetry.SchemeTag, scheme)));
     }
 
     /// <summary>Logs and counts a rate-limit rejection.</summary>
@@ -56,21 +62,20 @@ internal sealed partial class SecurityEventReporter
     /// <param name="policy">The application-owned policy name.</param>
     public void ReportRateLimitRejection(HttpContext httpContext, string policy)
     {
-        LogRateLimitRejection(
-            _logger,
-            policy,
-            httpContext.Response.StatusCode,
-            TelemetryHttpContext.RouteTemplate(httpContext),
-            TelemetryHttpContext.TraceId(httpContext));
-        _rateLimitRejections.Add(1, new KeyValuePair<string, object?>(AspNetCoreTelemetry.PolicyTag, policy));
+        TelemetryGuard.Run(() =>
+        {
+            var route = TelemetryHttpContext.RouteTemplate(httpContext);
+            var trace = TelemetryHttpContext.TraceId(httpContext);
+            LogRateLimitRejection(_logger, policy, httpContext.Response.StatusCode, route, trace);
+        });
+        TelemetryGuard.Run(() => _rateLimitRejections?.Add(1, new KeyValuePair<string, object?>(AspNetCoreTelemetry.PolicyTag, policy)));
     }
 
     [LoggerMessage(
         EventId = AspNetCoreTelemetry.AuthenticationEventId,
         EventName = "AuthenticationEvent",
-        Level = LogLevel.Warning,
         Message = "Authentication event {SecurityEvent} with reason {Reason} on scheme {Scheme}, route {RouteTemplate} and trace {TraceId}")]
-    private static partial void LogAuthenticationEvent(ILogger logger, string securityEvent, string reason, string scheme, string routeTemplate, string traceId);
+    private static partial void LogAuthenticationEvent(ILogger logger, LogLevel level, string securityEvent, string reason, string scheme, string routeTemplate, string traceId);
 
     [LoggerMessage(
         EventId = AspNetCoreTelemetry.RateLimitRejectionEventId,
