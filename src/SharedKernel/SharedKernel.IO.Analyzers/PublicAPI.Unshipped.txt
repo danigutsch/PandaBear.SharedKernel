@@ -1,0 +1,8 @@
+#nullable enable
+const PandaBear.IO.Analyzers.IODiagnosticIds.HandRolledCopyLoop = "SKIO002" -> string!
+const PandaBear.IO.Analyzers.IODiagnosticIds.UnboundedBuffering = "SKIO001" -> string!
+PandaBear.IO.Analyzers.IODiagnosticIds
+PandaBear.IO.Analyzers.SharedKernelIOAnalyzer
+PandaBear.IO.Analyzers.SharedKernelIOAnalyzer.SharedKernelIOAnalyzer() -> void
+override PandaBear.IO.Analyzers.SharedKernelIOAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override PandaBear.IO.Analyzers.SharedKernelIOAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>

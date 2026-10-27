@@ -21,5 +21,8 @@ The threshold bounds retained content, not all process allocations. Hosts own re
 private temporary storage, disk quotas, and crash cleanup. Do not log input or temporary file paths.
 NativeAOT analyzers are enabled; packed NativeAOT and Windows execution are not yet proven for this package.
 
+The optional `PandaBear.SharedKernel.IO.Analyzers` package flags unbounded buffering of request and upload
+streams (`SKIO001`) and hand-rolled copy loops into a `MemoryStream` (`SKIO002`) and points to this API.
+
 See [stream intake policy](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/stream-intake.md)
 for ownership, limits, memory-map decisions, benchmark evidence, and application adoption boundaries.

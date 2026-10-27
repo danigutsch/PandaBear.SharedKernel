@@ -149,5 +149,7 @@
   <Project Path="tests/SharedKernel.Tabular.Tests/SharedKernel.Tabular.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.IO/SharedKernel.IO.csproj" />
   <Project Path="tests/SharedKernel.IO.Tests/SharedKernel.IO.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.IO.Analyzers/SharedKernel.IO.Analyzers.csproj" />
+  <Project Path="tests/SharedKernel.IO.Analyzers.Tests/SharedKernel.IO.Analyzers.Tests.csproj" />
   <Project Path="benchmarks/SharedKernel.IO.Benchmarks/SharedKernel.IO.Benchmarks.csproj" />
 </Solution>
