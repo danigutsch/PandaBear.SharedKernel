@@ -43,6 +43,7 @@ flowchart TB
     SharedKernel_Messaging_IntegrationEvents_EntityFrameworkCore[SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore] --> SharedKernel_Messaging[SharedKernel.Messaging]
     SharedKernel_Messaging_IntegrationEvents_EntityFrameworkCore[SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore] --> SharedKernel_Messaging_IntegrationEvents[SharedKernel.Messaging.IntegrationEvents]
     SharedKernel_Messaging_IntegrationEvents_EntityFrameworkCore[SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore] --> SharedKernel_Scheduling[SharedKernel.Scheduling]
+    SharedKernel_Messaging_Protobuf[SharedKernel.Messaging.Protobuf] --> SharedKernel_Messaging_IntegrationEvents[SharedKernel.Messaging.IntegrationEvents]
     SharedKernel_ObjectStorage_S3[SharedKernel.ObjectStorage.S3] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
     SharedKernel_ObjectStorage_S3[SharedKernel.ObjectStorage.S3] --> SharedKernel_ObjectStorage[SharedKernel.ObjectStorage]
     SharedKernel_OpenApi[SharedKernel.OpenApi] --> SharedKernel_ApiVersioning[SharedKernel.ApiVersioning]

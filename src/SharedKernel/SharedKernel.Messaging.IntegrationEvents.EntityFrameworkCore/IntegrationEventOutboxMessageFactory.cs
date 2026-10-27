@@ -6,7 +6,6 @@ namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 /// <summary>Builds outbox rows from integration events.</summary>
 internal static class IntegrationEventOutboxMessageFactory
 {
-    private const string JsonContentType = "application/json";
     private const string Source = "urn:sharedkernel:integration-events";
     private const string TraceParentExtensionAttribute = "traceparent";
     private const string TraceStateExtensionAttribute = "tracestate";
@@ -16,7 +15,10 @@ internal static class IntegrationEventOutboxMessageFactory
         TIntegrationEvent integrationEvent,
         IIntegrationEventSerializer serializer,
         DateTimeOffset enqueuedAt)
-        where TIntegrationEvent : IIntegrationEvent => new(
+        where TIntegrationEvent : IIntegrationEvent
+    {
+        var payload = serializer.SerializePayload(integrationEvent);
+        return new(
             Guid.CreateVersion7(),
             IntegrationEventEnvelopeConstants.Spec,
             IntegrationEventEnvelopeConstants.SpecVersion,
@@ -26,12 +28,13 @@ internal static class IntegrationEventOutboxMessageFactory
             TIntegrationEvent.EventVersion,
             integrationEvent.OccurredAt,
             null,
-            JsonContentType,
+            payload.DataContentType,
             null,
-            serializer.Serialize(integrationEvent),
-            EventPayloadEncoding.Json,
+            payload.Payload,
+            payload.Encoding,
             CreateTraceExtensionAttributesJson(),
             enqueuedAt);
+    }
 
     private static string? CreateTraceExtensionAttributesJson()
     {

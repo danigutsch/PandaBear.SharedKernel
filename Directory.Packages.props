@@ -15,6 +15,10 @@
     <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.6.1" />
     <PackageVersion Include="Aspire.StackExchange.Redis.OutputCaching" Version="13.6.1" />
     <PackageVersion Include="AWSSDK.S3" Version="4.0.104.4" />
+    <!-- Messaging.Protobuf: CloudNative.CloudEvents.Protobuf 2.9.0 requires Google.Protobuf 3.35.1 or later; 3.36.1 is the version the Aspire packages already resolve, so no other project changes. -->
+    <PackageVersion Include="CloudNative.CloudEvents" Version="2.9.0" />
+    <PackageVersion Include="CloudNative.CloudEvents.Protobuf" Version="2.9.0" />
+    <PackageVersion Include="Google.Protobuf" Version="3.36.1" />
     <PackageVersion Include="CommunityToolkit.Aspire.Hosting.k6" Version="13.6.0" />
     <PackageVersion Include="CommunityToolkit.Aspire.Hosting.OpenTelemetryCollector" Version="13.6.0" />
     <!-- Code analysis packages -->

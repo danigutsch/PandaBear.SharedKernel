@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>PandaBear.SharedKernel.Messaging.Protobuf</PackageId>
+        <Description>Protobuf payload serialization and the CloudEvents Protobuf event format for integration-event messaging.</Description>
+        <RootNamespace>PandaBear.Messaging.Protobuf</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <PackageTags>messaging;protobuf;cloudevents;integration-events;shared-kernel;dotnet</PackageTags>
+        <!-- No NativeAOT or trimming support is claimed: Google.Protobuf and CloudNative.CloudEvents are not validated here in a packed NativeAOT consumer. -->
+        <IsAotCompatible>false</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CloudNative.CloudEvents" />
+        <PackageReference Include="CloudNative.CloudEvents.Protobuf" />
+        <PackageReference Include="Google.Protobuf" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Messaging.IntegrationEvents\SharedKernel.Messaging.IntegrationEvents.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

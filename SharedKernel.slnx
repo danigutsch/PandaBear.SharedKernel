@@ -42,6 +42,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Messaging.IntegrationEvents.CloudEvents/SharedKernel.Messaging.IntegrationEvents.CloudEvents.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore/SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Messaging.IntegrationEvents.SourceGenerator/SharedKernel.Messaging.IntegrationEvents.SourceGenerator.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Messaging.Protobuf/SharedKernel.Messaging.Protobuf.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Npgsql/SharedKernel.Npgsql.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.ObjectStorage/SharedKernel.ObjectStorage.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.ObjectStorage.S3/SharedKernel.ObjectStorage.S3.csproj" />
@@ -105,6 +106,7 @@
   <Project Path="tests/SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests/SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests.csproj" />
   <Project Path="tests/SharedKernel.Messaging.IntegrationEvents.GeneratorTests/SharedKernel.Messaging.IntegrationEvents.GeneratorTests.csproj" />
   <Project Path="tests/SharedKernel.Messaging.IntegrationEvents.Tests/SharedKernel.Messaging.IntegrationEvents.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Messaging.Protobuf.Tests/SharedKernel.Messaging.Protobuf.Tests.csproj" />
   <Project Path="tests/SharedKernel.Messaging.Tests/SharedKernel.Messaging.Tests.csproj" />
   <Project Path="tests/SharedKernel.Npgsql.Testing/SharedKernel.Npgsql.Testing.csproj" />
   <Project Path="tests/SharedKernel.Npgsql.Testing.Host/SharedKernel.Npgsql.Testing.Host.csproj" />
