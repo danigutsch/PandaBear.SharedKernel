@@ -21,6 +21,7 @@ static PandaBear.Observability.PrivacyDataClassifications.Sensitive.get -> Micro
 PandaBear.Observability.ActivityPrivacyProcessor
 PandaBear.Observability.ActivityPrivacyProcessor.ActivityPrivacyProcessor(System.Func<string!, bool>? additionalSensitiveAttribute = null) -> void
 override PandaBear.Observability.ActivityPrivacyProcessor.OnEnd(System.Diagnostics.Activity! data) -> void
+static PandaBear.Observability.ObservabilityBuilderExtensions.AddTelemetryPrivacy<TBuilder>(this TBuilder builder, System.Func<string!, bool>? additionalSensitiveAttribute = null) -> TBuilder
 PandaBear.Observability.LogRecordPrivacyProcessor
 PandaBear.Observability.LogRecordPrivacyProcessor.LogRecordPrivacyProcessor(System.Func<string!, bool>? additionalSensitiveAttribute = null) -> void
 override PandaBear.Observability.LogRecordPrivacyProcessor.OnEnd(OpenTelemetry.Logs.LogRecord! data) -> void

@@ -24,6 +24,7 @@ extension in your application startup and supply any required parameters for ser
 
 - `ExplicitServiceNameDetector` — Ensures OpenTelemetry service.name is set via code config
 - `ObservabilityBuilderExtensions` — Extension(s) for standardized, DRY OpenTelemetry builder setup
+- `AddTelemetryPrivacy` — Log and trace privacy processors with formatted messages and scopes excluded
 - `PrivacyDataClassifications` — Technical personal, sensitive, credential, and financial classifications for source-generated logging parameters
 
 `ConfigureOpenTelemetry()` enables classified logging redaction with the default erasing fallback.
@@ -44,14 +45,13 @@ Both accept an optional `Func<string, bool>` for additional application-sensitiv
 The shared baseline always applies; the callback cannot permit attributes rejected by the baseline.
 Application identifiers and business-specific redaction policy stay with the host.
 
-Register both processors before exporters. This example opts into OpenTelemetry-only logging and
+`AddTelemetryPrivacy()` excludes formatted messages and scopes from OpenTelemetry logs and registers both
+processors. Call it before adding exporters. This example opts into OpenTelemetry-only logging and
 adds one host-owned attribute policy; the generic baseline remains mandatory:
 
 ```csharp
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry.Trace;
 using PandaBear.Observability;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -61,14 +61,7 @@ builder.ConfigureOpenTelemetry();
 static bool IsPrivateAttribute(string name) =>
     string.Equals(name, "private.identifier", StringComparison.OrdinalIgnoreCase);
 
-builder.Logging.AddOpenTelemetry(logging =>
-{
-    logging.IncludeFormattedMessage = false;
-    logging.IncludeScopes = false;
-    logging.AddProcessor(_ => new LogRecordPrivacyProcessor(IsPrivateAttribute));
-});
-builder.Services.AddOpenTelemetry().WithTracing(tracing =>
-    tracing.AddProcessor(new ActivityPrivacyProcessor(IsPrivateAttribute)));
+builder.AddTelemetryPrivacy(IsPrivateAttribute);
 
 // Add the host's exporters after the privacy processors.
 ```
