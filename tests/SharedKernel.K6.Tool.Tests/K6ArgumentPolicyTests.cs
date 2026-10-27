@@ -1,5 +1,6 @@
 namespace PandaBear.K6.Tool.Tests;
 
+/// <summary>Tests the rules that block k6 arguments the tool controls or considers unsafe.</summary>
 public sealed class K6ArgumentPolicyTests
 {
     private static readonly string[] Controlled = ["APP_BASE_URL", "APP_PROFILE", "K6_NO_USAGE_REPORT"];

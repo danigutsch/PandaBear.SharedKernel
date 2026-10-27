@@ -2,6 +2,7 @@ using System.Diagnostics;
 
 namespace PandaBear.PlaywrightMcp.Tool.Tests;
 
+/// <summary>Tests the child process helper that other tests use to check cancellation.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
 [Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
 public sealed class CancellableChildProcessTests

@@ -11,6 +11,7 @@ public sealed class ReviewAppTests : IDisposable
 {
     private readonly string directory = Directory.CreateTempSubdirectory("vault-review-app-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

@@ -11,12 +11,14 @@ using static PandaBear.VaultManager.Tool.Tests.Review.ReviewVaults;
 
 namespace PandaBear.VaultManager.Tool.Tests.Review;
 
+/// <summary>Tests that a review session saves decisions and writes the merged export to its files.</summary>
 public sealed class ReviewSessionFileTests : IDisposable
 {
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
     private const string NotesPassword = "Gh-notes-Passw0rd!";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-review-files-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

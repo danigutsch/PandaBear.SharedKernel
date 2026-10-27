@@ -2,6 +2,7 @@ using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests the vault command tree: its subcommands, help and version output, argument validation, and printable error text.</summary>
 public sealed class VaultCommandLineTests
 {
     private const string ExportPassword = "fixture export password";

@@ -5,6 +5,7 @@ using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests the catalog and apply commands together.</summary>
 public sealed class CatalogCommandTests : IDisposable
 {
     private const string Password = "fixture-catalog-cli-password";
@@ -12,6 +13,7 @@ public sealed class CatalogCommandTests : IDisposable
     private const string ExportPassword = "fixture export password";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-catalog-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

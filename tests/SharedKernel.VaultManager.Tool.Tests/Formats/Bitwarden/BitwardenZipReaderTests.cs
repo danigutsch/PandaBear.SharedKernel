@@ -3,10 +3,12 @@ using PandaBear.VaultManager.Tool.Model;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats.Bitwarden;
 
+/// <summary>Tests the reader for Bitwarden zip exports and its matching of attachment folders to items.</summary>
 public sealed class BitwardenZipReaderTests : IDisposable
 {
     private readonly string directory = Directory.CreateTempSubdirectory("vault-manager-bitwarden-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

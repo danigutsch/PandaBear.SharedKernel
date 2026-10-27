@@ -5,6 +5,7 @@ internal static class Bech32Reference
 {
     private const string Charset = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
 
+    /// <summary>Encodes <paramref name="data"/> as a bech32 string with the human-readable part <paramref name="hrp"/>.</summary>
     public static string Encode(string hrp, ReadOnlySpan<byte> data)
     {
         var values = new List<int>();

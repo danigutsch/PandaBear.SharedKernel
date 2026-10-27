@@ -5,6 +5,7 @@ using static PandaBear.VaultManager.Tool.Tests.Analysis.PasswordHealthFixture;
 
 namespace PandaBear.VaultManager.Tool.Tests.Analysis;
 
+/// <summary>Tests the password health findings: reuse, weak passwords, and passwords equal to the item name or user name.</summary>
 public sealed class PasswordHealthReportTests
 {
     private const string Reused = "Fixture-Reused-Password-1";

@@ -4,6 +4,7 @@ using static PandaBear.VaultManager.Tool.Tests.Matching.MatchFixture;
 
 namespace PandaBear.VaultManager.Tool.Tests.Matching;
 
+/// <summary>Tests how the duplicate matcher groups vault items and suggests related items.</summary>
 public sealed class DuplicateMatcherTests
 {
     [Fact]

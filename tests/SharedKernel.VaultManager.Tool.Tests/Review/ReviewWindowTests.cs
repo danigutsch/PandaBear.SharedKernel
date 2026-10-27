@@ -19,6 +19,7 @@ public sealed class ReviewWindowTests : IDisposable
     private const string NotesPassword = "Gh-notes-Passw0rd!";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-review-window-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

@@ -1,5 +1,6 @@
 namespace PandaBear.K6.Tool.Tests;
 
+/// <summary>Tests running k6 locally and in a container.</summary>
 public sealed class K6RunTests
 {
     [Fact]

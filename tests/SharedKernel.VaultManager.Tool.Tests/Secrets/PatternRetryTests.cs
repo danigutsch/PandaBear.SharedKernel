@@ -3,6 +3,7 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests that a regex match is retried once after a timeout.</summary>
 public sealed class PatternRetryTests
 {
     [Fact]

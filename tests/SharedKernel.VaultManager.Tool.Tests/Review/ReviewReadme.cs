@@ -3,6 +3,7 @@ namespace PandaBear.VaultManager.Tool.Tests.Review;
 /// <summary>Reads the tool README from the repository the tests were built from.</summary>
 internal static class ReviewReadme
 {
+    /// <summary>Returns the text of the tool README, found by walking up from the test output directory to the repository root.</summary>
     public static string Text()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
