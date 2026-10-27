@@ -105,6 +105,9 @@ add unit suffixes or rewrite dots. Query your backend for the stored names first
 below (for example `unhandled_exceptions` if your pipeline strips `_total`). The `job` label stands for whatever
 label identifies the service in your setup, and `{{ ... }}` is the alert annotation templating.
 
+The expressions are syntax-unverified: this repository does not run `promtool check rules` or `vmalert -dryRun`
+against them. Run one of those against your edited rules, and test them against your own data, before you rely on them.
+
 A counter series does not exist until its first increment, so a brand-new series starts at 1 and `increase()` or
 `rate()` over a window sees only one sample. The first-seen rule below therefore tests series presence with
 `max_over_time` instead of using `increase()`; the spike rule pads missing series with zero.

@@ -55,6 +55,33 @@ public sealed class SecurityEventPipelineTests
     }
 
     [Fact]
+    public async Task Authenticated_request_failing_a_policy_is_reported_as_forbidden_through_the_real_handler()
+    {
+        // Arrange
+        using var meters = new MeterCollector();
+        var logger = new RecordingLogger<SecurityEventReporter>();
+        await using var app = await SecurityEventTestApp.Start(meters, logger);
+        using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
+        var token = SecurityEventTestApp.CreateValidToken();
+        using var request = new HttpRequestMessage(HttpMethod.Get, new Uri("/admin", UriKind.Relative));
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // Act
+        using var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        var measurement = meters.Measurements.ShouldHaveSingleItem();
+        measurement.Tags[AspNetCoreTelemetry.EventTag].ShouldBe("forbidden");
+        measurement.Tags[AspNetCoreTelemetry.ReasonTag].ShouldBe("insufficient_permission");
+        measurement.Tags[AspNetCoreTelemetry.SchemeTag].ShouldBe("Bearer");
+        foreach (var record in logger.Records)
+        {
+            record.Message.ShouldNotContain(token, "the token must never be logged");
+        }
+    }
+
+    [Fact]
     public async Task Rate_limited_request_is_reported_with_the_policy_name_through_the_real_middleware()
     {
         // Arrange
