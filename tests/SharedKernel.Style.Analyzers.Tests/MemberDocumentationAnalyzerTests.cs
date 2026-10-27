@@ -89,9 +89,6 @@ public sealed class MemberDocumentationAnalyzerTests
             private int _count;
         }
         """)]
-    /// <summary>
-    /// Fully documented internal types and their constructors, properties, methods, fields, events, nested types, record parameters, and enum members report no SKSTYLE017.
-    /// </summary>
     public async Task Documented_internal_symbols_do_not_report_skstyle017(string source)
     {
         // Act
