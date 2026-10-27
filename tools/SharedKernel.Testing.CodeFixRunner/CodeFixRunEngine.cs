@@ -13,6 +13,7 @@ using PandaBear.Testing.CodeFixes;
 
 namespace PandaBear.Testing.CodeFixRunner;
 
+/// <summary>Applies the testing analyzer's code fixes to a project or solution loaded through MSBuild.</summary>
 internal static class CodeFixRunEngine
 {
     private static readonly ImmutableArray<DiagnosticAnalyzer> Analyzers =
@@ -22,6 +23,7 @@ internal static class CodeFixRunEngine
 
     private static readonly Lock MSBuildRegistrationLock = new();
 
+    /// <summary>Diagnostic ids the testing code fix provider can fix.</summary>
     public static ImmutableArray<string> FixableDiagnosticIds => CodeFixProvider.FixableDiagnosticIds;
 
     /// <summary>

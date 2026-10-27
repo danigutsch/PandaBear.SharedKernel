@@ -33,6 +33,7 @@ internal static class DependencySubmitCommand
         CancellationToken cancellationToken) =>
         Run(options, httpClient, TimeProvider.System, output, cancellationToken);
 
+    /// <summary>Submits a dependency snapshot to the GitHub dependency submission API and returns the exit code.</summary>
     internal static async Task<int> Run(
         DependencySubmitOptions options,
         HttpClient? httpClient,

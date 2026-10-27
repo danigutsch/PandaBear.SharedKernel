@@ -8,12 +8,17 @@ namespace PandaBear.Mediator.Benchmarks;
 /// </summary>
 internal static class AnalyzerBenchmarkSourceFactory
 {
+    /// <summary>Suite name for generated sources that trigger no analyzer diagnostics.</summary>
     public const string NoDiagnostics = "NoDiagnostics";
+    /// <summary>Suite name for generated sources that trigger many analyzer diagnostics.</summary>
     public const string ManyDiagnostics = "ManyDiagnostics";
 
     private const string IndentedOpenBrace = "    {";
     private const string IndentedCloseBrace = "    }";
 
+    /// <summary>Builds a synthetic C# source containing the requested number of mediator requests, shaped for the given diagnostics mode.</summary>
+    /// <param name="requestCount">Number of requests to generate; must be positive.</param>
+    /// <param name="diagnosticsMode">Either <see cref="NoDiagnostics" /> or <see cref="ManyDiagnostics" />.</param>
     public static string CreateSource(int requestCount, string diagnosticsMode)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(requestCount);

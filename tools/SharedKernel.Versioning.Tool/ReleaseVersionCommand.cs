@@ -1,7 +1,9 @@
 namespace PandaBear.Versioning.Tool;
 
+/// <summary>Calculates the next release version from the commits since the last release tag.</summary>
 internal static class ReleaseVersionCommand
 {
+    /// <summary>Reads the source SHA, last tag, and commit messages from git, calculates the version, writes the requested GitHub outputs, and returns it.</summary>
     public static async Task<VersionOutput> Run(CalculateReleaseOptions options, TextWriter output, CancellationToken ct)
     {
         if (options.VersionKind == "prerelease")
