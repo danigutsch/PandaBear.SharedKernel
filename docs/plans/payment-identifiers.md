@@ -61,7 +61,7 @@ Never introduce staffing modes, user counts, online-presence checks or a second-
 
 ## Required decisions resolved by the application plan
 
-- Refund unallocated excess against their remaining refundable cash balance.
+- Refund unallocated excess against its remaining refundable cash balance.
   Refunding excess must not reverse allocated EUR credit: a €120 receipt against €100 debt followed
   by a €20 excess refund leaves the €100 debt settled. Record append-only corrections to erroneous
   refund records; distinguish correcting a record from an actual return transfer. Block a receipt
