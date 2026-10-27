@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace PandaBear.Observability.Tests;
 
+/// <summary>Tests the data classification based log redaction configured by OpenTelemetry setup.</summary>
 [Trait(Testing.SharedKernelTestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
 public sealed class LoggingRedactionTests
 {

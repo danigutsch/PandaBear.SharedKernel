@@ -6,6 +6,9 @@ using PandaBear.Domain.EntityFrameworkCore;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// PostgreSQL-backed host that saves placed orders through domain-event dispatch, with a dispatcher that can be made to fail.
+/// </summary>
 internal sealed class PostgreSqlDomainEventDispatchScenario : IAsyncDisposable
 {
     private readonly PostgreSqlTestDatabaseLease database;
@@ -24,11 +27,17 @@ internal sealed class PostgreSqlDomainEventDispatchScenario : IAsyncDisposable
         Dispatcher = dispatcher;
     }
 
+    /// <summary>
+    /// Dispatcher that records the events dispatched while saving.
+    /// </summary>
     public PostgreSqlDomainEventDispatcher Dispatcher
     {
         get;
     }
 
+    /// <summary>
+    /// Creates an isolated PostgreSQL database, registers domain-event dispatch for PostgreSqlDomainEventDbContext, creates the schema and returns the scenario, cleaning up if creation fails.
+    /// </summary>
     public static async ValueTask<PostgreSqlDomainEventDispatchScenario> Create(
         PostgreSqlFixture fixture,
         bool failDispatch,
@@ -61,6 +70,9 @@ internal sealed class PostgreSqlDomainEventDispatchScenario : IAsyncDisposable
         }
     }
 
+    /// <summary>
+    /// Saves a new order with the given id after calling Place on it, so its event is dispatched during the save.
+    /// </summary>
     public async ValueTask SavePlacedOrder(int id, CancellationToken ct)
     {
         await using var scope = serviceProvider.CreateAsyncScope();
@@ -71,12 +83,18 @@ internal sealed class PostgreSqlDomainEventDispatchScenario : IAsyncDisposable
         _ = await context.SaveChangesAsync(ct);
     }
 
+    /// <summary>
+    /// Counts the persisted orders.
+    /// </summary>
     public async ValueTask<int> CountOrders(CancellationToken ct)
     {
         await using var scope = serviceProvider.CreateAsyncScope();
         return await scope.ServiceProvider.GetRequiredService<PostgreSqlDomainEventDbContext>().Orders.CountAsync(ct);
     }
 
+    /// <summary>
+    /// Releases the provider, data source and isolated database.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         await PostgreSqlScenarioCleanup.DisposeResources(null, serviceProvider, dataSource, database);

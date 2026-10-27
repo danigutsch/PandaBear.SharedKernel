@@ -17,6 +17,7 @@ internal static partial class RepositoryToolCallers
         ["<name>"] = "library",
     };
 
+    /// <summary>Reads the workflow files and the tool README under <paramref name="root"/> and returns each tool command line, expanding a bash argument array into the bare line and one line per appended value list.</summary>
     public static IEnumerable<RepositoryToolCaller> Find(string root)
     {
         // Documentation-only changes skip these tests, so only files whose changes run them are read.

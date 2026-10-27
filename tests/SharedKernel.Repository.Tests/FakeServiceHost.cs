@@ -14,6 +14,7 @@ internal sealed class FakeServiceHost
     private readonly string directory;
     private readonly Dictionary<string, string> names = new(StringComparer.Ordinal);
 
+    /// <summary>Creates <paramref name="directory"/>, where the scripts and their recorded process IDs and environments are written.</summary>
     public FakeServiceHost(string directory)
     {
         this.directory = directory;

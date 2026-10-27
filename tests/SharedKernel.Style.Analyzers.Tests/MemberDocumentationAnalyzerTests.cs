@@ -3,6 +3,7 @@ using System.Globalization;
 
 namespace PandaBear.Style.Analyzers.Tests;
 
+/// <summary>Tests for the SKSTYLE017 rule that requires XML documentation on internal types and members.</summary>
 public sealed class MemberDocumentationAnalyzerTests
 {
     [Theory]

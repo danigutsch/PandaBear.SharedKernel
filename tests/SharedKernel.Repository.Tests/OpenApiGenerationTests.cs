@@ -4,10 +4,12 @@ using PandaBear.Repository.Tests.Conventions;
 
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Guards the <c>openapi generate</c> and <c>openapi refresh</c> commands and the sanitized environment their child builds run in.</summary>
 public sealed class OpenApiGenerationTests : IDisposable
 {
     private readonly RepositoryTestScope scope = new();
 
+    /// <summary>Writes a CI configuration that defines the admin and catalog OpenAPI targets, each with its own generate and refresh property.</summary>
     public OpenApiGenerationTests() =>
         scope.WriteFile(".config/sharedkernel-ci.json", RepositoryTestScope.DefaultConfiguration.Replace(
             "\"version\": 1,",

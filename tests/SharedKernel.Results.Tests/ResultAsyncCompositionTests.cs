@@ -1,5 +1,8 @@
 namespace PandaBear.Results.Tests;
 
+/// <summary>
+/// Tests the asynchronous Map, Bind, Ensure, and Match overloads for results and for tasks or value tasks that produce results, including null-argument and uninitialized-result guards.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
 [Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
 public sealed class ResultAsyncCompositionTests

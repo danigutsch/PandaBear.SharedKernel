@@ -8,6 +8,7 @@ namespace PandaBear.Repository.Tests;
 /// <summary>Parses and invokes the real CI tool command tree with captured output.</summary>
 internal static class RepositoryToolInvocation
 {
+    /// <summary>Invokes <paramref name="args"/> with <paramref name="run"/> as the process runner and offline staging services.</summary>
     public static Task<RepositoryToolResult> Run(
         string workingDirectory,
         IReadOnlyList<string> args,
@@ -15,6 +16,7 @@ internal static class RepositoryToolInvocation
         CancellationToken ct) =>
         Run(workingDirectory, args, run, CandidateStagingTestServices.Offline(new CandidateGit()), ct);
 
+    /// <summary>Invokes <paramref name="args"/> with <paramref name="run"/> as the process runner and <paramref name="staging"/> as the stage-candidate services.</summary>
     public static Task<RepositoryToolResult> Run(
         string workingDirectory,
         IReadOnlyList<string> args,

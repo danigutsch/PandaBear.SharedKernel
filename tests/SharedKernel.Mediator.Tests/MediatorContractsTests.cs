@@ -1,5 +1,8 @@
 namespace PandaBear.Mediator.Tests;
 
+/// <summary>
+/// Tests that the Mediator request, handler, notification, stream, and sender contracts have the assignability and attribute shapes callers depend on.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ContractsCapability)]
 public sealed class MediatorContractsTests
 {

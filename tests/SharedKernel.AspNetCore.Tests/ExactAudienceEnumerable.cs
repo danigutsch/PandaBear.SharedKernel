@@ -2,8 +2,10 @@ using System.Collections;
 
 namespace PandaBear.AspNetCore.Tests;
 
+/// <summary>Audience sequence that yields "admin-api" and "catalog-api" and then throws if enumerated further, proving a validator stops at the second value.</summary>
 internal sealed class ExactAudienceEnumerable : IEnumerable<string>
 {
+    /// <inheritdoc />
     public IEnumerator<string> GetEnumerator()
     {
         yield return "admin-api";

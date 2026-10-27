@@ -18,10 +18,13 @@ internal sealed class CandidateGit
         get; set;
     }
 
+    /// <summary>Gets the recorded calls, in order.</summary>
     public List<ProcessCall> Calls { get; } = [];
 
+    /// <summary>Gets the arguments of each recorded call joined into one command string.</summary>
     public string[] Commands => [.. Calls.Select(static call => string.Join(' ', call.Arguments))];
 
+    /// <summary>Records the call and returns the configured answer for the rev-parse and status commands, throws the configured failure if set, and throws InvalidOperationException for any other command.</summary>
     public Task<string> Run(string[] arguments, string workingDirectory, CancellationToken ct)
     {
         Calls.Add(new ProcessCall("git", arguments, workingDirectory, ct));

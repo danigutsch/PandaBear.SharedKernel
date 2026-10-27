@@ -258,28 +258,9 @@ dotnet_diagnostic.CA1515.severity = none
 dotnet_diagnostic.CA1707.severity = none
 dotnet_diagnostic.CA1716.severity = none
 # CS1591 cannot skip test methods, so SKSTYLE017 covers public test types and helpers instead and skips [Fact]/[Theory] methods.
-# Staged rollout: undocumented members stay visible as suggestions until each test project is documented.
-# Owner: SharedKernel maintainers. Tracked by #3; raise SKSTYLE017 to warning per project once it is documented.
 dotnet_diagnostic.CS1591.severity = none
 sharedkernel_style_document_public_members = true
 dotnet_diagnostic.SKSTYLE004.severity = suggestion
-dotnet_diagnostic.SKSTYLE017.severity = suggestion
-
-# Documented test projects: undocumented members fail the build.
-[tests/SharedKernel.K6.Tool.Tests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.PlaywrightMcp.Tool.Tests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.RepoConfig.Tests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.VaultManager.Tool.Tests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.Versioning.Tests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
 
 # Reqnroll discovers binding and generated test support types by reflection.
 # Owner: behavior-test maintainers. Remove when unused binding types can be internalized safely.

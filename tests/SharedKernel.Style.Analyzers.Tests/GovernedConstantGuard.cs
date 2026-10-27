@@ -3,9 +3,17 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace PandaBear.Style.Analyzers.Tests;
 
+/// <summary>
+/// Checks that each governed literal catalog entry is owned by exactly one const string and that no other constant duplicates or aliases its value.
+/// </summary>
 internal static class GovernedConstantGuard
 {
     private static readonly string[] GeneratedSuffixes = [".g.cs", ".g.i.cs", ".generated.cs", ".designer.cs"];
+    /// <summary>
+    /// Scans non-generated syntax trees of the compilations and returns one message for each unresolvable constant, missing or ambiguous owner, and duplicated or redirected governed constant.
+    /// </summary>
+    /// <param name="compilations">The compilations to scan.</param>
+    /// <param name="catalogText">The governed literal catalog text.</param>
     public static IReadOnlyList<string> Validate(IEnumerable<Compilation> compilations, string catalogText)
     {
         var catalog = GovernedLiteralCatalog.Parse(catalogText);

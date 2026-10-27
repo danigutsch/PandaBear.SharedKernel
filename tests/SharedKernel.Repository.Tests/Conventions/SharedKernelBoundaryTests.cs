@@ -2,6 +2,7 @@ using static PandaBear.Repository.Tests.Conventions.SharedKernelBoundaryFiles;
 
 namespace PandaBear.Repository.Tests.Conventions;
 
+/// <summary>Guards the dependency, naming, and source-text rules that keep SharedKernel libraries product-neutral and consistent.</summary>
 public sealed class SharedKernelBoundaryTests
 {
 

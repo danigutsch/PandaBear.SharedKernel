@@ -3,6 +3,7 @@ using PandaBear.CI.Tool;
 
 namespace PandaBear.Repository.Tests;
 
+/// <summary>A temporary repository with a solution, projects, and a CI configuration for the selection and tool tests.</summary>
 internal sealed class RepositoryTestScope : IDisposable
 {
     /// <summary>The configuration that the scope writes: one default slice, <c>library</c>, that lists no project.</summary>
@@ -21,6 +22,7 @@ internal sealed class RepositoryTestScope : IDisposable
         }
         """;
 
+    /// <summary>The unique temporary directory that holds the repository and is deleted on disposal.</summary>
     public readonly string Root = Path.Combine(Path.GetTempPath(), "sharedkernel-selector-" + Guid.NewGuid().ToString("N"));
 
     /// <summary>Creates a solution of a library, a dependent library, and a test project of the dependent, and its CI configuration.</summary>
@@ -32,6 +34,7 @@ internal sealed class RepositoryTestScope : IDisposable
         WriteFile(".config/sharedkernel-ci.json", DefaultConfiguration);
     }
 
+    /// <summary>Writes a project file at <paramref name="path"/> and lists it in the solution file, creating the solution when needed.</summary>
     public void AddProject(string path, string content)
     {
         WriteFile(path, content);
@@ -41,11 +44,13 @@ internal sealed class RepositoryTestScope : IDisposable
         solution.Save(solutionPath);
     }
 
+    /// <summary>Adds a project that references the xunit.v3.mtp-v2 package and the given project paths, which makes it a test project.</summary>
     public void AddTestProject(string path, params string[] references) =>
         AddProject(path, "<Project><PackageReference Include=\"xunit.v3.mtp-v2\" />"
             + string.Concat(references.Select(reference => "<ProjectReference Include=\"" + Path.GetRelativePath(Path.GetDirectoryName(path)!, reference).Replace('\\', '/') + "\" />"))
             + "</Project>");
 
+    /// <summary>Writes <paramref name="content"/> to <paramref name="path"/> under the root, creating missing directories.</summary>
     public void WriteFile(string path, string content)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(Root, path))!);
@@ -135,6 +140,7 @@ internal sealed class RepositoryTestScope : IDisposable
         return selection;
     }
 
+    /// <summary>Clears the read-only attribute from every file, as Git objects have it, and deletes the root directory.</summary>
     public void Dispose()
     {
         // Git writes object files read-only, and Windows refuses to delete read-only files.

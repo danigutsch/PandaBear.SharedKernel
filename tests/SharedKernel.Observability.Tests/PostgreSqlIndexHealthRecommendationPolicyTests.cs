@@ -2,6 +2,7 @@ using PandaBear.Testing;
 
 namespace PandaBear.Observability.Npgsql.Tests;
 
+/// <summary>Tests how PostgreSqlIndexHealthRecommendationPolicy maps index and table evidence to an action and reason.</summary>
 [Trait(TestTraitNames.ScopeName, TestTraits.UnitScope)]
 [Trait(TestTraits.ComponentName, TestTraits.PostgreSqlObservabilityComponent)]
 public sealed class PostgreSqlIndexHealthRecommendationPolicyTests

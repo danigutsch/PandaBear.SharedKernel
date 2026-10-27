@@ -3,6 +3,9 @@ using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// Claim strategy that serializes callers with a semaphore and hands out unpublished messages only until one claim has succeeded, so concurrent relays cannot publish the same message twice.
+/// </summary>
 internal sealed class SingleClaimIntegrationEventOutboxClaimStrategy<TContext> :
     IIntegrationEventOutboxClaimStrategy<TContext>,
     IDisposable
@@ -11,6 +14,9 @@ internal sealed class SingleClaimIntegrationEventOutboxClaimStrategy<TContext> :
     private readonly SemaphoreSlim gate = new(1, 1);
     private bool claimed;
 
+    /// <summary>
+    /// Under the semaphore, returns no messages once a claim has succeeded; otherwise marks up to the batch size of due, unclaimed and unpublished messages as claimed and saves them.
+    /// </summary>
     public async ValueTask<IntegrationEventOutboxMessage[]> ClaimPending(
         TContext dbContext,
         int batchSize,
@@ -52,6 +58,9 @@ internal sealed class SingleClaimIntegrationEventOutboxClaimStrategy<TContext> :
         }
     }
 
+    /// <summary>
+    /// Disposes the semaphore.
+    /// </summary>
     public void Dispose()
     {
         gate.Dispose();

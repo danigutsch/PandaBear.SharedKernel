@@ -6,6 +6,7 @@ using PandaBear.Testing.Roslyn;
 
 namespace PandaBear.Testing.Analyzers.Tests;
 
+/// <summary>Test helper that compiles source with the standard usings and xunit reference and runs SharedKernelTestingAnalyzer over it.</summary>
 internal static class AnalyzerTestHarness
 {
     private const string DefaultUsings = """
@@ -18,6 +19,10 @@ internal static class AnalyzerTestHarness
 
         """;
 
+    /// <summary>Compiles the source with System, collections, IO, threading, tasks and Xunit usings prepended and the xunit assembly referenced.</summary>
+    /// <param name="source">C# source to compile.</param>
+    /// <param name="assemblyName">Assembly name of the compilation.</param>
+    /// <param name="path">File path given to the source's syntax tree.</param>
     public static CSharpCompilation CreateCompilation(
         string source,
         string assemblyName = "SharedKernel.Testing.Analyzers.Tests.Dynamic",
@@ -31,6 +36,11 @@ internal static class AnalyzerTestHarness
             path);
     }
 
+    /// <summary>Compiles the source, runs SharedKernelTestingAnalyzer with the supplied analyzer config options, and returns the diagnostics it reports.</summary>
+    /// <param name="source">C# source to analyze.</param>
+    /// <param name="assemblyName">Assembly name of the compilation.</param>
+    /// <param name="analyzerOptions">Analyzer config key/value options, or null for none.</param>
+    /// <param name="path">File path given to the source's syntax tree.</param>
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
         string source,
         string assemblyName = "SharedKernel.Testing.Analyzers.Tests.Dynamic",

@@ -4,6 +4,9 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace PandaBear.Style.Analyzers.Tests;
 
+/// <summary>
+/// Tests for SharedKernelStyleAnalyzer rules SKSTYLE001 through SKSTYLE010 and their configuration options.
+/// </summary>
 public sealed class SharedKernelStyleAnalyzerTests
 {
     [Fact]

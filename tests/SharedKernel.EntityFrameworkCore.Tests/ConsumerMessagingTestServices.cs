@@ -8,13 +8,22 @@ using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// Builders and helpers for the consumer outbox, relay and transport tests.
+/// </summary>
 internal static class ConsumerMessagingTestServices
 {
+    /// <summary>
+    /// Creates an outbox scope with a recording publisher and the system clock.
+    /// </summary>
     public static ConsumerMessagingTestScope CreateOutboxScope()
     {
         return new ConsumerMessagingTestScope();
     }
 
+    /// <summary>
+    /// Builds a validated provider with the integration event outbox and relay on a uniquely named in-memory ConsumerOutboxDbContext, using the given publisher and time provider.
+    /// </summary>
     public static ServiceProvider CreateOutboxRelayProvider(
         IEventEnvelopePublisher publisher,
         TimeProvider timeProvider,
@@ -44,6 +53,9 @@ internal static class ConsumerMessagingTestServices
         });
     }
 
+    /// <summary>
+    /// Enqueues a ConsumerTestIntegrationEvent with the given code through the outbox and saves it.
+    /// </summary>
     public static async ValueTask EnqueueConsumerTestIntegrationEvent(ServiceProvider provider, string slug)
     {
         ArgumentNullException.ThrowIfNull(provider);
@@ -60,6 +72,9 @@ internal static class ConsumerMessagingTestServices
         _ = await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
     }
 
+    /// <summary>
+    /// Returns the only outbox message stored in the provider's context and fails when there is not exactly one.
+    /// </summary>
     public static IntegrationEventOutboxMessage GetSingleOutboxMessage(ServiceProvider provider)
     {
         ArgumentNullException.ThrowIfNull(provider);
@@ -70,6 +85,9 @@ internal static class ConsumerMessagingTestServices
             .ShouldHaveSingleItem();
     }
 
+    /// <summary>
+    /// Marks the only outbox message as claimed by "test-relay" until the given time and saves it.
+    /// </summary>
     public static void ClaimSingleOutboxMessage(ServiceProvider provider, DateTimeOffset claimedUntil)
     {
         ArgumentNullException.ThrowIfNull(provider);
@@ -81,6 +99,9 @@ internal static class ConsumerMessagingTestServices
         _ = dbContext.SaveChanges();
     }
 
+    /// <summary>
+    /// Returns the single registered claim-strategy descriptor after adding the PostgreSQL atomic claims to the relay.
+    /// </summary>
     public static ServiceDescriptor GetPostgreSqlOutboxRelayClaimStrategyDescriptor()
     {
         var services = new ServiceCollection();
@@ -92,6 +113,9 @@ internal static class ConsumerMessagingTestServices
             .ShouldHaveSingleItem();
     }
 
+    /// <summary>
+    /// Returns the single IHostedService descriptor registered by the PostgreSQL transport consumer.
+    /// </summary>
     public static ServiceDescriptor GetPostgreSqlTransportConsumerHostedServiceDescriptor()
     {
         var services = new ServiceCollection();
@@ -102,6 +126,9 @@ internal static class ConsumerMessagingTestServices
             .ShouldHaveSingleItem();
     }
 
+    /// <summary>
+    /// Creates a validated provider with the PostgreSQL transport producer on an in-memory context and wraps it in a scenario.
+    /// </summary>
     public static ConsumerTransportScenario CreateTransportScenario(TimeProvider? timeProvider = null)
     {
         var services = new ServiceCollection();
@@ -130,6 +157,9 @@ internal static class ConsumerMessagingTestServices
         }
     }
 
+    /// <summary>
+    /// Creates a JSON CloudEvents envelope for ConsumerTestIntegrationEvent with the given event id.
+    /// </summary>
     public static EventEnvelope CreateEnvelope(string eventId) => new(
         CloudEventConstants.Spec,
         CloudEventConstants.SpecVersion,

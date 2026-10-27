@@ -1,5 +1,6 @@
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Guards the command-line surface of the CI tool: help text, version, parsing, and option validation.</summary>
 public sealed class RepositoryCommandLineTests
 {
     [Fact]

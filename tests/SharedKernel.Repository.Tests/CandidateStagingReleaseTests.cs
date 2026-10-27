@@ -5,6 +5,7 @@ using PandaBear.CI.Tool;
 
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Tests staging pinned candidate packages by downloading them from a published release, using a fake release server.</summary>
 public sealed class CandidateStagingReleaseTests
 {
     [Fact]

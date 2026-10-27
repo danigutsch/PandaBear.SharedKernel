@@ -7,6 +7,9 @@ using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// PostgreSQL-backed host that seeds, claims and consumes transport messages for the consumer "catalog" in an isolated database.
+/// </summary>
 [SuppressMessage(
     "Usage",
     "CA2213:Disposable fields should be disposed",
@@ -27,6 +30,9 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         this.dataSource = dataSource;
     }
 
+    /// <summary>
+    /// Leases an isolated PostgreSQL database and opens a data source on it, releasing the database if creation fails.
+    /// </summary>
     public static async ValueTask<PostgreSqlIntegrationEventTransportScenario> Create(
         PostgreSqlFixture fixture,
         CancellationToken ct)
@@ -44,6 +50,9 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         }
     }
 
+    /// <summary>
+    /// Creates the schema and inserts the given number of transport messages with ids event-1 to event-N.
+    /// </summary>
     public async ValueTask SeedMessages(int count, CancellationToken ct)
     {
         await using var dbContext = CreateDbContext();
@@ -53,6 +62,9 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         _ = await dbContext.SaveChangesAsync(ct);
     }
 
+    /// <summary>
+    /// Creates the schema and inserts one transport message with the given event id.
+    /// </summary>
     public async ValueTask SeedMessage(string eventId, CancellationToken ct)
     {
         await using var dbContext = CreateDbContext();
@@ -61,6 +73,9 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         _ = await dbContext.SaveChangesAsync(ct);
     }
 
+    /// <summary>
+    /// Runs the PostgreSQL transport consumer once for one message with the given publisher, clock, publisher lifetime and attempt limit, and returns the number consumed.
+    /// </summary>
     public async ValueTask<int> ConsumeWith(
         IEventEnvelopePublisher publisher,
         CancellationToken ct,
@@ -74,6 +89,9 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         return await consumer.ConsumePending(1, ct);
     }
 
+    /// <summary>
+    /// Runs the transport consumer with a scoped controlled publisher and the given batch size, and returns the number consumed.
+    /// </summary>
     public async ValueTask<int> ConsumeBatchWith(ControlledEventEnvelopePublisher publisher, int batchSize, CancellationToken ct)
     {
         await using var provider = CreateConsumerProvider(publisher, ServiceLifetime.Scoped);
@@ -82,6 +100,9 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         return await consumer.ConsumePending(batchSize, ct);
     }
 
+    /// <summary>
+    /// Loads the stored transport message with the given event id.
+    /// </summary>
     public async ValueTask<IntegrationEventTransportMessage> GetMessage(string eventId, CancellationToken ct)
     {
         await using var dbContext = CreateDbContext();
@@ -89,6 +110,9 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
             .SingleAsync(message => message.EventId == eventId, ct);
     }
 
+    /// <summary>
+    /// Claims messages from two contexts at the same time as workers "worker-1" and "worker-2" and returns everything either claimed.
+    /// </summary>
     public async ValueTask<IntegrationEventTransportMessage[]> ClaimConcurrently(CancellationToken ct)
     {
         await using var firstContext = CreateDbContext();
@@ -100,6 +124,9 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         return (await Task.WhenAll(firstClaim, secondClaim)).SelectMany(static messages => messages).ToArray();
     }
 
+    /// <summary>
+    /// Creates the schema and stages two transport messages with the same event id in a context without saving them.
+    /// </summary>
     public async ValueTask StageDuplicateDelivery(CancellationToken ct)
     {
         duplicateContext = CreateDbContext();
@@ -108,6 +135,9 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         duplicateContext.Set<IntegrationEventTransportMessage>().Add(CreateMessage("duplicate-event"));
     }
 
+    /// <summary>
+    /// Saves the staged duplicate deliveries, throwing InvalidOperationException when none were staged.
+    /// </summary>
     public async Task SaveDuplicateDelivery(CancellationToken ct)
     {
         if (duplicateContext is null)
@@ -118,6 +148,9 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         _ = await duplicateContext.SaveChangesAsync(ct);
     }
 
+    /// <summary>
+    /// Disposes the staged context, data source and isolated database.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         await PostgreSqlScenarioCleanup.DisposeResources(null, duplicateContext, dataSource, database);
@@ -144,6 +177,9 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
             [new IntegrationEventTransportDbContextConfiguration<TransportDbContext>()]);
     }
 
+    /// <summary>
+    /// Checks that exactly one message is poisoned for the consumer, then releases the one with the given event id and requires that to succeed.
+    /// </summary>
     public async ValueTask ReplayPoisoned(string eventId, DateTimeOffset now, CancellationToken ct)
     {
         await using var dbContext = CreateDbContext();

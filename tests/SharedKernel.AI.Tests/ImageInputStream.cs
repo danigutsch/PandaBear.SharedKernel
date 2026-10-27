@@ -1,12 +1,17 @@
 namespace PandaBear.AI.Tests;
 
+/// <summary>Test stream over a byte array that counts bytes read, records disposal and can pretend to be non-seekable.</summary>
+/// <param name="content">The bytes the stream serves.</param>
+/// <param name="seekable">Whether the stream reports and supports seeking, length and position.</param>
 internal sealed class ImageInputStream(byte[] content, bool seekable) : Stream
 {
     private readonly MemoryStream inner = new(content);
+    /// <summary>Gets the total number of bytes returned by all reads so far.</summary>
     public long BytesRead
     {
         get; private set;
     }
+    /// <summary>Gets a value indicating whether the stream has been disposed.</summary>
     public bool IsDisposed
     {
         get; private set;

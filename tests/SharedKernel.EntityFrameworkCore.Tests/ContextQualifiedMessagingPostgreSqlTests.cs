@@ -3,6 +3,10 @@ using PandaBear.Testing;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// PostgreSQL tests proving that two messaging contexts in one host keep their tables, transactions and publishers independent.
+/// </summary>
+/// <param name="fixture">Shared PostgreSQL fixture that supplies the isolated database.</param>
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.DatabaseIntegrationCategory)]
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IntegrationEventTransportCapability)]
 public sealed class ContextQualifiedMessagingPostgreSqlTests(PostgreSqlFixture fixture) : IAsyncLifetime
@@ -12,11 +16,17 @@ public sealed class ContextQualifiedMessagingPostgreSqlTests(PostgreSqlFixture f
     private ContextQualifiedMessagingPostgreSqlScenario Scenario =>
         scenario ?? throw new InvalidOperationException("Test scenario is not initialized.");
 
+    /// <summary>
+    /// Creates the two-context PostgreSQL scenario for the test.
+    /// </summary>
     public async ValueTask InitializeAsync()
     {
         scenario = await ContextQualifiedMessagingPostgreSqlScenario.Create(fixture, TestContext.Current.CancellationToken);
     }
 
+    /// <summary>
+    /// Disposes the scenario created for the test, if any.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         var currentScenario = scenario;

@@ -1,5 +1,6 @@
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Guards how the restore warning verification applies the exception ledger to its findings.</summary>
 public sealed class WarningExceptionTests
 {
     private const string High = "/r/src/A/A.csproj : warning NU1903: Package 'System.Foo' 1.0.0 has a known high severity vulnerability [/r/App.slnx]";

@@ -1,5 +1,7 @@
 namespace PandaBear.EventSourcing.Npgsql.Tests;
 
+/// <summary>Tests appending to and loading from the PostgreSQL event store, including revision conflicts and concurrency.</summary>
+/// <param name="fixture">The shared PostgreSQL test server fixture that supplies the per-test database.</param>
 public sealed class PostgreSqlEventStoreTests(PostgreSqlTestServerFixture fixture)
     : PostgreSqlDatabaseTestBase(fixture)
 {

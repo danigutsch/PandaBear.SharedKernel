@@ -2,6 +2,9 @@ using PandaBear.Results;
 
 namespace PandaBear.BuildingBlocks.Tests;
 
+/// <summary>
+/// Tests ValueObject equality and DateRange creation rules.
+/// </summary>
 public sealed class BuildingBlockTests
 {
     [Fact]

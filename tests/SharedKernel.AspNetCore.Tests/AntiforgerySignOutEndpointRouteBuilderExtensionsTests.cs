@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 
 namespace PandaBear.AspNetCore.Tests;
 
+/// <summary>Tests the argument validation of the antiforgery-protected sign-out endpoint mapping, in particular which post-sign-out redirects are allowed.</summary>
 [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
 public sealed class AntiforgerySignOutEndpointRouteBuilderExtensionsTests
 {

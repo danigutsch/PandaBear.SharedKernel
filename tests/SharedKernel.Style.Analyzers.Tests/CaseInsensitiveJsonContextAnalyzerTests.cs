@@ -2,6 +2,9 @@ using Microsoft.CodeAnalysis;
 
 namespace PandaBear.Style.Analyzers.Tests;
 
+/// <summary>
+/// Tests for the SKSTYLE015 rule that requires JSON serializer contexts to be case-insensitive for property names.
+/// </summary>
 public sealed class CaseInsensitiveJsonContextAnalyzerTests
 {
     [Theory]

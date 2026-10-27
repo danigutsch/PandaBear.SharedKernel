@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace PandaBear.Style.Analyzers.Tests;
 
+/// <summary>Tests for the unbounded I/O rule, which flags whole-content reads that have no size limit.</summary>
 public sealed class UnboundedIoAnalyzerTests
 {
     private const string DiagnosticId = "SKSTYLE011";

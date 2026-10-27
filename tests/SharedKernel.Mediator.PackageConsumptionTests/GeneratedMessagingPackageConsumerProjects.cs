@@ -1,7 +1,9 @@
 namespace PandaBear.Mediator.PackageConsumptionTests;
 
+/// <summary>Writes a consumer project that references the packed domain, mediator and integration event packages and their generators.</summary>
 internal static class GeneratedMessagingPackageConsumerProjects
 {
+    /// <summary>Writes a console project that maps TourCreatedDomainEvent to an integration event, publishes a serialized cloud event envelope, and prints whether the generated consumer handled the tour id.</summary>
     public static void Write(PackageConsumptionWorkspace workspace, MediatorPackageFeedFixture packageFeed)
     {
         workspace.WriteProject(

@@ -11,8 +11,10 @@ internal sealed class FakeReleaseServer : HttpMessageHandler
 {
     private readonly Dictionary<string, Queue<Func<CancellationToken, Task<HttpResponseMessage>>>> _responses = new(StringComparer.Ordinal);
 
+    /// <summary>Gets every request that reached the server, in arrival order.</summary>
     public List<FakeReleaseRequest> Requests { get; } = [];
 
+    /// <summary>Gets the absolute address of every request in <see cref="Requests"/>, in arrival order.</summary>
     public string[] Addresses => [.. Requests.Select(static request => request.Uri.AbsoluteUri)];
 
     /// <summary>Gets the release address of an asset of <see cref="CandidateStagingScope.Version"/>.</summary>
@@ -42,8 +44,10 @@ internal sealed class FakeReleaseServer : HttpMessageHandler
         return server;
     }
 
+    /// <summary>Returns a 200 response whose body is <paramref name="content"/>.</summary>
     public static HttpResponseMessage Ok(byte[] content) => new(HttpStatusCode.OK) { Content = new ByteArrayContent(content) };
 
+    /// <summary>Returns a 302 response whose <c>Location</c> header is <paramref name="location"/>.</summary>
     public static HttpResponseMessage Redirect(string location)
     {
         var response = new HttpResponseMessage(HttpStatusCode.Found);
@@ -51,8 +55,10 @@ internal sealed class FakeReleaseServer : HttpMessageHandler
         return response;
     }
 
+    /// <summary>Returns an empty response with the given status code.</summary>
     public static HttpResponseMessage Status(HttpStatusCode status) => new(status);
 
+    /// <summary>Returns an empty response with the given status code and a <c>Retry-After</c> header of <paramref name="delay"/>.</summary>
     public static HttpResponseMessage RetryAfter(HttpStatusCode status, TimeSpan delay)
     {
         var response = Status(status);
@@ -70,12 +76,14 @@ internal sealed class FakeReleaseServer : HttpMessageHandler
         }
     }
 
+    /// <summary>Queues a synchronous response factory for <paramref name="uri"/>.</summary>
     public void Add(string uri, Func<HttpResponseMessage> response)
     {
         ArgumentNullException.ThrowIfNull(response);
         Add(uri, _ => Task.FromResult(response()));
     }
 
+    /// <summary>Queues an asynchronous response factory for <paramref name="uri"/>, so a test can delay or cancel the answer.</summary>
     public void Add(string uri, Func<CancellationToken, Task<HttpResponseMessage>> response)
     {
         if (!_responses.TryGetValue(uri, out var queue))

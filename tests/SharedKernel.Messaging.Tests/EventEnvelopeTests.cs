@@ -1,5 +1,6 @@
 namespace PandaBear.Messaging.Tests;
 
+/// <summary>Unit tests for EventEnvelope construction and argument validation.</summary>
 public sealed class EventEnvelopeTests
 {
     private const string EnvelopeSpec = "test-envelope";

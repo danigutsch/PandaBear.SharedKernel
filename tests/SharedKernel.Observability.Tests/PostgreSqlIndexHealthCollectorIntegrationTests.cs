@@ -3,6 +3,7 @@ using PandaBear.Testing;
 
 namespace PandaBear.Observability.Npgsql.Tests;
 
+/// <summary>Integration tests for <see cref="PostgreSqlIndexHealthCollector"/> against an unreachable server.</summary>
 [Trait(TestTraitNames.ScopeName, TestTraits.IntegrationScope)]
 [Trait(TestTraits.ComponentName, TestTraits.PostgreSqlObservabilityComponent)]
 public sealed class PostgreSqlIndexHealthCollectorIntegrationTests

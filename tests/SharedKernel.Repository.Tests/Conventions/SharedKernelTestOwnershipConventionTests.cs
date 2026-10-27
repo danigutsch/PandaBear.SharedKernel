@@ -1,5 +1,6 @@
 namespace PandaBear.Repository.Tests.Conventions;
 
+/// <summary>Guards that every packable SharedKernel project is covered by a test project, apart from reviewed exceptions.</summary>
 public static class SharedKernelTestOwnershipConventionTests
 {
     // Reviewed exceptions: a packable project with no test project in its reference closure, and the reason.

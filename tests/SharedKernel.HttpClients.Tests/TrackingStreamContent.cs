@@ -2,8 +2,13 @@ using System.Net;
 
 namespace PandaBear.HttpClients.Tests;
 
+/// <summary>
+/// HTTP content of unknown length that copies a source stream and counts how often it is serialized.
+/// </summary>
+/// <param name="source">The stream copied to the request on each serialization.</param>
 internal sealed class TrackingStreamContent(Stream source) : HttpContent
 {
+    /// <summary>Number of times the content has been serialized to a request stream.</summary>
     public int SerializationCount
     {
         get; private set;

@@ -1,6 +1,9 @@
 
 namespace PandaBear.BuildingBlocks.Tests;
 
+/// <summary>
+/// Tests Compensation.CompleteOrCompensate behavior on failure, success and cancellation.
+/// </summary>
 public sealed class CompensationTests
 {
     [Fact]

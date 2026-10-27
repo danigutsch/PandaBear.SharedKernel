@@ -1,5 +1,7 @@
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Tests fixtures that borrow an already running PostgreSQL server named in the environment instead of starting one.</summary>
+/// <param name="fixture">The shared PostgreSQL test server fixture whose server the borrowing fixtures connect to.</param>
 public sealed class PostgreSqlTestServerFixtureBorrowingTests(PostgreSqlTestServerFixture fixture)
 {
     [Fact]

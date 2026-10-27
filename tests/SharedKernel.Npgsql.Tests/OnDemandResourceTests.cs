@@ -3,6 +3,7 @@ using PandaBear.IntegrationTesting;
 
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Tests OnDemandResource, which starts a value on first demand, shares or caches the outcome, and releases the value on disposal.</summary>
 public sealed class OnDemandResourceTests
 {
     [Fact]

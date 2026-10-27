@@ -1,5 +1,8 @@
 namespace PandaBear.Messaging.IntegrationEvents.Tests;
 
+/// <summary>
+/// Tests that integration event contracts stay independent of the mediator and expose their metadata.
+/// </summary>
 public sealed class IntegrationEventDispatchTests
 {
     [Fact]

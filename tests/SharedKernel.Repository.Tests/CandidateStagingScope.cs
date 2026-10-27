@@ -11,15 +11,26 @@ namespace PandaBear.Repository.Tests;
 /// </summary>
 internal sealed class CandidateStagingScope : IDisposable
 {
+    /// <summary>The 40-character library commit hash that the pin records as <c>libraryRevision</c>.</summary>
     public const string Revision = "0123456789abcdef0123456789abcdef01234567";
+
+    /// <summary>The prerelease package version that the pin records and the feed packages carry in their file names.</summary>
     public const string Version = "1.2.3-alpha.4.1";
+
+    /// <summary>The GitHub owner and repository name used when a test stages from a release instead of the feed.</summary>
     public const string Repository = "danigutsch/PandaBear.SharedKernel";
+
+    /// <summary>The pinned global.json content written to both the consumer and library roots.</summary>
     public const string GlobalJson = """{ "sdk": { "version": "10.0.402", "rollForward": "disable" } }""";
 
     // Git creates its object files read-only, which Windows refuses to delete until the attribute is cleared.
     private readonly TemporaryDirectory directory = new();
     private readonly List<string> lockedDirectories = [];
 
+    /// <summary>
+    /// Creates the consumer and library roots, fills the feed with the Results and CI tool packages plus one unlisted
+    /// package, and writes a pin that names only the two listed packages.
+    /// </summary>
     public CandidateStagingScope()
     {
         Base = directory.Path;
@@ -39,31 +50,37 @@ internal sealed class CandidateStagingScope : IDisposable
         Pin = WritePin(CreatePin());
     }
 
+    /// <summary>Gets the temporary directory that contains the consumer root, the library root, and the feed.</summary>
     public string Base
     {
         get;
     }
 
+    /// <summary>Gets the consumer repository root that holds the pin, the global.json, and the staged output.</summary>
     public string Root
     {
         get;
     }
 
+    /// <summary>Gets the library repository root, which holds its own copy of the global.json.</summary>
     public string LibraryRoot
     {
         get;
     }
 
+    /// <summary>Gets the directory that holds the candidate packages the staging command copies from.</summary>
     public string Feed
     {
         get;
     }
 
+    /// <summary>Gets the consumer's <c>.local/sharedkernel-feed</c> directory, where the staged packages must end up.</summary>
     public string Output
     {
         get;
     }
 
+    /// <summary>Gets the path of the <c>sharedkernel-candidate.json</c> pin file under the consumer's .config directory.</summary>
     public string PinPath
     {
         get;
@@ -78,6 +95,7 @@ internal sealed class CandidateStagingScope : IDisposable
     /// <summary>Gets the package contents by file name.</summary>
     public Dictionary<string, byte[]> Packages { get; } = new(StringComparer.Ordinal);
 
+    /// <summary>Gets the names of the feed packages that the pin lists, sorted by ordinal comparison.</summary>
     public string[] PackageNames => [.. Packages.Keys.Order(StringComparer.Ordinal)];
 
     /// <summary>Returns a pin with the identity of the packages in the feed and some consumption evidence.</summary>
@@ -103,6 +121,7 @@ internal sealed class CandidateStagingScope : IDisposable
     /// <summary>Writes the pin indented, as create-candidate does, and returns its bytes.</summary>
     public byte[] WritePin(JsonObject pin) => WritePin(pin.ToJsonString(new System.Text.Json.JsonSerializerOptions { WriteIndented = true }) + "\n");
 
+    /// <summary>Writes <paramref name="text"/> as UTF-8 to the pin file verbatim, so a test can store malformed or hand-edited content.</summary>
     public byte[] WritePin(string text)
     {
         Pin = Encoding.UTF8.GetBytes(text);
@@ -151,6 +170,7 @@ internal sealed class CandidateStagingScope : IDisposable
         return scratch;
     }
 
+    /// <summary>Restores write permission on directories that a test locked, then deletes the temporary directory.</summary>
     public void Dispose()
     {
         foreach (var locked in lockedDirectories)

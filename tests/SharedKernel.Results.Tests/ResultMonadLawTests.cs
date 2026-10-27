@@ -1,5 +1,8 @@
 namespace PandaBear.Results.Tests;
 
+/// <summary>
+/// Checks that Result.Bind obeys the monad left identity, right identity, and associativity laws and short-circuits failures.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
 [Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
 [Trait(Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.MonadLawsTheory)]

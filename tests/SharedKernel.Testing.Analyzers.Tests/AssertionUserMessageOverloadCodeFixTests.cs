@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis;
 
 namespace PandaBear.Testing.Analyzers.Tests;
 
+/// <summary>Tests the code fix that adds a forwarding userMessage overload for SKTEST017.</summary>
 public sealed class AssertionUserMessageOverloadCodeFixTests
 {
     private const string DiagnosticId = "SKTEST017";

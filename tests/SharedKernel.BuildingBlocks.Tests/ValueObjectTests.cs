@@ -2,6 +2,9 @@ using static PandaBear.BuildingBlocks.Tests.ValueObjectTestsHelpers;
 
 namespace PandaBear.BuildingBlocks.Tests;
 
+/// <summary>
+/// Tests ValueObject equality, hashing, operators and use as a collection key.
+/// </summary>
 public sealed class ValueObjectTests
 {
     [Fact]

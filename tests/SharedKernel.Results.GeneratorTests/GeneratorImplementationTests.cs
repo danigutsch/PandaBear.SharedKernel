@@ -3,6 +3,9 @@ using PandaBear.Results.SourceGenerator;
 
 namespace PandaBear.Results.GeneratorTests;
 
+/// <summary>
+/// Tests the error catalog generator's internal model equality, model builder, emitter, and provider type name sanitizing.
+/// </summary>
 public sealed class GeneratorImplementationTests
 {
     [Fact]

@@ -2,6 +2,7 @@ using System.Xml.Linq;
 
 namespace PandaBear.Repository.Tests.Conventions;
 
+/// <summary>Scans the SharedKernel project files and sources for dependency and naming rules that the boundary tests enforce.</summary>
 internal static class SharedKernelBoundaryFiles
 {
     private static readonly string[] OptionalSubmoduleSegmentNames =
@@ -32,6 +33,7 @@ internal static class SharedKernelBoundaryFiles
         "\"public-web\""
     ];
 
+    /// <summary>Returns a line for each runtime project or package reference from one optional submodule to a different optional submodule of the same family, such as one Npgsql adapter naming another; references to the family parent or to Abstractions projects are allowed.</summary>
     public static string[] FindSharedKernelRuntimeReferencesToSameFamilyOptionalSiblingSubmodules(string repositoryRoot)
     {
         return SharedKernelSourceProjectFiles(repositoryRoot)
@@ -206,6 +208,7 @@ internal static class SharedKernelBoundaryFiles
             && !normalizedPath.Contains("/obj/", StringComparison.Ordinal);
     }
 
+    /// <summary>Returns a line for each runtime reference from a primary SharedKernel project to one of its own descendant projects, excluding Abstractions projects.</summary>
     public static string[] FindSharedKernelRuntimeReferencesToDescendantOptionalSubmodules(string repositoryRoot)
     {
         return SharedKernelSourceProjectFiles(repositoryRoot)
@@ -274,6 +277,7 @@ internal static class SharedKernelBoundaryFiles
         return projectName.StartsWith("SharedKernel.Testing.", StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>Returns a line for each project reference in the SharedKernel source and test projects that points at a project whose name does not start with <c>SharedKernel.</c>.</summary>
     public static string[] FindSharedKernelProductReferences(string repositoryRoot)
     {
         return SharedKernelSourceFiles(repositoryRoot)
@@ -299,6 +303,7 @@ internal static class SharedKernelBoundaryFiles
             .Where(IsSourceFile);
     }
 
+    /// <summary>Returns the SharedKernel source projects whose name contains <c>Core</c> as a dot-separated segment.</summary>
     public static string[] FindSharedKernelCoreSegmentProjectViolations(string repositoryRoot)
     {
         return SharedKernelSourceProjectFiles(repositoryRoot)
@@ -317,6 +322,7 @@ internal static class SharedKernelBoundaryFiles
             .Any(segment => segment.Equals("Core", StringComparison.OrdinalIgnoreCase));
     }
 
+    /// <summary>Returns the SharedKernel source projects that reference an EntityFrameworkCore package but whose project name does not contain an <c>EntityFrameworkCore</c> segment.</summary>
     public static string[] FindSharedKernelEntityFrameworkCoreAdapterNamingViolations(string repositoryRoot)
     {
         return SharedKernelSourceProjectFiles(repositoryRoot)
@@ -343,6 +349,7 @@ internal static class SharedKernelBoundaryFiles
             .Any(packageName => packageName is not null && packageName.Contains("EntityFrameworkCore", StringComparison.OrdinalIgnoreCase));
     }
 
+    /// <summary>Returns each line of <paramref name="filePath"/> that contains a quoted product area name such as <c>"bookings"</c> or <c>"tours"</c>, with its relative path and line number.</summary>
     public static string[] FindProductSpecificSharedKernelTestingCoupling(string filePath)
     {
         var repositoryRoot = GetRepositoryRoot();
@@ -362,6 +369,7 @@ internal static class SharedKernelBoundaryFiles
 
         return [.. offenses];
     }
+    /// <summary>Walks up from the test binary directory to the first directory that contains <c>SharedKernel.slnx</c> and returns it.</summary>
     public static string GetRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
@@ -373,6 +381,7 @@ internal static class SharedKernelBoundaryFiles
         return directory?.FullName ?? throw new InvalidOperationException("Could not locate repository root.");
     }
 
+    /// <summary>Returns whether <paramref name="path"/> lies under a bin, obj, or Snapshots directory or ends with <c>.feature.cs</c>.</summary>
     public static bool IsGeneratedTestPath(string path)
     {
         var normalizedPath = path.Replace('\\', '/');
@@ -382,6 +391,7 @@ internal static class SharedKernelBoundaryFiles
             || normalizedPath.EndsWith(".feature.cs", StringComparison.Ordinal);
     }
 
+    /// <summary>Returns a line for each Npgsql, EntityFrameworkCore, Dapper, Azure, Redis, RabbitMQ, or MassTransit package reference in a SharedKernel project whose name does not mark it as a provider adapter.</summary>
     public static string[] FindProviderNeutralSharedKernelAdapterPackageReferences(string repositoryRoot)
     {
         var sharedKernelRoot = Path.Combine(repositoryRoot, "src", "SharedKernel");

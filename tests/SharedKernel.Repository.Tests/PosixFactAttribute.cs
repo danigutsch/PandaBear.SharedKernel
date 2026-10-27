@@ -6,6 +6,7 @@ namespace PandaBear.Repository.Tests;
 [AttributeUsage(AttributeTargets.Method)]
 internal sealed class PosixFactAttribute : FactAttribute
 {
+    /// <summary>Records the caller's source file and line for the test report and sets <c>Skip</c> when the tests run on Windows.</summary>
     public PosixFactAttribute([CallerFilePath] string? sourceFilePath = null, [CallerLineNumber] int sourceLineNumber = -1)
         : base(sourceFilePath, sourceLineNumber)
     {

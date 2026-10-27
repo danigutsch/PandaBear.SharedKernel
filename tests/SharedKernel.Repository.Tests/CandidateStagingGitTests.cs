@@ -1,5 +1,6 @@
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Tests stage-candidate against real Git repositories.</summary>
 public sealed class CandidateStagingGitTests
 {
     [Fact]

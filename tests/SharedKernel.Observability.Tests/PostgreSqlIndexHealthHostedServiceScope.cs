@@ -3,6 +3,7 @@ using System.Diagnostics.Metrics;
 
 namespace PandaBear.Observability.Npgsql.Tests;
 
+/// <summary>Runs the index health hosted service against an unreachable server while recording the telemetry it emits, and stops both on disposal.</summary>
 internal sealed class PostgreSqlIndexHealthHostedServiceScope : IAsyncDisposable
 {
     private static readonly TimeSpan StopTimeout = TimeSpan.FromSeconds(10);
@@ -27,8 +28,10 @@ internal sealed class PostgreSqlIndexHealthHostedServiceScope : IAsyncDisposable
         meterListener = PostgreSqlIndexHealthTelemetryTestListener.Create(RecordMeasurement);
     }
 
+    /// <summary>Gets a snapshot of the measurements recorded so far, each with instrument name, value and tags.</summary>
     public IReadOnlyCollection<(string InstrumentName, long Value, IReadOnlyDictionary<string, string?> Tags)> Measurements => measurements.ToArray();
 
+    /// <summary>Creates the scope and starts its hosted service, which polls a connection string that cannot connect.</summary>
     public static async Task<PostgreSqlIndexHealthHostedServiceScope> Start(CancellationToken ct)
     {
         var scope = new PostgreSqlIndexHealthHostedServiceScope();
@@ -36,11 +39,13 @@ internal sealed class PostgreSqlIndexHealthHostedServiceScope : IAsyncDisposable
         return scope;
     }
 
+    /// <summary>Waits up to ten seconds for a collection metric tagged with the "unavailable" outcome and returns true once it is seen.</summary>
     public Task<bool> WaitForUnavailableCollection(CancellationToken ct)
     {
         return unavailableCollectionObserved.Task.WaitAsync(TimeSpan.FromSeconds(10), ct);
     }
 
+    /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
         using var stopTimeout = new CancellationTokenSource(StopTimeout);

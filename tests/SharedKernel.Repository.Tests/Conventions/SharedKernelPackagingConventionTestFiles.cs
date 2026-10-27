@@ -3,8 +3,10 @@ using System.Xml.Linq;
 
 namespace PandaBear.Repository.Tests.Conventions;
 
+/// <summary>Reads project files and YAML lists for the packaging convention tests.</summary>
 internal static partial class SharedKernelPackagingConventionTestFiles
 {
+    /// <summary>Walks up from the test binary directory to the first directory that contains <c>SharedKernel.slnx</c> and returns it.</summary>
     public static string GetRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
@@ -21,6 +23,7 @@ internal static partial class SharedKernelPackagingConventionTestFiles
         throw new InvalidOperationException("Could not locate repository root.");
     }
 
+    /// <summary>Returns a message for each <c>HintName</c> assignment or <c>AddSource</c> call in <paramref name="text"/> whose string literal does not end in <c>.g.cs</c>.</summary>
     public static IEnumerable<string> GetHintNameLiteralViolations(string path, string text) =>
         HintNameLiteral().Matches(text)
             .Select(static match => match.Groups["name"].Value)
@@ -30,6 +33,7 @@ internal static partial class SharedKernelPackagingConventionTestFiles
     [GeneratedRegex(@"(?:HintName\w*\s*=|AddSource\(\s*)\s*""(?<name>[^""]*)""")]
     private static partial Regex HintNameLiteral();
 
+    /// <summary>Returns a message for each missing package metadata item of a packable project: a package ID that differs from the project name, missing tags, a missing or unpacked README, and a netstandard2.0 Roslyn package that does not opt out of AOT compatibility.</summary>
     public static IEnumerable<string> GetPackageMetadataViolations(string projectPath)
     {
         var document = XDocument.Load(projectPath);
@@ -71,12 +75,14 @@ internal static partial class SharedKernelPackagingConventionTestFiles
         }
     }
 
+    /// <summary>Loads the project file at <paramref name="projectPath"/> and returns the trimmed text of its first <paramref name="propertyName"/> element, or an empty string when none exists.</summary>
     public static string GetProperty(string projectPath, string propertyName)
     {
         var document = XDocument.Load(projectPath);
         return GetProperty(document, propertyName);
     }
 
+    /// <summary>Returns a message for each way an analyzer project breaks the analyzer-only package layout: build output under lib, an unpacked README or <c>_._</c> placeholder, a missing analyzer DLL under analyzers/dotnet/cs, or a DLL packed under lib.</summary>
     public static IEnumerable<string> GetAnalyzerPackageLayoutViolations(
         string projectPath,
         params string[] expectedAnalyzerDllNames)
@@ -111,6 +117,7 @@ internal static partial class SharedKernelPackagingConventionTestFiles
         }
     }
 
+    /// <summary>Returns the trimmed text after the dash of every list item line in <paramref name="content"/>, splitting on line feeds.</summary>
     public static HashSet<string> GetYamlPathEntries(string content)
     {
         var entries = new HashSet<string>(StringComparer.Ordinal);
@@ -128,6 +135,7 @@ internal static partial class SharedKernelPackagingConventionTestFiles
         return entries;
     }
 
+    /// <summary>Returns the trimmed text of the first element of <paramref name="document"/> named <paramref name="propertyName"/>, or an empty string when none exists.</summary>
     public static string GetProperty(XDocument document, string propertyName)
     {
         return document.Descendants()

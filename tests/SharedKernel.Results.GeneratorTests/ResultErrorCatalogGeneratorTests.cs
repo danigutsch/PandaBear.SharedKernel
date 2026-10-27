@@ -1,5 +1,8 @@
 namespace PandaBear.Results.GeneratorTests;
 
+/// <summary>
+/// Tests that the error catalog generator emits catalog sources for static error providers and skips unsupported shapes.
+/// </summary>
 public sealed class ResultErrorCatalogGeneratorTests
 {
     [Fact]

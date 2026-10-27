@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace PandaBear.Domain.GeneratorTests;
 
+/// <summary>Tests that the model identity generator emits Equals and GetHashCode for opted-in partial classes and reports SKMDL001 to SKMDL009 for unsupported shapes.</summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.IdentityCapability)]
 public sealed class ModelIdentityGeneratorTests
 {

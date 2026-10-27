@@ -5,10 +5,12 @@ namespace PandaBear.Repository.Tests;
 /// <summary>Writes the report classes and applies the diff, report, and symbol scenarios of the coverage gate tests.</summary>
 internal static class CoverageScenarios
 {
+    /// <summary>Returns a Cobertura <c>class</c> element for <paramref name="filename"/> whose lines carry the given numbers and are hit once or not at all.</summary>
     public static string Class(string filename, params (int Number, bool Hit)[] lines) =>
         new XElement("class", new XAttribute("filename", filename), new XElement("lines", lines.Select(static line =>
             new XElement("line", new XAttribute("number", line.Number), new XAttribute("hits", line.Hit ? 1 : 0))))).ToString();
 
+    /// <summary>Changes the patch, report, or symbol files of <paramref name="scope"/> to match the named scenario and throws <see cref="ArgumentException"/> for an unknown name.</summary>
     public static void Apply(CoverageTestScope scope, string scenario)
     {
         switch (scenario)

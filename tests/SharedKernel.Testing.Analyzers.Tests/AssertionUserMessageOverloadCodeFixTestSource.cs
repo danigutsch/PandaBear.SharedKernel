@@ -1,7 +1,9 @@
 namespace PandaBear.Testing.Analyzers.Tests;
 
+/// <summary>Builds source files for the user-message overload code fix tests, together with the WithUserMessage helper they forward to.</summary>
 internal static class AssertionUserMessageOverloadCodeFixTestSource
 {
+    /// <summary>Source of UserMessageAssertions with WithUserMessage overloads for Action, Func of T, Func of Task and Func of Task of T.</summary>
     public const string Helper = """
         internal static class UserMessageAssertions
         {
@@ -16,6 +18,7 @@ internal static class AssertionUserMessageOverloadCodeFixTestSource
         """;
 
     // Without the Func<Task> and Func<Task<T>> shapes, a lambda that returns a task binds to Func<T>.
+    /// <summary>Source of UserMessageAssertions with only the Action and Func of T WithUserMessage overloads, so task-returning lambdas bind to Func of T.</summary>
     public const string HelperWithoutTaskShapes = """
         internal static class UserMessageAssertions
         {
@@ -26,6 +29,9 @@ internal static class AssertionUserMessageOverloadCodeFixTestSource
         """;
 
     // Members are written without indentation; each of their lines is indented one level inside the sample class.
+    /// <summary>Returns a source file with a documented SampleAssertions class holding the members, indented one level, plus the helper and a using static import for it when the helper is not empty.</summary>
+    /// <param name="members">Unindented member declarations placed inside SampleAssertions.</param>
+    /// <param name="helper">Helper source appended to the file, or an empty string for none.</param>
     public static string Create(string members, string helper = Helper)
     {
         var helperImport = helper.Length == 0 ? string.Empty : "using static Sample.UserMessageAssertions;";

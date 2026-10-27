@@ -2,6 +2,7 @@ using System.Diagnostics;
 
 namespace PandaBear.Observability.Tests;
 
+/// <summary>Tests the tag redaction applied by <see cref="ActivityPrivacyProcessor"/> when an activity ends.</summary>
 public sealed class ActivityPrivacyProcessorTests
 {
     [Fact]

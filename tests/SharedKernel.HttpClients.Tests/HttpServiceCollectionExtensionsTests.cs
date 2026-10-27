@@ -1,5 +1,6 @@
 namespace PandaBear.HttpClients.Tests;
 
+/// <summary>Unit tests for the AddHttpClientDefaults service collection extension.</summary>
 [Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class HttpServiceCollectionExtensionsTests
 {

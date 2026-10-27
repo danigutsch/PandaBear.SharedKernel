@@ -20,16 +20,19 @@ internal sealed class TemporaryPostgreSqlRole : IAsyncDisposable
         Password = password;
     }
 
+    /// <summary>Gets the generated role name.</summary>
     public string Name
     {
         get;
     }
 
+    /// <summary>Gets the generated password of the role.</summary>
     public string Password
     {
         get;
     }
 
+    /// <summary>Creates a login role with a generated name and password through the administrative data source.</summary>
     [SuppressMessage(
         "Security",
         "CA2100:Review SQL queries for security vulnerabilities",
@@ -43,6 +46,7 @@ internal sealed class TemporaryPostgreSqlRole : IAsyncDisposable
         return new TemporaryPostgreSqlRole(administrativeDataSource, name, password);
     }
 
+    /// <summary>Drops the role, if it still exists, through the administrative data source with a 30 second timeout.</summary>
     [SuppressMessage(
         "Security",
         "CA2100:Review SQL queries for security vulnerabilities",

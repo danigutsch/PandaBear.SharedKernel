@@ -4,6 +4,9 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace PandaBear.Messaging.IntegrationEvents.Tests;
 
+/// <summary>
+/// Tests generated integration event contract registration, serialization and publishing to scoped handlers.
+/// </summary>
 public sealed class GeneratedIntegrationEventDispatchTests
 {
     [Fact]

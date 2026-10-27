@@ -89,5 +89,6 @@ internal sealed class ServiceToolProcess : IDisposable
         }
     }
 
+    /// <inheritdoc />
     public void Dispose() => run.Dispose();
 }

@@ -1,5 +1,7 @@
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Tests cancellation of database creation in the test database pool.</summary>
+/// <param name="fixture">The shared PostgreSQL test server fixture that leases the test databases.</param>
 public sealed class PostgreSqlTestDatabasePoolCancellationTests(PostgreSqlTestServerFixture fixture)
 {
     // The existing pool test cancels before the pool takes its gate, so no name is registered. Cancelling inside the

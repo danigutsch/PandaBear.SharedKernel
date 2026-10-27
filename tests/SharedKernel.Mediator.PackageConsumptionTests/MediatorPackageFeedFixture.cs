@@ -24,8 +24,10 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
 
     private string RootPath { get; set; } = null!;
 
+    /// <summary>The repository root, found by searching upward for SharedKernel.slnx, used to locate projects and Directory.Packages.props.</summary>
     internal string RepositoryRoot { get; private set; } = null!;
 
+    /// <summary>Creates a workspace for a consumer project that restores from this fixture's local feed at the test package version.</summary>
     internal PackageConsumptionWorkspace CreateWorkspace(string projectName) =>
         new(RepositoryRoot, FeedPath, PackageVersion, projectName);
 

@@ -4,8 +4,12 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PandaBear.Aspire.Hosting.K6.Tests;
 
+/// <summary>Reads the effective command-line arguments and environment of a K6 resource in tests.</summary>
 internal static class K6ResourceInspector
 {
+    /// <summary>Resolves the resource's argument and environment-variable callbacks in a run-mode execution context.</summary>
+    /// <param name="resource">The resource to evaluate.</param>
+    /// <returns>The resolved command-line arguments and environment variables.</returns>
     internal static async Task<(string[] Arguments, Dictionary<string, string> Environment)> Evaluate(IResource resource)
     {
         var configuration = await ExecutionConfigurationBuilder.Create(resource)

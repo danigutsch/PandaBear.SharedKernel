@@ -2,6 +2,8 @@ using PandaBear.IntegrationTesting;
 
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Tests resetting the public schema of a leased PostgreSQL database.</summary>
+/// <param name="fixture">The shared PostgreSQL test server fixture that supplies the per-test database.</param>
 public sealed class PostgreSqlPublicSchemaResetTests(PostgreSqlTestServerFixture fixture)
     : PostgreSqlDatabaseTestBase(fixture)
 {

@@ -6,6 +6,7 @@ using PandaBear.Testing.Roslyn;
 
 namespace PandaBear.Testing.CodeFixRunner.Tests;
 
+/// <summary>Tests the key that <c>DiagnosticLocationKey</c> builds from a diagnostic location.</summary>
 public sealed class DiagnosticLocationKeyTests
 {
     [Fact]

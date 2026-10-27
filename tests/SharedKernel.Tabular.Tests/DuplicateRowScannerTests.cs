@@ -1,5 +1,6 @@
 namespace PandaBear.Tabular.Tests;
 
+/// <summary>Tests for <see cref="DuplicateRowScanner"/> duplicate detection, comparer use and argument guards.</summary>
 public sealed class DuplicateRowScannerTests
 {
     [Fact]

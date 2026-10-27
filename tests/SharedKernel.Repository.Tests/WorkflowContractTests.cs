@@ -3,6 +3,7 @@ using PandaBear.Repository.Tests.Conventions;
 
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Guards the text of the GitHub workflow files against changes that would break the CI contract.</summary>
 public sealed class WorkflowContractTests
 {
     [Fact]

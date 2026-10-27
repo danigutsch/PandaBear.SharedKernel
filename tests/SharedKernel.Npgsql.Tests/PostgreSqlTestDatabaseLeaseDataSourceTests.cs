@@ -1,5 +1,7 @@
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Tests the extra data sources that a database lease can create for its database.</summary>
+/// <param name="fixture">The shared PostgreSQL test server fixture that leases the test databases.</param>
 public sealed class PostgreSqlTestDatabaseLeaseDataSourceTests(PostgreSqlTestServerFixture fixture)
 {
     [Fact]

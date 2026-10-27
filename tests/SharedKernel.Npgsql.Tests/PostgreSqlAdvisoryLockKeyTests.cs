@@ -1,5 +1,6 @@
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Tests the derivation of PostgreSQL advisory lock keys from identity text.</summary>
 public sealed class PostgreSqlAdvisoryLockKeyTests
 {
     [Theory]

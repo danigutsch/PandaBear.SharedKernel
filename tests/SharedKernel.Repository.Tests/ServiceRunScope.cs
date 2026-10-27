@@ -9,10 +9,13 @@ namespace PandaBear.Repository.Tests;
 [UnsupportedOSPlatform("windows")]
 internal sealed class ServiceRunScope : IDisposable
 {
+    /// <summary>The test project of the <c>library</c> slice, which has no service.</summary>
     public const string CoreTests = "tests/Core.Tests/Core.Tests.csproj";
 
+    /// <summary>The test project of the <c>database</c> slice, which receives the value that the service hands over.</summary>
     public const string DatabaseTests = "tests/Database.Tests/Database.Tests.csproj";
 
+    /// <summary>The project that the <c>database</c> slice starts as its service.</summary>
     public const string DatabaseHost = "tests/Database.Host/Database.Host.csproj";
 
     /// <summary>The value that the fake host hands over. The tests look for it everywhere it must not appear.</summary>
@@ -39,13 +42,16 @@ internal sealed class ServiceRunScope : IDisposable
         Selection = repository.WriteSelection("fixture", ("library", [CoreTests]), ("database", [DatabaseTests]));
     }
 
+    /// <summary>Gets the temporary repository that holds the projects, the configuration, and the plan.</summary>
     public RepositoryTestScope Repository => repository;
 
+    /// <summary>Gets the fake host that stands in for the service process.</summary>
     public FakeServiceHost Host
     {
         get;
     }
 
+    /// <summary>Gets the log that records the Git and dotnet requests of a run and answers them through <see cref="Respond"/>.</summary>
     public ProcessLog Processes
     {
         get;
@@ -70,6 +76,7 @@ internal sealed class ServiceRunScope : IDisposable
     /// <summary>Gets the file that the fake host was told to write its value to.</summary>
     public string ReadyFile => Host.Environment(DatabaseHost)["FAKE_READY_FILE"];
 
+    /// <summary>Runs the CI tool with <paramref name="args"/> in the scope's repository, recording processes in <see cref="Processes"/> and starting services through <see cref="Host"/>.</summary>
     public Task<RepositoryToolResult> Run(string[] args, CancellationToken ct) => RepositoryToolInvocation.Run(repository.Root, args, Processes, Host.Start, ct);
 
     /// <summary>Returns <c>&lt;phase&gt; &lt;status&gt;</c> for each line of the phase timings of <paramref name="execution"/>, the total line included.</summary>
@@ -91,6 +98,7 @@ internal sealed class ServiceRunScope : IDisposable
         return [.. found];
     }
 
+    /// <summary>Kills the fake host if a test left it running, then deletes the repository.</summary>
     public void Dispose()
     {
         // A failed test must not leave its fake host running.

@@ -4,6 +4,8 @@ using System.Net.Sockets;
 
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Tests creating a test database lease directly, including cancellation, failed cleanup and name validation.</summary>
+/// <param name="fixture">The shared PostgreSQL test server fixture that leases the test databases.</param>
 public sealed class PostgreSqlTestDatabaseLeaseCreationTests(PostgreSqlTestServerFixture fixture)
 {
     // The pool registers a name before it creates the database and unregisters it through onDropped. The existing pool

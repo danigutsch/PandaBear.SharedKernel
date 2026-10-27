@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace PandaBear.Style.Analyzers.Tests;
 
+/// <summary>Repository-wide guard tests for the governed literal catalog.</summary>
 public sealed class GovernedLiteralRepositoryTests
 {
     // It reads the compiler inputs that a Release build of the whole solution records, so test runs that build only

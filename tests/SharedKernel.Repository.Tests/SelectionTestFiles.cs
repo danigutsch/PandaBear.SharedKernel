@@ -25,6 +25,7 @@ internal static class SelectionTestFiles
             _ => ProcessRunner.Run(fileName, arguments, directory, ct),
         };
 
+    /// <summary>Deserializes the <c>selection.json</c> plan in the <paramref name="selection"/> directory.</summary>
     public static async Task<SelectionPlan> ReadPlan(string selection, CancellationToken ct) =>
         JsonSerializer.Deserialize(await File.ReadAllBytesAsync(Path.Combine(selection, "selection.json"), ct), SelectionPlanJsonContext.Default.SelectionPlan)!;
 

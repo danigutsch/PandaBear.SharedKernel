@@ -6,6 +6,9 @@ using PandaBear.Idempotency.EntityFrameworkCore;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// PostgreSQL-backed idempotency store host whose save interceptor holds two concurrent TryStart calls until both are saving.
+/// </summary>
 internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
 {
     private readonly PostgreSqlTestDatabaseLease database;
@@ -25,6 +28,9 @@ internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
         this.serviceProvider = serviceProvider;
     }
 
+    /// <summary>
+    /// Creates an isolated PostgreSQL database with the idempotency store, its context and the save barrier, creates the schema and returns the scenario, cleaning up if creation fails.
+    /// </summary>
     public static async ValueTask<PostgreSqlIdempotencyStoreScenario> Create(
         PostgreSqlFixture fixture,
         CancellationToken ct)
@@ -62,6 +68,9 @@ internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
         }
     }
 
+    /// <summary>
+    /// Starts the same operation from two scopes at once, releases both saves together and returns both results.
+    /// </summary>
     public async ValueTask<IdempotencyStartResult[]> TryStartConcurrently(CancellationToken ct)
     {
         var operation = new IdempotencyOperation(
@@ -81,6 +90,9 @@ internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
         return await Task.WhenAll(firstStart, secondStart);
     }
 
+    /// <summary>
+    /// Counts the stored idempotency entries.
+    /// </summary>
     public async ValueTask<int> CountEntries(CancellationToken ct)
     {
         await using var scope = serviceProvider.CreateAsyncScope();
@@ -88,6 +100,9 @@ internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
         return await dbContext.Set<IdempotencyEntryEntity>().CountAsync(ct);
     }
 
+    /// <summary>
+    /// Releases the provider, data source and isolated database.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         await PostgreSqlScenarioCleanup.DisposeResources(null, serviceProvider, dataSource, database);

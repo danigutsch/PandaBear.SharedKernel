@@ -10,9 +10,15 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// </summary>
 public sealed class PostgreSqlFixture : PostgreSqlTestServerFixture
 {
+    /// <summary>
+    /// Leases a new isolated PostgreSQL database from the shared server.
+    /// </summary>
     internal Task<PostgreSqlTestDatabaseLease> CreateIsolatedDatabase(CancellationToken ct) => CreateDatabase(ct);
 
     // Aspire locates generated DCP metadata by walking the synchronous builder-creation stack.
+    /// <summary>
+    /// Creates the distributed application testing builder through AspireTestApplication.
+    /// </summary>
     [MethodImpl(MethodImplOptions.NoInlining)]
     protected override IDistributedApplicationTestingBuilder CreateBuilder() => AspireTestApplication.CreateBuilder();
 }

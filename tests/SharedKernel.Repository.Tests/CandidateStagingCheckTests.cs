@@ -1,5 +1,6 @@
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Tests the checks that stage-candidate runs on the pin, the SDK files and the library checkout before it stages anything.</summary>
 public sealed class CandidateStagingCheckTests
 {
     [Theory]

@@ -2,6 +2,7 @@ using static PandaBear.Documentation.DocumentationSourceFacts;
 
 namespace PandaBear.Documentation.Tests;
 
+/// <summary>Tests the Roslyn-based extraction of switch case types, marked fact identifiers, method invocations and service registrations from C# source and Markdown.</summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
 [Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class DocumentationSourceFactsTests

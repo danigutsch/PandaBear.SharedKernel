@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace PandaBear.Style.Analyzers.Tests;
 
+/// <summary>Tests for the governed literal rule SKSTYLE012 and the catalog configuration error SKSTYLE013.</summary>
 public sealed class GovernedLiteralAnalyzerTests
 {
     [Theory]

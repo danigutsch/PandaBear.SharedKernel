@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace PandaBear.Mediator.GeneratorTests;
 
+/// <summary>Tests the structure of the AppMediator, dispatch and pipeline sources the generator emits.</summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
 public sealed class GeneratorDispatchTests
 {

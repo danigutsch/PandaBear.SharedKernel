@@ -2,8 +2,10 @@ using System.Reflection;
 
 namespace PandaBear.Mediator.GeneratorTests;
 
+/// <summary>Assertion helpers for the generator discovery report tests.</summary>
 internal static class GeneratorDiscoveryReportTestsHelpers
 {
+    /// <summary>Asserts that every expected segment occurs in the text, each one after the previous one.</summary>
     public static void AssertOrdered(string actual, params string[] expectedSegments)
     {
         var currentIndex = -1;
@@ -17,6 +19,7 @@ internal static class GeneratorDiscoveryReportTestsHelpers
         }
     }
 
+    /// <summary>Compiles the test source with the generated call graph source, loads it and returns the Json property of PandaBear.Mediator.Generated.MediatorCallGraph.</summary>
     public static string LoadGeneratedCallGraphJson(string source, string generatedCallGraphSource)
     {
         const string runtimeUsings = """
