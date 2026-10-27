@@ -6,6 +6,7 @@ using PandaBear.Tooling;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Verifies that tracked repository text files are valid UTF-8 as git would check them out, using an isolated copy of the repository to ignore local git attribute config.</summary>
 internal static class TextEncodingVerifier
 {
     private const int BufferSize = 81_920;
@@ -15,6 +16,7 @@ internal static class TextEncodingVerifier
     private static readonly TimeSpan ProcessExitTimeout = TimeSpan.FromSeconds(2);
     private static readonly UTF8Encoding StrictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
+    /// <summary>Returns the encoding issues found in the repository at <paramref name="rootPath"/>, or a single issue when git inspection fails.</summary>
     public static async Task<IReadOnlyList<RepoConfigIssue>> Verify(string rootPath, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
@@ -921,6 +923,7 @@ internal static class TextEncodingVerifier
         }
     }
 
+    /// <summary>Waits up to <paramref name="timeout"/> for <paramref name="cleanup"/> and, on timeout, observes its later failure so it is not left unobserved.</summary>
     internal static async Task ObserveCleanup(Task cleanup, TimeSpan timeout)
     {
         try

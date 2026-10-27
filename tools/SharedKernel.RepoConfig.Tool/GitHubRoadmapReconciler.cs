@@ -3,6 +3,7 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Reconciles roadmap items with GitHub issue state.</summary>
 internal sealed class GitHubRoadmapReconciler
 {
     private const string RequiredInputs = "GitHub reconciliation requires one seed manifest under roadmap/reconciliation/open-issues-*.json. Required reviewed inputs: mechanicalPriorityOverride, directCanonicalPrimaries, and closedItemTransitions.";
@@ -11,6 +12,9 @@ internal sealed class GitHubRoadmapReconciler
     private readonly HttpClient? _httpClient;
     private RoadmapProject _project;
 
+    /// <summary>Creates the reconciler for a project, optionally with an existing HTTP client.</summary>
+    /// <param name="project">Roadmap project to reconcile.</param>
+    /// <param name="httpClient">GitHub client, or <see langword="null" /> to create one from the environment.</param>
     internal GitHubRoadmapReconciler(RoadmapProject project, HttpClient? httpClient)
     {
         ArgumentNullException.ThrowIfNull(project);
@@ -19,12 +23,16 @@ internal sealed class GitHubRoadmapReconciler
         _httpClient = httpClient;
     }
 
+    /// <summary>Returns the messages describing the changes reconciliation would make, without applying them.</summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task<IReadOnlyList<string>> Preview(CancellationToken cancellationToken)
     {
         var plan = await CreatePlan(cancellationToken).ConfigureAwait(false);
         return plan.Messages(preview: true);
     }
 
+    /// <summary>Applies the reconciliation and returns the messages describing the changes.</summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task<IReadOnlyList<string>> Apply(CancellationToken cancellationToken)
     {
         var plan = await CreatePlan(cancellationToken).ConfigureAwait(false);
@@ -174,6 +182,7 @@ internal sealed class GitHubRoadmapReconciler
         }
     }
 
+    /// <summary>Returns the closed-item transitions the roadmap requires for issues that GitHub reports as closed.</summary>
     internal static RoadmapClosedItemTransition[] GetRequiredClosedTransitions(
         RoadmapProject project,
         GitHubRoadmapReconciliation reconciliation,
@@ -280,6 +289,7 @@ internal sealed class GitHubRoadmapReconciler
         || issue.SubIssues.Count(relation => relation.State == "OPEN"
             && string.Equals(relation.Repository, repository, StringComparison.OrdinalIgnoreCase)) >= 2;
 
+    /// <summary>Derives the blocking edges between issues of the repository.</summary>
     internal static GitHubRoadmapBlockerEdge[] DeriveBlockerEdges(
         IReadOnlyList<GitHubRoadmapReconcileIssue> issues,
         Dictionary<int, GitHubRoadmapReconcileIssue> issuesByNumber,
@@ -313,6 +323,7 @@ internal sealed class GitHubRoadmapReconciler
             .ToArray();
     }
 
+    /// <summary>Derives the blocking edges where an issue lives outside the repository.</summary>
     internal static GitHubRoadmapExternalBlockerEdge[] DeriveExternalBlockerEdges(
         IReadOnlyList<GitHubRoadmapReconcileIssue> issues,
         string repository)
