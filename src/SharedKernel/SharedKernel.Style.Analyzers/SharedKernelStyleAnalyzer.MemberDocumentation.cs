@@ -20,9 +20,12 @@ public sealed partial class SharedKernelStyleAnalyzer
     private static void AnalyzeMemberDocumentation(SymbolAnalysisContext context)
     {
         var symbol = context.Symbol;
+        var sourceTree = symbol.Locations.FirstOrDefault(static location => location.IsInSource)?.SourceTree;
+        var documentPublicMembers = StyleAnalyzerConfigOptions.Parse(context.Options.AnalyzerConfigOptionsProvider, sourceTree).DocumentPublicMembers;
         if (symbol.IsImplicitlyDeclared
             || symbol.IsOverride
-            || !IsInternalSurface(symbol)
+            || !(documentPublicMembers ? IsNonPrivate(symbol) : IsInternalSurface(symbol))
+            || IsTestMethod(symbol)
             || symbol is IMethodSymbol { MethodKind: not (MethodKind.Ordinary or MethodKind.Constructor or MethodKind.UserDefinedOperator or MethodKind.Conversion) }
             || symbol is IMethodSymbol { ExplicitInterfaceImplementations.Length: > 0 }
             || symbol is IPropertySymbol { IsIndexer: true }
@@ -70,6 +73,40 @@ public sealed partial class SharedKernelStyleAnalyzer
             MemberDeclarationSyntax member => HasDocumentation(member),
             _ => true,
         };
+    }
+
+    // xunit test methods describe themselves through their names and bodies and are not documented.
+    private static bool IsTestMethod(ISymbol symbol)
+    {
+        return symbol is IMethodSymbol method
+            && method.GetAttributes().Any(static attribute =>
+                attribute.AttributeClass is { } attributeClass && InheritsFromFactAttribute(attributeClass));
+    }
+
+    private static bool InheritsFromFactAttribute(INamedTypeSymbol type)
+    {
+        for (var current = type; current is not null; current = current.BaseType)
+        {
+            if (current is { Name: "FactAttribute", ContainingNamespace: { Name: "Xunit", ContainingNamespace.IsGlobalNamespace: true } })
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsNonPrivate(ISymbol symbol)
+    {
+        for (var current = symbol; current is not null and not INamespaceSymbol; current = current.ContainingType)
+        {
+            if (current.DeclaredAccessibility is Accessibility.Private or Accessibility.NotApplicable)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // A symbol is in the internal surface when it is not private at any level but also not reachable from outside the assembly.
