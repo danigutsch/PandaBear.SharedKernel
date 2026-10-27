@@ -1,0 +1,77 @@
+#nullable enable
+PandaBear.ObjectStorage.IObjectStore
+PandaBear.ObjectStorage.IObjectStore.CreateUploadUrl(PandaBear.ObjectStorage.ObjectUploadRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectUploadTicket!>
+PandaBear.ObjectStorage.IObjectStore.Delete(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.ObjectStorage.IObjectStore.Exists(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<bool>
+PandaBear.ObjectStorage.IObjectStore.GetPublicUri(string! objectKey) -> System.Uri!
+PandaBear.ObjectStorage.IObjectStore.ListKeys(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<string!>!>
+PandaBear.ObjectStorage.IObjectStore.ListObjects(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<PandaBear.ObjectStorage.ObjectInventoryItem!>!>
+PandaBear.ObjectStorage.IObjectStore.OpenRead(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectReadResult!>
+PandaBear.ObjectStorage.IObjectStore.Put(PandaBear.ObjectStorage.ObjectWriteRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectWriteResult!>
+PandaBear.ObjectStorage.ObjectInventoryItem
+PandaBear.ObjectStorage.ObjectInventoryItem.LastModifiedAt.get -> System.DateTimeOffset
+PandaBear.ObjectStorage.ObjectInventoryItem.LastModifiedAt.init -> void
+PandaBear.ObjectStorage.ObjectInventoryItem.ObjectInventoryItem(string! ObjectKey, System.DateTimeOffset LastModifiedAt) -> void
+PandaBear.ObjectStorage.ObjectInventoryItem.ObjectKey.get -> string!
+PandaBear.ObjectStorage.ObjectInventoryItem.ObjectKey.init -> void
+PandaBear.ObjectStorage.ObjectReadResult
+PandaBear.ObjectStorage.ObjectReadResult.Checksum.get -> string?
+PandaBear.ObjectStorage.ObjectReadResult.Checksum.init -> void
+PandaBear.ObjectStorage.ObjectReadResult.Content.get -> System.IO.Stream!
+PandaBear.ObjectStorage.ObjectReadResult.Content.init -> void
+PandaBear.ObjectStorage.ObjectReadResult.ContentType.get -> string!
+PandaBear.ObjectStorage.ObjectReadResult.ContentType.init -> void
+PandaBear.ObjectStorage.ObjectReadResult.Dispose() -> void
+PandaBear.ObjectStorage.ObjectReadResult.Length.get -> long
+PandaBear.ObjectStorage.ObjectReadResult.Length.init -> void
+PandaBear.ObjectStorage.ObjectReadResult.ObjectKey.get -> string!
+PandaBear.ObjectStorage.ObjectReadResult.ObjectKey.init -> void
+PandaBear.ObjectStorage.ObjectReadResult.ObjectReadResult(string! ObjectKey, System.IO.Stream! Content, string! ContentType, long Length, string? Checksum = null) -> void
+PandaBear.ObjectStorage.ObjectUploadRequest
+PandaBear.ObjectStorage.ObjectUploadRequest.ContentType.get -> string!
+PandaBear.ObjectStorage.ObjectUploadRequest.ContentType.init -> void
+PandaBear.ObjectStorage.ObjectUploadRequest.ExpiresAfter.get -> System.TimeSpan
+PandaBear.ObjectStorage.ObjectUploadRequest.ExpiresAfter.init -> void
+PandaBear.ObjectStorage.ObjectUploadRequest.Length.get -> long
+PandaBear.ObjectStorage.ObjectUploadRequest.Length.init -> void
+PandaBear.ObjectStorage.ObjectUploadRequest.ObjectKey.get -> string!
+PandaBear.ObjectStorage.ObjectUploadRequest.ObjectKey.init -> void
+PandaBear.ObjectStorage.ObjectUploadRequest.ObjectUploadRequest(string! ObjectKey, string! ContentType, long Length, System.TimeSpan ExpiresAfter) -> void
+PandaBear.ObjectStorage.ObjectUploadTicket
+PandaBear.ObjectStorage.ObjectUploadTicket.ExpiresAt.get -> System.DateTimeOffset
+PandaBear.ObjectStorage.ObjectUploadTicket.ExpiresAt.init -> void
+PandaBear.ObjectStorage.ObjectUploadTicket.ObjectKey.get -> string!
+PandaBear.ObjectStorage.ObjectUploadTicket.ObjectKey.init -> void
+PandaBear.ObjectStorage.ObjectUploadTicket.ObjectUploadTicket(string! ObjectKey, System.Uri! UploadUri, System.DateTimeOffset ExpiresAt, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! RequiredHeaders) -> void
+PandaBear.ObjectStorage.ObjectUploadTicket.RequiredHeaders.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+PandaBear.ObjectStorage.ObjectUploadTicket.RequiredHeaders.init -> void
+PandaBear.ObjectStorage.ObjectUploadTicket.UploadUri.get -> System.Uri!
+PandaBear.ObjectStorage.ObjectUploadTicket.UploadUri.init -> void
+PandaBear.ObjectStorage.ObjectWriteRequest
+PandaBear.ObjectStorage.ObjectWriteRequest.Checksum.get -> string?
+PandaBear.ObjectStorage.ObjectWriteRequest.Checksum.init -> void
+PandaBear.ObjectStorage.ObjectWriteRequest.Content.get -> System.IO.Stream!
+PandaBear.ObjectStorage.ObjectWriteRequest.Content.init -> void
+PandaBear.ObjectStorage.ObjectWriteRequest.ContentType.get -> string!
+PandaBear.ObjectStorage.ObjectWriteRequest.ContentType.init -> void
+PandaBear.ObjectStorage.ObjectWriteRequest.Length.get -> long
+PandaBear.ObjectStorage.ObjectWriteRequest.Length.init -> void
+PandaBear.ObjectStorage.ObjectWriteRequest.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>?
+PandaBear.ObjectStorage.ObjectWriteRequest.Metadata.init -> void
+PandaBear.ObjectStorage.ObjectWriteRequest.ObjectKey.get -> string!
+PandaBear.ObjectStorage.ObjectWriteRequest.ObjectKey.init -> void
+PandaBear.ObjectStorage.ObjectWriteRequest.ObjectWriteRequest(string! ObjectKey, System.IO.Stream! Content, string! ContentType, long Length, string? Checksum = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? Metadata = null) -> void
+PandaBear.ObjectStorage.ObjectWriteResult
+PandaBear.ObjectStorage.ObjectWriteResult.Checksum.get -> string?
+PandaBear.ObjectStorage.ObjectWriteResult.Checksum.init -> void
+PandaBear.ObjectStorage.ObjectWriteResult.ContentType.get -> string!
+PandaBear.ObjectStorage.ObjectWriteResult.ContentType.init -> void
+PandaBear.ObjectStorage.ObjectWriteResult.Length.get -> long
+PandaBear.ObjectStorage.ObjectWriteResult.Length.init -> void
+PandaBear.ObjectStorage.ObjectWriteResult.ObjectKey.get -> string!
+PandaBear.ObjectStorage.ObjectWriteResult.ObjectKey.init -> void
+PandaBear.ObjectStorage.ObjectWriteResult.ObjectWriteResult(string! ObjectKey, System.Uri! StorageUri, System.Uri! PublicUri, string! ContentType, long Length, string? Checksum) -> void
+PandaBear.ObjectStorage.ObjectWriteResult.PublicUri.get -> System.Uri!
+PandaBear.ObjectStorage.ObjectWriteResult.PublicUri.init -> void
+PandaBear.ObjectStorage.ObjectWriteResult.StorageUri.get -> System.Uri!
+PandaBear.ObjectStorage.ObjectWriteResult.StorageUri.init -> void

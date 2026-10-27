@@ -1,0 +1,37 @@
+#nullable enable
+const PandaBear.ObjectStorage.S3.S3ObjectStoreTelemetry.Name = "SharedKernel.ObjectStorage.S3" -> string!
+PandaBear.ObjectStorage.S3.S3ObjectStore
+PandaBear.ObjectStorage.S3.S3ObjectStore.CreateUploadUrl(PandaBear.ObjectStorage.ObjectUploadRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectUploadTicket!>
+PandaBear.ObjectStorage.S3.S3ObjectStore.Delete(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.ObjectStorage.S3.S3ObjectStore.Exists(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<bool>
+PandaBear.ObjectStorage.S3.S3ObjectStore.GetPublicUri(string! objectKey) -> System.Uri!
+PandaBear.ObjectStorage.S3.S3ObjectStore.ListKeys(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<string!>!>
+PandaBear.ObjectStorage.S3.S3ObjectStore.ListObjects(string! prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<PandaBear.ObjectStorage.ObjectInventoryItem!>!>
+PandaBear.ObjectStorage.S3.S3ObjectStore.OpenRead(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectReadResult!>
+PandaBear.ObjectStorage.S3.S3ObjectStore.Put(PandaBear.ObjectStorage.ObjectWriteRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectWriteResult!>
+PandaBear.ObjectStorage.S3.S3ObjectStore.S3ObjectStore(Amazon.S3.IAmazonS3! client, Microsoft.Extensions.Options.IOptions<PandaBear.ObjectStorage.S3.S3ObjectStoreOptions!>! storageOptions, System.TimeProvider! timeProvider) -> void
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.AccessKey.get -> string!
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.AccessKey.set -> void
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.AuthenticationRegion.get -> string!
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.AuthenticationRegion.set -> void
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.AutoProvisionBucket.get -> bool
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.AutoProvisionBucket.set -> void
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.Bucket.get -> string!
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.Bucket.set -> void
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.BucketProvisioningTimeout.get -> System.TimeSpan
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.BucketProvisioningTimeout.set -> void
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.Endpoint.get -> System.Uri?
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.Endpoint.set -> void
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.ForcePathStyle.get -> bool
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.ForcePathStyle.set -> void
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.MaxObjectKeyLength.get -> int
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.MaxObjectKeyLength.set -> void
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.PublicBaseUri.get -> System.Uri!
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.PublicBaseUri.set -> void
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.S3ObjectStoreOptions() -> void
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.SecretKey.get -> string!
+PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.SecretKey.set -> void
+PandaBear.ObjectStorage.S3.S3ObjectStoreServiceCollectionExtensions
+PandaBear.ObjectStorage.S3.S3ObjectStoreTelemetry
+static PandaBear.ObjectStorage.S3.S3ObjectStoreServiceCollectionExtensions.AddS3ObjectStore(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<PandaBear.ObjectStorage.S3.S3ObjectStoreOptions!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>PandaBear.SharedKernel.ObjectStorage</PackageId>
+        <Description>Host-neutral object-storage contracts.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>object-storage;storage;contracts;shared-kernel</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>
