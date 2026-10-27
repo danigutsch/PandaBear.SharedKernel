@@ -15,6 +15,7 @@ Choose the packages your project needs. Each package has its own README with req
 | Represent success, validation failures, and optional values | [Results](src/SharedKernel/SharedKernel.Results/README.md) |
 | Model domains and dispatch requests or events | [Domain](src/SharedKernel/SharedKernel.Domain/README.md) · [Mediator](src/SharedKernel/SharedKernel.Mediator/README.md) |
 | Handle HTTP outcomes, uploads, caching, and API versions | [HttpClients](src/SharedKernel/SharedKernel.HttpClients/README.md) · [HTTP caching](src/SharedKernel/SharedKernel.HttpCaching.AspNetCore/README.md) · [API versioning](src/SharedKernel/SharedKernel.ApiVersioning/README.md) |
+| Show HTTP failures, server validation, handled UI errors, and upload status accessibly in Blazor | [Blazor](src/SharedKernel/SharedKernel.Blazor/README.md) |
 | Add database-specific persistence and coordination | [Entity Framework Core](src/SharedKernel/SharedKernel.EntityFrameworkCore/README.md) · [PostgreSQL](src/SharedKernel/SharedKernel.Npgsql/README.md) · [Idempotency](src/SharedKernel/SharedKernel.Idempotency.Abstractions/README.md) |
 | Work with durable events and integration messages | [Event sourcing](src/SharedKernel/SharedKernel.EventSourcing/README.md) · [Integration events](src/SharedKernel/SharedKernel.Messaging.IntegrationEvents/README.md) |
 | Rewind bounded uploads or imports for multiple passes | [IO](src/SharedKernel/SharedKernel.IO/README.md) · [IO analyzers](src/SharedKernel/SharedKernel.IO.Analyzers/README.md) |
