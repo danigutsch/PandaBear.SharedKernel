@@ -18,6 +18,8 @@ key, URL and request identifiers are never tagged. AWS SDK tracing is not regist
 suppressed while an operation runs, so path-style URLs cannot reach exporters.
 Hosting a local SeaweedFS container belongs to `SharedKernel.Aspire.Hosting.SeaweedFs`.
 
+`AddS3ObjectStoreHealthCheck()` registers a readiness check that lists at most one key and never creates the bucket; failure text never carries the endpoint, bucket, or provider message.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.ObjectStorage.S3`. C# namespace: `PandaBear.ObjectStorage.S3`. Assembly/project identity: `SharedKernel.ObjectStorage.S3`.

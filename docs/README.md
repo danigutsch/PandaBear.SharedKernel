@@ -4,6 +4,7 @@
 - [Security baseline](security-baseline.md)
 - [Test assertion conventions](TEST_GUIDELINES.md)
 - [File and stream intake](stream-intake.md)
+- [Object storage and malware scanning](storage-and-scanning.md)
 - [Payment identifiers and payment epic handoff](plans/payment-identifiers.md)
 - [Command-line tool guidance](command-line-tools.md)
 - [Vault manager tool design](plans/vault-manager.md)

@@ -49,6 +49,12 @@ internal sealed class FakeAmazonS3Client : AmazonS3Client
     /// <summary>Gets or sets the last-modified time reported for listed objects.</summary>
     public DateTime ListObjectLastModified { get; set; } = TimeProvider.System.GetUtcNow().UtcDateTime;
 
+    /// <summary>Gets or sets the exception a listing throws, or null to succeed.</summary>
+    public Exception? ListObjectsException
+    {
+        get; set;
+    }
+
     /// <summary>Gets or sets whether listing returns no objects.</summary>
     public bool ReturnEmptyListResponse
     {
@@ -106,6 +112,11 @@ internal sealed class FakeAmazonS3Client : AmazonS3Client
     public override Task<ListObjectsV2Response> ListObjectsV2Async(ListObjectsV2Request request, CancellationToken cancellationToken = default)
     {
         Operations.Add($"ListObjectsV2:{request.BucketName}/{request.Prefix}/{request.ContinuationToken}");
+        if (ListObjectsException is not null)
+        {
+            throw ListObjectsException;
+        }
+
         if (ReturnEmptyListResponse)
         {
             return Task.FromResult(new ListObjectsV2Response { IsTruncated = false });
