@@ -9,12 +9,12 @@ public sealed class S3ObjectStoreTelemetryTests
     {
         // Arrange
         var expectedSource = S3ObjectStoreTelemetry.ActivitySource;
-        var activities = new List<Activity>();
+        var activities = new System.Collections.Concurrent.ConcurrentQueue<Activity>();
         using var listener = new ActivityListener
         {
             ShouldListenTo = source => ReferenceEquals(source, expectedSource),
             Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-            ActivityStopped = activities.Add
+            ActivityStopped = activities.Enqueue
         };
         ActivitySource.AddActivityListener(listener);
         using var client = new FakeAmazonS3Client();
@@ -24,9 +24,11 @@ public sealed class S3ObjectStoreTelemetryTests
         _ = await store.Exists("private/customer/image.jpg", TestContext.Current.CancellationToken);
 
         // Assert
-        activities.Count.ShouldBe(1);
-        var activity = activities[0];
-        activity.TagObjects.Select(static tag => tag.Key).ShouldBe(["object_storage.operation"]);
-        activity.TagObjects.Any(static tag => $"{tag.Value}".Contains("customer", StringComparison.Ordinal)).ShouldBe(false);
+        listener.Dispose();
+        // Other tests share the source, so assert over every activity seen.
+        activities.Any(static activity => activity.OperationName == "object_storage.exists").ShouldBe(true);
+        activities.SelectMany(static activity => activity.TagObjects)
+            .Any(static tag => tag.Key != "object_storage.operation" || $"{tag.Value}".Contains("customer", StringComparison.Ordinal))
+            .ShouldBe(false);
     }
 }
