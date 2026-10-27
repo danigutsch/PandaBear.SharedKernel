@@ -167,7 +167,8 @@ public static class HttpResponseShouldAssertionExtensions
     /// <returns>The matching link object.</returns>
     public static JsonElement ShouldHaveLink(this JsonElement actual, string rel)
     {
-        var links = GetRequiredProperty(actual, "links");
+        actual.ValueKind.ShouldBe(JsonValueKind.Object);
+        actual.TryGetProperty("links", out var links).ShouldBeTrue("Expected payload property 'links'.");
         links.ValueKind.ShouldBe(JsonValueKind.Array);
         foreach (var link in links.EnumerateArray())
         {

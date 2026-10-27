@@ -29,4 +29,20 @@ internal static class JsonPayload
             return true;
         }
     }
+
+    /// <summary>Runs an assertion and returns the message of the xUnit assertion exception it throws.</summary>
+    /// <param name="assertion">The assertion to run.</param>
+    /// <returns>The failure message, or <see langword="null"/> when the assertion passed.</returns>
+    public static string? FailureMessage(Action assertion)
+    {
+        try
+        {
+            assertion();
+            return null;
+        }
+        catch (Xunit.Sdk.XunitException exception)
+        {
+            return exception.Message;
+        }
+    }
 }

@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using PandaBear.Results;
 
 namespace PandaBear.BuildingBlocks.Tests;
@@ -59,7 +58,7 @@ public sealed class HypermediaLinkTests
         var link = HypermediaLink.Create("self", "/x", "GET").Value!;
 
         // Act
-        var json = JsonSerializer.Serialize(link, HypermediaLinkTestJsonContext.Default.HypermediaLink);
+        var json = JsonSerializer.Serialize(link, HypermediaLinkTestsJsonContext.Default.HypermediaLink);
 
         // Assert
         json.ShouldBe("""{"rel":"self","href":"/x","method":"GET"}""");
@@ -69,7 +68,7 @@ public sealed class HypermediaLinkTests
     public void Deserialize_roundtripsthewireshape()
     {
         // Act
-        var link = JsonSerializer.Deserialize("""{"rel":"self","href":"/x","method":"GET"}""", HypermediaLinkTestJsonContext.Default.HypermediaLink);
+        var link = JsonSerializer.Deserialize("""{"rel":"self","href":"/x","method":"GET"}""", HypermediaLinkTestsJsonContext.Default.HypermediaLink);
 
         // Assert
         link.ShouldBe(HypermediaLink.Create("self", "/x", "GET").Value);
@@ -79,7 +78,7 @@ public sealed class HypermediaLinkTests
     public void Deserialize_withblankvalue_throwsargumentexception()
     {
         // Arrange
-        Func<object?> act = () => JsonSerializer.Deserialize("""{"rel":"","href":"/x","method":"GET"}""", HypermediaLinkTestJsonContext.Default.HypermediaLink);
+        Func<object?> act = () => JsonSerializer.Deserialize("""{"rel":"","href":"/x","method":"GET"}""", HypermediaLinkTestsJsonContext.Default.HypermediaLink);
 
         // Act, Assert
         act.ShouldThrow<ArgumentException>();
@@ -89,13 +88,9 @@ public sealed class HypermediaLinkTests
     public void Deserialize_withmissingvalue_throwsargumentnullexception()
     {
         // Arrange
-        Func<object?> act = () => JsonSerializer.Deserialize("""{"rel":"self","href":"/x"}""", HypermediaLinkTestJsonContext.Default.HypermediaLink);
+        Func<object?> act = () => JsonSerializer.Deserialize("""{"rel":"self","href":"/x"}""", HypermediaLinkTestsJsonContext.Default.HypermediaLink);
 
         // Act, Assert
         act.ShouldThrow<ArgumentNullException>();
     }
 }
-
-/// <summary>Source-generated JSON metadata for the wire-shape tests.</summary>
-[JsonSerializable(typeof(HypermediaLink))]
-internal sealed partial class HypermediaLinkTestJsonContext : JsonSerializerContext;
