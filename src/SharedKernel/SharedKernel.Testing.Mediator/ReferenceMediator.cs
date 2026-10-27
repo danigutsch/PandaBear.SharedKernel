@@ -293,7 +293,7 @@ public sealed class ReferenceMediator : IMediator
         /// <summary>Name of the registered implementation type, used in diagnostics.</summary>
         public string ImplementationTypeName { get; } = implementationTypeName;
 
-        /// <summary>Explicit order within the stage; lower values run first.</summary>
+        /// <summary>Explicit order; lower values run first.</summary>
         public int Order { get; } = order;
 
         /// <summary>Whether the order was set explicitly rather than defaulted; explicitly ordered handlers run first.</summary>

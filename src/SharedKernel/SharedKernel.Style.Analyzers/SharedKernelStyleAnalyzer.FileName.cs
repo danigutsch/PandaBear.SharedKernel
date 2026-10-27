@@ -13,7 +13,7 @@ public sealed partial class SharedKernelStyleAnalyzer
         category: "Style",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "A file that declares exactly one top-level type should be named after that type. A generic type may add its type parameters in braces, such as Result{T}.cs. Generated files, files with several top-level types, and nested types are not checked.",
+        description: "A file that declares exactly one top-level type should be named after that type. A generic type may add its type parameters in braces, such as Result{T}.cs. Partial types, which are split across files by design, generated files, files with several top-level types, and nested types are not checked.",
         helpLinkUri: "https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Style.Analyzers/README.md#skstyle016");
 
     private static void AnalyzeFileName(SyntaxTreeAnalysisContext context)
@@ -25,7 +25,7 @@ public sealed partial class SharedKernelStyleAnalyzer
         }
 
         var topLevelTypes = GetTopLevelTypes(root).ToArray();
-        if (topLevelTypes.Length != 1)
+        if (topLevelTypes.Length != 1 || IsPartialType(topLevelTypes[0]))
         {
             return;
         }

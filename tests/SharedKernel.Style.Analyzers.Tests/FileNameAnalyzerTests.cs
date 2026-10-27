@@ -148,4 +148,23 @@ public sealed class FileNameAnalyzerTests
         // Assert
         diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.FileNameMismatch);
     }
+
+    [Fact]
+    public async Task Partial_type_in_aspect_file_does_not_report_skstyle016()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed partial class TourLoader
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, path: "TourLoader.Parsing.cs");
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.FileNameMismatch);
+    }
 }
