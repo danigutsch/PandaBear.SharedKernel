@@ -4,6 +4,7 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Immutable, digest-sealed record binding a roadmap automation result to its plan and artifact so later steps can detect tampering.</summary>
 internal sealed class RoadmapAutomationResultSeal
 {
     private const int CurrentSchemaVersion = 1;
@@ -29,46 +30,55 @@ internal sealed class RoadmapAutomationResultSeal
         SealDigest = sealDigest;
     }
 
+    /// <summary>Digest of the uploaded result artifact.</summary>
     public string ArtifactDigest
     {
         get;
     }
 
+    /// <summary>Commit SHA the result was produced on.</summary>
     public string BaseSha
     {
         get;
     }
 
+    /// <summary>Whether the result changes any path.</summary>
     public bool HasChanges
     {
         get;
     }
 
+    /// <summary>Number of paths the result changes.</summary>
     public int PathCount
     {
         get;
     }
 
+    /// <summary>Digest of the plan this result belongs to.</summary>
     public string PlanDigest
     {
         get;
     }
 
+    /// <summary>Digest of the working-tree change set the result produced.</summary>
     public string ResultDigest
     {
         get;
     }
 
+    /// <summary>Digest over the whole seal content.</summary>
     public string SealDigest
     {
         get;
     }
 
+    /// <summary>Digest of the GitHub snapshot from the plan.</summary>
     public string SnapshotDigest
     {
         get;
     }
 
+    /// <summary>Validates the digests, requires the path count to agree with <paramref name="hasChanges"/>, and returns the seal bound to <paramref name="plan"/>.</summary>
     public static RoadmapAutomationResultSeal Create(
         RoadmapAutomationPlan plan,
         string baseSha,
@@ -97,6 +107,7 @@ internal sealed class RoadmapAutomationResultSeal
         return unsigned.WithSealDigest(unsigned.ComputeSealDigest());
     }
 
+    /// <summary>Reads the seal file at <paramref name="path"/>, strictly validates it, and returns it only when its plan, artifact, and result digests equal the expected ones.</summary>
     public static RoadmapAutomationResultSeal Load(
         string path,
         string expectedPlanDigest,
@@ -170,6 +181,7 @@ internal sealed class RoadmapAutomationResultSeal
         }
     }
 
+    /// <summary>Writes the seal as indented JSON to <paramref name="path"/> through a rollback-safe atomic write.</summary>
     public void Write(string path)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);

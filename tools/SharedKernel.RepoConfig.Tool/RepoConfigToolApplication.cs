@@ -53,6 +53,7 @@ internal static class RepoConfigToolApplication
         }
     }
 
+    /// <summary>Creates the missing repository roadmap structure and lists the paths it created.</summary>
     public static int Init(string rootPath, TextWriter output)
     {
         var createdPaths = RepoConfigInitializer.Initialize(rootPath);
@@ -71,6 +72,7 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
+    /// <summary>Verifies the repository configuration and returns 0 when it is valid, otherwise reports the issues and returns 1.</summary>
     public static int Verify(string rootPath, TextWriter output, TextWriter error)
     {
         var issues = RepoConfigVerifier.Verify(rootPath);
@@ -84,6 +86,7 @@ internal static class RepoConfigToolApplication
         return 1;
     }
 
+    /// <summary>Reports repository configuration drift and returns 0 when there is none, otherwise 1.</summary>
     public static int Diff(string rootPath, TextWriter output, TextWriter error)
     {
         var issues = RepoConfigVerifier.Verify(rootPath);
@@ -97,6 +100,7 @@ internal static class RepoConfigToolApplication
         return 1;
     }
 
+    /// <summary>Sets one repository configuration value identified by <paramref name="key"/>.</summary>
     public static int Set(string rootPath, string key, string value, TextWriter output)
     {
         RepoConfigSetter.Set(rootPath, key, value);
@@ -104,6 +108,7 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
+    /// <summary>Runs a roadmap query against the loaded roadmap and writes up to <paramref name="limit"/> matching results.</summary>
     public static int Get(string rootPath, string query, string? value, string? type, int limit, TextWriter output)
     {
         // The command tree accepts only known queries and requires a value exactly for blockers-of, by-tag, and by-label.
@@ -181,6 +186,7 @@ internal static class RepoConfigToolApplication
         }
     }
 
+    /// <summary>Previews, or with <paramref name="force"/> applies, the sync of roadmap items to GitHub issues.</summary>
     public static async Task<int> SyncGitHub(string rootPath, bool force, HttpClient? httpClient, TextWriter output, CancellationToken ct)
     {
         var syncer = new GitHubRoadmapSyncer(RoadmapProject.Load(rootPath), httpClient);
@@ -191,6 +197,7 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
+    /// <summary>Previews, or with <paramref name="force"/> applies, the reconciliation of roadmap items with their GitHub issues.</summary>
     public static async Task<int> ReconcileGitHub(string rootPath, bool force, HttpClient? httpClient, TextWriter output, CancellationToken ct)
     {
         var reconciler = new GitHubRoadmapReconciler(RoadmapProject.Load(rootPath), httpClient);
@@ -201,6 +208,7 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
+    /// <summary>Previews, or with <paramref name="force"/> applies, the import of GitHub issues into the roadmap.</summary>
     public static async Task<int> ImportGitHub(string rootPath, bool force, HttpClient? httpClient, TextWriter output, CancellationToken ct)
     {
         var intake = new GitHubRoadmapIntake(RoadmapProject.Load(rootPath), httpClient);
@@ -211,6 +219,7 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
+    /// <summary>Verifies the encoding of repository text files and returns 0 when valid, otherwise reports issues and returns 1.</summary>
     public static async Task<int> VerifyTextEncoding(string rootPath, TextWriter output, TextWriter error, CancellationToken ct)
     {
         var issues = await TextEncodingVerifier.Verify(rootPath, ct).ConfigureAwait(false);
@@ -224,6 +233,7 @@ internal static class RepoConfigToolApplication
         return 1;
     }
 
+    /// <summary>Verifies that repository JSON files are valid and returns 0 when they are, otherwise reports issues and returns 1.</summary>
     public static async Task<int> VerifyJson(string rootPath, TextWriter output, TextWriter error, CancellationToken ct)
     {
         var issues = await JsonVerifier.Verify(rootPath, ct).ConfigureAwait(false);
@@ -237,6 +247,7 @@ internal static class RepoConfigToolApplication
         return 1;
     }
 
+    /// <summary>Verifies that repository line endings match their attributes and returns 0 when they do, otherwise reports issues and returns 1.</summary>
     public static async Task<int> VerifyLineEndings(string rootPath, TextWriter output, TextWriter error, CancellationToken ct)
     {
         var issues = await LineEndingVerifier.Verify(rootPath, ct).ConfigureAwait(false);
@@ -316,6 +327,7 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
+    /// <summary>Creates the roadmap automation plan for the current workflow run and publishes its digest, branch name, and base SHA as workflow outputs.</summary>
     public static async Task<int> PlanAutomation(RoadmapAutomationService service, TextWriter output, CancellationToken ct)
     {
         var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");
@@ -346,6 +358,7 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
+    /// <summary>Validates the roadmap automation plan identified by the plan digest environment variable.</summary>
     public static async Task<int> ValidateAutomationPlan(RoadmapAutomationService service, TextWriter output, CancellationToken ct)
     {
         var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");
@@ -357,6 +370,7 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
+    /// <summary>Applies the closure approvals of the validated roadmap automation plan.</summary>
     public static async Task<int> ApplyAutomationPlan(RoadmapAutomationService service, TextWriter output, CancellationToken ct)
     {
         var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");
@@ -368,6 +382,7 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
+    /// <summary>Seals the roadmap automation result for the validated plan and publishes the seal as workflow output.</summary>
     public static async Task<int> SealAutomationResult(RoadmapAutomationService service, TextWriter output, CancellationToken ct)
     {
         var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");
@@ -395,6 +410,7 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
+    /// <summary>Verifies the sealed roadmap automation result for the plan identified by the plan digest environment variable.</summary>
     public static async Task<int> VerifyAutomationResult(RoadmapAutomationService service, TextWriter output, CancellationToken ct)
     {
         var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");

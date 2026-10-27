@@ -6,6 +6,7 @@ using System.Text.Json.Nodes;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Synchronizes roadmap items to GitHub issues and a GitHub project.</summary>
 internal sealed class GitHubRoadmapSyncer
 {
     private const decimal ProjectNumberTolerance = 0.000001m;
@@ -26,11 +27,17 @@ internal sealed class GitHubRoadmapSyncer
     private readonly RoadmapProject _project;
     private readonly TimeProvider _timeProvider;
 
+    /// <summary>Creates a syncer that creates its own HTTP client from the environment.</summary>
+    /// <param name="project">Roadmap project to synchronize.</param>
     public GitHubRoadmapSyncer(RoadmapProject project)
         : this(project, httpClient: null, timeProvider: null)
     {
     }
 
+    /// <summary>Creates a syncer with explicit dependencies.</summary>
+    /// <param name="project">Roadmap project to synchronize.</param>
+    /// <param name="httpClient">GitHub client, or <see langword="null" /> to create one from the environment.</param>
+    /// <param name="timeProvider">Time source, or <see langword="null" /> for the system clock.</param>
     internal GitHubRoadmapSyncer(RoadmapProject project, HttpClient? httpClient, TimeProvider? timeProvider = null)
     {
         ArgumentNullException.ThrowIfNull(project);
@@ -40,6 +47,8 @@ internal sealed class GitHubRoadmapSyncer
         _timeProvider = timeProvider ?? TimeProvider.System;
     }
 
+    /// <summary>Returns the changes synchronization would make, without applying them.</summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task<GitHubSyncResult> Preview(CancellationToken cancellationToken)
     {
         var itemsWithIssues = GetItemsToSync();
@@ -71,6 +80,8 @@ internal sealed class GitHubRoadmapSyncer
         return new GitHubSyncResult(messages);
     }
 
+    /// <summary>Applies synchronization and returns the messages describing the changes.</summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task<GitHubSyncResult> Apply(CancellationToken cancellationToken)
     {
         var repository = GetGitHubRepository();

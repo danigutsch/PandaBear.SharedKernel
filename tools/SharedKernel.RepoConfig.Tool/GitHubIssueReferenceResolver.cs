@@ -5,11 +5,19 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Resolves where a referenced GitHub issue currently lives, following transfers.</summary>
+/// <param name="httpClient">Authenticated GitHub client.</param>
+/// <param name="timeProvider">Time source for retry delays, or <see langword="null" /> for the system clock.</param>
 internal sealed class GitHubIssueReferenceResolver(HttpClient httpClient, TimeProvider? timeProvider = null)
 {
     private const int MaximumResponseBytes = 1024 * 1024;
     private const int MaximumRedirects = 5;
 
+    /// <summary>Looks up the issue and returns its current repository, number, and node ID or a diagnostic.</summary>
+    /// <param name="repository">Repository the reference names.</param>
+    /// <param name="number">Issue number the reference names.</param>
+    /// <param name="nodeId">Previously recorded node ID, if any.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task<GitHubIssueReferenceResolution> Resolve(
         string repository,
         int number,

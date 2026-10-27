@@ -4,11 +4,13 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Captures the git working-tree changes of a roadmap run and later verifies they are unchanged.</summary>
 internal static class RoadmapGitChangeGuard
 {
     private const int MaxRoadmapFileBytes = 4 * 1024 * 1024;
     private static readonly UTF8Encoding StrictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
+    /// <summary>Parses NUL-delimited git status output, validates modes and paths, and returns the change set with a content digest.</summary>
     public static RoadmapGitChangeSet Capture(string rootPath, byte[] nulDelimitedStatus)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
@@ -38,6 +40,7 @@ internal static class RoadmapGitChangeGuard
             entries);
     }
 
+    /// <summary>Revalidates the entries of <paramref name="expected"/> and throws when the recomputed digest differs, meaning the files changed since capture.</summary>
     public static void Verify(string rootPath, RoadmapGitChangeSet expected)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
