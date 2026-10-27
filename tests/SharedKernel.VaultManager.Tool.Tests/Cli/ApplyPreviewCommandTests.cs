@@ -5,12 +5,14 @@ using static PandaBear.VaultManager.Tool.Tests.Cli.PreviewInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests the dry run and the removal guard of the apply command.</summary>
 public sealed class ApplyPreviewCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture preview export password";
     private const string Item = "bitwarden|vault.json|bw-github (\"GitHub\"): ";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-apply-preview-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

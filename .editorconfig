@@ -266,7 +266,16 @@ dotnet_diagnostic.SKSTYLE004.severity = suggestion
 dotnet_diagnostic.SKSTYLE017.severity = suggestion
 
 # Documented test projects: undocumented members fail the build.
+[tests/SharedKernel.K6.Tool.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.PlaywrightMcp.Tool.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
 [tests/SharedKernel.RepoConfig.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.VaultManager.Tool.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
 [tests/SharedKernel.Versioning.Tests/**.cs]

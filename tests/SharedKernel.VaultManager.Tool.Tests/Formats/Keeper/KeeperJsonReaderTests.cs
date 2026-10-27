@@ -6,10 +6,12 @@ using static PandaBear.VaultManager.Tool.Tests.Formats.Keeper.KeeperTestData;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats.Keeper;
 
+/// <summary>Tests the reader for Keeper JSON and zip exports.</summary>
 public sealed class KeeperJsonReaderTests : IDisposable
 {
     private readonly string directory = Directory.CreateTempSubdirectory("vault-manager-keeper-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

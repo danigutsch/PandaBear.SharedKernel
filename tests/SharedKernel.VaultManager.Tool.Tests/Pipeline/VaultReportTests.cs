@@ -7,6 +7,7 @@ using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
 
+/// <summary>Tests the Markdown vault report produced from a pipeline result.</summary>
 public sealed class VaultReportTests : IDisposable
 {
     private const string OldPassword = "fixture-old-keeper-password";
@@ -16,6 +17,7 @@ public sealed class VaultReportTests : IDisposable
     private const string ExportPassword = "fixture export password";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-pipeline-report-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

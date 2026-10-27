@@ -3,12 +3,14 @@ using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests how the commands ask for, refuse, and handle failures of passwords.</summary>
 public sealed class CommandPasswordTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private const string FilePassword = "fixture file password";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-passwords-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

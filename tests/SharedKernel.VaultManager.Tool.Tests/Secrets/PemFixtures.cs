@@ -19,17 +19,20 @@ internal static class PemFixtures
 
     private static readonly string Dashes = new('-', 5);
 
+    /// <summary>Returns a PEM boundary line such as <c>-----BEGIN label-----</c>.</summary>
     public static string Boundary(string kind, string label)
     {
         return Dashes + kind + " " + label + Dashes;
     }
 
+    /// <summary>Returns the stored Ed25519 OpenSSH private key as PEM text.</summary>
     public static string Ed25519OpenSsh()
     {
         string inner = Encoding.ASCII.GetString(Convert.FromBase64String(Fixture.Read("secrets/ed25519-openssh.body.b64")));
         return Wrap("OPENSSH PRIVATE KEY", inner, 70);
     }
 
+    /// <summary>Wraps <paramref name="base64"/> in PEM boundaries for <paramref name="label"/>, with lines of <paramref name="width"/> characters.</summary>
     public static string Wrap(string label, string base64, int width = 64)
     {
         var builder = new StringBuilder();
@@ -43,16 +46,19 @@ internal static class PemFixtures
         return builder.ToString();
     }
 
+    /// <summary>Returns <paramref name="rsa"/> as a PKCS#1 PEM key.</summary>
     public static string RsaPkcs1(RSA rsa)
     {
         return Wrap("RSA PRIVATE KEY", Convert.ToBase64String(rsa.ExportRSAPrivateKey()));
     }
 
+    /// <summary>Returns <paramref name="key"/> as an unencrypted PKCS#8 PEM key.</summary>
     public static string Pkcs8(AsymmetricAlgorithm key)
     {
         return Wrap("PRIVATE KEY", Convert.ToBase64String(key.ExportPkcs8PrivateKey()));
     }
 
+    /// <summary>Returns <paramref name="key"/> as a SEC1 PEM key.</summary>
     public static string Sec1(ECDsa key)
     {
         return Wrap("EC PRIVATE KEY", Convert.ToBase64String(key.ExportECPrivateKey()));
@@ -112,6 +118,7 @@ internal static class PemFixtures
         return Wrap("EC PRIVATE KEY", Convert.ToBase64String(writer.Encode()));
     }
 
+    /// <summary>Returns <paramref name="key"/> as a PKCS#8 PEM key encrypted with a fixed test password.</summary>
     public static string EncryptedPkcs8(AsymmetricAlgorithm key)
     {
         var parameters = new PbeParameters(PbeEncryptionAlgorithm.Aes256Cbc, HashAlgorithmName.SHA256, 1000);

@@ -15,6 +15,7 @@ public sealed class SmallScreenTests : IDisposable
 {
     private readonly string directory = Directory.CreateTempSubdirectory("vault-review-small-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

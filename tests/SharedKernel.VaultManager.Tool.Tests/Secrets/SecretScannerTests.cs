@@ -5,6 +5,7 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests the secret scanner: what it finds in item text, how confident it is, and where it proposes to place each finding.</summary>
 public sealed class SecretScannerTests
 {
     private static readonly SecretScanner Scanner = SecretScanner.Default;

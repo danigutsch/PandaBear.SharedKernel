@@ -9,11 +9,17 @@ namespace PandaBear.VaultManager.Tool.Tests.Cli;
 /// <summary>Writes synthetic exports for command-line tests. Secret-shaped values are built at test runtime.</summary>
 internal static class CliInputs
 {
+    /// <summary>The password of the Keeper login in the sample inputs.</summary>
     public const string KeeperPassword = "fixture-keeper-password";
+    /// <summary>The password of the Bitwarden login in the sample inputs.</summary>
     public const string BitwardenPassword = "fixture-bitwarden-password";
+    /// <summary>A password that appears only in notes.</summary>
     public const string NotesPassword = "Gh-notes-Passw0rd!";
+    /// <summary>The origin key of the Keeper login in the conflicting inputs.</summary>
     public const string KeeperKey = "keeper|keeper.json|rec-1";
+    /// <summary>The origin key of the Bitwarden login in the conflicting inputs.</summary>
     public const string BitwardenKey = "bitwarden|bitwarden.json|bw-1";
+    /// <summary>The origin key of the Keeper GitHub login.</summary>
     public const string GitHubKey = "keeper|keeper.json|rec-github";
 
     private static readonly KdfConfig FastPbkdf2 = new(KdfType.Pbkdf2Sha256, 5_000);

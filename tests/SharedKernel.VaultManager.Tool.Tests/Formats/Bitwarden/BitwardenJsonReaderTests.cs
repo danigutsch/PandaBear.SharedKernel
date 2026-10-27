@@ -4,6 +4,7 @@ using PandaBear.VaultManager.Tool.Model;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats.Bitwarden;
 
+/// <summary>Tests the reader for Bitwarden JSON exports.</summary>
 public sealed class BitwardenJsonReaderTests
 {
     [Fact]

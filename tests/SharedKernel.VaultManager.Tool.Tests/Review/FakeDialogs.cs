@@ -58,25 +58,30 @@ internal sealed class FakeDialogs : IReviewDialogs
         return this;
     }
 
+    /// <inheritdoc />
     public QuitChoice AskQuit(bool canSave)
     {
         quitQuestions.Add(canSave);
         return quitAnswers.Count > 0 ? quitAnswers.Dequeue() : QuitChoice.Discard;
     }
 
+    /// <inheritdoc />
     public string? AskExportPassword()
     {
         PasswordQuestions++;
         return Password;
     }
 
+    /// <inheritdoc />
     public bool Confirm(string title, string message)
     {
         confirmations.Add(title);
         return ConfirmAnswer;
     }
 
+    /// <inheritdoc />
     public void ShowHelp(IReadOnlyList<ReviewKey> keys) => help.Add(keys);
 
+    /// <inheritdoc />
     public void ShowError(string message) => errors.Add(message);
 }

@@ -2,6 +2,7 @@ using PandaBear.VaultManager.Tool.Model;
 
 namespace PandaBear.VaultManager.Tool.Tests.Model;
 
+/// <summary>Tests that <c>ToString</c> on vault model records hides secret values.</summary>
 public sealed class RedactionTests
 {
     private const string Secret = "fixture-secret-value";

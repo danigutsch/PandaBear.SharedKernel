@@ -8,6 +8,7 @@ using static PandaBear.VaultManager.Tool.Tests.Brief.BriefSamples;
 
 namespace PandaBear.VaultManager.Tool.Tests.Brief;
 
+/// <summary>Tests which agent decisions are accepted against the limits of a brief and how they combine with user decisions.</summary>
 public sealed class AgentDecisionsTests
 {
     [Fact]

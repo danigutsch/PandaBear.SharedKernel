@@ -2,6 +2,7 @@ using PandaBear.VaultManager.Tool.Matching;
 
 namespace PandaBear.VaultManager.Tool.Tests.Matching;
 
+/// <summary>Tests <see cref="ItemNormalizer"/> comparison forms for hosts, usernames, titles, notes, and TOTP values.</summary>
 public sealed class ItemNormalizerTests
 {
     [Theory]

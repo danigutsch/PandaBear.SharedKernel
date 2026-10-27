@@ -5,6 +5,7 @@ namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 /// <summary>Builds unencrypted OpenSSH containers with arbitrary key types for converter edge cases.</summary>
 internal static class OpenSshContainer
 {
+    /// <summary>Builds an unencrypted OpenSSH private key container for <paramref name="keyType"/> with <paramref name="privateFillerLength"/> bytes of filler as the private key data.</summary>
     public static string Unencrypted(string keyType, int privateFillerLength)
     {
         using var stream = new MemoryStream();

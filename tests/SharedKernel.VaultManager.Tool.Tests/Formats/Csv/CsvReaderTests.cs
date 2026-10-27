@@ -2,6 +2,7 @@ using PandaBear.VaultManager.Tool.Formats.Csv;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats.Csv;
 
+/// <summary>Tests the CSV parser used by the CSV format readers.</summary>
 public sealed class CsvReaderTests
 {
     [Fact]

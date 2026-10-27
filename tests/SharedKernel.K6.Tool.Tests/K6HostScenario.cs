@@ -5,6 +5,7 @@ namespace PandaBear.K6.Tool.Tests;
 /// <summary>The configuration and fake host script of a scenario with a managed host.</summary>
 internal static class K6HostScenario
 {
+    /// <summary>Builds a configuration with one <c>upload</c> scenario whose host command is <c>app-host</c>, using the given engine and timeouts.</summary>
     public static string Configuration(string engine = "podman", int readyTimeoutSeconds = 10, int healthTimeoutSeconds = 10) => $$"""
         {
           "version": 1,
@@ -30,7 +31,9 @@ internal static class K6HostScenario
         }
         """;
 
+    /// <summary>Formats the port of a health server for use in a URL.</summary>
     public static string Port(HealthServer server) => server.Port.ToString(CultureInfo.InvariantCulture);
 
+    /// <summary>Builds a shell snippet that writes a URL to the ready file the host is given.</summary>
     public static string Ready(string url) => "printf '%s\\n' " + FakeExecutable.Quote(url) + " > \"$APP_READY_FILE\"\n";
 }
