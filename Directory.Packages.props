@@ -19,6 +19,8 @@
     <PackageVersion Include="CloudNative.CloudEvents" Version="2.9.0" />
     <PackageVersion Include="CloudNative.CloudEvents.Protobuf" Version="2.9.0" />
     <PackageVersion Include="Google.Protobuf" Version="3.36.1" />
+    <!-- Build-time only: generates the Protobuf test event in SharedKernel.Messaging.Protobuf.Tests. It bundles protoc for Linux, macOS and Windows and has no dependencies. -->
+    <PackageVersion Include="Grpc.Tools" Version="2.84.0" />
     <PackageVersion Include="CommunityToolkit.Aspire.Hosting.k6" Version="13.6.0" />
     <PackageVersion Include="CommunityToolkit.Aspire.Hosting.OpenTelemetryCollector" Version="13.6.0" />
     <!-- Code analysis packages -->

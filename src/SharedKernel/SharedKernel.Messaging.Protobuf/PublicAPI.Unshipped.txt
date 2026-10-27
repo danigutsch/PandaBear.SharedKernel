@@ -10,3 +10,5 @@ PandaBear.Messaging.Protobuf.ProtobufIntegrationEventSerializer.SerializePayload
 static PandaBear.Messaging.Protobuf.ProtobufEventEnvelopeFormat.Decode(System.ReadOnlyMemory<byte> message) -> PandaBear.Messaging.EventEnvelope!
 static PandaBear.Messaging.Protobuf.ProtobufEventEnvelopeFormat.Encode(PandaBear.Messaging.IEventEnvelope! envelope) -> byte[]!
 static PandaBear.Messaging.Protobuf.ProtobufIntegrationEventSerializer.Deserialize<TIntegrationEvent>(string! payload) -> TIntegrationEvent
+PandaBear.Messaging.Protobuf.ProtobufIntegrationEventConsumerServiceCollectionExtensions
+static PandaBear.Messaging.Protobuf.ProtobufIntegrationEventConsumerServiceCollectionExtensions.AddProtobufIntegrationEventConsumer<TIntegrationEvent, THandler>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

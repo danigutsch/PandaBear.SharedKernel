@@ -11,7 +11,7 @@ public sealed class ProtobufIntegrationEventSerializerTests
     public void SerializePayload_withprotobufmessage_returnsbase64withprotobufcontenttype()
     {
         // Arrange
-        var integrationEvent = new ProtobufTestEvent { EventId = Guid.NewGuid(), OccurredAt = Occurred, Name = "Alps" };
+        var integrationEvent = TourCreated.Create(Guid.NewGuid(), Occurred, "Alps");
         var serializer = new ProtobufIntegrationEventSerializer();
 
         // Act
@@ -28,14 +28,14 @@ public sealed class ProtobufIntegrationEventSerializerTests
     public void Deserialize_ofserializedpayload_roundtripstheevent()
     {
         // Arrange
-        var integrationEvent = new ProtobufTestEvent { EventId = Guid.NewGuid(), OccurredAt = Occurred, Name = "Alps" };
+        var integrationEvent = TourCreated.Create(Guid.NewGuid(), Occurred, "Alps");
         var payload = new ProtobufIntegrationEventSerializer().SerializePayload(integrationEvent);
 
         // Act
-        var result = ProtobufIntegrationEventSerializer.Deserialize<ProtobufTestEvent>(payload.Payload);
+        var result = ProtobufIntegrationEventSerializer.Deserialize<TourCreated>(payload.Payload);
 
         // Assert
-        result.Equals(integrationEvent).ShouldBeTrue();
+        result.ShouldBe(integrationEvent);
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public sealed class ProtobufIntegrationEventSerializerTests
     {
         // Arrange
         var serializer = new ProtobufIntegrationEventSerializer();
-        Func<object?> act = () => serializer.SerializePayload<ProtobufTestEvent>(null!);
+        Func<object?> act = () => serializer.SerializePayload<TourCreated>(null!);
 
         // Act, Assert
         act.ShouldThrow<ArgumentNullException>();
@@ -83,7 +83,7 @@ public sealed class ProtobufIntegrationEventSerializerTests
     public void Deserialize_withinvalidbase64_throwsargumentexception()
     {
         // Arrange
-        Func<object?> act = () => ProtobufIntegrationEventSerializer.Deserialize<ProtobufTestEvent>("not base64!");
+        Func<object?> act = () => ProtobufIntegrationEventSerializer.Deserialize<TourCreated>("not base64!");
 
         // Act
         var exception = act.ShouldThrow<ArgumentException>();
@@ -97,7 +97,7 @@ public sealed class ProtobufIntegrationEventSerializerTests
     {
         // Arrange
         var truncated = Convert.ToBase64String([0x0A, 0x7F]);
-        Func<object?> act = () => ProtobufIntegrationEventSerializer.Deserialize<ProtobufTestEvent>(truncated);
+        Func<object?> act = () => ProtobufIntegrationEventSerializer.Deserialize<TourCreated>(truncated);
 
         // Act, Assert
         act.ShouldThrow<InvalidProtocolBufferException>();

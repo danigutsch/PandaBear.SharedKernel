@@ -28,7 +28,18 @@ services.AddSingleton<IIntegrationEventSerializer>(
     new ProtobufIntegrationEventSerializer(fallback: generatedJsonSerializer));
 ```
 
-The outbox records `SerializePayload`'s payload, encoding, and content type on each row. JSON stays the default: a serializer that only implements `Serialize` yields `application/json` with `EventPayloadEncoding.Json`. Without a fallback, an event that is not a Protobuf message fails with a `NotSupportedException` naming the event type. `ProtobufIntegrationEventSerializer.Deserialize<TIntegrationEvent>` reads a payload back; it throws `ArgumentException` for invalid base64 and `InvalidProtocolBufferException` for bytes that are not a valid message. Consuming Protobuf payloads through the generated inbox dispatcher is not provided: that dispatcher deserializes JSON.
+The outbox records `SerializePayload`'s payload, encoding, and content type on each row. JSON stays the default: a serializer that only implements `Serialize` yields `application/json` with `EventPayloadEncoding.Json`. Without a fallback, an event that is not a Protobuf message fails with a `NotSupportedException` naming the event type. `ProtobufIntegrationEventSerializer.Deserialize<TIntegrationEvent>` reads a payload back; it throws `ArgumentException` for invalid base64 and `InvalidProtocolBufferException` for bytes that are not a valid message.
+
+### Consuming Protobuf events
+
+The generated inbox dispatcher deserializes JSON, so register Protobuf events explicitly. The event type must implement `IIntegrationEvent` and `IMessage<T>` and have a public parameterless constructor, which a protoc-generated message does:
+
+```csharp
+services.AddGeneratedIntegrationEvents();                       // JSON consumers, if any
+services.AddProtobufIntegrationEventConsumer<TourCreated, TourCreatedHandler>();
+```
+
+The first call replaces the unkeyed `IEventEnvelopePublisher` with one that delivers envelopes with `EventPayloadEncoding.Base64` and `datacontenttype` `application/protobuf` to the handler registered for their event type, and passes every other envelope to the publisher registered before it (with its original lifetime, as a keyed service). Call it after `AddGeneratedIntegrationEvents`; called earlier, a JSON envelope fails with a `NotSupportedException` that names this requirement. A Protobuf envelope whose event type has no consumer, or a second consumer for one event type, fails with an actionable error too. The deserialization is typed and uses no reflection; the replacement is a plain `ServiceDescriptor` swap.
 
 ## Event format: `application/cloudevents+protobuf`
 
