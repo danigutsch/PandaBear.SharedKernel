@@ -8,6 +8,7 @@ using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Brief;
 
+/// <summary>Tests which groups, members, and findings a brief lists and what it withholds.</summary>
 public sealed class BriefBuilderTests : IDisposable
 {
     private const string KeeperKey = "keeper|keeper.json|rec-1";
@@ -18,6 +19,7 @@ public sealed class BriefBuilderTests : IDisposable
     private const string BitwardenNotes = "Bitwarden notes about the account";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-brief-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

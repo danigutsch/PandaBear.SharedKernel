@@ -5,6 +5,7 @@ using static PandaBear.VaultManager.Tool.Tests.Catalog.CatalogFixture;
 
 namespace PandaBear.VaultManager.Tool.Tests.Catalog;
 
+/// <summary>Tests applying an edited catalog to a vault.</summary>
 public sealed class CatalogApplierTests
 {
     [Fact]

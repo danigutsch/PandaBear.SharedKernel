@@ -1,5 +1,6 @@
 namespace PandaBear.PlaywrightMcp.Tool.Tests;
 
+/// <summary>Tests how the tool process reacts to a termination signal.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
 [Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
 public sealed class PlaywrightMcpTerminationTests

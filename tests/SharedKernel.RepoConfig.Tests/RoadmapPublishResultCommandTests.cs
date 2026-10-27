@@ -4,6 +4,7 @@ using static PandaBear.RepoConfig.Tests.RoadmapPublishResultTestOperations;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the <c>automation publish-result</c> command's use of the configured pull request body, required workflow files, and returned pull request URL.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class RoadmapPublishResultCommandTests

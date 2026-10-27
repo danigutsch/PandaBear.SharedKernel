@@ -1,5 +1,6 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests creating, writing, loading, and validating roadmap automation plans and their closed-item transitions.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RoadmapAutomationPlanTests
 {

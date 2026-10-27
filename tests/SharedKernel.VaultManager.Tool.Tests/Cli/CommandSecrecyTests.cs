@@ -8,6 +8,7 @@ using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests that command output never contains vault values.</summary>
 public sealed class CommandSecrecyTests : IDisposable
 {
     private const string OldPassword = "fixture-old-keeper-password";
@@ -19,6 +20,7 @@ public sealed class CommandSecrecyTests : IDisposable
     private const string ExportPassword = "fixture export password";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-secrecy-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

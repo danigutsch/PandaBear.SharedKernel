@@ -296,6 +296,9 @@ dotnet_diagnostic.SKSTYLE017.severity = warning
 [tests/SharedKernel.ImageProcessing.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
+[tests/SharedKernel.K6.Tool.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
 [tests/SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
@@ -305,13 +308,19 @@ dotnet_diagnostic.SKSTYLE017.severity = warning
 [tests/SharedKernel.Observability.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
+[tests/SharedKernel.PlaywrightMcp.Tool.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.RepoConfig.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
 [tests/SharedKernel.Style.CodeFixes.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
 [tests/SharedKernel.Testing.Analyzers.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
-[tests/SharedKernel.Testing.Tests/**.cs]
+[tests/SharedKernel.VaultManager.Tool.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
 # Reqnroll discovers binding and generated test support types by reflection.

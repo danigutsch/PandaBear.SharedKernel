@@ -1,5 +1,8 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Tests the verify-line-endings command against seeded Git repositories with eol attributes.
+/// </summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class VerifyLineEndingsCommandTests

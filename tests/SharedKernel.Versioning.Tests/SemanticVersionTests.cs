@@ -1,5 +1,8 @@
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests SemanticVersion parsing and bumping.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class SemanticVersionTests
 {

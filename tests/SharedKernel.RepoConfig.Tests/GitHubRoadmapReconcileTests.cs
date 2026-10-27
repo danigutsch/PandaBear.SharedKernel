@@ -5,6 +5,7 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the <c>github reconcile</c> roadmap command and its snapshot reads.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubRoadmapReconcileTests
 {

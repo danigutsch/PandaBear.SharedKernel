@@ -4,6 +4,7 @@ using System.Text;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the <c>verify-podman-dns</c> preflight command.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class PodmanDnsPreflightCommandTests
 {

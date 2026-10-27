@@ -2,6 +2,7 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the roadmap automation service's plan, apply, and result-sealing steps against scripted GitHub snapshots.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RoadmapAutomationServiceTests
 {

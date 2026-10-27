@@ -1,5 +1,8 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Tests the verify-gherkin command against seeded Git repositories of feature files.
+/// </summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class VerifyGherkinCommandTests

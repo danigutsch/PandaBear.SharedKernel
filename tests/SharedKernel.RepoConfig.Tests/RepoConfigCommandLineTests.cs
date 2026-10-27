@@ -2,6 +2,7 @@ using System.Globalization;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Checks the repo-config tool's command-line surface: help text, parse errors, the root option and documented command lines.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RepoConfigCommandLineTests
 {

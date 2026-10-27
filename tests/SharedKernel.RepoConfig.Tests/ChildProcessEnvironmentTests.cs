@@ -1,5 +1,6 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests that child processes started by the tool receive a sanitized environment.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class ChildProcessEnvironmentTests

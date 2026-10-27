@@ -7,6 +7,7 @@ using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
 
+/// <summary>Tests how <see cref="VaultPipeline"/> validates and writes its output file and withholds output while findings or conflicts await decisions.</summary>
 public sealed class PipelineOutputTests : IDisposable
 {
     private const string Password = "fixture-output-password";
@@ -14,6 +15,7 @@ public sealed class PipelineOutputTests : IDisposable
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
     private readonly string directory = Directory.CreateTempSubdirectory("vault-pipeline-output-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

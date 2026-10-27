@@ -1,5 +1,6 @@
 namespace PandaBear.VaultManager.Tool.Tests;
 
+/// <summary>Tests that <see cref="PasswordReader"/> reads hidden console input, handles backspace, and enforces new-password rules.</summary>
 public sealed class PasswordReaderTests
 {
     [Fact]

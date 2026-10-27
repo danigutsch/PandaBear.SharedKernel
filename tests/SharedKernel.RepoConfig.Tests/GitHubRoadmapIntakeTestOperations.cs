@@ -1,7 +1,9 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Test helpers that prepare roadmap workspaces for GitHub intake tests.</summary>
 internal static class GitHubRoadmapIntakeTestOperations
 {
+    /// <summary>Enables GitHub sync in the workspace and writes the reconciliation manifest.</summary>
     public static void Configure(TemporaryRepoConfigWorkspace workspace, string reconciliationManifest)
     {
         ArgumentNullException.ThrowIfNull(workspace);
@@ -11,6 +13,7 @@ internal static class GitHubRoadmapIntakeTestOperations
         workspace.WriteFile("roadmap/reconciliation/open-issues-test.json", reconciliationManifest);
     }
 
+    /// <summary>Adds one previously imported open roadmap item to the workspace.</summary>
     public static void AddImportedOpenItem(TemporaryRepoConfigWorkspace workspace)
     {
         ArgumentNullException.ThrowIfNull(workspace);
@@ -47,6 +50,7 @@ internal static class GitHubRoadmapIntakeTestOperations
             """);
     }
 
+    /// <summary>Adds two previously imported open items whose recorded relationship no longer matches GitHub.</summary>
     public static void AddImportedOpenPairWithStaleRelationship(TemporaryRepoConfigWorkspace workspace)
     {
         ArgumentNullException.ThrowIfNull(workspace);
@@ -105,6 +109,7 @@ internal static class GitHubRoadmapIntakeTestOperations
             """);
     }
 
+    /// <summary>Returns every roadmap JSON file in path order, each preceded by its relative path, for comparison.</summary>
     public static string ReadRoadmapState(TemporaryRepoConfigWorkspace workspace)
     {
         ArgumentNullException.ThrowIfNull(workspace);

@@ -1,5 +1,6 @@
 namespace PandaBear.PlaywrightMcp.Tool.Tests;
 
+/// <summary>Tests the engine commands the tool builds for Docker and Podman.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
 [Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
 public sealed class PlaywrightMcpCommandTests

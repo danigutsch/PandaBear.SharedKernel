@@ -4,6 +4,7 @@ using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests the text of the password prompts.</summary>
 public sealed class PasswordPromptsTests
 {
     private const string ExportPassword = "fixture export password";

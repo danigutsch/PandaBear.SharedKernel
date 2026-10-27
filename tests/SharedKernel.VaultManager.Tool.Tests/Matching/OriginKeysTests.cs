@@ -4,6 +4,7 @@ using static PandaBear.VaultManager.Tool.Tests.Matching.MatchFixture;
 
 namespace PandaBear.VaultManager.Tool.Tests.Matching;
 
+/// <summary>Tests <see cref="OriginKeys"/> key computation and its effect on duplicate matching.</summary>
 public sealed class OriginKeysTests
 {
     [Fact]

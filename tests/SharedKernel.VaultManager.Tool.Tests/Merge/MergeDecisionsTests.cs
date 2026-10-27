@@ -4,6 +4,7 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Merge;
 
+/// <summary>Tests how <see cref="MergeDecisions"/> applies finding decisions, finds field choices, and rebuilds pending entries.</summary>
 public sealed class MergeDecisionsTests
 {
     private const string OriginKey = "keeper|keeper.json|rec-1";

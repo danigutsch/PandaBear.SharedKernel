@@ -2,6 +2,7 @@ using PandaBear.VaultManager.Tool.IO;
 
 namespace PandaBear.VaultManager.Tool.Tests.IO;
 
+/// <summary>Tests that text is made safe for printing on one line.</summary>
 public sealed class PrintableTextTests
 {
     [Theory]

@@ -5,6 +5,9 @@ using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests reading, verifying, and discovering candidate manifests and consuming them.
+/// </summary>
 public static class CandidateManifestTests
 {
     [Fact]

@@ -3,6 +3,7 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests how accepted secret findings move from notes into the fields of an item or into new items.</summary>
 public sealed class SecretPlacerTests
 {
     [Fact]
