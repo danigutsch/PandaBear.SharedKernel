@@ -11,6 +11,13 @@ namespace PandaBear.Style.Analyzers.Tests;
 /// </summary>
 internal static class AnalyzerTestHarness
 {
+    /// <summary>Returns true when the diagnostic is reported inside the test source's <c>TourLoader</c> type.</summary>
+    public static bool IsInsideTourLoader(Diagnostic diagnostic)
+    {
+        var text = diagnostic.Location.SourceTree!.ToString();
+        return diagnostic.Location.SourceSpan.Start > text.IndexOf("class TourLoader", StringComparison.Ordinal);
+    }
+
     private const string DefaultUsings = """
         using System;
         using System.Collections.Generic;

@@ -16,8 +16,8 @@ the default .NET analyzer set.
 | ID | Default severity | Purpose |
 | --- | --- | --- |
 | `SKSTYLE001` | Warning | Method names should not end with `Async` unless an override or interface implementation contract requires it. |
-| `SKSTYLE002` | Warning | `CancellationToken` parameters should use the canonical name `ct`. |
-| `SKSTYLE003` | Warning | `CancellationToken` parameters should not declare default values. |
+| `SKSTYLE002` | Warning | `CancellationToken` parameters should use the canonical name `ct`. Overrides, interface implementations and lambda discards (`_`) are excluded because a contract fixes the name. |
+| `SKSTYLE003` | Warning | `CancellationToken` parameters should not declare default values. Overrides and interface implementations are excluded because callers on the concrete type rely on the contract's default. |
 | `SKSTYLE004` | Warning | Source files should not declare more than one top-level type unless they fall under a documented rollout exception. |
 | `SKSTYLE005` | Warning | Generic type names should not include suffixes that repeat generic arity. |
 | `SKSTYLE006` | Warning | Catch filters should not suppress every `OperationCanceledException` without checking the operation token. |

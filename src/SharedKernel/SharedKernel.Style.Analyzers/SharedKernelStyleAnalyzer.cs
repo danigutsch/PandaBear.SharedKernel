@@ -527,6 +527,21 @@ public sealed partial class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         return false;
     }
 
+    private static bool IsDiscard(IParameterSymbol parameter)
+    {
+        return parameter.ContainingSymbol is IMethodSymbol { MethodKind: MethodKind.AnonymousFunction }
+            && string.Equals(parameter.Name, "_", StringComparison.Ordinal);
+    }
+
+    private static bool IsContractFixedSignature(IParameterSymbol parameter)
+    {
+        return parameter.ContainingSymbol is IMethodSymbol
+        {
+            MethodKind: MethodKind.Ordinary or MethodKind.ExplicitInterfaceImplementation,
+        } method
+            && (method.IsOverride || ImplementsInterfaceContract(method));
+    }
+
     private static void AnalyzeParameter(SyntaxNodeAnalysisContext context, INamedTypeSymbol cancellationTokenType)
     {
         if (context.Node is not ParameterSyntax parameterSyntax
@@ -537,7 +552,13 @@ public sealed partial class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        if (!string.Equals(parameter.Name, CancellationTokenParameterName, StringComparison.Ordinal))
+        if (IsContractFixedSignature(parameter))
+        {
+            return;
+        }
+
+        if (!string.Equals(parameter.Name, CancellationTokenParameterName, StringComparison.Ordinal)
+            && !IsDiscard(parameter))
         {
             context.ReportDiagnostic(
                 Diagnostic.Create(
