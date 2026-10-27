@@ -207,10 +207,10 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
 
             var duplicateEventTypeGroups = registrations
                 .Where(static registration => registration.IsConsumer && registration.EventType is not null)
-                .GroupBy(static registration => (EventType: registration.EventType!, registration.IsProtobuf))
+                .GroupBy(static registration => registration.EventType!, StringComparer.Ordinal)
                 .Select(static group => new
                 {
-                    EventType = group.Key.EventType,
+                    EventType = group.Key,
                     ConsumerTypes = group.Select(static registration => registration.IntegrationEventType)
                         .Distinct(StringComparer.Ordinal)
                         .OrderBy(static type => type, StringComparer.Ordinal)

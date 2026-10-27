@@ -9,8 +9,8 @@ namespace PandaBear.Messaging.Protobuf;
 /// </summary>
 /// <remarks>
 /// A <see cref="EventPayloadEncoding.Json"/> payload is stored in <c>text_data</c>; a <see cref="EventPayloadEncoding.Base64"/> payload is
-/// decoded and stored in <c>binary_data</c>. The envelope event version is the <c>eventversion</c> extension attribute, and every entry of
-/// <see cref="IEventEnvelopePayload"/> extension attributes is a string extension attribute. A <c>proto_data</c> payload is not supported.
+/// decoded and stored in <c>binary_data</c>. The envelope event version is the <c>eventversion</c> extension attribute, and every property of
+/// <see cref="IEventEnvelope.ExtensionAttributesJson"/> is a string extension attribute. A <c>proto_data</c> payload is not supported.
 /// </remarks>
 public static class ProtobufEventEnvelopeFormat
 {

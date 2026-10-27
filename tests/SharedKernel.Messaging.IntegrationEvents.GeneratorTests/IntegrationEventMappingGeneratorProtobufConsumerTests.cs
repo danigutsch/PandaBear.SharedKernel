@@ -112,4 +112,69 @@ public sealed class IntegrationEventMappingGeneratorProtobufConsumerTests
         // Assert
         diagnosticIds.ShouldContain("SKMSG006");
     }
+
+    [Fact]
+    public void Json_and_protobuf_consumers_with_one_event_type_report_duplicate_event_types()
+    {
+        // Arrange
+        const string source = """
+            using System.Threading;
+            using System.Threading.Tasks;
+            using Google.Protobuf;
+            using Google.Protobuf.Reflection;
+            using Microsoft.Extensions.DependencyInjection;
+            using PandaBear.Messaging.Protobuf;
+
+            namespace Demo;
+
+            public sealed record LegacyTourCreatedIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "test.tour.created";
+                public static int EventVersion => 1;
+            }
+
+            // A stand-in Protobuf message declared in source, because the generator reads the event type of a message from source only.
+            public sealed class StubTourCreated : IIntegrationEvent, IMessage<StubTourCreated>
+            {
+                public static string EventType => "test.tour.created";
+                public static int EventVersion => 1;
+                public Guid EventId => Guid.Empty;
+                public DateTimeOffset OccurredAt => DateTimeOffset.MinValue;
+                public MessageDescriptor Descriptor => throw new NotSupportedException();
+                public int CalculateSize() => throw new NotSupportedException();
+                public void MergeFrom(CodedInputStream input) => throw new NotSupportedException();
+                public void WriteTo(CodedOutputStream output) => throw new NotSupportedException();
+                public void MergeFrom(StubTourCreated message) => throw new NotSupportedException();
+                public StubTourCreated Clone() => throw new NotSupportedException();
+                public bool Equals(StubTourCreated? other) => throw new NotSupportedException();
+            }
+
+            public sealed class LegacyTourCreatedHandler : IIntegrationEventHandler<LegacyTourCreatedIntegrationEvent>
+            {
+                public ValueTask Handle(LegacyTourCreatedIntegrationEvent integrationEvent, CancellationToken ct) => ValueTask.CompletedTask;
+            }
+
+            public sealed class StubTourCreatedHandler : IIntegrationEventHandler<StubTourCreated>
+            {
+                public ValueTask Handle(StubTourCreated integrationEvent, CancellationToken ct) => ValueTask.CompletedTask;
+            }
+
+            public static class Registration
+            {
+                public static IServiceCollection AddMessaging(IServiceCollection services)
+                {
+                    services.AddIntegrationEventConsumer<LegacyTourCreatedIntegrationEvent>("test.tour.created", null!);
+                    return services.AddProtobufIntegrationEventConsumer<StubTourCreated, StubTourCreatedHandler>();
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var diagnosticIds = runResult.Diagnostics.Select(static diagnostic => diagnostic.Id).ToArray();
+
+        // Assert
+        diagnosticIds.ShouldContain("SKMSG003");
+    }
 }

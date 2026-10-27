@@ -72,7 +72,7 @@ skip the decorator and weaken duplicate-delivery protection.
 ## Consequences
 
 - Missing and duplicate integration-event consumer handlers fail compilation with `SKMSG001` and
-  `SKMSG002`; duplicate consumer event types within one payload format fail compilation with
+  `SKMSG002`; duplicate consumer event types, in either payload format, fail compilation with
   `SKMSG003`; invalid registered contract types fail compilation with `SKMSG006`.
 - Protobuf messages (`Google.Protobuf.IMessage`) need no JSON metadata: the generated serializer writes
   mapped ones as base64 with `application/protobuf`, and the generated publisher delivers consumers
