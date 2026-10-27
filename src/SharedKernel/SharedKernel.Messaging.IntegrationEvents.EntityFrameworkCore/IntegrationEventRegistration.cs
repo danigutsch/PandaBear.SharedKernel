@@ -13,6 +13,10 @@ public sealed class IntegrationEventRegistration<TContext>
 {
     private readonly IServiceCollection services;
 
+    /// <summary>
+    /// Creates a registration builder over the service collection.
+    /// </summary>
+    /// <param name="services">Collection that receives the registrations.</param>
     internal IntegrationEventRegistration(IServiceCollection services)
     {
         this.services = services;

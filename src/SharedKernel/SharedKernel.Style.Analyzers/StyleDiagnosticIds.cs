@@ -71,4 +71,10 @@ public static class StyleDiagnosticIds
 
     /// <summary>Diagnostic emitted for an API JSON serializer context without case-insensitive property names.</summary>
     public const string CaseInsensitiveJsonContext = "SKSTYLE015";
+
+    /// <summary>Diagnostic emitted when a file's single top-level type does not match the file name.</summary>
+    public const string FileNameMismatch = "SKSTYLE016";
+
+    /// <summary>Diagnostic emitted for an internal type or member that lacks XML documentation.</summary>
+    public const string UndocumentedMember = "SKSTYLE017";
 }

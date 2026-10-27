@@ -12,11 +12,17 @@ internal sealed class IdempotencyEntryEntityConfiguration : IEntityTypeConfigura
     private readonly string schema;
     private readonly string tableName;
 
+    /// <summary>Creates a configuration that maps to the default schema and table.</summary>
     public IdempotencyEntryEntityConfiguration()
         : this(SharedKernelSchemas.Messaging, IdempotencyStorageOptions.DefaultTableName)
     {
     }
 
+    /// <summary>
+    /// Creates a configuration that maps to the given schema and table.
+    /// </summary>
+    /// <param name="schema">Schema that holds the table.</param>
+    /// <param name="tableName">Name of the idempotency table.</param>
     public IdempotencyEntryEntityConfiguration(string schema, string tableName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(schema);

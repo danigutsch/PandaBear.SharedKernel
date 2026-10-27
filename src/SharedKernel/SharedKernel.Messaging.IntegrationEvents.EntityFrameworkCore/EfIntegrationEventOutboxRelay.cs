@@ -14,9 +14,11 @@ internal sealed class EfIntegrationEventOutboxRelay<TContext>(
     IOptionsMonitor<IntegrationEventOutboxRelayOptions> options)
     where TContext : DbContext
 {
+    /// <summary>Publishes one batch sized by the context's configured relay options and returns how many messages were published.</summary>
     public async ValueTask<int> PublishPending(CancellationToken ct) =>
         await PublishPending(options.Get(IntegrationEventOptionsNames.Relay<TContext>()).BatchSize, ct).ConfigureAwait(false);
 
+    /// <summary>Claims up to <paramref name="batchSize" /> due messages, publishes them, and returns how many were published.</summary>
     internal async ValueTask<int> PublishPending(int batchSize, CancellationToken ct)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(batchSize);

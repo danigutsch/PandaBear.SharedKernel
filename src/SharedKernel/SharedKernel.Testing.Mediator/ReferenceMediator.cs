@@ -12,6 +12,12 @@ public sealed class ReferenceMediator : IMediator
     private readonly Dictionary<Type, NotificationRoute> notificationRoutes;
     private readonly Dictionary<(Type RequestType, Type ResponseType), StreamRoute> streamRoutes;
 
+    /// <summary>
+    /// Creates a mediator over precomputed routes.
+    /// </summary>
+    /// <param name="requestRoutes">Request routes keyed by request and response type.</param>
+    /// <param name="notificationRoutes">Notification routes keyed by notification type.</param>
+    /// <param name="streamRoutes">Stream routes keyed by request and response type.</param>
     internal ReferenceMediator(
         IDictionary<(Type RequestType, Type ResponseType), RequestRoute> requestRoutes,
         IDictionary<Type, NotificationRoute> notificationRoutes,
@@ -71,6 +77,7 @@ public sealed class ReferenceMediator : IMediator
         return route.Publish(notification, ct);
     }
 
+    /// <summary>Returns the boxed handler result as <typeparamref name="TResponse" />, or throws when its runtime type does not match.</summary>
     internal static TResponse CastBoxedResult<TResponse>(object? result)
     {
         if (result is TResponse typed)
@@ -83,14 +90,22 @@ public sealed class ReferenceMediator : IMediator
             $"Reference request dispatch returned '{sourceType.FullName}' when '{typeof(TResponse).FullName}' was expected.");
     }
 
+    /// <summary>Continues a boxed request pipeline with the next behavior or the handler.</summary>
     internal delegate ValueTask<object?> BoxedHandlerContinuation();
 
+    /// <summary>Continues a boxed stream pipeline with the next behavior or the handler.</summary>
     internal delegate IAsyncEnumerable<object?> BoxedStreamHandlerContinuation();
 
+    /// <summary>
+    /// Runs the pipelines and the single handler for one request type.
+    /// </summary>
+    /// <param name="registrations">Handlers registered for the request type.</param>
+    /// <param name="orderedPipelines">Pipeline behaviors in execution order.</param>
     internal sealed class RequestRoute(
         IReadOnlyList<RequestHandlerRegistration> registrations,
         IReadOnlyList<PipelineRegistration> orderedPipelines)
     {
+        /// <summary>Dispatches the request through the pipelines to its handler, and throws when there is not exactly one handler.</summary>
         public ValueTask<TResponse> Invoke<TResponse>(IRequest<TResponse> request, CancellationToken ct)
         {
             ArgumentNullException.ThrowIfNull(request);
@@ -134,10 +149,16 @@ public sealed class ReferenceMediator : IMediator
         }
     }
 
+    /// <summary>
+    /// Runs all handlers for one notification type.
+    /// </summary>
+    /// <param name="handlers">Handlers in execution order.</param>
+    /// <param name="publishInParallel">Whether handlers run concurrently instead of one after another.</param>
     internal sealed class NotificationRoute(
         IReadOnlyList<NotificationHandlerRegistration> handlers,
         bool publishInParallel)
     {
+        /// <summary>Delivers the notification to every handler, concurrently or in order.</summary>
         public async ValueTask Publish(object notification, CancellationToken ct)
         {
             ArgumentNullException.ThrowIfNull(notification);
@@ -155,10 +176,16 @@ public sealed class ReferenceMediator : IMediator
         }
     }
 
+    /// <summary>
+    /// Runs the pipelines and the single handler for one stream request type.
+    /// </summary>
+    /// <param name="registrations">Handlers registered for the request type.</param>
+    /// <param name="pipelines">Pipeline behaviors in execution order.</param>
     internal sealed class StreamRoute(
         IReadOnlyList<StreamHandlerRegistration> registrations,
         IReadOnlyList<StreamPipelineRegistration> pipelines)
     {
+        /// <summary>Dispatches the stream request through the pipelines to its handler, and throws when there is not exactly one handler.</summary>
         public IAsyncEnumerable<TResponse> Invoke<TResponse>(IStreamRequest<TResponse> request, CancellationToken ct)
         {
             ArgumentNullException.ThrowIfNull(request);
@@ -201,15 +228,30 @@ public sealed class ReferenceMediator : IMediator
 
     }
 
+    /// <summary>
+    /// A request handler registered with the reference mediator.
+    /// </summary>
+    /// <param name="implementationTypeName">Name of the implementation type, used in diagnostics.</param>
+    /// <param name="invoke">Delegate that calls the handler.</param>
     internal sealed class RequestHandlerRegistration(
         string implementationTypeName,
         Func<object, CancellationToken, ValueTask<object?>> invoke)
     {
+        /// <summary>Name of the registered implementation type, used in diagnostics.</summary>
         public string ImplementationTypeName { get; } = implementationTypeName;
 
+        /// <summary>Calls the handler with a boxed request and returns the boxed response.</summary>
         public Func<object, CancellationToken, ValueTask<object?>> Invoke { get; } = invoke;
     }
 
+    /// <summary>
+    /// A request pipeline behavior registered with the reference mediator.
+    /// </summary>
+    /// <param name="implementationTypeName">Name of the implementation type, used in diagnostics.</param>
+    /// <param name="stage">Pipeline stage the behavior runs in.</param>
+    /// <param name="order">Explicit order within the stage.</param>
+    /// <param name="registrationOrder">Position at which the registration was added.</param>
+    /// <param name="invoke">Delegate that runs the behavior.</param>
     internal sealed class PipelineRegistration(
         string implementationTypeName,
         PipelineStage stage,
@@ -217,17 +259,30 @@ public sealed class ReferenceMediator : IMediator
         int registrationOrder,
         Func<object, BoxedHandlerContinuation, CancellationToken, ValueTask<object?>> invoke)
     {
+        /// <summary>Name of the registered implementation type, used in diagnostics.</summary>
         public string ImplementationTypeName { get; } = implementationTypeName;
 
+        /// <summary>Pipeline stage the behavior runs in.</summary>
         public PipelineStage Stage { get; } = stage;
 
+        /// <summary>Explicit order within the stage; lower values run first.</summary>
         public int Order { get; } = order;
 
+        /// <summary>Position at which the registration was added; breaks ties between equal orders.</summary>
         public int RegistrationOrder { get; } = registrationOrder;
 
+        /// <summary>Runs the behavior around the next continuation with a boxed request and returns the boxed response.</summary>
         public Func<object, BoxedHandlerContinuation, CancellationToken, ValueTask<object?>> Invoke { get; } = invoke;
     }
 
+    /// <summary>
+    /// A notification handler registered with the reference mediator.
+    /// </summary>
+    /// <param name="implementationTypeName">Name of the implementation type, used in diagnostics.</param>
+    /// <param name="order">Explicit order; lower values run first.</param>
+    /// <param name="hasExplicitOrder">Whether the order was set explicitly rather than defaulted.</param>
+    /// <param name="registrationOrder">Position at which the registration was added.</param>
+    /// <param name="invoke">Delegate that calls the handler.</param>
     internal sealed class NotificationHandlerRegistration(
         string implementationTypeName,
         int order,
@@ -235,26 +290,46 @@ public sealed class ReferenceMediator : IMediator
         int registrationOrder,
         Func<object, CancellationToken, ValueTask> invoke)
     {
+        /// <summary>Name of the registered implementation type, used in diagnostics.</summary>
         public string ImplementationTypeName { get; } = implementationTypeName;
 
+        /// <summary>Explicit order; lower values run first.</summary>
         public int Order { get; } = order;
 
+        /// <summary>Whether the order was set explicitly rather than defaulted; explicitly ordered handlers run first.</summary>
         public bool HasExplicitOrder { get; } = hasExplicitOrder;
 
+        /// <summary>Position at which the registration was added; breaks ties between equal orders.</summary>
         public int RegistrationOrder { get; } = registrationOrder;
 
+        /// <summary>Calls the handler with a boxed notification.</summary>
         public Func<object, CancellationToken, ValueTask> Invoke { get; } = invoke;
     }
 
+    /// <summary>
+    /// A stream handler registered with the reference mediator.
+    /// </summary>
+    /// <param name="implementationTypeName">Name of the implementation type, used in diagnostics.</param>
+    /// <param name="invoke">Delegate that calls the handler.</param>
     internal sealed class StreamHandlerRegistration(
         string implementationTypeName,
         Func<object, CancellationToken, IAsyncEnumerable<object?>> invoke)
     {
+        /// <summary>Name of the registered implementation type, used in diagnostics.</summary>
         public string ImplementationTypeName { get; } = implementationTypeName;
 
+        /// <summary>Calls the handler with a boxed stream request and yields boxed items.</summary>
         public Func<object, CancellationToken, IAsyncEnumerable<object?>> Invoke { get; } = invoke;
     }
 
+    /// <summary>
+    /// A stream pipeline behavior registered with the reference mediator.
+    /// </summary>
+    /// <param name="implementationTypeName">Name of the implementation type, used in diagnostics.</param>
+    /// <param name="stage">Pipeline stage the behavior runs in.</param>
+    /// <param name="order">Explicit order within the stage.</param>
+    /// <param name="registrationOrder">Position at which the registration was added.</param>
+    /// <param name="invoke">Delegate that runs the behavior.</param>
     internal sealed class StreamPipelineRegistration(
         string implementationTypeName,
         PipelineStage stage,
@@ -262,19 +337,25 @@ public sealed class ReferenceMediator : IMediator
         int registrationOrder,
         Func<object, BoxedStreamHandlerContinuation, CancellationToken, IAsyncEnumerable<object?>> invoke)
     {
+        /// <summary>Name of the registered implementation type, used in diagnostics.</summary>
         public string ImplementationTypeName { get; } = implementationTypeName;
 
+        /// <summary>Pipeline stage the behavior runs in.</summary>
         public PipelineStage Stage { get; } = stage;
 
+        /// <summary>Explicit order within the stage; lower values run first.</summary>
         public int Order { get; } = order;
 
+        /// <summary>Position at which the registration was added; breaks ties between equal orders.</summary>
         public int RegistrationOrder { get; } = registrationOrder;
 
+        /// <summary>Runs the behavior around the next stream continuation and yields boxed items.</summary>
         public Func<object, BoxedStreamHandlerContinuation, CancellationToken, IAsyncEnumerable<object?>> Invoke { get; } = invoke;
     }
 
     private sealed class ThrowingAsyncEnumerable<T>(Exception exception) : IAsyncEnumerable<T>, IAsyncEnumerator<T>
     {
+        /// <summary>Always throws the captured exception.</summary>
         public T Current => throw exception;
 
         public ValueTask DisposeAsync()

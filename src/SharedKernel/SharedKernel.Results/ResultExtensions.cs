@@ -99,6 +99,16 @@ public static class ResultExtensions
         return result;
     }
 
+    /// <summary>Factories that create each failure kind of a result type from an error message.</summary>
+    /// <typeparam name="TResult">The result type the factories create.</typeparam>
+    /// <param name="Invalid">Creates an invalid result from a message and per-field validation errors.</param>
+    /// <param name="NotFound">Creates a not-found result from a message.</param>
+    /// <param name="Unauthorized">Creates an unauthorized result from a message.</param>
+    /// <param name="Forbidden">Creates a forbidden result from a message.</param>
+    /// <param name="Error">Creates a general error result from a message.</param>
+    /// <param name="Conflict">Creates a conflict result from a message.</param>
+    /// <param name="CriticalError">Creates a critical error result from a message.</param>
+    /// <param name="Unavailable">Creates an unavailable result from a message.</param>
     private readonly record struct FailureResultFactories<TResult>(
         Func<string, Dictionary<string, string[]>, TResult> Invalid,
         Func<string, TResult> NotFound,
@@ -111,6 +121,7 @@ public static class ResultExtensions
 
     private static class NonGenericFactories
     {
+        /// <summary>Factories that create the non-generic failure results.</summary>
         internal static FailureResultFactories<Result> Instance
         {
             get;

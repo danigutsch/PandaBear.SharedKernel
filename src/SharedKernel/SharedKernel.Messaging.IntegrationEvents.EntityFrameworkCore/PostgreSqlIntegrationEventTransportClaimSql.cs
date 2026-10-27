@@ -4,10 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
+/// <summary>Claims transport messages for one consumer with a single atomic PostgreSQL statement that skips rows locked by other consumers.</summary>
 internal static class PostgreSqlIntegrationEventTransportClaimSql
 {
     private const string NpgsqlProviderName = "Npgsql.EntityFrameworkCore.PostgreSQL";
 
+    /// <summary>Claims up to <paramref name="batchSize" /> due, unclaimed messages of <paramref name="consumerName" /> for <paramref name="claimedBy" /> until <paramref name="claimedUntil" /> and returns them.</summary>
     public static async ValueTask<IntegrationEventTransportMessage[]> ClaimPending<TContext>(
         TContext dbContext,
         string consumerName,
@@ -35,6 +37,7 @@ internal static class PostgreSqlIntegrationEventTransportClaimSql
             .ConfigureAwait(false);
     }
 
+    /// <summary>Builds the claim statement using the column and table names of the mapped transport entity.</summary>
     internal static string CreateClaimSql(IEntityType entityType)
     {
         var storeObject = StoreObjectIdentifier.Table(

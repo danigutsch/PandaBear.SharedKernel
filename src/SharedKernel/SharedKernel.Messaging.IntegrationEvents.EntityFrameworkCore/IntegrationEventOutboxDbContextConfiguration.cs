@@ -13,10 +13,15 @@ internal sealed class IntegrationEventOutboxDbContextConfiguration<TContext> : I
 {
     private readonly IOptionsMonitor<IntegrationEventStorageOptions>? storageOptions;
 
+    /// <summary>Creates a configuration that uses the default integration event storage options.</summary>
     public IntegrationEventOutboxDbContextConfiguration()
     {
     }
 
+    /// <summary>
+    /// Creates a configuration that reads the context's named integration event storage options.
+    /// </summary>
+    /// <param name="storageOptions">Monitor that supplies the per-context storage options.</param>
     public IntegrationEventOutboxDbContextConfiguration(IOptionsMonitor<IntegrationEventStorageOptions> storageOptions)
     {
         ArgumentNullException.ThrowIfNull(storageOptions);

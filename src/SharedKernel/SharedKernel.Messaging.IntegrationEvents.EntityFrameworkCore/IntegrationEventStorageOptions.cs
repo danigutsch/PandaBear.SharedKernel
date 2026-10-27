@@ -7,7 +7,9 @@ namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 /// </summary>
 public sealed class IntegrationEventStorageOptions
 {
+    /// <summary>Outbox table name used when the options do not set one.</summary>
     internal const string DefaultOutboxTableName = "outbox_messages";
+    /// <summary>Transport table name used when the options do not set one.</summary>
     internal const string DefaultTransportTableName = "transport_messages";
 
     /// <summary>
@@ -49,7 +51,9 @@ public sealed class IntegrationEventStorageOptions
         get; set;
     }
 
+    /// <summary>Schema of the outbox table: the outbox-specific schema when set, otherwise the shared schema.</summary>
     internal string EffectiveOutboxSchema => OutboxSchema ?? Schema;
 
+    /// <summary>Schema of the transport table: the transport-specific schema when set, otherwise the shared schema.</summary>
     internal string EffectiveTransportSchema => TransportSchema ?? Schema;
 }

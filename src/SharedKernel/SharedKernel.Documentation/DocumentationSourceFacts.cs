@@ -4,8 +4,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace PandaBear.Documentation;
 
+/// <summary>Reads identifiers and arguments out of C# source with Roslyn syntax parsing, so documentation can be checked against code without compiling it.</summary>
 internal static class DocumentationSourceFacts
 {
+    /// <summary>Returns the type names used as case patterns in the switch statements of the selected method.</summary>
     public static string[] ReadSwitchCaseTypeNames(string sourcePath, string methodName, int parameterCount)
     {
         var syntaxRoot = ParseSource(File.ReadAllText(sourcePath), sourcePath);
@@ -27,6 +29,7 @@ internal static class DocumentationSourceFacts
             .ToArray();
     }
 
+    /// <summary>Returns the identifiers invoked by the top-level statements of a source file.</summary>
     public static string[] ReadTopLevelInvocationIdentifiers(string sourcePath)
     {
         var syntaxRoot = ParseSource(File.ReadAllText(sourcePath), sourcePath);
@@ -37,6 +40,7 @@ internal static class DocumentationSourceFacts
         return ReadInvocationIdentifiers(invocations);
     }
 
+    /// <summary>Returns the identifiers registered through generic registration calls in the top-level statements of a source file.</summary>
     public static string[] ReadTopLevelRegistrationIdentifiers(string sourcePath)
     {
         var syntaxRoot = ParseSource(File.ReadAllText(sourcePath), sourcePath);
@@ -47,6 +51,7 @@ internal static class DocumentationSourceFacts
         return ReadRegistrationIdentifiers(invocations);
     }
 
+    /// <summary>Returns the identifiers invoked inside the selected method.</summary>
     public static string[] ReadMethodInvocationIdentifiers(
         string sourcePath,
         string methodName,
@@ -58,6 +63,7 @@ internal static class DocumentationSourceFacts
         return ReadInvocationIdentifiers(method.DescendantNodes().OfType<InvocationExpressionSyntax>());
     }
 
+    /// <summary>Returns the arguments passed to each invocation of the named method inside the selected method.</summary>
     public static string[] ReadMethodInvocationArguments(
         string sourcePath,
         string methodName,
@@ -81,6 +87,7 @@ internal static class DocumentationSourceFacts
             .ToArray();
     }
 
+    /// <summary>Returns the identifiers registered through generic registration calls inside the selected method.</summary>
     public static string[] ReadMethodRegistrationIdentifiers(
         string sourcePath,
         string methodName,
@@ -92,6 +99,7 @@ internal static class DocumentationSourceFacts
         return ReadRegistrationIdentifiers(method.DescendantNodes().OfType<InvocationExpressionSyntax>());
     }
 
+    /// <summary>Reads the fact identifiers listed between a document's generated-content markers.</summary>
     public static string[] ReadMarkedFactIdentifiers(
         string fullDocumentPath,
         string documentPath,
@@ -138,6 +146,7 @@ internal static class DocumentationSourceFacts
         return identifiers.Order(StringComparer.Ordinal).ToArray();
     }
 
+    /// <summary>Throws when the marked content block in the document is missing or malformed.</summary>
     public static void ValidateMarkedContentBlock(
         string fullDocumentPath,
         string documentPath,

@@ -4,12 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
+/// <summary>Claims outbox messages with a single atomic PostgreSQL statement that skips rows locked by other relays.</summary>
 internal sealed class PostgreSqlIntegrationEventOutboxClaimStrategy<TContext>
     : IIntegrationEventOutboxClaimStrategy<TContext>
     where TContext : DbContext
 {
     private const string NpgsqlProviderName = "Npgsql.EntityFrameworkCore.PostgreSQL";
 
+    /// <inheritdoc />
     public async ValueTask<IntegrationEventOutboxMessage[]> ClaimPending(
         TContext dbContext,
         int batchSize,
@@ -35,6 +37,7 @@ internal sealed class PostgreSqlIntegrationEventOutboxClaimStrategy<TContext>
             .ConfigureAwait(false);
     }
 
+    /// <summary>Builds the claim statement using the column and table names of the mapped outbox entity.</summary>
     internal static string CreateClaimSql(IEntityType entityType)
     {
         var storeObject = StoreObjectIdentifier.Table(

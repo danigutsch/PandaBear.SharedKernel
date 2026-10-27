@@ -7,6 +7,7 @@ namespace PandaBear.Idempotency.EntityFrameworkCore;
 /// </summary>
 public sealed class IdempotencyStorageOptions
 {
+    /// <summary>Table name used when the options do not set one.</summary>
     internal const string DefaultTableName = "idempotency_keys";
 
     /// <summary>

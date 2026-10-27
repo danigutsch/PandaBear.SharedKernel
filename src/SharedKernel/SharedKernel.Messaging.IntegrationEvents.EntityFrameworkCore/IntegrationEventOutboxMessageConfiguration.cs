@@ -12,11 +12,17 @@ internal sealed class IntegrationEventOutboxMessageConfiguration : IEntityTypeCo
     private readonly string schema;
     private readonly string tableName;
 
+    /// <summary>Creates a configuration that maps to the default schema and outbox table.</summary>
     public IntegrationEventOutboxMessageConfiguration()
         : this(SharedKernelSchemas.Messaging, IntegrationEventStorageOptions.DefaultOutboxTableName)
     {
     }
 
+    /// <summary>
+    /// Creates a configuration that maps to the given schema and table.
+    /// </summary>
+    /// <param name="schema">Schema that holds the table.</param>
+    /// <param name="tableName">Name of the outbox table.</param>
     public IntegrationEventOutboxMessageConfiguration(string schema, string tableName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(schema);

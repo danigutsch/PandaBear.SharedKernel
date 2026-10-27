@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 namespace HttpRequests.Sample;
 
+/// <summary>Test handler that answers every request with 503 and echoes the X-Forwarded-For header it received, so the sample can show address forwarding and retries.</summary>
 internal sealed class ForwardedAddressHandler : HttpMessageHandler
 {
+    /// <summary>Number of requests the handler has received.</summary>
     public int AttemptCount
     {
         get; private set;

@@ -13,6 +13,7 @@ internal sealed class IntegrationEventTransportMessageConfiguration : IEntityTyp
     private readonly string tableName;
     private readonly bool excludeFromMigrations;
 
+    /// <summary>Creates a configuration that maps to the default schema and transport table.</summary>
     public IntegrationEventTransportMessageConfiguration()
         : this(
             SharedKernelSchemas.Messaging,
@@ -21,6 +22,12 @@ internal sealed class IntegrationEventTransportMessageConfiguration : IEntityTyp
     {
     }
 
+    /// <summary>
+    /// Creates a configuration that maps to the given schema and table.
+    /// </summary>
+    /// <param name="schema">Schema that holds the table.</param>
+    /// <param name="tableName">Name of the transport table.</param>
+    /// <param name="excludeFromMigrations">Whether EF migrations skip the table because another context owns it.</param>
     public IntegrationEventTransportMessageConfiguration(
         string schema,
         string tableName,

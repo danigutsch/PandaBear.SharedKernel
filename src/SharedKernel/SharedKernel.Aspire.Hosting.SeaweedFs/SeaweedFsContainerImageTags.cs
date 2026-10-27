@@ -1,5 +1,6 @@
 namespace Aspire.Hosting;
 
+/// <summary>Pinned container image coordinates for the SeaweedFS resource.</summary>
 internal static class SeaweedFsContainerImageTags
 {
     /// <remarks>docker.io</remarks>

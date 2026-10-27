@@ -17,3 +17,5 @@ SKSTYLE012 | Style | Warning | Replace registered direct C# string literals with
 SKSTYLE013 | Style | Warning | Governed literal catalog must be valid and unambiguous
 SKSTYLE014 | Style | Warning | Use TimeProvider for current time
 SKSTYLE015 | Style | Disabled | Require case-insensitive property names on API JSON contexts; enable for API payload scopes
+SKSTYLE016 | Style | Warning | File name should match its single top-level type
+SKSTYLE017 | Style | Warning | Internal types and members, which CS1591 does not cover, should have XML documentation

@@ -13,6 +13,7 @@ public sealed record ContractValidationProblemDto
         get; init;
     }
 
+    /// <summary>Returns whether the errors dictionary has at least one entry and every entry has a usable field key and non-blank messages.</summary>
     internal bool HasWellFormedErrors()
     {
         if (Errors is null or { Count: 0 })

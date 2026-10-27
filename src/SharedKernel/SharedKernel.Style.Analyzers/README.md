@@ -30,6 +30,8 @@ the default .NET analyzer set.
 | `SKSTYLE013` | Warning; requires catalog | Correct malformed or ambiguous governed-literal metadata. |
 | `SKSTYLE014` | Warning | Use TimeProvider for wall-clock reads. |
 | `SKSTYLE015` | Disabled | Require `PropertyNameCaseInsensitive = true` on API JSON serializer contexts. |
+| `SKSTYLE016` | Warning | Name a file after its single top-level type; a generic type may use `Name{T}.cs`. |
+| `SKSTYLE017` | Warning | Document internal types and members, which `CS1591` does not cover. |
 
 ## Configuration
 
@@ -280,3 +282,31 @@ A context passes when its `[JsonSourceGenerationOptions]` sets `PropertyNameCase
 `JsonSerializerDefaults.Web`. Contexts for local, intentionally case-sensitive contracts stay out of the enabled scope,
 or use a normal diagnostic suppression. The code fix adds the attribute, adds the named argument, or flips an explicit
 `false`, preserving every other option. Fix All is not offered. The fix never adds runtime reflection.
+
+## SKSTYLE016
+
+A file that declares exactly one top-level type must be named after it: `Result.cs` for `Result`, and `Result{T}.cs` for
+`Result<T>`, so a generic type and its non-generic sibling never share a path. Type-name suffixes that repeat arity are
+reported separately by `SKSTYLE005`. Partial types, files with several top-level types (`SKSTYLE004`), nested types, files without a
+path, and generated files are not checked. The diagnostic has no code fix because a rename or move changes the project
+layout and every path that refers to it. Types that share a name across namespaces and cannot share a file name take a
+scoped `.editorconfig` exception with an owner and removal condition.
+
+## SKSTYLE017
+
+`CS1591` covers externally visible types and members. `SKSTYLE017` extends the same requirement to the internal surface:
+types, methods, constructors, properties, fields, enum members, and events that are internal, or public inside an internal
+type. Private members are not checked. Any XML documentation comment satisfies the rule, including `<inheritdoc />`. A
+property synthesized from a positional record parameter is documented by the matching `<param name="...">` element on the
+record, and a partial type or method is documented when any part is. Overrides, explicit interface implementations,
+indexers, accessors, compiler-generated members, and generated code are not checked. Enable both rules everywhere through
+`.editorconfig`:
+
+```ini
+[*.cs]
+dotnet_diagnostic.CS1591.severity = warning
+dotnet_diagnostic.SKSTYLE017.severity = warning
+```
+
+A repository with a large backlog can stage the rollout per scope with `suggestion` severity, an owner, and a removal
+condition; do not use `none` in production projects.

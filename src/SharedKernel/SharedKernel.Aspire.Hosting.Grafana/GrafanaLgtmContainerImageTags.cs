@@ -1,5 +1,6 @@
 namespace Aspire.Hosting;
 
+/// <summary>Pinned container image coordinates for the Grafana LGTM stack resource.</summary>
 internal static class GrafanaLgtmContainerImageTags
 {
     /// <remarks>docker.io</remarks>

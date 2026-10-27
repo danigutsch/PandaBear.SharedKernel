@@ -4,6 +4,13 @@ using Microsoft.Extensions.Options;
 
 namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
+/// <summary>
+/// Claims and consumes pending transport messages for one named consumer.
+/// </summary>
+/// <param name="scopeFactory">Factory for the per-batch service scope.</param>
+/// <param name="timeProvider">Clock for claim and retry times.</param>
+/// <param name="options">Monitor that supplies the per-context consumer options.</param>
+/// <param name="consumerName">Name of the consumer whose messages are handled.</param>
 internal sealed class PostgreSqlIntegrationEventTransportConsumer<TContext>(
     IServiceScopeFactory scopeFactory,
     TimeProvider timeProvider,
@@ -11,9 +18,11 @@ internal sealed class PostgreSqlIntegrationEventTransportConsumer<TContext>(
     string consumerName)
     where TContext : DbContext
 {
+    /// <summary>Consumes one batch sized by the context's configured consumer options and returns how many messages were handled.</summary>
     public async ValueTask<int> ConsumePending(CancellationToken ct) =>
         await ConsumePending(options.Get(IntegrationEventOptionsNames.Consumer<TContext>()).BatchSize, ct).ConfigureAwait(false);
 
+    /// <summary>Claims up to <paramref name="batchSize" /> due messages, hands them to their handlers, and returns how many were handled.</summary>
     internal async ValueTask<int> ConsumePending(int batchSize, CancellationToken ct)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(batchSize);

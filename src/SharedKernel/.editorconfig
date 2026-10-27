@@ -9,16 +9,16 @@
 [*.cs]
 dotnet_diagnostic.RS0026.severity = none
 
-[SharedKernel.Results/OptionOfT.cs]
+[SharedKernel.Results/Option?T?.cs]
 dotnet_diagnostic.CA1000.severity = none
 
-[SharedKernel.Results/ResultOfT.cs]
+[SharedKernel.Results/Result?T?.cs]
 dotnet_diagnostic.CA1000.severity = none
 
 [SharedKernel.Mediator.Abstractions/ICommand.cs]
 dotnet_diagnostic.CA1040.severity = none
 
-[SharedKernel.Mediator.Abstractions/ICommandOfResponse.cs]
+[SharedKernel.Mediator.Abstractions/ICommand?TResponse?.cs]
 dotnet_diagnostic.CA1040.severity = none
 
 [SharedKernel.Mediator.Abstractions/INotification.cs]
@@ -30,10 +30,10 @@ dotnet_diagnostic.CA1040.severity = none
 [SharedKernel.Mediator.Abstractions/IRequest.cs]
 dotnet_diagnostic.CA1040.severity = none
 
-[SharedKernel.Mediator.Abstractions/IStreamCommandOfResponse.cs]
+[SharedKernel.Mediator.Abstractions/IStreamCommand?TResponse?.cs]
 dotnet_diagnostic.CA1040.severity = none
 
-[SharedKernel.Mediator.Abstractions/IStreamQueryOfResponse.cs]
+[SharedKernel.Mediator.Abstractions/IStreamQuery?TResponse?.cs]
 dotnet_diagnostic.CA1040.severity = none
 
 [SharedKernel.Mediator.Abstractions/IStreamRequest.cs]
@@ -67,3 +67,8 @@ dotnet_diagnostic.CA2100.severity = none
 [SharedKernel.Npgsql/*.cs]
 dotnet_diagnostic.CA2007.severity = none
 dotnet_diagnostic.CA2100.severity = none
+
+# Each trait holder is a distinct TestTraits type in its own namespace; a shared file name would collide in one folder.
+# Owner: SharedKernel maintainers. Remove if the holders gain unique type names.
+[SharedKernel.Testing/SharedKernel*TestTraits.cs]
+dotnet_diagnostic.SKSTYLE016.severity = none

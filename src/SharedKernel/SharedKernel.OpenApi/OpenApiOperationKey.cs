@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Routing.Patterns;
 
 namespace PandaBear.OpenApi;
 
+/// <summary>Builds the key that identifies an OpenAPI operation by method and normalized route.</summary>
 internal static class OpenApiOperationKey
 {
+    /// <summary>Returns "METHOD:path" with route parameters reduced to their names, so keys match regardless of constraints and defaults.</summary>
     public static string Create(string relativePath, string httpMethod)
     {
         var pattern = RoutePatternFactory.Parse(relativePath.Trim('/'));

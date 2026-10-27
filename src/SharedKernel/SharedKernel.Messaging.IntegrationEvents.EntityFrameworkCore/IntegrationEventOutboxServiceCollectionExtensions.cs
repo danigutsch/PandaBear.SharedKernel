@@ -276,6 +276,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>Registers the options, validator, and storage of the PostgreSQL transport consumer without adding the hosted service, so tests can drive the consumer directly.</summary>
     internal static void AddPostgreSqlIntegrationEventTransportConsumerCore<TContext>(
         IServiceCollection services,
         string consumerName,

@@ -11,6 +11,7 @@ internal static class K6Library
 {
     private const string ResourcePrefix = "k6lib/";
 
+    /// <summary>Extracts the embedded k6 library scripts to a temporary directory so k6 can import them, and returns that directory.</summary>
     internal static string Materialize()
     {
         var assembly = typeof(K6Library).Assembly;

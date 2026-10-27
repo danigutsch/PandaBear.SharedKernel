@@ -27,6 +27,7 @@ public static class OpenApiGenerationMode
         return IsEnabled(environment, Assembly.GetEntryAssembly()?.GetName().Name);
     }
 
+    /// <summary>Determines generation mode from an explicit entry assembly name, so tests need not depend on the real entry assembly.</summary>
     internal static bool IsEnabled(IHostEnvironment environment, string? entryAssemblyName)
     {
         ArgumentNullException.ThrowIfNull(environment);

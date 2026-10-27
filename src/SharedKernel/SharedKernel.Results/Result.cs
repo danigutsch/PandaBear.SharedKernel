@@ -13,6 +13,9 @@ public readonly struct Result : IEquatable<Result>
     private const string ValidationErrorMessagesMustBeProvidedMessage = "Validation error message lists must be non-empty.";
     private const string ValidationErrorMessagesMustNotContainNullOrWhitespaceMessage = "Validation error messages must be non-empty.";
 
+    /// <summary>Creates a result and enforces that a failed status carries error details.</summary>
+    /// <param name="status">The outcome status.</param>
+    /// <param name="error">The error details, required for a failed status.</param>
     internal Result(ResultStatus status, ResultError? error)
     {
         Status = status;

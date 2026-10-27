@@ -25,6 +25,7 @@ public static class PostgreSqlIndexHealthTelemetry
         unit: "{collection}",
         description: "PostgreSQL index-health collection outcomes.");
 
+    /// <summary>Records the collection outcome and the aggregate assessments of one collection run.</summary>
     internal static void Record(PostgreSqlIndexHealthCollectionResult result)
     {
         RecordCollection(result.Outcome);
