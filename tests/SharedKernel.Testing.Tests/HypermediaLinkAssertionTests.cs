@@ -82,4 +82,17 @@ public sealed class HypermediaLinkAssertionTests
         // Assert
         failed.ShouldBeTrue();
     }
+
+    [Fact]
+    public void Payload_without_links_names_the_links_property_not_a_problem_property()
+    {
+        // Arrange
+        var payload = JsonPayload.Parse("""{"id":1}""");
+
+        // Act
+        var message = JsonPayload.FailureMessage(() => payload.ShouldHaveLink("self"));
+
+        // Assert
+        message.ShouldNotBeNull().ShouldContain("payload property 'links'", StringComparison.Ordinal);
+    }
 }
