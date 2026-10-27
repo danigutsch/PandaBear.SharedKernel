@@ -302,43 +302,6 @@ dotnet_diagnostic.SKSTYLE017.severity = warning
 [tests/SharedKernel.Results.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
-# Documented test projects: undocumented members fail the build.
-[tests/SharedKernel.Domain.Analyzers.Tests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.Domain.CodeFixes.Tests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.Domain.GeneratorTests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.Domain.Tests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.Mediator.Analyzers.Tests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.Mediator.CodeFixes.Tests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.Mediator.GeneratorTests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.Mediator.PackageConsumptionTests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.Mediator.Tests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.Results.AspNet.Tests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.Results.GeneratorTests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
-[tests/SharedKernel.Results.Tests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
 # Reqnroll discovers binding and generated test support types by reflection.
 # Owner: behavior-test maintainers. Remove when unused binding types can be internalized safely.
 [*]
