@@ -48,3 +48,8 @@ PandaBear.BuildingBlocks.PixKeyType.Cnpj = 2 -> PandaBear.BuildingBlocks.PixKeyT
 PandaBear.BuildingBlocks.PixKeyType.Phone = 3 -> PandaBear.BuildingBlocks.PixKeyType
 PandaBear.BuildingBlocks.PixKeyType.Email = 4 -> PandaBear.BuildingBlocks.PixKeyType
 PandaBear.BuildingBlocks.PixKeyType.Evp = 5 -> PandaBear.BuildingBlocks.PixKeyType
+PandaBear.BuildingBlocks.HypermediaLink
+PandaBear.BuildingBlocks.HypermediaLink.Href.get -> string!
+PandaBear.BuildingBlocks.HypermediaLink.Method.get -> string!
+PandaBear.BuildingBlocks.HypermediaLink.Rel.get -> string!
+static PandaBear.BuildingBlocks.HypermediaLink.Create(string? rel, string? href, string? method) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.HypermediaLink!>

@@ -57,3 +57,16 @@ await response.ShouldBeProblem(HttpStatusCode.NotFound, null, "not_found",
 A message overload reports a failure as an `XunitException` whose message starts with
 `userMessage` and whose inner exception is the original failure. Argument errors and cancellation
 pass through unchanged.
+
+## Hypermedia links
+
+Assert the `links` array of a parsed payload with `JsonElement` helpers:
+
+```csharp
+var link = payload.ShouldHaveLink("self");   // object payload; returns the matching link
+collection.ShouldAllHaveLink("self");        // nonempty array payload; every item needs the relation
+```
+
+`ShouldHaveLink` requires a `links` array containing an object whose `rel` equals the relation
+(case-sensitive) and whose `href` is a nonblank string. `ShouldAllHaveLink` fails on an empty array.
+Route values and other relations stay in the consuming test. Both have `userMessage` overloads.

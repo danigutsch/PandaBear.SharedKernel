@@ -26,3 +26,7 @@ static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveVa
 static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveValidationField(this System.Text.Json.JsonElement actual, string! field) -> System.Text.Json.JsonElement
 static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveValidationField(this System.Text.Json.JsonElement actual, string! field, string! userMessage) -> System.Text.Json.JsonElement
 static PandaBear.Testing.Http.TestHttpMessageHandler.FromException(System.Exception! sendException) -> PandaBear.Testing.Http.TestHttpMessageHandler!
+static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldAllHaveLink(this System.Text.Json.JsonElement actual, string! rel) -> void
+static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveLink(this System.Text.Json.JsonElement actual, string! rel) -> System.Text.Json.JsonElement
+static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldAllHaveLink(this System.Text.Json.JsonElement actual, string! rel, string! userMessage) -> void
+static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldHaveLink(this System.Text.Json.JsonElement actual, string! rel, string! userMessage) -> System.Text.Json.JsonElement
