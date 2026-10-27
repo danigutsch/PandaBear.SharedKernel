@@ -5,13 +5,25 @@ namespace PandaBear.BuildingBlocks;
 
 /// <summary>
 /// Represents a hypermedia link in a REST response. The JSON wire shape is
-/// <c>{"rel":"self","href":"/items/1","method":"GET"}</c>.
+/// <c>{"rel":"self","href":"/items/1","method":"GET"}</c>. Deserializing a blank or missing value throws
+/// <see cref="ArgumentException"/>, so an invalid link never becomes an instance.
 /// </summary>
 public sealed record HypermediaLink
 {
+    /// <summary>
+    /// Initializes a link. Prefer <see cref="Create"/> for untrusted input; this constructor is the JSON deserialization entry point.
+    /// </summary>
+    /// <param name="rel">The link relation.</param>
+    /// <param name="href">The link target.</param>
+    /// <param name="method">The HTTP method to use on the target.</param>
+    /// <exception cref="ArgumentNullException">A value is null.</exception>
+    /// <exception cref="ArgumentException">A value is empty or whitespace.</exception>
     [JsonConstructor]
-    private HypermediaLink(string rel, string href, string method)
+    public HypermediaLink(string rel, string href, string method)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(rel);
+        ArgumentException.ThrowIfNullOrWhiteSpace(href);
+        ArgumentException.ThrowIfNullOrWhiteSpace(method);
         Rel = rel;
         Href = href;
         Method = method;

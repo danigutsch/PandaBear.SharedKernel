@@ -74,6 +74,26 @@ public sealed class HypermediaLinkTests
         // Assert
         link.ShouldBe(HypermediaLink.Create("self", "/x", "GET").Value);
     }
+
+    [Fact]
+    public void Deserialize_withblankvalue_throwsargumentexception()
+    {
+        // Arrange
+        Func<object?> act = () => JsonSerializer.Deserialize("""{"rel":"","href":"/x","method":"GET"}""", HypermediaLinkTestJsonContext.Default.HypermediaLink);
+
+        // Act, Assert
+        act.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact]
+    public void Deserialize_withmissingvalue_throwsargumentnullexception()
+    {
+        // Arrange
+        Func<object?> act = () => JsonSerializer.Deserialize("""{"rel":"self","href":"/x"}""", HypermediaLinkTestJsonContext.Default.HypermediaLink);
+
+        // Act, Assert
+        act.ShouldThrow<ArgumentNullException>();
+    }
 }
 
 /// <summary>Source-generated JSON metadata for the wire-shape tests.</summary>

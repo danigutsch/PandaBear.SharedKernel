@@ -49,6 +49,7 @@ PandaBear.BuildingBlocks.PixKeyType.Phone = 3 -> PandaBear.BuildingBlocks.PixKey
 PandaBear.BuildingBlocks.PixKeyType.Email = 4 -> PandaBear.BuildingBlocks.PixKeyType
 PandaBear.BuildingBlocks.PixKeyType.Evp = 5 -> PandaBear.BuildingBlocks.PixKeyType
 PandaBear.BuildingBlocks.HypermediaLink
+PandaBear.BuildingBlocks.HypermediaLink.HypermediaLink(string! rel, string! href, string! method) -> void
 PandaBear.BuildingBlocks.HypermediaLink.Href.get -> string!
 PandaBear.BuildingBlocks.HypermediaLink.Method.get -> string!
 PandaBear.BuildingBlocks.HypermediaLink.Rel.get -> string!
