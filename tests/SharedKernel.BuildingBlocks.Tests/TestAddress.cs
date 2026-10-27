@@ -4,8 +4,8 @@ namespace PandaBear.BuildingBlocks.Tests;
 /// <summary>
 /// A value object made of a street and an optional city, used in value object equality tests.
 /// </summary>
-/// /// <param name="street">The street component.</param>
-/// /// <param name="city">The optional city component.</param>
+/// <param name="street">The street component.</param>
+/// <param name="city">The optional city component.</param>
 internal sealed class TestAddress(string street, string? city) : ValueObject
 {
     /// <summary>

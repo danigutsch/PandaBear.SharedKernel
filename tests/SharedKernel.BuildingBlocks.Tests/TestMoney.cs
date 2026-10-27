@@ -4,8 +4,8 @@ namespace PandaBear.BuildingBlocks.Tests;
 /// <summary>
 /// A value object made of an amount and a currency code, used in value object equality tests.
 /// </summary>
-/// /// <param name="amount">The monetary amount.</param>
-/// /// <param name="currency">The currency code.</param>
+/// <param name="amount">The monetary amount.</param>
+/// <param name="currency">The currency code.</param>
 internal sealed class TestMoney(decimal amount, string currency) : ValueObject
 {
     /// <summary>

@@ -12,7 +12,7 @@ internal sealed class GeneratedIntegrationEventConsumerScope : IDisposable
     /// <summary>
     /// Creates a scope from the service provider and resolves the event envelope publisher, and throws ArgumentNullException when the provider is null.
     /// </summary>
-    /// /// <param name="serviceProvider">The provider the scope is created from.</param>
+    /// <param name="serviceProvider">The provider the scope is created from.</param>
     public GeneratedIntegrationEventConsumerScope(IServiceProvider serviceProvider)
     {
         ArgumentNullException.ThrowIfNull(serviceProvider);

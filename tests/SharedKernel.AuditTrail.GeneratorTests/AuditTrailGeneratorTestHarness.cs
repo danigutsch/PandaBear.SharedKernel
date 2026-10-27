@@ -61,9 +61,9 @@ internal static class AuditTrailGeneratorTestHarness
 /// <summary>
 /// Captures the outcome of one AuditTrailMappingGenerator run.
 /// </summary>
-/// /// <param name="RunResult">The raw generator driver result.</param>
-/// /// <param name="OutputCompilation">The compilation updated with the generated sources.</param>
-/// /// <param name="Diagnostics">The diagnostics reported by the generator run.</param>
+/// <param name="RunResult">The raw generator driver result.</param>
+/// <param name="OutputCompilation">The compilation updated with the generated sources.</param>
+/// <param name="Diagnostics">The diagnostics reported by the generator run.</param>
 internal sealed record AuditTrailGeneratorRun(
     GeneratorDriverRunResult RunResult,
     CSharpCompilation OutputCompilation,

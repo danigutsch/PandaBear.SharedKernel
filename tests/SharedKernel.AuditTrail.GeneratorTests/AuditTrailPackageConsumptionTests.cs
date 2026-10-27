@@ -3,7 +3,7 @@ namespace PandaBear.AuditTrail.GeneratorTests;
 /// <summary>
 /// Tests that the packed audit trail source generator package works in a consumer project.
 /// </summary>
-/// /// <param name="packageFeed">The fixture that packs the audit trail packages into a local feed.</param>
+/// <param name="packageFeed">The fixture that packs the audit trail packages into a local feed.</param>
 public sealed class AuditTrailPackageConsumptionTests(AuditTrailPackageFeedFixture packageFeed)
     : IClassFixture<AuditTrailPackageFeedFixture>
 {
