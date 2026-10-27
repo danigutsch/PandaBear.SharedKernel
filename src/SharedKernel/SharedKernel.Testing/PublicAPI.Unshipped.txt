@@ -4,15 +4,15 @@ const PandaBear.Domain.Tests.TestTraits.CoreBehaviorCategory = "CoreBehavior" ->
 const PandaBear.Domain.Tests.TestTraits.DomainComponent = "SharedKernel.Domain" -> string!
 const PandaBear.Domain.Tests.TestTraits.EntityCapability = "Entity" -> string!
 const PandaBear.EventSourcing.Tests.TestTraits.EventSourcingComponent = "SharedKernel.EventSourcing" -> string!
-const PandaBear.Functional.Tests.TestTraits.CompositionCategory = "Composition" -> string!
-const PandaBear.Functional.Tests.TestTraits.CoreBehaviorCategory = "CoreBehavior" -> string!
-const PandaBear.Functional.Tests.TestTraits.EdgeCaseCategory = "EdgeCase" -> string!
-const PandaBear.Functional.Tests.TestTraits.FunctorLawsTheory = "FunctorLaws" -> string!
-const PandaBear.Functional.Tests.TestTraits.MatchSemanticsTheory = "MatchSemantics" -> string!
-const PandaBear.Functional.Tests.TestTraits.MonadLawsTheory = "MonadLaws" -> string!
-const PandaBear.Functional.Tests.TestTraits.OptionCapability = "Option" -> string!
-const PandaBear.Functional.Tests.TestTraits.ResultCapability = "Result" -> string!
-const PandaBear.Functional.Tests.TestTraits.ResultsComponent = "SharedKernel.Results" -> string!
+const PandaBear.Results.Tests.TestTraits.CompositionCategory = "Composition" -> string!
+const PandaBear.Results.Tests.TestTraits.CoreBehaviorCategory = "CoreBehavior" -> string!
+const PandaBear.Results.Tests.TestTraits.EdgeCaseCategory = "EdgeCase" -> string!
+const PandaBear.Results.Tests.TestTraits.FunctorLawsTheory = "FunctorLaws" -> string!
+const PandaBear.Results.Tests.TestTraits.MatchSemanticsTheory = "MatchSemantics" -> string!
+const PandaBear.Results.Tests.TestTraits.MonadLawsTheory = "MonadLaws" -> string!
+const PandaBear.Results.Tests.TestTraits.OptionCapability = "Option" -> string!
+const PandaBear.Results.Tests.TestTraits.ResultCapability = "Result" -> string!
+const PandaBear.Results.Tests.TestTraits.ResultsComponent = "SharedKernel.Results" -> string!
 const PandaBear.Idempotency.Tests.TestTraits.IdempotencyComponent = "SharedKernel.Idempotency.Abstractions" -> string!
 const PandaBear.Mediator.GeneratorTests.TestTraits.DependencyInjectionCapability = "DependencyInjection" -> string!
 const PandaBear.Mediator.GeneratorTests.TestTraits.DiscoveryCapability = "Discovery" -> string!
@@ -52,7 +52,7 @@ override PandaBear.Testing.GatedCountingReadStream.SetLength(long value) -> void
 override PandaBear.Testing.GatedCountingReadStream.Write(byte[]! buffer, int offset, int count) -> void
 PandaBear.Domain.Tests.TestTraits
 PandaBear.EventSourcing.Tests.TestTraits
-PandaBear.Functional.Tests.TestTraits
+PandaBear.Results.Tests.TestTraits
 PandaBear.Idempotency.Tests.TestTraits
 PandaBear.Mediator.GeneratorTests.TestTraits
 PandaBear.Mediator.Tests.TestTraits

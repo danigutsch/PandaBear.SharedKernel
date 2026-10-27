@@ -174,7 +174,7 @@ public static class SharedKernelPackagingConventionTests
         var repositoryRoot = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
         string[] projectPaths =
         [
-            "benchmarks/SharedKernel.Functional.Benchmarks/SharedKernel.Functional.Benchmarks.csproj",
+            "benchmarks/SharedKernel.Results.Benchmarks/SharedKernel.Results.Benchmarks.csproj",
             "benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj",
             "samples/Mediator/Mediator.Sample/Mediator.Sample.csproj",
             "samples/Results/BasicResults.Sample/BasicResults.Sample.csproj",

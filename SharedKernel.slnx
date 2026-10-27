@@ -86,7 +86,7 @@
   <Project Path="tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj" />
   <Project Path="tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj" />
   <Project Path="tests/SharedKernel.EventSourcing.Tests/SharedKernel.EventSourcing.Tests.csproj" />
-  <Project Path="tests/SharedKernel.Functional.Tests/SharedKernel.Functional.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Results.Tests/SharedKernel.Results.Tests.csproj" />
   <Project Path="tests/SharedKernel.HttpClients.Tests/SharedKernel.HttpClients.Tests.csproj" />
   <Project Path="tests/SharedKernel.Idempotency.Abstractions.Tests/SharedKernel.Idempotency.Abstractions.Tests.csproj" />
   <Project Path="tests/SharedKernel.ImageProcessing.Tests/SharedKernel.ImageProcessing.Tests.csproj" />
@@ -133,7 +133,7 @@
   <Project Path="samples/HttpRequests/HttpRequests.Sample/HttpRequests.Sample.csproj" />
   <Project Path="samples/Mediator/Mediator.Sample/Mediator.Sample.csproj" />
   <Project Path="samples/Results/BasicResults.Sample/BasicResults.Sample.csproj" />
-  <Project Path="benchmarks/SharedKernel.Functional.Benchmarks/SharedKernel.Functional.Benchmarks.csproj" />
+  <Project Path="benchmarks/SharedKernel.Results.Benchmarks/SharedKernel.Results.Benchmarks.csproj" />
   <Project Path="benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj" />
   <Project Path="tools/SharedKernel.CI.Tool/SharedKernel.CI.Tool.csproj" />
   <Project Path="tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj" />
