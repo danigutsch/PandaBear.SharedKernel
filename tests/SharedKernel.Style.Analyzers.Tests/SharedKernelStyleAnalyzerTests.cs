@@ -28,6 +28,8 @@ public sealed class SharedKernelStyleAnalyzerTests
             StyleDiagnosticIds.InvalidGovernedLiteralCatalog,
             StyleDiagnosticIds.DirectCurrentTime,
             StyleDiagnosticIds.CaseInsensitiveJsonContext,
+            StyleDiagnosticIds.FileNameMismatch,
+            StyleDiagnosticIds.UndocumentedProperty,
         ];
 
         // Act

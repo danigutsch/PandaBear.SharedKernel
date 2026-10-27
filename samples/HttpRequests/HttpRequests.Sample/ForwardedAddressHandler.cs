@@ -6,6 +6,7 @@ namespace HttpRequests.Sample;
 
 internal sealed class ForwardedAddressHandler : HttpMessageHandler
 {
+    /// <summary>Number of requests the handler has received.</summary>
     public int AttemptCount
     {
         get; private set;

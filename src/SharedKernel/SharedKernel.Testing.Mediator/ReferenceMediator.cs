@@ -205,8 +205,10 @@ public sealed class ReferenceMediator : IMediator
         string implementationTypeName,
         Func<object, CancellationToken, ValueTask<object?>> invoke)
     {
+        /// <summary>Name of the registered implementation type, used in diagnostics.</summary>
         public string ImplementationTypeName { get; } = implementationTypeName;
 
+        /// <summary>Calls the handler with a boxed request and returns the boxed response.</summary>
         public Func<object, CancellationToken, ValueTask<object?>> Invoke { get; } = invoke;
     }
 
@@ -217,14 +219,19 @@ public sealed class ReferenceMediator : IMediator
         int registrationOrder,
         Func<object, BoxedHandlerContinuation, CancellationToken, ValueTask<object?>> invoke)
     {
+        /// <summary>Name of the registered implementation type, used in diagnostics.</summary>
         public string ImplementationTypeName { get; } = implementationTypeName;
 
+        /// <summary>Pipeline stage the behavior runs in.</summary>
         public PipelineStage Stage { get; } = stage;
 
+        /// <summary>Explicit order within the stage; lower values run first.</summary>
         public int Order { get; } = order;
 
+        /// <summary>Position at which the registration was added; breaks ties between equal orders.</summary>
         public int RegistrationOrder { get; } = registrationOrder;
 
+        /// <summary>Runs the behavior around the next continuation with a boxed request and returns the boxed response.</summary>
         public Func<object, BoxedHandlerContinuation, CancellationToken, ValueTask<object?>> Invoke { get; } = invoke;
     }
 
@@ -235,14 +242,19 @@ public sealed class ReferenceMediator : IMediator
         int registrationOrder,
         Func<object, CancellationToken, ValueTask> invoke)
     {
+        /// <summary>Name of the registered implementation type, used in diagnostics.</summary>
         public string ImplementationTypeName { get; } = implementationTypeName;
 
+        /// <summary>Explicit order within the stage; lower values run first.</summary>
         public int Order { get; } = order;
 
+        /// <summary>Whether the order was set explicitly rather than defaulted; explicitly ordered handlers run first.</summary>
         public bool HasExplicitOrder { get; } = hasExplicitOrder;
 
+        /// <summary>Position at which the registration was added; breaks ties between equal orders.</summary>
         public int RegistrationOrder { get; } = registrationOrder;
 
+        /// <summary>Calls the handler with a boxed notification.</summary>
         public Func<object, CancellationToken, ValueTask> Invoke { get; } = invoke;
     }
 
@@ -250,8 +262,10 @@ public sealed class ReferenceMediator : IMediator
         string implementationTypeName,
         Func<object, CancellationToken, IAsyncEnumerable<object?>> invoke)
     {
+        /// <summary>Name of the registered implementation type, used in diagnostics.</summary>
         public string ImplementationTypeName { get; } = implementationTypeName;
 
+        /// <summary>Calls the handler with a boxed stream request and yields boxed items.</summary>
         public Func<object, CancellationToken, IAsyncEnumerable<object?>> Invoke { get; } = invoke;
     }
 
@@ -262,19 +276,25 @@ public sealed class ReferenceMediator : IMediator
         int registrationOrder,
         Func<object, BoxedStreamHandlerContinuation, CancellationToken, IAsyncEnumerable<object?>> invoke)
     {
+        /// <summary>Name of the registered implementation type, used in diagnostics.</summary>
         public string ImplementationTypeName { get; } = implementationTypeName;
 
+        /// <summary>Pipeline stage the behavior runs in.</summary>
         public PipelineStage Stage { get; } = stage;
 
+        /// <summary>Explicit order within the stage; lower values run first.</summary>
         public int Order { get; } = order;
 
+        /// <summary>Position at which the registration was added; breaks ties between equal orders.</summary>
         public int RegistrationOrder { get; } = registrationOrder;
 
+        /// <summary>Runs the behavior around the next stream continuation and yields boxed items.</summary>
         public Func<object, BoxedStreamHandlerContinuation, CancellationToken, IAsyncEnumerable<object?>> Invoke { get; } = invoke;
     }
 
     private sealed class ThrowingAsyncEnumerable<T>(Exception exception) : IAsyncEnumerable<T>, IAsyncEnumerator<T>
     {
+        /// <summary>Always throws the captured exception.</summary>
         public T Current => throw exception;
 
         public ValueTask DisposeAsync()

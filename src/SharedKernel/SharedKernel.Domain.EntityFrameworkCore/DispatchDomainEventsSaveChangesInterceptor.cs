@@ -180,8 +180,10 @@ internal sealed class DispatchDomainEventsSaveChangesInterceptor : SaveChangesIn
 
     private sealed class DispatchedEventState(DbContextId contextId)
     {
+        /// <summary>Identity of the database context whose save is being dispatched.</summary>
         public DbContextId ContextId { get; } = contextId;
 
+        /// <summary>Domain events already dispatched during the current save, compared by reference.</summary>
         public HashSet<IDomainEvent> Events { get; } = new(ReferenceEqualityComparer.Instance);
     }
 }

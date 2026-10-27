@@ -251,14 +251,22 @@ dotnet_diagnostic.CA1716.severity = none
 [src/SharedKernel/SharedKernel.Results/Option*.cs]
 dotnet_diagnostic.CA1716.severity = none
 
+# Staged rollout of SKSTYLE017 outside shipped libraries; src/ is enforced at warning.
+# Owner: SharedKernel maintainers. Tracked by #3; raise to warning once these scopes are documented.
+[{tools,benchmarks}/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = suggestion
+
 [tests/**.cs]
 dotnet_diagnostic.CA2007.severity = none
 dotnet_diagnostic.CA5394.severity = none
 dotnet_diagnostic.CA1515.severity = none
 dotnet_diagnostic.CA1707.severity = none
 dotnet_diagnostic.CA1716.severity = none
-dotnet_diagnostic.CS1591.severity = none
+# Staged rollout: undocumented test members stay visible as suggestions until the backlog is retired.
+# Owner: SharedKernel maintainers. Tracked by #3; raise to warning once test projects are documented.
+dotnet_diagnostic.CS1591.severity = suggestion
 dotnet_diagnostic.SKSTYLE004.severity = suggestion
+dotnet_diagnostic.SKSTYLE017.severity = suggestion
 
 # Reqnroll discovers binding and generated test support types by reflection.
 # Owner: behavior-test maintainers. Remove when unused binding types can be internalized safely.

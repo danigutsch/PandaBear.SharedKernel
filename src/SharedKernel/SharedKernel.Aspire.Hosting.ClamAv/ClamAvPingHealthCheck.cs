@@ -6,6 +6,7 @@ namespace Aspire.Hosting;
 
 internal sealed class ClamAvPingHealthCheck(EndpointReference endpoint) : IHealthCheck
 {
+    /// <summary>Null-terminated clamd command that asks the daemon to reply with PONG.</summary>
     private static ReadOnlyMemory<byte> PingCommand { get; } = "zPING\0"u8.ToArray();
 
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)

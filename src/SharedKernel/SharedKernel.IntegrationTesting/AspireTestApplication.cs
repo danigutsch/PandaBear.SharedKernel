@@ -308,6 +308,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
         await operation(timeoutCts.Token).ConfigureAwait(false);
     }
 
+    /// <summary>Started distributed application; throws when it was already disposed or never initialized.</summary>
     private DistributedApplication App => _app ?? throw new InvalidOperationException("Aspire test application is not initialized.");
 
     private static string[] CreateAppHostArguments(IReadOnlyCollection<string> appHostArguments)

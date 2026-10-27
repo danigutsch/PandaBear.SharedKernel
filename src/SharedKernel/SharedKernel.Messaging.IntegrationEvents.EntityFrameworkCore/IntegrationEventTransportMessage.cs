@@ -49,38 +49,46 @@ internal sealed class IntegrationEventTransportMessage : EventEnvelope, IIntegra
     {
     }
 
+    /// <summary>Identifier of the integration event this message records.</summary>
     public Guid Id
     {
         get; private set;
     }
 
+    /// <summary>Name of the consumer the message is recorded for, truncated to the maximum length.</summary>
     public string ConsumerName { get; private set; } = string.Empty;
 
+    /// <summary>When the message was received.</summary>
     public DateTimeOffset ReceivedAt
     {
         get; private set;
     }
 
+    /// <summary>When the consumer finished processing the message, or null while it is unprocessed.</summary>
     public DateTimeOffset? ProcessedAt
     {
         get; private set;
     }
 
+    /// <summary>Number of times consuming the message has been attempted.</summary>
     public int ConsumeAttempts
     {
         get; private set;
     }
 
+    /// <summary>When the latest consume attempt happened, or null before the first attempt.</summary>
     public DateTimeOffset? LastConsumeAttemptAt
     {
         get; private set;
     }
 
+    /// <summary>Earliest time the next consume attempt may run, or null when none is scheduled.</summary>
     public DateTimeOffset? NextConsumeAttemptAt
     {
         get; private set;
     }
 
+    /// <summary>Error text of the latest failed consume attempt, or null when none failed.</summary>
     public string? LastConsumeError
     {
         get; private set;
@@ -94,11 +102,13 @@ internal sealed class IntegrationEventTransportMessage : EventEnvelope, IIntegra
         get; private set;
     }
 
+    /// <summary>Identifier of the consumer instance that currently holds the claim, or null when unclaimed.</summary>
     public string? ClaimedBy
     {
         get; private set;
     }
 
+    /// <summary>When the current claim expires and another consumer may claim the message, or null when unclaimed.</summary>
     public DateTimeOffset? ClaimedUntil
     {
         get; private set;

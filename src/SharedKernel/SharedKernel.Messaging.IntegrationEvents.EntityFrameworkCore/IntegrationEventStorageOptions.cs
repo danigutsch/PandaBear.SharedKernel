@@ -49,7 +49,9 @@ public sealed class IntegrationEventStorageOptions
         get; set;
     }
 
+    /// <summary>Schema of the outbox table: the outbox-specific schema when set, otherwise the shared schema.</summary>
     internal string EffectiveOutboxSchema => OutboxSchema ?? Schema;
 
+    /// <summary>Schema of the transport table: the transport-specific schema when set, otherwise the shared schema.</summary>
     internal string EffectiveTransportSchema => TransportSchema ?? Schema;
 }

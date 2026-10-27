@@ -48,7 +48,11 @@ internal static class ContextKeyedDefault<TService>
 
     private static string Names(IEnumerable<Type> contexts) => string.Join(", ", contexts.Select(context => context.Name));
 
+    /// <summary>Marks a context as having a registration of the service.</summary>
+    /// <param name="ContextType">The registered database context type.</param>
     private sealed record Registration(Type ContextType);
 
+    /// <summary>Marks a context as the explicitly chosen default.</summary>
+    /// <param name="ContextType">The chosen database context type.</param>
     private sealed record Choice(Type ContextType);
 }

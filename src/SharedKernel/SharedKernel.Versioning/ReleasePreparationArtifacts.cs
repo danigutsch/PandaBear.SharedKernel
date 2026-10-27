@@ -190,5 +190,9 @@ public static class ReleasePreparationArtifacts
             .Replace("\t", "\\t", StringComparison.Ordinal) + "\"";
     }
 
+    /// <summary>One package file listed in the release preparation manifest.</summary>
+    /// <param name="FileName">Package file name without directory.</param>
+    /// <param name="Sha256">SHA-256 hash of the package file.</param>
+    /// <param name="SizeBytes">Package file size in bytes.</param>
     private sealed record ReleasePackageEntry(string FileName, string Sha256, long SizeBytes);
 }

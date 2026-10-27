@@ -117,11 +117,13 @@ internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegratio
         get; private set;
     }
 
+    /// <summary>Identifier of the publisher instance that currently holds the claim, or null when unclaimed.</summary>
     public string? ClaimedBy
     {
         get; private set;
     }
 
+    /// <summary>When the current claim expires and another publisher may claim the message, or null when unclaimed.</summary>
     public DateTimeOffset? ClaimedUntil
     {
         get; private set;

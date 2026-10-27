@@ -133,10 +133,13 @@ public static class PostgreSqlEventSourcingTelemetry
     /// </summary>
     public static string ExpectedRevisionExact => "exact";
 
+    /// <summary>Source of the event sourcing activities.</summary>
     internal static ActivitySource ActivitySource { get; } = new(Name);
 
+    /// <summary>Meter that owns the event sourcing instruments.</summary>
     internal static Meter Meter { get; } = new(Name);
 
+    /// <summary>Records how long an event stream append took, in milliseconds.</summary>
     internal static Histogram<double> AppendDuration
     {
         get;
@@ -145,6 +148,7 @@ public static class PostgreSqlEventSourcingTelemetry
         unit: "ms",
         description: "Duration of PostgreSQL event stream append operations.");
 
+    /// <summary>Records how long an event stream load took, in milliseconds.</summary>
     internal static Histogram<double> LoadDuration
     {
         get;
@@ -153,6 +157,7 @@ public static class PostgreSqlEventSourcingTelemetry
         unit: "ms",
         description: "Duration of PostgreSQL event stream load operations.");
 
+    /// <summary>Records how long a projection checkpoint operation took, in milliseconds.</summary>
     internal static Histogram<double> CheckpointDuration
     {
         get;
@@ -161,6 +166,7 @@ public static class PostgreSqlEventSourcingTelemetry
         unit: "ms",
         description: "Duration of PostgreSQL projection checkpoint operations.");
 
+    /// <summary>Counts events written to event streams.</summary>
     internal static Counter<long> EventsAppended
     {
         get;
@@ -169,6 +175,7 @@ public static class PostgreSqlEventSourcingTelemetry
         unit: "{event}",
         description: "Number of events appended to PostgreSQL event streams.");
 
+    /// <summary>Counts events read from event streams.</summary>
     internal static Counter<long> EventsLoaded
     {
         get;
@@ -177,6 +184,7 @@ public static class PostgreSqlEventSourcingTelemetry
         unit: "{event}",
         description: "Number of events loaded from PostgreSQL event streams.");
 
+    /// <summary>Counts appends rejected because the expected stream revision did not match.</summary>
     internal static Counter<long> AppendConflicts
     {
         get;

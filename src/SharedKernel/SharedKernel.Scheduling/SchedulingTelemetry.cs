@@ -73,10 +73,13 @@ public static class SchedulingTelemetry
     /// </summary>
     public static string OutcomeError => "error";
 
+    /// <summary>Source of the polling activities.</summary>
     internal static ActivitySource ActivitySource { get; } = new(Name);
 
+    /// <summary>Meter that owns the polling instruments.</summary>
     internal static Meter Meter { get; } = new(Name);
 
+    /// <summary>Records how long one polling drain cycle took, in seconds.</summary>
     internal static Histogram<double> PollingCycleDuration
     {
         get;
@@ -85,6 +88,7 @@ public static class SchedulingTelemetry
         "s",
         "Duration of one polling drain cycle.");
 
+    /// <summary>Counts polling batches that completed.</summary>
     internal static Counter<long> PollingBatches
     {
         get;
@@ -93,6 +97,7 @@ public static class SchedulingTelemetry
         "{batch}",
         "Completed polling batches.");
 
+    /// <summary>Counts work items processed by polling.</summary>
     internal static Counter<long> PollingItems
     {
         get;
@@ -101,6 +106,7 @@ public static class SchedulingTelemetry
         "{item}",
         "Processed polling work items.");
 
+    /// <summary>Counts polling failures that were handled without stopping the poller.</summary>
     internal static Counter<long> PollingFailures
     {
         get;

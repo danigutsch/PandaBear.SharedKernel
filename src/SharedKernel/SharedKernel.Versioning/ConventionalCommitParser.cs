@@ -148,5 +148,10 @@ public static class ConventionalCommitParser
 
     private static bool IsToken(string value) => value.All(character => char.IsLetterOrDigit(character) || character == '-');
 
+    /// <summary>Parsed first line of a conventional commit message.</summary>
+    /// <param name="Type">Commit type, such as feat or fix.</param>
+    /// <param name="Scope">Optional scope in parentheses, or null when absent.</param>
+    /// <param name="IsBreaking">Whether the header carries the breaking-change marker.</param>
+    /// <param name="Description">Short summary after the colon.</param>
     private sealed record CommitHeader(string Type, string? Scope, bool IsBreaking, string Description);
 }

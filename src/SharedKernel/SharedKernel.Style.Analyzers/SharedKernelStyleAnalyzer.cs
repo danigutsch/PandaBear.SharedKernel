@@ -139,6 +139,8 @@ public sealed partial class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             OptionalResultMethodRule,
             UnboundedWholeReadRule,
             CaseInsensitiveJsonContextRule,
+            FileNameRule,
+            PropertyDocumentationRule,
             GovernedLiteralAnalysis.LiteralRule,
             GovernedLiteralAnalysis.CatalogRule);
 
@@ -182,6 +184,8 @@ public sealed partial class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             SymbolKind.Method);
 
         context.RegisterSyntaxTreeAction(AnalyzeSyntaxTree);
+        context.RegisterSyntaxTreeAction(AnalyzeFileName);
+        context.RegisterSymbolAction(AnalyzePropertyDocumentation, SymbolKind.Property);
 
         context.RegisterSymbolAction(
             symbolContext => AnalyzeNamedType(symbolContext, domainEventType),
