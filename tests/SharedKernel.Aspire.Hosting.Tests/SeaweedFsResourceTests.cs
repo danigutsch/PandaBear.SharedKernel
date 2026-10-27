@@ -3,6 +3,7 @@ using Aspire.Hosting.ApplicationModel;
 
 namespace PandaBear.Aspire.Hosting.Tests;
 
+/// <summary>Tests the SeaweedFS S3 container resource builder: image, endpoints, credentials, data storage, host port, filer UI and argument validation.</summary>
 public sealed class SeaweedFsResourceTests
 {
     private const string DataFolder = "/data";

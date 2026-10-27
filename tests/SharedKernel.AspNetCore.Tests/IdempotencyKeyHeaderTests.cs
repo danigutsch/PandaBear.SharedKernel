@@ -3,6 +3,7 @@ using PandaBear.Testing;
 
 namespace PandaBear.AspNetCore.Tests;
 
+/// <summary>Tests creation and validation of the <c>Idempotency-Key</c> header value object.</summary>
 [Trait(SharedKernelTestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
 public sealed class IdempotencyKeyHeaderTests
 {

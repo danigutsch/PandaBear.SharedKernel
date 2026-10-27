@@ -266,13 +266,28 @@ dotnet_diagnostic.SKSTYLE004.severity = suggestion
 dotnet_diagnostic.SKSTYLE017.severity = suggestion
 
 # Documented test projects: undocumented members fail the build.
+[tests/SharedKernel.AI.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.ApiVersioning.AspNetCore.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
 [tests/SharedKernel.ApiVersioning.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.AspNetCore.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
 [tests/SharedKernel.Aspire.Analyzers.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
 [tests/SharedKernel.Aspire.CodeFixes.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Aspire.Hosting.K6.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Aspire.Hosting.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
 [tests/SharedKernel.AuditTrail.GeneratorTests/**.cs]
@@ -284,7 +299,13 @@ dotnet_diagnostic.SKSTYLE017.severity = warning
 [tests/SharedKernel.BuildingBlocks.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
+[tests/SharedKernel.CodeFixes.Testing/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
 [tests/SharedKernel.DocumentRendering.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Documentation.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
 [tests/SharedKernel.Domain.Analyzers.Tests/**.cs]
@@ -302,13 +323,16 @@ dotnet_diagnostic.SKSTYLE017.severity = warning
 [tests/SharedKernel.EntityFrameworkCore.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
+[tests/SharedKernel.HttpClients.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
 [tests/SharedKernel.IO.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
-[tests/SharedKernel.Idempotency.Abstractions.Tests/**.cs]
+[tests/SharedKernel.K6.Tool.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
-[tests/SharedKernel.K6.Tool.Tests/**.cs]
+[tests/SharedKernel.MalwareScanning.ClamAv.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
 [tests/SharedKernel.Mediator.Analyzers.Tests/**.cs]
@@ -329,7 +353,10 @@ dotnet_diagnostic.SKSTYLE017.severity = warning
 [tests/SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
-[tests/SharedKernel.Messaging.IntegrationEvents.Tests/**.cs]
+[tests/SharedKernel.Messaging.IntegrationEvents.GeneratorTests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Messaging.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
 [tests/SharedKernel.PlaywrightMcp.Tool.Tests/**.cs]
@@ -338,13 +365,10 @@ dotnet_diagnostic.SKSTYLE017.severity = warning
 [tests/SharedKernel.RepoConfig.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
-[tests/SharedKernel.Results.AspNet.Tests/**.cs]
-dotnet_diagnostic.SKSTYLE017.severity = warning
-
 [tests/SharedKernel.Results.GeneratorTests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
-[tests/SharedKernel.Testing.Analyzers.Tests/**.cs]
+[tests/SharedKernel.Style.Analyzers.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
 [tests/SharedKernel.VaultManager.Tool.Tests/**.cs]

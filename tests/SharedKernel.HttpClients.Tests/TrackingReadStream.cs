@@ -1,19 +1,26 @@
 namespace PandaBear.HttpClients.Tests;
 
+/// <summary>
+/// Read-only stream over a byte array that records how many bytes and reads were requested and whether it was disposed.
+/// </summary>
+/// <param name="content">The bytes the stream serves.</param>
 internal sealed class TrackingReadStream(byte[] content) : Stream
 {
     private readonly MemoryStream _inner = new(content, writable: false);
 
+    /// <summary>Total number of bytes returned by reads so far.</summary>
     public long BytesRead
     {
         get; private set;
     }
 
+    /// <summary>Whether the stream has been disposed.</summary>
     public bool IsDisposed
     {
         get; private set;
     }
 
+    /// <summary>Number of read calls made against the stream.</summary>
     public int ReadCount
     {
         get; private set;

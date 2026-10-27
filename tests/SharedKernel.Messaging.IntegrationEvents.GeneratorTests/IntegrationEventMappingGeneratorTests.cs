@@ -7,6 +7,9 @@ using PandaBear.Messaging.IntegrationEvents.SourceGenerator;
 
 namespace PandaBear.Messaging.IntegrationEvents.GeneratorTests;
 
+/// <summary>
+/// Tests for IntegrationEventMappingGenerator output and diagnostics for registered contracts, handlers, and domain event mappings.
+/// </summary>
 public sealed class IntegrationEventMappingGeneratorTests
 {
     private const string GeneratedAsyncScopeCreation =

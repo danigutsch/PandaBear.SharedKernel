@@ -1,5 +1,6 @@
 namespace PandaBear.Testing.CodeFixRunner.Tests;
 
+/// <summary>Tests the code fix runner command line: option parsing, target validation, exit codes and what is written to standard output and error.</summary>
 public sealed class CodeFixRunnerCommandLineTests : IDisposable
 {
     private const string ProjectToken = "{project}";
@@ -445,6 +446,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
         result.Error.ShouldContain("System.IO.IOException: Connection reset by peer", StringComparison.Ordinal);
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
         projectDirectory.Dispose();

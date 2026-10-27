@@ -6,13 +6,18 @@ using Polly;
 
 namespace PandaBear.HttpClients.Tests;
 
+/// <summary>Builds service providers with the default HTTP client registration and runs requests through them to observe retry, circuit breaker and telemetry behavior.</summary>
 internal static class HttpClientDefaultsTestServices
 {
     private const string ClientName = "shared-kernel-resilience-tests";
     private static readonly byte[] StreamingPayload = "payment-payload"u8.ToArray();
 
+    /// <summary>Gets the byte length of the streamed "payment-payload" request body.</summary>
     public static int StreamingPayloadLength => StreamingPayload.Length;
 
+    /// <summary>Registers the HTTP client defaults and reports whether a client with the given name can be created.</summary>
+    /// <param name="name">The client name to create.</param>
+    /// <returns><see langword="true" /> when the factory returned a client.</returns>
     public static bool CanCreateClient(string name)
     {
         var services = new ServiceCollection();
@@ -25,6 +30,8 @@ internal static class HttpClientDefaultsTestServices
         return client is not null;
     }
 
+    /// <summary>Registers the HTTP client defaults and reports whether a tracer provider and a meter provider can be resolved.</summary>
+    /// <returns>Whether tracing and metrics providers are registered.</returns>
     public static (bool TracingRegistered, bool MetricsRegistered) GetTelemetryRegistrations()
     {
         var services = new ServiceCollection();
@@ -37,6 +44,12 @@ internal static class HttpClientDefaultsTestServices
         return (tracingRegistered, metricsRegistered);
     }
 
+    /// <summary>Sends one request to a handler that fails transiently after accepting it, through a client with the default resilience (optionally customized), and records the outcome.</summary>
+    /// <param name="method">The HTTP method of the request.</param>
+    /// <param name="includeStreamingContent">Whether the request carries tracked stream content.</param>
+    /// <param name="configureResilience">An optional customization of the standard resilience options.</param>
+    /// <param name="ct">The cancellation token.</param>
+    /// <returns>The final status code, the number of attempts that reached the handler, how often the content was serialized and how many source bytes were read.</returns>
     public static async Task<(
         HttpStatusCode StatusCode,
         int AttemptCount,
@@ -81,6 +94,9 @@ internal static class HttpClientDefaultsTestServices
             source?.BytesRead ?? 0);
     }
 
+    /// <summary>Customizes the retry and circuit breaker predicates to ignore 429 responses on paths under <c>/visitor-quota/</c>, sends 102 requests to a quota client that returns 429 for its first 101, then one request each to an ordinary client and a transient client, and records the outcomes.</summary>
+    /// <param name="ct">The cancellation token.</param>
+    /// <returns>The quota statuses and attempts, the ordinary and transient statuses and attempts, and the distinct request paths seen by the retry predicate.</returns>
     public static async Task<(
         HttpStatusCode[] QuotaStatuses,
         int QuotaAttempts,

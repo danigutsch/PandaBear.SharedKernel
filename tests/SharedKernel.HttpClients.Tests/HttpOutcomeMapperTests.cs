@@ -8,6 +8,9 @@ using Polly.Timeout;
 
 namespace PandaBear.HttpClients.Tests;
 
+/// <summary>
+/// Unit tests for HttpOutcomeMapper.Send mapping of HTTP responses, timeouts, cancellation, and transport failures to bounded HttpOutcome values.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class HttpOutcomeMapperTests
 {

@@ -1,5 +1,6 @@
 namespace PandaBear.Tabular.Tests;
 
+/// <summary>Tests for the literal CSV parsing rules: trailing empty rows, naive comma splitting, header matching and null guards.</summary>
 public sealed class CsvParsingSemanticsTests
 {
     [Theory]

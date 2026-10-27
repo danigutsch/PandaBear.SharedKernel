@@ -8,8 +8,10 @@ using SharedHarness = PandaBear.Testing.Roslyn.GeneratorTestHarness;
 
 namespace PandaBear.Messaging.IntegrationEvents.GeneratorTests;
 
+/// <summary>Compiles integration event test sources and runs the integration event generators against them.</summary>
 internal static class GeneratorTestHarness
 {
+    /// <summary>Hint name of the source file that the integration event generator emits.</summary>
     public const string GeneratedHintName = "SharedKernel.Messaging.IntegrationEvents.GeneratedIntegrationEvents.g.cs";
 
     private const string AssemblyName = "SharedKernel.Messaging.IntegrationEvents.Tests.Dynamic";
@@ -21,6 +23,10 @@ internal static class GeneratorTestHarness
 
         """;
 
+    /// <summary>
+    /// Compiles one source text, prefixed with the default usings, as a Preview-language C# compilation.
+    /// </summary>
+    /// <param name="source">The C# source to compile.</param>
     public static CSharpCompilation CreateCompilation(string source)
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(DefaultUsings + source, new CSharpParseOptions(LanguageVersion.Preview));
@@ -28,6 +34,10 @@ internal static class GeneratorTestHarness
         return SharedHarness.CreateCompilation([syntaxTree], AssemblyName, GetMetadataReferences());
     }
 
+    /// <summary>
+    /// Compiles several source texts, each prefixed with the default usings and named Source0000.cs, Source0001.cs, and so on.
+    /// </summary>
+    /// <param name="sources">The C# source texts in compilation order.</param>
     public static CSharpCompilation CreateCompilation(IEnumerable<string> sources)
     {
         var syntaxTrees = sources.Select((source, index) => CSharpSyntaxTree.ParseText(
@@ -38,10 +48,20 @@ internal static class GeneratorTestHarness
         return SharedHarness.CreateCompilation(syntaxTrees, AssemblyName, GetMetadataReferences());
     }
 
+    /// <summary>
+    /// Runs the generators on the compilation and returns only the driver run result.
+    /// </summary>
+    /// <param name="compilation">The compilation to generate from.</param>
+    /// <param name="generators">The generators to run, or none to run IntegrationEventMappingGenerator.</param>
     public static GeneratorDriverRunResult RunGeneratorDriver(
         CSharpCompilation compilation,
         params IIncrementalGenerator[] generators) => RunGenerator(compilation, generators).RunResult;
 
+    /// <summary>
+    /// Runs the generators on the compilation and returns the run result together with the output compilation that includes generated sources.
+    /// </summary>
+    /// <param name="compilation">The compilation to generate from.</param>
+    /// <param name="generators">The generators to run, or none to run IntegrationEventMappingGenerator.</param>
     public static (GeneratorDriverRunResult RunResult, CSharpCompilation OutputCompilation) RunGenerator(
         CSharpCompilation compilation,
         params IIncrementalGenerator[] generators)
@@ -51,6 +71,10 @@ internal static class GeneratorTestHarness
         return (runResult, outputCompilation);
     }
 
+    /// <summary>
+    /// Returns the text of the integration event generator's emitted source from the run result.
+    /// </summary>
+    /// <param name="runResult">The generator driver run result.</param>
     public static string GetGeneratedSource(GeneratorDriverRunResult runResult) =>
         SharedHarness.GetGeneratedSource(runResult, GeneratedHintName);
 

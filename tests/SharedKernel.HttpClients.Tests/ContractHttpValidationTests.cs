@@ -5,6 +5,7 @@ using System.Text.Json;
 
 namespace PandaBear.HttpClients.Tests;
 
+/// <summary>Tests how contract HTTP validation turns failed responses into HTTP or validation exceptions and how it bounds and sanitizes validation problem bodies.</summary>
 public sealed class ContractHttpValidationTests
 {
     [Fact]

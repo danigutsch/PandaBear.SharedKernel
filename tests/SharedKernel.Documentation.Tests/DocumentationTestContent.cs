@@ -1,7 +1,11 @@
 namespace PandaBear.Documentation.Tests;
 
+/// <summary>Sample configuration files, Markdown documents and C#, project and workflow sources used as inputs by the documentation tests.</summary>
 internal static class DocumentationTestContent
 {
+    /// <summary>Builds an Overview document whose "sample" generated block, with an old-generator header, holds a Mermaid flowchart containing the given line.</summary>
+    /// <param name="line">The flowchart line placed inside the block.</param>
+    /// <returns>The Markdown document.</returns>
     public static string GeneratedBlockDocument(string line) =>
         $$"""
         # Overview
@@ -16,6 +20,10 @@ internal static class DocumentationTestContent
         <!-- generated:sample:end -->
         """;
 
+    /// <summary>Builds a generator configuration with docs path <c>docs/architecture</c> and one Mermaid flowchart block named "sample" that writes the given line.</summary>
+    /// <param name="line">The flowchart line the block generates.</param>
+    /// <param name="targetPath">The block's target file under the docs path.</param>
+    /// <returns>The JSON configuration text.</returns>
     public static string GeneratorConfig(string line, string targetPath = "overview.md") =>
         $$"""
         {
@@ -33,6 +41,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a generator configuration whose only block, "sample", has no <c>targetPath</c>.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string MissingTargetPathConfig() =>
         """
         {
@@ -48,6 +58,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a generator configuration whose <c>docsPath</c> is <c>../outside</c>, which leaves the repository root.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string EscapingDocsPathConfig() =>
         """
         {
@@ -64,6 +76,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a generator configuration with block "first" targeting <c>first.md</c> and block "second" targeting <c>second.md</c>.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string TwoBlockConfig() =>
         """
         {
@@ -86,6 +100,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a generator configuration in which blocks "first" and "second" both target <c>overview.md</c>.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string TwoBlocksSameTargetConfig() =>
         """
         {
@@ -108,6 +124,9 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds an Overview document with an empty-but-marked generated block containing "old" for each given block name.</summary>
+    /// <param name="blockNames">The names of the generated blocks to include.</param>
+    /// <returns>The Markdown document.</returns>
     public static string GeneratedBlocksDocument(params string[] blockNames) =>
         string.Join(
             '\n',
@@ -123,6 +142,8 @@ internal static class DocumentationTestContent
                 }),
             ]);
 
+    /// <summary>Builds a generator configuration with six blocks that read repository sources: AppHost resources, project references, endpoint routes with audience rules, integration events, a CI job graph and the workflow list with <c>excluded.yml</c> excluded.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string RepositorySourcesConfig() =>
         """
         {
@@ -186,6 +207,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a generator configuration with a project-references block whose filter name "unknown" is not supported.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string UnknownProjectFilterConfig() =>
         """
         {
@@ -203,6 +226,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a generator configuration with a project-references block rooted at <c>.</c> that uses the "sharedkernel" project filter.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string SharedKernelProjectFilterConfig() =>
         """
         {
@@ -220,6 +245,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a generator configuration whose block "sample" has the unsupported kind "unknown".</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string UnknownBlockKindConfig() =>
         """
         {
@@ -235,6 +262,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a generator configuration that omits <c>docsPath</c>.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string MissingDocsPathConfig() =>
         """
         {
@@ -250,6 +279,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a generator configuration that omits <c>generatorName</c>.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string MissingGeneratorNameConfig() =>
         """
         {
@@ -265,6 +296,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a generator configuration that has a docs path and generator name but no <c>blocks</c> property.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string MissingBlocksConfig() =>
         """
         {
@@ -273,6 +306,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a generator configuration whose <c>blocks</c> property is JSON null.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string NullBlocksConfig() =>
         """
         {
@@ -282,6 +317,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a generator configuration whose <c>blocks</c> array holds a single null entry.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string NullBlockEntryConfig() =>
         """
         {
@@ -291,6 +328,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a generator configuration with two blocks that are both named "sample".</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string DuplicateBlockNamesConfig() =>
         """
         {
@@ -313,6 +352,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a conformance configuration whose "sample-events" check compares the documented <c>current-event</c> facts in <c>docs/architecture/FLOWS.md</c> with the switch cases of <c>Apply</c> in <c>SampleAggregate.cs</c> and <c>SampleProjection.cs</c>.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string SwitchFactConformanceConfig() =>
         """
         {
@@ -339,6 +380,9 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a conformance configuration whose "sample-runtime" check compares documented <c>current-runtime</c> facts with the registrations in <c>SampleRuntime.Configure</c> (filtered to identifiers containing "IntegrationEvent" plus CatalogProjectionHostedService) and requires one <c>Configure</c> call with <c>addRuntime: null</c> inside <c>Entry</c>.</summary>
+    /// <param name="requireMissingInvocation">Whether the required invocation names a method, "Missing", that the source does not call.</param>
+    /// <returns>The JSON configuration text.</returns>
     public static string RegistrationFactConformanceConfig(bool requireMissingInvocation = false) =>
         $$"""
         {
@@ -372,6 +416,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a conformance configuration that expects <c>docs/README.md</c> to list the requirements deprecated-docs-reviewed and guidance-centralized and to keep a non-empty documentation-index-table content block.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string ExpectedFactConformanceConfig() =>
         """
         {
@@ -391,6 +437,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a conformance configuration that expects <c>docs/DOCUMENTATION_GOVERNANCE.md</c> to list three governance standards and to keep non-empty required-sections-checklist, provenance-expectations and small-doc-exemption content blocks.</summary>
+    /// <returns>The JSON configuration text.</returns>
     public static string GovernanceFactConformanceConfig() =>
         """
         {
@@ -415,6 +463,9 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Builds a governance document with its three standards listed and three content blocks, where the named block is left empty.</summary>
+    /// <param name="removedBlock">The content block to leave empty: required-sections-checklist, provenance-expectations or small-doc-exemption.</param>
+    /// <returns>The Markdown document.</returns>
     public static string GovernanceDocumentWithoutContent(string removedBlock)
     {
         var requiredSections = removedBlock == "required-sections-checklist"
@@ -448,6 +499,8 @@ internal static class DocumentationTestContent
         """;
     }
 
+    /// <summary>Returns C# for a <c>SampleAggregate</c> whose <c>Apply</c> has an unrelated <c>is bool</c> check and a switch expression over FirstEvent and SecondEvent.</summary>
+    /// <returns>The C# source text.</returns>
     public static string SampleAggregateSource() =>
         """
         internal sealed class SampleAggregate
@@ -469,6 +522,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Returns C# for a <c>SampleProjection</c> whose <c>Apply</c> is a switch statement with cases for FirstEvent and SecondEvent.</summary>
+    /// <returns>The C# source text.</returns>
     public static string SampleProjectionSource() =>
         """
         internal sealed class SampleProjection
@@ -489,6 +544,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Returns C# for a <c>SampleRuntime</c> whose <c>Entry</c> calls <c>Configure(addRuntime: null)</c> and whose <c>Configure</c> registers an audit-retention hosted service, an integration event outbox and a catalog projection hosted service.</summary>
+    /// <returns>The C# source text.</returns>
     public static string SampleRuntimeSource() =>
         """
         internal static class SampleRuntime
@@ -505,6 +562,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Returns a top-level AppHost program that adds Postgres, an "admin" database, an optional Clam AV resource, an API project that references them and a Dockerfile worker.</summary>
+    /// <returns>The C# source text.</returns>
     public static string AppHostProgram() =>
         """
         var builder = DistributedApplication.CreateBuilder(args);
@@ -516,6 +575,8 @@ internal static class DocumentationTestContent
         builder.AddDockerfile(worker, api);
         """;
 
+    /// <summary>Returns a project file that has a project reference to <c>../Lib/Lib.csproj</c>.</summary>
+    /// <returns>The project file text.</returns>
     public static string AppProject() =>
         """
         <Project Sdk="Microsoft.NET.Sdk">
@@ -525,11 +586,15 @@ internal static class DocumentationTestContent
         </Project>
         """;
 
+    /// <summary>Returns a project file with no items and no references.</summary>
+    /// <returns>The project file text.</returns>
     public static string EmptyProject() =>
         """
         <Project Sdk="Microsoft.NET.Sdk" />
         """;
 
+    /// <summary>Returns C# that maps customer endpoints, including routes written to confuse a naive parser (comments, brace and char literals, raw and verbatim multi-line strings, unterminated literals, padding that pushes calls apart), a public catalog group and a presentation update route.</summary>
+    /// <returns>The C# source text.</returns>
     public static string CustomerEndpoints()
     {
         var padding = string.Join(
@@ -613,6 +678,8 @@ internal static class DocumentationTestContent
         """";
     }
 
+    /// <summary>Returns C# for the integration event record <c>AdminTourCreatedIntegrationEvent</c> with event type "admin.tour.created" and version 1.</summary>
+    /// <returns>The C# source text.</returns>
     public static string AdminTourCreatedIntegrationEvent() =>
         """
         public sealed record AdminTourCreatedIntegrationEvent(
@@ -623,6 +690,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Returns C# for a mapping class whose <c>MapTourCreated</c> creates an <c>AdminTourCreatedIntegrationEvent</c>.</summary>
+    /// <returns>The C# source text.</returns>
     public static string TourIntegrationEventMappings() =>
         """
         internal static class TourIntegrationEventMappings
@@ -634,6 +703,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Returns C# for an empty handler class that implements <c>IIntegrationEventHandler</c> for <c>AdminTourCreatedIntegrationEvent</c>.</summary>
+    /// <returns>The C# source text.</returns>
     public static string AdminTourCreatedIntegrationHandler() =>
         """
         internal sealed class AdminTourCreatedIntegrationHandler : IIntegrationEventHandler<AdminTourCreatedIntegrationEvent>
@@ -641,6 +712,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Returns C# that registers an integration event consumer for <c>AdminTourCreatedIntegrationEvent</c> under its event type.</summary>
+    /// <returns>The C# source text.</returns>
     public static string ApplicationDependencyInjection() =>
         """
         public static class ApplicationDependencyInjection
@@ -654,6 +727,8 @@ internal static class DocumentationTestContent
         }
         """;
 
+    /// <summary>Returns a pull-request workflow with jobs build, test (templated display name) and deploy, chained through <c>needs</c>.</summary>
+    /// <returns>The workflow YAML text.</returns>
     public static string CiWorkflow() =>
         """
         name: CI
@@ -669,6 +744,8 @@ internal static class DocumentationTestContent
               - test
         """;
 
+    /// <summary>Returns a manually dispatched workflow named "Release workflow" with a single release job.</summary>
+    /// <returns>The workflow YAML text.</returns>
     public static string ReleaseWorkflow() =>
         """
         name: Release workflow
@@ -678,6 +755,8 @@ internal static class DocumentationTestContent
             name: Release job
         """;
 
+    /// <summary>Returns a push workflow named "Excluded workflow", used to prove excluded workflow files are left out of generated output.</summary>
+    /// <returns>The workflow YAML text.</returns>
     public static string ExcludedWorkflow() =>
         """
         name: Excluded workflow

@@ -1,7 +1,10 @@
 namespace PandaBear.Documentation.Tests;
 
+/// <summary>Locates the repository root and reads tool invocations out of repository files.</summary>
 internal static class RepositoryFiles
 {
+    /// <summary>Walks up from the test assembly directory to the first directory containing <c>SharedKernel.slnx</c>.</summary>
+    /// <returns>The repository root path.</returns>
     public static string GetRootPath()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

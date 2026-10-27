@@ -8,6 +8,7 @@ using PandaBear.Testing;
 
 namespace PandaBear.AspNetCore.Tests;
 
+/// <summary>Tests the default request-binding behavior that <c>AddTestRequestBindingDefaults</c> configures for test hosts.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.EndpointCategory)]
 [Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
 public sealed class TestRequestBindingDefaultsTests
@@ -44,6 +45,7 @@ public sealed class TestRequestBindingDefaultsTests
         response.StatusCode.ShouldBe(expected);
         calls.ShouldBe(0);
     }
+
     [Fact]
     public static void Null_service_collections_are_rejected()
     {

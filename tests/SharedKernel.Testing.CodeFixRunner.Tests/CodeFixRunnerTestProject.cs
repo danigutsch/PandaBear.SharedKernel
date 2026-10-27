@@ -2,8 +2,10 @@ using System.Globalization;
 
 namespace PandaBear.Testing.CodeFixRunner.Tests;
 
+/// <summary>Sample project, solution, source and configuration texts, plus helpers that write them to a temporary directory for code fix runner tests.</summary>
 internal static class CodeFixRunnerTestProject
 {
+    /// <summary>A minimal net10.0 SDK-style project file with restore disabled.</summary>
     public const string ProjectFile = """
         <Project Sdk="Microsoft.NET.Sdk">
           <PropertyGroup>
@@ -15,11 +17,13 @@ internal static class CodeFixRunnerTestProject
         </Project>
         """;
 
+    /// <summary>A project file that is cut off before its closing tags, so MSBuild cannot load it.</summary>
     public const string MalformedProjectFile = """
         <Project Sdk="Microsoft.NET.Sdk">
           <PropertyGroup>
         """;
 
+    /// <summary>A <c>global.json</c> that pins SDK 10.0.999 with roll-forward disabled, a version that is not installed.</summary>
     public const string MissingSdkGlobalJsonFile = """
         {
           "sdk": {
@@ -29,6 +33,7 @@ internal static class CodeFixRunnerTestProject
         }
         """;
 
+    /// <summary>A <c>.slnx</c> solution that lists the existing <c>Sample.Tests.csproj</c> and a project file that does not exist.</summary>
     public const string SolutionWithMissingProjectFile = """
         <Solution>
           <Project Path="Sample.Tests.csproj" />
@@ -36,6 +41,7 @@ internal static class CodeFixRunnerTestProject
         </Solution>
         """;
 
+    /// <summary>A stub <c>Xunit.Assert</c> and a test class with one <c>Xunit.Assert.True(true)</c> call, which SKTEST006 can fix.</summary>
     public const string SourceFile = """
         namespace Xunit
         {
@@ -63,6 +69,7 @@ internal static class CodeFixRunnerTestProject
         }
         """;
 
+    /// <summary>A test class with an empty method and no xUnit assertions, so no SKTEST006 diagnostic is raised.</summary>
     public const string CleanSourceFile = """
         namespace Sample.Tests
         {
@@ -75,6 +82,7 @@ internal static class CodeFixRunnerTestProject
         }
         """;
 
+    /// <summary>A test method calling both <c>Xunit.Assert.Equal</c> with <c>ignoreCase</c>, which has no fix, and the fixable <c>Xunit.Assert.True</c>.</summary>
     public const string SupportedAndUnsupportedSourceFile = """
         namespace Xunit
         {
@@ -103,6 +111,7 @@ internal static class CodeFixRunnerTestProject
         }
         """;
 
+    /// <summary>A test method with two <c>Xunit.Assert.True</c> calls whose arguments carry irregular inner spacing.</summary>
     public const string MultipleSupportedSourceFile = """
         namespace Xunit
         {
@@ -127,6 +136,7 @@ internal static class CodeFixRunnerTestProject
         }
         """;
 
+    /// <summary>A <c>[Fact]</c> test class that calls a private static <c>CreateTourId</c> helper, which SKTEST004 moves into a helpers class.</summary>
     public const string HelperSourceFile = """
         namespace Xunit
         {
@@ -153,6 +163,7 @@ internal static class CodeFixRunnerTestProject
         }
         """;
 
+    /// <summary>A <c>[Fact]</c> test whose Act, Arrange and Assert comment markers appear in the wrong order.</summary>
     public const string UnorderedMarkersSourceFile = """
         namespace Xunit
         {
@@ -181,6 +192,7 @@ internal static class CodeFixRunnerTestProject
         }
         """;
 
+    /// <summary>An <c>.editorconfig</c> that enables SKTEST017 at warning severity for C# files.</summary>
     public const string UserMessageOverloadEditorConfigFile = """
         root = true
 
@@ -188,6 +200,7 @@ internal static class CodeFixRunnerTestProject
         dotnet_diagnostic.SKTEST017.severity = warning
         """;
 
+    /// <summary>Assertion extensions <c>ShouldBePositive</c> and <c>ShouldBeEven</c> without <c>string userMessage</c> overloads, plus the <c>WithUserMessage</c> helpers the generated overloads call.</summary>
     public const string UserMessageOverloadSourceFile = """
         using static Sample.Assertions.UserMessageAssertions;
 
@@ -222,6 +235,7 @@ internal static class CodeFixRunnerTestProject
         """;
 
     // The paramName overload already uses the (Action, string) signature that the userMessage overload needs.
+    /// <summary>A <c>ShouldFail</c> assertion whose <c>(Action, string?)</c> overload already occupies the signature a <c>userMessage</c> overload would need.</summary>
     public const string BlockedUserMessageOverloadSourceFile = """
         namespace Sample.Assertions
         {
@@ -239,6 +253,8 @@ internal static class CodeFixRunnerTestProject
         }
         """;
 
+    /// <summary>Creates an empty directory named <c>sk-codefix-runner-</c> plus a new GUID under the system temp path.</summary>
+    /// <returns>The full path of the created directory.</returns>
     public static string CreateTemporaryProject()
     {
         var projectDirectory = Path.Combine(Path.GetTempPath(), "sk-codefix-runner-" + Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture));
@@ -248,11 +264,18 @@ internal static class CodeFixRunnerTestProject
 
     // The unrestored project gets framework references only from a targeting pack that the selected SDK ships. The
     // repository's pinned SDK ships one; a newer installed SDK can need a downloaded pack and then loads no references.
+    /// <summary>Copies the repository <c>global.json</c> into the directory so the sample project loads with the pinned SDK.</summary>
+    /// <param name="directory">The directory that receives the copy.</param>
     public static void PinRepositorySdk(string directory)
     {
         File.Copy(Path.Combine(RepositoryFiles.GetRootPath(), "global.json"), Path.Combine(directory, "global.json"));
     }
 
+    /// <summary>Writes <see cref="ProjectFile"/> as <c>Sample.Tests.csproj</c> and the given source as <c>SampleTests.cs</c> into the directory.</summary>
+    /// <param name="directory">The directory to write into.</param>
+    /// <param name="source">The text of the source file.</param>
+    /// <param name="ct">The token that cancels the writes.</param>
+    /// <returns>The paths of the written project file and source file.</returns>
     public static async Task<(string ProjectPath, string SourcePath)> Write(string directory, string source, CancellationToken ct)
     {
         var projectPath = Path.Combine(directory, "Sample.Tests.csproj");

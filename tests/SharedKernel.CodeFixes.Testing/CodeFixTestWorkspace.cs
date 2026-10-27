@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace PandaBear.CodeFixes.Testing;
 
+/// <summary>In-memory Roslyn project holding one C# test document, used to run analyzers and code fix providers and inspect the results.</summary>
 public sealed class CodeFixTestWorkspace
 {
     private const string DefaultUsings = """
@@ -25,6 +26,7 @@ public sealed class CodeFixTestWorkspace
         DocumentId = documentId;
     }
 
+    /// <summary>Gets the underlying ad hoc Roslyn workspace.</summary>
     public AdhocWorkspace Workspace
     {
         get;
@@ -49,6 +51,10 @@ public sealed class CodeFixTestWorkspace
         }
     }
 
+    /// <summary>Creates a workspace with one project referencing the trusted platform assemblies and one document <c>Test0.cs</c> made of common <c>using</c> directives followed by the given source.</summary>
+    /// <param name="source">The C# source appended after the default usings.</param>
+    /// <param name="assemblyName">The project and assembly name.</param>
+    /// <returns>The new workspace.</returns>
     public static CodeFixTestWorkspace Create(string source, string assemblyName = "SharedKernel.Style.CodeFixes.Tests.Dynamic")
     {
         ArgumentNullException.ThrowIfNull(source);
@@ -83,6 +89,10 @@ public sealed class CodeFixTestWorkspace
         return new CodeFixTestWorkspace(workspace, projectId, documentId);
     }
 
+    /// <summary>Adds a further document, prefixed with the default usings, to the project.</summary>
+    /// <param name="source">The C# source appended after the default usings.</param>
+    /// <param name="name">The document file name.</param>
+    /// <returns>The identifier of the new document.</returns>
     public DocumentId AddDocument(string source, string name)
     {
         ArgumentNullException.ThrowIfNull(source);
@@ -98,6 +108,10 @@ public sealed class CodeFixTestWorkspace
         return documentId;
     }
 
+    /// <summary>Creates a warning diagnostic with the given id whose location spans the first occurrence of the marker text in the main document.</summary>
+    /// <param name="diagnosticId">The diagnostic identifier.</param>
+    /// <param name="markerText">The text to locate in the document.</param>
+    /// <returns>The synthetic diagnostic.</returns>
     public async Task<Diagnostic> CreateDocumentDiagnostic(string diagnosticId, string markerText)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(diagnosticId);
@@ -123,6 +137,10 @@ public sealed class CodeFixTestWorkspace
         return Diagnostic.Create(descriptor, Location.Create(syntaxTree, new TextSpan(start, markerText.Length)));
     }
 
+    /// <summary>Asks the provider to register its code fixes for the diagnostic in the main document and collects the registered actions.</summary>
+    /// <param name="provider">The code fix provider under test.</param>
+    /// <param name="diagnostic">The diagnostic to fix.</param>
+    /// <returns>The code actions the provider registered.</returns>
     public async Task<IReadOnlyList<CodeAction>> GetCodeActions(CodeFixProvider provider, Diagnostic diagnostic)
     {
         ArgumentNullException.ThrowIfNull(provider);
@@ -139,6 +157,9 @@ public sealed class CodeFixTestWorkspace
         return actions;
     }
 
+    /// <summary>Compiles the project and runs the analyzer over it.</summary>
+    /// <param name="analyzer">The analyzer under test.</param>
+    /// <returns>The diagnostics the analyzer reported.</returns>
     public async Task<IReadOnlyList<Diagnostic>> GetAnalyzerDiagnostics(DiagnosticAnalyzer analyzer)
     {
         ArgumentNullException.ThrowIfNull(analyzer);
@@ -150,6 +171,9 @@ public sealed class CodeFixTestWorkspace
         return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
     }
 
+    /// <summary>Applies the single change operation of the code action to the workspace solution.</summary>
+    /// <param name="action">The code action to apply.</param>
+    /// <returns>A task that completes when the changes have been applied.</returns>
     public async Task ApplyCodeAction(CodeAction action)
     {
         ArgumentNullException.ThrowIfNull(action);
@@ -159,11 +183,16 @@ public sealed class CodeFixTestWorkspace
         Workspace.TryApplyChanges(applyOperation.ChangedSolution);
     }
 
+    /// <summary>Gets the current text of the main document, including the default usings.</summary>
+    /// <returns>The document text.</returns>
     public async Task<string> GetDocumentText()
     {
         return (await Document.GetTextAsync().ConfigureAwait(false)).ToString();
     }
 
+    /// <summary>Gets the current text of the document with the given identifier.</summary>
+    /// <param name="documentId">The document to read.</param>
+    /// <returns>The document text.</returns>
     public async Task<string> GetDocumentText(DocumentId documentId)
     {
         ArgumentNullException.ThrowIfNull(documentId);
@@ -172,6 +201,8 @@ public sealed class CodeFixTestWorkspace
         return (await document.GetTextAsync().ConfigureAwait(false)).ToString();
     }
 
+    /// <summary>Compiles the project and returns the compiler's own diagnostics.</summary>
+    /// <returns>The compilation diagnostics.</returns>
     public async Task<IReadOnlyList<Diagnostic>> GetCompilationDiagnostics()
     {
         var project = Workspace.CurrentSolution.GetProject(ProjectId) ?? throw new InvalidOperationException("Test project could not be found.");
