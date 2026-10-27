@@ -262,9 +262,11 @@ dotnet_diagnostic.CA5394.severity = none
 dotnet_diagnostic.CA1515.severity = none
 dotnet_diagnostic.CA1707.severity = none
 dotnet_diagnostic.CA1716.severity = none
-# Staged rollout: undocumented test members stay visible as suggestions until the backlog is retired.
-# Owner: SharedKernel maintainers. Tracked by #3; raise to warning once test projects are documented.
-dotnet_diagnostic.CS1591.severity = suggestion
+# CS1591 cannot skip test methods, so SKSTYLE017 covers public test types and helpers instead and skips [Fact]/[Theory] methods.
+# Staged rollout: undocumented members stay visible as suggestions until each test project is documented.
+# Owner: SharedKernel maintainers. Tracked by #3; raise SKSTYLE017 to warning per project once it is documented.
+dotnet_diagnostic.CS1591.severity = none
+sharedkernel_style_document_public_members = true
 dotnet_diagnostic.SKSTYLE004.severity = suggestion
 dotnet_diagnostic.SKSTYLE017.severity = suggestion
 
