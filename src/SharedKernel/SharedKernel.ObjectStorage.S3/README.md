@@ -14,6 +14,8 @@ independent of the authenticated endpoint. Presigned PUT tickets sign `Content-T
 `Content-Length`, and last at most seven days.
 
 AWS SDK traces drop bucket, key, request-id and URL attributes so object keys do not reach telemetry.
+The redaction processor runs in registration order, so call `AddS3ObjectStore` before registering any trace
+exporter or batch processor; a processor registered earlier can see unredacted spans.
 Hosting a local SeaweedFS container belongs to `SharedKernel.Aspire.Hosting.SeaweedFs`.
 
 ## Package identity and availability
