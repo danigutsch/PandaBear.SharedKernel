@@ -7,7 +7,4 @@ internal static partial class UiFailureLog
 {
     [LoggerMessage(UiFailureReporter.HandledFailureEventId, LogLevel.Error, "Handled UI failure in {Operation}: {ExceptionType} (trace {TraceId})", EventName = "HandledUiFailure")]
     public static partial void HandledFailure(ILogger logger, string operation, string exceptionType, string traceId);
-
-    [LoggerMessage(UiFailureReporter.CounterFailureEventId, LogLevel.Warning, "The handled-failure counter threw; the failure was still logged", EventName = "HandledFailureCounterFailed")]
-    public static partial void CounterFailed(ILogger logger);
 }

@@ -43,11 +43,10 @@ else if (outcome.Kind != HttpOutcomeKind.Succeeded)
 
 Blazor Server component exceptions do not reach the ASP.NET Core exception handler, and code that catches them often shows a message and nothing else. `IUiFailureReporter.Report(exception, operation)` logs `Handled UI failure in {Operation}: {ExceptionType} (trace {TraceId})` under `EventId` 7001 (`HandledUiFailure`). The exception object, message, stack, and data are never logged. Operation names must be code-chosen constants; unsafe or overlong names are logged as `unknown`.
 
-`IHandledFailureCounter` is the seam for incrementing `unhandled_exceptions_total` with the tag `handled=true`, so handled and unhandled failures can share one series. This package defines only the interface and ships no counter: the intended implementation is the `UnhandledExceptionReporter` that pull request 195 proposes for `SharedKernel.AspNetCore`, which is not merged or released, so do not rely on it yet. Until it exists, supply your own implementation or leave it out, in which case failures are logged and not counted and no warning is raised for the missing counter. The reporter is a singleton, so register the counter as a singleton. A counter that throws cannot break reporting; a fixed warning (event id 7002, no exception text) is logged instead.
+Each report also increments the counter `handled_ui_failures_total` on the meter `PandaBear.Blazor` (`UiFailureReporter.MeterName`), tagged `error_type` (exception type name, with `AggregateException` and `TargetInvocationException` unwrapped to their first inner exception) and `operation` (the sanitized operation name). Tag cardinality is bounded by your call sites; messages, trace ids, and user data are never tags. The counter is separate from `unhandled_exceptions_total` in `SharedKernel.AspNetCore`, because a page failure has no route template. Metrics are fail-safe: a throwing meter factory or listener writes the exception type name to standard error and never breaks reporting or the log. The reporter needs an `IMeterFactory`, which the ASP.NET Core host and `AddMetrics()` register. Register the meter for export, for example `metrics.AddMeter(UiFailureReporter.MeterName)` with OpenTelemetry.
 
 ```csharp
 builder.Services.AddUiFailureReporting();
-builder.Services.AddSingleton<IHandledFailureCounter, MyHandledFailureCounter>(); // optional
 ```
 
 ```razor
