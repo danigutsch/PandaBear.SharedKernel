@@ -8,7 +8,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RoadmapAutomationConfigTests
 {
-    /// <summary><c>init</c> writes a nonblank <c>automation.pullRequestBody</c> and a schema that requires only it, forbids extra properties, caps it at 65536 characters, leaves <c>automation</c> optional, and declares every top-level config property.</summary>
     [Fact]
     public async Task Init_declares_the_automation_pull_request_body_in_the_config_and_its_schema()
     {
@@ -36,7 +35,6 @@ public sealed class RoadmapAutomationConfigTests
             .ShouldAllSatisfy(property => properties.TryGetProperty(property.Name, out _).ShouldBeTrue(property.Name));
     }
 
-    /// <summary><c>verify</c> exits with 0 for an initialized config whose <c>automation</c> property has been removed.</summary>
     [Fact]
     public async Task Verify_accepts_a_config_without_automation_settings()
     {
@@ -52,9 +50,6 @@ public sealed class RoadmapAutomationConfigTests
         exitCode.ShouldBe(0, error);
     }
 
-    /// <summary><c>verify</c> exits with 1 and reports the expected <c>roadmap/config.json</c> message when <c>automation</c> is an array, is empty, has a blank or non-string <c>pullRequestBody</c>, or has an unsupported <c>title</c> property.</summary>
-    /// <param name="automation">The JSON written as the <c>automation</c> property.</param>
-    /// <param name="expectedMessage">The message <c>verify</c> must report for it.</param>
     [Theory]
     [InlineData("[]", "automation must be a JSON object when present.")]
     [InlineData("{}", "automation.pullRequestBody must be a nonblank string of at most 65536 characters.")]
@@ -76,7 +71,6 @@ public sealed class RoadmapAutomationConfigTests
         error.ShouldContain("- roadmap/config.json: " + expectedMessage, StringComparison.Ordinal);
     }
 
-    /// <summary><c>verify</c> exits with 1 for a <c>pullRequestBody</c> of 65537 characters, one more than the 65536 allowed.</summary>
     [Fact]
     public async Task Verify_rejects_a_pull_request_body_longer_than_github_allows()
     {

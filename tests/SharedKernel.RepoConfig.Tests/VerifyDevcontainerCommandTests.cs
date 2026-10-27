@@ -5,9 +5,6 @@ namespace PandaBear.RepoConfig.Tests;
 /// </summary>
 public sealed class VerifyDevcontainerCommandTests
 {
-    /// <summary>
-    /// Verifies that devcontainer up runs with trace logging and its output and trace are both echoed and written to devcontainer-up.log.
-    /// </summary>
     [Fact]
     public async Task Up_runs_with_trace_logging_and_tees_its_log_to_output()
     {
@@ -34,9 +31,6 @@ public sealed class VerifyDevcontainerCommandTests
         log.ShouldContain("trace on stderr", StringComparison.Ordinal);
     }
 
-    /// <summary>
-    /// Verifies that an up outcome of error fails the command with exit code 1 and removes the container even though the CLI exited 0.
-    /// </summary>
     [Fact]
     public async Task Outcome_error_fails_even_when_the_cli_exits_zero()
     {
@@ -59,9 +53,6 @@ public sealed class VerifyDevcontainerCommandTests
         workspace.DockerCalls().ShouldBe(["[rm][-f][abc123]"]);
     }
 
-    /// <summary>
-    /// Verifies that a nonzero devcontainer up exit code fails the command and removes the container it reported.
-    /// </summary>
     [Fact]
     public async Task Nonzero_up_exit_fails_and_removes_the_reported_container()
     {
@@ -83,9 +74,6 @@ public sealed class VerifyDevcontainerCommandTests
         workspace.DockerCalls().ShouldBe(["[rm][-f][abc123]"]);
     }
 
-    /// <summary>
-    /// Verifies that cleanup removes the last container ID found in the trace log.
-    /// </summary>
     [Fact]
     public async Task Cleanup_removes_the_last_container_id_in_the_trace_log()
     {
@@ -107,9 +95,6 @@ public sealed class VerifyDevcontainerCommandTests
         workspace.DockerCalls().ShouldBe(["[rm][-f][second]"]);
     }
 
-    /// <summary>
-    /// Verifies that --keep-container skips container removal and reports the kept container.
-    /// </summary>
     [Fact]
     public async Task Keep_container_skips_removal()
     {
@@ -130,9 +115,6 @@ public sealed class VerifyDevcontainerCommandTests
         workspace.DockerCalls().ShouldBeEmpty();
     }
 
-    /// <summary>
-    /// Verifies that an up result without a container ID fails with exit code 1, writes no metadata, and removes nothing.
-    /// </summary>
     [Fact]
     public async Task Missing_container_id_fails_without_metadata_or_cleanup()
     {
@@ -156,9 +138,6 @@ public sealed class VerifyDevcontainerCommandTests
         File.Exists(Path.Combine(workspace.RootPath, "TestResults", "devcontainer-smoke", "metadata.txt")).ShouldBeFalse();
     }
 
-    /// <summary>
-    /// Verifies that --log-directory receives metadata.txt with the workspace, log directory, CLI path, and container ID, plus the up log.
-    /// </summary>
     [Fact]
     public async Task Metadata_is_written_to_the_log_directory()
     {
@@ -188,9 +167,6 @@ public sealed class VerifyDevcontainerCommandTests
         File.Exists(Path.Combine(logDirectory, "devcontainer-up.log")).ShouldBeTrue();
     }
 
-    /// <summary>
-    /// Verifies that --exec commands run in order through bash -lc, each writes its own numbered log, and the container is removed afterwards.
-    /// </summary>
     [Fact]
     public async Task Exec_commands_run_in_order_in_a_login_shell_with_their_own_logs()
     {
@@ -221,9 +197,6 @@ public sealed class VerifyDevcontainerCommandTests
         workspace.DockerCalls().ShouldBe(["[rm][-f][abc123]"]);
     }
 
-    /// <summary>
-    /// Verifies that a failing --exec stops later commands, fails with the exec exit code, and removes the container.
-    /// </summary>
     [Fact]
     public async Task Failing_exec_stops_the_run_and_removes_the_container()
     {
@@ -249,9 +222,6 @@ public sealed class VerifyDevcontainerCommandTests
         workspace.DockerCalls().ShouldBe(["[rm][-f][abc123]"]);
     }
 
-    /// <summary>
-    /// Verifies that no Git mount is passed to devcontainer up for a main worktree.
-    /// </summary>
     [Fact]
     public async Task Git_directory_is_not_mounted_for_a_main_worktree()
     {
@@ -273,9 +243,6 @@ public sealed class VerifyDevcontainerCommandTests
         workspace.CliCalls().ShouldBe([$"[up][--workspace-folder][{repository.RootPath}][--log-level][trace]"]);
     }
 
-    /// <summary>
-    /// Verifies that the Git common directory is bind-mounted into the container for a linked worktree.
-    /// </summary>
     [Fact]
     public async Task Git_common_directory_is_mounted_for_a_linked_worktree()
     {
@@ -307,9 +274,6 @@ public sealed class VerifyDevcontainerCommandTests
         ]);
     }
 
-    /// <summary>
-    /// Verifies that a missing .devcontainer/devcontainer.json fails before the CLI is started.
-    /// </summary>
     [Fact]
     public async Task Missing_devcontainer_definition_fails_before_starting_the_cli()
     {
@@ -331,9 +295,6 @@ public sealed class VerifyDevcontainerCommandTests
         workspace.CliCalls().ShouldBeEmpty();
     }
 
-    /// <summary>
-    /// Verifies that a missing docker executable fails before the CLI is started.
-    /// </summary>
     [Fact]
     public async Task Missing_docker_fails_before_starting_the_cli()
     {
@@ -359,9 +320,6 @@ public sealed class VerifyDevcontainerCommandTests
         workspace.CliCalls().ShouldBeEmpty();
     }
 
-    /// <summary>
-    /// Verifies that bootstrapping the devcontainer CLI fails on a non-Linux-x64 host, names --devcontainer-cli, and makes no HTTP request.
-    /// </summary>
     [Fact]
     public async Task Cli_bootstrap_requires_a_linux_x64_host()
     {
@@ -385,9 +343,6 @@ public sealed class VerifyDevcontainerCommandTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>
-    /// Verifies that cancelling the run kills the CLI process tree, including a grandchild process, and exits with code 1.
-    /// </summary>
     [Fact]
     public async Task Cancellation_kills_the_cli_process_tree()
     {
@@ -415,9 +370,6 @@ public sealed class VerifyDevcontainerCommandTests
         exited.ShouldBeTrue();
     }
 
-    /// <summary>
-    /// Verifies that documented verify-devcontainer command lines parse to the verify-devcontainer command without errors.
-    /// </summary>
     [Theory]
     [InlineData("verify-devcontainer")]
     [InlineData("verify-devcontainer --exec \"dotnet --version\" --exec \"git --version\" --root .")]
@@ -435,9 +387,6 @@ public sealed class VerifyDevcontainerCommandTests
         parseResult.CommandResult.Command.Name.ShouldBe("verify-devcontainer");
     }
 
-    /// <summary>
-    /// Verifies that blank values for --exec, --log-directory, and --devcontainer-cli are parse errors.
-    /// </summary>
     [Theory]
     [InlineData("--exec", "")]
     [InlineData("--exec", " ")]

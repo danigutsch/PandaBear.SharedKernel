@@ -9,7 +9,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubRoadmapReconcileTests
 {
-    /// <summary>Verifies that reconcile rejects an open relation whose target is missing locally.</summary>
     [Fact]
     public async Task GitHub_reconcile_rejects_a_missing_local_open_relation_target()
     {
@@ -43,7 +42,6 @@ public sealed class GitHubRoadmapReconcileTests
         error.ToString().ShouldContain("GitHub reconciliation local open relationship target is missing", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that reconcile treats relations with the same number in different repositories as different issues.</summary>
     [Fact]
     public async Task GitHub_reconcile_distinguishes_same_number_relations_from_different_repositories()
     {
@@ -85,7 +83,6 @@ public sealed class GitHubRoadmapReconcileTests
         exitCode.ShouldBe(0);
     }
 
-    /// <summary>Verifies that the reconcile digest leaves out closed issues that only the seed lists.</summary>
     [Fact]
     public async Task GitHub_reconcile_digest_excludes_seed_only_closed_issues()
     {
@@ -166,7 +163,6 @@ public sealed class GitHubRoadmapReconcileTests
 
 
 
-    /// <summary>Verifies that reconcile keeps the repository-qualified metadata of cross-repository blockers.</summary>
     [Fact]
     public async Task GitHub_reconcile_preserves_qualified_cross_repository_blocker_metadata()
     {
@@ -246,7 +242,6 @@ public sealed class GitHubRoadmapReconcileTests
         externalCount.ShouldBe(1);
     }
 
-    /// <summary>Verifies that reconcile with force fails when the manifest changes while requests run.</summary>
     [Fact]
     public async Task GitHub_reconcile_force_rejects_a_manifest_changed_during_the_request()
     {
@@ -312,7 +307,6 @@ public sealed class GitHubRoadmapReconcileTests
         workspace.ReadFile(manifestPath).ShouldBe(concurrentContent);
     }
 
-    /// <summary>Verifies that reconcile names the seed manifest inputs it cannot find.</summary>
     [Fact]
     public async Task GitHub_reconcile_reports_the_seed_manifest_inputs_when_missing()
     {
@@ -336,7 +330,6 @@ public sealed class GitHubRoadmapReconcileTests
         error.ToString().ShouldContain("Required reviewed inputs: mechanicalPriorityOverride, directCanonicalPrimaries, and closedItemTransitions.", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that reconcile marks an issue with an external parent as needing a human decision and does not follow the parent chain out of the repository.</summary>
     [Fact]
     public async Task GitHub_reconcile_treats_an_external_parent_as_needs_human_without_parent_chain_exit()
     {
@@ -430,7 +423,6 @@ public sealed class GitHubRoadmapReconcileTests
         root.GetProperty("childrenOfCanonicalPrimaries").GetArrayLength().ShouldBe(0);
     }
 
-    /// <summary>Verifies that reconcile previews by default and requests only structural issue metadata.</summary>
     [Fact]
     public async Task GitHub_reconcile_defaults_to_preview_and_requests_only_structural_metadata()
     {
@@ -541,7 +533,6 @@ public sealed class GitHubRoadmapReconcileTests
         requestBody.ShouldNotContain("mutation", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that reconcile with force derives a manifest that stays identical on repeated runs.</summary>
     [Fact]
     public async Task GitHub_reconcile_force_derives_a_stable_manifest()
     {
@@ -678,7 +669,6 @@ public sealed class GitHubRoadmapReconcileTests
         manifestAfterSecondApply.ShouldBe(manifestAfterFirstApply);
     }
 
-    /// <summary>Verifies that the snapshot fails when the default branch moves between issue pages.</summary>
     [Fact]
     public async Task Snapshot_rejects_default_branch_movement_between_issue_pages()
     {
@@ -712,7 +702,6 @@ public sealed class GitHubRoadmapReconcileTests
         exception.Message.ShouldBe("GitHub reconciliation default branch changed while reading the snapshot.");
     }
 
-    /// <summary>Verifies that the snapshot reads the default branch again after all issue metadata.</summary>
     [Fact]
     public async Task Snapshot_rechecks_default_branch_after_all_issue_metadata()
     {
@@ -751,7 +740,6 @@ public sealed class GitHubRoadmapReconcileTests
         exception.Message.ShouldBe("GitHub reconciliation default branch changed while reading the snapshot.");
     }
 
-    /// <summary>Verifies that the snapshot reads again when only the default branch commit changed.</summary>
     [Fact]
     public async Task Snapshot_rereads_when_only_the_default_branch_commit_changed()
     {
@@ -790,7 +778,6 @@ public sealed class GitHubRoadmapReconcileTests
         snapshot.RepositoryCommit.ShouldBe("2222222222222222222222222222222222222222");
     }
 
-    /// <summary>Verifies that the snapshot gives up after the default branch changed three times.</summary>
     [Fact]
     public async Task Snapshot_stops_rereading_after_three_default_branch_changes()
     {
@@ -824,7 +811,6 @@ public sealed class GitHubRoadmapReconcileTests
         exception.Message.ShouldBe("GitHub reconciliation default branch changed while reading the snapshot.");
     }
 
-    /// <summary>Verifies that the snapshot fails when GitHub repeats an issue page cursor.</summary>
     [Fact]
     public async Task Snapshot_rejects_a_repeated_issue_page_cursor()
     {
@@ -854,7 +840,6 @@ public sealed class GitHubRoadmapReconcileTests
         exception.Message.ShouldBe("GitHub reconciliation response repeated an issue page cursor.");
     }
 
-    /// <summary>Verifies that the snapshot rejects a response larger than the allowed size.</summary>
     [Fact]
     public async Task Snapshot_rejects_an_oversized_response()
     {
@@ -879,7 +864,6 @@ public sealed class GitHubRoadmapReconcileTests
         exception.Message.ShouldBe("GitHub reconciliation response exceeded the allowed size.");
     }
 
-    /// <summary>Verifies that the snapshot deadline cancels a stalled request, using a fake clock instead of real waiting.</summary>
     [Fact]
     public async Task Snapshot_deadline_cancels_a_stalled_request_without_waiting_in_real_time()
     {
@@ -898,7 +882,6 @@ public sealed class GitHubRoadmapReconcileTests
         exception.Message.ShouldBe("GitHub reconciliation snapshot timed out after 120 seconds.");
     }
 
-    /// <summary>Verifies that cancellation by the caller propagates and is not reported as a timeout.</summary>
     [Fact]
     public async Task Snapshot_preserves_caller_cancellation_instead_of_reporting_a_timeout()
     {
@@ -918,7 +901,6 @@ public sealed class GitHubRoadmapReconcileTests
         exception.CancellationToken.ShouldBe(cancellation.Token);
     }
 
-    /// <summary>Verifies that the snapshot rejects a body larger than the allowed size even when the content length header claims less.</summary>
     [Fact]
     public async Task Snapshot_rejects_an_oversized_body_even_when_content_length_understates_it()
     {

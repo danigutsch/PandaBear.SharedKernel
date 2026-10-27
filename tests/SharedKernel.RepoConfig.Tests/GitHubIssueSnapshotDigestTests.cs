@@ -4,7 +4,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubIssueSnapshotDigestTests
 {
-    /// <summary>Verifies that the digest differs when label boundaries move even though the joined label text is the same.</summary>
     [Fact]
     public void Compute_distinguishes_label_boundaries_from_label_content()
     {
@@ -26,7 +25,6 @@ public sealed class GitHubIssueSnapshotDigestTests
         separateDigest.ShouldNotBe(embeddedDigest);
     }
 
-    /// <summary>Verifies that the digest does not change when issues, labels, or relations are listed in a different order.</summary>
     [Fact]
     public void Compute_is_stable_across_issue_label_and_relation_ordering()
     {

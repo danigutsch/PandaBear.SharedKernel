@@ -8,9 +8,6 @@ namespace PandaBear.Versioning.Tests;
 /// </summary>
 public static class CandidateEvidenceMergeTests
 {
-    /// <summary>
-    /// Verifies that passed Linux and Windows evidence is merged into the candidate while its other fields, such as consumerCompatibility and packageSha256, are kept.
-    /// </summary>
     [Fact]
     public static async Task Passed_platform_evidence_is_merged_into_the_candidate_and_other_fields_are_kept()
     {
@@ -37,9 +34,6 @@ public static class CandidateEvidenceMergeTests
         merged["packageSha256"]!.ToJsonString().ShouldBe(JsonNode.Parse(await File.ReadAllTextAsync(candidate, TestContext.Current.CancellationToken))!["packageSha256"]!.ToJsonString());
     }
 
-    /// <summary>
-    /// Verifies that evidence for a different library revision is rejected with exit code 2 and no output file is written.
-    /// </summary>
     [Fact]
     public static async Task Evidence_for_another_revision_is_rejected_and_nothing_is_written()
     {
@@ -63,9 +57,6 @@ public static class CandidateEvidenceMergeTests
         File.Exists(output).ShouldBeFalse();
     }
 
-    /// <summary>
-    /// Verifies that failed platform evidence is rejected with exit code 2 and no output file is written.
-    /// </summary>
     [Fact]
     public static async Task Failed_platform_evidence_is_rejected_and_nothing_is_written()
     {

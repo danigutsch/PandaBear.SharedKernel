@@ -6,7 +6,6 @@ namespace PandaBear.RepoConfig.Tests;
 /// <summary>Tests the download, verification, and extraction of the pinned Node.js and Dev Container CLI archives.</summary>
 public sealed class DevcontainerCliBootstrapTests
 {
-    /// <summary>Verifies that the bootstrap extracts only Node.js and the CLI package, and reuses the cache on a second run.</summary>
     [Fact]
     public async Task Bootstrap_extracts_only_node_and_the_cli_package_and_reuses_the_cache()
     {
@@ -52,7 +51,6 @@ public sealed class DevcontainerCliBootstrapTests
         metadata.ShouldContain($"devcontainer_cli={Path.Combine(prefix, "cli", DevcontainerCliArchive.CliVersion, "package", "devcontainer.js")}");
     }
 
-    /// <summary>Verifies that a Node.js archive with a wrong hash fails before anything is extracted.</summary>
     [Fact]
     public async Task Node_archive_with_a_wrong_hash_fails_before_extracting()
     {
@@ -84,7 +82,6 @@ public sealed class DevcontainerCliBootstrapTests
         workspace.CliCalls().ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that a CLI archive with a wrong integrity value fails before anything is extracted.</summary>
     [Fact]
     public async Task Cli_archive_with_a_wrong_integrity_fails_before_extracting()
     {
@@ -115,7 +112,6 @@ public sealed class DevcontainerCliBootstrapTests
         Directory.Exists(Path.Combine(workspace.RootPath, "TestResults", "devcontainer-tools")).ShouldBeFalse();
     }
 
-    /// <summary>Verifies that a failed download status fails the bootstrap.</summary>
     [Fact]
     public async Task Failed_download_status_fails_the_bootstrap()
     {
@@ -139,7 +135,6 @@ public sealed class DevcontainerCliBootstrapTests
         error.ShouldContain("404", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that a Node.js archive whose <c>node</c> entry is a link is rejected.</summary>
     [Fact]
     public async Task Node_archive_whose_node_is_a_link_is_rejected()
     {
@@ -155,7 +150,6 @@ public sealed class DevcontainerCliBootstrapTests
         exception.Message.ShouldContain("regular file", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that a Node.js archive without a <c>node</c> binary is rejected.</summary>
     [Fact]
     public async Task Node_archive_without_node_is_rejected()
     {
@@ -171,7 +165,6 @@ public sealed class DevcontainerCliBootstrapTests
         exception.Message.ShouldContain("bin/node", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that a CLI archive entry outside the package directory is rejected.</summary>
     [Theory]
     [InlineData("package/../../escape.js")]
     [InlineData("/escape.js")]
@@ -193,7 +186,6 @@ public sealed class DevcontainerCliBootstrapTests
         exception.Message.ShouldContain("unsafe path", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that a CLI archive that contains a link is rejected.</summary>
     [Fact]
     public async Task Cli_archive_link_is_rejected()
     {
@@ -211,7 +203,6 @@ public sealed class DevcontainerCliBootstrapTests
         exception.Message.ShouldContain("regular file", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that a CLI archive without the entry point is rejected.</summary>
     [Fact]
     public async Task Cli_archive_without_the_entry_point_is_rejected()
     {

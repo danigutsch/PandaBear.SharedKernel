@@ -4,7 +4,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RollbackFileWriteBatchTests
 {
-    /// <summary>When the expected content of the second file is stale, applying throws that it changed after the write plan was created and leaves both files at their original content.</summary>
     [Fact]
     public void Apply_rejects_stale_source_content_before_mutating_any_file()
     {
@@ -28,7 +27,6 @@ public sealed class RollbackFileWriteBatchTests
         workspace.ReadFile("second.json").ShouldBe("second-original");
     }
 
-    /// <summary>Applying one update and one create leaves the updated and created contents on disk and no <c>.tmp</c> or <c>.bak</c> files.</summary>
     [Fact]
     public void Apply_commits_all_planned_files()
     {
@@ -51,7 +49,6 @@ public sealed class RollbackFileWriteBatchTests
         Directory.EnumerateFiles(workspace.RootPath, "*.bak", SearchOption.AllDirectories).ShouldBeEmpty();
     }
 
-    /// <summary>A write to a path in a different workspace throws that it is outside the repository write scope and creates no file.</summary>
     [Fact]
     public void Apply_rejects_a_write_outside_the_lock_scope()
     {
@@ -70,7 +67,6 @@ public sealed class RollbackFileWriteBatchTests
         File.Exists(outsidePath).ShouldBe(false);
     }
 
-    /// <summary>A write to a file under a directory symbolic link that points outside the scope throws a symbolic-link error and creates no file at the target.</summary>
     [Fact]
     public void Apply_rejects_a_write_through_a_symbolic_link()
     {
@@ -91,7 +87,6 @@ public sealed class RollbackFileWriteBatchTests
         File.Exists(outsidePath).ShouldBe(false);
     }
 
-    /// <summary>Creating a file at a path that is a dangling symbolic link throws a symbolic-link error and leaves the link in place.</summary>
     [Fact]
     public void Apply_does_not_replace_a_dangling_symbolic_link_for_a_planned_create()
     {
@@ -110,7 +105,6 @@ public sealed class RollbackFileWriteBatchTests
         new FileInfo(destinationPath).LinkTarget.ShouldNotBeNull();
     }
 
-    /// <summary>Using a symbolic link as the write scope itself throws that the scope must not be a symbolic link and creates no file at the target.</summary>
     [Fact]
     public void Apply_rejects_a_symbolic_link_write_scope()
     {
@@ -132,7 +126,6 @@ public sealed class RollbackFileWriteBatchTests
         File.Exists(outsidePath).ShouldBe(false);
     }
 
-    /// <summary>When the planning inputs change between the first and second precondition check, applying throws that they changed after the write plan was created, verifies twice, and leaves the output file unchanged.</summary>
     [Fact]
     public void Apply_rechecks_planning_inputs_after_staging()
     {
@@ -156,7 +149,6 @@ public sealed class RollbackFileWriteBatchTests
         workspace.ReadFile("output.json").ShouldBe("original-output");
     }
 
-    /// <summary>Applying an empty batch still runs the precondition, so a precondition that throws "stale planning input" fails the call.</summary>
     [Fact]
     public void Apply_verifies_an_empty_batch_before_reporting_success()
     {
@@ -174,7 +166,6 @@ public sealed class RollbackFileWriteBatchTests
         exception.Message.ShouldBe("stale planning input");
     }
 
-    /// <summary>A write scope located below a symbolic link throws that the scope traverses a symbolic link and creates no file at the target.</summary>
     [Fact]
     public void Apply_rejects_a_write_scope_beneath_a_symbolic_link()
     {
@@ -197,7 +188,6 @@ public sealed class RollbackFileWriteBatchTests
         File.Exists(outsidePath).ShouldBe(false);
     }
 
-    /// <summary>When the second write targets an existing directory and fails with an <see cref="IOException"/>, the first file is restored to its original content and no <c>.tmp</c> or <c>.bak</c> files remain.</summary>
     [Fact]
     public void Apply_rolls_back_prior_replacements_when_a_later_replacement_fails()
     {
@@ -221,7 +211,6 @@ public sealed class RollbackFileWriteBatchTests
         Directory.EnumerateFiles(workspace.RootPath, "*.bak", SearchOption.AllDirectories).ShouldBeEmpty();
     }
 
-    /// <summary>When staging the second write fails with a <see cref="DirectoryNotFoundException"/> because its folder is missing, the first file keeps its original content and no <c>.tmp</c> or <c>.bak</c> files remain.</summary>
     [Fact]
     public void Apply_removes_prior_staged_files_when_later_staging_fails()
     {

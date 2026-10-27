@@ -5,7 +5,6 @@ namespace PandaBear.RepoConfig.Tests;
 /// <summary>Tests escaping of control characters for terminal output.</summary>
 public sealed class ControlCharactersTests
 {
-    /// <summary>Verifies that escaping keeps readable Unicode text and escapes terminal control characters.</summary>
     [Theory]
     [InlineData("", "")]
     [InlineData("São Paulo 日本語 😀", "São Paulo 日本語 😀")]
@@ -23,7 +22,6 @@ public sealed class ControlCharactersTests
         escaped.ShouldBe(expected);
     }
 
-    /// <summary>Verifies that escaping renders lone surrogate code units as escapes without throwing.</summary>
     [Fact]
     public void Escape_escapes_lone_surrogate_code_units_without_losing_surrounding_text()
     {

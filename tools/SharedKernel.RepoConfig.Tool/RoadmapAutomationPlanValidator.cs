@@ -1,7 +1,9 @@
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Checks that a roadmap automation plan is still current before result files are written or pushed.</summary>
 internal static class RoadmapAutomationPlanValidator
 {
+    /// <summary>Throws unless the plan digest, repository, default-branch head, GitHub snapshot, input snapshot, and closed transitions all still match the plan.</summary>
     public static void ValidateBeforeWrite(
         RoadmapAutomationPlan plan,
         string expectedPlanDigest,
@@ -68,6 +70,7 @@ internal static class RoadmapAutomationPlanValidator
         }
     }
 
+    /// <summary>Throws unless the plan digest, repository, default-branch head, GitHub snapshot, and approved and required transitions still match the plan just before push.</summary>
     public static void ValidateBeforePush(
         RoadmapAutomationPlan plan,
         string expectedPlanDigest,

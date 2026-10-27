@@ -9,7 +9,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class RoadmapPublishResultCommandTests
 {
-    /// <summary>With <c>automation.pullRequestBody</c> set to "Refs #42", a forced publish exits with 0, posts that body to the pulls endpoint, and writes the pull request URL to the summary and the workflow outputs.</summary>
     [Fact]
     public async Task Publish_sends_the_configured_pull_request_body_and_summarizes_the_url()
     {
@@ -32,8 +31,6 @@ public sealed class RoadmapPublishResultCommandTests
         result.Outputs.ShouldContain($"pull_request_url={RoadmapGitHubPublicationTestOperations.PullRequestUrl}", StringComparison.Ordinal);
     }
 
-    /// <summary>With the <c>automation</c> property removed from the config, publishing with or without <c>--force</c> exits with 1, reports that <c>automation.pullRequestBody</c> must be defined, and sends only GraphQL requests.</summary>
-    /// <param name="force">Whether <c>--force</c> is passed.</param>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -54,8 +51,6 @@ public sealed class RoadmapPublishResultCommandTests
         handler.Requests.ShouldAllSatisfy(request => request.PathAndQuery.ShouldBe("/graphql"));
     }
 
-    /// <summary>A forced publish exits with 1 and reports the missing variable when <c>GITHUB_OUTPUT</c> or <c>GITHUB_STEP_SUMMARY</c> is unset, having sent only GraphQL requests.</summary>
-    /// <param name="missingVariable">The workflow environment variable left unset.</param>
     [Theory]
     [InlineData("GITHUB_OUTPUT")]
     [InlineData("GITHUB_STEP_SUMMARY")]
@@ -75,7 +70,6 @@ public sealed class RoadmapPublishResultCommandTests
         handler.Requests.ShouldAllSatisfy(request => request.PathAndQuery.ShouldBe("/graphql"));
     }
 
-    /// <summary>When the pull request response has an empty URL, a forced publish exits with 1, reports that no pull request URL was returned, and leaves the workflow output and summary files empty.</summary>
     [Fact]
     public async Task Publish_fails_and_writes_no_outputs_without_a_pull_request_url()
     {

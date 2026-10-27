@@ -6,6 +6,7 @@ using PandaBear.Tooling;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Checks that Podman container DNS can start before tests need it.</summary>
 internal static class PodmanDnsPreflightCommand
 {
     private const int MaximumPodmanOutputLength = 1_048_576;
@@ -936,6 +937,9 @@ internal static class PodmanDnsPreflightCommand
         return result.StandardOutput;
     }
 
+    /// <summary>Starts the process and returns its exit code and bounded captured output.</summary>
+    /// <param name="startInfo">Process to start.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     internal static async Task<PodmanCommandResult> RunProcess(ProcessStartInfo startInfo, CancellationToken cancellationToken)
     {
         Process process;
@@ -976,6 +980,8 @@ internal static class PodmanDnsPreflightCommand
         }
     }
 
+    /// <summary>Kills the process tree if it is still running.</summary>
+    /// <param name="process">Process to stop.</param>
     internal static async Task Stop(Process process)
     {
         try
@@ -1004,6 +1010,9 @@ internal static class PodmanDnsPreflightCommand
         }
     }
 
+    /// <summary>Reads the stream to the end, keeping only a bounded amount of output.</summary>
+    /// <param name="reader">Stream to read.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     internal static async Task<string> ReadBoundedOutput(StreamReader reader, CancellationToken cancellationToken)
     {
         var output = new StringBuilder();

@@ -38,7 +38,6 @@ public sealed class GitHubLabelSyncCommandTests
         ]
         """;
 
-    /// <summary>Verifies that a preview lists the labels to create and update without sending any write.</summary>
     [Fact]
     public async Task Sync_labels_previews_creates_and_updates_without_writing()
     {
@@ -62,7 +61,6 @@ public sealed class GitHubLabelSyncCommandTests
         request.PathAndQuery.ShouldBe(LabelsPath + "?per_page=100&page=1");
     }
 
-    /// <summary>Verifies that force creates missing labels, updates changed ones, and deletes nothing.</summary>
     [Fact]
     public async Task Sync_labels_with_force_creates_missing_and_updates_changed_labels_without_deleting()
     {
@@ -101,7 +99,6 @@ public sealed class GitHubLabelSyncCommandTests
         createBody.RootElement.GetProperty("description").GetString().ShouldBe("HTTP API contracts");
     }
 
-    /// <summary>Verifies that the command follows pagination to read all remote labels.</summary>
     [Fact]
     public async Task Sync_labels_reads_every_page_of_remote_labels()
     {
@@ -127,7 +124,6 @@ public sealed class GitHubLabelSyncCommandTests
         ]);
     }
 
-    /// <summary>Verifies that an invalid repository value fails before the configuration is read.</summary>
     [Fact]
     public async Task Sync_labels_rejects_an_invalid_repository_before_reading_configuration()
     {
@@ -145,7 +141,6 @@ public sealed class GitHubLabelSyncCommandTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that the command fails when the configuration has no labels section.</summary>
     [Fact]
     public async Task Sync_labels_requires_the_labels_section()
     {
@@ -162,7 +157,6 @@ public sealed class GitHubLabelSyncCommandTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that the command rejects a label with an invalid value.</summary>
     [Theory]
     [InlineData("[]", "$.labels must name at least one label.")]
     [InlineData("""[{"name":"","color":"ffffff","description":""}]""", "$.labels[0].name must be 1 to 50 characters without control characters or surrounding white space.")]
@@ -189,7 +183,6 @@ public sealed class GitHubLabelSyncCommandTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that the command rejects a label description longer than GitHub allows.</summary>
     [Fact]
     public async Task Sync_labels_rejects_a_description_longer_than_github_allows()
     {
@@ -205,7 +198,6 @@ public sealed class GitHubLabelSyncCommandTests
         error.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json: $.labels[0].description must be at most 100 characters without control characters." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that the command rejects a label with a missing required property or an unknown one.</summary>
     [Theory]
     [InlineData("""[{"name":"ci","color":"ffffff"}]""", "$.labels[0]")]
     [InlineData("""[{"name":"ci","color":"ffffff","description":null}]""", "$.labels[0].description")]
@@ -225,7 +217,6 @@ public sealed class GitHubLabelSyncCommandTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that the command fails for a missing token before any request to GitHub.</summary>
     [Fact]
     public async Task Sync_labels_requires_a_token_before_reading_github()
     {
@@ -249,7 +240,6 @@ public sealed class GitHubLabelSyncCommandTests
         error.ToString().ShouldBe("sharedkernel-repo: Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub label sync." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that a failed read reports the status without echoing the response content.</summary>
     [Theory]
     [InlineData(HttpStatusCode.Forbidden, "[]", "GitHub label sync failed with HTTP 403.")]
     [InlineData(HttpStatusCode.OK, "{}", "GitHub label sync returned an invalid label response.")]
@@ -272,7 +262,6 @@ public sealed class GitHubLabelSyncCommandTests
         handler.Requests.ShouldHaveSingleItem();
     }
 
-    /// <summary>Verifies that a failed write names the label it was writing.</summary>
     [Fact]
     public async Task Sync_labels_names_the_label_whose_write_failed()
     {
@@ -292,7 +281,6 @@ public sealed class GitHubLabelSyncCommandTests
         error.ShouldBe("sharedkernel-repo: GitHub label sync failed with HTTP 422 for label area: api. Rerun the sync after fixing the cause." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that the command limits how many response bytes it reads.</summary>
     [Fact]
     public async Task Sync_labels_bounds_the_response_it_reads()
     {
@@ -312,7 +300,6 @@ public sealed class GitHubLabelSyncCommandTests
         error.ShouldBe("sharedkernel-repo: GitHub label sync response exceeded the allowed size." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that the command times out a request that GitHub does not answer.</summary>
     [Fact]
     public async Task Sync_labels_times_out_a_request_that_github_does_not_answer()
     {

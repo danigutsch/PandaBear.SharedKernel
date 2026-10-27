@@ -8,7 +8,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubRoadmapExternalBlockerTests
 {
-    /// <summary>Verifies that reconcile keeps a repository-qualified external blocker even when a local issue has the same number.</summary>
     [Fact]
     public async Task Reconcile_retains_qualified_external_blocker_without_colliding_with_local_number()
     {
@@ -44,7 +43,6 @@ public sealed class GitHubRoadmapExternalBlockerTests
         manifest.RootElement.GetProperty("blockerEdges").GetArrayLength().ShouldBe(0);
     }
 
-    /// <summary>Verifies that deriving external blockers fails when the two endpoints report conflicting states.</summary>
     [Fact]
     public void External_blocker_derivation_rejects_conflicting_endpoint_states()
     {
@@ -65,7 +63,6 @@ public sealed class GitHubRoadmapExternalBlockerTests
         exception.Message.ShouldContain("endpoint states conflict", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that the snapshot digest changes with the repository and the state of an external blocker.</summary>
     [Theory]
     [InlineData("other/library", "CLOSED")]
     [InlineData("different/library", "OPEN")]
@@ -85,7 +82,6 @@ public sealed class GitHubRoadmapExternalBlockerTests
         changedDigest.ShouldNotBe(originalDigest);
     }
 
-    /// <summary>Verifies that the manifest rejects external blocker metadata that is ambiguous or inconsistent.</summary>
     [Theory]
     [InlineData("same-repository", "exactly one local endpoint")]
     [InlineData("both-external", "exactly one local endpoint")]

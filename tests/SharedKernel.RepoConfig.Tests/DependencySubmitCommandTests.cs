@@ -14,7 +14,6 @@ public sealed class DependencySubmitCommandTests
     private const string Snapshot = """{"version":0,"sha":"0123456789abcdef0123456789abcdef01234567","ref":"refs/heads/main","manifests":{}}""";
     private const string Endpoint = "https://api.github.com/repos/owner/repository/dependency-graph/snapshots";
 
-    /// <summary>Verifies that submit without force previews the snapshot and the endpoint and sends no request.</summary>
     [Fact]
     public async Task Submit_previews_the_snapshot_and_endpoint_without_a_request()
     {
@@ -44,7 +43,6 @@ public sealed class DependencySubmitCommandTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that a preview does not read the GitHub token.</summary>
     [Fact]
     public async Task Submit_preview_does_not_read_a_token()
     {
@@ -70,7 +68,6 @@ public sealed class DependencySubmitCommandTests
         output.ToString().ShouldStartWith("preview: dependency submission would send", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that submit with force posts the exact snapshot bytes to the repository dependency graph endpoint.</summary>
     [Fact]
     public async Task Submit_with_force_posts_the_exact_snapshot_bytes_to_the_repository_dependency_graph()
     {
@@ -104,7 +101,6 @@ public sealed class DependencySubmitCommandTests
         request.Body.ShouldBe(Snapshot);
     }
 
-    /// <summary>Verifies that submit with force fails when no GitHub token is available.</summary>
     [Fact]
     public async Task Submit_with_force_requires_a_token()
     {
@@ -130,7 +126,6 @@ public sealed class DependencySubmitCommandTests
         error.ToString().ShouldBe("sharedkernel-repo: Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub dependency submission." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that submit rejects a repository value that is not an owner and name, before any request.</summary>
     [Theory]
     [InlineData("owner")]
     [InlineData("owner/repository/extra")]
@@ -165,7 +160,6 @@ public sealed class DependencySubmitCommandTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that submit requires the snapshot file to hold a JSON object, before any request.</summary>
     [Theory]
     [InlineData("[]", "sharedkernel-repo: TestResults/dependency-snapshot.json must contain a JSON object.")]
     [InlineData("{", "sharedkernel-repo: TestResults/dependency-snapshot.json: Invalid JSON at line 1, byte 2: Expected depth to be zero at the end of the JSON payload.")]
@@ -195,7 +189,6 @@ public sealed class DependencySubmitCommandTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that submit fails when the snapshot file does not exist.</summary>
     [Fact]
     public async Task Submit_requires_the_snapshot_file()
     {
@@ -221,7 +214,6 @@ public sealed class DependencySubmitCommandTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that submit rejects a snapshot larger than the snapshot command can write.</summary>
     [Fact]
     public async Task Submit_rejects_a_snapshot_larger_than_the_snapshot_command_writes()
     {
@@ -253,7 +245,6 @@ public sealed class DependencySubmitCommandTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that submit reports a rejected request without echoing untrusted response details.</summary>
     [Theory]
     [InlineData(HttpStatusCode.UnprocessableEntity)]
     [InlineData(HttpStatusCode.Forbidden)]
@@ -284,7 +275,6 @@ public sealed class DependencySubmitCommandTests
         error.ToString().ShouldBe($"sharedkernel-repo: GitHub dependency submission failed with HTTP {((int)statusCode).ToString(CultureInfo.InvariantCulture)}." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that submit fails when GitHub reports the snapshot as invalid.</summary>
     [Fact]
     public async Task Submit_fails_when_github_reports_the_snapshot_as_invalid()
     {
@@ -312,7 +302,6 @@ public sealed class DependencySubmitCommandTests
         error.ToString().ShouldBe("sharedkernel-repo: GitHub reported the dependency snapshot as invalid." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that submit reports a transport failure without leaking request details.</summary>
     [Fact]
     public async Task Submit_reports_a_transport_failure_without_request_details()
     {
@@ -338,7 +327,6 @@ public sealed class DependencySubmitCommandTests
         error.ToString().ShouldBe("sharedkernel-repo: GitHub dependency submission request failed." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that submit times out a request that GitHub does not answer.</summary>
     [Fact]
     public async Task Submit_times_out_a_request_that_github_does_not_answer()
     {
@@ -360,7 +348,6 @@ public sealed class DependencySubmitCommandTests
         output.ToString().ShouldBe(string.Empty);
     }
 
-    /// <summary>Verifies that submit limits how many response bytes it reads.</summary>
     [Fact]
     public async Task Submit_bounds_the_response_it_reads()
     {
@@ -390,7 +377,6 @@ public sealed class DependencySubmitCommandTests
         error.ToString().ShouldBe("sharedkernel-repo: GitHub dependency submission response exceeded the allowed size." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that submit rejects a blank snapshot path.</summary>
     [Theory]
     [InlineData("--snapshot", "")]
     [InlineData("--snapshot", " ")]
@@ -416,7 +402,6 @@ public sealed class DependencySubmitCommandTests
         output.ToString().ShouldNotContain("preview:", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that submit requires both the snapshot and the repository options.</summary>
     [Theory]
     [InlineData("--repository", "owner/repository")]
     [InlineData("--snapshot", SnapshotPath)]

@@ -5,7 +5,6 @@ namespace PandaBear.RepoConfig.Tests;
 /// <summary>Tests how the resolver finds executables on the search path.</summary>
 public sealed class ExecutableResolverTests
 {
-    /// <summary>Verifies that the resolver returns an existing executable found in an absolute path entry.</summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -22,7 +21,6 @@ public sealed class ExecutableResolverTests
         resolvedPath.ShouldBe(expectedPath);
     }
 
-    /// <summary>Verifies that the resolver skips relative path entries, even when they contain a match.</summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -41,7 +39,6 @@ public sealed class ExecutableResolverTests
         resolvedPath.ShouldBe(expectedPath, "Only the absolute entry may supply the executable.");
     }
 
-    /// <summary>Verifies that the resolver finds nothing when every path entry is relative.</summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -54,7 +51,6 @@ public sealed class ExecutableResolverTests
         resolvedPath.ShouldBeNull();
     }
 
-    /// <summary>Verifies that on Unix a file counts as executable only when an execute permission bit is set.</summary>
     [Theory]
     [InlineData(UnixFileMode.UserRead, false)]
     [InlineData(UnixFileMode.UserExecute, true)]

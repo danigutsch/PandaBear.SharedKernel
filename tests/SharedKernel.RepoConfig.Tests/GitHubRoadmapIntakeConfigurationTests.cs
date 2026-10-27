@@ -8,7 +8,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubRoadmapIntakeConfigurationTests
 {
-    /// <summary>Verifies that verification rejects an item identifier prefix that is unsafe for file names.</summary>
     [Theory]
     [InlineData("../outside")]
     [InlineData("/tmp/outside")]
@@ -33,7 +32,6 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         messages.ShouldContain("itemIdPrefix may contain only ASCII letters, digits, underscores, and hyphens.", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that loading a reconciliation manifest rejects an impact cap below one.</summary>
     [Fact]
     public async Task GitHub_roadmap_reconciliation_load_rejects_an_impact_cap_below_one()
     {
@@ -85,7 +83,6 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         exception.Message.ShouldContain("GitHub reconciliation manifest contains invalid mechanical priority values.", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that import does nothing when the GitHub integration is disabled.</summary>
     [Fact]
     public async Task GitHub_import_respects_disabled_integration()
     {
@@ -110,7 +107,6 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that import fails when the intake configuration is missing.</summary>
     [Fact]
     public async Task GitHub_import_requires_the_intake_configuration()
     {
@@ -171,7 +167,6 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that import fails unless exactly one reconciliation manifest exists.</summary>
     [Theory]
     [InlineData(0, "One GitHub reconciliation manifest is required under roadmap/reconciliation.")]
     [InlineData(2, "Exactly one GitHub reconciliation manifest is required under roadmap/reconciliation.")]
@@ -204,7 +199,6 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that import applies the configured identity, scoring, theme, and status defaults to new items.</summary>
     [Fact]
     public async Task GitHub_import_uses_configured_identity_scoring_theme_and_status_defaults()
     {

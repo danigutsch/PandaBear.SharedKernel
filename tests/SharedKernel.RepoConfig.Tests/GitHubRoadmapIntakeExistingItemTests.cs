@@ -7,7 +7,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubRoadmapIntakeExistingItemTests
 {
-    /// <summary>Verifies that import rejects an imported item that GitHub reopened unless a review accepts it.</summary>
     [Fact]
     public async Task GitHub_import_rejects_a_reopened_imported_item_without_explicit_review()
     {
@@ -94,7 +93,6 @@ public sealed class GitHubRoadmapIntakeExistingItemTests
         stateAfter.ShouldBe(stateBefore);
     }
 
-    /// <summary>Verifies that import refreshes the snapshot metadata of an item it already imported.</summary>
     [Fact]
     public async Task GitHub_import_refreshes_existing_imported_snapshot_metadata()
     {

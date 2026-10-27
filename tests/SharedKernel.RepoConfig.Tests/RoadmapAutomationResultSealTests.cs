@@ -4,7 +4,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RoadmapAutomationResultSealTests
 {
-    /// <summary>A seal written to disk and loaded with the matching plan, artifact, and result digests keeps the plan digest, artifact digest, base SHA, snapshot digest, result digest, path count of 3, and change flag.</summary>
     [Fact]
     public void Result_seal_round_trip_binds_plan_artifact_base_snapshot_and_diff()
     {
@@ -40,7 +39,6 @@ public sealed class RoadmapAutomationResultSealTests
         loaded.HasChanges.ShouldBeTrue();
     }
 
-    /// <summary>Loading a seal file whose result digest was replaced throws that the seal is invalid or was tampered with.</summary>
     [Fact]
     public void Result_seal_rejects_tampering()
     {
@@ -73,7 +71,6 @@ public sealed class RoadmapAutomationResultSealTests
         exception.Message.ShouldBe("Roadmap automation result seal is invalid or was tampered with.");
     }
 
-    /// <summary>Writing a seal to a path that already holds a file throws that the file changed after the write plan was created and leaves the existing content untouched.</summary>
     [Fact]
     public void Result_seal_write_refuses_to_replace_an_existing_artifact()
     {

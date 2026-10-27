@@ -6,7 +6,6 @@ namespace PandaBear.RepoConfig.Tests;
 /// <summary>Tests the node identity that GitHub roadmap import records.</summary>
 public sealed class GitHubRoadmapNewIdentityTests
 {
-    /// <summary>Verifies that the first import stores the GitHub node identity and that a second import changes nothing.</summary>
     [Fact]
     public async Task Initial_import_persists_node_identity_and_repeated_import_is_idempotent()
     {

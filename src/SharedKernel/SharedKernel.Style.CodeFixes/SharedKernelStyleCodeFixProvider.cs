@@ -22,7 +22,8 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
             StyleDiagnosticIds.DomainEventSuffix,
             StyleDiagnosticIds.SuccessOnlyResultMethod,
             StyleDiagnosticIds.DirectCurrentTime,
-            StyleDiagnosticIds.CaseInsensitiveJsonContext
+            StyleDiagnosticIds.CaseInsensitiveJsonContext,
+            StyleDiagnosticIds.FileNameMismatch
         ];
 
     /// <inheritdoc />
@@ -74,6 +75,11 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
             if (diagnostic.Id == StyleDiagnosticIds.CaseInsensitiveJsonContext)
             {
                 await CaseInsensitiveJsonContextCodeFix.Register(context, diagnostic).ConfigureAwait(false);
+            }
+
+            if (diagnostic.Id == StyleDiagnosticIds.FileNameMismatch)
+            {
+                await RenameFileToTypeNameCodeFix.Register(context, diagnostic).ConfigureAwait(false);
             }
 
             if (diagnostic.Id == StyleDiagnosticIds.SuccessOnlyResultMethod)

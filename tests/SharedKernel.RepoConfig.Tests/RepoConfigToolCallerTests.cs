@@ -4,7 +4,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RepoConfigToolCallerTests
 {
-    /// <summary>Parses every repo-config command line found in the repository's workflows and expects at least one caller and no parse errors.</summary>
     [Fact]
     public void Every_workflow_command_line_parses_to_a_command()
     {
@@ -28,9 +27,6 @@ public sealed class RepoConfigToolCallerTests
         failures.ShouldBeEmpty();
     }
 
-    /// <summary>Expects the named workflow file to invoke the named repo-config command, for the baseline and scan commands in security.yml.</summary>
-    /// <param name="file">The workflow file path relative to the repository root.</param>
-    /// <param name="commandName">The command name that must appear among the parsed callers of that file.</param>
     [Theory]
     [InlineData(".github/workflows/security.yml", "baseline")]
     [InlineData(".github/workflows/security.yml", "scan")]
@@ -50,7 +46,6 @@ public sealed class RepoConfigToolCallerTests
         commandNames.ShouldContain(commandName);
     }
 
-    /// <summary>Scans a temporary workflow with dotnet run, dotnet tool run and installed-tool steps and expects exactly those three command lines, ignoring a setup action input and an error-prefix echo.</summary>
     [Fact]
     public async Task Workflow_scan_reads_source_built_and_installed_tool_command_lines()
     {

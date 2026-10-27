@@ -7,7 +7,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class RoadmapAutomationCommandTests
 {
-    /// <summary><c>automation unknown</c> exits with 1 with an unrecognized-command message and does not mention <c>GITHUB_REPOSITORY</c>, even though that variable is unset.</summary>
     [Fact]
     public async Task Unknown_automation_command_is_a_syntax_error_without_ci_environment()
     {
@@ -32,8 +31,6 @@ public sealed class RoadmapAutomationCommandTests
         errorText.ShouldNotContain("GITHUB_REPOSITORY", StringComparison.Ordinal);
     }
 
-    /// <summary>Each automation step run with <c>--root .</c> and no <c>GITHUB_REPOSITORY</c> exits with 1, prints nothing to standard output, and reports that roadmap automation requires <c>GITHUB_REPOSITORY</c>.</summary>
-    /// <param name="step">The automation subcommand under test.</param>
     [Theory]
     [InlineData("plan-github")]
     [InlineData("validate-plan")]
@@ -63,7 +60,6 @@ public sealed class RoadmapAutomationCommandTests
         error.ToString().ShouldBe("sharedkernel-repo: Roadmap automation requires GITHUB_REPOSITORY." + Environment.NewLine);
     }
 
-    /// <summary><c>automation plan-github</c> exits with 0 and writes the plan digest, change flag, branch name, and base SHA to the workflow output file and a summary heading, without copying the untrusted issue title or label into either file.</summary>
     [Fact]
     public async Task Plan_command_writes_only_integrity_bound_workflow_outputs()
     {
@@ -118,7 +114,6 @@ public sealed class RoadmapAutomationCommandTests
         workflowSummary.ShouldNotContain("untrusted", StringComparison.OrdinalIgnoreCase);
     }
 
-    /// <summary><c>automation publish-result</c> without <c>--force</c> exits with 0 and prints a preview of the branch, draft pull request, and changed file using only read-only GraphQL requests, without writing workflow files or changing the roadmap.</summary>
     [Fact]
     public async Task Publish_command_without_force_previews_the_pull_request_without_changes()
     {
@@ -179,7 +174,6 @@ public sealed class RoadmapAutomationCommandTests
         roadmapAfter.ShouldBe(roadmapBefore);
     }
 
-    /// <summary><c>automation publish-result</c> without <c>--force</c> exits with 1 and reports an invalid or tampered result seal when <c>ROADMAP_RESULT_DIGEST</c> does not match, sending no mutation and writing no workflow files.</summary>
     [Fact]
     public async Task Publish_command_without_force_rejects_a_mismatched_result_digest()
     {
@@ -235,7 +229,6 @@ public sealed class RoadmapAutomationCommandTests
         File.Exists(githubSummaryPath).ShouldBeFalse();
     }
 
-    /// <summary><c>automation publish-result --force</c> exits with 0, prints that the pull request was published, sends a POST to the repository's pulls endpoint, and writes the pull request URL to the workflow output file.</summary>
     [Fact]
     public async Task Publish_command_with_force_writes_a_nonempty_pull_request_url()
     {
@@ -295,7 +288,6 @@ public sealed class RoadmapAutomationCommandTests
             && string.Equals(request.PathAndQuery, "/repos/owner/repository/pulls", StringComparison.Ordinal));
     }
 
-    /// <summary><c>automation plan-github</c> exits with 1 and asks for <c>GITHUB_TOKEN</c> when only <c>GH_TOKEN</c> is set, without printing the <c>GH_TOKEN</c> value.</summary>
     [Fact]
     public async Task Automation_rejects_the_generic_token_fallback()
     {

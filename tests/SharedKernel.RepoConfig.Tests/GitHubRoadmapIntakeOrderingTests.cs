@@ -7,7 +7,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubRoadmapIntakeOrderingTests
 {
-    /// <summary>Verifies that import fails when no order value is left for a new item.</summary>
     [Fact]
     public async Task GitHub_import_rejects_order_exhaustion()
     {
@@ -73,7 +72,6 @@ public sealed class GitHubRoadmapIntakeOrderingTests
         workspace.FileExists("roadmap/items/RM-018-github-100.json").ShouldBe(false);
     }
 
-    /// <summary>Verifies that import orders a new blocker before the existing item it blocks.</summary>
     [Fact]
     public async Task GitHub_import_places_a_new_blocker_before_an_existing_imported_item()
     {

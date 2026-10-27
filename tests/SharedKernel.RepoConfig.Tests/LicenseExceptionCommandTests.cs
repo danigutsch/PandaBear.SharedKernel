@@ -5,7 +5,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class LicenseExceptionCommandTests
 {
-    /// <summary>Verifies that the command appends the approved package URLs to the GitHub output when every check passes.</summary>
     [Fact]
     public async Task Verify_license_exceptions_appends_the_approved_package_urls_when_every_check_passes()
     {
@@ -27,7 +26,6 @@ public sealed class LicenseExceptionCommandTests
         githubOutput.ShouldBe("earlier=value\n" + LicenseExceptionTestRepository.ApprovedPackages + Environment.NewLine, "The package URLs keep the configured order and follow the existing outputs.");
     }
 
-    /// <summary>Verifies that the command fails unless the approval values and every locked package version match.</summary>
     [Theory]
     [InlineData("1.0.0-alpha.20261021.2", "2.25.29", "15.0.0", false, true, false, ".config/sharedkernel-candidate.json: packageVersion is \"1.0.0-alpha.20261021.2\", not the approved \"0.1.0-alpha.94.1\"; re-review the license exceptions.")]
     [InlineData("1.2.0-alpha.20261023.1", "2.25.29", "15.0.0", false, true, false, ".config/sharedkernel-candidate.json: packageVersion is \"1.2.0-alpha.20261023.1\", not the approved \"0.1.0-alpha.94.1\"; re-review the license exceptions.")]
@@ -66,7 +64,6 @@ public sealed class LicenseExceptionCommandTests
         File.Exists(outputPath).ShouldBeFalse("A failed verification grants no license exception.");
     }
 
-    /// <summary>Verifies that package identifiers in lock files match the approved packages regardless of case.</summary>
     [Fact]
     public async Task Verify_license_exceptions_matches_locked_package_ids_ignoring_case()
     {
@@ -83,7 +80,6 @@ public sealed class LicenseExceptionCommandTests
         result.StandardError.ShouldContain("- src/packages.lock.json: streamjsonrpc resolves to 2.25.30 for net10.0, not the approved 2.25.29.", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that the command reads only lock files that Git tracks.</summary>
     [Fact]
     public async Task Verify_license_exceptions_reads_only_tracked_lock_files()
     {
@@ -101,7 +97,6 @@ public sealed class LicenseExceptionCommandTests
         result.StandardError.ShouldBe(string.Empty);
     }
 
-    /// <summary>Verifies that the command reads tracked lock files in the root and in nested directories.</summary>
     [Fact]
     public async Task Verify_license_exceptions_reads_tracked_lock_files_at_the_root_and_in_nested_directories()
     {
@@ -125,7 +120,6 @@ public sealed class LicenseExceptionCommandTests
         File.Exists(outputPath).ShouldBeFalse("A failed verification grants no license exception.");
     }
 
-    /// <summary>Verifies that the command rejects an approval file that repeats a property.</summary>
     [Fact]
     public async Task Verify_license_exceptions_rejects_an_approval_file_that_repeats_a_property()
     {
@@ -147,7 +141,6 @@ public sealed class LicenseExceptionCommandTests
         File.Exists(outputPath).ShouldBeFalse("A failed verification grants no license exception.");
     }
 
-    /// <summary>Verifies that the command fails when no lock file is tracked.</summary>
     [Fact]
     public async Task Verify_license_exceptions_requires_a_tracked_lock_file()
     {
@@ -165,7 +158,6 @@ public sealed class LicenseExceptionCommandTests
         result.StandardError.ShouldContain("- .config/sharedkernel-repo.json: StreamJsonRpc 2.25.29 is approved, but no tracked packages.lock.json resolves it; remove its license exception.", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that a relative GitHub output path resolves against the repository root.</summary>
     [Fact]
     public async Task Verify_license_exceptions_resolves_a_relative_github_output_against_the_root()
     {
@@ -186,7 +178,6 @@ public sealed class LicenseExceptionCommandTests
         File.Exists(Path.Combine(workingDirectory.Path, "github-output")).ShouldBeFalse("A relative output path resolves against --root, not the working directory.");
     }
 
-    /// <summary>Verifies that the command fails when the configuration file is missing.</summary>
     [Fact]
     public async Task Verify_license_exceptions_requires_the_configuration_file()
     {
@@ -204,7 +195,6 @@ public sealed class LicenseExceptionCommandTests
         result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json does not exist." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that the command fails when the configuration lacks the license exceptions section.</summary>
     [Theory]
     [InlineData("""{"version":1}""")]
     [InlineData("""{"version":1,"licenseExceptions":null}""")]
@@ -223,7 +213,6 @@ public sealed class LicenseExceptionCommandTests
         result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no licenseExceptions section." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that an invalid configuration error names the file and the JSON path.</summary>
     [Theory]
     [InlineData("""{"version":2}""", ".config/sharedkernel-repo.json: $.version must be 1.")]
     [InlineData("""{}""", ".config/sharedkernel-repo.json is not valid at $ (line 1).")]
@@ -266,7 +255,6 @@ public sealed class LicenseExceptionCommandTests
         File.Exists(outputPath).ShouldBeFalse();
     }
 
-    /// <summary>Verifies that the command rejects a configuration file larger than one mebibyte.</summary>
     [Fact]
     public async Task Verify_license_exceptions_rejects_a_configuration_larger_than_one_mebibyte()
     {
@@ -283,7 +271,6 @@ public sealed class LicenseExceptionCommandTests
         result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json exceeds the 1 MiB configuration size limit." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that the command refuses to follow a symbolic link to the approval file.</summary>
     [Fact]
     public async Task Verify_license_exceptions_does_not_follow_a_symbolic_link_to_the_approval_file()
     {
@@ -310,7 +297,6 @@ public sealed class LicenseExceptionCommandTests
         result.StandardError.ShouldContain("- .config/sharedkernel-candidate.json: Symbolic links are not followed in repository paths.", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that the command refuses to follow a symbolic link to the configuration file.</summary>
     [Fact]
     public async Task Verify_license_exceptions_does_not_follow_a_symbolic_link_to_the_configuration()
     {
@@ -337,7 +323,6 @@ public sealed class LicenseExceptionCommandTests
         result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json: Symbolic links are not followed in repository paths." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that the command rejects a blank GitHub output path.</summary>
     [Theory]
     [InlineData("")]
     [InlineData(" ")]

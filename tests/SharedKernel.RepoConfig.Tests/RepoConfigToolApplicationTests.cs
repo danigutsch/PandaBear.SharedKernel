@@ -10,7 +10,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class RepoConfigToolApplicationTests
 {
-    /// <summary>Verifying an empty workspace exits 1 and reports the missing roadmap directory and roadmap/config.json.</summary>
     [Fact]
     public async Task Verify_reports_missing_roadmap_structure()
     {
@@ -30,7 +29,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("roadmap/config.json: Missing required file.", StringComparison.Ordinal);
     }
 
-    /// <summary>After init, verify exits 0 with "Repository config is valid." and the config and first roadmap item files exist.</summary>
     [Fact]
     public async Task Init_creates_structure_that_verify_accepts()
     {
@@ -54,7 +52,6 @@ public sealed class RepoConfigToolApplicationTests
         workspace.FileExists("roadmap/items/RM-001-roadmap-gitops.json").ShouldBeTrue();
     }
 
-    /// <summary>Init writes config and item JSON schemas that declare the 2020-12 draft, contain no github.com links and include required, integrations, size, uniqueItems and a 0.1 minimum.</summary>
     [Fact]
     public async Task Init_writes_full_schema_templates()
     {
@@ -81,7 +78,6 @@ public sealed class RepoConfigToolApplicationTests
         itemSchemaText.ShouldContain("\"minimum\": 0.1", StringComparison.Ordinal);
     }
 
-    /// <summary>The roadmap README written by init tells readers to run "sharedkernel-repo verify" and does not use a "dotnet run --project" command.</summary>
     [Fact]
     public async Task Init_writes_portable_roadmap_readme_command()
     {
@@ -100,7 +96,6 @@ public sealed class RepoConfigToolApplicationTests
         readmeText.ShouldNotContain("dotnet run --project", StringComparison.Ordinal);
     }
 
-    /// <summary>With an untriaged RM-002 added next to RM-001, verify passes and get next-priority lists RM-001 but not RM-002.</summary>
     [Fact]
     public async Task Get_excludes_untriaged_items_from_executable_priority_queries()
     {
@@ -128,7 +123,6 @@ public sealed class RepoConfigToolApplicationTests
         outputText.ShouldNotContain("RM-002", StringComparison.Ordinal);
     }
 
-    /// <summary>A title containing a newline and an escape character is printed by get next-priority as one line with the escapes rendered as \u000A and \u001B.</summary>
     [Fact]
     public async Task Get_escapes_control_characters_in_item_titles()
     {
@@ -161,7 +155,6 @@ public sealed class RepoConfigToolApplicationTests
         outputText.ShouldContain("\\u001B", StringComparison.Ordinal);
     }
 
-    /// <summary>An itemIdPrefix containing a newline and an escape character makes verify exit 1 with the allowed-characters message, writing no raw escape character or newline to standard error.</summary>
     [Fact]
     public async Task Verify_does_not_emit_control_characters_from_an_invalid_item_id_prefix()
     {
@@ -189,7 +182,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldNotContain("RM\n", StringComparison.Ordinal);
     }
 
-    /// <summary>An item id containing a newline and an escape character is shown by get blocking-overview on one line as "RM-002\u000A\u001B blocked by RM-001".</summary>
     [Fact]
     public async Task Get_blocking_overview_escapes_control_characters_in_item_ids()
     {
@@ -230,8 +222,6 @@ public sealed class RepoConfigToolApplicationTests
         outputText.ShouldContain("RM-002\\u000A\\u001B blocked by RM-001", StringComparison.Ordinal);
     }
 
-    /// <summary>Adding an order or scoring input to an untriaged item makes verify exit 1 with "Untriaged roadmap items must not define priority inputs."</summary>
-    /// <param name="priorityInput">The JSON property text inserted before the item's theme.</param>
     [Theory]
     [InlineData("\"order\": 20,")]
     [InlineData("\"scoring\": { \"reach\": 10, \"impact\": 3, \"confidence\": 0.8, \"effort\": 2 },")]
@@ -257,7 +247,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("Untriaged roadmap items must not define priority inputs.", StringComparison.Ordinal);
     }
 
-    /// <summary>Listing the untriaged RM-002 in order.json makes verify exit 1 with "order.json must not contain untriaged item: RM-002."</summary>
     [Fact]
     public async Task Verify_rejects_untriaged_items_in_order_json()
     {
@@ -281,7 +270,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("order.json must not contain untriaged item: RM-002.", StringComparison.Ordinal);
     }
 
-    /// <summary>When untriaged RM-002 blocks RM-001, get blockers-of RM-001 prints "RM-002 | issue | ready | untriaged" without order or score values.</summary>
     [Fact]
     public async Task Get_blockers_of_renders_untriaged_items_without_priority_values()
     {
@@ -309,7 +297,6 @@ public sealed class RepoConfigToolApplicationTests
         outputText.ShouldNotContain("score", StringComparison.Ordinal);
     }
 
-    /// <summary>The $schema reference in the config and the first item written by init each resolve to an existing schema file on disk.</summary>
     [Fact]
     public async Task Init_writes_templates_with_resolvable_local_schema_references()
     {
@@ -333,7 +320,6 @@ public sealed class RepoConfigToolApplicationTests
         File.Exists(itemSchemaPath).ShouldBeTrue();
     }
 
-    /// <summary>Running set github.repository example/repository exits 0 and writes that repository value into roadmap/config.json.</summary>
     [Fact]
     public async Task Set_updates_github_repository_config()
     {
@@ -355,7 +341,6 @@ public sealed class RepoConfigToolApplicationTests
         configText.ShouldContain("\"repository\": \"example/repository\"", StringComparison.Ordinal);
     }
 
-    /// <summary>After set github.repository, verify still passes and the config keeps enabled false and sourceOfTruth "projection" next to the new repository.</summary>
     [Fact]
     public async Task Set_preserves_existing_github_projection_settings_and_valid_config()
     {
@@ -384,7 +369,6 @@ public sealed class RepoConfigToolApplicationTests
         github.GetProperty("repository").GetString().ShouldBe("example/repository");
     }
 
-    /// <summary>Adding a projectFieldMapping object to the GitHub integration makes verify exit 1 with "integrations.github.projectFieldMapping is not supported."</summary>
     [Fact]
     public async Task Verify_rejects_obsolete_github_project_field_mapping()
     {
@@ -408,7 +392,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("integrations.github.projectFieldMapping is not supported.", StringComparison.Ordinal);
     }
 
-    /// <summary>Setting sourceOfTruth to "manual" makes verify exit 1 with "integrations.github.sourceOfTruth must be projection."</summary>
     [Fact]
     public async Task Verify_rejects_invalid_github_projection_source_of_truth()
     {
@@ -432,7 +415,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("integrations.github.sourceOfTruth must be projection.", StringComparison.Ordinal);
     }
 
-    /// <summary>Removing sourceOfTruth from the GitHub integration still passes verify, with exit 0 and empty standard error.</summary>
     [Fact]
     public async Task Verify_allows_missing_github_projection_source_of_truth()
     {
@@ -456,8 +438,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldBe(string.Empty);
     }
 
-    /// <summary>Setting github.repository to a value with a space, query, fragment, backslash or double hyphen exits 1 with "github.repository must be shaped as owner/repository." and leaves the value out of the config.</summary>
-    /// <param name="repository">The invalid repository value passed to set.</param>
     [Theory]
     [InlineData("owner only")]
     [InlineData("owner/repo?state=closed")]
@@ -486,7 +466,6 @@ public sealed class RepoConfigToolApplicationTests
         configText.ShouldNotContain(JsonSerializer.Serialize(repository), StringComparison.Ordinal);
     }
 
-    /// <summary>An item that depends on the nonexistent RM-404 makes verify exit 1 with "Unknown dependency: RM-404."</summary>
     [Fact]
     public async Task Verify_reports_unknown_dependencies()
     {
@@ -510,7 +489,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("Unknown dependency: RM-404.", StringComparison.Ordinal);
     }
 
-    /// <summary>Copying RM-001 to a second file makes verify exit 1 with "Duplicate roadmap item id: RM-001." as a diagnostic rather than a tool-level error.</summary>
     [Fact]
     public async Task Verify_reports_duplicate_roadmap_ids_without_aborting_diagnostics()
     {
@@ -534,7 +512,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
     }
 
-    /// <summary>A numeric parent value (7) makes verify exit 1 with "parent must be a string when present."</summary>
     [Fact]
     public async Task Verify_reports_invalid_parent_type()
     {
@@ -558,7 +535,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("parent must be a string when present.", StringComparison.Ordinal);
     }
 
-    /// <summary>A whitespace-only parent value makes verify exit 1 with "parent must not be blank when present."</summary>
     [Fact]
     public async Task Verify_rejects_blank_parent()
     {
@@ -582,7 +558,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("parent must not be blank when present.", StringComparison.Ordinal);
     }
 
-    /// <summary>Setting RM-001's parent to RM-001 makes verify exit 1 with "Roadmap item cannot reference itself as parent."</summary>
     [Fact]
     public async Task Verify_rejects_item_as_its_own_parent()
     {
@@ -606,7 +581,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("Roadmap item cannot reference itself as parent.", StringComparison.Ordinal);
     }
 
-    /// <summary>When RM-001's parent is RM-002 and RM-002 loops back to RM-001, verify exits 1 with "parent cycle includes RM-001."</summary>
     [Fact]
     public async Task Verify_reports_parent_cycles()
     {
@@ -632,7 +606,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("parent cycle includes RM-001.", StringComparison.Ordinal);
     }
 
-    /// <summary>A GitHub mapping with a subIssues list makes verify exit 1 with "integrations.github.subIssues is not supported; use parent links."</summary>
     [Fact]
     public async Task Verify_rejects_github_subissues_in_favor_of_parent_links()
     {
@@ -658,7 +631,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("integrations.github.subIssues is not supported; use parent links.", StringComparison.Ordinal);
     }
 
-    /// <summary>A scoring confidence of 0.09 makes verify exit 1 with "confidence must be between 0.1 and 1.0."</summary>
     [Fact]
     public async Task Verify_reports_confidence_below_documented_range()
     {
@@ -682,7 +654,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("confidence must be between 0.1 and 1.0.", StringComparison.Ordinal);
     }
 
-    /// <summary>Removing itemIdPrefix from roadmap/config.json makes verify exit 1 with "Missing required string property: itemIdPrefix."</summary>
     [Fact]
     public async Task Verify_reports_missing_item_id_prefix()
     {
@@ -706,7 +677,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("Missing required string property: itemIdPrefix.", StringComparison.Ordinal);
     }
 
-    /// <summary>Cutting the integrations object out of roadmap/config.json makes verify exit 1 with "Missing required object property: integrations."</summary>
     [Fact]
     public async Task Verify_reports_missing_integrations_object()
     {
@@ -731,7 +701,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("Missing required object property: integrations.", StringComparison.Ordinal);
     }
 
-    /// <summary>Duplicating "done" in project.closedStatuses makes verify exit 1 with "project.closedStatuses contains a duplicate value: done."</summary>
     [Fact]
     public async Task Verify_reports_duplicate_config_array_values()
     {
@@ -755,7 +724,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("project.closedStatuses contains a duplicate value: done.", StringComparison.Ordinal);
     }
 
-    /// <summary>A number (7) inside project.closedStatuses makes verify exit 1 with "project.closedStatuses must contain only non-empty strings."</summary>
     [Fact]
     public async Task Verify_reports_invalid_config_array_values()
     {
@@ -779,7 +747,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("project.closedStatuses must contain only non-empty strings.", StringComparison.Ordinal);
     }
 
-    /// <summary>A closedStatuses entry "done " with a trailing space makes verify exit 1 with "project.closedStatuses must not contain leading or trailing whitespace."</summary>
     [Fact]
     public async Task Verify_rejects_config_array_values_with_leading_or_trailing_whitespace()
     {
@@ -803,7 +770,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("project.closedStatuses must not contain leading or trailing whitespace.", StringComparison.Ordinal);
     }
 
-    /// <summary>Adding a tagFields array to the project config makes verify exit 1 with "project.tagFields is not supported."</summary>
     [Fact]
     public async Task Verify_rejects_obsolete_project_tag_fields()
     {
@@ -827,7 +793,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("project.tagFields is not supported.", StringComparison.Ordinal);
     }
 
-    /// <summary>The label "area: tooling " with a trailing space makes verify exit 1 with "labels must not contain leading or trailing whitespace."</summary>
     [Fact]
     public async Task Verify_rejects_item_array_values_with_leading_or_trailing_whitespace()
     {
@@ -851,9 +816,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("labels must not contain leading or trailing whitespace.", StringComparison.Ordinal);
     }
 
-    /// <summary>An item whose integrations value is an array, or whose github entry is an array, makes verify exit 1 with the matching "must be a JSON object when present." message.</summary>
-    /// <param name="integrations">The JSON text inserted as the item's integrations property.</param>
-    /// <param name="expectedMessage">The error text standard error must contain.</param>
     [Theory]
     [InlineData("[]", "integrations must be a JSON object when present.")]
     [InlineData("{ \"github\": [] }", "integrations.github must be a JSON object when present.")]
@@ -879,7 +841,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain(expectedMessage, StringComparison.Ordinal);
     }
 
-    /// <summary>An item with an empty id and an array integrations value reports both "Missing required string property: id." and the integrations object error.</summary>
     [Fact]
     public async Task Verify_reports_malformed_item_integrations_when_the_item_id_is_invalid()
     {
@@ -907,8 +868,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("integrations must be a JSON object when present.", StringComparison.Ordinal);
     }
 
-    /// <summary>With GitHub sync enabled, a repository value with a space, query, fragment, backslash or double hyphen makes verify exit 1 with "integrations.github.repository must be shaped as owner/repository when GitHub sync is enabled."</summary>
-    /// <param name="repository">The invalid repository value written into the config.</param>
     [Theory]
     [InlineData("owner only")]
     [InlineData("owner/repo?state=closed")]
@@ -937,9 +896,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("integrations.github.repository must be shaped as owner/repository when GitHub sync is enabled.", StringComparison.Ordinal);
     }
 
-    /// <summary>With GitHub sync enabled, a projectV2 target that is not an object or has a missing or wrong-typed id, an invalid owner, or a non-positive or non-integer number makes verify exit 1 with the matching projectV2 message.</summary>
-    /// <param name="projectV2">The JSON text written as the projectV2 property.</param>
-    /// <param name="expectedError">The error text standard error must contain.</param>
     [Theory]
     [InlineData("[]", "integrations.github.projectV2 must be a JSON object.")]
     [InlineData("{}", "integrations.github.projectV2.id must be a non-empty string.")]
@@ -972,7 +928,6 @@ public sealed class RepoConfigToolApplicationTests
         verifyError.ToString().ShouldContain(expectedError, StringComparison.Ordinal);
     }
 
-    /// <summary>GitHubRepositoryName.IsValid accepts "owner-name/repository", an owner with a single hyphen.</summary>
     [Fact]
     public void GitHub_repository_name_accepts_single_hyphenated_owner()
     {
@@ -983,7 +938,6 @@ public sealed class RepoConfigToolApplicationTests
         isValid.ShouldBeTrue();
     }
 
-    /// <summary>A dependencies list naming RM-404 twice reports the duplicate value and reports "Unknown dependency: RM-404." only once.</summary>
     [Fact]
     public async Task Verify_reports_duplicate_string_array_values_without_cascading_reference_errors()
     {
@@ -1009,7 +963,6 @@ public sealed class RepoConfigToolApplicationTests
         unknownDependencyReports.ShouldBe(1);
     }
 
-    /// <summary>A theme file containing a JSON array makes verify exit 1 with "Theme root must be a JSON object." for roadmap/themes/repo-operations.json.</summary>
     [Fact]
     public async Task Verify_reports_non_object_theme_file()
     {
@@ -1032,7 +985,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("roadmap/themes/repo-operations.json: Theme root must be a JSON object.", StringComparison.Ordinal);
     }
 
-    /// <summary>Deleting the repo-operations theme file makes verify exit 1 with "Unknown theme: repo-operations." for the item that uses it.</summary>
     [Fact]
     public async Task Verify_reports_items_when_theme_catalog_is_empty()
     {
@@ -1055,7 +1007,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("Unknown theme: repo-operations.", StringComparison.Ordinal);
     }
 
-    /// <summary>When epic RM-001 blocks issue RM-002, get next-unblocked lists RM-001 and omits RM-002.</summary>
     [Fact]
     public async Task Get_next_unblocked_skips_open_blockers()
     {
@@ -1082,7 +1033,6 @@ public sealed class RepoConfigToolApplicationTests
         outputText.ShouldNotContain("RM-002 | issue", StringComparison.Ordinal);
     }
 
-    /// <summary>Get next-work lists RM-001, which blocks open RM-002, before the better-ordered enabler RM-003, and omits blocked RM-002.</summary>
     [Fact]
     public async Task Get_next_work_prioritizes_unblocked_items_that_close_open_blockers()
     {
@@ -1115,7 +1065,6 @@ public sealed class RepoConfigToolApplicationTests
         outputText.ShouldNotContain("RM-002 | issue", StringComparison.Ordinal);
     }
 
-    /// <summary>When RM-001 only blocks the done item RM-002, get next-work lists the better-ordered enabler RM-003 before RM-001.</summary>
     [Fact]
     public async Task Get_next_work_does_not_elevate_items_that_only_unblock_closed_work()
     {
@@ -1149,7 +1098,6 @@ public sealed class RepoConfigToolApplicationTests
         outputText.ShouldNotContain("RM-002 | issue", StringComparison.Ordinal);
     }
 
-    /// <summary>When RM-001 and RM-003 each unblock open work, get next-work lists RM-003, which has the better order, before RM-001.</summary>
     [Fact]
     public async Task Get_next_work_uses_canonical_priority_to_break_blocker_ties()
     {
@@ -1189,7 +1137,6 @@ public sealed class RepoConfigToolApplicationTests
         higherPriorityBlockerIndex.ShouldBeLessThan(lowerPriorityBlockerIndex);
     }
 
-    /// <summary>Get blockers-of RM-002 lists its blocker, epic RM-001.</summary>
     [Fact]
     public async Task Get_blockers_of_lists_direct_blockers()
     {
@@ -1215,7 +1162,6 @@ public sealed class RepoConfigToolApplicationTests
         outputText.ShouldContain("RM-001 | epic", StringComparison.Ordinal);
     }
 
-    /// <summary>Get blockers-of RM-999 exits 1 with empty standard output and exactly "sharedkernel-repo: Unknown roadmap item id: RM-999" on standard error.</summary>
     [Fact]
     public async Task Get_blockers_of_prefixes_unknown_item_error()
     {
@@ -1239,7 +1185,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldBe("sharedkernel-repo: Unknown roadmap item id: RM-999" + Environment.NewLine);
     }
 
-    /// <summary>When the output writer throws cancellation although the caller's token is not cancelled, github sync exits 1 with "sharedkernel-repo: The operation was canceled." on standard error.</summary>
     [Fact]
     public async Task GitHub_sync_returns_clean_error_for_noncaller_cancellation()
     {
@@ -1264,7 +1209,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("sharedkernel-repo: The operation was canceled.", StringComparison.Ordinal);
     }
 
-    /// <summary>When the caller's token is already cancelled, github sync exits 1 and writes nothing to standard error.</summary>
     [Fact]
     public async Task GitHub_sync_reports_no_diagnostic_for_caller_cancellation()
     {
@@ -1290,7 +1234,6 @@ public sealed class RepoConfigToolApplicationTests
         error.ToString().ShouldBe(string.Empty);
     }
 
-    /// <summary>When the caller cancels while the first project-target HTTP request is answered, github sync exits 1 and writes nothing to standard output or error.</summary>
     [Fact]
     public async Task GitHub_sync_preview_reports_no_diagnostic_for_caller_cancellation_during_project_preflight()
     {
@@ -1320,7 +1263,6 @@ public sealed class RepoConfigToolApplicationTests
         syncError.ToString().ShouldBe(string.Empty);
     }
 
-    /// <summary>When the caller cancels while the project fields response is being read, github sync preview exits 1 and writes nothing to standard output or error.</summary>
     [Fact]
     public async Task GitHub_sync_preview_reports_no_diagnostic_for_caller_cancellation_after_project_fields_are_read()
     {
@@ -1366,7 +1308,6 @@ public sealed class RepoConfigToolApplicationTests
         syncError.ToString().ShouldBe(string.Empty);
     }
 
-    /// <summary>When the caller cancels while the project fields response is being read, GitHubRoadmapSyncer.Apply throws an OperationCanceledException carrying the caller's token.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_propagates_caller_cancellation_after_project_fields_are_read()
     {
@@ -1412,7 +1353,6 @@ public sealed class RepoConfigToolApplicationTests
         exception.CancellationToken.ShouldBe(cancellation.Token);
     }
 
-    /// <summary>With RM-001 mapped to issue 997 and no HTTP client supplied, github sync exits 0 and prints "preview: sync labels for owner/repository#997 from RM-001".</summary>
     [Fact]
     public async Task GitHub_sync_preview_reports_mapped_issues_without_network()
     {
@@ -1437,7 +1377,6 @@ public sealed class RepoConfigToolApplicationTests
         outputText.ShouldContain("preview: sync labels for owner/repository#997 from RM-001", StringComparison.Ordinal);
     }
 
-    /// <summary>With GH_TOKEN and GITHUB_TOKEN unset, GitHubRoadmapSyncer.Apply throws InvalidOperationException saying to set GH_TOKEN or GITHUB_TOKEN before authenticated GitHub sync.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_requires_a_token_for_authenticated_sync()
     {
@@ -1461,7 +1400,6 @@ public sealed class RepoConfigToolApplicationTests
         exception.Message.ShouldBe("Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub sync.");
     }
 
-    /// <summary>With a valid intake configuration but GH_TOKEN and GITHUB_TOKEN unset, github import exits 1 with empty standard output and the message to set a token before authenticated GitHub import.</summary>
     [Fact]
     public async Task GitHub_import_requires_a_token_for_authenticated_import()
     {
@@ -1518,7 +1456,6 @@ public sealed class RepoConfigToolApplicationTests
         error.ToString().ShouldBe("sharedkernel-repo: Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub import." + Environment.NewLine);
     }
 
-    /// <summary>When issue 997 is already in project 1 with no field values, github sync previews that membership and setting the Roadmap order field to 10 without sending any GraphQL mutation.</summary>
     [Fact]
     public async Task GitHub_sync_preview_preflights_existing_project_membership_without_mutating()
     {
@@ -1551,7 +1488,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When issue 997 is not yet in project 1, github sync previews adding it and setting Roadmap order to 10 "after adding it", using four requests and no mutation.</summary>
     [Fact]
     public async Task GitHub_sync_preview_defers_field_writes_until_missing_project_membership_is_added()
     {
@@ -1584,7 +1520,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When a status option other than the current one is ambiguous (two options share the id "done"), github sync previews skipping the projection of issue 997 because Roadmap status cannot be projected, using two requests and no mutation.</summary>
     [Fact]
     public async Task GitHub_sync_preview_blocks_project_proposals_for_invalid_noncurrent_status_options()
     {
@@ -1627,7 +1562,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When the remote project reports number 2 instead of the configured 1, github sync exits 1 with "Configured GitHub Project target could not be verified." after a single request and no mutation.</summary>
     [Fact]
     public async Task GitHub_sync_preview_rejects_an_unverified_project_target_without_mutating()
     {
@@ -1657,7 +1591,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When the project's Roadmap order field already holds 11, github sync exits 0 and prints a drift line saying the field cannot be projected from the roadmap source, sending no mutation.</summary>
     [Fact]
     public async Task GitHub_sync_preview_reports_project_value_conflicts_without_mutating()
     {
@@ -1689,7 +1622,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When the HTTP transport throws a request exception whose message is a token, github sync exits 1 with "GitHub sync request failed." and does not print the token.</summary>
     [Fact]
     public async Task GitHub_sync_preview_sanitizes_transport_failures()
     {
@@ -1717,7 +1649,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldNotContain("ghp_test_token", StringComparison.Ordinal);
     }
 
-    /// <summary>With a project target but no issue mappings, github sync reports that no items are mapped and still previews that the Roadmap order field cannot be projected, using two requests and no mutation.</summary>
     [Fact]
     public async Task GitHub_sync_preview_preflights_project_schema_without_issue_mappings()
     {
@@ -1748,7 +1679,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>With an item set to create its issue and a project target, github sync previews the issue creation and the unprojectable Roadmap order field, using two requests and no mutation.</summary>
     [Fact]
     public async Task GitHub_sync_preview_preflights_project_schema_for_issue_creation_intents()
     {
@@ -1781,8 +1711,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When the Roadmap status field has null, empty, blank-id, duplicate-name or shared-id options, github sync exits 0 and previews that the Roadmap status field cannot be projected, sending no mutation.</summary>
-    /// <param name="statusOptions">The JSON options array returned for the Roadmap status field.</param>
     [Theory]
     [InlineData("null")]
     [InlineData("[]")]
@@ -1833,7 +1761,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>An order.json listing only RM-404 makes verify exit 1 with "Unknown ordered item: RM-404." and "Missing ordered item: RM-001."</summary>
     [Fact]
     public async Task Verify_reports_stale_order_file()
     {
@@ -1857,7 +1784,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("Missing ordered item: RM-001.", StringComparison.Ordinal);
     }
 
-    /// <summary>With the GitHub integration disabled by init, github sync exits 1 with "GitHub sync is disabled in roadmap/config.json."</summary>
     [Fact]
     public async Task GitHub_sync_preview_respects_disabled_integration()
     {
@@ -1879,7 +1805,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("GitHub sync is disabled in roadmap/config.json.", StringComparison.Ordinal);
     }
 
-    /// <summary>Removing the enabled property from the GitHub integration makes github sync exit 1 with "GitHub sync is disabled in roadmap/config.json."</summary>
     [Fact]
     public async Task GitHub_sync_preview_defaults_to_disabled_when_enabled_is_missing()
     {
@@ -1903,7 +1828,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("GitHub sync is disabled in roadmap/config.json.", StringComparison.Ordinal);
     }
 
-    /// <summary>Two items both mapped to GitHub issue 997 make verify exit 1 with "Duplicate GitHub issue mapping: 997."</summary>
     [Fact]
     public async Task Verify_reports_duplicate_github_issue_mappings()
     {
@@ -1929,7 +1853,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("Duplicate GitHub issue mapping: 997.", StringComparison.Ordinal);
     }
 
-    /// <summary>An item whose theme is changed to "missing-theme" makes verify exit 1 with "Unknown theme: missing-theme."</summary>
     [Fact]
     public async Task Verify_reports_unknown_theme()
     {
@@ -1953,7 +1876,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("Unknown theme: missing-theme.", StringComparison.Ordinal);
     }
 
-    /// <summary>An item with its theme property removed reports "Missing required string property: theme." and no "Unknown theme:" follow-up error.</summary>
     [Fact]
     public async Task Verify_reports_missing_theme_without_unknown_theme_cascade()
     {
@@ -1978,7 +1900,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldNotContain("Unknown theme:", StringComparison.Ordinal);
     }
 
-    /// <summary>An order.json holding a JSON array makes verify exit 1 with "order.json root must be a JSON object." as a diagnostic, not a tool-level error.</summary>
     [Fact]
     public async Task Verify_reports_non_object_order_file()
     {
@@ -2002,7 +1923,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
     }
 
-    /// <summary>Truncated JSON in config, item, theme and order files makes verify exit 1 with an "Invalid JSON:" diagnostic prefixed by each file's path, not a tool-level error.</summary>
     [Fact]
     public async Task Verify_reports_malformed_json_files_with_paths()
     {
@@ -2032,7 +1952,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
     }
 
-    /// <summary>An order.json that lists lower-priority RM-001 before higher-priority RM-002 makes verify exit 1 with "order.json items must match priority order: order ascending, score descending, then id."</summary>
     [Fact]
     public async Task Verify_reports_order_file_sequence_mismatch()
     {
@@ -2056,7 +1975,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("order.json items must match priority order: order ascending, score descending, then id.", StringComparison.Ordinal);
     }
 
-    /// <summary>When RM-001 and RM-000 have equal order but RM-000 has lower reach, an order.json listing RM-001 first passes verify with exit 0.</summary>
     [Fact]
     public async Task Verify_order_file_uses_priority_tiebreakers()
     {
@@ -2082,7 +2000,6 @@ public sealed class RepoConfigToolApplicationTests
         exitCode.ShouldBe(0);
     }
 
-    /// <summary>When RM-001 and RM-002 each list the other as a blocker, verify exits 1 with a "blockedBy cycle includes" diagnostic.</summary>
     [Fact]
     public async Task Verify_reports_blocked_by_cycles()
     {
@@ -2111,7 +2028,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("blockedBy cycle includes", StringComparison.Ordinal);
     }
 
-    /// <summary>Get next-priority with limit 3 lists RM-001 first, then RM-002 with the same score, then RM-000 with a lower score, matching the order file.</summary>
     [Fact]
     public async Task Get_next_priority_orders_items_by_order_score_and_id()
     {
@@ -2151,7 +2067,6 @@ public sealed class RepoConfigToolApplicationTests
         secondIndex.ShouldBeLessThan(thirdIndex);
     }
 
-    /// <summary>Of two otherwise identical blocker items, get next-blockers with limit 2 puts RM-002 before RM-003 even though RM-003's file sorts first.</summary>
     [Fact]
     public async Task Get_next_blockers_orders_equal_blockers_by_id()
     {
@@ -2183,7 +2098,6 @@ public sealed class RepoConfigToolApplicationTests
         outputText.ShouldStartWith("RM-002 | blocker", StringComparison.Ordinal);
     }
 
-    /// <summary>Of two otherwise identical issue items, get low-hanging-fruit for type issue puts RM-002 before RM-003 even though RM-003's file sorts first.</summary>
     [Fact]
     public async Task Get_low_hanging_fruit_orders_equal_items_by_id()
     {
@@ -2215,7 +2129,6 @@ public sealed class RepoConfigToolApplicationTests
         outputText.ShouldStartWith("RM-002 | issue", StringComparison.Ordinal);
     }
 
-    /// <summary>Among equal-score, equal-effort issues, get pareto with limit 2 returns RM-003 then RM-006, which share the lowest order, and leaves out RM-002 with order 20.</summary>
     [Fact]
     public async Task Get_pareto_orders_equal_score_and_effort_by_order_then_id()
     {
@@ -2259,7 +2172,6 @@ public sealed class RepoConfigToolApplicationTests
         outputText.ShouldNotContain("RM-002 | issue", StringComparison.Ordinal);
     }
 
-    /// <summary>With RM-001 blocking RM-003 through RM-006 and a limit of 10, get pareto lists the unblocked RM-002 and leaves out RM-001.</summary>
     [Fact]
     public async Task Get_pareto_limit_uses_unblocked_open_items()
     {
@@ -2295,7 +2207,6 @@ public sealed class RepoConfigToolApplicationTests
         outputText.ShouldNotContain("RM-001 |", StringComparison.Ordinal);
     }
 
-    /// <summary>Preview of two mapped items lists issue 997 from RM-001 before issue 998 from RM-000, following the order file rather than id.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_preview_orders_mapped_items_by_priority()
     {
@@ -2325,7 +2236,6 @@ public sealed class RepoConfigToolApplicationTests
         result.Messages[1].ShouldBe("preview: sync labels for owner/repository#998 from RM-000");
     }
 
-    /// <summary>Apply first checks that issue 997 is not a pull request (404 on the pulls path), then reads the issue and posts the "area: tooling" label, without any PATCH request.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_syncs_labels_after_confirming_the_mapping_is_not_a_pull_request()
     {
@@ -2363,7 +2273,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests[2].Body.ShouldContain("area: tooling", StringComparison.Ordinal);
     }
 
-    /// <summary>Preview of an item whose issue is "create" reports "preview: create GitHub issue for owner/repository from RM-001" and sends no HTTP request.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_preview_describes_explicit_issue_creation_without_http()
     {
@@ -2389,7 +2298,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>When GitHub has the extra label "manual" and a case-different "AREA: TOOLING", apply reports drift only for "manual" and sends no DELETE, PATCH or PUT request.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_reports_extra_github_labels_without_removing_them()
     {
@@ -2419,7 +2327,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Method == HttpMethod.Delete || request.Method == HttpMethod.Patch || request.Method == HttpMethod.Put);
     }
 
-    /// <summary>Apply posts a new issue titled from RM-001 when its issue is "create", reports "created owner/repository#1200 from RM-001" and writes issue 1200 back into the item file.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_creates_and_persists_an_explicit_issue_mapping()
     {
@@ -2455,7 +2362,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests[0].Body.ShouldContain("area: tooling", StringComparison.Ordinal);
     }
 
-    /// <summary>When issue creation exceeds the 30 second limit, apply throws TimeoutException, keeps the "create" intent and the .lock file, and a second sync throws InvalidOperationException without any HTTP request.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_throws_timeout_when_issue_creation_limit_is_reached()
     {
@@ -2491,7 +2397,6 @@ public sealed class RepoConfigToolApplicationTests
         retryHandler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>When the item file changes from "create" to issue 1200 after the project was loaded, apply creates no issue and syncs labels on issue 1200 instead.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_adopts_a_mapping_persisted_after_project_load()
     {
@@ -2522,7 +2427,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldContain(request => request.PathAndQuery == "/repos/owner/repository/issues/1200/labels");
     }
 
-    /// <summary>When the item file is changed to issue 1300 while GitHub creates issue 1200, apply throws InvalidOperationException saying the mapping changed, keeps 1300 in the file and leaves the .lock file.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_does_not_overwrite_a_mapping_changed_during_issue_creation()
     {
@@ -2559,7 +2463,6 @@ public sealed class RepoConfigToolApplicationTests
         File.Exists(Path.Combine(workspace.RootPath, "roadmap/items/RM-001-roadmap-gitops.json.lock")).ShouldBeTrue();
     }
 
-    /// <summary>When GitHub answers issue creation with HTTP 422, apply throws "GitHub issue creation failed: HTTP 422 (request validation failed)." after one request and keeps "create" in the item file.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_keeps_create_intent_when_issue_creation_fails()
     {
@@ -2587,7 +2490,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.Count.ShouldBe(1);
     }
 
-    /// <summary>When GitHub answers issue creation with HTTP 500, apply throws "GitHub issue creation failed: HTTP 500.", leaves the .lock file, and a second sync throws InvalidOperationException without any HTTP request.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_retains_the_creation_lock_after_an_ambiguous_server_failure()
     {
@@ -2622,7 +2524,6 @@ public sealed class RepoConfigToolApplicationTests
         retryHandler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>With a projectV2 target configured and the item already in the project, preview reports "preview: ensure owner/repository#997 is in GitHub Project 1".</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_preview_describes_conditional_project_membership()
     {
@@ -2652,7 +2553,6 @@ public sealed class RepoConfigToolApplicationTests
         result.Messages.ShouldContain("preview: ensure owner/repository#997 is in GitHub Project 1");
     }
 
-    /// <summary>GitHubProjectClient.GetFieldValues throws "GitHub Project request failed (FORBIDDEN)." when the GraphQL response carries a FORBIDDEN error.</summary>
     [Fact]
     public async Task GitHub_project_field_reads_fail_closed_when_graphql_reports_an_error()
     {
@@ -2670,7 +2570,6 @@ public sealed class RepoConfigToolApplicationTests
         exception.Message.ShouldBe("GitHub Project request failed (FORBIDDEN).");
     }
 
-    /// <summary>FindItemId follows the page cursor of the first response and returns "target-item" from the second page, using exactly two requests.</summary>
     [Fact]
     public async Task GitHub_project_client_finds_existing_item_on_a_later_page()
     {
@@ -2692,7 +2591,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests[1].Body.ShouldContain("cursor-1", StringComparison.Ordinal);
     }
 
-    /// <summary>Three FindItemId lookups against a two-page project return item-1, item-2 and null while reading the pages only once, with two requests in total.</summary>
     [Fact]
     public async Task GitHub_project_client_pages_item_membership_once_for_many_lookups()
     {
@@ -2716,7 +2614,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.Count.ShouldBe(2);
     }
 
-    /// <summary>After AddIssue adds issue-1, FindItemId returns the new item id "new-item" from memory instead of reading the project again, using two requests in total.</summary>
     [Fact]
     public async Task GitHub_project_client_remembers_an_added_item_for_later_lookups()
     {
@@ -2739,7 +2636,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.Count.ShouldBe(2);
     }
 
-    /// <summary>Calling GetFields twice for the same target returns the same cached instance and sends only one request.</summary>
     [Fact]
     public async Task GitHub_project_client_reads_field_definitions_once_per_target()
     {
@@ -2759,7 +2655,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.Count.ShouldBe(1);
     }
 
-    /// <summary>VerifyTarget accepts a target owner "OWNER" when the remote project reports the login "owner".</summary>
     [Fact]
     public async Task GitHub_project_target_accepts_case_insensitive_owner_login()
     {
@@ -2777,7 +2672,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.Count.ShouldBe(1);
     }
 
-    /// <summary>GitHubProjectClient.GetFields throws "GitHub Project request failed (FORBIDDEN)." when the GraphQL response carries a FORBIDDEN error.</summary>
     [Fact]
     public async Task GitHub_project_fields_fail_closed_when_graphql_reports_an_error()
     {
@@ -2795,7 +2689,6 @@ public sealed class RepoConfigToolApplicationTests
         exception.Message.ShouldBe("GitHub Project request failed (FORBIDDEN).");
     }
 
-    /// <summary>FindItemId returns null when the project's only page has no items.</summary>
     [Fact]
     public async Task GitHub_project_client_returns_null_when_item_is_not_present()
     {
@@ -2812,7 +2705,6 @@ public sealed class RepoConfigToolApplicationTests
         itemId.ShouldBeNull();
     }
 
-    /// <summary>VerifyTarget throws "Configured GitHub Project target could not be verified." when the remote project number is 2 but the target says 1.</summary>
     [Fact]
     public async Task GitHub_project_target_rejects_mismatched_remote_number()
     {
@@ -2830,7 +2722,6 @@ public sealed class RepoConfigToolApplicationTests
         exception.Message.ShouldBe("Configured GitHub Project target could not be verified.");
     }
 
-    /// <summary>GetIssueNodeId throws "GitHub issue mapping could not be found: #1." when the response issue has no id.</summary>
     [Fact]
     public async Task GitHub_project_client_rejects_missing_issue_node_id()
     {
@@ -2848,7 +2739,6 @@ public sealed class RepoConfigToolApplicationTests
         exception.Message.ShouldBe("GitHub issue mapping could not be found: #1.");
     }
 
-    /// <summary>GetFields throws "GitHub Project request failed with HTTP 403." when the server answers 403 Forbidden.</summary>
     [Fact]
     public async Task GitHub_project_client_rejects_http_failure()
     {
@@ -2866,7 +2756,6 @@ public sealed class RepoConfigToolApplicationTests
         exception.Message.ShouldBe("GitHub Project request failed with HTTP 403.");
     }
 
-    /// <summary>GetFieldValues throws "GitHub Project field values could not be read." when the response node is empty.</summary>
     [Fact]
     public async Task GitHub_project_client_rejects_missing_field_values()
     {
@@ -2884,7 +2773,6 @@ public sealed class RepoConfigToolApplicationTests
         exception.Message.ShouldBe("GitHub Project field values could not be read.");
     }
 
-    /// <summary>FindItemId throws "GitHub Project items could not be read." when the response node has no items.</summary>
     [Fact]
     public async Task GitHub_project_client_rejects_missing_project_items()
     {
@@ -2902,7 +2790,6 @@ public sealed class RepoConfigToolApplicationTests
         exception.Message.ShouldBe("GitHub Project items could not be read.");
     }
 
-    /// <summary>With a projectV2 target configured, apply syncs labels on issue 997, adds it to the project, sets the project fields including the single-select status, and reports "projected owner/repository#997 to GitHub Project 1".</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_adds_mapped_issue_to_configured_project_once()
     {
@@ -2959,7 +2846,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldContain(request => request.PathAndQuery == "/repos/owner/repository/issues/997/labels" && request.Method == HttpMethod.Post);
     }
 
-    /// <summary>A mapped item with an empty labels list is reported as "skipped owner/repository#997 from RM-001 because it has no labels", after two GET requests and no POST.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_skips_mapped_items_without_labels()
     {
@@ -2991,7 +2877,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Method == HttpMethod.Post);
     }
 
-    /// <summary>With two mapped items whose HTTP calls each advance the fake clock, apply finishes and returns two messages, so the timeout restarts per item.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_resets_the_timeout_for_each_item()
     {
@@ -3020,7 +2905,6 @@ public sealed class RepoConfigToolApplicationTests
         result.Messages.Count.ShouldBe(2);
     }
 
-    /// <summary>When the HTTP call for a mapped item runs past the fake clock's limit, apply throws TimeoutException with "GitHub sync timed out after 30 seconds."</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_throws_timeout_when_the_per_item_limit_is_reached()
     {
@@ -3047,9 +2931,6 @@ public sealed class RepoConfigToolApplicationTests
         exception.Message.ShouldBe("GitHub sync timed out after 30 seconds.");
     }
 
-    /// <summary>A failing pull request check for issue 997 (401, 403, 422, 429 or 502) throws InvalidOperationException with a fixed status hint and none of the token strings from the reason, body or headers, after one GET.</summary>
-    /// <param name="statusCode">The HTTP status the pull request check returns.</param>
-    /// <param name="expectedMessage">The exact exception message expected for that status.</param>
     [Theory]
     [InlineData(HttpStatusCode.Unauthorized, "GitHub pull request check failed for #997: HTTP 401 (authentication required).")]
     [InlineData(HttpStatusCode.Forbidden, "GitHub pull request check failed for #997: HTTP 403 (access denied or rate limited).")]
@@ -3087,7 +2968,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests[0].PathAndQuery.ShouldBe("/repos/owner/repository/pulls/997");
     }
 
-    /// <summary>When the label POST fails with HTTP 422, apply throws "GitHub label sync failed for #997: HTTP 422 (request validation failed)." without the token strings from the response reason, body or headers.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_does_not_expose_remote_details_for_label_failure()
     {
@@ -3121,7 +3001,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests[2].Method.ShouldBe(HttpMethod.Post);
     }
 
-    /// <summary>When the pulls path for issue 997 returns 200, apply throws InvalidOperationException saying the mapping "points to a pull request" after a single GET.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_rejects_pull_request_mappings()
     {
@@ -3151,7 +3030,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests[0].PathAndQuery.ShouldBe("/repos/owner/repository/pulls/997");
     }
 
-    /// <summary>With no item mapped or set to create, apply returns the single message "No roadmap items have GitHub issue mappings or explicit creation requests." and sends no request.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_reports_empty_mapping_and_create_request_filter()
     {
@@ -3175,7 +3053,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>When the project has no fields, apply reports the projection of issue 997 as skipped and the Roadmap status field as drift, and sends no GraphQL mutation.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_blocks_project_projection_when_roadmap_status_field_is_missing()
     {
@@ -3205,7 +3082,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When the project's Roadmap order number field already holds 11, apply reports drift for that field and sends no field-value update.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_reports_number_conflicts_without_overwriting_the_project_value()
     {
@@ -3234,7 +3110,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("updateProjectV2ItemFieldValue", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>A project RICE confidence value of 0.8000005, a float round-trip of 0.8, produces no drift message and no field-value update.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_tolerates_project_number_float_round_trips()
     {
@@ -3263,7 +3138,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("updateProjectV2ItemFieldValue", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When the project's Roadmap status is already "done" while the roadmap says otherwise, apply reports drift for that field and sends no field-value update.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_reports_status_conflicts_without_overwriting_the_project_value()
     {
@@ -3292,7 +3166,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("updateProjectV2ItemFieldValue", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When the project's Roadmap tags text field already holds "manual", apply reports drift for that field and sends no field-value update.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_reports_text_conflicts_without_overwriting_the_project_value()
     {
@@ -3321,7 +3194,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("updateProjectV2ItemFieldValue", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When the Roadmap status field offers only a "planned" option, apply reports drift for the status field and sends no field-value update.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_reports_missing_status_options_without_mutating_the_project()
     {
@@ -3350,8 +3222,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("updateProjectV2ItemFieldValue", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When the Roadmap status field is absent, duplicated, has an empty id or is a text field, apply reports the projection as skipped and the status field as drift, and sends no GraphQL mutation.</summary>
-    /// <param name="projectFields">The GraphQL response describing the project's fields.</param>
     [Theory]
     [InlineData("""
         { "data": { "node": { "fields": { "nodes": [] } } } }
@@ -3400,8 +3270,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When two status options share the name "ready" or one id covers two names, apply reports drift for Roadmap status and sends no field-value update.</summary>
-    /// <param name="statusOptions">The JSON options array of the Roadmap status field.</param>
     [Theory]
     [InlineData("""
         [
@@ -3448,7 +3316,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("updateProjectV2ItemFieldValue", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When a status option other than the current one is ambiguous (the id "done" is used twice), apply skips the projection and reports status drift before sending any mutation, even with update responses queued.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_prevalidates_noncurrent_status_options_before_project_mutations()
     {
@@ -3493,7 +3360,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When the project defines only the order and status fields, apply still projects issue 997, sends exactly two field-value updates and reports the missing RICE reach field as drift.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_continues_compatible_field_mutations_when_nonstatus_fields_are_missing()
     {
@@ -3545,7 +3411,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.Count(request => request.Body?.Contains("updateProjectV2ItemFieldValue", StringComparison.Ordinal) == true).ShouldBe(2);
     }
 
-    /// <summary>With an untriaged item present, apply sends exactly four field-value updates and none for the order, reach, impact, confidence, effort or score fields, and sends no clear mutation.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_skips_numeric_project_fields_for_untriaged_items()
     {
@@ -3606,7 +3471,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("clearProjectV2ItemFieldValue", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>With an untriaged item present, github sync previews setting only the Roadmap status to ready and prints nothing about Roadmap order or RICE fields, sending no mutation.</summary>
     [Fact]
     public async Task GitHub_sync_preview_skips_numeric_project_fields_for_untriaged_items()
     {
@@ -3648,7 +3512,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When the Roadmap order field is a TEXT field instead of NUMBER, apply reports drift for it and sends no field-value update.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_reports_incompatible_project_field_types_without_mutating_them()
     {
@@ -3677,7 +3540,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("updateProjectV2ItemFieldValue", StringComparison.Ordinal) == true);
     }
 
-    /// <summary>When the .lock file for an item set to create already exists, apply throws InvalidOperationException naming RM-001 and the lock path, and sends no HTTP request.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_rejects_held_issue_creation_locks_without_http_requests()
     {
@@ -3706,7 +3568,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>When the item file changes from "create" to "do-not-create" after the project was loaded, apply throws InvalidOperationException saying the mapping changed while synchronizing, and sends no HTTP request.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_aborts_without_http_when_create_intent_changes()
     {
@@ -3734,7 +3595,6 @@ public sealed class RepoConfigToolApplicationTests
         handler.Requests.ShouldBeEmpty();
     }
 
-    /// <summary>Passing the label "area: tooling" as two unquoted words to get by-label exits 1 with "Unrecognized command or argument 'tooling'." and no tool-name prefix.</summary>
     [Fact]
     public async Task Get_by_label_rejects_unquoted_label_with_spaces()
     {
@@ -3753,7 +3613,6 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
     }
 
-    /// <summary>Running get next-priority in an empty workspace exits 1 with "sharedkernel-repo: Roadmap config is invalid." on standard error.</summary>
     [Fact]
     public async Task Get_reports_tool_name_for_config_errors()
     {

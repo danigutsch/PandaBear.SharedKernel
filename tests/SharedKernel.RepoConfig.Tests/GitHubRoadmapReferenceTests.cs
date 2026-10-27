@@ -7,7 +7,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubRoadmapReferenceTests
 {
-    /// <summary>Verifies that an external issue mapping neither requests a local issue with the same number nor writes to GitHub.</summary>
     [Fact]
     public async Task External_issue_mapping_does_not_request_a_same_number_local_issue_or_remote_write()
     {
@@ -36,7 +35,6 @@ public sealed class GitHubRoadmapReferenceTests
         workspace.ReadFile("roadmap/items/RM-018-github-100.json").ShouldBe(content);
     }
 
-    /// <summary>Verifies that the same issue number in two repositories is not treated as a duplicate identity.</summary>
     [Fact]
     public async Task Same_issue_number_in_different_repositories_is_not_a_duplicate_identity()
     {
@@ -62,7 +60,6 @@ public sealed class GitHubRoadmapReferenceTests
         // Assert
         issues.ShouldBeEmpty();
     }
-    /// <summary>Verifies that import keeps the identity of an external parent and the reviewed priority.</summary>
     [Theory]
     [InlineData(false, true, true)]
     [InlineData(true, true, true)]
@@ -143,7 +140,6 @@ public sealed class GitHubRoadmapReferenceTests
         RepoConfigVerifier.Verify(workspace.RootPath).ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that reconcile resolves transferred issues, keeps their history, and does not write to GitHub.</summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -202,7 +198,6 @@ public sealed class GitHubRoadmapReferenceTests
         }
     }
 
-    /// <summary>Verifies that reconcile reports an inaccessible reference and keeps its reviewed record.</summary>
     [Fact]
     public async Task Reconcile_reports_inaccessible_reference_and_retains_its_reviewed_record()
     {
@@ -229,7 +224,6 @@ public sealed class GitHubRoadmapReferenceTests
         workspace.ReadFile("roadmap/items/RM-018-github-100.json").ShouldBe(original);
     }
 
-    /// <summary>Verifies that reconcile rejects an ambiguous issue identity before writing.</summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -269,7 +263,6 @@ public sealed class GitHubRoadmapReferenceTests
         workspace.ReadFile("roadmap/items/RM-019-github-101.json").ShouldBe(second);
     }
 
-    /// <summary>Verifies that a fresh sync skips an unresolved reference and still syncs a healthy item.</summary>
     [Theory]
     [InlineData(System.Net.HttpStatusCode.NotFound, false)]
     [InlineData(System.Net.HttpStatusCode.Gone, false)]
@@ -320,7 +313,6 @@ public sealed class GitHubRoadmapReferenceTests
         after.ShouldBe(state);
     }
 
-    /// <summary>Verifies that a fresh sync verifies a changed node identifier and accepts a valid format migration.</summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -370,7 +362,6 @@ public sealed class GitHubRoadmapReferenceTests
         workspace.ReadFile("roadmap/items/RM-018-github-100.json").ShouldBe(original);
     }
 
-    /// <summary>Verifies that import requires an exact mapping for an external blocker and keeps the inverse links.</summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -433,7 +424,6 @@ public sealed class GitHubRoadmapReferenceTests
         }
     }
 
-    /// <summary>Verifies that import rejects an invalid graph that runs through a preserved external record, before it writes.</summary>
     [Theory]
     [InlineData("blocker")]
     [InlineData("parent")]

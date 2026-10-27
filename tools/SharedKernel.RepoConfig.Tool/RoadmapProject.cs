@@ -2,6 +2,7 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Loaded repository roadmap: its items, status vocabulary, and GitHub integration settings.</summary>
 internal sealed class RoadmapProject
 {
     private readonly Dictionary<string, RoadmapItemSnapshot> _itemsById;
@@ -37,61 +38,73 @@ internal sealed class RoadmapProject
         _itemsById = Items.ToDictionary(item => item.Id, StringComparer.Ordinal);
     }
 
+    /// <summary>All roadmap items in ordinal file-name order.</summary>
     public IReadOnlyList<RoadmapItemSnapshot> Items
     {
         get;
     }
 
+    /// <summary>Repository root the roadmap was loaded from.</summary>
     public string RootPath
     {
         get;
     }
 
+    /// <summary>Statuses that count as closed.</summary>
     public IReadOnlySet<string> ClosedStatuses
     {
         get;
     }
 
+    /// <summary>Statuses an item may use.</summary>
     public IReadOnlySet<string> AllowedStatuses
     {
         get;
     }
 
+    /// <summary>Configured GitHub repository, or null when none is set.</summary>
     public string? GitHubRepository
     {
         get;
     }
 
+    /// <summary>Whether the GitHub integration is enabled.</summary>
     public bool GitHubEnabled
     {
         get;
     }
 
+    /// <summary>Prefix every item id must start with.</summary>
     public string ItemIdPrefix
     {
         get;
     }
 
+    /// <summary>Theme assigned to items imported from GitHub, or null.</summary>
     public string? GitHubIntakeTheme
     {
         get;
     }
 
+    /// <summary>Status given to imported items whose issue is open, or null.</summary>
     public string? GitHubIntakeOpenStatus
     {
         get;
     }
 
+    /// <summary>Status given to imported items whose issue was closed as completed, or null.</summary>
     public string? GitHubIntakeClosedStatus
     {
         get;
     }
 
+    /// <summary>Status given to imported items whose issue was closed as not planned, or null.</summary>
     public string? GitHubIntakeNotPlannedStatus
     {
         get;
     }
 
+    /// <summary>GitHub project the items are synced to, or null.</summary>
     public GitHubProjectTarget? GitHubProjectTarget
     {
         get;
@@ -105,6 +118,7 @@ internal sealed class RoadmapProject
         get;
     }
 
+    /// <summary>Verifies the roadmap configuration under <paramref name="rootPath"/> and loads it, throwing when the configuration is invalid.</summary>
     public static RoadmapProject Load(string rootPath)
     {
         var issues = RepoConfigVerifier.Verify(rootPath);
@@ -139,15 +153,19 @@ internal sealed class RoadmapProject
             ReadAutomationPullRequestBody(config.RootElement));
     }
 
+    /// <summary>Returns triaged items that are not closed, optionally limited to one <paramref name="type"/>.</summary>
     public IReadOnlyList<RoadmapItemSnapshot> OpenItems(string? type = null) =>
         Items.Where(item => item.IsTriaged && !IsClosed(item) && (type is null || string.Equals(item.Type, type, StringComparison.Ordinal))).ToArray();
 
+    /// <summary>Returns whether the item has a closed status.</summary>
     public bool IsClosed(RoadmapItemSnapshot item) =>
         ClosedStatuses.Contains(item.Status);
 
+    /// <summary>Returns whether every blocker of the item is closed.</summary>
     public bool IsUnblocked(RoadmapItemSnapshot item) =>
         BlockersOf(item.Id).All(IsClosed);
 
+    /// <summary>Returns the known items that block <paramref name="itemId"/>, or an empty list when the id is unknown.</summary>
     public IReadOnlyList<RoadmapItemSnapshot> BlockersOf(string itemId)
     {
         if (!_itemsById.TryGetValue(itemId, out var item))
@@ -167,17 +185,21 @@ internal sealed class RoadmapProject
         return blockers;
     }
 
+    /// <summary>Counts how many items use each tag.</summary>
     public IEnumerable<KeyValuePair<string, int>> TagCounts() =>
         Items.SelectMany(item => item.Tags).GroupBy(tag => tag, StringComparer.Ordinal).Select(group => new KeyValuePair<string, int>(group.Key, group.Count())).OrderByDescending(item => item.Value).ThenBy(item => item.Key, StringComparer.Ordinal);
 
+    /// <summary>Counts how many items use each label.</summary>
     public IEnumerable<KeyValuePair<string, int>> LabelCounts() =>
         Items.SelectMany(item => item.Labels).GroupBy(label => label, StringComparer.Ordinal).Select(group => new KeyValuePair<string, int>(group.Key, group.Count())).OrderByDescending(item => item.Value).ThenBy(item => item.Key, StringComparer.Ordinal);
 
+    /// <summary>Returns a copy of the project with its items replaced by <paramref name="items"/>.</summary>
     public RoadmapProject WithItems(IReadOnlyList<RoadmapItemSnapshot> items) => new(
         RootPath, items, AllowedStatuses, ClosedStatuses, ItemIdPrefix, GitHubIntakeTheme,
         GitHubIntakeOpenStatus, GitHubIntakeClosedStatus, GitHubIntakeNotPlannedStatus, GitHubRepository, GitHubEnabled, GitHubProjectTarget,
         AutomationPullRequestBody);
 
+    /// <summary>Returns the distinct, sorted GitHub issue numbers of items that link an issue in the project repository.</summary>
     public int[] GetGitHubIssueNumbers() => Items
         .Where(item => item.GitHubIssue is int && item.HasLocalGitHubIssue(GitHubRepository))
         .Select(item => item.GitHubIssue.GetValueOrDefault())
@@ -211,6 +233,7 @@ internal sealed class RoadmapProject
     private static RoadmapItemSnapshot LoadItem(string rootPath, string itemPath) =>
         ReadItemContent(RepoConfigPaths.RelativeTo(rootPath, itemPath), File.ReadAllText(itemPath));
 
+    /// <summary>Parses one roadmap item file's JSON content into a snapshot, treating an item with triage "untriaged" as untriaged.</summary>
     internal static RoadmapItemSnapshot ReadItemContent(string relativePath, string content)
     {
         using var document = JsonDocument.Parse(content);

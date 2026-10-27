@@ -27,9 +27,6 @@ public static class VersioningCommandLineTests
         "verify-consumer",
     ];
 
-    /// <summary>
-    /// Verifies that root help lists every command on standard output.
-    /// </summary>
     [Fact]
     public static async Task Root_help_lists_every_command_on_standard_output()
     {
@@ -46,9 +43,6 @@ public static class VersioningCommandLineTests
         }
     }
 
-    /// <summary>
-    /// Verifies that the help of each command lists its arguments and options on standard output.
-    /// </summary>
     [Theory]
     [InlineData("classify-commit", "<message>...")]
     [InlineData("compute", "--base <version> (REQUIRED)", "--prerelease <label>", "--sha <sha>")]
@@ -76,9 +70,6 @@ public static class VersioningCommandLineTests
         result.Output.ShouldContainInOrder(expected);
     }
 
-    /// <summary>
-    /// Verifies that the --version option prints the version on standard output.
-    /// </summary>
     [Fact]
     public static async Task Version_option_prints_the_version_on_standard_output()
     {
@@ -91,9 +82,6 @@ public static class VersioningCommandLineTests
         result.Output.Trim().ShouldNotBe(string.Empty);
     }
 
-    /// <summary>
-    /// Verifies that running without a command is a parse error.
-    /// </summary>
     [Fact]
     public static async Task Missing_command_is_a_parse_error()
     {
@@ -106,9 +94,6 @@ public static class VersioningCommandLineTests
         result.Output.ShouldContain("Usage:", StringComparison.Ordinal);
     }
 
-    /// <summary>
-    /// Verifies that invalid command lines are reported as parse errors on standard error with the expected message.
-    /// </summary>
     [Theory]
     [InlineData("Unrecognized command or argument 'unknown'.", "unknown")]
     [InlineData("Unrecognized command or argument '--unknown'.", "check-public-api-baselines", "--unknown", "value")]
@@ -141,9 +126,6 @@ public static class VersioningCommandLineTests
         result.Error.ShouldContain(expectedError, StringComparison.Ordinal);
     }
 
-    /// <summary>
-    /// Verifies that each valid command line parses without errors and selects the expected command.
-    /// </summary>
     [Theory]
     [InlineData("classify-commit", "classify-commit", "feat(api)!:", "remove", "route")]
     [InlineData("compute", "compute", "--base", "0.1.0", "--prerelease", "alpha.1", "--sha", "abc123")]
@@ -172,9 +154,6 @@ public static class VersioningCommandLineTests
         parseResult.Action.ShouldBeSameAs(action);
     }
 
-    /// <summary>
-    /// Verifies that string options bind the given values and their defaults.
-    /// </summary>
     [Theory]
     [InlineData("--version-kind", "prerelease", "calculate-release", "--run-number", "7")]
     [InlineData("--version-kind", "stable", "calculate-release", "--version-kind", "stable")]
@@ -197,9 +176,6 @@ public static class VersioningCommandLineTests
         value.ShouldBe(expected);
     }
 
-    /// <summary>
-    /// Verifies that --aot binds true only when it is present.
-    /// </summary>
     [Theory]
     [InlineData(true, "consume-candidate", "--candidate-directory", "artifacts/candidate", "--aot")]
     [InlineData(true, "consume-candidate", "--candidate", "candidate.json", "--aot")]
@@ -219,9 +195,6 @@ public static class VersioningCommandLineTests
         aot.ShouldBe(expected);
     }
 
-    /// <summary>
-    /// Verifies that --version and --baseline-version bind parsed semantic versions.
-    /// </summary>
     [Fact]
     public static void Semantic_version_options_bind_parsed_versions()
     {
@@ -236,9 +209,6 @@ public static class VersioningCommandLineTests
         baselineVersion.ShouldBe(new SemanticVersion(1, 2, 2));
     }
 
-    /// <summary>
-    /// Verifies that classify-commit accepts a commit message split across several arguments.
-    /// </summary>
     [Fact]
     public static void Classify_commit_accepts_a_message_split_across_arguments()
     {
@@ -251,9 +221,6 @@ public static class VersioningCommandLineTests
         message.ShouldBe(["feat(api)!:", "remove", "route"]);
     }
 
-    /// <summary>
-    /// Verifies that the [diagram] directive parses a command line without running it and a misspelled option exits 1.
-    /// </summary>
     [Fact]
     public static async Task Diagram_directive_parses_command_lines_without_running_them()
     {
@@ -277,9 +244,6 @@ public static class VersioningCommandLineTests
         misspelled.Output.ShouldContain("--candidate-directry", StringComparison.Ordinal);
     }
 
-    /// <summary>
-    /// Verifies that the [diagram] directive parses the consumer command after the -- separator without running it, and a misspelled option exits 1.
-    /// </summary>
     [Fact]
     public static async Task Diagram_directive_parses_a_consumer_command_after_the_separator_without_running_it()
     {
@@ -303,9 +267,6 @@ public static class VersioningCommandLineTests
         misspelled.Output.ShouldContain("--candidat", StringComparison.Ordinal);
     }
 
-    /// <summary>
-    /// Verifies that a command failure exits with code 2 and writes an Error message to standard error only.
-    /// </summary>
     [Fact]
     public static async Task Command_failures_exit_with_code_2_and_report_on_standard_error()
     {
@@ -318,9 +279,6 @@ public static class VersioningCommandLineTests
         result.Error.ShouldStartWith("Error: ", StringComparison.Ordinal);
     }
 
-    /// <summary>
-    /// Verifies that consume-candidate writes child process output to standard error and only the evidence workspace result to standard output.
-    /// </summary>
     [Fact]
     public static async Task Consume_candidate_writes_child_process_output_to_standard_error()
     {
@@ -346,9 +304,6 @@ public static class VersioningCommandLineTests
         Directory.Exists(result.Output[resultPrefix.Length..].Trim()).ShouldBeTrue();
     }
 
-    /// <summary>
-    /// Verifies that every versioning command line in the CI workflow parses and selects a command.
-    /// </summary>
     [Fact]
     public static void Workflow_versioning_command_lines_dispatch_to_a_command()
     {
@@ -371,9 +326,6 @@ public static class VersioningCommandLineTests
         }
     }
 
-    /// <summary>
-    /// Verifies that every command line in the tool README parses and selects its command.
-    /// </summary>
     [Fact]
     public static void Readme_command_lines_dispatch_to_their_command()
     {
@@ -397,9 +349,6 @@ public static class VersioningCommandLineTests
         });
     }
 
-    /// <summary>
-    /// Verifies that each README usage synopsis names a command and only options that command accepts.
-    /// </summary>
     [Fact]
     public static void Readme_usage_synopsis_names_every_command_with_options_it_accepts()
     {
@@ -416,9 +365,6 @@ public static class VersioningCommandLineTests
         unknown.ShouldBeEmpty();
     }
 
-    /// <summary>
-    /// Verifies that the synopsis scan reports options and commands that the versioning tool does not accept.
-    /// </summary>
     [Fact]
     public static async Task Readme_synopsis_scan_reports_options_that_the_command_does_not_accept()
     {
@@ -445,9 +391,6 @@ public static class VersioningCommandLineTests
         unknown.ShouldBe(["compute --missing", "unknown-command"]);
     }
 
-    /// <summary>
-    /// Verifies that the README scan reads commands from inline code and local tool run lines.
-    /// </summary>
     [Fact]
     public static async Task Readme_scan_reads_inline_code_and_local_tool_command_lines()
     {
@@ -471,9 +414,6 @@ public static class VersioningCommandLineTests
         commandLines.ShouldBe(["check-public-api-baselines", "validate-package-metadata", "--help"]);
     }
 
-    /// <summary>
-    /// Verifies that README text that runs or names the tool without a runnable command line is rejected.
-    /// </summary>
     [Theory]
     [InlineData("Install sharedkernel-version before packing.")]
     [InlineData("Run `echo sharedkernel-version check-public-api-baselines` before packing.")]
@@ -494,9 +434,6 @@ public static class VersioningCommandLineTests
         action.ShouldThrow<InvalidOperationException>().Message.ShouldContain("is not a runnable command line", StringComparison.Ordinal);
     }
 
-    /// <summary>
-    /// Verifies that has-breaking-change-marker rejects ranges that Git would read as options instead of revisions.
-    /// </summary>
     [Theory]
     [InlineData("has-breaking-change-marker", "--output=x")]
     [InlineData("has-breaking-change-marker", "--", "--output=x")]
@@ -513,9 +450,6 @@ public static class VersioningCommandLineTests
             "<git-range> requires a revision range that is not empty and does not start with '-'.");
     }
 
-    /// <summary>
-    /// Verifies that a failure after cancellation exits with code 1 and writes no output.
-    /// </summary>
     [Fact]
     public static async Task Failure_after_cancellation_exits_with_code_1_without_output()
     {

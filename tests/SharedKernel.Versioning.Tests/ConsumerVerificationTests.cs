@@ -6,9 +6,6 @@ namespace PandaBear.Versioning.Tests;
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public sealed class ConsumerVerificationTests
 {
-    /// <summary>
-    /// Verifies that the command runs in a clean clone of the committed revision with the candidate packages and isolated NuGet caches, records passed evidence, and leaves the manifest and scratch space clean.
-    /// </summary>
     [Fact]
     public async Task The_command_runs_on_a_clean_clone_of_the_committed_revision_with_the_candidate_packages_and_isolated_caches()
     {
@@ -42,9 +39,6 @@ public sealed class ConsumerVerificationTests
         unchanged.ShouldBe(manifest);
     }
 
-    /// <summary>
-    /// Verifies that uncommitted consumer changes exit 2 with pending dirty evidence and the command is not run.
-    /// </summary>
     [Fact]
     public async Task Uncommitted_consumer_changes_stay_pending_without_running_the_command()
     {
@@ -66,9 +60,6 @@ public sealed class ConsumerVerificationTests
         evidence["consumerDirty"]!.GetValue<bool>().ShouldBeTrue();
     }
 
-    /// <summary>
-    /// Verifies that a dirty library revision in the candidate exits 2 with pending evidence and the command is not run.
-    /// </summary>
     [Fact]
     public async Task Uncommitted_library_evidence_stays_pending_without_running_the_command()
     {
@@ -88,9 +79,6 @@ public sealed class ConsumerVerificationTests
         scope.Evidence["consumerDirty"]!.GetValue<bool>().ShouldBeFalse();
     }
 
-    /// <summary>
-    /// Verifies that a failing command exits 2, records failed evidence with the reason, and deletes the scratch directory.
-    /// </summary>
     [Fact]
     public async Task A_failing_command_records_failed_evidence_and_deletes_the_scratch_directory()
     {
@@ -111,9 +99,6 @@ public sealed class ConsumerVerificationTests
         evidence["reason"]!.GetValue<string>().ShouldStartWith("Command failed (3): ", StringComparison.Ordinal);
     }
 
-    /// <summary>
-    /// Verifies that a consumer whose files do not resolve every SharedKernel package to the candidate (stale versions, project references, bad NuGet.Config, committed feed packages, or an outside solution project) fails with the expected message without running the command.
-    /// </summary>
     [Theory]
     [InlineData("Directory.Packages.props", """<Project><PackageVersion Include="pandabear.sharedkernel.results" Version="0.9.0" /></Project>""", "Directory.Packages.props: pandabear.sharedkernel.results has version 0.9.0, not the candidate version 1.0.0-alpha.1.")]
     [InlineData("src/Consumer/packages.lock.json", "stale-lock", "src/Consumer/packages.lock.json: PandaBear.SharedKernel.Results resolves to 0.9.0, not the candidate version 1.0.0-alpha.1.")]
@@ -167,9 +152,6 @@ public sealed class ConsumerVerificationTests
         evidence["reason"]!.GetValue<string>().ShouldContain(expected, StringComparison.Ordinal);
     }
 
-    /// <summary>
-    /// Verifies that --solution selects the solution to check when the root has more than one .slnx file.
-    /// </summary>
     [Fact]
     public async Task A_named_solution_is_checked_instead_of_requiring_one_at_the_root()
     {
@@ -186,9 +168,6 @@ public sealed class ConsumerVerificationTests
         result.ExitCode.ShouldBe(0, result.Error);
     }
 
-    /// <summary>
-    /// Verifies that an invalid candidate manifest or package exits 2 and records failed evidence with the consumer revision.
-    /// </summary>
     [Theory]
     [InlineData("{")]
     [InlineData("null")]
@@ -234,9 +213,6 @@ public sealed class ConsumerVerificationTests
         evidence["reason"]!.GetValue<string>().ShouldNotBeEmpty();
     }
 
-    /// <summary>
-    /// Verifies that --output naming the candidate manifest is rejected, the manifest stays unchanged, and no evidence is written.
-    /// </summary>
     [Fact]
     public async Task The_evidence_never_replaces_the_candidate_manifest()
     {
@@ -257,9 +233,6 @@ public sealed class ConsumerVerificationTests
         File.Exists(scope.EvidencePath).ShouldBeFalse();
     }
 
-    /// <summary>
-    /// Verifies that cancelling stops the running command, deletes the scratch directory, and writes no evidence.
-    /// </summary>
     [Fact]
     public async Task Cancellation_stops_the_command_deletes_the_scratch_directory_and_writes_no_evidence()
     {

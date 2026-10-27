@@ -4,7 +4,6 @@ namespace PandaBear.RepoConfig.Tests;
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RoadmapGraphTraversalTests
 {
-    /// <summary>In a 24-item graph where each item is blocked by its two predecessors, the blocker cycle check reports no issues and stays within 8 blocker reads per item.</summary>
     [Fact]
     public void Shared_acyclic_blockers_are_visited_in_linear_work()
     {
@@ -24,7 +23,6 @@ public sealed class RoadmapGraphTraversalTests
         budget.Reads.ShouldBeLessThanOrEqualTo(count * 8);
     }
 
-    /// <summary>A chain of 20000 items each blocked by the previous one passes the blocker cycle check with no issues and within 8 reads per item.</summary>
     [Fact]
     public void Deep_acyclic_blockers_do_not_require_recursive_stack_space()
     {
@@ -43,7 +41,6 @@ public sealed class RoadmapGraphTraversalTests
         budget.Reads.ShouldBeLessThanOrEqualTo(count * 8);
     }
 
-    /// <summary>With the cycle a, b, c plus d feeding into it, the blocker cycle check reports a, b, c, and d, but not the item that merely depends on the cycle or the item with a missing blocker.</summary>
     [Fact]
     public void All_cycle_members_are_reported_without_reporting_incoming_dependencies()
     {
@@ -65,7 +62,6 @@ public sealed class RoadmapGraphTraversalTests
         paths.ShouldBe(["a", "b", "c", "d"]);
     }
 
-    /// <summary>An item blocked by itself yields exactly one issue, "blockedBy cycle includes a."</summary>
     [Fact]
     public void Self_cycles_are_reported()
     {
@@ -80,7 +76,6 @@ public sealed class RoadmapGraphTraversalTests
         issues[0].Message.ShouldBe("blockedBy cycle includes a.");
     }
 
-    /// <summary>A parent chain of 20000 items passes the parent cycle check with no issues.</summary>
     [Fact]
     public void Deep_parent_chains_do_not_require_recursive_stack_space()
     {
@@ -96,7 +91,6 @@ public sealed class RoadmapGraphTraversalTests
         issues.ShouldBeEmpty();
     }
 
-    /// <summary>With parents a to b and b to a, and a child pointing at a, the parent cycle check reports a and b but not the child.</summary>
     [Fact]
     public void Parent_cycle_members_are_reported_without_incoming_children()
     {

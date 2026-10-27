@@ -13,9 +13,6 @@ namespace PandaBear.Versioning.Tests;
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class ToolPackageCheckTests
 {
-    /// <summary>
-    /// Verifies that consume-candidate installs a packed tool, runs its command with --help, and records passed consumption evidence.
-    /// </summary>
     [Fact]
     public static async Task Consume_candidate_installs_each_tool_package_and_runs_its_command_with_help()
     {
@@ -41,9 +38,6 @@ public static class ToolPackageCheckTests
         recorded.ShouldBe("passed", "Every tool command answered --help, and the samples ran.");
     }
 
-    /// <summary>
-    /// Verifies that a tool package that fails to install makes consume-candidate exit 2 naming the package and records failed evidence.
-    /// </summary>
     [Fact]
     public static async Task Consume_candidate_fails_naming_a_tool_package_that_does_not_install()
     {
@@ -71,9 +65,6 @@ public static class ToolPackageCheckTests
         recorded.ShouldBe("failed");
     }
 
-    /// <summary>
-    /// Verifies that a tool package of a different version than the candidate is rejected before any tool is installed.
-    /// </summary>
     [Fact]
     public static async Task Consume_candidate_rejects_a_tool_package_of_another_version_before_installing_tools()
     {
@@ -96,9 +87,6 @@ public static class ToolPackageCheckTests
         result.Error.ShouldContain("expected version 1.0.0, found 2.0.0", StringComparison.Ordinal);
     }
 
-    /// <summary>
-    /// Verifies that packages in the candidate directory that the manifest does not list are named and rejected before any tool installs, leaving the manifest unchanged.
-    /// </summary>
     [Fact]
     public static async Task Consume_candidate_rejects_packages_that_the_manifest_does_not_list_before_installing_tools()
     {
@@ -129,9 +117,6 @@ public static class ToolPackageCheckTests
         retained.ShouldBe(original, "A failure before consumption leaves the recorded evidence unchanged.");
     }
 
-    /// <summary>
-    /// Verifies that a package whose file name differs from a listed one only in case is rejected as unlisted on case-sensitive file systems.
-    /// </summary>
     [Fact(
         SkipType = typeof(FileSystemProbes),
         SkipUnless = nameof(FileSystemProbes.IsCaseSensitive),
@@ -159,9 +144,6 @@ public static class ToolPackageCheckTests
         retained.ShouldBe(original, "A failure before consumption leaves the recorded evidence unchanged.");
     }
 
-    /// <summary>
-    /// Verifies that tools install from the candidate directory alone through a generated NuGet.config and every declared command runs with --help from an empty directory, with the scratch directory deleted afterwards.
-    /// </summary>
     [Fact]
     public static async Task Tool_check_installs_tools_from_the_candidate_directory_alone_and_runs_each_command_from_an_empty_directory()
     {
@@ -208,9 +190,6 @@ public static class ToolPackageCheckTests
         Directory.Exists(scratch).ShouldBeFalse("The scratch directory is deleted after the check.");
     }
 
-    /// <summary>
-    /// Verifies that a package that does not install is named in the error and the scratch directory is deleted.
-    /// </summary>
     [Fact]
     public static async Task Tool_check_names_a_package_that_does_not_install_and_deletes_its_scratch_directory()
     {
@@ -235,9 +214,6 @@ public static class ToolPackageCheckTests
         Directory.Exists(scratch).ShouldBeFalse("The scratch directory is deleted when the check fails.");
     }
 
-    /// <summary>
-    /// Verifies that the package and command whose --help fails are named in the error and the scratch directory is deleted.
-    /// </summary>
     [Fact]
     public static async Task Tool_check_names_the_package_and_command_whose_help_fails_and_deletes_its_scratch_directory()
     {
@@ -265,9 +241,6 @@ public static class ToolPackageCheckTests
         Directory.Exists(scratch).ShouldBeFalse("The scratch directory is deleted when the check fails.");
     }
 
-    /// <summary>
-    /// Verifies that command names are read only from framework-dependent tools/&lt;tfm&gt;/any settings of every target framework.
-    /// </summary>
     [Fact]
     public static void Tool_commands_are_read_from_the_framework_dependent_settings_of_every_target_framework()
     {
@@ -288,9 +261,6 @@ public static class ToolPackageCheckTests
         commands.ShouldBe(["sharedkernel-probe", "sharedkernel-probe-admin"], "Only framework-dependent settings name the commands that a tool path install creates.");
     }
 
-    /// <summary>
-    /// Verifies that tool settings declaring a document type are rejected as invalid XML.
-    /// </summary>
     [Fact]
     public static void Tool_settings_that_declare_a_document_type_are_rejected()
     {
@@ -315,9 +285,6 @@ public static class ToolPackageCheckTests
         exception.InnerException.ShouldBeOfType<XmlException>();
     }
 
-    /// <summary>
-    /// Verifies that a tool package without framework-dependent settings is rejected.
-    /// </summary>
     [Fact]
     public static void Tool_package_without_framework_dependent_settings_is_rejected()
     {
@@ -337,9 +304,6 @@ public static class ToolPackageCheckTests
         exception.Message.ShouldBe(tool + ": expected a command in tools/<tfm>/any/DotnetToolSettings.xml");
     }
 
-    /// <summary>
-    /// Verifies that empty, dot-prefixed, and path-like tool command names are rejected.
-    /// </summary>
     [Theory]
     [InlineData("")]
     [InlineData("..")]

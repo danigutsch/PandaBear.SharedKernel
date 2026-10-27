@@ -10,9 +10,6 @@ public sealed class VerifyLinksCommandTests
     private const string DocsConfiguration = """{"version":1,"links":{"include":["docs/*.md"],"exclude":[]}}""";
     private const string Tracker = "summarize durable context or link a maintained doc instead";
 
-    /// <summary>
-    /// Verifies that the findings match those reported by the original Python linter for the seeded corpus.
-    /// </summary>
     [Fact]
     public async Task Verify_links_reports_what_the_python_linter_reports_for_the_seeded_corpus()
     {
@@ -33,9 +30,6 @@ public sealed class VerifyLinksCommandTests
         result.StandardError.ShouldBe(LinkTestRepository.Lines(LinkCorpus.ExpectedLinkFindings));
     }
 
-    /// <summary>
-    /// Verifies that explicit paths replace the configured include patterns while the exclude patterns still apply.
-    /// </summary>
     [Fact]
     public async Task Verify_links_scans_explicit_paths_instead_of_the_configured_include_but_keeps_the_exclude()
     {
@@ -55,9 +49,6 @@ public sealed class VerifyLinksCommandTests
         result.StandardError.ShouldBe(LinkTestRepository.Lines(LinkCorpus.ExpectedExplicitPathFindings));
     }
 
-    /// <summary>
-    /// Verifies that the success output counts the scanned files when every link resolves.
-    /// </summary>
     [Fact]
     public async Task Verify_links_counts_the_scanned_files_when_every_link_resolves()
     {
@@ -82,9 +73,6 @@ public sealed class VerifyLinksCommandTests
         result.StandardOutput.ShouldBe("Link validation passed for 2 documentation files." + Environment.NewLine);
     }
 
-    /// <summary>
-    /// Verifies that line splitting, lowercasing, and URL parsing match the Python linter.
-    /// </summary>
     [Fact]
     public async Task Verify_links_matches_python_line_splitting_lowercasing_and_url_parsing()
     {
@@ -118,9 +106,6 @@ public sealed class VerifyLinksCommandTests
             "- docs/u.md:20: missing local link target: m3.md"));
     }
 
-    /// <summary>
-    /// Verifies that a line containing a tracker reference is rejected.
-    /// </summary>
     [Theory]
     [InlineData("See https://github.com/example/project/issues/945.")]
     [InlineData("See https://github.com/example/project/pull/945.")]
@@ -146,9 +131,6 @@ public sealed class VerifyLinksCommandTests
         result.StandardError.ShouldContain("- docs/example.md:1: ", StringComparison.Ordinal);
     }
 
-    /// <summary>
-    /// Verifies that a hash that is not a tracker reference is allowed.
-    /// </summary>
     [Theory]
     [InlineData("Unicode Standard Annex #15: Unicode Normalization Forms")]
     [InlineData("UAX #15 defines normalization forms.")]
@@ -170,9 +152,6 @@ public sealed class VerifyLinksCommandTests
         result.StandardOutput.ShouldBe("Link validation passed for 1 documentation files." + Environment.NewLine);
     }
 
-    /// <summary>
-    /// Verifies that a file or link the Python linter cannot process is reported with the expected finding.
-    /// </summary>
     [Theory]
     [InlineData("docs/missing.md", "- docs/missing.md: cannot be read.")]
     [InlineData("docs/invalid.md", "- docs/invalid.md: is not valid UTF-8.")]
@@ -192,9 +171,6 @@ public sealed class VerifyLinksCommandTests
         result.StandardError.ShouldBe(LinkTestRepository.Lines("Link validation failed:", expectedFinding));
     }
 
-    /// <summary>
-    /// Verifies that a configuration without a links section is rejected.
-    /// </summary>
     [Theory]
     [InlineData("""{"version":1}""")]
     [InlineData("""{"version":1,"links":null}""")]
@@ -211,9 +187,6 @@ public sealed class VerifyLinksCommandTests
         result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no links section." + Environment.NewLine);
     }
 
-    /// <summary>
-    /// Verifies that an invalid links section is rejected with an error naming the file and JSON path.
-    /// </summary>
     [Theory]
     [InlineData("""{"version":1,"links":{"include":["*.md"]}}""", ".config/sharedkernel-repo.json is not valid at $.links (line 1).")]
     [InlineData("""{"version":1,"links":{"include":["*.md"],"exclude":[],"extra":1}}""", ".config/sharedkernel-repo.json is not valid at $.links.extra (line 1).")]

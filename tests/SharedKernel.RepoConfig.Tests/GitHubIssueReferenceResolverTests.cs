@@ -6,7 +6,6 @@ namespace PandaBear.RepoConfig.Tests;
 /// <summary>Tests how the resolver follows GitHub issue references across transfers and migrations.</summary>
 public sealed class GitHubIssueReferenceResolverTests
 {
-    /// <summary>Verifies that the resolver follows a transfer redirect and keeps the node identity opaque.</summary>
     [Fact]
     public async Task Resolve_follows_transfer_and_keeps_opaque_identity()
     {
@@ -29,7 +28,6 @@ public sealed class GitHubIssueReferenceResolverTests
         handler.Requests.Count.ShouldBe(2);
     }
 
-    /// <summary>Verifies that the resolver rejects an untrusted redirect target before it sends the next request.</summary>
     [Theory]
     [InlineData("https://evil.example/repos/owner/repo/issues/1")]
     [InlineData("http://api.github.com/repos/owner/repo/issues/1")]
@@ -51,7 +49,6 @@ public sealed class GitHubIssueReferenceResolverTests
         handler.Requests.Count.ShouldBe(1);
     }
 
-    /// <summary>Verifies that the resolver refreshes a migrated node identifier without decoding it.</summary>
     [Fact]
     public async Task Resolve_refreshes_migrated_node_id_without_decoding()
     {
@@ -72,7 +69,6 @@ public sealed class GitHubIssueReferenceResolverTests
         handler.Requests[0].Body.ShouldContain("opaque-old", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that the resolver falls back when the node is missing and reports an inaccessible locator.</summary>
     [Fact]
     public async Task Resolve_falls_back_from_missing_node_and_reports_inaccessible_locator()
     {
@@ -93,7 +89,6 @@ public sealed class GitHubIssueReferenceResolverTests
         handler.Requests.Count.ShouldBe(2);
     }
 
-    /// <summary>Verifies that the resolver rejects metadata that describes a pull request.</summary>
     [Fact]
     public async Task Resolve_rejects_pull_request_metadata()
     {
@@ -108,7 +103,6 @@ public sealed class GitHubIssueReferenceResolverTests
         // Assert
         await action.ShouldThrow<InvalidOperationException>();
     }
-    /// <summary>Verifies that the resolver accepts a response that uses the last request the rate limit allows.</summary>
     [Fact]
     public async Task Resolve_accepts_the_last_successful_rate_limit_allowance()
     {
@@ -126,7 +120,6 @@ public sealed class GitHubIssueReferenceResolverTests
         result.Number.ShouldBe(18);
     }
 
-    /// <summary>Verifies that a deleted issue stays in the result as an unresolved reference.</summary>
     [Fact]
     public async Task Resolve_preserves_deleted_issue_as_unresolved()
     {
@@ -145,7 +138,6 @@ public sealed class GitHubIssueReferenceResolverTests
         result.Diagnostic.ShouldContain("410", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that the resolver rejects a redirect loop.</summary>
     [Fact]
     public async Task Resolve_rejects_redirect_loops()
     {
@@ -164,7 +156,6 @@ public sealed class GitHubIssueReferenceResolverTests
         handler.Requests.Count.ShouldBe(1);
     }
 
-    /// <summary>Verifies that cancellation by the caller propagates instead of being reported as an unresolved reference.</summary>
     [Fact]
     public async Task Resolve_does_not_swallow_caller_cancellation()
     {
@@ -182,7 +173,6 @@ public sealed class GitHubIssueReferenceResolverTests
         handler.Requests.Count.ShouldBe(0);
     }
 
-    /// <summary>Verifies that the resolver limits how many response bytes it reads.</summary>
     [Fact]
     public async Task Resolve_bounds_response_size()
     {
@@ -200,7 +190,6 @@ public sealed class GitHubIssueReferenceResolverTests
         exception.Message.ShouldContain("exceeded the allowed size", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that the resolver stops when the snapshot deadline passes.</summary>
     [Fact]
     public async Task Resolve_enforces_snapshot_deadline()
     {
@@ -217,7 +206,6 @@ public sealed class GitHubIssueReferenceResolverTests
         exception.Message.ShouldContain("120 seconds", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that the resolver reports rate limiting as a failure instead of treating the reference as unresolved.</summary>
     [Fact]
     public async Task Resolve_surfaces_rate_limiting_instead_of_quarantining_it()
     {
