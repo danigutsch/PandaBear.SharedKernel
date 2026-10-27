@@ -1,5 +1,8 @@
 namespace PandaBear.Idempotency.Tests;
 
+/// <summary>
+/// Tests the Complete overloads of IIdempotencyStore and that the other store methods remain the implementer's responsibility.
+/// </summary>
 public sealed class IIdempotencyStoreTests
 {
     [Fact]

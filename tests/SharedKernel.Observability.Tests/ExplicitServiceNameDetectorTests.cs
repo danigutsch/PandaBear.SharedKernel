@@ -1,5 +1,6 @@
 namespace PandaBear.Observability.Tests;
 
+/// <summary>Tests the resource attributes produced by <see cref="ExplicitServiceNameDetector"/>.</summary>
 public class ExplicitServiceNameDetectorTests
 {
     [Fact]

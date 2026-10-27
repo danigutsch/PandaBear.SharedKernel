@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace PandaBear.Testing.Analyzers.Tests;
 
+/// <summary>Single-document ad hoc Roslyn workspace for running analyzers and code fix providers against test source.</summary>
 internal sealed class CodeFixTestWorkspace
 {
     private const string DefaultUsings = """
@@ -26,6 +27,7 @@ internal sealed class CodeFixTestWorkspace
         DocumentId = documentId;
     }
 
+    /// <summary>Gets the underlying ad hoc workspace holding the project and document.</summary>
     public AdhocWorkspace Workspace
     {
         get;
@@ -38,6 +40,12 @@ internal sealed class CodeFixTestWorkspace
 
     private Document Document => Workspace.CurrentSolution.GetDocument(DocumentId).ShouldBeOfType<Document>();
 
+    /// <summary>Creates a workspace with one Test0.cs document, optionally prefixed with the default usings, referencing all trusted platform assemblies.</summary>
+    /// <param name="source">C# source of the document.</param>
+    /// <param name="assemblyName">Project and assembly name.</param>
+    /// <param name="filePath">Path of the document, or null for a unique temporary path.</param>
+    /// <param name="includeDefaultUsings">True to prepend the System, IO, threading, tasks and Xunit usings.</param>
+    /// <param name="documentationMode">How XML documentation comments are parsed.</param>
     public static CodeFixTestWorkspace Create(
         string source,
         string assemblyName = "SharedKernel.Testing.CodeFixes.Tests.Dynamic",
@@ -78,11 +86,18 @@ internal sealed class CodeFixTestWorkspace
         return new CodeFixTestWorkspace(workspace, documentId);
     }
 
+    /// <summary>Creates a warning diagnostic with the given id located on the first occurrence of the marker text, without properties.</summary>
+    /// <param name="diagnosticId">Id given to the diagnostic.</param>
+    /// <param name="markerText">Text in the document whose first occurrence becomes the diagnostic location.</param>
     public Task<Diagnostic> CreateDocumentDiagnostic(string diagnosticId, string markerText)
     {
         return CreateDocumentDiagnostic(diagnosticId, markerText, properties: null);
     }
 
+    /// <summary>Creates a warning diagnostic with the given id and properties located on the first occurrence of the marker text, failing the test if the text is absent.</summary>
+    /// <param name="diagnosticId">Id given to the diagnostic.</param>
+    /// <param name="markerText">Text in the document whose first occurrence becomes the diagnostic location.</param>
+    /// <param name="properties">Properties attached to the diagnostic, or null.</param>
     public async Task<Diagnostic> CreateDocumentDiagnostic(
         string diagnosticId,
         string markerText,
@@ -111,6 +126,9 @@ internal sealed class CodeFixTestWorkspace
             []);
     }
 
+    /// <summary>Asks the provider to register its fixes for the diagnostic and returns the code actions it offered.</summary>
+    /// <param name="provider">Code fix provider under test.</param>
+    /// <param name="diagnostic">Diagnostic to fix.</param>
     public async Task<IReadOnlyList<CodeAction>> GetCodeActions(CodeFixProvider provider, Diagnostic diagnostic)
     {
         var actions = new List<CodeAction>();
@@ -119,6 +137,9 @@ internal sealed class CodeFixTestWorkspace
         return actions;
     }
 
+    /// <summary>Runs the analyzer over the document's compilation and returns what it reports, first enabling a rule that is off by default when its id is given.</summary>
+    /// <param name="analyzer">Analyzer under test.</param>
+    /// <param name="enabledDiagnosticId">Id of a disabled-by-default rule to switch on, or null.</param>
     public async Task<IReadOnlyList<Diagnostic>> GetAnalyzerDiagnostics(DiagnosticAnalyzer analyzer, string? enabledDiagnosticId = null)
     {
         var project = Document.Project;
@@ -135,6 +156,8 @@ internal sealed class CodeFixTestWorkspace
         return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
     }
 
+    /// <summary>Applies the single change operation of the code action to the workspace.</summary>
+    /// <param name="action">Code action whose changes are applied.</param>
     public async Task ApplyCodeAction(CodeAction action)
     {
         var operations = await action.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
@@ -142,11 +165,14 @@ internal sealed class CodeFixTestWorkspace
         Workspace.TryApplyChanges(applyOperation.ChangedSolution);
     }
 
+    /// <summary>Returns the current text of the main test document.</summary>
     public async Task<string> GetDocumentText()
     {
         return (await Document.GetTextAsync().ConfigureAwait(false)).ToString();
     }
 
+    /// <summary>Returns the current text of the project document with the given name.</summary>
+    /// <param name="documentName">Name of the document to read.</param>
     public async Task<string> GetDocumentText(string documentName)
     {
         var document = Workspace.CurrentSolution.Projects.Single().Documents.SingleOrDefault(candidate => string.Equals(candidate.Name, documentName, StringComparison.Ordinal)).ShouldBeOfType<Document>();

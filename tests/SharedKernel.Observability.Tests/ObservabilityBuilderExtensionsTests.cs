@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace PandaBear.Observability.Tests;
 
+/// <summary>Tests the host builder extension methods that configure observability.</summary>
 public sealed class ObservabilityBuilderExtensionsTests
 {
     [Fact]

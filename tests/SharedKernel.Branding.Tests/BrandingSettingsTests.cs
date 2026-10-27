@@ -2,6 +2,9 @@ using PandaBear.Testing;
 
 namespace PandaBear.Branding.Tests;
 
+/// <summary>
+/// Tests validation and normalization performed by BrandingSettings.Create.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.ValidationCapability)]
 public sealed class BrandingSettingsTests
 {

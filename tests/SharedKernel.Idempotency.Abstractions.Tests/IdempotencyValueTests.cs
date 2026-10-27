@@ -1,5 +1,8 @@
 namespace PandaBear.Idempotency.Tests;
 
+/// <summary>
+/// Tests IdempotencyKey, IdempotencyScope and IdempotencyOperation value semantics.
+/// </summary>
 public sealed class IdempotencyValueTests
 {
     [Fact]

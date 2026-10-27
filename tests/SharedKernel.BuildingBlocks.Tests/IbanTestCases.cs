@@ -1,8 +1,14 @@
 namespace PandaBear.BuildingBlocks.Tests;
 
+/// <summary>
+/// Shared IBAN test data.
+/// </summary>
 internal static class IbanTestCases
 {
     // SWIFT IBAN Registry release 103: one example per registered country.
+    /// <summary>
+    /// One valid IBAN example for each country in the SWIFT IBAN Registry, from AD to YE.
+    /// </summary>
     public static TheoryData<string> RegistryExamples => new()
     {
         "AD1200012030200359100100",

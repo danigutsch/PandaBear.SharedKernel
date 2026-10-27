@@ -2,8 +2,14 @@ using PandaBear.Testing.Packaging;
 
 namespace PandaBear.AuditTrail.GeneratorTests;
 
+/// <summary>
+/// Writes the consumer project used by the audit trail package consumption tests.
+/// </summary>
 internal static class AuditTrailConsumerProject
 {
+    /// <summary>
+    /// Writes a net10.0 project that references the audit trail source generator package, plus a Consumer.cs with a BookingConfirmed event, a BookingAuditEntry and an AuditTrailMapping method, into the workspace.
+    /// </summary>
     public static void Write(PackageConsumptionWorkspace workspace) =>
         workspace.WriteProject(
             $$"""

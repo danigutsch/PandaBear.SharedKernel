@@ -266,6 +266,27 @@ dotnet_diagnostic.SKSTYLE004.severity = suggestion
 dotnet_diagnostic.SKSTYLE017.severity = suggestion
 
 # Documented test projects: undocumented members fail the build.
+[tests/SharedKernel.ApiVersioning.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Aspire.Analyzers.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Aspire.CodeFixes.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.AuditTrail.GeneratorTests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Branding.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.BuildingBlocks.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.DocumentRendering.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
 [tests/SharedKernel.Domain.Analyzers.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
@@ -281,7 +302,10 @@ dotnet_diagnostic.SKSTYLE017.severity = warning
 [tests/SharedKernel.EntityFrameworkCore.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
-[tests/SharedKernel.EventSourcing.Npgsql.Tests/**.cs]
+[tests/SharedKernel.IO.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Idempotency.Abstractions.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
 [tests/SharedKernel.K6.Tool.Tests/**.cs]
@@ -302,7 +326,10 @@ dotnet_diagnostic.SKSTYLE017.severity = warning
 [tests/SharedKernel.Mediator.PackageConsumptionTests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
-[tests/SharedKernel.Npgsql.Testing/**.cs]
+[tests/SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests/**.cs]
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Messaging.IntegrationEvents.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
 [tests/SharedKernel.PlaywrightMcp.Tool.Tests/**.cs]
@@ -317,10 +344,10 @@ dotnet_diagnostic.SKSTYLE017.severity = warning
 [tests/SharedKernel.Results.GeneratorTests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
-[tests/SharedKernel.VaultManager.Tool.Tests/**.cs]
+[tests/SharedKernel.Testing.Analyzers.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
-[tests/SharedKernel.Versioning.Tests/**.cs]
+[tests/SharedKernel.VaultManager.Tool.Tests/**.cs]
 dotnet_diagnostic.SKSTYLE017.severity = warning
 
 # Reqnroll discovers binding and generated test support types by reflection.

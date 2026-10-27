@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace PandaBear.Testing.Analyzers.Tests;
 
+/// <summary>Tests the SKTEST011 suggestion to inline a single-use delegate local into the ShouldThrow assertion, and its code fix.</summary>
 public sealed class AssertionDelegateInliningTests
 {
     private const string DiagnosticId = "SKTEST011";

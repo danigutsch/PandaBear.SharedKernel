@@ -4,6 +4,7 @@ using PandaBear.Testing.Http;
 
 namespace PandaBear.Testing.Tests;
 
+/// <summary>Tests the HTTP problem-details assertions that check status, detail, code, and validation errors of a response body.</summary>
 public sealed class HttpProblemAssertionTests
 {
     [Fact]

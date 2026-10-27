@@ -1,5 +1,8 @@
 namespace PandaBear.BuildingBlocks.Tests;
 
+/// <summary>
+/// Tests ShouldHandleAsFailure, which separates real failures from cooperative cancellation.
+/// </summary>
 public sealed class ExceptionCancellationExtensionsTests
 {
     [Fact]

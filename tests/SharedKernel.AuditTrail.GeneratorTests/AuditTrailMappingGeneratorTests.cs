@@ -3,6 +3,9 @@ using PandaBear.Testing;
 
 namespace PandaBear.AuditTrail.GeneratorTests;
 
+/// <summary>
+/// Tests that AuditTrailMappingGenerator emits dispatch handlers for valid audit mappings and AUDIT001 or AUDIT002 errors for invalid ones.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
 [Trait(SharedKernelTestTraitNames.ComponentName, "SharedKernel.AuditTrail.SourceGenerator")]
 public sealed class AuditTrailMappingGeneratorTests

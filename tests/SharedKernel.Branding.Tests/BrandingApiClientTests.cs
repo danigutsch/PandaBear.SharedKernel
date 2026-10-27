@@ -3,6 +3,9 @@ using PandaBear.Testing;
 
 namespace PandaBear.Branding.Tests;
 
+/// <summary>
+/// Tests that BrandingApiClient requests and deserializes the public branding settings.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.ApiClientCapability)]
 public sealed class BrandingApiClientTests
 {

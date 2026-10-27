@@ -1,5 +1,6 @@
 namespace PandaBear.Testing.Tests;
 
+/// <summary>Tests the collection equivalence assertion of the Should helpers.</summary>
 public sealed class ShouldCollectionAssertionTests
 {
     [Fact]

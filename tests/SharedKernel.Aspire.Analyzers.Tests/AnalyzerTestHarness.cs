@@ -6,6 +6,9 @@ using PandaBear.Testing.Roslyn;
 
 namespace PandaBear.Aspire.Analyzers.Tests;
 
+/// <summary>
+/// Builds in-memory compilations and runs SharedKernelAspireAnalyzer over them for the Aspire analyzer tests.
+/// </summary>
 internal static class AnalyzerTestHarness
 {
     private const string DefaultUsings = """
@@ -18,6 +21,9 @@ internal static class AnalyzerTestHarness
 
         """;
 
+    /// <summary>
+    /// Compiles the given source with default usings and the xUnit assembly referenced, under the given assembly name and file path.
+    /// </summary>
     public static CSharpCompilation CreateCompilation(
         string source,
         string assemblyName = "SharedKernel.Aspire.Analyzers.Tests.Dynamic",
@@ -31,6 +37,9 @@ internal static class AnalyzerTestHarness
             path);
     }
 
+    /// <summary>
+    /// Compiles the given source and returns the diagnostics reported by SharedKernelAspireAnalyzer.
+    /// </summary>
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
         string source,
         string assemblyName = "SharedKernel.Aspire.Analyzers.Tests.Dynamic",

@@ -3,6 +3,9 @@ using PandaBear.CodeFixes.Testing;
 
 namespace PandaBear.Aspire.CodeFixes.Tests;
 
+/// <summary>
+/// Tests that SharedKernelAspireCodeFixProvider offers and applies the Aspire image pin fixes.
+/// </summary>
 public sealed class SharedKernelAspireCodeFixProviderTests
 {
     [Fact]

@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace PandaBear.Style.CodeFixes.Tests;
 
+/// <summary>Tests the code actions, fix-all support and helper types of SharedKernelStyleCodeFixProvider using ad hoc Roslyn workspaces.</summary>
 public sealed class SharedKernelStyleCodeFixProviderTests
 {
     [Theory]

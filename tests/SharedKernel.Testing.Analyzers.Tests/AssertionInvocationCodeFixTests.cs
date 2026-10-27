@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis;
 
 namespace PandaBear.Testing.Analyzers.Tests;
 
+/// <summary>Tests the code fixes for the unsafe assertion diagnostics SKTEST012 and SKTEST014.</summary>
 public sealed class AssertionInvocationCodeFixTests
 {
     [Theory]
