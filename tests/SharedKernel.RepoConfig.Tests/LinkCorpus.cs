@@ -6,6 +6,7 @@ namespace PandaBear.RepoConfig.Tests;
 /// </summary>
 internal static class LinkCorpus
 {
+    /// <summary>The repository configuration whose link section lists the files to include and exclude.</summary>
     public const string Configuration = """
         {
           "version": 1,
@@ -18,6 +19,7 @@ internal static class LinkCorpus
 
     private const string Tracker = "summarize durable context or link a maintained doc instead";
 
+    /// <summary>The findings that <c>verify-links</c> reports for the corpus.</summary>
     public static readonly string[] ExpectedLinkFindings =
     [
         "Link validation failed:",
@@ -53,6 +55,7 @@ internal static class LinkCorpus
     /// <summary>The arguments of the explicit-path run, which replace <c>include</c> but not <c>exclude</c>.</summary>
     public static readonly string[] ExplicitPaths = ["notes", "docs/GENERATED_x.md", "README.md", "docs/linked"];
 
+    /// <summary>The findings that <c>verify-links</c> reports when given explicit paths.</summary>
     public static readonly string[] ExpectedExplicitPathFindings =
     [
         "Link validation failed:",
@@ -60,6 +63,7 @@ internal static class LinkCorpus
         "- shared/shared.md:3: missing local link target: missing-shared.md",
     ];
 
+    /// <summary>The findings that <c>verify-line-endings</c> reports for the corpus.</summary>
     public static readonly string[] ExpectedLineEndingFindings =
     [
         "Repository line-ending verification failed:",

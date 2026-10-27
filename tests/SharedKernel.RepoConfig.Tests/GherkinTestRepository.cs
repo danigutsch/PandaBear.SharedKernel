@@ -1,5 +1,6 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Creates repositories and configurations for the Gherkin verification tests.</summary>
 internal static class GherkinTestRepository
 {
     /// <summary>Returns a configuration whose <c>gherkin</c> section has the given patterns.</summary>

@@ -9,6 +9,7 @@ internal static class Bip39Reference
 {
     private static readonly Lazy<string[]> Words = new(LoadWords);
 
+    /// <summary>Returns the BIP39 mnemonic for <paramref name="entropy"/>, with the checksum bits appended.</summary>
     public static string Mnemonic(byte[] entropy)
     {
         byte[] hash = SHA256.HashData(entropy);
@@ -81,6 +82,7 @@ internal static class Bip39Reference
         return reader.ReadToEnd().Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     }
 
+    /// <summary>Returns a twelve-word phrase that has an invalid BIP39 checksum but whose HMAC-SHA512 seed-version hash starts with <c>01</c>, so it reads as an Electrum seed.</summary>
     public static string ElectrumPhrase()
     {
         string[] words = Mnemonic(TestSecrets.Bytes(500, 16)).Split(' ');

@@ -2,6 +2,7 @@ using System.Globalization;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the <c>automation</c> command group for argument errors, required environment, workflow outputs, and publish previews.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class RoadmapAutomationCommandTests

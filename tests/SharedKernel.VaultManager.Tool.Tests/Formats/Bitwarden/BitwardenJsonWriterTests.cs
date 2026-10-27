@@ -6,6 +6,7 @@ using PandaBear.VaultManager.Tool.Model;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats.Bitwarden;
 
+/// <summary>Tests the writer for Bitwarden JSON exports, including its size limits and warnings.</summary>
 public sealed class BitwardenJsonWriterTests
 {
     private static readonly ItemOrigin Origin = new("test", "test.json", null, null);

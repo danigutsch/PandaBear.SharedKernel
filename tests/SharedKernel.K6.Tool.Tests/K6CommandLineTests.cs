@@ -3,6 +3,7 @@ using System.CommandLine.Parsing;
 
 namespace PandaBear.K6.Tool.Tests;
 
+/// <summary>Tests parsing and help of the k6 command line.</summary>
 public sealed class K6CommandLineTests
 {
     [Theory]

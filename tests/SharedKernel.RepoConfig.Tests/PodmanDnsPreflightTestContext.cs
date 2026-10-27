@@ -4,6 +4,7 @@ using System.Text;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Builds a temporary fake proc and Podman run-root tree and scripts Podman and stat responses so the verify-podman-dns command can run without a real Podman.</summary>
 internal sealed class PodmanDnsPreflightTestContext : IDisposable
 {
     private const int CurrentUserId = 1000;
@@ -15,6 +16,7 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
     private int _containerQueryCount;
     private int _namespaceQueryCount;
 
+    /// <summary>Creates a unique temp root with a fake proc tree whose own status reports user id 1000 and an empty Podman run root.</summary>
     public PodmanDnsPreflightTestContext()
     {
         RootPath = Path.Combine(Path.GetTempPath(), "verify-podman-dns-tests", Guid.NewGuid().ToString("N"));
@@ -28,34 +30,49 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
             $"Name:\ttest{Environment.NewLine}Uid:\t{CurrentUserId}\t{CurrentUserId}\t{CurrentUserId}\t{CurrentUserId}{Environment.NewLine}");
     }
 
+    /// <summary>Gets the unique temporary directory that holds the fake proc and run-root trees.</summary>
     public string RootPath
     {
         get;
     }
 
+    /// <summary>Gets the fake proc directory that stands in for /proc.</summary>
     public string ProcRoot
     {
         get;
     }
 
+    /// <summary>Gets the fake Podman run-root directory that the stubbed <c>info</c> query reports.</summary>
     public string RunRoot
     {
         get;
     }
 
+    /// <summary>Gets the networks/aardvark-dns configuration directory under the run root.</summary>
     public string AardvarkDirectory
     {
         get;
     }
 
+    /// <summary>Gets or sets the output returned for the <c>network ls</c> query, one network name per line.</summary>
     public string Networks { get; set; } = string.Empty;
 
+    /// <summary>Gets or sets the output returned for the <c>ps --quiet</c> query, one container id per line.</summary>
     public string Containers { get; set; } = string.Empty;
 
+    /// <summary>Gets the Podman argument strings that the command ran, in order, excluding stat calls.</summary>
     public List<string> Commands { get; } = [];
 
+    /// <summary>Gets every process start info the command submitted, including stat calls, for asserting executables and environment.</summary>
     public List<ProcessStartInfo> ProcessStartInfos { get; } = [];
 
+    /// <summary>Creates a fake aardvark-dns process under the proc root with comm, status, stat, cmdline and network namespace files, plus the optional pid file and ref-count file.</summary>
+    /// <param name="processId">The process id of the fake daemon.</param>
+    /// <param name="configDirectory">The directory passed to the daemon's <c>--config</c> argument, or the aardvark directory when null.</param>
+    /// <param name="equalsForm">True to write <c>--config=dir</c> as one argument instead of two.</param>
+    /// <param name="writePidFile">True to write aardvark.pid containing the process id.</param>
+    /// <param name="refCount">The ref-count file content, or null to skip writing the file.</param>
+    /// <param name="startTime">The start time written into the process stat file.</param>
     public void AddDaemon(
         int processId,
         string? configDirectory = null,
@@ -101,12 +118,16 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
         }
     }
 
+    /// <summary>Writes a file with the given content into the aardvark-dns configuration directory, creating the directory first.</summary>
+    /// <param name="name">The file name inside the aardvark directory.</param>
+    /// <param name="content">The file content.</param>
     public void WriteConfig(string name, string content = "config")
     {
         Directory.CreateDirectory(AardvarkDirectory);
         File.WriteAllText(Path.Combine(AardvarkDirectory, name), content);
     }
 
+    /// <summary>Replaces the aardvark-dns directory path with a regular file so the preflight meets a non-directory there.</summary>
     public void WriteAardvarkDirectoryAsFile()
     {
         var networksDirectory = Path.Combine(RunRoot, "networks");
@@ -114,67 +135,112 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
         File.WriteAllText(AardvarkDirectory, "not a directory");
     }
 
+    /// <summary>Writes a regular file at the run root's networks path so the preflight meets a non-directory there.</summary>
     public void WriteNetworksDirectoryAsFile()
     {
         Directory.CreateDirectory(RunRoot);
         File.WriteAllText(Path.Combine(RunRoot, "networks"), "not a directory");
     }
 
+    /// <summary>Makes the Podman query with the given arguments fail with exit code 1 and the error "simulated failure".</summary>
+    /// <param name="arguments">The Podman arguments after the executable name.</param>
     public void SetFailure(string arguments) =>
         _responses[arguments] = new PodmanCommandResult(1, string.Empty, "simulated failure");
 
+    /// <summary>Makes the Podman query with the given arguments succeed with exit code 0 and the given standard output.</summary>
+    /// <param name="arguments">The Podman arguments after the executable name.</param>
+    /// <param name="output">The standard output to return.</param>
     public void SetResponse(string arguments, string output) =>
         _responses[arguments] = new PodmanCommandResult(0, output, string.Empty);
 
+    /// <summary>Makes the Podman query with the given arguments succeed with exit code 0 while also writing the given standard error.</summary>
+    /// <param name="arguments">The Podman arguments after the executable name.</param>
+    /// <param name="output">The standard output to return.</param>
+    /// <param name="error">The standard error to return.</param>
     public void SetResponse(string arguments, string output, string error) =>
         _responses[arguments] = new PodmanCommandResult(0, output, error);
 
+    /// <summary>Queues successive standard outputs for repeated runs of the same Podman query, one consumed per call, before falling back to fixed responses.</summary>
+    /// <param name="arguments">The Podman arguments after the executable name.</param>
+    /// <param name="outputs">The outputs returned in order on each call.</param>
     public void SetResponses(string arguments, params string[] outputs) =>
         _responseQueues[arguments] = new Queue<PodmanCommandResult>(
             outputs.Select(output => new PodmanCommandResult(0, output, string.Empty)));
 
+    /// <summary>Routes processes started with the given executable to the real process runner instead of the stub.</summary>
+    /// <param name="executable">The executable path to run for real.</param>
     public void UseSystemProcessFor(string executable) =>
         _systemProcessExecutable = executable;
 
+    /// <summary>Overwrites the network namespace identity (device:inode text) of a fake process.</summary>
+    /// <param name="processId">The fake process id.</param>
+    /// <param name="identity">The identity text the stubbed stat returns.</param>
     public void SetProcessNamespaceIdentity(int processId, string identity) =>
         File.WriteAllText(Path.Combine(ProcRoot, processId.ToString(CultureInfo.InvariantCulture), "ns", "net"), identity + "\n");
 
+    /// <summary>Deletes the network namespace file of a fake process so its namespace cannot be read.</summary>
+    /// <param name="processId">The fake process id.</param>
     public void DeleteProcessNamespaceIdentity(int processId) =>
         File.Delete(Path.Combine(ProcRoot, processId.ToString(CultureInfo.InvariantCulture), "ns", "net"));
 
+    /// <summary>Rewrites the stat file of a fake process with a new start time.</summary>
+    /// <param name="processId">The fake process id.</param>
+    /// <param name="startTime">The start time to record.</param>
     public void SetProcessStartTime(int processId, ulong startTime) =>
         WriteProcessStat(processId, startTime);
 
+    /// <summary>Changes a fake process's start time during the second container query, simulating a daemon restart between checks.</summary>
+    /// <param name="processId">The fake process id.</param>
+    /// <param name="startTime">The new start time.</param>
     public void ChangeProcessStartTimeOnRecheck(int processId, ulong startTime) =>
         _onContainerRecheck = () => SetProcessStartTime(processId, startTime);
 
+    /// <summary>Changes a fake process's namespace identity during the second container query, simulating a namespace swap between checks.</summary>
+    /// <param name="processId">The fake process id.</param>
+    /// <param name="identity">The new identity text.</param>
     public void ChangeNamespaceIdentityOnRecheck(int processId, string identity) =>
         _onContainerRecheck = () => SetProcessNamespaceIdentity(processId, identity);
 
+    /// <summary>Changes a fake process's start time when the fourth namespace stat query runs, simulating a restart just before the final check completes.</summary>
+    /// <param name="processId">The fake process id.</param>
+    /// <param name="startTime">The new start time.</param>
     public void ChangeProcessStartTimeOnFinalNamespaceCheck(int processId, ulong startTime) =>
         _onFinalNamespaceCheck = () => SetProcessStartTime(processId, startTime);
 
+    /// <summary>Rewrites aardvark.pid with the given content during the second container query.</summary>
+    /// <param name="content">The new pid file content.</param>
     public void ChangePidFileOnRecheck(string content) =>
         _onContainerRecheck = () => WriteConfig("aardvark.pid", content);
 
+    /// <summary>Rewrites the rootless-netns ref-count file with the given content during the second container query.</summary>
+    /// <param name="content">The new ref-count content.</param>
     public void ChangeRefCountOnRecheck(string content) =>
         _onContainerRecheck = () =>
             File.WriteAllText(Path.Combine(RunRoot, "networks", "rootless-netns", "ref-count"), content);
 
+    /// <summary>Creates a new file in the aardvark directory during the second container query, simulating configuration appearing between checks.</summary>
+    /// <param name="name">The config file name to create.</param>
     public void ChangeConfigOnRecheck(string name) =>
         _onContainerRecheck = () => WriteConfig(name);
 
+    /// <summary>Creates the run root's networks directory during the second container query, simulating it appearing between checks.</summary>
     public void CreateNetworksDirectoryOnRecheck() =>
         _onContainerRecheck = () => Directory.CreateDirectory(Path.Combine(RunRoot, "networks"));
 
+    /// <summary>Deletes the rootless-netns active namespace file.</summary>
     public void DeleteActiveNamespace() =>
         File.Delete(Path.Combine(RunRoot, "networks", "rootless-netns", "rootless-netns"));
 
+    /// <summary>Overwrites the comm file of a fake process so it reports a different process name.</summary>
+    /// <param name="processId">The fake process id.</param>
+    /// <param name="name">The process name to record.</param>
     public void SetProcessName(int processId, string name) =>
         File.WriteAllText(
             Path.Combine(ProcRoot, processId.ToString(CultureInfo.InvariantCulture), "comm"),
             name + Environment.NewLine);
 
+    /// <summary>Reads every file under the root into a dictionary of relative path to bytes so tests can assert the command changed nothing.</summary>
+    /// <returns>The file contents keyed by path relative to the root.</returns>
     public IReadOnlyDictionary<string, byte[]> Snapshot() =>
         Directory
             .EnumerateFiles(RootPath, "*", SearchOption.AllDirectories)
@@ -183,6 +249,12 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
                 File.ReadAllBytes,
                 StringComparer.Ordinal);
 
+    /// <summary>Runs the verify-podman-dns command against this context's fake host and captures its exit code and output.</summary>
+    /// <param name="arguments">Extra command-line arguments appended after the command name.</param>
+    /// <param name="podmanExecutable">The Podman executable path the host reports, or null when Podman is missing.</param>
+    /// <param name="statExecutable">The stat executable path the host reports, or null when stat is missing.</param>
+    /// <param name="isLinux">Whether the host reports a Linux platform.</param>
+    /// <returns>The exit code, standard output and standard error.</returns>
     public async Task<(int ExitCode, string StandardOutput, string StandardError)> Run(
         string[]? arguments = null,
         string? podmanExecutable = "/usr/bin/podman",
@@ -205,6 +277,7 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
         return (exitCode, output.ToString(), error.ToString());
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
         if (Directory.Exists(RootPath))

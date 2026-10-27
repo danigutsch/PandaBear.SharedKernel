@@ -4,6 +4,7 @@ using System.Globalization;
 
 namespace PandaBear.PlaywrightMcp.Tool.Tests;
 
+/// <summary>A long-running shell or PowerShell child that records its process ID and start time so tests can tell whether that exact process is still alive.</summary>
 internal sealed class CancellableChildProcess : IAsyncDisposable
 {
     private readonly string _pidFile = Path.Combine(
@@ -12,6 +13,7 @@ internal sealed class CancellableChildProcess : IAsyncDisposable
     private int? _pid;
     private DateTime? _startTimeUtc;
 
+    /// <summary>Prepares the start info of a child that writes its PID to a temporary file and then sleeps for five minutes.</summary>
     public CancellableChildProcess()
     {
         StartInfo = new ProcessStartInfo
@@ -43,11 +45,13 @@ internal sealed class CancellableChildProcess : IAsyncDisposable
         StartInfo.Environment["PID_FILE"] = _pidFile;
     }
 
+    /// <summary>The start info to launch the child with.</summary>
     public ProcessStartInfo StartInfo
     {
         get;
     }
 
+    /// <summary>Whether the process with the recorded ID and start time is still alive; throws if the identity was not captured.</summary>
     public bool IsRunning
     {
         get
@@ -71,6 +75,7 @@ internal sealed class CancellableChildProcess : IAsyncDisposable
         }
     }
 
+    /// <summary>Waits up to 30 seconds for the child to write its PID file, then captures its identity.</summary>
     public async Task WaitUntilReady(CancellationToken cancellationToken)
     {
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -96,6 +101,7 @@ internal sealed class CancellableChildProcess : IAsyncDisposable
         }
     }
 
+    /// <summary>Kills the child's process tree if it is still the recorded process, then deletes the PID file.</summary>
     public async ValueTask DisposeAsync()
     {
         await CapturePidIfAvailable();
@@ -130,6 +136,7 @@ internal sealed class CancellableChildProcess : IAsyncDisposable
         }
     }
 
+    /// <summary>Returns whether the process has not exited and started at the given UTC time, which tells a reused process ID from the original child.</summary>
     internal static bool MatchesIdentity(Process child, DateTime startTimeUtc)
     {
         ArgumentNullException.ThrowIfNull(child);

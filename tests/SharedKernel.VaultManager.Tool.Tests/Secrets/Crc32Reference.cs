@@ -5,6 +5,7 @@ namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 /// <summary>Bitwise CRC-32 (IEEE 802.3, reflected polynomial 0xEDB88320), kept separate from the production table code.</summary>
 internal static class Crc32Reference
 {
+    /// <summary>Returns the CRC-32 of the ASCII text.</summary>
     public static uint Compute(string ascii)
     {
         uint crc = 0xFFFFFFFF;

@@ -2,6 +2,7 @@ using System.Globalization;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the <c>security baseline</c> command's document policy checks and the <c>security</c> option parser.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class SecurityBaselineCommandTests
 {

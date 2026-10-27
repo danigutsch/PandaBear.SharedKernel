@@ -2,6 +2,7 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests how the secret scanner detects blocks of recovery codes.</summary>
 public sealed class RecoveryCodeDetectorTests
 {
     [Fact]

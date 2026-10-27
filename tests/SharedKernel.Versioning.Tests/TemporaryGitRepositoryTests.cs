@@ -2,6 +2,9 @@ using PandaBear.Testing;
 
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests cleanup of the temporary Git repository fixture.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public sealed class TemporaryGitRepositoryTests
 {

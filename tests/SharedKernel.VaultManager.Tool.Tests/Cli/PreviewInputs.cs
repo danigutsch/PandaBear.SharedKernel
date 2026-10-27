@@ -11,12 +11,25 @@ namespace PandaBear.VaultManager.Tool.Tests.Cli;
 /// </summary>
 internal static class PreviewInputs
 {
+    /// <summary>The login password that previews must never print.</summary>
     public const string Password = "fixture-preview-password";
+
+    /// <summary>The shared notes text of the login that previews must never print.</summary>
     public const string NotesText = "fixture preview notes text";
+
+    /// <summary>The value of the login's "Plan" text field that previews must never print.</summary>
     public const string FieldValue = "fixture-preview-field-value";
+
+    /// <summary>The password part of the masked address's user info, which must never be printed.</summary>
     public const string UriSecret = "fixture-preview-uri-secret";
+
+    /// <summary>The token query value of the masked address, which must never be printed.</summary>
     public const string UriToken = "fixture-preview-uri-token";
+
+    /// <summary>The login address that carries both <see cref="UriSecret" /> and <see cref="UriToken" />.</summary>
     public const string MaskedUri = "https://alice:" + UriSecret + "@example.com/reset?token=" + UriToken;
+
+    /// <summary>The TOTP secret of the login that previews must never print.</summary>
     public static readonly string TotpSecret = PipelineSecrets.TotpSecret(2200);
 
     /// <summary>Writes the vault, makes its catalog, shares the notes in the decisions file, and makes the catalog again.</summary>

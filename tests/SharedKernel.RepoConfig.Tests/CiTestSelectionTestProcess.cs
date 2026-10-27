@@ -3,8 +3,10 @@ using System.Diagnostics;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Runs external processes for the CI test selection tests and locates the repository root.</summary>
 internal static class CiTestSelectionTestProcess
 {
+    /// <summary>Starts a process with the given arguments and optional environment overrides, and returns its exit code and captured output.</summary>
     public static async Task<ProcessResult> Run(
         string fileName,
         string workingDirectory,
@@ -83,6 +85,7 @@ internal static class CiTestSelectionTestProcess
             await standardError);
     }
 
+    /// <summary>Returns the nearest ancestor of the test output directory that contains <c>SharedKernel.slnx</c>, or throws when none does.</summary>
     public static string GetRepositoryRoot()
     {
         for (var directory = new DirectoryInfo(AppContext.BaseDirectory); directory is not null; directory = directory.Parent)
@@ -96,5 +99,9 @@ internal static class CiTestSelectionTestProcess
         throw new DirectoryNotFoundException("Could not locate the repository root.");
     }
 
+    /// <summary>The exit code and captured output of a finished process.</summary>
+    /// <param name="ExitCode">The process exit code.</param>
+    /// <param name="StandardOutput">Everything the process wrote to standard output.</param>
+    /// <param name="StandardError">Everything the process wrote to standard error.</param>
     internal readonly record struct ProcessResult(int ExitCode, string StandardOutput, string StandardError);
 }

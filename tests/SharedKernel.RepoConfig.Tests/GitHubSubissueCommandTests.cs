@@ -4,6 +4,7 @@ using static PandaBear.RepoConfig.Tests.GitHubSubissueTestOperations;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the <c>github link-subissue</c> command.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class GitHubSubissueCommandTests

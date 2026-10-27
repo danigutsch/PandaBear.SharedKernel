@@ -4,6 +4,7 @@ using static PandaBear.VaultManager.Tool.Tests.Merge.MergeFixture;
 
 namespace PandaBear.VaultManager.Tool.Tests.Merge;
 
+/// <summary>Tests the Markdown rendering of <see cref="MergeReport"/>.</summary>
 public sealed class MergeReportTests
 {
     [Fact]

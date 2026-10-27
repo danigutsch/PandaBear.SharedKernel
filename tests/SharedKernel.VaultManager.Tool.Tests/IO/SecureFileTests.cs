@@ -2,11 +2,13 @@ using PandaBear.VaultManager.Tool.IO;
 
 namespace PandaBear.VaultManager.Tool.Tests.IO;
 
+/// <summary>Tests that secure file writes are owner-only, atomic, and cancelable.</summary>
 public sealed class SecureFileTests : IDisposable
 {
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
     private readonly string directory = Directory.CreateTempSubdirectory("vault-manager-tests-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

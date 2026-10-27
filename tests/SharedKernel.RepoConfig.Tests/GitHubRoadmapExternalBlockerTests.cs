@@ -4,6 +4,7 @@ using System.Text.Json.Nodes;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests how roadmap reconciliation handles blockers that live in another repository.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubRoadmapExternalBlockerTests
 {

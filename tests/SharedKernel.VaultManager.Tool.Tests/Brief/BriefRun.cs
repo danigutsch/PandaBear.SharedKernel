@@ -9,6 +9,7 @@ namespace PandaBear.VaultManager.Tool.Tests.Brief;
 /// <summary>Reads, scans, and merges inputs as the merge command does, and builds the brief of the result.</summary>
 internal static class BriefRun
 {
+    /// <summary>Runs the merge pipeline on the inputs and returns the brief built from the result together with the result.</summary>
     public static (BriefDocument Brief, PipelineResult Result) Build(IReadOnlyList<string> inputs, MergeDecisions? decisions = null, MergePolicy? policy = null)
     {
         decisions ??= MergeDecisions.None;

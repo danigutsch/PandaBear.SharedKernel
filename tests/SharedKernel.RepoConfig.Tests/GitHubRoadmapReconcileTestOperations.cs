@@ -1,7 +1,9 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Test helpers for the GitHub roadmap reconcile tests.</summary>
 internal static class GitHubRoadmapReconcileTestOperations
 {
+    /// <summary>Configures the workspace with a reconciliation manifest that has no issues, edges, or dispositions.</summary>
     public static void ConfigureEmptySeed(TemporaryRepoConfigWorkspace workspace)
     {
         ArgumentNullException.ThrowIfNull(workspace);

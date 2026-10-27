@@ -4,6 +4,7 @@ using static PandaBear.VaultManager.Tool.Tests.Merge.MergeFixture;
 
 namespace PandaBear.VaultManager.Tool.Tests.Merge;
 
+/// <summary>Tests how <see cref="Merger"/> combines a Keeper and a Bitwarden duplicate, resolves conflicts, and preserves losing values.</summary>
 public sealed class MergerTests
 {
     private const string OldPassword = "fixture-old-password";

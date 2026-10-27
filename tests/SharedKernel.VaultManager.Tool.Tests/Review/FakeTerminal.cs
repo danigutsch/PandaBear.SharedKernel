@@ -23,6 +23,7 @@ internal sealed class FakeTerminal
     /// <summary>Number of password prompts asked before each UI run.</summary>
     public IReadOnlyList<int> PromptsBeforeRun => promptsBeforeRun;
 
+    /// <summary>Creates the review terminal that reports <see cref="OutputIsTerminal"/> and runs <see cref="User"/> for each session.</summary>
     public ReviewTerminal Terminal() => new(
         () => OutputIsTerminal,
         (session, _) =>

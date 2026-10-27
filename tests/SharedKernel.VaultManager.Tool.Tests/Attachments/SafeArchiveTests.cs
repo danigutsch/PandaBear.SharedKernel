@@ -3,6 +3,7 @@ using PandaBear.VaultManager.Tool.Attachments;
 
 namespace PandaBear.VaultManager.Tool.Tests.Attachments;
 
+/// <summary>Tests safe opening and reading of zip archives and their limits.</summary>
 public sealed class SafeArchiveTests
 {
     [Fact]

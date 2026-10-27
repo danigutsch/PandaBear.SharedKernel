@@ -2,6 +2,7 @@ using System.Globalization;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests that the roadmap write-input snapshot digests repository-owned inputs and detects later changes.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RoadmapWriteInputSnapshotTests
 {

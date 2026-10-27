@@ -10,11 +10,13 @@ using static PandaBear.VaultManager.Tool.Tests.Review.ReviewVaults;
 
 namespace PandaBear.VaultManager.Tool.Tests.Review;
 
+/// <summary>Tests the review session: grouping and filtering, masked and revealed values, field and finding decisions, and linking and splitting items.</summary>
 public sealed class ReviewSessionTests : IDisposable
 {
     private const string NotesPassword = "Gh-notes-Passw0rd!";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-review-session-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

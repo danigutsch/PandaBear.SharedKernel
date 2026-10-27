@@ -10,12 +10,14 @@ using PandaBear.VaultManager.Tool.Tests.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Review;
 
+/// <summary>Tests the <c>review</c> command: terminal and argument checks, password prompts, decisions and output files, and the messages it prints.</summary>
 public sealed class ReviewCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private const string FilePassword = "fixture file password";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-review-command-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

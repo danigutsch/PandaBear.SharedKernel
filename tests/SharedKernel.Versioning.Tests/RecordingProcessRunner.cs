@@ -15,6 +15,9 @@ internal sealed class RecordingProcessRunner(string? failingFileName = null)
         get;
     } = [];
 
+    /// <summary>
+    /// Records the process with its arguments, configuration file content, and working directory entries, then fails when its name matches the failing file name or returns a fixed output line.
+    /// </summary>
     public async Task<string> Run(string fileName, IEnumerable<string> arguments, string? workingDirectory, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();

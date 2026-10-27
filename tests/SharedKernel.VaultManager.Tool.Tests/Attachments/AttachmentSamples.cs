@@ -3,6 +3,7 @@ using System.Text;
 
 namespace PandaBear.VaultManager.Tool.Tests.Attachments;
 
+/// <summary>Sample attachments of each kind, whose private-key markers are assembled at runtime.</summary>
 internal static class AttachmentSamples
 {
     // Key markers are assembled at runtime so the repository holds no private-key-shaped literals.
@@ -14,6 +15,7 @@ internal static class AttachmentSamples
         return Encoding.UTF8.GetBytes(key.ExportPkcs8PrivateKeyPem());
     }
 
+    /// <summary>Theory data of file name, content, and the name of the expected kind.</summary>
     public static TheoryData<string, byte[], string> All => new()
     {
         { "notes.txt", Encoding.UTF8.GetBytes("plain text\nsecond line"), "Text" },
