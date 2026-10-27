@@ -6,6 +6,8 @@ namespace PandaBear.RepoConfig.Tests;
 /// <summary>Finds <c>sharedkernel-repo</c> command lines in the repository workflows.</summary>
 internal static partial class RepoConfigToolCallers
 {
+    /// <summary>Returns every tool invocation found in the <c>.github/workflows</c> YAML files under <paramref name="root"/>, with its arguments split into tokens.</summary>
+    /// <param name="root">The repository root that contains <c>.github/workflows</c>.</param>
     public static IEnumerable<RepoConfigToolCaller> Find(string root)
     {
         // Documentation-only changes skip these tests, so only files whose changes run them are read.

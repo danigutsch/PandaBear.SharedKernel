@@ -2,6 +2,7 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests the validators that confirm a candidate secret: card numbers, Base32 seeds, BIP39 phrases, JWTs, token checksums, and age keys.</summary>
 public sealed class SecretValidatorTests
 {
     [Theory]

@@ -1,5 +1,8 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Tests the verify-devcontainer command against a fake devcontainer CLI and fake docker executable.
+/// </summary>
 public sealed class VerifyDevcontainerCommandTests
 {
     [Fact]

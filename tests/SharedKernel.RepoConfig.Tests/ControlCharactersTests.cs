@@ -2,6 +2,7 @@ using PandaBear.Tooling;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests escaping of control characters for terminal output.</summary>
 public sealed class ControlCharactersTests
 {
     [Theory]

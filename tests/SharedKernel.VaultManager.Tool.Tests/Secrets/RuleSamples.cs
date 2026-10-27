@@ -9,8 +9,10 @@ internal static class RuleSamples
     private const string LowerAlphanumeric = "abcdefghijklmnopqrstuvwxyz0123456789";
     private const string UpperAlphanumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+    /// <summary>Pairs every catalog rule id with a text that matches it and a text that does not.</summary>
     public static IReadOnlyList<(string RuleId, string Positive, string Negative)> All { get; } = Build();
 
+    /// <summary>Returns the rule ids of <see cref="All"/> as theory data.</summary>
     public static TheoryData<string> Ids()
     {
         var data = new TheoryData<string>();

@@ -14,8 +14,10 @@ internal sealed class TestPrompts(string newPassword, string? filePassword = nul
     private readonly List<string> filePasswordPrompts = [];
     private readonly List<string> newPasswordPrompts = [];
 
+    /// <summary>The prompt texts shown so far for password-protected input files.</summary>
     public IReadOnlyList<string> FilePasswordPrompts => filePasswordPrompts;
 
+    /// <summary>The prompt texts shown so far for the password of a new export.</summary>
     public IReadOnlyList<string> NewPasswordPrompts => newPasswordPrompts;
 
     /// <summary>Whether the environment reports that standard input is a terminal.</summary>
@@ -33,6 +35,7 @@ internal sealed class TestPrompts(string newPassword, string? filePassword = nul
         get; init;
     }
 
+    /// <summary>Creates the command environment that records prompts, runs the configured hooks, and uses a clock fixed at <see cref="PipelineInputs.Now"/>.</summary>
     public VaultCommandEnvironment Environment() => new(
         prompt =>
         {

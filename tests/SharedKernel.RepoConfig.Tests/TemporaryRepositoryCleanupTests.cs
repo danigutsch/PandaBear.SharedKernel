@@ -1,5 +1,8 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Tests that temporary repository fixtures delete read-only files and tolerate already-removed roots.
+/// </summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class TemporaryRepositoryCleanupTests
 {

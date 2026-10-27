@@ -5,6 +5,7 @@ using PandaBear.VaultManager.Tool.Tests.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
 
+/// <summary>Tests that <see cref="SshKeyNormalizer"/> derives public keys and fingerprints, rewrites keys as PKCS#8, and falls back to secure notes without losing key text.</summary>
 public sealed class SshKeyNormalizerTests
 {
     [Fact]

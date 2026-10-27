@@ -2,6 +2,7 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests normalizing TOTP secrets and URIs and decoding migration payloads.</summary>
 public sealed class TotpUriTests
 {
     [Fact]

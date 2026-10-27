@@ -4,6 +4,7 @@ using PandaBear.VaultManager.Tool.Tests.Merge;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests which field and address values the review shows and which it masks or withholds.</summary>
 public sealed class ShownValuesTests
 {
     [Fact]

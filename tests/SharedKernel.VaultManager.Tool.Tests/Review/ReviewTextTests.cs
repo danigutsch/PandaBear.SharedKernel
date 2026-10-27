@@ -2,6 +2,7 @@ using PandaBear.VaultManager.Tool.Review;
 
 namespace PandaBear.VaultManager.Tool.Tests.Review;
 
+/// <summary>Tests that <see cref="ReviewText"/> makes text safe to show on one terminal line.</summary>
 public sealed class ReviewTextTests
 {
     [Theory]

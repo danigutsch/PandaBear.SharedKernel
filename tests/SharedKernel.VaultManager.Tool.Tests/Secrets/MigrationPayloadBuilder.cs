@@ -5,6 +5,7 @@ namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 /// <summary>Writes Google Authenticator migration payloads (protobuf) for decoder tests.</summary>
 internal static class MigrationPayloadBuilder
 {
+    /// <summary>Builds an <c>otpauth-migration</c> URI whose payload holds one protobuf entry per secret, name, issuer, algorithm, digit count, and type.</summary>
     public static string Uri(params (byte[] Secret, string Name, string Issuer, int Algorithm, int Digits, int Type)[] entries)
     {
         using var payload = new MemoryStream();

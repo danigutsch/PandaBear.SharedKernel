@@ -2,6 +2,7 @@ using System.Globalization;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the security scanner's exit codes, report publication, and handling of cancellation, a missing scanner, and unsafe report locations.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class SecurityScannerTests
 {

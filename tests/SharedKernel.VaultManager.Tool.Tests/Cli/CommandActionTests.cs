@@ -4,6 +4,7 @@ using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests how command actions end when they are cancelled.</summary>
 public sealed class CommandActionTests
 {
     private const string ExportPassword = "fixture export password";

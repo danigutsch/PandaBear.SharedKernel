@@ -2,8 +2,10 @@ using System.Net;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Test helpers for the GitHub roadmap reference tests.</summary>
 internal static class GitHubRoadmapReferenceTestOperations
 {
+    /// <summary>Queues the responses for an issue that moved to another repository, or for an unresolvable one when <paramref name="unresolved"/> is set.</summary>
     public static void EnqueueTransfer(TestHttpMessageHandler handler, bool unresolved = false)
     {
         handler.Enqueue(GitHubRoadmapSnapshotTestOperations.CreateOpenIssuesResponse([]));

@@ -4,6 +4,7 @@ using System.Text.Json.Nodes;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the configuration that GitHub roadmap import and reconciliation require.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubRoadmapIntakeConfigurationTests
 {

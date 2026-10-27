@@ -5,6 +5,7 @@ using PandaBear.VaultManager.Tool.Formats.Bitwarden;
 
 namespace PandaBear.VaultManager.Tool.Tests.Crypto;
 
+/// <summary>Tests the encryption and decryption of Bitwarden password-protected exports.</summary>
 public sealed class PasswordProtectedExportTests
 {
     private const string FixturePassword = "fixture password";

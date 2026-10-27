@@ -4,6 +4,7 @@ using static PandaBear.VaultManager.Tool.Tests.Merge.MergeFixture;
 
 namespace PandaBear.VaultManager.Tool.Tests.Merge;
 
+/// <summary>Tests that <see cref="DecisionsFile"/> serializes decisions without secret values, reads them back, and rejects malformed files.</summary>
 public sealed class DecisionsFileTests : IDisposable
 {
     private const string OldPassword = "fixture-old-password";
@@ -11,6 +12,7 @@ public sealed class DecisionsFileTests : IDisposable
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
     private readonly string directory = Directory.CreateTempSubdirectory("vault-decisions-file-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

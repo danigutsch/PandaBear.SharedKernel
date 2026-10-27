@@ -3,6 +3,7 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests how the resolver follows GitHub issue references across transfers and migrations.</summary>
 public sealed class GitHubIssueReferenceResolverTests
 {
     [Fact]

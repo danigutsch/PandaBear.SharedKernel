@@ -2,6 +2,7 @@ using PandaBear.Tooling;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests how the resolver finds executables on the search path.</summary>
 public sealed class ExecutableResolverTests
 {
     [Theory]

@@ -2,10 +2,12 @@ using PandaBear.VaultManager.Tool.Formats;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats;
 
+/// <summary>Tests that the format detector classifies vault files by content.</summary>
 public sealed class FormatDetectorTests : IDisposable
 {
     private readonly string directory = Directory.CreateTempSubdirectory("vault-manager-detect-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Theory]

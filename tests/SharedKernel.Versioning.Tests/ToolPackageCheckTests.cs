@@ -7,6 +7,9 @@ using PandaBear.Versioning.Tool;
 
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests that consume-candidate and ToolPackageCheck install tool packages from the candidate directory and run each command with --help.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class ToolPackageCheckTests
 {

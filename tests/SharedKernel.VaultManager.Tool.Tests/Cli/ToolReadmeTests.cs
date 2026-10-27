@@ -2,6 +2,7 @@ using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests that the command lines shown in the tool readme match the real command tree.</summary>
 public sealed class ToolReadmeTests
 {
     [Fact]

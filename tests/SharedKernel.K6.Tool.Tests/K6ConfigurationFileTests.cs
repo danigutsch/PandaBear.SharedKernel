@@ -1,5 +1,6 @@
 namespace PandaBear.K6.Tool.Tests;
 
+/// <summary>Tests loading and validation of the k6 configuration file.</summary>
 public sealed class K6ConfigurationFileTests
 {
     private const string Host = """

@@ -3,10 +3,12 @@ using PandaBear.VaultManager.Tool.Model;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats;
 
+/// <summary>Tests that the vault file reader picks the reader for a file's format and reports unreadable input.</summary>
 public sealed class VaultFileReaderTests : IDisposable
 {
     private readonly string directory = Directory.CreateTempSubdirectory("vault-manager-read-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Theory]

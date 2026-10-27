@@ -2,6 +2,9 @@ using System.Text;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Tests the verify-text-encoding command, which checks staged Git blobs for valid NUL-free UTF-8, against seeded repositories.
+/// </summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class VerifyTextEncodingCommandTests

@@ -1,5 +1,6 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Creates executable files for the executable resolver tests.</summary>
 internal static class ExecutableResolverTestFiles
 {
     /// <summary>Writes an empty file that Unix marks executable for its owner, and returns its path.</summary>

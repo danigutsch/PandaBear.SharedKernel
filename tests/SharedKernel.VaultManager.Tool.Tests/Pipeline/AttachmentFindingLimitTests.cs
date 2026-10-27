@@ -6,11 +6,13 @@ using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
 
+/// <summary>Tests the cap on findings that <see cref="VaultPipeline"/> lists for one attachment.</summary>
 public sealed class AttachmentFindingLimitTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-attachment-limit-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact(Timeout = LargeTexts.ScanBudget)]

@@ -2,8 +2,14 @@ using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Disposable temporary directory with a package folder, an output folder, and helpers that write candidate packages, tool packages, and consumption samples for release preparation tests.
+/// </summary>
 internal sealed class TemporaryReleasePrepDirectory : IDisposable
 {
+    /// <summary>
+    /// Creates the directory with a packages folder and a Directory.Build.props that sets the repository URL.
+    /// </summary>
     public TemporaryReleasePrepDirectory()
     {
         Root = Path.Combine(Path.GetTempPath(), $"release-prep-{Guid.NewGuid():N}");
@@ -21,16 +27,25 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
             """ + Environment.NewLine);
     }
 
+    /// <summary>
+    /// Gets the absolute path of the directory root.
+    /// </summary>
     public string Root
     {
         get;
     }
 
+    /// <summary>
+    /// Gets the directory that holds the candidate packages and manifest.
+    /// </summary>
     public string PackageDirectory
     {
         get;
     }
 
+    /// <summary>
+    /// Gets the directory that release preparation writes its output to.
+    /// </summary>
     public string OutputDirectory
     {
         get;
@@ -88,6 +103,9 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
         return Path.Combine(PackageDirectory, packageId + ".1.0.0.nupkg");
     }
 
+    /// <summary>
+    /// Writes the global.json, an empty Directory.Packages.props, and three sample console projects that print the sample output.
+    /// </summary>
     public async Task WriteConsumptionSamples(string sampleOutput, CancellationToken ct)
     {
         File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(Root, "global.json"));
@@ -104,6 +122,9 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
         }
     }
 
+    /// <summary>
+    /// Writes a SharedKernel project with an invalid target framework so that packing it fails.
+    /// </summary>
     public async Task WriteUnpackableSharedKernelProject(CancellationToken ct)
     {
         var projectDirectory = Path.Combine(Root, "src", "SharedKernel", "PandaBear.Sample");
@@ -116,6 +137,9 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
         await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Unshipped.txt"), "#nullable enable", ct);
     }
 
+    /// <summary>
+    /// Deletes the directory.
+    /// </summary>
     public void Dispose()
     {
         if (Directory.Exists(Root))

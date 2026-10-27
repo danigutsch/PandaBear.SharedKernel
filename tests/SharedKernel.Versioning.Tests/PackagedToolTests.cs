@@ -3,6 +3,9 @@ using PandaBear.Testing;
 
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests which projects the package planner packs as candidates.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class PackagedToolTests
 {

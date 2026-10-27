@@ -3,6 +3,7 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests the catalog of secret rules and the patterns used outside it.</summary>
 public sealed class SecretRuleCatalogTests
 {
     [Theory]

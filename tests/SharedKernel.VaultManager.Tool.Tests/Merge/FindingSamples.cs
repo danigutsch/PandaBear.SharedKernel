@@ -7,6 +7,7 @@ namespace PandaBear.VaultManager.Tool.Tests.Merge;
 /// <summary>Builds secret findings and finding decisions without scanning an item.</summary>
 internal static class FindingSamples
 {
+    /// <summary>Creates a generic-secret finding of the given confidence at offset 0 length 8 of the notes field.</summary>
     public static SecretFinding Finding(Confidence confidence) => new()
     {
         RuleId = "fixture-rule",
@@ -20,6 +21,7 @@ internal static class FindingSamples
     /// <summary>A medium-confidence finding at the start of a field.</summary>
     public static SecretFinding At(string fieldPath) => Finding(Confidence.Medium) with { Location = new SecretLocation(fieldPath, 0, 4) };
 
+    /// <summary>Creates merge decisions with no group decisions or overrides and one finding choice for the given item.</summary>
     public static MergeDecisions Decide(string originKey, SecretFinding finding, FindingDecision decision) =>
         new([], MatchOverrides.None)
         {

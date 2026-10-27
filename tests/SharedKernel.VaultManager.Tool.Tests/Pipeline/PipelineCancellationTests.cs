@@ -3,12 +3,14 @@ using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
 
+/// <summary>Tests that <see cref="VaultPipeline"/> stops with <see cref="OperationCanceledException"/> and leaves no output when its token is canceled.</summary>
 public sealed class PipelineCancellationTests : IDisposable
 {
     private const string Password = "fixture-output-password";
     private const string ExportPassword = "fixture export password";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-pipeline-cancellation-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

@@ -8,6 +8,7 @@ namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 /// </summary>
 internal static class OverlapSamples
 {
+    /// <summary>Returns <paramref name="count"/> deterministic locations that start below <paramref name="maxStart"/>, with lengths up to <paramref name="maxLength"/> for the long ones.</summary>
     public static IEnumerable<SecretLocation> Locations(int count, int maxStart, int maxLength)
     {
         uint state = 7;
