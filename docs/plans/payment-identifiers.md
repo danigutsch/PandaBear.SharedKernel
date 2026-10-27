@@ -36,7 +36,7 @@ a concrete generic limitation is demonstrated by a regression test.
    encrypted account details/snapshots/artifacts, and recoverable persistent key configuration.
 2. Deliver #959 schedules through Tour: draft/approved/superseded EUR terms, immutable price
    snapshots, positive two-decimal installments, selected allocations, cancellation adjustments,
-   business-date overdue calculations, legacy compatibility, and deletion protection.
+   business-date overdue calculations, and deletion protection.
 3. Expand #959 with EUR/BRL agreed quotes, explicit expiry, settlement rounding/remainders,
    reconciliation, gross/fees/net/EUR-credit accounting, excess customer credit, refunds and full
    receipt reversals. Record transfers already performed; do not execute transfers.
@@ -48,9 +48,9 @@ a concrete generic limitation is demonstrated by a regression test.
    OpenAPI and accessible Management forms together. Keep runtime authorization and optimistic
    revision checks server-side, and use transactional financial/audit writes and keyed commands.
 6. Roll out encryption configuration and additive migrations before enabling workflows. Preserve
-   #1140 calendar dates and legacy payment IDs, amounts and dates; derive currency without conversion.
-   Existing EUR receipts remain unallocated until explicitly assigned; non-EUR legacy flows remain
-   available. Keep provisional document retention and the existing production privacy/retention gate.
+   #1140 calendar dates; derive currency without conversion. Receipts remain unallocated until
+   explicitly assigned. Keep provisional document retention and the existing production
+   privacy/retention gate.
 
 Admin inherits Operator capabilities and can finish another Admin's draft. Operators may view masked
 information and record receipts; approvals and sensitive recipient access remain Admin-only.
@@ -61,7 +61,7 @@ Never introduce staffing modes, user counts, online-presence checks or a second-
 
 ## Required decisions resolved by the application plan
 
-- Refund unallocated excess and legacy receipts against their remaining refundable cash balance.
+- Refund unallocated excess against their remaining refundable cash balance.
   Refunding excess must not reverse allocated EUR credit: a €120 receipt against €100 debt followed
   by a €20 excess refund leaves the €100 debt settled. Record append-only corrections to erroneous
   refund records; distinguish correcting a record from an actual return transfer. Block a receipt
