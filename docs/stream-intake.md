@@ -59,6 +59,17 @@ actual-length comparison, minimum length, scanning status, decoded image limits,
 and storage compensation. Helpers accepting MemoryStream specifically need explicit Stream migration
 and application tests; this package does not silently change them.
 
+## Analyzer enforcement
+
+The optional `PandaBear.SharedKernel.IO.Analyzers` package reports `SKIO001` when `Stream.CopyTo[Async]`
+into a `MemoryStream` or `StreamReader.ReadToEnd[Async]` consumes `IFormFile.OpenReadStream()`,
+`HttpRequest.Body`, or `HttpContent.ReadAsStream[Async]`, and when `HttpContent.ReadAsByteArrayAsync` is
+called, without a `Length` or `ContentLength` comparison in the same member. It reports `SKIO002` for a loop
+that reads a stream and writes each chunk into a `MemoryStream` without a non-zero relational comparison
+(a running total against a maximum). Both steer to `SeekableContent.Create`. A host-owned request size
+limit is not visible to the analyzer; suppress or configure severity where the host enforces it.
+See the [package README](../src/SharedKernel/SharedKernel.IO.Analyzers/README.md).
+
 ## Evidence and verification
 
 The real HTTP comparison and its limitations live in
