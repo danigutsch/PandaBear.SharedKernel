@@ -1,5 +1,6 @@
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Guards the <c>warning-summary</c> command, which combines warning reports into a Markdown table.</summary>
 public sealed class WarningSummaryTests
 {
     private const string Restore = """{"tool":"NuGet restore","blocking":1,"advisory":2,"accepted":0,"blockingFindings":["NU1903 System.Foo 1.0.0"]}""";

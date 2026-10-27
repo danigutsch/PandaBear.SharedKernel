@@ -8,6 +8,9 @@ using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// PostgreSQL-backed host with two messaging contexts (first_messaging and second_messaging schemas) that exposes seeding, publishing, consuming and counting operations for the context-qualified messaging tests.
+/// </summary>
 internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDisposable
 {
     private const string FirstConsumerName = "first-consumer";
@@ -31,16 +34,25 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
         SecondCreateScript = secondCreateScript;
     }
 
+    /// <summary>
+    /// Create-table SQL generated for FirstMessagingDbContext.
+    /// </summary>
     public string FirstCreateScript
     {
         get;
     }
 
+    /// <summary>
+    /// Create-table SQL generated for SecondMessagingDbContext.
+    /// </summary>
     public string SecondCreateScript
     {
         get;
     }
 
+    /// <summary>
+    /// Creates an isolated PostgreSQL database, builds the two-context provider, creates both contexts' tables and returns the scenario, cleaning up everything if creation fails.
+    /// </summary>
     public static async ValueTask<ContextQualifiedMessagingPostgreSqlScenario> Create(
         PostgreSqlFixture fixture,
         CancellationToken ct)
@@ -97,6 +109,9 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
         }
     }
 
+    /// <summary>
+    /// Enqueues the same integration event twice with a first-context business record in one transaction, rolls the transaction back when the save fails and throws InvalidOperationException if the duplicate unexpectedly persists.
+    /// </summary>
     public async Task SaveFirstBusinessRecordWithDuplicateOutboxEvent(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -124,6 +139,9 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
         throw new InvalidOperationException("The duplicate outbox event unexpectedly persisted.");
     }
 
+    /// <summary>
+    /// Saves a second-context business record and an outbox event in one transaction and commits it.
+    /// </summary>
     public async ValueTask CommitSecondBusinessRecordAndOutbox(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -138,6 +156,9 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
         await transaction.CommitAsync(ct);
     }
 
+    /// <summary>
+    /// Counts business records and outbox messages stored by each of the two contexts.
+    /// </summary>
     public async ValueTask<(int FirstBusiness, int FirstOutbox, int SecondBusiness, int SecondOutbox)> CountRecords(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -151,6 +172,9 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
             await secondDbContext.Set<IntegrationEventOutboxMessage>().CountAsync(ct));
     }
 
+    /// <summary>
+    /// Enqueues one outbox event through the second context and saves it.
+    /// </summary>
     public async ValueTask EnqueueSecondOutboxEvent(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -162,6 +186,9 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
         _ = await dbContext.SaveChangesAsync(ct);
     }
 
+    /// <summary>
+    /// Enqueues an event through the first context, publishes it with the relay and returns the message's PublishedAt and the number of transport messages written.
+    /// </summary>
     public async ValueTask<(DateTimeOffset? PublishedAt, int TransportCount)> PublishFirstOutboxThroughItsProducer(CancellationToken ct)
     {
         await using (var enqueueScope = provider.CreateAsyncScope())
@@ -187,6 +214,9 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
         return (publishedAt, transportCount);
     }
 
+    /// <summary>
+    /// Runs the second context's outbox relay for one message and returns the number published.
+    /// </summary>
     public async ValueTask<int> PublishSecondOutbox(CancellationToken ct)
     {
         var relay = provider.GetRequiredService<EfIntegrationEventOutboxRelay<SecondMessagingDbContext>>();
@@ -194,6 +224,9 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
         return await relay.PublishPending(1, ct);
     }
 
+    /// <summary>
+    /// Stores a pending second-context transport message for the given event id.
+    /// </summary>
     public async ValueTask SeedSecondTransportMessage(string eventId, CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -206,6 +239,9 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
         _ = await dbContext.SaveChangesAsync(ct);
     }
 
+    /// <summary>
+    /// Runs the second context's PostgreSQL transport consumer for one message and returns the number consumed.
+    /// </summary>
     public async ValueTask<int> ConsumeSecondTransport(CancellationToken ct)
     {
         var consumer = provider.GetRequiredService<PostgreSqlIntegrationEventTransportConsumer<SecondMessagingDbContext>>();
@@ -213,6 +249,9 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
         return await consumer.ConsumePending(1, ct);
     }
 
+    /// <summary>
+    /// Reads the single second-context outbox message's published time, attempts, last attempt time and claim owner and expiry.
+    /// </summary>
     public async ValueTask<(DateTimeOffset? PublishedAt, int Attempts, DateTimeOffset? LastAttemptAt, string? ClaimedBy, DateTimeOffset? ClaimedUntil)> GetSecondOutboxState(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -227,6 +266,9 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
             message.ClaimedUntil);
     }
 
+    /// <summary>
+    /// Reads the processed time, attempts, last attempt time and claim owner and expiry of the second-context transport message with the given event id.
+    /// </summary>
     public async ValueTask<(DateTimeOffset? ProcessedAt, int Attempts, DateTimeOffset? LastAttemptAt, string? ClaimedBy, DateTimeOffset? ClaimedUntil)> GetSecondTransportState(
         string eventId,
         CancellationToken ct)
@@ -244,6 +286,9 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
             message.ClaimedUntil);
     }
 
+    /// <summary>
+    /// Counts the transport messages stored by the first context.
+    /// </summary>
     public async ValueTask<int> CountFirstTransportMessages(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -252,6 +297,9 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
         return await dbContext.Set<IntegrationEventTransportMessage>().CountAsync(ct);
     }
 
+    /// <summary>
+    /// Releases the provider, data source and isolated database.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         await PostgreSqlScenarioCleanup.DisposeResources(null, provider, dataSource, database);

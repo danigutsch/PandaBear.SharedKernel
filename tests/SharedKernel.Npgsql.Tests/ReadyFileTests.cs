@@ -3,6 +3,7 @@ using PandaBear.Npgsql.Testing.Host;
 
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Tests resolving and publishing the ready file through which the owner host announces its server's connection string. Each test uses its own temporary directory, removed on disposal.</summary>
 public sealed class ReadyFileTests : IDisposable
 {
     private readonly string _directory = Directory.CreateTempSubdirectory("sk-ready-file-").FullName;
@@ -147,6 +148,7 @@ public sealed class ReadyFileTests : IDisposable
         mode.ShouldBe(UnixFileMode.UserRead | UnixFileMode.UserWrite, "the line carries the password of the server");
     }
 
+    /// <summary>Deletes the test's temporary directory, ignoring IO errors so cleanup does not hide assertion failures.</summary>
     public void Dispose()
     {
         try

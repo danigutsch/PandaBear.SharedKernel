@@ -1,5 +1,6 @@
 namespace PandaBear.EventSourcing.Tests;
 
+/// <summary>Tests replaying, adding and clearing events on an event-sourced aggregate root.</summary>
 public sealed class EventSourcedAggregateRootTests
 {
     [Fact]

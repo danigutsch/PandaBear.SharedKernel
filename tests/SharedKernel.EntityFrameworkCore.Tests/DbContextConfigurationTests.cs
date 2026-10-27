@@ -4,6 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// Tests registration and application of IDbContextConfiguration instances and the development diagnostics option.
+/// </summary>
 public sealed class DbContextConfigurationTests
 {
     [Fact]

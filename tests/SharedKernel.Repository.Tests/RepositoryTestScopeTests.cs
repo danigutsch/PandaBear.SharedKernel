@@ -1,5 +1,6 @@
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Guards the cleanup of <see cref="RepositoryTestScope"/>.</summary>
 public sealed class RepositoryTestScopeTests
 {
     [Fact]

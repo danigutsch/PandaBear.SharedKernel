@@ -2,6 +2,9 @@ using PandaBear.Testing;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// Tests PostgreSqlScenarioCleanup.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IdempotencyCapability)]
 public sealed class PostgreSqlScenarioCleanupTests

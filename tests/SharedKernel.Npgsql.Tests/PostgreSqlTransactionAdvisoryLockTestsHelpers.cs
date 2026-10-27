@@ -1,9 +1,11 @@
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Helpers for probing PostgreSQL advisory locks from a separate connection.</summary>
 internal static class PostgreSqlTransactionAdvisoryLockTestsHelpers
 {
     private static readonly TimeSpan LockWaitTimeout = TimeSpan.FromSeconds(10);
 
+    /// <summary>Tries to take a transaction-scoped advisory lock on a fresh connection and releases it by rolling back, returning whether the lock was free.</summary>
     public static async Task<bool> TryAcquire(NpgsqlDataSource dataSource, long lockKey, CancellationToken ct)
     {
         await using var connection = await dataSource.OpenConnectionAsync(ct);
@@ -16,6 +18,7 @@ internal static class PostgreSqlTransactionAdvisoryLockTestsHelpers
         return result is true;
     }
 
+    /// <summary>Polls pg_locks every 25 milliseconds until the backend with the given process id is waiting for an ungranted advisory lock, throwing TimeoutException after ten seconds and propagating cancellation of the caller's token.</summary>
     public static async Task WaitForWaitingLock(NpgsqlDataSource dataSource, int processId, CancellationToken ct)
     {
         using var timeoutCts = new CancellationTokenSource(LockWaitTimeout);

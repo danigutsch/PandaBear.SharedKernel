@@ -1,5 +1,8 @@
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// Cleanup helper that releases PostgreSQL test scenario resources.
+/// </summary>
 internal static class PostgreSqlScenarioCleanup
 {
     /// <summary>

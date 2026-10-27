@@ -2,10 +2,12 @@ using System.Xml.Linq;
 
 namespace PandaBear.Repository.Tests.Conventions;
 
+/// <summary>Computes which SharedKernel projects the test projects reach through project references.</summary>
 internal static class SharedKernelTestOwnershipFiles
 {
     private static readonly string[] SearchedDirectories = ["src", "tests"];
 
+    /// <summary>Follows project references transitively from every xunit test project under tests and returns the sorted names of the packable src/SharedKernel projects that none of them reaches.</summary>
     public static string[] FindUnreachedPackableProjects()
     {
         var repositoryRoot = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();

@@ -1,5 +1,7 @@
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Tests the transaction-scoped PostgreSQL advisory lock.</summary>
+/// <param name="fixture">The shared PostgreSQL test server fixture that supplies the per-test database.</param>
 public sealed class PostgreSqlTransactionAdvisoryLockTests(PostgreSqlTestServerFixture fixture)
     : PostgreSqlDatabaseTestBase(fixture)
 {

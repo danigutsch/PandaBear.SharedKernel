@@ -5,8 +5,14 @@ using PandaBear.EntityFrameworkCore;
 
 namespace PandaBear.Domain.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// Builds service providers for the order domain-event dispatch tests.
+/// </summary>
 internal static class OrderServices
 {
+    /// <summary>
+    /// Builds a provider with the given dispatcher, domain-event dispatch and an in-memory OrderDbContext, optionally adding an interceptor that runs after dispatch.
+    /// </summary>
     public static ServiceProvider BuildProvider(RecordingDomainEventDispatcher dispatcher, SaveChangesInterceptor? afterDispatch = null)
     {
         var services = new ServiceCollection();

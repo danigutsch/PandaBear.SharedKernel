@@ -5,6 +5,10 @@ using PandaBear.Testing;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// PostgreSQL tests of EfCoreCommandTransactionScope committing, rolling back and joining transactions.
+/// </summary>
+/// <param name="fixture">Shared PostgreSQL fixture that supplies the isolated database.</param>
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.DatabaseIntegrationCategory)]
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.CommandTransactionScopeCapability)]
 [SuppressMessage(
@@ -19,12 +23,18 @@ public sealed class EfCoreCommandTransactionScopeTests(PostgreSqlFixture fixture
     private NpgsqlDataSource DataSource =>
         dataSource ?? throw new InvalidOperationException("PostgreSQL test database is not initialized.");
 
+    /// <summary>
+    /// Creates an isolated PostgreSQL database and opens a data source on it.
+    /// </summary>
     public async ValueTask InitializeAsync()
     {
         database = await fixture.CreateIsolatedDatabase(TestContext.Current.CancellationToken);
         dataSource = database.CreateDataSource(nameof(EfCoreCommandTransactionScopeTests));
     }
 
+    /// <summary>
+    /// Disposes the data source and releases the isolated database.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         var currentDataSource = dataSource;

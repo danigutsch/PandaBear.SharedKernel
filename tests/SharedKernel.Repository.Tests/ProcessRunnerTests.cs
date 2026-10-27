@@ -4,6 +4,7 @@ using PandaBear.Testing;
 
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Guards how the CI tool runs child processes: output capture, failures, cancellation, timeouts, and Git environment cleanup.</summary>
 public sealed class ProcessRunnerTests
 {
     [Fact]

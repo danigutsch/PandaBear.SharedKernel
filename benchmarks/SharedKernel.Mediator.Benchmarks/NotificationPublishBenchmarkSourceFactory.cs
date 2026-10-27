@@ -8,15 +8,10 @@ namespace PandaBear.Mediator.Benchmarks;
 /// </summary>
 internal static class NotificationPublishBenchmarkSourceFactory
 {
-    /// <summary>Handler mode in which notification handlers declare an explicit order.</summary>
     public const string OrderedHandlers = "Ordered";
-    /// <summary>Handler mode in which notification handlers declare no order.</summary>
     public const string UnorderedHandlers = "Unordered";
-    /// <summary>Publish strategy that invokes handlers one after another.</summary>
     public const string SequentialStrategy = "Sequential";
-    /// <summary>Publish strategy that invokes handlers concurrently.</summary>
     public const string ParallelStrategy = "Parallel";
-    /// <summary>Number of handlers used by default when benchmarking failing handlers.</summary>
     public const int DefaultFailureHandlerCount = 10;
 
     private const string DoubleIndent = "        ";

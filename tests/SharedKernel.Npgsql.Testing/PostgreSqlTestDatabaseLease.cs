@@ -44,6 +44,7 @@ public sealed class PostgreSqlTestDatabaseLease : IAsyncDisposable
         get;
     }
 
+    /// <summary>Creates the named database on the server and opens a data source for it, dropping the database again if any later step fails.</summary>
     [SuppressMessage(
         "Security",
         "CA2100:Review SQL queries for security vulnerabilities",
@@ -150,6 +151,7 @@ public sealed class PostgreSqlTestDatabaseLease : IAsyncDisposable
             }).ConfigureAwait(false);
     }
 
+    /// <summary>Force-drops the named fixture-owned database through the given server connection string, rejecting names the fixture did not issue before connecting.</summary>
     [SuppressMessage(
         "Security",
         "CA2100:Review SQL queries for security vulnerabilities",

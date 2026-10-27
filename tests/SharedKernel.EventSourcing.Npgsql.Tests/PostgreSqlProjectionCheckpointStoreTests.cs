@@ -1,5 +1,7 @@
 namespace PandaBear.EventSourcing.Npgsql.Tests;
 
+/// <summary>Tests saving and reading projection checkpoints in the PostgreSQL checkpoint store.</summary>
+/// <param name="fixture">The shared PostgreSQL test server fixture that supplies the per-test database.</param>
 public sealed class PostgreSqlProjectionCheckpointStoreTests(PostgreSqlTestServerFixture fixture)
     : PostgreSqlDatabaseTestBase(fixture)
 {

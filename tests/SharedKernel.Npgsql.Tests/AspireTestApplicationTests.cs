@@ -4,6 +4,8 @@ using PandaBear.IntegrationTesting;
 
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Tests how AspireTestApplication configures container endpoints and application teardown.</summary>
+/// <param name="fixture">The shared PostgreSQL test server fixture whose server the tests connect to.</param>
 public sealed class AspireTestApplicationTests(PostgreSqlTestServerFixture fixture)
 {
     // Aspire allocates proxyless ports outside the OS ephemeral range, and mixing a DCP-reserved proxy target port with a

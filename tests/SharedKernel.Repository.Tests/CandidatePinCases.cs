@@ -5,6 +5,7 @@ namespace PandaBear.Repository.Tests;
 /// <summary>Writes the invalid pins that stage-candidate must reject before it runs Git or changes a file.</summary>
 internal static class CandidatePinCases
 {
+    /// <summary>Writes a pin file that is invalid in the way the named scenario describes, such as an oversized, malformed, commented, duplicated, mis-hashed or wrongly named pin, and throws ArgumentOutOfRangeException for an unknown scenario.</summary>
     public static void Write(CandidateStagingScope scope, string scenario)
     {
         ArgumentNullException.ThrowIfNull(scope);

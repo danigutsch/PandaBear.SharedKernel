@@ -1,5 +1,6 @@
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Tests how a PostgreSQL test server is borrowed from a connection string in the environment.</summary>
 public sealed class PostgreSqlTestServerBorrowTests
 {
     [Fact]

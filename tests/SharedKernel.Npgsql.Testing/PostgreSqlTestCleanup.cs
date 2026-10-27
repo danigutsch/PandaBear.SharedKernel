@@ -3,8 +3,10 @@ using System.Runtime.ExceptionServices;
 
 namespace PandaBear.Npgsql.Testing;
 
+/// <summary>Runs test cleanup actions so that every action is attempted and no failure is lost.</summary>
 internal static class PostgreSqlTestCleanup
 {
+    /// <summary>Runs every cleanup action in order after an optional operation failure, then rethrows a single failure as is or several wrapped in an AggregateException with the operation failure first.</summary>
     [SuppressMessage(
         "Design",
         "CA1031:Do not catch general exception types",

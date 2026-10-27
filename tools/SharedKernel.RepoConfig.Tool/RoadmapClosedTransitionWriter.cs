@@ -3,10 +3,8 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
-/// <summary>Writes approved closed-item transitions into the roadmap reconciliation manifest.</summary>
 internal static class RoadmapClosedTransitionWriter
 {
-    /// <summary>Adds approved transitions to the manifest's closedItemTransitions array, rejecting invalid or conflicting entries, and returns the updated manifest text.</summary>
     public static string AddToManifest(
         string manifestContent,
         IReadOnlyList<RoadmapClosedItemTransition> approvedTransitions)

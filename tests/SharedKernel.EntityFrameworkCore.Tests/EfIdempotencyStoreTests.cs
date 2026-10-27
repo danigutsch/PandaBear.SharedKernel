@@ -4,6 +4,9 @@ using PandaBear.Idempotency.EntityFrameworkCore;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// Tests EfIdempotencyStore and IdempotencyEntryEntity against an in-memory context.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IdempotencyCapability)]
 public sealed class EfIdempotencyStoreTests

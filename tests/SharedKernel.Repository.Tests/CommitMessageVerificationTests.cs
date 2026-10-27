@@ -1,5 +1,6 @@
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Guards the <c>verify-commit-message</c> command for pull request events and commit message files.</summary>
 public sealed class CommitMessageVerificationTests
 {
     private const string TitleError = "PR title must be a Conventional Commit header of at most 100 characters.";

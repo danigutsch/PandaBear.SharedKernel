@@ -4,6 +4,7 @@ using PandaBear.Testing;
 
 namespace PandaBear.Repository.Tests;
 
+/// <summary>A temporary directory that holds a copy of the setup script and a fake <c>dotnet</c> that logs each call and exits with a configured code.</summary>
 internal sealed class SetupScriptTestScope : IDisposable
 {
     private readonly TemporaryDirectory directory = new();
@@ -11,6 +12,7 @@ internal sealed class SetupScriptTestScope : IDisposable
     private readonly string outside;
     private readonly string script;
 
+    /// <summary>Copies setup-dev.sh, or setup-dev.ps1 on Windows, into a root whose name contains a space and writes a fake <c>dotnet</c> that logs its directory and arguments and exits with the code in the environment for restore or build.</summary>
     public SetupScriptTestScope()
     {
         Root = Path.Combine(directory.Path, "sharedkernel setup");
@@ -48,16 +50,19 @@ internal sealed class SetupScriptTestScope : IDisposable
         File.SetUnixFileMode(fakeDotnet, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
     }
 
+    /// <summary>Gets the directory that holds the copied script, which the script must treat as the repository root.</summary>
     public string Root
     {
         get;
     }
 
+    /// <summary>Gets the file to which the fake <c>dotnet</c> appends one line per call, as the working directory and the arguments.</summary>
     public string LogPath
     {
         get;
     }
 
+    /// <summary>Runs the script from a directory outside the checkout with the fake <c>dotnet</c> first on PATH, so restore and build exit with the given codes.</summary>
     public Task<CiTestSelectionTestProcess.ProcessResult> Run(int restoreExitCode, int buildExitCode, CancellationToken ct)
     {
         string[] arguments = OperatingSystem.IsWindows()
@@ -79,5 +84,6 @@ internal sealed class SetupScriptTestScope : IDisposable
             });
     }
 
+    /// <inheritdoc />
     public void Dispose() => directory.Dispose();
 }

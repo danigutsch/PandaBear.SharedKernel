@@ -1,5 +1,6 @@
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Guards the <c>verify-restore-warnings</c> command, which fails on high and critical NuGet vulnerability warnings and reports the rest.</summary>
 public sealed class RestoreWarningVerificationTests
 {
     private const string High = "/r/src/A/A.csproj : warning NU1903: Package 'System.Foo' 1.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-aaaa-bbbb-cccc [/r/App.slnx]";

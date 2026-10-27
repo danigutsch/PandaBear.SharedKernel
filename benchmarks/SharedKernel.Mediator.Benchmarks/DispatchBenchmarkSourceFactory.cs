@@ -8,21 +8,13 @@ namespace PandaBear.Mediator.Benchmarks;
 /// </summary>
 internal static class DispatchBenchmarkSourceFactory
 {
-    /// <summary>Request shape that uses a class.</summary>
     public const string ClassShape = "Class";
-    /// <summary>Request shape that uses a record class.</summary>
     public const string RecordClassShape = "RecordClass";
-    /// <summary>Request shape that uses a struct.</summary>
     public const string StructShape = "Struct";
-    /// <summary>Request shape that uses a readonly record struct.</summary>
     public const string ReadonlyRecordStructShape = "ReadonlyRecordStruct";
-    /// <summary>Pipeline depth with no pipeline behaviors.</summary>
     public const int NoPipelineCount = 0;
-    /// <summary>Pipeline depth with one pipeline behavior.</summary>
     public const int OnePipelineCount = 1;
-    /// <summary>Pipeline depth with three pipeline behaviors.</summary>
     public const int ThreePipelineCount = 3;
-    /// <summary>Pipeline depth with ten pipeline behaviors.</summary>
     public const int TenPipelineCount = 10;
 
     /// <summary>

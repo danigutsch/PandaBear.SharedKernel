@@ -1,5 +1,6 @@
 namespace PandaBear.EventSourcing.Tests;
 
+/// <summary>Tests the stream id, stream revision, expected revision, envelope and checkpoint value types.</summary>
 public sealed class EventSourcingValueTests
 {
     [Fact]

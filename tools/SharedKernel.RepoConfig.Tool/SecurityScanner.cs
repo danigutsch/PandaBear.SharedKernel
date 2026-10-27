@@ -6,16 +6,13 @@ using PandaBear.Tooling;
 
 namespace PandaBear.RepoConfig.Tool;
 
-/// <summary>Runs Gitleaks over the repository and moves its validated SARIF report to the destination.</summary>
 internal static class SecurityScanner
 {
-    /// <summary>Runs Gitleaks resolved from PATH with the real process runner.</summary>
     public static Task<int> Run(string root, string destination, TextWriter output, TextWriter error, CancellationToken cancellationToken) =>
         Run(root, destination, output, error,
             ExecutableResolver.Resolve("gitleaks", Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows()),
             RunProcess, cancellationToken);
 
-    /// <summary>Runs the scan with an injected executable and process runner, validates the SARIF report, and returns 0 for no findings, 1 for findings, 3 for scanner failure.</summary>
     internal static async Task<int> Run(
         string root, string destination, TextWriter output, TextWriter error, string? executable,
         Func<ProcessStartInfo, CancellationToken, Task<int>> runProcess, CancellationToken cancellationToken)

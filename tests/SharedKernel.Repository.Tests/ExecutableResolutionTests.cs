@@ -1,5 +1,6 @@
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Guards how the CI tool finds the <c>git</c> executable.</summary>
 public sealed class ExecutableResolutionTests
 {
     [Theory]

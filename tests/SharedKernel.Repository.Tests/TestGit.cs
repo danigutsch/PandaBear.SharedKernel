@@ -28,6 +28,7 @@ internal static class TestGit
         return (await Run(directory, ["rev-parse", "HEAD"], ct)).Trim();
     }
 
+    /// <summary>Runs <c>git</c> with <paramref name="arguments"/> in <paramref name="directory"/> and returns its standard output, or throws an <see cref="InvalidOperationException"/> that carries the standard error when Git exits with a non-zero code.</summary>
     public static async Task<string> Run(string directory, string[] arguments, CancellationToken ct)
     {
         var result = await CiTestSelectionTestProcess.Run("git", directory, arguments, ct, Environment);

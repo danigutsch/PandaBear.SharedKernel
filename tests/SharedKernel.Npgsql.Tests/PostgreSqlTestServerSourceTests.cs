@@ -1,5 +1,6 @@
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Tests PostgreSqlTestServerSource, which starts an owned server on first demand or borrows one named in the environment.</summary>
 public sealed class PostgreSqlTestServerSourceTests
 {
     [Fact]

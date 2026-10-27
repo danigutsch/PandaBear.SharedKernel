@@ -3,6 +3,7 @@ using System.Net.Sockets;
 
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Helpers for finding loopback ports in tests.</summary>
 internal static class LoopbackPorts
 {
     /// <summary>Returns a loopback port on which nothing listens, because the listener that found it is already closed.</summary>

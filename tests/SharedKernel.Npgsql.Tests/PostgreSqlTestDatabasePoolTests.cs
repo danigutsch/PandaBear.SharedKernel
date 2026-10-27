@@ -1,5 +1,7 @@
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Tests the test database pool created from a fixed server connection string.</summary>
+/// <param name="fixture">The shared PostgreSQL test server fixture that leases the bootstrap and test databases.</param>
 public sealed class PostgreSqlTestDatabasePoolTests(PostgreSqlTestServerFixture fixture)
 {
     [Fact]

@@ -2,6 +2,9 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace PandaBear.Domain.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// Save interceptor that throws InvalidOperationException on the first SavingChangesAsync call and lets every later save through.
+/// </summary>
 internal sealed class FailOnceSaveInterceptor : SaveChangesInterceptor
 {
     private bool failed;

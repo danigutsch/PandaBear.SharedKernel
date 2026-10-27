@@ -11,10 +11,13 @@ internal sealed class ProcessLog(Func<string, string[], CancellationToken, Task<
     {
     }
 
+    /// <summary>Gets every request that reached the log, in order.</summary>
     public List<ProcessCall> Calls { get; } = [];
 
+    /// <summary>Gets each request as the file name followed by its space-joined arguments.</summary>
     public string[] Commands => [.. Calls.Select(static call => call.FileName + " " + string.Join(' ', call.Arguments))];
 
+    /// <summary>Records the request and returns the answer that the response function gives for it.</summary>
     public Task<string> Run(string fileName, string[] arguments, string workingDirectory, CancellationToken ct)
     {
         Calls.Add(new ProcessCall(fileName, arguments, workingDirectory, ct));

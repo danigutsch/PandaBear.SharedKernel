@@ -2,6 +2,9 @@ using PandaBear.Testing;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// Tests ControlledEventEnvelopePublisher.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IntegrationEventTransportCapability)]
 public sealed class ControlledEventEnvelopePublisherTests

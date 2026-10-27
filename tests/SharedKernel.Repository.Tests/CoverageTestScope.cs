@@ -13,12 +13,16 @@ namespace PandaBear.Repository.Tests;
 /// </summary>
 internal sealed class CoverageTestScope : IDisposable
 {
+    /// <summary>The 40-character commit hash that the tests pass as the <c>--base</c> option.</summary>
     public const string BaseRevision = "0123456789abcdef0123456789abcdef01234567";
 
+    /// <summary>The 40-character commit hash that the fake <c>git rev-parse HEAD</c> answers.</summary>
     public const string Revision = "89abcdef0123456789abcdef0123456789abcdef";
 
+    /// <summary>The two parent hashes, one per line, that the fake <c>git rev-parse HEAD^@</c> answers.</summary>
     public const string Parents = "1111111111111111111111111111111111111111\n2222222222222222222222222222222222222222\n";
 
+    /// <summary>Writes the coverage policy, the five-line <c>src/Core.cs</c> change, a report with <paramref name="coveredLines"/> of those lines hit, and a placeholder Release symbol file; <paramref name="conditions"/> sets the condition coverage of line 1.</summary>
     public CoverageTestScope(int coveredLines, string? conditions = null)
     {
         Repository.WriteFile(".config/sharedkernel-ci.json", Configuration(80));
@@ -30,8 +34,10 @@ internal sealed class CoverageTestScope : IDisposable
         WriteFile("src/Placeholder/bin/Release/net10.0/Placeholder.pdb", "symbols");
     }
 
+    /// <summary>Gets the temporary repository that holds the files of this scope.</summary>
     public RepositoryTestScope Repository { get; } = new();
 
+    /// <summary>Gets the root directory of <see cref="Repository"/>.</summary>
     public string Root => Repository.Root;
 
     /// <summary>Gets or sets the output of <c>git diff</c>; <see langword="null"/> makes it fail.</summary>
@@ -74,8 +80,10 @@ internal sealed class CoverageTestScope : IDisposable
         _ => Task.FromResult(Patch),
     };
 
+    /// <summary>Writes <paramref name="content"/> to <paramref name="path"/> relative to the repository root, creating missing directories.</summary>
     public void WriteFile(string path, string content) => Repository.WriteFile(path, content);
 
+    /// <summary>Returns the text of <paramref name="path"/> relative to the repository root.</summary>
     public string ReadFile(string path) => File.ReadAllText(Path.Combine(Root, path));
 
     /// <summary>Records the symbols, then verifies <c>coverage.xml</c> against <see cref="BaseRevision"/>, both with <see cref="Processes"/>.</summary>
@@ -87,6 +95,7 @@ internal sealed class CoverageTestScope : IDisposable
         return await Verify(processes, reports);
     }
 
+    /// <summary>Runs <c>coverage verify</c> with <paramref name="processes"/> against the given report paths, or <c>coverage.xml</c> when none is given, using <see cref="BaseRevision"/> and the recorded symbol evidence.</summary>
     public Task<RepositoryToolResult> Verify(ProcessLog processes, params string[] reports) =>
         RepositoryToolInvocation.Run(
             Root,
@@ -125,5 +134,6 @@ internal sealed class CoverageTestScope : IDisposable
         File.WriteAllBytes(Path.Combine(Root, "src/bin/Release/net10.0/Core.pdb"), blob.ToArray());
     }
 
+    /// <inheritdoc />
     public void Dispose() => Repository.Dispose();
 }

@@ -6,7 +6,6 @@ using PandaBear.Tooling;
 
 namespace PandaBear.RepoConfig.Tool;
 
-/// <summary>Reads git state through bounded, time-limited git processes.</summary>
 internal sealed class RoadmapGitRepository
 {
     private const int MaxErrorBytes = 16 * 1024;
@@ -16,13 +15,11 @@ internal sealed class RoadmapGitRepository
     private static readonly UTF8Encoding StrictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
     private readonly Func<ProcessStartInfo, CancellationToken, Task<RoadmapGitCommandResult>> _run;
 
-    /// <summary>Creates a repository reader that runs the real git executable.</summary>
     public RoadmapGitRepository()
         : this(RunProcess)
     {
     }
 
-    /// <summary>Creates a repository reader that runs git through the injected <paramref name="run"/> delegate.</summary>
     internal RoadmapGitRepository(
         Func<ProcessStartInfo, CancellationToken, Task<RoadmapGitCommandResult>> run)
     {
@@ -30,7 +27,6 @@ internal sealed class RoadmapGitRepository
         _run = run;
     }
 
-    /// <summary>Returns the commit SHA of HEAD in <paramref name="rootPath"/>.</summary>
     public async Task<string> ReadHead(string rootPath, CancellationToken cancellationToken)
     {
         var result = await Run(
@@ -55,7 +51,6 @@ internal sealed class RoadmapGitRepository
         return head;
     }
 
-    /// <summary>Returns the raw NUL-delimited porcelain v2 status including untracked files.</summary>
     public async Task<byte[]> ReadStatus(string rootPath, CancellationToken cancellationToken)
     {
         var result = await Run(
@@ -65,7 +60,6 @@ internal sealed class RoadmapGitRepository
         return result.StandardOutput;
     }
 
-    /// <summary>Lists the root-level entries of the tree at <paramref name="revision"/>, requiring <paramref name="rootPath"/> to be the repository root.</summary>
     public async Task<string[]> ReadCommittedRootPaths(string rootPath, string revision, CancellationToken cancellationToken)
     {
         var prefix = await RunOffline(rootPath, ["rev-parse", "--show-prefix"], cancellationToken).ConfigureAwait(false);
@@ -78,7 +72,6 @@ internal sealed class RoadmapGitRepository
         return StrictUtf8.GetString(result.StandardOutput).Split('\0', StringSplitOptions.RemoveEmptyEntries);
     }
 
-    /// <summary>Returns the bytes of the file at <paramref name="relativePath"/> in <paramref name="revision"/>.</summary>
     public async Task<byte[]> ReadCommittedFile(string rootPath, string revision, string relativePath, CancellationToken cancellationToken)
     {
         var result = await RunOffline(rootPath, ["cat-file", "blob", revision + ":" + relativePath], cancellationToken).ConfigureAwait(false);

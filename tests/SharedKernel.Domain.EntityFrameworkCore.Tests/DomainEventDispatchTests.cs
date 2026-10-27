@@ -3,6 +3,9 @@ using PandaBear.EntityFrameworkCore;
 
 namespace PandaBear.Domain.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// Tests that the domain-event dispatch save interceptor publishes events of saved aggregates through the registered dispatcher.
+/// </summary>
 public sealed class DomainEventDispatchTests
 {
     [Fact]

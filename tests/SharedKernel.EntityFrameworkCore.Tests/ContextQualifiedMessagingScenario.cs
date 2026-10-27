@@ -12,6 +12,9 @@ using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// In-memory host with two messaging contexts (first and second) carrying outbox, inbox, transport and relay registrations, with helpers to enqueue, publish and inspect their storage.
+/// </summary>
 internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
 {
     private const string FirstConsumerName = "first-consumer";
@@ -27,11 +30,17 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         this.applicationPublisher = applicationPublisher;
     }
 
+    /// <summary>
+    /// Creates the scenario with transport producers for both contexts and no first-context publisher override.
+    /// </summary>
     public static ContextQualifiedMessagingScenario Create()
     {
         return Create(firstPublisher: null, addTransportProducers: true);
     }
 
+    /// <summary>
+    /// Creates the scenario with the outbox and idempotency store defaults pointing at TContext.
+    /// </summary>
     public static ContextQualifiedMessagingScenario CreateWithDefaultsFor<TContext>()
         where TContext : DbContext
     {
@@ -42,6 +51,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         });
     }
 
+    /// <summary>
+    /// Creates the scenario with the given publisher registered as the first context's keyed envelope publisher.
+    /// </summary>
     public static ContextQualifiedMessagingScenario CreateWithFirstPublisher(IEventEnvelopePublisher firstPublisher)
     {
         ArgumentNullException.ThrowIfNull(firstPublisher);
@@ -49,6 +61,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return Create(firstPublisher, addTransportProducers: true);
     }
 
+    /// <summary>
+    /// Creates the scenario without PostgreSQL transport producers, leaving the application publisher as the only publisher.
+    /// </summary>
     public static ContextQualifiedMessagingScenario CreateWithoutTransportProducers()
     {
         return Create(firstPublisher: null, addTransportProducers: false);
@@ -152,6 +167,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         _ = scope.ServiceProvider.GetRequiredService<IIdempotencyStore>();
     }
 
+    /// <summary>
+    /// Registers a transport producer before an application publisher added with TryAdd, publishes one envelope through the unkeyed publisher and returns how many the application publisher received and how many transport messages were stored.
+    /// </summary>
     public static async ValueTask<(int ApplicationPublished, int TransportCount)> PublishWithApplicationRegisteredAfterProducer(
         CancellationToken ct)
     {
@@ -178,13 +196,22 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
             await dbContext.Set<IntegrationEventTransportMessage>().CountAsync(ct));
     }
 
+    /// <summary>
+    /// Number of envelopes the application publisher has received.
+    /// </summary>
     public int GetApplicationPublishedCount() => applicationPublisher.Published.Count;
 
+    /// <summary>
+    /// Enqueues one event in each context's keyed outbox and returns the event ids per context.
+    /// </summary>
     public ValueTask<(Guid[] First, Guid[] Second)> EnqueueInEachContext(CancellationToken ct)
     {
         return EnqueueInEachContext(1, ct);
     }
 
+    /// <summary>
+    /// Enqueues the given number of events in each context's keyed outbox, saves both contexts and returns the event ids per context.
+    /// </summary>
     public async ValueTask<(Guid[] First, Guid[] Second)> EnqueueInEachContext(int countPerContext, CancellationToken ct)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(countPerContext);
@@ -212,6 +239,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return (firstEventIds, secondEventIds);
     }
 
+    /// <summary>
+    /// Counts the outbox messages stored by each context.
+    /// </summary>
     public async ValueTask<(int First, int Second)> CountOutboxMessages(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -223,6 +253,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return (firstCount, secondCount);
     }
 
+    /// <summary>
+    /// Reads the payload of the only outbox message in each context.
+    /// </summary>
     public async ValueTask<(string? First, string? Second)> GetSingleOutboxPayloads(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -238,6 +271,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return (firstPayload, secondPayload);
     }
 
+    /// <summary>
+    /// Reads the payload of the only outbox message in the second context.
+    /// </summary>
     public async ValueTask<string?> GetSecondOutboxPayload(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -248,6 +284,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
             .SingleAsync(ct);
     }
 
+    /// <summary>
+    /// Enqueues an event through the domain-event outbox while the second context is the current save context, then saves that context.
+    /// </summary>
     public async ValueTask EnqueueDomainEventInSecondContext(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -265,6 +304,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         _ = await dbContext.SaveChangesAsync(ct);
     }
 
+    /// <summary>
+    /// Starts one idempotent operation in each context's keyed idempotency store.
+    /// </summary>
     public async ValueTask StartIdempotentOperationsInEachContext(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -276,6 +318,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         _ = await secondStore.TryStart(CreateOperation("second"), startedAt, null, ct);
     }
 
+    /// <summary>
+    /// Counts the idempotency entries stored by each context.
+    /// </summary>
     public async ValueTask<(int First, int Second)> CountIdempotencyEntries(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -287,6 +332,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return (firstCount, secondCount);
     }
 
+    /// <summary>
+    /// Publishes one envelope through each context's keyed publisher and saves both contexts.
+    /// </summary>
     public async ValueTask PublishTransportMessagesInEachContext(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -301,6 +349,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         _ = await secondDbContext.SaveChangesAsync(ct);
     }
 
+    /// <summary>
+    /// Reads the consumer name of the only transport message in each context.
+    /// </summary>
     public async ValueTask<(string First, string Second)> GetTransportDestinations(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -316,6 +367,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return (firstDestination, secondDestination);
     }
 
+    /// <summary>
+    /// Reads the event id of the only transport message in each context.
+    /// </summary>
     public async ValueTask<(string First, string Second)> GetTransportEventIds(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -331,6 +385,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return (firstEventId, secondEventId);
     }
 
+    /// <summary>
+    /// Publishes one envelope through the unkeyed publisher and returns how many the application publisher received and how many transport messages each context stored.
+    /// </summary>
     public async ValueTask<(int ApplicationPublished, int FirstTransport, int SecondTransport)> PublishThroughApplicationPublisher(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -345,6 +402,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
             await secondDbContext.Set<IntegrationEventTransportMessage>().CountAsync(ct));
     }
 
+    /// <summary>
+    /// Resolves both PostgreSQL transport consumers and returns the batch size configured for each context.
+    /// </summary>
     public (int First, int Second) GetTransportConsumerBatchSizes()
     {
         _ = provider.GetRequiredService<PostgreSqlIntegrationEventTransportConsumer<FirstMessagingDbContext>>();
@@ -356,6 +416,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
             options.Get(IntegrationEventOptionsNames.Consumer<SecondMessagingDbContext>()).BatchSize);
     }
 
+    /// <summary>
+    /// Enqueues one event per context, runs each context's relay for one message and returns the enqueued event ids.
+    /// </summary>
     public async ValueTask<(Guid First, Guid Second)> PublishEachOutboxThroughItsRelay(CancellationToken ct)
     {
         var eventIds = await EnqueueInEachContext(ct);
@@ -367,6 +430,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return (eventIds.First[0], eventIds.Second[0]);
     }
 
+    /// <summary>
+    /// Enqueues one event in the first context's outbox and saves it.
+    /// </summary>
     public async ValueTask EnqueueInFirstContext(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -378,6 +444,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         _ = await dbContext.SaveChangesAsync(ct);
     }
 
+    /// <summary>
+    /// Runs the first context's relay for one message and returns the number published.
+    /// </summary>
     public async ValueTask<int> PublishFirstRelay(CancellationToken ct)
     {
         var relay = provider.GetRequiredService<EfIntegrationEventOutboxRelay<FirstMessagingDbContext>>();
@@ -385,6 +454,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return await relay.PublishPending(1, ct);
     }
 
+    /// <summary>
+    /// Reads the published time, attempts, last error and claim owner and expiry of the first context's only outbox message.
+    /// </summary>
     public async ValueTask<(DateTimeOffset? PublishedAt, int Attempts, string? LastError, string? ClaimedBy, DateTimeOffset? ClaimedUntil)> GetFirstOutboxState(CancellationToken ct)
     {
         await using var scope = provider.CreateAsyncScope();
@@ -394,6 +466,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return (message.PublishedAt, message.PublishAttempts, message.LastPublishError, message.ClaimedBy, message.ClaimedUntil);
     }
 
+    /// <summary>
+    /// Enqueues two events per context, publishes with each relay's own options and returns the transport message count per context.
+    /// </summary>
     public async ValueTask<(int First, int Second)> PublishUsingContextRelayOptions(CancellationToken ct)
     {
         await EnqueueInEachContext(2, ct);
@@ -411,6 +486,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return (firstCount, secondCount);
     }
 
+    /// <summary>
+    /// Reads the outbox, transport and inbox schema and table names mapped for the first context.
+    /// </summary>
     public async ValueTask<(string OutboxSchema, string OutboxTable, string TransportSchema, string TransportTable, string InboxSchema, string InboxTable)> GetFirstStorageMappings()
     {
         await using var scope = provider.CreateAsyncScope();
@@ -419,6 +497,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return GetStorageMappings(dbContext);
     }
 
+    /// <summary>
+    /// Reads the outbox, transport and inbox schema and table names mapped for the second context.
+    /// </summary>
     public async ValueTask<(string OutboxSchema, string OutboxTable, string TransportSchema, string TransportTable, string InboxSchema, string InboxTable)> GetSecondStorageMappings()
     {
         await using var scope = provider.CreateAsyncScope();
@@ -427,6 +508,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return GetStorageMappings(dbContext);
     }
 
+    /// <summary>
+    /// Reads the outbox, transport and inbox schema and table names mapped for a context registered with default storage options.
+    /// </summary>
     public static async ValueTask<(string OutboxSchema, string OutboxTable, string TransportSchema, string TransportTable, string InboxSchema, string InboxTable)> GetDefaultStorageMappings()
     {
         var services = new ServiceCollection();
@@ -448,6 +532,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return GetStorageMappings(dbContext);
     }
 
+    /// <summary>
+    /// Registers separate outbox and transport schemas, then returns the mapped schema and table names and the PostgreSQL claim SQL for each.
+    /// </summary>
     public static async ValueTask<(string OutboxSchema, string OutboxTable, string TransportSchema, string TransportTable, string OutboxSql, string TransportSql)> GetSplitSchemaStorage()
     {
         var services = new ServiceCollection();
@@ -486,6 +573,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
             PostgreSqlIntegrationEventTransportClaimSql.CreateClaimSql(transport));
     }
 
+    /// <summary>
+    /// Reports whether a split-schema transport table is excluded from migrations.
+    /// </summary>
     public static async ValueTask<bool> IsSplitSchemaTransportExcludedFromMigrations()
     {
         var services = new ServiceCollection();
@@ -513,6 +603,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return transport.IsTableExcludedFromMigrations();
     }
 
+    /// <summary>
+    /// Returns the PostgreSQL claim SQL generated for the outbox and transport tables of each context.
+    /// </summary>
     public async ValueTask<(string FirstOutbox, string FirstTransport, string SecondOutbox, string SecondTransport)> GetClaimSql()
     {
         await using var scope = provider.CreateAsyncScope();
@@ -549,6 +642,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         IdempotencyScope.From("sharedkernel.tests.composed"),
         IdempotencyKey.From(key));
 
+    /// <summary>
+    /// Disposes the service provider.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         await provider.DisposeAsync();

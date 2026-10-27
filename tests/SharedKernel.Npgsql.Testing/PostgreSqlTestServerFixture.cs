@@ -34,6 +34,7 @@ public abstract class PostgreSqlTestServerFixture : IAsyncLifetime
     {
     }
 
+    /// <summary>Creates a fixture that reads the borrowed server's connection string through the given environment reader.</summary>
     internal PostgreSqlTestServerFixture(Func<string, string?> readEnvironment)
     {
         // CreateBuilder runs on the first demand, never while the fixture is constructed.
@@ -52,12 +53,16 @@ public abstract class PostgreSqlTestServerFixture : IAsyncLifetime
     /// <inheritdoc />
     public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
+    /// <summary>Leases a new isolated database, resolving the server on first use.</summary>
     internal Task<PostgreSqlTestDatabaseLease> CreateDatabase(CancellationToken ct) => _databases.Create(ct);
 
+    /// <summary>Gets the names of the databases this fixture created and has not yet dropped.</summary>
     internal IReadOnlyCollection<string> OwnedDatabaseNames => _databases.OwnedDatabaseNames;
 
+    /// <summary>Resolves the server on first use and returns its connection string.</summary>
     internal Task<string> GetServerConnectionString(CancellationToken ct) => _server.GetConnectionString(ct);
 
+    /// <summary>Returns whether a database with the given name currently exists on the server.</summary>
     internal async Task<bool> DatabaseExists(string databaseName, CancellationToken ct)
     {
         var administrativeConnectionString = new NpgsqlConnectionStringBuilder(await _server.GetConnectionString(ct))

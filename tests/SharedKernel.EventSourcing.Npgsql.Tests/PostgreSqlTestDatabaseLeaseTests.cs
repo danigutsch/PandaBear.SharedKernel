@@ -1,5 +1,6 @@
 namespace PandaBear.EventSourcing.Npgsql.Tests;
 
+/// <summary>Tests the name validation performed before a leased test database is dropped.</summary>
 public sealed class PostgreSqlTestDatabaseLeaseTests
 {
     [Theory]

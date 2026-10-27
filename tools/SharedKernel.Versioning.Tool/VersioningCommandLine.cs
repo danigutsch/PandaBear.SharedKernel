@@ -4,7 +4,6 @@ using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tool;
 
-/// <summary>Builds the command line of the versioning tool.</summary>
 internal static class VersioningCommandLine
 {
     private const int CommandFailed = 2;
@@ -14,7 +13,6 @@ internal static class VersioningCommandLine
     private const string BaselineVersionDescription =
         "Published package version to compare APIs against. Requires PandaBear.SharedKernel.* mapped only to an existing local feed in NuGet.Config.";
 
-    /// <summary>Creates the root command with all versioning subcommands, reading piped input from <paramref name="input"/>.</summary>
     public static RootCommand Create(TextReader input, TimeProvider timeProvider)
     {
         ArgumentNullException.ThrowIfNull(input);

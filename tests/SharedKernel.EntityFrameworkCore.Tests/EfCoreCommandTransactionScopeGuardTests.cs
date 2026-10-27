@@ -2,6 +2,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// Tests the argument and provider guards of EfCoreCommandTransactionScope.Execute.
+/// </summary>
 public sealed class EfCoreCommandTransactionScopeGuardTests
 {
     [Fact]

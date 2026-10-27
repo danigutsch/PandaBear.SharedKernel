@@ -1,10 +1,7 @@
 namespace PandaBear.RepoConfig.Tool;
 
-/// <summary>Creates the default roadmap configuration files.</summary>
 internal static class RepoConfigInitializer
 {
-    /// <summary>Creates the missing default files and returns the relative paths created.</summary>
-    /// <param name="rootPath">Repository root.</param>
     public static IReadOnlyList<string> Initialize(string rootPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);

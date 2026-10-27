@@ -2,6 +2,10 @@ using PandaBear.Testing;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// PostgreSQL tests of integration event transport claiming, duplicate rejection, consuming, retries and poison handling.
+/// </summary>
+/// <param name="fixture">Shared PostgreSQL fixture that supplies the isolated database.</param>
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.DatabaseIntegrationCategory)]
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IntegrationEventTransportCapability)]
 public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture fixture) : IAsyncLifetime
@@ -11,11 +15,17 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
     private PostgreSqlIntegrationEventTransportScenario Scenario =>
         scenario ?? throw new InvalidOperationException("Test scenario is not initialized.");
 
+    /// <summary>
+    /// Creates the PostgreSQL transport scenario for the test.
+    /// </summary>
     public async ValueTask InitializeAsync()
     {
         scenario = await PostgreSqlIntegrationEventTransportScenario.Create(fixture, TestContext.Current.CancellationToken);
     }
 
+    /// <summary>
+    /// Disposes the scenario created for the test, if any.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         var currentScenario = scenario;

@@ -3,6 +3,7 @@ using PandaBear.Npgsql.Testing.Host;
 
 namespace PandaBear.Npgsql.Tests;
 
+/// <summary>Tests ShutdownRequest, which turns the end of standard input or a termination signal into a single stop request for the owner host.</summary>
 public sealed class ShutdownRequestTests
 {
     private static readonly TimeSpan Patience = TimeSpan.FromSeconds(30);

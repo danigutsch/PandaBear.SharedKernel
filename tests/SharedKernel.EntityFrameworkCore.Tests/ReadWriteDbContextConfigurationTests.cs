@@ -3,6 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
+/// <summary>
+/// Tests the read and write DbContext configuration baselines and how they compose.
+/// </summary>
 public sealed class ReadWriteDbContextConfigurationTests
 {
     [Fact]

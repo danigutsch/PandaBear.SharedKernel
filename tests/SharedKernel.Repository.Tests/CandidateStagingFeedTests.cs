@@ -2,6 +2,7 @@ using System.Text;
 
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Tests staging pinned candidate packages from a local feed directory into the output directory.</summary>
 public sealed class CandidateStagingFeedTests
 {
     [Fact]

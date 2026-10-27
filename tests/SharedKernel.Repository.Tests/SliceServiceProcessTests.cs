@@ -18,6 +18,7 @@ public sealed class SliceServiceProcessTests
         + FakeServiceHost.WaitForEndOfInput
         + "sleep 4\n: > \"$FAKE_MARKERS/service.stopped\"\n";
 
+    /// <summary>Terminates the tool while a service that needs four seconds to stop is running and expects the service's stop marker, exit code 1, no ready-file directory left, and the full set of phase timings, including a failed test phase and a passed service stop.</summary>
     [PosixFact]
     public async Task A_signal_gives_the_service_the_time_it_needs_to_stop_and_the_run_still_writes_its_evidence()
     {
@@ -40,6 +41,7 @@ public sealed class SliceServiceProcessTests
             "The evidence of a cancelled run is written, so the job can upload it.");
     }
 
+    /// <summary>Starts the tool with <c>GH_TOKEN</c>, <c>GITHUB_TOKEN</c>, and <c>github_token</c> set and expects exit code 0, none of those names in the service's recorded environment, and an unrelated variable still present.</summary>
     [PosixFact]
     public async Task Tokens_in_the_environment_of_the_tool_never_reach_the_service()
     {

@@ -4,13 +4,16 @@ using System.Diagnostics.Metrics;
 
 namespace PandaBear.EventSourcing.Npgsql.Tests;
 
+/// <summary>Shared helpers for the PostgreSQL event store tests: option creation, append capture and telemetry listeners.</summary>
 internal static class PostgreSqlEventStoreTestsHelpers
 {
+    /// <summary>Creates options whose schema name is a fresh GUID-based name so each test works in isolated tables.</summary>
     public static PostgreSqlEventSourcingOptions CreateOptions() => new()
     {
         Schema = $"es_{Guid.NewGuid():N}",
     };
 
+    /// <summary>Appends one event expecting a new stream and returns the revision conflict exception if it occurs, or null if the append succeeded.</summary>
     public static async Task<Exception?> CaptureAppendResult(
         PostgreSqlEventStore store,
         StreamId streamId,
@@ -32,6 +35,7 @@ internal static class PostgreSqlEventStoreTestsHelpers
         }
     }
 
+    /// <summary>Appends one event to and loads a new stream while listening for activities and metrics, returning those stopped under its own root activity and tagged with the options' schema.</summary>
     public static async Task<(Activity[] Activities, string[] Measurements)> CaptureTelemetry(
         string connectionString,
         PostgreSqlEventSourcingOptions options,
@@ -57,6 +61,7 @@ internal static class PostgreSqlEventStoreTestsHelpers
         return ([.. stoppedActivities], [.. measurements]);
     }
 
+    /// <summary>Creates and registers a listener that queues stopped activities from the event sourcing activity source whose trace and parent span match the given root activity.</summary>
     public static ActivityListener CreateActivityListener(
         ConcurrentQueue<Activity> stoppedActivities,
         Activity rootActivity)
@@ -82,6 +87,7 @@ internal static class PostgreSqlEventStoreTestsHelpers
         return listener;
     }
 
+    /// <summary>Creates and starts a listener that queues the instrument name of each double or long measurement from the event sourcing meter tagged with the given schema.</summary>
     public static MeterListener CreateMeterListener(
         ConcurrentQueue<string> measurements,
         string schema)
@@ -115,6 +121,7 @@ internal static class PostgreSqlEventStoreTestsHelpers
         return listener;
     }
 
+    /// <summary>Returns whether the activity has a tag with the given key whose value equals the expected value.</summary>
     public static bool HasTag(Activity activity, string key, object expectedValue)
     {
         foreach (var tag in activity.TagObjects)

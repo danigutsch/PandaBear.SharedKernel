@@ -15,6 +15,7 @@ public sealed class SliceServiceTests
 
     private static readonly string HostReady = FakeServiceHost.Ready(ServiceRunScope.Value) + FakeServiceHost.WaitForEndOfInput;
 
+    /// <summary>Runs the database slice and expects locked restore, build, and test with the service running, its private directory present, and its ready file already deleted during the test phase, the phases in order, and the service stopped at the end.</summary>
     [PosixFact]
     public async Task The_service_starts_after_the_build_serves_the_test_phase_and_is_stopped_after_it()
     {
@@ -53,6 +54,7 @@ public sealed class SliceServiceTests
         run.Host.IsRunning(Database).ShouldBeFalse();
     }
 
+    /// <summary>Runs the database slice and expects only the test call to receive the value variable and no ready-file variable, and the service to receive only the ready-file variable.</summary>
     [PosixFact]
     public async Task Only_the_test_phase_receives_the_value_and_the_service_receives_only_the_ready_file()
     {
@@ -73,6 +75,7 @@ public sealed class SliceServiceTests
         service.ContainsKey("FAKE_SERVICE_VALUE").ShouldBeFalse("The service never receives the value it hands over.");
     }
 
+    /// <summary>Makes the test output print the service value and expects the value in no file under the plan directory and in neither output stream, with <c>[redacted]</c> in its place in standard error and test.log.</summary>
     [PosixFact]
     public async Task The_value_is_in_no_file_and_no_message_even_when_the_tests_print_it()
     {
@@ -94,6 +97,7 @@ public sealed class SliceServiceTests
         (await File.ReadAllTextAsync(Path.Combine(run.Execution, "test.log"), ct)).ShouldBe("connected to [redacted]" + Environment.NewLine);
     }
 
+    /// <summary>Makes the test command fail with an error that contains the service value and expects exit code 2, the value in no file and in neither stream, and the error text kept with the value replaced by <c>[redacted]</c>.</summary>
     [PosixFact]
     public async Task The_value_is_in_no_file_and_no_message_when_the_tests_fail_and_print_it()
     {
@@ -116,6 +120,7 @@ public sealed class SliceServiceTests
         result.Error.ShouldContain("[redacted]", StringComparison.Ordinal);
     }
 
+    /// <summary>Reads the ready-file path the service was given and expects an absolute path outside both the execution directory and the repository, and neither the file nor its directory left after the run.</summary>
     [PosixFact]
     public async Task The_ready_file_is_in_a_private_directory_outside_the_execution_directory_and_is_deleted()
     {
@@ -135,6 +140,7 @@ public sealed class SliceServiceTests
         Directory.Exists(Path.GetDirectoryName(readyFile)).ShouldBeFalse();
     }
 
+    /// <summary>Runs a service that prints to both streams and expects the text in service-database stdout and stderr log files, the phase log to name both files, and the manifest to list the service phases between build and test.</summary>
     [PosixFact]
     public async Task The_service_output_streams_to_log_files_that_the_phase_names()
     {
@@ -157,6 +163,7 @@ public sealed class SliceServiceTests
             .ShouldBe(["load", "restore", "build", "service-database", "test", "service-stop-database"]);
     }
 
+    /// <summary>Runs a service that prints <c>boom</c> to standard error and exits with 4 before writing its value and expects exit code 2, the exit code and both log paths in the error, no test run, and only the service phase failed.</summary>
     [PosixFact]
     public async Task A_service_that_exits_before_it_is_ready_fails_the_run_with_its_exit_code_and_its_log_files()
     {
@@ -180,6 +187,7 @@ public sealed class SliceServiceTests
         Directory.Exists(Path.GetDirectoryName(run.ReadyFile)).ShouldBeFalse();
     }
 
+    /// <summary>Runs a service that never writes its value with a one-second ready timeout and expects exit code 2, a timeout message, no test run, the service stopped, and its directory removed.</summary>
     [PosixFact]
     public async Task A_service_that_never_writes_its_value_times_out_and_is_stopped()
     {
@@ -200,6 +208,7 @@ public sealed class SliceServiceTests
         Directory.Exists(Path.GetDirectoryName(run.ReadyFile)).ShouldBeFalse();
     }
 
+    /// <summary>Runs a service that writes 5000 bytes to its ready file and expects exit code 2, a message about the 4096-byte limit that does not repeat the content, no test run, and the service stopped.</summary>
     [PosixFact]
     public async Task A_ready_file_larger_than_four_kibibytes_fails_the_run_without_repeating_it()
     {
@@ -221,6 +230,7 @@ public sealed class SliceServiceTests
             ["load passed", "restore passed", "build passed", "service-database failed", "service-stop-database passed", "total failed"]);
     }
 
+    /// <summary>Runs a service whose value contains a tab and expects exit code 2, a control-character message that does not repeat the value, the value in no file, and the service stopped.</summary>
     [PosixFact]
     public async Task A_value_with_a_control_character_fails_the_run_without_repeating_it()
     {
@@ -239,6 +249,7 @@ public sealed class SliceServiceTests
         run.Host.IsRunning(Database).ShouldBeFalse();
     }
 
+    /// <summary>Cancels the run after the service process has started and expects exit code 1 with no output or failure message, no test run, the service stopped, its directory removed, and the service phase recorded as failed.</summary>
     [PosixFact]
     public async Task Cancelling_while_the_service_starts_stops_it_and_records_the_failed_run()
     {
@@ -268,6 +279,7 @@ public sealed class SliceServiceTests
             ["load passed", "restore passed", "build passed", "service-database failed", "service-stop-database passed", "total failed"]);
     }
 
+    /// <summary>Makes the test command throw <c>Tests failed.</c> and expects exit code 2 with that message, the service stopped and its directory removed, and a failed test phase followed by a passed service stop.</summary>
     [PosixFact]
     public async Task A_failed_test_phase_stops_the_service_and_stays_the_reported_failure()
     {
@@ -290,6 +302,7 @@ public sealed class SliceServiceTests
             ["load passed", "restore passed", "build passed", "service-database passed", "test failed", "service-stop-database passed", "total failed"]);
     }
 
+    /// <summary>Runs a service that sleeps for 300 seconds after its input closes with a one-second stop timeout and expects exit code 2, a kill message, at least one second elapsed, the service gone, and the stop phase failed.</summary>
     [PosixFact]
     public async Task A_service_that_ignores_the_end_of_its_input_is_killed_only_after_the_stop_timeout_and_fails_the_run()
     {
@@ -313,6 +326,7 @@ public sealed class SliceServiceTests
         manifest.RootElement.GetProperty("status").GetString().ShouldBe("failed");
     }
 
+    /// <summary>Runs a service that exits with 3 after its input closes while the tests pass and expects exit code 2, a message with that exit code, and a failed service-stop phase after a passed test phase.</summary>
     [PosixFact]
     public async Task A_service_that_exits_with_an_error_after_its_input_closes_fails_an_otherwise_passing_run()
     {
@@ -330,6 +344,7 @@ public sealed class SliceServiceTests
             ["load passed", "restore passed", "build passed", "service-database passed", "test passed", "service-stop-database failed", "total failed"]);
     }
 
+    /// <summary>Lets the service exit with 5 on its own while the test command waits for it to stop and expects exit code 2 and a message that the service exited with that code before it was stopped.</summary>
     [PosixFact]
     public async Task A_service_that_crashed_while_the_tests_ran_fails_an_otherwise_passing_run()
     {
@@ -357,6 +372,7 @@ public sealed class SliceServiceTests
         result.Error.ShouldContain("The service of slice database exited with code 5 before it was stopped.", StringComparison.Ordinal);
     }
 
+    /// <summary>Fails both the tests and the service stop (exit code 3) and expects the reported error to stay the test failure, with the stop failure present only in the phase table and diagnostics file.</summary>
     [PosixFact]
     public async Task A_teardown_failure_is_recorded_without_replacing_the_failure_that_started_it()
     {
@@ -381,6 +397,7 @@ public sealed class SliceServiceTests
         diagnostics.ShouldContain("exited with code 3 after its input closed", StringComparison.Ordinal);
     }
 
+    /// <summary>Runs the library slice, which has no service, and expects no service started, the usual restore, build, and test commands, no process configuration, and only the four standard phases.</summary>
     [PosixFact]
     public async Task A_slice_without_a_service_starts_nothing_and_runs_its_tests_as_before()
     {
@@ -406,6 +423,7 @@ public sealed class SliceServiceTests
         (await ServiceRunScope.Phases(execution, ct)).ShouldBe(["load passed", "restore passed", "build passed", "test passed", "total passed"]);
     }
 
+    /// <summary>Runs the database slice and expects the generated solution filter to list the service host project and the slice's test project, because the service starts with <c>--no-build --no-restore</c>.</summary>
     [PosixFact]
     public async Task The_service_project_is_restored_and_built_with_the_slice()
     {
@@ -422,6 +440,7 @@ public sealed class SliceServiceTests
             [Database, ServiceRunScope.DatabaseTests], "The service runs with --no-build --no-restore, so the filter must restore and build it.");
     }
 
+    /// <summary>Runs the database slice in Debug and expects one service start with an absolute dotnet and the <c>run --project ... --no-build --no-restore --no-launch-profile</c> arguments, run from the root with input, output, and error redirected and no shell.</summary>
     [PosixFact]
     public async Task The_service_is_started_with_dotnet_run_on_the_built_project_with_all_three_streams_redirected()
     {
@@ -444,6 +463,7 @@ public sealed class SliceServiceTests
         started.UsesShell.ShouldBeFalse();
     }
 
+    /// <summary>Selects the database and queue slices together and expects one run with both services started in slice order and stopped in reverse order, and a single test call that receives both service values.</summary>
     [PosixFact]
     public async Task Services_of_several_slices_start_in_slice_order_share_one_test_run_and_stop_in_reverse()
     {

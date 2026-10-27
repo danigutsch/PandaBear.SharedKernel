@@ -1,5 +1,6 @@
 namespace PandaBear.Repository.Tests;
 
+/// <summary>Guards the setup script that restores and builds the solution.</summary>
 public sealed class SetupScriptTests
 {
     [Theory]

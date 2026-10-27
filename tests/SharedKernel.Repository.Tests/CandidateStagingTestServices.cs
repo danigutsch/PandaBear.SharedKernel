@@ -22,6 +22,7 @@ internal static class CandidateStagingTestServices
         return new CandidateStagingServices(git.Run, static () => new FakeReleaseServer(), TimeProvider.System, CandidateDownloadLimits.Default);
     }
 
+    /// <summary>Uses <paramref name="git"/> and <paramref name="server"/>, with an optional clock and download limits that default to the system clock and the default limits.</summary>
     public static CandidateStagingServices Create(
         CandidateGit git,
         FakeReleaseServer server,

@@ -4,15 +4,11 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
-/// <summary>Imports GitHub issues into the roadmap according to the reconciliation manifest.</summary>
 internal sealed class GitHubRoadmapIntake
 {
     private readonly HttpClient? _httpClient;
     private RoadmapProject _project;
 
-    /// <summary>Creates the intake for a project, optionally with an existing HTTP client.</summary>
-    /// <param name="project">Roadmap project to extend.</param>
-    /// <param name="httpClient">GitHub client, or <see langword="null" /> to create one from the environment.</param>
     internal GitHubRoadmapIntake(RoadmapProject project, HttpClient? httpClient)
     {
         ArgumentNullException.ThrowIfNull(project);
@@ -21,16 +17,12 @@ internal sealed class GitHubRoadmapIntake
         _httpClient = httpClient;
     }
 
-    /// <summary>Returns the messages describing the changes intake would make, without applying them.</summary>
-    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task<IReadOnlyList<string>> Preview(CancellationToken cancellationToken)
     {
         var plan = await CreatePlan(cancellationToken).ConfigureAwait(false);
         return plan.Messages(preview: true);
     }
 
-    /// <summary>Applies the intake and returns the messages describing the changes.</summary>
-    /// <param name="cancellationToken">Cancellation token.</param>
     public async Task<IReadOnlyList<string>> Apply(CancellationToken cancellationToken)
     {
         var plan = await CreatePlan(cancellationToken).ConfigureAwait(false);
