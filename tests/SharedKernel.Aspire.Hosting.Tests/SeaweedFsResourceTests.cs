@@ -27,7 +27,8 @@ public sealed class SeaweedFsResourceTests
         endpoints.ShouldAllSatisfy(endpoint => endpoint.IsExternal.ShouldBeFalse());
         endpoints.ShouldContain(endpoint => endpoint.Name == SeaweedFsResource.S3EndpointName && endpoint.TargetPort == 8333);
         endpoints.ShouldContain(endpoint => endpoint.Name == "master" && endpoint.TargetPort == 9333);
-        seaweedFs.Resource.Annotations.OfType<HealthCheckAnnotation>().ShouldHaveSingleItem().Key.ShouldBe("seaweed_master_/cluster/healthz_200_check");
+        seaweedFs.Resource.Annotations.OfType<HealthCheckAnnotation>().Select(check => check.Key).Order().ToArray().ShouldBe(
+            ["seaweed_master_/cluster/healthz_200_check", "seaweed_s3_/healthz_200_check"]);
         seaweedFs.Resource.Annotations.OfType<ContainerLifetimeAnnotation>().ShouldBeEmpty();
         seaweedFs.Resource.PrimaryEndpoint.EndpointName.ShouldBe(SeaweedFsResource.S3EndpointName);
     }
@@ -217,5 +218,59 @@ public sealed class SeaweedFsResourceTests
 
         // Assert
         action.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("bucketDefault");
+    }
+
+    [Fact]
+    public async Task WithAccessKey_replaces_the_generated_credentials_with_the_given_parameters()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var accessKey = builder.AddParameter("custom-access", "custom-access-value", secret: true);
+        var secretKey = builder.AddParameter("custom-secret", "custom-secret-value", secret: true);
+        var seaweedFs = builder.AddSeaweedFs("seaweed", "media");
+
+        // Act
+        seaweedFs.WithAccessKey(accessKey).WithSecretKey(secretKey);
+        var variables = await EnvironmentVariables.Of(seaweedFs.Resource);
+
+        // Assert
+        seaweedFs.Resource.AccessKeyParameter.ShouldBeSameAs(accessKey.Resource);
+        seaweedFs.Resource.SecretKeyParameter.ShouldBeSameAs(secretKey.Resource);
+        variables["AWS_ACCESS_KEY_ID"].ShouldBe("custom-access-value");
+        variables["AWS_SECRET_ACCESS_KEY"].ShouldBe("custom-secret-value");
+    }
+
+    [Fact]
+    public async Task AddBucket_adds_a_child_resource_and_provisions_every_bucket_at_startup()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var seaweedFs = builder.AddSeaweedFs("seaweed", "media");
+
+        // Act
+        var thumbnails = seaweedFs.AddBucket("thumbnails");
+        var exports = seaweedFs.AddBucket("exports", "export-files");
+        var variables = await EnvironmentVariables.Of(seaweedFs.Resource);
+
+        // Assert
+        thumbnails.Resource.Parent.ShouldBeSameAs(seaweedFs.Resource);
+        thumbnails.Resource.BucketName.ShouldBe("thumbnails");
+        exports.Resource.Name.ShouldBe("exports");
+        exports.Resource.BucketName.ShouldBe("export-files");
+        variables["S3_BUCKET"].ShouldBe("media,thumbnails,export-files");
+    }
+
+    [Fact]
+    public void AddBucket_rejects_a_bucket_name_that_would_break_the_comma_separated_list()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var seaweedFs = builder.AddSeaweedFs("seaweed", "media");
+
+        // Act
+        var action = () => seaweedFs.AddBucket("thumbnails", "a,b");
+
+        // Assert
+        action.ShouldThrow<ArgumentException>().ParamName.ShouldBe("bucketName");
     }
 }

@@ -284,4 +284,40 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
         // Assert
         source.ShouldContain("delete summary.setup_data", StringComparison.Ordinal);
     }
+
+    [Fact]
+    public async Task WithWebDashboard_enables_the_built_in_dashboard_on_an_external_endpoint_in_run_mode()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+
+        // Act
+        k6.WithWebDashboard();
+        var environment = await K6ResourceInspector.UnresolvedEnvironment(k6.Resource);
+
+        // Assert
+        var dashboard = k6.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem(endpoint => endpoint.Name == "dashboard");
+        dashboard.TargetPort.ShouldBe(5665);
+        dashboard.IsExternal.ShouldBeTrue();
+        dashboard.UriScheme.ShouldBe("http");
+        environment["K6_WEB_DASHBOARD"].ShouldBe("true");
+        environment["K6_WEB_DASHBOARD_HOST"].ShouldBe("0.0.0.0");
+    }
+
+    [Fact]
+    public async Task WithWebDashboard_adds_nothing_when_publishing()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOptions { Args = ["--publisher", "manifest", "--output-path", "manifest.json"] });
+        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+
+        // Act
+        k6.WithWebDashboard();
+        var environment = await K6ResourceInspector.UnresolvedEnvironment(k6.Resource);
+
+        // Assert
+        k6.Resource.Annotations.OfType<EndpointAnnotation>().ShouldNotContain(endpoint => endpoint.Name == "dashboard");
+        environment.ContainsKey("K6_WEB_DASHBOARD").ShouldBeFalse();
+    }
 }

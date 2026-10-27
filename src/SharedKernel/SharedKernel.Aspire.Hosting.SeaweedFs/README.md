@@ -24,6 +24,8 @@ dashboard link. The UI has no authentication and allows reading and changing eve
 development machine. The endpoint is added in run mode only; publish manifests and resources that never call the method keep
 every endpoint internal.
 
+The resource waits on the master (`/cluster/healthz`) and the S3 gateway (`/healthz`). `WithAccessKey` and `WithSecretKey` replace the generated credentials with parameters. `AddBucket(name, bucketName)` adds a child bucket resource whose connection string carries the S3 endpoint and bucket name, never the credentials; the container creates every bucket at startup through `S3_BUCKET` and skips existing ones.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Aspire.Hosting.SeaweedFs`. C# namespace: `PandaBear.Aspire.Hosting.SeaweedFs`. Assembly/project identity: `SharedKernel.Aspire.Hosting.SeaweedFs`.

@@ -14,7 +14,7 @@ SharedKernel only when it is host-agnostic and carries no application business r
 | Scanner contract | `SharedKernel.MalwareScanning` | `IMalwareScanner` over a stream and length, a verdict without daemon text, names, or bytes | Which uploads are scanned, what a rejection means |
 | ClamAV provider | `SharedKernel.MalwareScanning.ClamAv` | `zINSTREAM` client, fail-closed `Failed` status, scan telemetry, `AddClamAvHealthCheck` | Container hosting, upload policy |
 | Local ClamAV hosting | `SharedKernel.Aspire.Hosting.ClamAv` | Aspire resource, image tag, `PING` readiness check | Runtime health of a deployed app |
-| Local SeaweedFS hosting | `SharedKernel.Aspire.Hosting.SeaweedFs` | Aspire resource, endpoints, credentials parameters, master readiness check | S3 client behavior |
+| Local SeaweedFS hosting | `SharedKernel.Aspire.Hosting.SeaweedFs` | Aspire resource, endpoints, credential parameters (`WithAccessKey`, `WithSecretKey`), child buckets (`AddBucket`), master and S3 readiness checks | S3 client behavior |
 
 Application policy stays in the consuming repository: media metadata, upload size and type rules, which uploads are scanned,
 tour or content links, publishing and public-visibility rules, accessibility workflows, and processing pipelines.
@@ -32,6 +32,28 @@ Both runtime checks register on `IHealthChecksBuilder` and add no host dependenc
 
 Failure descriptions are fixed strings. They never include a host, port, endpoint, bucket, object key, daemon response, or
 provider message, and the result carries no exception. Caller cancellation propagates; only the scan timeout is a health failure.
+
+## Aspire resource baseline
+
+Every hosting resource follows the official Aspire resource shape where it applies:
+
+| Resource | Readiness check | Data volume and bind mount | Fixed host port | Opt-in UI |
+| --- | --- | --- | --- | --- |
+| ClamAV | `PING`/`PONG` | yes | yes | not applicable |
+| SeaweedFS | master and S3 gateway | yes | yes | Filer UI (`WithFilerUi`) |
+| Grafana | HTTP | yes | yes | Grafana itself |
+| Loki | HTTP | yes, data below `/loki` | yes | not applicable |
+| Tempo | HTTP, port 3200 | yes, data below `/var/tempo` | yes (OTLP gRPC port) | not applicable |
+| Prometheus | HTTP | yes | yes | Prometheus itself |
+| OpenTelemetry collector | from CommunityToolkit.Aspire.Hosting.OpenTelemetryCollector | not applicable | not applicable | not applicable |
+| k6 scenario | not applicable (explicit-start job) | not applicable | not applicable | web dashboard (`WithWebDashboard`) |
+
+Loki and Tempo take their storage paths from the configuration file the consumer supplies, so that file must store data
+below the folder the volume mounts. The Tempo readiness check uses the Tempo default `http_listen_port` 3200. UI endpoints
+exist only in run mode and never in publish manifests.
+
+The ClamAV hosting package keeps its own `PING` check instead of reusing the runtime check, because a hosting package must
+not depend on the provider package.
 
 ## Consumer prerequisites
 
