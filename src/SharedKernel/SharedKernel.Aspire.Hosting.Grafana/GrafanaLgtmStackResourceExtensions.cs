@@ -13,6 +13,10 @@ public static class GrafanaLgtmStackResourceExtensions
     private const string OtlpHttpJsonProtocol = "http/json";
     private const string CollectorGrpcEndpointName = "grpc";
     private const string CollectorHttpEndpointName = "http";
+    private const string GrafanaDataPath = "/var/lib/grafana";
+    private const string LokiDataPath = "/loki";
+    private const string TempoDataPath = "/var/tempo";
+    private const string PrometheusDataPath = "/prometheus";
 
     /// <summary>
     /// Adds an OpenTelemetry Collector gateway to the application model and routes the telemetry of compatible resources through it.
@@ -156,6 +160,35 @@ public static class GrafanaLgtmStackResourceExtensions
     }
 
     /// <summary>
+    /// Adds a named volume for the Grafana data folder to a Grafana container resource.
+    /// </summary>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="name">The name of the volume. Defaults to an auto-generated name based on the application and resource names.</param>
+    /// <param name="isReadOnly">A flag that indicates if this is a read-only volume.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    public static IResourceBuilder<GrafanaResource> WithDataVolume(this IResourceBuilder<GrafanaResource> builder, string? name = null, bool isReadOnly = false)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        return builder.WithVolume(name ?? VolumeNameGenerator.Generate(builder, "data"), GrafanaDataPath, isReadOnly);
+    }
+
+    /// <summary>
+    /// Adds a bind mount for the Grafana data folder to a Grafana container resource.
+    /// </summary>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="source">The source directory on the host to mount into the container.</param>
+    /// <param name="isReadOnly">A flag that indicates if this is a read-only mount.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    public static IResourceBuilder<GrafanaResource> WithDataBindMount(this IResourceBuilder<GrafanaResource> builder, string source, bool isReadOnly = false)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(source);
+
+        return builder.WithBindMount(source, GrafanaDataPath, isReadOnly);
+    }
+
+    /// <summary>
     /// Adds a Loki container to the application model.
     /// </summary>
     /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
@@ -205,6 +238,37 @@ public static class GrafanaLgtmStackResourceExtensions
     }
 
     /// <summary>
+    /// Adds a named volume for the Loki data folder to a Loki container resource.
+    /// </summary>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="name">The name of the volume. Defaults to an auto-generated name based on the application and resource names.</param>
+    /// <param name="isReadOnly">A flag that indicates if this is a read-only volume.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <remarks>The configuration file must store its data below <c>/loki</c>, the data folder of the Loki image.</remarks>
+    public static IResourceBuilder<LokiResource> WithDataVolume(this IResourceBuilder<LokiResource> builder, string? name = null, bool isReadOnly = false)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        return builder.WithVolume(name ?? VolumeNameGenerator.Generate(builder, "data"), LokiDataPath, isReadOnly);
+    }
+
+    /// <summary>
+    /// Adds a bind mount for the Loki data folder to a Loki container resource.
+    /// </summary>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="source">The source directory on the host to mount into the container.</param>
+    /// <param name="isReadOnly">A flag that indicates if this is a read-only mount.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <remarks>The configuration file must store its data below <c>/loki</c>, the data folder of the Loki image.</remarks>
+    public static IResourceBuilder<LokiResource> WithDataBindMount(this IResourceBuilder<LokiResource> builder, string source, bool isReadOnly = false)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(source);
+
+        return builder.WithBindMount(source, LokiDataPath, isReadOnly);
+    }
+
+    /// <summary>
     /// Adds a Tempo container to the application model.
     /// </summary>
     /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
@@ -212,6 +276,12 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="configurationFile">The path of the Tempo configuration file.</param>
     /// <returns>A reference to the <see cref="IResourceBuilder{T}"/>.</returns>
     /// <remarks>
+    /// <para>
+    /// This resource includes a built-in health check of the Tempo HTTP port 3200, the Tempo default <c>http_listen_port</c>,
+    /// so the configuration file must not change it. When this resource is referenced as a dependency using the
+    /// <see cref="ResourceBuilderExtensions.WaitFor{T}(IResourceBuilder{T}, IResourceBuilder{IResource})"/>
+    /// extension method then the dependent resource will wait until Tempo is ready.
+    /// </para>
     /// The resource is excluded from the manifest, because it is meant for local development.
     /// This version of the package uses the <inheritdoc cref="GrafanaLgtmContainerImageTags.TempoImage"/> container image, pinned by digest to its <inheritdoc cref="GrafanaLgtmContainerImageTags.TempoTag"/> tag.
     /// </remarks>
@@ -231,6 +301,8 @@ public static class GrafanaLgtmStackResourceExtensions
             .WithBindMount(Path.GetFullPath(configurationFile), "/etc/tempo/tempo.yaml", isReadOnly: true)
             .WithArgs("-config.file=/etc/tempo/tempo.yaml")
             .WithEndpoint(targetPort: 4317, name: TempoResource.OtlpGrpcEndpointName)
+            .WithHttpEndpoint(targetPort: 3200, name: TempoResource.HttpEndpointName)
+            .WithHttpHealthCheck("/ready", endpointName: TempoResource.HttpEndpointName)
             .ExcludeFromManifest();
     }
 
@@ -245,6 +317,37 @@ public static class GrafanaLgtmStackResourceExtensions
         ArgumentNullException.ThrowIfNull(builder);
 
         return builder.WithEndpoint(TempoResource.OtlpGrpcEndpointName, endpoint => endpoint.Port = port);
+    }
+
+    /// <summary>
+    /// Adds a named volume for the Tempo data folder to a Tempo container resource.
+    /// </summary>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="name">The name of the volume. Defaults to an auto-generated name based on the application and resource names.</param>
+    /// <param name="isReadOnly">A flag that indicates if this is a read-only volume.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <remarks>The configuration file must store its data below <c>/var/tempo</c>, the data folder of the Tempo image.</remarks>
+    public static IResourceBuilder<TempoResource> WithDataVolume(this IResourceBuilder<TempoResource> builder, string? name = null, bool isReadOnly = false)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        return builder.WithVolume(name ?? VolumeNameGenerator.Generate(builder, "data"), TempoDataPath, isReadOnly);
+    }
+
+    /// <summary>
+    /// Adds a bind mount for the Tempo data folder to a Tempo container resource.
+    /// </summary>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="source">The source directory on the host to mount into the container.</param>
+    /// <param name="isReadOnly">A flag that indicates if this is a read-only mount.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <remarks>The configuration file must store its data below <c>/var/tempo</c>, the data folder of the Tempo image.</remarks>
+    public static IResourceBuilder<TempoResource> WithDataBindMount(this IResourceBuilder<TempoResource> builder, string source, bool isReadOnly = false)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(source);
+
+        return builder.WithBindMount(source, TempoDataPath, isReadOnly);
     }
 
     /// <summary>
@@ -294,6 +397,35 @@ public static class GrafanaLgtmStackResourceExtensions
         ArgumentNullException.ThrowIfNull(builder);
 
         return builder.WithEndpoint(PrometheusResource.HttpEndpointName, endpoint => endpoint.Port = port);
+    }
+
+    /// <summary>
+    /// Adds a named volume for the Prometheus data folder to a Prometheus container resource.
+    /// </summary>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="name">The name of the volume. Defaults to an auto-generated name based on the application and resource names.</param>
+    /// <param name="isReadOnly">A flag that indicates if this is a read-only volume.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    public static IResourceBuilder<PrometheusResource> WithDataVolume(this IResourceBuilder<PrometheusResource> builder, string? name = null, bool isReadOnly = false)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        return builder.WithVolume(name ?? VolumeNameGenerator.Generate(builder, "data"), PrometheusDataPath, isReadOnly);
+    }
+
+    /// <summary>
+    /// Adds a bind mount for the Prometheus data folder to a Prometheus container resource.
+    /// </summary>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="source">The source directory on the host to mount into the container.</param>
+    /// <param name="isReadOnly">A flag that indicates if this is a read-only mount.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    public static IResourceBuilder<PrometheusResource> WithDataBindMount(this IResourceBuilder<PrometheusResource> builder, string source, bool isReadOnly = false)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(source);
+
+        return builder.WithBindMount(source, PrometheusDataPath, isReadOnly);
     }
 
     /// <summary>

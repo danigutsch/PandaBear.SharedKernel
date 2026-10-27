@@ -18,4 +18,8 @@ internal static class S3ObjectStoreTestFactory
             AutoProvisionBucket = autoProvisionBucket
         }), timeProvider ?? TimeProvider.System);
     }
+
+    /// <summary>Creates a health check over the fake client.</summary>
+    public static S3ObjectStoreHealthCheck CreateHealthCheck(FakeAmazonS3Client client) =>
+        new(client, Options.Create(S3ObjectStoreOptionsTestFactory.CreateValidOptions()));
 }

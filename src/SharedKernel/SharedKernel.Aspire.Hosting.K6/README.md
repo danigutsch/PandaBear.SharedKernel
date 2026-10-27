@@ -62,6 +62,8 @@ export const handleSummary = createSummaryHandler('items-smoke');
 A failed token request stops the run before any load starts, and a breached threshold makes k6 exit with a non-zero
 code.
 
+`WithWebDashboard()` turns on the built-in k6 web dashboard (`K6_WEB_DASHBOARD`) and exposes port 5665 on a host endpoint in run mode only. The dashboard has no authentication and shows results only while a run is active.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Aspire.Hosting.K6`. C# namespace: `PandaBear.Aspire.Hosting.K6`. Assembly/project identity: `SharedKernel.Aspire.Hosting.K6`.

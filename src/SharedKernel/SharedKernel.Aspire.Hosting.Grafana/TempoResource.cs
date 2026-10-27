@@ -9,6 +9,9 @@ public sealed class TempoResource([ResourceName] string name) : ContainerResourc
     /// <summary>Name of the OTLP gRPC endpoint that receives traces.</summary>
     internal const string OtlpGrpcEndpointName = "otlp-grpc";
 
+    /// <summary>Name of the HTTP endpoint that serves the readiness check.</summary>
+    internal const string HttpEndpointName = "http";
+
     private EndpointReference? _primaryEndpoint;
 
     /// <summary>

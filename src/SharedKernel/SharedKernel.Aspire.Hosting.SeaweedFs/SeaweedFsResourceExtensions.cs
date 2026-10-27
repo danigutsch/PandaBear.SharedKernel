@@ -20,10 +20,10 @@ public static class SeaweedFsResourceExtensions
     /// <remarks>
     /// <para>
     /// The S3 access key and secret key are generated as the secret parameters <c>{name}-access-key</c> and
-    /// <c>{name}-secret-key</c>, so unsigned requests are rejected. This resource includes a built-in health check of the
-    /// SeaweedFS master. When this resource is referenced as a dependency using the
+    /// <c>{name}-secret-key</c>, so unsigned requests are rejected. This resource includes built-in health checks of the
+    /// SeaweedFS master and the S3 gateway. When this resource is referenced as a dependency using the
     /// <see cref="ResourceBuilderExtensions.WaitFor{T}(IResourceBuilder{T}, IResourceBuilder{IResource})"/>
-    /// extension method then the dependent resource will wait until the master is healthy.
+    /// extension method then the dependent resource will wait until the master and the S3 gateway are healthy.
     /// </para>
     /// This version of the package uses the <inheritdoc cref="SeaweedFsContainerImageTags.Image"/> container image, pinned by digest to its <inheritdoc cref="SeaweedFsContainerImageTags.Tag"/> tag.
     /// </remarks>
@@ -54,12 +54,91 @@ public static class SeaweedFsResourceExtensions
             .WithImageRegistry(SeaweedFsContainerImageTags.Registry)
             .WithImageSHA256(SeaweedFsContainerImageTags.Digest)
             .WithArgs("mini", "-dir=/data", "-webdav=false", "-admin.ui=false")
-            .WithEnvironment("AWS_ACCESS_KEY_ID", accessKey)
-            .WithEnvironment("AWS_SECRET_ACCESS_KEY", secretKey)
-            .WithEnvironment("S3_BUCKET", bucket)
+            .WithEnvironment(context =>
+            {
+                context.EnvironmentVariables["AWS_ACCESS_KEY_ID"] = resource.AccessKeyParameter;
+                context.EnvironmentVariables["AWS_SECRET_ACCESS_KEY"] = resource.SecretKeyParameter;
+                var buckets = new ReferenceExpressionBuilder();
+                buckets.AppendFormatted(resource.BucketParameter);
+                foreach (var extraBucket in resource.BucketNames.Values)
+                {
+                    buckets.AppendLiteral("," + extraBucket);
+                }
+
+                context.EnvironmentVariables["S3_BUCKET"] = buckets.Build();
+            })
             .WithEndpoint(targetPort: 8333, name: SeaweedFsResource.S3EndpointName, scheme: "http", isExternal: false)
             .WithEndpoint(targetPort: 9333, name: "master", scheme: "http", isExternal: false)
-            .WithHttpHealthCheck("/cluster/healthz", endpointName: "master");
+            .WithHttpHealthCheck("/cluster/healthz", endpointName: "master")
+            .WithHttpHealthCheck("/healthz", endpointName: SeaweedFsResource.S3EndpointName);
+    }
+
+    /// <summary>
+    /// Replaces the generated S3 access key with a parameter.
+    /// </summary>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="accessKey">The parameter that contains the access key.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    public static IResourceBuilder<SeaweedFsResource> WithAccessKey(this IResourceBuilder<SeaweedFsResource> builder, IResourceBuilder<ParameterResource> accessKey)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(accessKey);
+
+        RemoveGenerated(builder, builder.Resource.AccessKeyParameter, accessKey.Resource, "access-key");
+        builder.Resource.AccessKeyParameter = accessKey.Resource;
+        return builder;
+    }
+
+    /// <summary>
+    /// Replaces the generated S3 secret key with a parameter.
+    /// </summary>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="secretKey">The parameter that contains the secret key.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    public static IResourceBuilder<SeaweedFsResource> WithSecretKey(this IResourceBuilder<SeaweedFsResource> builder, IResourceBuilder<ParameterResource> secretKey)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(secretKey);
+
+        RemoveGenerated(builder, builder.Resource.SecretKeyParameter, secretKey.Resource, "secret-key");
+        builder.Resource.SecretKeyParameter = secretKey.Resource;
+        return builder;
+    }
+
+    /// <summary>
+    /// Adds a bucket that the SeaweedFS container creates at startup, in addition to the default bucket.
+    /// </summary>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="name">The name of the bucket resource.</param>
+    /// <param name="bucketName">The name of the bucket. Defaults to <paramref name="name"/>.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{T}"/> of the bucket resource.</returns>
+    /// <remarks>
+    /// <c>weed mini</c> creates every bucket named in its comma-separated <c>S3_BUCKET</c> variable and skips buckets that exist.
+    /// The bucket resource's connection string carries the S3 endpoint and the bucket name, never the credentials.
+    /// </remarks>
+    public static IResourceBuilder<SeaweedFsBucketResource> AddBucket(
+        this IResourceBuilder<SeaweedFsResource> builder,
+        [ResourceName] string name,
+        string? bucketName = null)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        var bucket = bucketName ?? name;
+        if (string.IsNullOrWhiteSpace(bucket) || bucket.Contains(',', StringComparison.Ordinal) || bucket.Any(char.IsWhiteSpace))
+        {
+            throw new ArgumentException("A bucket name must not be blank or contain commas or whitespace.", nameof(bucketName));
+        }
+
+        builder.Resource.BucketNames.Add(name, bucket);
+        return builder.ApplicationBuilder.AddResource(new SeaweedFsBucketResource(name, bucket, builder.Resource));
+    }
+
+    private static void RemoveGenerated(IResourceBuilder<SeaweedFsResource> builder, ParameterResource current, ParameterResource replacement, string suffix)
+    {
+        if (!ReferenceEquals(current, replacement) && current.Name == $"{builder.Resource.Name}-{suffix}")
+        {
+            builder.ApplicationBuilder.Resources.Remove(current);
+        }
     }
 
     /// <summary>

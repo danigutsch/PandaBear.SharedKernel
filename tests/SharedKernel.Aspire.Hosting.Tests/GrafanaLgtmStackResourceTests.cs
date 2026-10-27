@@ -79,7 +79,7 @@ public sealed class GrafanaLgtmStackResourceTests
 
         // Assert
         var image = tempo.Resource.Annotations.OfType<ContainerImageAnnotation>().ShouldHaveSingleItem();
-        var endpoint = tempo.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem();
+        var endpoint = tempo.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem(annotation => annotation.Name == "otlp-grpc");
         image.Registry.ShouldBe("docker.io");
         image.Image.ShouldBe("grafana/tempo");
         image.SHA256.ShouldBe("bc9245fe3da4e63dc4c6862d9c2dad9bcd8be13d0ba4f7705fa6acda4c904d0e");
@@ -121,7 +121,74 @@ public sealed class GrafanaLgtmStackResourceTests
         // Assert
         grafana.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem().Port.ShouldBe(13000);
         loki.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem().Port.ShouldBe(13100);
-        tempo.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem().Port.ShouldBe(14317);
+        tempo.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem(annotation => annotation.Name == "otlp-grpc").Port.ShouldBe(14317);
         prometheus.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem().Port.ShouldBe(19090);
+    }
+
+    [Fact]
+    public void AddTempo_adds_a_readiness_check_on_the_http_port()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+
+        // Act
+        var tempo = builder.AddTempo("tempo", Path.Combine(ConfigurationRoot, "tempo.yaml"));
+
+        // Assert
+        var http = tempo.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem(annotation => annotation.Name == "http");
+        http.TargetPort.ShouldBe(3200);
+        http.IsExternal.ShouldBeFalse();
+        tempo.Resource.Annotations.OfType<HealthCheckAnnotation>().ShouldHaveSingleItem().Key.ShouldBe("tempo_http_/ready_200_check");
+    }
+
+    [Fact]
+    public void WithDataVolume_mounts_a_generated_named_volume_at_the_data_folder_of_each_resource()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var grafana = builder.AddGrafana("grafana", ConfigurationRoot);
+        var loki = builder.AddLoki("loki", Path.Combine(ConfigurationRoot, "loki.yaml"));
+        var tempo = builder.AddTempo("tempo", Path.Combine(ConfigurationRoot, "tempo.yaml"));
+        var prometheus = builder.AddPrometheus("prometheus", Path.Combine(ConfigurationRoot, "prometheus.yml"));
+
+        // Act
+        grafana.WithDataVolume();
+        loki.WithDataVolume();
+        tempo.WithDataVolume();
+        prometheus.WithDataVolume("prometheus-data");
+
+        // Assert
+        var grafanaVolume = MountAnnotations.Volume(grafana.Resource);
+        grafanaVolume.Target.ShouldBe("/var/lib/grafana");
+        grafanaVolume.Source.ShouldBe(VolumeNameGenerator.Generate(grafana, "data"));
+        MountAnnotations.Volume(loki.Resource).Target.ShouldBe("/loki");
+        MountAnnotations.Volume(tempo.Resource).Target.ShouldBe("/var/tempo");
+        var prometheusVolume = MountAnnotations.Volume(prometheus.Resource);
+        prometheusVolume.Target.ShouldBe("/prometheus");
+        prometheusVolume.Source.ShouldBe("prometheus-data");
+    }
+
+    [Fact]
+    public void WithDataBindMount_mounts_the_source_at_the_data_folder_of_each_resource()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var grafana = builder.AddGrafana("grafana", ConfigurationRoot);
+        var loki = builder.AddLoki("loki", Path.Combine(ConfigurationRoot, "loki.yaml"));
+        var tempo = builder.AddTempo("tempo", Path.Combine(ConfigurationRoot, "tempo.yaml"));
+        var prometheus = builder.AddPrometheus("prometheus", Path.Combine(ConfigurationRoot, "prometheus.yml"));
+        var source = Path.Combine(Path.GetTempPath(), "lgtm-data");
+
+        // Act
+        grafana.WithDataBindMount(source);
+        loki.WithDataBindMount(source);
+        tempo.WithDataBindMount(source);
+        prometheus.WithDataBindMount(source);
+
+        // Assert
+        MountAnnotations.Mount(grafana.Resource, "/var/lib/grafana").Type.ShouldBe(ContainerMountType.BindMount);
+        MountAnnotations.Mount(loki.Resource, "/loki").Source.ShouldBe(source);
+        MountAnnotations.Mount(tempo.Resource, "/var/tempo").Source.ShouldBe(source);
+        MountAnnotations.Mount(prometheus.Resource, "/prometheus").Source.ShouldBe(source);
     }
 }

@@ -35,3 +35,5 @@ PandaBear.ObjectStorage.S3.S3ObjectStoreOptions.SecretKey.set -> void
 PandaBear.ObjectStorage.S3.S3ObjectStoreServiceCollectionExtensions
 PandaBear.ObjectStorage.S3.S3ObjectStoreTelemetry
 static PandaBear.ObjectStorage.S3.S3ObjectStoreServiceCollectionExtensions.AddS3ObjectStore(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<PandaBear.ObjectStorage.S3.S3ObjectStoreOptions!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.ObjectStorage.S3.S3ObjectStoreHealthChecksBuilderExtensions
+static PandaBear.ObjectStorage.S3.S3ObjectStoreHealthChecksBuilderExtensions.AddS3ObjectStoreHealthCheck(this Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder! builder, string! name = "object-storage", Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus? failureStatus = null, System.Collections.Generic.IEnumerable<string!>? tags = null) -> Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder!

@@ -14,6 +14,8 @@ public static class K6ScenarioResourceExtensions
     private const string ResultsTarget = "/results";
     private const string LogName = "k6.log";
     private const string ConsoleName = "k6-console.log";
+    private const int DashboardPort = 5665;
+    private const string DashboardEndpointName = "dashboard";
 
     /// <summary>
     /// Adds a k6 container that runs one script and starts only when requested from the dashboard or the Aspire CLI.
@@ -117,6 +119,31 @@ public static class K6ScenarioResourceExtensions
             .WithEnvironment("SK_K6_CLIENT_ID", clientId)
             .WithEnvironment("SK_K6_CLIENT_SECRET", clientSecret)
             .WaitFor(identityProvider);
+    }
+
+    /// <summary>
+    /// Enables the built-in k6 web dashboard and exposes it on a host endpoint for local development.
+    /// </summary>
+    /// <remarks>
+    /// The dashboard (<c>K6_WEB_DASHBOARD</c>, port 5665) is built into k6 and serves results only while a run is active.
+    /// It has no authentication, so the endpoint is added only in run mode and publish manifests never expose it.
+    /// </remarks>
+    /// <param name="k6">The k6 container resource.</param>
+    /// <returns>The configured k6 container resource.</returns>
+    public static IResourceBuilder<K6Resource> WithWebDashboard(this IResourceBuilder<K6Resource> k6)
+    {
+        ArgumentNullException.ThrowIfNull(k6);
+
+        if (!k6.ApplicationBuilder.ExecutionContext.IsRunMode)
+        {
+            return k6;
+        }
+
+        return k6
+            .WithEnvironment("K6_WEB_DASHBOARD", "true")
+            .WithEnvironment("K6_WEB_DASHBOARD_HOST", "0.0.0.0")
+            .WithEndpoint(targetPort: DashboardPort, name: DashboardEndpointName, scheme: "http", isExternal: true)
+            .WithUrlForEndpoint(DashboardEndpointName, url => url.DisplayText = "k6 dashboard");
     }
 
     /// <summary>

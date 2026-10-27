@@ -17,6 +17,8 @@ configuration before it forwards the telemetry of the AppHost. `configurationRoo
 `otel-collector` (`privacy.yaml` and `config.yaml`), `prometheus`, and `tempo` configuration. Each resource is also available on
 its own, for example `AddGrafana`, `AddLoki`, and `AddOpenTelemetryCollectorGateway`. The images are pinned by tag and digest.
 
+`WithDataVolume` and `WithDataBindMount` persist the data of Grafana (`/var/lib/grafana`), Loki (`/loki`), Tempo (`/var/tempo`), and Prometheus (`/prometheus`); the Loki and Tempo configuration files must store data below those folders. Tempo reports ready through its HTTP port 3200 (`/ready`), so its configuration must keep the default `http_listen_port`.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Aspire.Hosting.Grafana`. C# namespace: `PandaBear.Aspire.Hosting.Grafana`. Assembly/project identity: `SharedKernel.Aspire.Hosting.Grafana`.

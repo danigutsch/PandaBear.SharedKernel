@@ -43,15 +43,25 @@ public sealed class SeaweedFsResource(
     /// <summary>
     /// Gets the parameter that contains the S3 access key.
     /// </summary>
-    public ParameterResource AccessKeyParameter { get; } = accessKeyParameter;
+    public ParameterResource AccessKeyParameter { get; internal set; } = accessKeyParameter;
 
     /// <summary>
     /// Gets the parameter that contains the S3 secret key.
     /// </summary>
-    public ParameterResource SecretKeyParameter { get; } = secretKeyParameter;
+    public ParameterResource SecretKeyParameter { get; internal set; } = secretKeyParameter;
 
     /// <summary>
     /// Gets the parameter that contains the default bucket name.
     /// </summary>
     public ParameterResource BucketParameter { get; } = bucketParameter;
+
+    /// <summary>
+    /// Gets the buckets added with <c>AddBucket</c>, keyed by resource name, in addition to the default bucket.
+    /// </summary>
+    public IReadOnlyDictionary<string, string> Buckets => BucketNames;
+
+    /// <summary>
+    /// Gets the mutable map behind <see cref="Buckets"/>.
+    /// </summary>
+    internal Dictionary<string, string> BucketNames { get; } = new(StringComparer.Ordinal);
 }
