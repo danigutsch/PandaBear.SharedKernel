@@ -18,6 +18,7 @@ flowchart TB
     SharedKernel_AspNetCore[SharedKernel.AspNetCore] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
     SharedKernel_AspNetCore[SharedKernel.AspNetCore] --> SharedKernel_OpenApi[SharedKernel.OpenApi]
     SharedKernel_AspNetCore[SharedKernel.AspNetCore] --> SharedKernel_Results[SharedKernel.Results]
+    SharedKernel_Blazor[SharedKernel.Blazor] --> SharedKernel_HttpClients[SharedKernel.HttpClients]
     SharedKernel_Branding[SharedKernel.Branding] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
     SharedKernel_Branding[SharedKernel.Branding] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks] --> SharedKernel_Results[SharedKernel.Results]

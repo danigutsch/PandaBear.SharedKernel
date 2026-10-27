@@ -33,3 +33,4 @@ Module README files beside source own consumer usage and examples. Samples and b
 - [Breaking namespace decision](adr/20261020-pandabear-namespaces.md)
 - [Public Git hosting decision](adr/20261020-public-git-hosting.md)
 - [Classic extension methods](adr/20261026-classic-extension-methods.md)
+- [Blazor helpers package](adr/20261027-blazor-helpers-package.md)

@@ -1,0 +1,87 @@
+#nullable enable
+const PandaBear.Blazor.ErrorSummary.MaxMessageLength = 300 -> int
+const PandaBear.Blazor.UiFailureReporter.HandledFailureEventId = 7001 -> int
+const PandaBear.Blazor.UiFailureReporter.MaxOperationLength = 100 -> int
+const PandaBear.Blazor.UiFailureReporter.UnknownOperation = "unknown" -> string!
+const PandaBear.Blazor.UiFailureReporter.UnknownTraceId = "unknown" -> string!
+const PandaBear.Blazor.UploadStatus.MaxDisplayTextLength = 200 -> int
+PandaBear.Blazor.BlazorServiceCollectionExtensions
+PandaBear.Blazor.ErrorSummary
+PandaBear.Blazor.ErrorSummary.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>?
+PandaBear.Blazor.ErrorSummary.AdditionalAttributes.set -> void
+PandaBear.Blazor.ErrorSummary.ErrorSummary() -> void
+PandaBear.Blazor.ErrorSummary.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.ErrorSummaryItem!>!
+PandaBear.Blazor.ErrorSummary.Items.set -> void
+PandaBear.Blazor.ErrorSummary.Title.get -> string!
+PandaBear.Blazor.ErrorSummary.Title.set -> void
+PandaBear.Blazor.ErrorSummaryItem
+PandaBear.Blazor.ErrorSummaryItem.ErrorSummaryItem(string! TargetId, string! Message) -> void
+PandaBear.Blazor.ErrorSummaryItem.Message.get -> string!
+PandaBear.Blazor.ErrorSummaryItem.Message.init -> void
+PandaBear.Blazor.ErrorSummaryItem.TargetId.get -> string!
+PandaBear.Blazor.ErrorSummaryItem.TargetId.init -> void
+PandaBear.Blazor.HttpOutcomeMessages
+PandaBear.Blazor.HttpOutcomeMessages.Fallback.get -> string!
+PandaBear.Blazor.HttpOutcomeMessages.For(PandaBear.HttpClients.HttpOutcome! outcome) -> string!
+PandaBear.Blazor.HttpOutcomeMessages.For(PandaBear.HttpClients.HttpOutcomeKind kind) -> string!
+PandaBear.Blazor.HttpOutcomeMessages.HttpOutcomeMessages(string! fallback) -> void
+PandaBear.Blazor.HttpOutcomeMessages.With(PandaBear.HttpClients.HttpOutcomeKind kind, string! message) -> PandaBear.Blazor.HttpOutcomeMessages!
+PandaBear.Blazor.IHandledFailureCounter
+PandaBear.Blazor.IHandledFailureCounter.IncrementHandled() -> void
+PandaBear.Blazor.IUiFailureReporter
+PandaBear.Blazor.IUiFailureReporter.Report(System.Exception! exception, string! operation) -> void
+PandaBear.Blazor.RecoveryErrorBoundary
+PandaBear.Blazor.RecoveryErrorBoundary.OperationName.get -> string!
+PandaBear.Blazor.RecoveryErrorBoundary.OperationName.set -> void
+PandaBear.Blazor.RecoveryErrorBoundary.RecoverLabel.get -> string?
+PandaBear.Blazor.RecoveryErrorBoundary.RecoverLabel.set -> void
+PandaBear.Blazor.RecoveryErrorBoundary.RecoveryErrorBoundary() -> void
+PandaBear.Blazor.RecoveryErrorBoundary.RecoveryMessage.get -> string!
+PandaBear.Blazor.RecoveryErrorBoundary.RecoveryMessage.set -> void
+PandaBear.Blazor.ServerValidationBinder
+PandaBear.Blazor.ServerValidationBinder.Apply(PandaBear.HttpClients.HttpOutcome! outcome) -> PandaBear.Blazor.ServerValidationResult!
+PandaBear.Blazor.ServerValidationBinder.Apply(System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>? errors) -> PandaBear.Blazor.ServerValidationResult!
+PandaBear.Blazor.ServerValidationBinder.Clear() -> void
+PandaBear.Blazor.ServerValidationBinder.Dispose() -> void
+PandaBear.Blazor.ServerValidationBinder.ServerValidationBinder(Microsoft.AspNetCore.Components.Forms.EditContext! editContext, PandaBear.Blazor.ServerValidationOptions! options) -> void
+PandaBear.Blazor.ServerValidationIssue
+PandaBear.Blazor.ServerValidationIssue.FieldName.get -> string!
+PandaBear.Blazor.ServerValidationIssue.FieldName.init -> void
+PandaBear.Blazor.ServerValidationIssue.Message.get -> string!
+PandaBear.Blazor.ServerValidationIssue.Message.init -> void
+PandaBear.Blazor.ServerValidationIssue.ServerValidationIssue(string! FieldName, string! Message) -> void
+PandaBear.Blazor.ServerValidationOptions
+PandaBear.Blazor.ServerValidationOptions.FallbackMessage.get -> string!
+PandaBear.Blazor.ServerValidationOptions.KnownFields.get -> System.Collections.Generic.IReadOnlyCollection<string!>!
+PandaBear.Blazor.ServerValidationOptions.MaxFieldNameLength.get -> int
+PandaBear.Blazor.ServerValidationOptions.MaxFieldNameLength.init -> void
+PandaBear.Blazor.ServerValidationOptions.MaxFields.get -> int
+PandaBear.Blazor.ServerValidationOptions.MaxFields.init -> void
+PandaBear.Blazor.ServerValidationOptions.MaxMessageLength.get -> int
+PandaBear.Blazor.ServerValidationOptions.MaxMessageLength.init -> void
+PandaBear.Blazor.ServerValidationOptions.MaxMessagesPerField.get -> int
+PandaBear.Blazor.ServerValidationOptions.MaxMessagesPerField.init -> void
+PandaBear.Blazor.ServerValidationOptions.ServerValidationOptions(System.Collections.Generic.IEnumerable<string!>! knownFields, string! fallbackMessage) -> void
+PandaBear.Blazor.ServerValidationResult
+PandaBear.Blazor.ServerValidationResult.HasUnplacedErrors.get -> bool
+PandaBear.Blazor.ServerValidationResult.Issues.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.ServerValidationIssue!>!
+PandaBear.Blazor.ServerValidationResult.ToSummaryItems(System.Func<string!, string!>! fieldId) -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.ErrorSummaryItem!>!
+PandaBear.Blazor.UiFailureReporter
+PandaBear.Blazor.UiFailureReporter.Report(System.Exception! exception, string! operation) -> void
+PandaBear.Blazor.UiFailureReporter.UiFailureReporter(Microsoft.Extensions.Logging.ILogger<PandaBear.Blazor.UiFailureReporter!>! logger, PandaBear.Blazor.IHandledFailureCounter? counter = null) -> void
+PandaBear.Blazor.UploadStatus
+PandaBear.Blazor.UploadStatus.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>?
+PandaBear.Blazor.UploadStatus.AdditionalAttributes.set -> void
+PandaBear.Blazor.UploadStatus.CancelText.get -> string!
+PandaBear.Blazor.UploadStatus.CancelText.set -> void
+PandaBear.Blazor.UploadStatus.Label.get -> string!
+PandaBear.Blazor.UploadStatus.Label.set -> void
+PandaBear.Blazor.UploadStatus.OnCancel.get -> Microsoft.AspNetCore.Components.EventCallback
+PandaBear.Blazor.UploadStatus.OnCancel.set -> void
+PandaBear.Blazor.UploadStatus.ProgressLabel.get -> string!
+PandaBear.Blazor.UploadStatus.ProgressLabel.set -> void
+PandaBear.Blazor.UploadStatus.State.get -> PandaBear.HttpClients.UploadOperationState!
+PandaBear.Blazor.UploadStatus.State.set -> void
+PandaBear.Blazor.UploadStatus.UploadStatus() -> void
+static PandaBear.Blazor.BlazorServiceCollectionExtensions.AddUiFailureReporting(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+const PandaBear.Blazor.UiFailureReporter.CounterFailureEventId = 7002 -> int

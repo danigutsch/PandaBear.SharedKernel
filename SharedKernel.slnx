@@ -11,6 +11,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Aspire.Hosting.SeaweedFs/SharedKernel.Aspire.Hosting.SeaweedFs.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.AuditTrail/SharedKernel.AuditTrail.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.AuditTrail.SourceGenerator/SharedKernel.AuditTrail.SourceGenerator.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Blazor/SharedKernel.Blazor.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Branding/SharedKernel.Branding.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.DocumentRendering/SharedKernel.DocumentRendering.csproj" />
@@ -77,6 +78,7 @@
   <Project Path="tests/SharedKernel.Aspire.Hosting.K6.Tests/SharedKernel.Aspire.Hosting.K6.Tests.csproj" />
   <Project Path="tests/SharedKernel.Aspire.Hosting.Tests/SharedKernel.Aspire.Hosting.Tests.csproj" />
   <Project Path="tests/SharedKernel.AuditTrail.GeneratorTests/SharedKernel.AuditTrail.GeneratorTests.csproj" />
+  <Project Path="tests/SharedKernel.Blazor.Tests/SharedKernel.Blazor.Tests.csproj" />
   <Project Path="tests/SharedKernel.Branding.Tests/SharedKernel.Branding.Tests.csproj" />
   <Project Path="tests/SharedKernel.BuildingBlocks.Tests/SharedKernel.BuildingBlocks.Tests.csproj" />
   <Project Path="tests/SharedKernel.CodeFixes.Testing/SharedKernel.CodeFixes.Testing.csproj" />
