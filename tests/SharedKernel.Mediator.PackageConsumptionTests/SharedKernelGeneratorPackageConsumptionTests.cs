@@ -2,6 +2,10 @@ using PandaBear.Testing;
 
 namespace PandaBear.Mediator.PackageConsumptionTests;
 
+/// <summary>
+/// Builds fresh consumer projects against the packed Domain and Results packages to prove their bundled source generators run for package consumers.
+/// </summary>
+/// <param name="packageFeed">The shared local package feed the consumer workspaces restore from.</param>
 [Collection(MediatorPackageFeedSharing.Name)]
 [Trait(SharedKernelTestTraitNames.CategoryName, "PackageConsumption")]
 public sealed class SharedKernelGeneratorPackageConsumptionTests(MediatorPackageFeedFixture packageFeed)

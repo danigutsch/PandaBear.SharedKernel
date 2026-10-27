@@ -3,6 +3,9 @@ using PandaBear.Testing;
 
 namespace PandaBear.Mediator.Tests;
 
+/// <summary>
+/// Tests the reference dispatcher's request, command, notification, and stream handling, including missing and ambiguous handlers and pipeline ordering.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.ReferenceDispatcherCapability)]
 public sealed class ReferenceDispatcherTests
 {

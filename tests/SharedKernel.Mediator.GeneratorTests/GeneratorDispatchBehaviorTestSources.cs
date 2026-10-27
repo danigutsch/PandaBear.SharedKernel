@@ -1,7 +1,9 @@
 namespace PandaBear.Mediator.GeneratorTests;
 
+/// <summary>C# source snippets for dispatch behavior tests, each defining requests, handlers and a static Demo.TraceLog that records execution order.</summary>
 internal static class GeneratorDispatchBehaviorTestSources
 {
+    /// <summary>Stream request with a handler and validation and observability pipeline behaviors that trace only before and after their enumeration, not each yielded item.</summary>
     public static string StreamDispatchWithoutYieldTracing()
     {
         return """
@@ -75,6 +77,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Stream request whose handler and both pipeline behaviors also trace every yielded item.</summary>
     public static string StreamDispatchWithYieldTracing()
     {
         return """
@@ -151,6 +154,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Stream request whose handler calls ct.ThrowIfCancellationRequested before each yield, with tracing in the handler and both pipeline behaviors.</summary>
     public static string StreamDispatchWithCancellationDuringEnumeration()
     {
         return """
@@ -228,6 +232,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Stream request whose handler yields item:1 and then throws InvalidOperationException 'boom', with tracing in the handler and both pipeline behaviors.</summary>
     public static string StreamDispatchWithEnumerationException()
     {
         return """
@@ -300,6 +305,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Stream request whose handler records handler-disposed in a finally block, with tracing in the handler and both pipeline behaviors, to observe early disposal.</summary>
     public static string StreamDispatchWithEarlyDisposal()
     {
         return """
@@ -391,6 +397,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Request GetTour whose handler throws InvalidOperationException 'handler boom'.</summary>
     public static string SendWithException()
     {
         return """
@@ -411,6 +418,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Request GetTour whose handler returns 'tour:{Id}'.</summary>
     public static string SendSuccess()
     {
         return """
@@ -431,6 +439,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Request GetTour whose handler throws InvalidOperationException internally, catches it and returns 'fallback'.</summary>
     public static string SendWithHandledException()
     {
         return """
@@ -460,6 +469,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Request GetTour whose handler calls ct.ThrowIfCancellationRequested before returning 'tour:{Id}'.</summary>
     public static string SendWithCancellation()
     {
         return """
@@ -483,6 +493,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Request GetTour whose handler throws OperationCanceledException 'unexpected' without the caller's token being cancelled.</summary>
     public static string SendWithUnexpectedCancellation()
     {
         return """
@@ -503,6 +514,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Notification TourCreated whose single handler calls ct.ThrowIfCancellationRequested.</summary>
     public static string PublishWithCancellation()
     {
         return """
@@ -526,6 +538,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Notification TourCreated whose single handler throws OperationCanceledException 'unexpected'.</summary>
     public static string PublishWithUnexpectedCancellation()
     {
         return """
@@ -546,6 +559,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Notification TourCreated whose single handler completes immediately.</summary>
     public static string PublishSuccess()
     {
         return """
@@ -566,6 +580,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Notification TourCreated whose single handler throws InvalidOperationException 'handler boom'.</summary>
     public static string PublishWithException()
     {
         return """
@@ -586,6 +601,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Notification TourCreated with two handlers ordered 10 and 20 that both complete immediately.</summary>
     public static string SequentialPublishSuccess()
     {
         return """
@@ -614,6 +630,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Notification TourCreated with handlers ordered 10 and 20 where the first calls ct.ThrowIfCancellationRequested.</summary>
     public static string SequentialPublishWithCancellation()
     {
         return """
@@ -645,6 +662,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Notification TourCreated with handlers ordered 10 and 20 where the first throws InvalidOperationException 'handler boom'.</summary>
     public static string SequentialPublishWithException()
     {
         return """
@@ -673,6 +691,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Stream request without pipelines whose handler checks cancellation before each yielded item.</summary>
     public static string StreamDispatchWithCancellationNoPipelines()
     {
         return """
@@ -704,6 +723,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Stream request without pipelines whose handler yields item:1 and then throws InvalidOperationException 'boom'.</summary>
     public static string StreamDispatchWithExceptionNoPipelines()
     {
         return """
@@ -732,6 +752,7 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    /// <summary>Stream request without pipelines whose handler yields item:1 through item:Count.</summary>
     public static string StreamDispatchNoPipelines()
     {
         return """

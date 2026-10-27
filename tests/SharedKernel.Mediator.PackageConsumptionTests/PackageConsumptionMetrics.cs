@@ -5,13 +5,16 @@ using System.Text.RegularExpressions;
 
 namespace PandaBear.Mediator.PackageConsumptionTests;
 
+/// <summary>Helpers that measure publish output and run published consumer executables in the package consumption tests.</summary>
 internal static partial class PackageConsumptionMetrics
 {
+    /// <summary>Counts the 'warning ILnnnn' trim warnings in the publish output.</summary>
     public static int CountTrimWarnings(string publishOutput)
     {
         return TrimWarningRegex().Count(publishOutput);
     }
 
+    /// <summary>Sums the size in bytes of the distinct generated AppMediator, DependencyInjection, DiscoveryReport and GeneratedDispatch source files found in the workspace.</summary>
     public static long GetGeneratedSourceSize(PackageConsumptionWorkspace workspace)
     {
         var generatedFiles = new[]
@@ -28,6 +31,7 @@ internal static partial class PackageConsumptionMetrics
             .Sum(static file => new FileInfo(file).Length);
     }
 
+    /// <summary>Returns the runtime identifier of the current machine, such as linux-x64 or win-arm64, throwing for architectures other than x64 and Arm64.</summary>
     public static string GetCurrentRuntimeIdentifier()
     {
         var os = (RuntimeInformation.IsOSPlatform(OSPlatform.Windows), RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) switch
@@ -47,6 +51,7 @@ internal static partial class PackageConsumptionMetrics
         return $"{os}-{architecture}";
     }
 
+    /// <summary>Reads the first-dispatch-ms and steady-state-dispatch-ms lines from the output into time spans, throwing when either is missing.</summary>
     public static (TimeSpan FirstDispatch, TimeSpan SteadyStateDispatch) ParseRuntimeMetrics(string output)
     {
         double? firstDispatchMilliseconds = null;
@@ -74,6 +79,7 @@ internal static partial class PackageConsumptionMetrics
             : (TimeSpan.FromMilliseconds(firstDispatchMilliseconds.Value), TimeSpan.FromMilliseconds(steadyStateMilliseconds.Value));
     }
 
+    /// <summary>Runs the published executable in its own directory, captures stdout and stderr with the elapsed time, and throws when the exit code is not 0.</summary>
     public static async Task<(string Output, TimeSpan Duration)> RunPublishedExecutable(string publishedExecutable)
     {
         var workingDirectory = Path.GetDirectoryName(publishedExecutable)

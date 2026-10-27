@@ -1,5 +1,6 @@
 namespace PandaBear.Domain.Tests;
 
+/// <summary>Tests the shape of the domain event dispatch contracts.</summary>
 public sealed class DomainEventDispatchTests
 {
     [Fact]

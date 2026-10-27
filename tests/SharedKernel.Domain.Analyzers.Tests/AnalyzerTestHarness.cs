@@ -6,6 +6,7 @@ using PandaBear.Testing.Roslyn;
 
 namespace PandaBear.Domain.Analyzers.Tests;
 
+/// <summary>Compiles test source against the default usings and runs the domain analyzer over it.</summary>
 internal static class AnalyzerTestHarness
 {
     private const string DefaultUsings = """
@@ -18,6 +19,7 @@ internal static class AnalyzerTestHarness
 
         """;
 
+    /// <summary>Compiles the source as the given file path and returns the diagnostics reported by SharedKernelDomainAnalyzer, throwing when the source has compile errors.</summary>
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(string source, string path = "TestSource.cs")
     {
         var compilation = CreateCompilation(source, path);
@@ -36,6 +38,7 @@ internal static class AnalyzerTestHarness
         return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
     }
 
+    /// <summary>Returns the full source line on which the diagnostic starts, throwing when the diagnostic has no source location.</summary>
     public static string GetReportedLine(Diagnostic diagnostic)
     {
         var sourceTree = diagnostic.Location.SourceTree

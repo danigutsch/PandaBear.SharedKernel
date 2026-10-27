@@ -1,5 +1,8 @@
 namespace PandaBear.Results.Tests;
 
+/// <summary>
+/// Checks that Option.Map obeys the functor identity and composition laws.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
 [Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
 [Trait(Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.FunctorLawsTheory)]
