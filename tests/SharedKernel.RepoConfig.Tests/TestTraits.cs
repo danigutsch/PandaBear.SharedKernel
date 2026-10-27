@@ -1,7 +1,7 @@
 namespace PandaBear.RepoConfig.Tests;
 
 /// <summary>
-/// Trait names shared by the RepoConfig test classes.
+/// Trait values shared by the RepoConfig test classes.
 /// </summary>
 internal static class TestTraits
 {
