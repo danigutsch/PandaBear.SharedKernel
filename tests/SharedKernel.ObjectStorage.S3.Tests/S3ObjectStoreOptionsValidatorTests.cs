@@ -12,6 +12,8 @@ public sealed class S3ObjectStoreOptionsValidatorTests
     [InlineData("secret-key")]
     [InlineData("timeout")]
     [InlineData("public-base-uri")]
+    [InlineData("authentication-region")]
+    [InlineData("max-object-key-length")]
     public void Validate_fails_for_invalid_required_storage_configuration(string invalidField)
     {
         // Arrange
@@ -41,6 +43,12 @@ public sealed class S3ObjectStoreOptionsValidatorTests
                 break;
             case "public-base-uri":
                 options.PublicBaseUri = null!;
+                break;
+            case "authentication-region":
+                options.AuthenticationRegion = " ";
+                break;
+            case "max-object-key-length":
+                options.MaxObjectKeyLength = 0;
                 break;
         }
 
