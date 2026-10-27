@@ -106,5 +106,5 @@ packable project has no such test project and no entry in the reviewed exception
 | Package-consumption test | A test project such as `SharedKernel.Mediator.PackageConsumptionTests` that restores packed packages from a local feed | No CI lane unless its runtime justifies one |
 
 A generator that ships inside another package, such as the results generator inside `PandaBear.SharedKernel.Results`, is not
-packable and keeps its own `GeneratorTests` project. A project whose only content is a migration placeholder, such as
-`SharedKernel.Functional`, is a reviewed exception with its reason beside the exception.
+packable and keeps its own `GeneratorTests` project. A packable project with no test project in its reference closure needs a
+reviewed exception, with its reason beside the exception in `SharedKernelTestOwnershipConventionTests`.

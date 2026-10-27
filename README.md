@@ -12,7 +12,7 @@ Choose the packages your project needs. Each package has its own README with req
 
 | What you need | Start here |
 | --- | --- |
-| Represent success, validation failures, and optional values | [Results](src/SharedKernel/SharedKernel.Results/README.md) · [Functional](src/SharedKernel/SharedKernel.Functional/README.md) |
+| Represent success, validation failures, and optional values | [Results](src/SharedKernel/SharedKernel.Results/README.md) |
 | Model domains and dispatch requests or events | [Domain](src/SharedKernel/SharedKernel.Domain/README.md) · [Mediator](src/SharedKernel/SharedKernel.Mediator/README.md) |
 | Handle HTTP outcomes, uploads, caching, and API versions | [HttpClients](src/SharedKernel/SharedKernel.HttpClients/README.md) · [HTTP caching](src/SharedKernel/SharedKernel.HttpCaching.AspNetCore/README.md) · [API versioning](src/SharedKernel/SharedKernel.ApiVersioning/README.md) |
 | Add database-specific persistence and coordination | [Entity Framework Core](src/SharedKernel/SharedKernel.EntityFrameworkCore/README.md) · [PostgreSQL](src/SharedKernel/SharedKernel.Npgsql/README.md) · [Idempotency](src/SharedKernel/SharedKernel.Idempotency.Abstractions/README.md) |
