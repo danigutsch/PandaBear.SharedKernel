@@ -3,9 +3,15 @@ using System.Reflection;
 
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests the version metadata stamped on the versioning assembly.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VersionMetadataTests
 {
+    /// <summary>
+    /// Verifies that the assembly, file, and informational versions come from the central version properties.
+    /// </summary>
     [Fact]
     public static void Stamps_assembly_metadata_from_central_version_properties()
     {

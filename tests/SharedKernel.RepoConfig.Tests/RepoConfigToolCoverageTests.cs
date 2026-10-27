@@ -2,9 +2,11 @@ using System.Globalization;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the repo config command line for argument errors, init, diff, set, get, GitHub sync failures, and verify output.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RepoConfigToolCoverageTests
 {
+    /// <summary>Running the command <c>unknown</c> exits with 1 and reports that the command or argument is unrecognized.</summary>
     [Fact]
     public async Task Unknown_command_is_a_parse_error()
     {
@@ -22,6 +24,7 @@ public sealed class RepoConfigToolCoverageTests
         errorText.ShouldContain("Unrecognized command or argument 'unknown'.", StringComparison.Ordinal);
     }
 
+    /// <summary>Running <c>init</c> a second time in the same workspace exits with 0 and says the roadmap structure is already initialized.</summary>
     [Fact]
     public async Task Init_reports_when_structure_already_exists()
     {
@@ -43,6 +46,7 @@ public sealed class RepoConfigToolCoverageTests
         outputText.ShouldContain("Repository roadmap structure is already initialized.", StringComparison.Ordinal);
     }
 
+    /// <summary>After <c>init</c>, <c>diff</c> exits with 0 and reports no drift; after <c>roadmap/config.json</c> is deleted it exits with 1 and reports drift.</summary>
     [Fact]
     public async Task Diff_reports_valid_and_invalid_structure()
     {
@@ -69,6 +73,7 @@ public sealed class RepoConfigToolCoverageTests
         invalidError.ToString().ShouldContain("Repository config drift:", StringComparison.Ordinal);
     }
 
+    /// <summary><c>set</c> exits with 1 and leaves <c>roadmap/config.json</c> unchanged when called with no arguments, with an extra argument, or with the unsupported key <c>unknown</c>.</summary>
     [Fact]
     public async Task Set_rejects_missing_extra_and_unsupported_arguments_without_writing()
     {
@@ -103,6 +108,7 @@ public sealed class RepoConfigToolCoverageTests
         configAfter.ShouldBe(configBefore);
     }
 
+    /// <summary>With an epic, a blocked issue, and an unblocked enabler, every <c>get</c> query exits with 0 and prints the expected priority, blocker, tag, and label rows, while <c>next-unblocked --type issue</c> reports no matching items.</summary>
     [Fact]
     public async Task Get_project_queries_cover_priority_taxonomy_and_blocker_views()
     {
@@ -157,6 +163,7 @@ public sealed class RepoConfigToolCoverageTests
         nextIssueOutputText.ShouldContain("No matching roadmap items.", StringComparison.Ordinal);
     }
 
+    /// <summary><c>get next-priority</c> in an uninitialized workspace exits with 1 for a missing <c>--type</c> value, a non-numeric or zero <c>--limit</c>, and an unknown option, each with a specific message and no tool-name prefix.</summary>
     [Fact]
     public async Task Get_rejects_invalid_options_before_loading_config()
     {
@@ -184,6 +191,7 @@ public sealed class RepoConfigToolCoverageTests
         errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
     }
 
+    /// <summary>With GitHub sync enabled, <c>github</c> without a subcommand and <c>github sync --unknown</c> exit with 1, while a plain <c>github sync</c> with no mapped items exits with 0 and says there is nothing to sync.</summary>
     [Fact]
     public async Task GitHub_sync_rejects_invalid_arguments_and_previews_empty_mappings()
     {
@@ -216,6 +224,7 @@ public sealed class RepoConfigToolCoverageTests
         previewError.ToString().ShouldBe(string.Empty);
     }
 
+    /// <summary>Applying the syncer to an item mapped to GitHub issue 997 lets an <see cref="HttpRequestException"/> from the transport ("network unavailable") escape unchanged.</summary>
     [Fact]
     public async Task GitHub_roadmap_syncer_apply_propagates_http_request_errors_for_application_boundary()
     {
@@ -241,6 +250,7 @@ public sealed class RepoConfigToolCoverageTests
         exception.Message.ShouldContain("network unavailable", StringComparison.Ordinal);
     }
 
+    /// <summary><c>github sync --force</c> exits with 1 and prints only "GitHub sync request failed." when the transport throws an <see cref="HttpRequestException"/>, without leaking its token-like message.</summary>
     [Fact]
     public async Task GitHub_sync_force_reports_safe_diagnostic_for_http_request_errors()
     {
@@ -270,6 +280,7 @@ public sealed class RepoConfigToolCoverageTests
         errorText.ShouldNotContain("ghp_transport_token", StringComparison.Ordinal);
     }
 
+    /// <summary>When the file reader throws an <see cref="IOException"/>, parsing returns no document and records one issue on <c>roadmap/config.json</c> with the read failure message.</summary>
     [Fact]
     public void Try_parse_json_file_reports_read_failures_as_issues()
     {
@@ -286,6 +297,7 @@ public sealed class RepoConfigToolCoverageTests
         issues[0].Message.ShouldBe("Unable to read JSON: simulated read failure");
     }
 
+    /// <summary><c>github sync --force</c> exits with 1 and prints "GitHub sync timed out after 30 seconds." with no standard output when the request times out.</summary>
     [Fact]
     public async Task GitHub_sync_force_reports_safe_diagnostic_for_timeouts()
     {
@@ -314,6 +326,7 @@ public sealed class RepoConfigToolCoverageTests
         errorText.ShouldBe("sharedkernel-repo: GitHub sync timed out after 30 seconds." + Environment.NewLine);
     }
 
+    /// <summary><c>verify</c> exits with 1 and reports the invalid config's source-of-truth, statuses, ordering, GitHub flag, and scoring model, plus the invalid item's id prefix, type, order, and blockedBy errors.</summary>
     [Fact]
     public async Task Verify_reports_config_and_item_policy_violations()
     {

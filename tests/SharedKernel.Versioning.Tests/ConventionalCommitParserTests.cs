@@ -1,8 +1,14 @@
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests parsing of Conventional Commit messages.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class ConventionalCommitParserTests
 {
+    /// <summary>
+    /// Verifies that the type, scope, breaking marker, description, body, and footers are parsed from a message.
+    /// </summary>
     [Fact]
     public static void Parses_type_scope_bang_description_body_and_footers()
     {
@@ -21,6 +27,9 @@ public static class ConventionalCommitParserTests
         commit.Footers.ShouldContain("Refs: release-plan");
     }
 
+    /// <summary>
+    /// Verifies that commit messages map to the expected release impact, including breaking markers and BREAKING CHANGE footers.
+    /// </summary>
     [Theory]
     [InlineData("feat: add option", ReleaseImpact.Minor)]
     [InlineData("fix: correct version", ReleaseImpact.Patch)]

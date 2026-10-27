@@ -1,9 +1,11 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests that child processes started by the tool receive a sanitized environment.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class ChildProcessEnvironmentTests
 {
+    /// <summary>Verifies that the Podman DNS preflight starts its processes without <c>GH_TOKEN</c> or <c>GITHUB_TOKEN</c> in their environment.</summary>
     [Fact]
     public async Task Verify_podman_dns_starts_processes_without_github_tokens()
     {
@@ -37,6 +39,7 @@ public sealed class ChildProcessEnvironmentTests
         });
     }
 
+    /// <summary>Verifies that the text encoding check starts Git without GitHub tokens in its environment.</summary>
     [Fact]
     public async Task Verify_text_encoding_starts_git_without_github_tokens()
     {
@@ -73,6 +76,7 @@ public sealed class ChildProcessEnvironmentTests
         gitEnvironment.ShouldNotContain("GITHUB_TOKEN");
     }
 
+    /// <summary>Verifies that the JSON check starts Git from the search path without GitHub tokens in its environment.</summary>
     [Fact]
     public async Task Verify_json_starts_git_from_path_without_github_tokens()
     {
@@ -109,6 +113,7 @@ public sealed class ChildProcessEnvironmentTests
         gitEnvironment.ShouldNotContain("GITHUB_TOKEN");
     }
 
+    /// <summary>Verifies that Git index commands ignore a repository-local Git found through relative search path entries.</summary>
     [Theory]
     [InlineData("verify-json")]
     [InlineData("verify-line-endings")]
@@ -135,6 +140,7 @@ public sealed class ChildProcessEnvironmentTests
         fakeGit.Ran.ShouldBeFalse("Git resolves only from absolute PATH entries, so the repository-local fake never runs.");
     }
 
+    /// <summary>Verifies that the dependency snapshot command ignores a repository-local Git found through relative search path entries.</summary>
     [Fact]
     public async Task Dependency_snapshot_ignores_repository_local_git_from_relative_path_entries()
     {
@@ -159,6 +165,7 @@ public sealed class ChildProcessEnvironmentTests
         fakeGit.Ran.ShouldBeFalse("Git resolves only from absolute PATH entries, so the committed fake never runs.");
     }
 
+    /// <summary>Verifies that the automation plan command ignores a repository-local Git found through relative search path entries.</summary>
     [Fact]
     public async Task Automation_plan_ignores_repository_local_git_from_relative_path_entries()
     {

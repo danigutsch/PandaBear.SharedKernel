@@ -2,6 +2,7 @@ using System.Globalization;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Prepares a sealed automation result with scripted GitHub responses and runs <c>automation publish-result</c> against it.</summary>
 internal static class RoadmapPublishResultTestOperations
 {
     private const string ChangedPath = "roadmap/reconciliation/open-issues-test.json";

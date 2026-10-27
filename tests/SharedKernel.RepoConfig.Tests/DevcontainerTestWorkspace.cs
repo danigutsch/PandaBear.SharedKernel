@@ -33,28 +33,34 @@ internal sealed class DevcontainerTestWorkspace : IDisposable
         WriteCli(UpScript("{\"outcome\":\"success\",\"containerId\":\"abc123\"}"));
     }
 
+    /// <summary>The workspace root directory.</summary>
     public string RootPath
     {
         get;
     }
 
+    /// <summary>The directory that holds the fake Dev Container CLI, the fake Docker, and their call logs.</summary>
     public string ToolsPath => _tools.Path;
 
+    /// <summary>The path of the fake Dev Container CLI executable.</summary>
     public string CliPath
     {
         get;
     }
 
+    /// <summary>The path of the fake Docker executable.</summary>
     public string DockerPath
     {
         get;
     }
 
+    /// <summary>The file that records each call to the fake Dev Container CLI.</summary>
     public string CliCallsPath
     {
         get;
     }
 
+    /// <summary>The file that records each call to the fake Docker.</summary>
     public string DockerCallsPath
     {
         get;
@@ -77,16 +83,21 @@ internal sealed class DevcontainerTestWorkspace : IDisposable
         exit 64
         """;
 
+    /// <summary>Replaces the fake Dev Container CLI with a script that runs the given <c>up</c> and <c>exec</c> fragments.</summary>
     public void WriteCli(string up, string exec = "echo \"exec output\"; exit 0") =>
         WriteExecutable(CliPath, CliScript(up, exec));
 
+    /// <summary>Returns the recorded Dev Container CLI calls, one line per call.</summary>
     public string[] CliCalls() => ReadCalls(CliCallsPath);
 
+    /// <summary>Returns the recorded Docker calls, one line per call.</summary>
     public string[] DockerCalls() => ReadCalls(DockerCallsPath);
 
+    /// <summary>Creates a host that uses the fake Docker and the given platform, client, and pins.</summary>
     public DevcontainerHost Host(bool isLinuxX64 = true, HttpClient? httpClient = null, DevcontainerCliPins? pins = null) =>
         new(DockerPath, isLinuxX64, httpClient, pins ?? DevcontainerCliPins.Default);
 
+    /// <summary>Runs <c>verify-devcontainer</c> with the given arguments against the workspace and returns its exit code, output, and error.</summary>
     public async Task<(int ExitCode, string Output, string Error)> Run(
         IReadOnlyList<string> arguments,
         DevcontainerHost? host = null,
@@ -103,12 +114,14 @@ internal sealed class DevcontainerTestWorkspace : IDisposable
         return (exitCode, output.ToString(), error.ToString());
     }
 
+    /// <summary>Writes the content with LF line endings and marks the file executable for its owner.</summary>
     public static void WriteExecutable(string path, string content)
     {
         File.WriteAllText(path, content.ReplaceLineEndings("\n"));
         File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
     }
 
+    /// <summary>Deletes the temporary tools directory and the root directory when the workspace created it.</summary>
     public void Dispose()
     {
         _tools.Dispose();

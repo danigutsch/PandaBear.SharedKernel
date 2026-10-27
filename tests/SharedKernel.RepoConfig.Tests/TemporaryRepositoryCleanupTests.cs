@@ -1,8 +1,14 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Tests that temporary repository fixtures delete read-only files and tolerate already-removed roots.
+/// </summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class TemporaryRepositoryCleanupTests
 {
+    /// <summary>
+    /// Verifies that disposing a Git or CI repository fixture removes a nested read-only file under .git/objects.
+    /// </summary>
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -29,6 +35,9 @@ public sealed class TemporaryRepositoryCleanupTests
         Directory.Exists(rootPath).ShouldBeFalse();
     }
 
+    /// <summary>
+    /// Verifies that disposing a Git or CI repository fixture succeeds when its root directory was already deleted.
+    /// </summary>
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -51,6 +60,9 @@ public sealed class TemporaryRepositoryCleanupTests
         Directory.Exists(rootPath).ShouldBeFalse();
     }
 
+    /// <summary>
+    /// Verifies that DeleteLooseObject removes a read-only loose Git blob and leaves the working tree file in place.
+    /// </summary>
     [Fact]
     public async Task DeleteLooseObject_removes_a_read_only_git_blob()
     {
@@ -71,6 +83,9 @@ public sealed class TemporaryRepositoryCleanupTests
         File.Exists(Path.Combine(repository.RootPath, "blob.txt")).ShouldBeTrue();
     }
 
+    /// <summary>
+    /// Verifies that disposing a Git repository also removes a linked worktree containing a read-only file.
+    /// </summary>
     [Fact]
     public async Task Dispose_removes_read_only_files_in_linked_worktrees()
     {

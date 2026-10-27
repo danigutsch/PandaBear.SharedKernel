@@ -2,10 +2,16 @@ using System.Text;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Tests the verify-text-encoding command, which checks staged Git blobs for valid NUL-free UTF-8, against seeded repositories.
+/// </summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class VerifyTextEncodingCommandTests
 {
+    /// <summary>
+    /// Verifies that the tool help lists the verify-text-encoding command.
+    /// </summary>
     [Fact]
     public async Task Help_lists_the_verify_text_encoding_command()
     {
@@ -21,6 +27,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldBe(string.Empty);
     }
 
+    /// <summary>
+    /// Verifies that --root is honored and a repository of valid UTF-8 files passes.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_honors_root_and_accepts_valid_utf8_baseline()
     {
@@ -48,6 +57,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldBe(string.Empty);
     }
 
+    /// <summary>
+    /// Verifies that extra arguments are rejected.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_rejects_extra_arguments()
     {
@@ -64,6 +76,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldContain("Unrecognized command or argument 'extra'.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that UTF-16 (with or without a BOM, either endianness) and UTF-8 text containing NUL bytes are rejected.
+    /// </summary>
     [Theory]
     [InlineData("utf16le-bom")]
     [InlineData("utf16be-bom")]
@@ -99,6 +114,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldNotContain("text\n", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that invalid UTF-8 is reported without echoing file content or the repository root path.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_rejects_invalid_utf8_without_leaking_content_or_root()
     {
@@ -121,6 +139,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldNotContain("System.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that only files the index attributes mark exactly as binary are skipped.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_skips_only_exact_binary_set_from_index_attributes()
     {
@@ -143,6 +164,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldBe(string.Empty);
     }
 
+    /// <summary>
+    /// Verifies that every attribute value except the set binary attribute (merge=binary, binary=custom, -binary) still gets scanned.
+    /// </summary>
     [Theory]
     [InlineData("packages.lock.json merge=binary", "packages.lock.json")]
     [InlineData("assigned.dat binary=custom", "assigned.dat")]
@@ -168,6 +192,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldNotContain("PRIVATE_ATTRIBUTE_CONTENT", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that diagnostics for paths with special characters are sanitized to a single line.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_sanitizes_special_path_diagnostics_to_one_line()
     {
@@ -198,6 +225,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldNotContain("\u001B", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that Unicode format and separator characters in paths are escaped in diagnostics.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_escapes_unicode_format_and_separator_characters()
     {
@@ -221,6 +251,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldNotContain("\U0001BCA0", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that environment variables that reroute the Git directory are ignored.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_ignores_alternate_git_directory_routing()
     {
@@ -250,6 +283,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldContain("invalid.txt: Is not valid UTF-8.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that environment variables that reroute the Git index are ignored.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_ignores_alternate_index_routing()
     {
@@ -277,6 +313,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldContain("content.txt: Is not valid UTF-8.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that binary attributes from a global attributes file are ignored.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_ignores_global_binary_attributes()
     {
@@ -302,6 +341,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldContain("invalid.txt: Is not valid UTF-8.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that the original .git/info/attributes file does not make files binary.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_ignores_original_info_attributes()
     {
@@ -323,6 +365,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldNotContain(repository.RootPath, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that blob replacement refs are ignored so the original blob is checked.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_ignores_blob_replacement_refs()
     {
@@ -352,6 +397,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldContain("invalid.txt: Is not valid UTF-8.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that SHA-256 repositories are supported when the installed Git supports them.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_supports_sha256_repositories_when_git_supports_them()
     {
@@ -376,6 +424,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldContain("invalid.txt: Is not valid UTF-8.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that a split index is read together with its shared index.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_reads_split_index_with_its_shared_index()
     {
@@ -405,6 +456,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldBe(string.Empty);
     }
 
+    /// <summary>
+    /// Verifies that object alternates declared by the repository itself are preserved.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_preserves_repository_declared_object_alternates()
     {
@@ -437,6 +491,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldContain("alternate-invalid.txt: Is not valid UTF-8.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that object alternates supplied by the caller environment are ignored.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_ignores_caller_provided_object_alternates()
     {
@@ -467,6 +524,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldNotContain(objectId, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that a linked worktree is checked using its own index.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_uses_the_linked_worktree_index()
     {
@@ -500,6 +560,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldContain("content.txt: Is not valid UTF-8.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that symbolic link index entries are skipped without reading their blobs.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_skips_symlink_index_entries_without_reading_the_blob()
     {
@@ -521,6 +584,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldBe(string.Empty);
     }
 
+    /// <summary>
+    /// Verifies that staged content is checked, not the working tree content.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_reads_staged_content_not_working_tree_content()
     {
@@ -541,6 +607,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldBe(string.Empty);
     }
 
+    /// <summary>
+    /// Verifies that invalid staged content is rejected even when the working tree file is valid.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_rejects_invalid_staged_content_even_when_working_tree_is_valid()
     {
@@ -562,6 +631,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldNotContain("STAGED_SENTINEL", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that a root that is not a Git repository is reported without raw process details.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_reports_non_git_roots_without_raw_process_details()
     {
@@ -580,6 +652,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldNotContain("fatal:", StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Verifies that a corrupt index is reported without raw Git details.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_reports_corrupt_index_without_raw_git_details()
     {
@@ -602,6 +677,9 @@ public sealed class VerifyTextEncodingCommandTests
         result.StandardError.ShouldNotContain("fatal:", StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Verifies that a missing blob is reported without raw Git details.
+    /// </summary>
     [Fact]
     public async Task Verify_text_encoding_reports_missing_blob_without_raw_git_details()
     {

@@ -4,9 +4,11 @@ using System.Text;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the <c>verify-podman-dns</c> preflight command.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class PodmanDnsPreflightCommandTests
 {
+    /// <summary>Verifies that the tool help lists the <c>verify-podman-dns</c> command.</summary>
     [Fact]
     public async Task Help_lists_the_verify_podman_dns_command()
     {
@@ -28,6 +30,7 @@ public sealed class PodmanDnsPreflightCommandTests
         error.ToString().ShouldBe(string.Empty);
     }
 
+    /// <summary>Verifies that the command help describes the verbosity option.</summary>
     [Fact]
     public async Task Command_help_describes_the_verbosity_option()
     {
@@ -51,6 +54,7 @@ public sealed class PodmanDnsPreflightCommandTests
         error.ToString().ShouldBe(string.Empty);
     }
 
+    /// <summary>Verifies that the help option works when other valid options are present.</summary>
     [Fact]
     public async Task Help_is_recognized_with_other_valid_options()
     {
@@ -67,6 +71,7 @@ public sealed class PodmanDnsPreflightCommandTests
         context.Commands.ShouldBe([]);
     }
 
+    /// <summary>Verifies that quiet verbosity hides the healthy state message.</summary>
     [Theory]
     [InlineData("q")]
     [InlineData("quiet")]
@@ -85,6 +90,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldBe(string.Empty);
     }
 
+    /// <summary>Verifies that the other verbosity levels print the healthy state message.</summary>
     [Theory]
     [InlineData("m")]
     [InlineData("minimal")]
@@ -109,6 +115,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldBe(string.Empty);
     }
 
+    /// <summary>Verifies that an unknown verbosity is a parse error and Podman never runs.</summary>
     [Fact]
     public async Task Unknown_verbosity_is_a_parse_error_without_running_podman()
     {
@@ -124,6 +131,7 @@ public sealed class PodmanDnsPreflightCommandTests
         context.Commands.ShouldBe([]);
     }
 
+    /// <summary>Verifies that a missing Podman executable makes the check inapplicable.</summary>
     [Fact]
     public async Task Missing_podman_is_inapplicable()
     {
@@ -140,6 +148,7 @@ public sealed class PodmanDnsPreflightCommandTests
         context.Commands.ShouldBe([]);
     }
 
+    /// <summary>Verifies that a relative Podman executable path fails the check.</summary>
     [Fact]
     public async Task Relative_podman_executable_fails_closed()
     {
@@ -155,6 +164,7 @@ public sealed class PodmanDnsPreflightCommandTests
         context.Commands.ShouldBe([]);
     }
 
+    /// <summary>Verifies that a host other than Linux fails the check.</summary>
     [Fact]
     public async Task Non_linux_host_fails_closed()
     {
@@ -171,6 +181,7 @@ public sealed class PodmanDnsPreflightCommandTests
         context.Commands.ShouldBe([]);
     }
 
+    /// <summary>Verifies that invalid rootless or remote mode output from Podman fails the check.</summary>
     [Theory]
     [InlineData("info --format {{.Host.ServiceIsRemote}}", "unknown\n", "invalid remote-service mode")]
     [InlineData("info --format {{.Host.Security.Rootless}}", "unknown\n", "invalid rootless mode")]
@@ -189,6 +200,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardOutput.ShouldBe(string.Empty);
     }
 
+    /// <summary>Verifies that rootful Podman makes the check inapplicable and prints nothing.</summary>
     [Fact]
     public async Task Rootful_podman_is_inapplicable_and_quiet()
     {
@@ -210,6 +222,7 @@ public sealed class PodmanDnsPreflightCommandTests
         ]);
     }
 
+    /// <summary>Verifies that a relative run root reported by Podman fails the check.</summary>
     [Fact]
     public async Task Relative_reported_run_root_fails_closed()
     {
@@ -225,6 +238,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("invalid run root", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a run root equal to the filesystem root fails the check.</summary>
     [Fact]
     public async Task Filesystem_root_reported_as_run_root_fails_closed()
     {
@@ -241,6 +255,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("unsafe run root", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a run root that does not exist fails the check.</summary>
     [Fact]
     public async Task Missing_reported_run_root_fails_closed()
     {
@@ -257,6 +272,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("run root does not exist", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that the aardvark configuration of a known internal network is healthy and is not modified.</summary>
     [Fact]
     public async Task Known_internal_network_config_is_healthy_and_read_only()
     {
@@ -293,6 +309,7 @@ public sealed class PodmanDnsPreflightCommandTests
         ]);
     }
 
+    /// <summary>Verifies that an aardvark configuration without a Podman network is reported and left in place.</summary>
     [Fact]
     public async Task Orphan_config_is_reported_without_mutation()
     {
@@ -314,6 +331,7 @@ public sealed class PodmanDnsPreflightCommandTests
         after.ShouldBe(before);
     }
 
+    /// <summary>Verifies that a live aardvark daemon for the run root without a PID file fails the check.</summary>
     [Fact]
     public async Task Live_runroot_daemon_without_pid_file_fails_closed()
     {
@@ -332,6 +350,7 @@ public sealed class PodmanDnsPreflightCommandTests
         after.ShouldBe(before);
     }
 
+    /// <summary>Verifies that a missing reference count fails the check and changes nothing.</summary>
     [Fact]
     public async Task Missing_refcount_fails_without_mutation()
     {
@@ -350,6 +369,7 @@ public sealed class PodmanDnsPreflightCommandTests
         after.ShouldBe(before);
     }
 
+    /// <summary>Verifies that a daemon in a different network namespace than the containers counts as stale.</summary>
     [Fact]
     public async Task Daemon_in_different_network_namespace_is_stale()
     {
@@ -370,6 +390,7 @@ public sealed class PodmanDnsPreflightCommandTests
         after.ShouldBe(before);
     }
 
+    /// <summary>Verifies that a daemon whose network namespace cannot be read fails the check.</summary>
     [Fact]
     public async Task Missing_daemon_namespace_identity_fails_closed()
     {
@@ -387,6 +408,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("network namespace identities", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a live daemon with no active container namespace counts as stale.</summary>
     [Fact]
     public async Task Live_daemon_without_active_namespace_is_stale()
     {
@@ -407,6 +429,7 @@ public sealed class PodmanDnsPreflightCommandTests
         after.ShouldBe(before);
     }
 
+    /// <summary>Verifies that a live daemon whose process stat cannot be read fails the check.</summary>
     [Fact]
     public async Task Live_daemon_without_stat_fails_closed()
     {
@@ -422,6 +445,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("GNU stat is required", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that more than one live daemon for the run root fails the check as ambiguous.</summary>
     [Fact]
     public async Task Multiple_live_daemons_are_ambiguous()
     {
@@ -442,6 +466,7 @@ public sealed class PodmanDnsPreflightCommandTests
         after.ShouldBe(before);
     }
 
+    /// <summary>Verifies that a daemon process identifier reused during inspection fails the check.</summary>
     [Fact]
     public async Task Reused_daemon_pid_during_inspection_fails_closed()
     {
@@ -458,6 +483,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("process identity changed during inspection", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a network namespace replaced late in the inspection fails the check.</summary>
     [Fact]
     public async Task Late_namespace_replacement_fails_closed()
     {
@@ -474,6 +500,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("network namespace identity changed during inspection", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a process identifier reused during the final namespace check fails the check.</summary>
     [Fact]
     public async Task Pid_reuse_during_final_namespace_check_fails_closed()
     {
@@ -490,6 +517,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("process identity changed during inspection", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that an invalid reference count fails the check.</summary>
     [Theory]
     [InlineData("0", "reference count is 0")]
     [InlineData("invalid", "unable to verify safely")]
@@ -510,6 +538,7 @@ public sealed class PodmanDnsPreflightCommandTests
         after.ShouldBe(before);
     }
 
+    /// <summary>Verifies that a daemon of the same user for another run root is ignored.</summary>
     [Fact]
     public async Task Same_user_daemon_for_another_run_root_is_ignored()
     {
@@ -526,6 +555,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldBe(string.Empty);
     }
 
+    /// <summary>Verifies that a daemon started with the <c>--config=</c> form matches only its exact run root.</summary>
     [Fact]
     public async Task Equals_form_config_argument_matches_exact_run_root()
     {
@@ -541,6 +571,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldBe(string.Empty);
     }
 
+    /// <summary>Verifies that a configuration without a live daemon fails the check.</summary>
     [Fact]
     public async Task Config_without_live_daemon_fails_closed()
     {
@@ -556,6 +587,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("does not identify a live aardvark-dns daemon", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a malformed aardvark directory path fails the check.</summary>
     [Fact]
     public async Task Malformed_aardvark_directory_path_fails_closed()
     {
@@ -572,6 +604,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardOutput.ShouldBe(string.Empty);
     }
 
+    /// <summary>Verifies that a malformed networks directory path fails the check.</summary>
     [Fact]
     public async Task Malformed_networks_directory_path_fails_closed()
     {
@@ -588,6 +621,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardOutput.ShouldBe(string.Empty);
     }
 
+    /// <summary>Verifies that a PID file with invalid content fails the check.</summary>
     [Fact]
     public async Task Malformed_pid_file_fails_closed()
     {
@@ -603,6 +637,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("contains an invalid PID", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a PID file for a process that has exited is rejected.</summary>
     [Fact]
     public async Task Pid_file_for_exited_process_is_rejected()
     {
@@ -618,6 +653,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("PID 1401, which is not running", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a PID file that names a process other than aardvark is rejected.</summary>
     [Fact]
     public async Task Pid_file_for_non_aardvark_process_is_rejected()
     {
@@ -635,6 +671,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("PID 1402, which is conmon", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a PID file for an aardvark process that uses another run root is rejected.</summary>
     [Fact]
     public async Task Pid_file_for_aardvark_using_another_run_root_is_rejected()
     {
@@ -651,6 +688,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("not configured for", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a change of the running containers during inspection fails the check.</summary>
     [Fact]
     public async Task Running_container_state_change_during_inspection_fails_closed()
     {
@@ -666,6 +704,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("running container state changed", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a change of the PID file during inspection fails the check.</summary>
     [Fact]
     public async Task Pid_file_change_during_inspection_fails_closed()
     {
@@ -682,6 +721,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("PID file changed during inspection", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a change of the reference count during inspection fails the check.</summary>
     [Fact]
     public async Task Reference_count_change_during_inspection_fails_closed()
     {
@@ -698,6 +738,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("reference count changed during inspection", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a change of the aardvark configuration during inspection fails the check.</summary>
     [Fact]
     public async Task Aardvark_configuration_change_during_inspection_fails_closed()
     {
@@ -714,6 +755,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("configuration changed during inspection", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a change of the Podman network state during inspection fails the check.</summary>
     [Fact]
     public async Task Podman_network_state_change_during_inspection_fails_closed()
     {
@@ -731,6 +773,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("Podman network state changed", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a change of the Podman run root during inspection fails the check.</summary>
     [Fact]
     public async Task Podman_run_root_change_during_inspection_fails_closed()
     {
@@ -750,6 +793,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("Podman run root changed", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a change of the run root directory during inspection fails the check.</summary>
     [Fact]
     public async Task Run_root_directory_state_change_during_inspection_fails_closed()
     {
@@ -765,6 +809,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("run-root directory state changed", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a Podman query that returns an invalid single value fails the check.</summary>
     [Theory]
     [InlineData("false\ntrue\n")]
     [InlineData("")]
@@ -782,6 +827,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("remote-service mode", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that Podman output beyond the size limit fails the check and is not printed.</summary>
     [Fact]
     public async Task Oversized_podman_output_fails_closed_without_echoing_it()
     {
@@ -799,6 +845,7 @@ public sealed class PodmanDnsPreflightCommandTests
             $"verify-podman-dns: unable to verify safely: podman info failed while reading remote-service mode{Environment.NewLine}");
     }
 
+    /// <summary>Verifies that Podman error output beyond the size limit fails the check and is not printed.</summary>
     [Fact]
     public async Task Oversized_podman_error_fails_closed_without_echoing_it()
     {
@@ -816,6 +863,7 @@ public sealed class PodmanDnsPreflightCommandTests
             $"verify-podman-dns: unable to verify safely: podman info failed while reading remote-service mode{Environment.NewLine}");
     }
 
+    /// <summary>Verifies that a failure to start Podman names the executable.</summary>
     [Fact]
     public async Task Process_start_failure_names_the_executable()
     {
@@ -836,6 +884,7 @@ public sealed class PodmanDnsPreflightCommandTests
         exception.Message.ShouldContain(executable, StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a failure to start the stat command names its executable in the diagnostics.</summary>
     [Fact]
     public async Task Stat_start_failure_names_the_executable_in_command_diagnostics()
     {
@@ -853,6 +902,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain(statExecutable, StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that cleanup ignores a process that is already gone.</summary>
     [Fact]
     public async Task Process_cleanup_ignores_an_already_unavailable_process()
     {
@@ -868,6 +918,7 @@ public sealed class PodmanDnsPreflightCommandTests
         completed.ShouldBe(true);
     }
 
+    /// <summary>Verifies that cancellation kills the inspection process and its children.</summary>
     [Fact]
     public async Task Cancellation_kills_the_inspection_process_tree()
     {
@@ -905,6 +956,7 @@ public sealed class PodmanDnsPreflightCommandTests
         exited.ShouldBeTrue();
     }
 
+    /// <summary>Verifies that output capture keeps only the limit marker once the size limit is exceeded.</summary>
     [Fact]
     public async Task Process_output_capture_retains_only_the_limit_marker()
     {
@@ -922,6 +974,7 @@ public sealed class PodmanDnsPreflightCommandTests
         capturedOutput.Length.ShouldBe(1_048_577);
     }
 
+    /// <summary>Verifies that a failing Podman query fails the check.</summary>
     [Theory]
     [InlineData("info --format {{.Host.ServiceIsRemote}}", "remote-service mode")]
     [InlineData("info --format {{.Host.Security.Rootless}}", "rootless mode")]
@@ -944,6 +997,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardOutput.ShouldBe(string.Empty);
     }
 
+    /// <summary>Verifies that a remote Podman connection fails the check.</summary>
     [Fact]
     public async Task Remote_podman_fails_closed()
     {
@@ -959,6 +1013,7 @@ public sealed class PodmanDnsPreflightCommandTests
         result.StandardError.ShouldContain("remote Podman state", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that an unknown option is a parse error and Podman never runs.</summary>
     [Fact]
     public async Task Unknown_option_is_a_parse_error_without_running_podman()
     {

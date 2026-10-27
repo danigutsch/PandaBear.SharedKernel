@@ -2,9 +2,11 @@ using System.Globalization;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests that the roadmap write-input snapshot digests repository-owned inputs and detects later changes.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RoadmapWriteInputSnapshotTests
 {
+    /// <summary>Appending a newline to <c>roadmap/config.json</c> after the first capture gives a second capture a different 64-character lowercase hex digest.</summary>
     [Fact]
     public async Task Digest_changes_when_a_repository_owned_input_changes()
     {
@@ -27,6 +29,7 @@ public sealed class RoadmapWriteInputSnapshotTests
         second.Digest.ShouldNotBe(first.Digest);
     }
 
+    /// <summary>Verifying a snapshot after <c>roadmap/config.json</c> was deleted throws an error that the input changed after the write plan was created and names the deleted path.</summary>
     [Fact]
     public async Task Verify_reports_a_deleted_required_file_as_a_stale_plan()
     {

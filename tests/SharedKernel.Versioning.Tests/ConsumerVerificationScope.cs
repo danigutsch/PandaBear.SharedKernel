@@ -13,10 +13,19 @@ namespace PandaBear.Versioning.Tests;
 /// </summary>
 internal sealed partial class ConsumerVerificationScope : IDisposable
 {
+    /// <summary>
+    /// The candidate package version used by the consumer repository and manifest.
+    /// </summary>
     public const string Version = "1.0.0-alpha.1";
 
+    /// <summary>
+    /// File name of the candidate Results package.
+    /// </summary>
     public const string Package = "PandaBear.SharedKernel.Results." + Version + ".nupkg";
 
+    /// <summary>
+    /// NuGet.Config content that maps PandaBear.SharedKernel.* packages to the local feed and everything else to nuget.org.
+    /// </summary>
     public const string NuGetConfig = """
         <configuration>
           <packageSources>
@@ -34,6 +43,9 @@ internal sealed partial class ConsumerVerificationScope : IDisposable
 
     private readonly TemporaryGitRepository repository = new();
 
+    /// <summary>
+    /// Writes the consumer repository files, the candidate package, and an in-memory candidate manifest that is not yet written to disk.
+    /// </summary>
     public ConsumerVerificationScope()
     {
         WriteFile(".gitignore", "TestResults/\n.local/\n");
@@ -55,25 +67,46 @@ internal sealed partial class ConsumerVerificationScope : IDisposable
         };
     }
 
+    /// <summary>
+    /// Gets the root directory of the consumer repository.
+    /// </summary>
     public string Root => repository.Root;
 
+    /// <summary>
+    /// Gets the temporary directory, outside the repository, that holds the candidate package and manifest.
+    /// </summary>
     public string CandidateDirectory { get; } = Path.Combine(Path.GetTempPath(), "versioning-candidate-" + Guid.NewGuid().ToString("N"));
 
+    /// <summary>
+    /// Gets the path of the candidate manifest file.
+    /// </summary>
     public string Manifest => Path.Combine(CandidateDirectory, "candidate.json");
 
+    /// <summary>
+    /// Gets the path of the compatibility evidence file the verification writes.
+    /// </summary>
     public string EvidencePath => Path.Combine(Root, "TestResults", "consumer-compatibility.json");
 
+    /// <summary>
+    /// Gets the candidate manifest content, which tests may change before it is committed.
+    /// </summary>
     public JsonObject Candidate
     {
         get;
     }
 
+    /// <summary>
+    /// Gets the compatibility evidence parsed from the evidence file.
+    /// </summary>
     public JsonObject Evidence => JsonNode.Parse(File.ReadAllText(EvidencePath))!.AsObject();
 
     /// <summary>A command that prints the clone directory, the staged packages, the NuGet cache variables, and HEAD.</summary>
     public static string[] Probe(string extra = "") =>
         ["git", "-c", "alias.probe=!pwd; ls .local/sharedkernel-feed; echo \"packages=$NUGET_PACKAGES\"; echo \"http=$NUGET_HTTP_CACHE_PATH\"; git rev-parse HEAD" + extra, "probe"];
 
+    /// <summary>
+    /// Returns a packages.lock.json for the Results package with the given dependency type and resolved version, plus an unrelated external package.
+    /// </summary>
     public static string Lock(string type, string resolved) =>
         "{ \"version\": 2, \"dependencies\": { \"net10.0\": { \"PandaBear.SharedKernel.Results\": { \"type\": \"" + type + "\", \"resolved\": \"" + resolved
             + "\" }, \"External.Package\": { \"type\": \"Direct\", \"resolved\": \"2.0.0\" } } } }";
@@ -81,6 +114,9 @@ internal sealed partial class ConsumerVerificationScope : IDisposable
     /// <summary>Returns the scratch directory that a probe's <c>pwd</c> printed, under the temporary directory of this process.</summary>
     public static string ScratchDirectory(string output) => Path.Combine(Path.GetTempPath(), Scratch().Match(output).Value);
 
+    /// <summary>
+    /// Writes a file under the consumer repository root, creating missing directories.
+    /// </summary>
     public void WriteFile(string path, string content)
     {
         var fullPath = Path.Combine(Root, path);
@@ -102,9 +138,15 @@ internal sealed partial class ConsumerVerificationScope : IDisposable
         return (await CommandRunner.Run("git", ["rev-parse", "HEAD"], Root, ct)).Trim();
     }
 
+    /// <summary>
+    /// Runs the verify-consumer command for the candidate and repository with the given options and command.
+    /// </summary>
     public Task<CommandLineInvocation> Verify(string[] command, CancellationToken ct, params string[] options) =>
         VersioningCommandLineRunner.Invoke(["verify-consumer", "--candidate", Manifest, "--repo-root", Root, .. options, "--", .. command], ct);
 
+    /// <summary>
+    /// Deletes the consumer repository and the candidate directory.
+    /// </summary>
     public void Dispose()
     {
         repository.Dispose();

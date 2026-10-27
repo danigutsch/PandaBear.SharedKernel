@@ -2,9 +2,15 @@ using PandaBear.Testing;
 
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests cleanup of the temporary Git repository fixture.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public sealed class TemporaryGitRepositoryTests
 {
+    /// <summary>
+    /// Verifies that Dispose removes read-only Git objects and can be called twice.
+    /// </summary>
     [Fact]
     public async Task Dispose_removes_read_only_git_objects_and_can_be_called_twice()
     {

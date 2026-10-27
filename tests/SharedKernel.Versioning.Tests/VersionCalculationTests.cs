@@ -1,8 +1,14 @@
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests version calculation from base versions and commit history.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VersionCalculationTests
 {
+    /// <summary>
+    /// Verifies that the highest release impact in the commit history decides the next version and its derived assembly, file, and informational versions.
+    /// </summary>
     [Fact]
     public static void Calculates_highest_release_impact_from_commit_history()
     {
@@ -27,6 +33,9 @@ public static class VersionCalculationTests
         output.InformationalVersion.ShouldBe("0.2.0-alpha.1+sha.abc123");
     }
 
+    /// <summary>
+    /// Verifies that a breaking commit produces a major release.
+    /// </summary>
     [Fact]
     public static void Calculates_major_release_for_breaking_commit()
     {
@@ -43,6 +52,9 @@ public static class VersionCalculationTests
         output.AssemblyVersion.ShouldBe("2.0.0.0");
     }
 
+    /// <summary>
+    /// Verifies that the commit SHA is appended to existing build metadata in the informational version.
+    /// </summary>
     [Fact]
     public static void Appends_sha_to_existing_build_metadata()
     {

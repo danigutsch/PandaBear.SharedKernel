@@ -2,9 +2,11 @@ using System.Globalization;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the <c>security baseline</c> command's document policy checks and the <c>security</c> option parser.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class SecurityBaselineCommandTests
 {
+    /// <summary>A policy that requires the text "Controls" in <c>docs/security.md</c>, which contains it, makes <c>security baseline</c> exit with 0 and print that the baseline is current.</summary>
     [Fact]
     public async Task Baseline_accepts_repository_document_contracts()
     {
@@ -24,6 +26,8 @@ public sealed class SecurityBaselineCommandTests
         error.ToString().ShouldBe(string.Empty);
     }
 
+    /// <summary><c>security baseline</c> exits with 2 and reports a <c>security:</c> error for a policy that is empty, has version 2, lists no documents, points at <c>../outside.md</c>, or points at a non-document <c>.cs</c> file.</summary>
+    /// <param name="policy">The security baseline policy JSON.</param>
     [Theory]
     [InlineData("{}")]
     [InlineData("{\"version\":2,\"documents\":[]}")]
@@ -46,6 +50,7 @@ public sealed class SecurityBaselineCommandTests
         error.ToString().ShouldContain("security:", StringComparison.Ordinal);
     }
 
+    /// <summary>When the policy names <c>docs/security.md</c> but the file does not exist, <c>security baseline</c> exits with 1 and the error names that path.</summary>
     [Fact]
     public async Task Baseline_reports_missing_documents_without_printing_document_contents()
     {
@@ -63,6 +68,7 @@ public sealed class SecurityBaselineCommandTests
         error.ToString().ShouldContain("docs/security.md", StringComparison.Ordinal);
     }
 
+    /// <summary>When <c>docs/security.md</c> lacks the required text "#815", <c>security baseline</c> exits with 1 and reports missing required text without echoing the document's content.</summary>
     [Fact]
     public async Task Baseline_reports_missing_required_text()
     {
@@ -82,6 +88,7 @@ public sealed class SecurityBaselineCommandTests
         error.ToString().ShouldNotContain("private-document-value", StringComparison.Ordinal);
     }
 
+    /// <summary>When <c>docs</c> is a symbolic link to a directory outside the repository, <c>security baseline</c> exits with 2 and does not print the outside document's content.</summary>
     [Fact]
     public async Task Baseline_rejects_symbolic_links_outside_the_repository()
     {
@@ -101,6 +108,8 @@ public sealed class SecurityBaselineCommandTests
         result.ShouldBe(2);
         error.ToString().ShouldNotContain("outside-private-value", StringComparison.Ordinal);
     }
+    /// <summary>The <c>security</c> command exits with 1, prints an error, does not report the baseline as current, and writes no report for <c>scan</c> without <c>--output</c>, a missing, blank, or repeated <c>--output</c> value, <c>--output</c> on <c>baseline</c>, or an unknown option.</summary>
+    /// <param name="arguments">The arguments passed after <c>security</c>.</param>
     [Theory]
     [InlineData("scan")]
     [InlineData("scan", "--output")]

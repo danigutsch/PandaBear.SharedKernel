@@ -1,8 +1,10 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the <c>dependency snapshot</c> command.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class DependencySnapshotCommandTests
 {
+    /// <summary>Verifies that the snapshot keeps every framework, package kind, and project edge from the lock files without running a restore.</summary>
     [Fact]
     public async Task Snapshot_preserves_every_framework_package_kind_and_project_edge_without_restore()
     {
@@ -49,6 +51,7 @@ public sealed class DependencySnapshotCommandTests
         Directory.Exists(Path.Combine(repository.RootPath, "src", "obj")).ShouldBeFalse();
     }
 
+    /// <summary>Verifies that the snapshot rejects package URLs that expand beyond the allowed size before it publishes any output.</summary>
     [Fact]
     public async Task Snapshot_rejects_amplified_package_urls_before_publishing_output()
     {
@@ -75,6 +78,7 @@ public sealed class DependencySnapshotCommandTests
         repository.SnapshotExists.ShouldBeFalse();
     }
 
+    /// <summary>Verifies that the snapshot rejects lock graphs that are incomplete or ambiguous.</summary>
     [Theory]
     [InlineData("{\"version\":99,\"dependencies\":{}}")]
     [InlineData("{\"version\":3,\"dependencies\":{\"net10.0\":{\"A\":{\"type\":\"Direct\",\"resolved\":\"1.0.0\",\"contentHash\":\"HASH\"}}}}")]
@@ -96,6 +100,7 @@ public sealed class DependencySnapshotCommandTests
         repository.SnapshotExists.ShouldBeFalse();
     }
 
+    /// <summary>Verifies that the snapshot fails when a project has no lock file, even if another project's lock file is valid.</summary>
     [Fact]
     public async Task Snapshot_rejects_a_missing_project_lock_even_when_another_lock_is_valid()
     {
@@ -116,6 +121,7 @@ public sealed class DependencySnapshotCommandTests
         repository.SnapshotExists.ShouldBeFalse();
     }
 
+    /// <summary>Verifies that the snapshot fails when its inputs differ from the committed content.</summary>
     [Fact]
     public async Task Snapshot_rejects_dirty_inputs()
     {
@@ -132,6 +138,7 @@ public sealed class DependencySnapshotCommandTests
     }
 
 
+    /// <summary>Verifies that the snapshot rejects a request that labels a clean commit with a different revision.</summary>
     [Fact]
     public async Task Snapshot_rejects_mislabeling_a_clean_commit()
     {
@@ -147,6 +154,7 @@ public sealed class DependencySnapshotCommandTests
     }
 
 
+    /// <summary>Verifies that the snapshot rejects a lock file that Git ignores and the commit does not contain.</summary>
     [Fact]
     public async Task Snapshot_rejects_an_ignored_lock_file_missing_from_the_commit()
     {
@@ -163,6 +171,7 @@ public sealed class DependencySnapshotCommandTests
         repository.SnapshotExists.ShouldBeFalse();
     }
 
+    /// <summary>Verifies that the snapshot reads the committed lock content even when Git is told to assume the tracked lock file unchanged.</summary>
     [Fact]
     public async Task Snapshot_uses_committed_blobs_when_tracked_lock_changes_are_assumed_unchanged()
     {
@@ -184,6 +193,7 @@ public sealed class DependencySnapshotCommandTests
     }
 
 
+    /// <summary>Verifies that the snapshot flattens project connectors that reconverge and emits no duplicate package edges.</summary>
     [Fact]
     public async Task Snapshot_flattens_reconverging_project_connectors_without_duplicate_package_edges()
     {
@@ -211,6 +221,7 @@ public sealed class DependencySnapshotCommandTests
         targets[0].GetString().ShouldBe("pkg:nuget/Leaf@2.0.0");
     }
 
+    /// <summary>Verifies that the snapshot rejects local project references that form a cycle.</summary>
     [Fact]
     public async Task Snapshot_rejects_cyclic_local_project_connectors()
     {
@@ -232,6 +243,7 @@ public sealed class DependencySnapshotCommandTests
     }
 
 
+    /// <summary>Verifies that the snapshot ignores Git replacement objects, so a reviewed commit always yields its real content.</summary>
     [Fact]
     public async Task Snapshot_ignores_replacement_objects_for_a_reviewed_commit()
     {
@@ -257,6 +269,7 @@ public sealed class DependencySnapshotCommandTests
         nodes.TryGetProperty("pkg:nuget/A@9.9.9", out _).ShouldBeFalse();
     }
 
+    /// <summary>Verifies that the snapshot refuses to write its output outside the reviewed repository.</summary>
     [Fact]
     public async Task Snapshot_rejects_output_outside_the_reviewed_repository()
     {

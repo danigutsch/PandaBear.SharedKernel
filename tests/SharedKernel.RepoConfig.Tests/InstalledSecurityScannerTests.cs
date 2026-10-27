@@ -4,9 +4,11 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the security scanner that is installed on the machine. The tests run only when requested.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class InstalledSecurityScannerTests
 {
+    /// <summary>Verifies that the installed scanner finds planted secrets, redacts the evidence it reports, and accepts a clean source tree, including in a directory name with spaces.</summary>
     [Theory(Explicit = true)]
     [InlineData("repository with spaces")]
     [InlineData(".worktrees/repository with spaces")]

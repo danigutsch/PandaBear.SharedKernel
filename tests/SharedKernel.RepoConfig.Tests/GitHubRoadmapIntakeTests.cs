@@ -4,9 +4,11 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the <c>github import</c> roadmap command.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubRoadmapIntakeTests
 {
+    /// <summary>Verifies that import does not link a parent from another repository to a local issue with the same number.</summary>
     [Fact]
     public async Task GitHub_import_does_not_link_an_external_parent_with_a_matching_issue_number()
     {
@@ -74,6 +76,7 @@ public sealed class GitHubRoadmapIntakeTests
         childItem.RootElement.TryGetProperty("parent", out _).ShouldBeFalse();
     }
 
+    /// <summary>Verifies that import rejects a manifest without a snapshot digest before any network request.</summary>
     [Fact]
     public async Task GitHub_import_rejects_a_manifest_without_snapshot_digest_before_network()
     {
@@ -130,6 +133,7 @@ public sealed class GitHubRoadmapIntakeTests
         handler.Requests.ShouldBeEmpty();
     }
 
+    /// <summary>Verifies that import previews by default and requests only safe issue metadata.</summary>
     [Fact]
     public async Task GitHub_import_defaults_to_preview_and_fetches_only_safe_metadata()
     {
@@ -209,6 +213,7 @@ public sealed class GitHubRoadmapIntakeTests
         requestBody.ShouldNotContain("mutation", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that import with force allocates identifiers, links items, assigns priority, and changes nothing on a second run.</summary>
     [Fact]
     public async Task GitHub_import_force_allocates_links_prioritizes_and_is_idempotent()
     {
@@ -346,6 +351,7 @@ public sealed class GitHubRoadmapIntakeTests
         stateAfterSecondApply.ShouldBe(stateAfterFirstApply);
     }
 
+    /// <summary>Verifies that import rejects a changed issue set and writes nothing.</summary>
     [Fact]
     public async Task GitHub_import_rejects_issue_set_digest_drift_without_writing()
     {
@@ -414,6 +420,7 @@ public sealed class GitHubRoadmapIntakeTests
         stateAfter.ShouldBe(stateBefore);
     }
 
+    /// <summary>Verifies that import rejects an issue with conflicting type labels and writes nothing.</summary>
     [Fact]
     public async Task GitHub_import_rejects_conflicting_type_labels_without_writing()
     {
@@ -478,6 +485,7 @@ public sealed class GitHubRoadmapIntakeTests
         stateAfter.ShouldBe(stateBefore);
     }
 
+    /// <summary>Verifies that import rejects a pull request in the issue set and writes nothing.</summary>
     [Fact]
     public async Task GitHub_import_rejects_pull_requests_without_writing()
     {
@@ -570,6 +578,7 @@ public sealed class GitHubRoadmapIntakeTests
         stateAfter.ShouldBe(stateBefore);
     }
 
+    /// <summary>Verifies that import moves a declared, imported item to the closed support status.</summary>
     [Fact]
     public async Task GitHub_import_transitions_a_declared_imported_item_to_closed_support()
     {
@@ -660,6 +669,7 @@ public sealed class GitHubRoadmapIntakeTests
         stateAfterSecondApply.ShouldBe(stateAfterFirstApply);
     }
 
+    /// <summary>Verifies that import moves a not-planned item to the configured not-planned status.</summary>
     [Fact]
     public async Task GitHub_import_transitions_a_not_planned_item_to_the_configured_not_planned_status()
     {
@@ -755,6 +765,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
 
+    /// <summary>Verifies that import rejects a not-planned transition when no not-planned status is configured.</summary>
     [Fact]
     public async Task GitHub_import_rejects_a_not_planned_transition_without_a_configured_not_planned_status()
     {
@@ -818,6 +829,7 @@ public sealed class GitHubRoadmapIntakeTests
         workspace.ReadFile("roadmap/items/RM-018-github-100.json").ShouldNotContain("\"done\"", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that import keeps the exact blocker links of an item that moves to closed.</summary>
     [Fact]
     public async Task GitHub_import_preserves_exact_blocker_links_during_a_closed_transition()
     {
@@ -897,6 +909,7 @@ public sealed class GitHubRoadmapIntakeTests
         orderedItems.ShouldBe(["RM-001", "RM-019"]);
     }
 
+    /// <summary>Verifies that import rejects a closed transition that the manifest does not declare and writes nothing.</summary>
     [Fact]
     public async Task GitHub_import_rejects_an_undeclared_imported_closed_transition_without_writing()
     {
@@ -970,6 +983,7 @@ public sealed class GitHubRoadmapIntakeTests
         stateAfter.ShouldBe(stateBefore);
     }
 
+    /// <summary>Verifies that import rejects a declared transition for an issue without an existing roadmap mapping.</summary>
     [Fact]
     public async Task GitHub_import_rejects_a_declared_transition_without_an_existing_mapping()
     {
@@ -1035,6 +1049,7 @@ public sealed class GitHubRoadmapIntakeTests
         stateAfter.ShouldBe(stateBefore);
     }
 
+    /// <summary>Verifies that import rejects a closed transition for an item that was reviewed by hand.</summary>
     [Fact]
     public async Task GitHub_import_rejects_a_closed_transition_for_a_reviewed_item()
     {
@@ -1100,6 +1115,7 @@ public sealed class GitHubRoadmapIntakeTests
         workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json").ShouldBe(reviewedItem);
     }
 
+    /// <summary>Verifies that import rejects a declared transition that names a different roadmap item than the mapping.</summary>
     [Fact]
     public async Task GitHub_import_rejects_a_declared_transition_with_a_different_roadmap_item()
     {
@@ -1165,6 +1181,7 @@ public sealed class GitHubRoadmapIntakeTests
         stateAfter.ShouldBe(stateBefore);
     }
 
+    /// <summary>Verifies that import replaces imported relationships with the exact relationships GitHub reports.</summary>
     [Fact]
     public async Task GitHub_import_replaces_imported_relationships_with_exact_github_metadata()
     {
@@ -1243,6 +1260,7 @@ public sealed class GitHubRoadmapIntakeTests
         childItem.RootElement.GetProperty("parent").GetString().ShouldBe("RM-018");
     }
 
+    /// <summary>Verifies that import links only parents that are mapped and open in the digest-verified snapshot.</summary>
     [Fact]
     public async Task GitHub_import_links_only_mapped_open_parents_from_a_digest_snapshot()
     {
@@ -1381,6 +1399,7 @@ public sealed class GitHubRoadmapIntakeTests
         childItem.RootElement.GetProperty("parent").GetString().ShouldBe("RM-019");
     }
 
+    /// <summary>Verifies that import rejects snapshot metadata that differs from the manifest and writes nothing.</summary>
     [Fact]
     public async Task GitHub_import_rejects_snapshot_metadata_drift_without_writing()
     {

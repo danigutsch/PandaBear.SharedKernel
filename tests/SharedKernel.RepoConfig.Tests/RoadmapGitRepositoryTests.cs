@@ -3,10 +3,12 @@ using System.Text;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests how the roadmap Git repository starts <c>git</c>, handles its failures, and passes cancellation through.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class RoadmapGitRepositoryTests
 {
+    /// <summary>Reading HEAD starts a fully qualified <c>git</c> with the fixed arguments <c>rev-parse --verify HEAD</c>, redirected output, <c>GIT_TERMINAL_PROMPT=0</c>, and neither <c>GH_TOKEN</c> nor <c>GITHUB_TOKEN</c> in its environment.</summary>
     [Fact]
     public async Task Git_queries_use_fixed_noninteractive_arguments_without_credentials()
     {
@@ -42,6 +44,7 @@ public sealed class RoadmapGitRepositoryTests
         startInfo.Environment.ContainsKey("GITHUB_TOKEN").ShouldBeFalse();
     }
 
+    /// <summary>With a <c>PATH</c> that holds only the current directory and an empty entry, reading HEAD throws that git could not be resolved to an absolute path and starts no process.</summary>
     [Fact]
     public async Task Git_queries_start_nothing_when_no_absolute_path_entry_holds_git()
     {
@@ -69,6 +72,7 @@ public sealed class RoadmapGitRepositoryTests
         started.ShouldBeFalse("Without an absolute PATH entry for git, no bare name falls back to the current directory.");
     }
 
+    /// <summary>When git exits with 1 and writes a diagnostic to standard error, reading HEAD throws a fixed "Git inspection failed" message that does not contain the diagnostic text.</summary>
     [Fact]
     public async Task Git_errors_do_not_expose_untrusted_diagnostics()
     {
@@ -89,6 +93,7 @@ public sealed class RoadmapGitRepositoryTests
         exception.Message.ShouldNotContain("diagnostic-credential-marker", StringComparison.Ordinal);
     }
 
+    /// <summary>When the command runner throws <see cref="OperationCanceledException"/> for an already cancelled token, reading HEAD lets it escape carrying that same token.</summary>
     [Fact]
     public async Task Git_cancellation_is_preserved()
     {

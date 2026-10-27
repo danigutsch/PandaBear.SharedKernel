@@ -2,9 +2,11 @@ using System.Globalization;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Checks the repo-config tool's command-line surface: help text, parse errors, the root option and documented command lines.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RepoConfigCommandLineTests
 {
+    /// <summary>Running with --help exits 0 with empty standard error and lists init, verify, diff, set, get, github, automation, security, dependency and each verify-* command.</summary>
     [Fact]
     public async Task Root_help_lists_every_command()
     {
@@ -36,6 +38,7 @@ public sealed class RepoConfigCommandLineTests
         outputText.ShouldContain("  dependency ", StringComparison.Ordinal);
     }
 
+    /// <summary>Running with no arguments exits 1 and reports "Required command was not provided." on standard error.</summary>
     [Fact]
     public async Task Missing_command_is_a_parse_error()
     {
@@ -51,6 +54,7 @@ public sealed class RepoConfigCommandLineTests
         error.ToString().ShouldContain("Required command was not provided.", StringComparison.Ordinal);
     }
 
+    /// <summary>Running with --version exits 0, prints a non-empty version on standard output and writes nothing to standard error.</summary>
     [Fact]
     public async Task Version_option_writes_the_version_to_standard_output()
     {
@@ -68,6 +72,8 @@ public sealed class RepoConfigCommandLineTests
         error.ToString().ShouldBe(string.Empty);
     }
 
+    /// <summary>Running a command group (github, automation, security or dependency) without a subcommand exits 1 with "Required command was not provided."</summary>
+    /// <param name="group">The command group name given as the only argument.</param>
     [Theory]
     [InlineData("github")]
     [InlineData("automation")]
@@ -88,6 +94,7 @@ public sealed class RepoConfigCommandLineTests
         error.ToString().ShouldContain("Required command was not provided.", StringComparison.Ordinal);
     }
 
+    /// <summary>Running init without --root initializes the working directory, exiting 0 and creating roadmap/config.json there.</summary>
     [Fact]
     public async Task Root_option_defaults_to_the_working_directory()
     {
@@ -105,6 +112,7 @@ public sealed class RepoConfigCommandLineTests
         workspace.FileExists("roadmap/config.json").ShouldBeTrue();
     }
 
+    /// <summary>Running init with a relative --root name resolves it against the supplied working directory and creates roadmap/config.json in that workspace.</summary>
     [Fact]
     public async Task Root_option_resolves_relative_paths_against_the_working_directory()
     {
@@ -124,6 +132,7 @@ public sealed class RepoConfigCommandLineTests
         workspace.FileExists("roadmap/config.json").ShouldBeTrue();
     }
 
+    /// <summary>After init with --root ".", verify reports "Repository config is valid." and diff reports "Repository config has no drift.", both exiting 0 with empty standard error.</summary>
     [Fact]
     public async Task Dot_root_verifies_the_working_directory()
     {
@@ -151,6 +160,9 @@ public sealed class RepoConfigCommandLineTests
         diffError.ToString().ShouldBe(string.Empty);
     }
 
+    /// <summary>Each documented sharedkernel-repo command line parses without errors and resolves to the expected leaf command name.</summary>
+    /// <param name="commandLine">The command line text after the tool name.</param>
+    /// <param name="expectedCommand">The name of the command the parse result must select.</param>
     [Theory]
     [InlineData("github sync", "sync")]
     [InlineData("github sync --force --root .", "sync")]
@@ -193,6 +205,8 @@ public sealed class RepoConfigCommandLineTests
         parseResult.CommandResult.Command.Name.ShouldBe(expectedCommand);
     }
 
+    /// <summary>An empty or whitespace --root value exits 1 with "--root requires a directory path." and creates no config.</summary>
+    /// <param name="root">The blank value passed to --root.</param>
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
@@ -212,6 +226,7 @@ public sealed class RepoConfigCommandLineTests
         workspace.FileExists("roadmap/config.json").ShouldBeFalse();
     }
 
+    /// <summary>A --root value containing a null character, supplied through an @ response file, exits 1 with "--root path contains a null character." and creates no config.</summary>
     [Fact]
     public async Task Root_option_with_a_null_character_from_a_response_file_is_a_parse_error()
     {
@@ -231,6 +246,7 @@ public sealed class RepoConfigCommandLineTests
         workspace.FileExists("roadmap/config.json").ShouldBeFalse();
     }
 
+    /// <summary>Running init with --root as the last argument exits 1 with "Required argument missing for option: '--root'." and creates no config.</summary>
     [Fact]
     public async Task Root_option_without_a_value_is_a_parse_error()
     {
@@ -248,6 +264,8 @@ public sealed class RepoConfigCommandLineTests
         workspace.FileExists("roadmap/config.json").ShouldBeFalse();
     }
 
+    /// <summary>The help of github sync, reconcile and import exits 0 and shows the --force and --root options.</summary>
+    /// <param name="command">The github subcommand whose help is requested.</param>
     [Theory]
     [InlineData("sync")]
     [InlineData("reconcile")]
@@ -269,6 +287,7 @@ public sealed class RepoConfigCommandLineTests
         error.ToString().ShouldBe(string.Empty);
     }
 
+    /// <summary>The help of automation publish-result exits 0 and shows the "Previews" description with the --force and --root options.</summary>
     [Fact]
     public async Task Publish_result_help_describes_force_and_root()
     {
@@ -288,6 +307,7 @@ public sealed class RepoConfigCommandLineTests
         error.ToString().ShouldBe(string.Empty);
     }
 
+    /// <summary>The help of get exits 0 and lists every query name (next-priority through by-label) and the --limit option.</summary>
     [Fact]
     public async Task Get_help_lists_every_query()
     {
@@ -318,6 +338,7 @@ public sealed class RepoConfigCommandLineTests
         error.ToString().ShouldBe(string.Empty);
     }
 
+    /// <summary>Running get with the unknown query "bogus" in an empty workspace exits 1 with "Argument 'bogus' not recognized." and no roadmap-loading error prefix.</summary>
     [Fact]
     public async Task Get_rejects_an_unknown_query_before_loading_the_roadmap()
     {
@@ -336,6 +357,10 @@ public sealed class RepoConfigCommandLineTests
         errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
     }
 
+    /// <summary>Queries that need a value (blockers-of, by-tag, by-label) or must not get one (next-work, tags) exit 1 with the matching message in an empty workspace, before any roadmap loading.</summary>
+    /// <param name="query">The get query name.</param>
+    /// <param name="value">The extra value passed after the query, or null for none.</param>
+    /// <param name="expectedError">The error text standard error must contain.</param>
     [Theory]
     [InlineData("blockers-of", null, "get blockers-of requires an item ID.")]
     [InlineData("by-tag", null, "get by-tag requires a tag.")]
@@ -360,6 +385,7 @@ public sealed class RepoConfigCommandLineTests
         errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
     }
 
+    /// <summary>The help of set exits 0 and mentions the supported key github.repository.</summary>
     [Fact]
     public async Task Set_help_lists_the_supported_key()
     {
@@ -376,6 +402,7 @@ public sealed class RepoConfigCommandLineTests
         error.ToString().ShouldBe(string.Empty);
     }
 
+    /// <summary>Every command line found in the tool README and the roadmap README template parses without errors, and at least one is found.</summary>
     [Fact]
     public void Documented_command_lines_parse_without_errors()
     {
@@ -398,6 +425,7 @@ public sealed class RepoConfigCommandLineTests
         parseErrors.ShouldBeEmpty();
     }
 
+    /// <summary>The [diagram] directive before a valid init command exits 0, prints the parse tree containing "[ init [ --root &lt;" and does not create roadmap/config.json.</summary>
     [Fact]
     public async Task Diagram_directive_parses_a_valid_command_line_without_running_it()
     {
@@ -416,6 +444,7 @@ public sealed class RepoConfigCommandLineTests
         workspace.FileExists("roadmap/config.json").ShouldBeFalse("The directive prints the parse diagram instead of running init.");
     }
 
+    /// <summary>The [diagram] directive before init with the misspelled option --rot exits 1, shows "--rot" in the output and does not create roadmap/config.json.</summary>
     [Fact]
     public async Task Diagram_directive_fails_a_misspelled_option_without_running_the_command()
     {

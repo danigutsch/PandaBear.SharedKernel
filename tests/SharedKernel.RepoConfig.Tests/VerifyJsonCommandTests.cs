@@ -2,6 +2,9 @@ using System.Text;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Tests the verify-json command against seeded Git repositories of JSON and JSONC files.
+/// </summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class VerifyJsonCommandTests
@@ -9,6 +12,9 @@ public sealed class VerifyJsonCommandTests
     private const string TrackedPath = " settings café.json";
     private const string Jsonc = "// Repository JSONC\n{\"url\":\"https://example.test/a//b\",\"values\":[1,],/* comment */}";
 
+    /// <summary>
+    /// Verifies that tracked JSONC files pass and untracked package caches are not traversed.
+    /// </summary>
     [Theory]
     [InlineData("jsonc")]
     [InlineData("utf8-bom")]
@@ -31,6 +37,9 @@ public sealed class VerifyJsonCommandTests
         result.StandardError.ShouldBe(string.Empty, "Untracked JSON under .nuget is not read.");
     }
 
+    /// <summary>
+    /// Verifies that each failure names the tracked file path and the line and column of the error.
+    /// </summary>
     [Theory]
     [InlineData("malformed", "Invalid JSON at line 1, byte 10: Expected depth to be zero at the end of the JSON payload.")]
     [InlineData("invalid-utf8", "Invalid UTF-8 at line 1, byte 3.")]
@@ -66,6 +75,9 @@ public sealed class VerifyJsonCommandTests
         result.StandardError.ShouldNotContain(repository.RootPath, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that every malformed tracked JSON file is reported, not only the first.
+    /// </summary>
     [Fact]
     public async Task Verify_json_reports_every_malformed_file()
     {
@@ -88,6 +100,9 @@ public sealed class VerifyJsonCommandTests
         result.StandardError.ShouldNotContain("valid.json", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that the working tree content is validated rather than the staged blob, producing the expected exit code.
+    /// </summary>
     [Theory]
     [InlineData("{}", "{\"value\":", 1)]
     [InlineData("{\"value\":", "{}", 0)]
@@ -106,6 +121,9 @@ public sealed class VerifyJsonCommandTests
         result.ExitCode.ShouldBe(expectedExitCode, "The modified file is not staged, so only the working tree holds its current content.");
     }
 
+    /// <summary>
+    /// Verifies that a file larger than the size limit is rejected.
+    /// </summary>
     [Fact]
     public async Task Verify_json_rejects_a_file_larger_than_the_size_limit()
     {
@@ -126,6 +144,9 @@ public sealed class VerifyJsonCommandTests
         result.StandardError.ShouldContain("- large.json: Exceeds the 64 MiB JSON size limit.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that a tracked symbolic link is not followed.
+    /// </summary>
     [Fact]
     public async Task Verify_json_does_not_follow_a_tracked_symbolic_link()
     {
@@ -150,6 +171,9 @@ public sealed class VerifyJsonCommandTests
         result.StandardError.ShouldBe(string.Empty);
     }
 
+    /// <summary>
+    /// Verifies that the current working directory is used as the root when --root is omitted.
+    /// </summary>
     [Fact]
     public async Task Verify_json_uses_the_working_directory_when_root_is_omitted()
     {
@@ -166,6 +190,9 @@ public sealed class VerifyJsonCommandTests
         result.StandardError.ShouldContain("- settings.json: Invalid JSON", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that an unreadable Git index is reported without leaking raw Git output.
+    /// </summary>
     [Fact]
     public async Task Verify_json_reports_an_unreadable_index_without_raw_git_details()
     {
@@ -183,6 +210,9 @@ public sealed class VerifyJsonCommandTests
         result.StandardError.ShouldBe("sharedkernel-repo: Git index inspection failed." + Environment.NewLine);
     }
 
+    /// <summary>
+    /// Verifies that unexpected arguments are rejected instead of silently skipping validation.
+    /// </summary>
     [Fact]
     public async Task Verify_json_rejects_arguments_instead_of_skipping_validation()
     {

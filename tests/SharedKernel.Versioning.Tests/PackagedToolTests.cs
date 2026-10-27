@@ -3,12 +3,18 @@ using PandaBear.Testing;
 
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests which projects the package planner packs as candidates.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class PackagedToolTests
 {
     // Shipping the vault manager is a separate decision, so candidates do not pack it.
     private const string VaultManagerProject = "tools/SharedKernel.VaultManager.Tool/SharedKernel.VaultManager.Tool.csproj";
 
+    /// <summary>
+    /// Verifies that the planner covers every PackAsTool project under tools except the vault manager.
+    /// </summary>
     [Fact]
     public static void Candidates_pack_every_dotnet_tool_project_except_the_vault_manager()
     {
@@ -32,6 +38,9 @@ public static class PackagedToolTests
         toolProjects.ShouldNotBeEmpty();
         unpackedTools.ShouldBe([], "SharedKernelPackagePlanner.PackagedTools must name every tool package, because FindProjects skips a name that has no project.");
     }
+    /// <summary>
+    /// Verifies that the planner includes every packable test support project whose package ID starts with PandaBear.SharedKernel.
+    /// </summary>
     [Fact]
     public static void Candidates_include_every_packable_consumer_test_support_project()
     {

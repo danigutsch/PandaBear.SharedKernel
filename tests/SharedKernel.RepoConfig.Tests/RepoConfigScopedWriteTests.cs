@@ -2,9 +2,12 @@ using System.Net;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Checks that repo-config initialize, set and GitHub sync refuse to write through symbolic links and leave the link targets unchanged.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RepoConfigScopedWriteTests
 {
+    /// <summary>Initializing with the root, the roadmap directory, an existing config file or a dangling config file replaced by a symbolic link throws InvalidOperationException and creates nothing outside, keeping an existing target's content.</summary>
+    /// <param name="location">Which path is linked: root, roadmap, config or dangling-config.</param>
     [Theory]
     [InlineData("root")]
     [InlineData("roadmap")]
@@ -50,6 +53,8 @@ public sealed class RepoConfigScopedWriteTests
         }
     }
 
+    /// <summary>Setting github.repository through a symbolic-linked config file or roadmap directory throws InvalidOperationException and leaves the linked config.json byte-for-byte unchanged.</summary>
+    /// <param name="linkedParent">True to link the roadmap directory, false to link only config.json.</param>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -79,6 +84,7 @@ public sealed class RepoConfigScopedWriteTests
         outside.ReadFile("roadmap/config.json").ShouldBe(original);
     }
 
+    /// <summary>Syncing a roadmap item that is a symbolic link throws InvalidOperationException, sends no HTTP request so no remote issue is created, and leaves the link target unchanged.</summary>
     [Fact]
     public async Task Sync_rejects_linked_item_before_creating_remote_issue()
     {
@@ -108,6 +114,7 @@ public sealed class RepoConfigScopedWriteTests
         outside.ReadFile("target.json").ShouldBe(content);
     }
 
+    /// <summary>Syncing succeeds when a symbolic link sits at the item's predictable .tmp path: the link target stays "outside-original" and the item records issue 1200.</summary>
     [Fact]
     public async Task Sync_does_not_follow_predictable_temporary_mapping_link()
     {
@@ -137,6 +144,7 @@ public sealed class RepoConfigScopedWriteTests
     }
 
 
+    /// <summary>When the item is replaced by a symbolic link after GitHub creates issue 1200, sync throws InvalidOperationException naming the created issue, keeps the .lock recovery file and leaves the link target unchanged.</summary>
     [Fact]
     public async Task Sync_retains_recovery_lock_and_issue_number_when_destination_becomes_linked()
     {

@@ -2,9 +2,15 @@ using PandaBear.Testing;
 
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests how the versioning tool resolves the git executable.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class CommandRunnerResolutionTests
 {
+    /// <summary>
+    /// Verifies that a git executable in the working directory or on a relative PATH entry is never run, so the real git fails outside a repository with exit code 2.
+    /// </summary>
     [Theory]
     [InlineData("git")]
     [InlineData("relative-bin/git")]

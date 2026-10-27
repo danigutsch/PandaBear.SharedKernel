@@ -1,5 +1,8 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Tests the verify-gherkin command against seeded Git repositories of feature files.
+/// </summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class VerifyGherkinCommandTests
@@ -8,6 +11,9 @@ public sealed class VerifyGherkinCommandTests
     private const string ValidFeature = "Feature: Valid\n    Scenario: s\n        Given x\n";
     private const string InvalidFeature = "Feature:\n";
 
+    /// <summary>
+    /// Verifies that the seeded corpus produces one reported finding for each Gherkin violation.
+    /// </summary>
     [Fact]
     public async Task Verify_gherkin_reports_each_violation_in_the_seeded_corpus()
     {
@@ -23,6 +29,9 @@ public sealed class VerifyGherkinCommandTests
         GherkinTestRepository.ErrorLines(result).ShouldBe([Heading, .. GherkinCorpus.Issues]);
     }
 
+    /// <summary>
+    /// Verifies that explicit paths limit the check to the feature files under them.
+    /// </summary>
     [Fact]
     public async Task Verify_gherkin_checks_only_the_feature_files_under_explicit_paths()
     {
@@ -41,6 +50,9 @@ public sealed class VerifyGherkinCommandTests
             "Only the named files are checked, so dup-b.feature is the first file with its Feature name.");
     }
 
+    /// <summary>
+    /// Verifies that feature files matching the included patterns are checked and those matching excluded patterns are skipped.
+    /// </summary>
     [Fact]
     public async Task Verify_gherkin_selects_included_feature_files_except_excluded_ones()
     {
@@ -69,6 +81,9 @@ public sealed class VerifyGherkinCommandTests
         ]);
     }
 
+    /// <summary>
+    /// Verifies that explicit paths replace the included patterns while the excluded patterns still apply.
+    /// </summary>
     [Fact]
     public async Task Explicit_paths_replace_the_included_patterns_but_not_the_excluded_ones()
     {
@@ -93,6 +108,9 @@ public sealed class VerifyGherkinCommandTests
         result.StandardError.ShouldNotContain("features/", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that an explicit path that is not a tracked feature file or directory is rejected with the expected message.
+    /// </summary>
     [Theory]
     [InlineData("missing.feature", "missing.feature names no tracked feature file.")]
     [InlineData("features/a.txt", "features/a.txt names no tracked feature file.")]
@@ -118,6 +136,9 @@ public sealed class VerifyGherkinCommandTests
         result.StandardError.ShouldBe("sharedkernel-repo: " + expectedMessage + Environment.NewLine);
     }
 
+    /// <summary>
+    /// Verifies that valid tracked feature files pass and untracked ones are ignored.
+    /// </summary>
     [Fact]
     public async Task Verify_gherkin_accepts_valid_feature_files_and_ignores_untracked_ones()
     {
@@ -136,6 +157,9 @@ public sealed class VerifyGherkinCommandTests
         result.StandardError.ShouldBe(string.Empty);
     }
 
+    /// <summary>
+    /// Verifies that a feature file that cannot be read as UTF-8 is reported with the expected message.
+    /// </summary>
     [Theory]
     [InlineData("missing-tracked-file", "Is missing from the working tree.")]
     [InlineData("invalid-utf8", "Invalid UTF-8 at line 2, byte 15.")]
@@ -162,6 +186,9 @@ public sealed class VerifyGherkinCommandTests
         GherkinTestRepository.ErrorLines(result).ShouldBe([Heading, "- features/a.feature: " + expectedMessage]);
     }
 
+    /// <summary>
+    /// Verifies that allowed tag patterns must match the whole tag, not a prefix or substring.
+    /// </summary>
     [Fact]
     public async Task Allowed_tag_patterns_match_the_whole_tag()
     {
@@ -188,6 +215,9 @@ public sealed class VerifyGherkinCommandTests
         ]);
     }
 
+    /// <summary>
+    /// Verifies that the command fails when the configuration has no gherkin section.
+    /// </summary>
     [Fact]
     public async Task Verify_gherkin_fails_without_a_gherkin_section()
     {
@@ -204,6 +234,9 @@ public sealed class VerifyGherkinCommandTests
         result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no gherkin section." + Environment.NewLine);
     }
 
+    /// <summary>
+    /// Verifies that an invalid gherkin configuration section is rejected with the expected message.
+    /// </summary>
     [Theory]
     [InlineData("""{"version":1,"gherkin":{}}""", " is not valid at $.gherkin (line 1).")]
     [InlineData("""{"version":1,"gherkin":{"include":["a"],"exclude":[],"allowedTagPatterns":[],"forbiddenTags":[],"featureNameMaxLength":1,"scenarioNameMaxLength":1,"tags":[]}}""", " is not valid at $.gherkin.tags (line 1).")]

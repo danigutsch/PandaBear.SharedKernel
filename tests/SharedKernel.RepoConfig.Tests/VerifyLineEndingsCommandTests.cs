@@ -1,11 +1,17 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Tests the verify-line-endings command against seeded Git repositories with eol attributes.
+/// </summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class VerifyLineEndingsCommandTests
 {
     private const string Attributes = "* text=auto eol=lf\n*.cmd text eol=crlf\n*.png binary\n";
 
+    /// <summary>
+    /// Verifies that a CRLF blob staged in the index is rejected under an eol=lf attribute.
+    /// </summary>
     [Fact]
     public async Task Verify_line_endings_rejects_a_crlf_blob_in_the_index_under_eol_lf()
     {
@@ -29,6 +35,9 @@ public sealed class VerifyLineEndingsCommandTests
             + "- blob.txt: Expected LF line endings." + Environment.NewLine);
     }
 
+    /// <summary>
+    /// Verifies that working tree content the attributes do not allow is rejected with the expected message.
+    /// </summary>
     [Theory]
     [InlineData("worktree.md", "# Worktree\r\n", "Expected LF line endings.")]
     [InlineData("mixed.txt", "a\r\nb\n", "Expected LF line endings.")]
@@ -51,6 +60,9 @@ public sealed class VerifyLineEndingsCommandTests
         result.StandardError.ShouldContain($"- {path}: {expectedMessage}", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that files whose line endings match their attributes pass.
+    /// </summary>
     [Fact]
     public async Task Verify_line_endings_accepts_files_that_match_their_attributes()
     {
@@ -78,6 +90,9 @@ public sealed class VerifyLineEndingsCommandTests
         result.StandardOutput.ShouldBe("Repository line endings match their attributes." + Environment.NewLine);
     }
 
+    /// <summary>
+    /// Verifies that every file in the seeded corpus is reported.
+    /// </summary>
     [Fact]
     public async Task Verify_line_endings_reports_every_file_of_the_seeded_corpus()
     {
@@ -97,6 +112,9 @@ public sealed class VerifyLineEndingsCommandTests
         result.StandardError.ShouldBe(string.Join(Environment.NewLine, LinkCorpus.ExpectedLineEndingFindings) + Environment.NewLine);
     }
 
+    /// <summary>
+    /// Verifies that the command fails outside a Git repository.
+    /// </summary>
     [Fact]
     public async Task Verify_line_endings_fails_outside_a_git_repository()
     {

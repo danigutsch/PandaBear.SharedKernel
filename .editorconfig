@@ -268,6 +268,15 @@ dotnet_diagnostic.CS1591.severity = suggestion
 dotnet_diagnostic.SKSTYLE004.severity = suggestion
 dotnet_diagnostic.SKSTYLE017.severity = suggestion
 
+# Documented test projects: undocumented members fail the build.
+[tests/SharedKernel.RepoConfig.Tests/**.cs]
+dotnet_diagnostic.CS1591.severity = warning
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
+[tests/SharedKernel.Versioning.Tests/**.cs]
+dotnet_diagnostic.CS1591.severity = warning
+dotnet_diagnostic.SKSTYLE017.severity = warning
+
 # Reqnroll discovers binding and generated test support types by reflection.
 # Owner: behavior-test maintainers. Remove when unused binding types can be internalized safely.
 [*]

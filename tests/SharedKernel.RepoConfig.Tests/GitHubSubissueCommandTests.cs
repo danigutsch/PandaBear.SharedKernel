@@ -4,12 +4,14 @@ using static PandaBear.RepoConfig.Tests.GitHubSubissueTestOperations;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the <c>github link-subissue</c> command.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class GitHubSubissueCommandTests
 {
     private const string ApiRoot = "https://api.github.com/repos/owner/repository/issues/";
 
+    /// <summary>Verifies that a preview sends no request and needs no credentials.</summary>
     [Fact]
     public async Task Link_previews_without_network_or_credentials()
     {
@@ -30,6 +32,7 @@ public sealed class GitHubSubissueCommandTests
         handler.Requests.ShouldBeEmpty();
     }
 
+    /// <summary>Verifies that the command resolves the child native identifier, posts the link, and then checks the parent.</summary>
     [Fact]
     public async Task Link_resolves_native_id_and_verifies_the_parent_after_posting()
     {
@@ -55,6 +58,7 @@ public sealed class GitHubSubissueCommandTests
         handler.Requests[4].Message.RequestUri.ShouldBe(new Uri(ApiRoot + "20/parent"));
     }
 
+    /// <summary>Verifies that the command writes nothing when the child already has the requested parent.</summary>
     [Fact]
     public async Task Link_is_idempotent_when_parent_already_matches()
     {
@@ -73,6 +77,7 @@ public sealed class GitHubSubissueCommandTests
         handler.Requests.All(request => request.Method == HttpMethod.Get).ShouldBeTrue();
     }
 
+    /// <summary>Verifies that the command refuses to replace a different existing parent.</summary>
     [Fact]
     public async Task Link_refuses_to_replace_an_existing_parent()
     {
@@ -89,6 +94,7 @@ public sealed class GitHubSubissueCommandTests
         handler.Requests.All(request => request.Method == HttpMethod.Get).ShouldBeTrue();
     }
 
+    /// <summary>Verifies that the command does not report success when the final parent check fails.</summary>
     [Fact]
     public async Task Link_does_not_claim_success_when_verification_fails()
     {
@@ -106,6 +112,7 @@ public sealed class GitHubSubissueCommandTests
         error.ShouldContain("verify", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a failed verification response warns that the write may have happened.</summary>
     [Theory]
     [InlineData(HttpStatusCode.ServiceUnavailable, "{}")]
     [InlineData(HttpStatusCode.OK, "ghp_untrusted invalid JSON")]
@@ -126,6 +133,7 @@ public sealed class GitHubSubissueCommandTests
         error.ShouldNotContain("ghp_untrusted", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a verification transport failure warns that the write may have happened.</summary>
     [Fact]
     public async Task Link_warns_of_a_possible_write_when_verification_transport_fails()
     {
@@ -160,6 +168,7 @@ public sealed class GitHubSubissueCommandTests
         calls.ShouldBe(5);
     }
 
+    /// <summary>Verifies that a failure while reading the response is reported without details and still warns of a possible write.</summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -188,6 +197,7 @@ public sealed class GitHubSubissueCommandTests
         error.Contains("remote write may have succeeded", StringComparison.Ordinal).ShouldBe(afterWrite);
     }
 
+    /// <summary>Verifies that the command accepts a link that another actor created in the meantime and does not repeat the write.</summary>
     [Fact]
     public async Task Link_accepts_an_already_linked_race_without_repeating_the_write()
     {
@@ -205,6 +215,7 @@ public sealed class GitHubSubissueCommandTests
         handler.Requests.Count(request => request.Method == HttpMethod.Post).ShouldBe(1);
     }
 
+    /// <summary>Verifies that invalid repository, parent, or child values fail before any request.</summary>
     [Theory]
     [InlineData("owner/repository", "0", "20")]
     [InlineData("owner/repository", "10", "-1")]
@@ -225,6 +236,7 @@ public sealed class GitHubSubissueCommandTests
         handler.Requests.ShouldBeEmpty();
     }
 
+    /// <summary>Verifies that HTTP errors are reported without echoing the response content.</summary>
     [Theory]
     [InlineData(HttpStatusCode.Forbidden)]
     [InlineData(HttpStatusCode.NotFound)]
@@ -246,6 +258,7 @@ public sealed class GitHubSubissueCommandTests
         error.ShouldNotContain("ghp_untrusted", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that the command rejects an issue response that is malformed or has an unexpected shape.</summary>
     [Theory]
     [InlineData("not-json ghp_untrusted")]
     [InlineData("{\"id\":0,\"number\":10}")]
@@ -269,6 +282,7 @@ public sealed class GitHubSubissueCommandTests
         handler.Requests.Count.ShouldBe(1);
     }
 
+    /// <summary>Verifies that the command limits how many response bytes it reads.</summary>
     [Fact]
     public async Task Link_bounds_response_bytes()
     {
@@ -287,6 +301,7 @@ public sealed class GitHubSubissueCommandTests
         error.ShouldContain("exceeded", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that transport failures are reported without details.</summary>
     [Fact]
     public async Task Link_sanitizes_transport_failures()
     {
@@ -302,6 +317,7 @@ public sealed class GitHubSubissueCommandTests
         error.ShouldContain("request failed", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that cancellation stops the command before it writes.</summary>
     [Fact]
     public async Task Link_propagates_cancellation_without_a_write()
     {

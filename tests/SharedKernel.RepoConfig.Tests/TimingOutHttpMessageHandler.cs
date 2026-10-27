@@ -2,6 +2,11 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// HTTP message handler that advances the fake clock before each response so that deadlines expire.
+/// </summary>
+/// <param name="timeProvider">The fake clock to advance.</param>
+/// <param name="advance">The amount to advance per request; 30 seconds when null.</param>
 internal sealed class TimingOutHttpMessageHandler(
     FakeTimeProvider timeProvider,
     TimeSpan? advance = null) : HttpMessageHandler

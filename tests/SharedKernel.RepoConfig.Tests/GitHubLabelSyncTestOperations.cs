@@ -2,8 +2,10 @@ using System.Globalization;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Test helpers for the GitHub label sync command.</summary>
 internal static class GitHubLabelSyncTestOperations
 {
+    /// <summary>Creates a workspace whose repository configuration holds the given JSON.</summary>
     public static TemporaryRepoConfigWorkspace CreateWorkspace(string configuration)
     {
         var workspace = new TemporaryRepoConfigWorkspace();
@@ -11,6 +13,7 @@ internal static class GitHubLabelSyncTestOperations
         return workspace;
     }
 
+    /// <summary>Runs <c>github sync-labels</c> against the workspace with the given handler, and returns its exit code, output, and error.</summary>
     public static async Task<(int ExitCode, string Output, string Error)> Run(
         TemporaryRepoConfigWorkspace workspace,
         TestHttpMessageHandler handler,

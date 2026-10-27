@@ -2,9 +2,11 @@ using System.Globalization;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the integrity checks that GitHub roadmap import applies before it writes.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubRoadmapIntakeIntegrityTests
 {
+    /// <summary>Verifies that import checks a mapped closed issue even when it is not an endpoint of a blocker.</summary>
     [Fact]
     public async Task GitHub_import_verifies_a_mapped_closed_issue_that_is_not_a_blocker_endpoint()
     {
@@ -77,6 +79,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         workspace.FileExists("roadmap/items/RM-018-github-100.json").ShouldBe(true);
     }
 
+    /// <summary>Verifies that import rejects a generated file name that another item already owns.</summary>
     [Fact]
     public async Task GitHub_import_rejects_a_generated_filename_owned_by_another_item()
     {
@@ -145,6 +148,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         workspace.ReadFile(collidingPath).ShouldBe(collidingItem);
     }
 
+    /// <summary>Verifies that import with force fails when the manifest changes while requests run.</summary>
     [Fact]
     public async Task GitHub_import_force_rejects_a_manifest_changed_during_the_request()
     {
@@ -211,6 +215,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         workspace.FileExists("roadmap/items/RM-018-github-100.json").ShouldBe(false);
     }
 
+    /// <summary>Verifies that import with force fails when an item appears while requests run.</summary>
     [Fact]
     public async Task GitHub_import_force_rejects_an_item_added_during_the_request()
     {
@@ -279,6 +284,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         workspace.FileExists("roadmap/items/RM-018-github-100.json").ShouldBe(false);
     }
 
+    /// <summary>Verifies that import rejects manifest blocker edges that the verified snapshot does not contain.</summary>
     [Fact]
     public async Task GitHub_import_rejects_manifest_blocker_edges_not_present_in_the_verified_snapshot()
     {

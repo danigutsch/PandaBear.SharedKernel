@@ -6,9 +6,15 @@ using PandaBear.Versioning.Tool;
 
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests the versioning tool library: release calculation, API compatibility, packing, release preparation, package metadata validation, and process handling.
+/// </summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VersioningToolTests
 {
+    /// <summary>
+    /// Verifies that the versioning tool project is packaged as a .NET tool.
+    /// </summary>
     [Fact]
     public static void Tool_project_is_packaged_as_dotnet_tool()
     {
@@ -50,6 +56,9 @@ public static class VersioningToolTests
         readmeItem.ShouldNotBeNull();
     }
 
+    /// <summary>
+    /// Verifies that the SharedKernel testing helper projects are packable source projects.
+    /// </summary>
     [Fact]
     public static void SharedKernel_testing_helpers_are_packable_source_projects()
     {
@@ -102,6 +111,9 @@ public static class VersioningToolTests
         }
     }
 
+    /// <summary>
+    /// Verifies that a feat! header or a BREAKING CHANGE footer in any commit message is detected as a breaking marker.
+    /// </summary>
     [Fact]
     public static void Detects_breaking_change_markers()
     {
@@ -115,6 +127,9 @@ public static class VersioningToolTests
         hasMarker.ShouldBeTrue();
     }
 
+    /// <summary>
+    /// Verifies that a breaking marker is still found when non-conventional commits such as merge commits are present.
+    /// </summary>
     [Fact]
     public static void Detects_breaking_change_markers_when_non_conventional_commits_are_present()
     {
@@ -128,6 +143,9 @@ public static class VersioningToolTests
         hasMarker.ShouldBeTrue();
     }
 
+    /// <summary>
+    /// Verifies that no marker is reported when all commits are non-conventional.
+    /// </summary>
     [Fact]
     public static void Ignores_non_conventional_commits_when_checking_breaking_change_markers()
     {
@@ -141,6 +159,9 @@ public static class VersioningToolTests
         hasMarker.ShouldBeFalse();
     }
 
+    /// <summary>
+    /// Verifies that a BREAKING-CHANGE footer is detected in a non-conventional commit.
+    /// </summary>
     [Fact]
     public static void Detects_breaking_dash_change_footer_in_non_conventional_commits()
     {
@@ -154,6 +175,9 @@ public static class VersioningToolTests
         hasMarker.ShouldBeTrue();
     }
 
+    /// <summary>
+    /// Verifies that a breaking marker in the stable phase is not treated as report-only.
+    /// </summary>
     [Fact]
     public static void Does_not_treat_stable_breaking_marker_as_report_only()
     {
@@ -173,6 +197,9 @@ public static class VersioningToolTests
         reportOnly.ShouldBeFalse();
     }
 
+    /// <summary>
+    /// Verifies that a breaking marker in the beta phase is treated as report-only.
+    /// </summary>
     [Fact]
     public static void Treats_beta_breaking_marker_as_report_only()
     {
@@ -192,6 +219,9 @@ public static class VersioningToolTests
         reportOnly.ShouldBeTrue();
     }
 
+    /// <summary>
+    /// Verifies that the src Directory.Build.props conditions analyzers on the MSBuild project name rather than a source path.
+    /// </summary>
     [Fact]
     public static void SharedKernel_analyzer_condition_uses_project_name()
     {
@@ -221,6 +251,9 @@ public static class VersioningToolTests
         props.ShouldNotContain("src/SharedKernel/SharedKernel.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that the public API baseline check accepts a repository whose baseline files are present.
+    /// </summary>
     [Fact]
     public static async Task Checks_public_API_baseline_files()
     {
@@ -242,6 +275,9 @@ public static class VersioningToolTests
         checkedProjects.ShouldBe(1);
     }
 
+    /// <summary>
+    /// Verifies that the check-public-api-baselines command runs against a repository.
+    /// </summary>
     [Fact]
     public static async Task Runs_check_public_API_baselines_command()
     {
@@ -266,6 +302,9 @@ public static class VersioningToolTests
         result.Output.ShouldContain("Public API baselines", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that the public API baseline check rejects a repository without a SharedKernel directory.
+    /// </summary>
     [Fact]
     public static void Rejects_missing_sharedkernel_directory_for_public_API_baselines()
     {
@@ -279,6 +318,9 @@ public static class VersioningToolTests
         exception.Message.ShouldContain("SharedKernel directory does not exist", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that the public API baseline check rejects a SharedKernel directory that contains no projects.
+    /// </summary>
     [Fact]
     public static void Rejects_sharedkernel_directory_without_projects_for_public_API_baselines()
     {
@@ -293,6 +335,9 @@ public static class VersioningToolTests
         exception.Message.ShouldContain("No SharedKernel projects found", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that API compatibility validation packs the projects and checks them against the baseline version.
+    /// </summary>
     [Fact]
     public static async Task Check_API_compatibility_validates_packages_against_the_baseline_version()
     {
@@ -324,6 +369,9 @@ public static class VersioningToolTests
         report.ShouldContain("-p:PackageValidationBaselineVersion=1.2.2", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that check-api-compatibility defaults the version to a local alpha timestamp.
+    /// </summary>
     [Fact]
     public static async Task Check_API_compatibility_defaults_the_version_to_a_local_alpha_timestamp()
     {
@@ -343,6 +391,9 @@ public static class VersioningToolTests
             StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that the check-api-compatibility command reports alpha failures without failing the run.
+    /// </summary>
     [Fact]
     public static async Task Runs_check_API_compatibility_command_as_report_only_for_alpha_failures()
     {
@@ -372,6 +423,9 @@ public static class VersioningToolTests
         result.Output.ShouldContain("API compatibility report", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that report-only API compatibility exits as canceled when packing fails after cancellation.
+    /// </summary>
     [Fact]
     public static async Task Report_only_check_API_compatibility_exits_as_canceled_when_packing_fails_after_cancellation()
     {
@@ -410,6 +464,9 @@ public static class VersioningToolTests
         result.Error.ShouldBe(string.Empty);
     }
 
+    /// <summary>
+    /// Verifies that beta API compatibility failures fail the run only when a breaking marker is present.
+    /// </summary>
     [Theory]
     [InlineData(true, 0)]
     [InlineData(false, 2)]
@@ -441,6 +498,9 @@ public static class VersioningToolTests
         File.Exists(Path.Combine(temporaryDirectory.OutputDirectory, "1.2.3-beta.1", "api-compatibility-report.md")).ShouldBeTrue();
     }
 
+    /// <summary>
+    /// Verifies that a stable-phase API compatibility failure returns an error.
+    /// </summary>
     [Fact]
     public static async Task Returns_error_for_stable_API_compatibility_failure()
     {
@@ -472,6 +532,9 @@ public static class VersioningToolTests
         result.Error.ShouldContain("Error:", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that packing rejects a version whose directory already holds a snupkg or symbols package.
+    /// </summary>
     [Theory]
     [InlineData("PandaBear.SharedKernel.Results.1.2.3.snupkg")]
     [InlineData("PandaBear.SharedKernel.Results.1.2.3.symbols.nupkg")]
@@ -495,6 +558,9 @@ public static class VersioningToolTests
         exception.Message.ShouldContain("Package version already exists", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that pack project discovery fails when the SharedKernel directory is missing.
+    /// </summary>
     [Fact]
     public static void Rejects_pack_project_discovery_when_sharedkernel_directory_is_missing()
     {
@@ -509,6 +575,9 @@ public static class VersioningToolTests
         exception.Message.ShouldContain("SharedKernel directory does not exist", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that pack-sharedkernel fails when no projects exist.
+    /// </summary>
     [Fact]
     public static async Task Rejects_pack_sharedkernel_when_no_projects_exist()
     {
@@ -525,6 +594,9 @@ public static class VersioningToolTests
         exception.Message.ShouldContain("No SharedKernel projects found.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that pack-sharedkernel resolves a relative output root and runs.
+    /// </summary>
     [Fact]
     public static async Task Runs_pack_sharedkernel_command_with_relative_output_root()
     {
@@ -573,6 +645,9 @@ public static class VersioningToolTests
         normalizedOutput.ShouldContain(packageDirectory, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that pack-sharedkernel passes the version options to dotnet pack.
+    /// </summary>
     [Fact]
     public static async Task Pack_sharedkernel_passes_version_options_to_dotnet_pack()
     {
@@ -607,6 +682,9 @@ public static class VersioningToolTests
         result.Error.ShouldNotContain("EnablePackageValidation", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that the version output serializes to the expected JSON.
+    /// </summary>
     [Fact]
     public static void Serializes_version_output_json()
     {
@@ -622,6 +700,9 @@ public static class VersioningToolTests
         json.ShouldContain("\"assemblyVersion\":\"1.0.0.0\"", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that commit messages separated by NUL characters are read from input.
+    /// </summary>
     [Fact]
     public static async Task Reads_null_separated_commit_messages_from_input()
     {
@@ -636,6 +717,9 @@ public static class VersioningToolTests
         messages.ShouldContain("fix: patch output");
     }
 
+    /// <summary>
+    /// Verifies that the classify-commit command classifies a commit message.
+    /// </summary>
     [Fact]
     public static async Task Runs_classify_commit_command()
     {
@@ -651,6 +735,9 @@ public static class VersioningToolTests
         result.Error.ShouldBe(string.Empty);
     }
 
+    /// <summary>
+    /// Verifies that the compute command computes a version from commit messages on input.
+    /// </summary>
     [Fact]
     public static async Task Runs_compute_command_from_input()
     {
@@ -667,6 +754,9 @@ public static class VersioningToolTests
         json.ShouldContain("\"informationalVersion\":\"0.2.0-alpha.1+sha.abc123\"", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that calculate-release derives the next version and release impact from Git history for each version kind.
+    /// </summary>
     [Theory]
     [InlineData("feat: add public capability", "prerelease", "1.3.0-alpha.7", "minor")]
     [InlineData("refactor(api)!: rename package", "prerelease", "2.0.0-alpha.7", "major")]
@@ -722,6 +812,9 @@ public static class VersioningToolTests
         summary.ShouldContain("- Base version: `1.2.3`", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that calculate-release keeps the core of the latest prerelease tag when new commits arrive.
+    /// </summary>
     [Theory]
     [InlineData("feat: add public capability", "prerelease", "1.3.0-alpha.7", "minor")]
     [InlineData("refactor(api)!: rename package", "prerelease", "1.3.0-alpha.7", "major")]
@@ -763,6 +856,9 @@ public static class VersioningToolTests
         json.ShouldContain("\"releaseImpact\":\"" + expectedImpact + "\"", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that calculate-release starts at the initial development version when the repository has no tags.
+    /// </summary>
     [Theory]
     [InlineData("prerelease", "0.1.0-alpha.7")]
     [InlineData("stable", "0.1.0")]
@@ -793,6 +889,9 @@ public static class VersioningToolTests
         result.Output.ShouldContain($"\"packageVersion\":\"{expectedVersion}\"", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that a prerelease calculation without a run number is rejected.
+    /// </summary>
     [Fact]
     public static async Task Rejects_prerelease_calculation_without_run_number()
     {
@@ -806,6 +905,9 @@ public static class VersioningToolTests
         result.Error.ShouldContain("Option '--run-number' is required when '--version-kind' is prerelease.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that has-breaking-change-marker reports a marker found in the Git history range.
+    /// </summary>
     [Fact]
     public static async Task Runs_has_breaking_change_marker_command_from_git_history()
     {
@@ -825,6 +927,9 @@ public static class VersioningToolTests
         result.Output.ShouldContain("Breaking-change marker found", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that has-breaking-change-marker returns an error when the range has no marker.
+    /// </summary>
     [Fact]
     public static async Task Returns_error_when_breaking_change_marker_is_missing()
     {
@@ -845,6 +950,9 @@ public static class VersioningToolTests
         result.Error.ShouldContain("No breaking-change marker found", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that has-breaking-change-marker exits with code 2 when Git fails.
+    /// </summary>
     [Fact]
     public static async Task Breaking_change_marker_check_exits_with_code_2_when_git_fails()
     {
@@ -864,6 +972,9 @@ public static class VersioningToolTests
         result.Error.ShouldNotContain("No breaking-change marker found", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that the range is passed to Git after the end-of-options marker.
+    /// </summary>
     [Fact]
     public static async Task Breaking_change_marker_check_passes_the_range_to_git_after_the_end_of_options()
     {
@@ -882,6 +993,9 @@ public static class VersioningToolTests
         File.Exists(Path.Combine(root, "log.txt")).ShouldBeFalse();
     }
 
+    /// <summary>
+    /// Verifies that a missing executable is reported as an InvalidOperationException naming it.
+    /// </summary>
     [Fact]
     public static async Task Wraps_missing_process_start_failures()
     {
@@ -896,6 +1010,9 @@ public static class VersioningToolTests
         exception.Message.ShouldContain("Failed to start " + executableName, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that a run with an already canceled token throws OperationCanceledException instead of starting a process.
+    /// </summary>
     [Fact]
     public static async Task Canceled_runs_do_not_start_processes()
     {
@@ -910,6 +1027,9 @@ public static class VersioningToolTests
         await action.ShouldThrow<OperationCanceledException>();
     }
 
+    /// <summary>
+    /// Verifies that RunOrDefault rethrows a start failure that follows cancellation.
+    /// </summary>
     [Fact]
     public static async Task Run_or_default_rethrows_a_failure_that_follows_cancellation()
     {
@@ -931,6 +1051,9 @@ public static class VersioningToolTests
         await action.ShouldThrow<InvalidOperationException>();
     }
 
+    /// <summary>
+    /// Verifies that canceling stops the running child process.
+    /// </summary>
     [Fact]
     public static async Task Cancellation_terminates_the_running_process()
     {
@@ -965,6 +1088,9 @@ public static class VersioningToolTests
         lookup.ShouldThrow<ArgumentException>();
     }
 
+    /// <summary>
+    /// Verifies that terminating a Process object that was never started does not throw.
+    /// </summary>
     [Fact]
     public static async Task Termination_ignores_a_process_object_without_a_running_process()
     {
@@ -978,6 +1104,9 @@ public static class VersioningToolTests
         exception.ShouldBeNull();
     }
 
+    /// <summary>
+    /// Verifies that termination stops waiting when a killed process never reports its exit.
+    /// </summary>
     [Fact]
     public static async Task Termination_stops_waiting_when_a_killed_process_never_reports_its_exit()
     {
@@ -997,6 +1126,9 @@ public static class VersioningToolTests
         unreaped.Process.HasExited.ShouldBeFalse();
     }
 
+    /// <summary>
+    /// Verifies that release preparation writes its artifacts for a package directory and repository.
+    /// </summary>
     [Fact]
     public static async Task Writes_release_preparation_artifacts()
     {
@@ -1116,6 +1248,9 @@ public static class VersioningToolTests
         sbomRoot.GetProperty("packages").GetArrayLength().ShouldBe(1);
     }
 
+    /// <summary>
+    /// Verifies that the SPDX created timestamp is taken from SOURCE_DATE_EPOCH so the output is reproducible.
+    /// </summary>
     [Fact]
     public static void Writes_reproducible_spdx_created_timestamp_from_source_date_epoch()
     {
@@ -1138,6 +1273,9 @@ public static class VersioningToolTests
         sbom.ShouldContain("\"created\": \"2000-01-01T00:00:00Z\"", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that an invalid SOURCE_DATE_EPOCH returns the expected error.
+    /// </summary>
     [Theory]
     [InlineData("not-a-timestamp", "SOURCE_DATE_EPOCH must be a Unix timestamp in seconds.")]
     [InlineData("9223372036854775807", "SOURCE_DATE_EPOCH is outside the supported Unix timestamp range.")]
@@ -1188,6 +1326,9 @@ public static class VersioningToolTests
         result.Error.ShouldContain(expectedMessage, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that SPDX JSON is written when the repository URL property uses MSBuild casing.
+    /// </summary>
     [Fact]
     public static async Task Writes_spdx_json_when_repository_url_property_uses_msbuild_casing()
     {
@@ -1221,6 +1362,9 @@ public static class VersioningToolTests
         documentNamespace.ShouldBe("https://example.invalid/cased-repo/sbom/1.2.3");
     }
 
+    /// <summary>
+    /// Verifies that the package lock inventory is read from the src directory only.
+    /// </summary>
     [Fact]
     public static async Task Reads_package_lock_inventory_from_src_only()
     {
@@ -1276,6 +1420,9 @@ public static class VersioningToolTests
         package.LockFiles.ShouldNotContain("tests/Sample.Tests/packages.lock.json");
     }
 
+    /// <summary>
+    /// Verifies that the package lock inventory is read in a deterministic order.
+    /// </summary>
     [Fact]
     public static async Task Reads_package_lock_inventory_in_deterministic_order()
     {
@@ -1341,6 +1488,9 @@ public static class VersioningToolTests
         packages[2].LockFiles.ShouldBe(["src/Sample.B/packages.lock.json"]);
     }
 
+    /// <summary>
+    /// Verifies that generated package lock files under the source directory are ignored.
+    /// </summary>
     [Fact]
     public static async Task Ignores_generated_package_locks_under_source_directory()
     {
@@ -1410,6 +1560,9 @@ public static class VersioningToolTests
         package.LockFiles.ShouldBe(["src/Sample/packages.lock.json"]);
     }
 
+    /// <summary>
+    /// Verifies that package metadata validation accepts packable SharedKernel projects.
+    /// </summary>
     [Fact]
     public static async Task Validates_package_metadata_for_packable_sharedkernel_projects()
     {
@@ -1455,6 +1608,9 @@ public static class VersioningToolTests
         result.Output.ShouldContain("Package metadata validation passed.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that package metadata validation accepts MSBuild property names in any casing.
+    /// </summary>
     [Fact]
     public static async Task Validates_package_metadata_with_msbuild_property_casing()
     {
@@ -1500,6 +1656,9 @@ public static class VersioningToolTests
         result.Output.ShouldContain("Package metadata validation passed.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that missing package metadata returns an error.
+    /// </summary>
     [Fact]
     public static async Task Returns_error_for_missing_package_metadata()
     {
@@ -1541,6 +1700,9 @@ public static class VersioningToolTests
         result.Error.ShouldContain("SharedKernel.Sample.csproj missing Description", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that an invalid project property file returns an error.
+    /// </summary>
     [Fact]
     public static async Task Returns_error_for_invalid_project_property_file()
     {
@@ -1562,6 +1724,9 @@ public static class VersioningToolTests
         result.Error.ShouldContain("Directory.Build.props", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that package metadata validation returns an error when the SharedKernel source directory is missing.
+    /// </summary>
     [Fact]
     public static async Task Returns_error_when_sharedkernel_source_directory_is_missing_for_package_metadata()
     {
@@ -1593,6 +1758,9 @@ public static class VersioningToolTests
         result.Error.ShouldContain("SharedKernel source directory does not exist:", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that an invalid package lock inventory returns an error.
+    /// </summary>
     [Fact]
     public static async Task Returns_error_for_invalid_package_lock_inventory()
     {
@@ -1629,6 +1797,9 @@ public static class VersioningToolTests
         result.Error.ShouldContain("Invalid packages.lock.json:", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that a package lock without a dependencies section returns an error.
+    /// </summary>
     [Fact]
     public static async Task Returns_error_for_package_lock_without_dependencies_section()
     {
@@ -1670,6 +1841,9 @@ public static class VersioningToolTests
         result.Error.ShouldContain("Missing top-level dependencies section.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that an error is returned when no source package locks are found.
+    /// </summary>
     [Fact]
     public static async Task Returns_error_when_no_source_package_locks_are_found()
     {
@@ -1700,6 +1874,9 @@ public static class VersioningToolTests
         result.Error.ShouldContain("No packages.lock.json files found under source directory:", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that a package lock entry without a resolved version returns an error.
+    /// </summary>
     [Fact]
     public static async Task Returns_error_for_package_lock_without_resolved_version()
     {
@@ -1750,6 +1927,9 @@ public static class VersioningToolTests
         result.Error.ShouldContain("has no resolved version.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that the prepare-release command runs and writes its artifacts.
+    /// </summary>
     [Fact]
     public static async Task Runs_prepare_release_command_and_writes_artifacts()
     {
@@ -1815,6 +1995,9 @@ public static class VersioningToolTests
         releaseNotes.ShouldContain("- feat: add release prep (abc123)", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that prepare-release returns an error when the package directory is missing.
+    /// </summary>
     [Fact]
     public static async Task Returns_error_for_missing_prepare_release_package_directory()
     {
@@ -1830,6 +2013,9 @@ public static class VersioningToolTests
         result.Error.ShouldContain("Package directory does not exist:", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that prepare-release returns an error when the package directory holds no packages.
+    /// </summary>
     [Fact]
     public static async Task Returns_error_for_prepare_release_without_packages()
     {

@@ -2,9 +2,11 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the roadmap automation service's plan, apply, and result-sealing steps against scripted GitHub snapshots.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RoadmapAutomationServiceTests
 {
+    /// <summary>For a closed issue 100 with a hostile title and label, the plan requires exactly the transition to RM-018 and its file contains neither the title text nor the label.</summary>
     [Fact]
     public async Task Plan_carries_the_exact_required_transition_without_untrusted_metadata()
     {
@@ -36,6 +38,7 @@ public sealed class RoadmapAutomationServiceTests
         planContent.ShouldNotContain("labels", StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>Applying a plan for closed issue 100 leaves exactly one closed-item transition in the reconciliation manifest, issue 100 mapped to RM-018.</summary>
     [Fact]
     public async Task Apply_plan_adds_only_the_approved_transition_after_live_revalidation()
     {
@@ -66,6 +69,7 @@ public sealed class RoadmapAutomationServiceTests
         transitions[0].GetProperty("roadmapItem").GetString().ShouldBe("RM-018");
     }
 
+    /// <summary>Sealing a result after the plan was applied but before the reconciliation manifest was refreshed throws that the manifest does not match the approved snapshot.</summary>
     [Fact]
     public async Task Result_seal_rejects_an_unrefreshed_reconciliation_manifest()
     {
@@ -106,6 +110,7 @@ public sealed class RoadmapAutomationServiceTests
         exception.Message.ShouldBe("Roadmap automation reconciliation manifest does not match the approved snapshot.");
     }
 
+    /// <summary>After the manifest is refreshed, sealing a result whose only changed file is the reconciliation file yields a seal with changes, one path, and a 64-character result digest.</summary>
     [Fact]
     public async Task Result_seal_round_trip_revalidates_the_refreshed_manifest_and_confined_diff()
     {
@@ -165,6 +170,7 @@ public sealed class RoadmapAutomationServiceTests
         seal.ResultDigest.Length.ShouldBe(64);
     }
 
+    /// <summary>When HEAD moved to another SHA after planning, the plan keeps the original base SHA while the seal records the new HEAD.</summary>
     [Fact]
     public async Task Result_seal_binds_to_the_current_head_when_main_moved_after_planning()
     {
@@ -212,6 +218,9 @@ public sealed class RoadmapAutomationServiceTests
         seal.BaseSha.ShouldBe(RoadmapAutomationTestPlan.DifferentSha);
     }
 
+    /// <summary>The single required transition in the plan has the close reason <c>NOT_PLANNED</c> or <c>COMPLETED</c> as given, and <c>COMPLETED</c> when the issue has no state reason.</summary>
+    /// <param name="stateReason">The GitHub state reason of the closed issue, or <see langword="null"/>.</param>
+    /// <param name="expected">The close reason the plan must carry.</param>
     [Theory]
     [InlineData("NOT_PLANNED", "NOT_PLANNED")]
     [InlineData("COMPLETED", "COMPLETED")]
@@ -236,6 +245,7 @@ public sealed class RoadmapAutomationServiceTests
         plan.RequiredClosedTransitions.ShouldHaveSingleItem().CloseReason.ShouldBe(expected);
     }
 
+    /// <summary>Applying a plan for an issue closed as <c>NOT_PLANNED</c> and refreshing the manifest records one transition to RM-018 with <c>closeReason</c> set to <c>NOT_PLANNED</c>.</summary>
     [Fact]
     public async Task Apply_plan_records_a_not_planned_close_outcome_in_the_manifest_only_when_it_is_not_completed()
     {

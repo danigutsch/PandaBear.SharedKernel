@@ -1,8 +1,14 @@
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests SemanticVersion parsing and bumping.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class SemanticVersionTests
 {
+    /// <summary>
+    /// Verifies that a version with prerelease and build metadata parses into its parts.
+    /// </summary>
     [Fact]
     public static void Parses_semantic_version_with_prerelease_and_metadata()
     {
@@ -20,6 +26,9 @@ public static class SemanticVersionTests
         version.BuildMetadata.ShouldBe("sha.abc123");
     }
 
+    /// <summary>
+    /// Verifies that each release impact bumps the stable version core and drops prerelease and build metadata.
+    /// </summary>
     [Theory]
     [InlineData(ReleaseImpact.None, "1.2.3")]
     [InlineData(ReleaseImpact.Patch, "1.2.4")]

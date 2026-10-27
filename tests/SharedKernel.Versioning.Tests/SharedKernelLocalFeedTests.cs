@@ -1,8 +1,14 @@
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests generation and validation of the local SharedKernel package feed configuration.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class SharedKernelLocalFeedTests
 {
+    /// <summary>
+    /// Verifies that the generated NuGet.config maps PandaBear.SharedKernel.* to the local feed so missing internal packages cannot come from the public feed.
+    /// </summary>
     [Fact]
     public static async Task Missing_internal_packages_cannot_fall_back_to_public_feed()
     {
@@ -22,6 +28,9 @@ public static class SharedKernelLocalFeedTests
         config.ShouldContain("pattern=\"PandaBear.SharedKernel.*\"", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that package IDs are read, sorted, from valid packages of the expected version.
+    /// </summary>
     [Fact]
     public static void Reads_package_ids_from_valid_packages()
     {
@@ -44,6 +53,9 @@ public static class SharedKernelLocalFeedTests
         packageIds.ShouldBe(["PandaBear.SharedKernel.Functional", "PandaBear.SharedKernel.Results"]);
     }
 
+    /// <summary>
+    /// Verifies that a package without a .nuspec is rejected.
+    /// </summary>
     [Fact]
     public static void Rejects_package_without_nuspec()
     {
@@ -60,6 +72,9 @@ public static class SharedKernelLocalFeedTests
         action.ShouldThrow<ArgumentException>().Message.ShouldContain("expected one .nuspec", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that a package whose version differs from the expected version is rejected.
+    /// </summary>
     [Fact]
     public static void Rejects_package_version_mismatch()
     {
@@ -77,6 +92,9 @@ public static class SharedKernelLocalFeedTests
         action.ShouldThrow<ArgumentException>().Message.ShouldContain("expected version 1.2.3", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that a package depending on another SharedKernel package at a different version is rejected.
+    /// </summary>
     [Fact]
     public static void Rejects_internal_dependency_version_mismatch()
     {
@@ -95,6 +113,9 @@ public static class SharedKernelLocalFeedTests
         action.ShouldThrow<ArgumentException>().Message.ShouldContain("dependency version 1.2.3", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that two packages with the same ID are rejected as duplicates.
+    /// </summary>
     [Fact]
     public static void Rejects_duplicate_package_ids()
     {
@@ -116,6 +137,9 @@ public static class SharedKernelLocalFeedTests
         action.ShouldThrow<ArgumentException>().Message.ShouldContain("duplicate packages", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that a restored package is found in the package cache regardless of ID casing.
+    /// </summary>
     [Fact]
     public static void Detects_restored_package_case_insensitively()
     {
@@ -131,6 +155,9 @@ public static class SharedKernelLocalFeedTests
         restored.ShouldBeTrue();
     }
 
+    /// <summary>
+    /// Verifies that a relative NuGet source URL is rejected because it must be absolute.
+    /// </summary>
     [Fact]
     public static async Task Rejects_relative_nuget_source_url()
     {
@@ -150,6 +177,9 @@ public static class SharedKernelLocalFeedTests
         exception.Message.ShouldContain("NuGet source URL must be absolute.", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that the restore project references the package at the given version and the NuGet.config clears sources and maps the package to the feed.
+    /// </summary>
     [Fact]
     public static async Task Writes_restore_project_and_nuget_config()
     {

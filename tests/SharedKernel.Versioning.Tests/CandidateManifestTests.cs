@@ -5,8 +5,14 @@ using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tests;
 
+/// <summary>
+/// Tests reading, verifying, and discovering candidate manifests and consuming them.
+/// </summary>
 public static class CandidateManifestTests
 {
+    /// <summary>
+    /// Verifies that a verified downloaded candidate yields its package version and a NuGet.config pointing at the current package directory.
+    /// </summary>
     [Fact]
     public static async Task Downloaded_candidates_generate_configuration_for_the_current_feed_location()
     {
@@ -31,6 +37,9 @@ public static class CandidateManifestTests
         config.Descendants("package").ShouldContain(x => (string?)x.Attribute("pattern") == "PandaBear.SharedKernel.*");
     }
 
+    /// <summary>
+    /// Verifies that a package whose hash differs from the manifest is rejected with a Candidate package changed error.
+    /// </summary>
     [Fact]
     public static void Changed_candidate_packages_are_rejected()
     {
@@ -48,6 +57,9 @@ public static class CandidateManifestTests
         exception.Message.ShouldContain("Candidate package changed", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that a manifest entry with a path such as ../outside.nupkg is rejected because only file names are allowed.
+    /// </summary>
     [Fact]
     public static void Candidate_package_paths_cannot_escape_the_feed()
     {
@@ -64,6 +76,9 @@ public static class CandidateManifestTests
         exception.Message.ShouldContain("filename", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that Find locates the single nested manifest and the found manifest still passes hash verification.
+    /// </summary>
     [Fact]
     public static void Candidate_directory_finds_one_nested_manifest_and_preserves_hash_verification()
     {
@@ -80,6 +95,9 @@ public static class CandidateManifestTests
         evidence["packageVersion"]!.GetValue<string>().ShouldBe("1.0.0");
     }
 
+    /// <summary>
+    /// Verifies that consume-candidate fails with exit code 2 when the directory holds zero or two candidate.json files.
+    /// </summary>
     [Theory]
     [InlineData(0)]
     [InlineData(2)]
@@ -104,6 +122,9 @@ public static class CandidateManifestTests
         result.Error.ShouldContain("exactly one candidate.json", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that consume-candidate fails with exit code 2 when the candidate directory does not exist.
+    /// </summary>
     [Fact]
     public static async Task Candidate_directory_must_exist()
     {
@@ -121,6 +142,9 @@ public static class CandidateManifestTests
         result.Error.ShouldContain("Candidate directory does not exist: " + missing, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that --candidate-directory and --candidate cannot be combined, in either order, and fail with exit code 1.
+    /// </summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -141,6 +165,9 @@ public static class CandidateManifestTests
         result.Error.ShouldContain("cannot be combined", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that a tampered package in a discovered manifest is rejected and the manifest stays unchanged.
+    /// </summary>
     [Fact]
     public static async Task Consuming_a_discovered_manifest_rejects_tampered_packages_before_changing_evidence()
     {
@@ -162,6 +189,9 @@ public static class CandidateManifestTests
         retained.ShouldBe(original);
     }
 
+    /// <summary>
+    /// Verifies that cancelling consumption exits with code 1 and leaves the recorded evidence and manifest unchanged.
+    /// </summary>
     [Fact]
     public static async Task Canceled_consumption_leaves_recorded_evidence_unchanged()
     {
@@ -189,6 +219,9 @@ public static class CandidateManifestTests
         Directory.GetFiles(temporary.PackageDirectory, "candidate.json*").ShouldBe([manifest]);
     }
 
+    /// <summary>
+    /// Verifies that a failed consumption exits with code 2 and records failed evidence for the current platform.
+    /// </summary>
     [Fact]
     public static async Task Failed_consumption_records_failed_evidence()
     {
