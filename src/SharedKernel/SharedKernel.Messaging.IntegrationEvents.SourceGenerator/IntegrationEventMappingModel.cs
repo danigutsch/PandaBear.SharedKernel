@@ -6,4 +6,5 @@ internal sealed record IntegrationEventMappingModel(
     string DomainEventType,
     string IntegrationEventType,
     string DispatchMethodName,
-    string EscapedMethodName);
+    string EscapedMethodName,
+    bool IsProtobuf);
