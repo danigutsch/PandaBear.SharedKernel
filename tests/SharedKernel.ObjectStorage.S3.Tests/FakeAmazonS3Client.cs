@@ -4,42 +4,52 @@ using Amazon.S3.Model;
 
 namespace PandaBear.ObjectStorage.S3.Tests;
 
+/// <summary>Records S3 operations and returns canned responses so the S3 object store can be tested without a server.</summary>
 internal sealed class FakeAmazonS3Client : AmazonS3Client
 {
+    /// <summary>Creates a client with anonymous credentials that points at an unused local endpoint.</summary>
     public FakeAmazonS3Client()
         : base(new AnonymousAWSCredentials(), new AmazonS3Config { ServiceURL = "http://localhost:8333", ForcePathStyle = true })
     {
     }
 
+    /// <summary>Gets the operations the store invoked, in call order.</summary>
     public List<string> Operations { get; } = [];
 
+    /// <summary>Gets whether OpenTelemetry instrumentation was suppressed during the last metadata lookup, or null before any lookup.</summary>
     public bool? SuppressedDuringMetadataLookup
     {
         get; private set;
     }
 
+    /// <summary>Gets the most recent upload request, or null before any upload.</summary>
     public PutObjectRequest? LastPutObjectRequest
     {
         get; private set;
     }
 
+    /// <summary>Gets or sets the task a bucket creation waits on, or null to complete immediately.</summary>
     public Task<PutBucketResponse>? PutBucketTask
     {
         get; set;
     }
 
+    /// <summary>Gets or sets the exception a metadata lookup throws, or null to succeed.</summary>
     public Exception? GetObjectMetadataException
     {
         get; set;
     }
 
+    /// <summary>Gets or sets the exception an object read throws, or null to succeed.</summary>
     public Exception? GetObjectException
     {
         get; set;
     }
 
+    /// <summary>Gets or sets the last-modified time reported for listed objects.</summary>
     public DateTime ListObjectLastModified { get; set; } = TimeProvider.System.GetUtcNow().UtcDateTime;
 
+    /// <summary>Gets or sets whether listing returns no objects.</summary>
     public bool ReturnEmptyListResponse
     {
         get; set;

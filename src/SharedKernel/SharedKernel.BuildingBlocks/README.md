@@ -22,6 +22,14 @@ the result type.
 compensation action if that operation fails. Use it for small best-effort cleanup around side
 effects that cannot share a transaction.
 
+## Hypermedia links
+
+`HypermediaLink` is an immutable record with `Rel`, `Href`, and `Method`. `HypermediaLink.Create` returns a
+`Result<HypermediaLink>`; a null, empty, or whitespace value is an `Invalid` result that names the first
+offending field (`rel`, `href`, or `method`). The JSON wire shape is
+`{"rel":"self","href":"/items/1","method":"GET"}`, produced and read with System.Text.Json attributes only, so
+it works with a consumer's source-generated `JsonSerializerContext` and needs no reflection. Deserializing a blank or missing value throws `ArgumentException`.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.BuildingBlocks`. C# namespace: `PandaBear.BuildingBlocks`. Assembly/project identity: `SharedKernel.BuildingBlocks`.

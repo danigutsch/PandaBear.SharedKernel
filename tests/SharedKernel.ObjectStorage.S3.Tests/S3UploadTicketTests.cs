@@ -7,6 +7,7 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace PandaBear.ObjectStorage.S3.Tests;
 
+/// <summary>Tests the signed upload tickets that the S3 object store creates.</summary>
 public sealed class S3UploadTicketTests
 {
     [Fact]

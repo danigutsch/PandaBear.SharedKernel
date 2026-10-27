@@ -161,6 +161,61 @@ public static class HttpResponseShouldAssertionExtensions
     public static void ShouldHaveValidationErrors(this JsonElement actual, IReadOnlyDictionary<string, string[]> expected, string userMessage) =>
         WithUserMessage(userMessage, () => actual.ShouldHaveValidationErrors(expected));
 
+    /// <summary>Verifies that a payload object has a <c>links</c> array containing the relation with a nonblank string href.</summary>
+    /// <param name="actual">The parsed payload object.</param>
+    /// <param name="rel">The case-sensitive link relation, such as <c>self</c>.</param>
+    /// <returns>The matching link object.</returns>
+    public static JsonElement ShouldHaveLink(this JsonElement actual, string rel)
+    {
+        var links = GetRequiredProperty(actual, "links");
+        links.ValueKind.ShouldBe(JsonValueKind.Array);
+        foreach (var link in links.EnumerateArray())
+        {
+            if (link.ValueKind == JsonValueKind.Object
+                && link.TryGetProperty("rel", out var linkRel)
+                && linkRel.ValueKind == JsonValueKind.String
+                && linkRel.GetString() == rel)
+            {
+                link.TryGetProperty("href", out var href).ShouldBeTrue($"Expected link '{rel}' to have an href.");
+                href.ValueKind.ShouldBe(JsonValueKind.String);
+                string.IsNullOrWhiteSpace(href.GetString()).ShouldBeFalse($"Expected link '{rel}' to have a nonblank href.");
+                return link;
+            }
+        }
+
+        throw new Xunit.Sdk.XunitException($"Expected link relation '{rel}'.");
+    }
+
+    /// <summary>Verifies that a nonempty payload array has the link relation on every item.</summary>
+    /// <param name="actual">The parsed payload array.</param>
+    /// <param name="rel">The case-sensitive link relation, such as <c>self</c>.</param>
+    public static void ShouldAllHaveLink(this JsonElement actual, string rel)
+    {
+        actual.ValueKind.ShouldBe(JsonValueKind.Array);
+        actual.EnumerateArray().ShouldNotBeEmpty();
+        foreach (var item in actual.EnumerateArray())
+        {
+            item.ShouldHaveLink(rel);
+        }
+    }
+
+    /// <summary>Verifies that a payload object has a <c>links</c> array containing the relation with a nonblank string href.</summary>
+    /// <param name="actual">The parsed payload object.</param>
+    /// <param name="rel">The case-sensitive link relation, such as <c>self</c>.</param>
+    /// <param name="userMessage">Why the test expects the assertion to hold; the failure message starts with it.</param>
+    /// <returns>The matching link object.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="userMessage"/> is null.</exception>
+    public static JsonElement ShouldHaveLink(this JsonElement actual, string rel, string userMessage) =>
+        WithUserMessage(userMessage, () => actual.ShouldHaveLink(rel));
+
+    /// <summary>Verifies that a nonempty payload array has the link relation on every item.</summary>
+    /// <param name="actual">The parsed payload array.</param>
+    /// <param name="rel">The case-sensitive link relation, such as <c>self</c>.</param>
+    /// <param name="userMessage">Why the test expects the assertion to hold; the failure message starts with it.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="userMessage"/> is null.</exception>
+    public static void ShouldAllHaveLink(this JsonElement actual, string rel, string userMessage) =>
+        WithUserMessage(userMessage, () => actual.ShouldAllHaveLink(rel));
+
     private static JsonElement GetRequiredProperty(JsonElement actual, string name)
     {
         actual.ValueKind.ShouldBe(JsonValueKind.Object);
