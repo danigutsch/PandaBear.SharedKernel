@@ -6,14 +6,18 @@ namespace PandaBear.Style.Analyzers;
 /// <summary>
 /// Captures the analyzer-config switches that shape async-suffix rule behavior.
 /// </summary>
-internal readonly struct StyleAnalyzerConfigOptions(bool allowAsyncSuffixOverrides, bool allowAsyncSuffixInterfaceImplementations)
+internal readonly struct StyleAnalyzerConfigOptions(bool allowAsyncSuffixOverrides, bool allowAsyncSuffixInterfaceImplementations, bool documentPublicMembers = false)
 {
     private const string AllowAsyncSuffixOverridesKey = "sharedkernel_style_allow_async_suffix_overrides";
     private const string AllowAsyncSuffixInterfaceImplementationsKey = "sharedkernel_style_allow_async_suffix_interface_implementations";
 
+    private const string DocumentPublicMembersKey = "sharedkernel_style_document_public_members";
+
     public bool AllowAsyncSuffixOverrides { get; } = allowAsyncSuffixOverrides;
 
     public bool AllowAsyncSuffixInterfaceImplementations { get; } = allowAsyncSuffixInterfaceImplementations;
+
+    public bool DocumentPublicMembers { get; } = documentPublicMembers;
 
     /// <summary>
     /// Reads the style-analyzer options from the current analyzer config provider.
@@ -27,7 +31,8 @@ internal readonly struct StyleAnalyzerConfigOptions(bool allowAsyncSuffixOverrid
 
         return new StyleAnalyzerConfigOptions(
             ReadBooleanOption(optionsProvider, syntaxTree, AllowAsyncSuffixOverridesKey, defaultValue: true),
-            ReadBooleanOption(optionsProvider, syntaxTree, AllowAsyncSuffixInterfaceImplementationsKey, defaultValue: true));
+            ReadBooleanOption(optionsProvider, syntaxTree, AllowAsyncSuffixInterfaceImplementationsKey, defaultValue: true),
+            ReadBooleanOption(optionsProvider, syntaxTree, DocumentPublicMembersKey, defaultValue: false));
     }
 
     private static bool ReadBooleanOption(AnalyzerConfigOptionsProvider optionsProvider, SyntaxTree? syntaxTree, string key, bool defaultValue)
