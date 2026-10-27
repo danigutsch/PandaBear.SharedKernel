@@ -48,6 +48,31 @@ public static class ObservabilityBuilderExtensions
     }
 
     /// <summary>
+    /// Excludes formatted messages and scopes from OpenTelemetry logs and registers
+    /// <see cref="LogRecordPrivacyProcessor"/> and <see cref="ActivityPrivacyProcessor"/>.
+    /// Call before adding exporters so the processors run first.
+    /// </summary>
+    /// <typeparam name="TBuilder">Host builder type, e.g. WebApplicationBuilder, HostApplicationBuilder.</typeparam>
+    /// <param name="builder">The host application builder to configure.</param>
+    /// <param name="additionalSensitiveAttribute">Optional host policy naming extra attributes to remove; it cannot permit attributes the shared baseline removes.</param>
+    /// <returns>The updated builder instance for chaining.</returns>
+    public static TBuilder AddTelemetryPrivacy<TBuilder>(this TBuilder builder, Func<string, bool>? additionalSensitiveAttribute = null) where TBuilder : IHostApplicationBuilder
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        builder.Logging.AddOpenTelemetry(logging =>
+        {
+            logging.IncludeFormattedMessage = false;
+            logging.IncludeScopes = false;
+            logging.AddProcessor(_ => new LogRecordPrivacyProcessor(additionalSensitiveAttribute));
+        });
+        builder.Services.AddOpenTelemetry()
+            .WithTracing(tracing => tracing.AddProcessor(new ActivityPrivacyProcessor(additionalSensitiveAttribute)));
+
+        return builder;
+    }
+
+    /// <summary>
     /// Adds startup logging for the application name and informational version.
     /// </summary>
     /// <typeparam name="TBuilder">Host builder type, e.g. WebApplicationBuilder, HostApplicationBuilder.</typeparam>
