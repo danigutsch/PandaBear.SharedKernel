@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Reflection;
 using Microsoft.Extensions.Logging;
 
 namespace PandaBear.Blazor.Tests;
@@ -12,8 +13,8 @@ public sealed class UiFailureReporterTests
     {
         // Arrange
         var logger = new CapturingLogger<UiFailureReporter>();
-        var counter = new RecordingCounter();
-        var reporter = new UiFailureReporter(logger, counter);
+        using var meters = new MeterCollector();
+        var reporter = new UiFailureReporter(logger, meters);
         using var activity = new Activity("test");
         activity.Start();
         var exception = new InvalidOperationException(HostileText.StackTrace);
@@ -33,15 +34,21 @@ public sealed class UiFailureReporterTests
         entry.Message.ShouldNotContain("secret", StringComparison.Ordinal);
         entry.Message.ShouldNotContain("Orders.cs", StringComparison.Ordinal);
         entry.Values.Values.Any(value => value is not null && value.Contains("secret", StringComparison.Ordinal)).ShouldBeFalse();
-        counter.Count.ShouldBe(1);
+        var measurement = meters.Measurements.ShouldHaveSingleItem();
+        measurement.Instrument.ShouldBe(UiFailureReporter.HandledFailuresCounterName);
+        measurement.Value.ShouldBe(1);
+        measurement.Tags.Count.ShouldBe(2);
+        measurement.Tags[UiFailureReporter.ErrorTypeTag].ShouldBe(nameof(InvalidOperationException));
+        measurement.Tags[UiFailureReporter.OperationTag].ShouldBe("customers.import");
     }
 
     [Fact]
-    public void Report_works_without_a_counter_and_without_an_ambient_activity()
+    public void Report_works_without_an_ambient_activity()
     {
         // Arrange
         var logger = new CapturingLogger<UiFailureReporter>();
-        var reporter = new UiFailureReporter(logger);
+        using var meters = new MeterCollector();
+        var reporter = new UiFailureReporter(logger, meters);
 
         // Act
         reporter.Report(new TimeoutException("never logged"), "customers.import");
@@ -61,7 +68,8 @@ public sealed class UiFailureReporterTests
     {
         // Arrange
         var logger = new CapturingLogger<UiFailureReporter>();
-        var reporter = new UiFailureReporter(logger);
+        using var meters = new MeterCollector();
+        var reporter = new UiFailureReporter(logger, meters);
 
         // Act
         reporter.Report(new InvalidOperationException(), operation);
@@ -75,7 +83,8 @@ public sealed class UiFailureReporterTests
     {
         // Arrange
         var logger = new CapturingLogger<UiFailureReporter>();
-        var reporter = new UiFailureReporter(logger);
+        using var meters = new MeterCollector();
+        var reporter = new UiFailureReporter(logger, meters);
 
         // Act
         reporter.Report(new InvalidOperationException(), HostileText.VeryLong(10_000));
@@ -88,7 +97,8 @@ public sealed class UiFailureReporterTests
     public void Null_exception_is_rejected()
     {
         // Arrange
-        var reporter = new UiFailureReporter(new CapturingLogger<UiFailureReporter>());
+        using var meters = new MeterCollector();
+        var reporter = new UiFailureReporter(new CapturingLogger<UiFailureReporter>(), meters);
 
         // Act
         var report = () => reporter.Report(null!, "operation");
@@ -98,21 +108,91 @@ public sealed class UiFailureReporterTests
     }
 
     [Fact]
-    public void Throwing_counter_cannot_break_reporting_and_leaves_a_fixed_warning()
+    public void Unsafe_operation_is_counted_as_unknown()
+    {
+        // Arrange
+        using var meters = new MeterCollector();
+        var reporter = new UiFailureReporter(new CapturingLogger<UiFailureReporter>(), meters);
+
+        // Act
+        reporter.Report(new InvalidOperationException(), HostileText.Markup);
+
+        // Assert
+        meters.Measurements.ShouldHaveSingleItem().Tags[UiFailureReporter.OperationTag].ShouldBe(UiFailureReporter.UnknownOperation);
+    }
+
+    [Fact]
+    public void Aggregate_exception_is_counted_by_its_first_inner_type()
+    {
+        // Arrange
+        using var meters = new MeterCollector();
+        var reporter = new UiFailureReporter(new CapturingLogger<UiFailureReporter>(), meters);
+
+        // Act
+        reporter.Report(new AggregateException(new TimeoutException(HostileText.StackTrace)), "op");
+
+        // Assert
+        meters.Measurements.ShouldHaveSingleItem().Tags[UiFailureReporter.ErrorTypeTag].ShouldBe(nameof(TimeoutException));
+    }
+
+    [Fact]
+    public void Target_invocation_exception_is_counted_by_its_inner_type()
+    {
+        // Arrange
+        using var meters = new MeterCollector();
+        var reporter = new UiFailureReporter(new CapturingLogger<UiFailureReporter>(), meters);
+
+        // Act
+        reporter.Report(new TargetInvocationException(new FormatException()), "op");
+
+        // Assert
+        meters.Measurements.ShouldHaveSingleItem().Tags[UiFailureReporter.ErrorTypeTag].ShouldBe(nameof(FormatException));
+    }
+
+    [Fact]
+    public void Throwing_meter_factory_cannot_break_reporting_and_the_log_is_still_written()
     {
         // Arrange
         var logger = new CapturingLogger<UiFailureReporter>();
-        var reporter = new UiFailureReporter(logger, new ThrowingCounter());
+        using var meters = new ThrowingMeterFactory();
+        var reporter = new UiFailureReporter(logger, meters);
 
         // Act
-        reporter.Report(new InvalidOperationException(), "customers.import");
+        var failure = Record.Exception(() => reporter.Report(new InvalidOperationException(), "customers.import"));
 
         // Assert
-        logger.Entries.ShouldHaveCount(2);
-        var warning = logger.Entries[1];
-        warning.Level.ShouldBe(LogLevel.Warning);
-        warning.EventId.Id.ShouldBe(UiFailureReporter.CounterFailureEventId);
-        warning.Exception.ShouldBeNull();
-        warning.Message.ShouldNotContain(ThrowingCounter.SecretMessage, StringComparison.Ordinal);
+        failure.ShouldBeNull();
+        logger.Entries.ShouldHaveSingleItem().EventId.Id.ShouldBe(UiFailureReporter.HandledFailureEventId);
+    }
+
+    [Fact]
+    public void Throwing_listener_cannot_break_reporting_and_the_log_is_still_written()
+    {
+        // Arrange
+        var logger = new CapturingLogger<UiFailureReporter>();
+        using var meters = new MeterCollector { ThrowOnMeasurement = true };
+        var reporter = new UiFailureReporter(logger, meters);
+
+        // Act
+        var failure = Record.Exception(() => reporter.Report(new InvalidOperationException(), "customers.import"));
+
+        // Assert
+        failure.ShouldBeNull();
+        logger.Entries.ShouldHaveSingleItem().EventId.Id.ShouldBe(UiFailureReporter.HandledFailureEventId);
+    }
+
+    [Fact]
+    public void Constructor_rejects_null_arguments()
+    {
+        // Arrange
+        using var meters = new MeterCollector();
+
+        // Act
+        var nullLogger = () => new UiFailureReporter(null!, meters);
+        var nullFactory = () => new UiFailureReporter(new CapturingLogger<UiFailureReporter>(), null!);
+
+        // Assert
+        nullLogger.ShouldThrow<ArgumentNullException>();
+        nullFactory.ShouldThrow<ArgumentNullException>();
     }
 }

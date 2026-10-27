@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PandaBear.Blazor.Tests;
 
@@ -11,7 +10,7 @@ public sealed class BlazorServiceCollectionExtensionsTests
     public void AddUiFailureReporting_registers_the_reporter_as_a_singleton()
     {
         // Arrange
-        var services = new ServiceCollection().AddLogging();
+        var services = new ServiceCollection().AddLogging().AddMetrics();
 
         // Act
         var returned = services.AddUiFailureReporting();
@@ -40,22 +39,20 @@ public sealed class BlazorServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void AddUiFailureReporting_resolves_with_a_registered_counter()
+    public void AddUiFailureReporting_resolves_with_the_metrics_services()
     {
         // Arrange
-        var counter = new RecordingCounter();
         var services = new ServiceCollection()
-            .AddSingleton(NullLoggerFactory.Instance)
-            .AddSingleton(typeof(Microsoft.Extensions.Logging.ILogger<>), typeof(NullLogger<>))
-            .AddSingleton<IHandledFailureCounter>(counter)
+            .AddLogging()
+            .AddMetrics()
             .AddUiFailureReporting();
         using var provider = services.BuildServiceProvider();
 
         // Act
-        provider.GetRequiredService<IUiFailureReporter>().Report(new InvalidOperationException(), "op");
+        var failure = Record.Exception(() => provider.GetRequiredService<IUiFailureReporter>().Report(new InvalidOperationException(), "op"));
 
         // Assert
-        counter.Count.ShouldBe(1);
+        failure.ShouldBeNull();
     }
 
     [Fact]
