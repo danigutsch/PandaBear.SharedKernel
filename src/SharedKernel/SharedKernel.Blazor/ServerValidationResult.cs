@@ -19,8 +19,8 @@ public sealed class ServerValidationResult
     }
 
     /// <summary>
-    /// Gets whether the server reported errors that could not be placed on a known field, such as model-level
-    /// or unknown keys. Show caller-chosen fixed copy for them; never show the server text.
+    /// Gets whether the server reported errors that could not be shown on a known field: model-level
+    /// or unknown keys, keys beyond the field cap, and messages beyond the per-field cap. Show caller-chosen fixed copy for them; never show the server text.
     /// </summary>
     public bool HasUnplacedErrors
     {

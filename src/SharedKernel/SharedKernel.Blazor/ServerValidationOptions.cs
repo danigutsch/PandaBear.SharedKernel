@@ -29,15 +29,47 @@ public sealed record ServerValidationOptions
         get;
     }
 
-    /// <summary>Gets the longest server field name that is considered, 128 by default.</summary>
-    public int MaxFieldNameLength { get; init; } = 128;
+    /// <summary>Gets the longest server field name that is considered, 128 by default; must be positive.</summary>
+    public int MaxFieldNameLength
+    {
+        get;
+        init
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+            field = value;
+        }
+    } = 128;
 
-    /// <summary>Gets the longest kept message, 300 characters by default; longer messages end in an ellipsis.</summary>
-    public int MaxMessageLength { get; init; } = 300;
+    /// <summary>Gets the longest kept message, 300 characters by default and positive; longer messages end in an ellipsis.</summary>
+    public int MaxMessageLength
+    {
+        get;
+        init
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+            field = value;
+        }
+    } = 300;
 
-    /// <summary>Gets how many messages are kept per field, 5 by default.</summary>
-    public int MaxMessagesPerField { get; init; } = 5;
+    /// <summary>Gets how many messages are kept per field, 5 by default; must be positive.</summary>
+    public int MaxMessagesPerField
+    {
+        get;
+        init
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+            field = value;
+        }
+    } = 5;
 
-    /// <summary>Gets how many server keys are considered, 50 by default; further keys count as unplaced.</summary>
-    public int MaxFields { get; init; } = 50;
+    /// <summary>Gets how many server keys are considered, 50 by default and positive; further keys count as unplaced.</summary>
+    public int MaxFields
+    {
+        get;
+        init
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+            field = value;
+        }
+    } = 50;
 }

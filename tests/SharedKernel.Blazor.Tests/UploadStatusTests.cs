@@ -9,17 +9,19 @@ namespace PandaBear.Blazor.Tests;
 public sealed class UploadStatusTests : BunitContext
 {
     [Fact]
-    public void Nothing_is_rendered_while_no_upload_is_displayed()
+    public void Labelled_region_and_empty_status_exist_before_the_first_state_change()
     {
         // Arrange & Act
         var cut = this.RenderStatus(new UploadOperationState());
 
         // Assert
-        cut.Markup.Trim().ShouldBeEmpty();
+        cut.Find("section").GetAttribute("aria-label").ShouldBe(RegionLabel);
+        cut.Find("[role=status]").TextContent.ShouldBeEmpty();
+        cut.FindAll("progress, button").ShouldBeEmpty();
     }
 
     [Fact]
-    public void Region_is_labelled_and_contains_a_polite_atomic_status_with_the_announcement()
+    public void Status_carries_the_announcement_and_relies_on_the_implicit_live_region_semantics()
     {
         // Arrange
         var state = Started();
@@ -32,8 +34,8 @@ public sealed class UploadStatusTests : BunitContext
         region.GetAttribute("aria-label").ShouldBe(RegionLabel);
         region.GetAttribute("tabindex").ShouldBe("-1");
         var status = cut.Find("[role=status]");
-        status.GetAttribute("aria-live").ShouldBe("polite");
-        status.GetAttribute("aria-atomic").ShouldBe("true");
+        status.HasAttribute("aria-live").ShouldBeFalse();
+        status.HasAttribute("aria-atomic").ShouldBeFalse();
         status.TextContent.ShouldBe("customers.csv queued.");
     }
 
@@ -45,16 +47,18 @@ public sealed class UploadStatusTests : BunitContext
         var operationId = state.OperationId;
         state.ReportBytes(operationId, 10);
         var cut = this.RenderStatus(state);
-        var before = cut.Find("[role=status]").TextContent;
+        var before = cut.Find("[role=status]").OuterHtml;
 
         // Act
         state.ReportBytes(operationId, 15);
         cut.Render();
+        var inStep = cut.Find("[role=status]").OuterHtml;
+        state.ReportBytes(operationId, 20);
+        cut.Render();
 
         // Assert
-        before.ShouldBe("customers.csv upload is 10% complete.");
-        cut.Find("[role=status]").TextContent.ShouldBe(before);
-        cut.Find("progress").GetAttribute("value").ShouldBe("15");
+        inStep.ShouldBe(before);
+        cut.Find("[role=status]").TextContent.ShouldBe("customers.csv upload is 20% complete.");
     }
 
     [Fact]
@@ -145,7 +149,7 @@ public sealed class UploadStatusTests : BunitContext
 
         // Assert
         cut.FindAll("script, img").ShouldBeEmpty();
-        cut.Find("[data-upload-failure]").TextContent.Length.ShouldBeLessThanOrEqualTo(UploadStatus.MaxDisplayTextLength);
+        cut.Find("[role=status] [data-upload-failure]").TextContent.Length.ShouldBeLessThanOrEqualTo(UploadStatus.MaxDisplayTextLength);
     }
 
     [Fact]
@@ -179,6 +183,68 @@ public sealed class UploadStatusTests : BunitContext
         cut.Render();
 
         // Assert
-        JSInterop.VerifyNotInvoke("Blazor._internal.domWrapper.focus");
+        JSInterop.Invocations.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Failure_reason_is_inside_the_live_status_region()
+    {
+        // Arrange
+        var state = Started();
+        state.Fail(state.OperationId, "The file is too large.");
+
+        // Act
+        var cut = this.RenderStatus(state);
+
+        // Assert
+        var status = cut.Find("[role=status]");
+        status.TextContent.ShouldContain("customers.csv failed.", StringComparison.Ordinal);
+        status.TextContent.ShouldContain("The file is too large.", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Bidi_and_zero_width_characters_cannot_spoof_the_file_name()
+    {
+        // Arrange
+        var state = Started("invoice\u202Efdp.exe\u200B");
+
+        // Act
+        var cut = this.RenderStatus(state);
+
+        // Assert
+        cut.Markup.ShouldNotContain("\u202E", StringComparison.Ordinal);
+        cut.Markup.ShouldNotContain("\u200B", StringComparison.Ordinal);
+        cut.Find("button").GetAttribute("aria-label").ShouldBe("Cancel upload: invoicefdp.exe");
+    }
+
+    [Fact]
+    public void Focus_changes_on_the_cancel_button_do_not_re_render_the_component()
+    {
+        // Arrange
+        var state = Started();
+        var cut = this.RenderStatus(state);
+        var renders = cut.RenderCount;
+
+        // Act
+        cut.Find("button").Focus();
+        cut.Find("button").Blur();
+
+        // Assert
+        cut.RenderCount.ShouldBe(renders);
+    }
+
+    [Fact]
+    public void Missing_state_is_rejected()
+    {
+        // Arrange & Act
+        var render = () =>
+        {
+            Render<UploadStatus>(parameters => parameters
+                .Add(component => component.State, null!)
+                .Add(component => component.Label, RegionLabel));
+        };
+
+        // Assert
+        render.ShouldThrow<ArgumentNullException>();
     }
 }

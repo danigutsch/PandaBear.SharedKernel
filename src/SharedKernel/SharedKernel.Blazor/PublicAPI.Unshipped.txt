@@ -84,3 +84,4 @@ PandaBear.Blazor.UploadStatus.State.get -> PandaBear.HttpClients.UploadOperation
 PandaBear.Blazor.UploadStatus.State.set -> void
 PandaBear.Blazor.UploadStatus.UploadStatus() -> void
 static PandaBear.Blazor.BlazorServiceCollectionExtensions.AddUiFailureReporting(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+const PandaBear.Blazor.UiFailureReporter.CounterFailureEventId = 7002 -> int

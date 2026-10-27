@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using PandaBear.HttpClients;
 
 namespace PandaBear.Blazor;
@@ -10,18 +9,19 @@ namespace PandaBear.Blazor;
 /// An accessible view of an <see cref="UploadOperationState" />: a labelled status region, progress, and a cancel button.
 /// </summary>
 /// <remarks>
-/// The component renders a <c>section</c> named by <see cref="Label" /> with <c>tabindex="-1"</c>, a polite, atomic
-/// <c>role="status"</c> element holding the state's announcement, a determinate <c>progress</c> only while the state
+/// The component always renders a <c>section</c> named by <see cref="Label" /> with <c>tabindex="-1"</c> and an
+/// initially empty <c>role="status"</c> element (an implicit polite, atomic live region), so assistive technology
+/// already knows the region when the first announcement arrives. The status holds the state's announcement and, after
+/// a failure, the failure reason. A determinate <c>progress</c> only while the state
 /// is uploading and an indeterminate one while it is otherwise active, and a cancel button named after the file.
 /// The announcement changes only when <see cref="UploadOperationState.Announcement" /> does, so the state's ten-percent
 /// steps throttle what assistive technology reads. When the cancel button had focus and disappears, focus moves to the
 /// region. The component does not cancel transport work, and it renders when the parent re-renders after mutating the
-/// state. Reset the state only after moving focus yourself, because the region disappears with the state.
+/// state. Focus changes on the button are tracked without re-rendering.
 /// File names and failure messages are encoded and truncated to <see cref="MaxDisplayTextLength" /> characters.
-/// Extra attributes, such as <c>class</c>, are applied to the section. Nothing is rendered while the state is
-/// <see cref="UploadOperationStatus.None" />.
+/// Extra attributes, such as <c>class</c>, are applied to the section.
 /// </remarks>
-public sealed class UploadStatus : ComponentBase
+public sealed class UploadStatus : ComponentBase, IHandleEvent
 {
     /// <summary>The longest file name or failure message shown before it is truncated.</summary>
     public const int MaxDisplayTextLength = 200;
@@ -62,11 +62,20 @@ public sealed class UploadStatus : ComponentBase
         get; set;
     }
 
+    /// <summary>Handles element events without re-rendering, so focus changes on the cancel button cost no render.</summary>
+    /// <param name="callback">The event handler.</param>
+    /// <param name="arg">The event arguments.</param>
+    /// <returns>A task that completes when the handler does.</returns>
+    Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
+
+    /// <inheritdoc />
+    protected override void OnParametersSet() => ArgumentNullException.ThrowIfNull(State);
+
     /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         var cancelVisible = State.IsActive;
-        var moveFocus = _cancelRendered && !cancelVisible && _cancelFocused && State.Status is not UploadOperationStatus.None;
+        var moveFocus = _cancelRendered && !cancelVisible && _cancelFocused;
         _cancelRendered = cancelVisible;
         if (!cancelVisible)
         {
@@ -78,25 +87,13 @@ public sealed class UploadStatus : ComponentBase
             return;
         }
 
-        try
-        {
-            await _region.FocusAsync().ConfigureAwait(false);
-        }
-        catch (JSDisconnectedException)
-        {
-            // The circuit is gone; there is nothing left to focus.
-        }
+        await FocusHelper.TryFocus(_region).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
-
-        if (State.Status is UploadOperationStatus.None)
-        {
-            return;
-        }
 
         var fileName = BoundedText.ToDisplay(State.FileName, MaxDisplayTextLength);
         builder.OpenElement(0, "section");
@@ -107,23 +104,22 @@ public sealed class UploadStatus : ComponentBase
 
         builder.OpenElement(5, "div");
         builder.AddAttribute(6, "role", "status");
-        builder.AddAttribute(7, "aria-live", "polite");
-        builder.AddAttribute(8, "aria-atomic", "true");
-        builder.AddContent(9, BoundedText.ToDisplay(State.Announcement, MaxDisplayTextLength * 2));
+        builder.AddContent(7, BoundedText.ToDisplay(State.Announcement, MaxDisplayTextLength * 2));
+        if (State.Status is UploadOperationStatus.Failed && !string.IsNullOrWhiteSpace(State.FailureMessage))
+        {
+            builder.AddContent(8, " ");
+            builder.OpenElement(9, "span");
+            builder.AddAttribute(10, "data-upload-failure", true);
+            builder.AddContent(11, BoundedText.ToDisplay(State.FailureMessage, MaxDisplayTextLength));
+            builder.CloseElement();
+        }
+
         builder.CloseElement();
 
         if (State.IsActive)
         {
             BuildProgress(builder, fileName);
             BuildCancelButton(builder, fileName);
-        }
-
-        if (State.Status is UploadOperationStatus.Failed && !string.IsNullOrWhiteSpace(State.FailureMessage))
-        {
-            builder.OpenElement(10, "p");
-            builder.AddAttribute(11, "data-upload-failure", true);
-            builder.AddContent(12, BoundedText.ToDisplay(State.FailureMessage, MaxDisplayTextLength));
-            builder.CloseElement();
         }
 
         builder.CloseElement();
@@ -149,8 +145,10 @@ public sealed class UploadStatus : ComponentBase
         builder.AddAttribute(31, "type", "button");
         builder.AddAttribute(32, "aria-label", $"{CancelText}: {fileName}");
         builder.AddAttribute(33, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => OnCancel.InvokeAsync()));
-        builder.AddAttribute(34, "onfocus", EventCallback.Factory.Create<FocusEventArgs>(this, () => _cancelFocused = true));
-        builder.AddAttribute(35, "onblur", EventCallback.Factory.Create<FocusEventArgs>(this, () => _cancelFocused = false));
+
+        // Plain delegates have no receiver, so tracking focus does not re-render the component.
+        builder.AddAttribute(34, "onfocus", (Action<FocusEventArgs>)(_ => _cancelFocused = true));
+        builder.AddAttribute(35, "onblur", (Action<FocusEventArgs>)(_ => _cancelFocused = false));
         builder.AddContent(36, CancelText);
         builder.CloseElement();
     }

@@ -96,4 +96,23 @@ public sealed class UiFailureReporterTests
         // Assert
         report.ShouldThrow<ArgumentNullException>();
     }
+
+    [Fact]
+    public void Throwing_counter_cannot_break_reporting_and_leaves_a_fixed_warning()
+    {
+        // Arrange
+        var logger = new CapturingLogger<UiFailureReporter>();
+        var reporter = new UiFailureReporter(logger, new ThrowingCounter());
+
+        // Act
+        reporter.Report(new InvalidOperationException(), "customers.import");
+
+        // Assert
+        logger.Entries.ShouldHaveCount(2);
+        var warning = logger.Entries[1];
+        warning.Level.ShouldBe(LogLevel.Warning);
+        warning.EventId.Id.ShouldBe(UiFailureReporter.CounterFailureEventId);
+        warning.Exception.ShouldBeNull();
+        warning.Message.ShouldNotContain(ThrowingCounter.SecretMessage, StringComparison.Ordinal);
+    }
 }

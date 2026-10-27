@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using static PandaBear.Blazor.Tests.ComponentFixtures;
 
 namespace PandaBear.Blazor.Tests;
@@ -35,18 +36,19 @@ public sealed class ErrorSummaryTests : BunitContext
         region.GetAttribute("aria-labelledby").ShouldBe(heading.Id);
         var links = cut.FindAll("li a");
         links.Count.ShouldBe(2);
-        links[0].GetAttribute("href").ShouldBe("#email");
+        links[0].GetAttribute("href").ShouldBe("http://localhost/#email");
         links[0].TextContent.ShouldBe("Email is required.");
-        links[1].GetAttribute("href").ShouldBe("#name");
+        links[1].GetAttribute("href").ShouldBe("http://localhost/#name");
     }
 
     [Fact]
-    public void Summary_takes_focus_when_new_items_appear_but_not_on_an_unchanged_rerender()
+    public void Summary_takes_focus_on_every_new_submission_but_not_on_an_unchanged_rerender()
     {
         // Arrange
+        var items = Items(("email", "Email is required."));
         var cut = Render<ErrorSummary>(parameters => parameters
             .Add(component => component.Title, "There is a problem")
-            .Add(component => component.Items, Items(("email", "Email is required."))));
+            .Add(component => component.Items, items));
 
         // Act
         var first = JSInterop.VerifyFocusAsyncInvoke(1)[0];
@@ -57,17 +59,17 @@ public sealed class ErrorSummaryTests : BunitContext
         focused.Id.ShouldBe(cut.Find("section").GetAttribute("blazor:elementreference"));
         JSInterop.VerifyFocusAsyncInvoke(1);
 
-        // Act
+        // Act: a resubmission with identical content arrives as a fresh list.
         cut.Render(parameters => parameters
             .Add(component => component.Title, "There is a problem")
-            .Add(component => component.Items, Items(("name", "Name is required."))));
+            .Add(component => component.Items, Items(("email", "Email is required."))));
 
         // Assert
         JSInterop.VerifyFocusAsyncInvoke(2);
     }
 
     [Fact]
-    public void Hostile_text_is_encoded_and_bounded_and_cannot_break_out_of_the_link_target()
+    public void Hostile_text_is_encoded_and_bounded_and_the_link_target_is_exactly_escaped()
     {
         // Arrange & Act
         var cut = Render<ErrorSummary>(parameters => parameters
@@ -77,8 +79,39 @@ public sealed class ErrorSummaryTests : BunitContext
         // Assert
         cut.FindAll("script, img").ShouldBeEmpty();
         var links = cut.FindAll("li a");
-        links[0].GetAttribute("href").ShouldStartWith("#", StringComparison.Ordinal);
+        links[0].GetAttribute("href").ShouldBe("http://localhost/#a%20b%22%3E%3Cscript%3E");
         links[0].TextContent.ShouldBe(HostileText.Markup);
         links[1].TextContent.Length.ShouldBeLessThanOrEqualTo(ErrorSummary.MaxMessageLength);
+    }
+
+    [Fact]
+    public void Links_replace_the_current_fragment_and_keep_the_page_address_so_a_base_href_cannot_redirect_them()
+    {
+        // Arrange
+        Services.GetRequiredService<NavigationManager>().NavigateTo("/orders/new?draft=1#old");
+
+        // Act
+        var cut = Render<ErrorSummary>(parameters => parameters
+            .Add(component => component.Title, "There is a problem")
+            .Add(component => component.Items, Items(("email", "Email is required."))));
+
+        // Assert
+        var link = cut.Find("li a");
+        link.GetAttribute("href").ShouldBe("http://localhost/orders/new?draft=1#email");
+        link.GetAttribute("target").ShouldBe("_top");
+    }
+
+    [Fact]
+    public void Missing_title_items_or_target_ids_are_rejected()
+    {
+        // Arrange
+        var noTitle = () => this.RenderSummary(null!, Items(("a", "b")));
+        var noItems = () => this.RenderSummary("Title", null!);
+        var noTarget = () => this.RenderSummary("Title", [new ErrorSummaryItem(null!, "message")]);
+
+        // Act & Assert
+        noTitle.ShouldThrow<ArgumentNullException>();
+        noItems.ShouldThrow<ArgumentNullException>();
+        noTarget.ShouldThrow<ArgumentNullException>();
     }
 }

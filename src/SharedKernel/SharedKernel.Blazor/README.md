@@ -10,8 +10,8 @@ Accessible Blazor helpers for HTTP outcome messages, server validation, error su
 
 Show server failures in two tiers and never join server text into one message.
 
-1. Field-keyed validation errors go to the form through `ServerValidationBinder`, which uses a `ValidationMessageStore`. Only fields named in `ServerValidationOptions.KnownFields` are shown (matched without regard to case). Names and messages are bounded; blank, multi-line, or stack-trace-like messages become the fallback field message. A field's messages are cleared when that field changes. Dispose the binder with the form.
-2. Everything else shows fixed copy that you choose. `HttpOutcomeMessages` maps an `HttpOutcomeKind` to your copy and never reads `HttpOutcome.Message` or `ValidationErrors`. `ServerValidationResult.HasUnplacedErrors` tells you when a validation response had keys that could not be placed.
+1. Field-keyed validation errors go to the form through `ServerValidationBinder`, which uses a `ValidationMessageStore`. Only fields named in `ServerValidationOptions.KnownFields` are shown (matched without regard to case). Names and messages are bounded; blank, multi-line, or stack-trace-like messages become the fallback field message. A field's messages are cleared when that field changes, and all server messages are cleared when a new validation request starts (an `EditForm` submit), so unchanged data can be submitted again. Duplicate messages are shown once, and the per-field cap holds across case-variant keys. Dispose the binder with the form.
+2. Everything else shows fixed copy that you choose. `HttpOutcomeMessages` maps an `HttpOutcomeKind` to your copy and never reads `HttpOutcome.Message` or `ValidationErrors`. `ServerValidationResult.HasUnplacedErrors` tells you when anything could not be shown on a field: unknown or model-level keys, keys beyond `MaxFields`, or messages beyond `MaxMessagesPerField`. All `Max*` options must be positive. Display text drops Unicode format characters (bidirectional overrides, zero-width characters), and screening rejects text longer than four times `MaxMessageLength` before any pattern runs.
 
 ```csharp
 private static readonly HttpOutcomeMessages Messages = new HttpOutcomeMessages("We could not save the customer. Try again later.")
@@ -33,7 +33,7 @@ else if (outcome.Kind != HttpOutcomeKind.Succeeded)
 }
 ```
 
-`ErrorSummary` renders a labelled `section` (`tabindex="-1"`) with a heading and fragment links to the fields, and takes focus when new items appear. Give each field a stable `id`, and show a message beside each field with `ValidationMessage`.
+`ErrorSummary` renders a labelled `section` (`tabindex="-1"`) with a heading and fragment links to the fields, and takes focus whenever a new `Items` list instance arrives, so pass a fresh list for every submission, even with identical content, and keep the same list across unrelated re-renders. Each link is the current page address without its fragment plus `#id`, so a document `<base href>` cannot redirect it. The links carry `target="_top"` so Blazor's link interception, which scrolls to a fragment without moving focus, leaves them to the browser's native fragment navigation, which focuses the target. The target element must therefore be an input or otherwise focusable (for example `tabindex="-1"`). Give each field a stable `id`, and show a message beside each field with `ValidationMessage`.
 
 ```razor
 <ErrorSummary Title="There is a problem" Items="_summary" class="error-summary" />
@@ -43,7 +43,7 @@ else if (outcome.Kind != HttpOutcomeKind.Succeeded)
 
 Blazor Server component exceptions do not reach the ASP.NET Core exception handler, and code that catches them often shows a message and nothing else. `IUiFailureReporter.Report(exception, operation)` logs `Handled UI failure in {Operation}: {ExceptionType} (trace {TraceId})` under `EventId` 7001 (`HandledUiFailure`). The exception object, message, stack, and data are never logged. Operation names must be code-chosen constants; unsafe or overlong names are logged as `unknown`.
 
-`IHandledFailureCounter` is the seam for the `unhandled_exceptions_total` counter with the tag `handled=true`, so handled and unhandled failures share one series. This package defines only the interface; an application, or `SharedKernel.AspNetCore` once it provides one, supplies the implementation. Without one, failures are logged and not counted.
+`IHandledFailureCounter` is the seam for incrementing `unhandled_exceptions_total` with the tag `handled=true`, so handled and unhandled failures can share one series. This package defines only the interface and ships no counter: the intended implementation is the `UnhandledExceptionReporter` that pull request 195 proposes for `SharedKernel.AspNetCore`, which is not merged or released, so do not rely on it yet. Until it exists, supply your own implementation or leave it out, in which case failures are logged and not counted and no warning is raised for the missing counter. The reporter is a singleton, so register the counter as a singleton. A counter that throws cannot break reporting; a fixed warning (event id 7002, no exception text) is logged instead.
 
 ```csharp
 builder.Services.AddUiFailureReporting();
@@ -57,11 +57,11 @@ builder.Services.AddSingleton<IHandledFailureCounter, MyHandledFailureCounter>()
 </RecoveryErrorBoundary>
 ```
 
-`RecoveryErrorBoundary` reports the fault, renders only your fixed copy in a `role="alert"` element, and offers a button to render the child again when you supply `RecoverLabel`.
+`RecoveryErrorBoundary` reports the fault, renders only your fixed copy in a focusable `role="alert"` element and moves focus to it, and offers a button to render the child again when you supply `RecoverLabel`. After that button is used, focus moves to an empty `tabindex="-1"` anchor placed before the child's content.
 
 ## Upload status
 
-`UploadStatus` shows an `UploadOperationState`. It renders a `section` named by `Label`, a polite, atomic `role="status"` element with the state's announcement (the state's ten-percent steps throttle what assistive technology reads), a determinate `progress` only while uploading and an indeterminate one while queued, retrying, or processing, and a cancel button named after the file. When the cancel button had focus and disappears, focus moves to the section. The component renders when its parent re-renders after mutating the state, and it does not cancel transport work.
+`UploadStatus` shows an `UploadOperationState`. It always renders a `section` named by `Label` and an initially empty `role="status"` element (an implicit polite live region), so the first announcement is read. The status holds the state's announcement (the state's ten-percent steps throttle what assistive technology reads) and, after a failure, the failure reason. It also renders a determinate `progress` only while uploading and an indeterminate one while queued, retrying, or processing, and a cancel button named after the file. When the cancel button had focus and disappears, focus moves to the section; focus changes on the button cause no render. The component renders when its parent re-renders after mutating the state, and it does not cancel transport work.
 
 ```razor
 <UploadStatus State="_upload" Label="Customer import upload status" OnCancel="CancelUpload" />
@@ -71,8 +71,8 @@ File names and failure messages are encoded and truncated to 200 characters. The
 
 ## Notes
 
-- Link targets in `ErrorSummary` are fragment links (`#id`); browsers move focus to a focusable target of a fragment navigation.
-- Depends on the ASP.NET Core shared framework and `PandaBear.SharedKernel.HttpClients`; see the [package decision](../../../docs/adr/20261027-blazor-helpers-package.md).
+- Link targets in `ErrorSummary` are fragment links on the current page; browsers move focus to a focusable target of a fragment navigation.
+- Depends on the `Microsoft.AspNetCore.Components.Web` package and `PandaBear.SharedKernel.HttpClients`, not on the ASP.NET Core shared framework; see the [package decision](../../../docs/adr/20261027-blazor-helpers-package.md).
 
 ## Package identity and availability
 

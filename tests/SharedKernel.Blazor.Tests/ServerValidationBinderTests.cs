@@ -205,4 +205,113 @@ public sealed class ServerValidationBinderTests
         item.TargetId.ShouldBe("input-Email");
         item.Message.ShouldBe("Email taken.");
     }
+
+    [Fact]
+    public void Identical_messages_for_one_field_are_shown_once()
+    {
+        // Arrange
+        var context = new EditContext(new ServerValidationModel());
+        using var binder = new ServerValidationBinder(context, Options());
+
+        // Act
+        var result = binder.Apply(Errors(("Name", ["Taken.", "Taken.", "Taken."])));
+
+        // Assert
+        context.GetValidationMessages(context.Field(nameof(ServerValidationModel.Name))).ShouldHaveSingleItem();
+        result.Issues.ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void Message_cap_applies_across_case_variant_keys_and_reports_dropped_messages()
+    {
+        // Arrange
+        var context = new EditContext(new ServerValidationModel());
+        var options = Options() with
+        {
+            MaxMessagesPerField = 2
+        };
+        using var binder = new ServerValidationBinder(context, options);
+
+        // Act
+        var result = binder.Apply(Errors(("name", ["a", "b"]), ("NAME", ["c", "d"])));
+
+        // Assert
+        context.GetValidationMessages(context.Field(nameof(ServerValidationModel.Name))).Count().ShouldBe(2);
+        result.HasUnplacedErrors.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Messages_dropped_by_the_per_field_cap_set_the_unplaced_flag()
+    {
+        // Arrange
+        var context = new EditContext(new ServerValidationModel());
+        var options = Options() with
+        {
+            MaxMessagesPerField = 2
+        };
+        using var binder = new ServerValidationBinder(context, options);
+
+        // Act
+        var result = binder.Apply(Errors(("Name", ["a", "b", "c"])));
+
+        // Assert
+        result.HasUnplacedErrors.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Keys_beyond_the_field_cap_are_unplaced_even_when_known()
+    {
+        // Arrange
+        var context = new EditContext(new ServerValidationModel());
+        var options = Options() with
+        {
+            MaxFields = 1
+        };
+        using var binder = new ServerValidationBinder(context, options);
+
+        // Act
+        var result = binder.Apply(Errors(("Name", ["a"]), ("Email", ["b"])));
+
+        // Assert
+        result.HasUnplacedErrors.ShouldBeTrue();
+        result.Issues.ShouldHaveSingleItem().FieldName.ShouldBe("Name");
+        context.GetValidationMessages(context.Field(nameof(ServerValidationModel.Email))).ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void A_new_validation_request_clears_server_messages_so_unchanged_data_can_be_resubmitted()
+    {
+        // Arrange
+        var context = new EditContext(new ServerValidationModel());
+        using var binder = new ServerValidationBinder(context, Options());
+        binder.Apply(Errors(("Name", ["Name taken."])));
+
+        // Act
+        var valid = context.Validate();
+
+        // Assert
+        valid.ShouldBeTrue();
+        context.GetValidationMessages().ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Non_positive_bounds_are_rejected(int bound)
+    {
+        // Arrange
+        var options = Options();
+
+        // Act
+        var length = () => options with { MaxMessageLength = bound };
+        var name = () => options with { MaxFieldNameLength = bound };
+        var perField = () => options with { MaxMessagesPerField = bound };
+        var fields = () => options with { MaxFields = bound };
+
+        // Assert
+        length.ShouldThrow<ArgumentOutOfRangeException>();
+        name.ShouldThrow<ArgumentOutOfRangeException>();
+        perField.ShouldThrow<ArgumentOutOfRangeException>();
+        fields.ShouldThrow<ArgumentOutOfRangeException>();
+    }
 }

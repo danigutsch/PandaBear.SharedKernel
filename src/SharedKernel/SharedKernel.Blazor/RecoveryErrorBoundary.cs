@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace PandaBear.Blazor;
 
@@ -12,9 +12,17 @@ namespace PandaBear.Blazor;
 /// The exception message and stack never reach the page or, through this component, the log. Wrap the app's root
 /// layout body with it so one component fault does not end the circuit. Requires an
 /// <see cref="IUiFailureReporter" /> in the service provider; see <see cref="BlazorServiceCollectionExtensions.AddUiFailureReporting" />.
+/// After a fault, focus moves to the alert. After the recover button renders the child again, focus moves to an empty
+/// <c>tabindex="-1"</c> anchor placed before the child's content, so keyboard focus is not lost with the removed button.
 /// </remarks>
 public sealed class RecoveryErrorBoundary : ErrorBoundaryBase
 {
+    private ElementReference _alert;
+    private ElementReference _anchor;
+    private bool _focusAlert;
+    private bool _focusAnchor;
+    private bool _showAnchor;
+
     [Inject]
     private IUiFailureReporter Reporter { get; set; } = default!;
 
@@ -38,7 +46,24 @@ public sealed class RecoveryErrorBoundary : ErrorBoundaryBase
     protected override Task OnErrorAsync(Exception exception)
     {
         Reporter.Report(exception, OperationName);
+        _focusAlert = true;
+        _focusAnchor = false;
         return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_focusAlert && CurrentException is not null)
+        {
+            _focusAlert = false;
+            await FocusHelper.TryFocus(_alert).ConfigureAwait(false);
+        }
+        else if (_focusAnchor && CurrentException is null)
+        {
+            _focusAnchor = false;
+            await FocusHelper.TryFocus(_anchor).ConfigureAwait(false);
+        }
     }
 
     /// <inheritdoc />
@@ -48,22 +73,40 @@ public sealed class RecoveryErrorBoundary : ErrorBoundaryBase
 
         if (CurrentException is null)
         {
-            builder.AddContent(0, ChildContent);
+            if (_showAnchor)
+            {
+                builder.OpenElement(0, "span");
+                builder.AddAttribute(1, "data-recovery-anchor", true);
+                builder.AddAttribute(2, "tabindex", "-1");
+                builder.AddElementReferenceCapture(3, anchor => _anchor = anchor);
+                builder.CloseElement();
+            }
+
+            builder.AddContent(4, ChildContent);
             return;
         }
 
-        builder.OpenElement(1, "div");
-        builder.AddAttribute(2, "role", "alert");
-        builder.AddContent(3, RecoveryMessage);
+        builder.OpenElement(5, "div");
+        builder.AddAttribute(6, "role", "alert");
+        builder.AddAttribute(7, "tabindex", "-1");
+        builder.AddElementReferenceCapture(8, alert => _alert = alert);
+        builder.AddContent(9, RecoveryMessage);
         if (!string.IsNullOrWhiteSpace(RecoverLabel))
         {
-            builder.OpenElement(4, "button");
-            builder.AddAttribute(5, "type", "button");
-            builder.AddAttribute(6, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, Recover));
-            builder.AddContent(7, RecoverLabel);
+            builder.OpenElement(10, "button");
+            builder.AddAttribute(11, "type", "button");
+            builder.AddAttribute(12, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, RecoverAndFocus));
+            builder.AddContent(13, RecoverLabel);
             builder.CloseElement();
         }
 
         builder.CloseElement();
+    }
+
+    private void RecoverAndFocus()
+    {
+        _showAnchor = true;
+        _focusAnchor = true;
+        Recover();
     }
 }

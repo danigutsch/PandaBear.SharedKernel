@@ -9,7 +9,8 @@ namespace PandaBear.Blazor;
 /// <remarks>
 /// Only keys that match a configured known field are shown; names and messages are bounded, and messages that are
 /// blank, multi-line, or stack-trace-like are replaced by the configured fallback message. Messages for one field
-/// are cleared when that field changes. Server text is never joined into one free-form message. Dispose the binder
+/// are cleared when that field changes, and all are cleared when a new validation request starts (an
+/// <c>EditForm</c> submit), so unchanged data can be submitted again. Server text is never joined into one free-form message. Dispose the binder
 /// with the form. Not thread-safe; use it on the renderer's synchronization context.
 /// </remarks>
 public sealed class ServerValidationBinder : IDisposable
@@ -38,6 +39,7 @@ public sealed class ServerValidationBinder : IDisposable
 
         _store = new ValidationMessageStore(editContext);
         _editContext.OnFieldChanged += ClearChangedField;
+        _editContext.OnValidationRequested += ClearOnValidationRequested;
     }
 
     /// <summary>Replaces the previous server messages with those of <paramref name="outcome" />.</summary>
@@ -59,6 +61,7 @@ public sealed class ServerValidationBinder : IDisposable
         var issues = new List<ServerValidationIssue>();
         var unplaced = false;
         var considered = 0;
+        var counts = new Dictionary<string, int>(StringComparer.Ordinal);
 
         foreach (var (key, messages) in errors ?? new Dictionary<string, string[]>())
         {
@@ -76,7 +79,7 @@ public sealed class ServerValidationBinder : IDisposable
                 continue;
             }
 
-            AddMessages(fieldName, messages, issues);
+            unplaced |= AddMessages(fieldName, messages, issues, counts);
         }
 
         _editContext.NotifyValidationStateChanged();
@@ -90,31 +93,39 @@ public sealed class ServerValidationBinder : IDisposable
         _editContext.NotifyValidationStateChanged();
     }
 
-    /// <summary>Stops reacting to field changes. Messages already shown stay until cleared.</summary>
-    public void Dispose() => _editContext.OnFieldChanged -= ClearChangedField;
+    /// <summary>Stops reacting to field changes and validation requests. Messages already shown stay until cleared.</summary>
+    public void Dispose()
+    {
+        _editContext.OnFieldChanged -= ClearChangedField;
+        _editContext.OnValidationRequested -= ClearOnValidationRequested;
+    }
 
-    private void AddMessages(string fieldName, string[] messages, List<ServerValidationIssue> issues)
+    private bool AddMessages(string fieldName, string[] messages, List<ServerValidationIssue> issues, Dictionary<string, int> counts)
     {
         var field = _editContext.Field(fieldName);
-        var seenFallback = false;
-        foreach (var raw in messages.Take(_options.MaxMessagesPerField))
+        foreach (var raw in messages)
         {
-            var message = BoundedText.ToSingleLineMessage(raw, _options.MaxMessageLength);
-            if (message is null)
+            counts.TryGetValue(fieldName, out var count);
+            if (count >= _options.MaxMessagesPerField)
             {
-                if (seenFallback)
-                {
-                    continue;
-                }
-
-                seenFallback = true;
-                message = _options.FallbackMessage;
+                return true;
             }
 
+            var message = BoundedText.ToSingleLineMessage(raw, _options.MaxMessageLength) ?? _options.FallbackMessage;
+            if (issues.Any(issue => issue.FieldName == fieldName && string.Equals(issue.Message, message, StringComparison.Ordinal)))
+            {
+                continue;
+            }
+
+            counts[fieldName] = count + 1;
             _store.Add(field, message);
             issues.Add(new ServerValidationIssue(fieldName, message));
         }
+
+        return false;
     }
+
+    private void ClearOnValidationRequested(object? sender, ValidationRequestedEventArgs e) => _store.Clear();
 
     private void ClearChangedField(object? sender, FieldChangedEventArgs e)
     {

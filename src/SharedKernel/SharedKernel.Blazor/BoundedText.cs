@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace PandaBear.Blazor;
@@ -5,26 +7,35 @@ namespace PandaBear.Blazor;
 /// <summary>Bounds and screens text before it reaches a user-facing surface.</summary>
 internal static partial class BoundedText
 {
-    private const string Ellipsis = "…";
+    private const string Ellipsis = "\u2026";
+    private const int ScreeningLengthFactor = 4;
 
     /// <summary>Truncates to at most <paramref name="maxLength" /> characters, ending in an ellipsis when cut.</summary>
     public static string Truncate(string value, int maxLength)
     {
+        if (maxLength <= 0)
+        {
+            return string.Empty;
+        }
+
         if (value.Length <= maxLength)
         {
             return value;
         }
 
-        var keep = Math.Max(maxLength - Ellipsis.Length, 0);
+        var keep = maxLength - Ellipsis.Length;
         if (keep > 0 && char.IsHighSurrogate(value[keep - 1]))
         {
             keep--;
         }
 
-        return string.Concat(value.AsSpan(0, keep), Ellipsis);
+        return string.Concat(value.AsSpan(0, Math.Max(keep, 0)), Ellipsis);
     }
 
-    /// <summary>Replaces control characters with spaces and truncates, for text that must be shown whatever it contains.</summary>
+    /// <summary>
+    /// Replaces control characters with spaces, removes Unicode format characters (bidirectional overrides and
+    /// isolates, zero-width characters), and truncates, for text that must be shown whatever it contains.
+    /// </summary>
     public static string ToDisplay(string? value, int maxLength)
     {
         if (string.IsNullOrEmpty(value))
@@ -32,27 +43,54 @@ internal static partial class BoundedText
             return string.Empty;
         }
 
-        var cleaned = string.Create(value.Length, value, static (span, source) =>
+        var builder = new StringBuilder(Math.Min(value.Length, maxLength * ScreeningLengthFactor));
+        foreach (var character in value)
         {
-            for (var index = 0; index < source.Length; index++)
+            if (IsFormat(character))
             {
-                span[index] = char.IsControl(source[index]) ? ' ' : source[index];
+                continue;
             }
-        });
-        return Truncate(cleaned.Trim(), maxLength);
+
+            builder.Append(char.IsControl(character) ? ' ' : character);
+        }
+
+        return Truncate(builder.ToString().Trim(), maxLength);
     }
 
-    /// <summary>Returns a bounded single-line message, or <see langword="null" /> when the text is blank, multi-line, or stack-trace-like.</summary>
+    /// <summary>
+    /// Returns a bounded single-line message, or <see langword="null" /> when the text is blank, longer than four
+    /// times the bound (rejected before any pattern runs), multi-line, or stack-trace-like.
+    /// </summary>
     public static string? ToSingleLineMessage(string? value, int maxLength)
     {
-        if (string.IsNullOrWhiteSpace(value) || value.Any(char.IsControl) || StackTraceLike().IsMatch(value))
+        if (string.IsNullOrWhiteSpace(value) || value.Length > maxLength * ScreeningLengthFactor)
         {
             return null;
         }
 
-        return Truncate(value.Trim(), maxLength);
+        var cleaned = string.Concat(value.Where(character => !IsFormat(character)));
+        if (string.IsNullOrWhiteSpace(cleaned) || cleaned.Any(char.IsControl))
+        {
+            return null;
+        }
+
+        try
+        {
+            if (StackTraceLike().IsMatch(cleaned))
+            {
+                return null;
+            }
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            return null;
+        }
+
+        return Truncate(cleaned.Trim(), maxLength);
     }
 
-    [GeneratedRegex(@"(^|\s)at\s+[\w.<>`$+]+\(|:line\s+\d+|\b[\w.]*Exception\b", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 250)]
+    private static bool IsFormat(char character) => char.GetUnicodeCategory(character) == UnicodeCategory.Format;
+
+    [GeneratedRegex(@"(^|\s)at\s+[\w<>`$+]+(\.[\w<>`$+]+)+\(|\.\w+:line\s+\d+|\b\w+Exception\b", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 250)]
     private static partial Regex StackTraceLike();
 }

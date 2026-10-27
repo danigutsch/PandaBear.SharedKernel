@@ -21,6 +21,26 @@ internal static class ComponentFixtures
             builder.CloseComponent();
         };
 
+    /// <summary>Creates a fragment that renders a <see cref="ThrowingChild" /> whose behavior is read at render time.</summary>
+    /// <param name="shouldThrow">Whether the child throws.</param>
+    /// <returns>The fragment.</returns>
+    public static RenderFragment ThrowingFragment(Func<bool> shouldThrow) => builder =>
+    {
+        builder.OpenComponent<ThrowingChild>(0);
+        builder.AddAttribute(1, nameof(ThrowingChild.Throw), shouldThrow());
+        builder.CloseComponent();
+    };
+
+    /// <summary>Creates the exception a focus call raises when the circuit is gone.</summary>
+    /// <param name="kind">The failure kind: disconnected, canceled, or disposed.</param>
+    /// <returns>The exception.</returns>
+    public static Exception FocusFailure(string kind) => kind switch
+    {
+        "disconnected" => new Microsoft.JSInterop.JSDisconnectedException("gone"),
+        "canceled" => new TaskCanceledException(),
+        _ => new ObjectDisposedException("renderer"),
+    };
+
     /// <summary>Starts an upload operation.</summary>
     /// <param name="fileName">The file name.</param>
     /// <param name="total">The declared length.</param>
