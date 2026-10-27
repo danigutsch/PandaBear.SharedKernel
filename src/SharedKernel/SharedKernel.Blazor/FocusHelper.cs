@@ -6,7 +6,10 @@ namespace PandaBear.Blazor;
 /// <summary>Moves focus without failing when the circuit or renderer has already gone away.</summary>
 internal static class FocusHelper
 {
-    /// <summary>Focuses an element, ignoring the exceptions raised when the circuit disconnects or is disposed.</summary>
+    /// <summary>
+    /// Focuses an element, ignoring the exceptions raised when the circuit disconnects or is disposed.
+    /// A canceled call needs no catch: the renderer already treats a canceled lifecycle task as not faulted.
+    /// </summary>
     public static async ValueTask TryFocus(ElementReference element)
     {
         try
@@ -16,10 +19,6 @@ internal static class FocusHelper
         catch (JSDisconnectedException)
         {
             // The circuit is gone; there is nothing left to focus.
-        }
-        catch (TaskCanceledException)
-        {
-            // The JavaScript call was canceled while the circuit shut down.
         }
         catch (ObjectDisposedException)
         {
