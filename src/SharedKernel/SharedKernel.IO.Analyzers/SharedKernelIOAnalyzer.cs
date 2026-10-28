@@ -30,7 +30,7 @@ public sealed class SharedKernelIOAnalyzer : DiagnosticAnalyzer
         category: "IO",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "A read loop that writes every chunk into a MemoryStream retains the complete payload in managed memory. Use SeekableContent.Create, which bounds memory and spills to a temporary file, or compare the running total with a maximum inside the loop.");
+        description: "A read loop that writes every chunk into a MemoryStream retains the complete payload in managed memory. Use SeekableContent.Create, which counts bytes against a maximum and, for non-seekable input, bounds memory and spills to a temporary file, or compare the running total with a maximum inside the loop.");
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics

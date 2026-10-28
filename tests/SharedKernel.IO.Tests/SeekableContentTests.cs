@@ -1,7 +1,7 @@
 namespace PandaBear.IO.Tests;
 
 /// <summary>
-/// Tests SeekableContent.Create, which copies non-seekable input into seekable memory or file-backed content.
+/// Tests SeekableContent.Create, which copies non-seekable or offset input into seekable memory or file-backed content and passes seekable input at zero through.
 /// </summary>
 public sealed class SeekableContentTests
 {
@@ -202,7 +202,7 @@ public sealed class SeekableContentTests
     public async Task Synchronous_disposal_deletes_file()
     {
         // Arrange
-        using var source = new MemoryStream([1]);
+        using var source = new NonSeekableStream([1]);
         var lease = await SeekableContent.Create(source, 1, 0, TestContext.Current.CancellationToken);
         var path = lease.Content.ShouldBeOfType<FileStream>().Name;
 
@@ -218,7 +218,7 @@ public sealed class SeekableContentTests
     public async Task File_is_deleted_on_disposal()
     {
         // Arrange
-        using var source = new MemoryStream([1, 2]);
+        using var source = new NonSeekableStream([1, 2]);
         var lease = await SeekableContent.Create(source, 2, 0, TestContext.Current.CancellationToken);
         var file = lease.Content.ShouldBeOfType<FileStream>();
         var path = file.Name;
@@ -231,5 +231,159 @@ public sealed class SeekableContentTests
         // Assert
         fileExistsAfterDisposal.ShouldBeFalse();
         source.CanRead.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Seekable_source_at_zero_is_passed_through_without_copy()
+    {
+        // Arrange
+        using var source = new MemoryStream([1, 2, 3, 4]);
+
+        // Act
+        await using var lease = await SeekableContent.Create(source, 4, 0, TestContext.Current.CancellationToken);
+
+        // Assert
+        lease.Content.ShouldBeSameAs(source);
+        lease.Content.ShouldNotBeOfType<FileStream>();
+        lease.Content.Position.ShouldBe(0);
+        lease.Content.Length.ShouldBe(4);
+    }
+
+    [Fact]
+    public async Task Passed_through_lease_disposal_leaves_source_open_and_usable()
+    {
+        // Arrange
+        using var source = new MemoryStream([1, 2, 3]);
+        var lease = await SeekableContent.Create(source, 3, 0, TestContext.Current.CancellationToken);
+
+        // Act
+        ((IDisposable)lease).Dispose();
+        await lease.DisposeAsync();
+        source.Position = 1;
+
+        // Assert
+        source.CanRead.ShouldBeTrue();
+        source.ReadByte().ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task Passed_through_source_accepts_exact_limit_and_supports_second_pass()
+    {
+        // Arrange
+        var bytes = new byte[200000];
+        using var source = new MemoryStream(bytes);
+
+        // Act
+        await using var lease = await SeekableContent.Create(source, bytes.Length, 0, TestContext.Current.CancellationToken);
+        lease.Content.Position = 0;
+        using var copy = new MemoryStream();
+        await lease.Content.CopyToAsync(copy, TestContext.Current.CancellationToken);
+
+        // Assert
+        copy.Length.ShouldBe(bytes.Length);
+    }
+
+    [Fact]
+    public async Task Passed_through_source_over_limit_fails_restores_position_and_stays_open()
+    {
+        // Arrange
+        using var source = new MemoryStream(new byte[9]);
+        Func<Task> action = async () =>
+        {
+            await using var lease = await SeekableContent.Create(source, 8, 0, TestContext.Current.CancellationToken);
+        };
+
+        // Act
+        await action.ShouldThrow<InvalidDataException>();
+
+        // Assert
+        source.CanRead.ShouldBeTrue();
+        source.Position.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Passed_through_negative_limit_fails_before_reading()
+    {
+        // Arrange
+        using var source = new MemoryStream([1]);
+        Func<Task> action = async () =>
+        {
+            await using var lease = await SeekableContent.Create(source, -1, 0, TestContext.Current.CancellationToken);
+        };
+
+        // Act
+        await action.ShouldThrow<ArgumentOutOfRangeException>();
+
+        // Assert
+        source.Position.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Cancellation_during_pass_through_count_restores_position_and_keeps_source_open()
+    {
+        // Arrange
+        using var cancellation = new CancellationTokenSource();
+        using var source = new FailingReadStream(cancellation);
+        Func<Task> action = async () =>
+        {
+            await using var lease = await SeekableContent.Create(source, 200000, 0, cancellation.Token);
+        };
+
+        // Act
+        await action.ShouldThrow<OperationCanceledException>();
+
+        // Assert
+        source.CanRead.ShouldBeTrue();
+        source.Position.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Seekable_source_at_non_zero_position_is_copied_from_that_position()
+    {
+        // Arrange
+        using var source = new MemoryStream([1, 2, 3, 4]);
+        source.Position = 2;
+
+        // Act
+        await using var lease = await SeekableContent.Create(source, 2, 4, TestContext.Current.CancellationToken);
+
+        // Assert
+        lease.Content.ShouldNotBeSameAs(source);
+        lease.Content.Position.ShouldBe(0);
+        lease.Content.Length.ShouldBe(2);
+        lease.Content.ReadByte().ShouldBe(3);
+        source.CanRead.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Empty_seekable_source_is_passed_through_even_with_zero_limit()
+    {
+        // Arrange
+        using var source = new MemoryStream();
+
+        // Act
+        await using var lease = await SeekableContent.Create(source, 0, 0, TestContext.Current.CancellationToken);
+
+        // Assert
+        lease.Content.ShouldBeSameAs(source);
+        lease.Content.Length.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Seekable_source_whose_length_disagrees_with_bytes_read_is_rejected()
+    {
+        // Arrange
+        using var source = new MisreportedLengthStream([1, 2, 3], 10);
+        Func<Task> action = async () =>
+        {
+            await using var lease = await SeekableContent.Create(source, 100, 0, TestContext.Current.CancellationToken);
+        };
+
+        // Act
+        await action.ShouldThrow<InvalidDataException>();
+
+        // Assert
+        source.CanRead.ShouldBeTrue();
+        source.Position.ShouldBe(0);
     }
 }
