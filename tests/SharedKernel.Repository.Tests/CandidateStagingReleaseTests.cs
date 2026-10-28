@@ -2,6 +2,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using PandaBear.CI.Tool;
+using PandaBear.Testing;
 
 namespace PandaBear.Repository.Tests;
 
