@@ -21,25 +21,24 @@ public sealed class DelegateHttpMessageHandlerTests
     }
 
     [Fact]
-    public static async Task Delegate_handler_does_not_call_the_factory_when_already_canceled()
+    public static async Task Delegate_handler_passes_the_callers_token_to_the_asynchronous_factory()
     {
         // Arrange
-        var calls = 0;
-        using var handler = new DelegateHttpMessageHandler((_, _) =>
+        CancellationToken observed = default;
+        using var handler = new DelegateHttpMessageHandler((_, token) =>
         {
-            calls++;
+            observed = token;
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
         });
-        using var client = new HttpClient(handler);
+        using var invoker = new HttpMessageInvoker(handler, disposeHandler: false);
+        using var request = new HttpRequestMessage(HttpMethod.Get, new Uri("https://example.test/"));
         using var cancellation = new CancellationTokenSource();
-        await cancellation.CancelAsync();
 
         // Act
-        Func<Task> action = () => client.GetAsync(new Uri("https://example.test/"), cancellation.Token);
+        using var response = await invoker.SendAsync(request, cancellation.Token);
 
         // Assert
-        await action.ShouldThrowAssignableTo<OperationCanceledException>();
-        calls.ShouldBe(0);
+        observed.ShouldBe(cancellation.Token);
     }
 
     [Fact]

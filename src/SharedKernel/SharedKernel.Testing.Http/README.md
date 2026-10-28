@@ -12,7 +12,7 @@ Construct `HttpClient` with `TestHttpMessageHandler`, enqueue HTTP or JSON respo
 
 ## Handlers and content
 
-`DelegateHttpMessageHandler` answers every request with a synchronous or asynchronous delegate and honors a canceled token before calling it.
+`DelegateHttpMessageHandler` answers every request with a synchronous or asynchronous delegate and passes the caller's cancellation token to asynchronous delegates.
 `TrackingStreamContent` copies a source stream, counts serializations and disposes the source with the content.
 
 ## Package identity and availability

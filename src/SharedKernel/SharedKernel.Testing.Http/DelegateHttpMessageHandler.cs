@@ -26,7 +26,6 @@ public sealed class DelegateHttpMessageHandler : HttpMessageHandler
     /// <inheritdoc />
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
         return _respond(request, cancellationToken);
     }
 }
