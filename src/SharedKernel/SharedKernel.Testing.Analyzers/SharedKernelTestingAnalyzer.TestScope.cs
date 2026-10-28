@@ -127,4 +127,32 @@ public sealed partial class SharedKernelTestingAnalyzer
 
         return null;
     }
+
+    /// <summary>Reports a literal <c>Trait("Scope", value)</c> when <c>TestScope</c> is referenced, because the typed attribute is the canonical form.</summary>
+    private static bool TryReportTypedScope(SyntaxNodeAnalysisContext context, AttributeSyntax attribute)
+    {
+        if (attribute.ArgumentList is not { Arguments.Count: 2 } argumentList
+            || argumentList.Arguments[0].Expression is not LiteralExpressionSyntax { Token.Value: string name }
+            || !string.Equals(name, ScopeTraitName, StringComparison.Ordinal)
+            || argumentList.Arguments[1].Expression is not LiteralExpressionSyntax { Token.Value: string value }
+            || !TestScopeValues.All.Contains(value, StringComparer.Ordinal)
+            || context.Compilation.GetTypeByMetadataName("PandaBear.Testing.TestScopeAttribute") is null)
+        {
+            return false;
+        }
+
+        var member = TestScopeValues.ToMemberName(value);
+        var properties = ImmutableDictionary<string, string?>.Empty
+            .Add("Replacement", $"global::PandaBear.Testing.TestScope(global::PandaBear.Testing.TestScope.{member})")
+            .Add("Kind", "TestScope");
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                XunitTraitConstantUsageRule,
+                attribute.GetLocation(),
+                properties,
+                $"Trait(\"{name}\", \"{value}\")",
+                $"TestScope(TestScope.{member})"));
+
+        return true;
+    }
 }

@@ -68,6 +68,10 @@ does not report production code or non-test helper methods.
 matching constant can be identified from `SharedKernel.Testing` trait constants or a project-local
 `TestTraits` type in the current namespace chain.
 
+When `PandaBear.Testing.TestScopeAttribute` is referenced, `SKTEST009` treats the typed attribute as the canonical form of a
+literal `[Trait("Scope", "<value>")]` with a `TestScope` value and offers to replace the whole attribute. Constants and
+values outside the `TestScope` set keep the normal constant advice.
+
 Keep existing `SKTEST001`–`SKTEST009` diagnostics at `warning`; repository warning-as-error settings make violations fail
 the build without changing analyzer descriptor severity.
 

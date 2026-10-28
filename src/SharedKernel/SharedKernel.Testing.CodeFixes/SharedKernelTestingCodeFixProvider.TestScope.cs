@@ -48,6 +48,23 @@ public sealed partial class SharedKernelTestingCodeFixProvider
         return string.Concat(parts.Select(static part => char.ToUpper(part[0], CultureInfo.InvariantCulture) + part.Substring(1)));
     }
 
+    private static Task<Document> UseTypedScopeAttribute(
+        Document document,
+        SyntaxNode syntaxRoot,
+        AttributeSyntax attribute,
+        string replacement)
+    {
+        // The replacement is "<attribute name>(<argument>)", so reparse it as an attribute and keep the original trivia.
+        var replacementAttribute = ((AttributeListSyntax)ParseSyntaxTree($"[{replacement}] class C {{ }}")
+                .GetCompilationUnitRoot()
+                .DescendantNodes()
+                .First(static node => node is AttributeListSyntax))
+            .Attributes[0]
+            .WithTriviaFrom(attribute);
+
+        return Task.FromResult(document.WithSyntaxRoot(syntaxRoot.ReplaceNode(attribute, replacementAttribute)));
+    }
+
     private static Task<Document> AddTestScope(
         Document document,
         SyntaxNode syntaxRoot,

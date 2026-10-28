@@ -202,6 +202,11 @@ public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             return;
         }
 
+        if (TryReportTypedScope(context, attribute))
+        {
+            return;
+        }
+
         AnalyzeTraitArgument(context, attribute, attribute.ArgumentList.Arguments[0], includeTraitValues: false);
         AnalyzeTraitArgument(context, attribute, attribute.ArgumentList.Arguments[1], includeTraitValues: true);
     }

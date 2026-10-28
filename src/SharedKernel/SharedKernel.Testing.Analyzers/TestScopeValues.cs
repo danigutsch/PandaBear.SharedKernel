@@ -21,4 +21,12 @@ internal static class TestScopeValues
         "system",
         "architecture",
     ];
+
+    /// <summary>Maps a kebab-case scope value such as <c>ui-integration</c> to its enum member name <c>UiIntegration</c>.</summary>
+    public static string ToMemberName(string scope)
+    {
+        var parts = scope.Split(['-'], StringSplitOptions.RemoveEmptyEntries);
+
+        return string.Concat(parts.Select(static part => char.ToUpperInvariant(part[0]) + part.Substring(1)));
+    }
 }

@@ -473,6 +473,19 @@ public sealed partial class SharedKernelTestingCodeFixProvider : CodeFixProvider
     {
         var replacement = GetNonWhiteSpaceProperty(diagnostic, "Replacement");
         var node = syntaxRoot.FindNode(context.Span);
+        if (replacement is not null
+            && GetNonWhiteSpaceProperty(diagnostic, "Kind") == "TestScope"
+            && node.FirstAncestorOrSelf<AttributeSyntax>() is AttributeSyntax scopeAttribute)
+        {
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    title: $"Use {replacement}",
+                    createChangedDocument: _ => UseTypedScopeAttribute(document, syntaxRoot, scopeAttribute, replacement),
+                    equivalenceKey: $"UseTypedScope:{replacement}"),
+                diagnostic);
+            return;
+        }
+
         if (replacement is null
             || node.DescendantNodesAndSelf().OfType<LiteralExpressionSyntax>().FirstOrDefault(candidate => candidate.Span.IntersectsWith(context.Span)) is not LiteralExpressionSyntax literalExpression)
         {
