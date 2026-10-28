@@ -19,6 +19,8 @@ namespace PandaBear.Blazor;
 /// region. The component does not cancel transport work, and it renders when the parent re-renders after mutating the
 /// state. Focus changes on the button are tracked without re-rendering.
 /// File names and failure messages are encoded and truncated to <see cref="MaxDisplayTextLength" /> characters.
+/// An optional <see cref="Detail" /> fragment renders visible, non-live caller content after the status region; the
+/// live region keeps announcing only the throttled announcement.
 /// Extra attributes, such as <c>class</c>, are applied to the section.
 /// </remarks>
 public sealed class UploadStatus : ComponentBase, IHandleEvent
@@ -54,6 +56,17 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
     /// <summary>Gets or sets the progress element's accessible name prefix, "Upload progress" by default.</summary>
     [Parameter]
     public string ProgressLabel { get; set; } = "Upload progress";
+
+    /// <summary>
+    /// Gets or sets caller-supplied visible status detail, such as exact byte counts or a retry hint. It renders in a
+    /// non-live <c>div data-upload-detail</c> after the status region, so it is never announced. The caller bounds and
+    /// encodes its own text.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<UploadOperationState>? Detail
+    {
+        get; set;
+    }
 
     /// <summary>Gets or sets additional attributes applied to the section.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
@@ -115,6 +128,14 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
         }
 
         builder.CloseElement();
+
+        if (Detail is not null)
+        {
+            builder.OpenElement(12, "div");
+            builder.AddAttribute(13, "data-upload-detail", true);
+            builder.AddContent(14, Detail(State));
+            builder.CloseElement();
+        }
 
         if (State.IsActive)
         {

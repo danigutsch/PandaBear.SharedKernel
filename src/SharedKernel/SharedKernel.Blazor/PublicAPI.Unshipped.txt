@@ -76,6 +76,8 @@ PandaBear.Blazor.UploadStatus.AdditionalAttributes.get -> System.Collections.Gen
 PandaBear.Blazor.UploadStatus.AdditionalAttributes.set -> void
 PandaBear.Blazor.UploadStatus.CancelText.get -> string!
 PandaBear.Blazor.UploadStatus.CancelText.set -> void
+PandaBear.Blazor.UploadStatus.Detail.get -> Microsoft.AspNetCore.Components.RenderFragment<PandaBear.HttpClients.UploadOperationState!>?
+PandaBear.Blazor.UploadStatus.Detail.set -> void
 PandaBear.Blazor.UploadStatus.Label.get -> string!
 PandaBear.Blazor.UploadStatus.Label.set -> void
 PandaBear.Blazor.UploadStatus.OnCancel.get -> Microsoft.AspNetCore.Components.EventCallback
