@@ -3,7 +3,7 @@ using PandaBear.Testing;
 namespace PandaBear.Observability.Npgsql.Tests;
 
 /// <summary>Tests validation and service registration performed by AddPostgreSqlIndexHealthMonitoring.</summary>
-[Trait(TestTraitNames.ScopeName, TestTraitValues.UnitScope)]
+[TestScope(TestScope.Unit)]
 [Trait(TestTraits.ComponentName, TestTraits.PostgreSqlObservabilityComponent)]
 public sealed class PostgreSqlIndexHealthMonitoringServiceCollectionExtensionsTests
 {

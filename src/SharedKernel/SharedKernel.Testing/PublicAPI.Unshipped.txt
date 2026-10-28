@@ -34,14 +34,11 @@ const PandaBear.Testing.TestTraitNames.CategoryName = "Category" -> string!
 const PandaBear.Testing.TestTraitNames.HostName = "Host" -> string!
 const PandaBear.Testing.TestTraitNames.ScopeName = "Scope" -> string!
 const PandaBear.Testing.TestTraitNames.SurfaceName = "Surface" -> string!
-const PandaBear.Testing.TestTraitValues.AspireHost = "aspire" -> string!
 const PandaBear.Testing.TestTraitValues.ApiIntegrationScope = "api-integration" -> string!
 const PandaBear.Testing.TestTraitValues.DependencyInjectionCategory = "dependency-injection" -> string!
 const PandaBear.Testing.TestTraitValues.EndpointCategory = "endpoint" -> string!
-const PandaBear.Testing.TestTraitValues.IntegrationScope = "integration" -> string!
 const PandaBear.Testing.TestTraitValues.SecurityCategory = "security" -> string!
 const PandaBear.Testing.TestTraitValues.TestServerHost = "test-server" -> string!
-const PandaBear.Testing.TestTraitValues.UnitScope = "unit" -> string!
 override PandaBear.Testing.BlockingReadStream.CanRead.get -> bool
 override PandaBear.Testing.BlockingReadStream.CanSeek.get -> bool
 override PandaBear.Testing.BlockingReadStream.CanWrite.get -> bool

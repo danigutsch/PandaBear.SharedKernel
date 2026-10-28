@@ -10,9 +10,9 @@ Reusable test traits, environment scopes, and temporary-directory lifetimes.
 
 - `TestTraitNames` owns cross-project trait names such as `Scope`, `Area`, `Category`, `Host`, and
   `Surface`.
-- `TestTraitValues` owns cross-project values reused by multiple bounded-context test projects, including the
-  `UnitScope`, `IntegrationScope` and `AspireHost` constants for assembly-level traits. Test projects keep only their
-  own component and capability values in a local `TestTraits`.
+- `TestTraitValues` owns cross-project values reused by multiple bounded-context test projects. Scope and host
+  traits come from `TestScope` and `TestHost` (the `[TestScope]` and `[TestHost]` attributes, also valid on an assembly);
+  test projects keep only their own component and capability values in a local `TestTraits`.
 - `SharedKernelTestTraitNames` owns SharedKernel package-test names and the neutral `Unit` scope.
 - `TestScope` enumerates the test seams (`Unit`, `Behavior`, `Component`, `Contract`, `UiIntegration`,
   `Integration`, `System`, `Architecture`) and `ToTraitValue()` maps each to its `Scope` trait value.

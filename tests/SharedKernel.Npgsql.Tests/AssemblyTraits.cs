@@ -1,3 +1,3 @@
-[assembly: Trait(PandaBear.Testing.TestTraitNames.ScopeName, PandaBear.Testing.TestTraitValues.IntegrationScope)]
-[assembly: Trait(PandaBear.Testing.TestTraitNames.HostName, PandaBear.Testing.TestTraitValues.AspireHost)]
+[assembly: PandaBear.Testing.TestScope(PandaBear.Testing.TestScope.Integration)]
+[assembly: PandaBear.Testing.TestHost(PandaBear.Testing.TestHost.Aspire)]
 [assembly: AssemblyFixture(typeof(PandaBear.Npgsql.Tests.PostgreSqlTestServerFixture))]
