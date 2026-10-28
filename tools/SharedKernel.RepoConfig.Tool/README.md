@@ -139,7 +139,14 @@ file and the JSON path of the problem. A command fails when the file lacks its s
     "files": [
       { "path": ".gitattributes", "profile": "gitattributes" },
       { "path": "CODEOWNERS", "source": ".config/baseline/CODEOWNERS" }
-    ]
+    ],
+    "gitConfig": [
+      { "key": "pull.ff", "value": "only" }
+    ],
+    "hooks": {
+      "directory": ".githooks",
+      "hooks": [ { "name": "pre-commit", "profile": "pre-commit-diff-check" } ]
+    }
   }
 }
 ```
@@ -268,6 +275,7 @@ names its label; changes written before it remain, and rerunning the command app
 
 `baseline verify` and `baseline apply` read the `baseline` section and keep a set of repository files at the
 content the configuration produces. The tool names no forge, owner, or host; the consumer picks every path.
+`baseline` is unrelated to `security baseline`, which verifies the security documents.
 
 - `repositoryName` (1 to 100 letters, digits, `.`, `-`, `_`) and optional `defaultBranch` (default `main`) are the
   only variables: `@@repositoryName@@` and `@@defaultBranch@@` in content are replaced by plain text. An unknown
@@ -283,11 +291,33 @@ content the configuration produces. The tool names no forge, owner, or host; the
   by hand), or `unmanaged` (no marker, different content). Line-ending differences are not drift; files are written
   with LF.
 
+Embedded profiles, all generic: `gitattributes` (LF policy, CRLF for `.cmd` and `.bat`, binary extensions),
+`editorconfig` (UTF-8, LF, final newline, indentation), `gitignore` (environment files, logs, temporary files, OS
+and IDE folders), `readme` (skeleton using the two variables), `pull-request-template`, `issue-form-bug`,
+`issue-form-feature` (YAML issue forms that GitHub and Forgejo read), and `pre-commit-diff-check` (a hook that runs
+`git diff --cached --check`).
+
+`gitConfig` is an array of `{key, value, overwriteExisting}` repository-local Git settings, set with
+`git config --local` and never by editing `.git/config`. Only these keys are accepted: `init.defaultBranch`,
+`pull.ff`, `pull.rebase`, `push.autoSetupRemote`, `push.default`, `fetch.prune`, `rebase.autoStash`,
+`commit.gpgsign`, `tag.gpgsign`, `gpg.format`, `user.useConfigOnly`, `core.autocrlf`, and `core.eol`. Keys that can
+run code or redirect authentication, such as `core.fsmonitor`, `core.sshCommand`, `core.pager`, `core.editor`,
+`credential.*`, `alias.*`, `include*`, and `url.*.insteadOf`, are rejected. A value has 1 to 200 characters, no
+control characters, and does not start with `-`. `hooks` has a `directory` (default `.githooks`, a tracked
+directory) and `hooks`, each with a `name` (`pre-commit`, `prepare-commit-msg`, `commit-msg`, `post-commit`,
+`pre-merge-commit`, `post-merge`, `pre-rebase`, `post-checkout`, or `pre-push`), a `profile` or `source`, and
+`overwriteExisting`. Hook files carry the marker after the shebang line and are executable on POSIX systems; a hook
+that lost the bit is drift. `apply` sets `core.hooksPath` to the directory, the only way the baseline sets it, and
+writes nothing into `.git/hooks`. `overwriteHooksPath` allows replacing a different existing `core.hooksPath`. When
+`gitConfig` or `hooks` is present, `--root` must be the top level of a Git repository.
+
 `baseline verify` lists each file that is not current on standard error and exits 1. `baseline apply` prints
 `preview:` lines for each file it would create, update, or overwrite and writes with `--force`, in one rollback
 batch. A `modified` or `unmanaged` file without `overwriteExisting` is a conflict: it is reported on standard
-error, nothing is written, and the command exits 1. Applying an up-to-date repository changes nothing. Missing
-parent directories are created and are not removed if a later write fails.
+error, nothing is written, and the command exits 1, in a preview too, because a preview that would fail under
+`--force` must not exit 0. Applying an up-to-date repository changes nothing. Missing
+parent directories are created, and those that a failed apply created are removed again when empty. Git settings
+are set after the files; a failure there leaves the files in place and rerunning is idempotent.
 
 ## Roadmap publication
 
@@ -398,7 +428,7 @@ default-branch commit moved while it was read.
 | Code | Meaning |
 | --- | --- |
 | 0 | Success, including previews and a healthy or inapplicable Podman state. |
-| 1 | Verification failure or drift, invalid text encoding or JSON, a line-ending, link, or Gherkin finding, a license exception finding, baseline drift or a baseline conflict, stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a failed dev container start, command, or CLI bootstrap, a command-line error, or cancellation. |
+| 1 | Verification failure or drift, invalid text encoding or JSON, a line-ending, link, or Gherkin finding, a license exception finding, baseline drift or a baseline conflict (also in a preview), stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a failed dev container start, command, or CLI bootstrap, a command-line error, or cancellation. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or the command did not stop within two seconds. |
 
 ## Security
