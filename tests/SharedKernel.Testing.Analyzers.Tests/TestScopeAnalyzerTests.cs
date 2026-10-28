@@ -8,6 +8,19 @@ public sealed class TestScopeAnalyzerTests
     private const string DiagnosticId = TestingDiagnosticIds.XunitTestScope;
 
     [Fact]
+    public void Analyzer_scope_values_match_the_test_scope_enum_in_order()
+    {
+        // Arrange
+        var expected = Enum.GetValues<TestScope>().Select(static scope => scope.ToTraitValue());
+
+        // Act
+        var actual = TestScopeValues.All;
+
+        // Assert
+        actual.ShouldBe(expected);
+    }
+
+    [Fact]
     public async Task Test_without_any_scope_reports_SKTEST018()
     {
         // Arrange
