@@ -1,3 +1,4 @@
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
@@ -8,18 +9,20 @@ public sealed class CommandPasswordTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private const string FilePassword = "fixture file password";
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-passwords-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
 
-    /// <summary>Deletes the temporary directory.</summary>
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    private string DirectoryPath => temporaryDirectory.Path;
+
+    /// <inheritdoc />
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public async Task Merge_without_a_terminal_refuses_an_encrypted_output_before_any_work()
     {
         // Arrange
-        string[] inputs = CliInputs.NewerBitwardenLogin(directory);
-        string output = Path.Combine(directory, "merged.json");
-        string report = Path.Combine(directory, "report.md");
+        string[] inputs = CliInputs.NewerBitwardenLogin(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string report = Path.Combine(DirectoryPath, "report.md");
         var prompts = new TestPrompts(ExportPassword) { IsInteractive = false };
 
         // Act
@@ -39,8 +42,8 @@ public sealed class CommandPasswordTests : IDisposable
     public async Task Merge_without_a_terminal_writes_a_plaintext_output()
     {
         // Arrange
-        string[] inputs = CliInputs.NewerBitwardenLogin(directory);
-        string output = Path.Combine(directory, "merged.json");
+        string[] inputs = CliInputs.NewerBitwardenLogin(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword) { IsInteractive = false }.Environment(), ["merge", .. inputs, "--output", output, "--plaintext"], TestContext.Current.CancellationToken);
@@ -57,8 +60,8 @@ public sealed class CommandPasswordTests : IDisposable
     public async Task Commands_without_a_terminal_refuse_a_protected_input_by_name_before_any_work(string command)
     {
         // Arrange
-        string[] inputs = [CliInputs.NewerBitwardenLogin(directory)[0], CliInputs.ProtectedBitwarden(directory, FilePassword)];
-        string output = Path.Combine(directory, "merged.json");
+        string[] inputs = [CliInputs.NewerBitwardenLogin(DirectoryPath)[0], CliInputs.ProtectedBitwarden(DirectoryPath, FilePassword)];
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var prompts = new TestPrompts(ExportPassword, FilePassword) { IsInteractive = false };
         string[] args = command == "merge" ? ["merge", .. inputs, "--output", output, "--plaintext"] : [command, .. inputs];
 
@@ -80,12 +83,12 @@ public sealed class CommandPasswordTests : IDisposable
     public async Task Commands_refuse_a_protected_input_with_unsupported_key_derivation_before_asking_its_password(string command, string property, int value, string message)
     {
         // Arrange
-        string input = CliInputs.ProtectedBitwarden(directory, FilePassword);
+        string input = CliInputs.ProtectedBitwarden(DirectoryPath, FilePassword);
         string text = await File.ReadAllTextAsync(input, TestContext.Current.CancellationToken);
         var envelope = System.Text.Json.Nodes.JsonNode.Parse(text).ShouldNotBeNull().AsObject();
         envelope[property] = value;
         await File.WriteAllTextAsync(input, envelope.ToJsonString(), TestContext.Current.CancellationToken);
-        string output = Path.Combine(directory, "merged.json");
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var prompts = new TestPrompts(ExportPassword, FilePassword);
         string[] args = command == "merge" ? ["merge", input, "--output", output, "--plaintext"] : [command, input];
 
@@ -103,8 +106,8 @@ public sealed class CommandPasswordTests : IDisposable
     public async Task Merge_asks_once_for_the_password_of_a_protected_input()
     {
         // Arrange
-        string input = CliInputs.ProtectedBitwarden(directory, FilePassword);
-        string output = Path.Combine(directory, "merged.json");
+        string input = CliInputs.ProtectedBitwarden(DirectoryPath, FilePassword);
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var prompts = new TestPrompts(ExportPassword, FilePassword);
 
         // Act
@@ -120,8 +123,8 @@ public sealed class CommandPasswordTests : IDisposable
     public async Task Merge_reads_each_input_once_and_asks_its_password_once()
     {
         // Arrange
-        string input = CliInputs.ProtectedBitwarden(directory, FilePassword);
-        string output = Path.Combine(directory, "merged.json");
+        string input = CliInputs.ProtectedBitwarden(DirectoryPath, FilePassword);
+        string output = Path.Combine(DirectoryPath, "merged.json");
 
         // The input is gone once its password is typed, so a merge that read it again would fail.
         var prompts = new TestPrompts(ExportPassword, FilePassword) { OnFilePassword = () => File.Delete(input) };
@@ -140,8 +143,8 @@ public sealed class CommandPasswordTests : IDisposable
     public async Task Wrong_input_password_exits_3()
     {
         // Arrange
-        string input = CliInputs.ProtectedBitwarden(directory, FilePassword);
-        string output = Path.Combine(directory, "merged.json");
+        string input = CliInputs.ProtectedBitwarden(DirectoryPath, FilePassword);
+        string output = Path.Combine(DirectoryPath, "merged.json");
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword, "fixture wrong password").Environment(), ["merge", input, "--output", output, "--plaintext"], TestContext.Current.CancellationToken);
@@ -157,7 +160,7 @@ public sealed class CommandPasswordTests : IDisposable
     public async Task Password_prompt_that_fails_exits_3_with_its_message()
     {
         // Arrange
-        string input = CliInputs.ProtectedBitwarden(directory, FilePassword);
+        string input = CliInputs.ProtectedBitwarden(DirectoryPath, FilePassword);
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["scan", input], TestContext.Current.CancellationToken);
@@ -171,8 +174,8 @@ public sealed class CommandPasswordTests : IDisposable
     public async Task Merge_canceled_at_the_password_prompt_exits_1_and_writes_nothing()
     {
         // Arrange
-        string[] inputs = CliInputs.NewerBitwardenLogin(directory);
-        string output = Path.Combine(directory, "merged.json");
+        string[] inputs = CliInputs.NewerBitwardenLogin(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         var prompts = new TestPrompts(ExportPassword) { OnNewPassword = cancellation.Cancel };
 
@@ -183,7 +186,7 @@ public sealed class CommandPasswordTests : IDisposable
         run.ExitCode.ShouldBe(1);
         prompts.NewPasswordPrompts.ShouldHaveSingleItem();
         File.Exists(output).ShouldBeFalse();
-        Directory.GetFiles(directory).Length.ShouldBe(2);
+        Directory.GetFiles(DirectoryPath).Length.ShouldBe(2);
     }
 
     [Theory]
@@ -193,8 +196,8 @@ public sealed class CommandPasswordTests : IDisposable
     public async Task Commands_canceled_before_they_start_exit_1(string command)
     {
         // Arrange
-        string[] inputs = CliInputs.NewerBitwardenLogin(directory);
-        string output = Path.Combine(directory, "merged.json");
+        string[] inputs = CliInputs.NewerBitwardenLogin(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
         string[] args = command == "merge" ? ["merge", .. inputs, "--output", output] : [command, .. inputs];
 
         // Act
@@ -210,8 +213,8 @@ public sealed class CommandPasswordTests : IDisposable
     public async Task Unexpected_error_exits_1_without_showing_its_message()
     {
         // Arrange
-        string[] inputs = CliInputs.NewerBitwardenLogin(directory);
-        string output = Path.Combine(directory, "merged.json");
+        string[] inputs = CliInputs.NewerBitwardenLogin(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var prompts = new TestPrompts(ExportPassword) { OnNewPassword = () => throw new FormatException("fixture-value-in-a-message") };
 
         // Act

@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text.Json.Nodes;
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Brief;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
@@ -18,10 +19,12 @@ public sealed class CommandSecrecyTests : IDisposable
     private const string UndatedKeeperPassword = "fixture-undated-keeper-password";
     private const string UndatedBitwardenPassword = "fixture-undated-bitwarden-password";
     private const string ExportPassword = "fixture export password";
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-secrecy-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
 
-    /// <summary>Deletes the temporary directory.</summary>
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    private string DirectoryPath => temporaryDirectory.Path;
+
+    /// <inheritdoc />
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public async Task Command_output_reports_and_decisions_never_contain_vault_values()
@@ -32,7 +35,7 @@ public sealed class CommandSecrecyTests : IDisposable
         string[] notesCodes = PipelineSecrets.GitHubRecoveryCodes(1110);
         string[] fileCodes = PipelineSecrets.GitHubRecoveryCodes(1130);
         string privateKey = PemFixtures.Ed25519OpenSsh();
-        string zip = Write(directory, "keeper.zip", CommanderZip(
+        string zip = Write(DirectoryPath, "keeper.zip", CommanderZip(
             KeeperJson(
                 KeeperLogin("rec-github", "GitHub", "alice", OldPassword, "https://github.com/login", PipelineSecrets.RecoveryNotes(notesCodes, NotesPassword), totp),
                 KeeperLogin("rec-keeper", "Keeper only", "carol", KeeperOnlyPassword, "https://keeper-only.example.com"),
@@ -40,13 +43,13 @@ public sealed class CommandSecrecyTests : IDisposable
                 KeeperSshKey("rec-ssh", "Deploy key", privateKey, PemFixtures.Ed25519PublicKey),
                 KeeperFileRecord("rec-files", "GitHub backup", "file-codes", "github-recovery-codes.txt")),
             ("files/file-codes", string.Join('\n', fileCodes))));
-        string bitwarden = Write(directory, "bitwarden.json", BitwardenJson(
+        string bitwarden = Write(DirectoryPath, "bitwarden.json", BitwardenJson(
             BitwardenLogin("bw-github", "GitHub", "alice", NewPassword, "https://github.com"),
             BitwardenLogin("bw-undated", "Undated", "dave", UndatedBitwardenPassword, "https://undated.example.com", revised: false)));
-        string output = Path.Combine(directory, "merged.json");
-        string decisionsPath = Path.Combine(directory, "decisions.json");
-        string scanReport = Path.Combine(directory, "scan.md");
-        string mergeReport = Path.Combine(directory, "merge.md");
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
+        string scanReport = Path.Combine(DirectoryPath, "scan.md");
+        string mergeReport = Path.Combine(DirectoryPath, "merge.md");
         string[] mergeArgs = ["merge", zip, bitwarden, "--output", output, "--decisions", decisionsPath, "--report", mergeReport];
         var ct = TestContext.Current.CancellationToken;
 
@@ -127,18 +130,18 @@ public sealed class CommandSecrecyTests : IDisposable
             ["name"] = "Fixture card",
             ["card"] = new JsonObject { ["cardholderName"] = "Alice Example", ["number"] = bitwardenCard, ["code"] = "4567", ["expMonth"] = "12", ["expYear"] = "2030" },
         };
-        string zip = Write(directory, "keeper.zip", CommanderZip(
+        string zip = Write(DirectoryPath, "keeper.zip", CommanderZip(
             KeeperJson(
                 KeeperLogin("rec-github", "GitHub", "alice", OldPassword, "https://github.com/login", keeperNotes, keeperTotp),
                 KeeperSshKey("rec-ssh", "Deploy key", keeperKey, PemFixtures.Ed25519PublicKey),
                 keeperCardRecord,
                 KeeperFileRecord("rec-files", "GitHub backup", "file-codes", "github-recovery-codes.txt")),
             ("files/file-codes", string.Join('\n', fileCodes))));
-        string bitwarden = Write(directory, "bitwarden.json", BitwardenJson(bitwardenLogin, bitwardenSsh, bitwardenCardItem));
-        string briefPath = Path.Combine(directory, "brief.json");
+        string bitwarden = Write(DirectoryPath, "bitwarden.json", BitwardenJson(bitwardenLogin, bitwardenSsh, bitwardenCardItem));
+        string briefPath = Path.Combine(DirectoryPath, "brief.json");
         string[] args =
         [
-            "merge", zip, bitwarden, "--output", Path.Combine(directory, "merged.json"), "--decisions", Path.Combine(directory, "decisions.json"),
+            "merge", zip, bitwarden, "--output", Path.Combine(DirectoryPath, "merged.json"), "--decisions", Path.Combine(DirectoryPath, "decisions.json"),
             "--brief", briefPath, "--policy", "ask",
         ];
 

@@ -9,8 +9,6 @@
         <Using Include="Microsoft.Extensions.DependencyInjection" />
         <Using Include="PandaBear.HttpClients" />
         <Using Include="PandaBear.Testing.Assertions" />
-        <Using Include="PandaBear.Testing.Http" />
-        <Using Include="PandaBear.Testing" />
         <Using Include="Xunit" />
     </ItemGroup>
 

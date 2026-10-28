@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json.Nodes;
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Review;
@@ -15,16 +16,18 @@ public sealed class ReviewCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private const string FilePassword = "fixture file password";
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-review-command-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string DirectoryPath => temporaryDirectory.Path;
 
     /// <inheritdoc />
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public async Task Review_without_a_terminal_exits_3_and_points_to_merge_with_a_decisions_file()
     {
         // Arrange
-        string[] inputs = [CliInputs.ConflictingLogins(directory)[0], CliInputs.ProtectedBitwarden(directory, FilePassword)];
+        string[] inputs = [CliInputs.ConflictingLogins(DirectoryPath)[0], CliInputs.ProtectedBitwarden(DirectoryPath, FilePassword)];
         var prompts = new TestPrompts(ExportPassword, FilePassword) { IsInteractive = false };
 
         // Act
@@ -47,7 +50,7 @@ public sealed class ReviewCommandTests : IDisposable
         var terminal = new FakeTerminal { OutputIsTerminal = false };
 
         // Act
-        var run = await ReviewRun.Invoke(prompts.Environment(), terminal, [CliInputs.ProtectedBitwarden(directory, FilePassword)], TestContext.Current.CancellationToken);
+        var run = await ReviewRun.Invoke(prompts.Environment(), terminal, [CliInputs.ProtectedBitwarden(DirectoryPath, FilePassword)], TestContext.Current.CancellationToken);
 
         // Assert
         run.ExitCode.ShouldBe(3);
@@ -108,7 +111,7 @@ public sealed class ReviewCommandTests : IDisposable
         var terminal = new FakeTerminal();
 
         // Act
-        var run = await ReviewRun.Invoke(new TestPrompts(ExportPassword).Environment(), terminal, [.. CliInputs.ConflictingLogins(directory), option], TestContext.Current.CancellationToken);
+        var run = await ReviewRun.Invoke(new TestPrompts(ExportPassword).Environment(), terminal, [.. CliInputs.ConflictingLogins(DirectoryPath), option], TestContext.Current.CancellationToken);
 
         // Assert
         run.ExitCode.ShouldBe(1);
@@ -120,7 +123,7 @@ public sealed class ReviewCommandTests : IDisposable
     public async Task Review_refuses_an_output_that_is_an_input_before_asking_for_passwords()
     {
         // Arrange
-        string input = CliInputs.ProtectedBitwarden(directory, FilePassword);
+        string input = CliInputs.ProtectedBitwarden(DirectoryPath, FilePassword);
         var prompts = new TestPrompts(ExportPassword, FilePassword);
         var terminal = new FakeTerminal();
 
@@ -138,8 +141,8 @@ public sealed class ReviewCommandTests : IDisposable
     public async Task Review_refuses_an_existing_output_without_force_before_asking_for_passwords()
     {
         // Arrange
-        string input = CliInputs.ProtectedBitwarden(directory, FilePassword);
-        string output = Path.Combine(directory, "merged.json");
+        string input = CliInputs.ProtectedBitwarden(DirectoryPath, FilePassword);
+        string output = Path.Combine(DirectoryPath, "merged.json");
         await File.WriteAllTextAsync(output, "fixture existing output", TestContext.Current.CancellationToken);
         var prompts = new TestPrompts(ExportPassword, FilePassword);
         var terminal = new FakeTerminal();
@@ -162,7 +165,7 @@ public sealed class ReviewCommandTests : IDisposable
         var terminal = new FakeTerminal();
 
         // Act
-        var run = await ReviewRun.Invoke(prompts.Environment(), terminal, [Path.Combine(directory, "missing.json"), CliInputs.ProtectedBitwarden(directory, FilePassword)], TestContext.Current.CancellationToken);
+        var run = await ReviewRun.Invoke(prompts.Environment(), terminal, [Path.Combine(DirectoryPath, "missing.json"), CliInputs.ProtectedBitwarden(DirectoryPath, FilePassword)], TestContext.Current.CancellationToken);
 
         // Assert
         run.ExitCode.ShouldBe(3);
@@ -179,7 +182,7 @@ public sealed class ReviewCommandTests : IDisposable
         var terminal = new FakeTerminal { Prompts = () => prompts.FilePasswordPrompts.Count };
 
         // Act
-        var run = await ReviewRun.Invoke(prompts.Environment(), terminal, [CliInputs.ProtectedBitwarden(directory, FilePassword)], TestContext.Current.CancellationToken);
+        var run = await ReviewRun.Invoke(prompts.Environment(), terminal, [CliInputs.ProtectedBitwarden(DirectoryPath, FilePassword)], TestContext.Current.CancellationToken);
 
         // Assert
         run.ExitCode.ShouldBe(0);
@@ -196,7 +199,7 @@ public sealed class ReviewCommandTests : IDisposable
         var terminal = new FakeTerminal();
 
         // Act
-        var run = await ReviewRun.Invoke(new TestPrompts(ExportPassword, "fixture wrong password").Environment(), terminal, [CliInputs.ProtectedBitwarden(directory, FilePassword)], TestContext.Current.CancellationToken);
+        var run = await ReviewRun.Invoke(new TestPrompts(ExportPassword, "fixture wrong password").Environment(), terminal, [CliInputs.ProtectedBitwarden(DirectoryPath, FilePassword)], TestContext.Current.CancellationToken);
 
         // Assert
         run.ExitCode.ShouldBe(3);
@@ -209,8 +212,8 @@ public sealed class ReviewCommandTests : IDisposable
     public async Task Review_saves_to_the_decisions_file_and_starts_from_it_the_next_time()
     {
         // Arrange
-        string[] inputs = CliInputs.ConflictingLogins(directory);
-        string decisionsPath = Path.Combine(directory, "decisions.json");
+        string[] inputs = CliInputs.ConflictingLogins(DirectoryPath);
+        string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
         var environment = new TestPrompts(ExportPassword).Environment();
         var first = new FakeTerminal
         {
@@ -239,8 +242,8 @@ public sealed class ReviewCommandTests : IDisposable
     public async Task Review_writes_the_merged_vault_to_the_output_and_says_so()
     {
         // Arrange
-        string[] inputs = CliInputs.ConflictingLogins(directory);
-        string output = Path.Combine(directory, "merged.json");
+        string[] inputs = CliInputs.ConflictingLogins(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var terminal = new FakeTerminal
         {
             User = session =>
@@ -265,8 +268,8 @@ public sealed class ReviewCommandTests : IDisposable
     public async Task Review_counts_the_attachments_to_upload_and_lists_them_once_it_wrote_the_merged_vault()
     {
         // Arrange
-        string input = CliInputs.KeeperZipWithFolderAndAttachments(directory);
-        string output = Path.Combine(directory, "merged.json");
+        string input = CliInputs.KeeperZipWithFolderAndAttachments(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var environment = new TestPrompts(ExportPassword).Environment();
         var writes = new FakeTerminal
         {
@@ -299,8 +302,8 @@ public sealed class ReviewCommandTests : IDisposable
     public async Task Review_counts_and_lists_the_files_of_attachment_folders_that_match_no_single_item()
     {
         // Arrange
-        string zip = PipelineInputs.Write(directory, "bitwarden.zip", PipelineInputs.TwoBanksZip());
-        string output = Path.Combine(directory, "merged.json");
+        string zip = PipelineInputs.Write(DirectoryPath, "bitwarden.zip", PipelineInputs.TwoBanksZip());
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var terminal = new FakeTerminal
         {
             User = session =>
@@ -341,10 +344,10 @@ public sealed class ReviewCommandTests : IDisposable
         ]);
         string[] inputs =
         [
-            PipelineInputs.Write(directory, "keeper.json", PipelineInputs.KeeperJson(PipelineInputs.KeeperLogin("rec-long", "Long", "bob", url: "https://long.example.com", notes: "Password: " + huge))),
-            PipelineInputs.Write(directory, "bitwarden.json", PipelineInputs.BitwardenJson(withHistory)),
+            PipelineInputs.Write(DirectoryPath, "keeper.json", PipelineInputs.KeeperJson(PipelineInputs.KeeperLogin("rec-long", "Long", "bob", url: "https://long.example.com", notes: "Password: " + huge))),
+            PipelineInputs.Write(DirectoryPath, "bitwarden.json", PipelineInputs.BitwardenJson(withHistory)),
         ];
-        string output = Path.Combine(directory, "merged.json");
+        string output = Path.Combine(DirectoryPath, "merged.json");
         string? accepted = null;
         var terminal = new FakeTerminal
         {
@@ -380,7 +383,7 @@ public sealed class ReviewCommandTests : IDisposable
         var terminal = new FakeTerminal();
 
         // Act
-        var run = await ReviewRun.Invoke(new TestPrompts(ExportPassword).Environment(), terminal, CliInputs.ConflictingLogins(directory), new CancellationToken(canceled: true));
+        var run = await ReviewRun.Invoke(new TestPrompts(ExportPassword).Environment(), terminal, CliInputs.ConflictingLogins(DirectoryPath), new CancellationToken(canceled: true));
 
         // Assert
         run.ExitCode.ShouldBe(1);

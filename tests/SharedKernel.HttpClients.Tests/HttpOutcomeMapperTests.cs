@@ -1,8 +1,9 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Net;
 using System.Net.Http.Headers;
+using System.Net;
 using System.Text;
+using PandaBear.Testing;
 using Polly.CircuitBreaker;
 using Polly.Timeout;
 
@@ -11,7 +12,7 @@ namespace PandaBear.HttpClients.Tests;
 /// <summary>
 /// Unit tests for HttpOutcomeMapper.Send mapping of HTTP responses, timeouts, cancellation, and transport failures to bounded HttpOutcome values.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Trait(SharedKernelTestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
 public sealed class HttpOutcomeMapperTests
 {
     private static readonly HttpOutcomeMapperTestsJsonContext Json = HttpOutcomeMapperTestsJsonContext.Default;
@@ -284,7 +285,7 @@ public sealed class HttpOutcomeMapperTests
     }
 
     [Fact]
-    [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
+    [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
     public async Task Send_returns_malformed_body_after_reading_only_the_bounded_oversized_json_prefix()
     {
         // Arrange
@@ -593,7 +594,7 @@ public sealed class HttpOutcomeMapperTests
     }
 
     [Fact]
-    [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
+    [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
     public async Task Send_returns_redacted_transport_failure()
     {
         // Arrange
@@ -689,7 +690,7 @@ public sealed class HttpOutcomeMapperTests
     }
 
     [Fact]
-    [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
+    [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
     public async Task Send_telemetry_contains_only_method_status_and_outcome_kind()
     {
         // Arrange

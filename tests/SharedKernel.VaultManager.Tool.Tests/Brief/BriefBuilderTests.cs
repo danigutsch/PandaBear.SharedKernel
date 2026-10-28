@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Brief;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Model;
@@ -17,10 +18,12 @@ public sealed class BriefBuilderTests : IDisposable
     private const string BitwardenPassword = "fixture-bitwarden-brief-password";
     private const string KeeperNotes = "Keeper notes about the account";
     private const string BitwardenNotes = "Bitwarden notes about the account";
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-brief-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
 
-    /// <summary>Deletes the temporary directory.</summary>
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    private string DirectoryPath => temporaryDirectory.Path;
+
+    /// <inheritdoc />
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public void Brief_lists_only_the_groups_that_need_a_decision()
@@ -28,10 +31,10 @@ public sealed class BriefBuilderTests : IDisposable
         // Arrange
         string[] inputs =
         [
-            Write(directory, "keeper.json", KeeperJson(
+            Write(DirectoryPath, "keeper.json", KeeperJson(
                 KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com", modified: false),
                 KeeperLogin("rec-2", "Mail", "bob", "fixture-same-mail-password", "https://mail.example.com"))),
-            Write(directory, "bitwarden.json", BitwardenJson(
+            Write(DirectoryPath, "bitwarden.json", BitwardenJson(
                 BitwardenLogin("bw-1", "Example", "alice", BitwardenPassword, "https://example.com", revised: false),
                 BitwardenLogin("bw-2", "Mail", "bob", "fixture-same-mail-password", "https://mail.example.com"))),
         ];
@@ -72,7 +75,7 @@ public sealed class BriefBuilderTests : IDisposable
         bitwarden["folderId"] = "folder-work";
         var export = JsonNode.Parse(BitwardenJson(bitwarden)).ShouldNotBeNull();
         export["folders"] = new JsonArray(new JsonObject { ["id"] = "folder-work", ["name"] = "Work" });
-        string[] inputs = [Write(directory, "keeper.json", KeeperJson(keeper)), Write(directory, "bitwarden.json", export.ToJsonString())];
+        string[] inputs = [Write(DirectoryPath, "keeper.json", KeeperJson(keeper)), Write(DirectoryPath, "bitwarden.json", export.ToJsonString())];
         var decisions = BriefRun.Linked(KeeperKey, BitwardenKey) with
         {
             Notes = [new ItemNotesDecision(KeeperKey, NotesDecision.Share, NotesSha256: ItemNotesDecision.HashOf(KeeperNotes))]
@@ -107,7 +110,7 @@ public sealed class BriefBuilderTests : IDisposable
         JsonObject keeper = KeeperLogin("rec-1", "Example", totp, KeeperPassword, "https://example.com", KeeperNotes, modified: false);
         JsonObject bitwarden = BitwardenLogin("bw-1", "Example", "alice", BitwardenPassword, "https://example.com", revised: false);
         bitwarden["notes"] = BitwardenNotes;
-        string[] inputs = [Write(directory, "keeper.json", KeeperJson(keeper)), Write(directory, "bitwarden.json", BitwardenJson(bitwarden))];
+        string[] inputs = [Write(DirectoryPath, "keeper.json", KeeperJson(keeper)), Write(DirectoryPath, "bitwarden.json", BitwardenJson(bitwarden))];
         var stale = BriefRun.Linked(KeeperKey, BitwardenKey) with
         {
             Notes =
@@ -137,8 +140,8 @@ public sealed class BriefBuilderTests : IDisposable
         newer["passwordHistory"] = new JsonArray(new JsonObject { ["lastUsedDate"] = "2025-01-01T00:00:00.000Z", ["password"] = "Older-Strong-Password-1" });
         string[] inputs =
         [
-            Write(directory, "keeper.json", KeeperJson(older, KeeperLogin("rec-2", "Shop", "carol", "admin", "https://shop.example.com"))),
-            Write(directory, "bitwarden.json", BitwardenJson(newer)),
+            Write(DirectoryPath, "keeper.json", KeeperJson(older, KeeperLogin("rec-2", "Shop", "carol", "admin", "https://shop.example.com"))),
+            Write(DirectoryPath, "bitwarden.json", BitwardenJson(newer)),
         ];
 
         // Act
@@ -161,7 +164,7 @@ public sealed class BriefBuilderTests : IDisposable
     {
         // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(3200);
-        string input = Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-github", "GitHub", "alice", url: "https://github.com", notes: PipelineSecrets.RecoveryNotes(codes, "Gh-brief-Passw0rd!"))));
+        string input = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperLogin("rec-github", "GitHub", "alice", url: "https://github.com", notes: PipelineSecrets.RecoveryNotes(codes, "Gh-brief-Passw0rd!"))));
 
         // Act
         (BriefDocument brief, var result) = BriefRun.Build([input]);
@@ -195,7 +198,7 @@ public sealed class BriefBuilderTests : IDisposable
         JsonObject keeper = KeeperLogin("rec-1", "GitHub", "alice", KeeperPassword, "https://github.com", keeperNotes, modified: false);
         JsonObject bitwarden = BitwardenLogin("bw-1", "GitHub", "alice", BitwardenPassword, "https://github.com", revised: false);
         bitwarden["notes"] = bitwardenNotes;
-        string[] inputs = [Write(directory, "keeper.json", KeeperJson(keeper)), Write(directory, "bitwarden.json", BitwardenJson(bitwarden))];
+        string[] inputs = [Write(DirectoryPath, "keeper.json", KeeperJson(keeper)), Write(DirectoryPath, "bitwarden.json", BitwardenJson(bitwarden))];
         var scan = BriefRun.Build(inputs).Result;
         string codesId = scan.Findings.ShouldHaveSingleItem(item => item.OriginKey == BitwardenKey).Findings.ShouldHaveSingleItem().Id;
         var decisions = MergeDecisions.None with
@@ -226,7 +229,7 @@ public sealed class BriefBuilderTests : IDisposable
         const string Connection = "postgres://fixture-db-user:fixture-db-secret@db.internal.example:5432/app";
         JsonObject keeper = KeeperLogin("rec-1", "Database", null, KeeperPassword, "https://example.com", Connection, modified: false);
         JsonObject bitwarden = BitwardenLogin("bw-1", "Database", "alice", BitwardenPassword, "https://example.com", revised: false);
-        string[] inputs = [Write(directory, "keeper.json", KeeperJson(keeper)), Write(directory, "bitwarden.json", BitwardenJson(bitwarden))];
+        string[] inputs = [Write(DirectoryPath, "keeper.json", KeeperJson(keeper)), Write(DirectoryPath, "bitwarden.json", BitwardenJson(bitwarden))];
         var connection = BriefRun.Build(inputs).Result.Findings.ShouldHaveSingleItem().Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.ConnectionString);
         var decisions = BriefRun.Linked(KeeperKey, BitwardenKey) with
         {
@@ -256,8 +259,8 @@ public sealed class BriefBuilderTests : IDisposable
         // Arrange
         string[] inputs =
         [
-            Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Router", "admin", KeeperPassword, "https://admin:fixture/router@router.local", modified: false))),
-            Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Router", "admin", BitwardenPassword, "https://admin:fixture/router@router.local", revised: false))),
+            Write(DirectoryPath, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Router", "admin", KeeperPassword, "https://admin:fixture/router@router.local", modified: false))),
+            Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Router", "admin", BitwardenPassword, "https://admin:fixture/router@router.local", revised: false))),
         ];
 
         // Act
@@ -273,8 +276,8 @@ public sealed class BriefBuilderTests : IDisposable
         // Arrange
         string[] inputs =
         [
-            Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "App", "alice", KeeperPassword, "androidapp://com.example.app", modified: false))),
-            Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "App", "alice", BitwardenPassword, "androidapp://com.example.app", revised: false))),
+            Write(DirectoryPath, "keeper.json", KeeperJson(KeeperLogin("rec-1", "App", "alice", KeeperPassword, "androidapp://com.example.app", modified: false))),
+            Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "App", "alice", BitwardenPassword, "androidapp://com.example.app", revised: false))),
         ];
 
         // Act
@@ -291,7 +294,7 @@ public sealed class BriefBuilderTests : IDisposable
         string notes = "Which street did we live on?\nfixture-street-answer";
         string[] inputs =
         [
-            Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Bank", "alice", KeeperPassword, "https://bank.example.com", notes, modified: false))),
+            Write(DirectoryPath, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Bank", "alice", KeeperPassword, "https://bank.example.com", notes, modified: false))),
         ];
         var question = BriefRun.Build(inputs).Result.Findings.ShouldHaveSingleItem().Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.SecurityQuestion);
 
@@ -309,8 +312,8 @@ public sealed class BriefBuilderTests : IDisposable
         // Arrange
         string[] inputs =
         [
-            Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com", modified: false))),
-            Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example Bank", "alice", BitwardenPassword, "https://example.com"))),
+            Write(DirectoryPath, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com", modified: false))),
+            Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example Bank", "alice", BitwardenPassword, "https://example.com"))),
         ];
 
         // Act
@@ -326,8 +329,8 @@ public sealed class BriefBuilderTests : IDisposable
         // Arrange
         string[] inputs =
         [
-            Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com", modified: false))),
-            Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", BitwardenPassword, "https://example.com", revised: false))),
+            Write(DirectoryPath, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com", modified: false))),
+            Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", BitwardenPassword, "https://example.com", revised: false))),
         ];
 
         // Act
@@ -343,8 +346,8 @@ public sealed class BriefBuilderTests : IDisposable
         // Arrange
         string[] inputs =
         [
-            Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com", modified: false))),
-            Write(directory, "bitwarden.json", BitwardenJson(
+            Write(DirectoryPath, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com", modified: false))),
+            Write(DirectoryPath, "bitwarden.json", BitwardenJson(
                 BitwardenLogin("bw-1", "Example", "alice", BitwardenPassword, "https://example.com", revised: false),
                 BitwardenLogin("bw-2", "Example", "bob", "fixture-bob-password", "https://example.com"))),
         ];

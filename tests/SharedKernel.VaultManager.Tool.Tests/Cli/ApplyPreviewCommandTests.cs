@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Formats.Bitwarden;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 using static PandaBear.VaultManager.Tool.Tests.Cli.PreviewInputs;
@@ -10,10 +11,12 @@ public sealed class ApplyPreviewCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture preview export password";
     private const string Item = "bitwarden|vault.json|bw-github (\"GitHub\"): ";
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-apply-preview-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
 
-    /// <summary>Deletes the temporary directory.</summary>
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    private string DirectoryPath => temporaryDirectory.Path;
+
+    /// <inheritdoc />
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public async Task Dry_run_lists_the_changes_and_removals_and_writes_nothing()
@@ -21,7 +24,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
         // Arrange
         var prompts = new TestPrompts(ExportPassword);
         var environment = prompts.Environment();
-        (string vault, string catalog, string decisions) = await SharedCatalog(directory, environment, TestContext.Current.CancellationToken);
+        (string vault, string catalog, string decisions) = await SharedCatalog(DirectoryPath, environment, TestContext.Current.CancellationToken);
         await EditItem(catalog, item =>
         {
             item["name"] = "GitHub (work)";
@@ -30,7 +33,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
             JsonNode masked = item["uris"]![1]!.DeepClone();
             item["uris"] = new JsonArray(masked, new JsonObject { ["value"] = "https://github.com" });
         }, TestContext.Current.CancellationToken);
-        string[] before = Directory.GetFiles(directory);
+        string[] before = Directory.GetFiles(DirectoryPath);
 
         // Act
         var run = await CommandLineRun.Invoke(environment, ["apply", vault, "--catalog", catalog, "--decisions", decisions, "--dry-run"], TestContext.Current.CancellationToken);
@@ -56,7 +59,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
             "The dry run wrote nothing. Apply refuses these removals without --allow-removals.",
         ]);
         prompts.NewPasswordPrompts.ShouldBeEmpty();
-        Directory.GetFiles(directory).ShouldBeEquivalentTo(before);
+        Directory.GetFiles(DirectoryPath).ShouldBeEquivalentTo(before);
         string[] secrets = [NotesText, FieldValue, "fixture-preview-new-value", Password, TotpSecret, UriSecret, UriToken, "alice"];
         secrets.ShouldAllSatisfy(secret =>
         {
@@ -71,9 +74,9 @@ public sealed class ApplyPreviewCommandTests : IDisposable
         // Arrange
         var prompts = new TestPrompts(ExportPassword);
         var environment = prompts.Environment();
-        (string vault, string catalog, string decisions) = await SharedCatalog(directory, environment, TestContext.Current.CancellationToken);
+        (string vault, string catalog, string decisions) = await SharedCatalog(DirectoryPath, environment, TestContext.Current.CancellationToken);
         await EditItem(catalog, item => item["fields"] = new JsonArray(), TestContext.Current.CancellationToken);
-        string output = Path.Combine(directory, "organized.json");
+        string output = Path.Combine(DirectoryPath, "organized.json");
 
         // Act
         var run = await CommandLineRun.Invoke(environment, ["apply", vault, "--catalog", catalog, "--decisions", decisions, "-o", output, "--dry-run", "--allow-removals"], TestContext.Current.CancellationToken);
@@ -94,7 +97,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
     {
         // Arrange
         var environment = new TestPrompts(ExportPassword).Environment();
-        (string vault, string catalog, string decisions) = await SharedCatalog(directory, environment, TestContext.Current.CancellationToken);
+        (string vault, string catalog, string decisions) = await SharedCatalog(DirectoryPath, environment, TestContext.Current.CancellationToken);
 
         // Act
         var run = await CommandLineRun.Invoke(environment, ["apply", vault, "--catalog", catalog, "--decisions", decisions, "--dry-run"], TestContext.Current.CancellationToken);
@@ -115,7 +118,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
     {
         // Arrange
         var environment = new TestPrompts(ExportPassword).Environment();
-        (string vault, string catalog, string decisions) = await SharedCatalog(directory, environment, TestContext.Current.CancellationToken);
+        (string vault, string catalog, string decisions) = await SharedCatalog(DirectoryPath, environment, TestContext.Current.CancellationToken);
         await EditItem(catalog, item => item["name"] = " ", TestContext.Current.CancellationToken);
 
         // Act
@@ -132,7 +135,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
     {
         // Arrange
         var environment = new TestPrompts(ExportPassword).Environment();
-        (string vault, string catalog, string decisions) = await SharedCatalog(directory, environment, TestContext.Current.CancellationToken);
+        (string vault, string catalog, string decisions) = await SharedCatalog(DirectoryPath, environment, TestContext.Current.CancellationToken);
         await EditItem(catalog, item => item["name"] = new string('n', 1_001), TestContext.Current.CancellationToken);
 
         // Act
@@ -149,7 +152,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
     {
         // Arrange
         var environment = new TestPrompts(ExportPassword).Environment();
-        (string vault, string catalog, string decisions) = await SharedCatalog(directory, environment, TestContext.Current.CancellationToken);
+        (string vault, string catalog, string decisions) = await SharedCatalog(DirectoryPath, environment, TestContext.Current.CancellationToken);
         await EditItem(catalog, item => item["name"] = "Git​Hub\u001B[31m", TestContext.Current.CancellationToken);
 
         // Act
@@ -167,7 +170,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
     {
         // Arrange
         var environment = new TestPrompts(ExportPassword).Environment();
-        (string vault, string catalog, string decisions) = await SharedCatalog(directory, environment, TestContext.Current.CancellationToken);
+        (string vault, string catalog, string decisions) = await SharedCatalog(DirectoryPath, environment, TestContext.Current.CancellationToken);
         await EditItem(catalog, item => item["uris"]!.AsArray().Add(new JsonObject { ["value"] = "https://p\u0430ypal.com" }), TestContext.Current.CancellationToken);
 
         // Act
@@ -185,9 +188,9 @@ public sealed class ApplyPreviewCommandTests : IDisposable
         // Arrange
         var prompts = new TestPrompts(ExportPassword);
         var environment = prompts.Environment();
-        (string vault, string catalog, string decisions) = await SharedCatalog(directory, environment, TestContext.Current.CancellationToken);
+        (string vault, string catalog, string decisions) = await SharedCatalog(DirectoryPath, environment, TestContext.Current.CancellationToken);
         await EditItem(catalog, item => item["fields"] = new JsonArray(), TestContext.Current.CancellationToken);
-        string output = Path.Combine(directory, "organized.json");
+        string output = Path.Combine(DirectoryPath, "organized.json");
 
         // Act
         var run = await CommandLineRun.Invoke(environment, ["apply", vault, "--catalog", catalog, "--decisions", decisions, "-o", output], TestContext.Current.CancellationToken);
@@ -206,9 +209,9 @@ public sealed class ApplyPreviewCommandTests : IDisposable
     {
         // Arrange
         var environment = new TestPrompts(ExportPassword).Environment();
-        (string vault, string catalog, string decisions) = await SharedCatalog(directory, environment, TestContext.Current.CancellationToken);
+        (string vault, string catalog, string decisions) = await SharedCatalog(DirectoryPath, environment, TestContext.Current.CancellationToken);
         await EditItem(catalog, item => item["fields"] = new JsonArray(), TestContext.Current.CancellationToken);
-        string output = Path.Combine(directory, "organized.json");
+        string output = Path.Combine(DirectoryPath, "organized.json");
 
         // Act
         var run = await CommandLineRun.Invoke(environment, ["apply", vault, "--catalog", catalog, "--decisions", decisions, "-o", output, "--plaintext", "--allow-removals"], TestContext.Current.CancellationToken);
@@ -225,7 +228,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
     {
         // Arrange
         var environment = new TestPrompts(ExportPassword).Environment();
-        (string vault, string catalog, _) = await SharedCatalog(directory, environment, TestContext.Current.CancellationToken);
+        (string vault, string catalog, _) = await SharedCatalog(DirectoryPath, environment, TestContext.Current.CancellationToken);
 
         // Act
         var run = await CommandLineRun.Invoke(environment, ["apply", vault, "--catalog", catalog], TestContext.Current.CancellationToken);

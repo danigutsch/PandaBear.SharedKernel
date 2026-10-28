@@ -1,3 +1,4 @@
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Pipeline;
 using PandaBear.VaultManager.Tool.Review;
@@ -13,16 +14,18 @@ namespace PandaBear.VaultManager.Tool.Tests.Review;
 [Collection(HeadlessTerminal.Collection)]
 public sealed class SmallScreenTests : IDisposable
 {
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-review-small-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string DirectoryPath => temporaryDirectory.Path;
 
     /// <inheritdoc />
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public void Writing_with_pending_decisions_on_a_zero_size_terminal_shows_the_problem_on_the_message_line()
     {
         // Arrange
-        var session = Session(ConflictingLogins(directory), files: new ReviewFiles(null, new PipelineOutput(Path.Combine(directory, "merged.json"))));
+        var session = Session(ConflictingLogins(DirectoryPath), files: new ReviewFiles(null, new PipelineOutput(Path.Combine(DirectoryPath, "merged.json"))));
         session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.Name, KeeperKey);
         string blocker = session.WriteBlocker.ShouldNotBeNull();
         using IApplication app = HeadlessTerminal.Start();
@@ -47,8 +50,8 @@ public sealed class SmallScreenTests : IDisposable
     public void Writing_a_password_protected_vault_on_a_zero_size_terminal_writes_nothing_and_says_why()
     {
         // Arrange
-        string output = Path.Combine(directory, "merged.json");
-        var session = Session(ConflictingLogins(directory), files: new ReviewFiles(null, new PipelineOutput(output)));
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        var session = Session(ConflictingLogins(DirectoryPath), files: new ReviewFiles(null, new PipelineOutput(output)));
         session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
         using IApplication app = HeadlessTerminal.Start();
         app.Driver!.SetScreenSize(0, 0);
@@ -75,8 +78,8 @@ public sealed class SmallScreenTests : IDisposable
     public void Quitting_with_unsaved_decisions_on_a_zero_size_terminal_keeps_the_review_open_and_save_still_works()
     {
         // Arrange
-        string decisionsPath = Path.Combine(directory, "decisions.json");
-        var session = Session(ConflictingLogins(directory), files: new ReviewFiles(decisionsPath, null));
+        string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
+        var session = Session(ConflictingLogins(DirectoryPath), files: new ReviewFiles(decisionsPath, null));
         session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
         using IApplication app = HeadlessTerminal.Start();
         app.Driver!.SetScreenSize(0, 0);
@@ -107,7 +110,7 @@ public sealed class SmallScreenTests : IDisposable
     public void The_key_list_on_a_terminal_below_the_minimum_size_names_the_minimum_on_the_message_line(int width, int height)
     {
         // Arrange
-        var session = Session(ConflictingLogins(directory));
+        var session = Session(ConflictingLogins(DirectoryPath));
         using IApplication app = HeadlessTerminal.Start();
         app.Driver!.SetScreenSize(width, height);
         using var window = new ReviewWindow(session, new ReviewDialogs(app));

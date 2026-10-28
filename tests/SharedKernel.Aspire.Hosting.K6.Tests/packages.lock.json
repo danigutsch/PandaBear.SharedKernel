@@ -584,6 +584,9 @@
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
+      "PandaBear.SharedKernel.Testing": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {

@@ -1,3 +1,4 @@
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Formats.Bitwarden;
 using PandaBear.VaultManager.Tool.Matching;
 using PandaBear.VaultManager.Tool.Merge;
@@ -13,17 +14,19 @@ public sealed class MergeDecisionsCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-decisions-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
 
-    /// <summary>Deletes the temporary directory.</summary>
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    private string DirectoryPath => temporaryDirectory.Path;
+
+    /// <inheritdoc />
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public async Task Merge_without_a_decisions_file_exits_2_and_asks_for_one()
     {
         // Arrange
-        string[] inputs = CliInputs.ConflictingLogins(directory);
-        string output = Path.Combine(directory, "merged.json");
+        string[] inputs = CliInputs.ConflictingLogins(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var prompts = new TestPrompts(ExportPassword);
 
         // Act
@@ -36,16 +39,16 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         run.Error.ShouldContain("--decisions <file>", StringComparison.Ordinal);
         File.Exists(output).ShouldBeFalse();
         prompts.NewPasswordPrompts.ShouldBeEmpty();
-        Directory.GetFiles(directory).Length.ShouldBe(2);
+        Directory.GetFiles(DirectoryPath).Length.ShouldBe(2);
     }
 
     [Fact]
     public async Task Pending_field_entries_list_the_members_and_a_member_choice_resolves_them()
     {
         // Arrange
-        string[] inputs = CliInputs.ConflictingLogins(directory);
-        string output = Path.Combine(directory, "merged.json");
-        string decisionsPath = Path.Combine(directory, "decisions.json");
+        string[] inputs = CliInputs.ConflictingLogins(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
         string[] args = ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--plaintext"];
 
         // Act
@@ -85,9 +88,9 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     {
         // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(1000);
-        string input = CliInputs.CodesAndPasswordInNotes(directory, codes);
-        string output = Path.Combine(directory, "merged.json");
-        string decisionsPath = Path.Combine(directory, "decisions.json");
+        string input = CliInputs.CodesAndPasswordInNotes(DirectoryPath, codes);
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
         string[] args = ["merge", input, "--output", output, "--decisions", decisionsPath, "--plaintext"];
 
         // Act
@@ -121,9 +124,9 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     {
         // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(1010);
-        string input = CliInputs.CodesAndPasswordInNotes(directory, codes);
-        string output = Path.Combine(directory, "merged.json");
-        string decisionsPath = Path.Combine(directory, "decisions.json");
+        string input = CliInputs.CodesAndPasswordInNotes(DirectoryPath, codes);
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
         var findings = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Run(new PipelineRequest([input])).Findings.ShouldHaveSingleItem();
         string codesId = findings.Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.RecoveryCodes).Id;
         string passwordId = findings.Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.Password).Id;
@@ -148,9 +151,9 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     {
         // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(1020);
-        string[] inputs = CliInputs.CodesInKeeperNotes(directory, codes);
-        string output = Path.Combine(directory, "merged.json");
-        string decisionsPath = Path.Combine(directory, "decisions.json");
+        string[] inputs = CliInputs.CodesInKeeperNotes(DirectoryPath, codes);
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
         var planned = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Run(new PipelineRequest(inputs));
         var group = planned.Match.Groups.ShouldHaveSingleItem(candidate => candidate.Members.Count == 2);
         string codesId = planned.Findings.ShouldHaveSingleItem().Findings.ShouldHaveSingleItem().Id;
@@ -197,12 +200,12 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     {
         // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(1030);
-        string[] inputs = CliInputs.CodesInKeeperNotes(directory, codes);
-        string output = Path.Combine(directory, "merged.json");
+        string[] inputs = CliInputs.CodesInKeeperNotes(DirectoryPath, codes);
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var planned = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Run(new PipelineRequest(inputs));
         string codesId = planned.Findings.ShouldHaveSingleItem().Findings.ShouldHaveSingleItem().Id;
         string json = $$"""{"version":2,"groups":[],"links":[],"splits":[],"finding":[{"originKey":"{{CliInputs.GitHubKey}}","choices":[{"findingId":"{{codesId}}","decision":"Rejected"}]}]}""";
-        string decisionsPath = PipelineInputs.Write(directory, "decisions.json", json);
+        string decisionsPath = PipelineInputs.Write(DirectoryPath, "decisions.json", json);
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--plaintext"], TestContext.Current.CancellationToken);
@@ -223,8 +226,8 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     {
         // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(1040);
-        string[] inputs = CliInputs.CodesInKeeperNotes(directory, codes);
-        string output = Path.Combine(directory, "merged.json");
+        string[] inputs = CliInputs.CodesInKeeperNotes(DirectoryPath, codes);
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var planned = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Run(new PipelineRequest(inputs));
         string codesId = planned.Findings
             .ShouldHaveSingleItem(item => string.Equals(item.OriginKey, CliInputs.GitHubKey, StringComparison.Ordinal)).Findings
@@ -241,7 +244,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
               "findings": []
             }
             """;
-        string decisionsPath = PipelineInputs.Write(directory, "decisions.json", json);
+        string decisionsPath = PipelineInputs.Write(DirectoryPath, "decisions.json", json);
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--plaintext"], TestContext.Current.CancellationToken);
@@ -261,9 +264,9 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     public async Task Member_decision_naming_an_item_outside_its_group_is_warned_about_and_replaced_by_a_pending_entry()
     {
         // Arrange
-        string[] inputs = CliInputs.ConflictingLogins(directory);
-        string output = Path.Combine(directory, "merged.json");
-        string decisionsPath = Path.Combine(directory, "decisions.json");
+        string[] inputs = CliInputs.ConflictingLogins(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
         string[] args = ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--plaintext"];
         var conflict = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Run(new PipelineRequest(inputs)).Unresolved.ShouldHaveSingleItem();
         DecisionsFile.Write(decisionsPath, new MergeDecisions([new GroupDecision(conflict.GroupKey, [FieldChoice.Member(conflict.FieldPath, "keeper|keeper.json|rec-gone")])], MatchOverrides.None));
@@ -286,10 +289,10 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     public async Task Merge_warnings_replace_control_characters_from_the_decisions_file()
     {
         // Arrange
-        string[] inputs = CliInputs.NewerBitwardenLogin(directory);
-        string output = Path.Combine(directory, "merged.json");
+        string[] inputs = CliInputs.NewerBitwardenLogin(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
         string groupKey = string.Concat("0000", (char)0x1B, "[2J", (char)0x0D, (char)0x9B, "0000");
-        string decisionsPath = Path.Combine(directory, "decisions.json");
+        string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
         DecisionsFile.Write(decisionsPath, new MergeDecisions([new GroupDecision(groupKey, [FieldChoice.Empty(FieldPaths.Notes)])], MatchOverrides.None));
 
         // Act
@@ -304,9 +307,9 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     public async Task Merge_with_the_ask_policy_leaves_every_conflict_to_the_decisions_file()
     {
         // Arrange
-        string[] inputs = CliInputs.NewerBitwardenLogin(directory);
-        string output = Path.Combine(directory, "merged.json");
-        string decisionsPath = Path.Combine(directory, "decisions.json");
+        string[] inputs = CliInputs.NewerBitwardenLogin(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--policy", "ask"], TestContext.Current.CancellationToken);
@@ -321,9 +324,9 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     public async Task Merge_reports_an_invalid_decisions_file_and_leaves_it_unchanged()
     {
         // Arrange
-        string[] inputs = CliInputs.ConflictingLogins(directory);
-        string output = Path.Combine(directory, "merged.json");
-        string decisionsPath = PipelineInputs.Write(directory, "decisions.json", """{"version":1,"groups":[],"links":[],"splits":[]}""");
+        string[] inputs = CliInputs.ConflictingLogins(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string decisionsPath = PipelineInputs.Write(DirectoryPath, "decisions.json", """{"version":1,"groups":[],"links":[],"splits":[]}""");
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--decisions", decisionsPath], TestContext.Current.CancellationToken);
@@ -339,9 +342,9 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     public async Task Merge_report_lists_the_decisions_needed()
     {
         // Arrange
-        string[] inputs = CliInputs.ConflictingLogins(directory);
-        string output = Path.Combine(directory, "merged.json");
-        string report = Path.Combine(directory, "report.md");
+        string[] inputs = CliInputs.ConflictingLogins(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string report = Path.Combine(DirectoryPath, "report.md");
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--report", report], TestContext.Current.CancellationToken);

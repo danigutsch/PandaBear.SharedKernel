@@ -1,7 +1,8 @@
-using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
+using System.Net;
 using System.Text.Json;
+using System.Text;
+using PandaBear.Testing;
 
 namespace PandaBear.HttpClients.Tests;
 
@@ -168,7 +169,7 @@ public sealed class ContractHttpValidationTests
     }
 
     [Fact]
-    [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
+    [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
     public async Task Ensure_success_bounds_oversized_validation_content()
     {
         // Arrange

@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Security.Cryptography;
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Formats.Keeper;
 using PandaBear.VaultManager.Tool.Model;
 using static PandaBear.VaultManager.Tool.Tests.Formats.Keeper.KeeperTestData;
@@ -9,10 +10,12 @@ namespace PandaBear.VaultManager.Tool.Tests.Formats.Keeper;
 /// <summary>Tests the reader for Keeper JSON and zip exports.</summary>
 public sealed class KeeperJsonReaderTests : IDisposable
 {
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-manager-keeper-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string DirectoryPath => temporaryDirectory.Path;
 
     /// <inheritdoc />
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public void Read_keeps_shared_folders_and_record_folders_as_declared_folders()
@@ -371,7 +374,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
     public void ReadZip_attaches_files_by_file_uid_and_warns_about_missing_files()
     {
         // Arrange
-        string path = Path.Combine(directory, "keeper.zip");
+        string path = Path.Combine(DirectoryPath, "keeper.zip");
         File.WriteAllBytes(path, TestZip.Create(("export.json", TestZip.Utf8(CommanderZipExport())), ("files/file-1", "%PDF"u8.ToArray())));
 
         // Act
@@ -388,7 +391,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
     public void ReadZip_warns_about_files_no_record_lists_and_about_other_entries()
     {
         // Arrange
-        string path = Path.Combine(directory, "keeper.zip");
+        string path = Path.Combine(DirectoryPath, "keeper.zip");
         File.WriteAllBytes(path, TestZip.Create(
             ("export.json", TestZip.Utf8(CommanderZipExport())),
             ("files/file-1", "%PDF"u8.ToArray()),
@@ -411,7 +414,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
     public void ReadZip_without_export_json_throws_invalid_data()
     {
         // Arrange
-        string path = Path.Combine(directory, "other.zip");
+        string path = Path.Combine(DirectoryPath, "other.zip");
         File.WriteAllBytes(path, TestZip.Create(("data.json", TestZip.Utf8("{}"))));
         var action = () => KeeperJsonReader.ReadZip(path);
 

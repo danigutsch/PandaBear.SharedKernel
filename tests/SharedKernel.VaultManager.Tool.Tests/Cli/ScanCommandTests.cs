@@ -9,17 +9,19 @@ public sealed class ScanCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-scan-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string DirectoryPath => temporaryDirectory.Path;
 
     /// <inheritdoc />
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public async Task Scan_summarizes_findings_and_password_health_on_standard_output()
     {
         // Arrange
-        string keeper = CliInputs.CodesAndPasswordInNotes(directory, PipelineSecrets.GitHubRecoveryCodes(900));
-        string bitwarden = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-mail", "Mail", "bob", "short", "https://mail.example.com")));
+        string keeper = CliInputs.CodesAndPasswordInNotes(DirectoryPath, PipelineSecrets.GitHubRecoveryCodes(900));
+        string bitwarden = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-mail", "Mail", "bob", "short", "https://mail.example.com")));
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["scan", keeper, bitwarden], TestContext.Current.CancellationToken);
@@ -39,14 +41,14 @@ public sealed class ScanCommandTests : IDisposable
             Attachments to upload after the import: 0
 
             """.ReplaceLineEndings("\n"), StringComparer.Ordinal);
-        Directory.GetFiles(directory).Length.ShouldBe(2);
+        Directory.GetFiles(DirectoryPath).Length.ShouldBe(2);
     }
 
     [Fact]
     public async Task Scan_counts_the_files_of_attachment_folders_that_match_no_single_item_among_the_attachments_to_upload()
     {
         // Arrange
-        string zip = Write(directory, "bitwarden.zip", TwoBanksZip());
+        string zip = Write(DirectoryPath, "bitwarden.zip", TwoBanksZip());
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["scan", zip], TestContext.Current.CancellationToken);
@@ -60,8 +62,8 @@ public sealed class ScanCommandTests : IDisposable
     public async Task Scan_writes_the_full_report_readable_only_by_its_owner_and_replaces_an_old_one()
     {
         // Arrange
-        string keeper = CliInputs.CodesAndPasswordInNotes(directory, PipelineSecrets.GitHubRecoveryCodes(910));
-        string report = Write(directory, "report.md", "# Vault report\n\nold report");
+        string keeper = CliInputs.CodesAndPasswordInNotes(DirectoryPath, PipelineSecrets.GitHubRecoveryCodes(910));
+        string report = Write(DirectoryPath, "report.md", "# Vault report\n\nold report");
         if (!OperatingSystem.IsWindows())
         {
             File.SetUnixFileMode(report, OwnerOnly | UnixFileMode.GroupRead | UnixFileMode.OtherRead);
@@ -87,8 +89,8 @@ public sealed class ScanCommandTests : IDisposable
     public async Task Scan_never_replaces_an_existing_file_that_is_not_a_vault_report()
     {
         // Arrange
-        string keeper = CliInputs.CodesAndPasswordInNotes(directory, PipelineSecrets.GitHubRecoveryCodes(950));
-        string decisions = Write(directory, "decisions.json", "{\"version\":2,\"groups\":[]}");
+        string keeper = CliInputs.CodesAndPasswordInNotes(DirectoryPath, PipelineSecrets.GitHubRecoveryCodes(950));
+        string decisions = Write(DirectoryPath, "decisions.json", "{\"version\":2,\"groups\":[]}");
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["scan", keeper, "--report", decisions], TestContext.Current.CancellationToken);
@@ -105,7 +107,7 @@ public sealed class ScanCommandTests : IDisposable
     public async Task Scan_never_writes_the_report_over_an_input()
     {
         // Arrange
-        string keeper = CliInputs.CodesAndPasswordInNotes(directory, PipelineSecrets.GitHubRecoveryCodes(920));
+        string keeper = CliInputs.CodesAndPasswordInNotes(DirectoryPath, PipelineSecrets.GitHubRecoveryCodes(920));
         string before = await File.ReadAllTextAsync(keeper, TestContext.Current.CancellationToken);
 
         // Act
@@ -122,8 +124,8 @@ public sealed class ScanCommandTests : IDisposable
     public async Task Scan_refuses_a_report_path_that_differs_from_an_input_only_in_case_and_says_why()
     {
         // Arrange
-        string bitwarden = CliInputs.BitwardenWithFolder(directory);
-        string report = Path.Combine(directory, "BITWARDEN.json");
+        string bitwarden = CliInputs.BitwardenWithFolder(DirectoryPath);
+        string report = Path.Combine(DirectoryPath, "BITWARDEN.json");
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["scan", bitwarden, "--report", report], TestContext.Current.CancellationToken);
@@ -138,9 +140,9 @@ public sealed class ScanCommandTests : IDisposable
     public async Task Scan_never_writes_the_report_over_an_input_reached_through_a_linked_directory()
     {
         // Arrange
-        string real = Directory.CreateDirectory(Path.Combine(directory, "real")).FullName;
+        string real = Directory.CreateDirectory(Path.Combine(DirectoryPath, "real")).FullName;
         string keeper = CliInputs.CodesAndPasswordInNotes(real, PipelineSecrets.GitHubRecoveryCodes(940));
-        string alias = Path.Combine(directory, "alias");
+        string alias = Path.Combine(DirectoryPath, "alias");
         Directory.CreateSymbolicLink(alias, real);
         string before = await File.ReadAllTextAsync(keeper, TestContext.Current.CancellationToken);
 
@@ -159,8 +161,8 @@ public sealed class ScanCommandTests : IDisposable
     public async Task Scan_fails_before_reading_inputs_when_the_report_directory_does_not_exist()
     {
         // Arrange
-        string keeper = CliInputs.CodesAndPasswordInNotes(directory, PipelineSecrets.GitHubRecoveryCodes(930));
-        string report = Path.Combine(directory, "missing", "report.md");
+        string keeper = CliInputs.CodesAndPasswordInNotes(DirectoryPath, PipelineSecrets.GitHubRecoveryCodes(930));
+        string report = Path.Combine(DirectoryPath, "missing", "report.md");
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["scan", keeper, "--report", report], TestContext.Current.CancellationToken);

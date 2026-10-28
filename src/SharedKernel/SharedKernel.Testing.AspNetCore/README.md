@@ -17,6 +17,12 @@ across ASP.NET Core test projects.
 - Optionally set the hosting environment
 - Optionally apply test service overrides
 
+## Fakes
+
+- `FakeFormFile`: in-memory `IFormFile`.
+- `FakeBrowserFile`: in-memory Blazor `IBrowserFile` that rejects reads above `maxAllowedSize` with `IOException`.
+- `ThrowingDistributedCache`: `IDistributedCache` whose every operation throws the supplied exception.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Testing.AspNetCore`. C# namespace: `PandaBear.Testing.AspNetCore`. Assembly/project identity: `SharedKernel.Testing.AspNetCore`.
