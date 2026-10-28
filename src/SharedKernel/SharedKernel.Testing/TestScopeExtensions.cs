@@ -6,19 +6,8 @@ namespace PandaBear.Testing;
 public static class TestScopeExtensions
 {
     /// <summary>
-    /// Gets the <c>Scope</c> trait value for <paramref name="scope" />.
+    /// Gets the <c>Scope</c> trait value for <paramref name="scope" />, the kebab-case member name.
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="scope" /> is not a defined value.</exception>
-    public static string ToTraitValue(this TestScope scope) => scope switch
-    {
-        TestScope.Unit => "unit",
-        TestScope.Behavior => "behavior",
-        TestScope.Component => "component",
-        TestScope.Contract => "contract",
-        TestScope.UiIntegration => "ui-integration",
-        TestScope.Integration => "integration",
-        TestScope.System => "system",
-        TestScope.Architecture => "architecture",
-        _ => throw new ArgumentOutOfRangeException(nameof(scope), scope, "Undefined test scope."),
-    };
+    public static string ToTraitValue(this TestScope scope) => TraitValue.Of(scope, nameof(scope));
 }

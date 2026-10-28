@@ -85,3 +85,27 @@ PandaBear.Testing.TestScope.UiIntegration = 4 -> PandaBear.Testing.TestScope
 PandaBear.Testing.TestScope.Unit = 0 -> PandaBear.Testing.TestScope
 PandaBear.Testing.TestScopeExtensions
 static PandaBear.Testing.TestScopeExtensions.ToTraitValue(this PandaBear.Testing.TestScope scope) -> string!
+PandaBear.Testing.TestHost
+PandaBear.Testing.TestHost.InProcess = 0 -> PandaBear.Testing.TestHost
+PandaBear.Testing.TestHost.TestServer = 1 -> PandaBear.Testing.TestHost
+PandaBear.Testing.TestHost.Aspire = 2 -> PandaBear.Testing.TestHost
+PandaBear.Testing.TestHost.Browser = 3 -> PandaBear.Testing.TestHost
+PandaBear.Testing.TestHostExtensions
+static PandaBear.Testing.TestHostExtensions.ToTraitValue(this PandaBear.Testing.TestHost host) -> string!
+PandaBear.Testing.TestFocus
+PandaBear.Testing.TestFocus.CoreBehavior = 0 -> PandaBear.Testing.TestFocus
+PandaBear.Testing.TestFocus.DomainRule = 1 -> PandaBear.Testing.TestFocus
+PandaBear.Testing.TestFocus.EdgeCase = 2 -> PandaBear.Testing.TestFocus
+PandaBear.Testing.TestFocus.Regression = 3 -> PandaBear.Testing.TestFocus
+PandaBear.Testing.TestFocus.Security = 4 -> PandaBear.Testing.TestFocus
+PandaBear.Testing.TestFocus.DriftGuard = 5 -> PandaBear.Testing.TestFocus
+PandaBear.Testing.TestFocus.Migration = 6 -> PandaBear.Testing.TestFocus
+PandaBear.Testing.TestFocusExtensions
+static PandaBear.Testing.TestFocusExtensions.ToTraitValue(this PandaBear.Testing.TestFocus focus) -> string!
+PandaBear.Testing.TestPriority
+PandaBear.Testing.TestPriority.Smoke = 0 -> PandaBear.Testing.TestPriority
+PandaBear.Testing.TestPriority.Critical = 1 -> PandaBear.Testing.TestPriority
+PandaBear.Testing.TestPriorityExtensions
+static PandaBear.Testing.TestPriorityExtensions.ToTraitValue(this PandaBear.Testing.TestPriority priority) -> string!
+const PandaBear.Testing.TestTraitNames.FocusName = "Focus" -> string!
+const PandaBear.Testing.TestTraitNames.PriorityName = "Priority" -> string!
