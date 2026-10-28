@@ -72,6 +72,7 @@ already owns its kind; add a package only when a new kind needs a dependency tha
 | `SharedKernel.Testing.Assertions` | `Should*` assertions for xUnit, `Result` and entity identity | `SharedKernel.Results` |
 | `SharedKernel.Testing.Xunit` | Typed trait attributes (`TestScope`, `TestHost`, `TestFocus`, `TestPriority`, `TestArea`, `TestSurface`) | `SharedKernel.Testing` |
 | `SharedKernel.Testing.Http` | Assertions on HTTP responses and problem details | `SharedKernel.Testing.Assertions` |
+| `SharedKernel.Testing.Logging` | Recording and throwing `ILogger` fakes | `Microsoft.Extensions.Logging.Abstractions` |
 | `SharedKernel.Testing.AspNetCore` | Web application factory helpers | ASP.NET Core testing |
 | `SharedKernel.Testing.Web` | bUnit element assertions | bUnit |
 | `SharedKernel.Testing.Playwright` | Playwright assertions | Playwright |

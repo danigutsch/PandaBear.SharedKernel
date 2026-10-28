@@ -1,0 +1,27 @@
+#nullable enable
+const PandaBear.Testing.Logging.ThrowingLogger<T>.Secret = "logger-secret" -> string!
+PandaBear.Testing.Logging.RecordedLog
+PandaBear.Testing.Logging.RecordedLog.EventId.get -> Microsoft.Extensions.Logging.EventId
+PandaBear.Testing.Logging.RecordedLog.EventId.init -> void
+PandaBear.Testing.Logging.RecordedLog.Exception.get -> System.Exception?
+PandaBear.Testing.Logging.RecordedLog.Exception.init -> void
+PandaBear.Testing.Logging.RecordedLog.Level.get -> Microsoft.Extensions.Logging.LogLevel
+PandaBear.Testing.Logging.RecordedLog.Level.init -> void
+PandaBear.Testing.Logging.RecordedLog.Message.get -> string!
+PandaBear.Testing.Logging.RecordedLog.Message.init -> void
+PandaBear.Testing.Logging.RecordedLog.RecordedLog(Microsoft.Extensions.Logging.LogLevel Level, Microsoft.Extensions.Logging.EventId EventId, string! Message, System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, object?>>! State, System.Exception? Exception) -> void
+PandaBear.Testing.Logging.RecordedLog.State.get -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, object?>>!
+PandaBear.Testing.Logging.RecordedLog.State.init -> void
+PandaBear.Testing.Logging.RecordingLogger
+PandaBear.Testing.Logging.RecordingLogger.BeginScope<TState>(TState state) -> System.IDisposable?
+PandaBear.Testing.Logging.RecordingLogger.IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) -> bool
+PandaBear.Testing.Logging.RecordingLogger.Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, System.Exception? exception, System.Func<TState, System.Exception?, string!>! formatter) -> void
+PandaBear.Testing.Logging.RecordingLogger.RecordingLogger() -> void
+PandaBear.Testing.Logging.RecordingLogger.Records.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Logging.RecordedLog!>!
+PandaBear.Testing.Logging.RecordingLogger<T>
+PandaBear.Testing.Logging.RecordingLogger<T>.RecordingLogger() -> void
+PandaBear.Testing.Logging.ThrowingLogger<T>
+PandaBear.Testing.Logging.ThrowingLogger<T>.BeginScope<TState>(TState state) -> System.IDisposable?
+PandaBear.Testing.Logging.ThrowingLogger<T>.IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) -> bool
+PandaBear.Testing.Logging.ThrowingLogger<T>.Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, System.Exception? exception, System.Func<TState, System.Exception?, string!>! formatter) -> void
+PandaBear.Testing.Logging.ThrowingLogger<T>.ThrowingLogger() -> void
