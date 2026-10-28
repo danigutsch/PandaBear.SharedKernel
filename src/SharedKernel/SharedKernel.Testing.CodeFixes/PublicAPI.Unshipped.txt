@@ -1,4 +1,5 @@
 #nullable enable
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestScope = "SKTEST018" -> string!
 PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider
 PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.SharedKernelTestingCodeFixProvider() -> void
 override PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>

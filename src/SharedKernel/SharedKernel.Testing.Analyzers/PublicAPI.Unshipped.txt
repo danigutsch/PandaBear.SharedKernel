@@ -21,3 +21,4 @@ const PandaBear.Testing.Analyzers.TestingDiagnosticIds.PlaywrightAssertion = "SK
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.ActivityListenerSourceIdentity = "SKTEST010" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.SutConstructionInAct = "SKTEST016" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.AssertionUserMessageOverload = "SKTEST017" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestScope = "SKTEST018" -> string!
