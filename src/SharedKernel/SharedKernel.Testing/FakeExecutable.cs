@@ -25,7 +25,12 @@ public static class FakeExecutable
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(body);
 
-        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        var directory = Path.GetDirectoryName(path);
+        if (!string.IsNullOrEmpty(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
         File.WriteAllText(path, "#!/bin/sh\n" + body);
         File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
     }

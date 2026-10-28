@@ -1,6 +1,6 @@
 namespace PandaBear.Testing;
 
-/// <summary>Detects file-system capabilities once per process so tests can skip when the host lacks them.</summary>
+/// <summary>Detects file-system capabilities once per process so tests can skip when the host lacks them. A probe that cannot run reports the capability as missing.</summary>
 public static class FileSystemProbes
 {
     private static readonly Lazy<bool> SymbolicLinks = new(ProbeSymbolicLinks);
@@ -18,18 +18,14 @@ public static class FileSystemProbes
 
     private static bool ProbeSymbolicLinks()
     {
-        using var directory = new TemporaryDirectory();
-        var target = Directory.CreateDirectory(Path.Combine(directory.Path, "target")).FullName;
         try
         {
+            using var directory = new TemporaryDirectory();
+            var target = Directory.CreateDirectory(Path.Combine(directory.Path, "target")).FullName;
             Directory.CreateSymbolicLink(Path.Combine(directory.Path, "link"), target);
             return true;
         }
-        catch (UnauthorizedAccessException)
-        {
-            return false;
-        }
-        catch (IOException)
+        catch (Exception exception) when (IsProbeFailure(exception))
         {
             return false;
         }
@@ -42,10 +38,10 @@ public static class FileSystemProbes
             return false;
         }
 
-        using var directory = new TemporaryDirectory();
-        var file = Path.Combine(directory.Path, "probe.txt");
         try
         {
+            using var directory = new TemporaryDirectory();
+            var file = Path.Combine(directory.Path, "probe.txt");
             File.WriteAllText(file, "probe");
             File.SetUnixFileMode(file, UnixFileMode.None);
             using var stream = File.OpenRead(file);
@@ -55,12 +51,26 @@ public static class FileSystemProbes
         {
             return true;
         }
+        catch (Exception exception) when (IsProbeFailure(exception))
+        {
+            return false;
+        }
     }
 
     private static bool ProbeCaseSensitivity()
     {
-        using var directory = new TemporaryDirectory();
-        File.WriteAllText(Path.Combine(directory.Path, "probe"), string.Empty);
-        return !File.Exists(Path.Combine(directory.Path, "PROBE"));
+        try
+        {
+            using var directory = new TemporaryDirectory();
+            File.WriteAllText(Path.Combine(directory.Path, "probe"), string.Empty);
+            return !File.Exists(Path.Combine(directory.Path, "PROBE"));
+        }
+        catch (Exception exception) when (IsProbeFailure(exception))
+        {
+            return false;
+        }
     }
+
+    private static bool IsProbeFailure(Exception exception) =>
+        exception is IOException or UnauthorizedAccessException or NotSupportedException or System.Security.SecurityException;
 }

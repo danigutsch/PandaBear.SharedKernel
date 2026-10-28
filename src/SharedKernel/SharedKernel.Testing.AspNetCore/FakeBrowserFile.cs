@@ -5,6 +5,9 @@ namespace PandaBear.Testing.AspNetCore;
 /// <summary>An in-memory <see cref="IBrowserFile" /> that enforces the maximum allowed size like the real implementation.</summary>
 public sealed class FakeBrowserFile : IBrowserFile
 {
+    /// <summary>The <c>maxAllowedSize</c> that <see cref="OpenReadStream" /> uses when none is supplied; matches the <see cref="IBrowserFile" /> default.</summary>
+    public const long DefaultMaxAllowedSize = 512000;
+
     private readonly byte[] _content;
 
     /// <summary>Initializes a new instance of the <see cref="FakeBrowserFile" /> class.</summary>
@@ -45,8 +48,10 @@ public sealed class FakeBrowserFile : IBrowserFile
     }
 
     /// <inheritdoc />
-    public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = default)
+    public Stream OpenReadStream(long maxAllowedSize = DefaultMaxAllowedSize, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (Size > maxAllowedSize)
         {
             throw new IOException($"Supplied file with size {Size} bytes exceeds the maximum of {maxAllowedSize} bytes.");

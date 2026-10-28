@@ -16,8 +16,11 @@ PandaBear.Testing.Logging.RecordingLogger
 PandaBear.Testing.Logging.RecordingLogger.BeginScope<TState>(TState state) -> System.IDisposable?
 PandaBear.Testing.Logging.RecordingLogger.IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) -> bool
 PandaBear.Testing.Logging.RecordingLogger.Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, System.Exception? exception, System.Func<TState, System.Exception?, string!>! formatter) -> void
+PandaBear.Testing.Logging.RecordingLogger.MinimumLevel.get -> Microsoft.Extensions.Logging.LogLevel
+PandaBear.Testing.Logging.RecordingLogger.MinimumLevel.set -> void
 PandaBear.Testing.Logging.RecordingLogger.RecordingLogger() -> void
 PandaBear.Testing.Logging.RecordingLogger.Records.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Logging.RecordedLog!>!
+PandaBear.Testing.Logging.RecordingLogger.Scopes.get -> System.Collections.Generic.IReadOnlyList<object!>!
 PandaBear.Testing.Logging.RecordingLogger<T>
 PandaBear.Testing.Logging.RecordingLogger<T>.RecordingLogger() -> void
 PandaBear.Testing.Logging.ThrowingLogger<T>

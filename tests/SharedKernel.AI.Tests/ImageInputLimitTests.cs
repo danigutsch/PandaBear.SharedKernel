@@ -14,7 +14,7 @@ public sealed class ImageInputLimitTests
     {
         // Arrange
         const int limit = 5 * 1024 * 1024;
-        using var image = new SeekableTrackingReadStream(new byte[limit + 100], seekable);
+        using var image = new TrackingReadStream(new byte[limit + 100], seekable);
         using var handler = new TestHttpMessageHandler();
         using var client = new HttpClient(handler, disposeHandler: false);
         var generator = new LiteLlmImageTextGenerator(client, new LiteLlmImageTextGeneratorOptions
@@ -42,7 +42,7 @@ public sealed class ImageInputLimitTests
     {
         // Arrange
         const int limit = 5 * 1024 * 1024;
-        using var image = new SeekableTrackingReadStream(new byte[limit], seekable);
+        using var image = new TrackingReadStream(new byte[limit], seekable);
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.OK, "{\"choices\":[{\"message\":{\"content\":\"{\\\"altText\\\":\\\"Image\\\"}\"}}]}");
         using var client = new HttpClient(handler, disposeHandler: false);
@@ -97,7 +97,7 @@ public sealed class ImageInputLimitTests
     public async Task Generate_enforces_configured_limit_against_actual_bytes(bool seekable)
     {
         // Arrange
-        using var image = new SeekableTrackingReadStream(new byte[100], seekable);
+        using var image = new TrackingReadStream(new byte[100], seekable);
         using var handler = new TestHttpMessageHandler();
         using var client = new HttpClient(handler, disposeHandler: false);
         var generator = new LiteLlmImageTextGenerator(client, new LiteLlmImageTextGeneratorOptions
@@ -124,7 +124,7 @@ public sealed class ImageInputLimitTests
     public async Task Generate_reads_current_position_with_configured_limit_without_overflow(int limit)
     {
         // Arrange
-        using var image = new SeekableTrackingReadStream([9, 9, 9, 1, 2, 3], true) { Position = 3 };
+        using var image = new TrackingReadStream([9, 9, 9, 1, 2, 3], true) { Position = 3 };
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.OK, "{\"choices\":[{\"message\":{\"content\":\"{\\\"altText\\\":\\\"Image\\\"}\"}}]}");
         using var client = new HttpClient(handler, disposeHandler: false);
@@ -152,7 +152,7 @@ public sealed class ImageInputLimitTests
     public async Task Generate_rejects_invalid_limit_before_reading_or_dispatch(int limit)
     {
         // Arrange
-        using var image = new SeekableTrackingReadStream([1], false);
+        using var image = new TrackingReadStream([1], false);
         using var handler = new TestHttpMessageHandler();
         using var client = new HttpClient(handler, disposeHandler: false);
         var generator = new LiteLlmImageTextGenerator(client, new LiteLlmImageTextGeneratorOptions
