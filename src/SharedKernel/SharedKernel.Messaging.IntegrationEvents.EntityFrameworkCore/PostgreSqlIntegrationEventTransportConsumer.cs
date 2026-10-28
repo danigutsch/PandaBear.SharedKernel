@@ -62,14 +62,14 @@ internal sealed class PostgreSqlIntegrationEventTransportConsumer<TContext>(
                 var attemptedAt = timeProvider.GetUtcNow();
                 if (message.ConsumeAttempts + 1 >= consumerOptions.MaxConsumeAttempts)
                 {
-                    message.MarkPoisoned(attemptedAt, FormatConsumeError(exception));
+                    message.MarkPoisoned(attemptedAt, DescribeConsumeFailure(exception));
                 }
                 else
                 {
                     message.MarkConsumeFailed(
                         attemptedAt,
                         attemptedAt.Add(GetRetryDelay(message.ConsumeAttempts)),
-                        FormatConsumeError(exception));
+                        DescribeConsumeFailure(exception));
                 }
             }
 
@@ -94,14 +94,8 @@ internal sealed class PostgreSqlIntegrationEventTransportConsumer<TContext>(
             && (exception is not OperationCanceledException || !ct.IsCancellationRequested);
     }
 
-    private static string FormatConsumeError(Exception exception)
+    private static string DescribeConsumeFailure(Exception exception)
     {
-        var message = string.IsNullOrWhiteSpace(exception.Message)
-            ? exception.GetType().FullName ?? exception.GetType().Name
-            : exception.Message;
-
-        return message.Length <= IntegrationEventTransportMessage.LastConsumeErrorMaxLength
-            ? message
-            : message[..IntegrationEventTransportMessage.LastConsumeErrorMaxLength];
+        return exception.GetType().FullName ?? exception.GetType().Name;
     }
 }

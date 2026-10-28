@@ -114,7 +114,7 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
         await Scenario.SeedMessage(eventId, TestContext.Current.CancellationToken);
         var publisher = new RecordingEventEnvelopePublisher
         {
-            Failure = new InvalidOperationException("handler failed")
+            Failure = new InvalidOperationException("handler failed for jane@example.com")
         };
 
         // Act
@@ -128,7 +128,7 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
         message.ConsumeAttempts.ShouldBe(1);
         message.LastConsumeAttemptAt.ShouldNotBeNull();
         message.NextConsumeAttemptAt.ShouldNotBeNull();
-        message.LastConsumeError.ShouldContain("handler failed", StringComparison.Ordinal);
+        message.LastConsumeError.ShouldBe(typeof(InvalidOperationException).FullName);
         message.ClaimedBy.ShouldBeNull();
         message.ClaimedUntil.ShouldBeNull();
     }
@@ -187,6 +187,7 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
         var message = await Scenario.GetMessage(eventId, ct);
         message.ConsumeAttempts.ShouldBe(2);
         message.PoisonedAt.ShouldNotBeNull();
+        message.LastConsumeError.ShouldBe(typeof(InvalidOperationException).FullName);
         message.ProcessedAt.ShouldBeNull();
         message.NextConsumeAttemptAt.ShouldBeNull();
         message.ClaimedBy.ShouldBeNull();
