@@ -73,4 +73,9 @@ public static class TestingDiagnosticIds
     /// Diagnostic emitted when xUnit trait metadata uses a string literal where a canonical constant exists.
     /// </summary>
     public const string XunitTraitConstantUsage = "SKTEST009";
+
+    /// <summary>
+    /// Diagnostic emitted when an xUnit test method has no valid, unambiguous test scope.
+    /// </summary>
+    public const string XunitTestScope = "SKTEST018";
 }

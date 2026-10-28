@@ -29,6 +29,7 @@ public sealed class SharedKernelTestingAnalyzerTests
             TestingDiagnosticIds.ActivityListenerSourceIdentity,
             TestingDiagnosticIds.SutConstructionInAct,
             TestingDiagnosticIds.AssertionUserMessageOverload,
+            TestingDiagnosticIds.XunitTestScope,
         ];
 
         // Act
@@ -685,7 +686,8 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId
+            && candidate.Properties["Replacement"] == "global::Demo.TestTraits.SmokeCategory");
         var sourceTree = diagnostic.Location.SourceTree.ShouldNotBeNull();
         var sourceText = await sourceTree.GetTextAsync(TestContext.Current.CancellationToken);
         var reportedText = sourceText.ToString(diagnostic.Location.SourceSpan);

@@ -26,6 +26,7 @@
         <Compile Include="..\SharedKernel.Testing.Analyzers\AssertionUserMessageOverload.cs" Link="AssertionUserMessageOverload.cs" />
         <Compile Include="../SharedKernel.Testing.Analyzers/TestMethodNameSegments.cs" Link="TestMethodNameSegments.cs" />
         <Compile Include="..\SharedKernel.Testing.Analyzers\TestingDiagnosticIds.cs" Link="TestingDiagnosticIds.cs" />
+        <Compile Include="..\SharedKernel.Testing.Analyzers\TestScopeValues.cs" Link="TestScopeValues.cs" />
     </ItemGroup>
 
     <ItemGroup>

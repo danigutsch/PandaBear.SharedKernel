@@ -16,6 +16,7 @@ This Roslyn component is reserved for focused fixes that pair with the diagnosti
 - `SKTEST001` is diagnostics-only in the current rollout slice.
 - `SKTEST002` offers a conservative rename when an xUnit test method can be converted safely to the underscore naming convention.
 - `SKTEST003` adds configured required trait metadata to a test method.
+- `SKTEST018` adds a test scope attribute to the test class, one action per allowed scope, for a missing scope only.
 - `SKTEST004` extracts a static helper method to a dedicated helper file when it does not use test-instance state.
 - `SKTEST005` adds a placeholder serial collection justification attribute.
 - `SKTEST006` rewrites direct xUnit assertions to the repository `Should*` wrappers where the mapping is one to one: `Equal` and `NotEqual` (two arguments, a comparer or `ignoreCase` third argument where it maps), `True`, `False`, `Null`, `NotNull`, `Empty`, `NotEmpty`, `Contains` and `DoesNotContain` (value or predicate), `InRange`, `Same`, `Single` (one argument) and `All`. `Assert.Multiple` and any call whose arguments do not map one to one receive no fix, because the replacement needs a decision about assertion intent.

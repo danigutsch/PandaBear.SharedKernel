@@ -19,3 +19,4 @@ SKTEST015 | Testing | Warning | Use ShouldHaveTitle for supported Playwright tit
 SKTEST010 | Testing | Warning | Test activity listeners should filter by source identity
 SKTEST016 | Testing | Warning | Construct the system under test in Arrange
 SKTEST017 | Testing | Disabled | Public assertions should have a userMessage overload; enable warning severity in assertion libraries
+SKTEST018 | Testing | Info | xUnit test methods should declare exactly one valid test scope

@@ -31,7 +31,7 @@ internal static class AnalyzerTestHarness
         return Roslyn.AnalyzerTestHarness.CreateCompilation(
             source,
             DefaultUsings,
-            [typeof(FactAttribute).Assembly],
+            [typeof(FactAttribute).Assembly, typeof(TestScopeAttribute).Assembly],
             assemblyName,
             path);
     }
@@ -62,6 +62,20 @@ internal static class AnalyzerTestHarness
         var compilationWithAnalyzers = compilation.WithAnalyzers([analyzer], compilationOptions);
 
         return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
+    }
+
+    /// <summary>Runs SharedKernelTestingAnalyzer over the source and returns only the diagnostics with the given id.</summary>
+    /// <param name="diagnosticId">Diagnostic id to keep.</param>
+    /// <param name="source">C# source to analyze.</param>
+    /// <param name="analyzerOptions">Analyzer config key/value options, or null for none.</param>
+    public static async Task<ImmutableArray<Diagnostic>> GetDiagnosticsById(
+        string diagnosticId,
+        string source,
+        ImmutableDictionary<string, string>? analyzerOptions = null)
+    {
+        var diagnostics = await GetAnalyzerDiagnostics(source, analyzerOptions: analyzerOptions).ConfigureAwait(false);
+
+        return [.. diagnostics.Where(diagnostic => diagnostic.Id == diagnosticId)];
     }
 
 }

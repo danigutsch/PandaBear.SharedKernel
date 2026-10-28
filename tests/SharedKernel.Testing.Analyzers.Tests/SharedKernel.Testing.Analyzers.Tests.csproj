@@ -26,6 +26,7 @@
             <Aliases>testingcodefixes</Aliases>
         </ProjectReference>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Roslyn\SharedKernel.Testing.Roslyn.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Xunit\SharedKernel.Testing.Xunit.csproj" />
     </ItemGroup>
 
 </Project>

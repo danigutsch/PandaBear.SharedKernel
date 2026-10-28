@@ -31,6 +31,7 @@ test assertions. Do not apply it to regular production projects.
 | `SKTEST015` | Warning | Use the specialized Playwright wrapper for default string title assertions. |
 | `SKTEST010` | Warning | Compare test activity source instances by identity. |
 | `SKTEST016` | Warning | Construct explicitly named SUTs in Arrange. |
+| `SKTEST018` | Suggestion | Every xUnit test declares exactly one valid test scope. |
 | `SKTEST017` | Disabled; opt-in warning | Give every public `Should*` assertion an overload that takes `userMessage`. |
 
 See [test assertion conventions](../../../docs/TEST_GUIDELINES.md) for migrations, exception-testing
@@ -66,6 +67,10 @@ does not report production code or non-test helper methods.
 `SKTEST009` is conservative: it reports string literals in `Trait` attributes only when exactly one
 matching constant can be identified from `SharedKernel.Testing` trait constants or a project-local
 `TestTraits` type in the current namespace chain.
+
+When `PandaBear.Testing.TestScopeAttribute` is referenced, `SKTEST009` treats the typed attribute as the canonical form of a
+literal `[Trait("Scope", "<value>")]` with a `TestScope` value and offers to replace the whole attribute. Constants and
+values outside the `TestScope` set keep the normal constant advice.
 
 Keep existing `SKTEST001`–`SKTEST009` diagnostics at `warning`; repository warning-as-error settings make violations fail
 the build without changing analyzer descriptor severity.
@@ -242,3 +247,33 @@ RS0016 reports:
 dotnet run --project tools/SharedKernel.Testing.CodeFixRunner -c Release -- <project> --diagnostic SKTEST017
 dotnet format analyzers <project> --diagnostics RS0016 --severity warn
 ```
+
+## SKTEST018
+
+Every xUnit test declares the seam it exercises. A test satisfies the rule when its method, its class or an enclosing
+or base class, or its assembly carries `[TestScope(TestScope.X)]` (`SharedKernel.Testing.Xunit`) or
+`[Trait("Scope", "<value>")]`. The nearest level that declares a scope wins, so a method scope overrides a class scope.
+
+The rule reports three cases at the test method:
+
+- `missing`: no scope at any level.
+- `unknown`: the winning scope is outside the allowed set, including an undefined `TestScope` value.
+- `conflicting`: two different scopes at the winning level. The same scope declared twice is not a conflict.
+
+The allowed set is the `TestScope` values (`unit`, `behavior`, `component`, `contract`, `ui-integration`,
+`integration`, `system`, `architecture`). Narrow it per repository:
+
+```ini
+[*.cs]
+sharedkernel_testing_allowed_scopes = unit;integration
+```
+
+The rule reports at suggestion severity so adoption can be staged. Promote it once the repository is fully tagged:
+
+```ini
+[*.cs]
+dotnet_diagnostic.SKTEST018.severity = warning
+```
+
+The code fix, offered only for a missing scope, adds one action per allowed scope to the test class. It writes the typed
+attribute when `PandaBear.Testing.TestScopeAttribute` is referenced and `[Trait("Scope", ...)]` otherwise.

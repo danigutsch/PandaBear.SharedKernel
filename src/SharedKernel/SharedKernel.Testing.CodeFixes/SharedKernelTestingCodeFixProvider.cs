@@ -28,7 +28,7 @@ public sealed partial class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
     /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds =>
-        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitTestClassHelperMethod, TestingDiagnosticIds.XunitSerialCollectionJustification, TestingDiagnosticIds.XunitAssertionWrapper, TestingDiagnosticIds.XunitTraitConstantUsage, TestingDiagnosticIds.AssertionDelegateInlining, TestingDiagnosticIds.LinqSingleAssertion, TestingDiagnosticIds.ConditionalAssertion, TestingDiagnosticIds.AssertionUserMessageOverload];
+        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitTestClassHelperMethod, TestingDiagnosticIds.XunitSerialCollectionJustification, TestingDiagnosticIds.XunitAssertionWrapper, TestingDiagnosticIds.XunitTraitConstantUsage, TestingDiagnosticIds.AssertionDelegateInlining, TestingDiagnosticIds.LinqSingleAssertion, TestingDiagnosticIds.ConditionalAssertion, TestingDiagnosticIds.AssertionUserMessageOverload, TestingDiagnosticIds.XunitTestScope];
 
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
@@ -123,6 +123,12 @@ public sealed partial class SharedKernelTestingCodeFixProvider : CodeFixProvider
         if (string.Equals(diagnostic.Id, TestingDiagnosticIds.XunitTestMethodRequiredTrait, StringComparison.Ordinal))
         {
             RegisterRequiredTraitFix(context, document, diagnostic, methodDeclaration, syntaxRoot);
+            return;
+        }
+
+        if (string.Equals(diagnostic.Id, TestingDiagnosticIds.XunitTestScope, StringComparison.Ordinal))
+        {
+            RegisterTestScopeFix(context, document, diagnostic, methodDeclaration, syntaxRoot);
             return;
         }
 
@@ -467,6 +473,19 @@ public sealed partial class SharedKernelTestingCodeFixProvider : CodeFixProvider
     {
         var replacement = GetNonWhiteSpaceProperty(diagnostic, "Replacement");
         var node = syntaxRoot.FindNode(context.Span);
+        if (replacement is not null
+            && GetNonWhiteSpaceProperty(diagnostic, "Kind") == "TestScope"
+            && node.FirstAncestorOrSelf<AttributeSyntax>() is AttributeSyntax scopeAttribute)
+        {
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    title: $"Use {replacement}",
+                    createChangedDocument: _ => UseTypedScopeAttribute(document, syntaxRoot, scopeAttribute, replacement),
+                    equivalenceKey: $"UseTypedScope:{replacement}"),
+                diagnostic);
+            return;
+        }
+
         if (replacement is null
             || node.DescendantNodesAndSelf().OfType<LiteralExpressionSyntax>().FirstOrDefault(candidate => candidate.Span.IntersectsWith(context.Span)) is not LiteralExpressionSyntax literalExpression)
         {
