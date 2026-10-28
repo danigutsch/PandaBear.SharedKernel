@@ -68,6 +68,19 @@ builder.Services.AddUiFailureReporting();
 
 File names and failure messages are encoded and truncated to 200 characters. The default English strings, `CancelText` and `ProgressLabel`, are parameters for localization; the announcement text comes from `UploadOperationState`.
 
+To match existing accessible names and styling, all optional and unset by default (the markup is then unchanged):
+
+| Parameter | Default | Purpose |
+| --- | --- | --- |
+| `CancelLabelFormat` | `null`: `{CancelText}: {file}` | Format for the cancel button's accessible name, `{0}` is the bounded file name; the visible text stays `CancelText`. |
+| `ProgressLabelFormat` | `null`: `{ProgressLabel}: {file}` | Format for the progress accessible name, `{0}` is the bounded file name. |
+| `IndeterminateProgressLabelFormat` | `null`: same as determinate | Separate progress name while the progress is indeterminate. |
+| `ProgressTextFormat` | `null`: `{0} / {1}` | Format for the determinate progress fallback content, `{0}` transferred bytes, `{1}` total. |
+| `CancelClass`, `ProgressClass`, `StatusClass` | `null`: no `class` attribute | CSS classes for the cancel button, the progress element, and the `role="status"` element (for example to hide it visually). |
+| `RenderFailureInStatus` | `true` | When `false`, the failure message is not rendered in the live region; show it in `Detail`. |
+
+Formats are composite format strings, so they work as plain Razor attributes (`CancelLabelFormat="Cancel upload of {0}"`) and need no reflection; a malformed format throws `FormatException` at render.
+
 ## Notes
 
 - Link targets in `ErrorSummary` are fragment links on the current page; browsers move focus to a focusable target of a fragment navigation.

@@ -36,4 +36,20 @@ internal static class UploadStatusRendering
     /// <returns>The detail fragment.</returns>
     public static RenderFragment<UploadOperationState> TextDetail(Func<UploadOperationState, string> text)
         => state => builder => builder.AddContent(0, text(state));
+
+    /// <summary>Creates a state with a determinate upload at 40 of 100 bytes.</summary>
+    /// <param name="fileName">The display file name.</param>
+    /// <returns>The uploading state.</returns>
+    public static UploadOperationState Uploading(string fileName = "customers.csv")
+    {
+        var state = ComponentFixtures.Started(fileName);
+        state.ReportBytes(state.OperationId, 40);
+        return state;
+    }
+
+    /// <summary>Lists the attribute names of an element in document order.</summary>
+    /// <param name="element">The element.</param>
+    /// <returns>The attribute names.</returns>
+    public static string[] AttributeNames(AngleSharp.Dom.IElement element)
+        => element.Attributes.Select(attribute => attribute.Name).ToArray();
 }
