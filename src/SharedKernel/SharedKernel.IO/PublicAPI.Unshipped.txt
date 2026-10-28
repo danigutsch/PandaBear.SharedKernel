@@ -4,3 +4,23 @@ PandaBear.IO.SeekableContent.Content.get -> System.IO.Stream!
 PandaBear.IO.SeekableContent.Dispose() -> void
 PandaBear.IO.SeekableContent.DisposeAsync() -> System.Threading.Tasks.ValueTask
 static PandaBear.IO.SeekableContent.Create(System.IO.Stream! source, long maxLength, int memoryThreshold, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.IO.SeekableContent!>
+PandaBear.IO.ReadOnlyMemoryStream
+PandaBear.IO.ReadOnlyMemoryStream.ReadOnlyMemoryStream(System.ReadOnlyMemory<byte> memory) -> void
+override PandaBear.IO.ReadOnlyMemoryStream.CanRead.get -> bool
+override PandaBear.IO.ReadOnlyMemoryStream.CanSeek.get -> bool
+override PandaBear.IO.ReadOnlyMemoryStream.CanWrite.get -> bool
+override PandaBear.IO.ReadOnlyMemoryStream.CopyTo(System.IO.Stream! destination, int bufferSize) -> void
+override PandaBear.IO.ReadOnlyMemoryStream.CopyToAsync(System.IO.Stream! destination, int bufferSize, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+override PandaBear.IO.ReadOnlyMemoryStream.Flush() -> void
+override PandaBear.IO.ReadOnlyMemoryStream.Length.get -> long
+override PandaBear.IO.ReadOnlyMemoryStream.Position.get -> long
+override PandaBear.IO.ReadOnlyMemoryStream.Position.set -> void
+override PandaBear.IO.ReadOnlyMemoryStream.Read(byte[]! buffer, int offset, int count) -> int
+override PandaBear.IO.ReadOnlyMemoryStream.Read(System.Span<byte> buffer) -> int
+override PandaBear.IO.ReadOnlyMemoryStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override PandaBear.IO.ReadOnlyMemoryStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
+override PandaBear.IO.ReadOnlyMemoryStream.ReadByte() -> int
+override PandaBear.IO.ReadOnlyMemoryStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override PandaBear.IO.ReadOnlyMemoryStream.SetLength(long value) -> void
+override PandaBear.IO.ReadOnlyMemoryStream.Write(byte[]! buffer, int offset, int count) -> void
+override PandaBear.IO.ReadOnlyMemoryStream.Write(System.ReadOnlySpan<byte> buffer) -> void
