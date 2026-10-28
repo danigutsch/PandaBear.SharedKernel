@@ -16,8 +16,8 @@ namespace PandaBear.Blazor;
 /// a failure, the failure reason. A determinate <c>progress</c> only while the state
 /// is uploading and an indeterminate one while it is otherwise active, and a cancel button named after the file.
 /// The announcement changes only when <see cref="UploadOperationState.Announcement" /> does, so the state's ten-percent
-/// steps throttle what assistive technology reads. When the cancel button had focus and disappears, focus moves to the
-/// region. The component does not cancel transport work, and it renders when the parent re-renders after mutating the
+/// steps throttle what assistive technology reads. When the cancel button had focus or was activated and disappears, focus
+/// moves to the region. The component does not cancel transport work, and it renders when the parent re-renders after mutating the
 /// state. Focus changes on the button are tracked without re-rendering.
 /// File names and failure messages are encoded and truncated to <see cref="MaxDisplayTextLength" /> characters.
 /// An optional <see cref="Detail" /> fragment renders visible, non-live caller content after the status region; the
@@ -35,6 +35,7 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
     private ElementReference _region;
     private bool _cancelRendered;
     private bool _cancelFocused;
+    private bool _cancelActivated;
 
     /// <summary>Gets or sets the state to show.</summary>
     [Parameter]
@@ -166,11 +167,12 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         var cancelVisible = State.IsActive;
-        var moveFocus = _cancelRendered && !cancelVisible && _cancelFocused;
+        var moveFocus = _cancelRendered && !cancelVisible && (_cancelFocused || _cancelActivated);
         _cancelRendered = cancelVisible;
         if (!cancelVisible)
         {
             _cancelFocused = false;
+            _cancelActivated = false;
         }
 
         if (!moveFocus)
@@ -249,17 +251,32 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
         builder.CloseElement();
     }
 
-    /// <remarks>The focus handlers are plain delegates: they have no receiver, so tracking focus does not re-render the component.</remarks>
+    private Task ActivateCancel()
+    {
+        _cancelActivated = true;
+        return OnCancel.InvokeAsync();
+    }
+
+    /// <remarks>
+    /// The focus handlers are plain delegates: they have no receiver, so tracking focus does not re-render the component.
+    /// A browser blurs a focused element it removes, and that event can reach the server before the render is acknowledged,
+    /// so a blur is a user moving focus away only while the state is still active; otherwise it is the removal itself.
+    /// Activating the button also marks it for the focus move, because Safari does not focus a button on mouse click.
+    /// </remarks>
     private void BuildCancelButton(RenderTreeBuilder builder, string fileName)
     {
         builder.OpenElement(30, "button");
         builder.AddAttribute(31, "type", "button");
         builder.AddAttribute(32, "aria-label", AccessibleName(CancelLabelFormat, CancelText, fileName));
         builder.AddAttribute(33, "class", CancelClass);
-        builder.AddAttribute(34, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => OnCancel.InvokeAsync()));
+        builder.AddAttribute(34, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, ActivateCancel));
 
         builder.AddAttribute(35, "onfocus", (Action<FocusEventArgs>)(_ => _cancelFocused = true));
-        builder.AddAttribute(36, "onblur", (Action<FocusEventArgs>)(_ => _cancelFocused = false));
+        builder.AddAttribute(36, "onblur", (Action<FocusEventArgs>)(_ =>
+        {
+            _cancelFocused &= !State.IsActive;
+            _cancelActivated &= !State.IsActive;
+        }));
         builder.AddContent(37, CancelText);
         builder.CloseElement();
     }

@@ -172,6 +172,81 @@ public sealed class UploadStatusTests : BunitContext
     }
 
     [Fact]
+    public void Focus_moves_to_the_region_when_the_browser_blurs_the_removed_cancel_button_before_the_render_completes()
+    {
+        // Arrange
+        var state = Started();
+        var cut = this.RenderStatus(state);
+        var regionReference = cut.Find("section").GetAttribute("blazor:elementreference");
+        var button = cut.Find("button");
+        button.Focus();
+
+        // Act
+        state.Cancel(state.OperationId);
+        button.Blur();
+        cut.Render();
+
+        // Assert
+        var invocation = JSInterop.VerifyFocusAsyncInvoke(1)[0];
+        var target = invocation.Arguments[0].ShouldBeOfType<ElementReference>();
+        target.Id.ShouldBe(regionReference);
+    }
+
+    [Fact]
+    public void Focus_is_left_alone_when_the_user_blurs_the_cancel_button_while_the_upload_is_active()
+    {
+        // Arrange
+        var state = Started();
+        var cut = this.RenderStatus(state);
+        var button = cut.Find("button");
+        button.Focus();
+        button.Blur();
+
+        // Act
+        state.Cancel(state.OperationId);
+        cut.Render();
+
+        // Assert
+        JSInterop.Invocations.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Focus_moves_to_the_region_when_the_cancel_button_is_clicked_without_ever_taking_focus()
+    {
+        // Arrange
+        var state = Started();
+        var cut = this.RenderStatus(state, () => state.Cancel(state.OperationId));
+        var regionReference = cut.Find("section").GetAttribute("blazor:elementreference");
+
+        // Act
+        cut.Find("button").Click();
+        cut.Render();
+
+        // Assert
+        var invocation = JSInterop.VerifyFocusAsyncInvoke(1)[0];
+        var target = invocation.Arguments[0].ShouldBeOfType<ElementReference>();
+        target.Id.ShouldBe(regionReference);
+    }
+
+    [Fact]
+    public void Focus_is_left_alone_when_the_user_blurs_the_button_after_a_click_that_did_not_end_the_upload()
+    {
+        // Arrange
+        var state = Started();
+        var cut = this.RenderStatus(state, () => { });
+        var button = cut.Find("button");
+        button.Click();
+        button.Blur();
+
+        // Act
+        state.Cancel(state.OperationId);
+        cut.Render();
+
+        // Assert
+        JSInterop.Invocations.ShouldBeEmpty();
+    }
+
+    [Fact]
     public void Focus_is_left_alone_when_the_cancel_button_was_not_focused()
     {
         // Arrange
