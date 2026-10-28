@@ -160,6 +160,7 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
         builder.CloseElement();
     }
 
+    /// <remarks>The focus handlers are plain delegates: they have no receiver, so tracking focus does not re-render the component.</remarks>
     private void BuildCancelButton(RenderTreeBuilder builder, string fileName)
     {
         builder.OpenElement(30, "button");
@@ -167,7 +168,6 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
         builder.AddAttribute(32, "aria-label", $"{CancelText}: {fileName}");
         builder.AddAttribute(33, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => OnCancel.InvokeAsync()));
 
-        // Plain delegates have no receiver, so tracking focus does not re-render the component.
         builder.AddAttribute(34, "onfocus", (Action<FocusEventArgs>)(_ => _cancelFocused = true));
         builder.AddAttribute(35, "onblur", (Action<FocusEventArgs>)(_ => _cancelFocused = false));
         builder.AddContent(36, CancelText);

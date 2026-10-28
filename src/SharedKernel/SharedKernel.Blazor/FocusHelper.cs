@@ -9,6 +9,7 @@ internal static class FocusHelper
     /// <summary>
     /// Focuses an element, ignoring the exceptions raised when the circuit disconnects or is disposed.
     /// A canceled call needs no catch: the renderer already treats a canceled lifecycle task as not faulted.
+    /// A disconnected circuit leaves nothing to focus, and a renderer or JavaScript runtime that was disposed first is ignored for the same reason.
     /// </summary>
     public static async ValueTask TryFocus(ElementReference element)
     {
@@ -18,11 +19,9 @@ internal static class FocusHelper
         }
         catch (JSDisconnectedException)
         {
-            // The circuit is gone; there is nothing left to focus.
         }
         catch (ObjectDisposedException)
         {
-            // The renderer or JavaScript runtime was disposed first.
         }
     }
 }

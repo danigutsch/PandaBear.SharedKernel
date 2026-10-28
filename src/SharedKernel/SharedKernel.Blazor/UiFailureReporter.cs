@@ -76,15 +76,20 @@ public sealed class UiFailureReporter : IUiFailureReporter
             new KeyValuePair<string, object?>(OperationTag, operationName)));
     }
 
-    private static string ErrorType(Exception exception)
+    private static string ErrorType(Exception exception) => UnwrapWrapperExceptions(exception).GetType().Name;
+
+    /// <summary>
+    /// Returns the first inner exception of aggregate and reflection wrappers, which hide the real fault;
+    /// tagging with it keeps the tag bounded and meaningful.
+    /// </summary>
+    private static Exception UnwrapWrapperExceptions(Exception exception)
     {
-        // Wrappers hide the real fault; report the first inner exception so the tag stays bounded and meaningful.
         while (exception is AggregateException or System.Reflection.TargetInvocationException && exception.InnerException is { } inner)
         {
             exception = inner;
         }
 
-        return exception.GetType().Name;
+        return exception;
     }
 
     private static string SafeOperation(string? operation)

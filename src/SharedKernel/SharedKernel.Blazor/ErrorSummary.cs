@@ -47,6 +47,9 @@ public sealed class ErrorSummary : ComponentBase
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;
 
+    /// <summary>A new list instance means a new submission, even with identical content, so it takes focus again; the same instance does not.</summary>
+    private bool IsSameSubmission() => ReferenceEquals(Items, _focusedItems);
+
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
@@ -59,8 +62,7 @@ public sealed class ErrorSummary : ComponentBase
             ArgumentNullException.ThrowIfNull(item.Message);
         }
 
-        // A new list means a new submission, even with identical content, so it takes focus again.
-        if (ReferenceEquals(Items, _focusedItems))
+        if (IsSameSubmission())
         {
             return;
         }

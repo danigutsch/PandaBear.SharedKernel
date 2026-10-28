@@ -160,6 +160,11 @@ public static class ApiAuthenticationServiceCollectionExtensions
     /// Adds several named exact-audience bearer schemes. Each scheme maps roles with its own permission table when it
     /// validates a token; no host-wide claims transformation is registered.
     /// </summary>
+    /// <remarks>
+    /// No default authenticate scheme is set: a route is authenticated only by the scheme its policy names, so a route
+    /// that forgets a module policy fails closed under the fallback instead of accepting another module's token.
+    /// One audience per scheme keeps a token for one module from authenticating another module's routes.
+    /// </remarks>
     /// <param name="services">The service collection.</param>
     /// <param name="configuration">The configuration that supplies the authority and issuer.</param>
     /// <param name="environment">The host environment.</param>
@@ -188,8 +193,6 @@ public static class ApiAuthenticationServiceCollectionExtensions
 
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerPostConfigureOptions>());
 
-        // No default authenticate scheme: a route is authenticated only by the scheme its policy names, so a route
-        // that forgets a module policy fails closed under the fallback instead of accepting another module's token.
         var authentication = services.AddAuthentication(options =>
         {
             options.DefaultChallengeScheme = schemes[0].Name;
@@ -296,7 +299,6 @@ public static class ApiAuthenticationServiceCollectionExtensions
 
         if (schemes.Select(static scheme => scheme.Audience).Distinct(StringComparer.Ordinal).Count() != schemes.Count)
         {
-            // One audience per scheme keeps a token for one module from authenticating another module's routes.
             throw new ArgumentException("Bearer scheme audiences must be unique.", nameof(schemes));
         }
     }

@@ -9,8 +9,8 @@ namespace PandaBear.AspNetCore;
 internal static class TelemetryHttpContext
 {
     /// <summary>Gets the matched route template, never the raw request path.</summary>
+    /// <remarks>The exception-handler middleware clears the endpoint and keeps the original on its feature.</remarks>
     public static string RouteTemplate(HttpContext httpContext) =>
-        // The exception-handler middleware clears the endpoint and keeps the original on its feature.
         (httpContext.Features.Get<IExceptionHandlerFeature>()?.Endpoint ?? httpContext.GetEndpoint()) is RouteEndpoint { RoutePattern.RawText: { Length: > 0 } template }
             ? template
             : AspNetCoreTelemetry.UnmatchedRoute;
