@@ -1,3 +1,4 @@
+using PandaBear.Testing.Http;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -19,7 +20,7 @@ public sealed class ForwardedClientIpTests
         var services = new ServiceCollection();
         services.AddHttpClient("forwarded")
             .AddForwardedClientIp()
-            .ConfigurePrimaryHttpMessageHandler(() => new ForwardedClientIpTestHandler((request, _) =>
+            .ConfigurePrimaryHttpMessageHandler(() => new DelegateHttpMessageHandler((request, _) =>
                 Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
                 {
                     Content = new StringContent(string.Join(',', request.Headers.GetValues(ForwardedHeadersDefaults.XForwardedForHeaderName)))
@@ -49,7 +50,7 @@ public sealed class ForwardedClientIpTests
         var services = new ServiceCollection();
         services.AddHttpClient("forwarded")
             .AddForwardedClientIp()
-            .ConfigurePrimaryHttpMessageHandler(() => new ForwardedClientIpTestHandler((request, _) =>
+            .ConfigurePrimaryHttpMessageHandler(() => new DelegateHttpMessageHandler((request, _) =>
                 Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
                 {
                     Content = new StringContent(string.Join(',', request.Headers.GetValues(ForwardedHeadersDefaults.XForwardedForHeaderName)))
@@ -80,7 +81,7 @@ public sealed class ForwardedClientIpTests
         var services = new ServiceCollection();
         services.AddHttpClient("forwarded")
             .AddForwardedClientIp()
-            .ConfigurePrimaryHttpMessageHandler(() => new ForwardedClientIpTestHandler(async (request, _) =>
+            .ConfigurePrimaryHttpMessageHandler(() => new DelegateHttpMessageHandler(async (request, _) =>
             {
                 await Task.Yield();
                 return new HttpResponseMessage(HttpStatusCode.OK)
@@ -115,7 +116,7 @@ public sealed class ForwardedClientIpTests
         var services = new ServiceCollection();
         services.AddHttpClient("forwarded")
             .AddForwardedClientIp()
-            .ConfigurePrimaryHttpMessageHandler(() => new ForwardedClientIpTestHandler((request, _) =>
+            .ConfigurePrimaryHttpMessageHandler(() => new DelegateHttpMessageHandler((request, _) =>
                 Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
                 {
                     Content = new StringContent(
@@ -143,7 +144,7 @@ public sealed class ForwardedClientIpTests
         var services = new ServiceCollection();
         services.AddHttpClient("forwarded").AddForwardedClientIp();
         services.AddHttpClient("ordinary")
-            .ConfigurePrimaryHttpMessageHandler(() => new ForwardedClientIpTestHandler((request, _) =>
+            .ConfigurePrimaryHttpMessageHandler(() => new DelegateHttpMessageHandler((request, _) =>
                 Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
                 {
                     Content = new StringContent(string.Join(',', request.Headers.GetValues(ForwardedHeadersDefaults.XForwardedForHeaderName)))
@@ -171,7 +172,7 @@ public sealed class ForwardedClientIpTests
         HttpResponseMessage? expected = null;
         using var handler = new ResolvedClientIpForwardingHandler(new HttpContextAccessor())
         {
-            InnerHandler = new ForwardedClientIpTestHandler(async (_, _) =>
+            InnerHandler = new DelegateHttpMessageHandler(async (_, _) =>
             {
                 await Task.Yield();
                 expected = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("response-body") };
@@ -204,7 +205,7 @@ public sealed class ForwardedClientIpTests
         CancellationToken observed = default;
         using var handler = new ResolvedClientIpForwardingHandler(new HttpContextAccessor())
         {
-            InnerHandler = new ForwardedClientIpTestHandler((_, token) =>
+            InnerHandler = new DelegateHttpMessageHandler((_, token) =>
             {
                 observed = token;
                 return Task.FromCanceled<HttpResponseMessage>(token);

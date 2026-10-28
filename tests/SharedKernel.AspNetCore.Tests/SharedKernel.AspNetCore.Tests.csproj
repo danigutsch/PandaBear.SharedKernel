@@ -30,6 +30,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Logging\SharedKernel.Testing.Logging.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.AspNetCore\SharedKernel.Testing.AspNetCore.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Http\SharedKernel.Testing.Http.csproj" />
     </ItemGroup>
 
 </Project>

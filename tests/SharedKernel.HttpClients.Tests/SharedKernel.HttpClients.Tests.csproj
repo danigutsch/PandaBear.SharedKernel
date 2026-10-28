@@ -9,6 +9,7 @@
         <Using Include="Microsoft.Extensions.DependencyInjection" />
         <Using Include="PandaBear.HttpClients" />
         <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="PandaBear.Testing.Http" />
         <Using Include="PandaBear.Testing" />
         <Using Include="Xunit" />
     </ItemGroup>
@@ -24,6 +25,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.HttpClients\SharedKernel.HttpClients.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Http\SharedKernel.Testing.Http.csproj" />
     </ItemGroup>
 
 </Project>
