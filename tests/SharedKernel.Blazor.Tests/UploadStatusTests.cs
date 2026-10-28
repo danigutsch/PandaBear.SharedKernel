@@ -234,6 +234,80 @@ public sealed class UploadStatusTests : BunitContext
     }
 
     [Fact]
+    public void Detail_renders_the_fragment_with_the_state_outside_the_live_region()
+    {
+        // Arrange
+        var state = Started();
+        state.ReportBytes(state.OperationId, 40);
+        var detail = TextDetail(current => $"Uploading {current.FileName}: {current.BytesTransferred} of {current.TotalBytes} bytes.");
+
+        // Act
+        var cut = this.RenderStatusWithDetail(state, detail);
+
+        // Assert
+        cut.Find("section > [data-upload-detail]").TextContent.ShouldBe("Uploading customers.csv: 40 of 100 bytes.");
+        cut.FindAll("[role=status] [data-upload-detail]").ShouldBeEmpty();
+        cut.Find("[role=status]").TextContent.ShouldBe("customers.csv upload is 40% complete.");
+        cut.Find("[data-upload-detail]").HasAttribute("role").ShouldBeFalse();
+        cut.Find("[data-upload-detail]").HasAttribute("aria-live").ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Null_detail_renders_the_existing_markup_only()
+    {
+        // Arrange
+        var state = Started();
+
+        // Act
+        var cut = this.RenderStatusWithDetail(state, null);
+
+        // Assert
+        cut.FindAll("[data-upload-detail]").ShouldBeEmpty();
+        cut.Find("section").Children.Select(child => child.LocalName).ToArray().ShouldBe(["div", "progress", "button"]);
+        cut.Find("section").GetAttribute("aria-label").ShouldBe(RegionLabel);
+        cut.Find("section").GetAttribute("tabindex").ShouldBe("-1");
+        cut.Find("section").GetAttribute("class").ShouldBe("upload");
+        cut.Find("[role=status]").TextContent.ShouldBe("customers.csv queued.");
+    }
+
+    [Fact]
+    public void Detail_does_not_change_what_the_live_region_announces_or_bounds()
+    {
+        // Arrange
+        var state = Started(HostileText.Markup + HostileText.VeryLong(1_000));
+        state.Fail(state.OperationId, HostileText.Markup + HostileText.VeryLong(10_000));
+        var detail = TextDetail(_ => "More detail.");
+
+        // Act
+        var cut = this.RenderStatusWithDetail(state, detail);
+
+        // Assert
+        cut.FindAll("script, img").ShouldBeEmpty();
+        cut.Find("[role=status]").TextContent.ShouldNotContain("More detail.", StringComparison.Ordinal);
+        cut.Find("[role=status] [data-upload-failure]").TextContent.Length.ShouldBeLessThanOrEqualTo(UploadStatus.MaxDisplayTextLength);
+    }
+
+    [Fact]
+    public void Focus_moves_to_the_region_when_the_focused_cancel_button_disappears_with_a_detail_present()
+    {
+        // Arrange
+        var state = Started();
+        var detail = TextDetail(_ => "More detail.");
+        var cut = this.RenderStatusWithDetail(state, detail);
+        var regionReference = cut.Find("section").GetAttribute("blazor:elementreference");
+        cut.Find("button").Focus();
+
+        // Act
+        state.Cancel(state.OperationId);
+        cut.Render();
+
+        // Assert
+        var invocation = JSInterop.VerifyFocusAsyncInvoke(1)[0];
+        invocation.Arguments[0].ShouldBeOfType<ElementReference>().Id.ShouldBe(regionReference);
+        cut.Find("[data-upload-detail]").TextContent.ShouldBe("More detail.");
+    }
+
+    [Fact]
     public void Missing_state_is_rejected()
     {
         // Arrange & Act
