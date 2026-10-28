@@ -302,6 +302,9 @@
       "PandaBear.SharedKernel.InputNormalization": {
         "type": "Project"
       },
+      "PandaBear.SharedKernel.IO": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.ObjectStorage": {
         "type": "Project"
       },
