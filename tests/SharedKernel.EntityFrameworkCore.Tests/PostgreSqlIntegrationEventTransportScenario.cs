@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 using PandaBear.Messaging;
 using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
@@ -29,6 +30,11 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         this.database = database;
         this.dataSource = dataSource;
     }
+
+    private readonly RecordingLogger<PostgreSqlIntegrationEventTransportConsumer<TransportDbContext>> logger = new();
+
+    /// <summary>Gets the records the consumer under test has logged.</summary>
+    internal IReadOnlyList<RecordedLog> LogRecords => logger.Records;
 
     /// <summary>
     /// Leases an isolated PostgreSQL database and opens a data source on it, releasing the database if creation fails.
@@ -203,6 +209,7 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
             _ => throw new ArgumentOutOfRangeException(nameof(publisherLifetime), publisherLifetime, "Unsupported test publisher lifetime.")
         };
         services.AddSingleton(timeProvider ?? TimeProvider.System);
+        services.AddSingleton<ILogger<PostgreSqlIntegrationEventTransportConsumer<TransportDbContext>>>(logger);
         services.AddPostgreSqlIntegrationEventTransportConsumer<TransportDbContext>(ConsumerName);
         services.Configure<IntegrationEventOutboxRelayOptions>(
             IntegrationEventOptionsNames.Consumer<TransportDbContext>(),

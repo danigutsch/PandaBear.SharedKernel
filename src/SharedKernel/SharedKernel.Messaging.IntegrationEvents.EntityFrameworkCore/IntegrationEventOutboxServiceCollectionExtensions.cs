@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PandaBear.EntityFrameworkCore;
 using PandaBear.Idempotency.EntityFrameworkCore;
@@ -303,6 +304,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
             sp.GetRequiredService<IServiceScopeFactory>(),
             sp.GetRequiredService<TimeProvider>(),
             sp.GetRequiredService<IOptionsMonitor<IntegrationEventOutboxRelayOptions>>(),
+            sp.GetRequiredService<ILogger<PostgreSqlIntegrationEventTransportConsumer<TContext>>>(),
             consumerName));
     }
 

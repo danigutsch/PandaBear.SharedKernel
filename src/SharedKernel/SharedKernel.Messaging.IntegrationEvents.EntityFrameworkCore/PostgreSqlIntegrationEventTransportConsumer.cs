@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
@@ -10,11 +11,13 @@ namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 /// <param name="scopeFactory">Factory for the per-batch service scope.</param>
 /// <param name="timeProvider">Clock for claim and retry times.</param>
 /// <param name="options">Monitor that supplies the per-context consumer options.</param>
+/// <param name="logger">Logger that receives each failed attempt with its exception; stored failure state keeps only the exception type.</param>
 /// <param name="consumerName">Name of the consumer whose messages are handled.</param>
-internal sealed class PostgreSqlIntegrationEventTransportConsumer<TContext>(
+internal sealed partial class PostgreSqlIntegrationEventTransportConsumer<TContext>(
     IServiceScopeFactory scopeFactory,
     TimeProvider timeProvider,
     IOptionsMonitor<IntegrationEventOutboxRelayOptions> options,
+    ILogger<PostgreSqlIntegrationEventTransportConsumer<TContext>> logger,
     string consumerName)
     where TContext : DbContext
 {
@@ -63,6 +66,7 @@ internal sealed class PostgreSqlIntegrationEventTransportConsumer<TContext>(
                 if (message.ConsumeAttempts + 1 >= consumerOptions.MaxConsumeAttempts)
                 {
                     message.MarkPoisoned(attemptedAt, DescribeConsumeFailure(exception));
+                    LogMessagePoisoned(exception, consumerName, message.Id, message.ConsumeAttempts);
                 }
                 else
                 {
@@ -70,6 +74,7 @@ internal sealed class PostgreSqlIntegrationEventTransportConsumer<TContext>(
                         attemptedAt,
                         attemptedAt.Add(GetRetryDelay(message.ConsumeAttempts)),
                         DescribeConsumeFailure(exception));
+                    LogConsumeFailed(exception, consumerName, message.Id, message.ConsumeAttempts);
                 }
             }
 
@@ -98,4 +103,10 @@ internal sealed class PostgreSqlIntegrationEventTransportConsumer<TContext>(
     {
         return exception.GetType().FullName ?? exception.GetType().Name;
     }
+
+    [LoggerMessage(1, LogLevel.Warning, "Transport consumer {ConsumerName} failed to handle message {MessageId} on attempt {Attempt}; it will be retried")]
+    private partial void LogConsumeFailed(Exception exception, string consumerName, Guid messageId, int attempt);
+
+    [LoggerMessage(2, LogLevel.Error, "Transport consumer {ConsumerName} poisoned message {MessageId} after attempt {Attempt}")]
+    private partial void LogMessagePoisoned(Exception exception, string consumerName, Guid messageId, int attempt);
 }
