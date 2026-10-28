@@ -195,14 +195,14 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
 
         builder.OpenElement(5, "div");
         builder.AddAttribute(6, "role", "status");
-        builder.AddAttribute(15, "class", StatusClass);
-        builder.AddContent(7, BoundedText.ToDisplay(State.Announcement, MaxDisplayTextLength * 2));
+        builder.AddAttribute(7, "class", StatusClass);
+        builder.AddContent(8, BoundedText.ToDisplay(State.Announcement, MaxDisplayTextLength * 2));
         if (RenderFailureInStatus && State.Status is UploadOperationStatus.Failed && !string.IsNullOrWhiteSpace(State.FailureMessage))
         {
-            builder.AddContent(8, " ");
-            builder.OpenElement(9, "span");
-            builder.AddAttribute(10, "data-upload-failure", true);
-            builder.AddContent(11, BoundedText.ToDisplay(State.FailureMessage, MaxDisplayTextLength));
+            builder.AddContent(9, " ");
+            builder.OpenElement(10, "span");
+            builder.AddAttribute(11, "data-upload-failure", true);
+            builder.AddContent(12, BoundedText.ToDisplay(State.FailureMessage, MaxDisplayTextLength));
             builder.CloseElement();
         }
 
@@ -210,9 +210,9 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
 
         if (Detail is not null)
         {
-            builder.OpenElement(12, "div");
-            builder.AddAttribute(13, "data-upload-detail", true);
-            builder.AddContent(14, Detail(State));
+            builder.OpenElement(13, "div");
+            builder.AddAttribute(14, "data-upload-detail", true);
+            builder.AddContent(15, Detail(State));
             builder.CloseElement();
         }
 
@@ -238,12 +238,12 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
     {
         builder.OpenElement(20, "progress");
         builder.AddAttribute(21, "aria-label", ProgressAccessibleName(fileName));
-        builder.AddAttribute(25, "class", ProgressClass);
+        builder.AddAttribute(22, "class", ProgressClass);
         if (State.IsDeterminate)
         {
-            builder.AddAttribute(22, "max", State.TotalBytes);
-            builder.AddAttribute(23, "value", State.BytesTransferred);
-            builder.AddContent(24, string.Format(CultureInfo.InvariantCulture, ProgressTextFormat ?? "{0} / {1}", State.BytesTransferred, State.TotalBytes));
+            builder.AddAttribute(23, "max", State.TotalBytes);
+            builder.AddAttribute(24, "value", State.BytesTransferred);
+            builder.AddContent(25, string.Format(CultureInfo.InvariantCulture, ProgressTextFormat ?? "{0} / {1}", State.BytesTransferred, State.TotalBytes));
         }
 
         builder.CloseElement();
@@ -255,12 +255,12 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
         builder.OpenElement(30, "button");
         builder.AddAttribute(31, "type", "button");
         builder.AddAttribute(32, "aria-label", AccessibleName(CancelLabelFormat, CancelText, fileName));
-        builder.AddAttribute(37, "class", CancelClass);
-        builder.AddAttribute(33, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => OnCancel.InvokeAsync()));
+        builder.AddAttribute(33, "class", CancelClass);
+        builder.AddAttribute(34, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => OnCancel.InvokeAsync()));
 
-        builder.AddAttribute(34, "onfocus", (Action<FocusEventArgs>)(_ => _cancelFocused = true));
-        builder.AddAttribute(35, "onblur", (Action<FocusEventArgs>)(_ => _cancelFocused = false));
-        builder.AddContent(36, CancelText);
+        builder.AddAttribute(35, "onfocus", (Action<FocusEventArgs>)(_ => _cancelFocused = true));
+        builder.AddAttribute(36, "onblur", (Action<FocusEventArgs>)(_ => _cancelFocused = false));
+        builder.AddContent(37, CancelText);
         builder.CloseElement();
     }
 }
