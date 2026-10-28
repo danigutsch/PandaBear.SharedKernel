@@ -1,15 +1,17 @@
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.IO;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.IO;
 
 /// <summary>Tests the detection of two paths that name the same file through symbolic links.</summary>
 public sealed class FilePathsTests : IDisposable
 {
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-file-paths-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string directory => temporaryDirectory.Path;
 
     /// <inheritdoc />
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Theory(SkipType = typeof(FileSystemProbes), SkipUnless = nameof(FileSystemProbes.CanCreateSymbolicLinks), Skip = "This system does not let the test create symbolic links.")]
     [InlineData(false)]

@@ -1,3 +1,4 @@
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 

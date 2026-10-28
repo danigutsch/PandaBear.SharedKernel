@@ -1,3 +1,5 @@
+using PandaBear.Testing;
+
 namespace PandaBear.Repository.Tests;
 
 /// <summary>Guards the <c>run-mutation-tests</c> command, which installs the pinned Stryker version and runs each configured Stryker file.</summary>

@@ -123,11 +123,23 @@ PandaBear.Testing.BlockingReadStream
 PandaBear.Testing.BlockingReadStream.BlockingReadStream(System.Action? onReadStarted = null) -> void
 PandaBear.Testing.BlockingReadStream.IsDisposed.get -> bool
 PandaBear.Testing.BlockingReadStream.ReadStarted.get -> System.Threading.Tasks.Task!
+PandaBear.Testing.FakeExecutable
+PandaBear.Testing.FileSystemProbes
 PandaBear.Testing.GatedCountingReadStream
 PandaBear.Testing.GatedCountingReadStream.BytesRead.get -> long
 PandaBear.Testing.GatedCountingReadStream.GatedCountingReadStream(byte[]! content) -> void
 PandaBear.Testing.GatedCountingReadStream.ReadStarted.get -> System.Threading.Tasks.Task!
 PandaBear.Testing.GatedCountingReadStream.Release() -> void
+PandaBear.Testing.RecordingFakeExecutable
+PandaBear.Testing.RecordingFakeExecutable.Arguments() -> string![]!
+PandaBear.Testing.RecordingFakeExecutable.ArgumentsPath.get -> string!
+PandaBear.Testing.RecordingFakeExecutable.Environment() -> string![]!
+PandaBear.Testing.RecordingFakeExecutable.EnvironmentPath.get -> string!
+PandaBear.Testing.RecordingFakeExecutable.Path.get -> string!
+PandaBear.Testing.RecordingFakeExecutable.ProcessId() -> int
+PandaBear.Testing.RecordingFakeExecutable.ProcessIdPath.get -> string!
+PandaBear.Testing.RecordingFakeExecutable.RecordingFakeExecutable(string! directory, string! name, int exitCode, string! body) -> void
+PandaBear.Testing.RecordingFakeExecutable.Started.get -> bool
 PandaBear.Testing.RecordingWriteStream
 PandaBear.Testing.RecordingWriteStream.RecordingWriteStream() -> void
 PandaBear.Testing.RecordingWriteStream.WriteSizes.get -> System.Collections.Generic.IReadOnlyList<int>!
@@ -165,6 +177,12 @@ PandaBear.Testing.TrackingReadStream.ReadCount.get -> int
 PandaBear.Testing.TrackingReadStream.TrackingReadStream(byte[]! content) -> void
 PandaBear.Testing.UnsizedStream
 PandaBear.Testing.UnsizedStream.UnsizedStream(byte[]! content) -> void
+static PandaBear.Testing.FakeExecutable.Quote(string! value) -> string!
+static PandaBear.Testing.FakeExecutable.WriteMarker(string! path, string! marker) -> void
+static PandaBear.Testing.FakeExecutable.WriteScript(string! path, string! body) -> void
+static PandaBear.Testing.FileSystemProbes.CanCreateSymbolicLinks.get -> bool
+static PandaBear.Testing.FileSystemProbes.CanDenyAccess.get -> bool
+static PandaBear.Testing.FileSystemProbes.IsCaseSensitive.get -> bool
 static PandaBear.Testing.TestScopeExtensions.ToTraitValue(this PandaBear.Testing.TestScope scope) -> string!
 PandaBear.Testing.TestHost
 PandaBear.Testing.TestHost.InProcess = 0 -> PandaBear.Testing.TestHost
