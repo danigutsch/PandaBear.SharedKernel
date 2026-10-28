@@ -8,7 +8,8 @@ Do not log payloads, original filenames, temporary paths, or upload credentials.
 Buffer only bounded small content. Spool when a non-seekable input needs independent sequential passes
 such as signature validation, scanning, decoding, hashing, and storage. Rewind explicitly before each
 pass. Do not duplicate byte arrays or add a second copy merely because an API accepts ReadOnlyMemory.
-Use seekable input directly only when the caller controls its lifetime, size, position, and concurrent use.
+Use seekable input directly only when the caller controls its lifetime, size, position, and concurrent use;
+`SeekableContent.Create` does this for seekable input at position zero and bounds it with one counting pass.
 
 Memory mapping is for measured random access to an existing local file whose lifetime is controlled.
 A network request is not a local file and cannot be mapped directly. Creating a file solely to map a
@@ -19,15 +20,23 @@ of the actual workload justify mapping. Do not bypass malware scanning or valida
 
 Add one concrete `PandaBear.IO.SeekableContent` lease in `PandaBear.SharedKernel.IO`, with no runtime
 package dependencies. `Create(Stream source, long maxLength, int memoryThreshold, CancellationToken ct)`
-copies from the current position, leaves source open, and returns `Content` positioned at zero.
-The lease owns only the copy. Dispose it after all passes. The stream is mutable, intended for sequential
-use by cooperating callers, and must not escape the lease lifetime. No interfaces, DI registrations,
+leaves source open and returns `Content` positioned at zero with `Length` equal to the content length.
+A non-seekable source, or a seekable one not at position zero, is copied from its current position and the
+lease owns only the copy. A seekable source at position zero is passed through: one bounded counting pass
+(pooled buffer, `maxLength` enforced on actual bytes) checks that the count equals `Length`, rewinds, and
+`Content` is the source instance itself. The lease never disposes a source. Its `Position` is shared mutable
+state, so the caller must not use the source concurrently or after the lease, and must not rely on the
+source being unchanged between the count and later passes. Dispose the lease after all passes. The stream
+is mutable, intended for sequential use by cooperating callers, and must not escape the lease lifetime.
+A seekable source at a non-zero position spools so that `Position = 0` rewinds and `Length` stay correct. No interfaces, DI registrations,
 factories, extension surfaces, caching, or custom exception hierarchy are needed.
 
 `maxLength` counts actual copied bytes; zero accepts only empty input. Oversize input throws
 `InvalidDataException` after at most one extra byte is consumed. Negative limits fail before reads.
 Empty input is valid here; minimum lengths and file formats are host policy. Copy failures and cancellation
-clean up the partial copy; they never dispose or rewind source. Retrying requires a new source or caller rewind.
+clean up the partial copy; they never dispose source, and a copy never rewinds it, so retrying needs a new
+source or caller rewind. A failed pass-through restores the source to position zero. A `Length` that
+disagrees with the bytes read throws `InvalidDataException`.
 
 The memory threshold bounds content retained in memory, not total process allocations: the fixed copy
 buffer, stream bookkeeping, and transient memory during growth also count. Spill before writing a chunk
@@ -74,5 +83,5 @@ See the [package README](../src/SharedKernel/SharedKernel.IO.Analyzers/README.md
 
 The real HTTP comparison and its limitations live in
 [the IO benchmark](../benchmarks/SharedKernel.IO.Benchmarks/README.md). Focused lease tests cover
-non-seekable input, exact and exceeded limits, cancellation, and cleanup. No claim of packed NativeAOT
+non-seekable and seekable input, pass-through identity, exact and exceeded limits, cancellation, and cleanup. No claim of packed NativeAOT
 execution or Windows execution follows from analyzer compatibility alone.
