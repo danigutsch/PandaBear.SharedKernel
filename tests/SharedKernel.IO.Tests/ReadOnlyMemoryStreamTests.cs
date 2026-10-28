@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace PandaBear.IO.Tests;
 
 /// <summary>
@@ -217,6 +219,40 @@ public sealed class ReadOnlyMemoryStreamTests
         completedSynchronously.ShouldBeTrue();
         read.ShouldBe(3);
         buffer.SequenceEqual(new byte[] { 1, 2, 3 }).ShouldBeTrue();
+    }
+
+    [Fact]
+    [SuppressMessage("Performance", "CA1835:Prefer the memory-based overloads", Justification = "The array overload is the code path under test.")]
+    public async Task ReadAsync_through_the_array_overload_returns_the_data_and_advances_the_position()
+    {
+        // Arrange
+        using var stream = new ReadOnlyMemoryStream(new byte[] { 1, 2, 3, 4 });
+        var buffer = new byte[4];
+
+        // Act
+        var read = await stream.ReadAsync(buffer, 1, 3, TestContext.Current.CancellationToken);
+
+        // Assert
+        read.ShouldBe(3);
+        buffer.SequenceEqual(new byte[] { 0, 1, 2, 3 }).ShouldBeTrue();
+        stream.Position.ShouldBe(3);
+    }
+
+    [Fact]
+    [SuppressMessage("Performance", "CA1835:Prefer the memory-based overloads", Justification = "The array overload is the code path under test.")]
+    public async Task ReadAsync_through_the_array_overload_honors_a_canceled_token()
+    {
+        // Arrange
+        using var stream = new ReadOnlyMemoryStream(new byte[] { 1, 2, 3 });
+        using var cancellation = new CancellationTokenSource();
+        await cancellation.CancelAsync();
+        Func<Task> action = async () => _ = await stream.ReadAsync(new byte[3], 0, 3, cancellation.Token);
+
+        // Act
+        await action.ShouldThrow<TaskCanceledException>();
+
+        // Assert
+        stream.Position.ShouldBe(0);
     }
 
     [Fact]
