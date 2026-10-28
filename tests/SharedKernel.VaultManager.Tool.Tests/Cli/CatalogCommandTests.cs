@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Formats.Bitwarden;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
@@ -11,19 +12,21 @@ public sealed class CatalogCommandTests : IDisposable
     private const string Password = "fixture-catalog-cli-password";
     private const string NotesText = "fixture catalog cli notes";
     private const string ExportPassword = "fixture export password";
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-catalog-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
 
-    /// <summary>Deletes the temporary directory.</summary>
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    private string DirectoryPath => temporaryDirectory.Path;
+
+    /// <inheritdoc />
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public async Task Catalog_then_apply_renames_and_moves_an_item_without_showing_secrets()
     {
         // Arrange
-        string vault = CliInputs.LoginWithNotesInFolder(directory, Password, NotesText);
-        string catalogPath = Path.Combine(directory, "catalog.json");
-        string decisionsPath = Path.Combine(directory, "decisions.json");
-        string output = Path.Combine(directory, "organized.json");
+        string vault = CliInputs.LoginWithNotesInFolder(DirectoryPath, Password, NotesText);
+        string catalogPath = Path.Combine(DirectoryPath, "catalog.json");
+        string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
+        string output = Path.Combine(DirectoryPath, "organized.json");
         var environment = new TestPrompts(ExportPassword).Environment();
 
         // Act
@@ -63,9 +66,9 @@ public sealed class CatalogCommandTests : IDisposable
     public async Task Apply_refuses_a_catalog_made_from_another_version_of_the_vault()
     {
         // Arrange
-        string vault = CliInputs.LoginWithNotesInFolder(directory, Password, NotesText);
-        string catalogPath = Path.Combine(directory, "catalog.json");
-        string output = Path.Combine(directory, "organized.json");
+        string vault = CliInputs.LoginWithNotesInFolder(DirectoryPath, Password, NotesText);
+        string catalogPath = Path.Combine(DirectoryPath, "catalog.json");
+        string output = Path.Combine(DirectoryPath, "organized.json");
         var environment = new TestPrompts(ExportPassword).Environment();
         (await CommandLineRun.Invoke(environment, ["catalog", vault, "-o", catalogPath], TestContext.Current.CancellationToken)).ExitCode.ShouldBe(0);
         await File.AppendAllTextAsync(vault, " ", TestContext.Current.CancellationToken);
@@ -83,9 +86,9 @@ public sealed class CatalogCommandTests : IDisposable
     public async Task Apply_writes_nothing_while_the_catalog_sets_withheld_notes()
     {
         // Arrange
-        string vault = CliInputs.LoginWithNotesInFolder(directory, Password, NotesText);
-        string catalogPath = Path.Combine(directory, "catalog.json");
-        string output = Path.Combine(directory, "organized.json");
+        string vault = CliInputs.LoginWithNotesInFolder(DirectoryPath, Password, NotesText);
+        string catalogPath = Path.Combine(DirectoryPath, "catalog.json");
+        string output = Path.Combine(DirectoryPath, "organized.json");
         var environment = new TestPrompts(ExportPassword).Environment();
         (await CommandLineRun.Invoke(environment, ["catalog", vault, "-o", catalogPath], TestContext.Current.CancellationToken)).ExitCode.ShouldBe(0);
         var document = JsonNode.Parse(await File.ReadAllTextAsync(catalogPath, TestContext.Current.CancellationToken)).ShouldNotBeNull();
@@ -106,9 +109,9 @@ public sealed class CatalogCommandTests : IDisposable
     public async Task Apply_names_the_attachments_to_upload_only_when_it_writes_the_vault()
     {
         // Arrange
-        string vault = CliInputs.KeeperZipWithFolderAndAttachments(directory);
-        string catalogPath = Path.Combine(directory, "catalog.json");
-        string output = Path.Combine(directory, "organized.json");
+        string vault = CliInputs.KeeperZipWithFolderAndAttachments(DirectoryPath);
+        string catalogPath = Path.Combine(DirectoryPath, "catalog.json");
+        string output = Path.Combine(DirectoryPath, "organized.json");
         var environment = new TestPrompts(ExportPassword).Environment();
         (await CommandLineRun.Invoke(environment, ["catalog", vault, "-o", catalogPath], TestContext.Current.CancellationToken)).ExitCode.ShouldBe(0);
         var document = JsonNode.Parse(await File.ReadAllTextAsync(catalogPath, TestContext.Current.CancellationToken)).ShouldNotBeNull();

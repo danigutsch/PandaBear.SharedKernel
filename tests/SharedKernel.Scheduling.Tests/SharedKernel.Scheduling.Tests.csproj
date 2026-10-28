@@ -8,12 +8,14 @@
 
   <ItemGroup>
     <Using Include="PandaBear.Testing.Assertions" />
+    <Using Include="PandaBear.Testing.Logging" />
     <Using Include="Xunit" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Scheduling\SharedKernel.Scheduling.csproj" />
     <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+    <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Logging\SharedKernel.Testing.Logging.csproj" />
     <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
   </ItemGroup>
 

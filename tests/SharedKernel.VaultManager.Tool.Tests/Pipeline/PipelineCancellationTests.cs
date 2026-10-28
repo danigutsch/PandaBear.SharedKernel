@@ -1,3 +1,4 @@
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Pipeline;
 using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
@@ -8,17 +9,19 @@ public sealed class PipelineCancellationTests : IDisposable
 {
     private const string Password = "fixture-output-password";
     private const string ExportPassword = "fixture export password";
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-pipeline-cancellation-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string DirectoryPath => temporaryDirectory.Path;
 
     /// <inheritdoc />
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public void Merge_canceled_at_the_new_password_prompt_leaves_neither_a_temporary_file_nor_an_output()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
-        string output = Path.Combine(directory, "merged.json");
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
+        string output = Path.Combine(DirectoryPath, "merged.json");
         using var cancellation = new CancellationTokenSource();
         var prompts = new TestPrompts(ExportPassword) { OnNewPassword = cancellation.Cancel };
         var pipeline = new VaultPipeline(prompts.Environment());
@@ -31,15 +34,15 @@ public sealed class PipelineCancellationTests : IDisposable
 
         // Assert
         prompts.NewPasswordPrompts.ShouldHaveSingleItem();
-        Directory.GetFileSystemEntries(directory).ShouldBe([input]);
+        Directory.GetFileSystemEntries(DirectoryPath).ShouldBe([input]);
     }
 
     [Fact]
     public void Merge_with_a_canceled_token_writes_nothing_and_asks_for_no_password()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
-        string output = Path.Combine(directory, "merged.json");
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var prompts = new TestPrompts(ExportPassword);
         var pipeline = new VaultPipeline(prompts.Environment());
         var scanned = VaultPipeline.Scan(pipeline.Load([input], TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);
@@ -53,7 +56,7 @@ public sealed class PipelineCancellationTests : IDisposable
 
         // Assert
         prompts.NewPasswordPrompts.ShouldBeEmpty();
-        Directory.GetFileSystemEntries(directory).ShouldBe([input]);
+        Directory.GetFileSystemEntries(DirectoryPath).ShouldBe([input]);
     }
 
     [Fact]
@@ -79,7 +82,7 @@ public sealed class PipelineCancellationTests : IDisposable
     public void Scan_with_a_canceled_token_stops_before_scanning()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
         var loaded = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Load([input], TestContext.Current.CancellationToken);
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();

@@ -1,3 +1,4 @@
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
@@ -7,17 +8,19 @@ public sealed class InspectCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private const string FilePassword = "fixture file password";
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-inspect-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
 
-    /// <summary>Deletes the temporary directory.</summary>
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    private string DirectoryPath => temporaryDirectory.Path;
+
+    /// <inheritdoc />
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public async Task Inspect_reports_format_counts_folders_times_attachments_and_warnings_per_input()
     {
         // Arrange
-        string zip = CliInputs.KeeperZipWithFolderAndAttachments(directory);
-        string bitwarden = CliInputs.BitwardenWithFolder(directory);
+        string zip = CliInputs.KeeperZipWithFolderAndAttachments(DirectoryPath);
+        string bitwarden = CliInputs.BitwardenWithFolder(DirectoryPath);
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", zip, bitwarden], TestContext.Current.CancellationToken);
@@ -62,7 +65,7 @@ public sealed class InspectCommandTests : IDisposable
     public async Task Inspect_lists_declared_folders_that_hold_no_item()
     {
         // Arrange
-        string input = PipelineInputs.Write(directory, "bitwarden.json", """{"encrypted":false,"folders":[{"id":"f","name":"Archive/Old"}],"items":[]}""");
+        string input = PipelineInputs.Write(DirectoryPath, "bitwarden.json", """{"encrypted":false,"folders":[{"id":"f","name":"Archive/Old"}],"items":[]}""");
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", input], TestContext.Current.CancellationToken);
@@ -76,7 +79,7 @@ public sealed class InspectCommandTests : IDisposable
     public async Task Inspect_asks_once_for_the_password_of_a_protected_input()
     {
         // Arrange
-        string input = CliInputs.ProtectedBitwarden(directory, FilePassword);
+        string input = CliInputs.ProtectedBitwarden(DirectoryPath, FilePassword);
         var prompts = new TestPrompts(ExportPassword, FilePassword);
 
         // Act
@@ -92,8 +95,8 @@ public sealed class InspectCommandTests : IDisposable
     public async Task Inspect_reports_the_readable_inputs_and_exits_3_for_an_unreadable_one()
     {
         // Arrange
-        string bitwarden = CliInputs.BitwardenWithFolder(directory);
-        string missing = Path.Combine(directory, "missing.json");
+        string bitwarden = CliInputs.BitwardenWithFolder(DirectoryPath);
+        string missing = Path.Combine(DirectoryPath, "missing.json");
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", missing, bitwarden], TestContext.Current.CancellationToken);
@@ -109,7 +112,7 @@ public sealed class InspectCommandTests : IDisposable
     public async Task Inspect_takes_an_argument_starting_with_at_as_a_file_name_and_shows_no_vault_values()
     {
         // Arrange
-        string export = CliInputs.BitwardenWithFolder(directory);
+        string export = CliInputs.BitwardenWithFolder(DirectoryPath);
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", "@" + export], TestContext.Current.CancellationToken);
@@ -127,7 +130,7 @@ public sealed class InspectCommandTests : IDisposable
     {
         // Arrange
         string folder = string.Concat("Work", (char)0x1B, "[2J", (char)0x9B, "31m", (char)0x7F, (char)0x07, "end");
-        string bitwarden = CliInputs.BitwardenWithFolder(directory, folder);
+        string bitwarden = CliInputs.BitwardenWithFolder(DirectoryPath, folder);
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", bitwarden], TestContext.Current.CancellationToken);
@@ -145,7 +148,7 @@ public sealed class InspectCommandTests : IDisposable
     public async Task Inspect_names_an_input_it_cannot_read(string name, string content, string reason)
     {
         // Arrange
-        string input = PipelineInputs.Write(directory, name, content);
+        string input = PipelineInputs.Write(DirectoryPath, name, content);
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", input], TestContext.Current.CancellationToken);

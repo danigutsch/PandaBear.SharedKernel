@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Matching;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Pipeline;
@@ -15,10 +16,12 @@ public sealed class VaultReportTests : IDisposable
     private const string NotesPassword = "Gh-notes-Passw0rd!";
     private const string KeeperOnlyPassword = "fixture-keeper-only-password";
     private const string ExportPassword = "fixture export password";
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-pipeline-report-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string DirectoryPath => temporaryDirectory.Path;
 
     /// <inheritdoc />
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public void Report_decisions_file_and_result_text_never_contain_vault_values()
@@ -29,15 +32,15 @@ public sealed class VaultReportTests : IDisposable
         string[] notesCodes = PipelineSecrets.GitHubRecoveryCodes(610);
         string[] fileCodes = PipelineSecrets.GitHubRecoveryCodes(630);
         string privateKey = PemFixtures.Ed25519OpenSsh();
-        string zip = Write(directory, "keeper.zip", CommanderZip(
+        string zip = Write(DirectoryPath, "keeper.zip", CommanderZip(
             KeeperJson(
                 KeeperLogin("rec-github", "GitHub", "alice", OldPassword, "https://github.com/login", PipelineSecrets.RecoveryNotes(notesCodes, NotesPassword), totp),
                 KeeperLogin("rec-keeper", "Keeper only", "carol", KeeperOnlyPassword, "https://keeper-only.example.com"),
                 KeeperSshKey("rec-ssh", "Deploy key", privateKey, PemFixtures.Ed25519PublicKey),
                 KeeperFileRecord("rec-files", "GitHub backup", "file-codes", "github-recovery-codes.txt")),
             ("files/file-codes", string.Join('\n', fileCodes))));
-        string bitwarden = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-github", "GitHub", "alice", NewPassword, "https://github.com")));
-        string output = Path.Combine(directory, "merged.json");
+        string bitwarden = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-github", "GitHub", "alice", NewPassword, "https://github.com")));
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
         var proposed = pipeline.Run(new PipelineRequest([zip, bitwarden]));
         var github = proposed.Findings.ShouldHaveSingleItem(item => string.Equals(item.ItemName, "GitHub", StringComparison.Ordinal));
@@ -74,21 +77,21 @@ public sealed class VaultReportTests : IDisposable
     {
         // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(700);
-        string zip = Write(directory, "keeper.zip", CommanderZip(
+        string zip = Write(DirectoryPath, "keeper.zip", CommanderZip(
             KeeperJson(
                 KeeperLogin("rec-mail", "Mail", "alice", "short", "https://mail.example.com"),
                 KeeperLogin("rec-bank", "Bank", "alice", "short", "https://bank.example.org"),
                 KeeperFileRecord("rec-files", "GitHub backup", "file-codes", "github-recovery-codes.txt")),
             ("files/file-codes", string.Join('\n', codes))));
         string csv = Write(
-            directory,
+            DirectoryPath,
             "bitwarden.csv",
             "folder,favorite,type,name,notes,fields,reprompt,login_uri,login_username,login_password,login_totp\n"
             + ",,login,Mail,,,0,https://mail.example.com,alice,other-mail-password,\n");
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
 
         // Act
-        var result = pipeline.Run(new PipelineRequest([zip, csv]) { Output = new PipelineOutput(Path.Combine(directory, "merged.json")) });
+        var result = pipeline.Run(new PipelineRequest([zip, csv]) { Output = new PipelineOutput(Path.Combine(DirectoryPath, "merged.json")) });
         string report = VaultReport.ToMarkdown(result);
 
         // Assert
@@ -118,14 +121,14 @@ public sealed class VaultReportTests : IDisposable
     {
         // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(720);
-        string keeper = Write(directory, "keeper.json", KeeperJson(
+        string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(
             KeeperLogin("rec-github", "GitHub", "alice", OldPassword, "https://github.com", PipelineSecrets.RecoveryNotes(codes, NotesPassword), modified: !conflict)));
-        string bitwarden = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-github", "GitHub", "alice", NewPassword, "https://github.com", revised: false)));
+        string bitwarden = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-github", "GitHub", "alice", NewPassword, "https://github.com", revised: false)));
         string[] inputs = conflict ? [keeper, bitwarden] : [keeper];
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
 
         // Act
-        var result = pipeline.Run(new PipelineRequest(inputs) { Output = new PipelineOutput(Path.Combine(directory, "merged.json")) });
+        var result = pipeline.Run(new PipelineRequest(inputs) { Output = new PipelineOutput(Path.Combine(DirectoryPath, "merged.json")) });
         string report = VaultReport.ToMarkdown(result);
 
         // Assert
@@ -136,7 +139,7 @@ public sealed class VaultReportTests : IDisposable
     public void Report_lists_the_files_of_attachment_folders_that_two_items_named_bank_share_for_upload_by_hand()
     {
         // Arrange
-        string zip = Write(directory, "bitwarden.zip", TwoBanksZip());
+        string zip = Write(DirectoryPath, "bitwarden.zip", TwoBanksZip());
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
 
         // Act
@@ -161,7 +164,7 @@ public sealed class VaultReportTests : IDisposable
         const string FileName = "scan\u001b[5m.pdf";
         var keeperBank = KeeperLogin("rec-bank", Name, "alice", "fixture-keeper-bank-password", "https://bank.example.com", notes: "PIN: 4821");
         keeperBank["folders"] = new JsonArray(new JsonObject { ["folder"] = Folder });
-        string keeper = Write(directory, "keeper.zip", CommanderZip(KeeperJson(keeperBank, KeeperFileRecord("rec-scan", Name, "file-scan", FileName))));
+        string keeper = Write(DirectoryPath, "keeper.zip", CommanderZip(KeeperJson(keeperBank, KeeperFileRecord("rec-scan", Name, "file-scan", FileName))));
         var bitwardenBank = BitwardenLogin("bw-bank", Name, "alice", "fixture-bitwarden-bank-password", "https://bank.example.com");
         bitwardenBank["folderId"] = "folder-imported";
         var bitwardenExport = new JsonObject
@@ -170,7 +173,7 @@ public sealed class VaultReportTests : IDisposable
             ["folders"] = new JsonArray(new JsonObject { ["id"] = "folder-imported", ["name"] = "Imported" }),
             ["items"] = new JsonArray(bitwardenBank),
         };
-        string bitwarden = Write(directory, "bitwarden.json", bitwardenExport.ToJsonString());
+        string bitwarden = Write(DirectoryPath, "bitwarden.json", bitwardenExport.ToJsonString());
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
 
         // Act
@@ -190,8 +193,8 @@ public sealed class VaultReportTests : IDisposable
     {
         // Arrange
         const string Name = "Bank\u2028# Injected heading";
-        string keeper = Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-bank", Name, "alice", "fixture-keeper-bank-password", "https://bank.example.com")));
-        string bitwarden = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-bank", Name, "alice", "fixture-bitwarden-bank-password", "https://bank.example.com")));
+        string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperLogin("rec-bank", Name, "alice", "fixture-keeper-bank-password", "https://bank.example.com")));
+        string bitwarden = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-bank", Name, "alice", "fixture-bitwarden-bank-password", "https://bank.example.com")));
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
 
         // Act
@@ -209,7 +212,7 @@ public sealed class VaultReportTests : IDisposable
     public void Report_lists_a_password_equal_to_the_item_name_or_user_name_only_as_weak()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(
             BitwardenLogin("bw-router", "Router-Admin-Panel", "admin", "Router-Admin-Panel", "http://192.168.1.1"),
             BitwardenLogin("bw-printer", "Printer", "printer-admin-01", "printer-admin-01", "http://192.168.1.2")));
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
@@ -228,7 +231,7 @@ public sealed class VaultReportTests : IDisposable
     public void Report_lists_a_short_single_class_password_equal_to_the_user_name_once_without_naming_the_reason()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-router", "Router", "admin", "admin", "http://192.168.1.1")));
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-router", "Router", "admin", "admin", "http://192.168.1.1")));
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
 
         // Act
@@ -246,7 +249,7 @@ public sealed class VaultReportTests : IDisposable
     public void Report_names_three_other_items_that_reuse_a_password_and_counts_the_rest()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(
             BitwardenLogin("bw-mail", "Mail", "alice", KeeperOnlyPassword, "https://mail.example.com"),
             BitwardenLogin("bw-bank", "Bank", "alice", KeeperOnlyPassword, "https://bank.example.com"),
             BitwardenLogin("bw-shop", "Shop", "alice", KeeperOnlyPassword, "https://shop.example.com"),

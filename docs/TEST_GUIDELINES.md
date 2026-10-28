@@ -68,11 +68,12 @@ already owns its kind; add a package only when a new kind needs a dependency tha
 
 | Package | Owns | May depend on |
 | --- | --- | --- |
-| `SharedKernel.Testing` | Traits, environment scopes, temporary directories | Test framework only |
+| `SharedKernel.Testing` | Traits, environment scopes, temporary directories, stream and executable doubles, file-system probes | Test framework only |
 | `SharedKernel.Testing.Assertions` | `Should*` assertions for xUnit, `Result` and entity identity | `SharedKernel.Results` |
 | `SharedKernel.Testing.Xunit` | Typed trait attributes (`TestScope`, `TestHost`, `TestFocus`, `TestPriority`, `TestArea`, `TestSurface`) | `SharedKernel.Testing` |
-| `SharedKernel.Testing.Http` | Assertions on HTTP responses and problem details | `SharedKernel.Testing.Assertions` |
-| `SharedKernel.Testing.AspNetCore` | Web application factory helpers | ASP.NET Core testing |
+| `SharedKernel.Testing.Http` | Assertions on HTTP responses and problem details, delegate handler, tracking content | `SharedKernel.Testing.Assertions` |
+| `SharedKernel.Testing.Logging` | Recording and throwing `ILogger` fakes | `Microsoft.Extensions.Logging.Abstractions` |
+| `SharedKernel.Testing.AspNetCore` | Web application factory helpers, form-file, browser-file and throwing-cache fakes | ASP.NET Core testing |
 | `SharedKernel.Testing.Web` | bUnit element assertions | bUnit |
 | `SharedKernel.Testing.Playwright` | Playwright assertions | Playwright |
 | `SharedKernel.Testing.Mediator` | Reference mediator test dispatcher | `SharedKernel.Mediator.Abstractions` |

@@ -1,3 +1,4 @@
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.VaultManager.Tool.Model;
 
@@ -6,10 +7,12 @@ namespace PandaBear.VaultManager.Tool.Tests.Formats;
 /// <summary>Tests that the vault file reader picks the reader for a file's format and reports unreadable input.</summary>
 public sealed class VaultFileReaderTests : IDisposable
 {
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-manager-read-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string DirectoryPath => temporaryDirectory.Path;
 
     /// <inheritdoc />
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Theory]
     [InlineData("keeper-json", "keeper")]
@@ -19,7 +22,7 @@ public sealed class VaultFileReaderTests : IDisposable
     public void Read_dispatches_to_the_reader_for_the_detected_format(string sample, string provider)
     {
         // Arrange
-        string path = FormatSamples.WriteSample(directory, sample);
+        string path = FormatSamples.WriteSample(DirectoryPath, sample);
 
         // Act
         var result = VaultFileReader.Read(path, _ => throw new InvalidOperationException("No password expected."));
@@ -37,7 +40,7 @@ public sealed class VaultFileReaderTests : IDisposable
         // Arrange
         string trash = string.Concat(Enumerable.Range(0, deleted).Select(index =>
             ",{\"id\":\"old-" + index + "\",\"type\":2,\"name\":\"Old\",\"notes\":\"fixture keep me\",\"deletedDate\":\"2026-01-01T00:00:00Z\"}"));
-        string path = Path.Combine(directory, "trash.json");
+        string path = Path.Combine(DirectoryPath, "trash.json");
         File.WriteAllText(path, "{\"encrypted\":false,\"folders\":[],\"items\":[{\"id\":\"kept\",\"type\":2,\"name\":\"Kept\",\"notes\":\"fixture\"}" + trash + "]}");
 
         // Act
@@ -52,7 +55,7 @@ public sealed class VaultFileReaderTests : IDisposable
     public void Read_password_protected_export_asks_for_the_file_password_by_file_name()
     {
         // Arrange
-        string path = FormatSamples.WriteSample(directory, "bitwarden-protected");
+        string path = FormatSamples.WriteSample(DirectoryPath, "bitwarden-protected");
         var asked = new List<string>();
 
         // Act
@@ -71,7 +74,7 @@ public sealed class VaultFileReaderTests : IDisposable
     public void Read_account_restricted_export_throws_with_explanation()
     {
         // Arrange
-        string path = FormatSamples.WriteSample(directory, "bitwarden-restricted");
+        string path = FormatSamples.WriteSample(DirectoryPath, "bitwarden-restricted");
         var action = () => VaultFileReader.Read(path, _ => "unused");
 
         // Act
@@ -85,7 +88,7 @@ public sealed class VaultFileReaderTests : IDisposable
     public void Read_unknown_format_throws_invalid_data()
     {
         // Arrange
-        string path = FormatSamples.WriteSample(directory, "other-text");
+        string path = FormatSamples.WriteSample(DirectoryPath, "other-text");
         var action = () => VaultFileReader.Read(path, _ => "unused");
 
         // Act, Assert
@@ -96,7 +99,7 @@ public sealed class VaultFileReaderTests : IDisposable
     public void Read_reports_an_input_that_is_a_directory_by_its_path()
     {
         // Arrange
-        string path = Directory.CreateDirectory(Path.Combine(directory, "export.json")).FullName;
+        string path = Directory.CreateDirectory(Path.Combine(DirectoryPath, "export.json")).FullName;
         var action = () => VaultFileReader.Read(path, _ => "unused");
 
         // Act
@@ -111,7 +114,7 @@ public sealed class VaultFileReaderTests : IDisposable
     public void Read_rejects_files_larger_than_the_input_cap_before_reading()
     {
         // Arrange
-        string path = Path.Combine(directory, "large.json");
+        string path = Path.Combine(DirectoryPath, "large.json");
         using (var stream = File.Create(path))
         {
             stream.SetLength(VaultFileReader.MaxInputBytes + 1);
@@ -130,7 +133,7 @@ public sealed class VaultFileReaderTests : IDisposable
     public void Read_zip_exports_return_items_from_the_archive()
     {
         // Arrange
-        string keeper = FormatSamples.Write(directory, "keeper.zip", TestZip.Create(
+        string keeper = FormatSamples.Write(DirectoryPath, "keeper.zip", TestZip.Create(
             ("export.json", TestZip.Utf8("""{"records":[{"uid":"u","title":"Zipped","login":"x"}]}"""))));
 
         // Act

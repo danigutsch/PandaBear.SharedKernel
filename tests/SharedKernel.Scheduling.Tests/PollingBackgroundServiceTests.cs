@@ -62,7 +62,7 @@ public sealed class PollingBackgroundServiceTests
         await service.StopAsync(ct);
 
         // Assert
-        var failure = logger.Entries.ShouldHaveSingleItem(entry => entry.Level == LogLevel.Error);
+        var failure = logger.Records.ShouldHaveSingleItem(entry => entry.Level == LogLevel.Error);
         failure.Message.ShouldContain("failing", StringComparison.Ordinal);
         failure.Message.ShouldContain(nameof(InvalidOperationException), StringComparison.Ordinal);
         failure.Message.ShouldNotContain("secret detail", StringComparison.Ordinal);

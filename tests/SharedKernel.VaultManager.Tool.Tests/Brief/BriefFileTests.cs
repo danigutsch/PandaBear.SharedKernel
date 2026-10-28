@@ -1,3 +1,4 @@
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Brief;
 using PandaBear.VaultManager.Tool.Matching;
 using PandaBear.VaultManager.Tool.Model;
@@ -9,10 +10,12 @@ namespace PandaBear.VaultManager.Tool.Tests.Brief;
 public sealed class BriefFileTests : IDisposable
 {
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-brief-file-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
 
-    /// <summary>Deletes the temporary directory.</summary>
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    private string DirectoryPath => temporaryDirectory.Path;
+
+    /// <inheritdoc />
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public void Brief_round_trips_and_is_written_readable_only_by_its_owner()
@@ -39,7 +42,7 @@ public sealed class BriefFileTests : IDisposable
                     ]),
             ],
             [new MatchSuggestion(MatchSuggestionKind.SameTitle, "keeper|keeper.json|rec-2", "bitwarden|bitwarden.json|bw-2", "Mail", "Mail")]);
-        string path = Path.Combine(directory, "brief.json");
+        string path = Path.Combine(DirectoryPath, "brief.json");
 
         // Act
         BriefFile.Write(path, brief, TestContext.Current.CancellationToken);

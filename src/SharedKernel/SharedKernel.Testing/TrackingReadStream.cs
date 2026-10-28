@@ -1,10 +1,10 @@
-namespace PandaBear.HttpClients.Tests;
+namespace PandaBear.Testing;
 
 /// <summary>
 /// Read-only stream over a byte array that records how many bytes and reads were requested and whether it was disposed.
 /// </summary>
 /// <param name="content">The bytes the stream serves.</param>
-internal sealed class TrackingReadStream(byte[] content) : Stream
+public sealed class TrackingReadStream(byte[] content) : Stream
 {
     private readonly MemoryStream _inner = new(content, writable: false);
 
@@ -26,24 +26,31 @@ internal sealed class TrackingReadStream(byte[] content) : Stream
         get; private set;
     }
 
+    /// <inheritdoc />
     public override bool CanRead => true;
 
+    /// <inheritdoc />
     public override bool CanSeek => false;
 
+    /// <inheritdoc />
     public override bool CanWrite => false;
 
+    /// <inheritdoc />
     public override long Length => throw new NotSupportedException();
 
+    /// <inheritdoc />
     public override long Position
     {
         get => throw new NotSupportedException();
         set => throw new NotSupportedException();
     }
 
+    /// <inheritdoc />
     public override void Flush()
     {
     }
 
+    /// <inheritdoc />
     public override int Read(byte[] buffer, int offset, int count)
     {
         var bytesRead = _inner.Read(buffer, offset, count);
@@ -51,6 +58,7 @@ internal sealed class TrackingReadStream(byte[] content) : Stream
         return bytesRead;
     }
 
+    /// <inheritdoc />
     public override int Read(Span<byte> buffer)
     {
         var bytesRead = _inner.Read(buffer);
@@ -58,6 +66,7 @@ internal sealed class TrackingReadStream(byte[] content) : Stream
         return bytesRead;
     }
 
+    /// <inheritdoc />
     public override async Task<int> ReadAsync(
         byte[] buffer,
         int offset,
@@ -69,21 +78,26 @@ internal sealed class TrackingReadStream(byte[] content) : Stream
         return bytesRead;
     }
 
+    /// <inheritdoc />
     public override async ValueTask<int> ReadAsync(
         Memory<byte> buffer,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var bytesRead = await _inner.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
         RecordRead(bytesRead);
         return bytesRead;
     }
 
+    /// <inheritdoc />
     public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
 
+    /// <inheritdoc />
     public override void SetLength(long value) => throw new NotSupportedException();
 
+    /// <inheritdoc />
     public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 
+    /// <inheritdoc />
     protected override void Dispose(bool disposing)
     {
         if (disposing)

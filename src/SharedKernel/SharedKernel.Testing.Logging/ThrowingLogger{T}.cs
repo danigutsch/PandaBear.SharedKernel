@@ -1,12 +1,12 @@
 using Microsoft.Extensions.Logging;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace PandaBear.Testing.Logging;
 
-/// <summary>A logger whose every call throws, to prove telemetry never breaks the request flow.</summary>
+/// <summary>A logger whose every call throws, to prove telemetry never breaks the surrounding flow.</summary>
 /// <typeparam name="T">The logger category.</typeparam>
-internal sealed class ThrowingLogger<T> : ILogger<T>
+public sealed class ThrowingLogger<T> : ILogger<T>
 {
-    /// <summary>The message of the thrown exception; it must never be surfaced.</summary>
+    /// <summary>The message of the thrown exception; callers must never surface it.</summary>
     public const string Secret = "logger-secret";
 
     /// <inheritdoc />

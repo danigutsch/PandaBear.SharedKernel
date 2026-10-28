@@ -5,6 +5,9 @@ PandaBear.Testing.Http.CapturedHttpRequest.CapturedHttpRequest(System.Net.Http.H
 PandaBear.Testing.Http.CapturedHttpRequest.Message.get -> System.Net.Http.HttpRequestMessage!
 PandaBear.Testing.Http.CapturedHttpRequest.Method.get -> System.Net.Http.HttpMethod!
 PandaBear.Testing.Http.CapturedHttpRequest.PathAndQuery.get -> string!
+PandaBear.Testing.Http.DelegateHttpMessageHandler
+PandaBear.Testing.Http.DelegateHttpMessageHandler.DelegateHttpMessageHandler(System.Func<System.Net.Http.HttpRequestMessage!, System.Net.Http.HttpResponseMessage!>! respond) -> void
+PandaBear.Testing.Http.DelegateHttpMessageHandler.DelegateHttpMessageHandler(System.Func<System.Net.Http.HttpRequestMessage!, System.Threading.CancellationToken, System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!>! respond) -> void
 PandaBear.Testing.Http.HttpResponseFactory
 PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions
 PandaBear.Testing.Http.TestHttpMessageHandler
@@ -14,6 +17,9 @@ PandaBear.Testing.Http.TestHttpMessageHandler.LastRequest.get -> PandaBear.Testi
 PandaBear.Testing.Http.TestHttpMessageHandler.Requests.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!
 PandaBear.Testing.Http.TestHttpMessageHandler.TestHttpMessageHandler() -> void
 PandaBear.Testing.Http.TestHttpMessageHandler.TestHttpMessageHandler(System.Net.Http.HttpResponseMessage! response) -> void
+PandaBear.Testing.Http.TrackingStreamContent
+PandaBear.Testing.Http.TrackingStreamContent.SerializationCount.get -> int
+PandaBear.Testing.Http.TrackingStreamContent.TrackingStreamContent(System.IO.Stream! source) -> void
 static PandaBear.Testing.Http.HttpResponseFactory.Json(string! json, System.Net.HttpStatusCode statusCode = System.Net.HttpStatusCode.OK) -> System.Net.Http.HttpResponseMessage!
 static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldBeProblem(this System.Net.Http.HttpResponseMessage! actual, System.Net.HttpStatusCode expectedStatus, string? expectedDetail = null, string? expectedCode = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Text.Json.JsonElement>!
 static PandaBear.Testing.Http.HttpResponseShouldAssertionExtensions.ShouldBeProblem(this System.Net.Http.HttpResponseMessage! actual, System.Net.HttpStatusCode expectedStatus, string? expectedDetail, string? expectedCode, string! userMessage, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Text.Json.JsonElement>!

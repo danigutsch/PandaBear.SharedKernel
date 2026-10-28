@@ -1,15 +1,18 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
+using PandaBear.Testing;
 
 namespace PandaBear.Aspire.Hosting.K6.Tests;
 
 /// <summary>Tests the K6 scenario resource builder: image pinning, mounts, arguments, log-file preparation, client credentials and the bundled library scripts.</summary>
 public sealed class K6ScenarioResourceExtensionsTests : IDisposable
 {
-    private readonly string _root = Directory.CreateTempSubdirectory("k6-host-tests").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
 
-    /// <summary>Deletes the temporary directory tree the tests used.</summary>
-    public void Dispose() => Directory.Delete(_root, recursive: true);
+    private string DirectoryPath => temporaryDirectory.Path;
+
+    /// <inheritdoc />
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public void AddK6Scenario_pins_the_image_by_tag_and_digest()
@@ -18,7 +21,7 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
         var builder = DistributedApplication.CreateBuilder([]);
 
         // Act
-        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+        var k6 = builder.AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", Path.Combine(DirectoryPath, "results"));
 
         // Assert
         var image = k6.Resource.Annotations.OfType<ContainerImageAnnotation>().ShouldHaveSingleItem();
@@ -33,7 +36,7 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
         var builder = DistributedApplication.CreateBuilder([]);
 
         // Act
-        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+        var k6 = builder.AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", Path.Combine(DirectoryPath, "results"));
 
         // Assert
         k6.Resource.Annotations.OfType<ExplicitStartupAnnotation>().Count().ShouldBe(1);
@@ -44,14 +47,14 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
     {
         // Arrange
         var builder = DistributedApplication.CreateBuilder([]);
-        var results = Path.Combine(_root, "results");
+        var results = Path.Combine(DirectoryPath, "results");
 
         // Act
-        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", results);
+        var k6 = builder.AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", results);
 
         // Assert
         var mounts = k6.Resource.Annotations.OfType<ContainerMountAnnotation>().ToDictionary(mount => mount.Target);
-        mounts["/scripts"].Source.ShouldBe(_root);
+        mounts["/scripts"].Source.ShouldBe(DirectoryPath);
         mounts["/scripts"].IsReadOnly.ShouldBeTrue();
         mounts["/k6lib"].IsReadOnly.ShouldBeTrue();
         File.Exists(Path.Combine(mounts["/k6lib"].Source!, "auth.js")).ShouldBeTrue();
@@ -68,7 +71,7 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
         var builder = DistributedApplication.CreateBuilder([]);
 
         // Act
-        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+        var k6 = builder.AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", Path.Combine(DirectoryPath, "results"));
 
         // Assert
         var library = k6.Resource.Annotations.OfType<ContainerMountAnnotation>().Where(mount => mount.Target == "/k6lib").ShouldHaveSingleItem();
@@ -85,16 +88,16 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
         }
 
         var builder = DistributedApplication.CreateBuilder([]);
-        var first = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+        var first = builder.AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", Path.Combine(DirectoryPath, "results"));
         var library = first.Resource.Annotations.OfType<ContainerMountAnnotation>().Where(mount => mount.Target == "/k6lib").ShouldHaveSingleItem().Source!;
-        var decoy = Path.Combine(_root, "decoy.txt");
+        var decoy = Path.Combine(DirectoryPath, "decoy.txt");
         File.WriteAllText(decoy, "decoy");
         var authPath = Path.Combine(library, "auth.js");
         File.Delete(authPath);
         File.CreateSymbolicLink(authPath, decoy);
 
         // Act
-        DistributedApplication.CreateBuilder([]).AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+        DistributedApplication.CreateBuilder([]).AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", Path.Combine(DirectoryPath, "results"));
 
         // Assert
         File.ReadAllText(decoy).ShouldBe("decoy");
@@ -111,13 +114,13 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
             return;
         }
 
-        var created = Path.Combine(_root, "created");
-        var existing = Directory.CreateDirectory(Path.Combine(_root, "existing")).FullName;
+        var created = Path.Combine(DirectoryPath, "created");
+        var existing = Directory.CreateDirectory(Path.Combine(DirectoryPath, "existing")).FullName;
         File.SetUnixFileMode(existing, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
 
         // Act
-        DistributedApplication.CreateBuilder([]).AddK6Scenario("created", _root, "scenarios/smoke.js", created);
-        DistributedApplication.CreateBuilder([]).AddK6Scenario("existing", _root, "scenarios/smoke.js", existing);
+        DistributedApplication.CreateBuilder([]).AddK6Scenario("created", DirectoryPath, "scenarios/smoke.js", created);
+        DistributedApplication.CreateBuilder([]).AddK6Scenario("existing", DirectoryPath, "scenarios/smoke.js", existing);
 
         // Assert
         var shared = UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute
@@ -134,7 +137,7 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
         var builder = DistributedApplication.CreateBuilder([]);
 
         // Act
-        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+        var k6 = builder.AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", Path.Combine(DirectoryPath, "results"));
 
         // Assert
         var (arguments, _) = await K6ResourceInspector.Evaluate(k6.Resource);
@@ -151,7 +154,7 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
         var builder = DistributedApplication.CreateBuilder([]);
 
         // Act
-        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+        var k6 = builder.AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", Path.Combine(DirectoryPath, "results"));
 
         // Assert
         var (arguments, _) = await K6ResourceInspector.Evaluate(k6.Resource);
@@ -170,12 +173,12 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
             return;
         }
 
-        var results = Path.Combine(_root, "results");
+        var results = Path.Combine(DirectoryPath, "results");
         Directory.CreateDirectory(results);
         File.WriteAllText(Path.Combine(results, "k6.log"), "left over from an earlier run");
 
         // Act
-        DistributedApplication.CreateBuilder([]).AddK6Scenario("smoke", _root, "scenarios/smoke.js", results);
+        DistributedApplication.CreateBuilder([]).AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", results);
 
         // Assert
         var shared = UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead | UnixFileMode.GroupWrite
@@ -197,9 +200,9 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
             return;
         }
 
-        var results = Path.Combine(_root, "results");
+        var results = Path.Combine(DirectoryPath, "results");
         Directory.CreateDirectory(results);
-        var decoy = Path.Combine(_root, "decoy.txt");
+        var decoy = Path.Combine(DirectoryPath, "decoy.txt");
         File.WriteAllText(decoy, "decoy");
         foreach (var name in new[] { "k6.log", "k6-console.log" })
         {
@@ -207,7 +210,7 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
         }
 
         // Act
-        DistributedApplication.CreateBuilder([]).AddK6Scenario("smoke", _root, "scenarios/smoke.js", results);
+        DistributedApplication.CreateBuilder([]).AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", results);
 
         // Assert
         File.ReadAllText(decoy).ShouldBe("decoy");
@@ -226,7 +229,7 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
         var builder = DistributedApplication.CreateBuilder([]);
         var identity = builder.AddContainer("identity", "quay.io/keycloak/keycloak").WithHttpEndpoint(targetPort: 8080, port: 18080, name: "http");
         var secret = builder.AddParameter("k6-client-secret", "secret-value", secret: true);
-        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+        var k6 = builder.AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", Path.Combine(DirectoryPath, "results"));
 
         // Act
         k6.WithK6ClientCredentials(identity, "/realms/app/protocol/openid-connect/token", "k6-smoke", secret);
@@ -249,7 +252,7 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
         var builder = DistributedApplication.CreateBuilder([]);
 
         // Act
-        Action act = () => builder.AddK6Scenario("smoke", _root, "../escape.js", Path.Combine(_root, "results"));
+        Action act = () => builder.AddK6Scenario("smoke", DirectoryPath, "../escape.js", Path.Combine(DirectoryPath, "results"));
 
         // Assert
         act.ShouldThrow<ArgumentException>();
@@ -260,7 +263,7 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
     {
         // Arrange
         var builder = DistributedApplication.CreateBuilder([]);
-        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+        var k6 = builder.AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", Path.Combine(DirectoryPath, "results"));
         var library = k6.Resource.Annotations.OfType<ContainerMountAnnotation>().Where(mount => mount.Target == "/k6lib").ShouldHaveSingleItem().Source!;
 
         // Act
@@ -275,7 +278,7 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
     {
         // Arrange
         var builder = DistributedApplication.CreateBuilder([]);
-        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+        var k6 = builder.AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", Path.Combine(DirectoryPath, "results"));
         var library = k6.Resource.Annotations.OfType<ContainerMountAnnotation>().Where(mount => mount.Target == "/k6lib").ShouldHaveSingleItem().Source!;
 
         // Act
@@ -290,7 +293,7 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
     {
         // Arrange
         var builder = DistributedApplication.CreateBuilder([]);
-        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+        var k6 = builder.AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", Path.Combine(DirectoryPath, "results"));
 
         // Act
         k6.WithWebDashboard();
@@ -310,7 +313,7 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
     {
         // Arrange
         var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOptions { Args = ["--publisher", "manifest", "--output-path", "manifest.json"] });
-        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+        var k6 = builder.AddK6Scenario("smoke", DirectoryPath, "scenarios/smoke.js", Path.Combine(DirectoryPath, "results"));
 
         // Act
         k6.WithWebDashboard();

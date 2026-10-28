@@ -1,12 +1,15 @@
 using System.Text;
 using PandaBear.Npgsql.Testing.Host;
+using PandaBear.Testing;
 
 namespace PandaBear.Npgsql.Tests;
 
 /// <summary>Tests resolving and publishing the ready file through which the owner host announces its server's connection string. Each test uses its own temporary directory, removed on disposal.</summary>
 public sealed class ReadyFileTests : IDisposable
 {
-    private readonly string _directory = Directory.CreateTempSubdirectory("sk-ready-file-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string DirectoryPath => temporaryDirectory.Path;
 
     [Theory]
     [InlineData(null)]
@@ -28,7 +31,7 @@ public sealed class ReadyFileTests : IDisposable
     public void A_relative_path_is_refused_because_the_owner_cannot_know_what_it_is_relative_to()
     {
         // Arrange
-        var relativePath = Path.GetRelativePath(Directory.GetCurrentDirectory(), Path.Combine(_directory, "ready.txt"));
+        var relativePath = Path.GetRelativePath(Directory.GetCurrentDirectory(), Path.Combine(DirectoryPath, "ready.txt"));
         Func<object?> resolve = () => ReadyFile.Resolve(FakeEnvironment.WithReadyFile(relativePath));
 
         // Act
@@ -42,7 +45,7 @@ public sealed class ReadyFileTests : IDisposable
     public void A_missing_directory_is_refused_before_a_container_is_started_for_nothing()
     {
         // Arrange
-        Func<object?> resolve = () => ReadyFile.Resolve(FakeEnvironment.WithReadyFile(Path.Combine(_directory, "missing", "ready.txt")));
+        Func<object?> resolve = () => ReadyFile.Resolve(FakeEnvironment.WithReadyFile(Path.Combine(DirectoryPath, "missing", "ready.txt")));
 
         // Act
         var failure = resolve.ShouldThrow<InvalidOperationException>();
@@ -55,7 +58,7 @@ public sealed class ReadyFileTests : IDisposable
     public void An_existing_file_is_refused_because_the_owner_would_read_it_as_ready_before_the_server_is()
     {
         // Arrange
-        var path = Path.Combine(_directory, "ready.txt");
+        var path = Path.Combine(DirectoryPath, "ready.txt");
         File.WriteAllText(path, "Host=stale;Password=stale-secret");
         Func<object?> resolve = () => ReadyFile.Resolve(FakeEnvironment.WithReadyFile(path));
 
@@ -71,7 +74,7 @@ public sealed class ReadyFileTests : IDisposable
     public void A_new_file_in_an_existing_directory_resolves_to_its_path_without_surrounding_whitespace()
     {
         // Arrange
-        var path = Path.Combine(_directory, "ready.txt");
+        var path = Path.Combine(DirectoryPath, "ready.txt");
 
         // Act
         var resolved = ReadyFile.Resolve(FakeEnvironment.WithReadyFile($"  {path}\n"));
@@ -85,7 +88,7 @@ public sealed class ReadyFileTests : IDisposable
     public void The_connection_string_is_published_as_one_utf8_line_without_a_byte_order_mark()
     {
         // Arrange
-        var path = Path.Combine(_directory, "ready.txt");
+        var path = Path.Combine(DirectoryPath, "ready.txt");
         const string connectionString = "Host=127.0.0.1;Port=41234;Username=postgres;Password=\"p\u00e4ssw\u00f6rd\"";
 
         // Act
@@ -100,12 +103,12 @@ public sealed class ReadyFileTests : IDisposable
     public void Publishing_replaces_the_file_in_one_step_and_leaves_no_temporary_file()
     {
         // Arrange
-        var path = Path.Combine(_directory, "ready.txt");
+        var path = Path.Combine(DirectoryPath, "ready.txt");
         ReadyFile.Publish(path, "Host=first");
 
         // Act
         ReadyFile.Publish(path, "Host=second");
-        var files = Directory.GetFiles(_directory).Select(Path.GetFileName).ToArray();
+        var files = Directory.GetFiles(DirectoryPath).Select(Path.GetFileName).ToArray();
 
         // Assert
         File.ReadAllText(path).ShouldBe("Host=second\n");
@@ -116,7 +119,7 @@ public sealed class ReadyFileTests : IDisposable
     public void Nothing_appears_at_the_ready_path_until_the_whole_line_is_written()
     {
         // Arrange
-        var path = Path.Combine(_directory, "ready.txt");
+        var path = Path.Combine(DirectoryPath, "ready.txt");
 
         // The temporary file cannot be created, which stands for a write that fails half way.
         _ = Directory.CreateDirectory(path + ".tmp");
@@ -138,7 +141,7 @@ public sealed class ReadyFileTests : IDisposable
             return;
         }
 
-        var path = Path.Combine(_directory, "ready.txt");
+        var path = Path.Combine(DirectoryPath, "ready.txt");
 
         // Act
         ReadyFile.Publish(path, "Host=127.0.0.1;Password=owner-secret");
@@ -153,7 +156,7 @@ public sealed class ReadyFileTests : IDisposable
     {
         try
         {
-            Directory.Delete(_directory, recursive: true);
+            temporaryDirectory.Dispose();
         }
         catch (IOException)
         {

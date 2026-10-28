@@ -238,6 +238,15 @@
           "xunit.v3.assert": "[4.0.0, )"
         }
       },
+      "PandaBear.SharedKernel.Testing.Http": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Testing.Assertions": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Testing.Logging": {
+        "type": "Project"
+      },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "CentralTransitive",
         "requested": "[10.0.13, )",

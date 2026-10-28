@@ -1,12 +1,12 @@
 using System.Globalization;
 
-namespace PandaBear.K6.Tool.Tests;
+namespace PandaBear.Testing;
 
 /// <summary>A POSIX shell script that records each argument on a line, its environment, and its process ID.</summary>
-internal sealed class FakeExecutable
+public sealed class RecordingFakeExecutable
 {
     /// <summary>Writes the recording shell script into <c>directory</c> and, on Unix, marks it executable.</summary>
-    public FakeExecutable(string directory, string name, int exitCode, string body)
+    public RecordingFakeExecutable(string directory, string name, int exitCode, string body)
     {
         Directory.CreateDirectory(directory);
         Path = System.IO.Path.Combine(directory, name);
@@ -17,9 +17,9 @@ internal sealed class FakeExecutable
             Path,
             $"""
             #!/bin/sh
-            printf '%s' "$$" > {Quote(ProcessIdPath)}
-            for argument in "$@"; do printf '%s\n' "$argument"; done > {Quote(ArgumentsPath)}
-            /usr/bin/env > {Quote(EnvironmentPath)}
+            printf '%s' "$$" > {FakeExecutable.Quote(ProcessIdPath)}
+            for argument in "$@"; do printf '%s\n' "$argument"; done > {FakeExecutable.Quote(ArgumentsPath)}
+            /usr/bin/env > {FakeExecutable.Quote(EnvironmentPath)}
             {body}
             exit {exitCode.ToString(CultureInfo.InvariantCulture)}
             """);
@@ -64,7 +64,4 @@ internal sealed class FakeExecutable
 
     /// <summary>Reads the process ID the script recorded.</summary>
     public int ProcessId() => int.Parse(File.ReadAllText(ProcessIdPath), CultureInfo.InvariantCulture);
-
-    /// <summary>Wraps a value in single quotes for a POSIX shell, escaping embedded single quotes.</summary>
-    public static string Quote(string value) => "'" + value.Replace("'", "'\\''", StringComparison.Ordinal) + "'";
 }

@@ -10,6 +10,11 @@ Reusable HTTP response and message-handler helpers for SharedKernel test suites.
 
 Construct `HttpClient` with `TestHttpMessageHandler`, enqueue HTTP or JSON responses, and inspect its captured requests. `HttpResponseFactory.Json` creates explicit test responses. This test handler avoids network access; consumers retain response-disposal and contract assertions.
 
+## Handlers and content
+
+`DelegateHttpMessageHandler` answers every request with a synchronous or asynchronous delegate and passes the caller's cancellation token to asynchronous delegates.
+`TrackingStreamContent` copies a source stream, counts serializations and disposes the source with the content.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Testing.Http`. C# namespace: `PandaBear.Testing.Http`. Assembly/project identity: `SharedKernel.Testing.Http`.

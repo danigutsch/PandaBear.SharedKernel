@@ -2,6 +2,8 @@ using System.Net;
 using Microsoft.Extensions.Http.Resilience;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using PandaBear.Testing.Http;
+using PandaBear.Testing;
 using Polly;
 
 namespace PandaBear.HttpClients.Tests;

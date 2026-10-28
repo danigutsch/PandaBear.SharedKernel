@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Time.Testing;
 using PandaBear.Testing;
 using System.Diagnostics;
 using System.Globalization;
@@ -333,7 +334,7 @@ public static class VersioningToolTests
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         await temporaryDirectory.WriteUnpackableSharedKernelProject(TestContext.Current.CancellationToken);
-        var clock = new FixedTimeProvider(new DateTimeOffset(2026, 1, 2, 3, 4, 5, TimeSpan.Zero));
+        var clock = new FakeTimeProvider(new DateTimeOffset(2026, 1, 2, 3, 4, 5, TimeSpan.Zero));
         string[] args = ["check-api-compatibility", "--repo-root", temporaryDirectory.Root, "--output-root", temporaryDirectory.OutputDirectory];
 
         // Act

@@ -1,3 +1,4 @@
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.IO;
 
 namespace PandaBear.VaultManager.Tool.Tests.IO;
@@ -6,16 +7,18 @@ namespace PandaBear.VaultManager.Tool.Tests.IO;
 public sealed class SecureFileTests : IDisposable
 {
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-manager-tests-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string DirectoryPath => temporaryDirectory.Path;
 
     /// <inheritdoc />
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public void WriteAllText_creates_file_readable_only_by_owner()
     {
         // Arrange
-        var path = Path.Combine(directory, "out.json");
+        var path = Path.Combine(DirectoryPath, "out.json");
 
         // Act
         SecureFile.WriteAllText(path, "content", overwrite: false);
@@ -32,7 +35,7 @@ public sealed class SecureFileTests : IDisposable
     public void WriteAllText_refuses_to_replace_existing_file_without_overwrite()
     {
         // Arrange
-        var path = Path.Combine(directory, "out.json");
+        var path = Path.Combine(DirectoryPath, "out.json");
         File.WriteAllText(path, "existing");
         var action = () => SecureFile.WriteAllText(path, "new", overwrite: false);
 
@@ -47,7 +50,7 @@ public sealed class SecureFileTests : IDisposable
     public void WriteAllText_overwrite_replaces_content_and_narrows_permissions()
     {
         // Arrange
-        var path = Path.Combine(directory, "out.json");
+        var path = Path.Combine(DirectoryPath, "out.json");
         File.WriteAllText(path, "existing");
         if (!OperatingSystem.IsWindows())
         {
@@ -69,20 +72,20 @@ public sealed class SecureFileTests : IDisposable
     public void WriteAllText_leaves_no_temporary_files()
     {
         // Arrange
-        var path = Path.Combine(directory, "out.json");
+        var path = Path.Combine(DirectoryPath, "out.json");
 
         // Act
         SecureFile.WriteAllText(path, "content", overwrite: false);
 
         // Assert
-        Directory.GetFiles(directory).ShouldBe([path]);
+        Directory.GetFiles(DirectoryPath).ShouldBe([path]);
     }
 
     [Fact]
     public void WriteAllText_with_a_token_canceled_before_the_move_leaves_neither_a_temporary_file_nor_the_file()
     {
         // Arrange
-        var path = Path.Combine(directory, "out.json");
+        var path = Path.Combine(DirectoryPath, "out.json");
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
         var action = () => SecureFile.WriteAllText(path, "content".AsSpan(), overwrite: false, cancellation.Token);
@@ -91,7 +94,7 @@ public sealed class SecureFileTests : IDisposable
         action.ShouldThrow<OperationCanceledException>();
 
         // Assert
-        Directory.GetFileSystemEntries(directory).ShouldBeEmpty();
+        Directory.GetFileSystemEntries(DirectoryPath).ShouldBeEmpty();
     }
 
     [Fact]
@@ -100,7 +103,7 @@ public sealed class SecureFileTests : IDisposable
         // Arrange
         // Creating the temporary file in a missing directory would fail, so only a write that stops first reports the
         // cancellation.
-        var path = Path.Combine(directory, "missing", "out.json");
+        var path = Path.Combine(DirectoryPath, "missing", "out.json");
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
         var action = () => SecureFile.WriteAllText(path, "content".AsSpan(), overwrite: false, cancellation.Token);
@@ -109,14 +112,14 @@ public sealed class SecureFileTests : IDisposable
         action.ShouldThrow<OperationCanceledException>();
 
         // Assert
-        Directory.GetFileSystemEntries(directory).ShouldBeEmpty();
+        Directory.GetFileSystemEntries(DirectoryPath).ShouldBeEmpty();
     }
 
     [Fact]
     public void WriteAllText_with_a_token_canceled_before_the_move_keeps_the_file_it_would_replace()
     {
         // Arrange
-        var path = Path.Combine(directory, "out.json");
+        var path = Path.Combine(DirectoryPath, "out.json");
         File.WriteAllText(path, "existing");
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
@@ -127,21 +130,21 @@ public sealed class SecureFileTests : IDisposable
 
         // Assert
         File.ReadAllText(path).ShouldBe("existing");
-        Directory.GetFileSystemEntries(directory).ShouldBe([path]);
+        Directory.GetFileSystemEntries(DirectoryPath).ShouldBe([path]);
     }
 
     [Fact]
     public void WriteAllText_deletes_its_temporary_file_when_the_file_cannot_be_moved_into_place()
     {
         // Arrange
-        var path = Directory.CreateDirectory(Path.Combine(directory, "out.json")).FullName;
+        var path = Directory.CreateDirectory(Path.Combine(DirectoryPath, "out.json")).FullName;
         var action = () => SecureFile.WriteAllText(path, "content", overwrite: true);
 
         // Act
         action.ShouldThrow<IOException>();
 
         // Assert
-        Directory.GetFileSystemEntries(directory).ShouldBe([path]);
+        Directory.GetFileSystemEntries(DirectoryPath).ShouldBe([path]);
         Directory.GetFileSystemEntries(path).ShouldBeEmpty();
     }
 }

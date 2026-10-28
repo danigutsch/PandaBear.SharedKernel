@@ -37,6 +37,19 @@ const PandaBear.Testing.TestTraitValues.DependencyInjectionCategory = "dependenc
 const PandaBear.Testing.TestTraitValues.EndpointCategory = "endpoint" -> string!
 const PandaBear.Testing.TestTraitValues.SecurityCategory = "security" -> string!
 const PandaBear.Testing.TestTraitValues.TestServerHost = "test-server" -> string!
+override PandaBear.Testing.BlockingReadStream.CanRead.get -> bool
+override PandaBear.Testing.BlockingReadStream.CanSeek.get -> bool
+override PandaBear.Testing.BlockingReadStream.CanWrite.get -> bool
+override PandaBear.Testing.BlockingReadStream.Flush() -> void
+override PandaBear.Testing.BlockingReadStream.Length.get -> long
+override PandaBear.Testing.BlockingReadStream.Position.get -> long
+override PandaBear.Testing.BlockingReadStream.Position.set -> void
+override PandaBear.Testing.BlockingReadStream.Read(byte[]! buffer, int offset, int count) -> int
+override PandaBear.Testing.BlockingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override PandaBear.Testing.BlockingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
+override PandaBear.Testing.BlockingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override PandaBear.Testing.BlockingReadStream.SetLength(long value) -> void
+override PandaBear.Testing.BlockingReadStream.Write(byte[]! buffer, int offset, int count) -> void
 override PandaBear.Testing.GatedCountingReadStream.CanRead.get -> bool
 override PandaBear.Testing.GatedCountingReadStream.CanSeek.get -> bool
 override PandaBear.Testing.GatedCountingReadStream.CanWrite.get -> bool
@@ -50,17 +63,90 @@ override PandaBear.Testing.GatedCountingReadStream.ReadAsync(System.Memory<byte>
 override PandaBear.Testing.GatedCountingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
 override PandaBear.Testing.GatedCountingReadStream.SetLength(long value) -> void
 override PandaBear.Testing.GatedCountingReadStream.Write(byte[]! buffer, int offset, int count) -> void
+override PandaBear.Testing.RecordingWriteStream.CanRead.get -> bool
+override PandaBear.Testing.RecordingWriteStream.CanSeek.get -> bool
+override PandaBear.Testing.RecordingWriteStream.CanWrite.get -> bool
+override PandaBear.Testing.RecordingWriteStream.Flush() -> void
+override PandaBear.Testing.RecordingWriteStream.Length.get -> long
+override PandaBear.Testing.RecordingWriteStream.Position.get -> long
+override PandaBear.Testing.RecordingWriteStream.Position.set -> void
+override PandaBear.Testing.RecordingWriteStream.Read(byte[]! buffer, int offset, int count) -> int
+override PandaBear.Testing.RecordingWriteStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override PandaBear.Testing.RecordingWriteStream.SetLength(long value) -> void
+override PandaBear.Testing.RecordingWriteStream.Write(byte[]! buffer, int offset, int count) -> void
+override PandaBear.Testing.RecordingWriteStream.Write(System.ReadOnlySpan<byte> buffer) -> void
+override PandaBear.Testing.SeekableTrackingReadStream.CanRead.get -> bool
+override PandaBear.Testing.SeekableTrackingReadStream.CanSeek.get -> bool
+override PandaBear.Testing.SeekableTrackingReadStream.CanWrite.get -> bool
+override PandaBear.Testing.SeekableTrackingReadStream.Flush() -> void
+override PandaBear.Testing.SeekableTrackingReadStream.Length.get -> long
+override PandaBear.Testing.SeekableTrackingReadStream.Position.get -> long
+override PandaBear.Testing.SeekableTrackingReadStream.Position.set -> void
+override PandaBear.Testing.SeekableTrackingReadStream.Read(byte[]! buffer, int offset, int count) -> int
+override PandaBear.Testing.SeekableTrackingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override PandaBear.Testing.SeekableTrackingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
+override PandaBear.Testing.SeekableTrackingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override PandaBear.Testing.SeekableTrackingReadStream.SetLength(long value) -> void
+override PandaBear.Testing.SeekableTrackingReadStream.Write(byte[]! buffer, int offset, int count) -> void
+override PandaBear.Testing.TrackingReadStream.CanRead.get -> bool
+override PandaBear.Testing.TrackingReadStream.CanSeek.get -> bool
+override PandaBear.Testing.TrackingReadStream.CanWrite.get -> bool
+override PandaBear.Testing.TrackingReadStream.Flush() -> void
+override PandaBear.Testing.TrackingReadStream.Length.get -> long
+override PandaBear.Testing.TrackingReadStream.Position.get -> long
+override PandaBear.Testing.TrackingReadStream.Position.set -> void
+override PandaBear.Testing.TrackingReadStream.Read(byte[]! buffer, int offset, int count) -> int
+override PandaBear.Testing.TrackingReadStream.Read(System.Span<byte> buffer) -> int
+override PandaBear.Testing.TrackingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override PandaBear.Testing.TrackingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
+override PandaBear.Testing.TrackingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override PandaBear.Testing.TrackingReadStream.SetLength(long value) -> void
+override PandaBear.Testing.TrackingReadStream.Write(byte[]! buffer, int offset, int count) -> void
+override PandaBear.Testing.UnsizedStream.CanRead.get -> bool
+override PandaBear.Testing.UnsizedStream.CanSeek.get -> bool
+override PandaBear.Testing.UnsizedStream.CanWrite.get -> bool
+override PandaBear.Testing.UnsizedStream.Flush() -> void
+override PandaBear.Testing.UnsizedStream.Length.get -> long
+override PandaBear.Testing.UnsizedStream.Position.get -> long
+override PandaBear.Testing.UnsizedStream.Position.set -> void
+override PandaBear.Testing.UnsizedStream.Read(byte[]! buffer, int offset, int count) -> int
+override PandaBear.Testing.UnsizedStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override PandaBear.Testing.UnsizedStream.SetLength(long value) -> void
+override PandaBear.Testing.UnsizedStream.Write(byte[]! buffer, int offset, int count) -> void
 PandaBear.Domain.Tests.TestTraits
 PandaBear.EventSourcing.Tests.TestTraits
 PandaBear.Results.Tests.TestTraits
 PandaBear.Idempotency.Tests.TestTraits
 PandaBear.Mediator.GeneratorTests.TestTraits
 PandaBear.Mediator.Tests.TestTraits
+PandaBear.Testing.BlockingReadStream
+PandaBear.Testing.BlockingReadStream.BlockingReadStream(System.Action? onReadStarted = null) -> void
+PandaBear.Testing.BlockingReadStream.IsDisposed.get -> bool
+PandaBear.Testing.BlockingReadStream.ReadStarted.get -> System.Threading.Tasks.Task!
+PandaBear.Testing.FakeExecutable
+PandaBear.Testing.FileSystemProbes
 PandaBear.Testing.GatedCountingReadStream
 PandaBear.Testing.GatedCountingReadStream.BytesRead.get -> long
 PandaBear.Testing.GatedCountingReadStream.GatedCountingReadStream(byte[]! content) -> void
 PandaBear.Testing.GatedCountingReadStream.ReadStarted.get -> System.Threading.Tasks.Task!
 PandaBear.Testing.GatedCountingReadStream.Release() -> void
+PandaBear.Testing.RecordingFakeExecutable
+PandaBear.Testing.RecordingFakeExecutable.Arguments() -> string![]!
+PandaBear.Testing.RecordingFakeExecutable.ArgumentsPath.get -> string!
+PandaBear.Testing.RecordingFakeExecutable.Environment() -> string![]!
+PandaBear.Testing.RecordingFakeExecutable.EnvironmentPath.get -> string!
+PandaBear.Testing.RecordingFakeExecutable.Path.get -> string!
+PandaBear.Testing.RecordingFakeExecutable.ProcessId() -> int
+PandaBear.Testing.RecordingFakeExecutable.ProcessIdPath.get -> string!
+PandaBear.Testing.RecordingFakeExecutable.RecordingFakeExecutable(string! directory, string! name, int exitCode, string! body) -> void
+PandaBear.Testing.RecordingFakeExecutable.Started.get -> bool
+PandaBear.Testing.RecordingWriteStream
+PandaBear.Testing.RecordingWriteStream.RecordingWriteStream() -> void
+PandaBear.Testing.RecordingWriteStream.WriteSizes.get -> System.Collections.Generic.IReadOnlyList<int>!
+PandaBear.Testing.SeekableTrackingReadStream
+PandaBear.Testing.SeekableTrackingReadStream.BytesRead.get -> long
+PandaBear.Testing.SeekableTrackingReadStream.IsDisposed.get -> bool
+PandaBear.Testing.SeekableTrackingReadStream.SeekableTrackingReadStream(byte[]! content, bool seekable) -> void
 PandaBear.Testing.SerialTestJustificationAttribute
 PandaBear.Testing.SerialTestJustificationAttribute.Reason.get -> string!
 PandaBear.Testing.SerialTestJustificationAttribute.SerialTestJustificationAttribute(string! reason) -> void
@@ -84,6 +170,19 @@ PandaBear.Testing.TestScope.System = 6 -> PandaBear.Testing.TestScope
 PandaBear.Testing.TestScope.UiIntegration = 4 -> PandaBear.Testing.TestScope
 PandaBear.Testing.TestScope.Unit = 0 -> PandaBear.Testing.TestScope
 PandaBear.Testing.TestScopeExtensions
+PandaBear.Testing.TrackingReadStream
+PandaBear.Testing.TrackingReadStream.BytesRead.get -> long
+PandaBear.Testing.TrackingReadStream.IsDisposed.get -> bool
+PandaBear.Testing.TrackingReadStream.ReadCount.get -> int
+PandaBear.Testing.TrackingReadStream.TrackingReadStream(byte[]! content) -> void
+PandaBear.Testing.UnsizedStream
+PandaBear.Testing.UnsizedStream.UnsizedStream(byte[]! content) -> void
+static PandaBear.Testing.FakeExecutable.Quote(string! value) -> string!
+static PandaBear.Testing.FakeExecutable.WriteMarker(string! path, string! marker) -> void
+static PandaBear.Testing.FakeExecutable.WriteScript(string! path, string! body) -> void
+static PandaBear.Testing.FileSystemProbes.CanCreateSymbolicLinks.get -> bool
+static PandaBear.Testing.FileSystemProbes.CanDenyAccess.get -> bool
+static PandaBear.Testing.FileSystemProbes.IsCaseSensitive.get -> bool
 static PandaBear.Testing.TestScopeExtensions.ToTraitValue(this PandaBear.Testing.TestScope scope) -> string!
 PandaBear.Testing.TestHost
 PandaBear.Testing.TestHost.InProcess = 0 -> PandaBear.Testing.TestHost

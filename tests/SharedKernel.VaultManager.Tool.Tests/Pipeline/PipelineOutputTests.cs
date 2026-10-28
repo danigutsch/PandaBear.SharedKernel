@@ -1,4 +1,5 @@
 using System.Globalization;
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.VaultManager.Tool.Formats.Bitwarden;
 using PandaBear.VaultManager.Tool.Merge;
@@ -13,18 +14,20 @@ public sealed class PipelineOutputTests : IDisposable
     private const string Password = "fixture-output-password";
     private const string ExportPassword = "fixture export password";
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-pipeline-output-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string DirectoryPath => temporaryDirectory.Path;
 
     /// <inheritdoc />
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public void Run_writes_a_password_protected_export_unless_plaintext_is_requested()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
-        string encrypted = Path.Combine(directory, "encrypted.json");
-        string plaintext = Path.Combine(directory, "plaintext.json");
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
+        string encrypted = Path.Combine(DirectoryPath, "encrypted.json");
+        string plaintext = Path.Combine(DirectoryPath, "plaintext.json");
         var encryptedPrompts = new TestPrompts(ExportPassword);
         var plaintextPrompts = new TestPrompts(ExportPassword);
 
@@ -47,8 +50,8 @@ public sealed class PipelineOutputTests : IDisposable
     public void Run_creates_the_output_readable_only_by_its_owner()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
-        string output = Path.Combine(directory, "merged.json");
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
 
         // Act
@@ -66,8 +69,8 @@ public sealed class PipelineOutputTests : IDisposable
     public void Run_refuses_to_replace_an_existing_output_without_force_before_reading_inputs()
     {
         // Arrange
-        string missingInput = Path.Combine(directory, "missing.json");
-        string output = Write(directory, "merged.json", "existing");
+        string missingInput = Path.Combine(DirectoryPath, "missing.json");
+        string output = Write(DirectoryPath, "merged.json", "existing");
         var prompts = new TestPrompts(ExportPassword);
         var pipeline = new VaultPipeline(prompts.Environment());
 
@@ -86,8 +89,8 @@ public sealed class PipelineOutputTests : IDisposable
     public void Run_replaces_an_existing_output_with_force()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
-        string output = Write(directory, "merged.json", "existing");
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
+        string output = Write(DirectoryPath, "merged.json", "existing");
         if (!OperatingSystem.IsWindows())
         {
             File.SetUnixFileMode(output, OwnerOnly | UnixFileMode.GroupRead | UnixFileMode.OtherRead);
@@ -112,7 +115,7 @@ public sealed class PipelineOutputTests : IDisposable
     {
         // Arrange
         string json = BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com"));
-        string input = Write(directory, "bitwarden.json", json);
+        string input = Write(DirectoryPath, "bitwarden.json", json);
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
 
         var action = () => pipeline.Run(new PipelineRequest([input]) { Output = new PipelineOutput(input, Plaintext: true, Force: true) });
@@ -129,9 +132,9 @@ public sealed class PipelineOutputTests : IDisposable
     {
         // Arrange
         string json = BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com"));
-        string exports = Directory.CreateDirectory(Path.Combine(directory, "exports")).FullName;
+        string exports = Directory.CreateDirectory(Path.Combine(DirectoryPath, "exports")).FullName;
         string input = Write(exports, "bitwarden.json", json);
-        string alias = Path.Combine(directory, "alias");
+        string alias = Path.Combine(DirectoryPath, "alias");
         Directory.CreateSymbolicLink(alias, exports);
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
 
@@ -150,9 +153,9 @@ public sealed class PipelineOutputTests : IDisposable
     {
         // Arrange
         string json = BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com"));
-        string exports = Directory.CreateDirectory(Path.Combine(directory, "e", "exports")).FullName;
-        string nested = Directory.CreateDirectory(Path.Combine(directory, "e", "f")).FullName;
-        string links = Directory.CreateDirectory(Path.Combine(directory, "d")).FullName;
+        string exports = Directory.CreateDirectory(Path.Combine(DirectoryPath, "e", "exports")).FullName;
+        string nested = Directory.CreateDirectory(Path.Combine(DirectoryPath, "e", "f")).FullName;
+        string links = Directory.CreateDirectory(Path.Combine(DirectoryPath, "d")).FullName;
         string input = Write(exports, "bitwarden.json", json);
         Directory.CreateSymbolicLink(Path.Combine(links, "nested"), nested);
         string alias = Path.Combine(links, "alias");
@@ -174,8 +177,8 @@ public sealed class PipelineOutputTests : IDisposable
     {
         // Arrange
         string json = BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com"));
-        string input = Write(directory, "bitwarden.json", json);
-        string variant = Path.Combine(directory, "Bitwarden.JSON");
+        string input = Write(DirectoryPath, "bitwarden.json", json);
+        string variant = Path.Combine(DirectoryPath, "Bitwarden.JSON");
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
 
         var action = () => pipeline.Run(new PipelineRequest([input]) { Output = new PipelineOutput(variant, Plaintext: true, Force: true) });
@@ -186,15 +189,15 @@ public sealed class PipelineOutputTests : IDisposable
         // Assert
         exception.Message.ShouldContain("also an input", StringComparison.Ordinal);
         File.ReadAllText(input).ShouldBe(json);
-        Directory.GetFiles(directory).ShouldBe([input]);
+        Directory.GetFiles(DirectoryPath).ShouldBe([input]);
     }
 
     [Fact]
     public void Run_refuses_an_output_in_a_missing_directory_before_reading_inputs()
     {
         // Arrange
-        string missingInput = Path.Combine(directory, "missing.json");
-        string output = Path.Combine(directory, "no-such-directory", "merged.json");
+        string missingInput = Path.Combine(DirectoryPath, "missing.json");
+        string output = Path.Combine(DirectoryPath, "no-such-directory", "merged.json");
         var prompts = new TestPrompts(ExportPassword);
         var pipeline = new VaultPipeline(prompts.Environment());
 
@@ -214,8 +217,8 @@ public sealed class PipelineOutputTests : IDisposable
     public void Run_refuses_an_output_path_that_is_a_directory_before_reading_inputs()
     {
         // Arrange
-        string missingInput = Path.Combine(directory, "missing.json");
-        string output = Directory.CreateDirectory(Path.Combine(directory, "merged.json")).FullName;
+        string missingInput = Path.Combine(DirectoryPath, "missing.json");
+        string output = Directory.CreateDirectory(Path.Combine(DirectoryPath, "merged.json")).FullName;
         var prompts = new TestPrompts(ExportPassword);
         var pipeline = new VaultPipeline(prompts.Environment());
 
@@ -233,7 +236,7 @@ public sealed class PipelineOutputTests : IDisposable
     public void Run_and_merge_reject_an_empty_output_path_as_an_argument_error_before_asking_for_a_password()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
         var prompts = new TestPrompts(ExportPassword);
         var pipeline = new VaultPipeline(prompts.Environment());
         var scanned = VaultPipeline.Scan(pipeline.Load([input], TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);
@@ -253,8 +256,8 @@ public sealed class PipelineOutputTests : IDisposable
     public void Run_refuses_a_new_export_password_shorter_than_the_minimum_before_writing()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
-        string output = Path.Combine(directory, "merged.json");
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var prompts = new TestPrompts("short");
         var pipeline = new VaultPipeline(prompts.Environment());
 
@@ -266,14 +269,14 @@ public sealed class PipelineOutputTests : IDisposable
         // Assert
         exception.Message.ShouldContain(PasswordReader.MinimumNewPasswordLength.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal);
         prompts.NewPasswordPrompts.ShouldHaveSingleItem();
-        Directory.GetFiles(directory).ShouldBe([input]);
+        Directory.GetFiles(DirectoryPath).ShouldBe([input]);
     }
 
     [Fact(SkipType = typeof(FileSystemProbes), SkipUnless = nameof(FileSystemProbes.CanDenyAccess), Skip = "File permissions do not stop this process from reading files.")]
     public void Run_reports_an_input_it_may_not_read_as_a_file_error_that_names_the_input()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
         if (!OperatingSystem.IsWindows())
         {
             File.SetUnixFileMode(input, UnixFileMode.None);
@@ -295,8 +298,8 @@ public sealed class PipelineOutputTests : IDisposable
     public void Run_reports_an_output_directory_it_may_not_write_as_a_file_error_that_names_the_output()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
-        string locked = Directory.CreateDirectory(Path.Combine(directory, "locked")).FullName;
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
+        string locked = Directory.CreateDirectory(Path.Combine(DirectoryPath, "locked")).FullName;
         if (!OperatingSystem.IsWindows())
         {
             File.SetUnixFileMode(locked, UnixFileMode.UserRead | UnixFileMode.UserExecute);
@@ -320,8 +323,8 @@ public sealed class PipelineOutputTests : IDisposable
     public void Run_reports_an_output_directory_it_may_not_search_as_a_file_error_that_names_the_output()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
-        string locked = Directory.CreateDirectory(Path.Combine(directory, "locked")).FullName;
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
+        string locked = Directory.CreateDirectory(Path.Combine(DirectoryPath, "locked")).FullName;
         if (!OperatingSystem.IsWindows())
         {
             File.SetUnixFileMode(locked, OwnerOnly);
@@ -344,8 +347,8 @@ public sealed class PipelineOutputTests : IDisposable
     public void Run_does_not_write_when_the_writer_reports_errors()
     {
         // Arrange
-        string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", new string('n', 800), "alice", Password, "https://example.com")));
-        string output = Path.Combine(directory, "merged.json");
+        string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", new string('n', 800), "alice", Password, "https://example.com")));
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var prompts = new TestPrompts(ExportPassword);
         var pipeline = new VaultPipeline(prompts.Environment());
 
@@ -365,9 +368,9 @@ public sealed class PipelineOutputTests : IDisposable
     {
         // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(910);
-        string keeper = Write(directory, "keeper.json", KeeperJson(
+        string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(
             KeeperLogin("rec-github", "GitHub", "alice", url: "https://github.com", notes: PipelineSecrets.RecoveryNotes(codes, "Gh-notes-Passw0rd!"))));
-        string output = Path.Combine(directory, "merged.json");
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var prompts = new TestPrompts(ExportPassword);
         var pipeline = new VaultPipeline(prompts.Environment());
 
@@ -392,9 +395,9 @@ public sealed class PipelineOutputTests : IDisposable
     {
         // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(920);
-        string keeper = Write(directory, "keeper.json", KeeperJson(
+        string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(
             KeeperLogin("rec-github", "GitHub", "alice", url: "https://github.com", notes: PipelineSecrets.RecoveryNotes(codes, "Gh-notes-Passw0rd!"))));
-        string output = Path.Combine(directory, "merged.json");
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
         var findings = pipeline.Run(new PipelineRequest([keeper])).Findings.ShouldHaveSingleItem();
         var proposed = findings.Findings.ShouldHaveSingleItem(finding => !finding.IsPreAccepted);
@@ -414,9 +417,9 @@ public sealed class PipelineOutputTests : IDisposable
     public void Run_does_not_write_while_conflicts_need_a_decision()
     {
         // Arrange
-        string keeper = Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Example", "alice", "fixture-keeper-password", "https://example.com", modified: false)));
-        string bitwarden = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", "fixture-bitwarden-password", "https://example.com", revised: false)));
-        string output = Path.Combine(directory, "merged.json");
+        string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Example", "alice", "fixture-keeper-password", "https://example.com", modified: false)));
+        string bitwarden = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", "fixture-bitwarden-password", "https://example.com", revised: false)));
+        string output = Path.Combine(DirectoryPath, "merged.json");
         var prompts = new TestPrompts(ExportPassword);
         var pipeline = new VaultPipeline(prompts.Environment());
 

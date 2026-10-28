@@ -1,3 +1,4 @@
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Matching;
 using PandaBear.VaultManager.Tool.Merge;
 using static PandaBear.VaultManager.Tool.Tests.Merge.MergeFixture;
@@ -10,10 +11,12 @@ public sealed class DecisionsFileTests : IDisposable
     private const string OldPassword = "fixture-old-password";
     private const string NewPassword = "fixture-new-password";
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-decisions-file-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string DirectoryPath => temporaryDirectory.Path;
 
     /// <inheritdoc />
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public void Decisions_round_trip_and_contain_no_values()
@@ -293,7 +296,7 @@ public sealed class DecisionsFileTests : IDisposable
     {
         // Arrange
         const string Value = "fixture-value-in-an-unknown-property";
-        string path = Path.Combine(directory, "decisions.json");
+        string path = Path.Combine(DirectoryPath, "decisions.json");
         File.WriteAllText(path, $$"""{"version":2,"groups":[],"links":[],"splits":[],"finding":"{{Value}}"}""");
 
         var action = () => DecisionsFile.Read(path);
@@ -360,7 +363,7 @@ public sealed class DecisionsFileTests : IDisposable
     public void Read_returns_no_decisions_when_the_file_does_not_exist()
     {
         // Arrange
-        string path = Path.Combine(directory, "decisions.json");
+        string path = Path.Combine(DirectoryPath, "decisions.json");
 
         // Act
         var decisions = DecisionsFile.Read(path);
@@ -374,7 +377,7 @@ public sealed class DecisionsFileTests : IDisposable
     public void Write_replaces_the_file_readable_only_by_its_owner_and_read_loads_it()
     {
         // Arrange
-        string path = Path.Combine(directory, "decisions.json");
+        string path = Path.Combine(DirectoryPath, "decisions.json");
         File.WriteAllText(path, "{}");
         if (!OperatingSystem.IsWindows())
         {

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Time.Testing;
 using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -208,7 +209,7 @@ public sealed class IntegrationEventOutboxMessageTests
         var dbContext = scope.DbContext;
         var outbox = new EfIntegrationEventOutbox<ConsumerOutboxDbContext>(
             dbContext,
-            new AdjustableTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero)),
+            new FakeTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero)),
             new ContextQualifiedMessagingTestIntegrationEventSerializer("{}"));
         using var activity = new Activity("outbox-test");
         activity.TraceStateString = "vendor=value";
@@ -236,7 +237,7 @@ public sealed class IntegrationEventOutboxMessageTests
     {
         // Arrange
         var publisher = new RecordingEventEnvelopePublisher();
-        var timeProvider = new AdjustableTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero));
+        var timeProvider = new FakeTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero));
         await using var provider = ConsumerMessagingTestServices.CreateOutboxRelayProvider(publisher, timeProvider);
         await ConsumerMessagingTestServices.EnqueueConsumerTestIntegrationEvent(provider, "andes-relay-2026");
 
@@ -261,7 +262,7 @@ public sealed class IntegrationEventOutboxMessageTests
         {
             Failure = new InvalidOperationException("transport unavailable")
         };
-        var timeProvider = new AdjustableTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero));
+        var timeProvider = new FakeTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero));
         await using var provider = ConsumerMessagingTestServices.CreateOutboxRelayProvider(publisher, timeProvider);
         await ConsumerMessagingTestServices.EnqueueConsumerTestIntegrationEvent(provider, "andes-retry-2026");
 
@@ -286,7 +287,7 @@ public sealed class IntegrationEventOutboxMessageTests
         // Arrange
         var publisher = new RecordingEventEnvelopePublisher();
         var now = new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero);
-        var timeProvider = new AdjustableTimeProvider(now);
+        var timeProvider = new FakeTimeProvider(now);
         await using var provider = ConsumerMessagingTestServices.CreateOutboxRelayProvider(publisher, timeProvider);
         await ConsumerMessagingTestServices.EnqueueConsumerTestIntegrationEvent(provider, "andes-claimed-2026");
         ConsumerMessagingTestServices.ClaimSingleOutboxMessage(provider, now.AddMinutes(5));
@@ -310,7 +311,7 @@ public sealed class IntegrationEventOutboxMessageTests
         // Arrange
         var publisher = new RecordingEventEnvelopePublisher();
         var now = new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero);
-        var timeProvider = new AdjustableTimeProvider(now);
+        var timeProvider = new FakeTimeProvider(now);
         await using var provider = ConsumerMessagingTestServices.CreateOutboxRelayProvider(publisher, timeProvider);
         await ConsumerMessagingTestServices.EnqueueConsumerTestIntegrationEvent(provider, "andes-expired-claim-2026");
         ConsumerMessagingTestServices.ClaimSingleOutboxMessage(provider, now.AddSeconds(-1));
@@ -333,7 +334,7 @@ public sealed class IntegrationEventOutboxMessageTests
     {
         // Arrange
         var publisher = new RecordingEventEnvelopePublisher();
-        var timeProvider = new AdjustableTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero));
+        var timeProvider = new FakeTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero));
         await using var provider = ConsumerMessagingTestServices.CreateOutboxRelayProvider(
             publisher,
             timeProvider,
@@ -415,7 +416,7 @@ public sealed class IntegrationEventOutboxMessageTests
     {
         // Arrange
         var now = new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero);
-        await using var scenario = ConsumerMessagingTestServices.CreateTransportScenario(new AdjustableTimeProvider(now));
+        await using var scenario = ConsumerMessagingTestServices.CreateTransportScenario(new FakeTimeProvider(now));
         var dbContext = scenario.DbContext;
         var publisher = scenario.Publisher;
         var envelope = ConsumerMessagingTestServices.CreateEnvelope("transport-producer-event");
@@ -500,7 +501,7 @@ public sealed class IntegrationEventOutboxMessageTests
     {
         // Arrange
         var publisher = new RecordingEventEnvelopePublisher();
-        var timeProvider = new AdjustableTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero));
+        var timeProvider = new FakeTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero));
         await using var provider = ConsumerMessagingTestServices.CreateOutboxRelayProvider(
             publisher,
             timeProvider,
@@ -525,7 +526,7 @@ public sealed class IntegrationEventOutboxMessageTests
         {
             Failure = new InvalidOperationException(string.Empty)
         };
-        var timeProvider = new AdjustableTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero));
+        var timeProvider = new FakeTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero));
         await using var provider = ConsumerMessagingTestServices.CreateOutboxRelayProvider(publisher, timeProvider);
         await ConsumerMessagingTestServices.EnqueueConsumerTestIntegrationEvent(provider, "andes-empty-error-2026");
 
@@ -548,7 +549,7 @@ public sealed class IntegrationEventOutboxMessageTests
         {
             Failure = new InvalidOperationException(new string('x', 2_100))
         };
-        var timeProvider = new AdjustableTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero));
+        var timeProvider = new FakeTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero));
         await using var provider = ConsumerMessagingTestServices.CreateOutboxRelayProvider(publisher, timeProvider);
         await ConsumerMessagingTestServices.EnqueueConsumerTestIntegrationEvent(provider, "andes-long-error-2026");
 

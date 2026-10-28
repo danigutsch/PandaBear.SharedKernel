@@ -1,6 +1,25 @@
 #nullable enable
 const PandaBear.Testing.AspNetCore.ApiTestAuthentication.Authority = "https://identity.test" -> string!
 PandaBear.Testing.AspNetCore.ApiTestAuthentication
+PandaBear.Testing.AspNetCore.FakeBrowserFile
+PandaBear.Testing.AspNetCore.FakeBrowserFile.ContentType.get -> string!
+PandaBear.Testing.AspNetCore.FakeBrowserFile.FakeBrowserFile(byte[]! content, string! name, string! contentType = "application/octet-stream") -> void
+PandaBear.Testing.AspNetCore.FakeBrowserFile.LastModified.get -> System.DateTimeOffset
+PandaBear.Testing.AspNetCore.FakeBrowserFile.LastModified.init -> void
+PandaBear.Testing.AspNetCore.FakeBrowserFile.Name.get -> string!
+PandaBear.Testing.AspNetCore.FakeBrowserFile.OpenReadStream(long maxAllowedSize = 512000, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.IO.Stream!
+PandaBear.Testing.AspNetCore.FakeBrowserFile.Size.get -> long
+PandaBear.Testing.AspNetCore.FakeFormFile
+PandaBear.Testing.AspNetCore.FakeFormFile.ContentDisposition.get -> string!
+PandaBear.Testing.AspNetCore.FakeFormFile.ContentType.get -> string!
+PandaBear.Testing.AspNetCore.FakeFormFile.CopyTo(System.IO.Stream! target) -> void
+PandaBear.Testing.AspNetCore.FakeFormFile.CopyToAsync(System.IO.Stream! target, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+PandaBear.Testing.AspNetCore.FakeFormFile.FakeFormFile(byte[]! content, string! fileName, string! contentType = "application/octet-stream", string! name = "file") -> void
+PandaBear.Testing.AspNetCore.FakeFormFile.FileName.get -> string!
+PandaBear.Testing.AspNetCore.FakeFormFile.Headers.get -> Microsoft.AspNetCore.Http.IHeaderDictionary!
+PandaBear.Testing.AspNetCore.FakeFormFile.Length.get -> long
+PandaBear.Testing.AspNetCore.FakeFormFile.Name.get -> string!
+PandaBear.Testing.AspNetCore.FakeFormFile.OpenReadStream() -> System.IO.Stream!
 PandaBear.Testing.AspNetCore.RecordingOutputCacheStore
 PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictByTagAsync(string! tag, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
 PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictionCancellationToken.get -> System.Threading.CancellationToken
@@ -21,6 +40,16 @@ PandaBear.Testing.AspNetCore.TestHostEnvironment.ContentRootPath.set -> void
 PandaBear.Testing.AspNetCore.TestHostEnvironment.EnvironmentName.get -> string!
 PandaBear.Testing.AspNetCore.TestHostEnvironment.EnvironmentName.set -> void
 PandaBear.Testing.AspNetCore.TestHostEnvironment.TestHostEnvironment(string! applicationName) -> void
+PandaBear.Testing.AspNetCore.ThrowingDistributedCache
+PandaBear.Testing.AspNetCore.ThrowingDistributedCache.Get(string! key) -> byte[]?
+PandaBear.Testing.AspNetCore.ThrowingDistributedCache.GetAsync(string! key, System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<byte[]?>!
+PandaBear.Testing.AspNetCore.ThrowingDistributedCache.Refresh(string! key) -> void
+PandaBear.Testing.AspNetCore.ThrowingDistributedCache.RefreshAsync(string! key, System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+PandaBear.Testing.AspNetCore.ThrowingDistributedCache.Remove(string! key) -> void
+PandaBear.Testing.AspNetCore.ThrowingDistributedCache.RemoveAsync(string! key, System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+PandaBear.Testing.AspNetCore.ThrowingDistributedCache.Set(string! key, byte[]! value, Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions! options) -> void
+PandaBear.Testing.AspNetCore.ThrowingDistributedCache.SetAsync(string! key, byte[]! value, Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions! options, System.Threading.CancellationToken token = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+PandaBear.Testing.AspNetCore.ThrowingDistributedCache.ThrowingDistributedCache(System.Exception! failure) -> void
 PandaBear.Testing.AspNetCore.WebApplicationTestHost
 static PandaBear.Testing.AspNetCore.ApiTestAuthentication.ConfigureAuthenticatedClient(System.Net.Http.HttpClient! client, string! audience, string! role) -> void
 static PandaBear.Testing.AspNetCore.ApiTestAuthentication.ConfigureClient(System.Net.Http.HttpClient! client, string! audience, string! issuer, string! role) -> void

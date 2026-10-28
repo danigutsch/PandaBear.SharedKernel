@@ -1,3 +1,4 @@
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Formats;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats;
@@ -5,10 +6,12 @@ namespace PandaBear.VaultManager.Tool.Tests.Formats;
 /// <summary>Tests that the format detector classifies vault files by content.</summary>
 public sealed class FormatDetectorTests : IDisposable
 {
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-manager-detect-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string DirectoryPath => temporaryDirectory.Path;
 
     /// <inheritdoc />
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Theory]
     [InlineData("keeper-json", "KeeperJson")]
@@ -27,7 +30,7 @@ public sealed class FormatDetectorTests : IDisposable
     public void Detect_identifies_format_by_content(string sample, string expected)
     {
         // Arrange
-        string path = FormatSamples.WriteSample(directory, sample);
+        string path = FormatSamples.WriteSample(DirectoryPath, sample);
 
         // Act
         var format = FormatDetector.Detect(path);
@@ -40,7 +43,7 @@ public sealed class FormatDetectorTests : IDisposable
     public void Detect_ignores_file_extension()
     {
         // Arrange
-        string path = FormatSamples.Write(directory, "export.csv", Fixture.Read("keeper/web.json"));
+        string path = FormatSamples.Write(DirectoryPath, "export.csv", Fixture.Read("keeper/web.json"));
 
         // Act
         var format = FormatDetector.Detect(path);

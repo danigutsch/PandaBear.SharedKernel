@@ -26,6 +26,15 @@ hardcoded trait literals through `SKTEST009` when a single safe replacement can 
 Use `SerialTestJustificationAttribute` on xUnit collection definitions that disable parallelization.
 `SKTEST005` enforces a non-empty reason.
 
+## Test doubles
+
+- Streams: `BlockingReadStream`, `GatedCountingReadStream`, `RecordingWriteStream`, `SeekableTrackingReadStream`,
+  `TrackingReadStream` and `UnsizedStream` cover blocking, counting, gating, unknown-length and disposal-tracking cases.
+- Executables: `FakeExecutable` writes POSIX shell scripts (`WriteScript`, `WriteMarker`, `Quote`);
+  `RecordingFakeExecutable` also records arguments, environment and process ID.
+- File system: `FileSystemProbes` reports `CanCreateSymbolicLinks`, `CanDenyAccess` and `IsCaseSensitive` for
+  `SkipUnless` conditions. Use `TemporaryDirectory` for every temporary directory lifetime.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Testing`. C# namespace: `PandaBear.Testing`. Assembly/project identity: `SharedKernel.Testing`.

@@ -62,9 +62,9 @@ internal sealed class K6TestRepository : IDisposable
     public void SetExecutable(string name, string path) => _executables[name] = path;
 
     /// <summary>Adds a POSIX shell script that records its arguments and environment and exits with a code.</summary>
-    public FakeExecutable AddFake(string name, int exitCode = 0, string body = "")
+    public RecordingFakeExecutable AddFake(string name, int exitCode = 0, string body = "")
     {
-        var fake = new FakeExecutable(Path.Combine(Root, "fakes"), name, exitCode, body);
+        var fake = new RecordingFakeExecutable(Path.Combine(Root, "fakes"), name, exitCode, body);
         _executables[name] = fake.Path;
         return fake;
     }

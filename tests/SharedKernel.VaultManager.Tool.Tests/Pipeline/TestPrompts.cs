@@ -1,5 +1,5 @@
+using Microsoft.Extensions.Time.Testing;
 using PandaBear.VaultManager.Tool.Pipeline;
-using PandaBear.VaultManager.Tool.Tests.Merge;
 
 namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
 
@@ -50,5 +50,5 @@ internal sealed class TestPrompts(string newPassword, string? filePassword = nul
             return newPassword;
         },
         IsInteractive,
-        new FixedTimeProvider(PipelineInputs.Now));
+        new FakeTimeProvider(PipelineInputs.Now));
 }

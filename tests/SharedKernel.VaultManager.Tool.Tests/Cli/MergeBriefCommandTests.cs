@@ -1,3 +1,4 @@
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Brief;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
@@ -9,19 +10,21 @@ public sealed class MergeBriefCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-brief-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
 
-    /// <summary>Deletes the temporary directory.</summary>
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    private string DirectoryPath => temporaryDirectory.Path;
+
+    /// <inheritdoc />
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public async Task Merge_writes_the_brief_also_when_fields_need_a_decision()
     {
         // Arrange
-        string[] inputs = CliInputs.ConflictingLogins(directory);
-        string output = Path.Combine(directory, "merged.json");
-        string decisionsPath = Path.Combine(directory, "decisions.json");
-        string briefPath = Path.Combine(directory, "brief.json");
+        string[] inputs = CliInputs.ConflictingLogins(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
+        string briefPath = Path.Combine(DirectoryPath, "brief.json");
 
         // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--brief", briefPath], TestContext.Current.CancellationToken);
@@ -47,9 +50,9 @@ public sealed class MergeBriefCommandTests : IDisposable
     public async Task Merge_that_writes_the_vault_writes_an_empty_brief_and_replaces_an_earlier_one()
     {
         // Arrange
-        string[] inputs = CliInputs.NewerBitwardenLogin(directory);
-        string output = Path.Combine(directory, "merged.json");
-        string briefPath = Path.Combine(directory, "brief.json");
+        string[] inputs = CliInputs.NewerBitwardenLogin(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string briefPath = Path.Combine(DirectoryPath, "brief.json");
         string[] args = ["merge", .. inputs, "--output", output, "--brief", briefPath, "--plaintext", "--force"];
 
         // Act
@@ -69,9 +72,9 @@ public sealed class MergeBriefCommandTests : IDisposable
     public async Task Merge_replaces_a_brief_that_an_editor_saved_with_a_byte_order_mark()
     {
         // Arrange
-        string[] inputs = CliInputs.ConflictingLogins(directory);
-        string output = Path.Combine(directory, "merged.json");
-        string briefPath = Path.Combine(directory, "brief.json");
+        string[] inputs = CliInputs.ConflictingLogins(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string briefPath = Path.Combine(DirectoryPath, "brief.json");
         string[] args = ["merge", .. inputs, "--output", output, "--brief", briefPath];
         (await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), args, TestContext.Current.CancellationToken)).ExitCode.ShouldBe(2);
         string text = await File.ReadAllTextAsync(briefPath, TestContext.Current.CancellationToken);
@@ -89,9 +92,9 @@ public sealed class MergeBriefCommandTests : IDisposable
     public async Task Merge_refuses_a_brief_path_that_names_a_file_that_is_not_a_brief()
     {
         // Arrange
-        string[] inputs = CliInputs.ConflictingLogins(directory);
-        string output = Path.Combine(directory, "merged.json");
-        string briefPath = PipelineInputs.Write(directory, "notes.txt", "fixture text that is not a brief");
+        string[] inputs = CliInputs.ConflictingLogins(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string briefPath = PipelineInputs.Write(DirectoryPath, "notes.txt", "fixture text that is not a brief");
         var prompts = new TestPrompts(ExportPassword);
 
         // Act
@@ -113,10 +116,10 @@ public sealed class MergeBriefCommandTests : IDisposable
     public async Task Merge_refuses_a_brief_path_that_is_an_input_or_another_file_it_writes(string other)
     {
         // Arrange
-        string[] inputs = CliInputs.ConflictingLogins(directory);
-        string output = Path.Combine(directory, "merged.json");
-        string decisionsPath = Path.Combine(directory, "decisions.json");
-        string report = Path.Combine(directory, "report.md");
+        string[] inputs = CliInputs.ConflictingLogins(DirectoryPath);
+        string output = Path.Combine(DirectoryPath, "merged.json");
+        string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
+        string report = Path.Combine(DirectoryPath, "report.md");
         string briefPath = other switch
         {
             "output" => output,

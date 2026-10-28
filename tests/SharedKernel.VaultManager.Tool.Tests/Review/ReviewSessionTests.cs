@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Matching;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Model;
@@ -14,17 +15,19 @@ namespace PandaBear.VaultManager.Tool.Tests.Review;
 public sealed class ReviewSessionTests : IDisposable
 {
     private const string NotesPassword = "Gh-notes-Passw0rd!";
-    private readonly string directory = Directory.CreateTempSubdirectory("vault-review-session-").FullName;
+    private readonly TemporaryDirectory temporaryDirectory = new();
+
+    private string DirectoryPath => temporaryDirectory.Path;
 
     /// <inheritdoc />
-    public void Dispose() => Directory.Delete(directory, recursive: true);
+    public void Dispose() => temporaryDirectory.Dispose();
 
     [Fact]
     public void Notes_decisions_are_set_replaced_and_removed_per_item()
     {
         // Arrange
         VaultItem wifi = KeeperNote("rec-3", "Wifi", "fixture wifi note");
-        var session = Session(Scan(directory, wifi));
+        var session = Session(Scan(DirectoryPath, wifi));
         var missing = () => session.DecideNotes("keeper|keeper.json|missing", NotesDecision.Share);
 
         // Act
@@ -51,7 +54,7 @@ public sealed class ReviewSessionTests : IDisposable
         VaultItem wifi = KeeperNote("rec-3", "Wifi", "fixture wifi note");
         VaultItem router = KeeperNote("rec-4", "Router", "fixture router note");
         VaultItem github = CodesAndPasswordInNotes("rec-github", PipelineSecrets.GitHubRecoveryCodes(720), NotesPassword);
-        var session = Session(Scan(directory, wifi, router, github), MergeDecisions.None with
+        var session = Session(Scan(DirectoryPath, wifi, router, github), MergeDecisions.None with
         {
             Notes = [new ItemNotesDecision(OriginKey(router), NotesDecision.Private)]
         });
@@ -76,7 +79,7 @@ public sealed class ReviewSessionTests : IDisposable
         VaultItem keeperMail = KeeperLogin("rec-2", "Mail", "bob", KeeperPassword, "https://mail.example.com", PipelineInputs.KeeperModified);
         VaultItem bitwardenMail = BitwardenLogin("bw-2", "Mail", "bob", KeeperPassword, "https://mail.example.com", PipelineInputs.BitwardenRevision);
         VaultItem wifi = KeeperNote("rec-3", "Wifi", "fixture wifi note");
-        var session = Session(Scan(directory, keeperExample, bitwardenExample, keeperMail, bitwardenMail, wifi));
+        var session = Session(Scan(DirectoryPath, keeperExample, bitwardenExample, keeperMail, bitwardenMail, wifi));
 
         // Act
         var all = session.Groups(GroupFilter.All, null);
@@ -100,7 +103,7 @@ public sealed class ReviewSessionTests : IDisposable
         VaultItem keeper = CodesAndPasswordInNotes("rec-github", codes, NotesPassword);
         VaultItem work = BitwardenLogin("bw-work", "GitHub work", "bob", BitwardenPassword, "https://github.com");
         VaultItem wifi = KeeperNote("rec-wifi", "Wifi", "fixture wifi note");
-        var session = Session(Scan(directory, keeper, work, wifi));
+        var session = Session(Scan(DirectoryPath, keeper, work, wifi));
 
         // Act
         var withFindings = session.Groups(GroupFilter.HasFindings, null);
@@ -124,7 +127,7 @@ public sealed class ReviewSessionTests : IDisposable
     {
         // Arrange
         var session = Session(Scan(
-            directory,
+            DirectoryPath,
             KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com"),
             KeeperNote("rec-2", "Wifi", "fixture wifi note")));
 
@@ -139,7 +142,7 @@ public sealed class ReviewSessionTests : IDisposable
     public void Fields_show_each_member_value_and_mask_the_password_by_default()
     {
         // Arrange
-        var session = Session(ConflictingLogins(directory));
+        var session = Session(ConflictingLogins(DirectoryPath));
         var group = GroupOf(session, KeeperKey);
 
         // Act
@@ -165,7 +168,7 @@ public sealed class ReviewSessionTests : IDisposable
     public void Revealing_a_field_shows_its_values_until_it_is_masked_again()
     {
         // Arrange
-        var session = Session(ConflictingLogins(directory));
+        var session = Session(ConflictingLogins(DirectoryPath));
         string groupKey = GroupOf(session, KeeperKey).Key;
 
         // Act
@@ -227,7 +230,7 @@ public sealed class ReviewSessionTests : IDisposable
                 },
             }),
         ];
-        var session = Session(Scan(directory, items));
+        var session = Session(Scan(DirectoryPath, items));
         string[] secrets = [KeeperPassword, BitwardenPassword, totp, .. cardNumbers, .. cardCodes, .. privateKeys, .. hidden, .. history];
 
         // Act
@@ -254,7 +257,7 @@ public sealed class ReviewSessionTests : IDisposable
             Origin = new ItemOrigin("keeper", KeeperFile, "identity", null),
         };
         VaultItem login = KeeperLogin("site", "Example", "carol", null, "https://u:fixture-uri-password@example.com/Path?token=fixture-uri-token#fixture-fragment");
-        var session = Session(Scan(directory, identity, login));
+        var session = Session(Scan(DirectoryPath, identity, login));
 
         // Act
         ReviewField[] fields = [.. session.Groups(GroupFilter.All, null).SelectMany(group => session.Fields(group.Key))];
@@ -273,7 +276,7 @@ public sealed class ReviewSessionTests : IDisposable
     public void Choosing_a_member_decides_the_field_and_marks_the_review_dirty()
     {
         // Arrange
-        var session = Session(ConflictingLogins(directory));
+        var session = Session(ConflictingLogins(DirectoryPath));
         string groupKey = GroupOf(session, KeeperKey).Key;
 
         // Act
@@ -302,7 +305,7 @@ public sealed class ReviewSessionTests : IDisposable
         {
             Notes = "fixture bitwarden notes"
         };
-        var session = Session(Scan(directory, keeper, bitwarden));
+        var session = Session(Scan(DirectoryPath, keeper, bitwarden));
         string groupKey = GroupOf(session, OriginKey(keeper)).Key;
 
         // Act
@@ -333,7 +336,7 @@ public sealed class ReviewSessionTests : IDisposable
             }
         };
         VaultItem bitwarden = BitwardenLogin("bw-1", "Example", "alice", KeeperPassword, "https://example.com", PipelineInputs.BitwardenRevision);
-        var session = Session(Scan(directory, keeper, bitwarden));
+        var session = Session(Scan(DirectoryPath, keeper, bitwarden));
         string groupKey = GroupOf(session, OriginKey(keeper)).Key;
 
         // Act
@@ -349,7 +352,7 @@ public sealed class ReviewSessionTests : IDisposable
     public void Clearing_a_choice_leaves_the_field_to_the_policy_again()
     {
         // Arrange
-        var session = Session(ConflictingLogins(directory));
+        var session = Session(ConflictingLogins(DirectoryPath));
         string groupKey = GroupOf(session, KeeperKey).Key;
         session.ChooseMember(groupKey, FieldPaths.LoginPassword, BitwardenKey);
 
@@ -366,7 +369,7 @@ public sealed class ReviewSessionTests : IDisposable
     public void Choosing_an_item_outside_the_group_or_a_member_for_a_list_is_refused()
     {
         // Arrange
-        var session = Session(ConflictingLogins(directory));
+        var session = Session(ConflictingLogins(DirectoryPath));
         string groupKey = GroupOf(session, KeeperKey).Key;
         var outsider = () => session.ChooseMember(groupKey, FieldPaths.LoginPassword, "keeper|keeper.json|rec-unknown");
         var list = () => session.ChooseMember(groupKey, FieldPaths.LoginUris, KeeperKey);
@@ -385,7 +388,7 @@ public sealed class ReviewSessionTests : IDisposable
     {
         // Arrange
         VaultItem keeper = CodesAndPasswordInNotes("rec-github", PipelineSecrets.GitHubRecoveryCodes(530), NotesPassword);
-        var session = Session(Scan(directory, keeper));
+        var session = Session(Scan(DirectoryPath, keeper));
         string groupKey = GroupOf(session, OriginKey(keeper)).Key;
         var proposed = session.Findings(groupKey).ShouldHaveSingleItem(finding => finding.IsPending);
 
@@ -407,7 +410,7 @@ public sealed class ReviewSessionTests : IDisposable
         // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(540);
         VaultItem keeper = CodesAndPasswordInNotes("rec-github", codes, NotesPassword);
-        var session = Session(Scan(directory, keeper));
+        var session = Session(Scan(DirectoryPath, keeper));
         string groupKey = GroupOf(session, OriginKey(keeper)).Key;
         var preAccepted = session.Findings(groupKey).ShouldHaveSingleItem(finding => finding.Kind == SecretKind.RecoveryCodes);
 
@@ -430,7 +433,7 @@ public sealed class ReviewSessionTests : IDisposable
     {
         // Arrange
         VaultItem keeper = CodesAndPasswordInNotes("rec-github", PipelineSecrets.GitHubRecoveryCodes(550), NotesPassword);
-        var session = Session(Scan(directory, keeper));
+        var session = Session(Scan(DirectoryPath, keeper));
         string groupKey = GroupOf(session, OriginKey(keeper)).Key;
         var masked = session.Findings(groupKey).ShouldHaveSingleItem(finding => finding.Kind == SecretKind.Password);
 
@@ -451,7 +454,7 @@ public sealed class ReviewSessionTests : IDisposable
         // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(555);
         VaultItem keeper = CodesAndPasswordInNotes("rec-github", codes, NotesPassword);
-        var session = Session(Scan(directory, keeper));
+        var session = Session(Scan(DirectoryPath, keeper));
         string groupKey = GroupOf(session, OriginKey(keeper)).Key;
 
         // Act
@@ -470,7 +473,7 @@ public sealed class ReviewSessionTests : IDisposable
         string uri = PipelineSecrets.TotpUri(PipelineSecrets.TotpSecret(557));
         VaultItem seeded = KeeperLogin("rec-seed", "Seeded", seed, KeeperPassword, "https://seeded.example.com");
         VaultItem authenticator = KeeperLogin("rec-uri", "Authenticator", uri, KeeperPassword, "https://otp.example.com");
-        var session = Session(Scan(directory, seeded, authenticator));
+        var session = Session(Scan(DirectoryPath, seeded, authenticator));
         string seededGroup = GroupOf(session, OriginKey(seeded)).Key;
         string uriGroup = GroupOf(session, OriginKey(authenticator)).Key;
         var uriFinding = session.Findings(uriGroup).ShouldHaveSingleItem();
@@ -503,7 +506,7 @@ public sealed class ReviewSessionTests : IDisposable
         {
             Notes = "Password: " + huge
         };
-        var session = Session(Scan(directory, keeper));
+        var session = Session(Scan(DirectoryPath, keeper));
         string groupKey = GroupOf(session, OriginKey(keeper)).Key;
         var finding = session.Findings(groupKey).ShouldHaveSingleItem(found => found.Kind == SecretKind.Password);
 
@@ -526,7 +529,7 @@ public sealed class ReviewSessionTests : IDisposable
         {
             Fields = [new CustomField("\u001b]0;TITLE\u0007PIN", "fixture-hidden-pin", CustomFieldType.Hidden)],
         };
-        var session = Session(Scan(directory, keeper));
+        var session = Session(Scan(DirectoryPath, keeper));
 
         // Act
         var fields = FieldOf(session, GroupOf(session, OriginKey(keeper)).Key, FieldPaths.Fields);
@@ -542,7 +545,7 @@ public sealed class ReviewSessionTests : IDisposable
         // Arrange
         VaultItem keeper = KeeperLogin("rec-1", "GitHub", "alice", KeeperPassword, "https://github.com", PipelineInputs.KeeperModified);
         VaultItem bitwarden = BitwardenLogin("bw-1", "GitHub work", "alice.work", KeeperPassword, "https://github.com", PipelineInputs.BitwardenRevision);
-        var session = Session(Scan(directory, keeper, bitwarden));
+        var session = Session(Scan(DirectoryPath, keeper, bitwarden));
 
         // Act
         bool linked = session.Link(OriginKey(keeper), OriginKey(bitwarden));
@@ -559,7 +562,7 @@ public sealed class ReviewSessionTests : IDisposable
     {
         // Arrange
         var split = new MergeDecisions([], new MatchOverrides([], [new OriginKeyPair(BitwardenKey, KeeperKey)]));
-        var session = Session(ConflictingLogins(directory), split);
+        var session = Session(ConflictingLogins(DirectoryPath), split);
         int separate = session.Groups(GroupFilter.All, null).Count;
 
         // Act
@@ -576,7 +579,7 @@ public sealed class ReviewSessionTests : IDisposable
     public void Splitting_an_item_moves_it_into_a_group_of_its_own()
     {
         // Arrange
-        var session = Session(ConflictingLogins(directory));
+        var session = Session(ConflictingLogins(DirectoryPath));
 
         // Act
         session.Split(BitwardenKey);
@@ -592,11 +595,11 @@ public sealed class ReviewSessionTests : IDisposable
     public void Pending_entries_of_the_decisions_count_as_no_decision()
     {
         // Arrange
-        var conflicts = Session(ConflictingLogins(directory));
+        var conflicts = Session(ConflictingLogins(DirectoryPath));
         var pending = conflicts.Decisions.WithPending(conflicts.Pending.Fields, conflicts.Pending.Findings);
 
         // Act
-        var session = Session(ConflictingLogins(directory), pending);
+        var session = Session(ConflictingLogins(DirectoryPath), pending);
 
         // Assert
         pending.Groups.ShouldHaveSingleItem().Choices.ShouldHaveSingleItem().Kind.ShouldBe(FieldChoiceKind.Pending);
@@ -610,7 +613,7 @@ public sealed class ReviewSessionTests : IDisposable
     {
         // Arrange
         VaultItem keeper = CodesAndPasswordInNotes("rec-github", PipelineSecrets.GitHubRecoveryCodes(560), NotesPassword);
-        var session = Session(Scan(directory, keeper));
+        var session = Session(Scan(DirectoryPath, keeper));
         string groupKey = GroupOf(session, OriginKey(keeper)).Key;
         session.ToggleReveal(groupKey, FieldPaths.Notes);
         var finding = session.Findings(groupKey).ShouldHaveSingleItem(finding => finding.Kind == SecretKind.Password);
