@@ -29,4 +29,14 @@ public static class TestTraitNames
     /// Trait name for tested surface.
     /// </summary>
     public const string SurfaceName = "Surface";
+
+    /// <summary>
+    /// Trait name for what a test verifies.
+    /// </summary>
+    public const string FocusName = "Focus";
+
+    /// <summary>
+    /// Trait name for test priority.
+    /// </summary>
+    public const string PriorityName = "Priority";
 }

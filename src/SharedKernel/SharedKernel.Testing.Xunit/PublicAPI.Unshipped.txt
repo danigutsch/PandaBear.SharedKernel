@@ -1,0 +1,25 @@
+#nullable enable
+PandaBear.Testing.TestScopeAttribute
+PandaBear.Testing.TestScopeAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
+PandaBear.Testing.TestScopeAttribute.Scope.get -> PandaBear.Testing.TestScope
+PandaBear.Testing.TestScopeAttribute.TestScopeAttribute(PandaBear.Testing.TestScope scope) -> void
+PandaBear.Testing.TestHostAttribute
+PandaBear.Testing.TestHostAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
+PandaBear.Testing.TestHostAttribute.Host.get -> PandaBear.Testing.TestHost
+PandaBear.Testing.TestHostAttribute.TestHostAttribute(PandaBear.Testing.TestHost host) -> void
+PandaBear.Testing.TestFocusAttribute
+PandaBear.Testing.TestFocusAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
+PandaBear.Testing.TestFocusAttribute.Focus.get -> PandaBear.Testing.TestFocus
+PandaBear.Testing.TestFocusAttribute.TestFocusAttribute(PandaBear.Testing.TestFocus focus) -> void
+PandaBear.Testing.TestPriorityAttribute
+PandaBear.Testing.TestPriorityAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
+PandaBear.Testing.TestPriorityAttribute.Priority.get -> PandaBear.Testing.TestPriority
+PandaBear.Testing.TestPriorityAttribute.TestPriorityAttribute(PandaBear.Testing.TestPriority priority) -> void
+PandaBear.Testing.TestAreaAttribute
+PandaBear.Testing.TestAreaAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
+PandaBear.Testing.TestAreaAttribute.TestAreaAttribute(string! value) -> void
+PandaBear.Testing.TestSurfaceAttribute
+PandaBear.Testing.TestSurfaceAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
+PandaBear.Testing.TestSurfaceAttribute.TestSurfaceAttribute(string! value) -> void
+PandaBear.Testing.TestAreaAttribute.Value.get -> string!
+PandaBear.Testing.TestSurfaceAttribute.Value.get -> string!

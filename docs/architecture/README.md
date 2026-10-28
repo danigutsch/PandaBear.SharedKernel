@@ -56,6 +56,7 @@ flowchart TB
     SharedKernel_Testing_CodeFixes[SharedKernel.Testing.CodeFixes] --> SharedKernel_Testing_Analyzers[SharedKernel.Testing.Analyzers]
     SharedKernel_Testing_Http[SharedKernel.Testing.Http] --> SharedKernel_Testing_Assertions[SharedKernel.Testing.Assertions]
     SharedKernel_Testing_Mediator[SharedKernel.Testing.Mediator] --> SharedKernel_Mediator_Abstractions[SharedKernel.Mediator.Abstractions]
+    SharedKernel_Testing_Xunit[SharedKernel.Testing.Xunit] --> SharedKernel_Testing[SharedKernel.Testing]
 ```
 <!-- generated:library-dependencies:end -->
 

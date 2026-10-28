@@ -68,6 +68,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Testing.Roslyn/SharedKernel.Testing.Roslyn.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Snapshots/SharedKernel.Testing.Snapshots.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Web/SharedKernel.Testing.Web.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Testing.Xunit/SharedKernel.Testing.Xunit.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Versioning/SharedKernel.Versioning.csproj" />
   <Project Path="tests/SharedKernel.AI.Tests/SharedKernel.AI.Tests.csproj" />
   <Project Path="tests/SharedKernel.ApiVersioning.AspNetCore.Tests/SharedKernel.ApiVersioning.AspNetCore.Tests.csproj" />

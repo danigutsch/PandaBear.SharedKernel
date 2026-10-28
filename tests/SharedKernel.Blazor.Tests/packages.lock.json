@@ -237,14 +237,6 @@
           "xunit.v3.runner.inproc.console": "[4.0.2]"
         }
       },
-      "xunit.v3.extensibility.core": {
-        "type": "Transitive",
-        "resolved": "4.0.2",
-        "contentHash": "ARTt+pGyd86mdtiFBkKpyBQvRC3u0rr8oidBlII2GsAg7D6TfOsDFCsoQtFij83V5pE57m3whUIqT4xjiARXbQ==",
-        "dependencies": {
-          "xunit.v3.common": "[4.0.2]"
-        }
-      },
       "xunit.v3.runner.common": {
         "type": "Transitive",
         "resolved": "4.0.2",
@@ -357,6 +349,15 @@
         "contentHash": "803Ryeh5gWtGPdy7knumXKzMmMIG6tbX18Y5Din0z9V5IOiWjfbK1qvgw45b6ffyR6+CATw9yOa/6LOU2gvS1A==",
         "dependencies": {
           "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.20.0, 2.0.0)"
+        }
+      },
+      "xunit.v3.extensibility.core": {
+        "type": "CentralTransitive",
+        "requested": "[4.0.2, )",
+        "resolved": "4.0.2",
+        "contentHash": "ARTt+pGyd86mdtiFBkKpyBQvRC3u0rr8oidBlII2GsAg7D6TfOsDFCsoQtFij83V5pE57m3whUIqT4xjiARXbQ==",
+        "dependencies": {
+          "xunit.v3.common": "[4.0.2]"
         }
       }
     }

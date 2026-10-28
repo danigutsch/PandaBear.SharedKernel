@@ -12,6 +12,10 @@ Reusable test traits, environment scopes, and temporary-directory lifetimes.
   `Surface`.
 - `TestTraitValues` owns cross-project values reused by multiple bounded-context test projects.
 - `SharedKernelTestTraitNames` owns SharedKernel package-test names and the neutral `Unit` scope.
+- `TestScope` enumerates the test seams (`Unit`, `Behavior`, `Component`, `Contract`, `UiIntegration`,
+  `Integration`, `System`, `Architecture`) and `ToTraitValue()` maps each to its `Scope` trait value.
+  `TestHost`, `TestFocus` and `TestPriority` do the same for `Host`, `Focus` and `Priority`.
+  `SharedKernel.Testing.Xunit` provides the matching attributes.
 - Project-specific values belong in the owning test project's `TestTraits` type.
 
 Use constants in `Trait` attributes whenever they exist. `SharedKernel.Testing.Analyzers` reports
