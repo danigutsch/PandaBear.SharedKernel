@@ -15,7 +15,7 @@ internal static partial class BaselinePlanner
     {
         root = Path.GetFullPath(root);
         List<BaselineEntry> entries = [];
-        foreach (var file in baseline.Files)
+        foreach (var (file, executable) in baseline.ManagedFiles)
         {
             var fullPath = Resolve(root, file.Path, file.Path);
             var template = file.Profile is { } profile
@@ -24,7 +24,14 @@ internal static partial class BaselinePlanner
             var body = Substitute(file.Path, template, baseline).Replace("\r\n", "\n", StringComparison.Ordinal).TrimEnd('\n') + "\n";
             var desired = BaselineMarker.Compose(file.Path, body);
             var existing = ReadExisting(fullPath, file.Path);
-            entries.Add(new BaselineEntry(file.Path, fullPath, Compare(file.Path, desired, existing), desired, existing, file.OverwriteExisting));
+            var status = Compare(file.Path, desired, existing);
+            if (status == BaselineStatus.Current && executable && !OperatingSystem.IsWindows()
+                && !File.GetUnixFileMode(fullPath).HasFlag(UnixFileMode.UserExecute))
+            {
+                status = BaselineStatus.Outdated;
+            }
+
+            entries.Add(new BaselineEntry(file.Path, fullPath, status, desired, existing, file.OverwriteExisting, executable));
         }
 
         return entries;

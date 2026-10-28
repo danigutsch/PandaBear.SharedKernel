@@ -119,6 +119,12 @@ internal static class BaselineProfiles
               label: Proposal
         """;
 
+    private const string HookPreCommitDiffCheck = """
+        #!/bin/sh
+        # Rejects staged whitespace errors.
+        exec git diff --cached --check
+        """;
+
     private static readonly Dictionary<string, string> Content = new(StringComparer.Ordinal)
     {
         ["gitattributes"] = Gitattributes,
@@ -128,6 +134,7 @@ internal static class BaselineProfiles
         ["pull-request-template"] = PullRequestTemplate,
         ["issue-form-bug"] = IssueFormBug,
         ["issue-form-feature"] = IssueFormFeature,
+        ["pre-commit-diff-check"] = HookPreCommitDiffCheck,
     };
 
     /// <summary>Gets the profile IDs.</summary>

@@ -1,3 +1,4 @@
+using System.Runtime.Versioning;
 using static PandaBear.RepoConfig.Tests.BaselineTestOperations;
 
 namespace PandaBear.RepoConfig.Tests;
@@ -269,7 +270,7 @@ public sealed class BaselineCommandTests
     [Theory]
     [InlineData("""{ "repositoryName": "bad name", "files": [ { "path": ".gitignore", "profile": "gitignore" } ] }""", "$.baseline.repositoryName")]
     [InlineData("""{ "repositoryName": "ok", "defaultBranch": "-x", "files": [ { "path": ".gitignore", "profile": "gitignore" } ] }""", "$.baseline.defaultBranch")]
-    [InlineData("""{ "repositoryName": "ok", "files": [] }""", "$.baseline.files must name at least one file")]
+    [InlineData("""{ "repositoryName": "ok", "files": [] }""", "$.baseline must name at least one of files, gitConfig, or hooks")]
     [InlineData("""{ "repositoryName": "ok", "files": [ { "path": "A", "profile": "gitignore" }, { "path": "a", "profile": "readme" } ] }""", "$.baseline.files[1].path repeats")]
     public async Task Baseline_commands_reject_invalid_section_values(string section, string expectedFragment)
     {
@@ -282,5 +283,33 @@ public sealed class BaselineCommandTests
         // Assert
         exitCode.ShouldBe(1);
         error.ShouldContain(expectedFragment, StringComparison.Ordinal, "The error names the JSON path of the problem.");
+    }
+
+    [Fact(SkipUnless = nameof(PosixTestSupport.CanRestrictPermissions), SkipType = typeof(PosixTestSupport), Skip = "Needs POSIX permissions that bind the current user.")]
+    [UnsupportedOSPlatform("windows")]
+    public async Task Apply_with_force_removes_the_directories_it_created_when_a_write_fails()
+    {
+        // Arrange
+        using var workspace = CreateWorkspace("""
+            {
+              "version": 1,
+              "baseline": {
+                "repositoryName": "example-repo",
+                "files": [
+                  { "path": "created/one/.gitignore", "profile": "gitignore" },
+                  { "path": "locked/.gitignore", "profile": "gitignore" }
+                ]
+              }
+            }
+            """);
+        using var locked = new ReadOnlyDirectory(Path.Combine(workspace.RootPath, "locked"));
+
+        // Act
+        var (exitCode, _, error) = await Run(workspace, "apply", force: true);
+
+        // Assert
+        exitCode.ShouldBe(1, "The write into the read-only directory fails.");
+        error.ShouldNotBeEmpty();
+        Directory.Exists(Path.Combine(workspace.RootPath, "created")).ShouldBeFalse("The directories created for the failed apply are removed.");
     }
 }
