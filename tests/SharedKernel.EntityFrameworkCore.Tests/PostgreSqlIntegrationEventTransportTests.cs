@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using PandaBear.Testing;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
@@ -129,6 +130,11 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
         message.LastConsumeAttemptAt.ShouldNotBeNull();
         message.NextConsumeAttemptAt.ShouldNotBeNull();
         message.LastConsumeError.ShouldBe(typeof(InvalidOperationException).FullName);
+        var log = Scenario.LogRecords.ShouldHaveSingleItem();
+        log.Level.ShouldBe(LogLevel.Warning);
+        log.Exception.ShouldBeSameAs(publisher.Failure);
+        log.State.ShouldContain(new KeyValuePair<string, object?>("MessageId", message.Id));
+        log.State.ShouldContain(new KeyValuePair<string, object?>("Attempt", 1));
         message.ClaimedBy.ShouldBeNull();
         message.ClaimedUntil.ShouldBeNull();
     }
@@ -188,6 +194,7 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
         message.ConsumeAttempts.ShouldBe(2);
         message.PoisonedAt.ShouldNotBeNull();
         message.LastConsumeError.ShouldBe(typeof(InvalidOperationException).FullName);
+        Scenario.LogRecords.Select(record => record.Level).ShouldBe([LogLevel.Warning, LogLevel.Error]);
         message.ProcessedAt.ShouldBeNull();
         message.NextConsumeAttemptAt.ShouldBeNull();
         message.ClaimedBy.ShouldBeNull();
