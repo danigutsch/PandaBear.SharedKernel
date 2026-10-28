@@ -74,17 +74,33 @@ PandaBear.Blazor.UiFailureReporter.UiFailureReporter(Microsoft.Extensions.Loggin
 PandaBear.Blazor.UploadStatus
 PandaBear.Blazor.UploadStatus.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>?
 PandaBear.Blazor.UploadStatus.AdditionalAttributes.set -> void
+PandaBear.Blazor.UploadStatus.CancelClass.get -> string?
+PandaBear.Blazor.UploadStatus.CancelClass.set -> void
+PandaBear.Blazor.UploadStatus.CancelLabelFormat.get -> string?
+PandaBear.Blazor.UploadStatus.CancelLabelFormat.set -> void
 PandaBear.Blazor.UploadStatus.CancelText.get -> string!
 PandaBear.Blazor.UploadStatus.CancelText.set -> void
 PandaBear.Blazor.UploadStatus.Detail.get -> Microsoft.AspNetCore.Components.RenderFragment<PandaBear.HttpClients.UploadOperationState!>?
 PandaBear.Blazor.UploadStatus.Detail.set -> void
+PandaBear.Blazor.UploadStatus.IndeterminateProgressLabelFormat.get -> string?
+PandaBear.Blazor.UploadStatus.IndeterminateProgressLabelFormat.set -> void
 PandaBear.Blazor.UploadStatus.Label.get -> string!
 PandaBear.Blazor.UploadStatus.Label.set -> void
 PandaBear.Blazor.UploadStatus.OnCancel.get -> Microsoft.AspNetCore.Components.EventCallback
 PandaBear.Blazor.UploadStatus.OnCancel.set -> void
+PandaBear.Blazor.UploadStatus.ProgressClass.get -> string?
+PandaBear.Blazor.UploadStatus.ProgressClass.set -> void
 PandaBear.Blazor.UploadStatus.ProgressLabel.get -> string!
 PandaBear.Blazor.UploadStatus.ProgressLabel.set -> void
+PandaBear.Blazor.UploadStatus.ProgressLabelFormat.get -> string?
+PandaBear.Blazor.UploadStatus.ProgressLabelFormat.set -> void
+PandaBear.Blazor.UploadStatus.ProgressTextFormat.get -> string?
+PandaBear.Blazor.UploadStatus.ProgressTextFormat.set -> void
+PandaBear.Blazor.UploadStatus.RenderFailureInStatus.get -> bool
+PandaBear.Blazor.UploadStatus.RenderFailureInStatus.set -> void
 PandaBear.Blazor.UploadStatus.State.get -> PandaBear.HttpClients.UploadOperationState!
 PandaBear.Blazor.UploadStatus.State.set -> void
+PandaBear.Blazor.UploadStatus.StatusClass.get -> string?
+PandaBear.Blazor.UploadStatus.StatusClass.set -> void
 PandaBear.Blazor.UploadStatus.UploadStatus() -> void
 static PandaBear.Blazor.BlazorServiceCollectionExtensions.AddUiFailureReporting(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
