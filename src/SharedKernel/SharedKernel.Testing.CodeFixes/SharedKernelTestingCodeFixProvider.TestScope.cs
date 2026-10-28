@@ -1,10 +1,11 @@
-using System.Globalization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
+
+using PandaBear.Testing.Analyzers;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -30,7 +31,7 @@ public sealed partial class SharedKernelTestingCodeFixProvider
         var typed = GetNonWhiteSpaceProperty(diagnostic, "TypedAttribute") == "true";
         foreach (var scope in allowedScopes.Split([';'], StringSplitOptions.RemoveEmptyEntries))
         {
-            var member = ToEnumMemberName(scope);
+            var member = TestScopeValues.ToMemberName(scope);
             var title = typed ? $"Add TestScope(TestScope.{member})" : $"Add Trait(\"Scope\", \"{scope}\")";
             context.RegisterCodeFix(
                 CodeAction.Create(
@@ -39,13 +40,6 @@ public sealed partial class SharedKernelTestingCodeFixProvider
                     equivalenceKey: $"AddTestScope:{typed}:{scope}"),
                 diagnostic);
         }
-    }
-
-    private static string ToEnumMemberName(string scope)
-    {
-        var parts = scope.Split(['-'], StringSplitOptions.RemoveEmptyEntries);
-
-        return string.Concat(parts.Select(static part => char.ToUpper(part[0], CultureInfo.InvariantCulture) + part.Substring(1)));
     }
 
     private static Task<Document> UseTypedScopeAttribute(
