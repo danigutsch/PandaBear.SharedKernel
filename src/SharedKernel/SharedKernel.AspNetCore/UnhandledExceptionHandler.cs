@@ -15,20 +15,27 @@ internal sealed class UnhandledExceptionHandler(UnhandledExceptionReporter repor
 {
     private const string TraceIdExtension = "traceId";
 
+    /// <summary>A client that went away is not a server fault, so it is left to the framework.</summary>
+    private static bool ClientWentAway(Exception exception, HttpContext httpContext) =>
+        exception is OperationCanceledException && httpContext.RequestAborted.IsCancellationRequested;
+
     /// <inheritdoc />
+    /// <remarks>
+    /// A malformed or oversized request (Kestrel 400, 413, 431 ...) is a client error that carries its own status.
+    /// It is answered with that status and is not reported as an unhandled server exception.
+    /// The problem-details service is trimming-safe and honors the host's content negotiation. A client that
+    /// accepts no problem format still receives the status.
+    /// </remarks>
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(httpContext);
         ArgumentNullException.ThrowIfNull(exception);
 
-        // A client that went away is not a server fault; leave it to the framework.
-        if (exception is OperationCanceledException && httpContext.RequestAborted.IsCancellationRequested)
+        if (ClientWentAway(exception, httpContext))
         {
             return false;
         }
 
-        // A malformed or oversized request (Kestrel 400, 413, 431 ...) is a client error that carries its own status.
-        // It is answered with that status and is not an unhandled server exception.
         var statusCode = exception is BadHttpRequestException badRequest
             ? badRequest.StatusCode
             : StatusCodes.Status500InternalServerError;
@@ -48,8 +55,6 @@ internal sealed class UnhandledExceptionHandler(UnhandledExceptionReporter repor
         };
         problem.Extensions[TraceIdExtension] = TelemetryHttpContext.TraceId(httpContext);
 
-        // The problem-details service is trimming-safe and honors the host's content negotiation. A client that
-        // accepts no problem format still receives the status.
         await httpContext.RequestServices.GetRequiredService<IProblemDetailsService>()
             .TryWriteAsync(new ProblemDetailsContext { HttpContext = httpContext, ProblemDetails = problem })
             .ConfigureAwait(false);

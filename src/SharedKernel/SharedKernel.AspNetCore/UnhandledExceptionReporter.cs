@@ -79,15 +79,17 @@ public sealed partial class UnhandledExceptionReporter
             new KeyValuePair<string, object?>(AspNetCoreTelemetry.HandledTag, handled)));
     }
 
-    private static string ErrorType(Exception exception)
+    private static string ErrorType(Exception exception) => UnwrapWrapperExceptions(exception).GetType().Name;
+
+    /// <summary>Reports the first inner exception of wrappers, because they hide the real fault and keep the tag bounded and meaningful.</summary>
+    private static Exception UnwrapWrapperExceptions(Exception exception)
     {
-        // Wrappers hide the real fault; report the first inner exception so the tag stays bounded and meaningful.
         while (exception is AggregateException or System.Reflection.TargetInvocationException && exception.InnerException is { } inner)
         {
             exception = inner;
         }
 
-        return exception.GetType().Name;
+        return exception;
     }
 
     [LoggerMessage(
@@ -97,6 +99,6 @@ public sealed partial class UnhandledExceptionReporter
         Message = "Unhandled exception {ErrorType} on route {RouteTemplate} with status {StatusCode} and trace {TraceId}")]
     private static partial void LogUnhandledException(ILogger logger, string errorType, string routeTemplate, int statusCode, string traceId);
 
-    // IMeterFactory owns the meter and disposes it with the service provider.
+    /// <summary>Creates the meter through the factory, which owns it and disposes it with the service provider.</summary>
     private static Meter CreateMeter(IMeterFactory meterFactory) => meterFactory.Create(AspNetCoreTelemetry.MeterName);
 }

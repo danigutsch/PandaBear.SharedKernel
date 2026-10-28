@@ -20,21 +20,25 @@ internal sealed class JwtBearerSecurityEventsPostConfigureOptions : IPostConfigu
 
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<JwtBearerEvents, object> Wrapped = new();
 
+    /// <summary>An events type resolved from dependency injection replaces the instance, so that choice is left to the host.</summary>
+    private static bool HostResolvesEventsFromDependencyInjection(JwtBearerOptions options) => options.EventsType is not null;
+
+    /// <summary>A host may share one events instance across schemes, so each instance is wrapped only once.</summary>
+    private static bool FirstWrap(JwtBearerEvents events) => Wrapped.TryAdd(events, true);
+
     /// <inheritdoc />
     public void PostConfigure(string? name, JwtBearerOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        // An events type resolved from DI replaces the instance; leave that choice to the host.
-        if (options.EventsType is not null)
+        if (HostResolvesEventsFromDependencyInjection(options))
         {
             return;
         }
 
         var events = options.Events ??= new JwtBearerEvents();
 
-        // A host may share one events instance across schemes; wrap it once.
-        if (!Wrapped.TryAdd(events, true))
+        if (!FirstWrap(events))
         {
             return;
         }

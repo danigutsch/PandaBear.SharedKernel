@@ -148,12 +148,12 @@ public sealed class SharedKernelIOAnalyzer : DiagnosticAnalyzer
         return root;
     }
 
-    // A relational comparison against Length or ContentLength is the explicit bound recognized around a buffering call.
+    /// <summary>A relational comparison against Length or ContentLength is the explicit bound recognized around a buffering call.</summary>
     private static bool HasLengthBound(IOperation root) =>
         root.DescendantsAndSelf().OfType<IBinaryOperation>().Any(static binary =>
             IsRelational(binary) && (MentionsLength(binary.LeftOperand) || MentionsLength(binary.RightOperand)));
 
-    // Inside a copy loop, any relational comparison other than one against zero (the end-of-stream test) is a bound.
+    /// <summary>Inside a copy loop, any relational comparison other than one against zero (the end-of-stream test) is a bound.</summary>
     private static bool HasLoopBound(ILoopOperation loop) =>
         loop.DescendantsAndSelf().OfType<IBinaryOperation>().Any(static binary =>
             IsRelational(binary) && !IsZero(binary.LeftOperand) && !IsZero(binary.RightOperand));

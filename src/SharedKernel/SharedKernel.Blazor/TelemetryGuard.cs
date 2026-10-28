@@ -24,6 +24,7 @@ internal static class TelemetryGuard
         }
     }
 
+    /// <summary>Writes the failure to standard error and a debugger; a closed standard error is ignored because nothing is left to report to.</summary>
     private static void Surface(string exceptionType)
     {
         var line = $"PandaBear.Blazor telemetry failure: {exceptionType}";
@@ -33,7 +34,6 @@ internal static class TelemetryGuard
         }
         catch (IOException)
         {
-            // Standard error is the last resort; when it is closed there is nowhere left to report.
         }
 
         if (Debugger.IsAttached)

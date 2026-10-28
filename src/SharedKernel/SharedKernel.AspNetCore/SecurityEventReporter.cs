@@ -40,10 +40,7 @@ internal sealed partial class SecurityEventReporter
     /// <param name="scheme">The authentication scheme name.</param>
     public void ReportAuthentication(HttpContext httpContext, string securityEvent, string reason, string scheme)
     {
-        // A challenge without a token is routine anonymous traffic; every other event is a failure worth a warning.
-        var level = securityEvent == JwtBearerSecurityEventsPostConfigureOptions.Challenge && reason == JwtBearerSecurityEventsPostConfigureOptions.MissingToken
-            ? LogLevel.Information
-            : LogLevel.Warning;
+        var level = IsRoutineAnonymousTraffic(securityEvent, reason) ? LogLevel.Information : LogLevel.Warning;
         TelemetryGuard.Run(() =>
         {
             var route = TelemetryHttpContext.RouteTemplate(httpContext);
@@ -56,6 +53,10 @@ internal sealed partial class SecurityEventReporter
             new KeyValuePair<string, object?>(AspNetCoreTelemetry.ReasonTag, reason),
             new KeyValuePair<string, object?>(AspNetCoreTelemetry.SchemeTag, scheme)));
     }
+
+    /// <summary>A challenge without a token is routine anonymous traffic; every other event is a failure worth a warning.</summary>
+    private static bool IsRoutineAnonymousTraffic(string securityEvent, string reason) =>
+        securityEvent == JwtBearerSecurityEventsPostConfigureOptions.Challenge && reason == JwtBearerSecurityEventsPostConfigureOptions.MissingToken;
 
     /// <summary>Logs and counts a rate-limit rejection.</summary>
     /// <param name="httpContext">The rejected request.</param>
@@ -84,6 +85,6 @@ internal sealed partial class SecurityEventReporter
         Message = "Rate limit policy {Policy} rejected a request with status {StatusCode} on route {RouteTemplate} and trace {TraceId}")]
     private static partial void LogRateLimitRejection(ILogger logger, string policy, int statusCode, string routeTemplate, string traceId);
 
-    // IMeterFactory owns the meter and disposes it with the service provider.
+    /// <summary>Creates the meter through the factory, which owns it and disposes it with the service provider.</summary>
     private static Meter CreateMeter(IMeterFactory meterFactory) => meterFactory.Create(AspNetCoreTelemetry.MeterName);
 }

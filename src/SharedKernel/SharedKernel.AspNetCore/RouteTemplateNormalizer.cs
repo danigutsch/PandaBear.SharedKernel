@@ -27,6 +27,10 @@ internal static class RouteTemplateNormalizer
         return template;
     }
 
+    /// <remarks>
+    /// A scheme is letters, digits, '+', '-' or '.' before the first ':'; route constraints such as {id:int}
+    /// are preceded by '/' or '{', which a scheme cannot contain.
+    /// </remarks>
     private static bool LooksLikeUri(string template)
     {
         if (template.Contains("://", StringComparison.Ordinal))
@@ -34,8 +38,6 @@ internal static class RouteTemplateNormalizer
             return true;
         }
 
-        // A scheme is letters, digits, '+', '-' or '.' before the first ':'; route constraints such as {id:int}
-        // are preceded by '/' or '{', which a scheme cannot contain.
         var colon = template.IndexOf(':', StringComparison.Ordinal);
         return colon > 0 && char.IsAsciiLetter(template[0])
             && template.AsSpan(0, colon).IndexOfAnyExcept(SchemeCharacters) < 0;
