@@ -5,28 +5,35 @@ namespace PandaBear.Testing;
 /// <summary>A POSIX shell script that records each argument on a line, its environment, and its process ID.</summary>
 public sealed class RecordingFakeExecutable
 {
-    /// <summary>Writes the recording shell script into <c>directory</c> and, on Unix, marks it executable.</summary>
+    /// <summary>Writes the recording shell script into <c>directory</c> and marks it executable. Throws <see cref="PlatformNotSupportedException" /> on Windows.</summary>
+    /// <param name="directory">The directory that receives the script; it is created when missing.</param>
+    /// <param name="name">The script file name.</param>
+    /// <param name="exitCode">The exit code the script returns.</param>
+    /// <param name="body">Shell commands run after the script has recorded its process ID, environment and arguments.</param>
     public RecordingFakeExecutable(string directory, string name, int exitCode, string body)
     {
-        Directory.CreateDirectory(directory);
+        ArgumentNullException.ThrowIfNull(directory);
+        ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(body);
+
+        if (OperatingSystem.IsWindows())
+        {
+            throw new PlatformNotSupportedException("Recording fake executables are POSIX shell scripts.");
+        }
+
         Path = System.IO.Path.Combine(directory, name);
         ArgumentsPath = Path + ".args";
         EnvironmentPath = Path + ".env";
         ProcessIdPath = Path + ".pid";
-        File.WriteAllText(
+        FakeExecutable.WriteScript(
             Path,
             $"""
-            #!/bin/sh
             printf '%s' "$$" > {FakeExecutable.Quote(ProcessIdPath)}
-            for argument in "$@"; do printf '%s\n' "$argument"; done > {FakeExecutable.Quote(ArgumentsPath)}
             /usr/bin/env > {FakeExecutable.Quote(EnvironmentPath)}
+            for argument in "$@"; do printf '%s\n' "$argument"; done > {FakeExecutable.Quote(ArgumentsPath)}
             {body}
             exit {exitCode.ToString(CultureInfo.InvariantCulture)}
             """);
-        if (!OperatingSystem.IsWindows())
-        {
-            File.SetUnixFileMode(Path, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
-        }
     }
 
     /// <summary>The absolute path of the script.</summary>
@@ -53,7 +60,7 @@ public sealed class RecordingFakeExecutable
         get;
     }
 
-    /// <summary>Whether the script has run, which is when it has written its arguments file.</summary>
+    /// <summary>Whether the script has recorded its process ID, environment and arguments; the arguments file is written last, before <c>body</c> runs.</summary>
     public bool Started => File.Exists(ArgumentsPath);
 
     /// <summary>Reads the arguments the script was called with, one entry per line.</summary>

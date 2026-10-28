@@ -75,19 +75,6 @@ override PandaBear.Testing.RecordingWriteStream.Seek(long offset, System.IO.Seek
 override PandaBear.Testing.RecordingWriteStream.SetLength(long value) -> void
 override PandaBear.Testing.RecordingWriteStream.Write(byte[]! buffer, int offset, int count) -> void
 override PandaBear.Testing.RecordingWriteStream.Write(System.ReadOnlySpan<byte> buffer) -> void
-override PandaBear.Testing.SeekableTrackingReadStream.CanRead.get -> bool
-override PandaBear.Testing.SeekableTrackingReadStream.CanSeek.get -> bool
-override PandaBear.Testing.SeekableTrackingReadStream.CanWrite.get -> bool
-override PandaBear.Testing.SeekableTrackingReadStream.Flush() -> void
-override PandaBear.Testing.SeekableTrackingReadStream.Length.get -> long
-override PandaBear.Testing.SeekableTrackingReadStream.Position.get -> long
-override PandaBear.Testing.SeekableTrackingReadStream.Position.set -> void
-override PandaBear.Testing.SeekableTrackingReadStream.Read(byte[]! buffer, int offset, int count) -> int
-override PandaBear.Testing.SeekableTrackingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-override PandaBear.Testing.SeekableTrackingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
-override PandaBear.Testing.SeekableTrackingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
-override PandaBear.Testing.SeekableTrackingReadStream.SetLength(long value) -> void
-override PandaBear.Testing.SeekableTrackingReadStream.Write(byte[]! buffer, int offset, int count) -> void
 override PandaBear.Testing.TrackingReadStream.CanRead.get -> bool
 override PandaBear.Testing.TrackingReadStream.CanSeek.get -> bool
 override PandaBear.Testing.TrackingReadStream.CanWrite.get -> bool
@@ -143,10 +130,6 @@ PandaBear.Testing.RecordingFakeExecutable.Started.get -> bool
 PandaBear.Testing.RecordingWriteStream
 PandaBear.Testing.RecordingWriteStream.RecordingWriteStream() -> void
 PandaBear.Testing.RecordingWriteStream.WriteSizes.get -> System.Collections.Generic.IReadOnlyList<int>!
-PandaBear.Testing.SeekableTrackingReadStream
-PandaBear.Testing.SeekableTrackingReadStream.BytesRead.get -> long
-PandaBear.Testing.SeekableTrackingReadStream.IsDisposed.get -> bool
-PandaBear.Testing.SeekableTrackingReadStream.SeekableTrackingReadStream(byte[]! content, bool seekable) -> void
 PandaBear.Testing.SerialTestJustificationAttribute
 PandaBear.Testing.SerialTestJustificationAttribute.Reason.get -> string!
 PandaBear.Testing.SerialTestJustificationAttribute.SerialTestJustificationAttribute(string! reason) -> void
@@ -174,7 +157,7 @@ PandaBear.Testing.TrackingReadStream
 PandaBear.Testing.TrackingReadStream.BytesRead.get -> long
 PandaBear.Testing.TrackingReadStream.IsDisposed.get -> bool
 PandaBear.Testing.TrackingReadStream.ReadCount.get -> int
-PandaBear.Testing.TrackingReadStream.TrackingReadStream(byte[]! content) -> void
+PandaBear.Testing.TrackingReadStream.TrackingReadStream(byte[]! content, bool seekable = false) -> void
 PandaBear.Testing.UnsizedStream
 PandaBear.Testing.UnsizedStream.UnsizedStream(byte[]! content) -> void
 static PandaBear.Testing.FakeExecutable.Quote(string! value) -> string!

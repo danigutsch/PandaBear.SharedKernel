@@ -28,7 +28,7 @@ Use `SerialTestJustificationAttribute` on xUnit collection definitions that disa
 
 ## Test doubles
 
-- Streams: `BlockingReadStream`, `GatedCountingReadStream`, `RecordingWriteStream`, `SeekableTrackingReadStream`,
+- Streams: `BlockingReadStream`, `GatedCountingReadStream`, `RecordingWriteStream`,
   `TrackingReadStream` and `UnsizedStream` cover blocking, counting, gating, unknown-length and disposal-tracking cases.
 - Executables: `FakeExecutable` writes POSIX shell scripts (`WriteScript`, `WriteMarker`, `Quote`);
   `RecordingFakeExecutable` also records arguments, environment and process ID.

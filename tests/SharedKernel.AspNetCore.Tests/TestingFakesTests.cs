@@ -48,4 +48,31 @@ public sealed class TestingFakesTests
         var thrown = await async.ShouldThrow<InvalidOperationException>();
         thrown.ShouldBeSameAs(failure);
     }
+
+    [Fact]
+    public static void Fake_browser_file_honors_a_canceled_token()
+    {
+        // Arrange
+        var file = new FakeBrowserFile([1], "a.bin");
+        Action action = () => file.OpenReadStream(cancellationToken: new CancellationToken(canceled: true));
+
+        // Act, Assert
+        action.ShouldThrow<OperationCanceledException>();
+    }
+
+    [Fact]
+    public static void Throwing_distributed_cache_preserves_the_original_stack_trace()
+    {
+        // Arrange
+        Action thrower = () => throw new InvalidOperationException("cache down");
+        var failure = thrower.ShouldThrow<InvalidOperationException>();
+        var cache = new ThrowingDistributedCache(failure);
+        Action action = () => cache.Remove("k");
+
+        // Act
+        var thrown = action.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        thrown.StackTrace.ShouldContain(nameof(Throwing_distributed_cache_preserves_the_original_stack_trace), StringComparison.Ordinal);
+    }
 }

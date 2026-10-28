@@ -2,9 +2,11 @@ namespace PandaBear.Testing;
 
 /// <summary>
 /// Read-only stream over a byte array that records how many bytes and reads were requested and whether it was disposed.
+/// It can pretend to be non-seekable.
 /// </summary>
 /// <param name="content">The bytes the stream serves.</param>
-public sealed class TrackingReadStream(byte[] content) : Stream
+/// <param name="seekable">Whether the stream reports and supports seeking, length and position.</param>
+public sealed class TrackingReadStream(byte[] content, bool seekable = false) : Stream
 {
     private readonly MemoryStream _inner = new(content, writable: false);
 
@@ -27,22 +29,30 @@ public sealed class TrackingReadStream(byte[] content) : Stream
     }
 
     /// <inheritdoc />
-    public override bool CanRead => true;
+    public override bool CanRead => !IsDisposed;
 
     /// <inheritdoc />
-    public override bool CanSeek => false;
+    public override bool CanSeek => seekable && !IsDisposed;
 
     /// <inheritdoc />
     public override bool CanWrite => false;
 
     /// <inheritdoc />
-    public override long Length => throw new NotSupportedException();
+    public override long Length => seekable ? _inner.Length : throw new NotSupportedException();
 
     /// <inheritdoc />
     public override long Position
     {
-        get => throw new NotSupportedException();
-        set => throw new NotSupportedException();
+        get => seekable ? _inner.Position : throw new NotSupportedException();
+        set
+        {
+            if (!seekable)
+            {
+                throw new NotSupportedException();
+            }
+
+            _inner.Position = value;
+        }
     }
 
     /// <inheritdoc />
@@ -89,7 +99,7 @@ public sealed class TrackingReadStream(byte[] content) : Stream
     }
 
     /// <inheritdoc />
-    public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+    public override long Seek(long offset, SeekOrigin origin) => seekable ? _inner.Seek(offset, origin) : throw new NotSupportedException();
 
     /// <inheritdoc />
     public override void SetLength(long value) => throw new NotSupportedException();
