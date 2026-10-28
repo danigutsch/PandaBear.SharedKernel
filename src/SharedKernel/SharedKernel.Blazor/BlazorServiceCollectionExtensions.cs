@@ -8,8 +8,9 @@ public static class BlazorServiceCollectionExtensions
 {
     /// <summary>
     /// Registers <see cref="UiFailureReporter" /> as the <see cref="IUiFailureReporter" />, unless one is registered.
-    /// Requires an <see cref="System.Diagnostics.Metrics.IMeterFactory" />, which <c>AddMetrics()</c> and the ASP.NET Core host
-    /// register; register the <see cref="UiFailureReporter.MeterName" /> meter with OpenTelemetry to export the counter.
+    /// Also calls <c>AddMetrics()</c> so the <see cref="System.Diagnostics.Metrics.IMeterFactory" /> the reporter needs is available;
+    /// that call is idempotent, so a factory the host or caller already registered is kept. Register the
+    /// <see cref="UiFailureReporter.MeterName" /> meter with OpenTelemetry to export the counter.
     /// </summary>
     /// <param name="services">The service collection to update.</param>
     /// <returns>The same service collection.</returns>
@@ -17,6 +18,7 @@ public static class BlazorServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
+        services.AddMetrics();
         services.TryAddSingleton<IUiFailureReporter, UiFailureReporter>();
         return services;
     }
