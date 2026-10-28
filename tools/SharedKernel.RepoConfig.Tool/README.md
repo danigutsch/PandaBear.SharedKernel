@@ -50,6 +50,9 @@ sharedkernel-repo github link-subissue --repository owner/repository --parent 10
 sharedkernel-repo github link-subissue --repository owner/repository --parent 10 --child 20 --force
 sharedkernel-repo github sync-labels --repository owner/repository
 sharedkernel-repo github sync-labels --repository owner/repository --force
+sharedkernel-repo baseline verify
+sharedkernel-repo baseline apply
+sharedkernel-repo baseline apply --force
 sharedkernel-repo automation publish-result --force
 sharedkernel-repo verify-podman-dns --verbosity quiet
 sharedkernel-repo verify-json
@@ -74,6 +77,8 @@ sharedkernel-repo verify-devcontainer --exec "dotnet --version" --exec "git --ve
 | `github import` | Imports the reconciled issue snapshot into roadmap items. |
 | `github link-subissue` | Previews or creates a native GitHub parent/subissue link between existing issues in the same repository. |
 | `github sync-labels` | Creates the configured labels that are missing and updates those that differ; see [Repository labels](#repository-labels). |
+| `baseline verify` | Fails when a managed baseline file is missing, outdated, edited by hand, or unmanaged; see [Repository baseline](#repository-baseline). |
+| `baseline apply` | Creates and updates the managed baseline files; previews unless `--force` is given. |
 | `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request; see [Roadmap publication](#roadmap-publication). |
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
@@ -86,7 +91,7 @@ sharedkernel-repo verify-devcontainer --exec "dotnet --version" --exec "git --ve
 | `dependency verify-license-exceptions` | Verifies the configured license exceptions; see [License exceptions](#license-exceptions). |
 | `verify-devcontainer` | Starts the dev container of the root, runs each `--exec` command in it, and removes it; see [Dev container validation](#dev-container-validation). |
 
-`github` commands, `automation publish-result`, and `dependency submit` preview their changes unless
+`github` commands, `baseline apply`, `automation publish-result`, and `dependency submit` preview their changes unless
 `--force` is given. Lines that describe previewed changes start with `preview:`. The `publish-result`
 preview names the repository, base SHA, branch, and changed paths; the `dependency submit` preview names
 the snapshot, its size, and the endpoint. Every command except `verify-podman-dns` and `github link-subissue` takes `--root <path>`,
@@ -127,6 +132,14 @@ file and the JSON path of the problem. A command fails when the file lacks its s
   "links": {
     "include": ["README.md", "docs/*.md"],
     "exclude": ["*/bin/*", "docs/GENERATED*.md"]
+  },
+  "baseline": {
+    "repositoryName": "example",
+    "defaultBranch": "main",
+    "files": [
+      { "path": ".gitattributes", "profile": "gitattributes" },
+      { "path": "CODEOWNERS", "source": ".config/baseline/CODEOWNERS" }
+    ]
   }
 }
 ```
@@ -251,6 +264,31 @@ permission. Requests go only to api.github.com, do not follow redirects, read re
 time out after 30 seconds each. Errors report status codes without echoing response bodies. A failed write
 names its label; changes written before it remain, and rerunning the command applies the rest.
 
+## Repository baseline
+
+`baseline verify` and `baseline apply` read the `baseline` section and keep a set of repository files at the
+content the configuration produces. The tool names no forge, owner, or host; the consumer picks every path.
+
+- `repositoryName` (1 to 100 letters, digits, `.`, `-`, `_`) and optional `defaultBranch` (default `main`) are the
+  only variables: `@@repositoryName@@` and `@@defaultBranch@@` in content are replaced by plain text. An unknown
+  `@@name@@` is an error. Nothing is executed or included.
+- `files` is a nonempty array. Each entry has a `path` (repository-relative, outside `.git`, not a JSON file, unique
+  ignoring case) and exactly one of `profile` or `source`. `profile` is an embedded generic file: `gitattributes`,
+  `editorconfig`, `gitignore`, `readme`, `pull-request-template`, `issue-form-bug`, or `issue-form-feature`.
+  `source` is a repository-relative template file of at most 1 MiB that supplies the content, as for `CODEOWNERS`
+  and CI workflow wrappers. `overwriteExisting` (default `false`) allows replacing an existing file that is
+  unmanaged or edited by hand.
+- Every written file starts with a marker comment (`#`, or `<!-- -->` for `.md`) that holds the SHA-256 of the rest.
+  A file is `current`, `missing`, `outdated` (marked, unedited, desired content changed), `modified` (marked, edited
+  by hand), or `unmanaged` (no marker, different content). Line-ending differences are not drift; files are written
+  with LF.
+
+`baseline verify` lists each file that is not current on standard error and exits 1. `baseline apply` prints
+`preview:` lines for each file it would create, update, or overwrite and writes with `--force`, in one rollback
+batch. A `modified` or `unmanaged` file without `overwriteExisting` is a conflict: it is reported on standard
+error, nothing is written, and the command exits 1. Applying an up-to-date repository changes nothing. Missing
+parent directories are created and are not removed if a later write fails.
+
 ## Roadmap publication
 
 `automation publish-result` publishes the sealed roadmap maintenance result. The draft pull request's body is
@@ -360,7 +398,7 @@ default-branch commit moved while it was read.
 | Code | Meaning |
 | --- | --- |
 | 0 | Success, including previews and a healthy or inapplicable Podman state. |
-| 1 | Verification failure or drift, invalid text encoding or JSON, a line-ending, link, or Gherkin finding, a license exception finding, stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a failed dev container start, command, or CLI bootstrap, a command-line error, or cancellation. |
+| 1 | Verification failure or drift, invalid text encoding or JSON, a line-ending, link, or Gherkin finding, a license exception finding, baseline drift or a baseline conflict, stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a failed dev container start, command, or CLI bootstrap, a command-line error, or cancellation. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or the command did not stop within two seconds. |
 
 ## Security
