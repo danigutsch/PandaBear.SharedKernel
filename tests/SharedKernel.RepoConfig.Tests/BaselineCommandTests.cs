@@ -238,6 +238,20 @@ public sealed class BaselineCommandTests
     [InlineData("""{ "path": "x.json", "profile": "gitignore" }""", "$.baseline.files[0].path")]
     [InlineData("""{ "path": ".gitignore", "source": "/etc/passwd" }""", "$.baseline.files[0].source")]
     [InlineData("""{ "path": ".gitignore", "profile": "gitignore", "extra": 1 }""", "$.baseline.files[0]")]
+    [InlineData("""{ "path": "sub/.git/hooks/pre-commit", "profile": "gitignore" }""", "$.baseline.files[0].path")]
+    [InlineData("""{ "path": "a/b/.GIT/config", "profile": "gitignore" }""", "$.baseline.files[0].path")]
+    [InlineData("""{ "path": ".Git/config", "profile": "gitignore" }""", "$.baseline.files[0].path")]
+    [InlineData("""{ "path": ".git./config", "profile": "gitignore" }""", "$.baseline.files[0].path")]
+    [InlineData("""{ "path": ".git /config", "profile": "gitignore" }""", "$.baseline.files[0].path")]
+    [InlineData("""{ "path": "sub/.git./x", "profile": "gitignore" }""", "$.baseline.files[0].path")]
+    [InlineData("""{ "path": "GIT~1/config", "profile": "gitignore" }""", "$.baseline.files[0].path")]
+    [InlineData("""{ "path": "sub/PROGRA~1/x", "profile": "gitignore" }""", "$.baseline.files[0].path")]
+    [InlineData("""{ "path": "x.json.", "profile": "gitignore" }""", "$.baseline.files[0].path")]
+    [InlineData("""{ "path": "x.json ", "profile": "gitignore" }""", "$.baseline.files[0].path")]
+    [InlineData("""{ "path": "X.JSON.", "profile": "gitignore" }""", "$.baseline.files[0].path")]
+    [InlineData("""{ "path": "x.jsonc ", "profile": "gitignore" }""", "$.baseline.files[0].path")]
+    [InlineData("""{ "path": "dir./x", "profile": "gitignore" }""", "$.baseline.files[0].path")]
+    [InlineData("""{ "path": "dir /x", "profile": "gitignore" }""", "$.baseline.files[0].path")]
     public async Task Baseline_commands_reject_an_invalid_file_entry(string entry, string expectedFragment)
     {
         // Arrange

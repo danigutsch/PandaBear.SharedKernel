@@ -272,8 +272,8 @@ content the configuration produces. The tool names no forge, owner, or host; the
 - `repositoryName` (1 to 100 letters, digits, `.`, `-`, `_`) and optional `defaultBranch` (default `main`) are the
   only variables: `@@repositoryName@@` and `@@defaultBranch@@` in content are replaced by plain text. An unknown
   `@@name@@` is an error. Nothing is executed or included.
-- `files` is a nonempty array. Each entry has a `path` (repository-relative, outside `.git`, not a JSON file, unique
-  ignoring case) and exactly one of `profile` or `source`. `profile` is an embedded generic file: `gitattributes`,
+- `files` is a nonempty array. Each entry has a `path` (repository-relative, no `.git` directory at any depth, no segment that
+  contains `~` or ends in `.` or a space, not a JSON file, unique ignoring case) and exactly one of `profile` or `source`. `profile` is an embedded generic file: `gitattributes`,
   `editorconfig`, `gitignore`, `readme`, `pull-request-template`, `issue-form-bug`, or `issue-form-feature`.
   `source` is a repository-relative template file of at most 1 MiB that supplies the content, as for `CODEOWNERS`
   and CI workflow wrappers. `overwriteExisting` (default `false`) allows replacing an existing file that is

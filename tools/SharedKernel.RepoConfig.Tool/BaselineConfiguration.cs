@@ -60,12 +60,12 @@ internal sealed record BaselineConfiguration(
     {
         if (!RepositoryPath.IsRelative(file.Path)
             || file.Path.Any(char.IsControl)
-            || file.Path.Split('/')[0].Equals(".git", StringComparison.OrdinalIgnoreCase)
+            || file.Path.Split('/').Any(IsUnsafeSegment)
             || file.Path.Equals(ConsumerConfigurationFile.RelativePath, StringComparison.OrdinalIgnoreCase)
             || file.Path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
             || file.Path.EndsWith(".jsonc", StringComparison.OrdinalIgnoreCase))
         {
-            return path + ".path must be a repository-relative path with '/' separators and without empty, '.', or '..' segments, outside .git, not the configuration file, and not a JSON file, which has no comment for the managed-file marker.";
+            return path + ".path must be a repository-relative path with '/' separators and without empty, '.', or '..' segments, without a .git directory at any depth, without a segment that contains '~' or ends in '.' or a space (Windows aliases of .git and of JSON suffixes), not the configuration file, and not a JSON file, which has no comment for the managed-file marker.";
         }
 
         if ((file.Profile is null) == (file.Source is null))
@@ -86,4 +86,11 @@ internal sealed record BaselineConfiguration(
 
         return null;
     }
+
+    // Windows resolves "x.json." and ".git " to "x.json" and ".git", and "GIT~1" to ".git"; the rule applies on every
+    // platform so that one configuration behaves the same everywhere.
+    private static bool IsUnsafeSegment(string segment) =>
+        segment.Contains('~', StringComparison.Ordinal)
+        || segment[^1] is '.' or ' '
+        || segment.TrimEnd('.', ' ').Equals(".git", StringComparison.OrdinalIgnoreCase);
 }
