@@ -8,6 +8,7 @@ Do not log payloads, original filenames, temporary paths, or upload credentials.
 Buffer only bounded small content. Spool when a non-seekable input needs independent sequential passes
 such as signature validation, scanning, decoding, hashing, and storage. Rewind explicitly before each
 pass. Do not duplicate byte arrays or add a second copy merely because an API accepts ReadOnlyMemory.
+Wrap bytes already in memory with `ReadOnlyMemoryStream` instead of copying them into a `MemoryStream`.
 Use seekable input directly only when the caller controls its lifetime, size, position, and concurrent use;
 `SeekableContent.Create` does this for seekable input at position zero and bounds it with one counting pass.
 
