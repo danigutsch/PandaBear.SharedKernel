@@ -35,3 +35,4 @@ Module README files beside source own consumer usage and examples. Samples and b
 - [Classic extension methods](adr/20261026-classic-extension-methods.md)
 - [Blazor helpers package](adr/20261027-blazor-helpers-package.md)
 - [Shared telemetry registration](adr/20261027-shared-telemetry-registration.md)
+- [Repo baseline tool](adr/20261028-repo-baseline-tool.md)
