@@ -57,6 +57,7 @@ internal static class RepoConfigCommandLine
             CreateSecurityCommand(environment, root),
             CreateDependencyCommand(environment, root),
             CreateVerifyDevcontainerCommand(environment, root),
+            CreateBaselineCommand(environment, root),
         };
 
         // Consumer caller tests run "[diagram] <command line>" to parse a command line without running it.
@@ -205,6 +206,24 @@ internal static class RepoConfigCommandLine
         return new Command("github", "Preview or write GitHub projection, reconciliation, import, issue links, and labels.")
         {
             sync, reconcile, import, CreateLinkSubissueCommand(environment), CreateSyncLabelsCommand(environment, root)
+        };
+    }
+
+    private static Command CreateBaselineCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Command verify = new("verify", "Report managed baseline files that are missing, outdated, edited, or unmanaged.") { root };
+        SetGuardedAction(verify, (parseResult, output, error, ct) =>
+            BaselineCommand.Verify(ResolveRoot(parseResult, root, environment), output, error, ct));
+        Option<bool> force = new("--force")
+        {
+            Description = "Write the files instead of previewing them. Never replaces an unmanaged or edited file unless its entry sets overwriteExisting."
+        };
+        Command apply = new("apply", "Create and update the managed baseline files from the consumer configuration. Previews unless --force is given.") { force, root };
+        SetGuardedAction(apply, (parseResult, output, error, ct) => BaselineCommand.Apply(
+            ResolveRoot(parseResult, root, environment), parseResult.GetValue(force), output, error, ct));
+        return new Command("baseline", "Verify or apply the repository baseline files: attributes, editor and ignore settings, README, templates, and wrappers.")
+        {
+            verify, apply
         };
     }
 
