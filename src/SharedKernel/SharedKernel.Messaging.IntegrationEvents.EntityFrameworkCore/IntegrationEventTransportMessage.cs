@@ -98,7 +98,7 @@ internal sealed class IntegrationEventTransportMessage : EventEnvelope, IIntegra
         get; private set;
     }
 
-    /// <summary>Error text of the latest failed consume attempt, or null when none failed.</summary>
+    /// <summary>Full type name of the exception from the latest failed consume attempt, or null when none failed. Exception messages are not stored because they can embed payload or personal data.</summary>
     public string? LastConsumeError
     {
         get; private set;
