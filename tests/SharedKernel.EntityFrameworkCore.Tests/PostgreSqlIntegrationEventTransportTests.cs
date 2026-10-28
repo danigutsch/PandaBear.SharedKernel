@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Time.Testing;
 using Microsoft.Extensions.Logging;
 using PandaBear.Testing;
 
@@ -145,7 +146,7 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
         // Arrange
         const string eventId = "consumer-fail-once";
         var ct = TestContext.Current.CancellationToken;
-        var timeProvider = new AdjustableTimeProvider(new DateTimeOffset(2026, 7, 20, 12, 0, 0, TimeSpan.Zero));
+        var timeProvider = new FakeTimeProvider(new DateTimeOffset(2026, 7, 20, 12, 0, 0, TimeSpan.Zero));
         await Scenario.SeedMessage(eventId, ct);
         var publisher = new RecordingEventEnvelopePublisher
         {
@@ -177,7 +178,7 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
         // Arrange
         const string eventId = "consumer-poison";
         var ct = TestContext.Current.CancellationToken;
-        var timeProvider = new AdjustableTimeProvider(new DateTimeOffset(2026, 10, 24, 12, 0, 0, TimeSpan.Zero));
+        var timeProvider = new FakeTimeProvider(new DateTimeOffset(2026, 10, 24, 12, 0, 0, TimeSpan.Zero));
         await Scenario.SeedMessage(eventId, ct);
         var publisher = new RecordingEventEnvelopePublisher { Failure = new InvalidOperationException("handler failed") };
 
@@ -205,7 +206,7 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        var timeProvider = new AdjustableTimeProvider(new DateTimeOffset(2026, 10, 24, 12, 0, 0, TimeSpan.Zero));
+        var timeProvider = new FakeTimeProvider(new DateTimeOffset(2026, 10, 24, 12, 0, 0, TimeSpan.Zero));
         await Scenario.SeedMessage("poisoned-first", ct);
         var failing = new RecordingEventEnvelopePublisher { Failure = new InvalidOperationException("handler failed") };
         await Scenario.ConsumeWith(failing, ct, timeProvider, maxConsumeAttempts: 1);

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Time.Testing;
 using PandaBear.VaultManager.Tool.Matching;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Model;
@@ -103,7 +104,7 @@ internal static class MergeFixture
     public static MergeResult Run(MergePolicy policy, MergeDecisions? decisions, MatchOverrides? overrides, params VaultItem[] items)
     {
         var groups = DuplicateMatcher.Match(items, overrides).Groups;
-        return new Merger(new FixedTimeProvider(Now)).Merge(groups, policy, decisions);
+        return new Merger(new FakeTimeProvider(Now)).Merge(groups, policy, decisions);
     }
 
     /// <summary>Creates merge decisions holding one field choice for the group and no overrides.</summary>
