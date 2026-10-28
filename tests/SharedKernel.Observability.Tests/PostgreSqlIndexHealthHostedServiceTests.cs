@@ -4,7 +4,7 @@ namespace PandaBear.Observability.Npgsql.Tests;
 
 /// <summary>Integration tests for the PostgreSQL index health hosted service lifecycle and telemetry.</summary>
 [Collection("PostgreSQL index health telemetry")]
-[Trait(TestTraitNames.ScopeName, TestTraits.IntegrationScope)]
+[Trait(TestTraitNames.ScopeName, TestTraitValues.IntegrationScope)]
 [Trait(TestTraits.ComponentName, TestTraits.PostgreSqlObservabilityComponent)]
 public sealed class PostgreSqlIndexHealthHostedServiceTests
 {

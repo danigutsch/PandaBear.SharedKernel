@@ -45,7 +45,7 @@ internal sealed class SecurityEventTestFixture : IDisposable
     public static SecurityEventTestFixture Create(Action<JwtBearerOptions>? jwt = null, Action<RateLimiterOptions>? rateLimiter = null,
         ILogger<SecurityEventReporter>? logger = null, IMeterFactory? meterFactory = null, int telemetryRegistrations = 1)
     {
-        var meters = new MeterCollector();
+        var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var recording = new RecordingLogger<SecurityEventReporter>();
         var services = new ServiceCollection();
         services.AddSingleton(meterFactory ?? meters);

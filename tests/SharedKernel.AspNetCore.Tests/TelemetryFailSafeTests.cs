@@ -102,7 +102,7 @@ public sealed class TelemetryFailSafeTests
     public async Task Exception_handler_still_answers_with_problem_details_when_reporting_fails(string fault)
     {
         // Arrange
-        using var meters = new MeterCollector { ThrowOnMeasurement = fault == "listener" };
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName) { ThrowOnMeasurement = fault == "listener" };
         using var throwingFactory = new ThrowingMeterFactory();
         var reporter = new UnhandledExceptionReporter(
             fault == "logger" ? new ThrowingLogger<UnhandledExceptionReporter>() : new RecordingLogger<UnhandledExceptionReporter>(),
@@ -127,7 +127,7 @@ public sealed class TelemetryFailSafeTests
     public void Public_reporter_never_throws_and_still_counts_when_only_the_logger_fails()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var reporter = new UnhandledExceptionReporter(new ThrowingLogger<UnhandledExceptionReporter>(), meters);
 
         // Act

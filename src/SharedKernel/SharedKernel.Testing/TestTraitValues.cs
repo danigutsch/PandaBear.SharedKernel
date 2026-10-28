@@ -29,4 +29,19 @@ public static class TestTraitValues
     /// Host value for TestServer-hosted tests.
     /// </summary>
     public const string TestServerHost = "test-server";
+
+    /// <summary>
+    /// Scope value for tests that need no external services.
+    /// </summary>
+    public const string UnitScope = "unit";
+
+    /// <summary>
+    /// Scope value for tests that use real infrastructure.
+    /// </summary>
+    public const string IntegrationScope = "integration";
+
+    /// <summary>
+    /// Host value for tests that run against an Aspire application host.
+    /// </summary>
+    public const string AspireHost = "aspire";
 }

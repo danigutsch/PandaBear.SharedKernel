@@ -239,7 +239,7 @@ public sealed class SecurityEventTelemetryTests
     public async Task Shared_events_instance_is_wrapped_once_and_reports_the_scheme_that_raised_the_event()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var shared = new JwtBearerEvents();
         var services = new ServiceCollection();
         services.AddSingleton<IMeterFactory>(meters);

@@ -13,7 +13,7 @@ public sealed class UiFailureReporterTests
     {
         // Arrange
         var logger = new CapturingLogger<UiFailureReporter>();
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(UiFailureReporter.MeterName);
         var reporter = new UiFailureReporter(logger, meters);
         using var activity = new Activity("test");
         activity.Start();
@@ -47,7 +47,7 @@ public sealed class UiFailureReporterTests
     {
         // Arrange
         var logger = new CapturingLogger<UiFailureReporter>();
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(UiFailureReporter.MeterName);
         var reporter = new UiFailureReporter(logger, meters);
 
         // Act
@@ -68,7 +68,7 @@ public sealed class UiFailureReporterTests
     {
         // Arrange
         var logger = new CapturingLogger<UiFailureReporter>();
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(UiFailureReporter.MeterName);
         var reporter = new UiFailureReporter(logger, meters);
 
         // Act
@@ -83,7 +83,7 @@ public sealed class UiFailureReporterTests
     {
         // Arrange
         var logger = new CapturingLogger<UiFailureReporter>();
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(UiFailureReporter.MeterName);
         var reporter = new UiFailureReporter(logger, meters);
 
         // Act
@@ -97,7 +97,7 @@ public sealed class UiFailureReporterTests
     public void Null_exception_is_rejected()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(UiFailureReporter.MeterName);
         var reporter = new UiFailureReporter(new CapturingLogger<UiFailureReporter>(), meters);
 
         // Act
@@ -111,7 +111,7 @@ public sealed class UiFailureReporterTests
     public void Unsafe_operation_is_counted_as_unknown()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(UiFailureReporter.MeterName);
         var reporter = new UiFailureReporter(new CapturingLogger<UiFailureReporter>(), meters);
 
         // Act
@@ -125,7 +125,7 @@ public sealed class UiFailureReporterTests
     public void Aggregate_exception_is_counted_by_its_first_inner_type()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(UiFailureReporter.MeterName);
         var reporter = new UiFailureReporter(new CapturingLogger<UiFailureReporter>(), meters);
 
         // Act
@@ -139,7 +139,7 @@ public sealed class UiFailureReporterTests
     public void Target_invocation_exception_is_counted_by_its_inner_type()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(UiFailureReporter.MeterName);
         var reporter = new UiFailureReporter(new CapturingLogger<UiFailureReporter>(), meters);
 
         // Act
@@ -170,7 +170,7 @@ public sealed class UiFailureReporterTests
     {
         // Arrange
         var logger = new CapturingLogger<UiFailureReporter>();
-        using var meters = new MeterCollector { ThrowOnMeasurement = true };
+        using var meters = new MeterCollector(UiFailureReporter.MeterName) { ThrowOnMeasurement = true };
         var reporter = new UiFailureReporter(logger, meters);
 
         // Act
@@ -185,7 +185,7 @@ public sealed class UiFailureReporterTests
     public void Constructor_rejects_null_arguments()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(UiFailureReporter.MeterName);
 
         // Act
         var nullLogger = () => new UiFailureReporter(null!, meters);

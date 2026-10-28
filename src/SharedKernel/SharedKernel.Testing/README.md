@@ -10,7 +10,9 @@ Reusable test traits, environment scopes, and temporary-directory lifetimes.
 
 - `TestTraitNames` owns cross-project trait names such as `Scope`, `Area`, `Category`, `Host`, and
   `Surface`.
-- `TestTraitValues` owns cross-project values reused by multiple bounded-context test projects.
+- `TestTraitValues` owns cross-project values reused by multiple bounded-context test projects, including the
+  `UnitScope`, `IntegrationScope` and `AspireHost` constants for assembly-level traits. Test projects keep only their
+  own component and capability values in a local `TestTraits`.
 - `SharedKernelTestTraitNames` owns SharedKernel package-test names and the neutral `Unit` scope.
 - `TestScope` enumerates the test seams (`Unit`, `Behavior`, `Component`, `Contract`, `UiIntegration`,
   `Integration`, `System`, `Architecture`) and `ToTraitValue()` maps each to its `Scope` trait value.
@@ -30,6 +32,8 @@ Use `SerialTestJustificationAttribute` on xUnit collection definitions that disa
 
 - Streams: `BlockingReadStream`, `GatedCountingReadStream`, `RecordingWriteStream`,
   `TrackingReadStream` and `UnsizedStream` cover blocking, counting, gating, unknown-length and disposal-tracking cases.
+- Metrics: `MeterCollector` is an `IMeterFactory` that records the long measurements of its meters (pass a meter
+  name to restrict it); `ThrowingMeterFactory` fails every `Create` call.
 - Executables: `FakeExecutable` writes POSIX shell scripts (`WriteScript`, `WriteMarker`, `Quote`);
   `RecordingFakeExecutable` also records arguments, environment and process ID.
 - File system: `FileSystemProbes` reports `CanCreateSymbolicLinks`, `CanDenyAccess` and `IsCaseSensitive` for

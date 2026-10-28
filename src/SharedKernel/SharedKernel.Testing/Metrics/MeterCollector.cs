@@ -1,26 +1,24 @@
 using System.Diagnostics.Metrics;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace PandaBear.Testing.Metrics;
 
-/// <summary>A captured counter measurement.</summary>
-/// <param name="Instrument">The instrument name.</param>
-/// <param name="Value">The measured value.</param>
-/// <param name="Tags">The tags by name.</param>
-internal sealed record RecordedMeasurement(string Instrument, long Value, IReadOnlyDictionary<string, object?> Tags);
-
-/// <summary>An <see cref="IMeterFactory" /> that also collects the measurements of the meters it creates, isolated from other tests.</summary>
-internal sealed class MeterCollector : IMeterFactory
+/// <summary>An <see cref="IMeterFactory" /> that also collects the long measurements of the meters it creates, isolated from other tests.</summary>
+public sealed class MeterCollector : IMeterFactory
 {
+    /// <summary>Gets the message of the exception thrown by the measurement callback while <see cref="ThrowOnMeasurement" /> is set.</summary>
+    public const string ListenerFailureMessage = "listener-secret";
+
     private readonly List<Meter> _meters = [];
     private readonly MeterListener _listener = new();
     private readonly List<RecordedMeasurement> _measurements = [];
 
     /// <summary>Initializes a new instance of the <see cref="MeterCollector" /> class and starts listening.</summary>
-    public MeterCollector()
+    /// <param name="meterName">The name of the only meter to collect, or <see langword="null" /> to collect every meter this factory creates.</param>
+    public MeterCollector(string? meterName = null)
     {
         _listener.InstrumentPublished = (instrument, listener) =>
         {
-            if (ReferenceEquals(instrument.Meter.Scope, this) && instrument.Meter.Name == AspNetCoreTelemetry.MeterName)
+            if (ReferenceEquals(instrument.Meter.Scope, this) && (meterName is null || instrument.Meter.Name == meterName))
             {
                 listener.EnableMeasurementEvents(instrument);
             }
@@ -29,7 +27,7 @@ internal sealed class MeterCollector : IMeterFactory
         {
             if (ThrowOnMeasurement)
             {
-                throw new InvalidOperationException("listener-secret");
+                throw new InvalidOperationException(ListenerFailureMessage);
             }
 
             var map = new Dictionary<string, object?>(StringComparer.Ordinal);
