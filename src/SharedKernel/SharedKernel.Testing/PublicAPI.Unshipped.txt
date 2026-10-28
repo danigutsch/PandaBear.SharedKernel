@@ -74,3 +74,14 @@ PandaBear.Testing.TemporaryDirectory
 PandaBear.Testing.TemporaryDirectory.TemporaryDirectory() -> void
 PandaBear.Testing.TemporaryDirectory.Path.get -> string!
 PandaBear.Testing.TemporaryDirectory.Dispose() -> void
+PandaBear.Testing.TestScope
+PandaBear.Testing.TestScope.Architecture = 7 -> PandaBear.Testing.TestScope
+PandaBear.Testing.TestScope.Behavior = 1 -> PandaBear.Testing.TestScope
+PandaBear.Testing.TestScope.Component = 2 -> PandaBear.Testing.TestScope
+PandaBear.Testing.TestScope.Contract = 3 -> PandaBear.Testing.TestScope
+PandaBear.Testing.TestScope.Integration = 5 -> PandaBear.Testing.TestScope
+PandaBear.Testing.TestScope.System = 6 -> PandaBear.Testing.TestScope
+PandaBear.Testing.TestScope.UiIntegration = 4 -> PandaBear.Testing.TestScope
+PandaBear.Testing.TestScope.Unit = 0 -> PandaBear.Testing.TestScope
+PandaBear.Testing.TestScopeExtensions
+static PandaBear.Testing.TestScopeExtensions.ToTraitValue(this PandaBear.Testing.TestScope scope) -> string!

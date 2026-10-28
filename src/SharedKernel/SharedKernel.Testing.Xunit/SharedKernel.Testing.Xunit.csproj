@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>PandaBear.SharedKernel.Testing.Xunit</PackageId>
+        <Description>xUnit v3 trait attributes for declaring the test seam a test exercises.</Description>
+        <RootNamespace>PandaBear.Testing</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>testing;traits;xunit;shared-kernel;dotnet</PackageTags>
+        <IsAotCompatible>false</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="xunit.v3.extensibility.core" VersionOverride="4.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../SharedKernel.Testing/SharedKernel.Testing.csproj" />
+    </ItemGroup>
+
+</Project>

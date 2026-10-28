@@ -20,6 +20,7 @@
 
     <ItemGroup>
         <ProjectReference Include="../../src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj" />
+        <ProjectReference Include="../../src/SharedKernel/SharedKernel.Testing.Xunit/SharedKernel.Testing.Xunit.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Data\SharedKernel.Testing.Data.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Http\SharedKernel.Testing.Http.csproj" />

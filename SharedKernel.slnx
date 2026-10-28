@@ -60,6 +60,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Testing.Analyzers/SharedKernel.Testing.Analyzers.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.AspNetCore/SharedKernel.Testing.AspNetCore.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Assertions/SharedKernel.Testing.Assertions.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Testing.Xunit/SharedKernel.Testing.Xunit.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.CodeFixes/SharedKernel.Testing.CodeFixes.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Data/SharedKernel.Testing.Data.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Http/SharedKernel.Testing.Http.csproj" />

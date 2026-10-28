@@ -1,0 +1,5 @@
+#nullable enable
+PandaBear.Testing.TestScopeAttribute
+PandaBear.Testing.TestScopeAttribute.GetTraits() -> System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<string!, string!>>!
+PandaBear.Testing.TestScopeAttribute.Scope.get -> PandaBear.Testing.TestScope
+PandaBear.Testing.TestScopeAttribute.TestScopeAttribute(PandaBear.Testing.TestScope scope) -> void

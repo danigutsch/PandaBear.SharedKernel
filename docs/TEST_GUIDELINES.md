@@ -70,6 +70,7 @@ already owns its kind; add a package only when a new kind needs a dependency tha
 | --- | --- | --- |
 | `SharedKernel.Testing` | Traits, environment scopes, temporary directories | Test framework only |
 | `SharedKernel.Testing.Assertions` | `Should*` assertions for xUnit, `Result` and entity identity | `SharedKernel.Results` |
+| `SharedKernel.Testing.Xunit` | `TestScopeAttribute`: typed `Scope` trait for the test seam | `SharedKernel.Testing` |
 | `SharedKernel.Testing.Http` | Assertions on HTTP responses and problem details | `SharedKernel.Testing.Assertions` |
 | `SharedKernel.Testing.AspNetCore` | Web application factory helpers | ASP.NET Core testing |
 | `SharedKernel.Testing.Web` | bUnit element assertions | bUnit |
