@@ -78,7 +78,10 @@ public sealed class UiFailureReporter : IUiFailureReporter
 
     private static string ErrorType(Exception exception) => UnwrapWrapperExceptions(exception).GetType().Name;
 
-    /// <summary>Returns the first inner exception of aggregate and reflection wrappers, which hide the real fault; tagging with it keeps the tag bounded and meaningful.</summary>
+    /// <summary>
+    /// Returns the first inner exception of aggregate and reflection wrappers, which hide the real fault;
+    /// tagging with it keeps the tag bounded and meaningful.
+    /// </summary>
     private static Exception UnwrapWrapperExceptions(Exception exception)
     {
         while (exception is AggregateException or System.Reflection.TargetInvocationException && exception.InnerException is { } inner)
