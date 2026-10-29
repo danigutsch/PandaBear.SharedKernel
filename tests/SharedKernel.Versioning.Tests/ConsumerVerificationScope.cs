@@ -70,7 +70,7 @@ internal sealed partial class ConsumerVerificationScope : IDisposable
     /// <summary>
     /// Gets the root directory of the consumer repository.
     /// </summary>
-    public string Root => repository.Root;
+    public string Root => repository.RootPath;
 
     /// <summary>
     /// Gets the temporary directory, outside the repository, that holds the candidate package and manifest.

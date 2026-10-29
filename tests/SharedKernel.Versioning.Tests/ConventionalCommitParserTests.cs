@@ -3,7 +3,7 @@ namespace PandaBear.Versioning.Tests;
 /// <summary>
 /// Tests parsing of Conventional Commit messages.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class ConventionalCommitParserTests
 {
     [Fact]

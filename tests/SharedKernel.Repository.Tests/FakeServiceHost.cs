@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.Versioning;
-using PandaBear.Testing;
 
 namespace PandaBear.Repository.Tests;
 

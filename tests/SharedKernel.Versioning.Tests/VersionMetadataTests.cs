@@ -6,7 +6,7 @@ namespace PandaBear.Versioning.Tests;
 /// <summary>
 /// Tests the version metadata stamped on the versioning assembly.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VersionMetadataTests
 {
     [Fact]

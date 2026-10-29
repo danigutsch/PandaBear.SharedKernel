@@ -3,7 +3,7 @@ namespace PandaBear.Versioning.Tests;
 /// <summary>
 /// Tests version calculation from base versions and commit history.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VersionCalculationTests
 {
     [Fact]

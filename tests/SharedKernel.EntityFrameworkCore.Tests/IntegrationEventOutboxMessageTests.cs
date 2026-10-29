@@ -6,7 +6,6 @@ using PandaBear.Messaging;
 using PandaBear.Messaging.IntegrationEvents;
 using PandaBear.Messaging.IntegrationEvents.CloudEvents;
 using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
-using PandaBear.Testing;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 

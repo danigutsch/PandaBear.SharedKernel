@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Time.Testing;
 using Microsoft.Extensions.Logging;
-using PandaBear.Testing;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 

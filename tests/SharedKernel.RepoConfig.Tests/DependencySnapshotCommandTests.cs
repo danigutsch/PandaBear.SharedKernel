@@ -169,7 +169,7 @@ public sealed class DependencySnapshotCommandTests
     {
         // Arrange
         using var repository = await DependencySnapshotTestRepository.Create("{\"version\":2,\"dependencies\":{\"net10.0\":{\"A\":{\"type\":\"Direct\",\"resolved\":\"1.0.0\",\"contentHash\":\"HASH\"}}}}");
-        var index = await CiTestSelectionTestProcess.Run("git", repository.RootPath, ["update-index", "--assume-unchanged", "src/packages.lock.json"], TestContext.Current.CancellationToken);
+        var index = await TestProcess.Run("git", repository.RootPath, ["update-index", "--assume-unchanged", "src/packages.lock.json"], TestContext.Current.CancellationToken);
         index.ExitCode.ShouldBe(0);
         repository.WriteLock("{\"version\":2,\"dependencies\":{\"net10.0\":{\"A\":{\"type\":\"Direct\",\"resolved\":\"9.9.9\",\"contentHash\":\"HASH\"}}}}");
 
@@ -238,13 +238,13 @@ public sealed class DependencySnapshotCommandTests
     {
         // Arrange
         using var repository = await DependencySnapshotTestRepository.Create("{\"version\":2,\"dependencies\":{\"net10.0\":{\"A\":{\"type\":\"Direct\",\"resolved\":\"1.0.0\",\"contentHash\":\"HASH\"}}}}");
-        var original = await CiTestSelectionTestProcess.Run("git", repository.RootPath, ["rev-parse", "HEAD:src/packages.lock.json"], TestContext.Current.CancellationToken);
+        var original = await TestProcess.Run("git", repository.RootPath, ["rev-parse", "HEAD:src/packages.lock.json"], TestContext.Current.CancellationToken);
         original.ExitCode.ShouldBe(0);
         var content = await File.ReadAllTextAsync(Path.Combine(repository.RootPath, "src/packages.lock.json"), TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(Path.Combine(repository.RootPath, ".git/forged-lock.json"), content.Replace("1.0.0", "9.9.9", StringComparison.Ordinal), TestContext.Current.CancellationToken);
-        var forged = await CiTestSelectionTestProcess.Run("git", repository.RootPath, ["hash-object", "--no-filters", "-w", ".git/forged-lock.json"], TestContext.Current.CancellationToken);
+        var forged = await TestProcess.Run("git", repository.RootPath, ["hash-object", "--no-filters", "-w", ".git/forged-lock.json"], TestContext.Current.CancellationToken);
         forged.ExitCode.ShouldBe(0);
-        var replaced = await CiTestSelectionTestProcess.Run("git", repository.RootPath, ["replace", original.StandardOutput.Trim(), forged.StandardOutput.Trim()], TestContext.Current.CancellationToken);
+        var replaced = await TestProcess.Run("git", repository.RootPath, ["replace", original.StandardOutput.Trim(), forged.StandardOutput.Trim()], TestContext.Current.CancellationToken);
         replaced.ExitCode.ShouldBe(0);
 
         // Act

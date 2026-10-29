@@ -34,6 +34,11 @@ Use `SerialTestJustificationAttribute` on xUnit collection definitions that disa
   `TrackingReadStream` and `UnsizedStream` cover blocking, counting, gating, unknown-length and disposal-tracking cases.
 - Metrics: `MeterCollector` is an `IMeterFactory` that records the long measurements of its meters (pass a meter
   name to restrict it); `ThrowingMeterFactory` fails every `Create` call.
+- Processes and Git: `TestProcess.Run` runs a process and captures its output; `TestGit` runs Git without the user's
+  configuration and commits a directory (`CommitAll`, `Commit`); `TemporaryGitRepository` owns an isolated repository
+  with `Initialize`, `Commit`, `Tag` and `RunGit`.
+- Ports and cleanup: `LoopbackPort.GetFree` returns an unused loopback port; `TrackingCleanupAction` and
+  `TrackingAsyncDisposable` record the order of cleanup and disposal and can fail on demand.
 - Executables: `FakeExecutable` writes POSIX shell scripts (`WriteScript`, `WriteMarker`, `Quote`);
   `RecordingFakeExecutable` also records arguments, environment and process ID.
 - File system: `FileSystemProbes` reports `CanCreateSymbolicLinks`, `CanDenyAccess` and `IsCaseSensitive` for

@@ -1,11 +1,8 @@
-using PandaBear.Testing;
-
-namespace PandaBear.Versioning.Tests;
+namespace PandaBear.Testing.Tests;
 
 /// <summary>
 /// Tests cleanup of the temporary Git repository fixture.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public sealed class TemporaryGitRepositoryTests
 {
     [Fact]
@@ -15,7 +12,7 @@ public sealed class TemporaryGitRepositoryTests
         using var repository = new TemporaryGitRepository();
         await repository.Initialize(TestContext.Current.CancellationToken);
         await repository.Commit("test.txt", "content", "feat: add content", TestContext.Current.CancellationToken);
-        var objects = Directory.GetFiles(Path.Combine(repository.Root, ".git", "objects"), "*", SearchOption.AllDirectories);
+        var objects = Directory.GetFiles(Path.Combine(repository.RootPath, ".git", "objects"), "*", SearchOption.AllDirectories);
         objects.ShouldNotBeEmpty();
         foreach (var path in objects)
         {
@@ -27,6 +24,6 @@ public sealed class TemporaryGitRepositoryTests
         repository.Dispose();
 
         // Assert
-        Directory.Exists(repository.Root).ShouldBeFalse();
+        Directory.Exists(repository.RootPath).ShouldBeFalse();
     }
 }

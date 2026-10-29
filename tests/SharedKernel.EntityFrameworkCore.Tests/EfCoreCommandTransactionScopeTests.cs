@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using PandaBear.Testing;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 

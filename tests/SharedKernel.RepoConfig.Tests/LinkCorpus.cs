@@ -136,7 +136,7 @@ internal static class LinkCorpus
         repository.Delete("docs/gone.md");
     }
 
-    private static async Task<CiTestSelectionTestProcess.ProcessResult> Git(
+    private static async Task<TestProcessResult> Git(
         TemporaryGitRepository repository,
         IReadOnlyList<string> arguments,
         CancellationToken cancellationToken)

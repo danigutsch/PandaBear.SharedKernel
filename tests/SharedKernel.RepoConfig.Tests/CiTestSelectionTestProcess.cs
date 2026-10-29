@@ -1,90 +1,9 @@
-using System.ComponentModel;
-using System.Diagnostics;
 
 namespace PandaBear.RepoConfig.Tests;
 
-/// <summary>Runs external processes for the CI test selection tests and locates the repository root.</summary>
+/// <summary>Locates the repository root for the CI test selection tests.</summary>
 internal static class CiTestSelectionTestProcess
 {
-    /// <summary>Starts a process with the given arguments and optional environment overrides, and returns its exit code and captured output.</summary>
-    public static async Task<ProcessResult> Run(
-        string fileName,
-        string workingDirectory,
-        IReadOnlyList<string> arguments,
-        CancellationToken cancellationToken,
-        IReadOnlyDictionary<string, string?>? environment = null)
-    {
-        var startInfo = new ProcessStartInfo(fileName)
-        {
-            WorkingDirectory = workingDirectory,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false
-        };
-        foreach (var argument in arguments)
-        {
-            startInfo.ArgumentList.Add(argument);
-        }
-
-        if (environment is not null)
-        {
-            foreach (var variable in environment)
-            {
-                startInfo.Environment[variable.Key] = variable.Value;
-            }
-        }
-
-        using var process = Process.Start(startInfo).ShouldNotBeNull();
-        var standardOutput = process.StandardOutput.ReadToEndAsync(CancellationToken.None);
-        var standardError = process.StandardError.ReadToEndAsync(CancellationToken.None);
-        try
-        {
-            await process.WaitForExitAsync(cancellationToken);
-        }
-        catch (OperationCanceledException)
-        {
-            try
-            {
-                if (!process.HasExited)
-                {
-                    process.Kill(entireProcessTree: true);
-                    using var terminationTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(2));
-                    await process.WaitForExitAsync(terminationTimeout.Token);
-                }
-            }
-            catch (Exception exception) when (exception is InvalidOperationException
-                or Win32Exception
-                or NotSupportedException
-                or OperationCanceledException)
-            {
-                // Preserve the original cancellation after best-effort child cleanup.
-            }
-
-            var outputDrain = Task.WhenAll(standardOutput, standardError);
-            try
-            {
-                await outputDrain.WaitAsync(TimeSpan.FromSeconds(2), CancellationToken.None);
-            }
-            catch (Exception exception) when (exception is TimeoutException
-                or IOException
-                or InvalidOperationException)
-            {
-                _ = outputDrain.ContinueWith(
-                    static completed => _ = completed.Exception,
-                    CancellationToken.None,
-                    TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
-                    TaskScheduler.Default);
-            }
-
-            throw;
-        }
-
-        return new ProcessResult(
-            process.ExitCode,
-            await standardOutput,
-            await standardError);
-    }
-
     /// <summary>Returns the nearest ancestor of the test output directory that contains <c>SharedKernel.slnx</c>, or throws when none does.</summary>
     public static string GetRepositoryRoot()
     {
@@ -98,10 +17,4 @@ internal static class CiTestSelectionTestProcess
 
         throw new DirectoryNotFoundException("Could not locate the repository root.");
     }
-
-    /// <summary>The exit code and captured output of a finished process.</summary>
-    /// <param name="ExitCode">The process exit code.</param>
-    /// <param name="StandardOutput">Everything the process wrote to standard output.</param>
-    /// <param name="StandardError">Everything the process wrote to standard error.</param>
-    internal readonly record struct ProcessResult(int ExitCode, string StandardOutput, string StandardError);
 }

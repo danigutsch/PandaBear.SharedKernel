@@ -1,6 +1,5 @@
 using System.Globalization;
 using PandaBear.RepoConfig.Tests;
-using PandaBear.Testing;
 
 namespace PandaBear.Repository.Tests;
 
@@ -63,12 +62,12 @@ internal sealed class SetupScriptTestScope : IDisposable
     }
 
     /// <summary>Runs the script from a directory outside the checkout with the fake <c>dotnet</c> first on PATH, so restore and build exit with the given codes.</summary>
-    public Task<CiTestSelectionTestProcess.ProcessResult> Run(int restoreExitCode, int buildExitCode, CancellationToken ct)
+    public Task<TestProcessResult> Run(int restoreExitCode, int buildExitCode, CancellationToken ct)
     {
         string[] arguments = OperatingSystem.IsWindows()
             ? ["-NoLogo", "-NoProfile", "-NonInteractive", "-File", script]
             : [script];
-        return CiTestSelectionTestProcess.Run(
+        return TestProcess.Run(
             OperatingSystem.IsWindows() ? "pwsh" : "bash",
             outside,
             arguments,

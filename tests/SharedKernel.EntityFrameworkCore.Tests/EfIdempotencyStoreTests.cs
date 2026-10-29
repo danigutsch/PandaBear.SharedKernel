@@ -1,5 +1,4 @@
 using PandaBear.Idempotency;
-using PandaBear.Testing;
 using PandaBear.Idempotency.EntityFrameworkCore;
 
 namespace PandaBear.EntityFrameworkCore.Tests;

@@ -21,6 +21,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.ObjectStorage.S3\SharedKernel.ObjectStorage.S3.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.IO\SharedKernel.IO.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
     </ItemGroup>
 

@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="PandaBear.Testing" />
         <Using Include="PandaBear.Npgsql.Testing" />
         <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="PandaBear.Testing.Logging" />

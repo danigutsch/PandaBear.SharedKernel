@@ -7,35 +7,13 @@ namespace PandaBear.RepoConfig.Tests;
 /// </summary>
 internal sealed class TemporaryGitRepository : IDisposable
 {
-    private readonly IReadOnlyDictionary<string, string?> _gitEnvironment;
+    private readonly Testing.TemporaryGitRepository _repository = new();
     private readonly List<string> _linkedWorktreePaths = [];
-
-    /// <summary>
-    /// Creates the temporary directory and an isolated Git environment that ignores system and global configuration.
-    /// </summary>
-    public TemporaryGitRepository()
-    {
-        RootPath = Path.Combine(Path.GetTempPath(), "sharedkernel-repo-config-git-tests", Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(RootPath);
-        var homePath = Path.Combine(RootPath, ".home");
-        Directory.CreateDirectory(homePath);
-        _gitEnvironment = new Dictionary<string, string?>(StringComparer.Ordinal)
-        {
-            ["GIT_ATTR_NOSYSTEM"] = "1",
-            ["GIT_CONFIG_GLOBAL"] = OperatingSystem.IsWindows() ? "NUL" : "/dev/null",
-            ["GIT_CONFIG_NOSYSTEM"] = "1",
-            ["HOME"] = homePath,
-            ["XDG_CONFIG_HOME"] = Path.Combine(homePath, ".config")
-        };
-    }
 
     /// <summary>
     /// Gets the absolute path of the repository root.
     /// </summary>
-    public string RootPath
-    {
-        get;
-    }
+    public string RootPath => _repository.RootPath;
 
     /// <summary>
     /// Runs git init and disables core.autocrlf.
@@ -129,7 +107,7 @@ internal sealed class TemporaryGitRepository : IDisposable
         IReadOnlyDictionary<string, string?>? environment = null)
     {
         List<EnvironmentVariableScope> environmentScopes = [];
-        foreach (var variable in _gitEnvironment)
+        foreach (var variable in _repository.GitEnvironment)
         {
             environmentScopes.Add(new EnvironmentVariableScope(variable.Key, variable.Value));
         }
@@ -166,10 +144,10 @@ internal sealed class TemporaryGitRepository : IDisposable
     /// <summary>
     /// Runs the git executable in the repository root with the isolated Git environment.
     /// </summary>
-    public async Task<CiTestSelectionTestProcess.ProcessResult> RunGit(
+    public async Task<TestProcessResult> RunGit(
         IReadOnlyList<string> arguments,
         CancellationToken cancellationToken) =>
-        await CiTestSelectionTestProcess.Run("git", RootPath, arguments, cancellationToken, _gitEnvironment);
+        await _repository.TryRunGit(arguments, cancellationToken);
 
     /// <summary>
     /// Overwrites the Git index with invalid bytes.
@@ -294,10 +272,10 @@ internal sealed class TemporaryGitRepository : IDisposable
             TemporaryRepositoryDirectory.Delete(linkedWorktreePath);
         }
 
-        TemporaryRepositoryDirectory.Delete(RootPath);
+        _repository.Dispose();
     }
 
-    private async Task<CiTestSelectionTestProcess.ProcessResult> RunGitChecked(
+    private async Task<TestProcessResult> RunGitChecked(
         IReadOnlyList<string> arguments,
         CancellationToken cancellationToken)
     {

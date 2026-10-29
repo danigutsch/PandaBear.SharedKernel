@@ -1,5 +1,3 @@
-using PandaBear.Testing;
-
 namespace PandaBear.Repository.Tests;
 
 /// <summary>Guards how the CI tool finds the <c>git</c> executable.</summary>

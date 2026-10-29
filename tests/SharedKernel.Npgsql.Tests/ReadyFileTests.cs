@@ -1,6 +1,5 @@
 using System.Text;
 using PandaBear.Npgsql.Testing.Host;
-using PandaBear.Testing;
 
 namespace PandaBear.Npgsql.Tests;
 

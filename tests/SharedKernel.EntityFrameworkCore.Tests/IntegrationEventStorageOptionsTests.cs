@@ -1,6 +1,5 @@
 using PandaBear.Idempotency.EntityFrameworkCore;
 using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
-using PandaBear.Testing;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 

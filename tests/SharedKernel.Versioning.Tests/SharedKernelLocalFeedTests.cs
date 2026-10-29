@@ -3,7 +3,7 @@ namespace PandaBear.Versioning.Tests;
 /// <summary>
 /// Tests generation and validation of the local SharedKernel package feed configuration.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class SharedKernelLocalFeedTests
 {
     [Fact]
