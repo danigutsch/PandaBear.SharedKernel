@@ -406,6 +406,13 @@
           "xunit.v3.assert": "[4.0.0, )"
         }
       },
+      "PandaBear.SharedKernel.Testing.Xunit": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Testing": "[0.1.0-alpha.0, )",
+          "xunit.v3.extensibility.core": "[4.0.0, )"
+        }
+      },
       "Microsoft.Extensions.Compliance.Redaction": {
         "type": "CentralTransitive",
         "requested": "[10.11.0, )",

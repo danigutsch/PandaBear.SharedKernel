@@ -224,6 +224,13 @@
           "PandaBear.SharedKernel.Testing.Assertions": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.Testing.Xunit": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Testing": "[0.1.0-alpha.0, )",
+          "xunit.v3.extensibility.core": "[4.0.0, )"
+        }
+      },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "CentralTransitive",
         "requested": "[10.0.13, )",

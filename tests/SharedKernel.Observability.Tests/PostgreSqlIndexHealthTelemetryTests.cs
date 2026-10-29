@@ -4,7 +4,7 @@ using PandaBear.Testing;
 namespace PandaBear.Observability.Npgsql.Tests;
 
 /// <summary>Tests the metrics that PostgreSqlIndexHealthTelemetry emits for collection results, run serially because they share a meter listener.</summary>
-[Trait(TestTraitNames.ScopeName, TestTraits.UnitScope)]
+[TestScope(TestScope.Unit)]
 [Trait(TestTraits.ComponentName, TestTraits.PostgreSqlObservabilityComponent)]
 [Collection("PostgreSQL index health telemetry")]
 public sealed class PostgreSqlIndexHealthTelemetryTests

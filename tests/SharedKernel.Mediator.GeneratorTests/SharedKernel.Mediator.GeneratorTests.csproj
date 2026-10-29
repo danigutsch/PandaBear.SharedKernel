@@ -13,6 +13,7 @@
 
     <ItemGroup>
         <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="PandaBear.Testing.Metrics" />
         <Using Include="Xunit" />
     </ItemGroup>
 

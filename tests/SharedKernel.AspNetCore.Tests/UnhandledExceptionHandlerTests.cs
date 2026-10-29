@@ -12,7 +12,7 @@ public sealed class UnhandledExceptionHandlerTests
     public async Task Unhandled_exception_returns_problem_details_with_trace_id_and_no_exception_text()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var logger = new RecordingLogger<UnhandledExceptionReporter>();
         await using var app = await UnhandledExceptionTestApp.Start(meters, logger);
         using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
@@ -37,7 +37,7 @@ public sealed class UnhandledExceptionHandlerTests
     public async Task Unhandled_exception_logs_one_stable_event_with_only_bounded_values()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var logger = new RecordingLogger<UnhandledExceptionReporter>();
         await using var app = await UnhandledExceptionTestApp.Start(meters, logger);
         using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
@@ -62,7 +62,7 @@ public sealed class UnhandledExceptionHandlerTests
     public async Task Unhandled_exception_increments_a_counter_with_only_bounded_tags()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var logger = new RecordingLogger<UnhandledExceptionReporter>();
         await using var app = await UnhandledExceptionTestApp.Start(meters, logger);
         using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
@@ -87,7 +87,7 @@ public sealed class UnhandledExceptionHandlerTests
     public void Reporter_called_outside_a_request_counts_the_exception_as_handled_with_an_unmatched_route()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var logger = new RecordingLogger<UnhandledExceptionReporter>();
         var reporter = new UnhandledExceptionReporter(logger, meters);
 
@@ -105,7 +105,7 @@ public sealed class UnhandledExceptionHandlerTests
     public async Task Bad_http_request_keeps_its_status_and_is_not_counted_as_an_unhandled_exception()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var logger = new RecordingLogger<UnhandledExceptionReporter>();
         await using var app = await UnhandledExceptionTestApp.Start(meters, logger);
         using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
@@ -125,7 +125,7 @@ public sealed class UnhandledExceptionHandlerTests
     public async Task Client_abort_is_left_to_the_framework_and_not_counted()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var logger = new RecordingLogger<UnhandledExceptionReporter>();
         var handler = new UnhandledExceptionHandler(new UnhandledExceptionReporter(logger, meters));
         using var aborted = new CancellationTokenSource();
@@ -144,7 +144,7 @@ public sealed class UnhandledExceptionHandlerTests
     public void Exception_after_the_response_started_can_be_reported_explicitly_as_not_handled()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var reporter = new UnhandledExceptionReporter(new RecordingLogger<UnhandledExceptionReporter>(), meters);
         var httpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext();
 
@@ -167,7 +167,7 @@ public sealed class UnhandledExceptionHandlerTests
     public void Route_template_is_normalized_defensively(string input, string expected)
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var reporter = new UnhandledExceptionReporter(new RecordingLogger<UnhandledExceptionReporter>(), meters);
 
         // Act
@@ -181,7 +181,7 @@ public sealed class UnhandledExceptionHandlerTests
     public void Aggregate_and_reflection_wrappers_report_the_inner_exception_type()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var reporter = new UnhandledExceptionReporter(new RecordingLogger<UnhandledExceptionReporter>(), meters);
 
         // Act

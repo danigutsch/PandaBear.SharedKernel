@@ -21,6 +21,8 @@ const PandaBear.Mediator.GeneratorTests.TestTraits.SourceGeneratorComponent = "S
 const PandaBear.Mediator.Tests.TestTraits.AbstractionsComponent = "SharedKernel.Mediator.Abstractions" -> string!
 const PandaBear.Mediator.Tests.TestTraits.ContractsCapability = "Contracts" -> string!
 const PandaBear.Mediator.Tests.TestTraits.ReferenceDispatcherCapability = "ReferenceDispatcher" -> string!
+const PandaBear.Testing.Metrics.MeterCollector.ListenerFailureMessage = "listener-secret" -> string!
+const PandaBear.Testing.Metrics.ThrowingMeterFactory.FailureMessage = "factory-secret" -> string!
 const PandaBear.Testing.SharedKernelTestTraitNames.CapabilityName = "TestCapability" -> string!
 const PandaBear.Testing.SharedKernelTestTraitNames.CategoryName = "TestCategory" -> string!
 const PandaBear.Testing.SharedKernelTestTraitNames.ComponentName = "TestComponent" -> string!
@@ -117,6 +119,25 @@ PandaBear.Testing.GatedCountingReadStream.BytesRead.get -> long
 PandaBear.Testing.GatedCountingReadStream.GatedCountingReadStream(byte[]! content) -> void
 PandaBear.Testing.GatedCountingReadStream.ReadStarted.get -> System.Threading.Tasks.Task!
 PandaBear.Testing.GatedCountingReadStream.Release() -> void
+PandaBear.Testing.Metrics.MeterCollector
+PandaBear.Testing.Metrics.MeterCollector.Create(System.Diagnostics.Metrics.MeterOptions! options) -> System.Diagnostics.Metrics.Meter!
+PandaBear.Testing.Metrics.MeterCollector.Dispose() -> void
+PandaBear.Testing.Metrics.MeterCollector.Measurements.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Metrics.RecordedMeasurement!>!
+PandaBear.Testing.Metrics.MeterCollector.MeterCollector(string? meterName = null) -> void
+PandaBear.Testing.Metrics.MeterCollector.ThrowOnMeasurement.get -> bool
+PandaBear.Testing.Metrics.MeterCollector.ThrowOnMeasurement.set -> void
+PandaBear.Testing.Metrics.RecordedMeasurement
+PandaBear.Testing.Metrics.RecordedMeasurement.Instrument.get -> string!
+PandaBear.Testing.Metrics.RecordedMeasurement.Instrument.init -> void
+PandaBear.Testing.Metrics.RecordedMeasurement.RecordedMeasurement(string! Instrument, long Value, System.Collections.Generic.IReadOnlyDictionary<string!, object?>! Tags) -> void
+PandaBear.Testing.Metrics.RecordedMeasurement.Tags.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object?>!
+PandaBear.Testing.Metrics.RecordedMeasurement.Tags.init -> void
+PandaBear.Testing.Metrics.RecordedMeasurement.Value.get -> long
+PandaBear.Testing.Metrics.RecordedMeasurement.Value.init -> void
+PandaBear.Testing.Metrics.ThrowingMeterFactory
+PandaBear.Testing.Metrics.ThrowingMeterFactory.Create(System.Diagnostics.Metrics.MeterOptions! options) -> System.Diagnostics.Metrics.Meter!
+PandaBear.Testing.Metrics.ThrowingMeterFactory.Dispose() -> void
+PandaBear.Testing.Metrics.ThrowingMeterFactory.ThrowingMeterFactory() -> void
 PandaBear.Testing.RecordingFakeExecutable
 PandaBear.Testing.RecordingFakeExecutable.Arguments() -> string![]!
 PandaBear.Testing.RecordingFakeExecutable.ArgumentsPath.get -> string!

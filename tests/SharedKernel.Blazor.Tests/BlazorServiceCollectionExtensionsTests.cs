@@ -79,7 +79,7 @@ public sealed class BlazorServiceCollectionExtensionsTests
     public void AddUiFailureReporting_keeps_a_meter_factory_and_counts_when_metrics_are_added_around_it()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(UiFailureReporter.MeterName);
         var services = new ServiceCollection()
             .AddLogging()
             .AddSingleton<IMeterFactory>(meters)

@@ -10,6 +10,7 @@
         <Using Include="PandaBear.Blazor" />
         <Using Include="PandaBear.HttpClients" />
         <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="PandaBear.Testing.Metrics" />
         <Using Include="Xunit" />
     </ItemGroup>
 

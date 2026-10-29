@@ -13,7 +13,7 @@ public sealed class SecurityEventPipelineTests
     public async Task Request_without_a_token_is_challenged_and_reported_as_missing_token()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var logger = new RecordingLogger<SecurityEventReporter>();
         await using var app = await SecurityEventTestApp.Start(meters, logger);
         using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
@@ -33,7 +33,7 @@ public sealed class SecurityEventPipelineTests
     public async Task Request_with_a_bad_token_reports_a_bounded_failure_and_never_the_token()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var logger = new RecordingLogger<SecurityEventReporter>();
         await using var app = await SecurityEventTestApp.Start(meters, logger);
         using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
@@ -58,7 +58,7 @@ public sealed class SecurityEventPipelineTests
     public async Task Authenticated_request_failing_a_policy_is_reported_as_forbidden_through_the_real_handler()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var logger = new RecordingLogger<SecurityEventReporter>();
         await using var app = await SecurityEventTestApp.Start(meters, logger);
         using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
@@ -85,7 +85,7 @@ public sealed class SecurityEventPipelineTests
     public async Task Rate_limited_request_is_reported_with_the_policy_name_through_the_real_middleware()
     {
         // Arrange
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var logger = new RecordingLogger<SecurityEventReporter>();
         await using var app = await SecurityEventTestApp.Start(meters, logger);
         using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };

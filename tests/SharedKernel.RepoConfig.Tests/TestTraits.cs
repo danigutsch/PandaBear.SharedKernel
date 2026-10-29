@@ -13,8 +13,4 @@ internal static class TestTraits
     /// Trait value for tests that belong to the tooling area.
     /// </summary>
     public const string ToolingArea = "tooling";
-    /// <summary>
-    /// Trait value for unit-scope tests.
-    /// </summary>
-    public const string UnitScope = "unit";
 }

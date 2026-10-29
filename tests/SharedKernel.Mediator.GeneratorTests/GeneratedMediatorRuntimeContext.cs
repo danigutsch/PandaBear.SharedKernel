@@ -1,4 +1,3 @@
-using System.Diagnostics.Metrics;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -9,7 +8,7 @@ internal sealed class GeneratedMediatorRuntimeContext : IDisposable
 {
     private readonly Assembly assembly;
     private readonly Type mediatorType;
-    private readonly TestMeterFactory meterFactory = new();
+    private readonly MeterCollector meterFactory = new();
 
     private GeneratedMediatorRuntimeContext(Assembly assembly, Type mediatorType)
     {
@@ -130,26 +129,6 @@ internal sealed class GeneratedMediatorRuntimeContext : IDisposable
         if (assembly is IDisposable disposableAssembly)
         {
             disposableAssembly.Dispose();
-        }
-    }
-
-    private sealed class TestMeterFactory : IMeterFactory
-    {
-        private readonly List<Meter> meters = [];
-
-        Meter IMeterFactory.Create(MeterOptions options)
-        {
-            var meter = new Meter(options);
-            meters.Add(meter);
-            return meter;
-        }
-
-        public void Dispose()
-        {
-            foreach (var meter in meters)
-            {
-                meter.Dispose();
-            }
         }
     }
 }

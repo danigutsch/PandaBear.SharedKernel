@@ -9,7 +9,7 @@ public sealed class TelemetryFailureSurfacingTests
     {
         // Arrange
         using var captured = new ConsoleErrorCapture();
-        using var meters = new MeterCollector();
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var reporter = new UnhandledExceptionReporter(new ThrowingLogger<UnhandledExceptionReporter>(), meters);
 
         // Act
