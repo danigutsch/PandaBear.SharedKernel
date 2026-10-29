@@ -109,9 +109,10 @@ non-interactive commands and to how they start a UI.
   targets, the changed-code coverage threshold, source patterns, and symbol directories, and the `dotnet-stryker`
   version and Stryker config files. The
   [CI tool README](../tools/SharedKernel.CI.Tool/README.md#configuration) describes the format and the selection rules.
-- `sharedkernel-repo verify-links`, `verify-gherkin`, `dependency verify-license-exceptions`, and `github sync-labels`
-  read `.config/sharedkernel-repo.json`: the documentation files to scan for links, the Gherkin rules, the license
-  exceptions, and the repository labels. The
+- `sharedkernel-repo verify-links`, `verify-gherkin`, `dependency verify-license-exceptions`, `github sync-labels`, and
+  `baseline verify` and `apply` read `.config/sharedkernel-repo.json`: the documentation files to scan for links, the
+  Gherkin rules, the license exceptions, the repository labels, and the repository baseline files, Git settings, and hooks. Tool engines stay generic: the
+  baseline names no forge, owner, or host, and only allowlisted Git settings are accepted. The
   [repo tool README](../tools/SharedKernel.RepoConfig.Tool/README.md#configuration) describes the format.
 - `sharedkernel-k6 run` reads `.config/sharedkernel-k6.json`: the script and results directories, the container engine
   and digest-pinned image, and the scenarios with their script, base URL variable, forwarded environment variables,

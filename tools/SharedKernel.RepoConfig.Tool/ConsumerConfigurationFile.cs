@@ -103,6 +103,11 @@ internal static class ConsumerConfigurationFile
             Validate(labels);
         }
 
+        if (configuration.Baseline?.FindError() is { } baselineError)
+        {
+            throw Invalid(baselineError);
+        }
+
         return configuration;
     }
 

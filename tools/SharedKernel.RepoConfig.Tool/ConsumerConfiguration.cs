@@ -8,9 +8,11 @@ namespace PandaBear.RepoConfig.Tool;
 /// <param name="Links">The documentation files that <c>verify-links</c> scans, if any.</param>
 /// <param name="Gherkin">The feature files and rules that <c>verify-gherkin</c> checks, if any.</param>
 /// <param name="Labels">The repository labels that <c>github sync-labels</c> creates and updates, if any.</param>
+/// <param name="Baseline">The files that <c>baseline verify</c> and <c>baseline apply</c> manage, if any.</param>
 internal sealed record ConsumerConfiguration(
     int Version,
     LicenseExceptionConfiguration? LicenseExceptions = null,
     LinkConfiguration? Links = null,
     GherkinConfiguration? Gherkin = null,
-    IReadOnlyList<GitHubLabelConfiguration>? Labels = null);
+    IReadOnlyList<GitHubLabelConfiguration>? Labels = null,
+    BaselineConfiguration? Baseline = null);
