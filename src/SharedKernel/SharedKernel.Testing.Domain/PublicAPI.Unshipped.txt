@@ -1,0 +1,16 @@
+#nullable enable
+PandaBear.Testing.Domain.CancellationCapturingDomainEventDispatchHandler
+PandaBear.Testing.Domain.CancellationCapturingDomainEventDispatchHandler.CancellationCapturingDomainEventDispatchHandler() -> void
+PandaBear.Testing.Domain.CancellationCapturingDomainEventDispatchHandler.CapturedToken.get -> System.Threading.CancellationToken
+PandaBear.Testing.Domain.CancellationCapturingDomainEventDispatchHandler.Handle(PandaBear.Domain.IDomainEvent! domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Domain.CapturingDomainEventDispatchHandler
+PandaBear.Testing.Domain.CapturingDomainEventDispatchHandler.CapturingDomainEventDispatchHandler(string! name, System.Collections.Generic.IList<string!>! calls) -> void
+PandaBear.Testing.Domain.CapturingDomainEventDispatchHandler.Handle(PandaBear.Domain.IDomainEvent! domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Domain.RecordingDomainEventDispatcher
+PandaBear.Testing.Domain.RecordingDomainEventDispatcher.Dispatch(PandaBear.Domain.IDomainEvent! domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Domain.RecordingDomainEventDispatcher.Dispatch<TDomainEvent>(TDomainEvent domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Domain.RecordingDomainEventDispatcher.Dispatched.get -> System.Collections.Generic.IList<PandaBear.Domain.IDomainEvent!>!
+PandaBear.Testing.Domain.RecordingDomainEventDispatcher.RecordingDomainEventDispatcher() -> void
+PandaBear.Testing.Domain.ThrowingDomainEventDispatchHandler
+PandaBear.Testing.Domain.ThrowingDomainEventDispatchHandler.Handle(PandaBear.Domain.IDomainEvent! domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Domain.ThrowingDomainEventDispatchHandler.ThrowingDomainEventDispatchHandler() -> void
