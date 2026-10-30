@@ -53,3 +53,25 @@ header`. A branch ruleset that requires the old `PR Metadata` check name must be
 workflow.
 
 SharedKernel's own `.github/workflows/pr-metadata.yml` is this caller with a local `uses:` path.
+
+## .NET toolchain setup
+
+`.github/actions/setup-dotnet-tool` is the one composite action that sets up the SDK and builds a repository-owned
+CLI. It runs `actions/setup-dotnet` with `global-json-file` and the NuGet cache keyed by the lock files, then
+`dotnet restore <project> --locked-mode` and `dotnet build <project> -c Release --no-restore`. A stale lock file fails
+the restore; nothing relaxes it. Steps use `bash`, so the action runs on Linux, macOS, and Windows runners.
+
+| Input | Default | Meaning |
+| --- | --- | --- |
+| `project` | required | Tool project to restore and build, relative to `working-directory`. |
+| `global-json-file` | `global.json` | Path of the `global.json` that pins the SDK, relative to the workspace. |
+| `working-directory` | `.` | Directory, relative to the workspace, from which the project is restored and built. |
+| `cache-dependency-path` | `**/packages.lock.json` | Glob of the lock files that key the NuGet cache, relative to the workspace. |
+
+With the defaults the action behaves as before, so existing callers keep their cache keys. The PR Metadata workflow
+calls it from the checked-out tool source (`./tool-source/.github/actions/setup-dotnet-tool`, with the tool source
+in the sparse checkout) and passes `working-directory: tool-source`.
+
+A consumer wrapper calls the action by pinned SHA after it checked out the pinned SharedKernel source, or by local
+path from that checkout, and passes its own `project`, `global-json-file`, and `working-directory`. Candidate staging,
+local tool restore, `NUGET_PACKAGES`, and developer certificate trust stay in the consumer wrapper.

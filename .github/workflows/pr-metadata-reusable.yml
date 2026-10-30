@@ -47,15 +47,14 @@ jobs:
           sparse-checkout: |
             tools/SharedKernel.CI.Tool
             tools/Shared
+            .github/actions/setup-dotnet-tool
           sparse-checkout-cone-mode: true
-      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+      - name: Set up the SDK and build the CI tool
+        uses: ./tool-source/.github/actions/setup-dotnet-tool
         with:
+          project: tools/SharedKernel.CI.Tool
           global-json-file: tool-source/global.json
-      - name: Build the CI tool
-        working-directory: tool-source
-        run: |
-          dotnet restore tools/SharedKernel.CI.Tool --locked-mode
-          dotnet build tools/SharedKernel.CI.Tool -c Release --no-restore
+          working-directory: tool-source
       - name: Validate squash header
         working-directory: tool-source
         run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- verify-commit-message --event "$GITHUB_EVENT_PATH"
