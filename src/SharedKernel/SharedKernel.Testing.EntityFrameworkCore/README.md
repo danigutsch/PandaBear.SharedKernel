@@ -4,7 +4,7 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-A minimal Entity Framework Core context and entity for SharedKernel test suites.
+A minimal Entity Framework Core context and entity for SharedKernel test suites. The package is provider-agnostic: reference the provider package your test needs, such as `Microsoft.EntityFrameworkCore.InMemory` for the example below.
 
 ## Usage
 
