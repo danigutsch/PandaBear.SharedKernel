@@ -1,16 +1,20 @@
 using PandaBear.Messaging;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+
+
+namespace PandaBear.Testing.Messaging;
 
 /// <summary>
 /// Envelope publisher that stores published envelopes and can be set to fail every call or only the first.
 /// </summary>
-internal sealed class RecordingEventEnvelopePublisher : IEventEnvelopePublisher
+public sealed class RecordingEventEnvelopePublisher : IEventEnvelopePublisher
 {
+    private readonly List<EventEnvelope> published = [];
+
     /// <summary>
     /// Envelopes published successfully, in order.
     /// </summary>
-    public List<EventEnvelope> Published { get; } = [];
+    public IList<EventEnvelope> Published => published;
 
     /// <summary>
     /// Exception thrown by publish calls, or null to succeed.
@@ -47,7 +51,7 @@ internal sealed class RecordingEventEnvelopePublisher : IEventEnvelopePublisher
             throw Failure;
         }
 
-        Published.Add(envelope);
+        published.Add(envelope);
         return ValueTask.CompletedTask;
     }
 }

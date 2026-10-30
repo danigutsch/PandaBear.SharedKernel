@@ -216,6 +216,16 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
+      "PandaBear.SharedKernel.Messaging": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.Messaging.IntegrationEvents": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
+          "PandaBear.SharedKernel.Messaging": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
@@ -242,6 +252,13 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )"
+        }
+      },
+      "PandaBear.SharedKernel.Testing.Messaging": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Messaging": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Messaging.IntegrationEvents": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Testing.Playwright": {

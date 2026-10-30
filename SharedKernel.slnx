@@ -66,6 +66,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Testing.Http/SharedKernel.Testing.Http.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Logging/SharedKernel.Testing.Logging.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Mediator/SharedKernel.Testing.Mediator.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Testing.Messaging/SharedKernel.Testing.Messaging.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Playwright/SharedKernel.Testing.Playwright.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Roslyn/SharedKernel.Testing.Roslyn.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Snapshots/SharedKernel.Testing.Snapshots.csproj" />

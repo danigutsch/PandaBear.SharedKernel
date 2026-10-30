@@ -8,6 +8,7 @@ namespace PandaBear.RepoConfig.Tests;
 internal sealed class PodmanDnsPreflightTestContext : IDisposable
 {
     private const int CurrentUserId = 1000;
+    private readonly TemporaryDirectory _directory = new();
     private readonly Dictionary<string, PodmanCommandResult> _responses = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Queue<PodmanCommandResult>> _responseQueues = new(StringComparer.Ordinal);
     private Action? _onContainerRecheck;
@@ -19,7 +20,7 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
     /// <summary>Creates a unique temp root with a fake proc tree whose own status reports user id 1000 and an empty Podman run root.</summary>
     public PodmanDnsPreflightTestContext()
     {
-        RootPath = Path.Combine(Path.GetTempPath(), "verify-podman-dns-tests", Guid.NewGuid().ToString("N"));
+        RootPath = _directory.Path;
         ProcRoot = Path.Combine(RootPath, "proc");
         RunRoot = Path.Combine(RootPath, "runroot");
         AardvarkDirectory = Path.Combine(RunRoot, "networks", "aardvark-dns");
@@ -278,13 +279,7 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
     }
 
     /// <inheritdoc />
-    public void Dispose()
-    {
-        if (Directory.Exists(RootPath))
-        {
-            Directory.Delete(RootPath, recursive: true);
-        }
-    }
+    public void Dispose() => _directory.Dispose();
 
     private void WriteProcessStat(int processId, ulong startTime)
     {

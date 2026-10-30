@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>PandaBear.SharedKernel.Testing.Messaging</PackageId>
+        <Description>Reusable event envelope publisher and integration event handler fakes for SharedKernel test suites.</Description>
+        <RootNamespace>PandaBear.Testing.Messaging</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>testing;messaging;integration-events;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
+        <ProjectReference Include="..\SharedKernel.Messaging.IntegrationEvents\SharedKernel.Messaging.IntegrationEvents.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,3 +1,4 @@
+using PandaBear.Testing;
 using PandaBear.Testing.Packaging;
 
 namespace PandaBear.AuditTrail.GeneratorTests;
@@ -26,7 +27,9 @@ public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
     /// </summary>
     public string FeedPath { get; private set; } = null!;
 
-    private string RootPath { get; set; } = null!;
+    private readonly TemporaryDirectory _directory = new();
+
+    private string RootPath => _directory.Path;
 
     /// <summary>
     /// Repository root directory, located by searching upward from the test output for SharedKernel.slnx.
@@ -43,7 +46,6 @@ public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
     public async ValueTask InitializeAsync()
     {
         RepositoryRoot = FindRepositoryRoot();
-        RootPath = Path.Combine(Path.GetTempPath(), $"sharedkernel-audit-trail-package-feed-{Guid.NewGuid():N}");
         FeedPath = Path.Combine(RootPath, "feed");
         Directory.CreateDirectory(FeedPath);
 
@@ -57,11 +59,7 @@ public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
     /// <inheritdoc />
     public ValueTask DisposeAsync()
     {
-        if (!string.IsNullOrWhiteSpace(RootPath) && Directory.Exists(RootPath))
-        {
-            Directory.Delete(RootPath, recursive: true);
-        }
-
+        _directory.Dispose();
         return ValueTask.CompletedTask;
     }
 

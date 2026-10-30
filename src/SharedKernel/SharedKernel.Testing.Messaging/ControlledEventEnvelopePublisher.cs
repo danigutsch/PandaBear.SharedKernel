@@ -1,11 +1,11 @@
 using PandaBear.Messaging;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace PandaBear.Testing.Messaging;
 
 /// <summary>
 /// Envelope publisher that blocks its first two publish calls until the test releases them, so ordering of consumption can be observed.
 /// </summary>
-internal sealed class ControlledEventEnvelopePublisher : IEventEnvelopePublisher, IDisposable
+public sealed class ControlledEventEnvelopePublisher : IEventEnvelopePublisher, IDisposable
 {
     private readonly TaskCompletionSource<bool> firstStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly TaskCompletionSource<bool> releaseFirst = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -46,11 +46,11 @@ internal sealed class ControlledEventEnvelopePublisher : IEventEnvelopePublisher
         {
             case 1:
                 firstStarted.TrySetResult(true);
-                await releaseFirst.Task.WaitAsync(ct);
+                await releaseFirst.Task.WaitAsync(ct).ConfigureAwait(false);
                 break;
             case 2:
                 secondStarted.TrySetResult(true);
-                await releaseSecond.Task.WaitAsync(ct);
+                await releaseSecond.Task.WaitAsync(ct).ConfigureAwait(false);
                 break;
             default:
                 throw new InvalidOperationException($"Unexpected publish invocation {invocation}.");

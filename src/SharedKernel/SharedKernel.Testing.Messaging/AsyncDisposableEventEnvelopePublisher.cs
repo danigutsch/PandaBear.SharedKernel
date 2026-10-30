@@ -1,11 +1,11 @@
 using PandaBear.Messaging;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace PandaBear.Testing.Messaging;
 
 /// <summary>
 /// Envelope publisher that ignores published envelopes and counts how often it is asynchronously disposed.
 /// </summary>
-internal sealed class AsyncDisposableEventEnvelopePublisher : IEventEnvelopePublisher, IAsyncDisposable
+public sealed class AsyncDisposableEventEnvelopePublisher : IEventEnvelopePublisher, IAsyncDisposable
 {
     private int disposeCount;
 

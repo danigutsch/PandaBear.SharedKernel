@@ -246,6 +246,13 @@
           "xunit.v3.assert": "[4.0.0, )"
         }
       },
+      "PandaBear.SharedKernel.Testing.Messaging": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Messaging": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Messaging.IntegrationEvents": "[0.1.0-alpha.0, )"
+        }
+      },
       "sharedkernel.messaging.protobuf.testcontracts": {
         "type": "Project",
         "dependencies": {
