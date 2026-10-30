@@ -1,0 +1,105 @@
+name: Dependency snapshot (reusable)
+on:
+  workflow_call:
+    inputs:
+      runner:
+        description: Runner label for the job.
+        type: string
+        default: ubuntu-latest
+      target:
+        description: >-
+          Revision to snapshot: base is the pull request base, head is the pull request head, or the pushed commit
+          when the event is not a pull request.
+        type: string
+        required: true
+      correlator:
+        description: Stable name that GitHub uses to replace the previous snapshot of this manifest set.
+        type: string
+        required: true
+      source-repository:
+        description: Repository that holds the RepoConfig tool source. Empty builds the tool from the calling repository.
+        type: string
+        default: ''
+      source-ref:
+        description: Full 40-character commit SHA of the tool source. Required when source-repository is set.
+        type: string
+        default: ''
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    name: Snapshot
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 20
+    # Submitting a snapshot to the dependency graph needs contents: write; the caller job must grant it.
+    permissions:
+      contents: write
+    steps:
+      - name: Require valid inputs
+        env:
+          TARGET: ${{ inputs.target }}
+          SOURCE_REPOSITORY: ${{ inputs.source-repository }}
+          SOURCE_REF: ${{ inputs.source-ref }}
+        run: |
+          if [[ "$TARGET" != base && "$TARGET" != head ]]; then
+            echo "target must be base or head." >&2
+            exit 1
+          fi
+          if [[ -n "$SOURCE_REPOSITORY" && ! "$SOURCE_REF" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "source-ref must be a full 40-character lowercase commit SHA when source-repository is set." >&2
+            exit 1
+          fi
+
+      - name: Checkout the RepoConfig tool source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          repository: ${{ inputs.source-repository || github.repository }}
+          ref: ${{ inputs.source-ref }}
+          path: tool-source
+          persist-credentials: false
+          sparse-checkout: |
+            tools/SharedKernel.RepoConfig.Tool
+            tools/Shared
+            .github/actions/setup-dotnet-tool
+          sparse-checkout-cone-mode: true
+
+      - name: Checkout exact dependency inputs
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ inputs.target == 'base' && github.event.pull_request.base.sha || github.event.pull_request.head.sha || github.sha }}
+          path: dependency-input
+          persist-credentials: false
+
+      - name: Set up the SDK and build the RepoConfig tool
+        uses: ./tool-source/.github/actions/setup-dotnet-tool
+        with:
+          project: tools/SharedKernel.RepoConfig.Tool
+          global-json-file: tool-source/global.json
+          working-directory: tool-source
+
+      - name: Generate snapshot from committed lock files
+        env:
+          SNAPSHOT_SHA: ${{ inputs.target == 'base' && github.event.pull_request.base.sha || github.event.pull_request.head.sha || github.sha }}
+          SNAPSHOT_REF: ${{ github.event_name == 'pull_request' && format('refs/heads/{0}', inputs.target == 'base' && github.base_ref || github.head_ref) || github.ref }}
+          SNAPSHOT_JOB_ID: ${{ github.run_id }}
+          SNAPSHOT_CORRELATOR: ${{ inputs.correlator }}
+        run: |
+          dotnet run --project tool-source/tools/SharedKernel.RepoConfig.Tool -c Release --no-build --no-restore -- \
+            dependency snapshot --root dependency-input --sha "$SNAPSHOT_SHA" --ref "$SNAPSHOT_REF" \
+            --job "$SNAPSHOT_JOB_ID" --correlator "$SNAPSHOT_CORRELATOR" --output TestResults/dependency-snapshot.json
+
+      - name: Submit complete committed dependency snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          dotnet run --project tool-source/tools/SharedKernel.RepoConfig.Tool -c Release --no-build --no-restore -- \
+            dependency submit --snapshot dependency-input/TestResults/dependency-snapshot.json \
+            --repository "$GITHUB_REPOSITORY" --force
+
+      - name: Retain committed snapshot evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dependency-snapshot-${{ inputs.target }}
+          path: dependency-input/TestResults/dependency-snapshot.json
+          if-no-files-found: ignore

@@ -1,0 +1,84 @@
+name: Actionlint (reusable)
+on:
+  workflow_call:
+    inputs:
+      runner:
+        description: Runner label for the job. The job installs Linux x64 binaries.
+        type: string
+        default: ubuntu-latest
+      actionlint-version:
+        description: Actionlint release to install, without the leading v.
+        type: string
+        default: 1.7.9
+      actionlint-sha256:
+        description: >-
+          SHA-256 of actionlint_<version>_linux_amd64.tar.gz. Empty verifies the archive against the checksum file of
+          the same release.
+        type: string
+        default: ''
+      install-shellcheck:
+        description: Install shellcheck with apt so actionlint checks run steps. Set false when the runner provides it.
+        type: boolean
+        default: true
+permissions:
+  contents: read
+jobs:
+  actionlint:
+    name: Actionlint
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Install shellcheck
+        if: ${{ inputs.install-shellcheck }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes shellcheck
+
+      - name: Install actionlint
+        env:
+          ACTIONLINT_VERSION: ${{ inputs.actionlint-version }}
+          ACTIONLINT_SHA256: ${{ inputs.actionlint-sha256 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$ACTIONLINT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "actionlint-version must be a release such as 1.7.9." >&2
+            exit 1
+          fi
+          if [[ -n "$ACTIONLINT_SHA256" && ! "$ACTIONLINT_SHA256" =~ ^[0-9a-f]{64}$ ]]; then
+            echo "actionlint-sha256 must be 64 lowercase hexadecimal characters." >&2
+            exit 1
+          fi
+          archive="actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          checksums="actionlint_${ACTIONLINT_VERSION}_checksums.txt"
+          base_url="https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}"
+
+          curl_args=(
+            --fail
+            --silent
+            --show-error
+            --location
+            --proto '=https'
+            --proto-redir '=https'
+            --tlsv1.2
+          )
+
+          curl "${curl_args[@]}" --output "$archive" "$base_url/$archive"
+          if [[ -n "$ACTIONLINT_SHA256" ]]; then
+            echo "$ACTIONLINT_SHA256  $archive" | sha256sum --check --status
+          else
+            curl "${curl_args[@]}" --output "$checksums" "$base_url/$checksums"
+            grep "  $archive$" "$checksums" | sha256sum --check --status
+          fi
+          tar -xzf "$archive" actionlint
+          sudo install actionlint /usr/local/bin/actionlint
+
+      - name: Lint GitHub Actions workflows
+        run: actionlint -color

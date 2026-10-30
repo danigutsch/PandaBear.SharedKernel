@@ -103,3 +103,49 @@ To add or change a pin, review the action as the [pin-update review](pin-update-
 and update every reference in the same change. Do not edit a workflow alone: the check fails on any disagreement. When
 SharedKernel bumps a pin, each consumer takes the bump with its next SharedKernel revision pin, then updates its own
 references to the new SHA and version comment.
+
+## Actionlint and dependency review
+
+All of these take `runner` (default `ubuntu-latest`), declare `permissions` per job, and receive no secrets. SARIF and
+`security-events: write` stay with the caller; none of these workflows requests them.
+
+### `actionlint-reusable.yml`
+
+Job `actionlint` (`contents: read`) checks out, optionally installs shellcheck, installs actionlint from its release,
+and runs `actionlint -color`.
+
+| Input | Default | Meaning |
+| --- | --- | --- |
+| `runner` | `ubuntu-latest` | Runner label; the job installs Linux x64 binaries. |
+| `actionlint-version` | `1.7.9` | Release without the leading `v`. |
+| `actionlint-sha256` | empty | SHA-256 of the linux_amd64 archive. Empty verifies against the release checksum file. |
+| `install-shellcheck` | `true` | Install shellcheck with apt. |
+
+The caller keeps the triggers and path filters. SharedKernel's `actionlint.yml` passes the archive SHA-256.
+
+### `dependency-snapshot-reusable.yml`
+
+Job `snapshot` (`contents: write`, which the calling job must grant) builds the RepoConfig tool, generates a snapshot
+from the committed lock files of `target` and submits it. Inputs: `runner`, `target` (`base` or `head`, required),
+`correlator` (required), `source-repository`, `source-ref` (a full SHA, required when `source-repository` is set).
+It uploads the `dependency-snapshot-<target>` artifact.
+
+### `dependency-review-reusable.yml`
+
+Job `review` (`contents: read`) fails unless `plan-result` is `success` and `snapshot-result` is `success` or
+`skipped`, then runs `actions/dependency-review-action` when `review-required` is `true`.
+
+| Input | Default | Meaning |
+| --- | --- | --- |
+| `runner` | `ubuntu-latest` | Runner label. |
+| `review-required` | `'true'` | Caller's decision, for example from a plan job. |
+| `plan-result` | `success` | `needs.<plan>.result` of the caller. |
+| `snapshot-result` | `success` | `needs.<snapshots>.result` of the caller. |
+| `allow-licenses` | required | Comma-separated SPDX identifiers. |
+| `fail-on-severity` | `moderate` | Lowest failing vulnerability severity. |
+| `verify-license-exceptions` | `false` | Verify the `licenseExceptions` approval and pass its packages as allow-dependencies-licenses. |
+| `source-repository`, `source-ref` | empty | RepoConfig tool source, as for PR Metadata; needed only with `verify-license-exceptions`. |
+
+The caller keeps the triggers, concurrency, the `ci:rerun` label rule, the job `if` and `needs`, the plan job (change
+selection), the license values, and any evidence handling. Callers read `needs.<job>.result` and pass it in because a
+called workflow cannot see the caller's jobs. As with PR Metadata, check names become `<caller job> / <called job>`.
