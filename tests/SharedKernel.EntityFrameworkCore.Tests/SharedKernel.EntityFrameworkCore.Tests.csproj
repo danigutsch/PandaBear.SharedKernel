@@ -6,6 +6,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="PandaBear.Testing.EntityFrameworkCore" />
+        <Using Include="PandaBear.Testing" />
         <Using Include="PandaBear.Npgsql.Testing" />
         <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="PandaBear.Testing.Logging" />
@@ -25,6 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.EntityFrameworkCore\SharedKernel.Testing.EntityFrameworkCore.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.IntegrationTesting\SharedKernel.IntegrationTesting.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" IsAspireProjectResource="false" />

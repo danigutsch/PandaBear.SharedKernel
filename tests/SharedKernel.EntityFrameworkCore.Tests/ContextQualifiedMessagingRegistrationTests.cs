@@ -1,5 +1,3 @@
-using PandaBear.Testing;
-
 namespace PandaBear.EntityFrameworkCore.Tests;
 
 /// <summary>

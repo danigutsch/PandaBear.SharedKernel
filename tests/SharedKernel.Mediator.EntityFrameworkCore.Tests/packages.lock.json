@@ -283,6 +283,12 @@
           "xunit.v3.assert": "[4.0.0, )"
         }
       },
+      "PandaBear.SharedKernel.Testing.EntityFrameworkCore": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.Relational": "[10.0.13, )"
+        }
+      },
       "Microsoft.EntityFrameworkCore.Relational": {
         "type": "CentralTransitive",
         "requested": "[10.0.13, )",

@@ -1,0 +1,9 @@
+PandaBear.Testing.EntityFrameworkCore.TestDbContext
+PandaBear.Testing.EntityFrameworkCore.TestDbContext.Entities.get -> Microsoft.EntityFrameworkCore.DbSet<PandaBear.Testing.EntityFrameworkCore.TestEntity!>!
+PandaBear.Testing.EntityFrameworkCore.TestDbContext.TestDbContext(Microsoft.EntityFrameworkCore.DbContextOptions<PandaBear.Testing.EntityFrameworkCore.TestDbContext!>! options) -> void
+PandaBear.Testing.EntityFrameworkCore.TestEntity
+PandaBear.Testing.EntityFrameworkCore.TestEntity.Id.get -> int
+PandaBear.Testing.EntityFrameworkCore.TestEntity.Id.set -> void
+PandaBear.Testing.EntityFrameworkCore.TestEntity.Name.get -> string!
+PandaBear.Testing.EntityFrameworkCore.TestEntity.Name.set -> void
+PandaBear.Testing.EntityFrameworkCore.TestEntity.TestEntity() -> void

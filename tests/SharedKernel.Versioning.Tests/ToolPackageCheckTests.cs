@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
-using PandaBear.Testing;
 using PandaBear.Tooling;
 using PandaBear.Versioning.Tool;
 

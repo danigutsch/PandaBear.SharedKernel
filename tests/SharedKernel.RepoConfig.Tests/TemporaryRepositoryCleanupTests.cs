@@ -81,7 +81,7 @@ public sealed class TemporaryRepositoryCleanupTests
         using var repository = new TemporaryGitRepository();
         var cancellationToken = TestContext.Current.CancellationToken;
         await repository.Initialize(cancellationToken);
-        var commit = await CiTestSelectionTestProcess.Run(
+        var commit = await TestProcess.Run(
             "git",
             repository.RootPath,
             ["-c", "user.name=Repo Config Tests", "-c", "user.email=repo-config-tests@example.invalid", "-c", "commit.gpgsign=false", "commit", "--allow-empty", "--message", "base"],

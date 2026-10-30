@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using PandaBear.Testing;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 

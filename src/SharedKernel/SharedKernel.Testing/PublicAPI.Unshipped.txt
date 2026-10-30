@@ -119,6 +119,7 @@ PandaBear.Testing.GatedCountingReadStream.BytesRead.get -> long
 PandaBear.Testing.GatedCountingReadStream.GatedCountingReadStream(byte[]! content) -> void
 PandaBear.Testing.GatedCountingReadStream.ReadStarted.get -> System.Threading.Tasks.Task!
 PandaBear.Testing.GatedCountingReadStream.Release() -> void
+PandaBear.Testing.LoopbackPort
 PandaBear.Testing.Metrics.MeterCollector
 PandaBear.Testing.Metrics.MeterCollector.Create(System.Diagnostics.Metrics.MeterOptions! options) -> System.Diagnostics.Metrics.Meter!
 PandaBear.Testing.Metrics.MeterCollector.Dispose() -> void
@@ -155,6 +156,28 @@ PandaBear.Testing.SerialTestJustificationAttribute
 PandaBear.Testing.SerialTestJustificationAttribute.Reason.get -> string!
 PandaBear.Testing.SerialTestJustificationAttribute.SerialTestJustificationAttribute(string! reason) -> void
 PandaBear.Testing.SharedKernelTestTraitNames
+PandaBear.Testing.TemporaryGitRepository
+PandaBear.Testing.TemporaryGitRepository.Commit(string! fileName, string! content, string! message, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.Testing.TemporaryGitRepository.Dispose() -> void
+PandaBear.Testing.TemporaryGitRepository.GitEnvironment.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>!
+PandaBear.Testing.TemporaryGitRepository.Initialize(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.Testing.TemporaryGitRepository.RootPath.get -> string!
+PandaBear.Testing.TemporaryGitRepository.RunGit(System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+PandaBear.Testing.TemporaryGitRepository.Tag(string! tag, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.Testing.TemporaryGitRepository.TemporaryGitRepository() -> void
+PandaBear.Testing.TemporaryGitRepository.TryRunGit(System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Testing.TestProcessResult>!
+PandaBear.Testing.TemporaryGitRepository.WriteText(string! relativePath, string! content) -> void
+PandaBear.Testing.TestGit
+PandaBear.Testing.TestProcess
+PandaBear.Testing.TestProcessResult
+PandaBear.Testing.TestProcessResult.ExitCode.get -> int
+PandaBear.Testing.TestProcessResult.ExitCode.init -> void
+PandaBear.Testing.TestProcessResult.StandardError.get -> string!
+PandaBear.Testing.TestProcessResult.StandardError.init -> void
+PandaBear.Testing.TestProcessResult.StandardOutput.get -> string!
+PandaBear.Testing.TestProcessResult.StandardOutput.init -> void
+PandaBear.Testing.TestProcessResult.TestProcessResult() -> void
+PandaBear.Testing.TestProcessResult.TestProcessResult(int ExitCode, string! StandardOutput, string! StandardError) -> void
 PandaBear.Testing.TestTraitNames
 PandaBear.Testing.TestTraitValues
 PandaBear.Testing.EnvironmentVariableScope
@@ -174,6 +197,13 @@ PandaBear.Testing.TestScope.System = 6 -> PandaBear.Testing.TestScope
 PandaBear.Testing.TestScope.UiIntegration = 4 -> PandaBear.Testing.TestScope
 PandaBear.Testing.TestScope.Unit = 0 -> PandaBear.Testing.TestScope
 PandaBear.Testing.TestScopeExtensions
+PandaBear.Testing.TrackingAsyncDisposable
+PandaBear.Testing.TrackingAsyncDisposable.DisposeAsync() -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.TrackingAsyncDisposable.DisposeCalled.get -> bool
+PandaBear.Testing.TrackingAsyncDisposable.TrackingAsyncDisposable(string! name, System.Collections.Generic.ICollection<string!>! disposalOrder, System.Exception? failure = null) -> void
+PandaBear.Testing.TrackingCleanupAction
+PandaBear.Testing.TrackingCleanupAction.Invoke() -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.TrackingCleanupAction.TrackingCleanupAction(string! name, System.Collections.Generic.ICollection<string!>! cleanupOrder, System.Exception? failure = null) -> void
 PandaBear.Testing.TrackingReadStream
 PandaBear.Testing.TrackingReadStream.BytesRead.get -> long
 PandaBear.Testing.TrackingReadStream.IsDisposed.get -> bool
@@ -187,6 +217,13 @@ static PandaBear.Testing.FakeExecutable.WriteScript(string! path, string! body) 
 static PandaBear.Testing.FileSystemProbes.CanCreateSymbolicLinks.get -> bool
 static PandaBear.Testing.FileSystemProbes.CanDenyAccess.get -> bool
 static PandaBear.Testing.FileSystemProbes.IsCaseSensitive.get -> bool
+static PandaBear.Testing.LoopbackPort.GetFree() -> int
+static PandaBear.Testing.TestGit.Commit(string! directory, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+static PandaBear.Testing.TestGit.CommitAll(string! directory, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+static PandaBear.Testing.TestGit.Environment.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>!
+static PandaBear.Testing.TestGit.Run(string! directory, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+static PandaBear.Testing.TestGit.TryRun(string! directory, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken ct, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? environment = null) -> System.Threading.Tasks.Task<PandaBear.Testing.TestProcessResult>!
+static PandaBear.Testing.TestProcess.Run(string! fileName, string! workingDirectory, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken cancellationToken, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? environment = null) -> System.Threading.Tasks.Task<PandaBear.Testing.TestProcessResult>!
 static PandaBear.Testing.TestScopeExtensions.ToTraitValue(this PandaBear.Testing.TestScope scope) -> string!
 PandaBear.Testing.TestHost
 PandaBear.Testing.TestHost.InProcess = 0 -> PandaBear.Testing.TestHost

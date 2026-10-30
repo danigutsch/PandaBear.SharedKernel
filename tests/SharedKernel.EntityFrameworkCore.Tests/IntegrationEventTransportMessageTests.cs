@@ -1,6 +1,5 @@
 using PandaBear.Messaging;
 using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
-using PandaBear.Testing;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 

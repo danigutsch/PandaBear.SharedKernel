@@ -1,5 +1,5 @@
 using System.Net;
-using System.Net.Sockets;
+using PandaBear.Testing;
 
 namespace PandaBear.ObjectStorage.S3.Tests;
 
@@ -17,10 +17,7 @@ internal sealed class LoopbackS3Stub : IDisposable
     public LoopbackS3Stub(params HttpStatusCode[] statuses)
     {
         scriptedStatuses = new Queue<HttpStatusCode>(statuses);
-        using var probe = new TcpListener(IPAddress.Loopback, 0);
-        probe.Start();
-        var port = ((IPEndPoint)probe.LocalEndpoint).Port;
-        probe.Stop();
+        var port = LoopbackPort.GetFree();
         BaseUri = new Uri($"http://127.0.0.1:{port}/");
         listener.Prefixes.Add(BaseUri.AbsoluteUri);
         listener.Start();

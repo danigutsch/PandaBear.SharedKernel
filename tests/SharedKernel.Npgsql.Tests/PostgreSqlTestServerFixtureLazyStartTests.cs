@@ -119,7 +119,7 @@ public sealed class PostgreSqlTestServerFixtureLazyStartTests
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        var fixture = new RefusingServerFixture(FakeEnvironment.WithServer($"Host=127.0.0.1;Port={LoopbackPorts.Unused()};Username=postgres;Timeout=5"));
+        var fixture = new RefusingServerFixture(FakeEnvironment.WithServer($"Host=127.0.0.1;Port={LoopbackPort.GetFree()};Username=postgres;Timeout=5"));
         Func<Task> firstRequest = () => fixture.CreateDatabase(ct);
         Func<Task> laterRequest = () => fixture.CreateDatabase(ct);
 

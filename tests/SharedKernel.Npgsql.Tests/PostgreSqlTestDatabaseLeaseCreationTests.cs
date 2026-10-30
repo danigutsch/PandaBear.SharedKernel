@@ -1,6 +1,4 @@
 using System.Collections.Concurrent;
-using System.Net;
-using System.Net.Sockets;
 
 namespace PandaBear.Npgsql.Tests;
 
@@ -56,10 +54,7 @@ public sealed class PostgreSqlTestDatabaseLeaseCreationTests(PostgreSqlTestServe
         var ct = TestContext.Current.CancellationToken;
         var databaseName = $"test_{Guid.NewGuid():N}";
         var droppedNames = new ConcurrentQueue<string>();
-        using var unusedListener = new TcpListener(IPAddress.Loopback, 0);
-        unusedListener.Start();
-        var closedPort = ((IPEndPoint)unusedListener.LocalEndpoint).Port;
-        unusedListener.Stop();
+        var closedPort = LoopbackPort.GetFree();
         var unreachableServer = $"Host=127.0.0.1;Port={closedPort};Username=nobody;Timeout=5";
 
         // Act

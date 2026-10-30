@@ -1,5 +1,3 @@
-using PandaBear.Testing;
-
 namespace PandaBear.Versioning.Tests;
 
 /// <summary>Guards <c>verify-consumer</c>.</summary>

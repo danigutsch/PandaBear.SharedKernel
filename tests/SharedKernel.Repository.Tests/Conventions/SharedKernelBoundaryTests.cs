@@ -142,7 +142,7 @@ public sealed class SharedKernelBoundaryTests
     }
 
     [Fact]
-    [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
+    [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
     public void Every_hosted_profile_routes_through_the_trusted_collector_gateway_in_library()
     {
         // Act

@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Time.Testing;
-using PandaBear.Testing;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
@@ -697,7 +696,7 @@ public static class VersioningToolTests
         [
             "calculate-release",
             "--repo-root",
-            repository.Root,
+            repository.RootPath,
             "--version-kind",
             versionKind,
             "--run-number",
@@ -748,7 +747,7 @@ public static class VersioningToolTests
         [
             "calculate-release",
             "--repo-root",
-            repository.Root,
+            repository.RootPath,
             "--version-kind",
             versionKind,
             "--run-number",
@@ -780,7 +779,7 @@ public static class VersioningToolTests
         [
             "calculate-release",
             "--repo-root",
-            repository.Root,
+            repository.RootPath,
             "--version-kind",
             versionKind,
             "--run-number",
@@ -821,7 +820,7 @@ public static class VersioningToolTests
 
         // Act
         var result = await VersioningCommandLineRunner.Invoke(
-            ["has-breaking-change-marker", "HEAD~1..HEAD", "--repo-root", repository.Root],
+            ["has-breaking-change-marker", "HEAD~1..HEAD", "--repo-root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -840,7 +839,7 @@ public static class VersioningToolTests
 
         // Act
         var result = await VersioningCommandLineRunner.Invoke(
-            ["has-breaking-change-marker", "HEAD~1..HEAD", "--repo-root", repository.Root],
+            ["has-breaking-change-marker", "HEAD~1..HEAD", "--repo-root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -859,7 +858,7 @@ public static class VersioningToolTests
 
         // Act
         var result = await VersioningCommandLineRunner.Invoke(
-            ["has-breaking-change-marker", "missing-revision..HEAD", "--repo-root", repository.Root],
+            ["has-breaking-change-marker", "missing-revision..HEAD", "--repo-root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -875,7 +874,7 @@ public static class VersioningToolTests
         using var repository = new TemporaryGitRepository();
         await repository.Initialize(TestContext.Current.CancellationToken);
         await repository.Commit("file.txt", "base", "feat(api)!: remove route", TestContext.Current.CancellationToken);
-        var root = repository.Root;
+        var root = repository.RootPath;
 
         // Act
         // Parsing rejects such a range; the command still keeps Git from reading it as an option.
