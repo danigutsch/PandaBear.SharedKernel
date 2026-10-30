@@ -103,7 +103,7 @@ internal static partial class ActionPinVerifier
         }
 
         var comment = line.IndexOf(" #", StringComparison.Ordinal);
-        return comment < 0 ? line : line[..comment];
+        return comment < 0 || line.AsSpan(0, comment).IndexOfAny('"', '\'') >= 0 ? line : line[..comment];
     }
 
     private static IEnumerable<string> FindFiles(string root)
@@ -180,7 +180,7 @@ internal static partial class ActionPinVerifier
     [GeneratedRegex(@"^\s*(?:-\s+)?uses:\s*(?<ref>\S+)(?:\s+#\s*(?<comment>.*?))?\s*$", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
     private static partial Regex UsesLine();
 
-    [GeneratedRegex(@"\buses\s*:", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
+    [GeneratedRegex(@"\buses[""']?\s*:", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
     private static partial Regex UsesKeyword();
 
     [GeneratedRegex("^[0-9a-f]{40}$", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]

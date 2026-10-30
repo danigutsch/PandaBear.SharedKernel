@@ -170,6 +170,9 @@ public sealed class VerifyActionPinsCommandTests
     [InlineData("      - uses:\n          actions/checkout@v6", "Line 4:")]
     [InlineData("      - { uses: actions/checkout@v6 }", "Line 4:")]
     [InlineData("      - name: x\n        with: { uses: actions/checkout@v6 }", "Line 5:")]
+    [InlineData("      - \"uses\": actions/checkout@v6", "Line 4:")]
+    [InlineData("      - 'uses': actions/checkout@v6", "Line 4:")]
+    [InlineData("      - name: \"a #\", uses: actions/checkout@v6", "Line 4:")]
     public async Task Verify_action_pins_reports_a_uses_keyword_that_it_cannot_parse(string steps, string expectedLine)
     {
         // Arrange
