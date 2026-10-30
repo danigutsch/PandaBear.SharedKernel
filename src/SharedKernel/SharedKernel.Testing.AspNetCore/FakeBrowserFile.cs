@@ -38,8 +38,29 @@ public sealed class FakeBrowserFile : IBrowserFile
         init;
     }
 
+    /// <summary>Gets the size reported by <see cref="Size" /> when it should differ from the content length; the content length when <see langword="null" />.</summary>
+    public long? DeclaredSize
+    {
+        get;
+        init;
+    }
+
+    /// <summary>Gets the exception thrown by <see cref="OpenReadStream" /> after the limit is recorded; none when <see langword="null" />.</summary>
+    public Exception? OpenFailure
+    {
+        get;
+        init;
+    }
+
+    /// <summary>Gets the size limit passed to the latest <see cref="OpenReadStream" /> call, or <see langword="null" /> if never opened.</summary>
+    public long? MaximumAllowedSize
+    {
+        get;
+        private set;
+    }
+
     /// <inheritdoc />
-    public long Size => _content.LongLength;
+    public long Size => DeclaredSize ?? _content.LongLength;
 
     /// <inheritdoc />
     public string ContentType
@@ -51,6 +72,12 @@ public sealed class FakeBrowserFile : IBrowserFile
     public Stream OpenReadStream(long maxAllowedSize = DefaultMaxAllowedSize, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
+
+        MaximumAllowedSize = maxAllowedSize;
+        if (OpenFailure is not null)
+        {
+            throw OpenFailure;
+        }
 
         if (Size > maxAllowedSize)
         {

@@ -35,4 +35,19 @@ public sealed class RecordingLoggerTests
         // Act, Assert
         action.ShouldThrow<InvalidOperationException>().Message.ShouldBe(ThrowingLogger<RecordingLoggerTests>.Secret);
     }
+
+    [Fact]
+    public static void Recording_logger_provider_records_categories_and_keeps_one_ordered_log()
+    {
+        // Arrange
+        using var provider = new RecordingLoggerProvider();
+
+        // Act
+        ((RecordingLogger)provider.CreateLogger("First")).Log(LogLevel.Information, default, "one", null, static (state, _) => state);
+        ((RecordingLogger)provider.CreateLogger("Second")).Log(LogLevel.Warning, default, "two", null, static (state, _) => state);
+
+        // Assert
+        provider.CategoryNames.ShouldBe(["First", "Second"]);
+        provider.Records.Select(static record => record.Message).ShouldBe(["one", "two"]);
+    }
 }

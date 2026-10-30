@@ -58,3 +58,17 @@ static PandaBear.Testing.AspNetCore.WebApplicationTestHost.Create<TEntryPoint>(s
 PandaBear.Testing.AspNetCore.TestRequestBindingServiceCollectionExtensions
 static PandaBear.Testing.AspNetCore.TestRequestBindingServiceCollectionExtensions.AddTestRequestBindingDefaults(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 const PandaBear.Testing.AspNetCore.FakeBrowserFile.DefaultMaxAllowedSize = 512000 -> long
+PandaBear.Testing.AspNetCore.DistributedCacheOperation
+PandaBear.Testing.AspNetCore.DistributedCacheOperation.Get = 0 -> PandaBear.Testing.AspNetCore.DistributedCacheOperation
+PandaBear.Testing.AspNetCore.DistributedCacheOperation.Refresh = 2 -> PandaBear.Testing.AspNetCore.DistributedCacheOperation
+PandaBear.Testing.AspNetCore.DistributedCacheOperation.Remove = 3 -> PandaBear.Testing.AspNetCore.DistributedCacheOperation
+PandaBear.Testing.AspNetCore.DistributedCacheOperation.Set = 1 -> PandaBear.Testing.AspNetCore.DistributedCacheOperation
+PandaBear.Testing.AspNetCore.FakeBrowserFile.DeclaredSize.get -> long?
+PandaBear.Testing.AspNetCore.FakeBrowserFile.DeclaredSize.init -> void
+PandaBear.Testing.AspNetCore.FakeBrowserFile.MaximumAllowedSize.get -> long?
+PandaBear.Testing.AspNetCore.FakeBrowserFile.OpenFailure.get -> System.Exception?
+PandaBear.Testing.AspNetCore.FakeBrowserFile.OpenFailure.init -> void
+PandaBear.Testing.AspNetCore.ThrowingDistributedCache.CallCount(PandaBear.Testing.AspNetCore.DistributedCacheOperation operation) -> int
+PandaBear.Testing.AspNetCore.ThrowingDistributedCache.LastRemoveCancellationToken.get -> System.Threading.CancellationToken
+PandaBear.Testing.AspNetCore.ThrowingDistributedCache.LastSetOptions.get -> Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions?
+PandaBear.Testing.AspNetCore.ThrowingDistributedCache.ThrowingDistributedCache(Microsoft.Extensions.Caching.Distributed.IDistributedCache! inner, System.Exception! failure, System.Func<PandaBear.Testing.AspNetCore.DistributedCacheOperation, string!, int, bool>! shouldThrow) -> void
