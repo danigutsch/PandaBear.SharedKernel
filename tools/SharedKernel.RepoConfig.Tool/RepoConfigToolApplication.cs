@@ -261,6 +261,20 @@ internal static class RepoConfigToolApplication
         return 1;
     }
 
+    /// <summary>Verifies the pinned third-party Actions against the manifest and returns 0 when they match, otherwise reports issues and returns 1.</summary>
+    public static async Task<int> VerifyActionPins(string rootPath, string? manifestPath, TextWriter output, TextWriter error, CancellationToken ct)
+    {
+        var issues = await ActionPinVerifier.Verify(rootPath, manifestPath, ct).ConfigureAwait(false);
+        if (issues.Count == 0)
+        {
+            await output.WriteLineAsync("Action pins match the manifest.".AsMemory(), ct).ConfigureAwait(false);
+            return 0;
+        }
+
+        WriteIssues(error, "Action pin verification failed:", issues);
+        return 1;
+    }
+
     /// <summary>
     /// Verifies the links in the documentation files that the <c>links</c> section of the consumer configuration
     /// selects, or in <paramref name="paths"/> when any are given.

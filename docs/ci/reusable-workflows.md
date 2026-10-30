@@ -75,3 +75,31 @@ in the sparse checkout) and passes `working-directory: tool-source`.
 A consumer wrapper calls the action by pinned SHA after it checked out the pinned SharedKernel source, or by local
 path from that checkout, and passes its own `project`, `global-json-file`, and `working-directory`. Candidate staging,
 local tool restore, `NUGET_PACKAGES`, and developer certificate trust stay in the consumer wrapper.
+
+## Pinned third-party actions
+
+`.github/action-pins.json` is the one manifest of approved third-party Actions. Each entry names the
+`owner/repository`, the full 40-character commit SHA, and the release that SHA belongs to. `firstParty` lists
+repositories, such as this one, that need a full SHA but no manifest entry or version comment.
+
+```json
+{ "repository": "actions/checkout", "sha": "de0fac2e4500dabe0009e67214ff5f5447ce83dd", "version": "v6.0.2" }
+```
+
+Every external `uses:` reference in `.github/workflows` and `.github/actions` pins that SHA and repeats the version as
+its trailing comment (`uses: actions/checkout@<sha> # v6.0.2`). Tags and branches fail, whatever they name.
+`sharedkernel-repo verify-action-pins` checks this and runs in the repository quality job of the validation workflow:
+
+```sh
+dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release -- verify-action-pins
+dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release -- verify-action-pins --manifest <path>
+```
+
+A consumer builds the tool from its pinned SharedKernel revision and passes `--manifest` with the manifest of that
+same revision (sparse-check out `.github/action-pins.json` with the tool source), so both repositories fail on the same
+drift. The check lists the file, line, and reason for each violation.
+
+To add or change a pin, review the action as the [pin-update review](pin-update-review.md) describes, edit the manifest,
+and update every reference in the same change. Do not edit a workflow alone: the check fails on any disagreement. When
+SharedKernel bumps a pin, each consumer takes the bump with its next SharedKernel revision pin, then updates its own
+references to the new SHA and version comment.
