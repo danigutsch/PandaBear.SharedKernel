@@ -29,7 +29,7 @@ permissions:
 jobs:
   snapshot:
     name: Snapshot
-    runs-on: ${{ inputs.runner }}
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
     timeout-minutes: 20
     # Submitting a snapshot to the dependency graph needs contents: write; the caller job must grant it.
     permissions:
@@ -40,6 +40,7 @@ jobs:
           TARGET: ${{ inputs.target }}
           SOURCE_REPOSITORY: ${{ inputs.source-repository }}
           SOURCE_REF: ${{ inputs.source-ref }}
+        shell: bash
         run: |
           if [[ "$TARGET" != base && "$TARGET" != head ]]; then
             echo "target must be base or head." >&2
@@ -76,6 +77,7 @@ jobs:
           project: tools/SharedKernel.RepoConfig.Tool
           global-json-file: tool-source/global.json
           working-directory: tool-source
+          cache-dependency-path: tool-source/**/packages.lock.json
 
       - name: Generate snapshot from committed lock files
         env:
@@ -83,17 +85,21 @@ jobs:
           SNAPSHOT_REF: ${{ github.event_name == 'pull_request' && format('refs/heads/{0}', inputs.target == 'base' && github.base_ref || github.head_ref) || github.ref }}
           SNAPSHOT_JOB_ID: ${{ github.run_id }}
           SNAPSHOT_CORRELATOR: ${{ inputs.correlator }}
+        working-directory: tool-source
+        shell: bash
         run: |
-          dotnet run --project tool-source/tools/SharedKernel.RepoConfig.Tool -c Release --no-build --no-restore -- \
-            dependency snapshot --root dependency-input --sha "$SNAPSHOT_SHA" --ref "$SNAPSHOT_REF" \
+          dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release --no-build --no-restore -- \
+            dependency snapshot --root "$GITHUB_WORKSPACE/dependency-input" --sha "$SNAPSHOT_SHA" --ref "$SNAPSHOT_REF" \
             --job "$SNAPSHOT_JOB_ID" --correlator "$SNAPSHOT_CORRELATOR" --output TestResults/dependency-snapshot.json
 
       - name: Submit complete committed dependency snapshot
         env:
           GH_TOKEN: ${{ github.token }}
+        working-directory: tool-source
+        shell: bash
         run: |
-          dotnet run --project tool-source/tools/SharedKernel.RepoConfig.Tool -c Release --no-build --no-restore -- \
-            dependency submit --snapshot dependency-input/TestResults/dependency-snapshot.json \
+          dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release --no-build --no-restore -- \
+            dependency submit --snapshot "$GITHUB_WORKSPACE/dependency-input/TestResults/dependency-snapshot.json" \
             --repository "$GITHUB_REPOSITORY" --force
 
       - name: Retain committed snapshot evidence

@@ -20,7 +20,9 @@ internal static partial class ActionPinVerifier
     /// Reports each external reference in <c>.github/workflows/*.yml</c>, <c>.github/workflows/*.yaml</c>, and every
     /// <c>action.yml</c> or <c>action.yaml</c> under <c>.github/actions</c> that is not pinned to a full commit SHA,
     /// is absent from the manifest, pins another SHA than the manifest, or lacks the manifest version as its comment.
-    /// Local <c>./</c> references are not checked; <c>docker://</c> references are never approved.
+    /// Local <c>./</c> references are not checked; <c>docker://</c> references are never approved. A <c>uses:</c> that
+    /// is not a one-line block-style reference, such as a value on the next line or a flow mapping, is reported because
+    /// it cannot be checked. A root without <c>.github/workflows</c> is an error.
     /// </summary>
     /// <exception cref="InvalidOperationException">The manifest is missing, unreadable, too large, or invalid.</exception>
     public static async Task<IReadOnlyList<RepoConfigIssue>> Verify(string rootPath, string? manifestPath, CancellationToken cancellationToken)
@@ -36,8 +38,12 @@ internal static partial class ActionPinVerifier
             var lines = await File.ReadAllLinesAsync(file, cancellationToken).ConfigureAwait(false);
             for (var index = 0; index < lines.Length; index++)
             {
-                if (UsesLine().Match(lines[index]) is { Success: true } match
-                    && Check(match.Groups["ref"].Value.Trim('\'', '"'), match.Groups["comment"].Value, approved, firstParty) is { } message)
+                var message = UsesLine().Match(lines[index]) is { Success: true } match
+                    ? Check(match.Groups["ref"].Value.Trim('\'', '"'), match.Groups["comment"].Value, approved, firstParty)
+                    : UsesKeyword().IsMatch(WithoutComment(lines[index]))
+                        ? "A uses: reference must be a block-style 'uses: owner/repository@sha # version' on one line; this line cannot be checked."
+                        : null;
+                if (message is not null)
                 {
                     issues.Add(new RepoConfigIssue(relative, $"Line {index + 1}: {message}"));
                 }
@@ -89,13 +95,27 @@ internal static partial class ActionPinVerifier
             : $"'{repository}' needs the trailing comment '# {pin.Version}'.";
     }
 
+    private static string WithoutComment(string line)
+    {
+        if (line.AsSpan().TrimStart().StartsWith("#", StringComparison.Ordinal))
+        {
+            return string.Empty;
+        }
+
+        var comment = line.IndexOf(" #", StringComparison.Ordinal);
+        return comment < 0 ? line : line[..comment];
+    }
+
     private static IEnumerable<string> FindFiles(string root)
     {
         var workflows = Path.Combine(root, ".github", "workflows");
         var actions = Path.Combine(root, ".github", "actions");
-        var files = Directory.Exists(workflows)
-            ? Directory.EnumerateFiles(workflows).Where(static file => file.EndsWith(".yml", StringComparison.Ordinal) || file.EndsWith(".yaml", StringComparison.Ordinal))
-            : [];
+        if (!Directory.Exists(workflows))
+        {
+            throw new InvalidOperationException("The root has no .github/workflows directory, so no action pin was checked.");
+        }
+
+        var files = Directory.EnumerateFiles(workflows).Where(static file => file.EndsWith(".yml", StringComparison.Ordinal) || file.EndsWith(".yaml", StringComparison.Ordinal));
         var composites = Directory.Exists(actions)
             ? Directory.EnumerateFiles(actions, "*", SearchOption.AllDirectories).Where(static file => Path.GetFileName(file) is "action.yml" or "action.yaml")
             : [];
@@ -157,8 +177,11 @@ internal static partial class ActionPinVerifier
             : throw new InvalidOperationException("Every action pin manifest firstParty entry must be an owner/repository name.");
     }
 
-    [GeneratedRegex(@"^\s*(?:-\s+)?uses:\s*(?<ref>\S+)(?:\s+#\s*(?<comment>.*))?$", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
+    [GeneratedRegex(@"^\s*(?:-\s+)?uses:\s*(?<ref>\S+)(?:\s+#\s*(?<comment>.*?))?\s*$", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
     private static partial Regex UsesLine();
+
+    [GeneratedRegex(@"\buses\s*:", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
+    private static partial Regex UsesKeyword();
 
     [GeneratedRegex("^[0-9a-f]{40}$", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
     private static partial Regex FullSha();

@@ -151,4 +151,71 @@ public sealed class VerifyActionPinsCommandTests
         result.ExitCode.ShouldBe(1);
         result.StandardError.ShouldBe("sharedkernel-repo: The action pin manifest does not exist." + Environment.NewLine);
     }
+
+    [Fact]
+    public async Task Verify_action_pins_rejects_a_tag_reference_with_trailing_white_space()
+    {
+        // Arrange
+        using var workspace = ActionPinTestWorkspace.Create(Manifest, "jobs:\n  build:\n    steps:\n      - uses: actions/checkout@v6   \n", null);
+
+        // Act
+        var result = await LinkTestRepository.Run(workspace, ["verify-action-pins", "--root", workspace.RootPath], TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.StandardError.ShouldContain("'actions/checkout' must pin a full 40-character lowercase commit SHA, not 'v6'.", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("      - uses:\n          actions/checkout@v6", "Line 4:")]
+    [InlineData("      - { uses: actions/checkout@v6 }", "Line 4:")]
+    [InlineData("      - name: x\n        with: { uses: actions/checkout@v6 }", "Line 5:")]
+    public async Task Verify_action_pins_reports_a_uses_keyword_that_it_cannot_parse(string steps, string expectedLine)
+    {
+        // Arrange
+        using var workspace = ActionPinTestWorkspace.Create(Manifest, $"jobs:\n  build:\n    steps:\n{steps}\n", null);
+
+        // Act
+        var result = await LinkTestRepository.Run(workspace, ["verify-action-pins", "--root", workspace.RootPath], TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.StandardError.ShouldContain(expectedLine + " A uses: reference must be a block-style", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Verify_action_pins_checks_yaml_extensions_mixed_case_repositories_and_reusable_workflow_paths()
+    {
+        // Arrange
+        using var workspace = ActionPinTestWorkspace.Create(
+            Manifest,
+            $"jobs:\n  call:\n    uses: Actions/Checkout/.github/workflows/x.yml@{CheckoutSha} # v6.0.2\n",
+            null);
+        workspace.WriteFile(".github/workflows/other.yaml", "jobs:\n  a:\n    steps:\n      - uses: actions/checkout@main\n");
+
+        // Act
+        var result = await LinkTestRepository.Run(workspace, ["verify-action-pins", "--root", workspace.RootPath], TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.StandardError.ShouldBe(
+            "Action pin verification failed:" + Environment.NewLine
+            + "- .github/workflows/other.yaml: Line 4: 'actions/checkout' must pin a full 40-character lowercase commit SHA, not 'main'." + Environment.NewLine,
+            "The mixed-case reusable workflow reference matches the manifest and only the .yaml file fails.");
+    }
+
+    [Fact]
+    public async Task Verify_action_pins_fails_when_the_root_has_no_workflows_directory()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        workspace.WriteFile(".github/action-pins.json", Manifest);
+
+        // Act
+        var result = await LinkTestRepository.Run(workspace, ["verify-action-pins", "--root", workspace.RootPath], TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.StandardError.ShouldBe("sharedkernel-repo: The root has no .github/workflows directory, so no action pin was checked." + Environment.NewLine);
+    }
 }

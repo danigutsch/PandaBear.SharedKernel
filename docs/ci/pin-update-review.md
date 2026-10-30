@@ -1,12 +1,12 @@
 # Action and container pin review
 
-Keep external Actions pinned to immutable full commit SHAs and container resources pinned to readable tags plus verified digests. Source declarations are authoritative; copied version inventories become stale. This is a manual review workflow, not a new updater or write-capable service.
+Pin external Actions to immutable full commit SHAs listed in `.github/action-pins.json`, with the release as a trailing comment; `sharedkernel-repo verify-action-pins` fails on any disagreement (see [reusable workflows](reusable-workflows.md#pinned-third-party-actions)). Change a pin by editing the manifest and every reference together. Pin container resources to readable tags plus verified digests. Source declarations are authoritative; copied version inventories become stale. This is a manual review workflow, not a new updater or write-capable service.
 
 ## Standalone ownership
 
 | Pin location | Review owner and evidence |
 | --- | --- |
-| `.github/workflows/ci.yml` external `uses:` | Library CI maintainers verify upstream SHA, release changes, permissions, nested Actions, downloaded tools, runner compatibility, and artifact behavior. |
+| `.github/action-pins.json` and every external `uses:` in `.github/workflows` and `.github/actions` | Library CI maintainers verify upstream SHA, release changes, permissions, nested Actions, downloaded tools, runner compatibility, and artifact behavior. |
 | `src/SharedKernel/SharedKernel.Aspire.Hosting.ClamAv`, `.SeaweedFs`, and `.Grafana` (`*ContainerImageTags.cs`), and `.K6` (resource extensions) | Hosting package maintainers verify registry tag/digest, supported architectures, configuration compatibility, resource health, persistence, and telemetry/privacy behavior. |
 | `tools/SharedKernel.PlaywrightMcp.Tool/PlaywrightMcpCommand.cs` | Tool maintainers review the pinned image, local engine isolation, explicit image preparation, network restrictions, and browser/MCP compatibility. |
 

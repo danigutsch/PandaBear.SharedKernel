@@ -23,7 +23,7 @@ permissions:
 jobs:
   metadata:
     name: Validate squash header
-    runs-on: ${{ inputs.runner }}
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
     timeout-minutes: 5
     permissions:
       contents: read
@@ -32,6 +32,7 @@ jobs:
         env:
           SOURCE_REPOSITORY: ${{ inputs.source-repository }}
           SOURCE_REF: ${{ inputs.source-ref }}
+        shell: bash
         run: |
           if [[ -n "$SOURCE_REPOSITORY" && ! "$SOURCE_REF" =~ ^[0-9a-f]{40}$ ]]; then
             echo "source-ref must be a full 40-character lowercase commit SHA when source-repository is set." >&2
@@ -55,6 +56,7 @@ jobs:
           project: tools/SharedKernel.CI.Tool
           global-json-file: tool-source/global.json
           working-directory: tool-source
+          cache-dependency-path: tool-source/**/packages.lock.json
       - name: Validate squash header
         working-directory: tool-source
         run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- verify-commit-message --event "$GITHUB_EVENT_PATH"

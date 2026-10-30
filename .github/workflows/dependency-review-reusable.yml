@@ -15,11 +15,11 @@ on:
       plan-result:
         description: Result of the caller's plan job, or success when there is none. Anything else fails the job.
         type: string
-        default: success
+        required: true
       snapshot-result:
         description: Result of the caller's snapshot jobs. Only success and skipped pass.
         type: string
-        default: success
+        required: true
       allow-licenses:
         description: Comma-separated SPDX identifiers that the review accepts.
         type: string
@@ -48,7 +48,7 @@ permissions:
 jobs:
   review:
     name: Review
-    runs-on: ${{ inputs.runner }}
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
     timeout-minutes: 15
     permissions:
       contents: read
@@ -59,6 +59,7 @@ jobs:
           PLAN_RESULT: ${{ inputs.plan-result }}
           SOURCE_REPOSITORY: ${{ inputs.source-repository }}
           SOURCE_REF: ${{ inputs.source-ref }}
+        shell: bash
         run: |
           test "$PLAN_RESULT" = success
           case "$SNAPSHOT_RESULT" in
@@ -71,7 +72,7 @@ jobs:
           fi
 
       - name: Checkout repository
-        if: inputs.review-required == 'true'
+        if: inputs.review-required == 'true' && inputs.verify-license-exceptions
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -98,14 +99,17 @@ jobs:
           project: tools/SharedKernel.RepoConfig.Tool
           global-json-file: tool-source/global.json
           working-directory: tool-source
+          cache-dependency-path: tool-source/**/packages.lock.json
 
       # The pinned Action ignores purl versions. Fail before emitting its exception if the approval expires.
       - name: Validate exact preview license approval
         if: inputs.review-required == 'true' && inputs.verify-license-exceptions
         id: preview-license
+        working-directory: tool-source
+        shell: bash
         run: |
-          dotnet run --project tool-source/tools/SharedKernel.RepoConfig.Tool -c Release --no-build --no-restore -- \
-            dependency verify-license-exceptions --github-output "$GITHUB_OUTPUT"
+          dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release --no-build --no-restore -- \
+            dependency verify-license-exceptions --root "$GITHUB_WORKSPACE" --github-output "$GITHUB_OUTPUT"
 
       - name: Dependency Review
         if: inputs.review-required == 'true'

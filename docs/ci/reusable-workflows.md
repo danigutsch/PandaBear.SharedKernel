@@ -96,8 +96,10 @@ dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release -- verify-act
 ```
 
 A consumer builds the tool from its pinned SharedKernel revision and passes `--manifest` with the manifest of that
-same revision (sparse-check out `.github/action-pins.json` with the tool source), so both repositories fail on the same
-drift. The check lists the file, line, and reason for each violation.
+same revision (sparse-check out the `.github` directory next to `tools/`, because cone mode takes directories, not single files; `.github/actions/setup-dotnet-tool` alone does not bring the manifest), so both repositories fail on the same
+drift. The check lists the file, line, and reason for each violation. A `uses:` it cannot parse (value on the next line, flow mapping) is a violation, and a root without `.github/workflows` is an error.
+
+An action that only a consumer uses must be added to this repository's manifest first; a consumer has no manifest of its own, so an unlisted action fails its check until then.
 
 To add or change a pin, review the action as the [pin-update review](pin-update-review.md) describes, edit the manifest,
 and update every reference in the same change. Do not edit a workflow alone: the check fails on any disagreement. When
@@ -139,8 +141,8 @@ Job `review` (`contents: read`) fails unless `plan-result` is `success` and `sna
 | --- | --- | --- |
 | `runner` | `ubuntu-latest` | Runner label. |
 | `review-required` | `'true'` | Caller's decision, for example from a plan job. |
-| `plan-result` | `success` | `needs.<plan>.result` of the caller. |
-| `snapshot-result` | `success` | `needs.<snapshots>.result` of the caller. |
+| `plan-result` | required | `needs.<plan>.result` of the caller. |
+| `snapshot-result` | required | `needs.<snapshots>.result` of the caller. |
 | `allow-licenses` | required | Comma-separated SPDX identifiers. |
 | `fail-on-severity` | `moderate` | Lowest failing vulnerability severity. |
 | `verify-license-exceptions` | `false` | Verify the `licenseExceptions` approval and pass its packages as allow-dependencies-licenses. |
@@ -149,3 +151,14 @@ Job `review` (`contents: read`) fails unless `plan-result` is `success` and `sna
 The caller keeps the triggers, concurrency, the `ci:rerun` label rule, the job `if` and `needs`, the plan job (change
 selection), the license values, and any evidence handling. Callers read `needs.<job>.result` and pass it in because a
 called workflow cannot see the caller's jobs. As with PR Metadata, check names become `<caller job> / <called job>`.
+
+### Caller obligations for snapshots
+
+The snapshot workflow does not guard its own trigger. The caller's job must run it only for trusted events: pushes,
+manual runs, and pull requests whose head repository is the calling repository and whose actor is not
+`dependabot[bot]`, because forks and Dependabot receive a read-only token and cannot submit snapshots. Grant
+`contents: write` on that calling job only.
+
+SharedKernel does not run dependency review itself: the dependency submission API answered HTTP 404 for this
+repository. A repository adopting the snapshot and review workflows needs the Dependency graph enabled (Settings,
+Advanced Security) and dependency submission available before the caller can pass.
