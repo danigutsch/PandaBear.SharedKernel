@@ -168,15 +168,18 @@ public sealed class WorkflowContractTests
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
-        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "pr-metadata.yml"));
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "pr-metadata-reusable.yml"));
+        var caller = File.ReadAllText(Path.Combine(root, ".github", "workflows", "pr-metadata.yml"));
 
         // Act
         var job = WorkflowJobs.Read(workflow, "metadata");
 
         // Assert
         job.ShouldContain(
-            "        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release -- verify-commit-message --event \"$GITHUB_EVENT_PATH\"\n",
+            "        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- verify-commit-message --event \"$GITHUB_EVENT_PATH\"\n",
             StringComparison.Ordinal);
+        caller.ShouldContain("    uses: ./.github/workflows/pr-metadata-reusable.yml\n", StringComparison.Ordinal);
+        caller.ShouldNotContain("secrets:", StringComparison.Ordinal);
         workflow.ShouldNotContain("github.event.pull_request.title", StringComparison.Ordinal);
         workflow.ShouldNotContain("github.event.pull_request.body", StringComparison.Ordinal);
     }
