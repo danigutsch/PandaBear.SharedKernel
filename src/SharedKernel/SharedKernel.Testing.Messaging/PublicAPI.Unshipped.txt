@@ -1,0 +1,44 @@
+#nullable enable
+PandaBear.Testing.Messaging.AsyncDisposableEventEnvelopePublisher
+PandaBear.Testing.Messaging.AsyncDisposableEventEnvelopePublisher.AsyncDisposableEventEnvelopePublisher() -> void
+PandaBear.Testing.Messaging.AsyncDisposableEventEnvelopePublisher.DisposeAsync() -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Messaging.AsyncDisposableEventEnvelopePublisher.DisposeCount.get -> int
+PandaBear.Testing.Messaging.AsyncDisposableEventEnvelopePublisher.Publish(PandaBear.Messaging.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Messaging.CapturingHandler<TIntegrationEvent>
+PandaBear.Testing.Messaging.CapturingHandler<TIntegrationEvent>.CapturingHandler() -> void
+PandaBear.Testing.Messaging.CapturingHandler<TIntegrationEvent>.Handle(TIntegrationEvent integrationEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Messaging.ControlledEventEnvelopePublisher
+PandaBear.Testing.Messaging.ControlledEventEnvelopePublisher.ControlledEventEnvelopePublisher() -> void
+PandaBear.Testing.Messaging.ControlledEventEnvelopePublisher.Dispose() -> void
+PandaBear.Testing.Messaging.ControlledEventEnvelopePublisher.DisposeCount.get -> int
+PandaBear.Testing.Messaging.ControlledEventEnvelopePublisher.FirstStarted.get -> System.Threading.Tasks.Task!
+PandaBear.Testing.Messaging.ControlledEventEnvelopePublisher.InvocationCount.get -> int
+PandaBear.Testing.Messaging.ControlledEventEnvelopePublisher.Publish(PandaBear.Messaging.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Messaging.ControlledEventEnvelopePublisher.ReleaseFirst() -> void
+PandaBear.Testing.Messaging.ControlledEventEnvelopePublisher.ReleaseSecond() -> void
+PandaBear.Testing.Messaging.ControlledEventEnvelopePublisher.SecondStarted.get -> System.Threading.Tasks.Task!
+PandaBear.Testing.Messaging.DelegatingEventEnvelopePublisher
+PandaBear.Testing.Messaging.DelegatingEventEnvelopePublisher.DelegatingEventEnvelopePublisher(PandaBear.Messaging.IEventEnvelopePublisher! inner) -> void
+PandaBear.Testing.Messaging.DelegatingEventEnvelopePublisher.Publish(PandaBear.Messaging.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Messaging.DisposableEventEnvelopePublisher
+PandaBear.Testing.Messaging.DisposableEventEnvelopePublisher.Attempts.get -> int
+PandaBear.Testing.Messaging.DisposableEventEnvelopePublisher.DisposableEventEnvelopePublisher() -> void
+PandaBear.Testing.Messaging.DisposableEventEnvelopePublisher.Dispose() -> void
+PandaBear.Testing.Messaging.DisposableEventEnvelopePublisher.DisposeCount.get -> int
+PandaBear.Testing.Messaging.DisposableEventEnvelopePublisher.Failure.get -> System.Exception?
+PandaBear.Testing.Messaging.DisposableEventEnvelopePublisher.Failure.init -> void
+PandaBear.Testing.Messaging.DisposableEventEnvelopePublisher.Publish(PandaBear.Messaging.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Messaging.RecordingEventEnvelopePublisher
+PandaBear.Testing.Messaging.RecordingEventEnvelopePublisher.Attempts.get -> int
+PandaBear.Testing.Messaging.RecordingEventEnvelopePublisher.FailOnce.get -> bool
+PandaBear.Testing.Messaging.RecordingEventEnvelopePublisher.FailOnce.init -> void
+PandaBear.Testing.Messaging.RecordingEventEnvelopePublisher.Failure.get -> System.Exception?
+PandaBear.Testing.Messaging.RecordingEventEnvelopePublisher.Failure.init -> void
+PandaBear.Testing.Messaging.RecordingEventEnvelopePublisher.Publish(PandaBear.Messaging.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Messaging.RecordingEventEnvelopePublisher.Published.get -> System.Collections.Generic.IList<PandaBear.Messaging.EventEnvelope!>!
+PandaBear.Testing.Messaging.RecordingEventEnvelopePublisher.RecordingEventEnvelopePublisher() -> void
+PandaBear.Testing.Messaging.StaticRecordingEventEnvelopePublisher
+PandaBear.Testing.Messaging.StaticRecordingEventEnvelopePublisher.Publish(PandaBear.Messaging.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Messaging.StaticRecordingEventEnvelopePublisher.StaticRecordingEventEnvelopePublisher() -> void
+static PandaBear.Testing.Messaging.CapturingHandler<TIntegrationEvent>.Handled.get -> System.Collections.Generic.IList<TIntegrationEvent>!
+static PandaBear.Testing.Messaging.StaticRecordingEventEnvelopePublisher.Received.get -> System.Collections.Generic.IList<PandaBear.Messaging.EventEnvelope!>!

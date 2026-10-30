@@ -8,6 +8,7 @@
     <ItemGroup>
         <Using Include="PandaBear.Messaging.Protobuf.TestContracts" />
         <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="PandaBear.Testing.Messaging" />
         <Using Include="Xunit" />
     </ItemGroup>
 
@@ -22,6 +23,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Messaging.Protobuf\SharedKernel.Messaging.Protobuf.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Messaging\SharedKernel.Testing.Messaging.csproj" />
         <ProjectReference Include="..\SharedKernel.Messaging.Protobuf.TestContracts\SharedKernel.Messaging.Protobuf.TestContracts.csproj" />
     </ItemGroup>
 

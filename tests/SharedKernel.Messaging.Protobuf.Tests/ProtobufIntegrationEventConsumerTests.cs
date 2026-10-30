@@ -12,9 +12,9 @@ public sealed class ProtobufIntegrationEventConsumerTests
     public async Task Publish_withprotobufenvelope_deliversthedeserializedeventtothehandler()
     {
         // Arrange
-        CapturingTourCreatedHandler.Handled.Clear();
+        CapturingHandler<TourCreated>.Handled.Clear();
         var integrationEvent = TourCreated.Create(Guid.NewGuid(), Occurred, "Alps");
-        var services = new ServiceCollection().AddProtobufIntegrationEventConsumer<TourCreated, CapturingTourCreatedHandler>();
+        var services = new ServiceCollection().AddProtobufIntegrationEventConsumer<TourCreated, CapturingHandler<TourCreated>>();
         await using var provider = services.BuildServiceProvider();
         await using var scope = provider.CreateAsyncScope();
 
@@ -23,16 +23,16 @@ public sealed class ProtobufIntegrationEventConsumerTests
             .Publish(ProtobufEnvelopes.ForProtobuf(integrationEvent), TestContext.Current.CancellationToken);
 
         // Assert
-        CapturingTourCreatedHandler.Handled.ShouldBe([integrationEvent]);
+        CapturingHandler<TourCreated>.Handled.ShouldBe([integrationEvent]);
     }
 
     [Fact]
     public async Task Publish_withjsonenvelope_passesittothepublisherregisteredbefore()
     {
         // Arrange
-        var inner = new RecordingEnvelopePublisher();
+        var inner = new RecordingEventEnvelopePublisher();
         var services = new ServiceCollection().AddSingleton<IEventEnvelopePublisher>(inner);
-        services.AddProtobufIntegrationEventConsumer<TourCreated, CapturingTourCreatedHandler>();
+        services.AddProtobufIntegrationEventConsumer<TourCreated, CapturingHandler<TourCreated>>();
         await using var provider = services.BuildServiceProvider();
         await using var scope = provider.CreateAsyncScope();
         var json = ProtobufEnvelopes.Create("other.created", "{}", EventPayloadEncoding.Json, "application/json");
@@ -41,16 +41,16 @@ public sealed class ProtobufIntegrationEventConsumerTests
         await scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>().Publish(json, TestContext.Current.CancellationToken);
 
         // Assert
-        inner.Received.ShouldBe([json]);
+        inner.Published.ShouldBe([json]);
     }
 
     [Fact]
     public async Task Publish_withjsonenvelopeandascopedtypeinner_resolvestheinnerfromthecontainer()
     {
         // Arrange
-        StaticRecordingEnvelopePublisher.Received.Clear();
-        var services = new ServiceCollection().AddScoped<IEventEnvelopePublisher, StaticRecordingEnvelopePublisher>();
-        services.AddProtobufIntegrationEventConsumer<TourCreated, CapturingTourCreatedHandler>();
+        StaticRecordingEventEnvelopePublisher.Received.Clear();
+        var services = new ServiceCollection().AddScoped<IEventEnvelopePublisher, StaticRecordingEventEnvelopePublisher>();
+        services.AddProtobufIntegrationEventConsumer<TourCreated, CapturingHandler<TourCreated>>();
         await using var provider = services.BuildServiceProvider();
         await using var scope = provider.CreateAsyncScope();
         var json = ProtobufEnvelopes.Create("other.created", "{}", EventPayloadEncoding.Json, "application/json");
@@ -59,14 +59,14 @@ public sealed class ProtobufIntegrationEventConsumerTests
         await scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>().Publish(json, TestContext.Current.CancellationToken);
 
         // Assert
-        StaticRecordingEnvelopePublisher.Received.ShouldBe([json]);
+        StaticRecordingEventEnvelopePublisher.Received.ShouldBe([json]);
     }
 
     [Fact]
     public async Task Publish_withjsonenvelopeandnopublisherregisteredbefore_failswithanactionableerror()
     {
         // Arrange
-        var services = new ServiceCollection().AddProtobufIntegrationEventConsumer<TourCreated, CapturingTourCreatedHandler>();
+        var services = new ServiceCollection().AddProtobufIntegrationEventConsumer<TourCreated, CapturingHandler<TourCreated>>();
         await using var provider = services.BuildServiceProvider();
         await using var scope = provider.CreateAsyncScope();
         var publisher = scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
@@ -85,11 +85,11 @@ public sealed class ProtobufIntegrationEventConsumerTests
     public async Task Publish_withprotobufeventcoveredbygeneratedcode_passesittothegeneratedpublisher()
     {
         // Arrange
-        CapturingTourCreatedHandler.Handled.Clear();
-        var inner = new RecordingEnvelopePublisher();
+        CapturingHandler<TourCreated>.Handled.Clear();
+        var inner = new RecordingEventEnvelopePublisher();
         var services = new ServiceCollection().AddSingleton<IEventEnvelopePublisher>(inner);
         services.AddSingleton(new ProtobufGeneratedConsumer(TourCreated.EventType));
-        services.AddProtobufIntegrationEventConsumer<TourCreated, CapturingTourCreatedHandler>();
+        services.AddProtobufIntegrationEventConsumer<TourCreated, CapturingHandler<TourCreated>>();
         await using var provider = services.BuildServiceProvider();
         await using var scope = provider.CreateAsyncScope();
         var envelope = ProtobufEnvelopes.ForProtobuf(TourCreated.Create(Guid.NewGuid(), Occurred, "Alps"));
@@ -98,8 +98,8 @@ public sealed class ProtobufIntegrationEventConsumerTests
         await scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>().Publish(envelope, TestContext.Current.CancellationToken);
 
         // Assert
-        inner.Received.ShouldBe([envelope]);
-        CapturingTourCreatedHandler.Handled.ShouldBeEmpty();
+        inner.Published.ShouldBe([envelope]);
+        CapturingHandler<TourCreated>.Handled.ShouldBeEmpty();
     }
 
     [Fact]
@@ -108,7 +108,7 @@ public sealed class ProtobufIntegrationEventConsumerTests
         // Arrange
         var services = new ServiceCollection();
         services.AddSingleton(new ProtobufGeneratedConsumer(TourCreated.EventType));
-        services.AddProtobufIntegrationEventConsumer<TourCreated, CapturingTourCreatedHandler>();
+        services.AddProtobufIntegrationEventConsumer<TourCreated, CapturingHandler<TourCreated>>();
         await using var provider = services.BuildServiceProvider();
         await using var scope = provider.CreateAsyncScope();
         var publisher = scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
@@ -126,9 +126,9 @@ public sealed class ProtobufIntegrationEventConsumerTests
     public async Task Publish_withunregisteredprotobufeventtypeandapublisherregisteredbefore_passesittothatpublisher()
     {
         // Arrange
-        var inner = new RecordingEnvelopePublisher();
+        var inner = new RecordingEventEnvelopePublisher();
         var services = new ServiceCollection().AddSingleton<IEventEnvelopePublisher>(inner);
-        services.AddProtobufIntegrationEventConsumer<TourCreated, CapturingTourCreatedHandler>();
+        services.AddProtobufIntegrationEventConsumer<TourCreated, CapturingHandler<TourCreated>>();
         await using var provider = services.BuildServiceProvider();
         await using var scope = provider.CreateAsyncScope();
         var unknown = ProtobufEnvelopes.Create("unknown.created", "CgA=", EventPayloadEncoding.Base64, ProtobufContentTypes.Payload);
@@ -137,14 +137,14 @@ public sealed class ProtobufIntegrationEventConsumerTests
         await scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>().Publish(unknown, TestContext.Current.CancellationToken);
 
         // Assert
-        inner.Received.ShouldBe([unknown]);
+        inner.Published.ShouldBe([unknown]);
     }
 
     [Fact]
     public async Task Publish_withunregisteredprotobufeventtype_failswithanactionableerror()
     {
         // Arrange
-        var services = new ServiceCollection().AddProtobufIntegrationEventConsumer<TourCreated, CapturingTourCreatedHandler>();
+        var services = new ServiceCollection().AddProtobufIntegrationEventConsumer<TourCreated, CapturingHandler<TourCreated>>();
         await using var provider = services.BuildServiceProvider();
         await using var scope = provider.CreateAsyncScope();
         var publisher = scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
@@ -163,7 +163,7 @@ public sealed class ProtobufIntegrationEventConsumerTests
     public async Task Publish_withcorruptprotobufpayload_throwsinvalidprotocolbufferexception()
     {
         // Arrange
-        var services = new ServiceCollection().AddProtobufIntegrationEventConsumer<TourCreated, CapturingTourCreatedHandler>();
+        var services = new ServiceCollection().AddProtobufIntegrationEventConsumer<TourCreated, CapturingHandler<TourCreated>>();
         await using var provider = services.BuildServiceProvider();
         await using var scope = provider.CreateAsyncScope();
         var publisher = scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
@@ -178,8 +178,8 @@ public sealed class ProtobufIntegrationEventConsumerTests
     public void AddProtobufIntegrationEventConsumer_twiceforoneeventtype_throwsinvalidoperationexception()
     {
         // Arrange
-        var services = new ServiceCollection().AddProtobufIntegrationEventConsumer<TourCreated, CapturingTourCreatedHandler>();
-        Func<object?> act = () => services.AddProtobufIntegrationEventConsumer<TourCreated, CapturingTourCreatedHandler>();
+        var services = new ServiceCollection().AddProtobufIntegrationEventConsumer<TourCreated, CapturingHandler<TourCreated>>();
+        Func<object?> act = () => services.AddProtobufIntegrationEventConsumer<TourCreated, CapturingHandler<TourCreated>>();
 
         // Act
         var exception = act.ShouldThrow<InvalidOperationException>();
@@ -193,7 +193,7 @@ public sealed class ProtobufIntegrationEventConsumerTests
     {
         // Arrange
         Func<object?> act = () => ProtobufIntegrationEventConsumerServiceCollectionExtensions
-            .AddProtobufIntegrationEventConsumer<TourCreated, CapturingTourCreatedHandler>(null!);
+            .AddProtobufIntegrationEventConsumer<TourCreated, CapturingHandler<TourCreated>>(null!);
 
         // Act, Assert
         act.ShouldThrow<ArgumentNullException>();

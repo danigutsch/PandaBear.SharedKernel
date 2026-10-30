@@ -7,12 +7,14 @@ namespace PandaBear.Versioning.Tests;
 /// </summary>
 internal sealed class TemporaryReleasePrepDirectory : IDisposable
 {
+    private readonly TemporaryDirectory _directory = new();
+
     /// <summary>
     /// Creates the directory with a packages folder and a Directory.Build.props that sets the repository URL.
     /// </summary>
     public TemporaryReleasePrepDirectory()
     {
-        Root = Path.Combine(Path.GetTempPath(), $"release-prep-{Guid.NewGuid():N}");
+        Root = _directory.Path;
         PackageDirectory = Path.Combine(Root, "packages");
         OutputDirectory = Path.Combine(Root, "release-prep");
         Directory.CreateDirectory(PackageDirectory);
@@ -140,11 +142,5 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
     /// <summary>
     /// Deletes the directory.
     /// </summary>
-    public void Dispose()
-    {
-        if (Directory.Exists(Root))
-        {
-            Directory.Delete(Root, recursive: true);
-        }
-    }
+    public void Dispose() => _directory.Dispose();
 }

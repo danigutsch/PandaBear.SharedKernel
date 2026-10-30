@@ -23,11 +23,14 @@ internal sealed class RepositoryTestScope : IDisposable
         """;
 
     /// <summary>The unique temporary directory that holds the repository and is deleted on disposal.</summary>
-    public readonly string Root = Path.Combine(Path.GetTempPath(), "sharedkernel-selector-" + Guid.NewGuid().ToString("N"));
+    public readonly string Root;
+
+    private readonly TemporaryDirectory _directory = new();
 
     /// <summary>Creates a solution of a library, a dependent library, and a test project of the dependent, and its CI configuration.</summary>
     public RepositoryTestScope()
     {
+        Root = _directory.Path;
         AddProject("src/Core/Core.csproj", """<Project />""");
         AddProject("src/Dependent/Dependent.csproj", """<Project><ProjectReference Include="../Core/Core.csproj" /></Project>""");
         AddProject("tests/Core.Tests/Core.Tests.csproj", """<Project><PackageReference Include="xunit.v3.mtp-v2" /><ProjectReference Include="../../src/Dependent/Dependent.csproj" /></Project>""");
@@ -141,19 +144,5 @@ internal sealed class RepositoryTestScope : IDisposable
     }
 
     /// <summary>Clears the read-only attribute from every file, as Git objects have it, and deletes the root directory.</summary>
-    public void Dispose()
-    {
-        // Git writes object files read-only, and Windows refuses to delete read-only files.
-        var options = new EnumerationOptions { RecurseSubdirectories = true, AttributesToSkip = FileAttributes.ReparsePoint };
-        foreach (var path in Directory.EnumerateFiles(Root, "*", options))
-        {
-            var attributes = File.GetAttributes(path);
-            if ((attributes & FileAttributes.ReadOnly) != 0)
-            {
-                File.SetAttributes(path, attributes & ~FileAttributes.ReadOnly);
-            }
-        }
-
-        Directory.Delete(Root, recursive: true);
-    }
+    public void Dispose() => _directory.Dispose();
 }

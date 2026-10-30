@@ -5,13 +5,14 @@ namespace PandaBear.RepoConfig.Tests;
 /// </summary>
 internal sealed class TemporaryRepoConfigWorkspace : IDisposable
 {
+    private readonly TemporaryDirectory _directory = new();
+
     /// <summary>
     /// Creates a unique temporary workspace directory.
     /// </summary>
     public TemporaryRepoConfigWorkspace()
     {
-        RootPath = Path.Combine(Path.GetTempPath(), "sharedkernel-repo-config-tests", Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(RootPath);
+        RootPath = _directory.Path;
     }
 
     /// <summary>
@@ -53,11 +54,5 @@ internal sealed class TemporaryRepoConfigWorkspace : IDisposable
     /// <summary>
     /// Deletes the workspace directory when it exists.
     /// </summary>
-    public void Dispose()
-    {
-        if (Directory.Exists(RootPath))
-        {
-            Directory.Delete(RootPath, recursive: true);
-        }
-    }
+    public void Dispose() => _directory.Dispose();
 }

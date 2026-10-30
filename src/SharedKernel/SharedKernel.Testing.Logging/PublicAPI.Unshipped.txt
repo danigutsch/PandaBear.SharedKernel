@@ -28,3 +28,10 @@ PandaBear.Testing.Logging.ThrowingLogger<T>.BeginScope<TState>(TState state) -> 
 PandaBear.Testing.Logging.ThrowingLogger<T>.IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) -> bool
 PandaBear.Testing.Logging.ThrowingLogger<T>.Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, System.Exception? exception, System.Func<TState, System.Exception?, string!>! formatter) -> void
 PandaBear.Testing.Logging.ThrowingLogger<T>.ThrowingLogger() -> void
+PandaBear.Testing.Logging.RecordingLoggerProvider
+PandaBear.Testing.Logging.RecordingLoggerProvider.CategoryNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Testing.Logging.RecordingLoggerProvider.CreateLogger(string! categoryName) -> Microsoft.Extensions.Logging.ILogger!
+PandaBear.Testing.Logging.RecordingLoggerProvider.Dispose() -> void
+PandaBear.Testing.Logging.RecordingLoggerProvider.Logger.get -> PandaBear.Testing.Logging.RecordingLogger!
+PandaBear.Testing.Logging.RecordingLoggerProvider.RecordingLoggerProvider() -> void
+PandaBear.Testing.Logging.RecordingLoggerProvider.Records.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Logging.RecordedLog!>!

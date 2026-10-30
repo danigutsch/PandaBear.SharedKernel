@@ -1,10 +1,8 @@
-namespace PandaBear.EntityFrameworkCore.Tests;
+using PandaBear.Testing.Messaging;
 
-/// <summary>
-/// Tests ControlledEventEnvelopePublisher.
-/// </summary>
-[Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IntegrationEventTransportCapability)]
+namespace PandaBear.Testing.Tests;
+
+/// <summary>Tests the shared controlled envelope publisher.</summary>
 public sealed class ControlledEventEnvelopePublisherTests
 {
     [Fact]

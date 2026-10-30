@@ -3,6 +3,7 @@
 - [Development and quality](development.md)
 - [Security baseline](security-baseline.md)
 - [Test assertion conventions](TEST_GUIDELINES.md)
+- [Assertion helper audit](testing/ASSERTION_HELPER_AUDIT.md)
 - [File and stream intake](stream-intake.md)
 - [Object storage and malware scanning](storage-and-scanning.md)
 - [Payment identifiers and payment epic handoff](plans/payment-identifiers.md)

@@ -1,3 +1,4 @@
+using PandaBear.Testing;
 using System.Xml.Linq;
 
 namespace PandaBear.Mediator.PackageConsumptionTests;
@@ -22,7 +23,9 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
     /// </summary>
     public string DependencyInjectionPackageVersion { get; private set; } = null!;
 
-    private string RootPath { get; set; } = null!;
+    private readonly TemporaryDirectory _directory = new();
+
+    private string RootPath => _directory.Path;
 
     /// <summary>The repository root, found by searching upward for SharedKernel.slnx, used to locate projects and Directory.Packages.props.</summary>
     internal string RepositoryRoot { get; private set; } = null!;
@@ -37,7 +40,6 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
         RepositoryRoot = FindRepositoryRoot();
         DependencyInjectionPackageVersion = ReadCentralPackageVersion("Microsoft.Extensions.DependencyInjection");
 
-        RootPath = Path.Combine(Path.GetTempPath(), $"sharedkernel-mediator-package-feed-{Guid.NewGuid():N}");
         FeedPath = Path.Combine(RootPath, "feed");
         Directory.CreateDirectory(FeedPath);
 
@@ -58,11 +60,7 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
     /// <inheritdoc />
     public ValueTask DisposeAsync()
     {
-        if (!string.IsNullOrWhiteSpace(RootPath) && Directory.Exists(RootPath))
-        {
-            Directory.Delete(RootPath, recursive: true);
-        }
-
+        _directory.Dispose();
         return ValueTask.CompletedTask;
     }
 

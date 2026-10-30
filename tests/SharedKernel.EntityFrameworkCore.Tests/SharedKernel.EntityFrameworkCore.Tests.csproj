@@ -11,6 +11,7 @@
         <Using Include="PandaBear.Npgsql.Testing" />
         <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="PandaBear.Testing.Logging" />
+        <Using Include="PandaBear.Testing.Messaging" />
         <Using Include="Xunit" />
     </ItemGroup>
 
@@ -32,6 +33,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Logging\SharedKernel.Testing.Logging.csproj" IsAspireProjectResource="false" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Messaging\SharedKernel.Testing.Messaging.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\SharedKernel.Npgsql.Testing\SharedKernel.Npgsql.Testing.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.EntityFrameworkCore\SharedKernel.EntityFrameworkCore.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Domain.EntityFrameworkCore\SharedKernel.Domain.EntityFrameworkCore.csproj" IsAspireProjectResource="false" />

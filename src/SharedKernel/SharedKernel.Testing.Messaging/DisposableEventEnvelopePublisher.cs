@@ -1,11 +1,11 @@
 using PandaBear.Messaging;
 
-namespace PandaBear.EntityFrameworkCore.Tests;
+namespace PandaBear.Testing.Messaging;
 
 /// <summary>
 /// Envelope publisher that counts attempts and disposals and can be configured to fail every publish.
 /// </summary>
-internal sealed class DisposableEventEnvelopePublisher : IEventEnvelopePublisher, IDisposable
+public sealed class DisposableEventEnvelopePublisher : IEventEnvelopePublisher, IDisposable
 {
     private int disposeCount;
 
