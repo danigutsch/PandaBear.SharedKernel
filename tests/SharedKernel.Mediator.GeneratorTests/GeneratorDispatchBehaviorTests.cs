@@ -1244,7 +1244,7 @@ public sealed class GeneratorDispatchBehaviorTests
                 }
             }
             """;
-        MetadataReference[] references = [MetadataReference.CreateFromFile(typeof(PandaBear.Results.Result).Assembly.Location)];
+        MetadataReference[] references = [MetadataReference.CreateFromFile(typeof(Results.Result).Assembly.Location)];
         var diagnostics = GeneratorTestHarness.RunGeneratorDriver(source, references).Results.Single().Diagnostics;
         using var runtime = GeneratedMediatorRuntimeContext.Create(source, references);
         var renameType = runtime.GetRequiredType("Demo.Rename");
@@ -1254,14 +1254,14 @@ public sealed class GeneratorDispatchBehaviorTests
             runtime.CreateInstance("Demo.RenameHandler"),
             runtime.CreateInstance("Demo.CreateHandler"),
             runtime.CreateInstance("Demo.CountHandler"),
-            Activator.CreateInstance(behaviorType.MakeGenericType(renameType, typeof(PandaBear.Results.Result)))!,
-            Activator.CreateInstance(behaviorType.MakeGenericType(createType, typeof(PandaBear.Results.Result<int>)))!);
+            Activator.CreateInstance(behaviorType.MakeGenericType(renameType, typeof(Results.Result)))!,
+            Activator.CreateInstance(behaviorType.MakeGenericType(createType, typeof(Results.Result<int>)))!);
 
         // Act
-        var blankPlain = await mediator.Send((IRequest<PandaBear.Results.Result>)Activator.CreateInstance(renameType, " ")!, CancellationToken.None);
-        var okPlain = await mediator.Send((IRequest<PandaBear.Results.Result>)Activator.CreateInstance(renameType, "n")!, CancellationToken.None);
-        var blankGeneric = await mediator.Send((IRequest<PandaBear.Results.Result<int>>)Activator.CreateInstance(createType, "")!, CancellationToken.None);
-        var okGeneric = await mediator.Send((IRequest<PandaBear.Results.Result<int>>)Activator.CreateInstance(createType, "n")!, CancellationToken.None);
+        var blankPlain = await mediator.Send((IRequest<Results.Result>)Activator.CreateInstance(renameType, " ")!, CancellationToken.None);
+        var okPlain = await mediator.Send((IRequest<Results.Result>)Activator.CreateInstance(renameType, "n")!, CancellationToken.None);
+        var blankGeneric = await mediator.Send((IRequest<Results.Result<int>>)Activator.CreateInstance(createType, "")!, CancellationToken.None);
+        var okGeneric = await mediator.Send((IRequest<Results.Result<int>>)Activator.CreateInstance(createType, "n")!, CancellationToken.None);
 
         // Assert
         var constructorParameterTypes = runtime.GetRequiredType("PandaBear.Mediator.AppMediator").GetConstructors().ShouldHaveSingleItem().GetParameters()
@@ -1269,13 +1269,13 @@ public sealed class GeneratorDispatchBehaviorTests
                 ? parameter.ParameterType.GenericTypeArguments
                 : [parameter.ParameterType])
             .ToArray();
-        constructorParameterTypes.ShouldContain(behaviorType.MakeGenericType(renameType, typeof(PandaBear.Results.Result)));
-        constructorParameterTypes.ShouldContain(behaviorType.MakeGenericType(createType, typeof(PandaBear.Results.Result<int>)));
+        constructorParameterTypes.ShouldContain(behaviorType.MakeGenericType(renameType, typeof(Results.Result)));
+        constructorParameterTypes.ShouldContain(behaviorType.MakeGenericType(createType, typeof(Results.Result<int>)));
         constructorParameterTypes.ShouldNotContain(static type => type.IsGenericType && type.GetGenericArguments().Contains(typeof(int)) && type.Name.StartsWith("NameValidationBehavior", StringComparison.Ordinal));
         diagnostics.ShouldNotContain(static diagnostic => diagnostic.Severity >= DiagnosticSeverity.Warning);
-        blankPlain.Status.ShouldBe(PandaBear.Results.ResultStatus.Invalid);
+        blankPlain.Status.ShouldBe(Results.ResultStatus.Invalid);
         okPlain.IsSuccess.ShouldBeTrue();
-        blankGeneric.Status.ShouldBe(PandaBear.Results.ResultStatus.Invalid);
+        blankGeneric.Status.ShouldBe(Results.ResultStatus.Invalid);
         okGeneric.Value.ShouldBe(42);
     }
 
@@ -1311,7 +1311,7 @@ public sealed class GeneratorDispatchBehaviorTests
                 public ValueTask<TResponse> Handle(TRequest request, RequestHandlerContinuation<TResponse> next, CancellationToken ct) => next();
             }
             """;
-        MetadataReference[] references = [MetadataReference.CreateFromFile(typeof(PandaBear.Results.Result).Assembly.Location)];
+        MetadataReference[] references = [MetadataReference.CreateFromFile(typeof(Results.Result).Assembly.Location)];
         var runResult = GeneratorTestHarness.RunGeneratorDriver(source, references);
 
         // Act
@@ -1350,7 +1350,7 @@ public sealed class GeneratorDispatchBehaviorTests
                 public ValueTask<TResponse> Handle(TRequest request, RequestHandlerContinuation<TResponse> next, CancellationToken ct) => next();
             }
             """;
-        MetadataReference[] references = [MetadataReference.CreateFromFile(typeof(PandaBear.Results.Result).Assembly.Location)];
+        MetadataReference[] references = [MetadataReference.CreateFromFile(typeof(Results.Result).Assembly.Location)];
 
         // Act
         var diagnostics = GeneratorTestHarness.RunGeneratorDriver(source, references).Results.Single().Diagnostics;
