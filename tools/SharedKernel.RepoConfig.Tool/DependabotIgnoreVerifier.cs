@@ -13,7 +13,7 @@ internal static partial class DependabotIgnoreVerifier
 
     /// <summary>
     /// Reports each <c>ignore</c> list entry of the Dependabot configuration that has no <c>update-types</c> key. The
-    /// check is line based and expects block-style YAML. A root without the configuration is an error.
+    /// check is line based and expects block-style YAML; an inline <c>ignore</c> value is reported because it cannot be checked. A root without the configuration is an error.
     /// </summary>
     /// <exception cref="InvalidOperationException">The root has no Dependabot configuration.</exception>
     public static async Task<IReadOnlyList<RepoConfigIssue>> Verify(string rootPath, CancellationToken cancellationToken)
@@ -47,6 +47,11 @@ internal static partial class DependabotIgnoreVerifier
             if (ignoreIndent < 0)
             {
                 ignoreIndent = IgnoreKey().IsMatch(text) ? indent : -1;
+                if (ignoreIndent < 0 && InlineIgnore().IsMatch(text))
+                {
+                    issues.Add(new RepoConfigIssue(relative, $"Line {index + 1}: The ignore list must be block-style; this line cannot be checked."));
+                }
+
                 continue;
             }
 
@@ -61,6 +66,10 @@ internal static partial class DependabotIgnoreVerifier
             }
 
             entryScoped |= body.StartsWith("update-types:", StringComparison.Ordinal);
+            if (entryName.Length == 0 && NameKey().Match(body) is { Success: true } later)
+            {
+                entryName = Unquote(later.Groups["name"].Value);
+            }
         }
 
         Flush();
@@ -87,6 +96,9 @@ internal static partial class DependabotIgnoreVerifier
 
     [GeneratedRegex(@"^ignore:\s*(?:#.*)?$", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
     private static partial Regex IgnoreKey();
+
+    [GeneratedRegex(@"^ignore:\s*[^\s#]", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
+    private static partial Regex InlineIgnore();
 
     [GeneratedRegex(@"^dependency-name:\s*(?<name>.+?)\s*$", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
     private static partial Regex NameKey();
