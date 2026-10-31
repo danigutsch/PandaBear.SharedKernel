@@ -19,6 +19,7 @@ internal static class Bip39
     /// <summary>Normalizes a word: NFKD, then lowercase.</summary>
     /// <param name="word">Word.</param>
     /// <returns>Normalized word.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="word"/> is <see langword="null"/>.</exception>
     [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "The BIP39 wordlist and Electrum normalization are lowercase.")]
     public static string NormalizeWord(string word)
     {
@@ -37,6 +38,7 @@ internal static class Bip39
     /// <summary>Whether words form a mnemonic with a valid checksum.</summary>
     /// <param name="words">Words, normalized or not.</param>
     /// <returns><see langword="true"/> when the checksum matches.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="words"/> is <see langword="null"/>.</exception>
     public static bool IsValidMnemonic(IReadOnlyList<string> words)
     {
         ArgumentNullException.ThrowIfNull(words);
@@ -91,6 +93,7 @@ internal static class Bip39
     /// </summary>
     /// <param name="words">Words.</param>
     /// <returns><see langword="true"/> when the version prefix matches.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="words"/> is <see langword="null"/>.</exception>
     public static bool IsElectrumSeed(IReadOnlyList<string> words)
     {
         ArgumentNullException.ThrowIfNull(words);

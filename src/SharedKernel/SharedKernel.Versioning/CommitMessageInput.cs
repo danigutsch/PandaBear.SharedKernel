@@ -10,6 +10,7 @@ public static class CommitMessageInput
     /// </summary>
     /// <param name="reader">The input reader.</param>
     /// <returns>The parsed commit messages.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="reader"/> is <see langword="null"/>.</exception>
     public static async Task<IReadOnlyList<string>> ReadMessages(TextReader reader)
     {
         ArgumentNullException.ThrowIfNull(reader);

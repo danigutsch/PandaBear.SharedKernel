@@ -47,6 +47,7 @@ public sealed class TestHttpMessageHandler : HttpMessageHandler
     /// </summary>
     /// <param name="sendException">The exception to throw.</param>
     /// <returns>The throwing handler.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="sendException"/> is <see langword="null"/>.</exception>
     public static TestHttpMessageHandler FromException(Exception sendException)
     {
         ArgumentNullException.ThrowIfNull(sendException);
@@ -58,6 +59,7 @@ public sealed class TestHttpMessageHandler : HttpMessageHandler
     /// Enqueues an HTTP response.
     /// </summary>
     /// <param name="response">The response to return.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="response"/> is <see langword="null"/>.</exception>
     public void Enqueue(HttpResponseMessage response)
     {
         ArgumentNullException.ThrowIfNull(response);

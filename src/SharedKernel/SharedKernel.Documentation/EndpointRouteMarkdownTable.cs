@@ -14,6 +14,8 @@ internal static partial class EndpointRouteMarkdownTable
     /// <summary>
     /// Builds an endpoint inventory table from C# source files.
     /// </summary>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="sourcePath"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="configuration"/> is <see langword="null"/>.</exception>
     public static string Build(string sourcePath, DocumentationGeneratorBlock configuration)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourcePath);

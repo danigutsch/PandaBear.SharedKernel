@@ -37,6 +37,7 @@ internal static class DecisionsFile
     /// and names the JSON path of the problem, never a value.
     /// </exception>
     /// <exception cref="IOException">The file cannot be read.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="path"/> is empty.</exception>
     public static MergeDecisions Read(string path)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -63,6 +64,8 @@ internal static class DecisionsFile
     /// <param name="path">Decisions file.</param>
     /// <param name="decisions">Decisions.</param>
     /// <exception cref="IOException">The file cannot be written.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="path"/> is empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="decisions"/> is <see langword="null"/>.</exception>
     public static void Write(string path, MergeDecisions decisions)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -74,6 +77,7 @@ internal static class DecisionsFile
     /// <summary>Serializes decisions.</summary>
     /// <param name="decisions">Decisions.</param>
     /// <returns>Indented JSON with item names as typed, except for escaped control and format characters.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="decisions"/> is <see langword="null"/>.</exception>
     public static string Serialize(MergeDecisions decisions)
     {
         ArgumentNullException.ThrowIfNull(decisions);
@@ -96,6 +100,7 @@ internal static class DecisionsFile
     /// format does not define or a property twice in one object. The message names the JSON path of the problem, never a
     /// value.
     /// </exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is <see langword="null"/>.</exception>
     public static MergeDecisions Deserialize(string json)
     {
         ArgumentNullException.ThrowIfNull(json);

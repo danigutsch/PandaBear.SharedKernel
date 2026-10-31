@@ -21,6 +21,7 @@ internal static class AgentDecisions
     /// <param name="agent">Agent decisions.</param>
     /// <param name="brief">Brief the agent read.</param>
     /// <returns>One problem per decision outside the limits, naming keys, field paths, and finding IDs, never values.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="agent"/> or <paramref name="brief"/> is <see langword="null"/>.</exception>
     public static IReadOnlyList<string> Check(MergeDecisions agent, BriefDocument brief)
     {
         ArgumentNullException.ThrowIfNull(agent);
@@ -93,6 +94,7 @@ internal static class AgentDecisions
     /// <param name="user">User decisions.</param>
     /// <param name="agent">Agent decisions that <see cref="Check"/> found within the limits.</param>
     /// <returns>The combined decisions.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="user"/> or <paramref name="agent"/> is <see langword="null"/>.</exception>
     public static MergeDecisions Combine(MergeDecisions user, MergeDecisions agent)
     {
         ArgumentNullException.ThrowIfNull(user);
@@ -109,6 +111,7 @@ internal static class AgentDecisions
     /// <param name="user">User decisions.</param>
     /// <param name="agent">Agent decisions.</param>
     /// <returns>The effective field and finding decisions of the agent.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="user"/> or <paramref name="agent"/> is <see langword="null"/>.</exception>
     public static MergeDecisions Effective(MergeDecisions user, MergeDecisions agent)
     {
         ArgumentNullException.ThrowIfNull(user);
@@ -143,6 +146,7 @@ internal static class AgentDecisions
     /// <param name="agent">Agent decisions.</param>
     /// <param name="findings">Findings of the merge, per input item.</param>
     /// <returns>Per item with such findings, its origin key, name, and the rejected findings.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="user"/>, <paramref name="agent"/>, or <paramref name="findings"/> is <see langword="null"/>.</exception>
     public static IReadOnlyList<ItemFindingDecisions> RejectedByAgent(MergeDecisions user, MergeDecisions agent, IReadOnlyList<ItemFindingsResult> findings)
     {
         ArgumentNullException.ThrowIfNull(user);
@@ -178,6 +182,7 @@ internal static class AgentDecisions
     /// <param name="applied">Merge with the user's and the agent's decisions.</param>
     /// <param name="decisions">The user's and the agent's decisions, combined by <see cref="Combine"/>.</param>
     /// <returns>One problem per changed group or member choice, naming keys and field paths, never values.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="userOnly"/>, <paramref name="applied"/>, or <paramref name="decisions"/> is <see langword="null"/>.</exception>
     public static IReadOnlyList<string> Conflicts(PipelineResult userOnly, PipelineResult applied, MergeDecisions decisions)
     {
         ArgumentNullException.ThrowIfNull(userOnly);

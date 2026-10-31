@@ -12,6 +12,7 @@ public static class DiagnosticLocationKey
     /// </summary>
     /// <param name="diagnostic">The diagnostic.</param>
     /// <returns>The diagnostic location key with zero-based line and character positions.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="diagnostic"/> is <see langword="null"/>.</exception>
     public static string Create(Diagnostic diagnostic)
     {
         ArgumentNullException.ThrowIfNull(diagnostic);

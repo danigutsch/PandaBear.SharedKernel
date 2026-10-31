@@ -14,6 +14,8 @@ public static class IntegrationEventTransportPoison
     /// <param name="ct">The cancellation token.</param>
     /// <typeparam name="TContext">The transport context type.</typeparam>
     /// <returns>The number of poisoned messages.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="consumerName"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="dbContext"/> is <see langword="null"/>.</exception>
     public static Task<int> CountPoisoned<TContext>(TContext dbContext, string consumerName, CancellationToken ct)
         where TContext : DbContext
     {
@@ -34,6 +36,8 @@ public static class IntegrationEventTransportPoison
     /// <param name="ct">The cancellation token.</param>
     /// <typeparam name="TContext">The transport context type.</typeparam>
     /// <returns><see langword="true" /> when a poisoned message was released.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="consumerName"/> or <paramref name="eventId"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="dbContext"/> is <see langword="null"/>.</exception>
     public static async Task<bool> ReleasePoisoned<TContext>(
         TContext dbContext,
         string consumerName,

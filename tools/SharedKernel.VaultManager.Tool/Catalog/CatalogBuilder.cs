@@ -125,6 +125,7 @@ internal static class CatalogBuilder
     /// <param name="uri">Address.</param>
     /// <param name="index">Position of the address in the item.</param>
     /// <returns>The catalog entry.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="uri"/> is <see langword="null"/>.</exception>
     public static CatalogUri ToCatalog(LoginUri uri, int index)
     {
         ArgumentNullException.ThrowIfNull(uri);

@@ -12,6 +12,8 @@ public static class PostgreSqlIndexHealthRecommendationPolicy
     /// <summary>Assesses evidence without creating, changing, or removing a database object.</summary>
     /// <param name="evidence">The read-only PostgreSQL catalog evidence to assess.</param>
     /// <returns>An advisory action and bounded reason for the evidence.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="evidence"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the kind of <paramref name="evidence"/> is not supported.</exception>
     public static PostgreSqlIndexHealthAssessment Assess(PostgreSqlIndexEvidence evidence)
     {
         ArgumentNullException.ThrowIfNull(evidence);

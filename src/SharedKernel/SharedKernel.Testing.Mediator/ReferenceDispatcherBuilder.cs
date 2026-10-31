@@ -51,6 +51,7 @@ public sealed class ReferenceDispatcherBuilder
     /// <typeparam name="TResponse">The produced response type.</typeparam>
     /// <param name="handler">The handler instance to register.</param>
     /// <returns>The current builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="handler"/> is <see langword="null"/>.</exception>
     public ReferenceDispatcherBuilder AddRequestHandler<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
         where TRequest : IRequest<TResponse>
     {
@@ -73,6 +74,7 @@ public sealed class ReferenceDispatcherBuilder
     /// <param name="responseType">The produced response type.</param>
     /// <param name="handler">The handler instance to register.</param>
     /// <returns>The current builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="requestType"/>, <paramref name="responseType"/>, or <paramref name="handler"/> is <see langword="null"/>.</exception>
     public ReferenceDispatcherBuilder AddRequestHandler(Type requestType, Type responseType, object handler)
     {
         ArgumentNullException.ThrowIfNull(requestType);
@@ -101,6 +103,7 @@ public sealed class ReferenceDispatcherBuilder
     /// <typeparam name="TResponse">The produced response type.</typeparam>
     /// <param name="pipeline">The pipeline instance to register.</param>
     /// <returns>The current builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="pipeline"/> is <see langword="null"/>.</exception>
     public ReferenceDispatcherBuilder AddPipeline<TRequest, TResponse>(IPipelineBehavior<TRequest, TResponse> pipeline)
         where TRequest : IRequest<TResponse>
     {
@@ -121,6 +124,7 @@ public sealed class ReferenceDispatcherBuilder
     /// <param name="responseType">The produced response type.</param>
     /// <param name="pipeline">The pipeline instance to register.</param>
     /// <returns>The current builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="requestType"/>, <paramref name="responseType"/>, or <paramref name="pipeline"/> is <see langword="null"/>.</exception>
     public ReferenceDispatcherBuilder AddPipeline(Type requestType, Type responseType, object pipeline)
     {
         ArgumentNullException.ThrowIfNull(requestType);
@@ -149,6 +153,7 @@ public sealed class ReferenceDispatcherBuilder
     /// <typeparam name="TNotification">The handled notification type.</typeparam>
     /// <param name="handler">The handler instance to register.</param>
     /// <returns>The current builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="handler"/> is <see langword="null"/>.</exception>
     public ReferenceDispatcherBuilder AddNotificationHandler<TNotification>(INotificationHandler<TNotification> handler)
         where TNotification : INotification
     {
@@ -173,6 +178,7 @@ public sealed class ReferenceDispatcherBuilder
     /// <param name="notificationType">The handled notification type.</param>
     /// <param name="handler">The handler instance to register.</param>
     /// <returns>The current builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="notificationType"/> or <paramref name="handler"/> is <see langword="null"/>.</exception>
     public ReferenceDispatcherBuilder AddNotificationHandler(Type notificationType, object handler)
     {
         ArgumentNullException.ThrowIfNull(notificationType);
@@ -199,6 +205,7 @@ public sealed class ReferenceDispatcherBuilder
     /// <typeparam name="TResponse">The streamed item type.</typeparam>
     /// <param name="handler">The stream handler instance to register.</param>
     /// <returns>The current builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="handler"/> is <see langword="null"/>.</exception>
     public ReferenceDispatcherBuilder AddStreamHandler<TRequest, TResponse>(IStreamRequestHandler<TRequest, TResponse> handler)
         where TRequest : IStreamRequest<TResponse>
     {
@@ -221,6 +228,7 @@ public sealed class ReferenceDispatcherBuilder
     /// <param name="responseType">The streamed item type.</param>
     /// <param name="handler">The stream handler instance to register.</param>
     /// <returns>The current builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="requestType"/>, <paramref name="responseType"/>, or <paramref name="handler"/> is <see langword="null"/>.</exception>
     public ReferenceDispatcherBuilder AddStreamHandler(Type requestType, Type responseType, object handler)
     {
         ArgumentNullException.ThrowIfNull(requestType);
@@ -249,6 +257,7 @@ public sealed class ReferenceDispatcherBuilder
     /// <typeparam name="TResponse">The streamed item type.</typeparam>
     /// <param name="pipeline">The stream pipeline instance to register.</param>
     /// <returns>The current builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="pipeline"/> is <see langword="null"/>.</exception>
     public ReferenceDispatcherBuilder AddStreamPipeline<TRequest, TResponse>(IStreamPipelineBehavior<TRequest, TResponse> pipeline)
         where TRequest : IStreamRequest<TResponse>
     {
@@ -269,6 +278,7 @@ public sealed class ReferenceDispatcherBuilder
     /// <param name="responseType">The streamed item type.</param>
     /// <param name="pipeline">The stream pipeline instance to register.</param>
     /// <returns>The current builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="requestType"/>, <paramref name="responseType"/>, or <paramref name="pipeline"/> is <see langword="null"/>.</exception>
     public ReferenceDispatcherBuilder AddStreamPipeline(Type requestType, Type responseType, object pipeline)
     {
         ArgumentNullException.ThrowIfNull(requestType);

@@ -15,6 +15,8 @@ public static class ApiVersionRouteGroupExtensions
     /// <param name="version">The API version definition.</param>
     /// <param name="routePrefix">The unversioned API route prefix.</param>
     /// <returns>The configured route group builder.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="routePrefix"/> is empty, white-space, or contains no non-slash character.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="endpoints"/>, <paramref name="version"/>, or <paramref name="routePrefix"/> is <see langword="null"/>.</exception>
     public static RouteGroupBuilder MapApiVersionGroup(
         this IEndpointRouteBuilder endpoints,
         ApiVersionDefinition version,
@@ -37,6 +39,7 @@ public static class ApiVersionRouteGroupExtensions
     /// <param name="builder">The endpoint convention builder.</param>
     /// <param name="version">The API version definition.</param>
     /// <returns>The configured endpoint convention builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> or <paramref name="version"/> is <see langword="null"/>.</exception>
     public static TBuilder WithApiVersion<TBuilder>(this TBuilder builder, ApiVersionDefinition version)
         where TBuilder : IEndpointConventionBuilder
     {

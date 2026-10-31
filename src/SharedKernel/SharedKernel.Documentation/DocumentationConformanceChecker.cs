@@ -13,6 +13,8 @@ public static class DocumentationConformanceChecker
     /// <param name="rootPath">The repository root path.</param>
     /// <param name="configPath">The configuration path relative to the repository root.</param>
     /// <returns>The number of conformance checks completed.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="rootPath"/> or <paramref name="configPath"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="InvalidOperationException">The configuration cannot be read, a fact check is stale, or a source or document is missing or malformed.</exception>
     public static int Check(string rootPath, string configPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);

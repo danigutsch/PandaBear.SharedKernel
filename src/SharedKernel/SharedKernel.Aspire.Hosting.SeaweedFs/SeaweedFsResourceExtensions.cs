@@ -79,6 +79,7 @@ public static class SeaweedFsResourceExtensions
     /// <param name="builder">The resource builder.</param>
     /// <param name="accessKey">The parameter that contains the access key.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> or <paramref name="accessKey"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<SeaweedFsResource> WithAccessKey(this IResourceBuilder<SeaweedFsResource> builder, IResourceBuilder<ParameterResource> accessKey)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -95,6 +96,7 @@ public static class SeaweedFsResourceExtensions
     /// <param name="builder">The resource builder.</param>
     /// <param name="secretKey">The parameter that contains the secret key.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> or <paramref name="secretKey"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<SeaweedFsResource> WithSecretKey(this IResourceBuilder<SeaweedFsResource> builder, IResourceBuilder<ParameterResource> secretKey)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -112,6 +114,8 @@ public static class SeaweedFsResourceExtensions
     /// <param name="name">The name of the bucket resource.</param>
     /// <param name="bucketName">The name of the bucket. Defaults to <paramref name="name"/>.</param>
     /// <returns>A reference to the <see cref="IResourceBuilder{T}"/> of the bucket resource.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="name"/> is <see langword="null"/>, empty, or white-space, or the bucket name is blank or contains commas or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// <c>weed mini</c> creates every bucket named in its comma-separated <c>S3_BUCKET</c> variable and skips buckets that exist.
     /// The bucket resource's connection string carries the S3 endpoint and the bucket name, never the credentials.
@@ -148,6 +152,7 @@ public static class SeaweedFsResourceExtensions
     /// <param name="name">The name of the volume. Defaults to an auto-generated name based on the application and resource names.</param>
     /// <param name="isReadOnly">A flag that indicates if this is a read-only volume.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<SeaweedFsResource> WithDataVolume(this IResourceBuilder<SeaweedFsResource> builder, string? name = null, bool isReadOnly = false)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -162,6 +167,8 @@ public static class SeaweedFsResourceExtensions
     /// <param name="source">The source directory on the host to mount into the container.</param>
     /// <param name="isReadOnly">A flag that indicates if this is a read-only mount.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="source"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<SeaweedFsResource> WithDataBindMount(this IResourceBuilder<SeaweedFsResource> builder, string source, bool isReadOnly = false)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -176,6 +183,7 @@ public static class SeaweedFsResourceExtensions
     /// <param name="builder">The resource builder.</param>
     /// <param name="port">The port to bind on the host. If <see langword="null"/> is used random port will be assigned.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<SeaweedFsResource> WithHostPort(this IResourceBuilder<SeaweedFsResource> builder, int? port)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -188,6 +196,7 @@ public static class SeaweedFsResourceExtensions
     /// </summary>
     /// <param name="builder">The resource builder.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// The Filer UI gives unauthenticated read and write access to every stored object. It is a development and operator tool,
     /// not an independently secured service. The endpoint is added only in run mode, so publish manifests never expose it, and

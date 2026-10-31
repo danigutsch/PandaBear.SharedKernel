@@ -17,6 +17,7 @@ public static class PostgreSqlTransactionAdvisoryLock
     /// <param name="lockKey">The caller-defined 64-bit advisory lock key.</param>
     /// <param name="ct">The cancellation token.</param>
     /// <returns>A task that completes when PostgreSQL grants the lock.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="connection"/> or <paramref name="transaction"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// PostgreSQL releases this lock when <paramref name="transaction" /> commits, rolls back, or is disposed.
     /// Callers own lock-key derivation and must retain the transaction through their critical section.

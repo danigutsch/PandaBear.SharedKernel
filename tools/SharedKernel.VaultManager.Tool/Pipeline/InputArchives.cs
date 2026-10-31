@@ -11,6 +11,7 @@ internal sealed class InputArchives : IDisposable
     /// <param name="inputPath">Input file.</param>
     /// <param name="warnings">Receives one warning per file that cannot be opened.</param>
     /// <returns>The archive, or <see langword="null"/> when it cannot be opened.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="inputPath"/> or <paramref name="warnings"/> is <see langword="null"/>.</exception>
     public SafeArchive? Open(string inputPath, ICollection<string> warnings)
     {
         ArgumentNullException.ThrowIfNull(inputPath);

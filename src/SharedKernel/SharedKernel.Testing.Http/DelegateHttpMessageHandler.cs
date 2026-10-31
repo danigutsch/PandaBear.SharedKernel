@@ -7,6 +7,7 @@ public sealed class DelegateHttpMessageHandler : HttpMessageHandler
 
     /// <summary>Initializes a new instance of the <see cref="DelegateHttpMessageHandler" /> class.</summary>
     /// <param name="respond">Creates the response for each request.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="respond"/> is <see langword="null"/>.</exception>
     public DelegateHttpMessageHandler(Func<HttpRequestMessage, HttpResponseMessage> respond)
     {
         ArgumentNullException.ThrowIfNull(respond);
@@ -16,6 +17,7 @@ public sealed class DelegateHttpMessageHandler : HttpMessageHandler
 
     /// <summary>Initializes a new instance of the <see cref="DelegateHttpMessageHandler" /> class.</summary>
     /// <param name="respond">Creates the response for each request and may observe cancellation.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="respond"/> is <see langword="null"/>.</exception>
     public DelegateHttpMessageHandler(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> respond)
     {
         ArgumentNullException.ThrowIfNull(respond);

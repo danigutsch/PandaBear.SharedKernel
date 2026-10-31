@@ -19,6 +19,8 @@ internal static class CandidateStaging
     /// Validates the pin, checks the SDK lockstep and the library checkout, then stages every missing package and writes
     /// the pin as <c>candidate.json</c>.
     /// </summary>
+    /// <exception cref="InvalidOperationException">The feed directory does not exist.</exception>
+    /// <exception cref="InvalidDataException">A staged package does not match its pinned SHA-256 hash.</exception>
     /// <remarks>
     /// Packages are copied or downloaded into a staging directory beside the output, verified there, and only then moved
     /// into the output, so the output never holds an unverified package. An identical package already in the output is

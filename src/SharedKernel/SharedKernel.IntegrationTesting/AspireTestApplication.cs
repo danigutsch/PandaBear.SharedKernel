@@ -37,6 +37,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// </summary>
     /// <param name="args">Command-line configuration arguments for the builder.</param>
     /// <returns>The configured Aspire testing builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="args"/> is <see langword="null"/>.</exception>
     public static IDistributedApplicationTestingBuilder CreateBuilder(params string[] args)
     {
         ArgumentNullException.ThrowIfNull(args);
@@ -69,6 +70,8 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// <param name="appHostArguments">AppHost configuration arguments.</param>
     /// <param name="ct">A cancellation token.</param>
     /// <returns>The started test application.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="healthyResourceNames"/> or <paramref name="appHostArguments"/> is <see langword="null"/>.</exception>
+    /// <exception cref="AggregateException">Thrown when starting the application fails and tearing down the partially started application also fails.</exception>
     public static async Task<AspireTestApplication> Start<TAppHost>(
         IEnumerable<string> healthyResourceNames,
         TimeSpan? resourceStartupTimeout,
@@ -123,6 +126,8 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// <param name="resourceStartupTimeout">The resource startup timeout.</param>
     /// <param name="ct">A cancellation token.</param>
     /// <returns>The started test application.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> or <paramref name="healthyResourceNames"/> is <see langword="null"/>.</exception>
+    /// <exception cref="AggregateException">Thrown when starting the application fails and tearing down the partially started application also fails.</exception>
     public static async Task<AspireTestApplication> Start(
         IDistributedApplicationTestingBuilder builder,
         IEnumerable<string> healthyResourceNames,
@@ -218,6 +223,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// <param name="resourceName">The Aspire resource name.</param>
     /// <param name="ct">A cancellation token.</param>
     /// <returns>The configured connection string.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the resource has no configured connection string.</exception>
     public async Task<string> GetConnectionString(string resourceName, CancellationToken ct)
     {
         var connectionString = await App.GetConnectionStringAsync(resourceName, ct).ConfigureAwait(false);

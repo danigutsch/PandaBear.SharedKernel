@@ -251,6 +251,7 @@ internal sealed class PlaywrightMcpApplication(
     /// no output; <see langword="null"/> collects the output in the result.
     /// </param>
     /// <param name="ct">Cancels the run and kills the process tree.</param>
+    /// <exception cref="InvalidOperationException">The process could not be started.</exception>
     internal static async Task<ProcessResult> RunProcess(
         ProcessStartInfo startInfo,
         TextWriter? forward,

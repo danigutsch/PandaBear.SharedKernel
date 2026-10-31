@@ -329,13 +329,10 @@ directly in an `<exception cref="...">` tag. Detected throws are `throw new X(..
 `ArgumentOutOfRangeException.ThrowIfNegative`, and similar). A tag naming the thrown type or any base type satisfies the rule. One
 diagnostic is reported per missing exception type.
 
-Not reported: throws handled by an enclosing `try` with an unfiltered matching `catch`, rethrows (`throw;`), throws inside lambdas
+Not reported: throws handled by an enclosing `try` with a matching `catch` that is unfiltered or whose filter is a pure type test of the caught variable (`when (e is IOException or JsonException)`), rethrows (`throw;`), throws inside lambdas
 and local functions, throws of a value statically typed as plain `Exception`, overrides, explicit interface implementations,
 accessors, members documented with `<inheritdoc />`, and generated code. Members without any documentation comment are left to
-`CS1591` and `SKSTYLE017`. Exceptions thrown by callees are not traced.
-
-Unlike Roslynator `RCS1140`, the rule recognizes the `ThrowIf*` helpers, ignores handled throws, accepts base-type tags,
-reports each type once, and needs no extra package. It has no code fix; add the tag by hand.
+`CS1591` and `SKSTYLE017`. Exceptions thrown by callees are not traced. The rule has no code fix; add the tag by hand.
 
 ```ini
 [*.cs]

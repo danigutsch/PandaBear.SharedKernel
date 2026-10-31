@@ -9,6 +9,7 @@ internal static class FolderTree
     /// </summary>
     /// <param name="paths">Folder paths; <see langword="null"/>, empty, and whitespace paths are skipped.</param>
     /// <returns>Distinct paths in ordinal order. A parent is skipped when it is empty or ends with <c>/</c>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="paths"/> is <see langword="null"/>.</exception>
     public static IReadOnlyList<string> WithParents(IEnumerable<string?> paths)
     {
         ArgumentNullException.ThrowIfNull(paths);

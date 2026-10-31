@@ -34,6 +34,8 @@ internal static class DependencySubmitCommand
         Run(options, httpClient, TimeProvider.System, output, cancellationToken);
 
     /// <summary>Submits a dependency snapshot to the GitHub dependency submission API and returns the exit code.</summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/>, <paramref name="timeProvider"/>, or <paramref name="output"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">The repository option does not name a GitHub repository as <c>owner/name</c>.</exception>
     internal static async Task<int> Run(
         DependencySubmitOptions options,
         HttpClient? httpClient,

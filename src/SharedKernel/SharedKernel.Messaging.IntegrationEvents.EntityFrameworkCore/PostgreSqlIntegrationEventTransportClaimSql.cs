@@ -10,6 +10,7 @@ internal static class PostgreSqlIntegrationEventTransportClaimSql
     private const string NpgsqlProviderName = "Npgsql.EntityFrameworkCore.PostgreSQL";
 
     /// <summary>Claims up to <paramref name="batchSize" /> due, unclaimed messages of <paramref name="consumerName" /> for <paramref name="claimedBy" /> until <paramref name="claimedUntil" /> and returns them.</summary>
+    /// <exception cref="InvalidOperationException">The context does not use the PostgreSQL EF Core provider, or the transport message entity is not configured.</exception>
     public static async ValueTask<IntegrationEventTransportMessage[]> ClaimPending<TContext>(
         TContext dbContext,
         string consumerName,
@@ -38,6 +39,7 @@ internal static class PostgreSqlIntegrationEventTransportClaimSql
     }
 
     /// <summary>Builds the claim statement using the column and table names of the mapped transport entity.</summary>
+    /// <exception cref="InvalidOperationException">The transport table name is not configured.</exception>
     internal static string CreateClaimSql(IEntityType entityType)
     {
         var storeObject = StoreObjectIdentifier.Table(

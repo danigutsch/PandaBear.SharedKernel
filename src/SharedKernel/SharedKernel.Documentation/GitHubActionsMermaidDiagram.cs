@@ -13,6 +13,7 @@ internal static partial class GitHubActionsMermaidDiagram
     /// <summary>
     /// Builds a job dependency diagram from one workflow file.
     /// </summary>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="workflowPath"/> or <paramref name="triggerLabel"/> is <see langword="null"/>, empty, or white-space.</exception>
     public static string BuildJobs(string workflowPath, string triggerLabel)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workflowPath);
@@ -42,6 +43,7 @@ internal static partial class GitHubActionsMermaidDiagram
     /// <summary>
     /// Builds a workflow inventory diagram for workflow files in one directory.
     /// </summary>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="workflowsPath"/>, <paramref name="rootLabel"/>, or <paramref name="excludedWorkflowFileName"/> is <see langword="null"/>, empty, or white-space.</exception>
     public static string BuildWorkflowInventory(string workflowsPath, string rootLabel, string excludedWorkflowFileName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workflowsPath);

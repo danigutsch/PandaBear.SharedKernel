@@ -24,6 +24,7 @@ internal static class ShownValues
     /// <param name="index">Position of the field in the item.</param>
     /// <param name="findings">Secret findings of the item.</param>
     /// <returns><see langword="true"/> when the field may be shown and edited.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="field"/> or <paramref name="findings"/> is <see langword="null"/>.</exception>
     public static bool IsShown(CustomField field, int index, IReadOnlyList<SecretFinding> findings)
     {
         ArgumentNullException.ThrowIfNull(field);
@@ -37,6 +38,7 @@ internal static class ShownValues
     /// <summary>Whether a custom field is the additional folders field, which is shown as a list of folders.</summary>
     /// <param name="field">Custom field.</param>
     /// <returns><see langword="true"/> for a text field named <see cref="AdditionalFolders.FieldName"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="field"/> is <see langword="null"/>.</exception>
     public static bool IsAdditionalFolders(CustomField field)
     {
         ArgumentNullException.ThrowIfNull(field);
@@ -51,6 +53,7 @@ internal static class ShownValues
     /// </summary>
     /// <param name="address">Address as stored; it need not be a valid absolute URI.</param>
     /// <returns>The address as it may be shown.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="address"/> is <see langword="null"/>.</exception>
     public static string MaskUri(string address)
     {
         ArgumentNullException.ThrowIfNull(address);
@@ -74,6 +77,7 @@ internal static class ShownValues
     /// The user name, or <see langword="null"/> when the item has none, a finding lies at <c>login.username</c>, or the scanner
     /// finds a secret in its text, such as a token stored as the user name.
     /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="item"/> or <paramref name="findings"/> is <see langword="null"/>.</exception>
     public static string? Username(VaultItem item, IReadOnlyList<SecretFinding> findings)
     {
         ArgumentNullException.ThrowIfNull(item);

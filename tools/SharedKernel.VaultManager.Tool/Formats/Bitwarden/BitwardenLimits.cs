@@ -29,6 +29,7 @@ internal static class BitwardenLimits
     /// <summary>Length of a value once encrypted as a Bitwarden type 2 encrypted string.</summary>
     /// <param name="value">Plaintext value.</param>
     /// <returns>Encrypted string length in characters.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static int EncryptedLength(string value)
     {
         ArgumentNullException.ThrowIfNull(value);

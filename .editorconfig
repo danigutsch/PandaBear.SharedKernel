@@ -137,8 +137,7 @@ dotnet_diagnostic.SKSTYLE001.severity = suggestion
 dotnet_diagnostic.SKSTYLE002.severity = suggestion
 dotnet_diagnostic.SKSTYLE003.severity = suggestion
 dotnet_diagnostic.SKSTYLE004.severity = suggestion
-# Staged adoption of SKSTYLE018. Owner: SharedKernel maintainers. Remove when existing undocumented throws are documented.
-dotnet_diagnostic.SKSTYLE018.severity = suggestion
+dotnet_diagnostic.SKSTYLE018.severity = warning
 dotnet_diagnostic.SKTEST001.severity = warning
 dotnet_diagnostic.SKTEST002.severity = warning
 dotnet_diagnostic.SKTEST003.severity = warning
@@ -263,6 +262,11 @@ dotnet_diagnostic.CA1716.severity = none
 dotnet_diagnostic.CS1591.severity = none
 sharedkernel_style_document_public_members = true
 dotnet_diagnostic.SKSTYLE004.severity = suggestion
+dotnet_diagnostic.SKSTYLE018.severity = none
+
+# Benchmarks and samples are not consumer API surface, so thrown exceptions need no documentation.
+[{benchmarks,samples}/**.cs]
+dotnet_diagnostic.SKSTYLE018.severity = none
 
 # Reqnroll discovers binding and generated test support types by reflection.
 # Owner: behavior-test maintainers. Remove when unused binding types can be internalized safely.

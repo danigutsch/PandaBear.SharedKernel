@@ -37,6 +37,8 @@ public sealed class ControlledEventEnvelopePublisher : IEventEnvelopePublisher, 
     /// <summary>
     /// Counts the invocation, signals that it started and waits until it is released; a third call throws InvalidOperationException.
     /// </summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="envelope"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Thrown on the third and every later call.</exception>
     public async ValueTask Publish(EventEnvelope envelope, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(envelope);

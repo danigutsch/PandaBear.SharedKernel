@@ -22,6 +22,7 @@ internal sealed class IntegrationEventTransportDbContextConfiguration<TContext> 
     /// Creates a configuration that reads the context's named integration event storage options.
     /// </summary>
     /// <param name="storageOptions">Monitor that supplies the per-context storage options.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="storageOptions"/> is <see langword="null"/>.</exception>
     public IntegrationEventTransportDbContextConfiguration(IOptionsMonitor<IntegrationEventStorageOptions> storageOptions)
     {
         ArgumentNullException.ThrowIfNull(storageOptions);

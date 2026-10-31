@@ -17,6 +17,7 @@ public static class PostgreSqlSessionAdvisoryLock
     /// <param name="lockKey">The caller-defined 64-bit advisory lock key.</param>
     /// <param name="ct">The cancellation token.</param>
     /// <returns>A lease whose disposal closes the session and releases the lock.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="dataSource"/> is <see langword="null"/>.</exception>
     /// <remarks>Callers own lock-key derivation and must retain the lease through their critical section.</remarks>
     public static async ValueTask<IAsyncDisposable> Acquire(
         NpgsqlDataSource dataSource,

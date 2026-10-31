@@ -11,6 +11,7 @@ public static class Option
     /// <typeparam name="T">The wrapped non-null type.</typeparam>
     /// <param name="value">The value to wrap.</param>
     /// <returns>An option containing <paramref name="value"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static Option<T> Some<T>(T value)
         where T : notnull
     {

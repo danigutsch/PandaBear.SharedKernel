@@ -10,6 +10,7 @@ public static class ApiDeprecationPolicyExtensions
     /// </summary>
     /// <param name="definition">The API version definition.</param>
     /// <returns><see langword="true"/> when deprecation metadata exists; otherwise, <see langword="false"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="definition"/> is <see langword="null"/>.</exception>
     public static bool HasDeprecationPolicy(this ApiVersionDefinition definition)
     {
         ArgumentNullException.ThrowIfNull(definition);
@@ -23,6 +24,7 @@ public static class ApiDeprecationPolicyExtensions
     /// <param name="definition">The API version definition.</param>
     /// <param name="date">The date to compare.</param>
     /// <returns><see langword="true"/> when the sunset date has passed; otherwise, <see langword="false"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="definition"/> is <see langword="null"/>.</exception>
     public static bool HasSunsetOnOrBefore(this ApiVersionDefinition definition, DateOnly date)
     {
         ArgumentNullException.ThrowIfNull(definition);

@@ -25,6 +25,7 @@ internal static class KeyClassifier
     /// <summary>Normalizes a label: lowercase, without <c>_ - .</c> and spaces.</summary>
     /// <param name="key">Label.</param>
     /// <returns>Normalized label.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="key"/> is <see langword="null"/>.</exception>
     [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Labels are matched against lowercase multilingual keywords.")]
     public static string Normalize(string key)
     {

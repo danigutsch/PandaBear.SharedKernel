@@ -7,6 +7,7 @@ public sealed class CompositeDomainEventDispatcher : IDomainEventDispatcher
 
     /// <summary>Initializes a composite dispatcher with the registered domain-event handlers.</summary>
     /// <param name="handlers">The handlers invoked for every domain event.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="handlers"/> is <see langword="null"/>.</exception>
     public CompositeDomainEventDispatcher(IEnumerable<IDomainEventDispatchHandler> handlers)
     {
         ArgumentNullException.ThrowIfNull(handlers);

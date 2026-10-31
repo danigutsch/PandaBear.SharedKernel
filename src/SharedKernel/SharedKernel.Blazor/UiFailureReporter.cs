@@ -47,6 +47,7 @@ public sealed class UiFailureReporter : IUiFailureReporter
     /// <summary>Initializes a reporter.</summary>
     /// <param name="logger">The logger.</param>
     /// <param name="meterFactory">The factory that creates the package meter.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="logger"/> or <paramref name="meterFactory"/> is <see langword="null"/>.</exception>
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "IMeterFactory owns and disposes the meter.")]
     public UiFailureReporter(ILogger<UiFailureReporter> logger, IMeterFactory meterFactory)
     {

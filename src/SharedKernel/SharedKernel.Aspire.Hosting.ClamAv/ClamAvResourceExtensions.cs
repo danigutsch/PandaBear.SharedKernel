@@ -48,6 +48,7 @@ public static class ClamAvResourceExtensions
     /// <param name="name">The name of the volume. Defaults to an auto-generated name based on the application and resource names.</param>
     /// <param name="isReadOnly">A flag that indicates if this is a read-only volume.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<ClamAvResource> WithDataVolume(this IResourceBuilder<ClamAvResource> builder, string? name = null, bool isReadOnly = false)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -62,6 +63,8 @@ public static class ClamAvResourceExtensions
     /// <param name="source">The source directory on the host to mount into the container.</param>
     /// <param name="isReadOnly">A flag that indicates if this is a read-only mount.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="source"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<ClamAvResource> WithDataBindMount(this IResourceBuilder<ClamAvResource> builder, string source, bool isReadOnly = false)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -76,6 +79,7 @@ public static class ClamAvResourceExtensions
     /// <param name="builder">The resource builder.</param>
     /// <param name="port">The port to bind on the host. If <see langword="null"/> is used random port will be assigned.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<ClamAvResource> WithHostPort(this IResourceBuilder<ClamAvResource> builder, int? port)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -89,6 +93,7 @@ public static class ClamAvResourceExtensions
     /// <param name="builder">The resource builder.</param>
     /// <param name="enabled"><see langword="true"/> to run the FreshClam daemon, which updates the virus definitions; otherwise <see langword="false"/>.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// FreshClam runs unless it is disabled. Disable it when the virus definitions are supplied by the image, a mounted volume, or another update process.
     /// </remarks>
@@ -106,6 +111,7 @@ public static class ClamAvResourceExtensions
     /// <param name="destination">The resource where the environment variables are injected.</param>
     /// <param name="clamAv">The ClamAV resource to connect to.</param>
     /// <returns>A reference to the <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="destination"/> or <paramref name="clamAv"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// The variables are <c>MalwareScanning__ClamAv__Host</c> and <c>MalwareScanning__ClamAv__Port</c>, which the
     /// <c>PandaBear.SharedKernel.MalwareScanning.ClamAv</c> package reads.

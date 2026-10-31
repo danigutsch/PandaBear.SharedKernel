@@ -22,6 +22,7 @@ internal sealed class GeneratedMarkdownUpdater(string rootPath, string docsRelat
     /// <param name="checkOnly">Whether to detect drift without writing files.</param>
     /// <param name="replacements">Generated block names, target paths, and replacement content.</param>
     /// <returns>Repository-relative file paths changed or stale.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="replacements"/> is <see langword="null"/>.</exception>
     public List<string> Update(
         bool checkOnly,
         IReadOnlyList<(string Name, string TargetPath, string Replacement)> replacements)
@@ -97,6 +98,7 @@ internal sealed class GeneratedMarkdownUpdater(string rootPath, string docsRelat
     }
 
     /// <summary>Writes the content to a temporary file and moves it over the target, so a failure never leaves a half-written document.</summary>
+    /// <exception cref="InvalidOperationException">The directory of <paramref name="path"/> cannot be determined.</exception>
     internal static void WriteAtomically(string path, string content)
     {
         var directoryPath = Path.GetDirectoryName(path)

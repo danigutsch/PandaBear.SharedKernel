@@ -10,6 +10,7 @@ public static class SnapshotText
     /// </summary>
     /// <param name="text">The text to normalize.</param>
     /// <returns>The normalized text.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="text"/> is <see langword="null"/>.</exception>
     public static string Normalize(string text)
     {
         ArgumentNullException.ThrowIfNull(text);

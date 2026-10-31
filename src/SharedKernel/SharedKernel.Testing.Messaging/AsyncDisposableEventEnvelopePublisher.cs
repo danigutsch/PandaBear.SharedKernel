@@ -17,6 +17,7 @@ public sealed class AsyncDisposableEventEnvelopePublisher : IEventEnvelopePublis
     /// <summary>
     /// Validates the envelope and cancellation token, then completes without publishing anything.
     /// </summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="envelope"/> is <see langword="null"/>.</exception>
     public ValueTask Publish(EventEnvelope envelope, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(envelope);

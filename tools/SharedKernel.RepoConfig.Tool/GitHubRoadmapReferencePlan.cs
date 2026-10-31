@@ -34,6 +34,7 @@ internal sealed class GitHubRoadmapReferencePlan
     /// <summary>Plans reference updates for every item of the project from the snapshot.</summary>
     /// <param name="project">Roadmap project.</param>
     /// <param name="snapshot">GitHub issue snapshot.</param>
+    /// <exception cref="InvalidOperationException">A resolved reference or node identity maps to multiple roadmap items.</exception>
     public static GitHubRoadmapReferencePlan Create(RoadmapProject project, GitHubRoadmapReconcileSnapshot snapshot)
     {
         List<AtomicFileWrite> writes = [];

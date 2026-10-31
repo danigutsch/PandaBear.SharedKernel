@@ -8,6 +8,7 @@ namespace PandaBear.Documentation;
 internal static class DocumentationSourceFacts
 {
     /// <summary>Returns the type names used as case patterns in the switch statements of the selected method.</summary>
+    /// <exception cref="InvalidOperationException">The selected method uses typeof-based event dispatch or a case pattern that cannot be parsed.</exception>
     public static string[] ReadSwitchCaseTypeNames(string sourcePath, string methodName, int parameterCount)
     {
         var syntaxRoot = ParseSource(File.ReadAllText(sourcePath), sourcePath);
@@ -100,6 +101,7 @@ internal static class DocumentationSourceFacts
     }
 
     /// <summary>Reads the fact identifiers listed between a document's generated-content markers.</summary>
+    /// <exception cref="InvalidOperationException">The marked section is missing or malformed, or its identifiers are not unique.</exception>
     public static string[] ReadMarkedFactIdentifiers(
         string fullDocumentPath,
         string documentPath,
@@ -147,6 +149,7 @@ internal static class DocumentationSourceFacts
     }
 
     /// <summary>Throws when the marked content block in the document is missing or malformed.</summary>
+    /// <exception cref="InvalidOperationException">The marked content block is missing, malformed, or empty.</exception>
     public static void ValidateMarkedContentBlock(
         string fullDocumentPath,
         string documentPath,

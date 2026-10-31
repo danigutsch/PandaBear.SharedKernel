@@ -38,6 +38,7 @@ internal sealed class Merger(TimeProvider timeProvider)
     /// <param name="policy">Conflict policy.</param>
     /// <param name="decisions">User decisions, or <see langword="null"/> for none.</param>
     /// <returns>The merged export, the unresolved conflicts, and a value-free report.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="groups"/> or <paramref name="policy"/> is <see langword="null"/>.</exception>
     public MergeResult Merge(IReadOnlyList<MatchGroup> groups, MergePolicy policy, MergeDecisions? decisions)
     {
         ArgumentNullException.ThrowIfNull(groups);
