@@ -32,6 +32,7 @@ the default .NET analyzer set.
 | `SKSTYLE015` | Disabled | Require `PropertyNameCaseInsensitive = true` on API JSON serializer contexts. |
 | `SKSTYLE016` | Warning | Name a file after its single top-level type; a generic type may use `Name{T}.cs`. |
 | `SKSTYLE017` | Warning | Document internal types and members, which `CS1591` does not cover. |
+| `SKSTYLE018` | Warning | List every exception a documented, non-private method, constructor, or operator throws in an `<exception>` tag. |
 
 ## Configuration
 
@@ -319,3 +320,24 @@ sharedkernel_style_document_public_members = true
 
 A repository with a large backlog can stage the rollout per scope with `suggestion` severity, an owner, and a removal
 condition; do not use `none` in production projects.
+
+## SKSTYLE018
+
+A non-private method, constructor, or operator that has an XML documentation comment must list each exception it throws
+directly in an `<exception cref="...">` tag. Detected throws are `throw new X(...)`, throw expressions, and static
+`Exception.ThrowIf*` helpers on exception types (`ArgumentNullException.ThrowIfNull`, `ObjectDisposedException.ThrowIf`,
+`ArgumentOutOfRangeException.ThrowIfNegative`, and similar). A tag naming the thrown type or any base type satisfies the rule. One
+diagnostic is reported per missing exception type.
+
+Not reported: throws handled by an enclosing `try` with an unfiltered matching `catch`, rethrows (`throw;`), throws inside lambdas
+and local functions, throws of a value statically typed as plain `Exception`, overrides, explicit interface implementations,
+accessors, members documented with `<inheritdoc />`, and generated code. Members without any documentation comment are left to
+`CS1591` and `SKSTYLE017`. Exceptions thrown by callees are not traced.
+
+Unlike Roslynator `RCS1140`, the rule recognizes the `ThrowIf*` helpers, ignores handled throws, accepts base-type tags,
+reports each type once, and needs no extra package. It has no code fix; add the tag by hand.
+
+```ini
+[*.cs]
+dotnet_diagnostic.SKSTYLE018.severity = warning
+```
