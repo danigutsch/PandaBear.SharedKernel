@@ -4,3 +4,12 @@ PandaBear.Mediator.EntityFrameworkCore.EfCoreCommandTransactionBehavior<TRequest
 PandaBear.Mediator.EntityFrameworkCore.EfCoreCommandTransactionBehavior<TRequest, TResponse>.Handle(TRequest request, PandaBear.Mediator.RequestHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
 PandaBear.Mediator.EntityFrameworkCore.EfCoreMediatorServiceCollectionExtensions
 static PandaBear.Mediator.EntityFrameworkCore.EfCoreMediatorServiceCollectionExtensions.AddEfCoreCommandTransaction<TContext, TRequest, TResponse>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.Mediator.EntityFrameworkCore.IAfterCommit<TRequest, TResponse>
+PandaBear.Mediator.EntityFrameworkCore.IAfterCommit<TRequest, TResponse>.Handle(TRequest request, TResponse response, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Mediator.EntityFrameworkCore.IAfterRollback<TRequest, TResponse>
+PandaBear.Mediator.EntityFrameworkCore.IAfterRollback<TRequest, TResponse>.Handle(TRequest request, TResponse response, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Mediator.EntityFrameworkCore.ITransactionLockDeclaration
+PandaBear.Mediator.EntityFrameworkCore.ITransactionLockDeclaration.GetTransactionLocks(Microsoft.EntityFrameworkCore.DbContext! dbContext, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<string!>!>
+PandaBear.Mediator.EntityFrameworkCore.ResultTransactionBehavior<TRequest, TResponse>
+PandaBear.Mediator.EntityFrameworkCore.ResultTransactionBehavior<TRequest, TResponse>.Handle(TRequest request, PandaBear.Mediator.RequestHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
+PandaBear.Mediator.EntityFrameworkCore.ResultTransactionBehavior<TRequest, TResponse>.ResultTransactionBehavior(Microsoft.EntityFrameworkCore.DbContext! dbContext, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory! scopeFactory, Microsoft.Extensions.Logging.ILogger! logger) -> void

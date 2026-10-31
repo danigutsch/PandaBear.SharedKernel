@@ -36,6 +36,11 @@ internal static class TestTraits
     public const string CommandTransactionScopeCapability = "command-transaction-scope";
 
     /// <summary>
+    /// Capability value for tests of the result transaction pipeline behavior.
+    /// </summary>
+    public const string ResultTransactionBehaviorCapability = "result-transaction-behavior";
+
+    /// <summary>
     /// Capability value for tests of domain event dispatch.
     /// </summary>
     public const string DomainEventDispatchCapability = "domain-event-dispatch";
