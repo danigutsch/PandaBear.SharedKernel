@@ -67,7 +67,7 @@ internal static class DiscoveryReportEmitter
             $"Response={request.Response.MetadataName}",
             $"ResponseGenericDefinition={request.Response.GenericTypeDefinitionMetadataName ?? "<none>"}",
             $"ResponseTypeArguments={FormatValues(request.Response.TypeArguments)}",
-            $"IsValueType={request.IsValueType}",
+            $"RequestIsValueType={request.IsValueType}",
             $"Handlers={FormatValues(request.Handlers.Select(FormatHandler))}",
             $"Pipelines={FormatValues(request.Pipelines.Select(FormatPipeline))}",
         };

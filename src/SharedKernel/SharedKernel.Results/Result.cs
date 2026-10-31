@@ -5,7 +5,7 @@ namespace PandaBear.Results;
 /// <summary>
 /// Represents the result of an operation that can succeed or fail.
 /// </summary>
-public readonly struct Result : IEquatable<Result>
+public readonly struct Result : IEquatable<Result>, IResultLike<Result>
 {
     private readonly ResultError? error;
     private const string UninitializedResultMessage = "Result status is not initialized.";
@@ -182,6 +182,20 @@ public readonly struct Result : IEquatable<Result>
         ArgumentNullException.ThrowIfNull(value);
 
         return new(ResultStatus.Accepted, value, null);
+    }
+
+    /// <summary>
+    /// Creates a failed result from an existing error; the status is derived from <see cref="ResultError.Code"/>.
+    /// </summary>
+    /// <param name="resultError">The error to carry.</param>
+    /// <returns>The failed result.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="resultError"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">The error is an invalid error without field details.</exception>
+    public static Result FromError(ResultError resultError)
+    {
+        ArgumentNullException.ThrowIfNull(resultError);
+
+        return new(ResultErrorStatusMap.GetFailureStatus(resultError, nameof(resultError)), resultError);
     }
 
     /// <summary>

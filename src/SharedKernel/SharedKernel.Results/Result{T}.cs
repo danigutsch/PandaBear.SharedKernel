@@ -6,7 +6,7 @@ namespace PandaBear.Results;
 /// Represents the result of an operation that can succeed with a value or fail with an error.
 /// </summary>
 /// <typeparam name="T">The success value type.</typeparam>
-public readonly struct Result<T> : IEquatable<Result<T>>
+public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     where T : notnull
 {
     private readonly T? value;
@@ -252,35 +252,42 @@ public readonly struct Result<T> : IEquatable<Result<T>>
         return this;
     }
 
-    private static Result<T> CreateEnsureFailureResult(ResultError error)
+    private static Result<T> CreateEnsureFailureResult(ResultError error) =>
+        new(ResultErrorStatusMap.GetFailureStatus(error, nameof(error)), default, error);
+
+    /// <summary>
+    /// Creates a failed result from an existing error; the status is derived from <see cref="ResultError.Code"/>.
+    /// </summary>
+    /// <param name="resultError">The error to carry.</param>
+    /// <returns>The failed result.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="resultError"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">The error is an invalid error without field details.</exception>
+    public static Result<T> FromError(ResultError resultError)
     {
-        ValidateEnsureFailureError(error);
-        return new Result<T>(GetEnsureFailureStatus(error), default, error);
+        ArgumentNullException.ThrowIfNull(resultError);
+
+        return new(ResultErrorStatusMap.GetFailureStatus(resultError, nameof(resultError)), default, resultError);
     }
 
-    private static void ValidateEnsureFailureError(ResultError error)
-    {
-        if (string.Equals(error.Code, ResultErrorCodes.Invalid, StringComparison.Ordinal)
-            && (error.ValidationErrors is null || error.ValidationErrors.Count == 0))
-        {
-            throw new ArgumentException(ResultInvariantMessages.ValidationErrorsMustContainFieldDetails, nameof(error));
-        }
-    }
+    static Result<T> IResultLike<Result<T>>.Invalid(string detail, string field, string message) =>
+        Result.Invalid<T>(detail, field, message);
 
-    private static ResultStatus GetEnsureFailureStatus(ResultError error)
-    {
-        return error.Code switch
-        {
-            ResultErrorCodes.Invalid => ResultStatus.Invalid,
-            ResultErrorCodes.NotFound => ResultStatus.NotFound,
-            ResultErrorCodes.Unauthorized => ResultStatus.Unauthorized,
-            ResultErrorCodes.Forbidden => ResultStatus.Forbidden,
-            ResultErrorCodes.Conflict => ResultStatus.Conflict,
-            ResultErrorCodes.CriticalError => ResultStatus.CriticalError,
-            ResultErrorCodes.Unavailable => ResultStatus.Unavailable,
-            _ => ResultStatus.Error,
-        };
-    }
+    static Result<T> IResultLike<Result<T>>.Invalid(string detail, IReadOnlyDictionary<string, string[]> validationErrors) =>
+        Result.Invalid<T>(detail, validationErrors);
+
+    static Result<T> IResultLike<Result<T>>.NotFound(string detail) => Result.NotFound<T>(detail);
+
+    static Result<T> IResultLike<Result<T>>.Unauthorized(string detail) => Result.Unauthorized<T>(detail);
+
+    static Result<T> IResultLike<Result<T>>.Forbidden(string detail) => Result.Forbidden<T>(detail);
+
+    static Result<T> IResultLike<Result<T>>.Conflict(string detail) => Result.Conflict<T>(detail);
+
+    static Result<T> IResultLike<Result<T>>.Error(string detail) => Result.Error<T>(detail);
+
+    static Result<T> IResultLike<Result<T>>.CriticalError(string detail) => Result.CriticalError<T>(detail);
+
+    static Result<T> IResultLike<Result<T>>.Unavailable(string detail) => Result.Unavailable<T>(detail);
 
     /// <summary>
     /// Returns the current error details when the result failed.
