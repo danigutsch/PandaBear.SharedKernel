@@ -1,0 +1,49 @@
+#nullable enable
+const PandaBear.DispositionHold.DispositionScope.MaxKeyLength = 128 -> int
+const PandaBear.DispositionHold.DispositionScope.MaxKindLength = 64 -> int
+const PandaBear.DispositionHold.Hold.MaxIdentifierLength = 128 -> int
+override PandaBear.DispositionHold.DispositionScope.ToString() -> string!
+PandaBear.DispositionHold.DispositionHoldDecision
+PandaBear.DispositionHold.DispositionHoldDecision.DispositionHoldDecision() -> void
+PandaBear.DispositionHold.DispositionHoldDecision.HoldIds.get -> System.Collections.Generic.IReadOnlyList<System.Guid>!
+PandaBear.DispositionHold.DispositionHoldDecision.IsClear.get -> bool
+PandaBear.DispositionHold.DispositionHoldStateUnknownException
+PandaBear.DispositionHold.DispositionHoldStateUnknownException.DispositionHoldStateUnknownException() -> void
+PandaBear.DispositionHold.DispositionHoldStateUnknownException.DispositionHoldStateUnknownException(string! message) -> void
+PandaBear.DispositionHold.DispositionHoldStateUnknownException.DispositionHoldStateUnknownException(string! message, System.Exception! innerException) -> void
+PandaBear.DispositionHold.DispositionScope
+PandaBear.DispositionHold.DispositionScope.DispositionScope() -> void
+PandaBear.DispositionHold.DispositionScope.Key.get -> string!
+PandaBear.DispositionHold.DispositionScope.Kind.get -> string!
+PandaBear.DispositionHold.Hold
+PandaBear.DispositionHold.Hold.AuthorityReference.get -> string!
+PandaBear.DispositionHold.Hold.Basis.get -> PandaBear.DispositionHold.HoldBasis
+PandaBear.DispositionHold.Hold.EffectiveFrom.get -> System.DateTimeOffset
+PandaBear.DispositionHold.Hold.ExpiresAt.get -> System.DateTimeOffset?
+PandaBear.DispositionHold.Hold.Id.get -> System.Guid
+PandaBear.DispositionHold.Hold.IsReleased.get -> bool
+PandaBear.DispositionHold.Hold.PlacedAt.get -> System.DateTimeOffset
+PandaBear.DispositionHold.Hold.PlacedBy.get -> string!
+PandaBear.DispositionHold.Hold.PurposeCode.get -> string!
+PandaBear.DispositionHold.Hold.Release(string? releasedBy, string? reasonCode, System.DateTimeOffset releasedAt) -> void
+PandaBear.DispositionHold.Hold.ReleasedAt.get -> System.DateTimeOffset?
+PandaBear.DispositionHold.Hold.ReleasedBy.get -> string?
+PandaBear.DispositionHold.Hold.ReleaseReasonCode.get -> string?
+PandaBear.DispositionHold.Hold.RestrainsAt(System.DateTimeOffset at) -> bool
+PandaBear.DispositionHold.Hold.ReviewDueAt.get -> System.DateTimeOffset
+PandaBear.DispositionHold.Hold.Scope.get -> PandaBear.DispositionHold.DispositionScope
+PandaBear.DispositionHold.HoldBasis
+PandaBear.DispositionHold.HoldBasis.DataSubjectRestriction = 2 -> PandaBear.DispositionHold.HoldBasis
+PandaBear.DispositionHold.HoldBasis.Investigation = 4 -> PandaBear.DispositionHold.HoldBasis
+PandaBear.DispositionHold.HoldBasis.LegalClaim = 0 -> PandaBear.DispositionHold.HoldBasis
+PandaBear.DispositionHold.HoldBasis.LegalObligation = 1 -> PandaBear.DispositionHold.HoldBasis
+PandaBear.DispositionHold.HoldBasis.RegulatoryInquiry = 3 -> PandaBear.DispositionHold.HoldBasis
+PandaBear.DispositionHold.IDispositionHoldGuard
+PandaBear.DispositionHold.IDispositionHoldGuard.Check(System.Collections.Generic.IReadOnlyCollection<PandaBear.DispositionHold.DispositionScope>! scopes, System.DateTimeOffset at, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.DispositionHold.DispositionHoldDecision>
+PandaBear.DispositionHold.IDispositionHoldStore
+PandaBear.DispositionHold.IDispositionHoldStore.Add(PandaBear.DispositionHold.Hold! hold, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.DispositionHold.IDispositionHoldStore.Find(System.Guid id, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.DispositionHold.Hold?>
+static PandaBear.DispositionHold.DispositionHoldDecision.Clear.get -> PandaBear.DispositionHold.DispositionHoldDecision
+static PandaBear.DispositionHold.DispositionHoldDecision.HeldBy(System.Collections.Generic.IReadOnlyList<System.Guid>! holdIds) -> PandaBear.DispositionHold.DispositionHoldDecision
+static PandaBear.DispositionHold.DispositionScope.From(string? kind, string? key) -> PandaBear.DispositionHold.DispositionScope
+static PandaBear.DispositionHold.Hold.Place(PandaBear.DispositionHold.DispositionScope scope, PandaBear.DispositionHold.HoldBasis basis, string? purposeCode, string? authorityReference, string? placedBy, System.DateTimeOffset placedAt, System.DateTimeOffset effectiveFrom, System.DateTimeOffset reviewDueAt, System.DateTimeOffset? expiresAt = null) -> PandaBear.DispositionHold.Hold!

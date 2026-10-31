@@ -51,6 +51,36 @@ public sealed class HtmlDocumentRendererTests
     }
 
     [Fact]
+    public void Render_embeds_a_raster_data_uri_logo()
+    {
+        // Arrange
+        const string logo = "data:image/png;base64,iVBORw0KGgo=";
+        var request = new DocumentRenderRequest("en", "Tour service contract", [new DocumentSection("Travel", [new DocumentField("Dates", "2026-07-11", DocumentPrivacyClassification.Public)])], new DocumentBrandingSnapshot("B1", "Example Company", new Uri(logo, UriKind.Absolute)));
+
+        // Act
+        var html = Encoding.UTF8.GetString(new HtmlDocumentRenderer().Render(request));
+
+        // Assert
+        html.ShouldContain($"<img src=\"{logo}\"", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("data:image/svg+xml;base64,PHN2Zy8+")]
+    [InlineData("data:image/png;base64,/9j/")]
+    [InlineData("data:text/html;base64,PGI+")]
+    public void Render_excludes_non_raster_or_mismatched_data_uri_logos(string logo)
+    {
+        // Arrange
+        var request = new DocumentRenderRequest("en", "Tour service contract", [new DocumentSection("Travel", [new DocumentField("Dates", "2026-07-11", DocumentPrivacyClassification.Public)])], new DocumentBrandingSnapshot("B1", "Example Company", new Uri(logo, UriKind.Absolute)));
+
+        // Act
+        var html = Encoding.UTF8.GetString(new HtmlDocumentRenderer().Render(request));
+
+        // Assert
+        html.ShouldNotContain("<img", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Render_excludes_unsafe_logo_uris()
     {
         // Arrange

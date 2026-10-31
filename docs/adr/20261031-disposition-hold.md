@@ -1,0 +1,25 @@
+# Disposition hold packages
+
+Date: 2026-10-31. Status: accepted.
+
+Applications that purge, anonymize or erase data need one answer to a narrow question: is anything restraining this disposition right now? Each application currently answers it with its own code or with a comment. This record decides what SharedKernel owns for that answer. It amends [ADR-027](20260624-provider-specific-sharedkernel-infrastructure-modules.md) only by adding an example of a neutral contract with a PostgreSQL provider; retention stays host-owned as ADR-027 already says.
+
+## Decision
+
+- **Name:** `DispositionHold`. "Audit" collides with `PandaBear.AuditTrail`. "Compliance" collides with `Microsoft.Extensions.Compliance` and with the acceptance criterion of the shared GDPR/LGPD tracking issue that no shared package encodes jurisdiction-specific legal policy. "Legal hold" is too narrow: the same restraint serves an investigation or a data-subject restriction request.
+- **`PandaBear.SharedKernel.DispositionHold.Abstractions`:** no dependencies. A `Hold` has an opaque scope (`kind` and `key`), a neutral basis (`LegalClaim`, `LegalObligation`, `DataSubjectRestriction`, `RegulatoryInquiry`, `Investigation`), an opaque purpose code, an opaque reference to the restricted record that authorizes it, the placing actor, effective, review and optional expiry dates, and one explicit release. `IDispositionHoldGuard.Check` answers whether any hold restrains a set of scopes at a time. Every text field accepts only ASCII letters, digits and `. _ : -`, so names, e-mail addresses and free text cannot be stored by accident. The guard throws `DispositionHoldStateUnknownException` when it cannot decide, and callers must treat that as a refusal.
+- **`PandaBear.SharedKernel.DispositionHold.EntityFrameworkCore`:** an EF Core store and guard for PostgreSQL, registered per `DbContext`. Placing a hold and checking for one take PostgreSQL transaction-scoped advisory locks per scope, so a hold placed while a purge is checking is either seen by that purge or waits for it to commit. Without an open transaction the store refuses, because a lock taken outside a transaction releases at once and protects nothing. It also refuses any isolation level above read committed: repeatable read and serializable take their snapshot at the first statement, which can predate a hold committed while the lock was awaited, so the check could miss it. The transaction belongs to the caller, and the hold must be saved and committed in it.
+- **Stays in the host:** retention periods and defaults, which bases a product accepts, who may place or release a hold, review workflow and reminders, evidence of purges, the schema owner and migrations, and the user interface. The packages define no retention period, no legal basis text and no default.
+
+## Lock ordering
+
+Hold locks are the last lock tier. A transaction takes every lock its command declares first and hold locks afterwards, and never asks for a command lock after a hold lock. Within the tier, locks are taken in ascending key order, so two transactions over overlapping scope sets cannot cross. A purge calls `Check` once with all of its scopes. PostgreSQL's deadlock detector remains the backstop: it aborts one transaction with `40P01`, which EF Core's retry strategy treats as transient. The guard wraps other failures as `DispositionHoldStateUnknownException` and keeps the original exception as the inner exception. A shared ordered-lock helper is planned in `SharedKernel.Npgsql`; the hold store takes its locks through one internal class so it can adopt the helper without a public change.
+
+## Cost and alternatives
+
+- Two more preview packages and their public API baselines. The EF module references `SharedKernel.Npgsql` (and so `Npgsql`, already a pinned first-party dependency) for the advisory-lock key derivation; no new third-party package is introduced.
+- The EF module supports PostgreSQL only and says so by refusing other providers. A second provider needs its own module.
+- Rejected: a hold flag on each application table. It repeats the guard in every purge path and cannot serialize a hold placement against a purge in progress.
+- Rejected: a policy engine that decides retention. That is jurisdiction-specific legal policy and belongs to the consuming product and its counsel.
+
+Registry publication, releases and consumer adoption remain separate actions.

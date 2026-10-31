@@ -9,6 +9,12 @@ namespace PandaBear.DocumentRendering;
 /// </summary>
 public sealed class HtmlDocumentRenderer : IDocumentRenderer
 {
+    /// <summary>
+    /// The longest embedded raster logo URI the renderer accepts. It keeps a document bounded and stays under the
+    /// roughly 65,000 characters that <see cref="Uri" /> accepts, so a data URI that the snapshot can hold fits here.
+    /// </summary>
+    private const int MaxEmbeddedLogoLength = 60_000;
+
     /// <inheritdoc />
     public byte[] Render(DocumentRenderRequest request)
     {
@@ -79,7 +85,9 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
         }
 
         builder.Append("<header aria-label=\"Document branding\">");
-        var safeLogoUri = WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(branding.LogoUri?.OriginalString, 2048);
+        var logoText = branding.LogoUri?.OriginalString;
+        var safeLogoUri = WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(logoText, 2048)
+            ?? WebAssetUriSanitizer.NormalizeRasterDataImage(logoText, MaxEmbeddedLogoLength);
         if (safeLogoUri is not null)
         {
             builder.Append("<img src=\"").Append(HtmlEncode(safeLogoUri)).Append("\" alt=\"")

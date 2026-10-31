@@ -39,3 +39,10 @@ public static class Example
 Package ID: `PandaBear.SharedKernel.DocumentRendering`. C# namespace: `PandaBear.DocumentRendering`. Assembly/project identity: `SharedKernel.DocumentRendering`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+## Logos
+
+`DocumentBrandingSnapshot.LogoUri` renders when it is a root-relative or HTTPS URI, or a base64 `data:` URI of a PNG,
+JPEG or WebP image whose bytes match the declared type (up to 60,000 characters). SVG and other types are never
+rendered. An embedded logo makes the finalized document self-contained, so it does not change when the hosted file does.
+The renderer checks the type signature only; the application that accepts the upload must decode, scan and re-encode it.

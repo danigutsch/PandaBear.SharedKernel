@@ -41,6 +41,11 @@ internal static class TestTraits
     public const string DomainEventDispatchCapability = "domain-event-dispatch";
 
     /// <summary>
+    /// Capability value for tests of the disposition hold store and guard.
+    /// </summary>
+    public const string DispositionHoldCapability = "disposition-hold";
+
+    /// <summary>
     /// Category value for tests that check provider guard behavior.
     /// </summary>
     public const string ProviderGuardCategory = "provider-guard";

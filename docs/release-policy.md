@@ -46,3 +46,11 @@ and refresh their candidate pins and lock files together; do not install both id
 The separate `PandaBear.SharedKernel.Idempotency.EntityFrameworkCore` provider now depends on
 the renamed contracts package. HTTP retry state belongs to HttpClients; application request
 fingerprinting and transaction/replay policy remain in the consuming application.
+
+## Disposition hold packages
+
+`PandaBear.SharedKernel.DispositionHold.Abstractions` and
+`PandaBear.SharedKernel.DispositionHold.EntityFrameworkCore` are new preview packages. They define a
+jurisdiction-neutral hold model and a fail-closed guard, and a PostgreSQL store for it. They encode no
+retention period and no legal rule; see the [decision](adr/20261031-disposition-hold.md). Adding them to
+a consumer is a separate adoption step.

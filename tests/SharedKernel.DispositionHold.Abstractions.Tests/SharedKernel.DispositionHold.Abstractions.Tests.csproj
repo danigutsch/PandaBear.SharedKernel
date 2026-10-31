@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>PandaBear.DispositionHold.Tests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="PandaBear.DispositionHold" />
+        <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.MTP">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="xunit.v3.mtp-v2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.DispositionHold.Abstractions\SharedKernel.DispositionHold.Abstractions.csproj" />
+    </ItemGroup>
+
+</Project>
