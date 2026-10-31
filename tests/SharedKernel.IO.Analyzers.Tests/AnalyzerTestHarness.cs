@@ -41,13 +41,21 @@ internal static class AnalyzerTestHarness
 
     /// <summary>
     /// Compiles the given source and returns the diagnostics reported by SharedKernelIOAnalyzer.
+    /// Diagnostics that are disabled by default run only when listed in <paramref name="enabledDiagnostics"/>.
     /// </summary>
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
         string source,
         string assemblyName = "SharedKernel.IO.Analyzers.Tests.Dynamic",
-        string path = "TestSource.cs")
+        string path = "TestSource.cs",
+        IEnumerable<string>? enabledDiagnostics = null)
     {
         var compilation = CreateCompilation(source, assemblyName, path);
+        if (enabledDiagnostics is not null)
+        {
+            compilation = compilation.WithOptions(compilation.Options.WithSpecificDiagnosticOptions(
+                enabledDiagnostics.ToDictionary(static id => id, static _ => ReportDiagnostic.Warn)));
+        }
+
         var errors = compilation.GetDiagnostics().Where(static d => d.Severity == DiagnosticSeverity.Error).ToArray();
         if (errors.Length > 0)
         {

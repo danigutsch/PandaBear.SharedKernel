@@ -16,7 +16,7 @@ public sealed class SharedKernelIOAnalyzerTests
         var diagnosticIds = analyzer.SupportedDiagnostics.Select(static descriptor => descriptor.Id);
 
         // Assert
-        diagnosticIds.ShouldBe([IODiagnosticIds.UnboundedBuffering, IODiagnosticIds.HandRolledCopyLoop]);
+        diagnosticIds.ShouldBe([IODiagnosticIds.UnboundedBuffering, IODiagnosticIds.HandRolledCopyLoop, IODiagnosticIds.MissingRequestSizeLimit]);
     }
 
     [Fact]
