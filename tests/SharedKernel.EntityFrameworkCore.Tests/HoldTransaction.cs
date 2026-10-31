@@ -76,6 +76,13 @@ internal sealed class HoldTransaction : IAsyncDisposable
         }
     }
 
+    /// <summary>Rolls the open transaction back and begins a new one, as a retry attempt does.</summary>
+    public async ValueTask Restart(CancellationToken ct)
+    {
+        await dbContext.Database.RollbackTransactionAsync(ct);
+        await dbContext.Database.BeginTransactionAsync(ct);
+    }
+
     /// <summary>Rolls the open transaction back.</summary>
     public async ValueTask Rollback(CancellationToken ct) => await dbContext.Database.RollbackTransactionAsync(ct);
 

@@ -12,5 +12,7 @@ PostgreSQL store and fail-closed guard for `PandaBear.SharedKernel.DispositionHo
 - `Add` and `Check` take PostgreSQL transaction-scoped advisory locks per scope. A hold placed while a purge checks is
   either seen by that purge or waits for it. The locks release at commit or rollback.
 - Lock order: take the locks your command declares first, then call the guard or `Add`. Hold locks are the last tier.
-  Within it, scopes are locked in ascending key order, so overlapping scope sets cannot deadlock each other.
+  Locks go through `PandaBear.Npgsql.PostgreSqlOrderedTransactionLocks` at tier 1, in ascending key order. Call `Check` once
+  with all scopes of a purge: a second call in the same transaction that sorts before a lock already taken is refused
+  (`Check` reports it as `DispositionHoldStateUnknownException`, `Add` throws `InvalidOperationException`).
 - Retention periods, legal bases and who may place a hold stay in the host.

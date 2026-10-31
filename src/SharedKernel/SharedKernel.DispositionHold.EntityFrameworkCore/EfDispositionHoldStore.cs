@@ -12,12 +12,14 @@ namespace PandaBear.DispositionHold.EntityFrameworkCore;
 internal sealed class EfDispositionHoldStore<TContext>(TContext dbContext) : IDispositionHoldStore, IDispositionHoldGuard
     where TContext : DbContext
 {
+    private readonly HoldScopeLock scopeLock = new(dbContext);
+
     /// <inheritdoc />
     public async ValueTask Add(Hold hold, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(hold);
 
-        await HoldScopeLock.Acquire(dbContext, [hold.Scope], ct).ConfigureAwait(false);
+        await scopeLock.Acquire([hold.Scope], ct).ConfigureAwait(false);
         dbContext.Set<Hold>().Add(hold);
     }
 
@@ -34,7 +36,7 @@ internal sealed class EfDispositionHoldStore<TContext>(TContext dbContext) : IDi
         ArgumentNullException.ThrowIfNull(scopes);
         try
         {
-            await HoldScopeLock.Acquire(dbContext, scopes, ct).ConfigureAwait(false);
+            await scopeLock.Acquire(scopes, ct).ConfigureAwait(false);
             if (scopes.Count == 0)
             {
                 return DispositionHoldDecision.Clear;
