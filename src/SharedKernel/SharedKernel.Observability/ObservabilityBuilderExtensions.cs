@@ -18,6 +18,7 @@ public static class ObservabilityBuilderExtensions
     /// Formatted messages and scopes are excluded from OpenTelemetry logs, and <see cref="LogRecordPrivacyProcessor"/>
     /// and <see cref="ActivityPrivacyProcessor"/> are registered, so the privacy baseline applies without a separate call.
     /// Call <see cref="AddTelemetryPrivacy{TBuilder}"/> to add host-owned private attributes.
+    /// Call this before adding exporters so the processors run first.
     /// </summary>
     /// <typeparam name="TBuilder">Host builder type, e.g. WebApplicationBuilder, HostApplicationBuilder.</typeparam>
     /// <param name="builder">The host application builder to configure.</param>
