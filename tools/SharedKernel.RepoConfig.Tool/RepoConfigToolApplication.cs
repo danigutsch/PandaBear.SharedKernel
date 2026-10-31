@@ -275,6 +275,20 @@ internal static class RepoConfigToolApplication
         return 1;
     }
 
+    /// <summary>Verifies that every Dependabot ignore entry names update-types and returns 0 when they do, otherwise reports issues and returns 1.</summary>
+    public static async Task<int> VerifyDependabot(string rootPath, TextWriter output, TextWriter error, CancellationToken ct)
+    {
+        var issues = await DependabotIgnoreVerifier.Verify(rootPath, ct).ConfigureAwait(false);
+        if (issues.Count == 0)
+        {
+            await output.WriteLineAsync("Dependabot ignore entries leave security updates enabled.".AsMemory(), ct).ConfigureAwait(false);
+            return 0;
+        }
+
+        WriteIssues(error, "Dependabot ignore verification failed:", issues);
+        return 1;
+    }
+
     /// <summary>
     /// Verifies the links in the documentation files that the <c>links</c> section of the consumer configuration
     /// selects, or in <paramref name="paths"/> when any are given.
