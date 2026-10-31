@@ -1,6 +1,6 @@
 # Shared telemetry registration
 
-Date: 2026-10-27. Status: accepted.
+Date: 2026-10-27. Status: accepted; the opt-in privacy wiring is superseded by [Telemetry privacy by default](20261031-telemetry-privacy-by-default.md).
 
 Hosts repeat the same OpenTelemetry registration. `SharedKernel.Observability` already owns the shared part, `ConfigureOpenTelemetry()`: redaction, service identity, runtime metrics. This record decides which of the remaining host-side registration steps move into a SharedKernel package.
 

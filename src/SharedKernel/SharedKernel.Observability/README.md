@@ -45,9 +45,11 @@ Both accept an optional `Func<string, bool>` for additional application-sensitiv
 The shared baseline always applies; the callback cannot permit attributes rejected by the baseline.
 Application identifiers and business-specific redaction policy stay with the host.
 
-`AddTelemetryPrivacy()` excludes formatted messages and scopes from OpenTelemetry logs and registers both
-processors. Call it before adding exporters. This example opts into OpenTelemetry-only logging and
-adds one host-owned attribute policy; the generic baseline remains mandatory:
+`ConfigureOpenTelemetry()` already excludes formatted messages and scopes from OpenTelemetry logs and
+registers both processors, so the generic baseline applies by default. `AddTelemetryPrivacy()` adds one
+host-owned attribute policy on top; on its own it applies the baseline too, and the baseline is registered
+once however the two are combined. Call both before adding exporters. This example opts into
+OpenTelemetry-only logging and adds one host-owned attribute policy:
 
 ```csharp
 using Microsoft.Extensions.Hosting;
@@ -66,7 +68,7 @@ builder.AddTelemetryPrivacy(IsPrivateAttribute);
 // Add the host's exporters after the privacy processors.
 ```
 
-`ConfigureOpenTelemetry()` enables classified logging redaction but does not register these processors.
+`ConfigureOpenTelemetry()` also enables classified logging redaction with the default erasing fallback.
 The host selects additional private attributes, logging providers, instrumentation, and exporters.
 The shared baseline removes sensitive HTTP, database, AWS/S3, object-storage, and messaging attributes
 while retaining operational fields such as route templates, methods, status codes, and operation names.

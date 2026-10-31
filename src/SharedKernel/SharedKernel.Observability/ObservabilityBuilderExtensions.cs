@@ -15,6 +15,10 @@ public static class ObservabilityBuilderExtensions
     /// <summary>
     /// Configures standardized OpenTelemetry logging, metrics, and tracing for the supplied builder,
     /// including cross-service runtime instrumentation plus explicit stable service identity.
+    /// Formatted messages and scopes are excluded from OpenTelemetry logs, and <see cref="LogRecordPrivacyProcessor"/>
+    /// and <see cref="ActivityPrivacyProcessor"/> are registered, so the privacy baseline applies without a separate call.
+    /// Call <see cref="AddTelemetryPrivacy{TBuilder}"/> to add host-owned private attributes.
+    /// Call this before adding exporters so the processors run first.
     /// </summary>
     /// <typeparam name="TBuilder">Host builder type, e.g. WebApplicationBuilder, HostApplicationBuilder.</typeparam>
     /// <param name="builder">The host application builder to configure.</param>
@@ -25,11 +29,7 @@ public static class ObservabilityBuilderExtensions
 
         builder.Services.AddRedaction();
         builder.Logging.EnableRedaction();
-        builder.Logging.AddOpenTelemetry(logging =>
-        {
-            logging.IncludeFormattedMessage = true;
-            logging.IncludeScopes = true;
-        });
+        builder.EnsureTelemetryPrivacy();
 
         var serviceVersion = ApplicationVersionProvider.GetEntryAssemblyInformationalVersion();
         var resourceBuilder = ResourceBuilder.CreateDefault().AddDetector(new ExplicitServiceNameDetector(builder.Environment.ApplicationName, serviceVersion));
@@ -48,9 +48,9 @@ public static class ObservabilityBuilderExtensions
     }
 
     /// <summary>
-    /// Excludes formatted messages and scopes from OpenTelemetry logs and registers
-    /// <see cref="LogRecordPrivacyProcessor"/> and <see cref="ActivityPrivacyProcessor"/>.
-    /// Call before adding exporters so the processors run first.
+    /// Adds host-owned private attribute names to the privacy baseline that <see cref="ConfigureOpenTelemetry{TBuilder}"/>
+    /// already applies. When called on its own it applies the baseline too, and the baseline is registered once however
+    /// the two methods are combined. Call before adding exporters so the processors run first.
     /// </summary>
     /// <typeparam name="TBuilder">Host builder type, e.g. WebApplicationBuilder, HostApplicationBuilder.</typeparam>
     /// <param name="builder">The host application builder to configure.</param>
@@ -60,16 +60,34 @@ public static class ObservabilityBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
+        var policy = builder.EnsureTelemetryPrivacy();
+        if (additionalSensitiveAttribute is not null)
+        {
+            policy.Add(additionalSensitiveAttribute);
+        }
+
+        return builder;
+    }
+
+    private static TelemetryPrivacyPolicy EnsureTelemetryPrivacy<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
+    {
+        var existing = builder.Services.FirstOrDefault(static descriptor => descriptor.ServiceType == typeof(TelemetryPrivacyPolicy));
+        if (existing?.ImplementationInstance is TelemetryPrivacyPolicy registered)
+        {
+            return registered;
+        }
+
+        var policy = new TelemetryPrivacyPolicy();
+        builder.Services.AddSingleton(policy);
         builder.Logging.AddOpenTelemetry(logging =>
         {
             logging.IncludeFormattedMessage = false;
             logging.IncludeScopes = false;
-            logging.AddProcessor(_ => new LogRecordPrivacyProcessor(additionalSensitiveAttribute));
+            logging.AddProcessor(_ => new LogRecordPrivacyProcessor(policy.IsSensitive));
         });
         builder.Services.AddOpenTelemetry()
-            .WithTracing(tracing => tracing.AddProcessor(new ActivityPrivacyProcessor(additionalSensitiveAttribute)));
-
-        return builder;
+            .WithTracing(tracing => tracing.AddProcessor(new ActivityPrivacyProcessor(policy.IsSensitive)));
+        return policy;
     }
 
     /// <summary>
