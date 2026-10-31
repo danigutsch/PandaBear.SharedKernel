@@ -16,9 +16,13 @@ namespace PandaBear.Npgsql;
 /// <para>
 /// The order is the tier, then the numeric key from <see cref="PostgreSqlAdvisoryLockKey.FromUtf8Sha256BigEndian(string)" />, then the
 /// ordinal name. Locks requested together are deduplicated by key, keeping the lowest tier, and taken one statement at a time in that order.
-/// A lock the transaction already holds is skipped. A request that would take a lock sorting before one already taken, whether in a lower
+/// Every requested lock is taken again even when this instance took it before, because PostgreSQL releases a lock taken after a savepoint
+/// when the transaction rolls back to that savepoint; taking a lock the transaction still holds is harmless. A lock this instance took
+/// before is exempt from the order check. A request that would take a lock sorting before one already taken, whether in a lower
 /// tier or earlier within the same tier, throws before any lock of that request is taken: taking it could deadlock against a transaction
-/// that takes the same locks in the order this type enforces. Request all locks of a tier together when possible.
+/// that takes the same locks in the order this type enforces. Request all locks of a tier together when possible. After rolling back to a
+/// savepoint that was created before locks were taken, treat those locks as released: use a new instance if the original order must be
+/// enforced again.
 /// </para>
 /// <para>
 /// Instances are not thread-safe, like the connection and transaction they use.
@@ -83,18 +87,21 @@ public sealed class PostgreSqlOrderedTransactionLocks
             return;
         }
 
-        if (lastTaken is { } taken && pending[0].CompareTo(taken) < 0)
+        var firstNew = Array.Find(pending, candidate => !candidate.AlreadyTaken);
+        if (firstNew.Name is not null && lastTaken is { } taken && firstNew.CompareTo(taken) < 0)
         {
             throw new InvalidOperationException(
-                $"Lock '{pending[0].Name}' (tier {pending[0].Tier}) cannot be taken after lock '{taken.Name}' (tier {taken.Tier}); "
+                $"Lock '{firstNew.Name}' (tier {firstNew.Tier}) cannot be taken after lock '{taken.Name}' (tier {taken.Tier}); "
                 + "locks must be taken in tier, key, name order within one transaction.");
         }
 
         foreach (var next in pending)
         {
             await PostgreSqlTransactionAdvisoryLock.Acquire(connection, transaction, next.Key, ct);
-            _ = heldKeys.Add(next.Key);
-            lastTaken = next;
+            if (heldKeys.Add(next.Key) && (lastTaken is null || next.CompareTo(lastTaken.Value) > 0))
+            {
+                lastTaken = next;
+            }
         }
     }
 
@@ -106,11 +113,8 @@ public sealed class PostgreSqlOrderedTransactionLocks
             ArgumentOutOfRangeException.ThrowIfNegative(request.Tier);
             ArgumentException.ThrowIfNullOrEmpty(request.Name);
 
-            var candidate = new OrderedLock(request.Tier, PostgreSqlAdvisoryLockKey.FromUtf8Sha256BigEndian(request.Name), request.Name);
-            if (heldKeys.Contains(candidate.Key))
-            {
-                continue;
-            }
+            var key = PostgreSqlAdvisoryLockKey.FromUtf8Sha256BigEndian(request.Name);
+            var candidate = new OrderedLock(request.Tier, key, request.Name, heldKeys.Contains(key));
 
             if (!lowestPerKey.TryGetValue(candidate.Key, out var existing) || candidate.CompareTo(existing) < 0)
             {
@@ -124,7 +128,7 @@ public sealed class PostgreSqlOrderedTransactionLocks
         return ordered;
     }
 
-    private readonly record struct OrderedLock(int Tier, long Key, string Name) : IComparable<OrderedLock>
+    private readonly record struct OrderedLock(int Tier, long Key, string Name, bool AlreadyTaken) : IComparable<OrderedLock>
     {
         public int CompareTo(OrderedLock other)
         {

@@ -53,7 +53,7 @@ public sealed class PostgreSqlOrderedTransactionLocksTests(PostgreSqlTestServerF
     }
 
     [Fact]
-    public async Task Skips_a_lock_the_transaction_already_holds()
+    public async Task Accepts_a_request_for_a_lock_the_transaction_already_holds()
     {
         // Arrange
         await using var connection = await DataSource.OpenConnectionAsync(TestContext.Current.CancellationToken);
@@ -156,6 +156,25 @@ public sealed class PostgreSqlOrderedTransactionLocksTests(PostgreSqlTestServerF
         // Act
         await new PostgreSqlOrderedTransactionLocks(connection, second).Acquire([new(0, "retry-low")], TestContext.Current.CancellationToken);
         var free = await PostgreSqlOrderedTransactionLocksTestsHelpers.FreeNames(DataSource, ["retry-low"], TestContext.Current.CancellationToken);
+
+        // Assert
+        free.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Takes_a_lock_again_after_a_rollback_to_a_savepoint_released_it()
+    {
+        // Arrange
+        await using var connection = await DataSource.OpenConnectionAsync(TestContext.Current.CancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(TestContext.Current.CancellationToken);
+        var locks = new PostgreSqlOrderedTransactionLocks(connection, transaction);
+        await transaction.SaveAsync("before-lock", TestContext.Current.CancellationToken);
+        await locks.Acquire([new(0, "savepoint-lock")], TestContext.Current.CancellationToken);
+        await transaction.RollbackAsync("before-lock", TestContext.Current.CancellationToken);
+
+        // Act
+        await locks.Acquire([new(0, "savepoint-lock")], TestContext.Current.CancellationToken);
+        var free = await PostgreSqlOrderedTransactionLocksTestsHelpers.FreeNames(DataSource, ["savepoint-lock"], TestContext.Current.CancellationToken);
 
         // Assert
         free.ShouldBeEmpty();
