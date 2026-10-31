@@ -10,6 +10,10 @@ Small raw-Npgsql primitives with a stable, provider-specific boundary.
 
 - `PostgreSqlTransactionAdvisoryLock` executes parameterized `pg_advisory_xact_lock` SQL on a
   caller-supplied active `NpgsqlConnection` and `NpgsqlTransaction`.
+- `PostgreSqlOrderedTransactionLocks` takes several transaction-scoped advisory locks for one
+  open `NpgsqlConnection` and `NpgsqlTransaction` in a single global order, so transactions that
+  need more than one lock cannot deadlock on them. Callers pass `PostgreSqlTransactionLockRequest`
+  values (`Tier`, `Name`); keys come from `PostgreSqlAdvisoryLockKey.FromUtf8Sha256BigEndian(Name)`.
 - `PostgreSqlSessionAdvisoryLock` executes parameterized `pg_advisory_lock` SQL on a dedicated
   `NpgsqlConnection` opened from a caller-supplied `NpgsqlDataSource`, returning an
   `IAsyncDisposable` lease.
@@ -38,6 +42,30 @@ long lockKey = PostgreSqlAdvisoryLockKey.FromUtf8Sha256BigEndian("inventory:123"
 
 Pass the key to either advisory-lock acquisition method. Keep business-specific identity composition
 in the consumer; this helper does not change existing callers or their lock keys.
+
+## Ordered transaction locks
+
+```csharp
+using PandaBear.Npgsql;
+
+var locks = new PostgreSqlOrderedTransactionLocks(connection, transaction);
+await locks.Acquire([new(0, $"admin:tour-capacity:{tourId}")], ct);
+await locks.Acquire([new(1, $"disposition-hold:{scope}")], ct);
+```
+
+- Locks requested together are deduplicated by key (the lowest tier wins) and taken one statement at a
+  time, sorted by tier, then numeric key, then ordinal name. A lock the transaction already holds is
+  skipped.
+- The instance remembers the last lock taken. A later request that sorts before it, in a lower tier or
+  earlier within the same tier, throws `InvalidOperationException` naming both locks, before any lock
+  of that request is taken. Request every lock of a tier in one call when possible.
+- Create one instance per transaction attempt and share it with all code that takes locks in that
+  transaction. Separate instances over the same transaction do not know each other's locks. Do not
+  reuse an instance for the next transaction (for example on a retry): Npgsql reuses its transaction
+  object per connection.
+- The type never begins, commits, rolls back or disposes the transaction, and it throws when the
+  transaction is no longer open. Assign tiers by convention in the consuming repository, for example
+  tier 0 for locks a command declares and tier 1 for guards taken later.
 
 ## Package identity and availability
 
