@@ -1,7 +1,7 @@
 namespace PandaBear.ObjectStorage.S3.Tests;
 
 /// <summary>Protects exact object identity and safe relative storage syntax.</summary>
-[Xunit.Trait(PandaBear.Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
 public sealed class ObjectStorageKeyTests
 {
     [Fact]

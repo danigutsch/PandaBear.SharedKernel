@@ -1,8 +1,8 @@
 namespace PandaBear.Npgsql.Tests;
 
 /// <summary>Protects the lock identity contract while carrying its numeric value as a distinct type.</summary>
-[PandaBear.Testing.TestScope(PandaBear.Testing.TestScope.Unit)]
-[PandaBear.Testing.TestHost(PandaBear.Testing.TestHost.InProcess)]
+[TestScope(TestScope.Unit)]
+[TestHost(TestHost.InProcess)]
 public sealed class PostgreSqlLockKeyTests
 {
     [Fact]
