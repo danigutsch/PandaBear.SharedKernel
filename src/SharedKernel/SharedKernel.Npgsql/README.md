@@ -54,13 +54,17 @@ await locks.Acquire([new(1, $"disposition-hold:{scope}")], ct);
 ```
 
 - Locks requested together are deduplicated by key (the lowest tier wins) and taken one statement at a
-  time, sorted by tier, then numeric key, then ordinal name. A lock the transaction already holds is
-  skipped.
+  time, sorted by tier, then numeric key, then ordinal name. A lock is taken again even when the
+  instance took it before, because PostgreSQL releases a lock taken after a savepoint when the
+  transaction rolls back to that savepoint; a lock the instance took before is exempt from the order
+  check.
 - The instance remembers the last lock taken. A later request that sorts before it, in a lower tier or
   earlier within the same tier, throws `InvalidOperationException` naming both locks, before any lock
   of that request is taken. Request every lock of a tier in one call when possible.
 - Create one instance per transaction attempt and share it with all code that takes locks in that
-  transaction. Separate instances over the same transaction do not know each other's locks. Do not
+  transaction. After rolling back to a savepoint created before locks were taken, treat those locks
+  as released and use a new instance if the order must be enforced again. Separate instances over the
+  same transaction do not know each other's locks. Do not
   reuse an instance for the next transaction (for example on a retry): Npgsql reuses its transaction
   object per connection.
 - The type never begins, commits, rolls back or disposes the transaction, and it throws when the
