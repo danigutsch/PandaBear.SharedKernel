@@ -23,7 +23,7 @@ internal sealed class RoadmapGitRepository
     }
 
     /// <summary>Creates a repository reader that runs git through the injected <paramref name="run"/> delegate.</summary>
-    /// <exception cref="ArgumentNullException"><paramref name="run"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="run"/> is <see langword="null"/>.</exception>
     internal RoadmapGitRepository(
         Func<ProcessStartInfo, CancellationToken, Task<RoadmapGitCommandResult>> run)
     {
@@ -68,7 +68,7 @@ internal sealed class RoadmapGitRepository
     }
 
     /// <summary>Lists the root-level entries of the tree at <paramref name="revision"/>, requiring <paramref name="rootPath"/> to be the repository root.</summary>
-    /// <exception cref="InvalidOperationException"><paramref name="rootPath"/> is not the repository root.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when <paramref name="rootPath"/> is not the repository root.</exception>
     public async Task<string[]> ReadCommittedRootPaths(string rootPath, string revision, CancellationToken cancellationToken)
     {
         var prefix = await RunOffline(rootPath, ["rev-parse", "--show-prefix"], cancellationToken).ConfigureAwait(false);

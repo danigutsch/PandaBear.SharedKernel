@@ -21,7 +21,7 @@ public static class HttpCacheHeaders
     /// <param name="httpContext">The request context whose response headers are updated.</param>
     /// <param name="maxAge">The public cache freshness lifetime.</param>
     /// <param name="staleWhileRevalidate">The optional stale-while-revalidate lifetime.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="httpContext"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="httpContext"/> is <see langword="null"/>.</exception>
     public static void SetPublic(HttpContext httpContext, TimeSpan maxAge, TimeSpan? staleWhileRevalidate = null)
     {
         ArgumentNullException.ThrowIfNull(httpContext);
@@ -44,7 +44,7 @@ public static class HttpCacheHeaders
     /// Sets response headers that prevent storage by browsers and intermediaries.
     /// </summary>
     /// <param name="httpContext">The request context whose response headers are updated.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="httpContext"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="httpContext"/> is <see langword="null"/>.</exception>
     public static void SetNoStore(HttpContext httpContext)
     {
         ArgumentNullException.ThrowIfNull(httpContext);

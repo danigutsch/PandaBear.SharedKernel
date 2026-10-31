@@ -24,7 +24,7 @@ internal sealed record PasswordHealthReport(IReadOnlyList<PasswordIssue> Issues)
     /// </summary>
     /// <param name="export">Vault to analyze.</param>
     /// <returns>The report.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="export"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="export"/> is <see langword="null"/>.</exception>
     public static PasswordHealthReport Analyze(VaultExport export)
     {
         ArgumentNullException.ThrowIfNull(export);
@@ -61,7 +61,7 @@ internal sealed record PasswordHealthReport(IReadOnlyList<PasswordIssue> Issues)
     /// </summary>
     /// <param name="groups">Members of each match group.</param>
     /// <returns>For each group, the check of each member in member order. A member without a password gets no flag.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="groups"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="groups"/> is <see langword="null"/>.</exception>
     public static IReadOnlyList<IReadOnlyList<PasswordCheck>> CheckMembers(IReadOnlyList<IReadOnlyList<VaultItem>> groups)
     {
         ArgumentNullException.ThrowIfNull(groups);

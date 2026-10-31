@@ -50,7 +50,7 @@ internal sealed class ReviewWindow : Window
     /// <summary>Builds the window for a review.</summary>
     /// <param name="session">Review state.</param>
     /// <param name="dialogs">Questions and messages the window shows.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="session"/> or <paramref name="dialogs"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="session"/> or <paramref name="dialogs"/> is <see langword="null"/>.</exception>
     public ReviewWindow(ReviewSession session, IReviewDialogs dialogs)
     {
         ArgumentNullException.ThrowIfNull(session);

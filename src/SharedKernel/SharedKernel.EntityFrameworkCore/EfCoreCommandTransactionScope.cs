@@ -15,7 +15,7 @@ public static class EfCoreCommandTransactionScope
     /// <param name="ct">The cancellation token.</param>
     /// <typeparam name="TResponse">The operation response type.</typeparam>
     /// <returns>The operation response.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="dbContext"/> or <paramref name="next"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="dbContext"/> or <paramref name="next"/> is <see langword="null"/>.</exception>
     public static async ValueTask<TResponse> Execute<TResponse>(
         DbContext dbContext,
         Func<ValueTask<TResponse>> next,

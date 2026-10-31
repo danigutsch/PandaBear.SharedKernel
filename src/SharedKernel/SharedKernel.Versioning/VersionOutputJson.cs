@@ -10,7 +10,7 @@ public static class VersionOutputJson
     /// </summary>
     /// <param name="output">The version output.</param>
     /// <returns>The JSON representation.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="output"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="output"/> is <see langword="null"/>.</exception>
     public static string Serialize(VersionOutput output)
     {
         ArgumentNullException.ThrowIfNull(output);

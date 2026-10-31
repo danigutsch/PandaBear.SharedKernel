@@ -14,7 +14,7 @@ internal static class PostgreSqlNames
     }
 
     /// <summary>Returns the configured schema name, or the default when no options are given, after checking it is a valid identifier.</summary>
-    /// <exception cref="ArgumentException">When the schema of <paramref name="options"/> is not a valid unquoted PostgreSQL identifier.</exception>
+    /// <exception cref="ArgumentException">Thrown when the schema of <paramref name="options"/> is not a valid unquoted PostgreSQL identifier.</exception>
     public static string SchemaName(PostgreSqlEventSourcingOptions? options)
     {
         var schema = options?.Schema ?? new PostgreSqlEventSourcingOptions().Schema;

@@ -31,7 +31,7 @@ public sealed class ResultError : IEquatable<ResultError>
     /// <param name="detail">Specific explanation of the problem instance.</param>
     /// <param name="code">Stable machine-readable error code.</param>
     /// <param name="validationErrors">Optional validation errors keyed by field name.</param>
-    /// <exception cref="ArgumentException">When <paramref name="detail"/> or <paramref name="code"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="detail"/> or <paramref name="code"/> is <see langword="null"/>, empty, or white-space.</exception>
     internal ResultError(
         string detail,
         string code,

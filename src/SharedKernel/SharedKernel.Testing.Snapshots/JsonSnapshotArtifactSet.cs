@@ -25,8 +25,8 @@ public sealed class JsonSnapshotArtifactSet
     /// <param name="artifactDisplayName">A human-readable artifact name for failure messages.</param>
     /// <param name="refreshHint">The refresh hint for failure messages.</param>
     /// <param name="generatedFileNameOverrides">Generated file names for snapshots whose generator output does not use the common prefix.</param>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="canonicalDirectory"/> or <paramref name="generatedDirectory"/> or <paramref name="canonicalArtifactSuffix"/> or <paramref name="artifactDisplayName"/> or <paramref name="refreshHint"/> is empty or consists only of white-space characters.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="canonicalDirectory"/> or <paramref name="generatedDirectory"/> or <paramref name="canonicalArtifactSuffix"/> or <paramref name="generatedArtifactPrefix"/> or <paramref name="artifactDisplayName"/> or <paramref name="refreshHint"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="canonicalDirectory"/>, <paramref name="generatedDirectory"/>, <paramref name="canonicalArtifactSuffix"/>, <paramref name="artifactDisplayName"/>, or <paramref name="refreshHint"/> is empty or consists only of white-space characters.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="canonicalDirectory"/>, <paramref name="generatedDirectory"/>, <paramref name="canonicalArtifactSuffix"/>, <paramref name="generatedArtifactPrefix"/>, <paramref name="artifactDisplayName"/>, or <paramref name="refreshHint"/> is <see langword="null"/>.</exception>
     public JsonSnapshotArtifactSet(
         string canonicalDirectory,
         string generatedDirectory,

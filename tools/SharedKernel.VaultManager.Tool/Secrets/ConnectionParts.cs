@@ -18,7 +18,7 @@ internal sealed record ConnectionParts(string? Username, string? Password, strin
     /// <param name="value">URI text.</param>
     /// <param name="parts">Split parts.</param>
     /// <returns><see langword="true"/> when the URI has user info with a password.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static bool TryParseUri(string value, out ConnectionParts? parts)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -69,7 +69,7 @@ internal sealed record ConnectionParts(string? Username, string? Password, strin
     /// <param name="value">Connection string.</param>
     /// <param name="parts">Split parts.</param>
     /// <returns><see langword="true"/> when the string parses and has a password.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static bool TryParseConnectionString(string value, out ConnectionParts? parts)
     {
         ArgumentNullException.ThrowIfNull(value);

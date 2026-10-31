@@ -8,9 +8,9 @@ internal static class BoundedHttpContentReader
     /// <param name="maxBytes">Maximum number of bytes allowed.</param>
     /// <param name="limitMessage">Message of the exception thrown when the limit is exceeded.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="content"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxBytes"/> is not positive.</exception>
-    /// <exception cref="ArgumentException"><paramref name="limitMessage"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="maxBytes"/> is not positive.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="limitMessage"/> is <see langword="null"/>, empty, or white-space.</exception>
     /// <exception cref="InvalidOperationException">The content exceeds <paramref name="maxBytes"/>.</exception>
     public static async Task<byte[]> Read(
         HttpContent content,

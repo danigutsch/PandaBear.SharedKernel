@@ -22,7 +22,7 @@ internal sealed class IntegrationEventOutboxDbContextConfiguration<TContext> : I
     /// Creates a configuration that reads the context's named integration event storage options.
     /// </summary>
     /// <param name="storageOptions">Monitor that supplies the per-context storage options.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="storageOptions"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="storageOptions"/> is <see langword="null"/>.</exception>
     public IntegrationEventOutboxDbContextConfiguration(IOptionsMonitor<IntegrationEventStorageOptions> storageOptions)
     {
         ArgumentNullException.ThrowIfNull(storageOptions);

@@ -30,7 +30,7 @@ public sealed class ServerValidationResult
     /// <summary>Creates error summary entries that link each issue to a form control.</summary>
     /// <param name="fieldId">Maps a known field name to the HTML id of its control.</param>
     /// <returns>One entry per issue.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="fieldId"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="fieldId"/> is <see langword="null"/>.</exception>
     public IReadOnlyList<ErrorSummaryItem> ToSummaryItems(Func<string, string> fieldId)
     {
         ArgumentNullException.ThrowIfNull(fieldId);

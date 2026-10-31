@@ -22,7 +22,7 @@ internal sealed class IdempotencyDbContextConfiguration<TContext> : IDbContextCo
     /// Creates a configuration that reads the context's named idempotency storage options.
     /// </summary>
     /// <param name="storageOptions">Monitor that supplies the per-context storage options.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="storageOptions"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="storageOptions"/> is <see langword="null"/>.</exception>
     public IdempotencyDbContextConfiguration(IOptionsMonitor<IdempotencyStorageOptions> storageOptions)
     {
         ArgumentNullException.ThrowIfNull(storageOptions);

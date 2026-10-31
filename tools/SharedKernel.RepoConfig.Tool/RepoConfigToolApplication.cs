@@ -16,7 +16,7 @@ internal static class RepoConfigToolApplication
     /// Runs a command and reports expected failures on standard error with exit code 1.
     /// Caller cancellation propagates so System.CommandLine handles it.
     /// </summary>
-    /// <exception cref="ArgumentNullException"><paramref name="error"/> or <paramref name="command"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="error"/> or <paramref name="command"/> is <see langword="null"/>.</exception>
     public static async Task<int> Guard(TextWriter error, Func<Task<int>> command, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(error);
@@ -110,7 +110,7 @@ internal static class RepoConfigToolApplication
     }
 
     /// <summary>Runs a roadmap query against the loaded roadmap and writes up to <paramref name="limit"/> matching results.</summary>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="query"/> is not a known roadmap query.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="query"/> is not a known roadmap query.</exception>
     /// <exception cref="InvalidOperationException">The queried roadmap item ID is unknown.</exception>
     public static int Get(string rootPath, string query, string? value, string? type, int limit, TextWriter output)
     {

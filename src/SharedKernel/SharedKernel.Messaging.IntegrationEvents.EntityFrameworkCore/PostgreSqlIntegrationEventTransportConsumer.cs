@@ -26,7 +26,7 @@ internal sealed partial class PostgreSqlIntegrationEventTransportConsumer<TConte
         await ConsumePending(options.Get(IntegrationEventOptionsNames.Consumer<TContext>()).BatchSize, ct).ConfigureAwait(false);
 
     /// <summary>Claims up to <paramref name="batchSize" /> due messages, hands them to their handlers, and returns how many were handled.</summary>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="batchSize"/> is zero or negative.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="batchSize"/> is zero or negative.</exception>
     internal async ValueTask<int> ConsumePending(int batchSize, CancellationToken ct)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(batchSize);

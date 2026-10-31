@@ -11,7 +11,7 @@ internal static class ChildProcessEnvironment
     /// Removes <c>GH_TOKEN</c> and <c>GITHUB_TOKEN</c> from the environment that <paramref name="startInfo"/> gives the child process.
     /// </summary>
     /// <param name="startInfo">The start information of a child process.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="startInfo"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="startInfo"/> is <see langword="null"/>.</exception>
     public static void RemoveGitHubTokens(ProcessStartInfo startInfo)
     {
         ArgumentNullException.ThrowIfNull(startInfo);

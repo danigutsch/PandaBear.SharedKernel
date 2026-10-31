@@ -52,7 +52,7 @@ internal sealed class SecretScanner
 
     /// <summary>Creates a scanner over a rule set.</summary>
     /// <param name="rules">Catalog rules, in priority order.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="rules"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="rules"/> is <see langword="null"/>.</exception>
     public SecretScanner(IReadOnlyList<SecretRule> rules)
     {
         ArgumentNullException.ThrowIfNull(rules);

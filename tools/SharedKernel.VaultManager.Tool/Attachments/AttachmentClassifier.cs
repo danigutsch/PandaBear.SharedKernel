@@ -15,7 +15,7 @@ internal static class AttachmentClassifier
     /// <param name="complete">Whether <paramref name="head"/> is the whole file.</param>
     /// <param name="fileName">File name, used only when no magic bytes match.</param>
     /// <returns>Detected kind.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="fileName"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="fileName"/> is <see langword="null"/>.</exception>
     public static AttachmentKind Classify(ReadOnlySpan<byte> head, bool complete, string fileName)
     {
         ArgumentNullException.ThrowIfNull(fileName);

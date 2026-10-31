@@ -34,7 +34,7 @@ internal static class CatalogFile
     /// names the JSON path of the problem, never a value.
     /// </exception>
     /// <exception cref="IOException">The file does not exist or cannot be read.</exception>
-    /// <exception cref="ArgumentException"><paramref name="path"/> is empty.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="path"/> is empty.</exception>
     public static CatalogDocument Read(string path)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -55,8 +55,8 @@ internal static class CatalogFile
     /// <param name="catalog">Catalog.</param>
     /// <param name="overwrite">Whether an existing file may be replaced.</param>
     /// <exception cref="IOException">The file cannot be written.</exception>
-    /// <exception cref="ArgumentException"><paramref name="path"/> is empty.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="catalog"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="path"/> is empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="catalog"/> is <see langword="null"/>.</exception>
     public static void Write(string path, CatalogDocument catalog, bool overwrite)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -68,7 +68,7 @@ internal static class CatalogFile
     /// <summary>Serializes a catalog.</summary>
     /// <param name="catalog">Catalog.</param>
     /// <returns>Indented JSON with text as typed, except for escaped control and format characters.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="catalog"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="catalog"/> is <see langword="null"/>.</exception>
     public static string Serialize(CatalogDocument catalog)
     {
         ArgumentNullException.ThrowIfNull(catalog);
@@ -83,7 +83,7 @@ internal static class CatalogFile
     /// The text is not a valid catalog of a supported version, or two items have the same key. The message names the JSON
     /// path of the problem or the key, never a value.
     /// </exception>
-    /// <exception cref="ArgumentNullException"><paramref name="json"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is <see langword="null"/>.</exception>
     public static CatalogDocument Deserialize(string json)
     {
         ArgumentNullException.ThrowIfNull(json);
@@ -130,7 +130,7 @@ internal static class CatalogFile
     /// <param name="path">File.</param>
     /// <returns>Lowercase hexadecimal digest.</returns>
     /// <exception cref="IOException">The file cannot be read.</exception>
-    /// <exception cref="ArgumentException"><paramref name="path"/> is empty.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="path"/> is empty.</exception>
     public static string Hash(string path)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);

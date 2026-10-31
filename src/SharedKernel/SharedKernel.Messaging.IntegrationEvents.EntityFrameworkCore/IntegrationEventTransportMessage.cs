@@ -21,8 +21,8 @@ internal sealed class IntegrationEventTransportMessage : EventEnvelope, IIntegra
     /// <param name="consumerName">Name of the consumer the message is addressed to.</param>
     /// <param name="envelope">Envelope copied into the message.</param>
     /// <param name="receivedAt">When the message was stored.</param>
-    /// <exception cref="ArgumentException"><paramref name="id"/> is empty, or <paramref name="consumerName"/> is <see langword="null"/>, empty, or white space.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="envelope"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="id"/> is empty, or <paramref name="consumerName"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="envelope"/> is <see langword="null"/>.</exception>
     public IntegrationEventTransportMessage(
         Guid id,
         string consumerName,
@@ -173,7 +173,7 @@ internal sealed class IntegrationEventTransportMessage : EventEnvelope, IIntegra
     /// <param name="attemptedAt">When the attempt failed.</param>
     /// <param name="nextAttemptAt">When the message becomes eligible again.</param>
     /// <param name="error">The failure description.</param>
-    /// <exception cref="ArgumentException"><paramref name="error"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="error"/> is <see langword="null"/>, empty, or white-space.</exception>
     public void MarkConsumeFailed(DateTimeOffset attemptedAt, DateTimeOffset nextAttemptAt, string error)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(error);

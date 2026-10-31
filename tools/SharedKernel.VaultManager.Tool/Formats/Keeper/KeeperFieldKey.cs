@@ -6,7 +6,7 @@ internal static class KeeperFieldKey
     /// <summary>Splits a key into field type and label.</summary>
     /// <param name="key">Key from <c>custom_fields</c> or a CSV pair.</param>
     /// <returns>Type without <c>$</c> (empty for plain labels) and label without a trailing <c>:&lt;digit&gt;</c>.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="key"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="key"/> is <see langword="null"/>.</exception>
     public static (string Type, string Label) Parse(string key)
     {
         ArgumentNullException.ThrowIfNull(key);

@@ -14,7 +14,7 @@ internal static class TokenChecksums
     /// <summary>Whether a <c>gh?_</c> token carries a valid checksum.</summary>
     /// <param name="token">Token including its prefix.</param>
     /// <returns><see langword="true"/> when the checksum matches.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="token"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="token"/> is <see langword="null"/>.</exception>
     public static bool IsValidGitHubToken(string token)
     {
         ArgumentNullException.ThrowIfNull(token);
@@ -24,7 +24,7 @@ internal static class TokenChecksums
     /// <summary>Whether an <c>npm_</c> token carries a valid checksum.</summary>
     /// <param name="token">Token including its prefix.</param>
     /// <returns><see langword="true"/> when the checksum matches.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="token"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="token"/> is <see langword="null"/>.</exception>
     public static bool IsValidNpmToken(string token)
     {
         ArgumentNullException.ThrowIfNull(token);

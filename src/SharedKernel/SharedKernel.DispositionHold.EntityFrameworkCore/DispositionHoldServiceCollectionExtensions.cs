@@ -28,7 +28,7 @@ public static class DispositionHoldServiceCollectionExtensions
     /// <param name="configureStorage">The delegate that configures the context's hold table.</param>
     /// <typeparam name="TContext">The DbContext type that owns the hold table.</typeparam>
     /// <returns>The configured service collection.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="configureStorage"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureStorage"/> is <see langword="null"/>.</exception>
     public static IServiceCollection AddDispositionHolds<TContext>(
         this IServiceCollection services,
         Action<DispositionHoldStorageOptions> configureStorage)

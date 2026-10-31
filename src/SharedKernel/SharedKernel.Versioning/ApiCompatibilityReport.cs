@@ -10,7 +10,7 @@ public static class ApiCompatibilityReport
     /// </summary>
     /// <param name="options">The report options.</param>
     /// <returns>The report path.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">The report path has no directory.</exception>
     public static async Task<string> Initialize(ApiCompatibilityReportOptions options)
     {
@@ -29,8 +29,8 @@ public static class ApiCompatibilityReport
     /// <param name="reportPath">The report path.</param>
     /// <param name="output">The output to append.</param>
     /// <returns>A task that completes when output is appended.</returns>
-    /// <exception cref="ArgumentException"><paramref name="reportPath"/> is <see langword="null"/>, empty, or white space.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="output"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="reportPath"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="output"/> is <see langword="null"/>.</exception>
     public static Task AppendOutput(string reportPath, string output)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(reportPath);
@@ -44,7 +44,7 @@ public static class ApiCompatibilityReport
     /// </summary>
     /// <param name="options">The report options.</param>
     /// <returns><see langword="true" /> when the failure is report-only.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
     public static bool ShouldTreatFailureAsReportOnly(ApiCompatibilityReportOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -58,7 +58,7 @@ public static class ApiCompatibilityReport
     /// </summary>
     /// <param name="options">The report options.</param>
     /// <returns>The report path.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
     public static string GetReportPath(ApiCompatibilityReportOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);

@@ -19,8 +19,8 @@ public static class S3ObjectStoreHealthChecksBuilderExtensions
     /// <param name="failureStatus">The status reported on failure, or null for <see cref="HealthStatus.Unhealthy" />.</param>
     /// <param name="tags">The optional registration tags.</param>
     /// <returns>The health checks builder.</returns>
-    /// <exception cref="ArgumentException"><paramref name="name"/> is <see langword="null"/>, empty, or white space.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="name"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IHealthChecksBuilder AddS3ObjectStoreHealthCheck(
         this IHealthChecksBuilder builder,
         string name = "object-storage",

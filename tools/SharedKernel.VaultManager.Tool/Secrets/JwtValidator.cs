@@ -8,7 +8,7 @@ internal static class JwtValidator
     /// <summary>Whether the first segment decodes to a JSON object carrying <c>alg</c>.</summary>
     /// <param name="token">Candidate token.</param>
     /// <returns><see langword="true"/> when the header is well formed.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="token"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="token"/> is <see langword="null"/>.</exception>
     public static bool HasAlgorithmHeader(string token)
     {
         ArgumentNullException.ThrowIfNull(token);

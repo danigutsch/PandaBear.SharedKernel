@@ -7,7 +7,7 @@ internal static class CardNumberValidator
     /// <param name="digits">ASCII digits only.</param>
     /// <param name="brand">Brand name when valid.</param>
     /// <returns><see langword="true"/> when valid.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="digits"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="digits"/> is <see langword="null"/>.</exception>
     public static bool TryGetBrand(string digits, out string? brand)
     {
         ArgumentNullException.ThrowIfNull(digits);

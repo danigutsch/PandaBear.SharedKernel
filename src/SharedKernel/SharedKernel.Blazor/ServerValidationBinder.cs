@@ -45,7 +45,7 @@ public sealed class ServerValidationBinder : IDisposable
     /// <summary>Replaces the previous server messages with those of <paramref name="outcome" />.</summary>
     /// <param name="outcome">The outcome; its <see cref="HttpOutcome.ValidationErrors" /> are applied and its message is ignored.</param>
     /// <returns>The placed issues and whether anything could not be placed.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="outcome"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="outcome"/> is <see langword="null"/>.</exception>
     public ServerValidationResult Apply(HttpOutcome outcome)
     {
         ArgumentNullException.ThrowIfNull(outcome);

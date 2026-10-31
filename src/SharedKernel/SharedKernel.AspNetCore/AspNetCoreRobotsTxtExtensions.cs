@@ -20,8 +20,8 @@ public static class AspNetCoreRobotsTxtExtensions
     /// <param name="app">The endpoint route builder.</param>
     /// <param name="robotsTxt">The robots.txt content owned by the consuming application.</param>
     /// <returns>The mapped endpoint convention builder, explicitly marked anonymous.</returns>
-    /// <exception cref="ArgumentException">When <paramref name="robotsTxt"/> is empty or white space.</exception>
-    /// <exception cref="ArgumentNullException">When <paramref name="app"/> or <paramref name="robotsTxt"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="robotsTxt"/> is empty or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="app"/> or <paramref name="robotsTxt"/> is <see langword="null"/>.</exception>
     public static IEndpointConventionBuilder MapRobotsTxt(this IEndpointRouteBuilder app, string robotsTxt)
     {
         ArgumentNullException.ThrowIfNull(app);

@@ -13,7 +13,7 @@ public static class ApplicationBuilderHttpCacheExtensions
     /// <summary>
     /// Enforces scoped route-group no-store policies when protected responses begin.
     /// </summary>
-    /// <exception cref="ArgumentNullException">When <paramref name="app"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="app"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// Register before authentication, authorization, and rate limiting. Endpoint metadata protects matched
     /// requests; configured group prefixes also protect unmatched paths and method rejection responses.

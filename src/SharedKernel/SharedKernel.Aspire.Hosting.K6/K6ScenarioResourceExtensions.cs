@@ -20,8 +20,8 @@ public static class K6ScenarioResourceExtensions
     /// <summary>
     /// Adds a k6 container that runs one script and starts only when requested from the dashboard or the Aspire CLI.
     /// </summary>
-    /// <exception cref="ArgumentException"><paramref name="name"/> or <paramref name="scriptDirectory"/> or <paramref name="script"/> or <paramref name="resultsDirectory"/> is <see langword="null"/>, empty, or white space, or <paramref name="script"/> is not under <paramref name="scriptDirectory"/>.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="name"/>, <paramref name="scriptDirectory"/>, <paramref name="script"/>, or <paramref name="resultsDirectory"/> is <see langword="null"/>, empty, or white-space, or <paramref name="script"/> is not under <paramref name="scriptDirectory"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// The image is pinned by tag and digest. The script directory and the helper library (<c>/k6lib/auth.js</c>
     /// and <c>/k6lib/summary.js</c>) mount read-only; the results directory mounts writable at <c>/results</c>.
@@ -88,8 +88,8 @@ public static class K6ScenarioResourceExtensions
     /// <summary>
     /// Passes the client-credentials settings that <c>/k6lib/auth.js</c> reads and waits for the identity provider.
     /// </summary>
-    /// <exception cref="ArgumentException"><paramref name="tokenPath"/> or <paramref name="clientId"/> is <see langword="null"/>, empty, or white space.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="k6"/> or <paramref name="identityProvider"/> or <paramref name="clientSecret"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="tokenPath"/> or <paramref name="clientId"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="k6"/>, <paramref name="identityProvider"/>, or <paramref name="clientSecret"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// The environment names are <c>SK_K6_TOKEN_URL</c>, <c>SK_K6_CLIENT_ID</c>, <c>SK_K6_CLIENT_SECRET</c>, and
     /// <c>SK_K6_TOKEN_HOST</c>. The secret is an Aspire secret parameter. The token request goes to the identity
@@ -128,7 +128,7 @@ public static class K6ScenarioResourceExtensions
     /// <summary>
     /// Enables the built-in k6 web dashboard and exposes it on a host endpoint for local development.
     /// </summary>
-    /// <exception cref="ArgumentNullException"><paramref name="k6"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="k6"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// The dashboard (<c>K6_WEB_DASHBOARD</c>, port 5665) is built into k6 and serves results only while a run is active.
     /// It has no authentication, so the endpoint is added only in run mode and publish manifests never expose it.

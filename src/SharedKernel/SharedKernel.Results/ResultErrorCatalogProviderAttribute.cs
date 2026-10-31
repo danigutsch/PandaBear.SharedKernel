@@ -12,7 +12,7 @@ public sealed class ResultErrorCatalogProviderAttribute : Attribute
     /// Initializes a new instance of the <see cref="ResultErrorCatalogProviderAttribute"/> class.
     /// </summary>
     /// <param name="providerType">The generated provider type for the assembly.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="providerType"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="providerType"/> is <see langword="null"/>.</exception>
     public ResultErrorCatalogProviderAttribute(
         [DynamicallyAccessedMembers(
             DynamicallyAccessedMemberTypes.PublicParameterlessConstructor |

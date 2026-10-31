@@ -13,8 +13,8 @@ internal static partial class AppHostMermaidDiagram
     /// <summary>
     /// Builds an AppHost resource relationship diagram.
     /// </summary>
-    /// <exception cref="ArgumentException"><paramref name="appHostPath"/> is <see langword="null"/>, empty, or white space.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="labels"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="appHostPath"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="labels"/> is <see langword="null"/>.</exception>
     public static string Build(string appHostPath, IReadOnlyDictionary<string, string> labels)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(appHostPath);

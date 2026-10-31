@@ -25,7 +25,7 @@ internal sealed record PemBlock(string Label, IReadOnlyList<string> Headers, str
     /// matching <c>END</c> line.
     /// </param>
     /// <returns><see langword="true"/> when a complete block was found.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="text"/> is <see langword="null"/>.</exception>
     public static bool TryParse(string text, out PemBlock? block, out Range extent)
     {
         ArgumentNullException.ThrowIfNull(text);

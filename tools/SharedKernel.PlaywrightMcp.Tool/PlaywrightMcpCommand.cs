@@ -9,7 +9,7 @@ internal static class PlaywrightMcpCommand
     internal const string Image = "mcr.microsoft.com/playwright/mcp:v0.0.78@sha256:3d871c22ea2d4cca0966e2cfb1860e1cb03eb7353725a3d6cffd133296fb04eb";
 
     /// <summary>Creates the start information that shows the active Docker context.</summary>
-    /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">The engine of <paramref name="options"/> is not Docker.</exception>
     public static ProcessStartInfo CreateDockerContextShowStartInfo(PlaywrightMcpOptions options)
     {
@@ -27,7 +27,7 @@ internal static class PlaywrightMcpCommand
     }
 
     /// <summary>Creates the start information that probes the Docker context for its endpoint.</summary>
-    /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">The engine of <paramref name="options"/> is not Docker.</exception>
     public static ProcessStartInfo CreateDockerContextProbeStartInfo(PlaywrightMcpOptions options)
     {
@@ -53,8 +53,8 @@ internal static class PlaywrightMcpCommand
     }
 
     /// <summary>Creates the start information that runs the Playwright MCP container on the selected engine.</summary>
-    /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="containerName"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="containerName"/> is <see langword="null"/>, empty, or white-space.</exception>
     public static ProcessStartInfo CreateRuntimeStartInfo(
         PlaywrightMcpOptions options,
         string containerName)
@@ -134,7 +134,7 @@ internal static class PlaywrightMcpCommand
     }
 
     /// <summary>Creates the start information that pulls the Playwright MCP image.</summary>
-    /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
     public static ProcessStartInfo CreatePullStartInfo(PlaywrightMcpOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -147,7 +147,7 @@ internal static class PlaywrightMcpCommand
     }
 
     /// <summary>Creates the start information that removes the Playwright MCP image.</summary>
-    /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
     public static ProcessStartInfo CreateImageRemoveStartInfo(PlaywrightMcpOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -160,8 +160,8 @@ internal static class PlaywrightMcpCommand
     }
 
     /// <summary>Creates the start information that removes the named container.</summary>
-    /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="containerName"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="containerName"/> is <see langword="null"/>, empty, or white-space.</exception>
     public static ProcessStartInfo CreateContainerCleanupStartInfo(
         PlaywrightMcpOptions options,
         string containerName)
@@ -183,8 +183,8 @@ internal static class PlaywrightMcpCommand
     }
 
     /// <summary>Creates the start information that checks whether the named container exists.</summary>
-    /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="containerName"/> is empty or whitespace, or the engine of <paramref name="options"/> is not Docker.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="containerName"/> is empty or white-space, or the engine of <paramref name="options"/> is not Docker.</exception>
     public static ProcessStartInfo CreateContainerExistenceProbeStartInfo(
         PlaywrightMcpOptions options,
         string containerName)
@@ -205,7 +205,7 @@ internal static class PlaywrightMcpCommand
     }
 
     /// <summary>Creates the start information that checks whether Podman runs rootless.</summary>
-    /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">The engine of <paramref name="options"/> is not Podman.</exception>
     public static ProcessStartInfo CreatePodmanRootlessProbeStartInfo(PlaywrightMcpOptions options)
     {

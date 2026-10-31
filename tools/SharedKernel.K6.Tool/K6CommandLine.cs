@@ -14,7 +14,7 @@ internal static class K6CommandLine
     /// <param name="workingDirectory">Directory that a relative <c>--root</c> resolves from.</param>
     /// <param name="getEnvironmentVariable">Reads the variables that configure the target and reach k6.</param>
     /// <param name="resolveExecutable">Resolves a command name to an absolute executable path, or <see langword="null"/>.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="getEnvironmentVariable"/> or <paramref name="resolveExecutable"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="getEnvironmentVariable"/> or <paramref name="resolveExecutable"/> is <see langword="null"/>.</exception>
     public static RootCommand Create(
         string workingDirectory,
         Func<string, string?> getEnvironmentVariable,

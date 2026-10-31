@@ -25,7 +25,7 @@ public sealed class ThrowingDistributedCache : IDistributedCache
     /// <param name="inner">The cache that receives every call that does not throw.</param>
     /// <param name="failure">The exception thrown by failing operations.</param>
     /// <param name="shouldThrow">Receives the operation, the key and the 1-based call count of that operation; returns <see langword="true" /> to throw.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="inner"/> or <paramref name="failure"/> or <paramref name="shouldThrow"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="inner"/>, <paramref name="failure"/>, or <paramref name="shouldThrow"/> is <see langword="null"/>.</exception>
     public ThrowingDistributedCache(IDistributedCache inner, Exception failure, Func<DistributedCacheOperation, string, int, bool> shouldThrow)
     {
         ArgumentNullException.ThrowIfNull(inner);

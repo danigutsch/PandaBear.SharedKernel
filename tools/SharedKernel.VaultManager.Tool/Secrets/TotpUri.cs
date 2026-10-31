@@ -24,7 +24,7 @@ internal static class TotpUri
     /// <summary>Whether a value is an HOTP URI, which Bitwarden does not support.</summary>
     /// <param name="value">Value.</param>
     /// <returns><see langword="true"/> for <c>otpauth://hotp/</c>.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static bool IsHotp(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -37,7 +37,7 @@ internal static class TotpUri
     /// <param name="defaultAccount">Account used when the value names none, for example the login user name.</param>
     /// <param name="uri">Normalized URI.</param>
     /// <returns><see langword="true"/> when the value holds a usable TOTP secret.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static bool TryNormalize(string value, string? defaultIssuer, string? defaultAccount, out string? uri)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -78,7 +78,7 @@ internal static class TotpUri
     /// <summary>Decodes a Google Authenticator migration URI.</summary>
     /// <param name="value">The <c>otpauth-migration://offline?data=</c> URI.</param>
     /// <returns>Decoded accounts, or an empty list when the payload is malformed.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static IReadOnlyList<MigratedOtp> DecodeMigration(string value)
     {
         ArgumentNullException.ThrowIfNull(value);

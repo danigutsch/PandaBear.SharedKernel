@@ -38,7 +38,7 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
     /// <param name="originKey">Origin key of the item.</param>
     /// <param name="notes">The item's current notes.</param>
     /// <returns><see langword="true"/> when the notes may be shown and edited.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="notes"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="notes"/> is <see langword="null"/>.</exception>
     public bool SharesNotes(string originKey, string notes)
     {
         ArgumentNullException.ThrowIfNull(notes);
@@ -53,7 +53,7 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
     /// </summary>
     /// <param name="updates">New entries, such as pending entries for notes that need a decision.</param>
     /// <returns>The updated decisions.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="updates"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="updates"/> is <see langword="null"/>.</exception>
     public MergeDecisions WithNotes(IEnumerable<ItemNotesDecision> updates)
     {
         ArgumentNullException.ThrowIfNull(updates);
@@ -137,7 +137,7 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
     /// <param name="originKey">Origin key of the item the finding belongs to.</param>
     /// <param name="finding">Finding.</param>
     /// <returns><see langword="true"/> when the finding is moved to its target.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="finding"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="finding"/> is <see langword="null"/>.</exception>
     public bool Applies(string originKey, SecretFinding finding)
     {
         ArgumentNullException.ThrowIfNull(finding);
@@ -160,7 +160,7 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
     /// <param name="fields">Fields that need a decision. The entry lists their members as options.</param>
     /// <param name="findings">Findings that need a decision, per item; their decisions are ignored.</param>
     /// <returns>The updated decisions.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="fields"/> or <paramref name="findings"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="fields"/> or <paramref name="findings"/> is <see langword="null"/>.</exception>
     public MergeDecisions WithPending(IReadOnlyList<UnresolvedConflict> fields, IReadOnlyList<ItemFindingDecisions> findings)
     {
         ArgumentNullException.ThrowIfNull(fields);

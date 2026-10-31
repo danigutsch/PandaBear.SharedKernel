@@ -93,7 +93,7 @@ internal sealed class EfIdempotencyRetentionStore<TContext>(TContext dbContext) 
     }
 
     /// <summary>Builds the purge statement using the column and table names of the mapped idempotency entity.</summary>
-    /// <exception cref="InvalidOperationException">When <paramref name="entityType"/> is not mapped to a table.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when <paramref name="entityType"/> is not mapped to a table.</exception>
     internal static string CreatePurgeSql(IEntityType entityType)
     {
         var storeObject = StoreObjectIdentifier.Table(

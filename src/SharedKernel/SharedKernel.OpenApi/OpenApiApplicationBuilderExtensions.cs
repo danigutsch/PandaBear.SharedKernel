@@ -13,7 +13,7 @@ public static class OpenApiApplicationBuilderExtensions
     /// </summary>
     /// <param name="application">The application to configure.</param>
     /// <returns>The configured application.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="application"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="application"/> is <see langword="null"/>.</exception>
     public static WebApplication MapConfiguredOpenApi(this WebApplication application)
     {
         ArgumentNullException.ThrowIfNull(application);

@@ -15,7 +15,7 @@ internal static class VaultCommandLine
     /// </summary>
     /// <param name="environment">Password prompts, terminal state, and clock of the commands.</param>
     /// <returns>The root command.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="environment"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="environment"/> is <see langword="null"/>.</exception>
     public static RootCommand Create(VaultCommandEnvironment environment)
     {
         ArgumentNullException.ThrowIfNull(environment);
@@ -38,7 +38,7 @@ internal static class VaultCommandLine
     /// <param name="rootCommand">Root command from <see cref="Create"/>.</param>
     /// <param name="args">Command-line arguments.</param>
     /// <returns>The parse result, ready to invoke.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="rootCommand"/> or <paramref name="args"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="rootCommand"/> or <paramref name="args"/> is <see langword="null"/>.</exception>
     public static ParseResult Parse(RootCommand rootCommand, IReadOnlyList<string> args)
     {
         ArgumentNullException.ThrowIfNull(rootCommand);
@@ -63,7 +63,7 @@ internal static class VaultCommandLine
     /// <param name="configuration">Output and error writers, and signal handling, of the invocation.</param>
     /// <param name="ct">Cancels the command.</param>
     /// <returns>The exit code.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="configuration"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="configuration"/> is <see langword="null"/>.</exception>
     public static Task<int> Invoke(RootCommand rootCommand, IReadOnlyList<string> args, InvocationConfiguration configuration, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(configuration);

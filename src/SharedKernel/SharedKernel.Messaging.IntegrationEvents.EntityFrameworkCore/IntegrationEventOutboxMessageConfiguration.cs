@@ -23,7 +23,7 @@ internal sealed class IntegrationEventOutboxMessageConfiguration : IEntityTypeCo
     /// </summary>
     /// <param name="schema">Schema that holds the table.</param>
     /// <param name="tableName">Name of the outbox table.</param>
-    /// <exception cref="ArgumentException"><paramref name="schema"/> or <paramref name="tableName"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="schema"/> or <paramref name="tableName"/> is <see langword="null"/>, empty, or white-space.</exception>
     public IntegrationEventOutboxMessageConfiguration(string schema, string tableName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(schema);

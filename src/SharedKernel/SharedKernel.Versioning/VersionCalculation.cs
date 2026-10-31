@@ -13,7 +13,7 @@ public static class VersionCalculation
     /// <param name="prerelease">The optional prerelease label.</param>
     /// <param name="sha">The optional source SHA.</param>
     /// <returns>The calculated version output.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="baseVersion"/> or <paramref name="commitMessages"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="baseVersion"/> or <paramref name="commitMessages"/> is <see langword="null"/>.</exception>
     public static VersionOutput Calculate(
         SemanticVersion baseVersion,
         IEnumerable<string> commitMessages,

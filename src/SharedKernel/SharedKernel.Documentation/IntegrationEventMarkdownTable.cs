@@ -13,7 +13,7 @@ internal static partial class IntegrationEventMarkdownTable
     /// <summary>
     /// Builds an integration-event inventory table from C# source files.
     /// </summary>
-    /// <exception cref="ArgumentException"><paramref name="sourcePath"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="sourcePath"/> is <see langword="null"/>, empty, or white-space.</exception>
     public static string Build(string sourcePath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourcePath);

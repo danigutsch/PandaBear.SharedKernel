@@ -7,7 +7,7 @@ internal static class SourceTextEditor
     /// <param name="text">Source text.</param>
     /// <param name="locations">Locations inside the text.</param>
     /// <returns>Remaining text, or <see langword="null"/> when nothing but whitespace remains.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="text"/> or <paramref name="locations"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="text"/> or <paramref name="locations"/> is <see langword="null"/>.</exception>
     public static string? Remove(string text, IEnumerable<SecretLocation> locations)
     {
         ArgumentNullException.ThrowIfNull(text);

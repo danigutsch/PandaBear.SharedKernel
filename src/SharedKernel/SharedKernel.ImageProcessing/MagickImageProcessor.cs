@@ -18,8 +18,8 @@ public static class MagickImageProcessor
     /// <param name="request">The image processing request.</param>
     /// <param name="ct">A token that can cancel processing before each variant is created.</param>
     /// <returns>The decoded image metadata and generated variants.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="request"/> or its content, variants, or limits is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="request"/> requests no variants.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> or its content, variants, or limits is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="request"/> requests no variants.</exception>
     /// <exception cref="ImageProcessingException">The image data cannot be decoded or encoded.</exception>
     public static ImageProcessingResult Process(ImageProcessingRequest request, CancellationToken ct)
     {

@@ -70,8 +70,8 @@ public static class ApiTestAuthentication
     /// <param name="audience">The token audience.</param>
     /// <param name="issuer">The token issuer.</param>
     /// <param name="role">The provider role to emit.</param>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="audience"/> or <paramref name="issuer"/> or <paramref name="role"/> is empty or consists only of white-space characters.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="client"/> or <paramref name="audience"/> or <paramref name="issuer"/> or <paramref name="role"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="audience"/>, <paramref name="issuer"/>, or <paramref name="role"/> is empty or consists only of white-space characters.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="client"/>, <paramref name="audience"/>, <paramref name="issuer"/>, or <paramref name="role"/> is <see langword="null"/>.</exception>
     public static void ConfigureClient(HttpClient client, string audience, string issuer, string role)
     {
         ArgumentNullException.ThrowIfNull(client);

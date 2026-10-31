@@ -5,7 +5,7 @@ internal static class RepoConfigInitializer
 {
     /// <summary>Creates the missing default files and returns the relative paths created.</summary>
     /// <param name="rootPath">Repository root.</param>
-    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="rootPath"/> is <see langword="null"/>, empty, or white-space.</exception>
     public static IReadOnlyList<string> Initialize(string rootPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);

@@ -23,7 +23,7 @@ public static class ObservabilityBuilderExtensions
     /// <typeparam name="TBuilder">Host builder type, e.g. WebApplicationBuilder, HostApplicationBuilder.</typeparam>
     /// <param name="builder">The host application builder to configure.</param>
     /// <returns>The updated builder instance for chaining.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="builder"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     public static TBuilder ConfigureOpenTelemetry<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -57,7 +57,7 @@ public static class ObservabilityBuilderExtensions
     /// <param name="builder">The host application builder to configure.</param>
     /// <param name="additionalSensitiveAttribute">Optional host policy naming extra attributes to remove; it cannot permit attributes the shared baseline removes.</param>
     /// <returns>The updated builder instance for chaining.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="builder"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     public static TBuilder AddTelemetryPrivacy<TBuilder>(this TBuilder builder, Func<string, bool>? additionalSensitiveAttribute = null) where TBuilder : IHostApplicationBuilder
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -99,7 +99,7 @@ public static class ObservabilityBuilderExtensions
     /// <param name="builder">The host application builder to configure.</param>
     /// <param name="applicationVersion">The optional application version to log. When omitted, the entry assembly informational version is used.</param>
     /// <returns>The updated builder instance for chaining.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="builder"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     public static TBuilder AddApplicationVersionLogging<TBuilder>(this TBuilder builder, string? applicationVersion = null) where TBuilder : IHostApplicationBuilder
     {
         ArgumentNullException.ThrowIfNull(builder);

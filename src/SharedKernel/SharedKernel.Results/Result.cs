@@ -71,8 +71,8 @@ public readonly struct Result : IEquatable<Result>, IResultLike<Result>
     /// <param name="whenSuccess">Called when the result succeeded.</param>
     /// <param name="whenFailure">Called when the result failed.</param>
     /// <returns>The value produced by the matched branch.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="whenSuccess"/> or <paramref name="whenFailure"/> is <see langword="null"/>.</exception>
-    /// <exception cref="InvalidOperationException">When the result status is not initialized.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="whenSuccess"/> or <paramref name="whenFailure"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the result status is not initialized.</exception>
     public TResult Match<TResult>(Func<TResult> whenSuccess, Func<ResultError, TResult> whenFailure)
     {
         ArgumentNullException.ThrowIfNull(whenSuccess);
@@ -93,8 +93,8 @@ public readonly struct Result : IEquatable<Result>, IResultLike<Result>
     /// <param name="whenSuccess">Called when the result succeeded.</param>
     /// <param name="whenFailure">Called when the result failed.</param>
     /// <returns>The value produced by the matched branch.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="whenSuccess"/> or <paramref name="whenFailure"/> is <see langword="null"/>.</exception>
-    /// <exception cref="InvalidOperationException">When the result status is not initialized.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="whenSuccess"/> or <paramref name="whenFailure"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the result status is not initialized.</exception>
     public async Task<TResult> Match<TResult>(Func<Task<TResult>> whenSuccess, Func<ResultError, Task<TResult>> whenFailure)
     {
         ArgumentNullException.ThrowIfNull(whenSuccess);
@@ -115,8 +115,8 @@ public readonly struct Result : IEquatable<Result>, IResultLike<Result>
     /// <param name="whenSuccess">Called when the result succeeded.</param>
     /// <param name="whenFailure">Called when the result failed.</param>
     /// <returns>The value produced by the matched branch.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="whenSuccess"/> or <paramref name="whenFailure"/> is <see langword="null"/>.</exception>
-    /// <exception cref="InvalidOperationException">When the result status is not initialized.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="whenSuccess"/> or <paramref name="whenFailure"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the result status is not initialized.</exception>
     public async ValueTask<TResult> Match<TResult>(Func<ValueTask<TResult>> whenSuccess, Func<ResultError, ValueTask<TResult>> whenFailure)
     {
         ArgumentNullException.ThrowIfNull(whenSuccess);
@@ -142,7 +142,7 @@ public readonly struct Result : IEquatable<Result>, IResultLike<Result>
     /// <typeparam name="T">The success value type.</typeparam>
     /// <param name="value">The success value.</param>
     /// <returns>A successful result containing the value.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static Result<T> Ok<T>(T value)
         where T : notnull
     {
@@ -163,7 +163,7 @@ public readonly struct Result : IEquatable<Result>, IResultLike<Result>
     /// <typeparam name="T">The success value type.</typeparam>
     /// <param name="value">The success value.</param>
     /// <returns>A successful created result containing the value.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static Result<T> Created<T>(T value)
         where T : notnull
     {
@@ -184,7 +184,7 @@ public readonly struct Result : IEquatable<Result>, IResultLike<Result>
     /// <typeparam name="T">The success value type.</typeparam>
     /// <param name="value">The success value.</param>
     /// <returns>A successful accepted result containing the value.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static Result<T> Accepted<T>(T value)
         where T : notnull
     {

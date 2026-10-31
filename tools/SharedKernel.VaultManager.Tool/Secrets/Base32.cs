@@ -12,7 +12,7 @@ internal static class Base32
     /// <summary>Uppercases a secret and drops characters outside A-Z and 2-7, such as spaces, dashes, and padding.</summary>
     /// <param name="value">Raw secret.</param>
     /// <returns>Normalized secret.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static string Normalize(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -33,7 +33,7 @@ internal static class Base32
     /// <summary>Whether text is a strict base32 TOTP secret of at least 80 bits: A-Z, 2-7, and optional padding.</summary>
     /// <param name="value">Candidate, already free of separators.</param>
     /// <returns><see langword="true"/> when the candidate qualifies.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static bool IsTotpSecret(string value)
     {
         ArgumentNullException.ThrowIfNull(value);

@@ -37,7 +37,7 @@ internal sealed class SafeArchive : IDisposable
     /// <param name="path">Zip file.</param>
     /// <returns>Validated archive.</returns>
     /// <exception cref="InvalidDataException">The file is not a zip archive or breaks a limit.</exception>
-    /// <exception cref="ArgumentException"><paramref name="path"/> is empty.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="path"/> is empty.</exception>
     public static SafeArchive Open(string path)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -59,7 +59,7 @@ internal sealed class SafeArchive : IDisposable
     /// <param name="limits">Bounds to enforce.</param>
     /// <returns>Validated archive.</returns>
     /// <exception cref="InvalidDataException">The data is not a zip archive or breaks a limit.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="stream"/> or <paramref name="limits"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream"/> or <paramref name="limits"/> is <see langword="null"/>.</exception>
     public static SafeArchive Open(Stream stream, ArchiveLimits limits)
     {
         ArgumentNullException.ThrowIfNull(stream);
@@ -89,7 +89,7 @@ internal sealed class SafeArchive : IDisposable
     /// <param name="entry">Entry of this archive.</param>
     /// <returns>Entry content.</returns>
     /// <exception cref="InvalidDataException">The entry changed size since validation.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="entry"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="entry"/> is <see langword="null"/>.</exception>
     public byte[] ReadAllBytes(ArchiveEntryInfo entry)
     {
         ArgumentNullException.ThrowIfNull(entry);
@@ -106,7 +106,7 @@ internal sealed class SafeArchive : IDisposable
     /// <param name="entry">Entry of this archive.</param>
     /// <returns>The 32-byte digest.</returns>
     /// <exception cref="InvalidDataException">The entry changed size since validation.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="entry"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="entry"/> is <see langword="null"/>.</exception>
     public byte[] ComputeSha256(ArchiveEntryInfo entry)
     {
         ArgumentNullException.ThrowIfNull(entry);
@@ -140,7 +140,7 @@ internal sealed class SafeArchive : IDisposable
     /// <summary>Extracts an entry's text within the text extraction limits.</summary>
     /// <param name="entry">Entry of this archive.</param>
     /// <returns>Extracted text, or <see langword="null"/> when the entry is not a text kind. Binaries are never decoded.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="entry"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="entry"/> is <see langword="null"/>.</exception>
     public ExtractedText? ReadText(ArchiveEntryInfo entry)
     {
         ArgumentNullException.ThrowIfNull(entry);

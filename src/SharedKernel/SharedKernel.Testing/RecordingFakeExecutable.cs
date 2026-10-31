@@ -10,7 +10,7 @@ public sealed class RecordingFakeExecutable
     /// <param name="name">The script file name.</param>
     /// <param name="exitCode">The exit code the script returns.</param>
     /// <param name="body">Shell commands run after the script has recorded its process ID, environment and arguments.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="directory"/> or <paramref name="name"/> or <paramref name="body"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="directory"/>, <paramref name="name"/>, or <paramref name="body"/> is <see langword="null"/>.</exception>
     /// <exception cref="PlatformNotSupportedException">Thrown when the current platform is Windows.</exception>
     public RecordingFakeExecutable(string directory, string name, int exitCode, string body)
     {

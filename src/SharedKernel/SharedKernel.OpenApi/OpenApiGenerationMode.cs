@@ -20,7 +20,7 @@ public static class OpenApiGenerationMode
     /// </summary>
     /// <param name="environment">The host environment.</param>
     /// <returns><see langword="true" /> only for an explicitly marked document generator process; otherwise, <see langword="false" />.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="environment"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="environment"/> is <see langword="null"/>.</exception>
     public static bool IsEnabled(IHostEnvironment environment)
     {
         ArgumentNullException.ThrowIfNull(environment);
@@ -29,7 +29,7 @@ public static class OpenApiGenerationMode
     }
 
     /// <summary>Determines generation mode from an explicit entry assembly name, so tests need not depend on the real entry assembly.</summary>
-    /// <exception cref="ArgumentNullException">When <paramref name="environment"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="environment"/> is <see langword="null"/>.</exception>
     internal static bool IsEnabled(IHostEnvironment environment, string? entryAssemblyName)
     {
         ArgumentNullException.ThrowIfNull(environment);

@@ -12,7 +12,7 @@ public static class ContractHttpValidation
     /// <summary>
     /// Accepts successful responses, extracts validation errors from HTTP 400, and throws for unsuccessful responses.
     /// </summary>
-    /// <exception cref="ArgumentNullException">When <paramref name="response"/> or <paramref name="jsonTypeInfo"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="response"/> or <paramref name="jsonTypeInfo"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// The caller retains ownership of the response. HTTP 400 JSON reads are limited to 1 MiB; this method does not send
     /// a request or create a timeout. Invalid validation payloads produce an exception without field errors.

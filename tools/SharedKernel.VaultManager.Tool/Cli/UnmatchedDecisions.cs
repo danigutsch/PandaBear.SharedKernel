@@ -15,7 +15,7 @@ internal static class UnmatchedDecisions
     /// <param name="decisions">Decisions the pipeline ran with.</param>
     /// <param name="result">Pipeline result.</param>
     /// <returns>One message per unmatched decision. Messages hold keys, field paths, and identifiers, never values.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="decisions"/> or <paramref name="result"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="decisions"/> or <paramref name="result"/> is <see langword="null"/>.</exception>
     public static IReadOnlyList<string> Find(MergeDecisions decisions, PipelineResult result)
     {
         ArgumentNullException.ThrowIfNull(decisions);

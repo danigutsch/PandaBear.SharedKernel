@@ -17,7 +17,7 @@ internal static class PlaywrightMcpCommandLine
         """;
 
     /// <summary>Creates the root command with its serve, prepare, and clean subcommands.</summary>
-    /// <exception cref="ArgumentNullException"><paramref name="getEnvironmentVariable"/> or <paramref name="resolveExecutable"/> or <paramref name="runProcess"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="getEnvironmentVariable"/>, <paramref name="resolveExecutable"/>, or <paramref name="runProcess"/> is <see langword="null"/>.</exception>
     public static RootCommand Create(
         Func<string, string?> getEnvironmentVariable,
         Func<string, string?> resolveExecutable,

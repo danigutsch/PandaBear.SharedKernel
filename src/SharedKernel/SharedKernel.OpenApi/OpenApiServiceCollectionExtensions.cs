@@ -13,7 +13,7 @@ public static class OpenApiServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
     /// <param name="boundaryNames">The boundary names whose document names and route prefixes are the same.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="services"/> or <paramref name="boundaryNames"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="services"/> or <paramref name="boundaryNames"/> is <see langword="null"/>.</exception>
     public static void AddBoundaryOpenApiDocuments(
         this IServiceCollection services,
         IReadOnlyCollection<string> boundaryNames)
@@ -30,8 +30,8 @@ public static class OpenApiServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
     /// <param name="boundaries">The boundary documents to register.</param>
-    /// <exception cref="ArgumentException">When a boundary has an empty or white-space document name or route prefix, a route prefix with no non-slash character, or a document name that duplicates another boundary.</exception>
-    /// <exception cref="ArgumentNullException">When <paramref name="services"/> or <paramref name="boundaries"/> is <see langword="null"/>, or <paramref name="boundaries"/> contains a <see langword="null"/> boundary or a boundary without a document name or route prefix.</exception>
+    /// <exception cref="ArgumentException">Thrown when a boundary has an empty or white-space document name or route prefix, a route prefix with no non-slash character, or a document name that duplicates another boundary.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="services"/> or <paramref name="boundaries"/> is <see langword="null"/>, or <paramref name="boundaries"/> contains a <see langword="null"/> boundary or a boundary without a document name or route prefix.</exception>
     public static void AddBoundaryOpenApiDocuments(
         this IServiceCollection services,
         IReadOnlyCollection<OpenApiBoundaryDocument> boundaries)
@@ -79,8 +79,8 @@ public static class OpenApiServiceCollectionExtensions
     /// <param name="services">The service collection to configure.</param>
     /// <param name="versions">The API contract versions to register.</param>
     /// <param name="routePrefix">The unversioned API route prefix.</param>
-    /// <exception cref="ArgumentException">When <paramref name="routePrefix"/> is empty, white space, or contains no non-slash character, or <paramref name="versions"/> contains versions with the same document name.</exception>
-    /// <exception cref="ArgumentNullException">When <paramref name="services"/> or <paramref name="versions"/> is <see langword="null"/>, or <paramref name="versions"/> contains a <see langword="null"/> version.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="routePrefix"/> is empty, white-space, or contains no non-slash character, or <paramref name="versions"/> contains versions with the same document name.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="services"/> or <paramref name="versions"/> is <see langword="null"/>, or <paramref name="versions"/> contains a <see langword="null"/> version.</exception>
     public static void AddApiVersionOpenApiDocuments(
         this IServiceCollection services,
         IReadOnlyCollection<ApiVersionDefinition> versions,

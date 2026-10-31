@@ -68,7 +68,7 @@ public static class SharedKernelLocalFeed
     /// <param name="packageId">The package ID.</param>
     /// <param name="version">The package version.</param>
     /// <returns><see langword="true" /> when the package version was restored.</returns>
-    /// <exception cref="ArgumentException"><paramref name="packageCache"/> or <paramref name="packageId"/> or <paramref name="version"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="packageCache"/>, <paramref name="packageId"/>, or <paramref name="version"/> is <see langword="null"/>, empty, or white-space.</exception>
     public static bool PackageWasRestored(string packageCache, string packageId, string version)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(packageCache);
@@ -93,8 +93,8 @@ public static class SharedKernelLocalFeed
     /// <param name="packageIds">The package IDs to reference.</param>
     /// <param name="version">The package version.</param>
     /// <returns>A task that completes when the project file is written.</returns>
-    /// <exception cref="ArgumentException"><paramref name="restoreDirectory"/> or <paramref name="version"/> is <see langword="null"/>, empty, or white space.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="packageIds"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="restoreDirectory"/> or <paramref name="version"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="packageIds"/> is <see langword="null"/>.</exception>
     public static async Task WriteRestoreProject(string restoreDirectory, string[] packageIds, string version)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(restoreDirectory);
@@ -128,8 +128,8 @@ public static class SharedKernelLocalFeed
     /// <param name="packageIds">The package IDs restored from the local feed.</param>
     /// <param name="nugetSourceUrl">The fallback NuGet source URL.</param>
     /// <returns>A task that completes when the configuration file is written.</returns>
-    /// <exception cref="ArgumentException"><paramref name="restoreDirectory"/> or <paramref name="packageDirectory"/> is <see langword="null"/>, empty, or white space, or <paramref name="nugetSourceUrl"/> is not absolute.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="packageIds"/> or <paramref name="nugetSourceUrl"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="restoreDirectory"/> or <paramref name="packageDirectory"/> is <see langword="null"/>, empty, or white-space, or <paramref name="nugetSourceUrl"/> is not absolute.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="packageIds"/> or <paramref name="nugetSourceUrl"/> is <see langword="null"/>.</exception>
     public static async Task WriteNuGetConfig(string restoreDirectory, string packageDirectory, string[] packageIds, Uri nugetSourceUrl)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(restoreDirectory);

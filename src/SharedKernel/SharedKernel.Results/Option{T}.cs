@@ -57,7 +57,7 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     /// <typeparam name="TResult">The projected non-null type.</typeparam>
     /// <param name="map">The projection to apply when a value is present.</param>
     /// <returns>The projected option, or an empty option when no value is present.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="map"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="map"/> is <see langword="null"/>.</exception>
     public Option<TResult> Map<TResult>(Func<T, TResult> map)
         where TResult : notnull
     {
@@ -74,7 +74,7 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     /// <typeparam name="TResult">The projected non-null type.</typeparam>
     /// <param name="map">The asynchronous projection to apply when a value is present.</param>
     /// <returns>The projected option, or an empty option when no value is present.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="map"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="map"/> is <see langword="null"/>.</exception>
     public async Task<Option<TResult>> Map<TResult>(Func<T, Task<TResult>> map)
         where TResult : notnull
     {
@@ -94,7 +94,7 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     /// <typeparam name="TResult">The projected non-null type.</typeparam>
     /// <param name="map">The asynchronous projection to apply when a value is present.</param>
     /// <returns>The projected option, or an empty option when no value is present.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="map"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="map"/> is <see langword="null"/>.</exception>
     public async ValueTask<Option<TResult>> Map<TResult>(Func<T, ValueTask<TResult>> map)
         where TResult : notnull
     {
@@ -114,7 +114,7 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     /// <typeparam name="TResult">The projected non-null type.</typeparam>
     /// <param name="bind">The projection to apply when a value is present.</param>
     /// <returns>The bound option, or an empty option when no value is present.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="bind"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="bind"/> is <see langword="null"/>.</exception>
     public Option<TResult> Bind<TResult>(Func<T, Option<TResult>> bind)
         where TResult : notnull
     {
@@ -131,7 +131,7 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     /// <typeparam name="TResult">The projected non-null type.</typeparam>
     /// <param name="bind">The asynchronous projection to apply when a value is present.</param>
     /// <returns>The bound option, or an empty option when no value is present.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="bind"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="bind"/> is <see langword="null"/>.</exception>
     public async Task<Option<TResult>> Bind<TResult>(Func<T, Task<Option<TResult>>> bind)
         where TResult : notnull
     {
@@ -151,7 +151,7 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     /// <typeparam name="TResult">The projected non-null type.</typeparam>
     /// <param name="bind">The asynchronous projection to apply when a value is present.</param>
     /// <returns>The bound option, or an empty option when no value is present.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="bind"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="bind"/> is <see langword="null"/>.</exception>
     public async ValueTask<Option<TResult>> Bind<TResult>(Func<T, ValueTask<Option<TResult>>> bind)
         where TResult : notnull
     {
@@ -172,7 +172,7 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     /// <param name="whenSome">Called when a value is present.</param>
     /// <param name="whenNone">Called when the option is empty.</param>
     /// <returns>The value produced by the matched branch.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="whenSome"/> or <paramref name="whenNone"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="whenSome"/> or <paramref name="whenNone"/> is <see langword="null"/>.</exception>
     public TResult Match<TResult>(Func<T, TResult> whenSome, Func<TResult> whenNone)
     {
         ArgumentNullException.ThrowIfNull(whenSome);
@@ -190,7 +190,7 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     /// <param name="whenSome">Called when a value is present.</param>
     /// <param name="whenNone">Called when the option is empty.</param>
     /// <returns>The value produced by the matched branch.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="whenSome"/> or <paramref name="whenNone"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="whenSome"/> or <paramref name="whenNone"/> is <see langword="null"/>.</exception>
     public async Task<TResult> Match<TResult>(Func<T, Task<TResult>> whenSome, Func<Task<TResult>> whenNone)
     {
         ArgumentNullException.ThrowIfNull(whenSome);
@@ -208,7 +208,7 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     /// <param name="whenSome">Called when a value is present.</param>
     /// <param name="whenNone">Called when the option is empty.</param>
     /// <returns>The value produced by the matched branch.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="whenSome"/> or <paramref name="whenNone"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="whenSome"/> or <paramref name="whenNone"/> is <see langword="null"/>.</exception>
     public async ValueTask<TResult> Match<TResult>(Func<T, ValueTask<TResult>> whenSome, Func<ValueTask<TResult>> whenNone)
     {
         ArgumentNullException.ThrowIfNull(whenSome);

@@ -22,7 +22,7 @@ internal sealed class GeneratedMarkdownUpdater(string rootPath, string docsRelat
     /// <param name="checkOnly">Whether to detect drift without writing files.</param>
     /// <param name="replacements">Generated block names, target paths, and replacement content.</param>
     /// <returns>Repository-relative file paths changed or stale.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="replacements"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="replacements"/> is <see langword="null"/>.</exception>
     public List<string> Update(
         bool checkOnly,
         IReadOnlyList<(string Name, string TargetPath, string Replacement)> replacements)

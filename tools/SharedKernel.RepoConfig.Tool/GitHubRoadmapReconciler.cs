@@ -15,7 +15,7 @@ internal sealed class GitHubRoadmapReconciler
     /// <summary>Creates the reconciler for a project, optionally with an existing HTTP client.</summary>
     /// <param name="project">Roadmap project to reconcile.</param>
     /// <param name="httpClient">GitHub client, or <see langword="null" /> to create one from the environment.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="project"/> is <see langword="null"/>.</exception>
     internal GitHubRoadmapReconciler(RoadmapProject project, HttpClient? httpClient)
     {
         ArgumentNullException.ThrowIfNull(project);
@@ -184,7 +184,7 @@ internal sealed class GitHubRoadmapReconciler
     }
 
     /// <summary>Returns the closed-item transitions the roadmap requires for issues that GitHub reports as closed.</summary>
-    /// <exception cref="ArgumentNullException"><paramref name="project"/>, <paramref name="reconciliation"/>, or <paramref name="issues"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="project"/>, <paramref name="reconciliation"/>, or <paramref name="issues"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">A closed issue lacks an exact closed item transition.</exception>
     internal static RoadmapClosedItemTransition[] GetRequiredClosedTransitions(
         RoadmapProject project,

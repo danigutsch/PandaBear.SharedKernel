@@ -7,7 +7,7 @@ internal static class ResultErrorStatusMap
     /// <param name="error">The error to map; must not be null.</param>
     /// <param name="paramName">The parameter name reported when the error is invalid.</param>
     /// <returns>The failure status.</returns>
-    /// <exception cref="ArgumentException">When <paramref name="error"/> uses the invalid code without validation error details.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="error"/> uses the invalid code without validation error details.</exception>
     public static ResultStatus GetFailureStatus(ResultError error, string paramName)
     {
         if (string.Equals(error.Code, ResultErrorCodes.Invalid, StringComparison.Ordinal)

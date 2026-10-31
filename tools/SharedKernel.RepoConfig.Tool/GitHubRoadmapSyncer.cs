@@ -38,7 +38,7 @@ internal sealed class GitHubRoadmapSyncer
     /// <param name="project">Roadmap project to synchronize.</param>
     /// <param name="httpClient">GitHub client, or <see langword="null" /> to create one from the environment.</param>
     /// <param name="timeProvider">Time source, or <see langword="null" /> for the system clock.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="project"/> is <see langword="null"/>.</exception>
     internal GitHubRoadmapSyncer(RoadmapProject project, HttpClient? httpClient, TimeProvider? timeProvider = null)
     {
         ArgumentNullException.ThrowIfNull(project);

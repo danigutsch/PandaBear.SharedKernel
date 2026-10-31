@@ -64,7 +64,7 @@ internal static class BitwardenZipReader
     /// <summary>Folder name the Bitwarden export uses for an item: reserved characters become <c>_</c>, runs of <c>_</c> collapse.</summary>
     /// <param name="itemName">Item name.</param>
     /// <returns>Sanitized folder name without the duplicate suffix.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="itemName"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="itemName"/> is <see langword="null"/>.</exception>
     public static string SanitizeFolderName(string itemName)
     {
         ArgumentNullException.ThrowIfNull(itemName);

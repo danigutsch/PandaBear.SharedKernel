@@ -69,7 +69,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// </summary>
     /// <param name="currentValue">The current success value when the result succeeded; otherwise <see langword="null"/>.</param>
     /// <returns><see langword="true"/> when the result succeeded.</returns>
-    /// <exception cref="InvalidOperationException">When the result succeeded but contains no value.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the result succeeded but contains no value.</exception>
     public bool TryGetValue([NotNullWhen(true)] out T? currentValue)
     {
         if (IsSuccess)
@@ -88,7 +88,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// <typeparam name="TResult">The projected non-null success type.</typeparam>
     /// <param name="map">The projection to apply when the result succeeded.</param>
     /// <returns>The mapped result, or the original failure when the result failed.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="map"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="map"/> is <see langword="null"/>.</exception>
     public Result<TResult> Map<TResult>(Func<T, TResult> map)
         where TResult : notnull
     {
@@ -105,7 +105,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// <typeparam name="TResult">The projected non-null success type.</typeparam>
     /// <param name="map">The asynchronous projection to apply when the result succeeded.</param>
     /// <returns>The mapped result, or the original failure when the result failed.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="map"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="map"/> is <see langword="null"/>.</exception>
     public async Task<Result<TResult>> Map<TResult>(Func<T, Task<TResult>> map)
         where TResult : notnull
     {
@@ -125,7 +125,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// <typeparam name="TResult">The projected non-null success type.</typeparam>
     /// <param name="map">The asynchronous projection to apply when the result succeeded.</param>
     /// <returns>The mapped result, or the original failure when the result failed.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="map"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="map"/> is <see langword="null"/>.</exception>
     public async ValueTask<Result<TResult>> Map<TResult>(Func<T, ValueTask<TResult>> map)
         where TResult : notnull
     {
@@ -145,7 +145,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// <typeparam name="TResult">The projected non-null success type.</typeparam>
     /// <param name="bind">The projection to apply when the result succeeded.</param>
     /// <returns>The bound result, or the original failure when the result failed.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="bind"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="bind"/> is <see langword="null"/>.</exception>
     public Result<TResult> Bind<TResult>(Func<T, Result<TResult>> bind)
         where TResult : notnull
     {
@@ -162,7 +162,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// <typeparam name="TResult">The projected non-null success type.</typeparam>
     /// <param name="bind">The asynchronous projection to apply when the result succeeded.</param>
     /// <returns>The bound result, or the original failure when the result failed.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="bind"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="bind"/> is <see langword="null"/>.</exception>
     public async Task<Result<TResult>> Bind<TResult>(Func<T, Task<Result<TResult>>> bind)
         where TResult : notnull
     {
@@ -182,7 +182,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// <typeparam name="TResult">The projected non-null success type.</typeparam>
     /// <param name="bind">The asynchronous projection to apply when the result succeeded.</param>
     /// <returns>The bound result, or the original failure when the result failed.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="bind"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="bind"/> is <see langword="null"/>.</exception>
     public async ValueTask<Result<TResult>> Bind<TResult>(Func<T, ValueTask<Result<TResult>>> bind)
         where TResult : notnull
     {
@@ -202,7 +202,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// <param name="predicate">The predicate to evaluate when the result succeeded.</param>
     /// <param name="error">The error to return when the predicate fails.</param>
     /// <returns>The original result when the predicate succeeds, or the provided failure when it fails.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="predicate"/> or <paramref name="error"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="predicate"/> or <paramref name="error"/> is <see langword="null"/>.</exception>
     public Result<T> Ensure(Func<T, bool> predicate, ResultError error)
     {
         ArgumentNullException.ThrowIfNull(predicate);
@@ -224,7 +224,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// <param name="predicate">The predicate to evaluate when the result succeeded.</param>
     /// <param name="error">The error to return when the predicate fails.</param>
     /// <returns>The original result when the predicate succeeds, or the provided failure when it fails.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="predicate"/> or <paramref name="error"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="predicate"/> or <paramref name="error"/> is <see langword="null"/>.</exception>
     public async Task<Result<T>> Ensure(Func<T, Task<bool>> predicate, ResultError error)
     {
         ArgumentNullException.ThrowIfNull(predicate);
@@ -246,7 +246,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// <param name="predicate">The predicate to evaluate when the result succeeded.</param>
     /// <param name="error">The error to return when the predicate fails.</param>
     /// <returns>The original result when the predicate succeeds, or the provided failure when it fails.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="predicate"/> or <paramref name="error"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="predicate"/> or <paramref name="error"/> is <see langword="null"/>.</exception>
     public async ValueTask<Result<T>> Ensure(Func<T, ValueTask<bool>> predicate, ResultError error)
     {
         ArgumentNullException.ThrowIfNull(predicate);
@@ -323,8 +323,8 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// <param name="whenSuccess">Called when the result succeeded.</param>
     /// <param name="whenFailure">Called when the result failed.</param>
     /// <returns>The value produced by the matched branch.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="whenSuccess"/> or <paramref name="whenFailure"/> is <see langword="null"/>.</exception>
-    /// <exception cref="InvalidOperationException">When the result status is not initialized.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="whenSuccess"/> or <paramref name="whenFailure"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the result status is not initialized.</exception>
     public TResult Match<TResult>(Func<T, TResult> whenSuccess, Func<ResultError, TResult> whenFailure)
     {
         ArgumentNullException.ThrowIfNull(whenSuccess);
@@ -345,8 +345,8 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// <param name="whenSuccess">Called when the result succeeded.</param>
     /// <param name="whenFailure">Called when the result failed.</param>
     /// <returns>The value produced by the matched branch.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="whenSuccess"/> or <paramref name="whenFailure"/> is <see langword="null"/>.</exception>
-    /// <exception cref="InvalidOperationException">When the result status is not initialized.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="whenSuccess"/> or <paramref name="whenFailure"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the result status is not initialized.</exception>
     public async Task<TResult> Match<TResult>(Func<T, Task<TResult>> whenSuccess, Func<ResultError, Task<TResult>> whenFailure)
     {
         ArgumentNullException.ThrowIfNull(whenSuccess);
@@ -367,8 +367,8 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// <param name="whenSuccess">Called when the result succeeded.</param>
     /// <param name="whenFailure">Called when the result failed.</param>
     /// <returns>The value produced by the matched branch.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="whenSuccess"/> or <paramref name="whenFailure"/> is <see langword="null"/>.</exception>
-    /// <exception cref="InvalidOperationException">When the result status is not initialized.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="whenSuccess"/> or <paramref name="whenFailure"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the result status is not initialized.</exception>
     public async ValueTask<TResult> Match<TResult>(Func<T, ValueTask<TResult>> whenSuccess, Func<ResultError, ValueTask<TResult>> whenFailure)
     {
         ArgumentNullException.ThrowIfNull(whenSuccess);
@@ -386,7 +386,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// Converts this result to a non-generic result.
     /// </summary>
     /// <returns>A non-generic result preserving status and error information.</returns>
-    /// <exception cref="InvalidOperationException">When the result status is not initialized.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the result status is not initialized.</exception>
     public Result ToResult()
     {
         if (IsSuccess)

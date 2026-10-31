@@ -16,7 +16,7 @@ internal static class KeeperJsonReader
     /// <param name="sourceFile">File name recorded as the item origin.</param>
     /// <returns>Items and warnings.</returns>
     /// <exception cref="InvalidDataException">The file is not a Keeper JSON export.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="json"/> or <paramref name="sourceFile"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> or <paramref name="sourceFile"/> is <see langword="null"/>.</exception>
     public static VaultReadResult Read(string json, string sourceFile)
     {
         ArgumentNullException.ThrowIfNull(json);
@@ -29,7 +29,7 @@ internal static class KeeperJsonReader
     /// <param name="path">Zip file holding <c>export.json</c> and <c>files/&lt;file_uid&gt;</c> entries.</param>
     /// <returns>Items with attachment references, and warnings.</returns>
     /// <exception cref="InvalidDataException">The archive breaks a safety limit or holds no Keeper export.</exception>
-    /// <exception cref="ArgumentException"><paramref name="path"/> is empty.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="path"/> is empty.</exception>
     public static VaultReadResult ReadZip(string path)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);

@@ -17,7 +17,7 @@ public static class AspNetCoreServiceCollectionExtensions
     /// <c>traceId</c> and no exception text, logs one stable event per exception and counts it in
     /// <see cref="AspNetCoreTelemetry.UnhandledExceptionsCounterName" />.
     /// </summary>
-    /// <exception cref="ArgumentNullException">When <paramref name="services"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="services"/> is <see langword="null"/>.</exception>
     /// <remarks>This also calls <c>AddProblemDetails()</c>, a host-wide registration that makes the exception and status-code middleware write problem details for every endpoint, not only for this handler. Intended for API hosts. The host must still call <c>UseExceptionHandler()</c> so the framework invokes the handler. A UI host that uses <c>UseExceptionHandler("/Error")</c> should not register it, because exception handlers run before the error page.</remarks>
     /// <param name="services">The service collection to configure.</param>
     /// <returns>The same service collection.</returns>
@@ -36,7 +36,7 @@ public static class AspNetCoreServiceCollectionExtensions
     /// Logs and counts JWT bearer authentication failures, challenges and forbidden results with a bounded reason, and
     /// rate-limit rejections with the policy name. Existing events and rejection callbacks keep running afterwards.
     /// </summary>
-    /// <exception cref="ArgumentNullException">When <paramref name="services"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="services"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// Tokens, claims and exception messages are never logged or used as tag values. A request that presents an invalid
     /// token raises both <c>authentication_failed</c> and <c>challenge</c>. Not instrumented: a scheme that configures

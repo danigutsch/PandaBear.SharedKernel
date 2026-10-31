@@ -31,7 +31,7 @@ internal static class OriginKeys
     /// <summary>Computes the origin key of every item.</summary>
     /// <param name="items">Items in input order.</param>
     /// <returns>Unique keys aligned with <paramref name="items"/>.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="items"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is <see langword="null"/>.</exception>
     public static IReadOnlyList<string> Compute(IReadOnlyList<VaultItem> items)
     {
         ArgumentNullException.ThrowIfNull(items);
@@ -60,7 +60,7 @@ internal static class OriginKeys
     /// <param name="key">Key the item would have.</param>
     /// <param name="taken">Keys other items already have; receives the returned key.</param>
     /// <returns>A key no other item has.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="key"/> or <paramref name="taken"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="key"/> or <paramref name="taken"/> is <see langword="null"/>.</exception>
     public static string MakeUnique(string key, ISet<string> taken)
     {
         ArgumentNullException.ThrowIfNull(key);

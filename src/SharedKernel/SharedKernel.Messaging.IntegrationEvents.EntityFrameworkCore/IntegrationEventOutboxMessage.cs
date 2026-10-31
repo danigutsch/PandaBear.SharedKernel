@@ -158,7 +158,7 @@ internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegratio
     /// </summary>
     /// <param name="claimedBy">Name of the claiming relay.</param>
     /// <param name="claimedUntil">When the claim lapses.</param>
-    /// <exception cref="ArgumentException"><paramref name="claimedBy"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="claimedBy"/> is <see langword="null"/>, empty, or white-space.</exception>
     public void MarkClaimed(string claimedBy, DateTimeOffset claimedUntil)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(claimedBy);
@@ -175,7 +175,7 @@ internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegratio
     /// <param name="attemptedAt">The attempt time.</param>
     /// <param name="nextAttemptAt">The next retry time.</param>
     /// <param name="error">The failure description.</param>
-    /// <exception cref="ArgumentException"><paramref name="error"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="error"/> is <see langword="null"/>, empty, or white-space.</exception>
     public void MarkPublishFailed(DateTimeOffset attemptedAt, DateTimeOffset nextAttemptAt, string error)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(error);

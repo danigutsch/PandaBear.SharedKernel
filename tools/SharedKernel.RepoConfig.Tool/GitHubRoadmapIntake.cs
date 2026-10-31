@@ -13,7 +13,7 @@ internal sealed class GitHubRoadmapIntake
     /// <summary>Creates the intake for a project, optionally with an existing HTTP client.</summary>
     /// <param name="project">Roadmap project to extend.</param>
     /// <param name="httpClient">GitHub client, or <see langword="null" /> to create one from the environment.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="project"/> is <see langword="null"/>.</exception>
     internal GitHubRoadmapIntake(RoadmapProject project, HttpClient? httpClient)
     {
         ArgumentNullException.ThrowIfNull(project);

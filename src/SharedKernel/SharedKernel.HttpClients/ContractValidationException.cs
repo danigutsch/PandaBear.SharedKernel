@@ -42,7 +42,7 @@ public sealed class ContractValidationException : HttpRequestException
     /// </summary>
     /// <param name="message">The error message.</param>
     /// <param name="validationErrors">The validation errors from the API.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="validationErrors"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="validationErrors"/> is <see langword="null"/>.</exception>
     public ContractValidationException(string message, IReadOnlyDictionary<string, string[]> validationErrors)
         : base(message, null, HttpStatusCode.BadRequest)
     {

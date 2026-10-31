@@ -17,7 +17,7 @@ public static class ReleaseVersionCalculator
     /// </summary>
     /// <param name="input">The calculation input.</param>
     /// <returns>The calculation result.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="input"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="input"/> is <see langword="null"/>.</exception>
     public static async Task<ReleaseVersionCalculationResult> Calculate(ReleaseVersionCalculationInput input)
     {
         ArgumentNullException.ThrowIfNull(input);
@@ -55,7 +55,7 @@ public static class ReleaseVersionCalculator
     /// </summary>
     /// <param name="result">The calculation result.</param>
     /// <returns>The GitHub output lines.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="result"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="result"/> is <see langword="null"/>.</exception>
     public static string[] CreateGitHubOutputs(ReleaseVersionCalculationResult result)
     {
         ArgumentNullException.ThrowIfNull(result);
@@ -79,7 +79,7 @@ public static class ReleaseVersionCalculator
     /// </summary>
     /// <param name="result">The calculation result.</param>
     /// <returns>The summary lines.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="result"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="result"/> is <see langword="null"/>.</exception>
     public static string[] CreateSummary(ReleaseVersionCalculationResult result)
     {
         ArgumentNullException.ThrowIfNull(result);

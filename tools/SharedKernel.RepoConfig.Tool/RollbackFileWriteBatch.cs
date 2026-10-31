@@ -9,8 +9,8 @@ namespace PandaBear.RepoConfig.Tool;
 internal static class RollbackFileWriteBatch
 {
     /// <summary>Locks <paramref name="lockScope"/>, runs <paramref name="verifyPreconditions"/>, and atomically replaces each file in <paramref name="writes"/>.</summary>
-    /// <exception cref="ArgumentException"><paramref name="lockScope"/> is <see langword="null"/>, empty, or whitespace.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="writes"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="lockScope"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="writes"/> is <see langword="null"/>.</exception>
     public static void Apply(string lockScope, IReadOnlyList<AtomicFileWrite> writes, Action? verifyPreconditions = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(lockScope);

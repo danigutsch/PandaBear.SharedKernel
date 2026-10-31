@@ -39,7 +39,7 @@ public abstract class EventSourcedAggregateRoot<TId>
     /// Replays persisted events without marking them as uncommitted.
     /// </summary>
     /// <param name="events">The persisted events to replay.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="events"/> is <see langword="null"/> or contains a <see langword="null"/> event.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="events"/> is <see langword="null"/> or contains a <see langword="null"/> event.</exception>
     public void Replay(IEnumerable<object> events)
     {
         ArgumentNullException.ThrowIfNull(events);
@@ -57,7 +57,7 @@ public abstract class EventSourcedAggregateRoot<TId>
     /// Applies and tracks a new event.
     /// </summary>
     /// <param name="domainEvent">The event to apply.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="domainEvent"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="domainEvent"/> is <see langword="null"/>.</exception>
     protected void AddEvent(object domainEvent)
     {
         ArgumentNullException.ThrowIfNull(domainEvent);

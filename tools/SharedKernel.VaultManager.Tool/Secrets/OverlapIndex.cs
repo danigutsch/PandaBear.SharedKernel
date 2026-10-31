@@ -19,7 +19,7 @@ internal sealed class OverlapIndex
     /// <param name="left">First location.</param>
     /// <param name="right">Second location.</param>
     /// <returns><see langword="true"/> when they overlap.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>.</exception>
     public static bool Overlaps(SecretLocation left, SecretLocation right)
     {
         ArgumentNullException.ThrowIfNull(left);
@@ -30,7 +30,7 @@ internal sealed class OverlapIndex
 
     /// <summary>Adds a location. Its position is the number of locations added before it.</summary>
     /// <param name="location">Location to add.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="location"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="location"/> is <see langword="null"/>.</exception>
     public void Add(SecretLocation location)
     {
         ArgumentNullException.ThrowIfNull(location);
@@ -52,7 +52,7 @@ internal sealed class OverlapIndex
     /// <summary>Finds an added location that overlaps <paramref name="location"/>.</summary>
     /// <param name="location">Location to test.</param>
     /// <returns>The position of an overlapping location, or -1 when none overlaps.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="location"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="location"/> is <see langword="null"/>.</exception>
     public int FindOverlap(SecretLocation location)
     {
         ArgumentNullException.ThrowIfNull(location);

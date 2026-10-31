@@ -13,7 +13,7 @@ internal static class AdditionalFolders
     /// <summary>Folders listed by the item's additional folders fields, in order.</summary>
     /// <param name="fields">Custom fields of an item.</param>
     /// <returns>Trimmed, non-empty lines of every Text field named <see cref="FieldName"/>.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="fields"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="fields"/> is <see langword="null"/>.</exception>
     public static IEnumerable<string> Read(IEnumerable<CustomField> fields)
     {
         ArgumentNullException.ThrowIfNull(fields);
@@ -32,7 +32,7 @@ internal static class AdditionalFolders
     /// <param name="folders">Folders to add.</param>
     /// <param name="folder">The item's folder, which is not listed; <see langword="null"/> for none.</param>
     /// <returns>The fields, without an additional folders field when no folder remains.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="fields"/> or <paramref name="folders"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="fields"/> or <paramref name="folders"/> is <see langword="null"/>.</exception>
     public static IReadOnlyList<CustomField> Add(IEnumerable<CustomField> fields, IEnumerable<string> folders, string? folder)
     {
         ArgumentNullException.ThrowIfNull(fields);

@@ -56,7 +56,7 @@ public sealed class HttpOutcomeMessages
     /// <summary>Returns the copy for an outcome, ignoring its server-provided message and validation text.</summary>
     /// <param name="outcome">The outcome.</param>
     /// <returns>The configured copy, or <see cref="Fallback" />.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="outcome"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="outcome"/> is <see langword="null"/>.</exception>
     public string For(HttpOutcome outcome)
     {
         ArgumentNullException.ThrowIfNull(outcome);

@@ -13,7 +13,7 @@ public sealed class FakeFormFile : IFormFile
     /// <param name="fileName">The client-supplied file name.</param>
     /// <param name="contentType">The declared content type.</param>
     /// <param name="name">The form field name.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/> or <paramref name="fileName"/> or <paramref name="contentType"/> or <paramref name="name"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/>, <paramref name="fileName"/>, <paramref name="contentType"/>, or <paramref name="name"/> is <see langword="null"/>.</exception>
     public FakeFormFile(byte[] content, string fileName, string contentType = "application/octet-stream", string name = "file")
     {
         ArgumentNullException.ThrowIfNull(content);

@@ -6,7 +6,7 @@ internal static class ReviewHelp
     /// <summary>Formats one line per key: the key, where it works, and what it does.</summary>
     /// <param name="keys">Keys, in the order to show them.</param>
     /// <returns>The lines.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="keys"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="keys"/> is <see langword="null"/>.</exception>
     public static IReadOnlyList<string> Lines(IReadOnlyList<ReviewKey> keys)
     {
         ArgumentNullException.ThrowIfNull(keys);

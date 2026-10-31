@@ -23,7 +23,7 @@ internal sealed class RoadmapWriteInputSnapshot
     }
 
     /// <summary>Reads all roadmap input files under <paramref name="rootPath"/> into a snapshot.</summary>
-    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="rootPath"/> is <see langword="null"/>, empty, or white-space.</exception>
     public static RoadmapWriteInputSnapshot Capture(string rootPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);

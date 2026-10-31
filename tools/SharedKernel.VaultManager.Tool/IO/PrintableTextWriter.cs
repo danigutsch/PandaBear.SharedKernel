@@ -16,7 +16,7 @@ internal sealed class PrintableTextWriter : TextWriter
 
     /// <summary>Creates a writer that writes printable text to another writer, with the line break of that writer.</summary>
     /// <param name="inner">Writer that receives the printable text.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="inner"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="inner"/> is <see langword="null"/>.</exception>
     public PrintableTextWriter(TextWriter inner)
         : base(inner?.FormatProvider)
     {

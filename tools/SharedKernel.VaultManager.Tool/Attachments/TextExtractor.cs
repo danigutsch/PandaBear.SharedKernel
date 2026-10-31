@@ -21,7 +21,7 @@ internal static class TextExtractor
     /// <param name="maxBytes">Most bytes decoded.</param>
     /// <param name="maxLineLength">Most characters kept per line; line breaks are kept.</param>
     /// <returns>Extracted text and truncation details.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxBytes"/> or <paramref name="maxLineLength"/> is zero or negative.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="maxBytes"/> or <paramref name="maxLineLength"/> is zero or negative.</exception>
     public static ExtractedText Extract(ReadOnlySpan<byte> content, int maxBytes, int maxLineLength)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxBytes);

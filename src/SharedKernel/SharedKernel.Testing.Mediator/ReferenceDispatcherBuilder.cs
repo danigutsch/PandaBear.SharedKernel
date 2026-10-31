@@ -74,7 +74,7 @@ public sealed class ReferenceDispatcherBuilder
     /// <param name="responseType">The produced response type.</param>
     /// <param name="handler">The handler instance to register.</param>
     /// <returns>The current builder.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="requestType"/> or <paramref name="responseType"/> or <paramref name="handler"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="requestType"/>, <paramref name="responseType"/>, or <paramref name="handler"/> is <see langword="null"/>.</exception>
     public ReferenceDispatcherBuilder AddRequestHandler(Type requestType, Type responseType, object handler)
     {
         ArgumentNullException.ThrowIfNull(requestType);
@@ -124,7 +124,7 @@ public sealed class ReferenceDispatcherBuilder
     /// <param name="responseType">The produced response type.</param>
     /// <param name="pipeline">The pipeline instance to register.</param>
     /// <returns>The current builder.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="requestType"/> or <paramref name="responseType"/> or <paramref name="pipeline"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="requestType"/>, <paramref name="responseType"/>, or <paramref name="pipeline"/> is <see langword="null"/>.</exception>
     public ReferenceDispatcherBuilder AddPipeline(Type requestType, Type responseType, object pipeline)
     {
         ArgumentNullException.ThrowIfNull(requestType);
@@ -228,7 +228,7 @@ public sealed class ReferenceDispatcherBuilder
     /// <param name="responseType">The streamed item type.</param>
     /// <param name="handler">The stream handler instance to register.</param>
     /// <returns>The current builder.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="requestType"/> or <paramref name="responseType"/> or <paramref name="handler"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="requestType"/>, <paramref name="responseType"/>, or <paramref name="handler"/> is <see langword="null"/>.</exception>
     public ReferenceDispatcherBuilder AddStreamHandler(Type requestType, Type responseType, object handler)
     {
         ArgumentNullException.ThrowIfNull(requestType);
@@ -278,7 +278,7 @@ public sealed class ReferenceDispatcherBuilder
     /// <param name="responseType">The streamed item type.</param>
     /// <param name="pipeline">The stream pipeline instance to register.</param>
     /// <returns>The current builder.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="requestType"/> or <paramref name="responseType"/> or <paramref name="pipeline"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="requestType"/>, <paramref name="responseType"/>, or <paramref name="pipeline"/> is <see langword="null"/>.</exception>
     public ReferenceDispatcherBuilder AddStreamPipeline(Type requestType, Type responseType, object pipeline)
     {
         ArgumentNullException.ThrowIfNull(requestType);

@@ -36,7 +36,7 @@ internal static class KeeperRecordMapper
     /// <param name="zipFiles">Sizes of <c>files/&lt;file_uid&gt;</c> entries of a Commander zip, or <see langword="null"/> for plain JSON or CSV.</param>
     /// <param name="warnings">Receives problems; warnings name items and fields, never values.</param>
     /// <returns>Vault item.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="record"/> or <paramref name="sourceFile"/> or <paramref name="warnings"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="record"/>, <paramref name="sourceFile"/>, or <paramref name="warnings"/> is <see langword="null"/>.</exception>
     public static VaultItem Map(KeeperRecord record, string sourceFile, IReadOnlyDictionary<string, long>? zipFiles, ICollection<string> warnings)
     {
         ArgumentNullException.ThrowIfNull(record);

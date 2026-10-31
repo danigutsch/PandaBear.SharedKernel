@@ -16,7 +16,7 @@ internal sealed record PlaywrightMcpOptions(
     string? DockerEndpoint = null)
 {
     /// <summary>Reads the environment and available executables to choose a container engine and build the options.</summary>
-    /// <exception cref="ArgumentNullException"><paramref name="getEnvironmentVariable"/> or <paramref name="resolveExecutable"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="getEnvironmentVariable"/> or <paramref name="resolveExecutable"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Neither Docker nor Podman is available, both are and no engine is selected, or an environment variable has an unsupported value.</exception>
     /// <exception cref="InvalidOperationException">The selected container runtime path is not absolute.</exception>
     public static PlaywrightMcpOptions Parse(

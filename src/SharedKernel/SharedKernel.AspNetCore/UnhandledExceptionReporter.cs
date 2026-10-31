@@ -26,7 +26,7 @@ public sealed partial class UnhandledExceptionReporter
     /// <summary>Initializes a new instance of the <see cref="UnhandledExceptionReporter" /> class.</summary>
     /// <param name="logger">The logger that receives the single event per exception.</param>
     /// <param name="meterFactory">The factory that creates the package meter.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="logger"/> or <paramref name="meterFactory"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="logger"/> or <paramref name="meterFactory"/> is <see langword="null"/>.</exception>
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "IMeterFactory owns and disposes the meter.")]
     public UnhandledExceptionReporter(ILogger<UnhandledExceptionReporter> logger, IMeterFactory meterFactory)
     {
@@ -45,7 +45,7 @@ public sealed partial class UnhandledExceptionReporter
     /// <param name="httpContext">The request that raised the exception.</param>
     /// <param name="exception">The exception; only its type name is used.</param>
     /// <param name="handled">Whether a handler produced a response for the exception.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="httpContext"/> or <paramref name="exception"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="httpContext"/> or <paramref name="exception"/> is <see langword="null"/>.</exception>
     public void Report(HttpContext httpContext, Exception exception, bool handled)
     {
         ArgumentNullException.ThrowIfNull(httpContext);
@@ -65,7 +65,7 @@ public sealed partial class UnhandledExceptionReporter
     /// <param name="statusCode">The status code of the response, or zero when there is none.</param>
     /// <param name="traceId">The trace identifier, or <see langword="null" /> when unknown.</param>
     /// <param name="handled">Whether a handler recovered from the exception.</param>
-    /// <exception cref="ArgumentNullException">When <paramref name="exception"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="exception"/> is <see langword="null"/>.</exception>
     public void Report(Exception exception, string? routeTemplate, int statusCode, string? traceId, bool handled)
     {
         ArgumentNullException.ThrowIfNull(exception);

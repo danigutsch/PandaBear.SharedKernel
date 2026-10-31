@@ -17,8 +17,8 @@ internal static class PodmanDnsPreflightCommand
     /// Inspects the host's rootless Podman DNS state without changing it.
     /// </summary>
     /// <returns>0 when the state is healthy or the check does not apply; 1 when it is stale or cannot be verified.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="host"/>, <paramref name="output"/>, <paramref name="error"/>, or the process runner of <paramref name="host"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException">The proc root of <paramref name="host"/> is empty or whitespace.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="host"/>, <paramref name="output"/>, <paramref name="error"/>, or the process runner of <paramref name="host"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">The proc root of <paramref name="host"/> is empty or white-space.</exception>
     public static async Task<int> Run(
         PodmanDnsHost host,
         bool quiet,

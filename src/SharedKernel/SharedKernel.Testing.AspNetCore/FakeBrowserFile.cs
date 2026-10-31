@@ -14,7 +14,7 @@ public sealed class FakeBrowserFile : IBrowserFile
     /// <param name="content">The file content.</param>
     /// <param name="name">The client-supplied file name.</param>
     /// <param name="contentType">The declared content type.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/> or <paramref name="name"/> or <paramref name="contentType"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/>, <paramref name="name"/>, or <paramref name="contentType"/> is <see langword="null"/>.</exception>
     public FakeBrowserFile(byte[] content, string name, string contentType = "application/octet-stream")
     {
         ArgumentNullException.ThrowIfNull(content);

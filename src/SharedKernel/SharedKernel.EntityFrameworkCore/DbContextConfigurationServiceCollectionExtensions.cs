@@ -15,7 +15,7 @@ public static class DbContextConfigurationServiceCollectionExtensions
     /// <param name="configuration">The configuration to add.</param>
     /// <typeparam name="TContext">The DbContext type being configured.</typeparam>
     /// <returns>The configured service collection.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="services"/> or <paramref name="configuration"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="services"/> or <paramref name="configuration"/> is <see langword="null"/>.</exception>
     public static IServiceCollection AddDbContextConfiguration<TContext>(
         this IServiceCollection services,
         IDbContextConfiguration<TContext> configuration)
@@ -39,7 +39,7 @@ public static class DbContextConfigurationServiceCollectionExtensions
     /// sensitive data logging writes parameter values to the log.
     /// </param>
     /// <typeparam name="TContext">The DbContext type being configured.</typeparam>
-    /// <exception cref="ArgumentNullException">When <paramref name="services"/> or <paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="services"/> or <paramref name="options"/> is <see langword="null"/>.</exception>
     public static void ApplyDbContextOptionConfigurations<TContext>(
         this IServiceCollection services,
         DbContextOptionsBuilder options,

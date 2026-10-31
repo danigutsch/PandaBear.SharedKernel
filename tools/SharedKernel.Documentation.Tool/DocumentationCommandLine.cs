@@ -16,7 +16,7 @@ internal static class DocumentationCommandLine
     /// Creates the root command. Configuration paths, and the paths inside each configuration file, resolve
     /// against <paramref name="rootPath" />. Commands write to the invocation's output and error writers.
     /// </summary>
-    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="rootPath"/> is <see langword="null"/>, empty, or white-space.</exception>
     public static RootCommand Create(string rootPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);

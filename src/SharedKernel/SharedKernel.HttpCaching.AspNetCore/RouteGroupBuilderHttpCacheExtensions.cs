@@ -14,7 +14,7 @@ public static class RouteGroupBuilderHttpCacheExtensions
     /// </summary>
     /// <param name="group">The route group to protect from client and intermediary caching.</param>
     /// <returns>The same route group for fluent endpoint composition.</returns>
-    /// <exception cref="ArgumentNullException">When <paramref name="group"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="group"/> is <see langword="null"/>.</exception>
     public static RouteGroupBuilder WithNoStoreResponses(this RouteGroupBuilder group)
     {
         ArgumentNullException.ThrowIfNull(group);
@@ -29,8 +29,8 @@ public static class RouteGroupBuilderHttpCacheExtensions
     /// <summary>
     /// Applies no-store headers to a route group and all requests beneath its absolute path prefix.
     /// </summary>
-    /// <exception cref="ArgumentException">When <paramref name="pathPrefix"/> has no value.</exception>
-    /// <exception cref="ArgumentNullException">When <paramref name="group"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="pathPrefix"/> has no value.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="group"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// Use <see cref="ApplicationBuilderHttpCacheExtensions.UseNoStoreResponses" /> before authentication
     /// and other response-producing middleware to protect authorization, binding, rate-limit, and unmatched responses.
