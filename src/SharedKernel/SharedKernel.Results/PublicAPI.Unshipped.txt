@@ -1,4 +1,14 @@
 #nullable enable
+PandaBear.Results.IResultLike<TSelf>.Conflict(string! detail) -> TSelf
+PandaBear.Results.IResultLike<TSelf>.CriticalError(string! detail) -> TSelf
+PandaBear.Results.IResultLike<TSelf>.Error(string! detail) -> TSelf
+PandaBear.Results.IResultLike<TSelf>.Unavailable(string! detail) -> TSelf
+PandaBear.Results.IResultLike<TSelf>.Forbidden(string! detail) -> TSelf
+PandaBear.Results.IResultLike<TSelf>.FromError(PandaBear.Results.ResultError! resultError) -> TSelf
+PandaBear.Results.IResultLike<TSelf>.Invalid(string! detail, string! field, string! message) -> TSelf
+PandaBear.Results.IResultLike<TSelf>.Invalid(string! detail, System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>! validationErrors) -> TSelf
+PandaBear.Results.IResultLike<TSelf>.NotFound(string! detail) -> TSelf
+PandaBear.Results.IResultLike<TSelf>.Unauthorized(string! detail) -> TSelf
 PandaBear.Results.ResultErrorCatalogProviderAttribute
 PandaBear.Results.ResultErrorCatalogProviderAttribute.ProviderType.get -> System.Type!
 PandaBear.Results.ResultErrorCatalogProviderAttribute.ResultErrorCatalogProviderAttribute(System.Type! providerType) -> void
@@ -29,3 +39,11 @@ static PandaBear.Results.ResultTaskExtensions.Ensure<T>(this System.Threading.Ta
 static PandaBear.Results.ResultTaskExtensions.Ensure<T>(this System.Threading.Tasks.ValueTask<PandaBear.Results.Result<T>> source, System.Func<T, bool>! predicate, PandaBear.Results.ResultError! error) -> System.Threading.Tasks.ValueTask<PandaBear.Results.Result<T>>
 static PandaBear.Results.ResultTaskExtensions.Ensure<T>(this System.Threading.Tasks.ValueTask<PandaBear.Results.Result<T>> source, System.Func<T, System.Threading.Tasks.Task<bool>!>! predicate, PandaBear.Results.ResultError! error) -> System.Threading.Tasks.ValueTask<PandaBear.Results.Result<T>>
 static PandaBear.Results.ResultTaskExtensions.Ensure<T>(this System.Threading.Tasks.ValueTask<PandaBear.Results.Result<T>> source, System.Func<T, System.Threading.Tasks.ValueTask<bool>>! predicate, PandaBear.Results.ResultError! error) -> System.Threading.Tasks.ValueTask<PandaBear.Results.Result<T>>
+PandaBear.Results.IResultLike<TSelf>
+PandaBear.Results.IResultLike<TSelf>.ErrorDetails.get -> PandaBear.Results.ResultError?
+PandaBear.Results.IResultLike<TSelf>.IsFailure.get -> bool
+PandaBear.Results.IResultLike<TSelf>.IsSuccess.get -> bool
+PandaBear.Results.IResultLike<TSelf>.Status.get -> PandaBear.Results.ResultStatus
+PandaBear.Results.IResultLike<TSelf>.TryGetError(out PandaBear.Results.ResultError? currentError) -> bool
+static PandaBear.Results.Result.FromError(PandaBear.Results.ResultError! resultError) -> PandaBear.Results.Result
+static PandaBear.Results.Result<T>.FromError(PandaBear.Results.ResultError! resultError) -> PandaBear.Results.Result<T>

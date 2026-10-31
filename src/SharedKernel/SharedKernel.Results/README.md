@@ -28,6 +28,16 @@ public static class Example
 }
 ```
 
+## Generic code over Result and Result<T>
+
+`Result` and `Result<T>` implement `IResultLike<TSelf>`: status, `IsFailure`, `ErrorDetails`/`TryGetError`, plus static factories
+(`FromError`, `Invalid`, `NotFound`, `Unauthorized`, `Forbidden`, `Conflict`, `Error`, `CriticalError`, `Unavailable`). Constrain generic code with
+`where TResponse : struct, IResultLike<TResponse>` (no boxing) so an open-generic behavior can short-circuit with
+`TResponse.Invalid("Validation failed", "name", "Name is required")` for both shapes.
+
+`default(Result)` and `default(Result<T>)` are uninitialized: `Status` is `Unknown` and both `IsSuccess` and `IsFailure` are false, so do
+not treat "not a failure" as success. `Result` and `Result<T>` are the intended implementers of the interface.
+
 ## Constraints
 
 Check success/failure before accessing payloads; propagate cancellation in asynchronous flows. Keep business validation in its owning domain. Registry publication remains deferred.

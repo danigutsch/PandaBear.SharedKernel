@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis;
 using PandaBear.Testing.Mediator;
 using PandaBear.Testing;
 
@@ -1187,4 +1188,174 @@ public sealed class GeneratorDispatchBehaviorTests
         exception.Message.ShouldBe("parallel boom");
     }
 
+    [Fact]
+    public async Task Generated_dispatch_runs_open_generic_result_behavior_for_result_and_generic_result_responses()
+    {
+        // Arrange
+        const string source = """
+            using PandaBear.Mediator;
+            using PandaBear.Results;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record Rename(string Name) : IRequest<Result>;
+            public sealed record Create(string Name) : IRequest<Result<int>>;
+            public sealed record Count() : IRequest<int>;
+
+            public sealed class RenameHandler : IRequestHandler<Rename, Result>
+            {
+                public ValueTask<Result> Handle(Rename request, CancellationToken ct) => ValueTask.FromResult(Result.Ok());
+            }
+
+            public sealed class CreateHandler : IRequestHandler<Create, Result<int>>
+            {
+                public ValueTask<Result<int>> Handle(Create request, CancellationToken ct) => ValueTask.FromResult(Result.Ok(42));
+            }
+
+            public sealed class CountHandler : IRequestHandler<Count, int>
+            {
+                public ValueTask<int> Handle(Count request, CancellationToken ct) => ValueTask.FromResult(3);
+            }
+
+            public interface INamed
+            {
+                string Name { get; }
+            }
+
+            [PipelineOrder(PipelineStage.Validation)]
+            public sealed class NameValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+                where TRequest : IRequest<TResponse>
+                where TResponse : struct, IResultLike<TResponse>
+            {
+                public ValueTask<TResponse> Handle(TRequest request, RequestHandlerContinuation<TResponse> next, CancellationToken ct)
+                {
+                    var name = request switch
+                    {
+                        Rename rename => rename.Name,
+                        Create create => create.Name,
+                        _ => "ok",
+                    };
+
+                    return string.IsNullOrWhiteSpace(name)
+                        ? ValueTask.FromResult(TResponse.Invalid("Validation failed", "name", "Name is required"))
+                        : next();
+                }
+            }
+            """;
+        MetadataReference[] references = [MetadataReference.CreateFromFile(typeof(PandaBear.Results.Result).Assembly.Location)];
+        var diagnostics = GeneratorTestHarness.RunGeneratorDriver(source, references).Results.Single().Diagnostics;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source, references);
+        var renameType = runtime.GetRequiredType("Demo.Rename");
+        var createType = runtime.GetRequiredType("Demo.Create");
+        var behaviorType = runtime.GetRequiredType("Demo.NameValidationBehavior`2");
+        var mediator = runtime.CreateMediator(
+            runtime.CreateInstance("Demo.RenameHandler"),
+            runtime.CreateInstance("Demo.CreateHandler"),
+            runtime.CreateInstance("Demo.CountHandler"),
+            Activator.CreateInstance(behaviorType.MakeGenericType(renameType, typeof(PandaBear.Results.Result)))!,
+            Activator.CreateInstance(behaviorType.MakeGenericType(createType, typeof(PandaBear.Results.Result<int>)))!);
+
+        // Act
+        var blankPlain = await mediator.Send((IRequest<PandaBear.Results.Result>)Activator.CreateInstance(renameType, " ")!, CancellationToken.None);
+        var okPlain = await mediator.Send((IRequest<PandaBear.Results.Result>)Activator.CreateInstance(renameType, "n")!, CancellationToken.None);
+        var blankGeneric = await mediator.Send((IRequest<PandaBear.Results.Result<int>>)Activator.CreateInstance(createType, "")!, CancellationToken.None);
+        var okGeneric = await mediator.Send((IRequest<PandaBear.Results.Result<int>>)Activator.CreateInstance(createType, "n")!, CancellationToken.None);
+
+        // Assert
+        var constructorParameterTypes = runtime.GetRequiredType("PandaBear.Mediator.AppMediator").GetConstructors().ShouldHaveSingleItem().GetParameters()
+            .SelectMany(static parameter => parameter.ParameterType.IsGenericType && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Func<>)
+                ? parameter.ParameterType.GenericTypeArguments
+                : [parameter.ParameterType])
+            .ToArray();
+        constructorParameterTypes.ShouldContain(behaviorType.MakeGenericType(renameType, typeof(PandaBear.Results.Result)));
+        constructorParameterTypes.ShouldContain(behaviorType.MakeGenericType(createType, typeof(PandaBear.Results.Result<int>)));
+        constructorParameterTypes.ShouldNotContain(static type => type.IsGenericType && type.GetGenericArguments().Contains(typeof(int)) && type.Name.StartsWith("NameValidationBehavior", StringComparison.Ordinal));
+        diagnostics.ShouldNotContain(static diagnostic => diagnostic.Severity >= DiagnosticSeverity.Warning);
+        blankPlain.Status.ShouldBe(PandaBear.Results.ResultStatus.Invalid);
+        okPlain.IsSuccess.ShouldBeTrue();
+        blankGeneric.Status.ShouldBe(PandaBear.Results.ResultStatus.Invalid);
+        okGeneric.Value.ShouldBe(42);
+    }
+
+    [Fact]
+    public void Generated_pipelines_apply_self_referential_constrained_behavior_only_to_satisfying_responses()
+    {
+        // Arrange
+        const string source = """
+            using PandaBear.Mediator;
+            using PandaBear.Results;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record Rename(string Name) : IRequest<Result>;
+            public sealed record Count() : IRequest<int>;
+
+            public sealed class RenameHandler : IRequestHandler<Rename, Result>
+            {
+                public ValueTask<Result> Handle(Rename request, CancellationToken ct) => ValueTask.FromResult(Result.Ok());
+            }
+
+            public sealed class CountHandler : IRequestHandler<Count, int>
+            {
+                public ValueTask<int> Handle(Count request, CancellationToken ct) => ValueTask.FromResult(3);
+            }
+
+            public sealed class ResultOnlyBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+                where TRequest : IRequest<TResponse>
+                where TResponse : struct, IResultLike<TResponse>
+            {
+                public ValueTask<TResponse> Handle(TRequest request, RequestHandlerContinuation<TResponse> next, CancellationToken ct) => next();
+            }
+            """;
+        MetadataReference[] references = [MetadataReference.CreateFromFile(typeof(PandaBear.Results.Result).Assembly.Location)];
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(source, references);
+
+        // Act
+        var pipelines = GeneratorTestHarness.GetGeneratedSource(runResult, "SharedKernel.Mediator.Generated.GeneratedPipelines.g.cs");
+
+        // Assert
+        runResult.Results.Single().Diagnostics.ShouldNotContain(static diagnostic => diagnostic.Severity >= DiagnosticSeverity.Warning);
+        pipelines.ShouldContain("global::Demo.Rename request", StringComparison.Ordinal);
+        pipelines.ShouldNotContain("global::Demo.Count request", StringComparison.Ordinal);
+        pipelines.Split("Invoke_", StringSplitOptions.None).Length.ShouldBe(2);
+    }
+
+    [Fact]
+    public void Generated_pipelines_report_constrained_behavior_that_binds_no_request()
+    {
+        // Arrange
+        const string source = """
+            using PandaBear.Mediator;
+            using PandaBear.Results;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record Count() : IRequest<int>;
+
+            public sealed class CountHandler : IRequestHandler<Count, int>
+            {
+                public ValueTask<int> Handle(Count request, CancellationToken ct) => ValueTask.FromResult(3);
+            }
+
+            public sealed class ResultOnlyBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+                where TRequest : IRequest<TResponse>
+                where TResponse : struct, IResultLike<TResponse>
+            {
+                public ValueTask<TResponse> Handle(TRequest request, RequestHandlerContinuation<TResponse> next, CancellationToken ct) => next();
+            }
+            """;
+        MetadataReference[] references = [MetadataReference.CreateFromFile(typeof(PandaBear.Results.Result).Assembly.Location)];
+
+        // Act
+        var diagnostics = GeneratorTestHarness.RunGeneratorDriver(source, references).Results.Single().Diagnostics;
+
+        // Assert
+        diagnostics.ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.UnboundPipelineConstraints);
+    }
 }
