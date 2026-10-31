@@ -142,9 +142,8 @@ public partial class ResultTransactionBehavior<TRequest, TResponse> : IPipelineB
             throw new InvalidOperationException("Declared transaction locks require the Npgsql provider.");
         }
 
-        var names = await declaration.GetTransactionLocks(dbContext, ct).ConfigureAwait(false);
         var locks = new PostgreSqlOrderedTransactionLocks(connection, npgsqlTransaction);
-        await locks.Acquire(names.Select(static name => new PostgreSqlTransactionLockRequest(0, name)), ct).ConfigureAwait(false);
+        await locks.Acquire(declaration.TransactionLocks.Select(static name => new PostgreSqlTransactionLockRequest(0, name)), ct).ConfigureAwait(false);
     }
 
     [SuppressMessage(

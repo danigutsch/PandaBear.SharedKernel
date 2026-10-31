@@ -213,6 +213,31 @@ public sealed class ResultTransactionBehaviorTests(PostgreSqlFixture fixture) : 
     }
 
     [Fact]
+    public async Task Collapses_duplicate_declared_locks_so_the_command_does_not_wait_on_itself()
+    {
+        // Arrange
+        const string lockName = "result-transaction:duplicate";
+        await using var scenario = new ResultTransactionTestScenario(DataSource);
+        var (behavior, _, scope) = scenario.CreateBehavior();
+        using var scopeLease = scope;
+        bool? lockFreeWhileRunning = null;
+
+        // Act
+        var result = await behavior.Handle(
+            new ResultTransactionTestCommand([lockName, lockName]),
+            async () =>
+            {
+                lockFreeWhileRunning = await H.TryTakeLock(DataSource, lockName);
+                return Result.Ok();
+            },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        lockFreeWhileRunning.ShouldBe(false);
+    }
+
+    [Fact]
     public async Task Serializes_parallel_commands_that_declare_the_same_lock()
     {
         // Arrange
@@ -234,14 +259,17 @@ public sealed class ResultTransactionBehaviorTests(PostgreSqlFixture fixture) : 
         await using var scenario = new ResultTransactionTestScenario(DataSource);
         var (behavior, context, scope) = scenario.CreateBehavior();
         using var scopeLease = scope;
+        const string lockName = "result-transaction:retry";
         var attempts = 0;
+        var lockHeldPerAttempt = new List<bool>();
 
         // Act
         var result = await behavior.Handle(
-            new ResultTransactionTestCommand(["result-transaction:retry"]),
+            new ResultTransactionTestCommand([lockName]),
             async () =>
             {
                 attempts++;
+                lockHeldPerAttempt.Add(!await H.TryTakeLock(DataSource, lockName));
                 _ = await H.AddAndSave(context, "retried", Result.Ok());
                 return attempts == 1
                     ? throw new PostgresException("could not serialize access", "ERROR", "ERROR", PostgresErrorCodes.SerializationFailure)
@@ -252,6 +280,7 @@ public sealed class ResultTransactionBehaviorTests(PostgreSqlFixture fixture) : 
         // Assert
         result.IsSuccess.ShouldBeTrue();
         attempts.ShouldBe(2);
+        lockHeldPerAttempt.ShouldBe([true, true]);
         var persisted = await H.CountNamed(DataSource, "retried");
         persisted.ShouldBe(1);
         scenario.Hooks.Calls.ShouldBe(["commit"]);
