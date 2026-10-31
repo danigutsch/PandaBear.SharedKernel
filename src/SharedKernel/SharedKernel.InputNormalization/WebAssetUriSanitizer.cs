@@ -72,12 +72,15 @@ public static class WebAssetUriSanitizer
     }
 
     /// <summary>
-    /// Returns the value unchanged when it is a base64 <c>data:</c> URI of a PNG, JPEG or WebP image whose decoded bytes
-    /// start with the signature of the declared type (a RIFF header carrying the WEBP tag for WebP); otherwise <see langword="null" />. SVG and every other type are
-    /// rejected because they can carry script or external references, as are parameters, whitespace, unpadded or
-    /// malformed base64, and values longer than <paramref name="maxLength" />. The check proves only the type signature;
-    /// an application that accepts uploads must still decode and re-encode the image itself.
+    /// Returns the value unchanged when it is a base64 <c>data:</c> URI of a PNG, JPEG or WebP image whose decoded
+    /// bytes start with the signature of the declared type; otherwise <see langword="null" />.
     /// </summary>
+    /// <remarks>
+    /// The WebP signature is a RIFF header carrying the WEBP tag. SVG and every other type are rejected because they
+    /// can carry script or external references, as are parameters, whitespace, unpadded or malformed base64, and values
+    /// longer than the limit. The check proves only the type signature; an application that accepts uploads must still
+    /// decode and re-encode the image itself.
+    /// </remarks>
     /// <param name="value">The candidate URI.</param>
     /// <param name="maxLength">The maximum accepted length of the whole URI.</param>
     /// <returns>The accepted URI, or <see langword="null" />.</returns>

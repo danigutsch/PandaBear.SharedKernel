@@ -6,13 +6,22 @@ namespace PandaBear.DispositionHold.EntityFrameworkCore;
 
 /// <summary>
 /// Maps <see cref="Hold" /> to one table. The scope is stored as one <c>kind/key</c> column, which is unambiguous
-/// because scope identifiers never contain a slash.
+/// because scope identifiers never contain a slash. A stored value that is not in that form fails materialization, so
+/// a corrupt row makes checks over its scope refuse rather than report clear.
 /// </summary>
 internal sealed class HoldEntityConfiguration(string schema, string tableName) : IEntityTypeConfiguration<Hold>
 {
     private static readonly ValueConverter<DispositionScope, string> ScopeConverter = new(
         scope => scope.ToString(),
-        value => DispositionScope.From(value.Substring(0, value.IndexOf('/', StringComparison.Ordinal)), value.Substring(value.IndexOf('/', StringComparison.Ordinal) + 1)));
+        value => ParseScope(value));
+
+    private static DispositionScope ParseScope(string value)
+    {
+        var separator = value.IndexOf('/', StringComparison.Ordinal);
+        return separator < 0
+            ? throw new FormatException("A stored hold scope is not in the kind/key form.")
+            : DispositionScope.From(value[..separator], value[(separator + 1)..]);
+    }
 
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<Hold> builder)

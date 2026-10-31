@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
@@ -54,8 +55,11 @@ internal sealed class PostgreSqlDispositionHoldScenario : IAsyncDisposable
     }
 
     /// <summary>Opens a caller with its own context, store, guard and, when asked, an open transaction.</summary>
-    public ValueTask<HoldTransaction> Open(bool beginTransaction, CancellationToken ct) =>
-        HoldTransaction.Open(serviceProvider, beginTransaction, ct);
+    public ValueTask<HoldTransaction> Open(
+        bool beginTransaction,
+        CancellationToken ct,
+        IsolationLevel isolationLevel = IsolationLevel.ReadCommitted) =>
+        HoldTransaction.Open(serviceProvider, beginTransaction, isolationLevel, ct);
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()

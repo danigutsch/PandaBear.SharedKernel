@@ -9,6 +9,7 @@ public interface IDispositionHoldStore
     /// <summary>
     /// Stages a newly placed hold for the next commit. Implementations serialize against concurrent disposition of the
     /// same scope first, so a hold placed while a purge is checking is either seen by that purge or waits for it.
+    /// That guarantee holds only when the caller saves the hold and commits in the same transaction that staged it.
     /// </summary>
     /// <param name="hold">The hold to store.</param>
     /// <param name="ct">A token that can cancel the operation.</param>

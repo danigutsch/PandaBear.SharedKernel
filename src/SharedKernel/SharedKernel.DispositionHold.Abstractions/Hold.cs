@@ -5,6 +5,10 @@ namespace PandaBear.DispositionHold;
 /// released it and why, using opaque identifiers only, never content or personal data. A hold restrains disposition;
 /// it does not define retention periods or any legal rule.
 /// </summary>
+/// <remarks>
+/// The identifier alphabet excludes spaces and <c>@</c>, but it cannot tell an opaque code from one derived from
+/// personal data. Callers must use identifiers that are not derivable from a person's name, address or document number.
+/// </remarks>
 public sealed class Hold
 {
     /// <summary>The maximum length of purpose, authority, actor and reason identifiers.</summary>

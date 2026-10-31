@@ -10,8 +10,8 @@ namespace PandaBear.DocumentRendering;
 public sealed class HtmlDocumentRenderer : IDocumentRenderer
 {
     /// <summary>
-    /// The longest embedded raster logo URI the renderer accepts. It stays below the length <see cref="Uri" /> can
-    /// represent, so a logo that fits the branding snapshot also fits here.
+    /// The longest embedded raster logo URI the renderer accepts. It keeps a document bounded and stays under the
+    /// roughly 65,000 characters that <see cref="Uri" /> accepts, so a data URI that the snapshot can hold fits here.
     /// </summary>
     private const int MaxEmbeddedLogoLength = 60_000;
 

@@ -1,3 +1,4 @@
+using System.Data;
 using PandaBear.DispositionHold;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
@@ -43,6 +44,58 @@ public sealed class PostgreSqlDispositionHoldTests(PostgreSqlFixture fixture) : 
 
         // Act
         var check = async () => await caller.Guard.Check(scopes, Placed, ct);
+
+        // Assert
+        _ = await check.ShouldThrow<DispositionHoldStateUnknownException>();
+    }
+
+    [Theory]
+    [InlineData(IsolationLevel.RepeatableRead)]
+    [InlineData(IsolationLevel.Serializable)]
+    public async Task Check_refuses_when_the_transaction_isolation_could_hide_a_hold_committed_while_waiting(IsolationLevel isolationLevel)
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        await using var purge = await Scenario.Open(beginTransaction: true, ct, isolationLevel);
+
+        // Act
+        var check = async () => await purge.Guard.Check([DispositionScope.From("document", "doc-1")], Placed, ct);
+
+        // Assert
+        _ = await check.ShouldThrow<DispositionHoldStateUnknownException>();
+    }
+
+    [Fact]
+    public async Task Check_sees_a_hold_committed_while_it_waited_even_after_an_earlier_query_in_the_transaction()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var scope = DispositionScope.From("document", "doc-1");
+        var hold = DispositionHoldTestData.Place(scope);
+        await using var placer = await Scenario.Open(beginTransaction: true, ct);
+        await using var purge = await Scenario.Open(beginTransaction: true, ct);
+        await placer.Store.Add(hold, ct);
+        await purge.RunAnyQuery(ct);
+
+        // Act
+        var check = purge.Guard.Check([scope], Placed.AddDays(2), ct).AsTask();
+        await Task.WhenAny(check, Task.Delay(BlockedProbe, ct));
+        await placer.Commit(ct);
+        var decision = await check.WaitAsync(ct);
+
+        // Assert
+        decision.HoldIds.ShouldBe([hold.Id]);
+    }
+
+    [Fact]
+    public async Task Check_with_no_scopes_still_refuses_without_an_open_transaction()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        await using var caller = await Scenario.Open(beginTransaction: false, ct);
+
+        // Act
+        var check = async () => await caller.Guard.Check([], Placed, ct);
 
         // Assert
         _ = await check.ShouldThrow<DispositionHoldStateUnknownException>();

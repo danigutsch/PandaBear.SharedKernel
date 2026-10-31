@@ -32,14 +32,14 @@ internal sealed class EfDispositionHoldStore<TContext>(TContext dbContext) : IDi
         CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(scopes);
-        if (scopes.Count == 0)
-        {
-            return DispositionHoldDecision.Clear;
-        }
-
         try
         {
             await HoldScopeLock.Acquire(dbContext, scopes, ct).ConfigureAwait(false);
+            if (scopes.Count == 0)
+            {
+                return DispositionHoldDecision.Clear;
+            }
+
             var keys = scopes.ToArray();
             var holdIds = await dbContext.Set<Hold>()
                 .AsNoTracking()

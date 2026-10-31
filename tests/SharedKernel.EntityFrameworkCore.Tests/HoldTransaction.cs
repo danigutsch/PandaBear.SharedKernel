@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using System.Data;
+using Microsoft.EntityFrameworkCore;
 using PandaBear.DispositionHold;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
@@ -32,16 +34,24 @@ internal sealed class HoldTransaction : IAsyncDisposable
     }
 
     /// <summary>Opens a caller, beginning a transaction when asked.</summary>
-    public static async ValueTask<HoldTransaction> Open(IServiceProvider services, bool beginTransaction, CancellationToken ct)
+    public static async ValueTask<HoldTransaction> Open(
+        IServiceProvider services,
+        bool beginTransaction,
+        IsolationLevel isolationLevel,
+        CancellationToken ct)
     {
         var holdTransaction = new HoldTransaction(services.CreateAsyncScope());
         if (beginTransaction)
         {
-            await holdTransaction.dbContext.Database.BeginTransactionAsync(ct);
+            await holdTransaction.dbContext.Database.BeginTransactionAsync(isolationLevel, ct);
         }
 
         return holdTransaction;
     }
+
+    /// <summary>Reads any row inside the open transaction, so the transaction has already run a statement.</summary>
+    public async ValueTask RunAnyQuery(CancellationToken ct) =>
+        _ = await dbContext.Database.SqlQuery<int>($"SELECT 1 AS \"Value\"").ToListAsync(ct);
 
     /// <summary>Saves staged changes and commits the open transaction.</summary>
     public async ValueTask Commit(CancellationToken ct)
