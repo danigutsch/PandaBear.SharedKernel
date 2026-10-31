@@ -1,5 +1,7 @@
 using System.Data;
+using PandaBear.Npgsql;
 using PandaBear.DispositionHold;
+using PandaBear.DispositionHold.EntityFrameworkCore;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
 
@@ -158,8 +160,11 @@ public sealed class PostgreSqlDispositionHoldTests(PostgreSqlFixture fixture) : 
 
         // Act
         var beforeEffect = await purge.Guard.Check([held], Placed, ct);
+        await purge.Restart(ct);
         var afterExpiry = await purge.Guard.Check([held], Placed.AddDays(10), ct);
+        await purge.Restart(ct);
         var afterRelease = await purge.Guard.Check([released.Scope], Placed.AddDays(5), ct);
+        await purge.Restart(ct);
         var otherScope = await purge.Guard.Check([DispositionScope.From("document", "doc-3")], Placed.AddDays(2), ct);
 
         // Assert
@@ -210,6 +215,46 @@ public sealed class PostgreSqlDispositionHoldTests(PostgreSqlFixture fixture) : 
         // Assert
         finishedWhilePlacing.ShouldBeFalse();
         decision.HoldIds.ShouldBe([hold.Id]);
+    }
+
+    [Fact]
+    public async Task Check_accepts_the_same_scope_again_and_a_smaller_key_in_a_new_transaction()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var scopes = new[] { DispositionScope.From("document", "doc-1"), DispositionScope.From("document", "doc-2") }
+            .OrderBy(scope => PostgreSqlAdvisoryLockKey.FromUtf8Sha256BigEndian(HoldScopeLock.LockName(scope)))
+            .ToArray();
+        await using var purge = await Scenario.Open(beginTransaction: true, ct);
+        _ = await purge.Guard.Check([scopes[1]], Placed, ct);
+        var again = await purge.Guard.Check([scopes[1]], Placed, ct);
+        await purge.Restart(ct);
+
+        // Act
+        var afterRestart = await purge.Guard.Check([scopes[0]], Placed, ct);
+
+        // Assert
+        again.IsClear.ShouldBeTrue();
+        afterRestart.IsClear.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Check_holds_the_lock_again_after_a_savepoint_rollback_released_it()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var scope = DispositionScope.From("document", "doc-1");
+        await using var purge = await Scenario.Open(beginTransaction: true, ct);
+        await purge.CreateSavepoint("before-check", ct);
+        _ = await purge.Guard.Check([scope], Placed, ct);
+        await purge.RollbackToSavepoint("before-check", ct);
+
+        // Act
+        _ = await purge.Guard.Check([scope], Placed, ct);
+        var locked = await Scenario.IsScopeLocked(scope, ct);
+
+        // Assert
+        locked.ShouldBeTrue();
     }
 
     [Fact]

@@ -2,6 +2,8 @@ using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using PandaBear.Npgsql;
+using PandaBear.DispositionHold;
 using PandaBear.DispositionHold.EntityFrameworkCore;
 
 namespace PandaBear.EntityFrameworkCore.Tests;
@@ -60,6 +62,24 @@ internal sealed class PostgreSqlDispositionHoldScenario : IAsyncDisposable
         CancellationToken ct,
         IsolationLevel isolationLevel = IsolationLevel.ReadCommitted) =>
         HoldTransaction.Open(serviceProvider, beginTransaction, isolationLevel, ct);
+
+    /// <summary>Reports whether another connection is blocked from taking the advisory lock that guards the scope.</summary>
+    public async ValueTask<bool> IsScopeLocked(DispositionScope scope, CancellationToken ct)
+    {
+        var key = PostgreSqlAdvisoryLockKey.FromUtf8Sha256BigEndian(HoldScopeLock.LockName(scope));
+        await using var connection = await dataSource.OpenConnectionAsync(ct);
+        await using var command = new NpgsqlCommand("SELECT pg_try_advisory_lock(@key)", connection);
+        command.Parameters.AddWithValue("key", key);
+        var acquired = (bool)(await command.ExecuteScalarAsync(ct))!;
+        if (acquired)
+        {
+            await using var release = new NpgsqlCommand("SELECT pg_advisory_unlock(@key)", connection);
+            release.Parameters.AddWithValue("key", key);
+            _ = await release.ExecuteScalarAsync(ct);
+        }
+
+        return !acquired;
+    }
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()

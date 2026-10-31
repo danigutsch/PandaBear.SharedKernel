@@ -53,6 +53,14 @@ internal sealed class HoldTransaction : IAsyncDisposable
     public async ValueTask RunAnyQuery(CancellationToken ct) =>
         _ = await dbContext.Database.SqlQuery<int>($"SELECT 1 AS \"Value\"").ToListAsync(ct);
 
+    /// <summary>Creates a savepoint in the open transaction.</summary>
+    public async ValueTask CreateSavepoint(string name, CancellationToken ct) =>
+        await dbContext.Database.CurrentTransaction!.CreateSavepointAsync(name, ct);
+
+    /// <summary>Rolls the open transaction back to a savepoint, releasing locks taken after it.</summary>
+    public async ValueTask RollbackToSavepoint(string name, CancellationToken ct) =>
+        await dbContext.Database.CurrentTransaction!.RollbackToSavepointAsync(name, ct);
+
     /// <summary>Saves staged changes and commits the open transaction.</summary>
     public async ValueTask Commit(CancellationToken ct)
     {
@@ -74,6 +82,13 @@ internal sealed class HoldTransaction : IAsyncDisposable
             await dbContext.Database.RollbackTransactionAsync(ct);
             await dbContext.Database.BeginTransactionAsync(ct);
         }
+    }
+
+    /// <summary>Rolls the open transaction back and begins a new one, as a retry attempt does.</summary>
+    public async ValueTask Restart(CancellationToken ct)
+    {
+        await dbContext.Database.RollbackTransactionAsync(ct);
+        await dbContext.Database.BeginTransactionAsync(ct);
     }
 
     /// <summary>Rolls the open transaction back.</summary>
