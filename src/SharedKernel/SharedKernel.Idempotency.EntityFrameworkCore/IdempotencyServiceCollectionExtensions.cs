@@ -55,6 +55,7 @@ public static class IdempotencyServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         ContextKeyedDefault<IIdempotencyStore>.Choose(services, typeof(TContext));
+        ContextKeyedDefault<IIdempotencyRetentionStore>.Choose(services, typeof(TContext));
         return services;
     }
 
@@ -76,6 +77,11 @@ public static class IdempotencyServiceCollectionExtensions
                 IValidateOptions<IdempotencyStorageOptions>,
                 IdempotencyStorageOptionsValidator>());
         services.TryAddScoped<EfIdempotencyStore<TContext>>();
+        services.TryAddScoped<EfIdempotencyRetentionStore<TContext>>();
+        services.TryAddKeyedScoped<IIdempotencyRetentionStore>(
+            typeof(TContext),
+            (serviceProvider, _) => serviceProvider.GetRequiredService<EfIdempotencyRetentionStore<TContext>>());
+        ContextKeyedDefault<IIdempotencyRetentionStore>.Register(services, typeof(TContext), nameof(UseDefaultIdempotencyStore));
         services.TryAddKeyedScoped<IIdempotencyStore>(
             typeof(TContext),
             (serviceProvider, _) => serviceProvider.GetRequiredService<EfIdempotencyStore<TContext>>());

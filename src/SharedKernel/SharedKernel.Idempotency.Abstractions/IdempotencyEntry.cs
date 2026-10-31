@@ -13,4 +13,13 @@ public sealed record IdempotencyEntry(
     IdempotencyEntryState State,
     DateTimeOffset StartedAt,
     DateTimeOffset? CompletedAt,
-    string? ResultFingerprint);
+    string? ResultFingerprint)
+{
+    /// <summary>
+    /// Gets the opaque key of the record that owns the entry for retention purposes, or <see langword="null" /> when none was recorded.
+    /// </summary>
+    public string? RetentionOwner
+    {
+        get; init;
+    }
+}
