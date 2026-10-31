@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>PandaBear.SharedKernel.DispositionHold.Abstractions</PackageId>
+        <Description>Jurisdiction-neutral disposition holds and a fail-closed guard contract for blocking deletion or anonymization.</Description>
+        <RootNamespace>PandaBear.DispositionHold</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <PackageTags>disposition-hold;retention;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

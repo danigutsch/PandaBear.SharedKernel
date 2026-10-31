@@ -150,6 +150,8 @@
   <Project Path="benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj" />
   <Project Path="tools/SharedKernel.CI.Tool/SharedKernel.CI.Tool.csproj" />
   <Project Path="tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.DispositionHold.Abstractions/SharedKernel.DispositionHold.Abstractions.csproj" />
+  <Project Path="tests/SharedKernel.DispositionHold.Abstractions.Tests/SharedKernel.DispositionHold.Abstractions.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Documentation/SharedKernel.Documentation.csproj" />
   <Project Path="tools/SharedKernel.Documentation.Tool/SharedKernel.Documentation.Tool.csproj" />
   <Project Path="tools/SharedKernel.RepoConfig.Tool/SharedKernel.RepoConfig.Tool.csproj" />
