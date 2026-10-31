@@ -8,6 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\src\SharedKernel\SharedKernel.ObjectStorage\SharedKernel.ObjectStorage.csproj" />
+        <ProjectReference Include="..\..\..\src\SharedKernel\SharedKernel.Npgsql\SharedKernel.Npgsql.csproj" />
         <ProjectReference Include="..\..\..\src\SharedKernel\SharedKernel.BuildingBlocks\SharedKernel.BuildingBlocks.csproj" />
         <ProjectReference Include="..\..\..\src\SharedKernel\SharedKernel.Results\SharedKernel.Results.csproj" />
     </ItemGroup>

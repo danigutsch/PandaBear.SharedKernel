@@ -1,7 +1,7 @@
 namespace PandaBear.InputNormalization;
 
 /// <summary>
-/// Validates relative slash-delimited keys used by object storage providers.
+/// Validates relative slash-delimited keys with well-formed Unicode and no control characters.
 /// </summary>
 public static class ObjectStorageKeyValidator
 {
@@ -16,6 +16,7 @@ public static class ObjectStorageKeyValidator
         if (string.IsNullOrWhiteSpace(value)
             || maxLength <= 0
             || value.Length > maxLength
+            || HasInvalidText(value)
             || value[0] is '/' or '\\'
             || value.Contains('\\', StringComparison.Ordinal)
             || IsWindowsRootedPath(value))
@@ -28,4 +29,27 @@ public static class ObjectStorageKeyValidator
 
     private static bool IsWindowsRootedPath(string value) =>
         value.Length >= 2 && char.IsAsciiLetter(value[0]) && value[1] == ':';
+
+    private static bool HasInvalidText(string value)
+    {
+        for (var index = 0; index < value.Length; index++)
+        {
+            if (char.IsControl(value[index]))
+            {
+                return true;
+            }
+
+            if (char.IsSurrogate(value[index]))
+            {
+                if (!char.IsSurrogatePair(value, index))
+                {
+                    return true;
+                }
+
+                index++;
+            }
+        }
+
+        return false;
+    }
 }

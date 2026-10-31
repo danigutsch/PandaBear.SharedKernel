@@ -7,6 +7,15 @@ namespace PandaBear.Npgsql;
 /// </summary>
 public static class PostgreSqlTransactionAdvisoryLock
 {
+    /// <summary>Acquires an advisory lock using a typed numeric identity.</summary>
+    /// <param name="connection">The open connection owning the transaction.</param>
+    /// <param name="transaction">The active lock-owning transaction.</param>
+    /// <param name="lockKey">The exact advisory lock identity.</param>
+    /// <param name="ct">The cancellation token.</param>
+    /// <returns>The existing provider operation or lock lease.</returns>
+    public static ValueTask AcquireKey(NpgsqlConnection connection, NpgsqlTransaction transaction, PostgreSqlLockKey lockKey, CancellationToken ct) =>
+        Acquire(connection, transaction, lockKey.Value, ct);
+
     private const string AcquireSql = "SELECT pg_advisory_xact_lock(@lockKey);";
 
     /// <summary>

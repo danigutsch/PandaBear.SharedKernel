@@ -11,4 +11,15 @@ public sealed record ObjectUploadRequest(
     string ObjectKey,
     string ContentType,
     long Length,
-    TimeSpan ExpiresAfter);
+    TimeSpan ExpiresAfter)
+{
+    /// <summary>Creates a request using a validated object identity.</summary>
+    /// <param name="objectKey">The objectKey value.</param>
+    /// <param name="contentType">The contentType value.</param>
+    /// <param name="length">The length value.</param>
+    /// <param name="expiresAfter">The expiresAfter value.</param>
+    /// <returns>The provider-neutral request.</returns>
+    /// <exception cref="InvalidOperationException">The key has not been initialized.</exception>
+    public static ObjectUploadRequest Create(ObjectStorageKey objectKey, string contentType, long length, TimeSpan expiresAfter) =>
+        new(objectKey.Value, contentType, length, expiresAfter);
+}

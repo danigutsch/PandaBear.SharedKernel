@@ -1,5 +1,7 @@
 using PandaBear.BuildingBlocks;
 using PandaBear.Results;
+using PandaBear.ObjectStorage;
+using PandaBear.Npgsql;
 
 var bookingResult = CreateBooking("VT-42", "Ada Lovelace");
 var bookingMessage = bookingResult.Match(
@@ -45,6 +47,24 @@ if (iban.IsFailure || bic.IsFailure || cpf.IsFailure || cnpj.IsFailure || pix.Is
     || PixKey.Create(PixKeyType.Email, "Pix@bcb.gov.br").IsSuccess)
 {
     throw new InvalidOperationException("Payment identifier package checks failed.");
+}
+
+// These checks run against the packed packages, including during NativeAOT consumption.
+var objectKey = ObjectStorageKey.From("media/café #1.jpg", 1024);
+var prefix = ObjectStoragePrefix.From("media/");
+var lockKey = PostgreSqlLockKey.FromIdentity("inventory:123");
+if (objectKey != ObjectStorageKey.From("media/café #1.jpg")
+    || objectKey == ObjectStorageKey.From("media/Café #1.jpg")
+    || objectKey.ToEscapedPath() != "media/caf%C3%A9%20%231.jpg"
+    || ObjectStorageKey.TryFrom("media/../secret", out _)
+    || ObjectStorageKey.TryFrom("media/file\n.jpg", out _)
+    || ObjectStoragePrefix.TryFrom("/", out _)
+    || prefix.Value != "media/"
+    || ObjectStoragePrefix.From("") != default
+    || lockKey.Value != -6502278405708100228L
+    || lockKey != new PostgreSqlLockKey(-6502278405708100228L))
+{
+    throw new InvalidOperationException("Validated key package checks failed.");
 }
 
 Console.WriteLine(bookingMessage);

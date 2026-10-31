@@ -32,7 +32,7 @@ public sealed class PostgreSqlOrderedTransactionLocks
 {
     private readonly NpgsqlConnection connection;
     private readonly NpgsqlTransaction transaction;
-    private readonly HashSet<long> heldKeys = [];
+    private readonly HashSet<PostgreSqlLockKey> heldKeys = [];
     private OrderedLock? lastTaken;
 
     /// <summary>
@@ -97,7 +97,7 @@ public sealed class PostgreSqlOrderedTransactionLocks
 
         foreach (var next in pending)
         {
-            await PostgreSqlTransactionAdvisoryLock.Acquire(connection, transaction, next.Key, ct);
+            await PostgreSqlTransactionAdvisoryLock.AcquireKey(connection, transaction, next.Key, ct);
             if (heldKeys.Add(next.Key) && (lastTaken is null || next.CompareTo(lastTaken.Value) > 0))
             {
                 lastTaken = next;
@@ -107,13 +107,13 @@ public sealed class PostgreSqlOrderedTransactionLocks
 
     private OrderedLock[] Order(IEnumerable<PostgreSqlTransactionLockRequest> locks)
     {
-        var lowestPerKey = new Dictionary<long, OrderedLock>();
+        var lowestPerKey = new Dictionary<PostgreSqlLockKey, OrderedLock>();
         foreach (var request in locks)
         {
             ArgumentOutOfRangeException.ThrowIfNegative(request.Tier);
             ArgumentException.ThrowIfNullOrEmpty(request.Name);
 
-            var key = PostgreSqlAdvisoryLockKey.FromUtf8Sha256BigEndian(request.Name);
+            var key = PostgreSqlLockKey.FromIdentity(request.Name);
             var candidate = new OrderedLock(request.Tier, key, request.Name, heldKeys.Contains(key));
 
             if (!lowestPerKey.TryGetValue(candidate.Key, out var existing) || candidate.CompareTo(existing) < 0)
@@ -128,7 +128,7 @@ public sealed class PostgreSqlOrderedTransactionLocks
         return ordered;
     }
 
-    private readonly record struct OrderedLock(int Tier, long Key, string Name, bool AlreadyTaken) : IComparable<OrderedLock>
+    private readonly record struct OrderedLock(int Tier, PostgreSqlLockKey Key, string Name, bool AlreadyTaken) : IComparable<OrderedLock>
     {
         public int CompareTo(OrderedLock other)
         {

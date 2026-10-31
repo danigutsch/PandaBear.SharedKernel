@@ -1,4 +1,6 @@
 #nullable enable
+override PandaBear.ObjectStorage.ObjectStorageKey.ToString() -> string!
+override PandaBear.ObjectStorage.ObjectStoragePrefix.ToString() -> string!
 PandaBear.ObjectStorage.IObjectStore
 PandaBear.ObjectStorage.IObjectStore.CreateUploadUrl(PandaBear.ObjectStorage.ObjectUploadRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectUploadTicket!>
 PandaBear.ObjectStorage.IObjectStore.Delete(string! objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
@@ -27,6 +29,14 @@ PandaBear.ObjectStorage.ObjectReadResult.Length.init -> void
 PandaBear.ObjectStorage.ObjectReadResult.ObjectKey.get -> string!
 PandaBear.ObjectStorage.ObjectReadResult.ObjectKey.init -> void
 PandaBear.ObjectStorage.ObjectReadResult.ObjectReadResult(string! ObjectKey, System.IO.Stream! Content, string! ContentType, long Length, string? Checksum = null) -> void
+PandaBear.ObjectStorage.ObjectStorageKey
+PandaBear.ObjectStorage.ObjectStorageKey.ObjectStorageKey() -> void
+PandaBear.ObjectStorage.ObjectStorageKey.ToEscapedPath() -> string!
+PandaBear.ObjectStorage.ObjectStorageKey.Value.get -> string!
+PandaBear.ObjectStorage.ObjectStoragePrefix
+PandaBear.ObjectStorage.ObjectStoragePrefix.ObjectStoragePrefix() -> void
+PandaBear.ObjectStorage.ObjectStoragePrefix.Value.get -> string!
+PandaBear.ObjectStorage.ObjectStoreValueExtensions
 PandaBear.ObjectStorage.ObjectUploadRequest
 PandaBear.ObjectStorage.ObjectUploadRequest.ContentType.get -> string!
 PandaBear.ObjectStorage.ObjectUploadRequest.ContentType.init -> void
@@ -75,3 +85,15 @@ PandaBear.ObjectStorage.ObjectWriteResult.PublicUri.get -> System.Uri!
 PandaBear.ObjectStorage.ObjectWriteResult.PublicUri.init -> void
 PandaBear.ObjectStorage.ObjectWriteResult.StorageUri.get -> System.Uri!
 PandaBear.ObjectStorage.ObjectWriteResult.StorageUri.init -> void
+static PandaBear.ObjectStorage.ObjectStorageKey.From(string! value, int maxLength = 2147483647) -> PandaBear.ObjectStorage.ObjectStorageKey
+static PandaBear.ObjectStorage.ObjectStorageKey.TryFrom(string? value, out PandaBear.ObjectStorage.ObjectStorageKey key, int maxLength = 2147483647) -> bool
+static PandaBear.ObjectStorage.ObjectStoragePrefix.From(string! value, int maxLength = 2147483647) -> PandaBear.ObjectStorage.ObjectStoragePrefix
+static PandaBear.ObjectStorage.ObjectStoragePrefix.TryFrom(string? value, out PandaBear.ObjectStorage.ObjectStoragePrefix prefix, int maxLength = 2147483647) -> bool
+static PandaBear.ObjectStorage.ObjectStoreValueExtensions.Delete(this PandaBear.ObjectStorage.IObjectStore! store, PandaBear.ObjectStorage.ObjectStorageKey objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+static PandaBear.ObjectStorage.ObjectStoreValueExtensions.Exists(this PandaBear.ObjectStorage.IObjectStore! store, PandaBear.ObjectStorage.ObjectStorageKey objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<bool>
+static PandaBear.ObjectStorage.ObjectStoreValueExtensions.GetPublicUri(this PandaBear.ObjectStorage.IObjectStore! store, PandaBear.ObjectStorage.ObjectStorageKey objectKey) -> System.Uri!
+static PandaBear.ObjectStorage.ObjectStoreValueExtensions.ListKeys(this PandaBear.ObjectStorage.IObjectStore! store, PandaBear.ObjectStorage.ObjectStoragePrefix prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<string!>!>
+static PandaBear.ObjectStorage.ObjectStoreValueExtensions.ListObjects(this PandaBear.ObjectStorage.IObjectStore! store, PandaBear.ObjectStorage.ObjectStoragePrefix prefix, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<PandaBear.ObjectStorage.ObjectInventoryItem!>!>
+static PandaBear.ObjectStorage.ObjectStoreValueExtensions.OpenRead(this PandaBear.ObjectStorage.IObjectStore! store, PandaBear.ObjectStorage.ObjectStorageKey objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectReadResult!>
+static PandaBear.ObjectStorage.ObjectWriteRequest.Create(PandaBear.ObjectStorage.ObjectStorageKey objectKey, System.IO.Stream! content, string! contentType, long length, string? checksum = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> PandaBear.ObjectStorage.ObjectWriteRequest!
+static PandaBear.ObjectStorage.ObjectUploadRequest.Create(PandaBear.ObjectStorage.ObjectStorageKey objectKey, string! contentType, long length, System.TimeSpan expiresAfter) -> PandaBear.ObjectStorage.ObjectUploadRequest!

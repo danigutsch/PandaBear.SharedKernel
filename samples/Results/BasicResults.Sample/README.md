@@ -26,3 +26,6 @@ The sample stays intentionally small while still showing both success and failur
 It also demonstrates the package rule for asynchronous composition: keep `Map`, `Bind`, and
 `Match` under the same names and lift them over `Task`/`ValueTask` instead of introducing
 `Async`-suffixed operator names.
+
+The executable also checks typed object-storage keys and PostgreSQL advisory lock identities against
+the packed packages. Package consumption runs these checks under the managed runtime and NativeAOT.

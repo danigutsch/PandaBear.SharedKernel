@@ -207,7 +207,10 @@
         "type": "Project"
       },
       "PandaBear.SharedKernel.ObjectStorage": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )"
+        }
       },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "CentralTransitive",

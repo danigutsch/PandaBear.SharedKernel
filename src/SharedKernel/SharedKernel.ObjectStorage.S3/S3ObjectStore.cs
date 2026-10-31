@@ -2,7 +2,6 @@ using System.Globalization;
 using Amazon.S3.Model;
 using Amazon.S3;
 using Microsoft.Extensions.Options;
-using PandaBear.InputNormalization;
 
 namespace PandaBear.ObjectStorage.S3;
 
@@ -154,7 +153,7 @@ public sealed class S3ObjectStore(
         var baseUri = options.PublicBaseUri.OriginalString.EndsWith(Separator, StringComparison.Ordinal)
             ? options.PublicBaseUri
             : new Uri(options.PublicBaseUri.OriginalString + Separator, baseUriKind);
-        var escapedKey = string.Join(Separator, objectKey.Split(Separator).Select(Uri.EscapeDataString));
+        var escapedKey = ObjectStorageKey.From(objectKey, options.MaxObjectKeyLength).ToEscapedPath();
         return baseUri.IsAbsoluteUri ? new Uri(baseUri, escapedKey) : new Uri(baseUri.OriginalString + escapedKey, UriKind.Relative);
     }
 
@@ -195,7 +194,7 @@ public sealed class S3ObjectStore(
         var baseUri = endpoint.OriginalString.EndsWith(Separator, StringComparison.Ordinal)
             ? endpoint
             : new Uri(endpoint.OriginalString + Separator, UriKind.Absolute);
-        var escapedKey = string.Join(Separator, objectKey.Split(Separator).Select(Uri.EscapeDataString));
+        var escapedKey = ObjectStorageKey.From(objectKey, options.MaxObjectKeyLength).ToEscapedPath();
         return new Uri(baseUri, $"{options.Bucket}/{escapedKey}");
     }
 
@@ -267,7 +266,7 @@ public sealed class S3ObjectStore(
 
     private void ValidateKey(string objectKey)
     {
-        if (!ObjectStorageKeyValidator.IsValidRelativeKey(objectKey, options.MaxObjectKeyLength))
+        if (!ObjectStorageKey.TryFrom(objectKey, out _, options.MaxObjectKeyLength))
         {
             throw new ArgumentException("Object key must be a relative slash-delimited path without dot segments.", nameof(objectKey));
         }
@@ -275,9 +274,10 @@ public sealed class S3ObjectStore(
 
     private void ValidatePrefix(string prefix)
     {
-        if (!string.IsNullOrEmpty(prefix))
+        // Retain the legacy null-as-empty behavior of the string API.
+        if (!ObjectStoragePrefix.TryFrom(prefix ?? string.Empty, out _, options.MaxObjectKeyLength))
         {
-            ValidateKey(prefix.TrimEnd('/'));
+            throw new ArgumentException("Object prefix must be relative and must not include dot segments.", nameof(prefix));
         }
     }
 }
