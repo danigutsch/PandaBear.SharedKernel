@@ -85,7 +85,7 @@ public sealed class RepositoryToolCallerTests
     [InlineData(".github/workflows/ci.yml", "select")]
     [InlineData(".github/workflows/ci.yml", "run")]
     [InlineData(".github/workflows/ci.yml", "stage-candidate")]
-    [InlineData(".github/workflows/pr-metadata.yml", "verify-commit-message")]
+    [InlineData(".github/workflows/pr-metadata-reusable.yml", "verify-commit-message")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "select")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "run")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "refresh")]

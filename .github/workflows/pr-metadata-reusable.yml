@@ -1,0 +1,62 @@
+name: PR Metadata (reusable)
+on:
+  workflow_call:
+    inputs:
+      runner:
+        description: Runner label for the job.
+        type: string
+        default: ubuntu-latest
+      source-repository:
+        description: >-
+          Repository that holds the CI tool source, such as danigutsch/PandaBear.SharedKernel. Empty builds the tool
+          from the calling repository.
+        type: string
+        default: ''
+      source-ref:
+        description: >-
+          Full 40-character commit SHA of the tool source. Required when source-repository is set; empty uses the
+          event revision of the calling repository.
+        type: string
+        default: ''
+permissions:
+  contents: read
+jobs:
+  metadata:
+    name: Validate squash header
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Require a pinned tool source
+        env:
+          SOURCE_REPOSITORY: ${{ inputs.source-repository }}
+          SOURCE_REF: ${{ inputs.source-ref }}
+        shell: bash
+        run: |
+          if [[ -n "$SOURCE_REPOSITORY" && ! "$SOURCE_REF" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "source-ref must be a full 40-character lowercase commit SHA when source-repository is set." >&2
+            exit 1
+          fi
+      - name: Checkout the CI tool source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          repository: ${{ inputs.source-repository || github.repository }}
+          ref: ${{ inputs.source-ref }}
+          path: tool-source
+          persist-credentials: false
+          sparse-checkout: |
+            tools/SharedKernel.CI.Tool
+            tools/Shared
+            .github/actions/setup-dotnet-tool
+          sparse-checkout-cone-mode: true
+      - name: Set up the SDK and build the CI tool
+        uses: ./tool-source/.github/actions/setup-dotnet-tool
+        with:
+          project: tools/SharedKernel.CI.Tool
+          global-json-file: tool-source/global.json
+          working-directory: tool-source
+          cache-dependency-path: tool-source/**/packages.lock.json
+      - name: Validate squash header
+        working-directory: tool-source
+        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- verify-commit-message --event "$GITHUB_EVENT_PATH"

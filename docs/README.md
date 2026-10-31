@@ -18,6 +18,7 @@
 - [ASP.NET Core error and security telemetry](aspnetcore-error-and-security-telemetry.md)
 - [Warning policy](ci/warning-policy.md)
 - [Action and image pin review](ci/pin-update-review.md)
+- [Reusable workflows and actions](ci/reusable-workflows.md)
 
 Module README files beside source own consumer usage and examples. Samples and benchmarks remain under `samples/` and `benchmarks/`. The architecture diagrams are generated from this repository's code and workflow.
 

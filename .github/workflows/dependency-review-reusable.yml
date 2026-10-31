@@ -1,0 +1,128 @@
+name: Dependency review (reusable)
+on:
+  workflow_call:
+    inputs:
+      runner:
+        description: Runner label for the job.
+        type: string
+        default: ubuntu-latest
+      review-required:
+        description: >-
+          Whether the review runs. The caller decides, for example from a plan job that skips documentation-only
+          changes; false only reports that nothing was reviewed.
+        type: string
+        default: 'true'
+      plan-result:
+        description: Result of the caller's plan job, or success when there is none. Anything else fails the job.
+        type: string
+        required: true
+      snapshot-result:
+        description: Result of the caller's snapshot jobs. Only success and skipped pass.
+        type: string
+        required: true
+      allow-licenses:
+        description: Comma-separated SPDX identifiers that the review accepts.
+        type: string
+        required: true
+      fail-on-severity:
+        description: Lowest vulnerability severity that fails the review (low, moderate, high, or critical).
+        type: string
+        default: moderate
+      verify-license-exceptions:
+        description: >-
+          Verify the approved license exceptions with the RepoConfig tool and pass their packages as
+          allow-dependencies-licenses. The calling repository then needs the licenseExceptions section of its
+          .config/sharedkernel-repo.json.
+        type: boolean
+        default: false
+      source-repository:
+        description: Repository that holds the RepoConfig tool source. Empty builds the tool from the calling repository.
+        type: string
+        default: ''
+      source-ref:
+        description: Full 40-character commit SHA of the tool source. Required when source-repository is set.
+        type: string
+        default: ''
+permissions:
+  contents: read
+jobs:
+  review:
+    name: Review
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Require successful snapshot generation when applicable
+        env:
+          SNAPSHOT_RESULT: ${{ inputs.snapshot-result }}
+          PLAN_RESULT: ${{ inputs.plan-result }}
+          SOURCE_REPOSITORY: ${{ inputs.source-repository }}
+          SOURCE_REF: ${{ inputs.source-ref }}
+        shell: bash
+        run: |
+          test "$PLAN_RESULT" = success
+          case "$SNAPSHOT_RESULT" in
+            success | skipped) ;;
+            *) echo "Dependency snapshot generation did not succeed." >&2; exit 1 ;;
+          esac
+          if [[ -n "$SOURCE_REPOSITORY" && ! "$SOURCE_REF" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "source-ref must be a full 40-character lowercase commit SHA when source-repository is set." >&2
+            exit 1
+          fi
+
+      - name: Checkout repository
+        if: inputs.review-required == 'true' && inputs.verify-license-exceptions
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Checkout the RepoConfig tool source
+        if: inputs.review-required == 'true' && inputs.verify-license-exceptions
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          repository: ${{ inputs.source-repository || github.repository }}
+          ref: ${{ inputs.source-ref }}
+          path: tool-source
+          persist-credentials: false
+          sparse-checkout: |
+            tools/SharedKernel.RepoConfig.Tool
+            tools/Shared
+            .github/actions/setup-dotnet-tool
+          sparse-checkout-cone-mode: true
+
+      - name: Set up the SDK and build the RepoConfig tool
+        if: inputs.review-required == 'true' && inputs.verify-license-exceptions
+        uses: ./tool-source/.github/actions/setup-dotnet-tool
+        with:
+          project: tools/SharedKernel.RepoConfig.Tool
+          global-json-file: tool-source/global.json
+          working-directory: tool-source
+          cache-dependency-path: tool-source/**/packages.lock.json
+
+      # The pinned Action ignores purl versions. Fail before emitting its exception if the approval expires.
+      - name: Validate exact preview license approval
+        if: inputs.review-required == 'true' && inputs.verify-license-exceptions
+        id: preview-license
+        working-directory: tool-source
+        shell: bash
+        run: |
+          dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release --no-build --no-restore -- \
+            dependency verify-license-exceptions --root "$GITHUB_WORKSPACE" --github-output "$GITHUB_OUTPUT"
+
+      - name: Dependency Review
+        if: inputs.review-required == 'true'
+        uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
+        with:
+          fail-on-severity: ${{ inputs.fail-on-severity }}
+          license-check: true
+          vulnerability-check: true
+          # Informational scorecards perform serial external lookups for repeated manifest entries.
+          show-openssf-scorecard: false
+          allow-dependencies-licenses: ${{ steps.preview-license.outputs.packages }}
+          allow-licenses: ${{ inputs.allow-licenses }}
+
+      - name: Report unchanged dependency inputs
+        if: inputs.review-required != 'true'
+        run: echo "The caller reported no dependency changes to review."

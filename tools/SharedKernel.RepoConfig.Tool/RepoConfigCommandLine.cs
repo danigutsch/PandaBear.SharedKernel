@@ -53,6 +53,7 @@ internal static class RepoConfigCommandLine
             CreateVerifyLineEndingsCommand(environment, root),
             CreateVerifyLinksCommand(environment, root),
             CreateVerifyGherkinCommand(environment, root),
+            CreateVerifyActionPinsCommand(environment, root),
             CreateVerifyPodmanDnsCommand(environment),
             CreateSecurityCommand(environment, root),
             CreateDependencyCommand(environment, root),
@@ -368,6 +369,23 @@ internal static class RepoConfigCommandLine
         Command command = new("verify-line-endings", "Verify that files in the Git index and the working tree use the line endings that their eol attribute requires.") { root };
         SetGuardedAction(command, (parseResult, output, error, ct) =>
             RepoConfigToolApplication.VerifyLineEndings(ResolveRoot(parseResult, root, environment), output, error, ct));
+        return command;
+    }
+
+    private static Command CreateVerifyActionPinsCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Option<string> manifest = new("--manifest")
+        {
+            Description = $"Action pin manifest. Relative to the root; defaults to {ActionPinVerifier.DefaultManifestPath}.",
+            HelpName = "path",
+        };
+        Command command = new("verify-action-pins", "Verify that every external uses: reference pins the full commit SHA and version comment that the action pin manifest approves.") { manifest, root };
+        SetGuardedAction(command, (parseResult, output, error, ct) => RepoConfigToolApplication.VerifyActionPins(
+            ResolveRoot(parseResult, root, environment),
+            parseResult.GetValue(manifest),
+            output,
+            error,
+            ct));
         return command;
     }
 

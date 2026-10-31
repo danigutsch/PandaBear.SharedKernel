@@ -11,14 +11,6 @@ jobs:
   metadata:
     name: ${{ github.event.action == 'labeled' && github.event.label.name != 'ci:rerun' && 'Ignored label event' || 'PR Metadata' }}
     if: ${{ github.event.action != 'labeled' || github.event.label.name == 'ci:rerun' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-        with:
-          persist-credentials: false
-      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5
-        with:
-          global-json-file: global.json
-      - name: Validate squash header
-        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release -- verify-commit-message --event "$GITHUB_EVENT_PATH"
+    permissions:
+      contents: read
+    uses: ./.github/workflows/pr-metadata-reusable.yml

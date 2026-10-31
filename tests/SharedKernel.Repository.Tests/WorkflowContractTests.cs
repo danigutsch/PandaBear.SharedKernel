@@ -164,19 +164,79 @@ public sealed class WorkflowContractTests
     }
 
     [Fact]
+    public void Reusable_workflows_take_no_secrets_declare_job_permissions_and_keep_inputs_out_of_scripts()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var files = Directory.GetFiles(Path.Combine(root, ".github", "workflows"), "*-reusable.yml");
+
+        // Act
+        List<string> violations = [];
+        foreach (var file in files)
+        {
+            var name = Path.GetFileName(file);
+            var lines = File.ReadAllText(file).Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n');
+            var jobsStart = Array.IndexOf(lines, "jobs:");
+            var jobKeys = lines.Skip(jobsStart + 1).TakeWhile(static line => line.Length == 0 || line.StartsWith(' ')).Where(static line => line.StartsWith("  ", StringComparison.Ordinal) && !line.StartsWith("   ", StringComparison.Ordinal) && line.EndsWith(':')).Select(static line => line.Trim().TrimEnd(':')).ToArray();
+            var workflow = string.Join('\n', lines);
+            if (workflow.Contains("secrets:", StringComparison.Ordinal))
+            {
+                violations.Add(name + ": declares or passes secrets");
+            }
+
+            foreach (var key in jobKeys)
+            {
+                if (!WorkflowJobs.Read(workflow, key).Contains("\n    permissions:\n", StringComparison.Ordinal))
+                {
+                    violations.Add(name + ": job " + key + " has no explicit permissions");
+                }
+            }
+
+            for (var index = 0; index < lines.Length; index++)
+            {
+                var line = lines[index];
+                if (line.Contains("uses: actions/checkout@", StringComparison.Ordinal)
+                    && !lines.Skip(index + 1).TakeWhile(static next => !next.TrimStart().StartsWith("- ", StringComparison.Ordinal) && !next.TrimStart().StartsWith("uses:", StringComparison.Ordinal) && !next.TrimStart().StartsWith("run:", StringComparison.Ordinal)).Any(static next => next.Trim() == "persist-credentials: false"))
+                {
+                    violations.Add(name + ": checkout at line " + (index + 1) + " keeps credentials");
+                }
+
+                if (line.TrimStart().StartsWith("run:", StringComparison.Ordinal))
+                {
+                    var indent = line.Length - line.TrimStart().Length;
+                    var block = line.TrimEnd().EndsWith('|') || line.TrimEnd().EndsWith('>')
+                        ? lines.Skip(index + 1).TakeWhile(next => next.Length == 0 || next.Length - next.TrimStart().Length > indent)
+                        : [line];
+                    if (block.Any(static text => text.Contains("${{ inputs.", StringComparison.Ordinal)))
+                    {
+                        violations.Add(name + ": run block at line " + (index + 1) + " interpolates an input");
+                    }
+                }
+            }
+        }
+
+        // Assert
+        files.ShouldNotBeEmpty();
+        violations.ShouldBeEmpty();
+    }
+
+    [Fact]
     public void Pull_request_metadata_reaches_the_ci_tool_only_through_the_event_file()
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
-        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "pr-metadata.yml"));
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "pr-metadata-reusable.yml"));
+        var caller = File.ReadAllText(Path.Combine(root, ".github", "workflows", "pr-metadata.yml"));
 
         // Act
         var job = WorkflowJobs.Read(workflow, "metadata");
 
         // Assert
         job.ShouldContain(
-            "        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release -- verify-commit-message --event \"$GITHUB_EVENT_PATH\"\n",
+            "        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- verify-commit-message --event \"$GITHUB_EVENT_PATH\"\n",
             StringComparison.Ordinal);
+        caller.ShouldContain("    uses: ./.github/workflows/pr-metadata-reusable.yml\n", StringComparison.Ordinal);
+        caller.ShouldNotContain("secrets:", StringComparison.Ordinal);
         workflow.ShouldNotContain("github.event.pull_request.title", StringComparison.Ordinal);
         workflow.ShouldNotContain("github.event.pull_request.body", StringComparison.Ordinal);
     }
