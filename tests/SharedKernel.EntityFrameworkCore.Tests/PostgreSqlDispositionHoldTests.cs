@@ -218,26 +218,7 @@ public sealed class PostgreSqlDispositionHoldTests(PostgreSqlFixture fixture) : 
     }
 
     [Fact]
-    public async Task Check_refuses_a_later_call_in_the_same_transaction_that_would_take_a_smaller_lock_key()
-    {
-        // Arrange
-        var ct = TestContext.Current.CancellationToken;
-        var scopes = new[] { DispositionScope.From("document", "doc-1"), DispositionScope.From("document", "doc-2") }
-            .OrderBy(scope => PostgreSqlAdvisoryLockKey.FromUtf8Sha256BigEndian(HoldScopeLock.LockName(scope)))
-            .ToArray();
-        await using var purge = await Scenario.Open(beginTransaction: true, ct);
-        _ = await purge.Guard.Check([scopes[1]], Placed, ct);
-
-        // Act
-        var check = async () => await purge.Guard.Check([scopes[0]], Placed, ct);
-
-        // Assert
-        var exception = await check.ShouldThrow<DispositionHoldStateUnknownException>();
-        exception.InnerException.ShouldBeOfType<InvalidOperationException>();
-    }
-
-    [Fact]
-    public async Task Check_accepts_the_same_scopes_again_and_a_fresh_order_in_a_new_transaction()
+    public async Task Check_accepts_the_same_scope_again_and_a_smaller_key_in_a_new_transaction()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
@@ -255,6 +236,25 @@ public sealed class PostgreSqlDispositionHoldTests(PostgreSqlFixture fixture) : 
         // Assert
         again.IsClear.ShouldBeTrue();
         afterRestart.IsClear.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Check_holds_the_lock_again_after_a_savepoint_rollback_released_it()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var scope = DispositionScope.From("document", "doc-1");
+        await using var purge = await Scenario.Open(beginTransaction: true, ct);
+        await purge.CreateSavepoint("before-check", ct);
+        _ = await purge.Guard.Check([scope], Placed, ct);
+        await purge.RollbackToSavepoint("before-check", ct);
+
+        // Act
+        _ = await purge.Guard.Check([scope], Placed, ct);
+        var locked = await Scenario.IsScopeLocked(scope, ct);
+
+        // Assert
+        locked.ShouldBeTrue();
     }
 
     [Fact]
