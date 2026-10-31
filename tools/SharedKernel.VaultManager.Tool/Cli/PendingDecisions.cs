@@ -24,6 +24,7 @@ internal sealed record PendingDecisions(IReadOnlyList<UnresolvedConflict> Fields
     /// <param name="result">Pipeline result.</param>
     /// <param name="decisions">Decisions the pipeline ran with.</param>
     /// <returns>The pending fields and findings.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="result"/> or <paramref name="decisions"/> is <see langword="null"/>.</exception>
     public static PendingDecisions Find(PipelineResult result, MergeDecisions decisions)
     {
         ArgumentNullException.ThrowIfNull(result);

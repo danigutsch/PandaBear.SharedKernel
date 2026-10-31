@@ -60,6 +60,7 @@ public static class HttpOutcomeMapper
     /// <param name="value">The materialized response value.</param>
     /// <param name="location">The response Location header, when present.</param>
     /// <returns>The successful HTTP outcome.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static HttpOutcome<TValue> Succeeded<TValue>(HttpStatusCode statusCode, TValue value, Uri? location = null)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -76,6 +77,8 @@ public static class HttpOutcomeMapper
     /// <summary>
     /// Sends an HTTP request and maps its response to an HTTP outcome.
     /// </summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="httpClient"/>, <paramref name="request"/>, or <paramref name="validationProblemJson"/> is <see langword="null"/>.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="ct"/> is canceled while the request is in flight.</exception>
     /// <remarks>
     /// After argument validation, this method owns and disposes <paramref name="request" /> and the received response.
     /// The supplied <paramref name="httpClient" /> remains caller-owned.
@@ -138,6 +141,8 @@ public static class HttpOutcomeMapper
     /// <summary>
     /// Sends an HTTP request and maps its materialized JSON response to an HTTP outcome.
     /// </summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="httpClient"/>, <paramref name="request"/>, <paramref name="valueJson"/>, or <paramref name="validationProblemJson"/> is <see langword="null"/>.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="ct"/> is canceled while the request is in flight.</exception>
     /// <remarks>
     /// After argument validation, this method owns and disposes <paramref name="request" /> and the received response.
     /// The supplied <paramref name="httpClient" /> remains caller-owned.

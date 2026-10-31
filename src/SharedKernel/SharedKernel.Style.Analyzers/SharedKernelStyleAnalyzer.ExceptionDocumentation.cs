@@ -135,14 +135,46 @@ public sealed partial class SharedKernelStyleAnalyzer
         {
             if (parent is ITryOperation tryOperation
                 && ReferenceEquals(tryOperation.Body, child)
-                && tryOperation.Catches.Any(catchClause => catchClause.Filter is null
-                    && (catchClause.ExceptionType is not { } caught || DerivesFromOrEquals(thrown, caught))))
+                && tryOperation.Catches.Any(catchClause => CatchHandles(catchClause, thrown)))
             {
                 return true;
             }
         }
 
         return false;
+    }
+
+    // A filter handles the throw only when it is a pure type test of the caught variable, for example when (e is IOException or JsonException).
+    private static bool CatchHandles(ICatchClauseOperation catchClause, INamedTypeSymbol thrown)
+    {
+        if (catchClause.ExceptionType is { } caught && !DerivesFromOrEquals(thrown, caught))
+        {
+            return false;
+        }
+
+        return catchClause.Filter switch
+        {
+            null => true,
+            IIsTypeOperation { IsNegated: false, ValueOperand: ILocalReferenceOperation local } isType => IsCatchLocal(catchClause, local) && DerivesFromOrEquals(thrown, isType.TypeOperand),
+            IIsPatternOperation { Value: ILocalReferenceOperation local, Pattern: { } pattern } => IsCatchLocal(catchClause, local) && PatternMatches(pattern, thrown),
+            _ => false,
+        };
+    }
+
+    private static bool IsCatchLocal(ICatchClauseOperation catchClause, ILocalReferenceOperation local)
+    {
+        return catchClause.Locals.Contains(local.Local, SymbolEqualityComparer.Default);
+    }
+
+    private static bool PatternMatches(IPatternOperation pattern, INamedTypeSymbol thrown)
+    {
+        return pattern switch
+        {
+            IBinaryPatternOperation { OperatorKind: BinaryOperatorKind.Or } binary => PatternMatches(binary.LeftPattern, thrown) || PatternMatches(binary.RightPattern, thrown),
+            ITypePatternOperation type => DerivesFromOrEquals(thrown, type.MatchedType),
+            IDeclarationPatternOperation declaration => declaration.MatchedType is { } matched && DerivesFromOrEquals(thrown, matched),
+            _ => false,
+        };
     }
 
     private static bool IsSystemException(INamedTypeSymbol type)

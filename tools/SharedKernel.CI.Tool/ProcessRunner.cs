@@ -59,6 +59,7 @@ internal static class ProcessRunner
     /// standard output.
     /// </summary>
     /// <exception cref="TimeoutException">The process did not exit within <paramref name="timeout"/>; its process tree is terminated first.</exception>
+    /// <exception cref="InvalidOperationException">The process could not be started, or exited unsuccessfully.</exception>
     internal static async Task<string> Run(
         string fileName, string[] arguments, string workingDirectory, TimeSpan timeout, TimeProvider timeProvider, Action<ProcessStartInfo> configure, CancellationToken ct, bool echo = false)
     {

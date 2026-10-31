@@ -18,6 +18,7 @@ internal static class FormatDetector
     /// <param name="content">File bytes.</param>
     /// <returns>Detected format, or <see cref="VaultFileFormat.Unknown"/>.</returns>
     /// <exception cref="InvalidDataException">The content is a zip archive that breaks a safety limit.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/> is <see langword="null"/>.</exception>
     public static VaultFileFormat Detect(byte[] content)
     {
         ArgumentNullException.ThrowIfNull(content);

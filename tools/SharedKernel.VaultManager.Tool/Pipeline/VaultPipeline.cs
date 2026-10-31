@@ -284,6 +284,7 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
     /// <exception cref="InvalidOperationException">
     /// The new-password prompt failed, or the password is shorter than <see cref="PasswordReader.MinimumNewPasswordLength"/>.
     /// </exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="vault"/>, <paramref name="output"/>, or <paramref name="inputPaths"/> is <see langword="null"/>.</exception>
     public BitwardenWriteResult Write(VaultExport vault, PipelineOutput output, IReadOnlyList<string> inputPaths, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(vault);

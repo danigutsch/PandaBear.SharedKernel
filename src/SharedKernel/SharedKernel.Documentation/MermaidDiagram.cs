@@ -20,6 +20,8 @@ internal static partial class MermaidDiagram
     /// <summary>
     /// Builds a fenced Mermaid block.
     /// </summary>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="flowchart"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="body"/> is <see langword="null"/>.</exception>
     public static string Build(string flowchart, IEnumerable<string> body)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(flowchart);
@@ -31,6 +33,7 @@ internal static partial class MermaidDiagram
     /// <summary>
     /// Converts a label into a Mermaid-safe node identifier.
     /// </summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static string NodeId(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -42,6 +45,7 @@ internal static partial class MermaidDiagram
     /// <summary>
     /// Formats dependency edges as Mermaid node declarations and arrows.
     /// </summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="edges"/> is <see langword="null"/>.</exception>
     public static IEnumerable<string> FormatEdges(IReadOnlyCollection<(string Source, string Target)> edges)
     {
         ArgumentNullException.ThrowIfNull(edges);

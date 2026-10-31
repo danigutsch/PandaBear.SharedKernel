@@ -75,6 +75,7 @@ internal static class SecretText
     /// <summary>Splits text into lines with their start offsets, without line terminators.</summary>
     /// <param name="text">Text.</param>
     /// <returns>Lines in order.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="text"/> is <see langword="null"/>.</exception>
     public static List<(int Start, string Text)> Lines(string text)
     {
         ArgumentNullException.ThrowIfNull(text);
@@ -124,6 +125,7 @@ internal static class SecretText
     /// <param name="value">Encoded text.</param>
     /// <param name="bytes">Decoded bytes.</param>
     /// <returns><see langword="true"/> when the text is valid base64.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static bool TryDecodeBase64(string value, out byte[]? bytes)
     {
         ArgumentNullException.ThrowIfNull(value);

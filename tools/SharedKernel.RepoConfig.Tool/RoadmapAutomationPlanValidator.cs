@@ -4,6 +4,8 @@ namespace PandaBear.RepoConfig.Tool;
 internal static class RoadmapAutomationPlanValidator
 {
     /// <summary>Throws unless the plan digest, repository, default-branch head, GitHub snapshot, input snapshot, and closed transitions all still match the plan.</summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="plan"/>, <paramref name="currentBaselineTransitions"/>, or <paramref name="currentRequiredTransitions"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">The plan no longer matches the current state.</exception>
     public static void ValidateBeforeWrite(
         RoadmapAutomationPlan plan,
         string expectedPlanDigest,
@@ -71,6 +73,8 @@ internal static class RoadmapAutomationPlanValidator
     }
 
     /// <summary>Throws unless the plan digest, repository, default-branch head, GitHub snapshot, and approved and required transitions still match the plan just before push.</summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="plan"/>, <paramref name="currentApprovedTransitions"/>, or <paramref name="currentRequiredTransitions"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">The plan no longer matches the current state.</exception>
     public static void ValidateBeforePush(
         RoadmapAutomationPlan plan,
         string expectedPlanDigest,

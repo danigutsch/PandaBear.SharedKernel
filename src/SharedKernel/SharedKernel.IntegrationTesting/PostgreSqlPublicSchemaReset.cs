@@ -47,6 +47,8 @@ public static class PostgreSqlPublicSchemaReset
     /// <param name="connection">The PostgreSQL database connection.</param>
     /// <param name="excludedTableNames">Public-schema table names to preserve.</param>
     /// <param name="ct">A cancellation token.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="excludedTableNames"/> contains an empty or white-space name.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="connection"/> or <paramref name="excludedTableNames"/> is <see langword="null"/>.</exception>
     public static async Task Reset(
         DbConnection connection,
         IReadOnlyCollection<string> excludedTableNames,

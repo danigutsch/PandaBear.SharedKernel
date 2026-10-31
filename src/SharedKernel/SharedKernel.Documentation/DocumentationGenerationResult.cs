@@ -8,6 +8,7 @@ public sealed class DocumentationGenerationResult
     /// <summary>
     /// Initializes a new instance of the <see cref="DocumentationGenerationResult" /> class.
     /// </summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="changedFiles"/> is <see langword="null"/>.</exception>
     public DocumentationGenerationResult(IReadOnlyList<string> changedFiles)
     {
         ArgumentNullException.ThrowIfNull(changedFiles);

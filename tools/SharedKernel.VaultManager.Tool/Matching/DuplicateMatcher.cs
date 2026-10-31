@@ -20,6 +20,7 @@ internal static class DuplicateMatcher
     /// <param name="items">Items from every input, in input order.</param>
     /// <param name="overrides">Forced links and splits, or <see langword="null"/> for none.</param>
     /// <returns>Groups covering every item once, plus suggestions.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is <see langword="null"/>.</exception>
     public static MatchResult Match(IReadOnlyList<VaultItem> items, MatchOverrides? overrides = null)
     {
         ArgumentNullException.ThrowIfNull(items);

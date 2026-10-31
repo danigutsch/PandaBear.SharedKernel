@@ -19,6 +19,9 @@ internal static class RepoConfigSetter
     /// <param name="rootPath">Repository root.</param>
     /// <param name="key">Configuration key.</param>
     /// <param name="value">New value.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="rootPath"/>, <paramref name="key"/>, or <paramref name="value"/> is empty or white-space, <paramref name="key"/> is unsupported, or <paramref name="value"/> is not shaped as <c>owner/repository</c> for <c>github.repository</c>.</exception>
+    /// <exception cref="FileNotFoundException">The roadmap config file does not exist.</exception>
+    /// <exception cref="InvalidOperationException">The roadmap config root is not a JSON object.</exception>
     public static void Set(string rootPath, string key, string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);

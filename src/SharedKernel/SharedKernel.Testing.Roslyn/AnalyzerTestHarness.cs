@@ -15,6 +15,7 @@ public static class AnalyzerTestHarness
     /// <summary>
     /// Creates a preview C# compilation with trusted-platform and caller-provided references.
     /// </summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/>, <paramref name="defaultUsings"/>, <paramref name="assemblyName"/>, or <paramref name="path"/> is <see langword="null"/>.</exception>
     public static CSharpCompilation CreateCompilation(
         string source,
         string defaultUsings,

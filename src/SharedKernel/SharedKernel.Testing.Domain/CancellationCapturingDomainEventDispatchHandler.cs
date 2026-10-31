@@ -14,6 +14,7 @@ public sealed class CancellationCapturingDomainEventDispatchHandler : IDomainEve
     /// <summary>Stores the supplied token in CapturedToken and completes synchronously, throwing when the event is null.</summary>
     /// <param name="domainEvent">The event being dispatched.</param>
     /// <param name="ct">The cancellation token for the dispatch.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="domainEvent"/> is <see langword="null"/>.</exception>
     public ValueTask Handle(IDomainEvent domainEvent, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(domainEvent);

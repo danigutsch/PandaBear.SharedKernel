@@ -17,6 +17,7 @@ public static class GeneratorTestHarness
     /// <param name="assemblyName">The compilation assembly name.</param>
     /// <param name="additionalReferences">References added after the trusted platform assemblies.</param>
     /// <returns>The compilation.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="syntaxTrees"/> or <paramref name="assemblyName"/> is <see langword="null"/>.</exception>
     public static CSharpCompilation CreateCompilation(
         IEnumerable<SyntaxTree> syntaxTrees,
         string assemblyName,
@@ -40,6 +41,7 @@ public static class GeneratorTestHarness
     /// <param name="globalOptions">The analyzer config global options the generators read.</param>
     /// <param name="trackIncrementalGeneratorSteps">Whether the driver records per-step outputs for caching assertions.</param>
     /// <returns>The driver.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="generators"/> is <see langword="null"/>.</exception>
     public static GeneratorDriver CreateDriver(
         IEnumerable<IIncrementalGenerator> generators,
         CSharpParseOptions? parseOptions,
@@ -65,6 +67,7 @@ public static class GeneratorTestHarness
     /// <param name="compilation">The compilation to generate from.</param>
     /// <param name="globalOptions">The analyzer config global options the generator reads.</param>
     /// <returns>The run result.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="generator"/> or <paramref name="compilation"/> is <see langword="null"/>.</exception>
     public static GeneratorDriverRunResult Run(
         IIncrementalGenerator generator,
         CSharpCompilation compilation,
@@ -86,6 +89,7 @@ public static class GeneratorTestHarness
     /// <param name="outputCompilation">The compilation with the generated sources added.</param>
     /// <param name="diagnostics">The diagnostics reported while generating.</param>
     /// <returns>The run result.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="generators"/> or <paramref name="compilation"/> is <see langword="null"/>.</exception>
     public static GeneratorDriverRunResult RunAndUpdate(
         IEnumerable<IIncrementalGenerator> generators,
         CSharpCompilation compilation,
@@ -108,6 +112,7 @@ public static class GeneratorTestHarness
     /// <param name="hintName">The hint name the generator passed to <c>AddSource</c>.</param>
     /// <returns>The generated source text.</returns>
     /// <exception cref="InvalidOperationException">Thrown when no generated source has the hint name.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="runResult"/> or <paramref name="hintName"/> is <see langword="null"/>.</exception>
     public static string GetGeneratedSource(GeneratorDriverRunResult runResult, string hintName)
     {
         ArgumentNullException.ThrowIfNull(runResult);
@@ -127,6 +132,7 @@ public static class GeneratorTestHarness
     /// </summary>
     /// <param name="runResult">The run result.</param>
     /// <returns>The diagnostics.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="runResult"/> is <see langword="null"/>.</exception>
     public static ImmutableArray<Diagnostic> GetDiagnostics(GeneratorDriverRunResult runResult)
     {
         ArgumentNullException.ThrowIfNull(runResult);

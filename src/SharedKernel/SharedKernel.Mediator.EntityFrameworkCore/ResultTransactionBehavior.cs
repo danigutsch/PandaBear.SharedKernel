@@ -47,6 +47,7 @@ public partial class ResultTransactionBehavior<TRequest, TResponse> : IPipelineB
     /// <param name="dbContext">The context that owns the transaction boundary.</param>
     /// <param name="scopeFactory">Creates the fresh scope the outcome hooks run in.</param>
     /// <param name="logger">Logs hook failures.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="dbContext"/>, <paramref name="scopeFactory"/>, or <paramref name="logger"/> is <see langword="null"/>.</exception>
     public ResultTransactionBehavior(DbContext dbContext, IServiceScopeFactory scopeFactory, ILogger logger)
     {
         ArgumentNullException.ThrowIfNull(dbContext);

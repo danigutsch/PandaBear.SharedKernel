@@ -4,6 +4,7 @@ namespace PandaBear.Versioning.Tool;
 internal static class ReleaseVersionCommand
 {
     /// <summary>Reads the source SHA, last tag, and commit messages from git, calculates the version, writes the requested GitHub outputs, and returns it.</summary>
+    /// <exception cref="ArgumentException">The run number of <paramref name="options"/> is empty or white-space.</exception>
     public static async Task<VersionOutput> Run(CalculateReleaseOptions options, TextWriter output, CancellationToken ct)
     {
         if (options.VersionKind == "prerelease")

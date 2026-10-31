@@ -29,6 +29,8 @@ public static class HttpCacheCultures
     /// <param name="cultureQueryKey">The canonical culture query-string key.</param>
     /// <param name="languageQueryKey">The alternate language query-string key.</param>
     /// <param name="invalidCultureValue">The optional cache-key value used when an explicit culture is unsupported.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="cultureQueryKey"/> or <paramref name="languageQueryKey"/> is empty or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="httpContext"/>, <paramref name="cultureQueryKey"/>, or <paramref name="languageQueryKey"/> is <see langword="null"/>.</exception>
     public static void NormalizeQueryAliases(
         HttpContext httpContext,
         string cultureQueryKey,

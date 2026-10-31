@@ -28,6 +28,7 @@ internal sealed class IntegrationEventTransportMessageConfiguration : IEntityTyp
     /// <param name="schema">Schema that holds the table.</param>
     /// <param name="tableName">Name of the transport table.</param>
     /// <param name="excludeFromMigrations">Whether EF migrations skip the table because another context owns it.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="schema"/> or <paramref name="tableName"/> is <see langword="null"/>, empty, or white-space.</exception>
     public IntegrationEventTransportMessageConfiguration(
         string schema,
         string tableName,

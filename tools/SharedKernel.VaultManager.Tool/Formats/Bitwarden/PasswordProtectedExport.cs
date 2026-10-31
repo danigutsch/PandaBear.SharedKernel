@@ -15,6 +15,7 @@ internal static class PasswordProtectedExport
     /// <param name="password">File password chosen when the export was created.</param>
     /// <returns>Unencrypted Bitwarden export JSON.</returns>
     /// <exception cref="InvalidDataException">The file is malformed, its settings are unsafe, or the password is wrong.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="envelopeJson"/> or <paramref name="password"/> is <see langword="null"/>.</exception>
     public static string Decrypt(string envelopeJson, string password)
     {
         ArgumentNullException.ThrowIfNull(envelopeJson);
@@ -43,6 +44,7 @@ internal static class PasswordProtectedExport
     /// </summary>
     /// <param name="envelopeJson">Contents of the password-protected export file.</param>
     /// <exception cref="InvalidDataException">The file is malformed, or its settings are unsupported or outside the accepted ranges.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="envelopeJson"/> is <see langword="null"/>.</exception>
     public static void CheckEnvelope(string envelopeJson)
     {
         ArgumentNullException.ThrowIfNull(envelopeJson);
@@ -56,6 +58,7 @@ internal static class PasswordProtectedExport
     /// <param name="kdf">Key derivation settings.</param>
     /// <returns>Password-protected export file contents.</returns>
     /// <exception cref="InvalidDataException">The key derivation settings are outside accepted ranges.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="plainJson"/>, <paramref name="password"/>, or <paramref name="kdf"/> is <see langword="null"/>.</exception>
     public static string Encrypt(string plainJson, string password, KdfConfig kdf)
     {
         ArgumentNullException.ThrowIfNull(plainJson);

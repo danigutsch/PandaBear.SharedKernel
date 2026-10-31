@@ -14,6 +14,7 @@ public static class Compensation
     /// <param name="compensate">The action that compensates the earlier side effect when the operation fails.</param>
     /// <param name="ct">A token that can cancel the operation.</param>
     /// <returns>A task that completes when the operation succeeds or compensation has run after failure.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="operation"/> or <paramref name="compensate"/> is <see langword="null"/>.</exception>
     public static async ValueTask CompleteOrCompensate(
         Func<CancellationToken, ValueTask> operation,
         Func<CancellationToken, ValueTask> compensate,

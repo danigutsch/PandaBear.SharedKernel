@@ -17,6 +17,7 @@ internal static class CandidateCommand
     }
 
     /// <summary>Requires a clean working tree, packs the candidate, and returns the path of the candidate manifest.</summary>
+    /// <exception cref="ArgumentException">The working tree is not clean, or the baseline package mapping is not exclusively a local feed.</exception>
     public static async Task<string> Create(
         string root, string? version, string? baselineVersion, TextWriter output, TimeProvider timeProvider, CancellationToken ct)
     {

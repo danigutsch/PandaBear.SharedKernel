@@ -56,6 +56,7 @@ internal static class CommandSymbols
     /// </summary>
     /// <param name="option">Option that names a file.</param>
     /// <returns>The same option.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="option"/> is <see langword="null"/>.</exception>
     public static Option<string> FilePath(Option<string> option)
     {
         ArgumentNullException.ThrowIfNull(option);

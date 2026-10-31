@@ -79,6 +79,8 @@ internal sealed class RoadmapAutomationResultSeal
     }
 
     /// <summary>Validates the digests, requires the path count to agree with <paramref name="hasChanges"/>, and returns the seal bound to <paramref name="plan"/>.</summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="plan"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">A digest is invalid, or the path count does not agree with <paramref name="hasChanges"/>.</exception>
     public static RoadmapAutomationResultSeal Create(
         RoadmapAutomationPlan plan,
         string baseSha,
@@ -108,6 +110,8 @@ internal sealed class RoadmapAutomationResultSeal
     }
 
     /// <summary>Reads the seal file at <paramref name="path"/>, strictly validates it, and returns it only when its plan, artifact, and result digests equal the expected ones.</summary>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="path"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="InvalidOperationException">The seal file is missing or invalid, or its digests do not equal the expected ones.</exception>
     public static RoadmapAutomationResultSeal Load(
         string path,
         string expectedPlanDigest,
@@ -182,6 +186,8 @@ internal sealed class RoadmapAutomationResultSeal
     }
 
     /// <summary>Writes the seal as indented JSON to <paramref name="path"/> through a rollback-safe atomic write.</summary>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="path"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when <paramref name="path"/> has no parent directory.</exception>
     public void Write(string path)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);

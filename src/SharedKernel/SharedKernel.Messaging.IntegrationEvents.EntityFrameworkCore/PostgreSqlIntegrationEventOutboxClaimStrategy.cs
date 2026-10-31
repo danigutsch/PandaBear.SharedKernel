@@ -38,6 +38,7 @@ internal sealed class PostgreSqlIntegrationEventOutboxClaimStrategy<TContext>
     }
 
     /// <summary>Builds the claim statement using the column and table names of the mapped outbox entity.</summary>
+    /// <exception cref="InvalidOperationException">The outbox table name is not configured.</exception>
     internal static string CreateClaimSql(IEntityType entityType)
     {
         var storeObject = StoreObjectIdentifier.Table(

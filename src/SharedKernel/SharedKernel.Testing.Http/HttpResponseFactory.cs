@@ -14,6 +14,7 @@ public static class HttpResponseFactory
     /// <param name="json">The JSON body.</param>
     /// <param name="statusCode">The status code.</param>
     /// <returns>The HTTP response message.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is <see langword="null"/>.</exception>
     public static HttpResponseMessage Json(string json, HttpStatusCode statusCode = HttpStatusCode.OK)
     {
         ArgumentNullException.ThrowIfNull(json);

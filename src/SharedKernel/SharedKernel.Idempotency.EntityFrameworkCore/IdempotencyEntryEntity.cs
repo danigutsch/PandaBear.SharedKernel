@@ -12,6 +12,7 @@ internal sealed class IdempotencyEntryEntity
     /// <param name="key">The operation key.</param>
     /// <param name="startedAt">The time at which processing started.</param>
     /// <param name="retentionOwner">The optional retention owner key.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="scope"/> or <paramref name="key"/> is <see langword="null"/>, empty, or white-space.</exception>
     public IdempotencyEntryEntity(
         string scope,
         string key,

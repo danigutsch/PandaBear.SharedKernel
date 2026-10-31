@@ -32,6 +32,7 @@ internal static class BriefFile
     /// the JSON path of the problem, never a value.
     /// </exception>
     /// <exception cref="IOException">The file does not exist or cannot be read.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="path"/> is empty.</exception>
     public static BriefDocument Read(string path)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -52,6 +53,8 @@ internal static class BriefFile
     /// <param name="brief">Brief.</param>
     /// <param name="ct">Observed before the written file is moved into place.</param>
     /// <exception cref="IOException">The file cannot be written.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="path"/> is empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="brief"/> is <see langword="null"/>.</exception>
     public static void Write(string path, BriefDocument brief, CancellationToken ct = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -63,6 +66,7 @@ internal static class BriefFile
     /// <summary>Serializes a brief.</summary>
     /// <param name="brief">Brief.</param>
     /// <returns>Indented JSON with text as typed, except for escaped control and format characters.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="brief"/> is <see langword="null"/>.</exception>
     public static string Serialize(BriefDocument brief)
     {
         ArgumentNullException.ThrowIfNull(brief);
@@ -76,6 +80,7 @@ internal static class BriefFile
     /// <exception cref="InvalidDataException">
     /// The text is not a valid brief of a supported version. The message names the JSON path of the problem, never a value.
     /// </exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is <see langword="null"/>.</exception>
     public static BriefDocument Deserialize(string json)
     {
         ArgumentNullException.ThrowIfNull(json);

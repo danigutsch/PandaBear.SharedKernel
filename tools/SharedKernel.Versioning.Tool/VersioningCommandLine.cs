@@ -15,6 +15,7 @@ internal static class VersioningCommandLine
         "Published package version to compare APIs against. Requires PandaBear.SharedKernel.* mapped only to an existing local feed in NuGet.Config.";
 
     /// <summary>Creates the root command with all versioning subcommands, reading piped input from <paramref name="input"/>.</summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="input"/> or <paramref name="timeProvider"/> is <see langword="null"/>.</exception>
     public static RootCommand Create(TextReader input, TimeProvider timeProvider)
     {
         ArgumentNullException.ThrowIfNull(input);

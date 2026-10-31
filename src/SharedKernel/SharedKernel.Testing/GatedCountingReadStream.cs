@@ -15,6 +15,7 @@ public sealed class GatedCountingReadStream : Stream
     /// Initializes the stream with test-owned content.
     /// </summary>
     /// <param name="content">The bytes exposed after the read gate opens.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/> is <see langword="null"/>.</exception>
     public GatedCountingReadStream(byte[] content)
     {
         ArgumentNullException.ThrowIfNull(content);

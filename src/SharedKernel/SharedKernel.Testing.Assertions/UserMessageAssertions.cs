@@ -12,6 +12,8 @@ namespace PandaBear.Testing.Assertions;
 internal static class UserMessageAssertions
 {
     /// <summary>Runs the assertion and prefixes the user message to any assertion failure.</summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="userMessage"/> is <see langword="null"/>.</exception>
+    /// <exception cref="XunitException">Thrown when the assertion fails; the message starts with <paramref name="userMessage"/> followed by the original failure message.</exception>
     public static void WithUserMessage(string userMessage, Action assertion)
     {
         ArgumentNullException.ThrowIfNull(userMessage);
@@ -27,6 +29,8 @@ internal static class UserMessageAssertions
     }
 
     /// <summary>Runs the assertion, prefixes the user message to any assertion failure, and returns the result.</summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="userMessage"/> is <see langword="null"/>.</exception>
+    /// <exception cref="XunitException">Thrown when the assertion fails; the message starts with <paramref name="userMessage"/> followed by the original failure message.</exception>
     public static T WithUserMessage<T>(string userMessage, Func<T> assertion)
     {
         ArgumentNullException.ThrowIfNull(userMessage);
@@ -42,6 +46,8 @@ internal static class UserMessageAssertions
     }
 
     /// <summary>Runs the asynchronous assertion and prefixes the user message to any assertion failure.</summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="userMessage"/> is <see langword="null"/>.</exception>
+    /// <exception cref="XunitException">Thrown when the assertion fails; the message starts with <paramref name="userMessage"/> followed by the original failure message.</exception>
     public static async Task WithUserMessage(string userMessage, Func<Task> assertion)
     {
         ArgumentNullException.ThrowIfNull(userMessage);
@@ -57,6 +63,8 @@ internal static class UserMessageAssertions
     }
 
     /// <summary>Runs the asynchronous assertion, prefixes the user message to any assertion failure, and returns the result.</summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="userMessage"/> is <see langword="null"/>.</exception>
+    /// <exception cref="XunitException">Thrown when the assertion fails; the message starts with <paramref name="userMessage"/> followed by the original failure message.</exception>
     public static async Task<T> WithUserMessage<T>(string userMessage, Func<Task<T>> assertion)
     {
         ArgumentNullException.ThrowIfNull(userMessage);

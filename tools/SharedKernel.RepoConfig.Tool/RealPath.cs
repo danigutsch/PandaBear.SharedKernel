@@ -12,6 +12,7 @@ internal static class RealPath
     /// Resolves every symbolic link in the absolute <paramref name="path"/>, component by component. A component that
     /// does not exist is kept, and <c>..</c> applies to the resolved parent rather than to the path as written.
     /// </summary>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="path"/> is not absolute.</exception>
     public static string Resolve(string path)
     {
         var resolved = Path.GetPathRoot(path) ?? throw new ArgumentException("The path must be absolute.", nameof(path));

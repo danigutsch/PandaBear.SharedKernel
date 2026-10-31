@@ -11,6 +11,8 @@ internal static class DispositionIdentifier
     /// <param name="parameterName">The parameter name reported on failure.</param>
     /// <param name="maxLength">The maximum accepted length.</param>
     /// <returns>The trimmed value.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="value"/> is empty or white-space after trimming, is longer than <paramref name="maxLength"/> characters, or contains a character other than ASCII letters, digits, and <c>. _ : -</c>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static string Require(string? value, string parameterName, int maxLength)
     {
         ArgumentNullException.ThrowIfNull(value, parameterName);

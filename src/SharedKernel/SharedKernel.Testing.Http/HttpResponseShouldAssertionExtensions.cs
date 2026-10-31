@@ -165,6 +165,7 @@ public static class HttpResponseShouldAssertionExtensions
     /// <param name="actual">The parsed payload object.</param>
     /// <param name="rel">The case-sensitive link relation, such as <c>self</c>.</param>
     /// <returns>The matching link object.</returns>
+    /// <exception cref="Xunit.Sdk.XunitException">Thrown when no item of the <c>links</c> array has the relation <paramref name="rel"/>.</exception>
     public static JsonElement ShouldHaveLink(this JsonElement actual, string rel)
     {
         actual.ValueKind.ShouldBe(JsonValueKind.Object);

@@ -77,6 +77,8 @@ public sealed class PostgreSqlIndexHealthCollector
     /// <summary>Initializes a collector with a dedicated read-only Npgsql data source.</summary>
     /// <param name="dataSource">The data source created for a least-privilege monitoring role.</param>
     /// <param name="commandTimeout">The optional maximum duration for each read-only command.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="dataSource"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="commandTimeout"/> is zero, negative, or longer than the maximum supported command timeout.</exception>
     public PostgreSqlIndexHealthCollector(NpgsqlDataSource dataSource, TimeSpan? commandTimeout = null)
     {
         ArgumentNullException.ThrowIfNull(dataSource);

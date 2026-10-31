@@ -38,6 +38,7 @@ internal sealed class GitHubRoadmapSyncer
     /// <param name="project">Roadmap project to synchronize.</param>
     /// <param name="httpClient">GitHub client, or <see langword="null" /> to create one from the environment.</param>
     /// <param name="timeProvider">Time source, or <see langword="null" /> for the system clock.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="project"/> is <see langword="null"/>.</exception>
     internal GitHubRoadmapSyncer(RoadmapProject project, HttpClient? httpClient, TimeProvider? timeProvider = null)
     {
         ArgumentNullException.ThrowIfNull(project);
@@ -49,6 +50,7 @@ internal sealed class GitHubRoadmapSyncer
 
     /// <summary>Returns the changes synchronization would make, without applying them.</summary>
     /// <param name="cancellationToken">Cancellation token.</param>
+    /// <exception cref="InvalidOperationException">No HTTP client can be created, or the project has no GitHub Project target.</exception>
     public async Task<GitHubSyncResult> Preview(CancellationToken cancellationToken)
     {
         var itemsWithIssues = GetItemsToSync();
@@ -82,6 +84,7 @@ internal sealed class GitHubRoadmapSyncer
 
     /// <summary>Applies synchronization and returns the messages describing the changes.</summary>
     /// <param name="cancellationToken">Cancellation token.</param>
+    /// <exception cref="InvalidOperationException">No HTTP client can be created.</exception>
     public async Task<GitHubSyncResult> Apply(CancellationToken cancellationToken)
     {
         var repository = GetGitHubRepository();

@@ -49,6 +49,7 @@ public sealed class ReferenceMediator : IMediator
     /// <param name="request">The stream request instance to dispatch.</param>
     /// <param name="ct">The cancellation token for the operation.</param>
     /// <returns>The produced stream of response items.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
     public IAsyncEnumerable<TResponse> Send<TResponse>(IStreamRequest<TResponse> request, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -78,6 +79,7 @@ public sealed class ReferenceMediator : IMediator
     }
 
     /// <summary>Returns the boxed handler result as <typeparamref name="TResponse" />, or throws when its runtime type does not match.</summary>
+    /// <exception cref="InvalidOperationException">Thrown when <paramref name="result"/> is not a <typeparamref name="TResponse"/>.</exception>
     internal static TResponse CastBoxedResult<TResponse>(object? result)
     {
         if (result is TResponse typed)
@@ -106,6 +108,7 @@ public sealed class ReferenceMediator : IMediator
         IReadOnlyList<PipelineRegistration> orderedPipelines)
     {
         /// <summary>Dispatches the request through the pipelines to its handler, and throws when there is not exactly one handler.</summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
         public ValueTask<TResponse> Invoke<TResponse>(IRequest<TResponse> request, CancellationToken ct)
         {
             ArgumentNullException.ThrowIfNull(request);
@@ -159,6 +162,7 @@ public sealed class ReferenceMediator : IMediator
         bool publishInParallel)
     {
         /// <summary>Delivers the notification to every handler, concurrently or in order.</summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="notification"/> is <see langword="null"/>.</exception>
         public async ValueTask Publish(object notification, CancellationToken ct)
         {
             ArgumentNullException.ThrowIfNull(notification);
@@ -186,6 +190,7 @@ public sealed class ReferenceMediator : IMediator
         IReadOnlyList<StreamPipelineRegistration> pipelines)
     {
         /// <summary>Dispatches the stream request through the pipelines to its handler, and throws when there is not exactly one handler.</summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
         public IAsyncEnumerable<TResponse> Invoke<TResponse>(IStreamRequest<TResponse> request, CancellationToken ct)
         {
             ArgumentNullException.ThrowIfNull(request);

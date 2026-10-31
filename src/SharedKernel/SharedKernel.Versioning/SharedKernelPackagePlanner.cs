@@ -22,6 +22,7 @@ public static class SharedKernelPackagePlanner
     /// </summary>
     /// <param name="options">The package options.</param>
     /// <returns>The package directory.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
     public static string ResolvePackageDirectory(SharedKernelPackageOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -37,6 +38,7 @@ public static class SharedKernelPackagePlanner
     /// </summary>
     /// <param name="repoRoot">The repository root.</param>
     /// <returns>Sorted project file paths.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="repoRoot"/> is <see langword="null"/>, empty, or white-space.</exception>
     public static string[] FindProjects(string repoRoot)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(repoRoot);
@@ -81,6 +83,8 @@ public static class SharedKernelPackagePlanner
     /// <param name="enablePackageValidation">The optional package-validation flag.</param>
     /// <param name="baselineVersion">The optional package-validation baseline version.</param>
     /// <returns>The command arguments.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="project"/> or <paramref name="packageDirectory"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
     public static string[] CreatePackArguments(
         string project,
         SharedKernelPackageOptions options,

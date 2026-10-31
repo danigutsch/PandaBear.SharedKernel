@@ -38,6 +38,8 @@ public static class AspNetCoreSecurityHeadersExtensions
     /// <param name="contentSecurityPolicy">The Content Security Policy value owned by the consuming application.</param>
     /// <param name="permissionsPolicy">The Permissions Policy value owned by the consuming application.</param>
     /// <returns>The same <see cref="IApplicationBuilder"/> instance.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="contentSecurityPolicy"/> or <paramref name="permissionsPolicy"/> is empty or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="app"/>, <paramref name="contentSecurityPolicy"/>, or <paramref name="permissionsPolicy"/> is <see langword="null"/>.</exception>
     public static IApplicationBuilder UseSecurityHeaders(
         this IApplicationBuilder app,
         string contentSecurityPolicy,

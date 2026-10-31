@@ -7,6 +7,7 @@ internal static class GitHubHttpClient
 {
     /// <summary>Creates a client authenticated with <c>GH_TOKEN</c> or <c>GITHUB_TOKEN</c>.</summary>
     /// <param name="operation">Description of the operation, used in the missing-token message.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="operation"/> is <see langword="null"/>, empty, or white-space.</exception>
     public static HttpClient Create(string operation)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(operation);
@@ -17,6 +18,7 @@ internal static class GitHubHttpClient
 
     /// <summary>Creates a client authenticated with <c>GITHUB_TOKEN</c>.</summary>
     /// <param name="operation">Description of the operation, used in the missing-token message.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="operation"/> is <see langword="null"/>, empty, or white-space.</exception>
     public static HttpClient CreateFromGitHubToken(string operation)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(operation);

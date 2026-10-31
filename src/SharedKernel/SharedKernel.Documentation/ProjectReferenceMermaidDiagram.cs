@@ -10,6 +10,8 @@ internal static class ProjectReferenceMermaidDiagram
     /// <summary>
     /// Builds a project dependency diagram for projects accepted by <paramref name="includeProject" />.
     /// </summary>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="rootPath"/> or <paramref name="sourceRelativePath"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="includeProject"/> is <see langword="null"/>.</exception>
     public static string Build(string rootPath, string sourceRelativePath, Func<string[], bool> includeProject)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
