@@ -8,9 +8,13 @@ namespace PandaBear.Results;
 /// </summary>
 /// <remarks>
 /// <see cref="Result"/> and <see cref="Result{T}"/> are the intended implementers; the interface is a constraint for generic code,
-/// not an extension point. A <see langword="default"/> instance of either struct is uninitialized: its
-/// <see cref="Status"/> is <see cref="ResultStatus.Unknown"/> and both <see cref="IsSuccess"/> and <see cref="IsFailure"/> are
-/// <see langword="false"/>, so generic code must not assume that a result which is not a failure is a success.
+/// not an extension point.
+/// <para>
+/// A <see langword="default"/> instance of either struct was never produced by an operation, so it is invalid. Its
+/// <see cref="Status"/> is <see cref="ResultStatus.Unknown"/>, <see cref="IsSuccess"/> and <see cref="IsFailure"/> are both
+/// <see langword="false"/>, and <c>Match</c> throws <see cref="InvalidOperationException"/>. Generic code should test
+/// <see cref="IsSuccess"/> for the success path and treat every other state as not successful; <c>!IsFailure</c> does not mean success.
+/// </para>
 /// </remarks>
 /// <typeparam name="TSelf">The implementing result type.</typeparam>
 public interface IResultLike<TSelf>

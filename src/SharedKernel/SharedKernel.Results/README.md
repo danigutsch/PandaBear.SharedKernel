@@ -35,8 +35,10 @@ public static class Example
 `where TResponse : struct, IResultLike<TResponse>` (no boxing) so an open-generic behavior can short-circuit with
 `TResponse.Invalid("Validation failed", "name", "Name is required")` for both shapes.
 
-`default(Result)` and `default(Result<T>)` are uninitialized: `Status` is `Unknown` and both `IsSuccess` and `IsFailure` are false, so do
-not treat "not a failure" as success. `Result` and `Result<T>` are the intended implementers of the interface.
+`default(Result)` and `default(Result<T>)` were never produced by an operation, so they are invalid: `Status` is `Unknown`, `IsSuccess` and
+`IsFailure` are both false, and `Match` throws `InvalidOperationException`. In generic code test `IsSuccess` for the success path and treat
+every other state as not successful; `!IsFailure` does not mean success (for example, commit a transaction only when `IsSuccess` is true).
+`Result` and `Result<T>` are the intended implementers of the interface.
 
 ## Constraints
 
