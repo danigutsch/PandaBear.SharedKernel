@@ -33,6 +33,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             StyleDiagnosticIds.CaseInsensitiveJsonContext,
             StyleDiagnosticIds.FileNameMismatch,
             StyleDiagnosticIds.UndocumentedMember,
+            StyleDiagnosticIds.UndocumentedThrownException,
         ];
 
         // Act

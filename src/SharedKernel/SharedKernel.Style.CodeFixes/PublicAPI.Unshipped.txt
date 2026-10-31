@@ -22,3 +22,4 @@ const PandaBear.Style.Analyzers.StyleDiagnosticIds.DirectCurrentTime = "SKSTYLE0
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.CaseInsensitiveJsonContext = "SKSTYLE015" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.FileNameMismatch = "SKSTYLE016" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.UndocumentedMember = "SKSTYLE017" -> string!
+const PandaBear.Style.Analyzers.StyleDiagnosticIds.UndocumentedThrownException = "SKSTYLE018" -> string!
