@@ -14,6 +14,7 @@ public static class BlazorServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The service collection to update.</param>
     /// <returns>The same service collection.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="services"/> is <see langword="null"/>.</exception>
     public static IServiceCollection AddUiFailureReporting(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);

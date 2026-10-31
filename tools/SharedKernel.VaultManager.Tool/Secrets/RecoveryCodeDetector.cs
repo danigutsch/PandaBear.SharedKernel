@@ -37,6 +37,7 @@ internal static class RecoveryCodeDetector
     /// <summary>Whether text mentions recovery or backup codes.</summary>
     /// <param name="text">Text.</param>
     /// <returns><see langword="true"/> when a keyword is present.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
     public static bool HasKeyword(string text)
     {
         ArgumentNullException.ThrowIfNull(text);

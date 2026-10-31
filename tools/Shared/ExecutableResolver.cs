@@ -25,6 +25,7 @@ internal static class ExecutableResolver
     /// <param name="path">The directory list, separated by <see cref="Path.PathSeparator"/>.</param>
     /// <param name="isWindows">Whether to try <c>&lt;command&gt;.exe</c> first and skip the Unix execute-permission check.</param>
     /// <returns>The absolute executable path, or <see langword="null"/> when no absolute directory contains it.</returns>
+    /// <exception cref="ArgumentException"><paramref name="command"/> is <see langword="null"/>, empty, or whitespace.</exception>
     internal static string? Resolve(string command, string? path, bool isWindows)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(command);

@@ -67,6 +67,8 @@ internal static class SshKeyConverter
     /// <param name="pem">Private key text.</param>
     /// <param name="suppliedPublicKey">Matching public key in authorized_keys form, used for Ed25519 PKCS#8 keys.</param>
     /// <returns>Converted key data, or the problem that prevented conversion.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="pem"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">The inspected key can no longer be parsed as a PEM block.</exception>
     public static SshKeyConversion Convert(string pem, string? suppliedPublicKey = null)
     {
         ArgumentNullException.ThrowIfNull(pem);

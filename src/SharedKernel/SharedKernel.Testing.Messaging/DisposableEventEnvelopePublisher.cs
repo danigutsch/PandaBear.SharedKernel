@@ -33,6 +33,7 @@ public sealed class DisposableEventEnvelopePublisher : IEventEnvelopePublisher, 
     /// <summary>
     /// Validates the envelope and cancellation token, counts the attempt and throws Failure when it is set.
     /// </summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="envelope"/> is <see langword="null"/>.</exception>
     public ValueTask Publish(EventEnvelope envelope, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(envelope);

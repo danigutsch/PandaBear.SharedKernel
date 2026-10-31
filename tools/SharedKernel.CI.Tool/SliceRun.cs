@@ -19,6 +19,7 @@ internal static class SliceRun
     private const string Redaction = "[redacted]";
 
     /// <summary>Runs the selected test slices and writes their results.</summary>
+    /// <exception cref="InvalidOperationException">No Cobertura report exists for a selected slice, or a service failed to stop.</exception>
     public static async Task Run(
         string root,
         string selection,

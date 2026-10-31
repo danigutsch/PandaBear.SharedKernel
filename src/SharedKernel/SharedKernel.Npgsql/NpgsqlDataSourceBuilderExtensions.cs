@@ -12,6 +12,7 @@ public static class NpgsqlDataSourceBuilderExtensions
     /// </summary>
     /// <param name="builder">The Npgsql data source builder to configure.</param>
     /// <returns>The configured data source builder.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="builder"/> is <see langword="null"/>.</exception>
     public static NpgsqlDataSourceBuilder ConfigureTracingWithoutFirstResponseEvent(
         this NpgsqlDataSourceBuilder builder)
     {

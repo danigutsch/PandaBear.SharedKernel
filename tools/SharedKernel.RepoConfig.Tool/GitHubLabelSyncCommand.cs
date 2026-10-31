@@ -36,6 +36,8 @@ internal static class GitHubLabelSyncCommand
         Run(rootPath, repository, force, httpClient, TimeProvider.System, output, cancellationToken);
 
     /// <summary>Synchronizes the configured labels to a GitHub repository and returns the exit code.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="timeProvider"/> or <paramref name="output"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">The repository option does not name a GitHub repository as <c>owner/name</c>, or the consumer configuration has no labels section.</exception>
     internal static async Task<int> Run(
         string rootPath,
         string repository,

@@ -126,6 +126,8 @@ internal sealed class RoadmapAutomationPlan
     }
 
     /// <summary>Validates the inputs, orders and merges the closed transitions, derives the branch name, and returns the plan sealed with its digest.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="baselineClosedTransitions"/> or <paramref name="requiredClosedTransitions"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="runId"/> is less than 1.</exception>
     public static RoadmapAutomationPlan Create(
         string repository,
         long runId,
@@ -174,6 +176,9 @@ internal sealed class RoadmapAutomationPlan
     }
 
     /// <summary>Reads the plan file at <paramref name="path"/>, strictly validates its shape, and returns it only when its digest equals <paramref name="expectedPlanDigest"/>.</summary>
+    /// <exception cref="ArgumentException"><paramref name="path"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The plan run ID is less than 1.</exception>
+    /// <exception cref="InvalidOperationException">The plan file is missing, too large, or invalid, or its digest does not match <paramref name="expectedPlanDigest"/>.</exception>
     public static RoadmapAutomationPlan Load(string path, string expectedPlanDigest)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
@@ -272,6 +277,8 @@ internal sealed class RoadmapAutomationPlan
     }
 
     /// <summary>Writes the plan as indented JSON to <paramref name="path"/> through a rollback-safe atomic write.</summary>
+    /// <exception cref="ArgumentException"><paramref name="path"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="InvalidOperationException"><paramref name="path"/> has no parent directory.</exception>
     public void Write(string path)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
@@ -291,6 +298,7 @@ internal sealed class RoadmapAutomationPlan
     }
 
     /// <summary>Returns the lowercase SHA-256 hex digest of the transitions serialized as JSON in issue order.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="transitions"/> is <see langword="null"/>.</exception>
     internal static string ComputeTransitionsDigest(IEnumerable<RoadmapClosedItemTransition> transitions)
     {
         ArgumentNullException.ThrowIfNull(transitions);
@@ -314,6 +322,7 @@ internal sealed class RoadmapAutomationPlan
     }
 
     /// <summary>Throws when <paramref name="roadmapItem"/> is not a valid roadmap item id.</summary>
+    /// <exception cref="InvalidOperationException"><paramref name="roadmapItem"/> is not a valid roadmap item ID.</exception>
     internal static void ValidateRoadmapItemId(string roadmapItem)
     {
         if (string.IsNullOrWhiteSpace(roadmapItem)
@@ -485,6 +494,7 @@ internal sealed class RoadmapAutomationPlan
     }
 
     /// <summary>Returns <paramref name="value"/> when it is a 40-character lowercase hex SHA, otherwise throws naming <paramref name="name"/>.</summary>
+    /// <exception cref="InvalidOperationException"><paramref name="value"/> is not a 40-character lowercase hex SHA.</exception>
     internal static string ValidateSha(string value, string name)
     {
         if (!IsLowerHex(value, 40))

@@ -6,6 +6,7 @@ namespace PandaBear.Testing;
 internal static class TraitValue
 {
     /// <summary>Converts a defined enum member name such as <c>UiIntegration</c> to its kebab-case trait value.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="value"/> is not a defined member of <typeparamref name="TEnum"/>.</exception>
     internal static string Of<TEnum>(TEnum value, string parameterName) where TEnum : struct, Enum
     {
         if (!Enum.IsDefined(value))

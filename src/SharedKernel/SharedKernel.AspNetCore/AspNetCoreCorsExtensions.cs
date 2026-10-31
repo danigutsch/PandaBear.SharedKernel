@@ -12,6 +12,8 @@ public static class AspNetCoreCorsExtensions
     /// <summary>
     /// Adds a CORS policy from a configuration section containing allowed origins.
     /// </summary>
+    /// <exception cref="ArgumentException">When <paramref name="policyName"/> is empty or white space.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="options"/>, <paramref name="allowedOriginsSection"/>, or <paramref name="policyName"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// Empty sections create a deny-all policy. Applications still own the policy name and the
     /// configuration path to keep security boundaries explicit at the composition root.

@@ -16,6 +16,9 @@ public static class IntegrationEventConsumerServiceCollectionExtensions
     /// <param name="jsonTypeInfo">The AOT-safe JSON metadata for the event contract.</param>
     /// <typeparam name="TIntegrationEvent">The integration event contract type.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <exception cref="ArgumentException"><paramref name="eventType"/> is <see langword="null"/>, empty, or white space, or differs from the event type that <typeparamref name="TIntegrationEvent"/> declares.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> or <paramref name="jsonTypeInfo"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException"><typeparamref name="TIntegrationEvent"/> is already registered with different JSON metadata.</exception>
     public static IServiceCollection AddIntegrationEventContract<TIntegrationEvent>(
         this IServiceCollection services,
         string eventType,

@@ -25,6 +25,8 @@ public sealed class JsonSnapshotArtifactSet
     /// <param name="artifactDisplayName">A human-readable artifact name for failure messages.</param>
     /// <param name="refreshHint">The refresh hint for failure messages.</param>
     /// <param name="generatedFileNameOverrides">Generated file names for snapshots whose generator output does not use the common prefix.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="canonicalDirectory"/> or <paramref name="generatedDirectory"/> or <paramref name="canonicalArtifactSuffix"/> or <paramref name="artifactDisplayName"/> or <paramref name="refreshHint"/> is empty or consists only of white-space characters.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="canonicalDirectory"/> or <paramref name="generatedDirectory"/> or <paramref name="canonicalArtifactSuffix"/> or <paramref name="generatedArtifactPrefix"/> or <paramref name="artifactDisplayName"/> or <paramref name="refreshHint"/> is <see langword="null"/>.</exception>
     public JsonSnapshotArtifactSet(
         string canonicalDirectory,
         string generatedDirectory,
@@ -55,6 +57,7 @@ public sealed class JsonSnapshotArtifactSet
     /// <summary>
     /// Asserts that every canonical snapshot has a matching generated artifact and vice versa.
     /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when a canonical snapshot and its generated artifact differ, or one of them is missing.</exception>
     public void AssertCanonicalArtifactsMatchGeneratedArtifacts()
     {
         var failures = GetArtifactDrift();
@@ -72,6 +75,8 @@ public sealed class JsonSnapshotArtifactSet
     /// Asserts that one generated artifact matches its committed canonical snapshot.
     /// </summary>
     /// <param name="snapshotName">The logical snapshot name.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="snapshotName"/> is null, empty, or consists only of white-space characters.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the generated artifact does not match the canonical snapshot.</exception>
     public void AssertGeneratedArtifactMatchesCanonicalSnapshot(string snapshotName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(snapshotName);
@@ -144,6 +149,7 @@ public sealed class JsonSnapshotArtifactSet
     /// </summary>
     /// <param name="snapshotName">The logical snapshot name.</param>
     /// <returns>The parsed JSON snapshot.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="snapshotName"/> is null, empty, or consists only of white-space characters.</exception>
     public JsonNode GetCanonicalSnapshot(string snapshotName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(snapshotName);
@@ -160,6 +166,7 @@ public sealed class JsonSnapshotArtifactSet
     /// </summary>
     /// <param name="snapshotName">The logical snapshot name.</param>
     /// <returns>The parsed generated JSON artifact.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="snapshotName"/> is null, empty, or consists only of white-space characters.</exception>
     public JsonNode GetGeneratedArtifact(string snapshotName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(snapshotName);

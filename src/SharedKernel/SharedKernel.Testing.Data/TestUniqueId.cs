@@ -12,6 +12,7 @@ public static class TestUniqueId
     /// </summary>
     /// <param name="prefix">The optional prefix.</param>
     /// <returns>A unique value safe for names, identifiers, and email local parts.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="prefix"/> is <see langword="null"/>, empty, or consists only of white-space characters.</exception>
     public static string Create(string prefix = "test")
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(prefix);

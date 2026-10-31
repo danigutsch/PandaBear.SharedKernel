@@ -8,6 +8,7 @@ public static class OptionTaskExtensions
     /// <summary>
     /// Maps the successful value of an asynchronous option.
     /// </summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <see langword="null"/>.</exception>
     public static async Task<Option<TResult>> Map<T, TResult>(this Task<Option<T>> source, Func<T, TResult> map)
         where T : notnull
         where TResult : notnull =>
@@ -19,6 +20,7 @@ public static class OptionTaskExtensions
     /// <summary>
     /// Maps the successful value of an asynchronous option.
     /// </summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <see langword="null"/>.</exception>
     public static async Task<Option<TResult>> Map<T, TResult>(this Task<Option<T>> source, Func<T, Task<TResult>> map)
         where T : notnull
         where TResult : notnull =>
@@ -30,6 +32,7 @@ public static class OptionTaskExtensions
     /// <summary>
     /// Maps the successful value of an asynchronous option.
     /// </summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <see langword="null"/>.</exception>
     public static async Task<Option<TResult>> Map<T, TResult>(this Task<Option<T>> source, Func<T, ValueTask<TResult>> map)
         where T : notnull
         where TResult : notnull =>
@@ -65,6 +68,7 @@ public static class OptionTaskExtensions
     /// <summary>
     /// Binds the successful value of an asynchronous option.
     /// </summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <see langword="null"/>.</exception>
     public static async Task<Option<TResult>> Bind<T, TResult>(this Task<Option<T>> source, Func<T, Option<TResult>> bind)
         where T : notnull
         where TResult : notnull =>
@@ -76,6 +80,7 @@ public static class OptionTaskExtensions
     /// <summary>
     /// Binds the successful value of an asynchronous option.
     /// </summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <see langword="null"/>.</exception>
     public static async Task<Option<TResult>> Bind<T, TResult>(this Task<Option<T>> source, Func<T, Task<Option<TResult>>> bind)
         where T : notnull
         where TResult : notnull =>
@@ -87,6 +92,7 @@ public static class OptionTaskExtensions
     /// <summary>
     /// Binds the successful value of an asynchronous option.
     /// </summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <see langword="null"/>.</exception>
     public static async Task<Option<TResult>> Bind<T, TResult>(this Task<Option<T>> source, Func<T, ValueTask<Option<TResult>>> bind)
         where T : notnull
         where TResult : notnull =>
@@ -122,6 +128,7 @@ public static class OptionTaskExtensions
     /// <summary>
     /// Matches an asynchronous option.
     /// </summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <see langword="null"/>.</exception>
     public static async Task<TResult> Match<T, TResult>(this Task<Option<T>> source, Func<T, TResult> whenSome, Func<TResult> whenNone)
         where T : notnull =>
         source is null
@@ -132,6 +139,7 @@ public static class OptionTaskExtensions
     /// <summary>
     /// Matches an asynchronous option.
     /// </summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <see langword="null"/>.</exception>
     public static async Task<TResult> Match<T, TResult>(this Task<Option<T>> source, Func<T, Task<TResult>> whenSome, Func<Task<TResult>> whenNone)
         where T : notnull =>
         source is null
@@ -142,6 +150,7 @@ public static class OptionTaskExtensions
     /// <summary>
     /// Matches an asynchronous option.
     /// </summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="source"/> is <see langword="null"/>.</exception>
     public static async Task<TResult> Match<T, TResult>(this Task<Option<T>> source, Func<T, ValueTask<TResult>> whenSome, Func<ValueTask<TResult>> whenNone)
         where T : notnull =>
         source is null

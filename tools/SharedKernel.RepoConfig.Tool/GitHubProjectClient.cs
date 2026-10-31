@@ -16,6 +16,7 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
     /// <summary>Verifies that the project target exists with the expected owner and number.</summary>
     /// <param name="target">Project to verify.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
+    /// <exception cref="InvalidOperationException">The project target does not exist with the expected owner and number.</exception>
     public async Task VerifyTarget(GitHubProjectTarget target, CancellationToken cancellationToken)
     {
         const string Query = "query($id:ID!){node(id:$id){... on ProjectV2{id number owner{... on User{login} ... on Organization{login}}}}}";
@@ -36,6 +37,7 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
     /// <param name="repository">Repository in <c>owner/name</c> form.</param>
     /// <param name="issueNumber">Issue number.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
+    /// <exception cref="InvalidOperationException">GitHub does not return a node ID for the issue.</exception>
     public async Task<string> GetIssueNodeId(string repository, int issueNumber, CancellationToken cancellationToken)
     {
         var parts = repository.Split('/');
@@ -57,6 +59,7 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
     /// <param name="target">Project to add to.</param>
     /// <param name="issueId">Issue node ID.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
+    /// <exception cref="InvalidOperationException">GitHub does not add the issue to the project.</exception>
     public async Task<string> AddIssue(GitHubProjectTarget target, string issueId, CancellationToken cancellationToken)
     {
         const string Query = "mutation($projectId:ID!,$contentId:ID!){addProjectV2ItemById(input:{projectId:$projectId,contentId:$contentId}){item{id}}}";
@@ -141,6 +144,7 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
     /// <summary>Returns the fields of the project.</summary>
     /// <param name="target">Project to read.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
+    /// <exception cref="InvalidOperationException">GitHub does not return the project fields.</exception>
     public async Task<IReadOnlyList<GitHubProjectResponse.ProjectField>> GetFields(GitHubProjectTarget target, CancellationToken cancellationToken)
     {
         ResetCacheForOtherProject(target);
@@ -159,6 +163,7 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
     /// <summary>Returns the field values of the project item.</summary>
     /// <param name="itemId">Project item ID.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
+    /// <exception cref="InvalidOperationException">GitHub does not return the project item field values.</exception>
     public async Task<IReadOnlyList<GitHubProjectItemResponse.FieldValue>> GetFieldValues(string itemId, CancellationToken cancellationToken)
     {
         const string Query = "query($id:ID!){node(id:$id){... on ProjectV2Item{fieldValues(first:100){nodes{... on ProjectV2ItemFieldNumberValue{number field{... on ProjectV2FieldCommon{id name}}} ... on ProjectV2ItemFieldTextValue{text field{... on ProjectV2FieldCommon{id name}}} ... on ProjectV2ItemFieldSingleSelectValue{optionId field{... on ProjectV2FieldCommon{id name}}}}}}}}";

@@ -38,6 +38,7 @@ internal static class SshKeyNormalizer
     /// <summary>Completes an SSH key item. Other items, and SSH key items that are complete, are returned unchanged.</summary>
     /// <param name="item">Item.</param>
     /// <returns>The completed item, or a secure note that keeps the key when it cannot be converted.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="item"/> is <see langword="null"/>.</exception>
     public static VaultItem Normalize(VaultItem item)
     {
         ArgumentNullException.ThrowIfNull(item);

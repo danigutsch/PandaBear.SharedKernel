@@ -13,6 +13,7 @@ internal static class CsvReader
     /// <param name="text">CSV text, with or without a byte order mark.</param>
     /// <returns>Records in file order.</returns>
     /// <exception cref="InvalidDataException">A quoted field is unterminated or followed by stray characters.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
     public static IReadOnlyList<CsvRecord> Parse(string text)
     {
         ArgumentNullException.ThrowIfNull(text);

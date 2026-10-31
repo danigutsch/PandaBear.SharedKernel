@@ -19,6 +19,7 @@ public static class ApiSecurityApplicationBuilderExtensions
     }
 
     /// <summary>Adds authentication and authorization middleware unless <paramref name="enableAuthentication" /> or the OpenAPI generation mode disables them.</summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="application"/> is <see langword="null"/>.</exception>
     internal static WebApplication UseApiSecurity(WebApplication application, bool? enableAuthentication)
     {
         ArgumentNullException.ThrowIfNull(application);

@@ -49,6 +49,7 @@ internal static class FieldDiff
     /// <summary>Field paths on which the members differ, in report order.</summary>
     /// <param name="members">Group members.</param>
     /// <returns>Changed paths; empty when every member is semantically equal.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="members"/> is <see langword="null"/>.</exception>
     public static IReadOnlyList<string> ChangedPaths(IReadOnlyList<VaultItem> members)
     {
         ArgumentNullException.ThrowIfNull(members);

@@ -58,6 +58,7 @@ internal static class CandidateFilter
     /// <summary>Whether a value is one character repeated, a short unit repeated, or an ascending or descending run.</summary>
     /// <param name="value">Value.</param>
     /// <returns><see langword="true"/> when the value has no real randomness.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
     public static bool IsRepeatedOrSequential(string value)
     {
         ArgumentNullException.ThrowIfNull(value);

@@ -19,6 +19,7 @@ public static class CurrentSaveChangesDbContext
     /// </summary>
     /// <param name="dbContext">The current DbContext.</param>
     /// <returns>A scope that restores the previous DbContext when disposed.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="dbContext"/> is <see langword="null"/>.</exception>
     public static IDisposable Enter(DbContext dbContext)
     {
         ArgumentNullException.ThrowIfNull(dbContext);

@@ -30,6 +30,7 @@ internal static class KeeperCsvReader
     /// <param name="sourceFile">File name recorded as the item origin.</param>
     /// <returns>Items and warnings.</returns>
     /// <exception cref="InvalidDataException">The file is not well-formed CSV.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="text"/> or <paramref name="sourceFile"/> is <see langword="null"/>.</exception>
     public static VaultReadResult Read(string text, string sourceFile)
     {
         ArgumentNullException.ThrowIfNull(text);

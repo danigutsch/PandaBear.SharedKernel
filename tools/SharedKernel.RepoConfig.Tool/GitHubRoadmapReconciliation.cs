@@ -150,6 +150,7 @@ internal sealed class GitHubRoadmapReconciliation
 
     /// <summary>Returns the numbers of issues that must be read from GitHub for the project and manifest.</summary>
     /// <param name="project">Roadmap project.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="project"/> is <see langword="null"/>.</exception>
     public int[] GetRequiredIssueNumbers(RoadmapProject project)
     {
         ArgumentNullException.ThrowIfNull(project);
@@ -164,6 +165,7 @@ internal sealed class GitHubRoadmapReconciliation
 
     /// <summary>Finds and loads the manifest under the repository root.</summary>
     /// <param name="rootPath">Repository root.</param>
+    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
     public static GitHubRoadmapReconciliation Load(string rootPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
@@ -175,6 +177,9 @@ internal sealed class GitHubRoadmapReconciliation
     /// <summary>Parses manifest content.</summary>
     /// <param name="manifestPath">Path of the manifest, used in diagnostics.</param>
     /// <param name="content">Manifest JSON text.</param>
+    /// <exception cref="ArgumentException"><paramref name="manifestPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="content"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">The manifest root is not a JSON object.</exception>
     public static GitHubRoadmapReconciliation Parse(string manifestPath, string content)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(manifestPath);

@@ -102,6 +102,7 @@ public sealed class BrandingSettings
     /// <param name="request">The branding settings request.</param>
     /// <param name="allowedFontFamilies">The allowed font families, using each value as its canonical casing.</param>
     /// <returns>A result containing validated branding settings, or validation errors.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="request"/> or <paramref name="allowedFontFamilies"/> is <see langword="null"/>.</exception>
     public static Result<BrandingSettings> Create(BrandingSettingsDto request, IReadOnlyCollection<string> allowedFontFamilies)
     {
         ArgumentNullException.ThrowIfNull(request);

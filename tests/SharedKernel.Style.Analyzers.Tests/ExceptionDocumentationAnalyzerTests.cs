@@ -14,6 +14,9 @@ public sealed class ExceptionDocumentationAnalyzerTests
     [InlineData("try { Run(); } catch (ArgumentException) { } throw new InvalidOperationException();", "InvalidOperationException")]
     [InlineData("try { throw new InvalidOperationException(); } catch (ArgumentException) { }", "InvalidOperationException")]
     [InlineData("try { Run(); } catch (Exception) { throw new InvalidOperationException(); }", "InvalidOperationException")]
+    [InlineData("try { throw new InvalidOperationException(); } catch (Exception e) when (e is ArgumentException) { }", "InvalidOperationException")]
+    [InlineData("try { throw new InvalidOperationException(); } catch (Exception e) when (e.Message.Length > 0) { }", "InvalidOperationException")]
+    [InlineData("try { throw new InvalidOperationException(); } catch (Exception e) when (e is not InvalidOperationException) { }", "InvalidOperationException")]
     public async Task Undocumented_thrown_exception_reports_skstyle018(string body, string expected)
     {
         // Arrange
@@ -41,6 +44,8 @@ public sealed class ExceptionDocumentationAnalyzerTests
     [InlineData("throw new InvalidOperationException();", "<inheritdoc />")]
     [InlineData("try { throw new InvalidOperationException(); } catch (InvalidOperationException) { }", "<summary>Runs.</summary>")]
     [InlineData("try { throw new InvalidOperationException(); } catch (Exception) { }", "<summary>Runs.</summary>")]
+    [InlineData("try { throw new InvalidOperationException(); } catch (Exception e) when (e is IOException or InvalidOperationException) { }", "<summary>Runs.</summary>")]
+    [InlineData("try { throw new ArgumentNullException(\"a\"); } catch (Exception e) when (e is ArgumentException) { }", "<summary>Runs.</summary>")]
     [InlineData("try { Run(); } catch (Exception) { throw; }", "<summary>Runs.</summary>")]
     [InlineData("Action a = () => throw new InvalidOperationException(); a();", "<summary>Runs.</summary>")]
     [InlineData("void Local() => throw new InvalidOperationException(); Local();", "<summary>Runs.</summary>")]

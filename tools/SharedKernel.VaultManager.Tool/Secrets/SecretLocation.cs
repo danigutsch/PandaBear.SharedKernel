@@ -63,6 +63,7 @@ internal sealed record SecretLocation(string FieldPath, int Start, int Length, i
     /// <param name="index">Custom field index.</param>
     /// <param name="isName">Whether the path names the field label rather than its value.</param>
     /// <returns><see langword="true"/> when the path refers to a custom field.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="fieldPath"/> is <see langword="null"/>.</exception>
     public static bool TryParseField(string fieldPath, out int index, out bool isName)
     {
         ArgumentNullException.ThrowIfNull(fieldPath);

@@ -13,6 +13,7 @@ public static class PostgreSqlEventSourcingSchema
     /// <param name="dataSource">The PostgreSQL data source.</param>
     /// <param name="options">The provider options.</param>
     /// <param name="ct">The cancellation token.</param>
+    /// <exception cref="ArgumentNullException">When <paramref name="dataSource"/> is <see langword="null"/>.</exception>
     public static async ValueTask Initialize(
         NpgsqlDataSource dataSource,
         PostgreSqlEventSourcingOptions? options,

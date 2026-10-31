@@ -12,6 +12,7 @@ public static class CloudEventMapper
     /// <param name="integrationEvent">The integration event instance.</param>
     /// <param name="metadata">The transport metadata for the CloudEvent.</param>
     /// <returns>A CloudEvents metadata envelope containing the typed payload.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="integrationEvent"/> or <paramref name="metadata"/> is <see langword="null"/>.</exception>
     public static CloudEventEnvelope<TIntegrationEvent> ToCloudEvent<TIntegrationEvent>(
         TIntegrationEvent integrationEvent,
         CloudEventMetadata metadata)

@@ -47,6 +47,7 @@ public static class AspNetCoreForwardedHeadersExtensions
     /// <param name="builder">The application builder.</param>
     /// <typeparam name="TApplicationBuilder">The application builder type.</typeparam>
     /// <returns>The same application builder.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="builder"/> is <see langword="null"/>.</exception>
     public static TApplicationBuilder AddConfiguredTrustedForwardedHeaders<TApplicationBuilder>(
         this TApplicationBuilder builder)
         where TApplicationBuilder : IHostApplicationBuilder
@@ -64,6 +65,7 @@ public static class AspNetCoreForwardedHeadersExtensions
     /// <param name="services">The service collection.</param>
     /// <param name="configuration">The configuration section containing known proxies and networks.</param>
     /// <returns>The same <see cref="IServiceCollection"/> instance.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="services"/> or <paramref name="configuration"/> is <see langword="null"/>.</exception>
     public static IServiceCollection AddConfiguredTrustedForwardedHeaders(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -79,6 +81,7 @@ public static class AspNetCoreForwardedHeadersExtensions
     /// <summary>
     /// Configures forwarded headers and configured trusted proxy addresses/networks.
     /// </summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="options"/> or <paramref name="configuration"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// When at least one trusted proxy or network is configured, the default loopback trust entries are
     /// replaced with the configured entries. Network entries use CIDR notation, for example <c>10.0.0.0/8</c>.

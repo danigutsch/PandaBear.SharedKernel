@@ -16,6 +16,8 @@ public static class EfCoreMediatorServiceCollectionExtensions
     /// <typeparam name="TRequest">The command request type.</typeparam>
     /// <typeparam name="TResponse">The command response type.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="services"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">When <typeparamref name="TRequest"/> is not a command request.</exception>
     public static IServiceCollection AddEfCoreCommandTransaction<TContext, TRequest, TResponse>(this IServiceCollection services)
         where TContext : DbContext
         where TRequest : IRequest<TResponse>

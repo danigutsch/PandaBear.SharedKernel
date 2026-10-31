@@ -18,6 +18,7 @@ public interface IDbContextConfiguration<TContext>
     /// Configures model conventions before EF Core builds the model.
     /// </summary>
     /// <param name="configurationBuilder">The convention configuration builder.</param>
+    /// <exception cref="ArgumentNullException">When <paramref name="configurationBuilder"/> is <see langword="null"/>.</exception>
     void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         ArgumentNullException.ThrowIfNull(configurationBuilder);
@@ -27,6 +28,7 @@ public interface IDbContextConfiguration<TContext>
     /// Configures context options.
     /// </summary>
     /// <param name="optionsBuilder">The options builder.</param>
+    /// <exception cref="ArgumentNullException">When <paramref name="optionsBuilder"/> is <see langword="null"/>.</exception>
     void ConfigureOptions(DbContextOptionsBuilder optionsBuilder)
     {
         ArgumentNullException.ThrowIfNull(optionsBuilder);
@@ -36,6 +38,7 @@ public interface IDbContextConfiguration<TContext>
     /// Configures the model.
     /// </summary>
     /// <param name="modelBuilder">The model builder.</param>
+    /// <exception cref="ArgumentNullException">When <paramref name="modelBuilder"/> is <see langword="null"/>.</exception>
     void ConfigureModel(ModelBuilder modelBuilder)
     {
         ArgumentNullException.ThrowIfNull(modelBuilder);

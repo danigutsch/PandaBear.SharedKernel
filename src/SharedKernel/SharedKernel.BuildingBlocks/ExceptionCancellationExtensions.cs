@@ -14,6 +14,7 @@ public static class ExceptionCancellationExtensions
     /// <see langword="true" /> when the exception is not a cooperative cancellation for <paramref name="ct" />;
     /// otherwise, <see langword="false" />.
     /// </returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="exception"/> is <see langword="null"/>.</exception>
     public static bool ShouldHandleAsFailure(this Exception exception, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(exception);

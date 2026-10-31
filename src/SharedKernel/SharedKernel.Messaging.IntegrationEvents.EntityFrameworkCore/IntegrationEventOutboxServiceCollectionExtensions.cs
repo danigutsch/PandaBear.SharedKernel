@@ -48,6 +48,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="configureStorage">The delegate that configures the context's integration-event tables.</param>
     /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="configureStorage"/> is <see langword="null"/>.</exception>
     /// <remarks>The outbox is keyed by <c>typeof(TContext)</c>. It is also the unkeyed outbox when it is the only context registered or the one chosen with <see cref="UseDefaultIntegrationEventOutbox{TContext}" />.</remarks>
     public static IServiceCollection AddIntegrationEventOutbox<TContext>(
         this IServiceCollection services,
@@ -66,6 +67,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="services">The service collection to configure.</param>
     /// <typeparam name="TContext">The DbContext type whose outbox becomes the unkeyed default.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> is <see langword="null"/>.</exception>
     public static IServiceCollection UseDefaultIntegrationEventOutbox<TContext>(this IServiceCollection services)
         where TContext : DbContext
     {
@@ -106,6 +108,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="configureOptions">An optional delegate that configures relay behavior.</param>
     /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> is <see langword="null"/>.</exception>
     /// <remarks>The relay prefers the envelope publisher keyed by <c>typeof(TContext)</c>, then requires an unkeyed application publisher.</remarks>
     public static IServiceCollection AddIntegrationEventOutboxRelay<TContext>(
         this IServiceCollection services,
@@ -138,6 +141,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="services">The service collection to configure.</param>
     /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> is <see langword="null"/>.</exception>
     public static IServiceCollection AddPostgreSqlIntegrationEventOutboxRelayAtomicClaims<TContext>(
         this IServiceCollection services)
         where TContext : DbContext
@@ -169,6 +173,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="configureStorage">The delegate that configures the context's idempotency table.</param>
     /// <typeparam name="TContext">The DbContext type that owns the inbox idempotency table.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> or <paramref name="configureStorage"/> is <see langword="null"/>.</exception>
     /// <remarks>The store is keyed by <c>typeof(TContext)</c>. It is also the unkeyed store when it is the only context registered or the one chosen with <see cref="IdempotencyServiceCollectionExtensions.UseDefaultIdempotencyStore{TContext}" />.</remarks>
     public static IServiceCollection AddIntegrationEventInbox<TContext>(
         this IServiceCollection services,
@@ -205,6 +210,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="configureStorage">The delegate that configures the context's integration-event tables.</param>
     /// <typeparam name="TContext">The DbContext type that owns the transport table.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="configureStorage"/> is <see langword="null"/>.</exception>
     /// <remarks>The producer is registered only as an <see cref="IEventEnvelopePublisher" /> keyed by <c>typeof(TContext)</c>.</remarks>
     public static IServiceCollection AddPostgreSqlIntegrationEventTransportProducer<TContext>(
         this IServiceCollection services,
@@ -223,6 +229,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="services">The service collection to configure.</param>
     /// <typeparam name="TContext">The DbContext type that maps the transport table.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> is <see langword="null"/>.</exception>
     public static IServiceCollection AddIntegrationEventTransportStorage<TContext>(this IServiceCollection services)
         where TContext : DbContext
     {
@@ -278,6 +285,8 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     }
 
     /// <summary>Registers the options, validator, and storage of the PostgreSQL transport consumer without adding the hosted service, so tests can drive the consumer directly.</summary>
+    /// <exception cref="ArgumentException"><paramref name="consumerName"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> is <see langword="null"/>.</exception>
     internal static void AddPostgreSqlIntegrationEventTransportConsumerCore<TContext>(
         IServiceCollection services,
         string consumerName,
@@ -315,6 +324,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="configureStorage">The delegate that configures the context's integration-event tables.</param>
     /// <typeparam name="TContext">The DbContext type that owns or reads the configured tables.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> or <paramref name="configureStorage"/> is <see langword="null"/>.</exception>
     public static IServiceCollection ConfigureIntegrationEventStorage<TContext>(
         this IServiceCollection services,
         Action<IntegrationEventStorageOptions> configureStorage)

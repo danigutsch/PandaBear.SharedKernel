@@ -27,6 +27,8 @@ internal sealed class RoadmapGitHubPublisher
     }
 
     /// <summary>Creates a publisher with an injected <paramref name="timeProvider"/> so the publication timeout can be controlled.</summary>
+    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="httpClient"/> or <paramref name="timeProvider"/> is <see langword="null"/>.</exception>
     internal RoadmapGitHubPublisher(
         string rootPath,
         HttpClient httpClient,
@@ -44,6 +46,8 @@ internal sealed class RoadmapGitHubPublisher
     /// Runs the checks that <see cref="Publish"/> makes before contacting GitHub and describes the pull request
     /// it would create. Nothing is sent to GitHub.
     /// </summary>
+    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="plan"/> or <paramref name="changes"/> is <see langword="null"/>.</exception>
     public static async Task<RoadmapGitHubPublicationPreview> Preview(
         string rootPath,
         RoadmapAutomationPlan plan,
@@ -67,6 +71,10 @@ internal sealed class RoadmapGitHubPublisher
     }
 
     /// <summary>Creates a tree, commit, branch, and pull request from the verified change set, rechecking that the default branch has not moved, and returns the pull request URL and commit SHA.</summary>
+    /// <exception cref="ArgumentException"><paramref name="pullRequestBody"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="plan"/> or <paramref name="changes"/> is <see langword="null"/>.</exception>
+    /// <exception cref="OperationCanceledException"><paramref name="cancellationToken"/> is canceled.</exception>
+    /// <exception cref="TimeoutException">The publication does not complete in time.</exception>
     public async Task<RoadmapGitHubPublication> Publish(
         RoadmapAutomationPlan plan,
         string baseSha,

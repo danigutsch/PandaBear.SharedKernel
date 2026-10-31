@@ -34,6 +34,7 @@ internal static class RepoConfigCommandLine
     /// <summary>
     /// Creates the root command. Actions write to the writers in the invocation configuration.
     /// </summary>
+    /// <exception cref="ArgumentNullException"><paramref name="environment"/> is <see langword="null"/>.</exception>
     public static RootCommand Create(RepoConfigToolEnvironment environment)
     {
         ArgumentNullException.ThrowIfNull(environment);

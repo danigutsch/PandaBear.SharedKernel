@@ -24,6 +24,7 @@ public sealed record VersionOutput(
     /// <param name="impact">The release impact.</param>
     /// <param name="sha">The optional source SHA.</param>
     /// <returns>The version output.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="version"/> is <see langword="null"/>.</exception>
     public static VersionOutput Create(SemanticVersion version, ReleaseImpact impact, string? sha = null)
     {
         ArgumentNullException.ThrowIfNull(version);

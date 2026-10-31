@@ -8,6 +8,7 @@ public sealed class ThrowingDomainEventDispatchHandler : IDomainEventDispatchHan
     /// <summary>Returns a faulted ValueTask carrying InvalidOperationException 'The test handler rejected the domain event.', after throwing on a null event or an already cancelled token.</summary>
     /// <param name="domainEvent">The event being dispatched.</param>
     /// <param name="ct">The cancellation token for the dispatch.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="domainEvent"/> is <see langword="null"/>.</exception>
     public ValueTask Handle(IDomainEvent domainEvent, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(domainEvent);

@@ -8,6 +8,7 @@ internal static class SharedKernelPackCommand
     private static readonly Uri NuGetSourceUrl = new(string.Concat("https://api.nuget.org", "/v3/index.json"));
 
     /// <summary>Packs the projects with the requested versions, optionally verifies restore from the resulting feed, and returns the package directory.</summary>
+    /// <exception cref="ArgumentException">No SharedKernel projects are found.</exception>
     public static async Task<string> Run(PackSharedKernelOptions options, TextWriter output, CancellationToken ct)
     {
         var packageOptions = new SharedKernelPackageOptions(

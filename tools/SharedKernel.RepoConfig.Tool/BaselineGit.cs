@@ -43,6 +43,7 @@ internal static class BaselineGit
     }
 
     /// <summary>Sets the entry's key to its value, replacing every existing value.</summary>
+    /// <exception cref="InvalidOperationException"><c>git config</c> could not set the entry.</exception>
     public static async Task Set(string root, BaselineGitEntry entry, CancellationToken cancellationToken)
     {
         var (exitCode, _) = await Run(root, ["config", "--local", "--replace-all", entry.Key, entry.Value], cancellationToken).ConfigureAwait(false);

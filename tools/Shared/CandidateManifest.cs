@@ -11,6 +11,7 @@ internal static class CandidateManifest
 {
     /// <summary>Returns the path of the single <c>candidate.json</c> found recursively under the directory, and throws when there is not exactly one.</summary>
     /// <param name="directory">Directory to search.</param>
+    /// <exception cref="ArgumentException">The directory does not exist, or does not contain exactly one <c>candidate.json</c>.</exception>
     public static string Find(string directory)
     {
         if (!Directory.Exists(directory))
@@ -26,6 +27,7 @@ internal static class CandidateManifest
 
     /// <summary>Reads the manifest and verifies it, returning its JSON object; throws when it is empty or lacks package hashes.</summary>
     /// <param name="path">Path of the <c>candidate.json</c> file.</param>
+    /// <exception cref="ArgumentException">The manifest is empty, lacks package hashes, names an invalid package file name, or a package changed.</exception>
     public static JsonObject ReadAndVerify(string path)
     {
         var evidence = JsonNode.Parse(File.ReadAllText(path))?.AsObject()

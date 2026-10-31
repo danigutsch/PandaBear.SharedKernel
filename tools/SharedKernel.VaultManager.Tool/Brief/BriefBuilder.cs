@@ -26,6 +26,7 @@ internal static class BriefBuilder
     /// checked against the inputs as they are.
     /// </param>
     /// <returns>The brief.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="inputs"/> or <paramref name="scanned"/> or <paramref name="result"/> or <paramref name="decisions"/> is <see langword="null"/>.</exception>
     public static BriefDocument Build(IReadOnlyList<string> inputs, ScannedVault scanned, PipelineResult result, MergeDecisions decisions, bool everyGroup = false)
     {
         ArgumentNullException.ThrowIfNull(inputs);

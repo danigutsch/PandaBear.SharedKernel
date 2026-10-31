@@ -53,6 +53,7 @@ internal sealed class ReviewSession
     /// <param name="scanned">Vault read and scanned once.</param>
     /// <param name="decisions">Decisions to start from; pending entries count as no decision.</param>
     /// <param name="files">Decisions file and merged vault the review may write.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="environment"/> or <paramref name="scanned"/> or <paramref name="decisions"/> or <paramref name="files"/> is <see langword="null"/>.</exception>
     public ReviewSession(VaultCommandEnvironment environment, ScannedVault scanned, MergeDecisions decisions, ReviewFiles files)
     {
         ArgumentNullException.ThrowIfNull(environment);
@@ -308,6 +309,7 @@ internal sealed class ReviewSession
     /// <summary>Removes the decision on a field, so the policy resolves it again. Does nothing when there is none.</summary>
     /// <param name="groupKey">Group key.</param>
     /// <param name="fieldPath">Field path.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="groupKey"/> or <paramref name="fieldPath"/> is <see langword="null"/>.</exception>
     public void ClearChoice(string groupKey, string fieldPath)
     {
         ArgumentNullException.ThrowIfNull(groupKey);
@@ -361,6 +363,7 @@ internal sealed class ReviewSession
     /// <summary>Removes the decision on a finding. Does nothing when there is none.</summary>
     /// <param name="originKey">Origin key of the item that holds the finding.</param>
     /// <param name="findingId">Finding identifier.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="originKey"/> or <paramref name="findingId"/> is <see langword="null"/>.</exception>
     public void ClearFinding(string originKey, string findingId)
     {
         ArgumentNullException.ThrowIfNull(originKey);
@@ -527,6 +530,7 @@ internal sealed class ReviewSession
     /// <param name="groupKey">Group key.</param>
     /// <param name="fieldPath">Field path.</param>
     /// <returns><see langword="true"/> when the field is revealed; <see langword="false"/> when it is masked.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="groupKey"/> or <paramref name="fieldPath"/> is <see langword="null"/>.</exception>
     public bool ToggleReveal(string groupKey, string fieldPath)
     {
         ArgumentNullException.ThrowIfNull(groupKey);
@@ -538,6 +542,7 @@ internal sealed class ReviewSession
     /// <param name="originKey">Origin key of the item that holds the finding.</param>
     /// <param name="findingId">Finding identifier.</param>
     /// <returns><see langword="true"/> when the finding is revealed; <see langword="false"/> when it is masked.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="originKey"/> or <paramref name="findingId"/> is <see langword="null"/>.</exception>
     public bool ToggleRevealFinding(string originKey, string findingId)
     {
         ArgumentNullException.ThrowIfNull(originKey);

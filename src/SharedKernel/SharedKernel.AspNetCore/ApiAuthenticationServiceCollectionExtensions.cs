@@ -43,6 +43,8 @@ public static class ApiAuthenticationServiceCollectionExtensions
     }
 
     /// <summary>Registers API security with an explicit authentication switch, so tests can force authentication on or off independent of the OpenAPI generation mode.</summary>
+    /// <exception cref="ArgumentException">When <paramref name="audience"/> is empty or white space.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="services"/>, <paramref name="configuration"/>, <paramref name="environment"/>, <paramref name="permissionsByRole"/>, or <paramref name="audience"/> is <see langword="null"/>.</exception>
     internal static AuthorizationBuilder AddApiSecurity(
         this IServiceCollection services,
         IConfiguration configuration,
@@ -74,6 +76,8 @@ public static class ApiAuthenticationServiceCollectionExtensions
     /// <param name="audience">The only audience accepted by this API boundary.</param>
     /// <param name="permissionsByRole">The application-owned permissions granted for each validated role.</param>
     /// <returns>An authorization builder for boundary-specific permission policies.</returns>
+    /// <exception cref="ArgumentException">When <paramref name="audience"/> is empty or white space.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="services"/>, <paramref name="configuration"/>, <paramref name="environment"/>, <paramref name="permissionsByRole"/>, or <paramref name="audience"/> is <see langword="null"/>.</exception>
     public static AuthorizationBuilder AddApiBearerAuthentication(
         this IServiceCollection services,
         IConfiguration configuration,
@@ -136,6 +140,7 @@ public static class ApiAuthenticationServiceCollectionExtensions
     }
 
     /// <summary>Registers API security with an explicit authentication switch, so tests can force authentication on or off independent of the OpenAPI generation mode.</summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="services"/>, <paramref name="configuration"/>, or <paramref name="environment"/> is <see langword="null"/>.</exception>
     internal static AuthorizationBuilder AddApiSecurity(
         this IServiceCollection services,
         IConfiguration configuration,
@@ -160,6 +165,7 @@ public static class ApiAuthenticationServiceCollectionExtensions
     /// Adds several named exact-audience bearer schemes. Each scheme maps roles with its own permission table when it
     /// validates a token; no host-wide claims transformation is registered.
     /// </summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="services"/>, <paramref name="configuration"/>, or <paramref name="environment"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// No default authenticate scheme is set: a route is authenticated only by the scheme its policy names, so a route
     /// that forgets a module policy fails closed under the fallback instead of accepting another module's token.
@@ -227,6 +233,7 @@ public static class ApiAuthenticationServiceCollectionExtensions
     /// <param name="services">The service collection to configure.</param>
     /// <param name="permissionsByRole">The application-owned permissions granted for each validated role.</param>
     /// <returns>An authorization builder for boundary-specific permission policies.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="services"/> or <paramref name="permissionsByRole"/> is <see langword="null"/>.</exception>
     public static AuthorizationBuilder AddApiAuthorization(
         this IServiceCollection services,
         IReadOnlyDictionary<string, IReadOnlyCollection<string>> permissionsByRole)
@@ -241,6 +248,8 @@ public static class ApiAuthenticationServiceCollectionExtensions
     }
 
     /// <summary>Applies the audience, authority, and token validation settings shared by all JWT bearer registrations.</summary>
+    /// <exception cref="ArgumentException">When <paramref name="audience"/> is empty or white space.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="options"/> or <paramref name="audience"/> is <see langword="null"/>.</exception>
     internal static void ConfigureBearerOptions(
         JwtBearerOptions options,
         string audience,

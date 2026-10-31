@@ -33,6 +33,7 @@ public sealed class ConcurrentAspireTestApplications : IAsyncDisposable
     /// <param name="startApplication">Starts an isolated AppHost application instance.</param>
     /// <param name="ct">A cancellation token.</param>
     /// <returns>The concurrently started applications.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="startApplication"/> is <see langword="null"/>.</exception>
     public static async Task<ConcurrentAspireTestApplications> Start(
         Func<CancellationToken, Task<AspireTestApplication>> startApplication,
         CancellationToken ct)

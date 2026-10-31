@@ -38,6 +38,7 @@ public sealed record IdempotencyStartResult
     /// </summary>
     /// <param name="entry">The existing idempotency entry.</param>
     /// <returns>The already-started result.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="entry"/> is <see langword="null"/>.</exception>
     public static IdempotencyStartResult AlreadyStarted(IdempotencyEntry entry)
     {
         ArgumentNullException.ThrowIfNull(entry);

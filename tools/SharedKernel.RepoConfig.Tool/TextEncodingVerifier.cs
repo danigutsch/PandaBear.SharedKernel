@@ -17,6 +17,7 @@ internal static class TextEncodingVerifier
     private static readonly UTF8Encoding StrictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
     /// <summary>Returns the encoding issues found in the repository at <paramref name="rootPath"/>, or a single issue when git inspection fails.</summary>
+    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
     public static async Task<IReadOnlyList<RepoConfigIssue>> Verify(string rootPath, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);

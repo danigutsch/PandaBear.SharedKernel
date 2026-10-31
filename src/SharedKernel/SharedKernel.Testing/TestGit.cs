@@ -23,6 +23,7 @@ public static class TestGit
     /// <param name="ct">Cancels the run.</param>
     /// <param name="environment">Environment variables that replace or, with a <see langword="null" /> value, remove entries of <see cref="Environment" />.</param>
     /// <returns>The exit code and captured output.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="directory"/> or <paramref name="arguments"/> is <see langword="null"/>.</exception>
     public static Task<TestProcessResult> TryRun(
         string directory,
         IReadOnlyList<string> arguments,

@@ -18,6 +18,9 @@ internal sealed class GitHubIssueReferenceResolver(HttpClient httpClient, TimePr
     /// <param name="number">Issue number the reference names.</param>
     /// <param name="nodeId">Previously recorded node ID, if any.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="number"/> is not positive.</exception>
+    /// <exception cref="OperationCanceledException"><paramref name="cancellationToken"/> is canceled.</exception>
+    /// <exception cref="TimeoutException">The lookup does not complete within 120 seconds.</exception>
     public async Task<GitHubIssueReferenceResolution> Resolve(
         string repository,
         int number,

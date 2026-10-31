@@ -19,6 +19,7 @@ internal sealed class EfIntegrationEventOutboxRelay<TContext>(
         await PublishPending(options.Get(IntegrationEventOptionsNames.Relay<TContext>()).BatchSize, ct).ConfigureAwait(false);
 
     /// <summary>Claims up to <paramref name="batchSize" /> due messages, publishes them, and returns how many were published.</summary>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="batchSize"/> is zero or negative.</exception>
     internal async ValueTask<int> PublishPending(int batchSize, CancellationToken ct)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(batchSize);

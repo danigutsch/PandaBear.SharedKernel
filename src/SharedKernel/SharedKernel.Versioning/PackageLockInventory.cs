@@ -16,6 +16,7 @@ public static class PackageLockInventory
     /// </summary>
     /// <param name="repositoryRoot">The repository root.</param>
     /// <returns>The resolved packages.</returns>
+    /// <exception cref="ArgumentException"><paramref name="repositoryRoot"/> is <see langword="null"/>, empty, or white space.</exception>
     public static ResolvedNuGetPackage[] Read(string repositoryRoot)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(repositoryRoot);
@@ -35,6 +36,7 @@ public static class PackageLockInventory
     /// </summary>
     /// <param name="packages">The resolved packages.</param>
     /// <returns>The attribution JSON.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="packages"/> is <see langword="null"/>.</exception>
     public static string WriteAttributionJson(IReadOnlyCollection<ResolvedNuGetPackage> packages)
     {
         ArgumentNullException.ThrowIfNull(packages);
@@ -67,6 +69,7 @@ public static class PackageLockInventory
     /// </summary>
     /// <param name="packages">The resolved packages.</param>
     /// <returns>The notices markdown.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="packages"/> is <see langword="null"/>.</exception>
     public static string WriteNoticesMarkdown(IReadOnlyCollection<ResolvedNuGetPackage> packages)
     {
         ArgumentNullException.ThrowIfNull(packages);
@@ -92,6 +95,7 @@ public static class PackageLockInventory
     /// <param name="options">The release-preparation options.</param>
     /// <param name="packages">The resolved packages.</param>
     /// <returns>The SPDX JSON document.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="options"/> or <paramref name="packages"/> is <see langword="null"/>.</exception>
     public static string WriteSpdxJson(ReleasePreparationOptions options, IReadOnlyCollection<ResolvedNuGetPackage> packages)
     {
         ArgumentNullException.ThrowIfNull(options);

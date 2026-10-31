@@ -19,6 +19,7 @@ internal sealed class EfIntegrationEventOutbox<TContext> : IIntegrationEventOutb
     /// <param name="dbContext">Context whose unit of work receives the messages.</param>
     /// <param name="timeProvider">Clock that stamps the enqueue time.</param>
     /// <param name="serializer">Serializer for the event payload.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="dbContext"/> or <paramref name="timeProvider"/> or <paramref name="serializer"/> is <see langword="null"/>.</exception>
     public EfIntegrationEventOutbox(
         TContext dbContext,
         TimeProvider timeProvider,

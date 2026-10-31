@@ -6,6 +6,7 @@ namespace PandaBear.RepoConfig.Tool;
 internal static class RepoConfigVerifier
 {
     /// <summary>Checks the repository structure, configuration, and roadmap items under <paramref name="rootPath"/> and returns every issue found.</summary>
+    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
     public static IReadOnlyList<RepoConfigIssue> Verify(string rootPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);

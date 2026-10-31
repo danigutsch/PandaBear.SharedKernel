@@ -10,6 +10,7 @@ internal static class Bech32
     /// <summary>Whether text is an age identity with a valid bech32 checksum.</summary>
     /// <param name="value">Candidate, in either case.</param>
     /// <returns><see langword="true"/> when the checksum is valid.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
     public static bool IsValidAgeSecretKey(string value)
     {
         ArgumentNullException.ThrowIfNull(value);

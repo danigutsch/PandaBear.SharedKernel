@@ -50,6 +50,7 @@ internal sealed partial record CandidatePin(
     }
 
     /// <summary>Names each identity property whose value differs from <paramref name="other"/>.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="other"/> is <see langword="null"/>.</exception>
     public string[] IdentityDifferences(CandidatePin other)
     {
         ArgumentNullException.ThrowIfNull(other);

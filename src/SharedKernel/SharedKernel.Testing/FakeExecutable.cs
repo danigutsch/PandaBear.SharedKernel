@@ -8,6 +8,7 @@ public static class FakeExecutable
     /// <summary>Writes an executable script that creates an empty marker file and exits with code 1.</summary>
     /// <param name="path">The script path; missing parent directories are created.</param>
     /// <param name="marker">The path of the marker file the script creates when it runs.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="marker"/> is <see langword="null"/>.</exception>
     [UnsupportedOSPlatform("windows")]
     public static void WriteMarker(string path, string marker)
     {
@@ -19,6 +20,7 @@ public static class FakeExecutable
     /// <summary>Writes an executable <c>/bin/sh</c> script.</summary>
     /// <param name="path">The script path; missing parent directories are created.</param>
     /// <param name="body">The script body placed after the shebang line.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="path"/> or <paramref name="body"/> is <see langword="null"/>.</exception>
     [UnsupportedOSPlatform("windows")]
     public static void WriteScript(string path, string body)
     {
@@ -38,6 +40,7 @@ public static class FakeExecutable
     /// <summary>Quotes a value for a POSIX shell single-quoted string.</summary>
     /// <param name="value">The value to quote.</param>
     /// <returns>The quoted value.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static string Quote(string value)
     {
         ArgumentNullException.ThrowIfNull(value);

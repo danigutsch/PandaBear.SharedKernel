@@ -16,6 +16,8 @@ internal static class CodeFixRunnerCommandLine
     /// Fixes the target, writes diagnostics to the given error writer, and returns the number of fixed diagnostics, or
     /// <see langword="null"/> when MSBuild or the target did not load.
     /// </param>
+    /// <exception cref="ArgumentException"><paramref name="workingDirectory"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="run"/> is <see langword="null"/>.</exception>
     public static RootCommand Create(string workingDirectory, Func<CodeFixRunnerOptions, TextWriter, CancellationToken, Task<int?>> run)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workingDirectory);

@@ -23,6 +23,7 @@ internal sealed class RoadmapWriteInputSnapshot
     }
 
     /// <summary>Reads all roadmap input files under <paramref name="rootPath"/> into a snapshot.</summary>
+    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
     public static RoadmapWriteInputSnapshot Capture(string rootPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
@@ -42,6 +43,7 @@ internal sealed class RoadmapWriteInputSnapshot
     }
 
     /// <summary>Throws when any input file was added, removed, or modified since capture.</summary>
+    /// <exception cref="InvalidOperationException">An input file was added, removed, or modified since capture.</exception>
     public void Verify()
     {
         var comparer = OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;

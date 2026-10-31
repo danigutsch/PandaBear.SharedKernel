@@ -13,6 +13,8 @@ internal static class RetentionOwnerIdentifier
     /// <param name="value">The value to validate.</param>
     /// <param name="parameterName">The parameter name reported on failure.</param>
     /// <returns>The trimmed value.</returns>
+    /// <exception cref="ArgumentException">When <paramref name="value"/> is empty or white space after trimming, is longer than <see cref="MaxLength"/> characters, or contains a character other than ASCII letters, digits, and <c>. _ : -</c>.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="value"/> is <see langword="null"/>.</exception>
     public static string Require(string? value, string parameterName)
     {
         ArgumentNullException.ThrowIfNull(value, parameterName);

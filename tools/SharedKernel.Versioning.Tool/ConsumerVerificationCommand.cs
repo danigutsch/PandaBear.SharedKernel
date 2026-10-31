@@ -131,6 +131,7 @@ internal static class ConsumerVerificationCommand
     /// Requires every <c>PandaBear.SharedKernel.*</c> central package version, lock file entry, and local tool, compared
     /// case-insensitively, to be the candidate version, and no project to reference SharedKernel sources.
     /// </summary>
+    /// <exception cref="ArgumentException">A package, project, lock file entry, or local tool does not use the candidate version, a project is missing or outside the repository, or the consumer references no SharedKernel package.</exception>
     internal static void ValidateConsumer(string clone, string solution, string version)
     {
         var references = 0;
@@ -218,6 +219,7 @@ internal static class ConsumerVerificationCommand
     /// Copies the candidate's packages into the folder that the clone's <c>NuGet.Config</c> maps
     /// <c>PandaBear.SharedKernel.*</c> to, and verifies the copies.
     /// </summary>
+    /// <exception cref="ArgumentException">The <c>NuGet.Config</c> is missing, ambiguous, or does not map the packages to one local folder, the folder already holds packages, or a candidate package changed while staged.</exception>
     internal static async Task StagePackages(string clone, string candidate, JsonObject hashes, CancellationToken ct)
     {
         var configurations = Directory.GetFiles(clone).Where(static file => string.Equals(Path.GetFileName(file), "NuGet.Config", StringComparison.OrdinalIgnoreCase)).ToArray();

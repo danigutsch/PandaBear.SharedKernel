@@ -14,6 +14,7 @@ internal static class BitwardenCsvReader
     /// <summary>Whether a header row is a Bitwarden CSV header.</summary>
     /// <param name="header">First CSV record.</param>
     /// <returns><see langword="true"/> when the required Bitwarden columns are present.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="header"/> is <see langword="null"/>.</exception>
     public static bool IsHeader(IReadOnlyList<string> header)
     {
         ArgumentNullException.ThrowIfNull(header);
@@ -27,6 +28,7 @@ internal static class BitwardenCsvReader
     /// <param name="sourceFile">File name recorded as the item origin.</param>
     /// <returns>Items and warnings.</returns>
     /// <exception cref="InvalidDataException">The file is malformed or has no Bitwarden header.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="text"/> or <paramref name="sourceFile"/> is <see langword="null"/>.</exception>
     public static VaultReadResult Read(string text, string sourceFile)
     {
         ArgumentNullException.ThrowIfNull(text);

@@ -19,6 +19,7 @@ public static class S3ObjectStoreServiceCollectionExtensions
     /// <param name="services">The service collection to configure.</param>
     /// <param name="configure">Populates <see cref="S3ObjectStoreOptions" />, typically by binding a configuration section.</param>
     /// <returns>The configured service collection.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> or <paramref name="configure"/> is <see langword="null"/>.</exception>
     public static IServiceCollection AddS3ObjectStore(this IServiceCollection services, Action<S3ObjectStoreOptions> configure)
     {
         ArgumentNullException.ThrowIfNull(services);

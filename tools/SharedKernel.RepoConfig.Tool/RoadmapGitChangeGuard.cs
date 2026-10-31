@@ -11,6 +11,8 @@ internal static class RoadmapGitChangeGuard
     private static readonly UTF8Encoding StrictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
     /// <summary>Parses NUL-delimited git status output, validates modes and paths, and returns the change set with a content digest.</summary>
+    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="nulDelimitedStatus"/> is <see langword="null"/>.</exception>
     public static RoadmapGitChangeSet Capture(string rootPath, byte[] nulDelimitedStatus)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
@@ -41,6 +43,9 @@ internal static class RoadmapGitChangeGuard
     }
 
     /// <summary>Revalidates the entries of <paramref name="expected"/> and throws when the recomputed digest differs, meaning the files changed since capture.</summary>
+    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="expected"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">The recomputed digest differs from <paramref name="expected"/>.</exception>
     public static void Verify(string rootPath, RoadmapGitChangeSet expected)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);

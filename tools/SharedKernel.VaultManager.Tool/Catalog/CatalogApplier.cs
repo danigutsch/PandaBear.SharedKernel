@@ -26,6 +26,7 @@ internal static class CatalogApplier
     /// The edited vault, the number of changed items, and a line for each change and removal, or the problems that keep
     /// the catalog from being applied. A line and a problem name the item by its key and name, never a value.
     /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="vault"/> or <paramref name="catalog"/> or <paramref name="decisions"/> is <see langword="null"/>.</exception>
     public static CatalogApplyResult Apply(LoadedVault vault, CatalogDocument catalog, MergeDecisions decisions)
     {
         ArgumentNullException.ThrowIfNull(vault);

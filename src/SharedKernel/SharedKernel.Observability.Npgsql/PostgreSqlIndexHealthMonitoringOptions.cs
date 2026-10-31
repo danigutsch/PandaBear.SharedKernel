@@ -10,6 +10,7 @@ public sealed class PostgreSqlIndexHealthMonitoringOptions
     public TimeSpan CommandTimeout { get; set; } = TimeSpan.FromSeconds(30);
 
     /// <summary>Throws when the polling interval or command timeout is outside its supported range.</summary>
+    /// <exception cref="InvalidOperationException">When <see cref="PollingInterval"/> or <see cref="CommandTimeout"/> is outside its supported range.</exception>
     internal void Validate()
     {
         if (PollingInterval < TimeSpan.FromMinutes(1)

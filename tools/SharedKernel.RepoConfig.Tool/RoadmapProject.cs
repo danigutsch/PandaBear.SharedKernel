@@ -119,6 +119,7 @@ internal sealed class RoadmapProject
     }
 
     /// <summary>Verifies the roadmap configuration under <paramref name="rootPath"/> and loads it, throwing when the configuration is invalid.</summary>
+    /// <exception cref="InvalidOperationException">The roadmap configuration is invalid or does not define <c>itemIdPrefix</c>.</exception>
     public static RoadmapProject Load(string rootPath)
     {
         var issues = RepoConfigVerifier.Verify(rootPath);

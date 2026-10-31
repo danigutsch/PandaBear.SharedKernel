@@ -53,6 +53,7 @@ internal sealed class GitHubRoadmapReconcileClient
     /// <summary>Creates a client with an explicit time source.</summary>
     /// <param name="httpClient">Authenticated GitHub client.</param>
     /// <param name="timeProvider">Time source for retry delays.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="httpClient"/> or <paramref name="timeProvider"/> is <see langword="null"/>.</exception>
     internal GitHubRoadmapReconcileClient(HttpClient httpClient, TimeProvider timeProvider)
     {
         ArgumentNullException.ThrowIfNull(httpClient);
@@ -67,6 +68,9 @@ internal sealed class GitHubRoadmapReconcileClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <param name="project">Roadmap project whose references are resolved, if any.</param>
     /// <param name="resolveExternalReferences">Whether to resolve issue references that live in other repositories.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="requiredIssueNumbers"/> is <see langword="null"/>.</exception>
+    /// <exception cref="OperationCanceledException"><paramref name="cancellationToken"/> is canceled.</exception>
+    /// <exception cref="TimeoutException">The snapshot is not read within 120 seconds.</exception>
     public async Task<GitHubRoadmapReconcileSnapshot> ReadSnapshot(
         string repository,
         int[] requiredIssueNumbers,

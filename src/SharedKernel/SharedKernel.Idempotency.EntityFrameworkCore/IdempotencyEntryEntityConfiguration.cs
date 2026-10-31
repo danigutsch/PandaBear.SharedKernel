@@ -23,6 +23,7 @@ internal sealed class IdempotencyEntryEntityConfiguration : IEntityTypeConfigura
     /// </summary>
     /// <param name="schema">Schema that holds the table.</param>
     /// <param name="tableName">Name of the idempotency table.</param>
+    /// <exception cref="ArgumentException">When <paramref name="schema"/> or <paramref name="tableName"/> is <see langword="null"/>, empty, or white space.</exception>
     public IdempotencyEntryEntityConfiguration(string schema, string tableName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(schema);

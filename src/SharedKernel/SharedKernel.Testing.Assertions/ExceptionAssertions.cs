@@ -13,6 +13,8 @@ internal static class ExceptionAssertions
     /// <typeparam name="TException">The expected inner exception type.</typeparam>
     /// <param name="action">The reflection invocation.</param>
     /// <returns>The typed inner exception.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="action"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the invocation throws a <see cref="TargetInvocationException"/> whose inner exception is not a <typeparamref name="TException"/>, or throws nothing.</exception>
     internal static TException ThrowsInner<TException>(Action action)
         where TException : Exception
     {

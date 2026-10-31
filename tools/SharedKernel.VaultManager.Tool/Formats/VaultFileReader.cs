@@ -21,6 +21,8 @@ internal static class VaultFileReader
     /// <exception cref="IOException">
     /// The file does not exist, is a directory, or cannot be read, also when access to it is denied.
     /// </exception>
+    /// <exception cref="ArgumentException"><paramref name="path"/> is empty.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="passwordProvider"/> is <see langword="null"/>.</exception>
     public static VaultReadResult Read(string path, Func<string, string> passwordProvider)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -80,6 +82,7 @@ internal static class VaultFileReader
     /// <param name="path">File to read.</param>
     /// <returns>File bytes.</returns>
     /// <exception cref="InvalidDataException">The file is larger than the cap.</exception>
+    /// <exception cref="ArgumentException"><paramref name="path"/> is empty.</exception>
     public static byte[] ReadCapped(string path)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -100,6 +103,7 @@ internal static class VaultFileReader
     /// <param name="content">File bytes.</param>
     /// <returns>Text.</returns>
     /// <exception cref="InvalidDataException">The bytes are not valid UTF-8.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="content"/> is <see langword="null"/>.</exception>
     public static string DecodeText(byte[] content)
     {
         ArgumentNullException.ThrowIfNull(content);

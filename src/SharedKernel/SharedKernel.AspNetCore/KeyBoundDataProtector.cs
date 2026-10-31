@@ -14,6 +14,8 @@ public sealed class KeyBoundDataProtector
     /// </summary>
     /// <param name="dataProtectionProvider">The provider used to create key-bound protectors.</param>
     /// <param name="purpose">The stable application purpose for the protected value type.</param>
+    /// <exception cref="ArgumentException">When <paramref name="purpose"/> is empty or white space.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="dataProtectionProvider"/> or <paramref name="purpose"/> is <see langword="null"/>.</exception>
     public KeyBoundDataProtector(IDataProtectionProvider dataProtectionProvider, string purpose)
     {
         ArgumentNullException.ThrowIfNull(dataProtectionProvider);
@@ -28,6 +30,8 @@ public sealed class KeyBoundDataProtector
     /// <param name="key">The storage-entry key that must also be supplied to unprotect the value.</param>
     /// <param name="plaintext">The value to protect.</param>
     /// <returns>The protected value.</returns>
+    /// <exception cref="ArgumentException">When <paramref name="key"/> is empty or white space.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="plaintext"/> or <paramref name="key"/> is <see langword="null"/>.</exception>
     public byte[] Protect(string key, byte[] plaintext)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
@@ -42,6 +46,8 @@ public sealed class KeyBoundDataProtector
     /// <param name="key">The storage-entry key used when the value was protected.</param>
     /// <param name="protectedData">The protected value.</param>
     /// <returns>The original plaintext value.</returns>
+    /// <exception cref="ArgumentException">When <paramref name="key"/> is empty or white space.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="protectedData"/> or <paramref name="key"/> is <see langword="null"/>.</exception>
     public byte[] Unprotect(string key, byte[] protectedData)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(key);

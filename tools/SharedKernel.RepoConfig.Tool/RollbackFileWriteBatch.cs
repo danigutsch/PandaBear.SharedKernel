@@ -9,6 +9,8 @@ namespace PandaBear.RepoConfig.Tool;
 internal static class RollbackFileWriteBatch
 {
     /// <summary>Locks <paramref name="lockScope"/>, runs <paramref name="verifyPreconditions"/>, and atomically replaces each file in <paramref name="writes"/>.</summary>
+    /// <exception cref="ArgumentException"><paramref name="lockScope"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="writes"/> is <see langword="null"/>.</exception>
     public static void Apply(string lockScope, IReadOnlyList<AtomicFileWrite> writes, Action? verifyPreconditions = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(lockScope);
@@ -229,6 +231,7 @@ internal static class RollbackFileWriteBatch
         $"{path}.{Guid.NewGuid():N}.{extension}";
 
     /// <summary>Throws when <paramref name="normalizedPath"/> falls outside <paramref name="normalizedScope"/> or is otherwise not an allowed write target.</summary>
+    /// <exception cref="InvalidOperationException">The path is outside the write scope or is, or traverses, a symbolic link.</exception>
     internal static void ValidateWritePath(string normalizedScope, string normalizedPath)
     {
         normalizedScope = Path.TrimEndingDirectorySeparator(Path.GetFullPath(normalizedScope));

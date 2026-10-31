@@ -9,6 +9,7 @@ internal static class PackageConsumptionCommand
     /// Installs the tool packages in <paramref name="feed" /> and runs their commands with <c>--help</c>, then restores, builds,
     /// and runs the samples against the packages, writing child process output to <paramref name="error" />.
     /// </summary>
+    /// <exception cref="ArgumentException">The feed contains no packages.</exception>
     public static async Task Run(string root, string feed, string version, bool aot, TextWriter output, TextWriter error, CancellationToken ct)
     {
         var packages = Directory.GetFiles(feed, "*.nupkg");

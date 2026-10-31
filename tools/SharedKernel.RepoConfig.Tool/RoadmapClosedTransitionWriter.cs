@@ -7,6 +7,8 @@ namespace PandaBear.RepoConfig.Tool;
 internal static class RoadmapClosedTransitionWriter
 {
     /// <summary>Adds approved transitions to the manifest's closedItemTransitions array, rejecting invalid or conflicting entries, and returns the updated manifest text.</summary>
+    /// <exception cref="ArgumentNullException"><paramref name="manifestContent"/> or <paramref name="approvedTransitions"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">The manifest is invalid, or an approved transition conflicts with it.</exception>
     public static string AddToManifest(
         string manifestContent,
         IReadOnlyList<RoadmapClosedItemTransition> approvedTransitions)

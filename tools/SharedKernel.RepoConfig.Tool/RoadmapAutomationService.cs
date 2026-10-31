@@ -10,6 +10,7 @@ internal sealed class RoadmapAutomationService
     private readonly string _rootPath;
 
     /// <summary>Creates the service for the checkout at <paramref name="rootPath"/>, optionally with injected HTTP and git dependencies.</summary>
+    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
     public RoadmapAutomationService(
         string rootPath,
         HttpClient? httpClient = null,
@@ -22,6 +23,7 @@ internal sealed class RoadmapAutomationService
     }
 
     /// <summary>Returns the full path of the plan artifact under <paramref name="rootPath"/>.</summary>
+    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
     public static string GetPlanPath(string rootPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
@@ -29,6 +31,7 @@ internal sealed class RoadmapAutomationService
     }
 
     /// <summary>Returns the full path of the result seal artifact under <paramref name="rootPath"/>.</summary>
+    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/>, empty, or whitespace.</exception>
     public static string GetResultSealPath(string rootPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
@@ -36,6 +39,8 @@ internal sealed class RoadmapAutomationService
     }
 
     /// <summary>Reads the GitHub snapshot against a clean checkout of the current default branch, writes the plan artifact, and returns the plan.</summary>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="runId"/> is less than 1.</exception>
+    /// <exception cref="InvalidOperationException">The checkout does not match the current default branch head, or the default branch changed while planning.</exception>
     public async Task<RoadmapAutomationPlan> CreatePlan(
         long runId,
         string expectedRepository,
@@ -190,6 +195,7 @@ internal sealed class RoadmapAutomationService
     }
 
     /// <summary>Validates the sealed result and publishes its changes to GitHub as a pull request.</summary>
+    /// <exception cref="InvalidOperationException">No GitHub client can be created.</exception>
     public async Task<RoadmapGitHubPublication> PublishResult(
         string expectedPlanDigest,
         string expectedArtifactDigest,

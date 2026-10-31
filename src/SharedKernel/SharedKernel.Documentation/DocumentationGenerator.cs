@@ -10,6 +10,8 @@ public static class DocumentationGenerator
     /// <summary>
     /// Runs documentation generation from a JSON config file.
     /// </summary>
+    /// <exception cref="ArgumentException"><paramref name="rootPath"/> or <paramref name="configPath"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="InvalidOperationException">The configuration cannot be read or is invalid, or a block cannot be generated or applied.</exception>
     public static DocumentationGenerationResult Run(string rootPath, string configPath, bool checkOnly)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);

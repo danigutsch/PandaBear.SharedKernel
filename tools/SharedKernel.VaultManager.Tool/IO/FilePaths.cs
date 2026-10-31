@@ -29,6 +29,7 @@ internal static class FilePaths
     /// <param name="path">Absolute or relative path.</param>
     /// <returns>The resolved full path.</returns>
     /// <exception cref="IOException">The path holds more than <see cref="MaxLinks"/> symbolic links.</exception>
+    /// <exception cref="ArgumentException"><paramref name="path"/> is empty.</exception>
     public static string ResolveLinks(string path)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);

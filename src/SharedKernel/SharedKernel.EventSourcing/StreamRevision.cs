@@ -21,6 +21,7 @@ public readonly record struct StreamRevision
     /// </summary>
     /// <param name="value">The one-based revision value.</param>
     /// <returns>The created stream revision.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">When <paramref name="value"/> is zero or negative.</exception>
     public static StreamRevision From(long value)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);

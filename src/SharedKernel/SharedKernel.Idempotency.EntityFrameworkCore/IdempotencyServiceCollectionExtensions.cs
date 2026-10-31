@@ -31,6 +31,7 @@ public static class IdempotencyServiceCollectionExtensions
     /// <param name="configureStorage">The delegate that configures the context's idempotency table.</param>
     /// <typeparam name="TContext">The DbContext type that owns the idempotency table.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="configureStorage"/> is <see langword="null"/>.</exception>
     /// <remarks>The store is keyed by <c>typeof(TContext)</c>. It is also the unkeyed store when it is the only context registered or the one chosen with <see cref="UseDefaultIdempotencyStore{TContext}" />.</remarks>
     public static IServiceCollection AddIdempotencyStore<TContext>(
         this IServiceCollection services,
@@ -49,6 +50,7 @@ public static class IdempotencyServiceCollectionExtensions
     /// <param name="services">The service collection to configure.</param>
     /// <typeparam name="TContext">The DbContext type whose store becomes the unkeyed default.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="services"/> is <see langword="null"/>.</exception>
     public static IServiceCollection UseDefaultIdempotencyStore<TContext>(this IServiceCollection services)
         where TContext : DbContext
     {

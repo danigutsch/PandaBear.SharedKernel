@@ -10,6 +10,7 @@ public static class BreakingChangeMarker
     /// </summary>
     /// <param name="messages">Null-separated commit messages.</param>
     /// <returns><see langword="true" /> when a breaking-change marker exists.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="messages"/> is <see langword="null"/>.</exception>
     public static bool HasMarker(string messages)
     {
         ArgumentNullException.ThrowIfNull(messages);

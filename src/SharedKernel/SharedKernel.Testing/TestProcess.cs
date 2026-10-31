@@ -13,6 +13,8 @@ public static class TestProcess
     /// <param name="cancellationToken">Cancels the wait and kills the process.</param>
     /// <param name="environment">Environment variables to set or, with a <see langword="null" /> value, to remove.</param>
     /// <returns>The exit code and captured output.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="arguments"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the process does not start.</exception>
     public static async Task<TestProcessResult> Run(
         string fileName,
         string workingDirectory,

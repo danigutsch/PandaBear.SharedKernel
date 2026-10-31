@@ -15,6 +15,8 @@ internal static class GitHubRequestTimeout
     /// <summary>Creates the timeout exception for an operation that exceeded the given duration.</summary>
     /// <param name="operation">Description of the operation that timed out.</param>
     /// <param name="duration">Duration that was exceeded; must be positive.</param>
+    /// <exception cref="ArgumentException"><paramref name="operation"/> is <see langword="null"/>, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="duration"/> is not positive.</exception>
     public static TimeoutException Create(string operation, TimeSpan duration)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(operation);

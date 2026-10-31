@@ -19,6 +19,7 @@ internal static class GitHubSubissueCommand
     /// </summary>
     /// <exception cref="InvalidOperationException">Arguments are invalid, authentication is absent, or GitHub rejects or fails to verify the link.</exception>
     /// <exception cref="TimeoutException">GitHub does not complete the operation within thirty seconds.</exception>
+    /// <exception cref="OperationCanceledException">The caller cancels the operation.</exception>
     public static async Task<int> Run(
         string repository,
         int parent,

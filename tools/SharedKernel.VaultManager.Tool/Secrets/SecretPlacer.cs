@@ -15,6 +15,7 @@ internal static class SecretPlacer
     /// <param name="accepted">Findings the user accepted, including pre-accepted ones.</param>
     /// <param name="attachmentTexts">Attachment text by <c>attachment:</c> field path, for findings from attachments.</param>
     /// <returns>The updated item, new items, and problems described without values.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="item"/> or <paramref name="accepted"/> is <see langword="null"/>.</exception>
     public static PlacementResult Apply(VaultItem item, IEnumerable<SecretFinding> accepted, IReadOnlyDictionary<string, string>? attachmentTexts = null)
     {
         ArgumentNullException.ThrowIfNull(item);

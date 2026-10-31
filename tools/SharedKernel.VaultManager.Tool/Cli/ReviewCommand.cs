@@ -28,6 +28,7 @@ internal static class ReviewCommand
     /// <param name="environment">Password prompts, terminal state, and clock.</param>
     /// <param name="terminal">Terminal that runs the review UI.</param>
     /// <returns>The command.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="environment"/> or <paramref name="terminal"/> is <see langword="null"/>.</exception>
     public static Command Create(VaultCommandEnvironment environment, ReviewTerminal terminal)
     {
         ArgumentNullException.ThrowIfNull(environment);

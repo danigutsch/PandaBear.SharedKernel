@@ -21,6 +21,8 @@ public static class AntiforgerySignOutEndpointRouteBuilderExtensions
     /// <param name="remoteAuthenticationScheme">The remote identity-provider authentication scheme.</param>
     /// <param name="redirectUri">The local URI to use after remote sign-out.</param>
     /// <returns>The configured endpoint.</returns>
+    /// <exception cref="ArgumentException">When <paramref name="pattern"/>, <paramref name="localAuthenticationScheme"/>, <paramref name="remoteAuthenticationScheme"/>, or <paramref name="redirectUri"/> is empty or white space, or <paramref name="redirectUri"/> is not a local path.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="endpoints"/>, <paramref name="pattern"/>, <paramref name="localAuthenticationScheme"/>, <paramref name="remoteAuthenticationScheme"/>, or <paramref name="redirectUri"/> is <see langword="null"/>.</exception>
     [RequiresDynamicCode("Maps a route handler that relies on runtime-generated code.")]
     [RequiresUnreferencedCode("Maps a route handler that requires unreferenced application code.")]
     public static IEndpointConventionBuilder MapAntiforgeryProtectedSignOut(
@@ -66,6 +68,7 @@ public static class AntiforgerySignOutEndpointRouteBuilderExtensions
     /// <param name="remoteAuthenticationScheme">The remote identity-provider authentication scheme.</param>
     /// <param name="redirectUri">The local URI to use after remote sign-out.</param>
     /// <returns>The configured endpoint.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="redirectUri"/> is <see langword="null"/>.</exception>
     [RequiresDynamicCode("Maps a route handler that relies on runtime-generated code.")]
     [RequiresUnreferencedCode("Maps a route handler that requires unreferenced application code.")]
     public static IEndpointConventionBuilder MapAntiforgeryProtectedSignOut(

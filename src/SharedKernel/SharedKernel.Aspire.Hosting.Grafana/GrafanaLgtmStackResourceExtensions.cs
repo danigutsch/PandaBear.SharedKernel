@@ -152,6 +152,7 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="builder">The resource builder.</param>
     /// <param name="port">The port to bind on the host. If <see langword="null"/> is used random port will be assigned.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<GrafanaResource> WithHostPort(this IResourceBuilder<GrafanaResource> builder, int? port)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -166,6 +167,7 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="name">The name of the volume. Defaults to an auto-generated name based on the application and resource names.</param>
     /// <param name="isReadOnly">A flag that indicates if this is a read-only volume.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<GrafanaResource> WithDataVolume(this IResourceBuilder<GrafanaResource> builder, string? name = null, bool isReadOnly = false)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -180,6 +182,8 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="source">The source directory on the host to mount into the container.</param>
     /// <param name="isReadOnly">A flag that indicates if this is a read-only mount.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentException"><paramref name="source"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<GrafanaResource> WithDataBindMount(this IResourceBuilder<GrafanaResource> builder, string source, bool isReadOnly = false)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -230,6 +234,7 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="builder">The resource builder.</param>
     /// <param name="port">The port to bind on the host. If <see langword="null"/> is used random port will be assigned.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<LokiResource> WithHostPort(this IResourceBuilder<LokiResource> builder, int? port)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -244,6 +249,7 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="name">The name of the volume. Defaults to an auto-generated name based on the application and resource names.</param>
     /// <param name="isReadOnly">A flag that indicates if this is a read-only volume.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
     /// <remarks>The configuration file must store its data below <c>/loki</c>, the data folder of the Loki image.</remarks>
     public static IResourceBuilder<LokiResource> WithDataVolume(this IResourceBuilder<LokiResource> builder, string? name = null, bool isReadOnly = false)
     {
@@ -259,6 +265,8 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="source">The source directory on the host to mount into the container.</param>
     /// <param name="isReadOnly">A flag that indicates if this is a read-only mount.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentException"><paramref name="source"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
     /// <remarks>The configuration file must store its data below <c>/loki</c>, the data folder of the Loki image.</remarks>
     public static IResourceBuilder<LokiResource> WithDataBindMount(this IResourceBuilder<LokiResource> builder, string source, bool isReadOnly = false)
     {
@@ -312,6 +320,7 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="builder">The resource builder.</param>
     /// <param name="port">The port to bind on the host. If <see langword="null"/> is used random port will be assigned.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<TempoResource> WithHostPort(this IResourceBuilder<TempoResource> builder, int? port)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -326,6 +335,7 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="name">The name of the volume. Defaults to an auto-generated name based on the application and resource names.</param>
     /// <param name="isReadOnly">A flag that indicates if this is a read-only volume.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
     /// <remarks>The configuration file must store its data below <c>/var/tempo</c>, the data folder of the Tempo image.</remarks>
     public static IResourceBuilder<TempoResource> WithDataVolume(this IResourceBuilder<TempoResource> builder, string? name = null, bool isReadOnly = false)
     {
@@ -341,6 +351,8 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="source">The source directory on the host to mount into the container.</param>
     /// <param name="isReadOnly">A flag that indicates if this is a read-only mount.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentException"><paramref name="source"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
     /// <remarks>The configuration file must store its data below <c>/var/tempo</c>, the data folder of the Tempo image.</remarks>
     public static IResourceBuilder<TempoResource> WithDataBindMount(this IResourceBuilder<TempoResource> builder, string source, bool isReadOnly = false)
     {
@@ -392,6 +404,7 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="builder">The resource builder.</param>
     /// <param name="port">The port to bind on the host. If <see langword="null"/> is used random port will be assigned.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<PrometheusResource> WithHostPort(this IResourceBuilder<PrometheusResource> builder, int? port)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -406,6 +419,7 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="name">The name of the volume. Defaults to an auto-generated name based on the application and resource names.</param>
     /// <param name="isReadOnly">A flag that indicates if this is a read-only volume.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<PrometheusResource> WithDataVolume(this IResourceBuilder<PrometheusResource> builder, string? name = null, bool isReadOnly = false)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -420,6 +434,8 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="source">The source directory on the host to mount into the container.</param>
     /// <param name="isReadOnly">A flag that indicates if this is a read-only mount.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentException"><paramref name="source"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
     public static IResourceBuilder<PrometheusResource> WithDataBindMount(this IResourceBuilder<PrometheusResource> builder, string source, bool isReadOnly = false)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -434,6 +450,8 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
     /// <param name="configurationRoot">The path of the folder that contains the <c>grafana</c>, <c>loki</c>, <c>otel-collector</c>, <c>prometheus</c>, and <c>tempo</c> configuration folders.</param>
     /// <returns>A reference to the <see cref="IResourceBuilder{T}"/> for the Grafana resource.</returns>
+    /// <exception cref="ArgumentException"><paramref name="configurationRoot"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// The resources are named with <see cref="GrafanaLgtmStackDefaults.ResourceNames"/>.
     /// </remarks>
@@ -454,6 +472,8 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <param name="resourceNames">The names of the resources.</param>
     /// <param name="configurationRoot">The path of the folder that contains the <c>grafana</c>, <c>loki</c>, <c>otel-collector</c>, <c>prometheus</c>, and <c>tempo</c> configuration folders.</param>
     /// <returns>A reference to the <see cref="IResourceBuilder{T}"/> for the Grafana resource.</returns>
+    /// <exception cref="ArgumentException"><paramref name="configurationRoot"/> is <see langword="null"/>, empty, or white space.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="resourceNames"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// The collector waits for Tempo and Loki, Prometheus waits for the collector, and Grafana waits for Loki, Tempo, and Prometheus.
     /// </remarks>

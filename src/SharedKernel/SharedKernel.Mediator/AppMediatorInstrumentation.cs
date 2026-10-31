@@ -15,6 +15,7 @@ public sealed class AppMediatorInstrumentation : IDisposable
     /// Initializes a new instance of the <see cref="AppMediatorInstrumentation" /> class.
     /// </summary>
     /// <param name="meterFactory">The meter factory used to create the mediator meter.</param>
+    /// <exception cref="ArgumentNullException">When <paramref name="meterFactory"/> is <see langword="null"/>.</exception>
     public AppMediatorInstrumentation(IMeterFactory meterFactory)
     {
         ArgumentNullException.ThrowIfNull(meterFactory);

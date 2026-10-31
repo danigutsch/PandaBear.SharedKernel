@@ -13,6 +13,9 @@ public static class AspNetCoreRateLimitingExtensions
     /// <summary>
     /// Adds a fixed-window rate-limit policy partitioned by remote IP address.
     /// </summary>
+    /// <exception cref="ArgumentException">When <paramref name="policyName"/> is empty or white space.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="options"/> or <paramref name="policyName"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">When <paramref name="permitLimit"/> is zero or negative or <paramref name="window"/> is zero or negative.</exception>
     /// <remarks>
     /// Applications behind reverse proxies must configure and trust forwarded headers before this policy runs.
     /// Otherwise, the remote IP address may be the proxy address rather than the original client address.
@@ -64,6 +67,7 @@ public static class AspNetCoreRateLimitingExtensions
     /// <summary>
     /// Adds fixed-window rate-limit policies partitioned by remote IP address.
     /// </summary>
+    /// <exception cref="ArgumentNullException">When <paramref name="options"/> or <paramref name="policies"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// This helper also sets <see cref="RateLimiterOptions.RejectionStatusCode" /> to
     /// <see cref="StatusCodes.Status429TooManyRequests" /> through each added policy.

@@ -21,6 +21,7 @@ internal sealed record ItemNotesDecision(string OriginKey, NotesDecision Decisio
     /// <summary>Hashes notes for <see cref="NotesSha256"/>.</summary>
     /// <param name="notes">Notes text.</param>
     /// <returns>SHA-256 of the UTF-8 text, in lowercase hexadecimal.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="notes"/> is <see langword="null"/>.</exception>
     public static string HashOf(string notes)
     {
         ArgumentNullException.ThrowIfNull(notes);

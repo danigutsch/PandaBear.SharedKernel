@@ -13,6 +13,7 @@ internal static class ReviewApp
     /// <param name="session">Review state.</param>
     /// <param name="ct">Cancels the review.</param>
     /// <returns><see cref="ExitCodes.Success"/>, or <see cref="ExitCodes.UnexpectedError"/> when the review was canceled.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="session"/> is <see langword="null"/>.</exception>
     public static int Run(ReviewSession session, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(session);
@@ -28,6 +29,7 @@ internal static class ReviewApp
     /// <param name="dialogs">Questions and messages the window shows.</param>
     /// <param name="ct">Cancels the review.</param>
     /// <returns><see cref="ExitCodes.Success"/>, or <see cref="ExitCodes.UnexpectedError"/> when the review was canceled.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="app"/> or <paramref name="session"/> or <paramref name="dialogs"/> is <see langword="null"/>.</exception>
     internal static int Run(IApplication app, ReviewSession session, IReviewDialogs dialogs, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(app);

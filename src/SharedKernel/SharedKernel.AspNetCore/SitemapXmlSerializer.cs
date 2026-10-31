@@ -27,6 +27,7 @@ public static class SitemapXmlSerializer
     /// <param name="cancellationToken">The token used to cancel serialization.</param>
     /// <returns>A task that represents the serialization operation. The task result contains a readable UTF-8 sitemap XML stream positioned at its beginning.</returns>
     /// <exception cref="InvalidOperationException">Thrown when more than <see cref="MaximumUrlCount" /> entries are provided.</exception>
+    /// <exception cref="ArgumentNullException">When <paramref name="entries"/> is <see langword="null"/> or contains a <see langword="null"/> entry.</exception>
     public static async Task<Stream> Serialize(IEnumerable<SitemapEntry> entries, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entries);

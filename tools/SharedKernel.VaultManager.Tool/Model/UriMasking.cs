@@ -17,6 +17,7 @@ internal static class UriMasking
     /// The address with user info replaced before <c>@</c>, and the text after <c>?</c> or <c>#</c> replaced; or the scheme
     /// followed by the mask.
     /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="uri"/> or <paramref name="mask"/> is <see langword="null"/>.</exception>
     public static string Mask(string uri, string mask)
     {
         ArgumentNullException.ThrowIfNull(uri);
@@ -41,6 +42,7 @@ internal static class UriMasking
     /// <param name="uri">Address as stored; it need not be a valid absolute URI.</param>
     /// <param name="mask">Text that replaces the rest of the address.</param>
     /// <returns>The scheme and <c>://</c> followed by the mask, or the mask alone for an address without a scheme.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="uri"/> or <paramref name="mask"/> is <see langword="null"/>.</exception>
     public static string MaskAfterScheme(string uri, string mask)
     {
         ArgumentNullException.ThrowIfNull(uri);

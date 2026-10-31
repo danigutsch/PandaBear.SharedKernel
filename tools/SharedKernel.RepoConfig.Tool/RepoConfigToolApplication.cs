@@ -16,6 +16,7 @@ internal static class RepoConfigToolApplication
     /// Runs a command and reports expected failures on standard error with exit code 1.
     /// Caller cancellation propagates so System.CommandLine handles it.
     /// </summary>
+    /// <exception cref="ArgumentNullException"><paramref name="error"/> or <paramref name="command"/> is <see langword="null"/>.</exception>
     public static async Task<int> Guard(TextWriter error, Func<Task<int>> command, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(error);
@@ -109,6 +110,8 @@ internal static class RepoConfigToolApplication
     }
 
     /// <summary>Runs a roadmap query against the loaded roadmap and writes up to <paramref name="limit"/> matching results.</summary>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="query"/> is not a known roadmap query.</exception>
+    /// <exception cref="InvalidOperationException">The queried roadmap item ID is unknown.</exception>
     public static int Get(string rootPath, string query, string? value, string? type, int limit, TextWriter output)
     {
         // The command tree accepts only known queries and requires a value exactly for blockers-of, by-tag, and by-label.
@@ -293,6 +296,7 @@ internal static class RepoConfigToolApplication
     /// Verifies the links in the documentation files that the <c>links</c> section of the consumer configuration
     /// selects, or in <paramref name="paths"/> when any are given.
     /// </summary>
+    /// <exception cref="InvalidOperationException">The consumer configuration has no links section.</exception>
     public static async Task<int> VerifyLinks(string rootPath, IReadOnlyList<string> paths, TextWriter output, TextWriter error, CancellationToken ct)
     {
         var configuration = await ConsumerConfigurationFile.Read(rootPath, ct).ConfigureAwait(false);
@@ -313,6 +317,7 @@ internal static class RepoConfigToolApplication
     /// Verifies the feature files that the <c>gherkin</c> section of the consumer configuration selects, or the tracked
     /// feature files that <paramref name="paths"/> name, against its rules.
     /// </summary>
+    /// <exception cref="InvalidOperationException">The consumer configuration has no gherkin section.</exception>
     public static async Task<int> VerifyGherkin(string rootPath, IReadOnlyList<string> paths, TextWriter output, TextWriter error, CancellationToken ct)
     {
         var configuration = await ConsumerConfigurationFile.Read(rootPath, ct).ConfigureAwait(false);
@@ -333,6 +338,7 @@ internal static class RepoConfigToolApplication
     /// Verifies the license exceptions in the consumer configuration. On success, appends
     /// <c>packages=pkg:nuget/&lt;id&gt;@&lt;version&gt;,...</c> to <paramref name="githubOutput"/> when it is given.
     /// </summary>
+    /// <exception cref="InvalidOperationException">The consumer configuration has no licenseExceptions section.</exception>
     public static async Task<int> VerifyLicenseExceptions(string rootPath, string? githubOutput, TextWriter output, TextWriter error, CancellationToken ct)
     {
         var configuration = await ConsumerConfigurationFile.Read(rootPath, ct).ConfigureAwait(false);
@@ -356,6 +362,7 @@ internal static class RepoConfigToolApplication
     }
 
     /// <summary>Creates the roadmap automation plan for the current workflow run and publishes its digest, branch name, and base SHA as workflow outputs.</summary>
+    /// <exception cref="InvalidOperationException"><c>GITHUB_RUN_ID</c> is not a positive number.</exception>
     public static async Task<int> PlanAutomation(RoadmapAutomationService service, TextWriter output, CancellationToken ct)
     {
         var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");

@@ -15,6 +15,7 @@ public static class DomainEventDispatchServiceCollectionExtensions
     /// <param name="services">The service collection to configure.</param>
     /// <typeparam name="TContext">The DbContext type.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="services"/> is <see langword="null"/>.</exception>
     public static IServiceCollection AddDomainEventDispatch<TContext>(this IServiceCollection services)
         where TContext : DbContext
     {

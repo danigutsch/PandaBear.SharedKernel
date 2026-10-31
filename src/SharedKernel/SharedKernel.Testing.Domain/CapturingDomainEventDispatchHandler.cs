@@ -10,6 +10,7 @@ public sealed class CapturingDomainEventDispatchHandler(string name, IList<strin
     /// <summary>Throws when the event is null or the token is already cancelled, otherwise adds the handler name to the call list.</summary>
     /// <param name="domainEvent">The event being dispatched.</param>
     /// <param name="ct">The cancellation token for the dispatch.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="domainEvent"/> is <see langword="null"/>.</exception>
     public ValueTask Handle(IDomainEvent domainEvent, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(domainEvent);

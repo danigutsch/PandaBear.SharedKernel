@@ -11,6 +11,7 @@ public sealed class CapturedHttpRequest
     /// <param name="message">The captured request message.</param>
     /// <param name="pathAndQuery">The captured request path and query.</param>
     /// <param name="body">The captured request body.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="message"/> or <paramref name="pathAndQuery"/> is <see langword="null"/>.</exception>
     public CapturedHttpRequest(HttpRequestMessage message, string pathAndQuery, string? body)
     {
         ArgumentNullException.ThrowIfNull(message);

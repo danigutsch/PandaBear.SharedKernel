@@ -18,6 +18,8 @@ public sealed class ProgressStreamContent : HttpContent
     /// <param name="content">The source stream. Disposing this content also disposes the source.</param>
     /// <param name="contentLength">The authoritative declared file length.</param>
     /// <param name="progress">Receives cumulative file bytes after they are written to the transport.</param>
+    /// <exception cref="ArgumentNullException">When <paramref name="content"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">When <paramref name="contentLength"/> is negative.</exception>
     public ProgressStreamContent(Stream content, long contentLength, IProgress<long>? progress)
     {
         ArgumentNullException.ThrowIfNull(content);
