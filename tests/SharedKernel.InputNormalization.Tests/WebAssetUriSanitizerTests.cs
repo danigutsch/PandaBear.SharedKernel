@@ -65,4 +65,63 @@ public sealed class WebAssetUriSanitizerTests
         // Assert
         normalized.ShouldBeNull();
     }
+
+    [Theory]
+    [InlineData("data:image/png;base64,iVBORw0KGgo=")]
+    [InlineData("data:image/jpeg;base64,/9j/")]
+    [InlineData("data:image/webp;base64,UklGRgAAAABXRUJQ")]
+    public void NormalizeRasterDataImage_accepts_png_jpeg_and_webp_whose_bytes_match_the_declared_type(string candidate)
+    {
+        // Arrange
+        const int maxLength = 4096;
+
+        // Act
+        var normalized = WebAssetUriSanitizer.NormalizeRasterDataImage(candidate, maxLength);
+
+        // Assert
+        normalized.ShouldBe(candidate);
+    }
+
+    [Theory]
+    [InlineData("data:image/svg+xml;base64,PHN2Zy8+")]
+    [InlineData("data:image/gif;base64,R0lGODlh")]
+    [InlineData("data:image/webp;base64,UklGRgAAAABXQVZF")]
+    [InlineData("data:text/html;base64,PGI+")]
+    [InlineData("data:image/png;base64,/9j/")]
+    [InlineData("data:image/jpeg;base64,iVBORw0KGgo=")]
+    [InlineData("data:image/png;charset=utf-8;base64,iVBORw0KGgo=")]
+    [InlineData("data:image/png,iVBORw0KGgo=")]
+    [InlineData("DATA:image/png;base64,iVBORw0KGgo=")]
+    [InlineData("data:image/png;base64,iVBORw0KGgo")]
+    [InlineData("data:image/png;base64,iVBO Rw0KGgo=")]
+    [InlineData("data:image/png;base64,iVBORw0KGgo=\n")]
+    [InlineData("data:image/png;base64,")]
+    [InlineData("https://cdn.example.test/logo.png")]
+    [InlineData("/logo.png")]
+    public void NormalizeRasterDataImage_rejects_other_types_mismatched_bytes_and_malformed_payloads(string candidate)
+    {
+        // Arrange
+        const int maxLength = 4096;
+
+        // Act
+        var normalized = WebAssetUriSanitizer.NormalizeRasterDataImage(candidate, maxLength);
+
+        // Assert
+        normalized.ShouldBeNull();
+    }
+
+    [Fact]
+    public void NormalizeRasterDataImage_rejects_a_uri_longer_than_the_limit_and_null()
+    {
+        // Arrange
+        const string candidate = "data:image/png;base64,iVBORw0KGgo=";
+
+        // Act
+        var tooLong = WebAssetUriSanitizer.NormalizeRasterDataImage(candidate, candidate.Length - 1);
+        var missing = WebAssetUriSanitizer.NormalizeRasterDataImage(null, 4096);
+
+        // Assert
+        tooLong.ShouldBeNull();
+        missing.ShouldBeNull();
+    }
 }

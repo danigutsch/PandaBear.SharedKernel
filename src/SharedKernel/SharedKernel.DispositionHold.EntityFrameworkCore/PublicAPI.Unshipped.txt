@@ -1,0 +1,9 @@
+PandaBear.DispositionHold.EntityFrameworkCore.DispositionHoldServiceCollectionExtensions
+PandaBear.DispositionHold.EntityFrameworkCore.DispositionHoldStorageOptions
+PandaBear.DispositionHold.EntityFrameworkCore.DispositionHoldStorageOptions.DispositionHoldStorageOptions() -> void
+PandaBear.DispositionHold.EntityFrameworkCore.DispositionHoldStorageOptions.Schema.get -> string!
+PandaBear.DispositionHold.EntityFrameworkCore.DispositionHoldStorageOptions.Schema.set -> void
+PandaBear.DispositionHold.EntityFrameworkCore.DispositionHoldStorageOptions.TableName.get -> string!
+PandaBear.DispositionHold.EntityFrameworkCore.DispositionHoldStorageOptions.TableName.set -> void
+static PandaBear.DispositionHold.EntityFrameworkCore.DispositionHoldServiceCollectionExtensions.AddDispositionHolds<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static PandaBear.DispositionHold.EntityFrameworkCore.DispositionHoldServiceCollectionExtensions.AddDispositionHolds<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<PandaBear.DispositionHold.EntityFrameworkCore.DispositionHoldStorageOptions!>! configureStorage) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

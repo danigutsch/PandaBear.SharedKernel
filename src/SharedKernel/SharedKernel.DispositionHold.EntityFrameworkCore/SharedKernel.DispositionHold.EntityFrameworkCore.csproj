@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>PandaBear.SharedKernel.DispositionHold.EntityFrameworkCore</PackageId>
+        <Description>Entity Framework Core store and fail-closed guard for disposition holds on PostgreSQL.</Description>
+        <RootNamespace>PandaBear.DispositionHold.EntityFrameworkCore</RootNamespace>
+        <PackageTags>disposition-hold;retention;entity-framework-core;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.EntityFrameworkCore\SharedKernel.EntityFrameworkCore.csproj" />
+        <ProjectReference Include="..\SharedKernel.BuildingBlocks\SharedKernel.BuildingBlocks.csproj" />
+        <ProjectReference Include="..\SharedKernel.Npgsql\SharedKernel.Npgsql.csproj" />
+        <ProjectReference Include="..\SharedKernel.DispositionHold.Abstractions\SharedKernel.DispositionHold.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

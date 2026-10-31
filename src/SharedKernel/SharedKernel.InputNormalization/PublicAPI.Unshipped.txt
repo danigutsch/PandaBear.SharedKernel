@@ -10,5 +10,6 @@ static PandaBear.InputNormalization.StringSanitizer.NormalizeKeyRemovingDiacriti
 static PandaBear.InputNormalization.StringSanitizer.Sanitize(string? value) -> string?
 static PandaBear.InputNormalization.StringSanitizer.SanitizeCollection(System.Collections.Generic.IEnumerable<string!>? values) -> string![]!
 static PandaBear.InputNormalization.StringSanitizer.SanitizeNotes(string? value) -> string?
+static PandaBear.InputNormalization.WebAssetUriSanitizer.NormalizeRasterDataImage(string? value, int maxLength) -> string?
 static PandaBear.InputNormalization.WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(string? value, int maxLength) -> string?
 static PandaBear.InputNormalization.WebAssetUriSanitizer.ToRootRelativeOrHttpsUri(string? value, int maxLength) -> System.Uri?

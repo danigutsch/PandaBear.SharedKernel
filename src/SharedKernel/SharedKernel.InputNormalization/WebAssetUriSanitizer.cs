@@ -7,6 +7,13 @@ namespace PandaBear.InputNormalization;
 /// </summary>
 public static class WebAssetUriSanitizer
 {
+    private static readonly (string Prefix, byte?[] Signature)[] RasterDataUriSignatures =
+    [
+        ("data:image/png;base64,", [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]),
+        ("data:image/jpeg;base64,", [0xFF, 0xD8, 0xFF]),
+        ("data:image/webp;base64,", [0x52, 0x49, 0x46, 0x46, null, null, null, null, 0x57, 0x45, 0x42, 0x50]),
+    ];
+
     /// <summary>
     /// Normalizes a root-relative or absolute HTTPS web asset URI string.
     /// </summary>
@@ -62,6 +69,72 @@ public static class WebAssetUriSanitizer
     {
         var normalized = NormalizeRootRelativeOrHttps(value, maxLength);
         return normalized is null ? null : new Uri(normalized, UriKind.RelativeOrAbsolute);
+    }
+
+    /// <summary>
+    /// Returns the value unchanged when it is a base64 <c>data:</c> URI of a PNG, JPEG or WebP image whose decoded bytes
+    /// start with the signature of the declared type (a RIFF header carrying the WEBP tag for WebP); otherwise <see langword="null" />. SVG and every other type are
+    /// rejected because they can carry script or external references, as are parameters, whitespace, unpadded or
+    /// malformed base64, and values longer than <paramref name="maxLength" />. The check proves only the type signature;
+    /// an application that accepts uploads must still decode and re-encode the image itself.
+    /// </summary>
+    /// <param name="value">The candidate URI.</param>
+    /// <param name="maxLength">The maximum accepted length of the whole URI.</param>
+    /// <returns>The accepted URI, or <see langword="null" />.</returns>
+    public static string? NormalizeRasterDataImage(string? value, int maxLength)
+    {
+        if (value is null || value.Length > maxLength)
+        {
+            return null;
+        }
+
+        foreach (var (prefix, signature) in RasterDataUriSignatures)
+        {
+            if (value.StartsWith(prefix, StringComparison.Ordinal))
+            {
+                return HasSignature(value.AsSpan(prefix.Length), signature) ? value : null;
+            }
+        }
+
+        return null;
+    }
+
+    private static bool HasSignature(ReadOnlySpan<char> base64, byte?[] signature)
+    {
+        if (base64.IsEmpty || base64.Length % 4 != 0 || !IsStrictBase64(base64))
+        {
+            return false;
+        }
+
+        var bytes = new byte[base64.Length / 4 * 3];
+        if (!Convert.TryFromBase64Chars(base64, bytes, out var written) || written < signature.Length)
+        {
+            return false;
+        }
+
+        for (var index = 0; index < signature.Length; index++)
+        {
+            if (signature[index] is { } expected && bytes[index] != expected)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool IsStrictBase64(ReadOnlySpan<char> value)
+    {
+        var padding = value.EndsWith("==", StringComparison.Ordinal) ? 2 : value.EndsWith('=') ? 1 : 0;
+        foreach (var character in value[..^padding])
+        {
+            if (!char.IsAsciiLetterOrDigit(character) && character is not ('+' or '/'))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static bool ContainsControlCharacter(string value) => value.Any(char.IsControl);

@@ -151,6 +151,7 @@
   <Project Path="tools/SharedKernel.CI.Tool/SharedKernel.CI.Tool.csproj" />
   <Project Path="tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.DispositionHold.Abstractions/SharedKernel.DispositionHold.Abstractions.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.DispositionHold.EntityFrameworkCore/SharedKernel.DispositionHold.EntityFrameworkCore.csproj" />
   <Project Path="tests/SharedKernel.DispositionHold.Abstractions.Tests/SharedKernel.DispositionHold.Abstractions.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Documentation/SharedKernel.Documentation.csproj" />
   <Project Path="tools/SharedKernel.Documentation.Tool/SharedKernel.Documentation.Tool.csproj" />

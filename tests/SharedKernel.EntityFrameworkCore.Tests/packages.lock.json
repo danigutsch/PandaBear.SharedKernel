@@ -913,6 +913,20 @@
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.DispositionHold.Abstractions": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.DispositionHold.EntityFrameworkCore": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.Relational": "[10.0.13, )",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
+          "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.DispositionHold.Abstractions": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.EntityFrameworkCore": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Npgsql": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.Domain": {
         "type": "Project",
         "dependencies": {
@@ -980,6 +994,12 @@
           "PandaBear.SharedKernel.Messaging": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Messaging.IntegrationEvents": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Scheduling": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Npgsql": {
+        "type": "Project",
+        "dependencies": {
+          "Npgsql": "[10.0.3, )"
         }
       },
       "PandaBear.SharedKernel.Npgsql.Testing": {

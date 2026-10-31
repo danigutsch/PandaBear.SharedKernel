@@ -41,7 +41,7 @@ PandaBear.DispositionHold.HoldBasis.RegulatoryInquiry = 3 -> PandaBear.Dispositi
 PandaBear.DispositionHold.IDispositionHoldGuard
 PandaBear.DispositionHold.IDispositionHoldGuard.Check(System.Collections.Generic.IReadOnlyCollection<PandaBear.DispositionHold.DispositionScope>! scopes, System.DateTimeOffset at, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.DispositionHold.DispositionHoldDecision>
 PandaBear.DispositionHold.IDispositionHoldStore
-PandaBear.DispositionHold.IDispositionHoldStore.Add(PandaBear.DispositionHold.Hold! hold) -> void
+PandaBear.DispositionHold.IDispositionHoldStore.Add(PandaBear.DispositionHold.Hold! hold, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 PandaBear.DispositionHold.IDispositionHoldStore.Find(System.Guid id, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.DispositionHold.Hold?>
 static PandaBear.DispositionHold.DispositionHoldDecision.Clear.get -> PandaBear.DispositionHold.DispositionHoldDecision
 static PandaBear.DispositionHold.DispositionHoldDecision.HeldBy(System.Collections.Generic.IReadOnlyList<System.Guid>! holdIds) -> PandaBear.DispositionHold.DispositionHoldDecision
