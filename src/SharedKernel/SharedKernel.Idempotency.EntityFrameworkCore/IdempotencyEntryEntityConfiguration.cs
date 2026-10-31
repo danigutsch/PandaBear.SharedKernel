@@ -44,5 +44,7 @@ internal sealed class IdempotencyEntryEntityConfiguration : IEntityTypeConfigura
         builder.Property(entry => entry.State).HasConversion<string>().HasMaxLength(32).IsRequired().IsConcurrencyToken();
         builder.Property(entry => entry.StartedAt).IsConcurrencyToken();
         builder.Property(entry => entry.ResultFingerprint).HasMaxLength(512);
+        builder.Property(entry => entry.RetentionOwner).HasMaxLength(RetentionOwnerIdentifier.MaxLength);
+        builder.HasIndex(entry => entry.RetentionOwner);
     }
 }

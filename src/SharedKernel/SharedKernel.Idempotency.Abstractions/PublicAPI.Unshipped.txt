@@ -44,3 +44,16 @@ static PandaBear.Idempotency.IdempotencyKey.From(string? value) -> PandaBear.Ide
 override PandaBear.Idempotency.IdempotencyKey.ToString() -> string!
 static PandaBear.Idempotency.IdempotencyScope.From(string? value) -> PandaBear.Idempotency.IdempotencyScope
 override PandaBear.Idempotency.IdempotencyScope.ToString() -> string!
+PandaBear.Idempotency.IIdempotencyRetentionStore
+PandaBear.Idempotency.IIdempotencyRetentionStore.PurgeExpired(System.DateTimeOffset cutoff, string? ownerTrackedScopePrefix, System.Collections.Generic.IReadOnlyCollection<string!>! heldRetentionOwners, int batchSize, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Idempotency.IdempotencyRetentionPurgeResult!>
+PandaBear.Idempotency.IIdempotencyStore.TryStart(PandaBear.Idempotency.IdempotencyOperation operation, System.DateTimeOffset startedAt, System.TimeSpan? lockDuration, string? retentionOwner, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Idempotency.IdempotencyStartResult!>
+PandaBear.Idempotency.IdempotencyEntry.RetentionOwner.get -> string?
+PandaBear.Idempotency.IdempotencyEntry.RetentionOwner.init -> void
+PandaBear.Idempotency.IdempotencyRetentionPurgeResult
+PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Held.get -> long
+PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Held.init -> void
+PandaBear.Idempotency.IdempotencyRetentionPurgeResult.IdempotencyRetentionPurgeResult(long Purged, long Held, long Unattributed) -> void
+PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Purged.get -> long
+PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Purged.init -> void
+PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Unattributed.get -> long
+PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Unattributed.init -> void

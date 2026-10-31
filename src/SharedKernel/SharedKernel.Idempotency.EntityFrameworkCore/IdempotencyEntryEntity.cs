@@ -11,10 +11,12 @@ internal sealed class IdempotencyEntryEntity
     /// <param name="scope">The operation scope.</param>
     /// <param name="key">The operation key.</param>
     /// <param name="startedAt">The time at which processing started.</param>
+    /// <param name="retentionOwner">The optional retention owner key.</param>
     public IdempotencyEntryEntity(
         string scope,
         string key,
-        DateTimeOffset startedAt)
+        DateTimeOffset startedAt,
+        string? retentionOwner = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(scope);
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
@@ -23,6 +25,7 @@ internal sealed class IdempotencyEntryEntity
         Key = key;
         State = IdempotencyEntryState.Started;
         StartedAt = startedAt;
+        RetentionOwner = retentionOwner;
     }
 
     /// <summary>
@@ -83,11 +86,21 @@ internal sealed class IdempotencyEntryEntity
     }
 
     /// <summary>
+    /// Gets the optional key of the record that owns the entry for retention purposes.
+    /// </summary>
+    public string? RetentionOwner
+    {
+        get; private set;
+    }
+
+    /// <summary>
     /// Restarts processing for an expired operation.
     /// </summary>
     /// <param name="startedAt">The new processing start time.</param>
-    public void Restart(DateTimeOffset startedAt)
+    /// <param name="retentionOwner">The retention owner key to record, or null to keep the stored one.</param>
+    public void Restart(DateTimeOffset startedAt, string? retentionOwner = null)
     {
+        RetentionOwner = retentionOwner ?? RetentionOwner;
         State = IdempotencyEntryState.Started;
         StartedAt = startedAt;
         CompletedAt = null;

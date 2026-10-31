@@ -20,6 +20,31 @@ public interface IIdempotencyStore
         CancellationToken ct);
 
     /// <summary>
+    /// Attempts to start processing an idempotent operation and records the retention owner of the entry.
+    /// </summary>
+    /// <param name="operation">The idempotent operation.</param>
+    /// <param name="startedAt">The time at which processing starts.</param>
+    /// <param name="lockDuration">The optional processing lock duration.</param>
+    /// <param name="retentionOwner">
+    /// The opaque key of the record that owns the entry for retention purposes, or <see langword="null" /> for none.
+    /// </param>
+    /// <param name="ct">A token that can cancel the operation.</param>
+    /// <returns>A result indicating whether processing ownership was acquired.</returns>
+    /// <exception cref="NotSupportedException">
+    /// Thrown by the default implementation when <paramref name="retentionOwner" /> is not <see langword="null" />,
+    /// because a store that predates retention owners cannot record one.
+    /// </exception>
+    ValueTask<IdempotencyStartResult> TryStart(
+        IdempotencyOperation operation,
+        DateTimeOffset startedAt,
+        TimeSpan? lockDuration,
+        string? retentionOwner,
+        CancellationToken ct) => retentionOwner is null
+            ? TryStart(operation, startedAt, lockDuration, ct)
+            : throw new NotSupportedException(
+                $"{GetType().Name} does not record retention owners. Implement the TryStart overload that takes a retention owner.");
+
+    /// <summary>
     /// Marks an idempotent operation as completed.
     /// </summary>
     /// <param name="operation">The idempotent operation.</param>

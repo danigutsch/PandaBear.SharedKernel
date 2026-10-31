@@ -10,19 +10,30 @@ internal sealed class EfIdempotencyStore<TContext>(TContext dbContext) : IIdempo
     where TContext : DbContext
 {
     /// <inheritdoc />
+    public ValueTask<IdempotencyStartResult> TryStart(
+        IdempotencyOperation operation,
+        DateTimeOffset startedAt,
+        TimeSpan? lockDuration,
+        CancellationToken ct) => TryStart(operation, startedAt, lockDuration, retentionOwner: null, ct);
+
+    /// <inheritdoc />
     public async ValueTask<IdempotencyStartResult> TryStart(
         IdempotencyOperation operation,
         DateTimeOffset startedAt,
         TimeSpan? lockDuration,
+        string? retentionOwner,
         CancellationToken ct)
     {
+        var owner = retentionOwner is null ? null : RetentionOwnerIdentifier.Require(retentionOwner, nameof(retentionOwner));
+
         var existing = await Find(operation, ct).ConfigureAwait(false);
         if (existing is null)
         {
             var entry = new IdempotencyEntryEntity(
                 operation.Scope.Value,
                 operation.Key.Value,
-                startedAt);
+                startedAt,
+                owner);
 
             dbContext.Set<IdempotencyEntryEntity>().Add(entry);
             try
@@ -48,7 +59,7 @@ internal sealed class EfIdempotencyStore<TContext>(TContext dbContext) : IIdempo
             return IdempotencyStartResult.AlreadyStarted(ToEntry(existing));
         }
 
-        existing.Restart(startedAt);
+        existing.Restart(startedAt, owner);
 
         try
         {
@@ -125,5 +136,8 @@ internal sealed class EfIdempotencyStore<TContext>(TContext dbContext) : IIdempo
             entity.State,
             entity.StartedAt,
             entity.CompletedAt,
-            entity.ResultFingerprint);
+            entity.ResultFingerprint)
+        {
+            RetentionOwner = entity.RetentionOwner,
+        };
 }
