@@ -16,7 +16,14 @@ The separate EntityFrameworkCore package supplies reusable persistence; applicat
   to 255 characters and can contain only letters, digits, `.`, `_`, `:`, or `-`. Use UUIDv4, UUIDv7, ULID, or
   similarly high-entropy random values; do not include personal data or business identifiers.
 - `IdempotencyOperation`: the pair of scope and key used by stores.
-- `IIdempotencyStore`: storage-neutral contract for starting, completing, and reading idempotent operations.
+- `IIdempotencyStore`: storage-neutral contract for starting, completing, and reading idempotent operations. The
+  `TryStart` overload that takes a `retentionOwner` records an opaque owner key (ASCII letters, digits, `.`, `_`, `:`,
+  `-`; at most 128 characters) on the entry and `IdempotencyEntry.RetentionOwner` returns it. A store that predates
+  the overload keeps working: the default implementation accepts `null` and throws `NotSupportedException` for an owner.
+- `IIdempotencyRetentionStore`: optional contract for purging one bounded batch of expired entries. The caller passes a
+  cutoff, an optional owner-tracked scope prefix and the held owner keys, and gets purged, held and unattributed
+  counts. An expired entry whose owner is held is never deleted. Inside an owner-tracked scope an expired entry
+  without an owner is retained and counted as unattributed (fail-closed); outside it entries purge as before.
 
 Inbox/outbox tables and projection checkpoints can use these primitives without depending on HTTP, messaging, or a
 specific database provider.
@@ -31,6 +38,7 @@ Source is public; registry publication remains deferred. Consume a validated can
 
 This package defines validated operation identity and the persistence contract: keys, scopes,
 operations, entries, lifecycle state, and start results. Validation enforces those value contracts.
+Retention periods, which scopes are owner-tracked, the held owner keys and purge evidence stay in the host.
 It does not execute commands, fingerprint payloads, schedule retries, or choose transaction policy.
 
 `PandaBear.SharedKernel.Idempotency.EntityFrameworkCore` implements persistence separately.

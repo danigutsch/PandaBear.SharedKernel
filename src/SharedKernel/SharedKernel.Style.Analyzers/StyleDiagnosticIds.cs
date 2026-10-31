@@ -77,4 +77,7 @@ public static class StyleDiagnosticIds
 
     /// <summary>Diagnostic emitted for an internal type or member that lacks XML documentation.</summary>
     public const string UndocumentedMember = "SKSTYLE017";
+
+    /// <summary>Diagnostic emitted when a documented member throws an exception that its XML documentation does not list.</summary>
+    public const string UndocumentedThrownException = "SKSTYLE018";
 }

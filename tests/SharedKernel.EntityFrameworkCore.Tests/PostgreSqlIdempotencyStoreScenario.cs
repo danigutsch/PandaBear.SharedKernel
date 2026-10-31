@@ -91,6 +91,57 @@ internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
     }
 
     /// <summary>
+    /// Starts a new entry in the scope with the owner and start time and returns its operation. Opens the save barrier for good, so it suits scenarios that do not force concurrent saves.
+    /// </summary>
+    public async ValueTask<IdempotencyOperation> Seed(string scopeValue, string? retentionOwner, DateTimeOffset startedAt, CancellationToken ct)
+    {
+        saveBarrier.Release();
+        var operation = new IdempotencyOperation(
+            IdempotencyScope.From(scopeValue),
+            IdempotencyKey.From(Guid.CreateVersion7().ToString("N")));
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var store = scope.ServiceProvider.GetRequiredService<IIdempotencyStore>();
+        (await store.TryStart(operation, startedAt, TimeSpan.FromMinutes(5), retentionOwner, ct)).Started.ShouldBeTrue();
+        return operation;
+    }
+
+    /// <summary>
+    /// Completes the operation at the given time.
+    /// </summary>
+    public async ValueTask Complete(IdempotencyOperation operation, DateTimeOffset completedAt, CancellationToken ct)
+    {
+        saveBarrier.Release();
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var store = scope.ServiceProvider.GetRequiredService<IIdempotencyStore>();
+        await store.Complete(operation, completedAt, ct);
+    }
+
+    /// <summary>
+    /// Reads the stored entry of the operation, or null when it was deleted.
+    /// </summary>
+    public async ValueTask<IdempotencyEntry?> Find(IdempotencyOperation operation, CancellationToken ct)
+    {
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var store = scope.ServiceProvider.GetRequiredService<IIdempotencyStore>();
+        return await store.Get(operation, ct);
+    }
+
+    /// <summary>
+    /// Runs one retention purge batch through the registered retention store.
+    /// </summary>
+    public async ValueTask<IdempotencyRetentionPurgeResult> Purge(
+        DateTimeOffset cutoff,
+        string? ownerTrackedScopePrefix,
+        string[] heldRetentionOwners,
+        int batchSize,
+        CancellationToken ct)
+    {
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var retention = scope.ServiceProvider.GetRequiredService<IIdempotencyRetentionStore>();
+        return await retention.PurgeExpired(cutoff, ownerTrackedScopePrefix, heldRetentionOwners, batchSize, ct);
+    }
+
+    /// <summary>
     /// Counts the stored idempotency entries.
     /// </summary>
     public async ValueTask<int> CountEntries(CancellationToken ct)

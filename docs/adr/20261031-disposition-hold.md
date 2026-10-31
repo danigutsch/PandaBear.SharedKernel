@@ -22,4 +22,8 @@ Hold locks are the last lock tier. A transaction takes every lock its command de
 - Rejected: a hold flag on each application table. It repeats the guard in every purge path and cannot serialize a hold placement against a purge in progress.
 - Rejected: a policy engine that decides retention. That is jurisdiction-specific legal policy and belongs to the consuming product and its counsel.
 
+## Idempotency retention
+
+Idempotency entries can outlive the record they belong to, so a host that purges them needs to know which entries a hold protects. `PandaBear.SharedKernel.Idempotency.*` records an opaque, nullable `RetentionOwner` on each entry and offers `IIdempotencyRetentionStore.PurgeExpired`, which takes the cutoff, an optional owner-tracked scope prefix and the held owner keys and never deletes a held entry. It keeps the entries without an owner in an owner-tracked scope (fail-closed) and counts them. The owner key uses the identifier rules of this record, but nothing links the packages: the host maps a hold scope to the owner keys it passes. Retention periods, which scopes are owner-tracked and the evidence of what was purged stay in the host, as for every other purge.
+
 Registry publication, releases and consumer adoption remain separate actions.
