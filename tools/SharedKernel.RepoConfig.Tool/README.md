@@ -63,6 +63,7 @@ sharedkernel-repo verify-gherkin
 sharedkernel-repo verify-gherkin tests/Features/booking.feature tests/Features/Tours
 sharedkernel-repo verify-action-pins
 sharedkernel-repo verify-action-pins --manifest .github/action-pins.json
+sharedkernel-repo verify-dependabot
 sharedkernel-repo dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository
 sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_OUTPUT"
 sharedkernel-repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
@@ -89,6 +90,7 @@ sharedkernel-repo verify-devcontainer --exec "dotnet --version" --exec "git --ve
 | `verify-links [<path>...]` | Fails on a broken local link or Markdown anchor, a link that leaves the repository, or an issue or pull request reference in documentation files; see [Documentation links](#documentation-links). |
 | `verify-gherkin [<path>...]` | Checks tracked Gherkin feature files against the configured rules; see [Gherkin feature files](#gherkin-feature-files). |
 | `verify-action-pins [--manifest <path>]` | Fails when an external `uses:` reference in `.github/workflows` or `.github/actions` is not pinned to a full 40-character commit SHA, is absent from the manifest (default `.github/action-pins.json`), pins another SHA than the manifest, or lacks the manifest version as its trailing comment. Local `./` references are skipped, `docker://` references fail, and `firstParty` repositories need only the full SHA. See [reusable workflows](../../docs/ci/reusable-workflows.md#pinned-third-party-actions). |
+| `verify-dependabot` | Fails when an `ignore` entry in `.github/dependabot.yml` has no `update-types`. GitHub applies such an entry to security updates as well, so the dependency would never receive a security pull request; list the `version-update:semver-*` types instead. The check is line based and expects block-style YAML. |
 | `dependency snapshot` | Generates a dependency snapshot from committed lock files; see [Offline dependency snapshots](#offline-dependency-snapshots). |
 | `dependency submit` | Submits a dependency snapshot to the GitHub dependency graph. |
 | `dependency verify-license-exceptions` | Verifies the configured license exceptions; see [License exceptions](#license-exceptions). |

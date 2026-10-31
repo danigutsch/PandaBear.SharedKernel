@@ -54,6 +54,7 @@ internal static class RepoConfigCommandLine
             CreateVerifyLinksCommand(environment, root),
             CreateVerifyGherkinCommand(environment, root),
             CreateVerifyActionPinsCommand(environment, root),
+            CreateVerifyDependabotCommand(environment, root),
             CreateVerifyPodmanDnsCommand(environment),
             CreateSecurityCommand(environment, root),
             CreateDependencyCommand(environment, root),
@@ -386,6 +387,14 @@ internal static class RepoConfigCommandLine
             output,
             error,
             ct));
+        return command;
+    }
+
+    private static Command CreateVerifyDependabotCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Command command = new("verify-dependabot", "Verify that every Dependabot ignore entry names update-types, so ignored dependencies still receive security updates.") { root };
+        SetGuardedAction(command, (parseResult, output, error, ct) =>
+            RepoConfigToolApplication.VerifyDependabot(ResolveRoot(parseResult, root, environment), output, error, ct));
         return command;
     }
 
