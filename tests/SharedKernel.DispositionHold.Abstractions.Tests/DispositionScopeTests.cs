@@ -10,15 +10,15 @@ public sealed class DispositionScopeTests
     {
         // Arrange
         const string kind = " document-lineage ";
-        const string key = " 0194f2a0-aaaa-7bbb-8ccc-0123456789ab ";
+        const string key = " lineage-17 ";
 
         // Act
         var scope = DispositionScope.From(kind, key);
 
         // Assert
         scope.Kind.ShouldBe("document-lineage");
-        scope.Key.ShouldBe("0194f2a0-aaaa-7bbb-8ccc-0123456789ab");
-        scope.ToString().ShouldBe("document-lineage/0194f2a0-aaaa-7bbb-8ccc-0123456789ab");
+        scope.Key.ShouldBe("lineage-17");
+        scope.ToString().ShouldBe("document-lineage/lineage-17");
     }
 
     [Theory]
