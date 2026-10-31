@@ -827,4 +827,35 @@ public sealed class GeneratorDiscoveryReportTests
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.StreamTours", StringComparison.Ordinal));
     }
 
+    [Fact]
+    public void Generate_discovery_report_request_is_value_type_describes_the_request_not_the_response()
+    {
+        // Arrange
+        var source = TestSources.ModuleHeader
+            + """
+            public readonly record struct Pair(int Id) : IRequest<Wrapped>;
+            public sealed record Boxed(int Id) : IRequest<Wrapped>;
+            public readonly record struct Wrapped(int Value);
+
+            public sealed class PairHandler : IRequestHandler<Pair, Wrapped>
+            {
+                public ValueTask<Wrapped> Handle(Pair request, CancellationToken ct) => ValueTask.FromResult(new Wrapped(1));
+            }
+
+            public sealed class BoxedHandler : IRequestHandler<Boxed, Wrapped>
+            {
+                public ValueTask<Wrapped> Handle(Boxed request, CancellationToken ct) => ValueTask.FromResult(new Wrapped(2));
+            }
+            """;
+
+        // Act
+        var report = GeneratorTestHarness.GenerateSource(source);
+
+        // Assert
+        var pairLine = report.Split('\n').Where(static line => line.Contains("global::Demo.Pair |", StringComparison.Ordinal)).ShouldHaveSingleItem();
+        var boxedLine = report.Split('\n').Where(static line => line.Contains("global::Demo.Boxed |", StringComparison.Ordinal)).ShouldHaveSingleItem();
+        pairLine.ShouldContain("RequestIsValueType=True", StringComparison.Ordinal);
+        boxedLine.ShouldContain("RequestIsValueType=False", StringComparison.Ordinal);
+        boxedLine.ShouldContain("Response=global::Demo.Wrapped", StringComparison.Ordinal);
+    }
 }

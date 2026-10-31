@@ -24,8 +24,8 @@ internal static class MediatorDiscoveryReport
 
     public static string[] Requests { get; } =
     [
-        "global::Mediator.Sample.CreateBooking | Kind=CommandWithResponse | Response=string | ResponseGenericDefinition=<none> | ResponseTypeArguments=[] | IsValueType=False | Handlers=[global::Mediator.Sample.CreateBookingHandler(Request,Public,Handle)] | Pipelines=[]",
-        "global::Mediator.Sample.LookupTourSummary | Kind=Query | Response=string | ResponseGenericDefinition=<none> | ResponseTypeArguments=[] | IsValueType=False | Handlers=[global::Mediator.Sample.LookupTourSummaryHandler(Request,Public,Handle)] | Pipelines=[]",
+        "global::Mediator.Sample.CreateBooking | Kind=CommandWithResponse | Response=string | ResponseGenericDefinition=<none> | ResponseTypeArguments=[] | RequestIsValueType=False | Handlers=[global::Mediator.Sample.CreateBookingHandler(Request,Public,Handle)] | Pipelines=[]",
+        "global::Mediator.Sample.LookupTourSummary | Kind=Query | Response=string | ResponseGenericDefinition=<none> | ResponseTypeArguments=[] | RequestIsValueType=False | Handlers=[global::Mediator.Sample.LookupTourSummaryHandler(Request,Public,Handle)] | Pipelines=[]",
     ];
 
     public static string[] Notifications { get; } =

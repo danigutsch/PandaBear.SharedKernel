@@ -24,7 +24,7 @@ internal static class MediatorDiscoveryReport
 
     public static string[] Requests { get; } =
     [
-        "global::Demo.CreateTour | Kind=CommandWithResponse | Response=int | ResponseGenericDefinition=<none> | ResponseTypeArguments=[] | IsValueType=False | Handlers=[global::Demo.CreateTourHandler(CommandWithResponse,Public,Handle)] | Pipelines=[global::Demo.ValidationBehavior(Stage=-1000,Order=0,Applicability=Closed,OpenGeneric=<none>)]",
+        "global::Demo.CreateTour | Kind=CommandWithResponse | Response=int | ResponseGenericDefinition=<none> | ResponseTypeArguments=[] | RequestIsValueType=False | Handlers=[global::Demo.CreateTourHandler(CommandWithResponse,Public,Handle)] | Pipelines=[global::Demo.ValidationBehavior(Stage=-1000,Order=0,Applicability=Closed,OpenGeneric=<none>)]",
     ];
 
     public static string[] Notifications { get; } =

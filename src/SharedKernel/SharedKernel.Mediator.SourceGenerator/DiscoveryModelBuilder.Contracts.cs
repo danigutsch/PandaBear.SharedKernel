@@ -55,7 +55,7 @@ internal static partial class DiscoveryModelBuilder
         }
 
         var handlerInterfaces = type.AllInterfaces
-            .Select(candidate => CreateRequestHandlerDescriptor(type, candidate, discoverySymbols, discoveryState, primaryAssembly))
+            .Select(candidate => CreateRequestHandlerDescriptor(type, candidate, discoverySymbols, primaryAssembly))
             .OfType<(string Key, int Priority, HandlerDescriptor Descriptor)>()
             .GroupBy(static descriptor => descriptor.Key, StringComparer.Ordinal)
             .Select(static group => group.OrderBy(static item => item.Priority).First().Descriptor)
@@ -63,6 +63,9 @@ internal static partial class DiscoveryModelBuilder
 
         foreach (var handlerInterface in handlerInterfaces)
         {
+            ReportInaccessibleRegistrationType(type, handlerInterface.IsAccessibleToGeneratedMediator, primaryAssembly, discoveryState);
+            ReportInvalidHandlerSignature(type, handlerInterface.RequestMetadataName, handlerInterface.HasCompatibleHandleMethod, primaryAssembly, discoveryState);
+            ReportDuplicateHandlerRegistrations(type, handlerInterface, primaryAssembly, discoveryState);
             yield return handlerInterface;
         }
     }
@@ -71,7 +74,6 @@ internal static partial class DiscoveryModelBuilder
         INamedTypeSymbol type,
         INamedTypeSymbol candidate,
         DiscoverySymbols discoverySymbols,
-        DiscoveryState discoveryState,
         IAssemblySymbol primaryAssembly)
     {
         var originalDefinition = candidate.OriginalDefinition;
@@ -110,8 +112,6 @@ internal static partial class DiscoveryModelBuilder
             : candidate.TypeArguments[1];
         var isAccessibleToGeneratedMediator = IsAccessibleToGeneratedMediator(type, primaryAssembly);
         var hasCompatibleHandleMethod = HasCompatibleRequestHandleMethod(type, requestType, responseType, discoverySymbols, primaryAssembly);
-        ReportInaccessibleRegistrationType(type, isAccessibleToGeneratedMediator, primaryAssembly, discoveryState);
-        ReportInvalidHandlerSignature(type, GetTypeDisplayString(requestType), hasCompatibleHandleMethod, primaryAssembly, discoveryState);
         var descriptor = new HandlerDescriptor(
             GetMetadataName(type),
             GetTypeDisplayString(requestType),
@@ -122,23 +122,32 @@ internal static partial class DiscoveryModelBuilder
             hasCompatibleHandleMethod,
             handlerKind.Value);
 
-        if (isAccessibleToGeneratedMediator && hasCompatibleHandleMethod)
+        return ($"{descriptor.RequestMetadataName}|{descriptor.ResponseMetadataName}", priority, descriptor);
+    }
+
+    private static void ReportDuplicateHandlerRegistrations(
+        INamedTypeSymbol type,
+        HandlerDescriptor descriptor,
+        IAssemblySymbol primaryAssembly,
+        DiscoveryState discoveryState)
+    {
+        if (!descriptor.IsAccessibleToGeneratedMediator || !descriptor.HasCompatibleHandleMethod)
         {
-            ReportDuplicateGeneratedRegistration(
-                type,
-                MediatorGenerationNames.GetSelfRegistrationServiceType(descriptor.MetadataName),
-                descriptor.MetadataName,
-                primaryAssembly,
-                discoveryState);
-            ReportDuplicateGeneratedRegistration(
-                type,
-                MediatorGenerationNames.GetHandlerServiceType(descriptor),
-                descriptor.MetadataName,
-                primaryAssembly,
-                discoveryState);
+            return;
         }
 
-        return ($"{descriptor.RequestMetadataName}|{descriptor.ResponseMetadataName}", priority, descriptor);
+        ReportDuplicateGeneratedRegistration(
+            type,
+            MediatorGenerationNames.GetSelfRegistrationServiceType(descriptor.MetadataName),
+            descriptor.MetadataName,
+            primaryAssembly,
+            discoveryState);
+        ReportDuplicateGeneratedRegistration(
+            type,
+            MediatorGenerationNames.GetHandlerServiceType(descriptor),
+            descriptor.MetadataName,
+            primaryAssembly,
+            discoveryState);
     }
 
     private static IEnumerable<RawPipelineDescriptor> CreatePipelines(
@@ -152,15 +161,21 @@ internal static partial class DiscoveryModelBuilder
             yield break;
         }
 
-        var isAccessibleToGeneratedMediator = IsAccessibleToGeneratedMediator(type, primaryAssembly);
-        ReportInaccessibleRegistrationType(type, isAccessibleToGeneratedMediator, primaryAssembly, discoveryState);
-
         var pipelineTypeArguments = type.AllInterfaces
             .Where(
                 candidate => SymbolEqualityComparer.Default.Equals(
                     candidate.OriginalDefinition,
                     discoverySymbols.PipelineInterface))
-            .Select(static candidate => candidate.TypeArguments);
+            .Select(static candidate => candidate.TypeArguments)
+            .ToArray();
+
+        if (pipelineTypeArguments.Length == 0)
+        {
+            yield break;
+        }
+
+        var isAccessibleToGeneratedMediator = IsAccessibleToGeneratedMediator(type, primaryAssembly);
+        ReportInaccessibleRegistrationType(type, isAccessibleToGeneratedMediator, primaryAssembly, discoveryState);
 
         foreach (var typeArguments in pipelineTypeArguments)
         {
@@ -245,15 +260,21 @@ internal static partial class DiscoveryModelBuilder
             yield break;
         }
 
-        var isAccessibleToGeneratedMediator = IsAccessibleToGeneratedMediator(type, primaryAssembly);
-        ReportInaccessibleRegistrationType(type, isAccessibleToGeneratedMediator, primaryAssembly, discoveryState);
-
         var notificationTypeArguments = type.AllInterfaces
             .Where(
                 candidate => SymbolEqualityComparer.Default.Equals(
                     candidate.OriginalDefinition,
                     discoverySymbols.NotificationHandlerInterface))
-            .Select(static candidate => candidate.TypeArguments);
+            .Select(static candidate => candidate.TypeArguments)
+            .ToArray();
+
+        if (notificationTypeArguments.Length == 0)
+        {
+            yield break;
+        }
+
+        var isAccessibleToGeneratedMediator = IsAccessibleToGeneratedMediator(type, primaryAssembly);
+        ReportInaccessibleRegistrationType(type, isAccessibleToGeneratedMediator, primaryAssembly, discoveryState);
 
         foreach (var typeArguments in notificationTypeArguments)
         {
@@ -340,15 +361,21 @@ internal static partial class DiscoveryModelBuilder
             yield break;
         }
 
-        var isAccessibleToGeneratedMediator = IsAccessibleToGeneratedMediator(type, primaryAssembly);
-        ReportInaccessibleRegistrationType(type, isAccessibleToGeneratedMediator, primaryAssembly, discoveryState);
-
         var streamHandlerTypeArguments = type.AllInterfaces
             .Where(
                 candidate => SymbolEqualityComparer.Default.Equals(
                     candidate.OriginalDefinition,
                     discoverySymbols.StreamHandlerInterface))
-            .Select(static candidate => candidate.TypeArguments);
+            .Select(static candidate => candidate.TypeArguments)
+            .ToArray();
+
+        if (streamHandlerTypeArguments.Length == 0)
+        {
+            yield break;
+        }
+
+        var isAccessibleToGeneratedMediator = IsAccessibleToGeneratedMediator(type, primaryAssembly);
+        ReportInaccessibleRegistrationType(type, isAccessibleToGeneratedMediator, primaryAssembly, discoveryState);
 
         foreach (var typeArguments in streamHandlerTypeArguments)
         {
@@ -395,15 +422,21 @@ internal static partial class DiscoveryModelBuilder
             yield break;
         }
 
-        var isAccessibleToGeneratedMediator = IsAccessibleToGeneratedMediator(type, primaryAssembly);
-        ReportInaccessibleRegistrationType(type, isAccessibleToGeneratedMediator, primaryAssembly, discoveryState);
-
         var pipelineTypeArguments = type.AllInterfaces
             .Where(
                 candidate => SymbolEqualityComparer.Default.Equals(
                     candidate.OriginalDefinition,
                     discoverySymbols.StreamPipelineInterface))
-            .Select(static candidate => candidate.TypeArguments);
+            .Select(static candidate => candidate.TypeArguments)
+            .ToArray();
+
+        if (pipelineTypeArguments.Length == 0)
+        {
+            yield break;
+        }
+
+        var isAccessibleToGeneratedMediator = IsAccessibleToGeneratedMediator(type, primaryAssembly);
+        ReportInaccessibleRegistrationType(type, isAccessibleToGeneratedMediator, primaryAssembly, discoveryState);
 
         foreach (var typeArguments in pipelineTypeArguments)
         {

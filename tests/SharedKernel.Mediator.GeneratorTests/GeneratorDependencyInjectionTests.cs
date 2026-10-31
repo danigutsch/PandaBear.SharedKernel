@@ -458,4 +458,169 @@ public sealed class GeneratorDependencyInjectionTests
             "services.AddScoped<global::PandaBear.Mediator.IStreamRequestHandler<global::Demo.StreamCities, string>, global::Demo.SearchStreamHandler>();",
             StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void Generate_service_registration_unrelated_non_public_types_no_inaccessible_diagnostic()
+    {
+        // Arrange
+        var source = TestSources.ModuleHeader
+            + """
+            public sealed record CreateTour(string Name) : ICommand<int>;
+
+            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
+            {
+                public async ValueTask<int> Handle(CreateTour request, CancellationToken ct)
+                {
+                    await Task.Yield();
+                    return 42;
+                }
+
+                private sealed class Helper;
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var (_, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        diagnostics.ShouldNotContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
+    }
+
+    [Fact]
+    public void Generate_service_registration_inaccessible_pipeline_behavior_diagnostic()
+    {
+        // Arrange
+        var source = TestSources.ModuleHeader
+            + """
+            public sealed record CreateTour(string Name) : ICommand<int>;
+
+            internal sealed class HiddenBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+                where TRequest : IRequest<TResponse>
+            {
+                public ValueTask<TResponse> Handle(TRequest request, RequestHandlerContinuation<TResponse> next, CancellationToken ct) => next();
+            }
+            """;
+        var moduleReference = GeneratorTestHarness.CreateMetadataReference(source, "SharedKernel.Mediator.Tests.ModuleB");
+        var hostSource = TestSources.DemoHeader + "public sealed record Ping() : IQuery<int>;";
+        var host = GeneratorTestHarness.CreateCompilation(hostSource, additionalReferences: [moduleReference]);
+
+        // Act
+        var (_, diagnostics) = GeneratorTestHarness.RunAndGetResult(host, GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        diagnostics.ShouldContain(
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InaccessibleRegistrationType
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("HiddenBehavior", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Generate_service_registration_command_handler_with_response_no_duplicate_diagnostic()
+    {
+        // Arrange
+        var source = TestSources.ModuleHeader + TestSources.CreateTourWithHandler;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var (_, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        diagnostics.ShouldNotContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.DuplicateGeneratedRegistration);
+    }
+
+    [Fact]
+    public void Generate_service_registration_query_and_unit_command_handlers_no_duplicate_diagnostic()
+    {
+        // Arrange
+        var source = TestSources.ModuleHeader
+            + """
+            public sealed record GetTour(int Id) : IQuery<string>;
+            public sealed record Rename(int Id) : ICommand;
+
+            public sealed class GetTourHandler : IQueryHandler<GetTour, string>
+            {
+                public ValueTask<string> Handle(GetTour request, CancellationToken ct) => ValueTask.FromResult("x");
+            }
+
+            public sealed class RenameHandler : ICommandHandler<Rename>
+            {
+                public ValueTask<Unit> Handle(Rename request, CancellationToken ct) => ValueTask.FromResult(Unit.Value);
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        diagnostics.ShouldNotContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.DuplicateGeneratedRegistration);
+        generatedSource.ShouldContain("services.AddScoped<global::Demo.GetTourHandler>();", StringComparison.Ordinal);
+        generatedSource.ShouldContain("services.AddScoped<global::Demo.RenameHandler>();", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_service_registration_request_handler_for_two_requests_reports_one_duplicate_self_registration()
+    {
+        // Arrange
+        var source = TestSources.ModuleHeader
+            + """
+            public sealed record First(int Id) : IRequest<int>;
+            public sealed record Second(int Id) : IRequest<string>;
+
+            public sealed class BothHandler : IRequestHandler<First, int>, IRequestHandler<Second, string>
+            {
+                public ValueTask<int> Handle(First request, CancellationToken ct) => ValueTask.FromResult(1);
+
+                public ValueTask<string> Handle(Second request, CancellationToken ct) => ValueTask.FromResult("2");
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        diagnostics.Count(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.DuplicateGeneratedRegistration
+                                               && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.BothHandler", StringComparison.Ordinal))
+            .ShouldBe(1);
+        var registrationCount = generatedSource.Split("services.AddScoped<global::Demo.BothHandler>();", StringSplitOptions.None).Length - 1;
+        registrationCount.ShouldBe(1);
+    }
+
+    [Fact]
+    public void Generate_service_registration_pipeline_implementing_two_closed_interfaces_reports_duplicate_self_registration()
+    {
+        // Arrange
+        var source = TestSources.ModuleHeader
+            + """
+            public sealed record First(int Id) : IRequest<int>;
+            public sealed record Second(int Id) : IRequest<string>;
+
+            public sealed class BothBehavior : IPipelineBehavior<First, int>, IPipelineBehavior<Second, string>
+            {
+                public ValueTask<int> Handle(First request, RequestHandlerContinuation<int> next, CancellationToken ct) => next();
+
+                public ValueTask<string> Handle(Second request, RequestHandlerContinuation<string> next, CancellationToken ct) => next();
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var (_, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        diagnostics.Count(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.DuplicateGeneratedRegistration
+                                               && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.BothBehavior", StringComparison.Ordinal))
+            .ShouldBe(1);
+    }
 }
