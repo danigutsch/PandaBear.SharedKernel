@@ -57,3 +57,4 @@ PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Purged.get -> long
 PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Purged.init -> void
 PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Unattributed.get -> long
 PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Unattributed.init -> void
+PandaBear.Idempotency.IIdempotencyRetentionStore.PurgeExpired(System.DateTimeOffset cutoff, string? ownerTrackedScopePrefix, System.Collections.Generic.IReadOnlyCollection<string!>! heldRetentionOwners, int batchSize, System.Func<System.Collections.Generic.IReadOnlyCollection<string!>!, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlySet<string!>!>>! guard, System.Threading.CancellationToken ct, string? scopePrefix = null) -> System.Threading.Tasks.ValueTask<PandaBear.Idempotency.IdempotencyRetentionPurgeResult!>

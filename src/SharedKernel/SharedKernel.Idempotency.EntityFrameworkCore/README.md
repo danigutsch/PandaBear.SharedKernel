@@ -18,13 +18,24 @@ the migration that adds the column and index.
 
 `AddIdempotencyStore<TContext>()` also registers `IIdempotencyRetentionStore`. `PurgeExpired` deletes one batch of at
 most `batchSize` entries whose last touch (completion time, else start time) is before the cutoff, oldest first with
-scope and key as the tie-break, in one PostgreSQL statement that skips rows locked by another worker
-(`FOR UPDATE SKIP LOCKED`). Entries whose owner is in the held set, and unattributed entries in the owner-tracked scope
+scope and key as the tie-break. It selects the batch with `FOR UPDATE SKIP LOCKED`, so it skips rows locked by another
+worker, and deletes exactly the selected rows in the same transaction (the transaction of the context, or one of its own). Entries whose owner is in the held set, and unattributed entries in the owner-tracked scope
 prefix, are retained and counted; they do not use up the batch. Call it inside the transaction in which the host
 checks its holds. A host that shares the table between features passes `scopePrefix` (for example `documents.`) to
 limit the purge to its own scopes: entries outside the prefix are never read, counted or deleted, and an empty or
 whitespace prefix is rejected. Without `scopePrefix` the purge covers the whole table. It requires the Npgsql EF Core provider. Retention periods, the tracked scopes, the held owners and purge evidence
 stay in the host.
+
+The overload that takes a `guard` (`Func<IReadOnlyCollection<string>, CancellationToken, ValueTask<IReadOnlySet<string>>>`)
+lets the host check its holds against exactly the rows about to be deleted. `heldRetentionOwners` stays a pre-filter. The
+store calls the guard once per batch, after selecting and locking the rows and before deleting, with the distinct non-null
+owners of the selected rows (not at all when there are none). The guard returns the owners to keep, and the store deletes
+only the selected rows whose owner is not returned. PostgreSQL READ COMMITTED gives each statement its own snapshot, so a
+hold committed after a purge statement began is invisible to that statement; the guard runs in the same transaction under
+the host's own locks (for example `PandaBear.SharedKernel.DispositionHold`). If the guard throws or its token is
+cancelled, nothing is deleted and the exception propagates. `Held` counts the expired entries kept because their owner is
+in `heldRetentionOwners` plus the selected entries kept because the guard returned their owner. Unattributed entries are
+retained and counted as before and never reach the guard. The overload without a guard shares the same code path.
 
 ## Install and example
 

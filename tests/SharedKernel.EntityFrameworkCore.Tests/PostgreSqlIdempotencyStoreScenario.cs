@@ -143,6 +143,46 @@ internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
     }
 
     /// <summary>
+    /// Runs one retention purge batch through the registered retention store, with a guard over the selected batch.
+    /// </summary>
+    public async ValueTask<IdempotencyRetentionPurgeResult> Purge(
+        DateTimeOffset cutoff,
+        string? ownerTrackedScopePrefix,
+        string[] heldRetentionOwners,
+        int batchSize,
+        Func<IReadOnlyCollection<string>, CancellationToken, ValueTask<IReadOnlySet<string>>> guard,
+        CancellationToken ct,
+        string? scopePrefix = null)
+    {
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var retention = scope.ServiceProvider.GetRequiredService<IIdempotencyRetentionStore>();
+        return await retention.PurgeExpired(cutoff, ownerTrackedScopePrefix, heldRetentionOwners, batchSize, guard, ct, scopePrefix);
+    }
+
+    /// <summary>
+    /// Locks the stored row of the operation with SELECT ... FOR UPDATE on a separate connection until the returned handle is disposed.
+    /// </summary>
+    public async ValueTask<IAsyncDisposable> LockEntry(IdempotencyOperation operation, CancellationToken ct)
+    {
+        var connection = await dataSource.OpenConnectionAsync(ct);
+        try
+        {
+            var transaction = await connection.BeginTransactionAsync(ct);
+            await using var command = connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText = "SELECT 1 FROM messaging.idempotency_keys WHERE \"Key\" = @key FOR UPDATE";
+            command.Parameters.AddWithValue("key", operation.Key.Value);
+            (await command.ExecuteScalarAsync(ct)).ShouldNotBeNull();
+            return new EntryLock(connection, transaction);
+        }
+        catch
+        {
+            await connection.DisposeAsync();
+            throw;
+        }
+    }
+
+    /// <summary>
     /// Counts the stored idempotency entries.
     /// </summary>
     public async ValueTask<int> CountEntries(CancellationToken ct)
@@ -158,6 +198,15 @@ internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         await PostgreSqlScenarioCleanup.DisposeResources(null, serviceProvider, dataSource, database);
+    }
+
+    private sealed class EntryLock(NpgsqlConnection connection, NpgsqlTransaction transaction) : IAsyncDisposable
+    {
+        public async ValueTask DisposeAsync()
+        {
+            await transaction.RollbackAsync();
+            await connection.DisposeAsync();
+        }
     }
 
     private sealed class IdempotencyDbContext(
