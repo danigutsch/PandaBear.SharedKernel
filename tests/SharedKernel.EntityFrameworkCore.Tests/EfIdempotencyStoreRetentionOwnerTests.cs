@@ -197,4 +197,20 @@ public sealed class EfIdempotencyStoreRetentionOwnerTests
             await retention.PurgeExpired(StartedAt, null, [], 10, CancellationToken.None);
         }));
     }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task PurgeExpired_rejects_an_empty_or_whitespace_scope_prefix(string scopePrefix)
+    {
+        // Arrange
+        await using var dbContext = ConsumerIdempotencyTestServices.Create();
+        var retention = new EfIdempotencyRetentionStore<ConsumerIdempotencyDbContext>(dbContext);
+
+        // Act, Assert
+        await ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<Task>)(async () =>
+        {
+            await retention.PurgeExpired(StartedAt, null, [], 10, CancellationToken.None, scopePrefix);
+        }));
+    }
 }

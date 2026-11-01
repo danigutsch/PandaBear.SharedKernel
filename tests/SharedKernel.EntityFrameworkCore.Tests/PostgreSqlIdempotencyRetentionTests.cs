@@ -283,4 +283,66 @@ public sealed class PostgreSqlIdempotencyRetentionTests(PostgreSqlFixture fixtur
         batches.Sum(static batch => batch.Purged).ShouldBe(20);
         await Scenario.ShouldHaveEntryCount(0, ct);
     }
+
+    [Fact]
+    public async Task PurgeExpired_restricted_to_a_scope_prefix_leaves_expired_entries_of_other_scopes_untouched()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var inScope = await Scenario.Seed(TrackedScope, "document-8", Old, ct);
+        var inScopeUnowned = await Scenario.Seed(TrackedScope, null, Old, ct);
+        var otherOwned = await Scenario.Seed(UntrackedScope, "document-8", Old, ct);
+        var otherUnowned = await Scenario.Seed(UntrackedScope, null, Old, ct);
+        var otherHeld = await Scenario.Seed(UntrackedScope, "document-7", Old, ct);
+
+        // Act
+        var result = await Scenario.Purge(Cutoff, TrackedPrefix, ["document-7"], 100, ct, TrackedPrefix);
+
+        // Assert
+        result.ShouldBe(new IdempotencyRetentionPurgeResult(Purged: 1, Held: 0, Unattributed: 1));
+        await Scenario.ShouldHaveDeleted(inScope, ct);
+        await Scenario.ShouldHaveRetained(inScopeUnowned, ct);
+        await Scenario.ShouldHaveRetained(otherOwned, ct);
+        await Scenario.ShouldHaveRetained(otherUnowned, ct);
+        await Scenario.ShouldHaveRetained(otherHeld, ct);
+    }
+
+    [Fact]
+    public async Task PurgeExpired_restricted_to_a_scope_prefix_counts_a_held_entry_in_scope_only()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var held = await Scenario.Seed(TrackedScope, "document-7", Old, ct);
+        await Scenario.Seed(UntrackedScope, "document-7", Old, ct);
+
+        // Act
+        var result = await Scenario.Purge(Cutoff, null, ["document-7"], 100, ct, TrackedPrefix);
+
+        // Assert
+        result.ShouldBe(new IdempotencyRetentionPurgeResult(Purged: 0, Held: 1, Unattributed: 0));
+        await Scenario.ShouldHaveRetained(held, ct);
+    }
+
+    [Fact]
+    public async Task PurgeExpired_restricted_to_a_scope_prefix_fills_the_batch_from_that_scope_only()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var other = await Scenario.Seed(UntrackedScope, "document-8", Old, ct);
+        var first = await Scenario.Seed(TrackedScope, "document-8", Old.AddDays(1), ct);
+        var second = await Scenario.Seed(TrackedScope, "document-8", Old.AddDays(2), ct);
+        var third = await Scenario.Seed(TrackedScope, "document-8", Old.AddDays(3), ct);
+
+        // Act
+        var firstBatch = await Scenario.Purge(Cutoff, null, [], 2, ct, TrackedPrefix);
+        var secondBatch = await Scenario.Purge(Cutoff, null, [], 2, ct, TrackedPrefix);
+
+        // Assert
+        firstBatch.Purged.ShouldBe(2);
+        secondBatch.Purged.ShouldBe(1);
+        await Scenario.ShouldHaveDeleted(first, ct);
+        await Scenario.ShouldHaveDeleted(second, ct);
+        await Scenario.ShouldHaveDeleted(third, ct);
+        await Scenario.ShouldHaveRetained(other, ct);
+    }
 }

@@ -18,11 +18,17 @@ public interface IIdempotencyRetentionStore
     /// <param name="heldRetentionOwners">The owner keys that are held. An expired entry with one of these owners is retained and counted as held, in every scope.</param>
     /// <param name="batchSize">The maximum number of entries to delete; it must be positive.</param>
     /// <param name="ct">A token that can cancel the operation.</param>
+    /// <param name="scopePrefix">
+    /// Limits the purge to entries whose scope starts with this prefix, or <see langword="null" /> to cover every scope of the table.
+    /// Entries outside the prefix are never read, counted or deleted, so a host that shares the table between features
+    /// passes the prefix of its own scopes. It cannot be empty or whitespace.
+    /// </param>
     /// <returns>The purged, held and unattributed counts for the batch.</returns>
     ValueTask<IdempotencyRetentionPurgeResult> PurgeExpired(
         DateTimeOffset cutoff,
         string? ownerTrackedScopePrefix,
         IReadOnlyCollection<string> heldRetentionOwners,
         int batchSize,
-        CancellationToken ct);
+        CancellationToken ct,
+        string? scopePrefix = null);
 }
