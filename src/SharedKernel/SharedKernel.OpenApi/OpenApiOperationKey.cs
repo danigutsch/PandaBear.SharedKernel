@@ -21,7 +21,6 @@ internal readonly record struct OpenApiOperationKey
     /// <returns>The normalized operation identity.</returns>
     /// <exception cref="ArgumentNullException">The route pattern or HTTP method is null.</exception>
     /// <exception cref="ArgumentException">The HTTP method is blank or is not a valid HTTP token.</exception>
-    /// <exception cref="RoutePatternException">The route pattern is malformed.</exception>
     public static OpenApiOperationKey Create(string relativePath, string httpMethod)
     {
         ArgumentNullException.ThrowIfNull(relativePath);
