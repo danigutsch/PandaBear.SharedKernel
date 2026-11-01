@@ -25,7 +25,9 @@ The separate EntityFrameworkCore package supplies reusable persistence; applicat
   counts. An expired entry whose owner is held is never deleted. Inside an owner-tracked scope an expired entry
   without an owner is retained and counted as unattributed (fail-closed); outside it entries purge as before. An optional `scopePrefix` limits the purge, and its counts, to the scopes that
   start with it, so a host that shares the table between features can protect the entries of the others; without it
-  the purge covers the whole table, and an empty prefix is rejected.
+  the purge covers the whole table, and an empty prefix is rejected. An overload that takes a `guard` function lets the
+  host veto owners after the store selected the batch and before it deletes: the guard is called once per batch with the
+  distinct non-null owners of the selected rows and returns the owners to keep; if it throws, nothing is deleted.
 
 Inbox/outbox tables and projection checkpoints can use these primitives without depending on HTTP, messaging, or a
 specific database provider.
