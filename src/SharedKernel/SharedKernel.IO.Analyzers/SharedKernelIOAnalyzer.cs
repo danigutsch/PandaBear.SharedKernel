@@ -10,9 +10,16 @@ namespace PandaBear.IO.Analyzers;
 /// Reports unbounded stream buffering and hand-rolled copy loops.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class SharedKernelIOAnalyzer : DiagnosticAnalyzer
+public sealed partial class SharedKernelIOAnalyzer : DiagnosticAnalyzer
 {
     private const int MaxTraceDepth = 8;
+
+    private static readonly string[] LimitAttributeNames =
+    [
+        "Microsoft.AspNetCore.Mvc.RequestSizeLimitAttribute",
+        "Microsoft.AspNetCore.Mvc.DisableRequestSizeLimitAttribute",
+        "Microsoft.AspNetCore.Mvc.RequestFormLimitsAttribute",
+    ];
 
     private static readonly DiagnosticDescriptor UnboundedBufferingRule = new(
         IODiagnosticIds.UnboundedBuffering,
@@ -37,7 +44,7 @@ public sealed class SharedKernelIOAnalyzer : DiagnosticAnalyzer
     {
         get;
     } =
-        ImmutableArray.Create(UnboundedBufferingRule, HandRolledCopyLoopRule);
+        ImmutableArray.Create(UnboundedBufferingRule, HandRolledCopyLoopRule, MissingRequestSizeLimitRule);
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -59,6 +66,8 @@ public sealed class SharedKernelIOAnalyzer : DiagnosticAnalyzer
 
             start.RegisterOperationAction(ctx => AnalyzeInvocation(ctx, types), OperationKind.Invocation);
             start.RegisterOperationAction(ctx => AnalyzeLoop(ctx, types), OperationKind.Loop);
+            start.RegisterOperationAction(ctx => AnalyzeMappedEndpoint(ctx, types), OperationKind.Invocation);
+            start.RegisterOperationBlockAction(ctx => AnalyzeControllerAction(ctx, types));
         });
     }
 
@@ -253,6 +262,42 @@ public sealed class SharedKernelIOAnalyzer : DiagnosticAnalyzer
             HttpContent = compilation.GetTypeByMetadataName("System.Net.Http.HttpContent");
             FormFile = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.IFormFile");
             HttpRequest = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.HttpRequest");
+            FormFileCollection = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.IFormFileCollection");
+            PipeReader = compilation.GetTypeByMetadataName("System.IO.Pipelines.PipeReader");
+            ControllerBase = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.ControllerBase");
+            MaxRequestBodySizeFeature = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.Features.IHttpMaxRequestBodySizeFeature");
+            RequestSizeLimitMetadata = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Http.Metadata.IRequestSizeLimitMetadata");
+            LimitAttributes = [.. LimitAttributeNames.Select(compilation.GetTypeByMetadataName).OfType<INamedTypeSymbol>()];
+        }
+
+        public INamedTypeSymbol? FormFileCollection
+        {
+            get;
+        }
+
+        public INamedTypeSymbol? PipeReader
+        {
+            get;
+        }
+
+        public INamedTypeSymbol? ControllerBase
+        {
+            get;
+        }
+
+        public INamedTypeSymbol? MaxRequestBodySizeFeature
+        {
+            get;
+        }
+
+        public INamedTypeSymbol? RequestSizeLimitMetadata
+        {
+            get;
+        }
+
+        public ImmutableArray<INamedTypeSymbol> LimitAttributes
+        {
+            get;
         }
 
         public INamedTypeSymbol Stream

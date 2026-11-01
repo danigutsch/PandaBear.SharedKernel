@@ -14,6 +14,7 @@ dependency and does not require `PandaBear.SharedKernel.IO`.
 | --- | --- | --- |
 | `SKIO001` | Warning | A request or upload stream is buffered in memory without an explicit length bound. |
 | `SKIO002` | Warning | A hand-rolled read loop copies a stream into a `MemoryStream` without a length bound. |
+| `SKIO003` | Disabled; opt-in warning | An upload or raw-body endpoint sets no endpoint-level request size limit. |
 
 ### SKIO001
 
@@ -34,6 +35,33 @@ Reported on a `while`, `do`, or `for` loop that calls `Stream.Read[Async]` and `
 with no relational comparison other than against zero. A running total compared with a maximum, or
 `remaining > 0`-style counters compared with a non-zero value, count as a bound.
 
+### SKIO003
+
+Disabled by default, because a limit configured by the host (Kestrel options, endpoint groups, filters) is not visible
+to the analyzer. Enable it where upload endpoints are expected to carry their own size budget; Kestrel's default is
+30,000,000 bytes.
+
+Reported on an endpoint that takes an `IFormFile`, `IFormFileCollection`, `PipeReader` or `Stream` parameter, or reads
+`HttpRequest.Body`:
+
+- a public instance action of a `ControllerBase` type, and
+- the handler of a minimal-API `MapPost`, `MapPut`, `MapPatch`, `MapMethods` or `Map` call (a lambda or a method group).
+
+Not reported when the endpoint has a limit:
+
+- `[RequestSizeLimit]` or `[DisableRequestSizeLimit]` on the action, its controller type, or the handler (a lambda
+  attribute or the handler method);
+- `[RequestFormLimits]` that sets `MultipartBodyLengthLimit`; other `RequestFormLimits` settings do not bound the upload;
+- a later call in the `Map*` chain that passes a `RequestSizeLimitAttribute` or an `IRequestSizeLimitMetadata`, for
+  example `.WithMetadata(new RequestSizeLimitAttribute(10_000_000))`;
+- a reference to `IHttpMaxRequestBodySizeFeature` in the endpoint body.
+
+Non-endpoint methods, `MapGet`, and handlers that take none of the listed parameters and do not read `Request.Body`
+are not checked. A method-group handler is checked by its parameters and attributes only, not its body.
+
+There is no code fix: the maximum size, its unit, and whether to disable the limit are application policy, so a fix
+could only insert an arbitrary number.
+
 ### Limits
 
 The analysis is local: it does not follow parameters, fields, reassigned locals, or other methods, and a
@@ -46,6 +74,7 @@ the host enforces it. Prefer `SeekableContent.Create`, which counts received byt
 ```ini
 dotnet_diagnostic.SKIO001.severity = warning
 dotnet_diagnostic.SKIO002.severity = warning
+dotnet_diagnostic.SKIO003.severity = warning
 ```
 
 ## See Also

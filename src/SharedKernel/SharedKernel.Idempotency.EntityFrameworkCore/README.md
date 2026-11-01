@@ -21,7 +21,9 @@ most `batchSize` entries whose last touch (completion time, else start time) is 
 scope and key as the tie-break, in one PostgreSQL statement that skips rows locked by another worker
 (`FOR UPDATE SKIP LOCKED`). Entries whose owner is in the held set, and unattributed entries in the owner-tracked scope
 prefix, are retained and counted; they do not use up the batch. Call it inside the transaction in which the host
-checks its holds. It requires the Npgsql EF Core provider. Retention periods, the tracked scopes, the held owners and purge evidence
+checks its holds. A host that shares the table between features passes `scopePrefix` (for example `documents.`) to
+limit the purge to its own scopes: entries outside the prefix are never read, counted or deleted, and an empty or
+whitespace prefix is rejected. Without `scopePrefix` the purge covers the whole table. It requires the Npgsql EF Core provider. Retention periods, the tracked scopes, the held owners and purge evidence
 stay in the host.
 
 ## Install and example
