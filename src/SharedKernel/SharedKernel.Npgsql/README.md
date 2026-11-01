@@ -37,10 +37,15 @@ Small raw-Npgsql primitives with a stable, provider-specific boundary.
 ```csharp
 using PandaBear.Npgsql;
 
-long lockKey = PostgreSqlAdvisoryLockKey.FromUtf8Sha256BigEndian("inventory:123");
+var lockKey = PostgreSqlLockKey.FromIdentity("inventory:123");
 ```
 
-Pass the key to either advisory-lock acquisition method. Keep business-specific identity composition
+`PostgreSqlLockKey` carries the signed numeric identity with value equality and signed ordering.
+Every `long`, including zero, is valid; use its constructor for an existing numeric key. Identity
+hashing retains the exact existing protocol. The original static derivation helper and `long`
+acquisition overloads remain available.
+
+Pass the typed key to either advisory-lock `AcquireKey` method. Keep business-specific identity composition
 in the consumer; this helper does not change existing callers or their lock keys.
 
 ## Ordered transaction locks

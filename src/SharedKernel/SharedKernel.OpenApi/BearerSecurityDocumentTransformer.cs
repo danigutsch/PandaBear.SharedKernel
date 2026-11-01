@@ -31,8 +31,7 @@ public sealed class BearerSecurityDocumentTransformer : IOpenApiDocumentTransfor
             .Where(static description => !string.IsNullOrWhiteSpace(description.RelativePath) && !string.IsNullOrWhiteSpace(description.HttpMethod))
             .ToDictionary(
                 description => OpenApiOperationKey.Create(description.RelativePath!, description.HttpMethod!),
-                description => description,
-                StringComparer.OrdinalIgnoreCase);
+                description => description);
 
         var hasProtectedOperation = false;
         foreach (var path in document.Paths)

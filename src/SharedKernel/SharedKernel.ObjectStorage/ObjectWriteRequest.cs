@@ -15,4 +15,17 @@ public sealed record ObjectWriteRequest(
     string ContentType,
     long Length,
     string? Checksum = null,
-    IReadOnlyDictionary<string, string>? Metadata = null);
+    IReadOnlyDictionary<string, string>? Metadata = null)
+{
+    /// <summary>Creates a request using a validated object identity.</summary>
+    /// <param name="objectKey">The objectKey value.</param>
+    /// <param name="content">The content value.</param>
+    /// <param name="contentType">The contentType value.</param>
+    /// <param name="length">The length value.</param>
+    /// <param name="checksum">The checksum value.</param>
+    /// <param name="metadata">The metadata value.</param>
+    /// <returns>The provider-neutral request.</returns>
+    /// <exception cref="InvalidOperationException">The key has not been initialized.</exception>
+    public static ObjectWriteRequest Create(ObjectStorageKey objectKey, Stream content, string contentType, long length, string? checksum = null, IReadOnlyDictionary<string, string>? metadata = null) =>
+        new(objectKey.Value, content, contentType, length, checksum, metadata);
+}

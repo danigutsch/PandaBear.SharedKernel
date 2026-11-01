@@ -7,6 +7,14 @@ namespace PandaBear.Npgsql;
 /// </summary>
 public static class PostgreSqlSessionAdvisoryLock
 {
+    /// <summary>Acquires an advisory lock using a typed numeric identity.</summary>
+    /// <param name="dataSource">The source used to open the lock-owning session.</param>
+    /// <param name="lockKey">The exact advisory lock identity.</param>
+    /// <param name="ct">The cancellation token.</param>
+    /// <returns>The existing provider operation or lock lease.</returns>
+    public static ValueTask<IAsyncDisposable> AcquireKey(NpgsqlDataSource dataSource, PostgreSqlLockKey lockKey, CancellationToken ct) =>
+        Acquire(dataSource, lockKey.Value, ct);
+
     private const string AcquireSql = "SELECT pg_advisory_lock(@lockKey);";
     private const string ReleaseSql = "SELECT pg_advisory_unlock(@lockKey);";
 

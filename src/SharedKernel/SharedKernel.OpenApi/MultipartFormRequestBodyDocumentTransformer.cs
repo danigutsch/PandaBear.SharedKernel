@@ -38,8 +38,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformer : IOpenApiDocume
             .Where(static description => !string.IsNullOrWhiteSpace(description.RelativePath) && !string.IsNullOrWhiteSpace(description.HttpMethod))
             .ToDictionary(
                 description => OpenApiOperationKey.Create(description.RelativePath ?? string.Empty, description.HttpMethod ?? string.Empty),
-                description => description,
-                StringComparer.OrdinalIgnoreCase);
+                description => description);
 
         foreach (var pathItem in document.Paths)
         {

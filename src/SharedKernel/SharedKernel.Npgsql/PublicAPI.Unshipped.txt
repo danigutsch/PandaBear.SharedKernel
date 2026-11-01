@@ -1,6 +1,12 @@
 #nullable enable
 PandaBear.Npgsql.NpgsqlDataSourceBuilderExtensions
 PandaBear.Npgsql.PostgreSqlAdvisoryLockKey
+PandaBear.Npgsql.PostgreSqlLockKey
+PandaBear.Npgsql.PostgreSqlLockKey.CompareTo(PandaBear.Npgsql.PostgreSqlLockKey other) -> int
+PandaBear.Npgsql.PostgreSqlLockKey.PostgreSqlLockKey() -> void
+PandaBear.Npgsql.PostgreSqlLockKey.PostgreSqlLockKey(long Value) -> void
+PandaBear.Npgsql.PostgreSqlLockKey.Value.get -> long
+PandaBear.Npgsql.PostgreSqlLockKey.Value.init -> void
 PandaBear.Npgsql.PostgreSqlOrderedTransactionLocks
 PandaBear.Npgsql.PostgreSqlOrderedTransactionLocks.Acquire(System.Collections.Generic.IEnumerable<PandaBear.Npgsql.PostgreSqlTransactionLockRequest>! locks, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 PandaBear.Npgsql.PostgreSqlOrderedTransactionLocks.PostgreSqlOrderedTransactionLocks(Npgsql.NpgsqlConnection! connection, Npgsql.NpgsqlTransaction! transaction) -> void
@@ -15,5 +21,12 @@ PandaBear.Npgsql.PostgreSqlTransactionLockRequest.Tier.get -> int
 PandaBear.Npgsql.PostgreSqlTransactionLockRequest.Tier.init -> void
 static PandaBear.Npgsql.NpgsqlDataSourceBuilderExtensions.ConfigureTracingWithoutFirstResponseEvent(this Npgsql.NpgsqlDataSourceBuilder! builder) -> Npgsql.NpgsqlDataSourceBuilder!
 static PandaBear.Npgsql.PostgreSqlAdvisoryLockKey.FromUtf8Sha256BigEndian(string! identity) -> long
+static PandaBear.Npgsql.PostgreSqlLockKey.FromIdentity(string! identity) -> PandaBear.Npgsql.PostgreSqlLockKey
+static PandaBear.Npgsql.PostgreSqlLockKey.operator <(PandaBear.Npgsql.PostgreSqlLockKey left, PandaBear.Npgsql.PostgreSqlLockKey right) -> bool
+static PandaBear.Npgsql.PostgreSqlLockKey.operator <=(PandaBear.Npgsql.PostgreSqlLockKey left, PandaBear.Npgsql.PostgreSqlLockKey right) -> bool
+static PandaBear.Npgsql.PostgreSqlLockKey.operator >(PandaBear.Npgsql.PostgreSqlLockKey left, PandaBear.Npgsql.PostgreSqlLockKey right) -> bool
+static PandaBear.Npgsql.PostgreSqlLockKey.operator >=(PandaBear.Npgsql.PostgreSqlLockKey left, PandaBear.Npgsql.PostgreSqlLockKey right) -> bool
 static PandaBear.Npgsql.PostgreSqlSessionAdvisoryLock.Acquire(Npgsql.NpgsqlDataSource! dataSource, long lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.IAsyncDisposable!>
 static PandaBear.Npgsql.PostgreSqlTransactionAdvisoryLock.Acquire(Npgsql.NpgsqlConnection! connection, Npgsql.NpgsqlTransaction! transaction, long lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+static PandaBear.Npgsql.PostgreSqlSessionAdvisoryLock.AcquireKey(Npgsql.NpgsqlDataSource! dataSource, PandaBear.Npgsql.PostgreSqlLockKey lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.IAsyncDisposable!>
+static PandaBear.Npgsql.PostgreSqlTransactionAdvisoryLock.AcquireKey(Npgsql.NpgsqlConnection! connection, Npgsql.NpgsqlTransaction! transaction, PandaBear.Npgsql.PostgreSqlLockKey lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
