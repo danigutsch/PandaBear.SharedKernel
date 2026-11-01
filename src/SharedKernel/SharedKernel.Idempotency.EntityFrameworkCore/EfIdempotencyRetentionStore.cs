@@ -27,13 +27,19 @@ internal sealed class EfIdempotencyRetentionStore<TContext>(TContext dbContext) 
         string? ownerTrackedScopePrefix,
         IReadOnlyCollection<string> heldRetentionOwners,
         int batchSize,
-        CancellationToken ct)
+        CancellationToken ct,
+        string? scopePrefix = null)
     {
         ArgumentNullException.ThrowIfNull(heldRetentionOwners);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(batchSize);
         if (ownerTrackedScopePrefix is { Length: 0 })
         {
             throw new ArgumentException("The owner-tracked scope prefix cannot be empty.", nameof(ownerTrackedScopePrefix));
+        }
+
+        if (scopePrefix is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(scopePrefix);
         }
 
         var held = heldRetentionOwners
@@ -62,6 +68,8 @@ internal sealed class EfIdempotencyRetentionStore<TContext>(TContext dbContext) 
                 AddParameter(command, "held", held);
                 AddParameter(command, "tracked", ownerTrackedScopePrefix is not null);
                 AddParameter(command, "prefix", ownerTrackedScopePrefix ?? string.Empty);
+                AddParameter(command, "restricted", scopePrefix is not null);
+                AddParameter(command, "scopePrefix", scopePrefix ?? string.Empty);
                 AddParameter(command, "batch", batchSize);
 
                 var reader = await command.ExecuteReaderAsync(ct).ConfigureAwait(false);
@@ -107,7 +115,8 @@ internal sealed class EfIdempotencyRetentionStore<TContext>(TContext dbContext) 
         var owner = FormatIdentifier(GetColumnName(entityType, nameof(IdempotencyEntryEntity.RetentionOwner), storeObject));
 
         var touched = $"COALESCE(entry.{completedAt}, entry.{startedAt})";
-        var expired = $"{touched} < @cutoff";
+        var inScope = $"(NOT @restricted OR starts_with(entry.{scope}, @scopePrefix))";
+        var candidate = $"{touched} < @cutoff AND {inScope}";
         var isHeld = $"entry.{owner} = ANY(@held)";
         var isUnattributed = $"entry.{owner} IS NULL AND @tracked AND starts_with(entry.{scope}, @prefix)";
 
@@ -115,7 +124,7 @@ internal sealed class EfIdempotencyRetentionStore<TContext>(TContext dbContext) 
             WITH purgeable AS (
                 SELECT entry.{{scope}} AS purge_scope, entry.{{key}} AS purge_key
                 FROM {{table}} AS entry
-                WHERE {{expired}}
+                WHERE {{candidate}}
                     AND NOT COALESCE({{isHeld}}, FALSE)
                     AND NOT ({{isUnattributed}})
                 ORDER BY {{touched}}, entry.{{scope}}, entry.{{key}}
@@ -130,8 +139,8 @@ internal sealed class EfIdempotencyRetentionStore<TContext>(TContext dbContext) 
             )
             SELECT
                 (SELECT COUNT(*) FROM purged) AS "Purged",
-                (SELECT COUNT(*) FROM {{table}} AS entry WHERE {{expired}} AND {{isHeld}}) AS "Held",
-                (SELECT COUNT(*) FROM {{table}} AS entry WHERE {{expired}} AND {{isUnattributed}}) AS "Unattributed"
+                (SELECT COUNT(*) FROM {{table}} AS entry WHERE {{candidate}} AND {{isHeld}}) AS "Held",
+                (SELECT COUNT(*) FROM {{table}} AS entry WHERE {{candidate}} AND {{isUnattributed}}) AS "Unattributed"
             """;
     }
 

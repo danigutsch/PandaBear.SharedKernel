@@ -134,11 +134,12 @@ internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
         string? ownerTrackedScopePrefix,
         string[] heldRetentionOwners,
         int batchSize,
-        CancellationToken ct)
+        CancellationToken ct,
+        string? scopePrefix = null)
     {
         await using var scope = serviceProvider.CreateAsyncScope();
         var retention = scope.ServiceProvider.GetRequiredService<IIdempotencyRetentionStore>();
-        return await retention.PurgeExpired(cutoff, ownerTrackedScopePrefix, heldRetentionOwners, batchSize, ct);
+        return await retention.PurgeExpired(cutoff, ownerTrackedScopePrefix, heldRetentionOwners, batchSize, ct, scopePrefix);
     }
 
     /// <summary>

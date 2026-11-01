@@ -23,7 +23,9 @@ The separate EntityFrameworkCore package supplies reusable persistence; applicat
 - `IIdempotencyRetentionStore`: optional contract for purging one bounded batch of expired entries. The caller passes a
   cutoff, an optional owner-tracked scope prefix and the held owner keys, and gets purged, held and unattributed
   counts. An expired entry whose owner is held is never deleted. Inside an owner-tracked scope an expired entry
-  without an owner is retained and counted as unattributed (fail-closed); outside it entries purge as before.
+  without an owner is retained and counted as unattributed (fail-closed); outside it entries purge as before. An optional `scopePrefix` limits the purge, and its counts, to the scopes that
+  start with it, so a host that shares the table between features can protect the entries of the others; without it
+  the purge covers the whole table, and an empty prefix is rejected.
 
 Inbox/outbox tables and projection checkpoints can use these primitives without depending on HTTP, messaging, or a
 specific database provider.
