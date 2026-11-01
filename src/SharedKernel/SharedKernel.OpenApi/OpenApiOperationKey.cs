@@ -16,6 +16,12 @@ internal readonly record struct OpenApiOperationKey
     public override int GetHashCode() => value is null ? 0 : StringComparer.OrdinalIgnoreCase.GetHashCode(value);
 
     /// <summary>Returns "METHOD:path" with route parameters reduced to their names, so keys match regardless of constraints and defaults.</summary>
+    /// <param name="relativePath">The route pattern relative to its document root.</param>
+    /// <param name="httpMethod">The HTTP method token.</param>
+    /// <returns>The normalized operation identity.</returns>
+    /// <exception cref="ArgumentNullException">The route pattern or HTTP method is null.</exception>
+    /// <exception cref="ArgumentException">The HTTP method is blank or is not a valid HTTP token.</exception>
+    /// <exception cref="RoutePatternException">The route pattern is malformed.</exception>
     public static OpenApiOperationKey Create(string relativePath, string httpMethod)
     {
         ArgumentNullException.ThrowIfNull(relativePath);
