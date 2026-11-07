@@ -55,6 +55,12 @@ public static class SharedKernelPackagingConventionTests
             (
                 Path.Combine(repositoryRoot, "src", "SharedKernel", "SharedKernel.Domain.CodeFixes", "SharedKernel.Domain.CodeFixes.csproj"),
                 ["SharedKernel.Domain.CodeFixes.dll"]),
+            (
+                Path.Combine(repositoryRoot, "src", "SharedKernel", "SharedKernel.Blazor.Analyzers", "SharedKernel.Blazor.Analyzers.csproj"),
+                ["SharedKernel.Blazor.Analyzers.dll"]),
+            (
+                Path.Combine(repositoryRoot, "src", "SharedKernel", "SharedKernel.Blazor.CodeFixes", "SharedKernel.Blazor.CodeFixes.csproj"),
+                ["SharedKernel.Blazor.CodeFixes.dll"]),
         ];
 
         // Act
