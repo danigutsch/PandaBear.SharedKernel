@@ -14,3 +14,27 @@ PandaBear.Mediator.AppMediatorInstrumentation.StreamsTotal.get -> System.Diagnos
 PandaBear.Mediator.SharedKernelMediatorActivitySource
 static PandaBear.Mediator.SharedKernelMediatorActivitySource.ActivitySourceName.get -> string!
 static PandaBear.Mediator.SharedKernelMediatorActivitySource.Source.get -> System.Diagnostics.ActivitySource!
+PandaBear.Mediator.ScopedSender
+PandaBear.Mediator.ScopedSender.ScopedSender(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory! scopeFactory, System.IServiceProvider! callerServices, System.Func<System.IServiceProvider!, System.IServiceProvider!, System.Threading.Tasks.ValueTask>? scopeInitializer = null) -> void
+PandaBear.Mediator.ScopedSender.Send<TResponse>(PandaBear.Mediator.IRequest<TResponse>! request) -> System.Threading.Tasks.ValueTask<TResponse>
+PandaBear.Mediator.ScopedSender.Send<TResponse>(PandaBear.Mediator.IRequest<TResponse>! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
+PandaBear.Mediator.ConcurrencyConflictBehavior<TRequest, TResponse>
+PandaBear.Mediator.ConcurrencyConflictBehavior<TRequest, TResponse>.ConcurrencyConflictBehavior() -> void
+PandaBear.Mediator.ConcurrencyConflictBehavior<TRequest, TResponse>.Handle(TRequest request, PandaBear.Mediator.RequestHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
+const PandaBear.Mediator.ConcurrencyConflictBehavior<TRequest, TResponse>.ConflictMessage = "The data was changed or removed by someone else. Reload it and try again." -> string!
+PandaBear.Mediator.ConcurrencyConflictServiceCollectionExtensions
+static PandaBear.Mediator.ConcurrencyConflictServiceCollectionExtensions.AddConcurrencyConflictHandling<TRequest, TResponse>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.Mediator.ScopedSenderServiceCollectionExtensions
+static PandaBear.Mediator.ScopedSenderServiceCollectionExtensions.AddScopedSender(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static PandaBear.Mediator.ScopedSenderServiceCollectionExtensions.AddScopedSender(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Func<System.IServiceProvider!, System.IServiceProvider!, System.Threading.Tasks.ValueTask>! scopeInitializer) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.Mediator.UniqueRuleMap
+PandaBear.Mediator.UniqueRuleMap.Add(string! rule, string! field, string! message) -> PandaBear.Mediator.UniqueRuleMap!
+PandaBear.Mediator.UniqueRuleMap.UniqueRuleMap() -> void
+PandaBear.Mediator.UniqueViolationBehavior<TRequest, TResponse>
+PandaBear.Mediator.UniqueViolationBehavior<TRequest, TResponse>.Handle(TRequest request, PandaBear.Mediator.RequestHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
+PandaBear.Mediator.UniqueViolationBehavior<TRequest, TResponse>.UniqueViolationBehavior(PandaBear.Mediator.UniqueRuleMap? map = null) -> void
+const PandaBear.Mediator.UniqueViolationBehavior<TRequest, TResponse>.ConflictMessage = "A value that must be unique is already in use." -> string!
+const PandaBear.Mediator.UniqueViolationBehavior<TRequest, TResponse>.ValidationDetail = "One or more validation errors occurred." -> string!
+PandaBear.Mediator.UniqueViolationServiceCollectionExtensions
+static PandaBear.Mediator.UniqueViolationServiceCollectionExtensions.AddUniqueViolationHandling(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<PandaBear.Mediator.UniqueRuleMap!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static PandaBear.Mediator.UniqueViolationServiceCollectionExtensions.AddUniqueViolationHandling<TRequest, TResponse>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
