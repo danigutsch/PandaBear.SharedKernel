@@ -67,3 +67,25 @@ variables. The helper does not provide concurrency isolation.
 `TemporaryDirectory` uses the platform temporary-directory API. Disposal removes nested read-only
 files, avoids traversing symbolic links, and accepts an already removed root. Cleanup failures
 propagate. Keep fixture-specific file writers in the owning tests.
+
+## Call proxy
+
+`CallProxy.Create<IStore>(realStore, hooks => ...)` wraps a service so a test can hold, fail, follow up or replace a call without a
+decorator class per service. Hooks are chosen by method name and apply to methods that return `Task`, `Task<T>`, `ValueTask`,
+`ValueTask<T>`, a value, or nothing:
+
+```csharp
+var store = CallProxy.Create<IOrderStore>(real, hooks => hooks
+    .Before(nameof(IOrderStore.Find), call => gate.Wait((Guid)call.Args[0]!))   // hold until released, or throw to fail
+    .After(nameof(IOrderStore.Find), call => DeleteRow(call.Result))            // follow up with call.Result set
+    .Returns(nameof(IOrderStore.EmailExists), false));                          // replace the result, real service not called
+```
+
+Exceptions of the real service arrive unwrapped. The service must be a public interface (the runtime generates the proxy type), not an
+abstract class. Hooks are chosen by method name only, so overloads (and same-named methods of different interfaces) share their hooks.
+Hooks of a synchronous method are waited for on the calling thread, so keep them short. `out` and `ref` values written by the real
+service reach the caller, and `call.Args` shows them to after hooks. A `Returns` value that does not fit the method's result type (for
+example `null` for an `int`) throws an `InvalidOperationException` naming the method when the call is made.
+
+It fits a test that wraps a real implementation and needs one targeted hold, failure, follow-up or replaced result. It does not replace a
+fake that implements the whole interface with typed recorded state, a service registered by type, or delegate-based fakes.

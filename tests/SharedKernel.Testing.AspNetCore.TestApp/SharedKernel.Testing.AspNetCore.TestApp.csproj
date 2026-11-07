@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <RootNamespace>PandaBear.Testing.AspNetCore.TestApp</RootNamespace>
+        <IsPackable>false</IsPackable>
+        <EnableSharedKernelTestingAnalyzers>false</EnableSharedKernelTestingAnalyzers>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.Testing.AspNetCore.Tests" />
+    </ItemGroup>
+
+</Project>
