@@ -1,0 +1,9 @@
+#nullable enable
+PandaBear.Blazor.Analyzers.BlazorDiagnosticIds
+const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.LongLivedScopeService = "SKBLZ002" -> string!
+const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.UnguardedBusyFlag = "SKBLZ001" -> string!
+PandaBear.Blazor.Analyzers.SharedKernelBlazorAnalyzer
+PandaBear.Blazor.Analyzers.SharedKernelBlazorAnalyzer.SharedKernelBlazorAnalyzer() -> void
+override PandaBear.Blazor.Analyzers.SharedKernelBlazorAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override PandaBear.Blazor.Analyzers.SharedKernelBlazorAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.MissingKey = "SKBLZ003" -> string!

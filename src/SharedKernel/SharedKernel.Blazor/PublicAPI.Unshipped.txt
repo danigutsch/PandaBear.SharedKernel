@@ -1,5 +1,7 @@
 #nullable enable
 const PandaBear.Blazor.ErrorSummary.MaxMessageLength = 300 -> int
+const PandaBear.Blazor.InteractiveMarker.AttributeName = "data-interactive" -> string!
+const PandaBear.Blazor.InteractiveMarker.ReadySelector = "[data-interactive='true']" -> string!
 const PandaBear.Blazor.UiFailureReporter.ErrorTypeTag = "error_type" -> string!
 const PandaBear.Blazor.UiFailureReporter.HandledFailureEventId = 7001 -> int
 const PandaBear.Blazor.UiFailureReporter.HandledFailuresCounterName = "handled_ui_failures_total" -> string!
@@ -30,6 +32,8 @@ PandaBear.Blazor.HttpOutcomeMessages.For(PandaBear.HttpClients.HttpOutcome! outc
 PandaBear.Blazor.HttpOutcomeMessages.For(PandaBear.HttpClients.HttpOutcomeKind kind) -> string!
 PandaBear.Blazor.HttpOutcomeMessages.HttpOutcomeMessages(string! fallback) -> void
 PandaBear.Blazor.HttpOutcomeMessages.With(PandaBear.HttpClients.HttpOutcomeKind kind, string! message) -> PandaBear.Blazor.HttpOutcomeMessages!
+PandaBear.Blazor.InteractiveMarker
+PandaBear.Blazor.InteractiveMarker.InteractiveMarker() -> void
 PandaBear.Blazor.IUiFailureReporter
 PandaBear.Blazor.IUiFailureReporter.Report(System.Exception! exception, string! operation) -> void
 PandaBear.Blazor.RecoveryErrorBoundary
@@ -104,3 +108,37 @@ PandaBear.Blazor.UploadStatus.StatusClass.get -> string?
 PandaBear.Blazor.UploadStatus.StatusClass.set -> void
 PandaBear.Blazor.UploadStatus.UploadStatus() -> void
 static PandaBear.Blazor.BlazorServiceCollectionExtensions.AddUiFailureReporting(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.Blazor.FormField<TValue>
+PandaBear.Blazor.FormField<TValue>.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.FormField<TValue>.ChildContent.set -> void
+PandaBear.Blazor.FormField<TValue>.For.get -> System.Linq.Expressions.Expression<System.Func<TValue>!>?
+PandaBear.Blazor.FormField<TValue>.For.set -> void
+PandaBear.Blazor.FormField<TValue>.FormField() -> void
+PandaBear.Blazor.FormField<TValue>.InputId.get -> string!
+PandaBear.Blazor.FormField<TValue>.InputId.set -> void
+PandaBear.Blazor.FormField<TValue>.Label.get -> string!
+PandaBear.Blazor.FormField<TValue>.Label.set -> void
+PandaBear.Blazor.ServerFormSubmission
+PandaBear.Blazor.ServerFormSubmission.ConflictMessage.get -> string?
+PandaBear.Blazor.ServerFormSubmission.ConflictMessage.init -> void
+PandaBear.Blazor.ServerFormSubmission.Dispose() -> void
+PandaBear.Blazor.ServerFormSubmission.Error.get -> string?
+PandaBear.Blazor.ServerFormSubmission.IsSaving.get -> bool
+PandaBear.Blazor.ServerFormSubmission.NotFoundMessage.get -> string?
+PandaBear.Blazor.ServerFormSubmission.NotFoundMessage.init -> void
+PandaBear.Blazor.ServerFormSubmission.ServerFormSubmission(Microsoft.AspNetCore.Components.Forms.EditContext! editContext, PandaBear.Blazor.ServerValidationOptions! options, System.Func<string!, string!>! fieldId, string! failureMessage) -> void
+PandaBear.Blazor.ServerFormSubmission.Submit(System.Func<System.Threading.Tasks.Task<PandaBear.Results.Result>!>! save) -> System.Threading.Tasks.Task<bool>!
+PandaBear.Blazor.ServerFormSubmission.Summary.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.ErrorSummaryItem!>!
+PandaBear.Blazor.ConfirmationState<TKey>
+PandaBear.Blazor.ConfirmationState<TKey>.Ask(TKey key) -> void
+PandaBear.Blazor.ConfirmationState<TKey>.Cancel() -> void
+PandaBear.Blazor.ConfirmationState<TKey>.ConfirmationState() -> void
+PandaBear.Blazor.ConfirmationState<TKey>.HasPending.get -> bool
+PandaBear.Blazor.ConfirmationState<TKey>.IsPending(TKey key) -> bool
+PandaBear.Blazor.ParameterChange
+PandaBear.Blazor.ParameterChange.Changed = 2 -> PandaBear.Blazor.ParameterChange
+PandaBear.Blazor.ParameterChange.Initial = 0 -> PandaBear.Blazor.ParameterChange
+PandaBear.Blazor.ParameterChange.Unchanged = 1 -> PandaBear.Blazor.ParameterChange
+PandaBear.Blazor.ParameterTracker<T>
+PandaBear.Blazor.ParameterTracker<T>.ParameterTracker() -> void
+PandaBear.Blazor.ParameterTracker<T>.Update(T value) -> PandaBear.Blazor.ParameterChange

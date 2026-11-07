@@ -1,0 +1,10 @@
+#nullable enable
+PandaBear.Blazor.CodeFixes.SharedKernelBlazorCodeFixProvider
+PandaBear.Blazor.CodeFixes.SharedKernelBlazorCodeFixProvider.SharedKernelBlazorCodeFixProvider() -> void
+override PandaBear.Blazor.CodeFixes.SharedKernelBlazorCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+override PandaBear.Blazor.CodeFixes.SharedKernelBlazorCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider?
+override PandaBear.Blazor.CodeFixes.SharedKernelBlazorCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
+const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.LongLivedScopeService = "SKBLZ002" -> string!
+const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.UnguardedBusyFlag = "SKBLZ001" -> string!
+PandaBear.Blazor.Analyzers.BlazorDiagnosticIds
+const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.MissingKey = "SKBLZ003" -> string!
