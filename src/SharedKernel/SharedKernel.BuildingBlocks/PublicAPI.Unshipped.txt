@@ -1,21 +1,77 @@
 #nullable enable
+const PandaBear.BuildingBlocks.CountryCode.AssignedCount = 249 -> int
+const PandaBear.BuildingBlocks.EmailAddress.MaxLength = 254 -> int
+const PandaBear.BuildingBlocks.PersonName.MaxPartLength = 128 -> int
+const PandaBear.BuildingBlocks.PhoneNumber.MaxDigits = 15 -> int
+const PandaBear.BuildingBlocks.PhoneNumber.MinDigits = 7 -> int
+const PandaBear.BuildingBlocks.PostalAddress.MaxPartLength = 128 -> int
+const PandaBear.BuildingBlocks.PostalAddress.MaxPostalCodeLength = 32 -> int
+override PandaBear.BuildingBlocks.CountryCode.ToString() -> string!
+override PandaBear.BuildingBlocks.Currency.ToString() -> string!
+override PandaBear.BuildingBlocks.EmailAddress.ToString() -> string!
+override PandaBear.BuildingBlocks.Money.ToString() -> string!
+override PandaBear.BuildingBlocks.PersonName.ToString() -> string!
+override PandaBear.BuildingBlocks.PhoneNumber.ToString() -> string!
+override PandaBear.BuildingBlocks.PostalAddress.ToString() -> string!
+PandaBear.BuildingBlocks.CountryCode
+PandaBear.BuildingBlocks.CountryCode.Value.get -> string!
+PandaBear.BuildingBlocks.Currency
+PandaBear.BuildingBlocks.Currency.Code.get -> string!
+PandaBear.BuildingBlocks.Currency.MinorUnits.get -> int
 PandaBear.BuildingBlocks.DateRange
 PandaBear.BuildingBlocks.DateRange.DurationDays.get -> double
 PandaBear.BuildingBlocks.DateRange.EndDate.get -> System.DateTime
 PandaBear.BuildingBlocks.DateRange.StartDate.get -> System.DateTime
+PandaBear.BuildingBlocks.EmailAddress
+PandaBear.BuildingBlocks.EmailAddress.Value.get -> string!
 PandaBear.BuildingBlocks.ExceptionCancellationExtensions
 PandaBear.BuildingBlocks.IIdentified<TId>
 PandaBear.BuildingBlocks.IIdentified<TId>.Id.get -> TId
+PandaBear.BuildingBlocks.Money
+PandaBear.BuildingBlocks.Money.Add(PandaBear.BuildingBlocks.Money! other) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Money!>
+PandaBear.BuildingBlocks.Money.Amount.get -> decimal
+PandaBear.BuildingBlocks.Money.Currency.get -> PandaBear.BuildingBlocks.Currency!
+PandaBear.BuildingBlocks.Money.IsPositive.get -> bool
 PandaBear.BuildingBlocks.OptionResultExtensions
+PandaBear.BuildingBlocks.PersonName
+PandaBear.BuildingBlocks.PersonName.FirstName.get -> string!
+PandaBear.BuildingBlocks.PersonName.FullName.get -> string!
+PandaBear.BuildingBlocks.PersonName.LastName.get -> string!
+PandaBear.BuildingBlocks.PhoneNumber
+PandaBear.BuildingBlocks.PhoneNumber.Value.get -> string!
+PandaBear.BuildingBlocks.PostalAddress
+PandaBear.BuildingBlocks.PostalAddress.City.get -> string!
+PandaBear.BuildingBlocks.PostalAddress.Complement.get -> string?
+PandaBear.BuildingBlocks.PostalAddress.Country.get -> PandaBear.BuildingBlocks.CountryCode!
+PandaBear.BuildingBlocks.PostalAddress.Neighborhood.get -> string?
+PandaBear.BuildingBlocks.PostalAddress.PostalCode.get -> string!
+PandaBear.BuildingBlocks.PostalAddress.State.get -> string?
+PandaBear.BuildingBlocks.PostalAddress.Street.get -> string!
+PandaBear.BuildingBlocks.UniqueConstraintViolationException
+PandaBear.BuildingBlocks.UniqueConstraintViolationException.Rule.get -> string!
+PandaBear.BuildingBlocks.UniqueConstraintViolationException.UniqueConstraintViolationException() -> void
+PandaBear.BuildingBlocks.UniqueConstraintViolationException.UniqueConstraintViolationException(string! rule) -> void
+PandaBear.BuildingBlocks.UniqueConstraintViolationException.UniqueConstraintViolationException(string! rule, System.Exception? innerException) -> void
 PandaBear.BuildingBlocks.ValueObject
 PandaBear.BuildingBlocks.ValueObject.Equals(PandaBear.BuildingBlocks.ValueObject? other) -> bool
 abstract PandaBear.BuildingBlocks.ValueObject.GetEqualityComponents() -> System.Collections.Generic.IEnumerable<object?>!
 PandaBear.BuildingBlocks.ValueObject.ValueObject() -> void
 override PandaBear.BuildingBlocks.ValueObject.Equals(object? obj) -> bool
 override PandaBear.BuildingBlocks.ValueObject.GetHashCode() -> int
+static PandaBear.BuildingBlocks.CountryCode.All.get -> System.Collections.Generic.IReadOnlyList<PandaBear.BuildingBlocks.CountryCode!>!
+static PandaBear.BuildingBlocks.CountryCode.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.CountryCode!>
+static PandaBear.BuildingBlocks.Currency.Brl.get -> PandaBear.BuildingBlocks.Currency!
+static PandaBear.BuildingBlocks.Currency.Create(string? code) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Currency!>
+static PandaBear.BuildingBlocks.Currency.Eur.get -> PandaBear.BuildingBlocks.Currency!
+static PandaBear.BuildingBlocks.Currency.Usd.get -> PandaBear.BuildingBlocks.Currency!
 static PandaBear.BuildingBlocks.DateRange.Create(System.DateTime startDate, System.DateTime endDate) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.DateRange!>
+static PandaBear.BuildingBlocks.EmailAddress.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.EmailAddress!>
 static PandaBear.BuildingBlocks.ExceptionCancellationExtensions.ShouldHandleAsFailure(this System.Exception! exception, System.Threading.CancellationToken ct) -> bool
+static PandaBear.BuildingBlocks.Money.Create(decimal amount, PandaBear.BuildingBlocks.Currency? currency) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Money!>
 static PandaBear.BuildingBlocks.OptionResultExtensions.ToNotFoundResult<TEntity, TId>(this PandaBear.Results.Option<TEntity> source, TId id, string? container = null) -> PandaBear.Results.Result<TEntity>
+static PandaBear.BuildingBlocks.PersonName.Create(string? firstName, string? lastName) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.PersonName!>
+static PandaBear.BuildingBlocks.PhoneNumber.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.PhoneNumber!>
+static PandaBear.BuildingBlocks.PostalAddress.Create(string? street, string? complement, string? neighborhood, string? postalCode, string? city, string? state, string? country) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.PostalAddress!>
 static PandaBear.BuildingBlocks.ValueObject.operator !=(PandaBear.BuildingBlocks.ValueObject? left, PandaBear.BuildingBlocks.ValueObject? right) -> bool
 static PandaBear.BuildingBlocks.ValueObject.operator ==(PandaBear.BuildingBlocks.ValueObject? left, PandaBear.BuildingBlocks.ValueObject? right) -> bool
 PandaBear.BuildingBlocks.Compensation
@@ -54,3 +110,33 @@ PandaBear.BuildingBlocks.HypermediaLink.Href.get -> string!
 PandaBear.BuildingBlocks.HypermediaLink.Method.get -> string!
 PandaBear.BuildingBlocks.HypermediaLink.Rel.get -> string!
 static PandaBear.BuildingBlocks.HypermediaLink.Create(string? rel, string? href, string? method) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.HypermediaLink!>
+PandaBear.BuildingBlocks.CountryCode.EnglishName.get -> string!
+PandaBear.BuildingBlocks.BirthDate
+PandaBear.BuildingBlocks.BirthDate.AgeOn(System.DateOnly day) -> int
+PandaBear.BuildingBlocks.BirthDate.Value.get -> System.DateOnly
+override PandaBear.BuildingBlocks.BirthDate.ToString() -> string!
+static PandaBear.BuildingBlocks.BirthDate.Create(System.DateOnly value, System.DateOnly today, int minAgeYears, int maxAgeYears) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.BirthDate!>
+PandaBear.BuildingBlocks.DateOnlyRange
+PandaBear.BuildingBlocks.DateOnlyRange.Days.get -> int
+PandaBear.BuildingBlocks.DateOnlyRange.EndDate.get -> System.DateOnly
+PandaBear.BuildingBlocks.DateOnlyRange.StartDate.get -> System.DateOnly
+static PandaBear.BuildingBlocks.DateOnlyRange.Create(System.DateOnly startDate, System.DateOnly endDate) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.DateOnlyRange!>
+PandaBear.BuildingBlocks.ReferenceCode
+PandaBear.BuildingBlocks.ReferenceCode.Value.get -> string!
+override PandaBear.BuildingBlocks.ReferenceCode.ToString() -> string!
+static PandaBear.BuildingBlocks.ReferenceCode.Create(string? value, int maxLength, string! field = "code", string! label = "Code") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.ReferenceCode!>
+static PandaBear.BuildingBlocks.Money.CreateExact(decimal amount, PandaBear.BuildingBlocks.Currency? currency, string! field = "amount", string! label = "Amount") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Money!>
+PandaBear.BuildingBlocks.BusinessTimeProvider
+PandaBear.BuildingBlocks.BusinessTimeProvider.BusinessTimeProvider(System.TimeZoneInfo! businessTimeZone, System.TimeProvider? inner = null) -> void
+PandaBear.BuildingBlocks.ConcurrencyConflictException
+PandaBear.BuildingBlocks.ConcurrencyConflictException.ConcurrencyConflictException() -> void
+PandaBear.BuildingBlocks.ConcurrencyConflictException.ConcurrencyConflictException(string! message) -> void
+PandaBear.BuildingBlocks.ConcurrencyConflictException.ConcurrencyConflictException(string! message, System.Exception? innerException) -> void
+PandaBear.BuildingBlocks.ConcurrencyConflictException.ConcurrencyConflictException(System.Exception? innerException) -> void
+PandaBear.BuildingBlocks.TimeProviderExtensions
+override PandaBear.BuildingBlocks.BusinessTimeProvider.CreateTimer(System.Threading.TimerCallback! callback, object? state, System.TimeSpan dueTime, System.TimeSpan period) -> System.Threading.ITimer!
+override PandaBear.BuildingBlocks.BusinessTimeProvider.GetTimestamp() -> long
+override PandaBear.BuildingBlocks.BusinessTimeProvider.GetUtcNow() -> System.DateTimeOffset
+override PandaBear.BuildingBlocks.BusinessTimeProvider.LocalTimeZone.get -> System.TimeZoneInfo!
+override PandaBear.BuildingBlocks.BusinessTimeProvider.TimestampFrequency.get -> long
+static PandaBear.BuildingBlocks.TimeProviderExtensions.Today(this System.TimeProvider! provider) -> System.DateOnly
