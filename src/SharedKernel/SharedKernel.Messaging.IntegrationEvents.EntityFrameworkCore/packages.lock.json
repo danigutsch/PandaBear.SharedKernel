@@ -126,11 +126,19 @@
         "resolved": "10.0.13",
         "contentHash": "ZjTwxzhiw2TMEzIbUDkMF0dfDB2I4NQgIfKD0ELu9/5Mk+SRGdKZcD0/lvBrRCAPo6KN2r0BW86MRancoyJkoA=="
       },
+      "PandaBear.SharedKernel.BuildingBlocks": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.EntityFrameworkCore": {
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.13, )",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
+          "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Idempotency.Abstractions": {
@@ -145,6 +153,9 @@
           "PandaBear.SharedKernel.Idempotency.Abstractions": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.InputNormalization": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Messaging": {
         "type": "Project"
       },
@@ -154,6 +165,9 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
           "PandaBear.SharedKernel.Messaging": "[0.1.0-alpha.0, )"
         }
+      },
+      "PandaBear.SharedKernel.Results": {
+        "type": "Project"
       },
       "PandaBear.SharedKernel.Scheduling": {
         "type": "Project",

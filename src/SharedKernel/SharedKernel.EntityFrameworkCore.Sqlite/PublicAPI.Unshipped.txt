@@ -1,0 +1,6 @@
+#nullable enable
+PandaBear.EntityFrameworkCore.Sqlite.SqliteServiceCollectionExtensions
+PandaBear.EntityFrameworkCore.Sqlite.SqliteUniqueViolationParser
+PandaBear.EntityFrameworkCore.Sqlite.SqliteUniqueViolationParser.SqliteUniqueViolationParser() -> void
+PandaBear.EntityFrameworkCore.Sqlite.SqliteUniqueViolationParser.TryParse(Microsoft.EntityFrameworkCore.DbUpdateException! exception, out PandaBear.EntityFrameworkCore.UniqueViolation! violation) -> bool
+static PandaBear.EntityFrameworkCore.Sqlite.SqliteServiceCollectionExtensions.AddSqliteUniqueViolationParser(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

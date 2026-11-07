@@ -1,18 +1,32 @@
 #nullable enable
 const PandaBear.EntityFrameworkCore.SharedKernelSchemas.Messaging = "messaging" -> string!
+const PandaBear.EntityFrameworkCore.UniqueRuleIndexBuilderExtensions.AnnotationName = "PandaBear:UniqueRule" -> string!
 PandaBear.EntityFrameworkCore.CurrentSaveChangesDbContext
 PandaBear.EntityFrameworkCore.DbContextConfigurationServiceCollectionExtensions
+PandaBear.EntityFrameworkCore.DbContextUniqueViolationExtensions
 PandaBear.EntityFrameworkCore.EfCoreCommandTransactionScope
 PandaBear.EntityFrameworkCore.IDbContextConfiguration<TContext>
 PandaBear.EntityFrameworkCore.IDbContextConfiguration<TContext>.ConfigureConventions(Microsoft.EntityFrameworkCore.ModelConfigurationBuilder! configurationBuilder) -> void
 PandaBear.EntityFrameworkCore.IDbContextConfiguration<TContext>.ConfigureModel(Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> void
 PandaBear.EntityFrameworkCore.IDbContextConfiguration<TContext>.ConfigureOptions(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! optionsBuilder) -> void
 PandaBear.EntityFrameworkCore.IDbContextConfiguration<TContext>.ContextType.get -> System.Type!
+PandaBear.EntityFrameworkCore.IUniqueViolationParser
+PandaBear.EntityFrameworkCore.IUniqueViolationParser.TryParse(Microsoft.EntityFrameworkCore.DbUpdateException! exception, out PandaBear.EntityFrameworkCore.UniqueViolation! violation) -> bool
 PandaBear.EntityFrameworkCore.SharedKernelSchemas
+PandaBear.EntityFrameworkCore.UniqueRuleIndexBuilderExtensions
+PandaBear.EntityFrameworkCore.UniqueViolation
+PandaBear.EntityFrameworkCore.UniqueViolation.Columns.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.EntityFrameworkCore.UniqueViolation.Columns.init -> void
+PandaBear.EntityFrameworkCore.UniqueViolation.ConstraintName.get -> string?
+PandaBear.EntityFrameworkCore.UniqueViolation.ConstraintName.init -> void
+PandaBear.EntityFrameworkCore.UniqueViolation.Table.get -> string?
+PandaBear.EntityFrameworkCore.UniqueViolation.Table.init -> void
+PandaBear.EntityFrameworkCore.UniqueViolation.UniqueViolation(string? ConstraintName, string? Table, System.Collections.Generic.IReadOnlyList<string!>! Columns) -> void
 static PandaBear.EntityFrameworkCore.CurrentSaveChangesDbContext.Current.get -> Microsoft.EntityFrameworkCore.DbContext?
 static PandaBear.EntityFrameworkCore.CurrentSaveChangesDbContext.Enter(Microsoft.EntityFrameworkCore.DbContext! dbContext) -> System.IDisposable!
 static PandaBear.EntityFrameworkCore.DbContextConfigurationServiceCollectionExtensions.AddDbContextConfiguration<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, PandaBear.EntityFrameworkCore.IDbContextConfiguration<TContext!>! configuration) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static PandaBear.EntityFrameworkCore.DbContextConfigurationServiceCollectionExtensions.ApplyDbContextOptionConfigurations<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! options, bool enableDevelopmentDiagnostics) -> void
+static PandaBear.EntityFrameworkCore.DbContextUniqueViolationExtensions.SaveChangesTranslatingUniqueViolations(this Microsoft.EntityFrameworkCore.DbContext! dbContext, PandaBear.EntityFrameworkCore.IUniqueViolationParser! parser, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
 static PandaBear.EntityFrameworkCore.EfCoreCommandTransactionScope.Execute<TResponse>(Microsoft.EntityFrameworkCore.DbContext! dbContext, System.Func<System.Threading.Tasks.ValueTask<TResponse>>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
 PandaBear.EntityFrameworkCore.ReadDbContextConfiguration<TContext>
 PandaBear.EntityFrameworkCore.ReadDbContextConfiguration<TContext>.ConfigureOptions(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! optionsBuilder) -> void
@@ -20,3 +34,7 @@ PandaBear.EntityFrameworkCore.ReadDbContextConfiguration<TContext>.ReadDbContext
 PandaBear.EntityFrameworkCore.WriteDbContextConfiguration<TContext>
 PandaBear.EntityFrameworkCore.WriteDbContextConfiguration<TContext>.ConfigureOptions(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! optionsBuilder) -> void
 PandaBear.EntityFrameworkCore.WriteDbContextConfiguration<TContext>.WriteDbContextConfiguration() -> void
+static PandaBear.EntityFrameworkCore.UniqueRuleIndexBuilderExtensions.HasUniqueRule<TEntity>(this Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder<TEntity>! builder, string! rule) -> Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder<TEntity>!
+PandaBear.EntityFrameworkCore.DatabaseMigrationExtensions
+static PandaBear.EntityFrameworkCore.DatabaseMigrationExtensions.ApplyMigrations<TContext>(this System.IServiceProvider! services, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+static PandaBear.EntityFrameworkCore.DbContextUniqueViolationExtensions.SaveChangesTranslatingConflicts(this Microsoft.EntityFrameworkCore.DbContext! dbContext, PandaBear.EntityFrameworkCore.IUniqueViolationParser! parser, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!

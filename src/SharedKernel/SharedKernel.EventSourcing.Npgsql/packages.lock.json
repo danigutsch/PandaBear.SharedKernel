@@ -26,10 +26,14 @@
       "PandaBear.SharedKernel.BuildingBlocks": {
         "type": "Project",
         "dependencies": {
-          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-dev.local, )",
+          "PandaBear.SharedKernel.Results": "[0.1.0-dev.local, )"
         }
       },
       "PandaBear.SharedKernel.EventSourcing": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.InputNormalization": {
         "type": "Project"
       },
       "PandaBear.SharedKernel.Npgsql": {
