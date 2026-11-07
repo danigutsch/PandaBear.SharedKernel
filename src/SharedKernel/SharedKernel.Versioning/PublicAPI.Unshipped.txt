@@ -34,6 +34,18 @@ PandaBear.Versioning.ConventionalCommit.Scope.init -> void
 PandaBear.Versioning.ConventionalCommit.Type.get -> string!
 PandaBear.Versioning.ConventionalCommit.Type.init -> void
 PandaBear.Versioning.ConventionalCommitParser
+PandaBear.Versioning.DevPackStep
+PandaBear.Versioning.DevPackStep.DevPackStep(string! Name, string! ProjectPath, string! PackageId, bool Rebuild, bool Stale = false) -> void
+PandaBear.Versioning.DevPackStep.Name.get -> string!
+PandaBear.Versioning.DevPackStep.Name.init -> void
+PandaBear.Versioning.DevPackStep.PackageId.get -> string!
+PandaBear.Versioning.DevPackStep.PackageId.init -> void
+PandaBear.Versioning.DevPackStep.ProjectPath.get -> string!
+PandaBear.Versioning.DevPackStep.ProjectPath.init -> void
+PandaBear.Versioning.DevPackStep.Rebuild.get -> bool
+PandaBear.Versioning.DevPackStep.Rebuild.init -> void
+PandaBear.Versioning.DevPackStep.Stale.get -> bool
+PandaBear.Versioning.DevPackStep.Stale.init -> void
 PandaBear.Versioning.PackageLockInventory
 PandaBear.Versioning.PackageMetadataValidator
 PandaBear.Versioning.ProjectPropertyReader
@@ -106,6 +118,7 @@ PandaBear.Versioning.SemanticVersion.Prerelease.get -> string?
 PandaBear.Versioning.SemanticVersion.Prerelease.init -> void
 PandaBear.Versioning.SemanticVersion.SemanticVersion(int Major, int Minor, int Patch, string? Prerelease = null, string? BuildMetadata = null) -> void
 PandaBear.Versioning.SemanticVersion.StableCore.get -> PandaBear.Versioning.SemanticVersion!
+PandaBear.Versioning.SharedKernelDevPackPlanner
 PandaBear.Versioning.SharedKernelLocalFeed
 PandaBear.Versioning.SharedKernelPackageOptions
 PandaBear.Versioning.SharedKernelPackageOptions.AssemblyVersion.get -> string?
@@ -160,6 +173,8 @@ static PandaBear.Versioning.ReleaseVersionCalculator.CreateGitHubOutputs(PandaBe
 static PandaBear.Versioning.ReleaseVersionCalculator.CreateSummary(PandaBear.Versioning.ReleaseVersionCalculationResult! result) -> string![]!
 static PandaBear.Versioning.ReleaseVersionCalculator.GetCommitRange(string! sourceTag) -> string!
 static PandaBear.Versioning.SemanticVersion.Parse(string! value) -> PandaBear.Versioning.SemanticVersion!
+static PandaBear.Versioning.SharedKernelDevPackPlanner.EvictFromGlobalPackages(string! packageId, string! version, string? globalPackagesDirectory = null) -> bool
+static PandaBear.Versioning.SharedKernelDevPackPlanner.Plan(string! repoRoot, System.Collections.Generic.IReadOnlyCollection<string!>! requested, string! feedDirectory, string! version) -> System.Collections.Generic.IReadOnlyList<PandaBear.Versioning.DevPackStep!>!
 static PandaBear.Versioning.SharedKernelLocalFeed.PackageWasRestored(string! packageCache, string! packageId, string! version) -> bool
 static PandaBear.Versioning.SharedKernelLocalFeed.ReadPackageIds(string![]! packages, string! version) -> string![]!
 static PandaBear.Versioning.SharedKernelLocalFeed.WriteNuGetConfig(string! restoreDirectory, string! packageDirectory, string![]! packageIds, System.Uri! nugetSourceUrl) -> System.Threading.Tasks.Task!
@@ -171,3 +186,5 @@ static PandaBear.Versioning.SharedKernelPackagePlanner.ResolvePackageDirectory(P
 static PandaBear.Versioning.VersionCalculation.Calculate(PandaBear.Versioning.SemanticVersion! baseVersion, System.Collections.Generic.IEnumerable<string!>! commitMessages, string? prerelease = null, string? sha = null) -> PandaBear.Versioning.VersionOutput!
 static PandaBear.Versioning.VersionOutput.Create(PandaBear.Versioning.SemanticVersion! version, PandaBear.Versioning.ReleaseImpact impact, string? sha = null) -> PandaBear.Versioning.VersionOutput!
 static PandaBear.Versioning.VersionOutputJson.Serialize(PandaBear.Versioning.VersionOutput! output) -> string!
+static PandaBear.Versioning.SharedKernelDevPackPlanner.ParseGlobalPackagesListing(string! output) -> string?
+static PandaBear.Versioning.SharedKernelDevPackPlanner.ResolveGlobalPackagesDirectory(string! consumerDirectory, string? explicitDirectory, string? environmentValue, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<string?>!>? queryDotnet, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
