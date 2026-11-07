@@ -45,3 +45,8 @@ every other state as not successful; `!IsFailure` does not mean success (for exa
 Check success/failure before accessing payloads; propagate cancellation in asynchronous flows. Keep business validation in its owning domain. Registry publication remains deferred.
 
 Package ID: `PandaBear.SharedKernel.Results`. C# namespace: `PandaBear.Results`. Assembly/project identity: `SharedKernel.Results`.
+
+## Reading validation errors
+
+`result.ValidationErrors()` returns the field messages of a result (empty when there are none), and `Result<T>.WithoutValue()` drops
+the value while keeping success or the failure.

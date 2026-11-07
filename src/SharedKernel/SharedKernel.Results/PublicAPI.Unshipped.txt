@@ -47,3 +47,6 @@ PandaBear.Results.IResultLike<TSelf>.Status.get -> PandaBear.Results.ResultStatu
 PandaBear.Results.IResultLike<TSelf>.TryGetError(out PandaBear.Results.ResultError? currentError) -> bool
 static PandaBear.Results.Result.FromError(PandaBear.Results.ResultError! resultError) -> PandaBear.Results.Result
 static PandaBear.Results.Result<T>.FromError(PandaBear.Results.ResultError! resultError) -> PandaBear.Results.Result<T>
+PandaBear.Results.ResultValidationExtensions
+static PandaBear.Results.ResultValidationExtensions.ValidationErrors(this PandaBear.Results.Result result) -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>!
+static PandaBear.Results.ResultValidationExtensions.WithoutValue<T>(this PandaBear.Results.Result<T> result) -> PandaBear.Results.Result

@@ -2,3 +2,8 @@
 
 PandaBear.Results.AspNet.ResultStatusHttpExtensions
 static PandaBear.Results.AspNet.ResultStatusHttpExtensions.ToHttpStatusCode(this PandaBear.Results.ResultStatus status) -> int
+PandaBear.Results.AspNet.ResultHttpExtensions
+static PandaBear.Results.AspNet.ResultHttpExtensions.ToHttpResult(this PandaBear.Results.Result result) -> Microsoft.AspNetCore.Http.IResult!
+static PandaBear.Results.AspNet.ResultHttpExtensions.ToHttpResult<T>(this PandaBear.Results.Result<T> result) -> Microsoft.AspNetCore.Http.IResult!
+const PandaBear.Results.AspNet.ResultHttpExtensions.InternalServerErrorDetail = "An unexpected error occurred." -> string!
+const PandaBear.Results.AspNet.ResultHttpExtensions.ServiceUnavailableDetail = "The service is temporarily unavailable." -> string!
