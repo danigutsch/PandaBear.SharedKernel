@@ -31,7 +31,7 @@ public sealed class Cpf : ValueObject
     }
 
     /// <summary>Gets the sensitive value in the display mask <c>000.000.000-00</c>; a restored value that is not eleven digits is returned unchanged. Personal data: do not log or expose it without authorization. <see cref="ToString"/> stays redacted.</summary>
-    public string Formatted => Value.Length == 11
+    public string Formatted => Value.Length == 11 && Value.All(char.IsAsciiDigit)
         ? string.Create(14, Value, static (span, value) =>
         {
             value.AsSpan(0, 3).CopyTo(span);

@@ -64,16 +64,20 @@ public sealed class CpfTests
         cpf.Value.ShouldBe(value);
     }
 
-    [Fact]
-    public void Formatted_returns_a_restored_value_unchanged_when_it_is_not_eleven_digits()
+    [Theory]
+    [InlineData("legacy")]
+    [InlineData("abcdefghijk")]
+    [InlineData("1234567890a")]
+    [InlineData("529.982.247-25")]
+    public void Formatted_returns_a_restored_value_unchanged_when_it_is_not_eleven_digits(string value)
     {
         // Arrange
-        var cpf = Cpf.Restore("legacy");
+        var cpf = Cpf.Restore(value);
 
         // Act
         var formatted = cpf.Formatted;
 
         // Assert
-        formatted.ShouldBe("legacy");
+        formatted.ShouldBe(value);
     }
 }
