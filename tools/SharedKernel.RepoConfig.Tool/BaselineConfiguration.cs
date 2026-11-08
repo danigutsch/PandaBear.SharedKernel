@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.Json.Serialization;
 using PandaBear.Tooling;
 
 namespace PandaBear.RepoConfig.Tool;
@@ -22,6 +23,7 @@ internal sealed record BaselineConfiguration(
     private const int MaxValueLength = 200;
 
     /// <summary>Gets the managed files followed by the hook files, each with whether it must be executable.</summary>
+    [JsonIgnore]
     public IReadOnlyList<(BaselineFileConfiguration File, bool Executable)> ManagedFiles =>
     [
         .. (Files ?? []).Select(static file => (file, false)),
@@ -29,6 +31,7 @@ internal sealed record BaselineConfiguration(
     ];
 
     /// <summary>Gets the Git settings, followed by <c>core.hooksPath</c> when hooks are configured.</summary>
+    [JsonIgnore]
     public IReadOnlyList<BaselineGitConfigurationEntry> GitSettings =>
     [
         .. GitConfig ?? [],

@@ -131,7 +131,8 @@ internal static class BaselineCommand
         return new BaselinePlan(baseline, files, settings);
     }
 
-    private static void Write(string rootPath, BaselineEntry[] changes)
+    /// <summary>Writes <paramref name="changes"/> in one rollback batch and removes the directories it created if the batch fails.</summary>
+    internal static void Write(string rootPath, BaselineEntry[] changes)
     {
         var root = Path.GetFullPath(rootPath);
         List<string> createdDirectories = [];

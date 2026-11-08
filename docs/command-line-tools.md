@@ -112,7 +112,7 @@ non-interactive commands and to how they start a UI.
 - `sharedkernel-repo verify-links`, `verify-gherkin`, `dependency verify-license-exceptions`, `github sync-labels`, and
   `baseline verify` and `apply` read `.config/sharedkernel-repo.json`: the documentation files to scan for links, the
   Gherkin rules, the license exceptions, the repository labels, and the repository baseline files, Git settings, and hooks. Tool engines stay generic: the
-  baseline names no forge, owner, or host, and only allowlisted Git settings are accepted. The
+  baseline names no forge, owner, or host, and only allowlisted Git settings are accepted. `sharedkernel-repo new` writes that file for a new repository. The
   [repo tool README](../tools/SharedKernel.RepoConfig.Tool/README.md#configuration) describes the format.
 - `sharedkernel-k6 run` reads `.config/sharedkernel-k6.json`: the script and results directories, the container engine
   and digest-pinned image, and the scenarios with their script, base URL variable, forwarded environment variables,

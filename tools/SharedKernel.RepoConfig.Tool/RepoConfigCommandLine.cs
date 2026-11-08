@@ -61,6 +61,7 @@ internal static class RepoConfigCommandLine
             CreateDependencyCommand(environment, root),
             CreateVerifyDevcontainerCommand(environment, root),
             CreateBaselineCommand(environment, root),
+            CreateNewCommand(environment, root),
         };
 
         // Consumer caller tests run "[diagram] <command line>" to parse a command line without running it.
@@ -228,6 +229,52 @@ internal static class RepoConfigCommandLine
         {
             verify, apply
         };
+    }
+
+    private static Command CreateNewCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Option<string?> name = new("--name")
+        {
+            Description = "Repository name for the README. Defaults to the last segment of --root."
+        };
+        Option<string> branch = new("--branch")
+        {
+            Description = "Default branch name.",
+            DefaultValueFactory = static _ => "main"
+        };
+        Option<string> language = new("--language")
+        {
+            Description = "Language that selects feature content: " + string.Join(", ", RepoLanguage.All.Select(static l => l.Id)) + ".",
+            DefaultValueFactory = static _ => RepoLanguage.None.Id
+        };
+        Option<string?> sdkVersion = new("--sdk-version")
+        {
+            Description = "The .NET SDK version that global.json pins and Directory.Build.props targets, such as 10.0.100. Needed by the global-json and build-props features."
+        };
+        Option<string[]> feature = new("--feature")
+        {
+            Description = "Feature to write; repeat the option to select several: " + string.Join(", ", RepoFeature.All.Select(static f => f.Id)) + ". Defaults to every feature except signed-commits; the dotnet features need --language dotnet."
+        };
+        Option<bool> force = new("--force")
+        {
+            Description = "Write the repository instead of previewing it. Never replaces an existing file or Git setting."
+        };
+        Command command = new("new", "Start a repository: write the chosen baseline files and their consumer configuration, and initialize Git. Previews unless --force is given.")
+        {
+            name, branch, language, sdkVersion, feature, force, root
+        };
+        SetGuardedAction(command, (parseResult, output, error, ct) => NewCommand.Run(
+            ResolveRoot(parseResult, root, environment),
+            parseResult.GetValue(name),
+            parseResult.GetRequiredValue(branch),
+            parseResult.GetRequiredValue(language),
+            parseResult.GetValue(sdkVersion),
+            parseResult.GetValue(feature) ?? [],
+            parseResult.GetValue(force),
+            output,
+            error,
+            ct));
+        return command;
     }
 
     private static Command CreateSyncLabelsCommand(RepoConfigToolEnvironment environment, Option<string> root)

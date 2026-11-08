@@ -53,6 +53,17 @@ internal static class BaselineGit
         }
     }
 
+    /// <summary>Runs <c>git init</c> in <paramref name="root"/> with <paramref name="branch"/> as the initial branch.</summary>
+    /// <exception cref="InvalidOperationException"><c>git init</c> failed.</exception>
+    public static async Task Init(string root, string branch, CancellationToken cancellationToken)
+    {
+        var (exitCode, _) = await Run(root, ["init", "-b", branch], cancellationToken).ConfigureAwait(false);
+        if (exitCode != 0)
+        {
+            throw new InvalidOperationException("git init failed.");
+        }
+    }
+
     private static async Task<(int ExitCode, string Output)> Run(string root, string[] arguments, CancellationToken cancellationToken)
     {
         var git = ExecutableResolver.Resolve("git", Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows())
