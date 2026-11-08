@@ -1,3 +1,4 @@
+using PandaBear.InputNormalization;
 using PandaBear.Results;
 
 namespace PandaBear.BuildingBlocks;
@@ -100,8 +101,50 @@ public sealed class PostalAddress : ValueObject
             : Result.Ok(new PostalAddress(validStreet, validComplement, validNeighborhood, validPostalCode, validCity, validState, countryResult.Value));
     }
 
+    /// <summary>For persistence mappers: rebuilds an address from parts that were produced by this type earlier; it performs NO validation beyond null/blank checks of the required parts and the same sanitizing as <see cref="Create"/>, so length limits are not enforced and a stored value that a newer rule would reject can still be loaded; never use it for user input.</summary>
+    /// <param name="street">The stored street and number.</param>
+    /// <param name="complement">The stored complement; blank becomes <see langword="null"/>.</param>
+    /// <param name="neighborhood">The stored neighborhood; blank becomes <see langword="null"/>.</param>
+    /// <param name="postalCode">The stored postal code.</param>
+    /// <param name="city">The stored city.</param>
+    /// <param name="state">The stored state or region; blank becomes <see langword="null"/>.</param>
+    /// <param name="country">The stored country.</param>
+    /// <returns>The address.</returns>
+    /// <exception cref="ArgumentNullException">A required part or <paramref name="country"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">A required text part is empty or blank.</exception>
+    public static PostalAddress Restore(
+        string street,
+        string? complement,
+        string? neighborhood,
+        string postalCode,
+        string city,
+        string? state,
+        CountryCode country)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(street);
+        ArgumentException.ThrowIfNullOrWhiteSpace(postalCode);
+        ArgumentException.ThrowIfNullOrWhiteSpace(city);
+        ArgumentNullException.ThrowIfNull(country);
+        var validStreet = StringSanitizer.Sanitize(street);
+        var validPostalCode = StringSanitizer.Sanitize(postalCode);
+        var validCity = StringSanitizer.Sanitize(city);
+        ArgumentException.ThrowIfNullOrEmpty(validStreet, nameof(street));
+        ArgumentException.ThrowIfNullOrEmpty(validPostalCode, nameof(postalCode));
+        ArgumentException.ThrowIfNullOrEmpty(validCity, nameof(city));
+        return new PostalAddress(
+            validStreet,
+            NullIfEmpty(StringSanitizer.Sanitize(complement)),
+            NullIfEmpty(StringSanitizer.Sanitize(neighborhood)),
+            validPostalCode,
+            validCity,
+            NullIfEmpty(StringSanitizer.Sanitize(state)),
+            country);
+    }
+
     /// <inheritdoc />
     public override string ToString() => "PostalAddress [redacted]";
+
+    private static string? NullIfEmpty(string? value) => string.IsNullOrEmpty(value) ? null : value;
 
     /// <inheritdoc />
     protected override IEnumerable<object?> GetEqualityComponents()

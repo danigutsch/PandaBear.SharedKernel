@@ -30,6 +30,30 @@ public sealed class Cpf : ValueObject
         return Result.Ok(new Cpf(value));
     }
 
+    /// <summary>Gets the sensitive value in the display mask <c>000.000.000-00</c>; a restored value that is not eleven digits is returned unchanged. Personal data: do not log or expose it without authorization. <see cref="ToString"/> stays redacted.</summary>
+    public string Formatted => Value.Length == 11
+        ? string.Create(14, Value, static (span, value) =>
+        {
+            value.AsSpan(0, 3).CopyTo(span);
+            span[3] = '.';
+            value.AsSpan(3, 3).CopyTo(span[4..]);
+            span[7] = '.';
+            value.AsSpan(6, 3).CopyTo(span[8..]);
+            span[11] = '-';
+            value.AsSpan(9, 2).CopyTo(span[12..]);
+        })
+        : Value;
+
+    /// <summary>For persistence mappers: rebuilds a CPF from text that was produced by this type earlier; it performs NO validation beyond null/blank checks and trimming, so a stored value that a newer rule would reject can still be loaded; never use it for user input.</summary>
+    /// <param name="value">The stored value.</param>
+    /// <returns>The CPF.</returns>
+    /// <exception cref="ArgumentException"><paramref name="value"/> is <see langword="null"/>, empty or blank.</exception>
+    public static Cpf Restore(string value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(value);
+        return new Cpf(value.Trim());
+    }
+
     /// <inheritdoc />
     public override string ToString() => "Cpf [redacted]";
 

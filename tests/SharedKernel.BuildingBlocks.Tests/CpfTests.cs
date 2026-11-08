@@ -46,4 +46,34 @@ public sealed class CpfTests
         // Assert
         result.Status.ShouldBe(ResultStatus.Invalid);
     }
+
+    [Theory]
+    [InlineData("52998224725", "529.982.247-25")]
+    [InlineData("01234567890", "012.345.678-90")]
+    public void Formatted_prints_the_display_mask_while_to_string_stays_redacted(string value, string expected)
+    {
+        // Arrange
+        var cpf = Cpf.Create(value).ShouldBeSuccess();
+
+        // Act
+        var formatted = cpf.Formatted;
+
+        // Assert
+        formatted.ShouldBe(expected);
+        cpf.ToString().ShouldBe("Cpf [redacted]");
+        cpf.Value.ShouldBe(value);
+    }
+
+    [Fact]
+    public void Formatted_returns_a_restored_value_unchanged_when_it_is_not_eleven_digits()
+    {
+        // Arrange
+        var cpf = Cpf.Restore("legacy");
+
+        // Act
+        var formatted = cpf.Formatted;
+
+        // Assert
+        formatted.ShouldBe("legacy");
+    }
 }

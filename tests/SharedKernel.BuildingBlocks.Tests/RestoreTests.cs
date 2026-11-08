@@ -166,6 +166,79 @@ public sealed class RestoreTests
     }
 
     [Theory]
+    [InlineData("52998224725", "52998224725")]
+    [InlineData(" 01234567890 ", "01234567890")]
+    public void Cpf_restore_equals_create_for_valid_values(string input, string canonical)
+    {
+        // Arrange
+        var created = Cpf.Create(canonical).ShouldBeSuccess();
+
+        // Act
+        var restored = Cpf.Restore(input);
+
+        // Assert
+        restored.ShouldBe(created);
+        restored.GetHashCode().ShouldBe(created.GetHashCode());
+        restored.ToString().ShouldBe("Cpf [redacted]");
+    }
+
+    [Fact]
+    public void Cpf_restore_keeps_a_stored_value_that_create_rejects()
+    {
+        // Act
+        var restored = Cpf.Restore("11111111111");
+
+        // Assert
+        Cpf.Create("11111111111").Status.ShouldBe(Results.ResultStatus.Invalid);
+        restored.Value.ShouldBe("11111111111");
+        restored.ToString().ShouldBe("Cpf [redacted]");
+    }
+
+    [Fact]
+    public void Postal_address_restore_equals_create_for_valid_values()
+    {
+        // Arrange
+        var created = PostalAddress.Create("Rua A, 10", "Apt 4", null, "01000-000", "São Paulo", "SP", "BR").ShouldBeSuccess();
+
+        // Act
+        var restored = PostalAddress.Restore(" Rua  A, 10 ", "Apt 4", null, "01000-000", "São Paulo", "SP", CountryCode.Restore("br"));
+
+        // Assert
+        restored.ShouldBe(created);
+        restored.GetHashCode().ShouldBe(created.GetHashCode());
+        restored.ToString().ShouldBe("PostalAddress [redacted]");
+    }
+
+    [Fact]
+    public void Postal_address_restore_turns_blank_optional_parts_into_null()
+    {
+        // Act
+        var restored = PostalAddress.Restore("Rua A", "  ", "", "01000", "Sao Paulo", null, CountryCode.Restore("BR"));
+
+        // Assert
+        restored.Complement.ShouldBeNull();
+        restored.Neighborhood.ShouldBeNull();
+        restored.State.ShouldBeNull();
+    }
+
+    [Fact]
+    public void Postal_address_restore_keeps_parts_longer_than_the_current_limit_and_an_unassigned_country()
+    {
+        // Arrange
+        var longStreet = new string('a', PostalAddress.MaxPartLength + 10);
+        var longPostalCode = new string('9', PostalAddress.MaxPostalCodeLength + 10);
+
+        // Act
+        var restored = PostalAddress.Restore(longStreet, null, null, longPostalCode, "Pristina", null, CountryCode.Restore("xk"));
+
+        // Assert
+        PostalAddress.Create(longStreet, null, null, longPostalCode, "Pristina", null, "XK").Status.ShouldBe(Results.ResultStatus.Invalid);
+        restored.Street.ShouldBe(longStreet);
+        restored.PostalCode.ShouldBe(longPostalCode);
+        restored.Country.Value.ShouldBe("XK");
+    }
+
+    [Theory]
     [InlineData("")]
     [InlineData("   ")]
     public void Restore_rejects_blank_text(string input)
@@ -177,8 +250,16 @@ public sealed class RestoreTests
         var currency = () => Currency.Restore(input);
         var firstName = () => PersonName.Restore(input, "Silva");
         var lastName = () => PersonName.Restore("Ana", input);
+        var cpf = () => Cpf.Restore(input);
+        var street = () => PostalAddress.Restore(input, null, null, "01000", "Sao Paulo", null, CountryCode.Restore("BR"));
+        var postalCode = () => PostalAddress.Restore("Rua A", null, null, input, "Sao Paulo", null, CountryCode.Restore("BR"));
+        var city = () => PostalAddress.Restore("Rua A", null, null, "01000", input, null, CountryCode.Restore("BR"));
 
         // Act & Assert
+        cpf.ShouldThrow<ArgumentException>();
+        street.ShouldThrow<ArgumentException>();
+        postalCode.ShouldThrow<ArgumentException>();
+        city.ShouldThrow<ArgumentException>();
         email.ShouldThrow<ArgumentException>();
         phone.ShouldThrow<ArgumentException>();
         country.ShouldThrow<ArgumentException>();
@@ -196,8 +277,18 @@ public sealed class RestoreTests
         var country = () => CountryCode.Restore(null!);
         var currency = () => Currency.Restore(null!);
         var name = () => PersonName.Restore(null!, null!);
+        var cpf = () => Cpf.Restore(null!);
+        var street = () => PostalAddress.Restore(null!, null, null, "01000", "Sao Paulo", null, CountryCode.Restore("BR"));
+        var postalCode = () => PostalAddress.Restore("Rua A", null, null, null!, "Sao Paulo", null, CountryCode.Restore("BR"));
+        var city = () => PostalAddress.Restore("Rua A", null, null, "01000", null!, null, CountryCode.Restore("BR"));
+        var addressCountry = () => PostalAddress.Restore("Rua A", null, null, "01000", "Sao Paulo", null, null!);
 
         // Act & Assert
+        cpf.ShouldThrow<ArgumentNullException>();
+        street.ShouldThrow<ArgumentNullException>();
+        postalCode.ShouldThrow<ArgumentNullException>();
+        city.ShouldThrow<ArgumentNullException>();
+        addressCountry.ShouldThrow<ArgumentNullException>();
         email.ShouldThrow<ArgumentNullException>();
         phone.ShouldThrow<ArgumentNullException>();
         country.ShouldThrow<ArgumentNullException>();
