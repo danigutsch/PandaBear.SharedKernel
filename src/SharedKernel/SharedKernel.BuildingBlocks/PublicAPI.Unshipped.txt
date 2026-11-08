@@ -85,7 +85,10 @@ PandaBear.BuildingBlocks.Cnpj.Value.get -> string!
 override PandaBear.BuildingBlocks.Cnpj.ToString() -> string!
 static PandaBear.BuildingBlocks.Cnpj.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Cnpj!>
 PandaBear.BuildingBlocks.Cpf
+PandaBear.BuildingBlocks.Cpf.Formatted.get -> string!
 PandaBear.BuildingBlocks.Cpf.Value.get -> string!
+static PandaBear.BuildingBlocks.Cpf.Restore(string! value) -> PandaBear.BuildingBlocks.Cpf!
+static PandaBear.BuildingBlocks.PostalAddress.Restore(string! street, string? complement, string? neighborhood, string! postalCode, string! city, string? state, PandaBear.BuildingBlocks.CountryCode! country) -> PandaBear.BuildingBlocks.PostalAddress!
 override PandaBear.BuildingBlocks.Cpf.ToString() -> string!
 static PandaBear.BuildingBlocks.Cpf.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Cpf!>
 PandaBear.BuildingBlocks.Iban

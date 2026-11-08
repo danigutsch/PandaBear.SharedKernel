@@ -95,12 +95,18 @@ recipient verification, masking, authorization, encryption and financial policy 
 expose `Value`. Do not destructure these objects in logs. JSON/EF adapters must call factories and
 handle validation failure. Persistence mappers (EF value converters) that rebuild a value from stored text must use the
 `Restore` factories instead of `Create(...).Value`: `EmailAddress.Restore`, `PhoneNumber.Restore`, `CountryCode.Restore`,
-`Currency.Restore`, `PersonName.Restore(firstName, lastName)` and `Money.Restore(amount, currency)`. `Restore` is for persistence mappers
+`Currency.Restore`, `PersonName.Restore(firstName, lastName)`, `Money.Restore(amount, currency)`, `Cpf.Restore(value)` and
+`PostalAddress.Restore(street, complement, neighborhood, postalCode, city, state, country)`. `Restore` is for persistence mappers
 only: it rebuilds a value from text this type produced earlier, performs no validation beyond null/blank checks (`ArgumentException`) and
 the same trim and case normalization as `Create`, so a stored value that a newer rule rejects (an allow-list that tightened, a
 longer-than-now name) still loads instead of throwing on every query. `CountryCode.Restore` keeps a code outside the assigned set (its
-`EnglishName` is the code), `Currency.Restore` keeps a delisted code (2 minor units) and `Money.Restore` does not round. Never use `Restore`
-for user input.
+`EnglishName` is the code), `Currency.Restore` keeps a delisted code (2 minor units) and `Money.Restore` does not round. `Cpf.Restore`
+trims and keeps a value whose check digits fail; `PostalAddress.Restore` sanitizes each part like `Create`, turns blank optional parts into
+`null`, requires street, postal code and city, takes an already restored `CountryCode`, and does not enforce the part length limits. Never
+use `Restore` for user input.
+
+`Cpf.Formatted` returns the sensitive display mask `000.000.000-00` (for example on a printed contract); it is personal data like `Value`,
+while `ToString()` stays redacted. A restored value that is not eleven digits is returned unchanged.
 
 ## Country names
 

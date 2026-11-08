@@ -31,6 +31,12 @@ PandaBear.DocumentRendering.DocumentField.PrivacyClassification.get -> PandaBear
 PandaBear.DocumentRendering.DocumentField.PrivacyClassification.init -> void
 PandaBear.DocumentRendering.DocumentField.Value.get -> string!
 PandaBear.DocumentRendering.DocumentField.Value.init -> void
+PandaBear.DocumentRendering.DocumentParagraph
+PandaBear.DocumentRendering.DocumentParagraph.DocumentParagraph(string! Text, PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
+PandaBear.DocumentRendering.DocumentParagraph.PrivacyClassification.get -> PandaBear.DocumentRendering.DocumentPrivacyClassification
+PandaBear.DocumentRendering.DocumentParagraph.PrivacyClassification.init -> void
+PandaBear.DocumentRendering.DocumentParagraph.Text.get -> string!
+PandaBear.DocumentRendering.DocumentParagraph.Text.init -> void
 PandaBear.DocumentRendering.DocumentPrivacyClassification
 PandaBear.DocumentRendering.DocumentPrivacyClassification.None = 0 -> PandaBear.DocumentRendering.DocumentPrivacyClassification
 PandaBear.DocumentRendering.DocumentPrivacyClassification.Operational = 2 -> PandaBear.DocumentRendering.DocumentPrivacyClassification
@@ -53,6 +59,8 @@ PandaBear.DocumentRendering.DocumentSection.Fields.get -> System.Collections.Gen
 PandaBear.DocumentRendering.DocumentSection.Fields.init -> void
 PandaBear.DocumentRendering.DocumentSection.Heading.get -> string!
 PandaBear.DocumentRendering.DocumentSection.Heading.init -> void
+PandaBear.DocumentRendering.DocumentSection.Paragraphs.get -> System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentParagraph!>!
+PandaBear.DocumentRendering.DocumentSection.Paragraphs.init -> void
 PandaBear.DocumentRendering.HtmlDocumentRenderer
 PandaBear.DocumentRendering.HtmlDocumentRenderer.HtmlDocumentRenderer() -> void
 PandaBear.DocumentRendering.HtmlDocumentRenderer.Render(PandaBear.DocumentRendering.DocumentRenderRequest! request) -> byte[]!

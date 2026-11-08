@@ -10,6 +10,13 @@ Structured document models and deterministic HTML rendering primitives.
 
 Create a `DocumentRenderRequest` with `DocumentSection`, `DocumentField`, a `DocumentBrandingSnapshot`, and the required privacy classification. Pass it to `HtmlDocumentRenderer.Render` through `IDocumentRenderer` to produce HTML bytes. This package supplies structured rendering; storage, HTTP delivery, access control, and document business rules remain consumer-owned.
 
+A `DocumentSection` carries label/value `DocumentField`s and, optionally, ordered `DocumentParagraph`s (`Text` plus the required privacy
+classification) set through its `Paragraphs` property. Paragraphs render as `<p>` elements before the fields, in order, HTML-encoded; a
+section without paragraphs renders exactly as before, and a section with paragraphs and no fields omits the empty field list. The text is
+the caller's final wording: the renderer builds no clause numbering. A paragraph with a null or blank text is rejected
+(`ArgumentException`), and one with `DocumentPrivacyClassification.None` throws `InvalidOperationException`, like a field. The encoder writes
+characters from U+00A0 to U+00FF (such as `á` and `ª`) as numeric character references; the document declares UTF-8 and contains no script.
+
 ## Install and example
 
 The following placeholders are intentional: replace `<validated-candidate-version>` with a candidate that has actually been built and validated, and `<private-candidate-feed>` with its private local feed. The placeholders do not identify a published package version. The code requires the package's target runtime; integration examples assume application-owned host/provider configuration.
@@ -26,8 +33,17 @@ public static class Example
     public static byte[] Render()
     {
         var request = new DocumentRenderRequest("en", "Receipt",
-            [new DocumentSection("Items",
-                [new DocumentField("Product", "Guidebook", DocumentPrivacyClassification.Public)])],
+            [
+                new DocumentSection("Items",
+                    [new DocumentField("Product", "Guidebook", DocumentPrivacyClassification.Public)]),
+                new DocumentSection("Terms", [])
+                {
+                    Paragraphs =
+                    [
+                        new DocumentParagraph("Clause 1: payment within 45 days.", DocumentPrivacyClassification.Public),
+                    ],
+                },
+            ],
             Branding: null);
         return new HtmlDocumentRenderer().Render(request);
     }

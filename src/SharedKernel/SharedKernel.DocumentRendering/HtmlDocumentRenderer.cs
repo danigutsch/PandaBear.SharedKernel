@@ -38,21 +38,40 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
         {
             ArgumentNullException.ThrowIfNull(section);
             ArgumentNullException.ThrowIfNull(section.Fields);
+            ArgumentNullException.ThrowIfNull(section.Paragraphs);
 
-            builder.Append("<section><h2>").Append(HtmlEncode(section.Heading)).Append("</h2><dl>");
-            foreach (var field in section.Fields)
+            builder.Append("<section><h2>").Append(HtmlEncode(section.Heading)).Append("</h2>");
+            foreach (var paragraph in section.Paragraphs)
             {
-                ArgumentNullException.ThrowIfNull(field);
-                if (field.PrivacyClassification == DocumentPrivacyClassification.None)
+                ArgumentNullException.ThrowIfNull(paragraph);
+                ArgumentException.ThrowIfNullOrWhiteSpace(paragraph.Text, nameof(paragraph.Text));
+                if (paragraph.PrivacyClassification == DocumentPrivacyClassification.None)
                 {
-                    throw new InvalidOperationException("Document fields must be privacy classified before rendering.");
+                    throw new InvalidOperationException("Document paragraphs must be privacy classified before rendering.");
                 }
 
-                builder.Append("<dt>").Append(HtmlEncode(field.Label)).Append("</dt><dd>")
-                    .Append(HtmlEncode(field.Value)).Append("</dd>");
+                builder.Append("<p>").Append(HtmlEncode(paragraph.Text)).Append("</p>");
             }
 
-            builder.Append("</dl></section>");
+            if (section.Fields.Count > 0 || section.Paragraphs.Count == 0)
+            {
+                builder.Append("<dl>");
+                foreach (var field in section.Fields)
+                {
+                    ArgumentNullException.ThrowIfNull(field);
+                    if (field.PrivacyClassification == DocumentPrivacyClassification.None)
+                    {
+                        throw new InvalidOperationException("Document fields must be privacy classified before rendering.");
+                    }
+
+                    builder.Append("<dt>").Append(HtmlEncode(field.Label)).Append("</dt><dd>")
+                        .Append(HtmlEncode(field.Value)).Append("</dd>");
+                }
+
+                builder.Append("</dl>");
+            }
+
+            builder.Append("</section>");
         }
 
         builder.Append("</main>");
