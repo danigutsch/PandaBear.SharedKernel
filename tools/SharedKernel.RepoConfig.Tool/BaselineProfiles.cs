@@ -54,6 +54,18 @@ internal static class BaselineProfiles
         .vs/
         """;
 
+    private const string GitignoreDotnet = Gitignore + "\n" + """
+        [Bb]in/
+        [Oo]bj/
+        TestResults/
+        *.user
+        *.suo
+        *.nupkg
+        *.snupkg
+        .worktrees/
+        .tmp/
+        """;
+
     private const string Readme = """
         # @@repositoryName@@
 
@@ -130,6 +142,7 @@ internal static class BaselineProfiles
         ["gitattributes"] = Gitattributes,
         ["editorconfig"] = Editorconfig,
         ["gitignore"] = Gitignore,
+        ["gitignore-dotnet"] = GitignoreDotnet,
         ["readme"] = Readme,
         ["pull-request-template"] = PullRequestTemplate,
         ["issue-form-bug"] = IssueFormBug,
