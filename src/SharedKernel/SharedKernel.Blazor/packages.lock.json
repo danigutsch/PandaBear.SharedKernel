@@ -23,9 +23,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[10.0.13, )",
-        "resolved": "10.0.13",
-        "contentHash": "40yrBMsLEcjixBR4G+FiUaBPvxXIPSKJ2OgSrbOZcmSDBda4Sb0k7BWrfDpIvn3IvvDzwOL/tEPa6gDQfh6aRw=="
+        "requested": "[10.0.14, )",
+        "resolved": "10.0.14",
+        "contentHash": "YlTamXppEQls6DYWt7RdUuwWDb0lyw/vXCaGeQpLCpsLmfwGuCkOz/vIGgMTV7ECsJcavkCOkxZXv9s8rdAHkQ=="
       },
       "Microsoft.AspNetCore.Authorization": {
         "type": "Transitive",
@@ -301,13 +301,6 @@
         "resolved": "8.0.0",
         "contentHash": "7mu9v0QDv66ar3DpGSZHg9NuNcxDaaAcnMULuZlaTpP9+hwXhrxNGsF5GmLkSHxFdb5bBc1TzeujsRgTrPWi+Q=="
       },
-      "PandaBear.SharedKernel.BuildingBlocks": {
-        "type": "Project",
-        "dependencies": {
-          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
-        }
-      },
       "PandaBear.SharedKernel.HttpClients": {
         "type": "Project",
         "dependencies": {
@@ -320,9 +313,6 @@
         }
       },
       "PandaBear.SharedKernel.Idempotency.Abstractions": {
-        "type": "Project"
-      },
-      "PandaBear.SharedKernel.InputNormalization": {
         "type": "Project"
       },
       "PandaBear.SharedKernel.Results": {

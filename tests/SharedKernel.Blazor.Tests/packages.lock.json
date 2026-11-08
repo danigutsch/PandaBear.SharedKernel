@@ -394,7 +394,6 @@
         "dependencies": {
           "Microsoft.Playwright": "[1.63.0, )",
           "Microsoft.Playwright.Xunit.v3": "[1.63.0, )",
-          "PandaBear.SharedKernel.Blazor": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Testing.AspNetCore": "[0.1.0-alpha.0, )"
         }
       },
