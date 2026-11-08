@@ -1,81 +1,19 @@
 #nullable enable
-const PandaBear.AspNetCore.ApiAuthenticationDefaults.AllowHttpDevelopmentAuthorityConfigurationKey = "Authentication:AllowHttpDevelopmentAuthority" -> string!
-const PandaBear.AspNetCore.ApiAuthenticationDefaults.AuthorityConfigurationKey = "Authentication:Authority" -> string!
-const PandaBear.AspNetCore.ApiAuthenticationDefaults.IssuerConfigurationKey = "Authentication:Issuer" -> string!
-const PandaBear.AspNetCore.ApiAuthenticationDefaults.PermissionClaimType = "permission" -> string!
-const PandaBear.AspNetCore.ApiAuthenticationDefaults.RolesClaimType = "roles" -> string!
-const PandaBear.AspNetCore.SitemapXmlSerializer.ContentType = "application/xml; charset=utf-8" -> string!
-const PandaBear.AspNetCore.SitemapXmlSerializer.MaximumUrlCount = 50000 -> int
-PandaBear.AspNetCore.ApiAuthenticationDefaults
-PandaBear.AspNetCore.ApiAuthenticationServiceCollectionExtensions
-PandaBear.AspNetCore.AntiforgerySignOutEndpointRouteBuilderExtensions
-PandaBear.AspNetCore.ApiBearerScheme
-PandaBear.AspNetCore.ApiBearerScheme.ApiBearerScheme(string! Name, string! Audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! PermissionsByRole) -> void
-PandaBear.AspNetCore.ApiBearerScheme.Audience.get -> string!
-PandaBear.AspNetCore.ApiBearerScheme.Audience.init -> void
-PandaBear.AspNetCore.ApiBearerScheme.Name.get -> string!
-PandaBear.AspNetCore.ApiBearerScheme.Name.init -> void
-PandaBear.AspNetCore.ApiBearerScheme.PermissionsByRole.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>!
-PandaBear.AspNetCore.ApiBearerScheme.PermissionsByRole.init -> void
-PandaBear.AspNetCore.ApiSecurityApplicationBuilderExtensions
 PandaBear.AspNetCore.AspNetCoreCorsExtensions
-PandaBear.AspNetCore.AuthorizationPolicyBuilderExtensions
-PandaBear.AspNetCore.SitemapCanonicalOrigin
-PandaBear.AspNetCore.SitemapEntry
-PandaBear.AspNetCore.SitemapEntry.LastModified.get -> System.DateTimeOffset?
-PandaBear.AspNetCore.SitemapEntry.Location.get -> System.Uri!
-PandaBear.AspNetCore.SitemapEntry.SitemapEntry(System.Uri! location, System.DateTimeOffset? lastModified = null) -> void
-PandaBear.AspNetCore.SitemapXmlSerializer
-static PandaBear.AspNetCore.ApiAuthenticationServiceCollectionExtensions.AddApiAuthorization(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
-static PandaBear.AspNetCore.ApiAuthenticationServiceCollectionExtensions.AddApiBearerAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, string! audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
-static PandaBear.AspNetCore.AntiforgerySignOutEndpointRouteBuilderExtensions.MapAntiforgeryProtectedSignOut(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, string! pattern, string! localAuthenticationScheme, string! remoteAuthenticationScheme, string! redirectUri) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
-static PandaBear.AspNetCore.AntiforgerySignOutEndpointRouteBuilderExtensions.MapAntiforgeryProtectedSignOut(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, string! pattern, string! localAuthenticationScheme, string! remoteAuthenticationScheme, System.Uri! redirectUri) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
-static PandaBear.AspNetCore.ApiAuthenticationServiceCollectionExtensions.AddApiBearerAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, System.Collections.Generic.IReadOnlyList<PandaBear.AspNetCore.ApiBearerScheme!>! schemes) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
-static PandaBear.AspNetCore.ApiAuthenticationServiceCollectionExtensions.AddApiSecurity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, string! audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
-static PandaBear.AspNetCore.ApiAuthenticationServiceCollectionExtensions.AddApiSecurity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, System.Collections.Generic.IReadOnlyList<PandaBear.AspNetCore.ApiBearerScheme!>! schemes) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
-static PandaBear.AspNetCore.ApiSecurityApplicationBuilderExtensions.UseApiSecurity(this Microsoft.AspNetCore.Builder.WebApplication! application) -> Microsoft.AspNetCore.Builder.WebApplication!
 static PandaBear.AspNetCore.AspNetCoreCorsExtensions.AddConfiguredOriginsPolicy(this Microsoft.AspNetCore.Cors.Infrastructure.CorsOptions! options, string! policyName, Microsoft.Extensions.Configuration.IConfiguration! allowedOriginsSection) -> Microsoft.AspNetCore.Cors.Infrastructure.CorsOptions!
 PandaBear.AspNetCore.AspNetCoreForwardedHeadersExtensions
 static PandaBear.AspNetCore.AspNetCoreForwardedHeadersExtensions.AddForwardedClientIp(this Microsoft.Extensions.DependencyInjection.IHttpClientBuilder! builder) -> Microsoft.Extensions.DependencyInjection.IHttpClientBuilder!
 static PandaBear.AspNetCore.AspNetCoreForwardedHeadersExtensions.AddConfiguredTrustedForwardedHeaders<TApplicationBuilder>(this TApplicationBuilder builder) -> TApplicationBuilder
 static PandaBear.AspNetCore.AspNetCoreForwardedHeadersExtensions.AddConfiguredTrustedForwardedHeaders(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static PandaBear.AspNetCore.AspNetCoreForwardedHeadersExtensions.ConfigureTrustedForwardedHeaders(this Microsoft.AspNetCore.Builder.ForwardedHeadersOptions! options, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Microsoft.AspNetCore.Builder.ForwardedHeadersOptions!
-PandaBear.AspNetCore.AspNetCoreRateLimitingExtensions
-static PandaBear.AspNetCore.AspNetCoreRateLimitingExtensions.AddRemoteIpFixedWindowPolicies(this Microsoft.AspNetCore.RateLimiting.RateLimiterOptions! options, System.Collections.Generic.IReadOnlyCollection<PandaBear.AspNetCore.RemoteIpFixedWindowRateLimitPolicy!>! policies) -> Microsoft.AspNetCore.RateLimiting.RateLimiterOptions!
-static PandaBear.AspNetCore.AspNetCoreRateLimitingExtensions.AddRemoteIpFixedWindowPolicy(this Microsoft.AspNetCore.RateLimiting.RateLimiterOptions! options, string! policyName, int permitLimit, System.TimeSpan window) -> Microsoft.AspNetCore.RateLimiting.RateLimiterOptions!
-PandaBear.AspNetCore.AspNetCoreRobotsTxtExtensions
-static PandaBear.AspNetCore.AspNetCoreRobotsTxtExtensions.MapRobotsTxt(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! app, string! robotsTxt) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
 PandaBear.AspNetCore.AspNetCoreSecurityHeadersExtensions
 static PandaBear.AspNetCore.AspNetCoreSecurityHeadersExtensions.UseSecurityHeaders(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app, string! contentSecurityPolicy) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
 static PandaBear.AspNetCore.AspNetCoreSecurityHeadersExtensions.UseSecurityHeaders(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app, string! contentSecurityPolicy, string! permissionsPolicy) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
-PandaBear.AspNetCore.KeyBoundDataProtector
-PandaBear.AspNetCore.KeyBoundDataProtector.KeyBoundDataProtector(Microsoft.AspNetCore.DataProtection.IDataProtectionProvider! dataProtectionProvider, string! purpose) -> void
-PandaBear.AspNetCore.KeyBoundDataProtector.Protect(string! key, byte[]! plaintext) -> byte[]!
-PandaBear.AspNetCore.KeyBoundDataProtector.Unprotect(string! key, byte[]! protectedData) -> byte[]!
-PandaBear.AspNetCore.RemoteIpFixedWindowRateLimitPolicy
-PandaBear.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.Name.get -> string!
-PandaBear.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.Name.init -> void
-PandaBear.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.PermitLimit.get -> int
-PandaBear.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.PermitLimit.init -> void
-PandaBear.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.RemoteIpFixedWindowRateLimitPolicy(string! Name, int PermitLimit, System.TimeSpan Window) -> void
-PandaBear.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.Window.get -> System.TimeSpan
-PandaBear.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.Window.init -> void
-static PandaBear.AspNetCore.AuthorizationPolicyBuilderExtensions.RequirePermission(this Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder! builder, string! permission) -> Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder!
-static PandaBear.AspNetCore.SitemapCanonicalOrigin.IsValid(string? value) -> bool
-static PandaBear.AspNetCore.SitemapCanonicalOrigin.Parse(string! value) -> System.Uri!
-static PandaBear.AspNetCore.SitemapXmlSerializer.Serialize(System.Collections.Generic.IEnumerable<PandaBear.AspNetCore.SitemapEntry!>! entries, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.IO.Stream!>!
-const PandaBear.AspNetCore.IdempotencyKeyHeader.Name = "Idempotency-Key" -> string!
-PandaBear.AspNetCore.IdempotencyKeyHeader
-static PandaBear.AspNetCore.IdempotencyKeyHeader.Create(string? value) -> PandaBear.Results.Result<PandaBear.Idempotency.IdempotencyKey>
 PandaBear.AspNetCore.HostEnvironmentVariableNames
 const PandaBear.AspNetCore.HostEnvironmentVariableNames.AspNetCoreEnvironment = "ASPNETCORE_ENVIRONMENT" -> string!
 const PandaBear.AspNetCore.HostEnvironmentVariableNames.DotNetEnvironment = "DOTNET_ENVIRONMENT" -> string!
-const PandaBear.AspNetCore.ApiAuthenticationDefaults.SubjectClaimType = "sub" -> string!
-PandaBear.AspNetCore.ClaimsPrincipalExtensions
-static PandaBear.AspNetCore.ClaimsPrincipalExtensions.GetSubjectId(this System.Security.Claims.ClaimsPrincipal! principal) -> string?
 PandaBear.AspNetCore.AspNetCoreServiceCollectionExtensions
 static PandaBear.AspNetCore.AspNetCoreServiceCollectionExtensions.AddUnhandledExceptionHandler(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-static PandaBear.AspNetCore.AspNetCoreServiceCollectionExtensions.AddSecurityEventTelemetry(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 PandaBear.AspNetCore.AspNetCoreTelemetry
 const PandaBear.AspNetCore.AspNetCoreTelemetry.MeterName = "PandaBear.AspNetCore" -> string!
 const PandaBear.AspNetCore.AspNetCoreTelemetry.UnhandledExceptionsCounterName = "unhandled_exceptions_total" -> string!

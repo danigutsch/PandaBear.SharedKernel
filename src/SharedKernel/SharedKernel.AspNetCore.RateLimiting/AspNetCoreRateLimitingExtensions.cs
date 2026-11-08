@@ -3,7 +3,7 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
 
-namespace PandaBear.AspNetCore;
+namespace PandaBear.AspNetCore.RateLimiting;
 
 /// <summary>
 /// Provides reusable rate-limiting helpers for ASP.NET Core applications.

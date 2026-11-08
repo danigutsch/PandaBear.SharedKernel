@@ -1,7 +1,6 @@
-using PandaBear.Idempotency;
 using PandaBear.Results;
 
-namespace PandaBear.AspNetCore;
+namespace PandaBear.Idempotency.AspNetCore;
 
 /// <summary>Creates an idempotency key from a required HTTP header without throwing for invalid input.</summary>
 public static class IdempotencyKeyHeader

@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace PandaBear.AspNetCore;
+namespace PandaBear.AspNetCore.Authentication;
 
 /// <summary>Reads provider-neutral subject identity without introducing ambient request state.</summary>
 public static class ClaimsPrincipalExtensions

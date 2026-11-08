@@ -3,21 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace PandaBear.AspNetCore;
+namespace PandaBear.AspNetCore.Authentication;
 
 /// <summary>Wraps the JWT bearer events of every scheme so failures, challenges and forbidden results are reported before the existing handlers run.</summary>
 internal sealed class JwtBearerSecurityEventsPostConfigureOptions : IPostConfigureOptions<JwtBearerOptions>
 {
-    /// <summary>The event tag value for a failed token validation.</summary>
-    public const string AuthenticationFailed = "authentication_failed";
-    /// <summary>The event tag value for a challenge response.</summary>
-    public const string Challenge = "challenge";
-    /// <summary>The event tag value for a forbidden response.</summary>
-    public const string Forbidden = "forbidden";
-
-    /// <summary>The reason for a challenge that carried no token.</summary>
-    public const string MissingToken = "missing_token";
-
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<JwtBearerEvents, object> Wrapped = new();
 
     /// <summary>An events type resolved from dependency injection replaces the instance, so that choice is left to the host.</summary>
@@ -49,17 +39,17 @@ internal sealed class JwtBearerSecurityEventsPostConfigureOptions : IPostConfigu
 
         events.OnAuthenticationFailed = context =>
         {
-            Report(context.HttpContext, AuthenticationFailed, Reason(context.Exception), context.Scheme.Name);
+            Report(context.HttpContext, AuthenticationEventNames.AuthenticationFailed, Reason(context.Exception), context.Scheme.Name);
             return failed(context);
         };
         events.OnChallenge = context =>
         {
-            Report(context.HttpContext, Challenge, context.AuthenticateFailure is null ? MissingToken : Reason(context.AuthenticateFailure), context.Scheme.Name);
+            Report(context.HttpContext, AuthenticationEventNames.Challenge, context.AuthenticateFailure is null ? AuthenticationEventNames.MissingToken : Reason(context.AuthenticateFailure), context.Scheme.Name);
             return challenge(context);
         };
         events.OnForbidden = context =>
         {
-            Report(context.HttpContext, Forbidden, "insufficient_permission", context.Scheme.Name);
+            Report(context.HttpContext, AuthenticationEventNames.Forbidden, "insufficient_permission", context.Scheme.Name);
             return forbidden(context);
         };
     }

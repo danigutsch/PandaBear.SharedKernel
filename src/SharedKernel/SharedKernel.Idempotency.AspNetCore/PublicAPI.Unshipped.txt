@@ -1,0 +1,8 @@
+#nullable enable
+const PandaBear.Idempotency.AspNetCore.IdempotencyKeyHeader.Name = "Idempotency-Key" -> string!
+PandaBear.Idempotency.AspNetCore.IdempotencyKeyHeader
+PandaBear.Idempotency.AspNetCore.KeyBoundDataProtector
+PandaBear.Idempotency.AspNetCore.KeyBoundDataProtector.KeyBoundDataProtector(Microsoft.AspNetCore.DataProtection.IDataProtectionProvider! dataProtectionProvider, string! purpose) -> void
+PandaBear.Idempotency.AspNetCore.KeyBoundDataProtector.Protect(string! key, byte[]! plaintext) -> byte[]!
+PandaBear.Idempotency.AspNetCore.KeyBoundDataProtector.Unprotect(string! key, byte[]! protectedData) -> byte[]!
+static PandaBear.Idempotency.AspNetCore.IdempotencyKeyHeader.Create(string? value) -> PandaBear.Results.Result<PandaBear.Idempotency.IdempotencyKey>

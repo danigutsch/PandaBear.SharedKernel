@@ -3,10 +3,10 @@
     <PropertyGroup>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.AspNetCore</PackageId>
-        <Description>Reusable ASP.NET Core helpers for explicit application security and hosting defaults.</Description>
+        <Description>Reusable ASP.NET Core helpers for explicit application hosting defaults: security headers, trusted forwarded headers, CORS and unhandled-exception telemetry.</Description>
         <RootNamespace>PandaBear.AspNetCore</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageTags>aspnetcore;security;cors;rate-limiting;headers;shared-kernel;dotnet</PackageTags>
+        <PackageTags>aspnetcore;security;cors;headers;telemetry;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,19 +14,17 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\SharedKernel.Idempotency.Abstractions\SharedKernel.Idempotency.Abstractions.csproj" />
-        <ProjectReference Include="..\SharedKernel.Results\SharedKernel.Results.csproj" />
         <ProjectReference Include="..\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
-        <ProjectReference Include="..\SharedKernel.OpenApi\SharedKernel.OpenApi.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+        <!-- The sibling AspNetCore packages share the internal telemetry helpers and the security-event reporter. -->
+        <InternalsVisibleTo Include="SharedKernel.AspNetCore.Authentication" />
+        <InternalsVisibleTo Include="SharedKernel.AspNetCore.RateLimiting" />
         <InternalsVisibleTo Include="SharedKernel.AspNetCore.Tests" />
+        <InternalsVisibleTo Include="SharedKernel.AspNetCore.Authentication.Tests" />
+        <InternalsVisibleTo Include="SharedKernel.AspNetCore.RateLimiting.Tests" />
         <None Include="README.md" Pack="true" PackagePath="\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     </ItemGroup>
 
 </Project>

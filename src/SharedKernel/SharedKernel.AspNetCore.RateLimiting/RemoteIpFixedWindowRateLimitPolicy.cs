@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore;
+namespace PandaBear.AspNetCore.RateLimiting;
 
 /// <summary>
 /// Defines an application-owned fixed-window rate-limit policy partitioned by remote IP address.

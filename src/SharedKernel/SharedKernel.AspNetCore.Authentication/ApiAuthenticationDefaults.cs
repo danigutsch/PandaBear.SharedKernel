@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore;
+namespace PandaBear.AspNetCore.Authentication;
 
 /// <summary>
 /// Defines provider-neutral API authentication configuration and claim conventions.

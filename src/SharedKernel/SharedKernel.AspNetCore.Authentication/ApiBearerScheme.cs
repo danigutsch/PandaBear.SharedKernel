@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore;
+namespace PandaBear.AspNetCore.Authentication;
 
 /// <summary>
 /// One named bearer scheme that accepts only tokens issued for exactly <see cref="Audience" /> and maps roles to

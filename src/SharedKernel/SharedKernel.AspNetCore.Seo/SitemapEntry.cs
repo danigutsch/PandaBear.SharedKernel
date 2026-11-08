@@ -1,4 +1,4 @@
-namespace PandaBear.AspNetCore;
+namespace PandaBear.AspNetCore.Seo;
 
 /// <summary>
 /// Represents one URL entry in a sitemap XML document.

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace PandaBear.AspNetCore;
+namespace PandaBear.AspNetCore.Seo;
 
 /// <summary>
 /// Provides reusable robots.txt endpoint helpers for ASP.NET Core applications.

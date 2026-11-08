@@ -1,7 +1,7 @@
 using System.Xml;
 using System.Xml.Linq;
 
-namespace PandaBear.AspNetCore;
+namespace PandaBear.AspNetCore.Seo;
 
 /// <summary>
 /// Serializes sitemap entries using the sitemap XML protocol.

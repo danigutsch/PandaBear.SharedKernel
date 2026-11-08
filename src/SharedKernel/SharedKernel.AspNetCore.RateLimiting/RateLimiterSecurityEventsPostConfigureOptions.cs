@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore;
+namespace PandaBear.AspNetCore.RateLimiting;
 
 /// <summary>Wraps <see cref="RateLimiterOptions.OnRejected" /> so each rejection is reported before the existing callback runs.</summary>
 internal sealed class RateLimiterSecurityEventsPostConfigureOptions : IPostConfigureOptions<RateLimiterOptions>
