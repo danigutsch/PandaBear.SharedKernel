@@ -160,6 +160,7 @@ static PandaBear.Versioning.CommitMessageInput.ReadMessages(System.IO.TextReader
 static PandaBear.Versioning.ConventionalCommitParser.Parse(string! message) -> PandaBear.Versioning.ConventionalCommit!
 static PandaBear.Versioning.ConventionalCommitParser.TryParse(string! message, out PandaBear.Versioning.ConventionalCommit? commit) -> bool
 static PandaBear.Versioning.PackageLockInventory.Read(string! repositoryRoot) -> PandaBear.Versioning.ResolvedNuGetPackage![]!
+static PandaBear.Versioning.PackageLockInventory.VerifyLockCoverage(string! repositoryRoot) -> int
 static PandaBear.Versioning.PackageLockInventory.WriteAttributionJson(System.Collections.Generic.IReadOnlyCollection<PandaBear.Versioning.ResolvedNuGetPackage!>! packages) -> string!
 static PandaBear.Versioning.PackageLockInventory.WriteNoticesMarkdown(System.Collections.Generic.IReadOnlyCollection<PandaBear.Versioning.ResolvedNuGetPackage!>! packages) -> string!
 static PandaBear.Versioning.PackageLockInventory.WriteSpdxJson(PandaBear.Versioning.ReleasePreparationOptions! options, System.Collections.Generic.IReadOnlyCollection<PandaBear.Versioning.ResolvedNuGetPackage!>! packages) -> string!

@@ -81,6 +81,10 @@ an exempt library and still lists its packages through the retained locks. `shar
 that no committed lock file resolves; the remedy is to remove the project from the list, delete the property, and restore to create its lock
 file. Run it after a restore of the solution.
 
+The `repository-quality` job of the validation workflow enforces the same rule on every pull request that builds: after `setup-dev.sh`
+restores and builds the whole solution, `sharedkernel-version verify-lock-coverage` reads the restored assets of every lock-free library and
+fails, naming `project: package@version`, for a pair that no committed lock resolves, or when a lock-free library has no restored assets.
+
 ### Package requirements
 
 Every packable project sets `PackageId` (`PandaBear.` plus the project name), `PackageTags`, and `Description`, ships a `README.md` next to the

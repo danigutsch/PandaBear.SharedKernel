@@ -33,6 +33,7 @@ internal static class VersioningCommandLine
             CreatePackSharedKernel(timeProvider),
             CreatePackDev(),
             CreatePrepareRelease(input),
+            CreateVerifyLockCoverage(),
             CreateCreateCandidate(timeProvider),
             CreateValidateCandidate(timeProvider),
             CreateConsumeCandidate(),
@@ -351,6 +352,19 @@ internal static class VersioningCommandLine
             await ReleasePreparationArtifacts.Write(options, changes).ConfigureAwait(false);
             await output.WriteLineAsync("Release prep artifacts: " + options.OutputDirectory).ConfigureAwait(false);
         });
+        return command;
+    }
+
+    private static Command CreateVerifyLockCoverage()
+    {
+        var repoRoot = RepoRootOption();
+        var command = new Command(
+            "verify-lock-coverage",
+            "Fails when a source project without a packages.lock.json resolves, in its restored obj/project.assets.json, a package version that no committed lock file resolves. Run it after restoring the solution.")
+        {
+            repoRoot,
+        };
+        SetAction(command, (parseResult, output, _) => LockCoverageCommand.Run(parseResult.GetRequiredValue(repoRoot), output));
         return command;
     }
 

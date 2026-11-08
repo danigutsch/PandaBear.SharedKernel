@@ -8,7 +8,7 @@ namespace PandaBear.Versioning;
 /// </summary>
 public static class ReleasePreparationArtifacts
 {
-    private const string LicenseEvidenceNote = "Generated from resolved packages.lock.json files; license fields use NOASSERTION until reviewed against NuGet and dependency-review metadata.";
+    private const string LicenseEvidenceNote = "Generated from resolved packages.lock.json files and, for projects without a lock file, their restored obj/project.assets.json; license fields use NOASSERTION until reviewed against NuGet and dependency-review metadata.";
 
     /// <summary>
     /// Writes release-preparation artifacts to the configured output directory.

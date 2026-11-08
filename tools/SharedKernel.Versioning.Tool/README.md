@@ -62,6 +62,7 @@ sharedkernel-version compute --base <version> [--prerelease <label>] [--sha <sha
 sharedkernel-version calculate-release [--version-kind prerelease|stable] [--run-number <number>] [--sha <sha>] [--github-output <path>] [--github-summary <path>]
 sharedkernel-version check-public-api-baselines
 sharedkernel-version validate-package-metadata
+sharedkernel-version verify-lock-coverage
 sharedkernel-version has-breaking-change-marker <git-range>
 sharedkernel-version check-api-compatibility [--version <version>] [--release-phase alpha|beta|rc|stable] [--baseline-version <version>] [--breaking-marker] [--output-root <path>]
 sharedkernel-version pack-sharedkernel [--version <version>] [--assembly-version <version>] [--file-version <version>] [--informational-version <version>] [--output-root <path>] [--skip-restore-check]
@@ -103,9 +104,18 @@ and `informationalVersion`. `--github-output` appends `base_version`, `source_ta
 ```text
 sharedkernel-version check-public-api-baselines
 sharedkernel-version validate-package-metadata
+sharedkernel-version verify-lock-coverage
 sharedkernel-version has-breaking-change-marker origin/main..HEAD
 sharedkernel-version check-api-compatibility --version 0.2.0-beta.1 --release-phase beta --breaking-marker --baseline-version 0.1.0
 ```
+
+`verify-lock-coverage` is the lock coverage drift guard. The dependency snapshot reads committed `packages.lock.json` files only,
+so a source project that keeps none (`lockExemptProjects` in `.config/sharedkernel-repo.json`) must resolve only package versions
+that some committed lock file resolves. The command reads the restored `obj/project.assets.json` of each such project and exits 2,
+naming `project: package@version` and the remedy, for a package version that no committed lock resolves. A lock-free project with
+no restored assets also exits 2 (run `dotnet restore SharedKernel.slnx --locked-mode` first), so it never passes vacuously. A
+repository whose source projects all keep a lock file passes with zero projects checked. It writes nothing and needs no package
+directory; the validation workflow runs it in `repository-quality`, which restores the whole solution.
 
 `has-breaking-change-marker` succeeds when a commit in the range has a `!` header or a `BREAKING CHANGE:` or
 `BREAKING-CHANGE:` footer, and exits 3 when no commit has one. Arguments that start with `@` name response

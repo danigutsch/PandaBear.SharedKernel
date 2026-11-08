@@ -18,6 +18,7 @@ public static class VersioningCommandLineTests
         "pack-sharedkernel",
         "pack-dev",
         "prepare-release",
+        "verify-lock-coverage",
         "create-candidate",
         "validate-candidate",
         "consume-candidate",
@@ -53,6 +54,7 @@ public static class VersioningCommandLineTests
     [InlineData("pack-sharedkernel", "--version <version>", "--assembly-version <version>", "--file-version <version>", "--informational-version <version>", "--output-root <path>", "--skip-restore-check", "--repo-root <path>")]
     [InlineData("pack-dev", "<project>", "--feed <path> (REQUIRED)", "--version <version>", "--repo-root <path>")]
     [InlineData("prepare-release", "--version <version> (REQUIRED)", "--package-dir <path> (REQUIRED)", "--output-dir <path>", "--source-tag <tag>", "--release-impact <impact>", "--sha <sha>", "--repo-root <path>")]
+    [InlineData("verify-lock-coverage", "--repo-root <path>")]
     [InlineData("create-candidate", "--version <version>", "--baseline-version <version>", "--repo-root <path>")]
     [InlineData("validate-candidate", "--version <version>", "--baseline-version <version>", "--aot", "--repo-root <path>")]
     [InlineData("consume-candidate", "--candidate <path>", "--candidate-directory <path>", "--output <path>", "--aot", "--repo-root <path>")]
@@ -137,6 +139,7 @@ public static class VersioningCommandLineTests
     [InlineData("pack-sharedkernel", "pack-sharedkernel", "--version", "1.2.3", "--assembly-version", "1.0.0.0", "--file-version", "1.2.3.0", "--informational-version", "1.2.3+sha.abc123", "--output-root", "artifacts", "--repo-root", "/repo", "--skip-restore-check")]
     [InlineData("pack-dev", "pack-dev", "--feed", "feed", "--version", "0.1.0-dev.local", "--repo-root", "/repo", "SharedKernel.Results", "SharedKernel.Domain")]
     [InlineData("prepare-release", "prepare-release", "--version", "1.2.3", "--package-dir", "packages", "--output-dir", "release", "--repo-root", "/repo", "--source-tag", "v1.2.2", "--release-impact", "minor", "--sha", "abc123")]
+    [InlineData("verify-lock-coverage", "verify-lock-coverage", "--repo-root", "/repo")]
     [InlineData("create-candidate", "create-candidate", "--version", "1.2.3-alpha.1", "--baseline-version", "1.2.2", "--repo-root", "/repo")]
     [InlineData("validate-candidate", "validate-candidate", "--repo-root", "/repo", "--version", "1.2.3-alpha.1", "--baseline-version", "1.2.2", "--aot")]
     [InlineData("consume-candidate", "consume-candidate", "--candidate", "candidate.json", "--output", "evidence.json", "--aot", "--repo-root", "/repo")]
@@ -362,7 +365,7 @@ public static class VersioningCommandLineTests
         var unknown = CallerCommandLine.FindUnknownOptions(rootCommand, synopses);
 
         // Assert
-        synopses.Select(static synopsis => synopsis.Command).ShouldBe(CommandNames.Except(["check-public-api-baselines", "validate-package-metadata"]), "A synopsis without placeholders is a runnable command line, which the README command line scan parses.");
+        synopses.Select(static synopsis => synopsis.Command).ShouldBe(CommandNames.Except(["check-public-api-baselines", "validate-package-metadata", "verify-lock-coverage"]), "A synopsis without placeholders is a runnable command line, which the README command line scan parses.");
         unknown.ShouldBeEmpty();
     }
 
