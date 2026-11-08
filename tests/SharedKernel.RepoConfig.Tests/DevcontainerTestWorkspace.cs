@@ -30,6 +30,9 @@ internal sealed class DevcontainerTestWorkspace : IDisposable
         CliCallsPath = Path.Combine(_tools.Path, "cli-calls.txt");
         DockerCallsPath = Path.Combine(_tools.Path, "docker-calls.txt");
         WriteExecutable(DockerPath, "#!/bin/sh\n" + RecordCall(DockerCallsPath) + "\n");
+        // The launcher is written once and never rewritten; the per-test script is only read by the shell. Executing a file that was
+        // just rewritten can fail with ETXTBSY (text file busy) when a parallel test forks while the file is still open for writing.
+        WriteExecutable(CliPath, "#!/bin/sh\nexec /bin/sh \"$0.script\" \"$@\"\n");
         WriteCli(UpScript("{\"outcome\":\"success\",\"containerId\":\"abc123\"}"));
     }
 
@@ -83,9 +86,9 @@ internal sealed class DevcontainerTestWorkspace : IDisposable
         exit 64
         """;
 
-    /// <summary>Replaces the fake Dev Container CLI with a script that runs the given <c>up</c> and <c>exec</c> fragments.</summary>
+    /// <summary>Replaces the script that the fake Dev Container CLI runs with one that runs the given <c>up</c> and <c>exec</c> fragments.</summary>
     public void WriteCli(string up, string exec = "echo \"exec output\"; exit 0") =>
-        WriteExecutable(CliPath, CliScript(up, exec));
+        File.WriteAllText(CliPath + ".script", CliScript(up, exec).ReplaceLineEndings("\n"));
 
     /// <summary>Returns the recorded Dev Container CLI calls, one line per call.</summary>
     public string[] CliCalls() => ReadCalls(CliCallsPath);
