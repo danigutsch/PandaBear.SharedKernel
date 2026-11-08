@@ -53,6 +53,8 @@ sharedkernel-repo github sync-labels --repository owner/repository --force
 sharedkernel-repo baseline verify
 sharedkernel-repo baseline apply
 sharedkernel-repo baseline apply --force
+sharedkernel-repo new --root ./example-repo --language dotnet
+sharedkernel-repo new --root ./example-repo --language dotnet --feature readme --feature signed-commits --force
 sharedkernel-repo automation publish-result --force
 sharedkernel-repo verify-podman-dns --verbosity quiet
 sharedkernel-repo verify-json
@@ -82,6 +84,7 @@ sharedkernel-repo verify-devcontainer --exec "dotnet --version" --exec "git --ve
 | `github sync-labels` | Creates the configured labels that are missing and updates those that differ; see [Repository labels](#repository-labels). |
 | `baseline verify` | Fails when a managed baseline file is missing, outdated, edited by hand, or unmanaged; see [Repository baseline](#repository-baseline). |
 | `baseline apply` | Creates and updates the managed baseline files; previews unless `--force` is given. |
+| `new` | Starts a repository from a language and features: writes the baseline files and their configuration and initializes Git; previews unless `--force` is given. See [Starting a repository](#starting-a-repository). |
 | `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request; see [Roadmap publication](#roadmap-publication). |
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
@@ -333,6 +336,34 @@ error, nothing is written, and the command exits 1, in a preview too, because a 
 `--force` must not exit 0. Applying an up-to-date repository changes nothing. Missing
 parent directories are created, and those that a failed apply created are removed again when empty. Git settings
 are set after the files; a failure there leaves the files in place and rerunning is idempotent.
+
+## Starting a repository
+
+`new` starts a repository that has no `.config/sharedkernel-repo.json` yet. It plans a baseline in memory from the
+chosen language and features, writes the files and the configuration in one rollback batch, and runs `git init`. Afterwards
+`baseline verify` and `baseline apply` work on the repository. See the
+[repo new command ADR](../../docs/adr/20261108-repo-new-command.md).
+
+| Option | Meaning |
+| --- | --- |
+| `--root <path>` | The directory to create or fill. Defaults to the current directory. |
+| `--name <name>` | Repository name for the README. Defaults to the last segment of `--root`. |
+| `--branch <name>` | Default branch. Defaults to `main`. |
+| `--language <id>` | `none` (default) or `dotnet`. A language selects the content of a feature, such as the .NET ignore rules; it adds no file itself. |
+| `--sdk-version <v>` | The .NET SDK version, such as `10.0.100`, that `global.json` pins and `Directory.Build.props` targets. Needed by the `global-json` and `build-props` features. |
+| `--feature <id>` | A feature to write; repeat the option to select several. Without it every feature except `signed-commits` is written, and the .NET features only with `--language dotnet`. |
+| `--force` | Writes instead of previewing. |
+
+The features are `readme`, `gitignore`, `gitattributes`, `editorconfig`, `hooks` (a tracked `pre-commit` hook and
+`core.hooksPath`), `git-config` (`init.defaultBranch`, `pull.ff`, `fetch.prune`), and `signed-commits`
+(`commit.gpgsign`, `tag.gpgsign`, `gpg.format=ssh`). Four more features are written once and never managed, because they
+have no comment for the marker or are meant to be edited: `agents` (`AGENTS.md`), and with `--language dotnet`
+`global-json`, `nuget-config`, and `build-props`. `new` never replaces such a file: if one exists it is a conflict.
+`signed-commits` is opt-in because signing needs a key that you
+provide, and commits fail without one. An unknown language or feature, an invalid name, an existing configuration
+file, or a conflict with an existing unmanaged file or different Git setting is reported on standard error and the
+command exits 1, in a preview too, with nothing written. The content is neutral: no owner, copyright holder, forge, or
+host is embedded.
 
 ## Roadmap publication
 

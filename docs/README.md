@@ -38,3 +38,4 @@ Module README files beside source own consumer usage and examples. Samples and b
 - [Blazor helpers package](adr/20261027-blazor-helpers-package.md)
 - [Shared telemetry registration](adr/20261027-shared-telemetry-registration.md)
 - [Repo baseline tool](adr/20261028-repo-baseline-tool.md)
+- [Repo new command](adr/20261108-repo-new-command.md)
