@@ -1,0 +1,108 @@
+#nullable enable
+PandaBear.Packages.Advisory
+PandaBear.Packages.Advisory.AffectedVersions.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageVersion!>!
+PandaBear.Packages.Advisory.Affects(PandaBear.Packages.PackageVersion! version) -> bool
+PandaBear.Packages.Advisory.Id.get -> string!
+PandaBear.Packages.Advisory.Package.get -> PandaBear.Packages.PackageName!
+PandaBear.Packages.Advisory.Severity.get -> PandaBear.Packages.AdvisorySeverity
+PandaBear.Packages.AdvisorySeverity
+PandaBear.Packages.AdvisorySeverity.Critical = 3 -> PandaBear.Packages.AdvisorySeverity
+PandaBear.Packages.AdvisorySeverity.High = 2 -> PandaBear.Packages.AdvisorySeverity
+PandaBear.Packages.AdvisorySeverity.Low = 0 -> PandaBear.Packages.AdvisorySeverity
+PandaBear.Packages.AdvisorySeverity.Medium = 1 -> PandaBear.Packages.AdvisorySeverity
+PandaBear.Packages.AptPackageReader
+PandaBear.Packages.AptPackageReader.AptPackageReader(PandaBear.Packages.IProcessRunner! runner, string! dpkgQueryPath) -> void
+PandaBear.Packages.AptPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
+PandaBear.Packages.CargoPackageReader
+PandaBear.Packages.CargoPackageReader.CargoPackageReader(PandaBear.Packages.IProcessRunner! runner, string! cargoPath) -> void
+PandaBear.Packages.CargoPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
+PandaBear.Packages.DeclaredPackages
+PandaBear.Packages.DeclaredPackages.For(PandaBear.Packages.PackageManagerKind manager) -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageRequirement!>!
+PandaBear.Packages.DeclaredPackages.Managers.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageManagerKind>!
+PandaBear.Packages.FlatpakPackageReader
+PandaBear.Packages.FlatpakPackageReader.FlatpakPackageReader(PandaBear.Packages.IProcessRunner! runner, string! flatpakPath) -> void
+PandaBear.Packages.FlatpakPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
+PandaBear.Packages.IPackageReader
+PandaBear.Packages.IPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
+PandaBear.Packages.IProcessRunner
+PandaBear.Packages.IProcessRunner.Run(string! executable, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Packages.ProcessOutput!>!
+PandaBear.Packages.InstalledPackage
+PandaBear.Packages.InstalledPackage.InstalledPackage(PandaBear.Packages.PackageName! name, PandaBear.Packages.PackageVersion! version) -> void
+PandaBear.Packages.InstalledPackage.Name.get -> PandaBear.Packages.PackageName!
+PandaBear.Packages.InstalledPackage.Version.get -> PandaBear.Packages.PackageVersion!
+PandaBear.Packages.MinimumReleaseAge
+PandaBear.Packages.MinimumReleaseAge.Value.get -> System.TimeSpan
+PandaBear.Packages.NpmPackageReader
+PandaBear.Packages.NpmPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
+PandaBear.Packages.NpmPackageReader.NpmPackageReader(PandaBear.Packages.IProcessRunner! runner, string! npmPath) -> void
+PandaBear.Packages.PackageChange
+PandaBear.Packages.PackageChange.InstalledVersion.get -> PandaBear.Packages.PackageVersion?
+PandaBear.Packages.PackageChange.Kind.get -> PandaBear.Packages.PackageChangeKind
+PandaBear.Packages.PackageChange.PackageChange(PandaBear.Packages.PackageChangeKind kind, PandaBear.Packages.PackageRequirement! requirement, PandaBear.Packages.PackageVersion? installedVersion = null) -> void
+PandaBear.Packages.PackageChange.Requirement.get -> PandaBear.Packages.PackageRequirement!
+PandaBear.Packages.PackageChangeKind
+PandaBear.Packages.PackageChangeKind.ChangeVersion = 1 -> PandaBear.Packages.PackageChangeKind
+PandaBear.Packages.PackageChangeKind.Install = 0 -> PandaBear.Packages.PackageChangeKind
+PandaBear.Packages.PackageManagerKind
+PandaBear.Packages.PackageManagerKind.Apt = 0 -> PandaBear.Packages.PackageManagerKind
+PandaBear.Packages.PackageManagerKind.Cargo = 1 -> PandaBear.Packages.PackageManagerKind
+PandaBear.Packages.PackageManagerKind.Flatpak = 3 -> PandaBear.Packages.PackageManagerKind
+PandaBear.Packages.PackageManagerKind.Npm = 2 -> PandaBear.Packages.PackageManagerKind
+PandaBear.Packages.PackageManagers
+PandaBear.Packages.PackageName
+PandaBear.Packages.PackageName.Value.get -> string!
+PandaBear.Packages.PackagePlanner
+PandaBear.Packages.PackageRequirement
+PandaBear.Packages.PackageRequirement.Name.get -> PandaBear.Packages.PackageName!
+PandaBear.Packages.PackageRequirement.PackageRequirement(PandaBear.Packages.PackageName! name, PandaBear.Packages.PackageVersion? version = null) -> void
+PandaBear.Packages.PackageRequirement.Version.get -> PandaBear.Packages.PackageVersion?
+PandaBear.Packages.PackageVersion
+PandaBear.Packages.PackageVersion.Value.get -> string!
+PandaBear.Packages.ProcessOutput
+PandaBear.Packages.ProcessOutput.ExitCode.get -> int
+PandaBear.Packages.ProcessOutput.ProcessOutput(int exitCode, string! standardOutput, string! standardError = "") -> void
+PandaBear.Packages.ProcessOutput.StandardError.get -> string!
+PandaBear.Packages.ProcessOutput.StandardOutput.get -> string!
+PandaBear.Packages.SystemProcessRunner
+PandaBear.Packages.SystemProcessRunner.Run(string! executable, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Packages.ProcessOutput!>!
+PandaBear.Packages.SystemProcessRunner.SystemProcessRunner() -> void
+PandaBear.Packages.UpdateCandidate
+PandaBear.Packages.UpdateCandidate.CandidateVersion.get -> PandaBear.Packages.PackageVersion!
+PandaBear.Packages.UpdateCandidate.InstalledVersion.get -> PandaBear.Packages.PackageVersion!
+PandaBear.Packages.UpdateCandidate.Package.get -> PandaBear.Packages.PackageName!
+PandaBear.Packages.UpdateCandidate.ReleasedAt.get -> System.DateTimeOffset
+PandaBear.Packages.UpdateCandidate.UpdateCandidate(PandaBear.Packages.PackageName! package, PandaBear.Packages.PackageVersion! installedVersion, PandaBear.Packages.PackageVersion! candidateVersion, System.DateTimeOffset releasedAt) -> void
+PandaBear.Packages.UpdateDecision
+PandaBear.Packages.UpdateDecision.Candidate.get -> PandaBear.Packages.UpdateCandidate!
+PandaBear.Packages.UpdateDecision.Kind.get -> PandaBear.Packages.UpdateDecisionKind
+PandaBear.Packages.UpdateDecision.Reason.get -> string!
+PandaBear.Packages.UpdateDecision.UpdateDecision(PandaBear.Packages.UpdateDecisionKind kind, PandaBear.Packages.UpdateCandidate! candidate, string! reason) -> void
+PandaBear.Packages.UpdateDecisionKind
+PandaBear.Packages.UpdateDecisionKind.Allow = 0 -> PandaBear.Packages.UpdateDecisionKind
+PandaBear.Packages.UpdateDecisionKind.Block = 3 -> PandaBear.Packages.UpdateDecisionKind
+PandaBear.Packages.UpdateDecisionKind.Hold = 1 -> PandaBear.Packages.UpdateDecisionKind
+PandaBear.Packages.UpdateDecisionKind.Urgent = 2 -> PandaBear.Packages.UpdateDecisionKind
+PandaBear.Packages.UpdatePolicy
+const PandaBear.Packages.Advisory.MaxIdLength = 128 -> int
+const PandaBear.Packages.MinimumReleaseAge.MaxDays = 3650 -> int
+const PandaBear.Packages.PackageName.MaxLength = 214 -> int
+const PandaBear.Packages.PackageVersion.MaxLength = 128 -> int
+override PandaBear.Packages.Advisory.ToString() -> string!
+override PandaBear.Packages.InstalledPackage.ToString() -> string!
+override PandaBear.Packages.MinimumReleaseAge.ToString() -> string!
+override PandaBear.Packages.PackageChange.ToString() -> string!
+override PandaBear.Packages.PackageName.ToString() -> string!
+override PandaBear.Packages.PackageRequirement.ToString() -> string!
+override PandaBear.Packages.PackageVersion.ToString() -> string!
+override PandaBear.Packages.UpdateCandidate.ToString() -> string!
+override PandaBear.Packages.UpdateDecision.ToString() -> string!
+static PandaBear.Packages.Advisory.Create(string? id, PandaBear.Packages.PackageName! package, PandaBear.Packages.AdvisorySeverity severity, System.Collections.Generic.IEnumerable<PandaBear.Packages.PackageVersion!>! affectedVersions, string! field = "advisory") -> PandaBear.Results.Result<PandaBear.Packages.Advisory!>
+static PandaBear.Packages.DeclaredPackages.Create(System.Collections.Generic.IReadOnlyDictionary<PandaBear.Packages.PackageManagerKind, System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageRequirement!>!>! declared, string! field = "packages") -> PandaBear.Results.Result<PandaBear.Packages.DeclaredPackages!>
+static PandaBear.Packages.MinimumReleaseAge.FromDays(int days, string! field = "minimumReleaseAge") -> PandaBear.Results.Result<PandaBear.Packages.MinimumReleaseAge!>
+static PandaBear.Packages.PackageManagers.Id(PandaBear.Packages.PackageManagerKind manager) -> string!
+static PandaBear.Packages.PackageManagers.Ids.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.Packages.PackageManagers.TryParse(string? id, out PandaBear.Packages.PackageManagerKind? manager) -> bool
+static PandaBear.Packages.PackageName.Create(string? value, string! field = "name") -> PandaBear.Results.Result<PandaBear.Packages.PackageName!>
+static PandaBear.Packages.PackagePlanner.Plan(System.Collections.Generic.IEnumerable<PandaBear.Packages.PackageRequirement!>! requirements, System.Collections.Generic.IEnumerable<PandaBear.Packages.InstalledPackage!>! installed) -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageChange!>!
+static PandaBear.Packages.PackageVersion.Create(string? value, string! field = "version") -> PandaBear.Results.Result<PandaBear.Packages.PackageVersion!>
+static PandaBear.Packages.UpdatePolicy.Decide(PandaBear.Packages.UpdateCandidate! candidate, System.Collections.Generic.IEnumerable<PandaBear.Packages.Advisory!>! advisories, PandaBear.Packages.MinimumReleaseAge! minimumAge, System.DateTimeOffset now) -> PandaBear.Packages.UpdateDecision!
