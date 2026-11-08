@@ -9,9 +9,9 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.Authentication.Tests;
 
-/// <summary>Starts a web application with real JWT bearer authentication and a rate-limited route.</summary>
+/// <summary>Starts a web application with real JWT bearer authentication and authentication-event telemetry.</summary>
 internal static class SecurityEventTestApp
 {
     // Generated per process so no key material is stored in source.
@@ -27,7 +27,7 @@ internal static class SecurityEventTestApp
         SigningCredentials = new SigningCredentials(SigningKey, SecurityAlgorithms.HmacSha256)
     });
 
-    /// <summary>Starts the application with security-event telemetry registered.</summary>
+    /// <summary>Starts the application with authentication-event telemetry registered.</summary>
     /// <param name="meters">The meter factory and collector.</param>
     /// <param name="logger">The logger that records reporter output.</param>
     /// <returns>The started application.</returns>
@@ -49,16 +49,13 @@ internal static class SecurityEventTestApp
                 };
             });
         builder.Services.AddAuthorization(options => options.AddPolicy("admin", policy => policy.RequireClaim("role", "admin")));
-        builder.Services.AddRateLimiter(options => options.AddRemoteIpFixedWindowPolicy("login", 1, TimeSpan.FromMinutes(1)));
-        builder.Services.AddSecurityEventTelemetry();
+        builder.Services.AddAuthenticationEventTelemetry();
         var app = builder.Build();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseRateLimiter();
         app.MapGet("/secure", () => "ok").RequireAuthorization();
         app.MapGet("/admin", () => "ok").RequireAuthorization("admin");
-        app.MapGet("/login", () => "ok").AllowAnonymous().RequireRateLimiting("login");
         await app.StartAsync(TestContext.Current.CancellationToken);
         return app;
     }

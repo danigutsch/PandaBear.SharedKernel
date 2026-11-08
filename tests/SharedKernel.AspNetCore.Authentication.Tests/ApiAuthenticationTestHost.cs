@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.Authentication.Tests;
 
 /// <summary>Disposable service provider that exposes the options and services registered by the API security extensions.</summary>
 internal sealed class ApiAuthenticationTestHost : IAsyncDisposable
@@ -64,7 +64,7 @@ internal sealed class ApiAuthenticationTestHost : IAsyncDisposable
         var services = new ServiceCollection();
         services.AddApiSecurity(
             ApiAuthenticationTestConfiguration.Create(string.Empty, string.Empty),
-            new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
+            new TestHostEnvironment("SharedKernel.AspNetCore.Authentication.Tests"),
             "test-api",
             permissionsByRole,
             registerBearerAuthentication: false);

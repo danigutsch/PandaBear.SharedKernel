@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.Authentication.Tests;
 
 /// <summary>Audience sequence that yields "admin-api" and "catalog-api" and then throws if enumerated further, proving a validator stops at the second value.</summary>
 internal sealed class ExactAudienceEnumerable : IEnumerable<string>

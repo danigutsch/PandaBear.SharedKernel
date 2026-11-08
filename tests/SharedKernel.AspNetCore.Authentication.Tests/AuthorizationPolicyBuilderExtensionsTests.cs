@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.Authentication.Tests;
 
 /// <summary>
 /// Verifies application-owned permission policy requirements.

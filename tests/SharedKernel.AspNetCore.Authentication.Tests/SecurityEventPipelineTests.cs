@@ -1,10 +1,9 @@
 using System.Net;
 using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Http;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.Authentication.Tests;
 
-/// <summary>Tests the security events through the real JwtBearer handler and the rate-limiter middleware.</summary>
+/// <summary>Tests the authentication events through the real JwtBearer handler.</summary>
 public sealed class SecurityEventPipelineTests
 {
     private const string BadToken = "not.a.jwt-secret-value";
@@ -79,26 +78,5 @@ public sealed class SecurityEventPipelineTests
         {
             record.Message.ShouldNotContain(token, "the token must never be logged");
         }
-    }
-
-    [Fact]
-    public async Task Rate_limited_request_is_reported_with_the_policy_name_through_the_real_middleware()
-    {
-        // Arrange
-        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
-        var logger = new RecordingLogger<SecurityEventReporter>();
-        await using var app = await SecurityEventTestApp.Start(meters, logger);
-        using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
-        using var first = await client.GetAsync(new Uri("/login", UriKind.Relative), TestContext.Current.CancellationToken);
-
-        // Act
-        using var second = await client.GetAsync(new Uri("/login", UriKind.Relative), TestContext.Current.CancellationToken);
-
-        // Assert
-        first.StatusCode.ShouldBe(HttpStatusCode.OK);
-        second.StatusCode.ShouldBe((HttpStatusCode)StatusCodes.Status429TooManyRequests);
-        var measurement = meters.Measurements.ShouldHaveSingleItem();
-        measurement.Instrument.ShouldBe(AspNetCoreTelemetry.RateLimitRejectionsCounterName);
-        measurement.Tags[AspNetCoreTelemetry.PolicyTag].ShouldBe("login");
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.Authentication.Tests;
 
 /// <summary>
 /// Verifies named exact-audience bearer schemes for hosts that co-host modules.
@@ -114,7 +114,7 @@ public sealed class NamedApiBearerSchemeTests
             ApiAuthenticationTestConfiguration.Create(
                 "https://identity.example.test/realms/example",
                 "https://identity.example.test/realms/example"),
-            new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
+            new TestHostEnvironment("SharedKernel.AspNetCore.Authentication.Tests"),
             schemes);
 
         // Assert

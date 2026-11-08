@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using PandaBear.Testing;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.Authentication.Tests;
 
 /// <summary>Tests that <c>GetSubjectId</c> reads only the <c>sub</c> claim and returns it unchanged.</summary>
 [Trait(TestTraitNames.CategoryName, SharedKernelTestTraitNames.UnitScope)]

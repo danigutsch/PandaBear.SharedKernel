@@ -1,17 +1,15 @@
 using System.Diagnostics.Metrics;
 using System.Net;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.Authentication.Tests;
 
-/// <summary>Builds a service provider with the security-event telemetry, a recording logger and a metric collector.</summary>
+/// <summary>Builds a service provider with the authentication-event telemetry, a recording logger and a metric collector.</summary>
 internal sealed class SecurityEventTestFixture : IDisposable
 {
     /// <summary>A bearer credential sentinel that must never appear in any log record or metric tag.</summary>
@@ -41,8 +39,8 @@ internal sealed class SecurityEventTestFixture : IDisposable
     /// <summary>The service provider.</summary>
     public IServiceProvider Services => _provider;
 
-    /// <summary>Creates the fixture; the optional callbacks configure the JWT bearer and rate limiter options before telemetry is registered.</summary>
-    public static SecurityEventTestFixture Create(Action<JwtBearerOptions>? jwt = null, Action<RateLimiterOptions>? rateLimiter = null,
+    /// <summary>Creates the fixture; the optional callback configures the JWT bearer options before telemetry is registered.</summary>
+    public static SecurityEventTestFixture Create(Action<JwtBearerOptions>? jwt = null,
         ILogger<SecurityEventReporter>? logger = null, IMeterFactory? meterFactory = null, int telemetryRegistrations = 1)
     {
         var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
@@ -51,10 +49,9 @@ internal sealed class SecurityEventTestFixture : IDisposable
         services.AddSingleton(meterFactory ?? meters);
         services.AddSingleton(logger ?? recording);
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => jwt?.Invoke(options));
-        services.AddRateLimiter(options => rateLimiter?.Invoke(options));
         for (var i = 0; i < telemetryRegistrations; i++)
         {
-            services.AddSecurityEventTelemetry();
+            services.AddAuthenticationEventTelemetry();
         }
 
         return new SecurityEventTestFixture(services.BuildServiceProvider(), meters, recording);

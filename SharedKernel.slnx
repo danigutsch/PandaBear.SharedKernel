@@ -88,6 +88,9 @@
   <Project Path="tests/SharedKernel.ApiVersioning.AspNetCore.Tests/SharedKernel.ApiVersioning.AspNetCore.Tests.csproj" />
   <Project Path="tests/SharedKernel.ApiVersioning.Tests/SharedKernel.ApiVersioning.Tests.csproj" />
   <Project Path="tests/SharedKernel.AspNetCore.Tests/SharedKernel.AspNetCore.Tests.csproj" />
+  <Project Path="tests/SharedKernel.AspNetCore.Authentication.Tests/SharedKernel.AspNetCore.Authentication.Tests.csproj" />
+  <Project Path="tests/SharedKernel.AspNetCore.RateLimiting.Tests/SharedKernel.AspNetCore.RateLimiting.Tests.csproj" />
+  <Project Path="tests/SharedKernel.AspNetCore.Seo.Tests/SharedKernel.AspNetCore.Seo.Tests.csproj" />
   <Project Path="tests/SharedKernel.Aspire.Analyzers.Tests/SharedKernel.Aspire.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.Aspire.CodeFixes.Tests/SharedKernel.Aspire.CodeFixes.Tests.csproj" />
   <Project Path="tests/SharedKernel.Aspire.Hosting.K6.Tests/SharedKernel.Aspire.Hosting.K6.Tests.csproj" />
@@ -113,6 +116,7 @@
   <Project Path="tests/SharedKernel.Results.Tests/SharedKernel.Results.Tests.csproj" />
   <Project Path="tests/SharedKernel.HttpClients.Tests/SharedKernel.HttpClients.Tests.csproj" />
   <Project Path="tests/SharedKernel.Idempotency.Abstractions.Tests/SharedKernel.Idempotency.Abstractions.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Idempotency.AspNetCore.Tests/SharedKernel.Idempotency.AspNetCore.Tests.csproj" />
   <Project Path="tests/SharedKernel.ImageProcessing.Tests/SharedKernel.ImageProcessing.Tests.csproj" />
   <Project Path="tests/SharedKernel.InputNormalization.Tests/SharedKernel.InputNormalization.Tests.csproj" />
   <Project Path="tests/SharedKernel.K6.Tool.Tests/SharedKernel.K6.Tool.Tests.csproj" />

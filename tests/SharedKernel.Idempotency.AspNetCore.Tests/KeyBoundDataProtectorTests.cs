@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.DataProtection;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace PandaBear.Idempotency.AspNetCore.Tests;
 
 /// <summary>
 /// Verifies opaque storage-entry keys bind protected values to their original entry.

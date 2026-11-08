@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.Authentication.Tests;
 
 /// <summary>Disposable service provider hosting two named API bearer schemes, one for a catalog module and one for a branding module.</summary>
 internal sealed class NamedApiBearerSchemeHost : IAsyncDisposable
@@ -46,7 +46,7 @@ internal sealed class NamedApiBearerSchemeHost : IAsyncDisposable
             ApiAuthenticationTestConfiguration.Create(
                 "https://identity.example.test/realms/example",
                 "https://identity.example.test/realms/example"),
-            new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
+            new TestHostEnvironment("SharedKernel.AspNetCore.Authentication.Tests"),
             Schemes,
             registerBearerAuthentication);
         return new NamedApiBearerSchemeHost(services.BuildServiceProvider());

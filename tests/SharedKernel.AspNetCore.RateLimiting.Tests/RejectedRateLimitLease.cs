@@ -1,6 +1,6 @@
 using System.Threading.RateLimiting;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.RateLimiting.Tests;
 
 /// <summary>A rate-limit lease that was not acquired.</summary>
 internal sealed class RejectedRateLimitLease : RateLimitLease

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 
-namespace PandaBear.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.Authentication.Tests;
 
 /// <summary>Builds in-memory configuration for the API bearer-authentication tests.</summary>
 internal static class ApiAuthenticationTestConfiguration
