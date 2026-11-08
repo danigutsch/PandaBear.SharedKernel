@@ -45,6 +45,34 @@ public static class PackageLockInventory
     }
 
     /// <summary>
+    /// Verifies the lock coverage drift guard without reading a package directory: the restored <c>obj/project.assets.json</c>
+    /// of every source project that keeps no <c>packages.lock.json</c> may resolve only package versions that some committed
+    /// lock file resolves, because the dependency snapshot reads lock files alone.
+    /// </summary>
+    /// <param name="repositoryRoot">The repository root.</param>
+    /// <returns>The number of lock-free source projects that were checked, which is zero when every source project keeps a lock file.</returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="repositoryRoot"/> is <see langword="null"/>, empty, or white-space; when a lock-free source
+    /// project has no restored assets, so the check never passes vacuously; or when the restored assets of a lock-free project
+    /// resolve a package version that no committed lock file resolves.
+    /// </exception>
+    public static int VerifyLockCoverage(string repositoryRoot)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(repositoryRoot);
+
+        var (_, unlockedProjects) = GetSources(repositoryRoot);
+        var packages = new Dictionary<string, SortedSet<string>>(StringComparer.OrdinalIgnoreCase);
+        var assetsPackages = new List<(string Project, string Package)>();
+        foreach (var project in unlockedProjects)
+        {
+            AddAssetsPackages(repositoryRoot, project, packages, assetsPackages);
+        }
+
+        VerifyAssetsPackagesAreLocked(repositoryRoot, assetsPackages);
+        return unlockedProjects.Length;
+    }
+
+    /// <summary>
     /// Writes third-party attribution JSON with review-required license placeholders.
     /// </summary>
     /// <param name="packages">The resolved packages.</param>
@@ -56,7 +84,7 @@ public static class PackageLockInventory
 
         var builder = new StringBuilder();
         builder.AppendLine("{");
-        builder.AppendLine("  \"source\": \"packages.lock.json\",");
+        builder.AppendLine("  \"source\": \"packages.lock.json; obj/project.assets.json for projects without a lock file\",");
         builder.AppendLine("  \"licenseEvidence\": \"NOASSERTION; review NuGet and dependency-review metadata before release\",");
         builder.AppendLine("  \"packages\": [");
         var index = 0;
@@ -90,7 +118,7 @@ public static class PackageLockInventory
         var builder = new StringBuilder();
         builder.AppendLine("# Third-party notices");
         builder.AppendLine();
-        builder.AppendLine("Generated from resolved `packages.lock.json` files. License expressions are `NOASSERTION` until reviewed against NuGet and dependency-review metadata.");
+        builder.AppendLine("Generated from resolved `packages.lock.json` files and, for projects without a lock file, their restored `obj/project.assets.json`. License expressions are `NOASSERTION` until reviewed against NuGet and dependency-review metadata.");
         builder.AppendLine();
         builder.AppendLine("| Package | Version | License evidence | Review required |");
         builder.AppendLine("| --- | --- | --- | --- |");

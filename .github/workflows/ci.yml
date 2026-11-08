@@ -245,6 +245,9 @@ jobs:
       - name: Verify pinned third-party actions
         if: needs.selection.outputs.build_required == 'true'
         run: dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release --no-build --no-restore -- verify-action-pins
+      - name: Verify lock coverage of the lock-free libraries
+        if: needs.selection.outputs.build_required == 'true'
+        run: dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- verify-lock-coverage
       - name: Verify formatting
         if: needs.selection.outputs.build_required == 'true'
         run: dotnet format SharedKernel.slnx --verify-no-changes --no-restore

@@ -111,6 +111,26 @@ public sealed class WorkflowContractTests
     }
 
     [Fact]
+    public void Repository_quality_verifies_lock_coverage_after_restoring_and_building_the_whole_solution()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
+
+        // Act
+        var quality = WorkflowJobs.Read(workflow, "repository-quality");
+
+        // Assert
+        quality.ShouldContain(
+            "      - name: Verify lock coverage of the lock-free libraries\n"
+                + "        if: needs.selection.outputs.build_required == 'true'\n"
+                + "        run: dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- verify-lock-coverage\n",
+            StringComparison.Ordinal,
+            "Only a restore of the whole solution creates obj/project.assets.json for every lock-free library, and setup-dev.sh restores and builds it, so the drift guard runs after it.");
+        quality.IndexOf("run: bash setup-dev.sh", StringComparison.Ordinal).ShouldBeLessThan(quality.IndexOf("-- verify-lock-coverage", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void Validation_summary_requires_the_source_build_whenever_a_candidate_is_required()
     {
         // Arrange
