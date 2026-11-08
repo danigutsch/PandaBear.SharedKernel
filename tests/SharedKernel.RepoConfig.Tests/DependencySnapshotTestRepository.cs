@@ -33,6 +33,12 @@ internal sealed class DependencySnapshotTestRepository : IDisposable
     public void WriteLock(string value) =>
         repository.WriteText("src/packages.lock.json", value.Replace("HASH", Convert.ToBase64String(new byte[64]), StringComparison.Ordinal));
 
+    /// <summary>Writes a file below the repository root; the next <see cref="Commit"/> records it.</summary>
+    public void WriteFile(string relativePath, string text) => repository.WriteText(relativePath, text);
+
+    /// <summary>Writes <c>.config/sharedkernel-repo.json</c>; the next <see cref="Commit"/> records it.</summary>
+    public void WriteConfiguration(string json) => repository.WriteText(".config/sharedkernel-repo.json", json);
+
     /// <summary>Stages every change, commits it without signing, and records the new <see cref="Head"/>.</summary>
     public async Task Commit()
     {

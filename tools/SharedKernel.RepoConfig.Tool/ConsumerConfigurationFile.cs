@@ -56,6 +56,16 @@ internal static class ConsumerConfigurationFile
             throw new InvalidOperationException($"{RelativePath} exceeds the 1 MiB configuration size limit.");
         }
 
+        return Parse(content);
+    }
+
+    /// <summary>
+    /// Parses and validates the bytes of a configuration file, for callers that read it from somewhere other than the
+    /// working tree.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The content is not a valid configuration of version 1.</exception>
+    public static ConsumerConfiguration Parse(byte[] content)
+    {
         ConsumerConfiguration? configuration;
         try
         {
@@ -108,7 +118,31 @@ internal static class ConsumerConfigurationFile
             throw Invalid(baselineError);
         }
 
+        if (configuration.LockExemptProjects is { } lockExemptProjects)
+        {
+            ValidateLockExemptProjects(lockExemptProjects);
+        }
+
         return configuration;
+    }
+
+    private static void ValidateLockExemptProjects(IReadOnlyList<string> projects)
+    {
+        HashSet<string> seen = new(StringComparer.Ordinal);
+        for (var index = 0; index < projects.Count; index++)
+        {
+            var path = string.Create(CultureInfo.InvariantCulture, $"$.lockExemptProjects[{index}]");
+            var project = projects[index];
+            if (!RepositoryPath.IsRelative(project) || !project.EndsWith("proj", StringComparison.Ordinal))
+            {
+                throw Invalid(path + " must be a repository-relative project file path with '/' separators and without empty, '.', or '..' segments.");
+            }
+
+            if (!seen.Add(project))
+            {
+                throw Invalid(path + " repeats a project.");
+            }
+        }
     }
 
     private static void Validate(LinkConfiguration links)
