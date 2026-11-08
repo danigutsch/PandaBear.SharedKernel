@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.DocumentRendering</PackageId>
         <Description>Structured document models and deterministic HTML rendering primitives.</Description>
         <RootNamespace>PandaBear.DocumentRendering</RootNamespace>

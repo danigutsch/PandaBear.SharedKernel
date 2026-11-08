@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Branding</PackageId>
         <Description>Reusable branding settings contracts, validation, and HTTP client primitives.</Description>
         <RootNamespace>PandaBear.Branding</RootNamespace>

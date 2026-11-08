@@ -128,7 +128,7 @@ The caller keeps the triggers and path filters. SharedKernel's `actionlint.yml` 
 ### `dependency-snapshot-reusable.yml`
 
 Job `snapshot` (`contents: write`, which the calling job must grant) builds the RepoConfig tool, generates a snapshot
-from the committed lock files of `target` and submits it. Inputs: `runner`, `target` (`base` or `head`, required),
+from the committed lock files of `target` (projects listed in `lockExemptProjects` of `.config/sharedkernel-repo.json` need none) and submits it. Inputs: `runner`, `target` (`base` or `head`, required),
 `correlator` (required), `source-repository`, `source-ref` (a full SHA, required when `source-repository` is set).
 It uploads the `dependency-snapshot-<target>` artifact.
 

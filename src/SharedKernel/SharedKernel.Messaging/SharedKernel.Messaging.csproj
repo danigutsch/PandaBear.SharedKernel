@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Messaging</PackageId>
         <Description>Storage-neutral messaging model for event envelopes, messages, metadata, and delivery boundaries.</Description>
         <RootNamespace>PandaBear.Messaging</RootNamespace>

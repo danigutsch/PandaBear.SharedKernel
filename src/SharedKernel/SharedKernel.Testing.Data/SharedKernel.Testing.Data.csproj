@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.Data</PackageId>
         <Description>Reusable deterministic test data helpers for SharedKernel test suites.</Description>
         <RootNamespace>PandaBear.Testing.Data</RootNamespace>

@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
     <PackageId>PandaBear.SharedKernel.EventSourcing.Npgsql</PackageId>
     <Description>Npgsql adapter for SharedKernel event-sourcing primitives.</Description>
     <RootNamespace>PandaBear.EventSourcing.Npgsql</RootNamespace>

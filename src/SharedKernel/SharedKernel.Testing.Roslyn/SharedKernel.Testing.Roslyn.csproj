@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.Roslyn</PackageId>
         <Description>Reusable Roslyn test helpers for SharedKernel analyzer and generator test suites.</Description>
         <RootNamespace>PandaBear.Testing.Roslyn</RootNamespace>

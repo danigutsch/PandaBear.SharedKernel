@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.Domain</PackageId>
         <Description>Reusable domain event dispatcher and dispatch handler fakes for SharedKernel test suites.</Description>
         <RootNamespace>PandaBear.Testing.Domain</RootNamespace>

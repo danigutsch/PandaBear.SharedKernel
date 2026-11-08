@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.AI</PackageId>
         <Description>Reusable AI-assisted image text generation contracts and LiteLLM client.</Description>
         <RootNamespace>PandaBear.AI</RootNamespace>

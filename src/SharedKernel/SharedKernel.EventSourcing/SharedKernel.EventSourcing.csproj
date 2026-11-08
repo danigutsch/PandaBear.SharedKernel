@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.EventSourcing</PackageId>
         <Description>Storage-neutral event-sourcing primitives for shared-kernel workflows.</Description>
         <RootNamespace>PandaBear.EventSourcing</RootNamespace>

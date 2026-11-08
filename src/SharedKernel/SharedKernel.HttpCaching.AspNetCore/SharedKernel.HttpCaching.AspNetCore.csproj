@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.HttpCaching.AspNetCore</PackageId>
         <Description>ASP.NET Core HTTP caching helpers for SharedKernel.</Description>
         <RootNamespace>PandaBear.HttpCaching.AspNetCore</RootNamespace>

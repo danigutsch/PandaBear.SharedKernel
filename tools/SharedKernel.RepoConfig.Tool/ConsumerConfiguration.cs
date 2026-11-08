@@ -9,10 +9,15 @@ namespace PandaBear.RepoConfig.Tool;
 /// <param name="Gherkin">The feature files and rules that <c>verify-gherkin</c> checks, if any.</param>
 /// <param name="Labels">The repository labels that <c>github sync-labels</c> creates and updates, if any.</param>
 /// <param name="Baseline">The files that <c>baseline verify</c> and <c>baseline apply</c> manage, if any.</param>
+/// <param name="LockExemptProjects">
+/// The solution projects, as repository-relative project file paths, that keep no <c>packages.lock.json</c>, which
+/// <c>dependency snapshot</c> then does not require. A project that is not listed must still have a lock file.
+/// </param>
 internal sealed record ConsumerConfiguration(
     int Version,
     LicenseExceptionConfiguration? LicenseExceptions = null,
     LinkConfiguration? Links = null,
     GherkinConfiguration? Gherkin = null,
     IReadOnlyList<GitHubLabelConfiguration>? Labels = null,
-    BaselineConfiguration? Baseline = null);
+    BaselineConfiguration? Baseline = null,
+    IReadOnlyList<string>? LockExemptProjects = null);

@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.ApiVersioning.AspNetCore</PackageId>
         <Description>ASP.NET Core adapters for SharedKernel API contract versioning.</Description>
         <RootNamespace>PandaBear.ApiVersioning.AspNetCore</RootNamespace>

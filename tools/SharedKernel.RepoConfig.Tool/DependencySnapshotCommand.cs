@@ -85,6 +85,7 @@ internal static class DependencySnapshotCommand
             throw new InvalidOperationException("Solution projects must be nonempty and unique.");
         }
 
+        var exempt = await ReadLockExemptProjects(root, sha, projects, comparer, git, cancellationToken).ConfigureAwait(false);
         using var buffer = new MemoryStream();
         using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = true }))
         {
@@ -111,6 +112,11 @@ internal static class DependencySnapshotCommand
                 cancellationToken.ThrowIfCancellationRequested();
                 var projectBytes = await ReadInput(root, project, sha, git, remainingBytes, cancellationToken).ConfigureAwait(false);
                 remainingBytes -= projectBytes.Length;
+                if (exempt.Contains(project))
+                {
+                    continue;
+                }
+
                 var lockPath = Path.Combine(Path.GetDirectoryName(project)!, "packages.lock.json");
                 if (!locks.Add(lockPath))
                 {
@@ -146,6 +152,45 @@ internal static class DependencySnapshotCommand
         }
 
         return Encoding.UTF8.GetString(buffer.ToArray()) + Environment.NewLine;
+    }
+
+    // Projects that the committed consumer configuration exempts from lock files. Every entry must be a solution project
+    // without a committed lock, so a stale or contradictory entry fails instead of hiding a project's dependencies.
+    private static async Task<HashSet<string>> ReadLockExemptProjects(
+        string root,
+        string sha,
+        string[] projects,
+        StringComparer comparer,
+        RoadmapGitRepository git,
+        CancellationToken cancellationToken)
+    {
+        HashSet<string> exempt = new(comparer);
+        if (!await git.CommittedPathExists(root, sha, ConsumerConfigurationFile.RelativePath, cancellationToken).ConfigureAwait(false))
+        {
+            return exempt;
+        }
+
+        var configuration = ConsumerConfigurationFile.Parse(
+            await git.ReadCommittedFile(root, sha, ConsumerConfigurationFile.RelativePath, cancellationToken).ConfigureAwait(false));
+        var solutionProjects = projects.ToHashSet(comparer);
+        foreach (var relativePath in configuration.LockExemptProjects ?? [])
+        {
+            var project = Path.GetFullPath(relativePath, root);
+            if (!solutionProjects.Contains(project))
+            {
+                throw new InvalidOperationException("A lock-exempt project is not a solution project.");
+            }
+
+            var lockPath = Path.Combine(Path.GetDirectoryName(project)!, "packages.lock.json");
+            if (await git.CommittedPathExists(root, sha, Path.GetRelativePath(root, lockPath).Replace('\\', '/'), cancellationToken).ConfigureAwait(false))
+            {
+                throw new InvalidOperationException("A lock-exempt project must not have a committed lockfile.");
+            }
+
+            exempt.Add(project);
+        }
+
+        return exempt;
     }
 
     private static async Task<byte[]> ReadInput(string root, string path, string revision, RoadmapGitRepository git, int remainingBytes, CancellationToken cancellationToken)

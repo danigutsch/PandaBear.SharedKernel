@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.ApiVersioning</PackageId>
         <Description>Host-agnostic API contract versioning primitives.</Description>
         <RootNamespace>PandaBear.ApiVersioning</RootNamespace>

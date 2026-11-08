@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.Web</PackageId>
         <Description>Reusable bUnit element assertions for SharedKernel web test suites.</Description>
         <RootNamespace>PandaBear.Testing.Web</RootNamespace>

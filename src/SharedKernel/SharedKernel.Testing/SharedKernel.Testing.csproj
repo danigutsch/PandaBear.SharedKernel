@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing</PackageId>
         <Description>Reusable test traits, environment scopes, and temporary-directory lifetimes.</Description>
         <RootNamespace>PandaBear.Testing</RootNamespace>

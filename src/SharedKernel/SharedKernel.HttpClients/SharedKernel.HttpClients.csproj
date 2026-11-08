@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.HttpClients</PackageId>
         <Description>Reusable HTTP client helpers, validation responses, defaults, and telemetry.</Description>
         <RootNamespace>PandaBear.HttpClients</RootNamespace>
