@@ -6,6 +6,25 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Reusable value-object and workflow building blocks shared by bounded contexts.
 
+## Source layout
+
+Source files are grouped by topic. The folders are organization only: every public type keeps the single
+`PandaBear.BuildingBlocks` namespace, so moving between folders never changes the API.
+
+| Folder | Contents |
+| --- | --- |
+| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, text rules, option-to-result helpers |
+| `Contact` | `EmailAddress`, `PhoneNumber`, `PersonName`, `PostalAddress` |
+| `Geography` | `CountryCode`, `CountryNames` |
+| `Finance` | `Money`, `Currency`, `CurrencyCodes`, `Iban`, `Bic` |
+| `Brazil` | `Cpf`, `Cnpj`, `PixKey`, `PixKeyType`, check-digit helpers |
+| `Time` | `BirthDate`, `DateRange`, `DateOnlyRange`, `BusinessTimeProvider`, `TimeProvider` helpers |
+| `Failures` | concurrency and unique-constraint exceptions, cancellation helpers, `Compensation` |
+| `Http` | `HypermediaLink` |
+
+The test project mirrors these folders; shared test helpers live next to the types they exercise, and
+`RestoreTests` (which spans several types) stays at the root.
+
 ## Identity and optional lookups
 
 `IIdentified<TId>` exposes a stable identifier for any identified model. It is owned by this package;
