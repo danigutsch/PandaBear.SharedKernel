@@ -7,7 +7,7 @@ documentation on public APIs. Do not add the Async suffix to methods.
 Read the touched flow before editing. Prove production audit gaps with failing regression tests before changing behavior. Keep libraries host-agnostic
 and dependency-light. Keep application compatibility in the application repository. Generic tool engines live here; a consuming repository supplies application policy and data through configuration files and arguments. Git source is public at https://github.com/danigutsch/PandaBear.SharedKernel. Registry publication remains deferred; do not publish packages. Package IDs use PandaBear.SharedKernel.*; assembly and project names remain SharedKernel.*; C# namespaces use PandaBear.*.
 
-Libraries listed in `lockExemptProjects` of `.config/sharedkernel-repo.json` keep no `packages.lock.json` (see docs/package-development.md); every other project does.
+Libraries listed in `lockExemptProjects` of `.config/sharedkernel-repo.json` keep no `packages.lock.json`; every other project does. Retention is minimal: a `src` library keeps its lock only when it locks a package version that no other retained lock covers (see docs/package-development.md, "Lock files").
 
 Restore with `dotnet restore SharedKernel.slnx --locked-mode`, build with `dotnet build SharedKernel.slnx -c Release --no-restore`, and test with
 `dotnet test --solution SharedKernel.slnx -c Release --no-build --no-restore`. Use MTP filters for local debugging; CI selects complete projects. Do

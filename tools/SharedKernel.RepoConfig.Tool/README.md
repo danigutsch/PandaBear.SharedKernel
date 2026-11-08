@@ -178,8 +178,8 @@ Every finding is listed. When none is found, `--github-output <path>` appends
 `packages.lock.json`, for example `"lockExemptProjects": ["src/Library/Library.csproj"]`. `dependency snapshot` then needs no lock
 for them and writes no manifest for them. A solution project that is not listed must still have a committed lock file, so a
 repository that locks every project needs no entry. An entry fails the snapshot when it is not a project of the solution
-or when its lock file is committed. List a project only when every package it resolves also appears in the lock file of another
-project; otherwise the snapshot would omit that package. Set `RestorePackagesWithLockFile` to `false` in the listed project
+or when its lock file is committed. List a project only when every package it resolves also appears in the lock file of another retained
+project (retain as few locks as that allows); otherwise the snapshot would omit that package. Set `RestorePackagesWithLockFile` to `false` in the listed project
 files, because NuGet reports NU1005 for a lock file next to a project with the property false.
 
 ### Documentation links
