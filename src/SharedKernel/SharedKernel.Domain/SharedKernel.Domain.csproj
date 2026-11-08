@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Domain</PackageId>
         <Description>Persistence-agnostic DDD primitives and typed domain-event dispatch contracts.</Description>
         <RootNamespace>PandaBear.Domain</RootNamespace>

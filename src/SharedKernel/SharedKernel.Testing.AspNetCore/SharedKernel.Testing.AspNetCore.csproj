@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.AspNetCore</PackageId>
         <Description>ASP.NET Core web application factory helpers for SharedKernel tests.</Description>
         <RootNamespace>PandaBear.Testing.AspNetCore</RootNamespace>

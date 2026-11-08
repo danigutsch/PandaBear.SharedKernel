@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.Mediator</PackageId>
         <Description>Reference mediator test dispatcher helpers for SharedKernel.Mediator.</Description>
         <RootNamespace>PandaBear.Testing.Mediator</RootNamespace>

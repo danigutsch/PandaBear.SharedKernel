@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.BuildingBlocks</PackageId>
         <Description>Reusable value-object and workflow building blocks for shared-kernel workflows.</Description>
         <RootNamespace>PandaBear.BuildingBlocks</RootNamespace>

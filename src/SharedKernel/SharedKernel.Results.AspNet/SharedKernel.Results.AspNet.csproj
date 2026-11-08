@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Results.AspNet</PackageId>
         <Description>ASP.NET Core adapters for SharedKernel.Results.</Description>
         <RootNamespace>PandaBear.Results.AspNet</RootNamespace>

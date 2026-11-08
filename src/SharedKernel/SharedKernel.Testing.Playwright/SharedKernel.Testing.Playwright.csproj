@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.Playwright</PackageId>
         <Description>Reusable Playwright assertions for SharedKernel browser test suites.</Description>
         <RootNamespace>PandaBear.Testing.Playwright</RootNamespace>

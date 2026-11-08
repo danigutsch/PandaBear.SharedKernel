@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Testing.Logging</PackageId>
         <Description>Reusable recording and throwing loggers for SharedKernel test suites.</Description>
         <RootNamespace>PandaBear.Testing.Logging</RootNamespace>

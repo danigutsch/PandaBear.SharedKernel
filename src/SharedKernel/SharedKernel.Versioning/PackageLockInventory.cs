@@ -12,22 +12,35 @@ public static class PackageLockInventory
     private const string SourceDateEpochVariableName = "SOURCE_DATE_EPOCH";
 
     /// <summary>
-    /// Reads resolved packages from maintained source-project lock files under a repository root.
+    /// Reads resolved packages from the maintained source projects under a repository root: the
+    /// <c>packages.lock.json</c> next to each project, or, for a project that keeps no lock file, the packages that its
+    /// restored <c>obj/project.assets.json</c> resolves.
     /// </summary>
     /// <param name="repositoryRoot">The repository root.</param>
     /// <returns>The resolved packages.</returns>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="repositoryRoot"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="repositoryRoot"/> is <see langword="null"/>, empty, or white-space; when a source
+    /// project has neither a lock file nor restored assets; or when the restored assets of a project without a lock file
+    /// resolve a package version that no committed lock file resolves.
+    /// </exception>
     public static ResolvedNuGetPackage[] Read(string repositoryRoot)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(repositoryRoot);
 
-        var packageLockFiles = GetPackageLockFiles(repositoryRoot);
+        var (packageLockFiles, unlockedProjects) = GetSources(repositoryRoot);
         var packages = new Dictionary<string, SortedSet<string>>(StringComparer.OrdinalIgnoreCase);
         foreach (var lockFile in packageLockFiles)
         {
             AddLockFilePackages(repositoryRoot, lockFile, packages);
         }
 
+        var assetsPackages = new List<(string Project, string Package)>();
+        foreach (var project in unlockedProjects)
+        {
+            AddAssetsPackages(repositoryRoot, project, packages, assetsPackages);
+        }
+
+        VerifyAssetsPackagesAreLocked(repositoryRoot, assetsPackages);
         return ToResolvedPackages(packages);
     }
 
@@ -136,13 +149,47 @@ public static class PackageLockInventory
         return builder.ToString();
     }
 
-    private static bool IsMaintainedLockFile(string path) =>
-        !path.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
-        && !path.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
-        && !path.Contains(Path.DirectorySeparatorChar + ".worktrees" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
-        && !path.Contains(Path.DirectorySeparatorChar + "artifacts" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+    private static readonly HashSet<string> GeneratedDirectories = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".git", "bin", "obj", ".worktrees", "artifacts", "node_modules",
+    };
 
-    private static string[] GetPackageLockFiles(string repositoryRoot)
+    private static readonly string[] ProjectExtensions = [".csproj", ".fsproj", ".vbproj"];
+
+    /// <summary>Enumerates the files below <paramref name="directory"/> that a name filter accepts, without entering generated or tool directories.</summary>
+    private static IEnumerable<string> EnumerateMaintainedFiles(string directory, Func<string, bool> accepts)
+    {
+        foreach (var file in Directory.EnumerateFiles(directory))
+        {
+            if (accepts(Path.GetFileName(file)))
+            {
+                yield return file;
+            }
+        }
+
+        foreach (var child in Directory.EnumerateDirectories(directory))
+        {
+            if (GeneratedDirectories.Contains(Path.GetFileName(child)))
+            {
+                continue;
+            }
+
+            foreach (var file in EnumerateMaintainedFiles(child, accepts))
+            {
+                yield return file;
+            }
+        }
+    }
+
+    private static bool IsLockFileName(string name) => string.Equals(name, "packages.lock.json", StringComparison.Ordinal);
+
+    private static bool IsProjectFileName(string name) =>
+        ProjectExtensions.Any(extension => name.EndsWith(extension, StringComparison.OrdinalIgnoreCase));
+
+    private static string ToRelative(string repositoryRoot, string path) =>
+        Path.GetRelativePath(repositoryRoot, path).Replace('\\', '/');
+
+    private static (string[] LockFiles, string[] UnlockedProjects) GetSources(string repositoryRoot)
     {
         if (!Directory.Exists(repositoryRoot))
         {
@@ -155,15 +202,98 @@ public static class PackageLockInventory
             throw new ArgumentException($"Source directory does not exist: {sourceRoot}");
         }
 
-        var packageLockFiles = Directory.EnumerateFiles(sourceRoot, "packages.lock.json", SearchOption.AllDirectories)
-            .Where(IsMaintainedLockFile)
+        var packageLockFiles = EnumerateMaintainedFiles(sourceRoot, IsLockFileName).ToArray();
+        var unlockedProjects = EnumerateMaintainedFiles(sourceRoot, IsProjectFileName)
+            .Where(project => !File.Exists(Path.Combine(Path.GetDirectoryName(project)!, "packages.lock.json")))
             .ToArray();
-        if (packageLockFiles.Length == 0)
+        if (packageLockFiles.Length == 0 && unlockedProjects.Length == 0)
         {
             throw new ArgumentException($"No packages.lock.json files found under source directory: {sourceRoot}");
         }
 
-        return packageLockFiles;
+        return (packageLockFiles, unlockedProjects);
+    }
+
+    private static void AddAssetsPackages(
+        string repositoryRoot,
+        string project,
+        Dictionary<string, SortedSet<string>> packages,
+        List<(string Project, string Package)> assetsPackages)
+    {
+        var assetsFile = Path.Combine(Path.GetDirectoryName(project)!, "obj", "project.assets.json");
+        if (!File.Exists(assetsFile))
+        {
+            throw new ArgumentException(
+                $"{ToRelative(repositoryRoot, project)} has no packages.lock.json and no restored obj/project.assets.json; run dotnet restore for the solution before reading the package inventory.");
+        }
+
+        using var document = ReadJson(assetsFile, "project.assets.json");
+        if (!document.RootElement.TryGetProperty("targets", out var targets))
+        {
+            throw new ArgumentException($"Unexpected project.assets.json schema: {assetsFile}. Missing top-level targets section.");
+        }
+
+        var relativeAssets = ToRelative(repositoryRoot, assetsFile);
+        foreach (var target in targets.EnumerateObject())
+        {
+            foreach (var entry in target.Value.EnumerateObject())
+            {
+                // Entries are "Id/Version"; project references have the type "project".
+                if (!entry.Value.TryGetProperty("type", out var type) || type.GetString() != "package")
+                {
+                    continue;
+                }
+
+                var separator = entry.Name.LastIndexOf('/');
+                if (separator <= 0 || separator == entry.Name.Length - 1)
+                {
+                    throw new ArgumentException($"Package entry {entry.Name} in {assetsFile} has no resolved version.");
+                }
+
+                var key = entry.Name[..separator] + "@" + entry.Name[(separator + 1)..];
+                if (!packages.TryGetValue(key, out var sources))
+                {
+                    sources = new SortedSet<string>(StringComparer.Ordinal);
+                    packages.Add(key, sources);
+                }
+
+                sources.Add(relativeAssets);
+                assetsPackages.Add((ToRelative(repositoryRoot, project), key));
+            }
+        }
+    }
+
+    // A package that only a lock-free project resolves is invisible to the committed dependency snapshot, which is built
+    // from lock files alone, so every such package version must also appear in some committed lock file.
+    private static void VerifyAssetsPackagesAreLocked(string repositoryRoot, List<(string Project, string Package)> assetsPackages)
+    {
+        if (assetsPackages.Count == 0)
+        {
+            return;
+        }
+
+        var locked = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var lockFile in EnumerateMaintainedFiles(repositoryRoot, IsLockFileName))
+        {
+            var packages = new Dictionary<string, SortedSet<string>>(StringComparer.OrdinalIgnoreCase);
+            AddLockFilePackages(repositoryRoot, lockFile, packages);
+            locked.UnionWith(packages.Keys);
+        }
+
+        var uncovered = assetsPackages
+            .Where(entry => !locked.Contains(entry.Package))
+            .Distinct()
+            .OrderBy(entry => entry.Project, StringComparer.Ordinal)
+            .ThenBy(entry => entry.Package, StringComparer.OrdinalIgnoreCase)
+            .Select(entry => $"{entry.Project}: {entry.Package}")
+            .ToArray();
+        if (uncovered.Length > 0)
+        {
+            throw new ArgumentException(
+                "Restored assets of projects without a packages.lock.json resolve packages that no committed lock file resolves, so the dependency snapshot would omit them:"
+                + Environment.NewLine + string.Join(Environment.NewLine, uncovered)
+                + Environment.NewLine + "Remove each project from lockExemptProjects in .config/sharedkernel-repo.json and its project file's RestorePackagesWithLockFile=false, then restore to create its packages.lock.json.");
+        }
     }
 
     private static void AddLockFilePackages(string repositoryRoot, string lockFile, Dictionary<string, SortedSet<string>> packages)
@@ -217,16 +347,18 @@ public static class PackageLockInventory
             .ThenBy(package => package.Version, StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
-    private static JsonDocument ReadLockFile(string lockFile)
+    private static JsonDocument ReadLockFile(string lockFile) => ReadJson(lockFile, "packages.lock.json");
+
+    private static JsonDocument ReadJson(string path, string description)
     {
         try
         {
-            using var stream = File.OpenRead(lockFile);
+            using var stream = File.OpenRead(path);
             return JsonDocument.Parse(stream);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
         {
-            throw new ArgumentException($"Invalid packages.lock.json: {lockFile}", ex);
+            throw new ArgumentException($"Invalid {description}: {path}", ex);
         }
     }
 

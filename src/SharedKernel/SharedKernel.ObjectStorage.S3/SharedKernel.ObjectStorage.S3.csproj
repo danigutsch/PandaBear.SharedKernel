@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.ObjectStorage.S3</PackageId>
         <Description>S3-compatible provider for SharedKernel object-storage contracts.</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>

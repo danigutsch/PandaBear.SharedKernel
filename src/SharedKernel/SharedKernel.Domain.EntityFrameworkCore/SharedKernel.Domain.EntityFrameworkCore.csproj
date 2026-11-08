@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Domain.EntityFrameworkCore</PackageId>
         <Description>Entity Framework Core SaveChanges integration for dispatching aggregate domain events.</Description>
         <RootNamespace>PandaBear.Domain.EntityFrameworkCore</RootNamespace>

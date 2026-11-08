@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.AuditTrail</PackageId>
         <Description>Metadata-only audit-trail mapping contracts for application-owned persistence boundaries.</Description>
         <RootNamespace>PandaBear.AuditTrail</RootNamespace>

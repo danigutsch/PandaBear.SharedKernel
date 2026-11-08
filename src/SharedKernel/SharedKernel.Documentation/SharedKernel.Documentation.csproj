@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <IsPackable>true</IsPackable>
         <PackageId>PandaBear.SharedKernel.Documentation</PackageId>
         <Description>Reusable primitives for generated Markdown and source-backed documentation conformance checks.</Description>

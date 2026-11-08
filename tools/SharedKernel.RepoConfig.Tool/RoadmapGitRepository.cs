@@ -81,6 +81,13 @@ internal sealed class RoadmapGitRepository
         return StrictUtf8.GetString(result.StandardOutput).Split('\0', StringSplitOptions.RemoveEmptyEntries);
     }
 
+    /// <summary>Indicates whether <paramref name="revision"/> contains an entry at <paramref name="relativePath"/>.</summary>
+    public async Task<bool> CommittedPathExists(string rootPath, string revision, string relativePath, CancellationToken cancellationToken)
+    {
+        var result = await RunOffline(rootPath, ["ls-tree", "-z", "--name-only", revision, "--", relativePath], cancellationToken).ConfigureAwait(false);
+        return result.StandardOutput.Length != 0;
+    }
+
     /// <summary>Returns the bytes of the file at <paramref name="relativePath"/> in <paramref name="revision"/>.</summary>
     public async Task<byte[]> ReadCommittedFile(string rootPath, string revision, string relativePath, CancellationToken cancellationToken)
     {

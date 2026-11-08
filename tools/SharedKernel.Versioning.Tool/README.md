@@ -132,6 +132,9 @@ Without `--version`, the version is `0.1.0-alpha.local.<UTC timestamp>`.
 `prepare-release` reads change lines from standard input and writes `release-notes.md`, `CHANGELOG.md`,
 `release-manifest.json`, `third-party-attributions.json`, `third-party-notices.md`, and `sbom.spdx.json` to
 `--output-dir`, which defaults to `artifacts/release-prep`. Set `SOURCE_DATE_EPOCH` for a reproducible SBOM timestamp.
+The package inventory reads the `packages.lock.json` next to each project under `src`; a project without one is read from its
+restored `obj/project.assets.json`, so restore the solution first. The command fails and lists the project and package when such
+a project resolves a package version that no committed lock file resolves, because the dependency snapshot would omit it.
 
 ### Local development packs
 
