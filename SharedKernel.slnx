@@ -8,10 +8,13 @@
   <Project Path="src/SharedKernel/SharedKernel.Aspire.Hosting.ClamAv/SharedKernel.Aspire.Hosting.ClamAv.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Aspire.Hosting.Grafana/SharedKernel.Aspire.Hosting.Grafana.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Aspire.Hosting.K6/SharedKernel.Aspire.Hosting.K6.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Aspire.Hosting.Sqlite/SharedKernel.Aspire.Hosting.Sqlite.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Aspire.Hosting.SeaweedFs/SharedKernel.Aspire.Hosting.SeaweedFs.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.AuditTrail/SharedKernel.AuditTrail.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.AuditTrail.SourceGenerator/SharedKernel.AuditTrail.SourceGenerator.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Blazor/SharedKernel.Blazor.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Blazor.Analyzers/SharedKernel.Blazor.Analyzers.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Blazor.CodeFixes/SharedKernel.Blazor.CodeFixes.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Branding/SharedKernel.Branding.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.DocumentRendering/SharedKernel.DocumentRendering.csproj" />
@@ -21,6 +24,8 @@
   <Project Path="src/SharedKernel/SharedKernel.Domain.EntityFrameworkCore/SharedKernel.Domain.EntityFrameworkCore.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Domain.SourceGenerator/SharedKernel.Domain.SourceGenerator.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.EntityFrameworkCore/SharedKernel.EntityFrameworkCore.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.EntityFrameworkCore.Analyzers/SharedKernel.EntityFrameworkCore.Analyzers.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.EntityFrameworkCore.Sqlite/SharedKernel.EntityFrameworkCore.Sqlite.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.EventSourcing/SharedKernel.EventSourcing.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.EventSourcing.Npgsql/SharedKernel.EventSourcing.Npgsql.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.HttpCaching.AspNetCore/SharedKernel.HttpCaching.AspNetCore.csproj" />
@@ -51,6 +56,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Observability.Npgsql/SharedKernel.Observability.Npgsql.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.OpenApi/SharedKernel.OpenApi.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Results.Analyzers/SharedKernel.Results.Analyzers.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Results.AspNet/SharedKernel.Results.AspNet.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Results.SourceGenerator/SharedKernel.Results.SourceGenerator.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Scheduling/SharedKernel.Scheduling.csproj" />
@@ -84,6 +90,8 @@
   <Project Path="tests/SharedKernel.Aspire.Hosting.Tests/SharedKernel.Aspire.Hosting.Tests.csproj" />
   <Project Path="tests/SharedKernel.AuditTrail.GeneratorTests/SharedKernel.AuditTrail.GeneratorTests.csproj" />
   <Project Path="tests/SharedKernel.Blazor.Tests/SharedKernel.Blazor.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Blazor.Analyzers.Tests/SharedKernel.Blazor.Analyzers.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Blazor.CodeFixes.Tests/SharedKernel.Blazor.CodeFixes.Tests.csproj" />
   <Project Path="tests/SharedKernel.Branding.Tests/SharedKernel.Branding.Tests.csproj" />
   <Project Path="tests/SharedKernel.BuildingBlocks.Tests/SharedKernel.BuildingBlocks.Tests.csproj" />
   <Project Path="tests/SharedKernel.CodeFixes.Testing/SharedKernel.CodeFixes.Testing.csproj" />
@@ -93,7 +101,9 @@
   <Project Path="tests/SharedKernel.Domain.EntityFrameworkCore.Tests/SharedKernel.Domain.EntityFrameworkCore.Tests.csproj" />
   <Project Path="tests/SharedKernel.Domain.GeneratorTests/SharedKernel.Domain.GeneratorTests.csproj" />
   <Project Path="tests/SharedKernel.Domain.Tests/SharedKernel.Domain.Tests.csproj" />
+  <Project Path="tests/SharedKernel.EntityFrameworkCore.Sqlite.Tests/SharedKernel.EntityFrameworkCore.Sqlite.Tests.csproj" />
   <Project Path="tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj" />
+  <Project Path="tests/SharedKernel.EntityFrameworkCore.Analyzers.Tests/SharedKernel.EntityFrameworkCore.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj" />
   <Project Path="tests/SharedKernel.EventSourcing.Tests/SharedKernel.EventSourcing.Tests.csproj" />
   <Project Path="tests/SharedKernel.Results.Tests/SharedKernel.Results.Tests.csproj" />
@@ -125,6 +135,7 @@
   <Project Path="tests/SharedKernel.PlaywrightMcp.Tool.Tests/SharedKernel.PlaywrightMcp.Tool.Tests.csproj" />
   <Project Path="tests/SharedKernel.Results.AspNet.Tests/SharedKernel.Results.AspNet.Tests.csproj" />
   <Project Path="tests/SharedKernel.Results.GeneratorTests/SharedKernel.Results.GeneratorTests.csproj" />
+  <Project Path="tests/SharedKernel.Results.Analyzers.Tests/SharedKernel.Results.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.Scheduling.Tests/SharedKernel.Scheduling.Tests.csproj" />
   <Project Path="tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.Style.CodeFixes.Tests/SharedKernel.Style.CodeFixes.Tests.csproj" />
@@ -135,6 +146,8 @@
   <Project Path="tests/SharedKernel.Testing.Packaging/SharedKernel.Testing.Packaging.csproj" />
   <Project Path="tests/SharedKernel.Testing.Scenarios/SharedKernel.Testing.Scenarios.csproj" />
   <Project Path="tests/SharedKernel.Testing.System/SharedKernel.Testing.System.csproj" />
+  <Project Path="tests/SharedKernel.Testing.AspNetCore.TestApp/SharedKernel.Testing.AspNetCore.TestApp.csproj" />
+  <Project Path="tests/SharedKernel.Testing.AspNetCore.Tests/SharedKernel.Testing.AspNetCore.Tests.csproj" />
   <Project Path="tests/SharedKernel.Testing.Tests/SharedKernel.Testing.Tests.csproj" />
   <Project Path="tests/SharedKernel.VaultManager.Tool.Tests/SharedKernel.VaultManager.Tool.Tests.csproj" />
   <Project Path="tests/SharedKernel.Versioning.Tests/SharedKernel.Versioning.Tests.csproj" />

@@ -31,6 +31,7 @@ internal static class VersioningCommandLine
             CreateHasBreakingChangeMarker(),
             CreateCheckApiCompatibility(timeProvider),
             CreatePackSharedKernel(timeProvider),
+            CreatePackDev(),
             CreatePrepareRelease(input),
             CreateCreateCandidate(timeProvider),
             CreateValidateCandidate(timeProvider),
@@ -265,6 +266,46 @@ internal static class VersioningCommandLine
                 parseResult.GetValue(assemblyVersion),
                 parseResult.GetValue(fileVersion),
                 parseResult.GetValue(informationalVersion)),
+            output,
+            ct));
+        return command;
+    }
+
+    private static Command CreatePackDev()
+    {
+        var projects = new Argument<string[]>("project")
+        {
+            Description = "Project to rebuild, such as SharedKernel.Results. Default: every SharedKernel project. Dependencies are packed only when the feed lacks them.",
+            Arity = ArgumentArity.ZeroOrMore,
+        };
+        var feed = new Option<string>("--feed")
+        {
+            Description = "Feed directory that receives the packages; created when missing.",
+            HelpName = "path",
+            Required = true,
+        };
+        var version = new Option<string>("--version")
+        {
+            Description = "Package version. Default: " + DevPackCommand.DefaultVersion + ".",
+            HelpName = "version",
+            DefaultValueFactory = static _ => DevPackCommand.DefaultVersion,
+        };
+        var repoRoot = RepoRootOption();
+        var command = new Command(
+            "pack-dev",
+            "Packs the named SharedKernel projects from the working tree into a feed and evicts them from the NuGet cache, so a consumer sees uncommitted changes in seconds.")
+        {
+            projects,
+            feed,
+            version,
+            repoRoot,
+        };
+        SetAction(command, (parseResult, output, ct) => DevPackCommand.Run(
+            new DevPackOptions(
+                parseResult.GetRequiredValue(feed),
+                parseResult.GetRequiredValue(version),
+                parseResult.GetRequiredValue(repoRoot),
+                parseResult.GetValue(projects) ?? []),
             output,
             ct));
         return command;

@@ -182,12 +182,24 @@
       "PandaBear.SharedKernel.Aspire.Analyzers": {
         "type": "Project"
       },
+      "PandaBear.SharedKernel.BuildingBlocks": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.InputNormalization": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Mediator": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
           "Microsoft.Extensions.Diagnostics": "[10.0.13, )",
-          "PandaBear.SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Mediator.Abstractions": {
@@ -197,6 +209,9 @@
         "type": "Project"
       },
       "PandaBear.SharedKernel.Mediator.SourceGenerator": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
       "PandaBear.SharedKernel.Style.Analyzers": {

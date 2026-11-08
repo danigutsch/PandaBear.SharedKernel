@@ -20,6 +20,11 @@ PandaBear.Testing.AspNetCore.FakeFormFile.Headers.get -> Microsoft.AspNetCore.Ht
 PandaBear.Testing.AspNetCore.FakeFormFile.Length.get -> long
 PandaBear.Testing.AspNetCore.FakeFormFile.Name.get -> string!
 PandaBear.Testing.AspNetCore.FakeFormFile.OpenReadStream() -> System.IO.Stream!
+PandaBear.Testing.AspNetCore.KestrelTestHost
+PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint>
+PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint>.BaseAddress.get -> System.Uri!
+PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint>.Services.get -> System.IServiceProvider!
 PandaBear.Testing.AspNetCore.RecordingOutputCacheStore
 PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictByTagAsync(string! tag, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
 PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictionCancellationToken.get -> System.Threading.CancellationToken
@@ -54,6 +59,7 @@ PandaBear.Testing.AspNetCore.WebApplicationTestHost
 static PandaBear.Testing.AspNetCore.ApiTestAuthentication.ConfigureAuthenticatedClient(System.Net.Http.HttpClient! client, string! audience, string! role) -> void
 static PandaBear.Testing.AspNetCore.ApiTestAuthentication.ConfigureClient(System.Net.Http.HttpClient! client, string! audience, string! issuer, string! role) -> void
 static PandaBear.Testing.AspNetCore.ApiTestAuthentication.ConfigureJwtBearer(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! audience) -> void
+static PandaBear.Testing.AspNetCore.KestrelTestHost.Start<TEntryPoint>(string? environment = null, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? configuration = null, System.Action<Microsoft.Extensions.DependencyInjection.IServiceCollection!>? configureTestServices = null) -> PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint!>!
 static PandaBear.Testing.AspNetCore.WebApplicationTestHost.Create<TEntryPoint>(string? environment = null, System.Action<Microsoft.Extensions.DependencyInjection.IServiceCollection!>? configureTestServices = null, System.Action<System.Net.Http.HttpClient!>? configureClient = null, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? configuration = null) -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
 PandaBear.Testing.AspNetCore.TestRequestBindingServiceCollectionExtensions
 static PandaBear.Testing.AspNetCore.TestRequestBindingServiceCollectionExtensions.AddTestRequestBindingDefaults(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

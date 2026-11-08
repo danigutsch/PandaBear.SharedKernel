@@ -31,3 +31,18 @@ public static class Example
 Check success/failure before accessing payloads; propagate cancellation in asynchronous flows. Keep business validation in its owning domain. Registry publication remains deferred.
 
 Package ID: `PandaBear.SharedKernel.Results.AspNet`. C# namespace: `PandaBear.Results.AspNet`. Assembly/project identity: `SharedKernel.Results.AspNet`.
+
+## Minimal API responses
+
+`result.ToHttpResult()` returns 204 for Ok and NoContent and 202 for Accepted. `Result<T>.ToHttpResult()` returns 200 with the value for Ok,
+201 with the value for Created, and 202 with the value for Accepted. A Created response sets no `Location` header; set one in the
+endpoint when you need it. A failure becomes a validation problem (invalid results, with their field errors) or a problem response
+with the mapped status code.
+
+- A failure that maps to HTTP 5xx (Error, CriticalError, Unavailable) never sends the result's own detail to the client, because it may
+  hold internal text such as exception messages, SQL or paths. The response carries a fixed detail instead:
+  `ResultHttpExtensions.InternalServerErrorDetail` ("An unexpected error occurred.") for 500 and
+  `ResultHttpExtensions.ServiceUnavailableDetail` ("The service is temporarily unavailable.") for 503. Log the real detail yourself.
+- A failure that maps to 4xx (Invalid, Unauthorized, Forbidden, NotFound, Conflict) sends the result's detail, so keep those details
+  safe for callers to read.
+- An uninitialized result (`default(Result)` or `default(Result<T>)`) throws `InvalidOperationException` instead of becoming a response.

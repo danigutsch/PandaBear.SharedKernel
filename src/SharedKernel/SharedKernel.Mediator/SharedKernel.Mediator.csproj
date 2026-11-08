@@ -16,6 +16,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
+        <ProjectReference Include="..\SharedKernel.BuildingBlocks\SharedKernel.BuildingBlocks.csproj" />
+        <ProjectReference Include="..\SharedKernel.Results\SharedKernel.Results.csproj" />
     </ItemGroup>
 
     <ItemGroup>

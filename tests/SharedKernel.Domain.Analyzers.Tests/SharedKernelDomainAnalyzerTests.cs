@@ -16,7 +16,7 @@ public sealed class SharedKernelDomainAnalyzerTests
         var diagnosticIds = analyzer.SupportedDiagnostics.Select(static descriptor => descriptor.Id).ToArray();
 
         // Assert
-        diagnosticIds.ShouldBe([DomainDiagnosticIds.NonPrivateSetter, DomainDiagnosticIds.MutableCollectionExposure]);
+        diagnosticIds.ShouldBe([DomainDiagnosticIds.NonPrivateSetter, DomainDiagnosticIds.MutableCollectionExposure, DomainDiagnosticIds.AmbientClock]);
     }
 
     [Theory]

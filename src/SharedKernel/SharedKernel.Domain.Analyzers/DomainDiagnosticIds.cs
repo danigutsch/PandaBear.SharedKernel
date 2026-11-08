@@ -14,4 +14,9 @@ public static class DomainDiagnosticIds
     /// Diagnostic emitted when a domain-model property exposes a mutable collection outside its assembly.
     /// </summary>
     public const string MutableCollectionExposure = "SKDOM002";
+
+    /// <summary>
+    /// Diagnostic emitted when domain code reads the ambient clock instead of an injected time source.
+    /// </summary>
+    public const string AmbientClock = "SKDOM003";
 }

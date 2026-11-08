@@ -11,6 +11,7 @@ public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
     private static readonly string[] PackageProjects =
     [
         "src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj",
+        "src/SharedKernel/SharedKernel.InputNormalization/SharedKernel.InputNormalization.csproj",
         "src/SharedKernel/SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj",
         "src/SharedKernel/SharedKernel.Domain/SharedKernel.Domain.csproj",
         "src/SharedKernel/SharedKernel.AuditTrail/SharedKernel.AuditTrail.csproj",

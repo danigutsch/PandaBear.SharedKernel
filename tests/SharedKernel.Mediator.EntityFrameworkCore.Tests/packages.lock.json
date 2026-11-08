@@ -255,12 +255,23 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
+      "PandaBear.SharedKernel.BuildingBlocks": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.EntityFrameworkCore": {
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.13, )",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
+          "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )"
         }
+      },
+      "PandaBear.SharedKernel.InputNormalization": {
+        "type": "Project"
       },
       "PandaBear.SharedKernel.Mediator.Abstractions": {
         "type": "Project"

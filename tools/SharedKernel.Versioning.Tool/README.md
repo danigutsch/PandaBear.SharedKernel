@@ -65,6 +65,7 @@ sharedkernel-version validate-package-metadata
 sharedkernel-version has-breaking-change-marker <git-range>
 sharedkernel-version check-api-compatibility [--version <version>] [--release-phase alpha|beta|rc|stable] [--baseline-version <version>] [--breaking-marker] [--output-root <path>]
 sharedkernel-version pack-sharedkernel [--version <version>] [--assembly-version <version>] [--file-version <version>] [--informational-version <version>] [--output-root <path>] [--skip-restore-check]
+sharedkernel-version pack-dev --feed <path> [--version <version>] [--repo-root <path>] [<project>...]
 sharedkernel-version prepare-release --version <version> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes
 sharedkernel-version create-candidate [--version <version>] [--baseline-version <version>]
 sharedkernel-version validate-candidate [--version <version>] [--baseline-version <version>] [--aot]
@@ -134,6 +135,21 @@ Without `--version`, the version is `0.1.0-alpha.local.<UTC timestamp>`.
 The package inventory reads the `packages.lock.json` next to each project under `src`; a project without one is read from its
 restored `obj/project.assets.json`, so restore the solution first. The command fails and lists the project and package when such
 a project resolves a package version that no committed lock file resolves, because the dependency snapshot would omit it.
+
+### Local development packs
+
+```text
+sharedkernel-version pack-dev --feed ../app/.local/sharedkernel-feed SharedKernel.Results
+```
+
+`pack-dev` is the fast loop for a consumer that develops against uncommitted library changes. It packs the named projects
+(`SharedKernel.Results`, not the package id) from the working tree into `--feed` as `--version` (default `0.1.0-dev.local`),
+packs their project-reference dependencies only when the feed does not hold them yet (a kept dependency whose `*.cs`, `*.csproj`, `*.props` or `*.targets` files, outside `bin/` and `obj/`, changed after its package was written is reported as `Kept   <id> (stale: sources changed after it was packed; name it to repack)`; it is warned about, never repacked automatically), and removes every repacked package
+from the NuGet global packages folder, which caches by id and version and would otherwise keep serving the previous build.
+The folder is a non-empty `NUGET_PACKAGES`, else the one `dotnet nuget locals global-packages --list` reports from the current
+directory (honoring `globalPackagesFolder` in `NuGet.Config`), else `~/.nuget/packages`; each line says whether a cached copy
+was evicted. `--repo-root` may be relative. Without project names it repacks every SharedKernel project. It runs no API
+checks and records no manifest, so its output is never a candidate; use `create-candidate` for that.
 
 ### Candidates
 

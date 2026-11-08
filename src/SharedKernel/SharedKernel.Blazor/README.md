@@ -81,6 +81,49 @@ To match existing accessible names and styling, all optional and unset by defaul
 
 Formats are composite format strings, so they work as plain Razor attributes (`CancelLabelFormat="Cancel upload of {0}"`) and need no reflection; a malformed format throws `FormatException` at render.
 
+## Interactivity marker
+
+`<InteractiveMarker />` renders a hidden element whose `data-interactive` attribute is `false` while a page is only prerendered and
+`true` once the interactive renderer has taken over (`RendererInfo.IsInteractive`). Browser tests wait for
+`InteractiveMarker.ReadySelector` instead of sleeping; `SharedKernel.Testing.Playwright` provides `WaitForBlazorInteractive`, which uses its
+own copy of that selector (a test keeps the two equal) so the test package does not depend on this library.
+
+## Server-backed forms
+
+`ServerFormSubmission` keeps the state of a form that saves to a server: `IsSaving` (reset even when the save throws), the
+field errors shown on the fields and in `ErrorSummary` (`Summary`), and a fixed general `Error` for failures that cannot be
+shown on a field. `await submission.Submit(() => ...)` runs the save and returns `true` on success. A failed result that is
+not a validation failure shows the constructor's `failureMessage`, except `ResultStatus.Conflict` and `ResultStatus.NotFound`,
+where retrying cannot help: set the optional init properties `ConflictMessage` and `NotFoundMessage` (fixed, caller-authored
+text; `null` falls back to `failureMessage`). A validation failure shows `Error` (the `failureMessage`) whenever the server errors left nothing to list in `Summary` or some could not
+be placed, so a failed save is never silent. Server error text is never copied into `Error`.
+`FormField<TValue>` renders a
+label tied to its control and the field's `ValidationMessage`.
+
+`Submit` is safe to wire to `EditForm` `OnSubmit`: a call made while a save is running returns `false` without running the save
+(a double click cannot save twice); every accepted call first clears the previous `Summary` and `Error`, so a throwing save leaves
+nothing stale; and it calls `EditContext.Validate()` first. If the context holds messages, such as the parse error an
+`InputNumber` or `InputDate` reports for text it cannot read, the save does not run, `Submit` returns `false`, `IsSaving` stays
+`false`, and `Summary` lists the messages of the known fields (`Error` stays `null`). Without this check the unparsable edit would
+be dropped silently and the old value saved. Messages on fields that are not in `ServerValidationOptions.KnownFields` (or on the model) still block
+the save but have no summary entry; when no message could be listed, `Error` shows the fixed failure message so the user is never
+left with a silent no-op. List every field the form shows. Call `Submit` on the renderer's context (for example
+inside the event handler), not from a background thread.
+
+```csharp
+_submission = new ServerFormSubmission(_context, options, field => "customer-" + field, "We could not save. Try again later.")
+{
+    ConflictMessage = "The data was changed or removed by someone else. Reload it and try again.",
+    NotFoundMessage = "This record no longer exists.",
+};
+```
+
+```razor
+<FormField Label="Email" InputId="customer-Email" For="() => _form.Email">
+    <InputText id="customer-Email" @bind-Value="_form.Email" />
+</FormField>
+```
+
 ## Notes
 
 - Link targets in `ErrorSummary` are fragment links on the current page; browsers move focus to a focusable target of a fragment navigation.
@@ -91,3 +134,9 @@ Formats are composite format strings, so they work as plain Razor attributes (`C
 Package ID: `PandaBear.SharedKernel.Blazor`. C# namespace: `PandaBear.Blazor`. Assembly/project identity: `SharedKernel.Blazor`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+## Reusing a component when the parameter changes
+
+Blazor keeps one component instance when the route changes between URLs that map to the same component, so state loaded in
+`OnInitializedAsync` goes stale. Load in `OnParametersSetAsync` and ask a `ParameterTracker<T>` whether the value really changed:
+`Update(value)` returns `Initial`, `Unchanged` or `Changed`. `ConfirmationState<TKey>` keeps the "confirm this row's delete" state of a list.

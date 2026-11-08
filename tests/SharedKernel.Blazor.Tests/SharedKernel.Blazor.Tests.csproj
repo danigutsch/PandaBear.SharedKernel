@@ -30,6 +30,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Blazor\SharedKernel.Blazor.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Playwright\SharedKernel.Testing.Playwright.csproj" />
     </ItemGroup>
 
 </Project>

@@ -594,6 +594,13 @@
           "Aspire.Hosting": "[13.6.1, )"
         }
       },
+      "PandaBear.SharedKernel.Aspire.Hosting.Sqlite": {
+        "type": "Project",
+        "dependencies": {
+          "Aspire.Hosting": "[13.6.1, )",
+          "Microsoft.Extensions.Diagnostics.HealthChecks": "[10.0.13, )"
+        }
+      },
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },

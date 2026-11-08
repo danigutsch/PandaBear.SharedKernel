@@ -21,6 +21,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.Hosting.ClamAv\SharedKernel.Aspire.Hosting.ClamAv.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.Hosting.Grafana\SharedKernel.Aspire.Hosting.Grafana.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.Hosting.SeaweedFs\SharedKernel.Aspire.Hosting.SeaweedFs.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.Hosting.Sqlite\SharedKernel.Aspire.Hosting.Sqlite.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
     </ItemGroup>
 

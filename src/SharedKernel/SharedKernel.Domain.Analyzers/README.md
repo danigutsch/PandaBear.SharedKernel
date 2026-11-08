@@ -22,6 +22,7 @@ it from DTO, read-model, persistence, API, or test projects.
 | --- | --- | --- |
 | `SKDOM001` | Warning | Properties should not expose a non-private, non-`init` setter. |
 | `SKDOM002` | Warning | Properties visible outside the assembly should not expose mutable collection types. |
+| `SKDOM003` | Warning | Domain code should not read the ambient clock (`DateTime.Now`, `UtcNow`, `Today`, `DateTimeOffset.Now`, `UtcNow`). |
 
 ## Configuration
 
@@ -30,6 +31,7 @@ Use `.editorconfig` to tune analyzer behavior:
 ```ini
 dotnet_diagnostic.SKDOM001.severity = warning
 dotnet_diagnostic.SKDOM002.severity = warning
+dotnet_diagnostic.SKDOM003.severity = warning
 ```
 
 ## SKDOM001
@@ -74,6 +76,28 @@ CA1819 and CA1002, and visible fields to CA1051, so enable those SDK rules along
 Fix: keep a private collection, expose `IReadOnlyCollection<T>` or `IReadOnlyList<T>` (for example
 `items.AsReadOnly()`), and add intent-revealing methods for each change. There is no automatic fix
 because changing the exposed type changes callers.
+
+## SKDOM003
+
+Reports reads of `System.DateTime.Now`, `DateTime.UtcNow`, `DateTime.Today`, `System.DateTimeOffset.Now`,
+and `DateTimeOffset.UtcNow`, however they are spelled (`DateTime.UtcNow`, `System.DateTime.UtcNow`, or
+`UtcNow` through `using static System.DateTime`), in any member of the compilation. The diagnostic
+points at the whole member access.
+
+```csharp
+public sealed class Tour
+{
+    public bool HasStarted(DateTime start) => start <= DateTime.UtcNow; // SKDOM003
+}
+```
+
+Not reported: `DateTime.MinValue`/`MaxValue`, `DateTimeKind`, `Stopwatch`, `TimeProvider.GetUtcNow()`,
+parameters such as `DateTime today`, same-named members on your own types, and accesses inside `nameof`.
+
+Fix: receive the date or time as an argument (for example `Customer.Create(..., today)`) or use an
+injected `TimeProvider`. There is no attribute opt-out; use `#pragma warning disable SKDOM003` or an
+`.editorconfig` severity. Method groups or other indirect clock reads (for example `DateTime.Now.Date`
+is reported once at `DateTime.Now`) are the only forms detected; `TimeZoneInfo.Local` is not.
 
 ## Package boundary
 

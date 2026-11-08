@@ -151,7 +151,7 @@ public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [ActivityListenerSourceIdentityRule, SutConstructionRule, TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule, AssertionDelegateInliningRule, SingleAssertionRule, ParenthesizedAssertionRule, ConditionalAssertionRule, PlaywrightAssertionRule, AssertionUserMessageOverloadRule, XunitTestScopeRule];
+        [ActivityListenerSourceIdentityRule, SutConstructionRule, TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule, AssertionDelegateInliningRule, SingleAssertionRule, ParenthesizedAssertionRule, ConditionalAssertionRule, PlaywrightAssertionRule, AssertionUserMessageOverloadRule, XunitTestScopeRule, CallProxyServiceTypeRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -190,6 +190,7 @@ public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             compilationContext.RegisterSyntaxNodeAction(
                 AnalyzeAttribute,
                 SyntaxKind.Attribute);
+            RegisterCallProxyServiceTypeAnalysis(compilationContext);
         });
     }
 

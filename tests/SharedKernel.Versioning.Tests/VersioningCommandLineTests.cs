@@ -16,6 +16,7 @@ public static class VersioningCommandLineTests
         "has-breaking-change-marker",
         "check-api-compatibility",
         "pack-sharedkernel",
+        "pack-dev",
         "prepare-release",
         "create-candidate",
         "validate-candidate",
@@ -50,6 +51,7 @@ public static class VersioningCommandLineTests
     [InlineData("has-breaking-change-marker", "<git-range>", "--repo-root <path>")]
     [InlineData("check-api-compatibility", "--version <version>", "--release-phase <alpha|beta|rc|stable>", "--baseline-version <version>", "--breaking-marker", "--output-root <path>", "--repo-root <path>")]
     [InlineData("pack-sharedkernel", "--version <version>", "--assembly-version <version>", "--file-version <version>", "--informational-version <version>", "--output-root <path>", "--skip-restore-check", "--repo-root <path>")]
+    [InlineData("pack-dev", "<project>", "--feed <path> (REQUIRED)", "--version <version>", "--repo-root <path>")]
     [InlineData("prepare-release", "--version <version> (REQUIRED)", "--package-dir <path> (REQUIRED)", "--output-dir <path>", "--source-tag <tag>", "--release-impact <impact>", "--sha <sha>", "--repo-root <path>")]
     [InlineData("create-candidate", "--version <version>", "--baseline-version <version>", "--repo-root <path>")]
     [InlineData("validate-candidate", "--version <version>", "--baseline-version <version>", "--aot", "--repo-root <path>")]
@@ -133,6 +135,7 @@ public static class VersioningCommandLineTests
     [InlineData("has-breaking-change-marker", "has-breaking-change-marker", "origin/main..HEAD", "--repo-root", "/repo")]
     [InlineData("check-api-compatibility", "check-api-compatibility", "--version", "1.2.3", "--release-phase", "stable", "--baseline-version", "1.2.2", "--breaking-marker", "--output-root", "artifacts/api", "--repo-root", "/repo")]
     [InlineData("pack-sharedkernel", "pack-sharedkernel", "--version", "1.2.3", "--assembly-version", "1.0.0.0", "--file-version", "1.2.3.0", "--informational-version", "1.2.3+sha.abc123", "--output-root", "artifacts", "--repo-root", "/repo", "--skip-restore-check")]
+    [InlineData("pack-dev", "pack-dev", "--feed", "feed", "--version", "0.1.0-dev.local", "--repo-root", "/repo", "SharedKernel.Results", "SharedKernel.Domain")]
     [InlineData("prepare-release", "prepare-release", "--version", "1.2.3", "--package-dir", "packages", "--output-dir", "release", "--repo-root", "/repo", "--source-tag", "v1.2.2", "--release-impact", "minor", "--sha", "abc123")]
     [InlineData("create-candidate", "create-candidate", "--version", "1.2.3-alpha.1", "--baseline-version", "1.2.2", "--repo-root", "/repo")]
     [InlineData("validate-candidate", "validate-candidate", "--repo-root", "/repo", "--version", "1.2.3-alpha.1", "--baseline-version", "1.2.2", "--aot")]

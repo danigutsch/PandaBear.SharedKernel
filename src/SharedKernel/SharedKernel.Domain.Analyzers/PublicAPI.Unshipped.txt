@@ -1,5 +1,6 @@
 #nullable enable
 PandaBear.Domain.Analyzers.DomainDiagnosticIds
+const PandaBear.Domain.Analyzers.DomainDiagnosticIds.AmbientClock = "SKDOM003" -> string!
 const PandaBear.Domain.Analyzers.DomainDiagnosticIds.MutableCollectionExposure = "SKDOM002" -> string!
 const PandaBear.Domain.Analyzers.DomainDiagnosticIds.NonPrivateSetter = "SKDOM001" -> string!
 PandaBear.Domain.Analyzers.SharedKernelDomainAnalyzer

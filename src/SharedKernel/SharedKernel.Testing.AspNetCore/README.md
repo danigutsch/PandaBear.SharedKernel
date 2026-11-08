@@ -23,6 +23,12 @@ across ASP.NET Core test projects.
 - `FakeBrowserFile`: in-memory Blazor `IBrowserFile` that rejects reads above `maxAllowedSize` with `IOException`.
 - `ThrowingDistributedCache`: `IDistributedCache` whose every operation throws the supplied exception.
 
+## Real sockets for browsers
+
+`KestrelTestHost.Start<TEntryPoint>(environment, configuration, configureTestServices)` runs the application's real entry point on
+Kestrel at `127.0.0.1` with an ephemeral port and returns a host with `BaseAddress` and `Services`; dispose it when done. Use it
+when the client is out of process, such as a browser; in-memory `WebApplicationFactory` servers cannot be reached over a socket.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Testing.AspNetCore`. C# namespace: `PandaBear.Testing.AspNetCore`. Assembly/project identity: `SharedKernel.Testing.AspNetCore`.

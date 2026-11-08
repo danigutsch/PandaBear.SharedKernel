@@ -49,6 +49,7 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
         await Pack("src/SharedKernel/SharedKernel.Mediator.Analyzers/SharedKernel.Mediator.Analyzers.csproj").ConfigureAwait(false);
         await Pack("src/SharedKernel/SharedKernel.Mediator.CodeFixes/SharedKernel.Mediator.CodeFixes.csproj").ConfigureAwait(false);
         await Pack("src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj").ConfigureAwait(false);
+        await Pack("src/SharedKernel/SharedKernel.InputNormalization/SharedKernel.InputNormalization.csproj").ConfigureAwait(false);
         await Pack("src/SharedKernel/SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj").ConfigureAwait(false);
         await Pack("src/SharedKernel/SharedKernel.Domain/SharedKernel.Domain.csproj").ConfigureAwait(false);
         await Pack("src/SharedKernel/SharedKernel.Domain.SourceGenerator/SharedKernel.Domain.SourceGenerator.csproj").ConfigureAwait(false);

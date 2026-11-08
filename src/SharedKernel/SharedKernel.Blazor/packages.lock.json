@@ -315,6 +315,9 @@
       "PandaBear.SharedKernel.Idempotency.Abstractions": {
         "type": "Project"
       },
+      "PandaBear.SharedKernel.Results": {
+        "type": "Project"
+      },
       "Microsoft.Extensions.Compliance.Abstractions": {
         "type": "CentralTransitive",
         "requested": "[10.11.0, )",

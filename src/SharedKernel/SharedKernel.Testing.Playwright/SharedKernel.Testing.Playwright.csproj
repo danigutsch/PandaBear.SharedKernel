@@ -16,7 +16,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\SharedKernel.Testing.AspNetCore\SharedKernel.Testing.AspNetCore.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="Microsoft.Playwright" />
+      <PackageReference Include="Microsoft.Playwright.Xunit.v3" />
     </ItemGroup>
 
 </Project>
