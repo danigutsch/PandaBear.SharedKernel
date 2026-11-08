@@ -42,7 +42,7 @@ public sealed class SharedKernelResultsAnalyzer : DiagnosticAnalyzer
     {
         if (context is null)
         {
-            throw new System.ArgumentNullException(nameof(context));
+            throw new ArgumentNullException(nameof(context));
         }
 
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);

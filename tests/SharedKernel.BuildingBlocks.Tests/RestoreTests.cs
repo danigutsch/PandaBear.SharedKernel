@@ -25,7 +25,7 @@ public sealed class RestoreTests
         var restored = EmailAddress.Restore("Legacy@localhost");
 
         // Assert
-        EmailAddress.Create("Legacy@localhost").Status.ShouldBe(PandaBear.Results.ResultStatus.Invalid);
+        EmailAddress.Create("Legacy@localhost").Status.ShouldBe(Results.ResultStatus.Invalid);
         restored.Value.ShouldBe("legacy@localhost");
         restored.ToString().ShouldBe("EmailAddress [redacted]");
     }
@@ -49,7 +49,7 @@ public sealed class RestoreTests
         var restored = PhoneNumber.Restore(" +55 11 x123 ");
 
         // Assert
-        PhoneNumber.Create("+55 11 x123").Status.ShouldBe(PandaBear.Results.ResultStatus.Invalid);
+        PhoneNumber.Create("+55 11 x123").Status.ShouldBe(Results.ResultStatus.Invalid);
         restored.Value.ShouldBe("+55 11 x123");
         restored.ToString().ShouldBe("PhoneNumber [redacted]");
     }
@@ -74,7 +74,7 @@ public sealed class RestoreTests
         var restored = CountryCode.Restore("xk");
 
         // Assert
-        CountryCode.Create("XK").Status.ShouldBe(PandaBear.Results.ResultStatus.Invalid);
+        CountryCode.Create("XK").Status.ShouldBe(Results.ResultStatus.Invalid);
         restored.Value.ShouldBe("XK");
         restored.EnglishName.ShouldBe("XK");
         restored.ToString().ShouldBe("XK");
@@ -100,7 +100,7 @@ public sealed class RestoreTests
         var restored = Currency.Restore("hrk");
 
         // Assert
-        Currency.Create("HRK").Status.ShouldBe(PandaBear.Results.ResultStatus.Invalid);
+        Currency.Create("HRK").Status.ShouldBe(Results.ResultStatus.Invalid);
         restored.Code.ShouldBe("HRK");
         restored.MinorUnits.ShouldBe(2);
         restored.ToString().ShouldBe("HRK");
@@ -161,7 +161,7 @@ public sealed class RestoreTests
         var restored = PersonName.Restore(longName, "Silva");
 
         // Assert
-        PersonName.Create(longName, "Silva").Status.ShouldBe(PandaBear.Results.ResultStatus.Invalid);
+        PersonName.Create(longName, "Silva").Status.ShouldBe(Results.ResultStatus.Invalid);
         restored.FirstName.ShouldBe(longName);
     }
 

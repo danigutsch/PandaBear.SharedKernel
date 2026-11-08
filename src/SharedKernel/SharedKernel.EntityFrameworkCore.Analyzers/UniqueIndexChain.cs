@@ -111,7 +111,7 @@ internal static class UniqueIndexChain
         return value.HasValue && value.Value is true;
     }
 
-    private static bool IsRuleCall(SemanticModel model, InvocationExpressionSyntax call, INamedTypeSymbol ruleExtensions, System.Threading.CancellationToken token)
+    private static bool IsRuleCall(SemanticModel model, InvocationExpressionSyntax call, INamedTypeSymbol ruleExtensions, CancellationToken token)
     {
         if (call.Expression is not MemberAccessExpressionSyntax { Name.Identifier.ValueText: RuleMethodName })
         {
@@ -180,7 +180,7 @@ internal static class UniqueIndexChain
         }
     }
 
-    private static void AddDeclaredTarget(SemanticModel model, InvocationExpressionSyntax top, List<ILocalSymbol> locals, System.Threading.CancellationToken token)
+    private static void AddDeclaredTarget(SemanticModel model, InvocationExpressionSyntax top, List<ILocalSymbol> locals, CancellationToken token)
     {
         if (top.Parent is EqualsValueClauseSyntax { Parent: VariableDeclaratorSyntax declarator })
         {
@@ -195,7 +195,7 @@ internal static class UniqueIndexChain
         }
     }
 
-    private static void AddLocal(SemanticModel model, ExpressionSyntax? expression, List<ILocalSymbol> locals, System.Threading.CancellationToken token)
+    private static void AddLocal(SemanticModel model, ExpressionSyntax? expression, List<ILocalSymbol> locals, CancellationToken token)
     {
         if (expression is not null && model.GetSymbolInfo(expression, token).Symbol is ILocalSymbol local)
         {
@@ -234,7 +234,7 @@ internal static class UniqueIndexChain
         return false;
     }
 
-    private static string DescribeIndex(SemanticModel model, List<InvocationExpressionSyntax> chain, System.Threading.CancellationToken token)
+    private static string DescribeIndex(SemanticModel model, List<InvocationExpressionSyntax> chain, CancellationToken token)
     {
         var names = new List<string>();
         var hasIndex = chain.FirstOrDefault(static call => call.Expression is MemberAccessExpressionSyntax { Name.Identifier.ValueText: "HasIndex" });

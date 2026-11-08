@@ -1,9 +1,9 @@
 namespace PandaBear.Mediator;
 
 /// <summary>
-/// Maps the application rule names carried by <see cref="PandaBear.BuildingBlocks.UniqueConstraintViolationException"/> to the field and
+/// Maps the application rule names carried by <see cref="BuildingBlocks.UniqueConstraintViolationException"/> to the field and
 /// the caller-facing message of a validation failure. Configure it once at startup through
-/// <see cref="UniqueViolationServiceCollectionExtensions.AddUniqueViolationHandling(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action{UniqueRuleMap})"/>.
+/// <see cref="UniqueViolationServiceCollectionExtensions.AddUniqueViolationHandling(Microsoft.Extensions.DependencyInjection.IServiceCollection, Action{UniqueRuleMap})"/>.
 /// </summary>
 /// <remarks>
 /// The map is meant to be filled during startup and only read afterwards; it is not synchronized for concurrent writes.

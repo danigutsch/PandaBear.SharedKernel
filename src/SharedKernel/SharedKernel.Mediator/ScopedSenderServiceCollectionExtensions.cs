@@ -25,7 +25,7 @@ public static class ScopedSenderServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.TryAddScoped<ScopedSender>(static sp => new ScopedSender(sp.GetRequiredService<IServiceScopeFactory>(), sp));
+        services.TryAddScoped(static sp => new ScopedSender(sp.GetRequiredService<IServiceScopeFactory>(), sp));
         return services;
     }
 
@@ -47,7 +47,7 @@ public static class ScopedSenderServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(scopeInitializer);
 
-        services.Replace(ServiceDescriptor.Scoped<ScopedSender>(sp => new ScopedSender(sp.GetRequiredService<IServiceScopeFactory>(), sp, scopeInitializer)));
+        services.Replace(ServiceDescriptor.Scoped(sp => new ScopedSender(sp.GetRequiredService<IServiceScopeFactory>(), sp, scopeInitializer)));
         return services;
     }
 }

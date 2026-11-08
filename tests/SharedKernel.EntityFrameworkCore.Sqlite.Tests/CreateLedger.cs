@@ -5,7 +5,7 @@ namespace PandaBear.EntityFrameworkCore.Sqlite.Tests;
 
 /// <summary>A hand-written migration that creates the ledger table.</summary>
 [DbContext(typeof(LedgerDbContext))]
-[Migration(CreateLedger.MigrationId)]
+[Migration(MigrationId)]
 public sealed class CreateLedger : Migration
 {
     /// <summary>The migration id.</summary>
