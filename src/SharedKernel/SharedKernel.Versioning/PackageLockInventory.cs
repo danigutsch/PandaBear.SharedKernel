@@ -61,11 +61,10 @@ public static class PackageLockInventory
         ArgumentException.ThrowIfNullOrWhiteSpace(repositoryRoot);
 
         var (_, unlockedProjects) = GetSources(repositoryRoot);
-        var packages = new Dictionary<string, SortedSet<string>>(StringComparer.OrdinalIgnoreCase);
         var assetsPackages = new List<(string Project, string Package)>();
         foreach (var project in unlockedProjects)
         {
-            AddAssetsPackages(repositoryRoot, project, packages, assetsPackages);
+            AddAssetsPackages(repositoryRoot, project, packages: null, assetsPackages);
         }
 
         VerifyAssetsPackagesAreLocked(repositoryRoot, assetsPackages);
@@ -245,7 +244,7 @@ public static class PackageLockInventory
     private static void AddAssetsPackages(
         string repositoryRoot,
         string project,
-        Dictionary<string, SortedSet<string>> packages,
+        Dictionary<string, SortedSet<string>>? packages,
         List<(string Project, string Package)> assetsPackages)
     {
         var assetsFile = Path.Combine(Path.GetDirectoryName(project)!, "obj", "project.assets.json");
@@ -279,13 +278,17 @@ public static class PackageLockInventory
                 }
 
                 var key = entry.Name[..separator] + "@" + entry.Name[(separator + 1)..];
-                if (!packages.TryGetValue(key, out var sources))
+                if (packages is not null)
                 {
-                    sources = new SortedSet<string>(StringComparer.Ordinal);
-                    packages.Add(key, sources);
+                    if (!packages.TryGetValue(key, out var sources))
+                    {
+                        sources = new SortedSet<string>(StringComparer.Ordinal);
+                        packages.Add(key, sources);
+                    }
+
+                    sources.Add(relativeAssets);
                 }
 
-                sources.Add(relativeAssets);
                 assetsPackages.Add((ToRelative(repositoryRoot, project), key));
             }
         }
