@@ -59,18 +59,27 @@ Linux and Windows consume the same hashed artifacts before stable promotion. Rep
 ### Lock files
 
 Lock files exist to make restores reproducible for the projects that build, test, and run in CI: tests, tools, samples, and benchmarks. A
-lock file is not packed and does not constrain consumers, so a library keeps one only when it resolves a package that no other lock file
-resolves. Every other library under `src` is lock-exempt: it is listed in `lockExemptProjects` of `.config/sharedkernel-repo.json`, sets
-`<RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>` in its project file (NuGet reports NU1005 for a lock file next to a
-project with the property false), and has no `packages.lock.json`. NuGet.Config and `Directory.Build.props` still enable locking for every
-other project. A new project is locked until you opt it out. `LockFilePolicyConventionTests` keeps the list, the project files, and the lock
-files consistent.
+lock file is not packed and does not constrain consumers, so a library under `src` keeps one only when it is needed for the repository's
+dependency snapshot to list every package version. Retention is minimal: tests, tools, samples, and benchmarks always keep their lock
+files; the libraries under `src` are walked in ordinal path order, and a library is retained only when its lock has a package version
+(an `Id@Version` pair) that no already-retained project locks. A second pass then drops a retained library when the other retained locks
+cover all of its pairs, one at a time in the same order, until none can be dropped. The result is deterministic but order-dependent (of
+two libraries that cover each other, the one that sorts first stays), and the union of the retained locks equals the union of all locks,
+so no package leaves the dependency snapshot. Every other library under `src` is lock-exempt: it is listed in `lockExemptProjects` of
+`.config/sharedkernel-repo.json`, sets `<RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>` in its project file (NuGet reports
+NU1005 for a lock file next to a project with the property false), and has no `packages.lock.json`. NuGet.Config and
+`Directory.Build.props` still enable locking for every other project. A new project is locked until you opt it out.
+`LockFilePolicyConventionTests` keeps the list, the project files, and the lock files consistent, and fails when a retained library is
+fully covered by the other locks (so the retained set is stable) or when the restored assets of an exempt library hold a pair that no
+committed lock resolves.
 
-To exempt a library, check that every package version in its current lock file also appears in a lock file of another project, remove the
-lock file, set the property, and add the project to the list. The dependency snapshot then writes no manifest for it and still lists its
-packages through the other locks. `sharedkernel-version prepare-release` reads the restored `obj/project.assets.json` of an exempt library for
-the SBOM and fails, naming the project and package, when it resolves a package version that no committed lock file resolves; the remedy is
-to remove the project from the list, delete the property, and restore to create its lock file. Run it after a restore of the solution.
+To change the policy after a dependency update, restore with locks for every project to see each library's pairs
+(`dotnet restore SharedKernel.slnx --force-evaluate -p:RestorePackagesWithLockFile=true`, then discard the locks of the exempt libraries),
+apply the rule above, then update the list, the property, and the lock files together. The dependency snapshot then writes no manifest for
+an exempt library and still lists its packages through the retained locks. `sharedkernel-version prepare-release` reads the restored
+`obj/project.assets.json` of an exempt library for the SBOM and fails, naming the project and package, when it resolves a package version
+that no committed lock file resolves; the remedy is to remove the project from the list, delete the property, and restore to create its lock
+file. Run it after a restore of the solution.
 
 ### Package requirements
 

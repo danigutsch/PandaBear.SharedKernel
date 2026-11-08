@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Aspire.Hosting.Sqlite</PackageId>
         <Description>Aspire hosting extensions that model a SQLite database file as a resource, with no container.</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
