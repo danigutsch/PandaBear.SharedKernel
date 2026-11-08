@@ -78,4 +78,9 @@ public static class TestingDiagnosticIds
     /// Diagnostic emitted when an xUnit test method has no valid, unambiguous test scope.
     /// </summary>
     public const string XunitTestScope = "SKTEST018";
+
+    /// <summary>
+    /// Diagnostic emitted when CallProxy.Create wraps a type that is not a public interface.
+    /// </summary>
+    public const string CallProxyServiceType = "SKTEST019";
 }

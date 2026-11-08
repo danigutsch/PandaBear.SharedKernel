@@ -1,3 +1,4 @@
+using PandaBear.InputNormalization;
 using PandaBear.Results;
 
 namespace PandaBear.BuildingBlocks;
@@ -40,6 +41,22 @@ public sealed class PersonName : ValueObject
         var last = TextRules.Required(errors, lastName, "lastName", "Last name", MaxPartLength);
 
         return errors.HasErrors ? errors.ToResult<PersonName>() : Result.Ok(new PersonName(first, last));
+    }
+
+    /// <summary> Length limits are not enforced.</summary>
+    /// <param name="firstName">The stored first name.</param>
+    /// <param name="lastName">The stored last name.</param>
+    /// <returns>The name.</returns>
+    /// <exception cref="ArgumentException">A part is <see langword="null"/>, empty or blank.</exception>
+    public static PersonName Restore(string firstName, string lastName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
+        var first = StringSanitizer.Sanitize(firstName);
+        var last = StringSanitizer.Sanitize(lastName);
+        ArgumentException.ThrowIfNullOrEmpty(first, nameof(firstName));
+        ArgumentException.ThrowIfNullOrEmpty(last, nameof(lastName));
+        return new PersonName(first, last);
     }
 
     /// <inheritdoc />

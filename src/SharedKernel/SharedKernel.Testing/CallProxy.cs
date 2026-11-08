@@ -24,6 +24,10 @@ public class CallProxy : DispatchProxy
     /// <param name="configure">Adds the hooks, or <see langword="null"/> for a plain pass-through.</param>
     /// <returns>The proxy.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="inner"/> is null.</exception>
+    /// <exception cref="ArgumentException">A hook or replacement is registered for a name that matches no method of the service.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// <see cref="CallHooks.Returns"/> is registered for a name whose methods all return no value or all have out or ref parameters.
+    /// </exception>
     public static TService Create<TService>(TService inner, Action<CallHooks>? configure = null)
         where TService : class
     {
@@ -33,6 +37,7 @@ public class CallProxy : DispatchProxy
         var callProxy = (CallProxy)(object)proxy;
         callProxy._inner = inner;
         configure?.Invoke(callProxy._hooks);
+        callProxy._hooks.Validate(typeof(TService));
         return proxy;
     }
 

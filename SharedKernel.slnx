@@ -24,6 +24,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Domain.EntityFrameworkCore/SharedKernel.Domain.EntityFrameworkCore.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Domain.SourceGenerator/SharedKernel.Domain.SourceGenerator.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.EntityFrameworkCore/SharedKernel.EntityFrameworkCore.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.EntityFrameworkCore.Analyzers/SharedKernel.EntityFrameworkCore.Analyzers.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.EntityFrameworkCore.Sqlite/SharedKernel.EntityFrameworkCore.Sqlite.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.EventSourcing/SharedKernel.EventSourcing.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.EventSourcing.Npgsql/SharedKernel.EventSourcing.Npgsql.csproj" />
@@ -55,6 +56,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Observability.Npgsql/SharedKernel.Observability.Npgsql.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.OpenApi/SharedKernel.OpenApi.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Results.Analyzers/SharedKernel.Results.Analyzers.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Results.AspNet/SharedKernel.Results.AspNet.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Results.SourceGenerator/SharedKernel.Results.SourceGenerator.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Scheduling/SharedKernel.Scheduling.csproj" />
@@ -101,6 +103,7 @@
   <Project Path="tests/SharedKernel.Domain.Tests/SharedKernel.Domain.Tests.csproj" />
   <Project Path="tests/SharedKernel.EntityFrameworkCore.Sqlite.Tests/SharedKernel.EntityFrameworkCore.Sqlite.Tests.csproj" />
   <Project Path="tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj" />
+  <Project Path="tests/SharedKernel.EntityFrameworkCore.Analyzers.Tests/SharedKernel.EntityFrameworkCore.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj" />
   <Project Path="tests/SharedKernel.EventSourcing.Tests/SharedKernel.EventSourcing.Tests.csproj" />
   <Project Path="tests/SharedKernel.Results.Tests/SharedKernel.Results.Tests.csproj" />
@@ -132,6 +135,7 @@
   <Project Path="tests/SharedKernel.PlaywrightMcp.Tool.Tests/SharedKernel.PlaywrightMcp.Tool.Tests.csproj" />
   <Project Path="tests/SharedKernel.Results.AspNet.Tests/SharedKernel.Results.AspNet.Tests.csproj" />
   <Project Path="tests/SharedKernel.Results.GeneratorTests/SharedKernel.Results.GeneratorTests.csproj" />
+  <Project Path="tests/SharedKernel.Results.Analyzers.Tests/SharedKernel.Results.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.Scheduling.Tests/SharedKernel.Scheduling.Tests.csproj" />
   <Project Path="tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.Style.CodeFixes.Tests/SharedKernel.Style.CodeFixes.Tests.csproj" />

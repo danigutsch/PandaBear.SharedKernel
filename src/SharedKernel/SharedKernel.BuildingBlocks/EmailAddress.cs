@@ -53,6 +53,20 @@ public sealed class EmailAddress : ValueObject
 #pragma warning restore CA1308
     }
 
+    /// <summary></summary>
+    /// <param name="value">The stored address.</param>
+    /// <returns>The address, lower-cased.</returns>
+    /// <exception cref="ArgumentException"><paramref name="value"/> is <see langword="null"/>, empty or blank.</exception>
+    public static EmailAddress Restore(string value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(value);
+        var sanitized = StringSanitizer.Sanitize(value);
+        ArgumentException.ThrowIfNullOrEmpty(sanitized, nameof(value));
+#pragma warning disable CA1308 // Lower case is the canonical form, as in Create.
+        return new EmailAddress(sanitized.ToLowerInvariant());
+#pragma warning restore CA1308
+    }
+
     /// <inheritdoc />
     public override string ToString() => "EmailAddress [redacted]";
 

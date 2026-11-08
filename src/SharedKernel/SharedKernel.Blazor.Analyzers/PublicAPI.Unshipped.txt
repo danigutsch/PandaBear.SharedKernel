@@ -7,3 +7,4 @@ PandaBear.Blazor.Analyzers.SharedKernelBlazorAnalyzer.SharedKernelBlazorAnalyzer
 override PandaBear.Blazor.Analyzers.SharedKernelBlazorAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
 override PandaBear.Blazor.Analyzers.SharedKernelBlazorAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
 const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.MissingKey = "SKBLZ003" -> string!
+const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.StaleParameter = "SKBLZ004" -> string!

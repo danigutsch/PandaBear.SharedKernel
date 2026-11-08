@@ -8,3 +8,4 @@ const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.LongLivedScopeService = "SK
 const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.UnguardedBusyFlag = "SKBLZ001" -> string!
 PandaBear.Blazor.Analyzers.BlazorDiagnosticIds
 const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.MissingKey = "SKBLZ003" -> string!
+const PandaBear.Blazor.Analyzers.BlazorDiagnosticIds.StaleParameter = "SKBLZ004" -> string!

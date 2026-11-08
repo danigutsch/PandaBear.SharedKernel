@@ -1,7 +1,7 @@
 namespace PandaBear.Testing.Tests;
 
 /// <summary>A small service the <see cref="CallProxy"/> tests wrap; public because proxies can only implement public interfaces.</summary>
-public interface ICallProbe
+public interface ICallProbe : ICallProbeBase
 {
     /// <summary>Doubles a number.</summary>
     /// <param name="value">The number.</param>
@@ -51,4 +51,13 @@ public interface ICallProbe
     /// <summary>Finds a number, or nothing.</summary>
     /// <returns>A task with the number, or null.</returns>
     Task<int?> FindNumber();
+
+    /// <summary>Saves nothing, without a result.</summary>
+    /// <returns>A task that completes when done.</returns>
+    Task Save();
+
+    /// <summary>Saves a number and returns it, an overload of <see cref="Save()"/> that has a result.</summary>
+    /// <param name="value">The number.</param>
+    /// <returns>A task with the number.</returns>
+    Task<int> Save(int value);
 }

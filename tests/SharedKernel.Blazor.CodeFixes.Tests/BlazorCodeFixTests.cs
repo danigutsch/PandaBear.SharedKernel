@@ -164,6 +164,45 @@ public sealed class BlazorCodeFixTests
         errors.ShouldBeEmpty();
     }
 
+    [Theory]
+    [InlineData("await foreach (var item in Sender.Send(new Feed(), CancellationToken.None)) { Keep(item); }", "stream send")]
+    [InlineData("_ = this.Sender.Send(new Feed(), CancellationToken.None);", "stream send through this")]
+    [InlineData("_ = Sender?.Send(new Feed(), CancellationToken.None);", "stream send through a null-conditional")]
+    [InlineData("Keep(Sender);", "property passed along")]
+    [InlineData("Sender = null!;", "property assigned")]
+    public async Task The_sender_fix_is_not_offered_when_the_component_uses_the_sender_beyond_plain_requests(string use, string reason)
+    {
+        // Arrange
+        var workspace = CodeFixTestWorkspace.Create(SenderSources.Component(use));
+        var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.LongLivedScopeService, "ISender");
+
+        // Act
+        var actions = await workspace.GetCodeActions(new SharedKernelBlazorCodeFixProvider(), diagnostic);
+
+        // Assert
+        actions.ShouldBeEmpty(reason);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("var value = await Sender.Send(new Ping(), CancellationToken.None);")]
+    [InlineData("var value = await this.Sender.Send(new Ping(), CancellationToken.None);")]
+    [InlineData("var value = await Sender.Send(new Ping(), CancellationToken.None);\n        _ = Sender?.Send(new Ping(), CancellationToken.None);")]
+    public async Task The_sender_fix_is_offered_and_compiles_when_the_component_sends_only_plain_requests(string use)
+    {
+        // Arrange
+        var workspace = CodeFixTestWorkspace.Create(SenderSources.Component(use));
+        var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.LongLivedScopeService, "ISender");
+
+        // Act
+        var actions = await workspace.GetCodeActions(new SharedKernelBlazorCodeFixProvider(), diagnostic);
+        await workspace.ApplyCodeAction(actions.ShouldHaveSingleItem());
+        var errors = (await workspace.GetCompilationDiagnostics()).Where(static candidate => candidate.Severity == DiagnosticSeverity.Error).ToArray();
+
+        // Assert
+        errors.ShouldBeEmpty();
+    }
+
     [Fact]
     public async Task No_fix_is_offered_for_an_injected_db_context()
     {

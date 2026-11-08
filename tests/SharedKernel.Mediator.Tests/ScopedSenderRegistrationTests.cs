@@ -167,29 +167,4 @@ public sealed class ScopedSenderRegistrationTests
         firstResponse.ShouldBe("alice");
         secondResponse.ShouldBe("bob");
     }
-
-    [Fact]
-    public async Task A_second_registration_with_an_initializer_does_not_replace_the_first()
-    {
-        // Arrange
-        var log = new ScopeLog();
-        await using var provider = new ServiceCollection()
-            .AddSingleton(log)
-            .AddScoped<ScopeMarker>()
-            .AddScoped<ISender, MarkerSender>()
-            .AddScopedSender()
-            .AddScopedSender(static (_, operation) =>
-            {
-                operation.GetRequiredService<ScopeMarker>().Value = "ignored";
-                return ValueTask.CompletedTask;
-            })
-            .BuildServiceProvider();
-        await using var scope = provider.CreateAsyncScope();
-
-        // Act
-        var response = await scope.ServiceProvider.GetRequiredService<ScopedSender>().Send(new MarkerRequest());
-
-        // Assert
-        response.ShouldBeNull();
-    }
 }

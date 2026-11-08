@@ -93,7 +93,14 @@ recipient verification, masking, authorization, encryption and financial policy 
 `Value` explicitly exposes sensitive plaintext: do not include it in ordinary APIs or telemetry.
 `ToString()` and factory errors omit identifiers; structured logging/property serialization can still
 expose `Value`. Do not destructure these objects in logs. JSON/EF adapters must call factories and
-handle validation failure; this package supplies no deserialization or persistence bypass.
+handle validation failure. Persistence mappers (EF value converters) that rebuild a value from stored text must use the
+`Restore` factories instead of `Create(...).Value`: `EmailAddress.Restore`, `PhoneNumber.Restore`, `CountryCode.Restore`,
+`Currency.Restore`, `PersonName.Restore(firstName, lastName)` and `Money.Restore(amount, currency)`. `Restore` is for persistence mappers
+only: it rebuilds a value from text this type produced earlier, performs no validation beyond null/blank checks (`ArgumentException`) and
+the same trim and case normalization as `Create`, so a stored value that a newer rule rejects (an allow-list that tightened, a
+longer-than-now name) still loads instead of throwing on every query. `CountryCode.Restore` keeps a code outside the assigned set (its
+`EnglishName` is the code), `Currency.Restore` keeps a delisted code (2 minor units) and `Money.Restore` does not round. Never use `Restore`
+for user input.
 
 ## Country names
 
@@ -102,6 +109,12 @@ codes. It does not use ICU/NLS data, `RegionInfo`, resource files or the current
 host, also with `InvariantGlobalization=true`. The names are the Unicode CLDR English territory names (for example `Brazil`,
 `Türkiye`, `Côte d'Ivoire`, `Congo - Kinshasa`), cross-checked against the ISO 3166-1 English short names, with `&` written
 as `and`, "St." spelled `Saint` and a plain ASCII apostrophe; accents are kept. The table is the source of truth: update it when ISO assigns a code.
+
+`CountryCode.AllByEnglishName` is the list for dropdowns: every code ordered by English name, ignoring case and diacritics (`Åland Islands`
+sorts among the A names, `Türkiye` among the T names, `Zimbabwe` last). It does not use ICU or the current culture (a culture sort
+becomes ordinal under `InvariantGlobalization=true` and would put accented names after `Zimbabwe`): the key folds the accented letters of the
+table to ASCII (`Å ã`->`A`, `ç`->`C`, `é`->`E`, `í`->`I`, `ô`->`O`, `ü`->`U`), upper-cases ASCII letters, compares ordinally and breaks ties by
+code. A test fails if a table name contains a character the key does not handle.
 
 ## Currencies
 

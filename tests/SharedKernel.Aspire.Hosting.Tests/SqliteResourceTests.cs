@@ -5,7 +5,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace PandaBear.Aspire.Hosting.Tests;
 
-/// <summary>Tests the SQLite database file resource builder: path resolution, directory creation, connection string, dashboard snapshot, health check and consumer references.</summary>
+/// <summary>Tests the SQLite database file resource builder: path resolution, directory creation at start, connection string, dashboard snapshot, health check and consumer references.</summary>
 public sealed class SqliteResourceTests
 {
     /// <summary>Verifies that a relative path is resolved against the AppHost directory.</summary>
@@ -41,9 +41,9 @@ public sealed class SqliteResourceTests
         sqlite.Resource.DatabasePath.ShouldBe(path);
     }
 
-    /// <summary>Verifies that the parent directory is created but the database file is not.</summary>
+    /// <summary>Verifies that adding the resource has no file system side effect, so model building and manifest generation stay pure.</summary>
     [Fact]
-    public void AddSqlite_creates_the_parent_directory_but_not_the_database_file()
+    public void AddSqlite_does_not_create_the_directory()
     {
         // Arrange
         using var temp = new TemporaryDirectory();
@@ -54,8 +54,42 @@ public sealed class SqliteResourceTests
         builder.AddSqlite("db", path);
 
         // Assert
+        Directory.Exists(temp.Path).ShouldBeFalse();
+    }
+
+    /// <summary>Verifies that the before-start event creates the parent directory but not the database file.</summary>
+    [Fact]
+    public async Task BeforeStart_creates_the_parent_directory_but_not_the_database_file()
+    {
+        // Arrange
+        using var temp = new TemporaryDirectory();
+        var path = Path.Combine(temp.Path, "nested", "app.db");
+        var builder = DistributedApplication.CreateBuilder([]);
+        builder.AddSqlite("db", path);
+
+        // Act
+        await BeforeStartPublisher.Publish(builder);
+
+        // Assert
         Directory.Exists(Path.Combine(temp.Path, "nested")).ShouldBeTrue();
         File.Exists(path).ShouldBeFalse();
+    }
+
+    /// <summary>Verifies that the before-start event creates nothing when the application is published.</summary>
+    [Fact]
+    public async Task BeforeStart_does_not_create_the_directory_in_publish_mode()
+    {
+        // Arrange
+        using var temp = new TemporaryDirectory();
+        var path = Path.Combine(temp.Path, "nested", "app.db");
+        var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOptions { Args = ["--publisher", "manifest", "--output-path", Path.Combine(temp.Path, "out")], DisableDashboard = true });
+        builder.AddSqlite("db", path);
+
+        // Act
+        await BeforeStartPublisher.Publish(builder);
+
+        // Assert
+        Directory.Exists(Path.Combine(temp.Path, "nested")).ShouldBeFalse();
     }
 
     /// <summary>Verifies the connection string for a plain path.</summary>
@@ -154,6 +188,7 @@ public sealed class SqliteResourceTests
     {
         // Arrange
         using var temp = new TemporaryDirectory();
+        Directory.CreateDirectory(temp.Path);
         var builder = DistributedApplication.CreateBuilder([]);
         builder.AddSqlite("db", Path.Combine(temp.Path, "app.db"));
 
@@ -170,6 +205,7 @@ public sealed class SqliteResourceTests
     {
         // Arrange
         using var temp = new TemporaryDirectory();
+        Directory.CreateDirectory(temp.Path);
         var path = Path.Combine(temp.Path, "app.db");
         var builder = DistributedApplication.CreateBuilder([]);
         builder.AddSqlite("db", path);
@@ -188,6 +224,7 @@ public sealed class SqliteResourceTests
     {
         // Arrange
         using var temp = new TemporaryDirectory();
+        Directory.CreateDirectory(temp.Path);
         var path = Path.Combine(temp.Path, "app.db");
         var builder = DistributedApplication.CreateBuilder([]);
         builder.AddSqlite("db", path);
@@ -209,6 +246,7 @@ public sealed class SqliteResourceTests
     {
         // Arrange
         using var temp = new TemporaryDirectory();
+        Directory.CreateDirectory(temp.Path);
         var builder = DistributedApplication.CreateBuilder([]);
         builder.AddSqlite("db", Path.Combine(temp.Path, "app.db"));
         using var readOnly = new ReadOnlyDirectory(temp.Path);
@@ -229,6 +267,7 @@ public sealed class SqliteResourceTests
         var path = Path.Combine(temp.Path, "gone", "app.db");
         var builder = DistributedApplication.CreateBuilder([]);
         builder.AddSqlite("db", path);
+        Directory.CreateDirectory(Path.Combine(temp.Path, "gone"));
         Directory.Delete(Path.Combine(temp.Path, "gone"));
 
         // Act

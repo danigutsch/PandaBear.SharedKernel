@@ -19,14 +19,15 @@ builder.AddProject<Projects.Web>("web")
 The project receives `ConnectionStrings__Default=Data Source=<absolute path>`. A relative path is resolved against the AppHost
 directory. A path that contains a semicolon is quoted in the connection string.
 
-`AddSqlite` creates the database file's parent directory, because SQLite creates the file but not its folder. It does not create the
-database file. The dashboard shows the resource as `Sqlite` in the `Running` state with a `DatabasePath` property.
+When the application starts (not when publishing), the database file's parent directory is created, because SQLite creates the file
+but not its folder. `AddSqlite` itself has no file system side effect, and the database file is never created by this package. The dashboard shows the resource as `Sqlite` in the `Running` state with a `DatabasePath` property.
 
 ## Health check
 
 The resource has a health check named `{name}-file`. It is healthy when the database directory exists and the
-file, if it exists, can be opened for reading. The check is read-only: it creates, modifies and deletes nothing, and it reports that
-the location exists and the file is readable, not that it is writable. Its messages never include the path.
+file, if it exists, can be opened for reading, so `WaitFor` waits for exactly that. The check is read-only: it creates, modifies and
+deletes nothing. It does not test writability, which cannot be done without writing; a read-only volume or wrong permissions surface
+as a SQLite "readonly database" error at first use. Its messages never include the path.
 
 ## Limits
 

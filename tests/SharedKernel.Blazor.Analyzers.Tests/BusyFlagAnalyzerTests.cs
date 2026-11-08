@@ -14,7 +14,7 @@ public sealed class BusyFlagAnalyzerTests
         var ids = analyzer.SupportedDiagnostics.Select(static descriptor => descriptor.Id).ToArray();
 
         // Assert
-        ids.ShouldBe([BlazorDiagnosticIds.UnguardedBusyFlag, BlazorDiagnosticIds.LongLivedScopeService, BlazorDiagnosticIds.MissingKey]);
+        ids.ShouldBe([BlazorDiagnosticIds.UnguardedBusyFlag, BlazorDiagnosticIds.LongLivedScopeService, BlazorDiagnosticIds.MissingKey, BlazorDiagnosticIds.StaleParameter]);
     }
 
     [Theory]

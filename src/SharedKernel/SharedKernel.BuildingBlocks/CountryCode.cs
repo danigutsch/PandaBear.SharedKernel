@@ -44,10 +44,13 @@ public sealed class CountryCode : ValueObject
     }
 
     /// <summary>Gets the English short name of the country, for example <c>Brazil</c>; it comes from a fixed table, so it does not depend on the host's globalization data or the current culture.</summary>
-    public string EnglishName => CountryNames.ByCode[Value];
+    public string EnglishName => CountryNames.ByCode.TryGetValue(Value, out var name) ? name : Value;
 
     /// <summary>Gets every assigned code in ordinal order.</summary>
     public static IReadOnlyList<CountryCode> All { get; } = Assigned.Order(StringComparer.Ordinal).Select(code => new CountryCode(code)).ToArray();
+
+    /// <summary>Gets every assigned code ordered by English name, ignoring case and diacritics (for example <c>Åland Islands</c> sorts among the A names). The order uses an explicit ASCII fold of the table's accented letters and ordinal comparison, so it is identical on every host, also with <c>InvariantGlobalization=true</c>. Ties break by code.</summary>
+    public static IReadOnlyList<CountryCode> AllByEnglishName { get; } = All.OrderBy(code => CountryNames.SortKey(code.EnglishName), StringComparer.Ordinal).ThenBy(code => code.Value, StringComparer.Ordinal).ToArray();
 
     /// <summary>Creates a code from text; case is ignored and surrounding whitespace is removed.</summary>
     /// <param name="value">The candidate code.</param>
@@ -58,6 +61,16 @@ public sealed class CountryCode : ValueObject
         return candidate is not null && Assigned.Contains(candidate)
             ? Result.Ok(new CountryCode(candidate))
             : Result.Invalid<CountryCode>(detail: "Country code is not a valid ISO 3166-1 alpha-2 code.", field: "country", message: "Country code is not a valid ISO 3166-1 alpha-2 code.");
+    }
+
+    /// <summary>For persistence mappers: rebuilds a value from text that was produced by this type earlier; it performs NO validation beyond null checks and normalization identical to <see cref="Create"/>, so a stored value that a newer rule would reject can still be loaded; never use it for user input. A code outside the assigned set is kept, and its <see cref="EnglishName"/> is the code itself.</summary>
+    /// <param name="value">The stored code.</param>
+    /// <returns>The code.</returns>
+    /// <exception cref="ArgumentException"><paramref name="value"/> is <see langword="null"/>, empty or blank.</exception>
+    public static CountryCode Restore(string value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(value);
+        return new CountryCode(value.Trim().ToUpperInvariant());
     }
 
     /// <inheritdoc />

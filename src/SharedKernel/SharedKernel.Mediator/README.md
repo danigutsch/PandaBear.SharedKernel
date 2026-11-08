@@ -155,7 +155,9 @@ services.AddScopedSender((caller, operation) =>
 });
 ```
 
-`CurrentUserHolder` stands for your own scoped state holder. The first `AddScopedSender` call wins; a later call does not replace it.
+`CurrentUserHolder` stands for your own scoped state holder. Order semantics: the initializer overload always wins. It replaces any earlier `ScopedSender` registration (so a host can configure an
+initializer after a shared module called the parameterless `AddScopedSender()`), a later parameterless call does not undo it, and when
+several initializers are registered the last one wins.
 
 - Prefer passing the actor or identity explicitly in the command when practical: it is clean and needs no framework support.
 - When state must be reached from places that cannot take `ScopedSender`, Microsoft documents the `CircuitServicesAccessor` pattern

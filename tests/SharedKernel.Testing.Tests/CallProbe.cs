@@ -79,4 +79,25 @@ internal sealed class CallProbe : ICallProbe
         Calls.Add(nameof(FindNumber));
         return Task.FromResult<int?>(7);
     }
+
+    /// <inheritdoc />
+    public Task<int> Inherited()
+    {
+        Calls.Add(nameof(Inherited));
+        return Task.FromResult(11);
+    }
+
+    /// <inheritdoc />
+    public Task Save()
+    {
+        Calls.Add(nameof(Save));
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    public Task<int> Save(int value)
+    {
+        Calls.Add(nameof(Save));
+        return Task.FromResult(value);
+    }
 }

@@ -65,6 +65,17 @@ public sealed class Money : ValueObject
         return Result.Ok(new Money(amount, currency));
     }
 
+    /// <summary>For persistence mappers: rebuilds a value from a stored amount and currency; the amount is NOT rounded and the currency is not checked against the allow-list, so a stored value that a newer rule would reject can still be loaded; never use it for user input.</summary>
+    /// <param name="amount">The stored amount.</param>
+    /// <param name="currency">The stored currency, typically from <see cref="Currency.Restore"/>.</param>
+    /// <returns>The money value.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="currency"/> is <see langword="null"/>.</exception>
+    public static Money Restore(decimal amount, Currency currency)
+    {
+        ArgumentNullException.ThrowIfNull(currency);
+        return new Money(amount, currency);
+    }
+
     /// <summary>Adds another amount of the same currency.</summary>
     /// <param name="other">The amount to add.</param>
     /// <returns>The sum or a validation error when the currencies differ.</returns>

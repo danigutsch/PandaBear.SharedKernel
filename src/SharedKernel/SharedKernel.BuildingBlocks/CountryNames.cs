@@ -13,6 +13,31 @@ namespace PandaBear.BuildingBlocks;
 /// <summary>The fixed English short name of every officially assigned ISO 3166-1 alpha-2 country code.</summary>
 internal static class CountryNames
 {
+    /// <summary>Builds the culture-independent sort key of an English name: Latin accented letters of the table are folded to ASCII and ASCII letters are upper-cased, so ordinal comparison ignores case and diacritics on every host.</summary>
+    /// <param name="name">The English name.</param>
+    /// <returns>The sort key.</returns>
+    internal static string SortKey(string name) =>
+        string.Create(name.Length, name, static (span, source) =>
+        {
+            for (var index = 0; index < source.Length; index++)
+            {
+                span[index] = Fold(source[index]);
+            }
+        });
+
+    private static char Fold(char character) => character switch
+    {
+        'Å' => 'A',
+        'ã' => 'A',
+        'ç' => 'C',
+        'é' => 'E',
+        'í' => 'I',
+        'ô' => 'O',
+        'ü' => 'U',
+        >= 'a' and <= 'z' => (char)(character - 32),
+        _ => character,
+    };
+
     /// <summary>Holds the English short name by upper-case alpha-2 code; it holds an entry for every code in <see cref="CountryCode.All"/>.</summary>
     internal static readonly FrozenDictionary<string, string> ByCode = new Dictionary<string, string>(StringComparer.Ordinal)
     {

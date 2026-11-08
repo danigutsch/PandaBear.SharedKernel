@@ -22,6 +22,7 @@ apply a code fix inside generated code, so move the logic to a code-behind file 
 | `SKBLZ001` | Warning | A component flag is set to `true`, awaited across, and reset without `try`/`finally`. |
 | `SKBLZ002` | Warning | A component injects `ISender` or a `DbContext`, which go stale in the circuit's service scope. |
 | `SKBLZ003` | Warning | A component loop renders table rows, list items or components without a key. |
+| `SKBLZ004` | Warning | A routable component reads a parameter in `OnInitialized` or `OnInitializedAsync`, which does not run again when the route changes it. |
 
 ## Configuration
 
@@ -29,6 +30,7 @@ apply a code fix inside generated code, so move the logic to a code-behind file 
 dotnet_diagnostic.SKBLZ001.severity = warning
 dotnet_diagnostic.SKBLZ002.severity = warning
 dotnet_diagnostic.SKBLZ003.severity = warning
+dotnet_diagnostic.SKBLZ004.severity = warning
 ```
 
 ## SKBLZ001
@@ -79,7 +81,7 @@ public ISender Sender { get; set; } = default!;   // SKBLZ002
 Not reported: `ScopedSender`, `IDbContextFactory<T>`, properties without `[Inject]`, and types that are not components.
 
 Fix: inject `ScopedSender` (register it with `AddScopedSender()`), or `IDbContextFactory<T>` and create a
-context per operation. `SharedKernel.Blazor.CodeFixes` replaces `ISender` with `ScopedSender`. There is no automatic fix for
+context per operation. `SharedKernel.Blazor.CodeFixes` replaces `ISender` with `ScopedSender`, but only when the component sends plain requests (`Send` with an `IRequest<T>`) or does not use the sender; the fix cannot add the required `AddScopedSender()` registration. The diagnostic stays when the component sends an `IStreamRequest<T>`: `ScopedSender` has no stream overload and a stream cannot run in a per-request scope, so create a scope per stream with `IServiceScopeFactory`. There is no automatic fix for
 `DbContext`, because the component code that uses it has to change too. `ScopedSender` runs every request in a new service scope;
 carry per-circuit state (current user, tenant) into it with the `AddScopedSender` initializer, see the
 [Mediator README](../SharedKernel.Mediator/README.md#scoped-sending).
@@ -99,6 +101,34 @@ Reports a `foreach` or `for` loop in a component whose body opens a `tr`, an `li
 Without a key Blazor matches items by position, so after an insert, a removal or a reorder the state of one row (a pending
 confirmation, a focused input) can attach to another row. Not reported: loops that call `SetKey`, `option` and other elements, and
 types that are not components. There is no code fix, because the key has to be a stable identifier chosen by the author.
+
+## SKBLZ004
+
+Blazor keeps one component instance when the route changes between URLs that map to the same component (for example
+`@page "/customers/new"` and `@page "/customers/{Id:guid}/edit"`). `OnInitialized` does not run again, so state loaded from a parameter
+goes stale: the new `Id` is ignored and the previous record's values stay. Reports a read of a `[Parameter]` property (this includes
+`[SupplyParameterFromQuery]`) inside an override of `OnInitialized` or `OnInitializedAsync`, including lambdas declared in the method.
+The diagnostic points at the property access.
+
+```csharp
+[Parameter] public Guid? Id { get; set; }
+
+protected override async Task OnInitializedAsync()
+{
+    _model = await Load(Id);   // SKBLZ004
+}
+```
+
+Only routable components are checked: the class has a `[Route]` attribute (what `@page` generates) and either a route template with a
+`{` parameter segment, more than one `[Route]`, or the property is a `[SupplyParameterFromQuery]` parameter.
+
+Not reported: reads in `OnParametersSet` or `OnParametersSetAsync`, components without a route (a child component whose parameters are set
+once), a single route without parameters, properties without `[Parameter]` (including `[CascadingParameter]` only), `nameof(Id)`, assignments to the
+parameter, members of other instances, code reached through other methods (the check is syntactic and limited to the method body), and types
+that are not components.
+
+There is no code fix, because the right change needs a design decision: load in `OnParametersSetAsync` and reload only when the value
+changed (see `ParameterTracker<T>` in `SharedKernel.Blazor`), and decide what happens to unsaved edits.
 
 ## Package boundary
 

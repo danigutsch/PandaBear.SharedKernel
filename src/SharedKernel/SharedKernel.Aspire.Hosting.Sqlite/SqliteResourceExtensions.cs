@@ -18,10 +18,12 @@ public static class SqliteResourceExtensions
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="name"/> or <paramref name="databasePath"/> is <see langword="null"/>, empty, or white-space.</exception>
     /// <remarks>
-    /// The database file's parent directory is created if it is missing; the database file itself is created by SQLite on first use.
+    /// Adding the resource has no file system side effect. When the application starts (the <see cref="BeforeStartEvent"/>, not when publishing),
+    /// the database file's parent directory is created if it is missing; the database file itself is created by SQLite on first use.
     /// The resource has a health check named <c>{name}-file</c>; a dependent resource that uses
     /// <see cref="ResourceBuilderExtensions.WaitFor{T}(IResourceBuilder{T}, IResourceBuilder{IResource})"/> waits until the
-    /// directory is writable and the file, if present, is readable.
+    /// directory exists and the file, if present, is readable. The check does not test writability, because that cannot be done
+    /// without writing; a read-only location surfaces as a SQLite error on first use.
     /// </remarks>
     public static IResourceBuilder<SqliteResource> AddSqlite(this IDistributedApplicationBuilder builder, [ResourceName] string name, string databasePath)
     {
@@ -31,9 +33,13 @@ public static class SqliteResourceExtensions
 
         var fullPath = Path.GetFullPath(databasePath, builder.AppHostDirectory);
         var directory = Path.GetDirectoryName(fullPath);
-        if (!string.IsNullOrEmpty(directory))
+        if (!string.IsNullOrEmpty(directory) && !builder.ExecutionContext.IsPublishMode)
         {
-            Directory.CreateDirectory(directory);
+            builder.Eventing.Subscribe<BeforeStartEvent>((_, _) =>
+            {
+                Directory.CreateDirectory(directory);
+                return Task.CompletedTask;
+            });
         }
 
         var resource = new SqliteResource(name, fullPath);

@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace PandaBear.Blazor.Analyzers;
 
@@ -44,11 +45,20 @@ public sealed class SharedKernelBlazorAnalyzer : DiagnosticAnalyzer
         isEnabledByDefault: true,
         description: "Without a key Blazor matches items by position, so after an insert, a removal or a reorder the state of one row (a pending confirmation, a focused input) can attach to a different row. Reported for table rows, list items and components; options and other elements are not reported.");
 
+    private static readonly DiagnosticDescriptor StaleParameterRule = new(
+        BlazorDiagnosticIds.StaleParameter,
+        title: "Load parameter-dependent state in OnParametersSet",
+        messageFormat: "Parameter '{0}' is read in {1}, which runs once, but the route can change it while the component instance is reused; load state in OnParametersSetAsync and reload when the value changes (see ParameterTracker<T>)",
+        category: "Reliability",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Blazor keeps one component instance when the route changes between URLs that map to the same component, so OnInitialized does not run again and state loaded from a parameter goes stale. Reported for routable components that have a route parameter, several routes or a query parameter.");
+
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
     {
         get;
-    } = ImmutableArray.Create(UnguardedBusyFlagRule, LongLivedScopeServiceRule, MissingKeyRule);
+    } = ImmutableArray.Create(UnguardedBusyFlagRule, LongLivedScopeServiceRule, MissingKeyRule, StaleParameterRule);
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -80,6 +90,16 @@ public sealed class SharedKernelBlazorAnalyzer : DiagnosticAnalyzer
                 SyntaxKind.ForEachStatement,
                 SyntaxKind.ForStatement);
 
+            var parameter = compilationContext.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Components.ParameterAttribute");
+            var query = compilationContext.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Components.SupplyParameterFromQueryAttribute");
+            var route = compilationContext.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Components.RouteAttribute");
+            if (parameter is not null && route is not null)
+            {
+                compilationContext.RegisterOperationAction(
+                    operationContext => AnalyzeParameterRead(operationContext, component, parameter, query, route),
+                    OperationKind.PropertyReference);
+            }
+
             if (inject is not null && (sender is not null || dbContext is not null))
             {
                 compilationContext.RegisterSymbolAction(
@@ -87,6 +107,66 @@ public sealed class SharedKernelBlazorAnalyzer : DiagnosticAnalyzer
                     SymbolKind.Property);
             }
         });
+    }
+
+    private static void AnalyzeParameterRead(
+        OperationAnalysisContext context,
+        INamedTypeSymbol component,
+        INamedTypeSymbol parameter,
+        INamedTypeSymbol? query,
+        INamedTypeSymbol route)
+    {
+        var reference = (IPropertyReferenceOperation)context.Operation;
+        if (context.ContainingSymbol is not IMethodSymbol { IsOverride: true, Name: "OnInitialized" or "OnInitializedAsync" } method
+            || reference.Instance is not IInstanceReferenceOperation
+            || !IsComponent(method.ContainingType, component)
+            || !HasAttribute(reference.Property, parameter, query)
+            || IsNameOfOrWrite(reference)
+            || !CanChangeParameters(method.ContainingType, route, IsQueryParameter(reference.Property, query)))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(StaleParameterRule, reference.Syntax.GetLocation(), reference.Property.Name, method.Name));
+    }
+
+    private static bool HasAttribute(IPropertySymbol property, INamedTypeSymbol parameter, INamedTypeSymbol? query)
+    {
+        return property.GetAttributes().Any(attribute =>
+            SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, parameter)
+            || (query is not null && SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, query)));
+    }
+
+    private static bool IsQueryParameter(IPropertySymbol property, INamedTypeSymbol? query)
+    {
+        return query is not null
+            && property.GetAttributes().Any(attribute => SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, query));
+    }
+
+    private static bool IsNameOfOrWrite(IPropertyReferenceOperation reference)
+    {
+        for (var current = reference.Parent; current is not null; current = current.Parent)
+        {
+            if (current is INameOfOperation)
+            {
+                return true;
+            }
+        }
+
+        return reference.Parent is IAssignmentOperation { Target: var target } && target == reference;
+    }
+
+    private static bool CanChangeParameters(INamedTypeSymbol type, INamedTypeSymbol route, bool isQueryParameter)
+    {
+        var routes = type.GetAttributes()
+            .Where(attribute => SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, route))
+            .ToArray();
+        return routes.Length > 0
+            && (isQueryParameter
+                || routes.Length > 1
+                || routes.Any(attribute => attribute.ConstructorArguments.Length > 0
+                    && attribute.ConstructorArguments[0].Value is string template
+                    && template.IndexOf('{') >= 0));
     }
 
     private static void AnalyzeBlock(SyntaxNodeAnalysisContext context, INamedTypeSymbol component)

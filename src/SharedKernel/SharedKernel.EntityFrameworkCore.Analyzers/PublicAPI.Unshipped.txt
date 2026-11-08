@@ -1,0 +1,7 @@
+#nullable enable
+PandaBear.EntityFrameworkCore.Analyzers.EntityFrameworkCoreDiagnosticIds
+const PandaBear.EntityFrameworkCore.Analyzers.EntityFrameworkCoreDiagnosticIds.UntaggedUniqueIndex = "SKEF001" -> string!
+PandaBear.EntityFrameworkCore.Analyzers.SharedKernelEntityFrameworkCoreAnalyzer
+PandaBear.EntityFrameworkCore.Analyzers.SharedKernelEntityFrameworkCoreAnalyzer.SharedKernelEntityFrameworkCoreAnalyzer() -> void
+override PandaBear.EntityFrameworkCore.Analyzers.SharedKernelEntityFrameworkCoreAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override PandaBear.EntityFrameworkCore.Analyzers.SharedKernelEntityFrameworkCoreAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>

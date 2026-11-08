@@ -11,7 +11,7 @@ Code fixes for the [SharedKernel.Blazor.Analyzers](https://github.com/danigutsch
 | Diagnostic | Fix | Offered when |
 | --- | --- | --- |
 | `SKBLZ001` | Reset the flag in a finally block | No local declared between the set and the reset (including `out var`, pattern and deconstruction variables) is used after the reset. |
-| `SKBLZ002` | Use ScopedSender | The injected type is `PandaBear.Mediator.ISender`. There is no fix for `DbContext`. Register it with `AddScopedSender()`; carry per-circuit state into each request's new scope with its initializer (see the [Mediator README](../SharedKernel.Mediator/README.md#scoped-sending)). |
+| `SKBLZ002` | Use ScopedSender | The injected type is `PandaBear.Mediator.ISender`, and the component only sends plain requests (`Send` with an `IRequest<T>`) through it, or does not use it. Not offered when the component sends an `IStreamRequest<T>` or uses the sender any other way (passing it on, assigning it): `ScopedSender` has no stream overload, and a stream cannot run in a per-request scope. Create a scope per stream with `IServiceScopeFactory` instead. There is no fix for `DbContext`. The fix cannot register the service: add `AddScopedSender()` yourself; carry per-circuit state into each request's new scope with its initializer (see the [Mediator README](../SharedKernel.Mediator/README.md#scoped-sending)). |
 
 Fixes are offered in the IDE for code-behind and plain C# files, not inside code generated from `.razor` files.
 

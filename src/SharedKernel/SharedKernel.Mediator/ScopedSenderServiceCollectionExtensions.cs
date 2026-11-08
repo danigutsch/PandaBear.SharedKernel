@@ -10,7 +10,8 @@ public static class ScopedSenderServiceCollectionExtensions
 {
     /// <summary>
     /// Registers <see cref="ScopedSender"/> with a scoped lifetime, so each instance holds the provider of the scope it is resolved in
-    /// (for a Blazor component, the circuit scope). Calling it again adds nothing. It does not register <see cref="ISender"/>; use
+    /// (for a Blazor component, the circuit scope). It is idempotent: if <see cref="ScopedSender"/> is already registered, with or without
+    /// an initializer, it changes nothing. It does not register <see cref="ISender"/>; use
     /// <c>AddSharedKernelMediator</c> for that.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
@@ -30,8 +31,9 @@ public static class ScopedSenderServiceCollectionExtensions
 
     /// <summary>
     /// Registers <see cref="ScopedSender"/> with a scoped lifetime that runs <paramref name="scopeInitializer"/> on every new operation
-    /// scope before sending, so an app can copy circuit state from the caller's scope into the new one. Calling it again, or after
-    /// <see cref="AddScopedSender(IServiceCollection)"/>, adds nothing.
+    /// scope before sending, so an app can copy circuit state from the caller's scope into the new one. The initializer overload always
+    /// wins: it replaces any earlier <see cref="ScopedSender"/> registration (including one from the parameterless overload), a later
+    /// <see cref="AddScopedSender(IServiceCollection)"/> call does not undo it, and when called more than once the last initializer wins.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
     /// <param name="scopeInitializer">
@@ -45,7 +47,7 @@ public static class ScopedSenderServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(scopeInitializer);
 
-        services.TryAddScoped<ScopedSender>(sp => new ScopedSender(sp.GetRequiredService<IServiceScopeFactory>(), sp, scopeInitializer));
+        services.Replace(ServiceDescriptor.Scoped<ScopedSender>(sp => new ScopedSender(sp.GetRequiredService<IServiceScopeFactory>(), sp, scopeInitializer)));
         return services;
     }
 }

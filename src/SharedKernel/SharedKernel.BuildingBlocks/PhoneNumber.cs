@@ -62,6 +62,19 @@ public sealed class PhoneNumber : ValueObject
         return Result.Ok(new PhoneNumber((plus ? "+" : string.Empty) + new string(digits, 0, count)));
     }
 
+    /// <summary> A value that <see cref="Create"/> would reject is kept as its sanitized text.</summary>
+    /// <param name="value">The stored number.</param>
+    /// <returns>The number.</returns>
+    /// <exception cref="ArgumentException"><paramref name="value"/> is <see langword="null"/>, empty or blank.</exception>
+    public static PhoneNumber Restore(string value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(value);
+        var sanitized = StringSanitizer.Sanitize(value);
+        ArgumentException.ThrowIfNullOrEmpty(sanitized, nameof(value));
+        var created = Create(sanitized);
+        return created.IsSuccess ? created.Value : new PhoneNumber(sanitized);
+    }
+
     /// <inheritdoc />
     public override string ToString() => "PhoneNumber [redacted]";
 

@@ -140,3 +140,10 @@ override PandaBear.BuildingBlocks.BusinessTimeProvider.GetUtcNow() -> System.Dat
 override PandaBear.BuildingBlocks.BusinessTimeProvider.LocalTimeZone.get -> System.TimeZoneInfo!
 override PandaBear.BuildingBlocks.BusinessTimeProvider.TimestampFrequency.get -> long
 static PandaBear.BuildingBlocks.TimeProviderExtensions.Today(this System.TimeProvider! provider) -> System.DateOnly
+static PandaBear.BuildingBlocks.CountryCode.AllByEnglishName.get -> System.Collections.Generic.IReadOnlyList<PandaBear.BuildingBlocks.CountryCode!>!
+static PandaBear.BuildingBlocks.CountryCode.Restore(string! value) -> PandaBear.BuildingBlocks.CountryCode!
+static PandaBear.BuildingBlocks.Currency.Restore(string! code) -> PandaBear.BuildingBlocks.Currency!
+static PandaBear.BuildingBlocks.EmailAddress.Restore(string! value) -> PandaBear.BuildingBlocks.EmailAddress!
+static PandaBear.BuildingBlocks.Money.Restore(decimal amount, PandaBear.BuildingBlocks.Currency! currency) -> PandaBear.BuildingBlocks.Money!
+static PandaBear.BuildingBlocks.PersonName.Restore(string! firstName, string! lastName) -> PandaBear.BuildingBlocks.PersonName!
+static PandaBear.BuildingBlocks.PhoneNumber.Restore(string! value) -> PandaBear.BuildingBlocks.PhoneNumber!

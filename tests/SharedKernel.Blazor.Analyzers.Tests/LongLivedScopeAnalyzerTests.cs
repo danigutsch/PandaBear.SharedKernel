@@ -28,6 +28,31 @@ public sealed class LongLivedScopeAnalyzerTests
     }
 
     [Fact]
+    public async Task An_injected_sender_that_sends_a_stream_request_is_still_reported()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed record Feed : PandaBear.Mediator.IStreamRequest<int>;
+
+            public sealed class Page : ComponentBase
+            {
+                [Inject]
+                public PandaBear.Mediator.ISender Sender { get; set; } = default!;
+
+                public void Run() => _ = Sender.Send(new Feed(), default);
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldHaveSingleItem().Id.ShouldBe(BlazorDiagnosticIds.LongLivedScopeService);
+    }
+
+    [Fact]
     public async Task An_injected_db_context_is_reported()
     {
         // Arrange

@@ -41,13 +41,20 @@ internal static class AnalyzerTestHarness
     /// <param name="assemblyName">Assembly name of the compilation.</param>
     /// <param name="analyzerOptions">Analyzer config key/value options, or null for none.</param>
     /// <param name="path">File path given to the source's syntax tree.</param>
+    /// <param name="referenceSharedKernelTesting">False removes the SharedKernel.Testing reference, so only sources that do not use it compile.</param>
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
         string source,
         string assemblyName = "SharedKernel.Testing.Analyzers.Tests.Dynamic",
         ImmutableDictionary<string, string>? analyzerOptions = null,
-        string path = "TestSource.cs")
+        string path = "TestSource.cs",
+        bool referenceSharedKernelTesting = true)
     {
         var compilation = CreateCompilation(source, assemblyName, path);
+        if (!referenceSharedKernelTesting)
+        {
+            compilation = RemoveSharedKernelTestingReference(compilation);
+        }
+
         var analyzer = new SharedKernelTestingAnalyzer();
         var optionsProvider = new TestAnalyzerConfigOptionsProvider(analyzerOptions ?? ImmutableDictionary<string, string>.Empty);
         var options = new AnalyzerOptions([]);
@@ -78,4 +85,13 @@ internal static class AnalyzerTestHarness
         return [.. diagnostics.Where(diagnostic => diagnostic.Id == diagnosticId)];
     }
 
+    private static CSharpCompilation RemoveSharedKernelTestingReference(CSharpCompilation compilation)
+    {
+        var testingAssemblyName = typeof(TestScopeAttribute).Assembly.GetName().Name;
+        var references = compilation.References
+            .Where(reference => compilation.GetAssemblyOrModuleSymbol(reference)?.Name == testingAssemblyName)
+            .ToArray();
+
+        return compilation.RemoveReferences(references);
+    }
 }

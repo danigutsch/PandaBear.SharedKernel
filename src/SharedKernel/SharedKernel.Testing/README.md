@@ -87,5 +87,17 @@ Hooks of a synchronous method are waited for on the calling thread, so keep them
 service reach the caller, and `call.Args` shows them to after hooks. A `Returns` value that does not fit the method's result type (for
 example `null` for an `int`) throws an `InvalidOperationException` naming the method when the call is made.
 
+`Create` validates the registrations after `configure` ran, so a test never passes while believing a call was stubbed. Hooks and
+replacements are keyed by name and apply to every overload of that name. It throws:
+
+- `ArgumentException` when a `Before`, `After` or `Returns` name matches no method of the service or its inherited interfaces; the
+  message lists the unknown names and the available method names.
+- `InvalidOperationException` ("Returns cannot be used for 'Save', which returns no value") when `Returns` targets a name whose methods
+  all return `Task`, `ValueTask` or `void`.
+- `InvalidOperationException` when every value-returning method of a `Returns` name has `out` or `ref` parameters, which cannot be
+  stubbed; use `After` or `Before` and let the real call run.
+
+A `Returns` name is valid as long as at least one overload returns a value without `out`/`ref` parameters.
+
 It fits a test that wraps a real implementation and needs one targeted hold, failure, follow-up or replaced result. It does not replace a
 fake that implements the whole interface with typed recorded state, a service registered by type, or delegate-based fakes.
