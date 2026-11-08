@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>PandaBear.Packages.Tool.Tests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="PandaBear.Testing" />
+        <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="PandaBear.Packages" />
+        <Using Include="PandaBear.Packages.Tool" />
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.MTP">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="xunit.v3.mtp-v2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\tools\SharedKernel.Packages.Tool\SharedKernel.Packages.Tool.csproj" />
+    </ItemGroup>
+
+</Project>

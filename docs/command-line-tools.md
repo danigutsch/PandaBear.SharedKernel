@@ -121,6 +121,9 @@ non-interactive commands and to how they start a UI.
 - `sharedkernel-sandbox doctor` optionally reads `.config/sharedkernel-sandbox.json`: the paths that the sandbox must
   not let a command read. Without the file it skips that check. The
   [sandbox tool README](../tools/SharedKernel.Sandbox.Tool/README.md#configuration) describes the format.
+- `sharedkernel-packages plan` reads `.config/sharedkernel-packages.json`: the packages that should be installed, per
+  package manager. A package may have only one owner, so a name under two managers is an error. The
+  [packages tool README](../tools/SharedKernel.Packages.Tool/README.md#configuration) describes the format.
 - Paths in the file are relative to the root and use `/`. They are never rooted, have no empty, `.`, or `..`
   segments, and resolve under the root without following symbolic links.
   The one exception is `deniedReadPaths` of `sharedkernel-sandbox`: it names places outside the repository, so each entry is
