@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.IO</PackageId>
         <Description>Bounded seekable stream spooling with explicit ownership and cleanup.</Description>
         <PackageTags>io;streams;spooling;shared-kernel;dotnet</PackageTags>

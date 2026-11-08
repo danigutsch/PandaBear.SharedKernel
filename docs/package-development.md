@@ -56,6 +56,22 @@ with `sharedkernel-version verify-consumer --candidate <candidate.json> -- <comm
 Linux and Windows consume the same hashed artifacts before stable promotion. Repository and Source Link metadata target the public repository; candidate validation records source and symbol evidence separately.
 
 
+### Lock files
+
+Lock files exist to make restores reproducible for the projects that build, test, and run in CI: tests, tools, samples, and benchmarks. A
+lock file is not packed and does not constrain consumers, so a library keeps one only when it resolves a package that no other lock file
+resolves. Every other library under `src` is lock-exempt: it is listed in `lockExemptProjects` of `.config/sharedkernel-repo.json`, sets
+`<RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>` in its project file (NuGet reports NU1005 for a lock file next to a
+project with the property false), and has no `packages.lock.json`. NuGet.Config and `Directory.Build.props` still enable locking for every
+other project. A new project is locked until you opt it out. `LockFilePolicyConventionTests` keeps the list, the project files, and the lock
+files consistent.
+
+To exempt a library, check that every package version in its current lock file also appears in a lock file of another project, remove the
+lock file, set the property, and add the project to the list. The dependency snapshot then writes no manifest for it and still lists its
+packages through the other locks. `sharedkernel-version prepare-release` reads the restored `obj/project.assets.json` of an exempt library for
+the SBOM and fails, naming the project and package, when it resolves a package version that no committed lock file resolves; the remedy is
+to remove the project from the list, delete the property, and restore to create its lock file. Run it after a restore of the solution.
+
 ### Package requirements
 
 Every packable project sets `PackageId` (`PandaBear.` plus the project name), `PackageTags`, and `Description`, ships a `README.md` next to the

@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Idempotency.Abstractions</PackageId>
         <Description>Validated idempotency identities and storage-neutral lifecycle contracts.</Description>
         <RootNamespace>PandaBear.Idempotency</RootNamespace>

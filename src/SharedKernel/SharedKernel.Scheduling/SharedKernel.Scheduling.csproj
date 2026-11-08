@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Scheduling</PackageId>
         <Description>Host-integrated scheduling primitives for polling and background work coordination.</Description>
         <RootNamespace>PandaBear.Scheduling</RootNamespace>

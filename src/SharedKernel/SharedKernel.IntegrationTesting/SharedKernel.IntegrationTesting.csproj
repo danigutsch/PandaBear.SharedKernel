@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.IntegrationTesting</PackageId>
         <Description>Reusable Aspire and PostgreSQL integration-test helpers for SharedKernel test suites.</Description>
         <RootNamespace>PandaBear.IntegrationTesting</RootNamespace>

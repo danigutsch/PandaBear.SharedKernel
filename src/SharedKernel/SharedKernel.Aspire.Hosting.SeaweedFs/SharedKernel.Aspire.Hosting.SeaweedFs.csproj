@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Aspire.Hosting.SeaweedFs</PackageId>
         <Description>Aspire hosting extensions for authenticated local SeaweedFS S3 storage.</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>

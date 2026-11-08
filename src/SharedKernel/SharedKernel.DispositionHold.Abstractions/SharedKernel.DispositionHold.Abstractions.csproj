@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.DispositionHold.Abstractions</PackageId>
         <Description>Jurisdiction-neutral disposition holds and a fail-closed guard contract for blocking deletion or anonymization.</Description>
         <RootNamespace>PandaBear.DispositionHold</RootNamespace>

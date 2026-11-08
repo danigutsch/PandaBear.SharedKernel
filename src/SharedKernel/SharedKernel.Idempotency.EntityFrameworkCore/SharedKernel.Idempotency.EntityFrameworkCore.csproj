@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Idempotency.EntityFrameworkCore</PackageId>
         <Description>Entity Framework Core persistence provider for reusable idempotency stores.</Description>
         <RootNamespace>PandaBear.Idempotency.EntityFrameworkCore</RootNamespace>

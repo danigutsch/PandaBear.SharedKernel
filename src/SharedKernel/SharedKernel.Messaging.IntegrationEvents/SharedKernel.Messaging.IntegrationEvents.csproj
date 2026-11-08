@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Messaging.IntegrationEvents</PackageId>
         <Description>Typed, versioned integration-event contracts and dispatch abstractions for cross-boundary messaging.</Description>
         <RootNamespace>PandaBear.Messaging.IntegrationEvents</RootNamespace>

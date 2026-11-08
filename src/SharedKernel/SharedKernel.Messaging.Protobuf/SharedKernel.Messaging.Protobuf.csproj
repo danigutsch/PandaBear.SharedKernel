@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Messaging.Protobuf</PackageId>
         <Description>Protobuf payload serialization and the CloudEvents Protobuf event format for integration-event messaging.</Description>
         <RootNamespace>PandaBear.Messaging.Protobuf</RootNamespace>

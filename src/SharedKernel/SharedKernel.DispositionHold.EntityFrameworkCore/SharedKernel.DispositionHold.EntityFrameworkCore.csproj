@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.DispositionHold.EntityFrameworkCore</PackageId>
         <Description>Entity Framework Core store and fail-closed guard for disposition holds on PostgreSQL.</Description>
         <RootNamespace>PandaBear.DispositionHold.EntityFrameworkCore</RootNamespace>

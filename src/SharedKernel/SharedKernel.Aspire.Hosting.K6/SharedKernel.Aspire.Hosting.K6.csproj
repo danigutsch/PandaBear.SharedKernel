@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Aspire.Hosting.K6</PackageId>
         <Description>Aspire hosting extensions that run a k6 scenario as an explicit-start container with client-credentials authentication.</Description>
         <RootNamespace>PandaBear.Aspire.Hosting.K6</RootNamespace>

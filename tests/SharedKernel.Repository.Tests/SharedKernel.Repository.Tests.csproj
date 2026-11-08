@@ -7,8 +7,16 @@
     <Using Include="PandaBear.Testing.Assertions" />
     <PackageReference Include="coverlet.MTP" PrivateAssets="all" />
     <PackageReference Include="xunit.v3.mtp-v2" />
+    <!-- Every library references this build-time analyzer (src/Directory.Build.props). A locked project must resolve it too, so the
+         dependency snapshot still lists it now that the libraries keep no lock files. It is not run here. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
     <ProjectReference Include="../../tools/SharedKernel.CI.Tool/SharedKernel.CI.Tool.csproj" />
     <ProjectReference Include="../../src/SharedKernel/SharedKernel.Testing.Assertions/SharedKernel.Testing.Assertions.csproj" />
     <ProjectReference Include="../../src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj" />
   </ItemGroup>
+  <Target Name="DropPublicApiAnalyzers" AfterTargets="ResolveLockFileAnalyzers">
+    <ItemGroup>
+      <Analyzer Remove="@(Analyzer->WithMetadataValue('NuGetPackageId', 'Microsoft.CodeAnalysis.PublicApiAnalyzers'))" />
+    </ItemGroup>
+  </Target>
 </Project>

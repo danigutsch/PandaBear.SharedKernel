@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Versioning</PackageId>
         <Description>Reusable SemVer and Conventional Commit release-impact primitives.</Description>
         <RootNamespace>PandaBear.Versioning</RootNamespace>

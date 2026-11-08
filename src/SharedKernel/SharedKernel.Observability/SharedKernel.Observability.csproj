@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Observability</PackageId>
         <Description>Reusable observability helpers for shared-kernel service diagnostics.</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>

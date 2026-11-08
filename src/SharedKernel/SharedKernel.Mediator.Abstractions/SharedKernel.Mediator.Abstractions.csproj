@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Mediator.Abstractions</PackageId>
         <Description>Core abstractions for SharedKernel.Mediator.</Description>
         <RootNamespace>PandaBear.Mediator</RootNamespace>
