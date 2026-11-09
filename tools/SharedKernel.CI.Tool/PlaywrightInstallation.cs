@@ -60,7 +60,8 @@ internal static class PlaywrightInstallation
         string[] evaluate = ["msbuild", projectPath, "-getProperty:OutputPath", .. configuration is null ? Array.Empty<string>() : ["-p:Configuration=" + configuration]];
         var evaluated = await run("dotnet", evaluate, root, ct).ConfigureAwait(false);
         var evaluation = Stopwatch.GetElapsedTime(started);
-        var outputPath = evaluated.Trim()
+        // The property is the last line: the dotnet CLI can print banner lines first, such as the telemetry line under DOTNET_CLI_CONTEXT_VERBOSE.
+        var outputPath = (evaluated.Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? string.Empty)
             .Replace('\\', Path.DirectorySeparatorChar)
             .Replace('/', Path.DirectorySeparatorChar);
         var script = outputPath.Length == 0 ? string.Empty : Path.Combine(Path.GetFullPath(outputPath, Path.GetDirectoryName(projectPath)!), "playwright.ps1");
