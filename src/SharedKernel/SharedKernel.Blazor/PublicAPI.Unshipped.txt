@@ -149,5 +149,5 @@ PandaBear.Blazor.ListDelete<TKey>.Error.get -> string?
 PandaBear.Blazor.ListDelete<TKey>.IsPending(TKey key) -> bool
 PandaBear.Blazor.ListDelete<TKey>.IsRunning.get -> bool
 PandaBear.Blazor.ListDelete<TKey>.ListDelete(string! failureMessage, string? conflictMessage = null) -> void
-PandaBear.Blazor.ListDelete<TKey>.Run(TKey key, System.Func<System.Threading.Tasks.Task<PandaBear.Results.Result>!>! delete, System.Func<System.Threading.Tasks.Task!>! reload, System.Action<TKey>! removeLocal) -> System.Threading.Tasks.Task!
+PandaBear.Blazor.ListDelete<TKey>.Run(TKey key, System.Func<System.Threading.Tasks.ValueTask<PandaBear.Results.Result>>! delete, System.Func<System.Threading.Tasks.Task!>! reload, System.Action<TKey>! removeLocal) -> System.Threading.Tasks.Task!
 static PandaBear.Blazor.ServerFormSubmission.ForRecord(Microsoft.AspNetCore.Components.Forms.EditContext! editContext, System.Collections.Generic.IEnumerable<string!>! knownFields, string! idPrefix, string! noun, string? invalidMessage = null, string? failureMessage = null, string? conflictMessage = null, string? notFoundMessage = null) -> PandaBear.Blazor.ServerFormSubmission!

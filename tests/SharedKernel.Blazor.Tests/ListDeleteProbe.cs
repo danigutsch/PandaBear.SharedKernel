@@ -1,3 +1,5 @@
+using PandaBear.Results;
+
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Records what a page's reload and local removal callbacks were asked to do.</summary>
@@ -19,4 +21,9 @@ internal sealed class ListDeleteProbe
         Reloads++;
         return Task.CompletedTask;
     }
+
+    /// <summary>Stands in for a mediator send that returns a <see cref="ValueTask{TResult}"/>.</summary>
+    /// <param name="id">The row key.</param>
+    /// <returns>A successful result.</returns>
+    public static ValueTask<Result> Send(Guid id) => ValueTask.FromResult(Result.Ok());
 }

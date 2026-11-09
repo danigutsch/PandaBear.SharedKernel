@@ -22,7 +22,8 @@ public sealed class ListDelete<TKey>
     /// <param name="failureMessage">The fixed text shown when a deletion fails and retrying may not help. It is never server text.</param>
     /// <param name="conflictMessage">
     /// The fixed text shown when the deletion fails with <see cref="ResultStatus.Conflict"/>. <see langword="null"/> shows the detail
-    /// of the failed result, which the application authors; pass text when that detail must not reach the page.
+    /// of the failed result. Unlike <see cref="ServerFormSubmission.ConflictMessage"/>, which is never server text, that detail reaches the page,
+    /// so it must be authored by the application and never copied from a remote service; pass text when it cannot be trusted.
     /// </param>
     /// <exception cref="ArgumentNullException"><paramref name="failureMessage"/> is null.</exception>
     public ListDelete(string failureMessage, string? conflictMessage = null)
@@ -61,7 +62,8 @@ public sealed class ListDelete<TKey>
     /// Leaves the confirmation and runs the deletion. A deletion that succeeded, or found the row already gone, calls
     /// <paramref name="removeLocal"/> so the page drops the row without reading the list again. A conflict (the row was changed or
     /// removed by someone else) calls <paramref name="reload"/>, so the list shows which one happened. Any other failure only sets
-    /// <see cref="Error"/>. A call made while a deletion runs does nothing.
+    /// <see cref="Error"/>. A call made while a deletion runs only leaves the confirmation; disable the confirm buttons with
+    /// <see cref="IsRunning"/> so the click is visibly refused.
     /// </summary>
     /// <param name="key">The key of the row to delete.</param>
     /// <param name="delete">Sends the deletion; an exception propagates.</param>
@@ -69,11 +71,14 @@ public sealed class ListDelete<TKey>
     /// <param name="removeLocal">Drops the row from the page's list.</param>
     /// <returns>A task that completes when the deletion and the follow-up have finished.</returns>
     /// <exception cref="ArgumentNullException">A callback is null.</exception>
-    public async Task Run(TKey key, Func<Task<Result>> delete, Func<Task> reload, Action<TKey> removeLocal)
+    public async Task Run(TKey key, Func<ValueTask<Result>> delete, Func<Task> reload, Action<TKey> removeLocal)
     {
         ArgumentNullException.ThrowIfNull(delete);
         ArgumentNullException.ThrowIfNull(reload);
         ArgumentNullException.ThrowIfNull(removeLocal);
+
+        // Leave the confirmation first, so a confirm click made while another deletion runs does not leave its row waiting.
+        _confirmation.Cancel();
 
         if (IsRunning)
         {
@@ -83,8 +88,6 @@ public sealed class ListDelete<TKey>
         IsRunning = true;
         try
         {
-            // Leave the confirmation first, so the row shows its normal buttons while the deletion runs.
-            _confirmation.Cancel();
             var result = await delete().ConfigureAwait(true);
             Error = result.IsSuccess ? null : result.Status is ResultStatus.Conflict ? _conflictMessage ?? result.ErrorDetails?.Detail ?? _failureMessage : _failureMessage;
 

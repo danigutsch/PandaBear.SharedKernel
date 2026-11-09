@@ -19,7 +19,7 @@ public sealed class ListDeleteTests
         flow.Ask(id);
 
         // Act
-        await flow.Run(id, () => Task.FromResult(Result.Ok()), _page.Reload, _page.Removed.Add);
+        await flow.Run(id, () => ValueTask.FromResult(Result.Ok()), _page.Reload, _page.Removed.Add);
 
         // Assert
         _page.Removed.ShouldBe([id]);
@@ -37,7 +37,7 @@ public sealed class ListDeleteTests
         var flow = new ListDelete<Guid>(FailureMessage);
 
         // Act
-        await flow.Run(id, () => Task.FromResult(Result.NotFound("gone")), _page.Reload, _page.Removed.Add);
+        await flow.Run(id, () => ValueTask.FromResult(Result.NotFound("gone")), _page.Reload, _page.Removed.Add);
 
         // Assert
         _page.Removed.ShouldBe([id]);
@@ -52,7 +52,7 @@ public sealed class ListDeleteTests
         var flow = new ListDelete<Guid>(FailureMessage);
 
         // Act
-        await flow.Run(Guid.NewGuid(), () => Task.FromResult(Result.Conflict("Someone changed it.")), _page.Reload, _page.Removed.Add);
+        await flow.Run(Guid.NewGuid(), () => ValueTask.FromResult(Result.Conflict("Someone changed it.")), _page.Reload, _page.Removed.Add);
 
         // Assert
         flow.Error.ShouldBe("Someone changed it.");
@@ -67,7 +67,7 @@ public sealed class ListDeleteTests
         var flow = new ListDelete<Guid>(FailureMessage, "Reload and try again.");
 
         // Act
-        await flow.Run(Guid.NewGuid(), () => Task.FromResult(Result.Conflict("Someone changed it.")), _page.Reload, _page.Removed.Add);
+        await flow.Run(Guid.NewGuid(), () => ValueTask.FromResult(Result.Conflict("Someone changed it.")), _page.Reload, _page.Removed.Add);
 
         // Assert
         flow.Error.ShouldBe("Reload and try again.");
@@ -80,7 +80,7 @@ public sealed class ListDeleteTests
         var flow = new ListDelete<Guid>(FailureMessage);
 
         // Act
-        await flow.Run(Guid.NewGuid(), () => Task.FromResult(Result.Error("boom")), _page.Reload, _page.Removed.Add);
+        await flow.Run(Guid.NewGuid(), () => ValueTask.FromResult(Result.Error("boom")), _page.Reload, _page.Removed.Add);
 
         // Assert
         flow.Error.ShouldBe(FailureMessage);
@@ -93,10 +93,10 @@ public sealed class ListDeleteTests
     {
         // Arrange
         var flow = new ListDelete<Guid>(FailureMessage);
-        await flow.Run(Guid.NewGuid(), () => Task.FromResult(Result.Error("boom")), _page.Reload, _page.Removed.Add);
+        await flow.Run(Guid.NewGuid(), () => ValueTask.FromResult(Result.Error("boom")), _page.Reload, _page.Removed.Add);
 
         // Act
-        await flow.Run(Guid.NewGuid(), () => Task.FromResult(Result.Ok()), _page.Reload, _page.Removed.Add);
+        await flow.Run(Guid.NewGuid(), () => ValueTask.FromResult(Result.Ok()), _page.Reload, _page.Removed.Add);
 
         // Assert
         flow.Error.ShouldBeNull();
@@ -112,7 +112,7 @@ public sealed class ListDeleteTests
         var first = flow.Run(Guid.NewGuid(), () =>
         {
             sends++;
-            return gate.Task;
+            return new ValueTask<Result>(gate.Task);
         }, _page.Reload, _page.Removed.Add);
 
         // Act
@@ -120,7 +120,7 @@ public sealed class ListDeleteTests
         await flow.Run(Guid.NewGuid(), () =>
         {
             sends++;
-            return Task.FromResult(Result.Ok());
+            return ValueTask.FromResult(Result.Ok());
         }, _page.Reload, _page.Removed.Add);
         gate.SetResult(Result.Ok());
         await first;
@@ -157,9 +157,9 @@ public sealed class ListDeleteTests
         var flow = new ListDelete<Guid>(FailureMessage);
 
         // Act
-        Func<Task> act = () => flow.Run(Guid.NewGuid(), () => Task.FromResult(Result.Conflict("changed")), () => throw new InvalidOperationException("down"), _page.Removed.Add);
+        Func<Task> act = () => flow.Run(Guid.NewGuid(), () => ValueTask.FromResult(Result.Conflict("changed")), () => throw new InvalidOperationException("down"), _page.Removed.Add);
         await act.ShouldThrow<InvalidOperationException>();
-        await flow.Run(Guid.NewGuid(), () => Task.FromResult(Result.Ok()), _page.Reload, _page.Removed.Add);
+        await flow.Run(Guid.NewGuid(), () => ValueTask.FromResult(Result.Ok()), _page.Reload, _page.Removed.Add);
 
         // Assert
         flow.IsRunning.ShouldBeFalse();
@@ -184,6 +184,40 @@ public sealed class ListDeleteTests
     }
 
     [Fact]
+    public async Task A_confirm_click_on_another_row_while_a_deletion_runs_leaves_its_confirmation()
+    {
+        // Arrange
+        var rowA = Guid.NewGuid();
+        var rowB = Guid.NewGuid();
+        var flow = new ListDelete<Guid>(FailureMessage);
+        var gate = new TaskCompletionSource<Result>();
+        flow.Ask(rowA);
+        var first = flow.Run(rowA, () => new ValueTask<Result>(gate.Task), _page.Reload, _page.Removed.Add);
+        flow.Ask(rowB);
+
+        // Act
+        await flow.Run(rowB, () => ValueTask.FromResult(Result.Ok()), _page.Reload, _page.Removed.Add);
+        gate.SetResult(Result.Ok());
+        await first;
+
+        // Assert
+        flow.IsPending(rowB).ShouldBeFalse();
+        _page.Removed.ShouldBe([rowA]);
+    }
+
+    [Fact]
+    public void A_value_task_returning_send_is_accepted_as_the_deletion()
+    {
+        // Arrange
+        var flow = new ListDelete<Guid>(FailureMessage);
+        // Act
+        var running = flow.Run(Guid.NewGuid(), () => ListDeleteProbe.Send(Guid.Empty), _page.Reload, _page.Removed.Add);
+
+        // Assert
+        running.IsCompletedSuccessfully.ShouldBeTrue();
+    }
+
+    [Fact]
     public async Task Missing_callbacks_and_messages_are_rejected()
     {
         // Arrange
@@ -191,10 +225,14 @@ public sealed class ListDeleteTests
 
         // Act
         Action constructing = () => _ = new ListDelete<Guid>(null!);
-        Func<Task> running = () => flow.Run(Guid.NewGuid(), null!, _page.Reload, _page.Removed.Add);
+        Func<Task> noDelete = () => flow.Run(Guid.NewGuid(), null!, _page.Reload, _page.Removed.Add);
+        Func<Task> noReload = () => flow.Run(Guid.NewGuid(), () => ValueTask.FromResult(Result.Ok()), null!, _page.Removed.Add);
+        Func<Task> noRemove = () => flow.Run(Guid.NewGuid(), () => ValueTask.FromResult(Result.Ok()), _page.Reload, null!);
 
         // Assert
         constructing.ShouldThrow<ArgumentNullException>();
-        await running.ShouldThrow<ArgumentNullException>();
+        await noDelete.ShouldThrow<ArgumentNullException>();
+        await noReload.ShouldThrow<ArgumentNullException>();
+        await noRemove.ShouldThrow<ArgumentNullException>();
     }
 }

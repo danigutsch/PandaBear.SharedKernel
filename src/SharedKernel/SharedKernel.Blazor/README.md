@@ -154,12 +154,12 @@ shows the confirm buttons, and `Error` holds the message to show. `Run(key, dele
 sends the deletion and then follows the result: success or `ResultStatus.NotFound` calls `removeLocal(key)` so the page drops the
 row without reading the list again; `ResultStatus.Conflict` calls `reload()` so the list shows what happened; any other failure only
 sets `Error`. `Error` is the constructor's `failureMessage`, except for a conflict, which shows the failed result's detail (or the
-optional `conflictMessage`). A second `Run` while one is running does nothing, and `IsRunning` is reset even when a callback throws.
+optional `conflictMessage`). `delete` returns a `ValueTask<Result>`, so `Mediator.Send(...)` fits directly. A `Run` made while another is running only leaves the confirmation and sends nothing; disable the confirm buttons with `IsRunning` as in the sample. `IsRunning` is reset even when a callback throws. The conflict detail is application text: unlike `ServerFormSubmission.ConflictMessage` it is shown as is, so pass `conflictMessage` if it may come from a remote service.
 The class keeps no rows and no `[PersistentState]`: the page keeps its own rows (loaded with `[PersistentState]` and `??=`) and passes
 the callbacks.
 
 ```razor
-<button type="button" @onclick="() => _delete.Run(row.Id, () => Mediator.Send(new DeleteCustomer(row.Id)), Reload, Remove)">Confirm</button>
+<button type="button" disabled="@_delete.IsRunning" @onclick="() => _delete.Run(row.Id, () => Mediator.Send(new DeleteCustomer(row.Id)), Reload, Remove)">Confirm</button>
 ```
 
 ```csharp
