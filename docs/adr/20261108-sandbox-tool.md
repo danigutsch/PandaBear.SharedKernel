@@ -49,5 +49,6 @@ and the sandbox runtime installs a rule that refuses to create any `AF_UNIX` soc
 ## Deferred
 
 - Generating, merging, and verifying the sandbox settings from a profile: done, see [Sandbox settings](20261109-sandbox-settings.md).
-- A socket-free check lane (folder-mode whitespace, build, and direct test runs).
+- A socket-free check lane (folder-mode whitespace, build, and direct test runs): decided in the
+  [socket-free check lane](20261109-socket-free-check-lane.md) ADR, as a command of the CI tool.
 - Probing the network, because it makes an outbound call and needs an opt-in.

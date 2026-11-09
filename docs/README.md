@@ -44,3 +44,4 @@ Module README files beside source own consumer usage and examples. Samples and b
 - [Sandbox settings](adr/20261109-sandbox-settings.md)
 - [Packages tool](adr/20261108-packages-tool.md)
 - [Package advisories and release dates](adr/20261109-package-advisories.md)
+- [Socket-free check lane](adr/20261109-socket-free-check-lane.md)

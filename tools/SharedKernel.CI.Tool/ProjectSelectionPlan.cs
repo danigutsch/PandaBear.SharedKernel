@@ -15,7 +15,11 @@ internal static class ProjectSelectionPlan
     public const string PlanFileName = "selection.json";
 
     /// <summary>Computes the test project selection for a revision range, writes the plan and its outputs, and exports them for GitHub Actions when an output file is given.</summary>
-    public static async Task Write(
+    /// <remarks>
+    /// With <c>includeWorkingTree</c>, the changed paths also include the uncommitted changes of the working tree and its untracked,
+    /// not ignored files, as a local check needs them; a failed listing selects every test project. The method returns the plan it wrote.
+    /// </remarks>
+    public static async Task<SelectionPlan> Write(
         string root,
         string directory,
         string? baseRevision,
@@ -24,7 +28,8 @@ internal static class ProjectSelectionPlan
         TextWriter output,
         TextWriter error,
         CancellationToken ct,
-        TimeProvider? timeProvider = null)
+        TimeProvider? timeProvider = null,
+        bool includeWorkingTree = false)
     {
         var time = timeProvider ?? TimeProvider.System;
         var configuration = await CiConfigurationFile.Read(root, ct).ConfigureAwait(false);
@@ -59,6 +64,21 @@ internal static class ProjectSelectionPlan
             catch (Exception exception) when (!ct.IsCancellationRequested && exception is InvalidOperationException or TimeoutException)
             {
                 fullReason = "--base " + baseRevision + " is not an ancestor of HEAD in this checkout.";
+            }
+        }
+
+        if (includeWorkingTree && changes is not null)
+        {
+            try
+            {
+                var tracked = await Git(["diff", "--name-only", "--no-renames", "-z", "HEAD", "--"]).ConfigureAwait(false);
+                var untracked = await Git(["ls-files", "-z", "--others", "--exclude-standard"]).ConfigureAwait(false);
+                changes = [.. changes.Concat(tracked.Split('\0', StringSplitOptions.RemoveEmptyEntries)).Concat(untracked.Split('\0', StringSplitOptions.RemoveEmptyEntries)).Distinct(StringComparer.Ordinal)];
+            }
+            catch (Exception exception) when (!ct.IsCancellationRequested && exception is InvalidOperationException or TimeoutException)
+            {
+                changes = null;
+                fullReason = "the uncommitted changes of the working tree could not be listed.";
             }
         }
 
@@ -133,6 +153,8 @@ internal static class ProjectSelectionPlan
         {
             await output.WriteLineAsync(ControlCharacters.Escape(reason)).ConfigureAwait(false);
         }
+
+        return selection;
 
         async Task<string> Git(string[] arguments)
         {
