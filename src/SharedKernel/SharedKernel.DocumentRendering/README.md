@@ -17,6 +17,14 @@ the caller's final wording: the renderer builds no clause numbering. A paragraph
 (`ArgumentException`), and one with `DocumentPrivacyClassification.None` throws `InvalidOperationException`, like a field. The encoder writes
 characters from U+00A0 to U+00FF (such as `á` and `ª`) as numeric character references; the document declares UTF-8 and contains no script.
 
+A section can also carry real lists through its `Lists` property: each `DocumentList` holds `Items` (strings) and the required privacy
+classification, with `IsOrdered` (false renders `<ul>`, true renders `<ol>`) and an optional `Label` written as the list's `aria-label`.
+Items render as `<li>` elements, HTML-encoded, so screen readers and Word see a list; the renderer adds no bullet or number characters,
+so do not start items with "• ". Lists render after the paragraphs and before the fields, in order, and a section with lists and no
+fields omits the empty field list. A list without items, a blank or null item, or a null list is rejected (`ArgumentOutOfRangeException` for no items, `ArgumentException` for a blank item,
+`ArgumentNullException`), and a list with `DocumentPrivacyClassification.None` throws `InvalidOperationException`. Sections without
+lists render exactly as before.
+
 ## Install and example
 
 The following placeholders are intentional: replace `<validated-candidate-version>` with a candidate that has actually been built and validated, and `<private-candidate-feed>` with its private local feed. The placeholders do not identify a published package version. The code requires the package's target runtime; integration examples assume application-owned host/provider configuration.
@@ -41,6 +49,10 @@ public static class Example
                     Paragraphs =
                     [
                         new DocumentParagraph("Clause 1: payment within 45 days.", DocumentPrivacyClassification.Public),
+                    ],
+                    Lists =
+                    [
+                        new DocumentList(["Hotel", "Breakfast"], DocumentPrivacyClassification.Public) { Label = "Included" },
                     ],
                 },
             ],

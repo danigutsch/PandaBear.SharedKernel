@@ -39,6 +39,7 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
             ArgumentNullException.ThrowIfNull(section);
             ArgumentNullException.ThrowIfNull(section.Fields);
             ArgumentNullException.ThrowIfNull(section.Paragraphs);
+            ArgumentNullException.ThrowIfNull(section.Lists);
 
             builder.Append("<section><h2>").Append(HtmlEncode(section.Heading)).Append("</h2>");
             foreach (var paragraph in section.Paragraphs)
@@ -53,7 +54,12 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
                 builder.Append("<p>").Append(HtmlEncode(paragraph.Text)).Append("</p>");
             }
 
-            if (section.Fields.Count > 0 || section.Paragraphs.Count == 0)
+            foreach (var list in section.Lists)
+            {
+                AppendList(builder, list);
+            }
+
+            if (section.Fields.Count > 0 || (section.Paragraphs.Count == 0 && section.Lists.Count == 0))
             {
                 builder.Append("<dl>");
                 foreach (var field in section.Fields)
@@ -78,6 +84,34 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
         AppendFooter(builder, request.Branding);
         builder.Append("</body></html>");
         return Encoding.UTF8.GetBytes(builder.ToString());
+    }
+
+    private static void AppendList(StringBuilder builder, DocumentList list)
+    {
+        ArgumentNullException.ThrowIfNull(list);
+        ArgumentNullException.ThrowIfNull(list.Items);
+        if (list.PrivacyClassification == DocumentPrivacyClassification.None)
+        {
+            throw new InvalidOperationException("Document lists must be privacy classified before rendering.");
+        }
+
+        ArgumentOutOfRangeException.ThrowIfZero(list.Items.Count, nameof(DocumentList.Items));
+
+        var tag = list.IsOrdered ? "ol" : "ul";
+        builder.Append('<').Append(tag);
+        if (!string.IsNullOrWhiteSpace(list.Label))
+        {
+            builder.Append(" aria-label=\"").Append(HtmlEncode(list.Label)).Append('"');
+        }
+
+        builder.Append('>');
+        foreach (var item in list.Items)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(item, nameof(DocumentList.Items));
+            builder.Append("<li>").Append(HtmlEncode(item)).Append("</li>");
+        }
+
+        builder.Append("</").Append(tag).Append('>');
     }
 
     private static void AppendBrandingStyles(StringBuilder builder, DocumentBrandingSnapshot? branding)
