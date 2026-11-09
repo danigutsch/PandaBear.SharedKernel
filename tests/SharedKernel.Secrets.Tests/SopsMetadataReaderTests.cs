@@ -174,6 +174,63 @@ public sealed class SopsMetadataReaderTests
     }
 
     [Fact]
+    public void YAML_key_groups_with_nested_blocks_scalar_items_and_empty_flow_collections_are_read()
+    {
+        // Arrange
+        var yaml = $"sops:\n    key_groups:\n        -\n            age:\n                - recipient: {TestRecipients.First}\n        - age:\n            - recipient: {TestRecipients.Second}\n    shamir_threshold: 1\n    empty: {{}}\n    list: []\n    scalars:\n        - one\n        - two\n";
+
+        // Act
+        var holders = SopsMetadataReader.Read(yaml, SopsFormat.Yaml).ShouldBeSuccess();
+
+        // Assert
+        holders.Age.Select(static r => r.Value).ShouldBe([TestRecipients.Second, TestRecipients.First]);
+        holders.OtherKeyTypes.ShouldBe(["scalars"]);
+    }
+
+    [Fact]
+    public void YAML_quoted_keys_are_read()
+    {
+        // Arrange
+        var yaml = $"sops:\n    \"age\":\n        - recipient: {TestRecipients.First}\n    'version': 3.13.0\n";
+
+        // Act
+        var holders = SopsMetadataReader.Read(yaml, SopsFormat.Yaml).ShouldBeSuccess();
+
+        // Assert
+        holders.Age.Select(static r => r.Value).ShouldBe([TestRecipients.First]);
+    }
+
+    [Theory]
+    [InlineData("sops:\n    a:\n        b: [x\n")]
+    [InlineData("sops:\n    \"a\"b: 1\n")]
+    [InlineData("sops:\n    : 1\n")]
+    [InlineData("sops:\n    a: 1\n  b: 2\n")]
+    [InlineData("sops: &x\n    a: 1\n")]
+    [InlineData("sops:\n    -\n")]
+    [InlineData("sops:\n    \tage: []\n")]
+    public void More_yaml_outside_the_subset_is_an_error(string yaml)
+    {
+        // Act
+        var result = SopsMetadataReader.Read(yaml, SopsFormat.Yaml);
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void YAML_nested_deeper_than_the_limit_is_an_error()
+    {
+        // Arrange
+        var yaml = "sops:\n" + string.Concat(Enumerable.Range(1, 20).Select(static depth => new string(' ', depth * 2) + "k" + depth + ":\n")) + new string(' ', 42) + "leaf: 1\n";
+
+        // Act
+        var result = SopsMetadataReader.Read(yaml, SopsFormat.Yaml);
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+    }
+
+    [Fact]
     public void YAML_with_comments_and_null_values_is_read()
     {
         // Arrange

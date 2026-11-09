@@ -29,6 +29,18 @@ public sealed class AgeRecipientSetTests
     }
 
     [Fact]
+    public void Sets_that_share_their_first_recipient_but_differ_later_are_not_equal()
+    {
+        // Arrange
+        var secondAndThird = TestRecipients.Set(TestRecipients.Third, TestRecipients.Second);
+
+        // Assert
+        TestRecipients.Set(TestRecipients.Third, TestRecipients.First).ShouldNotBe(secondAndThird);
+        TestRecipients.Set(TestRecipients.Third, TestRecipients.Second, TestRecipients.First).ShouldNotBe(secondAndThird);
+        TestRecipients.Set(TestRecipients.Third).ShouldNotBe(secondAndThird);
+    }
+
+    [Fact]
     public void The_recipients_are_ordered_by_text()
     {
         // Act

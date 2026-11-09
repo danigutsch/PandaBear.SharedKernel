@@ -116,3 +116,5 @@ PandaBear.Secrets.ProcessSopsTool.Rotate(string! absoluteFile, PandaBear.Secrets
 PandaBear.Secrets.ProcessSopsTool.UpdateRecipients(string! absoluteFile, PandaBear.Secrets.SopsCreationRule! rule, PandaBear.Secrets.AgeIdentityRef! identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.RecipientVerification!>>!
 PandaBear.Secrets.ProcessSopsTool.ListRecipients(string! absoluteFile, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SopsFileRecipients!>>!
 PandaBear.Secrets.ProcessSopsTool.VerifyRecipients(string! absoluteFile, PandaBear.Secrets.SopsCreationRule! rule, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.RecipientVerification!>>!
+PandaBear.Secrets.SopsFileReader
+static PandaBear.Secrets.SopsFileReader.ReadRecipients(string! absoluteFile, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SopsFileRecipients!>>!

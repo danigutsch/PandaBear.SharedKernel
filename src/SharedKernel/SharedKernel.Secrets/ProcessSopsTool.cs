@@ -10,7 +10,6 @@ namespace PandaBear.Secrets;
 /// </summary>
 public sealed class ProcessSopsTool : ISopsTool
 {
-    private const int MaxFileBytes = 16 * 1024 * 1024;
     private const string AgeKeyFile = "SOPS_AGE_KEY_FILE";
 
     private readonly IToolRunner _runner;
@@ -142,42 +141,8 @@ public sealed class ProcessSopsTool : ISopsTool
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException"><paramref name="absoluteFile"/> is <see langword="null"/>.</exception>
-    public async Task<Result<SopsFileRecipients>> ListRecipients(string absoluteFile, CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(absoluteFile);
-        var invalid = ToolInvocation.CheckFile(absoluteFile);
-        if (invalid is not null)
-        {
-            return Result.Invalid<SopsFileRecipients>(invalid, "file", invalid);
-        }
-
-        var format = Path.GetExtension(absoluteFile) switch
-        {
-            ".yaml" or ".yml" => SopsFormat.Yaml,
-            ".json" => SopsFormat.Json,
-            _ => (SopsFormat?)null,
-        };
-        if (format is null)
-        {
-            return ToolInvocation.Error<SopsFileRecipients>("Only YAML and JSON SOPS files have readable recipients.");
-        }
-
-        string text;
-        try
-        {
-            text = await ReadBounded(absoluteFile, cancellationToken).ConfigureAwait(false);
-        }
-        catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
-        {
-            return Result.NotFound<SopsFileRecipients>("The file does not exist.");
-        }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
-        {
-            return ToolInvocation.Error<SopsFileRecipients>("The file cannot be read.");
-        }
-
-        return text.Length == 0 ? ToolInvocation.Error<SopsFileRecipients>("The file is empty or larger than 16 MiB.") : SopsMetadataReader.Read(text, format.Value);
-    }
+    public Task<Result<SopsFileRecipients>> ListRecipients(string absoluteFile, CancellationToken cancellationToken) =>
+        SopsFileReader.ReadRecipients(absoluteFile, cancellationToken);
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
@@ -205,22 +170,5 @@ public sealed class ProcessSopsTool : ISopsTool
 
         // The output moves out of the result; the caller now owns and disposes the bytes.
         return run is null ? ToolInvocation.Error<SecretBytes>(problem!) : Result.Ok(run.StandardOutput);
-    }
-
-    private static async Task<string> ReadBounded(string path, CancellationToken cancellationToken)
-    {
-        var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
-        await using (stream.ConfigureAwait(false))
-        {
-            var buffer = new byte[MaxFileBytes + 1];
-            var length = 0;
-            int read;
-            while (length < buffer.Length && (read = await stream.ReadAsync(buffer.AsMemory(length), cancellationToken).ConfigureAwait(false)) > 0)
-            {
-                length += read;
-            }
-
-            return length > MaxFileBytes ? string.Empty : Encoding.UTF8.GetString(buffer.AsSpan(0, length));
-        }
     }
 }
