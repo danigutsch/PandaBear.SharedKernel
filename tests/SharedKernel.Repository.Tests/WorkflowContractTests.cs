@@ -86,7 +86,7 @@ public sealed class WorkflowContractTests
         validate.ShouldContain("    if: needs.selection.outputs.build_required == 'true' && needs.selection.outputs.matrix != '[]'\n", StringComparison.Ordinal);
         validate.ShouldContain("        slice: ${{ fromJSON(needs.selection.outputs.matrix) }}\n", StringComparison.Ordinal);
         validate.ShouldContain("          SLICE: ${{ matrix.slice }}\n", StringComparison.Ordinal);
-        validate.ShouldContain("-- run --slice \"$SLICE\" --github-summary \"$GITHUB_STEP_SUMMARY\"\n", StringComparison.Ordinal);
+        validate.ShouldContain("-- run --slice \"$SLICE\" --install-playwright --playwright-dependencies --github-summary \"$GITHUB_STEP_SUMMARY\"\n", StringComparison.Ordinal);
         validate.ShouldContain("          name: validation-${{ matrix.slice }}-evidence\n          path: TestResults/selection/execution-${{ matrix.slice }}/**\n", StringComparison.Ordinal);
     }
 
