@@ -15,3 +15,18 @@ static PandaBear.Testing.Playwright.PlaywrightShouldAssertionExtensions.ShouldHa
 virtual PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.Configuration.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>?
 virtual PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
 virtual PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.EnvironmentName.get -> string!
+PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions
+static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveNoUnlabelledControls(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveNoUnlabelledControls(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveNoUnnamedLinksOrButtons(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveNoUnnamedLinksOrButtons(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveSingleLevelOneHeading(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveSingleLevelOneHeading(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveLanguage(this Microsoft.Playwright.IPage! page, string! expectedLanguage) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveLanguage(this Microsoft.Playwright.IPage! page, string! expectedLanguage, string! userMessage) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldNotScrollHorizontally(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldNotScrollHorizontally(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveFocusWithin(this Microsoft.Playwright.IPage! page, string! containerSelector) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveFocusWithin(this Microsoft.Playwright.IPage! page, string! containerSelector, string! userMessage) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveAccessibleStructure(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveAccessibleStructure(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!

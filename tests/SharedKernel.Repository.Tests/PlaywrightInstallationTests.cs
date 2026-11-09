@@ -38,6 +38,22 @@ public sealed class PlaywrightInstallationTests : IDisposable
     }
 
     [Fact]
+    public async Task Banner_lines_before_the_evaluated_output_path_are_ignored()
+    {
+        // Arrange
+        // DOTNET_CLI_CONTEXT_VERBOSE, which the CI workflow sets, makes the dotnet CLI print a telemetry line before the property value.
+        scope.WriteFile("tests/Core.Tests/bin/Release/net10.0/playwright.ps1", "# installer");
+        var processes = new ProcessLog((fileName, _, _) => Task.FromResult(fileName == "dotnet" ? "Telemetry is: Enabled\nbin\\Release/net10.0/\n" : string.Empty));
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["install-playwright", "--project", Project], processes.Run, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        processes.Commands.ShouldContain("pwsh " + Path.Combine(scope.Root, "tests", "Core.Tests", "bin", "Release", "net10.0", "playwright.ps1") + " install");
+    }
+
+    [Fact]
     public async Task An_absolute_output_path_and_a_configuration_are_honored_without_dependencies()
     {
         // Arrange

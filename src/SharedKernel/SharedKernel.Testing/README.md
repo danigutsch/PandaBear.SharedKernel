@@ -37,6 +37,10 @@ Use `SerialTestJustificationAttribute` on xUnit collection definitions that disa
 - Processes and Git: `TestProcess.Run` runs a process and captures its output; `TestGit` runs Git without the user's
   configuration and commits a directory (`CommitAll`, `Commit`); `TemporaryGitRepository` owns an isolated repository
   with `Initialize`, `Commit`, `Tag` and `RunGit`.
+- Time: `CountingTimeProvider` wraps a `TimeProvider` (the system clock by default) and counts how often the current UTC time is
+  read (`Reads`, `Reset`), to prove that an operation reads the clock once. For a fixed or movable clock use
+  `FakeTimeProvider` from `Microsoft.Extensions.TimeProvider.Testing` (`SetUtcNow`, `Advance`, `SetLocalTimeZone`) and pass it
+  as the inner provider; no helper here duplicates it.
 - Ports and cleanup: `LoopbackPort.GetFree` returns an unused loopback port; `TrackingCleanupAction` and
   `TrackingAsyncDisposable` record the order of cleanup and disposal and can fail on demand.
 - Executables: `FakeExecutable` writes POSIX shell scripts (`WriteScript`, `WriteMarker`, `Quote`);

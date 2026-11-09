@@ -52,6 +52,17 @@
       "projects": []
     },
     {
+      "name": "browser",
+      "projects": [
+        "tests/SharedKernel.Testing.Tests/SharedKernel.Testing.Tests.csproj"
+      ],
+      "playwright": {
+        "project": "tests/SharedKernel.Testing.Tests/SharedKernel.Testing.Tests.csproj",
+        "browsers": ["chromium"],
+        "onlyShell": true
+      }
+    },
+    {
       "name": "postgres",
       "projects": [
         "tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj",

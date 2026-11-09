@@ -70,7 +70,8 @@ jobs:
         env:
           DOTNET_CLI_CONTEXT_VERBOSE: 'true'
           SLICE: ${{ matrix.slice }}
-        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- run --slice "$SLICE" --github-summary "$GITHUB_STEP_SUMMARY"
+          SHAREDKERNEL_REQUIRE_BROWSER: 'true'
+        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- run --slice "$SLICE" --install-playwright --playwright-dependencies --github-summary "$GITHUB_STEP_SUMMARY"
       - name: Retain validation evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

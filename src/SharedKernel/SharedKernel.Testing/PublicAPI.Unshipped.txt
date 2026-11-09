@@ -263,3 +263,13 @@ PandaBear.Testing.CallProxy
 PandaBear.Testing.CallProxy.CallProxy() -> void
 override PandaBear.Testing.CallProxy.Invoke(System.Reflection.MethodInfo? targetMethod, object?[]? args) -> object?
 static PandaBear.Testing.CallProxy.Create<TService>(TService! inner, System.Action<PandaBear.Testing.CallHooks!>? configure = null) -> TService!
+PandaBear.Testing.CountingTimeProvider
+PandaBear.Testing.CountingTimeProvider.CountingTimeProvider() -> void
+PandaBear.Testing.CountingTimeProvider.CountingTimeProvider(System.TimeProvider! inner) -> void
+PandaBear.Testing.CountingTimeProvider.Reads.get -> int
+PandaBear.Testing.CountingTimeProvider.Reset() -> void
+override PandaBear.Testing.CountingTimeProvider.CreateTimer(System.Threading.TimerCallback! callback, object? state, System.TimeSpan dueTime, System.TimeSpan period) -> System.Threading.ITimer!
+override PandaBear.Testing.CountingTimeProvider.GetTimestamp() -> long
+override PandaBear.Testing.CountingTimeProvider.GetUtcNow() -> System.DateTimeOffset
+override PandaBear.Testing.CountingTimeProvider.LocalTimeZone.get -> System.TimeZoneInfo!
+override PandaBear.Testing.CountingTimeProvider.TimestampFrequency.get -> long
