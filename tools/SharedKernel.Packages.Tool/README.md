@@ -10,7 +10,7 @@ which one package has more than one owner, because two package managers would th
 
 ## Prerequisites
 
-The tools of the declared managers on `PATH`: `dpkg-query` for `apt`, `cargo`, `npm`, and `flatpak`. Executables resolve
+The tools of the declared managers on `PATH`: `dpkg-query` for `apt`, `cargo`, `npm`, `flatpak`, `snap`, and `brew`. Executables resolve
 only from the absolute directories of `PATH`. A manager with no declared package needs no tool.
 
 ## Installation
@@ -53,17 +53,20 @@ cargo: change ripgrep from 13.0.0 to 14.1.0
     "apt": ["git", "libreoffice"],
     "cargo": ["ripgrep=14.1.0", "bat"],
     "npm": ["corepack"],
-    "flatpak": ["org.telegram.desktop"]
+    "flatpak": ["org.telegram.desktop"],
+    "snap": ["firefox"],
+    "brew": ["ripgrep"]
   }
 }
 ```
 
-- The managers are `apt`, `cargo`, `npm`, and `flatpak`. Each entry is a package name, or `name=version` to require
+- The managers are `apt`, `cargo`, `npm`, `flatpak`, `snap`, and `brew`. Each entry is a package name, or `name=version` to require
   exactly that version.
 - **One owner per package.** A name that appears under two managers, or twice under one, is an error that names the
   package and the managers, and nothing is run. The owner is the name: a pin does not make two declarations different.
 - Versions are compared as text, exactly. apt names include an architecture, such as `libc6:amd64`, when a bare name is
-  ambiguous.
+  ambiguous. A Homebrew formula with more than one installed version is an error until `brew cleanup` removes the old
+  ones; brew prints nothing when it has nothing installed, which reads as an empty list.
 
 ## Exit codes
 

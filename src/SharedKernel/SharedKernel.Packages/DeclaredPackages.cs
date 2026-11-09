@@ -21,7 +21,7 @@ public sealed class DeclaredPackages : ValueObject
     public IReadOnlyList<PackageRequirement> For(PackageManagerKind manager) =>
         _groups.FirstOrDefault(g => g.Manager == manager).Requirements ?? [];
 
-    /// <summary>Creates the declaration, or fails with one error for every package that has more than one owner.</summary>
+    /// <summary>Creates the declaration, or fails with one error for every package that has more than one owner or a tap-qualified Homebrew name.</summary>
     /// <param name="declared">The requirements per manager. A manager with none is allowed and ignored.</param>
     /// <param name="field">The field name used in validation errors.</param>
     /// <returns>The declaration or a validation error that names each offending package and the managers involved.</returns>
@@ -32,6 +32,15 @@ public sealed class DeclaredPackages : ValueObject
         ArgumentNullException.ThrowIfNull(declared);
 
         var errors = new ValidationErrors();
+        foreach (var requirement in declared.TryGetValue(PackageManagerKind.Brew, out var brew) ? brew : [])
+        {
+            if (requirement.Name.Value.Contains('/', StringComparison.Ordinal))
+            {
+                var message = $"{requirement.Name} is a tap-qualified Homebrew name; brew list prints only the short name, so declare it without the tap.";
+                errors.Add(Result.Invalid(detail: message, field: field, message: message));
+            }
+        }
+
         Dictionary<PackageName, List<PackageManagerKind>> owners = [];
         foreach (var (manager, requirements) in declared.OrderBy(static pair => pair.Key))
         {

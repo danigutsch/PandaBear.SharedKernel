@@ -6,7 +6,7 @@ namespace PandaBear.Packages;
 public static class PackageManagers
 {
     /// <summary>Gets the IDs of all managers, in enum order.</summary>
-    public static IReadOnlyList<string> Ids { get; } = ["apt", "cargo", "npm", "flatpak"];
+    public static IReadOnlyList<string> Ids { get; } = ["apt", "cargo", "npm", "flatpak", "snap", "brew"];
 
     /// <summary>Returns the ID of <paramref name="manager"/>.</summary>
     /// <param name="manager">The package manager.</param>
@@ -17,6 +17,8 @@ public static class PackageManagers
         PackageManagerKind.Cargo => "cargo",
         PackageManagerKind.Npm => "npm",
         PackageManagerKind.Flatpak => "flatpak",
+        PackageManagerKind.Snap => "snap",
+        PackageManagerKind.Brew => "brew",
         _ => throw new ArgumentOutOfRangeException(nameof(manager)),
     };
 
@@ -32,6 +34,8 @@ public static class PackageManagers
             "cargo" => PackageManagerKind.Cargo,
             "npm" => PackageManagerKind.Npm,
             "flatpak" => PackageManagerKind.Flatpak,
+            "snap" => PackageManagerKind.Snap,
+            "brew" => PackageManagerKind.Brew,
             _ => null,
         };
         return manager is not null;

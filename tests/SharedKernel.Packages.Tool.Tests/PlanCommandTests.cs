@@ -49,6 +49,41 @@ public sealed class PlanCommandTests
     }
 
     [Fact]
+    public async Task Snap_and_brew_packages_are_read_and_planned()
+    {
+        // Arrange
+        using var repository = CreateRepository("""{"version":1,"packages":{"snap":["firefox=158.0-2","core24"],"brew":["ripgrep","wget=1.25.0"]}}""");
+        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput>
+        {
+            ["/fake/snap"] = new(0, "Name Version Rev Tracking Publisher Notes\nfirefox 157.0 9057 latest/stable mozilla** -\ncore24 1 2 latest/stable canonical** base\n"),
+            ["/fake/brew"] = new(0, "wget 1.25.0\n"),
+        });
+
+        // Act
+        var (exitCode, output, error) = await Run(repository.Path, runner, ResolveAll);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        error.ShouldBe(string.Empty);
+        output.ShouldBe("snap: change firefox from 157.0 to 158.0-2\nbrew: install ripgrep\n2 of 4 declared packages need a change.\n".ReplaceLineEndings());
+    }
+
+    [Fact]
+    public async Task A_brew_formula_with_two_installed_versions_fails_the_run()
+    {
+        // Arrange
+        using var repository = CreateRepository("""{"version":1,"packages":{"brew":["wget"]}}""");
+        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput> { ["/fake/brew"] = new(0, "wget 1.24.0 1.25.0\n") });
+
+        // Act
+        var (exitCode, _, error) = await Run(repository.Path, runner, ResolveAll);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ShouldContain("brew: ", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task A_package_with_two_owners_is_refused_and_no_tool_is_run()
     {
         // Arrange
@@ -234,7 +269,7 @@ public sealed class PlanCommandTests
 
     [Theory]
     [InlineData("""{"version":2,"packages":{}}""", "$.version must be 1.")]
-    [InlineData("""{"version":1,"packages":{"pip":["x"]}}""", "$.packages.pip is not a known package manager; the managers are: apt, cargo, npm, flatpak.")]
+    [InlineData("""{"version":1,"packages":{"pip":["x"]}}""", "$.packages.pip is not a known package manager; the managers are: apt, cargo, npm, flatpak, snap, brew.")]
     [InlineData("""{"version":1,"packages":{"apt":null}}""", "$.packages.apt must be a list of package names, not null.")]
     [InlineData("""{"version":1,"packages":{"apt":["git",null]}}""", "$.packages.apt[1] must be a package name, not null.")]
     [InlineData("""{"version":1,"packages":{"apt":["bad name"]}}""", "$.packages.apt[0] must start with a valid package name.")]

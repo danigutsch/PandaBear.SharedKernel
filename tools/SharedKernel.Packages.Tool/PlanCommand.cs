@@ -97,6 +97,8 @@ internal static class PlanCommand
         PackageManagerKind.Cargo => "cargo",
         PackageManagerKind.Npm => "npm",
         PackageManagerKind.Flatpak => "flatpak",
+        PackageManagerKind.Snap => "snap",
+        PackageManagerKind.Brew => "brew",
         _ => throw new ArgumentOutOfRangeException(nameof(manager)),
     };
 
@@ -106,6 +108,8 @@ internal static class PlanCommand
         PackageManagerKind.Cargo => new CargoPackageReader(runner, path),
         PackageManagerKind.Npm => new NpmPackageReader(runner, path),
         PackageManagerKind.Flatpak => new FlatpakPackageReader(runner, path),
+        PackageManagerKind.Snap => new SnapPackageReader(runner, path),
+        PackageManagerKind.Brew => new BrewPackageReader(runner, path),
         _ => throw new ArgumentOutOfRangeException(nameof(manager)),
     };
 }
