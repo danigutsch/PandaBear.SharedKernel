@@ -1,5 +1,6 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 
 namespace PandaBear.Results.AspNet;
 
@@ -17,22 +18,35 @@ public static class ConcurrencyHeaders
     /// <summary>Formats a version as a strong entity tag.</summary>
     /// <param name="version">The record's version.</param>
     /// <returns>The quoted entity tag, for example <c>"3"</c>.</returns>
-    public static string ETag(long version) => $"\"{version.ToString(CultureInfo.InvariantCulture)}\"";
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="version"/> is negative.</exception>
+    public static string ETag(long version)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(version);
+        return $"\"{version.ToString(CultureInfo.InvariantCulture)}\"";
+    }
 
     /// <summary>Reads the version an update is based on from the <c>If-Match</c> header.</summary>
-    /// <remarks>RFC 9110 requires strong comparison for <c>If-Match</c>, so only exactly one strong tag holding a non-negative integer is accepted.</remarks>
+    /// <remarks>
+    /// RFC 9110 requires strong comparison for <c>If-Match</c>, so only exactly one well-formed strong tag holding a non-negative integer in
+    /// the canonical form <see cref="ETag(long)"/> produces is accepted (no leading zeros, no sign). A missing or unusable header is
+    /// deliberately a 400 validation problem keyed <c>version</c>, not 428 Precondition Required. A stale version is not detected here: it is
+    /// whatever the operation returns (409 Conflict is recommended, not 412). <see cref="Update"/> returns no new <c>ETag</c>; the client reads again.
+    /// </remarks>
     /// <param name="request">The request.</param>
     /// <returns>
     /// The version, or an invalid result keyed to <c>version</c> when the header is missing, is <c>*</c>, a weak tag (<c>W/"n"</c>),
-    /// a list of tags, or not a version.
+    /// a list of tags, malformed, or not a canonical version.
     /// </returns>
     /// <exception cref="ArgumentNullException"><paramref name="request"/> is <see langword="null"/>.</exception>
     public static Result<long> ReadVersion(HttpRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var tags = request.GetTypedHeaders().IfMatch;
-        return tags is [{ IsWeak: false }] && long.TryParse(tags[0].Tag.Value?.Trim('"'), NumberStyles.None, CultureInfo.InvariantCulture, out var version)
+        // The strict parser rejects the whole header when any list element is malformed; the typed-header parser would silently drop it.
+        return EntityTagHeaderValue.TryParseStrictList(request.Headers.IfMatch, out var tags)
+            && tags is [{ IsWeak: false } tag]
+            && long.TryParse(tag.Tag.Value?.Trim('"'), NumberStyles.None, CultureInfo.InvariantCulture, out var version)
+            && tag.Tag.Value == ETag(version)
             ? Result.Ok(version)
             : Result.Invalid<long>(IfMatchDetail, VersionField, IfMatchHint);
     }

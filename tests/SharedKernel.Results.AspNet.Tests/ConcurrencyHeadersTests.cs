@@ -19,6 +19,16 @@ public sealed class ConcurrencyHeadersTests
     }
 
     [Fact]
+    public void A_negative_version_cannot_be_formatted()
+    {
+        // Act
+        var exception = ShouldAssertionExtensions.ShouldThrow<ArgumentOutOfRangeException>((Func<object?>)(() => ConcurrencyHeaders.ETag(-1)));
+
+        // Assert
+        exception.ParamName.ShouldBe("version");
+    }
+
+    [Fact]
     public void A_strong_entity_tag_is_read_back_as_the_version()
     {
         // Arrange
@@ -55,6 +65,9 @@ public sealed class ConcurrencyHeadersTests
     [InlineData("\"+1\"")]
     [InlineData("\" 1\"")]
     [InlineData("\"\"")]
+    [InlineData("\"7\", junk")]
+    [InlineData("7")]
+    [InlineData("\"007\"")]
     [InlineData("\"9223372036854775808\"")]
     public void An_unusable_if_match_header_is_a_validation_failure_keyed_to_version(string? header)
     {

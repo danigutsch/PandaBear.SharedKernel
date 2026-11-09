@@ -10,7 +10,9 @@ public static class VersionedResultHttpExtensions
     /// <typeparam name="T">The value type.</typeparam>
     /// <param name="result">The result.</param>
     /// <param name="version">Selects the record version from the value.</param>
+    /// <remarks>The typed <c>Ok&lt;T&gt;</c> response metadata is hidden by the wrapper; declare <c>.Produces&lt;T&gt;()</c> on the endpoint for OpenAPI.</remarks>
     /// <returns>The converted response; only a successful one carries the entity tag.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The selected version is negative.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="version"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">The result is not initialized.</exception>
     public static IResult ToHttpResult<T>(this Result<T> result, Func<T, long> version)
@@ -28,6 +30,7 @@ public static class VersionedResultHttpExtensions
     /// <param name="result">The result.</param>
     /// <param name="location">Builds the location of the created resource from the value.</param>
     /// <param name="body">Builds the response body from the value.</param>
+    /// <remarks>The location is sent as given: URL-encode any path segment you build into it.</remarks>
     /// <returns>201 with the location and body on success, otherwise a problem response.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="location"/> or <paramref name="body"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">The result is not initialized.</exception>

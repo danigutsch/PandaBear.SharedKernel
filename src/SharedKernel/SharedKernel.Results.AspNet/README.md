@@ -49,10 +49,10 @@ with the mapped status code.
 
 ## Optimistic concurrency over HTTP
 
-`ConcurrencyHeaders` carries a record's numeric version as a strong entity tag. `ETag(version)` formats `"3"`. `ReadVersion(request)`
+`ConcurrencyHeaders` carries a record's numeric version as a strong entity tag. `ETag(version)` formats `"3"` and throws for a negative version. `ReadVersion(request)`
 reads the version an update is based on from `If-Match` and returns an invalid result keyed to `version` when the header is missing, `*`, a
-weak tag (`W/"3"`), a list of tags, or not a non-negative integer, because RFC 9110 requires strong comparison for `If-Match`. A stale
-version is not detected here: the update reports it (for example as a Conflict result, HTTP 409). `Update(request, send)` reads the
+weak tag (`W/"3"`), a list of tags, malformed (`"7", junk`), unquoted, or not a canonical non-negative integer (`"007"`, `"+7"`), because RFC 9110 requires strong comparison for `If-Match`. A missing or unusable header is deliberately a 400 validation
+problem, not 428. A stale version is not detected here: the update reports it (a Conflict result, HTTP 409, is recommended; not 412). `Update(request, send)` reads the
 version, skips `send` when it is unusable, and converts the outcome with `ToHttpResult()`.
 
 ```csharp
@@ -66,3 +66,7 @@ group.MapPost("/", async (ThingBody body, ISender sender, CancellationToken ct) 
 
 `ToHttpResult(version)` sets the `ETag` header on a successful read. `ToCreatedHttpResult(location, body)` answers 201 with a `Location`
 header and the body you choose, and the usual problem response for a failure.
+
+Notes: `Update` returns no new `ETag`, so the client reads again after a change. `ToCreatedHttpResult` sends the location as given, so
+URL-encode path segments you build into it. `ToHttpResult(version)` wraps the response, which hides the typed `Ok<T>` metadata; declare
+`.Produces<T>()` on the endpoint for OpenAPI.

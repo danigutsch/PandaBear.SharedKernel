@@ -40,6 +40,16 @@ public sealed class VersionedResultHttpExtensionsTests
     }
 
     [Fact]
+    public void A_read_with_a_negative_version_is_rejected()
+    {
+        // Act
+        var exception = ShouldAssertionExtensions.ShouldThrow<ArgumentOutOfRangeException>((Func<object?>)(() => Result.Ok(new ConcurrencyTestSupport.Row("a", -1)).ToHttpResult(row => row.Version)));
+
+        // Assert
+        exception.ParamName.ShouldBe("version");
+    }
+
+    [Fact]
     public void A_read_requires_a_version_selector()
     {
         // Act
