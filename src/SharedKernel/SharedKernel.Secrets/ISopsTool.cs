@@ -29,23 +29,6 @@ public interface ISopsTool
     /// <param name="cancellationToken">Cancels the run.</param>
     Task<Result<SecretBytes>> DecryptValue(string root, SecretRef reference, AgeIdentityRef identity, CancellationToken cancellationToken);
 
-    /// <summary>Rotates the file's data key in place (<c>sops rotate -i</c>). The recipients stay.</summary>
-    /// <param name="absoluteFile">The encrypted file, rewritten in place.</param>
-    /// <param name="identity">The identity file that can decrypt it.</param>
-    /// <param name="cancellationToken">Cancels the run.</param>
-    Task<Result> Rotate(string absoluteFile, AgeIdentityRef identity, CancellationToken cancellationToken);
-
-    /// <summary>
-    /// Makes the file's recipients equal the rule's recipient set, in place: it rotates the data key while adding the missing
-    /// and removing the unexpected recipients (<c>sops rotate -i --add-age --rm-age</c>), then reads the file again and
-    /// fails unless the set is exact. A file with non-age key holders is refused. Returns the comparison made before the change.
-    /// </summary>
-    /// <param name="absoluteFile">The encrypted file, rewritten in place.</param>
-    /// <param name="rule">The rule whose recipient set the file must end up with.</param>
-    /// <param name="identity">The identity file that can decrypt it.</param>
-    /// <param name="cancellationToken">Cancels the run.</param>
-    Task<Result<RecipientVerification>> UpdateRecipients(string absoluteFile, SopsCreationRule rule, AgeIdentityRef identity, CancellationToken cancellationToken);
-
     /// <summary>Reads the key holders from the file's metadata without decrypting it.</summary>
     /// <param name="absoluteFile">The encrypted YAML or JSON file.</param>
     /// <param name="cancellationToken">Cancels the read.</param>

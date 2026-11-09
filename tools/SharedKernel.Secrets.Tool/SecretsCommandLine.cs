@@ -59,7 +59,7 @@ internal static class SecretsCommandLine
         };
         var decryptOutput = new Option<string>("--output", "-o")
         {
-            Description = "Write the plaintext to this new file (mode 0600) instead of standard output. Needs --force.",
+            Description = "Write the plaintext to this new file inside the root (mode 0600, written through a temporary file) instead of standard output. Relative to the root, no symbolic links. Needs --force.",
             HelpName = "path",
         };
         var decrypt = new Command("decrypt", "Decrypt a file or one value to standard output. Writes to a file only with --output and --force.")
@@ -110,13 +110,18 @@ internal static class SecretsCommandLine
             check,
         };
 
-        var verify = new Command("verify", "Check that every *.sops.* file that a creation rule matches is encrypted to exactly that rule's recipients.")
+        var allowUnverified = new Option<bool>("--allow-unverified-files")
+        {
+            Description = "RISK: do not fail because some *.sops.* files match no creation rule. Those files are listed but nobody checks who can read them.",
+        };
+        var verify = new Command("verify", "Check that every *.sops.* file is encrypted to exactly the recipients of its creation rule, with nothing in clear. Fails when nothing is verified or a file matches no rule.")
         {
             rootOption,
+            allowUnverified,
         };
         verify.SetAction((parseResult, cancellationToken) => Execute(
             parseResult,
-            (output, error) => VerifyCommand.Run(Root(parseResult, rootOption, environment), output, error, cancellationToken),
+            (output, error) => VerifyCommand.Run(Root(parseResult, rootOption, environment), parseResult.GetValue(allowUnverified), output, error, cancellationToken),
             cancellationToken));
 
         var root = new RootCommand("Generates age identities, encrypts and decrypts SOPS files, and checks the recipients of encrypted files against the creation rules in .config/sharedkernel-secrets.json. Secrets travel on standard input and output only.");

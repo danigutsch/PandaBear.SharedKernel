@@ -27,7 +27,7 @@ public sealed class ProcessSopsToolTests
         encrypted.ShouldBe("encrypted: document\n");
         var request = runner.Requests.ShouldHaveSingleItem();
         request.Executable.ShouldBe(Sops);
-        request.Arguments.ShouldBe(["encrypt", "--age", $"{TestRecipients.Second},{TestRecipients.First}", "--input-type", "yaml", "--output-type", "yaml", "/dev/stdin"]);
+        request.Arguments.ShouldBe(["--config", "/dev/null", "encrypt", "--age", $"{TestRecipients.Second},{TestRecipients.First}", "--input-type", "yaml", "--output-type", "yaml", "/dev/stdin"]);
         request.Arguments.ShouldNotContain(document);
         request.Environment.ShouldBeEmpty();
         Encoding.UTF8.GetString(runner.Inputs.ShouldHaveSingleItem()).ShouldBe(document);
@@ -45,7 +45,7 @@ public sealed class ProcessSopsToolTests
         completed.ShouldBeSuccess();
 
         // Assert
-        runner.Requests.ShouldHaveSingleItem().Arguments.ShouldBe(["encrypt", "--age", TestRecipients.First, "--input-type", "json", "--output-type", "json", "/dev/stdin"]);
+        runner.Requests.ShouldHaveSingleItem().Arguments.ShouldBe(["--config", "/dev/null", "encrypt", "--age", TestRecipients.First, "--input-type", "json", "--output-type", "json", "/dev/stdin"]);
     }
 
     [Fact]
@@ -62,6 +62,40 @@ public sealed class ProcessSopsToolTests
     }
 
     [Fact]
+    public async Task Every_sops_call_ignores_any_config_file_and_runs_in_an_empty_directory_that_is_removed_afterwards()
+    {
+        // Arrange
+        List<(string Directory, bool Empty)> seen = [];
+        var runner = new FakeToolRunner(request =>
+        {
+            seen.Add((request.WorkingDirectory ?? string.Empty, request.WorkingDirectory is not null && Directory.Exists(request.WorkingDirectory) && !Directory.EnumerateFileSystemEntries(request.WorkingDirectory).Any()));
+            return FakeToolRunner.Result(0, "x");
+        });
+        var tool = new ProcessSopsTool(runner, Sops);
+        var reference = SecretRef.Create("a.sops.yaml#k").ShouldBeSuccess();
+
+        // Act
+        await tool.Encrypt(SopsFormat.Yaml, TestRecipients.Set(TestRecipients.First), "a: b"u8.ToArray(), TestContext.Current.CancellationToken);
+        await tool.Decrypt("/repo/a.sops.yaml", Identity, TestContext.Current.CancellationToken);
+        await tool.DecryptValue("/repo", reference, Identity, TestContext.Current.CancellationToken);
+
+        // Assert
+        runner.Requests.Count.ShouldBe(3);
+        foreach (var request in runner.Requests)
+        {
+            request.Arguments.Take(2).ToArray().ShouldBe(["--config", "/dev/null"]);
+        }
+
+        foreach (var (directory, empty) in seen)
+        {
+            empty.ShouldBeTrue();
+            Directory.Exists(directory).ShouldBeFalse();
+        }
+
+        seen.Select(static entry => entry.Directory).Distinct().Count().ShouldBe(3);
+    }
+
+    [Fact]
     public async Task Decrypt_gives_the_child_only_the_identity_file_path_in_its_environment()
     {
         // Arrange
@@ -75,7 +109,7 @@ public sealed class ProcessSopsToolTests
         // Assert
         plaintext.RevealUtf8().ShouldContain("hunter2", StringComparison.Ordinal);
         var request = runner.Requests.ShouldHaveSingleItem();
-        request.Arguments.ShouldBe(["decrypt", "/repo/secrets/app.sops.yaml"]);
+        request.Arguments.ShouldBe(["--config", "/dev/null", "decrypt", "/repo/secrets/app.sops.yaml"]);
         request.Environment.ShouldBe(new Dictionary<string, string> { ["SOPS_AGE_KEY_FILE"] = "/keys/id.txt" });
         runner.Inputs.ShouldHaveSingleItem().ShouldBeEmpty();
     }
@@ -113,7 +147,7 @@ public sealed class ProcessSopsToolTests
 
         // Assert
         value.RevealUtf8().ShouldBe("hunter2");
-        runner.Requests.ShouldHaveSingleItem().Arguments.ShouldBe(["decrypt", "--extract", "[\"db\"][\"password\"]", Path.Combine(root.Path, "secrets", "app.sops.yaml")]);
+        runner.Requests.ShouldHaveSingleItem().Arguments.ShouldBe(["--config", "/dev/null", "decrypt", "--extract", "[\"db\"][\"password\"]", Path.Combine(root.Path, "secrets", "app.sops.yaml")]);
     }
 
     [Fact]
@@ -129,155 +163,6 @@ public sealed class ProcessSopsToolTests
         // Assert
         result.IsFailure.ShouldBeTrue();
         runner.Requests.ShouldBeEmpty();
-    }
-
-    [Fact]
-    public async Task Rotate_runs_sops_rotate_in_place_with_the_identity_in_the_environment()
-    {
-        // Arrange
-        var runner = FakeToolRunner.Succeeding();
-        var tool = new ProcessSopsTool(runner, Sops);
-
-        // Act
-        var completed = await tool.Rotate("/repo/app.sops.yaml", Identity, TestContext.Current.CancellationToken);
-        completed.ShouldBeSuccess();
-
-        // Assert
-        var request = runner.Requests.ShouldHaveSingleItem();
-        request.Arguments.ShouldBe(["rotate", "-i", "/repo/app.sops.yaml"]);
-        request.Environment["SOPS_AGE_KEY_FILE"].ShouldBe("/keys/id.txt");
-    }
-
-    [Fact]
-    public async Task Rotate_reports_a_failure_and_refuses_a_relative_path()
-    {
-        // Arrange
-        var failing = new ProcessSopsTool(FakeToolRunner.Failing(2, "no key could decrypt"), Sops);
-        var runner = FakeToolRunner.Succeeding();
-        var tool = new ProcessSopsTool(runner, Sops);
-
-        // Act
-        var failed = await failing.Rotate("/repo/app.sops.yaml", Identity, TestContext.Current.CancellationToken);
-        var relative = await tool.Rotate("app.sops.yaml", Identity, TestContext.Current.CancellationToken);
-
-        // Assert
-        failed.IsFailure.ShouldBeTrue();
-        relative.IsFailure.ShouldBeTrue();
-        runner.Requests.ShouldBeEmpty();
-    }
-
-    [Fact]
-    public async Task UpdateRecipients_adds_the_missing_recipient_and_checks_the_file_afterwards()
-    {
-        // Arrange
-        using var directory = new TemporaryDirectory();
-        var file = Path.Combine(directory.Path, "app.sops.yaml");
-        await File.WriteAllTextAsync(file, SopsSamples.Yaml([TestRecipients.First]), TestContext.Current.CancellationToken);
-        var runner = new FakeToolRunner(_ =>
-        {
-            File.WriteAllText(file, SopsSamples.Yaml([TestRecipients.First, TestRecipients.Second]));
-            return FakeToolRunner.Result(0, string.Empty);
-        });
-        var tool = new ProcessSopsTool(runner, Sops);
-
-        // Act
-        var beforeResult = await tool.UpdateRecipients(file, Rule, Identity, TestContext.Current.CancellationToken);
-        var before = beforeResult.ShouldBeSuccess();
-
-        // Assert
-        before.Missing.Select(static r => r.Value).ShouldBe([TestRecipients.Second]);
-        runner.Requests.ShouldHaveSingleItem().Arguments.ShouldBe(["rotate", "-i", "--add-age", TestRecipients.Second, file]);
-    }
-
-    [Fact]
-    public async Task UpdateRecipients_removes_an_unexpected_recipient()
-    {
-        // Arrange
-        using var directory = new TemporaryDirectory();
-        var file = Path.Combine(directory.Path, "app.sops.json");
-        await File.WriteAllTextAsync(file, SopsSamples.Json([TestRecipients.First, TestRecipients.Second, TestRecipients.Third]), TestContext.Current.CancellationToken);
-        var runner = new FakeToolRunner(_ =>
-        {
-            File.WriteAllText(file, SopsSamples.Json([TestRecipients.First, TestRecipients.Second]));
-            return FakeToolRunner.Result(0, string.Empty);
-        });
-        var tool = new ProcessSopsTool(runner, Sops);
-
-        // Act
-        var completed = await tool.UpdateRecipients(file, Rule, Identity, TestContext.Current.CancellationToken);
-        completed.ShouldBeSuccess();
-
-        // Assert
-        runner.Requests.ShouldHaveSingleItem().Arguments.ShouldBe(["rotate", "-i", "--rm-age", TestRecipients.Third, file]);
-    }
-
-    [Fact]
-    public async Task UpdateRecipients_does_nothing_when_the_set_is_already_exact()
-    {
-        // Arrange
-        using var directory = new TemporaryDirectory();
-        var file = Path.Combine(directory.Path, "app.sops.yaml");
-        await File.WriteAllTextAsync(file, SopsSamples.Yaml([TestRecipients.Second, TestRecipients.First]), TestContext.Current.CancellationToken);
-        var runner = FakeToolRunner.Succeeding();
-        var tool = new ProcessSopsTool(runner, Sops);
-
-        // Act
-        var verificationResult = await tool.UpdateRecipients(file, Rule, Identity, TestContext.Current.CancellationToken);
-        var verification = verificationResult.ShouldBeSuccess();
-
-        // Assert
-        verification.IsExact.ShouldBeTrue();
-        runner.Requests.ShouldBeEmpty();
-    }
-
-    [Fact]
-    public async Task UpdateRecipients_refuses_a_file_with_non_age_key_holders_and_runs_nothing()
-    {
-        // Arrange
-        using var directory = new TemporaryDirectory();
-        var file = Path.Combine(directory.Path, "app.sops.json");
-        await File.WriteAllTextAsync(file, SopsSamples.Json([TestRecipients.First], ",\"hc_vault\":[{\"vault_address\":\"https://v\"}]"), TestContext.Current.CancellationToken);
-        var runner = FakeToolRunner.Succeeding();
-        var tool = new ProcessSopsTool(runner, Sops);
-
-        // Act
-        var result = await tool.UpdateRecipients(file, Rule, Identity, TestContext.Current.CancellationToken);
-
-        // Assert
-        result.IsFailure.ShouldBeTrue();
-        runner.Requests.ShouldBeEmpty();
-    }
-
-    [Fact]
-    public async Task UpdateRecipients_fails_when_sops_succeeds_but_the_file_is_still_not_the_rule_set()
-    {
-        // Arrange
-        using var directory = new TemporaryDirectory();
-        var file = Path.Combine(directory.Path, "app.sops.yaml");
-        await File.WriteAllTextAsync(file, SopsSamples.Yaml([TestRecipients.First]), TestContext.Current.CancellationToken);
-        var tool = new ProcessSopsTool(FakeToolRunner.Succeeding(), Sops);
-
-        // Act
-        var result = await tool.UpdateRecipients(file, Rule, Identity, TestContext.Current.CancellationToken);
-
-        // Assert
-        result.ErrorDetails.ShouldNotBeNull().Detail.ShouldContain("still not the rule's recipient set", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public async Task UpdateRecipients_reports_a_failed_rotate()
-    {
-        // Arrange
-        using var directory = new TemporaryDirectory();
-        var file = Path.Combine(directory.Path, "app.sops.yaml");
-        await File.WriteAllTextAsync(file, SopsSamples.Yaml([TestRecipients.First]), TestContext.Current.CancellationToken);
-        var tool = new ProcessSopsTool(FakeToolRunner.Failing(128, "Failed to get the data key"), Sops);
-
-        // Act
-        var result = await tool.UpdateRecipients(file, Rule, Identity, TestContext.Current.CancellationToken);
-
-        // Assert
-        result.ErrorDetails.ShouldNotBeNull().Detail.ShouldBe("sops exited with code 128: Failed to get the data key");
     }
 
     [Fact]
@@ -393,11 +278,6 @@ public sealed class ProcessSopsToolTests
             () => tool.DecryptValue(null!, reference, Identity, token),
             () => tool.DecryptValue("/a", null!, Identity, token),
             () => tool.DecryptValue("/a", reference, null!, token),
-            () => tool.Rotate(null!, Identity, token),
-            () => tool.Rotate("/a", null!, token),
-            () => tool.UpdateRecipients(null!, Rule, Identity, token),
-            () => tool.UpdateRecipients("/a", null!, Identity, token),
-            () => tool.UpdateRecipients("/a", Rule, null!, token),
             () => tool.ListRecipients(null!, token),
             () => tool.VerifyRecipients("/a", null!, token),
         };

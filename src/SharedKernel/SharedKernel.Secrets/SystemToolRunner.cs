@@ -52,6 +52,11 @@ public sealed class SystemToolRunner : IToolRunner
             RedirectStandardError = true,
             UseShellExecute = false,
         };
+        if (request.WorkingDirectory is not null)
+        {
+            startInfo.WorkingDirectory = request.WorkingDirectory;
+        }
+
         startInfo.Environment.Clear();
         foreach (var argument in request.Arguments)
         {

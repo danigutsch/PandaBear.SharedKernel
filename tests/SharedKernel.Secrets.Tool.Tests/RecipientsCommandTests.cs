@@ -62,6 +62,28 @@ public sealed class RecipientsCommandTests
     }
 
     [Fact]
+    public async Task Check_reports_a_weakened_file_and_refuses_one_that_hides_its_metadata()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, "secrets/weak.sops.yaml", "password: hunter2\n" + TestRecipients.Block([TestRecipients.First, TestRecipients.Second], "    unencrypted_regex: .*\n"));
+        WriteFile(repository.Path, "secrets/hidden.sops.yaml", TestRecipients.Yaml([TestRecipients.First, TestRecipients.Third]) + "---\n" + TestRecipients.Block([TestRecipients.First, TestRecipients.Second]));
+
+        // Act
+        var weak = await Run(repository.Path, "recipients", "check", "secrets/weak.sops.yaml", "--root", repository.Path);
+        var hidden = await Run(repository.Path, "recipients", "check", "secrets/hidden.sops.yaml", "--root", repository.Path);
+        var list = await Run(repository.Path, "recipients", "list", "secrets/weak.sops.yaml", "--root", repository.Path);
+
+        // Assert
+        weak.ExitCode.ShouldBe(1);
+        weak.Output.ShouldContain("secrets/weak.sops.yaml: weakened: non-default setting unencrypted_regex", StringComparison.Ordinal);
+        hidden.ExitCode.ShouldBe(2);
+        hidden.Output.ShouldBe(string.Empty);
+        list.Output.ShouldContain("concern: 1 value is not encrypted", StringComparison.Ordinal);
+    }
+
+
+    [Fact]
     public async Task Check_fails_when_no_rule_matches_or_the_file_cannot_be_read()
     {
         // Arrange

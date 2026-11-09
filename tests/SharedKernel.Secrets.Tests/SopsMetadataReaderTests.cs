@@ -61,7 +61,7 @@ public sealed class SopsMetadataReaderTests
     public void Age_recipients_in_key_groups_are_collected_and_other_key_types_in_a_group_are_reported()
     {
         // Arrange
-        var json = $"{{\"sops\":{{\"key_groups\":[{{\"age\":[{{\"recipient\":\"{TestRecipients.First}\"}}]}},{{\"age\":[{{\"recipient\":\"{TestRecipients.Second}\"}}],\"pgp\":[{{\"fp\":\"ABC\"}}]}}],\"version\":\"3.13.0\"}}}}";
+        var json = $"{{\"sops\":{{\"key_groups\":[{{\"age\":[{{\"recipient\":\"{TestRecipients.First}\",\"enc\":{AgeEnvelopes.JsonLiteral(TestRecipients.First)}}}]}},{{\"age\":[{{\"recipient\":\"{TestRecipients.Second}\",\"enc\":{AgeEnvelopes.JsonLiteral(TestRecipients.Second)}}}],\"pgp\":[{{\"fp\":\"ABC\"}}]}}],\"version\":\"3.13.0\"}}}}";
 
         // Act
         var holders = SopsMetadataReader.Read(json, SopsFormat.Json).ShouldBeSuccess();
@@ -72,13 +72,13 @@ public sealed class SopsMetadataReaderTests
     }
 
     [Fact]
-    public void A_duplicate_age_entry_is_collapsed()
+    public void A_duplicate_age_entry_is_an_error_not_silently_collapsed()
     {
         // Act
-        var holders = SopsMetadataReader.Read(SopsSamples.Json([TestRecipients.First, TestRecipients.First]), SopsFormat.Json).ShouldBeSuccess();
+        var result = SopsMetadataReader.Read(SopsSamples.Json([TestRecipients.First, TestRecipients.First]), SopsFormat.Json);
 
         // Assert
-        holders.Age.Count.ShouldBe(1);
+        result.IsFailure.ShouldBeTrue();
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public sealed class SopsMetadataReaderTests
     public void YAML_sequence_items_at_the_same_indent_as_their_key_are_read()
     {
         // Arrange
-        var yaml = $"sops:\n  age:\n  - recipient: {TestRecipients.First}\n  - recipient: {TestRecipients.Second}\n  version: 3.13.0\n";
+        var yaml = $"sops:\n  age:\n  - recipient: {TestRecipients.First}\n    enc: |\n{AgeEnvelopes.Indented(TestRecipients.First, 6)}  - recipient: {TestRecipients.Second}\n    enc: |\n{AgeEnvelopes.Indented(TestRecipients.Second, 6)}  version: 3.13.0\n";
 
         // Act
         var holders = SopsMetadataReader.Read(yaml, SopsFormat.Yaml).ShouldBeSuccess();
@@ -177,7 +177,7 @@ public sealed class SopsMetadataReaderTests
     public void YAML_key_groups_with_nested_blocks_scalar_items_and_empty_flow_collections_are_read()
     {
         // Arrange
-        var yaml = $"sops:\n    key_groups:\n        -\n            age:\n                - recipient: {TestRecipients.First}\n        - age:\n            - recipient: {TestRecipients.Second}\n    shamir_threshold: 1\n    empty: {{}}\n    list: []\n    scalars:\n        - one\n        - two\n";
+        var yaml = $"sops:\n    key_groups:\n        -\n            age:\n                - recipient: {TestRecipients.First}\n                  enc: |\n{AgeEnvelopes.Indented(TestRecipients.First, 20)}        - age:\n            - recipient: {TestRecipients.Second}\n              enc: |\n{AgeEnvelopes.Indented(TestRecipients.Second, 16)}    shamir_threshold: 1\n    empty: {{}}\n    list: []\n    scalars:\n        - one\n        - two\n";
 
         // Act
         var holders = SopsMetadataReader.Read(yaml, SopsFormat.Yaml).ShouldBeSuccess();
@@ -191,7 +191,7 @@ public sealed class SopsMetadataReaderTests
     public void YAML_quoted_keys_are_read()
     {
         // Arrange
-        var yaml = $"sops:\n    \"age\":\n        - recipient: {TestRecipients.First}\n    'version': 3.13.0\n";
+        var yaml = $"sops:\n    \"age\":\n        - recipient: {TestRecipients.First}\n          enc: |\n{AgeEnvelopes.Indented(TestRecipients.First, 12)}    'version': 3.13.0\n";
 
         // Act
         var holders = SopsMetadataReader.Read(yaml, SopsFormat.Yaml).ShouldBeSuccess();
@@ -234,7 +234,7 @@ public sealed class SopsMetadataReaderTests
     public void YAML_with_comments_and_null_values_is_read()
     {
         // Arrange
-        var yaml = $"# header\nsops: # metadata\n    # keys\n    kms: null\n    age:\n        - recipient: '{TestRecipients.First}' # admin\n    version: 3.13.0 # sops\n";
+        var yaml = $"# header\nsops: # metadata\n    # keys\n    kms: null\n    age:\n        - recipient: '{TestRecipients.First}' # admin\n          enc: |\n{AgeEnvelopes.Indented(TestRecipients.First, 12)}    version: 3.13.0 # sops\n";
 
         // Act
         var holders = SopsMetadataReader.Read(yaml, SopsFormat.Yaml).ShouldBeSuccess();

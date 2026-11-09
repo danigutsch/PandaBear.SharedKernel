@@ -43,9 +43,11 @@ primitives here (`AgeRecipientSet`, `RecipientVerification`) instead of repeatin
   empty flow collections), converts it to JSON, and reuses the JSON reader. Everything else is an error. The reader fails
   closed: an unreadable file is never an empty recipient list, a repeated key is an error, and a non-age key holder (`kms`,
   `pgp`, `hc_vault`, or any other non-empty holder list) makes a file inexact, because its holder can read the file.
-- **`updatekeys` without a config file.** `sops updatekeys` needs a `.sops.yaml`. `UpdateRecipients` instead computes the
-  difference against the rule and runs `sops rotate -i --add-age --rm-age`, then reads the file again and fails unless it is
-  exact. The command rotates the data key and rewrites the file in place, so the CLI previews by default.
+- **No rotate or updatekeys for now.** An earlier draft had `UpdateRecipients` and `Rotate` (`sops rotate -i --add-age --rm-age`). They
+  rewrite a file in place without a backup, and no command with a preview, `--force`, and an atomic write existed, so they were
+  removed from the public API. They return together with such a command.
+- **sops runs with no ambient configuration.** sops reads `.sops.yaml` from its working directory. Every call passes `--config
+  /dev/null` and runs in a new empty directory, so a repository file cannot turn on `unencrypted_regex` and make `encrypt` write plaintext.
 - **Honest memory handling.** `SecretBytes` is a pinned array, overwritten on dispose, with a fixed `ToString`. .NET cannot
   guarantee that no copy exists (strings, streams, swap, core dumps); the README says so.
 
@@ -53,9 +55,37 @@ primitives here (`AgeRecipientSet`, `RecipientVerification`) instead of repeatin
 
 `sharedkernel-secrets` reads `.config/sharedkernel-secrets.json` (`creationRules`), finds `age`, `age-keygen`, and `sops` on
 `PATH` with the shared resolver (absolute `PATH` directories only), and is preview-by-default: `keygen`, `encrypt`, and
-`decrypt --output` change nothing without `--force`, and none of them overwrites a file. `decrypt` writes to standard output unless `--output` and `--force`
+`decrypt --output` change nothing without `--force`, and none of them overwrites a file. `decrypt --output` stays inside the root, refuses
+symbolic links, and renames a 0600 temporary file into place. `verify` never passes on nothing: no covered file, a path it cannot judge, or a
+file no rule covers is not success (`--allow-unverified-files` names the risk for the last). `decrypt` writes to standard output unless `--output` and `--force`
 are both given. Secrets are never arguments. Exit codes: 0 success or a preview, 1 a check found differences, 2 the result
 cannot be known or the request was refused.
+
+## Threat model and limits
+
+The checks read file metadata. They are meant to catch a repository whose encrypted files are readable by more people, or by different
+people, than the creation rule says, and a file that was never really encrypted. The attacker modelled can edit files in the repository
+(a pull request) but is not a holder of an allowed key.
+
+What the checks establish for a YAML or JSON file: there is exactly one `sops` block and the reader saw all of it; each listed recipient
+is valid and listed once; each entry's `enc` is an age file with exactly one recipient stanza of the type the label requires, and for SSH
+recipients with the tag derived from that key; no other key type (`kms`, `pgp`, `hc_vault`, ...) holds a key; no non-default
+`unencrypted_*`, `encrypted_*`, or `mac_only_encrypted` setting is present; and every value is `ENC[...]`, `null`, an empty string or
+collection, or under a key that ends in `_unencrypted`.
+
+What they do not establish:
+
+- **Who can decrypt.** sops never checks labels, and an X25519 stanza holds an ephemeral share and a wrapped key, never the recipient, so a
+  forged file can pair an allowed label with a stanza for another key. Only a trial decryption by each holder proves a label honest.
+- **That the data key is wrapped for the label's key,** and that the MAC and the ciphertext are intact. Nothing here decrypts or verifies a MAC.
+- **Plugin, hybrid, and tag recipients** beyond "exactly one stanza".
+- **Keys named `*_unencrypted`,** which sops leaves in clear on purpose, and comments the file's author left in clear count as plaintext, not as a pass.
+- **dotenv, ini, and binary files,** which are an error, not a pass.
+- **A compromised `age`, `age-keygen`, or `sops` program,** the machine's memory, swap, and core dumps.
+
+Reproduced bypasses that the design now refuses: a second YAML document, a byte order mark, or a `sops :` / `"sops":` spelling that hid the real
+block behind a fake one; a repeated label over two envelopes; a repository `.sops.yaml` with `unencrypted_regex: '.*'`; `verify` passing with
+no files, an unjudgeable path, or uncovered files; and an SSH recipient with white space or trailing bytes in its key.
 
 ## Deferred
 

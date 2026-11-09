@@ -3,8 +3,9 @@ namespace PandaBear.Secrets;
 /// <summary>The outcome of comparing a SOPS file's key holders with the recipient set of its creation rule.</summary>
 public sealed class RecipientVerification
 {
-    private RecipientVerification(IReadOnlyList<AgeRecipient> missing, IReadOnlyList<AgeRecipient> unexpected, IReadOnlyList<string> otherKeyTypes)
+    private RecipientVerification(IReadOnlyList<AgeRecipient> missing, IReadOnlyList<AgeRecipient> unexpected, IReadOnlyList<string> otherKeyTypes, IReadOnlyList<string> concerns)
     {
+        Concerns = concerns;
         Missing = missing;
         Unexpected = unexpected;
         OtherKeyTypes = otherKeyTypes;
@@ -28,8 +29,14 @@ public sealed class RecipientVerification
         get;
     }
 
+    /// <summary>Gets what else weakens the file (see <see cref="SopsFileRecipients.Concerns"/>).</summary>
+    public IReadOnlyList<string> Concerns
+    {
+        get;
+    }
+
     /// <summary>Gets a value indicating whether the file's key holders equal the rule's recipient set, with nothing else.</summary>
-    public bool IsExact => Missing.Count == 0 && Unexpected.Count == 0 && OtherKeyTypes.Count == 0;
+    public bool IsExact => Missing.Count == 0 && Unexpected.Count == 0 && OtherKeyTypes.Count == 0 && Concerns.Count == 0;
 
     /// <summary>
     /// Compares <paramref name="actual"/> with the recipient set of <paramref name="rule"/>: equal sets are exact; a subset,
@@ -46,6 +53,6 @@ public sealed class RecipientVerification
         var expected = rule.Recipients;
         var missing = expected.Recipients.Where(item => !actual.Age.Contains(item)).ToArray();
         var unexpected = actual.Age.Where(item => !expected.Contains(item)).ToArray();
-        return new RecipientVerification(missing, unexpected, actual.OtherKeyTypes);
+        return new RecipientVerification(missing, unexpected, actual.OtherKeyTypes, actual.Concerns);
     }
 }

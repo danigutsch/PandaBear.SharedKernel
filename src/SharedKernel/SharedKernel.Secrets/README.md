@@ -31,7 +31,8 @@ the input.
 
 - `AgeRecipient`: a public recipient. It accepts Bech32 recipients whose human-readable part is on an allow-list (`age`,
   `age1pq`, `age1tag`, `age1tagpq`, and the plugin parts `age1yubikey`, `age1tpm`, `age1se`, `age1fido2-hmac`) and SSH
-  recipient lines `ssh-ed25519 <key>` and `ssh-rsa <key>` with no comment. A native `age1...` recipient must carry a 32-byte
+  recipient lines `ssh-ed25519 <key>` and `ssh-rsa <key>` with no comment, no white space in the key, canonical base64, and a blob that
+  parses exactly (an ed25519 key is 32 bytes, an RSA key two minimal positive integers, nothing after it). A native `age1...` recipient must carry a 32-byte
   key. A Bech32 recipient is stored lowercase, so the uppercase spelling is equal. Private identities
   (`AGE-SECRET-KEY-1...`, `AGE-PLUGIN-...`) are rejected with their own message.
 - `AgeRecipientSet`: distinct recipients with order-insensitive equality: a reordered set is equal, a subset or a
@@ -52,8 +53,8 @@ requires. The checksum code is checked against the BIP-173 vectors and the Bech3
 
 ## Ports and adapters
 
-`IAgeTool` (`GenerateIdentity`, `Encrypt`, `Decrypt`) and `ISopsTool` (`Encrypt`, `Decrypt`, `DecryptValue`, `Rotate`,
-`UpdateRecipients`, `ListRecipients`, `VerifyRecipients`) have process adapters, `ProcessAgeTool` and `ProcessSopsTool`,
+`IAgeTool` (`GenerateIdentity`, `Encrypt`, `Decrypt`) and `ISopsTool` (`Encrypt`, `Decrypt`, `DecryptValue`,
+`ListRecipients`, `VerifyRecipients`) have process adapters, `ProcessAgeTool` and `ProcessSopsTool`,
 over `IToolRunner`. `SystemToolRunner` is the real runner:
 
 - the program path is absolute and arguments go one by one, without a shell;
@@ -66,19 +67,28 @@ over `IToolRunner`. `SystemToolRunner` is the real runner:
   control characters and cut at 200 characters.
 
 `age-keygen` writes the identity file itself with mode 0600; the adapter refuses an existing path (it never overwrites a key),
-prints only the public recipient, and fails if the file is readable by others. `UpdateRecipients` does what `sops updatekeys`
-does but without a `.sops.yaml`: it reads the file's recipients, then runs `sops rotate -i --add-age ... --rm-age ...` for
-the difference and checks the result. It rewrites the file in place and rotates the data key.
+prints only the public recipient, and fails if the file is readable by others. Every `sops` call passes `--config /dev/null` and
+runs in a new empty working directory that is deleted afterwards, because sops reads `.sops.yaml` from its working directory and a
+creation rule there (`unencrypted_regex: '.*'`) would otherwise write plaintext. There is no `rotate` or `updatekeys` in the public
+API: they rewrite a file in place without a backup, and they return when a command with a preview and an atomic write exists.
 
 ## Reading and checking recipients
 
 `SopsMetadataReader` reads the key holders from a file's `sops` block without decrypting and without a YAML library (a
 purpose-built reader of the subset SOPS writes). `RecipientVerification.Compare` then checks them against a rule:
 
-- equal sets are `IsExact`; a missing recipient, an unexpected recipient, or any non-age key holder (`kms`, `pgp`,
-  `hc_vault`, and so on: whoever holds one can read the file) is not;
-- **it fails closed.** A file the reader does not fully understand (flow collections, anchors, a repeated key, a second
-  `sops:` block, a recipient that is not valid) is an error, never an empty list that would pass for "no recipients".
+- equal sets are `IsExact`; a missing recipient, an unexpected recipient, a non-age key holder (`kms`, `pgp`, `hc_vault`, and
+  so on: whoever holds one can read the file), or any `Concerns` entry is not. Concerns are a non-default `unencrypted_*`,
+  `encrypted_*`, or `mac_only_encrypted` setting and values that are not `ENC[...]` (keys ending in `_unencrypted`, `null`, empty
+  strings, and empty collections are allowed);
+- a recipient listed twice is an error, and each entry's `enc` must be an age file with exactly one recipient stanza of the type its
+  label requires (X25519 for `age1...`, and for an SSH recipient the stanza type and key tag derived from the key). This proves the
+  labels and the structure, not who can decrypt: the X25519 stanza holds an ephemeral share, never the recipient, so only a trial
+  decryption by each holder proves a label honest;
+- **it fails closed.** A file the reader does not fully understand is an error, never an empty list that would pass for "no
+  recipients": a YAML document marker or directive, a byte order mark, a tab indent, a top-level anchor, alias, tag, flow
+  collection, or sequence, a top-level key that reads as `sops` without being spelled `sops:` exactly, a repeated key, a second
+  `sops:` block, an invalid or duplicated recipient, or an `enc` that is not one recipient stanza.
 - Only YAML and JSON files are readable. dotenv, ini, and binary SOPS files are an error.
 
 ## What .NET cannot guarantee

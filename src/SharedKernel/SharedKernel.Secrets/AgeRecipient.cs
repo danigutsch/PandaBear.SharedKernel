@@ -1,5 +1,4 @@
-using System.Buffers.Binary;
-using System.Text;
+using System.Security.Cryptography;
 using PandaBear.BuildingBlocks;
 using PandaBear.Results;
 
@@ -116,6 +115,12 @@ public sealed class AgeRecipient : ValueObject
         return null;
     }
 
+    /// <summary>For an SSH recipient, the 4-byte tag that age writes in the file header: the first four bytes of the SHA-256 of the key blob, in unpadded base64.</summary>
+    internal string? SshTag() =>
+        Kind == AgeRecipientKind.Ssh
+            ? Convert.ToBase64String(SHA256.HashData(Convert.FromBase64String(Value[(Value.IndexOf(' ', StringComparison.Ordinal) + 1)..]))[..4]).TrimEnd('=')
+            : null;
+
     private static string? ValidateSsh(string value, out string normalized, out AgeRecipientKind kind)
     {
         normalized = string.Empty;
@@ -126,17 +131,30 @@ public sealed class AgeRecipient : ValueObject
             return "An SSH recipient must be 'ssh-ed25519 <key>' or 'ssh-rsa <key>' without a comment.";
         }
 
-        var blob = new byte[parts[1].Length];
-        if (!Convert.TryFromBase64String(parts[1], blob, out var written) || written < 4)
+        // Convert.FromBase64String skips white space, so only the alphabet itself is allowed.
+        if (!parts[1].All(static c => char.IsAsciiLetterOrDigit(c) || c is '+' or '/' or '='))
+        {
+            return "The SSH recipient key must be plain base64 without white space.";
+        }
+
+        byte[] blob;
+        try
+        {
+            blob = Convert.FromBase64String(parts[1]);
+        }
+        catch (FormatException)
         {
             return "The SSH recipient key is not valid base64.";
         }
 
-        var typeLength = BinaryPrimitives.ReadUInt32BigEndian(blob);
-        var expected = Encoding.ASCII.GetBytes(parts[0]);
-        if (typeLength != expected.Length || written < 4 + expected.Length || !blob.AsSpan(4, expected.Length).SequenceEqual(expected))
+        if (Convert.ToBase64String(blob) != parts[1])
         {
-            return "The SSH recipient key does not match its key type.";
+            return "The SSH recipient key is not in canonical base64.";
+        }
+
+        if (!SshKeyBlob.IsExactly(parts[0], blob))
+        {
+            return "The SSH recipient key is not exactly one well-formed key of its type.";
         }
 
         normalized = value;

@@ -5,21 +5,37 @@ namespace PandaBear.Secrets;
 
 /// <summary>
 /// Converts the <c>sops:</c> block of a SOPS-written YAML file into JSON. It understands block mappings, block sequences,
-/// plain and quoted scalars, block scalars (which are skipped, as they only hold ciphertext), and empty flow collections.
+/// plain and quoted scalars, literal block scalars (kept as text, for the armored age files), and empty flow collections.
 /// Anything else, a tab indent, a repeated key, or a second <c>sops:</c> block yields <see langword="null"/>.
 /// </summary>
 internal static class SopsYamlSubset
 {
     private const int MaxDepth = 16;
 
-    /// <summary>Returns the JSON object <c>{"sops": ...}</c>, or <see langword="null"/> when the text is outside the subset.</summary>
-    internal static string? ToJson(string yaml)
+    /// <summary>
+    /// Returns the JSON object <c>{"sops": ...}</c> and the lines outside the <c>sops</c> block, or <see langword="null"/> when the text is outside
+    /// the subset. It is deliberately strict about the top level: a byte order mark, a document marker or directive, a tab indent, a top-level
+    /// anchor, alias, tag, flow collection, or sequence, and any top-level key that reads as <c>sops</c> without being spelled <c>sops:</c> exactly
+    /// all fail, so a fake block cannot hide the real one.
+    /// </summary>
+    internal static (string Json, List<string> DataLines)? Read(string yaml)
     {
+        if (yaml.Contains('\uFEFF', StringComparison.Ordinal))
+        {
+            return null;
+        }
+
         var lines = yaml.ReplaceLineEndings("\n").Split('\n');
         var start = -1;
         for (var index = 0; index < lines.Length; index++)
         {
-            if (!IsTopLevelSops(lines[index]))
+            var kind = ClassifyTopLevel(lines[index]);
+            if (kind == TopLevel.Invalid)
+            {
+                return null;
+            }
+
+            if (kind != TopLevel.Sops)
             {
                 continue;
             }
@@ -32,15 +48,16 @@ internal static class SopsYamlSubset
             start = index;
         }
 
-        if (start < 0 || !IsEmptyValue(lines[start]))
+        if (start < 0)
         {
             return null;
         }
 
         List<Token> tokens = [];
-        for (var index = start + 1; index < lines.Length; index++)
+        var blockEnd = start + 1;
+        for (; blockEnd < lines.Length; blockEnd++)
         {
-            var line = lines[index];
+            var line = lines[blockEnd];
             var trimmed = line.TrimStart(' ');
             if (trimmed.Length == 0 || trimmed[0] == '#')
             {
@@ -50,11 +67,6 @@ internal static class SopsYamlSubset
             if (line[0] != ' ')
             {
                 break;
-            }
-
-            if (trimmed[0] == '\t')
-            {
-                return null;
             }
 
             tokens.Add(new Token(line.Length - trimmed.Length, trimmed));
@@ -74,16 +86,98 @@ internal static class SopsYamlSubset
             writer.WriteEndObject();
         }
 
-        return Encoding.UTF8.GetString(stream.ToArray());
+        return (Encoding.UTF8.GetString(stream.ToArray()), [.. lines.Take(start), .. lines.Skip(blockEnd)]);
     }
 
-    private static bool IsTopLevelSops(string line) =>
-        line.StartsWith("sops:", StringComparison.Ordinal) || line.StartsWith("\"sops\":", StringComparison.Ordinal) || line.StartsWith("'sops':", StringComparison.Ordinal);
-
-    private static bool IsEmptyValue(string line)
+    private enum TopLevel
     {
-        var rest = line[(line.IndexOf(':', StringComparison.Ordinal) + 1)..].Trim();
-        return rest.Length == 0 || rest[0] == '#';
+        Other,
+        Sops,
+        Invalid,
+    }
+
+    /// <summary>Classifies one line at column zero, and refuses a tab indent anywhere.</summary>
+    private static TopLevel ClassifyTopLevel(string line)
+    {
+        if (line.Length == 0)
+        {
+            return TopLevel.Other;
+        }
+
+        if (line[0] == '\t' || line.TrimStart(' ').StartsWith('\t'))
+        {
+            return TopLevel.Invalid;
+        }
+
+        if (line[0] is ' ' or '#')
+        {
+            return TopLevel.Other;
+        }
+
+        if (IsMarker(line, "---") || IsMarker(line, "...") || line[0] is '%' or '-' or '?' or '&' or '*' or '!' or '{' or '[' or '|' or '>' or '@' or '`')
+        {
+            return TopLevel.Invalid;
+        }
+
+        var colon = FindMappingColon(line);
+        if (colon < 1)
+        {
+            return TopLevel.Invalid;
+        }
+
+        var key = line[..colon].Trim(' ', '\t', '"', '\'');
+        var value = line[(colon + 1)..].Trim(' ');
+        if (key == "<<" || (value.Length > 0 && value[0] is '&' or '*' or '!' or '{' or '[' && value is not ("[]" or "{}")))
+        {
+            return TopLevel.Invalid;
+        }
+
+        if (!string.Equals(key, "sops", StringComparison.OrdinalIgnoreCase))
+        {
+            return TopLevel.Other;
+        }
+
+        // Anything that reads as the metadata key must be spelled exactly 'sops:' with nothing but a comment after it.
+        return line.StartsWith("sops:", StringComparison.Ordinal) && (value.Length == 0 || value[0] == '#') ? TopLevel.Sops : TopLevel.Invalid;
+    }
+
+    private static bool IsMarker(string line, string marker) =>
+        line.StartsWith(marker, StringComparison.Ordinal) && (line.Length == 3 || line[3] is ' ' or '\t');
+
+    /// <summary>Finds the colon that ends a mapping key: outside quotes, followed by a space or the end of the line.</summary>
+    internal static int FindMappingColon(string text)
+    {
+        if (text[0] is '"' or '\'')
+        {
+            var close = text.IndexOf(text[0], 1);
+            if (close < 0)
+            {
+                return -1;
+            }
+
+            var after = close + 1;
+            while (after < text.Length && text[after] == ' ')
+            {
+                after++;
+            }
+
+            return after < text.Length && text[after] == ':' && (after + 1 == text.Length || text[after + 1] == ' ') ? after : -1;
+        }
+
+        if (text[0] is '[' or '{')
+        {
+            return -1;
+        }
+
+        for (var index = 1; index < text.Length; index++)
+        {
+            if (text[index] == ':' && (index + 1 == text.Length || text[index + 1] == ' '))
+            {
+                return index;
+            }
+        }
+
+        return -1;
     }
 
     private readonly record struct Token(int Indent, string Text);
@@ -192,15 +286,22 @@ internal static class SopsYamlSubset
                 return true;
             }
 
-            if (rest[0] is '|' or '>')
+            if (rest[0] == '>' || (rest[0] == '|' && rest is not ("|" or "|-" or "|+")))
             {
-                // A block scalar holds ciphertext here; skip its lines and keep no content.
+                return false;
+            }
+
+            if (rest[0] == '|')
+            {
+                // A literal block scalar holds the armored age file of a recipient; keep its lines.
+                List<string> content = [];
                 while (_position < tokens.Count && tokens[_position].Indent > indent)
                 {
+                    content.Add(tokens[_position].Text.TrimEnd());
                     _position++;
                 }
 
-                writer.WriteStringValue(string.Empty);
+                writer.WriteStringValue(string.Join('\n', content));
                 return true;
             }
 
@@ -274,30 +375,6 @@ internal static class SopsYamlSubset
 
             var after = text[(close + 1)..].TrimStart(' ');
             return after.Length == 0 || after[0] == '#' ? text[1..close] : null;
-        }
-
-        private static int FindMappingColon(string text)
-        {
-            if (text[0] is '"' or '\'')
-            {
-                var close = text.IndexOf(text[0], 1);
-                return close >= 0 && close + 1 < text.Length && text[close + 1] == ':' && (close + 2 == text.Length || text[close + 2] == ' ') ? close + 1 : -1;
-            }
-
-            if (text[0] is '[' or '{')
-            {
-                return -1;
-            }
-
-            for (var index = 1; index < text.Length; index++)
-            {
-                if (text[index] == ':' && (index + 1 == text.Length || text[index + 1] == ' '))
-                {
-                    return index;
-                }
-            }
-
-            return -1;
         }
     }
 }

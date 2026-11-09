@@ -16,6 +16,8 @@ namespace PandaBear.Secrets;
 /// </remarks>
 public static class SopsMetadataReader
 {
+    private const string DefaultUnencryptedSuffix = "_unencrypted";
+
     private static readonly HashSet<string> ScalarProperties = new(StringComparer.Ordinal)
     {
         "lastmodified", "mac", "version", "unencrypted_suffix", "encrypted_suffix", "unencrypted_regex", "encrypted_regex",
@@ -30,16 +32,29 @@ public static class SopsMetadataReader
     public static Result<SopsFileRecipients> Read(string content, SopsFormat format)
     {
         ArgumentNullException.ThrowIfNull(content);
-        var json = format == SopsFormat.Json ? content : SopsYamlSubset.ToJson(content);
-        if (json is null)
+        string json;
+        IReadOnlyList<string>? yamlData = null;
+        if (format == SopsFormat.Json)
         {
-            return Failure("The SOPS metadata is not in the YAML subset that SOPS writes, or the file has no single 'sops' block.");
+            json = content;
+        }
+        else
+        {
+            var converted = SopsYamlSubset.Read(content);
+            if (converted is null)
+            {
+                return Failure("The SOPS metadata is not in the YAML subset that SOPS writes, or the file has no single 'sops' block.");
+            }
+
+            (json, var dataLines) = converted.Value;
+            yamlData = dataLines;
         }
 
         try
         {
             using var document = JsonDocument.Parse(json, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Disallow, AllowTrailingCommas = false });
-            return ReadDocument(document.RootElement);
+            var plain = yamlData is null ? PlainValueScanner.CountJson(document.RootElement) : PlainValueScanner.CountYaml(yamlData);
+            return ReadDocument(document.RootElement, plain);
         }
         catch (JsonException)
         {
@@ -47,7 +62,7 @@ public static class SopsMetadataReader
         }
     }
 
-    private static Result<SopsFileRecipients> ReadDocument(JsonElement root)
+    private static Result<SopsFileRecipients> ReadDocument(JsonElement root, int plainValues)
     {
         if (root.ValueKind != JsonValueKind.Object)
         {
@@ -75,15 +90,22 @@ public static class SopsMetadataReader
 
         List<AgeRecipient> age = [];
         SortedSet<string> other = new(StringComparer.Ordinal);
-        if (!ReadHolders(block, age, other, out var problem))
+        List<string> concerns = [];
+        HashSet<string> envelopes = new(StringComparer.Ordinal);
+        if (!ReadHolders(block, age, other, concerns, envelopes, out var problem))
         {
             return Failure(problem);
         }
 
-        return Result.Ok(new SopsFileRecipients([.. age.DistinctBy(static item => item.Value, StringComparer.Ordinal)], [.. other]));
+        if (plainValues > 0)
+        {
+            concerns.Add(plainValues == 1 ? "1 value is not encrypted" : $"{plainValues} values are not encrypted");
+        }
+
+        return Result.Ok(new SopsFileRecipients(age, [.. other], concerns));
     }
 
-    private static bool ReadHolders(JsonElement block, List<AgeRecipient> age, SortedSet<string> other, out string problem)
+    private static bool ReadHolders(JsonElement block, List<AgeRecipient> age, SortedSet<string> other, List<string> concerns, HashSet<string> envelopes, out string problem)
     {
         problem = string.Empty;
         HashSet<string> seen = new(StringComparer.Ordinal);
@@ -99,7 +121,7 @@ public static class SopsMetadataReader
             switch (property.Name)
             {
                 case "age":
-                    if (!ReadAge(value, age, out problem))
+                    if (!ReadAge(value, age, envelopes, out problem))
                     {
                         return false;
                     }
@@ -114,7 +136,7 @@ public static class SopsMetadataReader
 
                     foreach (var group in value.EnumerateArray())
                     {
-                        if (group.ValueKind != JsonValueKind.Object || !ReadHolders(group, age, other, out problem))
+                        if (group.ValueKind != JsonValueKind.Object || !ReadHolders(group, age, other, concerns, envelopes, out problem))
                         {
                             problem = problem.Length == 0 ? "A SOPS key group is not a mapping." : problem;
                             return false;
@@ -123,7 +145,11 @@ public static class SopsMetadataReader
 
                     break;
                 default:
-                    if (!ScalarProperties.Contains(property.Name) && IsNonEmptyCollection(value))
+                    if (IsNonDefaultSetting(property.Name, value))
+                    {
+                        concerns.Add($"non-default setting {property.Name}");
+                    }
+                    else if (!ScalarProperties.Contains(property.Name) && IsNonEmptyCollection(value))
                     {
                         other.Add(property.Name);
                     }
@@ -135,7 +161,7 @@ public static class SopsMetadataReader
         return true;
     }
 
-    private static bool ReadAge(JsonElement value, List<AgeRecipient> age, out string problem)
+    private static bool ReadAge(JsonElement value, List<AgeRecipient> age, HashSet<string> envelopes, out string problem)
     {
         problem = "The SOPS age recipients are not a list of mappings with a 'recipient'.";
         if (value.ValueKind == JsonValueKind.Null)
@@ -151,11 +177,19 @@ public static class SopsMetadataReader
         foreach (var entry in value.EnumerateArray())
         {
             string? recipient = null;
+            string? enc = null;
             if (entry.ValueKind == JsonValueKind.Object)
             {
-                foreach (var property in entry.EnumerateObject().Where(static p => p.NameEquals("recipient")))
+                foreach (var property in entry.EnumerateObject())
                 {
-                    recipient = recipient is null && property.Value.ValueKind == JsonValueKind.String ? property.Value.GetString() : null;
+                    if (property.NameEquals("recipient"))
+                    {
+                        recipient = recipient is null && property.Value.ValueKind == JsonValueKind.String ? property.Value.GetString() : null;
+                    }
+                    else if (property.NameEquals("enc"))
+                    {
+                        enc = enc is null && property.Value.ValueKind == JsonValueKind.String ? property.Value.GetString() : null;
+                    }
                 }
             }
 
@@ -166,10 +200,39 @@ public static class SopsMetadataReader
                 return false;
             }
 
+            if (age.Any(item => item.Equals(parsed.Value)))
+            {
+                problem = "A SOPS age recipient is listed more than once.";
+                return false;
+            }
+
+            if (enc is null || !AgeEnvelope.IsSingleStanzaFor(parsed.Value, enc) || !envelopes.Add(enc.Trim()))
+            {
+                problem = "A SOPS age entry does not carry its own age file with exactly one recipient stanza that suits its label.";
+                return false;
+            }
+
             age.Add(parsed.Value);
         }
 
         return true;
+    }
+
+    private static bool IsNonDefaultSetting(string name, JsonElement value)
+    {
+        var text = value.ValueKind switch
+        {
+            JsonValueKind.String => value.GetString() ?? string.Empty,
+            JsonValueKind.True => "true",
+            _ => string.Empty,
+        };
+        return name switch
+        {
+            "encrypted_suffix" or "unencrypted_regex" or "encrypted_regex" or "unencrypted_comment_regex" or "encrypted_comment_regex" => text.Length > 0,
+            "unencrypted_suffix" => text.Length > 0 && text != DefaultUnencryptedSuffix,
+            "mac_only_encrypted" => text == "true",
+            _ => false,
+        };
     }
 
     private static bool IsNonEmptyCollection(JsonElement value) => value.ValueKind switch

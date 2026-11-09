@@ -1,10 +1,11 @@
 using PandaBear.Results;
+using PandaBear.Tooling;
 
 namespace PandaBear.Secrets.Tool;
 
 /// <summary>
 /// Implements <c>decrypt</c>: decrypts a whole file or one value (<c>file#key.path</c>) with sops and writes the plaintext to
-/// standard output. <c>--output</c> writes it to a new file with mode 0600 instead, and needs <c>--force</c>. Nothing else
+/// standard output. <c>--output</c> writes it to a new file inside the root with mode 0600, through a temporary file and a rename, and needs <c>--force</c>. Nothing else
 /// goes to standard output, and the plaintext is never escaped: it is the data.
 /// </summary>
 internal static class DecryptCommand
@@ -39,6 +40,7 @@ internal static class DecryptCommand
             throw new InvalidOperationException(identity.ErrorDetails?.Detail ?? "The identity file path is invalid.");
         }
 
+        var destination = outputPath is null ? null : ResolveOutput(root, outputPath);
         var sops = ToolLocator.Sops(environment);
         Result<SecretBytes> plaintext;
         if (target.Contains('#', StringComparison.Ordinal))
@@ -75,12 +77,37 @@ internal static class DecryptCommand
             return ExitCodes.Success;
         }
 
-        await WriteNewOwnerOnlyFile(Path.GetFullPath(outputPath, environment.WorkingDirectory), secret).ConfigureAwait(false);
+        await WriteNewOwnerOnlyFile(destination!, secret).ConfigureAwait(false);
         return ExitCodes.Success;
     }
 
-    private static async Task WriteNewOwnerOnlyFile(string path, SecretBytes secret)
+    /// <summary>Resolves <paramref name="output"/> under <paramref name="root"/>: relative, no <c>..</c>, no symbolic link in any segment, an existing directory, and no file there yet.</summary>
+    private static string ResolveOutput(string root, string output)
     {
+        if (!RepositoryPath.IsRelative(output))
+        {
+            throw new InvalidOperationException("--output must be a path inside the root: relative, with '/' separators and without empty, '.', or '..' segments.");
+        }
+
+        var destination = RepositoryPath.Resolve(root, output);
+        var directory = Path.GetDirectoryName(destination);
+        if (directory is null || !Directory.Exists(directory))
+        {
+            throw new InvalidOperationException("The directory of --output does not exist inside the root; decrypt does not create directories.");
+        }
+
+        return File.Exists(destination) || Directory.Exists(destination)
+            ? throw new InvalidOperationException("The output file already exists; decrypt never overwrites.")
+            : destination;
+    }
+
+    /// <summary>
+    /// Writes the plaintext to a new file next to <paramref name="destination"/> (mode 0600, created exclusively), then renames it into place without
+    /// overwriting. A failure at any step deletes the temporary file, so no partial plaintext is left.
+    /// </summary>
+    private static async Task WriteNewOwnerOnlyFile(string destination, SecretBytes secret)
+    {
+        var temporary = Path.Combine(Path.GetDirectoryName(destination)!, $".{Guid.NewGuid():N}.tmp");
         FileStreamOptions options = new()
         {
             Mode = FileMode.CreateNew,
@@ -92,19 +119,26 @@ internal static class DecryptCommand
             options.UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
         }
 
-        FileStream stream;
         try
         {
-            stream = new FileStream(path, options);
+            var stream = new FileStream(temporary, options);
+            await using (stream.ConfigureAwait(false))
+            {
+                secret.WriteTo(stream);
+                await stream.FlushAsync().ConfigureAwait(false);
+            }
+
+            File.Move(temporary, destination, overwrite: false);
         }
-        catch (IOException) when (File.Exists(path))
+        catch (IOException) when (File.Exists(destination))
         {
+            File.Delete(temporary);
             throw new InvalidOperationException("The output file already exists; decrypt never overwrites.");
         }
-
-        await using (stream.ConfigureAwait(false))
+        catch
         {
-            secret.WriteTo(stream);
+            File.Delete(temporary);
+            throw;
         }
     }
 }

@@ -9,7 +9,7 @@ public sealed class VerifyCommandTests
     private static readonly string Config = TestRecipients.Config(2, TestRecipients.First, TestRecipients.Second);
 
     [Fact]
-    public async Task Every_covered_file_that_is_exact_passes_and_uncovered_files_are_counted_not_judged()
+    public async Task Every_covered_file_that_is_exact_passes_and_uncovered_files_are_listed_and_only_allowed_when_asked_for_by_name()
     {
         // Arrange
         using var repository = CreateRepository(Config);
@@ -20,14 +20,17 @@ public sealed class VerifyCommandTests
         WriteFile(repository.Path, ".git/e.sops.yaml", "ignored");
 
         // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
+        var run = await Run(repository.Path, "verify", "--root", repository.Path, "--allow-unverified-files");
 
         // Assert
         run.ExitCode.ShouldBe(0);
         run.Output.ShouldContain("secrets/a.sops.yaml: ok", StringComparison.Ordinal);
         run.Output.ShouldContain("secrets/deep/b.sops.json: ok", StringComparison.Ordinal);
-        run.Output.ShouldContain("2 files match a creation rule: 2 exact, 0 differ, 0 unreadable. 1 other *.sops.* files are not covered by a rule.", StringComparison.Ordinal);
-        run.Output.ShouldNotContain("elsewhere", StringComparison.Ordinal);
+        run.Output.ShouldContain("elsewhere/c.sops.yaml: no creation rule matches, not verified", StringComparison.Ordinal);
+        run.Output.ShouldContain("2 files match a creation rule: 2 exact, 0 differ, 0 unreadable. 1 other *.sops.* files are not covered by a rule, 0 have paths that cannot be checked.", StringComparison.Ordinal);
+        var strict = await Run(repository.Path, "verify", "--root", repository.Path);
+        strict.ExitCode.ShouldBe(1);
+        strict.Output.ShouldContain("elsewhere/c.sops.yaml: no creation rule matches, not verified", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -72,7 +75,7 @@ public sealed class VerifyCommandTests
     }
 
     [Fact]
-    public async Task A_symbolic_link_is_not_followed()
+    public async Task A_symbolic_link_is_not_followed_and_nothing_verified_is_a_failure()
     {
         // Arrange
         using var repository = CreateRepository(Config);
@@ -85,8 +88,94 @@ public sealed class VerifyCommandTests
         var run = await Run(repository.Path, "verify", "--root", repository.Path);
 
         // Assert
+        run.ExitCode.ShouldBe(2);
+        run.Error.ShouldContain("No file matches a creation rule", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task A_repository_with_no_encrypted_files_is_a_failure_not_a_pass()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+
+        // Act
+        var run = await Run(repository.Path, "verify", "--root", repository.Path, "--allow-unverified-files");
+
+        // Assert
+        run.ExitCode.ShouldBe(2);
+        run.Error.ShouldContain("No file matches a creation rule", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("secrets/a:b.sops.yaml")]
+    [InlineData("secrets/c\\d.sops.yaml")]
+    [InlineData("secrets/new\nline.sops.yaml")]
+    public async Task A_file_with_a_path_the_tool_cannot_judge_is_a_failure_even_when_uncovered_files_are_allowed(string file)
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, "secrets/ok.sops.yaml", TestRecipients.Yaml([TestRecipients.First, TestRecipients.Second]));
+        WriteFile(repository.Path, file, TestRecipients.Yaml([TestRecipients.Third]));
+
+        // Act
+        var run = await Run(repository.Path, "verify", "--root", repository.Path, "--allow-unverified-files");
+
+        // Assert
+        run.ExitCode.ShouldBe(2);
+        run.Error.ShouldContain("cannot be checked", StringComparison.Ordinal);
+        run.Output.ShouldContain("1 files match a creation rule: 1 exact, 0 differ, 0 unreadable.", StringComparison.Ordinal);
+        run.Output.ShouldContain("1 have paths that cannot be checked.", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task The_sops_configuration_file_itself_is_not_an_encrypted_file()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, "secrets/ok.sops.yaml", TestRecipients.Yaml([TestRecipients.First, TestRecipients.Second]));
+        WriteFile(repository.Path, ".sops.yaml", "creation_rules: []\n");
+
+        // Act
+        var run = await Run(repository.Path, "verify", "--root", repository.Path);
+
+        // Assert
         run.ExitCode.ShouldBe(0);
-        run.Output.ShouldContain("0 files match a creation rule", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task A_file_that_hides_the_real_metadata_behind_a_second_document_is_a_failure_not_ok()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        var forged = TestRecipients.Yaml([TestRecipients.First, TestRecipients.Third]) + "---\n" + TestRecipients.Block([TestRecipients.First, TestRecipients.Second]);
+        WriteFile(repository.Path, "secrets/v1.sops.yaml", forged);
+        WriteFile(repository.Path, "secrets/v2.sops.yaml", "\uFEFF" + TestRecipients.Yaml([TestRecipients.First, TestRecipients.Third]));
+        WriteFile(repository.Path, "secrets/v3.sops.yaml", TestRecipients.Yaml([TestRecipients.First, TestRecipients.Third]).Replace("\nsops:", "\n\"sops\" :", StringComparison.Ordinal) + "---\n" + TestRecipients.Block([TestRecipients.First, TestRecipients.Second]));
+
+        // Act
+        var run = await Run(repository.Path, "verify", "--root", repository.Path);
+
+        // Assert
+        run.ExitCode.ShouldBe(2);
+        run.Output.ShouldNotContain(": ok", StringComparison.Ordinal);
+        run.Output.ShouldContain("3 files match a creation rule: 0 exact, 0 differ, 3 unreadable.", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task A_file_with_plaintext_and_a_non_default_encryption_setting_differs_with_the_reasons_named()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, "secrets/new.sops.yaml", "password: hunter2\n" + TestRecipients.Block([TestRecipients.First, TestRecipients.Second], "    unencrypted_regex: .*\n"));
+
+        // Act
+        var run = await Run(repository.Path, "verify", "--root", repository.Path);
+
+        // Assert
+        run.ExitCode.ShouldBe(1);
+        run.Output.ShouldContain("secrets/new.sops.yaml: weakened: 1 value is not encrypted", StringComparison.Ordinal);
+        run.Output.ShouldContain("secrets/new.sops.yaml: weakened: non-default setting unencrypted_regex", StringComparison.Ordinal);
+        run.Output.ShouldNotContain("hunter2", StringComparison.Ordinal);
     }
 
     [Fact]

@@ -6,7 +6,7 @@ namespace PandaBear.Secrets;
 /// <summary>
 /// <see cref="ISopsTool"/> over the <c>sops</c> program, started from an absolute path without a shell. Plaintext goes in on
 /// standard input and out on standard output; arguments carry only public recipients, paths, and key paths; the only
-/// environment variable is <c>SOPS_AGE_KEY_FILE</c>, set to the identity file's path. Reading metadata does not start a process.
+/// environment variable is <c>SOPS_AGE_KEY_FILE</c>, set to the identity file's path. Every call passes <c>--config /dev/null</c> and starts in a new empty directory. Reading metadata does not start a process.
 /// </summary>
 public sealed class ProcessSopsTool : ISopsTool
 {
@@ -40,7 +40,7 @@ public sealed class ProcessSopsTool : ISopsTool
         ArgumentNullException.ThrowIfNull(recipients);
         var type = FormatName(format);
         string[] arguments = ["encrypt", "--age", string.Join(',', recipients.Recipients.Select(static item => item.Value)), "--input-type", type, "--output-type", type, "/dev/stdin"];
-        var (run, problem) = await ToolInvocation.Run(_runner, "sops", new ToolRequest(_sops, arguments, standardInput: plaintext), cancellationToken).ConfigureAwait(false);
+        var (run, problem) = await RunSops(arguments, null, plaintext, cancellationToken).ConfigureAwait(false);
         if (run is null)
         {
             return ToolInvocation.Error<string>(problem!);
@@ -75,71 +75,6 @@ public sealed class ProcessSopsTool : ISopsTool
     }
 
     /// <inheritdoc />
-    /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
-    public async Task<Result> Rotate(string absoluteFile, AgeIdentityRef identity, CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(absoluteFile);
-        ArgumentNullException.ThrowIfNull(identity);
-        var invalid = ToolInvocation.CheckFile(absoluteFile);
-        if (invalid is not null)
-        {
-            return Result.Invalid(invalid, "file", invalid);
-        }
-
-        var (run, problem) = await ToolInvocation.Run(_runner, "sops", Request(["rotate", "-i", absoluteFile], identity), cancellationToken).ConfigureAwait(false);
-        if (run is null)
-        {
-            return Result.Error(problem!);
-        }
-
-        run.Dispose();
-        return Result.Ok();
-    }
-
-    /// <inheritdoc />
-    /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
-    public async Task<Result<RecipientVerification>> UpdateRecipients(string absoluteFile, SopsCreationRule rule, AgeIdentityRef identity, CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(absoluteFile);
-        ArgumentNullException.ThrowIfNull(rule);
-        ArgumentNullException.ThrowIfNull(identity);
-        var before = await VerifyRecipients(absoluteFile, rule, cancellationToken).ConfigureAwait(false);
-        if (before.IsFailure || before.Value.IsExact)
-        {
-            return before;
-        }
-
-        if (before.Value.OtherKeyTypes.Count > 0)
-        {
-            return ToolInvocation.Error<RecipientVerification>("The file has non-age key holders; sops rotate cannot remove them, so the recipients are not changed.");
-        }
-
-        List<string> arguments = ["rotate", "-i"];
-        if (before.Value.Missing.Count > 0)
-        {
-            arguments.AddRange(["--add-age", string.Join(',', before.Value.Missing.Select(static item => item.Value))]);
-        }
-
-        if (before.Value.Unexpected.Count > 0)
-        {
-            arguments.AddRange(["--rm-age", string.Join(',', before.Value.Unexpected.Select(static item => item.Value))]);
-        }
-
-        arguments.Add(absoluteFile);
-        var (run, problem) = await ToolInvocation.Run(_runner, "sops", Request(arguments, identity), cancellationToken).ConfigureAwait(false);
-        if (run is null)
-        {
-            return ToolInvocation.Error<RecipientVerification>(problem!);
-        }
-
-        run.Dispose();
-        var after = await VerifyRecipients(absoluteFile, rule, cancellationToken).ConfigureAwait(false);
-        return after.IsSuccess && after.Value.IsExact
-            ? before
-            : ToolInvocation.Error<RecipientVerification>("sops finished, but the file's recipients are still not the rule's recipient set.");
-    }
-
-    /// <inheritdoc />
     /// <exception cref="ArgumentNullException"><paramref name="absoluteFile"/> is <see langword="null"/>.</exception>
     public Task<Result<SopsFileRecipients>> ListRecipients(string absoluteFile, CancellationToken cancellationToken) =>
         SopsFileReader.ReadRecipients(absoluteFile, cancellationToken);
@@ -155,8 +90,24 @@ public sealed class ProcessSopsTool : ISopsTool
 
     private static string FormatName(SopsFormat format) => format == SopsFormat.Json ? "json" : "yaml";
 
-    private ToolRequest Request(IReadOnlyList<string> arguments, AgeIdentityRef identity) =>
-        new(_sops, arguments, new Dictionary<string, string> { [AgeKeyFile] = identity.Path });
+    /// <summary>
+    /// Runs sops with <c>--config /dev/null</c> and in a new empty directory, so a <c>.sops.yaml</c> in the caller's working directory (a creation rule with
+    /// <c>unencrypted_regex</c>, say) can neither change how data is encrypted nor leave plaintext in the result.
+    /// </summary>
+    private async Task<(ToolResult? Run, string? Problem)> RunSops(IReadOnlyList<string> arguments, AgeIdentityRef? identity, ReadOnlyMemory<byte> standardInput, CancellationToken cancellationToken)
+    {
+        var directory = Directory.CreateTempSubdirectory("sops-");
+        try
+        {
+            IReadOnlyDictionary<string, string>? environment = identity is null ? null : new Dictionary<string, string> { [AgeKeyFile] = identity.Path };
+            ToolRequest request = new(_sops, ["--config", "/dev/null", .. arguments], environment, standardInput, directory.FullName);
+            return await ToolInvocation.Run(_runner, "sops", request, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            directory.Delete(recursive: true);
+        }
+    }
 
     private async Task<Result<SecretBytes>> RunForOutput(IReadOnlyList<string> arguments, string absoluteFile, AgeIdentityRef identity, CancellationToken cancellationToken)
     {
@@ -166,7 +117,7 @@ public sealed class ProcessSopsTool : ISopsTool
             return Result.Invalid<SecretBytes>(invalid, "file", invalid);
         }
 
-        var (run, problem) = await ToolInvocation.Run(_runner, "sops", Request(arguments, identity), cancellationToken).ConfigureAwait(false);
+        var (run, problem) = await RunSops(arguments, identity, default, cancellationToken).ConfigureAwait(false);
 
         // The output moves out of the result; the caller now owns and disposes the bytes.
         return run is null ? ToolInvocation.Error<SecretBytes>(problem!) : Result.Ok(run.StandardOutput);

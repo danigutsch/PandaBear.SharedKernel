@@ -7,7 +7,7 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 Generates [age](https://age-encryption.org) identities, encrypts and decrypts [SOPS](https://getsops.io) files, and checks that
 every encrypted file in a repository is encrypted to exactly the recipients of its creation rule. It is a thin command line over
 `PandaBear.SharedKernel.Secrets`. **Secrets are never arguments**: plaintext travels on standard input and output only, and the
-programs it runs get no environment except `LC_ALL=C` and, for `sops`, the path in `SOPS_AGE_KEY_FILE`.
+programs it runs get no environment except `LC_ALL=C` and, for `sops`, the path in `SOPS_AGE_KEY_FILE`. Every `sops` call passes `--config /dev/null` and starts in an empty directory, so a `.sops.yaml` in the repository cannot change how data is encrypted.
 
 ## Prerequisites
 
@@ -42,6 +42,7 @@ sharedkernel-secrets decrypt secrets/app.sops.yaml --identity ~/.config/age/work
 sharedkernel-secrets recipients list secrets/app.sops.yaml
 sharedkernel-secrets recipients check secrets/app.sops.yaml
 sharedkernel-secrets verify
+sharedkernel-secrets verify --allow-unverified-files
 sharedkernel-secrets --help
 ```
 
@@ -54,12 +55,18 @@ sharedkernel-secrets --help
   file or a password manager rather than your shell history.
 - `decrypt` writes the plaintext to standard output exactly as it is, unescaped, with no added newline. `file#key.path` decrypts
   one value (`servers[0].token` indexes a list). The identity is `--identity <path>` or the path in `SOPS_AGE_KEY_FILE`, never the
-  key itself; a value that looks like a key is refused. `--output <path>` writes a new file with mode 0600 instead and needs
-  `--force`; it never overwrites.
-- `recipients list` prints the age recipients of a file and any other key holder (`kms`, `pgp`, ...). `recipients check` compares
-  them with the file's creation rule: a missing recipient, an unexpected recipient, and any non-age key holder are differences.
-- `verify` checks every `*.sops.*` file under the root that a rule matches. It skips `.git`, `node_modules`, `bin`, `obj`, and
-  symbolic links, counts the files that no rule covers, and does not judge them.
+  key itself; a value that looks like a key is refused. `--output <path>` writes a new file instead and needs `--force`. The
+  path is relative to the root (no `..`, no symbolic link), its directory must exist, and the file is created with mode 0600
+  next to its destination and renamed into place, so a failure leaves no partial plaintext. It never overwrites.
+- `recipients list` prints the age recipients of a file, any other key holder (`kms`, `pgp`, ...), and concerns. `recipients check`
+  compares them with the file's creation rule: a missing recipient, an unexpected recipient, a non-age key holder, and a
+  **weakening** are differences. A weakening is a non-default `unencrypted_regex`, `encrypted_regex`, `unencrypted_suffix`,
+  `encrypted_suffix`, comment regex, or `mac_only_encrypted` setting, or a value that is not `ENC[...]` (a key that ends with
+  `_unencrypted`, `null`, an empty string, and an empty list or mapping are allowed, as sops leaves them in clear).
+- `verify` checks every `*.sops.*` file under the root (not `.sops.yaml`, the sops configuration). It skips `.git`,
+  `node_modules`, `bin`, `obj`, and symbolic links. It never passes on nothing: no covered file is exit 2; a path it cannot judge
+  (`a:b.sops.yaml`, a backslash, a control character) is exit 2; a file that no rule matches is listed and exits 1, unless
+  you pass `--allow-unverified-files`, whose name says what you accept: nobody checks who can read those files.
 
 Output escapes control characters in file names and tool messages. The plaintext of `decrypt` is data and is not escaped, so
 pipe it, do not print it to a shared terminal or a log.
@@ -98,15 +105,19 @@ properties are errors):
 | Code | Meaning |
 | --- | --- |
 | 0 | Success, or a preview that changed nothing. |
-| 1 | A check ran and found a file whose recipients are not exactly its rule's recipients, or a command-line parse error. |
-| 2 | The result cannot be known or the request was refused: invalid or missing configuration, no matching rule, a missing program, a failed program, `--output` without `--force`, an existing output file, or a covered file that cannot be read. |
+| 1 | A check ran and found a file whose recipients are not exactly its rule's recipients, a weakened file, or (for `verify`) a file that no rule covers; or a command-line parse error. |
+| 2 | The result cannot be known or the request was refused: invalid or missing configuration, no matching rule, a missing program, a failed program, `--output` without `--force` or outside the root, an existing output file, `verify` with nothing to verify, or a file that cannot be read, understood, or judged. |
 
 ## Limits
 
 - Only YAML and JSON SOPS files have readable recipients. A reader that does not fully understand a file reports an error; it
-  never treats the file as having no recipients.
+  never treats the file as having no recipients. It refuses a YAML file with a second document, a byte order mark, a tab indent,
+  a top-level anchor, alias, tag, or flow collection, or a top-level key that reads as `sops` without being spelled `sops:`.
+- The checks read metadata. They prove the labels and the structure (each `enc` is an age file with exactly one recipient stanza
+  of the right type, and for SSH recipients the right key tag), not who can decrypt: only a trial decryption by each holder shows
+  that. See the [ADR](../../docs/adr/20261109-secrets-engine.md#threat-model-and-limits).
 - A non-age key holder (`kms`, `pgp`, `hc_vault`) makes a file differ from its rule, because its holder can read the file. The
   tool does not remove them.
 - .NET cannot guarantee that no copy of decrypted data remains in memory. The
   [library README](../../src/SharedKernel/SharedKernel.Secrets/README.md#what-net-cannot-guarantee) says what is and is not cleared.
-- `rotate` and recipient updates are available in the library (`ISopsTool`) and not in this command line yet.
+- Rotating keys and changing recipients are not offered: they rewrite files in place, and the tool has no command with a preview and an atomic write for them yet.

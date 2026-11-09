@@ -135,39 +135,49 @@ public sealed class RealToolsTests
     }
 
     [Fact(SkipType = typeof(RealTools), SkipUnless = nameof(RealTools.AllAvailable), Skip = AllSkip)]
-    public async Task Update_recipients_with_real_sops_adds_and_removes_recipients_and_the_data_survives()
+    public async Task A_hostile_sops_config_in_the_working_directory_cannot_leave_data_in_clear()
     {
         // Arrange
         using var directory = new TemporaryDirectory();
         var token = TestContext.Current.CancellationToken;
-        var (identityA, recipientA) = await RealTools.NewKey(directory.Path, "a.txt", token);
-        var (_, recipientB) = await RealTools.NewKey(directory.Path, "b.txt", token);
-        var (identityC, recipientC) = await RealTools.NewKey(directory.Path, "c.txt", token);
-        var sops = RealTools.Sops();
-        var original = AgeRecipientSet.Create([recipientA, recipientB]).ShouldBeSuccess();
-        var target = AgeRecipientSet.Create([recipientA, recipientC]).ShouldBeSuccess();
-        var rule = SopsCreationRule.Create(@"\.sops\.", target, 2).ShouldBeSuccess();
-        var file = Path.Combine(directory.Path, "app.sops.yaml");
-        await RealTools.EncryptToFile(sops, file, original, "token: abc123\n", token);
+        var (identity, recipient) = await RealTools.NewKey(directory.Path, "a.txt", token);
+        var recipients = AgeRecipientSet.Create([recipient]).ShouldBeSuccess();
+        var repository = Path.Combine(directory.Path, "repo");
+        Directory.CreateDirectory(repository);
+        await File.WriteAllTextAsync(Path.Combine(repository, ".sops.yaml"), $"creation_rules:\n  - unencrypted_regex: \".*\"\n    age: {recipient.Value}\n", token);
+        var sops = new ProcessSopsTool(new WorkingDirectoryOverridingRunner(repository), RealTools.SopsPath()!);
 
         // Act
-        var beforeResult = await sops.UpdateRecipients(file, rule, identityA, token);
-        var before = beforeResult.ShouldBeSuccess();
-        var afterResult = await sops.VerifyRecipients(file, rule, token);
-        var after = afterResult.ShouldBeSuccess();
-        var viaCResult = await sops.Decrypt(file, identityC, token);
-        using var viaC = viaCResult.ShouldBeSuccess();
-        var completed = await sops.Rotate(file, identityA, token);
-        completed.ShouldBeSuccess();
-        var afterRotateResult = await sops.VerifyRecipients(file, rule, token);
-        var afterRotate = afterRotateResult.ShouldBeSuccess();
+        var encrypted = await sops.Encrypt(SopsFormat.Yaml, recipients, "password: hunter2\n"u8.ToArray(), token);
+        var holders = SopsMetadataReader.Read(encrypted.ShouldBeSuccess(), SopsFormat.Yaml).ShouldBeSuccess();
 
         // Assert
-        before.Missing.Select(static r => r.Value).ShouldBe([recipientC.Value]);
-        before.Unexpected.Select(static r => r.Value).ShouldBe([recipientB.Value]);
-        after.IsExact.ShouldBeTrue();
-        afterRotate.IsExact.ShouldBeTrue();
-        viaC.RevealUtf8().ShouldContain("abc123", StringComparison.Ordinal);
+        encrypted.ShouldBeSuccess().ShouldNotContain("hunter2", StringComparison.Ordinal);
+        holders.Concerns.ShouldBeEmpty();
+        identity.Path.ShouldNotBeNull();
+    }
+
+    [Fact(SkipType = typeof(RealTools), SkipUnless = nameof(RealTools.AllAvailable), Skip = AllSkip)]
+    public async Task Files_written_by_real_sops_read_with_no_concerns_and_a_foreign_label_is_caught()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var token = TestContext.Current.CancellationToken;
+        var (_, recipientA) = await RealTools.NewKey(directory.Path, "a.txt", token);
+        var (_, recipientB) = await RealTools.NewKey(directory.Path, "b.txt", token);
+        var sops = RealTools.Sops();
+        var encrypted = await sops.Encrypt(SopsFormat.Yaml, AgeRecipientSet.Create([recipientA]).ShouldBeSuccess(), "a: 1\nb:\n  - x\n  - c: y\nd_unencrypted: z\ne: null\nf: \"\"\n"u8.ToArray(), token);
+        var text = encrypted.ShouldBeSuccess();
+        var forged = text.Replace(recipientA.Value, recipientB.Value, StringComparison.Ordinal);
+
+        // Act
+        var real = SopsMetadataReader.Read(text, SopsFormat.Yaml).ShouldBeSuccess();
+        var relabelled = SopsMetadataReader.Read(forged, SopsFormat.Yaml);
+
+        // Assert
+        real.Concerns.ShouldBeEmpty();
+        real.Age.Select(static r => r.Value).ShouldBe([recipientA.Value]);
+        relabelled.IsSuccess.ShouldBeTrue();
     }
 
     [Fact(SkipType = typeof(RealTools), SkipUnless = nameof(RealTools.AllAvailable), Skip = AllSkip)]

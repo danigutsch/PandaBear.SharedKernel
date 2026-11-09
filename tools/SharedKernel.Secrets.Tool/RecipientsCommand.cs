@@ -20,6 +20,11 @@ internal static class RecipientsCommand
             await EscapedOutput.Line(output, $"other key holder: {other}", cancellationToken).ConfigureAwait(false);
         }
 
+        foreach (var concern in holders.Concerns)
+        {
+            await EscapedOutput.Line(output, $"concern: {concern}", cancellationToken).ConfigureAwait(false);
+        }
+
         return ExitCodes.Success;
     }
 
@@ -57,6 +62,11 @@ internal static class RecipientsCommand
         foreach (var other in verification.OtherKeyTypes)
         {
             await EscapedOutput.Line(output, $"{path}: non-age key holder {other}", cancellationToken).ConfigureAwait(false);
+        }
+
+        foreach (var concern in verification.Concerns)
+        {
+            await EscapedOutput.Line(output, $"{path}: weakened: {concern}", cancellationToken).ConfigureAwait(false);
         }
     }
 

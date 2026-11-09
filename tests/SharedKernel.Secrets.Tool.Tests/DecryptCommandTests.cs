@@ -25,7 +25,7 @@ public sealed class DecryptCommandTests
         run.Output.ShouldBe(string.Empty);
         run.Error.ShouldBe(string.Empty);
         var request = runner.Requests.ShouldHaveSingleItem();
-        request.Arguments.ShouldBe(["decrypt", Path.Combine(repository.Path, "secrets", "app.sops.yaml")]);
+        request.Arguments.ShouldBe(["--config", "/dev/null", "decrypt", Path.Combine(repository.Path, "secrets", "app.sops.yaml")]);
         request.Environment.ShouldBe(new Dictionary<string, string> { ["SOPS_AGE_KEY_FILE"] = "/keys/id.txt" });
     }
 
@@ -42,7 +42,7 @@ public sealed class DecryptCommandTests
         // Assert
         run.ExitCode.ShouldBe(0);
         Encoding.UTF8.GetString(run.Plaintext).ShouldBe("hunter2");
-        runner.Requests.ShouldHaveSingleItem().Arguments.ShouldBe(["decrypt", "--extract", "[\"db\"][\"password\"]", Path.Combine(repository.Path, "secrets", "app.sops.yaml")]);
+        runner.Requests.ShouldHaveSingleItem().Arguments.ShouldBe(["--config", "/dev/null", "decrypt", "--extract", "[\"db\"][\"password\"]", Path.Combine(repository.Path, "secrets", "app.sops.yaml")]);
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public sealed class DecryptCommandTests
         // Arrange
         using var repository = CreateRepository(Config);
         var runner = ScriptedToolRunner.Unused();
-        var output = Path.Combine(repository.Path, "plain.txt");
+        var output = "plain.txt";
 
         // Act
         var run = await Run(repository.Path, runner, ResolveAll, null, null, "decrypt", "secrets/app.sops.yaml", "--root", repository.Path, "--identity", "/keys/id.txt", "--output", output);
@@ -108,7 +108,7 @@ public sealed class DecryptCommandTests
         run.ExitCode.ShouldBe(2);
         run.Error.ShouldContain("needs --force", StringComparison.Ordinal);
         runner.Requests.ShouldBeEmpty();
-        File.Exists(output).ShouldBeFalse();
+        File.Exists(Path.Combine(repository.Path, output)).ShouldBeFalse();
         run.Plaintext.ShouldBeEmpty();
     }
 
@@ -118,7 +118,7 @@ public sealed class DecryptCommandTests
     {
         // Arrange
         using var repository = CreateRepository(Config);
-        var output = Path.Combine(repository.Path, "plain.txt");
+        var output = "plain.txt";
 
         // Act
         var run = await Run(repository.Path, ScriptedToolRunner.Succeeding("hunter2"), ResolveAll, null, null, "decrypt", "secrets/app.sops.yaml", "--root", repository.Path, "--identity", "/keys/id.txt", "--output", output, "--force");
@@ -126,9 +126,11 @@ public sealed class DecryptCommandTests
         // Assert
         run.ExitCode.ShouldBe(0);
         run.Plaintext.ShouldBeEmpty();
-        var written = await File.ReadAllTextAsync(output, TestContext.Current.CancellationToken);
+        var target = Path.Combine(repository.Path, output);
+        var written = await File.ReadAllTextAsync(target, TestContext.Current.CancellationToken);
         written.ShouldBe("hunter2");
-        File.GetUnixFileMode(output).ShouldBe(UnixFileMode.UserRead | UnixFileMode.UserWrite);
+        File.GetUnixFileMode(target).ShouldBe(UnixFileMode.UserRead | UnixFileMode.UserWrite);
+        Directory.GetFiles(repository.Path).Select(Path.GetFileName).Order(StringComparer.Ordinal).ToArray().ShouldBe(["plain.txt"]);
     }
 
     [Fact]
@@ -136,8 +138,8 @@ public sealed class DecryptCommandTests
     {
         // Arrange
         using var repository = CreateRepository(Config);
-        var output = Path.Combine(repository.Path, "plain.txt");
-        await File.WriteAllTextAsync(output, "existing", TestContext.Current.CancellationToken);
+        var output = "plain.txt";
+        await File.WriteAllTextAsync(Path.Combine(repository.Path, output), "existing", TestContext.Current.CancellationToken);
 
         // Act
         var run = await Run(repository.Path, ScriptedToolRunner.Succeeding("hunter2"), ResolveAll, null, null, "decrypt", "secrets/app.sops.yaml", "--root", repository.Path, "--identity", "/keys/id.txt", "--output", output, "--force");
@@ -145,11 +147,77 @@ public sealed class DecryptCommandTests
         // Assert
         run.ExitCode.ShouldBe(2);
         run.Error.ShouldContain("never overwrites", StringComparison.Ordinal);
-        var written = await File.ReadAllTextAsync(output, TestContext.Current.CancellationToken);
+        var written = await File.ReadAllTextAsync(Path.Combine(repository.Path, output), TestContext.Current.CancellationToken);
         written.ShouldBe("existing");
+        Directory.GetFiles(repository.Path).Select(Path.GetFileName).Order(StringComparer.Ordinal).ToArray().ShouldBe(["plain.txt"]);
         var visible = run.Output + run.Error;
         visible.ShouldNotContain("hunter2", StringComparison.Ordinal);
     }
+
+    [Theory]
+    [InlineData("../escape.txt")]
+    [InlineData("sub/../../escape.txt")]
+    [InlineData("/tmp/absolute-escape.txt")]
+    [InlineData("a\\b.txt")]
+    [InlineData("missing-directory/plain.txt")]
+    public async Task An_output_outside_the_root_or_in_a_directory_that_does_not_exist_is_refused_and_sops_is_not_run(string output)
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        var runner = ScriptedToolRunner.Unused();
+
+        // Act
+        var run = await Run(repository.Path, runner, ResolveAll, null, null, "decrypt", "secrets/app.sops.yaml", "--root", repository.Path, "--identity", "/keys/id.txt", "--output", output, "--force");
+
+        // Assert
+        run.ExitCode.ShouldBe(2);
+        runner.Requests.ShouldBeEmpty();
+        File.Exists(Path.Combine(Path.GetDirectoryName(repository.Path)!, "escape.txt")).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task An_output_through_a_symbolic_link_is_refused()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        using var elsewhere = new TemporaryDirectory();
+        Directory.CreateSymbolicLink(Path.Combine(repository.Path, "linked"), elsewhere.Path);
+        File.CreateSymbolicLink(Path.Combine(repository.Path, "link.txt"), Path.Combine(elsewhere.Path, "victim.txt"));
+        var runner = ScriptedToolRunner.Succeeding("hunter2");
+
+        // Act
+        var throughDirectory = await Run(repository.Path, runner, ResolveAll, null, null, "decrypt", "secrets/app.sops.yaml", "--root", repository.Path, "--identity", "/keys/id.txt", "--output", "linked/plain.txt", "--force");
+        var throughFile = await Run(repository.Path, runner, ResolveAll, null, null, "decrypt", "secrets/app.sops.yaml", "--root", repository.Path, "--identity", "/keys/id.txt", "--output", "link.txt", "--force");
+
+        // Assert
+        throughDirectory.ExitCode.ShouldBe(2);
+        throughFile.ExitCode.ShouldBe(2);
+        Directory.GetFileSystemEntries(elsewhere.Path).ShouldBeEmpty();
+    }
+
+
+    [Fact]
+    public async Task A_file_that_appears_while_decrypting_is_never_overwritten_and_no_temporary_file_is_left()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        var target = Path.Combine(repository.Path, "plain.txt");
+        var runner = new ScriptedToolRunner(_ =>
+        {
+            File.WriteAllText(target, "raced");
+            return ScriptedToolRunner.Result(0, "hunter2");
+        });
+
+        // Act
+        var run = await Run(repository.Path, runner, ResolveAll, null, null, "decrypt", "secrets/app.sops.yaml", "--root", repository.Path, "--identity", "/keys/id.txt", "--output", "plain.txt", "--force");
+
+        // Assert
+        var content = await File.ReadAllTextAsync(target, TestContext.Current.CancellationToken);
+        run.ExitCode.ShouldBe(2);
+        content.ShouldBe("raced");
+        Directory.GetFiles(repository.Path).Select(Path.GetFileName).ToArray().ShouldBe(["plain.txt"]);
+    }
+
 
     [Fact]
     public async Task A_failing_sops_writes_no_plaintext_and_reports_one_line()

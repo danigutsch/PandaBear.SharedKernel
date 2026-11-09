@@ -12,18 +12,25 @@ internal static class TestRecipients
     /// <summary>A third valid X25519 recipient.</summary>
     public const string Third = "age1dquc283cn3pehdzu8pyk68ucd4eq5x6d9ru5qj67zdd7pq7gkdeq5raw4x";
 
+    private const string Encrypted = "ENC[AES256_GCM,data:x,iv:y,tag:z,type:str]";
+
     /// <summary>A SOPS JSON document encrypted to <paramref name="recipients"/>, with extra raw members inside the sops object.</summary>
     public static string Json(string[] recipients, string extraMembers = "")
     {
-        var age = string.Join(",", recipients.Select(static r => $"{{\"recipient\":\"{r}\",\"enc\":\"AAAA\"}}"));
-        return $"{{\"db\":{{\"password\":\"ENC[x]\"}},\"sops\":{{\"kms\":null,\"age\":[{age}],\"version\":\"3.13.0\"{extraMembers}}}}}";
+        var age = string.Join(",", recipients.Select(static r => $"{{\"recipient\":\"{r}\",\"enc\":{AgeEnvelopes.JsonLiteral(r)}}}"));
+        return $"{{\"db\":{{\"password\":\"{Encrypted}\"}},\"sops\":{{\"kms\":null,\"age\":[{age}],\"version\":\"3.13.0\"{extraMembers}}}}}";
     }
 
-    /// <summary>A SOPS YAML document encrypted to <paramref name="recipients"/>.</summary>
-    public static string Yaml(string[] recipients) =>
-        "db:\n    password: ENC[x]\nsops:\n    kms: []\n    age:\n"
-        + string.Concat(recipients.Select(static r => $"        - recipient: {r}\n          enc: |\n            AAAA\n"))
-        + "    version: 3.13.0\n";
+    /// <summary>A SOPS YAML document encrypted to <paramref name="recipients"/>, with extra raw lines inside the sops block and before it.</summary>
+    public static string Yaml(string[] recipients, string extraSopsLines = "", string dataLines = "") =>
+        $"db:\n    password: {Encrypted}\n{dataLines}{Block(recipients, extraSopsLines)}";
+
+    /// <summary>A bare <c>sops:</c> block that lists <paramref name="recipients"/>.</summary>
+    public static string Block(string[] recipients, string extraSopsLines = "") =>
+        "sops:\n    kms: []\n    age:\n"
+        + string.Concat(recipients.Select(static r => $"        - recipient: {r}\n          enc: |\n{AgeEnvelopes.Indented(r, 12)}"))
+        + extraSopsLines
+        + "    unencrypted_suffix: _unencrypted\n    version: 3.13.0\n";
 
     /// <summary>A configuration with one rule for <c>secrets/</c> that requires <paramref name="recipients"/>.</summary>
     public static string Config(int minimum, params string[] recipients) =>

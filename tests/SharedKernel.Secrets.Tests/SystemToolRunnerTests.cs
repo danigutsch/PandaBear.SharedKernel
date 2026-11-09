@@ -52,6 +52,29 @@ public sealed class SystemToolRunnerTests
     }
 
     [Fact(SkipType = typeof(UnixToolsProbe), SkipUnless = nameof(UnixToolsProbe.IsAvailable), Skip = SkipReason)]
+    public async Task The_child_starts_in_the_requested_working_directory()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+
+        // Act
+        using var result = await new SystemToolRunner().Run(new ToolRequest(UnixToolsProbe.Shell, ["-c", "pwd -P"], workingDirectory: directory.Path), TestContext.Current.CancellationToken);
+
+        // Assert
+        result.StandardOutput.RevealUtf8().Trim().ShouldBe(Path.GetFullPath(directory.Path).TrimEnd('/'));
+    }
+
+    [Fact]
+    public void A_relative_working_directory_is_refused()
+    {
+        // Act
+        Action act = () => _ = new ToolRequest("/usr/bin/age", [], workingDirectory: "relative");
+
+        // Assert
+        act.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact(SkipType = typeof(UnixToolsProbe), SkipUnless = nameof(UnixToolsProbe.IsAvailable), Skip = SkipReason)]
     public async Task The_exit_code_and_error_text_are_returned()
     {
         // Act

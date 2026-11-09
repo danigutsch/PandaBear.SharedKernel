@@ -41,7 +41,7 @@ public sealed class EncryptCommandTests
         run.Output.ShouldContain("Encrypted secrets/app.sops.yaml to 2 recipients.", StringComparison.Ordinal);
         var request = runner.Requests.ShouldHaveSingleItem();
         request.Executable.ShouldBe("/fake/sops");
-        request.Arguments.ShouldBe(["encrypt", "--age", $"{TestRecipients.Second},{TestRecipients.First}", "--input-type", "yaml", "--output-type", "yaml", "/dev/stdin"]);
+        request.Arguments.ShouldBe(["--config", "/dev/null", "encrypt", "--age", $"{TestRecipients.Second},{TestRecipients.First}", "--input-type", "yaml", "--output-type", "yaml", "/dev/stdin"]);
         request.Arguments.ShouldNotContain("password: hunter2");
         request.Environment.ShouldBeEmpty();
         Encoding.UTF8.GetString(runner.Inputs.ShouldHaveSingleItem()).ShouldBe("password: hunter2");
