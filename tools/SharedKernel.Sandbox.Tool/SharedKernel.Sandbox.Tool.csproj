@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>sharedkernel-sandbox</ToolCommandName>
+        <PackageId>PandaBear.SharedKernel.Sandbox.Tool</PackageId>
+        <Description>Probes what the current sandboxed environment allows, such as Unix sockets, named pipes, and writing to the temp and NuGet folders, and explains what that means for .NET tools.</Description>
+        <RootNamespace>PandaBear.Sandbox.Tool</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>sandbox;dotnet;agents;dotnet-tool</PackageTags>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.Sandbox.Tool.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.CommandLine" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="../Shared/ControlCharacters.cs" Link="Shared/ControlCharacters.cs" />
+        <Compile Include="../Shared/RepositoryPath.cs" Link="Shared/RepositoryPath.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

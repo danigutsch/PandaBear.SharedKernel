@@ -118,8 +118,13 @@ non-interactive commands and to how they start a UI.
   and digest-pinned image, and the scenarios with their script, base URL variable, forwarded environment variables,
   and optional host process. The [k6 tool README](../tools/SharedKernel.K6.Tool/README.md#configuration) describes
   the format.
+- `sharedkernel-sandbox doctor` optionally reads `.config/sharedkernel-sandbox.json`: the paths that the sandbox must
+  not let a command read. Without the file it skips that check. The
+  [sandbox tool README](../tools/SharedKernel.Sandbox.Tool/README.md#configuration) describes the format.
 - Paths in the file are relative to the root and use `/`. They are never rooted, have no empty, `.`, or `..`
   segments, and resolve under the root without following symbolic links.
+  The one exception is `deniedReadPaths` of `sharedkernel-sandbox`: it names places outside the repository, so each entry is
+  absolute or starts with `~/`, and the tool only probes it and never writes there.
 - Path patterns match with `FileSystemName.MatchesSimpleExpression(pattern, path, ignoreCase: false)`. Regular
   expressions from configuration compile with `RegexOptions.NonBacktracking` and a match timeout.
 
