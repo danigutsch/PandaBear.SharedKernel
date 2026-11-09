@@ -32,6 +32,7 @@ Choose the packages your project needs. Each package has its own README with req
 | Run configured k6 load scenarios against local targets | [k6 tool](tools/SharedKernel.K6.Tool/README.md) |
 | Probe what a sandboxed environment allows and what that means for .NET tools | [Sandbox tool](tools/SharedKernel.Sandbox.Tool/README.md) |
 | Compare declared packages with installed ones, one owner per package | [Packages tool](tools/SharedKernel.Packages.Tool/README.md) |
+| Generate age keys, encrypt and decrypt SOPS files, and verify every file's recipients against its creation rule | [Secrets tool](tools/SharedKernel.Secrets.Tool/README.md) |
 | Merge and migrate password vault exports offline | [Vault manager tool](tools/SharedKernel.VaultManager.Tool/README.md) |
 
 ## Try it

@@ -135,6 +135,10 @@ non-interactive commands and to how they start a UI.
   [packages tool README](../tools/SharedKernel.Packages.Tool/README.md#configuration) describes the format. The optional
   `minimumReleaseAgeDays` (0 to 3650) is the default age for `sharedkernel-packages updates`, which makes no network
   request unless `--allow-network` is given.
+- `sharedkernel-secrets` reads `.config/sharedkernel-secrets.json`: the creation rules, each with a path expression, the exact
+  recipients, and the least number of recipients. The tool hard-codes no policy, so the minimum is the consumer's. It
+  previews by default and changes files only with `--force`, never overwrites, and takes plaintext only on standard input.
+  The [secrets tool README](../tools/SharedKernel.Secrets.Tool/README.md#configuration) describes the format.
 - Paths in the file are relative to the root and use `/`. They are never rooted, have no empty, `.`, or `..`
   segments, and resolve under the root without following symbolic links.
   The one exception is `deniedReadPaths` of `sharedkernel-sandbox`: it names places outside the repository, so each entry is

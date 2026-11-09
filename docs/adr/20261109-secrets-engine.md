@@ -53,7 +53,7 @@ primitives here (`AgeRecipientSet`, `RecipientVerification`) instead of repeatin
 
 `sharedkernel-secrets` reads `.config/sharedkernel-secrets.json` (`creationRules`), finds `age`, `age-keygen`, and `sops` on
 `PATH` with the shared resolver (absolute `PATH` directories only), and is preview-by-default: `keygen`, `encrypt`, and
-`decrypt --output` change nothing without `--force`. `decrypt` writes to standard output unless `--output` and `--force`
+`decrypt --output` change nothing without `--force`, and none of them overwrites a file. `decrypt` writes to standard output unless `--output` and `--force`
 are both given. Secrets are never arguments. Exit codes: 0 success or a preview, 1 a check found differences, 2 the result
 cannot be known or the request was refused.
 
