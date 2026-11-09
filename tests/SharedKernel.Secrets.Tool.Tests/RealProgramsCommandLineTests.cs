@@ -194,4 +194,41 @@ public sealed class RealProgramsCommandLineTests
         swapped.Output.ShouldContain($"secrets/app.sops.yaml: changed: needs review: recipient {recipients[0]} is new", StringComparison.Ordinal);
         swapped.Output.ShouldContain($"secrets/other.sops.yaml: changed: needs review: recipient {recipients[0]} is new", StringComparison.Ordinal);
     }
+
+    [Fact(SkipType = typeof(RealPrograms), SkipUnless = nameof(RealPrograms.AllAvailable), Skip = "age, age-keygen, and sops are not all installed.")]
+    public async Task Real_sops_files_whose_sops_key_is_spelled_in_ways_a_heuristic_misses_are_never_skipped()
+    {
+        // Arrange
+        using var repository = CreateRepository(null);
+        var token = TestContext.Current.CancellationToken;
+        var runner = new SystemToolRunner();
+        var keys = Path.Combine(Path.GetTempPath(), "pandabear-keys-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(keys);
+        var recipients = new List<string>();
+        foreach (var name in KeyNames)
+        {
+            var keygen = await Run(repository.Path, runner, RealPrograms.Find, null, null, "keygen", "--output", Path.Combine(keys, name), "--force");
+            recipients.Add(RealPrograms.RecipientFrom(keygen.Output));
+        }
+
+        Directory.CreateDirectory(Path.Combine(repository.Path, ".config"));
+        await File.WriteAllTextAsync(Path.Combine(repository.Path, ".config", "sharedkernel-secrets.json"), TestRecipients.Config(2, recipients[1], recipients[2]), token);
+        await Run(repository.Path, runner, RealPrograms.Find, Encoding.UTF8.GetBytes("password: hunter2\n"), null, "encrypt", "secrets/app.sops.yaml", "--force");
+        var real = await File.ReadAllTextAsync(Path.Combine(repository.Path, "secrets", "app.sops.yaml"), token);
+        var spellings = new Dictionary<string, string> { ["complex"] = "? sops\n:", ["tag"] = "!!str sops:", ["anchor"] = "&x sops:", ["tab"] = "sops:\t" };
+        foreach (var (name, spelling) in spellings)
+        {
+            await File.WriteAllTextAsync(Path.Combine(repository.Path, "secrets", name + ".yaml"), real.Replace("\nsops:", "\n" + spelling, StringComparison.Ordinal), token);
+        }
+
+        // Act
+        var run = await Run(repository.Path, runner, RealPrograms.Find, null, null, "verify");
+
+        // Assert
+        run.ExitCode.ShouldBe(2);
+        foreach (var name in spellings.Keys)
+        {
+            run.Error.ShouldContain($"secrets/{name}.yaml:", StringComparison.Ordinal);
+        }
+    }
 }

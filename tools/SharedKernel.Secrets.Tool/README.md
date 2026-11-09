@@ -85,18 +85,23 @@ sharedkernel-secrets --help
     says `file could not be decrypted (not an identity verdict)`. A corrupted file therefore never reads as "this holder cannot decrypt".
 - `verify` judges every SOPS-encrypted file in the repository against the first creation rule that matches its path. It skips
   `.git` and the root `.sops.yaml` (the sops configuration) and nothing else by name: `bin`, `obj`, and `node_modules` are
-  checked. It matches `.sops.` in any letter case. **Inside the scope of a rule it reads every file, whatever its name or
-  extension**, and a file it cannot positively rule out as non-SOPS is exit 2: binary data, text that is not UTF-8 (such as UTF-16),
-  JSON-looking text that does not parse, a file larger than 16 MiB, and a FIFO or device (reads time out). A file that is SOPS is judged
-  whatever it is called (`secrets/prod.yaml`, `prod.enc.yaml`, `secrets/token`, a JSON binary store); JSON is read as JSON even in a
-  `.yaml` file, so a one-line `{"data":...,"sops":{...}}` is judged; YAML with a `sops` key at any indentation or in an escaped
-  spelling is judged (and fails if the reader cannot fully understand it). Outside every rule it reads only files named `*.sops.*`
-  or with a yaml, yml, json, env, or ini extension, and lists the SOPS ones as uncovered. It never passes on nothing: no covered file is
-  exit 2. **Symbolic links are never followed and are never silently skipped:** a link where a rule applies, or whose children a rule
-  could match (a link to a directory under `secrets/`), is exit 2; a link outside every rule that is named like a SOPS file is listed
-  as uncovered. A path with a control character, `:`, or `\` that holds SOPS metadata cannot be judged (exit 2); a SOPS file that no rule
-  matches is listed and exits 1, unless you pass `--allow-unverified-files`, whose name says what you accept: nobody checks who can
-  read those files.
+  checked. **A file is skipped as "not SOPS" only when it positively cannot be one.** That means it is empty, or it is valid UTF-8 and
+  holds **no** `sops` token and **no** `ENC[` anywhere. The search ignores letter case and decodes YAML and JSON escapes (`\xNN`,
+  `\uNNNN`, `\UNNNNNNNN`, a backslash at the end of a line), normalises compatibility characters (full-width letters), drops invisible
+  format characters, and folds case (the long s and similar), so `s\x6fps`, `ｓｏｐｓ`, and `ſops` all count. No line pattern decides that a
+  file is not SOPS, because go-yaml and sops read forms (`? sops`, `!!str sops:`, `&x sops:`, `sops:` plus a tab, flow YAML behind a
+  comment or `---`, an indented INI `[sops]` header) that no heuristic covers. A file that holds the token or an `ENC[` and that this tool cannot read as a
+  JSON document with a top-level `sops` property or as YAML with a plain `sops` key is **unknown**; binary data, text that is not
+  UTF-8 (such as UTF-16), a file larger than 16 MiB, and a FIFO or device (reads time out) are unknown too. Inside the scope of a rule
+  every file is read, whatever its name or extension, and an unknown file is exit 2. **A file in scope that merely mentions `sops` in
+  prose or a comment is therefore exit 2**; reword it or move it out of the rule's scope (there is no ignore list, because a skipped file is exactly the
+  hole this rule closes). A file that is SOPS is judged whatever it is called (`secrets/prod.yaml`, `prod.enc.yaml`, `secrets/token`); JSON is read as
+  JSON even in a `.yaml` file, so a one-line `{"data":...,"sops":{...}}` is judged. Outside every rule it reads only files named
+  `*.sops.*` (any letter case) or with a yaml, yml, json, env, or ini extension: a SOPS one is listed as uncovered, and so is an
+  unreadable one named `*.sops.*`. It never passes on nothing: no covered file is exit 2. **Symbolic links are never followed and are never silently skipped:**
+  a link where a rule applies, or whose children a rule could match (a link to a directory under `secrets/`), is exit 2; a link outside every rule that is
+  named like a SOPS file is listed as uncovered. A path with a control character, `:`, or `\` that holds SOPS metadata cannot be judged (exit 2); a SOPS file
+  that no rule matches is listed and exits 1, unless you pass `--allow-unverified-files`, whose name says what you accept: nobody checks who can read those files.
 - `verify --base <rev>` is the strongest check that needs no key. For every judged file it reads the same file at that git revision
   (git by absolute path, arguments one by one, no shell, no user configuration; the revision cannot start with `-` or hold `:` or
   spaces) and compares each label's `enc` text. A label that is new, or whose `enc` differs, is `changed: needs review` (exit 1),

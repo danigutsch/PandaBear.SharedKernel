@@ -80,7 +80,7 @@ internal static class SecretsToolHarness
                 File.WriteAllBytes(path, [(byte)'a', 0, (byte)'b']);
                 break;
             case "brokenjson":
-                File.WriteAllText(path, "{\"data\": ");
+                File.WriteAllText(path, "{\"sops\": ");
                 break;
             default:
                 File.WriteAllText(path, "\uFEFF" + TestRecipients.Json([TestRecipients.First]));

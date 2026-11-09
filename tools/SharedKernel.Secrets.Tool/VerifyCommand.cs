@@ -110,9 +110,16 @@ internal static class VerifyCommand
         }
 
         var sniffed = SopsSniffer.Classify(bytes, out var contentFormat, out var reason);
+        if (sniffed == SniffResult.Unknown && !inScope && named)
+        {
+            tally.Uncovered++;
+            await EscapedOutput.Line(output, $"{relative}: no creation rule matches, not verified (and it cannot be read: {reason})", cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
         if (sniffed == SniffResult.Unknown)
         {
-            if (inScope || named)
+            if (inScope)
             {
                 tally.Unjudgeable++;
                 await EscapedOutput.Line(error, $"{relative}: the file cannot be ruled out as a SOPS file: {reason}", cancellationToken).ConfigureAwait(false);
