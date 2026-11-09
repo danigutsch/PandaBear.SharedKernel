@@ -75,3 +75,41 @@ collection.ShouldAllHaveLink("self");        // nonempty array payload; every it
 `ShouldHaveLink` requires a `links` array containing an object whose `rel` equals the relation
 (case-sensitive) and whose `href` is a nonblank string. `ShouldAllHaveLink` fails on an empty array.
 Route values and other relations stay in the consuming test. Both have `userMessage` overloads.
+
+## Asserting success responses
+
+```csharp
+using PandaBear.Testing.Http;
+
+var tour = await response.ShouldBeCreated<TourDto>(cancellationToken);   // 201, Location, application/json
+response.ShouldHaveLocation("/api/tours/");                              // path prefix of the Location header
+response.ShouldHaveETag("\"3\"").ShouldBeNoStore();                      // strong tag; no-store headers
+
+var dto = await getResponse.ShouldBeOk<TourDto>(cancellationToken);      // 200, application/json, body as TourDto
+await deleteResponse.ShouldBeNoContent(cancellationToken);               // 204 with an empty body
+var bytes = await exportResponse.ShouldBeFile("text/csv", "tours.csv", cancellationToken);
+```
+
+| Assertion | Checks | Returns |
+| --- | --- | --- |
+| `ShouldHaveStatus(status)`, `ShouldBeOk()`, `ShouldBeAccepted()` | The status code (200, 202) | the response |
+| `ShouldBeOk<T>()` | 200, media type `application/json`, a body that deserializes to `T` | `T` |
+| `ShouldBeCreated()`, `ShouldBeCreated<T>()` | 201, a `Location` header, and for `T` the same body checks as `ShouldBeOk<T>` | the response, or `T` |
+| `ShouldHaveLocation(pathPrefix)` | the `Location` path starts with the prefix; query and fragment are ignored | the `Uri` |
+| `ShouldBeNoContent()` | 204 and an empty body | the response |
+| `ShouldBeFile(contentType, fileName)` | 200, media type, `attachment` disposition, and the name from `filename*` (RFC 5987) or else `filename` | the bytes |
+| `ShouldHaveHeader(name, value)` | a header on the response or its content, by case-insensitive name, with exactly that value | the response |
+| `ShouldBeNoStore()` | what `HttpCacheHeaders.SetNoStore` writes: `Cache-Control: no-store`, `Pragma: no-cache`, `Expires` not in the future | the response |
+| `ShouldHaveETag(quotedTag)` | a strong `ETag` equal to the quoted tag, such as `"v1"` | the response |
+
+`T` is read with `JsonSerializerOptions.Web` (case-insensitive, camelCase). Pass a `JsonSerializerOptions`
+for other naming, or a `JsonTypeInfo<T>` from a source-generated `JsonSerializerContext` for a
+reflection-free read; only the `JsonTypeInfo<T>` overloads avoid reflection. The media type is compared
+without parameters and ignoring case, and only `application/json` is accepted, not `+json` types.
+
+A wrong status, media type, or body fails with an `XunitException` that states the expected and
+actual values. Failures about the status or body quote at most 200 characters of a text body with
+control characters flattened to spaces, and only the size of a binary body, so a failure never prints
+a whole payload. Values of credential headers (`Authorization`, `Cookie`, `Set-Cookie`, and similar)
+are never quoted. Every assertion has a `userMessage` overload, and the asynchronous ones leave the
+response body readable afterwards.
