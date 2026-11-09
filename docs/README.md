@@ -42,3 +42,4 @@ Module README files beside source own consumer usage and examples. Samples and b
 - [Repo new command](adr/20261108-repo-new-command.md)
 - [Sandbox tool](adr/20261108-sandbox-tool.md)
 - [Packages tool](adr/20261108-packages-tool.md)
+- [Package advisories and release dates](adr/20261109-package-advisories.md)
