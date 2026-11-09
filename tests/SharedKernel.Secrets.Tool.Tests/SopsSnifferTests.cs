@@ -49,6 +49,66 @@ public sealed class SopsSnifferTests
     }
 
     [Theory]
+    [InlineData("\"so\\\u2028ps\": x")]
+    [InlineData("\"so\\\u2029ps\": x")]
+    [InlineData("\"so\\\u0085ps\": x")]
+    [InlineData("\"so\\\nps\": x")]
+    [InlineData("\"so\\\r\nps\": x")]
+    [InlineData("\"so\\\u2028   ps\": x")]
+    [InlineData("\"E\\\u2028NC[AES256_GCM]\"")]
+    [InlineData("\"E\\\u2029NC[AES256_GCM]\"")]
+    [InlineData("\"E\\\u0085NC[AES256_GCM]\"")]
+    public void A_backslash_before_any_line_break_character_is_a_line_continuation_that_reads_as_nothing(string text)
+    {
+        // Act
+        var result = SopsSniffer.Classify(Encoding.UTF8.GetBytes(text), out _, out _);
+
+        // Assert
+        result.ShouldNotBe(SniffResult.NotSops);
+    }
+
+    [Theory]
+    [InlineData("s o p s")]
+    [InlineData("s.o.p.s")]
+    [InlineData("s\\ o\\ p\\ s")]
+    [InlineData("s\u200bo\u00a0p\u2003s")]
+    [InlineData("S\u3000O\u2000P\u200as")]
+    [InlineData("s\u2001o\u2002p\u2003s\u2004:")]
+    [InlineData("s-o_p/s")]
+    [InlineData("e n c [")]
+    [InlineData("E\u00a0N\u2003C \u3000[")]
+    [InlineData("e.n.c.[x]")]
+    [InlineData("e n [ c [")]
+    [InlineData("sop s")]
+    public void Letters_of_the_tokens_separated_by_anything_that_is_not_a_letter_or_digit_still_count(string text)
+    {
+        // Act
+        var result = SopsSniffer.Classify(Encoding.UTF8.GetBytes(text), out _, out _);
+
+        // Assert
+        result.ShouldNotBe(SniffResult.NotSops);
+    }
+
+    [Theory]
+    [InlineData("soap and ops")]
+    [InlineData("enc (x)")]
+    [InlineData("ENC(x)")]
+    [InlineData("s1o2p3s")]
+    [InlineData("sosps")]
+    [InlineData("e n x [")]
+    [InlineData("ncc[")]
+    [InlineData("enc text [x]")]
+    [InlineData("enc, then words, then [brackets]")]
+    public void Text_whose_letters_do_not_spell_a_token_even_when_separators_are_ignored_is_not_sops(string text)
+    {
+        // Act
+        var result = SopsSniffer.Classify(Encoding.UTF8.GetBytes(text), out _, out _);
+
+        // Assert
+        result.ShouldBe(SniffResult.NotSops);
+    }
+
+    [Theory]
     [InlineData("? sops\n:\n")]
     [InlineData("!!str sops:\n  a: b\n")]
     [InlineData("&x sops:\n  a: b\n")]

@@ -109,7 +109,43 @@ internal static class SopsSniffer
     /// <summary>Returns whether the text, escapes decoded and case folded, holds <c>sops</c> or <c>ENC[</c> anywhere.</summary>
     internal static bool HasToken(string text) => Contains(Fold(text, unescape: false)) || Contains(Fold(text, unescape: true));
 
-    private static bool Contains(string folded) => folded.Contains("SOPS", StringComparison.Ordinal) || folded.Contains("ENC[", StringComparison.Ordinal);
+    /// <summary>
+    /// A separator-insensitive search of folded text for <c>s o p s</c> or <c>e n c [</c> with anything that is not a letter or digit between the characters
+    /// (the pattern <c>s[^\p{L}\p{N}]*o[^\p{L}\p{N}]*p[^\p{L}\p{N}]*s</c>, and <c>e..n..c</c> then separators then <c>[</c>). It runs in linear time: only letters and digits are kept,
+    /// and the bracket is looked for among the separators that follow the <c>c</c>. This is a backstop for escape equivalences that the decoder does not list, so
+    /// it over-flags on purpose: <c>s.o.p.s</c> in prose counts.
+    /// </summary>
+    private static bool Contains(string folded)
+    {
+        List<int> positions = [];
+        StringBuilder letters = new();
+        for (var index = 0; index < folded.Length; index++)
+        {
+            if (char.IsLetterOrDigit(folded[index]))
+            {
+                letters.Append(folded[index]);
+                positions.Add(index);
+            }
+        }
+
+        var compact = letters.ToString();
+        if (compact.Contains("SOPS", StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        for (var start = compact.IndexOf("ENC", StringComparison.Ordinal); start >= 0; start = compact.IndexOf("ENC", start + 1, StringComparison.Ordinal))
+        {
+            var last = positions[start + 2];
+            var next = start + 3 < positions.Count ? positions[start + 3] : folded.Length;
+            if (folded.AsSpan(last + 1, next - last - 1).Contains('['))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     private static string Fold(string text, bool unescape)
     {
@@ -135,6 +171,9 @@ internal static class SopsSniffer
         return folded.ToString();
     }
 
+    /// <summary>The line breaks libyaml recognises: line feed, carriage return, next line (U+0085), line separator (U+2028), and paragraph separator (U+2029).</summary>
+    private static bool IsBreak(char value) => value is '\n' or '\r' or '\u0085' or '\u2028' or '\u2029';
+
     /// <summary>Decodes <c>\xHH</c>, <c>\uHHHH</c>, <c>\UHHHHHHHH</c> and a backslash that ends a line (with the indentation that follows it) anywhere in the text.</summary>
     private static string UnescapeText(string text)
     {
@@ -153,10 +192,10 @@ internal static class SopsSniffer
             }
 
             var next = text[index + 1];
-            if (next is '\n' or '\r')
+            if (IsBreak(next))
             {
                 index++;
-                while (index + 1 < text.Length && text[index + 1] is '\n' or '\r' or ' ' or '\t')
+                while (index + 1 < text.Length && (IsBreak(text[index + 1]) || text[index + 1] is ' ' or '\t'))
                 {
                     index++;
                 }

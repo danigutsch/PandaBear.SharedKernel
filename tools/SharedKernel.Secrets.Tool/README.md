@@ -88,7 +88,7 @@ sharedkernel-secrets --help
   checked. **A file is skipped as "not SOPS" only when it positively cannot be one.** That means it is empty, or it is valid UTF-8 and
   holds **no** `sops` token and **no** `ENC[` anywhere. The search ignores letter case and decodes YAML and JSON escapes (`\xNN`,
   `\uNNNN`, `\UNNNNNNNN`, a backslash at the end of a line), normalises compatibility characters (full-width letters), drops invisible
-  format characters, and folds case (the long s and similar), so `s\x6fps`, `ｓｏｐｓ`, and `ſops` all count. No line pattern decides that a
+  format characters, and folds case (the long s and similar), so `s\x6fps`, `ｓｏｐｓ`, and `ſops` all count; a backslash before any line break (line feed, carriage return, NEL, line separator, paragraph separator) is a continuation. As a backstop for escape equivalences that are not listed, the search also ignores every character that is not a letter or digit between the letters, so `s.o.p.s`, `s o p s`, and `e n c [` count too (this over-flags on purpose; such a file in scope is exit 2). No line pattern decides that a
   file is not SOPS, because go-yaml and sops read forms (`? sops`, `!!str sops:`, `&x sops:`, `sops:` plus a tab, flow YAML behind a
   comment or `---`, an indented INI `[sops]` header) that no heuristic covers. A file that holds the token or an `ENC[` and that this tool cannot read as a
   JSON document with a top-level `sops` property or as YAML with a plain `sops` key is **unknown**; binary data, text that is not
@@ -102,6 +102,7 @@ sharedkernel-secrets --help
   a link where a rule applies, or whose children a rule could match (a link to a directory under `secrets/`), is exit 2; a link outside every rule that is
   named like a SOPS file is listed as uncovered. A path with a control character, `:`, or `\` that holds SOPS metadata cannot be judged (exit 2); a SOPS file
   that no rule matches is listed and exits 1, unless you pass `--allow-unverified-files`, whose name says what you accept: nobody checks who can read those files.
+- The skip rule is deliberately over-conservative, and the token search is a heuristic backstop. What `verify` guarantees is only this: a file it skips was positively proven free of the tokens above. A YAML escape equivalence that is not listed remains a residual risk.
 - `verify --base <rev>` is the strongest check that needs no key. For every judged file it reads the same file at that git revision
   (git by absolute path, arguments one by one, no shell, no user configuration; the revision cannot start with `-` or hold `:` or
   spaces) and compares each label's `enc` text. A label that is new, or whose `enc` differs, is `changed: needs review` (exit 1),

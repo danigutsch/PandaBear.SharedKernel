@@ -315,6 +315,27 @@ public sealed class VerifyScopeTests
         run.Error.ShouldContain("secrets/store:", StringComparison.Ordinal);
     }
 
+    [Theory]
+    [InlineData("\u2028")]
+    [InlineData("\u2029")]
+    [InlineData("\u0085")]
+    [InlineData("\n")]
+    public async Task A_yaml_file_whose_sops_key_and_every_encrypted_value_are_split_by_an_escaped_line_break_is_never_skipped(string lineBreak)
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
+        var rewritten = Subset.Replace("\nsops:", $"\n? \"so\\{lineBreak}ps\"\n:", StringComparison.Ordinal).Replace("ENC[", $"\"E\\{lineBreak}NC[", StringComparison.Ordinal);
+        WriteFile(repository.Path, "secrets/split.yaml", rewritten);
+
+        // Act
+        var run = await Run(repository.Path, "verify", "--root", repository.Path);
+
+        // Assert
+        run.ExitCode.ShouldBe(2);
+        run.Error.ShouldContain("secrets/split.yaml:", StringComparison.Ordinal);
+    }
+
     [Fact]
     public async Task A_sops_looking_file_outside_every_rule_with_a_sops_name_is_listed_not_skipped_even_when_it_cannot_be_parsed()
     {
