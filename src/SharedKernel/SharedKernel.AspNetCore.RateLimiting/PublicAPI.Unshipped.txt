@@ -1,0 +1,14 @@
+#nullable enable
+PandaBear.AspNetCore.RateLimiting.AspNetCoreRateLimitingExtensions
+PandaBear.AspNetCore.RateLimiting.RateLimitEventTelemetryServiceCollectionExtensions
+PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy
+PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.Name.get -> string!
+PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.Name.init -> void
+PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.PermitLimit.get -> int
+PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.PermitLimit.init -> void
+PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.RemoteIpFixedWindowRateLimitPolicy(string! Name, int PermitLimit, System.TimeSpan Window) -> void
+PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.Window.get -> System.TimeSpan
+PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.Window.init -> void
+static PandaBear.AspNetCore.RateLimiting.AspNetCoreRateLimitingExtensions.AddRemoteIpFixedWindowPolicies(this Microsoft.AspNetCore.RateLimiting.RateLimiterOptions! options, System.Collections.Generic.IReadOnlyCollection<PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy!>! policies) -> Microsoft.AspNetCore.RateLimiting.RateLimiterOptions!
+static PandaBear.AspNetCore.RateLimiting.AspNetCoreRateLimitingExtensions.AddRemoteIpFixedWindowPolicy(this Microsoft.AspNetCore.RateLimiting.RateLimiterOptions! options, string! policyName, int permitLimit, System.TimeSpan window) -> Microsoft.AspNetCore.RateLimiting.RateLimiterOptions!
+static PandaBear.AspNetCore.RateLimiting.RateLimitEventTelemetryServiceCollectionExtensions.AddRateLimitEventTelemetry(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

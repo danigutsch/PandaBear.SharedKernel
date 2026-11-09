@@ -297,11 +297,15 @@
       "PandaBear.SharedKernel.AspNetCore": {
         "type": "Project",
         "dependencies": {
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.AspNetCore.Authentication": {
+        "type": "Project",
+        "dependencies": {
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[10.0.13, )",
-          "PandaBear.SharedKernel.Idempotency.Abstractions": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.OpenApi": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.AspNetCore": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.OpenApi": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.HttpClients": {
@@ -328,9 +332,6 @@
           "Microsoft.OpenApi": "[2.12.2, )",
           "PandaBear.SharedKernel.ApiVersioning": "[0.1.0-alpha.0, )"
         }
-      },
-      "PandaBear.SharedKernel.Results": {
-        "type": "Project"
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "CentralTransitive",

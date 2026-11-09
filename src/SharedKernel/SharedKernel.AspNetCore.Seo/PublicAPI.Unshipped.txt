@@ -1,0 +1,14 @@
+#nullable enable
+const PandaBear.AspNetCore.Seo.SitemapXmlSerializer.ContentType = "application/xml; charset=utf-8" -> string!
+const PandaBear.AspNetCore.Seo.SitemapXmlSerializer.MaximumUrlCount = 50000 -> int
+PandaBear.AspNetCore.Seo.AspNetCoreRobotsTxtExtensions
+PandaBear.AspNetCore.Seo.SitemapCanonicalOrigin
+PandaBear.AspNetCore.Seo.SitemapEntry
+PandaBear.AspNetCore.Seo.SitemapEntry.LastModified.get -> System.DateTimeOffset?
+PandaBear.AspNetCore.Seo.SitemapEntry.Location.get -> System.Uri!
+PandaBear.AspNetCore.Seo.SitemapEntry.SitemapEntry(System.Uri! location, System.DateTimeOffset? lastModified = null) -> void
+PandaBear.AspNetCore.Seo.SitemapXmlSerializer
+static PandaBear.AspNetCore.Seo.AspNetCoreRobotsTxtExtensions.MapRobotsTxt(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! app, string! robotsTxt) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
+static PandaBear.AspNetCore.Seo.SitemapCanonicalOrigin.IsValid(string? value) -> bool
+static PandaBear.AspNetCore.Seo.SitemapCanonicalOrigin.Parse(string! value) -> System.Uri!
+static PandaBear.AspNetCore.Seo.SitemapXmlSerializer.Serialize(System.Collections.Generic.IEnumerable<PandaBear.AspNetCore.Seo.SitemapEntry!>! entries, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.IO.Stream!>!

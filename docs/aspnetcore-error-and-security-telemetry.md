@@ -1,26 +1,34 @@
 # ASP.NET Core error and security telemetry
 
-`PandaBear.SharedKernel.AspNetCore` offers two opt-in registrations that make unexpected errors and
-security events observable without exposing exception text, tokens or claims. Packages remain preview
-(prerelease). Nothing here is on by default.
+Three opt-in registrations make unexpected errors and security events observable without exposing
+exception text, tokens or claims. Each lives in the package that owns its concern, and all of them share the
+meter `PandaBear.AspNetCore`. Packages remain preview (prerelease). Nothing here is on by default.
+
+| Registration | Package | Namespace |
+| --- | --- | --- |
+| `AddUnhandledExceptionHandler` | `PandaBear.SharedKernel.AspNetCore` | `PandaBear.AspNetCore` |
+| `AddAuthenticationEventTelemetry` | `PandaBear.SharedKernel.AspNetCore.Authentication` | `PandaBear.AspNetCore.Authentication` |
+| `AddRateLimitEventTelemetry` | `PandaBear.SharedKernel.AspNetCore.RateLimiting` | `PandaBear.AspNetCore.RateLimiting` |
 
 ## Register
 
 ```csharp
-builder.Services.AddUnhandledExceptionHandler();   // IExceptionHandler + ProblemDetails + counter
-builder.Services.AddSecurityEventTelemetry();      // JwtBearer events + rate-limit rejections
+builder.Services.AddUnhandledExceptionHandler();       // IExceptionHandler + ProblemDetails + counter
+builder.Services.AddAuthenticationEventTelemetry();    // JwtBearer events
+builder.Services.AddRateLimitEventTelemetry();         // rate-limit rejections
 
 var app = builder.Build();
-app.UseExceptionHandler();                         // required so the framework calls the handler
+app.UseExceptionHandler();                             // required so the framework calls the handler
 ```
 
 Export the meter with the host's OpenTelemetry (or other `System.Diagnostics.Metrics`) configuration by
-adding the meter name `PandaBear.AspNetCore` (`AspNetCoreTelemetry.MeterName`).
+adding the meter name `PandaBear.AspNetCore` (`AspNetCoreTelemetry.MeterName`, in the core package).
 
-`AddSecurityEventTelemetry` wraps, after all other configuration, the `JwtBearerEvents` of every
-scheme and `RateLimiterOptions.OnRejected`. Existing handlers keep running after the report, and the
-existing `AddApiSecurity`, `AddApiBearerAuthentication` and `AddRemoteIpFixedWindowPolicy` helpers are
-unchanged.
+`AddAuthenticationEventTelemetry` wraps, after all other configuration, the `JwtBearerEvents` of every
+scheme, and `AddRateLimitEventTelemetry` wraps `RateLimiterOptions.OnRejected`. Existing handlers keep running
+after the report, and the existing `AddApiSecurity`, `AddApiBearerAuthentication` and
+`AddRemoteIpFixedWindowPolicy` helpers are unchanged. These two registrations replace the former single
+`AddSecurityEventTelemetry()`, which required both the JWT bearer and rate-limiting dependencies.
 
 Not instrumented, by design: a scheme that sets `EventsType`; a `JwtBearerEvents` subclass that overrides the
 virtual methods (`AuthenticationFailed`, `Challenge`, `Forbidden`) without calling the base, because the wrapper

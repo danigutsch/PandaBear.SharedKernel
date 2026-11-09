@@ -1,14 +1,11 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
 namespace PandaBear.AspNetCore;
 
 /// <summary>
-/// Registers the opt-in unhandled-exception handler and security-event telemetry.
+/// Registers the opt-in unhandled-exception handler.
 /// </summary>
 public static class AspNetCoreServiceCollectionExtensions
 {
@@ -29,30 +26,6 @@ public static class AspNetCoreServiceCollectionExtensions
         services.AddProblemDetails();
         services.TryAddSingleton<UnhandledExceptionReporter>();
         services.AddExceptionHandler<UnhandledExceptionHandler>();
-        return services;
-    }
-
-    /// <summary>
-    /// Logs and counts JWT bearer authentication failures, challenges and forbidden results with a bounded reason, and
-    /// rate-limit rejections with the policy name. Existing events and rejection callbacks keep running afterwards.
-    /// </summary>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="services"/> is <see langword="null"/>.</exception>
-    /// <remarks>
-    /// Tokens, claims and exception messages are never logged or used as tag values. A request that presents an invalid
-    /// token raises both <c>authentication_failed</c> and <c>challenge</c>. Not instrumented: a scheme that configures
-    /// <c>EventsType</c>, an events subclass that overrides the virtual methods without calling the <c>On*</c> delegates, and a limiter
-    /// configured only through the <c>UseRateLimiter(RateLimiterOptions)</c> overload. Reporting never throws into the host.
-    /// </remarks>
-    /// <param name="services">The service collection to configure.</param>
-    /// <returns>The same service collection.</returns>
-    public static IServiceCollection AddSecurityEventTelemetry(this IServiceCollection services)
-    {
-        ArgumentNullException.ThrowIfNull(services);
-
-        services.AddMetrics();
-        services.TryAddSingleton<SecurityEventReporter>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerSecurityEventsPostConfigureOptions>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<RateLimiterOptions>, RateLimiterSecurityEventsPostConfigureOptions>());
         return services;
     }
 }

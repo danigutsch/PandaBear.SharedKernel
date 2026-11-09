@@ -42,7 +42,7 @@ Candidate: `JsonElement` extensions such as `ShouldHaveString(name, expected)`, 
 
 Telemetry tests read `measurement.Tags[...]` repeatedly for one measurement.
 
-- 31 `Tags[...].ShouldBe` lines in 4 files: `SecurityEventPipelineTests.cs` (8), `SecurityEventTelemetryTests.cs` (10), `UnhandledExceptionHandlerTests.cs` (8) and `UiFailureReporterTests.cs` (5). Example: `SharedKernel.AspNetCore.Tests/SecurityEventTelemetryTests.cs:42`.
+- 31 `Tags[...].ShouldBe` lines in 4 files: `SecurityEventPipelineTests.cs` (8), `SecurityEventTelemetryTests.cs` (10), `UnhandledExceptionHandlerTests.cs` (8) and `UiFailureReporterTests.cs` (5). Example: `SharedKernel.AspNetCore.Authentication.Tests/SecurityEventTelemetryTests.cs:42` (moved from `SharedKernel.AspNetCore.Tests` when the package was split).
 
 Candidate: a tag-set assertion such as `ShouldHaveTags(("event", "authentication_failed"), ("reason", reason))` on the measurement type. The count is modest and the helper would need to depend on whichever measurement type these tests share, so confirm that type is public before proposing it for a package.
 

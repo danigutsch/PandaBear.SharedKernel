@@ -14,10 +14,10 @@ Node labels use project/assembly identities; public C# namespace roots are `Pand
 ```mermaid
 flowchart TB
     SharedKernel_ApiVersioning_AspNetCore[SharedKernel.ApiVersioning.AspNetCore] --> SharedKernel_ApiVersioning[SharedKernel.ApiVersioning]
-    SharedKernel_AspNetCore[SharedKernel.AspNetCore] --> SharedKernel_Idempotency_Abstractions[SharedKernel.Idempotency.Abstractions]
     SharedKernel_AspNetCore[SharedKernel.AspNetCore] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
-    SharedKernel_AspNetCore[SharedKernel.AspNetCore] --> SharedKernel_OpenApi[SharedKernel.OpenApi]
-    SharedKernel_AspNetCore[SharedKernel.AspNetCore] --> SharedKernel_Results[SharedKernel.Results]
+    SharedKernel_AspNetCore_Authentication[SharedKernel.AspNetCore.Authentication] --> SharedKernel_AspNetCore[SharedKernel.AspNetCore]
+    SharedKernel_AspNetCore_Authentication[SharedKernel.AspNetCore.Authentication] --> SharedKernel_OpenApi[SharedKernel.OpenApi]
+    SharedKernel_AspNetCore_RateLimiting[SharedKernel.AspNetCore.RateLimiting] --> SharedKernel_AspNetCore[SharedKernel.AspNetCore]
     SharedKernel_Blazor[SharedKernel.Blazor] --> SharedKernel_HttpClients[SharedKernel.HttpClients]
     SharedKernel_Blazor[SharedKernel.Blazor] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_Branding[SharedKernel.Branding] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
@@ -38,6 +38,8 @@ flowchart TB
     SharedKernel_EventSourcing_Npgsql[SharedKernel.EventSourcing.Npgsql] --> SharedKernel_EventSourcing[SharedKernel.EventSourcing]
     SharedKernel_EventSourcing_Npgsql[SharedKernel.EventSourcing.Npgsql] --> SharedKernel_Npgsql[SharedKernel.Npgsql]
     SharedKernel_HttpClients[SharedKernel.HttpClients] --> SharedKernel_Idempotency_Abstractions[SharedKernel.Idempotency.Abstractions]
+    SharedKernel_Idempotency_AspNetCore[SharedKernel.Idempotency.AspNetCore] --> SharedKernel_Idempotency_Abstractions[SharedKernel.Idempotency.Abstractions]
+    SharedKernel_Idempotency_AspNetCore[SharedKernel.Idempotency.AspNetCore] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_Idempotency_EntityFrameworkCore[SharedKernel.Idempotency.EntityFrameworkCore] --> SharedKernel_EntityFrameworkCore[SharedKernel.EntityFrameworkCore]
     SharedKernel_Idempotency_EntityFrameworkCore[SharedKernel.Idempotency.EntityFrameworkCore] --> SharedKernel_Idempotency_Abstractions[SharedKernel.Idempotency.Abstractions]
     SharedKernel_MalwareScanning_ClamAv[SharedKernel.MalwareScanning.ClamAv] --> SharedKernel_MalwareScanning[SharedKernel.MalwareScanning]

@@ -1,0 +1,33 @@
+#nullable enable
+const PandaBear.AspNetCore.Authentication.ApiAuthenticationDefaults.AllowHttpDevelopmentAuthorityConfigurationKey = "Authentication:AllowHttpDevelopmentAuthority" -> string!
+const PandaBear.AspNetCore.Authentication.ApiAuthenticationDefaults.AuthorityConfigurationKey = "Authentication:Authority" -> string!
+const PandaBear.AspNetCore.Authentication.ApiAuthenticationDefaults.IssuerConfigurationKey = "Authentication:Issuer" -> string!
+const PandaBear.AspNetCore.Authentication.ApiAuthenticationDefaults.PermissionClaimType = "permission" -> string!
+const PandaBear.AspNetCore.Authentication.ApiAuthenticationDefaults.RolesClaimType = "roles" -> string!
+const PandaBear.AspNetCore.Authentication.ApiAuthenticationDefaults.SubjectClaimType = "sub" -> string!
+PandaBear.AspNetCore.Authentication.AntiforgerySignOutEndpointRouteBuilderExtensions
+PandaBear.AspNetCore.Authentication.ApiAuthenticationDefaults
+PandaBear.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions
+PandaBear.AspNetCore.Authentication.ApiBearerScheme
+PandaBear.AspNetCore.Authentication.ApiBearerScheme.ApiBearerScheme(string! Name, string! Audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! PermissionsByRole) -> void
+PandaBear.AspNetCore.Authentication.ApiBearerScheme.Audience.get -> string!
+PandaBear.AspNetCore.Authentication.ApiBearerScheme.Audience.init -> void
+PandaBear.AspNetCore.Authentication.ApiBearerScheme.Name.get -> string!
+PandaBear.AspNetCore.Authentication.ApiBearerScheme.Name.init -> void
+PandaBear.AspNetCore.Authentication.ApiBearerScheme.PermissionsByRole.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>!
+PandaBear.AspNetCore.Authentication.ApiBearerScheme.PermissionsByRole.init -> void
+PandaBear.AspNetCore.Authentication.ApiSecurityApplicationBuilderExtensions
+PandaBear.AspNetCore.Authentication.AuthenticationEventTelemetryServiceCollectionExtensions
+PandaBear.AspNetCore.Authentication.AuthorizationPolicyBuilderExtensions
+PandaBear.AspNetCore.Authentication.ClaimsPrincipalExtensions
+static PandaBear.AspNetCore.Authentication.AntiforgerySignOutEndpointRouteBuilderExtensions.MapAntiforgeryProtectedSignOut(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, string! pattern, string! localAuthenticationScheme, string! remoteAuthenticationScheme, string! redirectUri) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
+static PandaBear.AspNetCore.Authentication.AntiforgerySignOutEndpointRouteBuilderExtensions.MapAntiforgeryProtectedSignOut(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, string! pattern, string! localAuthenticationScheme, string! remoteAuthenticationScheme, System.Uri! redirectUri) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
+static PandaBear.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiAuthorization(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
+static PandaBear.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiBearerAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, string! audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
+static PandaBear.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiBearerAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, System.Collections.Generic.IReadOnlyList<PandaBear.AspNetCore.Authentication.ApiBearerScheme!>! schemes) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
+static PandaBear.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiSecurity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, string! audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
+static PandaBear.AspNetCore.Authentication.ApiAuthenticationServiceCollectionExtensions.AddApiSecurity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, System.Collections.Generic.IReadOnlyList<PandaBear.AspNetCore.Authentication.ApiBearerScheme!>! schemes) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
+static PandaBear.AspNetCore.Authentication.ApiSecurityApplicationBuilderExtensions.UseApiSecurity(this Microsoft.AspNetCore.Builder.WebApplication! application) -> Microsoft.AspNetCore.Builder.WebApplication!
+static PandaBear.AspNetCore.Authentication.AuthenticationEventTelemetryServiceCollectionExtensions.AddAuthenticationEventTelemetry(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static PandaBear.AspNetCore.Authentication.AuthorizationPolicyBuilderExtensions.RequirePermission(this Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder! builder, string! permission) -> Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder!
+static PandaBear.AspNetCore.Authentication.ClaimsPrincipalExtensions.GetSubjectId(this System.Security.Claims.ClaimsPrincipal! principal) -> string?

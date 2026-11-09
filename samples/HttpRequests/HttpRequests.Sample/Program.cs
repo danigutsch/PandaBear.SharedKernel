@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 using PandaBear.AspNetCore;
+using PandaBear.AspNetCore.Authentication;
 using PandaBear.HttpClients;
 using PandaBear.Idempotency;
 

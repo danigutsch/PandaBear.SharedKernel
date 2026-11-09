@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.Idempotency.AspNetCore</PackageId>
+        <Description>ASP.NET Core adapters for idempotency: the Idempotency-Key header and a key-bound data protector.</Description>
+        <RootNamespace>PandaBear.Idempotency.AspNetCore</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>idempotency;aspnetcore;data-protection;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Idempotency.Abstractions\SharedKernel.Idempotency.Abstractions.csproj" />
+        <ProjectReference Include="..\SharedKernel.Results\SharedKernel.Results.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

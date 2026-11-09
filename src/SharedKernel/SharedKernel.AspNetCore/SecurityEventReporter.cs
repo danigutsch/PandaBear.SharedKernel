@@ -56,7 +56,7 @@ internal sealed partial class SecurityEventReporter
 
     /// <summary>A challenge without a token is routine anonymous traffic; every other event is a failure worth a warning.</summary>
     private static bool IsRoutineAnonymousTraffic(string securityEvent, string reason) =>
-        securityEvent == JwtBearerSecurityEventsPostConfigureOptions.Challenge && reason == JwtBearerSecurityEventsPostConfigureOptions.MissingToken;
+        securityEvent == AuthenticationEventNames.Challenge && reason == AuthenticationEventNames.MissingToken;
 
     /// <summary>Logs and counts a rate-limit rejection.</summary>
     /// <param name="httpContext">The rejected request.</param>

@@ -6,6 +6,13 @@ Instructions for `src/SharedKernel/SharedKernel.AspNetCore/`.
 
 - Applies only to files under `src/SharedKernel/SharedKernel.AspNetCore/`.
 - Intended for reusable ASP.NET Core primitives that applications explicitly opt into.
+- The ASP.NET Core family is split by concern. This core stays light (shared framework and `SharedKernel.InputNormalization` only)
+  and holds security headers, forwarded headers, CORS, the unhandled-exception handler and the telemetry names. Add a new
+  package for a concern that needs another dependency instead of widening the core:
+  `SharedKernel.AspNetCore.Authentication` (the only JwtBearer consumer), `SharedKernel.AspNetCore.RateLimiting`,
+  `SharedKernel.AspNetCore.Seo` and `SharedKernel.Idempotency.AspNetCore`.
+- The core exposes its internal telemetry helpers and `SecurityEventReporter` to the Authentication and RateLimiting packages
+  with `InternalsVisibleTo`; keep them internal rather than publishing them.
 
 ## Rules
 
