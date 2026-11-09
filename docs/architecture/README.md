@@ -63,6 +63,8 @@ flowchart TB
     SharedKernel_ObjectStorage_S3[SharedKernel.ObjectStorage.S3] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
     SharedKernel_ObjectStorage_S3[SharedKernel.ObjectStorage.S3] --> SharedKernel_ObjectStorage[SharedKernel.ObjectStorage]
     SharedKernel_OpenApi[SharedKernel.OpenApi] --> SharedKernel_ApiVersioning[SharedKernel.ApiVersioning]
+    SharedKernel_Packages[SharedKernel.Packages] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
+    SharedKernel_Packages[SharedKernel.Packages] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_Results[SharedKernel.Results] --> SharedKernel_Results_SourceGenerator[SharedKernel.Results.SourceGenerator]
     SharedKernel_Results_AspNet[SharedKernel.Results.AspNet] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_Style_CodeFixes[SharedKernel.Style.CodeFixes] --> SharedKernel_Style_Analyzers[SharedKernel.Style.Analyzers]

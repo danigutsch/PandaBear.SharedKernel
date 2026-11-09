@@ -64,6 +64,7 @@
     "src/SharedKernel/SharedKernel.Observability.Npgsql/SharedKernel.Observability.Npgsql.csproj",
     "src/SharedKernel/SharedKernel.Observability/SharedKernel.Observability.csproj",
     "src/SharedKernel/SharedKernel.OpenApi/SharedKernel.OpenApi.csproj",
+    "src/SharedKernel/SharedKernel.Packages/SharedKernel.Packages.csproj",
     "src/SharedKernel/SharedKernel.Results.Analyzers/SharedKernel.Results.Analyzers.csproj",
     "src/SharedKernel/SharedKernel.Results.AspNet/SharedKernel.Results.AspNet.csproj",
     "src/SharedKernel/SharedKernel.Results.SourceGenerator/SharedKernel.Results.SourceGenerator.csproj",

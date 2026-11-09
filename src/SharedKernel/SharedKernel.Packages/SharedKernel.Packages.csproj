@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.Packages</PackageId>
+        <Description>Package manager model: validated package names and versions, installed-state readers, and a read-only plan of missing or mismatched packages.</Description>
+        <PackageTags>packages;apt;shared-kernel;dotnet</PackageTags>
+        <RootNamespace>PandaBear.Packages</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.Packages.Tests" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.BuildingBlocks\SharedKernel.BuildingBlocks.csproj" />
+        <ProjectReference Include="..\SharedKernel.Results\SharedKernel.Results.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+</Project>
