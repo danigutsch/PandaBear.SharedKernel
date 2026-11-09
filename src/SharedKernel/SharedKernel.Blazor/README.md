@@ -118,6 +118,12 @@ _submission = new ServerFormSubmission(_context, options, field => "customer-" +
 };
 ```
 
+For a form that edits one kind of record, `ServerFormSubmission.ForRecord(context, knownFields, "customer", "customer")` builds the
+same submission with control ids `customer-{field}` and default messages built from the noun ("This value is not valid.", "We could
+not save the customer. Try again later.", "The customer was changed or removed by someone else. Reload the page and try again.",
+"That customer no longer exists."). Each message can be replaced through the optional `invalidMessage`, `failureMessage`,
+`conflictMessage` and `notFoundMessage` parameters.
+
 ```razor
 <FormField Label="Email" InputId="customer-Email" For="() => _form.Email">
     <InputText id="customer-Email" @bind-Value="_form.Email" />
@@ -140,3 +146,27 @@ Source is public; registry publication remains deferred. Consume a validated can
 Blazor keeps one component instance when the route changes between URLs that map to the same component, so state loaded in
 `OnInitializedAsync` goes stale. Load in `OnParametersSetAsync` and ask a `ParameterTracker<T>` whether the value really changed:
 `Update(value)` returns `Initial`, `Unchanged` or `Changed`. `ConfirmationState<TKey>` keeps the "confirm this row's delete" state of a list.
+
+## Deleting a row from a list
+
+`ListDelete<TKey>` is the whole delete flow of a list page: `Ask(key)` and `Cancel()` drive the confirmation, `IsPending(key)`
+shows the confirm buttons, and `Error` holds the message to show. `Run(key, delete, reload, removeLocal)` leaves the confirmation,
+sends the deletion and then follows the result: success or `ResultStatus.NotFound` calls `removeLocal(key)` so the page drops the
+row without reading the list again; `ResultStatus.Conflict` calls `reload()` so the list shows what happened; any other failure only
+sets `Error`. `Error` is the constructor's `failureMessage`, except for a conflict, which shows the failed result's detail (or the
+optional `conflictMessage`). `delete` returns a `ValueTask<Result>`, so `Mediator.Send(...)` fits directly. A `Run` made while another is running only leaves the confirmation and sends nothing; disable the confirm buttons with `IsRunning` as in the sample. `IsRunning` is reset even when a callback throws. The conflict detail is application text: unlike `ServerFormSubmission.ConflictMessage` it is shown as is, so pass `conflictMessage` if it may come from a remote service.
+The class keeps no rows and no `[PersistentState]`: the page keeps its own rows (loaded with `[PersistentState]` and `??=`) and passes
+the callbacks.
+
+```razor
+<button type="button" disabled="@_delete.IsRunning" @onclick="() => _delete.Run(row.Id, () => Mediator.Send(new DeleteCustomer(row.Id)), Reload, Remove)">Confirm</button>
+```
+
+```csharp
+private readonly ListDelete<Guid> _delete = new("We could not delete the customer. It may already be gone.");
+
+private async Task Reload() => Customers = await Mediator.Send(new ListCustomers());
+
+private void Remove(Guid id) => Customers = [.. Customers!.Where(row => row.Id != id)];
+```
+
