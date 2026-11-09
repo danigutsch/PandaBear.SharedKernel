@@ -70,6 +70,7 @@ jobs:
         env:
           DOTNET_CLI_CONTEXT_VERBOSE: 'true'
           SLICE: ${{ matrix.slice }}
+          SHAREDKERNEL_REQUIRE_BROWSER: 'true'
         run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- run --slice "$SLICE" --install-playwright --playwright-dependencies --github-summary "$GITHUB_STEP_SUMMARY"
       - name: Retain validation evidence
         if: always()

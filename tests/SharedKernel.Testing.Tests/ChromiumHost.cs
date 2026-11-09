@@ -7,7 +7,7 @@ internal static class ChromiumHost
 {
     private static readonly Lazy<bool> Available = new(Probe);
 
-    /// <summary>Gets a value indicating whether Chromium can be launched. Install it with <c>sharedkernel-ci install-playwright</c>. When the <c>CI</c> environment variable is <c>true</c> a failed launch throws instead.</summary>
+    /// <summary>Gets a value indicating whether Chromium can be launched. Install it with <c>sharedkernel-ci install-playwright</c>. When the <c>SHAREDKERNEL_REQUIRE_BROWSER</c> environment variable is <c>true</c> a failed launch throws instead.</summary>
     public static bool IsInstalled => Available.Value;
 
     /// <summary>Starts Playwright and a headless Chromium without its own sandbox, which an application started by the test does not need.</summary>
@@ -27,8 +27,9 @@ internal static class ChromiumHost
         }
     }
 
-    // CI installs Chromium for this project (the browser slice of .config/sharedkernel-ci.json), so a missing or broken browser there must fail the tests, not skip them.
-    private static bool RunsInCi => string.Equals(Environment.GetEnvironmentVariable("CI"), "true", StringComparison.OrdinalIgnoreCase);
+    // The browser slice of .config/sharedkernel-ci.json installs Chromium and the CI workflow sets this variable for it, so a missing or broken browser there
+    // must fail the tests, not skip them. Other runs, such as the Windows package-consumption job, install no browser and skip.
+    private static bool BrowserRequired => string.Equals(Environment.GetEnvironmentVariable("SHAREDKERNEL_REQUIRE_BROWSER"), "true", StringComparison.OrdinalIgnoreCase);
 
     private static bool Probe()
     {
@@ -43,7 +44,7 @@ internal static class ChromiumHost
                 return true;
             }).GetAwaiter().GetResult();
         }
-        catch (PlaywrightException) when (!RunsInCi)
+        catch (PlaywrightException) when (!BrowserRequired)
         {
             return false;
         }
