@@ -92,6 +92,34 @@ public sealed class ValidationErrors
         errors.Add(error.ToResult());
     }
 
+    /// <summary>
+    /// Adds a non-generic result to the collection when it failed, and ignores a successful one.
+    /// </summary>
+    /// <param name="result">The result of one validation step.</param>
+    /// <exception cref="InvalidOperationException">Thrown when the result failed with a status other than invalid.</exception>
+    public void AddIfFailed(Result result)
+    {
+        if (result.IsFailure)
+        {
+            Add(result);
+        }
+    }
+
+    /// <summary>
+    /// Adds a generic result to the collection when it failed, and ignores a successful one.
+    /// </summary>
+    /// <typeparam name="T">The success value type.</typeparam>
+    /// <param name="result">The result of one validation step.</param>
+    /// <exception cref="InvalidOperationException">Thrown when the result failed with a status other than invalid.</exception>
+    public void AddIfFailed<T>(Result<T> result)
+        where T : notnull
+    {
+        if (result.IsFailure)
+        {
+            Add(result);
+        }
+    }
+
     private Dictionary<string, string[]> MergeValidationErrors()
     {
         var mergedValidationErrors = new Dictionary<string, List<string>>(StringComparer.Ordinal);

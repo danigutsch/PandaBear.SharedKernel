@@ -50,3 +50,5 @@ static PandaBear.Results.Result<T>.FromError(PandaBear.Results.ResultError! resu
 PandaBear.Results.ResultValidationExtensions
 static PandaBear.Results.ResultValidationExtensions.ValidationErrors(this PandaBear.Results.Result result) -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>!
 static PandaBear.Results.ResultValidationExtensions.WithoutValue<T>(this PandaBear.Results.Result<T> result) -> PandaBear.Results.Result
+PandaBear.Results.ValidationErrors.AddIfFailed(PandaBear.Results.Result result) -> void
+PandaBear.Results.ValidationErrors.AddIfFailed<T>(PandaBear.Results.Result<T> result) -> void

@@ -56,6 +56,10 @@ public sealed class ConflictBehavior<TRequest, TResponse> : ConcurrencyConflictB
   transaction, a conflict raised while the transaction commits or is retried would escape the conversion, and handlers would run against a
   transaction that the exception has already invalidated.
 
+- **Stale data found by the handler:** when a handler compares the loaded version with the caller's and finds it outdated, return
+  `ConcurrencyConflictResults.Stale()` (or `Stale<T>()`). It is the same `Conflict` result and message as the behavior's, so a stale form and a
+  lost race look identical.
+
 
 ## Unique violation handling
 
