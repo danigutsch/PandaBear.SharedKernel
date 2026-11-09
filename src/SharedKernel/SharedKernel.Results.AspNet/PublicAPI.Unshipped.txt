@@ -7,3 +7,10 @@ static PandaBear.Results.AspNet.ResultHttpExtensions.ToHttpResult(this PandaBear
 static PandaBear.Results.AspNet.ResultHttpExtensions.ToHttpResult<T>(this PandaBear.Results.Result<T> result) -> Microsoft.AspNetCore.Http.IResult!
 const PandaBear.Results.AspNet.ResultHttpExtensions.InternalServerErrorDetail = "An unexpected error occurred." -> string!
 const PandaBear.Results.AspNet.ResultHttpExtensions.ServiceUnavailableDetail = "The service is temporarily unavailable." -> string!
+PandaBear.Results.AspNet.ConcurrencyHeaders
+static PandaBear.Results.AspNet.ConcurrencyHeaders.ETag(long version) -> string!
+static PandaBear.Results.AspNet.ConcurrencyHeaders.ReadVersion(Microsoft.AspNetCore.Http.HttpRequest! request) -> PandaBear.Results.Result<long>
+static PandaBear.Results.AspNet.ConcurrencyHeaders.Update(Microsoft.AspNetCore.Http.HttpRequest! request, System.Func<long, System.Threading.Tasks.ValueTask<PandaBear.Results.Result>>! send) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Http.IResult!>!
+PandaBear.Results.AspNet.VersionedResultHttpExtensions
+static PandaBear.Results.AspNet.VersionedResultHttpExtensions.ToCreatedHttpResult<TValue, TBody>(this PandaBear.Results.Result<TValue> result, System.Func<TValue, string!>! location, System.Func<TValue, TBody>! body) -> Microsoft.AspNetCore.Http.IResult!
+static PandaBear.Results.AspNet.VersionedResultHttpExtensions.ToHttpResult<T>(this PandaBear.Results.Result<T> result, System.Func<T, long>! version) -> Microsoft.AspNetCore.Http.IResult!
