@@ -50,3 +50,7 @@ Package ID: `PandaBear.SharedKernel.Results`. C# namespace: `PandaBear.Results`.
 
 `result.ValidationErrors()` returns the field messages of a result (empty when there are none), and `Result<T>.WithoutValue()` drops
 the value while keeping success or the failure.
+
+`ValidationErrors.AddIfFailed(result)` collects the failure of one validation step and ignores a success, so a `Validate` method can
+run every step, then return `errors.HasErrors ? errors.ToResult<TData>() : Result.Ok(data)`. A failure that is not `Invalid` throws
+`InvalidOperationException`, like `Add`.
