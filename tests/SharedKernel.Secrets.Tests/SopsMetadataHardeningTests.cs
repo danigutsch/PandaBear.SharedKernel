@@ -144,6 +144,47 @@ public sealed class SopsMetadataHardeningTests
         result.IsFailure.ShouldBeTrue();
     }
 
+    [Theory]
+    [InlineData("\nsops:", "\n!!binary c29wcw==:")]
+    [InlineData("\nsops:", "\n!<tag:yaml.org,2002:binary> c29wcw==:")]
+    [InlineData("\nsops:", "\n!!str sops:")]
+    [InlineData("password: ", "password: !!binary ")]
+    [InlineData("    version: 3.13.0", "    version: !!str 3.13.0")]
+    [InlineData("        - recipient: ", "        - !!str recipient: ")]
+    [InlineData("    kms: []", "    kms: [!!str a]")]
+    public void A_yaml_tag_anywhere_in_the_metadata_or_data_is_refused_with_a_clear_message(string target, string replacement)
+    {
+        // Arrange
+        var yaml = SopsSamples.Yaml(Both).Replace(target, replacement, StringComparison.Ordinal);
+
+        // Act
+        var result = SopsMetadataReader.Read(yaml, SopsFormat.Yaml);
+
+        // Assert
+        yaml.ShouldNotBe(SopsSamples.Yaml(Both));
+        result.ErrorDetails.ShouldNotBeNull().Detail.ShouldContain("tags", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void A_tag_directive_before_a_document_is_refused()
+    {
+        // Act
+        var result = SopsMetadataReader.Read("%TAG !x! tag:yaml.org,2002:bi\n---\n" + SopsSamples.Yaml(Both), SopsFormat.Yaml);
+
+        // Assert
+        result.ErrorDetails.ShouldNotBeNull().Detail.ShouldContain("tags", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void An_exclamation_mark_inside_a_word_is_not_a_tag()
+    {
+        // Act
+        var holders = SopsMetadataReader.Read(SopsSamples.Yaml(Both, dataLines: "greeting: hello!\n"), SopsFormat.Yaml).ShouldBeSuccess();
+
+        // Assert
+        holders.Concerns.ShouldHaveSingleItem().ShouldBe("1 value is not encrypted");
+    }
+
     [Fact]
     public void A_json_byte_order_mark_or_second_document_is_refused()
     {

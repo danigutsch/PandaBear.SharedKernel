@@ -95,6 +95,33 @@ internal static class SopsYamlSubset
         return (Encoding.UTF8.GetString(stream.ToArray()), [.. lines.Take(start), .. lines.Skip(blockEnd)]);
     }
 
+    /// <summary>
+    /// Returns whether the text has a YAML tag or a <c>%</c> directive anywhere: a <c>!</c> that starts a line or follows a space, tab, <c>[</c>, <c>{</c>, or
+    /// <c>,</c>, or a line that starts with <c>%</c>. go-yaml decodes tagged scalars (<c>!!binary c29wcw==</c> is the key <c>sops</c>), so no tag is
+    /// accepted: a fully encrypted file has none, and refusing them is cheaper than reading each one. An exclamation mark inside a word is not a tag.
+    /// </summary>
+    internal static bool HasTag(string yaml)
+    {
+        foreach (var line in yaml.ReplaceLineEndings("\n").Split('\n'))
+        {
+            var trimmed = line.TrimStart(' ', '\t');
+            if (trimmed.StartsWith('%') || trimmed.StartsWith('!'))
+            {
+                return true;
+            }
+
+            for (var index = line.IndexOf('!', StringComparison.Ordinal); index > 0; index = line.IndexOf('!', index + 1))
+            {
+                if (line[index - 1] is ' ' or '\t' or '[' or '{' or ',')
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private enum TopLevel
     {
         Other,

@@ -215,10 +215,12 @@ public sealed class RealProgramsCommandLineTests
         await File.WriteAllTextAsync(Path.Combine(repository.Path, ".config", "sharedkernel-secrets.json"), TestRecipients.Config(2, recipients[1], recipients[2]), token);
         await Run(repository.Path, runner, RealPrograms.Find, Encoding.UTF8.GetBytes("password: hunter2\n"), null, "encrypt", "secrets/app.sops.yaml", "--force");
         var real = await File.ReadAllTextAsync(Path.Combine(repository.Path, "secrets", "app.sops.yaml"), token);
-        var spellings = new Dictionary<string, string> { ["complex"] = "? sops\n:", ["tag"] = "!!str sops:", ["anchor"] = "&x sops:", ["tab"] = "sops:\t" };
+        var spellings = new Dictionary<string, string> { ["complex"] = "? sops\n:", ["tag"] = "!!str sops:", ["anchor"] = "&x sops:", ["tab"] = "sops:\t", ["binary"] = "!!binary c29wcw==:", ["verbatim"] = "!<tag:yaml.org,2002:binary> c29wcw==:" };
         foreach (var (name, spelling) in spellings)
         {
-            await File.WriteAllTextAsync(Path.Combine(repository.Path, "secrets", name + ".yaml"), real.Replace("\nsops:", "\n" + spelling, StringComparison.Ordinal), token);
+            var variant = real.Replace("\nsops:", "\n" + spelling, StringComparison.Ordinal);
+            await File.WriteAllTextAsync(Path.Combine(repository.Path, "secrets", name + ".sops.yaml"), variant, token);
+            await File.WriteAllTextAsync(Path.Combine(repository.Path, "secrets", name + ".yaml"), variant, token);
         }
 
         // Act
@@ -229,6 +231,7 @@ public sealed class RealProgramsCommandLineTests
         foreach (var name in spellings.Keys)
         {
             run.Error.ShouldContain($"secrets/{name}.yaml:", StringComparison.Ordinal);
+            run.Error.ShouldContain($"secrets/{name}.sops.yaml:", StringComparison.Ordinal);
         }
     }
 }

@@ -91,8 +91,20 @@ internal static class VerifyCommand
             return;
         }
 
-        var inScope = rule is not null;
-        if (relative == SopsConfigurationName || !(inScope || named || SopsSniffer.IsCandidateExtension(relative)))
+        if (relative == SopsConfigurationName)
+        {
+            return;
+        }
+
+        if (rule is not null && !named)
+        {
+            // The structural rule: nothing in a rule's scope is skipped because of what it contains. A file that is not named *.sops.* is not judged, and that fails the run.
+            tally.Unjudgeable++;
+            await EscapedOutput.Line(error, $"{relative}: not judged: name does not mark it as SOPS-encrypted (rename it to *.sops.<ext>, or move it out of the rule's scope)", cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
+        if (rule is null && !(named || SopsSniffer.IsCandidateExtension(relative)))
         {
             return;
         }
@@ -100,7 +112,7 @@ internal static class VerifyCommand
         var (bytes, problem) = await GuardedFileReader.Read(entry.AbsolutePath, MaxFileBytes, environment.FileReadTimeout ?? GuardedFileReader.DefaultTimeout, cancellationToken).ConfigureAwait(false);
         if (problem is not null)
         {
-            if (inScope || named)
+            if (named)
             {
                 tally.Unjudgeable++;
                 await EscapedOutput.Line(error, $"{relative}: {problem}", cancellationToken).ConfigureAwait(false);
@@ -109,27 +121,16 @@ internal static class VerifyCommand
             return;
         }
 
-        var sniffed = SopsSniffer.Classify(bytes, out var contentFormat, out var reason);
-        if (sniffed == SniffResult.Unknown && !inScope && named)
+        if (rule is null)
         {
-            tally.Uncovered++;
-            await EscapedOutput.Line(output, $"{relative}: no creation rule matches, not verified (and it cannot be read: {reason})", cancellationToken).ConfigureAwait(false);
-            return;
-        }
-
-        if (sniffed == SniffResult.Unknown)
-        {
-            if (inScope)
+            // Best effort outside every rule: a file that looks like SOPS (by a heuristic that cannot be complete) is listed as uncovered.
+            var sniffed = SopsSniffer.Classify(bytes, out _, out _);
+            if (named || sniffed == SniffResult.Sops)
             {
-                tally.Unjudgeable++;
-                await EscapedOutput.Line(error, $"{relative}: the file cannot be ruled out as a SOPS file: {reason}", cancellationToken).ConfigureAwait(false);
+                tally.Uncovered++;
+                await EscapedOutput.Line(output, $"{relative}: no creation rule matches, not verified", cancellationToken).ConfigureAwait(false);
             }
 
-            return;
-        }
-
-        if (sniffed == SniffResult.NotSops && !named)
-        {
             return;
         }
 
@@ -140,15 +141,8 @@ internal static class VerifyCommand
             return;
         }
 
-        if (rule is null)
-        {
-            tally.Uncovered++;
-            await EscapedOutput.Line(output, $"{relative}: no creation rule matches, not verified", cancellationToken).ConfigureAwait(false);
-            return;
-        }
-
         tally.Covered++;
-        var format = contentFormat ?? SopsSniffer.FormatOf(relative);
+        var format = SopsSniffer.FormatOf(relative);
         var holders = format is null
             ? Result.Error<SopsFileRecipients>("Only YAML and JSON SOPS files have readable recipients.")
             : SopsMetadataReader.Read(new UTF8Encoding(false).GetString(bytes), format.Value);

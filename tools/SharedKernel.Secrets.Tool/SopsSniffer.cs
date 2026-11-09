@@ -27,7 +27,8 @@ internal static class SopsSniffer
     }
 
     /// <summary>
-    /// Decides, conservatively, whether a file could be a SOPS document. A file is <see cref="SniffResult.NotSops"/> only when it positively cannot be: it is
+    /// A best-effort advisory used only outside every creation rule, where a file that looks like SOPS is listed as uncovered. It is not a guarantee (go-yaml decodes
+    /// tagged scalars such as <c>!!binary c29wcw==</c>, so no text search can be complete); inside a rule's scope nothing is decided by content. Decides, conservatively, whether a file could be a SOPS document. A file is <see cref="SniffResult.NotSops"/> only when it positively cannot be: it is
     /// empty, or it decodes as UTF-8 and holds no <c>sops</c> token and no <c>ENC[</c> anywhere, after YAML and JSON escapes (<c>\xNN</c>, <c>\uNNNN</c>,
     /// <c>\UNNNNNNNN</c>, line continuations) are decoded, compatibility characters are normalised (full-width letters), invisible format characters are removed,
     /// and case is folded (the long s and the like). Binary data and text that is not UTF-8 are <see cref="SniffResult.Unknown"/>. A file that does carry the

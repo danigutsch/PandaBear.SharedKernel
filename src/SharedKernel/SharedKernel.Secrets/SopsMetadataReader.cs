@@ -51,6 +51,11 @@ public static class SopsMetadataReader
         }
         else
         {
+            if (SopsYamlSubset.HasTag(content))
+            {
+                return Failure("YAML tags and %TAG directives are not supported: go-yaml decodes tagged scalars, so a tag can hide the sops key.");
+            }
+
             var converted = SopsYamlSubset.Read(content);
             if (converted is null)
             {

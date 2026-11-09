@@ -11,6 +11,195 @@ public sealed class VerifyScopeTests
     private static readonly string Subset = TestRecipients.Yaml([TestRecipients.First]);
 
     [Theory]
+    [InlineData("secrets/prod.yaml")]
+    [InlineData("secrets/prod.yml")]
+    [InlineData("secrets/prod.enc.yaml")]
+    [InlineData("secrets/token")]
+    [InlineData("secrets/store.dat")]
+    [InlineData("secrets/flow.yaml")]
+    [InlineData("secrets/deep/binary-store")]
+    [InlineData("secrets/README")]
+    [InlineData("secrets/plain.json")]
+    [InlineData("secrets/.gitkeep")]
+    [InlineData("secrets/empty")]
+    public async Task Every_file_in_the_scope_of_a_rule_whose_name_does_not_mark_it_as_sops_is_rejected_whatever_it_holds(string file)
+    {
+        ArgumentNullException.ThrowIfNull(file);
+
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
+        WriteFile(repository.Path, file, file.EndsWith("empty", StringComparison.Ordinal) ? string.Empty : file.Contains("flow", StringComparison.Ordinal) ? TestRecipients.Json([TestRecipients.First]) : Subset);
+
+        // Act
+        var run = await Run(repository.Path, "verify", "--root", repository.Path);
+
+        // Assert
+        run.ExitCode.ShouldBe(2);
+        run.Error.ShouldContain($"{file}: not judged: name does not mark it as SOPS-encrypted (rename it to *.sops.<ext>, or move it out of the rule's scope)", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("secrets/prod.SOPS.yaml")]
+    [InlineData("secrets/PROD.SOPS.YAML")]
+    [InlineData("secrets/.sops.yaml")]
+    [InlineData("secrets/sub/.sops.yaml")]
+    public async Task A_file_named_sops_in_any_letter_case_is_judged_where_it_sits(string file)
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
+        WriteFile(repository.Path, file, Subset);
+
+        // Act
+        var run = await Run(repository.Path, "verify", "--root", repository.Path);
+
+        // Assert
+        run.ExitCode.ShouldBe(1);
+        run.Output.ShouldContain($"{file}: missing recipient {TestRecipients.Second}", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task A_sops_json_document_named_sops_passes_with_the_right_recipients_and_the_root_configuration_is_skipped()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, "secrets/token.sops.json", TestRecipients.Json([TestRecipients.First, TestRecipients.Second]));
+        WriteFile(repository.Path, ".sops.yaml", "creation_rules: []\n");
+
+        // Act
+        var run = await Run(repository.Path, "verify", "--root", repository.Path);
+
+        // Assert
+        run.ExitCode.ShouldBe(0);
+        run.Output.ShouldContain("secrets/token.sops.json: labels consistent", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("indented")]
+    [InlineData("escaped")]
+    [InlineData("tabbed")]
+    [InlineData("complexkey")]
+    [InlineData("tag")]
+    [InlineData("anchor")]
+    [InlineData("trailingtab")]
+    [InlineData("binarytag")]
+    [InlineData("verbatimtag")]
+    [InlineData("tagdirective")]
+    public async Task Yaml_named_sops_that_the_reader_cannot_fully_understand_is_never_ok(string kind)
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
+        var text = kind switch
+        {
+            "indented" => string.Concat(Subset.Split('\n').Select(static l => l.Length == 0 ? l : "  " + l + "\n")),
+            "escaped" => Subset.Replace("\nsops:", "\n\"\\x73ops\":", StringComparison.Ordinal),
+            "tabbed" => Subset.Replace("\nsops:", "\n\"s\\u006fps\":", StringComparison.Ordinal),
+            "complexkey" => Subset.Replace("sops:\n", "? sops\n:\n", StringComparison.Ordinal),
+            "tag" => Subset.Replace("sops:\n", "!!str sops:\n", StringComparison.Ordinal),
+            "anchor" => Subset.Replace("sops:\n", "&x sops:\n", StringComparison.Ordinal),
+            "trailingtab" => Subset.Replace("sops:\n", "sops:\t\n", StringComparison.Ordinal),
+            "binarytag" => Subset.Replace("\nsops:", "\n!!binary c29wcw==:", StringComparison.Ordinal),
+            "verbatimtag" => Subset.Replace("\nsops:", "\n!<tag:yaml.org,2002:binary> c29wcw==:", StringComparison.Ordinal),
+            _ => "%TAG !x! tag:yaml.org,2002:bi\n---\n" + Subset.Replace("\nsops:", "\n!x!n%61ry c29wcw==:", StringComparison.Ordinal),
+        };
+        WriteFile(repository.Path, "secrets/hidden.sops.yaml", text);
+
+        // Act
+        var run = await Run(repository.Path, "verify", "--root", repository.Path);
+
+        // Assert
+        run.ExitCode.ShouldBe(2);
+        run.Error.ShouldContain("secrets/hidden.sops.yaml:", StringComparison.Ordinal);
+        run.Output.ShouldNotContain("secrets/hidden.sops.yaml: labels consistent", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("utf16")]
+    [InlineData("binary")]
+    [InlineData("nul")]
+    [InlineData("brokenjson")]
+    public async Task A_file_named_sops_that_is_not_readable_metadata_is_unjudgeable_and_fails_the_run(string kind)
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
+        WriteMystery(Path.Combine(repository.Path, "secrets", "mystery.sops.yaml"), kind, Subset);
+
+        // Act
+        var run = await Run(repository.Path, "verify", "--root", repository.Path);
+
+        // Assert
+        run.ExitCode.ShouldBe(2);
+        run.Error.ShouldContain("secrets/mystery.sops.yaml:", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
+    public async Task A_fifo_in_scope_does_not_hang_verify_whether_or_not_its_name_marks_it_as_sops()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
+        using var plain = await new SystemToolRunner().Run(new ToolRequest("/usr/bin/mkfifo", [Path.Combine(repository.Path, "secrets", "pipe")]), TestContext.Current.CancellationToken);
+        using var named = await new SystemToolRunner().Run(new ToolRequest("/usr/bin/mkfifo", [Path.Combine(repository.Path, "secrets", "pipe.sops.yaml")]), TestContext.Current.CancellationToken);
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+        // Act
+        var run = await Run(repository.Path, "verify", "--root", repository.Path);
+
+        // Assert
+        plain.ExitCode.ShouldBe(0);
+        named.ExitCode.ShouldBe(0);
+        run.ExitCode.ShouldBe(2);
+        run.Error.ShouldContain("secrets/pipe: not judged", StringComparison.Ordinal);
+        run.Error.ShouldContain("secrets/pipe.sops.yaml:", StringComparison.Ordinal);
+        stopwatch.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(20));
+    }
+
+    [Fact]
+    public async Task A_file_named_sops_larger_than_the_limit_is_unjudgeable()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
+        await using (var big = File.Create(Path.Combine(repository.Path, "secrets", "big.sops.yaml")))
+        {
+            big.SetLength((16 * 1024 * 1024) + 1);
+        }
+
+        // Act
+        var run = await Run(repository.Path, "verify", "--root", repository.Path);
+
+        // Assert
+        run.ExitCode.ShouldBe(2);
+        run.Error.ShouldContain("secrets/big.sops.yaml: the file is larger than 16 MiB", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Outside_every_rule_a_file_that_looks_like_sops_is_listed_as_uncovered_on_a_best_effort_basis_and_one_that_does_not_is_ignored()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
+        WriteFile(repository.Path, "other/prod.yaml", Subset);
+        WriteFile(repository.Path, "other/flow.yaml", TestRecipients.Json([TestRecipients.First]));
+        WriteFile(repository.Path, "other/plain.yaml", "name: value\n");
+        WriteFile(repository.Path, "other/notes.txt", "sops everywhere");
+
+        // Act
+        var run = await Run(repository.Path, "verify", "--root", repository.Path);
+
+        // Assert
+        run.ExitCode.ShouldBe(1);
+        run.Output.ShouldContain("other/prod.yaml: no creation rule matches, not verified", StringComparison.Ordinal);
+        run.Output.ShouldContain("other/flow.yaml: no creation rule matches, not verified", StringComparison.Ordinal);
+        run.Output.ShouldNotContain("other/plain.yaml", StringComparison.Ordinal);
+        run.Output.ShouldNotContain("other/notes.txt", StringComparison.Ordinal);
+    }
+
+    [Theory]
     [InlineData("secrets/bin/a.sops.yaml")]
     [InlineData("secrets/obj/a.sops.yaml")]
     [InlineData("secrets/node_modules/a.sops.yaml")]
@@ -30,6 +219,7 @@ public sealed class VerifyScopeTests
         run.Output.ShouldContain($"{file}: missing recipient", StringComparison.Ordinal);
     }
 
+
     [Fact]
     public async Task Only_the_git_directory_is_skipped()
     {
@@ -45,28 +235,6 @@ public sealed class VerifyScopeTests
         run.ExitCode.ShouldBe(0);
     }
 
-    [Theory]
-    [InlineData("secrets/prod.yaml")]
-    [InlineData("secrets/prod.yml")]
-    [InlineData("secrets/prod.enc.yaml")]
-    [InlineData("secrets/prod.SOPS.yaml")]
-    [InlineData("secrets/PROD.SOPS.YAML")]
-    [InlineData("secrets/.sops.yaml")]
-    [InlineData("secrets/sub/.sops.yaml")]
-    public async Task A_sops_encrypted_file_with_an_unexpected_name_is_judged_like_any_other(string file)
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        WriteFile(repository.Path, file, Subset);
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(1);
-        run.Output.ShouldContain($"{file}: missing recipient {TestRecipients.Second}", StringComparison.Ordinal);
-    }
 
     [Fact]
     public async Task A_file_named_sops_in_any_letter_case_is_judged_even_when_its_extension_is_not_a_known_one()
@@ -86,255 +254,6 @@ public sealed class VerifyScopeTests
         run.Output.ShouldContain("other/blob.Sops.dat: no creation rule matches, not verified", StringComparison.Ordinal);
     }
 
-    [Fact]
-    public async Task A_sops_encrypted_json_file_with_an_unexpected_name_is_judged()
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        WriteFile(repository.Path, "secrets/prod.json", TestRecipients.Json([TestRecipients.First]));
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(1);
-        run.Output.ShouldContain("secrets/prod.json: missing recipient", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public async Task Files_in_scope_that_are_not_sops_files_are_ignored_and_the_root_sops_configuration_is_skipped()
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        WriteFile(repository.Path, "secrets/plain.yaml", "name: value\nlist:\n  - a\n");
-        WriteFile(repository.Path, "secrets/data.json", "{\"a\": 1}");
-        WriteFile(repository.Path, "secrets/notes.txt", "this file only talks about other things");
-        WriteFile(repository.Path, ".sops.yaml", "creation_rules: []\n");
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(0);
-        run.Output.ShouldContain("1 files match a creation rule", StringComparison.Ordinal);
-    }
-
-    [Theory]
-    [InlineData("secrets/flow.yaml")]
-    [InlineData("secrets/flow.yml")]
-    [InlineData("secrets/token")]
-    [InlineData("secrets/store.dat")]
-    [InlineData("secrets/deep/binary-store")]
-    public async Task A_sops_json_document_is_judged_whatever_its_name_or_whether_it_is_written_on_one_line(string file)
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        WriteFile(repository.Path, file, TestRecipients.Json([TestRecipients.First]));
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(1);
-        run.Output.ShouldContain($"{file}: missing recipient {TestRecipients.Second}", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public async Task A_sops_json_document_with_the_right_recipients_passes_in_any_file_name()
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/token", TestRecipients.Json([TestRecipients.First, TestRecipients.Second]));
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(0);
-        run.Output.ShouldContain("secrets/token: labels consistent", StringComparison.Ordinal);
-    }
-
-    [Theory]
-    [InlineData("indented")]
-    [InlineData("escaped")]
-    [InlineData("tabbed")]
-    public async Task Yaml_the_reader_cannot_fully_understand_but_that_has_a_sops_key_is_judged_and_fails_the_run(string kind)
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        var text = kind switch
-        {
-            "indented" => string.Concat(Subset.Split('\n').Select(static l => l.Length == 0 ? l : "  " + l + "\n")),
-            "escaped" => Subset.Replace("\nsops:", "\n\"\\x73ops\":", StringComparison.Ordinal),
-            _ => Subset.Replace("\nsops:", "\n\"s\\u006fps\":", StringComparison.Ordinal),
-        };
-        WriteFile(repository.Path, "secrets/hidden.yaml", text);
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(2);
-        run.Error.ShouldContain("secrets/hidden.yaml:", StringComparison.Ordinal);
-    }
-
-    [Theory]
-    [InlineData("utf16")]
-    [InlineData("binary")]
-    [InlineData("nul")]
-    [InlineData("brokenjson")]
-    public async Task A_file_in_scope_that_cannot_be_ruled_out_as_non_sops_is_unjudgeable_and_fails_the_run(string kind)
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        WriteMystery(Path.Combine(repository.Path, "secrets", "mystery.yaml"), kind, Subset);
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(2);
-        run.Error.ShouldContain("secrets/mystery.yaml: the file cannot be ruled out as a SOPS file", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public async Task A_sops_json_document_behind_a_byte_order_mark_is_judged_and_refused()
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        WriteMystery(Path.Combine(repository.Path, "secrets", "mystery.yaml"), "jsonwithbom", Subset);
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(2);
-        run.Error.ShouldContain("secrets/mystery.yaml:", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public async Task Files_in_scope_that_are_positively_not_sops_are_ignored_whatever_their_extension()
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        WriteFile(repository.Path, "secrets/README", "We keep secrets with the usual tooling.\n");
-        WriteFile(repository.Path, "secrets/plain.json", "{\"a\": [1, 2, {\"b\": 1}]}");
-        WriteFile(repository.Path, "secrets/list.json", "[1, 2, 3]");
-        WriteFile(repository.Path, "secrets/empty", string.Empty);
-        WriteFile(repository.Path, "secrets/nested.yaml", "tools:\n  name: x\n");
-        WriteFile(repository.Path, "secrets/data.bin.txt", "just text\n");
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(0);
-        run.Output.ShouldContain("1 files match a creation rule", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public async Task A_file_in_scope_that_merely_mentions_sops_or_holds_an_encrypted_looking_value_is_unjudgeable_and_there_is_no_silent_pass()
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        WriteFile(repository.Path, "secrets/README", "We keep secrets with sops.\n");
-        WriteFile(repository.Path, "secrets/note.txt", "value: ENC[AES256_GCM,data:x]\n");
-        WriteFile(repository.Path, "secrets/plain.json", "{\"a\": [1, {\"sops\": 1}]}");
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(2);
-        run.Error.ShouldContain("secrets/README: the file cannot be ruled out as a SOPS file", StringComparison.Ordinal);
-        run.Error.ShouldContain("secrets/note.txt: the file cannot be ruled out as a SOPS file", StringComparison.Ordinal);
-        run.Error.ShouldContain("secrets/plain.json: the file cannot be ruled out as a SOPS file", StringComparison.Ordinal);
-    }
-
-    [Theory]
-    [InlineData("complexkey", "? sops\n:\n")]
-    [InlineData("tag", "!!str sops:\n")]
-    [InlineData("anchor", "&x sops:\n")]
-    [InlineData("tab", "sops:\t\n")]
-    public async Task Yaml_spellings_of_the_sops_key_that_go_yaml_reads_but_a_heuristic_would_not_are_never_skipped(string name, string spelling)
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        WriteFile(repository.Path, $"secrets/{name}.yaml", Subset.Replace("sops:\n", spelling, StringComparison.Ordinal));
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(2);
-        run.Error.ShouldContain($"secrets/{name}.yaml:", StringComparison.Ordinal);
-    }
-
-    [Theory]
-    [InlineData("flowcomment", "# note\n")]
-    [InlineData("flowmarker", "---\n")]
-    public async Task Flow_yaml_behind_a_comment_or_a_document_marker_is_never_skipped(string name, string prefix)
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        WriteFile(repository.Path, $"secrets/{name}.yaml", prefix + TestRecipients.Json([TestRecipients.First]));
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(2);
-        run.Error.ShouldContain($"secrets/{name}.yaml:", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public async Task An_ini_store_with_an_indented_sops_header_after_a_comment_is_never_skipped()
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        WriteFile(repository.Path, "secrets/store.ini", "; comment\n[app]\npassword = ENC[AES256_GCM,data:x]\n  [sops]\nage = x\n");
-        WriteFile(repository.Path, "secrets/store", "; comment\n  [sops]\nage = x\n");
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(2);
-        run.Error.ShouldContain("secrets/store.ini:", StringComparison.Ordinal);
-        run.Error.ShouldContain("secrets/store:", StringComparison.Ordinal);
-    }
-
-    [Theory]
-    [InlineData("\u2028")]
-    [InlineData("\u2029")]
-    [InlineData("\u0085")]
-    [InlineData("\n")]
-    public async Task A_yaml_file_whose_sops_key_and_every_encrypted_value_are_split_by_an_escaped_line_break_is_never_skipped(string lineBreak)
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        var rewritten = Subset.Replace("\nsops:", $"\n? \"so\\{lineBreak}ps\"\n:", StringComparison.Ordinal).Replace("ENC[", $"\"E\\{lineBreak}NC[", StringComparison.Ordinal);
-        WriteFile(repository.Path, "secrets/split.yaml", rewritten);
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(2);
-        run.Error.ShouldContain("secrets/split.yaml:", StringComparison.Ordinal);
-    }
 
     [Fact]
     public async Task A_sops_looking_file_outside_every_rule_with_a_sops_name_is_listed_not_skipped_even_when_it_cannot_be_parsed()
@@ -352,6 +271,7 @@ public sealed class VerifyScopeTests
         run.Output.ShouldContain("other/x.sops.yaml: no creation rule matches, not verified", StringComparison.Ordinal);
     }
 
+
     [Fact]
     public async Task A_sops_json_document_outside_every_rule_is_uncovered_whatever_its_name()
     {
@@ -367,6 +287,7 @@ public sealed class VerifyScopeTests
         run.ExitCode.ShouldBe(1);
         run.Output.ShouldContain("other/flow.yaml: no creation rule matches, not verified", StringComparison.Ordinal);
     }
+
 
     [Fact]
     public async Task A_symbolic_link_to_a_directory_inside_the_scope_is_unjudgeable_because_sops_would_decrypt_what_is_behind_it()
@@ -387,6 +308,7 @@ public sealed class VerifyScopeTests
         run.Error.ShouldContain("secrets/prod: a symbolic link cannot be checked", StringComparison.Ordinal);
         run.Error.ShouldContain("secrets/evil.sops.yml: a symbolic link cannot be checked", StringComparison.Ordinal);
     }
+
 
     [Fact]
     public async Task A_symbolic_link_named_like_a_sops_file_outside_every_rule_is_listed_as_uncovered_and_one_with_another_name_is_ignored()
@@ -409,45 +331,6 @@ public sealed class VerifyScopeTests
         run.Output.ShouldNotContain("plain-link", StringComparison.Ordinal);
     }
 
-    [Fact]
-    [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
-    public async Task A_fifo_in_scope_does_not_hang_verify_and_is_unjudgeable()
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        var fifo = Path.Combine(repository.Path, "secrets", "pipe");
-        using var made = await new SystemToolRunner().Run(new ToolRequest("/usr/bin/mkfifo", [fifo]), TestContext.Current.CancellationToken);
-        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        made.ExitCode.ShouldBe(0);
-        run.ExitCode.ShouldBe(2);
-        run.Error.ShouldContain("secrets/pipe:", StringComparison.Ordinal);
-        stopwatch.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(20));
-    }
-
-    [Fact]
-    public async Task A_file_larger_than_the_limit_in_scope_is_unjudgeable()
-    {
-        // Arrange
-        using var repository = CreateRepository(Config);
-        WriteFile(repository.Path, "secrets/ok.sops.yaml", Good);
-        await using (var big = File.Create(Path.Combine(repository.Path, "secrets", "big.yaml")))
-        {
-            big.SetLength((16 * 1024 * 1024) + 1);
-        }
-
-        // Act
-        var run = await Run(repository.Path, "verify", "--root", repository.Path);
-
-        // Assert
-        run.ExitCode.ShouldBe(2);
-        run.Error.ShouldContain("secrets/big.yaml: the file is larger than 16 MiB", StringComparison.Ordinal);
-    }
 
     [Fact]
     public async Task A_sops_encrypted_file_outside_every_rule_is_listed_as_uncovered_whatever_its_name()
@@ -469,6 +352,7 @@ public sealed class VerifyScopeTests
         allowed.ExitCode.ShouldBe(0);
     }
 
+
     [Fact]
     public async Task A_symbolic_link_in_scope_is_unjudgeable_and_one_outside_every_rule_is_ignored()
     {
@@ -489,6 +373,7 @@ public sealed class VerifyScopeTests
         run.Error.ShouldContain("secrets/link.sops.yaml: a symbolic link cannot be checked", StringComparison.Ordinal);
         run.Error.ShouldNotContain("other/link", StringComparison.Ordinal);
     }
+
 
     [Fact]
     [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]

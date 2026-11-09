@@ -83,26 +83,20 @@ sharedkernel-secrets --help
   - Only two outcomes are verdicts about an identity: success, and sops saying the identity matches none of the file's recipients.
     Every other failure (a bad MAC, a parse error, a corrupted `enc`, a missing file, an unreadable identity, a timeout) is exit 2 and
     says `file could not be decrypted (not an identity verdict)`. A corrupted file therefore never reads as "this holder cannot decrypt".
-- `verify` judges every SOPS-encrypted file in the repository against the first creation rule that matches its path. It skips
-  `.git` and the root `.sops.yaml` (the sops configuration) and nothing else by name: `bin`, `obj`, and `node_modules` are
-  checked. **A file is skipped as "not SOPS" only when it positively cannot be one.** That means it is empty, or it is valid UTF-8 and
-  holds **no** `sops` token and **no** `ENC[` anywhere. The search ignores letter case and decodes YAML and JSON escapes (`\xNN`,
-  `\uNNNN`, `\UNNNNNNNN`, a backslash at the end of a line), normalises compatibility characters (full-width letters), drops invisible
-  format characters, and folds case (the long s and similar), so `s\x6fps`, `ｓｏｐｓ`, and `ſops` all count; a backslash before any line break (line feed, carriage return, NEL, line separator, paragraph separator) is a continuation. As a backstop for escape equivalences that are not listed, the search also ignores every character that is not a letter or digit between the letters, so `s.o.p.s`, `s o p s`, and `e n c [` count too (this over-flags on purpose; such a file in scope is exit 2). No line pattern decides that a
-  file is not SOPS, because go-yaml and sops read forms (`? sops`, `!!str sops:`, `&x sops:`, `sops:` plus a tab, flow YAML behind a
-  comment or `---`, an indented INI `[sops]` header) that no heuristic covers. A file that holds the token or an `ENC[` and that this tool cannot read as a
-  JSON document with a top-level `sops` property or as YAML with a plain `sops` key is **unknown**; binary data, text that is not
-  UTF-8 (such as UTF-16), a file larger than 16 MiB, and a FIFO or device (reads time out) are unknown too. Inside the scope of a rule
-  every file is read, whatever its name or extension, and an unknown file is exit 2. **A file in scope that merely mentions `sops` in
-  prose or a comment is therefore exit 2**; reword it or move it out of the rule's scope (there is no ignore list, because a skipped file is exactly the
-  hole this rule closes). A file that is SOPS is judged whatever it is called (`secrets/prod.yaml`, `prod.enc.yaml`, `secrets/token`); JSON is read as
-  JSON even in a `.yaml` file, so a one-line `{"data":...,"sops":{...}}` is judged. Outside every rule it reads only files named
-  `*.sops.*` (any letter case) or with a yaml, yml, json, env, or ini extension: a SOPS one is listed as uncovered, and so is an
-  unreadable one named `*.sops.*`. It never passes on nothing: no covered file is exit 2. **Symbolic links are never followed and are never silently skipped:**
-  a link where a rule applies, or whose children a rule could match (a link to a directory under `secrets/`), is exit 2; a link outside every rule that is
-  named like a SOPS file is listed as uncovered. A path with a control character, `:`, or `\` that holds SOPS metadata cannot be judged (exit 2); a SOPS file
-  that no rule matches is listed and exits 1, unless you pass `--allow-unverified-files`, whose name says what you accept: nobody checks who can read those files.
-- The skip rule is deliberately over-conservative, and the token search is a heuristic backstop. What `verify` guarantees is only this: a file it skips was positively proven free of the tokens above. A YAML escape equivalence that is not listed remains a residual risk.
+- `verify` judges **only files named `*.sops.*`** (any letter case), and it rejects everything else in a rule's scope. This is a structural
+  rule with no content inspection: inside the scope of any creation rule (the paths its expression matches), every regular file must be named
+  `*.sops.<ext>`, or the run is exit 2 and lists the file as `not judged: name does not mark it as SOPS-encrypted (rename it to *.sops.<ext>, or
+  move it out of the rule's scope)`. There is no content sniffing in scope and no ignore list, so nothing in scope is skipped because of what
+  it contains (content tricks such as `!!binary c29wcw==:`, which go-yaml decodes to the key `sops`, cannot hide a file). A consequence is that
+  `.gitkeep`, a README, or a non-secret file in a scoped directory fails the run: rename it, or move it out of the rule's scope. A file named
+  `*.sops.*` is read (at most 16 MiB; a FIFO or device times out) and judged by the metadata reader, which fails closed (exit 2) on anything it
+  does not fully understand: tags (`!`...) and `%` directives anywhere in YAML, complex keys, anchors, flow style, escaped keys, indentation, UTF-16,
+  a second document, and more. It skips `.git`, the root `.sops.yaml` (the sops configuration), and nothing else by name: `bin`, `obj`, and
+  `node_modules` are checked. A link, an unreadable directory, and a path with a control character, `:`, or `\` in scope are exit 2. It never passes on nothing: no
+  covered file is exit 2. **Outside every rule the detection is best effort:** a file named `*.sops.*`, or a yaml, yml, json, env, or ini file that a
+  heuristic recognises as SOPS, is listed as uncovered (exit 1, unless `--allow-unverified-files`, whose name says what you accept: nobody checks who can read those files). The heuristic
+  cannot be complete, so keep SOPS files inside a rule's scope. A link where a rule applies, or whose children a rule could match, is exit 2; a link outside every rule that is named like a SOPS file is listed as uncovered.
+- **The guarantee, precisely:** `verify` judges only files named `*.sops.*`; every other file in a rule's scope is rejected, so nothing in scope is skipped by content inspection. Content detection outside scope is best effort.
 - `verify --base <rev>` is the strongest check that needs no key. For every judged file it reads the same file at that git revision
   (git by absolute path, arguments one by one, no shell, no user configuration; the revision cannot start with `-` or hold `:` or
   spaces) and compares each label's `enc` text. A label that is new, or whose `enc` differs, is `changed: needs review` (exit 1),
