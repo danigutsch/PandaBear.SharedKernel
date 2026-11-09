@@ -29,7 +29,7 @@ The single checks are `ShouldHaveNoUnlabelledControls`, `ShouldHaveNoUnnamedLink
 `ShouldHaveLanguage`, `ShouldNotScrollHorizontally` and `ShouldHaveFocusWithin`; `ShouldHaveAccessibleStructure` runs the first
 two, the heading check and the scroll check and reports every problem in one failure. A failure throws `PlaywrightException` and names
 the offending elements. The checks read the DOM once and do not wait: call them after the page is interactive and the state under test is
-shown. They are a structural smoke test, not an audit: `aria-labelledby` is accepted when non-blank without resolving its target, and
+shown. The control, link and button checks skip elements that are not visible (`display: none`, `visibility: hidden`, the `hidden` attribute) and elements inside `aria-hidden="true"`. They are a structural smoke test, not an audit: `aria-labelledby` is accepted when non-blank without resolving its target, and
 colour contrast, focus order and landmarks are not checked.
 
 ## Browser tests of a Blazor application

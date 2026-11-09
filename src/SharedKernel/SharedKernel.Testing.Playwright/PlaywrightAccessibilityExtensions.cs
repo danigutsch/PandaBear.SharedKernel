@@ -15,21 +15,31 @@ namespace PandaBear.Testing.Playwright;
 public static class PlaywrightAccessibilityExtensions
 {
     private const string UnlabelledControlsScript = """
-        () => [...document.querySelectorAll('input, select, textarea')]
-            .filter(el => el.type !== 'hidden' && el.type !== 'submit' && el.type !== 'button')
-            .filter(el => !(el.getAttribute('aria-label') || '').trim()
-                && !(el.getAttribute('aria-labelledby') || '').trim()
-                && !(el.labels && el.labels.length > 0))
-            .map(el => el.tagName.toLowerCase() + '#' + (el.id || el.name || '?'))
+        () => {
+            const visible = el => el.checkVisibility({ visibilityProperty: true }) && !el.closest('[aria-hidden="true"]');
+            const named = el => (el.getAttribute('aria-label') || '').trim()
+                || (el.getAttribute('aria-labelledby') || '').trim()
+                || (el.labels && el.labels.length > 0);
+            return [...document.querySelectorAll('input, select, textarea')]
+                .filter(el => !['hidden', 'submit', 'button'].includes(el.type))
+                .filter(visible)
+                .filter(el => !named(el))
+                .map(el => el.tagName.toLowerCase() + '#' + (el.id || el.name || '?'));
+        }
         """;
 
     private const string UnnamedLinksAndButtonsScript = """
-        () => [...document.querySelectorAll('a[href], button')]
-            .filter(el => !((el.getAttribute('aria-label') || '').trim()
+        () => {
+            const visible = el => el.checkVisibility({ visibilityProperty: true }) && !el.closest('[aria-hidden="true"]');
+            const named = el => (el.getAttribute('aria-label') || '').trim()
                 || (el.getAttribute('aria-labelledby') || '').trim()
                 || (el.textContent || '').trim()
-                || (el.getAttribute('title') || '').trim()))
-            .map(el => el.outerHTML.slice(0, 80))
+                || (el.getAttribute('title') || '').trim();
+            return [...document.querySelectorAll('a[href], button')]
+                .filter(visible)
+                .filter(el => !named(el))
+                .map(el => el.outerHTML.slice(0, 80));
+        }
         """;
 
     private const string LevelOneHeadingCountScript = "() => document.querySelectorAll('h1').length";

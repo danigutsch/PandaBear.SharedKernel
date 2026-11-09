@@ -50,6 +50,21 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
     }
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task Hidden_controls_links_and_buttons_are_ignored()
+    {
+        // Arrange
+        var page = await chromium.Show("""
+            <input style="display:none"><input style="visibility:hidden"><div hidden><input></div>
+            <div aria-hidden="true"><input><a href="/x"></a><button></button></div>
+            <a href="/y" hidden></a><button style="display:none"></button>
+            """);
+
+        // Act, Assert
+        await page.ShouldHaveNoUnlabelledControls();
+        await page.ShouldHaveNoUnnamedLinksOrButtons();
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public async Task Unnamed_links_and_buttons_are_listed_with_the_start_of_their_markup()
     {
         // Arrange
