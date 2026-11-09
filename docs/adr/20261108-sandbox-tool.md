@@ -48,6 +48,6 @@ and the sandbox runtime installs a rule that refuses to create any `AF_UNIX` soc
 
 ## Deferred
 
-- Generating, merging, and verifying the sandbox settings from a profile.
+- Generating, merging, and verifying the sandbox settings from a profile: done, see [Sandbox settings](20261109-sandbox-settings.md).
 - A socket-free check lane (folder-mode whitespace, build, and direct test runs).
 - Probing the network, because it makes an outbound call and needs an opt-in.

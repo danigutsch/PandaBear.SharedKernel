@@ -9,6 +9,15 @@ internal interface ISandboxEnvironment
         get;
     }
 
+    /// <summary>
+    /// Gets the home directory that the account database lists for the current user, independent of <c>$HOME</c>, or
+    /// <see langword="null"/> when it cannot be determined.
+    /// </summary>
+    string? AccountHomeDirectory
+    {
+        get;
+    }
+
     /// <summary>Gets the temporary directory.</summary>
     string TempDirectory
     {

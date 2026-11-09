@@ -14,4 +14,5 @@ namespace PandaBear.Sandbox.Tool;
     UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
     AllowDuplicateProperties = false)]
 [JsonSerializable(typeof(SandboxConfiguration))]
+[JsonSerializable(typeof(SettingsConfiguration))]
 internal sealed partial class SandboxConfigurationJsonContext : JsonSerializerContext;

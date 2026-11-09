@@ -27,6 +27,9 @@ A local tool runs as `dotnet tool run sharedkernel-sandbox -- doctor`.
 ```text
 sharedkernel-sandbox doctor
 sharedkernel-sandbox doctor --root ../app
+sharedkernel-sandbox settings plan
+sharedkernel-sandbox settings apply --force
+sharedkernel-sandbox settings verify
 sharedkernel-sandbox --help
 ```
 
@@ -73,6 +76,81 @@ can also hide a path behind an empty folder or an empty file, which looks the sa
 with nothing readable is **skipped**, not reported as blocked. A socket, a FIFO, or any path that does not answer within two
 seconds cannot be probed this way and is skipped, and `~/` is skipped when the home folder is unknown.
 
+## Settings
+
+`settings plan`, `settings apply`, and `settings verify` generate, merge, and check the `sandbox` section (and the `env`
+section) of a coding agent's settings file, in the Claude Code format (`.claude/settings.json` or
+`.claude/settings.local.json`), from the optional `settings` section of `.config/sharedkernel-sandbox.json`:
+
+```json
+{
+  "version": 1,
+  "deniedReadPaths": ["~/.ssh", "~/.gnupg"],
+  "settings": {
+    "profile": "dotnet",
+    "target": ".claude/settings.json",
+    "writeNuGetFolders": true,
+    "allowWrite": ["~/.cache/tool"],
+    "denyWrite": [],
+    "denyRead": [],
+    "allowedDomains": ["example.com"]
+  }
+}
+```
+
+| Property | Meaning |
+| --- | --- |
+| `profile` | `dotnet`, or omitted for no profile. |
+| `target` | The settings file, relative to the root, a `.json` file; default `.claude/settings.json`. |
+| `allowWrite`, `denyWrite`, `denyRead` | Entries of `sandbox.filesystem.*`: absolute, or starting with `~/` or `./`, without `..`. `allowWrite` refuses the root, the home folder, and any spelling of them (`/.`, `~/.`, `//`). |
+| `allowedDomains` | Entries of `sandbox.network.allowedDomains`: a host name, optionally `*.`-prefixed and with a `:port` suffix. A wildcard needs two labels below it; `*.com` and `*.co.uk` are refused (a heuristic, not the public suffix list). |
+| `writeNuGetFolders`, `writeDotnetHome`, `allowSdkDownload`, `environment` | Profile `dotnet` options, see below. |
+| `excludedCommands`, `removeDenyRead`, `allowAllUnixSockets` | Widen the sandbox; refused unless a risk flag is passed, see below. |
+
+`deniedReadPaths` is always added to `sandbox.filesystem.denyRead`, so the paths the sandbox must hide are in the settings.
+
+**Profile `dotnet`** adds `api.nuget.org`, the one host a plain restore from nuget.org needs, and, unless
+`"environment": false`, the `env` entries `MSBUILDDISABLENODEREUSE=1`, `DOTNET_CLI_USE_MSBUILD_SERVER=0`, and
+`DOTNET_CLI_TELEMETRY_OPTOUT=1`, which keep build servers from outliving a sandboxed command. Opt-ins, each off by
+default: `writeNuGetFolders` (write access to `~/.nuget/packages` and `~/.local/share/NuGet`), `writeDotnetHome` (write
+access to `~/.dotnet`), and `allowSdkDownload` (the host `builds.dotnet.microsoft.com`).
+
+**Merge, never replace.** The tool only appends missing entries. Every other key, every entry a person added by hand, and
+the order of keys and entries stay as they are. It never removes an entry because the configuration no longer lists it,
+and it does not record which entries it added: a record could go stale, and removal is the operation that once overwrote a
+hand-written `allowWrite`. The one removal, `removeDenyRead`, takes out exactly the entries it lists. An existing `env`
+value that differs from the profile is kept and reported as a warning.
+
+**Refused unless accepted.** `apply --force` exits 2 with a message that names the exposure unless the flag is passed. `plan`, `verify`, and `apply` without `--force` write nothing, so they do not refuse: they report as if the flag were passed and print `warning: would require --accept-risk-...`.
+
+| Request | Flag | Exposure |
+| --- | --- | --- |
+| `allowAllUnixSockets: true` | `--accept-risk-allow-all-unix-sockets` | Every command can reach the container engine socket, the ssh and gpg agents, and the user session bus. |
+| `excludedCommands` entries | `--accept-risk-excluded-commands` | Those commands run outside the sandbox with full access. |
+| `removeDenyRead` entries | `--accept-risk-remove-deny-read` | Hidden paths, such as credential folders, become readable. |
+| `allowWrite` of the home folder, any folder above it, or a path at most one level below `/` (`/home`, `/etc`, `/usr`) | `--accept-risk-broad-write` | Commands can rewrite shell startup files, ssh and gpg configuration, and other tools' state. |
+| `allowWrite` of `~/.bashrc`, `~/.bash_profile`, `~/.bash_login`, `~/.bash_logout`, `~/.profile`, `~/.zshrc`, `~/.zshenv`, `~/.zprofile`, `~/.ssh`, `~/.gnupg`, `~/.config/autostart`, a folder above one of these (such as `~/.config`), a path below them, or `.git` itself, `.git/hooks`, or `.git/config` | `--accept-risk-sensitive-write` | Code planted there runs later, outside the sandbox. |
+
+The home folder is taken from the environment (`$HOME`) and from the account database (`/etc/passwd`), and both the entry and the home folders are compared after dropping `.` segments and resolving symbolic links, so `HOME=/x`, `/home/<user>/.`, or a link to the home folder do not slip through. Other paths in `allowWrite` are not judged.
+
+`plan` prints the edits and never writes. `apply` prints them too, and writes only with `--force`: it replaces the file
+atomically (a temporary file in the same folder, renamed over the original), only when the file still has the content
+that was planned, and a failure leaves the original and removes the temporary file. `verify` reports the managed entries
+that the file lacks and exits 1 on drift; entries it does not manage are never reported. A second `apply` after a
+successful one has nothing to change.
+
+```text
+sharedkernel-sandbox settings apply --force --root ../app
+sharedkernel-sandbox settings plan --accept-risk-excluded-commands
+```
+
+Limits: the file is read as strict JSON of at most 1 MiB (no comments, trailing commas, or repeated properties) and is
+written with the indentation and line endings it already has, or two spaces and LF for a new file. Rewriting goes through
+`System.Text.Json`, so inline arrays are expanded to one entry per line, string escapes are normalized (the meaning is
+unchanged), and a byte order mark is dropped. A file with nothing to change is not rewritten. The target must stay inside
+the root and is never reached through a symbolic link. The tool writes only the keys listed here; the key names and the
+path prefixes follow the Claude Code settings reference, and keys it does not know are left alone.
+
 ## Limits
 
 - A sandbox can refuse creating a socket, binding it, and connecting to it independently of each other (a seccomp filter,
@@ -92,5 +170,5 @@ seconds cannot be probed this way and is skipped, and `~/` is skipped when the h
 | Code | Meaning |
 | --- | --- |
 | 0 | No required probe has a bad outcome. |
-| 1 | A required probe is denied or failed, or a configured path is exposed. |
-| 2 | The configuration file is invalid, or `--root` is not an existing directory. |
+| 1 | A required probe is denied or failed, or a configured path is exposed. `settings verify`: a managed entry is missing. |
+| 2 | The configuration file is invalid, `--root` is not an existing directory, or (settings) the settings file is invalid, a risk flag is missing, or a write failed. |
