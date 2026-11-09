@@ -17,6 +17,7 @@ public static class SharedKernelPackagePlanner
         "SharedKernel.CI.Tool",
         "SharedKernel.K6.Tool",
         "SharedKernel.Sandbox.Tool",
+        "SharedKernel.Packages.Tool",
     ];
     /// <summary>
     /// Resolves the package directory for a package version.

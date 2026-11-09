@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>sharedkernel-packages</ToolCommandName>
+        <PackageId>PandaBear.SharedKernel.Packages.Tool</PackageId>
+        <Description>Compares the packages that .config/sharedkernel-packages.json declares per package manager with the installed packages, read-only, and refuses a declaration in which a package has more than one owner.</Description>
+        <RootNamespace>PandaBear.Packages.Tool</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>packages;apt;cargo;npm;flatpak;dotnet-tool</PackageTags>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.Packages.Tool.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.CommandLine" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Packages\SharedKernel.Packages.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="../Shared/ControlCharacters.cs" Link="Shared/ControlCharacters.cs" />
+        <Compile Include="../Shared/ExecutableResolver.cs" Link="Shared/ExecutableResolver.cs" />
+        <Compile Include="../Shared/RepositoryPath.cs" Link="Shared/RepositoryPath.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>
