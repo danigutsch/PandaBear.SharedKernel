@@ -46,3 +46,23 @@ with the mapped status code.
 - A failure that maps to 4xx (Invalid, Unauthorized, Forbidden, NotFound, Conflict) sends the result's detail, so keep those details
   safe for callers to read.
 - An uninitialized result (`default(Result)` or `default(Result<T>)`) throws `InvalidOperationException` instead of becoming a response.
+
+## Optimistic concurrency over HTTP
+
+`ConcurrencyHeaders` carries a record's numeric version as a strong entity tag. `ETag(version)` formats `"3"`. `ReadVersion(request)`
+reads the version an update is based on from `If-Match` and returns an invalid result keyed to `version` when the header is missing, `*`, a
+weak tag (`W/"3"`), a list of tags, or not a non-negative integer, because RFC 9110 requires strong comparison for `If-Match`. A stale
+version is not detected here: the update reports it (for example as a Conflict result, HTTP 409). `Update(request, send)` reads the
+version, skips `send` when it is unusable, and converts the outcome with `ToHttpResult()`.
+
+```csharp
+group.MapGet("/{id:guid}", async (Guid id, ISender sender, CancellationToken ct) =>
+    (await sender.Send(new GetThing(id), ct)).ToHttpResult(thing => thing.Version));
+group.MapPut("/{id:guid}", (Guid id, ThingBody body, HttpRequest request, ISender sender, CancellationToken ct) =>
+    ConcurrencyHeaders.Update(request, version => sender.Send(new UpdateThing(id, body, version), ct)));
+group.MapPost("/", async (ThingBody body, ISender sender, CancellationToken ct) =>
+    (await sender.Send(new CreateThing(body), ct)).ToCreatedHttpResult(id => $"/api/v1/things/{id}", id => new { id }));
+```
+
+`ToHttpResult(version)` sets the `ETag` header on a successful read. `ToCreatedHttpResult(location, body)` answers 201 with a `Location`
+header and the body you choose, and the usual problem response for a failure.
