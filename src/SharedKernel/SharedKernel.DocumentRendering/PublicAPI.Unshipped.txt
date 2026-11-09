@@ -31,6 +31,16 @@ PandaBear.DocumentRendering.DocumentField.PrivacyClassification.get -> PandaBear
 PandaBear.DocumentRendering.DocumentField.PrivacyClassification.init -> void
 PandaBear.DocumentRendering.DocumentField.Value.get -> string!
 PandaBear.DocumentRendering.DocumentField.Value.init -> void
+PandaBear.DocumentRendering.DocumentList
+PandaBear.DocumentRendering.DocumentList.DocumentList(System.Collections.Generic.IReadOnlyList<string!>! Items, PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
+PandaBear.DocumentRendering.DocumentList.IsOrdered.get -> bool
+PandaBear.DocumentRendering.DocumentList.IsOrdered.init -> void
+PandaBear.DocumentRendering.DocumentList.Items.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.DocumentRendering.DocumentList.Items.init -> void
+PandaBear.DocumentRendering.DocumentList.Label.get -> string?
+PandaBear.DocumentRendering.DocumentList.Label.init -> void
+PandaBear.DocumentRendering.DocumentList.PrivacyClassification.get -> PandaBear.DocumentRendering.DocumentPrivacyClassification
+PandaBear.DocumentRendering.DocumentList.PrivacyClassification.init -> void
 PandaBear.DocumentRendering.DocumentParagraph
 PandaBear.DocumentRendering.DocumentParagraph.DocumentParagraph(string! Text, PandaBear.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
 PandaBear.DocumentRendering.DocumentParagraph.PrivacyClassification.get -> PandaBear.DocumentRendering.DocumentPrivacyClassification
@@ -44,9 +54,9 @@ PandaBear.DocumentRendering.DocumentPrivacyClassification.PersonalData = 3 -> Pa
 PandaBear.DocumentRendering.DocumentPrivacyClassification.Public = 1 -> PandaBear.DocumentRendering.DocumentPrivacyClassification
 PandaBear.DocumentRendering.DocumentPrivacyClassification.SensitivePersonalData = 4 -> PandaBear.DocumentRendering.DocumentPrivacyClassification
 PandaBear.DocumentRendering.DocumentRenderRequest
-PandaBear.DocumentRendering.DocumentRenderRequest.DocumentRenderRequest(string! Language, string! Title, System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentSection!>! Sections, PandaBear.DocumentRendering.DocumentBrandingSnapshot? Branding) -> void
 PandaBear.DocumentRendering.DocumentRenderRequest.Branding.get -> PandaBear.DocumentRendering.DocumentBrandingSnapshot?
 PandaBear.DocumentRendering.DocumentRenderRequest.Branding.init -> void
+PandaBear.DocumentRendering.DocumentRenderRequest.DocumentRenderRequest(string! Language, string! Title, System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentSection!>! Sections, PandaBear.DocumentRendering.DocumentBrandingSnapshot? Branding) -> void
 PandaBear.DocumentRendering.DocumentRenderRequest.Language.get -> string!
 PandaBear.DocumentRendering.DocumentRenderRequest.Language.init -> void
 PandaBear.DocumentRendering.DocumentRenderRequest.Sections.get -> System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentSection!>!
@@ -59,6 +69,8 @@ PandaBear.DocumentRendering.DocumentSection.Fields.get -> System.Collections.Gen
 PandaBear.DocumentRendering.DocumentSection.Fields.init -> void
 PandaBear.DocumentRendering.DocumentSection.Heading.get -> string!
 PandaBear.DocumentRendering.DocumentSection.Heading.init -> void
+PandaBear.DocumentRendering.DocumentSection.Lists.get -> System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentList!>!
+PandaBear.DocumentRendering.DocumentSection.Lists.init -> void
 PandaBear.DocumentRendering.DocumentSection.Paragraphs.get -> System.Collections.Generic.IReadOnlyList<PandaBear.DocumentRendering.DocumentParagraph!>!
 PandaBear.DocumentRendering.DocumentSection.Paragraphs.init -> void
 PandaBear.DocumentRendering.HtmlDocumentRenderer

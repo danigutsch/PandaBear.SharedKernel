@@ -13,4 +13,13 @@ public sealed record DocumentSection(string Heading, IReadOnlyList<DocumentField
         get;
         init;
     } = [];
+
+    /// <summary>
+    /// Gets the optional lists of the section, rendered in order after the paragraphs and before the fields. It is empty by default.
+    /// </summary>
+    public IReadOnlyList<DocumentList> Lists
+    {
+        get;
+        init;
+    } = [];
 }
