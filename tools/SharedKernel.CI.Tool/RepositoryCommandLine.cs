@@ -40,12 +40,13 @@ internal static partial class RepositoryCommandLine
     {
         runInstaller ??= run;
         var root = new RootCommand(
-            "Selects and runs affected test projects, generates OpenAPI documents, installs Playwright browsers, verifies changed-code coverage, stages package candidates, verifies commit messages, and runs mutation tests.");
+            "Selects and runs affected test projects, checks changed projects without sockets, generates OpenAPI documents, installs Playwright browsers, verifies changed-code coverage, stages package candidates, verifies commit messages, and runs mutation tests.");
 
         // Consumer caller tests parse command lines with [diagram] without running them.
         root.Directives.Add(new DiagramDirective());
         root.Subcommands.Add(CreateSelect(workingDirectory, run));
         root.Subcommands.Add(CreateRun(workingDirectory, run, runConfigured, startService, runInstaller));
+        root.Subcommands.Add(CreateLocalCheck(workingDirectory, run, runConfigured));
         root.Subcommands.Add(CreateOpenApi(workingDirectory, runConfigured));
         root.Subcommands.Add(CreateInstallPlaywright(workingDirectory, runInstaller));
         root.Subcommands.Add(CreateCoverage(workingDirectory, run));
@@ -217,6 +218,78 @@ internal static partial class RepositoryCommandLine
                     ct,
                     startService: startService,
                     runInstaller: runInstaller);
+            },
+            ct));
+        return command;
+    }
+
+    private static Command CreateLocalCheck(
+        string workingDirectory,
+        Func<string, string[], string, CancellationToken, Task<string>> run,
+        Func<string, string[], string, Action<ProcessStartInfo>, CancellationToken, Task<string>> runConfigured)
+    {
+        var baseOption = new Option<string>("--base")
+        {
+            Description = "Revision to compare with HEAD and the working tree, such as origin/main. Without one, every test project is selected.",
+            HelpName = "revision",
+        };
+        var configurationOption = CreateConfigurationOption("Debug");
+        var strictOption = new Option<bool>("--strict")
+        {
+            Description = "Fail when a lane could not run, or a selected test project could not be run, instead of only reporting it.",
+        };
+        var timeoutOption = new Option<int>("--timeout-minutes")
+        {
+            Description = "How long each child process may run before it is killed and its lane fails.",
+            HelpName = "minutes",
+            DefaultValueFactory = static _ => 30,
+        };
+        timeoutOption.Validators.Add(static result =>
+        {
+            if (result.GetValueOrDefault<int>() is < 1 or > 1440)
+            {
+                result.AddError("--timeout-minutes requires 1 to 1440.");
+            }
+        });
+        var rootOption = CreateRootOption();
+        var selectionOption = PathOption("--selection", "Directory for the plan, the solution filter, and the lane logs, relative to the root.", "directory");
+        selectionOption.DefaultValueFactory = static _ => "TestResults/local-check";
+        var testArguments = new Argument<string[]>("test-arguments")
+        {
+            Description = "Arguments after -- for every selected test executable, such as --filter-trait name=value.",
+            Arity = ArgumentArity.ZeroOrMore,
+        };
+        var command = new Command(
+            "local-check",
+            "Check the changed projects without a Unix domain socket: whitespace in folder mode, a build with node reuse off, and the built test executables run directly, then report what could not run.")
+        {
+            baseOption,
+            configurationOption,
+            strictOption,
+            timeoutOption,
+            rootOption,
+            selectionOption,
+            testArguments,
+        };
+        command.SetAction((parseResult, ct) => Execute(
+            parseResult,
+            (output, error) =>
+            {
+                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
+                return LocalCheck.Run(
+                    root,
+                    Path.GetFullPath(parseResult.GetRequiredValue(selectionOption), root),
+                    new LocalCheckOptions(
+                        parseResult.GetValue(baseOption),
+                        parseResult.GetRequiredValue(configurationOption),
+                        parseResult.GetValue(strictOption),
+                        parseResult.GetValue(testArguments) ?? [],
+                        TimeSpan.FromMinutes(parseResult.GetValue(timeoutOption))),
+                    run,
+                    runConfigured,
+                    output,
+                    error,
+                    ct);
             },
             ct));
         return command;

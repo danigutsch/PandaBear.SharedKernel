@@ -103,7 +103,7 @@ non-interactive commands and to how they start a UI.
   `JsonSerializerContext` that sets `UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow` and
   `AllowDuplicateProperties = false`. Errors name the file and the JSON path of the problem.
 - A command fails when the file lacks the section it needs.
-- `sharedkernel-ci select`, `run`, `openapi`, `coverage`, and `run-mutation-tests` read `.config/sharedkernel-ci.json`:
+- `sharedkernel-ci select`, `run`, `local-check`, `openapi`, `coverage`, and `run-mutation-tests` read `.config/sharedkernel-ci.json`:
   the solution, the full-validation and documentation path patterns, the always-selected test projects, whether changed
   projects need covering tests, the test slices with their OpenAPI targets, Playwright browsers, and services, the OpenAPI
   targets, the changed-code coverage threshold, source patterns, and symbol directories, and the `dotnet-stryker`

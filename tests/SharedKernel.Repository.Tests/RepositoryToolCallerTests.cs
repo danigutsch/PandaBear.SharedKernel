@@ -66,6 +66,8 @@ public sealed class RepositoryToolCallerTests
                 "verify-commit-message --event <event.json>",
                 "run-mutation-tests",
                 "run --slice library --coverage --install-playwright --playwright-dependencies --github-summary $GITHUB_STEP_SUMMARY",
+                "local-check --base origin/main",
+                "local-check --base origin/main --strict -- --filter-not-trait Category=Slow",
                 "coverage record-symbols",
                 "coverage verify --report artifacts --base $BASE_SHA --symbols TestResults/symbol-evidence.json",
                 "stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed"

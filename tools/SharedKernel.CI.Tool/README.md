@@ -6,7 +6,8 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 `sharedkernel-ci` selects the test projects affected by a change, as the repository's `.config/sharedkernel-ci.json`
 configures, writes a solution filter for each CI test slice, runs the selected test projects of one or more slices
-through one solution filter with the slices' services running around the tests, generates OpenAPI documents, installs
+through one solution filter with the slices' services running around the tests, checks the changed projects without a Unix
+domain socket for a sandbox that refuses them, generates OpenAPI documents, installs
 Playwright browsers, verifies the coverage of changed code, stages pinned package candidates in a local feed, verifies
 Conventional Commit messages in pull request events and git commit message files, and runs Stryker.NET mutation tests.
 
@@ -14,6 +15,7 @@ Conventional Commit messages in pull request events and git commit message files
 
 Git and the .NET SDK pinned in `global.json`. `select` reads `.config/sharedkernel-ci.json` and the solution it names in a
 Git checkout, and `run` reads the configuration and the plan that `select` wrote; `openapi` reads the configuration;
+`local-check` reads the configuration in a Git work tree and runs `git`, `dotnet`, and the built test executables, and needs no socket;
 `coverage` reads the configuration in a Git checkout with the history of `--base`;
 `install-playwright`, and `run --install-playwright`, need PowerShell (`pwsh`);
 `run` for a slice with a `service` starts the service's project with `dotnet run`, so it needs whatever that project
@@ -65,7 +67,7 @@ instead of running; an invalid command line exits 1.
 
 ### Configuration
 
-`select`, `run`, `openapi`, `coverage`, and `run-mutation-tests` read `<root>/.config/sharedkernel-ci.json`: strict JSON of at most 1 MiB with camelCase property names that
+`select`, `run`, `local-check`, `openapi`, `coverage`, and `run-mutation-tests` read `<root>/.config/sharedkernel-ci.json`: strict JSON of at most 1 MiB with camelCase property names that
 match exactly. Comments, trailing commas, and unknown, repeated, or missing properties are errors, and every error names
 the file and the JSON path of the problem.
 
@@ -306,6 +308,54 @@ If the tool dies, the service still sees end-of-file, because the pipe closes wi
 `service-<slice>` phase, which starts it and waits for its value, and a `service-stop-<slice>` phase to the evidence.
 A slice without a `service` runs as before.
 
+### local-check
+
+```text
+dotnet tool run sharedkernel-ci -- local-check --base origin/main
+dotnet tool run sharedkernel-ci -- local-check --base origin/main --strict -- --filter-not-trait Category=Slow
+```
+
+A check for a sandbox that refuses to create Unix domain sockets, where `dotnet test` and project-mode `dotnet format`
+crash with `SocketException (13)`. It needs no socket itself, and it is the lane for an agent in such a sandbox; it does
+not replace `run` or CI. It reads the same `.config/sharedkernel-ci.json` and adds nothing to it.
+
+`--base` is any revision of the checkout, such as `origin/main` (without it, every test project is selected). The tool
+resolves it to a commit and selects as `select` does, with the committed changes since it and also the uncommitted
+changes of the working tree and its untracked, not ignored files. Selection reasons go to standard output first, and
+the plan, the solution filter `local-check.slnf`, and a log per lane go to `--selection` (default
+`TestResults/local-check`). A test project of a slice that has a `service`, `openApi` targets, or `playwright` browsers is
+not run, because only `run` provides what it needs; the report lists it.
+
+The lanes run in order, each reported as `passed`, `FAILED`, or `SKIPPED` with its duration:
+
+1. `whitespace`: `dotnet format whitespace --folder <directory> --verify-no-changes --exclude bin/ obj/` for the
+   directory of each selected project (a directory inside another selected one is covered by it). A failure names each file
+   and the command that fixes it.
+2. `build`: `dotnet restore <filter> --locked-mode -m:1 -nodeReuse:false`, then `dotnet build <filter> -c <configuration>
+   --no-restore -m:1 -nodeReuse:false`. Every child process runs with `MSBUILDDISABLENODEREUSE=1`,
+   `DOTNET_CLI_USE_MSBUILD_SERVER=0`, and `DOTNET_CLI_TELEMETRY_OPTOUT=1`. Code-style enforcement in the build fails it,
+   but not every IDE rule: see below.
+3. `tests`: for each selected test project, `dotnet msbuild <project> -getProperty:TargetPath` finds the built assembly, and
+   the test executable next to it (or `dotnet <assembly>` without one) runs with `--progress off` and the arguments after
+   `--`, such as a trait filter, run. The arguments go to every selected test project, so a filter that names one project's
+   tests makes the others run no test and fail with exit code 8. A test run that ran no test fails. A project whose
+   `TargetPath` is empty, such as a multi-target project, is not supported and is listed as not run.
+
+`--configuration` defaults to `Debug`. `--timeout-minutes` (default 30, 1 to 1440) bounds each child process: past it the
+process tree is killed and the lane fails with `timed out`. A child process that prints `SocketException (13)` or `(1)`, or
+`Permission denied` on a line with the word socket or pipe, is reported as `The sandbox blocks Unix domain sockets` with a pointer to `sharedkernel-sandbox doctor`,
+and is a failure, not a skip. A child process that cannot start, such as a missing `dotnet`, skips its lane with the
+reason. Child process output in the report is the last 20 lines, shortened and escaped.
+
+The report always ends with what the lane does **not** check, so a green result is never read as complete: project-mode
+`dotnet format` style and analyzer rules (CI also reports IDE0002 and others that only that mode finds), coverage
+collection, `dotnet test` itself, and the whitespace of source files that a project compiles from outside its own
+directory, such as `tools/Shared/*.cs`, because folder mode visits only project directories. It also lists each selected test project that was not run, and why.
+
+The exit code is 0 only when at least one lane passed and every lane that ran passed. `--strict` also fails when a lane or a selected test project
+could not run, for CI. The command fails, and checks nothing, outside a Git work tree, for a `--base` that is not a
+commit, and when the change selects no project, so it cannot pass having checked nothing.
+
 ### openapi
 
 ```text
@@ -537,7 +587,7 @@ on standard error.
 | --- | --- |
 | 0 | Success. |
 | 1 | Invalid command line, cancellation, or an unexpected error. |
-| 2 | The configuration is invalid, or a run, generation, installation, coverage check, staging, the commit message check, or a mutation run failed; the reason is on standard error. |
+| 2 | The configuration is invalid, or a run, local check (a failed lane, a lane that could not run with `--strict`, or nothing selected), generation, installation, coverage check, staging, the commit message check, or a mutation run failed; the reason is on standard error. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within 90 seconds. |
 
 Ctrl+C or SIGTERM stops the running `git`, `dotnet`, `pwsh`, or `dotnet-stryker` process tree, then stops the services of

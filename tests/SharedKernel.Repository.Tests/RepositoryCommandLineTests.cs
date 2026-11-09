@@ -17,6 +17,7 @@ public sealed class RepositoryCommandLineTests
         result.ExitCode.ShouldBe(0);
         result.Output.ShouldContain("  select ", StringComparison.Ordinal);
         result.Output.ShouldContain("  run ", StringComparison.Ordinal);
+        result.Output.ShouldContain("  local-check ", StringComparison.Ordinal);
         result.Output.ShouldContain("  openapi ", StringComparison.Ordinal);
         result.Output.ShouldContain("  install-playwright ", StringComparison.Ordinal);
         result.Output.ShouldContain("  coverage ", StringComparison.Ordinal);
@@ -42,6 +43,17 @@ public sealed class RepositoryCommandLineTests
         "--github-summary <path>",
         "--root <path>",
         "--selection <directory>")]
+    [InlineData(
+        "local-check",
+        "--base <revision>",
+        "--configuration <name>",
+        "[default: Debug]",
+        "--strict",
+        "--timeout-minutes <minutes>",
+        "--root <path>",
+        "--selection <directory>",
+        "[default: TestResults/local-check]",
+        "<test-arguments>")]
     [InlineData("openapi", "generate", "refresh")]
     [InlineData("openapi generate", "--target <name>", "--root <path>")]
     [InlineData("openapi refresh", "--target <name>", "--root <path>")]
