@@ -3,17 +3,23 @@ using System.Text.Json;
 namespace PandaBear.Secrets;
 
 /// <summary>
-/// Counts the data values of a SOPS file that are not encrypted. sops writes every string, number, and boolean as <c>ENC[...]</c>; an empty
-/// string, <c>null</c>, and an empty list or mapping stay as they are. Keys that end with the default <c>_unencrypted</c> suffix (and everything
-/// below them) are meant to stay in clear and are not counted. A comment that is not encrypted counts.
+/// Counts the data values of a SOPS file that are not encrypted and notices comments. sops writes every string, number, and boolean as a
+/// complete <c>ENC[AES256_GCM,data:...,iv:...,tag:...,type:...]</c>; an empty string, <c>null</c>, and an empty list or mapping stay as they
+/// are. Keys that end with the default <c>_unencrypted</c> suffix (and everything below them) are meant to stay in clear and are not examined. Any
+/// comment text outside the <c>sops</c> block is reported, because a comment is not covered by the checks and can hold anything.
 /// </summary>
 internal static class PlainValueScanner
 {
     private const string Suffix = "_unencrypted";
+    private const int InitializationVectorLength = 32;
+    private const int AuthenticationTagLength = 16;
 
-    /// <summary>Counts plain values in the lines outside the <c>sops</c> block of a YAML file.</summary>
-    internal static int CountYaml(IEnumerable<string> lines)
+    private static readonly HashSet<string> ValueTypes = new(StringComparer.Ordinal) { "str", "int", "float", "bool", "bytes", "comment" };
+
+    /// <summary>Counts plain values in the lines outside the <c>sops</c> block of a YAML file, and says whether any comment has text.</summary>
+    internal static int CountYaml(IEnumerable<string> lines, out bool hasComment)
     {
+        hasComment = false;
         var count = 0;
         var skipBelow = -1;
         var blockBelow = -1;
@@ -40,7 +46,7 @@ internal static class PlainValueScanner
             skipBelow = -1;
             if (trimmed[0] == '#')
             {
-                count += trimmed.StartsWith("#ENC[", StringComparison.Ordinal) ? 0 : 1;
+                hasComment |= trimmed[1..].Trim().Length > 0;
                 continue;
             }
 
@@ -78,7 +84,9 @@ internal static class PlainValueScanner
                 continue;
             }
 
-            if (!IsEncryptedOrEmpty(StripComment(value)))
+            value = SplitComment(value, out var comment);
+            hasComment |= comment;
+            if (!IsEncryptedOrEmpty(value))
             {
                 count++;
             }
@@ -102,6 +110,48 @@ internal static class PlainValueScanner
         return count;
     }
 
+    /// <summary>Returns whether <paramref name="value"/> is a complete value as sops writes it: the cipher, base64 data, a 32-byte iv, a 16-byte tag, and a known type.</summary>
+    internal static bool IsWellFormedEncryptedValue(string value)
+    {
+        if (!value.StartsWith("ENC[", StringComparison.Ordinal) || !value.EndsWith(']'))
+        {
+            return false;
+        }
+
+        var parts = value[4..^1].Split(',');
+        return parts.Length == 5
+            && parts[0] == "AES256_GCM"
+            && TryBase64(parts[1], "data:", out _)
+            && TryBase64(parts[2], "iv:", out var iv) && iv == InitializationVectorLength
+            && TryBase64(parts[3], "tag:", out var tag) && tag == AuthenticationTagLength
+            && parts[4].StartsWith("type:", StringComparison.Ordinal) && ValueTypes.Contains(parts[4][5..]);
+    }
+
+    private static bool TryBase64(string part, string prefix, out int length)
+    {
+        length = 0;
+        if (!part.StartsWith(prefix, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        var text = part[prefix.Length..];
+        if (!text.All(static c => char.IsAsciiLetterOrDigit(c) || c is '+' or '/' or '='))
+        {
+            return false;
+        }
+
+        try
+        {
+            length = Convert.FromBase64String(text).Length;
+            return true;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+    }
+
     private static int Count(JsonProperty property) => property.Name.EndsWith(Suffix, StringComparison.Ordinal) ? 0 : CountValue(property.Value);
 
     private static int CountValue(JsonElement value) => value.ValueKind switch
@@ -113,19 +163,41 @@ internal static class PlainValueScanner
         _ => 1,
     };
 
-    private static string StripComment(string value)
+    /// <summary>Splits an inline comment off a YAML value, outside quotes. A comment counts when it has text after the marker.</summary>
+    private static string SplitComment(string value, out bool hasComment)
     {
+        hasComment = false;
+        if (value.Length > 0 && value[0] == '#')
+        {
+            hasComment = value[1..].Trim().Length > 0;
+            return string.Empty;
+        }
+
+        var end = value.Length;
+        var tail = string.Empty;
         if (value.Length > 0 && value[0] is '"' or '\'')
         {
             var close = value.IndexOf(value[0], 1);
-            return close < 0 ? value : value[..(close + 1)];
+            if (close >= 0)
+            {
+                end = close + 1;
+                tail = value[end..].Trim();
+            }
+        }
+        else
+        {
+            var comment = value.IndexOf(" #", StringComparison.Ordinal);
+            if (comment >= 0)
+            {
+                end = comment;
+                tail = value[(comment + 1)..];
+            }
         }
 
-        var comment = value.IndexOf(" #", StringComparison.Ordinal);
-        return (comment >= 0 ? value[..comment] : value).TrimEnd(' ');
+        hasComment = tail.Length > 1 && tail[0] == '#' && tail[1..].Trim().Length > 0;
+        return value[..end].TrimEnd(' ');
     }
 
     private static bool IsEncryptedOrEmpty(string value) =>
-        value is "" or "null" or "~" or "[]" or "{}" or "\"\"" or "''"
-        || (value.StartsWith("ENC[", StringComparison.Ordinal) && value.EndsWith(']'));
+        value is "" or "null" or "~" or "[]" or "{}" or "\"\"" or "''" || IsWellFormedEncryptedValue(value);
 }

@@ -16,7 +16,6 @@ public sealed class VerifyCommandTests
         WriteFile(repository.Path, "secrets/a.sops.yaml", TestRecipients.Yaml([TestRecipients.First, TestRecipients.Second]));
         WriteFile(repository.Path, "secrets/deep/b.sops.json", TestRecipients.Json([TestRecipients.Second, TestRecipients.First]));
         WriteFile(repository.Path, "elsewhere/c.sops.yaml", TestRecipients.Yaml([TestRecipients.Third]));
-        WriteFile(repository.Path, "node_modules/x/d.sops.yaml", "ignored");
         WriteFile(repository.Path, ".git/e.sops.yaml", "ignored");
 
         // Act
@@ -24,10 +23,11 @@ public sealed class VerifyCommandTests
 
         // Assert
         run.ExitCode.ShouldBe(0);
-        run.Output.ShouldContain("secrets/a.sops.yaml: ok", StringComparison.Ordinal);
-        run.Output.ShouldContain("secrets/deep/b.sops.json: ok", StringComparison.Ordinal);
+        run.Output.ShouldContain("secrets/a.sops.yaml: labels consistent", StringComparison.Ordinal);
+        run.Output.Split("proves labels and structure, not who can decrypt").Length.ShouldBe(2);
+        run.Output.ShouldContain("secrets/deep/b.sops.json: labels consistent", StringComparison.Ordinal);
         run.Output.ShouldContain("elsewhere/c.sops.yaml: no creation rule matches, not verified", StringComparison.Ordinal);
-        run.Output.ShouldContain("2 files match a creation rule: 2 exact, 0 differ, 0 unreadable. 1 other *.sops.* files are not covered by a rule, 0 have paths that cannot be checked.", StringComparison.Ordinal);
+        run.Output.ShouldContain("2 files match a creation rule: 2 consistent, 0 differ, 0 unreadable. 1 other SOPS files are not covered by a rule, 0 entries cannot be judged, 0 have changed recipients.", StringComparison.Ordinal);
         var strict = await Run(repository.Path, "verify", "--root", repository.Path);
         strict.ExitCode.ShouldBe(1);
         strict.Output.ShouldContain("elsewhere/c.sops.yaml: no creation rule matches, not verified", StringComparison.Ordinal);
@@ -52,7 +52,7 @@ public sealed class VerifyCommandTests
         run.Output.ShouldContain($"secrets/superset.sops.yaml: unexpected recipient {TestRecipients.Third}", StringComparison.Ordinal);
         run.Output.ShouldContain($"secrets/other.sops.yaml: missing recipient {TestRecipients.Second}", StringComparison.Ordinal);
         run.Output.ShouldContain($"secrets/other.sops.yaml: unexpected recipient {TestRecipients.Third}", StringComparison.Ordinal);
-        run.Output.ShouldContain("4 files match a creation rule: 1 exact, 3 differ, 0 unreadable.", StringComparison.Ordinal);
+        run.Output.ShouldContain("4 files match a creation rule: 1 consistent, 3 differ, 0 unreadable.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public sealed class VerifyCommandTests
         run.ExitCode.ShouldBe(2);
         run.Error.ShouldContain("secrets/broken.sops.yaml:", StringComparison.Ordinal);
         run.Error.ShouldContain("secrets/env.sops.env: Only YAML and JSON", StringComparison.Ordinal);
-        run.Output.ShouldContain("3 files match a creation rule: 0 exact, 1 differ, 2 unreadable.", StringComparison.Ordinal);
+        run.Output.ShouldContain("3 files match a creation rule: 0 consistent, 1 differ, 2 unreadable.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -123,8 +123,8 @@ public sealed class VerifyCommandTests
         // Assert
         run.ExitCode.ShouldBe(2);
         run.Error.ShouldContain("cannot be checked", StringComparison.Ordinal);
-        run.Output.ShouldContain("1 files match a creation rule: 1 exact, 0 differ, 0 unreadable.", StringComparison.Ordinal);
-        run.Output.ShouldContain("1 have paths that cannot be checked.", StringComparison.Ordinal);
+        run.Output.ShouldContain("1 files match a creation rule: 1 consistent, 0 differ, 0 unreadable.", StringComparison.Ordinal);
+        run.Output.ShouldContain("1 entries cannot be judged", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -157,8 +157,8 @@ public sealed class VerifyCommandTests
 
         // Assert
         run.ExitCode.ShouldBe(2);
-        run.Output.ShouldNotContain(": ok", StringComparison.Ordinal);
-        run.Output.ShouldContain("3 files match a creation rule: 0 exact, 0 differ, 3 unreadable.", StringComparison.Ordinal);
+        run.Output.ShouldNotContain(": labels consistent", StringComparison.Ordinal);
+        run.Output.ShouldContain("3 files match a creation rule: 0 consistent, 0 differ, 3 unreadable.", StringComparison.Ordinal);
     }
 
     [Fact]

@@ -41,7 +41,11 @@ sharedkernel-secrets decrypt secrets/app.sops.yaml#db.password --identity ~/.con
 sharedkernel-secrets decrypt secrets/app.sops.yaml --identity ~/.config/age/work.txt --output plain.yaml --force
 sharedkernel-secrets recipients list secrets/app.sops.yaml
 sharedkernel-secrets recipients check secrets/app.sops.yaml
+sharedkernel-secrets recipients check secrets/app.sops.yaml --prove-with-identity ~/.config/age/work.txt
+sharedkernel-secrets recipients check secrets/app.sops.yaml --prove-with-identity ~/.config/age/work.txt --prove-absent-identity ~/.config/age/revoked.txt
 sharedkernel-secrets verify
+sharedkernel-secrets verify --base origin/main
+sharedkernel-secrets verify --base origin/main --allow-changed-recipients
 sharedkernel-secrets verify --allow-unverified-files
 sharedkernel-secrets --help
 ```
@@ -56,17 +60,33 @@ sharedkernel-secrets --help
 - `decrypt` writes the plaintext to standard output exactly as it is, unescaped, with no added newline. `file#key.path` decrypts
   one value (`servers[0].token` indexes a list). The identity is `--identity <path>` or the path in `SOPS_AGE_KEY_FILE`, never the
   key itself; a value that looks like a key is refused. `--output <path>` writes a new file instead and needs `--force`. The
-  path is relative to the root (no `..`, no symbolic link), its directory must exist, and the file is created with mode 0600
-  next to its destination and renamed into place, so a failure leaves no partial plaintext. It never overwrites.
-- `recipients list` prints the age recipients of a file, any other key holder (`kms`, `pgp`, ...), and concerns. `recipients check`
-  compares them with the file's creation rule: a missing recipient, an unexpected recipient, a non-age key holder, and a
-  **weakening** are differences. A weakening is a non-default `unencrypted_regex`, `encrypted_regex`, `unencrypted_suffix`,
-  `encrypted_suffix`, comment regex, or `mac_only_encrypted` setting, or a value that is not `ENC[...]` (a key that ends with
-  `_unencrypted`, `null`, an empty string, and an empty list or mapping are allowed, as sops leaves them in clear).
-- `verify` checks every `*.sops.*` file under the root (not `.sops.yaml`, the sops configuration). It skips `.git`,
-  `node_modules`, `bin`, `obj`, and symbolic links. It never passes on nothing: no covered file is exit 2; a path it cannot judge
-  (`a:b.sops.yaml`, a backslash, a control character) is exit 2; a file that no rule matches is listed and exits 1, unless
-  you pass `--allow-unverified-files`, whose name says what you accept: nobody checks who can read those files.
+  path is relative to the root (no `..`, no symbolic link), its directory must exist, and the file is created with a random name and
+  mode 0600 next to its destination, exclusively, and renamed into place, so a failure leaves no partial plaintext. It never overwrites.
+- `recipients list` prints the age recipients of a file, any other key holder (`kms`, `pgp`, ...), and concerns.
+- `recipients check` compares a file's **labels** with its creation rule and prints `labels consistent` or the differences: a missing
+  recipient, an unexpected recipient, a non-age key holder, or a **weakening**. A weakening is a non-default `unencrypted_regex`,
+  `encrypted_regex`, `unencrypted_suffix`, `encrypted_suffix`, comment regex, or `mac_only_encrypted` setting (any YAML boolean
+  spelling, any JSON letter case), an unknown property in the `sops` block, a comment outside it (comments are not covered by the
+  checks), or a value that is not a complete `ENC[AES256_GCM,data:...,iv:...,tag:...,type:...]`. Keys that end with `_unencrypted`,
+  `null`, empty strings, and empty lists and mappings are allowed, as sops leaves them in clear. Every run says once that
+  it **proves labels and structure, not who can decrypt**.
+- `recipients check --prove-with-identity <file>` adds the proof that labels cannot give: sops tries to decrypt the file with that
+  identity file (never key material), in an empty directory with no configuration, and the plaintext is discarded unread. It reports
+  `can decrypt` or `cannot decrypt` (exit 1). `--prove-absent-identity <file>` is the negative check for a revoked key: it must
+  **not** decrypt (`CAN decrypt but must not` is exit 1). It only means something next to a `--prove-with-identity` that decrypts, so
+  it is refused alone and skipped when no holder decrypted. Both can be repeated. A failure of any kind counts as "cannot decrypt".
+- `verify` judges every SOPS-encrypted file in the repository against the first creation rule that matches its path. It skips
+  `.git` and the root `.sops.yaml` (the sops configuration) and nothing else by name: `bin`, `obj`, and `node_modules` are
+  checked. It matches `.sops.` in any letter case and reads every `*.yaml`, `*.yml`, `*.json`, `*.env`, and `*.ini` file for a
+  top-level `sops` key, so `secrets/prod.yaml`, `prod.enc.yaml`, and `prod.SOPS.yaml` are judged too. It never passes on nothing: no
+  covered file is exit 2; a symbolic link or an unreadable file or directory in scope, or a path with a control character, `:`, or
+  `\`, cannot be judged and is exit 2; a SOPS file that no rule matches is listed and exits 1, unless you pass
+  `--allow-unverified-files`, whose name says what you accept: nobody checks who can read those files.
+- `verify --base <rev>` is the strongest check that needs no key. For every judged file it reads the same file at that git revision
+  (git by absolute path, arguments one by one, no shell, no user configuration; the revision cannot start with `-` or hold `:` or
+  spaces) and compares each label's `enc` text. A label that is new, or whose `enc` differs, is `changed: needs review` (exit 1),
+  because only someone holding the data key can legitimately produce a new `enc`, and a forged label has to. An unchanged label
+  passes. `--allow-changed-recipients` accepts changes for a reviewed change, such as a deliberate rotation, which legitimately changes every `enc`.
 
 Output escapes control characters in file names and tool messages. The plaintext of `decrypt` is data and is not escaped, so
 pipe it, do not print it to a shared terminal or a log.
@@ -104,18 +124,19 @@ properties are errors):
 
 | Code | Meaning |
 | --- | --- |
-| 0 | Success, or a preview that changed nothing. |
-| 1 | A check ran and found a file whose recipients are not exactly its rule's recipients, a weakened file, or (for `verify`) a file that no rule covers; or a command-line parse error. |
-| 2 | The result cannot be known or the request was refused: invalid or missing configuration, no matching rule, a missing program, a failed program, `--output` without `--force` or outside the root, an existing output file, `verify` with nothing to verify, or a file that cannot be read, understood, or judged. |
+| 0 | Success (for a check: labels consistent, and any requested proof or base comparison passed), or a preview that changed nothing. |
+| 1 | A check ran and found a file whose recipients are not exactly its rule's recipients, a weakened file, a failed proof, or (for `verify`) a file that no rule covers or a label that changed since `--base`; or a command-line parse error. |
+| 2 | The result cannot be known or the request was refused: invalid or missing configuration, no matching rule, a missing program, a failed program, `--output` without `--force` or outside the root, an existing output file, `verify` with nothing to verify, a file, link, or directory that cannot be read, understood, or judged, an unusable `--base`, or `--prove-absent-identity` without `--prove-with-identity`. |
 
 ## Limits
 
 - Only YAML and JSON SOPS files have readable recipients. A reader that does not fully understand a file reports an error; it
   never treats the file as having no recipients. It refuses a YAML file with a second document, a byte order mark, a tab indent,
   a top-level anchor, alias, tag, or flow collection, or a top-level key that reads as `sops` without being spelled `sops:`.
-- The checks read metadata. They prove the labels and the structure (each `enc` is an age file with exactly one recipient stanza
-  of the right type, and for SSH recipients the right key tag), not who can decrypt: only a trial decryption by each holder shows
-  that. See the [ADR](../../docs/adr/20261109-secrets-engine.md#threat-model-and-limits).
+- **Labels are not proof.** An X25519 recipient label cannot be bound to its stanza without a private key: encrypt to X, rewrite the
+  label to A, and every static check still reports `labels consistent` while X decrypts. Only a trial decryption by each holder
+  (`--prove-with-identity`, `--prove-absent-identity`) or a review of what changed since a trusted revision (`--base`) closes that gap.
+  See the [ADR](../../docs/adr/20261109-secrets-engine.md#threat-model-and-limits).
 - A non-age key holder (`kms`, `pgp`, `hc_vault`) makes a file differ from its rule, because its holder can read the file. The
   tool does not remove them.
 - .NET cannot guarantee that no copy of decrypted data remains in memory. The

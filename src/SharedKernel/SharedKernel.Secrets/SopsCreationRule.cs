@@ -103,6 +103,16 @@ public sealed class SopsCreationRule : ValueObject
         return _regex.IsMatch(path.Value);
     }
 
+    /// <summary>Returns whether the rule's expression matches <paramref name="relativePath"/>, a repository-relative path with <c>/</c> separators. Unlike <see cref="Matches(EncryptedFilePath)"/> the path needs no <c>*.sops.*</c> name.</summary>
+    /// <param name="relativePath">The relative path.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="relativePath"/> is <see langword="null"/>.</exception>
+    /// <exception cref="RegexMatchTimeoutException">Matching took longer than one second.</exception>
+    public bool MatchesPath(string relativePath)
+    {
+        ArgumentNullException.ThrowIfNull(relativePath);
+        return _regex.IsMatch(relativePath);
+    }
+
     /// <inheritdoc />
     protected override IEnumerable<object?> GetEqualityComponents()
     {

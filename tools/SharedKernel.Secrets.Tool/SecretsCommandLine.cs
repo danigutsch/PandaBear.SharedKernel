@@ -94,14 +94,28 @@ internal static class SecretsCommandLine
             cancellationToken));
 
         var checkFile = new Argument<string>("file") { Description = "The encrypted YAML or JSON file, relative to the root." };
-        var check = new Command("check", "Check that a file is encrypted to exactly the recipients of its creation rule.")
+        var proveWith = new Option<string[]>("--prove-with-identity")
+        {
+            Description = "An identity file that must be able to decrypt the file. A trial decryption, run by sops in an empty directory with no configuration; the plaintext is discarded. Repeatable.",
+            HelpName = "path",
+            AllowMultipleArgumentsPerToken = false,
+        };
+        var proveAbsent = new Option<string[]>("--prove-absent-identity")
+        {
+            Description = "An identity file that must NOT be able to decrypt the file, such as a revoked key. Only meaningful next to a --prove-with-identity that decrypts. Repeatable.",
+            HelpName = "path",
+            AllowMultipleArgumentsPerToken = false,
+        };
+        var check = new Command("check", "Check that a file's labels are consistent with the recipients of its creation rule. Labels are not proof of who can decrypt; add --prove-with-identity for that.")
         {
             checkFile,
             rootOption,
+            proveWith,
+            proveAbsent,
         };
         check.SetAction((parseResult, cancellationToken) => Execute(
             parseResult,
-            (output, _) => RecipientsCommand.Check(Root(parseResult, rootOption, environment), parseResult.GetValue(checkFile)!, output, cancellationToken),
+            (output, _) => RecipientsCommand.Check(environment, Root(parseResult, rootOption, environment), parseResult.GetValue(checkFile)!, parseResult.GetValue(proveWith) ?? [], parseResult.GetValue(proveAbsent) ?? [], output, cancellationToken),
             cancellationToken));
 
         var recipients = new Command("recipients", "Inspect and check the recipients of encrypted files.")
@@ -114,14 +128,25 @@ internal static class SecretsCommandLine
         {
             Description = "RISK: do not fail because some *.sops.* files match no creation rule. Those files are listed but nobody checks who can read them.",
         };
-        var verify = new Command("verify", "Check that every *.sops.* file is encrypted to exactly the recipients of its creation rule, with nothing in clear. Fails when nothing is verified or a file matches no rule.")
+        var baseOption = new Option<string>("--base")
+        {
+            Description = "A git revision (such as origin/main). A label whose enc is new or different from that revision's is reported as 'changed: needs review', because only someone holding the data key can legitimately change it.",
+            HelpName = "rev",
+        };
+        var allowChanged = new Option<bool>("--allow-changed-recipients")
+        {
+            Description = "RISK: do not fail because a label's enc changed since --base. A forged label looks exactly like this; review the changes instead.",
+        };
+        var verify = new Command("verify", "Check that every SOPS-encrypted file is consistent with the recipients of its creation rule, with nothing in clear. Proves labels and structure, not who can decrypt. Fails when nothing is verified, an entry cannot be judged, or a file matches no rule.")
         {
             rootOption,
             allowUnverified,
+            baseOption,
+            allowChanged,
         };
         verify.SetAction((parseResult, cancellationToken) => Execute(
             parseResult,
-            (output, error) => VerifyCommand.Run(Root(parseResult, rootOption, environment), parseResult.GetValue(allowUnverified), output, error, cancellationToken),
+            (output, error) => VerifyCommand.Run(environment, Root(parseResult, rootOption, environment), new VerifyOptions(parseResult.GetValue(allowUnverified), parseResult.GetValue(baseOption), parseResult.GetValue(allowChanged)), output, error, cancellationToken),
             cancellationToken));
 
         var root = new RootCommand("Generates age identities, encrypts and decrypts SOPS files, and checks the recipients of encrypted files against the creation rules in .config/sharedkernel-secrets.json. Secrets travel on standard input and output only.");

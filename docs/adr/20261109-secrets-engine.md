@@ -75,17 +75,26 @@ collection, or under a key that ends in `_unencrypted`.
 
 What they do not establish:
 
-- **Who can decrypt.** sops never checks labels, and an X25519 stanza holds an ephemeral share and a wrapped key, never the recipient, so a
-  forged file can pair an allowed label with a stanza for another key. Only a trial decryption by each holder proves a label honest.
+- **Who can decrypt.** This is the lesson of the second review. sops never checks labels, and an X25519 stanza holds an ephemeral share and
+  a wrapped key, never the recipient, so a label cannot be bound to a stanza by any static check. Encrypt to X, rewrite the label to the
+  allowed A, and the file is structurally perfect while X decrypts. For that reason a pass is worded `labels consistent`, never
+  "verified", and every run says it once. A label is proven honest only by **trial decryption** by its holder (`recipients check
+  --prove-with-identity`, and `--prove-absent-identity` for a key that must be revoked) or by **review against a trusted revision**
+  (`verify --base`): only someone who already holds the data key can produce a new valid `enc`, so a label whose `enc` is new or changed
+  needs a human, and an unchanged one cannot have been forged since the base. The base check trusts the base revision; a rotation changes
+  every `enc` and needs `--allow-changed-recipients` after review. A failed trial decryption cannot say why it failed, so the absent proof
+  requires a decrypting holder in the same run.
 - **That the data key is wrapped for the label's key,** and that the MAC and the ciphertext are intact. Nothing here decrypts or verifies a MAC.
 - **Plugin, hybrid, and tag recipients** beyond "exactly one stanza".
-- **Keys named `*_unencrypted`,** which sops leaves in clear on purpose, and comments the file's author left in clear count as plaintext, not as a pass.
+- **Keys named `*_unencrypted`,** which sops leaves in clear on purpose. Comments outside the `sops` block count as a concern, not a pass, because nothing checks them; comments inside it are refused.
+- **Settings spelled in ways a consumer reads differently.** Property names are compared without regard to letter case, as Go's JSON decoder does, every YAML boolean spelling counts, and an unknown property in the `sops` block is a concern; another parser could still disagree on something not listed.
+- **A race on `decrypt --output`.** The destination is resolved without symbolic links and the file is renamed into place without overwriting, but a parent directory swapped for a link between the check and the rename is not detected. The temporary name is random and created exclusively, and it is removed on any failure, including cancellation.
 - **dotenv, ini, and binary files,** which are an error, not a pass.
 - **A compromised `age`, `age-keygen`, or `sops` program,** the machine's memory, swap, and core dumps.
 
-Reproduced bypasses that the design now refuses: a second YAML document, a byte order mark, or a `sops :` / `"sops":` spelling that hid the real
+Reproduced bypasses that the design now refuses (first review):  a second YAML document, a byte order mark, or a `sops :` / `"sops":` spelling that hid the real
 block behind a fake one; a repeated label over two envelopes; a repository `.sops.yaml` with `unencrypted_regex: '.*'`; `verify` passing with
-no files, an unjudgeable path, or uncovered files; and an SSH recipient with white space or trailing bytes in its key.
+no files, an unjudgeable path, or uncovered files; and an SSH recipient with white space or trailing bytes in its key. Second review: a relabelled X25519 recipient (now caught only by trial decryption or `--base`, and no longer described as verified); `verify` skipping directories named `bin`, `obj`, or `node_modules`, symbolic links, files named `prod.yaml`, `prod.enc.yaml`, `prod.SOPS.yaml`, or `secrets/.sops.yaml`; `mac_only_encrypted: True` or a differently cased JSON name; plaintext in a comment or after `#` on a value; and `ENC[hunter2]` passing as ciphertext.
 
 ## Deferred
 

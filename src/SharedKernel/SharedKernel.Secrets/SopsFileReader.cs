@@ -25,12 +25,10 @@ public static class SopsFileReader
             return Result.Invalid<SopsFileRecipients>(invalid, "file", invalid);
         }
 
-        var format = Path.GetExtension(absoluteFile) switch
-        {
-            ".yaml" or ".yml" => SopsFormat.Yaml,
-            ".json" => SopsFormat.Json,
-            _ => (SopsFormat?)null,
-        };
+        var extension = Path.GetExtension(absoluteFile);
+        SopsFormat? format = extension.Equals(".yaml", StringComparison.OrdinalIgnoreCase) || extension.Equals(".yml", StringComparison.OrdinalIgnoreCase)
+            ? SopsFormat.Yaml
+            : extension.Equals(".json", StringComparison.OrdinalIgnoreCase) ? SopsFormat.Json : null;
         if (format is null)
         {
             return ToolInvocation.Error<SopsFileRecipients>("Only YAML and JSON SOPS files have readable recipients.");

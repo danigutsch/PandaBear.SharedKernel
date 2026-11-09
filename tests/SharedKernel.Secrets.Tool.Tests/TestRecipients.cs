@@ -12,7 +12,8 @@ internal static class TestRecipients
     /// <summary>A third valid X25519 recipient.</summary>
     public const string Third = "age1dquc283cn3pehdzu8pyk68ucd4eq5x6d9ru5qj67zdd7pq7gkdeq5raw4x";
 
-    private const string Encrypted = "ENC[AES256_GCM,data:x,iv:y,tag:z,type:str]";
+    /// <summary>A well-formed encrypted value as sops writes it.</summary>
+    public const string Encrypted = "ENC[AES256_GCM,data:Zhnqwg==,iv:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=,tag:AAECAwQFBgcICQoLDA0ODw==,type:str]";
 
     /// <summary>A SOPS JSON document encrypted to <paramref name="recipients"/>, with extra raw members inside the sops object.</summary>
     public static string Json(string[] recipients, string extraMembers = "")

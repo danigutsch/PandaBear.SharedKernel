@@ -59,9 +59,15 @@ internal static class SopsYamlSubset
         {
             var line = lines[blockEnd];
             var trimmed = line.TrimStart(' ');
-            if (trimmed.Length == 0 || trimmed[0] == '#')
+            if (trimmed.Length == 0 || (trimmed[0] == '#' && trimmed[1..].Trim().Length == 0))
             {
                 continue;
+            }
+
+            // A comment inside the metadata is refused, so nothing in the block is left unexamined.
+            if (trimmed[0] == '#' && line[0] == ' ')
+            {
+                return null;
             }
 
             if (line[0] != ' ')
@@ -137,8 +143,8 @@ internal static class SopsYamlSubset
             return TopLevel.Other;
         }
 
-        // Anything that reads as the metadata key must be spelled exactly 'sops:' with nothing but a comment after it.
-        return line.StartsWith("sops:", StringComparison.Ordinal) && (value.Length == 0 || value[0] == '#') ? TopLevel.Sops : TopLevel.Invalid;
+        // Anything that reads as the metadata key must be spelled exactly 'sops:' with nothing after it.
+        return line.StartsWith("sops:", StringComparison.Ordinal) && value.Length == 0 ? TopLevel.Sops : TopLevel.Invalid;
     }
 
     private static bool IsMarker(string line, string marker) =>
@@ -207,7 +213,12 @@ internal static class SopsYamlSubset
             {
                 var token = tokens[_position];
                 var rest = token.Text.Length == 1 ? string.Empty : token.Text[1..].TrimStart(' ');
-                if (rest.Length == 0 || rest[0] == '#')
+                if (rest.Length > 0 && rest[0] == '#')
+                {
+                    return false;
+                }
+
+                if (rest.Length == 0)
                 {
                     _position++;
                     if (_position >= tokens.Count || tokens[_position].Indent <= indent || !ParseBlock(tokens[_position].Indent, depth + 1))
@@ -275,7 +286,12 @@ internal static class SopsYamlSubset
 
         private bool ParseValue(string rest, int indent, int depth)
         {
-            if (rest.Length == 0 || rest[0] == '#')
+            if (rest.Length > 0 && rest[0] == '#')
+            {
+                return false;
+            }
+
+            if (rest.Length == 0)
             {
                 if (_position < tokens.Count && (tokens[_position].Indent > indent || (tokens[_position].Indent == indent && IsSequenceItem(tokens[_position].Text))))
                 {
@@ -341,8 +357,12 @@ internal static class SopsYamlSubset
                 return true;
             }
 
-            var comment = raw.IndexOf(" #", StringComparison.Ordinal);
-            var plain = (comment >= 0 ? raw[..comment] : raw).TrimEnd(' ');
+            if (raw.Contains(" #", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            var plain = raw.TrimEnd(' ');
             if (plain is "null" or "~")
             {
                 writer.WriteNullValue();
@@ -374,7 +394,7 @@ internal static class SopsYamlSubset
             }
 
             var after = text[(close + 1)..].TrimStart(' ');
-            return after.Length == 0 || after[0] == '#' ? text[1..close] : null;
+            return after.Length == 0 ? text[1..close] : null;
         }
     }
 }

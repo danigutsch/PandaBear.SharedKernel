@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using PandaBear.Results;
 using PandaBear.Tooling;
 
@@ -77,7 +78,7 @@ internal static class DecryptCommand
             return ExitCodes.Success;
         }
 
-        await WriteNewOwnerOnlyFile(destination!, secret).ConfigureAwait(false);
+        await WriteNewOwnerOnlyFile(destination!, secret, cancellationToken).ConfigureAwait(false);
         return ExitCodes.Success;
     }
 
@@ -105,9 +106,9 @@ internal static class DecryptCommand
     /// Writes the plaintext to a new file next to <paramref name="destination"/> (mode 0600, created exclusively), then renames it into place without
     /// overwriting. A failure at any step deletes the temporary file, so no partial plaintext is left.
     /// </summary>
-    private static async Task WriteNewOwnerOnlyFile(string destination, SecretBytes secret)
+    private static async Task WriteNewOwnerOnlyFile(string destination, SecretBytes secret, CancellationToken cancellationToken)
     {
-        var temporary = Path.Combine(Path.GetDirectoryName(destination)!, $".{Guid.NewGuid():N}.tmp");
+        var temporary = Path.Combine(Path.GetDirectoryName(destination)!, $".{RandomNumberGenerator.GetHexString(32)}.tmp");
         FileStreamOptions options = new()
         {
             Mode = FileMode.CreateNew,
@@ -122,10 +123,11 @@ internal static class DecryptCommand
         try
         {
             var stream = new FileStream(temporary, options);
+            cancellationToken.ThrowIfCancellationRequested();
             await using (stream.ConfigureAwait(false))
             {
                 secret.WriteTo(stream);
-                await stream.FlushAsync().ConfigureAwait(false);
+                await stream.FlushAsync(cancellationToken).ConfigureAwait(false);
             }
 
             File.Move(temporary, destination, overwrite: false);

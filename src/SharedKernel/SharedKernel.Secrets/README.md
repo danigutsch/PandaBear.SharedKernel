@@ -79,12 +79,13 @@ purpose-built reader of the subset SOPS writes). `RecipientVerification.Compare`
 
 - equal sets are `IsExact`; a missing recipient, an unexpected recipient, a non-age key holder (`kms`, `pgp`, `hc_vault`, and
   so on: whoever holds one can read the file), or any `Concerns` entry is not. Concerns are a non-default `unencrypted_*`,
-  `encrypted_*`, or `mac_only_encrypted` setting and values that are not `ENC[...]` (keys ending in `_unencrypted`, `null`, empty
-  strings, and empty collections are allowed);
+  `encrypted_*`, or `mac_only_encrypted` setting (property names compared without regard to letter case, every YAML boolean spelling), an unknown
+  property in the `sops` block, a comment outside it, and values that are not a complete `ENC[AES256_GCM,data:...,iv:...,tag:...,type:...]`
+  (keys ending in `_unencrypted`, `null`, empty strings, and empty collections are allowed). Comments inside the `sops` block are refused;
 - a recipient listed twice is an error, and each entry's `enc` must be an age file with exactly one recipient stanza of the type its
   label requires (X25519 for `age1...`, and for an SSH recipient the stanza type and key tag derived from the key). This proves the
   labels and the structure, not who can decrypt: the X25519 stanza holds an ephemeral share, never the recipient, so only a trial
-  decryption by each holder proves a label honest;
+  decryption by each holder (or a comparison with a trusted revision of the file: `SopsFileRecipients.Envelopes`) proves a label honest;
 - **it fails closed.** A file the reader does not fully understand is an error, never an empty list that would pass for "no
   recipients": a YAML document marker or directive, a byte order mark, a tab indent, a top-level anchor, alias, tag, flow
   collection, or sequence, a top-level key that reads as `sops` without being spelled `sops:` exactly, a repeated key, a second

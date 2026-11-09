@@ -6,6 +6,17 @@ internal static class RealPrograms
     /// <summary>Gets a value indicating whether <c>age</c>, <c>age-keygen</c>, and <c>sops</c> are all installed.</summary>
     public static bool AllAvailable => Find("age") is not null && Find("age-keygen") is not null && Find("sops") is not null;
 
+    /// <summary>Gets a value indicating whether <c>git</c> is installed.</summary>
+    public static bool GitAvailable => Find("git") is not null;
+
+    /// <summary>Runs git with no user configuration in <paramref name="directory"/> and returns its exit code.</summary>
+    public static async Task<int> Git(string directory, CancellationToken cancellationToken, params string[] arguments)
+    {
+        var environment = new Dictionary<string, string> { ["GIT_CONFIG_GLOBAL"] = "/dev/null", ["GIT_CONFIG_NOSYSTEM"] = "1" };
+        using var result = await new SystemToolRunner().Run(new ToolRequest(Find("git")!, ["-C", directory, "-c", "user.name=t", "-c", "user.email=t@example.com", "-c", "commit.gpgsign=false", .. arguments], environment), cancellationToken);
+        return result.ExitCode;
+    }
+
     /// <summary>Returns the absolute path of <paramref name="command"/> in an absolute PATH directory, or <see langword="null"/>.</summary>
     public static string? Find(string command)
     {

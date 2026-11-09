@@ -54,7 +54,7 @@ static PandaBear.Secrets.SopsCreationRuleSet.Create(System.Collections.Generic.I
 PandaBear.Secrets.SopsFileRecipients
 PandaBear.Secrets.SopsFileRecipients.Age.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Secrets.AgeRecipient!>!
 PandaBear.Secrets.SopsFileRecipients.OtherKeyTypes.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Secrets.SopsFileRecipients.SopsFileRecipients(System.Collections.Generic.IReadOnlyList<PandaBear.Secrets.AgeRecipient!>! age, System.Collections.Generic.IReadOnlyList<string!>! otherKeyTypes, System.Collections.Generic.IReadOnlyList<string!>? concerns = null) -> void
+PandaBear.Secrets.SopsFileRecipients.SopsFileRecipients(System.Collections.Generic.IReadOnlyList<PandaBear.Secrets.AgeRecipient!>! age, System.Collections.Generic.IReadOnlyList<string!>! otherKeyTypes, System.Collections.Generic.IReadOnlyList<string!>? concerns = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? envelopes = null) -> void
 PandaBear.Secrets.RecipientVerification
 PandaBear.Secrets.RecipientVerification.Missing.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Secrets.AgeRecipient!>!
 PandaBear.Secrets.RecipientVerification.Unexpected.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Secrets.AgeRecipient!>!
@@ -117,3 +117,6 @@ static PandaBear.Secrets.SopsFileReader.ReadRecipients(string! absoluteFile, Sys
 PandaBear.Secrets.SopsFileRecipients.Concerns.get -> System.Collections.Generic.IReadOnlyList<string!>!
 PandaBear.Secrets.RecipientVerification.Concerns.get -> System.Collections.Generic.IReadOnlyList<string!>!
 PandaBear.Secrets.ToolRequest.WorkingDirectory.get -> string?
+PandaBear.Secrets.SopsCreationRule.MatchesPath(string! relativePath) -> bool
+PandaBear.Secrets.SopsCreationRuleSet.FirstMatchPath(string! relativePath) -> PandaBear.Secrets.SopsCreationRule?
+PandaBear.Secrets.SopsFileRecipients.Envelopes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!

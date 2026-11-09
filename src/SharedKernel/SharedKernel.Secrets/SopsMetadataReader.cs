@@ -18,11 +18,22 @@ public static class SopsMetadataReader
 {
     private const string DefaultUnencryptedSuffix = "_unencrypted";
 
-    private static readonly HashSet<string> ScalarProperties = new(StringComparer.Ordinal)
+    private static readonly string[] KnownNames =
+    [
+        "age", "key_groups", "lastmodified", "mac", "version", "shamir_threshold", "unencrypted_suffix", "encrypted_suffix", "unencrypted_regex", "encrypted_regex",
+        "unencrypted_comment_regex", "encrypted_comment_regex", "mac_only_encrypted", "kms", "gcp_kms", "azure_kv", "hc_vault", "pgp", "hckms",
+    ];
+
+    private static readonly HashSet<string> ScalarProperties = new(StringComparer.Ordinal) { "lastmodified", "mac", "version", "shamir_threshold" };
+
+    private static readonly HashSet<string> SettingProperties = new(StringComparer.Ordinal)
     {
-        "lastmodified", "mac", "version", "unencrypted_suffix", "encrypted_suffix", "unencrypted_regex", "encrypted_regex",
-        "unencrypted_comment_regex", "encrypted_comment_regex", "mac_only_encrypted", "shamir_threshold",
+        "unencrypted_suffix", "encrypted_suffix", "unencrypted_regex", "encrypted_regex", "unencrypted_comment_regex", "encrypted_comment_regex", "mac_only_encrypted",
     };
+
+    private static readonly HashSet<string> KeyHolderProperties = new(StringComparer.Ordinal) { "kms", "gcp_kms", "azure_kv", "hc_vault", "pgp", "hckms" };
+
+    private static readonly HashSet<string> FalseSpellings = new(StringComparer.OrdinalIgnoreCase) { "false", "no", "n", "off", string.Empty };
 
     /// <summary>Reads the key holders from <paramref name="content"/>.</summary>
     /// <param name="content">The text of the encrypted file.</param>
@@ -53,8 +64,9 @@ public static class SopsMetadataReader
         try
         {
             using var document = JsonDocument.Parse(json, new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Disallow, AllowTrailingCommas = false });
-            var plain = yamlData is null ? PlainValueScanner.CountJson(document.RootElement) : PlainValueScanner.CountYaml(yamlData);
-            return ReadDocument(document.RootElement, plain);
+            var hasComment = false;
+            var plain = yamlData is null ? PlainValueScanner.CountJson(document.RootElement) : PlainValueScanner.CountYaml(yamlData, out hasComment);
+            return ReadDocument(document.RootElement, plain, hasComment);
         }
         catch (JsonException)
         {
@@ -62,7 +74,7 @@ public static class SopsMetadataReader
         }
     }
 
-    private static Result<SopsFileRecipients> ReadDocument(JsonElement root, int plainValues)
+    private static Result<SopsFileRecipients> ReadDocument(JsonElement root, int plainValues, bool hasComment)
     {
         if (root.ValueKind != JsonValueKind.Object)
         {
@@ -72,6 +84,11 @@ public static class SopsMetadataReader
         JsonElement? sops = null;
         foreach (var property in root.EnumerateObject())
         {
+            if (string.Equals(property.Name, "sops", StringComparison.OrdinalIgnoreCase) && !property.NameEquals("sops"))
+            {
+                return Failure("A top-level property reads as 'sops' without being spelled that way.");
+            }
+
             if (property.NameEquals("sops"))
             {
                 if (sops is not null)
@@ -92,7 +109,8 @@ public static class SopsMetadataReader
         SortedSet<string> other = new(StringComparer.Ordinal);
         List<string> concerns = [];
         HashSet<string> envelopes = new(StringComparer.Ordinal);
-        if (!ReadHolders(block, age, other, concerns, envelopes, out var problem))
+        Dictionary<string, string> labelEnvelopes = new(StringComparer.Ordinal);
+        if (!ReadHolders(block, age, other, concerns, envelopes, labelEnvelopes, out var problem))
         {
             return Failure(problem);
         }
@@ -102,13 +120,18 @@ public static class SopsMetadataReader
             concerns.Add(plainValues == 1 ? "1 value is not encrypted" : $"{plainValues} values are not encrypted");
         }
 
-        return Result.Ok(new SopsFileRecipients(age, [.. other], concerns));
+        if (hasComment)
+        {
+            concerns.Add("comment present");
+        }
+
+        return Result.Ok(new SopsFileRecipients(age, [.. other], concerns, labelEnvelopes));
     }
 
-    private static bool ReadHolders(JsonElement block, List<AgeRecipient> age, SortedSet<string> other, List<string> concerns, HashSet<string> envelopes, out string problem)
+    private static bool ReadHolders(JsonElement block, List<AgeRecipient> age, SortedSet<string> other, List<string> concerns, HashSet<string> envelopes, Dictionary<string, string> labelEnvelopes, out string problem)
     {
         problem = string.Empty;
-        HashSet<string> seen = new(StringComparer.Ordinal);
+        HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
         foreach (var property in block.EnumerateObject())
         {
             if (!seen.Add(property.Name))
@@ -118,10 +141,11 @@ public static class SopsMetadataReader
             }
 
             var value = property.Value;
-            switch (property.Name)
+            var name = KnownNames.FirstOrDefault(known => string.Equals(known, property.Name, StringComparison.OrdinalIgnoreCase)) ?? property.Name;
+            switch (name)
             {
                 case "age":
-                    if (!ReadAge(value, age, envelopes, out problem))
+                    if (!ReadAge(value, age, envelopes, labelEnvelopes, out problem))
                     {
                         return false;
                     }
@@ -136,7 +160,7 @@ public static class SopsMetadataReader
 
                     foreach (var group in value.EnumerateArray())
                     {
-                        if (group.ValueKind != JsonValueKind.Object || !ReadHolders(group, age, other, concerns, envelopes, out problem))
+                        if (group.ValueKind != JsonValueKind.Object || !ReadHolders(group, age, other, concerns, envelopes, labelEnvelopes, out problem))
                         {
                             problem = problem.Length == 0 ? "A SOPS key group is not a mapping." : problem;
                             return false;
@@ -145,13 +169,23 @@ public static class SopsMetadataReader
 
                     break;
                 default:
-                    if (IsNonDefaultSetting(property.Name, value))
+                    if (SettingProperties.Contains(name))
                     {
-                        concerns.Add($"non-default setting {property.Name}");
+                        if (IsNonDefaultSetting(name, value))
+                        {
+                            concerns.Add($"non-default setting {name}");
+                        }
                     }
-                    else if (!ScalarProperties.Contains(property.Name) && IsNonEmptyCollection(value))
+                    else if (KeyHolderProperties.Contains(name) || (!ScalarProperties.Contains(name) && IsNonEmptyCollection(value)))
                     {
-                        other.Add(property.Name);
+                        if (IsNonEmptyCollection(value))
+                        {
+                            other.Add(property.Name);
+                        }
+                    }
+                    else if (!ScalarProperties.Contains(name))
+                    {
+                        concerns.Add($"unknown property {Shorten(property.Name)}");
                     }
 
                     break;
@@ -161,7 +195,7 @@ public static class SopsMetadataReader
         return true;
     }
 
-    private static bool ReadAge(JsonElement value, List<AgeRecipient> age, HashSet<string> envelopes, out string problem)
+    private static bool ReadAge(JsonElement value, List<AgeRecipient> age, HashSet<string> envelopes, Dictionary<string, string> labelEnvelopes, out string problem)
     {
         problem = "The SOPS age recipients are not a list of mappings with a 'recipient'.";
         if (value.ValueKind == JsonValueKind.Null)
@@ -178,17 +212,30 @@ public static class SopsMetadataReader
         {
             string? recipient = null;
             string? enc = null;
+            HashSet<string> fields = new(StringComparer.Ordinal);
             if (entry.ValueKind == JsonValueKind.Object)
             {
                 foreach (var property in entry.EnumerateObject())
                 {
-                    if (property.NameEquals("recipient"))
+                    if (string.Equals(property.Name, "recipient", StringComparison.OrdinalIgnoreCase))
                     {
-                        recipient = recipient is null && property.Value.ValueKind == JsonValueKind.String ? property.Value.GetString() : null;
+                        if (recipient is not null || !fields.Add("recipient"))
+                        {
+                            problem = "A SOPS age entry repeats a field.";
+                            return false;
+                        }
+
+                        recipient = property.Value.ValueKind == JsonValueKind.String ? property.Value.GetString() : null;
                     }
-                    else if (property.NameEquals("enc"))
+                    else if (string.Equals(property.Name, "enc", StringComparison.OrdinalIgnoreCase))
                     {
-                        enc = enc is null && property.Value.ValueKind == JsonValueKind.String ? property.Value.GetString() : null;
+                        if (!fields.Add("enc"))
+                        {
+                            problem = "A SOPS age entry repeats a field.";
+                            return false;
+                        }
+
+                        enc = property.Value.ValueKind == JsonValueKind.String ? property.Value.GetString() : null;
                     }
                 }
             }
@@ -212,6 +259,7 @@ public static class SopsMetadataReader
                 return false;
             }
 
+            labelEnvelopes[parsed.Value.Value] = enc.Trim();
             age.Add(parsed.Value);
         }
 
@@ -224,16 +272,19 @@ public static class SopsMetadataReader
         {
             JsonValueKind.String => value.GetString() ?? string.Empty,
             JsonValueKind.True => "true",
-            _ => string.Empty,
+            JsonValueKind.False => "false",
+            JsonValueKind.Null => string.Empty,
+            _ => value.GetRawText(),
         };
         return name switch
         {
-            "encrypted_suffix" or "unencrypted_regex" or "encrypted_regex" or "unencrypted_comment_regex" or "encrypted_comment_regex" => text.Length > 0,
             "unencrypted_suffix" => text.Length > 0 && text != DefaultUnencryptedSuffix,
-            "mac_only_encrypted" => text == "true",
-            _ => false,
+            "mac_only_encrypted" => !FalseSpellings.Contains(text),
+            _ => text.Length > 0,
         };
     }
+
+    private static string Shorten(string name) => name.Length <= 40 ? name : name[..40] + "...";
 
     private static bool IsNonEmptyCollection(JsonElement value) => value.ValueKind switch
     {

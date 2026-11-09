@@ -5,7 +5,8 @@ namespace PandaBear.Secrets.Tests;
 /// <summary>Builds SOPS documents in the layout that sops writes, with placeholder ciphertext and realistic age envelopes.</summary>
 internal static class SopsSamples
 {
-    private const string Encrypted = "ENC[AES256_GCM,data:abc,iv:def,tag:ghi,type:str]";
+    /// <summary>A well-formed encrypted value as sops writes it.</summary>
+    public const string Encrypted = "ENC[AES256_GCM,data:Zhnqwg==,iv:AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=,tag:AAECAwQFBgcICQoLDA0ODw==,type:str]";
 
     /// <summary>A SOPS YAML document encrypted to <paramref name="recipients"/>, with the data keys before the metadata as sops writes them.</summary>
     public static string Yaml(string[] recipients, string extraSopsLines = "", string dataLines = "")

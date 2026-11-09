@@ -231,10 +231,10 @@ public sealed class SopsMetadataReaderTests
     }
 
     [Fact]
-    public void YAML_with_comments_and_null_values_is_read()
+    public void YAML_with_null_values_and_quoted_scalars_is_read()
     {
         // Arrange
-        var yaml = $"# header\nsops: # metadata\n    # keys\n    kms: null\n    age:\n        - recipient: '{TestRecipients.First}' # admin\n          enc: |\n{AgeEnvelopes.Indented(TestRecipients.First, 12)}    version: 3.13.0 # sops\n";
+        var yaml = $"sops:\n    kms: null\n    age:\n        - recipient: '{TestRecipients.First}'\n          enc: |\n{AgeEnvelopes.Indented(TestRecipients.First, 12)}    version: 3.13.0\n";
 
         // Act
         var holders = SopsMetadataReader.Read(yaml, SopsFormat.Yaml).ShouldBeSuccess();

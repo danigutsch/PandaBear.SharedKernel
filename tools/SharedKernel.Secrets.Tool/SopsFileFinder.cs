@@ -1,39 +1,52 @@
 namespace PandaBear.Secrets.Tool;
 
-/// <summary>Finds the files named <c>*.sops.*</c> under a root, without following symbolic links and without entering VCS or build directories.</summary>
+/// <summary>
+/// Walks a repository and returns every file, every symbolic link, and every directory it cannot list. It skips only <c>.git</c> and never follows a
+/// link. Nothing is skipped by name, so a directory called <c>bin</c>, <c>obj</c>, or <c>node_modules</c> inside the scope of a rule is still checked.
+/// </summary>
 internal static class SopsFileFinder
 {
-    private static readonly HashSet<string> SkippedDirectories = new(StringComparer.Ordinal) { ".git", "node_modules", "bin", "obj" };
+    private const string GitDirectory = ".git";
 
-    /// <summary>Returns the root-relative paths with <c>/</c> separators, ordered ordinally.</summary>
-    public static IReadOnlyList<string> Find(string root)
+    /// <summary>Returns the entries ordered by their relative path.</summary>
+    public static IReadOnlyList<ScanEntry> Find(string root)
     {
-        List<string> found = [];
+        List<ScanEntry> found = [];
         Walk(new DirectoryInfo(root), string.Empty, found);
-        found.Sort(StringComparer.Ordinal);
+        found.Sort(static (left, right) => StringComparer.Ordinal.Compare(left.RelativePath, right.RelativePath));
         return found;
     }
 
-    private static void Walk(DirectoryInfo directory, string prefix, List<string> found)
+    private static void Walk(DirectoryInfo directory, string prefix, List<ScanEntry> found)
     {
-        foreach (var entry in directory.EnumerateFileSystemInfos())
+        List<FileSystemInfo> children;
+        try
         {
+            children = [.. directory.EnumerateFileSystemInfos()];
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            found.Add(new ScanEntry(prefix.TrimEnd('/'), directory.FullName, ScanEntryKind.UnreadableDirectory, "the directory cannot be listed"));
+            return;
+        }
+
+        foreach (var entry in children)
+        {
+            var relative = prefix + entry.Name;
             if (entry.LinkTarget is not null)
             {
-                continue;
+                found.Add(new ScanEntry(relative, entry.FullName, ScanEntryKind.Link));
             }
-
-            var relative = prefix + entry.Name;
-            if (entry is DirectoryInfo child)
+            else if (entry is DirectoryInfo child)
             {
-                if (!SkippedDirectories.Contains(entry.Name))
+                if (entry.Name != GitDirectory)
                 {
                     Walk(child, relative + "/", found);
                 }
             }
-            else if (entry.Name.Contains(".sops.", StringComparison.Ordinal))
+            else if (entry.Name != GitDirectory)
             {
-                found.Add(relative);
+                found.Add(new ScanEntry(relative, entry.FullName, ScanEntryKind.File));
             }
         }
     }

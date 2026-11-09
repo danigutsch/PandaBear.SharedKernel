@@ -37,4 +37,13 @@ public sealed class SopsCreationRuleSet
         ArgumentNullException.ThrowIfNull(path);
         return Rules.FirstOrDefault(rule => rule.Matches(path));
     }
+
+    /// <summary>Returns the first rule whose expression matches <paramref name="relativePath"/> (any file name), or <see langword="null"/>.</summary>
+    /// <param name="relativePath">The repository-relative path with <c>/</c> separators.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="relativePath"/> is <see langword="null"/>.</exception>
+    public SopsCreationRule? FirstMatchPath(string relativePath)
+    {
+        ArgumentNullException.ThrowIfNull(relativePath);
+        return Rules.FirstOrDefault(rule => rule.MatchesPath(relativePath));
+    }
 }

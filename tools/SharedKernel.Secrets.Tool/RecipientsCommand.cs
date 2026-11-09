@@ -30,14 +30,85 @@ internal static class RecipientsCommand
 
     /// <summary>Checks <paramref name="file"/> against the first creation rule that matches it.</summary>
     /// <exception cref="InvalidOperationException">The configuration or path is invalid, no rule matches, or the file's recipients cannot be read.</exception>
-    public static async Task<int> Check(string root, string file, TextWriter output, CancellationToken cancellationToken)
+    public static async Task<int> Check(
+        SecretsEnvironment environment,
+        string root,
+        string file,
+        IReadOnlyList<string> proveWith,
+        IReadOnlyList<string> proveAbsent,
+        TextWriter output,
+        CancellationToken cancellationToken)
     {
         var rules = await SecretsConfigurationFile.Read(root, cancellationToken).ConfigureAwait(false);
+        var with = Identities(environment, proveWith);
+        var absent = Identities(environment, proveAbsent);
+        if (absent.Count > 0 && with.Count == 0)
+        {
+            throw new InvalidOperationException("--prove-absent-identity only means something next to a --prove-with-identity that decrypts the same file; give both.");
+        }
+
+        var sops = with.Count + absent.Count > 0 ? ToolLocator.Sops(environment) : null;
         var (path, holders) = await Read(root, file, cancellationToken).ConfigureAwait(false);
         var rule = rules.FirstMatch(path) ?? throw new InvalidOperationException("No creation rule matches this file.");
         var verification = RecipientVerification.Compare(holders, rule);
         await Report(output, path.Value, verification, cancellationToken).ConfigureAwait(false);
-        return verification.IsExact ? ExitCodes.Success : ExitCodes.Differences;
+        await EscapedOutput.Line(output, VerifyCommand.ProofNote, cancellationToken).ConfigureAwait(false);
+        var exit = verification.IsExact ? ExitCodes.Success : ExitCodes.Differences;
+        if (sops is null)
+        {
+            return exit;
+        }
+
+        var resolved = path.ResolveUnder(root);
+        var absoluteFile = resolved.IsSuccess ? resolved.Value : throw new InvalidOperationException(resolved.ErrorDetails?.Detail ?? "The file path cannot be resolved under the root.");
+        var holderDecrypted = false;
+        foreach (var identity in with)
+        {
+            var can = await CanDecrypt(sops, absoluteFile, identity, cancellationToken).ConfigureAwait(false);
+            holderDecrypted |= can;
+            exit = can ? exit : ExitCodes.Differences;
+            await EscapedOutput.Line(output, $"{identity.Path}: {(can ? "can decrypt" : "cannot decrypt")}", cancellationToken).ConfigureAwait(false);
+        }
+
+        foreach (var identity in absent)
+        {
+            if (!holderDecrypted)
+            {
+                await EscapedOutput.Line(output, $"{identity.Path}: not tried, because no --prove-with-identity decrypted the file", cancellationToken).ConfigureAwait(false);
+                continue;
+            }
+
+            var can = await CanDecrypt(sops, absoluteFile, identity, cancellationToken).ConfigureAwait(false);
+            exit = can ? ExitCodes.Differences : exit;
+            await EscapedOutput.Line(output, $"{identity.Path}: {(can ? "CAN decrypt but must not" : "cannot decrypt, as required")}", cancellationToken).ConfigureAwait(false);
+        }
+
+        return exit;
+    }
+
+    private static List<AgeIdentityRef> Identities(SecretsEnvironment environment, IReadOnlyList<string> paths)
+    {
+        List<AgeIdentityRef> identities = [];
+        foreach (var path in paths)
+        {
+            var identity = AgeIdentityRef.Create(path.Length > 0 ? Path.GetFullPath(path, environment.WorkingDirectory) : path, "identity");
+            identities.Add(identity.IsSuccess ? identity.Value : throw new InvalidOperationException(identity.ErrorDetails?.Detail ?? "The identity file path is invalid."));
+        }
+
+        return identities;
+    }
+
+    /// <summary>A trial decryption: the plaintext is discarded unread. Any failure counts as "cannot".</summary>
+    private static async Task<bool> CanDecrypt(ProcessSopsTool sops, string absoluteFile, AgeIdentityRef identity, CancellationToken cancellationToken)
+    {
+        var result = await sops.Decrypt(absoluteFile, identity, cancellationToken).ConfigureAwait(false);
+        if (result.IsFailure)
+        {
+            return false;
+        }
+
+        result.Value.Dispose();
+        return true;
     }
 
     /// <summary>Writes the lines that say how a file differs from its rule, or a line that says it does not.</summary>
@@ -45,7 +116,7 @@ internal static class RecipientsCommand
     {
         if (verification.IsExact)
         {
-            await EscapedOutput.Line(output, $"{path}: ok", cancellationToken).ConfigureAwait(false);
+            await EscapedOutput.Line(output, $"{path}: labels consistent", cancellationToken).ConfigureAwait(false);
             return;
         }
 

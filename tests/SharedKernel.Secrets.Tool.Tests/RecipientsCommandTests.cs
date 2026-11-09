@@ -20,7 +20,7 @@ public sealed class RecipientsCommandTests
 
         // Assert
         run.ExitCode.ShouldBe(0);
-        run.Output.ShouldBe($"age: {TestRecipients.Second}\nage: {TestRecipients.First}\nother key holder: pgp\n".ReplaceLineEndings());
+        run.Output.ShouldContain($"age: {TestRecipients.Second}\nage: {TestRecipients.First}\nother key holder: pgp", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -35,7 +35,9 @@ public sealed class RecipientsCommandTests
 
         // Assert
         run.ExitCode.ShouldBe(0);
-        run.Output.ShouldBe("secrets/app.sops.yaml: ok\n".ReplaceLineEndings());
+        run.Output.ShouldContain("secrets/app.sops.yaml: labels consistent", StringComparison.Ordinal);
+        run.Output.ShouldContain("proves labels and structure, not who can decrypt", StringComparison.Ordinal);
+        run.Output.ShouldNotContain(": ok", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -54,11 +56,11 @@ public sealed class RecipientsCommandTests
 
         // Assert
         subset.ExitCode.ShouldBe(1);
-        subset.Output.ShouldBe($"secrets/subset.sops.yaml: missing recipient {TestRecipients.Second}\n".ReplaceLineEndings());
+        subset.Output.ShouldContain($"secrets/subset.sops.yaml: missing recipient {TestRecipients.Second}", StringComparison.Ordinal);
         superset.ExitCode.ShouldBe(1);
-        superset.Output.ShouldBe($"secrets/superset.sops.json: unexpected recipient {TestRecipients.Third}\n".ReplaceLineEndings());
+        superset.Output.ShouldContain($"secrets/superset.sops.json: unexpected recipient {TestRecipients.Third}", StringComparison.Ordinal);
         kms.ExitCode.ShouldBe(1);
-        kms.Output.ShouldBe("secrets/kms.sops.json: non-age key holder hc_vault\n".ReplaceLineEndings());
+        kms.Output.ShouldContain("secrets/kms.sops.json: non-age key holder hc_vault", StringComparison.Ordinal);
     }
 
     [Fact]
