@@ -114,3 +114,44 @@ static PandaBear.Packages.PackageName.Create(string? value, string! field = "nam
 static PandaBear.Packages.PackagePlanner.Plan(System.Collections.Generic.IEnumerable<PandaBear.Packages.PackageRequirement!>! requirements, System.Collections.Generic.IEnumerable<PandaBear.Packages.InstalledPackage!>! installed) -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageChange!>!
 static PandaBear.Packages.PackageVersion.Create(string? value, string! field = "version") -> PandaBear.Results.Result<PandaBear.Packages.PackageVersion!>
 static PandaBear.Packages.UpdatePolicy.Decide(PandaBear.Packages.UpdateCandidate! candidate, System.Collections.Generic.IEnumerable<PandaBear.Packages.Advisory!>! advisories, PandaBear.Packages.MinimumReleaseAge! minimumAge, System.DateTimeOffset now) -> PandaBear.Packages.UpdateDecision!
+PandaBear.Packages.IAdvisorySource
+PandaBear.Packages.IAdvisorySource.Query(PandaBear.Packages.PackageManagerKind manager, System.Collections.Generic.IReadOnlyCollection<PandaBear.Packages.InstalledPackage!>! packages, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.Advisory!>!>>!
+PandaBear.Packages.IReleaseDateSource
+PandaBear.Packages.IReleaseDateSource.GetReleaseDate(PandaBear.Packages.PackageManagerKind manager, PandaBear.Packages.PackageName! name, PandaBear.Packages.PackageVersion! version, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.DateTimeOffset>>!
+PandaBear.Packages.ILatestVersionSource
+PandaBear.Packages.ILatestVersionSource.GetLatest(PandaBear.Packages.PackageManagerKind manager, PandaBear.Packages.PackageName! name, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Packages.PackageVersion!>>!
+PandaBear.Packages.NetworkAccess
+PandaBear.Packages.NetworkAccess.Allowed = 1 -> PandaBear.Packages.NetworkAccess
+PandaBear.Packages.NetworkAccess.Denied = 0 -> PandaBear.Packages.NetworkAccess
+PandaBear.Packages.OsvAdvisorySource
+const PandaBear.Packages.OsvAdvisorySource.BatchSize = 100 -> int
+const PandaBear.Packages.OsvAdvisorySource.MaxListedVersions = 1000 -> int
+const PandaBear.Packages.OsvAdvisorySource.MaxPages = 20 -> int
+const PandaBear.Packages.OsvAdvisorySource.MaxResponseBytes = 8388608 -> int
+const PandaBear.Packages.OsvAdvisorySource.MaxVulnerabilities = 1000 -> int
+PandaBear.Packages.OsvAdvisorySource.OsvAdvisorySource(System.Net.Http.HttpClient! client, System.TimeProvider! timeProvider, string? aptEcosystem = null, System.TimeSpan? cacheLifetime = null, System.TimeSpan? requestTimeout = null) -> void
+PandaBear.Packages.OsvAdvisorySource.Query(PandaBear.Packages.PackageManagerKind manager, System.Collections.Generic.IReadOnlyCollection<PandaBear.Packages.InstalledPackage!>! packages, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.Advisory!>!>>!
+PandaBear.Packages.OsvEcosystems
+static PandaBear.Packages.OsvEcosystems.For(PandaBear.Packages.PackageManagerKind manager, string? aptEcosystem = null) -> PandaBear.Results.Result<string!>
+PandaBear.Packages.PackageHttp
+const PandaBear.Packages.PackageHttp.UserAgent = "sharedkernel-packages/1.0 (+https://github.com/danigutsch/PandaBear.SharedKernel)" -> string!
+static PandaBear.Packages.PackageHttp.CreateHandler() -> System.Net.Http.HttpMessageHandler!
+PandaBear.Packages.PackageUpdate
+PandaBear.Packages.PackageUpdate.CandidateVersion.get -> PandaBear.Packages.PackageVersion!
+PandaBear.Packages.PackageUpdate.InstalledVersion.get -> PandaBear.Packages.PackageVersion!
+PandaBear.Packages.PackageUpdate.Package.get -> PandaBear.Packages.PackageName!
+PandaBear.Packages.PackageUpdate.PackageUpdate(PandaBear.Packages.PackageName! package, PandaBear.Packages.PackageVersion! installedVersion, PandaBear.Packages.PackageVersion! candidateVersion) -> void
+PandaBear.Packages.RegistryReleaseSource
+const PandaBear.Packages.RegistryReleaseSource.MaxResponseBytes = 33554432 -> int
+PandaBear.Packages.RegistryReleaseSource.GetLatest(PandaBear.Packages.PackageManagerKind manager, PandaBear.Packages.PackageName! name, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Packages.PackageVersion!>>!
+PandaBear.Packages.RegistryReleaseSource.GetReleaseDate(PandaBear.Packages.PackageManagerKind manager, PandaBear.Packages.PackageName! name, PandaBear.Packages.PackageVersion! version, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.DateTimeOffset>>!
+PandaBear.Packages.RegistryReleaseSource.RegistryReleaseSource(System.Net.Http.HttpClient! client, System.TimeProvider! timeProvider, System.TimeSpan? cacheLifetime = null, System.TimeSpan? requestTimeout = null) -> void
+PandaBear.Packages.UpdatePlanner
+PandaBear.Packages.UpdatePlanner.Plan(PandaBear.Packages.PackageManagerKind manager, System.Collections.Generic.IEnumerable<PandaBear.Packages.PackageUpdate!>! updates, PandaBear.Packages.MinimumReleaseAge! minimumAge, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.UpdateDecision!>!>>!
+PandaBear.Packages.UpdatePlanner.UpdatePlanner(PandaBear.Packages.IAdvisorySource! advisories, PandaBear.Packages.IReleaseDateSource! releaseDates, PandaBear.Packages.ILatestVersionSource! latest, System.TimeProvider! timeProvider) -> void
+override PandaBear.Packages.PackageUpdate.ToString() -> string!
+PandaBear.Packages.UpdatePlanner.FindUpdates(PandaBear.Packages.PackageManagerKind manager, System.Collections.Generic.IEnumerable<PandaBear.Packages.InstalledPackage!>! installed, PandaBear.Packages.NetworkAccess access, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Packages.UpdateSearch!>>!
+PandaBear.Packages.UpdateSearch
+PandaBear.Packages.UpdateSearch.NotOnRegistry.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageName!>!
+PandaBear.Packages.UpdateSearch.UpdateSearch(System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageUpdate!>! updates, System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageName!>! notOnRegistry) -> void
+PandaBear.Packages.UpdateSearch.Updates.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageUpdate!>!

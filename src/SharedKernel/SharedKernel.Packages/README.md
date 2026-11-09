@@ -43,7 +43,18 @@ foreach (var change in PackagePlanner.Plan(wanted, installed))
   passed in, so decisions are deterministic. An advisory lists its exact affected versions, because this library never
   compares versions.
 
-Snap and Homebrew readers, release-date and advisory sources, and applying changes are separate packages and issues; see the
+- `IAdvisorySource`, `IReleaseDateSource` and `ILatestVersionSource` supply the policy's inputs. A failed, refused,
+  oversized, or partial lookup is a failed `Result`, never an empty list, and every call takes a `NetworkAccess` that is
+  `Denied` by default. `OsvAdvisorySource` (osv.dev) and `RegistryReleaseSource` (crates.io and npm) implement them over an
+  injected `HttpClient` (build its handler with `PackageHttp.CreateHandler()`): HTTPS only, a time limit, a response size
+  limit, no redirects, and an in-memory cache with expiry that never stores a failure. OSV matches the exact versions
+  that are asked about against its ranges, so range-only records need no version comparison here; apt needs an OSV release
+  such as `Debian:12`, and Flatpak is unsupported. `UpdatePlanner` finds candidates (a package the registry does not know is
+  listed in `UpdateSearch.NotOnRegistry` and not checked), queries both versions of each, and returns decisions only when
+  every other lookup succeeded. See the
+  [advisory ADR](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/adr/20261109-package-advisories.md).
+
+Snap and Homebrew readers and applying changes are separate packages and issues; see the
 [package management tooling epic](https://github.com/danigutsch/PandaBear.SharedKernel/issues/344).
 
 ## Limits to know
@@ -53,6 +64,10 @@ Snap and Homebrew readers, release-date and advisory sources, and applying chang
 - apt names use `dpkg-query`'s `${binary:Package}`, which adds the architecture (`libc6:amd64`) when a bare name would be
   ambiguous. Requirements for such packages must use that qualified name.
 - `UpdatePolicy` treats an empty advisory list as "no known advisories". A caller whose advisory feed failed must fail
-  before it calls the policy.
+  before it calls the policy; `UpdatePlanner` does that.
+- OSV names Debian and Ubuntu packages by source package, so an installed apt binary package with another name matches
+  nothing and looks clean. Map binary names to source names before an apt lookup.
+- The newest stable version is only known to differ from the installed one, not to be newer, because versions are not
+  ordered.
 - `npm ls` exits non-zero when the global tree has problems such as missing peers, even though it still prints a list; the
   reader reports that as an error.

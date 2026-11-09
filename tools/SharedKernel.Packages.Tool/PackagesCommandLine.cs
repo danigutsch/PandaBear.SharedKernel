@@ -10,8 +10,9 @@ internal static class PackagesCommandLine
     /// <param name="workingDirectory">The directory that a relative <c>--root</c> and the default root are resolved from.</param>
     /// <param name="resolveExecutable">Finds a program by name and returns its absolute path, or <see langword="null"/>.</param>
     /// <param name="runner">Runs the package tools.</param>
-    /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
-    public static RootCommand Create(string workingDirectory, Func<string, string?> resolveExecutable, IProcessRunner runner)
+    /// <param name="createUpdateSources">Creates the network sources for <c>updates</c>; the real ones when <see langword="null"/>. Called only after <c>--allow-network</c>.</param>
+    /// <exception cref="ArgumentNullException">A required argument is <see langword="null"/>.</exception>
+    public static RootCommand Create(string workingDirectory, Func<string, string?> resolveExecutable, IProcessRunner runner, Func<UpdateSources>? createUpdateSources = null)
     {
         ArgumentNullException.ThrowIfNull(workingDirectory);
         ArgumentNullException.ThrowIfNull(resolveExecutable);
@@ -42,10 +43,12 @@ internal static class PackagesCommandLine
         // Consumer caller tests parse command lines with [diagram] without running them.
         root.Directives.Add(new DiagramDirective());
         root.Subcommands.Add(plan);
+        root.Subcommands.Add(UpdatesCommand.Create(workingDirectory, resolveExecutable, runner, createUpdateSources ?? UpdateSources.CreateDefault));
         return root;
     }
 
-    private static async Task<int> Execute(ParseResult parseResult, Func<TextWriter, TextWriter, Task<int>> action, CancellationToken cancellationToken)
+    /// <summary>Runs <paramref name="action"/> and prints the message of a configuration or file error instead of failing.</summary>
+    internal static async Task<int> Execute(ParseResult parseResult, Func<TextWriter, TextWriter, Task<int>> action, CancellationToken cancellationToken)
     {
         var error = parseResult.InvocationConfiguration.Error;
         try

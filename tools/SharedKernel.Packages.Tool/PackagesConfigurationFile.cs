@@ -20,7 +20,12 @@ internal static class PackagesConfigurationFile
     /// The file is missing, larger than 1 MiB, or not a valid configuration of version 1, a manager ID or an entry is
     /// invalid, or a package has more than one owner.
     /// </exception>
-    public static async Task<DeclaredPackages> Read(string root, CancellationToken cancellationToken)
+    public static async Task<DeclaredPackages> Read(string root, CancellationToken cancellationToken) =>
+        (await ReadWithPolicy(root, cancellationToken).ConfigureAwait(false)).Packages;
+
+    /// <summary>Reads the configuration like <see cref="Read"/> and also returns the optional <c>minimumReleaseAgeDays</c>.</summary>
+    /// <exception cref="InvalidOperationException">As <see cref="Read"/>, or <c>minimumReleaseAgeDays</c> is outside 0 to 3650.</exception>
+    public static async Task<(DeclaredPackages Packages, int? MinimumReleaseAgeDays)> ReadWithPolicy(string root, CancellationToken cancellationToken)
     {
         string path;
         try
@@ -45,7 +50,7 @@ internal static class PackagesConfigurationFile
         return Parse(content);
     }
 
-    private static DeclaredPackages Parse(byte[] content)
+    private static (DeclaredPackages Packages, int? MinimumReleaseAgeDays) Parse(byte[] content)
     {
         PackagesConfiguration? configuration;
         try
@@ -70,6 +75,11 @@ internal static class PackagesConfigurationFile
         if (configuration.Version != 1)
         {
             throw Invalid("$.version must be 1.");
+        }
+
+        if (configuration.MinimumReleaseAgeDays is { } days && MinimumReleaseAge.FromDays(days).IsFailure)
+        {
+            throw Invalid($"$.minimumReleaseAgeDays must be from 0 to {MinimumReleaseAge.MaxDays}.");
         }
 
         Dictionary<PackageManagerKind, IReadOnlyList<PackageRequirement>> declared = [];
@@ -102,7 +112,7 @@ internal static class PackagesConfigurationFile
             throw Invalid("$.packages gives a package more than one owner:" + string.Concat(messages.Select(static m => "\n- " + m)));
         }
 
-        return result.Value;
+        return (result.Value, configuration.MinimumReleaseAgeDays);
     }
 
     private static PackageRequirement ParseEntry(string manager, int index, string? entry)
