@@ -34,7 +34,11 @@ public sealed class SystemProcessRunner : IProcessRunner
             RedirectStandardInput = true,
             UseShellExecute = false,
         };
+        // Tools print tables and messages in English: LC_ALL wins over the others, and LANGUAGE would override LC_MESSAGES.
         startInfo.Environment["LC_ALL"] = "C";
+        startInfo.Environment["LC_MESSAGES"] = "C";
+        startInfo.Environment["LANG"] = "C";
+        startInfo.Environment.Remove("LANGUAGE");
         foreach (var argument in arguments)
         {
             startInfo.ArgumentList.Add(argument);

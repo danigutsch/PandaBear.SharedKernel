@@ -20,11 +20,14 @@ foreach (var change in PackagePlanner.Plan(wanted, installed))
   repeats the input. Names and versions are kept exactly as written; versions only compare for equality, because
   ordering is specific to each package manager.
 - `IPackageReader` is the read contract. `AptPackageReader` (`dpkg-query`), `CargoPackageReader` (`cargo install --list`),
-  `NpmPackageReader` (`npm ls --global --json`), and `FlatpakPackageReader` (`flatpak list --app`) run their tool through
+  `NpmPackageReader` (`npm ls --global --json`), `FlatpakPackageReader` (`flatpak list --app`), `SnapPackageReader` (`snap list`), and
+  `BrewPackageReader` (`brew list --versions`) run their tool through
   `IProcessRunner` from an absolute path. A tool that cannot run, runs too long, exits non-zero, or prints a line that cannot be read is an error result whose message
   carries the first line of the tool's error output, never an empty list. Cancellation still throws. A package listed twice is an
   error. apt reports held packages as installed and a partly installed package as an error to repair. A
-  Flatpak application without a version text is identified by its branch.
+  Flatpak application without a version text is identified by its branch. The snap reader checks and skips the table
+  header and lists base snaps such as `core24`. The brew reader treats a formula with more than one installed version as an
+  error (run `brew cleanup`); empty brew output is an empty list.
 - `SystemProcessRunner` starts a real process without a shell, in the `C` locale, with a two-minute limit and a limit of 8 Mi
   characters on each of the standard output and the standard error it keeps. Output above the limit ends the process; a process that leaves its
   output open after it exits is an error, and cancellation kills it. Tests use a fake `IProcessRunner` and, where the tools

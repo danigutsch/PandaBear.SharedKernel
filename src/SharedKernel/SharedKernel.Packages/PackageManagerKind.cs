@@ -14,4 +14,10 @@ public enum PackageManagerKind
 
     /// <summary>Flatpak applications.</summary>
     Flatpak,
+
+    /// <summary>Snaps, read with <c>snap list</c>.</summary>
+    Snap,
+
+    /// <summary>Homebrew formulae and casks, read with <c>brew list --versions</c>.</summary>
+    Brew,
 }

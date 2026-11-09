@@ -13,6 +13,9 @@ PandaBear.Packages.AdvisorySeverity.Medium = 1 -> PandaBear.Packages.AdvisorySev
 PandaBear.Packages.AptPackageReader
 PandaBear.Packages.AptPackageReader.AptPackageReader(PandaBear.Packages.IProcessRunner! runner, string! dpkgQueryPath) -> void
 PandaBear.Packages.AptPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
+PandaBear.Packages.BrewPackageReader
+PandaBear.Packages.BrewPackageReader.BrewPackageReader(PandaBear.Packages.IProcessRunner! runner, string! brewPath) -> void
+PandaBear.Packages.BrewPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
 PandaBear.Packages.CargoPackageReader
 PandaBear.Packages.CargoPackageReader.CargoPackageReader(PandaBear.Packages.IProcessRunner! runner, string! cargoPath) -> void
 PandaBear.Packages.CargoPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
@@ -45,9 +48,11 @@ PandaBear.Packages.PackageChangeKind.ChangeVersion = 1 -> PandaBear.Packages.Pac
 PandaBear.Packages.PackageChangeKind.Install = 0 -> PandaBear.Packages.PackageChangeKind
 PandaBear.Packages.PackageManagerKind
 PandaBear.Packages.PackageManagerKind.Apt = 0 -> PandaBear.Packages.PackageManagerKind
+PandaBear.Packages.PackageManagerKind.Brew = 5 -> PandaBear.Packages.PackageManagerKind
 PandaBear.Packages.PackageManagerKind.Cargo = 1 -> PandaBear.Packages.PackageManagerKind
 PandaBear.Packages.PackageManagerKind.Flatpak = 3 -> PandaBear.Packages.PackageManagerKind
 PandaBear.Packages.PackageManagerKind.Npm = 2 -> PandaBear.Packages.PackageManagerKind
+PandaBear.Packages.PackageManagerKind.Snap = 4 -> PandaBear.Packages.PackageManagerKind
 PandaBear.Packages.PackageManagers
 PandaBear.Packages.PackageName
 PandaBear.Packages.PackageName.Value.get -> string!
@@ -63,6 +68,9 @@ PandaBear.Packages.ProcessOutput.ExitCode.get -> int
 PandaBear.Packages.ProcessOutput.ProcessOutput(int exitCode, string! standardOutput, string! standardError = "") -> void
 PandaBear.Packages.ProcessOutput.StandardError.get -> string!
 PandaBear.Packages.ProcessOutput.StandardOutput.get -> string!
+PandaBear.Packages.SnapPackageReader
+PandaBear.Packages.SnapPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
+PandaBear.Packages.SnapPackageReader.SnapPackageReader(PandaBear.Packages.IProcessRunner! runner, string! snapPath) -> void
 PandaBear.Packages.SystemProcessRunner
 PandaBear.Packages.SystemProcessRunner.Run(string! executable, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Packages.ProcessOutput!>!
 PandaBear.Packages.SystemProcessRunner.SystemProcessRunner() -> void

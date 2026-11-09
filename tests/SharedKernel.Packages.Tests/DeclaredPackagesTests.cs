@@ -31,6 +31,26 @@ public sealed class DeclaredPackagesTests
     }
 
     [Fact]
+    public void A_tap_qualified_brew_name_is_rejected_because_brew_lists_only_the_short_name()
+    {
+        // Act
+        var result = DeclaredPackages.Create(Declare((PackageManagerKind.Brew, ["user/tap/foo"]), (PackageManagerKind.Apt, ["git"])));
+
+        // Assert
+        result.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull()["packages"].ShouldBe(["user/tap/foo is a tap-qualified Homebrew name; brew list prints only the short name, so declare it without the tap."]);
+    }
+
+    [Fact]
+    public void A_slash_in_a_name_of_another_manager_is_allowed()
+    {
+        // Act
+        var result = DeclaredPackages.Create(Declare((PackageManagerKind.Npm, ["@scope/pkg"])));
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+    }
+
+    [Fact]
     public void The_same_name_twice_under_one_manager_is_rejected()
     {
         // Act

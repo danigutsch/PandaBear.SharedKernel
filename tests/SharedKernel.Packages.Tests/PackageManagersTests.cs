@@ -9,6 +9,8 @@ public sealed class PackageManagersTests
     [InlineData(PackageManagerKind.Cargo, "cargo")]
     [InlineData(PackageManagerKind.Npm, "npm")]
     [InlineData(PackageManagerKind.Flatpak, "flatpak")]
+    [InlineData(PackageManagerKind.Snap, "snap")]
+    [InlineData(PackageManagerKind.Brew, "brew")]
     public void Each_manager_has_its_id_and_the_id_parses_back_to_it(PackageManagerKind manager, string id)
     {
         // Act

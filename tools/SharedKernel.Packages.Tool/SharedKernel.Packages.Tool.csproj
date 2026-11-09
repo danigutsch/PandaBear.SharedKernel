@@ -8,7 +8,7 @@
         <Description>Compares the packages that .config/sharedkernel-packages.json declares per package manager with the installed packages, read-only, and refuses a declaration in which a package has more than one owner.</Description>
         <RootNamespace>PandaBear.Packages.Tool</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageTags>packages;apt;cargo;npm;flatpak;dotnet-tool</PackageTags>
+        <PackageTags>packages;apt;cargo;npm;flatpak;snap;homebrew;dotnet-tool</PackageTags>
         <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 

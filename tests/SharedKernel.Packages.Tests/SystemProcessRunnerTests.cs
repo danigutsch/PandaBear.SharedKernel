@@ -105,6 +105,16 @@ public sealed class SystemProcessRunnerTests
     }
 
     [Fact(SkipType = typeof(UnixToolsProbe), SkipUnless = nameof(UnixToolsProbe.IsAvailable), Skip = "The Unix tools are not available.")]
+    public async Task The_tool_sees_every_locale_variable_as_c_and_no_language_override()
+    {
+        // Act
+        var output = await new SystemProcessRunner().Run(UnixToolsProbe.Shell, ["-c", "printf '%s|%s|%s|%s' \"$LC_ALL\" \"$LC_MESSAGES\" \"$LANG\" \"${LANGUAGE-unset}\""], TestContext.Current.CancellationToken);
+
+        // Assert
+        output.StandardOutput.ShouldBe("C|C|C|unset");
+    }
+
+    [Fact(SkipType = typeof(UnixToolsProbe), SkipUnless = nameof(UnixToolsProbe.IsAvailable), Skip = "The Unix tools are not available.")]
     public async Task Arguments_are_passed_one_by_one_without_shell_interpretation()
     {
         // Act
