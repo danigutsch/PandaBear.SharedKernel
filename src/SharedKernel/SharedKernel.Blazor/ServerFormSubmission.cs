@@ -38,6 +38,45 @@ public sealed class ServerFormSubmission : IDisposable
     }
 
     /// <summary>
+    /// Creates the submission of a form that edits one kind of record, with the repeated default messages and the control ids
+    /// <c>{idPrefix}-{field}</c>.
+    /// </summary>
+    /// <param name="editContext">The edit context that shows the field messages.</param>
+    /// <param name="knownFields">The model field names the form can display.</param>
+    /// <param name="idPrefix">The prefix of the control ids; the id of a field is the prefix, a hyphen and the field name.</param>
+    /// <param name="noun">The lowercase name of the record, for example <c>customer</c>, used in the default messages.</param>
+    /// <param name="invalidMessage">The field message for unusable server messages; defaults to "This value is not valid."</param>
+    /// <param name="failureMessage">The general failure message; defaults to "We could not save the {noun}. Try again later."</param>
+    /// <param name="conflictMessage">The conflict message; defaults to "The {noun} was changed or removed by someone else. Reload the page and try again."</param>
+    /// <param name="notFoundMessage">The not found message; defaults to "That {noun} no longer exists."</param>
+    /// <returns>The submission; the caller disposes it.</returns>
+    /// <exception cref="ArgumentNullException">A required value is null.</exception>
+    /// <exception cref="ArgumentException">The prefix or the noun is blank, or a given message is blank.</exception>
+    public static ServerFormSubmission ForRecord(
+        EditContext editContext,
+        IEnumerable<string> knownFields,
+        string idPrefix,
+        string noun,
+        string? invalidMessage = null,
+        string? failureMessage = null,
+        string? conflictMessage = null,
+        string? notFoundMessage = null)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(idPrefix);
+        ArgumentException.ThrowIfNullOrWhiteSpace(noun);
+
+        return new ServerFormSubmission(
+            editContext,
+            new ServerValidationOptions(knownFields, invalidMessage ?? "This value is not valid."),
+            field => idPrefix + "-" + field,
+            failureMessage ?? $"We could not save the {noun}. Try again later.")
+        {
+            ConflictMessage = conflictMessage ?? $"The {noun} was changed or removed by someone else. Reload the page and try again.",
+            NotFoundMessage = notFoundMessage ?? $"That {noun} no longer exists.",
+        };
+    }
+
+    /// <summary>
     /// Gets the fixed text shown when the save fails with <see cref="ResultStatus.Conflict"/> (the row was changed or removed by
     /// someone else, so a retry fails the same way). It is never server text. <see langword="null"/> falls back to the failure message.
     /// </summary>
