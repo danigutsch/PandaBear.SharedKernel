@@ -142,4 +142,56 @@ public sealed class RealProgramsCommandLineTests
         swapped.Output.ShouldContain($"changed: needs review: recipient {recipients[0]}", StringComparison.Ordinal);
         allowed.ExitCode.ShouldBe(0);
     }
+
+    [Fact(SkipType = typeof(RealPrograms), SkipUnless = nameof(RealPrograms.AllAvailable), Skip = "age, age-keygen, and sops are not all installed.")]
+    public async Task Verify_against_a_real_git_base_works_with_the_root_in_a_subdirectory_and_never_compares_with_a_top_level_twin()
+    {
+        // Arrange
+        if (!RealPrograms.GitAvailable)
+        {
+            return;
+        }
+
+        using var outer = CreateRepository(null);
+        var token = TestContext.Current.CancellationToken;
+        var runner = new SystemToolRunner();
+        var root = Path.Combine(outer.Path, "sub");
+        Directory.CreateDirectory(Path.Combine(root, ".config"));
+        var keys = Path.Combine(Path.GetTempPath(), "pandabear-keys-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(keys);
+        var recipients = new List<string>();
+        foreach (var name in KeyNames)
+        {
+            var keygen = await Run(outer.Path, runner, RealPrograms.Find, null, null, "keygen", "--output", Path.Combine(keys, name), "--force");
+            recipients.Add(RealPrograms.RecipientFrom(keygen.Output));
+        }
+
+        await File.WriteAllTextAsync(Path.Combine(root, ".config", "sharedkernel-secrets.json"), TestRecipients.Config(2, recipients[1], recipients[2]), token);
+        await Run(root, runner, RealPrograms.Find, Encoding.UTF8.GetBytes("password: hunter2\n"), null, "encrypt", "secrets/app.sops.yaml", "--force");
+        var setup = new List<int> { await RealPrograms.Git(outer.Path, token, "init", "-q"), await RealPrograms.Git(outer.Path, token, "add", "-A"), await RealPrograms.Git(outer.Path, token, "commit", "-q", "-m", "base") };
+
+        // Act
+        var unchanged = await Run(root, runner, RealPrograms.Find, null, null, "verify", "--base", "HEAD");
+
+        // A top-level twin that an attacker controls: same relative name, labels the rule accepts, committed before the forgery.
+        var file = Path.Combine(root, "secrets", "app.sops.yaml");
+        var good = await File.ReadAllTextAsync(file, token);
+        var forged = good.Replace(recipients[1], recipients[0], StringComparison.Ordinal);
+        Directory.CreateDirectory(Path.Combine(outer.Path, "secrets"));
+        await File.WriteAllTextAsync(Path.Combine(outer.Path, "secrets", "app.sops.yaml"), forged, token);
+        await File.WriteAllTextAsync(Path.Combine(outer.Path, "secrets", "other.sops.yaml"), forged, token);
+        setup.Add(await RealPrograms.Git(outer.Path, token, "add", "-A"));
+        setup.Add(await RealPrograms.Git(outer.Path, token, "commit", "-q", "-m", "twin"));
+        await File.WriteAllTextAsync(file, forged, token);
+        await File.WriteAllTextAsync(Path.Combine(root, "secrets", "other.sops.yaml"), forged, token);
+        await File.WriteAllTextAsync(Path.Combine(root, ".config", "sharedkernel-secrets.json"), TestRecipients.Config(2, recipients[0], recipients[2]), token);
+        var swapped = await Run(root, runner, RealPrograms.Find, null, null, "verify", "--base", "HEAD");
+
+        // Assert
+        setup.Count(static code => code != 0).ShouldBe(0);
+        unchanged.ExitCode.ShouldBe(0);
+        swapped.ExitCode.ShouldBe(1);
+        swapped.Output.ShouldContain($"secrets/app.sops.yaml: changed: needs review: recipient {recipients[0]} is new", StringComparison.Ordinal);
+        swapped.Output.ShouldContain($"secrets/other.sops.yaml: changed: needs review: recipient {recipients[0]} is new", StringComparison.Ordinal);
+    }
 }

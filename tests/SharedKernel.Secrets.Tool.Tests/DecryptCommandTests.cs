@@ -26,7 +26,8 @@ public sealed class DecryptCommandTests
         run.Error.ShouldBe(string.Empty);
         var request = runner.Requests.ShouldHaveSingleItem();
         request.Arguments.ShouldBe(["--config", "/dev/null", "decrypt", Path.Combine(repository.Path, "secrets", "app.sops.yaml")]);
-        request.Environment.ShouldBe(new Dictionary<string, string> { ["SOPS_AGE_KEY_FILE"] = "/keys/id.txt" });
+        request.Environment.Keys.Order(StringComparer.Ordinal).ToArray().ShouldBe(["HOME", "SOPS_AGE_KEY_FILE"]);
+        request.Environment["SOPS_AGE_KEY_FILE"].ShouldBe("/keys/id.txt");
     }
 
     [Fact]

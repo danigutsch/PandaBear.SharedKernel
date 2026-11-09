@@ -27,7 +27,7 @@ public sealed class BaseRevisionTests
         runner.Requests.Select(static r => r.Executable).Distinct().ToArray().ShouldBe(["/fake/git"]);
         runner.Requests.Select(static r => string.Join(' ', r.Arguments)).ShouldContain($"-C {Path.GetFullPath(repository.Path)} rev-parse --verify --quiet origin/main^{{commit}}");
         var show = runner.Requests.Where(static r => r.Arguments.Contains("show")).ToArray().ShouldHaveSingleItem();
-        show.Arguments.ShouldBe(["-C", Path.GetFullPath(repository.Path), "show", "origin/main:secrets/a.sops.yaml"]);
+        show.Arguments.ShouldBe(["-C", Path.GetFullPath(repository.Path), "show", "origin/main:./secrets/a.sops.yaml"]);
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public sealed class BaseRevisionTests
         // Act
         var noGit = await Run(repository.Path, ScriptedToolRunner.Unused(), ResolveNone, null, null, "verify", "--root", repository.Path, "--base", "main");
         var unknown = await Run(repository.Path, ToolScripts.Git([], revParseExit: 1), ResolveAll, null, null, "verify", "--root", repository.Path, "--base", "nope");
-        var failingShow = await Run(repository.Path, new ScriptedToolRunner(request => request.Arguments.Contains("show") ? ScriptedToolRunner.Result(128, string.Empty, "fatal") : ScriptedToolRunner.Result(0, request.Arguments.Contains("ls-tree") ? "secrets/a.sops.yaml\0" : "x")), ResolveAll, null, null, "verify", "--root", repository.Path, "--base", "main");
+        var failingShow = await Run(repository.Path, new ScriptedToolRunner(request => request.Arguments.Contains("show") ? ScriptedToolRunner.Result(128, string.Empty, "fatal") : ScriptedToolRunner.Result(0, request.Arguments.Contains("ls-tree") ? "100644 blob abc\tsecrets/a.sops.yaml\0" : "x")), ResolveAll, null, null, "verify", "--root", repository.Path, "--base", "main");
 
         // Assert
         noGit.ExitCode.ShouldBe(2);

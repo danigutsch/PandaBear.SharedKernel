@@ -82,19 +82,23 @@ What they do not establish:
   --prove-with-identity`, and `--prove-absent-identity` for a key that must be revoked) or by **review against a trusted revision**
   (`verify --base`): only someone who already holds the data key can produce a new valid `enc`, so a label whose `enc` is new or changed
   needs a human, and an unchanged one cannot have been forged since the base. The base check trusts the base revision; a rotation changes
-  every `enc` and needs `--allow-changed-recipients` after review. A failed trial decryption cannot say why it failed, so the absent proof
-  requires a decrypting holder in the same run.
+  every `enc` and needs `--allow-changed-recipients` after review. A failed trial decryption is a verdict only when sops says the identity
+  matches none of the recipients; every other failure is exit 2, because sops prints the same first line ("Failed to get the data key") for a
+  wrong identity, a garbage or missing identity file, and a corrupted `enc`. So identities must first be readable regular files of age secret keys,
+  SSH and plugin identities are refused (an SSH key that is still a recipient would decrypt), and the absent proof requires a decrypting holder
+  in the same run. sops runs with `HOME` set to its empty working directory, because it otherwise tries `~/.ssh/id_*` and the caller's key file.
 - **That the data key is wrapped for the label's key,** and that the MAC and the ciphertext are intact. Nothing here decrypts or verifies a MAC.
 - **Plugin, hybrid, and tag recipients** beyond "exactly one stanza".
 - **Keys named `*_unencrypted`,** which sops leaves in clear on purpose. Comments outside the `sops` block count as a concern, not a pass, because nothing checks them; comments inside it are refused.
 - **Settings spelled in ways a consumer reads differently.** Property names are compared without regard to letter case, as Go's JSON decoder does, every YAML boolean spelling counts, and an unknown property in the `sops` block is a concern; another parser could still disagree on something not listed.
+- **What `verify` reads.** Inside a rule's scope every file is read and anything not positively non-SOPS is a failure; outside every rule only files named `*.sops.*` or with a yaml, yml, json, env, or ini extension are read. A SOPS document with another name and extension outside every rule goes unnoticed. A directory whose children a rule could match is probed with sample child names, so an exotic expression could still hide a link.
 - **A race on `decrypt --output`.** The destination is resolved without symbolic links and the file is renamed into place without overwriting, but a parent directory swapped for a link between the check and the rename is not detected. The temporary name is random and created exclusively, and it is removed on any failure, including cancellation.
 - **dotenv, ini, and binary files,** which are an error, not a pass.
 - **A compromised `age`, `age-keygen`, or `sops` program,** the machine's memory, swap, and core dumps.
 
 Reproduced bypasses that the design now refuses (first review):  a second YAML document, a byte order mark, or a `sops :` / `"sops":` spelling that hid the real
 block behind a fake one; a repeated label over two envelopes; a repository `.sops.yaml` with `unencrypted_regex: '.*'`; `verify` passing with
-no files, an unjudgeable path, or uncovered files; and an SSH recipient with white space or trailing bytes in its key. Second review: a relabelled X25519 recipient (now caught only by trial decryption or `--base`, and no longer described as verified); `verify` skipping directories named `bin`, `obj`, or `node_modules`, symbolic links, files named `prod.yaml`, `prod.enc.yaml`, `prod.SOPS.yaml`, or `secrets/.sops.yaml`; `mac_only_encrypted: True` or a differently cased JSON name; plaintext in a comment or after `#` on a value; and `ENC[hunter2]` passing as ciphertext.
+no files, an unjudgeable path, or uncovered files; and an SSH recipient with white space or trailing bytes in its key. Second review: a relabelled X25519 recipient (now caught only by trial decryption or `--base`, and no longer described as verified); `verify` skipping directories named `bin`, `obj`, or `node_modules`, symbolic links, files named `prod.yaml`, `prod.enc.yaml`, `prod.SOPS.yaml`, or `secrets/.sops.yaml`; `mac_only_encrypted: True` or a differently cased JSON name; plaintext in a comment or after `#` on a value; and `ENC[hunter2]` passing as ciphertext. Third review: `--prove-absent-identity` passing for a missing, empty, garbage, unreadable, directory, FIFO, or SSH identity, and for a file sops could not read at all; sops falling back to keys in the caller's home directory; `verify` skipping one-line JSON, indented or escaped YAML, UTF-16, and extensionless JSON binary stores in scope; symbolic links outside a rule's own name; a FIFO hanging `verify`; and `--base` with a root in a subdirectory comparing a file with a top-level twin.
 
 ## Deferred
 

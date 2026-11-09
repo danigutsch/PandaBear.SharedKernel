@@ -18,6 +18,11 @@ internal static class VerifyCommand
     private const string SopsConfigurationName = ".sops.yaml";
     private const long MaxFileBytes = 16 * 1024 * 1024;
 
+    private static readonly string[] ProbeNames =
+    [
+        "/", "/a", "/a.sops.yaml", "/a.sops.yml", "/a.sops.json", "/a.yaml", "/a.yml", "/a.json", "/a/b.sops.yaml", "/a/b.sops.json", "/a/b",
+    ];
+
     /// <summary>
     /// Returns 0 when every file is covered, consistent, and (with <c>--base</c>) unchanged, 1 when one differs, is weakened, is uncovered, or has a changed
     /// recipient, and 2 when nothing was verified or an entry cannot be read or judged. A failure outranks a difference.
@@ -36,7 +41,7 @@ internal static class VerifyCommand
         Tally tally = new();
         foreach (var entry in SopsFileFinder.Find(root))
         {
-            await Examine(entry, root, rules, baseline, tally, output, error, cancellationToken).ConfigureAwait(false);
+            await Examine(environment, entry, rules, baseline, tally, output, error, cancellationToken).ConfigureAwait(false);
         }
 
         await EscapedOutput.Line(
@@ -61,8 +66,8 @@ internal static class VerifyCommand
     }
 
     private static async Task Examine(
+        SecretsEnvironment environment,
         ScanEntry entry,
-        string root,
         SopsCreationRuleSet rules,
         GitBase? baseline,
         Tally tally,
@@ -82,42 +87,49 @@ internal static class VerifyCommand
         var named = Path.GetFileName(relative).Contains(".sops.", StringComparison.OrdinalIgnoreCase);
         if (entry.Kind == ScanEntryKind.Link)
         {
-            if (rule is not null)
+            await ExamineLink(relative, rules, named, tally, output, error, cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
+        var inScope = rule is not null;
+        if (relative == SopsConfigurationName || !(inScope || named || SopsSniffer.IsCandidateExtension(relative)))
+        {
+            return;
+        }
+
+        var (bytes, problem) = await GuardedFileReader.Read(entry.AbsolutePath, MaxFileBytes, environment.FileReadTimeout ?? GuardedFileReader.DefaultTimeout, cancellationToken).ConfigureAwait(false);
+        if (problem is not null)
+        {
+            if (inScope || named)
             {
                 tally.Unjudgeable++;
-                await EscapedOutput.Line(error, $"{relative}: a symbolic link cannot be checked", cancellationToken).ConfigureAwait(false);
+                await EscapedOutput.Line(error, $"{relative}: {problem}", cancellationToken).ConfigureAwait(false);
             }
 
             return;
         }
 
-        if (relative == SopsConfigurationName || !(named || SopsSniffer.IsCandidateExtension(relative)))
+        var sniffed = SopsSniffer.Classify(bytes, out var contentFormat, out var reason);
+        if (sniffed == SniffResult.Unknown)
+        {
+            if (inScope || named)
+            {
+                tally.Unjudgeable++;
+                await EscapedOutput.Line(error, $"{relative}: the file cannot be ruled out as a SOPS file: {reason}", cancellationToken).ConfigureAwait(false);
+            }
+
+            return;
+        }
+
+        if (sniffed == SniffResult.NotSops && !named)
         {
             return;
         }
 
-        var inScope = rule is not null || named;
-        if (relative.Any(static c => char.IsControl(c) || c is ':' or '\\') && inScope)
+        if (relative.Any(static c => char.IsControl(c) || c is ':' or '\\'))
         {
             tally.Unjudgeable++;
             await EscapedOutput.Line(error, $"{relative}: the path cannot be checked: it has a control character, ':' or '\\'", cancellationToken).ConfigureAwait(false);
-            return;
-        }
-
-        var content = await ReadFile(entry, cancellationToken).ConfigureAwait(false);
-        if (content.Problem is not null)
-        {
-            if (inScope)
-            {
-                tally.Unjudgeable++;
-                await EscapedOutput.Line(error, $"{relative}: {content.Problem}", cancellationToken).ConfigureAwait(false);
-            }
-
-            return;
-        }
-
-        if (!named && !SopsSniffer.LooksLikeSops(relative, content.Text))
-        {
             return;
         }
 
@@ -129,10 +141,10 @@ internal static class VerifyCommand
         }
 
         tally.Covered++;
-        var format = SopsSniffer.FormatOf(relative);
+        var format = contentFormat ?? SopsSniffer.FormatOf(relative);
         var holders = format is null
             ? Result.Error<SopsFileRecipients>("Only YAML and JSON SOPS files have readable recipients.")
-            : SopsMetadataReader.Read(content.Text, format.Value);
+            : SopsMetadataReader.Read(new UTF8Encoding(false).GetString(bytes), format.Value);
         if (holders.IsFailure)
         {
             tally.Unreadable++;
@@ -150,6 +162,24 @@ internal static class VerifyCommand
         if (baseline is not null)
         {
             tally.Changed += await ReportChanges(baseline, relative, holders.Value, output, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    /// A symbolic link is never followed, so what is behind it is never checked. One that sits where a rule applies, or that a rule could apply under
+    /// (a directory link whose children a rule matches), is unjudgeable. One elsewhere that is named like a SOPS file is listed as uncovered.
+    /// </summary>
+    private static async Task ExamineLink(string relative, SopsCreationRuleSet rules, bool named, Tally tally, TextWriter output, TextWriter error, CancellationToken cancellationToken)
+    {
+        if (rules.FirstMatchPath(relative) is not null || ProbeNames.Any(probe => rules.FirstMatchPath(relative + probe) is not null))
+        {
+            tally.Unjudgeable++;
+            await EscapedOutput.Line(error, $"{relative}: a symbolic link cannot be checked", cancellationToken).ConfigureAwait(false);
+        }
+        else if (named)
+        {
+            tally.Uncovered++;
+            await EscapedOutput.Line(output, $"{relative}: no creation rule matches, not verified", cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -177,26 +207,6 @@ internal static class VerifyCommand
         }
 
         return changes == 0 ? 0 : 1;
-    }
-
-    private static async Task<(string Text, string? Problem)> ReadFile(ScanEntry entry, CancellationToken cancellationToken)
-    {
-        try
-        {
-            if (new FileInfo(entry.AbsolutePath).Length > MaxFileBytes)
-            {
-                return (string.Empty, "the file is larger than 16 MiB");
-            }
-
-
-            // Decode the bytes ourselves: a stream reader would strip a byte order mark, which the reader must see and refuse.
-            var bytes = await File.ReadAllBytesAsync(entry.AbsolutePath, cancellationToken).ConfigureAwait(false);
-            return (new UTF8Encoding(false, throwOnInvalidBytes: true).GetString(bytes), null);
-        }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or DecoderFallbackException)
-        {
-            return (string.Empty, "the file cannot be read");
-        }
     }
 
     private sealed class Tally

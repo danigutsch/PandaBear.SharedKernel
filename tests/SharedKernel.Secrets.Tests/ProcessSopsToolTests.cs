@@ -29,7 +29,7 @@ public sealed class ProcessSopsToolTests
         request.Executable.ShouldBe(Sops);
         request.Arguments.ShouldBe(["--config", "/dev/null", "encrypt", "--age", $"{TestRecipients.Second},{TestRecipients.First}", "--input-type", "yaml", "--output-type", "yaml", "/dev/stdin"]);
         request.Arguments.ShouldNotContain(document);
-        request.Environment.ShouldBeEmpty();
+        request.Environment.Keys.ToArray().ShouldBe(["HOME"]);
         Encoding.UTF8.GetString(runner.Inputs.ShouldHaveSingleItem()).ShouldBe(document);
     }
 
@@ -96,6 +96,131 @@ public sealed class ProcessSopsToolTests
     }
 
     [Fact]
+    public async Task Sops_gets_an_empty_home_so_that_keys_in_the_callers_home_directory_cannot_decrypt()
+    {
+        // Arrange
+        List<(string? Home, string? WorkingDirectory)> seen = [];
+        var runner = new FakeToolRunner(request =>
+        {
+            seen.Add((request.Environment.GetValueOrDefault("HOME"), request.WorkingDirectory));
+            return FakeToolRunner.Result(0, "x");
+        });
+        var tool = new ProcessSopsTool(runner, Sops);
+
+        // Act
+        await tool.Decrypt("/repo/a.sops.yaml", Identity, TestContext.Current.CancellationToken);
+        await tool.TrialDecrypt("/repo/a.sops.yaml", Identity, TestContext.Current.CancellationToken);
+        await tool.Encrypt(SopsFormat.Yaml, TestRecipients.Set(TestRecipients.First), "a: b"u8.ToArray(), TestContext.Current.CancellationToken);
+
+        // Assert
+        seen.Count.ShouldBe(3);
+        foreach (var (home, directory) in seen)
+        {
+            home.ShouldNotBeNull();
+            home.ShouldBe(directory);
+        }
+    }
+
+    [Fact]
+    public async Task A_trial_that_decrypts_is_decrypted_and_the_plaintext_is_not_returned()
+    {
+        // Arrange
+        var tool = new ProcessSopsTool(FakeToolRunner.Succeeding("SECRET-PLAINTEXT"), Sops);
+
+        // Act
+        var trial = await tool.TrialDecrypt("/repo/a.sops.yaml", Identity, TestContext.Current.CancellationToken);
+
+        // Assert
+        trial.Outcome.ShouldBe(SopsTrialOutcome.Decrypted);
+        trial.Detail.ShouldBe(string.Empty);
+    }
+
+    [Fact]
+    public async Task Only_an_identity_that_matches_no_recipient_is_a_verdict()
+    {
+        // Arrange
+        const string noMatch = "Failed to get the data key required to decrypt the SOPS file.\n\nGroup 0: FAILED\n  age1x: FAILED\n    - | failed to create reader for decrypting sops data key with\n      | age: identity did not match any of the recipients: incorrect\n      | identity for recipient block.\n";
+        var tool = new ProcessSopsTool(FakeToolRunner.Failing(128, noMatch), Sops);
+
+        // Act
+        var trial = await tool.TrialDecrypt("/repo/a.sops.yaml", Identity, TestContext.Current.CancellationToken);
+
+        // Assert
+        trial.Outcome.ShouldBe(SopsTrialOutcome.NoMatchingIdentity);
+    }
+
+    [Theory]
+    [InlineData("Failed to get the data key required to decrypt the SOPS file.\n\nGroup 0: FAILED\n    - | failed to load age identities. Errors while loading age\n      | identities: unknown identity type.\n")]
+    [InlineData("Failed to get the data key required to decrypt the SOPS file.\n\nGroup 0: FAILED\n    - | failed to create reader for decrypting sops data key with\n      | age: failed to read header: parsing age header: unexpected intro\n")]
+    [InlineData("Failed to get the data key required to decrypt the SOPS file.\n    - | age: identity did not match any of the recipients\n    - | failed to load age identities.\n")]
+    [InlineData("Cannot decrypt MAC: Error base64-decoding data: illegal base64 data at input byte 172\n")]
+    [InlineData("Error: cannot operate on non-existent file \"/x\"\n")]
+    [InlineData("yaml: line 1: did not find expected node content\n")]
+    [InlineData("")]
+    public async Task Every_other_failure_is_no_verdict_about_the_identity(string standardError)
+    {
+        // Arrange
+        var tool = new ProcessSopsTool(FakeToolRunner.Failing(128, standardError), Sops);
+
+        // Act
+        var trial = await tool.TrialDecrypt("/repo/a.sops.yaml", Identity, TestContext.Current.CancellationToken);
+
+        // Assert
+        trial.Outcome.ShouldBe(SopsTrialOutcome.Failed);
+        trial.Detail.ShouldStartWith("sops exited with code 128", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task A_process_that_cannot_run_or_a_relative_file_is_no_verdict_either()
+    {
+        // Arrange
+        var timedOut = new ProcessSopsTool(FakeToolRunner.Throwing(new TimeoutException("The process did not finish within its time limit.")), Sops);
+        var unused = new ProcessSopsTool(FakeToolRunner.Succeeding(), Sops);
+
+        // Act
+        var timeout = await timedOut.TrialDecrypt("/repo/a.sops.yaml", Identity, TestContext.Current.CancellationToken);
+        var relative = await unused.TrialDecrypt("a.sops.yaml", Identity, TestContext.Current.CancellationToken);
+
+        // Assert
+        timeout.Outcome.ShouldBe(SopsTrialOutcome.Failed);
+        timeout.Detail.ShouldContain("could not run", StringComparison.Ordinal);
+        relative.Outcome.ShouldBe(SopsTrialOutcome.Failed);
+    }
+
+    [Fact]
+    public async Task A_trial_rejects_null()
+    {
+        // Arrange
+        var tool = new ProcessSopsTool(FakeToolRunner.Succeeding(), Sops);
+
+        // Act
+        Func<Task> noFile = () => tool.TrialDecrypt(null!, Identity, TestContext.Current.CancellationToken);
+        Func<Task> noIdentity = () => tool.TrialDecrypt("/a", null!, TestContext.Current.CancellationToken);
+
+        // Assert
+        await noFile.ShouldThrow<ArgumentNullException>();
+        await noIdentity.ShouldThrow<ArgumentNullException>();
+    }
+
+    [Fact]
+    public async Task Reading_recipients_from_a_file_that_never_finishes_is_an_error_not_a_hang()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var fifo = Path.Combine(directory.Path, "pipe.sops.yaml");
+        using var made = await new SystemToolRunner().Run(new ToolRequest("/usr/bin/mkfifo", [fifo]), TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await SopsFileReader.ReadRecipients(fifo, TestContext.Current.CancellationToken, TimeSpan.FromMilliseconds(300));
+
+        // Assert
+        made.ExitCode.ShouldBe(0);
+        result.IsFailure.ShouldBeTrue();
+        result.ErrorDetails.ShouldNotBeNull().Detail.ShouldContain("did not finish", StringComparison.Ordinal);
+    }
+
+
+    [Fact]
     public async Task Decrypt_gives_the_child_only_the_identity_file_path_in_its_environment()
     {
         // Arrange
@@ -110,7 +235,8 @@ public sealed class ProcessSopsToolTests
         plaintext.RevealUtf8().ShouldContain("hunter2", StringComparison.Ordinal);
         var request = runner.Requests.ShouldHaveSingleItem();
         request.Arguments.ShouldBe(["--config", "/dev/null", "decrypt", "/repo/secrets/app.sops.yaml"]);
-        request.Environment.ShouldBe(new Dictionary<string, string> { ["SOPS_AGE_KEY_FILE"] = "/keys/id.txt" });
+        request.Environment.Keys.Order(StringComparer.Ordinal).ToArray().ShouldBe(["HOME", "SOPS_AGE_KEY_FILE"]);
+        request.Environment["SOPS_AGE_KEY_FILE"].ShouldBe("/keys/id.txt");
         runner.Inputs.ShouldHaveSingleItem().ShouldBeEmpty();
     }
 

@@ -47,13 +47,15 @@ internal sealed class GitBase
     /// <exception cref="InvalidOperationException">Git failed.</exception>
     public async Task<SopsFileRecipients?> ReadHolders(string relativePath, CancellationToken cancellationToken)
     {
-        var listing = await Run(["ls-tree", "--name-only", "-z", _revision, "--", relativePath], cancellationToken).ConfigureAwait(false);
-        if (listing.Length == 0)
+        // './' makes git resolve the path from the directory it runs in (-C root), as the working tree does, not from the top of the repository: with
+        // the root in a subdirectory a plain 'rev:path' would read a different file, possibly an attacker's twin at the top level.
+        var listing = await Run(["ls-tree", "-z", _revision, "--", "./" + relativePath], cancellationToken).ConfigureAwait(false);
+        if (!listing.Contains(" blob ", StringComparison.Ordinal))
         {
             return null;
         }
 
-        var content = await Run(["show", $"{_revision}:{relativePath}"], cancellationToken).ConfigureAwait(false);
+        var content = await Run(["show", $"{_revision}:./{relativePath}"], cancellationToken).ConfigureAwait(false);
         var format = SopsSniffer.FormatOf(relativePath);
         if (format is null)
         {

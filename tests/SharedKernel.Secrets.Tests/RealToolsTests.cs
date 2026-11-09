@@ -181,6 +181,46 @@ public sealed class RealToolsTests
     }
 
     [Fact(SkipType = typeof(RealTools), SkipUnless = nameof(RealTools.AllAvailable), Skip = AllSkip)]
+    public async Task A_real_trial_tells_a_wrong_identity_from_a_broken_run()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var token = TestContext.Current.CancellationToken;
+        var (identityA, recipientA) = await RealTools.NewKey(directory.Path, "a.txt", token);
+        var (identityB, _) = await RealTools.NewKey(directory.Path, "b.txt", token);
+        var sops = RealTools.Sops();
+        var file = Path.Combine(directory.Path, "app.sops.yaml");
+        await RealTools.EncryptToFile(sops, file, AgeRecipientSet.Create([recipientA]).ShouldBeSuccess(), "k: v\n", token);
+        var text = await File.ReadAllTextAsync(file, token);
+        var tampered = Path.Combine(directory.Path, "mac.sops.yaml");
+        await File.WriteAllTextAsync(tampered, text.Replace("    mac: ENC[AES256_GCM,data:", "    mac: ENC[AES256_GCM,data:X", StringComparison.Ordinal), token);
+        var corrupted = Path.Combine(directory.Path, "enc.sops.yaml");
+        await File.WriteAllTextAsync(corrupted, text.Replace("YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", StringComparison.Ordinal), token);
+        var garbage = Path.Combine(directory.Path, "garbage.txt");
+        await File.WriteAllTextAsync(garbage, "garbage\n", token);
+        var garbageIdentity = AgeIdentityRef.Create(garbage).ShouldBeSuccess();
+        var missingIdentity = AgeIdentityRef.Create(Path.Combine(directory.Path, "missing.txt")).ShouldBeSuccess();
+
+        // Act
+        var holder = await sops.TrialDecrypt(file, identityA, token);
+        var stranger = await sops.TrialDecrypt(file, identityB, token);
+        var withGarbage = await sops.TrialDecrypt(file, garbageIdentity, token);
+        var withMissing = await sops.TrialDecrypt(file, missingIdentity, token);
+        var badMac = await sops.TrialDecrypt(tampered, identityA, token);
+        var badEnc = await sops.TrialDecrypt(corrupted, identityA, token);
+        var noFile = await sops.TrialDecrypt(Path.Combine(directory.Path, "nothere.sops.yaml"), identityA, token);
+
+        // Assert
+        holder.Outcome.ShouldBe(SopsTrialOutcome.Decrypted);
+        stranger.Outcome.ShouldBe(SopsTrialOutcome.NoMatchingIdentity);
+        withGarbage.Outcome.ShouldBe(SopsTrialOutcome.Failed);
+        withMissing.Outcome.ShouldBe(SopsTrialOutcome.Failed);
+        badMac.Outcome.ShouldBe(SopsTrialOutcome.Failed);
+        badEnc.Outcome.ShouldBe(SopsTrialOutcome.Failed);
+        noFile.Outcome.ShouldBe(SopsTrialOutcome.Failed);
+    }
+
+    [Fact(SkipType = typeof(RealTools), SkipUnless = nameof(RealTools.AllAvailable), Skip = AllSkip)]
     public async Task Sops_decryption_with_the_wrong_identity_fails_without_plaintext_in_the_message()
     {
         // Arrange

@@ -29,6 +29,15 @@ public interface ISopsTool
     /// <param name="cancellationToken">Cancels the run.</param>
     Task<Result<SecretBytes>> DecryptValue(string root, SecretRef reference, AgeIdentityRef identity, CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Tries to decrypt the file with the identity and discards the plaintext unread. Only a failure that sops attributes to the identity not matching
+    /// any recipient is <see cref="SopsTrialOutcome.NoMatchingIdentity"/>; every other failure is <see cref="SopsTrialOutcome.Failed"/>.
+    /// </summary>
+    /// <param name="absoluteFile">The encrypted file.</param>
+    /// <param name="identity">The identity file.</param>
+    /// <param name="cancellationToken">Cancels the run.</param>
+    Task<SopsTrial> TrialDecrypt(string absoluteFile, AgeIdentityRef identity, CancellationToken cancellationToken);
+
     /// <summary>Reads the key holders from the file's metadata without decrypting it.</summary>
     /// <param name="absoluteFile">The encrypted YAML or JSON file.</param>
     /// <param name="cancellationToken">Cancels the read.</param>

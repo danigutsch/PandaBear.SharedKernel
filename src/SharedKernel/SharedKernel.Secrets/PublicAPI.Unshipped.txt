@@ -113,10 +113,20 @@ PandaBear.Secrets.ProcessSopsTool.DecryptValue(string! root, PandaBear.Secrets.S
 PandaBear.Secrets.ProcessSopsTool.ListRecipients(string! absoluteFile, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SopsFileRecipients!>>!
 PandaBear.Secrets.ProcessSopsTool.VerifyRecipients(string! absoluteFile, PandaBear.Secrets.SopsCreationRule! rule, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.RecipientVerification!>>!
 PandaBear.Secrets.SopsFileReader
-static PandaBear.Secrets.SopsFileReader.ReadRecipients(string! absoluteFile, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SopsFileRecipients!>>!
+static PandaBear.Secrets.SopsFileReader.ReadRecipients(string! absoluteFile, System.Threading.CancellationToken cancellationToken, System.TimeSpan? readTimeout = null) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SopsFileRecipients!>>!
 PandaBear.Secrets.SopsFileRecipients.Concerns.get -> System.Collections.Generic.IReadOnlyList<string!>!
 PandaBear.Secrets.RecipientVerification.Concerns.get -> System.Collections.Generic.IReadOnlyList<string!>!
 PandaBear.Secrets.ToolRequest.WorkingDirectory.get -> string?
 PandaBear.Secrets.SopsCreationRule.MatchesPath(string! relativePath) -> bool
 PandaBear.Secrets.SopsCreationRuleSet.FirstMatchPath(string! relativePath) -> PandaBear.Secrets.SopsCreationRule?
 PandaBear.Secrets.SopsFileRecipients.Envelopes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+PandaBear.Secrets.SopsTrialOutcome
+PandaBear.Secrets.SopsTrialOutcome.Decrypted = 0 -> PandaBear.Secrets.SopsTrialOutcome
+PandaBear.Secrets.SopsTrialOutcome.Failed = 2 -> PandaBear.Secrets.SopsTrialOutcome
+PandaBear.Secrets.SopsTrialOutcome.NoMatchingIdentity = 1 -> PandaBear.Secrets.SopsTrialOutcome
+PandaBear.Secrets.SopsTrial
+PandaBear.Secrets.SopsTrial.Detail.get -> string!
+PandaBear.Secrets.SopsTrial.Outcome.get -> PandaBear.Secrets.SopsTrialOutcome
+PandaBear.Secrets.SopsTrial.SopsTrial(PandaBear.Secrets.SopsTrialOutcome outcome, string! detail) -> void
+PandaBear.Secrets.ISopsTool.TrialDecrypt(string! absoluteFile, PandaBear.Secrets.AgeIdentityRef! identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Secrets.SopsTrial!>!
+PandaBear.Secrets.ProcessSopsTool.TrialDecrypt(string! absoluteFile, PandaBear.Secrets.AgeIdentityRef! identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Secrets.SopsTrial!>!

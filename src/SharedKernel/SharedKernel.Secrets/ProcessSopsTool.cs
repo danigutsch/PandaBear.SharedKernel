@@ -12,6 +12,11 @@ public sealed class ProcessSopsTool : ISopsTool
 {
     private const string AgeKeyFile = "SOPS_AGE_KEY_FILE";
 
+    // What sops prints (through age) when it read the file and the identity and the identity matches none of the recipients. Anything that
+    // says the identity file, the header, or the file could not be read or parsed is not that verdict, even though sops uses the same first line.
+    private const string NoMatchMarker = "identity did not match any of the recipients";
+    private static readonly string[] BrokenRunMarkers = ["failed to load age identities", "failed to read header", "failed to parse", "Cannot decrypt MAC", "non-existent file"];
+
     private readonly IToolRunner _runner;
     private readonly string _sops;
 
@@ -75,6 +80,49 @@ public sealed class ProcessSopsTool : ISopsTool
     }
 
     /// <inheritdoc />
+    /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    public async Task<SopsTrial> TrialDecrypt(string absoluteFile, AgeIdentityRef identity, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(absoluteFile);
+        ArgumentNullException.ThrowIfNull(identity);
+        var invalid = ToolInvocation.CheckFile(absoluteFile);
+        if (invalid is not null)
+        {
+            return new SopsTrial(SopsTrialOutcome.Failed, invalid);
+        }
+
+        var directory = Directory.CreateTempSubdirectory("sops-");
+        try
+        {
+            ToolResult run;
+            try
+            {
+                run = await _runner.Run(Request(["decrypt", absoluteFile], identity, default, directory.FullName), cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception exception) when (exception is InvalidOperationException or TimeoutException)
+            {
+                return new SopsTrial(SopsTrialOutcome.Failed, $"sops could not run: {exception.Message}");
+            }
+
+            using (run)
+            {
+                if (run.ExitCode == 0)
+                {
+                    return new SopsTrial(SopsTrialOutcome.Decrypted, string.Empty);
+                }
+
+                var matched = run.StandardError.Contains(NoMatchMarker, StringComparison.Ordinal)
+                    && !BrokenRunMarkers.Any(marker => run.StandardError.Contains(marker, StringComparison.Ordinal));
+                return new SopsTrial(matched ? SopsTrialOutcome.NoMatchingIdentity : SopsTrialOutcome.Failed, ToolInvocation.Describe("sops", run));
+            }
+        }
+        finally
+        {
+            directory.Delete(recursive: true);
+        }
+    }
+
+    /// <inheritdoc />
     /// <exception cref="ArgumentNullException"><paramref name="absoluteFile"/> is <see langword="null"/>.</exception>
     public Task<Result<SopsFileRecipients>> ListRecipients(string absoluteFile, CancellationToken cancellationToken) =>
         SopsFileReader.ReadRecipients(absoluteFile, cancellationToken);
@@ -99,14 +147,30 @@ public sealed class ProcessSopsTool : ISopsTool
         var directory = Directory.CreateTempSubdirectory("sops-");
         try
         {
-            IReadOnlyDictionary<string, string>? environment = identity is null ? null : new Dictionary<string, string> { [AgeKeyFile] = identity.Path };
-            ToolRequest request = new(_sops, ["--config", "/dev/null", .. arguments], environment, standardInput, directory.FullName);
-            return await ToolInvocation.Run(_runner, "sops", request, cancellationToken).ConfigureAwait(false);
+            return await ToolInvocation.Run(_runner, "sops", Request(arguments, identity, standardInput, directory.FullName), cancellationToken).ConfigureAwait(false);
         }
         finally
         {
             directory.Delete(recursive: true);
         }
+    }
+
+    /// <summary>
+    /// The request for one sops call. <c>HOME</c> is the empty working directory, so sops cannot find SSH keys or a key file in the caller's home
+    /// directory: only the identity that was given can decrypt.
+    /// </summary>
+    private ToolRequest Request(IReadOnlyList<string> arguments, AgeIdentityRef? identity, ReadOnlyMemory<byte> standardInput, string directory)
+    {
+        Dictionary<string, string> environment = new(StringComparer.Ordinal)
+        {
+            ["HOME"] = directory
+        };
+        if (identity is not null)
+        {
+            environment[AgeKeyFile] = identity.Path;
+        }
+
+        return new ToolRequest(_sops, ["--config", "/dev/null", .. arguments], environment, standardInput, directory);
     }
 
     private async Task<Result<SecretBytes>> RunForOutput(IReadOnlyList<string> arguments, string absoluteFile, AgeIdentityRef identity, CancellationToken cancellationToken)

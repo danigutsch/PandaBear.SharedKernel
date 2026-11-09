@@ -52,7 +52,8 @@ internal static class SecretsToolHarness
             runner,
             () => input,
             () => new NonClosingStream(standardOutput),
-            name => variables is not null && variables.TryGetValue(name, out var value) ? value : null);
+            name => variables is not null && variables.TryGetValue(name, out var value) ? value : null,
+            TimeSpan.FromMilliseconds(500));
         var exitCode = await SecretsCommandLine
             .Create(environment)
             .Parse(arguments)
@@ -63,4 +64,27 @@ internal static class SecretsToolHarness
     /// <summary>Runs <paramref name="arguments"/> in a repository with default fakes.</summary>
     public static Task<ToolRun> Run(string root, params string[] arguments) =>
         Run(root, ScriptedToolRunner.Unused(), ResolveAll, null, null, arguments);
+
+    /// <summary>Writes a file that cannot be ruled out as a sops file: <c>utf16</c>, <c>binary</c>, <c>nul</c>, <c>brokenjson</c>, or a JSON document behind a byte order mark.</summary>
+    public static void WriteMystery(string path, string kind, string yamlText)
+    {
+        switch (kind)
+        {
+            case "utf16":
+                File.WriteAllBytes(path, System.Text.Encoding.Unicode.GetPreamble().Concat(System.Text.Encoding.Unicode.GetBytes(yamlText)).ToArray());
+                break;
+            case "binary":
+                File.WriteAllBytes(path, [0xff, 0xfe, 0x00, 0x80, 0xc3, 0x28]);
+                break;
+            case "nul":
+                File.WriteAllBytes(path, [(byte)'a', 0, (byte)'b']);
+                break;
+            case "brokenjson":
+                File.WriteAllText(path, "{\"data\": ");
+                break;
+            default:
+                File.WriteAllText(path, "\uFEFF" + TestRecipients.Json([TestRecipients.First]));
+                break;
+        }
+    }
 }

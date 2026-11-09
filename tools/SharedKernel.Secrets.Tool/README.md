@@ -71,21 +71,38 @@ sharedkernel-secrets --help
   `null`, empty strings, and empty lists and mappings are allowed, as sops leaves them in clear. Every run says once that
   it **proves labels and structure, not who can decrypt**.
 - `recipients check --prove-with-identity <file>` adds the proof that labels cannot give: sops tries to decrypt the file with that
-  identity file (never key material), in an empty directory with no configuration, and the plaintext is discarded unread. It reports
-  `can decrypt` or `cannot decrypt` (exit 1). `--prove-absent-identity <file>` is the negative check for a revoked key: it must
-  **not** decrypt (`CAN decrypt but must not` is exit 1). It only means something next to a `--prove-with-identity` that decrypts, so
-  it is refused alone and skipped when no holder decrypted. Both can be repeated. A failure of any kind counts as "cannot decrypt".
+  identity file, in an empty directory with no configuration and with `HOME` pointing at that empty directory (so no key in the
+  caller's `~/.ssh` or `~/.config/sops` can decrypt instead), and the plaintext is discarded unread. It reports `can decrypt` or
+  `cannot decrypt` (exit 1). `--prove-absent-identity <file>` is the negative check for a revoked key: it must **not** decrypt
+  (`CAN decrypt but must not` is exit 1). It only means something next to a `--prove-with-identity` that decrypts, so it is refused
+  alone and skipped when no holder decrypted. Both can be repeated.
+  - Every identity must first be a **readable regular file of age secret keys** (`AGE-SECRET-KEY-1...` lines and comments). A missing,
+    empty, garbage, unreadable, or comment-only file, a directory, a FIFO or device (which would block; reads time out after five
+    seconds), an SSH private key, or a plugin identity is exit 2 before any trial. SSH identities cannot be proven absent: an SSH key
+    that is still a recipient would decrypt, so the tool refuses rather than guess.
+  - Only two outcomes are verdicts about an identity: success, and sops saying the identity matches none of the file's recipients.
+    Every other failure (a bad MAC, a parse error, a corrupted `enc`, a missing file, an unreadable identity, a timeout) is exit 2 and
+    says `file could not be decrypted (not an identity verdict)`. A corrupted file therefore never reads as "this holder cannot decrypt".
 - `verify` judges every SOPS-encrypted file in the repository against the first creation rule that matches its path. It skips
   `.git` and the root `.sops.yaml` (the sops configuration) and nothing else by name: `bin`, `obj`, and `node_modules` are
-  checked. It matches `.sops.` in any letter case and reads every `*.yaml`, `*.yml`, `*.json`, `*.env`, and `*.ini` file for a
-  top-level `sops` key, so `secrets/prod.yaml`, `prod.enc.yaml`, and `prod.SOPS.yaml` are judged too. It never passes on nothing: no
-  covered file is exit 2; a symbolic link or an unreadable file or directory in scope, or a path with a control character, `:`, or
-  `\`, cannot be judged and is exit 2; a SOPS file that no rule matches is listed and exits 1, unless you pass
-  `--allow-unverified-files`, whose name says what you accept: nobody checks who can read those files.
+  checked. It matches `.sops.` in any letter case. **Inside the scope of a rule it reads every file, whatever its name or
+  extension**, and a file it cannot positively rule out as non-SOPS is exit 2: binary data, text that is not UTF-8 (such as UTF-16),
+  JSON-looking text that does not parse, a file larger than 16 MiB, and a FIFO or device (reads time out). A file that is SOPS is judged
+  whatever it is called (`secrets/prod.yaml`, `prod.enc.yaml`, `secrets/token`, a JSON binary store); JSON is read as JSON even in a
+  `.yaml` file, so a one-line `{"data":...,"sops":{...}}` is judged; YAML with a `sops` key at any indentation or in an escaped
+  spelling is judged (and fails if the reader cannot fully understand it). Outside every rule it reads only files named `*.sops.*`
+  or with a yaml, yml, json, env, or ini extension, and lists the SOPS ones as uncovered. It never passes on nothing: no covered file is
+  exit 2. **Symbolic links are never followed and are never silently skipped:** a link where a rule applies, or whose children a rule
+  could match (a link to a directory under `secrets/`), is exit 2; a link outside every rule that is named like a SOPS file is listed
+  as uncovered. A path with a control character, `:`, or `\` that holds SOPS metadata cannot be judged (exit 2); a SOPS file that no rule
+  matches is listed and exits 1, unless you pass `--allow-unverified-files`, whose name says what you accept: nobody checks who can
+  read those files.
 - `verify --base <rev>` is the strongest check that needs no key. For every judged file it reads the same file at that git revision
   (git by absolute path, arguments one by one, no shell, no user configuration; the revision cannot start with `-` or hold `:` or
   spaces) and compares each label's `enc` text. A label that is new, or whose `enc` differs, is `changed: needs review` (exit 1),
-  because only someone holding the data key can legitimately produce a new `enc`, and a forged label has to. An unchanged label
+  because only someone holding the data key can legitimately produce a new `enc`, and a forged label has to. Paths are resolved from
+  `--root` in both the working tree and the revision (`rev:./path`), so a root in a subdirectory of the repository compares each file with its own
+  twin at that revision, never with a file of the same name at the top level; a file missing at the revision is new, and every label of it is changed. An unchanged label
   passes. `--allow-changed-recipients` accepts changes for a reviewed change, such as a deliberate rotation, which legitimately changes every `enc`.
 
 Output escapes control characters in file names and tool messages. The plaintext of `decrypt` is data and is not escaped, so

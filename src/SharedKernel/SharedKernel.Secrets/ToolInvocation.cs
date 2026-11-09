@@ -27,10 +27,13 @@ internal static class ToolInvocation
             return (run, null);
         }
 
-        var problem = $"{tool} exited with code {run.ExitCode}: {FirstLine(run.StandardError)}";
+        var problem = Describe(tool, run);
         run.Dispose();
         return (null, problem);
     }
+
+    /// <summary>Describes a failed run in one short line.</summary>
+    internal static string Describe(string tool, ToolResult run) => $"{tool} exited with code {run.ExitCode}: {FirstLine(run.StandardError)}";
 
     /// <summary>Checks that <paramref name="path"/> is an absolute file path that is safe to pass as an argument.</summary>
     internal static string? CheckFile(string path) => path switch

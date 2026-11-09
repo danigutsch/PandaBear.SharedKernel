@@ -43,7 +43,7 @@ public sealed class EncryptCommandTests
         request.Executable.ShouldBe("/fake/sops");
         request.Arguments.ShouldBe(["--config", "/dev/null", "encrypt", "--age", $"{TestRecipients.Second},{TestRecipients.First}", "--input-type", "yaml", "--output-type", "yaml", "/dev/stdin"]);
         request.Arguments.ShouldNotContain("password: hunter2");
-        request.Environment.ShouldBeEmpty();
+        request.Environment.Keys.ToArray().ShouldBe(["HOME"]);
         Encoding.UTF8.GetString(runner.Inputs.ShouldHaveSingleItem()).ShouldBe("password: hunter2");
         File.Exists(Path.Combine(repository.Path, "secrets", "app.sops.yaml")).ShouldBeTrue();
         var visible = run.Output + run.Error;

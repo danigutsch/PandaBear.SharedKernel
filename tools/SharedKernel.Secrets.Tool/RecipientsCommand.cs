@@ -47,6 +47,16 @@ internal static class RecipientsCommand
             throw new InvalidOperationException("--prove-absent-identity only means something next to a --prove-with-identity that decrypts the same file; give both.");
         }
 
+        var timeout = environment.FileReadTimeout ?? GuardedFileReader.DefaultTimeout;
+        foreach (var identity in with.Concat(absent))
+        {
+            var unusable = await IdentityFileCheck.Validate(identity.Path, timeout, cancellationToken).ConfigureAwait(false);
+            if (unusable is not null)
+            {
+                throw new InvalidOperationException(unusable);
+            }
+        }
+
         var sops = with.Count + absent.Count > 0 ? ToolLocator.Sops(environment) : null;
         var (path, holders) = await Read(root, file, cancellationToken).ConfigureAwait(false);
         var rule = rules.FirstMatch(path) ?? throw new InvalidOperationException("No creation rule matches this file.");
@@ -64,7 +74,8 @@ internal static class RecipientsCommand
         var holderDecrypted = false;
         foreach (var identity in with)
         {
-            var can = await CanDecrypt(sops, absoluteFile, identity, cancellationToken).ConfigureAwait(false);
+            var trial = await Trial(sops, absoluteFile, identity, cancellationToken).ConfigureAwait(false);
+            var can = trial.Outcome == SopsTrialOutcome.Decrypted;
             holderDecrypted |= can;
             exit = can ? exit : ExitCodes.Differences;
             await EscapedOutput.Line(output, $"{identity.Path}: {(can ? "can decrypt" : "cannot decrypt")}", cancellationToken).ConfigureAwait(false);
@@ -78,7 +89,8 @@ internal static class RecipientsCommand
                 continue;
             }
 
-            var can = await CanDecrypt(sops, absoluteFile, identity, cancellationToken).ConfigureAwait(false);
+            var trial = await Trial(sops, absoluteFile, identity, cancellationToken).ConfigureAwait(false);
+            var can = trial.Outcome == SopsTrialOutcome.Decrypted;
             exit = can ? ExitCodes.Differences : exit;
             await EscapedOutput.Line(output, $"{identity.Path}: {(can ? "CAN decrypt but must not" : "cannot decrypt, as required")}", cancellationToken).ConfigureAwait(false);
         }
@@ -98,20 +110,19 @@ internal static class RecipientsCommand
         return identities;
     }
 
-    /// <summary>A trial decryption: the plaintext is discarded unread. Any failure counts as "cannot".</summary>
-    private static async Task<bool> CanDecrypt(ProcessSopsTool sops, string absoluteFile, AgeIdentityRef identity, CancellationToken cancellationToken)
+    /// <summary>
+    /// A trial decryption; the plaintext is discarded unread. Only "this identity matches no recipient" and success are verdicts about the identity.
+    /// Any other failure (a bad MAC, a parse error, a missing file, an unreadable identity, a timeout) says nothing about it and stops the run with exit 2.
+    /// </summary>
+    private static async Task<SopsTrial> Trial(ProcessSopsTool sops, string absoluteFile, AgeIdentityRef identity, CancellationToken cancellationToken)
     {
-        var result = await sops.Decrypt(absoluteFile, identity, cancellationToken).ConfigureAwait(false);
-        if (result.IsFailure)
-        {
-            return false;
-        }
-
-        result.Value.Dispose();
-        return true;
+        var trial = await sops.TrialDecrypt(absoluteFile, identity, cancellationToken).ConfigureAwait(false);
+        return trial.Outcome == SopsTrialOutcome.Failed
+            ? throw new InvalidOperationException($"{identity.Path}: the file could not be decrypted (not an identity verdict): {trial.Detail}")
+            : trial;
     }
 
-    /// <summary>Writes the lines that say how a file differs from its rule, or a line that says it does not.</summary>
+    /// <summary>Writes the lines that say how a file differs from its rule, or a line that says its labels are consistent.</summary>
     public static async Task Report(TextWriter output, string path, RecipientVerification verification, CancellationToken cancellationToken)
     {
         if (verification.IsExact)
