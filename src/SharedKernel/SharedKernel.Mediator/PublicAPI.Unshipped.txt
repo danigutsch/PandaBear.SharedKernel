@@ -38,3 +38,6 @@ const PandaBear.Mediator.UniqueViolationBehavior<TRequest, TResponse>.Validation
 PandaBear.Mediator.UniqueViolationServiceCollectionExtensions
 static PandaBear.Mediator.UniqueViolationServiceCollectionExtensions.AddUniqueViolationHandling(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<PandaBear.Mediator.UniqueRuleMap!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static PandaBear.Mediator.UniqueViolationServiceCollectionExtensions.AddUniqueViolationHandling<TRequest, TResponse>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.Mediator.ConcurrencyConflictResults
+static PandaBear.Mediator.ConcurrencyConflictResults.Stale() -> PandaBear.Results.Result
+static PandaBear.Mediator.ConcurrencyConflictResults.Stale<T>() -> PandaBear.Results.Result<T>
