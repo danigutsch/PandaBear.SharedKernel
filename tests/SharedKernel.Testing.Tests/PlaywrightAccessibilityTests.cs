@@ -65,6 +65,45 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
     }
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task Inputs_named_by_a_title_and_image_and_reset_inputs_pass()
+    {
+        // Arrange
+        var page = await chromium.Show("""<input title="Search"><input type="image" src="data:,"><input type="reset">""");
+
+        // Act, Assert
+        await page.ShouldHaveNoUnlabelledControls();
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task Links_and_buttons_named_by_an_image_alt_an_svg_title_or_a_nested_aria_label_pass()
+    {
+        // Arrange
+        var page = await chromium.Show("""
+            <a href="/a"><img src="data:," alt="Home"></a>
+            <button><svg width="8" height="8"><title>Close</title></svg></button>
+            <button><svg width="8" height="8" aria-label="Menu"></svg></button>
+            """);
+
+        // Act, Assert
+        await page.ShouldHaveNoUnnamedLinksOrButtons();
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task Links_and_buttons_with_only_an_empty_alt_or_title_are_still_reported()
+    {
+        // Arrange
+        var page = await chromium.Show("""<a href="/a"><img src="data:," alt=""></a><button><svg width="8" height="8"><title> </title></svg></button>""");
+        Func<Task> assertion = page.ShouldHaveNoUnnamedLinksOrButtons;
+
+        // Act
+        var exception = await assertion.ShouldThrow<PlaywrightException>();
+
+        // Assert
+        exception.Message.ShouldContain("<a href=\"/a\">", StringComparison.Ordinal);
+        exception.Message.ShouldContain("<button>", StringComparison.Ordinal);
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public async Task Unnamed_links_and_buttons_are_listed_with_the_start_of_their_markup()
     {
         // Arrange

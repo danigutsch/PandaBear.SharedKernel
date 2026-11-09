@@ -9,8 +9,9 @@ namespace PandaBear.Testing.Playwright;
 /// The checks read the DOM once, right now; they do not wait or retry, so call them after the page is interactive (see
 /// <see cref="PlaywrightPageExtensions.GotoInteractive"/>) and after the state under test is on screen. They find common structural
 /// problems only and do not replace a full audit such as axe-core. An accessible name here is a non-blank <c>aria-label</c>, a non-blank
-/// <c>aria-labelledby</c> attribute (the referenced element is not resolved), or, for a form control, an associated label and, for a link or button, its text
-/// or <c>title</c>. A failed assertion throws an <see cref="PlaywrightException"/> that describes the offending elements.
+/// <c>aria-labelledby</c> attribute (the referenced element is not resolved), or a non-blank <c>title</c>, or, for a form control, an associated label and, for a link
+/// or button, its text, a descendant <c>img</c> with a non-blank <c>alt</c> or a descendant with a non-blank <c>aria-label</c> (an <c>svg</c> <c>title</c> counts as text).
+/// Image and reset inputs are skipped along with hidden, submit and button inputs. A failed assertion throws an <see cref="PlaywrightException"/> that describes the offending elements.
 /// </remarks>
 public static class PlaywrightAccessibilityExtensions
 {
@@ -19,9 +20,10 @@ public static class PlaywrightAccessibilityExtensions
             const visible = el => el.checkVisibility({ visibilityProperty: true }) && !el.closest('[aria-hidden="true"]');
             const named = el => (el.getAttribute('aria-label') || '').trim()
                 || (el.getAttribute('aria-labelledby') || '').trim()
+                || (el.getAttribute('title') || '').trim()
                 || (el.labels && el.labels.length > 0);
             return [...document.querySelectorAll('input, select, textarea')]
-                .filter(el => !['hidden', 'submit', 'button'].includes(el.type))
+                .filter(el => !['hidden', 'submit', 'button', 'image', 'reset'].includes(el.type))
                 .filter(visible)
                 .filter(el => !named(el))
                 .map(el => el.tagName.toLowerCase() + '#' + (el.id || el.name || '?'));
@@ -34,7 +36,9 @@ public static class PlaywrightAccessibilityExtensions
             const named = el => (el.getAttribute('aria-label') || '').trim()
                 || (el.getAttribute('aria-labelledby') || '').trim()
                 || (el.textContent || '').trim()
-                || (el.getAttribute('title') || '').trim();
+                || (el.getAttribute('title') || '').trim()
+                || [...el.querySelectorAll('img[alt], [aria-label]')]
+                    .some(inner => (inner.getAttribute('alt') || inner.getAttribute('aria-label') || '').trim());
             return [...document.querySelectorAll('a[href], button')]
                 .filter(visible)
                 .filter(el => !named(el))
@@ -56,7 +60,7 @@ public static class PlaywrightAccessibilityExtensions
         "() => document.activeElement ? document.activeElement.outerHTML.slice(0, 80) : 'nothing'";
 
     /// <summary>Verifies that every visible form control has an accessible name.</summary>
-    /// <remarks>Hidden, submit and button inputs are skipped. A control is named by an associated label, <c>aria-label</c> or <c>aria-labelledby</c>.</remarks>
+    /// <remarks>Invisible elements and hidden, submit, button, image and reset inputs are skipped. A control is named by an associated label, <c>aria-label</c>, <c>aria-labelledby</c> or <c>title</c>.</remarks>
     /// <param name="page">The page to inspect.</param>
     /// <returns>A task that completes when the check passes.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="page"/> is <see langword="null"/>.</exception>
