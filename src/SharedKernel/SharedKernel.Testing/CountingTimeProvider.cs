@@ -37,6 +37,10 @@ public sealed class CountingTimeProvider : TimeProvider
     /// <inheritdoc />
     public override long GetTimestamp() => inner.GetTimestamp();
 
+    /// <inheritdoc />
+    public override ITimer CreateTimer(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period) =>
+        inner.CreateTimer(callback, state, dueTime, period);
+
     /// <summary>Sets the read count back to zero.</summary>
     public void Reset() => Interlocked.Exchange(ref reads, 0);
 

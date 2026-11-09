@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Time.Testing;
+
 namespace PandaBear.Testing.Tests;
 
 /// <summary>Tests the time provider that counts how often the current time is read.</summary>
@@ -97,5 +99,21 @@ public sealed class CountingTimeProviderTests
 
         // Assert
         exception.ParamName.ShouldBe("inner");
+    }
+
+    [Fact]
+    public static void Counting_time_provider_creates_timers_on_the_inner_provider()
+    {
+        // Arrange
+        var fake = new FakeTimeProvider(Instant);
+        var provider = new CountingTimeProvider(fake);
+        var fired = 0;
+        using var timer = provider.CreateTimer(_ => Interlocked.Increment(ref fired), null, TimeSpan.FromSeconds(5), Timeout.InfiniteTimeSpan);
+
+        // Act
+        fake.Advance(TimeSpan.FromSeconds(5));
+
+        // Assert
+        fired.ShouldBe(1);
     }
 }
