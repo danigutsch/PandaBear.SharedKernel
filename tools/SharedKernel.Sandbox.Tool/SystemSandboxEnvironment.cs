@@ -14,6 +14,37 @@ internal sealed class SystemSandboxEnvironment : ISandboxEnvironment
     public string HomeDirectory => Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
     /// <inheritdoc />
+    public string? AccountHomeDirectory
+    {
+        get
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                return null;
+            }
+
+            // Best effort: an unreadable account database only means that the check has one source fewer.
+            try
+            {
+                foreach (var line in File.ReadLines("/etc/passwd"))
+                {
+                    var fields = line.Split(':');
+                    if (fields.Length >= 6 && string.Equals(fields[0], Environment.UserName, StringComparison.Ordinal) && fields[5].Length > 0)
+                    {
+                        return fields[5];
+                    }
+                }
+            }
+            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+            {
+                return null;
+            }
+
+            return null;
+        }
+    }
+
+    /// <inheritdoc />
     public string TempDirectory => Path.GetTempPath();
 
     /// <inheritdoc />

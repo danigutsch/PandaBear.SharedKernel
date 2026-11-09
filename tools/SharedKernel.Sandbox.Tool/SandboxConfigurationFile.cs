@@ -94,6 +94,11 @@ internal static class SandboxConfigurationFile
             }
         }
 
+        if (configuration.Settings is not null)
+        {
+            SettingsConfigurationValidator.Validate(configuration.Settings);
+        }
+
         return configuration;
     }
 }

@@ -21,6 +21,12 @@ internal sealed class FakeSandboxEnvironment : ISandboxEnvironment
     public string HomeDirectory { get; set; } = "/home/user";
 
     /// <inheritdoc />
+    public string? AccountHomeDirectory
+    {
+        get; set;
+    }
+
+    /// <inheritdoc />
     public string TempDirectory => "/tmp/x";
 
     /// <inheritdoc />

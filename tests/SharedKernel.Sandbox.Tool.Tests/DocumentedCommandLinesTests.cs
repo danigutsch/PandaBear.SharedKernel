@@ -7,7 +7,7 @@ namespace PandaBear.Sandbox.Tool.Tests;
 public sealed class DocumentedCommandLinesTests
 {
     [Fact]
-    public void Every_readme_command_line_parses_to_the_doctor_command()
+    public void Every_readme_command_line_parses_to_a_tool_command()
     {
         // Arrange
         var root = SandboxCommandLine.Create(Path.GetTempPath(), new FakeSandboxEnvironment());

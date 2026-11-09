@@ -41,4 +41,5 @@ Module README files beside source own consumer usage and examples. Samples and b
 - [Repo baseline tool](adr/20261028-repo-baseline-tool.md)
 - [Repo new command](adr/20261108-repo-new-command.md)
 - [Sandbox tool](adr/20261108-sandbox-tool.md)
+- [Sandbox settings](adr/20261109-sandbox-settings.md)
 - [Packages tool](adr/20261108-packages-tool.md)
