@@ -1,0 +1,118 @@
+#nullable enable
+PandaBear.Secrets.AgeRecipientKind
+PandaBear.Secrets.AgeRecipientKind.X25519 = 0 -> PandaBear.Secrets.AgeRecipientKind
+PandaBear.Secrets.AgeRecipientKind.Hybrid = 1 -> PandaBear.Secrets.AgeRecipientKind
+PandaBear.Secrets.AgeRecipientKind.Tag = 2 -> PandaBear.Secrets.AgeRecipientKind
+PandaBear.Secrets.AgeRecipientKind.Plugin = 3 -> PandaBear.Secrets.AgeRecipientKind
+PandaBear.Secrets.AgeRecipientKind.Ssh = 4 -> PandaBear.Secrets.AgeRecipientKind
+PandaBear.Secrets.SopsFormat
+PandaBear.Secrets.SopsFormat.Yaml = 0 -> PandaBear.Secrets.SopsFormat
+PandaBear.Secrets.SopsFormat.Json = 1 -> PandaBear.Secrets.SopsFormat
+PandaBear.Secrets.AgeRecipient
+PandaBear.Secrets.AgeRecipient.Value.get -> string!
+PandaBear.Secrets.AgeRecipient.Kind.get -> PandaBear.Secrets.AgeRecipientKind
+override PandaBear.Secrets.AgeRecipient.ToString() -> string!
+static PandaBear.Secrets.AgeRecipient.Create(string? value, string! field = "recipient") -> PandaBear.Results.Result<PandaBear.Secrets.AgeRecipient!>
+const PandaBear.Secrets.AgeRecipient.MaxLength = 4096 -> int
+PandaBear.Secrets.AgeRecipientSet
+PandaBear.Secrets.AgeRecipientSet.Recipients.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Secrets.AgeRecipient!>!
+PandaBear.Secrets.AgeRecipientSet.Count.get -> int
+PandaBear.Secrets.AgeRecipientSet.Contains(PandaBear.Secrets.AgeRecipient! recipient) -> bool
+PandaBear.Secrets.AgeRecipientSet.Except(PandaBear.Secrets.AgeRecipientSet! other) -> System.Collections.Generic.IReadOnlyList<PandaBear.Secrets.AgeRecipient!>!
+override PandaBear.Secrets.AgeRecipientSet.ToString() -> string!
+static PandaBear.Secrets.AgeRecipientSet.Create(System.Collections.Generic.IEnumerable<PandaBear.Secrets.AgeRecipient?>? recipients, string! field = "recipients") -> PandaBear.Results.Result<PandaBear.Secrets.AgeRecipientSet!>
+PandaBear.Secrets.AgeIdentityRef
+PandaBear.Secrets.AgeIdentityRef.Path.get -> string!
+override PandaBear.Secrets.AgeIdentityRef.ToString() -> string!
+static PandaBear.Secrets.AgeIdentityRef.Create(string? value, string! field = "identity") -> PandaBear.Results.Result<PandaBear.Secrets.AgeIdentityRef!>
+const PandaBear.Secrets.AgeIdentityRef.MaxLength = 4096 -> int
+PandaBear.Secrets.EncryptedFilePath
+PandaBear.Secrets.EncryptedFilePath.Value.get -> string!
+PandaBear.Secrets.EncryptedFilePath.Format.get -> PandaBear.Secrets.SopsFormat?
+PandaBear.Secrets.EncryptedFilePath.ResolveUnder(string! root) -> PandaBear.Results.Result<string!>
+override PandaBear.Secrets.EncryptedFilePath.ToString() -> string!
+static PandaBear.Secrets.EncryptedFilePath.Create(string? value, string! field = "file") -> PandaBear.Results.Result<PandaBear.Secrets.EncryptedFilePath!>
+const PandaBear.Secrets.EncryptedFilePath.MaxLength = 1024 -> int
+PandaBear.Secrets.SecretRef
+PandaBear.Secrets.SecretRef.File.get -> PandaBear.Secrets.EncryptedFilePath!
+PandaBear.Secrets.SecretRef.KeyPath.get -> string!
+PandaBear.Secrets.SecretRef.SopsExtractPath.get -> string!
+override PandaBear.Secrets.SecretRef.ToString() -> string!
+static PandaBear.Secrets.SecretRef.Create(string? value, string! field = "secret") -> PandaBear.Results.Result<PandaBear.Secrets.SecretRef!>
+PandaBear.Secrets.SopsCreationRule
+PandaBear.Secrets.SopsCreationRule.PathRegex.get -> string!
+PandaBear.Secrets.SopsCreationRule.Recipients.get -> PandaBear.Secrets.AgeRecipientSet!
+PandaBear.Secrets.SopsCreationRule.MinimumRecipients.get -> int
+PandaBear.Secrets.SopsCreationRule.Matches(PandaBear.Secrets.EncryptedFilePath! path) -> bool
+static PandaBear.Secrets.SopsCreationRule.Create(string? pathRegex, PandaBear.Secrets.AgeRecipientSet? recipients, int minimumRecipients) -> PandaBear.Results.Result<PandaBear.Secrets.SopsCreationRule!>
+const PandaBear.Secrets.SopsCreationRule.MaxPatternLength = 1024 -> int
+const PandaBear.Secrets.SopsCreationRule.MaxMinimumRecipients = 64 -> int
+PandaBear.Secrets.SopsCreationRuleSet
+PandaBear.Secrets.SopsCreationRuleSet.Rules.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Secrets.SopsCreationRule!>!
+PandaBear.Secrets.SopsCreationRuleSet.FirstMatch(PandaBear.Secrets.EncryptedFilePath! path) -> PandaBear.Secrets.SopsCreationRule?
+static PandaBear.Secrets.SopsCreationRuleSet.Create(System.Collections.Generic.IEnumerable<PandaBear.Secrets.SopsCreationRule?>? rules) -> PandaBear.Results.Result<PandaBear.Secrets.SopsCreationRuleSet!>
+PandaBear.Secrets.SopsFileRecipients
+PandaBear.Secrets.SopsFileRecipients.Age.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Secrets.AgeRecipient!>!
+PandaBear.Secrets.SopsFileRecipients.OtherKeyTypes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Secrets.SopsFileRecipients.SopsFileRecipients(System.Collections.Generic.IReadOnlyList<PandaBear.Secrets.AgeRecipient!>! age, System.Collections.Generic.IReadOnlyList<string!>! otherKeyTypes) -> void
+PandaBear.Secrets.RecipientVerification
+PandaBear.Secrets.RecipientVerification.Missing.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Secrets.AgeRecipient!>!
+PandaBear.Secrets.RecipientVerification.Unexpected.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Secrets.AgeRecipient!>!
+PandaBear.Secrets.RecipientVerification.OtherKeyTypes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Secrets.RecipientVerification.IsExact.get -> bool
+static PandaBear.Secrets.RecipientVerification.Compare(PandaBear.Secrets.SopsFileRecipients! actual, PandaBear.Secrets.SopsCreationRule! rule) -> PandaBear.Secrets.RecipientVerification!
+PandaBear.Secrets.SopsMetadataReader
+static PandaBear.Secrets.SopsMetadataReader.Read(string! content, PandaBear.Secrets.SopsFormat format) -> PandaBear.Results.Result<PandaBear.Secrets.SopsFileRecipients!>
+PandaBear.Secrets.SecretBytes
+PandaBear.Secrets.SecretBytes.AsSpan() -> System.ReadOnlySpan<byte>
+PandaBear.Secrets.SecretBytes.Dispose() -> void
+PandaBear.Secrets.SecretBytes.IsDisposed.get -> bool
+PandaBear.Secrets.SecretBytes.Length.get -> int
+PandaBear.Secrets.SecretBytes.RevealUtf8() -> string!
+PandaBear.Secrets.SecretBytes.WriteTo(System.IO.Stream! destination) -> void
+override PandaBear.Secrets.SecretBytes.ToString() -> string!
+static PandaBear.Secrets.SecretBytes.CopyOf(System.ReadOnlySpan<byte> bytes) -> PandaBear.Secrets.SecretBytes!
+PandaBear.Secrets.ToolRequest
+PandaBear.Secrets.ToolRequest.Arguments.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Secrets.ToolRequest.Environment.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+PandaBear.Secrets.ToolRequest.Executable.get -> string!
+PandaBear.Secrets.ToolRequest.StandardInput.get -> System.ReadOnlyMemory<byte>
+PandaBear.Secrets.ToolRequest.ToolRequest(string! executable, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? environment = null, System.ReadOnlyMemory<byte> standardInput = default(System.ReadOnlyMemory<byte>)) -> void
+PandaBear.Secrets.ToolResult
+PandaBear.Secrets.ToolResult.Dispose() -> void
+PandaBear.Secrets.ToolResult.ExitCode.get -> int
+PandaBear.Secrets.ToolResult.StandardError.get -> string!
+PandaBear.Secrets.ToolResult.StandardOutput.get -> PandaBear.Secrets.SecretBytes!
+PandaBear.Secrets.ToolResult.ToolResult(int exitCode, PandaBear.Secrets.SecretBytes! standardOutput, string! standardError = "") -> void
+PandaBear.Secrets.IToolRunner
+PandaBear.Secrets.IToolRunner.Run(PandaBear.Secrets.ToolRequest! request, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Secrets.ToolResult!>!
+PandaBear.Secrets.SystemToolRunner
+PandaBear.Secrets.SystemToolRunner.Run(PandaBear.Secrets.ToolRequest! request, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Secrets.ToolResult!>!
+PandaBear.Secrets.SystemToolRunner.SystemToolRunner() -> void
+PandaBear.Secrets.SystemToolRunner.SystemToolRunner(System.TimeSpan timeout) -> void
+PandaBear.Secrets.IAgeTool
+PandaBear.Secrets.IAgeTool.GenerateIdentity(PandaBear.Secrets.AgeIdentityRef! destination, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.AgeRecipient!>>!
+PandaBear.Secrets.IAgeTool.Encrypt(PandaBear.Secrets.AgeRecipientSet! recipients, System.ReadOnlyMemory<byte> plaintext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<string!>>!
+PandaBear.Secrets.IAgeTool.Decrypt(PandaBear.Secrets.AgeIdentityRef! identity, System.ReadOnlyMemory<byte> ciphertext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SecretBytes!>>!
+PandaBear.Secrets.ProcessAgeTool
+PandaBear.Secrets.ProcessAgeTool.ProcessAgeTool(PandaBear.Secrets.IToolRunner! runner, string! agePath, string! ageKeygenPath) -> void
+PandaBear.Secrets.ProcessAgeTool.GenerateIdentity(PandaBear.Secrets.AgeIdentityRef! destination, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.AgeRecipient!>>!
+PandaBear.Secrets.ProcessAgeTool.Encrypt(PandaBear.Secrets.AgeRecipientSet! recipients, System.ReadOnlyMemory<byte> plaintext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<string!>>!
+PandaBear.Secrets.ProcessAgeTool.Decrypt(PandaBear.Secrets.AgeIdentityRef! identity, System.ReadOnlyMemory<byte> ciphertext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SecretBytes!>>!
+PandaBear.Secrets.ISopsTool
+PandaBear.Secrets.ISopsTool.Encrypt(PandaBear.Secrets.SopsFormat format, PandaBear.Secrets.AgeRecipientSet! recipients, System.ReadOnlyMemory<byte> plaintext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<string!>>!
+PandaBear.Secrets.ISopsTool.Decrypt(string! absoluteFile, PandaBear.Secrets.AgeIdentityRef! identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SecretBytes!>>!
+PandaBear.Secrets.ISopsTool.DecryptValue(string! root, PandaBear.Secrets.SecretRef! reference, PandaBear.Secrets.AgeIdentityRef! identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SecretBytes!>>!
+PandaBear.Secrets.ISopsTool.Rotate(string! absoluteFile, PandaBear.Secrets.AgeIdentityRef! identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result>!
+PandaBear.Secrets.ISopsTool.UpdateRecipients(string! absoluteFile, PandaBear.Secrets.SopsCreationRule! rule, PandaBear.Secrets.AgeIdentityRef! identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.RecipientVerification!>>!
+PandaBear.Secrets.ISopsTool.ListRecipients(string! absoluteFile, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SopsFileRecipients!>>!
+PandaBear.Secrets.ISopsTool.VerifyRecipients(string! absoluteFile, PandaBear.Secrets.SopsCreationRule! rule, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.RecipientVerification!>>!
+PandaBear.Secrets.ProcessSopsTool
+PandaBear.Secrets.ProcessSopsTool.ProcessSopsTool(PandaBear.Secrets.IToolRunner! runner, string! sopsPath) -> void
+PandaBear.Secrets.ProcessSopsTool.Encrypt(PandaBear.Secrets.SopsFormat format, PandaBear.Secrets.AgeRecipientSet! recipients, System.ReadOnlyMemory<byte> plaintext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<string!>>!
+PandaBear.Secrets.ProcessSopsTool.Decrypt(string! absoluteFile, PandaBear.Secrets.AgeIdentityRef! identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SecretBytes!>>!
+PandaBear.Secrets.ProcessSopsTool.DecryptValue(string! root, PandaBear.Secrets.SecretRef! reference, PandaBear.Secrets.AgeIdentityRef! identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SecretBytes!>>!
+PandaBear.Secrets.ProcessSopsTool.Rotate(string! absoluteFile, PandaBear.Secrets.AgeIdentityRef! identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result>!
+PandaBear.Secrets.ProcessSopsTool.UpdateRecipients(string! absoluteFile, PandaBear.Secrets.SopsCreationRule! rule, PandaBear.Secrets.AgeIdentityRef! identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.RecipientVerification!>>!
+PandaBear.Secrets.ProcessSopsTool.ListRecipients(string! absoluteFile, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SopsFileRecipients!>>!
+PandaBear.Secrets.ProcessSopsTool.VerifyRecipients(string! absoluteFile, PandaBear.Secrets.SopsCreationRule! rule, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.RecipientVerification!>>!

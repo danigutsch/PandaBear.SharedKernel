@@ -27,6 +27,7 @@ Choose the packages your project needs. Each package has its own README with req
 | Model installed packages and plan what is missing, read-only | [Packages](src/SharedKernel/SharedKernel.Packages/README.md) |
 | Wire Aspire hosts: service defaults with private telemetry and health endpoints, AppHost secrets, origins, health checks and image pins | [Service defaults](src/SharedKernel/SharedKernel.ServiceDefaults/README.md) · [Aspire hosting](src/SharedKernel/SharedKernel.Aspire.Hosting/README.md) |
 | Build focused tests and container-backed integration tests | [Testing](src/SharedKernel/SharedKernel.Testing/README.md) · [Integration testing](src/SharedKernel/SharedKernel.IntegrationTesting/README.md) · [SQLite testing](src/SharedKernel/SharedKernel.Testing.Sqlite/README.md) |
+| Keep secrets in git as age and SOPS files: validated recipients, identity references, creation rules, stdin-only adapters, exact recipient-set checks | [Secrets](src/SharedKernel/SharedKernel.Secrets/README.md) |
 | Automate documentation, package maintenance, and CI validation | [Documentation tool](tools/SharedKernel.Documentation.Tool/README.md) · [Versioning tool](tools/SharedKernel.Versioning.Tool/README.md) · [CI tool](tools/SharedKernel.CI.Tool/README.md) |
 | Run configured k6 load scenarios against local targets | [k6 tool](tools/SharedKernel.K6.Tool/README.md) |
 | Probe what a sandboxed environment allows and what that means for .NET tools | [Sandbox tool](tools/SharedKernel.Sandbox.Tool/README.md) |

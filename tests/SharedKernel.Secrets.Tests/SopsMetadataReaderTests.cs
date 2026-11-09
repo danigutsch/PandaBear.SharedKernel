@@ -1,0 +1,188 @@
+namespace PandaBear.Secrets.Tests;
+
+/// <summary>Tests reading the key holders from SOPS metadata, including files it must refuse.</summary>
+[Trait("Capability", "Secrets")]
+public sealed class SopsMetadataReaderTests
+{
+    private static readonly string[] Both = [TestRecipients.First, TestRecipients.Second];
+
+    [Fact]
+    public void YAML_age_recipients_are_read_and_ciphertext_blocks_are_ignored()
+    {
+        // Act
+        var holders = SopsMetadataReader.Read(SopsSamples.Yaml(Both), SopsFormat.Yaml).ShouldBeSuccess();
+
+        // Assert
+        holders.Age.Select(static r => r.Value).ShouldBe([TestRecipients.Second, TestRecipients.First]);
+        holders.OtherKeyTypes.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void JSON_age_recipients_are_read()
+    {
+        // Act
+        var holders = SopsMetadataReader.Read(SopsSamples.Json(Both), SopsFormat.Json).ShouldBeSuccess();
+
+        // Assert
+        holders.Age.Select(static r => r.Value).ShouldBe([TestRecipients.Second, TestRecipients.First]);
+        holders.OtherKeyTypes.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void YAML_with_windows_line_endings_and_quoted_recipients_is_read()
+    {
+        // Arrange
+        var yaml = SopsSamples.Yaml([TestRecipients.First]).Replace($"recipient: {TestRecipients.First}", $"recipient: \"{TestRecipients.First}\"", StringComparison.Ordinal).ReplaceLineEndings("\r\n");
+
+        // Act
+        var holders = SopsMetadataReader.Read(yaml, SopsFormat.Yaml).ShouldBeSuccess();
+
+        // Assert
+        holders.Age.Select(static r => r.Value).ShouldBe([TestRecipients.First]);
+    }
+
+    [Fact]
+    public void A_kms_or_pgp_key_holder_is_reported_by_name()
+    {
+        // Arrange
+        var yaml = SopsSamples.Yaml(Both).Replace("    kms: []\n", "    kms:\n        - arn: arn:aws:kms:eu-west-1:111122223333:key/abc\n          created: 2026-01-01T00:00:00Z\n          enc: AQIDAH\n", StringComparison.Ordinal);
+        var json = SopsSamples.Json(Both, ",\"hc_vault\":[{\"vault_address\":\"https://v\"}]");
+
+        // Act
+        var fromYaml = SopsMetadataReader.Read(yaml, SopsFormat.Yaml).ShouldBeSuccess();
+        var fromJson = SopsMetadataReader.Read(json, SopsFormat.Json).ShouldBeSuccess();
+
+        // Assert
+        fromYaml.OtherKeyTypes.ShouldBe(["kms"]);
+        fromJson.OtherKeyTypes.ShouldBe(["hc_vault"]);
+    }
+
+    [Fact]
+    public void Age_recipients_in_key_groups_are_collected_and_other_key_types_in_a_group_are_reported()
+    {
+        // Arrange
+        var json = $"{{\"sops\":{{\"key_groups\":[{{\"age\":[{{\"recipient\":\"{TestRecipients.First}\"}}]}},{{\"age\":[{{\"recipient\":\"{TestRecipients.Second}\"}}],\"pgp\":[{{\"fp\":\"ABC\"}}]}}],\"version\":\"3.13.0\"}}}}";
+
+        // Act
+        var holders = SopsMetadataReader.Read(json, SopsFormat.Json).ShouldBeSuccess();
+
+        // Assert
+        holders.Age.Select(static r => r.Value).ShouldBe([TestRecipients.Second, TestRecipients.First]);
+        holders.OtherKeyTypes.ShouldBe(["pgp"]);
+    }
+
+    [Fact]
+    public void A_duplicate_age_entry_is_collapsed()
+    {
+        // Act
+        var holders = SopsMetadataReader.Read(SopsSamples.Json([TestRecipients.First, TestRecipients.First]), SopsFormat.Json).ShouldBeSuccess();
+
+        // Assert
+        holders.Age.Count.ShouldBe(1);
+    }
+
+    [Fact]
+    public void A_file_with_no_age_recipients_yields_an_empty_list_not_an_error()
+    {
+        // Act
+        var holders = SopsMetadataReader.Read("{\"sops\":{\"version\":\"3.13.0\"}}", SopsFormat.Json).ShouldBeSuccess();
+
+        // Assert
+        holders.Age.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("db:\n  a: b\n")]
+    [InlineData("sops:\n")]
+    [InlineData("sops: {age: []}\n")]
+    [InlineData("sops:\n    age: [x]\n")]
+    [InlineData("sops:\n    age:\n        - recipient: notarecipient\n")]
+    [InlineData("sops:\n    age:\n        - enc: x\n")]
+    [InlineData("sops:\n\tage: []\n")]
+    [InlineData("sops:\n    age: &anchor\n        - recipient: age1\n")]
+    [InlineData("sops:\n    age: []\n    age: []\n")]
+    [InlineData("sops:\n    age: []\nsops:\n    age: []\n")]
+    [InlineData("sops:\n    age:\n        - recipient: age1qqq\n         bad: indent\n")]
+    [InlineData("sops:\n    key: \"unterminated\n")]
+    [InlineData("sops:\n    key: \"esc\\aped\"\n")]
+    [InlineData("sops:\n    key: !!tag value\n")]
+    [InlineData("sops:\n    - age\n")]
+    public void YAML_the_reader_does_not_fully_understand_is_an_error_never_an_empty_list(string yaml)
+    {
+        // Act
+        var result = SopsMetadataReader.Read(yaml, SopsFormat.Yaml);
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("[]")]
+    [InlineData("{}")]
+    [InlineData("{\"sops\":[]}")]
+    [InlineData("{\"sops\":{},\"sops\":{}}")]
+    [InlineData("{\"sops\":{\"age\":{}}}")]
+    [InlineData("{\"sops\":{\"age\":[{\"recipient\":5}]}}")]
+    [InlineData("{\"sops\":{\"age\":[{\"recipient\":\"x\"}]}}")]
+    [InlineData("{\"sops\":{\"age\":[],\"age\":[]}}")]
+    [InlineData("{\"sops\":{\"key_groups\":{}}}")]
+    [InlineData("{\"sops\":{\"key_groups\":[1]}}")]
+    [InlineData("{\"sops\":{\"age\":[],}}")]
+    [InlineData("{\"sops\":{/*c*/}}")]
+    public void JSON_the_reader_does_not_fully_understand_is_an_error_never_an_empty_list(string json)
+    {
+        // Act
+        var result = SopsMetadataReader.Read(json, SopsFormat.Json);
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void An_error_never_echoes_file_content()
+    {
+        // Act
+        var result = SopsMetadataReader.Read("sops:\n    age:\n        - recipient: SUPERSECRETMARKER\n", SopsFormat.Yaml);
+
+        // Assert
+        result.ErrorDetails.ShouldNotBeNull().Detail.ShouldNotContain("SUPERSECRETMARKER", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Read_rejects_null()
+    {
+        // Act
+        Action act = () => SopsMetadataReader.Read(null!, SopsFormat.Yaml);
+
+        // Assert
+        act.ShouldThrow<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void YAML_sequence_items_at_the_same_indent_as_their_key_are_read()
+    {
+        // Arrange
+        var yaml = $"sops:\n  age:\n  - recipient: {TestRecipients.First}\n  - recipient: {TestRecipients.Second}\n  version: 3.13.0\n";
+
+        // Act
+        var holders = SopsMetadataReader.Read(yaml, SopsFormat.Yaml).ShouldBeSuccess();
+
+        // Assert
+        holders.Age.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public void YAML_with_comments_and_null_values_is_read()
+    {
+        // Arrange
+        var yaml = $"# header\nsops: # metadata\n    # keys\n    kms: null\n    age:\n        - recipient: '{TestRecipients.First}' # admin\n    version: 3.13.0 # sops\n";
+
+        // Act
+        var holders = SopsMetadataReader.Read(yaml, SopsFormat.Yaml).ShouldBeSuccess();
+
+        // Assert
+        holders.Age.Select(static r => r.Value).ShouldBe([TestRecipients.First]);
+    }
+}
