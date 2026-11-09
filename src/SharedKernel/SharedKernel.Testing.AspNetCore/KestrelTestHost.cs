@@ -8,6 +8,13 @@ namespace PandaBear.Testing.AspNetCore;
 public static class KestrelTestHost
 {
     /// <summary>Starts the application's real entry point on Kestrel at a loopback address with an ephemeral port.</summary>
+    /// <remarks>
+    /// The listening address is supplied as the <c>urls</c> setting before the host is built, not through
+    /// <c>WebApplicationFactory.UseKestrel(int)</c>. A minimal-hosting entry point keeps running after the factory obtains its host and starts
+    /// that host on its own thread, while the factory's port override (<c>IServerAddressesFeature.Addresses.Clear()</c>) runs on the caller's
+    /// thread. Under CPU contention the entry point wins and Kestrel rejects the change ("Addresses cannot be modified after the server has
+    /// started"). A setting present before the host starts leaves nothing to race with.
+    /// </remarks>
     /// <typeparam name="TEntryPoint">A type from the application's entry-point assembly, usually <c>Program</c>.</typeparam>
     /// <param name="environment">The hosting environment name, or <see langword="null"/> for the application's default.</param>
     /// <param name="configuration">Configuration values added on top of the application's own.</param>
@@ -20,10 +27,15 @@ public static class KestrelTestHost
         Action<IServiceCollection>? configureTestServices = null)
         where TEntryPoint : class
     {
-        var factory = WebApplicationTestHost.Create<TEntryPoint>(environment, configureTestServices, null, configuration);
+        var settings = configuration is null
+            ? new Dictionary<string, string?>()
+            : new Dictionary<string, string?>(configuration);
+        settings["urls"] = "http://127.0.0.1:0";
+
+        var factory = WebApplicationTestHost.Create<TEntryPoint>(environment, configureTestServices, null, settings);
         try
         {
-            factory.UseKestrel(0);
+            factory.UseKestrel();
             factory.StartServer();
             return new KestrelTestHost<TEntryPoint>(factory, ResolveAddress(factory.Services));
         }
