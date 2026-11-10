@@ -120,7 +120,8 @@ internal sealed class CoverageTestScope : IDisposable
         var algorithm = scenario == "unsupported-hash" ? Guid.Empty : new Guid("8829d00f-11b8-4213-878b-770e8597ac16");
         var document = metadata.AddDocument(metadata.GetOrAddDocumentName(name), metadata.GetOrAddGuid(algorithm), metadata.GetOrAddBlob(hash), default);
         var sequence = new BlobBuilder();
-        if (scenario == "executable-symbols")
+        var executable = scenario is "executable-symbols" or "generated-symbols" or "unmarked-symbols" or "mismatched-symbols";
+        if (executable)
         {
             sequence.WriteBytes(new byte[] { 0, 0, 0, 1, 1, 1 });
         }
@@ -129,9 +130,15 @@ internal sealed class CoverageTestScope : IDisposable
         var counts = new int[64];
         counts[(int)TableIndex.MethodDef] = 1;
         var blob = new BlobBuilder();
-        new PortablePdbBuilder(metadata, ImmutableArray.Create(counts), default).Serialize(blob);
+        var pdb = new PortablePdbBuilder(metadata, ImmutableArray.Create(counts), default);
+        var pdbId = pdb.Serialize(blob);
         WriteFile("src/bin/Release/net10.0/Core.pdb", string.Empty);
         File.WriteAllBytes(Path.Combine(Root, "src/bin/Release/net10.0/Core.pdb"), blob.ToArray());
+        if (scenario is "generated-symbols" or "unmarked-symbols" or "mismatched-symbols")
+        {
+            var id = scenario == "mismatched-symbols" ? new BlobContentId(Guid.NewGuid(), 1) : pdbId;
+            File.WriteAllBytes(Path.Combine(Root, "src/bin/Release/net10.0/Core.dll"), GeneratedMethodAssembly.Build(id, scenario != "unmarked-symbols"));
+        }
     }
 
     /// <inheritdoc />
