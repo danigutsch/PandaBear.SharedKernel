@@ -25,6 +25,9 @@ internal static class CoverageScenarios
             case "interface-symbols":
             case "stale-symbols":
             case "executable-symbols":
+            case "generated-symbols":
+            case "unmarked-symbols":
+            case "mismatched-symbols":
                 scope.WriteSymbols(scenario);
                 break;
             case "space-path":
