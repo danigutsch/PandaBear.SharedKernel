@@ -40,18 +40,12 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
             ArgumentNullException.ThrowIfNull(section.Fields);
             ArgumentNullException.ThrowIfNull(section.Paragraphs);
             ArgumentNullException.ThrowIfNull(section.Lists);
+            ArgumentNullException.ThrowIfNull(section.Blocks);
 
             builder.Append("<section><h2>").Append(HtmlEncode(section.Heading)).Append("</h2>");
             foreach (var paragraph in section.Paragraphs)
             {
-                ArgumentNullException.ThrowIfNull(paragraph);
-                ArgumentException.ThrowIfNullOrWhiteSpace(paragraph.Text, nameof(paragraph.Text));
-                if (paragraph.PrivacyClassification == DocumentPrivacyClassification.None)
-                {
-                    throw new InvalidOperationException("Document paragraphs must be privacy classified before rendering.");
-                }
-
-                builder.Append("<p>").Append(HtmlEncode(paragraph.Text)).Append("</p>");
+                AppendParagraph(builder, paragraph);
             }
 
             foreach (var list in section.Lists)
@@ -59,7 +53,23 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
                 AppendList(builder, list);
             }
 
-            if (section.Fields.Count > 0 || (section.Paragraphs.Count == 0 && section.Lists.Count == 0))
+            foreach (var block in section.Blocks)
+            {
+                switch (block)
+                {
+                    case DocumentParagraph paragraph:
+                        AppendParagraph(builder, paragraph);
+                        break;
+                    case DocumentList list:
+                        AppendList(builder, list);
+                        break;
+                    default:
+                        ArgumentNullException.ThrowIfNull(block);
+                        break;
+                }
+            }
+
+            if (section.Fields.Count > 0 || (section.Paragraphs.Count == 0 && section.Lists.Count == 0 && section.Blocks.Count == 0))
             {
                 builder.Append("<dl>");
                 foreach (var field in section.Fields)
@@ -84,6 +94,18 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
         AppendFooter(builder, request.Branding);
         builder.Append("</body></html>");
         return Encoding.UTF8.GetBytes(builder.ToString());
+    }
+
+    private static void AppendParagraph(StringBuilder builder, DocumentParagraph paragraph)
+    {
+        ArgumentNullException.ThrowIfNull(paragraph);
+        ArgumentException.ThrowIfNullOrWhiteSpace(paragraph.Text, nameof(paragraph.Text));
+        if (paragraph.PrivacyClassification == DocumentPrivacyClassification.None)
+        {
+            throw new InvalidOperationException("Document paragraphs must be privacy classified before rendering.");
+        }
+
+        builder.Append("<p>").Append(HtmlEncode(paragraph.Text)).Append("</p>");
     }
 
     private static void AppendList(StringBuilder builder, DocumentList list)
