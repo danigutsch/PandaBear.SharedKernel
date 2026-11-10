@@ -56,6 +56,58 @@ public sealed class ContactCardTests : BunitContext
         cut.FindAll(".site-contact-card__lines").ShouldBeEmpty();
     }
 
+    [Fact]
+    public void Without_lines_and_channels_no_address_is_rendered()
+    {
+        // Arrange & Act
+        var titleOnly = Render<ContactCard>(parameters => parameters.Add(component => component.Title, "Contact"));
+        var emptyLines = Render<ContactCard>(parameters => parameters.Add(component => component.AddressLines, []));
+
+        // Assert
+        titleOnly.FindAll("address").ShouldBeEmpty();
+        titleOnly.Find("h3").TextContent.ShouldBe("Contact");
+        emptyLines.FindAll("address").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Lines_without_channels_render_no_empty_list()
+    {
+        // Arrange & Act
+        var cut = Render<ContactCard>(parameters => parameters.Add(component => component.AddressLines, ["Rua A, 1"]));
+
+        // Assert
+        cut.Find("address").TextContent.ShouldContain("Rua A, 1", StringComparison.Ordinal);
+        cut.FindAll("ul").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Phone_shows_its_display_text_while_the_link_uses_the_digits()
+    {
+        // Arrange & Act
+        var cut = Render<ContactCard>(parameters => parameters
+            .Add(component => component.Phone, Phone("+55 (11) 99999-0000"))
+            .Add(component => component.PhoneText, "+55 (11) 99999-0000"));
+
+        // Assert
+        var link = cut.Find("a");
+        link.TextContent.ShouldBe("+55 (11) 99999-0000");
+        link.GetAttribute("href").ShouldBe("tel:+5511999990000");
+    }
+
+    [Theory]
+    [InlineData("+55 (11) 99999-0001")]
+    [InlineData("call us")]
+    public void Phone_text_that_is_not_the_same_number_is_rejected(string text)
+    {
+        // Arrange & Act
+        var render = () => Render<ContactCard>(parameters => parameters
+            .Add(component => component.Phone, Phone("+55 (11) 99999-0000"))
+            .Add(component => component.PhoneText, text));
+
+        // Assert
+        render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(ContactCard.PhoneText));
+    }
+
     [Theory]
     [InlineData("a@b.example?cc=evil@example.org")]
     [InlineData("a@b.example?subject=x")]

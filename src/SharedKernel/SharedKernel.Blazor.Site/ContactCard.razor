@@ -4,29 +4,35 @@
     {
         @Heading.Render(HeadingLevel, "site-contact-card__title", null, @<text>@Title</text>)
     }
-    <address class="site-contact-card__address">
-        @if (AddressLines is { Count: > 0 })
-        {
-            <p class="site-contact-card__lines">
-                @foreach (var line in AddressLines)
-                {
-                    <span class="site-contact-card__line">@line</span>
-                }
-            </p>
-        }
-        <ul class="site-contact-card__channels">
-            @if (Phone is not null)
+    @if (HasLines || HasChannels)
+    {
+        <address class="site-contact-card__address">
+            @if (HasLines)
             {
-                <li><a href="@PhoneHref">@Phone.Value</a></li>
+                <p class="site-contact-card__lines">
+                    @foreach (var line in AddressLines!)
+                    {
+                        <span class="site-contact-card__line">@line</span>
+                    }
+                </p>
             }
-            @if (Email is not null)
+            @if (HasChannels)
             {
-                <li><a href="@EmailHref">@Email.Value</a></li>
+                <ul class="site-contact-card__channels">
+                    @if (Phone is not null)
+                    {
+                        <li><a href="@PhoneHref">@(PhoneText ?? Phone.Value)</a></li>
+                    }
+                    @if (Email is not null)
+                    {
+                        <li><a href="@EmailHref">@Email.Value</a></li>
+                    }
+                    @if (WhatsApp is not null)
+                    {
+                        <li><a href="@WhatsAppHref">@WhatsAppLabel</a></li>
+                    }
+                </ul>
             }
-            @if (WhatsApp is not null)
-            {
-                <li><a href="@WhatsAppHref">@WhatsAppLabel</a></li>
-            }
-        </ul>
-    </address>
+        </address>
+    }
 </section>

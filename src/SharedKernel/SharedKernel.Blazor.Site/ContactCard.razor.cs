@@ -4,7 +4,7 @@ using PandaBear.BuildingBlocks;
 namespace PandaBear.Blazor.Site;
 
 /// <summary>
-/// Contact data: an optional heading, an <c>address</c> with postal lines, and <c>tel:</c>, <c>mailto:</c> and <c>https://wa.me/</c>
+/// Contact data: an optional heading, and an <c>address</c> (only when there is something to show) with postal lines and <c>tel:</c>, <c>mailto:</c> and <c>https://wa.me/</c>
 /// links built from validated <see cref="PhoneNumber" /> and <see cref="EmailAddress" /> values. A value restored without
 /// validation is checked again, so only digits reach a <c>tel:</c> or WhatsApp link and no query reaches a <c>mailto:</c> link.
 /// </summary>
@@ -40,6 +40,16 @@ public sealed partial class ContactCard
         get; set;
     }
 
+    /// <summary>
+    /// Gets or sets the visible text of the phone link, for example <c>+55 (11) 99999-0000</c>. It must be the same number as
+    /// <see cref="Phone" />; separators are allowed. Without it the canonical digits are shown.
+    /// </summary>
+    [Parameter]
+    public string? PhoneText
+    {
+        get; set;
+    }
+
     /// <summary>Gets or sets the email address, linked with <c>mailto:</c>.</summary>
     [Parameter]
     public EmailAddress? Email
@@ -61,6 +71,10 @@ public sealed partial class ContactCard
         get; set;
     } = "WhatsApp";
 
+    private bool HasLines => AddressLines is { Count: > 0 };
+
+    private bool HasChannels => Phone is not null || Email is not null || WhatsApp is not null;
+
     private string? PhoneHref => Phone is null ? null : "tel:" + Phone.Value;
 
     private string? EmailHref => Email is null ? null : "mailto:" + Email.Value;
@@ -73,6 +87,11 @@ public sealed partial class ContactCard
         Heading.RequireLevel(HeadingLevel, nameof(HeadingLevel));
         RequireDigits(Phone, nameof(Phone));
         RequireDigits(WhatsApp, nameof(WhatsApp));
+        if (PhoneText is not null && (Phone is null || PhoneNumber.Create(PhoneText) is not { IsSuccess: true } text || text.Value != Phone))
+        {
+            throw new ArgumentException("The phone text must show the same number as Phone.", nameof(PhoneText));
+        }
+
         if (Email is not null && !Email.Value.All(character => char.IsAsciiLetterOrDigit(character) || character is '.' or '@' or '_' or '+' or '-'))
         {
             throw new ArgumentException("The email address has characters that are not safe in a mailto link.", nameof(Email));

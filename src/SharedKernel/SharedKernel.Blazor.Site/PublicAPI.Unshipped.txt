@@ -221,3 +221,5 @@ const PandaBear.Blazor.Site.LinkTarget.MaxLength = 2048 -> int
 PandaBear.Blazor.Site.LinkTarget.IsImageSource.get -> bool
 PandaBear.Blazor.Site.Section.HeadingId.get -> string?
 PandaBear.Blazor.Site.Section.HeadingId.set -> void
+PandaBear.Blazor.Site.ContactCard.PhoneText.get -> string?
+PandaBear.Blazor.Site.ContactCard.PhoneText.set -> void

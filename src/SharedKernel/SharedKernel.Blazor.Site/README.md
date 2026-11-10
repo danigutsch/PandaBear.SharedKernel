@@ -44,7 +44,7 @@ Reference the stylesheet from the host page, then your own stylesheet that overr
         </CardGrid>
     </Section>
 </main>
-<SiteFooter><ContactCard Email="_email" Phone="_phone" WhatsApp="_phone" /></SiteFooter>
+<SiteFooter><ContactCard Email="_email" Phone="_phone" PhoneText="+55 (11) 99999-0000" WhatsApp="_phone" /></SiteFooter>
 
 @code {
     private static readonly SiteNavItem[] _nav =
@@ -74,7 +74,7 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `Disclosure` | Native `details` and `summary`; a tab substitute without script. |
 | `Quote` | `figure` with a `blockquote` and a `cite` caption. |
 | `ImageGrid` | `figure` per image with width and height, lazy loading except the first `EagerCount`. |
-| `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links. |
+| `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links; no `address` when there are no lines and no channels. `PhoneText` shows the number as written (`+55 (11) 99999-0000`) while the link uses the digits; it must be the same number as `Phone`. The WhatsApp link shows `WhatsAppLabel`. |
 | `LanguageSwitcher` | Labelled `nav` of links with `hreflang`, `lang` and `aria-current="true"` on the current language. |
 | `PageHead` | Title, description, canonical link, OpenGraph basics and `hreflang` alternates including `x-default`. |
 
