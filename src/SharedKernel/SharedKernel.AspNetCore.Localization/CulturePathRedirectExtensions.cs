@@ -41,7 +41,8 @@ public static class CulturePathRedirectExtensions
         ArgumentNullException.ThrowIfNull(supportedCultures);
         ArgumentException.ThrowIfNullOrWhiteSpace(cookieName);
 
-        return app.UseMiddleware<CulturePathRedirectMiddleware>(supportedCultures, cookieName, excludedPrefixes ?? []);
+        PathString[] excluded = [.. excludedPrefixes ?? []];
+        return app.Use((context, next) => RedirectOrContinue(context, next, supportedCultures, cookieName, excluded));
     }
 
     /// <summary>
@@ -82,5 +83,79 @@ public static class CulturePathRedirectExtensions
                 Path = "/",
                 IsEssential = true
             });
+    }
+
+    private static Task RedirectOrContinue(
+        HttpContext context,
+        RequestDelegate next,
+        SupportedCultures supportedCultures,
+        string cookieName,
+        PathString[] excludedPrefixes)
+    {
+        var request = context.Request;
+        if (!HttpMethods.IsGet(request.Method) && !HttpMethods.IsHead(request.Method)
+            || CulturePath.TryParse(request.Path, supportedCultures, out _, out _)
+            || HasFileExtension(request.Path)
+            || IsExcluded(request.Path, excludedPrefixes))
+        {
+            return next(context);
+        }
+
+        var culture = FromCookie(request, supportedCultures, cookieName)
+            ?? FromAcceptLanguage(request, supportedCultures)
+            ?? supportedCultures.Default;
+
+        // The target is the path base plus a supported culture plus the original local path, so it always starts with
+        // the site's own path base and a supported culture and can never be a scheme-relative or absolute URL.
+        var location = request.PathBase + CulturePath.Prepend(request.Path, culture, supportedCultures) + request.QueryString;
+        context.Response.Headers.Append(Microsoft.Net.Http.Headers.HeaderNames.Vary, "Accept-Language, Cookie");
+        context.Response.Redirect(location, permanent: false);
+        return Task.CompletedTask;
+    }
+
+    private static bool IsExcluded(PathString path, PathString[] excludedPrefixes)
+    {
+        foreach (var prefix in excludedPrefixes)
+        {
+            if (path.StartsWithSegments(prefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool HasFileExtension(PathString path)
+    {
+        var value = path.Value;
+        if (string.IsNullOrEmpty(value))
+        {
+            return false;
+        }
+
+        var lastSegment = value.AsSpan(value.LastIndexOf('/') + 1);
+        return lastSegment.Contains('.');
+    }
+
+    private static ContentCulture? FromCookie(HttpRequest request, SupportedCultures supportedCultures, string cookieName) =>
+        request.Cookies.TryGetValue(cookieName, out var value) ? supportedCultures.Resolve(value) : null;
+
+    private static ContentCulture? FromAcceptLanguage(HttpRequest request, SupportedCultures supportedCultures)
+    {
+        foreach (var language in request.GetTypedHeaders().AcceptLanguage.OrderByDescending(static l => l.Quality ?? 1.0))
+        {
+            if (language.Quality is 0 || !language.Value.HasValue)
+            {
+                continue;
+            }
+
+            if (supportedCultures.Resolve(language.Value.Value) is { } culture)
+            {
+                return culture;
+            }
+        }
+
+        return null;
     }
 }
