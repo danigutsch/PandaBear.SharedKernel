@@ -13,7 +13,7 @@ Source files are grouped by topic. The folders are organization only: every publ
 
 | Folder | Contents |
 | --- | --- |
-| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, `Slug`, text rules, option-to-result helpers |
+| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, `Slug`, `WebUrl`, text rules, option-to-result helpers |
 | `Localization` | `ContentCulture`, `SupportedCultures`, `TranslationSet` |
 | `Contact` | `EmailAddress`, `PhoneNumber`, `PersonName`, `PostalAddress` |
 | `Geography` | `CountryCode`, `CountryNames` |
@@ -33,6 +33,19 @@ diacritics stripped, default maximum `Slug.DefaultMaxLength` = 128). Control cha
 ones), `/ \ ? #`, `.`, and any other non-ASCII character are rejected rather than transliterated, and the error never
 echoes the input. A slug therefore never contains `.`, which keeps it apart from file names in paths.
 `Slug.IsCanonical` checks an already-stored slug.
+
+## Web addresses
+
+`WebUrl.Create` accepts an absolute `http` or `https` address that is safe to render as a link, such as a sign-up form or a
+social profile. It must start with `http://` or `https://` in any case, name a host, and carry no user information (not
+even an empty one, `https://@host`). Relative and protocol-relative addresses (`//host`), `https:host`, every other scheme
+(`javascript:`, `data:`, `mailto:`), white space or control characters anywhere (rejected, not trimmed, because browsers strip
+some of them and that can hide a scheme), backslashes, lone surrogates, text not in Unicode normalization form C, and
+addresses longer than `WebUrl.MaxLength` (2048) are rejected; the error names the `field` and `label` and never echoes the
+input. `Value` keeps the path, query and fragment as supplied and lower-cases the scheme and host, so
+`HTTPS://Example.ORG/Tours` becomes `https://example.org/Tours` and addresses that differ only there are equal. The checks
+reuse `PandaBear.InputNormalization.WebAssetUriSanitizer`, with an `http` address checked through its `https` form.
+`WebUrl.Restore` rebuilds a stored value without validation.
 
 `ContentCulture` is a path-safe language tag in canonical casing (`pt`, `pt-BR`, `zh-Hant-TW`); cultures that differ only in
 case are equal, and `Parent` walks `pt-BR` to `pt`. Casing follows BCP 47: script title case and region upper case only before

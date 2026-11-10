@@ -178,3 +178,9 @@ static PandaBear.BuildingBlocks.Slug.IsCanonical(string? value, int maxLength = 
 static PandaBear.BuildingBlocks.Slug.Restore(string! value) -> PandaBear.BuildingBlocks.Slug!
 static PandaBear.BuildingBlocks.SupportedCultures.Create(PandaBear.BuildingBlocks.ContentCulture! defaultCulture, System.Collections.Generic.IEnumerable<PandaBear.BuildingBlocks.ContentCulture!>! cultures) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.SupportedCultures!>
 static PandaBear.BuildingBlocks.TranslationSet.Create<T>(System.Collections.Generic.IEnumerable<T!>! translations, System.Func<T!, PandaBear.BuildingBlocks.ContentCulture!>! cultureSelector) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.TranslationSet<T!>!>
+const PandaBear.BuildingBlocks.WebUrl.MaxLength = 2048 -> int
+PandaBear.BuildingBlocks.WebUrl
+PandaBear.BuildingBlocks.WebUrl.Value.get -> string!
+override PandaBear.BuildingBlocks.WebUrl.ToString() -> string!
+static PandaBear.BuildingBlocks.WebUrl.Create(string? value, string! field = "url", string! label = "Link") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.WebUrl!>
+static PandaBear.BuildingBlocks.WebUrl.Restore(string! value) -> PandaBear.BuildingBlocks.WebUrl!
