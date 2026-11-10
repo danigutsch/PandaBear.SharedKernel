@@ -35,6 +35,21 @@ public sealed class SkipLinkTests : BunitContext
     }
 
     [Fact]
+    public void Extra_attributes_cannot_replace_the_target_or_the_class()
+    {
+        // Arrange & Act
+        var cut = Render<SkipLink>(parameters => parameters
+            .AddUnmatched("href", "https://evil.example")
+            .AddUnmatched("class", "replaced")
+            .AddChildContent("Skip"));
+
+        // Assert
+        var link = cut.Find("a");
+        link.GetAttribute("href").ShouldBe("#main-content");
+        BunitElementAssertions.HasClass(link.ClassList, "site-skip-link");
+    }
+
+    [Fact]
     public void Blank_target_id_is_rejected()
     {
         // Arrange & Act
