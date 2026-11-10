@@ -55,6 +55,14 @@ internal static class SiteFixtures
         .Add(component => component.Items, NavItems)
         .Add(component => component.CurrentPath, currentPath));
 
+    /// <summary>Renders the header with the label "Main" and the given items.</summary>
+    /// <param name="context">The bUnit context.</param>
+    /// <param name="items">The navigation items.</param>
+    /// <returns>The rendered header.</returns>
+    public static IRenderedComponent<SiteHeader> RenderHeaderItems(this BunitContext context, params SiteNavItem[] items) => context.Render<SiteHeader>(parameters => parameters
+        .Add(component => component.Label, "Main")
+        .Add(component => component.Items, items));
+
     /// <summary>Renders a head outlet, then a <see cref="PageHead" /> that writes into it.</summary>
     /// <param name="context">The bUnit context.</param>
     /// <param name="configure">The page head parameters.</param>

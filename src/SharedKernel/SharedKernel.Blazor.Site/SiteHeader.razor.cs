@@ -6,9 +6,17 @@ namespace PandaBear.Blazor.Site;
 /// The page banner: a brand slot, a labelled navigation and an actions slot. A navigation item with children is a native
 /// <c>details</c> disclosure, so no script is needed. The item for <see cref="CurrentPath" /> gets <c>aria-current="page"</c>.
 /// </summary>
+/// <remarks>
+/// Matching compares paths only: the query and fragment are ignored, a missing leading slash is added, a trailing slash is
+/// ignored, and the comparison is ordinal and ignores case. So <c>tours</c>, <c>/tours/</c> and <c>/Tours?page=2</c> all match an
+/// item whose address is <c>/tours</c>, and the empty path matches <c>/</c>. An absolute item address never matches.
+/// </remarks>
 public sealed partial class SiteHeader
 {
-    /// <summary>Gets or sets the accessible name of the navigation, for example "Main". Caller-supplied so it can be localized.</summary>
+    /// <summary>
+    /// Gets or sets the accessible name of the navigation, for example "Main". Caller-supplied so it can be localized. Required when
+    /// <see cref="Items" /> is not empty.
+    /// </summary>
     [Parameter]
     [EditorRequired]
     public string Label
@@ -30,7 +38,10 @@ public sealed partial class SiteHeader
         get; set;
     } = [];
 
-    /// <summary>Gets or sets the path of the current page, which selects the item marked as current.</summary>
+    /// <summary>
+    /// Gets or sets the path of the current page, which selects the item marked as current, for example
+    /// <c>Navigation.ToBaseRelativePath(Navigation.Uri)</c> or <c>/tours</c>.
+    /// </summary>
     [Parameter]
     public string? CurrentPath
     {
@@ -48,6 +59,11 @@ public sealed partial class SiteHeader
     protected override void OnParametersSet()
     {
         ArgumentNullException.ThrowIfNull(Items);
+        if (Items.Count > 0)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(Label);
+        }
+
         foreach (var item in Items)
         {
             Validate(item, allowChildren: true);
@@ -86,7 +102,7 @@ public sealed partial class SiteHeader
     private static string Normalize(string path)
     {
         var end = path.IndexOfAny(['?', '#']);
-        var trimmed = (end < 0 ? path : path[..end]).TrimEnd('/');
-        return trimmed.Length == 0 ? "/" : trimmed;
+        var trimmed = (end < 0 ? path : path[..end]).Trim('/');
+        return "/" + trimmed;
     }
 }

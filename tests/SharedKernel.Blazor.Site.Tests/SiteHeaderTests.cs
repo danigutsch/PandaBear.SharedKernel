@@ -1,3 +1,5 @@
+using static PandaBear.Blazor.Site.Tests.SiteFixtures;
+
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the site header and its navigation.</summary>
@@ -46,7 +48,10 @@ public sealed class SiteHeaderTests : BunitContext
     [InlineData("/tours/")]
     [InlineData("/Tours?x=1")]
     [InlineData("/tours#top")]
-    public void Current_path_matching_ignores_case_query_fragment_and_trailing_slash(string path)
+    [InlineData("tours")]
+    [InlineData("tours/")]
+    [InlineData("Tours?x=1#top")]
+    public void Current_path_matching_ignores_case_query_fragment_leading_and_trailing_slash(string path)
     {
         // Arrange & Act
         var cut = this.RenderHeader(path);
@@ -66,16 +71,107 @@ public sealed class SiteHeaderTests : BunitContext
         cut.Find("nav details").HasAttribute("open").ShouldBeTrue();
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData("/")]
+    public void The_base_relative_path_of_the_home_page_marks_the_home_item(string path)
+    {
+        // Arrange & Act
+        var cut = this.RenderHeader(path);
+
+        // Assert
+        cut.Find("[aria-current]").GetAttribute("href").ShouldBe("/");
+    }
+
+    [Fact]
+    public void A_path_that_only_starts_like_an_item_is_not_current()
+    {
+        // Arrange & Act
+        var cut = this.RenderHeader("tours-extra");
+
+        // Assert
+        cut.FindAll("[aria-current]").ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void A_navigation_without_a_label_is_rejected(string label)
+    {
+        // Arrange & Act
+        var render = () => Render<SiteHeader>(parameters => parameters
+            .Add(component => component.Label, label)
+            .Add(component => component.Items, NavItems));
+
+        // Assert
+        render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(SiteHeader.Label));
+    }
+
+    [Fact]
+    public void A_header_without_items_needs_no_label()
+    {
+        // Arrange & Act
+        var cut = Render<SiteHeader>(parameters => parameters.Add(component => component.Brand, "<a href=\"/\">Brand</a>"));
+
+        // Assert
+        cut.FindAll("nav").ShouldBeEmpty();
+    }
+
     [Fact]
     public void Items_without_target_are_rejected()
     {
         // Arrange & Act
-        var empty = () => Render<SiteHeader>(parameters => parameters
-            .Add(component => component.Label, "Main")
-            .Add(component => component.Items, [new SiteNavItem("Nothing")]));
+        var render = () => this.RenderHeaderItems(new SiteNavItem("Nothing"));
 
         // Assert
-        empty.ShouldThrow<ArgumentException>();
+        render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(SiteHeader.Items));
+    }
+
+    [Fact]
+    public void A_null_item_or_child_is_rejected()
+    {
+        // Arrange & Act
+        var item = () => this.RenderHeaderItems(null!);
+        var child = () => this.RenderHeaderItems(new SiteNavItem("Group", Children: [null!]));
+
+        // Assert
+        item.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe(nameof(SiteHeader.Items));
+        child.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe(nameof(SiteHeader.Items));
+    }
+
+    [Fact]
+    public void An_item_with_both_a_target_and_children_is_rejected()
+    {
+        // Arrange & Act
+        var render = () => this.RenderHeaderItems(new SiteNavItem("Group", Link("/group"), [new SiteNavItem("Child", Link("/child"))]));
+
+        // Assert
+        render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(SiteHeader.Items));
+    }
+
+    [Fact]
+    public void Children_deeper_than_one_level_are_rejected()
+    {
+        // Arrange
+        var grandchild = new SiteNavItem("Grandchild", Link("/a/b/c"));
+
+        // Act
+        var render = () => this.RenderHeaderItems(new SiteNavItem("Group", Children: [new SiteNavItem("Child", Children: [grandchild])]));
+
+        // Assert
+        render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(SiteHeader.Items));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void An_item_without_text_is_rejected(string text)
+    {
+        // Arrange & Act
+        var render = () => this.RenderHeaderItems(new SiteNavItem(text, Link("/x")));
+
+        // Assert
+        render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(SiteHeader.Items));
     }
 
     [Fact]

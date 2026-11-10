@@ -19,7 +19,7 @@
                                     <ul class="site-nav__sublist">
                                         @foreach (var child in children)
                                         {
-                                            <li><a href="@child.Href?.Value"aria-current="@Current(child)">@child.Text</a></li>
+                                            <li><a href="@child.Href?.Value" aria-current="@Current(child)">@child.Text</a></li>
                                         }
                                     </ul>
                                 </details>
@@ -27,7 +27,7 @@
                         }
                         else
                         {
-                            <li class="site-nav__item"><a href="@item.Href?.Value"aria-current="@Current(item)">@item.Text</a></li>
+                            <li class="site-nav__item"><a href="@item.Href?.Value" aria-current="@Current(item)">@item.Text</a></li>
                         }
                     }
                 </ul>

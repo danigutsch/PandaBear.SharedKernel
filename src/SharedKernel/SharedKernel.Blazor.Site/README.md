@@ -63,7 +63,7 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | Component | Renders |
 | --- | --- |
 | `SkipLink` | The first link of the page; `TargetId` defaults to `main-content`. |
-| `SiteHeader` | `header` with a brand slot, a labelled `nav`, and an actions slot. An item with children is a native `details`; the item that matches `CurrentPath` (ignoring case, query, fragment and a trailing slash) gets `aria-current="page"` and opens its group. |
+| `SiteHeader` | `header` with a brand slot, a labelled `nav` (`Label` is required when there are items), and an actions slot. An item has either an `Href` or one level of children; an item with children is a native `details`. The item that matches `CurrentPath` gets `aria-current="page"` and opens its group. |
 | `SiteFooter` | `footer` with a content slot and an optional `Legal` line. |
 | `Hero` | The page's one `h1`, a subtitle, an eager image and an actions slot. |
 | `Section` | `section` labelled by its heading (`Level`, default 2), a decorative divider and an intro. |
@@ -76,6 +76,10 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links. |
 | `LanguageSwitcher` | Labelled `nav` of links with `hreflang`, `lang` and `aria-current="true"` on the current language. |
 | `PageHead` | Title, description, canonical link, OpenGraph basics and `hreflang` alternates including `x-default`. |
+
+`SiteHeader.CurrentPath` matching compares paths only: the query and fragment are ignored, a missing leading slash is added
+(`Navigation.ToBaseRelativePath(...)` returns `tours`, which matches `/tours`), a trailing slash is ignored, and the comparison is
+ordinal and ignores case. The empty path matches `/`. An item with an absolute address never matches.
 
 Texts that people read (labels, the new-tab hint, the WhatsApp link text) are parameters so the caller can localize them.
 
