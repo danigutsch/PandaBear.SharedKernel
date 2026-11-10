@@ -19,6 +19,7 @@ public static class SitemapXmlSerializer
     public const string ContentType = "application/xml; charset=utf-8";
 
     private static readonly XNamespace SitemapNamespace = "http://www.sitemaps.org/schemas/sitemap/0.9";
+    private static readonly XNamespace XhtmlNamespace = "http://www.w3.org/1999/xhtml";
 
     /// <summary>
     /// Serializes URL entries into a sitemap XML document.
@@ -45,9 +46,13 @@ public static class SitemapXmlSerializer
             urls.Add(CreateSitemapUrl(entry));
         }
 
-        var document = new XDocument(
-            new XDeclaration("1.0", "utf-8", null),
-            new XElement(SitemapNamespace + "urlset", urls));
+        var root = new XElement(SitemapNamespace + "urlset", urls);
+        if (urls.Any(static url => url.Elements(XhtmlNamespace + "link").Any()))
+        {
+            root.Add(new XAttribute(XNamespace.Xmlns + "xhtml", XhtmlNamespace.NamespaceName));
+        }
+
+        var document = new XDocument(new XDeclaration("1.0", "utf-8", null), root);
 
         var stream = new MemoryStream();
         await document.SaveAsync(stream, SaveOptions.DisableFormatting, cancellationToken).ConfigureAwait(false);
@@ -66,6 +71,15 @@ public static class SitemapXmlSerializer
             url.Add(new XElement(
                 SitemapNamespace + "lastmod",
                 XmlConvert.ToString(timestamp.UtcDateTime, XmlDateTimeSerializationMode.Utc)));
+        }
+
+        foreach (var alternate in entry.Alternates)
+        {
+            url.Add(new XElement(
+                XhtmlNamespace + "link",
+                new XAttribute("rel", "alternate"),
+                new XAttribute("hreflang", alternate.Language),
+                new XAttribute("href", alternate.Location.AbsoluteUri)));
         }
 
         return url;
