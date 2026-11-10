@@ -15,6 +15,12 @@ public sealed class ContentCultureTests
     [InlineData("zh-hant-tw", "zh-Hant-TW")]
     [InlineData("es-419", "es-419")]
     [InlineData("en-US", "en-US")]
+    [InlineData("en-u-ca-gregory", "en-u-ca-gregory")]
+    [InlineData("EN-U-CA-GREGORY", "en-u-ca-gregory")]
+    [InlineData("sr-latn-rs-u-nu-latn", "sr-Latn-RS-u-nu-latn")]
+    [InlineData("en-x-ab", "en-x-ab")]
+    [InlineData("de-de-X-AB-CDEF", "de-DE-x-ab-cdef")]
+    [InlineData("en-a-bb-123", "en-a-bb-123")]
     public void A_culture_is_trimmed_and_written_in_canonical_casing(string input, string expected)
     {
         // Act
@@ -38,7 +44,6 @@ public sealed class ContentCultureTests
     [InlineData("pt--BR")]
     [InlineData("pt_BR")]
     [InlineData("português")]
-    [InlineData("a-very-long-culture-name-that-is-not-a-language-tag")]
     public void An_invalid_culture_is_rejected_without_echoing_it(string? input)
     {
         // Act
@@ -49,6 +54,26 @@ public sealed class ContentCultureTests
         var message = result.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull()["culture"].ShouldHaveSingleItem();
         var echoed = !string.IsNullOrWhiteSpace(input) && message.Contains(input, StringComparison.Ordinal);
         echoed.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void A_well_formed_but_too_long_culture_is_rejected_with_a_fixed_message()
+    {
+        // Arrange
+        // Every part is well formed, so only the length can reject it; the marker parts would show up if the message echoed it.
+        const string input = "zz-markerqx-plughzz-xyzzyqq-frobnitz-gruezzz";
+
+        // Act
+        var result = ContentCulture.Create(input);
+
+        // Assert
+        result.Status.ShouldBe(ResultStatus.Invalid);
+        var details = result.ErrorDetails.ShouldNotBeNull();
+        var message = details.ValidationErrors.ShouldNotBeNull()["culture"].ShouldHaveSingleItem();
+        message.ShouldBe("Culture must be a language tag such as 'en' or 'es-419'.");
+        details.Detail.ShouldBe(message);
+        message.Contains("markerqx", StringComparison.Ordinal).ShouldBeFalse();
+        message.Contains(input, StringComparison.Ordinal).ShouldBeFalse();
     }
 
     [Fact]

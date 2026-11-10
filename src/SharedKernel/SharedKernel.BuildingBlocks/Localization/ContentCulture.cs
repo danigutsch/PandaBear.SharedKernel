@@ -5,8 +5,13 @@ namespace PandaBear.BuildingBlocks;
 
 /// <summary>
 /// The culture of a piece of content, such as <c>pt</c> or <c>pt-BR</c>, written as a path-safe language tag in canonical casing
-/// (language lower case, script title case, region upper case) so cultures that differ only in case are the same culture.
+/// so cultures that differ only in case are the same culture. Casing follows BCP 47: the language is lower case, and before the
+/// first single-character subtag (an extension such as <c>-u-</c> or the private use <c>-x-</c>) a four-letter script is title case
+/// and a two-letter region upper case; everything from that singleton on is lower case (<c>sr-Latn-RS-u-nu-latn</c>).
 /// It is a name, not a <see cref="System.Globalization.CultureInfo"/>, so it does not depend on the host's globalization data.
+/// It is a path-safe culture-name check (hyphen-separated ASCII letters and digits, a two-to-eight-letter first part, at most
+/// <see cref="MaxLength"/> characters), not full BCP 47 validation: it does not check subtag order, registry entries, or
+/// extension syntax.
 /// </summary>
 public sealed class ContentCulture : ValueObject
 {
@@ -100,6 +105,7 @@ public sealed class ContentCulture : ValueObject
     {
         var builder = new StringBuilder(candidate.Length);
         var parts = candidate.Split('-');
+        var afterSingleton = false;
         for (var index = 0; index < parts.Length; index++)
         {
             if (index > 0)
@@ -108,8 +114,11 @@ public sealed class ContentCulture : ValueObject
             }
 
             var part = parts[index];
-            var isRegion = index > 0 && part.Length == 2 && part.All(char.IsAsciiLetter);
-            var isScript = index > 0 && part.Length == 4 && part.All(char.IsAsciiLetter);
+
+            // BCP 47 casing: from the first singleton (an extension or private-use introducer) on, every subtag is lower case.
+            afterSingleton |= index > 0 && part.Length == 1;
+            var isRegion = !afterSingleton && index > 0 && part.Length == 2 && part.All(char.IsAsciiLetter);
+            var isScript = !afterSingleton && index > 0 && part.Length == 4 && part.All(char.IsAsciiLetter);
             if (isRegion)
             {
                 builder.Append(part.ToUpperInvariant());
