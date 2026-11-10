@@ -2,8 +2,8 @@
 override PandaBear.Blazor.Site.ImageAlternative.ToString() -> string!
 override PandaBear.Blazor.Site.LinkTarget.ToString() -> string!
 PandaBear.Blazor.Site.AlternateLink
-PandaBear.Blazor.Site.AlternateLink.AlternateLink(string! Culture, System.Uri! Href) -> void
-PandaBear.Blazor.Site.AlternateLink.Culture.get -> string!
+PandaBear.Blazor.Site.AlternateLink.AlternateLink(PandaBear.BuildingBlocks.ContentCulture! Culture, System.Uri! Href) -> void
+PandaBear.Blazor.Site.AlternateLink.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
 PandaBear.Blazor.Site.AlternateLink.Culture.init -> void
 PandaBear.Blazor.Site.AlternateLink.Href.get -> System.Uri!
 PandaBear.Blazor.Site.AlternateLink.Href.init -> void
@@ -121,7 +121,7 @@ PandaBear.Blazor.Site.ImageGrid.ImageGrid() -> void
 PandaBear.Blazor.Site.ImageGrid.Images.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.GalleryImage!>!
 PandaBear.Blazor.Site.ImageGrid.Images.set -> void
 PandaBear.Blazor.Site.LanguageLink
-PandaBear.Blazor.Site.LanguageLink.Culture.get -> string!
+PandaBear.Blazor.Site.LanguageLink.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
 PandaBear.Blazor.Site.LanguageLink.Culture.init -> void
 PandaBear.Blazor.Site.LanguageLink.Href.get -> PandaBear.Blazor.Site.LinkTarget!
 PandaBear.Blazor.Site.LanguageLink.Href.init -> void
@@ -129,7 +129,7 @@ PandaBear.Blazor.Site.LanguageLink.IsCurrent.get -> bool
 PandaBear.Blazor.Site.LanguageLink.IsCurrent.init -> void
 PandaBear.Blazor.Site.LanguageLink.Label.get -> string!
 PandaBear.Blazor.Site.LanguageLink.Label.init -> void
-PandaBear.Blazor.Site.LanguageLink.LanguageLink(string! Culture, string! Label, PandaBear.Blazor.Site.LinkTarget! Href, bool IsCurrent = false) -> void
+PandaBear.Blazor.Site.LanguageLink.LanguageLink(PandaBear.BuildingBlocks.ContentCulture! Culture, string! Label, PandaBear.Blazor.Site.LinkTarget! Href, bool IsCurrent = false) -> void
 PandaBear.Blazor.Site.LanguageSwitcher
 PandaBear.Blazor.Site.LanguageSwitcher.Label.get -> string!
 PandaBear.Blazor.Site.LanguageSwitcher.Label.set -> void
@@ -149,7 +149,7 @@ PandaBear.Blazor.Site.PageHead.Description.get -> string?
 PandaBear.Blazor.Site.PageHead.Description.set -> void
 PandaBear.Blazor.Site.PageHead.ImageUrl.get -> System.Uri?
 PandaBear.Blazor.Site.PageHead.ImageUrl.set -> void
-PandaBear.Blazor.Site.PageHead.Locale.get -> string?
+PandaBear.Blazor.Site.PageHead.Locale.get -> PandaBear.BuildingBlocks.ContentCulture?
 PandaBear.Blazor.Site.PageHead.Locale.set -> void
 PandaBear.Blazor.Site.PageHead.PageHead() -> void
 PandaBear.Blazor.Site.PageHead.SiteName.get -> string?

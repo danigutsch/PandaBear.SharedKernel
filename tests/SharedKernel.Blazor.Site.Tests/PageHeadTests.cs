@@ -1,3 +1,5 @@
+using static PandaBear.Blazor.Site.Tests.SiteFixtures;
+
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the head metadata rendered into a head outlet.</summary>
@@ -12,7 +14,7 @@ public sealed class PageHeadTests : BunitContext
             .Add(component => component.Description, "Eight days in the desert.")
             .Add(component => component.CanonicalUrl, new Uri("https://example.org/en/tours/atacama"))
             .Add(component => component.SiteName, "Brand")
-            .Add(component => component.Locale, "en_US")
+            .Add(component => component.Locale, Culture("en-us"))
             .Add(component => component.ImageUrl, new Uri("https://example.org/atacama.jpg")));
 
         // Assert
@@ -34,7 +36,7 @@ public sealed class PageHeadTests : BunitContext
         // Arrange & Act
         var head = this.RenderHead(parameters => parameters
             .Add(component => component.Title, "Atacama")
-            .Add(component => component.Alternates, [new AlternateLink("en", new Uri("https://example.org/en/x")), new AlternateLink("pt-BR", new Uri("https://example.org/pt/x"))])
+            .Add(component => component.Alternates, [new AlternateLink(Culture("en"), new Uri("https://example.org/en/x")), new AlternateLink(Culture("pt-br"), new Uri("https://example.org/pt/x"))])
             .Add(component => component.DefaultAlternateUrl, new Uri("https://example.org/en/x")));
 
         // Assert
@@ -75,7 +77,7 @@ public sealed class PageHeadTests : BunitContext
             .Add(component => component.CanonicalUrl, address));
         var alternate = () => Render<PageHead>(parameters => parameters
             .Add(component => component.Title, "x")
-            .Add(component => component.Alternates, [new AlternateLink("en", address)]));
+            .Add(component => component.Alternates, [new AlternateLink(Culture("en"), address)]));
         var image = () => Render<PageHead>(parameters => parameters
             .Add(component => component.Title, "x")
             .Add(component => component.ImageUrl, address));
@@ -86,18 +88,16 @@ public sealed class PageHeadTests : BunitContext
         image.ShouldThrow<ArgumentException>();
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("en\" onclick=\"x")]
-    public void Malformed_alternate_language_is_rejected(string culture)
+    [Fact]
+    public void A_missing_alternate_culture_is_rejected()
     {
         // Arrange & Act
         var render = () => Render<PageHead>(parameters => parameters
             .Add(component => component.Title, "x")
-            .Add(component => component.Alternates, [new AlternateLink(culture, new Uri("https://example.org/x"))]));
+            .Add(component => component.Alternates, [new AlternateLink(null!, new Uri("https://example.org/x"))]));
 
         // Assert
-        render.ShouldThrow<ArgumentException>();
+        render.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]

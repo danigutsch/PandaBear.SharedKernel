@@ -11,7 +11,7 @@
     }
     @foreach (var alternate in Alternates)
     {
-        <link rel="alternate" hreflang="@alternate.Culture" href="@alternate.Href.AbsoluteUri" />
+        <link rel="alternate" hreflang="@alternate.Culture.Value"href="@alternate.Href.AbsoluteUri" />
     }
     @if (DefaultAlternateUrl is not null)
     {
@@ -31,9 +31,9 @@
     {
         <meta property="og:site_name" content="@SiteName" />
     }
-    @if (!string.IsNullOrWhiteSpace(Locale))
+    @if (Locale is not null)
     {
-        <meta property="og:locale" content="@Locale" />
+        <meta property="og:locale" content="@Locale.Value.Replace('-', '_')" />
     }
     @if (ImageUrl is not null)
     {

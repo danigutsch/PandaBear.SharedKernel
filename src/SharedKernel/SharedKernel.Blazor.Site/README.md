@@ -90,8 +90,10 @@ Texts that people read (labels, the new-tab hint, the WhatsApp link text) are pa
   `InvalidOperationException` when it renders, and `GalleryImage` requires one.
 - `ContactCard` takes `PandaBear.BuildingBlocks.EmailAddress` and `PhoneNumber`. It checks restored values again, so only digits reach a
   `tel:` or WhatsApp link and no query reaches a `mailto:` link.
-- `PageHead` addresses are `System.Uri` and must be absolute `http` or `https`. Language tags stay plain strings such as `pt-BR` and must be
-  dash-separated alphanumeric subtags.
+- `PageHead` addresses are `System.Uri` and must be absolute `http` or `https`.
+- Cultures are `PandaBear.BuildingBlocks.ContentCulture` (`LanguageLink.Culture`, `AlternateLink.Culture`, `PageHead.Locale`), so the
+  language-tag rule and canonical casing (`pt-br` becomes `pt-BR`) live in one place. `hreflang` and `lang` use the canonical name;
+  `og:locale` writes it with an underscore (`pt_BR`). Build cultures from input with `ContentCulture.Create`; `Restore` skips validation.
 
 ## Design tokens
 

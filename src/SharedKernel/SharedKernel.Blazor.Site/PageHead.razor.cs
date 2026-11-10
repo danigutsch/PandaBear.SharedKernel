@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using PandaBear.BuildingBlocks;
 
 namespace PandaBear.Blazor.Site;
 
@@ -38,9 +39,9 @@ public sealed partial class PageHead
         get; set;
     }
 
-    /// <summary>Gets or sets the OpenGraph locale, for example <c>pt_BR</c>.</summary>
+    /// <summary>Gets or sets the culture of the page, written to <c>og:locale</c> with an underscore (<c>pt-BR</c> gives <c>pt_BR</c>).</summary>
     [Parameter]
-    public string? Locale
+    public ContentCulture? Locale
     {
         get; set;
     }
@@ -77,7 +78,7 @@ public sealed partial class PageHead
         foreach (var alternate in Alternates)
         {
             ArgumentNullException.ThrowIfNull(alternate, nameof(Alternates));
-            LanguageTag.Require(alternate.Culture, nameof(Alternates));
+            ArgumentNullException.ThrowIfNull(alternate.Culture, nameof(Alternates));
             ArgumentNullException.ThrowIfNull(alternate.Href, nameof(Alternates));
             RequireWebAddress(alternate.Href, nameof(Alternates));
         }

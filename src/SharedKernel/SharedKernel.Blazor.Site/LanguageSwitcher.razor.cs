@@ -32,7 +32,7 @@ public sealed partial class LanguageSwitcher
         foreach (var language in Languages)
         {
             ArgumentNullException.ThrowIfNull(language, nameof(Languages));
-            LanguageTag.Require(language.Culture, nameof(Languages));
+            ArgumentNullException.ThrowIfNull(language.Culture, nameof(Languages));
             ArgumentException.ThrowIfNullOrWhiteSpace(language.Label, nameof(Languages));
             ArgumentNullException.ThrowIfNull(language.Href, nameof(Languages));
         }

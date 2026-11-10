@@ -23,6 +23,11 @@ internal static class SiteFixtures
     /// <returns>The number.</returns>
     public static PhoneNumber Phone(string value) => PhoneNumber.Create(value).Value;
 
+    /// <summary>Creates a validated content culture.</summary>
+    /// <param name="value">The culture name.</param>
+    /// <returns>The culture, in canonical casing.</returns>
+    public static ContentCulture Culture(string value) => ContentCulture.Create(value).Value;
+
     /// <summary>Creates a validated email address.</summary>
     /// <param name="value">The address text.</param>
     /// <returns>The address.</returns>

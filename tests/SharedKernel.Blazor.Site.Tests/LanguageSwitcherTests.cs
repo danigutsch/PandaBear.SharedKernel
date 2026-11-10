@@ -1,3 +1,5 @@
+using static PandaBear.Blazor.Site.Tests.SiteFixtures;
+
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the language switcher.</summary>
@@ -5,12 +7,12 @@ public sealed class LanguageSwitcherTests : BunitContext
 {
     private static readonly LanguageLink[] Languages =
     [
-        new("pt-BR", "Portugues", "/pt/tours", IsCurrent: true),
-        new("en", "English", "/en/tours"),
+        new(Culture("pt-br"), "Portugues", "/pt/tours", IsCurrent: true),
+        new(Culture("en"), "English", "/en/tours"),
     ];
 
     [Fact]
-    public void Switcher_is_a_labelled_navigation_with_one_link_per_language_carrying_hreflang_and_lang()
+    public void Switcher_is_a_labelled_navigation_with_one_link_per_language_carrying_the_canonical_hreflang_and_lang()
     {
         // Arrange & Act
         var cut = Render<LanguageSwitcher>(parameters => parameters
@@ -43,19 +45,28 @@ public sealed class LanguageSwitcherTests : BunitContext
         current[0].GetAttribute("aria-current").ShouldBe("true");
     }
 
-    [Theory]
-    [InlineData("javascript:alert(1)", "en")]
-    [InlineData("/en", "")]
-    [InlineData("/en", "en\" onclick=\"x")]
-    public void Unsafe_links_and_malformed_cultures_are_rejected(string href, string culture)
+    [Fact]
+    public void Unsafe_links_are_rejected()
     {
         // Arrange & Act
         var render = () => Render<LanguageSwitcher>(parameters => parameters
             .Add(component => component.Label, "Language")
-            .Add(component => component.Languages, [new LanguageLink(culture, "x", href)]));
+            .Add(component => component.Languages, [new LanguageLink(Culture("en"), "x", "javascript:alert(1)")]));
 
         // Assert
         render.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact]
+    public void A_missing_culture_is_rejected()
+    {
+        // Arrange & Act
+        var render = () => Render<LanguageSwitcher>(parameters => parameters
+            .Add(component => component.Label, "Language")
+            .Add(component => component.Languages, [new LanguageLink(null!, "x", "/en")]));
+
+        // Assert
+        render.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
