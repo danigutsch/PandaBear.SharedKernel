@@ -73,6 +73,24 @@ What it does not count:
 exception middleware write problem details for every endpoint of the host, not only this handler's responses. Review
 that before enabling it in a host that already customizes its error bodies.
 
+A host that must keep its own error body, for example the title of its existing `400` answer, does not need another
+handler. The handler writes through `IProblemDetailsService`, so the host's own `AddProblemDetails` configuration applies
+to its bodies. Set `ProblemDetailsOptions.CustomizeProblemDetails` to change the `title`, remove the `type`, or remove the
+`traceId` extension for the statuses it wants; the status code, the logging and the counter do not change:
+
+```csharp
+builder.Services.AddUnhandledExceptionHandler();
+builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
+{
+    if (context.ProblemDetails.Status < 500)
+    {
+        context.ProblemDetails.Title = "The request could not be read.";
+        context.ProblemDetails.Type = null;
+        context.ProblemDetails.Extensions.Remove("traceId");
+    }
+});
+```
+
 | Signal | Name | Values |
 | --- | --- | --- |
 | Log event | `EventId` 4001 `UnhandledException`, Error | `ErrorType`, `RouteTemplate`, `StatusCode`, `TraceId`; no exception object |

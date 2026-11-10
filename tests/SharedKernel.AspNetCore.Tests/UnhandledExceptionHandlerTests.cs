@@ -122,6 +122,40 @@ public sealed class UnhandledExceptionHandlerTests
     }
 
     [Fact]
+    public async Task A_host_reshapes_the_client_error_body_with_its_own_problem_details_customization()
+    {
+        // Arrange
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
+        var logger = new RecordingLogger<UnhandledExceptionReporter>();
+        await using var app = await UnhandledExceptionTestApp.Start(meters, logger, options => options.CustomizeProblemDetails = context =>
+        {
+            if (context.ProblemDetails.Status < 500)
+            {
+                context.ProblemDetails.Title = "The request could not be read.";
+                context.ProblemDetails.Type = null;
+                context.ProblemDetails.Extensions.Remove("traceId");
+            }
+        });
+        using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
+
+        // Act
+        using var clientError = await client.PostAsync(new Uri("/upload", UriKind.Relative), content: null, TestContext.Current.CancellationToken);
+        using var serverError = await client.GetAsync(new Uri("/orders/42", UriKind.Relative), TestContext.Current.CancellationToken);
+
+        // Assert
+        clientError.StatusCode.ShouldBe(HttpStatusCode.RequestEntityTooLarge);
+        using var clientBody = JsonDocument.Parse(await clientError.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+        clientBody.RootElement.GetProperty("status").GetInt32().ShouldBe(413);
+        clientBody.RootElement.GetProperty("title").GetString().ShouldBe("The request could not be read.");
+        clientBody.RootElement.TryGetProperty("type", out _).ShouldBeFalse("the host removed the type");
+        clientBody.RootElement.TryGetProperty("traceId", out _).ShouldBeFalse("the host removed the trace identifier");
+        serverError.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
+        using var serverBody = JsonDocument.Parse(await serverError.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+        serverBody.RootElement.GetProperty("traceId").GetString().ShouldNotBeNull().ShouldNotBe(string.Empty);
+        meters.Measurements.ShouldHaveSingleItem("only the server error is counted");
+    }
+
+    [Fact]
     public async Task Client_abort_is_left_to_the_framework_and_not_counted()
     {
         // Arrange
