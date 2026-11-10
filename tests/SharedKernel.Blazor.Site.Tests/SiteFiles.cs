@@ -5,8 +5,6 @@ namespace PandaBear.Blazor.Site.Tests;
 /// <summary>Locates the package sources that the stylesheet tests read.</summary>
 internal static partial class SiteFiles
 {
-    private const string DarkMedia = "prefers-color-scheme: dark";
-
     /// <summary>Gets the directory of the package project.</summary>
     /// <returns>The absolute directory.</returns>
     public static string ProjectDirectory()
@@ -30,28 +28,22 @@ internal static partial class SiteFiles
     /// <returns>The absolute path.</returns>
     public static string ReadmePath() => Path.Combine(ProjectDirectory(), "README.md");
 
-    /// <summary>Reads the hex colour tokens of one colour scheme.</summary>
-    /// <param name="dark">Whether to read the dark scheme, merged over the default one.</param>
+    /// <summary>Reads the colour tokens, each defined once as <c>light-dark(#light, #dark)</c>, for one colour scheme.</summary>
+    /// <param name="dark">Whether to read the dark side of each pair.</param>
     /// <returns>The hex value by token name without the <c>--site-</c> prefix.</returns>
-    public static Dictionary<string, string> Colors(bool dark)
-    {
-        var css = File.ReadAllText(StylesheetPath());
-        var split = css.IndexOf(DarkMedia, StringComparison.Ordinal);
-        var colors = ReadColors(css[..split]);
-        if (dark)
-        {
-            foreach (var entry in ReadColors(css[split..]))
-            {
-                colors[entry.Key] = entry.Value;
-            }
-        }
+    public static Dictionary<string, string> Colors(bool dark) => ColorPattern().Matches(File.ReadAllText(StylesheetPath()))
+        .ToDictionary(match => match.Groups[1].Value, match => match.Groups[dark ? 3 : 2].Value, StringComparer.Ordinal);
 
-        return colors;
+    /// <summary>Returns the declarations of the rule whose selector list starts a line with <paramref name="selector" />.</summary>
+    /// <param name="css">The stylesheet.</param>
+    /// <param name="selector">The first selector of the rule.</param>
+    /// <returns>The text between the braces.</returns>
+    public static string Rule(string css, string selector)
+    {
+        var match = Regex.Match(css, @"^[ \t]*" + Regex.Escape(selector) + @"\s*(?:,[^{]*)?\{([^}]*)\}", RegexOptions.Multiline, TimeSpan.FromSeconds(1));
+        return match.Success ? match.Groups[1].Value : throw new InvalidOperationException("No rule starts with " + selector + ".");
     }
 
-    private static Dictionary<string, string> ReadColors(string css) => ColorPattern().Matches(css)
-        .ToDictionary(match => match.Groups[1].Value, match => match.Groups[2].Value, StringComparer.Ordinal);
-
-    [GeneratedRegex(@"--site-(color-[a-z-]+)\s*:\s*(#[0-9a-fA-F]{6})\s*;")]
+    [GeneratedRegex(@"--site-(color-[a-z-]+)\s*:\s*light-dark\(\s*(#[0-9a-fA-F]{6})\s*,\s*(#[0-9a-fA-F]{6})\s*\)\s*;")]
     private static partial Regex ColorPattern();
 }

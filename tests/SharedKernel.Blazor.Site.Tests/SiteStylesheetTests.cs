@@ -5,8 +5,6 @@ namespace PandaBear.Blazor.Site.Tests;
 /// <summary>Tests the static web asset stylesheet and the documented design tokens.</summary>
 public sealed partial class SiteStylesheetTests
 {
-    private const string DarkMedia = "prefers-color-scheme: dark";
-
     [Fact]
     public void Stylesheet_is_a_static_web_asset_of_the_package_and_the_readme_documents_its_path()
     {
@@ -26,7 +24,7 @@ public sealed partial class SiteStylesheetTests
     {
         // Arrange
         var css = File.ReadAllText(SiteFiles.StylesheetPath());
-        var defined = TokenPattern().Matches(css[..css.IndexOf(DarkMedia, StringComparison.Ordinal)]).Select(match => match.Groups[1].Value).ToHashSet(StringComparer.Ordinal);
+        var defined = TokenPattern().Matches(css).Select(match => match.Groups[1].Value).ToHashSet(StringComparer.Ordinal);
         var documented = DocumentedPattern().Matches(File.ReadAllText(SiteFiles.ReadmePath())).Select(match => match.Groups[1].Value).ToHashSet(StringComparer.Ordinal);
 
         // Act
@@ -43,19 +41,21 @@ public sealed partial class SiteStylesheetTests
     }
 
     [Fact]
-    public void Dark_scheme_overrides_only_tokens_that_exist_in_the_default_scheme()
+    public void Every_colour_token_is_defined_once_for_both_schemes_with_light_dark()
     {
         // Arrange
         var css = File.ReadAllText(SiteFiles.StylesheetPath());
-        var split = css.IndexOf(DarkMedia, StringComparison.Ordinal);
-        var light = TokenPattern().Matches(css[..split]).Select(match => match.Groups[1].Value).ToHashSet(StringComparer.Ordinal);
 
         // Act
-        var dark = TokenPattern().Matches(css[split..]).Select(match => match.Groups[1].Value).ToArray();
+        var colorTokens = TokenPattern().Matches(css).Select(match => match.Groups[1].Value).Where(token => token.StartsWith("color-", StringComparison.Ordinal)).ToArray();
+        var pairs = SiteFiles.Colors(dark: false);
 
         // Assert
-        dark.ShouldNotBeEmpty();
-        dark.ShouldAllSatisfy(token => light.ShouldContain(token));
+        colorTokens.ShouldNotBeEmpty();
+        colorTokens.Distinct(StringComparer.Ordinal).Count().ShouldBe(colorTokens.Length);
+        colorTokens.ShouldAllSatisfy(token => pairs.Keys.ShouldContain(token));
+        css.ShouldContain("color-scheme: light dark", StringComparison.Ordinal);
+        css.ShouldNotContain("prefers-color-scheme", StringComparison.Ordinal);
     }
 
     [Theory]
@@ -76,6 +76,10 @@ public sealed partial class SiteStylesheetTests
             ("color-accent", "color-surface"),
             ("color-on-primary", "color-primary"),
             ("color-on-accent", "color-accent"),
+            ("color-on-primary", "color-primary-hover"),
+            ("color-on-accent", "color-accent-hover"),
+            ("color-primary-hover", "color-surface"),
+            ("color-primary-hover", "color-surface-alt"),
         ];
 
         // Act
@@ -83,6 +87,55 @@ public sealed partial class SiteStylesheetTests
 
         // Assert
         ratios.ShouldAllSatisfy(entry => entry.Ratio.ShouldBeGreaterThanOrEqualTo(4.5, $"{entry.pair.Foreground} on {entry.pair.Background}"));
+    }
+
+    [Fact]
+    public void Button_hover_uses_the_hover_tokens_instead_of_a_filter()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Assert
+        css.ShouldNotContain("filter:", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-button--primary:hover").ShouldContain("var(--site-color-primary-hover)", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-button--secondary:hover").ShouldContain("var(--site-color-accent-hover)", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-button--outline:hover").ShouldContain("var(--site-color-primary-hover)", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("h5", "--site-font-size-base")]
+    [InlineData("h6", "--site-font-size-sm")]
+    public void Small_headings_are_not_smaller_than_their_documented_size(string heading, string token)
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Assert
+        SiteFiles.Rule(css, heading).ShouldContain($"font-size: var({token})", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Links_in_the_card_body_stay_clickable_above_the_title_link_overlay()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+        var rule = SiteFiles.Rule(css, ".site-card__body a:not(.site-card__title a)");
+
+        // Assert
+        rule.ShouldContain("position: relative", StringComparison.Ordinal);
+        rule.ShouldContain("z-index: 1", StringComparison.Ordinal);
+        css.ShouldContain(".site-card__title a {", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Card_shows_its_focus_ring_only_for_keyboard_focus()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Assert
+        css.ShouldNotContain(".site-card:focus-within", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-card:has(:focus-visible)").ShouldContain("outline: var(--site-focus-ring)", StringComparison.Ordinal);
     }
 
     [Fact]

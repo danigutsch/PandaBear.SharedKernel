@@ -1,16 +1,20 @@
 /* PandaBear.SharedKernel.Blazor.Site: brand-neutral site styles. Override the --site-* tokens in your own stylesheet. */
 
 :root {
-    --site-color-primary: #1d4ed8;
-    --site-color-on-primary: #ffffff;
-    --site-color-surface: #ffffff;
-    --site-color-surface-alt: #f3f4f6;
-    --site-color-text: #1f2937;
-    --site-color-muted: #4b5563;
-    --site-color-border: #d1d5db;
-    --site-color-accent: #b45309;
-    --site-color-on-accent: #ffffff;
-    --site-color-focus: #1d4ed8;
+    color-scheme: light dark;
+    /* Each colour is light-dark(light value, dark value). Override a token with light-dark() to keep both schemes. */
+    --site-color-primary: light-dark(#1d4ed8, #93c5fd);
+    --site-color-primary-hover: light-dark(#1e40af, #60a5fa);
+    --site-color-on-primary: light-dark(#ffffff, #111827);
+    --site-color-surface: light-dark(#ffffff, #111827);
+    --site-color-surface-alt: light-dark(#f3f4f6, #1f2937);
+    --site-color-text: light-dark(#1f2937, #f3f4f6);
+    --site-color-muted: light-dark(#4b5563, #9ca3af);
+    --site-color-border: light-dark(#d1d5db, #374151);
+    --site-color-accent: light-dark(#b45309, #fbbf24);
+    --site-color-accent-hover: light-dark(#92400e, #f59e0b);
+    --site-color-on-accent: light-dark(#ffffff, #111827);
+    --site-color-focus: light-dark(#1d4ed8, #93c5fd);
     --site-font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --site-font-heading: var(--site-font-body);
     --site-font-size-sm: clamp(0.875rem, 0.85rem + 0.1vw, 0.9375rem);
@@ -30,22 +34,6 @@
     --site-content-width: 72rem;
     --site-card-min-width: 16rem;
     --site-focus-ring: 3px solid var(--site-color-focus);
-    color-scheme: light dark;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --site-color-primary: #93c5fd;
-        --site-color-on-primary: #111827;
-        --site-color-surface: #111827;
-        --site-color-surface-alt: #1f2937;
-        --site-color-text: #f3f4f6;
-        --site-color-muted: #9ca3af;
-        --site-color-border: #374151;
-        --site-color-accent: #fbbf24;
-        --site-color-on-accent: #111827;
-        --site-color-focus: #93c5fd;
-    }
 }
 
 *,
@@ -73,6 +61,8 @@ h1 { font-size: var(--site-font-size-3xl); }
 h2 { font-size: var(--site-font-size-2xl); }
 h3 { font-size: var(--site-font-size-xl); }
 h4 { font-size: var(--site-font-size-lg); }
+h5 { font-size: var(--site-font-size-base); }
+h6 { font-size: var(--site-font-size-sm); }
 
 img {
     max-width: 100%;
@@ -277,11 +267,20 @@ a {
     color: var(--site-color-primary);
 }
 
-.site-button:hover {
-    filter: brightness(1.1);
+.site-button--primary:hover {
+    background: var(--site-color-primary-hover);
 }
 
-/* Cards: the title link covers the card; actions stay clickable above it. */
+.site-button--secondary:hover {
+    background: var(--site-color-accent-hover);
+}
+
+.site-button--outline:hover {
+    border-color: var(--site-color-primary-hover);
+    color: var(--site-color-primary-hover);
+}
+
+/* Cards: the title link covers the card; links and controls in the body and the actions stay clickable above it. */
 .site-card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--site-card-min-width)), 1fr));
@@ -321,11 +320,22 @@ a {
     inset: 0;
 }
 
+.site-card__body a:not(.site-card__title a),
+.site-card__body button,
+.site-card__body input,
+.site-card__body select,
+.site-card__body textarea,
+.site-card__body summary,
+.site-card__body [tabindex] {
+    position: relative;
+    z-index: 1;
+}
+
 .site-card__title a:hover {
     text-decoration: underline;
 }
 
-.site-card:focus-within {
+.site-card:has(:focus-visible) {
     outline: var(--site-focus-ring);
     outline-offset: 2px;
 }

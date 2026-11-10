@@ -68,7 +68,7 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `Hero` | The page's one `h1`, a subtitle, an eager image and an actions slot. |
 | `Section` | `section` labelled by its heading (`Level`, default 2), a decorative divider and an intro. |
 | `ButtonLink` | A link styled as a button (`Primary`, `Secondary`, `Outline`). `NewTab` adds `target="_blank"`, `rel="noopener noreferrer"` and a visually hidden `NewTabHint`. |
-| `Card`, `CardGrid` | `article` with an optional lazy image, a heading (`HeadingLevel`, default 3) whose link covers the card, text and actions; an auto-fit grid. |
+| `Card`, `CardGrid` | `article` with an optional lazy image, a heading (`HeadingLevel`, default 3) whose link covers the card, text and actions; an auto-fit grid. Links, buttons, form controls, `summary` and `[tabindex]` elements in the body and the actions are raised above the covering link, so they stay clickable; any other interactive element you put in the body needs `position: relative; z-index: 1`. The focus ring is drawn on the card while a control in it has keyboard focus (`:has(:focus-visible)`). |
 | `FactsTable` | `table` with a required `caption` and `th scope="row"` headers. |
 | `Disclosure` | Native `details` and `summary`; a tab substitute without script. |
 | `Quote` | `figure` with a `blockquote` and a `cite` caption. |
@@ -110,11 +110,24 @@ Texts that people read (labels, the new-tab hint, the WhatsApp link text) are pa
 
 ## Design tokens
 
-Override any token on `:root` in your own stylesheet. The dark values apply under `prefers-color-scheme: dark`.
+Override any token on `:root` in your own stylesheet. Each colour token is defined once with `light-dark(light, dark)`, and `:root`
+declares `color-scheme: light dark`, so the browser picks the side that matches the user's colour scheme. Override a colour with
+`light-dark()` too, so one declaration sets both schemes:
+
+```css
+:root {
+    --site-color-primary: light-dark(#0f766e, #5eead4);
+    --site-color-primary-hover: light-dark(#115e59, #2dd4bf);
+}
+```
+
+A plain value (`--site-color-primary: #0f766e;`) applies to both schemes; that is intentional, but check its contrast against the
+dark surface too. `light-dark()` needs a 2024 or later browser (Chrome 123, Firefox 120, Safari 17.5).
 
 | Token | Default (light / dark) | Use |
 | --- | --- | --- |
 | `--site-color-primary` | `#1d4ed8` / `#93c5fd` | Links, primary buttons, current items |
+| `--site-color-primary-hover` | `#1e40af` / `#60a5fa` | Primary and outline buttons on hover |
 | `--site-color-on-primary` | `#ffffff` / `#111827` | Text on the primary colour |
 | `--site-color-surface` | `#ffffff` / `#111827` | Page background |
 | `--site-color-surface-alt` | `#f3f4f6` / `#1f2937` | Cards, quotes, contact card |
@@ -122,6 +135,7 @@ Override any token on `:root` in your own stylesheet. The dark values apply unde
 | `--site-color-muted` | `#4b5563` / `#9ca3af` | Secondary text |
 | `--site-color-border` | `#d1d5db` / `#374151` | Borders and rules |
 | `--site-color-accent` | `#b45309` / `#fbbf24` | Divider, secondary buttons |
+| `--site-color-accent-hover` | `#92400e` / `#f59e0b` | Secondary buttons on hover |
 | `--site-color-on-accent` | `#ffffff` / `#111827` | Text on the accent colour |
 | `--site-color-focus` | `#1d4ed8` / `#93c5fd` | Focus ring colour |
 | `--site-focus-ring` | `3px solid` focus colour | `:focus-visible` outline |
@@ -135,7 +149,9 @@ Override any token on `:root` in your own stylesheet. The dark values apply unde
 | `--site-card-min-width` | `16rem` | Smallest card column of `CardGrid` |
 
 Every default text pair reaches a WCAG contrast ratio of at least 4.5:1 in both schemes (text, muted and primary on surface and
-surface-alt, accent on surface, on-primary on primary, on-accent on accent); a test computes the ratios from the stylesheet. Light
+surface-alt, accent on surface, on-primary on primary and on primary-hover, on-accent on accent and on accent-hover, primary-hover on
+surface and surface-alt); a test computes the ratios for both sides of every `light-dark()` pair. Buttons change to the hover tokens
+on hover, never to a filter, so the hover state keeps the checked contrast. Light
 values: text 14.7:1, muted 7.6:1, primary 6.7:1 and accent 5.0:1 on white. The stylesheet respects `prefers-reduced-motion`, shows a
 visible `:focus-visible` ring, is mobile first with one `48rem` breakpoint, and loads no fonts, images or other URLs.
 
