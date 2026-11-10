@@ -74,6 +74,6 @@ public sealed partial class Card
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(Title);
         Heading.RequireLevel(HeadingLevel, nameof(HeadingLevel));
-        ImageRules.Check(ImageSrc, ImageAlt, ImageWidth, ImageHeight, nameof(ImageAlt));
+        ImageRules.Check(ImageSrc, ImageAlt, ImageWidth, ImageHeight, "Image");
     }
 }

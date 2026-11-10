@@ -1,17 +1,20 @@
 namespace PandaBear.Blazor.Site.Tests;
 
-/// <summary>Tests the scheme allow list of link targets.</summary>
+/// <summary>Tests the scheme allow list and the shape rules of link targets.</summary>
 public sealed class LinkTargetTests
 {
     [Theory]
     [InlineData("/tours")]
     [InlineData("tours/one")]
+    [InlineData("./a:b")]
     [InlineData("#top")]
     [InlineData("?page=2")]
     [InlineData("https://example.org/a")]
+    [InlineData("HTTPS://example.org/a?b=c#d")]
     [InlineData("http://example.org/a")]
     [InlineData("mailto:hello@example.org")]
     [InlineData("tel:+5511999990000")]
+    [InlineData("tel:5511999990000")]
     public void Safe_links_are_accepted(string href)
     {
         // Arrange & Act
@@ -32,6 +35,30 @@ public sealed class LinkTargetTests
     [InlineData("java\tscript:alert(1)")]
     [InlineData("//evil.example/x")]
     [InlineData("\\\\evil.example\\x")]
+    [InlineData("/\\evil.example")]
+    [InlineData("/tours ")]
+    [InlineData("/a b")]
+    [InlineData("/a\u0085")]
+    [InlineData("/a b")]
+    [InlineData("a:b")]
+    [InlineData("https:evil.example")]
+    [InlineData("https:/evil.example")]
+    [InlineData("https://")]
+    [InlineData("https://user:pw@example.org/")]
+    [InlineData("http://user@example.org/")]
+    [InlineData("mailto:a@example.org?bcc=evil@example.org")]
+    [InlineData("mailto:a@example.org&cc=evil@example.org")]
+    [InlineData("mailto:a@example.org;b@example.org")]
+    [InlineData("mailto:a@example.org,b@example.org")]
+    [InlineData("mailto:a@example.org%0Abcc:evil@example.org")]
+    [InlineData("mailto:example.org")]
+    [InlineData("mailto:@example.org")]
+    [InlineData("mailto:a@")]
+    [InlineData("mailto:")]
+    [InlineData("tel:")]
+    [InlineData("tel:+")]
+    [InlineData("tel:call-me")]
+    [InlineData("tel:55+11")]
     [InlineData("")]
     [InlineData("  ")]
     [InlineData(null)]
@@ -45,15 +72,61 @@ public sealed class LinkTargetTests
     }
 
     [Fact]
-    public void Text_conversion_throws_for_an_unsafe_link_and_keeps_a_safe_one()
+    public void Links_longer_than_the_maximum_are_invalid()
+    {
+        // Arrange
+        var atLimit = "/" + new string('a', LinkTarget.MaxLength - 1);
+        var overLimit = atLimit + "a";
+
+        // Act
+        var accepted = LinkTarget.Create(atLimit);
+        var rejected = LinkTarget.Create(overLimit);
+
+        // Assert
+        accepted.IsSuccess.ShouldBeTrue();
+        rejected.IsFailure.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Validation_errors_do_not_echo_the_input()
     {
         // Arrange & Act
-        Func<object?> unsafeLink = () => (LinkTarget)"javascript:alert(1)";
-        LinkTarget safe = "/tours";
+        var result = LinkTarget.Create("javascript:secret");
+
+        // Assert
+        result.ErrorDetails!.Detail!.ShouldNotContain("secret", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void From_string_throws_for_an_unsafe_link_and_keeps_a_safe_one()
+    {
+        // Arrange & Act
+        var unsafeLink = () => LinkTarget.FromString("javascript:alert(1)");
+        var safe = LinkTarget.FromString("/tours");
 
         // Assert
         unsafeLink.ShouldThrow<ArgumentException>();
         safe.ShouldBe(LinkTarget.FromString("/tours"));
         safe.ToString().ShouldBe("/tours");
+    }
+
+    [Theory]
+    [InlineData("/img/a.jpg", true)]
+    [InlineData("https://cdn.example.org/a.jpg", true)]
+    [InlineData("http://cdn.example.org/a.jpg", false)]
+    [InlineData("img/a.jpg", false)]
+    [InlineData("#a", false)]
+    [InlineData("mailto:a@example.org", false)]
+    [InlineData("tel:+5511999990000", false)]
+    public void Only_root_relative_and_https_targets_are_image_sources(string href, bool expected)
+    {
+        // Arrange
+        var target = LinkTarget.FromString(href);
+
+        // Act
+        var isImageSource = target.IsImageSource;
+
+        // Assert
+        isImageSource.ShouldBe(expected);
     }
 }

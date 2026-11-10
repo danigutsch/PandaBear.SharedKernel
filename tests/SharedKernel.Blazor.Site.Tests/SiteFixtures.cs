@@ -13,10 +13,15 @@ internal static class SiteFixtures
         get;
     } =
     [
-        new("Home", "/"),
-        new("Tours", "/tours"),
-        new("About", null, [new("Team", "/about/team"), new("Story", "/about/story")]),
+        new("Home", Link("/")),
+        new("Tours", Link("/tours")),
+        new("About", null, [new("Team", Link("/about/team")), new("Story", Link("/about/story"))]),
     ];
+
+    /// <summary>Creates a link target from an author-controlled literal.</summary>
+    /// <param name="value">The address.</param>
+    /// <returns>The target.</returns>
+    public static LinkTarget Link(string value) => LinkTarget.FromString(value);
 
     /// <summary>Creates a validated phone number.</summary>
     /// <param name="value">The number text.</param>
@@ -37,7 +42,7 @@ internal static class SiteFixtures
     /// <param name="count">The number of images.</param>
     /// <returns>The images.</returns>
     public static GalleryImage[] Images(int count) => Enumerable.Range(1, count)
-        .Select(index => new GalleryImage($"/img{index}.jpg", ImageAlternative.Describe($"Photo {index}"), 400, 300, index == 1 ? "First" : null))
+        .Select(index => new GalleryImage(Link($"/img{index}.jpg"), ImageAlternative.Describe($"Photo {index}"), 400, 300, index == 1 ? "First" : null))
         .ToArray();
 
     /// <summary>Renders the header with <see cref="NavItems" />, the label "Main" and a brand link.</summary>

@@ -217,4 +217,5 @@ static PandaBear.Blazor.Site.ImageAlternative.Decorative() -> PandaBear.Blazor.S
 static PandaBear.Blazor.Site.ImageAlternative.Describe(string! text) -> PandaBear.Blazor.Site.ImageAlternative!
 static PandaBear.Blazor.Site.LinkTarget.Create(string? value) -> PandaBear.Results.Result<PandaBear.Blazor.Site.LinkTarget!>
 static PandaBear.Blazor.Site.LinkTarget.FromString(string! value) -> PandaBear.Blazor.Site.LinkTarget!
-static PandaBear.Blazor.Site.LinkTarget.implicit operator PandaBear.Blazor.Site.LinkTarget!(string! value) -> PandaBear.Blazor.Site.LinkTarget!
+const PandaBear.Blazor.Site.LinkTarget.MaxLength = 2048 -> int
+PandaBear.Blazor.Site.LinkTarget.IsImageSource.get -> bool

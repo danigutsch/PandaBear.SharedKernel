@@ -9,8 +9,8 @@ public sealed class CardTests : BunitContext
         // Arrange & Act
         var cut = Render<Card>(parameters => parameters
             .Add(component => component.Title, "Atacama")
-            .Add(component => component.Href, "/tours/atacama")
-            .Add(component => component.ImageSrc, "/atacama.jpg")
+            .Add(component => component.Href, LinkTarget.FromString("/tours/atacama"))
+            .Add(component => component.ImageSrc, LinkTarget.FromString("/atacama.jpg"))
             .Add(component => component.ImageAlt, ImageAlternative.Describe("Salt flats"))
             .Add(component => component.ImageWidth, 800)
             .Add(component => component.ImageHeight, 600)
@@ -42,18 +42,6 @@ public sealed class CardTests : BunitContext
         cut.Find("h4").TextContent.ShouldBe("Atacama");
         cut.FindAll("a").ShouldBeEmpty();
         cut.FindAll("img").ShouldBeEmpty();
-    }
-
-    [Fact]
-    public void Unsafe_title_link_is_rejected()
-    {
-        // Arrange & Act
-        var render = () => Render<Card>(parameters => parameters
-            .Add(component => component.Title, "Atacama")
-            .Add(component => component.Href, "javascript:alert(1)"));
-
-        // Assert
-        render.ShouldThrow<ArgumentException>();
     }
 
     [Fact]

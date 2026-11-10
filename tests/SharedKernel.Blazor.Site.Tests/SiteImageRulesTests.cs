@@ -9,7 +9,7 @@ public sealed class SiteImageRulesTests : BunitContext
         // Arrange & Act
         var render = () => Render<Hero>(parameters => parameters
             .Add(component => component.Title, "Title")
-            .Add(component => component.ImageSrc, "/a.jpg"));
+            .Add(component => component.ImageSrc, LinkTarget.FromString("/a.jpg")));
 
         // Assert
         render.ShouldThrow<InvalidOperationException>().Message.ShouldContain("ImageAlt", StringComparison.Ordinal);
@@ -21,7 +21,7 @@ public sealed class SiteImageRulesTests : BunitContext
         // Arrange & Act
         var render = () => Render<Card>(parameters => parameters
             .Add(component => component.Title, "Title")
-            .Add(component => component.ImageSrc, "/a.jpg"));
+            .Add(component => component.ImageSrc, LinkTarget.FromString("/a.jpg")));
 
         // Assert
         render.ShouldThrow<InvalidOperationException>();
@@ -60,7 +60,7 @@ public sealed class SiteImageRulesTests : BunitContext
         // Arrange & Act
         var cut = Render<Card>(parameters => parameters
             .Add(component => component.Title, "Title")
-            .Add(component => component.ImageSrc, "/a.jpg")
+            .Add(component => component.ImageSrc, LinkTarget.FromString("/a.jpg"))
             .Add(component => component.ImageAlt, ImageAlternative.Decorative()));
 
         // Assert
@@ -73,11 +73,43 @@ public sealed class SiteImageRulesTests : BunitContext
         // Arrange & Act
         var render = () => Render<Hero>(parameters => parameters
             .Add(component => component.Title, "Title")
-            .Add(component => component.ImageSrc, "/a.jpg")
+            .Add(component => component.ImageSrc, LinkTarget.FromString("/a.jpg"))
             .Add(component => component.ImageAlt, ImageAlternative.Describe("x"))
             .Add(component => component.ImageWidth, 0));
 
         // Assert
         render.ShouldThrow<ArgumentOutOfRangeException>();
+    }
+
+    [Theory]
+    [InlineData("mailto:a@example.org")]
+    [InlineData("tel:+5511999990000")]
+    [InlineData("http://example.org/a.jpg")]
+    [InlineData("a.jpg")]
+    public void Image_sources_that_are_not_root_relative_or_https_are_rejected(string src)
+    {
+        // Arrange
+        var source = LinkTarget.FromString(src);
+
+        // Act
+        var hero = () => Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Title")
+            .Add(component => component.ImageSrc, source)
+            .Add(component => component.ImageAlt, ImageAlternative.Decorative())
+            .Add(component => component.ImageWidth, 10)
+            .Add(component => component.ImageHeight, 10));
+        var card = () => Render<Card>(parameters => parameters
+            .Add(component => component.Title, "Title")
+            .Add(component => component.ImageSrc, source)
+            .Add(component => component.ImageAlt, ImageAlternative.Decorative())
+            .Add(component => component.ImageWidth, 10)
+            .Add(component => component.ImageHeight, 10));
+        var grid = () => Render<ImageGrid>(parameters => parameters
+            .Add(component => component.Images, [new GalleryImage(source, ImageAlternative.Decorative(), 10, 10)]));
+
+        // Assert
+        hero.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(Hero.ImageSrc));
+        card.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(Card.ImageSrc));
+        grid.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(ImageGrid.Images));
     }
 }

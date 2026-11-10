@@ -67,18 +67,14 @@ public sealed class SiteHeaderTests : BunitContext
     }
 
     [Fact]
-    public void Unsafe_links_and_items_without_target_are_rejected()
+    public void Items_without_target_are_rejected()
     {
         // Arrange & Act
-        var unsafeLink = () => Render<SiteHeader>(parameters => parameters
-            .Add(component => component.Label, "Main")
-            .Add(component => component.Items, [new SiteNavItem("Bad", "javascript:alert(1)")]));
         var empty = () => Render<SiteHeader>(parameters => parameters
             .Add(component => component.Label, "Main")
             .Add(component => component.Items, [new SiteNavItem("Nothing")]));
 
         // Assert
-        unsafeLink.ShouldThrow<ArgumentException>();
         empty.ShouldThrow<ArgumentException>();
     }
 

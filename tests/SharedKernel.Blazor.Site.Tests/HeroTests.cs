@@ -26,7 +26,7 @@ public sealed class HeroTests : BunitContext
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
             .Add(component => component.Title, "Discover")
-            .Add(component => component.ImageSrc, "/hero.jpg")
+            .Add(component => component.ImageSrc, LinkTarget.FromString("/hero.jpg"))
             .Add(component => component.ImageAlt, ImageAlternative.Describe("A lake"))
             .Add(component => component.ImageWidth, 1600)
             .Add(component => component.ImageHeight, 900));

@@ -62,6 +62,6 @@ public sealed partial class Hero
     protected override void OnParametersSet()
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(Title);
-        ImageRules.Check(ImageSrc, ImageAlt, ImageWidth, ImageHeight, nameof(ImageAlt));
+        ImageRules.Check(ImageSrc, ImageAlt, ImageWidth, ImageHeight, "Image");
     }
 }

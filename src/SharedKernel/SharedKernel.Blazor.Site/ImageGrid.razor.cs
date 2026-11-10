@@ -32,7 +32,7 @@ public sealed partial class ImageGrid
         {
             ArgumentNullException.ThrowIfNull(image, nameof(Images));
             ArgumentNullException.ThrowIfNull(image.Src, nameof(Images));
-            ImageRules.Check(image.Src, image.Alt, image.Width, image.Height, nameof(GalleryImage.Alt));
+            ImageRules.Check(image.Src, image.Alt, image.Width, image.Height, "GalleryImage.", nameof(Images));
         }
     }
 }

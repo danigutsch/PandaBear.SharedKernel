@@ -50,7 +50,7 @@ public sealed class ImageGridTests : BunitContext
     {
         // Arrange & Act
         var render = () => Render<ImageGrid>(parameters => parameters
-            .Add(component => component.Images, [new GalleryImage("/a.jpg", null!, 10, 10)]));
+            .Add(component => component.Images, [new GalleryImage(LinkTarget.FromString("/a.jpg"), null!, 10, 10)]));
 
         // Assert
         render.ShouldThrow<InvalidOperationException>();
@@ -61,7 +61,7 @@ public sealed class ImageGridTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<ImageGrid>(parameters => parameters
-            .Add(component => component.Images, [new GalleryImage("/a.jpg", ImageAlternative.Decorative(), 10, 10)]));
+            .Add(component => component.Images, [new GalleryImage(LinkTarget.FromString("/a.jpg"), ImageAlternative.Decorative(), 10, 10)]));
 
         // Assert
         cut.Find("img").GetAttribute("alt").ShouldBe(string.Empty);
@@ -75,7 +75,7 @@ public sealed class ImageGridTests : BunitContext
     {
         // Arrange & Act
         var render = () => Render<ImageGrid>(parameters => parameters
-            .Add(component => component.Images, [new GalleryImage("/a.jpg", ImageAlternative.Describe("x"), width, height)]));
+            .Add(component => component.Images, [new GalleryImage(LinkTarget.FromString("/a.jpg"), ImageAlternative.Describe("x"), width, height)]));
 
         // Assert
         render.ShouldThrow<ArgumentOutOfRangeException>();

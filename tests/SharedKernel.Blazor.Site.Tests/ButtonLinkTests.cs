@@ -11,7 +11,7 @@ public sealed class ButtonLinkTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<ButtonLink>(parameters => parameters
-            .Add(component => component.Href, "/tours")
+            .Add(component => component.Href, LinkTarget.FromString("/tours"))
             .Add(component => component.Variant, variant)
             .AddChildContent("Go"));
 
@@ -29,7 +29,7 @@ public sealed class ButtonLinkTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<ButtonLink>(parameters => parameters
-            .Add(component => component.Href, "https://example.org")
+            .Add(component => component.Href, LinkTarget.FromString("https://example.org"))
             .Add(component => component.NewTab, true)
             .AddChildContent("Partner"));
 
@@ -45,7 +45,7 @@ public sealed class ButtonLinkTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<ButtonLink>(parameters => parameters
-            .Add(component => component.Href, "https://example.org")
+            .Add(component => component.Href, LinkTarget.FromString("https://example.org"))
             .Add(component => component.NewTab, true)
             .Add(component => component.NewTabHint, "(abre em nova aba)")
             .AddChildContent("Parceiro"));
@@ -55,23 +55,11 @@ public sealed class ButtonLinkTests : BunitContext
     }
 
     [Fact]
-    public void Unsafe_schemes_are_rejected()
-    {
-        // Arrange & Act
-        var render = () => Render<ButtonLink>(parameters => parameters
-            .Add(component => component.Href, "javascript:alert(1)")
-            .AddChildContent("Bad"));
-
-        // Assert
-        render.ShouldThrow<ArgumentException>();
-    }
-
-    [Fact]
     public void Extra_attributes_and_class_are_passed_to_the_link_and_cannot_replace_rel()
     {
         // Arrange & Act
         var cut = Render<ButtonLink>(parameters => parameters
-            .Add(component => component.Href, "https://example.org")
+            .Add(component => component.Href, LinkTarget.FromString("https://example.org"))
             .Add(component => component.NewTab, true)
             .Add(component => component.Class, "extra")
             .AddUnmatched("rel", "opener")

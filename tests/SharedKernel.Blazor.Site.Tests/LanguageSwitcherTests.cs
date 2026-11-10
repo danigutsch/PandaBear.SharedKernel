@@ -7,8 +7,8 @@ public sealed class LanguageSwitcherTests : BunitContext
 {
     private static readonly LanguageLink[] Languages =
     [
-        new(Culture("pt-br"), "Portugues", "/pt/tours", IsCurrent: true),
-        new(Culture("en"), "English", "/en/tours"),
+        new(Culture("pt-br"), "Portugues", Link("/pt/tours"), IsCurrent: true),
+        new(Culture("en"), "English", Link("/en/tours")),
     ];
 
     [Fact]
@@ -46,24 +46,12 @@ public sealed class LanguageSwitcherTests : BunitContext
     }
 
     [Fact]
-    public void Unsafe_links_are_rejected()
-    {
-        // Arrange & Act
-        var render = () => Render<LanguageSwitcher>(parameters => parameters
-            .Add(component => component.Label, "Language")
-            .Add(component => component.Languages, [new LanguageLink(Culture("en"), "x", "javascript:alert(1)")]));
-
-        // Assert
-        render.ShouldThrow<ArgumentException>();
-    }
-
-    [Fact]
     public void A_missing_culture_is_rejected()
     {
         // Arrange & Act
         var render = () => Render<LanguageSwitcher>(parameters => parameters
             .Add(component => component.Label, "Language")
-            .Add(component => component.Languages, [new LanguageLink(null!, "x", "/en")]));
+            .Add(component => component.Languages, [new LanguageLink(null!, "x", Link("/en"))]));
 
         // Assert
         render.ShouldThrow<ArgumentNullException>();
