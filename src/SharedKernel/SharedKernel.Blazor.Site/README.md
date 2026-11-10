@@ -35,7 +35,7 @@ Reference the stylesheet from the host page, then your own stylesheet that overr
           ImageSrc="@LinkTarget.FromString("/img/hero.jpg")" ImageAlt="@ImageAlternative.Describe("A lake below snowy peaks")" ImageWidth="1600" ImageHeight="900">
         <Actions><ButtonLink Href="@LinkTarget.FromString("/tours")">See the tours</ButtonLink></Actions>
     </Hero>
-    <Section Title="Tours" Intro="Pick your next trip.">
+    <Section Title="Tours" HeadingId="tours-heading" Intro="Pick your next trip.">
         <CardGrid>
             <Card Title="Atacama" Href="@LinkTarget.FromString("/tours/atacama")" ImageSrc="@LinkTarget.FromString("/img/atacama.jpg")" ImageAlt="@ImageAlternative.Decorative()"
                   ImageWidth="800" ImageHeight="600">
@@ -67,7 +67,7 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `SiteHeader` | `header` with a brand slot, a labelled `nav` (`Label` is required when there are items), and an actions slot. An item has either an `Href` or one level of children; an item with children is a native `details`. The item that matches `CurrentPath` gets `aria-current="page"` and opens its group. |
 | `SiteFooter` | `footer` with a content slot and an optional `Legal` line. |
 | `Hero` | The page's one `h1`, a subtitle, an eager image and an actions slot. |
-| `Section` | `section` labelled by its heading (`Level`, default 2), a decorative divider and an intro. |
+| `Section` | `section` with a heading (`Level`, default 2), a decorative divider and an intro. Set `HeadingId` to give the heading that id and label the section by it (`aria-labelledby`), which makes it a named region; without it no id is generated, so prerendered and interactive markup match. |
 | `ButtonLink` | A link styled as a button (`Primary`, `Secondary`, `Outline`). `NewTab` adds `target="_blank"`, `rel="noopener noreferrer"` and a visually hidden `NewTabHint`. |
 | `Card`, `CardGrid` | `article` with an optional lazy image, a heading (`HeadingLevel`, default 3) whose link covers the card, text and actions; an auto-fit grid. Links, buttons, form controls, `summary` and `[tabindex]` elements in the body and the actions are raised above the covering link, so they stay clickable; any other interactive element you put in the body needs `position: relative; z-index: 1`. The focus ring is drawn on the card while a control in it has keyboard focus (`:has(:focus-visible)`). |
 | `FactsTable` | `table` with a required `caption` and `th scope="row"` headers. |

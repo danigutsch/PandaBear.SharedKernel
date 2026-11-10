@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Components;
 
 namespace PandaBear.Blazor.Site;
 
-/// <summary>A page section labelled by its heading, with an optional intro and a decorative divider.</summary>
+/// <summary>
+/// A page section with a heading, an optional intro and a decorative divider. With <see cref="HeadingId" /> the heading gets that id
+/// and the section is labelled by it (<c>aria-labelledby</c>), which makes it a named region landmark; without it no id is generated,
+/// so the markup is the same during prerendering and in the interactive circuit.
+/// </summary>
 public sealed partial class Section
 {
-    private readonly string _headingId = "site-section-" + Guid.NewGuid().ToString("N");
-
     /// <summary>Gets or sets the heading text.</summary>
     [Parameter]
     [EditorRequired]
@@ -14,6 +16,15 @@ public sealed partial class Section
     {
         get; set;
     } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the id of the heading, unique on the page and without white space. When set, the section is labelled by its heading.
+    /// </summary>
+    [Parameter]
+    public string? HeadingId
+    {
+        get; set;
+    }
 
     /// <summary>Gets or sets the heading level, from 1 to 6. The default is 2.</summary>
     [Parameter]
@@ -48,5 +59,9 @@ public sealed partial class Section
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(Title);
         Heading.RequireLevel(Level, nameof(Level));
+        if (HeadingId is not null && (HeadingId.Length == 0 || HeadingId.Any(char.IsWhiteSpace)))
+        {
+            throw new ArgumentException("A heading id must not be empty or contain white space.", nameof(HeadingId));
+        }
     }
 }

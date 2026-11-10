@@ -4,7 +4,7 @@ namespace PandaBear.Blazor.Site.Tests;
 public sealed class SectionTests : BunitContext
 {
     [Fact]
-    public void Section_is_labelled_by_its_heading_which_defaults_to_level_two()
+    public void Section_has_a_level_two_heading_intro_and_body_and_no_generated_id()
     {
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
@@ -15,9 +15,49 @@ public sealed class SectionTests : BunitContext
         // Assert
         var heading = cut.Find("section > .site-section__header > h2");
         heading.TextContent.ShouldBe("Tours");
-        cut.Find("section").GetAttribute("aria-labelledby").ShouldBe(heading.Id);
+        heading.HasAttribute("id").ShouldBeFalse();
+        cut.Find("section").HasAttribute("aria-labelledby").ShouldBeFalse();
         cut.Find(".site-section__intro").TextContent.ShouldBe("Pick one.");
         cut.Find(".site-section__body #body").ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void Section_markup_is_the_same_on_every_render_so_prerendering_and_the_circuit_agree()
+    {
+        // Arrange & Act
+        var first = Render<Section>(parameters => parameters.Add(component => component.Title, "Tours"));
+        var second = Render<Section>(parameters => parameters.Add(component => component.Title, "Tours"));
+
+        // Assert
+        second.Markup.ShouldBe(first.Markup);
+    }
+
+    [Fact]
+    public void A_heading_id_labels_the_section_by_its_heading()
+    {
+        // Arrange & Act
+        var cut = Render<Section>(parameters => parameters
+            .Add(component => component.Title, "Tours")
+            .Add(component => component.HeadingId, "tours-heading"));
+
+        // Assert
+        cut.Find("h2").Id.ShouldBe("tours-heading");
+        cut.Find("section").GetAttribute("aria-labelledby").ShouldBe("tours-heading");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("two words")]
+    public void A_blank_or_spaced_heading_id_is_rejected(string id)
+    {
+        // Arrange & Act
+        var render = () => Render<Section>(parameters => parameters
+            .Add(component => component.Title, "Tours")
+            .Add(component => component.HeadingId, id));
+
+        // Assert
+        render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(Section.HeadingId));
     }
 
     [Theory]

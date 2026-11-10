@@ -1,7 +1,7 @@
 @inherits SiteComponent
-<section class="@CssClass("site-section")" aria-labelledby="@_headingId" @attributes="AdditionalAttributes">
+<section class="@CssClass("site-section")" aria-labelledby="@HeadingId" @attributes="AdditionalAttributes">
     <div class="site-section__header">
-        @Heading.Render(Level, "site-section__title", _headingId, @<text>@Title</text>)
+        @Heading.Render(Level, "site-section__title", HeadingId, @<text>@Title</text>)
         @if (Divider)
         {
             <div class="site-divider" aria-hidden="true"></div>
