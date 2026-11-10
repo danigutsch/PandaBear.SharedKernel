@@ -1,0 +1,12 @@
+#nullable enable
+const PandaBear.AspNetCore.Localization.CulturePathRedirectExtensions.DefaultCookieName = "culture-choice" -> string!
+PandaBear.AspNetCore.Localization.CulturePath
+PandaBear.AspNetCore.Localization.CulturePathRedirectExtensions
+PandaBear.AspNetCore.Localization.PathCultureRequestCultureProvider
+PandaBear.AspNetCore.Localization.PathCultureRequestCultureProvider.PathCultureRequestCultureProvider(PandaBear.BuildingBlocks.SupportedCultures! supportedCultures) -> void
+override PandaBear.AspNetCore.Localization.PathCultureRequestCultureProvider.DetermineProviderCultureResult(Microsoft.AspNetCore.Http.HttpContext! httpContext) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Localization.ProviderCultureResult?>!
+static PandaBear.AspNetCore.Localization.CulturePath.Prepend(Microsoft.AspNetCore.Http.PathString path, PandaBear.BuildingBlocks.ContentCulture! culture, PandaBear.BuildingBlocks.SupportedCultures! supportedCultures) -> Microsoft.AspNetCore.Http.PathString
+static PandaBear.AspNetCore.Localization.CulturePath.Switch(Microsoft.AspNetCore.Http.PathString path, PandaBear.BuildingBlocks.ContentCulture! culture, PandaBear.BuildingBlocks.SupportedCultures! supportedCultures) -> Microsoft.AspNetCore.Http.PathString
+static PandaBear.AspNetCore.Localization.CulturePath.TryParse(Microsoft.AspNetCore.Http.PathString path, PandaBear.BuildingBlocks.SupportedCultures! supportedCultures, out PandaBear.BuildingBlocks.ContentCulture? culture, out Microsoft.AspNetCore.Http.PathString remainder) -> bool
+static PandaBear.AspNetCore.Localization.CulturePathRedirectExtensions.RememberCulture(this Microsoft.AspNetCore.Http.HttpResponse! response, PandaBear.BuildingBlocks.ContentCulture! culture, PandaBear.BuildingBlocks.SupportedCultures! supportedCultures, string! cookieName = "culture-choice") -> void
+static PandaBear.AspNetCore.Localization.CulturePathRedirectExtensions.UseCulturePathRedirect(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app, PandaBear.BuildingBlocks.SupportedCultures! supportedCultures, string! cookieName = "culture-choice", System.Collections.Generic.IReadOnlyCollection<Microsoft.AspNetCore.Http.PathString>? excludedPrefixes = null) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
