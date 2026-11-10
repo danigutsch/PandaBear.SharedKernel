@@ -396,6 +396,37 @@ public sealed class CulturePathRedirectTests
     }
 
     [Fact]
+    public void RememberCulture_scopes_the_cookie_to_the_path_base()
+    {
+        // Arrange
+        var context = new DefaultHttpContext();
+        context.Request.PathBase = "/app";
+
+        // Act
+        context.Response.RememberCulture(En, Supported);
+
+        // Assert
+        var setCookie = SetCookieHeaderValue.Parse(context.Response.Headers.SetCookie.ToString());
+        setCookie.Path.Value.ShouldBe("/app");
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void RememberCulture_marks_the_cookie_secure_only_for_https_requests(bool https)
+    {
+        // Arrange
+        var context = new DefaultHttpContext();
+        context.Request.IsHttps = https;
+
+        // Act
+        context.Response.RememberCulture(En, Supported);
+
+        // Assert
+        SetCookieHeaderValue.Parse(context.Response.Headers.SetCookie.ToString()).Secure.ShouldBe(https);
+    }
+
+    [Fact]
     public void RememberCulture_rejects_an_unsupported_culture()
     {
         // Arrange

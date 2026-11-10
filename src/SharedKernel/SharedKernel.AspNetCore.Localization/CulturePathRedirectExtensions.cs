@@ -53,6 +53,14 @@ public static class CulturePathRedirectExtensions
     /// Remembers the visitor's culture choice in a one-year, HTTP-only, SameSite=Lax cookie that
     /// <see cref="UseCulturePathRedirect" /> reads. Call it from a language-switch endpoint.
     /// </summary>
+    /// <remarks>
+    /// The cookie path is the request's path base (<c>/</c> when it is empty), so an application hosted under <c>/app</c> does
+    /// not set a cookie for the whole host. <c>Secure</c> follows <see cref="HttpRequest.IsHttps" />: behind a proxy or load
+    /// balancer that terminates TLS, configure forwarded headers (<c>UseForwardedHeaders</c> with <c>X-Forwarded-Proto</c>)
+    /// before this runs, or the cookie is sent without <c>Secure</c>. The cookie is marked <c>IsEssential</c>: the language
+    /// preference is treated as strictly necessary, so a cookie-consent policy does not suppress it; it holds only the culture
+    /// name, never personal data.
+    /// </remarks>
     /// <param name="response">The response that receives the cookie.</param>
     /// <param name="culture">The chosen culture. It must be one of the supported cultures.</param>
     /// <param name="supportedCultures">The supported cultures.</param>
@@ -84,7 +92,8 @@ public static class CulturePathRedirectExtensions
                 SameSite = SameSiteMode.Lax,
                 Secure = response.HttpContext.Request.IsHttps,
                 MaxAge = CookieLifetime,
-                Path = "/",
+                // The browser matches the cookie path against the escaped request path.
+                Path = response.HttpContext.Request.PathBase.HasValue ? response.HttpContext.Request.PathBase.ToUriComponent() : "/",
                 IsEssential = true
             });
     }

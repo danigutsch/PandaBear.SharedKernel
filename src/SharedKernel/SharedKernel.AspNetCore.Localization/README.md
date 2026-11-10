@@ -25,8 +25,18 @@ mechanics. It builds on the `SupportedCultures` and `ContentCulture` value objec
   file and passes through without localization or redirect. `Slug` never contains `.`, so content paths built from slugs
   are always localized; do not end a localized route with a segment that contains `.`.
 - `RememberCulture`: writes the remembered-choice cookie (HTTP-only, SameSite=Lax, one year) from a language-switch endpoint.
+  See [The remembered-choice cookie](#the-remembered-choice-cookie).
 - `CulturePath`: `TryParse`, `Prepend`, and `Switch` read, add, or swap the culture segment, for example to build
   language-switcher links.
+
+## The remembered-choice cookie
+
+`RememberCulture` stores only the culture name. Its path is the request's path base (`/` when empty), so a site hosted under
+`/app` does not set a cookie for the whole host. `Secure` follows `Request.IsHttps`: behind a proxy or load balancer that
+terminates TLS, configure forwarded headers (`UseForwardedHeaders` with `X-Forwarded-Proto`) before it runs, or the cookie is
+sent without `Secure`. The cookie is marked `IsEssential = true`, which declares the language preference strictly necessary, so
+a cookie-consent policy (`CookiePolicyOptions.CheckConsentNeeded`) does not suppress it; set your consent policy and privacy
+notice accordingly.
 
 ## Install and example
 
