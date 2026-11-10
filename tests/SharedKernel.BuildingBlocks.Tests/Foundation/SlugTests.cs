@@ -37,6 +37,8 @@ public sealed class SlugTests
     [InlineData("a.b")]
     [InlineData("tour & co")]
     [InlineData("東京")]
+    [InlineData("tour \uFF14\uFF12")]
+    [InlineData("straße")]
     public void Unsafe_or_empty_input_is_rejected_without_echoing_it(string? input)
     {
         // Act
@@ -47,6 +49,22 @@ public sealed class SlugTests
         var message = result.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull()["slug"].ShouldHaveSingleItem();
         var echoed = !string.IsNullOrWhiteSpace(input) && message.Contains(input, StringComparison.Ordinal);
         echoed.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void A_lone_surrogate_is_rejected_instead_of_throwing()
+    {
+        // Arrange
+        // Lone surrogates are built in code: attribute arguments are stored as UTF-8 and would arrive as U+FFFD.
+        string[] inputs = ["a\uD800", "\uDC00a", "tour \uD83D"];
+
+        // Act
+        var statuses = inputs.Select(static input => Slug.Create(input).Status).ToList();
+        var canonical = inputs.Select(static input => Slug.IsCanonical(input)).ToList();
+
+        // Assert
+        statuses.ShouldBe([ResultStatus.Invalid, ResultStatus.Invalid, ResultStatus.Invalid]);
+        canonical.ShouldBe([false, false, false]);
     }
 
     [Fact]
@@ -106,6 +124,8 @@ public sealed class SlugTests
     [InlineData("café", false)]
     [InlineData("", false)]
     [InlineData(null, false)]
+    [InlineData("tour-\uFF14\uFF12", false)]
+    [InlineData("straße", false)]
     public void Only_an_already_normalized_value_is_canonical(string? value, bool expected)
     {
         // Act

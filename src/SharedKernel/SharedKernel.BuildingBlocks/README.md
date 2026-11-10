@@ -29,8 +29,9 @@ The test project mirrors these folders; shared test helpers live next to the typ
 ## Slugs and content cultures
 
 `Slug.Create` turns free text into a canonical URL slug (lowercase ASCII letters and digits joined by single hyphens,
-diacritics stripped, default maximum `Slug.DefaultMaxLength` = 128). Control characters, `/ \ ? #`, and any other
-non-ASCII character are rejected rather than transliterated, and the error never echoes the input.
+diacritics stripped, default maximum `Slug.DefaultMaxLength` = 128). Control characters, surrogates (including lone
+ones), `/ \ ? #`, `.`, and any other non-ASCII character are rejected rather than transliterated, and the error never
+echoes the input. A slug therefore never contains `.`, which keeps it apart from file names in paths.
 `Slug.IsCanonical` checks an already-stored slug.
 
 `ContentCulture` is a path-safe language tag in canonical casing (`pt`, `pt-BR`, `zh-Hant-TW`); cultures that differ only in

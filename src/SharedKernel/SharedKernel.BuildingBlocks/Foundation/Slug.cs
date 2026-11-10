@@ -20,8 +20,8 @@ public sealed class Slug : ValueObject
 
     /// <summary>
     /// Creates a slug from free text. Diacritics are stripped (<c>Patagônia</c> becomes <c>patagonia</c>), whitespace, hyphens and
-    /// underscores collapse to a single hyphen, and text with control characters, <c>/ \ ? #</c>, or any other non-ASCII
-    /// character is rejected instead of transliterated.
+    /// underscores collapse to a single hyphen, and text with control characters, surrogates (including lone ones),
+    /// <c>/ \ ? #</c>, <c>.</c>, or any other non-ASCII character is rejected instead of transliterated.
     /// </summary>
     /// <param name="value">The free text.</param>
     /// <param name="maxLength">The longest allowed slug.</param>
@@ -89,7 +89,8 @@ public sealed class Slug : ValueObject
     private static bool TryBuild(string value, out string slug)
     {
         slug = string.Empty;
-        if (value.Any(char.IsControl) || value.IndexOfAny(['/', '\\', '?', '#']) >= 0)
+        // Reject every surrogate before Normalize, which throws on a lone one; a valid pair is non-ASCII and rejected anyway.
+        if (value.Any(char.IsControl) || value.Any(char.IsSurrogate) || value.IndexOfAny(['/', '\\', '?', '#']) >= 0)
         {
             return false;
         }
