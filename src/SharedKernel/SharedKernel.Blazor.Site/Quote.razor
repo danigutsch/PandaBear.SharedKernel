@@ -1,0 +1,8 @@
+@inherits SiteComponent
+<figure class="@CssClass("site-quote")" @attributes="AdditionalAttributes">
+    <blockquote>@ChildContent</blockquote>
+    @if (!string.IsNullOrWhiteSpace(Cite))
+    {
+        <figcaption><cite>@Cite</cite></figcaption>
+    }
+</figure>

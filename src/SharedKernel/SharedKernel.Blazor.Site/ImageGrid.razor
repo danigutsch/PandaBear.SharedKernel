@@ -1,0 +1,14 @@
+@inherits SiteComponent
+<div class="@CssClass("site-image-grid")" @attributes="AdditionalAttributes">
+    @for (var index = 0; index < Images.Count; index++)
+    {
+        var image = Images[index];
+        <figure class="site-image-grid__item">
+            <img src="@image.Src.Value" alt="@image.Alt.Text" width="@image.Width" height="@image.Height" loading="@(index < EagerCount ? "eager" : "lazy")" />
+            @if (!string.IsNullOrWhiteSpace(image.Caption))
+            {
+                <figcaption>@image.Caption</figcaption>
+            }
+        </figure>
+    }
+</div>

@@ -1,0 +1,220 @@
+#nullable enable
+override PandaBear.Blazor.Site.ImageAlternative.ToString() -> string!
+override PandaBear.Blazor.Site.LinkTarget.ToString() -> string!
+PandaBear.Blazor.Site.AlternateLink
+PandaBear.Blazor.Site.AlternateLink.AlternateLink(string! Culture, System.Uri! Href) -> void
+PandaBear.Blazor.Site.AlternateLink.Culture.get -> string!
+PandaBear.Blazor.Site.AlternateLink.Culture.init -> void
+PandaBear.Blazor.Site.AlternateLink.Href.get -> System.Uri!
+PandaBear.Blazor.Site.AlternateLink.Href.init -> void
+PandaBear.Blazor.Site.ButtonLink
+PandaBear.Blazor.Site.ButtonLink.ButtonLink() -> void
+PandaBear.Blazor.Site.ButtonLink.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.ButtonLink.ChildContent.set -> void
+PandaBear.Blazor.Site.ButtonLink.Href.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.ButtonLink.Href.set -> void
+PandaBear.Blazor.Site.ButtonLink.NewTab.get -> bool
+PandaBear.Blazor.Site.ButtonLink.NewTab.set -> void
+PandaBear.Blazor.Site.ButtonLink.NewTabHint.get -> string!
+PandaBear.Blazor.Site.ButtonLink.NewTabHint.set -> void
+PandaBear.Blazor.Site.ButtonLink.Variant.get -> PandaBear.Blazor.Site.ButtonVariant
+PandaBear.Blazor.Site.ButtonLink.Variant.set -> void
+PandaBear.Blazor.Site.ButtonVariant
+PandaBear.Blazor.Site.ButtonVariant.Outline = 2 -> PandaBear.Blazor.Site.ButtonVariant
+PandaBear.Blazor.Site.ButtonVariant.Primary = 0 -> PandaBear.Blazor.Site.ButtonVariant
+PandaBear.Blazor.Site.ButtonVariant.Secondary = 1 -> PandaBear.Blazor.Site.ButtonVariant
+PandaBear.Blazor.Site.Card
+PandaBear.Blazor.Site.Card.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.Card.Actions.set -> void
+PandaBear.Blazor.Site.Card.Card() -> void
+PandaBear.Blazor.Site.Card.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.Card.ChildContent.set -> void
+PandaBear.Blazor.Site.Card.HeadingLevel.get -> int
+PandaBear.Blazor.Site.Card.HeadingLevel.set -> void
+PandaBear.Blazor.Site.Card.Href.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.Card.Href.set -> void
+PandaBear.Blazor.Site.Card.ImageAlt.get -> PandaBear.Blazor.Site.ImageAlternative?
+PandaBear.Blazor.Site.Card.ImageAlt.set -> void
+PandaBear.Blazor.Site.Card.ImageHeight.get -> int?
+PandaBear.Blazor.Site.Card.ImageHeight.set -> void
+PandaBear.Blazor.Site.Card.ImageSrc.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.Card.ImageSrc.set -> void
+PandaBear.Blazor.Site.Card.ImageWidth.get -> int?
+PandaBear.Blazor.Site.Card.ImageWidth.set -> void
+PandaBear.Blazor.Site.Card.Title.get -> string!
+PandaBear.Blazor.Site.Card.Title.set -> void
+PandaBear.Blazor.Site.CardGrid
+PandaBear.Blazor.Site.CardGrid.CardGrid() -> void
+PandaBear.Blazor.Site.CardGrid.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.CardGrid.ChildContent.set -> void
+PandaBear.Blazor.Site.ContactCard
+PandaBear.Blazor.Site.ContactCard.AddressLines.get -> System.Collections.Generic.IReadOnlyList<string!>?
+PandaBear.Blazor.Site.ContactCard.AddressLines.set -> void
+PandaBear.Blazor.Site.ContactCard.ContactCard() -> void
+PandaBear.Blazor.Site.ContactCard.Email.get -> PandaBear.BuildingBlocks.EmailAddress?
+PandaBear.Blazor.Site.ContactCard.Email.set -> void
+PandaBear.Blazor.Site.ContactCard.HeadingLevel.get -> int
+PandaBear.Blazor.Site.ContactCard.HeadingLevel.set -> void
+PandaBear.Blazor.Site.ContactCard.Phone.get -> PandaBear.BuildingBlocks.PhoneNumber?
+PandaBear.Blazor.Site.ContactCard.Phone.set -> void
+PandaBear.Blazor.Site.ContactCard.Title.get -> string?
+PandaBear.Blazor.Site.ContactCard.Title.set -> void
+PandaBear.Blazor.Site.ContactCard.WhatsApp.get -> PandaBear.BuildingBlocks.PhoneNumber?
+PandaBear.Blazor.Site.ContactCard.WhatsApp.set -> void
+PandaBear.Blazor.Site.ContactCard.WhatsAppLabel.get -> string!
+PandaBear.Blazor.Site.ContactCard.WhatsAppLabel.set -> void
+PandaBear.Blazor.Site.Disclosure
+PandaBear.Blazor.Site.Disclosure.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.Disclosure.ChildContent.set -> void
+PandaBear.Blazor.Site.Disclosure.Disclosure() -> void
+PandaBear.Blazor.Site.Disclosure.Open.get -> bool
+PandaBear.Blazor.Site.Disclosure.Open.set -> void
+PandaBear.Blazor.Site.Disclosure.Summary.get -> string!
+PandaBear.Blazor.Site.Disclosure.Summary.set -> void
+PandaBear.Blazor.Site.FactRow
+PandaBear.Blazor.Site.FactRow.FactRow(string! Label, string! Value) -> void
+PandaBear.Blazor.Site.FactRow.Label.get -> string!
+PandaBear.Blazor.Site.FactRow.Label.init -> void
+PandaBear.Blazor.Site.FactRow.Value.get -> string!
+PandaBear.Blazor.Site.FactRow.Value.init -> void
+PandaBear.Blazor.Site.FactsTable
+PandaBear.Blazor.Site.FactsTable.Caption.get -> string!
+PandaBear.Blazor.Site.FactsTable.Caption.set -> void
+PandaBear.Blazor.Site.FactsTable.FactsTable() -> void
+PandaBear.Blazor.Site.FactsTable.Rows.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactRow!>!
+PandaBear.Blazor.Site.FactsTable.Rows.set -> void
+PandaBear.Blazor.Site.GalleryImage
+PandaBear.Blazor.Site.GalleryImage.Alt.get -> PandaBear.Blazor.Site.ImageAlternative!
+PandaBear.Blazor.Site.GalleryImage.Alt.init -> void
+PandaBear.Blazor.Site.GalleryImage.Caption.get -> string?
+PandaBear.Blazor.Site.GalleryImage.Caption.init -> void
+PandaBear.Blazor.Site.GalleryImage.GalleryImage(PandaBear.Blazor.Site.LinkTarget! Src, PandaBear.Blazor.Site.ImageAlternative! Alt, int Width, int Height, string? Caption = null) -> void
+PandaBear.Blazor.Site.GalleryImage.Height.get -> int
+PandaBear.Blazor.Site.GalleryImage.Height.init -> void
+PandaBear.Blazor.Site.GalleryImage.Src.get -> PandaBear.Blazor.Site.LinkTarget!
+PandaBear.Blazor.Site.GalleryImage.Src.init -> void
+PandaBear.Blazor.Site.GalleryImage.Width.get -> int
+PandaBear.Blazor.Site.GalleryImage.Width.init -> void
+PandaBear.Blazor.Site.Hero
+PandaBear.Blazor.Site.Hero.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.Hero.Actions.set -> void
+PandaBear.Blazor.Site.Hero.Hero() -> void
+PandaBear.Blazor.Site.Hero.ImageAlt.get -> PandaBear.Blazor.Site.ImageAlternative?
+PandaBear.Blazor.Site.Hero.ImageAlt.set -> void
+PandaBear.Blazor.Site.Hero.ImageHeight.get -> int?
+PandaBear.Blazor.Site.Hero.ImageHeight.set -> void
+PandaBear.Blazor.Site.Hero.ImageSrc.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.Hero.ImageSrc.set -> void
+PandaBear.Blazor.Site.Hero.ImageWidth.get -> int?
+PandaBear.Blazor.Site.Hero.ImageWidth.set -> void
+PandaBear.Blazor.Site.Hero.Subtitle.get -> string?
+PandaBear.Blazor.Site.Hero.Subtitle.set -> void
+PandaBear.Blazor.Site.Hero.Title.get -> string!
+PandaBear.Blazor.Site.Hero.Title.set -> void
+PandaBear.Blazor.Site.ImageAlternative
+PandaBear.Blazor.Site.ImageAlternative.IsDecorative.get -> bool
+PandaBear.Blazor.Site.ImageAlternative.Text.get -> string!
+PandaBear.Blazor.Site.ImageGrid
+PandaBear.Blazor.Site.ImageGrid.EagerCount.get -> int
+PandaBear.Blazor.Site.ImageGrid.EagerCount.set -> void
+PandaBear.Blazor.Site.ImageGrid.ImageGrid() -> void
+PandaBear.Blazor.Site.ImageGrid.Images.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.GalleryImage!>!
+PandaBear.Blazor.Site.ImageGrid.Images.set -> void
+PandaBear.Blazor.Site.LanguageLink
+PandaBear.Blazor.Site.LanguageLink.Culture.get -> string!
+PandaBear.Blazor.Site.LanguageLink.Culture.init -> void
+PandaBear.Blazor.Site.LanguageLink.Href.get -> PandaBear.Blazor.Site.LinkTarget!
+PandaBear.Blazor.Site.LanguageLink.Href.init -> void
+PandaBear.Blazor.Site.LanguageLink.IsCurrent.get -> bool
+PandaBear.Blazor.Site.LanguageLink.IsCurrent.init -> void
+PandaBear.Blazor.Site.LanguageLink.Label.get -> string!
+PandaBear.Blazor.Site.LanguageLink.Label.init -> void
+PandaBear.Blazor.Site.LanguageLink.LanguageLink(string! Culture, string! Label, PandaBear.Blazor.Site.LinkTarget! Href, bool IsCurrent = false) -> void
+PandaBear.Blazor.Site.LanguageSwitcher
+PandaBear.Blazor.Site.LanguageSwitcher.Label.get -> string!
+PandaBear.Blazor.Site.LanguageSwitcher.Label.set -> void
+PandaBear.Blazor.Site.LanguageSwitcher.Languages.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.LanguageLink!>!
+PandaBear.Blazor.Site.LanguageSwitcher.Languages.set -> void
+PandaBear.Blazor.Site.LanguageSwitcher.LanguageSwitcher() -> void
+PandaBear.Blazor.Site.LinkTarget
+PandaBear.Blazor.Site.LinkTarget.Value.get -> string!
+PandaBear.Blazor.Site.PageHead
+PandaBear.Blazor.Site.PageHead.Alternates.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.AlternateLink!>!
+PandaBear.Blazor.Site.PageHead.Alternates.set -> void
+PandaBear.Blazor.Site.PageHead.CanonicalUrl.get -> System.Uri?
+PandaBear.Blazor.Site.PageHead.CanonicalUrl.set -> void
+PandaBear.Blazor.Site.PageHead.DefaultAlternateUrl.get -> System.Uri?
+PandaBear.Blazor.Site.PageHead.DefaultAlternateUrl.set -> void
+PandaBear.Blazor.Site.PageHead.Description.get -> string?
+PandaBear.Blazor.Site.PageHead.Description.set -> void
+PandaBear.Blazor.Site.PageHead.ImageUrl.get -> System.Uri?
+PandaBear.Blazor.Site.PageHead.ImageUrl.set -> void
+PandaBear.Blazor.Site.PageHead.Locale.get -> string?
+PandaBear.Blazor.Site.PageHead.Locale.set -> void
+PandaBear.Blazor.Site.PageHead.PageHead() -> void
+PandaBear.Blazor.Site.PageHead.SiteName.get -> string?
+PandaBear.Blazor.Site.PageHead.SiteName.set -> void
+PandaBear.Blazor.Site.PageHead.Title.get -> string!
+PandaBear.Blazor.Site.PageHead.Title.set -> void
+PandaBear.Blazor.Site.Quote
+PandaBear.Blazor.Site.Quote.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.Quote.ChildContent.set -> void
+PandaBear.Blazor.Site.Quote.Cite.get -> string?
+PandaBear.Blazor.Site.Quote.Cite.set -> void
+PandaBear.Blazor.Site.Quote.Quote() -> void
+PandaBear.Blazor.Site.Section
+PandaBear.Blazor.Site.Section.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.Section.ChildContent.set -> void
+PandaBear.Blazor.Site.Section.Divider.get -> bool
+PandaBear.Blazor.Site.Section.Divider.set -> void
+PandaBear.Blazor.Site.Section.Intro.get -> string?
+PandaBear.Blazor.Site.Section.Intro.set -> void
+PandaBear.Blazor.Site.Section.Level.get -> int
+PandaBear.Blazor.Site.Section.Level.set -> void
+PandaBear.Blazor.Site.Section.Section() -> void
+PandaBear.Blazor.Site.Section.Title.get -> string!
+PandaBear.Blazor.Site.Section.Title.set -> void
+PandaBear.Blazor.Site.SiteComponent
+PandaBear.Blazor.Site.SiteComponent.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>?
+PandaBear.Blazor.Site.SiteComponent.AdditionalAttributes.set -> void
+PandaBear.Blazor.Site.SiteComponent.Class.get -> string?
+PandaBear.Blazor.Site.SiteComponent.Class.set -> void
+PandaBear.Blazor.Site.SiteComponent.CssClass(string! own) -> string!
+PandaBear.Blazor.Site.SiteComponent.SiteComponent() -> void
+PandaBear.Blazor.Site.SiteFooter
+PandaBear.Blazor.Site.SiteFooter.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.SiteFooter.ChildContent.set -> void
+PandaBear.Blazor.Site.SiteFooter.Legal.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.SiteFooter.Legal.set -> void
+PandaBear.Blazor.Site.SiteFooter.SiteFooter() -> void
+PandaBear.Blazor.Site.SiteHeader
+PandaBear.Blazor.Site.SiteHeader.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.SiteHeader.Actions.set -> void
+PandaBear.Blazor.Site.SiteHeader.Brand.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.SiteHeader.Brand.set -> void
+PandaBear.Blazor.Site.SiteHeader.CurrentPath.get -> string?
+PandaBear.Blazor.Site.SiteHeader.CurrentPath.set -> void
+PandaBear.Blazor.Site.SiteHeader.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.SiteNavItem!>!
+PandaBear.Blazor.Site.SiteHeader.Items.set -> void
+PandaBear.Blazor.Site.SiteHeader.Label.get -> string!
+PandaBear.Blazor.Site.SiteHeader.Label.set -> void
+PandaBear.Blazor.Site.SiteHeader.SiteHeader() -> void
+PandaBear.Blazor.Site.SiteNavItem
+PandaBear.Blazor.Site.SiteNavItem.Children.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.SiteNavItem!>?
+PandaBear.Blazor.Site.SiteNavItem.Children.init -> void
+PandaBear.Blazor.Site.SiteNavItem.Href.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.SiteNavItem.Href.init -> void
+PandaBear.Blazor.Site.SiteNavItem.SiteNavItem(string! Text, PandaBear.Blazor.Site.LinkTarget? Href = null, System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.SiteNavItem!>? Children = null) -> void
+PandaBear.Blazor.Site.SiteNavItem.Text.get -> string!
+PandaBear.Blazor.Site.SiteNavItem.Text.init -> void
+PandaBear.Blazor.Site.SkipLink
+PandaBear.Blazor.Site.SkipLink.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.SkipLink.ChildContent.set -> void
+PandaBear.Blazor.Site.SkipLink.SkipLink() -> void
+PandaBear.Blazor.Site.SkipLink.TargetId.get -> string!
+PandaBear.Blazor.Site.SkipLink.TargetId.set -> void
+static PandaBear.Blazor.Site.ImageAlternative.Decorative() -> PandaBear.Blazor.Site.ImageAlternative!
+static PandaBear.Blazor.Site.ImageAlternative.Describe(string! text) -> PandaBear.Blazor.Site.ImageAlternative!
+static PandaBear.Blazor.Site.LinkTarget.Create(string? value) -> PandaBear.Results.Result<PandaBear.Blazor.Site.LinkTarget!>
+static PandaBear.Blazor.Site.LinkTarget.FromString(string! value) -> PandaBear.Blazor.Site.LinkTarget!
+static PandaBear.Blazor.Site.LinkTarget.implicit operator PandaBear.Blazor.Site.LinkTarget!(string! value) -> PandaBear.Blazor.Site.LinkTarget!

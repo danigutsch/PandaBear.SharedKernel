@@ -1,0 +1,20 @@
+@inherits SiteComponent
+<section class="@CssClass("site-hero")" @attributes="AdditionalAttributes">
+    <div class="site-hero__text">
+        <h1 class="site-hero__title">@Title</h1>
+        @if (!string.IsNullOrWhiteSpace(Subtitle))
+        {
+            <p class="site-hero__subtitle">@Subtitle</p>
+        }
+        @if (Actions is not null)
+        {
+            <div class="site-hero__actions">@Actions</div>
+        }
+    </div>
+    @if (ImageSrc is not null && ImageAlt is not null)
+    {
+        <div class="site-hero__media">
+            <img src="@ImageSrc.Value" alt="@ImageAlt.Text" width="@ImageWidth" height="@ImageHeight" loading="eager" />
+        </div>
+    }
+</section>
