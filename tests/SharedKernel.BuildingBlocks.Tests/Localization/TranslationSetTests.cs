@@ -14,7 +14,7 @@ public sealed class TranslationSetTests
     public void The_exact_culture_wins()
     {
         // Arrange
-        var set = TranslationSet.Create<TitleTranslation>(
+        var set = TranslationSet.Create(
             [TitleTranslation.For("pt"), TitleTranslation.For("pt-BR"), TitleTranslation.For("en")],
             static t => t.Culture).ShouldBeSuccess();
 
@@ -30,7 +30,7 @@ public sealed class TranslationSetTests
     public void The_neutral_parent_of_the_requested_culture_is_next()
     {
         // Arrange
-        var set = TranslationSet.Create<TitleTranslation>([TitleTranslation.For("pt"), TitleTranslation.For("en")], static t => t.Culture).ShouldBeSuccess();
+        var set = TranslationSet.Create([TitleTranslation.For("pt"), TitleTranslation.For("en")], static t => t.Culture).ShouldBeSuccess();
 
         // Act
         var found = set.TryResolve(ContentCulture.Restore("pt-BR"), En, out var translation);
@@ -44,7 +44,7 @@ public sealed class TranslationSetTests
     public void A_multi_part_culture_walks_up_to_its_language()
     {
         // Arrange
-        var set = TranslationSet.Create<TitleTranslation>([TitleTranslation.For("zh"), TitleTranslation.For("en")], static t => t.Culture).ShouldBeSuccess();
+        var set = TranslationSet.Create([TitleTranslation.For("zh"), TitleTranslation.For("en")], static t => t.Culture).ShouldBeSuccess();
 
         // Act
         var found = set.TryResolve(ContentCulture.Restore("zh-Hant-TW"), En, out var translation);
@@ -58,7 +58,7 @@ public sealed class TranslationSetTests
     public void A_same_language_sibling_comes_before_the_default_culture()
     {
         // Arrange
-        var set = TranslationSet.Create<TitleTranslation>([TitleTranslation.For("en"), TitleTranslation.For("pt-BR")], static t => t.Culture).ShouldBeSuccess();
+        var set = TranslationSet.Create([TitleTranslation.For("en"), TitleTranslation.For("pt-BR")], static t => t.Culture).ShouldBeSuccess();
 
         // Act
         var neutral = set.TryResolve(Pt, En, out var fromNeutral);
@@ -75,10 +75,10 @@ public sealed class TranslationSetTests
     public void The_first_same_language_sibling_in_set_order_wins()
     {
         // Arrange
-        var portugalFirst = TranslationSet.Create<TitleTranslation>(
+        var portugalFirst = TranslationSet.Create(
             [TitleTranslation.For("en"), TitleTranslation.For("pt-PT"), TitleTranslation.For("pt-BR")],
             static t => t.Culture).ShouldBeSuccess();
-        var brazilFirst = TranslationSet.Create<TitleTranslation>(
+        var brazilFirst = TranslationSet.Create(
             [TitleTranslation.For("pt-BR"), TitleTranslation.For("en"), TitleTranslation.For("pt-PT")],
             static t => t.Culture).ShouldBeSuccess();
 
@@ -95,7 +95,7 @@ public sealed class TranslationSetTests
     public void A_neutral_parent_comes_before_a_same_language_sibling()
     {
         // Arrange
-        var set = TranslationSet.Create<TitleTranslation>([TitleTranslation.For("pt-PT"), TitleTranslation.For("pt")], static t => t.Culture).ShouldBeSuccess();
+        var set = TranslationSet.Create([TitleTranslation.For("pt-PT"), TitleTranslation.For("pt")], static t => t.Culture).ShouldBeSuccess();
 
         // Act
         set.TryResolve(ContentCulture.Restore("pt-BR"), En, out var translation);
@@ -110,7 +110,7 @@ public sealed class TranslationSetTests
         // Arrange
         ContentCulture[] cultures = [En, ContentCulture.Restore("pt-BR"), ContentCulture.Restore("zh-Hans")];
         var supported = SupportedCultures.Create(En, cultures).ShouldBeSuccess();
-        var set = TranslationSet.Create<TitleTranslation>(cultures.Select(static c => TitleTranslation.For(c.Value)), static t => t.Culture).ShouldBeSuccess();
+        var set = TranslationSet.Create(cultures.Select(static c => TitleTranslation.For(c.Value)), static t => t.Culture).ShouldBeSuccess();
         string[] requests = ["pt", "pt-PT", "zh-Hant-TW", "en-GB", "fr"];
 
         // Act
@@ -129,7 +129,7 @@ public sealed class TranslationSetTests
     public void The_default_culture_is_used_when_the_requested_one_is_missing()
     {
         // Arrange
-        var set = TranslationSet.Create<TitleTranslation>([TitleTranslation.For("en")], static t => t.Culture).ShouldBeSuccess();
+        var set = TranslationSet.Create([TitleTranslation.For("en")], static t => t.Culture).ShouldBeSuccess();
 
         // Act
         var found = set.TryResolve(ContentCulture.Restore("fr-FR"), En, out var translation);
@@ -143,7 +143,7 @@ public sealed class TranslationSetTests
     public void The_neutral_parent_of_the_default_culture_is_the_last_resort()
     {
         // Arrange
-        var set = TranslationSet.Create<TitleTranslation>([TitleTranslation.For("en")], static t => t.Culture).ShouldBeSuccess();
+        var set = TranslationSet.Create([TitleTranslation.For("en")], static t => t.Culture).ShouldBeSuccess();
 
         // Act
         var found = set.TryResolve(ContentCulture.Restore("fr"), ContentCulture.Restore("en-US"), out var translation);
@@ -157,7 +157,7 @@ public sealed class TranslationSetTests
     public void A_missing_request_uses_the_default_culture()
     {
         // Arrange
-        var set = TranslationSet.Create<TitleTranslation>([TitleTranslation.For("en"), TitleTranslation.For("pt")], static t => t.Culture).ShouldBeSuccess();
+        var set = TranslationSet.Create([TitleTranslation.For("en"), TitleTranslation.For("pt")], static t => t.Culture).ShouldBeSuccess();
 
         // Act
         var found = set.TryResolve(null, Pt, out var translation);
@@ -171,7 +171,7 @@ public sealed class TranslationSetTests
     public void No_translation_is_reported_when_nothing_matches()
     {
         // Arrange
-        var set = TranslationSet.Create<TitleTranslation>([TitleTranslation.For("de")], static t => t.Culture).ShouldBeSuccess();
+        var set = TranslationSet.Create([TitleTranslation.For("de")], static t => t.Culture).ShouldBeSuccess();
 
         // Act
         var found = set.TryResolve(ContentCulture.Restore("fr"), En, out var translation);
@@ -198,7 +198,7 @@ public sealed class TranslationSetTests
     public void Two_translations_for_one_culture_are_rejected()
     {
         // Act
-        var result = TranslationSet.Create<TitleTranslation>(
+        var result = TranslationSet.Create(
             [TitleTranslation.For("pt"), TitleTranslation.For("PT")],
             static t => t.Culture);
 
