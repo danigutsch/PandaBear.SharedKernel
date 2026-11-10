@@ -18,16 +18,20 @@ public static class TranslationSet
         ArgumentNullException.ThrowIfNull(cultureSelector);
 
         var byCulture = new Dictionary<ContentCulture, T>();
+        var order = new List<ContentCulture>();
         foreach (var translation in translations)
         {
             ArgumentNullException.ThrowIfNull(translation);
-            if (!byCulture.TryAdd(cultureSelector(translation), translation))
+            var culture = cultureSelector(translation);
+            if (!byCulture.TryAdd(culture, translation))
             {
                 const string message = "Translations cannot contain the same culture twice.";
                 return Result.Invalid<TranslationSet<T>>(detail: message, field: "translations", message: message);
             }
+
+            order.Add(culture);
         }
 
-        return Result.Ok(new TranslationSet<T>(byCulture));
+        return Result.Ok(new TranslationSet<T>(byCulture, [.. order]));
     }
 }

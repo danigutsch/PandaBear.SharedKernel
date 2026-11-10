@@ -8,14 +8,21 @@ public sealed class TranslationSet<T>
     where T : class
 {
     private readonly Dictionary<ContentCulture, T> _byCulture;
+    private readonly ContentCulture[] _order;
 
     /// <summary>Initializes the set from translations already checked for unique cultures.</summary>
     /// <param name="byCulture">The translations by culture.</param>
-    internal TranslationSet(Dictionary<ContentCulture, T> byCulture) => _byCulture = byCulture;
+    /// <param name="order">The cultures of <paramref name="byCulture"/> in the order the translations were given.</param>
+    internal TranslationSet(Dictionary<ContentCulture, T> byCulture, ContentCulture[] order)
+    {
+        _byCulture = byCulture;
+        _order = order;
+    }
 
     /// <summary>
-    /// Resolves the best translation: the requested culture, its neutral parents (<c>pt-BR</c> to <c>pt</c>), then the default culture
-    /// and its neutral parents.
+    /// Resolves the best translation in the same order as <see cref="SupportedCultures.Resolve(ContentCulture?)"/>: the requested
+    /// culture, its neutral parents (<c>pt-BR</c> to <c>pt</c>), then the first translation of the same language in the order the
+    /// translations were given (<c>pt</c> to <c>pt-BR</c>), then the default culture and its neutral parents.
     /// </summary>
     /// <param name="requested">The requested culture; <see langword="null"/> skips straight to the default.</param>
     /// <param name="defaultCulture">The culture used when the requested one has no translation.</param>
@@ -26,7 +33,9 @@ public sealed class TranslationSet<T>
     {
         ArgumentNullException.ThrowIfNull(defaultCulture);
 
-        return TryFind(requested, out translation) || TryFind(defaultCulture, out translation);
+        return TryFind(requested, out translation)
+            || TryFindSameLanguage(requested, out translation)
+            || TryFind(defaultCulture, out translation);
     }
 
     private bool TryFind(ContentCulture? culture, [MaybeNullWhen(false)] out T translation)
@@ -36,6 +45,25 @@ public sealed class TranslationSet<T>
             if (_byCulture.TryGetValue(candidate, out translation))
             {
                 return true;
+            }
+        }
+
+        translation = null;
+        return false;
+    }
+
+    private bool TryFindSameLanguage(ContentCulture? culture, [MaybeNullWhen(false)] out T translation)
+    {
+        if (culture is not null)
+        {
+            var language = culture.Language;
+            foreach (var candidate in _order)
+            {
+                if (candidate.Language == language)
+                {
+                    translation = _byCulture[candidate];
+                    return true;
+                }
             }
         }
 
