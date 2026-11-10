@@ -63,7 +63,7 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 
 | Component | Renders |
 | --- | --- |
-| `SkipLink` | The first link of the page; `TargetId` defaults to `main-content`. |
+| `SkipLink` | The first link of the page; `TargetId` defaults to `main-content`. Extra attributes cannot replace its `href` or `class`. |
 | `SiteHeader` | `header` with a brand slot, a labelled `nav` (`Label` is required when there are items), and an actions slot. An item has either an `Href` or one level of children; an item with children is a native `details`. The item that matches `CurrentPath` gets `aria-current="page"` and opens its group. |
 | `SiteFooter` | `footer` with a content slot and an optional `Legal` line. |
 | `Hero` | The page's one `h1`, a subtitle, an eager image and an actions slot. |
@@ -110,7 +110,7 @@ Texts that people read (labels, the new-tab hint, the WhatsApp link text) are pa
 - `PageHead` addresses are `System.Uri` and must be absolute `http` or `https`.
 - Cultures are `PandaBear.BuildingBlocks.ContentCulture` (`LanguageLink.Culture`, `AlternateLink.Culture`, `PageHead.Locale`), so the
   language-tag rule and canonical casing (`pt-br` becomes `pt-BR`) live in one place. `hreflang` and `lang` use the canonical name;
-  `og:locale` writes it with an underscore (`pt_BR`). Build cultures from input with `ContentCulture.Create`; `Restore` skips validation.
+  `og:locale` writes the language and region with an underscore (`pt_BR`) and drops a script subtag (`zh-Hant-TW` gives `zh_TW`). Build cultures from input with `ContentCulture.Create`; `Restore` skips validation.
 
 ## Design tokens
 

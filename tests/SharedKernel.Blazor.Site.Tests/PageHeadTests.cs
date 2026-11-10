@@ -30,6 +30,23 @@ public sealed class PageHeadTests : BunitContext
         head.Find("meta[property='og:image']").GetAttribute("content").ShouldBe("https://example.org/atacama.jpg");
     }
 
+    [Theory]
+    [InlineData("zh-Hant-TW", "zh_TW")]
+    [InlineData("pt-br", "pt_BR")]
+    [InlineData("sr-Latn-RS", "sr_RS")]
+    [InlineData("en", "en")]
+    [InlineData("zh-Hant", "zh")]
+    public void Og_locale_is_the_language_and_region_without_a_script(string culture, string expected)
+    {
+        // Arrange & Act
+        var head = this.RenderHead(parameters => parameters
+            .Add(component => component.Title, "Title")
+            .Add(component => component.Locale, Culture(culture)));
+
+        // Assert
+        head.Find("meta[property='og:locale']").GetAttribute("content").ShouldBe(expected);
+    }
+
     [Fact]
     public void Alternates_render_hreflang_links_including_x_default()
     {

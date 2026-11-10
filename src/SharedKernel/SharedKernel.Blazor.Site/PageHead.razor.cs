@@ -39,7 +39,10 @@ public sealed partial class PageHead
         get; set;
     }
 
-    /// <summary>Gets or sets the culture of the page, written to <c>og:locale</c> with an underscore (<c>pt-BR</c> gives <c>pt_BR</c>).</summary>
+    /// <summary>
+    /// Gets or sets the culture of the page, written to <c>og:locale</c> as language and region joined by an underscore: <c>pt-BR</c>
+    /// gives <c>pt_BR</c>, and a script subtag is dropped, so <c>zh-Hant-TW</c> gives <c>zh_TW</c>.
+    /// </summary>
     [Parameter]
     public ContentCulture? Locale
     {
@@ -82,6 +85,13 @@ public sealed partial class PageHead
             ArgumentNullException.ThrowIfNull(alternate.Href, nameof(Alternates));
             RequireWebAddress(alternate.Href, nameof(Alternates));
         }
+    }
+
+    private static string OpenGraphLocale(ContentCulture culture)
+    {
+        var subtags = culture.Value.Split('-');
+        var region = subtags.Skip(1).FirstOrDefault(subtag => subtag.Length == 2 || (subtag.Length == 3 && subtag.All(char.IsAsciiDigit)));
+        return region is null ? subtags[0] : subtags[0] + "_" + region;
     }
 
     private static void RequireWebAddress(Uri? address, string parameterName)
