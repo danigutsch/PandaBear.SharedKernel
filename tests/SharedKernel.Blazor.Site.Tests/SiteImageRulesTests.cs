@@ -61,24 +61,66 @@ public sealed class SiteImageRulesTests : BunitContext
         var cut = Render<Card>(parameters => parameters
             .Add(component => component.Title, "Title")
             .Add(component => component.ImageSrc, LinkTarget.FromString("/a.jpg"))
-            .Add(component => component.ImageAlt, ImageAlternative.Decorative()));
+            .Add(component => component.ImageAlt, ImageAlternative.Decorative())
+            .Add(component => component.ImageWidth, 10)
+            .Add(component => component.ImageHeight, 10));
 
         // Assert
         cut.Find("img").GetAttribute("alt").ShouldBe(string.Empty);
     }
 
-    [Fact]
-    public void Non_positive_dimensions_are_rejected_because_they_would_not_reserve_space()
+    [Theory]
+    [InlineData(0, 10, nameof(Hero.ImageWidth))]
+    [InlineData(10, -1, nameof(Hero.ImageHeight))]
+    public void Non_positive_dimensions_are_rejected_because_they_would_not_reserve_space(int width, int height, string parameter)
     {
         // Arrange & Act
         var render = () => Render<Hero>(parameters => parameters
             .Add(component => component.Title, "Title")
             .Add(component => component.ImageSrc, LinkTarget.FromString("/a.jpg"))
             .Add(component => component.ImageAlt, ImageAlternative.Describe("x"))
-            .Add(component => component.ImageWidth, 0));
+            .Add(component => component.ImageWidth, width)
+            .Add(component => component.ImageHeight, height));
 
         // Assert
-        render.ShouldThrow<ArgumentOutOfRangeException>();
+        render.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe(parameter);
+    }
+
+    [Theory]
+    [InlineData(null, 10, nameof(Hero.ImageWidth))]
+    [InlineData(10, null, nameof(Hero.ImageHeight))]
+    [InlineData(null, null, nameof(Hero.ImageWidth))]
+    public void An_image_without_width_or_height_is_rejected_because_it_would_shift_the_layout(int? width, int? height, string parameter)
+    {
+        // Arrange & Act
+        var hero = () => Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Title")
+            .Add(component => component.ImageSrc, LinkTarget.FromString("/a.jpg"))
+            .Add(component => component.ImageAlt, ImageAlternative.Describe("x"))
+            .Add(component => component.ImageWidth, width)
+            .Add(component => component.ImageHeight, height));
+        var card = () => Render<Card>(parameters => parameters
+            .Add(component => component.Title, "Title")
+            .Add(component => component.ImageSrc, LinkTarget.FromString("/a.jpg"))
+            .Add(component => component.ImageAlt, ImageAlternative.Describe("x"))
+            .Add(component => component.ImageWidth, width)
+            .Add(component => component.ImageHeight, height));
+
+        // Assert
+        hero.ShouldThrow<ArgumentException>().ParamName.ShouldBe(parameter);
+        card.ShouldThrow<ArgumentException>().ParamName.ShouldBe(parameter);
+    }
+
+    [Fact]
+    public void Dimensions_without_an_image_are_ignored()
+    {
+        // Arrange & Act
+        var cut = Render<Card>(parameters => parameters
+            .Add(component => component.Title, "Title")
+            .Add(component => component.ImageWidth, 10));
+
+        // Assert
+        cut.FindAll("img").ShouldBeEmpty();
     }
 
     [Theory]

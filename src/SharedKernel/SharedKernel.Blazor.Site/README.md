@@ -37,7 +37,8 @@ Reference the stylesheet from the host page, then your own stylesheet that overr
     </Hero>
     <Section Title="Tours" Intro="Pick your next trip.">
         <CardGrid>
-            <Card Title="Atacama" Href="@LinkTarget.FromString("/tours/atacama")" ImageSrc="@LinkTarget.FromString("/img/atacama.jpg")" ImageAlt="@ImageAlternative.Decorative()">
+            <Card Title="Atacama" Href="@LinkTarget.FromString("/tours/atacama")" ImageSrc="@LinkTarget.FromString("/img/atacama.jpg")" ImageAlt="@ImageAlternative.Decorative()"
+                  ImageWidth="800" ImageHeight="600">
                 <p>Eight days in the desert.</p>
             </Card>
         </CardGrid>
@@ -101,6 +102,9 @@ Texts that people read (labels, the new-tab hint, the WhatsApp link text) are pa
 - `ImageAlternative` is the accessibility decision for an image: `ImageAlternative.Describe("what it shows")` or
   `ImageAlternative.Decorative()` (rendered as `alt=""`). A component given an image source without a decision throws
   `InvalidOperationException` when it renders, and `GalleryImage` requires one.
+- `Hero` and `Card` require `ImageWidth` and `ImageHeight` whenever `ImageSrc` is set, and `GalleryImage` always has them, so the
+  browser reserves the space and the layout does not shift. A missing or non-positive dimension throws an `ArgumentException`
+  (`ArgumentOutOfRangeException` when not positive) whose `ParamName` is `ImageWidth` or `ImageHeight`.
 - `ContactCard` takes `PandaBear.BuildingBlocks.EmailAddress` and `PhoneNumber`. It checks restored values again, so only digits reach a
   `tel:` or WhatsApp link and no query reaches a `mailto:` link.
 - `PageHead` addresses are `System.Uri` and must be absolute `http` or `https`.

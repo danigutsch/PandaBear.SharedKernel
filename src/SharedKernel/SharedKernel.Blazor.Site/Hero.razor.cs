@@ -23,7 +23,10 @@ public sealed partial class Hero
         get; set;
     }
 
-    /// <summary>Gets or sets the image address. When set, <see cref="ImageAlt" /> is required.</summary>
+    /// <summary>
+    /// Gets or sets the image address, root-relative or https. When set, <see cref="ImageAlt" />, <see cref="ImageWidth" /> and
+    /// <see cref="ImageHeight" /> are required.
+    /// </summary>
     [Parameter]
     public LinkTarget? ImageSrc
     {
@@ -37,14 +40,14 @@ public sealed partial class Hero
         get; set;
     }
 
-    /// <summary>Gets or sets the intrinsic image width in pixels.</summary>
+    /// <summary>Gets or sets the intrinsic image width in pixels; required with an image.</summary>
     [Parameter]
     public int? ImageWidth
     {
         get; set;
     }
 
-    /// <summary>Gets or sets the intrinsic image height in pixels.</summary>
+    /// <summary>Gets or sets the intrinsic image height in pixels; required with an image.</summary>
     [Parameter]
     public int? ImageHeight
     {
