@@ -10,10 +10,6 @@ Reusable input normalization helpers for shared-kernel workflows.
 
 Use `StringSanitizer` for trimming/normalization and key generation, `NumericSanitizer.SanitizePrice` for reusable numeric normalization, `ObjectStorageKeyValidator.IsValidRelativeKey` for relative storage keys, and `WebAssetUriSanitizer` for root-relative or HTTPS assets. Normalization does not replace domain validation, authorization, or storage access checks.
 
-`UrlSlug.TryNormalize` turns free text into a canonical slug (lowercase ASCII letters and digits joined by single hyphens, diacritics stripped, default maximum 128 characters) and rejects control characters, `/ \ ? #`, and any other non-ASCII character instead of transliterating it; `UrlSlug.IsCanonical` checks an already-stored slug.
-
-`SupportedCultures` is an immutable, case-insensitive set of path-safe culture names with a default; `Resolve` maps a requested culture to a supported one (`pt-BR` to `pt`, or `pt` to `pt-BR`). `TranslationSet<T>` holds the translations of one entity and `TryResolve` picks the requested culture, its neutral parents, then the default culture's translation, or reports none.
-
 ## Install and example
 
 The following placeholders are intentional: replace `<validated-candidate-version>` with a candidate that has actually been built and validated, and `<private-candidate-feed>` with its private local feed. The placeholders do not identify a published package version. The code requires the package's target runtime; integration examples assume application-owned host/provider configuration.

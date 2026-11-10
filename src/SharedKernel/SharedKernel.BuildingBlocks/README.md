@@ -13,7 +13,8 @@ Source files are grouped by topic. The folders are organization only: every publ
 
 | Folder | Contents |
 | --- | --- |
-| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, text rules, option-to-result helpers |
+| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, `Slug`, text rules, option-to-result helpers |
+| `Localization` | `ContentCulture`, `SupportedCultures`, `TranslationSet` |
 | `Contact` | `EmailAddress`, `PhoneNumber`, `PersonName`, `PostalAddress` |
 | `Geography` | `CountryCode`, `CountryNames` |
 | `Finance` | `Money`, `Currency`, `CurrencyCodes`, `Iban`, `Bic` |
@@ -24,6 +25,19 @@ Source files are grouped by topic. The folders are organization only: every publ
 
 The test project mirrors these folders; shared test helpers live next to the types they exercise, and
 `RestoreTests` (which spans several types) stays at the root.
+
+## Slugs and content cultures
+
+`Slug.Create` turns free text into a canonical URL slug (lowercase ASCII letters and digits joined by single hyphens,
+diacritics stripped, default maximum `Slug.DefaultMaxLength` = 128). Control characters, `/ \ ? #`, and any other
+non-ASCII character are rejected rather than transliterated, and the error never echoes the input.
+`Slug.IsCanonical` checks an already-stored slug.
+
+`ContentCulture` is a path-safe language tag in canonical casing (`pt`, `pt-BR`, `zh-Hant-TW`); cultures that differ only in
+case are equal, and `Parent` walks `pt-BR` to `pt`. `SupportedCultures` is an immutable set of allowed cultures with a default:
+`Resolve` maps a requested culture to an allowed one (`pt-BR` to `pt`, or `pt` to `pt-BR`) and `TryGet` matches exact
+text such as a URL segment. `TranslationSet.Create` holds the translations of one entity, and `TryResolve` picks the requested
+culture, its neutral parents, then the default culture and its parents, or reports none.
 
 ## Identity and optional lookups
 

@@ -13,16 +13,3 @@ static PandaBear.InputNormalization.StringSanitizer.SanitizeNotes(string? value)
 static PandaBear.InputNormalization.WebAssetUriSanitizer.NormalizeRasterDataImage(string? value, int maxLength) -> string?
 static PandaBear.InputNormalization.WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(string? value, int maxLength) -> string?
 static PandaBear.InputNormalization.WebAssetUriSanitizer.ToRootRelativeOrHttpsUri(string? value, int maxLength) -> System.Uri?
-const PandaBear.InputNormalization.UrlSlug.DefaultMaxLength = 128 -> int
-PandaBear.InputNormalization.SupportedCultures
-PandaBear.InputNormalization.SupportedCultures.Cultures.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.InputNormalization.SupportedCultures.Default.get -> string!
-PandaBear.InputNormalization.SupportedCultures.Resolve(string? requested) -> string?
-PandaBear.InputNormalization.SupportedCultures.SupportedCultures(string! defaultCulture, System.Collections.Generic.IEnumerable<string!>! cultures) -> void
-PandaBear.InputNormalization.SupportedCultures.TryGet(string? value, out string! culture) -> bool
-PandaBear.InputNormalization.TranslationSet<T>
-PandaBear.InputNormalization.TranslationSet<T>.TranslationSet(System.Collections.Generic.IEnumerable<T!>! translations, System.Func<T!, string!>! cultureSelector) -> void
-PandaBear.InputNormalization.TranslationSet<T>.TryResolve(string? requestedCulture, string! defaultCulture, out T! translation) -> bool
-PandaBear.InputNormalization.UrlSlug
-static PandaBear.InputNormalization.UrlSlug.IsCanonical(string? value, int maxLength = 128) -> bool
-static PandaBear.InputNormalization.UrlSlug.TryNormalize(string? value, out string! slug, int maxLength = 128) -> bool
