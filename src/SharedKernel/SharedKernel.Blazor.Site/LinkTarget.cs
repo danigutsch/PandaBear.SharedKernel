@@ -13,9 +13,8 @@ namespace PandaBear.Blazor.Site;
 public sealed class LinkTarget : ValueObject
 {
     /// <summary>The longest accepted address, in characters.</summary>
-    public const int MaxLength = 2048;
+    public const int MaxLength = WebUrl.MaxLength;
 
-    private const string HttpScheme = "http";
     private const string HttpsScheme = "https";
 
     private LinkTarget(string value, bool isImageSource)
@@ -110,17 +109,11 @@ public sealed class LinkTarget : ValueObject
 
     private static Result<LinkTarget> Web(string value, string scheme)
     {
-        if (!value.AsSpan(scheme.Length).StartsWith("://", StringComparison.Ordinal))
-        {
-            return Invalid("An http or https link address must be absolute, with // and a host.");
-        }
-
-        // The sanitizer accepts https only; an http address is checked through its https form, which has the same shape.
-        var https = string.Equals(scheme, HttpsScheme, StringComparison.OrdinalIgnoreCase);
-        var candidate = https ? value : HttpsScheme + value[HttpScheme.Length..];
-        return IsAcceptedUnchanged(candidate)
-            ? Result.Ok(new LinkTarget(value, https))
-            : Invalid("An http or https link address needs a host and must not carry user information.");
+        // WebUrl canonicalizes the scheme and host; the target keeps the address exactly as supplied.
+        var url = WebUrl.Create(value, field: "href", label: "An http or https link address");
+        return url.IsSuccess
+            ? Result.Ok(new LinkTarget(value, string.Equals(scheme, HttpsScheme, StringComparison.OrdinalIgnoreCase)))
+            : url.ConvertError<WebUrl, LinkTarget>();
     }
 
     private static bool IsAcceptedUnchanged(string value) =>

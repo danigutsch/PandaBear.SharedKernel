@@ -129,4 +129,39 @@ public sealed class LinkTargetTests
         // Assert
         isImageSource.ShouldBe(expected);
     }
+
+    [Fact]
+    public void A_lone_surrogate_is_invalid_instead_of_throwing()
+    {
+        // Arrange
+        // Lone surrogates are built in code: attribute arguments are stored as UTF-8 and would arrive as U+FFFD.
+        string[] hrefs = ["/img/\uD800.jpg", "https://example.org/\uDC00", "http://example.org/\uD83D"];
+
+        // Act
+        var failures = hrefs.Select(static href => LinkTarget.Create(href).IsFailure).ToList();
+
+        // Assert
+        failures.ShouldBe([true, true, true]);
+    }
+
+    [Fact]
+    public void An_http_address_with_an_empty_user_information_is_invalid()
+    {
+        // Arrange & Act
+        var result = LinkTarget.Create("https://@example.org/");
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void An_absolute_address_keeps_its_original_case()
+    {
+        // Arrange & Act
+        var target = LinkTarget.FromString("HTTPS://Example.ORG/A");
+
+        // Assert
+        target.Value.ShouldBe("HTTPS://Example.ORG/A");
+        target.IsImageSource.ShouldBeTrue();
+    }
 }

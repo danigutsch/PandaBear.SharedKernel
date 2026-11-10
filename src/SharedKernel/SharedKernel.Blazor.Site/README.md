@@ -90,13 +90,15 @@ Texts that people read (labels, the new-tab hint, the WhatsApp link text) are pa
   `ArgumentException`; there is no implicit conversion from text, so markup writes `Href="@LinkTarget.FromString("/tours")"` for an
   author-controlled literal, and code builds addresses from external data with `Create`. Accepted are:
   - relative addresses (`/tours`, `tours/one`, `?page=2`, `#top`), but not protocol-relative ones (`//host`);
-  - absolute `http` and `https` addresses with `//`, a host and no user information (`https:host` and `https://user:pw@host` are refused);
+  - absolute `http` and `https` addresses that `PandaBear.BuildingBlocks.WebUrl` accepts: `//`, a host and no user information
+    (`https:host`, `https://user:pw@host` and `https://@host` are refused). The target keeps the address exactly as supplied,
+    not `WebUrl`'s lower-cased scheme and host;
   - `mailto:` with exactly one address and no query or headers (`?`, `&`, `;`, `,` and `%` are refused);
   - `tel:` with digits and an optional leading `+`.
 
   Every address is refused when it has white space anywhere (including `\u0085` and no-break space), a control character or a
-  backslash, or is longer than `LinkTarget.MaxLength` (2048). Root-relative and `https` checks reuse
-  `PandaBear.InputNormalization.WebAssetUriSanitizer`. Error messages never repeat the input.
+  backslash, or is longer than `LinkTarget.MaxLength` (2048, the same as `WebUrl.MaxLength`). Root-relative checks reuse
+  `PandaBear.InputNormalization.WebAssetUriSanitizer`, which also refuses lone surrogates. Error messages never repeat the input.
 - Image sources (`Hero.ImageSrc`, `Card.ImageSrc`, `GalleryImage.Src`) must be root-relative or `https`
   (`LinkTarget.IsImageSource`); a component given another target throws `ArgumentException` naming the parameter.
 - `ImageAlternative` is the accessibility decision for an image: `ImageAlternative.Describe("what it shows")` or
