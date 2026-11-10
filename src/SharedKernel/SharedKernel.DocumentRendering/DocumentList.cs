@@ -7,7 +7,7 @@ namespace PandaBear.DocumentRendering;
 /// </summary>
 public sealed record DocumentList(
     IReadOnlyList<string> Items,
-    DocumentPrivacyClassification PrivacyClassification)
+    DocumentPrivacyClassification PrivacyClassification) : DocumentBlock
 {
     /// <summary>
     /// Gets a value indicating whether the list is ordered (numbered). It is unordered (bulleted) by default.

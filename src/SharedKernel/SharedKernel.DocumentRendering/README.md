@@ -25,6 +25,12 @@ fields omits the empty field list. A list without items, a blank or null item, o
 `ArgumentNullException`), and a list with `DocumentPrivacyClassification.None` throws `InvalidOperationException`. Sections without
 lists render exactly as before.
 
+Paragraphs and lists render separately, so they cannot put a paragraph after a list. When the order matters, as for a clause whose
+last paragraph follows its bullets, set `Blocks` instead: an ordered sequence of `DocumentParagraph`s and `DocumentList`s that render
+in the given order, with the same rules for each. Blocks render after the `Paragraphs` and `Lists` of the section and before its
+fields, a section with blocks and no fields omits the empty field list, and a null block or sequence throws `ArgumentNullException`.
+Sections without blocks render exactly as before.
+
 ## Install and example
 
 The following placeholders are intentional: replace `<validated-candidate-version>` with a candidate that has actually been built and validated, and `<private-candidate-feed>` with its private local feed. The placeholders do not identify a published package version. The code requires the package's target runtime; integration examples assume application-owned host/provider configuration.

@@ -6,4 +6,4 @@ namespace PandaBear.DocumentRendering;
 /// </summary>
 public sealed record DocumentParagraph(
     string Text,
-    DocumentPrivacyClassification PrivacyClassification);
+    DocumentPrivacyClassification PrivacyClassification) : DocumentBlock;

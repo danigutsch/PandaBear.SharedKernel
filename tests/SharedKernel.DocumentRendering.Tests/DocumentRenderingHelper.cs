@@ -18,4 +18,10 @@ internal static class DocumentRenderingHelper
     /// </summary>
     internal static DocumentRenderRequest RequestWith(DocumentSection section) =>
         new("pt-BR", "Contrato", [section], null);
+
+    /// <summary>
+    /// Creates an action that renders a section holding only <paramref name="block"/> as its blocks.
+    /// </summary>
+    internal static Action RenderBlock(DocumentBlock block) =>
+        () => RenderHtml(RequestWith(new DocumentSection("S", []) { Blocks = [block] }));
 }
