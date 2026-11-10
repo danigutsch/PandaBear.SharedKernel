@@ -11,13 +11,15 @@ namespace PandaBear.AspNetCore.Localization;
 public static class CulturePath
 {
     /// <summary>
-    /// Attempts to read a supported culture from the first path segment.
+    /// Attempts to read a supported culture from the first path segment. Only the exact canonical name matches (ordinal:
+    /// <c>/en/tours</c>, not <c>/EN/tours</c> or <c>/%20en/tours</c>), so each page has a single URL;
+    /// <see cref="CulturePathRedirectExtensions.UseCulturePathRedirect" /> redirects the other spellings to it.
     /// </summary>
     /// <param name="path">The request path, relative to the path base.</param>
     /// <param name="supportedCultures">The supported cultures.</param>
     /// <param name="culture">The supported culture when found; otherwise <see langword="null" />.</param>
     /// <param name="remainder">The path after the culture segment (empty or starting with <c>/</c>) when found; otherwise the default path string.</param>
-    /// <returns><see langword="true" /> when the first segment names a supported culture; otherwise <see langword="false" />.</returns>
+    /// <returns><see langword="true" /> when the first segment is the canonical name of a supported culture; otherwise <see langword="false" />.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="supportedCultures" /> is <see langword="null" />.</exception>
     public static bool TryParse(
         PathString path,
@@ -29,22 +31,22 @@ public static class CulturePath
 
         culture = null;
         remainder = default;
-
-        var value = path.Value;
-        if (string.IsNullOrEmpty(value) || value[0] != '/')
+        if (!TrySplit(path, out var segment, out var rest))
         {
             return false;
         }
 
-        var end = value.IndexOf('/', 1);
-        var segment = end < 0 ? value[1..] : value[1..end];
-        if (!supportedCultures.TryGet(segment, out culture))
+        foreach (var supported in supportedCultures.Cultures)
         {
-            return false;
+            if (string.Equals(segment, supported.Value, StringComparison.Ordinal))
+            {
+                culture = supported;
+                remainder = rest;
+                return true;
+            }
         }
 
-        remainder = end < 0 ? PathString.Empty : new PathString(value[end..]);
-        return true;
+        return false;
     }
 
     /// <summary>
@@ -83,5 +85,51 @@ public static class CulturePath
         ArgumentNullException.ThrowIfNull(supportedCultures);
 
         return Prepend(TryParse(path, supportedCultures, out _, out var remainder) ? remainder : path, culture, supportedCultures);
+    }
+
+    /// <summary>
+    /// Reads a first segment that names a supported culture only in another spelling (<c>/EN/tours</c>, <c>/%20en/tours</c>),
+    /// so the caller can redirect it to the canonical segment.
+    /// </summary>
+    /// <param name="path">The request path, relative to the path base.</param>
+    /// <param name="supportedCultures">The supported cultures.</param>
+    /// <param name="culture">The supported culture the segment names when found; otherwise <see langword="null" />.</param>
+    /// <param name="remainder">The path after the segment (empty or starting with <c>/</c>) when found; otherwise the default path string.</param>
+    /// <returns><see langword="true" /> when the segment names a supported culture but is not its canonical name.</returns>
+    internal static bool TryParseNonCanonical(
+        PathString path,
+        SupportedCultures supportedCultures,
+        [NotNullWhen(true)] out ContentCulture? culture,
+        out PathString remainder)
+    {
+        culture = null;
+        remainder = default;
+        if (!TrySplit(path, out var segment, out var rest)
+            || !supportedCultures.TryGet(segment, out var named)
+            || string.Equals(segment, named.Value, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        culture = named;
+        remainder = rest;
+        return true;
+    }
+
+    private static bool TrySplit(PathString path, out string segment, out PathString remainder)
+    {
+        segment = string.Empty;
+        remainder = default;
+
+        var value = path.Value;
+        if (string.IsNullOrEmpty(value) || value[0] != '/')
+        {
+            return false;
+        }
+
+        var end = value.IndexOf('/', 1);
+        segment = end < 0 ? value[1..] : value[1..end];
+        remainder = end < 0 ? PathString.Empty : new PathString(value[end..]);
+        return true;
     }
 }

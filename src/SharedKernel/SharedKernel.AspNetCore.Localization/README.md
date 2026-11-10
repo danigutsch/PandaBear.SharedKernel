@@ -12,13 +12,18 @@ mechanics. It builds on the `SupportedCultures` and `ContentCulture` value objec
 ## What is inside
 
 - `PathCultureRequestCultureProvider`: a `RequestCultureProvider` that reads the first path segment against a
-  `SupportedCultures` set, for `UseRequestLocalization`.
+  `SupportedCultures` set, for `UseRequestLocalization`. Like `CulturePath.TryParse`, it accepts only the exact canonical
+  segment (`/en/tours`, not `/EN/tours`).
 - `UseCulturePathRedirect`: redirects GET and HEAD requests without a supported prefix (`/`, `/tours`, `/fr/tours`) to the
   same local path under the best culture, with a 302. The culture is the remembered-choice cookie, then the Accept-Language
-  header by quality, then the default culture. The response carries `Vary: Accept-Language, Cookie`. The target is only ever
-  the path base, a supported culture, and the original local path and query, so it cannot leave the site. Paths whose last
-  segment has a file extension (`/robots.txt`, `/css/site.css`) and paths under an excluded prefix (for example `/api`)
-  pass through. Register it after static files.
+  header by quality, then the default culture. The response carries `Vary: Accept-Language, Cookie`. A first segment that
+  names a supported culture in another spelling (`/EN/tours`, `/%20en/tours`) gets a 301 to the canonical segment
+  (`/en/tours`) with the rest of the path and the query kept, so each page has exactly one URL. The target is only ever
+  the path base, a supported culture, and the original local path and query, so it cannot leave the site. Paths under an
+  excluded prefix (for example `/api`) pass through. Register it after static files.
+- File paths: a path whose last segment contains a `.` (`/robots.txt`, `/css/site.css`, `/en/brochure.pdf`) is treated as a
+  file and passes through without localization or redirect. `Slug` never contains `.`, so content paths built from slugs
+  are always localized; do not end a localized route with a segment that contains `.`.
 - `RememberCulture`: writes the remembered-choice cookie (HTTP-only, SameSite=Lax, one year) from a language-switch endpoint.
 - `CulturePath`: `TryParse`, `Prepend`, and `Switch` read, add, or swap the culture segment, for example to build
   language-switcher links.

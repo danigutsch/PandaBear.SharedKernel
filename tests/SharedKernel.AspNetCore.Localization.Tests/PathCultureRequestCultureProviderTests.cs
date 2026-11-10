@@ -8,7 +8,6 @@ public sealed class PathCultureRequestCultureProviderTests
 {
     [Theory]
     [InlineData("/pt/tours", "pt")]
-    [InlineData("/EN/tours", "en")]
     [InlineData("/en", "en")]
     public async Task Reads_the_culture_from_the_first_path_segment(string path, string expected)
     {
@@ -30,7 +29,9 @@ public sealed class PathCultureRequestCultureProviderTests
     [InlineData("/")]
     [InlineData("/fr/tours")]
     [InlineData("/tours/pt")]
-    public async Task Returns_no_result_without_a_supported_prefix(string path)
+    [InlineData("/EN/tours")]
+    [InlineData("/ pt/tours")]
+    public async Task Returns_no_result_without_a_canonical_supported_prefix(string path)
     {
         // Arrange
         var provider = new PathCultureRequestCultureProvider(Supported);

@@ -8,7 +8,6 @@ public sealed class CulturePathTests
 {
     [Theory]
     [InlineData("/pt/tours/42", "pt", "/tours/42")]
-    [InlineData("/PT/tours", "pt", "/tours")]
     [InlineData("/en", "en", "")]
     [InlineData("/en/", "en", "/")]
     public void TryParse_reads_a_supported_first_segment_and_returns_the_rest(string path, string culture, string remainder)
@@ -30,7 +29,11 @@ public sealed class CulturePathTests
     [InlineData("/ptx/tours")]
     [InlineData("/tours/pt")]
     [InlineData("//pt/tours")]
-    public void TryParse_rejects_a_missing_or_unsupported_first_segment(string path)
+    [InlineData("/PT/tours")]
+    [InlineData("/En")]
+    [InlineData("/ en/tours")]
+    [InlineData("/en /tours")]
+    public void TryParse_rejects_a_missing_unsupported_or_non_canonical_first_segment(string path)
     {
         // Act
         var parsed = CulturePath.TryParse(new PathString(path), Supported, out var culture, out var remainder);

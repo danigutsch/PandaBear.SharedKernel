@@ -20,9 +20,13 @@ public static class CulturePathRedirectExtensions
     /// Redirects GET and HEAD requests that have no supported culture prefix (<c>/</c>, <c>/tours</c>, <c>/fr/tours</c>) to the
     /// same local path under the best culture with a 302. The culture is the remembered-choice cookie, then the
     /// Accept-Language header by quality, then <see cref="SupportedCultures.Default" />. The response varies on
-    /// <c>Accept-Language</c> and <c>Cookie</c>. The target is always the path base, a supported culture, and the original
-    /// local path and query, so the redirect cannot leave the site. Paths whose last segment has a file extension
-    /// (<c>/robots.txt</c>) and paths under an excluded prefix pass through. Register it after static files.
+    /// <c>Accept-Language</c> and <c>Cookie</c>. A first segment that names a supported culture in a non-canonical spelling
+    /// (<c>/EN/tours</c>, <c>/%20en/tours</c>) is redirected with a 301 to the canonical segment (<c>/en/tours</c>), keeping the
+    /// rest of the path and the query, so every page has a single URL. The target is always the path base, a supported culture,
+    /// and the original local path and query, so the redirect cannot leave the site. Paths under an excluded prefix pass
+    /// through. A path whose last segment contains a <c>.</c> (<c>/robots.txt</c>, <c>/en/site.css</c>) is treated as a file and
+    /// passes through without localization; a <see cref="Slug" /> never contains <c>.</c>, so slug-based content paths are
+    /// always localized. Register it after static files.
     /// </summary>
     /// <param name="app">The application builder.</param>
     /// <param name="supportedCultures">The supported cultures.</param>
@@ -99,6 +103,15 @@ public static class CulturePathRedirectExtensions
             || IsExcluded(request.Path, excludedPrefixes))
         {
             return next(context);
+        }
+
+        if (CulturePath.TryParseNonCanonical(request.Path, supportedCultures, out var named, out var remainder))
+        {
+            // Same page, other spelling of the culture segment: one permanent, preference-independent redirect to the
+            // canonical URL. The target is built like the one below, so it cannot leave the site either.
+            var canonical = request.PathBase + CulturePath.Prepend(remainder, named, supportedCultures) + request.QueryString;
+            context.Response.Redirect(canonical, permanent: true);
+            return Task.CompletedTask;
         }
 
         var culture = FromCookie(request, supportedCultures, cookieName)

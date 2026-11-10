@@ -163,8 +163,7 @@ public sealed class CulturePathRedirectTests
     [Theory]
     [InlineData("/pt")]
     [InlineData("/en/tours")]
-    [InlineData("/EN/tours")]
-    public async Task Passes_prefixed_requests_through(string path)
+    public async Task Passes_canonically_prefixed_requests_through(string path)
     {
         // Arrange
         await using var app = await CulturePathRedirectTestApp.Start(Supported);
@@ -176,6 +175,110 @@ public sealed class CulturePathRedirectTests
         context.Response.StatusCode.ShouldBe(StatusCodes.Status200OK);
         context.Response.Headers.Location.Count.ShouldBe(0);
         context.Response.Headers.Vary.Count.ShouldBe(0);
+    }
+
+    [Theory]
+    [InlineData("GET", "/EN/tours", "/en/tours", "pt")]
+    [InlineData("GET", "/PT", "/pt", "en")]
+    [InlineData("GET", "/Pt/", "/pt/", "en")]
+    [InlineData("GET", "/ en/tours/42", "/en/tours/42", "pt")]
+    [InlineData("HEAD", "/EN/tours", "/en/tours", "pt")]
+    public async Task Redirects_a_non_canonical_culture_segment_permanently_to_the_canonical_one(
+        string method,
+        string path,
+        string expected,
+        string otherCulture)
+    {
+        // Arrange
+        await using var app = await CulturePathRedirectTestApp.Start(Supported);
+
+        // Act
+        // The cookie and Accept-Language name the other culture: the segment, not the visitor's preference, decides.
+        var context = await CulturePathRedirectTestApp.Send(
+            app,
+            method,
+            path,
+            request =>
+            {
+                request.Headers.Cookie = $"{CulturePathRedirectExtensions.DefaultCookieName}={otherCulture}";
+                request.Headers.AcceptLanguage = otherCulture;
+            });
+
+        // Assert
+        context.Response.StatusCode.ShouldBe(StatusCodes.Status301MovedPermanently);
+        context.Response.Headers.Location.ToString().ShouldBe(expected);
+        context.Response.Headers.Vary.Count.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Keeps_the_path_base_and_query_when_canonicalizing_the_culture_segment()
+    {
+        // Arrange
+        await using var app = await CulturePathRedirectTestApp.Start(Supported);
+
+        // Act
+        var context = await CulturePathRedirectTestApp.Send(
+            app,
+            "GET",
+            "/EN/tours/42",
+            request =>
+            {
+                request.PathBase = "/app";
+                request.QueryString = new QueryString("?a=1&b=x%20y");
+            });
+
+        // Assert
+        context.Response.StatusCode.ShouldBe(StatusCodes.Status301MovedPermanently);
+        context.Response.Headers.Location.ToString().ShouldBe("/app/en/tours/42?a=1&b=x%20y");
+    }
+
+    [Fact]
+    public async Task The_canonical_redirect_target_is_served_without_another_redirect()
+    {
+        // Arrange
+        await using var app = await CulturePathRedirectTestApp.Start(Supported);
+        var first = await CulturePathRedirectTestApp.Send(app, "GET", "/EN/tours");
+        var location = first.Response.Headers.Location.ToString();
+
+        // Act
+        var second = await CulturePathRedirectTestApp.Send(app, "GET", location);
+
+        // Assert
+        first.Response.StatusCode.ShouldBe(StatusCodes.Status301MovedPermanently);
+        second.Response.StatusCode.ShouldBe(StatusCodes.Status200OK);
+        second.Response.Headers.Location.Count.ShouldBe(0);
+    }
+
+    [Theory]
+    [InlineData("/EN//evil.example/x")]
+    [InlineData("/EN/\\evil.example/x")]
+    [InlineData("/EN///evil")]
+    public async Task Never_canonicalizes_to_another_host(string path)
+    {
+        // Arrange
+        await using var app = await CulturePathRedirectTestApp.Start(Supported);
+
+        // Act
+        var context = await CulturePathRedirectTestApp.Send(app, "GET", path);
+
+        // Assert
+        var location = context.Response.Headers.Location.ToString();
+        context.Response.StatusCode.ShouldBe(StatusCodes.Status301MovedPermanently);
+        location.ShouldStartWith("/en/", StringComparison.Ordinal);
+        new Uri(new Uri("http://localhost/"), location).Host.ShouldBe("localhost");
+    }
+
+    [Fact]
+    public async Task Passes_a_non_canonical_segment_through_for_other_methods()
+    {
+        // Arrange
+        await using var app = await CulturePathRedirectTestApp.Start(Supported);
+
+        // Act
+        var context = await CulturePathRedirectTestApp.Send(app, "POST", "/EN/tours");
+
+        // Assert
+        context.Response.StatusCode.ShouldBe(StatusCodes.Status200OK);
     }
 
     [Theory]
@@ -211,7 +314,9 @@ public sealed class CulturePathRedirectTests
     [InlineData("/robots.txt")]
     [InlineData("/css/site.css")]
     [InlineData("/favicon.ico")]
-    public async Task Passes_paths_with_a_file_extension_through(string path)
+    [InlineData("/EN/site.css")]
+    [InlineData("/tours/v1.2")]
+    public async Task Passes_paths_whose_last_segment_contains_a_dot_through(string path)
     {
         // Arrange
         await using var app = await CulturePathRedirectTestApp.Start(Supported);
