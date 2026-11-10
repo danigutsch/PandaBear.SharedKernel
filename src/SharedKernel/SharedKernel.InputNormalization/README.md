@@ -8,7 +8,7 @@ Reusable input normalization helpers for shared-kernel workflows.
 
 ## Usage
 
-Use `StringSanitizer` for trimming/normalization and key generation, `NumericSanitizer.SanitizePrice` for reusable numeric normalization, `ObjectStorageKeyValidator.IsValidRelativeKey` for relative storage keys, and `WebAssetUriSanitizer` for root-relative or HTTPS assets. Normalization does not replace domain validation, authorization, or storage access checks.
+Use `StringSanitizer` for trimming/normalization and key generation, `NumericSanitizer.SanitizePrice` for reusable numeric normalization, `ObjectStorageKeyValidator.IsValidRelativeKey` for relative storage keys, and `WebAssetUriSanitizer` for root-relative or HTTPS assets (surrounding white space is trimmed; control characters, inner white space, backslashes, lone surrogates, protocol-relative addresses and user information are refused). Normalization does not replace domain validation, authorization, or storage access checks.
 
 ## Install and example
 

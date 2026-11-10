@@ -27,7 +27,8 @@ public static class WebAssetUriSanitizer
             return null;
         }
 
-        if (ContainsControlCharacter(value))
+        // A lone surrogate is rejected before Normalize, which throws on one.
+        if (ContainsControlCharacter(value) || ContainsLoneSurrogate(value))
         {
             return null;
         }
@@ -143,4 +144,21 @@ public static class WebAssetUriSanitizer
     private static bool ContainsControlCharacter(string value) => value.Any(char.IsControl);
 
     private static bool ContainsWhitespace(string value) => value.Any(char.IsWhiteSpace);
+
+    private static bool ContainsLoneSurrogate(string value)
+    {
+        for (var index = 0; index < value.Length; index++)
+        {
+            if (char.IsHighSurrogate(value[index]) && index + 1 < value.Length && char.IsLowSurrogate(value[index + 1]))
+            {
+                index++;
+            }
+            else if (char.IsSurrogate(value[index]))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
