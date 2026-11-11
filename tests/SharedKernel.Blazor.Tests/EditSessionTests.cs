@@ -14,7 +14,7 @@ public sealed class EditSessionTests
         var loads = 0;
 
         // Act
-        await session.Sync(null, id => { loads++; return Task.FromResult(Result.Ok(new EditSessionRecord("x", 1))); }, EditSessionFixtures.Fill);
+        await session.Sync(null, id => { loads++; return ValueTask.FromResult(Result.Ok(new EditSessionRecord("x", 1))); }, EditSessionFixtures.Fill);
 
         // Assert
         loads.ShouldBe(0);
@@ -34,7 +34,7 @@ public sealed class EditSessionTests
         Guid? loaded = null;
 
         // Act
-        await session.Sync(id, key => { loaded = key; return Task.FromResult(Result.Ok(new EditSessionRecord("Bia", 3))); }, EditSessionFixtures.Fill);
+        await session.Sync(id, key => { loaded = key; return ValueTask.FromResult(Result.Ok(new EditSessionRecord("Bia", 3))); }, EditSessionFixtures.Fill);
 
         // Assert
         loaded.ShouldBe(id);
@@ -53,7 +53,7 @@ public sealed class EditSessionTests
         var loads = 0;
 
         // Act
-        await session.Sync(Guid.NewGuid(), _ => { loads++; return Task.FromResult(Result.Ok(new EditSessionRecord("Loaded", 9))); }, EditSessionFixtures.Fill);
+        await session.Sync(Guid.NewGuid(), _ => { loads++; return ValueTask.FromResult(Result.Ok(new EditSessionRecord("Loaded", 9))); }, EditSessionFixtures.Fill);
 
         // Assert
         loads.ShouldBe(0);
@@ -68,7 +68,7 @@ public sealed class EditSessionTests
         using var session = EditSessionFixtures.Create();
 
         // Act
-        await session.Sync(Guid.NewGuid(), _ => Task.FromResult(Result.NotFound<EditSessionRecord>("gone")), EditSessionFixtures.Fill);
+        await session.Sync(Guid.NewGuid(), _ => ValueTask.FromResult(Result.NotFound<EditSessionRecord>("gone")), EditSessionFixtures.Fill);
 
         // Assert
         session.IsMissing.ShouldBeTrue();
@@ -84,13 +84,13 @@ public sealed class EditSessionTests
         using var session = EditSessionFixtures.Create();
         var id = Guid.NewGuid();
         var loaded = new List<Guid>();
-        await session.Sync(id, key => { loaded.Add(key); return Task.FromResult(Result.Ok(new EditSessionRecord("Bia", 1))); }, EditSessionFixtures.Fill);
+        await session.Sync(id, key => { loaded.Add(key); return ValueTask.FromResult(Result.Ok(new EditSessionRecord("Bia", 1))); }, EditSessionFixtures.Fill);
         var context = session.Context;
         var submission = session.Submission;
         session.Form.Name = "typed";
 
         // Act
-        await session.Sync(id, key => { loaded.Add(key); return Task.FromResult(Result.Ok(new EditSessionRecord("Bia", 1))); }, EditSessionFixtures.Fill);
+        await session.Sync(id, key => { loaded.Add(key); return ValueTask.FromResult(Result.Ok(new EditSessionRecord("Bia", 1))); }, EditSessionFixtures.Fill);
 
         // Assert
         loaded.ShouldBe([id]);
@@ -106,12 +106,12 @@ public sealed class EditSessionTests
         using var session = EditSessionFixtures.Create();
         var first = Guid.NewGuid();
         var second = Guid.NewGuid();
-        await session.Sync(first, _ => Task.FromResult(Result.Ok(new EditSessionRecord("First", 1))), EditSessionFixtures.Fill);
+        await session.Sync(first, _ => ValueTask.FromResult(Result.Ok(new EditSessionRecord("First", 1))), EditSessionFixtures.Fill);
         var oldSubmission = session.Submission;
         var resets = 0;
 
         // Act
-        await session.Sync(second, _ => Task.FromResult(Result.Ok(new EditSessionRecord("Second", 5))), EditSessionFixtures.Fill, () => resets++);
+        await session.Sync(second, _ => ValueTask.FromResult(Result.Ok(new EditSessionRecord("Second", 5))), EditSessionFixtures.Fill, () => resets++);
 
         // Assert
         resets.ShouldBe(1);
@@ -125,10 +125,10 @@ public sealed class EditSessionTests
     {
         // Arrange
         using var session = EditSessionFixtures.Create();
-        await session.Sync(Guid.NewGuid(), _ => Task.FromResult(Result.Ok(new EditSessionRecord("Bia", 1))), EditSessionFixtures.Fill);
+        await session.Sync(Guid.NewGuid(), _ => ValueTask.FromResult(Result.Ok(new EditSessionRecord("Bia", 1))), EditSessionFixtures.Fill);
 
         // Act
-        await session.Sync(null, _ => Task.FromResult(Result.Ok(new EditSessionRecord("x", 1))), EditSessionFixtures.Fill);
+        await session.Sync(null, _ => ValueTask.FromResult(Result.Ok(new EditSessionRecord("x", 1))), EditSessionFixtures.Fill);
 
         // Assert
         session.Record.ShouldBeNull();
@@ -142,10 +142,10 @@ public sealed class EditSessionTests
     {
         // Arrange
         using var session = EditSessionFixtures.Create();
-        await session.Sync(Guid.NewGuid(), _ => Task.FromResult(Result.NotFound<EditSessionRecord>("gone")), EditSessionFixtures.Fill);
+        await session.Sync(Guid.NewGuid(), _ => ValueTask.FromResult(Result.NotFound<EditSessionRecord>("gone")), EditSessionFixtures.Fill);
 
         // Act
-        await session.Sync(null, _ => Task.FromResult(Result.Ok(new EditSessionRecord("x", 1))), EditSessionFixtures.Fill);
+        await session.Sync(null, _ => ValueTask.FromResult(Result.Ok(new EditSessionRecord("x", 1))), EditSessionFixtures.Fill);
 
         // Assert
         session.IsMissing.ShouldBeFalse();
@@ -158,10 +158,10 @@ public sealed class EditSessionTests
         // Arrange
         using var session = EditSessionFixtures.Create();
         var slow = new TaskCompletionSource<Result<EditSessionRecord>>();
-        var first = session.Sync(Guid.NewGuid(), _ => slow.Task, EditSessionFixtures.Fill);
+        var first = session.Sync(Guid.NewGuid(), _ => new ValueTask<Result<EditSessionRecord>>(slow.Task), EditSessionFixtures.Fill);
 
         // Act
-        await session.Sync(Guid.NewGuid(), _ => Task.FromResult(Result.Ok(new EditSessionRecord("Newer", 2))), EditSessionFixtures.Fill);
+        await session.Sync(Guid.NewGuid(), _ => ValueTask.FromResult(Result.Ok(new EditSessionRecord("Newer", 2))), EditSessionFixtures.Fill);
         slow.SetResult(Result.Ok(new EditSessionRecord("Older", 1)));
         await first;
 
@@ -175,7 +175,7 @@ public sealed class EditSessionTests
     {
         // Arrange
         using var session = EditSessionFixtures.Create();
-        await session.Sync(null, _ => Task.FromResult(Result.Ok(new EditSessionRecord("x", 1))), EditSessionFixtures.Fill);
+        await session.Sync(null, _ => ValueTask.FromResult(Result.Ok(new EditSessionRecord("x", 1))), EditSessionFixtures.Fill);
 
         // Act
         await session.Submission!.Submit(() => Task.FromResult(Result.Invalid("bad", "Name", "Required")));
@@ -195,7 +195,7 @@ public sealed class EditSessionTests
 
         // Act
         Func<Task> noLoad = () => session.Sync(null, null!, EditSessionFixtures.Fill);
-        Func<Task> noFill = () => session.Sync(null, _ => Task.FromResult(Result.Ok(new EditSessionRecord("x", 1))), null!);
+        Func<Task> noFill = () => session.Sync(null, _ => ValueTask.FromResult(Result.Ok(new EditSessionRecord("x", 1))), null!);
 
         // Assert
         await noLoad.ShouldThrow<ArgumentNullException>();
