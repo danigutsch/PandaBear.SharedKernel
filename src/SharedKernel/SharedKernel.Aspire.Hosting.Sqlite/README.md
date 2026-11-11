@@ -50,6 +50,14 @@ The name mirrors Aspire's container helper `WithDataBindMount`, which also maps 
 `WithPersistentLifetime` do not exist here: there is no container, so there is no runtime-managed volume and no container to reuse
 across runs.
 
+To let each developer choose, `WithDataBindMountFromConfiguration` reads the folder from an AppHost setting and keeps the database
+ephemeral when the setting is missing or blank, so test runs and fresh clones stay isolated:
+
+```csharp
+var db = builder.AddSqlite("app-db")
+                .WithDataBindMountFromConfiguration("AppHost:DataFolder");   // e.g. --AppHost:DataFolder=./.local/data
+```
+
 ### Files next to the database
 
 `db.Resource.DataDirectory` is the folder that holds the database. Other files that belong with it, such as uploaded media, can live

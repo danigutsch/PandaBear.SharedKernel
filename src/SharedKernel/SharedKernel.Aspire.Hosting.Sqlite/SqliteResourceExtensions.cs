@@ -106,6 +106,29 @@ public static class SqliteResourceExtensions
     }
 
     /// <summary>
+    /// Keeps the database in the host folder that an AppHost setting names, as <see cref="WithDataBindMount"/> does; without the setting, or
+    /// with a blank one, the database stays ephemeral.
+    /// </summary>
+    /// <param name="builder">The SQLite resource.</param>
+    /// <param name="configurationKey">The AppHost configuration key, such as <c>AppHost:DataFolder</c>; a relative folder is resolved against the AppHost directory.</param>
+    /// <returns>The resource builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="configurationKey"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <remarks>
+    /// The setting is read when this is called, from the AppHost configuration (user secrets, <c>appsettings</c>, environment variables or the
+    /// command line, such as <c>--AppHost:DataFolder=./data</c>). Ephemeral by default keeps test runs and fresh clones isolated; a developer
+    /// opts in to keeping data.
+    /// </remarks>
+    public static IResourceBuilder<SqliteResource> WithDataBindMountFromConfiguration(this IResourceBuilder<SqliteResource> builder, string configurationKey)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(configurationKey);
+
+        var folder = builder.ApplicationBuilder.Configuration[configurationKey];
+        return string.IsNullOrWhiteSpace(folder) ? builder : builder.WithDataBindMount(folder);
+    }
+
+    /// <summary>
     /// Gives a resource read-only access to a SQLite database file that another resource owns: it receives
     /// <c>ConnectionStrings__{connectionName}=Data Source=&lt;path&gt;;Mode=ReadOnly</c>, so SQLite refuses every write on that connection.
     /// </summary>
