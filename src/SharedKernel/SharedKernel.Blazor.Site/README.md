@@ -6,7 +6,10 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Brand-neutral, accessible Razor components for a public website, plus one stylesheet of design tokens. The components use semantic
 landmarks, need no JavaScript and no interactive render mode, and work with static server-side rendering. Every component except
-`PageHead` takes a `class` and passes any other unmatched attribute to its root element.
+`PageHead` takes a `class` and passes any other unmatched attribute to its root element. An unmatched name that starts with an
+upper-case letter, names a removed parameter in any case (`ImageSrc`, `ImageAlt`, `ImageWidth`, `ImageHeight`: use `Image`), or
+holds a character an HTML attribute name cannot hold throws `InvalidOperationException` naming it, so a misspelled or removed
+parameter fails instead of silently becoming an attribute. Write pass-through HTML attributes in lower case.
 
 ## Usage
 
