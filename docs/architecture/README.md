@@ -36,6 +36,7 @@ flowchart TB
     SharedKernel_Domain_EntityFrameworkCore[SharedKernel.Domain.EntityFrameworkCore] --> SharedKernel_Domain[SharedKernel.Domain]
     SharedKernel_Domain_EntityFrameworkCore[SharedKernel.Domain.EntityFrameworkCore] --> SharedKernel_EntityFrameworkCore[SharedKernel.EntityFrameworkCore]
     SharedKernel_EntityFrameworkCore[SharedKernel.EntityFrameworkCore] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
+    SharedKernel_EntityFrameworkCore_Npgsql[SharedKernel.EntityFrameworkCore.Npgsql] --> SharedKernel_EntityFrameworkCore[SharedKernel.EntityFrameworkCore]
     SharedKernel_EntityFrameworkCore_Sqlite[SharedKernel.EntityFrameworkCore.Sqlite] --> SharedKernel_EntityFrameworkCore[SharedKernel.EntityFrameworkCore]
     SharedKernel_EventSourcing_Npgsql[SharedKernel.EventSourcing.Npgsql] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
     SharedKernel_EventSourcing_Npgsql[SharedKernel.EventSourcing.Npgsql] --> SharedKernel_EventSourcing[SharedKernel.EventSourcing]
