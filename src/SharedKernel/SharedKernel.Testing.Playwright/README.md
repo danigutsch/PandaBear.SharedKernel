@@ -4,7 +4,7 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Reusable Playwright assertions for SharedKernel browser test suites.
+Reusable Playwright assertions, diagnostics and test bases for SharedKernel browser test suites.
 
 ## Usage
 
@@ -53,6 +53,17 @@ Clicks and typing on a prerendered Blazor page are lost silently until the circu
 `PlaywrightPageExtensions.InteractiveReadySelector`; this package does not reference `SharedKernel.Blazor`, and a test in the Blazor test
 project keeps the selector in sync). Blazor
 commits text on the change event, so blur a field after `FillAsync`.
+
+`TracedPageTest` is the sibling for applications that already run elsewhere, such as an AppHost started by an
+`AspireAppHostFixture` (`PandaBear.SharedKernel.IntegrationTesting`). Each test gets its own browser context, `PageDiagnostics` and a
+trace; when the test fails, `PlaywrightArtifacts.Save` writes a full-page screenshot and the trace zip to `ArtifactsFolder`
+(`TestResults/playwright` next to the test assembly; open the trace with `playwright show-trace`). `GotoInteractive(uri)` opens a Blazor
+page with the diagnosing wait.
+
+`PageDiagnostics` records console messages, page errors, failed requests, error responses and the WebSocket lifecycle of a page.
+`page.WaitForBlazorInteractive(diagnostics, timeout)` reports the ASP.NET Core developer exception page as an `InvalidOperationException`
+and any other failure as a `TimeoutException` carrying the diagnostics and the start of the HTML. `locator.FillAndExpectValue(value)`
+fills, blurs and checks the value, filling again (at most three times) when an interactive render resets the field.
 
 Playwright launches Chromium with `--no-sandbox` by default; Chromium's own sandbox is not needed for an application you start
 yourself, and on Ubuntu 23.10+ AppArmor denies it to unprofiled binaries anyway. Install the browser binaries once with
