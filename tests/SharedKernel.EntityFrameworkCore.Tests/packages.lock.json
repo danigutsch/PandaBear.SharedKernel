@@ -951,6 +951,14 @@
           "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.EntityFrameworkCore.Npgsql": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
+          "Npgsql": "[10.0.3, )",
+          "PandaBear.SharedKernel.EntityFrameworkCore": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.Idempotency.Abstractions": {
         "type": "Project"
       },

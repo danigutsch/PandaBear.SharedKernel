@@ -79,7 +79,8 @@ guard. Report that loss as an application rule instead of a provider exception, 
 3. Catch `UniqueConstraintViolationException` in the application handler and return the same validation result as the pre-check.
 
 The parser (`IUniqueViolationParser`) holds all provider knowledge and is registered by the provider package, for example
-`AddSqliteUniqueViolationParser()` from `SharedKernel.EntityFrameworkCore.Sqlite`. A violation is matched to an index by
+`AddSqliteUniqueViolationParser()` from `SharedKernel.EntityFrameworkCore.Sqlite` or `AddNpgsqlUniqueViolationParser()` from
+`SharedKernel.EntityFrameworkCore.Npgsql`. A violation is matched to an index by
 constraint name (the index database name) or by table and every column, ignoring case. Another database needs one parser class.
 
 ### Concurrency conflicts

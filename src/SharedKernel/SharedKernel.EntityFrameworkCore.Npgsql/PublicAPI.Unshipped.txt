@@ -1,0 +1,6 @@
+#nullable enable
+PandaBear.EntityFrameworkCore.Npgsql.NpgsqlServiceCollectionExtensions
+PandaBear.EntityFrameworkCore.Npgsql.NpgsqlUniqueViolationParser
+PandaBear.EntityFrameworkCore.Npgsql.NpgsqlUniqueViolationParser.NpgsqlUniqueViolationParser() -> void
+PandaBear.EntityFrameworkCore.Npgsql.NpgsqlUniqueViolationParser.TryParse(Microsoft.EntityFrameworkCore.DbUpdateException! exception, out PandaBear.EntityFrameworkCore.UniqueViolation! violation) -> bool
+static PandaBear.EntityFrameworkCore.Npgsql.NpgsqlServiceCollectionExtensions.AddNpgsqlUniqueViolationParser(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

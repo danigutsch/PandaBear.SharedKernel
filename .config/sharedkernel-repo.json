@@ -33,6 +33,7 @@
     "src/SharedKernel/SharedKernel.Domain.SourceGenerator/SharedKernel.Domain.SourceGenerator.csproj",
     "src/SharedKernel/SharedKernel.Domain/SharedKernel.Domain.csproj",
     "src/SharedKernel/SharedKernel.EntityFrameworkCore.Analyzers/SharedKernel.EntityFrameworkCore.Analyzers.csproj",
+    "src/SharedKernel/SharedKernel.EntityFrameworkCore.Npgsql/SharedKernel.EntityFrameworkCore.Npgsql.csproj",
     "src/SharedKernel/SharedKernel.EntityFrameworkCore.Sqlite/SharedKernel.EntityFrameworkCore.Sqlite.csproj",
     "src/SharedKernel/SharedKernel.EntityFrameworkCore/SharedKernel.EntityFrameworkCore.csproj",
     "src/SharedKernel/SharedKernel.EventSourcing.Npgsql/SharedKernel.EventSourcing.Npgsql.csproj",
