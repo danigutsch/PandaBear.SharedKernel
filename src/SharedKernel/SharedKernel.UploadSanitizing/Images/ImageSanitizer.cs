@@ -32,10 +32,6 @@ public static class ImageSanitizer
     /// <summary>The message of an animated image when <see cref="ImageSanitizerOptions.RejectAnimation"/> is set.</summary>
     public const string AnimatedMessage = "The image must be a still image; animated images are not accepted.";
 
-    private const int StreamChunk = 81_920;
-
-    private const int MaxInitialCapacity = 1024 * 1024;
-
     /// <summary>Recognizes the format, removes the metadata and reads the size of an image held in memory.</summary>
     /// <param name="data">The uploaded bytes; they are not changed.</param>
     /// <param name="options">The limits and the error field.</param>
@@ -88,44 +84,8 @@ public static class ImageSanitizer
         ArgumentNullException.ThrowIfNull(content);
         ArgumentNullException.ThrowIfNull(options);
 
-        var limit = (int)options.MaxBytes + 1;
-        var buffer = new byte[InitialCapacity(content, limit)];
-        var total = 0;
-        while (true)
-        {
-            if (total == buffer.Length)
-            {
-                if (total == limit)
-                {
-                    return Invalid(options, TooLargeMessage);
-                }
-
-                Array.Resize(ref buffer, (int)Math.Min((long)buffer.Length * 2, limit));
-            }
-
-            var read = await content.ReadAsync(buffer.AsMemory(total), ct).ConfigureAwait(false);
-            if (read == 0)
-            {
-                break;
-            }
-
-            total += read;
-        }
-
-        return SanitizeInPlace(buffer.AsMemory(0, total), options);
-    }
-
-    private static int InitialCapacity(Stream content, int limit)
-    {
-        long hint = StreamChunk;
-        if (content.CanSeek)
-        {
-            // One more than the remaining length, so the read that returns zero needs no larger buffer. The length is only a hint: a
-            // stream may report more than it holds, so it never sizes the buffer beyond MaxInitialCapacity; reads grow it from there.
-            hint = Math.Max(content.Length - content.Position, 0) + 1;
-        }
-
-        return (int)Math.Clamp(hint, 1, Math.Min(limit, MaxInitialCapacity));
+        var buffer = await UploadReader.Read(content, options.MaxBytes, ct).ConfigureAwait(false);
+        return buffer is { } read ? SanitizeInPlace(read, options) : Invalid(options, TooLargeMessage);
     }
 
     private static ImageFormat? Detect(ReadOnlySpan<byte> data, ImageSanitizerOptions options)

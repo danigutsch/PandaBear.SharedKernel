@@ -1,10 +1,27 @@
 #nullable enable
+const PandaBear.UploadSanitizing.Fonts.FontSanitizer.MalformedMessage = "The font file is damaged or uses a structure that is not accepted." -> string!
+const PandaBear.UploadSanitizing.Fonts.FontSanitizer.NotAFontMessage = "The file must be a font in an accepted format." -> string!
+const PandaBear.UploadSanitizing.Fonts.FontSanitizer.TooLargeMessage = "The font file is larger than the accepted size." -> string!
+const PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.MaxBytesLimit = 2147483590 -> long
 const PandaBear.UploadSanitizing.Images.ImageSanitizer.AnimatedMessage = "The image must be a still image; animated images are not accepted." -> string!
 const PandaBear.UploadSanitizing.Images.ImageSanitizer.DimensionsTooLargeMessage = "The image is wider or taller than the accepted size." -> string!
 const PandaBear.UploadSanitizing.Images.ImageSanitizer.MalformedMessage = "The image file is damaged or uses a structure that is not accepted." -> string!
 const PandaBear.UploadSanitizing.Images.ImageSanitizer.NotAnImageMessage = "The file must be an image in an accepted format." -> string!
 const PandaBear.UploadSanitizing.Images.ImageSanitizer.TooLargeMessage = "The image file is larger than the accepted size." -> string!
 const PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.MaxBytesLimit = 2147483590 -> long
+PandaBear.UploadSanitizing.Fonts.FontFormat
+PandaBear.UploadSanitizing.Fonts.FontFormat.Woff2 = 0 -> PandaBear.UploadSanitizing.Fonts.FontFormat
+PandaBear.UploadSanitizing.Fonts.FontSanitizer
+PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions
+PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.Field.get -> string!
+PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.Field.init -> void
+PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.MaxBytes.get -> long
+PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.MaxBytes.init -> void
+PandaBear.UploadSanitizing.Fonts.SanitizedFont
+PandaBear.UploadSanitizing.Fonts.SanitizedFont.Bytes.get -> System.ReadOnlyMemory<byte>
+PandaBear.UploadSanitizing.Fonts.SanitizedFont.ContentType.get -> string!
+PandaBear.UploadSanitizing.Fonts.SanitizedFont.FileExtension.get -> string!
+PandaBear.UploadSanitizing.Fonts.SanitizedFont.Format.get -> PandaBear.UploadSanitizing.Fonts.FontFormat
 PandaBear.UploadSanitizing.Images.ImageFormat
 PandaBear.UploadSanitizing.Images.ImageFormat.Avif = 3 -> PandaBear.UploadSanitizing.Images.ImageFormat
 PandaBear.UploadSanitizing.Images.ImageFormat.Jpeg = 0 -> PandaBear.UploadSanitizing.Images.ImageFormat
@@ -31,6 +48,10 @@ PandaBear.UploadSanitizing.Images.SanitizedImage.Height.get -> int
 PandaBear.UploadSanitizing.Images.SanitizedImage.IsAnimated.get -> bool
 PandaBear.UploadSanitizing.Images.SanitizedImage.MetadataRemoved.get -> bool
 PandaBear.UploadSanitizing.Images.SanitizedImage.Width.get -> int
+static PandaBear.UploadSanitizing.Fonts.FontSanitizer.Sanitize(System.IO.Stream! content, PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions! options, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.UploadSanitizing.Fonts.SanitizedFont!>>!
+static PandaBear.UploadSanitizing.Fonts.FontSanitizer.Sanitize(System.ReadOnlySpan<byte> data, PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions! options) -> PandaBear.Results.Result<PandaBear.UploadSanitizing.Fonts.SanitizedFont!>
+static PandaBear.UploadSanitizing.Fonts.FontSanitizer.SanitizeInPlace(System.Memory<byte> buffer, PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions! options) -> PandaBear.Results.Result<PandaBear.UploadSanitizing.Fonts.SanitizedFont!>
+static PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.Default.get -> PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions!
 static PandaBear.UploadSanitizing.Images.ImageSanitizer.Sanitize(System.IO.Stream! content, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions! options, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.UploadSanitizing.Images.SanitizedImage!>>!
 static PandaBear.UploadSanitizing.Images.ImageSanitizer.Sanitize(System.ReadOnlySpan<byte> data, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions! options) -> PandaBear.Results.Result<PandaBear.UploadSanitizing.Images.SanitizedImage!>
 static PandaBear.UploadSanitizing.Images.ImageSanitizer.SanitizeInPlace(System.Memory<byte> buffer, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions! options) -> PandaBear.Results.Result<PandaBear.UploadSanitizing.Images.SanitizedImage!>

@@ -7,6 +7,7 @@
 
     <ItemGroup>
         <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="PandaBear.UploadSanitizing.Fonts" />
         <Using Include="PandaBear.UploadSanitizing.Images" />
         <Using Include="Xunit" />
     </ItemGroup>

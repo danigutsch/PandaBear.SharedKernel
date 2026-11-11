@@ -4,10 +4,17 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Dependency-free upload sanitizing for JPEG, PNG and WebP, and opt-in AVIF: format recognition by content, metadata removal without
-re-encoding, animation detection, and the image size from its header. No native library is needed, unlike `PandaBear.SharedKernel.ImageProcessing` (ImageMagick).
+Dependency-free upload sanitizing, recognized by content and never by file name or declared content type:
 
-## Usage
+- Images (`PandaBear.UploadSanitizing.Images`): JPEG, PNG and WebP, and opt-in AVIF, with metadata removal without re-encoding,
+  animation detection, and the image size from its header. No native library is needed, unlike `PandaBear.SharedKernel.ImageProcessing`
+  (ImageMagick).
+- Fonts (`PandaBear.UploadSanitizing.Fonts`): WOFF2, with a structural check of the header, the table directory and the data blocks.
+
+Both areas share one shape: a `Result` that never throws on untrusted input, options with a size limit and the error field, and three entry
+points (a span, a caller's buffer in place, and a bounded stream read).
+
+## Images
 
 `ImageSanitizer` accepts an upload only when its own bytes are a well-formed JPEG, PNG or WebP. The file name and the declared content type
 play no part. It removes the metadata that can reveal where and with what a photo was taken, and keeps everything else byte for byte:
@@ -59,6 +66,41 @@ Three entry points share the same checks:
 - `Sanitize(Stream, options, ct)` reads from the current position, at most `MaxBytes` plus one byte, and never disposes the stream. A seekable
   stream's length only sizes the first buffer, up to 1 MiB.
 
+## Fonts
+
+`FontSanitizer` accepts an upload only when its own bytes are a single, structurally sound WOFF2 font (W3C WOFF File Format 2.0). Nothing
+is removed: an accepted font is returned byte for byte as uploaded. The compressed font data is not decoded; a browser does that and drops a
+font it cannot use. The checks follow the specification:
+
+- the `wOF2` signature in a whole 48-byte header;
+- a TrueType (`00 01 00 00`), CFF (`OTTO`) or Apple TrueType (`true`) flavour; a font collection (`ttcf`) is refused;
+- a declared length equal to the file's, a zero reserved field, and a non-zero table count, total sfnt size and compressed size;
+- every table directory entry: an arbitrary tag that fits, UIntBase128 numbers of at most five bytes with no leading zero byte and no value
+  above 2^32 - 1, a known transform version for the table (`glyf` and `loca` 0 or 3, `hmtx` 0 or 1, every other table 0), a transform
+  length for a transformed table, a zero transform length for a transformed `loca`, and `glyf` and `loca` either both absent, both
+  transformed or both null-transformed;
+- compressed data that fits the file after the directory;
+- metadata and private blocks either absent with every field zero, or non-empty, on a four-byte boundary, after what precedes them and inside
+  the file.
+
+The result is a `Result<SanitizedFont>`: the format (`FontFormat.Woff2`), the bytes, the extension `.woff2` and the media type `font/woff2`.
+Every rejection is an invalid result with one message on `FontSanitizerOptions.Field` (default `file`):
+
+- `NotAFontMessage`: the file is shorter than the header or does not start with `wOF2`, for example a WOFF 1 font or an image.
+- `MalformedMessage`: the structure is damaged or unsupported, as listed above.
+- `TooLargeMessage`: more bytes than `FontSanitizerOptions.MaxBytes` (default 2 MiB).
+
+Offsets and lengths are added in 64-bit arithmetic, so a value that wraps around in 32 bits is refused, and no declared value sizes an
+allocation. The variable-length 255UInt16 numbers of the format occur only in the collection directory, which is refused with its flavour,
+and inside the compressed `glyf` streams, which are not decoded. The same three entry points exist; `SanitizeInPlace` returns the caller's
+buffer itself and never changes it.
+
+```csharp
+var checkedFont = await FontSanitizer.Sanitize(upload, FontSanitizerOptions.Default with { Field = "font" }, ct);
+```
+
+## Scope
+
 The package uses no reflection and is NativeAOT and trimming compatible. Malware scanning, storage, naming and who may upload stay with the
 application.
 
@@ -95,6 +137,6 @@ public static class Example
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.UploadSanitizing`. C# namespaces: `PandaBear.UploadSanitizing.Images`. Assembly/project identity: `SharedKernel.UploadSanitizing`.
+Package ID: `PandaBear.SharedKernel.UploadSanitizing`. C# namespaces: `PandaBear.UploadSanitizing.Images` and `PandaBear.UploadSanitizing.Fonts`. Assembly/project identity: `SharedKernel.UploadSanitizing`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

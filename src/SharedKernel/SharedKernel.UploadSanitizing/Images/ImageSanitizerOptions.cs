@@ -4,7 +4,7 @@ namespace PandaBear.UploadSanitizing.Images;
 public sealed record ImageSanitizerOptions
 {
     /// <summary>The largest value of <see cref="MaxBytes"/>: one byte less than the longest byte array, so the extra byte that proves a stream too long fits.</summary>
-    public const long MaxBytesLimit = 0x7FFFFFC6;
+    public const long MaxBytesLimit = UploadReader.MaxBytesLimit;
 
     /// <summary>Gets options with the defaults: 10 MiB, 20,000 pixels per side, field <c>file</c>.</summary>
     public static ImageSanitizerOptions Default { get; } = new();
