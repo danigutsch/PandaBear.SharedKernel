@@ -1,3 +1,4 @@
+using System.Data.Common;
 using Aspire.Hosting.ApplicationModel;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -54,5 +55,45 @@ public static class SqliteResourceExtensions
                 Properties = [new ResourcePropertySnapshot("DatabasePath", fullPath)],
             })
             .WithHealthCheck(healthCheckName);
+    }
+
+    /// <summary>
+    /// Gives a resource read-only access to a SQLite database file that another resource owns: it receives
+    /// <c>ConnectionStrings__{connectionName}=Data Source=&lt;path&gt;;Mode=ReadOnly</c>, so SQLite refuses every write on that connection.
+    /// </summary>
+    /// <typeparam name="TDestination">The consuming resource type.</typeparam>
+    /// <param name="builder">The consuming resource.</param>
+    /// <param name="database">The database file resource.</param>
+    /// <param name="connectionName">The connection string name; the database resource's name when omitted.</param>
+    /// <returns>The consuming resource builder.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="database"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="connectionName"/> is empty or white space.</exception>
+    /// <remarks>
+    /// The mode is a property of the connection string, so the consumer should still enforce it itself, for example by setting
+    /// <c>Mode=ReadOnly</c> on whatever connection string it receives. Combine with <c>WaitFor</c> on the owner when the consumer needs the
+    /// schema the owner creates.
+    /// </remarks>
+    public static IResourceBuilder<TDestination> WithReadOnlyReference<TDestination>(
+        this IResourceBuilder<TDestination> builder,
+        IResourceBuilder<SqliteResource> database,
+        string? connectionName = null)
+        where TDestination : IResourceWithEnvironment
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(database);
+        if (connectionName is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(connectionName);
+        }
+
+        var connectionString = new DbConnectionStringBuilder
+        {
+            ["Data Source"] = database.Resource.DatabasePath,
+            ["Mode"] = "ReadOnly",
+        }.ConnectionString;
+
+        return builder
+            .WithEnvironment($"ConnectionStrings__{connectionName ?? database.Resource.Name}", connectionString)
+            .WithRelationship(database.Resource, "Reference");
     }
 }

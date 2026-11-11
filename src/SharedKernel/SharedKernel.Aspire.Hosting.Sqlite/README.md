@@ -19,6 +19,21 @@ builder.AddProject<Projects.Web>("web")
 The project receives `ConnectionStrings__Default=Data Source=<absolute path>`. A relative path is resolved against the AppHost
 directory. A path that contains a semicolon is quoted in the connection string.
 
+A second project that must only read the same file, such as a public site next to an admin host that owns the schema, uses
+`WithReadOnlyReference`:
+
+```csharp
+var admin = builder.AddProject<Projects.Admin>("admin").WithReference(db, connectionName: "Default").WaitFor(db);
+
+builder.AddProject<Projects.Public>("public")
+       .WithReadOnlyReference(db, connectionName: "Default")
+       .WaitFor(admin);
+```
+
+It receives `ConnectionStrings__Default=Data Source=<absolute path>;Mode=ReadOnly` (the database resource's name when no connection
+name is given) and shows the reference on the dashboard. SQLite then refuses every write on that connection. The mode travels in
+configuration, so the reading application should still force `Mode=ReadOnly` on the connection string it receives.
+
 When the application starts (not when publishing), the database file's parent directory is created, because SQLite creates the file
 but not its folder. `AddSqlite` itself has no file system side effect, and the database file is never created by this package. The dashboard shows the resource as `Sqlite` in the `Running` state with a `DatabasePath` property.
 

@@ -4,3 +4,4 @@ Aspire.Hosting.ApplicationModel.SqliteResource.DatabasePath.get -> string!
 Aspire.Hosting.ApplicationModel.SqliteResource.SqliteResource(string! name, string! databasePath) -> void
 Aspire.Hosting.SqliteResourceExtensions
 static Aspire.Hosting.SqliteResourceExtensions.AddSqlite(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name, string! databasePath) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.SqliteResource!>!
+static Aspire.Hosting.SqliteResourceExtensions.WithReadOnlyReference<TDestination>(this Aspire.Hosting.ApplicationModel.IResourceBuilder<TDestination>! builder, Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.SqliteResource!>! database, string? connectionName = null) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<TDestination>!
