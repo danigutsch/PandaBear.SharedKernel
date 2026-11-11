@@ -36,6 +36,22 @@ public sealed class ImageGridTests : BunitContext
     }
 
     [Fact]
+    public void A_prioritized_first_image_is_eager_with_high_fetch_priority()
+    {
+        // Arrange & Act
+        var cut = Render<ImageGrid>(parameters => parameters
+            .Add(component => component.Images, Images(2))
+            .Add(component => component.PrioritizeFirstImage, true));
+
+        // Assert
+        var images = cut.FindAll("img");
+        images[0].GetAttribute("loading").ShouldBe("eager");
+        images[0].GetAttribute("fetchpriority").ShouldBe("high");
+        images[1].GetAttribute("loading").ShouldBe("lazy");
+        images[1].HasAttribute("fetchpriority").ShouldBeFalse();
+    }
+
+    [Fact]
     public void Every_image_is_lazy_by_default()
     {
         // Arrange & Act
@@ -46,14 +62,27 @@ public sealed class ImageGridTests : BunitContext
     }
 
     [Fact]
-    public void An_image_without_an_accessibility_decision_fails_to_render()
+    public void A_gallery_entry_without_an_image_fails_to_render()
     {
         // Arrange & Act
         var render = () => Render<ImageGrid>(parameters => parameters
-            .Add(component => component.Images, [new GalleryImage(LinkTarget.FromString("/a.jpg"), null!, 10, 10)]));
+            .Add(component => component.Images, [new GalleryImage(null!)]));
 
         // Assert
-        render.ShouldThrow<InvalidOperationException>();
+        render.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe(nameof(ImageGrid.Images));
+    }
+
+    [Fact]
+    public void A_responsive_image_keeps_the_eager_count_on_its_img_inside_the_picture()
+    {
+        // Arrange & Act
+        var cut = Render<ImageGrid>(parameters => parameters
+            .Add(component => component.Images, [new GalleryImage(PictureImage()), new GalleryImage(PictureImage())])
+            .Add(component => component.EagerCount, 1));
+
+        // Assert
+        cut.FindAll("figure > picture").Count.ShouldBe(2);
+        cut.FindAll("picture > img").Select(image => image.GetAttribute("loading")).ShouldBeEquivalentTo("eager", "lazy");
     }
 
     [Fact]
@@ -61,24 +90,10 @@ public sealed class ImageGridTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<ImageGrid>(parameters => parameters
-            .Add(component => component.Images, [new GalleryImage(LinkTarget.FromString("/a.jpg"), ImageAlternative.Decorative(), 10, 10)]));
+            .Add(component => component.Images, [new GalleryImage(Image("/a.jpg", ImageAlternative.Decorative()))]));
 
         // Assert
         cut.Find("img").GetAttribute("alt").ShouldBe(string.Empty);
-    }
-
-    [Theory]
-    [InlineData(0, 10)]
-    [InlineData(10, 0)]
-    [InlineData(-1, 10)]
-    public void Non_positive_dimensions_are_rejected_because_they_would_not_reserve_space(int width, int height)
-    {
-        // Arrange & Act
-        var render = () => Render<ImageGrid>(parameters => parameters
-            .Add(component => component.Images, [new GalleryImage(LinkTarget.FromString("/a.jpg"), ImageAlternative.Describe("x"), width, height)]));
-
-        // Assert
-        render.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]

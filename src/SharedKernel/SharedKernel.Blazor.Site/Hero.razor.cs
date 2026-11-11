@@ -4,7 +4,7 @@ namespace PandaBear.Blazor.Site;
 
 /// <summary>
 /// The page introduction with the one level-1 heading, a subtitle, an optional image and an actions slot.
-/// The image is loaded eagerly because it is usually the largest visible element.
+/// The image is loaded eagerly and with high fetch priority because it is usually the largest visible element.
 /// </summary>
 public sealed partial class Hero
 {
@@ -24,32 +24,11 @@ public sealed partial class Hero
     }
 
     /// <summary>
-    /// Gets or sets the image address, root-relative or https. When set, <see cref="ImageAlt" />, <see cref="ImageWidth" /> and
-    /// <see cref="ImageHeight" /> are required.
+    /// Gets or sets the image, loaded eagerly with <c>fetchpriority="high"</c>. A <see cref="ResponsiveImage" /> with sources
+    /// renders a <c>picture</c> with <c>srcset</c> and <c>sizes</c>; one without renders a single <c>img</c>.
     /// </summary>
     [Parameter]
-    public LinkTarget? ImageSrc
-    {
-        get; set;
-    }
-
-    /// <summary>Gets or sets the accessibility decision for the image: a description, or decorative.</summary>
-    [Parameter]
-    public ImageAlternative? ImageAlt
-    {
-        get; set;
-    }
-
-    /// <summary>Gets or sets the intrinsic image width in pixels; required with an image.</summary>
-    [Parameter]
-    public int? ImageWidth
-    {
-        get; set;
-    }
-
-    /// <summary>Gets or sets the intrinsic image height in pixels; required with an image.</summary>
-    [Parameter]
-    public int? ImageHeight
+    public ResponsiveImage? Image
     {
         get; set;
     }
@@ -65,6 +44,5 @@ public sealed partial class Hero
     protected override void OnParametersSet()
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(Title);
-        ImageRules.Check(ImageSrc, ImageAlt, ImageWidth, ImageHeight, "Image");
     }
 }

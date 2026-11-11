@@ -10,10 +10,7 @@ public sealed class CardTests : BunitContext
         var cut = Render<Card>(parameters => parameters
             .Add(component => component.Title, "Atacama")
             .Add(component => component.Href, LinkTarget.FromString("/tours/atacama"))
-            .Add(component => component.ImageSrc, LinkTarget.FromString("/atacama.jpg"))
-            .Add(component => component.ImageAlt, ImageAlternative.Describe("Salt flats"))
-            .Add(component => component.ImageWidth, 800)
-            .Add(component => component.ImageHeight, 600)
+            .Add(component => component.Image, ResponsiveImage.Create(LinkTarget.FromString("/atacama.jpg"), 800, 600, ImageAlternative.Describe("Salt flats")))
             .Add(component => component.Actions, "<a id=\"more\" href=\"/x\">More</a>")
             .AddChildContent("<p id=\"text\">Desert</p>"));
 

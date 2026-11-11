@@ -11,10 +11,8 @@
             <div class="site-hero__actions">@Actions</div>
         }
     </div>
-    @if (ImageSrc is not null && ImageAlt is not null)
+    @if (Image is not null)
     {
-        <div class="site-hero__media">
-            <img src="@ImageSrc.Value" alt="@ImageAlt.Text" width="@ImageWidth" height="@ImageHeight" loading="eager" />
-        </div>
+        <div class="site-hero__media">@ResponsiveImageMarkup.Render(Image, eager: true, highPriority: true)</div>
     }
 </section>

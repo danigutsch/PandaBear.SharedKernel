@@ -23,6 +23,16 @@ public sealed partial class ImageGrid
         get; set;
     }
 
+    /// <summary>
+    /// Gets or sets whether the first image is the page's main image: it then loads eagerly with <c>fetchpriority="high"</c>,
+    /// whatever <see cref="EagerCount" /> says. The default is <see langword="false" />.
+    /// </summary>
+    [Parameter]
+    public bool PrioritizeFirstImage
+    {
+        get; set;
+    }
+
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
@@ -31,8 +41,7 @@ public sealed partial class ImageGrid
         foreach (var image in Images)
         {
             ArgumentNullException.ThrowIfNull(image, nameof(Images));
-            ArgumentNullException.ThrowIfNull(image.Src, nameof(Images));
-            ImageRules.Check(image.Src, image.Alt, image.Width, image.Height, "GalleryImage.", nameof(Images));
+            ArgumentNullException.ThrowIfNull(image.Image, nameof(Images));
         }
     }
 }

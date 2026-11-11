@@ -28,32 +28,11 @@ public sealed partial class Card
     } = 3;
 
     /// <summary>
-    /// Gets or sets the image address, root-relative or https. When set, <see cref="ImageAlt" />, <see cref="ImageWidth" /> and
-    /// <see cref="ImageHeight" /> are required.
+    /// Gets or sets the image, loaded lazily. A <see cref="ResponsiveImage" /> with sources renders a <c>picture</c> with
+    /// <c>srcset</c> and <c>sizes</c>; one without renders a single <c>img</c>.
     /// </summary>
     [Parameter]
-    public LinkTarget? ImageSrc
-    {
-        get; set;
-    }
-
-    /// <summary>Gets or sets the accessibility decision for the image: a description, or decorative.</summary>
-    [Parameter]
-    public ImageAlternative? ImageAlt
-    {
-        get; set;
-    }
-
-    /// <summary>Gets or sets the intrinsic image width in pixels; required with an image.</summary>
-    [Parameter]
-    public int? ImageWidth
-    {
-        get; set;
-    }
-
-    /// <summary>Gets or sets the intrinsic image height in pixels; required with an image.</summary>
-    [Parameter]
-    public int? ImageHeight
+    public ResponsiveImage? Image
     {
         get; set;
     }
@@ -77,6 +56,5 @@ public sealed partial class Card
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(Title);
         Heading.RequireLevel(HeadingLevel, nameof(HeadingLevel));
-        ImageRules.Check(ImageSrc, ImageAlt, ImageWidth, ImageHeight, "Image");
     }
 }

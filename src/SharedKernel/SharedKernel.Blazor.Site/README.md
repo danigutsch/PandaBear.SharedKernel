@@ -32,13 +32,13 @@ Reference the stylesheet from the host page, then your own stylesheet that overr
 </SiteHeader>
 <main id="main-content" tabindex="-1">
     <Hero Title="Small-group tours" Subtitle="Eight countries, one guide."
-          ImageSrc="@LinkTarget.FromString("/img/hero.jpg")" ImageAlt="@ImageAlternative.Describe("A lake below snowy peaks")" ImageWidth="1600" ImageHeight="900">
+          Image="@ResponsiveImage.Create(LinkTarget.FromString("/img/hero.jpg"), 1600, 900, ImageAlternative.Describe("A lake below snowy peaks"))">
         <Actions><ButtonLink Href="@LinkTarget.FromString("/tours")">See the tours</ButtonLink></Actions>
     </Hero>
     <Section Title="Tours" HeadingId="tours-heading" Intro="Pick your next trip.">
         <CardGrid>
-            <Card Title="Atacama" Href="@LinkTarget.FromString("/tours/atacama")" ImageSrc="@LinkTarget.FromString("/img/atacama.jpg")" ImageAlt="@ImageAlternative.Decorative()"
-                  ImageWidth="800" ImageHeight="600">
+            <Card Title="Atacama" Href="@LinkTarget.FromString("/tours/atacama")"
+                  Image="@ResponsiveImage.Create(LinkTarget.FromString("/img/atacama.jpg"), 800, 600, ImageAlternative.Decorative())">
                 <p>Eight days in the desert.</p>
             </Card>
         </CardGrid>
@@ -66,14 +66,14 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `SkipLink` | The first link of the page; `TargetId` defaults to `main-content`. Extra attributes cannot replace its `href` or `class`. |
 | `SiteHeader` | `header` with a brand slot, a labelled `nav` (`Label` is required when there are items), and an actions slot. An item has either an `Href` or one level of children; an item with children is a native `details`. The item that matches `CurrentPath` gets `aria-current="page"` and opens its group. |
 | `SiteFooter` | `footer` with a content slot and an optional `Legal` line. |
-| `Hero` | The page's one `h1`, a subtitle, an eager image and an actions slot. |
+| `Hero` | The page's one `h1`, a subtitle, an image loaded eagerly with `fetchpriority="high"`, and an actions slot. |
 | `Section` | `section` with a heading (`Level`, default 2), a decorative divider and an intro. Set `HeadingId` to give the heading that id and label the section by it (`aria-labelledby`), which makes it a named region; without it no id is generated, so prerendered and interactive markup match. |
 | `ButtonLink` | A link styled as a button (`Primary`, `Secondary`, `Outline`). `NewTab` adds `target="_blank"`, `rel="noopener noreferrer"` and a visually hidden `NewTabHint`. |
 | `Card`, `CardGrid` | `article` with an optional lazy image, a heading (`HeadingLevel`, default 3) whose link covers the card, text and actions; an auto-fit grid. Links, buttons, form controls, `summary` and `[tabindex]` elements in the body and the actions are raised above the covering link, so they stay clickable; any other interactive element you put in the body needs `position: relative; z-index: 1`. The focus ring is drawn on the card while a control in it has keyboard focus (`:has(:focus-visible)`). |
 | `FactsTable` | `table` with a required `caption` and `th scope="row"` headers. |
 | `Disclosure` | Native `details` and `summary`; a tab substitute without script. |
 | `Quote` | `figure` with a `blockquote` and a `cite` caption. |
-| `ImageGrid` | `figure` per image with width and height, lazy loading except the first `EagerCount`. |
+| `ImageGrid` | `figure` per `GalleryImage` (a `ResponsiveImage` and an optional caption), lazy loading except the first `EagerCount`; `PrioritizeFirstImage` loads the first one eagerly with `fetchpriority="high"`. |
 | `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links; no `address` when there are no lines and no channels. `PhoneText` shows the number as written (`+55 (11) 99999-0000`) while the link uses the digits; it must be the same number as `Phone`. The WhatsApp link shows `WhatsAppLabel`. |
 | `LanguageSwitcher` | Labelled `nav` of links with `hreflang`, `lang` and `aria-current="true"` on the current language. |
 | `PageHead` | Title, description, canonical link, OpenGraph basics and `hreflang` alternates including `x-default`. |
@@ -99,20 +99,56 @@ Texts that people read (labels, the new-tab hint, the WhatsApp link text) are pa
   Every address is refused when it has white space anywhere (including `\u0085` and no-break space), a control character or a
   backslash, or is longer than `LinkTarget.MaxLength` (2048, the same as `WebUrl.MaxLength`). Root-relative checks reuse
   `PandaBear.InputNormalization.WebAssetUriSanitizer`, which also refuses lone surrogates. Error messages never repeat the input.
-- Image sources (`Hero.ImageSrc`, `Card.ImageSrc`, `GalleryImage.Src`) must be root-relative or `https`
-  (`LinkTarget.IsImageSource`); a component given another target throws `ArgumentException` naming the parameter.
+- `ResponsiveImage` is the image of `Hero.Image`, `Card.Image` and `GalleryImage.Image`. `ResponsiveImage.Create(src, width,
+  height, alt)` is one `img`; the optional `sizes`, `srcSet` and `sources` add responsive candidates:
+  - `ImageCandidate.AtWidth(src, 640)` (`640w`) or `ImageCandidate.AtDensity(src, 2m)` (`2x`) is one `srcset` entry. One set uses
+    one descriptor kind and never repeats a descriptor; `sizes` is required as soon as a width descriptor is used.
+  - `ImageSource.Create("image/avif", candidates)` is one `picture` `source`. The type must be an `image/` media type (it is
+    trimmed and lower-cased). List the most efficient format first: the browser takes the first type it supports. With
+    sources the component renders `<picture>`, each `source` with its `type`, `srcset` and the shared `sizes`, and the `img`
+    last as the fallback.
+
+  Every address (the fallback and each candidate) must be root-relative or `https` (`LinkTarget.IsImageSource`), and a candidate
+  address must not start or end with a comma, which would split the `srcset`; `Create` throws `ArgumentException` with
+  `ParamName` `src`. `width` and `height` are the fallback's intrinsic size and must be positive
+  (`ArgumentOutOfRangeException`), so the browser reserves the space and the layout does not shift.
 - `ImageAlternative` is the accessibility decision for an image: `ImageAlternative.Describe("what it shows")` or
-  `ImageAlternative.Decorative()` (rendered as `alt=""`). A component given an image source without a decision throws
-  `InvalidOperationException` when it renders, and `GalleryImage` requires one.
-- `Hero` and `Card` require `ImageWidth` and `ImageHeight` whenever `ImageSrc` is set, and `GalleryImage` always has them, so the
-  browser reserves the space and the layout does not shift. A missing or non-positive dimension throws an `ArgumentException`
-  (`ArgumentOutOfRangeException` when not positive) whose `ParamName` is `ImageWidth` or `ImageHeight`.
+  `ImageAlternative.Decorative()` (rendered as `alt=""`). `ResponsiveImage.Create` requires one (`ArgumentNullException`).
 - `ContactCard` takes `PandaBear.BuildingBlocks.EmailAddress` and `PhoneNumber`. It checks restored values again, so only digits reach a
   `tel:` or WhatsApp link and no query reaches a `mailto:` link.
 - `PageHead` addresses are `System.Uri` and must be absolute `http` or `https`.
 - Cultures are `PandaBear.BuildingBlocks.ContentCulture` (`LanguageLink.Culture`, `AlternateLink.Culture`, `PageHead.Locale`), so the
   language-tag rule and canonical casing (`pt-br` becomes `pt-BR`) live in one place. `hreflang` and `lang` use the canonical name;
   `og:locale` writes the language and region with an underscore (`pt_BR`) and drops a script subtag (`zh-Hant-TW` gives `zh_TW`). Build cultures from input with `ContentCulture.Create`; `Restore` skips validation.
+
+### Responsive image example
+
+```csharp
+var cover = ResponsiveImage.Create(
+    LinkTarget.FromString("/media/atacama-1600.jpg"), 1600, 900, ImageAlternative.Describe("Salt flats at dusk"),
+    sizes: "(min-width: 48rem) 50vw, 100vw",
+    srcSet: [ImageCandidate.AtWidth(LinkTarget.FromString("/media/atacama-800.jpg"), 800),
+             ImageCandidate.AtWidth(LinkTarget.FromString("/media/atacama-1600.jpg"), 1600)],
+    sources:
+    [
+        ImageSource.Create("image/avif", [ImageCandidate.AtWidth(LinkTarget.FromString("/media/atacama-800.avif"), 800),
+                                          ImageCandidate.AtWidth(LinkTarget.FromString("/media/atacama-1600.avif"), 1600)]),
+        ImageSource.Create("image/webp", [ImageCandidate.AtWidth(LinkTarget.FromString("/media/atacama-800.webp"), 800),
+                                          ImageCandidate.AtWidth(LinkTarget.FromString("/media/atacama-1600.webp"), 1600)])
+    ]);
+```
+
+### Migrating from the earlier image parameters and the old public site
+
+- `Hero` and `Card`: replace `ImageSrc`, `ImageAlt`, `ImageWidth` and `ImageHeight` with
+  `Image="@ResponsiveImage.Create(src, width, height, alt)"`. `new GalleryImage(src, alt, width, height, caption)` becomes
+  `new GalleryImage(ResponsiveImage.Create(src, width, height, alt), caption)`.
+- The ViajantesTurismo public site's `ResponsiveTourImage.razor` maps to a `ResponsiveImage`: its rendition groups become one
+  `ImageSource` per content type with an `ImageCandidate.AtWidth` per rendition (AVIF, then WebP, then JPEG, as its
+  `ContentTypeSortOrder` did), its `Sizes` parameter becomes `sizes`, and `TourImageRenditions.Fallback` gives the `src`,
+  `width` and `height`. `TourImageRenditions` stays in the application: choosing renditions and building media routes is
+  application policy. `Loading="eager"` with `FetchPriority="high"` is what `Hero` renders; `TourGallery` maps to `ImageGrid`
+  with `PrioritizeFirstImage`, and its `sizes` (`(min-width: 48rem) 50vw, 100vw`) goes into each image.
 
 ## Design tokens
 

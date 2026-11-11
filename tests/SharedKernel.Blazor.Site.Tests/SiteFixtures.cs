@@ -42,8 +42,33 @@ internal static class SiteFixtures
     /// <param name="count">The number of images.</param>
     /// <returns>The images.</returns>
     public static GalleryImage[] Images(int count) => Enumerable.Range(1, count)
-        .Select(index => new GalleryImage(Link($"/img{index}.jpg"), ImageAlternative.Describe($"Photo {index}"), 400, 300, index == 1 ? "First" : null))
+        .Select(index => new GalleryImage(Image($"/img{index}.jpg", ImageAlternative.Describe($"Photo {index}")), index == 1 ? "First" : null))
         .ToArray();
+
+    /// <summary>Creates a 400 by 300 image with one source.</summary>
+    /// <param name="src">The address.</param>
+    /// <param name="alt">The accessibility decision; described as "Photo" when omitted.</param>
+    /// <returns>The image.</returns>
+    public static ResponsiveImage Image(string src, ImageAlternative? alt = null) =>
+        ResponsiveImage.Create(Link(src), 400, 300, alt ?? ImageAlternative.Describe("Photo"));
+
+    /// <summary>
+    /// Creates a 1600 by 900 photo at <c>/p.jpg</c> with AVIF and WebP sources at 800 and 1600 pixels, a JPEG <c>srcset</c> and
+    /// <c>sizes</c>.
+    /// </summary>
+    /// <returns>The image.</returns>
+    public static ResponsiveImage PictureImage() => ResponsiveImage.Create(
+        Link("/p.jpg"),
+        1600,
+        900,
+        ImageAlternative.Describe("A lake"),
+        sizes: "(min-width: 48rem) 50vw, 100vw",
+        srcSet: [ImageCandidate.AtWidth(Link("/p-800.jpg"), 800), ImageCandidate.AtWidth(Link("/p.jpg"), 1600)],
+        sources:
+        [
+            ImageSource.Create("image/avif", [ImageCandidate.AtWidth(Link("/p-800.avif"), 800), ImageCandidate.AtWidth(Link("/p-1600.avif"), 1600)]),
+            ImageSource.Create("image/webp", [ImageCandidate.AtWidth(Link("/p-800.webp"), 800), ImageCandidate.AtWidth(Link("/p-1600.webp"), 1600)])
+        ]);
 
     /// <summary>Renders the header with <see cref="NavItems" />, the label "Main" and a brand link.</summary>
     /// <param name="context">The bUnit context.</param>

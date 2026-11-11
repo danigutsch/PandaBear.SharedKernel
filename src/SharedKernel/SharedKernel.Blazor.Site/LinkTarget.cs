@@ -31,7 +31,7 @@ public sealed class LinkTarget : ValueObject
 
     /// <summary>
     /// Gets whether the address is root-relative (<c>/img/a.jpg</c>) or absolute <c>https</c>, the only shapes accepted for
-    /// <c>Hero.ImageSrc</c>, <c>Card.ImageSrc</c> and <c>GalleryImage.Src</c>.
+    /// the addresses of a <see cref="ResponsiveImage" /> and its <see cref="ImageCandidate" />s.
     /// </summary>
     public bool IsImageSource
     {

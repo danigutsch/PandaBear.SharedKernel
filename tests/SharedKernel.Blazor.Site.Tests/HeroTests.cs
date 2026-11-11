@@ -26,10 +26,7 @@ public sealed class HeroTests : BunitContext
         // Arrange & Act
         var cut = Render<Hero>(parameters => parameters
             .Add(component => component.Title, "Discover")
-            .Add(component => component.ImageSrc, LinkTarget.FromString("/hero.jpg"))
-            .Add(component => component.ImageAlt, ImageAlternative.Describe("A lake"))
-            .Add(component => component.ImageWidth, 1600)
-            .Add(component => component.ImageHeight, 900));
+            .Add(component => component.Image, ResponsiveImage.Create(LinkTarget.FromString("/hero.jpg"), 1600, 900, ImageAlternative.Describe("A lake"))));
 
         // Assert
         var image = cut.Find("img");
@@ -38,6 +35,7 @@ public sealed class HeroTests : BunitContext
         image.GetAttribute("width").ShouldBe("1600");
         image.GetAttribute("height").ShouldBe("900");
         image.GetAttribute("loading").ShouldBe("eager");
+        image.GetAttribute("fetchpriority").ShouldBe("high");
     }
 
     [Fact]

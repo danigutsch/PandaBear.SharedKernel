@@ -1,10 +1,8 @@
 @inherits SiteComponent
 <article class="@CssClass("site-card")" @attributes="AdditionalAttributes">
-    @if (ImageSrc is not null && ImageAlt is not null)
+    @if (Image is not null)
     {
-        <div class="site-card__media">
-            <img src="@ImageSrc.Value" alt="@ImageAlt.Text" width="@ImageWidth" height="@ImageHeight" loading="lazy" />
-        </div>
+        <div class="site-card__media">@ResponsiveImageMarkup.Render(Image, eager: false, highPriority: false)</div>
     }
     <div class="site-card__body">
         @Heading.Render(HeadingLevel, "site-card__title", null, TitleContent)

@@ -1,6 +1,9 @@
 #nullable enable
 override PandaBear.Blazor.Site.ImageAlternative.ToString() -> string!
+override PandaBear.Blazor.Site.ImageCandidate.ToString() -> string!
+override PandaBear.Blazor.Site.ImageSource.ToString() -> string!
 override PandaBear.Blazor.Site.LinkTarget.ToString() -> string!
+override PandaBear.Blazor.Site.ResponsiveImage.ToString() -> string!
 PandaBear.Blazor.Site.AlternateLink
 PandaBear.Blazor.Site.AlternateLink.AlternateLink(PandaBear.BuildingBlocks.ContentCulture! Culture, System.Uri! Href) -> void
 PandaBear.Blazor.Site.AlternateLink.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
@@ -33,14 +36,8 @@ PandaBear.Blazor.Site.Card.HeadingLevel.get -> int
 PandaBear.Blazor.Site.Card.HeadingLevel.set -> void
 PandaBear.Blazor.Site.Card.Href.get -> PandaBear.Blazor.Site.LinkTarget?
 PandaBear.Blazor.Site.Card.Href.set -> void
-PandaBear.Blazor.Site.Card.ImageAlt.get -> PandaBear.Blazor.Site.ImageAlternative?
-PandaBear.Blazor.Site.Card.ImageAlt.set -> void
-PandaBear.Blazor.Site.Card.ImageHeight.get -> int?
-PandaBear.Blazor.Site.Card.ImageHeight.set -> void
-PandaBear.Blazor.Site.Card.ImageSrc.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.Card.ImageSrc.set -> void
-PandaBear.Blazor.Site.Card.ImageWidth.get -> int?
-PandaBear.Blazor.Site.Card.ImageWidth.set -> void
+PandaBear.Blazor.Site.Card.Image.get -> PandaBear.Blazor.Site.ResponsiveImage?
+PandaBear.Blazor.Site.Card.Image.set -> void
 PandaBear.Blazor.Site.Card.Title.get -> string!
 PandaBear.Blazor.Site.Card.Title.set -> void
 PandaBear.Blazor.Site.CardGrid
@@ -84,29 +81,17 @@ PandaBear.Blazor.Site.FactsTable.FactsTable() -> void
 PandaBear.Blazor.Site.FactsTable.Rows.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactRow!>!
 PandaBear.Blazor.Site.FactsTable.Rows.set -> void
 PandaBear.Blazor.Site.GalleryImage
-PandaBear.Blazor.Site.GalleryImage.Alt.get -> PandaBear.Blazor.Site.ImageAlternative!
-PandaBear.Blazor.Site.GalleryImage.Alt.init -> void
 PandaBear.Blazor.Site.GalleryImage.Caption.get -> string?
 PandaBear.Blazor.Site.GalleryImage.Caption.init -> void
-PandaBear.Blazor.Site.GalleryImage.GalleryImage(PandaBear.Blazor.Site.LinkTarget! Src, PandaBear.Blazor.Site.ImageAlternative! Alt, int Width, int Height, string? Caption = null) -> void
-PandaBear.Blazor.Site.GalleryImage.Height.get -> int
-PandaBear.Blazor.Site.GalleryImage.Height.init -> void
-PandaBear.Blazor.Site.GalleryImage.Src.get -> PandaBear.Blazor.Site.LinkTarget!
-PandaBear.Blazor.Site.GalleryImage.Src.init -> void
-PandaBear.Blazor.Site.GalleryImage.Width.get -> int
-PandaBear.Blazor.Site.GalleryImage.Width.init -> void
+PandaBear.Blazor.Site.GalleryImage.GalleryImage(PandaBear.Blazor.Site.ResponsiveImage! Image, string? Caption = null) -> void
+PandaBear.Blazor.Site.GalleryImage.Image.get -> PandaBear.Blazor.Site.ResponsiveImage!
+PandaBear.Blazor.Site.GalleryImage.Image.init -> void
 PandaBear.Blazor.Site.Hero
 PandaBear.Blazor.Site.Hero.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
 PandaBear.Blazor.Site.Hero.Actions.set -> void
 PandaBear.Blazor.Site.Hero.Hero() -> void
-PandaBear.Blazor.Site.Hero.ImageAlt.get -> PandaBear.Blazor.Site.ImageAlternative?
-PandaBear.Blazor.Site.Hero.ImageAlt.set -> void
-PandaBear.Blazor.Site.Hero.ImageHeight.get -> int?
-PandaBear.Blazor.Site.Hero.ImageHeight.set -> void
-PandaBear.Blazor.Site.Hero.ImageSrc.get -> PandaBear.Blazor.Site.LinkTarget?
-PandaBear.Blazor.Site.Hero.ImageSrc.set -> void
-PandaBear.Blazor.Site.Hero.ImageWidth.get -> int?
-PandaBear.Blazor.Site.Hero.ImageWidth.set -> void
+PandaBear.Blazor.Site.Hero.Image.get -> PandaBear.Blazor.Site.ResponsiveImage?
+PandaBear.Blazor.Site.Hero.Image.set -> void
 PandaBear.Blazor.Site.Hero.Subtitle.get -> string?
 PandaBear.Blazor.Site.Hero.Subtitle.set -> void
 PandaBear.Blazor.Site.Hero.Title.get -> string!
@@ -114,12 +99,21 @@ PandaBear.Blazor.Site.Hero.Title.set -> void
 PandaBear.Blazor.Site.ImageAlternative
 PandaBear.Blazor.Site.ImageAlternative.IsDecorative.get -> bool
 PandaBear.Blazor.Site.ImageAlternative.Text.get -> string!
+PandaBear.Blazor.Site.ImageCandidate
+PandaBear.Blazor.Site.ImageCandidate.Density.get -> decimal?
+PandaBear.Blazor.Site.ImageCandidate.Src.get -> PandaBear.Blazor.Site.LinkTarget!
+PandaBear.Blazor.Site.ImageCandidate.Width.get -> int?
 PandaBear.Blazor.Site.ImageGrid
 PandaBear.Blazor.Site.ImageGrid.EagerCount.get -> int
 PandaBear.Blazor.Site.ImageGrid.EagerCount.set -> void
 PandaBear.Blazor.Site.ImageGrid.ImageGrid() -> void
 PandaBear.Blazor.Site.ImageGrid.Images.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.GalleryImage!>!
 PandaBear.Blazor.Site.ImageGrid.Images.set -> void
+PandaBear.Blazor.Site.ImageSource
+PandaBear.Blazor.Site.ImageSource.Candidates.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.ImageCandidate!>!
+PandaBear.Blazor.Site.ImageSource.SrcSet.get -> string!
+PandaBear.Blazor.Site.ImageSource.Type.get -> string!
+PandaBear.Blazor.Site.ImageSource.UsesWidthDescriptors.get -> bool
 PandaBear.Blazor.Site.LanguageLink
 PandaBear.Blazor.Site.LanguageLink.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
 PandaBear.Blazor.Site.LanguageLink.Culture.init -> void
@@ -162,6 +156,15 @@ PandaBear.Blazor.Site.Quote.ChildContent.set -> void
 PandaBear.Blazor.Site.Quote.Cite.get -> string?
 PandaBear.Blazor.Site.Quote.Cite.set -> void
 PandaBear.Blazor.Site.Quote.Quote() -> void
+PandaBear.Blazor.Site.ResponsiveImage
+PandaBear.Blazor.Site.ResponsiveImage.Alt.get -> PandaBear.Blazor.Site.ImageAlternative!
+PandaBear.Blazor.Site.ResponsiveImage.Height.get -> int
+PandaBear.Blazor.Site.ResponsiveImage.Sizes.get -> string?
+PandaBear.Blazor.Site.ResponsiveImage.Sources.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.ImageSource!>!
+PandaBear.Blazor.Site.ResponsiveImage.Src.get -> PandaBear.Blazor.Site.LinkTarget!
+PandaBear.Blazor.Site.ResponsiveImage.SrcSet.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.ImageCandidate!>!
+PandaBear.Blazor.Site.ResponsiveImage.UsesPicture.get -> bool
+PandaBear.Blazor.Site.ResponsiveImage.Width.get -> int
 PandaBear.Blazor.Site.Section
 PandaBear.Blazor.Site.Section.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
 PandaBear.Blazor.Site.Section.ChildContent.set -> void
@@ -215,6 +218,9 @@ PandaBear.Blazor.Site.SkipLink.TargetId.get -> string!
 PandaBear.Blazor.Site.SkipLink.TargetId.set -> void
 static PandaBear.Blazor.Site.ImageAlternative.Decorative() -> PandaBear.Blazor.Site.ImageAlternative!
 static PandaBear.Blazor.Site.ImageAlternative.Describe(string! text) -> PandaBear.Blazor.Site.ImageAlternative!
+static PandaBear.Blazor.Site.ImageCandidate.AtDensity(PandaBear.Blazor.Site.LinkTarget! src, decimal density) -> PandaBear.Blazor.Site.ImageCandidate!
+static PandaBear.Blazor.Site.ImageCandidate.AtWidth(PandaBear.Blazor.Site.LinkTarget! src, int width) -> PandaBear.Blazor.Site.ImageCandidate!
+static PandaBear.Blazor.Site.ImageSource.Create(string! type, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.ImageCandidate!>! candidates) -> PandaBear.Blazor.Site.ImageSource!
 static PandaBear.Blazor.Site.LinkTarget.Create(string? value) -> PandaBear.Results.Result<PandaBear.Blazor.Site.LinkTarget!>
 static PandaBear.Blazor.Site.LinkTarget.FromString(string! value) -> PandaBear.Blazor.Site.LinkTarget!
 const PandaBear.Blazor.Site.LinkTarget.MaxLength = 2048 -> int
@@ -223,3 +229,6 @@ PandaBear.Blazor.Site.Section.HeadingId.get -> string?
 PandaBear.Blazor.Site.Section.HeadingId.set -> void
 PandaBear.Blazor.Site.ContactCard.PhoneText.get -> string?
 PandaBear.Blazor.Site.ContactCard.PhoneText.set -> void
+static PandaBear.Blazor.Site.ResponsiveImage.Create(PandaBear.Blazor.Site.LinkTarget! src, int width, int height, PandaBear.Blazor.Site.ImageAlternative! alt, string? sizes = null, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.ImageCandidate!>? srcSet = null, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.ImageSource!>? sources = null) -> PandaBear.Blazor.Site.ResponsiveImage!
+PandaBear.Blazor.Site.ImageGrid.PrioritizeFirstImage.get -> bool
+PandaBear.Blazor.Site.ImageGrid.PrioritizeFirstImage.set -> void
