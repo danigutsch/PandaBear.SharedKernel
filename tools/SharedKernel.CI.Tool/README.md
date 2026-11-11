@@ -399,13 +399,17 @@ dotnet tool run sharedkernel-ci -- coverage verify --report artifacts --base "$B
 
 `coverage verify` checks, in order:
 
-1. the symbol evidence of `--symbols`: it records `HEAD`, and each file it names is a `bin/Release` `.pdb` under a
+1. that no tracked file differs from `HEAD` (`git status --porcelain --untracked-files=no --ignore-submodules=none`
+   prints nothing): the diff covers committed changes, but source files and symbols are read from the working tree, so an
+   uncommitted change or deletion fails with a message to commit or stash it, rebuild, and record the symbols again;
+   untracked files, such as the reports and the evidence, are allowed;
+2. the symbol evidence of `--symbols`: it records `HEAD`, and each file it names is a `bin/Release` `.pdb` under a
    symbol directory, reached without a symbolic link, whose content has the recorded hash;
-2. the lines added since `--base`, a full hexadecimal Git object ID, from `git -c core.quotePath=false diff
+3. the lines added since `--base`, a full hexadecimal Git object ID, from `git -c core.quotePath=false diff
    --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ --unified=0 --inter-hunk-context=0 --text
    --find-renames <base>...HEAD --`, so repository Git configuration and attributes cannot hide, convert, or move
    changed lines; a path that Git quotes fails the check;
-3. the Cobertura reports of each `--report`: a report file, or a directory searched recursively for
+4. the Cobertura reports of each `--report`: a report file, or a directory searched recursively for
    `*.cobertura*.xml`, such as the `results` directory of `run --coverage`. A report with a document type declaration
    is refused. A line is covered when any report hits it.
 

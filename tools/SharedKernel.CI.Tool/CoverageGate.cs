@@ -27,7 +27,10 @@ internal static class CoverageGate
         "--unified=0", "--inter-hunk-context=0", "--text", "--find-renames",
     ];
 
-    /// <summary>Checks the symbol evidence, then the coverage of the lines added since <paramref name="baseRevision"/>.</summary>
+    /// <summary>Arguments that list the tracked files whose working-tree or index content differs from <c>HEAD</c>, one per line.</summary>
+    public static readonly string[] StatusArguments = ["status", "--porcelain", "--untracked-files=no", "--ignore-submodules=none"];
+
+    /// <summary>Checks that the working tree matches <c>HEAD</c>, then the symbol evidence, then the coverage of the lines added since <paramref name="baseRevision"/>.</summary>
     /// <exception cref="InvalidOperationException">The coverage is below the threshold, the evidence does not match, or Git failed.</exception>
     /// <exception cref="InvalidDataException">A report, the diff, or the evidence is invalid, or changed code has no coverage.</exception>
     public static async Task Verify(
@@ -65,6 +68,16 @@ internal static class CoverageGate
                 RepositoryPath.Resolve(root, CiConfigurationFile.RelativePath), MaxConfigurationBytes, CiConfigurationFile.RelativePath, ct).ConfigureAwait(false)));
             revision = (await run("git", ["rev-parse", "HEAD"], root, ct).ConfigureAwait(false)).Trim();
             parents = (await run("git", ["rev-parse", "HEAD^@"], root, ct).ConfigureAwait(false)).Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            // The diff covers committed changes, but sources and symbols are read from the working tree, so it must match HEAD.
+            var status = await run("git", StatusArguments, root, ct).ConfigureAwait(false);
+            var uncommitted = status.Split('\n', StringSplitOptions.RemoveEmptyEntries).Length;
+            if (uncommitted > 0)
+            {
+                throw new InvalidOperationException(string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"The working tree has uncommitted changes to {uncommitted} tracked file(s) (see git status). coverage verify compares the changes committed since --base with source files and symbols read from the working tree, which must match HEAD: commit or stash the changes, rebuild, and record the symbols again."));
+            }
 
             // The symbols decide which uncovered files count as having no executable code, so they are checked first.
             var symbolFiles = await SymbolEvidence.Verify(root, coverage, Path.GetFullPath(symbols, root), revision, ct).ConfigureAwait(false);
