@@ -100,7 +100,9 @@ Source is public; registry publication remains deferred. Consume a validated can
 ## Applying migrations at start-up
 
 `await app.Services.ApplyMigrations<AppDbContext>();` applies every pending migration of the context in a new service scope and leaves an
-up-to-date database unchanged. Call it once at start-up, before the application accepts requests.
+up-to-date database unchanged. Call it once at start-up, before the application accepts requests. It returns `true` after migrating, and
+`false` without doing anything when the context uses a non-relational provider, such as the in-memory provider of a test host, so a host
+can skip its other relational schema work the same way. `EnsureMigrationsApplied` passes for such a context.
 
 When several hosts share one database and only one owns the schema, the others call
 `await app.Services.EnsureMigrationsApplied<AppDbContext>();` instead. It reads the applied migrations without writing, so it works on a
