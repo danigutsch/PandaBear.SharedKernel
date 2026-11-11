@@ -16,6 +16,10 @@ application keeps the crawler policy and the URL inclusion policy.
   written as `<xhtml:link rel="alternate" hreflang="..." href="..." />`; `SitemapAlternate.ForDefault` creates the
   `x-default` entry. The `xhtml` namespace is declared only when an entry has alternates.
 - `SitemapCanonicalOrigin`: validates and parses the canonical origin that sitemap locations must use.
+- `AddCanonicalOrigin(configurationKey)`: binds `CanonicalOriginOptions` from one configuration value (such as `PublicSite:Origin`) and
+  validates it on start, so a host with a missing or invalid origin does not start (`OptionsValidationException` naming the key).
+  `CanonicalOriginOptions.Value` is the origin and `Absolute("/path")` builds an address on it. Build canonical, `hreflang`, OpenGraph and
+  sitemap addresses from it, never from the request's `Host` header. The value is read without the reflection-based binder.
 
 ## Install
 
