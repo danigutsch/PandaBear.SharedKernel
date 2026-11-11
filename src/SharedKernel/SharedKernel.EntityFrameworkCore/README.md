@@ -100,3 +100,8 @@ Source is public; registry publication remains deferred. Consume a validated can
 
 `await app.Services.ApplyMigrations<AppDbContext>();` applies every pending migration of the context in a new service scope and leaves an
 up-to-date database unchanged. Call it once at start-up, before the application accepts requests.
+
+When several hosts share one database and only one owns the schema, the others call
+`await app.Services.EnsureMigrationsApplied<AppDbContext>();` instead. It reads the applied migrations without writing, so it works on a
+read-only connection, and throws `InvalidOperationException` naming the context, the number of pending migrations and the first one while
+the owner has not migrated yet. A missing database counts as one without any migration and is not created.
