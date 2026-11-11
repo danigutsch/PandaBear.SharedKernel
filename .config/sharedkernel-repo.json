@@ -22,6 +22,7 @@
     "src/SharedKernel/SharedKernel.Blazor.Site/SharedKernel.Blazor.Site.csproj",
     "src/SharedKernel/SharedKernel.Branding/SharedKernel.Branding.csproj",
     "src/SharedKernel/SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj",
+    "src/SharedKernel/SharedKernel.Caching/SharedKernel.Caching.csproj",
     "src/SharedKernel/SharedKernel.DispositionHold.Abstractions/SharedKernel.DispositionHold.Abstractions.csproj",
     "src/SharedKernel/SharedKernel.DispositionHold.EntityFrameworkCore/SharedKernel.DispositionHold.EntityFrameworkCore.csproj",
     "src/SharedKernel/SharedKernel.DocumentRendering/SharedKernel.DocumentRendering.csproj",
