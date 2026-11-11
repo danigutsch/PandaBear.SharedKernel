@@ -12,7 +12,7 @@ Import `PandaBear.Testing.Playwright` and await `page.ShouldHaveTitle(expectedTi
 
 To state why the test expects the title, await `page.ShouldHaveTitle(expectedTitle, userMessage)`. Playwright puts the message before the failure and keeps its own exception type.
 
-`page.GetHeading(name, level)`, `page.GetLink(name)` and `page.GetButton(name)` locate by role and exact accessible name. Playwright's
+`page.GetHeading(name, level)`, `page.GetLink(name)` and `page.GetButton(name)` locate by role and exact accessible name; `page.GetHeading(level)` locates every heading of one level whatever its name. Playwright's
 `GetByRole` matches a name as a case-insensitive substring by default, so `"Save"` would also find "Save draft".
 
 ## Structural accessibility checks

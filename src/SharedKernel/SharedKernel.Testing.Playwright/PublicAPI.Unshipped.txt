@@ -49,3 +49,4 @@ PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions
 static PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetButton(this Microsoft.Playwright.IPage! page, string! name) -> Microsoft.Playwright.ILocator!
 static PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetHeading(this Microsoft.Playwright.IPage! page, string! name, int? level = null) -> Microsoft.Playwright.ILocator!
 static PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetLink(this Microsoft.Playwright.IPage! page, string! name) -> Microsoft.Playwright.ILocator!
+static PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetHeading(this Microsoft.Playwright.IPage! page, int level) -> Microsoft.Playwright.ILocator!
