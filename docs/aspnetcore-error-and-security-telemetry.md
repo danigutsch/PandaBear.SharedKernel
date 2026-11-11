@@ -56,6 +56,8 @@ The handler answers `500` with an RFC 9457 `application/problem+json` body (`sta
 `traceId`) and never includes the exception message, type or stack. It logs one record per exception and
 counts it. `traceId` is the current `Activity.Id` (a W3C `traceparent`-style value such as
 `00-<trace-id>-<span-id>-01`), or the request's `TraceIdentifier` when there is no activity.
+A client that accepts only another format, such as a browser that navigates to a failing URL and sends only `text/html`, still
+receives the same body as `application/problem+json`, after the host's `CustomizeProblemDetails`.
 
 What it does not count:
 

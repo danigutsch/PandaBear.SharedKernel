@@ -156,6 +156,65 @@ public sealed class UnhandledExceptionHandlerTests
     }
 
     [Fact]
+    public async Task A_client_that_accepts_only_html_still_receives_the_problem_body_with_the_same_status()
+    {
+        // Arrange
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
+        var logger = new RecordingLogger<UnhandledExceptionReporter>();
+        await using var app = await UnhandledExceptionTestApp.Start(meters, logger);
+        using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
+        using var request = new HttpRequestMessage(HttpMethod.Get, new Uri("/orders/42", UriKind.Relative));
+        request.Headers.TryAddWithoutValidation("Accept", "text/html");
+
+        // Act
+        using var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
+        response.Content.Headers.ContentType.ShouldNotBeNull().MediaType.ShouldBe("application/problem+json");
+        using var document = JsonDocument.Parse(body);
+        document.RootElement.GetProperty("status").GetInt32().ShouldBe(500);
+        document.RootElement.GetProperty("title").GetString().ShouldBe("An unexpected error occurred.");
+        document.RootElement.GetProperty("traceId").GetString().ShouldNotBeNull().ShouldNotBe(string.Empty);
+        body.ShouldNotContain(SensitiveMessage, "the exception message must never reach the response");
+        meters.Measurements.ShouldHaveSingleItem("the exception is counted once");
+    }
+
+    [Fact]
+    public async Task A_host_customization_also_shapes_the_body_of_a_client_that_accepts_only_html()
+    {
+        // Arrange
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
+        var logger = new RecordingLogger<UnhandledExceptionReporter>();
+        await using var app = await UnhandledExceptionTestApp.Start(meters, logger, options => options.CustomizeProblemDetails = context =>
+        {
+            if (context.ProblemDetails.Status < 500)
+            {
+                context.ProblemDetails.Title = "The request could not be read.";
+                context.ProblemDetails.Type = null;
+                context.ProblemDetails.Extensions.Remove("traceId");
+            }
+        });
+        using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
+        using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("/upload", UriKind.Relative));
+        request.Headers.TryAddWithoutValidation("Accept", "text/html");
+
+        // Act
+        using var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.RequestEntityTooLarge);
+        response.Content.Headers.ContentType.ShouldNotBeNull().MediaType.ShouldBe("application/problem+json");
+        using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+        body.RootElement.GetProperty("status").GetInt32().ShouldBe(413);
+        body.RootElement.GetProperty("title").GetString().ShouldBe("The request could not be read.");
+        body.RootElement.TryGetProperty("type", out _).ShouldBeFalse("the host removed the type");
+        body.RootElement.TryGetProperty("traceId", out _).ShouldBeFalse("the host removed the trace identifier");
+        meters.Measurements.ShouldBeEmpty("a client error is not counted as an unhandled exception");
+    }
+
+    [Fact]
     public async Task Client_abort_is_left_to_the_framework_and_not_counted()
     {
         // Arrange
