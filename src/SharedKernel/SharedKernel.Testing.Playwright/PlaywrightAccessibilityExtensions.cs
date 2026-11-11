@@ -11,13 +11,15 @@ namespace PandaBear.Testing.Playwright;
 /// problems only and do not replace a full audit such as axe-core. An accessible name here is a non-blank <c>aria-label</c>, a non-blank
 /// <c>aria-labelledby</c> attribute (the referenced element is not resolved), or a non-blank <c>title</c>, or, for a form control, an associated label and, for a link
 /// or button, its text, a descendant <c>img</c> with a non-blank <c>alt</c> or a descendant with a non-blank <c>aria-label</c> (an <c>svg</c> <c>title</c> counts as text).
-/// Image and reset inputs are skipped along with hidden, submit and button inputs. A failed assertion throws an <see cref="PlaywrightException"/> that describes the offending elements.
+/// Image and reset inputs are skipped along with hidden, submit and button inputs. Content inside an <c>inert</c> or
+/// <c>aria-hidden="true"</c> subtree, such as a live preview, is outside the accessibility tree and is skipped by every element check, so a
+/// preview's <c>h1</c> does not count as a second first-level heading. A failed assertion throws an <see cref="PlaywrightException"/> that describes the offending elements.
 /// </remarks>
 public static class PlaywrightAccessibilityExtensions
 {
     private const string UnlabelledControlsScript = """
         () => {
-            const visible = el => el.checkVisibility({ visibilityProperty: true }) && !el.closest('[aria-hidden="true"]');
+            const visible = el => el.checkVisibility({ visibilityProperty: true }) && !el.closest('[inert], [aria-hidden="true"]');
             const named = el => (el.getAttribute('aria-label') || '').trim()
                 || (el.getAttribute('aria-labelledby') || '').trim()
                 || (el.getAttribute('title') || '').trim()
@@ -32,7 +34,7 @@ public static class PlaywrightAccessibilityExtensions
 
     private const string UnnamedLinksAndButtonsScript = """
         () => {
-            const visible = el => el.checkVisibility({ visibilityProperty: true }) && !el.closest('[aria-hidden="true"]');
+            const visible = el => el.checkVisibility({ visibilityProperty: true }) && !el.closest('[inert], [aria-hidden="true"]');
             const named = el => (el.getAttribute('aria-label') || '').trim()
                 || (el.getAttribute('aria-labelledby') || '').trim()
                 || (el.textContent || '').trim()
@@ -46,7 +48,9 @@ public static class PlaywrightAccessibilityExtensions
         }
         """;
 
-    private const string LevelOneHeadingCountScript = "() => document.querySelectorAll('h1').length";
+    private const string LevelOneHeadingCountScript = """
+        () => [...document.querySelectorAll('h1')].filter(el => !el.closest('[inert], [aria-hidden="true"]')).length
+        """;
 
     private const string DocumentLanguageScript = "() => document.documentElement.lang";
 
@@ -90,14 +94,14 @@ public static class PlaywrightAccessibilityExtensions
     /// <exception cref="PlaywrightException">Thrown when a link or button has no name.</exception>
     public static Task ShouldHaveNoUnnamedLinksOrButtons(this IPage page, string userMessage) => Verify(page, Required(userMessage), UnnamedLinksOrButtons);
 
-    /// <summary>Verifies that the page has exactly one first-level heading.</summary>
+    /// <summary>Verifies that the page has exactly one first-level heading outside <c>inert</c> and <c>aria-hidden="true"</c> content.</summary>
     /// <param name="page">The page to inspect.</param>
     /// <returns>A task that completes when the check passes.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="page"/> is <see langword="null"/>.</exception>
     /// <exception cref="PlaywrightException">Thrown when the page has none or more than one <c>h1</c>.</exception>
     public static Task ShouldHaveSingleLevelOneHeading(this IPage page) => Verify(page, null, SingleLevelOneHeading);
 
-    /// <summary>Verifies that the page has exactly one first-level heading.</summary>
+    /// <summary>Verifies that the page has exactly one first-level heading outside <c>inert</c> and <c>aria-hidden="true"</c> content.</summary>
     /// <param name="page">The page to inspect.</param>
     /// <param name="userMessage">Why the test expects the assertion to hold; the failure message starts with it.</param>
     /// <returns>A task that completes when the check passes.</returns>

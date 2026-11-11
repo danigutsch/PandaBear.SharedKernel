@@ -203,6 +203,46 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
     }
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task A_page_with_an_inert_live_preview_has_an_accessible_structure()
+    {
+        // Arrange
+        var page = await chromium.Show("""
+            <h1>Theme</h1><label>Colour <input></label>
+            <div inert><h1>Preview</h1><input><a href="/p"></a><button></button></div>
+            <div aria-hidden="true"><h1>Decoration</h1></div>
+            """);
+
+        // Act, Assert
+        await page.ShouldHaveSingleLevelOneHeading();
+        await page.ShouldHaveAccessibleStructure();
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task Controls_links_and_buttons_inside_inert_content_are_ignored()
+    {
+        // Arrange
+        var page = await chromium.Show("""<section inert><input id="i"><a href="/x"></a><button></button></section>""");
+
+        // Act, Assert
+        await page.ShouldHaveNoUnlabelledControls();
+        await page.ShouldHaveNoUnnamedLinksOrButtons();
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task A_heading_inside_inert_or_aria_hidden_content_is_not_the_pages_heading()
+    {
+        // Arrange
+        var page = await chromium.Show("""<div inert><h1>Preview</h1></div><div aria-hidden="true"><h1>Decoration</h1></div>""");
+        Func<Task> assertion = page.ShouldHaveSingleLevelOneHeading;
+
+        // Act
+        var exception = await assertion.ShouldThrow<PlaywrightException>();
+
+        // Assert
+        exception.Message.ShouldBe("Expected exactly one first-level heading (h1), but found 0.");
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public async Task The_accessible_structure_check_reports_every_problem_in_one_failure()
     {
         // Arrange
