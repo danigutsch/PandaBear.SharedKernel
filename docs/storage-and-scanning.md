@@ -8,7 +8,7 @@ SharedKernel only when it is host-agnostic and carries no application business r
 | Concern | Package | Owns | Does not own |
 | --- | --- | --- | --- |
 | Bounded seekable content for multi-pass intake | `SharedKernel.IO` | `SeekableContent` lease with memory threshold and spill-to-disk | Request admission, size policy, storage |
-| Image upload sanitizing | `SharedKernel.ImageSanitizing` | `ImageSanitizer`: JPEG, PNG and WebP recognized by content; Exif/GPS, XMP, IPTC, comments and text chunks removed without re-encoding; header dimensions; size and dimension limits | Which uploads are images, naming, storage, scanning, decoding |
+| Image upload sanitizing | `SharedKernel.ImageSanitizing` | `ImageSanitizer`: JPEG, PNG and WebP recognized by content; Exif/GPS, XMP, IPTC, comments and text chunks removed without re-encoding; header dimensions; size and dimension limits; animation detection and optional refusal; opt-in AVIF (structure and size checked, metadata kept) | Which uploads are images, naming, storage, scanning, decoding |
 | Object-key validation | `SharedKernel.InputNormalization` | `ObjectStorageKeyValidator`: relative, slash-delimited keys without dot segments, bounded length | Key layout, variants, naming rules |
 | Object-store contract | `SharedKernel.ObjectStorage` | `IObjectStore`, write, read, list, delete, direct-upload tickets, checksum and metadata carriers | Provider behavior, key policy, publishing |
 | S3-compatible provider | `SharedKernel.ObjectStorage.S3` | `AddS3ObjectStore`, options validation, presigned PUT tickets, traces without bucket or key tags, `AddS3ObjectStoreHealthCheck` | Hosting a server, access policy, application metadata |

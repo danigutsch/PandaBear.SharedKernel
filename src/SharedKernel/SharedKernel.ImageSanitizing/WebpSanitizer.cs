@@ -14,16 +14,21 @@ internal static class WebpSanitizer
     private const int ExtendedHeaderLength = 10;
     private const byte ExifFlag = 0x08;
     private const byte XmpFlag = 0x04;
+    private const byte AnimationFlag = 0x02;
 
     /// <summary>Cleans a buffer that starts with a RIFF header of type WEBP, moving the kept chunks towards its start.</summary>
     /// <param name="data">The file; overwritten with the result.</param>
     /// <param name="width">The width, or zero.</param>
     /// <param name="height">The height, or zero.</param>
+    /// <param name="animated">
+    /// Whether the file is animated: an <c>ANIM</c> or <c>ANMF</c> chunk, or the animation flag of the extended header.
+    /// </param>
     /// <returns>The length of the result, or <c>-1</c> when the structure is malformed.</returns>
-    internal static int Clean(Span<byte> data, out int width, out int height)
+    internal static int Clean(Span<byte> data, out int width, out int height, out bool animated)
     {
         width = 0;
         height = 0;
+        animated = false;
         if (BinaryPrimitives.ReadUInt32LittleEndian(data[4..]) != (uint)(data.Length - 8))
         {
             return -1;
@@ -64,6 +69,7 @@ internal static class WebpSanitizer
                     }
 
                     flagsAt = written + ChunkHeaderLength;
+                    animated |= (payload[0] & AnimationFlag) != 0;
                     width = 1 + ReadUInt24(payload[4..]);
                     height = 1 + ReadUInt24(payload[7..]);
                     break;
@@ -83,6 +89,10 @@ internal static class WebpSanitizer
                     break;
                 case FourCc.Anmf:
                     hasImage = true;
+                    animated = true;
+                    break;
+                case FourCc.Anim:
+                    animated = true;
                     break;
                 default:
                     break;
@@ -150,6 +160,7 @@ internal static class WebpSanitizer
         internal const uint Vp8 = 0x56503820; // "VP8 "
         internal const uint Vp8L = 0x5650384C; // "VP8L"
         internal const uint Anmf = 0x414E4D46; // "ANMF"
+        internal const uint Anim = 0x414E494D; // "ANIM"
         internal const uint Exif = 0x45584946; // "EXIF"
         internal const uint Xmp = 0x584D5020; // "XMP "
     }

@@ -11,4 +11,10 @@ public enum ImageFormat
 
     /// <summary>WebP (a <c>RIFF</c> container of type <c>WEBP</c>).</summary>
     Webp = 2,
+
+    /// <summary>
+    /// AVIF (an ISOBMFF file whose <c>ftyp</c> box lists the <c>avif</c> or <c>avis</c> brand). Accepted only with
+    /// <see cref="ImageSanitizerOptions.AllowAvif"/>, and kept with its metadata.
+    /// </summary>
+    Avif = 3,
 }

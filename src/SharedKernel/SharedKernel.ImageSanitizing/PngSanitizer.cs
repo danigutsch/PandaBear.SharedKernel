@@ -19,11 +19,13 @@ internal static class PngSanitizer
     /// <param name="data">The file; overwritten with the result.</param>
     /// <param name="width">The width from the header chunk, or zero.</param>
     /// <param name="height">The height from the header chunk, or zero.</param>
+    /// <param name="animated">Whether the file is an animated PNG: it has an animation control (<c>acTL</c>) chunk.</param>
     /// <returns>The length of the result, or <c>-1</c> when the structure is malformed.</returns>
-    internal static int Clean(Span<byte> data, out int width, out int height)
+    internal static int Clean(Span<byte> data, out int width, out int height, out bool animated)
     {
         width = 0;
         height = 0;
+        animated = false;
         var written = SignatureLength;
         var position = SignatureLength;
         var hasImageData = false;
@@ -60,6 +62,7 @@ internal static class PngSanitizer
 
             var isEnd = type.SequenceEqual("IEND"u8);
             hasImageData |= type.SequenceEqual("IDAT"u8);
+            animated |= type.SequenceEqual("acTL"u8);
             var chunkLength = ChunkOverhead + (int)length;
             if (!IsMetadata(type))
             {

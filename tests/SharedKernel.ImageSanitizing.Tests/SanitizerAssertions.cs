@@ -32,6 +32,7 @@ internal static class SanitizerAssertions
             ImageSanitizer.NotAnImageMessage,
             ImageSanitizer.MalformedMessage,
             ImageSanitizer.TooLargeMessage,
-            ImageSanitizer.DimensionsTooLargeMessage);
+            ImageSanitizer.DimensionsTooLargeMessage,
+            ImageSanitizer.AnimatedMessage);
     }
 }

@@ -85,6 +85,29 @@ internal static class ImageSamples
         return Riff(body);
     }
 
+    /// <summary>The 1x1 PNG made an animated PNG by an <c>acTL</c> chunk before its image data.</summary>
+    /// <returns>The file.</returns>
+    internal static byte[] AnimatedPng()
+    {
+        var png = Png();
+        return Concat(png[..PngAfterHeader], PngChunk("acTL", [0, 0, 0, 1, 0, 0, 0, 0]), png[PngAfterHeader..]);
+    }
+
+    /// <summary>The 1x1 WebP in an extended container whose header may set the animation flag, with an optional extra chunk.</summary>
+    /// <param name="animationFlag">Whether the extended header sets the animation flag.</param>
+    /// <param name="extraChunk">The id of a chunk placed before the bitstream, or <see langword="null"/> for none.</param>
+    /// <returns>The file.</returns>
+    internal static byte[] ExtendedWebp(bool animationFlag, string? extraChunk)
+    {
+        var header = new byte[10];
+        header[0] = animationFlag ? (byte)0x02 : (byte)0;
+        return Riff(Concat(
+            Ascii("WEBP"),
+            RiffChunk("VP8X", header),
+            extraChunk is null ? [] : RiffChunk(extraChunk, new byte[16]),
+            Webp()[12..]));
+    }
+
     /// <summary>A JPEG without metadata: JFIF, an ICC profile, a quantization table, the frame header, a scan and the end marker.</summary>
     /// <param name="width">The width in the frame header.</param>
     /// <param name="height">The height in the frame header.</param>

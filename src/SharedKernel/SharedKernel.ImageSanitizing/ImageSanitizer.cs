@@ -6,7 +6,9 @@ namespace PandaBear.ImageSanitizing;
 /// Accepts an upload only when its own bytes are a well-formed JPEG, PNG or WebP, and removes the metadata that can reveal where and with
 /// what a photo was taken: Exif (with GPS), XMP, Photoshop/IPTC data, comments, text and time chunks, and bytes after the end of the image.
 /// Nothing is re-encoded and no native library is used: the pixel data and colour profiles are kept byte for byte. Anything that does not
-/// parse exactly is rejected rather than guessed at.
+/// parse exactly is rejected rather than guessed at. AVIF is accepted only with <see cref="ImageSanitizerOptions.AllowAvif"/>: its structure
+/// is checked and its size read, but its metadata is kept (see <see cref="SanitizedImage.MetadataRemoved"/>). Animated images are reported
+/// by <see cref="SanitizedImage.IsAnimated"/> and refused with <see cref="ImageSanitizerOptions.RejectAnimation"/>.
 /// </summary>
 /// <remarks>
 /// Untrusted input never throws: every rejection is an <see cref="ResultStatus.Invalid"/> result with one of the message constants on
@@ -15,8 +17,8 @@ namespace PandaBear.ImageSanitizing;
 /// </remarks>
 public static class ImageSanitizer
 {
-    /// <summary>The message of a file that is not a JPEG, PNG or WebP.</summary>
-    public const string NotAnImageMessage = "The file must be a JPEG, PNG or WebP image.";
+    /// <summary>The message of a file that is not a JPEG, PNG or WebP, or an AVIF when <see cref="ImageSanitizerOptions.AllowAvif"/> is set.</summary>
+    public const string NotAnImageMessage = "The file must be an image in an accepted format.";
 
     /// <summary>The message of an image whose structure is damaged or not supported.</summary>
     public const string MalformedMessage = "The image file is damaged or uses a structure that is not accepted.";
@@ -26,6 +28,9 @@ public static class ImageSanitizer
 
     /// <summary>The message of an image wider or taller than <see cref="ImageSanitizerOptions.MaxDimension"/>.</summary>
     public const string DimensionsTooLargeMessage = "The image is wider or taller than the accepted size.";
+
+    /// <summary>The message of an animated image when <see cref="ImageSanitizerOptions.RejectAnimation"/> is set.</summary>
+    public const string AnimatedMessage = "The image must be a still image; animated images are not accepted.";
 
     private const int StreamChunk = 81_920;
 
@@ -45,7 +50,7 @@ public static class ImageSanitizer
             return Invalid(options, TooLargeMessage);
         }
 
-        return Detect(data) is { } format ? Clean(data.ToArray(), format, options) : Invalid(options, NotAnImageMessage);
+        return Detect(data, options) is { } format ? Clean(data.ToArray(), format, options) : Invalid(options, NotAnImageMessage);
     }
 
     /// <summary>
@@ -65,7 +70,7 @@ public static class ImageSanitizer
             return Invalid(options, TooLargeMessage);
         }
 
-        return Detect(buffer.Span) is { } format ? Clean(buffer, format, options) : Invalid(options, NotAnImageMessage);
+        return Detect(buffer.Span, options) is { } format ? Clean(buffer, format, options) : Invalid(options, NotAnImageMessage);
     }
 
     /// <summary>
@@ -123,8 +128,13 @@ public static class ImageSanitizer
         return (int)Math.Clamp(hint, 1, Math.Min(limit, MaxInitialCapacity));
     }
 
-    private static ImageFormat? Detect(ReadOnlySpan<byte> data)
+    private static ImageFormat? Detect(ReadOnlySpan<byte> data, ImageSanitizerOptions options)
     {
+        if (options.AllowAvif && AvifReader.IsAvif(data))
+        {
+            return ImageFormat.Avif;
+        }
+
         if (data.StartsWith((ReadOnlySpan<byte>)[0xFF, 0xD8, 0xFF]))
         {
             return ImageFormat.Jpeg;
@@ -148,11 +158,14 @@ public static class ImageSanitizer
         var span = buffer.Span;
         int width;
         int height;
+        var animated = false;
+        var largestSide = 0;
         var length = format switch
         {
             ImageFormat.Jpeg => JpegSanitizer.Clean(span, out width, out height),
-            ImageFormat.Png => PngSanitizer.Clean(span, out width, out height),
-            _ => WebpSanitizer.Clean(span, out width, out height),
+            ImageFormat.Png => PngSanitizer.Clean(span, out width, out height, out animated),
+            ImageFormat.Avif => AvifReader.TryRead(span, out width, out height, out largestSide, out animated) ? span.Length : -1,
+            _ => WebpSanitizer.Clean(span, out width, out height, out animated),
         };
 
         if (length < 0 || width < 1 || height < 1)
@@ -160,12 +173,18 @@ public static class ImageSanitizer
             return Invalid(options, MalformedMessage);
         }
 
-        if (width > options.MaxDimension || height > options.MaxDimension)
+        // An AVIF can hold more than one image (an alpha plane, a thumbnail); a later decoder may decode any of them, so all are bounded.
+        if (Math.Max(Math.Max(width, height), largestSide) > options.MaxDimension)
         {
             return Invalid(options, DimensionsTooLargeMessage);
         }
 
-        return Result.Ok(new SanitizedImage(format, buffer[..length], width, height));
+        if (animated && options.RejectAnimation)
+        {
+            return Invalid(options, AnimatedMessage);
+        }
+
+        return Result.Ok(new SanitizedImage(format, buffer[..length], width, height, animated));
     }
 
     private static Result<SanitizedImage> Invalid(ImageSanitizerOptions options, string message) =>

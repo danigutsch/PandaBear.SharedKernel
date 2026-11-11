@@ -4,8 +4,8 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Dependency-free upload sanitizing for JPEG, PNG and WebP: format recognition by content, metadata removal without re-encoding, and the
-image size from its header. No native library is needed, unlike `PandaBear.SharedKernel.ImageProcessing` (ImageMagick).
+Dependency-free upload sanitizing for JPEG, PNG and WebP, and opt-in AVIF: format recognition by content, metadata removal without
+re-encoding, animation detection, and the image size from its header. No native library is needed, unlike `PandaBear.SharedKernel.ImageProcessing` (ImageMagick).
 
 ## Usage
 
@@ -17,16 +17,35 @@ play no part. It removes the metadata that can reveal where and with what a phot
 | JPEG | APP1 (Exif with GPS, XMP), APP13 (Photoshop, IPTC), COM, fill bytes, bytes after the end marker | JFIF, the ICC profile (APP2), every other segment, the scans |
 | PNG | `eXIf`, `tEXt`, `iTXt`, `zTXt`, `tIME`, bytes after `IEND` | every other chunk with its CRC, including `iCCP` |
 | WebP | `EXIF`, `XMP ` and their `VP8X` flags; the RIFF size is rewritten | every other chunk, including `ICCP`, and the other flags |
+| AVIF (opt-in) | nothing | everything: the file is returned unchanged |
 
 The result is a `Result<SanitizedImage>` from `PandaBear.SharedKernel.Results`: the format, the cleaned bytes, the width and height, the
-usual file extension and the media type. Untrusted input never throws. Every rejection is an invalid result with one message on
-`ImageSanitizerOptions.Field`:
+usual file extension and the media type, whether the metadata was removed (`MetadataRemoved`) and whether the image is animated
+(`IsAnimated`). Untrusted input never throws. Every rejection is an invalid result with one message on `ImageSanitizerOptions.Field`:
 
-- `NotAnImageMessage`: the leading bytes are not a JPEG, PNG or WebP signature.
+- `NotAnImageMessage`: the leading bytes are not a JPEG, PNG or WebP signature, nor an AVIF one when AVIF is allowed.
 - `MalformedMessage`: the structure does not parse exactly, for example a length beyond the file, a missing end marker or image data, a
-  second frame header or `IHDR`, a zero width, or a WebP whose RIFF size does not match.
+  second frame header or `IHDR`, a zero width, a WebP whose RIFF size does not match, or an AVIF box that does not fit its parent.
 - `TooLargeMessage`: more bytes than `ImageSanitizerOptions.MaxBytes` (default 10 MiB).
 - `DimensionsTooLargeMessage`: a width or height above `ImageSanitizerOptions.MaxDimension` (default 20,000).
+- `AnimatedMessage`: an animated image when `ImageSanitizerOptions.RejectAnimation` is set.
+
+### Animation
+
+`IsAnimated` is true for an APNG (an `acTL` chunk), an animated WebP (an `ANIM` or `ANMF` chunk, or the animation flag of `VP8X`) and an
+AVIF image sequence (the `avis` brand or a `moov` box). Animated images are accepted by default; set `RejectAnimation = true` to refuse them
+with `AnimatedMessage`, for example for a logo or an avatar.
+
+### AVIF
+
+AVIF is refused unless `AllowAvif = true`. An allowed AVIF is recognized by the `avif` or `avis` brand of its leading `ftyp` box, every
+ISOBMFF box must fit its parent exactly, and the size is the `ispe` property associated in `ipma` with the primary item named by `pitm`.
+Every `ispe` in the file, including those of an alpha plane or a thumbnail, must be within `MaxDimension`.
+
+The metadata of an AVIF is not removed, and `MetadataRemoved` is false. Exif and XMP are items whose byte ranges are listed in the `iloc`
+box; removing them means rewriting those offsets, and every other item's, which this package does not do rather than risk returning a
+damaged file. So AVIF is opt-in: allow it only where keeping the camera and location data is acceptable, or re-encode the image afterwards,
+for example with `PandaBear.SharedKernel.ImageProcessing`.
 
 Compare the message constants to map a rejection to your own wording. Declared lengths inside the file are checked against the bytes present
 before they are used, so a forged length never sizes an allocation; the work is linear in the input size. Pixel data is not decoded, so a

@@ -45,4 +45,28 @@ public sealed record ImageSanitizerOptions
             field = value;
         }
     } = "file";
+
+    /// <summary>
+    /// Gets a value indicating whether AVIF uploads are accepted. Default <see langword="false"/>, because the sanitizer checks the box
+    /// structure and reads the size of an AVIF but does not remove its metadata: Exif and XMP are items whose locations would have to be
+    /// rewritten, so an accepted AVIF is returned unchanged with <see cref="SanitizedImage.MetadataRemoved"/> <see langword="false"/>. Allow it
+    /// only when keeping that metadata is acceptable, or when the application re-encodes the image afterwards.
+    /// </summary>
+    public bool AllowAvif
+    {
+        get;
+        init;
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether animated images are refused with <see cref="ImageSanitizer.AnimatedMessage"/>: an APNG (an
+    /// <c>acTL</c> chunk), an animated WebP (an <c>ANIM</c> or <c>ANMF</c> chunk, or the animation flag of the extended header) or an AVIF
+    /// image sequence (the <c>avis</c> brand or a <c>moov</c> box). Default <see langword="false"/>; <see cref="SanitizedImage.IsAnimated"/>
+    /// reports animation either way.
+    /// </summary>
+    public bool RejectAnimation
+    {
+        get;
+        init;
+    }
 }
