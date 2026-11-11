@@ -28,7 +28,7 @@ public sealed partial class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
     /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds =>
-        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitTestClassHelperMethod, TestingDiagnosticIds.XunitSerialCollectionJustification, TestingDiagnosticIds.XunitAssertionWrapper, TestingDiagnosticIds.XunitTraitConstantUsage, TestingDiagnosticIds.AssertionDelegateInlining, TestingDiagnosticIds.LinqSingleAssertion, TestingDiagnosticIds.ConditionalAssertion, TestingDiagnosticIds.AssertionUserMessageOverload, TestingDiagnosticIds.XunitTestScope];
+        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitTestClassHelperMethod, TestingDiagnosticIds.XunitSerialCollectionJustification, TestingDiagnosticIds.XunitAssertionWrapper, TestingDiagnosticIds.XunitTraitConstantUsage, TestingDiagnosticIds.AssertionDelegateInlining, TestingDiagnosticIds.LinqSingleAssertion, TestingDiagnosticIds.ConditionalAssertion, TestingDiagnosticIds.AssertionUserMessageOverload, TestingDiagnosticIds.XunitTestScope, TestingDiagnosticIds.PlaywrightUrlWait];
 
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
@@ -49,6 +49,12 @@ public sealed partial class SharedKernelTestingCodeFixProvider : CodeFixProvider
         var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
         if (syntaxRoot is null)
         {
+            return;
+        }
+
+        if (string.Equals(diagnostic.Id, TestingDiagnosticIds.PlaywrightUrlWait, StringComparison.Ordinal))
+        {
+            await RegisterPlaywrightUrlWaitFix(context, document, diagnostic, syntaxRoot).ConfigureAwait(false);
             return;
         }
 

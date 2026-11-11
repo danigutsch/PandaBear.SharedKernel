@@ -33,6 +33,7 @@ test assertions. Do not apply it to regular production projects.
 | `SKTEST016` | Warning | Construct explicitly named SUTs in Arrange. |
 | `SKTEST018` | Suggestion | Every xUnit test declares exactly one valid test scope. |
 | `SKTEST019` | Warning | `CallProxy.Create<TService>` must wrap a public interface. |
+| `SKTEST020` | Warning | Wait for a page address with `ExpectPath`, not Playwright's `WaitForURLAsync`. |
 | `SKTEST017` | Disabled; opt-in warning | Give every public `Should*` assertion an overload that takes `userMessage`. |
 
 See [test assertion conventions](../../../docs/TEST_GUIDELINES.md) for migrations, exception-testing
@@ -298,3 +299,12 @@ Not reported: public interfaces (including public nested interfaces of public ty
 do not reference `SharedKernel.Testing`. Limitation: an interface that is public but constructed over a non-public type
 argument (for example `IHandler<InternalMessage>`) is not checked. The rule is a warning, like its siblings; tune it with
 `dotnet_diagnostic.SKTEST019.severity`.
+
+## SKTEST020
+
+Playwright .NET's `IPage.WaitForURLAsync` and `IFrame.WaitForURLAsync` read the current address and only then subscribe to
+navigation events, which arrive on another thread; a navigation that lands in between is lost and the wait times out
+(microsoft/playwright-dotnet#3364). The rule reports every call. `page.ExpectPath(uri)` and `page.ExpectPath(baseUri, "path")`
+from `SharedKernel.Testing.Playwright` poll the address in the driver instead. The code fix rewrites a page wait for one exact
+absolute address (a constant, an interpolated string without glob characters, or `uri.ToString()`) when `ExpectPath` is
+referenced; globs, regular expressions, predicates, options and frames are left for a person.

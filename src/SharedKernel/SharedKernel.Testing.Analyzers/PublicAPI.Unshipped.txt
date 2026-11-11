@@ -23,3 +23,4 @@ const PandaBear.Testing.Analyzers.TestingDiagnosticIds.SutConstructionInAct = "S
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.AssertionUserMessageOverload = "SKTEST017" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestScope = "SKTEST018" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.CallProxyServiceType = "SKTEST019" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.PlaywrightUrlWait = "SKTEST020" -> string!
