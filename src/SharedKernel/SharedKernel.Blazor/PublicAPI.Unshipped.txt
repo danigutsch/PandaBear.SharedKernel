@@ -12,6 +12,7 @@ const PandaBear.Blazor.UiFailureReporter.UnknownOperation = "unknown" -> string!
 const PandaBear.Blazor.UiFailureReporter.UnknownTraceId = "unknown" -> string!
 const PandaBear.Blazor.UploadStatus.MaxDisplayTextLength = 200 -> int
 PandaBear.Blazor.BlazorServiceCollectionExtensions
+PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Sync(TKey? key, System.Func<TKey, System.Threading.Tasks.Task<PandaBear.Results.Result<TRecord!>>!>! load, System.Action<TForm!, TRecord!>! fill, System.Action? onReset = null) -> System.Threading.Tasks.Task!
 PandaBear.Blazor.ErrorSummary
 PandaBear.Blazor.ErrorSummary.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>?
 PandaBear.Blazor.ErrorSummary.AdditionalAttributes.set -> void
@@ -151,3 +152,12 @@ PandaBear.Blazor.ListDelete<TKey>.IsRunning.get -> bool
 PandaBear.Blazor.ListDelete<TKey>.ListDelete(string! failureMessage, string? conflictMessage = null) -> void
 PandaBear.Blazor.ListDelete<TKey>.Run(TKey key, System.Func<System.Threading.Tasks.ValueTask<PandaBear.Results.Result>>! delete, System.Func<System.Threading.Tasks.Task!>! reload, System.Action<TKey>! removeLocal) -> System.Threading.Tasks.Task!
 static PandaBear.Blazor.ServerFormSubmission.ForRecord(Microsoft.AspNetCore.Components.Forms.EditContext! editContext, System.Collections.Generic.IEnumerable<string!>! knownFields, string! idPrefix, string! noun, string? invalidMessage = null, string? failureMessage = null, string? conflictMessage = null, string? notFoundMessage = null) -> PandaBear.Blazor.ServerFormSubmission!
+PandaBear.Blazor.EditSession<TKey, TForm, TRecord>
+PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Context.get -> Microsoft.AspNetCore.Components.Forms.EditContext?
+PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Dispose() -> void
+PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.EditSession(System.Collections.Generic.IEnumerable<string!>! knownFields, string! idPrefix, string! noun) -> void
+PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Form.get -> TForm!
+PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.IsMissing.get -> bool
+PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Record.get -> TRecord?
+PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Record.set -> void
+PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Submission.get -> PandaBear.Blazor.ServerFormSubmission?
