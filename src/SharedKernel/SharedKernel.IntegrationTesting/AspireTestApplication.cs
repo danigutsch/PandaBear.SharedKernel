@@ -1,6 +1,7 @@
 using Aspire.Hosting;
 using Aspire.Hosting.Testing;
 using Aspire.Hosting.ApplicationModel;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
@@ -11,10 +12,13 @@ namespace PandaBear.IntegrationTesting;
 
 /// <summary>
 /// Owns an Aspire distributed application lifetime for integration tests. It follows the log lines of every resource from the start, so a
-/// readiness wait that runs out of time reports each pending resource's state and its last log lines.
+/// readiness wait that runs out of time reports each pending resource's state and its last log lines. Every project resource it starts gets
+/// <c>DOTNET_hostBuilder__reloadConfigOnChange=false</c>, so parallel test hosts do not exhaust the per-user file-watcher (inotify) limit.
 /// </summary>
 public sealed class AspireTestApplication : IAsyncDisposable
 {
+    private const string DcpResourceNameSuffixArgument = "--DcpPublisher:ResourceNameSuffix=";
+    private const string ReloadConfigOnChangeVariable = "DOTNET_hostBuilder__reloadConfigOnChange";
     private static int _dcpResourceNameSuffixSequence;
     private static readonly TimeSpan DefaultResourceTeardownTimeout = TimeSpan.FromMinutes(2);
 
@@ -38,7 +42,8 @@ public sealed class AspireTestApplication : IAsyncDisposable
     }
 
     /// <summary>
-    /// Creates a resource-only Aspire testing builder with the standard concurrent-test defaults.
+    /// Creates a resource-only Aspire testing builder with the standard concurrent-test defaults: a DCP resource-name suffix of its own
+    /// (unless <paramref name="args"/> names one), so parallel test applications never share orchestrator resource names.
     /// </summary>
     /// <param name="args">Command-line configuration arguments for the builder.</param>
     /// <returns>The configured Aspire testing builder.</returns>
@@ -46,7 +51,24 @@ public sealed class AspireTestApplication : IAsyncDisposable
     public static IDistributedApplicationTestingBuilder CreateBuilder(params string[] args)
     {
         ArgumentNullException.ThrowIfNull(args);
-        return DistributedApplicationTestingBuilder.Create(args);
+        return DistributedApplicationTestingBuilder.Create(CreateAppHostArguments(args));
+    }
+
+    /// <summary>
+    /// Creates a resource-only Aspire testing builder with configuration values and the standard concurrent-test defaults of
+    /// <see cref="CreateBuilder(string[])"/>.
+    /// </summary>
+    /// <param name="configuration">Configuration values; <paramref name="args"/> win over them.</param>
+    /// <param name="args">Command-line configuration arguments for the builder.</param>
+    /// <returns>The configured Aspire testing builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="configuration"/> or <paramref name="args"/> is <see langword="null"/>.</exception>
+    public static IDistributedApplicationTestingBuilder CreateBuilder(IReadOnlyDictionary<string, string?> configuration, params string[] args)
+    {
+        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentNullException.ThrowIfNull(args);
+        return DistributedApplicationTestingBuilder.Create(
+            CreateAppHostArguments(args),
+            (_, settings) => AddConfiguration(settings, configuration));
     }
 
     /// <summary>
@@ -85,14 +107,48 @@ public sealed class AspireTestApplication : IAsyncDisposable
         CancellationToken ct)
         where TAppHost : class
     {
+        return await Start<TAppHost>(
+            healthyResourceNames,
+            resourceStartupTimeout,
+            appHostArguments,
+            new Dictionary<string, string?>(),
+            ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Starts an Aspire application with AppHost configuration arguments and values, and waits for resources. The AppHost reads the values
+    /// as configuration before its own code runs (connection strings of servers the tests own, a data folder); the arguments win over them.
+    /// </summary>
+    /// <typeparam name="TAppHost">The AppHost entry-point type.</typeparam>
+    /// <param name="healthyResourceNames">Resource names that must become healthy before the method returns.</param>
+    /// <param name="resourceStartupTimeout">The resource startup timeout.</param>
+    /// <param name="appHostArguments">AppHost configuration arguments.</param>
+    /// <param name="configuration">AppHost configuration values.</param>
+    /// <param name="ct">A cancellation token.</param>
+    /// <returns>The started test application.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="healthyResourceNames"/>, <paramref name="appHostArguments"/> or <paramref name="configuration"/> is <see langword="null"/>.</exception>
+    /// <exception cref="TimeoutException">A resource was not healthy in time; the message holds its state and last log lines.</exception>
+    /// <exception cref="AggregateException">Thrown when starting the application fails and tearing down the partially started application also fails.</exception>
+    public static async Task<AspireTestApplication> Start<TAppHost>(
+        IEnumerable<string> healthyResourceNames,
+        TimeSpan? resourceStartupTimeout,
+        IReadOnlyCollection<string> appHostArguments,
+        IReadOnlyDictionary<string, string?> configuration,
+        CancellationToken ct)
+        where TAppHost : class
+    {
         ArgumentNullException.ThrowIfNull(healthyResourceNames);
         ArgumentNullException.ThrowIfNull(appHostArguments);
+        ArgumentNullException.ThrowIfNull(configuration);
 
         var timeout = resourceStartupTimeout ?? DefaultResourceStartupTimeout;
         using var deadline = new CancellationTokenSource(timeout);
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, deadline.Token);
         var appBuilder = await DistributedApplicationTestingBuilder
-            .CreateAsync<TAppHost>(CreateAppHostArguments(appHostArguments), linked.Token)
+            .CreateAsync<TAppHost>(
+                CreateAppHostArguments(appHostArguments),
+                (_, settings) => AddConfiguration(settings, configuration),
+                linked.Token)
             .ConfigureAwait(false);
         return await StartBuilt(appBuilder, healthyResourceNames, timeout, deadline, linked.Token, ct).ConfigureAwait(false);
     }
@@ -313,6 +369,14 @@ public sealed class AspireTestApplication : IAsyncDisposable
                 builder.CreateResourceBuilder(container).WithEndpointProxySupport(false);
             }
 
+            // Every .NET host watches its appsettings files for changes, one inotify instance per file and host; parallel test runs then
+            // exhaust the per-user limit (IOException "The configured user limit (128) on the number of inotify instances has been
+            // reached"). Tests never reload configuration, so the documented host setting turns the watchers off.
+            foreach (var project in beforeStart.Model.Resources.OfType<ProjectResource>())
+            {
+                builder.CreateResourceBuilder(project).WithEnvironment(ReloadConfigOnChangeVariable, "false");
+            }
+
             return Task.CompletedTask;
         });
     }
@@ -383,13 +447,27 @@ public sealed class AspireTestApplication : IAsyncDisposable
 
     private static string[] CreateAppHostArguments(IReadOnlyCollection<string> appHostArguments)
     {
+        // A suffix the caller names (a stack and run id) is kept; it isolates as well as a generated one.
+        if (appHostArguments.Any(static argument =>
+                argument.StartsWith(DcpResourceNameSuffixArgument, StringComparison.OrdinalIgnoreCase)
+                && !string.IsNullOrWhiteSpace(argument[DcpResourceNameSuffixArgument.Length..])))
+        {
+            return [.. appHostArguments];
+        }
+
         var suffix = string.Create(
             CultureInfo.InvariantCulture,
             $"test-{Environment.ProcessId}-{Interlocked.Increment(ref _dcpResourceNameSuffixSequence)}");
         return
         [
             .. appHostArguments,
-            $"--DcpPublisher:ResourceNameSuffix={suffix}"
+            DcpResourceNameSuffixArgument + suffix
         ];
+    }
+
+    private static void AddConfiguration(HostApplicationBuilderSettings settings, IReadOnlyDictionary<string, string?> configuration)
+    {
+        settings.Configuration ??= new ConfigurationManager();
+        settings.Configuration.AddInMemoryCollection(configuration);
     }
 }

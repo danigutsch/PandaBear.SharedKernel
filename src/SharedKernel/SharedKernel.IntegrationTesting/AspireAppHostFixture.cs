@@ -2,8 +2,8 @@ namespace PandaBear.IntegrationTesting;
 
 /// <summary>
 /// An <see cref="AspireSystemFixture"/> that starts an AppHost project: each profile runs the AppHost with the arguments
-/// <see cref="Launch"/> returns (typically the profile folder as a data-folder setting), waits for the named resources, and fails with their
-/// state and log lines when one is not healthy in time.
+/// <see cref="Launch"/> returns (typically the profile folder as a data-folder setting) and its configuration values, waits for the named
+/// resources, and fails with their state and log lines when one is not healthy in time. Every run gets its own DCP resource-name suffix.
 /// </summary>
 /// <typeparam name="TAppHost">The AppHost project's metadata type, such as <c>Projects.MyApp_AppHost</c>.</typeparam>
 public abstract class AspireAppHostFixture<TAppHost> : AspireSystemFixture
@@ -19,6 +19,6 @@ public abstract class AspireAppHostFixture<TAppHost> : AspireSystemFixture
     protected sealed override Task<AspireTestApplication> Start(string profile, string folder, CancellationToken ct)
     {
         var launch = Launch(profile, folder);
-        return AspireTestApplication.Start<TAppHost>(launch.HealthyResources, launch.StartupTimeout, [.. launch.Arguments], ct);
+        return AspireTestApplication.Start<TAppHost>(launch.HealthyResources, launch.StartupTimeout, [.. launch.Arguments], launch.Configuration, ct);
     }
 }

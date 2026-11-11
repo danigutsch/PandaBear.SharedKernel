@@ -55,6 +55,29 @@ public sealed class TestWorkspaceTests
     }
 
     [Fact]
+    public async Task The_release_callback_runs_once_before_the_folder_is_removed()
+    {
+        // Arrange
+        var calls = 0;
+        var folderExistedDuringRelease = false;
+        TestWorkspace? workspace = null;
+        workspace = TestWorkspace.Create("sk-workspace", releaseFiles: () =>
+        {
+            calls++;
+            folderExistedDuringRelease = Directory.Exists(workspace!.Root);
+        });
+
+        // Act
+        await workspace.DisposeAsync();
+        await workspace.DisposeAsync();
+
+        // Assert
+        calls.ShouldBe(1);
+        folderExistedDuringRelease.ShouldBeTrue("pooled SQLite connections must be released while their files still exist, before the delete");
+        Directory.Exists(workspace.Root).ShouldBeFalse();
+    }
+
+    [Fact]
     public async Task Disposing_twice_is_harmless()
     {
         // Arrange

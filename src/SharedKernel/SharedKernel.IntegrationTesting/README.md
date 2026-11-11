@@ -40,7 +40,14 @@ SharedKernel seed and should stay reusable outside this repository.
 - Start AppHost-backed tests through `AspireTestApplication.Start<TAppHost>(...)`; create resource-only test
   builders with `AspireTestApplication.CreateBuilder(...)` and pass them to `Start(...)`.
 - `AspireTestApplication` applies DCP suffixes and preserves Aspire testing defaults; do not bypass or recreate
-  this isolation in consuming fixtures.
+  this isolation in consuming fixtures. Every builder it creates (`CreateBuilder`, `Start<TAppHost>`) gets a suffix of its own unless
+  the arguments name one (`--DcpPublisher:ResourceNameSuffix={stack}-{run}`), which is kept.
+- Pass AppHost configuration values (connection strings of servers the tests own, a data folder) as a dictionary:
+  `CreateBuilder(configuration, args)`, `Start<TAppHost>(resources, timeout, args, configuration, ct)`, or `AppHostLaunch.Configuration`
+  for `AspireAppHostFixture`. The AppHost reads them before its own code runs; arguments win over them.
+- Every project resource the application starts gets `DOTNET_hostBuilder__reloadConfigOnChange=false`: tests never reload configuration,
+  and one appsettings watcher per file and host exhausts the per-user inotify limit when many hosts run in parallel
+  (`IOException: The configured user limit (128) on the number of inotify instances has been reached`).
 - Dispose the returned application in the fixture `DisposeAsync` path.
 - Reset PostgreSQL with `PostgreSqlPublicSchemaReset.Reset(connection, ct)` before serial tests that need
   a known database baseline.
@@ -74,8 +81,29 @@ public sealed class SystemFixture : AspireAppHostFixture<Projects.MyApp_AppHost>
   an infrastructure application can start each container on the first test that needs it.
 - `Eventually.Succeeds(assertion, timeout, ct)` retries an assertion (every 250 ms by default) until it passes; on timeout the last
   failure is the inner exception. Use it instead of sleeping for state another process reaches later.
+- `Eventually.Until(probe, timeout, ct)` polls a probe until it returns a non-null value and returns it; `null` means "not yet", and an
+  exception from the probe ends the wait at once. On timeout it throws `TimeoutException` with the attempt count.
 - `TestWorkspace.Create(name)` makes a private temporary folder; `Folder(path)` creates folders inside it, and disposal removes it,
-  retrying while a stopped process still holds a file.
+  retrying while a stopped process still holds a file. `TestWorkspace.Create(name, releaseFiles)` runs `releaseFiles` once before the
+  delete; for SQLite files in the folder pass `SqliteConnection.ClearAllPools`, because pooled connections keep the files open and Windows
+  refuses to delete an open file.
+
+## Reading the application model
+
+`AppHostModel` tests the AppHost's wiring without starting anything:
+
+```csharp
+await using var builder = await DistributedApplicationTestingBuilder.CreateAsync<Projects.MyApp_AppHost>(ct);
+var web = AppHostModel.Project(builder, "web");
+
+AppHostModel.WaitedFor(web).ShouldBe(["database"]);
+AppHostModel.HasHttpHealthCheck(web, "/health").ShouldBeTrue();
+var environment = await AppHostModel.EvaluateEnvironment(web, ct);
+AppHostModel.ConnectionResource(environment["ConnectionStrings__Default"]).Name.ShouldBe("database");
+```
+
+`EvaluateEnvironment` runs the environment callbacks as a publish would, so values stay model objects (a connection-string reference,
+an endpoint reference, a plain string) instead of addresses that exist only at run time.
 
 ## On-demand resources
 

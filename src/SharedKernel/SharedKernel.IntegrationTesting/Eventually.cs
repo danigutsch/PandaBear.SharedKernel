@@ -71,4 +71,62 @@ public static class Eventually
         ct.ThrowIfCancellationRequested();
         throw new TimeoutException($"The condition did not hold within {timeout} ({attempts} attempts).", last);
     }
+
+    /// <summary>
+    /// Runs the probe until it returns a value, pausing <see cref="DefaultInterval"/> between attempts: use it to read state another process
+    /// writes later, such as a row, a message or a file.
+    /// </summary>
+    /// <typeparam name="T">The value type.</typeparam>
+    /// <param name="probe">The probe; it returns <see langword="null"/> while the state is not there yet, and receives a token cancelled at the deadline.</param>
+    /// <param name="timeout">How long to keep trying.</param>
+    /// <param name="ct">The caller's token; its cancellation is not reported as a timeout.</param>
+    /// <returns>The first value the probe returned.</returns>
+    /// <exception cref="TimeoutException">The probe returned no value in time.</exception>
+    public static Task<T> Until<T>(Func<CancellationToken, Task<T?>> probe, TimeSpan timeout, CancellationToken ct)
+        where T : class =>
+        Until(probe, timeout, DefaultInterval, ct);
+
+    /// <summary>Runs the probe until it returns a value.</summary>
+    /// <typeparam name="T">The value type.</typeparam>
+    /// <param name="probe">The probe; it returns <see langword="null"/> while the state is not there yet, and receives a token cancelled at the deadline.</param>
+    /// <param name="timeout">How long to keep trying.</param>
+    /// <param name="interval">The pause between two attempts.</param>
+    /// <param name="ct">The caller's token; its cancellation is not reported as a timeout.</param>
+    /// <returns>The first value the probe returned.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="probe"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="timeout"/> or <paramref name="interval"/> is not positive.</exception>
+    /// <exception cref="TimeoutException">The probe returned no value in time.</exception>
+    /// <remarks>
+    /// Unlike <see cref="Succeeds(Func{CancellationToken, Task}, TimeSpan, TimeSpan, CancellationToken)"/>, an exception from the probe is not
+    /// retried: <see langword="null"/> means "not yet", and a probe that throws is broken, so the exception ends the wait at once.
+    /// </remarks>
+    public static async Task<T> Until<T>(Func<CancellationToken, Task<T?>> probe, TimeSpan timeout, TimeSpan interval, CancellationToken ct)
+        where T : class
+    {
+        ArgumentNullException.ThrowIfNull(probe);
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(timeout, TimeSpan.Zero);
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(interval, TimeSpan.Zero);
+        ct.ThrowIfCancellationRequested();
+
+        using var deadline = new CancellationTokenSource(timeout);
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, deadline.Token);
+        var attempts = 0;
+        try
+        {
+            while (true)
+            {
+                attempts++;
+                if (await probe(linked.Token).ConfigureAwait(false) is { } value)
+                {
+                    return value;
+                }
+
+                await Task.Delay(interval, linked.Token).ConfigureAwait(false);
+            }
+        }
+        catch (OperationCanceledException) when (deadline.IsCancellationRequested && !ct.IsCancellationRequested)
+        {
+            throw new TimeoutException($"The probe returned no value within {timeout} ({attempts} attempts).");
+        }
+    }
 }
