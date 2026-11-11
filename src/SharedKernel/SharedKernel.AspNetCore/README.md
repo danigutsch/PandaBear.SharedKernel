@@ -17,6 +17,15 @@ policy. Each consuming application owns those decisions.
 - `AddConfiguredTrustedForwardedHeaders` and `ConfigureTrustedForwardedHeaders`: forwarded-header trust from
   configuration. `AddForwardedClientIp` forwards the resolved visitor identity to a downstream client (see below).
 - `AddConfiguredOriginsPolicy`: a CORS policy from a configuration section of allowed origins.
+- `UsePermanentRedirects`: asks an application resolver where the path of a GET or HEAD request moved and answers with a 301.
+  The resolver returns `PermanentRedirect(path, PreserveQuery: false)` or `null`. Only a plain local path is used: a single leading
+  `/`, printable ASCII, no `\`, `//`, `?`, `#` or white space (percent-encode the rest). Any other target is ignored with a logged
+  warning and the request continues, as it does when the target equals the request path. The location keeps the path base, and the
+  query only when `PreserveQuery` is set.
+
+  ```csharp
+  app.UsePermanentRedirects(context => context.RequestServices.GetRequiredService<MovedPages>().Find(context.Request.Path, context.RequestAborted));
+  ```
 - `MapImmutableFiles`: serves files whose content never changes under their name, such as uploads stored by content hash, from
   one folder at `{routePrefix}/{fileName}` (GET and HEAD). Only a plain file name (ASCII letters, digits, `.`, `-`, `_`, no
   leading dot) with an extension from the application's media type map, that the application's `isServed` callback approves
