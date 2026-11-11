@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
 
-namespace PandaBear.ImageSanitizing.Tests;
+namespace PandaBear.UploadSanitizing.Tests.Images;
 
 /// <summary>
 /// AVIF files for the sanitizer tests: ISOBMFF boxes that carry every part the sanitizer reads (the <c>ftyp</c> brands, the primary item

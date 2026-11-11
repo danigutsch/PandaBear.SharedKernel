@@ -1,4 +1,4 @@
-namespace PandaBear.ImageSanitizing;
+namespace PandaBear.UploadSanitizing.Images;
 
 /// <summary>
 /// An image whose structure <see cref="ImageSanitizer"/> checked and, unless <see cref="MetadataRemoved"/> is <see langword="false"/>, whose

@@ -1,6 +1,6 @@
 using PandaBear.Testing;
 
-namespace PandaBear.ImageSanitizing.Tests;
+namespace PandaBear.UploadSanitizing.Tests.Images;
 
 /// <summary>
 /// Tests that the sanitizer reports whether an image is animated (APNG, animated WebP, AVIF image sequences), and refuses it only when

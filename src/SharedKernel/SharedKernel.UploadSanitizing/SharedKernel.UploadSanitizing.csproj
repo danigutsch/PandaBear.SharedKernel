@@ -2,9 +2,9 @@
 
     <PropertyGroup>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
-        <PackageId>PandaBear.SharedKernel.ImageSanitizing</PackageId>
+        <PackageId>PandaBear.SharedKernel.UploadSanitizing</PackageId>
         <Description>Dependency-free upload sanitizing for JPEG, PNG, WebP and opt-in AVIF: format recognition by content, metadata removal without re-encoding, animation detection, and header dimensions.</Description>
-        <RootNamespace>PandaBear.ImageSanitizing</RootNamespace>
+        <RootNamespace>PandaBear.UploadSanitizing</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>image;upload;metadata;exif;avif;animation;privacy;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

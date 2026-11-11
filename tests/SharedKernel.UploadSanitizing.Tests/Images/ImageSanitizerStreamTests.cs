@@ -1,6 +1,6 @@
 using PandaBear.Testing;
 
-namespace PandaBear.ImageSanitizing.Tests;
+namespace PandaBear.UploadSanitizing.Tests.Images;
 
 /// <summary>Tests sanitizing an upload read from a stream: bounded reads, no trust in a declared length, and the stream left open.</summary>
 [TestScope(TestScope.Unit)]

@@ -1,6 +1,6 @@
 using PandaBear.Testing;
 
-namespace PandaBear.ImageSanitizing.Tests;
+namespace PandaBear.UploadSanitizing.Tests.Images;
 
 /// <summary>Tests the sanitizer options: their defaults and the values a caller cannot set.</summary>
 [TestScope(TestScope.Unit)]

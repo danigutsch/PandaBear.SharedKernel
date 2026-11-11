@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
 
-namespace PandaBear.ImageSanitizing;
+namespace PandaBear.UploadSanitizing.Images;
 
 /// <summary>
 /// Checks the ISOBMFF box structure of an AVIF without changing it and reads its size and whether it is animated. Every box must fit its

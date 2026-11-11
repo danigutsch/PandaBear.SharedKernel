@@ -1,6 +1,6 @@
 using PandaBear.Results;
 
-namespace PandaBear.ImageSanitizing.Tests;
+namespace PandaBear.UploadSanitizing.Tests.Images;
 
 /// <summary>Assertions on sanitizer results.</summary>
 internal static class SanitizerAssertions

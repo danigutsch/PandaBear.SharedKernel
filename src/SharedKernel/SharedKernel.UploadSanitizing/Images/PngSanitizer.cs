@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
 
-namespace PandaBear.ImageSanitizing;
+namespace PandaBear.UploadSanitizing.Images;
 
 /// <summary>
 /// Compacts a PNG in place without its eXIf, tEXt, iTXt, zTXt and tIME chunks and without bytes after the IEND chunk. Every other chunk,

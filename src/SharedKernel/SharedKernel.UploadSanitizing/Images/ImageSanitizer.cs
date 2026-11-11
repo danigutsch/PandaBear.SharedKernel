@@ -1,6 +1,6 @@
 using PandaBear.Results;
 
-namespace PandaBear.ImageSanitizing;
+namespace PandaBear.UploadSanitizing.Images;
 
 /// <summary>
 /// Accepts an upload only when its own bytes are a well-formed JPEG, PNG or WebP, and removes the metadata that can reveal where and with

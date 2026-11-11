@@ -1,7 +1,7 @@
 using System.Buffers.Binary;
 using System.Text;
 
-namespace PandaBear.ImageSanitizing.Tests;
+namespace PandaBear.UploadSanitizing.Tests.Images;
 
 /// <summary>
 /// Image files for the sanitizer tests. The PNG and lossless WebP are real 1x1 images; the JPEG and lossy WebP are structurally valid (every

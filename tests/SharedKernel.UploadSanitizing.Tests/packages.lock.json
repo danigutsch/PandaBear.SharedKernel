@@ -193,12 +193,6 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "PandaBear.SharedKernel.ImageSanitizing": {
-        "type": "Project",
-        "dependencies": {
-          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
-        }
-      },
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
@@ -217,6 +211,12 @@
         "dependencies": {
           "PandaBear.SharedKernel.Testing": "[0.1.0-alpha.0, )",
           "xunit.v3.extensibility.core": "[4.0.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.UploadSanitizing": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
       "Microsoft.Extensions.DependencyInjection": {

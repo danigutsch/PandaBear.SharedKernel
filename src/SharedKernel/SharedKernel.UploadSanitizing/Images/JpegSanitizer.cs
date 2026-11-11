@@ -1,4 +1,4 @@
-namespace PandaBear.ImageSanitizing;
+namespace PandaBear.UploadSanitizing.Images;
 
 /// <summary>
 /// Compacts a JPEG in place without its APP1 (Exif, XMP), APP13 (Photoshop, IPTC) and COM segments, without fill bytes and without bytes after

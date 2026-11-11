@@ -47,7 +47,6 @@ flowchart TB
     SharedKernel_Idempotency_AspNetCore[SharedKernel.Idempotency.AspNetCore] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_Idempotency_EntityFrameworkCore[SharedKernel.Idempotency.EntityFrameworkCore] --> SharedKernel_EntityFrameworkCore[SharedKernel.EntityFrameworkCore]
     SharedKernel_Idempotency_EntityFrameworkCore[SharedKernel.Idempotency.EntityFrameworkCore] --> SharedKernel_Idempotency_Abstractions[SharedKernel.Idempotency.Abstractions]
-    SharedKernel_ImageSanitizing[SharedKernel.ImageSanitizing] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_MalwareScanning_ClamAv[SharedKernel.MalwareScanning.ClamAv] --> SharedKernel_MalwareScanning[SharedKernel.MalwareScanning]
     SharedKernel_MalwareScanning_ClamAv[SharedKernel.MalwareScanning.ClamAv] --> SharedKernel_OpenApi[SharedKernel.OpenApi]
     SharedKernel_Mediator[SharedKernel.Mediator] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
@@ -85,6 +84,7 @@ flowchart TB
     SharedKernel_Testing_Messaging[SharedKernel.Testing.Messaging] --> SharedKernel_Messaging_IntegrationEvents[SharedKernel.Messaging.IntegrationEvents]
     SharedKernel_Testing_Playwright[SharedKernel.Testing.Playwright] --> SharedKernel_Testing_AspNetCore[SharedKernel.Testing.AspNetCore]
     SharedKernel_Testing_Xunit[SharedKernel.Testing.Xunit] --> SharedKernel_Testing[SharedKernel.Testing]
+    SharedKernel_UploadSanitizing[SharedKernel.UploadSanitizing] --> SharedKernel_Results[SharedKernel.Results]
 ```
 <!-- generated:library-dependencies:end -->
 

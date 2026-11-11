@@ -43,7 +43,6 @@
   <Project Path="src/SharedKernel/SharedKernel.Idempotency.AspNetCore/SharedKernel.Idempotency.AspNetCore.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Idempotency.EntityFrameworkCore/SharedKernel.Idempotency.EntityFrameworkCore.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.ImageProcessing/SharedKernel.ImageProcessing.csproj" />
-  <Project Path="src/SharedKernel/SharedKernel.ImageSanitizing/SharedKernel.ImageSanitizing.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.InputNormalization/SharedKernel.InputNormalization.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.IntegrationTesting/SharedKernel.IntegrationTesting.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.MalwareScanning/SharedKernel.MalwareScanning.csproj" />
@@ -92,6 +91,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Testing.Snapshots/SharedKernel.Testing.Snapshots.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Web/SharedKernel.Testing.Web.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Xunit/SharedKernel.Testing.Xunit.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.UploadSanitizing/SharedKernel.UploadSanitizing.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Versioning/SharedKernel.Versioning.csproj" />
   <Project Path="tests/SharedKernel.AI.Tests/SharedKernel.AI.Tests.csproj" />
   <Project Path="tests/SharedKernel.ApiVersioning.AspNetCore.Tests/SharedKernel.ApiVersioning.AspNetCore.Tests.csproj" />
@@ -131,7 +131,6 @@
   <Project Path="tests/SharedKernel.Idempotency.Abstractions.Tests/SharedKernel.Idempotency.Abstractions.Tests.csproj" />
   <Project Path="tests/SharedKernel.Idempotency.AspNetCore.Tests/SharedKernel.Idempotency.AspNetCore.Tests.csproj" />
   <Project Path="tests/SharedKernel.ImageProcessing.Tests/SharedKernel.ImageProcessing.Tests.csproj" />
-  <Project Path="tests/SharedKernel.ImageSanitizing.Tests/SharedKernel.ImageSanitizing.Tests.csproj" />
   <Project Path="tests/SharedKernel.InputNormalization.Tests/SharedKernel.InputNormalization.Tests.csproj" />
   <Project Path="tests/SharedKernel.K6.Tool.Tests/SharedKernel.K6.Tool.Tests.csproj" />
   <Project Path="tests/SharedKernel.Sandbox.Tool.Tests/SharedKernel.Sandbox.Tool.Tests.csproj" />
@@ -174,6 +173,7 @@
   <Project Path="tests/SharedKernel.Testing.AspNetCore.TestApp/SharedKernel.Testing.AspNetCore.TestApp.csproj" />
   <Project Path="tests/SharedKernel.Testing.AspNetCore.Tests/SharedKernel.Testing.AspNetCore.Tests.csproj" />
   <Project Path="tests/SharedKernel.Testing.Tests/SharedKernel.Testing.Tests.csproj" />
+  <Project Path="tests/SharedKernel.UploadSanitizing.Tests/SharedKernel.UploadSanitizing.Tests.csproj" />
   <Project Path="tests/SharedKernel.VaultManager.Tool.Tests/SharedKernel.VaultManager.Tool.Tests.csproj" />
   <Project Path="tests/SharedKernel.Versioning.Tests/SharedKernel.Versioning.Tests.csproj" />
   <Project Path="tools/SharedKernel.K6.Tool/SharedKernel.K6.Tool.csproj" />

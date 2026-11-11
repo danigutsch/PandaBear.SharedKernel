@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
 
-namespace PandaBear.ImageSanitizing;
+namespace PandaBear.UploadSanitizing.Images;
 
 /// <summary>
 /// Compacts a WebP in place without its EXIF and XMP chunks, clears the matching flags of the extended header (VP8X) and writes the new RIFF

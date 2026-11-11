@@ -2,7 +2,7 @@ using System.Buffers.Binary;
 using System.Runtime.InteropServices;
 using PandaBear.Testing;
 
-namespace PandaBear.ImageSanitizing.Tests;
+namespace PandaBear.UploadSanitizing.Tests.Images;
 
 /// <summary>
 /// Tests that the sanitizer removes location, camera and text metadata from each accepted format, keeps the colour profile and the image

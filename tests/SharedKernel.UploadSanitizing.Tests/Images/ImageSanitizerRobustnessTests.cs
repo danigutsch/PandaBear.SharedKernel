@@ -1,6 +1,6 @@
 using PandaBear.Testing;
 
-namespace PandaBear.ImageSanitizing.Tests;
+namespace PandaBear.UploadSanitizing.Tests.Images;
 
 /// <summary>
 /// Fuzz-style tests: truncations, single-byte mutations and random bytes behind each signature never throw, and every success is a

@@ -1,0 +1,37 @@
+#nullable enable
+const PandaBear.UploadSanitizing.Images.ImageSanitizer.AnimatedMessage = "The image must be a still image; animated images are not accepted." -> string!
+const PandaBear.UploadSanitizing.Images.ImageSanitizer.DimensionsTooLargeMessage = "The image is wider or taller than the accepted size." -> string!
+const PandaBear.UploadSanitizing.Images.ImageSanitizer.MalformedMessage = "The image file is damaged or uses a structure that is not accepted." -> string!
+const PandaBear.UploadSanitizing.Images.ImageSanitizer.NotAnImageMessage = "The file must be an image in an accepted format." -> string!
+const PandaBear.UploadSanitizing.Images.ImageSanitizer.TooLargeMessage = "The image file is larger than the accepted size." -> string!
+const PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.MaxBytesLimit = 2147483590 -> long
+PandaBear.UploadSanitizing.Images.ImageFormat
+PandaBear.UploadSanitizing.Images.ImageFormat.Avif = 3 -> PandaBear.UploadSanitizing.Images.ImageFormat
+PandaBear.UploadSanitizing.Images.ImageFormat.Jpeg = 0 -> PandaBear.UploadSanitizing.Images.ImageFormat
+PandaBear.UploadSanitizing.Images.ImageFormat.Png = 1 -> PandaBear.UploadSanitizing.Images.ImageFormat
+PandaBear.UploadSanitizing.Images.ImageFormat.Webp = 2 -> PandaBear.UploadSanitizing.Images.ImageFormat
+PandaBear.UploadSanitizing.Images.ImageSanitizer
+PandaBear.UploadSanitizing.Images.ImageSanitizerOptions
+PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.AllowAvif.get -> bool
+PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.AllowAvif.init -> void
+PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.Field.get -> string!
+PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.Field.init -> void
+PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.MaxBytes.get -> long
+PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.MaxBytes.init -> void
+PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.MaxDimension.get -> int
+PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.MaxDimension.init -> void
+PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.RejectAnimation.get -> bool
+PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.RejectAnimation.init -> void
+PandaBear.UploadSanitizing.Images.SanitizedImage
+PandaBear.UploadSanitizing.Images.SanitizedImage.Bytes.get -> System.ReadOnlyMemory<byte>
+PandaBear.UploadSanitizing.Images.SanitizedImage.ContentType.get -> string!
+PandaBear.UploadSanitizing.Images.SanitizedImage.FileExtension.get -> string!
+PandaBear.UploadSanitizing.Images.SanitizedImage.Format.get -> PandaBear.UploadSanitizing.Images.ImageFormat
+PandaBear.UploadSanitizing.Images.SanitizedImage.Height.get -> int
+PandaBear.UploadSanitizing.Images.SanitizedImage.IsAnimated.get -> bool
+PandaBear.UploadSanitizing.Images.SanitizedImage.MetadataRemoved.get -> bool
+PandaBear.UploadSanitizing.Images.SanitizedImage.Width.get -> int
+static PandaBear.UploadSanitizing.Images.ImageSanitizer.Sanitize(System.IO.Stream! content, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions! options, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.UploadSanitizing.Images.SanitizedImage!>>!
+static PandaBear.UploadSanitizing.Images.ImageSanitizer.Sanitize(System.ReadOnlySpan<byte> data, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions! options) -> PandaBear.Results.Result<PandaBear.UploadSanitizing.Images.SanitizedImage!>
+static PandaBear.UploadSanitizing.Images.ImageSanitizer.SanitizeInPlace(System.Memory<byte> buffer, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions! options) -> PandaBear.Results.Result<PandaBear.UploadSanitizing.Images.SanitizedImage!>
+static PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.Default.get -> PandaBear.UploadSanitizing.Images.ImageSanitizerOptions!

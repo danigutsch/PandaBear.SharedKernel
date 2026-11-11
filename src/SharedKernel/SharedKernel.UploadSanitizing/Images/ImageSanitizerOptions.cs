@@ -1,4 +1,4 @@
-namespace PandaBear.ImageSanitizing;
+namespace PandaBear.UploadSanitizing.Images;
 
 /// <summary>The limits of <see cref="ImageSanitizer"/> and the field its validation errors belong to.</summary>
 public sealed record ImageSanitizerOptions
