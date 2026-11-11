@@ -3,8 +3,11 @@ namespace PandaBear.Tabular;
 /// <summary>Finds later rows sharing a caller-defined key.</summary>
 public static class DuplicateRowScanner
 {
-    /// <summary>Finds the one-based document line numbers of later duplicate keys.</summary>
-    /// <param name="document">The document whose first line contains headers.</param>
+    /// <summary>
+    /// Finds the one-based document line numbers of later duplicate keys: each row's <see cref="CsvRow.LineNumber"/>, or for a row made with
+    /// <see cref="CsvRow.Create"/> its position after a one-line header.
+    /// </summary>
+    /// <param name="document">The document.</param>
     /// <param name="keySelector">Selects a comparison key, or null to skip a row.</param>
     /// <param name="comparer">The key comparer; ordinal comparison is used when null.</param>
     /// <returns>Duplicate line numbers in document order, excluding the first row for each key.</returns>
@@ -25,7 +28,7 @@ public static class DuplicateRowScanner
             var key = keySelector(row);
             if (key is not null && !seenKeys.Add(key))
             {
-                duplicateLineNumbers.Add(index + 2);
+                duplicateLineNumbers.Add(row.LineNumber > 0 ? row.LineNumber : index + 2);
             }
         }
 

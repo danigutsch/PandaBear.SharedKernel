@@ -2,14 +2,30 @@
 PandaBear.Tabular.CsvDocument
 PandaBear.Tabular.CsvDocument.Headers.get -> System.Collections.Generic.IReadOnlyList<string!>!
 PandaBear.Tabular.CsvDocument.Rows.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Tabular.CsvRow!>!
+PandaBear.Tabular.CsvParseOptions
+PandaBear.Tabular.CsvParseOptions.SkipBlankLines.get -> bool
+PandaBear.Tabular.CsvParseOptions.SkipBlankLines.init -> void
 PandaBear.Tabular.CsvRow
 PandaBear.Tabular.CsvRow.Count.get -> int
+PandaBear.Tabular.CsvRow.GetEnumerator() -> System.Collections.Generic.IEnumerator<string!>!
+PandaBear.Tabular.CsvRow.LineNumber.get -> int
 PandaBear.Tabular.CsvRow.this[int index].get -> string!
 PandaBear.Tabular.CsvRow.this[System.Collections.Generic.IReadOnlyList<string!>! headers, string! headerName].get -> string!
 PandaBear.Tabular.CsvRow.TryGetByHeader(System.Collections.Generic.IReadOnlyList<string!>! headers, string! headerName, out string? value) -> bool
+PandaBear.Tabular.CsvWriteOptions
+PandaBear.Tabular.CsvWriteOptions.GuardFormulas.get -> bool
+PandaBear.Tabular.CsvWriteOptions.GuardFormulas.init -> void
+PandaBear.Tabular.CsvWriteOptions.NewLine.get -> string!
+PandaBear.Tabular.CsvWriteOptions.NewLine.init -> void
+PandaBear.Tabular.CsvWriter
 PandaBear.Tabular.DuplicateRowScanner
 static PandaBear.Tabular.CsvDocument.Create(System.Collections.Generic.IReadOnlyList<string!>! headers, System.Collections.Generic.IReadOnlyList<PandaBear.Tabular.CsvRow!>! rows) -> PandaBear.Results.Result<PandaBear.Tabular.CsvDocument!>
-static PandaBear.Tabular.CsvDocument.Parse(string! content, System.Collections.Generic.IReadOnlyList<string!>? requiredHeaderNames = null) -> PandaBear.Results.Result<PandaBear.Tabular.CsvDocument!>
-static PandaBear.Tabular.CsvRow.Parse(string! csvLine) -> PandaBear.Tabular.CsvRow!
+static PandaBear.Tabular.CsvDocument.Parse(string! content, System.Collections.Generic.IReadOnlyList<string!>? requiredHeaderNames = null, PandaBear.Tabular.CsvParseOptions? options = null) -> PandaBear.Results.Result<PandaBear.Tabular.CsvDocument!>
+static PandaBear.Tabular.CsvDocument.ParseUtf8(System.ReadOnlySpan<byte> content, System.Collections.Generic.IReadOnlyList<string!>? requiredHeaderNames = null, PandaBear.Tabular.CsvParseOptions? options = null) -> PandaBear.Results.Result<PandaBear.Tabular.CsvDocument!>
+static PandaBear.Tabular.CsvParseOptions.Default.get -> PandaBear.Tabular.CsvParseOptions!
+static PandaBear.Tabular.CsvRow.Create(System.Collections.Generic.IEnumerable<string!>! values) -> PandaBear.Tabular.CsvRow!
+static PandaBear.Tabular.CsvWriteOptions.Default.get -> PandaBear.Tabular.CsvWriteOptions!
+static PandaBear.Tabular.CsvWriter.FormatField(string! value, PandaBear.Tabular.CsvWriteOptions? options = null) -> string!
+static PandaBear.Tabular.CsvWriter.Write(System.Collections.Generic.IReadOnlyList<string!>! headers, System.Collections.Generic.IEnumerable<System.Collections.Generic.IReadOnlyList<string!>!>! rows, PandaBear.Tabular.CsvWriteOptions? options = null) -> string!
+static PandaBear.Tabular.CsvWriter.Write(System.IO.TextWriter! writer, System.Collections.Generic.IReadOnlyList<string!>! headers, System.Collections.Generic.IEnumerable<System.Collections.Generic.IReadOnlyList<string!>!>! rows, PandaBear.Tabular.CsvWriteOptions? options = null) -> void
 static PandaBear.Tabular.DuplicateRowScanner.FindDuplicateLineNumbers(PandaBear.Tabular.CsvDocument! document, System.Func<PandaBear.Tabular.CsvRow!, string?>! keySelector, System.Collections.Generic.IEqualityComparer<string!>? comparer = null) -> System.Collections.Generic.IReadOnlyList<int>!
-static PandaBear.Tabular.CsvDocument.ParseUtf8(System.ReadOnlySpan<byte> content, System.Collections.Generic.IReadOnlyList<string!>? requiredHeaderNames = null) -> PandaBear.Results.Result<PandaBear.Tabular.CsvDocument!>
