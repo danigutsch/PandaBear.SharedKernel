@@ -184,3 +184,6 @@ PandaBear.BuildingBlocks.WebUrl.Value.get -> string!
 override PandaBear.BuildingBlocks.WebUrl.ToString() -> string!
 static PandaBear.BuildingBlocks.WebUrl.Create(string? value, string! field = "url", string! label = "Link") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.WebUrl!>
 static PandaBear.BuildingBlocks.WebUrl.Restore(string! value) -> PandaBear.BuildingBlocks.WebUrl!
+PandaBear.BuildingBlocks.Currency.Symbol.get -> string!
+PandaBear.BuildingBlocks.Money.ToDisplayString(System.IFormatProvider! provider) -> string!
+PandaBear.BuildingBlocks.Money.ToString(string? format, System.IFormatProvider? formatProvider) -> string!

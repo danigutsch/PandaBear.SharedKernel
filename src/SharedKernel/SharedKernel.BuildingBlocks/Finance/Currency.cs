@@ -24,6 +24,21 @@ public sealed class Currency : ValueObject
         get;
     }
 
+    /// <summary>
+    /// Gets the symbol money of this currency is displayed with: <c>R$</c>, <c>€</c>, <c>$</c>, <c>£</c> or <c>¥</c> for BRL, EUR, USD, GBP
+    /// and JPY, and the code itself for every other currency, whose symbols are ambiguous or unknown to readers abroad. The table is fixed,
+    /// so the symbol never depends on the platform's culture data.
+    /// </summary>
+    public string Symbol => Code switch
+    {
+        "BRL" => "R$",
+        "EUR" => "€",
+        "USD" => "$",
+        "GBP" => "£",
+        "JPY" => "¥",
+        _ => Code,
+    };
+
     /// <summary>Gets the number of decimal places of the currency's minor unit.</summary>
     public int MinorUnits => CurrencyCodes.MinorUnitsByCode.TryGetValue(Code, out var units) ? units : DefaultMinorUnits;
 

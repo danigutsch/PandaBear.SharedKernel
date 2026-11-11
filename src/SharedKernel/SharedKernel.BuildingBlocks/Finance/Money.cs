@@ -3,9 +3,15 @@ using PandaBear.Results;
 
 namespace PandaBear.BuildingBlocks;
 
-/// <summary>An amount of one <see cref="Currency"/>, rounded away from zero to the currency's minor unit. No currency conversion is performed.</summary>
-public sealed class Money : ValueObject
+/// <summary>
+/// An amount of one <see cref="Currency"/>, rounded away from zero to the currency's minor unit. No currency conversion is performed.
+/// <see cref="ToString()"/> is the invariant <c>EUR 1.00</c> form for logs and storage; <see cref="ToDisplayString"/> and the <c>C</c>
+/// format are for people.
+/// </summary>
+public sealed class Money : ValueObject, IFormattable
 {
+    private const string DisplayFormat = "C";
+
     private Money(decimal amount, Currency currency)
     {
         Amount = amount;
@@ -92,6 +98,47 @@ public sealed class Money : ValueObject
     /// <inheritdoc />
     public override string ToString() =>
         string.Create(CultureInfo.InvariantCulture, $"{Currency.Code} {Amount.ToString("F" + Currency.MinorUnits.ToString(CultureInfo.InvariantCulture), CultureInfo.InvariantCulture)}");
+
+    /// <summary>
+    /// Formats the money for people: the culture's currency pattern, separators and negative form, with <see cref="Currency.Symbol"/> as the
+    /// symbol and the currency's minor unit as the decimals, for example <c>R$ 1.234,56</c> (pt-BR, BRL), <c>€ 1.234,56</c> (pt-BR, EUR),
+    /// <c>1 234,56 €</c> (pt-PT, EUR) or <c>$1,234.56</c> (en-US, USD). The pattern comes from the platform's culture data (ICU on Linux
+    /// and macOS); in a host with invariant globalization every culture formats like the invariant culture, <c>€1,234.56</c>.
+    /// </summary>
+    /// <param name="provider">The culture, such as <see cref="CultureInfo.CurrentCulture"/>, or another format provider.</param>
+    /// <returns>The display text.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="provider"/> is <see langword="null"/>.</exception>
+    public string ToDisplayString(IFormatProvider provider)
+    {
+        ArgumentNullException.ThrowIfNull(provider);
+        return ToString(DisplayFormat, provider);
+    }
+
+    /// <summary>
+    /// Formats the money: <c>C</c> as <see cref="ToDisplayString"/> does, and <c>G</c>, an empty or a <see langword="null"/> format as the
+    /// invariant <see cref="ToString()"/>, whatever the provider.
+    /// </summary>
+    /// <param name="format">The format: <c>C</c>, <c>G</c>, empty or <see langword="null"/>.</param>
+    /// <param name="formatProvider">The culture for <c>C</c>; the current culture when <see langword="null"/>.</param>
+    /// <returns>The formatted text.</returns>
+    /// <exception cref="FormatException"><paramref name="format"/> is not one of the supported formats.</exception>
+    public string ToString(string? format, IFormatProvider? formatProvider)
+    {
+        if (string.IsNullOrEmpty(format) || format is "G" or "g")
+        {
+            return ToString();
+        }
+
+        if (format is not (DisplayFormat or "c"))
+        {
+            throw new FormatException($"The format '{format}' is not supported; use \"C\" for display or \"G\" for the invariant form.");
+        }
+
+        var numberFormat = (NumberFormatInfo)NumberFormatInfo.GetInstance(formatProvider ?? CultureInfo.CurrentCulture).Clone();
+        numberFormat.CurrencySymbol = Currency.Symbol;
+        numberFormat.CurrencyDecimalDigits = Currency.MinorUnits;
+        return Amount.ToString(DisplayFormat, numberFormat);
+    }
 
     /// <inheritdoc />
     protected override IEnumerable<object?> GetEqualityComponents()

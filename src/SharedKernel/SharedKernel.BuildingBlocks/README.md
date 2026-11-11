@@ -183,6 +183,25 @@ Arab Accounting Dinar `XAD` are not money and are rejected. An unknown code is a
 same table gives `MinorUnits`: 0 for `BIF CLP DJF GNF ISK JPY KMF KRW PYG RWF UGX UYI VND VUV XAF XOF XPF`, 3 for
 `BHD IQD JOD KWD LYD OMR TND`, 4 for `CLF UYW` and 2 for every other currency.
 
+### Displaying money
+
+`Money.ToString()` stays the invariant `EUR 1.00` form for logs and storage. For people, `money.ToDisplayString(culture)` (or the `C`
+format, as in `$"{price:C}"` or `string.Format(culture, "{0:C}", price)`) uses the culture's currency pattern, separators and negative
+form, `Currency.Symbol` as the symbol and the currency's minor unit as the decimals:
+
+| Culture | BRL | EUR | USD |
+| --- | --- | --- | --- |
+| pt-BR | `R$ 1.234,56` | `€ 1.234,56` | `$ 1.234,56` |
+| pt-PT | `1 234,56 R$` | `1 234,56 €` | `1 234,56 $` |
+| en-US | `R$1,234.56` | `€1,234.56` | `$1,234.56` |
+| invariant | `R$1,234.56` | `€1,234.56` | `$1,234.56` |
+
+`Currency.Symbol` comes from a fixed table (`R$`, `€`, `$`, `£`, `¥` for BRL, EUR, USD, GBP, JPY) and is the code itself for every other
+currency (`CHF 1.234,56`), so the symbol never depends on the platform. `RegionInfo` is not used: one code has many regional symbols
+(`US$`, `$`, `USD`), and a culture's own `CurrencySymbol` belongs to its region's currency, not to the money being shown. The pattern
+and separators do come from the culture data, which .NET reads from ICU on Linux and macOS: a host that sets `InvariantGlobalization`
+formats every culture like the invariant culture, and a container image without ICU must install it for pt-BR or pt-PT output.
+
 ## Dates, codes and exact money
 
 - `DateOnlyRange.Create(start, end)`: a range of calendar days with both ends included (`Days`); a missing date (`default`) is reported as required on `startDate` or `endDate`, and an end before the start on `endDate`.
