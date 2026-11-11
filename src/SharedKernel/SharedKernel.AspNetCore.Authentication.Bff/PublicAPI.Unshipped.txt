@@ -1,0 +1,100 @@
+#nullable enable
+const PandaBear.AspNetCore.Authentication.Bff.BffClaimTypes.SessionExpiresAt = "urn:pandabear:bff:session-expires-at" -> string!
+const PandaBear.AspNetCore.Authentication.Bff.BffClaimTypes.SessionId = "urn:pandabear:bff:session-id" -> string!
+const PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementDefaults.IdentityProviderHttpClientName = "PandaBear.Bff.IdentityProvider" -> string!
+override PandaBear.AspNetCore.Authentication.Bff.UserTokenResult.ToString() -> string!
+override PandaBear.AspNetCore.Authentication.Bff.UserTokenSet.ToString() -> string!
+PandaBear.AspNetCore.Authentication.Bff.BffClaimTypes
+PandaBear.AspNetCore.Authentication.Bff.ICurrentUserAccessor
+PandaBear.AspNetCore.Authentication.Bff.ICurrentUserAccessor.GetCurrentUser(System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Security.Claims.ClaimsPrincipal!>
+PandaBear.AspNetCore.Authentication.Bff.IUserSessionLock
+PandaBear.AspNetCore.Authentication.Bff.IUserSessionLock.Acquire(string! sessionId, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.IAsyncDisposable!>
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.RemoveAsync(string! key) -> System.Threading.Tasks.Task!
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.RemoveAsync(string! key, Microsoft.AspNetCore.Http.HttpContext! httpContext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.RemoveAsync(string! key, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.RenewAsync(string! key, Microsoft.AspNetCore.Authentication.AuthenticationTicket! ticket) -> System.Threading.Tasks.Task!
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.RenewAsync(string! key, Microsoft.AspNetCore.Authentication.AuthenticationTicket! ticket, Microsoft.AspNetCore.Http.HttpContext! httpContext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.RenewAsync(string! key, Microsoft.AspNetCore.Authentication.AuthenticationTicket! ticket, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.RetrieveAsync(string! key) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Authentication.AuthenticationTicket?>!
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.RetrieveAsync(string! key, Microsoft.AspNetCore.Http.HttpContext! httpContext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Authentication.AuthenticationTicket?>!
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.RetrieveAsync(string! key, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Authentication.AuthenticationTicket?>!
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.ServerSideTicketStore(Microsoft.Extensions.Caching.Distributed.IDistributedCache! cache, Microsoft.AspNetCore.DataProtection.IDataProtectionProvider! dataProtectionProvider, Microsoft.Extensions.Options.IOptions<PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStoreOptions!>! options, System.TimeProvider! timeProvider, Microsoft.Extensions.Logging.ILogger<PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore!>! logger) -> void
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.StoreAsync(Microsoft.AspNetCore.Authentication.AuthenticationTicket! ticket) -> System.Threading.Tasks.Task<string!>!
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.StoreAsync(Microsoft.AspNetCore.Authentication.AuthenticationTicket! ticket, Microsoft.AspNetCore.Http.HttpContext! httpContext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.StoreAsync(Microsoft.AspNetCore.Authentication.AuthenticationTicket! ticket, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStoreOptions
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStoreOptions.AbsoluteLifetime.get -> System.TimeSpan
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStoreOptions.AbsoluteLifetime.set -> void
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStoreOptions.KeyPrefix.get -> string!
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStoreOptions.KeyPrefix.set -> void
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStoreOptions.ServerSideTicketStoreOptions() -> void
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStoreOptions.SlidingExpiration.get -> System.TimeSpan?
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStoreOptions.SlidingExpiration.set -> void
+PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStoreServiceCollectionExtensions
+PandaBear.AspNetCore.Authentication.Bff.TokenEndpointClientAuthentication
+PandaBear.AspNetCore.Authentication.Bff.TokenEndpointClientAuthentication.BasicHeader = 1 -> PandaBear.AspNetCore.Authentication.Bff.TokenEndpointClientAuthentication
+PandaBear.AspNetCore.Authentication.Bff.TokenEndpointClientAuthentication.PostBody = 0 -> PandaBear.AspNetCore.Authentication.Bff.TokenEndpointClientAuthentication
+PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure
+PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure.ExchangeFailed = 5 -> PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure
+PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure.IdentityProviderUnavailable = 6 -> PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure
+PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure.None = 0 -> PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure
+PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure.NoSession = 1 -> PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure
+PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure.NoTokens = 3 -> PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure
+PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure.RefreshFailed = 4 -> PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure
+PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure.SessionExpired = 2 -> PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure
+PandaBear.AspNetCore.Authentication.Bff.UserTokenHttpClientBuilderExtensions
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementDefaults
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.CacheKeyPrefix.get -> string!
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.CacheKeyPrefix.set -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.ClientAuthentication.get -> PandaBear.AspNetCore.Authentication.Bff.TokenEndpointClientAuthentication
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.ClientAuthentication.set -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.CookieScheme.get -> string!
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.CookieScheme.set -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.IdentityProviderTimeout.get -> System.TimeSpan
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.IdentityProviderTimeout.set -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.OpenIdConnectScheme.get -> string!
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.OpenIdConnectScheme.set -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.RefreshBeforeExpiry.get -> System.TimeSpan
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.RefreshBeforeExpiry.set -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.RejectCookieWithoutTokenSession.get -> bool
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.RejectCookieWithoutTokenSession.set -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.RevokeRefreshTokenOnSignOut.get -> bool
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.RevokeRefreshTokenOnSignOut.set -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.SessionLifetime.get -> System.TimeSpan
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.SessionLifetime.set -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.UserTokenManagementOptions() -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementServiceCollectionExtensions
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManager
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManager.GetAccessToken(System.Security.Claims.ClaimsPrincipal! user, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.AspNetCore.Authentication.Bff.UserTokenResult!>!
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManager.GetAudienceAccessToken(System.Security.Claims.ClaimsPrincipal! user, string! audience, string? scope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.AspNetCore.Authentication.Bff.UserTokenResult!>!
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManager.GetTokens(System.Security.Claims.ClaimsPrincipal! user, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.AspNetCore.Authentication.Bff.UserTokenSet?>!
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManager.HasActiveSession(System.Security.Claims.ClaimsPrincipal! user, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManager.SignOut(System.Security.Claims.ClaimsPrincipal! user, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManager.StartSession(System.Security.Claims.ClaimsPrincipal! user, PandaBear.AspNetCore.Authentication.Bff.UserTokenSet! tokens, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManager.UserTokenManager(Microsoft.Extensions.Caching.Distributed.IDistributedCache! cache, Microsoft.AspNetCore.DataProtection.IDataProtectionProvider! dataProtectionProvider, System.Net.Http.IHttpClientFactory! httpClientFactory, Microsoft.Extensions.Options.IOptionsMonitor<Microsoft.AspNetCore.Authentication.OpenIdConnect.OpenIdConnectOptions!>! openIdConnectOptions, Microsoft.Extensions.Options.IOptions<PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions!>! options, PandaBear.AspNetCore.Authentication.Bff.IUserSessionLock! sessionLock, System.TimeProvider! timeProvider, Microsoft.Extensions.Logging.ILogger<PandaBear.AspNetCore.Authentication.Bff.UserTokenManager!>! logger) -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenResult
+PandaBear.AspNetCore.Authentication.Bff.UserTokenResult.AccessToken.get -> string?
+PandaBear.AspNetCore.Authentication.Bff.UserTokenResult.ExpiresAt.get -> System.DateTimeOffset?
+PandaBear.AspNetCore.Authentication.Bff.UserTokenResult.Failure.get -> PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure
+PandaBear.AspNetCore.Authentication.Bff.UserTokenResult.Succeeded.get -> bool
+PandaBear.AspNetCore.Authentication.Bff.UserTokenSet
+PandaBear.AspNetCore.Authentication.Bff.UserTokenSet.AccessToken.get -> string!
+PandaBear.AspNetCore.Authentication.Bff.UserTokenSet.AccessTokenExpiresAt.get -> System.DateTimeOffset
+PandaBear.AspNetCore.Authentication.Bff.UserTokenSet.AccessTokenType.get -> string?
+PandaBear.AspNetCore.Authentication.Bff.UserTokenSet.IdentityToken.get -> string?
+PandaBear.AspNetCore.Authentication.Bff.UserTokenSet.RefreshToken.get -> string?
+PandaBear.AspNetCore.Authentication.Bff.UserTokenSet.Scope.get -> string?
+PandaBear.AspNetCore.Authentication.Bff.UserTokenSet.UserTokenSet(string! accessToken, System.DateTimeOffset accessTokenExpiresAt, string? refreshToken, string? identityToken, string? accessTokenType, string? scope) -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenUnavailableException
+PandaBear.AspNetCore.Authentication.Bff.UserTokenUnavailableException.Failure.get -> PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure
+PandaBear.AspNetCore.Authentication.Bff.UserTokenUnavailableException.UserTokenUnavailableException() -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenUnavailableException.UserTokenUnavailableException(PandaBear.AspNetCore.Authentication.Bff.UserTokenFailure failure) -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenUnavailableException.UserTokenUnavailableException(string! message) -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenUnavailableException.UserTokenUnavailableException(string! message, System.Exception! innerException) -> void
+static PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStoreServiceCollectionExtensions.AddServerSideTicketStore(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! cookieScheme = "Cookies", System.Action<PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStoreOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static PandaBear.AspNetCore.Authentication.Bff.UserTokenHttpClientBuilderExtensions.AddTokenExchangeHandler(this Microsoft.Extensions.DependencyInjection.IHttpClientBuilder! builder, string! audience, string? scope = null) -> Microsoft.Extensions.DependencyInjection.IHttpClientBuilder!
+static PandaBear.AspNetCore.Authentication.Bff.UserTokenHttpClientBuilderExtensions.AddUserAccessTokenHandler(this Microsoft.Extensions.DependencyInjection.IHttpClientBuilder! builder) -> Microsoft.Extensions.DependencyInjection.IHttpClientBuilder!
+static PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementServiceCollectionExtensions.AddBlazorServerCurrentUser(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementServiceCollectionExtensions.AddUserTokenManagement(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

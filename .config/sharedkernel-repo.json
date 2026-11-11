@@ -4,6 +4,7 @@
     "src/SharedKernel/SharedKernel.AI/SharedKernel.AI.csproj",
     "src/SharedKernel/SharedKernel.ApiVersioning.AspNetCore/SharedKernel.ApiVersioning.AspNetCore.csproj",
     "src/SharedKernel/SharedKernel.ApiVersioning/SharedKernel.ApiVersioning.csproj",
+    "src/SharedKernel/SharedKernel.AspNetCore.Authentication.Bff/SharedKernel.AspNetCore.Authentication.Bff.csproj",
     "src/SharedKernel/SharedKernel.AspNetCore.Authentication/SharedKernel.AspNetCore.Authentication.csproj",
     "src/SharedKernel/SharedKernel.AspNetCore.Localization/SharedKernel.AspNetCore.Localization.csproj",
     "src/SharedKernel/SharedKernel.AspNetCore.RateLimiting/SharedKernel.AspNetCore.RateLimiting.csproj",

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.AspNetCore.Authentication.Bff</PackageId>
+        <Description>Backend-for-frontend token handling for ASP.NET Core and Blazor Server: a server-side cookie ticket store, protected per-session user tokens with coalesced refresh and sign-out revocation, an access-token HttpClient handler and RFC 8693 token exchange per audience.</Description>
+        <RootNamespace>PandaBear.AspNetCore.Authentication.Bff</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>aspnetcore;authentication;bff;openidconnect;token-exchange;blazor;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.AspNetCore.Authentication.Bff.Tests" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>
