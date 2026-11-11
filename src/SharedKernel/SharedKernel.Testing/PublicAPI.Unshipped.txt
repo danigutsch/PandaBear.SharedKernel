@@ -273,3 +273,6 @@ override PandaBear.Testing.CountingTimeProvider.GetTimestamp() -> long
 override PandaBear.Testing.CountingTimeProvider.GetUtcNow() -> System.DateTimeOffset
 override PandaBear.Testing.CountingTimeProvider.LocalTimeZone.get -> System.TimeZoneInfo!
 override PandaBear.Testing.CountingTimeProvider.TimestampFrequency.get -> long
+PandaBear.Testing.TestCleanup
+static PandaBear.Testing.TestCleanup.DisposeAll(System.Exception? operationFailure, params System.IAsyncDisposable?[]! resources) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.TestCleanup.Run(System.Exception? operationFailure, params System.Func<System.Threading.Tasks.ValueTask>![]! cleanupActions) -> System.Threading.Tasks.Task!

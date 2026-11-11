@@ -72,6 +72,26 @@ variables. The helper does not provide concurrency isolation.
 files, avoids traversing symbolic links, and accepts an already removed root. Cleanup failures
 propagate. Keep fixture-specific file writers in the owning tests.
 
+## Cleanup that keeps every failure
+
+`TestCleanup.DisposeAll(operationFailure, resources...)` disposes every resource that is not `null`, in order, even when one fails, and
+`TestCleanup.Run(operationFailure, actions...)` does the same for cleanup actions. Nothing is thrown when everything succeeds; a single
+failure is rethrown as it is, with its stack trace; several are thrown as one `AggregateException` with the operation failure first. Use
+it where a set-up fails half way, so the cleanup failure does not hide the set-up failure:
+
+```csharp
+try
+{
+    dataSource = database.CreateDataSource();
+    await MigrateSchema(dataSource, ct);
+}
+catch (Exception setupFailure)
+{
+    await TestCleanup.DisposeAll(setupFailure, dataSource, database);
+    throw;
+}
+```
+
 ## Call proxy
 
 `CallProxy.Create<IStore>(realStore, hooks => ...)` wraps a service so a test can hold, fail, follow up or replace a call without a
