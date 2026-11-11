@@ -102,4 +102,40 @@ public sealed class BirthDateTests
         onFebruary.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull()["birthDate"].ShouldBe(["Age must be at least 18 years."]);
         onMarch.IsSuccess.ShouldBeTrue();
     }
+
+    [Fact]
+    public void Restore_equals_create_for_a_valid_date()
+    {
+        // Act
+        var restored = BirthDate.Restore(new DateOnly(1990, 5, 20));
+
+        // Assert
+        restored.ShouldBe(BirthDate.Create(new DateOnly(1990, 5, 20), Today, 10, 120).ShouldBeSuccess());
+        restored.ToString().ShouldBe("BirthDate [redacted]");
+    }
+
+    [Fact]
+    public void Restore_keeps_a_stored_date_that_create_rejects_under_todays_age_limits()
+    {
+        // Arrange
+        var stored = new DateOnly(1950, 1, 1);
+
+        // Act
+        var restored = BirthDate.Restore(stored);
+
+        // Assert
+        BirthDate.Create(stored, Today, 18, 70).IsSuccess.ShouldBeFalse();
+        restored.Value.ShouldBe(stored);
+        restored.AgeOn(Today).ShouldBe(76);
+    }
+
+    [Fact]
+    public void Restore_rejects_the_default_date()
+    {
+        // Act
+        Action restore = () => BirthDate.Restore(default);
+
+        // Assert
+        restore.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe("value");
+    }
 }

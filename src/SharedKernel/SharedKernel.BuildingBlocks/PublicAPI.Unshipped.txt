@@ -187,3 +187,4 @@ static PandaBear.BuildingBlocks.WebUrl.Restore(string! value) -> PandaBear.Build
 PandaBear.BuildingBlocks.Currency.Symbol.get -> string!
 PandaBear.BuildingBlocks.Money.ToDisplayString(System.IFormatProvider! provider) -> string!
 PandaBear.BuildingBlocks.Money.ToString(string? format, System.IFormatProvider? formatProvider) -> string!
+static PandaBear.BuildingBlocks.BirthDate.Restore(System.DateOnly value) -> PandaBear.BuildingBlocks.BirthDate!

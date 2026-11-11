@@ -146,8 +146,10 @@ recipient verification, masking, authorization, encryption and financial policy 
 expose `Value`. Do not destructure these objects in logs. JSON/EF adapters must call factories and
 handle validation failure. Persistence mappers (EF value converters) that rebuild a value from stored text must use the
 `Restore` factories instead of `Create(...).Value`: `EmailAddress.Restore`, `PhoneNumber.Restore`, `CountryCode.Restore`,
-`Currency.Restore`, `PersonName.Restore(firstName, lastName)`, `Money.Restore(amount, currency)`, `Cpf.Restore(value)` and
-`PostalAddress.Restore(street, complement, neighborhood, postalCode, city, state, country)`. `Restore` is for persistence mappers
+`Currency.Restore`, `PersonName.Restore(firstName, lastName)`, `Money.Restore(amount, currency)`, `Cpf.Restore(value)`,
+`BirthDate.Restore(value)` and `PostalAddress.Restore(street, complement, neighborhood, postalCode, city, state, country)`.
+`BirthDate.Restore` skips the age limits, which depend on the day, and refuses only the default date
+(`ArgumentOutOfRangeException`). `Restore` is for persistence mappers
 only: it rebuilds a value from text this type produced earlier, performs no validation beyond null/blank checks (`ArgumentException`) and
 the same trim and case normalization as `Create`, so a stored value that a newer rule rejects (an allow-list that tightened, a
 longer-than-now name) still loads instead of throwing on every query. `CountryCode.Restore` keeps a code outside the assigned set (its
