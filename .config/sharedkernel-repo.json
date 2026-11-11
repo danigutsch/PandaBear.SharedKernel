@@ -94,6 +94,7 @@
     "src/SharedKernel/SharedKernel.Testing.Playwright/SharedKernel.Testing.Playwright.csproj",
     "src/SharedKernel/SharedKernel.Testing.Roslyn/SharedKernel.Testing.Roslyn.csproj",
     "src/SharedKernel/SharedKernel.Testing.Snapshots/SharedKernel.Testing.Snapshots.csproj",
+    "src/SharedKernel/SharedKernel.Testing.Sqlite/SharedKernel.Testing.Sqlite.csproj",
     "src/SharedKernel/SharedKernel.Testing.Web/SharedKernel.Testing.Web.csproj",
     "src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj",
     "src/SharedKernel/SharedKernel.Versioning/SharedKernel.Versioning.csproj"

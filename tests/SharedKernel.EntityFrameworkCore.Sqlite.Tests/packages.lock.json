@@ -341,6 +341,12 @@
           "xunit.v3.assert": "[4.0.0, )"
         }
       },
+      "PandaBear.SharedKernel.Testing.Sqlite": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Data.Sqlite.Core": "[10.0.13, )"
+        }
+      },
       "Microsoft.Data.Sqlite.Core": {
         "type": "CentralTransitive",
         "requested": "[10.0.13, )",

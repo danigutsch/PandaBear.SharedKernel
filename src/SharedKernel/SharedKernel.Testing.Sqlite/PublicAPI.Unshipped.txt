@@ -1,0 +1,5 @@
+#nullable enable
+PandaBear.Testing.Sqlite.SqliteInMemoryDatabase
+PandaBear.Testing.Sqlite.SqliteInMemoryDatabase.ConnectionString.get -> string!
+PandaBear.Testing.Sqlite.SqliteInMemoryDatabase.Dispose() -> void
+PandaBear.Testing.Sqlite.SqliteInMemoryDatabase.SqliteInMemoryDatabase(string! name = "test") -> void

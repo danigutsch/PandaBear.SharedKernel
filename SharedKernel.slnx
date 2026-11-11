@@ -88,6 +88,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Testing.Messaging/SharedKernel.Testing.Messaging.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Playwright/SharedKernel.Testing.Playwright.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Roslyn/SharedKernel.Testing.Roslyn.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Testing.Sqlite/SharedKernel.Testing.Sqlite.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Snapshots/SharedKernel.Testing.Snapshots.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Web/SharedKernel.Testing.Web.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Xunit/SharedKernel.Testing.Xunit.csproj" />
