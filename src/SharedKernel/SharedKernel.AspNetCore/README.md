@@ -17,6 +17,18 @@ policy. Each consuming application owns those decisions.
 - `AddConfiguredTrustedForwardedHeaders` and `ConfigureTrustedForwardedHeaders`: forwarded-header trust from
   configuration. `AddForwardedClientIp` forwards the resolved visitor identity to a downstream client (see below).
 - `AddConfiguredOriginsPolicy`: a CORS policy from a configuration section of allowed origins.
+- `MapImmutableFiles`: serves files whose content never changes under their name, such as uploads stored by content hash, from
+  one folder at `{routePrefix}/{fileName}` (GET and HEAD). Only a plain file name (ASCII letters, digits, `.`, `-`, `_`, no
+  leading dot) with an extension from the application's media type map, that the application's `isServed` callback approves
+  (for example because published content uses it) and that exists in the folder is served; everything else is a 404 before the
+  file system is touched. Answers carry the mapped media type, `Cache-Control: public, max-age=31536000, immutable`,
+  `X-Content-Type-Options: nosniff`, `Last-Modified`, and range support.
+
+  ```csharp
+  app.MapImmutableFiles("/media", mediaFolder,
+      new Dictionary<string, string> { [".jpg"] = "image/jpeg", [".png"] = "image/png", [".webp"] = "image/webp" },
+      (context, fileName) => context.RequestServices.GetRequiredService<Gallery>().IsPublished(fileName, context.RequestAborted));
+  ```
 - `AddUnhandledExceptionHandler` and `AspNetCoreTelemetry`: an opt-in unhandled-exception handler and the names of the
   meter, instruments, tags and log event identifiers of the ASP.NET Core telemetry family.
 - `HostEnvironmentVariableNames.AspNetCoreEnvironment` and `HostEnvironmentVariableNames.DotNetEnvironment` for C#
