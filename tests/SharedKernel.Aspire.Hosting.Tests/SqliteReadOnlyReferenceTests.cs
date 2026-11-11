@@ -13,9 +13,9 @@ public sealed class SqliteReadOnlyReferenceTests
     {
         // Arrange
         using var temp = new TemporaryDirectory();
-        var path = Path.Combine(temp.Path, "app.db");
+        var path = Path.Combine(temp.Path, "db.db");
         var builder = DistributedApplication.CreateBuilder([]);
-        var sqlite = builder.AddSqlite("db", path);
+        var sqlite = builder.AddSqlite("db").WithDataBindMount(temp.Path);
         var consumer = builder.AddContainer("public", "example/image").WithReadOnlyReference(sqlite, connectionName: "Default");
 
         // Act
@@ -32,7 +32,7 @@ public sealed class SqliteReadOnlyReferenceTests
         // Arrange
         using var temp = new TemporaryDirectory();
         var builder = DistributedApplication.CreateBuilder([]);
-        var sqlite = builder.AddSqlite("site-db", Path.Combine(temp.Path, "app.db"));
+        var sqlite = builder.AddSqlite("site-db").WithDataBindMount(temp.Path);
         var consumer = builder.AddContainer("public", "example/image").WithReadOnlyReference(sqlite);
 
         // Act
@@ -48,9 +48,10 @@ public sealed class SqliteReadOnlyReferenceTests
     {
         // Arrange
         using var temp = new TemporaryDirectory();
-        var path = Path.Combine(temp.Path, "app;Mode=ReadWriteCreate.db");
+        var folder = Path.Combine(temp.Path, "a;Mode=ReadWriteCreate");
+        var path = Path.Combine(folder, "db.db");
         var builder = DistributedApplication.CreateBuilder([]);
-        var sqlite = builder.AddSqlite("db", path);
+        var sqlite = builder.AddSqlite("db").WithDataBindMount(folder);
         var consumer = builder.AddContainer("public", "example/image").WithReadOnlyReference(sqlite, connectionName: "Default");
 
         // Act
@@ -69,7 +70,7 @@ public sealed class SqliteReadOnlyReferenceTests
         // Arrange
         using var temp = new TemporaryDirectory();
         var builder = DistributedApplication.CreateBuilder([]);
-        var sqlite = builder.AddSqlite("db", Path.Combine(temp.Path, "app.db"));
+        var sqlite = builder.AddSqlite("db").WithDataBindMount(temp.Path);
 
         // Act
         var consumer = builder.AddContainer("public", "example/image").WithReadOnlyReference(sqlite);
@@ -87,7 +88,7 @@ public sealed class SqliteReadOnlyReferenceTests
         // Arrange
         using var temp = new TemporaryDirectory();
         var builder = DistributedApplication.CreateBuilder([]);
-        var sqlite = builder.AddSqlite("db", Path.Combine(temp.Path, "app.db"));
+        var sqlite = builder.AddSqlite("db").WithDataBindMount(temp.Path);
         var consumer = builder.AddContainer("public", "example/image");
 
         // Act

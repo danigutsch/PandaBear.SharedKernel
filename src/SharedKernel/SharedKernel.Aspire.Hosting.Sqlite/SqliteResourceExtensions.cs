@@ -1,6 +1,9 @@
 using System.Data.Common;
 using Aspire.Hosting.ApplicationModel;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Aspire.Hosting;
 
@@ -9,52 +12,97 @@ namespace Aspire.Hosting;
 /// </summary>
 public static class SqliteResourceExtensions
 {
+    private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute;
+
     /// <summary>
-    /// Adds a SQLite database file to the application model.
+    /// Adds an ephemeral SQLite database file, <c>{name}.db</c>, to the application model. Use
+    /// <see cref="WithDataBindMount(IResourceBuilder{SqliteResource}, string)"/> to keep the data across runs.
     /// </summary>
     /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
-    /// <param name="name">The name of the resource.</param>
-    /// <param name="databasePath">The path of the database file; a relative path is resolved against the AppHost directory.</param>
+    /// <param name="name">The name of the resource; the database file is <c>{name}.db</c>.</param>
     /// <returns>A reference to the <see cref="IResourceBuilder{T}"/>.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="name"/> or <paramref name="databasePath"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="name"/> is <see langword="null"/>, empty, or white-space.</exception>
     /// <remarks>
-    /// Adding the resource has no file system side effect. When the application starts (the <see cref="BeforeStartEvent"/>, not when publishing),
-    /// the database file's parent directory is created if it is missing; the database file itself is created by SQLite on first use.
+    /// <para>
+    /// Like a container without a data volume, the database is ephemeral: its <see cref="SqliteResource.DataDirectory"/> is a new
+    /// directory under <see cref="Path.GetTempPath"/>, <c>aspire-sqlite-{name}-{random}</c>, unique to this AppHost run and resource.
+    /// Adding the resource has no file system side effect. When the application starts (the <see cref="BeforeStartEvent"/>, never when
+    /// publishing), the directory is created, accessible only by the current user on Unix; SQLite creates the database file on first use.
+    /// When the AppHost stops (<see cref="IHostApplicationLifetime.ApplicationStopped"/>), the directory and everything in it are deleted.
+    /// Deletion is best effort: a failure is logged as a warning, and a crashed or killed AppHost leaves the directory behind in the
+    /// temp folder, where it can be deleted by hand.
+    /// </para>
+    /// <para>
     /// The resource has a health check named <c>{name}-file</c>; a dependent resource that uses
     /// <see cref="ResourceBuilderExtensions.WaitFor{T}(IResourceBuilder{T}, IResourceBuilder{IResource})"/> waits until the
     /// directory exists and the file, if present, is readable. The check does not test writability, because that cannot be done
     /// without writing; a read-only location surfaces as a SQLite error on first use.
+    /// </para>
     /// </remarks>
-    public static IResourceBuilder<SqliteResource> AddSqlite(this IDistributedApplicationBuilder builder, [ResourceName] string name, string databasePath)
+    public static IResourceBuilder<SqliteResource> AddSqlite(this IDistributedApplicationBuilder builder, [ResourceName] string name)
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
-        ArgumentException.ThrowIfNullOrWhiteSpace(databasePath);
 
-        var fullPath = Path.GetFullPath(databasePath, builder.AppHostDirectory);
-        var directory = Path.GetDirectoryName(fullPath);
-        if (!string.IsNullOrEmpty(directory) && !builder.ExecutionContext.IsPublishMode)
+        var ephemeralDirectory = Path.Combine(Path.GetTempPath(), $"aspire-sqlite-{name}-{Guid.NewGuid():N}");
+        var resource = new SqliteResource(name, ephemeralDirectory);
+
+        if (!builder.ExecutionContext.IsPublishMode)
         {
-            builder.Eventing.Subscribe<BeforeStartEvent>((_, _) =>
+            builder.Eventing.Subscribe<BeforeStartEvent>((@event, _) =>
             {
-                Directory.CreateDirectory(directory);
+                var directory = resource.DataDirectory;
+                if (!string.Equals(directory, ephemeralDirectory, StringComparison.Ordinal))
+                {
+                    Directory.CreateDirectory(directory);
+                    return Task.CompletedTask;
+                }
+
+                if (OperatingSystem.IsWindows())
+                {
+                    Directory.CreateDirectory(directory);
+                }
+                else
+                {
+                    Directory.CreateDirectory(directory, OwnerOnly);
+                }
+
+                var logger = @event.Services.GetService<ILoggerFactory>()?.CreateLogger(typeof(SqliteResourceExtensions)) ?? NullLogger.Instance;
+                @event.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopped.Register(() => DeleteEphemeralDirectory(directory, logger));
                 return Task.CompletedTask;
             });
         }
 
-        var resource = new SqliteResource(name, fullPath);
         var healthCheckName = $"{name}-file";
-        builder.Services.AddHealthChecks().AddCheck(healthCheckName, new SqliteFileHealthCheck(fullPath));
+        builder.Services.AddHealthChecks().AddCheck(healthCheckName, new SqliteFileHealthCheck(resource));
 
         return builder.AddResource(resource)
-            .WithInitialState(new CustomResourceSnapshot
-            {
-                ResourceType = "Sqlite",
-                State = new ResourceStateSnapshot(KnownResourceStates.Running, KnownResourceStateStyles.Success),
-                Properties = [new ResourcePropertySnapshot("DatabasePath", fullPath)],
-            })
+            .WithDashboardSnapshot()
             .WithHealthCheck(healthCheckName);
+    }
+
+    /// <summary>
+    /// Keeps the database in a host folder across runs: the database file becomes <c>{folder}/{name}.db</c>, and the folder is never deleted.
+    /// </summary>
+    /// <param name="builder">The SQLite resource.</param>
+    /// <param name="source">The host folder; a relative path is resolved against the AppHost directory.</param>
+    /// <returns>The resource builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="source"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <remarks>
+    /// The name mirrors the container helpers' <c>WithDataBindMount</c>: the data lives in a host folder that the developer owns. The folder
+    /// is created when the application starts (never when publishing) and is not deleted when it stops; the temporary directory is then
+    /// never created. Connection strings, the health check and the dashboard follow the new location, even for references added before
+    /// this call.
+    /// </remarks>
+    public static IResourceBuilder<SqliteResource> WithDataBindMount(this IResourceBuilder<SqliteResource> builder, string source)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(source);
+
+        builder.Resource.DataDirectory = Path.GetFullPath(source, builder.ApplicationBuilder.AppHostDirectory);
+        return builder.WithDashboardSnapshot();
     }
 
     /// <summary>
@@ -71,7 +119,7 @@ public static class SqliteResourceExtensions
     /// <remarks>
     /// The mode is a property of the connection string, so the consumer should still enforce it itself, for example by setting
     /// <c>Mode=ReadOnly</c> on whatever connection string it receives. Combine with <c>WaitFor</c> on the owner when the consumer needs the
-    /// schema the owner creates.
+    /// schema the owner creates. The path is read when the environment is built, so a later <c>WithDataBindMount</c> is honored.
     /// </remarks>
     public static IResourceBuilder<TDestination> WithReadOnlyReference<TDestination>(
         this IResourceBuilder<TDestination> builder,
@@ -86,14 +134,37 @@ public static class SqliteResourceExtensions
             ArgumentException.ThrowIfNullOrWhiteSpace(connectionName);
         }
 
-        var connectionString = new DbConnectionStringBuilder
-        {
-            ["Data Source"] = database.Resource.DatabasePath,
-            ["Mode"] = "ReadOnly",
-        }.ConnectionString;
-
+        var resource = database.Resource;
+        var variable = $"ConnectionStrings__{connectionName ?? resource.Name}";
         return builder
-            .WithEnvironment($"ConnectionStrings__{connectionName ?? database.Resource.Name}", connectionString)
-            .WithRelationship(database.Resource, "Reference");
+            .WithEnvironment(context => context.EnvironmentVariables[variable] = new DbConnectionStringBuilder
+            {
+                ["Data Source"] = resource.DatabasePath,
+                ["Mode"] = "ReadOnly",
+            }.ConnectionString)
+            .WithRelationship(resource, "Reference");
+    }
+
+    private static IResourceBuilder<SqliteResource> WithDashboardSnapshot(this IResourceBuilder<SqliteResource> builder) =>
+        builder.WithInitialState(new CustomResourceSnapshot
+        {
+            ResourceType = "Sqlite",
+            State = new ResourceStateSnapshot(KnownResourceStates.Running, KnownResourceStateStyles.Success),
+            Properties = [new ResourcePropertySnapshot("DatabasePath", builder.Resource.DatabasePath)],
+        });
+
+    private static void DeleteEphemeralDirectory(string directory, ILogger logger)
+    {
+        try
+        {
+            if (Directory.Exists(directory))
+            {
+                Directory.Delete(directory, recursive: true);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            SqliteLog.EphemeralDirectoryNotDeleted(logger, directory, ex);
+        }
     }
 }

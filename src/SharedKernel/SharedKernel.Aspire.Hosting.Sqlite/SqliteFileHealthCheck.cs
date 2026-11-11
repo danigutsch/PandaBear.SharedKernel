@@ -1,3 +1,4 @@
+using Aspire.Hosting.ApplicationModel;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Aspire.Hosting;
@@ -6,18 +7,18 @@ namespace Aspire.Hosting;
 /// Read-only health check that reports healthy when the database directory exists and the database file, if it exists, can be opened for reading.
 /// It does not probe writability and never creates, modifies or deletes anything; it reports that the location exists and the file is readable, not that it is writable.
 /// </summary>
-/// <param name="databasePath">The absolute path of the database file.</param>
-internal sealed class SqliteFileHealthCheck(string databasePath) : IHealthCheck
+/// <param name="resource">The database resource, read at check time so a later <c>WithDataBindMount</c> is honored.</param>
+internal sealed class SqliteFileHealthCheck(SqliteResource resource) : IHealthCheck
 {
     /// <inheritdoc />
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        var directory = Path.GetDirectoryName(databasePath);
-        if (string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
+        if (!Directory.Exists(resource.DataDirectory))
         {
             return Task.FromResult(HealthCheckResult.Unhealthy("The SQLite database directory does not exist."));
         }
 
+        var databasePath = resource.DatabasePath;
         if (File.Exists(databasePath))
         {
             try

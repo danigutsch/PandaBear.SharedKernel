@@ -9,15 +9,63 @@ Aspire hosting integration that models a SQLite database file as a resource. No 
 ## Usage
 
 ```csharp
-var db = builder.AddSqlite("app-db", "data/app.db");
+var db = builder.AddSqlite("app-db");
 
 builder.AddProject<Projects.Web>("web")
        .WithReference(db, connectionName: "Default")
        .WaitFor(db);
 ```
 
-The project receives `ConnectionStrings__Default=Data Source=<absolute path>`. A relative path is resolved against the AppHost
-directory. A path that contains a semicolon is quoted in the connection string.
+The project receives `ConnectionStrings__Default=Data Source=<data directory>/app-db.db`. The database file is always named after
+the resource, `{name}.db`. A path that contains a semicolon is quoted in the connection string.
+
+## Ephemeral by default
+
+Like an Aspire container without a data volume, `AddSqlite(name)` keeps nothing between runs:
+
+- The database lives in a fresh directory under the OS temp path, `aspire-sqlite-{name}-{random}`, unique to the AppHost run and
+  the resource.
+- `AddSqlite` has no file system side effect. The directory is created when the application starts (the `BeforeStartEvent`), with
+  owner-only permissions on Unix because it holds application data. SQLite creates the database file on first use.
+- When the AppHost stops, the directory and everything in it are deleted. Deletion is best effort: a failure is logged as a warning
+  with the path. A crashed or killed AppHost cannot clean up, so its directory stays in the temp folder (`/tmp` or `$TMPDIR` on
+  Linux, `%TEMP%` on Windows) until it is deleted by hand or by the operating system's temp cleanup.
+- Publishing (`--publisher`) creates and deletes nothing. The manifest still carries the computed temp path in connection strings,
+  so a deployment must provide its own connection string.
+
+### Keeping the data: `WithDataBindMount`
+
+Persistence is opt-in. `WithDataBindMount` places the database in a host folder that you own:
+
+```csharp
+var db = builder.AddSqlite("app-db")
+                .WithDataBindMount("../../.local/data");   // relative to the AppHost directory
+```
+
+The database is then `<folder>/app-db.db`. The folder is created at start (never when publishing) and never deleted. The temporary
+directory is not created at all. Connection strings, the health check and the dashboard follow the folder, even for references added
+before the call.
+
+The name mirrors Aspire's container helper `WithDataBindMount`, which also maps data to a host folder. `WithDataVolume` and
+`WithPersistentLifetime` do not exist here: there is no container, so there is no runtime-managed volume and no container to reuse
+across runs.
+
+### Files next to the database
+
+`db.Resource.DataDirectory` is the folder that holds the database. Other files that belong with it, such as uploaded media, can live
+there and share its lifetime: deleted on stop when ephemeral, kept when bind-mounted. Pass it to a project with a callback, so it is
+read when the environment is built and a later `WithDataBindMount` is honored:
+
+```csharp
+builder.AddProject<Projects.Web>("web")
+       .WithReference(db, connectionName: "Default")
+       .WithEnvironment(context => context.EnvironmentVariables["Media__Path"] = Path.Combine(db.Resource.DataDirectory, "media"))
+       .WaitFor(db);
+```
+
+The application creates the subfolder itself.
+
+## Read-only consumers
 
 A second project that must only read the same file, such as a public site next to an admin host that owns the schema, uses
 `WithReadOnlyReference`:
@@ -30,12 +78,11 @@ builder.AddProject<Projects.Public>("public")
        .WaitFor(admin);
 ```
 
-It receives `ConnectionStrings__Default=Data Source=<absolute path>;Mode=ReadOnly` (the database resource's name when no connection
+It receives `ConnectionStrings__Default=Data Source=<path>;Mode=ReadOnly` (the database resource's name when no connection
 name is given) and shows the reference on the dashboard. SQLite then refuses every write on that connection. The mode travels in
 configuration, so the reading application should still force `Mode=ReadOnly` on the connection string it receives.
 
-When the application starts (not when publishing), the database file's parent directory is created, because SQLite creates the file
-but not its folder. `AddSqlite` itself has no file system side effect, and the database file is never created by this package. The dashboard shows the resource as `Sqlite` in the `Running` state with a `DatabasePath` property.
+The dashboard shows the resource as `Sqlite` in the `Running` state with a `DatabasePath` property.
 
 ## Health check
 
