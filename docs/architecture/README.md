@@ -45,6 +45,7 @@ flowchart TB
     SharedKernel_Idempotency_AspNetCore[SharedKernel.Idempotency.AspNetCore] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_Idempotency_EntityFrameworkCore[SharedKernel.Idempotency.EntityFrameworkCore] --> SharedKernel_EntityFrameworkCore[SharedKernel.EntityFrameworkCore]
     SharedKernel_Idempotency_EntityFrameworkCore[SharedKernel.Idempotency.EntityFrameworkCore] --> SharedKernel_Idempotency_Abstractions[SharedKernel.Idempotency.Abstractions]
+    SharedKernel_ImageSanitizing[SharedKernel.ImageSanitizing] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_MalwareScanning_ClamAv[SharedKernel.MalwareScanning.ClamAv] --> SharedKernel_MalwareScanning[SharedKernel.MalwareScanning]
     SharedKernel_MalwareScanning_ClamAv[SharedKernel.MalwareScanning.ClamAv] --> SharedKernel_OpenApi[SharedKernel.OpenApi]
     SharedKernel_Mediator[SharedKernel.Mediator] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]

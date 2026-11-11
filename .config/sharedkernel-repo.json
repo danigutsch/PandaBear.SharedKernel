@@ -44,6 +44,7 @@
     "src/SharedKernel/SharedKernel.Idempotency.AspNetCore/SharedKernel.Idempotency.AspNetCore.csproj",
     "src/SharedKernel/SharedKernel.Idempotency.EntityFrameworkCore/SharedKernel.Idempotency.EntityFrameworkCore.csproj",
     "src/SharedKernel/SharedKernel.ImageProcessing/SharedKernel.ImageProcessing.csproj",
+    "src/SharedKernel/SharedKernel.ImageSanitizing/SharedKernel.ImageSanitizing.csproj",
     "src/SharedKernel/SharedKernel.InputNormalization/SharedKernel.InputNormalization.csproj",
     "src/SharedKernel/SharedKernel.IntegrationTesting/SharedKernel.IntegrationTesting.csproj",
     "src/SharedKernel/SharedKernel.MalwareScanning.ClamAv/SharedKernel.MalwareScanning.ClamAv.csproj",
