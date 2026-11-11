@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 
 namespace PandaBear.HttpCaching.AspNetCore;
 
@@ -45,4 +46,54 @@ public static class ApplicationBuilderHttpCacheExtensions
             };
         });
     }
+
+    /// <summary>
+    /// Makes anonymous successful pages publicly cacheable for a short time: when a response starts, it gets
+    /// <c>Cache-Control: public, max-age=N</c> only if the request is GET or HEAD, the status is 200, the response has no
+    /// <c>Cache-Control</c> of its own and sets no cookie, the request has no <c>Authorization</c> header, and the user is not authenticated.
+    /// Every other response is left untouched.
+    /// </summary>
+    /// <remarks>
+    /// The user is checked when the response starts, so authentication that runs later in the pipeline is seen. Endpoints that want another
+    /// lifetime, such as immutable files, set their own header and keep it. Register it early, before the endpoints.
+    /// </remarks>
+    /// <param name="app">The application pipeline.</param>
+    /// <param name="maxAge">The freshness lifetime, at least one second; it is written in whole seconds.</param>
+    /// <returns>The same builder for middleware composition.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="app"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="maxAge"/> is less than one second.</exception>
+    public static IApplicationBuilder UseDefaultPublicCaching(this IApplicationBuilder app, TimeSpan maxAge)
+    {
+        ArgumentNullException.ThrowIfNull(app);
+        ArgumentOutOfRangeException.ThrowIfLessThan(maxAge, TimeSpan.FromSeconds(1));
+
+        var headerValue = new CacheControlHeaderValue { Public = true, MaxAge = TimeSpan.FromSeconds(Math.Floor(maxAge.TotalSeconds)) }.ToString();
+        return app.Use((context, next) =>
+        {
+            if (HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method))
+            {
+                context.Response.OnStarting(
+                    static state =>
+                    {
+                        var (httpContext, value) = ((HttpContext, string))state;
+                        if (IsAnonymousSharedResponse(httpContext))
+                        {
+                            httpContext.Response.Headers[HeaderNames.CacheControl] = value;
+                        }
+
+                        return Task.CompletedTask;
+                    },
+                    (context, headerValue));
+            }
+
+            return next(context);
+        });
+    }
+
+    private static bool IsAnonymousSharedResponse(HttpContext context) =>
+        context.Response.StatusCode == StatusCodes.Status200OK
+        && !context.Response.Headers.ContainsKey(HeaderNames.CacheControl)
+        && !context.Response.Headers.ContainsKey(HeaderNames.SetCookie)
+        && !context.Request.Headers.ContainsKey(HeaderNames.Authorization)
+        && context.User.Identity?.IsAuthenticated != true;
 }

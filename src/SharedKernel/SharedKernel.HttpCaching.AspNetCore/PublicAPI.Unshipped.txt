@@ -8,5 +8,6 @@ static PandaBear.HttpCaching.AspNetCore.HttpCacheHeaders.SetPublic(Microsoft.Asp
 static PandaBear.HttpCaching.AspNetCore.HttpCacheCultures.Normalize(string? culture) -> string?
 static PandaBear.HttpCaching.AspNetCore.RouteGroupBuilderHttpCacheExtensions.WithNoStoreResponses(this Microsoft.AspNetCore.Routing.RouteGroupBuilder! group) -> Microsoft.AspNetCore.Routing.RouteGroupBuilder!
 PandaBear.HttpCaching.AspNetCore.ApplicationBuilderHttpCacheExtensions
+static PandaBear.HttpCaching.AspNetCore.ApplicationBuilderHttpCacheExtensions.UseDefaultPublicCaching(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app, System.TimeSpan maxAge) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
 static PandaBear.HttpCaching.AspNetCore.ApplicationBuilderHttpCacheExtensions.UseNoStoreResponses(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
 static PandaBear.HttpCaching.AspNetCore.RouteGroupBuilderHttpCacheExtensions.WithNoStoreResponses(this Microsoft.AspNetCore.Routing.RouteGroupBuilder! group, Microsoft.AspNetCore.Http.PathString pathPrefix) -> Microsoft.AspNetCore.Routing.RouteGroupBuilder!
