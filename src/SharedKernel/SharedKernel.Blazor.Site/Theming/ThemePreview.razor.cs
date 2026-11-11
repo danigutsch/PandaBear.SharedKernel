@@ -10,12 +10,18 @@ namespace PandaBear.Blazor.Site.Theming;
 /// <c>inert</c>, so its headings and links do not join the page's outline or tab order.
 /// </summary>
 /// <remarks>
-/// The inline <c>style</c> element needs <c>style-src 'unsafe-inline'</c> (or a nonce) in the Content-Security-Policy of the page
-/// that shows the preview, which should be an administration host only. The public site keeps a strict policy and loads the
-/// generated stylesheet from a URL instead.
+/// The inline <c>style</c> element needs a CSP3 nonce source (<c>style-src 'nonce-…'</c>) in the Content-Security-Policy of the page
+/// that shows the preview, or <c>'unsafe-inline'</c>; pass the response's nonce in <see cref="Nonce" />. The component writes no style
+/// attributes, which a nonce cannot admit. The browser checks the policy whenever the style element is inserted or its text changes, and a
+/// nonce match does not depend on the text, so re-renders of an interactive page keep applying as long as the element carries the nonce
+/// of the document's response: on an interactive page, pass the value the static root read and handed to the interactive root, not one
+/// created in the circuit.
 /// </remarks>
 public sealed partial class ThemePreview
 {
+    private static readonly System.Buffers.SearchValues<char> Base64ValueCharacters =
+        System.Buffers.SearchValues.Create("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/-_");
+
     private string _css = string.Empty;
     private IReadOnlyList<ContrastCheck> _contrast = [];
     private List<(string Field, string Message, bool IsError)> _issues = [];
@@ -61,6 +67,17 @@ public sealed partial class ThemePreview
         get; set;
     } = "site-theme-preview";
 
+    /// <summary>
+    /// Gets or sets the Content-Security-Policy nonce of the page's response, written to the <c>style</c> element's <c>nonce</c>
+    /// attribute: a CSP3 base64 value (letters, digits, <c>+</c>, <c>/</c>, <c>-</c>, <c>_</c>, then up to two <c>=</c>). No attribute when
+    /// <see langword="null" />.
+    /// </summary>
+    [Parameter]
+    public string? Nonce
+    {
+        get; set;
+    }
+
     /// <summary>Gets or sets the texts.</summary>
     [Parameter]
     public ThemePreviewTexts Texts
@@ -74,6 +91,7 @@ public sealed partial class ThemePreview
     protected override void OnParametersSet()
     {
         SiteThemeStylesheet.RequireScopeId(ScopeId);
+        RequireNonce(Nonce);
         ArgumentNullException.ThrowIfNull(Texts);
         var theme = Theme ?? SiteTheme.Default;
         var review = theme.Review();
@@ -92,9 +110,18 @@ public sealed partial class ThemePreview
 
     private string PairName(ContrastCheck check) => $"{ThemeNames.Css(check.Foreground)} {Texts.On} {ThemeNames.Css(check.Background)}";
 
-    private string Swatch(ContrastCheck check)
+    private static void RequireNonce(string? nonce)
     {
-        var colors = (Theme ?? SiteTheme.Default).Colors;
-        return $"color: {colors[check.Foreground].For(Scheme).Value}; background: {colors[check.Background].For(Scheme).Value}";
+        if (nonce is null)
+        {
+            return;
+        }
+
+        var padding = nonce.Length - nonce.TrimEnd('=').Length;
+        var value = nonce.AsSpan(0, nonce.Length - padding);
+        if (value.IsEmpty || padding > 2 || value.ContainsAnyExcept(Base64ValueCharacters))
+        {
+            throw new ArgumentException("A nonce must be a CSP base64 value: letters, digits, '+', '/', '-' or '_', then up to two '='.", nameof(nonce));
+        }
     }
 }

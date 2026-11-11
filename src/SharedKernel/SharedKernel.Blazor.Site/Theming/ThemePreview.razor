@@ -1,6 +1,6 @@
 @inherits SiteComponent
 <section id="@ScopeId" class="@CssClass("site-theme-preview")" aria-label="@Texts.Label" data-theme="@ThemeNames.Css(Scheme)" data-width="@(Narrow ? "narrow" : "wide")" @attributes="AdditionalAttributes">
-    <style>@((MarkupString)_css)</style>
+    <style nonce="@Nonce">@((MarkupString)_css)</style>
     <div class="site-theme-preview__sample" inert>
         <nav class="site-nav" aria-label="@Texts.NavigationLabel">
             <ul>
@@ -37,7 +37,7 @@
             {
                 <tr>
                     <th scope="row">
-                        <span class="site-theme-preview__swatch" aria-hidden="true" style="@Swatch(check)">Aa</span>
+                        <span class="site-theme-preview__swatch" aria-hidden="true" data-foreground="@ThemeNames.Css(check.Foreground)" data-background="@ThemeNames.Css(check.Background)">Aa</span>
                         @PairName(check)
                     </th>
                     <td>@SiteThemeRules.FormatRatio(check.Ratio)</td>

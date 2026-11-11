@@ -295,8 +295,11 @@ stay out of the page outline and tab order. It needs no script and re-renders on
 }
 ```
 
-The inline `style` element needs `style-src 'unsafe-inline'` (or a nonce) in the Content-Security-Policy of the administration host
-that shows the preview. The public site keeps its strict policy because it loads `/theme.css` from a URL.
+The inline `style` element needs a nonce: pass the response's CSP nonce in `Nonce` and allow `style-src 'self' 'nonce-…'` (see
+`AddCspNonce` in PandaBear.SharedKernel.AspNetCore); the preview writes no style attributes. On an interactive page, use the nonce of
+the document's response: read it in the static `App`, pass it to the interactive `Routes` as a parameter and cascade it, because the
+circuit's own scope has a different one and interactive navigation sends no new response. The public site loads `/theme.css` from a
+URL instead.
 
 `ThemeEditorModel` is the form model: string colour fields (`colors.primary.light`), nullable numbers for sizes, weight and spacing,
 and fonts with faces. `ToDraft()` and `ToTheme()` return every error at once on its field path. Both hover fields empty means derived.

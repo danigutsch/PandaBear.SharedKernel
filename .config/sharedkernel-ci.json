@@ -54,6 +54,7 @@
     {
       "name": "browser",
       "projects": [
+        "tests/SharedKernel.Blazor.Site.Tests/SharedKernel.Blazor.Site.Tests.csproj",
         "tests/SharedKernel.Testing.Tests/SharedKernel.Testing.Tests.csproj"
       ],
       "playwright": {

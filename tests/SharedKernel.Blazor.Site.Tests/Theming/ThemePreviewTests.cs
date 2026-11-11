@@ -165,6 +165,80 @@ public sealed class ThemePreviewTests : BunitContext
     }
 
     [Fact]
+    public void The_style_element_carries_the_nonce_so_a_strict_policy_admits_it()
+    {
+        // Arrange & Act
+        var cut = Render<ThemePreview>(parameters => parameters
+            .Add(component => component.Theme, SiteTheme.Default)
+            .Add(component => component.Nonce, "q0Ub+/Xy_-9w4M1Lr2kE8A=="));
+
+        // Assert
+        cut.Find("style").GetAttribute("nonce").ShouldBe("q0Ub+/Xy_-9w4M1Lr2kE8A==");
+    }
+
+    [Fact]
+    public void The_style_element_keeps_its_nonce_when_a_new_draft_is_rendered()
+    {
+        // Arrange
+        var cut = Render<ThemePreview>(parameters => parameters
+            .Add(component => component.Theme, SiteTheme.Default)
+            .Add(component => component.Nonce, "bm9uY2U="));
+        var changed = SiteTheme.CreateDraft(ThemeFixtures.DefaultColorsWith(ThemeColorRole.Primary, ThemeFixtures.Pair("#0f766e", "#5eead4")), SiteTheme.Default.Typography).ShouldBeSuccess();
+
+        // Act
+        cut.Render(parameters => parameters.Add(component => component.Theme, changed));
+
+        // Assert
+        var style = cut.Find("style");
+        style.GetAttribute("nonce").ShouldBe("bm9uY2U=");
+        style.TextContent.ShouldContain("#0f766e", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Without_a_nonce_the_style_element_has_no_nonce_attribute()
+    {
+        // Arrange & Act
+        var cut = Render<ThemePreview>(parameters => parameters.Add(component => component.Theme, SiteTheme.Default));
+
+        // Assert
+        cut.Find("style").HasAttribute("nonce").ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("abc' 'unsafe-inline")]
+    [InlineData("abc\" onload=\"x")]
+    [InlineData("a=b")]
+    public void A_nonce_that_is_not_a_base64_value_is_refused(string nonce)
+    {
+        // Arrange & Act
+        var render = () => Render<ThemePreview>(parameters => parameters
+            .Add(component => component.Theme, SiteTheme.Default)
+            .Add(component => component.Nonce, nonce));
+
+        // Assert
+        render.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact]
+    public void Swatches_are_coloured_by_the_style_element_not_by_style_attributes_a_strict_policy_blocks()
+    {
+        // Arrange & Act
+        var cut = Render<ThemePreview>(parameters => parameters
+            .Add(component => component.Theme, SiteTheme.Default)
+            .Add(component => component.ScopeId, "brand-preview"));
+
+        // Assert
+        cut.FindAll("[style]").Count.ShouldBe(0);
+        var swatch = cut.Find("tbody tr .site-theme-preview__swatch");
+        swatch.GetAttribute("data-foreground").ShouldBe("text");
+        swatch.GetAttribute("data-background").ShouldBe("surface");
+        var style = cut.Find("style").TextContent;
+        style.ShouldContain("#brand-preview .site-theme-preview__swatch[data-foreground=\"text\"] {\n    color: var(--site-color-text);\n}", StringComparison.Ordinal);
+        style.ShouldContain("#brand-preview .site-theme-preview__swatch[data-background=\"surface\"] {\n    background: var(--site-color-surface);\n}", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void An_unsafe_scope_id_is_refused()
     {
         // Arrange & Act

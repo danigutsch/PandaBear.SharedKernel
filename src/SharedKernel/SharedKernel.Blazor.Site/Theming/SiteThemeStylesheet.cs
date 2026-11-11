@@ -56,8 +56,9 @@ public static class SiteThemeStylesheet
 
     /// <summary>
     /// Renders the stylesheet of a theme scoped to one element (the preview): the custom properties on <c>#scopeId</c>, the colour
-    /// scheme from its <c>data-theme</c> attribute, fluid sizes against its width (<c>cqi</c>), and the rules that apply the roles
-    /// to the sample, so the preview needs neither <c>site.css</c> nor script.
+    /// scheme from its <c>data-theme</c> attribute, fluid sizes against its width (<c>cqi</c>), the rules that apply the roles
+    /// to the sample and the colours of the contrast swatches by their <c>data-foreground</c> and <c>data-background</c> roles, so the
+    /// preview needs neither <c>site.css</c>, script nor style attributes.
     /// </summary>
     /// <param name="theme">The theme.</param>
     /// <param name="scopeId">The element id: a letter, then letters, digits, hyphens or underscores.</param>
@@ -95,6 +96,15 @@ public static class SiteThemeStylesheet
         css.Append(sample).Append(" .site-card {\n    margin-top: 0.5rem;\n    padding: 1rem;\n    background: var(--site-color-surface-alt);\n    border: 1px solid var(--site-color-border);\n    border-radius: 0.5rem;\n}\n");
         css.Append(sample).Append(" .site-card p {\n    margin: 0;\n    color: var(--site-color-muted);\n}\n");
         css.Append(scope).Append(" .site-theme-preview__swatch {\n    display: inline-block;\n    min-width: 2.5em;\n    margin-inline-end: 0.5em;\n    padding: 0 0.25em;\n    border: 1px solid currentColor;\n    text-align: center;\n}\n");
+
+        // The swatches take their colours from these rules, not from style attributes, which a policy without 'unsafe-inline' blocks.
+        foreach (var role in Enum.GetValues<ThemeColorRole>())
+        {
+            var name = ThemeNames.Css(role);
+            css.Append(scope).Append(" .site-theme-preview__swatch[data-foreground=\"").Append(name).Append("\"] {\n    color: var(--site-color-").Append(name).Append(");\n}\n");
+            css.Append(scope).Append(" .site-theme-preview__swatch[data-background=\"").Append(name).Append("\"] {\n    background: var(--site-color-").Append(name).Append(");\n}\n");
+        }
+
         return css.ToString();
     }
 

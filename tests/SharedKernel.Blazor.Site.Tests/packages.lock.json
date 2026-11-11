@@ -24,6 +24,22 @@
           "Microsoft.Testing.Platform": "2.4.1"
         }
       },
+      "Microsoft.AspNetCore.App.Internal.Assets": {
+        "type": "Direct",
+        "requested": "[10.0.14, )",
+        "resolved": "10.0.14",
+        "contentHash": "T1IOYbID1msKjQEh684HebnN+Xnq/pocMXDukOMZtzzPTf9c4/30+/JndM/1txrqwuSYqWvLiAQWzu4U93cshw=="
+      },
+      "Microsoft.Playwright": {
+        "type": "Direct",
+        "requested": "[1.63.0, )",
+        "resolved": "1.63.0",
+        "contentHash": "O9F45Tt5vjauIo7mTTgQtahigL7cfRLvBMpErLJfdvgCnQ14yue5BmRASNnfNBWRBni4Mqp2YiD1eFGIO4nUUw==",
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
+          "System.ComponentModel.Annotations": "5.0.0"
+        }
+      },
       "xunit.v3.mtp-v2": {
         "type": "Direct",
         "requested": "[4.0.2, )",
@@ -120,6 +136,11 @@
         "resolved": "5.0.0",
         "contentHash": "dDoKi0PnDz31yAyETfRntsLArTlVAVzUzCIvvEDsDsucrl33Dl8pIJG06ePTJTI3tGpeyHS9Cq7Foc/s4EeKcg=="
       },
+      "System.ComponentModel.Annotations": {
+        "type": "Transitive",
+        "resolved": "5.0.0",
+        "contentHash": "dMkqfy2el8A8/I76n2Hi1oBFEbG1SfxD2l5nhwXV3XjlnOmwxJlQbYpJH4W51odnU9sARCSAgv7S3CyAFMkpYg=="
+      },
       "System.Security.AccessControl": {
         "type": "Transitive",
         "resolved": "6.0.1",
@@ -173,6 +194,12 @@
         "dependencies": {
           "xunit.v3.extensibility.core": "[4.0.2]",
           "xunit.v3.runner.common": "[4.0.2]"
+        }
+      },
+      "PandaBear.SharedKernel.AspNetCore": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Blazor.Site": {

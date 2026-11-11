@@ -368,6 +368,8 @@ PandaBear.Blazor.Site.Theming.ThemePreview.Errors.get -> System.Collections.Gene
 PandaBear.Blazor.Site.Theming.ThemePreview.Errors.set -> void
 PandaBear.Blazor.Site.Theming.ThemePreview.Narrow.get -> bool
 PandaBear.Blazor.Site.Theming.ThemePreview.Narrow.set -> void
+PandaBear.Blazor.Site.Theming.ThemePreview.Nonce.get -> string?
+PandaBear.Blazor.Site.Theming.ThemePreview.Nonce.set -> void
 PandaBear.Blazor.Site.Theming.ThemePreview.Scheme.get -> PandaBear.Blazor.Site.Theming.ColorScheme
 PandaBear.Blazor.Site.Theming.ThemePreview.Scheme.set -> void
 PandaBear.Blazor.Site.Theming.ThemePreview.ScopeId.get -> string!
