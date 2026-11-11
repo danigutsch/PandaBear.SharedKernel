@@ -98,3 +98,5 @@ PandaBear.HttpClients.IdempotentSubmission<T>.HasPending.get -> bool
 PandaBear.HttpClients.IdempotentSubmission<T>.Operation.get -> string!
 PandaBear.HttpClients.IdempotentSubmission<T>.Submit(string! operation, System.Func<string!, System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.HttpClients.HttpOutcome<T>!>!>! submit, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.HttpClients.HttpOutcome<T>?>!
 PandaBear.HttpClients.IdempotentSubmission<T>.Retry(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.HttpClients.HttpOutcome<T>?>!
+PandaBear.HttpClients.HttpResilienceOptionsExtensions
+static PandaBear.HttpClients.HttpResilienceOptionsExtensions.DisableRetryOnTooManyRequests(this Microsoft.Extensions.Http.Resilience.HttpStandardResilienceOptions! options, System.Func<System.Net.Http.HttpRequestMessage!, bool>? appliesTo = null) -> Microsoft.Extensions.Http.Resilience.HttpStandardResilienceOptions!

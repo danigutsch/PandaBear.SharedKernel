@@ -18,9 +18,12 @@ not receive a per-client builder. Keep request-specific classification inside re
 using the current request from `Polly.HttpResilienceContextExtensions.GetRequestMessage` rather
 than capturing an ambient HTTP request during registration.
 
-For example, an application can exclude a particular visitor-quota response from both retry and
-circuit-breaker predicates while delegating every other outcome to the original native predicates.
-Keep that route/status classification application-owned. Automatic retries for unsafe HTTP methods
+For example, `options.DisableRetryOnTooManyRequests()` makes a 429 answer final: it is neither
+retried, which would spend more of a quota the server just reported exhausted, nor counted by the
+circuit breaker, which would otherwise cut off every request to that server after a burst of quota
+answers. Every other outcome goes to the predicates already configured. Pass a request predicate,
+such as `request => request.RequestUri?.AbsolutePath.StartsWith("/api/public/") == true`, to limit
+the rule to the routes of one quota-limited API; that classification stays application-owned. Automatic retries for unsafe HTTP methods
 remain disabled after customization, including when a callback supplies a broader retry predicate.
 Service discovery, telemetry, cancellation, and the original zero-argument overload remain unchanged.
 
