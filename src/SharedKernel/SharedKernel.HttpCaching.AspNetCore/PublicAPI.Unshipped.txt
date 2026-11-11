@@ -11,3 +11,19 @@ PandaBear.HttpCaching.AspNetCore.ApplicationBuilderHttpCacheExtensions
 static PandaBear.HttpCaching.AspNetCore.ApplicationBuilderHttpCacheExtensions.UseDefaultPublicCaching(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app, System.TimeSpan maxAge) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
 static PandaBear.HttpCaching.AspNetCore.ApplicationBuilderHttpCacheExtensions.UseNoStoreResponses(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
 static PandaBear.HttpCaching.AspNetCore.RouteGroupBuilderHttpCacheExtensions.WithNoStoreResponses(this Microsoft.AspNetCore.Routing.RouteGroupBuilder! group, Microsoft.AspNetCore.Http.PathString pathPrefix) -> Microsoft.AspNetCore.Routing.RouteGroupBuilder!
+const PandaBear.HttpCaching.AspNetCore.HttpCacheHeaders.ImmutableCacheControl = "public, max-age=31536000, immutable" -> string!
+const PandaBear.HttpCaching.AspNetCore.PreconditionProblems.FailedDetail = "The resource changed after it was read. Read it again and reapply the changes." -> string!
+const PandaBear.HttpCaching.AspNetCore.PreconditionProblems.InvalidIfMatchDetail = "If-Match must be \"*\" or a list of entity tags." -> string!
+const PandaBear.HttpCaching.AspNetCore.PreconditionProblems.RequiredDetail = "Send If-Match with the entity tag from the latest read." -> string!
+PandaBear.HttpCaching.AspNetCore.IfMatchCondition
+PandaBear.HttpCaching.AspNetCore.IfMatchCondition.EntityTags.get -> System.Collections.Generic.IReadOnlyList<Microsoft.Net.Http.Headers.EntityTagHeaderValue!>!
+PandaBear.HttpCaching.AspNetCore.IfMatchCondition.Matches(Microsoft.Net.Http.Headers.EntityTagHeaderValue? current) -> bool
+PandaBear.HttpCaching.AspNetCore.IfMatchCondition.Matches(string? currentEntityTag) -> bool
+PandaBear.HttpCaching.AspNetCore.IfMatchCondition.MatchesAny.get -> bool
+PandaBear.HttpCaching.AspNetCore.PreconditionProblems
+static PandaBear.HttpCaching.AspNetCore.HttpCacheHeaders.SetImmutable(Microsoft.AspNetCore.Http.HttpContext! httpContext) -> void
+static PandaBear.HttpCaching.AspNetCore.IfMatchCondition.Read(Microsoft.AspNetCore.Http.HttpRequest! request, out PandaBear.HttpCaching.AspNetCore.IfMatchCondition? condition) -> Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult?
+static PandaBear.HttpCaching.AspNetCore.IfMatchCondition.TryParse(Microsoft.Extensions.Primitives.StringValues values, out PandaBear.HttpCaching.AspNetCore.IfMatchCondition? condition) -> bool
+static PandaBear.HttpCaching.AspNetCore.PreconditionProblems.Failed(string? detail = null, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, object?>>? extensions = null) -> Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult!
+static PandaBear.HttpCaching.AspNetCore.PreconditionProblems.InvalidIfMatch(string? detail = null, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, object?>>? extensions = null) -> Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult!
+static PandaBear.HttpCaching.AspNetCore.PreconditionProblems.Required(string? detail = null, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, object?>>? extensions = null) -> Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult!

@@ -9,6 +9,12 @@ namespace PandaBear.HttpCaching.AspNetCore;
 /// </summary>
 public static class HttpCacheHeaders
 {
+    /// <summary>
+    /// The <c>Cache-Control</c> value of a response whose URL addresses its content: public, one year (the practical maximum), and
+    /// <c>immutable</c>, so browsers do not revalidate it on reload.
+    /// </summary>
+    public const string ImmutableCacheControl = "public, max-age=31536000, immutable";
+
     private const string StaleWhileRevalidateDirective = "stale-while-revalidate";
 
     private const string PragmaNoCache = "no-cache";
@@ -38,6 +44,23 @@ public static class HttpCacheHeaders
         }
 
         httpContext.Response.GetTypedHeaders().CacheControl = cacheControl;
+    }
+
+    /// <summary>
+    /// Sets <see cref="ImmutableCacheControl"/> on a response whose bytes never change under its URL, such as a content-hashed file, and
+    /// removes the <c>Pragma</c> and <c>Expires</c> headers that <see cref="SetNoStore"/> sets. Use it only when a new content gets a new URL.
+    /// It sets no other header: serve such files with <c>X-Content-Type-Options: nosniff</c> as any other upload.
+    /// </summary>
+    /// <param name="httpContext">The request context whose response headers are updated.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="httpContext"/> is <see langword="null"/>.</exception>
+    public static void SetImmutable(HttpContext httpContext)
+    {
+        ArgumentNullException.ThrowIfNull(httpContext);
+
+        var headers = httpContext.Response.Headers;
+        headers.CacheControl = ImmutableCacheControl;
+        headers.Remove(HeaderNames.Pragma);
+        headers.Remove(HeaderNames.Expires);
     }
 
     /// <summary>

@@ -37,6 +37,38 @@ not authenticated. Every other response is left untouched, so personalized, fail
 and endpoints that choose their own lifetime keep it. The lifetime must be at least one second and is written in whole seconds.
 Register it before the endpoints; the user is checked when the response starts, so later authentication is taken into account.
 
+## Immutable responses
+
+`HttpCacheHeaders.SetImmutable(httpContext)` writes `Cache-Control: public, max-age=31536000, immutable`
+(`HttpCacheHeaders.ImmutableCacheControl`) and removes `Pragma` and `Expires`. Use it only for bytes whose URL changes with their
+content, such as a content-hashed logo or upload. It sets no other header; serve such files with `X-Content-Type-Options: nosniff`
+as any other upload (`MapImmutableFiles` in `PandaBear.SharedKernel.AspNetCore` does both).
+
+## If-Match preconditions
+
+`IfMatchCondition` is the RFC 9110 `If-Match` condition for a write guarded by an opaque entity tag: `*` or a list of entity tags,
+compared strongly, so a weak tag never matches. `TryParse` refuses the whole value when an element is malformed, when it is empty, or
+when `*` is combined with tags. `Matches(current)` is false when the resource does not exist (`null`).
+
+```csharp
+if (IfMatchCondition.Read(httpContext.Request, out var ifMatch) is { } problem)
+{
+    return problem; // 428 without If-Match, 400 for an unusable one
+}
+
+var current = await store.Get(ct);
+if (!ifMatch!.Matches(current?.ETag))
+{
+    return PreconditionProblems.Failed(); // 412
+}
+```
+
+`PreconditionProblems.Required` (428), `InvalidIfMatch` (400) and `Failed` (412) take an optional detail and extension members, such as
+an application error code, when the defaults do not fit. A numeric version carried in `If-Match` is simpler with `ConcurrencyHeaders` in
+`PandaBear.SharedKernel.Results.AspNet`, which answers 400 and leaves a stale version to the operation. Document the header and the
+problems with `WithIfMatchPrecondition()` and `WithEntityTagResponseHeader()` from `PandaBear.SharedKernel.OpenApi`, which already
+references the OpenAPI packages that this one does not.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.HttpCaching.AspNetCore`. C# namespace: `PandaBear.HttpCaching.AspNetCore`. Assembly/project identity: `SharedKernel.HttpCaching.AspNetCore`.

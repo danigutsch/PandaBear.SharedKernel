@@ -22,3 +22,8 @@ static PandaBear.OpenApi.OpenApiGenerationMode.IsEnabled(Microsoft.Extensions.Ho
 static PandaBear.OpenApi.OpenApiServiceCollectionExtensions.AddBoundaryOpenApiDocuments(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyCollection<PandaBear.OpenApi.OpenApiBoundaryDocument!>! boundaries) -> void
 static PandaBear.OpenApi.OpenApiServiceCollectionExtensions.AddBoundaryOpenApiDocuments(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyCollection<string!>! boundaryNames) -> void
 static PandaBear.OpenApi.OpenApiServiceCollectionExtensions.AddApiVersionOpenApiDocuments(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyCollection<PandaBear.ApiVersioning.ApiVersionDefinition!>! versions, string! routePrefix = "api") -> void
+const PandaBear.OpenApi.ConditionalRequestEndpointExtensions.EntityTagDescription = "Strong validator of the returned representation; send it as If-Match on the next write." -> string!
+const PandaBear.OpenApi.ConditionalRequestEndpointExtensions.IfMatchDescription = "The entity tag (ETag) from the latest read, or \"*\"." -> string!
+PandaBear.OpenApi.ConditionalRequestEndpointExtensions
+static PandaBear.OpenApi.ConditionalRequestEndpointExtensions.WithEntityTagResponseHeader<TBuilder>(this TBuilder builder, string? description = null, int statusCode = 200) -> TBuilder
+static PandaBear.OpenApi.ConditionalRequestEndpointExtensions.WithIfMatchPrecondition<TBuilder>(this TBuilder builder, string? description = null) -> TBuilder
