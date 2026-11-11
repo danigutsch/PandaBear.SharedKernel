@@ -213,3 +213,11 @@ public void Dispose() => _session.Dispose();
 In the markup, show the "no longer exists" message when `_session.IsMissing`, and otherwise `<EditForm EditContext="_session.Context">` with
 `_session.Submission.Summary`, `.Error` and `.IsSaving` as for any `ServerFormSubmission`. Page state that must be cleared when the key changes
 (a confirmation, a notice) goes in `onReset`.
+
+`load` returns a `ValueTask<Result<TRecord>>`, so `Mediator.Send(...)` fits directly.
+
+Lookup lists the form chooses from (tours, customers) do not depend on the key, so they are not part of the session: load them once in
+`OnInitializedAsync` with `[PersistentState]` and `??=`. Blazor finishes `OnInitializedAsync` before the first `OnParametersSetAsync`, so the
+lists are there before the form exists, and a route change between two records does not reload them. A page that has a second, independent form
+(for example a notes form) builds it after `Sync` returns, once `Context` is not `null`, and drops it in `onReset`; guard that code with the
+page's own state (the second context is `null`), because a `Sync` that was superseded by a newer key also returns.

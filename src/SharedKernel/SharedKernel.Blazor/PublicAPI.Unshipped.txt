@@ -12,7 +12,7 @@ const PandaBear.Blazor.UiFailureReporter.UnknownOperation = "unknown" -> string!
 const PandaBear.Blazor.UiFailureReporter.UnknownTraceId = "unknown" -> string!
 const PandaBear.Blazor.UploadStatus.MaxDisplayTextLength = 200 -> int
 PandaBear.Blazor.BlazorServiceCollectionExtensions
-PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Sync(TKey? key, System.Func<TKey, System.Threading.Tasks.Task<PandaBear.Results.Result<TRecord!>>!>! load, System.Action<TForm!, TRecord!>! fill, System.Action? onReset = null) -> System.Threading.Tasks.Task!
+PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Sync(TKey? key, System.Func<TKey, System.Threading.Tasks.ValueTask<PandaBear.Results.Result<TRecord!>>>! load, System.Action<TForm!, TRecord!>! fill, System.Action? onReset = null) -> System.Threading.Tasks.Task!
 PandaBear.Blazor.ErrorSummary
 PandaBear.Blazor.ErrorSummary.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>?
 PandaBear.Blazor.ErrorSummary.AdditionalAttributes.set -> void
