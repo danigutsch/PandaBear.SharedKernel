@@ -247,17 +247,14 @@ public sealed class SharedKernelBoundaryTests
             "AspireTestApplication.cs"));
 
         // Act
-        var usesBoundedStartup = testApplicationText.Contains("RunWithResourceStartupTimeout", StringComparison.Ordinal)
-            && testApplicationText.Contains("BuildAsync(startupCt)", StringComparison.Ordinal)
-            && testApplicationText.Contains("await builtApp.StartAsync(startupCt)", StringComparison.Ordinal)
-            && testApplicationText.Contains(
-                "WaitForResourceHealthyAsync(resourceName, startupCt)",
-                StringComparison.Ordinal);
+        var usesBoundedStartup = testApplicationText.Contains("BuildAsync(startupCt)", StringComparison.Ordinal)
+            && testApplicationText.Contains("await app.StartAsync(startupCt)", StringComparison.Ordinal)
+            && testApplicationText.Contains("WaitForResourceHealthyAsync(name, waitCt)", StringComparison.Ordinal);
 
         // Assert
         usesBoundedStartup.ShouldBeTrue();
         testApplicationText.ShouldContain(
-            "CancellationTokenSource.CreateLinkedTokenSource(ct, timeoutCts.Token)",
+            "CancellationTokenSource.CreateLinkedTokenSource(ct, deadline.Token)",
             StringComparison.Ordinal);
     }
 
@@ -289,7 +286,7 @@ public sealed class SharedKernelBoundaryTests
         testApplicationText.ShouldNotContain(".WaitAsync(", StringComparison.Ordinal);
         testApplicationText.ShouldContain("CaptureTeardownFailure", StringComparison.Ordinal);
         testApplicationText.ShouldContain("new AggregateException(", StringComparison.Ordinal);
-        testApplicationText.ShouldContain("var teardownFailures = await DisposeAfterFailedStart", StringComparison.Ordinal);
+        testApplicationText.ShouldContain("var teardownFailures = await Teardown(", StringComparison.Ordinal);
     }
 
     [Fact]

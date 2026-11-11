@@ -26,10 +26,10 @@ SharedKernel seed and should stay reusable outside this repository.
   a reusable library capability with a stable boundary.
 - Keep helper APIs small, host-agnostic, documented, and free of app business rules.
 - Keep provider-specific behavior in provider-named helpers, such as PostgreSQL reset helpers.
-- Do not add Testcontainers, Respawn, generic fixture frameworks, or broader lifecycle abstractions for
-  speculative future needs. `OnDemandResource<T>` is the one lifecycle primitive: it starts a single value on
-  first demand and disposes it once. It decides nothing about what a value means, which tests need it, or what
-  teardown beyond disposal the value requires.
+- Do not add Testcontainers, Respawn or broader lifecycle abstractions for speculative future needs.
+  `OnDemandResource<T>` is the lifecycle primitive: it starts a single value on first demand and disposes it once;
+  `OnDemandResources<T>` keys it by name, and `AspireSystemFixture` uses it for one application per profile. They
+  decide nothing about what a value means, which tests need it, or what teardown beyond disposal it requires.
 - Prefer explicit operations over hidden global setup so tests can show which external state they reset.
 - Test AppHost isolation keeps DCP resource names suffixed while Aspire randomizes resource ports and disables
   the dashboard. Aspire service-discovery names remain unchanged.
@@ -45,6 +45,37 @@ SharedKernel seed and should stay reusable outside this repository.
 - Reset PostgreSQL with `PostgreSqlPublicSchemaReset.Reset(connection, ct)` before serial tests that need
   a known database baseline.
 - Pass explicit excluded table names when immutable test evidence must survive the reset.
+
+## System tests of an AppHost
+
+`AspireAppHostFixture<TAppHost>` is an xUnit assembly fixture that starts an AppHost on the first test that asks, once per profile and
+run, each profile in its own folder of a private `TestWorkspace` that is removed afterwards. The subclass names the AppHost's settings and
+resources; everything else is here:
+
+```csharp
+public sealed class SystemFixture : AspireAppHostFixture<Projects.MyApp_AppHost>
+{
+    protected override string WorkspaceName => "myapp-system";
+
+    protected override AppHostLaunch Launch(string profile, string folder) =>
+        new([$"--AppHost:DataFolder={folder}"], [Resources.Web, Resources.Api], TimeSpan.FromMinutes(3));
+}
+
+// In a test: var app = await fixture.Application(ct); var web = app.GetEndpoint(Resources.Web, "http");
+```
+
+- `Application(profile, ct)` starts a profile (or the `default` one) on demand and shares it; profiles keep tests that change global
+  state (an import, a reset) away from tests that share one application. `AspireSystemFixture` is the base for applications that are not
+  an AppHost project: implement `Start(profile, folder, ct)` and build the builder there, in the test assembly.
+- `AspireTestApplication` follows every resource's log lines from the start. A health wait that runs out of time (`Start`,
+  `WaitForHealthy`, `StartResource`) throws `TimeoutException` naming each pending resource with its state, health and last log lines;
+  `GetResourceLogs(name)` returns them for a failure message.
+- `StartResource(name, timeout, ct)` starts a resource added with `WithExplicitStart()` and waits for it: with `OnDemandResources<T>`,
+  an infrastructure application can start each container on the first test that needs it.
+- `Eventually.Succeeds(assertion, timeout, ct)` retries an assertion (every 250 ms by default) until it passes; on timeout the last
+  failure is the inner exception. Use it instead of sleeping for state another process reaches later.
+- `TestWorkspace.Create(name)` makes a private temporary folder; `Folder(path)` creates folders inside it, and disposal removes it,
+  retrying while a stopped process still holds a file.
 
 ## On-demand resources
 
