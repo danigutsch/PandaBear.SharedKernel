@@ -188,35 +188,17 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "PandaBear.SharedKernel.ApiVersioning": {
-        "type": "Project"
-      },
       "PandaBear.SharedKernel.AspNetCore": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "[10.0.13, )",
-          "PandaBear.SharedKernel.Idempotency.Abstractions": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.OpenApi": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.HttpCaching.AspNetCore": {
         "type": "Project"
       },
-      "PandaBear.SharedKernel.Idempotency.Abstractions": {
-        "type": "Project"
-      },
       "PandaBear.SharedKernel.InputNormalization": {
         "type": "Project"
-      },
-      "PandaBear.SharedKernel.OpenApi": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.AspNetCore.OpenApi": "[10.0.13, )",
-          "Microsoft.OpenApi": "[2.12.2, )",
-          "PandaBear.SharedKernel.ApiVersioning": "[0.1.0-alpha.0, )"
-        }
       },
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
@@ -266,26 +248,11 @@
           "Microsoft.Extensions.DependencyModel": "10.0.13"
         }
       },
-      "Microsoft.AspNetCore.OpenApi": {
-        "type": "CentralTransitive",
-        "requested": "[10.0.13, )",
-        "resolved": "10.0.13",
-        "contentHash": "XVuqUBGjVUVyb4DXR5BrSkrW0Br7sYKq39f723ILhQLlFHCyhAgWe1PkJBc42R/5mKBIgHiKVSY+PN5/4XtcQw==",
-        "dependencies": {
-          "Microsoft.OpenApi": "[2.12.2, 3.0.0)"
-        }
-      },
       "Microsoft.AspNetCore.TestHost": {
         "type": "CentralTransitive",
         "requested": "[10.0.13, )",
         "resolved": "10.0.13",
         "contentHash": "8xzbDfEOWg5GRp5byA42Axr4TbockbxCvdHTYk27ZIdst79DO0CLBp/Zw5sduK2goRii7of4EeuTjG/yPH4tsg=="
-      },
-      "Microsoft.OpenApi": {
-        "type": "CentralTransitive",
-        "requested": "[2.12.2, )",
-        "resolved": "2.12.2",
-        "contentHash": "ZkT7qiJe0Kj0+DTZOZo+xrDy1kNmdsWFQVPIQLNx9ZJ0T9cB2LG7r+Bi60so8/+yg1nkS7QCPadrzsTG4VPKrA=="
       },
       "xunit.v3.extensibility.core": {
         "type": "CentralTransitive",
