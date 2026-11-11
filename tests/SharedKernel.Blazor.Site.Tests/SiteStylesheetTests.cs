@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using PandaBear.Blazor.Site.Theming;
 
 namespace PandaBear.Blazor.Site.Tests;
 
@@ -111,7 +112,57 @@ public sealed partial class SiteStylesheetTests
         var css = File.ReadAllText(SiteFiles.StylesheetPath());
 
         // Assert
-        SiteFiles.Rule(css, heading).ShouldContain($"font-size: var({token})", StringComparison.Ordinal);
+        SiteFiles.Rule(css, heading).ShouldContain($"font-size: var(--site-{heading}-font-size, var({token}))", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Stylesheet_consumes_every_per_role_theme_variable_with_a_fallback()
+    {
+        // Arrange
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Act
+        var missing = SiteThemeStylesheet.RoleVariables
+            .Where(variable => !css.Contains("var(" + variable + ", ", StringComparison.Ordinal))
+            .ToArray();
+
+        // Assert
+        missing.ShouldBe([]);
+        SiteThemeStylesheet.RoleVariables.ShouldNotBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("h1", "font-family: var(--site-h1-font-family, var(--site-font-heading))")]
+    [InlineData("h1", "font-weight: var(--site-h1-font-weight, 700)")]
+    [InlineData("h1", "line-height: var(--site-h1-line-height, 1.2)")]
+    [InlineData("h3", "font-size: var(--site-h3-font-size, var(--site-font-size-xl))")]
+    [InlineData("body", "font-family: var(--site-body-font-family, var(--site-font-body))")]
+    [InlineData("body", "font-size: var(--site-body-font-size, var(--site-font-size-base))")]
+    [InlineData("body", "line-height: var(--site-body-line-height, var(--site-line-height))")]
+    [InlineData("small", "font-size: var(--site-small-font-size, var(--site-font-size-sm))")]
+    [InlineData("a", "font-weight: var(--site-link-font-weight, inherit)")]
+    [InlineData(".site-button", "font-weight: var(--site-button-font-weight, 600)")]
+    [InlineData(".site-nav a", "font-size: var(--site-nav-font-size, inherit)")]
+    public void Per_role_variables_fall_back_to_the_values_used_before_themes(string selector, string declaration)
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Assert
+        SiteFiles.Rule(css, selector).ShouldContain(declaration, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Links_inside_headings_keep_the_heading_typography()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+        var rule = SiteFiles.Rule(css, ":is(h1, h2, h3, h4, h5, h6) a");
+
+        // Assert
+        rule.ShouldContain("font: inherit", StringComparison.Ordinal);
+        rule.ShouldContain("letter-spacing: inherit", StringComparison.Ordinal);
+        rule.ShouldContain("text-transform: inherit", StringComparison.Ordinal);
     }
 
     [Fact]

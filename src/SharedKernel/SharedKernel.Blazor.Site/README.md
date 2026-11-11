@@ -197,6 +197,116 @@ on hover, never to a filter, so the hover state keeps the checked contrast. Ligh
 values: text 14.7:1, muted 7.6:1, primary 6.7:1 and accent 5.0:1 on white. The stylesheet respects `prefers-reduced-motion`, shows a
 visible `:focus-visible` ring, is mobile first with one `48rem` breakpoint, and loads no fonts, images or other URLs.
 
+## Owner-editable theme
+
+`PandaBear.Blazor.Site.Theming` turns colours, typography and self-hosted fonts that a site owner edits into a second stylesheet
+that `site.css` consumes. Without a theme nothing changes: every per-role variable falls back to the value `site.css` used before.
+
+### Model
+
+- `CssColor`: `#rrggbb` or `#rgb` (normalized to lower-case `#rrggbb`), with `RelativeLuminance` and `ContrastRatio(other)`
+  (WCAG 2.2 formula, unrounded). `ThemeColor.Create(light, dark)` is one token for both schemes.
+- `SiteColors.Create(primary, onPrimary, accent, onAccent, text, muted, surface, surfaceAlt, border, focus, primaryHover?, accentHover?)`.
+  A hover colour that is not given is derived: its base mixed with 20% of the text colour per scheme (`IsDerived(role)`).
+- `TypographyStyle.Create(fontKey, fallback, size, weight, lineHeight, letterSpacing, transform, italic)` for each `TypographyRole`
+  (h1 to h6, body, small, link, button, nav). Every value is optional; an unset value keeps `SiteTheme.Default`, and links, buttons
+  and navigation inherit from their surroundings when unset (so a link in small print stays small). `FontSize.Fixed(rem)` or
+  `FontSize.Fluid(minRem, maxRem)` (0.5 to 10rem); a fluid size grows linearly from a 20rem (320px) to an 80rem (1280px) viewport as
+  `clamp(min, a rem + b vw, max)`. Weight: 100 to 900 in steps of 100. Line height: 0.8 to 3. Letter spacing: -0.1em to 0.5em.
+  Transform: none, uppercase or capitalize.
+- `ThemeFont.Create(key, family, faces)` with `ThemeFontFace.Create(weight, style, src)`. Fonts are self-hosted uploads: `src` is a
+  `LinkTarget` that is root-relative or https and names a `.woff2` file, without `" ' ( ) < >` or a fragment. The family name allows
+  letters, digits, single inner spaces, hyphens and underscores (at most 64 characters); the key is a lower-case slug. A role's
+  `fallback` (`SansSerif`, `Serif`, `Monospace`) is the system stack written after the uploaded family.
+- `SiteTheme.Create(colors, typography, fonts?, allowSmallText)` enforces every rule; `SiteTheme.CreateDraft(...)` only requires
+  unique font keys and existing font references, so a preview can show a theme that still breaks a rule. `theme.Review()` returns the
+  errors, the warnings and every `ContrastCheck`. `SiteTheme.Default` is `site.css` as a theme. Every value object factory returns a
+  `Result`; errors carry field paths such as `colors.muted`, `typography.h1.size`, `typography.body.lineHeight`, `fonts[0].key`.
+
+### Rules
+
+| Rule | Threshold | Severity | Source |
+| --- | --- | --- | --- |
+| Text pairs: text, muted, primary and primary-hover on surface and surface-alt; on-primary on primary and primary-hover; on-accent on accent and accent-hover | 4.5:1 in the light and the dark scheme | Error on `colors.{foreground}` | WCAG 2.2 SC 1.4.3 |
+| Focus ring on surface and surface-alt | 3:1 in both schemes | Error on `colors.focus` | WCAG 2.2 SC 1.4.11 |
+| Body size (smallest value of a fluid size) | at least 1rem unless `allowSmallText` | Error | readability policy |
+| Every other role with a size | at least 0.875rem unless `allowSmallText` | Error | readability policy |
+| Body line height | 1.3 to 2 | Error | readability policy |
+| Fluid size | maximum at most 2.5 times the minimum | Error | WCAG 2.2 SC 1.4.4 (zoom must still double the text) |
+| Heading order: each level not larger than the level above, minimum and maximum compared | — | Warning on the smaller level's `size` | design guidance |
+| Font references and keys | key exists, keys unique | Error, also for drafts | rendering |
+
+Headings use the text colour, which already needs 4.5:1, so the 3:1 large-text allowance of SC 1.4.3 never lowers a check. Borders
+are not checked: the components never rely on a border alone to identify a control (SC 1.4.11 applies to the focus indicator here),
+and the default `#d1d5db` on white is a decorative 1.5:1. Heading order is a warning, not an error: WCAG conveys structure through
+heading markup (SC 1.3.1), not size, and a design can mark a level with weight, case or spacing instead.
+
+### Stylesheet
+
+`SiteThemeStylesheet.Render(theme)` writes `@font-face` rules (`font-display: swap`, key then weight order), then `:root` with the 12
+colour tokens as `light-dark(light, dark)` and the set typography values as `--site-{role}-{property}`, where role is `h1` … `h6`,
+`body`, `small`, `link`, `button` or `nav`, and property is `font-family`, `font-size`, `font-weight`, `line-height`,
+`letter-spacing`, `text-transform` or `font-style` (`SiteThemeStylesheet.RoleVariables`). The output is deterministic; every value
+comes from a validated value object, and strings are escaped again. `SiteThemeStylesheet.Hash(theme)` is the first 16 hex digits of
+the SHA-256 of the UTF-8 output. A host serves it with immutable caching, after `site.css`:
+
+```csharp
+app.MapGet("/theme.css", async (IThemeStore store, HttpContext http) =>
+{
+    var theme = await store.Current(http.RequestAborted) ?? SiteTheme.Default;
+    http.Response.Headers.CacheControl = "public, max-age=31536000, immutable";
+    return Results.Text(SiteThemeStylesheet.Render(theme), "text/css; charset=utf-8");
+});
+```
+
+```html
+<link rel="stylesheet" href="_content/PandaBear.SharedKernel.Blazor.Site/site.css" />
+<link rel="stylesheet" href="/theme.css?v=@SiteThemeStylesheet.Hash(theme)" />
+```
+
+The package keeps no endpoint code; `IThemeStore` stands for the application's storage. Upload font files with the application's
+file intake and store only their addresses in the theme.
+
+### Preview
+
+`ThemePreview` shows a small sample (navigation strip, h1 to h3, a paragraph with a link, small print, a primary and a secondary
+button, a card) styled by a `style` element scoped to `ScopeId`, then a contrast table for the shown scheme (pair, ratio rounded
+down, minimum, `Pass` or `Fail` in text) and the errors and warnings by field path. The sample is `inert`, so its headings and links
+stay out of the page outline and tab order. It needs no script and re-renders on every parameter change:
+
+```razor
+<ThemePreview Theme="_draft" Errors="_errors" Scheme="_dark ? ColorScheme.Dark : ColorScheme.Light" Narrow="_narrow" ScopeId="brand-preview" />
+
+@code {
+    private readonly ThemeEditorModel _model = ThemeEditorModel.FromTheme(SiteTheme.Default);
+    private SiteTheme _draft = SiteTheme.Default;
+    private IReadOnlyDictionary<string, string[]>? _errors;
+    private bool _dark, _narrow;
+
+    private void OnFieldChanged()
+    {
+        var draft = _model.ToDraft();
+        _errors = draft.IsSuccess ? null : draft.WithoutValue().ValidationErrors();
+        if (draft.IsSuccess) { _draft = draft.Value; }
+    }
+}
+```
+
+The inline `style` element needs `style-src 'unsafe-inline'` (or a nonce) in the Content-Security-Policy of the administration host
+that shows the preview. The public site keeps its strict policy because it loads `/theme.css` from a URL.
+
+`ThemeEditorModel` is the form model: string colour fields (`colors.primary.light`), nullable numbers for sizes, weight and spacing,
+and fonts with faces. `ToDraft()` and `ToTheme()` return every error at once on its field path. Both hover fields empty means derived.
+
+### Mapping the earlier Branding settings
+
+`PandaBear.Branding.BrandingSettings` (the ViajantesTurismo Branding context) maps as follows: `PrimaryColor` to `primary`,
+`AccentColor` to `accent`, `BackgroundColor` to `surface`, `TextColor` to `text`, each as the light value with a dark value chosen by
+the owner (or `SiteTheme.Default`'s); on-primary, on-accent, muted, surface-alt, border and focus come from `SiteTheme.Default` until
+edited, and `Create` reports any pair that the brand colours break. `HeadingFontFamily` and `BodyFontFamily` become the font keys of
+h1 to h6 and body; a system family (`system-ui`, `Arial`, `Verdana`, `Georgia`) maps to no key with the `SansSerif` or `Serif`
+fallback, and `Inter` maps to an uploaded `ThemeFont`. `BrandName` and `LogoUri` are not part of the theme.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Blazor.Site`. C# namespace: `PandaBear.Blazor.Site`. Assembly/project identity: `SharedKernel.Blazor.Site`.

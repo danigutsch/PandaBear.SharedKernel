@@ -1,9 +1,27 @@
 #nullable enable
+const PandaBear.Blazor.Site.Theming.FontSize.FluidFromWidth = 20 -> decimal
+const PandaBear.Blazor.Site.Theming.FontSize.FluidToWidth = 80 -> decimal
+const PandaBear.Blazor.Site.Theming.FontSize.Largest = 10 -> decimal
+const PandaBear.Blazor.Site.Theming.FontSize.Smallest = 0.5 -> decimal
+const PandaBear.Blazor.Site.Theming.SiteColors.DerivedHoverWeight = 0.2 -> double
+const PandaBear.Blazor.Site.Theming.ThemeFont.MaxFamilyLength = 64 -> int
+const PandaBear.Blazor.Site.Theming.ThemeFont.MaxKeyLength = 32 -> int
+const PandaBear.Blazor.Site.Theming.TypographyStyle.MaxLetterSpacing = 0.5 -> decimal
+const PandaBear.Blazor.Site.Theming.TypographyStyle.MaxLineHeight = 3 -> decimal
+const PandaBear.Blazor.Site.Theming.TypographyStyle.MinLetterSpacing = -0.1 -> decimal
+const PandaBear.Blazor.Site.Theming.TypographyStyle.MinLineHeight = 0.8 -> decimal
 override PandaBear.Blazor.Site.ImageAlternative.ToString() -> string!
 override PandaBear.Blazor.Site.ImageCandidate.ToString() -> string!
 override PandaBear.Blazor.Site.ImageSource.ToString() -> string!
 override PandaBear.Blazor.Site.LinkTarget.ToString() -> string!
 override PandaBear.Blazor.Site.ResponsiveImage.ToString() -> string!
+override PandaBear.Blazor.Site.Theming.CssColor.ToString() -> string!
+override PandaBear.Blazor.Site.Theming.FontSize.ToString() -> string!
+override PandaBear.Blazor.Site.Theming.SiteTheme.ToString() -> string!
+override PandaBear.Blazor.Site.Theming.ThemeColor.ToString() -> string!
+override PandaBear.Blazor.Site.Theming.ThemeFont.ToString() -> string!
+override PandaBear.Blazor.Site.Theming.ThemeFontFace.ToString() -> string!
+override PandaBear.Blazor.Site.Theming.TypographyStyle.ToString() -> string!
 PandaBear.Blazor.Site.AlternateLink
 PandaBear.Blazor.Site.AlternateLink.AlternateLink(PandaBear.BuildingBlocks.ContentCulture! Culture, System.Uri! Href) -> void
 PandaBear.Blazor.Site.AlternateLink.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
@@ -216,6 +234,249 @@ PandaBear.Blazor.Site.SkipLink.ChildContent.set -> void
 PandaBear.Blazor.Site.SkipLink.SkipLink() -> void
 PandaBear.Blazor.Site.SkipLink.TargetId.get -> string!
 PandaBear.Blazor.Site.SkipLink.TargetId.set -> void
+PandaBear.Blazor.Site.Theming.ColorScheme
+PandaBear.Blazor.Site.Theming.ColorScheme.Dark = 1 -> PandaBear.Blazor.Site.Theming.ColorScheme
+PandaBear.Blazor.Site.Theming.ColorScheme.Light = 0 -> PandaBear.Blazor.Site.Theming.ColorScheme
+PandaBear.Blazor.Site.Theming.ContrastCheck
+PandaBear.Blazor.Site.Theming.ContrastCheck.Background.get -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ContrastCheck.Background.init -> void
+PandaBear.Blazor.Site.Theming.ContrastCheck.ContrastCheck(PandaBear.Blazor.Site.Theming.ThemeColorRole Foreground, PandaBear.Blazor.Site.Theming.ThemeColorRole Background, PandaBear.Blazor.Site.Theming.ColorScheme Scheme, double Ratio, double Minimum, string! Criterion) -> void
+PandaBear.Blazor.Site.Theming.ContrastCheck.Criterion.get -> string!
+PandaBear.Blazor.Site.Theming.ContrastCheck.Criterion.init -> void
+PandaBear.Blazor.Site.Theming.ContrastCheck.Foreground.get -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ContrastCheck.Foreground.init -> void
+PandaBear.Blazor.Site.Theming.ContrastCheck.Minimum.get -> double
+PandaBear.Blazor.Site.Theming.ContrastCheck.Minimum.init -> void
+PandaBear.Blazor.Site.Theming.ContrastCheck.Passes.get -> bool
+PandaBear.Blazor.Site.Theming.ContrastCheck.Ratio.get -> double
+PandaBear.Blazor.Site.Theming.ContrastCheck.Ratio.init -> void
+PandaBear.Blazor.Site.Theming.ContrastCheck.Scheme.get -> PandaBear.Blazor.Site.Theming.ColorScheme
+PandaBear.Blazor.Site.Theming.ContrastCheck.Scheme.init -> void
+PandaBear.Blazor.Site.Theming.CssColor
+PandaBear.Blazor.Site.Theming.CssColor.ContrastRatio(PandaBear.Blazor.Site.Theming.CssColor! other) -> double
+PandaBear.Blazor.Site.Theming.CssColor.RelativeLuminance.get -> double
+PandaBear.Blazor.Site.Theming.CssColor.Value.get -> string!
+PandaBear.Blazor.Site.Theming.FontSize
+PandaBear.Blazor.Site.Theming.FontSize.IsFluid.get -> bool
+PandaBear.Blazor.Site.Theming.FontSize.Max.get -> decimal
+PandaBear.Blazor.Site.Theming.FontSize.Min.get -> decimal
+PandaBear.Blazor.Site.Theming.GenericFontFamily
+PandaBear.Blazor.Site.Theming.GenericFontFamily.Monospace = 2 -> PandaBear.Blazor.Site.Theming.GenericFontFamily
+PandaBear.Blazor.Site.Theming.GenericFontFamily.SansSerif = 0 -> PandaBear.Blazor.Site.Theming.GenericFontFamily
+PandaBear.Blazor.Site.Theming.GenericFontFamily.Serif = 1 -> PandaBear.Blazor.Site.Theming.GenericFontFamily
+PandaBear.Blazor.Site.Theming.SiteColors
+PandaBear.Blazor.Site.Theming.SiteColors.Accent.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
+PandaBear.Blazor.Site.Theming.SiteColors.AccentHover.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
+PandaBear.Blazor.Site.Theming.SiteColors.Border.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
+PandaBear.Blazor.Site.Theming.SiteColors.Focus.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
+PandaBear.Blazor.Site.Theming.SiteColors.IsDerived(PandaBear.Blazor.Site.Theming.ThemeColorRole role) -> bool
+PandaBear.Blazor.Site.Theming.SiteColors.Muted.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
+PandaBear.Blazor.Site.Theming.SiteColors.OnAccent.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
+PandaBear.Blazor.Site.Theming.SiteColors.OnPrimary.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
+PandaBear.Blazor.Site.Theming.SiteColors.Primary.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
+PandaBear.Blazor.Site.Theming.SiteColors.PrimaryHover.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
+PandaBear.Blazor.Site.Theming.SiteColors.Surface.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
+PandaBear.Blazor.Site.Theming.SiteColors.SurfaceAlt.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
+PandaBear.Blazor.Site.Theming.SiteColors.Text.get -> PandaBear.Blazor.Site.Theming.ThemeColor!
+PandaBear.Blazor.Site.Theming.SiteColors.this[PandaBear.Blazor.Site.Theming.ThemeColorRole role].get -> PandaBear.Blazor.Site.Theming.ThemeColor!
+PandaBear.Blazor.Site.Theming.SiteColors.With(PandaBear.Blazor.Site.Theming.ThemeColorRole role, PandaBear.Blazor.Site.Theming.ThemeColor! color) -> PandaBear.Blazor.Site.Theming.SiteColors!
+PandaBear.Blazor.Site.Theming.SiteColors.WithDerived(PandaBear.Blazor.Site.Theming.ThemeColorRole role) -> PandaBear.Blazor.Site.Theming.SiteColors!
+PandaBear.Blazor.Site.Theming.SiteTheme
+PandaBear.Blazor.Site.Theming.SiteTheme.AllowsSmallText.get -> bool
+PandaBear.Blazor.Site.Theming.SiteTheme.Colors.get -> PandaBear.Blazor.Site.Theming.SiteColors!
+PandaBear.Blazor.Site.Theming.SiteTheme.Effective(PandaBear.Blazor.Site.Theming.TypographyRole role) -> PandaBear.Blazor.Site.Theming.TypographyStyle!
+PandaBear.Blazor.Site.Theming.SiteTheme.Font(string! key) -> PandaBear.Blazor.Site.Theming.ThemeFont?
+PandaBear.Blazor.Site.Theming.SiteTheme.Fonts.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.Theming.ThemeFont!>!
+PandaBear.Blazor.Site.Theming.SiteTheme.Review() -> PandaBear.Blazor.Site.Theming.SiteThemeReview!
+PandaBear.Blazor.Site.Theming.SiteTheme.Typography.get -> PandaBear.Blazor.Site.Theming.SiteTypography!
+PandaBear.Blazor.Site.Theming.SiteThemeReview
+PandaBear.Blazor.Site.Theming.SiteThemeReview.Contrast.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.Theming.ContrastCheck!>!
+PandaBear.Blazor.Site.Theming.SiteThemeReview.Errors.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.Theming.ThemeIssue!>!
+PandaBear.Blazor.Site.Theming.SiteThemeReview.HasErrors.get -> bool
+PandaBear.Blazor.Site.Theming.SiteThemeReview.ToValidationErrors() -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>!
+PandaBear.Blazor.Site.Theming.SiteThemeReview.Warnings.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.Theming.ThemeIssue!>!
+PandaBear.Blazor.Site.Theming.SiteThemeStylesheet
+PandaBear.Blazor.Site.Theming.SiteTypography
+PandaBear.Blazor.Site.Theming.SiteTypography.this[PandaBear.Blazor.Site.Theming.TypographyRole role].get -> PandaBear.Blazor.Site.Theming.TypographyStyle!
+PandaBear.Blazor.Site.Theming.SiteTypography.With(PandaBear.Blazor.Site.Theming.TypographyRole role, PandaBear.Blazor.Site.Theming.TypographyStyle! style) -> PandaBear.Blazor.Site.Theming.SiteTypography!
+PandaBear.Blazor.Site.Theming.ThemeColor
+PandaBear.Blazor.Site.Theming.ThemeColor.Dark.get -> PandaBear.Blazor.Site.Theming.CssColor!
+PandaBear.Blazor.Site.Theming.ThemeColor.For(PandaBear.Blazor.Site.Theming.ColorScheme scheme) -> PandaBear.Blazor.Site.Theming.CssColor!
+PandaBear.Blazor.Site.Theming.ThemeColor.Light.get -> PandaBear.Blazor.Site.Theming.CssColor!
+PandaBear.Blazor.Site.Theming.ThemeColorFields
+PandaBear.Blazor.Site.Theming.ThemeColorFields.Dark.get -> string?
+PandaBear.Blazor.Site.Theming.ThemeColorFields.Dark.set -> void
+PandaBear.Blazor.Site.Theming.ThemeColorFields.Light.get -> string?
+PandaBear.Blazor.Site.Theming.ThemeColorFields.Light.set -> void
+PandaBear.Blazor.Site.Theming.ThemeColorFields.ThemeColorFields() -> void
+PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ThemeColorRole.Accent = 3 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ThemeColorRole.AccentHover = 4 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ThemeColorRole.Border = 10 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ThemeColorRole.Focus = 11 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ThemeColorRole.Muted = 7 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ThemeColorRole.OnAccent = 5 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ThemeColorRole.OnPrimary = 2 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ThemeColorRole.Primary = 0 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ThemeColorRole.PrimaryHover = 1 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ThemeColorRole.Surface = 8 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ThemeColorRole.SurfaceAlt = 9 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ThemeColorRole.Text = 6 -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.ThemeEditorModel
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.AllowSmallText.get -> bool
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.AllowSmallText.set -> void
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.Colors.get -> System.Collections.Generic.IReadOnlyDictionary<PandaBear.Blazor.Site.Theming.ThemeColorRole, PandaBear.Blazor.Site.Theming.ThemeColorFields!>!
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.Fonts.get -> System.Collections.ObjectModel.Collection<PandaBear.Blazor.Site.Theming.ThemeFontFields!>!
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.ThemeEditorModel() -> void
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.ToDraft() -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.ToTheme() -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.Typography.get -> System.Collections.Generic.IReadOnlyDictionary<PandaBear.Blazor.Site.Theming.TypographyRole, PandaBear.Blazor.Site.Theming.TypographyFields!>!
+PandaBear.Blazor.Site.Theming.ThemeFont
+PandaBear.Blazor.Site.Theming.ThemeFont.Faces.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.Theming.ThemeFontFace!>!
+PandaBear.Blazor.Site.Theming.ThemeFont.Family.get -> string!
+PandaBear.Blazor.Site.Theming.ThemeFont.Key.get -> string!
+PandaBear.Blazor.Site.Theming.ThemeFontFace
+PandaBear.Blazor.Site.Theming.ThemeFontFace.Src.get -> PandaBear.Blazor.Site.LinkTarget!
+PandaBear.Blazor.Site.Theming.ThemeFontFace.Style.get -> PandaBear.Blazor.Site.Theming.ThemeFontStyle
+PandaBear.Blazor.Site.Theming.ThemeFontFace.Weight.get -> int
+PandaBear.Blazor.Site.Theming.ThemeFontFaceFields
+PandaBear.Blazor.Site.Theming.ThemeFontFaceFields.Src.get -> string?
+PandaBear.Blazor.Site.Theming.ThemeFontFaceFields.Src.set -> void
+PandaBear.Blazor.Site.Theming.ThemeFontFaceFields.Style.get -> PandaBear.Blazor.Site.Theming.ThemeFontStyle
+PandaBear.Blazor.Site.Theming.ThemeFontFaceFields.Style.set -> void
+PandaBear.Blazor.Site.Theming.ThemeFontFaceFields.ThemeFontFaceFields() -> void
+PandaBear.Blazor.Site.Theming.ThemeFontFaceFields.Weight.get -> int?
+PandaBear.Blazor.Site.Theming.ThemeFontFaceFields.Weight.set -> void
+PandaBear.Blazor.Site.Theming.ThemeFontFields
+PandaBear.Blazor.Site.Theming.ThemeFontFields.Faces.get -> System.Collections.ObjectModel.Collection<PandaBear.Blazor.Site.Theming.ThemeFontFaceFields!>!
+PandaBear.Blazor.Site.Theming.ThemeFontFields.Family.get -> string?
+PandaBear.Blazor.Site.Theming.ThemeFontFields.Family.set -> void
+PandaBear.Blazor.Site.Theming.ThemeFontFields.Key.get -> string?
+PandaBear.Blazor.Site.Theming.ThemeFontFields.Key.set -> void
+PandaBear.Blazor.Site.Theming.ThemeFontFields.ThemeFontFields() -> void
+PandaBear.Blazor.Site.Theming.ThemeFontStyle
+PandaBear.Blazor.Site.Theming.ThemeFontStyle.Italic = 1 -> PandaBear.Blazor.Site.Theming.ThemeFontStyle
+PandaBear.Blazor.Site.Theming.ThemeFontStyle.Normal = 0 -> PandaBear.Blazor.Site.Theming.ThemeFontStyle
+PandaBear.Blazor.Site.Theming.ThemeIssue
+PandaBear.Blazor.Site.Theming.ThemeIssue.Field.get -> string!
+PandaBear.Blazor.Site.Theming.ThemeIssue.Field.init -> void
+PandaBear.Blazor.Site.Theming.ThemeIssue.Message.get -> string!
+PandaBear.Blazor.Site.Theming.ThemeIssue.Message.init -> void
+PandaBear.Blazor.Site.Theming.ThemeIssue.ThemeIssue(string! Field, string! Message) -> void
+PandaBear.Blazor.Site.Theming.ThemePreview
+PandaBear.Blazor.Site.Theming.ThemePreview.Errors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>?
+PandaBear.Blazor.Site.Theming.ThemePreview.Errors.set -> void
+PandaBear.Blazor.Site.Theming.ThemePreview.Narrow.get -> bool
+PandaBear.Blazor.Site.Theming.ThemePreview.Narrow.set -> void
+PandaBear.Blazor.Site.Theming.ThemePreview.Scheme.get -> PandaBear.Blazor.Site.Theming.ColorScheme
+PandaBear.Blazor.Site.Theming.ThemePreview.Scheme.set -> void
+PandaBear.Blazor.Site.Theming.ThemePreview.ScopeId.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreview.ScopeId.set -> void
+PandaBear.Blazor.Site.Theming.ThemePreview.Texts.get -> PandaBear.Blazor.Site.Theming.ThemePreviewTexts!
+PandaBear.Blazor.Site.Theming.ThemePreview.Texts.set -> void
+PandaBear.Blazor.Site.Theming.ThemePreview.Theme.get -> PandaBear.Blazor.Site.Theming.SiteTheme?
+PandaBear.Blazor.Site.Theming.ThemePreview.Theme.set -> void
+PandaBear.Blazor.Site.Theming.ThemePreview.ThemePreview() -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.CardText.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.CardText.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.CardTitle.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.CardTitle.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.ContrastCaption.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.ContrastCaption.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.DarkScheme.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.DarkScheme.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Error.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Error.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Fail.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Fail.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Heading1.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Heading1.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Heading2.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Heading2.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Heading3.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Heading3.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Label.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Label.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.LightScheme.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.LightScheme.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Link.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Link.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.NavigationCurrent.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.NavigationCurrent.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.NavigationLabel.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.NavigationLabel.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.NavigationOther.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.NavigationOther.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.On.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.On.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.PairColumn.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.PairColumn.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Paragraph.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Paragraph.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Pass.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Pass.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.PrimaryButton.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.PrimaryButton.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.RatioColumn.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.RatioColumn.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.RequiredColumn.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.RequiredColumn.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.ResultColumn.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.ResultColumn.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.SecondaryButton.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.SecondaryButton.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Small.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Small.init -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.ThemePreviewTexts() -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Warning.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Warning.init -> void
+PandaBear.Blazor.Site.Theming.ThemeTextTransform
+PandaBear.Blazor.Site.Theming.ThemeTextTransform.Capitalize = 2 -> PandaBear.Blazor.Site.Theming.ThemeTextTransform
+PandaBear.Blazor.Site.Theming.ThemeTextTransform.None = 0 -> PandaBear.Blazor.Site.Theming.ThemeTextTransform
+PandaBear.Blazor.Site.Theming.ThemeTextTransform.Uppercase = 1 -> PandaBear.Blazor.Site.Theming.ThemeTextTransform
+PandaBear.Blazor.Site.Theming.TypographyFields
+PandaBear.Blazor.Site.Theming.TypographyFields.Fallback.get -> PandaBear.Blazor.Site.Theming.GenericFontFamily?
+PandaBear.Blazor.Site.Theming.TypographyFields.Fallback.set -> void
+PandaBear.Blazor.Site.Theming.TypographyFields.FontKey.get -> string?
+PandaBear.Blazor.Site.Theming.TypographyFields.FontKey.set -> void
+PandaBear.Blazor.Site.Theming.TypographyFields.Italic.get -> bool?
+PandaBear.Blazor.Site.Theming.TypographyFields.Italic.set -> void
+PandaBear.Blazor.Site.Theming.TypographyFields.LetterSpacing.get -> decimal?
+PandaBear.Blazor.Site.Theming.TypographyFields.LetterSpacing.set -> void
+PandaBear.Blazor.Site.Theming.TypographyFields.LineHeight.get -> decimal?
+PandaBear.Blazor.Site.Theming.TypographyFields.LineHeight.set -> void
+PandaBear.Blazor.Site.Theming.TypographyFields.SizeMax.get -> decimal?
+PandaBear.Blazor.Site.Theming.TypographyFields.SizeMax.set -> void
+PandaBear.Blazor.Site.Theming.TypographyFields.SizeMin.get -> decimal?
+PandaBear.Blazor.Site.Theming.TypographyFields.SizeMin.set -> void
+PandaBear.Blazor.Site.Theming.TypographyFields.Transform.get -> PandaBear.Blazor.Site.Theming.ThemeTextTransform?
+PandaBear.Blazor.Site.Theming.TypographyFields.Transform.set -> void
+PandaBear.Blazor.Site.Theming.TypographyFields.TypographyFields() -> void
+PandaBear.Blazor.Site.Theming.TypographyFields.Weight.get -> int?
+PandaBear.Blazor.Site.Theming.TypographyFields.Weight.set -> void
+PandaBear.Blazor.Site.Theming.TypographyRole
+PandaBear.Blazor.Site.Theming.TypographyRole.Body = 6 -> PandaBear.Blazor.Site.Theming.TypographyRole
+PandaBear.Blazor.Site.Theming.TypographyRole.Button = 9 -> PandaBear.Blazor.Site.Theming.TypographyRole
+PandaBear.Blazor.Site.Theming.TypographyRole.H1 = 0 -> PandaBear.Blazor.Site.Theming.TypographyRole
+PandaBear.Blazor.Site.Theming.TypographyRole.H2 = 1 -> PandaBear.Blazor.Site.Theming.TypographyRole
+PandaBear.Blazor.Site.Theming.TypographyRole.H3 = 2 -> PandaBear.Blazor.Site.Theming.TypographyRole
+PandaBear.Blazor.Site.Theming.TypographyRole.H4 = 3 -> PandaBear.Blazor.Site.Theming.TypographyRole
+PandaBear.Blazor.Site.Theming.TypographyRole.H5 = 4 -> PandaBear.Blazor.Site.Theming.TypographyRole
+PandaBear.Blazor.Site.Theming.TypographyRole.H6 = 5 -> PandaBear.Blazor.Site.Theming.TypographyRole
+PandaBear.Blazor.Site.Theming.TypographyRole.Link = 8 -> PandaBear.Blazor.Site.Theming.TypographyRole
+PandaBear.Blazor.Site.Theming.TypographyRole.Nav = 10 -> PandaBear.Blazor.Site.Theming.TypographyRole
+PandaBear.Blazor.Site.Theming.TypographyRole.Small = 7 -> PandaBear.Blazor.Site.Theming.TypographyRole
+PandaBear.Blazor.Site.Theming.TypographyStyle
+PandaBear.Blazor.Site.Theming.TypographyStyle.Fallback.get -> PandaBear.Blazor.Site.Theming.GenericFontFamily?
+PandaBear.Blazor.Site.Theming.TypographyStyle.FontKey.get -> string?
+PandaBear.Blazor.Site.Theming.TypographyStyle.Italic.get -> bool?
+PandaBear.Blazor.Site.Theming.TypographyStyle.LetterSpacing.get -> decimal?
+PandaBear.Blazor.Site.Theming.TypographyStyle.LineHeight.get -> decimal?
+PandaBear.Blazor.Site.Theming.TypographyStyle.SetsFamily.get -> bool
+PandaBear.Blazor.Site.Theming.TypographyStyle.Size.get -> PandaBear.Blazor.Site.Theming.FontSize?
+PandaBear.Blazor.Site.Theming.TypographyStyle.Transform.get -> PandaBear.Blazor.Site.Theming.ThemeTextTransform?
+PandaBear.Blazor.Site.Theming.TypographyStyle.Weight.get -> int?
 static PandaBear.Blazor.Site.ImageAlternative.Decorative() -> PandaBear.Blazor.Site.ImageAlternative!
 static PandaBear.Blazor.Site.ImageAlternative.Describe(string! text) -> PandaBear.Blazor.Site.ImageAlternative!
 static PandaBear.Blazor.Site.ImageCandidate.AtDensity(PandaBear.Blazor.Site.LinkTarget! src, decimal density) -> PandaBear.Blazor.Site.ImageCandidate!
@@ -232,3 +493,23 @@ PandaBear.Blazor.Site.ContactCard.PhoneText.set -> void
 static PandaBear.Blazor.Site.ResponsiveImage.Create(PandaBear.Blazor.Site.LinkTarget! src, int width, int height, PandaBear.Blazor.Site.ImageAlternative! alt, string? sizes = null, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.ImageCandidate!>? srcSet = null, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.ImageSource!>? sources = null) -> PandaBear.Blazor.Site.ResponsiveImage!
 PandaBear.Blazor.Site.ImageGrid.PrioritizeFirstImage.get -> bool
 PandaBear.Blazor.Site.ImageGrid.PrioritizeFirstImage.set -> void
+static PandaBear.Blazor.Site.Theming.CssColor.Create(string? value) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.CssColor!>
+static PandaBear.Blazor.Site.Theming.CssColor.FromString(string! value) -> PandaBear.Blazor.Site.Theming.CssColor!
+static PandaBear.Blazor.Site.Theming.FontSize.Fixed(decimal rem) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.FontSize!>
+static PandaBear.Blazor.Site.Theming.FontSize.Fluid(decimal minRem, decimal maxRem) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.FontSize!>
+static PandaBear.Blazor.Site.Theming.SiteColors.Create(PandaBear.Blazor.Site.Theming.ThemeColor! primary, PandaBear.Blazor.Site.Theming.ThemeColor! onPrimary, PandaBear.Blazor.Site.Theming.ThemeColor! accent, PandaBear.Blazor.Site.Theming.ThemeColor! onAccent, PandaBear.Blazor.Site.Theming.ThemeColor! text, PandaBear.Blazor.Site.Theming.ThemeColor! muted, PandaBear.Blazor.Site.Theming.ThemeColor! surface, PandaBear.Blazor.Site.Theming.ThemeColor! surfaceAlt, PandaBear.Blazor.Site.Theming.ThemeColor! border, PandaBear.Blazor.Site.Theming.ThemeColor! focus, PandaBear.Blazor.Site.Theming.ThemeColor? primaryHover = null, PandaBear.Blazor.Site.Theming.ThemeColor? accentHover = null) -> PandaBear.Blazor.Site.Theming.SiteColors!
+static PandaBear.Blazor.Site.Theming.SiteTheme.Create(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
+static PandaBear.Blazor.Site.Theming.SiteTheme.CreateDraft(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
+static PandaBear.Blazor.Site.Theming.SiteTheme.Default.get -> PandaBear.Blazor.Site.Theming.SiteTheme!
+static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.ColorVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.Hash(PandaBear.Blazor.Site.Theming.SiteTheme! theme) -> string!
+static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.Render(PandaBear.Blazor.Site.Theming.SiteTheme! theme) -> string!
+static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.RoleVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.Blazor.Site.Theming.SiteTypography.Create(System.Collections.Generic.IReadOnlyDictionary<PandaBear.Blazor.Site.Theming.TypographyRole, PandaBear.Blazor.Site.Theming.TypographyStyle!>! styles) -> PandaBear.Blazor.Site.Theming.SiteTypography!
+static PandaBear.Blazor.Site.Theming.SiteTypography.Empty.get -> PandaBear.Blazor.Site.Theming.SiteTypography!
+static PandaBear.Blazor.Site.Theming.ThemeColor.Create(PandaBear.Blazor.Site.Theming.CssColor! light, PandaBear.Blazor.Site.Theming.CssColor! dark) -> PandaBear.Blazor.Site.Theming.ThemeColor!
+static PandaBear.Blazor.Site.Theming.ThemeEditorModel.FromTheme(PandaBear.Blazor.Site.Theming.SiteTheme! theme) -> PandaBear.Blazor.Site.Theming.ThemeEditorModel!
+static PandaBear.Blazor.Site.Theming.ThemeFont.Create(string? key, string? family, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFontFace!>! faces) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.ThemeFont!>
+static PandaBear.Blazor.Site.Theming.ThemeFontFace.Create(int weight, PandaBear.Blazor.Site.Theming.ThemeFontStyle style, PandaBear.Blazor.Site.LinkTarget! src) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.ThemeFontFace!>
+static PandaBear.Blazor.Site.Theming.TypographyStyle.Create(string? fontKey = null, PandaBear.Blazor.Site.Theming.GenericFontFamily? fallback = null, PandaBear.Blazor.Site.Theming.FontSize? size = null, int? weight = null, decimal? lineHeight = null, decimal? letterSpacing = null, PandaBear.Blazor.Site.Theming.ThemeTextTransform? transform = null, bool? italic = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.TypographyStyle!>
+static PandaBear.Blazor.Site.Theming.TypographyStyle.Inherit.get -> PandaBear.Blazor.Site.Theming.TypographyStyle!

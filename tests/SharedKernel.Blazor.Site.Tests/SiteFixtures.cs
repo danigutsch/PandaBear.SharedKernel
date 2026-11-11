@@ -1,5 +1,5 @@
-using System.Globalization;
 using Microsoft.AspNetCore.Components.Web;
+using PandaBear.Blazor.Site.Theming;
 using PandaBear.BuildingBlocks;
 
 namespace PandaBear.Blazor.Site.Tests;
@@ -101,23 +101,10 @@ internal static class SiteFixtures
         return outlet;
     }
 
-    /// <summary>Computes the WCAG contrast ratio of two <c>#rrggbb</c> colours.</summary>
+    /// <summary>Computes the WCAG contrast ratio of two <c>#rrggbb</c> colours with the production math of <see cref="CssColor" />.</summary>
     /// <param name="foreground">The text colour.</param>
     /// <param name="background">The background colour.</param>
     /// <returns>The ratio, from 1 to 21.</returns>
-    public static double Contrast(string foreground, string background)
-    {
-        var first = Luminance(foreground);
-        var second = Luminance(background);
-        return (Math.Max(first, second) + 0.05) / (Math.Min(first, second) + 0.05);
-    }
-
-    private static double Luminance(string hex) =>
-        (0.2126 * Channel(hex, 0)) + (0.7152 * Channel(hex, 2)) + (0.0722 * Channel(hex, 4));
-
-    private static double Channel(string hex, int offset)
-    {
-        var value = int.Parse(hex.AsSpan(1 + offset, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture) / 255.0;
-        return value <= 0.03928 ? value / 12.92 : Math.Pow((value + 0.055) / 1.055, 2.4);
-    }
+    public static double Contrast(string foreground, string background) =>
+        CssColor.FromString(foreground).ContrastRatio(CssColor.FromString(background));
 }
