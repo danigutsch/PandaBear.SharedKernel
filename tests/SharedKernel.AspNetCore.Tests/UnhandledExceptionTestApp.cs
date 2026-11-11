@@ -16,14 +16,21 @@ internal static class UnhandledExceptionTestApp
     /// <summary>Starts the application with the unhandled-exception handler registered.</summary>
     /// <param name="meters">The meter factory and collector.</param>
     /// <param name="logger">The logger that records reporter output.</param>
+    /// <param name="customize">The host's own <c>AddProblemDetails</c> configuration, or <see langword="null" /> for none.</param>
     /// <returns>The started application.</returns>
-    public static async Task<WebApplication> Start(MeterCollector meters, RecordingLogger<UnhandledExceptionReporter> logger)
+    public static async Task<WebApplication> Start(
+        MeterCollector meters, RecordingLogger<UnhandledExceptionReporter> logger, Action<ProblemDetailsOptions>? customize = null)
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseUrls("http://127.0.0.1:0");
         builder.Services.AddSingleton<IMeterFactory>(meters);
         builder.Services.AddSingleton<ILogger<UnhandledExceptionReporter>>(logger);
         builder.Services.AddUnhandledExceptionHandler();
+        if (customize is not null)
+        {
+            builder.Services.AddProblemDetails(customize);
+        }
+
         var app = builder.Build();
         app.UseExceptionHandler();
         app.MapGet("/orders/{id}", string (string id) => throw new InvalidOperationException(SensitiveMessage));

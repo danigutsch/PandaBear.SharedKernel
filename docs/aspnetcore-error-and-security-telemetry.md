@@ -56,6 +56,8 @@ The handler answers `500` with an RFC 9457 `application/problem+json` body (`sta
 `traceId`) and never includes the exception message, type or stack. It logs one record per exception and
 counts it. `traceId` is the current `Activity.Id` (a W3C `traceparent`-style value such as
 `00-<trace-id>-<span-id>-01`), or the request's `TraceIdentifier` when there is no activity.
+A client that accepts only another format, such as a browser that navigates to a failing URL and sends only `text/html`, still
+receives the same body as `application/problem+json`, after the host's `CustomizeProblemDetails`.
 
 What it does not count:
 
@@ -72,6 +74,24 @@ What it does not count:
 `AddUnhandledExceptionHandler` also calls `AddProblemDetails()`, a global registration: it makes the status-code and
 exception middleware write problem details for every endpoint of the host, not only this handler's responses. Review
 that before enabling it in a host that already customizes its error bodies.
+
+A host that must keep its own error body, for example the title of its existing `400` answer, does not need another
+handler. The handler writes through `IProblemDetailsService`, so the host's own `AddProblemDetails` configuration applies
+to its bodies. Set `ProblemDetailsOptions.CustomizeProblemDetails` to change the `title`, remove the `type`, or remove the
+`traceId` extension for the statuses it wants; the status code, the logging and the counter do not change:
+
+```csharp
+builder.Services.AddUnhandledExceptionHandler();
+builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
+{
+    if (context.ProblemDetails.Status < 500)
+    {
+        context.ProblemDetails.Title = "The request could not be read.";
+        context.ProblemDetails.Type = null;
+        context.ProblemDetails.Extensions.Remove("traceId");
+    }
+});
+```
 
 | Signal | Name | Values |
 | --- | --- | --- |

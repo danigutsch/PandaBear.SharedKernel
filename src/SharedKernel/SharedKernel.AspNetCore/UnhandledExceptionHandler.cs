@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using HttpJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace PandaBear.AspNetCore;
 
@@ -23,8 +25,9 @@ internal sealed class UnhandledExceptionHandler(UnhandledExceptionReporter repor
     /// <remarks>
     /// A malformed or oversized request (Kestrel 400, 413, 431 ...) is a client error that carries its own status.
     /// It is answered with that status and is not reported as an unhandled server exception.
-    /// The problem-details service is trimming-safe and honors the host's content negotiation. A client that
-    /// accepts no problem format still receives the status.
+    /// The problem-details service is trimming-safe and honors the host's content negotiation. When it finds no writer
+    /// for the request's <c>Accept</c> header (a browser that navigates to a failing URL sends only <c>text/html</c>), the
+    /// same problem is written as <c>application/problem+json</c> after the host's customization, so no error leaves without a body.
     /// </remarks>
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
@@ -55,9 +58,25 @@ internal sealed class UnhandledExceptionHandler(UnhandledExceptionReporter repor
         };
         problem.Extensions[TraceIdExtension] = TelemetryHttpContext.TraceId(httpContext);
 
-        await httpContext.RequestServices.GetRequiredService<IProblemDetailsService>()
-            .TryWriteAsync(new ProblemDetailsContext { HttpContext = httpContext, ProblemDetails = problem })
+        var context = new ProblemDetailsContext { HttpContext = httpContext, ProblemDetails = problem };
+        var written = await httpContext.RequestServices.GetRequiredService<IProblemDetailsService>()
+            .TryWriteAsync(context)
             .ConfigureAwait(false);
+        if (!written)
+        {
+            await WriteProblemJson(context).ConfigureAwait(false);
+        }
+
         return true;
+    }
+
+    /// <summary>Writes the problem when no registered writer accepted the request: the service ran no customization, so it runs here.</summary>
+    private static Task WriteProblemJson(ProblemDetailsContext context)
+    {
+        var services = context.HttpContext.RequestServices;
+        services.GetRequiredService<IOptions<ProblemDetailsOptions>>().Value.CustomizeProblemDetails?.Invoke(context);
+        var serializer = services.GetRequiredService<IOptions<HttpJsonOptions>>().Value.SerializerOptions;
+        return context.HttpContext.Response.WriteAsJsonAsync(
+            context.ProblemDetails, serializer.GetTypeInfo(typeof(ProblemDetails)), "application/problem+json");
     }
 }

@@ -170,3 +170,46 @@ private async Task Reload() => Customers = await Mediator.Send(new ListCustomers
 private void Remove(Guid id) => Customers = [.. Customers!.Where(row => row.Id != id)];
 ```
 
+
+## Creating or editing a record
+
+`EditSession<TKey, TForm, TRecord>` is the lifecycle of a page that creates a record (no key) or edits one (a key). Call
+`Sync(key, load, fill, onReset)` from `OnParametersSetAsync`: it returns at once while the key is unchanged; when the key changed it drops
+the previous form, record and submission, runs the optional `onReset` for the page's own state, loads the record of an existing key
+(`load` returns a `Result<TRecord>`; a failure sets `IsMissing`), copies it into the form with `fill`, and makes `Context` (the
+`EditContext`) and `Submission` (the `ServerFormSubmission`, built like `ServerFormSubmission.ForRecord`) ready. A load that finishes after
+the route moved on is dropped, so the older key never overwrites the newer one. The form is a new `TForm` for each key.
+
+The page keeps what is its own: the form fields, the commands that save and the navigation after a save. `[PersistentState]` stays on the
+page because it only works on a component property; pass the property through to `Record`, so the record restored from the prerendered page
+is not read again (it is used by the first `Sync` instead of calling `load`).
+
+```csharp
+private readonly EditSession<Guid, CustomerForm, CustomerDto> _session = new(KnownFields, "customer", "customer");
+
+[Parameter]
+public Guid? Id { get; set; }
+
+[PersistentState]
+public CustomerDto? Existing { get => _session.Record; set => _session.Record = value; }
+
+protected override Task OnParametersSetAsync() =>
+    _session.Sync(Id, id => Mediator.Send(new GetCustomer(id)), (form, customer) => form.FirstName = customer.FirstName);
+
+private async Task Save()
+{
+    var saved = await _session.Submission!.Submit(async () => Id is { } id
+        ? await Mediator.Send(new UpdateCustomer(id, _session.Form.ToDefinition(), _session.Record!.Version))
+        : (await Mediator.Send(new CreateCustomer(_session.Form.ToDefinition()))).WithoutValue());
+    if (saved)
+    {
+        Navigation.NavigateTo("customers");
+    }
+}
+
+public void Dispose() => _session.Dispose();
+```
+
+In the markup, show the "no longer exists" message when `_session.IsMissing`, and otherwise `<EditForm EditContext="_session.Context">` with
+`_session.Submission.Summary`, `.Error` and `.IsSaving` as for any `ServerFormSubmission`. Page state that must be cleared when the key changes
+(a confirmation, a notice) goes in `onReset`.
