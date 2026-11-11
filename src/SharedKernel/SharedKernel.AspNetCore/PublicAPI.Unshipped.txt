@@ -44,3 +44,8 @@ PandaBear.AspNetCore.UnhandledExceptionReporter
 PandaBear.AspNetCore.UnhandledExceptionReporter.UnhandledExceptionReporter(Microsoft.Extensions.Logging.ILogger<PandaBear.AspNetCore.UnhandledExceptionReporter!>! logger, System.Diagnostics.Metrics.IMeterFactory! meterFactory) -> void
 PandaBear.AspNetCore.UnhandledExceptionReporter.Report(Microsoft.AspNetCore.Http.HttpContext! httpContext, System.Exception! exception, bool handled) -> void
 PandaBear.AspNetCore.UnhandledExceptionReporter.Report(System.Exception! exception, string? routeTemplate, int statusCode, string? traceId, bool handled) -> void
+const PandaBear.AspNetCore.AspNetCoreSecurityHeadersExtensions.NoncePlaceholder = "{nonce}" -> string!
+PandaBear.AspNetCore.CspNonceServiceCollectionExtensions
+PandaBear.AspNetCore.ICspNonce
+PandaBear.AspNetCore.ICspNonce.Value.get -> string!
+static PandaBear.AspNetCore.CspNonceServiceCollectionExtensions.AddCspNonce(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

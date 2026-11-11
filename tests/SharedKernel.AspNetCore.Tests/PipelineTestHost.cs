@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PandaBear.AspNetCore.Tests;
 
@@ -23,10 +24,17 @@ internal sealed class PipelineTestHost : IAsyncDisposable
     /// <summary>Builds and starts a host.</summary>
     /// <param name="configure">Adds the middleware and endpoints under test.</param>
     /// <returns>The started host.</returns>
-    internal static async Task<PipelineTestHost> Start(Action<WebApplication> configure)
+    internal static Task<PipelineTestHost> Start(Action<WebApplication> configure) => Start(static _ => { }, configure);
+
+    /// <summary>Builds and starts a host with services.</summary>
+    /// <param name="services">Adds the services under test.</param>
+    /// <param name="configure">Adds the middleware and endpoints under test.</param>
+    /// <returns>The started host.</returns>
+    internal static async Task<PipelineTestHost> Start(Action<IServiceCollection> services, Action<WebApplication> configure)
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseUrls("http://127.0.0.1:0");
+        services(builder.Services);
         var app = builder.Build();
         configure(app);
         await app.StartAsync();
