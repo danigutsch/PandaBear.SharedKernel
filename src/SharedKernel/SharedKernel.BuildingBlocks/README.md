@@ -50,8 +50,9 @@ reuse `PandaBear.InputNormalization.WebAssetUriSanitizer`, with an `http` addres
 `ContentCulture` is a path-safe language tag in canonical casing (`pt`, `pt-BR`, `zh-Hant-TW`); cultures that differ only in
 case are equal, and `Parent` walks `pt-BR` to `pt`. Casing follows BCP 47: script title case and region upper case only before
 the first singleton, so `en-u-ca-gregory` and `de-DE-x-ab` stay lower case after the `u` or `x`. It is a path-safe
-culture-name check (hyphen-separated ASCII letters and digits, a two-to-eight-letter first part, at most 35 characters), not
-full BCP 47 validation: subtag order, registry entries, and extension syntax are not checked. `SupportedCultures` is an immutable set of allowed cultures with a default:
+culture-name check (hyphen-separated ASCII letters and digits, a two-to-eight-letter first part, later subtags of one to eight
+characters, a singleton followed by a subtag, at most 35 characters), not full BCP 47 validation: subtag order and registry entries
+are not checked; `Parent` drops a singleton left without a subtag (`en-x-ab` gives `en`). `SupportedCultures` is an immutable set of allowed cultures with a default:
 `Resolve` maps a requested culture to an allowed one (`pt-BR` to `pt`, or `pt` to `pt-BR`) and `TryGet` matches exact
 text such as a URL segment. `TranslationSet.Create` holds the translations of one entity, and `TryResolve` resolves in the same
 order as `SupportedCultures.Resolve`: the requested culture, its neutral parents, the first translation of the same language in

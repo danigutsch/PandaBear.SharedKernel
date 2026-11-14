@@ -9,9 +9,9 @@ namespace PandaBear.BuildingBlocks;
 /// first single-character subtag (an extension such as <c>-u-</c> or the private use <c>-x-</c>) a four-letter script is title case
 /// and a two-letter region upper case; everything from that singleton on is lower case (<c>sr-Latn-RS-u-nu-latn</c>).
 /// It is a name, not a <see cref="System.Globalization.CultureInfo"/>, so it does not depend on the host's globalization data.
-/// It is a path-safe culture-name check (hyphen-separated ASCII letters and digits, a two-to-eight-letter first part, at most
-/// <see cref="MaxLength"/> characters), not full BCP 47 validation: it does not check subtag order, registry entries, or
-/// extension syntax.
+/// It is a path-safe culture-name check (hyphen-separated ASCII letters and digits, a two-to-eight-letter first part, later subtags
+/// of one to eight characters, a singleton followed by at least one subtag that is not a singleton, at most <see cref="MaxLength"/>
+/// characters), not full BCP 47 validation: it does not check subtag order or registry entries.
 /// </summary>
 public sealed class ContentCulture : ValueObject
 {
@@ -26,13 +26,28 @@ public sealed class ContentCulture : ValueObject
         get;
     }
 
-    /// <summary>Gets the culture with the last part removed (<c>pt-BR</c> gives <c>pt</c>), or <see langword="null"/> for a neutral culture.</summary>
+    /// <summary>
+    /// Gets the culture with the last part removed (<c>pt-BR</c> gives <c>pt</c>), together with a singleton left without a subtag
+    /// (<c>en-x-ab</c> gives <c>en</c>), or <see langword="null"/> for a neutral culture.
+    /// </summary>
     public ContentCulture? Parent
     {
         get
         {
-            var index = Value.LastIndexOf('-');
-            return index > 0 ? new ContentCulture(Value[..index]) : null;
+            var parent = Value;
+            do
+            {
+                var index = parent.LastIndexOf('-');
+                if (index <= 0)
+                {
+                    return null;
+                }
+
+                parent = parent[..index];
+            }
+            while (!IsValid(parent));
+
+            return new ContentCulture(parent);
         }
     }
 
@@ -97,8 +112,34 @@ public sealed class ContentCulture : ValueObject
             return false;
         }
 
-        return parts.All(static part => part.Length > 0 && part.All(char.IsAsciiLetterOrDigit));
+        var privateUse = false;
+        for (var index = 1; index < parts.Length; index++)
+        {
+            var part = parts[index];
+            if (part.Length is < 1 or > 8 || !part.All(char.IsAsciiLetterOrDigit))
+            {
+                return false;
+            }
+
+            // A singleton (an extension or the private-use x) introduces at least one subtag; an extension's subtags are longer than one
+            // character, while private-use subtags may be single characters.
+            if (privateUse || part.Length > 1)
+            {
+                continue;
+            }
+
+            if (index == parts.Length - 1 || (!IsPrivateUse(part) && parts[index + 1].Length < 2))
+            {
+                return false;
+            }
+
+            privateUse = IsPrivateUse(part);
+        }
+
+        return true;
     }
+
+    private static bool IsPrivateUse(string singleton) => singleton is "x" or "X";
 
 #pragma warning disable CA1308 // Lower case is the canonical form of a language tag, not a security normalization.
     private static string Canonicalize(string candidate)

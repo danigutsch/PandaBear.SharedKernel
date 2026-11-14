@@ -44,6 +44,11 @@ public sealed class ContentCultureTests
     [InlineData("pt--BR")]
     [InlineData("pt_BR")]
     [InlineData("português")]
+    [InlineData("en-x")]
+    [InlineData("en-u")]
+    [InlineData("en-u-x-ab")]
+    [InlineData("en-abcdefghi")]
+    [InlineData("en-x-abcdefghi")]
     public void An_invalid_culture_is_rejected_without_echoing_it(string? input)
     {
         // Act
@@ -110,6 +115,20 @@ public sealed class ContentCultureTests
         parent.ShouldBe(ContentCulture.Restore("zh-Hant"));
         parent.Parent.ShouldBe(ContentCulture.Restore("zh"));
         culture.Language.ShouldBe(ContentCulture.Restore("zh"));
+    }
+
+    [Theory]
+    [InlineData("en-x-ab", "en")]
+    [InlineData("en-u-ca-gregory", "en-u-ca")]
+    [InlineData("en-u-ca", "en")]
+    [InlineData("en-x-a-b", "en-x-a")]
+    public void A_parent_never_ends_in_a_singleton(string input, string expected)
+    {
+        // Act
+        var culture = ContentCulture.Create(input).ShouldBeSuccess();
+
+        // Assert
+        culture.Parent.ShouldNotBeNull().Value.ShouldBe(expected);
     }
 
     [Fact]
