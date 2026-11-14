@@ -12,10 +12,7 @@ public sealed class MinimumReleaseAge : ValueObject
     private MinimumReleaseAge(TimeSpan value) => Value = value;
 
     /// <summary>Gets the age as a time span of whole days.</summary>
-    public TimeSpan Value
-    {
-        get;
-    }
+    public TimeSpan Value { get; }
 
     /// <summary>Creates an age of <paramref name="days"/> whole days.</summary>
     /// <param name="days">The number of days, from 0 to <see cref="MaxDays"/>.</param>

@@ -15,8 +15,5 @@ public interface ITransactionLockDeclaration
     /// Gets the names of the advisory locks the command needs.
     /// </summary>
     /// <value>The lock names; duplicates are collapsed and ordering is handled by the lock helper.</value>
-    IReadOnlyList<string> TransactionLocks
-    {
-        get;
-    }
+    IReadOnlyList<string> TransactionLocks { get; }
 }

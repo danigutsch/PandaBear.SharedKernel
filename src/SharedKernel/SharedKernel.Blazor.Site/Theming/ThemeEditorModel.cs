@@ -18,28 +18,16 @@ public sealed class ThemeEditorModel
     }
 
     /// <summary>Gets the colour fields by role.</summary>
-    public IReadOnlyDictionary<ThemeColorRole, ThemeColorFields> Colors
-    {
-        get;
-    }
+    public IReadOnlyDictionary<ThemeColorRole, ThemeColorFields> Colors { get; }
 
     /// <summary>Gets the typography fields by role.</summary>
-    public IReadOnlyDictionary<TypographyRole, TypographyFields> Typography
-    {
-        get;
-    }
+    public IReadOnlyDictionary<TypographyRole, TypographyFields> Typography { get; }
 
     /// <summary>Gets the fonts.</summary>
-    public Collection<ThemeFontFields> Fonts
-    {
-        get;
-    } = [];
+    public Collection<ThemeFontFields> Fonts { get; } = [];
 
     /// <summary>Gets or sets whether body text below 1rem and other text below 0.875rem is allowed.</summary>
-    public bool AllowSmallText
-    {
-        get; set;
-    }
+    public bool AllowSmallText { get; set; }
 
     /// <summary>Fills a model from a theme; a derived hover colour leaves its fields empty.</summary>
     /// <param name="theme">The theme.</param>

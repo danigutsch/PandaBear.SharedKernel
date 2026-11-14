@@ -9,28 +9,16 @@ namespace PandaBear.Packages.Tool;
 internal sealed class UpdateSources(IAdvisorySource advisories, IReleaseDateSource releaseDates, ILatestVersionSource latest, TimeProvider time, IDisposable? owned = null) : IDisposable
 {
     /// <summary>Gets the advisory source.</summary>
-    public IAdvisorySource Advisories
-    {
-        get;
-    } = advisories;
+    public IAdvisorySource Advisories { get; } = advisories;
 
     /// <summary>Gets the release-date source.</summary>
-    public IReleaseDateSource ReleaseDates
-    {
-        get;
-    } = releaseDates;
+    public IReleaseDateSource ReleaseDates { get; } = releaseDates;
 
     /// <summary>Gets the latest-version source.</summary>
-    public ILatestVersionSource Latest
-    {
-        get;
-    } = latest;
+    public ILatestVersionSource Latest { get; } = latest;
 
     /// <summary>Gets the clock.</summary>
-    public TimeProvider Time
-    {
-        get;
-    } = time;
+    public TimeProvider Time { get; } = time;
 
     /// <summary>Creates the real sources: OSV for advisories, crates.io and the npm registry for versions and dates.</summary>
     public static UpdateSources CreateDefault()

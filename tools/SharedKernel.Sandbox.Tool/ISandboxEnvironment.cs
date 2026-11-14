@@ -4,31 +4,19 @@ namespace PandaBear.Sandbox.Tool;
 internal interface ISandboxEnvironment
 {
     /// <summary>Gets the home directory, used to expand <c>~/</c> in configured paths.</summary>
-    string HomeDirectory
-    {
-        get;
-    }
+    string HomeDirectory { get; }
 
     /// <summary>
     /// Gets the home directory that the account database lists for the current user, independent of <c>$HOME</c>, or
     /// <see langword="null"/> when it cannot be determined.
     /// </summary>
-    string? AccountHomeDirectory
-    {
-        get;
-    }
+    string? AccountHomeDirectory { get; }
 
     /// <summary>Gets the temporary directory.</summary>
-    string TempDirectory
-    {
-        get;
-    }
+    string TempDirectory { get; }
 
     /// <summary>Gets the NuGet package folder, or <see langword="null"/> when it cannot be determined.</summary>
-    string? NuGetPackagesDirectory
-    {
-        get;
-    }
+    string? NuGetPackagesDirectory { get; }
 
     /// <summary>Creates and closes a Unix domain socket.</summary>
     (ProbeOutcome Outcome, string Detail) CreateUnixSocket();

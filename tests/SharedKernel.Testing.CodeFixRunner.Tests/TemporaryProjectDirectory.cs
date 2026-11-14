@@ -9,10 +9,7 @@ internal sealed class TemporaryProjectDirectory : IDisposable
     }
 
     /// <summary>Gets the full path of the temporary directory.</summary>
-    public string Path
-    {
-        get;
-    }
+    public string Path { get; }
 
     /// <summary>Creates the temporary directory on disk.</summary>
     /// <returns>A wrapper that owns the newly created directory.</returns>

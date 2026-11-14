@@ -29,28 +29,16 @@ public sealed class UpdateCandidate : ValueObject
     }
 
     /// <summary>Gets the package.</summary>
-    public PackageName Package
-    {
-        get;
-    }
+    public PackageName Package { get; }
 
     /// <summary>Gets the installed version.</summary>
-    public PackageVersion InstalledVersion
-    {
-        get;
-    }
+    public PackageVersion InstalledVersion { get; }
 
     /// <summary>Gets the version that could be installed.</summary>
-    public PackageVersion CandidateVersion
-    {
-        get;
-    }
+    public PackageVersion CandidateVersion { get; }
 
     /// <summary>Gets when the candidate version was released.</summary>
-    public DateTimeOffset ReleasedAt
-    {
-        get;
-    }
+    public DateTimeOffset ReleasedAt { get; }
 
     /// <inheritdoc />
     public override string ToString() => $"{Package} {InstalledVersion} -> {CandidateVersion}";

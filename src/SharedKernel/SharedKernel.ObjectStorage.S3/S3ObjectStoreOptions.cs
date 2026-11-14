@@ -23,10 +23,7 @@ public sealed class S3ObjectStoreOptions
     /// <summary>
     /// Gets or sets the private S3 endpoint.
     /// </summary>
-    public Uri? Endpoint
-    {
-        get; set;
-    }
+    public Uri? Endpoint { get; set; }
 
     /// <summary>
     /// Gets or sets the private bucket name.
@@ -49,10 +46,7 @@ public sealed class S3ObjectStoreOptions
     /// <remarks>
     /// Enable only for explicit local development. Production deployments must pre-provision the bucket.
     /// </remarks>
-    public bool AutoProvisionBucket
-    {
-        get; set;
-    }
+    public bool AutoProvisionBucket { get; set; }
 
     /// <summary>
     /// Gets or sets the maximum duration for local bucket auto-provisioning.

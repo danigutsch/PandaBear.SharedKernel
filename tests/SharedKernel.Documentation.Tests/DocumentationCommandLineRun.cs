@@ -14,22 +14,13 @@ internal sealed class DocumentationCommandLineRun
     }
 
     /// <summary>Gets the exit code returned by the command.</summary>
-    public int ExitCode
-    {
-        get;
-    }
+    public int ExitCode { get; }
 
     /// <summary>Gets the text the command wrote to standard output.</summary>
-    public string Output
-    {
-        get;
-    }
+    public string Output { get; }
 
     /// <summary>Gets the text the command wrote to standard error.</summary>
-    public string Error
-    {
-        get;
-    }
+    public string Error { get; }
 
     /// <summary>Parses the arguments against the documentation command tree rooted at the given path and runs the result.</summary>
     /// <param name="rootPath">The repository root the command resolves paths against.</param>

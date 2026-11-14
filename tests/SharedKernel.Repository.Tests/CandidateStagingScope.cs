@@ -50,46 +50,25 @@ internal sealed class CandidateStagingScope : IDisposable
     }
 
     /// <summary>Gets the temporary directory that contains the consumer root, the library root, and the feed.</summary>
-    public string Base
-    {
-        get;
-    }
+    public string Base { get; }
 
     /// <summary>Gets the consumer repository root that holds the pin, the global.json, and the staged output.</summary>
-    public string Root
-    {
-        get;
-    }
+    public string Root { get; }
 
     /// <summary>Gets the library repository root, which holds its own copy of the global.json.</summary>
-    public string LibraryRoot
-    {
-        get;
-    }
+    public string LibraryRoot { get; }
 
     /// <summary>Gets the directory that holds the candidate packages the staging command copies from.</summary>
-    public string Feed
-    {
-        get;
-    }
+    public string Feed { get; }
 
     /// <summary>Gets the consumer's <c>.local/sharedkernel-feed</c> directory, where the staged packages must end up.</summary>
-    public string Output
-    {
-        get;
-    }
+    public string Output { get; }
 
     /// <summary>Gets the path of the <c>sharedkernel-candidate.json</c> pin file under the consumer's .config directory.</summary>
-    public string PinPath
-    {
-        get;
-    }
+    public string PinPath { get; }
 
     /// <summary>Gets the exact bytes of the pin file.</summary>
-    public byte[] Pin
-    {
-        get; private set;
-    }
+    public byte[] Pin { get; private set; }
 
     /// <summary>Gets the package contents by file name.</summary>
     public Dictionary<string, byte[]> Packages { get; } = new(StringComparer.Ordinal);

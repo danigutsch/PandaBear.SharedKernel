@@ -4,10 +4,7 @@ namespace PandaBear.Observability;
 internal static class TelemetryPrivacyAttributeClassifier
 {
     /// <summary>Telemetry attribute names whose values may carry personal data, credentials, or storage identifiers and must be redacted.</summary>
-    private static HashSet<string> SensitiveAttributeNames
-    {
-        get;
-    } = new(StringComparer.OrdinalIgnoreCase)
+    private static HashSet<string> SensitiveAttributeNames { get; } = new(StringComparer.OrdinalIgnoreCase)
     {
         "authorization",
         "commandText",

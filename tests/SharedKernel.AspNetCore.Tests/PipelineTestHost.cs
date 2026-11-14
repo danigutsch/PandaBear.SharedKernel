@@ -16,10 +16,7 @@ internal sealed class PipelineTestHost : IAsyncDisposable
     }
 
     /// <summary>Gets a client for the host; it does not follow redirects.</summary>
-    internal HttpClient Client
-    {
-        get;
-    }
+    internal HttpClient Client { get; }
 
     /// <summary>Builds and starts a host.</summary>
     /// <param name="configure">Adds the middleware and endpoints under test.</param>

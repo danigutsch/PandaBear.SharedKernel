@@ -7,8 +7,5 @@ public sealed partial class CardGrid
 {
     /// <summary>Gets or sets the cards.</summary>
     [Parameter]
-    public RenderFragment? ChildContent
-    {
-        get; set;
-    }
+    public RenderFragment? ChildContent { get; set; }
 }

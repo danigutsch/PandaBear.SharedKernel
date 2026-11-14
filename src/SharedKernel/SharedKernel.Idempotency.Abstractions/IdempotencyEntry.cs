@@ -18,8 +18,5 @@ public sealed record IdempotencyEntry(
     /// <summary>
     /// Gets the opaque key of the record that owns the entry for retention purposes, or <see langword="null" /> when none was recorded.
     /// </summary>
-    public string? RetentionOwner
-    {
-        get; init;
-    }
+    public string? RetentionOwner { get; init; }
 }

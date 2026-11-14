@@ -18,20 +18,11 @@ public sealed class ProcessOutput
     }
 
     /// <summary>Gets the exit code.</summary>
-    public int ExitCode
-    {
-        get;
-    }
+    public int ExitCode { get; }
 
     /// <summary>Gets everything the process wrote to standard output.</summary>
-    public string StandardOutput
-    {
-        get;
-    }
+    public string StandardOutput { get; }
 
     /// <summary>Gets everything the process wrote to standard error.</summary>
-    public string StandardError
-    {
-        get;
-    }
+    public string StandardError { get; }
 }

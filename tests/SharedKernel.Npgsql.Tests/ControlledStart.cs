@@ -14,16 +14,10 @@ internal sealed class ControlledStart<T>(Exception? cancellationCallbackFailure 
     public int Calls => Volatile.Read(ref _calls);
 
     /// <summary>Gets the token passed to the most recent Start call.</summary>
-    public CancellationToken Token
-    {
-        get; private set;
-    }
+    public CancellationToken Token { get; private set; }
 
     /// <summary>Gets the managed thread id on which the most recent Start call ran.</summary>
-    public int ThreadId
-    {
-        get; private set;
-    }
+    public int ThreadId { get; private set; }
 
     /// <summary>Gets a task that completes when the token given to Start is cancelled, failing after 30 seconds instead of hanging.</summary>
     // A broken implementation must fail the test instead of hanging it.

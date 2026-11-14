@@ -13,9 +13,5 @@ public sealed record CsvParseOptions
     /// one-column document whose empty values matter stays readable; set it to <see langword="false"/> to read every blank line as a record
     /// of one empty field.
     /// </summary>
-    public bool SkipBlankLines
-    {
-        get;
-        init;
-    } = true;
+    public bool SkipBlankLines { get; init; } = true;
 }

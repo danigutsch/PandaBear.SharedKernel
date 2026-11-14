@@ -80,37 +80,22 @@ public sealed class ServerFormSubmission : IDisposable
     /// Gets the fixed text shown when the save fails with <see cref="ResultStatus.Conflict"/> (the row was changed or removed by
     /// someone else, so a retry fails the same way). It is never server text. <see langword="null"/> falls back to the failure message.
     /// </summary>
-    public string? ConflictMessage
-    {
-        get; init;
-    }
+    public string? ConflictMessage { get; init; }
 
     /// <summary>
     /// Gets the fixed text shown when the save fails with <see cref="ResultStatus.NotFound"/> (the record is gone). It is never
     /// server text. <see langword="null"/> falls back to the failure message.
     /// </summary>
-    public string? NotFoundMessage
-    {
-        get; init;
-    }
+    public string? NotFoundMessage { get; init; }
 
     /// <summary>Gets whether a save is in progress; use it to disable the submit button.</summary>
-    public bool IsSaving
-    {
-        get; private set;
-    }
+    public bool IsSaving { get; private set; }
 
     /// <summary>Gets the general error to show, or <see langword="null"/> when there is none.</summary>
-    public string? Error
-    {
-        get; private set;
-    }
+    public string? Error { get; private set; }
 
     /// <summary>Gets the error summary entries for the field errors of the last save.</summary>
-    public IReadOnlyList<ErrorSummaryItem> Summary
-    {
-        get; private set;
-    } = [];
+    public IReadOnlyList<ErrorSummaryItem> Summary { get; private set; } = [];
 
     /// <summary>
     /// Validates the edit context and, when it has no messages, runs a save and records its outcome. A call made while a save is

@@ -28,10 +28,7 @@ public sealed class FakeFormFile : IFormFile
     }
 
     /// <inheritdoc />
-    public string ContentType
-    {
-        get;
-    }
+    public string ContentType { get; }
 
     /// <inheritdoc />
     public string ContentDisposition => $"form-data; name=\"{Name}\"; filename=\"{FileName}\"";
@@ -47,16 +44,10 @@ public sealed class FakeFormFile : IFormFile
     public long Length => _content.LongLength;
 
     /// <inheritdoc />
-    public string Name
-    {
-        get;
-    }
+    public string Name { get; }
 
     /// <inheritdoc />
-    public string FileName
-    {
-        get;
-    }
+    public string FileName { get; }
 
     /// <inheritdoc />
     public Stream OpenReadStream() => new MemoryStream(_content, writable: false);

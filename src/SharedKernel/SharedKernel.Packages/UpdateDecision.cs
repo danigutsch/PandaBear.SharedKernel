@@ -20,22 +20,13 @@ public sealed class UpdateDecision : ValueObject
     }
 
     /// <summary>Gets what the policy says.</summary>
-    public UpdateDecisionKind Kind
-    {
-        get;
-    }
+    public UpdateDecisionKind Kind { get; }
 
     /// <summary>Gets the candidate that was judged.</summary>
-    public UpdateCandidate Candidate
-    {
-        get;
-    }
+    public UpdateCandidate Candidate { get; }
 
     /// <summary>Gets why, in one sentence.</summary>
-    public string Reason
-    {
-        get;
-    }
+    public string Reason { get; }
 
     /// <inheritdoc />
     public override string ToString() => $"{Kind}: {Candidate} - {Reason}";

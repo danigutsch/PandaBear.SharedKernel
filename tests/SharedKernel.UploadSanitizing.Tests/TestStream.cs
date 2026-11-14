@@ -20,16 +20,10 @@ internal sealed class TestStream : Stream
     }
 
     /// <summary>Gets the number of bytes handed out so far.</summary>
-    internal int BytesRead
-    {
-        get; private set;
-    }
+    internal int BytesRead { get; private set; }
 
     /// <summary>Gets a value indicating whether the stream was disposed.</summary>
-    internal bool IsDisposed
-    {
-        get; private set;
-    }
+    internal bool IsDisposed { get; private set; }
 
     /// <inheritdoc />
     public override bool CanRead => true;

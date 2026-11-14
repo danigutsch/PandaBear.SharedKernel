@@ -30,22 +30,13 @@ public sealed class ThemeFont : ValueObject
     }
 
     /// <summary>Gets the key that typography roles reference.</summary>
-    public string Key
-    {
-        get;
-    }
+    public string Key { get; }
 
     /// <summary>Gets the family name of the <c>@font-face</c> rules.</summary>
-    public string Family
-    {
-        get;
-    }
+    public string Family { get; }
 
     /// <summary>Gets the faces in weight then style order.</summary>
-    public IReadOnlyList<ThemeFontFace> Faces
-    {
-        get;
-    }
+    public IReadOnlyList<ThemeFontFace> Faces { get; }
 
     /// <summary>Creates a font.</summary>
     /// <param name="key">The key: a lower-case letter, then lower-case letters, digits or hyphens.</param>

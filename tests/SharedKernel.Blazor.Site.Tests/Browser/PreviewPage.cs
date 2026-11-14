@@ -23,16 +23,10 @@ internal sealed class PreviewPage : IAsyncDisposable
     }
 
     /// <summary>Gets the page.</summary>
-    public IPage Page
-    {
-        get;
-    }
+    public IPage Page { get; }
 
     /// <summary>Gets the nonce of the page's response.</summary>
-    public string Nonce
-    {
-        get;
-    }
+    public string Nonce { get; }
 
     /// <summary>Opens the preview and waits until its circuit is interactive.</summary>
     /// <param name="browser">The browser.</param>

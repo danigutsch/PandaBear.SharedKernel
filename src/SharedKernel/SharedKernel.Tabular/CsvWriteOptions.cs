@@ -12,11 +12,7 @@ public sealed record CsvWriteOptions
     /// full-width forms), or whose first character is a control character such as a tab or carriage return. Default <see langword="true"/>.
     /// Reading the file back gives the value with the apostrophe; turn it off for files that only programs read.
     /// </summary>
-    public bool GuardFormulas
-    {
-        get;
-        init;
-    } = true;
+    public bool GuardFormulas { get; init; } = true;
 
     /// <summary>Gets the line break after each record: <c>"\r\n"</c> (RFC 4180, the default) or <c>"\n"</c>.</summary>
     /// <exception cref="ArgumentException">The value is neither <c>"\r\n"</c> nor <c>"\n"</c>.</exception>

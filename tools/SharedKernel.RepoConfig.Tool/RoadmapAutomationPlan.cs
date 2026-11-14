@@ -42,88 +42,46 @@ internal sealed class RoadmapAutomationPlan
     }
 
     /// <summary>Digest of the baseline closed transitions merged with the required ones.</summary>
-    public string ApprovedClosedTransitionsDigest
-    {
-        get;
-    }
+    public string ApprovedClosedTransitionsDigest { get; }
 
     /// <summary>Commit SHA of the base the plan was created against.</summary>
-    public string BaseSha
-    {
-        get;
-    }
+    public string BaseSha { get; }
 
     /// <summary>Digest of the closed transitions already recorded in the reconciliation manifest.</summary>
-    public string BaselineClosedTransitionsDigest
-    {
-        get;
-    }
+    public string BaselineClosedTransitionsDigest { get; }
 
     /// <summary>Name of the branch the run publishes its changes to.</summary>
-    public string BranchName
-    {
-        get;
-    }
+    public string BranchName { get; }
 
     /// <summary>Object id of the default branch head when the plan was created.</summary>
-    public string DefaultBranchOid
-    {
-        get;
-    }
+    public string DefaultBranchOid { get; }
 
     /// <summary>Whether the run changes anything, either the snapshot or closed transitions.</summary>
-    public bool HasChanges
-    {
-        get;
-    }
+    public bool HasChanges { get; }
 
     /// <summary>Digest over the whole plan content, used to bind later steps to this plan.</summary>
-    public string PlanDigest
-    {
-        get;
-    }
+    public string PlanDigest { get; }
 
     /// <summary>Repository-relative path of the reconciliation manifest.</summary>
-    public string ReconciliationManifest
-    {
-        get;
-    }
+    public string ReconciliationManifest { get; }
 
     /// <summary>Closed-item transitions that must be added to the manifest, ordered by issue number.</summary>
-    public IReadOnlyList<RoadmapClosedItemTransition> RequiredClosedTransitions
-    {
-        get;
-    }
+    public IReadOnlyList<RoadmapClosedItemTransition> RequiredClosedTransitions { get; }
 
     /// <summary>Owner and name of the GitHub repository the plan targets.</summary>
-    public string Repository
-    {
-        get;
-    }
+    public string Repository { get; }
 
     /// <summary>Digest of the repository files the plan was computed from.</summary>
-    public string RepositoryInputDigest
-    {
-        get;
-    }
+    public string RepositoryInputDigest { get; }
 
     /// <summary>Identifier of the workflow run that created the plan.</summary>
-    public long RunId
-    {
-        get;
-    }
+    public long RunId { get; }
 
     /// <summary>Digest of the GitHub roadmap snapshot the plan was computed from.</summary>
-    public string SnapshotDigest
-    {
-        get;
-    }
+    public string SnapshotDigest { get; }
 
     /// <summary>Whether the GitHub snapshot differs from the repository content.</summary>
-    public bool SnapshotChanged
-    {
-        get;
-    }
+    public bool SnapshotChanged { get; }
 
     /// <summary>Validates the inputs, orders and merges the closed transitions, derives the branch name, and returns the plan sealed with its digest.</summary>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="baselineClosedTransitions"/> or <paramref name="requiredClosedTransitions"/> is <see langword="null"/>.</exception>

@@ -19,41 +19,26 @@ public sealed partial class SiteHeader
     /// </summary>
     [Parameter]
     [EditorRequired]
-    public string Label
-    {
-        get; set;
-    } = string.Empty;
+    public string Label { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the brand, usually a link to the home page.</summary>
     [Parameter]
-    public RenderFragment? Brand
-    {
-        get; set;
-    }
+    public RenderFragment? Brand { get; set; }
 
     /// <summary>Gets or sets the navigation items.</summary>
     [Parameter]
-    public IReadOnlyList<SiteNavItem> Items
-    {
-        get; set;
-    } = [];
+    public IReadOnlyList<SiteNavItem> Items { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the path of the current page, which selects the item marked as current, for example
     /// <c>Navigation.ToBaseRelativePath(Navigation.Uri)</c> or <c>/tours</c>.
     /// </summary>
     [Parameter]
-    public string? CurrentPath
-    {
-        get; set;
-    }
+    public string? CurrentPath { get; set; }
 
     /// <summary>Gets or sets content after the navigation, for example a language switcher.</summary>
     [Parameter]
-    public RenderFragment? Actions
-    {
-        get; set;
-    }
+    public RenderFragment? Actions { get; set; }
 
     /// <inheritdoc />
     protected override void OnParametersSet()

@@ -12,39 +12,24 @@ public sealed partial class ButtonLink
     /// <summary>Gets or sets the link target.</summary>
     [Parameter]
     [EditorRequired]
-    public LinkTarget? Href
-    {
-        get; set;
-    }
+    public LinkTarget? Href { get; set; }
 
     /// <summary>Gets or sets the visual style. The default is <see cref="ButtonVariant.Primary" />.</summary>
     [Parameter]
-    public ButtonVariant Variant
-    {
-        get; set;
-    }
+    public ButtonVariant Variant { get; set; }
 
     /// <summary>Gets or sets whether the link opens in a new tab.</summary>
     [Parameter]
-    public bool NewTab
-    {
-        get; set;
-    }
+    public bool NewTab { get; set; }
 
     /// <summary>Gets or sets the hint announced for a new-tab link. Caller-supplied so it can be localized.</summary>
     [Parameter]
-    public string NewTabHint
-    {
-        get; set;
-    } = "(opens in a new tab)";
+    public string NewTabHint { get; set; } = "(opens in a new tab)";
 
     /// <summary>Gets or sets the link text.</summary>
     [Parameter]
     [EditorRequired]
-    public RenderFragment? ChildContent
-    {
-        get; set;
-    }
+    public RenderFragment? ChildContent { get; set; }
 
     /// <inheritdoc />
     protected override void OnParametersSet() => ArgumentNullException.ThrowIfNull(Href);

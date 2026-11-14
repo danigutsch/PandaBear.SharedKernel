@@ -23,18 +23,12 @@ internal sealed class ImmutableFileTestHost : IAsyncDisposable
     }
 
     /// <summary>Gets a client for the host.</summary>
-    internal HttpClient Client
-    {
-        get;
-    }
+    internal HttpClient Client { get; }
 
     /// <summary>Gets the file names the application was asked to approve, in order.</summary>
     internal IReadOnlyList<string> Approvals => [.. ApprovalQueue];
 
-    private ConcurrentQueue<string> ApprovalQueue
-    {
-        get;
-    }
+    private ConcurrentQueue<string> ApprovalQueue { get; }
 
     /// <summary>Approves every file name.</summary>
     /// <param name="context">The request.</param>

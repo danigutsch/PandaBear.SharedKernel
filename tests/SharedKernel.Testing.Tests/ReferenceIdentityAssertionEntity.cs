@@ -4,8 +4,5 @@ namespace PandaBear.Testing.Tests;
 internal sealed class ReferenceIdentityAssertionEntity
 {
     /// <summary>Gets the identity, which stays <see cref="Guid.Empty" /> because the setter is private and never called.</summary>
-    public Guid Id
-    {
-        get; private init;
-    }
+    public Guid Id { get; private init; }
 }

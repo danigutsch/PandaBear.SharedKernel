@@ -11,22 +11,13 @@ public sealed class TrackingReadStream(byte[] content, bool seekable = false) : 
     private readonly MemoryStream _inner = new(content, writable: false);
 
     /// <summary>Total number of bytes returned by reads so far.</summary>
-    public long BytesRead
-    {
-        get; private set;
-    }
+    public long BytesRead { get; private set; }
 
     /// <summary>Whether the stream has been disposed.</summary>
-    public bool IsDisposed
-    {
-        get; private set;
-    }
+    public bool IsDisposed { get; private set; }
 
     /// <summary>Number of read calls made against the stream.</summary>
-    public int ReadCount
-    {
-        get; private set;
-    }
+    public int ReadCount { get; private set; }
 
     /// <inheritdoc />
     public override bool CanRead => !IsDisposed;

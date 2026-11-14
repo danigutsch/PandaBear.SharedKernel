@@ -16,16 +16,10 @@ public sealed class SanitizedFont
     }
 
     /// <summary>Gets the format recognized from the bytes.</summary>
-    public FontFormat Format
-    {
-        get;
-    }
+    public FontFormat Format { get; }
 
     /// <summary>Gets the font, byte for byte as uploaded.</summary>
-    public ReadOnlyMemory<byte> Bytes
-    {
-        get;
-    }
+    public ReadOnlyMemory<byte> Bytes { get; }
 
     /// <summary>Gets the usual file extension of the format, with its dot: <c>.woff2</c>.</summary>
     public string FileExtension => Format switch

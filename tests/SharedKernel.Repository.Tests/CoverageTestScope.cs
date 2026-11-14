@@ -41,10 +41,7 @@ internal sealed class CoverageTestScope : IDisposable
     public string Root => Repository.Root;
 
     /// <summary>Gets or sets the output of <c>git diff</c>; <see langword="null"/> makes it fail.</summary>
-    public string? Patch
-    {
-        get; set;
-    }
+    public string? Patch { get; set; }
 
     /// <summary>Gets a new log that answers <c>rev-parse HEAD</c>, <c>rev-parse HEAD^@</c>, and <c>diff</c>.</summary>
     public ProcessLog Processes => new(Answer);

@@ -21,10 +21,7 @@ internal sealed record DevcontainerCliPins(
     /// Gets the released pins. The Node.js hash is the one in the release's <c>SHASUMS256.txt.asc</c>, signed by a
     /// Node.js release key; the CLI integrity is the registry's <c>dist.integrity</c> for the version.
     /// </summary>
-    public static DevcontainerCliPins Default
-    {
-        get;
-    } = new(
+    public static DevcontainerCliPins Default { get; } = new(
         "24.22.1",
         new Uri("https://nodejs.org/dist/v24.22.1/node-v24.22.1-linux-x64.tar.gz"),
         "eb6728e77c576a35162c122c45ccadf224d89ff00abc8dae46cc2897c6002d7c",

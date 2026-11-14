@@ -25,16 +25,10 @@ internal sealed class SecurityEventTestFixture : IDisposable
     }
 
     /// <summary>The collector for the package meters.</summary>
-    public MeterCollector Meters
-    {
-        get;
-    }
+    public MeterCollector Meters { get; }
 
     /// <summary>The recording logger.</summary>
-    public RecordingLogger<SecurityEventReporter> Logger
-    {
-        get;
-    }
+    public RecordingLogger<SecurityEventReporter> Logger { get; }
 
     /// <summary>The service provider.</summary>
     public IServiceProvider Services => _provider;

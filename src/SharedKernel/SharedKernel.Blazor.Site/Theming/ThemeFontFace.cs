@@ -14,22 +14,13 @@ public sealed class ThemeFontFace : ValueObject
     }
 
     /// <summary>Gets the weight, a multiple of 100 from 100 to 900.</summary>
-    public int Weight
-    {
-        get;
-    }
+    public int Weight { get; }
 
     /// <summary>Gets the style.</summary>
-    public ThemeFontStyle Style
-    {
-        get;
-    }
+    public ThemeFontStyle Style { get; }
 
     /// <summary>Gets the address of the <c>.woff2</c> file.</summary>
-    public LinkTarget Src
-    {
-        get;
-    }
+    public LinkTarget Src { get; }
 
     /// <summary>Creates a face.</summary>
     /// <param name="weight">The weight, a multiple of 100 from 100 to 900.</param>

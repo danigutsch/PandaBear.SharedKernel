@@ -12,10 +12,7 @@ internal sealed class PostgreSqlDomainEventOrder : IAggregateRoot
     /// <summary>
     /// Identifier of the order.
     /// </summary>
-    public int Id
-    {
-        get; set;
-    }
+    public int Id { get; set; }
 
     /// <summary>
     /// Records a PostgreSqlOrderPlacedDomainEvent carrying the order Id.

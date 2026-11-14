@@ -9,10 +9,7 @@ internal sealed class TemporaryCodeFixDirectory : IDisposable
     }
 
     /// <summary>Gets the full path of the temporary directory.</summary>
-    public string Path
-    {
-        get;
-    }
+    public string Path { get; }
 
     /// <summary>Creates a new uniquely named temporary directory and returns a wrapper owning it.</summary>
     public static TemporaryCodeFixDirectory Create()

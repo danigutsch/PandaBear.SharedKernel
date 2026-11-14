@@ -6,9 +6,6 @@ namespace PandaBear.RepoConfig.Tool;
 internal sealed record GitHubRoadmapReconcileSnapshot(string? RepositoryCommit, IReadOnlyList<GitHubRoadmapReconcileIssue> Issues)
 {
     /// <summary>Resolution result of each referenced issue, keyed by reference.</summary>
-    public IReadOnlyDictionary<string, GitHubIssueReferenceResolution> ReferenceResolutions
-    {
-        get; init;
-    }
+    public IReadOnlyDictionary<string, GitHubIssueReferenceResolution> ReferenceResolutions { get; init; }
         = new Dictionary<string, GitHubIssueReferenceResolution>(StringComparer.Ordinal);
 }

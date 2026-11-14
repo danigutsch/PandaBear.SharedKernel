@@ -22,10 +22,7 @@ public sealed class KestrelTestHost<TEntryPoint> : IAsyncDisposable
     }
 
     /// <summary>Gets the loopback address the server listens on, for example <c>http://127.0.0.1:41873/</c>.</summary>
-    public Uri BaseAddress
-    {
-        get;
-    }
+    public Uri BaseAddress { get; }
 
     /// <summary>Gets the application's root service provider.</summary>
     public IServiceProvider Services => factory.Services;

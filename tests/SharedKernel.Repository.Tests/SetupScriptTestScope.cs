@@ -50,16 +50,10 @@ internal sealed class SetupScriptTestScope : IDisposable
     }
 
     /// <summary>Gets the directory that holds the copied script, which the script must treat as the repository root.</summary>
-    public string Root
-    {
-        get;
-    }
+    public string Root { get; }
 
     /// <summary>Gets the file to which the fake <c>dotnet</c> appends one line per call, as the working directory and the arguments.</summary>
-    public string LogPath
-    {
-        get;
-    }
+    public string LogPath { get; }
 
     /// <summary>Runs the script from a directory outside the checkout with the fake <c>dotnet</c> first on PATH, so restore and build exit with the given codes.</summary>
     public Task<TestProcessResult> Run(int restoreExitCode, int buildExitCode, CancellationToken ct)

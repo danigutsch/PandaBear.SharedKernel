@@ -15,10 +15,7 @@ internal sealed class ResultTransactionTestHooks
     public IReadOnlyList<string> Calls => calls;
 
     /// <summary>Gets or sets a value indicating whether the hooks throw after recording the call.</summary>
-    public bool Throw
-    {
-        get; set;
-    }
+    public bool Throw { get; set; }
 
     ValueTask IAfterCommit<ResultTransactionTestCommand, Result>.Handle(ResultTransactionTestCommand request, Result response, CancellationToken ct) =>
         Record("commit");

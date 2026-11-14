@@ -27,20 +27,11 @@ public sealed class CodeFixTestWorkspace
     }
 
     /// <summary>Gets the underlying ad hoc Roslyn workspace.</summary>
-    public AdhocWorkspace Workspace
-    {
-        get;
-    }
+    public AdhocWorkspace Workspace { get; }
 
-    private ProjectId ProjectId
-    {
-        get;
-    }
+    private ProjectId ProjectId { get; }
 
-    private DocumentId DocumentId
-    {
-        get;
-    }
+    private DocumentId DocumentId { get; }
 
     private Document Document
     {

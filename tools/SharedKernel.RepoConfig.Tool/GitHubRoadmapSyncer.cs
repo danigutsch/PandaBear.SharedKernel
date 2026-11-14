@@ -544,10 +544,7 @@ internal sealed class GitHubRoadmapSyncer
 
         public bool ValuesAreKnown { get; set; } = valuesAreKnown;
 
-        public bool IsBlocked
-        {
-            get; set;
-        }
+        public bool IsBlocked { get; set; }
 
         public List<string> Conflicts { get; } = [];
 

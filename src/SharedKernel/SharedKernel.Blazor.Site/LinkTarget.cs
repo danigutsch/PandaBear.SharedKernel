@@ -24,19 +24,13 @@ public sealed class LinkTarget : ValueObject
     }
 
     /// <summary>Gets the address exactly as supplied.</summary>
-    public string Value
-    {
-        get;
-    }
+    public string Value { get; }
 
     /// <summary>
     /// Gets whether the address is root-relative (<c>/img/a.jpg</c>) or absolute <c>https</c>, the only shapes accepted for
     /// the addresses of a <see cref="ResponsiveImage" /> and its <see cref="ImageCandidate" />s.
     /// </summary>
-    public bool IsImageSource
-    {
-        get;
-    }
+    public bool IsImageSource { get; }
 
     /// <summary>Creates a link target from text.</summary>
     /// <param name="value">The candidate address.</param>

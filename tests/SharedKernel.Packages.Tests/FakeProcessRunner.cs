@@ -4,16 +4,10 @@ namespace PandaBear.Packages.Tests;
 internal sealed class FakeProcessRunner(ProcessOutput output) : IProcessRunner
 {
     /// <summary>Gets the executable of the last call.</summary>
-    public string? Executable
-    {
-        get; private set;
-    }
+    public string? Executable { get; private set; }
 
     /// <summary>Gets the arguments of the last call.</summary>
-    public IReadOnlyList<string>? Arguments
-    {
-        get; private set;
-    }
+    public IReadOnlyList<string>? Arguments { get; private set; }
 
     /// <summary>Records the call and returns the canned output.</summary>
     public Task<ProcessOutput> Run(string executable, IReadOnlyList<string> arguments, CancellationToken cancellationToken)

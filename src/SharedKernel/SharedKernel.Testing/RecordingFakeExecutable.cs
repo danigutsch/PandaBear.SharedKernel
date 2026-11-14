@@ -39,28 +39,16 @@ public sealed class RecordingFakeExecutable
     }
 
     /// <summary>The absolute path of the script.</summary>
-    public string Path
-    {
-        get;
-    }
+    public string Path { get; }
 
     /// <summary>The file the script writes its arguments to, one per line.</summary>
-    public string ArgumentsPath
-    {
-        get;
-    }
+    public string ArgumentsPath { get; }
 
     /// <summary>The file the script writes its environment to.</summary>
-    public string EnvironmentPath
-    {
-        get;
-    }
+    public string EnvironmentPath { get; }
 
     /// <summary>The file the script writes its process ID to.</summary>
-    public string ProcessIdPath
-    {
-        get;
-    }
+    public string ProcessIdPath { get; }
 
     /// <summary>Whether the script has recorded its process ID, environment and arguments; the arguments file is written last, before <c>body</c> runs.</summary>
     public bool Started => File.Exists(ArgumentsPath);

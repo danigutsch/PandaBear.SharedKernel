@@ -19,10 +19,7 @@ public sealed class Currency : ValueObject
     public static Currency Usd { get; } = new("USD");
 
     /// <summary>Gets the upper-case three-letter code.</summary>
-    public string Code
-    {
-        get;
-    }
+    public string Code { get; }
 
     /// <summary>
     /// Gets the symbol money of this currency is displayed with: <c>R$</c>, <c>€</c>, <c>$</c>, <c>£</c> or <c>¥</c> for BRL, EUR, USD, GBP

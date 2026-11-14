@@ -18,16 +18,10 @@ public sealed record ServerValidationOptions
     }
 
     /// <summary>Gets the model field names the form can display.</summary>
-    public IReadOnlyCollection<string> KnownFields
-    {
-        get;
-    }
+    public IReadOnlyCollection<string> KnownFields { get; }
 
     /// <summary>Gets the field message that replaces unusable server messages.</summary>
-    public string FallbackMessage
-    {
-        get;
-    }
+    public string FallbackMessage { get; }
 
     /// <summary>Gets the longest server field name that is considered, 128 by default; must be positive.</summary>
     public int MaxFieldNameLength

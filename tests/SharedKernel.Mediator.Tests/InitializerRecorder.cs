@@ -6,28 +6,16 @@ namespace PandaBear.Mediator.Tests;
 internal sealed class InitializerRecorder
 {
     /// <summary>Gets the first provider received (the caller scope).</summary>
-    public IServiceProvider? Caller
-    {
-        get; private set;
-    }
+    public IServiceProvider? Caller { get; private set; }
 
     /// <summary>Gets the second provider received (the operation scope).</summary>
-    public IServiceProvider? Operation
-    {
-        get; private set;
-    }
+    public IServiceProvider? Operation { get; private set; }
 
     /// <summary>Gets the marker resolved from the caller scope.</summary>
-    public ScopeMarker? CallerMarker
-    {
-        get; private set;
-    }
+    public ScopeMarker? CallerMarker { get; private set; }
 
     /// <summary>Gets the marker resolved from the operation scope.</summary>
-    public ScopeMarker? OperationMarker
-    {
-        get; private set;
-    }
+    public ScopeMarker? OperationMarker { get; private set; }
 
     /// <summary>Records the providers and their markers.</summary>
     /// <param name="caller">The caller scope provider.</param>

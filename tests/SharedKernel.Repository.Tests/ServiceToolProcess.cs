@@ -46,10 +46,7 @@ internal sealed class ServiceToolProcess : IDisposable
     public ServiceRunScope Run => run;
 
     /// <summary>Gets the temporary directory of the tool process, where it creates the directory of the ready file.</summary>
-    public string Temp
-    {
-        get;
-    }
+    public string Temp { get; }
 
     /// <summary>Gets the execution directory of <c>run --slice database</c>.</summary>
     public string Execution => run.Execution;

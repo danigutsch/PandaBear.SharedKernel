@@ -40,10 +40,7 @@ public sealed partial class SharedKernelIOAnalyzer : DiagnosticAnalyzer
         description: "A read loop that writes every chunk into a MemoryStream retains the complete payload in managed memory. Use SeekableContent.Create, which counts bytes against a maximum and, for non-seekable input, bounds memory and spills to a temporary file, or compare the running total with a maximum inside the loop.");
 
     /// <inheritdoc />
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-    {
-        get;
-    } =
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(UnboundedBufferingRule, HandRolledCopyLoopRule, MissingRequestSizeLimitRule);
 
     /// <inheritdoc />
@@ -270,70 +267,31 @@ public sealed partial class SharedKernelIOAnalyzer : DiagnosticAnalyzer
             LimitAttributes = [.. LimitAttributeNames.Select(compilation.GetTypeByMetadataName).OfType<INamedTypeSymbol>()];
         }
 
-        public INamedTypeSymbol? FormFileCollection
-        {
-            get;
-        }
+        public INamedTypeSymbol? FormFileCollection { get; }
 
-        public INamedTypeSymbol? PipeReader
-        {
-            get;
-        }
+        public INamedTypeSymbol? PipeReader { get; }
 
-        public INamedTypeSymbol? ControllerBase
-        {
-            get;
-        }
+        public INamedTypeSymbol? ControllerBase { get; }
 
-        public INamedTypeSymbol? MaxRequestBodySizeFeature
-        {
-            get;
-        }
+        public INamedTypeSymbol? MaxRequestBodySizeFeature { get; }
 
-        public INamedTypeSymbol? RequestSizeLimitMetadata
-        {
-            get;
-        }
+        public INamedTypeSymbol? RequestSizeLimitMetadata { get; }
 
-        public ImmutableArray<INamedTypeSymbol> LimitAttributes
-        {
-            get;
-        }
+        public ImmutableArray<INamedTypeSymbol> LimitAttributes { get; }
 
-        public INamedTypeSymbol Stream
-        {
-            get;
-        }
+        public INamedTypeSymbol Stream { get; }
 
-        public INamedTypeSymbol? MemoryStream
-        {
-            get;
-        }
+        public INamedTypeSymbol? MemoryStream { get; }
 
-        public INamedTypeSymbol? StreamReader
-        {
-            get;
-        }
+        public INamedTypeSymbol? StreamReader { get; }
 
-        public INamedTypeSymbol? TextReader
-        {
-            get;
-        }
+        public INamedTypeSymbol? TextReader { get; }
 
-        public INamedTypeSymbol? HttpContent
-        {
-            get;
-        }
+        public INamedTypeSymbol? HttpContent { get; }
 
-        public INamedTypeSymbol? FormFile
-        {
-            get;
-        }
+        public INamedTypeSymbol? FormFile { get; }
 
-        public INamedTypeSymbol? HttpRequest
-        {
-            get;
-        }
+        public INamedTypeSymbol? HttpRequest { get; }
 
         public static KnownTypes? Create(Compilation compilation) =>
             compilation.GetTypeByMetadataName("System.IO.Stream") is { } stream ? new KnownTypes(compilation, stream) : null;

@@ -7,10 +7,7 @@ public static class TestGit
     private const string IdentityEmail = "test-author@example.invalid";
 
     /// <summary>Gets the environment variables that cut Git off from the user's global and system configuration.</summary>
-    public static IReadOnlyDictionary<string, string?> Environment
-    {
-        get;
-    } = new Dictionary<string, string?>(StringComparer.Ordinal)
+    public static IReadOnlyDictionary<string, string?> Environment { get; } = new Dictionary<string, string?>(StringComparer.Ordinal)
     {
         ["GIT_ATTR_NOSYSTEM"] = "1",
         ["GIT_CONFIG_GLOBAL"] = OperatingSystem.IsWindows() ? "NUL" : "/dev/null",

@@ -20,16 +20,10 @@ public sealed class ImageSource : ValueObject
     }
 
     /// <summary>Gets the media type, in lower case.</summary>
-    public string Type
-    {
-        get;
-    }
+    public string Type { get; }
 
     /// <summary>Gets the files in this format.</summary>
-    public IReadOnlyList<ImageCandidate> Candidates
-    {
-        get;
-    }
+    public IReadOnlyList<ImageCandidate> Candidates { get; }
 
     /// <summary>Gets a value indicating whether the candidates use width descriptors, which require <c>sizes</c>.</summary>
     public bool UsesWidthDescriptors => Candidates[0].Width is not null;

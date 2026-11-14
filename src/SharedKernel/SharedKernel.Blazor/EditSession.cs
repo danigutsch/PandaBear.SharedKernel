@@ -53,37 +53,22 @@ public sealed class EditSession<TKey, TForm, TRecord> : IDisposable
     }
 
     /// <summary>Gets the form model; it is replaced by a new instance when the key changes.</summary>
-    public TForm Form
-    {
-        get; private set;
-    } = new();
+    public TForm Form { get; private set; } = new();
 
     /// <summary>
     /// Gets or sets the loaded record, or <see langword="null"/> for a new record, a record that is still loading, or one that is missing.
     /// Set it before the first <see cref="Sync"/> to use a record restored from the prerendered page instead of loading it.
     /// </summary>
-    public TRecord? Record
-    {
-        get; set;
-    }
+    public TRecord? Record { get; set; }
 
     /// <summary>Gets whether the record could not be loaded, so the page shows its "no longer exists" message instead of the form.</summary>
-    public bool IsMissing
-    {
-        get; private set;
-    }
+    public bool IsMissing { get; private set; }
 
     /// <summary>Gets the edit context of <see cref="Form"/>, or <see langword="null"/> until the form is ready to show.</summary>
-    public EditContext? Context
-    {
-        get; private set;
-    }
+    public EditContext? Context { get; private set; }
 
     /// <summary>Gets the submission state of the form, or <see langword="null"/> until the form is ready to show.</summary>
-    public ServerFormSubmission? Submission
-    {
-        get; private set;
-    }
+    public ServerFormSubmission? Submission { get; private set; }
 
     /// <summary>
     /// Follows the route key. Returns at once while the key is unchanged. When it changed, drops the previous form, record and submission,

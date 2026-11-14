@@ -31,10 +31,7 @@ public sealed class HttpOutcomeMessages
     }
 
     /// <summary>Gets the copy used for kinds without their own entry.</summary>
-    public string Fallback
-    {
-        get;
-    }
+    public string Fallback { get; }
 
     /// <summary>Returns a new catalog that uses <paramref name="message" /> for <paramref name="kind" />.</summary>
     /// <param name="kind">The outcome kind.</param>

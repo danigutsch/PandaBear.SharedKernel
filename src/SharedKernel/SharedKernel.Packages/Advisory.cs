@@ -23,22 +23,13 @@ public sealed class Advisory : ValueObject
     }
 
     /// <summary>Gets the advisory identifier, such as <c>GHSA-xxxx-xxxx-xxxx</c>.</summary>
-    public string Id
-    {
-        get;
-    }
+    public string Id { get; }
 
     /// <summary>Gets the affected package.</summary>
-    public PackageName Package
-    {
-        get;
-    }
+    public PackageName Package { get; }
 
     /// <summary>Gets how serious the advisory is.</summary>
-    public AdvisorySeverity Severity
-    {
-        get;
-    }
+    public AdvisorySeverity Severity { get; }
 
     /// <summary>Gets the affected versions, ordered by text.</summary>
     public IReadOnlyList<PackageVersion> AffectedVersions => _affectedVersions;

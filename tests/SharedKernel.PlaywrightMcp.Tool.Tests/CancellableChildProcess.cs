@@ -46,10 +46,7 @@ internal sealed class CancellableChildProcess : IAsyncDisposable
     }
 
     /// <summary>The start info to launch the child with.</summary>
-    public ProcessStartInfo StartInfo
-    {
-        get;
-    }
+    public ProcessStartInfo StartInfo { get; }
 
     /// <summary>Whether the process with the recorded ID and start time is still alive; throws if the identity was not captured.</summary>
     public bool IsRunning

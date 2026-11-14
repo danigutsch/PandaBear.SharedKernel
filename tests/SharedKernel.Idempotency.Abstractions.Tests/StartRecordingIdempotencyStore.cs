@@ -8,18 +8,12 @@ internal sealed class StartRecordingIdempotencyStore : IIdempotencyStore
     /// <summary>
     /// Gets how many times the four-argument TryStart was called.
     /// </summary>
-    public int StartCallCount
-    {
-        get; private set;
-    }
+    public int StartCallCount { get; private set; }
 
     /// <summary>
     /// Gets the operation passed to the last TryStart call, or null before any call.
     /// </summary>
-    public IdempotencyOperation? StartedOperation
-    {
-        get; private set;
-    }
+    public IdempotencyOperation? StartedOperation { get; private set; }
 
     /// <summary>
     /// Records the call and reports a new start.

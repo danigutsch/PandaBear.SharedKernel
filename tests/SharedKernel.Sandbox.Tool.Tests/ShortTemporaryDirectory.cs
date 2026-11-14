@@ -11,10 +11,7 @@ internal sealed class ShortTemporaryDirectory : IDisposable
     }
 
     /// <summary>Gets the absolute path.</summary>
-    public string Path
-    {
-        get;
-    }
+    public string Path { get; }
 
     /// <inheritdoc />
     public void Dispose()

@@ -36,46 +36,25 @@ public sealed class ResponsiveImage : ValueObject
     }
 
     /// <summary>Gets the fallback address, which every browser can show.</summary>
-    public LinkTarget Src
-    {
-        get;
-    }
+    public LinkTarget Src { get; }
 
     /// <summary>Gets the intrinsic width in pixels; with <see cref="Height" /> it sets the aspect ratio the layout reserves.</summary>
-    public int Width
-    {
-        get;
-    }
+    public int Width { get; }
 
     /// <summary>Gets the intrinsic height in pixels.</summary>
-    public int Height
-    {
-        get;
-    }
+    public int Height { get; }
 
     /// <summary>Gets the accessibility decision: a description, or decorative.</summary>
-    public ImageAlternative Alt
-    {
-        get;
-    }
+    public ImageAlternative Alt { get; }
 
     /// <summary>Gets the <c>sizes</c> value, such as <c>(min-width: 48rem) 50vw, 100vw</c>, or <see langword="null" />.</summary>
-    public string? Sizes
-    {
-        get;
-    }
+    public string? Sizes { get; }
 
     /// <summary>Gets the <c>srcset</c> candidates of the <c>img</c>; empty for none.</summary>
-    public IReadOnlyList<ImageCandidate> SrcSet
-    {
-        get;
-    }
+    public IReadOnlyList<ImageCandidate> SrcSet { get; }
 
     /// <summary>Gets the <c>picture</c> sources in the order the browser considers them; empty for a plain <c>img</c>.</summary>
-    public IReadOnlyList<ImageSource> Sources
-    {
-        get;
-    }
+    public IReadOnlyList<ImageSource> Sources { get; }
 
     /// <summary>Gets a value indicating whether the image renders as a <c>picture</c>.</summary>
     public bool UsesPicture => Sources.Count > 0;

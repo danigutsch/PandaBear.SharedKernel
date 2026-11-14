@@ -16,8 +16,5 @@ namespace PandaBear.AspNetCore;
 public interface ICspNonce
 {
     /// <summary>Gets the nonce: 128 random bits in base64, created on first read and the same for the rest of the scope.</summary>
-    string Value
-    {
-        get;
-    }
+    string Value { get; }
 }

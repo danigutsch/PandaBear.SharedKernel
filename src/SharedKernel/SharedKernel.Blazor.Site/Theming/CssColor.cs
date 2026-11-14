@@ -22,31 +22,16 @@ public sealed class CssColor : ValueObject
     }
 
     /// <summary>Gets the colour as lower-case <c>#rrggbb</c>.</summary>
-    public string Value
-    {
-        get;
-    }
+    public string Value { get; }
 
     /// <summary>Gets the WCAG 2.2 relative luminance, from 0 (black) to 1 (white).</summary>
-    public double RelativeLuminance
-    {
-        get;
-    }
+    public double RelativeLuminance { get; }
 
-    private byte Red
-    {
-        get;
-    }
+    private byte Red { get; }
 
-    private byte Green
-    {
-        get;
-    }
+    private byte Green { get; }
 
-    private byte Blue
-    {
-        get;
-    }
+    private byte Blue { get; }
 
     /// <summary>Creates a colour from <c>#rgb</c> or <c>#rrggbb</c> in any letter case; surrounding white space is ignored.</summary>
     /// <param name="value">The candidate colour.</param>

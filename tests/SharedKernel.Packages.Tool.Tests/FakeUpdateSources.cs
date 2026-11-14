@@ -11,10 +11,7 @@ internal sealed class FakeUpdateSources(
     string[]? notFound = null) : IAdvisorySource, IReleaseDateSource, ILatestVersionSource
 {
     /// <summary>Gets how many lookups were made.</summary>
-    public int Lookups
-    {
-        get; private set;
-    }
+    public int Lookups { get; private set; }
 
     /// <summary>Creates the sources that the command receives.</summary>
     public UpdateSources ToSources() => new(this, this, this, new FixedTime(now));

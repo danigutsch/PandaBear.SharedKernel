@@ -6,10 +6,7 @@ namespace PandaBear.Npgsql.Testing;
 internal sealed class StartedPostgreSqlTestServer(string connectionString, Func<ValueTask> stop) : IAsyncDisposable
 {
     /// <summary>Gets the connection string of the server, without a database.</summary>
-    public string ConnectionString
-    {
-        get;
-    } = connectionString;
+    public string ConnectionString { get; } = connectionString;
 
     /// <inheritdoc />
     public ValueTask DisposeAsync() => stop();

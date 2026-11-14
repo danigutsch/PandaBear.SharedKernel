@@ -6,10 +6,7 @@ namespace PandaBear.Testing.Domain;
 public sealed class CancellationCapturingDomainEventDispatchHandler : IDomainEventDispatchHandler
 {
     /// <summary>The cancellation token received by the most recent Handle call.</summary>
-    public CancellationToken CapturedToken
-    {
-        get; private set;
-    }
+    public CancellationToken CapturedToken { get; private set; }
 
     /// <summary>Stores the supplied token in CapturedToken and completes synchronously, throwing when the event is null.</summary>
     /// <param name="domainEvent">The event being dispatched.</param>

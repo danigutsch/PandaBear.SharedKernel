@@ -6,11 +6,7 @@ namespace PandaBear.Testing.AspNetCore.Tests;
 internal sealed class RecordingHostedService : IHostedService
 {
     /// <summary>Gets a value indicating whether the host started the service.</summary>
-    internal static bool Started
-    {
-        get;
-        private set;
-    }
+    internal static bool Started { get; private set; }
 
     /// <inheritdoc />
     public Task StartAsync(CancellationToken cancellationToken)

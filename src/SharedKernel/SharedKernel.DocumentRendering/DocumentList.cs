@@ -12,19 +12,11 @@ public sealed record DocumentList(
     /// <summary>
     /// Gets a value indicating whether the list is ordered (numbered). It is unordered (bulleted) by default.
     /// </summary>
-    public bool IsOrdered
-    {
-        get;
-        init;
-    }
+    public bool IsOrdered { get; init; }
 
     /// <summary>
     /// Gets the optional accessible name of the list, written as its <c>aria-label</c>. It is not displayed. It is
     /// omitted when null or blank.
     /// </summary>
-    public string? Label
-    {
-        get;
-        init;
-    }
+    public string? Label { get; init; }
 }

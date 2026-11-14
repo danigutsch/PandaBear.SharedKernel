@@ -45,10 +45,7 @@ public sealed class MeterCollector : IMeterFactory
     }
 
     /// <summary>Gets or sets a value indicating whether the measurement callback throws, to simulate a faulty listener.</summary>
-    public bool ThrowOnMeasurement
-    {
-        get; set;
-    }
+    public bool ThrowOnMeasurement { get; set; }
 
     /// <summary>Gets the measurements captured so far.</summary>
     public IReadOnlyList<RecordedMeasurement> Measurements => _measurements;

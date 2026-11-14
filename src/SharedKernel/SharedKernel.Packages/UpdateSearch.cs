@@ -16,17 +16,11 @@ public sealed class UpdateSearch
     }
 
     /// <summary>Gets the packages whose newest stable version differs from the installed one, ordered by name.</summary>
-    public IReadOnlyList<PackageUpdate> Updates
-    {
-        get;
-    }
+    public IReadOnlyList<PackageUpdate> Updates { get; }
 
     /// <summary>
     /// Gets the packages that the registry does not know (a crate from git or a path, a linked npm package, a package with no
     /// stable version), ordered by name. They are not checked: this is never an allow.
     /// </summary>
-    public IReadOnlyList<PackageName> NotOnRegistry
-    {
-        get;
-    }
+    public IReadOnlyList<PackageName> NotOnRegistry { get; }
 }

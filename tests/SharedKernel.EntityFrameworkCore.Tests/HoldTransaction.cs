@@ -22,16 +22,10 @@ internal sealed class HoldTransaction : IAsyncDisposable
     }
 
     /// <summary>Gets the hold store of this caller.</summary>
-    public IDispositionHoldStore Store
-    {
-        get;
-    }
+    public IDispositionHoldStore Store { get; }
 
     /// <summary>Gets the hold guard of this caller.</summary>
-    public IDispositionHoldGuard Guard
-    {
-        get;
-    }
+    public IDispositionHoldGuard Guard { get; }
 
     /// <summary>Opens a caller, beginning a transaction when asked.</summary>
     public static async ValueTask<HoldTransaction> Open(

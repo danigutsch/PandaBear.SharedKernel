@@ -55,10 +55,7 @@ public sealed class SharedKernelBlazorAnalyzer : DiagnosticAnalyzer
         description: "Blazor keeps one component instance when the route changes between URLs that map to the same component, so OnInitialized does not run again and state loaded from a parameter goes stale. Reported for routable components that have a route parameter, several routes or a query parameter.");
 
     /// <inheritdoc />
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-    {
-        get;
-    } = ImmutableArray.Create(UnguardedBusyFlagRule, LongLivedScopeServiceRule, MissingKeyRule, StaleParameterRule);
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(UnguardedBusyFlagRule, LongLivedScopeServiceRule, MissingKeyRule, StaleParameterRule);
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)

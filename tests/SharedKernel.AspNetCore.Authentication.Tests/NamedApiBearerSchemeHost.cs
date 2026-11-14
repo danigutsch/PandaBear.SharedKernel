@@ -21,10 +21,7 @@ internal sealed class NamedApiBearerSchemeHost : IAsyncDisposable
     }
 
     /// <summary>Gets the two scheme definitions: "catalog-api" granting "catalog.write" and "branding-api" granting "branding.write" to the Admin role.</summary>
-    public static IReadOnlyList<ApiBearerScheme> Schemes
-    {
-        get;
-    } =
+    public static IReadOnlyList<ApiBearerScheme> Schemes { get; } =
     [
         new(CatalogScheme, "catalog-api", new Dictionary<string, IReadOnlyCollection<string>>(StringComparer.Ordinal)
         {

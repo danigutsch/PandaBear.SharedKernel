@@ -8,10 +8,7 @@ public sealed class BlockingReadStream(Action? onReadStarted = null) : Stream
     private Action? _onReadStarted = onReadStarted;
 
     /// <summary>Gets a value indicating whether the stream has been disposed.</summary>
-    public bool IsDisposed
-    {
-        get; private set;
-    }
+    public bool IsDisposed { get; private set; }
 
     /// <summary>Gets a task that completes when the first read begins.</summary>
     public Task ReadStarted => _readStarted.Task;

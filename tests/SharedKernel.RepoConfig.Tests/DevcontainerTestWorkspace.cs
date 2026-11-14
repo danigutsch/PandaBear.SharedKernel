@@ -37,37 +37,22 @@ internal sealed class DevcontainerTestWorkspace : IDisposable
     }
 
     /// <summary>The workspace root directory.</summary>
-    public string RootPath
-    {
-        get;
-    }
+    public string RootPath { get; }
 
     /// <summary>The directory that holds the fake Dev Container CLI, the fake Docker, and their call logs.</summary>
     public string ToolsPath => _tools.Path;
 
     /// <summary>The path of the fake Dev Container CLI executable.</summary>
-    public string CliPath
-    {
-        get;
-    }
+    public string CliPath { get; }
 
     /// <summary>The path of the fake Docker executable.</summary>
-    public string DockerPath
-    {
-        get;
-    }
+    public string DockerPath { get; }
 
     /// <summary>The file that records each call to the fake Dev Container CLI.</summary>
-    public string CliCallsPath
-    {
-        get;
-    }
+    public string CliCallsPath { get; }
 
     /// <summary>The file that records each call to the fake Docker.</summary>
-    public string DockerCallsPath
-    {
-        get;
-    }
+    public string DockerCallsPath { get; }
 
     /// <summary>Returns a shell fragment for <c>up</c> that prints <paramref name="stdout"/> and exits with <paramref name="exitCode"/>.</summary>
     public static string UpScript(string stdout, int exitCode = 0) =>

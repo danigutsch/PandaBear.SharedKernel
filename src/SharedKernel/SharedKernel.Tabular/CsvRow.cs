@@ -20,10 +20,7 @@ public sealed class CsvRow : IReadOnlyList<string>
     /// Gets the one-based physical line the record starts on in the parsed content, counting skipped blank lines and the line breaks inside
     /// quoted fields; zero for a row made with <see cref="Create"/>.
     /// </summary>
-    public int LineNumber
-    {
-        get;
-    }
+    public int LineNumber { get; }
 
     /// <summary>Gets the field at the zero-based column index.</summary>
     /// <param name="index">The zero-based column index.</param>

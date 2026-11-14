@@ -18,10 +18,7 @@ internal sealed class TemporaryRepoConfigWorkspace : IDisposable
     /// <summary>
     /// Gets the absolute path of the workspace directory.
     /// </summary>
-    public string RootPath
-    {
-        get;
-    }
+    public string RootPath { get; }
 
     /// <summary>
     /// Returns whether a file exists at the workspace-relative path.

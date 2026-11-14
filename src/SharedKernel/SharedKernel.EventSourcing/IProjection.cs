@@ -8,10 +8,7 @@ public interface IProjection
     /// <summary>
     /// Gets the projection name used for checkpoint ownership.
     /// </summary>
-    string Name
-    {
-        get;
-    }
+    string Name { get; }
 
     /// <summary>
     /// Applies one event envelope to the projection.

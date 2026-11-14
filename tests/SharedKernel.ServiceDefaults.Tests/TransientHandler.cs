@@ -8,10 +8,7 @@ namespace PandaBear.ServiceDefaults.Tests;
 internal sealed class TransientHandler(int failures = 1) : HttpMessageHandler
 {
     /// <summary>Gets the number of requests the handler received.</summary>
-    internal int Attempts
-    {
-        get; private set;
-    }
+    internal int Attempts { get; private set; }
 
     /// <inheritdoc />
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)

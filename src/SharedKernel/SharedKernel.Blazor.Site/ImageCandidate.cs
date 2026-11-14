@@ -17,25 +17,16 @@ public sealed class ImageCandidate : ValueObject
     }
 
     /// <summary>Gets the image address.</summary>
-    public LinkTarget Src
-    {
-        get;
-    }
+    public LinkTarget Src { get; }
 
     /// <summary>Gets the intrinsic width in pixels of this file, or <see langword="null" /> for a density descriptor.</summary>
-    public int? Width
-    {
-        get;
-    }
+    public int? Width { get; }
 
     /// <summary>
     /// Gets the pixel density this file is for, rounded to three decimals as it is written in the <c>srcset</c>, or <see langword="null" />
     /// for a width descriptor.
     /// </summary>
-    public decimal? Density
-    {
-        get;
-    }
+    public decimal? Density { get; }
 
     /// <summary>Creates a candidate with a width descriptor, which lets the browser pick by the rendered size given in <c>sizes</c>.</summary>
     /// <param name="src">The address of a file of this width.</param>

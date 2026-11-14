@@ -11,10 +11,7 @@ public sealed class ImageAlternative : ValueObject
     private ImageAlternative(string text) => Text = text;
 
     /// <summary>Gets the description; empty for a decorative image.</summary>
-    public string Text
-    {
-        get;
-    }
+    public string Text { get; }
 
     /// <summary>Gets a value indicating whether the image is purely decorative and is rendered with an empty <c>alt</c>.</summary>
     public bool IsDecorative => Text.Length == 0;

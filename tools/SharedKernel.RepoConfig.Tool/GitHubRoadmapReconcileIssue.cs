@@ -20,14 +20,8 @@ internal sealed record GitHubRoadmapReconcileIssue(
     IReadOnlyList<GitHubRoadmapReconcileRelation> Blocking)
 {
     /// <summary>GraphQL node ID of the issue, if known.</summary>
-    public string? NodeId
-    {
-        get; init;
-    }
+    public string? NodeId { get; init; }
 
     /// <summary>Reason the issue was closed, if any.</summary>
-    public string? StateReason
-    {
-        get; init;
-    }
+    public string? StateReason { get; init; }
 }

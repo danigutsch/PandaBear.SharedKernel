@@ -44,22 +44,13 @@ public sealed class Hold
     }
 
     /// <summary>Gets the opaque hold identifier.</summary>
-    public Guid Id
-    {
-        get; private init;
-    }
+    public Guid Id { get; private init; }
 
     /// <summary>Gets what the hold restrains.</summary>
-    public DispositionScope Scope
-    {
-        get; private init;
-    }
+    public DispositionScope Scope { get; private init; }
 
     /// <summary>Gets why the hold exists.</summary>
-    public HoldBasis Basis
-    {
-        get; private init;
-    }
+    public HoldBasis Basis { get; private init; }
 
     /// <summary>Gets the opaque purpose code the hold serves.</summary>
     public string PurposeCode { get; private init; } = default!;
@@ -71,46 +62,25 @@ public sealed class Hold
     public string PlacedBy { get; private init; } = default!;
 
     /// <summary>Gets when the hold was placed.</summary>
-    public DateTimeOffset PlacedAt
-    {
-        get; private init;
-    }
+    public DateTimeOffset PlacedAt { get; private init; }
 
     /// <summary>Gets when the hold starts to restrain disposition.</summary>
-    public DateTimeOffset EffectiveFrom
-    {
-        get; private init;
-    }
+    public DateTimeOffset EffectiveFrom { get; private init; }
 
     /// <summary>Gets when the hold is next due for review.</summary>
-    public DateTimeOffset ReviewDueAt
-    {
-        get; private init;
-    }
+    public DateTimeOffset ReviewDueAt { get; private init; }
 
     /// <summary>Gets when the hold stops restraining disposition by itself, or <see langword="null" /> when it needs an explicit release.</summary>
-    public DateTimeOffset? ExpiresAt
-    {
-        get; private init;
-    }
+    public DateTimeOffset? ExpiresAt { get; private init; }
 
     /// <summary>Gets the opaque actor that released the hold, or <see langword="null" /> while it has not been released.</summary>
-    public string? ReleasedBy
-    {
-        get; private set;
-    }
+    public string? ReleasedBy { get; private set; }
 
     /// <summary>Gets when the hold was released, or <see langword="null" /> while it has not been released.</summary>
-    public DateTimeOffset? ReleasedAt
-    {
-        get; private set;
-    }
+    public DateTimeOffset? ReleasedAt { get; private set; }
 
     /// <summary>Gets the opaque reason code recorded at release, or <see langword="null" /> while the hold has not been released.</summary>
-    public string? ReleaseReasonCode
-    {
-        get; private set;
-    }
+    public string? ReleaseReasonCode { get; private set; }
 
     /// <summary>Gets whether the hold has been explicitly released.</summary>
     public bool IsReleased => ReleasedAt is not null;

@@ -62,69 +62,39 @@ internal sealed class IntegrationEventTransportMessage : EventEnvelope, IIntegra
     }
 
     /// <summary>Identifier of the integration event this message records.</summary>
-    public Guid Id
-    {
-        get; private set;
-    }
+    public Guid Id { get; private set; }
 
     /// <summary>Name of the consumer the message is recorded for, truncated to the maximum length.</summary>
     public string ConsumerName { get; private set; } = string.Empty;
 
     /// <summary>When the message was received.</summary>
-    public DateTimeOffset ReceivedAt
-    {
-        get; private set;
-    }
+    public DateTimeOffset ReceivedAt { get; private set; }
 
     /// <summary>When the consumer finished processing the message, or null while it is unprocessed.</summary>
-    public DateTimeOffset? ProcessedAt
-    {
-        get; private set;
-    }
+    public DateTimeOffset? ProcessedAt { get; private set; }
 
     /// <summary>Number of times consuming the message has been attempted.</summary>
-    public int ConsumeAttempts
-    {
-        get; private set;
-    }
+    public int ConsumeAttempts { get; private set; }
 
     /// <summary>When the latest consume attempt happened, or null before the first attempt.</summary>
-    public DateTimeOffset? LastConsumeAttemptAt
-    {
-        get; private set;
-    }
+    public DateTimeOffset? LastConsumeAttemptAt { get; private set; }
 
     /// <summary>Earliest time the next consume attempt may run, or null when none is scheduled.</summary>
-    public DateTimeOffset? NextConsumeAttemptAt
-    {
-        get; private set;
-    }
+    public DateTimeOffset? NextConsumeAttemptAt { get; private set; }
 
     /// <summary>Full type name of the exception from the latest failed consume attempt, or null when none failed. Exception messages are not stored because they can embed payload or personal data.</summary>
-    public string? LastConsumeError
-    {
-        get; private set;
-    }
+    public string? LastConsumeError { get; private set; }
 
     /// <summary>
     /// Gets when the message exhausted its consume attempts. Ordinary claims never select a poisoned message.
     /// </summary>
-    public DateTimeOffset? PoisonedAt
-    {
-        get; private set;
-    }
+    public DateTimeOffset? PoisonedAt { get; private set; }
 
     /// <summary>Identifier of the consumer instance that currently holds the claim, or null when unclaimed.</summary>
-    public string? ClaimedBy
-    {
-        get; private set;
-    }
+    public string? ClaimedBy { get; private set; }
 
     /// <summary>When the current claim expires and another consumer may claim the message, or null when unclaimed.</summary>
-    public DateTimeOffset? ClaimedUntil
-    {
-        get; private set;
-    }
+    public DateTimeOffset? ClaimedUntil { get; private set; }
 
     /// <summary>
     /// Marks the message as consumed and clears retry and claim state.

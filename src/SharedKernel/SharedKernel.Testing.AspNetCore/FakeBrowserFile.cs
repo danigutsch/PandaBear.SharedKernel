@@ -27,47 +27,25 @@ public sealed class FakeBrowserFile : IBrowserFile
     }
 
     /// <inheritdoc />
-    public string Name
-    {
-        get;
-    }
+    public string Name { get; }
 
     /// <inheritdoc />
-    public DateTimeOffset LastModified
-    {
-        get;
-        init;
-    }
+    public DateTimeOffset LastModified { get; init; }
 
     /// <summary>Gets the size reported by <see cref="Size" /> when it should differ from the content length; the content length when <see langword="null" />.</summary>
-    public long? DeclaredSize
-    {
-        get;
-        init;
-    }
+    public long? DeclaredSize { get; init; }
 
     /// <summary>Gets the exception thrown by <see cref="OpenReadStream" /> after the limit is recorded; none when <see langword="null" />.</summary>
-    public Exception? OpenFailure
-    {
-        get;
-        init;
-    }
+    public Exception? OpenFailure { get; init; }
 
     /// <summary>Gets the size limit passed to the latest <see cref="OpenReadStream" /> call, or <see langword="null" /> if never opened.</summary>
-    public long? MaximumAllowedSize
-    {
-        get;
-        private set;
-    }
+    public long? MaximumAllowedSize { get; private set; }
 
     /// <inheritdoc />
     public long Size => DeclaredSize ?? _content.LongLength;
 
     /// <inheritdoc />
-    public string ContentType
-    {
-        get;
-    }
+    public string ContentType { get; }
 
     /// <inheritdoc />
     public Stream OpenReadStream(long maxAllowedSize = DefaultMaxAllowedSize, CancellationToken cancellationToken = default)

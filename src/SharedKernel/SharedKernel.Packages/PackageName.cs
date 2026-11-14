@@ -15,10 +15,7 @@ public sealed class PackageName : ValueObject
     private PackageName(string value) => Value = value;
 
     /// <summary>Gets the name.</summary>
-    public string Value
-    {
-        get;
-    }
+    public string Value { get; }
 
     /// <summary>Creates a name from <paramref name="value"/>, which is not trimmed or changed.</summary>
     /// <param name="value">The candidate name.</param>

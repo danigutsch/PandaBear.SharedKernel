@@ -29,8 +29,5 @@ public sealed class ResultErrorCatalogProviderAttribute : Attribute
     [DynamicallyAccessedMembers(
         DynamicallyAccessedMemberTypes.PublicParameterlessConstructor |
         DynamicallyAccessedMemberTypes.PublicProperties)]
-    public Type ProviderType
-    {
-        get;
-    }
+    public Type ProviderType { get; }
 }

@@ -13,62 +13,38 @@ public sealed partial class PageHead
     /// <summary>Gets or sets the page title, also used for <c>og:title</c>.</summary>
     [Parameter]
     [EditorRequired]
-    public string Title
-    {
-        get; set;
-    } = string.Empty;
+    public string Title { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the meta description, also used for <c>og:description</c>.</summary>
     [Parameter]
-    public string? Description
-    {
-        get; set;
-    }
+    public string? Description { get; set; }
 
     /// <summary>Gets or sets the canonical address, also used for <c>og:url</c>.</summary>
     [Parameter]
-    public Uri? CanonicalUrl
-    {
-        get; set;
-    }
+    public Uri? CanonicalUrl { get; set; }
 
     /// <summary>Gets or sets the site name for <c>og:site_name</c>.</summary>
     [Parameter]
-    public string? SiteName
-    {
-        get; set;
-    }
+    public string? SiteName { get; set; }
 
     /// <summary>
     /// Gets or sets the culture of the page, written to <c>og:locale</c> as language and region joined by an underscore: <c>pt-BR</c>
     /// gives <c>pt_BR</c>, and a script subtag is dropped, so <c>zh-Hant-TW</c> gives <c>zh_TW</c>.
     /// </summary>
     [Parameter]
-    public ContentCulture? Locale
-    {
-        get; set;
-    }
+    public ContentCulture? Locale { get; set; }
 
     /// <summary>Gets or sets the sharing image for <c>og:image</c>.</summary>
     [Parameter]
-    public Uri? ImageUrl
-    {
-        get; set;
-    }
+    public Uri? ImageUrl { get; set; }
 
     /// <summary>Gets or sets the language versions of the page, usually including the current one.</summary>
     [Parameter]
-    public IReadOnlyList<AlternateLink> Alternates
-    {
-        get; set;
-    } = [];
+    public IReadOnlyList<AlternateLink> Alternates { get; set; } = [];
 
     /// <summary>Gets or sets the address for <c>hreflang="x-default"</c>, the version for languages not listed.</summary>
     [Parameter]
-    public Uri? DefaultAlternateUrl
-    {
-        get; set;
-    }
+    public Uri? DefaultAlternateUrl { get; set; }
 
     /// <inheritdoc />
     protected override void OnParametersSet()

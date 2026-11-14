@@ -15,17 +15,11 @@ public sealed class PreviewDocument : ComponentBase
 {
     /// <summary>Gets or sets the request's nonce.</summary>
     [Inject]
-    public ICspNonce CspNonce
-    {
-        get; set;
-    } = default!;
+    public ICspNonce CspNonce { get; set; } = default!;
 
     /// <summary>Gets or sets the host options.</summary>
     [Inject]
-    public PreviewHostOptions Options
-    {
-        get; set;
-    } = default!;
+    public PreviewHostOptions Options { get; set; } = default!;
 
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)

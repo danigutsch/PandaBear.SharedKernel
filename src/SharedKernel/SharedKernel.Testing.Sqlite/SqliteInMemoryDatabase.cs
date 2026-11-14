@@ -36,10 +36,7 @@ public sealed class SqliteInMemoryDatabase : IDisposable
     }
 
     /// <summary>Gets the connection string of the database.</summary>
-    public string ConnectionString
-    {
-        get;
-    }
+    public string ConnectionString { get; }
 
     /// <summary>Closes the connection that keeps the database alive and clears the pooled connections of <see cref="ConnectionString"/>.</summary>
     public void Dispose()

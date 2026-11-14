@@ -44,16 +44,10 @@ internal sealed record RoadmapItemSnapshot(
     bool CreateGitHubIssue)
 {
     /// <summary>Repository the linked issue lives in, or null when it is the project repository.</summary>
-    public string? GitHubRepository
-    {
-        get; init;
-    }
+    public string? GitHubRepository { get; init; }
 
     /// <summary>GraphQL node id of the linked GitHub issue, or null.</summary>
-    public string? GitHubNodeId
-    {
-        get; init;
-    }
+    public string? GitHubNodeId { get; init; }
 
     /// <summary>Earlier locations of the linked issue, kept after the issue was transferred.</summary>
     public IReadOnlyList<GitHubIssueLocation> PreviousGitHubLocations { get; init; } = [];
@@ -62,16 +56,10 @@ internal sealed record RoadmapItemSnapshot(
     public IReadOnlyList<string> PreviousGitHubNodeIds { get; init; } = [];
 
     /// <summary>Whether the item has no local issue to write to, so its GitHub reference must not be changed.</summary>
-    public bool GitHubReferenceReadOnly
-    {
-        get; init;
-    }
+    public bool GitHubReferenceReadOnly { get; init; }
 
     /// <summary>Whether the GitHub issue reference could not be resolved.</summary>
-    public bool GitHubReferenceUnresolved
-    {
-        get; init;
-    }
+    public bool GitHubReferenceUnresolved { get; init; }
 
     /// <summary>Returns whether the item links, or is set to create, an issue in <paramref name="repository"/> and the reference is resolved.</summary>
     public bool HasLocalGitHubIssue(string? repository) => !GitHubReferenceUnresolved

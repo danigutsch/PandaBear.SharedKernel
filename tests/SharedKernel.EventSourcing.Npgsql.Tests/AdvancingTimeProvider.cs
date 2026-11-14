@@ -8,10 +8,7 @@ internal sealed class AdvancingTimeProvider(DateTimeOffset instant) : TimeProvid
     public DateTimeOffset Instant { get; set; } = instant;
 
     /// <summary>Gets how many times the clock has been read.</summary>
-    public int Reads
-    {
-        get; private set;
-    }
+    public int Reads { get; private set; }
 
     public override DateTimeOffset GetUtcNow()
     {

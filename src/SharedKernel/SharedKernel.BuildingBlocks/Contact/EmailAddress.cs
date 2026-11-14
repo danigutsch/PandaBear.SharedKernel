@@ -14,10 +14,7 @@ public sealed class EmailAddress : ValueObject
     private EmailAddress(string value) => Value = value;
 
     /// <summary>Gets the lower-case address. Personal data: do not log it without a reason.</summary>
-    public string Value
-    {
-        get;
-    }
+    public string Value { get; }
 
     /// <summary>Creates an address from text. Surrounding whitespace is removed and the result is lower-cased.</summary>
     /// <param name="value">The candidate address.</param>

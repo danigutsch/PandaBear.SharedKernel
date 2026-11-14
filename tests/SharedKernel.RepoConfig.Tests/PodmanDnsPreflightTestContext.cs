@@ -32,28 +32,16 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
     }
 
     /// <summary>Gets the unique temporary directory that holds the fake proc and run-root trees.</summary>
-    public string RootPath
-    {
-        get;
-    }
+    public string RootPath { get; }
 
     /// <summary>Gets the fake proc directory that stands in for /proc.</summary>
-    public string ProcRoot
-    {
-        get;
-    }
+    public string ProcRoot { get; }
 
     /// <summary>Gets the fake Podman run-root directory that the stubbed <c>info</c> query reports.</summary>
-    public string RunRoot
-    {
-        get;
-    }
+    public string RunRoot { get; }
 
     /// <summary>Gets the networks/aardvark-dns configuration directory under the run root.</summary>
-    public string AardvarkDirectory
-    {
-        get;
-    }
+    public string AardvarkDirectory { get; }
 
     /// <summary>Gets or sets the output returned for the <c>network ls</c> query, one network name per line.</summary>
     public string Networks { get; set; } = string.Empty;

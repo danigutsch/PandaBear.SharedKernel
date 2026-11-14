@@ -19,26 +19,17 @@ public sealed class RecordingEventEnvelopePublisher : IEventEnvelopePublisher
     /// <summary>
     /// Exception thrown by publish calls, or null to succeed.
     /// </summary>
-    public Exception? Failure
-    {
-        get; init;
-    }
+    public Exception? Failure { get; init; }
 
     /// <summary>
     /// True to throw Failure only on the first call instead of every call.
     /// </summary>
-    public bool FailOnce
-    {
-        get; init;
-    }
+    public bool FailOnce { get; init; }
 
     /// <summary>
     /// Number of Publish calls made, including failed ones.
     /// </summary>
-    public int Attempts
-    {
-        get; private set;
-    }
+    public int Attempts { get; private set; }
 
     /// <summary>
     /// Counts the attempt, throws Failure when configured to, and otherwise stores the envelope.

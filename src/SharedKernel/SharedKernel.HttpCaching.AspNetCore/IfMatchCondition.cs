@@ -20,16 +20,10 @@ public sealed class IfMatchCondition
     }
 
     /// <summary>Gets a value indicating whether the condition is <c>*</c>: it matches any current representation.</summary>
-    public bool MatchesAny
-    {
-        get;
-    }
+    public bool MatchesAny { get; }
 
     /// <summary>Gets the listed entity tags; empty when <see cref="MatchesAny"/> is <see langword="true"/>.</summary>
-    public IReadOnlyList<EntityTagHeaderValue> EntityTags
-    {
-        get;
-    }
+    public IReadOnlyList<EntityTagHeaderValue> EntityTags { get; }
 
     /// <summary>
     /// Parses the field values of an <c>If-Match</c> header. The whole value is refused when any element is malformed, when it is empty,

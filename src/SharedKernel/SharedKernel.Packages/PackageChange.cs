@@ -19,22 +19,13 @@ public sealed class PackageChange : ValueObject
     }
 
     /// <summary>Gets how the installed state differs.</summary>
-    public PackageChangeKind Kind
-    {
-        get;
-    }
+    public PackageChangeKind Kind { get; }
 
     /// <summary>Gets the requirement that is not met.</summary>
-    public PackageRequirement Requirement
-    {
-        get;
-    }
+    public PackageRequirement Requirement { get; }
 
     /// <summary>Gets the installed version for <see cref="PackageChangeKind.ChangeVersion"/>; otherwise <see langword="null"/>.</summary>
-    public PackageVersion? InstalledVersion
-    {
-        get;
-    }
+    public PackageVersion? InstalledVersion { get; }
 
     /// <inheritdoc />
     public override string ToString() => InstalledVersion is null ? $"{Kind} {Requirement}" : $"{Kind} {Requirement} (installed {InstalledVersion})";

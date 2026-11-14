@@ -28,10 +28,7 @@ internal sealed class SafeArchive : IDisposable
     }
 
     /// <summary>File entries in archive order. Directory entries are validated but not listed.</summary>
-    public IReadOnlyList<ArchiveEntryInfo> Entries
-    {
-        get;
-    }
+    public IReadOnlyList<ArchiveEntryInfo> Entries { get; }
 
     /// <summary>Opens and validates the archive at <paramref name="path"/> with the default limits.</summary>
     /// <param name="path">Zip file.</param>
@@ -345,14 +342,8 @@ internal sealed class SafeArchive : IDisposable
     {
         public ArchiveLimits Limits { get; } = limits;
 
-        public int Entries
-        {
-            get; set;
-        }
+        public int Entries { get; set; }
 
-        public long ExpandedBytes
-        {
-            get; set;
-        }
+        public long ExpandedBytes { get; set; }
     }
 }

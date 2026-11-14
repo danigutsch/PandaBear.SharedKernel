@@ -12,16 +12,10 @@ public sealed class DateOnlyRange : ValueObject
     }
 
     /// <summary>Gets the first day.</summary>
-    public DateOnly StartDate
-    {
-        get;
-    }
+    public DateOnly StartDate { get; }
 
     /// <summary>Gets the last day.</summary>
-    public DateOnly EndDate
-    {
-        get;
-    }
+    public DateOnly EndDate { get; }
 
     /// <summary>Gets the number of days, counting both the first and the last day.</summary>
     public int Days => EndDate.DayNumber - StartDate.DayNumber + 1;

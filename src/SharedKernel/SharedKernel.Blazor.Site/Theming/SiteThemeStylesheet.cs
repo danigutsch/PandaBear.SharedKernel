@@ -18,17 +18,11 @@ public static class SiteThemeStylesheet
     private static readonly string[] Properties = ["font-family", "font-size", "font-weight", "line-height", "letter-spacing", "text-transform", "font-style"];
 
     /// <summary>Gets the colour custom properties, in render order, such as <c>--site-color-surface-alt</c>.</summary>
-    public static IReadOnlyList<string> ColorVariables
-    {
-        get;
-    } =
+    public static IReadOnlyList<string> ColorVariables { get; } =
         [.. Enum.GetValues<ThemeColorRole>().Select(role => "--site-color-" + ThemeNames.Css(role))];
 
     /// <summary>Gets the per-role custom properties, in render order, such as <c>--site-h1-font-size</c>.</summary>
-    public static IReadOnlyList<string> RoleVariables
-    {
-        get;
-    } =
+    public static IReadOnlyList<string> RoleVariables { get; } =
         [.. from role in Enum.GetValues<TypographyRole>() from property in Properties select Variable(role, property)];
 
     /// <summary>Renders the stylesheet of a theme for the whole page (<c>:root</c>).</summary>

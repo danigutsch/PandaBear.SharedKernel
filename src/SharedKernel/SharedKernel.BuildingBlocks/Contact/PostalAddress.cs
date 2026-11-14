@@ -24,46 +24,25 @@ public sealed class PostalAddress : ValueObject
     }
 
     /// <summary>Gets the street and number. Personal data.</summary>
-    public string Street
-    {
-        get;
-    }
+    public string Street { get; }
 
     /// <summary>Gets the optional complement such as an apartment.</summary>
-    public string? Complement
-    {
-        get;
-    }
+    public string? Complement { get; }
 
     /// <summary>Gets the optional neighborhood or district.</summary>
-    public string? Neighborhood
-    {
-        get;
-    }
+    public string? Neighborhood { get; }
 
     /// <summary>Gets the postal code.</summary>
-    public string PostalCode
-    {
-        get;
-    }
+    public string PostalCode { get; }
 
     /// <summary>Gets the city.</summary>
-    public string City
-    {
-        get;
-    }
+    public string City { get; }
 
     /// <summary>Gets the optional state, province or region.</summary>
-    public string? State
-    {
-        get;
-    }
+    public string? State { get; }
 
     /// <summary>Gets the country.</summary>
-    public CountryCode Country
-    {
-        get;
-    }
+    public CountryCode Country { get; }
 
     /// <summary>Creates an address. Street, postal code, city and country are required; the rest are optional.</summary>
     /// <param name="street">The street and number.</param>

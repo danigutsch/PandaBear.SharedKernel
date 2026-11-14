@@ -27,22 +27,13 @@ public sealed class PostgreSqlTestDatabaseLease : IAsyncDisposable
     }
 
     /// <summary>Gets the fixture-issued database name. </summary>
-    public string DatabaseName
-    {
-        get;
-    }
+    public string DatabaseName { get; }
 
     /// <summary>Gets the isolated database connection string. </summary>
-    public string ConnectionString
-    {
-        get;
-    }
+    public string ConnectionString { get; }
 
     /// <summary>Gets the lease-owned data source. </summary>
-    public NpgsqlDataSource DataSource
-    {
-        get;
-    }
+    public NpgsqlDataSource DataSource { get; }
 
     /// <summary>Creates the named database on the server and opens a data source for it, dropping the database again if any later step fails.</summary>
     [SuppressMessage(

@@ -11,10 +11,7 @@ internal sealed class Order : IAggregateRoot
     /// <summary>
     /// Identifier of the order.
     /// </summary>
-    public int Id
-    {
-        get; set;
-    }
+    public int Id { get; set; }
 
     /// <summary>
     /// Records an OrderPlacedDomainEvent carrying the order Id.

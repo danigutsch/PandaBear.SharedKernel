@@ -21,16 +21,10 @@ internal sealed class TemporaryPostgreSqlRole : IAsyncDisposable
     }
 
     /// <summary>Gets the generated role name.</summary>
-    public string Name
-    {
-        get;
-    }
+    public string Name { get; }
 
     /// <summary>Gets the generated password of the role.</summary>
-    public string Password
-    {
-        get;
-    }
+    public string Password { get; }
 
     /// <summary>Creates a login role with a generated name and password through the administrative data source.</summary>
     [SuppressMessage(

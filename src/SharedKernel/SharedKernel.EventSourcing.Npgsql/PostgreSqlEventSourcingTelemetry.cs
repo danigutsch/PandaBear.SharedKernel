@@ -140,55 +140,37 @@ public static class PostgreSqlEventSourcingTelemetry
     internal static Meter Meter { get; } = new(Name);
 
     /// <summary>Records how long an event stream append took, in milliseconds.</summary>
-    internal static Histogram<double> AppendDuration
-    {
-        get;
-    } = Meter.CreateHistogram<double>(
+    internal static Histogram<double> AppendDuration { get; } = Meter.CreateHistogram<double>(
         MetricAppendDuration,
         unit: "ms",
         description: "Duration of PostgreSQL event stream append operations.");
 
     /// <summary>Records how long an event stream load took, in milliseconds.</summary>
-    internal static Histogram<double> LoadDuration
-    {
-        get;
-    } = Meter.CreateHistogram<double>(
+    internal static Histogram<double> LoadDuration { get; } = Meter.CreateHistogram<double>(
         MetricLoadDuration,
         unit: "ms",
         description: "Duration of PostgreSQL event stream load operations.");
 
     /// <summary>Records how long a projection checkpoint operation took, in milliseconds.</summary>
-    internal static Histogram<double> CheckpointDuration
-    {
-        get;
-    } = Meter.CreateHistogram<double>(
+    internal static Histogram<double> CheckpointDuration { get; } = Meter.CreateHistogram<double>(
         MetricCheckpointDuration,
         unit: "ms",
         description: "Duration of PostgreSQL projection checkpoint operations.");
 
     /// <summary>Counts events written to event streams.</summary>
-    internal static Counter<long> EventsAppended
-    {
-        get;
-    } = Meter.CreateCounter<long>(
+    internal static Counter<long> EventsAppended { get; } = Meter.CreateCounter<long>(
         MetricEventsAppended,
         unit: "{event}",
         description: "Number of events appended to PostgreSQL event streams.");
 
     /// <summary>Counts events read from event streams.</summary>
-    internal static Counter<long> EventsLoaded
-    {
-        get;
-    } = Meter.CreateCounter<long>(
+    internal static Counter<long> EventsLoaded { get; } = Meter.CreateCounter<long>(
         MetricEventsLoaded,
         unit: "{event}",
         description: "Number of events loaded from PostgreSQL event streams.");
 
     /// <summary>Counts appends rejected because the expected stream revision did not match.</summary>
-    internal static Counter<long> AppendConflicts
-    {
-        get;
-    } = Meter.CreateCounter<long>(
+    internal static Counter<long> AppendConflicts { get; } = Meter.CreateCounter<long>(
         MetricAppendConflicts,
         unit: "{conflict}",
         description: "Number of PostgreSQL event stream append conflicts.");

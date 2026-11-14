@@ -21,8 +21,5 @@ public sealed class ServerSideTicketStoreOptions
     /// Gets or sets an optional sliding expiration of the cache entry: an entry not read for this long is evicted. Defaults
     /// to none.
     /// </summary>
-    public TimeSpan? SlidingExpiration
-    {
-        get; set;
-    }
+    public TimeSpan? SlidingExpiration { get; set; }
 }

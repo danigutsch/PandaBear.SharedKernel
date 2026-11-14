@@ -39,10 +39,7 @@ public sealed class ErrorSummary : ComponentBase
 
     /// <summary>Gets or sets additional attributes applied to the section.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
-    public IReadOnlyDictionary<string, object>? AdditionalAttributes
-    {
-        get; set;
-    }
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;

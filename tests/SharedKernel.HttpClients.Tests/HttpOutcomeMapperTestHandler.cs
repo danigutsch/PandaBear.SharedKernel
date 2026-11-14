@@ -6,28 +6,16 @@ internal sealed class HttpOutcomeMapperTestHandler(
     Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> send) : HttpMessageHandler
 {
     /// <summary>Gets the cancellation token passed with the last request.</summary>
-    public CancellationToken ObservedCancellationToken
-    {
-        get; private set;
-    }
+    public CancellationToken ObservedCancellationToken { get; private set; }
 
     /// <summary>Gets the HTTP method of the last request.</summary>
-    public HttpMethod? ObservedMethod
-    {
-        get; private set;
-    }
+    public HttpMethod? ObservedMethod { get; private set; }
 
     /// <summary>Gets the request URI of the last request.</summary>
-    public Uri? ObservedRequestUri
-    {
-        get; private set;
-    }
+    public Uri? ObservedRequestUri { get; private set; }
 
     /// <summary>Gets the scheme of the <c>Authorization</c> header of the last request, or <see langword="null" /> when it had none.</summary>
-    public string? ObservedAuthorizationScheme
-    {
-        get; private set;
-    }
+    public string? ObservedAuthorizationScheme { get; private set; }
 
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {

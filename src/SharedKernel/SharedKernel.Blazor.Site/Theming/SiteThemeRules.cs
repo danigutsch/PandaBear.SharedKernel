@@ -27,10 +27,7 @@ internal static class SiteThemeRules
     private const double NonTextMinimum = 3.0;
 
     /// <summary>Gets the colour pairs the components draw, with their minimum and criterion.</summary>
-    public static IReadOnlyList<(ThemeColorRole Foreground, ThemeColorRole Background, double Minimum, string Criterion)> Pairs
-    {
-        get;
-    } =
+    public static IReadOnlyList<(ThemeColorRole Foreground, ThemeColorRole Background, double Minimum, string Criterion)> Pairs { get; } =
     [
         (ThemeColorRole.Text, ThemeColorRole.Surface, TextMinimum, "1.4.3"),
         (ThemeColorRole.Text, ThemeColorRole.SurfaceAlt, TextMinimum, "1.4.3"),

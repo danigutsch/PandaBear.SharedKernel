@@ -13,10 +13,7 @@ public sealed class Slug : ValueObject
     private Slug(string value) => Value = value;
 
     /// <summary>Gets the canonical slug.</summary>
-    public string Value
-    {
-        get;
-    }
+    public string Value { get; }
 
     /// <summary>
     /// Creates a slug from free text. Diacritics are stripped (<c>Patagônia</c> becomes <c>patagonia</c>), whitespace, hyphens and

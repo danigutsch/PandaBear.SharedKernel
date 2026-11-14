@@ -41,10 +41,7 @@ internal sealed class FakeDockerEngine : IDisposable
     public string DirectoryPath => _directory.Path;
 
     /// <summary>The file the script appends each call's arguments to.</summary>
-    public string LogPath
-    {
-        get;
-    }
+    public string LogPath { get; }
 
     /// <summary>Reads the logged calls, or an empty string when nothing was logged.</summary>
     public string ReadLog()

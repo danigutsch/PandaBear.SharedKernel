@@ -38,10 +38,7 @@ public sealed class CountryCode : ValueObject
     private CountryCode(string value) => Value = value;
 
     /// <summary>Gets the upper-case two-letter code.</summary>
-    public string Value
-    {
-        get;
-    }
+    public string Value { get; }
 
     /// <summary>Gets the English short name of the country, for example <c>Brazil</c>; it comes from a fixed table, so it does not depend on the host's globalization data or the current culture.</summary>
     public string EnglishName => CountryNames.ByCode.TryGetValue(Value, out var name) ? name : Value;

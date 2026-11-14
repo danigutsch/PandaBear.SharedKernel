@@ -90,10 +90,7 @@ internal sealed partial class ConsumerVerificationScope : IDisposable
     /// <summary>
     /// Gets the candidate manifest content, which tests may change before it is committed.
     /// </summary>
-    public JsonObject Candidate
-    {
-        get;
-    }
+    public JsonObject Candidate { get; }
 
     /// <summary>
     /// Gets the compatibility evidence parsed from the evidence file.

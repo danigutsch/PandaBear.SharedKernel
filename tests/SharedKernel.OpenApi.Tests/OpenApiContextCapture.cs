@@ -10,8 +10,5 @@ internal sealed class OpenApiContextCapture
     /// <summary>
     /// Gets or sets the most recent transformer context.
     /// </summary>
-    public OpenApiDocumentTransformerContext? Context
-    {
-        get; set;
-    }
+    public OpenApiDocumentTransformerContext? Context { get; set; }
 }

@@ -7,10 +7,7 @@ public sealed class Account
     public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>Gets or sets the tenant, the first part of the composite unique index.</summary>
-    public int TenantId
-    {
-        get; set;
-    }
+    public int TenantId { get; set; }
 
     /// <summary>Gets or sets the code, the second part of the composite unique index.</summary>
     public string Code { get; set; } = "code";
@@ -19,10 +16,7 @@ public sealed class Account
     public string Email { get; set; } = "a@example.com";
 
     /// <summary>Gets or sets the nickname, covered by an untagged unique index.</summary>
-    public string? Nickname
-    {
-        get; set;
-    }
+    public string? Nickname { get; set; }
 
     /// <summary>Gets or sets the required name.</summary>
     public string? Name { get; set; } = "name";
