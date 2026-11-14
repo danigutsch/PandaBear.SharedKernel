@@ -57,6 +57,21 @@ public sealed class CsvRfc4180ParsingTests
         }
     }
 
+    [Theory]
+    [InlineData("Name,Note\na,b\r")]
+    [InlineData("Name,Note\na,\"b\"\r")]
+    [InlineData("Name,Note\na,\"b\" \r")]
+    public void A_lone_carriage_return_at_the_end_ends_the_last_record_whether_or_not_the_field_is_quoted(string content)
+    {
+        foreach (var document in CsvParsing.ParseBoth(content))
+        {
+            // Assert
+            var row = document.Rows.ShouldHaveSingleItem();
+            row[0].ShouldBe("a");
+            row[1].ShouldBe("b");
+        }
+    }
+
     [Fact]
     public void Blank_lines_are_skipped_by_default_and_line_numbers_still_count_them()
     {

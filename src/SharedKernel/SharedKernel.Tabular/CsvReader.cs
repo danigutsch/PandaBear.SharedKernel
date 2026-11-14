@@ -170,9 +170,9 @@ internal static class CsvReader<T, TSymbols>
             index++;
         }
 
-        if (index >= content.Length)
+        if (index >= content.Length || (index + 1 == content.Length && content[index].Equals(TSymbols.CarriageReturn)))
         {
-            position = index;
+            position = content.Length;
             return RecordOutcome.Record;
         }
 
