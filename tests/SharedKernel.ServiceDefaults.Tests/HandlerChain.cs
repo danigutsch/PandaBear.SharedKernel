@@ -16,4 +16,10 @@ internal static class HandlerChain
 
         return chain;
     }
+
+    /// <summary>Tells whether a handler is the service discovery handler, whose type is internal to its package.</summary>
+    /// <param name="handler">The handler.</param>
+    /// <returns><see langword="true"/> for the service discovery handler.</returns>
+    internal static bool IsServiceDiscovery(HttpMessageHandler handler) =>
+        handler.GetType().FullName == "Microsoft.Extensions.ServiceDiscovery.Http.ResolvingHttpDelegatingHandler";
 }

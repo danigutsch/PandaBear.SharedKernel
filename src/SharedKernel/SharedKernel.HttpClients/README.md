@@ -8,11 +8,12 @@ Reusable HTTP client helpers, validation responses, defaults, and telemetry.
 
 ## Usage
 
-Call `AddHttpClientDefaults()` when composing reusable HTTP defaults. Use `HttpOutcomeMapper.Send` to map bounded HTTP responses into `HttpOutcome` or `HttpOutcome<T>`; `ContractHttpValidation` supports validation-error exceptions when that calling convention is required. `ProgressStreamContent` reports transferred bytes, while `UploadOperationState` tracks operation identity and terminal state. Keep credentials, endpoint configuration, and application retry policy in the consumer; propagate cancellation and retain response-size limits.
+HttpClient defaults (standard resilience without retries of unsafe methods, then service discovery, and telemetry) come from
+`AddSharedKernelServiceDefaults` in `PandaBear.SharedKernel.ServiceDefaults`. Use `HttpOutcomeMapper.Send` to map bounded HTTP responses into `HttpOutcome` or `HttpOutcome<T>`; `ContractHttpValidation` supports validation-error exceptions when that calling convention is required. `ProgressStreamContent` reports transferred bytes, while `UploadOperationState` tracks operation identity and terminal state. Keep credentials, endpoint configuration, and application retry policy in the consumer; propagate cancellation and retain response-size limits.
 
 ## Standard resilience customization
 
-Use `AddHttpClientDefaults(options => ...)` to customize the existing shared standard resilience
+Set `ServiceDefaultsOptions.ConfigureResilience` to customize the shared standard resilience
 options without adding another handler. The callback configures defaults across clients; it does
 not receive a per-client builder. Keep request-specific classification inside resilience predicates,
 using the current request from `Polly.HttpResilienceContextExtensions.GetRequestMessage` rather
@@ -25,7 +26,6 @@ answers. Every other outcome goes to the predicates already configured. Pass a r
 such as `request => request.RequestUri?.AbsolutePath.StartsWith("/api/public/") == true`, to limit
 the rule to the routes of one quota-limited API; that classification stays application-owned. Automatic retries for unsafe HTTP methods
 remain disabled after customization, including when a callback supplies a broader retry predicate.
-Service discovery, telemetry, cancellation, and the original zero-argument overload remain unchanged.
 
 ## Install and example
 

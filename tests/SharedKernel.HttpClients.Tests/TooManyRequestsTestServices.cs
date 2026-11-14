@@ -3,7 +3,7 @@ using Microsoft.Extensions.Http.Resilience;
 
 namespace PandaBear.HttpClients.Tests;
 
-/// <summary>Sends requests that a server answers with 429 through the default HTTP client registration, with a resilience customization.</summary>
+/// <summary>Sends requests that a server answers with 429 through the standard resilience handler, with a customization.</summary>
 internal static class TooManyRequestsTestServices
 {
     /// <summary>Accepts the requests of the quota-limited routes under <c>/visitor-quota/</c>.</summary>
@@ -33,8 +33,7 @@ internal static class TooManyRequestsTestServices
     {
         using var handler = new TransientAfterCommitHandler(failureStatus, failures);
         var services = new ServiceCollection();
-        services.AddServiceDiscovery();
-        services.AddHttpClientDefaults(configure);
+        services.ConfigureHttpClientDefaults(http => http.AddStandardResilienceHandler(configure));
         services.AddHttpClient("quota", client => client.BaseAddress = new Uri("https://quota.example.test"))
             .ConfigurePrimaryHttpMessageHandler(() => handler);
         await using var provider = services.BuildServiceProvider();

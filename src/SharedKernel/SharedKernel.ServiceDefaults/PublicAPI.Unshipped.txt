@@ -7,6 +7,8 @@ PandaBear.ServiceDefaults.ServiceDefaultsExtensions
 PandaBear.ServiceDefaults.ServiceDefaultsOptions
 PandaBear.ServiceDefaults.ServiceDefaultsOptions.AddResilience.get -> bool
 PandaBear.ServiceDefaults.ServiceDefaultsOptions.AddResilience.set -> void
+PandaBear.ServiceDefaults.ServiceDefaultsOptions.ConfigureResilience.get -> System.Action<Microsoft.Extensions.Http.Resilience.HttpStandardResilienceOptions!>?
+PandaBear.ServiceDefaults.ServiceDefaultsOptions.ConfigureResilience.set -> void
 PandaBear.ServiceDefaults.ServiceDefaultsOptions.AlivePath.get -> string!
 PandaBear.ServiceDefaults.ServiceDefaultsOptions.AlivePath.set -> void
 PandaBear.ServiceDefaults.ServiceDefaultsOptions.Exposure.get -> PandaBear.ServiceDefaults.HealthEndpointExposure

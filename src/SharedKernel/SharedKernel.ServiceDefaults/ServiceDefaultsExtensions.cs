@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Http.Resilience;
 using OpenTelemetry;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Metrics;
@@ -26,11 +27,13 @@ public static class ServiceDefaultsExtensions
     private const string SelfCheckName = "self";
 
     /// <summary>
-    /// Adds the service defaults: service discovery for every <see cref="HttpClient"/>, the standard resilience handler unless
-    /// <see cref="ServiceDefaultsOptions.AddResilience"/> is off, OpenTelemetry logs, metrics and traces through
-    /// <see cref="ObservabilityBuilderExtensions.ConfigureOpenTelemetry{TBuilder}"/> (privacy processors included) and every SharedKernel
-    /// meter and activity source, an OTLP exporter only when <c>OTEL_EXPORTER_OTLP_ENDPOINT</c> is set, and a liveness check named
-    /// <c>self</c> tagged <see cref="LiveTag"/>. Requests to the health and liveness paths are not traced.
+    /// Adds the service defaults: for every <see cref="HttpClient"/> the standard resilience handler, changed by
+    /// <see cref="ServiceDefaultsOptions.ConfigureResilience"/> and never retrying unsafe HTTP methods, unless
+    /// <see cref="ServiceDefaultsOptions.AddResilience"/> is off, then one service discovery handler inside it; OpenTelemetry logs, metrics
+    /// and traces through <see cref="ObservabilityBuilderExtensions.ConfigureOpenTelemetry{TBuilder}"/> (privacy processors included) and
+    /// every SharedKernel meter and activity source (the <c>SharedKernel.HttpClients</c> outcome source among them), an OTLP exporter only
+    /// when <c>OTEL_EXPORTER_OTLP_ENDPOINT</c> is set, and a liveness check named <c>self</c> tagged <see cref="LiveTag"/>. Requests to
+    /// the health and liveness paths are not traced.
     /// </summary>
     /// <typeparam name="TBuilder">The host builder type.</typeparam>
     /// <param name="builder">The host builder.</param>
@@ -40,7 +43,8 @@ public static class ServiceDefaultsExtensions
     /// <exception cref="ArgumentException">A health path does not start with <c>/</c>, or both paths are the same.</exception>
     /// <remarks>
     /// The privacy processors are registered before the OTLP exporter, so they run first. Exceptions are not recorded on request spans;
-    /// their messages can carry personal data.
+    /// their messages can carry personal data. These are the HttpClient defaults of the host: do not add a second resilience or service
+    /// discovery handler to every client, which would nest the pipelines.
     /// </remarks>
     public static TBuilder AddSharedKernelServiceDefaults<TBuilder>(this TBuilder builder, Action<ServiceDefaultsOptions>? configure = null)
         where TBuilder : IHostApplicationBuilder
@@ -59,9 +63,14 @@ public static class ServiceDefaultsExtensions
         builder.Services.AddServiceDiscovery();
         builder.Services.ConfigureHttpClientDefaults(http =>
         {
+            // Resilience before discovery: handlers added first run outermost, so every retry resolves the endpoint again.
             if (options.AddResilience)
             {
-                http.AddStandardResilienceHandler();
+                http.AddStandardResilienceHandler(resilience =>
+                {
+                    options.ConfigureResilience?.Invoke(resilience);
+                    resilience.Retry.DisableForUnsafeHttpMethods();
+                });
             }
 
             http.AddServiceDiscovery();

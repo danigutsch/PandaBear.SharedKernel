@@ -21,7 +21,7 @@ app.Run();
 | Concern | What |
 | --- | --- |
 | Service discovery | `AddServiceDiscovery()`, and service discovery on every `HttpClient` |
-| HTTP resilience | `AddStandardResilienceHandler()` on every `HttpClient`, unless `AddResilience = false` |
+| HTTP resilience | `AddStandardResilienceHandler()` on every `HttpClient`, outside the discovery handler so each retry resolves again; unsafe methods are never retried; off with `AddResilience = false` |
 | OpenTelemetry | `ConfigureOpenTelemetry()` (runtime metrics, service identity, log and span privacy processors), ASP.NET Core and `HttpClient` instrumentation, the application's own activity source, and every SharedKernel meter and source (`AddSharedKernelInstrumentation`) |
 | Privacy | The shared baseline, plus the attribute names in `SensitiveTelemetryAttributes`; exceptions are not recorded on request spans |
 | Export | The OTLP exporter, only when `OTEL_EXPORTER_OTLP_ENDPOINT` is set (Aspire sets it for every resource) |
@@ -54,6 +54,7 @@ start with `/`, or the same path for both endpoints, throw `ArgumentException`.
 | `AlivePath` | `/alive` | Liveness endpoint, checks tagged `live` |
 | `Exposure` | `Always` | `Always` or `DevelopmentOnly` |
 | `AddResilience` | `true` | Standard resilience handler on every `HttpClient` |
+| `ConfigureResilience` | `null` | Changes the shared standard resilience options; unsafe-method retries stay off |
 | `SensitiveTelemetryAttributes` | empty | Extra attribute names to remove from logs and spans, compared without case; they cannot permit a name the baseline removes |
 
 ## Package identity and availability

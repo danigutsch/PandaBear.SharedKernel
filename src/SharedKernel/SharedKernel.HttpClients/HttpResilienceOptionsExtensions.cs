@@ -10,8 +10,8 @@ public static class HttpResilienceOptionsExtensions
     /// <summary>
     /// Makes a 429 Too Many Requests answer final: it is not retried, which would spend more of a quota the server just reported exhausted,
     /// and not counted by the circuit breaker, which would otherwise cut off every request to that server after a burst of quota answers.
-    /// Every other outcome keeps the predicates already configured. Call it inside the <c>configureResilience</c> callback of
-    /// <see cref="HttpServiceCollectionExtensions.AddHttpClientDefaults(Microsoft.Extensions.DependencyInjection.IServiceCollection, Action{HttpStandardResilienceOptions}?)"/>.
+    /// Every other outcome keeps the predicates already configured. Call it where the standard resilience options are configured, such as
+    /// the <c>ConfigureResilience</c> callback of the SharedKernel service defaults.
     /// </summary>
     /// <param name="options">The standard resilience options.</param>
     /// <param name="appliesTo">

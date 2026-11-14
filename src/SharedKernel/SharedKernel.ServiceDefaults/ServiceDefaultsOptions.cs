@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Http.Resilience;
+
 namespace PandaBear.ServiceDefaults;
 
 /// <summary>Settings of <see cref="ServiceDefaultsExtensions.AddSharedKernelServiceDefaults{TBuilder}"/>.</summary>
@@ -20,6 +22,16 @@ public sealed class ServiceDefaultsOptions
     /// timeouts). The default is <see langword="true"/>.
     /// </summary>
     public bool AddResilience { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a change to the standard resilience options shared by every <see cref="HttpClient"/>, such as fewer retries or a
+    /// predicate that leaves some answers alone; <see langword="null"/> keeps the standard options. Retries of unsafe HTTP methods stay
+    /// off after it runs, even when it replaces the retry predicate. It is not used when <see cref="AddResilience"/> is off.
+    /// </summary>
+    public Action<HttpStandardResilienceOptions>? ConfigureResilience
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets the host-owned telemetry attribute names, compared without case, that the privacy processors remove on top of the shared
