@@ -10,6 +10,8 @@ public sealed class PlaywrightInstallationTests : IDisposable
 
     private readonly RepositoryTestScope scope = new();
 
+    private readonly StringWriter log = new();
+
     [Theory]
     [InlineData("bin\\Debug\\net10.0\\")]
     [InlineData("bin/Debug/net10.0/")]
@@ -167,6 +169,7 @@ public sealed class PlaywrightInstallationTests : IDisposable
                 await Task.Delay(Timeout.InfiniteTimeSpan, ct);
                 return string.Empty;
             },
+            TextWriter.Null,
             TestContext.Current.CancellationToken,
             TimeSpan.FromMilliseconds(100));
 
@@ -174,6 +177,97 @@ public sealed class PlaywrightInstallationTests : IDisposable
         (await action.ShouldThrow<TimeoutException>()).Message.ShouldContain("did not finish within", StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task An_installer_that_exits_non_zero_is_retried_until_it_succeeds()
+    {
+        // Arrange
+        scope.WriteFile("tests/Core.Tests/bin/Debug/net10.0/playwright.ps1", "# installer");
+        var installs = 0;
+        var processes = new ProcessLog((fileName, _, _) => fileName == "dotnet"
+            ? Task.FromResult("bin/Debug/net10.0/")
+            : ++installs < 3
+                ? Task.FromException<string>(new ProcessExitException(100, "Command failed (100): pwsh playwright.ps1 install"))
+                : Task.FromResult("installed"));
+        var time = new ImmediateTimeProvider(TimeSpan.FromMinutes(1));
+
+        // Act
+        var output = await PlaywrightInstallation.Run(
+            scope.Root, Project, ["chromium"], true, null, processes.Run, log, TestContext.Current.CancellationToken, timeProvider: time);
+
+        // Assert
+        output.ShouldContain("installed", StringComparison.Ordinal);
+        processes.Commands.Count(static command => command.StartsWith("pwsh ", StringComparison.Ordinal)).ShouldBe(3);
+        time.Timers.ShouldBe([TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(15)]);
+        log.ToString().ShouldContain("playwright: install attempt 1 of 3 failed with exit code 100; retrying in 5s.", StringComparison.Ordinal);
+        log.ToString().ShouldContain("playwright: install attempt 2 of 3 failed with exit code 100; retrying in 15s.", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task An_installer_that_keeps_failing_stops_after_three_attempts_with_its_error()
+    {
+        // Arrange
+        scope.WriteFile("tests/Core.Tests/bin/Debug/net10.0/playwright.ps1", "# installer");
+        var processes = new ProcessLog(static (fileName, _, _) => fileName == "dotnet"
+            ? Task.FromResult("bin/Debug/net10.0/")
+            : Task.FromException<string>(new ProcessExitException(100, "Command failed (100): pwsh playwright.ps1 install")));
+        var time = new ImmediateTimeProvider(TimeSpan.FromMinutes(1));
+        var action = async () => await PlaywrightInstallation.Run(
+            scope.Root, Project, ["chromium"], true, null, processes.Run, log, TestContext.Current.CancellationToken, timeProvider: time);
+
+        // Act
+        var exception = await action.ShouldThrow<ProcessExitException>();
+
+        // Assert
+        exception.Message.ShouldBe("Command failed (100): pwsh playwright.ps1 install");
+        processes.Commands.Count(static command => command.StartsWith("pwsh ", StringComparison.Ordinal)).ShouldBe(3);
+        time.Timers.ShouldBe([TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(15)]);
+        log.ToString().ShouldNotContain("attempt 3", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task An_installer_that_fails_to_start_is_not_retried()
+    {
+        // Arrange
+        scope.WriteFile("tests/Core.Tests/bin/Debug/net10.0/playwright.ps1", "# installer");
+        var processes = new ProcessLog(static (fileName, _, _) => fileName == "dotnet"
+            ? Task.FromResult("bin/Debug/net10.0/")
+            : Task.FromException<string>(new InvalidOperationException("Failed to start pwsh.")));
+        var time = new ImmediateTimeProvider(TimeSpan.FromMinutes(1));
+        var action = async () => await PlaywrightInstallation.Run(
+            scope.Root, Project, ["chromium"], true, null, processes.Run, log, TestContext.Current.CancellationToken, timeProvider: time);
+
+        // Act
+        var exception = await action.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldBe("Failed to start pwsh.");
+        processes.Commands.Count(static command => command.StartsWith("pwsh ", StringComparison.Ordinal)).ShouldBe(1);
+        time.Timers.ShouldBeEmpty();
+        log.ToString().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task A_project_without_a_built_installer_is_not_retried()
+    {
+        // Arrange
+        var processes = new ProcessLog(static (fileName, _, _) => Task.FromResult(fileName == "dotnet" ? "bin/Debug/net10.0/" : string.Empty));
+        var time = new ImmediateTimeProvider(TimeSpan.FromMinutes(1));
+        var action = async () => await PlaywrightInstallation.Run(
+            scope.Root, Project, ["chromium"], true, null, processes.Run, log, TestContext.Current.CancellationToken, timeProvider: time);
+
+        // Act
+        await action.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        processes.Commands.ShouldHaveSingleItem().ShouldStartWith("dotnet msbuild ", StringComparison.Ordinal);
+        time.Timers.ShouldBeEmpty();
+        log.ToString().ShouldBeEmpty();
+    }
+
     /// <inheritdoc />
-    public void Dispose() => scope.Dispose();
+    public void Dispose()
+    {
+        log.Dispose();
+        scope.Dispose();
+    }
 }

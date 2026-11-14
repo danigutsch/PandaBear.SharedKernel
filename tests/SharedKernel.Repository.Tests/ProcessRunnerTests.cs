@@ -43,9 +43,10 @@ public sealed class ProcessRunnerTests
         var action = () => ProcessRunner.Run(fileName, arguments, directory.Path, TestContext.Current.CancellationToken);
 
         // Act
-        var exception = await action.ShouldThrow<InvalidOperationException>();
+        var exception = await action.ShouldThrow<ProcessExitException>();
 
         // Assert
+        exception.ExitCode.ShouldBe(3);
         exception.Message.ShouldContain("(3)", StringComparison.Ordinal);
         exception.Message.ShouldContain("failure-detail", StringComparison.Ordinal);
     }
@@ -61,6 +62,7 @@ public sealed class ProcessRunnerTests
         var exception = await action.ShouldThrow<InvalidOperationException>();
 
         // Assert
+        exception.ShouldNotBeOfType<ProcessExitException>();
         exception.Message.ShouldContain("sharedkernel-missing-executable", StringComparison.Ordinal);
     }
 

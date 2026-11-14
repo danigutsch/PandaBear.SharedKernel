@@ -138,7 +138,7 @@ internal static class SliceRun
                     foreach (var install in playwright)
                     {
                         log.Append(await PlaywrightInstallation.Run(
-                            root, install.Project, install.Browsers, options.PlaywrightDependencies, options.Configuration, runInstaller ?? run, ct, onlyShell: install.OnlyShell).ConfigureAwait(false));
+                            root, install.Project, install.Browsers, options.PlaywrightDependencies, options.Configuration, runInstaller ?? run, error, ct, onlyShell: install.OnlyShell, timeProvider: time).ConfigureAwait(false));
                     }
 
                     return log.ToString();

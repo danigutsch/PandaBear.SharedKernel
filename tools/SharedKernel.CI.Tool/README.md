@@ -385,8 +385,11 @@ Evaluates the project's `OutputPath` with `dotnet msbuild <project> -getProperty
 `-p:Configuration=<name>` when `--configuration` is given, normalizes its `\` and `/` separators, resolves it from the
 project directory, and runs `pwsh <output>/playwright.ps1 install`, with `--with-deps` for `--with-dependencies`, `--only-shell` for `--only-shell`, and
 the browsers. Without `--browser`, Playwright installs its default browsers. The tool writes each line of the installer to standard error with its UTC time as it arrives, then reports the
-duration of the evaluation and the installer. Build the project first; the command fails
-when the output has no `playwright.ps1`.
+duration of the evaluation and the installer. An installer that exits with a non-zero code, such as when the package
+mirrors of `--with-deps` do not resolve, runs again after 5 seconds and once more after 15 seconds; the tool writes a line
+with the attempt and its exit code before each retry, and the third failure fails the command with the installer's error.
+A failure to start PowerShell, a missing `playwright.ps1`, and the timeout are not retried. Build the project first; the
+command fails when the output has no `playwright.ps1`.
 
 ### coverage
 

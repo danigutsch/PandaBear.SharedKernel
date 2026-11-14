@@ -59,7 +59,8 @@ internal static class ProcessRunner
     /// standard output.
     /// </summary>
     /// <exception cref="TimeoutException">The process did not exit within <paramref name="timeout"/>; its process tree is terminated first.</exception>
-    /// <exception cref="InvalidOperationException">The process could not be started, or exited unsuccessfully.</exception>
+    /// <exception cref="InvalidOperationException">The process could not be started.</exception>
+    /// <exception cref="ProcessExitException">The process exited with a non-zero code.</exception>
     internal static async Task<string> Run(
         string fileName, string[] arguments, string workingDirectory, TimeSpan timeout, TimeProvider timeProvider, Action<ProcessStartInfo> configure, CancellationToken ct, bool echo = false)
     {
@@ -102,7 +103,8 @@ internal static class ProcessRunner
         var error = await standardError.ConfigureAwait(false);
         if (process.ExitCode != 0)
         {
-            throw new InvalidOperationException(
+            throw new ProcessExitException(
+                process.ExitCode,
                 $"Command failed ({process.ExitCode}): {fileName} {string.Join(' ', arguments)}{Environment.NewLine}{output}{Environment.NewLine}{error}");
         }
 

@@ -396,6 +396,7 @@ internal static partial class RepositoryCommandLine
                     parseResult.GetValue(dependenciesOption),
                     parseResult.GetValue(configurationOption),
                     run,
+                    error,
                     ct,
                     onlyShell: parseResult.GetValue(onlyShellOption)).ConfigureAwait(false)).ConfigureAwait(false);
             },
