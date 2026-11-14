@@ -122,6 +122,42 @@ public sealed class PermanentRedirectTests
         response.Headers.Location.ShouldBeNull();
     }
 
+    [Fact]
+    public async Task A_percent_encoded_target_equal_to_the_encoded_request_path_passes_through()
+    {
+        // Arrange
+        await using var host = await PipelineTestHost.Start(app =>
+        {
+            app.UsePermanentRedirects(_ => ValueTask.FromResult<PermanentRedirect?>(new PermanentRedirect("/caf%C3%A9")));
+            app.MapGet("/café", () => "ok");
+        });
+
+        // Act
+        using var response = await host.Send(HttpMethod.Get, "/caf%C3%A9");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.Headers.Location.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task A_percent_encoded_path_base_stays_encoded_in_the_target()
+    {
+        // Arrange
+        await using var host = await PipelineTestHost.Start(app =>
+        {
+            app.UsePathBase("/café");
+            app.UsePermanentRedirects(_ => ValueTask.FromResult<PermanentRedirect?>(new PermanentRedirect("/new")));
+        });
+
+        // Act
+        using var response = await host.Send(HttpMethod.Get, "/caf%C3%A9/old");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.MovedPermanently);
+        response.Headers.Location.ShouldBe(new Uri("/caf%C3%A9/new", UriKind.Relative));
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("new")]

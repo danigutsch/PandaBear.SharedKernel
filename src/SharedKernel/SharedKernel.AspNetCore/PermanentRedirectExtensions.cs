@@ -12,13 +12,13 @@ public static partial class PermanentRedirectExtensions
     /// <summary>
     /// Asks <paramref name="resolve"/> where the path of each GET or HEAD request moved, and answers with a 301 to that local path. Other
     /// methods pass through without asking. The request continues unchanged when the resolver answers <see langword="null"/>, when the target
-    /// is the request path itself (loop guard), and when the target is not a plain local path; such a target is never redirected to, and a
+    /// is the request path itself in its percent-encoded form (loop guard), and when the target is not a plain local path; such a target is never redirected to, and a
     /// warning is logged without the target.
     /// </summary>
     /// <remarks>
     /// A plain local path starts with a single <c>/</c> and holds only printable ASCII without <c>\</c>, <c>//</c>, <c>?</c>, <c>#</c> or white
     /// space; encode other characters with percent escapes. That rules out schemes, protocol-relative and backslash addresses, header
-    /// injection, and query or fragment smuggling, so the redirect cannot leave the site. The location is the request's path base, the target,
+    /// injection, and query or fragment smuggling, so the redirect cannot leave the site. The location is the request's percent-encoded path base, the target,
     /// and the request's query string when <see cref="PermanentRedirect.PreserveQuery"/> is set. Register it before the endpoints and before a
     /// redirect that needs the moved path to exist, such as a culture prefix redirect.
     /// </remarks>
@@ -47,9 +47,9 @@ public static partial class PermanentRedirectExtensions
                         LogUnsafeTarget(logger);
                     }
                 }
-                else if (!string.Equals(redirect.Path, request.Path.Value, StringComparison.Ordinal))
+                else if (!string.Equals(redirect.Path, request.Path.ToUriComponent(), StringComparison.Ordinal))
                 {
-                    var location = request.PathBase.Value + redirect.Path + (redirect.PreserveQuery ? request.QueryString.Value : string.Empty);
+                    var location = request.PathBase.ToUriComponent() + redirect.Path + (redirect.PreserveQuery ? request.QueryString.Value : string.Empty);
                     context.Response.StatusCode = StatusCodes.Status301MovedPermanently;
                     context.Response.Headers[HeaderNames.Location] = location;
                     return;
