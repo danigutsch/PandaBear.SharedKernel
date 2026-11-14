@@ -47,7 +47,10 @@ public abstract class AspireSystemFixture : IAsyncDisposable
 
     /// <summary>Stops every started application, then removes the workspace.</summary>
     /// <returns>A task that completes when everything is cleaned up.</returns>
-    /// <exception cref="AggregateException">Stopping an application failed; the workspace is still removed.</exception>
+    /// <exception cref="AggregateException">
+    /// Stopping an application or removing the workspace failed; the workspace is removed even when stopping failed, and every failure is
+    /// reported.
+    /// </exception>
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "The workspace is removed before stop failures are reported.")]
     public async ValueTask DisposeAsync()
     {
@@ -61,15 +64,24 @@ public abstract class AspireSystemFixture : IAsyncDisposable
             stopFailure = failure;
         }
 
+        Exception? workspaceFailure = null;
         if (_workspace.IsValueCreated)
         {
-            await _workspace.Value.DisposeAsync().ConfigureAwait(false);
+            try
+            {
+                await _workspace.Value.DisposeAsync().ConfigureAwait(false);
+            }
+            catch (Exception failure)
+            {
+                workspaceFailure = failure;
+            }
         }
 
         GC.SuppressFinalize(this);
-        if (stopFailure is not null)
+        Exception[] failures = [.. new[] { stopFailure, workspaceFailure }.OfType<Exception>()];
+        if (failures.Length > 0)
         {
-            throw new AggregateException("Stopping the system test applications failed.", stopFailure);
+            throw new AggregateException("Stopping the system test applications or removing their workspace failed.", failures);
         }
     }
 

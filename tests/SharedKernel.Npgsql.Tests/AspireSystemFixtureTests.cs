@@ -36,4 +36,27 @@ public sealed class AspireSystemFixtureTests
         // Assert
         fixture.Folders.ShouldBeEmpty("no profile was asked for");
     }
+
+    [Fact]
+    public async Task A_workspace_that_cannot_be_removed_is_reported_together_with_the_stop_failure()
+    {
+        // Arrange
+        var fixture = new UndeletableWorkspaceFixture();
+        using var abandon = new CancellationTokenSource();
+        var pending = fixture.Application("held", abandon.Token);
+        await abandon.CancelAsync();
+        await Task.WhenAny(pending);
+        var startFailure = new InvalidOperationException("start failed");
+        fixture.FailStart(startFailure);
+
+        // Act
+        var disposal = fixture.DisposeAsync().AsTask();
+        await Task.WhenAny(disposal);
+        fixture.Unlock();
+
+        // Assert
+        var failures = disposal.Exception.ShouldNotBeNull().Flatten().InnerExceptions;
+        failures.ShouldContain(startFailure);
+        failures.ShouldContain(failure => failure is IOException or UnauthorizedAccessException);
+    }
 }
