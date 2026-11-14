@@ -60,6 +60,27 @@ public sealed class ThemePreviewTests : BunitContext
     }
 
     [Fact]
+    public void Additional_attributes_cannot_replace_the_id_theme_or_width_the_preview_owns()
+    {
+        // Arrange & Act
+        var cut = Render<ThemePreview>(parameters => parameters
+            .Add(component => component.Theme, SiteTheme.Default)
+            .Add(component => component.ScopeId, "brand-preview")
+            .Add(component => component.Scheme, ColorScheme.Dark)
+            .AddUnmatched("id", "other")
+            .AddUnmatched("data-theme", "light")
+            .AddUnmatched("data-width", "narrow")
+            .AddUnmatched("data-test", "kept"));
+
+        // Assert
+        var root = cut.Find(".site-theme-preview");
+        root.Id.ShouldBe("brand-preview");
+        root.GetAttribute("data-theme").ShouldBe("dark");
+        root.GetAttribute("data-width").ShouldBe("wide");
+        root.GetAttribute("data-test").ShouldBe("kept");
+    }
+
+    [Fact]
     public void Contrast_results_for_the_shown_scheme_are_written_as_text()
     {
         // Arrange & Act

@@ -1,5 +1,5 @@
 @inherits SiteComponent
-<section id="@ScopeId" class="@CssClass("site-theme-preview")" aria-label="@Texts.Label" data-theme="@ThemeNames.Css(Scheme)" data-width="@(Narrow ? "narrow" : "wide")" @attributes="AdditionalAttributes">
+<section class="@CssClass("site-theme-preview")" aria-label="@Texts.Label" @attributes="AdditionalAttributes" id="@ScopeId" data-theme="@ThemeNames.Css(Scheme)" data-width="@(Narrow ? "narrow" : "wide")">
     <style nonce="@Nonce">@((MarkupString)_css)</style>
     <div class="site-theme-preview__sample" inert>
         <nav class="site-nav" aria-label="@Texts.NavigationLabel">
