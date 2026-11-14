@@ -4,6 +4,10 @@ All packages remain preview (prerelease) until stable artifacts are separately a
 
 Consuming repositories take a candidate from its GitHub prerelease, `v<packageVersion>`, which holds the candidate's packages and manifest, `candidate.json`, unchanged. Each such publication is separately authorized. A consumer pins that manifest and stages the packages with `sharedkernel-ci stage-candidate --repository`.
 
+## Prerelease retention
+
+Only the newest prereleases and the protected consumer pins are kept. The manually dispatched `Prune prereleases` workflow runs `sharedkernel-ci prune-prereleases`, which keeps the newest `keep` prereleases (default 3) by creation date plus every version named in `protect`, the package versions that consumers pin, and deletes the other GitHub prereleases. It previews unless `apply` is set. Stable releases and drafts are never touched, and tags always stay, so a deleted version keeps its `v<version>` tag and is never reused. Deleting a release deletes its packages and `candidate.json` permanently: a consumer pinned to a deleted version can no longer stage it with `stage-candidate --repository` and must move to a kept candidate, or keep its own copy of the packages and stage them with `--feed`. Before applying, list every consumer pin in `protect`. The [CI tool guide](../tools/SharedKernel.CI.Tool/README.md#prune-prereleases) describes the command.
+
 ## Candidates and versions
 
 Successful package-affecting changes on main produce `<target>-alpha.<run>.<attempt>` candidates. Pull requests validate candidate artifacts before merge. Repository documentation-only changes skip packing; a README inside a package project remains an artifact input. Unknown history and uncertain inputs select full validation. Nightly validation covers the complete library and package consumers.
@@ -24,13 +28,13 @@ The only release channel is the preview candidate: a prerelease version that sig
 
 A candidate becomes stable only when all of these hold: the same hashed artifacts are consumed on Linux and Windows, including NativeAOT; the API compatibility and breaking-change gates pass; one consumer compatibility run is recorded with `sharedkernel-version verify-consumer`; and the repository owner separately authorizes the release.
 
-Preview candidates promise no compatibility with one another. Deliberate breaks are marked as breaking in Conventional Commit history, and earlier candidates and their evidence are kept for rollback. The first stable release defines the public API and is versioned `1.0.0`: record a prerelease tag whose version core is `1.0.0` before it, so the calculated target follows.
+Preview candidates promise no compatibility with one another. Deliberate breaks are marked as breaking in Conventional Commit history, and earlier candidates and their evidence are kept for rollback within the [prerelease retention](#prerelease-retention). The first stable release defines the public API and is versioned `1.0.0`: record a prerelease tag whose version core is `1.0.0` before it, so the calculated target follows.
 
 The repository owner owns support for every released version. [Security support](../SECURITY.md) follows the same channels.
 
 ## API and source compatibility
 
-C# namespaces use `PandaBear.*`; projects, assemblies, command names, and `PandaBear.SharedKernel.*` package IDs retain their documented identities. The [namespace decision](adr/20261020-pandabear-namespaces.md) records the breaking source change. Preserve API compatibility and breaking-change gates and mark deliberate breaks in Conventional Commit history. Keep previous candidates and evidence for rollback.
+C# namespaces use `PandaBear.*`; projects, assemblies, command names, and `PandaBear.SharedKernel.*` package IDs retain their documented identities. The [namespace decision](adr/20261020-pandabear-namespaces.md) records the breaking source change. Preserve API compatibility and breaking-change gates and mark deliberate breaks in Conventional Commit history. Keep previous candidates and evidence for rollback, as the [prerelease retention](#prerelease-retention) allows.
 
 Release tooling is documented in the root README and [versioning tool guide](../tools/SharedKernel.Versioning.Tool/README.md). Release preparation itself does not authorize registry publication.
 

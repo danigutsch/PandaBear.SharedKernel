@@ -8,8 +8,8 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 configures, writes a solution filter for each CI test slice, runs the selected test projects of one or more slices
 through one solution filter with the slices' services running around the tests, checks the changed projects without a Unix
 domain socket for a sandbox that refuses them, generates OpenAPI documents, installs
-Playwright browsers, verifies the coverage of changed code, stages pinned package candidates in a local feed, verifies
-Conventional Commit messages in pull request events and git commit message files, and runs Stryker.NET mutation tests.
+Playwright browsers, verifies the coverage of changed code, stages pinned package candidates in a local feed, deletes
+GitHub prereleases older than the newest few while keeping protected versions and every tag, verifies Conventional Commit messages in pull request events and git commit message files, and runs Stryker.NET mutation tests.
 
 ## Prerequisites
 
@@ -21,7 +21,8 @@ Git checkout, and `run` reads the configuration and the plan that `select` wrote
 `run` for a slice with a `service` starts the service's project with `dotnet run`, so it needs whatever that project
 needs, such as a container runtime;
 `stage-candidate` reads a clean SharedKernel checkout and, with `--repository`, needs HTTPS access to `github.com` and
-`release-assets.githubusercontent.com`; `verify-commit-message` reads only its event or message file;
+`release-assets.githubusercontent.com`; `prune-prereleases` needs HTTPS access to `api.github.com` and, to delete,
+a token in `GH_TOKEN` or `GITHUB_TOKEN` that may write the repository's contents; `verify-commit-message` reads only its event or message file;
 `run-mutation-tests` reads the configuration and, until the configured `dotnet-stryker` is installed, needs a NuGet
 source, as the root's `NuGet.Config` names it, that serves the `dotnet-stryker` package.
 
@@ -50,6 +51,7 @@ dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run --slice <name>
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- openapi refresh --target <name>
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- install-playwright --project <test-project> --browser chromium --with-dependencies
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- stage-candidate --pin <candidate.json> --library-root . --output <feed> --repository danigutsch/PandaBear.SharedKernel
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- prune-prereleases --repository danigutsch/PandaBear.SharedKernel --keep 3
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- verify-commit-message --event <event.json>
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run-mutation-tests
 ```
@@ -464,6 +466,39 @@ command ends; one older than a day, which an interrupted run left behind, is del
 concurrent run's newer one stays. A staging directory that cannot be deleted stays for a later run and does not fail
 the command. Standard output reports how many packages were added and how many were already present.
 
+### prune-prereleases
+
+```text
+dotnet tool run sharedkernel-ci -- prune-prereleases --repository danigutsch/PandaBear.SharedKernel --keep 3 --protect 0.1.0-alpha.530.1
+dotnet tool run sharedkernel-ci -- prune-prereleases --repository danigutsch/PandaBear.SharedKernel --keep 3 --protect 0.1.0-alpha.530.1 --force
+```
+
+Keeps the newest prereleases of a GitHub repository and deletes the older ones. `--repository` names the repository as
+`owner/name`, and `--keep`, from 1 to 10000, how many of the newest prereleases stay. `--protect`, repeated as needed,
+names a package version without the `v` of its tag, such as `0.1.0-alpha.530.1` for the release `v0.1.0-alpha.530.1`,
+whose prerelease always stays; protected prereleases do not count toward `--keep`. A protected version is a SemVer 2.0
+version without build metadata, as consumers pin it. A protected version without a release writes a warning to standard
+error and the run continues. The repository, the count, and the protected versions come only from the command line; the
+tool holds no repository's policy.
+
+Only published releases marked prerelease can be deleted; stable releases and drafts are counted and never touched.
+Prereleases are ordered by their `created_at` date, newest first, and by release ID when two dates are equal; the
+command does not parse versions. It reads every page of `GET /repos/<owner>/<name>/releases`, 100 releases a page and
+at most 10000 releases, before it deletes anything. Standard output lists each prerelease as `keep` (`newest` or
+`protected`) or `delete` with its creation date, then counts the ignored stable releases and drafts.
+
+Without `--force` the command only previews: it sends `GET` requests and exits 0. With `--force` it deletes the listed
+releases one at a time, newest first, with `DELETE /repos/<owner>/<name>/releases/<id>`, and writes `deleted <tag>` after
+each. It never deletes a tag, so `v<version>` stays and the version is not reused. Deleting a release also deletes its
+assets, `candidate.json` and the packages, and cannot be undone: a consumer pinned to a deleted version can no longer
+stage it with `stage-candidate --repository`. Any answer but `204 No Content` stops the run at once, with exit code 2 and
+a message that names the release and every release deleted before it; nothing is retried, and nothing further is
+deleted. A failed list request stops the run before any deletion.
+
+The `Prune prereleases` workflow (`.github/workflows/prune-prereleases.yml`) runs this command on manual dispatch only,
+with the inputs `keep` (default 3), `protect` (space-separated versions, default empty), and `apply` (default off, which
+previews); its job alone has `contents: write`.
+
 ### verify-restore-warnings
 
 Classifies the NuGet warnings in the saved output of a `dotnet restore` run:
@@ -591,7 +626,7 @@ on standard error.
 | --- | --- |
 | 0 | Success. |
 | 1 | Invalid command line, cancellation, or an unexpected error. |
-| 2 | The configuration is invalid, or a run, local check (a failed lane, a lane that could not run with `--strict`, or nothing selected), generation, installation, coverage check, staging, the commit message check, or a mutation run failed; the reason is on standard error. |
+| 2 | The configuration is invalid, or a run, local check (a failed lane, a lane that could not run with `--strict`, or nothing selected), generation, installation, coverage check, staging, prerelease pruning (a missing token for `--force`, or a failed GitHub API request), the commit message check, or a mutation run failed; the reason is on standard error. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within 90 seconds. |
 
 Ctrl+C or SIGTERM stops the running `git`, `dotnet`, `pwsh`, or `dotnet-stryker` process tree, then stops the services of
@@ -610,7 +645,7 @@ directory, or, for OpenAPI generation, the dotnet host that runs the tool, or th
 of the solution project that the configuration names, started without a GitHub token in its environment. Slice,
 target, browser, configuration, and MSBuild property values are restricted to names, so none can become an option or
 another property. `select` and `coverage verify` pass `--base` to Git only when it is a hexadecimal object ID, so Git
-cannot read it as an option, and escapes control characters in the changed paths that its reasons repeat. `verify-commit-message` starts no process. No credentials are needed. `stage-candidate` runs
+cannot read it as an option, and escapes control characters in the changed paths that its reasons repeat. `verify-commit-message` starts no process. No command but `prune-prereleases` uses credentials. `stage-candidate` runs
 Git without the inherited `GIT_*` variables, which could point it at another repository, and stops Git after a minute.
 
 A service's value can be a credential, such as a connection string with a password. The service writes it to a ready file in
@@ -628,3 +663,10 @@ sends a `User-Agent`, and never sends an `Authorization` header or a token. Each
 times out after five minutes. A 404 or another client error fails at once; 408, 429, and 5xx answers are retried, four
 attempts in all, after the `Retry-After` delay capped at 60 seconds, or after one, two, and four seconds without it.
 Integrity rests on the pinned SHA-256 hashes, not on the transport.
+
+`prune-prereleases` sends requests only to `https://api.github.com/repos/<owner>/<name>/releases`, built from the
+validated `--repository`. It reads its token from `GH_TOKEN`, then `GITHUB_TOKEN`, as `gh` does, and never from an
+argument; it sends the token as a `Bearer` `Authorization` header and never writes it. A preview works without a token
+for a public repository; `--force` fails before any request without one. The token needs `contents: write` to delete
+releases. Redirects are refused rather than followed, so the token never reaches another address, and each request
+times out after a minute. A release list page is at most 16 MiB, and release tags are escaped before they are written.
