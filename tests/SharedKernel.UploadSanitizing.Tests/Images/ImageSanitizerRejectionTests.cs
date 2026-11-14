@@ -96,6 +96,27 @@ public sealed class ImageSanitizerRejectionTests
     }
 
     [Fact]
+    public void A_webp_whose_bitstream_is_larger_than_the_limit_is_rejected_even_when_its_canvas_is_small()
+    {
+        // Arrange
+        var header = new byte[10];
+        var webp = ImageSamples.Riff(ImageSamples.Concat(
+            ImageSamples.Ascii("WEBP"),
+            ImageSamples.RiffChunk("VP8X", header),
+            ImageSamples.LossyWebp(4000, 10)[12..]));
+        var options = ImageSanitizerOptions.Default with
+        {
+            MaxDimension = 3999
+        };
+
+        // Act
+        var result = ImageSanitizer.Sanitize(webp, options);
+
+        // Assert
+        result.ShouldBeRejected(ImageSanitizer.DimensionsTooLargeMessage);
+    }
+
+    [Fact]
     public void The_errors_are_reported_on_the_configured_field()
     {
         // Arrange
@@ -199,6 +220,7 @@ public sealed class ImageSanitizerRejectionTests
                 { "a WebP lossless chunk too short for the size", ImageSamples.Riff(ImageSamples.Concat(ImageSamples.Ascii("WEBP"), ImageSamples.RiffChunk("VP8L", [0x2F, 0, 0, 0]))) },
                 { "a WebP lossy chunk with a wrong start code", ImageSamples.Corrupt(ImageSamples.LossyWebp(10, 10), 23, 0x00) },
                 { "a WebP lossy chunk of zero width", ImageSamples.LossyWebp(0, 10) },
+                { "a simple WebP with two bitstream chunks", ImageSamples.Riff(ImageSamples.Concat(webp[8..], ImageSamples.LossyWebp(10, 10)[12..])) },
             };
         }
     }

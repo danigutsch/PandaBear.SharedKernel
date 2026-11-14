@@ -5,7 +5,9 @@ namespace PandaBear.UploadSanitizing.Images;
 /// <summary>
 /// Compacts a WebP in place without its EXIF and XMP chunks, clears the matching flags of the extended header (VP8X) and writes the new RIFF
 /// size. Every other chunk, including the ICCP colour profile, is kept unchanged. The RIFF size must match the file exactly and every chunk
-/// must carry its padding byte. The size comes from the extended header, or else from the VP8 or VP8L bitstream header.
+/// must carry its padding byte. The size comes from the extended header, or else from the VP8 or VP8L bitstream header; a simple file holds
+/// exactly one bitstream. The largest side of the canvas and of every bitstream is reported, so a decoder that trusts a bitstream over a small
+/// canvas is bounded too.
 /// </summary>
 internal static class WebpSanitizer
 {
@@ -20,14 +22,16 @@ internal static class WebpSanitizer
     /// <param name="data">The file; overwritten with the result.</param>
     /// <param name="width">The width, or zero.</param>
     /// <param name="height">The height, or zero.</param>
+    /// <param name="largestSide">The largest width or height of the canvas and of every bitstream.</param>
     /// <param name="animated">
     /// Whether the file is animated: an <c>ANIM</c> or <c>ANMF</c> chunk, or the animation flag of the extended header.
     /// </param>
     /// <returns>The length of the result, or <c>-1</c> when the structure is malformed.</returns>
-    internal static int Clean(Span<byte> data, out int width, out int height, out bool animated)
+    internal static int Clean(Span<byte> data, out int width, out int height, out int largestSide, out bool animated)
     {
         width = 0;
         height = 0;
+        largestSide = 0;
         animated = false;
         if (BinaryPrimitives.ReadUInt32LittleEndian(data[4..]) != (uint)(data.Length - 8))
         {
@@ -72,12 +76,15 @@ internal static class WebpSanitizer
                     animated |= (payload[0] & AnimationFlag) != 0;
                     width = 1 + ReadUInt24(payload[4..]);
                     height = 1 + ReadUInt24(payload[7..]);
+                    largestSide = Math.Max(largestSide, Math.Max(width, height));
                     break;
                 case FourCc.Vp8 or FourCc.Vp8L:
-                    if (!TryReadBitstreamSize(fourCc, payload, out var streamWidth, out var streamHeight))
+                    if (!TryReadBitstreamSize(fourCc, payload, out var streamWidth, out var streamHeight) || (flagsAt < 0 && hasImage))
                     {
                         return -1;
                     }
+
+                    largestSide = Math.Max(largestSide, Math.Max(streamWidth, streamHeight));
 
                     // An extended file takes its size from the canvas; a simple file from its only bitstream.
                     if (flagsAt < 0)

@@ -125,7 +125,7 @@ public static class ImageSanitizer
             ImageFormat.Jpeg => JpegSanitizer.Clean(span, out width, out height),
             ImageFormat.Png => PngSanitizer.Clean(span, out width, out height, out animated),
             ImageFormat.Avif => AvifReader.TryRead(span, out width, out height, out largestSide, out animated) ? span.Length : -1,
-            _ => WebpSanitizer.Clean(span, out width, out height, out animated),
+            _ => WebpSanitizer.Clean(span, out width, out height, out largestSide, out animated),
         };
 
         if (length < 0 || width < 1 || height < 1)
@@ -133,7 +133,8 @@ public static class ImageSanitizer
             return Invalid(options, MalformedMessage);
         }
 
-        // An AVIF can hold more than one image (an alpha plane, a thumbnail); a later decoder may decode any of them, so all are bounded.
+        // An AVIF can hold more than one image (an alpha plane, a thumbnail), and a WebP bitstream can be larger than its canvas; a later
+        // decoder may decode any of them, so all are bounded.
         if (Math.Max(Math.Max(width, height), largestSide) > options.MaxDimension)
         {
             return Invalid(options, DimensionsTooLargeMessage);
