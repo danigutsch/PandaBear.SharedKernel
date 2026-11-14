@@ -72,6 +72,51 @@ internal static class TestImages
     }
 
     /// <summary>
+    /// Creates a three-frame animation of the given size encoded in the given format, positioned at the start.
+    /// </summary>
+    public static MemoryStream CreateAnimatedImage(uint width, uint height, MagickFormat format)
+    {
+        using var frames = new MagickImageCollection();
+        foreach (var color in new[] { MagickColors.Red, MagickColors.Green, MagickColors.Blue })
+        {
+            var frame = new MagickImage(color, width, height) { AnimationDelay = 10 };
+            frames.Add(frame);
+        }
+
+        var stream = new MemoryStream();
+        frames.Write(stream, format);
+        stream.Position = 0;
+
+        return stream;
+    }
+
+    /// <summary>
+    /// Creates a three-frame animated WebP of the given size, with one solid color per frame, positioned at the start.
+    /// </summary>
+    public static MemoryStream CreateAnimatedWebP(uint width, uint height)
+        => CreateAnimatedImage(width, height, MagickFormat.WebP);
+
+    /// <summary>
+    /// Returns the bytes of a blue image of the given size encoded in the given format.
+    /// </summary>
+    public static byte[] EncodeImage(uint width, uint height, MagickFormat format)
+    {
+        using var stream = CreateImage(width, height, format);
+
+        return stream.ToArray();
+    }
+
+    /// <summary>
+    /// Returns the bytes of a three-frame animated WebP of the given size.
+    /// </summary>
+    public static byte[] EncodeAnimatedWebP(uint width, uint height)
+    {
+        using var stream = CreateAnimatedWebP(width, height);
+
+        return stream.ToArray();
+    }
+
+    /// <summary>
     /// Creates a 64x32 AVIF image whose major brand bytes (offsets 8 to 11) are replaced by the four-character brand, and throws ArgumentException when the brand is not four characters long.
     /// </summary>
     public static MemoryStream CreateAvifWithMajorBrand(string majorBrand)
