@@ -81,3 +81,14 @@ PandaBear.Testing.AspNetCore.ThrowingDistributedCache.ThrowingDistributedCache(M
 PandaBear.Testing.AspNetCore.TestHostServiceCollectionExtensions
 static PandaBear.Testing.AspNetCore.TestHostServiceCollectionExtensions.ClearHealthChecks(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static PandaBear.Testing.AspNetCore.TestHostServiceCollectionExtensions.RemoveHostedServices(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.Testing.AspNetCore.StreamFormFile
+PandaBear.Testing.AspNetCore.StreamFormFile.ContentDisposition.get -> string!
+PandaBear.Testing.AspNetCore.StreamFormFile.ContentType.get -> string!
+PandaBear.Testing.AspNetCore.StreamFormFile.CopyTo(System.IO.Stream! target) -> void
+PandaBear.Testing.AspNetCore.StreamFormFile.CopyToAsync(System.IO.Stream! target, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+PandaBear.Testing.AspNetCore.StreamFormFile.FileName.get -> string!
+PandaBear.Testing.AspNetCore.StreamFormFile.Headers.get -> Microsoft.AspNetCore.Http.IHeaderDictionary!
+PandaBear.Testing.AspNetCore.StreamFormFile.Length.get -> long
+PandaBear.Testing.AspNetCore.StreamFormFile.Name.get -> string!
+PandaBear.Testing.AspNetCore.StreamFormFile.OpenReadStream() -> System.IO.Stream!
+PandaBear.Testing.AspNetCore.StreamFormFile.StreamFormFile(System.IO.Stream! content, long length, string! fileName, string! contentType = "application/octet-stream", string! name = "file") -> void

@@ -15,6 +15,35 @@ Construct `HttpClient` with `TestHttpMessageHandler`, enqueue HTTP or JSON respo
 `DelegateHttpMessageHandler` answers every request with a synchronous or asynchronous delegate and passes the caller's cancellation token to asynchronous delegates.
 `TrackingStreamContent` copies a source stream, counts serializations and disposes the source with the content.
 
+`TestHttpMessageHandler` hands out queued responses, so it suits tests that know their request count. When the count is
+unknown, or requests run concurrently, use one of these thread-safe handlers. Each records every request as a
+`CapturedHttpRequest` whose body is buffered on arrival, so `Body` and the headers stay readable after the caller disposes
+the request. Each creates a new response per request and leaves its disposal to the caller. `WaitForRequests(count,
+cancellationToken)` completes with the first `count` requests once they have arrived.
+
+| Handler | Answers |
+| --- | --- |
+| `RecordingHttpMessageHandler` | HTTP 200, a fixed status, or a `Func<CapturedHttpRequest, HttpResponseMessage>` |
+| `RoutingHttpMessageHandler` | `Map`/`MapJson` routes keyed by method and exact, case-sensitive path (query ignored; mapping a pair again replaces it); HTTP 404 or a fallback delegate otherwise |
+| `GatedHttpMessageHandler` | holds each request until `Release()`, then forwards it to an inner handler (HTTP 200 by default) |
+
+```csharp
+using var backend = new RoutingHttpMessageHandler();
+backend.MapJson(HttpMethod.Get, "/api/items", "[]");
+using var gate = new GatedHttpMessageHandler(backend);
+using var client = new HttpClient(gate, disposeHandler: false) { BaseAddress = new Uri("https://api.test") };
+
+var send = client.GetAsync(new Uri("/api/items", UriKind.Relative), cancellationToken);
+var arrived = await gate.WaitForRequests(1, cancellationToken);   // recorded, still held
+gate.Release();
+using var response = await send;
+```
+
+`GatedHttpMessageHandler` records a request before holding it, and reports held requests in `PendingCount`. A held request
+whose token is cancelled throws `OperationCanceledException` without reaching the inner handler; disposing the gate fails
+held requests with `ObjectDisposedException` and disposes the inner handler. An exception thrown by a response delegate
+reaches the caller, and the request stays recorded. Bodies are recorded as strings, so assert binary uploads elsewhere.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Testing.Http`. C# namespace: `PandaBear.Testing.Http`. Assembly/project identity: `SharedKernel.Testing.Http`.

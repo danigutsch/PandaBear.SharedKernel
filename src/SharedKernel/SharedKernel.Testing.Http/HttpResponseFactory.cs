@@ -24,4 +24,10 @@ public static class HttpResponseFactory
             Content = new StringContent(json, Encoding.UTF8, "application/json")
         };
     }
+
+    /// <summary>Invokes a test response delegate and rejects a missing response.</summary>
+    /// <exception cref="InvalidOperationException">Thrown when the delegate returns <see langword="null"/>.</exception>
+    internal static HttpResponseMessage Create(Func<CapturedHttpRequest, HttpResponseMessage> respond, CapturedHttpRequest request) =>
+        respond(request) ?? throw new InvalidOperationException(
+            $"The response delegate returned no response for {request.Method} {request.PathAndQuery}.");
 }
