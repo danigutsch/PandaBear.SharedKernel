@@ -7,8 +7,8 @@ using Microsoft.Extensions.Options;
 namespace PandaBear.AspNetCore.Authentication.Bff;
 
 /// <summary>
-/// Forwards every OpenID Connect event to the application's events and, after a validated login, starts the token session
-/// from the token endpoint response.
+/// Forwards every OpenID Connect event to the application's events and, after a validated login, ends the token session of
+/// the cookie the login replaces and starts the new one from the token endpoint response.
 /// </summary>
 internal sealed class TokenSessionOpenIdConnectEvents(OpenIdConnectEvents inner) : OpenIdConnectEvents
 {
@@ -37,19 +37,25 @@ internal sealed class TokenSessionOpenIdConnectEvents(OpenIdConnectEvents inner)
         }
 
         var services = context.HttpContext.RequestServices;
+        var options = services.GetRequiredService<IOptions<UserTokenManagementOptions>>().Value;
+        var manager = services.GetRequiredService<UserTokenManager>();
+        if (await CookiePrincipal.Find(context.HttpContext, options.CookieScheme).ConfigureAwait(false) is { } previous)
+        {
+            // A login over a live cookie replaces its session: end it and revoke its refresh token rather than orphan them.
+            await manager.SignOut(previous, context.HttpContext.RequestAborted).ConfigureAwait(false);
+        }
+
         var now = services.GetRequiredService<TimeProvider>().GetUtcNow();
         var tokens = new UserTokenSet(
             response.AccessToken,
             expiresIn is { } lifetime
                 ? now.AddSeconds(Math.Min(lifetime, (long)TimeSpan.FromDays(366).TotalSeconds))
-                : now.Add(services.GetRequiredService<IOptions<UserTokenManagementOptions>>().Value.DefaultAccessTokenLifetime),
+                : now.Add(options.DefaultAccessTokenLifetime),
             response.RefreshToken,
             response.IdToken,
             response.TokenType,
             response.Scope);
-        await services.GetRequiredService<UserTokenManager>()
-            .StartSession(context.Principal, tokens, context.HttpContext.RequestAborted)
-            .ConfigureAwait(false);
+        await manager.StartSession(context.Principal, tokens, context.HttpContext.RequestAborted).ConfigureAwait(false);
     }
 
     /// <inheritdoc />

@@ -81,7 +81,10 @@ public sealed partial class UserTokenManager
     /// <param name="ct">Cancels the store.</param>
     /// <returns>A task that completes when the tokens are stored.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="user" /> or <paramref name="tokens" /> is <see langword="null" />.</exception>
-    /// <remarks>The OpenID Connect events registered by <see cref="UserTokenManagementServiceCollectionExtensions.AddUserTokenManagement" /> call this after a validated login.</remarks>
+    /// <remarks>
+    /// The OpenID Connect events registered by <see cref="UserTokenManagementServiceCollectionExtensions.AddUserTokenManagement" />
+    /// call this after a validated login, once they have ended the session of the cookie the login replaces with <see cref="SignOut" />.
+    /// </remarks>
     public async Task StartSession(ClaimsPrincipal user, UserTokenSet tokens, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(user);

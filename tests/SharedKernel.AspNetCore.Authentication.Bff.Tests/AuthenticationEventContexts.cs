@@ -16,11 +16,16 @@ internal static class AuthenticationEventContexts
     /// <param name="host">The host.</param>
     /// <param name="response">The token endpoint response, or <see langword="null" /> for an ID token from the authorization response.</param>
     /// <param name="authorizationResponse">The authorization response.</param>
+    /// <param name="request">The callback request, for example one that carries an earlier login's cookie.</param>
     /// <returns>The context; its options carry the configured events.</returns>
-    internal static TokenValidatedContext TokenValidated(BffTestHost host, OpenIdConnectMessage? response, OpenIdConnectMessage? authorizationResponse = null)
+    internal static TokenValidatedContext TokenValidated(
+        BffTestHost host,
+        OpenIdConnectMessage? response,
+        OpenIdConnectMessage? authorizationResponse = null,
+        HttpContext? request = null)
     {
         var options = host.Services.GetRequiredService<IOptionsMonitor<OpenIdConnectOptions>>().Get(OpenIdConnectDefaults.AuthenticationScheme);
-        var httpContext = new DefaultHttpContext { RequestServices = host.CreateRequestServices() };
+        var httpContext = request ?? new DefaultHttpContext { RequestServices = host.CreateRequestServices() };
         var principal = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", "alice")], "oidc"));
         return new TokenValidatedContext(
             httpContext,

@@ -123,6 +123,30 @@ public sealed class AuthenticationEventTests
     }
 
     [Fact]
+    public async Task A_login_over_an_existing_cookie_ends_and_revokes_the_previous_token_session()
+    {
+        // Arrange
+        using var host = new BffTestHost();
+        var previous = await host.SignIn("alice", refreshToken: "previous-refresh");
+        var callback = AuthenticationEventContexts.CookieRequest(host, cookieUser: previous, currentUser: new ClaimsPrincipal(new ClaimsIdentity()));
+        var context = AuthenticationEventContexts.TokenValidated(
+            host,
+            new OpenIdConnectMessage { AccessToken = "login-access", RefreshToken = "login-refresh", ExpiresIn = "300" },
+            request: callback);
+
+        // Act
+        await context.Options.Events.TokenValidated(context);
+
+        // Assert
+        var previousActive = await host.Manager.HasActiveSession(previous, TestContext.Current.CancellationToken);
+        previousActive.ShouldBeFalse();
+        var tokens = await host.Manager.GetTokens(context.Principal!, TestContext.Current.CancellationToken);
+        tokens!.RefreshToken.ShouldBe("login-refresh");
+        var revocation = host.IdentityProvider.Requests.Where(request => request.Uri == FakeIdentityProvider.RevocationEndpoint).ShouldHaveSingleItem();
+        revocation.Form["token"].ShouldBe("previous-refresh");
+    }
+
+    [Fact]
     public async Task A_login_replaces_session_claims_that_the_principal_already_carried()
     {
         // Arrange
