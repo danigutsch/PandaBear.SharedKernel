@@ -46,14 +46,18 @@ internal static class AuthenticationEventContexts
         return new CookieValidatePrincipalContext(httpContext, CookieScheme(), options, ticket);
     }
 
-    /// <summary>A cookie sign-out context for the signed-in user.</summary>
+    /// <summary>A request that carries the authentication cookie of the user, while <see cref="HttpContext.User" /> is someone else.</summary>
     /// <param name="host">The host.</param>
-    /// <param name="user">The signed-in user.</param>
-    /// <returns>The context; its options carry the configured events.</returns>
-    internal static CookieSigningOutContext SigningOut(BffTestHost host, ClaimsPrincipal user)
+    /// <param name="cookieUser">The principal inside the cookie.</param>
+    /// <param name="currentUser">The principal of <see cref="HttpContext.User" />.</param>
+    /// <returns>The request context.</returns>
+    internal static HttpContext CookieRequest(BffTestHost host, ClaimsPrincipal cookieUser, ClaimsPrincipal currentUser)
     {
-        var httpContext = new DefaultHttpContext { RequestServices = host.CreateRequestServices(), User = user };
-        return new CookieSigningOutContext(httpContext, CookieScheme(), CookieOptions(host), new AuthenticationProperties(), new CookieOptions());
+        var options = CookieOptions(host);
+        var cookie = options.TicketDataFormat.Protect(new AuthenticationTicket(cookieUser, CookieAuthenticationDefaults.AuthenticationScheme));
+        var httpContext = new DefaultHttpContext { RequestServices = host.CreateRequestServices(), User = currentUser };
+        httpContext.Request.Headers.Cookie = string.Concat(options.Cookie.Name, "=", cookie);
+        return httpContext;
     }
 
     private static CookieAuthenticationOptions CookieOptions(BffTestHost host)

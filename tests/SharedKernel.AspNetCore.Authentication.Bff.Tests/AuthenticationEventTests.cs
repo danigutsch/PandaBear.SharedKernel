@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -136,17 +138,38 @@ public sealed class AuthenticationEventTests
     }
 
     [Fact]
-    public async Task Cookie_sign_out_ends_the_token_session()
+    public async Task Cookie_sign_out_ends_the_token_session_of_the_cookie_being_signed_out()
     {
         // Arrange
         using var host = new BffTestHost();
-        var user = await host.SignIn("alice");
-        var context = AuthenticationEventContexts.SigningOut(host, user);
+        var alice = await host.SignIn("alice");
+        var bob = await host.SignIn("bob");
+        var request = AuthenticationEventContexts.CookieRequest(host, cookieUser: alice, currentUser: bob);
 
         // Act
-        await context.Options.Events.SigningOut(context);
+        await request.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
         // Assert
+        var aliceActive = await host.Manager.HasActiveSession(alice, TestContext.Current.CancellationToken);
+        var bobActive = await host.Manager.HasActiveSession(bob, TestContext.Current.CancellationToken);
+        aliceActive.ShouldBeFalse();
+        bobActive.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task A_cookie_rejected_for_an_expired_session_signs_out_that_session_without_recursing()
+    {
+        // Arrange
+        using var host = new BffTestHost(options => options.SessionLifetime = TimeSpan.FromMinutes(1));
+        var alice = await host.SignIn("alice", expiresIn: TimeSpan.FromHours(1));
+        host.Time.Advance(TimeSpan.FromMinutes(2));
+        var request = AuthenticationEventContexts.CookieRequest(host, cookieUser: alice, currentUser: new ClaimsPrincipal(new ClaimsIdentity()));
+
+        // Act
+        var result = await request.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        // Assert
+        result.Succeeded.ShouldBeFalse();
         host.Cache.Entries.ShouldBeEmpty();
     }
 

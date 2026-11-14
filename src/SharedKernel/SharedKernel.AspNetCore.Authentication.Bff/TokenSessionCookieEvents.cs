@@ -14,7 +14,9 @@ internal sealed class TokenSessionCookieEvents(CookieAuthenticationEvents inner,
     /// <inheritdoc />
     public override async Task ValidatePrincipal(CookieValidatePrincipalContext context)
     {
+        CookiePrincipal.Record(context.HttpContext, context.Scheme.Name, context.Principal);
         await inner.ValidatePrincipal(context).ConfigureAwait(false);
+        CookiePrincipal.Record(context.HttpContext, context.Scheme.Name, context.Principal);
         if (!rejectWithoutTokenSession || context.Principal is null)
         {
             return;
@@ -31,8 +33,13 @@ internal sealed class TokenSessionCookieEvents(CookieAuthenticationEvents inner,
     /// <inheritdoc />
     public override async Task SigningOut(CookieSigningOutContext context)
     {
-        var tokens = context.HttpContext.RequestServices.GetRequiredService<UserTokenManager>();
-        await tokens.SignOut(context.HttpContext.User, context.HttpContext.RequestAborted).ConfigureAwait(false);
+        var principal = await CookiePrincipal.Find(context.HttpContext, context.Scheme.Name).ConfigureAwait(false);
+        if (principal is not null)
+        {
+            var tokens = context.HttpContext.RequestServices.GetRequiredService<UserTokenManager>();
+            await tokens.SignOut(principal, context.HttpContext.RequestAborted).ConfigureAwait(false);
+        }
+
         await inner.SigningOut(context).ConfigureAwait(false);
     }
 
