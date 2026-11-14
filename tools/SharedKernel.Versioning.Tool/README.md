@@ -172,8 +172,9 @@ sharedkernel-version consume-packages --feed artifacts/api-compat/packages/0.2.0
 `create-candidate` requires a clean committed checkout. It runs `check-api-compatibility` in the `beta` phase and
 writes `candidate.json` beside the packages in `artifacts/api-compat/packages/<version>`, recording the library
 revision and SHA-256 package hashes. Consumer, platform, and stable-promotion evidence stay `pending`. Without
-`--version`, the version is `<base>-alpha.local.t<UTC timestamp>.g<revision>`, where `<base>` is the version core
-of `ComputedSemVer` in `Directory.Build.props`. `--baseline-version` requires `PandaBear.SharedKernel.*` mapped only
+`--version`, the version is `<base>-alpha.local.t<yyyyMMddHHmmss UTC>.g<7-character revision>`, where `<base>` is the
+version core of `ComputedSemVer` in `Directory.Build.props`. It stays short because NuGet rejects a package whose id,
+version and file path together exceed its path limit (NU5123), and the longest package ids already use most of it. `--baseline-version` requires `PandaBear.SharedKernel.*` mapped only
 to an existing local feed in `NuGet.Config`.
 
 `consume-candidate` verifies the hashes and requires the manifest to list the exact file name of every package in its
