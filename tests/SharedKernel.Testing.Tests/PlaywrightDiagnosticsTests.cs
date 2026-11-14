@@ -100,8 +100,30 @@ public sealed class PlaywrightDiagnosticsTests(ChromiumPageFixture chromium) : I
         var saved = await PlaywrightArtifacts.Save(page, folder, "My.Test(case: 1)");
 
         // Assert
-        saved.ShouldBe([Path.Combine(folder, "My.Test_case__1_.png"), Path.Combine(folder, "My.Test_case__1_.zip")]);
+        saved.ShouldBe([Path.Combine(folder, "My.Test_case__1_-19e03605.png"), Path.Combine(folder, "My.Test_case__1_-19e03605.zip")]);
         saved.ShouldAllSatisfy(file => new FileInfo(file).Length.ShouldBeGreaterThan(0), "both artifacts are written");
+        Directory.Delete(folder, recursive: true);
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task Artifact_names_are_capped_and_kept_apart_by_a_hash_of_the_full_name()
+    {
+        // Arrange
+        var folder = Directory.CreateTempSubdirectory("sk-playwright-artifacts-").FullName;
+        var longName = "Theory(" + new string('x', 400) + ")";
+        var first = await chromium.Show("<h1>first</h1>");
+        await first.Context.Tracing.StartAsync(new TracingStartOptions());
+        var second = await chromium.Show("<h1>second</h1>");
+        await second.Context.Tracing.StartAsync(new TracingStartOptions());
+
+        // Act
+        var savedLong = await PlaywrightArtifacts.Save(first, folder, longName);
+        var savedLookAlike = await PlaywrightArtifacts.Save(second, folder, "My.Test(case_ 1)");
+
+        // Assert
+        savedLong.ShouldAllSatisfy(file => Path.GetFileName(file).Length.ShouldBeLessThanOrEqualTo(120), "long names are capped");
+        savedLong.ShouldAllSatisfy(file => File.Exists(file).ShouldBeTrue(), "capped artifacts are written");
+        savedLookAlike.ShouldBe([Path.Combine(folder, "My.Test_case__1_-cc6eefac.png"), Path.Combine(folder, "My.Test_case__1_-cc6eefac.zip")]);
         Directory.Delete(folder, recursive: true);
     }
 }
