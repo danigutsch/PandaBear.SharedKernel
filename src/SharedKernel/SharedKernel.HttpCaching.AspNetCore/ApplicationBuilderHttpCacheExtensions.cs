@@ -51,11 +51,13 @@ public static class ApplicationBuilderHttpCacheExtensions
     /// <summary>
     /// Makes anonymous successful pages publicly cacheable for a short time: when a response starts, it gets
     /// <c>Cache-Control: public, max-age=N</c> only if the request is GET or HEAD, the status is 200, the response has no
-    /// <c>Cache-Control</c> of its own and sets no cookie, its content security policy holds no per-request <c>'nonce-…'</c> source, the
-    /// request has no <c>Authorization</c> header, and the user is not authenticated. Every other response is left untouched.
+    /// <c>Cache-Control</c> of its own and sets no cookie, it does not vary by <c>Cookie</c> or by <c>*</c>, its content security policy
+    /// holds no per-request <c>'nonce-…'</c> source, the request has no <c>Authorization</c> header, and the user is not authenticated. Every
+    /// other response is left untouched.
     /// </summary>
     /// <remarks>
-    /// The user is checked when the response starts, so authentication that runs later in the pipeline is seen. Endpoints that want another
+    /// The user is checked when the response starts, so authentication that runs later in the pipeline is seen. Request cookies are not
+    /// checked: a page whose content depends on a cookie says so with <c>Vary: Cookie</c>. Endpoints that want another
     /// lifetime, such as immutable files, set their own header and keep it. Register it early, before the endpoints.
     /// </remarks>
     /// <param name="app">The application pipeline.</param>
@@ -98,7 +100,24 @@ public static class ApplicationBuilderHttpCacheExtensions
         && !context.Request.Headers.ContainsKey(HeaderNames.Authorization)
         && context.User.Identity?.IsAuthenticated != true
         && !HoldsNonce(context.Response.Headers[HeaderNames.ContentSecurityPolicy])
-        && !HoldsNonce(context.Response.Headers[HeaderNames.ContentSecurityPolicyReportOnly]);
+        && !HoldsNonce(context.Response.Headers[HeaderNames.ContentSecurityPolicyReportOnly])
+        && !VariesByCookieOrEverything(context.Response.Headers.Vary);
+
+    private static bool VariesByCookieOrEverything(StringValues vary)
+    {
+        foreach (var value in vary)
+        {
+            foreach (var field in (value ?? string.Empty).Split(',', StringSplitOptions.TrimEntries))
+            {
+                if (field == "*" || string.Equals(field, HeaderNames.Cookie, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
     private static bool HoldsNonce(StringValues policies)
     {

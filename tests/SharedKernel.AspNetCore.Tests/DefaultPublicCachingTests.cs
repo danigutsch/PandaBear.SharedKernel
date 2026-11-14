@@ -117,6 +117,37 @@ public sealed class DefaultPublicCachingTests
         response.Headers.CacheControl.ShouldNotBeNull().ToString().ShouldBe("public, max-age=60");
     }
 
+    [Theory]
+    [InlineData("*")]
+    [InlineData("Cookie")]
+    [InlineData("accept-encoding, cookie")]
+    [InlineData("Accept-Language,*")]
+    public async Task A_response_that_varies_by_cookie_or_by_everything_is_left_untouched(string vary)
+    {
+        // Arrange
+        await using var host = await CachingTestHost.Start(MaxAge);
+
+        // Act
+        using var response = await host.Send(HttpMethod.Get, $"/header?name=Vary&value={Uri.EscapeDataString(vary)}");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.Headers.CacheControl.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task A_response_that_varies_by_other_headers_becomes_public()
+    {
+        // Arrange
+        await using var host = await CachingTestHost.Start(MaxAge);
+
+        // Act
+        using var response = await host.Send(HttpMethod.Get, $"/header?name=Vary&value={Uri.EscapeDataString("Accept-Language, Cookie-Consent")}");
+
+        // Assert
+        response.Headers.CacheControl.ShouldNotBeNull().ToString().ShouldBe("public, max-age=60");
+    }
+
     [Fact]
     public async Task A_request_with_an_authorization_header_is_left_untouched()
     {
