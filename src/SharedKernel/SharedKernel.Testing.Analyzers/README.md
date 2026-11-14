@@ -306,5 +306,6 @@ Playwright .NET's `IPage.WaitForURLAsync` and `IFrame.WaitForURLAsync` read the 
 navigation events, which arrive on another thread; a navigation that lands in between is lost and the wait times out
 (microsoft/playwright-dotnet#3364). The rule reports every call. `page.ExpectPath(uri)` and `page.ExpectPath(baseUri, "path")`
 from `SharedKernel.Testing.Playwright` poll the address in the driver instead. The code fix rewrites a page wait for one exact
-absolute address (a constant, an interpolated string without glob characters, or `uri.ToString()`) when `ExpectPath` is
-referenced; globs, regular expressions, predicates, options and frames are left for a person.
+absolute `http` or `https` address (a constant, an interpolated string that starts with a literal `http://` or `https://`
+and has no glob characters, or `uri.ToString()`) when `ExpectPath` is referenced; relative addresses, globs, regular
+expressions, predicates, options and frames are left for a person.

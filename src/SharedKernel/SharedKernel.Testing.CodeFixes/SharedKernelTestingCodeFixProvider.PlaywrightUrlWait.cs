@@ -77,8 +77,9 @@ public sealed partial class SharedKernelTestingCodeFixProvider
                 && SymbolEqualityComparer.Default.Equals(candidate.Parameters[1].Type, uri));
     }
 
-    // The Uri for the argument: the receiver of uri.ToString(), or new Uri(argument) for a constant absolute address or an interpolated
-    // string whose text holds no glob character. Null for anything else, such as a variable that may hold a pattern.
+    // The Uri for the argument: the receiver of uri.ToString(), or new Uri(argument) for a constant absolute http(s) address or an
+    // interpolated string that starts with a literal http(s) scheme and whose text holds no glob character. Null for anything else,
+    // such as a relative address or a variable that may hold a pattern.
     private static ExpressionSyntax? GetExactAddress(SemanticModel model, ExpressionSyntax argument, CancellationToken ct)
     {
         if (argument is InvocationExpressionSyntax
@@ -92,8 +93,13 @@ public sealed partial class SharedKernelTestingCodeFixProvider
         }
 
         var exact = model.GetConstantValue(argument, ct) is { HasValue: true, Value: string constant }
-            ? constant.IndexOfAny(UrlGlobCharacters) < 0 && Uri.TryCreate(constant, UriKind.Absolute, out _)
+            ? constant.IndexOfAny(UrlGlobCharacters) < 0
+                && Uri.TryCreate(constant, UriKind.Absolute, out var address)
+                && (address.Scheme == Uri.UriSchemeHttp || address.Scheme == Uri.UriSchemeHttps)
+                && StartsWithHttpScheme(constant)
             : argument is InterpolatedStringExpressionSyntax interpolated
+                && interpolated.Contents.FirstOrDefault() is InterpolatedStringTextSyntax first
+                && StartsWithHttpScheme(first.TextToken.ValueText)
                 && interpolated.Contents.OfType<InterpolatedStringTextSyntax>()
                     .All(static text => text.TextToken.ValueText.IndexOfAny(UrlGlobCharacters) < 0);
         if (!exact)
@@ -103,6 +109,13 @@ public sealed partial class SharedKernelTestingCodeFixProvider
 
         return ObjectCreationExpression(ParseTypeName("System.Uri").WithAdditionalAnnotations(Simplifier.Annotation))
             .WithArgumentList(ArgumentList(SingletonSeparatedList(Argument(argument.WithoutTrivia()))));
+    }
+
+    // An http or https address written out in full. A root-relative "/customers" is absolute on Unix (a file: URI), so the scheme must
+    // be checked; an interpolated string qualifies only when its literal start names the scheme.
+    private static bool StartsWithHttpScheme(string text)
+    {
+        return text.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || text.StartsWith("https://", StringComparison.OrdinalIgnoreCase);
     }
 
     private static SyntaxNode AddNamespaceUsing(SyntaxNode syntaxRoot, string namespaceName)
