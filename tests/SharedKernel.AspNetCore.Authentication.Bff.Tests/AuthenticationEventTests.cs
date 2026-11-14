@@ -91,6 +91,36 @@ public sealed class AuthenticationEventTests
     }
 
     [Fact]
+    public async Task The_hybrid_flow_id_token_from_the_authorization_response_waits_for_the_code_redemption()
+    {
+        // Arrange
+        using var host = new BffTestHost();
+        var context = AuthenticationEventContexts.TokenValidated(host, response: null, new OpenIdConnectMessage { Code = "code", IdToken = "front-channel-id" });
+
+        // Act
+        await context.Options.Events.TokenValidated(context);
+
+        // Assert
+        context.Result.ShouldBeNull();
+        host.Cache.Entries.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task A_login_without_a_token_endpoint_response_or_code_fails()
+    {
+        // Arrange
+        using var host = new BffTestHost();
+        var context = AuthenticationEventContexts.TokenValidated(host, response: null, new OpenIdConnectMessage { IdToken = "front-channel-id" });
+
+        // Act
+        await context.Options.Events.TokenValidated(context);
+
+        // Assert
+        context.Result.ShouldNotBeNull();
+        context.Result.Failure.ShouldNotBeNull();
+    }
+
+    [Fact]
     public async Task A_login_replaces_session_claims_that_the_principal_already_carried()
     {
         // Arrange

@@ -14,9 +14,10 @@ internal static class AuthenticationEventContexts
 {
     /// <summary>A validated-token context for a fresh login of "alice" with the given token endpoint response.</summary>
     /// <param name="host">The host.</param>
-    /// <param name="response">The token endpoint response.</param>
+    /// <param name="response">The token endpoint response, or <see langword="null" /> for an ID token from the authorization response.</param>
+    /// <param name="authorizationResponse">The authorization response.</param>
     /// <returns>The context; its options carry the configured events.</returns>
-    internal static TokenValidatedContext TokenValidated(BffTestHost host, OpenIdConnectMessage response)
+    internal static TokenValidatedContext TokenValidated(BffTestHost host, OpenIdConnectMessage? response, OpenIdConnectMessage? authorizationResponse = null)
     {
         var options = host.Services.GetRequiredService<IOptionsMonitor<OpenIdConnectOptions>>().Get(OpenIdConnectDefaults.AuthenticationScheme);
         var httpContext = new DefaultHttpContext { RequestServices = host.CreateRequestServices() };
@@ -28,7 +29,8 @@ internal static class AuthenticationEventContexts
             principal,
             new AuthenticationProperties())
         {
-            TokenEndpointResponse = response
+            TokenEndpointResponse = response,
+            ProtocolMessage = authorizationResponse ?? new OpenIdConnectMessage()
         };
     }
 

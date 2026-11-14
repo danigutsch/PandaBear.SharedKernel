@@ -24,6 +24,12 @@ internal sealed class TokenSessionOpenIdConnectEvents(OpenIdConnectEvents inner)
         }
 
         var response = context.TokenEndpointResponse;
+        if (response is null && !string.IsNullOrEmpty(context.ProtocolMessage?.Code))
+        {
+            // Hybrid flow: this is the ID token of the authorization response; the event runs again after the code is redeemed.
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(response?.AccessToken) || !TryReadLifetime(response.ExpiresIn, out var expiresIn))
         {
             context.Fail(UnusableTokenResponse);
