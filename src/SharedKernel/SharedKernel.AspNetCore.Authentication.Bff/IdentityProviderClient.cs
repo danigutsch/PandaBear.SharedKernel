@@ -276,9 +276,10 @@ internal sealed partial class IdentityProviderClient
         return root.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String ? value.GetString() : null;
     }
 
+    /// <summary>Reads <c>expires_in</c>: <see langword="null" /> when it is absent, zero when it is not a whole number of seconds.</summary>
     private static long? ReadLifetime(JsonElement root)
     {
-        if (!root.TryGetProperty("expires_in", out var value))
+        if (!root.TryGetProperty("expires_in", out var value) || value.ValueKind == JsonValueKind.Null)
         {
             return null;
         }
@@ -287,7 +288,7 @@ internal sealed partial class IdentityProviderClient
         {
             JsonValueKind.Number when value.TryGetInt64(out var seconds) => seconds,
             JsonValueKind.String when long.TryParse(value.GetString(), NumberStyles.None, CultureInfo.InvariantCulture, out var seconds) => seconds,
-            _ => null
+            _ => 0
         };
     }
 

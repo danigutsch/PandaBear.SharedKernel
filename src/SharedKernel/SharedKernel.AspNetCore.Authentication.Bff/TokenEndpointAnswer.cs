@@ -17,7 +17,7 @@ internal sealed class TokenEndpointAnswer
         get; init;
     }
 
-    /// <summary>Gets the <c>expires_in</c> field, in seconds, if present.</summary>
+    /// <summary>Gets the <c>expires_in</c> field, in seconds, if present; zero when it is present but not a whole number.</summary>
     internal long? ExpiresIn
     {
         get; init;

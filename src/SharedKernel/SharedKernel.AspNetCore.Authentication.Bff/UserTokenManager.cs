@@ -319,15 +319,28 @@ public sealed partial class UserTokenManager
             return UserTokenResult.Failed(UserTokenFailure.IdentityProviderUnavailable);
         }
 
-        if (string.IsNullOrWhiteSpace(answer.AccessToken) || answer.ExpiresIn is not > 0)
+        if (string.IsNullOrWhiteSpace(answer.AccessToken) || answer.ExpiresIn is <= 0)
         {
             LogUnusableAnswer(_logger, IdentityProviderClient.RefreshOperation);
+            if (!string.IsNullOrWhiteSpace(answer.RefreshToken))
+            {
+                // The old refresh token may already be revoked by rotation: keep the new one for the next attempt.
+                var rotated = new UserTokenSet(
+                    tokens.AccessToken,
+                    tokens.AccessTokenExpiresAt,
+                    answer.RefreshToken,
+                    tokens.IdentityToken,
+                    tokens.AccessTokenType,
+                    tokens.Scope);
+                await _store.SetUserTokens(session, rotated, CancellationToken.None).ConfigureAwait(false);
+            }
+
             return UserTokenResult.Failed(UserTokenFailure.IdentityProviderUnavailable);
         }
 
         var refreshed = new UserTokenSet(
             answer.AccessToken,
-            ExpiresAfter(answer.ExpiresIn.Value),
+            answer.ExpiresIn is { } seconds ? ExpiresAfter(seconds) : _timeProvider.GetUtcNow().Add(_options.DefaultAccessTokenLifetime),
             answer.RefreshToken ?? tokens.RefreshToken,
             answer.IdentityToken ?? tokens.IdentityToken,
             answer.TokenType ?? tokens.AccessTokenType,

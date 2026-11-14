@@ -34,6 +34,12 @@ public sealed class UserTokenManagementOptions
     public TimeSpan RefreshBeforeExpiry { get; set; } = TimeSpan.FromMinutes(1);
 
     /// <summary>
+    /// Gets or sets the lifetime assumed for an access token whose token response omits <c>expires_in</c>, which RFC 6749
+    /// section 5.1 only recommends. Defaults to five minutes.
+    /// </summary>
+    public TimeSpan DefaultAccessTokenLifetime { get; set; } = TimeSpan.FromMinutes(5);
+
+    /// <summary>
     /// Gets or sets the timeout of each call to the identity provider. Defaults to ten seconds.
     /// </summary>
     public TimeSpan IdentityProviderTimeout { get; set; } = TimeSpan.FromSeconds(10);

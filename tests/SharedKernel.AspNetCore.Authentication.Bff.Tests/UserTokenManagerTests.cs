@@ -117,6 +117,61 @@ public sealed class UserTokenManagerTests
     }
 
     [Fact]
+    public async Task A_refresh_answer_without_expires_in_uses_the_default_lifetime_and_keeps_the_rotated_refresh_token()
+    {
+        // Arrange
+        using var host = new BffTestHost(options => options.DefaultAccessTokenLifetime = TimeSpan.FromMinutes(3));
+        host.IdentityProvider.Respond = request => request.Form.GetValueOrDefault("grant_type") == "refresh_token"
+            ? FakeIdentityProvider.Json(HttpStatusCode.OK, new Dictionary<string, object>
+            {
+                ["access_token"] = "access-new",
+                ["token_type"] = "Bearer",
+                ["refresh_token"] = "refresh-new"
+            })
+            : null;
+        var user = await host.SignIn("alice");
+        host.Time.Advance(TimeSpan.FromMinutes(10));
+
+        // Act
+        var result = await host.Manager.GetAccessToken(user, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.AccessToken.ShouldBe("access-new");
+        result.ExpiresAt.ShouldBe(host.Time.GetUtcNow().AddMinutes(3));
+        var tokens = await host.Manager.GetTokens(user, TestContext.Current.CancellationToken);
+        tokens!.RefreshToken.ShouldBe("refresh-new");
+    }
+
+    [Theory]
+    [InlineData(null, 300)]
+    [InlineData("access-new", 0)]
+    public async Task An_unusable_refresh_answer_fails_but_keeps_the_rotated_refresh_token(string? accessToken, int expiresIn)
+    {
+        // Arrange
+        using var host = new BffTestHost();
+        host.IdentityProvider.Respond = request => request.Form.GetValueOrDefault("grant_type") == "refresh_token"
+            ? FakeIdentityProvider.Json(HttpStatusCode.OK, new Dictionary<string, object?>
+            {
+                ["access_token"] = accessToken,
+                ["token_type"] = "Bearer",
+                ["expires_in"] = expiresIn,
+                ["refresh_token"] = "refresh-new"
+            })
+            : null;
+        var user = await host.SignIn("alice");
+        host.Time.Advance(TimeSpan.FromMinutes(10));
+
+        // Act
+        var result = await host.Manager.GetAccessToken(user, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Failure.ShouldBe(UserTokenFailure.IdentityProviderUnavailable);
+        var tokens = await host.Manager.GetTokens(user, TestContext.Current.CancellationToken);
+        tokens!.RefreshToken.ShouldBe("refresh-new");
+        tokens.AccessToken.ShouldBe("access-0");
+    }
+
+    [Fact]
     public async Task A_rejected_refresh_fails_typed_and_ends_the_token_session()
     {
         // Arrange

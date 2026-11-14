@@ -48,7 +48,7 @@ public sealed class AuthenticationEventTests
 
     [Theory]
     [InlineData(null, "300")]
-    [InlineData("access", null)]
+    [InlineData(" ", "300")]
     [InlineData("access", "0")]
     [InlineData("access", "soon")]
     public async Task A_login_without_a_usable_token_response_fails(string? accessToken, string? expiresIn)
@@ -64,6 +64,30 @@ public sealed class AuthenticationEventTests
         context.Result.ShouldNotBeNull();
         context.Result.Failure.ShouldNotBeNull();
         host.Cache.Entries.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public async Task A_login_without_expires_in_uses_the_default_access_token_lifetime(string? expiresIn)
+    {
+        // Arrange
+        using var host = new BffTestHost(options => options.DefaultAccessTokenLifetime = TimeSpan.FromMinutes(2));
+        var context = AuthenticationEventContexts.TokenValidated(host, new OpenIdConnectMessage
+        {
+            AccessToken = "login-access",
+            RefreshToken = "login-refresh",
+            ExpiresIn = expiresIn
+        });
+
+        // Act
+        await context.Options.Events.TokenValidated(context);
+
+        // Assert
+        context.Result.ShouldBeNull();
+        var tokens = await host.Manager.GetTokens(context.Principal!, TestContext.Current.CancellationToken);
+        tokens!.AccessTokenExpiresAt.ShouldBe(BffTestHost.Start.AddMinutes(2));
+        tokens.RefreshToken.ShouldBe("login-refresh");
     }
 
     [Fact]

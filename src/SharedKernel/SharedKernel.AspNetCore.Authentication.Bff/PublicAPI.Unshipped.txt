@@ -52,6 +52,8 @@ PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.ClientAuthent
 PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.ClientAuthentication.set -> void
 PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.CookieScheme.get -> string!
 PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.CookieScheme.set -> void
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.DefaultAccessTokenLifetime.get -> System.TimeSpan
+PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.DefaultAccessTokenLifetime.set -> void
 PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.IdentityProviderTimeout.get -> System.TimeSpan
 PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.IdentityProviderTimeout.set -> void
 PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementOptions.OpenIdConnectScheme.get -> string!

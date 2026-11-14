@@ -2,6 +2,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace PandaBear.AspNetCore.Authentication.Bff;
 
@@ -23,9 +24,7 @@ internal sealed class TokenSessionOpenIdConnectEvents(OpenIdConnectEvents inner)
         }
 
         var response = context.TokenEndpointResponse;
-        if (string.IsNullOrWhiteSpace(response?.AccessToken)
-            || !long.TryParse(response.ExpiresIn, NumberStyles.None, CultureInfo.InvariantCulture, out var expiresIn)
-            || expiresIn <= 0)
+        if (string.IsNullOrWhiteSpace(response?.AccessToken) || !TryReadLifetime(response.ExpiresIn, out var expiresIn))
         {
             context.Fail(UnusableTokenResponse);
             return;
@@ -35,7 +34,9 @@ internal sealed class TokenSessionOpenIdConnectEvents(OpenIdConnectEvents inner)
         var now = services.GetRequiredService<TimeProvider>().GetUtcNow();
         var tokens = new UserTokenSet(
             response.AccessToken,
-            now.AddSeconds(Math.Min(expiresIn, (long)TimeSpan.FromDays(366).TotalSeconds)),
+            expiresIn is { } lifetime
+                ? now.AddSeconds(Math.Min(lifetime, (long)TimeSpan.FromDays(366).TotalSeconds))
+                : now.Add(services.GetRequiredService<IOptions<UserTokenManagementOptions>>().Value.DefaultAccessTokenLifetime),
             response.RefreshToken,
             response.IdToken,
             response.TokenType,
@@ -83,4 +84,22 @@ internal sealed class TokenSessionOpenIdConnectEvents(OpenIdConnectEvents inner)
 
     /// <inheritdoc />
     public override Task PushAuthorization(PushedAuthorizationContext context) => inner.PushAuthorization(context);
+
+    /// <summary>Reads <c>expires_in</c>, which may be absent (RFC 6749 section 5.1) but otherwise must be a positive whole number.</summary>
+    private static bool TryReadLifetime(string? value, out long? seconds)
+    {
+        seconds = null;
+        if (string.IsNullOrEmpty(value))
+        {
+            return true;
+        }
+
+        if (!long.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out var parsed) || parsed <= 0)
+        {
+            return false;
+        }
+
+        seconds = parsed;
+        return true;
+    }
 }

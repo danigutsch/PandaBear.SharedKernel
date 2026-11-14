@@ -40,6 +40,7 @@ public static class UserTokenManagementServiceCollectionExtensions
             .Validate(value => !string.IsNullOrWhiteSpace(value.CacheKeyPrefix), "CacheKeyPrefix must be set.")
             .Validate(value => value.SessionLifetime > TimeSpan.Zero, "SessionLifetime must be positive.")
             .Validate(value => value.RefreshBeforeExpiry >= TimeSpan.Zero, "RefreshBeforeExpiry must not be negative.")
+            .Validate(value => value.DefaultAccessTokenLifetime > TimeSpan.Zero, "DefaultAccessTokenLifetime must be positive.")
             .Validate(value => value.IdentityProviderTimeout > TimeSpan.Zero, "IdentityProviderTimeout must be positive.");
         if (configure is not null)
         {
