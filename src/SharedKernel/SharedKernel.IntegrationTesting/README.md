@@ -44,7 +44,8 @@ SharedKernel seed and should stay reusable outside this repository.
   the arguments name one (`--DcpPublisher:ResourceNameSuffix={stack}-{run}`), which is kept.
 - Pass AppHost configuration values (connection strings of servers the tests own, a data folder) as a dictionary:
   `CreateBuilder(configuration, args)`, `Start<TAppHost>(resources, timeout, args, configuration, ct)`, or `AppHostLaunch.Configuration`
-  for `AspireAppHostFixture`. The AppHost reads them before its own code runs; arguments win over them.
+  for `AspireAppHostFixture`. The AppHost reads them before its own code runs; they win over its appsettings, user secrets and
+  environment variables, and arguments win over them.
 - Every project resource the application starts gets `DOTNET_hostBuilder__reloadConfigOnChange=false`: tests never reload configuration,
   and one appsettings watcher per file and host exhausts the per-user inotify limit when many hosts run in parallel
   (`IOException: The configured user limit (128) on the number of inotify instances has been reached`).

@@ -5,8 +5,8 @@ namespace PandaBear.IntegrationTesting;
 /// <param name="healthyResources">The resources that must report healthy before tests use the application.</param>
 /// <param name="startupTimeout">How long the start and the health wait may take together.</param>
 /// <param name="configuration">
-/// AppHost configuration values, such as connection strings of servers the tests own or a profile's data folder; the arguments win over
-/// them. <see langword="null"/> means none.
+/// AppHost configuration values, such as connection strings of servers the tests own or a profile's data folder; they win over the
+/// AppHost's appsettings, user secrets and environment variables, and the arguments win over them. <see langword="null"/> means none.
 /// </param>
 public sealed class AppHostLaunch(
     IReadOnlyList<string> arguments,
@@ -23,6 +23,6 @@ public sealed class AppHostLaunch(
     /// <summary>Gets how long the start and the health wait may take together.</summary>
     public TimeSpan StartupTimeout { get; } = startupTimeout;
 
-    /// <summary>Gets the AppHost configuration values; the arguments win over them.</summary>
+    /// <summary>Gets the AppHost configuration values; they win over appsettings, user secrets and environment variables, and the arguments win over them.</summary>
     public IReadOnlyDictionary<string, string?> Configuration { get; } = configuration ?? new Dictionary<string, string?>();
 }

@@ -54,6 +54,21 @@ public sealed class AspireTestApplicationIsolationTests
     }
 
     [Fact]
+    public async Task Configuration_values_win_over_environment_variables()
+    {
+        // Arrange
+        const string key = "SkIsolationTest:DataFolder";
+        var configuration = new Dictionary<string, string?> { [key] = "/tmp/test-run" };
+        using var environment = new EnvironmentVariableScope("SkIsolationTest__DataFolder", "/home/someone/real-data");
+
+        // Act
+        await using var builder = AspireTestApplication.CreateBuilder(configuration);
+
+        // Assert
+        builder.Configuration[key].ShouldBe("/tmp/test-run", "a developer's environment must not point a test run at real data");
+    }
+
+    [Fact]
     public async Task Started_projects_do_not_watch_their_configuration_files()
     {
         // Arrange

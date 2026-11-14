@@ -1,7 +1,6 @@
 using Aspire.Hosting;
 using Aspire.Hosting.Testing;
 using Aspire.Hosting.ApplicationModel;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
@@ -58,7 +57,9 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// Creates a resource-only Aspire testing builder with configuration values and the standard concurrent-test defaults of
     /// <see cref="CreateBuilder(string[])"/>.
     /// </summary>
-    /// <param name="configuration">Configuration values; <paramref name="args"/> win over them.</param>
+    /// <param name="configuration">
+    /// Configuration values; they win over appsettings, user secrets and environment variables, and <paramref name="args"/> win over them.
+    /// </param>
     /// <param name="args">Command-line configuration arguments for the builder.</param>
     /// <returns>The configured Aspire testing builder.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="configuration"/> or <paramref name="args"/> is <see langword="null"/>.</exception>
@@ -66,9 +67,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
     {
         ArgumentNullException.ThrowIfNull(configuration);
         ArgumentNullException.ThrowIfNull(args);
-        return DistributedApplicationTestingBuilder.Create(
-            CreateAppHostArguments(args),
-            (_, settings) => AddConfiguration(settings, configuration));
+        return DistributedApplicationTestingBuilder.Create(CreateAppHostArguments([.. ConfigurationArguments(configuration), .. args]));
     }
 
     /// <summary>
@@ -117,7 +116,8 @@ public sealed class AspireTestApplication : IAsyncDisposable
 
     /// <summary>
     /// Starts an Aspire application with AppHost configuration arguments and values, and waits for resources. The AppHost reads the values
-    /// as configuration before its own code runs (connection strings of servers the tests own, a data folder); the arguments win over them.
+    /// as configuration before its own code runs (connection strings of servers the tests own, a data folder); they win over appsettings,
+    /// user secrets and environment variables, and the arguments win over them.
     /// </summary>
     /// <typeparam name="TAppHost">The AppHost entry-point type.</typeparam>
     /// <param name="healthyResourceNames">Resource names that must become healthy before the method returns.</param>
@@ -146,8 +146,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, deadline.Token);
         var appBuilder = await DistributedApplicationTestingBuilder
             .CreateAsync<TAppHost>(
-                CreateAppHostArguments(appHostArguments),
-                (_, settings) => AddConfiguration(settings, configuration),
+                CreateAppHostArguments([.. ConfigurationArguments(configuration), .. appHostArguments]),
                 linked.Token)
             .ConfigureAwait(false);
         return await StartBuilt(appBuilder, healthyResourceNames, timeout, deadline, linked.Token, ct).ConfigureAwait(false);
@@ -465,9 +464,9 @@ public sealed class AspireTestApplication : IAsyncDisposable
         ];
     }
 
-    private static void AddConfiguration(HostApplicationBuilderSettings settings, IReadOnlyDictionary<string, string?> configuration)
-    {
-        settings.Configuration ??= new ConfigurationManager();
-        settings.Configuration.AddInMemoryCollection(configuration);
-    }
+    // Configuration values travel as command-line arguments, the last configuration source a builder adds, so appsettings, user secrets and
+    // environment variables of the developer's machine cannot override them (a data folder pointing at real data). Arguments the caller
+    // passes come after them and win. A null value becomes an empty one.
+    private static IEnumerable<string> ConfigurationArguments(IReadOnlyDictionary<string, string?> configuration) =>
+        configuration.Select(static pair => "--" + pair.Key + "=" + pair.Value);
 }
