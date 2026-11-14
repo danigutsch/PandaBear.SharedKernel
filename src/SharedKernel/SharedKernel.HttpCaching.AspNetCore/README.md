@@ -37,6 +37,9 @@ response has no `Cache-Control` of its own, the response sets no cookie, it does
 and endpoints that choose their own lifetime keep it. The lifetime must be at least one second and is written in whole seconds.
 Register it before the endpoints; the user is checked when the response starts, so later authentication is taken into account.
 Request cookies are not checked: a page whose content depends on a cookie says so with `Vary: Cookie`.
+The nonce check sees only a policy that is already written when this middleware decides; `UseSecurityHeaders` from
+`PandaBear.SharedKernel.AspNetCore` turns a `public` header on its nonce responses into `private` itself, so the two can be
+registered in either order.
 
 ## Immutable responses
 

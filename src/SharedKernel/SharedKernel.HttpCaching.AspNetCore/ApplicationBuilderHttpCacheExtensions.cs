@@ -58,7 +58,9 @@ public static class ApplicationBuilderHttpCacheExtensions
     /// <remarks>
     /// The user is checked when the response starts, so authentication that runs later in the pipeline is seen. Request cookies are not
     /// checked: a page whose content depends on a cookie says so with <c>Vary: Cookie</c>. Endpoints that want another
-    /// lifetime, such as immutable files, set their own header and keep it. Register it early, before the endpoints.
+    /// lifetime, such as immutable files, set their own header and keep it. Register it early, before the endpoints. The nonce check sees
+    /// only a policy already written when this middleware decides; <c>UseSecurityHeaders</c> from PandaBear.SharedKernel.AspNetCore makes
+    /// its own nonce responses non-shared, so the two can be registered in either order.
     /// </remarks>
     /// <param name="app">The application pipeline.</param>
     /// <param name="maxAge">The freshness lifetime, at least one second; it is written in whole seconds.</param>

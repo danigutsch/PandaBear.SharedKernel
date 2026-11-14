@@ -14,7 +14,9 @@ policy. Each consuming application owns those decisions.
 
 - `UseSecurityHeaders`: common browser security headers with an application-owned Content Security Policy and optional
   Permissions Policy. `{nonce}` in the policy (`style-src 'self' 'nonce-{nonce}'`) becomes the request's `ICspNonce`, a
-  128-bit random base64 value registered with `AddCspNonce()`.
+  128-bit random base64 value registered with `AddCspNonce()`. A shared cache must not hand that nonce to another visitor, so
+  when the response already carries a `Cache-Control` with `public` or `s-maxage`, the middleware turns it into `private` and
+  keeps `max-age` (an unreadable `Cache-Control` becomes `private, no-cache`).
 - `AddConfiguredTrustedForwardedHeaders` and `ConfigureTrustedForwardedHeaders`: forwarded-header trust from
   configuration. `AddForwardedClientIp` forwards the resolved visitor identity to a downstream client (see below).
 - `AddConfiguredOriginsPolicy`: a CORS policy from a configuration section of allowed origins.

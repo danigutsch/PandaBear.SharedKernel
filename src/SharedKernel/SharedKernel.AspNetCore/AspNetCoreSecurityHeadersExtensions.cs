@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 
 namespace PandaBear.AspNetCore;
 
@@ -34,7 +35,8 @@ public static class AspNetCoreSecurityHeadersExtensions
     /// <param name="app">The application builder.</param>
     /// <param name="contentSecurityPolicy">
     /// The Content Security Policy value owned by the consuming application. Every <see cref="NoncePlaceholder" /> in it is replaced with the
-    /// request's <see cref="ICspNonce" />.
+    /// request's <see cref="ICspNonce" />, and a <c>Cache-Control</c> that allows shared caching (<c>public</c> or <c>s-maxage</c>) on that response
+    /// becomes <c>private</c>, keeping <c>max-age</c>.
     /// </param>
     /// <returns>The same <see cref="IApplicationBuilder"/> instance.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the policy contains <see cref="NoncePlaceholder" /> and <see cref="ICspNonce" /> is not registered.</exception>
@@ -49,7 +51,8 @@ public static class AspNetCoreSecurityHeadersExtensions
     /// <param name="app">The application builder.</param>
     /// <param name="contentSecurityPolicy">
     /// The Content Security Policy value owned by the consuming application. Every <see cref="NoncePlaceholder" /> in it is replaced with the
-    /// request's <see cref="ICspNonce" />.
+    /// request's <see cref="ICspNonce" />, and a <c>Cache-Control</c> that allows shared caching (<c>public</c> or <c>s-maxage</c>) on that response
+    /// becomes <c>private</c>, keeping <c>max-age</c>.
     /// </param>
     /// <param name="permissionsPolicy">The Permissions Policy value owned by the consuming application.</param>
     /// <returns>The same <see cref="IApplicationBuilder"/> instance.</returns>
@@ -79,6 +82,7 @@ public static class AspNetCoreSecurityHeadersExtensions
                 if (nonce)
                 {
                     csp = csp.Replace(NoncePlaceholder, context.RequestServices.GetRequiredService<ICspNonce>().Value, StringComparison.Ordinal);
+                    KeepOutOfSharedCaches(context.Response);
                 }
 
                 SetSecurityHeaders(context, csp, permissions);
@@ -87,6 +91,31 @@ public static class AspNetCoreSecurityHeadersExtensions
 
             await next().ConfigureAwait(false);
         });
+    }
+
+    // A shared cache would hand this request's nonce to every later visitor. The check runs here, where the nonce is written, so a public
+    // header set before or after this callback (other middleware's OnStarting runs in either order) never leaves with the nonce.
+    private static void KeepOutOfSharedCaches(HttpResponse response)
+    {
+        var current = response.Headers.CacheControl;
+        if (current.Count == 0)
+        {
+            return;
+        }
+
+        if (!CacheControlHeaderValue.TryParse(current.ToString(), out var cacheControl))
+        {
+            response.Headers.CacheControl = "private, no-cache";
+            return;
+        }
+
+        if (cacheControl.Public || cacheControl.SharedMaxAge.HasValue)
+        {
+            cacheControl.Public = false;
+            cacheControl.SharedMaxAge = null;
+            cacheControl.Private = true;
+            response.Headers.CacheControl = cacheControl.ToString();
+        }
     }
 
     private static void SetSecurityHeaders(HttpContext httpContext, string contentSecurityPolicy, string permissionsPolicy)
