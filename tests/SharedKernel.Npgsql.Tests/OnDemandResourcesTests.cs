@@ -47,6 +47,52 @@ public sealed class OnDemandResourcesTests
     }
 
     [Fact]
+    public async Task A_demand_that_races_disposal_is_refused_or_its_value_is_disposed()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var leaked = 0;
+
+        // Act
+        for (var attempt = 0; attempt < 2000; attempt++)
+        {
+            var started = new ConcurrentBag<AsyncDisposableMarker>();
+            await using var resources = new OnDemandResources<AsyncDisposableMarker>((_, _) =>
+            {
+                var marker = new AsyncDisposableMarker();
+                started.Add(marker);
+                return Task.FromResult(marker);
+            });
+            using var gate = new Barrier(2);
+            var demand = Task.Run(
+                () =>
+                {
+                    gate.SignalAndWait(ct);
+                    return resources.Get("racing", ct);
+                },
+                ct);
+            var disposal = Task.Run(
+                async () =>
+                {
+                    gate.SignalAndWait(ct);
+                    await resources.DisposeAsync();
+                },
+                ct);
+            await disposal;
+            await Task.WhenAny(demand);
+            if (demand.IsFaulted)
+            {
+                demand.Exception.InnerException.ShouldBeOfType<ObjectDisposedException>();
+            }
+
+            leaked += started.Count(marker => marker.DisposeCount == 0);
+        }
+
+        // Assert
+        leaked.ShouldBe(0, "a value started while the set was disposed must be disposed too");
+    }
+
+    [Fact]
     public async Task A_blank_key_is_refused()
     {
         // Arrange

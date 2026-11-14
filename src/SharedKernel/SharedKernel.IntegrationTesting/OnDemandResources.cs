@@ -13,7 +13,8 @@ public sealed class OnDemandResources<T>(Func<string, CancellationToken, Task<T>
 {
     private readonly ConcurrentDictionary<string, OnDemandResource<T>> _resources = new(StringComparer.Ordinal);
     private readonly Func<string, CancellationToken, Task<T>> _start = start ?? throw new ArgumentNullException(nameof(start));
-    private volatile bool _disposed;
+    private readonly Lock _gate = new();
+    private bool _disposed;
 
     /// <summary>Gets the value of a key, starting it on the first demand.</summary>
     /// <param name="key">The key, such as a resource name.</param>
@@ -24,8 +25,15 @@ public sealed class OnDemandResources<T>(Func<string, CancellationToken, Task<T>
     public Task<T> Get(string key, CancellationToken ct)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
-        ObjectDisposedException.ThrowIf(_disposed, this);
-        return _resources.GetOrAdd(key, name => new OnDemandResource<T>(token => _start(name, token))).Get(ct);
+        OnDemandResource<T> resource;
+        lock (_gate)
+        {
+            // Disposal takes its snapshot under the same gate, so a resource added here is always among those it disposes.
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            resource = _resources.GetOrAdd(key, name => new OnDemandResource<T>(token => _start(name, token)));
+        }
+
+        return resource.Get(ct);
     }
 
     /// <summary>Disposes every started value; failures are reported together after all were attempted.</summary>
@@ -34,9 +42,15 @@ public sealed class OnDemandResources<T>(Func<string, CancellationToken, Task<T>
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Every value is disposed before the failures are reported.")]
     public async ValueTask DisposeAsync()
     {
-        _disposed = true;
+        OnDemandResource<T>[] resources;
+        lock (_gate)
+        {
+            _disposed = true;
+            resources = [.. _resources.Values];
+        }
+
         var failures = new List<Exception>();
-        foreach (var resource in _resources.Values)
+        foreach (var resource in resources)
         {
             try
             {
