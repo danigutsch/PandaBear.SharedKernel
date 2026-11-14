@@ -91,12 +91,12 @@ public sealed class EditSession<TKey, TForm, TRecord> : IDisposable
     /// restore on the first call), fills the form from it and makes <see cref="Context"/> and <see cref="Submission"/> ready.
     /// </summary>
     /// <param name="key">The record key, or <see langword="null"/> for a new record.</param>
-    /// <param name="load">Loads the record of a key; a failed result marks the record as missing.</param>
+    /// <param name="load">Loads the record of a key; a failed result marks the record as missing. It returns a <see cref="ValueTask{TResult}"/>, so <c>Mediator.Send(...)</c> fits directly.</param>
     /// <param name="fill">Copies the record into the form.</param>
     /// <param name="onReset">Runs when the key changed and the previous state was dropped, for the page's own state; optional.</param>
     /// <returns>A task that completes when the session is ready, missing, or superseded by a newer key.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="load"/> or <paramref name="fill"/> is null.</exception>
-    public async Task Sync(TKey? key, Func<TKey, Task<Result<TRecord>>> load, Action<TForm, TRecord> fill, Action? onReset = null)
+    public async Task Sync(TKey? key, Func<TKey, ValueTask<Result<TRecord>>> load, Action<TForm, TRecord> fill, Action? onReset = null)
     {
         ArgumentNullException.ThrowIfNull(load);
         ArgumentNullException.ThrowIfNull(fill);
