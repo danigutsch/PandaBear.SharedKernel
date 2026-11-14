@@ -45,7 +45,8 @@ SharedKernel seed and should stay reusable outside this repository.
 - Pass AppHost configuration values (connection strings of servers the tests own, a data folder) as a dictionary:
   `CreateBuilder(configuration, args)`, `Start<TAppHost>(resources, timeout, args, configuration, ct)`, or `AppHostLaunch.Configuration`
   for `AspireAppHostFixture`. The AppHost reads them before its own code runs; they win over its appsettings, user secrets and
-  environment variables, and arguments win over them.
+  environment variables, and arguments win over them. A `null` value contributes nothing; a key that is empty, white-space or
+  contains `=` cannot travel as an argument and is rejected with `ArgumentException`.
 - Every project resource the application starts gets `DOTNET_hostBuilder__reloadConfigOnChange=false`: tests never reload configuration,
   and one appsettings watcher per file and host exhausts the per-user inotify limit when many hosts run in parallel
   (`IOException: The configured user limit (128) on the number of inotify instances has been reached`).

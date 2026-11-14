@@ -59,10 +59,12 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// </summary>
     /// <param name="configuration">
     /// Configuration values; they win over appsettings, user secrets and environment variables, and <paramref name="args"/> win over them.
+    /// A <see langword="null"/> value contributes nothing.
     /// </param>
     /// <param name="args">Command-line configuration arguments for the builder.</param>
     /// <returns>The configured Aspire testing builder.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="configuration"/> or <paramref name="args"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when a key of <paramref name="configuration"/> is empty, white-space, or contains <c>=</c>.</exception>
     public static IDistributedApplicationTestingBuilder CreateBuilder(IReadOnlyDictionary<string, string?> configuration, params string[] args)
     {
         ArgumentNullException.ThrowIfNull(configuration);
@@ -123,10 +125,11 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// <param name="healthyResourceNames">Resource names that must become healthy before the method returns.</param>
     /// <param name="resourceStartupTimeout">The resource startup timeout.</param>
     /// <param name="appHostArguments">AppHost configuration arguments.</param>
-    /// <param name="configuration">AppHost configuration values.</param>
+    /// <param name="configuration">AppHost configuration values; a <see langword="null"/> value contributes nothing.</param>
     /// <param name="ct">A cancellation token.</param>
     /// <returns>The started test application.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="healthyResourceNames"/>, <paramref name="appHostArguments"/> or <paramref name="configuration"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when a key of <paramref name="configuration"/> is empty, white-space, or contains <c>=</c>.</exception>
     /// <exception cref="TimeoutException">A resource was not healthy in time; the message holds its state and last log lines.</exception>
     /// <exception cref="AggregateException">Thrown when starting the application fails and tearing down the partially started application also fails.</exception>
     public static async Task<AspireTestApplication> Start<TAppHost>(
@@ -140,14 +143,13 @@ public sealed class AspireTestApplication : IAsyncDisposable
         ArgumentNullException.ThrowIfNull(healthyResourceNames);
         ArgumentNullException.ThrowIfNull(appHostArguments);
         ArgumentNullException.ThrowIfNull(configuration);
+        var arguments = CreateAppHostArguments([.. ConfigurationArguments(configuration), .. appHostArguments]);
 
         var timeout = resourceStartupTimeout ?? DefaultResourceStartupTimeout;
         using var deadline = new CancellationTokenSource(timeout);
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, deadline.Token);
         var appBuilder = await DistributedApplicationTestingBuilder
-            .CreateAsync<TAppHost>(
-                CreateAppHostArguments([.. ConfigurationArguments(configuration), .. appHostArguments]),
-                linked.Token)
+            .CreateAsync<TAppHost>(arguments, linked.Token)
             .ConfigureAwait(false);
         return await StartBuilt(appBuilder, healthyResourceNames, timeout, deadline, linked.Token, ct).ConfigureAwait(false);
     }
@@ -466,7 +468,29 @@ public sealed class AspireTestApplication : IAsyncDisposable
 
     // Configuration values travel as command-line arguments, the last configuration source a builder adds, so appsettings, user secrets and
     // environment variables of the developer's machine cannot override them (a data folder pointing at real data). Arguments the caller
-    // passes come after them and win. A null value becomes an empty one.
-    private static IEnumerable<string> ConfigurationArguments(IReadOnlyDictionary<string, string?> configuration) =>
-        configuration.Select(static pair => "--" + pair.Key + "=" + pair.Value);
+    // passes come after them and win. A null value contributes nothing, as it did as an in-memory value; it must not become an empty one.
+    private static string[] ConfigurationArguments(IReadOnlyDictionary<string, string?> configuration) =>
+        [.. CheckConfigurationKeys(configuration, nameof(configuration))
+            .Where(static pair => pair.Value is not null)
+            .Select(static pair => "--" + pair.Key + "=" + pair.Value)];
+
+    /// <summary>Rejects configuration keys that cannot travel as a <c>--Key=value</c> argument.</summary>
+    /// <param name="configuration">The configuration values.</param>
+    /// <param name="parameterName">The name of the caller's parameter.</param>
+    /// <returns>The same values.</returns>
+    /// <exception cref="ArgumentException">Thrown when a key is empty, white-space, or contains <c>=</c>.</exception>
+    internal static IReadOnlyDictionary<string, string?> CheckConfigurationKeys(IReadOnlyDictionary<string, string?> configuration, string parameterName)
+    {
+        foreach (var key in configuration.Keys)
+        {
+            if (string.IsNullOrWhiteSpace(key) || key.Contains('=', StringComparison.Ordinal))
+            {
+                throw new ArgumentException(
+                    $"The configuration key '{key}' cannot be passed as a command-line argument: it must not be empty, white-space, or contain '='.",
+                    parameterName);
+            }
+        }
+
+        return configuration;
+    }
 }

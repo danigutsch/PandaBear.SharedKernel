@@ -69,6 +69,50 @@ public sealed class AspireTestApplicationIsolationTests
     }
 
     [Fact]
+    public async Task A_null_configuration_value_contributes_nothing()
+    {
+        // Arrange
+        const string key = "SkIsolationTest:NullValue";
+        var configuration = new Dictionary<string, string?> { [key] = null };
+        using var environment = new EnvironmentVariableScope("SkIsolationTest__NullValue", "from-environment");
+
+        // Act
+        await using var builder = AspireTestApplication.CreateBuilder(configuration);
+
+        // Assert
+        builder.Configuration[key].ShouldBe("from-environment", "a null value must not become an empty one that hides other sources");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("Section:Key=value")]
+    public void A_configuration_key_that_cannot_travel_as_an_argument_is_rejected(string key)
+    {
+        // Arrange
+        var configuration = new Dictionary<string, string?> { [key] = "value" };
+
+        // Act
+        var create = () => AspireTestApplication.CreateBuilder(configuration);
+
+        // Assert
+        create.ShouldThrow<ArgumentException>().ParamName.ShouldBe("configuration");
+    }
+
+    [Fact]
+    public void An_app_host_launch_rejects_a_configuration_key_that_cannot_travel_as_an_argument()
+    {
+        // Arrange
+        var configuration = new Dictionary<string, string?> { ["Section:Key=value"] = "value" };
+
+        // Act
+        var create = () => new AppHostLaunch(["--A=1"], ["web"], TimeSpan.FromMinutes(1), configuration);
+
+        // Assert
+        create.ShouldThrow<ArgumentException>().ParamName.ShouldBe("configuration");
+    }
+
+    [Fact]
     public async Task Started_projects_do_not_watch_their_configuration_files()
     {
         // Arrange

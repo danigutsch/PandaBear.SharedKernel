@@ -6,8 +6,11 @@ namespace PandaBear.IntegrationTesting;
 /// <param name="startupTimeout">How long the start and the health wait may take together.</param>
 /// <param name="configuration">
 /// AppHost configuration values, such as connection strings of servers the tests own or a profile's data folder; they win over the
-/// AppHost's appsettings, user secrets and environment variables, and the arguments win over them. <see langword="null"/> means none.
+/// AppHost's appsettings, user secrets and environment variables, and the arguments win over them. <see langword="null"/> means none; a
+/// <see langword="null"/> value contributes nothing. A key must not be empty, white-space, or contain <c>=</c>.
 /// </param>
+/// <exception cref="ArgumentNullException">Thrown when <paramref name="arguments"/> or <paramref name="healthyResources"/> is <see langword="null"/>.</exception>
+/// <exception cref="ArgumentException">Thrown when a key of <paramref name="configuration"/> is empty, white-space, or contains <c>=</c>.</exception>
 public sealed class AppHostLaunch(
     IReadOnlyList<string> arguments,
     IReadOnlyList<string> healthyResources,
@@ -24,5 +27,5 @@ public sealed class AppHostLaunch(
     public TimeSpan StartupTimeout { get; } = startupTimeout;
 
     /// <summary>Gets the AppHost configuration values; they win over appsettings, user secrets and environment variables, and the arguments win over them.</summary>
-    public IReadOnlyDictionary<string, string?> Configuration { get; } = configuration ?? new Dictionary<string, string?>();
+    public IReadOnlyDictionary<string, string?> Configuration { get; } = AspireTestApplication.CheckConfigurationKeys(configuration ?? new Dictionary<string, string?>(), nameof(configuration));
 }
