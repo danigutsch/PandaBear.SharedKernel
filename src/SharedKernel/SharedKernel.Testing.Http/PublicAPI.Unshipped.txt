@@ -69,3 +69,26 @@ static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeFil
 static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveHeader(this System.Net.Http.HttpResponseMessage! actual, string! name, string! expectedValue, string! userMessage) -> System.Net.Http.HttpResponseMessage!
 static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldBeNoStore(this System.Net.Http.HttpResponseMessage! actual, string! userMessage) -> System.Net.Http.HttpResponseMessage!
 static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldHaveETag(this System.Net.Http.HttpResponseMessage! actual, string! expectedStrongTag, string! userMessage) -> System.Net.Http.HttpResponseMessage!
+PandaBear.Testing.Http.GatedHttpMessageHandler
+PandaBear.Testing.Http.GatedHttpMessageHandler.GatedHttpMessageHandler() -> void
+PandaBear.Testing.Http.GatedHttpMessageHandler.GatedHttpMessageHandler(System.Net.Http.HttpMessageHandler! innerHandler) -> void
+PandaBear.Testing.Http.GatedHttpMessageHandler.PendingCount.get -> int
+PandaBear.Testing.Http.GatedHttpMessageHandler.Release() -> void
+PandaBear.Testing.Http.GatedHttpMessageHandler.Requests.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!
+PandaBear.Testing.Http.GatedHttpMessageHandler.WaitForRequests(int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!>!
+PandaBear.Testing.Http.RecordingHttpMessageHandler
+PandaBear.Testing.Http.RecordingHttpMessageHandler.LastRequest.get -> PandaBear.Testing.Http.CapturedHttpRequest?
+PandaBear.Testing.Http.RecordingHttpMessageHandler.RecordingHttpMessageHandler() -> void
+PandaBear.Testing.Http.RecordingHttpMessageHandler.RecordingHttpMessageHandler(System.Func<PandaBear.Testing.Http.CapturedHttpRequest!, System.Net.Http.HttpResponseMessage!>! respond) -> void
+PandaBear.Testing.Http.RecordingHttpMessageHandler.RecordingHttpMessageHandler(System.Net.HttpStatusCode statusCode) -> void
+PandaBear.Testing.Http.RecordingHttpMessageHandler.Requests.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!
+PandaBear.Testing.Http.RecordingHttpMessageHandler.WaitForRequests(int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!>!
+PandaBear.Testing.Http.RoutingHttpMessageHandler
+PandaBear.Testing.Http.RoutingHttpMessageHandler.LastRequest.get -> PandaBear.Testing.Http.CapturedHttpRequest?
+PandaBear.Testing.Http.RoutingHttpMessageHandler.Map(System.Net.Http.HttpMethod! method, string! path, System.Func<PandaBear.Testing.Http.CapturedHttpRequest!, System.Net.Http.HttpResponseMessage!>! respond) -> void
+PandaBear.Testing.Http.RoutingHttpMessageHandler.Map(System.Net.Http.HttpMethod! method, string! path, System.Net.HttpStatusCode statusCode) -> void
+PandaBear.Testing.Http.RoutingHttpMessageHandler.MapJson(System.Net.Http.HttpMethod! method, string! path, string! json, System.Net.HttpStatusCode statusCode = System.Net.HttpStatusCode.OK) -> void
+PandaBear.Testing.Http.RoutingHttpMessageHandler.Requests.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!
+PandaBear.Testing.Http.RoutingHttpMessageHandler.RoutingHttpMessageHandler() -> void
+PandaBear.Testing.Http.RoutingHttpMessageHandler.RoutingHttpMessageHandler(System.Func<PandaBear.Testing.Http.CapturedHttpRequest!, System.Net.Http.HttpResponseMessage!>! fallback) -> void
+PandaBear.Testing.Http.RoutingHttpMessageHandler.WaitForRequests(int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!>!

@@ -32,6 +32,10 @@ For the `configureTestServices` callback:
 ## Fakes
 
 - `FakeFormFile`: in-memory `IFormFile`.
+- `StreamFormFile`: `IFormFile` over a caller-supplied stream with a declared `Length`. `OpenReadStream` returns that same
+  stream on every call without buffering or rewinding it, so a non-seekable, slow or failing source (such as
+  `TrackingReadStream` from SharedKernel.Testing) reaches the code under test unchanged, and the declared length can
+  misstate the content. The caller owns the stream.
 - `FakeBrowserFile`: in-memory Blazor `IBrowserFile` that rejects reads above `maxAllowedSize` with `IOException`.
 - `ThrowingDistributedCache`: `IDistributedCache` whose every operation throws the supplied exception.
 

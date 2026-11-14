@@ -13,8 +13,10 @@ SharedKernel only when it is host-agnostic and carries no application business r
 | Object-key validation | `SharedKernel.InputNormalization` | `ObjectStorageKeyValidator`: relative, slash-delimited keys without dot segments, bounded length | Key layout, variants, naming rules |
 | Object-store contract | `SharedKernel.ObjectStorage` | `IObjectStore`, write, read, list, delete, direct-upload tickets, checksum and metadata carriers | Provider behavior, key policy, publishing |
 | S3-compatible provider | `SharedKernel.ObjectStorage.S3` | `AddS3ObjectStore`, options validation, presigned PUT tickets, traces without bucket or key tags, `AddS3ObjectStoreHealthCheck` | Hosting a server, access policy, application metadata |
+| Object-store test double | `SharedKernel.Testing.ObjectStorage` | `InMemoryObjectStore`: the S3 provider's key, missing-object, listing and ticket contract in memory, call recording, failure injection, discarded writes | Application key layout, provider-specific behavior beyond that contract |
 | Scanner contract | `SharedKernel.MalwareScanning` | `IMalwareScanner` over a stream and length, a verdict without daemon text, names, or bytes | Which uploads are scanned, what a rejection means |
 | ClamAV provider | `SharedKernel.MalwareScanning.ClamAv` | `zINSTREAM` client, fail-closed `Failed` status, scan telemetry, `AddClamAvHealthCheck` | Container hosting, upload policy |
+| Scanner test doubles | `SharedKernel.Testing.MalwareScanning` | `TestMalwareScanner` (clean, infected, throwing, recording, content handling) and `MalwareScanGate` for blocked scans | Application scan policy, a real daemon |
 | Local ClamAV hosting | `SharedKernel.Aspire.Hosting.ClamAv` | Aspire resource, image tag, `PING` readiness check | Runtime health of a deployed app |
 | Local SeaweedFS hosting | `SharedKernel.Aspire.Hosting.SeaweedFs` | Aspire resource, endpoints, credential parameters (`WithAccessKey`, `WithSecretKey`), child buckets (`AddBucket`), master and S3 readiness checks | S3 client behavior |
 
@@ -72,3 +74,4 @@ not depend on the provider package.
 - `tests/SharedKernel.MalwareScanning.ClamAv.Tests` covers verdicts, fail-closed behavior, configuration, and the health check
   against a loopback daemon double.
 - `tests/SharedKernel.InputNormalization.Tests` covers the object-key validator.
+- `tests/SharedKernel.Testing.ObjectStorage.Tests` covers the in-memory object store's contract, recording, and failure injection.
