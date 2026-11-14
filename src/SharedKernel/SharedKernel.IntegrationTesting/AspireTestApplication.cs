@@ -5,14 +5,19 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Text;
 
 namespace PandaBear.IntegrationTesting;
 
 /// <summary>
-/// Owns an Aspire distributed application lifetime for integration tests.
+/// Owns an Aspire distributed application lifetime for integration tests. It follows the log lines of every resource from the start, so a
+/// readiness wait that runs out of time reports each pending resource's state and its last log lines. Every project resource it starts gets
+/// <c>DOTNET_hostBuilder__reloadConfigOnChange=false</c>, so parallel test hosts do not exhaust the per-user file-watcher (inotify) limit.
 /// </summary>
 public sealed class AspireTestApplication : IAsyncDisposable
 {
+    private const string DcpResourceNameSuffixArgument = "--DcpPublisher:ResourceNameSuffix=";
+    private const string ReloadConfigOnChangeVariable = "DOTNET_hostBuilder__reloadConfigOnChange";
     private static int _dcpResourceNameSuffixSequence;
     private static readonly TimeSpan DefaultResourceTeardownTimeout = TimeSpan.FromMinutes(2);
 
@@ -23,17 +28,21 @@ public sealed class AspireTestApplication : IAsyncDisposable
 
     private IAsyncDisposable? _appBuilder;
     private DistributedApplication? _app;
+    private ResourceLogTail? _logs;
 
     private AspireTestApplication(
         IAsyncDisposable? appBuilder,
-        DistributedApplication app)
+        DistributedApplication app,
+        ResourceLogTail logs)
     {
         _appBuilder = appBuilder;
         _app = app;
+        _logs = logs;
     }
 
     /// <summary>
-    /// Creates a resource-only Aspire testing builder with the standard concurrent-test defaults.
+    /// Creates a resource-only Aspire testing builder with the standard concurrent-test defaults: a DCP resource-name suffix of its own
+    /// (unless <paramref name="args"/> names one), so parallel test applications never share orchestrator resource names.
     /// </summary>
     /// <param name="args">Command-line configuration arguments for the builder.</param>
     /// <returns>The configured Aspire testing builder.</returns>
@@ -41,7 +50,26 @@ public sealed class AspireTestApplication : IAsyncDisposable
     public static IDistributedApplicationTestingBuilder CreateBuilder(params string[] args)
     {
         ArgumentNullException.ThrowIfNull(args);
-        return DistributedApplicationTestingBuilder.Create(args);
+        return DistributedApplicationTestingBuilder.Create(CreateAppHostArguments(args));
+    }
+
+    /// <summary>
+    /// Creates a resource-only Aspire testing builder with configuration values and the standard concurrent-test defaults of
+    /// <see cref="CreateBuilder(string[])"/>.
+    /// </summary>
+    /// <param name="configuration">
+    /// Configuration values; they win over appsettings, user secrets and environment variables, and <paramref name="args"/> win over them.
+    /// A <see langword="null"/> value contributes nothing.
+    /// </param>
+    /// <param name="args">Command-line configuration arguments for the builder.</param>
+    /// <returns>The configured Aspire testing builder.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="configuration"/> or <paramref name="args"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when a key of <paramref name="configuration"/> is empty, white-space, or contains <c>=</c>.</exception>
+    public static IDistributedApplicationTestingBuilder CreateBuilder(IReadOnlyDictionary<string, string?> configuration, params string[] args)
+    {
+        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentNullException.ThrowIfNull(args);
+        return DistributedApplicationTestingBuilder.Create(CreateAppHostArguments([.. ConfigurationArguments(configuration), .. args]));
     }
 
     /// <summary>
@@ -71,6 +99,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// <param name="ct">A cancellation token.</param>
     /// <returns>The started test application.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="healthyResourceNames"/> or <paramref name="appHostArguments"/> is <see langword="null"/>.</exception>
+    /// <exception cref="TimeoutException">A resource was not healthy in time; the message holds its state and last log lines.</exception>
     /// <exception cref="AggregateException">Thrown when starting the application fails and tearing down the partially started application also fails.</exception>
     public static async Task<AspireTestApplication> Start<TAppHost>(
         IEnumerable<string> healthyResourceNames,
@@ -79,43 +108,50 @@ public sealed class AspireTestApplication : IAsyncDisposable
         CancellationToken ct)
         where TAppHost : class
     {
+        return await Start<TAppHost>(
+            healthyResourceNames,
+            resourceStartupTimeout,
+            appHostArguments,
+            new Dictionary<string, string?>(),
+            ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Starts an Aspire application with AppHost configuration arguments and values, and waits for resources. The AppHost reads the values
+    /// as configuration before its own code runs (connection strings of servers the tests own, a data folder); they win over appsettings,
+    /// user secrets and environment variables, and the arguments win over them.
+    /// </summary>
+    /// <typeparam name="TAppHost">The AppHost entry-point type.</typeparam>
+    /// <param name="healthyResourceNames">Resource names that must become healthy before the method returns.</param>
+    /// <param name="resourceStartupTimeout">The resource startup timeout.</param>
+    /// <param name="appHostArguments">AppHost configuration arguments.</param>
+    /// <param name="configuration">AppHost configuration values; a <see langword="null"/> value contributes nothing.</param>
+    /// <param name="ct">A cancellation token.</param>
+    /// <returns>The started test application.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="healthyResourceNames"/>, <paramref name="appHostArguments"/> or <paramref name="configuration"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when a key of <paramref name="configuration"/> is empty, white-space, or contains <c>=</c>.</exception>
+    /// <exception cref="TimeoutException">A resource was not healthy in time; the message holds its state and last log lines.</exception>
+    /// <exception cref="AggregateException">Thrown when starting the application fails and tearing down the partially started application also fails.</exception>
+    public static async Task<AspireTestApplication> Start<TAppHost>(
+        IEnumerable<string> healthyResourceNames,
+        TimeSpan? resourceStartupTimeout,
+        IReadOnlyCollection<string> appHostArguments,
+        IReadOnlyDictionary<string, string?> configuration,
+        CancellationToken ct)
+        where TAppHost : class
+    {
         ArgumentNullException.ThrowIfNull(healthyResourceNames);
         ArgumentNullException.ThrowIfNull(appHostArguments);
+        ArgumentNullException.ThrowIfNull(configuration);
+        var arguments = CreateAppHostArguments([.. ConfigurationArguments(configuration), .. appHostArguments]);
 
-        IDistributedApplicationTestingBuilder? appBuilder = null;
-        DistributedApplication? app = null;
-
-        try
-        {
-            await RunWithResourceStartupTimeout(async startupCt =>
-            {
-                appBuilder = await DistributedApplicationTestingBuilder
-                    .CreateAsync<TAppHost>(CreateAppHostArguments(appHostArguments), startupCt)
-                    .ConfigureAwait(false);
-                ConfigureTestResources(appBuilder);
-                var builtApp = await appBuilder.BuildAsync(startupCt).ConfigureAwait(false);
-                app = builtApp;
-
-                await builtApp.StartAsync(startupCt).ConfigureAwait(false);
-                foreach (var resourceName in healthyResourceNames)
-                {
-                    await builtApp.ResourceNotifications.WaitForResourceHealthyAsync(resourceName, startupCt).ConfigureAwait(false);
-                }
-            }, resourceStartupTimeout, ct).ConfigureAwait(false);
-
-            var startedApp = app ?? throw new InvalidOperationException("The Aspire application did not start.");
-            return new AspireTestApplication(appBuilder, startedApp);
-        }
-        catch (Exception startupFailure)
-        {
-            var teardownFailures = await DisposeAfterFailedStart(app, appBuilder).ConfigureAwait(false);
-            if (teardownFailures.Count > 0)
-            {
-                throw CreateStartupAndTeardownFailure(startupFailure, teardownFailures);
-            }
-
-            throw;
-        }
+        var timeout = resourceStartupTimeout ?? DefaultResourceStartupTimeout;
+        using var deadline = new CancellationTokenSource(timeout);
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, deadline.Token);
+        var appBuilder = await DistributedApplicationTestingBuilder
+            .CreateAsync<TAppHost>(arguments, linked.Token)
+            .ConfigureAwait(false);
+        return await StartBuilt(appBuilder, healthyResourceNames, timeout, deadline, linked.Token, ct).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -127,6 +163,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// <param name="ct">A cancellation token.</param>
     /// <returns>The started test application.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> or <paramref name="healthyResourceNames"/> is <see langword="null"/>.</exception>
+    /// <exception cref="TimeoutException">A resource was not healthy in time; the message holds its state and last log lines.</exception>
     /// <exception cref="AggregateException">Thrown when starting the application fails and tearing down the partially started application also fails.</exception>
     public static async Task<AspireTestApplication> Start(
         IDistributedApplicationTestingBuilder builder,
@@ -137,63 +174,10 @@ public sealed class AspireTestApplication : IAsyncDisposable
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(healthyResourceNames);
 
-        DistributedApplication? app = null;
-
-        try
-        {
-            await RunWithResourceStartupTimeout(async startupCt =>
-            {
-                ConfigureTestResources(builder);
-                var builtApp = await builder.BuildAsync(startupCt).ConfigureAwait(false);
-                app = builtApp;
-
-                await builtApp.StartAsync(startupCt).ConfigureAwait(false);
-                foreach (var resourceName in healthyResourceNames)
-                {
-                    await builtApp.ResourceNotifications.WaitForResourceHealthyAsync(resourceName, startupCt).ConfigureAwait(false);
-                }
-            }, resourceStartupTimeout, ct).ConfigureAwait(false);
-
-            var startedApp = app ?? throw new InvalidOperationException("The Aspire application did not start.");
-            return new AspireTestApplication(builder, startedApp);
-        }
-        catch (Exception startupFailure)
-        {
-            var teardownFailures = await DisposeAfterFailedStart(app, builder).ConfigureAwait(false);
-            if (teardownFailures.Count > 0)
-            {
-                throw CreateStartupAndTeardownFailure(startupFailure, teardownFailures);
-            }
-
-            throw;
-        }
-    }
-
-    private static void ConfigureTestResources(IDistributedApplicationTestingBuilder builder)
-    {
-        // DCP allows up to two minutes for resource cleanup; the host must not cancel it at 30 seconds.
-        builder.Services.Configure<HostOptions>(options => options.ShutdownTimeout = DefaultResourceTeardownTimeout);
-        builder.Eventing.Subscribe<BeforeStartEvent>((beforeStart, _) =>
-        {
-            // Aspire allocates proxyless ports outside the OS ephemeral range. Mixing DCP-reserved
-            // proxy target ports with runtime-assigned container ports lets Podman claim the same port.
-            foreach (var container in beforeStart.Model.Resources.OfType<ContainerResource>())
-            {
-                builder.CreateResourceBuilder(container).WithEndpointProxySupport(false);
-            }
-
-            return Task.CompletedTask;
-        });
-    }
-
-    private static async Task RunWithResourceStartupTimeout(
-        Func<CancellationToken, Task> operation,
-        TimeSpan? resourceStartupTimeout,
-        CancellationToken ct)
-    {
-        using var timeoutCts = new CancellationTokenSource(resourceStartupTimeout ?? DefaultResourceStartupTimeout);
-        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct, timeoutCts.Token);
-        await operation(linkedCts.Token).ConfigureAwait(false);
+        var timeout = resourceStartupTimeout ?? DefaultResourceStartupTimeout;
+        using var deadline = new CancellationTokenSource(timeout);
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, deadline.Token);
+        return await StartBuilt(builder, healthyResourceNames, timeout, deadline, linked.Token, ct).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -230,40 +214,185 @@ public sealed class AspireTestApplication : IAsyncDisposable
         return connectionString ?? throw new InvalidOperationException($"{resourceName} connection string is not configured.");
     }
 
+    /// <summary>Gets the last lines a resource logged since the application started (at most 50).</summary>
+    /// <param name="resourceName">The resource name.</param>
+    /// <returns>The lines, oldest first; error-stream lines start with <c>err: </c>.</returns>
+    /// <exception cref="ArgumentException"><paramref name="resourceName"/> is blank.</exception>
+    /// <exception cref="InvalidOperationException">The application was disposed.</exception>
+    public IReadOnlyList<string> GetResourceLogs(string resourceName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);
+        _ = App;
+        return _logs?.Lines(resourceName) ?? [];
+    }
+
+    /// <summary>Waits until resources report healthy.</summary>
+    /// <param name="resourceNames">The resources.</param>
+    /// <param name="timeout">How long to wait.</param>
+    /// <param name="ct">A cancellation token.</param>
+    /// <returns>A task that completes when every resource is healthy.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="resourceNames"/> is <see langword="null"/>.</exception>
+    /// <exception cref="TimeoutException">A resource was not healthy in time; the message holds its state and last log lines.</exception>
+    public async Task WaitForHealthy(IEnumerable<string> resourceNames, TimeSpan timeout, CancellationToken ct)
+    {
+        ArgumentNullException.ThrowIfNull(resourceNames);
+        using var deadline = new CancellationTokenSource(timeout);
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, deadline.Token);
+        await WaitForHealthy(App, _logs!, [.. resourceNames], timeout, deadline, linked.Token, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Starts a resource that was added with explicit start, and waits until it is healthy. Use it to start an expensive resource (a
+    /// container, a server) only when the first test needs it, typically through <see cref="OnDemandResources{T}"/>.
+    /// </summary>
+    /// <param name="resourceName">The resource name.</param>
+    /// <param name="timeout">How long the start and the health wait may take.</param>
+    /// <param name="ct">A cancellation token.</param>
+    /// <returns>A task that completes when the resource is healthy.</returns>
+    /// <exception cref="ArgumentException"><paramref name="resourceName"/> is blank.</exception>
+    /// <exception cref="InvalidOperationException">The application has no such resource, or the orchestrator refused the start.</exception>
+    /// <exception cref="TimeoutException">The resource was not healthy in time; the message holds its state and last log lines.</exception>
+    public async Task StartResource(string resourceName, TimeSpan timeout, CancellationToken ct)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);
+        var app = App;
+        var resource = app.Services.GetRequiredService<DistributedApplicationModel>().Resources
+            .FirstOrDefault(candidate => string.Equals(candidate.Name, resourceName, StringComparison.Ordinal))
+            ?? throw new InvalidOperationException($"The application has no resource named '{resourceName}'.");
+        using var deadline = new CancellationTokenSource(timeout);
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, deadline.Token);
+        var started = await app.Services.GetRequiredService<ResourceCommandService>()
+            .ExecuteCommandAsync(resource, KnownResourceCommands.StartCommand, linked.Token).ConfigureAwait(false);
+        if (!started.Success)
+        {
+            throw new InvalidOperationException($"Starting '{resourceName}' failed: {started.Message}");
+        }
+
+        await WaitForHealthy(app, _logs!, [resourceName], timeout, deadline, linked.Token, ct).ConfigureAwait(false);
+    }
+
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
         var app = _app;
         var appBuilder = _appBuilder;
+        var logs = _logs;
         _app = null;
         _appBuilder = null;
+        _logs = null;
 
-        var teardownFailures = new List<Exception>();
-        if (app is not null)
-        {
-            await CaptureTeardownFailure(
-                () => RunWithResourceTeardownTimeout(app.StopAsync),
-                teardownFailures).ConfigureAwait(false);
-            await CaptureTeardownFailure(() => app.DisposeAsync().AsTask(), teardownFailures).ConfigureAwait(false);
-        }
-
-        if (appBuilder is not null)
-        {
-            await CaptureTeardownFailure(() => appBuilder.DisposeAsync().AsTask(), teardownFailures)
-                .ConfigureAwait(false);
-        }
-
+        var teardownFailures = await Teardown(app, appBuilder, logs).ConfigureAwait(false);
         if (teardownFailures.Count > 0)
         {
             throw new AggregateException("Aspire test application teardown failed.", teardownFailures);
         }
     }
 
-    private static async Task<List<Exception>> DisposeAfterFailedStart(
+    private static async Task<AspireTestApplication> StartBuilt(
+        IDistributedApplicationTestingBuilder builder,
+        IEnumerable<string> healthyResourceNames,
+        TimeSpan timeout,
+        CancellationTokenSource deadline,
+        CancellationToken startupCt,
+        CancellationToken ct)
+    {
+        DistributedApplication? app = null;
+        ResourceLogTail? logs = null;
+        try
+        {
+            ConfigureTestResources(builder);
+            app = await builder.BuildAsync(startupCt).ConfigureAwait(false);
+
+            await app.StartAsync(startupCt).ConfigureAwait(false);
+
+            // Follow every resource's log lines once the orchestrator named its instances; the log service replays what came before.
+            logs = ResourceLogTail.Watch(
+                app.Services.GetRequiredService<ResourceLoggerService>(),
+                app.Services.GetRequiredService<DistributedApplicationModel>().Resources);
+            await WaitForHealthy(app, logs, [.. healthyResourceNames], timeout, deadline, startupCt, ct).ConfigureAwait(false);
+            return new AspireTestApplication(builder, app, logs);
+        }
+        catch (Exception startupFailure)
+        {
+            var teardownFailures = await Teardown(app, builder, logs).ConfigureAwait(false);
+            if (teardownFailures.Count > 0)
+            {
+                throw CreateStartupAndTeardownFailure(startupFailure, teardownFailures);
+            }
+
+            throw;
+        }
+    }
+
+    private static async Task WaitForHealthy(
+        DistributedApplication app,
+        ResourceLogTail logs,
+        IReadOnlyList<string> resourceNames,
+        TimeSpan timeout,
+        CancellationTokenSource deadline,
+        CancellationToken waitCt,
+        CancellationToken ct)
+    {
+        var notifications = app.Services.GetRequiredService<ResourceNotificationService>();
+        try
+        {
+            await Task.WhenAll(resourceNames.Select(name => notifications.WaitForResourceHealthyAsync(name, waitCt))).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException cancellation) when (deadline.IsCancellationRequested && !ct.IsCancellationRequested)
+        {
+            var report = new StringBuilder().Append(CultureInfo.InvariantCulture, $"Resources were not healthy within {timeout}.");
+            foreach (var name in resourceNames)
+            {
+                var state = notifications.TryGetCurrentState(name, out var current)
+                    ? $"{current.Snapshot.State?.Text ?? "unknown"}, health {current.Snapshot.HealthStatus?.ToString() ?? "unknown"}"
+                    : "no state";
+                _ = report.AppendLine().Append(CultureInfo.InvariantCulture, $"- {name}: {state}; last log lines:");
+                foreach (var line in logs.Lines(name))
+                {
+                    _ = report.AppendLine().Append("    ").Append(line);
+                }
+            }
+
+            throw new TimeoutException(report.ToString(), cancellation);
+        }
+    }
+
+    private static void ConfigureTestResources(IDistributedApplicationTestingBuilder builder)
+    {
+        // DCP allows up to two minutes for resource cleanup; the host must not cancel it at 30 seconds.
+        builder.Services.Configure<HostOptions>(options => options.ShutdownTimeout = DefaultResourceTeardownTimeout);
+        builder.Eventing.Subscribe<BeforeStartEvent>((beforeStart, _) =>
+        {
+            // Aspire allocates proxyless ports outside the OS ephemeral range. Mixing DCP-reserved
+            // proxy target ports with runtime-assigned container ports lets Podman claim the same port.
+            foreach (var container in beforeStart.Model.Resources.OfType<ContainerResource>())
+            {
+                builder.CreateResourceBuilder(container).WithEndpointProxySupport(false);
+            }
+
+            // Every .NET host watches its appsettings files for changes, one inotify instance per file and host; parallel test runs then
+            // exhaust the per-user limit (IOException "The configured user limit (128) on the number of inotify instances has been
+            // reached"). Tests never reload configuration, so the documented host setting turns the watchers off.
+            foreach (var project in beforeStart.Model.Resources.OfType<ProjectResource>())
+            {
+                builder.CreateResourceBuilder(project).WithEnvironment(ReloadConfigOnChangeVariable, "false");
+            }
+
+            return Task.CompletedTask;
+        });
+    }
+
+    private static async Task<List<Exception>> Teardown(
         DistributedApplication? app,
-        IAsyncDisposable? appBuilder)
+        IAsyncDisposable? appBuilder,
+        ResourceLogTail? logs)
     {
         var teardownFailures = new List<Exception>();
+        if (logs is not null)
+        {
+            await CaptureTeardownFailure(() => logs.DisposeAsync().AsTask(), teardownFailures).ConfigureAwait(false);
+        }
+
         if (app is not null)
         {
             await CaptureTeardownFailure(
@@ -319,13 +448,46 @@ public sealed class AspireTestApplication : IAsyncDisposable
 
     private static string[] CreateAppHostArguments(IReadOnlyCollection<string> appHostArguments)
     {
+        // A suffix the caller names (a stack and run id) is kept; it isolates as well as a generated one.
+        if (appHostArguments.Any(static argument =>
+                argument.StartsWith(DcpResourceNameSuffixArgument, StringComparison.OrdinalIgnoreCase)
+                && !string.IsNullOrWhiteSpace(argument[DcpResourceNameSuffixArgument.Length..])))
+        {
+            return [.. appHostArguments];
+        }
+
         var suffix = string.Create(
             CultureInfo.InvariantCulture,
             $"test-{Environment.ProcessId}-{Interlocked.Increment(ref _dcpResourceNameSuffixSequence)}");
         return
         [
             .. appHostArguments,
-            $"--DcpPublisher:ResourceNameSuffix={suffix}"
+            DcpResourceNameSuffixArgument + suffix
         ];
+    }
+
+    private static string[] ConfigurationArguments(IReadOnlyDictionary<string, string?> configuration) =>
+        [.. CheckConfigurationKeys(configuration, nameof(configuration))
+            .Where(static pair => pair.Value is not null)
+            .Select(static pair => "--" + pair.Key + "=" + pair.Value)];
+
+    /// <summary>Rejects configuration keys that cannot travel as a <c>--Key=value</c> argument.</summary>
+    /// <param name="configuration">The configuration values.</param>
+    /// <param name="parameterName">The name of the caller's parameter.</param>
+    /// <returns>The same values.</returns>
+    /// <exception cref="ArgumentException">Thrown when a key is empty, white-space, or contains <c>=</c>.</exception>
+    internal static IReadOnlyDictionary<string, string?> CheckConfigurationKeys(IReadOnlyDictionary<string, string?> configuration, string parameterName)
+    {
+        foreach (var key in configuration.Keys)
+        {
+            if (string.IsNullOrWhiteSpace(key) || key.Contains('=', StringComparison.Ordinal))
+            {
+                throw new ArgumentException(
+                    $"The configuration key '{key}' cannot be passed as a command-line argument: it must not be empty, white-space, or contain '='.",
+                    parameterName);
+            }
+        }
+
+        return configuration;
     }
 }

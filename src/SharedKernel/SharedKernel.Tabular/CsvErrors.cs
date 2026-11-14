@@ -56,4 +56,24 @@ internal static class CsvErrors
             field: "headers",
             message: "Header and row column counts do not match."
         );
+
+    /// <summary>
+    /// Result indicating that a quoted field is not closed before the end of the content.
+    /// </summary>
+    public static Result UnterminatedQuotedField(int csvLineNumber) =>
+        Result.Invalid(
+            detail: $"A quoted field is not closed (line {csvLineNumber}).",
+            field: "rows",
+            message: "Unterminated quoted field."
+        );
+
+    /// <summary>
+    /// Result indicating that text follows the closing quote of a quoted field.
+    /// </summary>
+    public static Result TextAfterQuotedField(int csvLineNumber) =>
+        Result.Invalid(
+            detail: $"A quoted field is followed by text before the next comma or line break (line {csvLineNumber}).",
+            field: "rows",
+            message: "Text after a quoted field."
+        );
 }

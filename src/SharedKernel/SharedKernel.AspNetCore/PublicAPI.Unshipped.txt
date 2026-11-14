@@ -1,4 +1,13 @@
 #nullable enable
+const PandaBear.AspNetCore.ImmutableFileEndpointExtensions.CacheControl = "public, max-age=31536000, immutable" -> string!
+PandaBear.AspNetCore.ImmutableFileEndpointExtensions
+PandaBear.AspNetCore.PermanentRedirect
+PandaBear.AspNetCore.PermanentRedirect.Path.get -> string!
+PandaBear.AspNetCore.PermanentRedirect.PermanentRedirect(string! Path, bool PreserveQuery = false) -> void
+PandaBear.AspNetCore.PermanentRedirect.PreserveQuery.get -> bool
+PandaBear.AspNetCore.PermanentRedirectExtensions
+static PandaBear.AspNetCore.PermanentRedirectExtensions.UsePermanentRedirects(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app, System.Func<Microsoft.AspNetCore.Http.HttpContext!, System.Threading.Tasks.ValueTask<PandaBear.AspNetCore.PermanentRedirect?>>! resolve) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
+static PandaBear.AspNetCore.ImmutableFileEndpointExtensions.MapImmutableFiles(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, string! routePrefix, string! folder, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! contentTypes, System.Func<Microsoft.AspNetCore.Http.HttpContext!, string!, System.Threading.Tasks.ValueTask<bool>>! isServed) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
 PandaBear.AspNetCore.AspNetCoreCorsExtensions
 static PandaBear.AspNetCore.AspNetCoreCorsExtensions.AddConfiguredOriginsPolicy(this Microsoft.AspNetCore.Cors.Infrastructure.CorsOptions! options, string! policyName, Microsoft.Extensions.Configuration.IConfiguration! allowedOriginsSection) -> Microsoft.AspNetCore.Cors.Infrastructure.CorsOptions!
 PandaBear.AspNetCore.AspNetCoreForwardedHeadersExtensions
@@ -35,3 +44,8 @@ PandaBear.AspNetCore.UnhandledExceptionReporter
 PandaBear.AspNetCore.UnhandledExceptionReporter.UnhandledExceptionReporter(Microsoft.Extensions.Logging.ILogger<PandaBear.AspNetCore.UnhandledExceptionReporter!>! logger, System.Diagnostics.Metrics.IMeterFactory! meterFactory) -> void
 PandaBear.AspNetCore.UnhandledExceptionReporter.Report(Microsoft.AspNetCore.Http.HttpContext! httpContext, System.Exception! exception, bool handled) -> void
 PandaBear.AspNetCore.UnhandledExceptionReporter.Report(System.Exception! exception, string? routeTemplate, int statusCode, string? traceId, bool handled) -> void
+const PandaBear.AspNetCore.AspNetCoreSecurityHeadersExtensions.NoncePlaceholder = "{nonce}" -> string!
+PandaBear.AspNetCore.CspNonceServiceCollectionExtensions
+PandaBear.AspNetCore.ICspNonce
+PandaBear.AspNetCore.ICspNonce.Value.get -> string!
+static PandaBear.AspNetCore.CspNonceServiceCollectionExtensions.AddCspNonce(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

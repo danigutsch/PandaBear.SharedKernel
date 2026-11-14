@@ -12,7 +12,14 @@ application keeps the crawler policy and the URL inclusion policy.
 - `MapRobotsTxt`: exposes an application-owned crawler policy at `/robots.txt` with `text/plain; charset=utf-8`.
 - `SitemapXmlSerializer`: generates sitemap XML (`SitemapXmlSerializer.ContentType`, at most
   `SitemapXmlSerializer.MaximumUrlCount` URLs) from `SitemapEntry` values.
+- `SitemapAlternate`: an alternate-language URL of a `SitemapEntry` (`new SitemapEntry(uri, lastModified, alternates)`),
+  written as `<xhtml:link rel="alternate" hreflang="..." href="..." />`; `SitemapAlternate.ForDefault` creates the
+  `x-default` entry. The `xhtml` namespace is declared only when an entry has alternates.
 - `SitemapCanonicalOrigin`: validates and parses the canonical origin that sitemap locations must use.
+- `AddCanonicalOrigin(configurationKey)`: binds `CanonicalOriginOptions` from one configuration value (such as `PublicSite:Origin`) and
+  validates it on start, so a host with a missing or invalid origin does not start (`OptionsValidationException` naming the key).
+  `CanonicalOriginOptions.Value` is the origin and `Absolute("/path")` builds an address on it. Build canonical, `hreflang`, OpenGraph and
+  sitemap addresses from it, never from the request's `Host` header. The value is read without the reflection-based binder.
 
 ## Install
 

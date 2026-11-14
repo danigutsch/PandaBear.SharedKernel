@@ -66,6 +66,35 @@ public sealed class WebAssetUriSanitizerTests
         normalized.ShouldBeNull();
     }
 
+    [Fact]
+    public void NormalizeRootRelativeOrHttps_rejects_a_lone_surrogate_instead_of_throwing()
+    {
+        // Arrange
+        // Lone surrogates are built in code: attribute arguments are stored as UTF-8 and would arrive as U+FFFD.
+        const int maxLength = 2048;
+        string[] candidates = ["/images/\uD800.svg", "/images/\uDC00", "https://cdn.example.test/\uD83D"];
+
+        // Act
+        var normalized = candidates.Select(static candidate => WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(candidate, maxLength)).ToList();
+
+        // Assert
+        normalized.ShouldBe([null, null, null]);
+    }
+
+    [Fact]
+    public void NormalizeRootRelativeOrHttps_keeps_a_valid_surrogate_pair()
+    {
+        // Arrange
+        const int maxLength = 2048;
+        const string candidate = "/images/😀.svg";
+
+        // Act
+        var normalized = WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(candidate, maxLength);
+
+        // Assert
+        normalized.ShouldBe(candidate);
+    }
+
     [Theory]
     [InlineData("data:image/png;base64,iVBORw0KGgo=")]
     [InlineData("data:image/jpeg;base64,/9j/")]

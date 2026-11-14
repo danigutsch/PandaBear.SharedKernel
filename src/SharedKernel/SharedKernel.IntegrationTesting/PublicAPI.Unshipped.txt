@@ -21,3 +21,49 @@ PandaBear.IntegrationTesting.OnDemandResource<T>
 PandaBear.IntegrationTesting.OnDemandResource<T>.DisposeAsync() -> System.Threading.Tasks.ValueTask
 PandaBear.IntegrationTesting.OnDemandResource<T>.Get(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<T>!
 PandaBear.IntegrationTesting.OnDemandResource<T>.OnDemandResource(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<T>!>! start) -> void
+PandaBear.IntegrationTesting.AppHostLaunch
+PandaBear.IntegrationTesting.AppHostLaunch.AppHostLaunch(System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Collections.Generic.IReadOnlyList<string!>! healthyResources, System.TimeSpan startupTimeout, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? configuration = null) -> void
+PandaBear.IntegrationTesting.AppHostLaunch.Configuration.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>!
+PandaBear.IntegrationTesting.AppHostLaunch.Arguments.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.IntegrationTesting.AppHostLaunch.HealthyResources.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.IntegrationTesting.AppHostLaunch.StartupTimeout.get -> System.TimeSpan
+PandaBear.IntegrationTesting.AspireAppHostFixture<TAppHost>
+PandaBear.IntegrationTesting.AspireAppHostFixture<TAppHost>.AspireAppHostFixture() -> void
+abstract PandaBear.IntegrationTesting.AspireAppHostFixture<TAppHost>.Launch(string! profile, string! folder) -> PandaBear.IntegrationTesting.AppHostLaunch!
+override sealed PandaBear.IntegrationTesting.AspireAppHostFixture<TAppHost>.Start(string! profile, string! folder, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.IntegrationTesting.AspireTestApplication!>!
+PandaBear.IntegrationTesting.AspireSystemFixture
+PandaBear.IntegrationTesting.AspireSystemFixture.AspireSystemFixture() -> void
+const PandaBear.IntegrationTesting.AspireSystemFixture.DefaultProfile = "default" -> string!
+PandaBear.IntegrationTesting.AspireSystemFixture.Workspace.get -> PandaBear.IntegrationTesting.TestWorkspace!
+abstract PandaBear.IntegrationTesting.AspireSystemFixture.WorkspaceName.get -> string!
+PandaBear.IntegrationTesting.AspireSystemFixture.Application(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.IntegrationTesting.AspireTestApplication!>!
+PandaBear.IntegrationTesting.AspireSystemFixture.Application(string! profile, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.IntegrationTesting.AspireTestApplication!>!
+PandaBear.IntegrationTesting.AspireSystemFixture.DisposeAsync() -> System.Threading.Tasks.ValueTask
+abstract PandaBear.IntegrationTesting.AspireSystemFixture.Start(string! profile, string! folder, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.IntegrationTesting.AspireTestApplication!>!
+PandaBear.IntegrationTesting.AspireTestApplication.GetResourceLogs(string! resourceName) -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.IntegrationTesting.AspireTestApplication.WaitForHealthy(System.Collections.Generic.IEnumerable<string!>! resourceNames, System.TimeSpan timeout, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.IntegrationTesting.AspireTestApplication.StartResource(string! resourceName, System.TimeSpan timeout, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.IntegrationTesting.Eventually
+static readonly PandaBear.IntegrationTesting.Eventually.DefaultInterval -> System.TimeSpan
+static PandaBear.IntegrationTesting.Eventually.Succeeds(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task!>! assertion, System.TimeSpan timeout, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+static PandaBear.IntegrationTesting.Eventually.Succeeds(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task!>! assertion, System.TimeSpan timeout, System.TimeSpan interval, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.IntegrationTesting.OnDemandResources<T>
+PandaBear.IntegrationTesting.OnDemandResources<T>.OnDemandResources(System.Func<string!, System.Threading.CancellationToken, System.Threading.Tasks.Task<T>!>! start) -> void
+PandaBear.IntegrationTesting.OnDemandResources<T>.Get(string! key, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<T>!
+PandaBear.IntegrationTesting.OnDemandResources<T>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+PandaBear.IntegrationTesting.TestWorkspace
+static PandaBear.IntegrationTesting.TestWorkspace.Create(string! name) -> PandaBear.IntegrationTesting.TestWorkspace!
+PandaBear.IntegrationTesting.TestWorkspace.Root.get -> string!
+PandaBear.IntegrationTesting.TestWorkspace.Folder(string! relativePath) -> string!
+PandaBear.IntegrationTesting.TestWorkspace.DisposeAsync() -> System.Threading.Tasks.ValueTask
+PandaBear.IntegrationTesting.AppHostModel
+static PandaBear.IntegrationTesting.AppHostModel.ConnectionResource(object! value) -> Aspire.Hosting.ApplicationModel.IResource!
+static PandaBear.IntegrationTesting.AppHostModel.EvaluateEnvironment(Aspire.Hosting.ApplicationModel.IResource! resource, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyDictionary<string!, object!>!>!
+static PandaBear.IntegrationTesting.AppHostModel.HasHttpHealthCheck(Aspire.Hosting.ApplicationModel.IResource! resource, string? path = null) -> bool
+static PandaBear.IntegrationTesting.AppHostModel.Project(Aspire.Hosting.Testing.IDistributedApplicationTestingBuilder! builder, string! name) -> Aspire.Hosting.ApplicationModel.ProjectResource!
+static PandaBear.IntegrationTesting.AppHostModel.WaitedFor(Aspire.Hosting.ApplicationModel.IResource! resource) -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.IntegrationTesting.AspireTestApplication.CreateBuilder(System.Collections.Generic.IReadOnlyDictionary<string!, string?>! configuration, params string![]! args) -> Aspire.Hosting.Testing.IDistributedApplicationTestingBuilder!
+static PandaBear.IntegrationTesting.Eventually.Until<T>(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<T?>!>! probe, System.TimeSpan timeout, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<T!>!
+static PandaBear.IntegrationTesting.Eventually.Until<T>(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<T?>!>! probe, System.TimeSpan timeout, System.TimeSpan interval, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<T!>!
+static PandaBear.IntegrationTesting.AspireTestApplication.Start<TAppHost>(System.Collections.Generic.IEnumerable<string!>! healthyResourceNames, System.TimeSpan? resourceStartupTimeout, System.Collections.Generic.IReadOnlyCollection<string!>! appHostArguments, System.Collections.Generic.IReadOnlyDictionary<string!, string?>! configuration, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.IntegrationTesting.AspireTestApplication!>!
+static PandaBear.IntegrationTesting.TestWorkspace.Create(string! name, System.Action? releaseFiles) -> PandaBear.IntegrationTesting.TestWorkspace!

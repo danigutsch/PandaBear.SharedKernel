@@ -1,0 +1,38 @@
+@inherits SiteComponent
+<header class="@CssClass("site-header")" @attributes="AdditionalAttributes">
+    <div class="site-header__inner">
+        @if (Brand is not null)
+        {
+            <div class="site-header__brand">@Brand</div>
+        }
+        @if (Items.Count > 0)
+        {
+            <nav class="site-nav" aria-label="@Label">
+                <ul class="site-nav__list">
+                    @foreach (var item in Items)
+                    {
+                        @if (item.Children is { Count: > 0 } children)
+                        {
+                            <li class="site-nav__item">
+                                <details class="site-nav__group" open="@HasCurrentChild(item)">
+                                    <summary>@item.Text</summary>
+                                    <ul class="site-nav__sublist">
+                                        @foreach (var child in children)
+                                        {
+                                            <li><a href="@child.Href?.Value" aria-current="@Current(child)">@child.Text</a></li>
+                                        }
+                                    </ul>
+                                </details>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="site-nav__item"><a href="@item.Href?.Value" aria-current="@Current(item)">@item.Text</a></li>
+                        }
+                    }
+                </ul>
+            </nav>
+        }
+        @Actions
+    </div>
+</header>

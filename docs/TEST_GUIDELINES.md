@@ -73,6 +73,7 @@ already owns its kind; add a package only when a new kind needs a dependency tha
 | `SharedKernel.Testing.Xunit` | Typed trait attributes (`TestScope`, `TestHost`, `TestFocus`, `TestPriority`, `TestArea`, `TestSurface`) | `SharedKernel.Testing` |
 | `SharedKernel.Testing.Http` | Assertions on HTTP responses and problem details, delegate handler, tracking content | `SharedKernel.Testing.Assertions` |
 | `SharedKernel.Testing.EntityFrameworkCore` | Minimal `TestDbContext` and `TestEntity` | `Microsoft.EntityFrameworkCore.Relational` |
+| `SharedKernel.Testing.Sqlite` | Private in-memory SQLite database per test | `Microsoft.Data.Sqlite.Core` |
 | `SharedKernel.Testing.Logging` | Recording and throwing `ILogger` fakes | `Microsoft.Extensions.Logging.Abstractions` |
 | `SharedKernel.Testing.AspNetCore` | Web application factory helpers, form-file, browser-file and throwing-cache fakes | ASP.NET Core testing |
 | `SharedKernel.Testing.Web` | bUnit element assertions | bUnit |

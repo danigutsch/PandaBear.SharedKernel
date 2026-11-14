@@ -30,3 +30,26 @@ static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHave
 static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveFocusWithin(this Microsoft.Playwright.IPage! page, string! containerSelector, string! userMessage) -> System.Threading.Tasks.Task!
 static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveAccessibleStructure(this Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task!
 static PandaBear.Testing.Playwright.PlaywrightAccessibilityExtensions.ShouldHaveAccessibleStructure(this Microsoft.Playwright.IPage! page, string! userMessage) -> System.Threading.Tasks.Task!
+PandaBear.Testing.Playwright.PageDiagnostics
+PandaBear.Testing.Playwright.PageDiagnostics.PageDiagnostics(Microsoft.Playwright.IPage! page) -> void
+PandaBear.Testing.Playwright.PageDiagnostics.Describe() -> System.Threading.Tasks.Task<string!>!
+PandaBear.Testing.Playwright.PlaywrightArtifacts
+static PandaBear.Testing.Playwright.PlaywrightArtifacts.Save(Microsoft.Playwright.IPage! page, string! folder, string! name) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
+PandaBear.Testing.Playwright.PlaywrightLocatorExtensions
+static PandaBear.Testing.Playwright.PlaywrightLocatorExtensions.FillAndExpectValue(this Microsoft.Playwright.ILocator! locator, string! value) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightPageExtensions.WaitForBlazorInteractive(this Microsoft.Playwright.IPage! page, PandaBear.Testing.Playwright.PageDiagnostics! diagnostics, float? timeoutMilliseconds = null) -> System.Threading.Tasks.Task!
+PandaBear.Testing.Playwright.TracedPageTest
+PandaBear.Testing.Playwright.TracedPageTest.TracedPageTest() -> void
+virtual PandaBear.Testing.Playwright.TracedPageTest.ArtifactsFolder.get -> string!
+PandaBear.Testing.Playwright.TracedPageTest.Diagnostics.get -> PandaBear.Testing.Playwright.PageDiagnostics!
+PandaBear.Testing.Playwright.TracedPageTest.GotoInteractive(System.Uri! address) -> System.Threading.Tasks.Task!
+override PandaBear.Testing.Playwright.TracedPageTest.InitializeAsync() -> System.Threading.Tasks.ValueTask
+override PandaBear.Testing.Playwright.TracedPageTest.DisposeAsync() -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions
+static PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetButton(this Microsoft.Playwright.IPage! page, string! name) -> Microsoft.Playwright.ILocator!
+static PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetHeading(this Microsoft.Playwright.IPage! page, string! name, int? level = null) -> Microsoft.Playwright.ILocator!
+static PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetLink(this Microsoft.Playwright.IPage! page, string! name) -> Microsoft.Playwright.ILocator!
+static PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetHeading(this Microsoft.Playwright.IPage! page, int level) -> Microsoft.Playwright.ILocator!
+static PandaBear.Testing.Playwright.PlaywrightPageExtensions.ExpectPath(this Microsoft.Playwright.IPage! page, System.Uri! expected) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightPageExtensions.ExpectPath(this Microsoft.Playwright.IPage! page, System.Uri! baseAddress, string! relativePath) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightLocatorExtensions.SetBlazorInputFile(this Microsoft.Playwright.ILocator! input, Microsoft.Playwright.FilePayload! file) -> System.Threading.Tasks.Task!

@@ -578,7 +578,7 @@
         "type": "Project",
         "dependencies": {
           "Aspire.Hosting": "[13.6.5, )",
-          "CommunityToolkit.Aspire.Hosting.k6": "[13.6.0, )"
+          "CommunityToolkit.Aspire.Hosting.k6": "[13.6.1, )"
         }
       },
       "PandaBear.SharedKernel.Results": {
@@ -634,11 +634,11 @@
       },
       "CommunityToolkit.Aspire.Hosting.k6": {
         "type": "CentralTransitive",
-        "requested": "[13.6.0, )",
-        "resolved": "13.6.0",
-        "contentHash": "NoBsRNgAMyB66l6XzaTxiHZFshhxF0umAYIl/3ed/CfWhvf6TI6d6xkibsfMOpFMreLuka4f/JUOfXBPRDfUsg==",
+        "requested": "[13.6.1, )",
+        "resolved": "13.6.1",
+        "contentHash": "D0F17n/rLtRv7eBA6s9Oq4CCWQRaC0a7nZ1xLy6HWuaCTfP/MOgGk6f79opZk6cF1MTp0wEvEbcVlZ1kf3vm5Q==",
         "dependencies": {
-          "Aspire.Hosting": "13.6.0"
+          "Aspire.Hosting": "13.6.4"
         }
       },
       "Google.Protobuf": {

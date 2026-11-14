@@ -50,7 +50,6 @@ PandaBear.HttpClients.HttpOutcomeKind.UnexpectedStatus = 8 -> PandaBear.HttpClie
 PandaBear.HttpClients.HttpOutcomeKind.UnsupportedContentType = 9 -> PandaBear.HttpClients.HttpOutcomeKind
 PandaBear.HttpClients.HttpOutcomeKind.ValidationProblem = 1 -> PandaBear.HttpClients.HttpOutcomeKind
 PandaBear.HttpClients.HttpOutcomeMapper
-PandaBear.HttpClients.HttpServiceCollectionExtensions
 PandaBear.HttpClients.ProgressStreamContent
 PandaBear.HttpClients.ProgressStreamContent.ProgressStreamContent(System.IO.Stream! content, long contentLength, System.IProgress<long>? progress) -> void
 const PandaBear.HttpClients.HttpOutcomeMapper.ActivitySourceName = "SharedKernel.HttpClients.ContractOutcomes" -> string!
@@ -61,8 +60,6 @@ static PandaBear.HttpClients.HttpOutcomeMapper.Status(PandaBear.HttpClients.Http
 static PandaBear.HttpClients.HttpOutcomeMapper.Status<TValue>(PandaBear.HttpClients.HttpOutcomeKind kind, System.Net.HttpStatusCode statusCode, string? message = null) -> PandaBear.HttpClients.HttpOutcome<TValue>!
 static PandaBear.HttpClients.HttpOutcomeMapper.Succeeded(System.Net.HttpStatusCode statusCode, System.Uri? location) -> PandaBear.HttpClients.HttpOutcome!
 static PandaBear.HttpClients.HttpOutcomeMapper.Succeeded<TValue>(System.Net.HttpStatusCode statusCode, TValue value, System.Uri? location = null) -> PandaBear.HttpClients.HttpOutcome<TValue>!
-static PandaBear.HttpClients.HttpServiceCollectionExtensions.AddHttpClientDefaults(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-static PandaBear.HttpClients.HttpServiceCollectionExtensions.AddHttpClientDefaults(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Microsoft.Extensions.Http.Resilience.HttpStandardResilienceOptions!>? configureResilience) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 PandaBear.HttpClients.UploadOperationState
 PandaBear.HttpClients.UploadOperationState.UploadOperationState() -> void
 PandaBear.HttpClients.UploadOperationState.OperationId.get -> long
@@ -98,3 +95,5 @@ PandaBear.HttpClients.IdempotentSubmission<T>.HasPending.get -> bool
 PandaBear.HttpClients.IdempotentSubmission<T>.Operation.get -> string!
 PandaBear.HttpClients.IdempotentSubmission<T>.Submit(string! operation, System.Func<string!, System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.HttpClients.HttpOutcome<T>!>!>! submit, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.HttpClients.HttpOutcome<T>?>!
 PandaBear.HttpClients.IdempotentSubmission<T>.Retry(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.HttpClients.HttpOutcome<T>?>!
+PandaBear.HttpClients.HttpResilienceOptionsExtensions
+static PandaBear.HttpClients.HttpResilienceOptionsExtensions.DisableRetryOnTooManyRequests(this Microsoft.Extensions.Http.Resilience.HttpStandardResilienceOptions! options, System.Func<System.Net.Http.HttpRequestMessage!, bool>? appliesTo = null) -> Microsoft.Extensions.Http.Resilience.HttpStandardResilienceOptions!

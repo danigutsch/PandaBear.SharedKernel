@@ -6,9 +6,24 @@ PandaBear.AspNetCore.Seo.SitemapCanonicalOrigin
 PandaBear.AspNetCore.Seo.SitemapEntry
 PandaBear.AspNetCore.Seo.SitemapEntry.LastModified.get -> System.DateTimeOffset?
 PandaBear.AspNetCore.Seo.SitemapEntry.Location.get -> System.Uri!
-PandaBear.AspNetCore.Seo.SitemapEntry.SitemapEntry(System.Uri! location, System.DateTimeOffset? lastModified = null) -> void
+PandaBear.AspNetCore.Seo.SitemapEntry.SitemapEntry(System.Uri! location, System.DateTimeOffset? lastModified = null, System.Collections.Generic.IEnumerable<PandaBear.AspNetCore.Seo.SitemapAlternate!>? alternates = null) -> void
 PandaBear.AspNetCore.Seo.SitemapXmlSerializer
 static PandaBear.AspNetCore.Seo.AspNetCoreRobotsTxtExtensions.MapRobotsTxt(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! app, string! robotsTxt) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
 static PandaBear.AspNetCore.Seo.SitemapCanonicalOrigin.IsValid(string? value) -> bool
 static PandaBear.AspNetCore.Seo.SitemapCanonicalOrigin.Parse(string! value) -> System.Uri!
 static PandaBear.AspNetCore.Seo.SitemapXmlSerializer.Serialize(System.Collections.Generic.IEnumerable<PandaBear.AspNetCore.Seo.SitemapEntry!>! entries, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.IO.Stream!>!
+const PandaBear.AspNetCore.Seo.SitemapAlternate.DefaultLanguage = "x-default" -> string!
+PandaBear.AspNetCore.Seo.SitemapAlternate
+PandaBear.AspNetCore.Seo.SitemapAlternate.Language.get -> string!
+PandaBear.AspNetCore.Seo.SitemapAlternate.Location.get -> System.Uri!
+PandaBear.AspNetCore.Seo.SitemapAlternate.SitemapAlternate(string! language, System.Uri! location) -> void
+PandaBear.AspNetCore.Seo.SitemapEntry.Alternates.get -> System.Collections.Generic.IReadOnlyList<PandaBear.AspNetCore.Seo.SitemapAlternate!>!
+static PandaBear.AspNetCore.Seo.SitemapAlternate.ForDefault(System.Uri! location) -> PandaBear.AspNetCore.Seo.SitemapAlternate!
+PandaBear.AspNetCore.Seo.CanonicalOriginOptions
+PandaBear.AspNetCore.Seo.CanonicalOriginOptions.Absolute(string! path) -> System.Uri!
+PandaBear.AspNetCore.Seo.CanonicalOriginOptions.CanonicalOriginOptions() -> void
+PandaBear.AspNetCore.Seo.CanonicalOriginOptions.Origin.get -> string?
+PandaBear.AspNetCore.Seo.CanonicalOriginOptions.Origin.set -> void
+PandaBear.AspNetCore.Seo.CanonicalOriginOptions.Value.get -> System.Uri!
+PandaBear.AspNetCore.Seo.CanonicalOriginServiceCollectionExtensions
+static PandaBear.AspNetCore.Seo.CanonicalOriginServiceCollectionExtensions.AddCanonicalOrigin(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! configurationKey) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

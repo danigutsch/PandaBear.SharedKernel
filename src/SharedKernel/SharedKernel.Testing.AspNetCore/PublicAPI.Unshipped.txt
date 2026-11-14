@@ -78,3 +78,6 @@ PandaBear.Testing.AspNetCore.ThrowingDistributedCache.CallCount(PandaBear.Testin
 PandaBear.Testing.AspNetCore.ThrowingDistributedCache.LastRemoveCancellationToken.get -> System.Threading.CancellationToken
 PandaBear.Testing.AspNetCore.ThrowingDistributedCache.LastSetOptions.get -> Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions?
 PandaBear.Testing.AspNetCore.ThrowingDistributedCache.ThrowingDistributedCache(Microsoft.Extensions.Caching.Distributed.IDistributedCache! inner, System.Exception! failure, System.Func<PandaBear.Testing.AspNetCore.DistributedCacheOperation, string!, int, bool>! shouldThrow) -> void
+PandaBear.Testing.AspNetCore.TestHostServiceCollectionExtensions
+static PandaBear.Testing.AspNetCore.TestHostServiceCollectionExtensions.ClearHealthChecks(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static PandaBear.Testing.AspNetCore.TestHostServiceCollectionExtensions.RemoveHostedServices(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

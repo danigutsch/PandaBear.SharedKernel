@@ -16,6 +16,18 @@ across ASP.NET Core test projects.
 - Create test hosts for ASP.NET Core entry point assemblies
 - Optionally set the hosting environment
 - Optionally apply test service overrides
+- Never watch configuration files: `WebApplicationTestHost` and `KestrelTestHost` (and so `KestrelPageTest` of
+  SharedKernel.Testing.Playwright) set `hostBuilder:reloadConfigOnChange=false`, because one appsettings watcher per file and host
+  exhausts the per-user inotify limit when many test hosts run in parallel. A `configuration` value for that key turns it back on.
+
+## Service overrides
+
+For the `configureTestServices` callback:
+
+- `services.RemoveHostedServices()` removes every `IHostedService` the application registered (background jobs, consumers); the web
+  server keeps running.
+- `services.ClearHealthChecks()` removes every health check registration, including later ones, so the host does not probe
+  dependencies the test never starts.
 
 ## Fakes
 

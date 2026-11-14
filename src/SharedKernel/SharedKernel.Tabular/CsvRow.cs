@@ -1,22 +1,33 @@
+using System.Collections;
+
 namespace PandaBear.Tabular;
 
-/// <summary>Represents a row whose comma-separated fields are trimmed.</summary>
-/// <remarks>Commas always separate fields; quoted, escaped, and multiline fields are not supported.</remarks>
-public sealed class CsvRow
+/// <summary>A record of a CSV document: its field values and, for a parsed record, the line it starts on.</summary>
+public sealed class CsvRow : IReadOnlyList<string>
 {
     private readonly string[] _values;
 
-    private CsvRow(string[] values)
+    private CsvRow(string[] values, int lineNumber)
     {
         _values = values;
+        LineNumber = lineNumber;
     }
 
     /// <summary>Gets the number of fields, including empty fields.</summary>
     public int Count => _values.Length;
 
+    /// <summary>
+    /// Gets the one-based physical line the record starts on in the parsed content, counting skipped blank lines and the line breaks inside
+    /// quoted fields; zero for a row made with <see cref="Create"/>.
+    /// </summary>
+    public int LineNumber
+    {
+        get;
+    }
+
     /// <summary>Gets the field at the zero-based column index.</summary>
     /// <param name="index">The zero-based column index.</param>
-    /// <returns>The trimmed field value.</returns>
+    /// <returns>The field value.</returns>
     /// <exception cref="IndexOutOfRangeException"><paramref name="index"/> is outside the row.</exception>
     public string this[int index] => _values[index];
 
@@ -38,6 +49,23 @@ public sealed class CsvRow
 
             return value!;
         }
+    }
+
+    /// <summary>Creates a row from field values, kept exactly as given.</summary>
+    /// <param name="values">The field values.</param>
+    /// <returns>The row, with <see cref="LineNumber"/> zero.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="values"/> or one of its values is null.</exception>
+    public static CsvRow Create(IEnumerable<string> values)
+    {
+        ArgumentNullException.ThrowIfNull(values);
+
+        string[] copy = [.. values];
+        foreach (var value in copy)
+        {
+            ArgumentNullException.ThrowIfNull(value, nameof(values));
+        }
+
+        return new CsvRow(copy, 0);
     }
 
     /// <summary>Tries to read the field under the first matching header.</summary>
@@ -68,20 +96,15 @@ public sealed class CsvRow
         return true;
     }
 
-    /// <summary>Creates a row from already split and trimmed fields.</summary>
-    /// <param name="values">The trimmed fields, which the row takes ownership of.</param>
-    /// <returns>A row retaining the fields.</returns>
-    internal static CsvRow FromValues(string[] values) => new(values);
+    /// <inheritdoc />
+    public IEnumerator<string> GetEnumerator() => ((IEnumerable<string>)_values).GetEnumerator();
 
-    /// <summary>Splits a line on every comma and trims each field.</summary>
-    /// <param name="csvLine">The line to split.</param>
-    /// <returns>A row retaining empty fields.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="csvLine"/> is null.</exception>
-    public static CsvRow Parse(string csvLine)
-    {
-        ArgumentNullException.ThrowIfNull(csvLine);
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        var values = csvLine.Split(',').Select(value => value.Trim()).ToArray();
-        return new CsvRow(values);
-    }
+    /// <summary>Creates a parsed row, taking ownership of the values.</summary>
+    /// <param name="values">The field values.</param>
+    /// <param name="lineNumber">The line the record starts on.</param>
+    /// <returns>The row.</returns>
+    internal static CsvRow FromParsed(string[] values, int lineNumber) => new(values, lineNumber);
 }

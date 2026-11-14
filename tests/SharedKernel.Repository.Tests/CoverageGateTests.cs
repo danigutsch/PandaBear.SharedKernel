@@ -191,6 +191,7 @@ public sealed class CoverageGateTests
             "git rev-parse HEAD",
             "git rev-parse HEAD",
             "git rev-parse HEAD^@",
+            "git status --porcelain --untracked-files=no --ignore-submodules=none",
             "git -c core.quotePath=false diff --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ --unified=0 --inter-hunk-context=0 --text --find-renames "
                 + CoverageTestScope.BaseRevision + "...HEAD --",
         ]);
@@ -345,6 +346,43 @@ public sealed class CoverageGateTests
         using var gate = JsonDocument.Parse(scope.ReadFile("TestResults/coverage-gate.json"));
         gate.RootElement.GetProperty("parents").EnumerateArray().Select(static parent => parent.GetString()).ShouldBe([target, feature]);
         gate.RootElement.GetProperty("revision").GetString().ShouldBe((await TestGit.Run(scope.Root, ["rev-parse", "HEAD"], ct)).Trim());
+    }
+
+    [Theory]
+    [InlineData("deleted")]
+    [InlineData("modified")]
+    public async Task Uncommitted_changes_to_tracked_files_fail_with_a_clear_message_before_any_file_is_read(string change)
+    {
+        // Arrange: a committed interface file that no report lists, so the gate would read it to compare it with the symbols.
+        var ct = TestContext.Current.CancellationToken;
+        using var scope = new CoverageTestScope(0);
+        File.Delete(Path.Combine(scope.Root, "coverage.xml"));
+        var baseRevision = await TestGit.CommitAll(scope.Root, ct);
+        scope.WriteFile("src/PublicOrigin.cs", "public interface IPublicOrigin { }\n");
+        await TestGit.Commit(scope.Root, ct);
+        scope.WriteFile("results/coverage.cobertura.xml", "<coverage><packages /></coverage>");
+        var record = await RepositoryToolInvocation.Run(scope.Root, ["coverage", "record-symbols"], ProcessRunner.Run, ct);
+        if (change == "deleted")
+        {
+            File.Delete(Path.Combine(scope.Root, "src/PublicOrigin.cs"));
+        }
+        else
+        {
+            scope.WriteFile("src/PublicOrigin.cs", "public interface IPublicOrigin { int Value { get; } }\n");
+        }
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(
+            scope.Root, ["coverage", "verify", "--report", "results", "--base", baseRevision, "--symbols", "TestResults/symbol-evidence.json"], ProcessRunner.Run, ct);
+
+        // Assert
+        record.ExitCode.ShouldBe(0, record.Error);
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("uncommitted changes to 1 tracked file", StringComparison.Ordinal);
+        result.Error.ShouldContain("must match HEAD", StringComparison.Ordinal);
+        result.Error.ShouldNotContain("Could not find file", StringComparison.Ordinal);
+        using var gate = JsonDocument.Parse(scope.ReadFile("TestResults/coverage-gate.json"));
+        gate.RootElement.GetProperty("passed").GetBoolean().ShouldBeFalse();
     }
 
     [Fact]

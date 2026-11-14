@@ -9,6 +9,10 @@ Reusable OpenAPI helpers for API projects in this repository.
 Current scope:
 
 - define boundary-specific OpenAPI document registrations
+- document optimistic concurrency: `WithIfMatchPrecondition()` adds a required `If-Match` header and the 400, 412 and 428 problem
+  responses to a write, and `WithEntityTagResponseHeader()` adds the required `ETag` header to a read's 200 response. Both work on an
+  endpoint or a route group and take an optional description. `IfMatchCondition` in `PandaBear.SharedKernel.HttpCaching.AspNetCore`
+  implements the matching behavior.
 
 Non-goals:
 

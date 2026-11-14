@@ -1,0 +1,19 @@
+@inherits SiteComponent
+<article class="@CssClass("site-card")" @attributes="AdditionalAttributes">
+    @if (Image is not null)
+    {
+        <div class="site-card__media">@ResponsiveImageMarkup.Render(Image, eager: false, highPriority: false)</div>
+    }
+    <div class="site-card__body">
+        @Heading.Render(HeadingLevel, "site-card__title", null, TitleContent)
+        @ChildContent
+    </div>
+    @if (Actions is not null)
+    {
+        <div class="site-card__actions">@Actions</div>
+    }
+</article>
+
+@code {
+    private RenderFragment TitleContent => Href is null ? @<text>@Title</text> : @<a href="@Href.Value">@Title</a>;
+}

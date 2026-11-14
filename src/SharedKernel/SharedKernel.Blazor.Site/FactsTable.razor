@@ -1,0 +1,13 @@
+@inherits SiteComponent
+<table class="@CssClass("site-facts")" @attributes="AdditionalAttributes">
+    <caption>@Caption</caption>
+    <tbody>
+        @foreach (var row in Rows)
+        {
+            <tr>
+                <th scope="row">@row.Label</th>
+                <td>@row.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>

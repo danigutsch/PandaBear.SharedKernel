@@ -1,0 +1,42 @@
+@using Microsoft.AspNetCore.Components.Web
+<PageTitle>@Title</PageTitle>
+<HeadContent>
+    @if (!string.IsNullOrWhiteSpace(Description))
+    {
+        <meta name="description" content="@Description" />
+    }
+    @if (CanonicalUrl is not null)
+    {
+        <link rel="canonical" href="@CanonicalUrl.AbsoluteUri" />
+    }
+    @foreach (var alternate in Alternates)
+    {
+        <link rel="alternate" hreflang="@alternate.Culture.Value" href="@alternate.Href.AbsoluteUri" />
+    }
+    @if (DefaultAlternateUrl is not null)
+    {
+        <link rel="alternate" hreflang="x-default" href="@DefaultAlternateUrl.AbsoluteUri" />
+    }
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="@Title" />
+    @if (!string.IsNullOrWhiteSpace(Description))
+    {
+        <meta property="og:description" content="@Description" />
+    }
+    @if (CanonicalUrl is not null)
+    {
+        <meta property="og:url" content="@CanonicalUrl.AbsoluteUri" />
+    }
+    @if (!string.IsNullOrWhiteSpace(SiteName))
+    {
+        <meta property="og:site_name" content="@SiteName" />
+    }
+    @if (Locale is not null)
+    {
+        <meta property="og:locale" content="@OpenGraphLocale(Locale)" />
+    }
+    @if (ImageUrl is not null)
+    {
+        <meta property="og:image" content="@ImageUrl.AbsoluteUri" />
+    }
+</HeadContent>

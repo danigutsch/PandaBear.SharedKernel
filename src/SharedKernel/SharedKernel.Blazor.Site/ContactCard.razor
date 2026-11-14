@@ -1,0 +1,38 @@
+@inherits SiteComponent
+<section class="@CssClass("site-contact-card")" @attributes="AdditionalAttributes">
+    @if (!string.IsNullOrWhiteSpace(Title))
+    {
+        @Heading.Render(HeadingLevel, "site-contact-card__title", null, @<text>@Title</text>)
+    }
+    @if (HasLines || HasChannels)
+    {
+        <address class="site-contact-card__address">
+            @if (HasLines)
+            {
+                <p class="site-contact-card__lines">
+                    @foreach (var line in AddressLines!)
+                    {
+                        <span class="site-contact-card__line">@line</span>
+                    }
+                </p>
+            }
+            @if (HasChannels)
+            {
+                <ul class="site-contact-card__channels">
+                    @if (Phone is not null)
+                    {
+                        <li><a href="@PhoneHref">@(PhoneText ?? Phone.Value)</a></li>
+                    }
+                    @if (Email is not null)
+                    {
+                        <li><a href="@EmailHref">@Email.Value</a></li>
+                    }
+                    @if (WhatsApp is not null)
+                    {
+                        <li><a href="@WhatsAppHref">@WhatsAppLabel</a></li>
+                    }
+                </ul>
+            }
+        </address>
+    }
+</section>

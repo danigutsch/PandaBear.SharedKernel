@@ -13,3 +13,6 @@ static PandaBear.InputNormalization.StringSanitizer.SanitizeNotes(string? value)
 static PandaBear.InputNormalization.WebAssetUriSanitizer.NormalizeRasterDataImage(string? value, int maxLength) -> string?
 static PandaBear.InputNormalization.WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(string? value, int maxLength) -> string?
 static PandaBear.InputNormalization.WebAssetUriSanitizer.ToRootRelativeOrHttpsUri(string? value, int maxLength) -> System.Uri?
+static PandaBear.InputNormalization.StringSanitizer.TryNormalizeKey(string! value, out string? key) -> bool
+static PandaBear.InputNormalization.StringSanitizer.TrySanitize(string? value, out string? sanitized) -> bool
+static PandaBear.InputNormalization.StringSanitizer.TrySanitizeNotes(string? value, out string? sanitized) -> bool

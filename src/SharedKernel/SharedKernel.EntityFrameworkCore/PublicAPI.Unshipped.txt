@@ -36,5 +36,6 @@ PandaBear.EntityFrameworkCore.WriteDbContextConfiguration<TContext>.ConfigureOpt
 PandaBear.EntityFrameworkCore.WriteDbContextConfiguration<TContext>.WriteDbContextConfiguration() -> void
 static PandaBear.EntityFrameworkCore.UniqueRuleIndexBuilderExtensions.HasUniqueRule<TEntity>(this Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder<TEntity>! builder, string! rule) -> Microsoft.EntityFrameworkCore.Metadata.Builders.IndexBuilder<TEntity>!
 PandaBear.EntityFrameworkCore.DatabaseMigrationExtensions
-static PandaBear.EntityFrameworkCore.DatabaseMigrationExtensions.ApplyMigrations<TContext>(this System.IServiceProvider! services, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+static PandaBear.EntityFrameworkCore.DatabaseMigrationExtensions.ApplyMigrations<TContext>(this System.IServiceProvider! services, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<bool>!
+static PandaBear.EntityFrameworkCore.DatabaseMigrationExtensions.EnsureMigrationsApplied<TContext>(this System.IServiceProvider! services, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
 static PandaBear.EntityFrameworkCore.DbContextUniqueViolationExtensions.SaveChangesTranslatingConflicts(this Microsoft.EntityFrameworkCore.DbContext! dbContext, PandaBear.EntityFrameworkCore.IUniqueViolationParser! parser, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!

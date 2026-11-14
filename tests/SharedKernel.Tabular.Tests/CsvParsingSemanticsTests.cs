@@ -1,32 +1,30 @@
 namespace PandaBear.Tabular.Tests;
 
-/// <summary>Tests for the literal CSV parsing rules: trailing empty rows, naive comma splitting, header matching and null guards.</summary>
+/// <summary>Tests for the parsing rules kept from the simple dialect: trailing line breaks, empty fields, header matching and null guards.</summary>
 public sealed class CsvParsingSemanticsTests
 {
     [Theory]
     [InlineData("\n")]
     [InlineData("\r\n")]
-    public void Parse_retains_trailing_empty_rows(string newline)
+    public void A_trailing_line_break_adds_no_row(string newline)
     {
         // Act
-        var result = CsvDocument.Parse("First,Second" + newline + "a,b" + newline);
+        var document = CsvDocument.Parse("First,Second" + newline + "a,b" + newline).ShouldBeSuccess();
 
         // Assert
-        result.IsFailure.ShouldBeTrue();
-        result.ErrorDetails!.Detail.ShouldContain("line 3", StringComparison.Ordinal);
+        document.Rows.ShouldHaveSingleItem().LineNumber.ShouldBe(2);
     }
 
     [Fact]
-    public void Parse_preserves_empty_fields_and_splits_quoted_commas_literally()
+    public void Parse_preserves_empty_fields_and_keeps_a_quoted_comma_in_its_field()
     {
         // Act
-        var row = CsvRow.Parse("one,,\"two,three\"");
+        var row = CsvDocument.Parse("A,B,C\none,,\"two,three\"").ShouldBeSuccess().Rows.ShouldHaveSingleItem();
 
         // Assert
-        row.Count.ShouldBe(4);
+        row.Count.ShouldBe(3);
         row[1].ShouldBe(string.Empty);
-        row[2].ShouldBe("\"two");
-        row[3].ShouldBe("three\"");
+        row[2].ShouldBe("two,three");
     }
 
     [Fact]
@@ -44,10 +42,10 @@ public sealed class CsvParsingSemanticsTests
     {
         // Arrange
         Action parseDocument = () => CsvDocument.Parse(null!);
-        Action parseRow = () => CsvRow.Parse(null!);
+        Action createRow = () => CsvRow.Create(null!);
 
         // Act, Assert
         parseDocument.ShouldThrow<ArgumentNullException>();
-        parseRow.ShouldThrow<ArgumentNullException>();
+        createRow.ShouldThrow<ArgumentNullException>();
     }
 }

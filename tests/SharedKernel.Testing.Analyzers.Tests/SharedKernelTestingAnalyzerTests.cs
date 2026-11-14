@@ -31,6 +31,7 @@ public sealed class SharedKernelTestingAnalyzerTests
             TestingDiagnosticIds.AssertionUserMessageOverload,
             TestingDiagnosticIds.XunitTestScope,
             TestingDiagnosticIds.CallProxyServiceType,
+            TestingDiagnosticIds.PlaywrightUrlWait,
         ];
 
         // Act

@@ -1,0 +1,9 @@
+@inherits SiteComponent
+<nav class="@CssClass("site-language-switcher")" aria-label="@Label" @attributes="AdditionalAttributes">
+    <ul>
+        @foreach (var language in Languages)
+        {
+            <li><a href="@language.Href.Value" hreflang="@language.Culture.Value" lang="@language.Culture.Value" aria-current="@(language.IsCurrent ? "true" : null)">@language.Label</a></li>
+        }
+    </ul>
+</nav>

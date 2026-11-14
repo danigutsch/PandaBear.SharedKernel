@@ -6,10 +6,14 @@ using Microsoft.Extensions.DependencyInjection;
 namespace PandaBear.Testing.AspNetCore;
 
 /// <summary>
-/// Creates ASP.NET Core test hosts with consistent bad-request responses and optional environment and service overrides.
+/// Creates ASP.NET Core test hosts with consistent bad-request responses and optional environment and service overrides. The hosts do not
+/// watch configuration files (<c>hostBuilder:reloadConfigOnChange=false</c>), so parallel test hosts do not exhaust the per-user
+/// file-watcher (inotify) limit.
 /// </summary>
 public static class WebApplicationTestHost
 {
+    private const string ReloadConfigOnChangeKey = "hostBuilder:reloadConfigOnChange";
+
     /// <summary>
     /// Creates a web application factory for the target application assembly.
     /// </summary>
@@ -33,6 +37,10 @@ public static class WebApplicationTestHost
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            // Tests never reload configuration, and one appsettings watcher per file and host exhausts the per-user inotify limit when
+            // many test hosts run in parallel. The caller's configuration below can still turn reloading back on.
+            builder.UseSetting(ReloadConfigOnChangeKey, "false");
+
             if (environment is not null)
             {
                 HostingAbstractionsWebHostBuilderExtensions.UseEnvironment(

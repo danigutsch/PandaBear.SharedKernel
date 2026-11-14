@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
@@ -11,12 +12,72 @@ namespace PandaBear.InputNormalization;
 public static partial class StringSanitizer
 {
     /// <summary>
+    /// Sanitizes like <see cref="Sanitize"/>, but reports malformed UTF-16 (a lone or reversed surrogate) and text that Unicode normalization
+    /// refuses as <see langword="false"/> instead of throwing <see cref="ArgumentException"/>. Use it for untrusted input, such as form fields
+    /// and route values, and turn <see langword="false"/> into a validation error.
+    /// </summary>
+    /// <param name="value">The string to sanitize.</param>
+    /// <param name="sanitized">The sanitized string; <see langword="null"/> when <paramref name="value"/> is <see langword="null"/> or malformed.</param>
+    /// <returns><see langword="false"/> when <paramref name="value"/> is malformed; <see langword="true"/> otherwise, including for <see langword="null"/>.</returns>
+    public static bool TrySanitize(string? value, out string? sanitized)
+    {
+        sanitized = null;
+        if (value is null)
+        {
+            return true;
+        }
+
+        if (!TryNormalize(value, out var normalized))
+        {
+            return false;
+        }
+
+        sanitized = NormalizeWhitespace(RemoveControlCharacters(normalized).Trim());
+        return true;
+    }
+
+    /// <summary>Sanitizes like <see cref="SanitizeNotes"/>, but reports malformed text as <see langword="false"/> instead of throwing.</summary>
+    /// <param name="value">The string to sanitize.</param>
+    /// <param name="sanitized">The sanitized string; <see langword="null"/> when <paramref name="value"/> is <see langword="null"/> or malformed.</param>
+    /// <returns><see langword="false"/> when <paramref name="value"/> is malformed; <see langword="true"/> otherwise, including for <see langword="null"/>.</returns>
+    public static bool TrySanitizeNotes(string? value, out string? sanitized)
+    {
+        sanitized = null;
+        if (value is null)
+        {
+            return true;
+        }
+
+        if (!TryNormalize(value, out var normalized))
+        {
+            return false;
+        }
+
+        sanitized = normalized.Trim();
+        return true;
+    }
+
+    /// <summary>Normalizes like <see cref="NormalizeKey"/>, but reports malformed text as <see langword="false"/> instead of throwing.</summary>
+    /// <param name="value">The string to normalize.</param>
+    /// <param name="key">The normalized key, or <see langword="null"/> when <paramref name="value"/> is malformed.</param>
+    /// <returns><see langword="false"/> when <paramref name="value"/> is malformed.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+    public static bool TryNormalizeKey(string value, [NotNullWhen(true)] out string? key)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+
+        key = TrySanitize(value, out var sanitized) ? sanitized!.ToUpperInvariant() : null;
+        return key is not null;
+    }
+
+    /// <summary>
     /// Sanitizes a string for general use (names, identifiers).
     /// Trims, normalizes whitespace, removes control characters, and normalizes Unicode.
     /// Returns null only if the input is null.
     /// </summary>
     /// <param name="value">The string to sanitize.</param>
     /// <returns>The sanitized string, or null if input is null.</returns>
+    /// <exception cref="ArgumentException"><paramref name="value"/> is not well-formed UTF-16; <see cref="TrySanitize"/> reports it instead.</exception>
     [return: NotNullIfNotNull(nameof(value))]
     public static string? Sanitize(string? value)
     {
@@ -39,6 +100,7 @@ public static partial class StringSanitizer
     /// </summary>
     /// <param name="value">The string to sanitize.</param>
     /// <returns>The sanitized string, or null if input is null.</returns>
+    /// <exception cref="ArgumentException"><paramref name="value"/> is not well-formed UTF-16; <see cref="TrySanitizeNotes"/> reports it instead.</exception>
     [return: NotNullIfNotNull(nameof(value))]
     public static string? SanitizeNotes(string? value)
     {
@@ -104,6 +166,33 @@ public static partial class StringSanitizer
     {
         ArgumentNullException.ThrowIfNull(value);
         return Sanitize(value).ToUpperInvariant();
+    }
+
+    /// <summary>Normalizes to form C, or reports text that is not well-formed UTF-16 or that normalization refuses.</summary>
+    private static bool TryNormalize(string value, [NotNullWhen(true)] out string? normalized)
+    {
+        normalized = null;
+        var remaining = value.AsSpan();
+        while (!remaining.IsEmpty)
+        {
+            if (Rune.DecodeFromUtf16(remaining, out _, out var consumed) != OperationStatus.Done)
+            {
+                return false;
+            }
+
+            remaining = remaining[consumed..];
+        }
+
+        try
+        {
+            // Well-formed text can still be refused, depending on the platform's Unicode data; that refusal is reported, not thrown.
+            normalized = value.Normalize(NormalizationForm.FormC);
+            return true;
+        }
+        catch (ArgumentException)
+        {
+            return false;
+        }
     }
 
     private static string RemoveControlCharacters(string value) => ControlCharacterRegex().Replace(value, string.Empty);

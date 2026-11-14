@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.UploadSanitizing</PackageId>
+        <Description>Dependency-free upload sanitizing recognized by content: JPEG, PNG, WebP and opt-in AVIF images with metadata removal without re-encoding, animation detection and header dimensions, and WOFF2 fonts with a structural check.</Description>
+        <RootNamespace>PandaBear.UploadSanitizing</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>image;font;woff2;upload;metadata;exif;avif;animation;privacy;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Results\SharedKernel.Results.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

@@ -17,9 +17,14 @@ flowchart TB
     SharedKernel_AspNetCore[SharedKernel.AspNetCore] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
     SharedKernel_AspNetCore_Authentication[SharedKernel.AspNetCore.Authentication] --> SharedKernel_AspNetCore[SharedKernel.AspNetCore]
     SharedKernel_AspNetCore_Authentication[SharedKernel.AspNetCore.Authentication] --> SharedKernel_OpenApi[SharedKernel.OpenApi]
+    SharedKernel_AspNetCore_Localization[SharedKernel.AspNetCore.Localization] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
     SharedKernel_AspNetCore_RateLimiting[SharedKernel.AspNetCore.RateLimiting] --> SharedKernel_AspNetCore[SharedKernel.AspNetCore]
+    SharedKernel_AspNetCore_Seo[SharedKernel.AspNetCore.Seo] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
+    SharedKernel_Aspire_Hosting[SharedKernel.Aspire.Hosting] --> SharedKernel_AspNetCore[SharedKernel.AspNetCore]
     SharedKernel_Blazor[SharedKernel.Blazor] --> SharedKernel_HttpClients[SharedKernel.HttpClients]
     SharedKernel_Blazor[SharedKernel.Blazor] --> SharedKernel_Results[SharedKernel.Results]
+    SharedKernel_Blazor_Site[SharedKernel.Blazor.Site] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
+    SharedKernel_Blazor_Site[SharedKernel.Blazor.Site] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
     SharedKernel_Branding[SharedKernel.Branding] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
     SharedKernel_Branding[SharedKernel.Branding] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
@@ -33,6 +38,7 @@ flowchart TB
     SharedKernel_Domain_EntityFrameworkCore[SharedKernel.Domain.EntityFrameworkCore] --> SharedKernel_Domain[SharedKernel.Domain]
     SharedKernel_Domain_EntityFrameworkCore[SharedKernel.Domain.EntityFrameworkCore] --> SharedKernel_EntityFrameworkCore[SharedKernel.EntityFrameworkCore]
     SharedKernel_EntityFrameworkCore[SharedKernel.EntityFrameworkCore] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
+    SharedKernel_EntityFrameworkCore_Npgsql[SharedKernel.EntityFrameworkCore.Npgsql] --> SharedKernel_EntityFrameworkCore[SharedKernel.EntityFrameworkCore]
     SharedKernel_EntityFrameworkCore_Sqlite[SharedKernel.EntityFrameworkCore.Sqlite] --> SharedKernel_EntityFrameworkCore[SharedKernel.EntityFrameworkCore]
     SharedKernel_EventSourcing_Npgsql[SharedKernel.EventSourcing.Npgsql] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
     SharedKernel_EventSourcing_Npgsql[SharedKernel.EventSourcing.Npgsql] --> SharedKernel_EventSourcing[SharedKernel.EventSourcing]
@@ -67,6 +73,7 @@ flowchart TB
     SharedKernel_Packages[SharedKernel.Packages] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_Results[SharedKernel.Results] --> SharedKernel_Results_SourceGenerator[SharedKernel.Results.SourceGenerator]
     SharedKernel_Results_AspNet[SharedKernel.Results.AspNet] --> SharedKernel_Results[SharedKernel.Results]
+    SharedKernel_ServiceDefaults[SharedKernel.ServiceDefaults] --> SharedKernel_Observability[SharedKernel.Observability]
     SharedKernel_Style_CodeFixes[SharedKernel.Style.CodeFixes] --> SharedKernel_Style_Analyzers[SharedKernel.Style.Analyzers]
     SharedKernel_Tabular[SharedKernel.Tabular] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_Testing_Assertions[SharedKernel.Testing.Assertions] --> SharedKernel_Results[SharedKernel.Results]
@@ -78,6 +85,7 @@ flowchart TB
     SharedKernel_Testing_Messaging[SharedKernel.Testing.Messaging] --> SharedKernel_Messaging_IntegrationEvents[SharedKernel.Messaging.IntegrationEvents]
     SharedKernel_Testing_Playwright[SharedKernel.Testing.Playwright] --> SharedKernel_Testing_AspNetCore[SharedKernel.Testing.AspNetCore]
     SharedKernel_Testing_Xunit[SharedKernel.Testing.Xunit] --> SharedKernel_Testing[SharedKernel.Testing]
+    SharedKernel_UploadSanitizing[SharedKernel.UploadSanitizing] --> SharedKernel_Results[SharedKernel.Results]
 ```
 <!-- generated:library-dependencies:end -->
 

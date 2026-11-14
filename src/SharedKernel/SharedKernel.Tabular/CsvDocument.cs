@@ -1,12 +1,12 @@
-using System.Text;
 using PandaBear.Results;
 
 namespace PandaBear.Tabular;
 
 /// <summary>
-/// Represents a simple comma-delimited document with headers and data rows.
+/// A CSV document: a header record and data records with one field per header. It reads RFC 4180, leniently, so simple unquoted files
+/// read as they always did: a quoted field may hold commas, line breaks and doubled quotes and keeps its white space; an unquoted field is
+/// trimmed and keeps a quote inside it literally. <see cref="CsvWriter"/> writes what this reads.
 /// </summary>
-/// <remarks>Quoted delimiters, escaping, and multiline fields are not supported. Empty data lines are retained.</remarks>
 public sealed class CsvDocument
 {
     private readonly IReadOnlyList<CsvRow> _rows;
@@ -17,7 +17,7 @@ public sealed class CsvDocument
         _rows = [.. rows];
     }
 
-    /// <summary>Gets the trimmed header columns.</summary>
+    /// <summary>Gets the header columns.</summary>
     public IReadOnlyList<string> Headers
     {
         get;
@@ -27,109 +27,37 @@ public sealed class CsvDocument
     public IReadOnlyList<CsvRow> Rows => _rows;
 
     /// <summary>
-    /// Parses CSV content into a document with headers and rows.
+    /// Parses CSV text into a document with headers and rows. A leading byte order mark is removed; records end at LF or CRLF, and a final
+    /// line break adds no record. A field whose first character other than spaces and tabs is a quote is quoted: it ends at the matching
+    /// quote, <c>""</c> inside it is one quote, and only spaces and tabs may follow it before the next comma or line break. Any other field
+    /// ends at the next comma or line break, is trimmed, and keeps a stray quote as a literal character.
     /// </summary>
-    /// <param name="content">Full CSV content, where the first line is the header row.</param>
+    /// <param name="content">Full CSV content, where the first record is the header row.</param>
     /// <param name="requiredHeaderNames">Optional list of required headers that must exist in the CSV header row.</param>
-    /// <returns>A parsed CSV document.</returns>
+    /// <param name="options">The options; <see cref="CsvParseOptions.Default"/> when <see langword="null"/>.</param>
+    /// <returns>
+    /// The document, or an invalid result for no header, a missing required header, a row whose field count differs, an unterminated quoted
+    /// field or text after a closing quote; line numbers in the errors are the physical lines records start on.
+    /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/> is null.</exception>
-    public static Result<CsvDocument> Parse(string content, IReadOnlyList<string>? requiredHeaderNames = null)
+    public static Result<CsvDocument> Parse(string content, IReadOnlyList<string>? requiredHeaderNames = null, CsvParseOptions? options = null)
     {
         ArgumentNullException.ThrowIfNull(content);
 
-        var lines = content
-            .Split(["\r\n", "\n"], StringSplitOptions.TrimEntries);
-
-        if (lines.Length == 0 || string.IsNullOrWhiteSpace(lines[0]))
-        {
-            return CsvErrors.HeadersMustContainAtLeastOneColumn().ConvertError<CsvDocument>();
-        }
-
-        return Build(CsvRow.Parse(lines[0]), lines.Skip(1).Select(CsvRow.Parse), requiredHeaderNames);
+        return CsvReader<char, Utf16CsvSymbols>.Read(content, requiredHeaderNames, options ?? CsvParseOptions.Default);
     }
 
     /// <summary>
-    /// Parses UTF-8 CSV bytes into a document with headers and rows without decoding the whole content to text.
+    /// Parses UTF-8 CSV bytes with the same rules and errors as <see cref="Parse"/> on the decoded text, without decoding the whole content:
+    /// fields are found on the bytes and each one is decoded on its own. A UTF-8 byte order mark is removed; invalid UTF-8 is replaced per
+    /// field as the decoder does.
     /// </summary>
-    /// <param name="content">Full UTF-8 CSV content, where the first line is the header row. A byte order mark is not removed.</param>
+    /// <param name="content">Full UTF-8 CSV content, where the first record is the header row.</param>
     /// <param name="requiredHeaderNames">Optional list of required headers that must exist in the CSV header row.</param>
-    /// <returns>The same document or error as <see cref="Parse(string, IReadOnlyList{string}?)"/> returns for the decoded text.</returns>
-    public static Result<CsvDocument> ParseUtf8(ReadOnlySpan<byte> content, IReadOnlyList<string>? requiredHeaderNames = null)
-    {
-        var rows = new List<CsvRow>();
-        CsvRow? headerRow = null;
-        var fields = new List<string>();
-        var remaining = content;
-        while (true)
-        {
-            var lineEnd = remaining.IndexOf((byte)'\n');
-            var line = lineEnd < 0 ? remaining : remaining[..lineEnd];
-            if (!line.IsEmpty && line[^1] == (byte)'\r')
-            {
-                line = line[..^1];
-            }
-
-            if (headerRow is null)
-            {
-                var headerLine = Encoding.UTF8.GetString(line).Trim();
-                if (string.IsNullOrWhiteSpace(headerLine))
-                {
-                    return CsvErrors.HeadersMustContainAtLeastOneColumn().ConvertError<CsvDocument>();
-                }
-
-                headerRow = CsvRow.Parse(headerLine);
-            }
-            else
-            {
-                rows.Add(ParseRow(line, fields));
-            }
-
-            if (lineEnd < 0)
-            {
-                return Build(headerRow, rows, requiredHeaderNames);
-            }
-
-            remaining = remaining[(lineEnd + 1)..];
-        }
-    }
-
-    private static CsvRow ParseRow(ReadOnlySpan<byte> line, List<string> fields)
-    {
-        fields.Clear();
-        while (true)
-        {
-            var comma = line.IndexOf((byte)',');
-            var field = comma < 0 ? line : line[..comma];
-            fields.Add(Encoding.UTF8.GetString(field).Trim());
-            if (comma < 0)
-            {
-                return CsvRow.FromValues([.. fields]);
-            }
-
-            line = line[(comma + 1)..];
-        }
-    }
-
-    private static Result<CsvDocument> Build(CsvRow headerRow, IEnumerable<CsvRow> rows, IReadOnlyList<string>? requiredHeaderNames)
-    {
-        var headers = Enumerable.Range(0, headerRow.Count).Select(i => headerRow[i]).ToArray();
-
-        var missingRequiredHeader = requiredHeaderNames?
-            .Select(requiredHeader => requiredHeader.Trim())
-            .Where(requiredHeader => !string.IsNullOrWhiteSpace(requiredHeader))
-            .FirstOrDefault(requiredHeader =>
-                !headers.Any(header =>
-                    string.Equals(header, requiredHeader, StringComparison.OrdinalIgnoreCase)
-                )
-            );
-
-        if (missingRequiredHeader is not null)
-        {
-            return CsvErrors.RequiredHeaderMissing(missingRequiredHeader).ConvertError<CsvDocument>();
-        }
-
-        return Create(headers, [.. rows]);
-    }
+    /// <param name="options">The options; <see cref="CsvParseOptions.Default"/> when <see langword="null"/>.</param>
+    /// <returns>The same document or error as <see cref="Parse"/> returns for the decoded text.</returns>
+    public static Result<CsvDocument> ParseUtf8(ReadOnlySpan<byte> content, IReadOnlyList<string>? requiredHeaderNames = null, CsvParseOptions? options = null) =>
+        CsvReader<byte, Utf8CsvSymbols>.Read(content, requiredHeaderNames, options ?? CsvParseOptions.Default);
 
     /// <summary>
     /// Creates a <see cref="CsvDocument"/> from explicit headers and data rows.
@@ -159,7 +87,7 @@ public sealed class CsvDocument
         {
             if (firstRowWithInvalidColumnCount is not null)
             {
-                var csvLineNumber = firstRowWithInvalidColumnCount.index + 2;
+                var csvLineNumber = LineNumber(firstRowWithInvalidColumnCount.row, firstRowWithInvalidColumnCount.index);
                 return CsvErrors.RowsHaveInconsistentColumnCounts(csvLineNumber).ConvertError<CsvDocument>();
             }
 
@@ -169,10 +97,39 @@ public sealed class CsvDocument
         var headerCountDiffersFromRows = firstRowWithInvalidColumnCount is not null;
         if (headerCountDiffersFromRows)
         {
-            var csvLineNumber = firstRowWithInvalidColumnCount!.index + 2;
+            var csvLineNumber = LineNumber(firstRowWithInvalidColumnCount!.row, firstRowWithInvalidColumnCount.index);
             return CsvErrors.HeaderCountMustMatchRowColumnCount(csvLineNumber).ConvertError<CsvDocument>();
         }
 
         return Result.Ok(new CsvDocument(headers, rows));
     }
+
+    /// <summary>Checks the required headers and the column counts of parsed records.</summary>
+    /// <param name="headerRow">The header record.</param>
+    /// <param name="rows">The data records.</param>
+    /// <param name="requiredHeaderNames">The required headers.</param>
+    /// <returns>The document or the first error.</returns>
+    internal static Result<CsvDocument> Build(CsvRow headerRow, IReadOnlyList<CsvRow> rows, IReadOnlyList<string>? requiredHeaderNames)
+    {
+        string[] headers = [.. headerRow];
+
+        var missingRequiredHeader = requiredHeaderNames?
+            .Select(requiredHeader => requiredHeader.Trim())
+            .Where(requiredHeader => !string.IsNullOrWhiteSpace(requiredHeader))
+            .FirstOrDefault(requiredHeader =>
+                !headers.Any(header =>
+                    string.Equals(header, requiredHeader, StringComparison.OrdinalIgnoreCase)
+                )
+            );
+
+        if (missingRequiredHeader is not null)
+        {
+            return CsvErrors.RequiredHeaderMissing(missingRequiredHeader).ConvertError<CsvDocument>();
+        }
+
+        return Create(headers, rows);
+    }
+
+    /// <summary>The line a row starts on: its parsed line, or for a created row its position after a one-line header.</summary>
+    private static int LineNumber(CsvRow row, int index) => row.LineNumber > 0 ? row.LineNumber : index + 2;
 }

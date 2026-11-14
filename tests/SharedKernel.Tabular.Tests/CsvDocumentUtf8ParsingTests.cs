@@ -9,7 +9,11 @@ public sealed class CsvDocumentUtf8ParsingTests
     [InlineData("First,Second\na,b")]
     [InlineData("First,Second\r\na,b\r\nc,d")]
     [InlineData(" First , Second \n a , b \n,")]
-    [InlineData("First,Second,Third\n\"x,y\",z\u00e9")]
+    [InlineData("First,Second\n\"x,y\",z\u00e9")]
+    [InlineData("First,Second\n\"x\r\ny\",\"q\"\"\"")]
+    [InlineData("First,Second\na,b\n")]
+    [InlineData("First,Second\r\n\r\na,b")]
+    [InlineData("   \na,b")]
     [InlineData("First,Second\n a , b")]
     [InlineData("﻿First,Second\na,b")]
     [InlineData("OnlyHeader")]
@@ -37,13 +41,11 @@ public sealed class CsvDocumentUtf8ParsingTests
 
     [Theory]
     [InlineData("")]
-    [InlineData("   \na,b")]
-    [InlineData(" \na,b")]
+    [InlineData(" \n ")]
     [InlineData("First,Second\na,b,c")]
     [InlineData("First,Second\na,b\nc")]
-    [InlineData("First,Second\na,b\n")]
-    [InlineData("First,Second\r\na,b\r\n")]
-    [InlineData("First,Second\r\n\r\na,b")]
+    [InlineData("First,Second\n\"open,b")]
+    [InlineData("First,Second\n\"a\"b,c")]
     public void ParseUtf8_fails_with_the_same_error_as_parsing_the_decoded_text(string text)
     {
         // Arrange

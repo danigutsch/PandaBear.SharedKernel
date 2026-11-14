@@ -13,7 +13,8 @@ Source files are grouped by topic. The folders are organization only: every publ
 
 | Folder | Contents |
 | --- | --- |
-| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, text rules, option-to-result helpers |
+| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, `Slug`, `WebUrl`, text rules, option-to-result helpers |
+| `Localization` | `ContentCulture`, `SupportedCultures`, `TranslationSet` |
 | `Contact` | `EmailAddress`, `PhoneNumber`, `PersonName`, `PostalAddress` |
 | `Geography` | `CountryCode`, `CountryNames` |
 | `Finance` | `Money`, `Currency`, `CurrencyCodes`, `Iban`, `Bic` |
@@ -24,6 +25,38 @@ Source files are grouped by topic. The folders are organization only: every publ
 
 The test project mirrors these folders; shared test helpers live next to the types they exercise, and
 `RestoreTests` (which spans several types) stays at the root.
+
+## Slugs and content cultures
+
+`Slug.Create` turns free text into a canonical URL slug (lowercase ASCII letters and digits joined by single hyphens,
+diacritics stripped, default maximum `Slug.DefaultMaxLength` = 128). Control characters, surrogates (including lone
+ones), `/ \ ? #`, `.`, and any other non-ASCII character are rejected rather than transliterated, and the error never
+echoes the input. A slug therefore never contains `.`, which keeps it apart from file names in paths.
+`Slug.IsCanonical` checks an already-stored slug.
+
+## Web addresses
+
+`WebUrl.Create` accepts an absolute `http` or `https` address that is safe to render as a link, such as a sign-up form or a
+social profile. It must start with `http://` or `https://` in any case, name a host, and carry no user information (not
+even an empty one, `https://@host`). Relative and protocol-relative addresses (`//host`), `https:host`, every other scheme
+(`javascript:`, `data:`, `mailto:`), white space or control characters anywhere (rejected, not trimmed, because browsers strip
+some of them and that can hide a scheme), backslashes, lone surrogates, text not in Unicode normalization form C, and
+addresses longer than `WebUrl.MaxLength` (2048) are rejected; the error names the `field` and `label` and never echoes the
+input. `Value` keeps the path, query and fragment as supplied and lower-cases the scheme and host, so
+`HTTPS://Example.ORG/Tours` becomes `https://example.org/Tours` and addresses that differ only there are equal. The checks
+reuse `PandaBear.InputNormalization.WebAssetUriSanitizer`, with an `http` address checked through its `https` form.
+`WebUrl.Restore` rebuilds a stored value without validation.
+
+`ContentCulture` is a path-safe language tag in canonical casing (`pt`, `pt-BR`, `zh-Hant-TW`); cultures that differ only in
+case are equal, and `Parent` walks `pt-BR` to `pt`. Casing follows BCP 47: script title case and region upper case only before
+the first singleton, so `en-u-ca-gregory` and `de-DE-x-ab` stay lower case after the `u` or `x`. It is a path-safe
+culture-name check (hyphen-separated ASCII letters and digits, a two-to-eight-letter first part, later subtags of one to eight
+characters, a singleton followed by a subtag, at most 35 characters), not full BCP 47 validation: subtag order and registry entries
+are not checked; `Parent` drops a singleton left without a subtag (`en-x-ab` gives `en`). `SupportedCultures` is an immutable set of allowed cultures with a default:
+`Resolve` maps a requested culture to an allowed one (`pt-BR` to `pt`, or `pt` to `pt-BR`) and `TryGet` matches exact
+text such as a URL segment. `TranslationSet.Create` holds the translations of one entity, and `TryResolve` resolves in the same
+order as `SupportedCultures.Resolve`: the requested culture, its neutral parents, the first translation of the same language in
+the order given (`pt` to `pt-BR`), then the default culture and its parents, or reports none.
 
 ## Identity and optional lookups
 
@@ -114,8 +147,10 @@ recipient verification, masking, authorization, encryption and financial policy 
 expose `Value`. Do not destructure these objects in logs. JSON/EF adapters must call factories and
 handle validation failure. Persistence mappers (EF value converters) that rebuild a value from stored text must use the
 `Restore` factories instead of `Create(...).Value`: `EmailAddress.Restore`, `PhoneNumber.Restore`, `CountryCode.Restore`,
-`Currency.Restore`, `PersonName.Restore(firstName, lastName)`, `Money.Restore(amount, currency)`, `Cpf.Restore(value)` and
-`PostalAddress.Restore(street, complement, neighborhood, postalCode, city, state, country)`. `Restore` is for persistence mappers
+`Currency.Restore`, `PersonName.Restore(firstName, lastName)`, `Money.Restore(amount, currency)`, `Cpf.Restore(value)`,
+`BirthDate.Restore(value)` and `PostalAddress.Restore(street, complement, neighborhood, postalCode, city, state, country)`.
+`BirthDate.Restore` skips the age limits, which depend on the day, and refuses only the default date
+(`ArgumentOutOfRangeException`). `Restore` is for persistence mappers
 only: it rebuilds a value from text this type produced earlier, performs no validation beyond null/blank checks (`ArgumentException`) and
 the same trim and case normalization as `Create`, so a stored value that a newer rule rejects (an allow-list that tightened, a
 longer-than-now name) still loads instead of throwing on every query. `CountryCode.Restore` keeps a code outside the assigned set (its
@@ -150,6 +185,25 @@ code `XTS`, the no-currency code `XXX`, the SDR `XDR`, the bond-market and fund 
 Arab Accounting Dinar `XAD` are not money and are rejected. An unknown code is an input-independent validation error. The
 same table gives `MinorUnits`: 0 for `BIF CLP DJF GNF ISK JPY KMF KRW PYG RWF UGX UYI VND VUV XAF XOF XPF`, 3 for
 `BHD IQD JOD KWD LYD OMR TND`, 4 for `CLF UYW` and 2 for every other currency.
+
+### Displaying money
+
+`Money.ToString()` stays the invariant `EUR 1.00` form for logs and storage. For people, `money.ToDisplayString(culture)` (or the `C`
+format, as in `$"{price:C}"` or `string.Format(culture, "{0:C}", price)`) uses the culture's currency pattern, separators and negative
+form, `Currency.Symbol` as the symbol and the currency's minor unit as the decimals:
+
+| Culture | BRL | EUR | USD |
+| --- | --- | --- | --- |
+| pt-BR | `R$ 1.234,56` | `€ 1.234,56` | `$ 1.234,56` |
+| pt-PT | `1 234,56 R$` | `1 234,56 €` | `1 234,56 $` |
+| en-US | `R$1,234.56` | `€1,234.56` | `$1,234.56` |
+| invariant | `R$1,234.56` | `€1,234.56` | `$1,234.56` |
+
+`Currency.Symbol` comes from a fixed table (`R$`, `€`, `$`, `£`, `¥` for BRL, EUR, USD, GBP, JPY) and is the code itself for every other
+currency (`CHF 1.234,56`), so the symbol never depends on the platform. `RegionInfo` is not used: one code has many regional symbols
+(`US$`, `$`, `USD`), and a culture's own `CurrencySymbol` belongs to its region's currency, not to the money being shown. The pattern
+and separators do come from the culture data, which .NET reads from ICU on Linux and macOS: a host that sets `InvariantGlobalization`
+formats every culture like the invariant culture, and a container image without ICU must install it for pt-BR or pt-PT output.
 
 ## Dates, codes and exact money
 

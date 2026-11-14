@@ -1,6 +1,10 @@
 Aspire.Hosting.ApplicationModel.SqliteResource
 Aspire.Hosting.ApplicationModel.SqliteResource.ConnectionStringExpression.get -> Aspire.Hosting.ApplicationModel.ReferenceExpression!
 Aspire.Hosting.ApplicationModel.SqliteResource.DatabasePath.get -> string!
-Aspire.Hosting.ApplicationModel.SqliteResource.SqliteResource(string! name, string! databasePath) -> void
+Aspire.Hosting.ApplicationModel.SqliteResource.DataDirectory.get -> string!
+Aspire.Hosting.ApplicationModel.SqliteResource.SqliteResource(string! name, string! dataDirectory) -> void
 Aspire.Hosting.SqliteResourceExtensions
-static Aspire.Hosting.SqliteResourceExtensions.AddSqlite(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name, string! databasePath) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.SqliteResource!>!
+static Aspire.Hosting.SqliteResourceExtensions.AddSqlite(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.SqliteResource!>!
+static Aspire.Hosting.SqliteResourceExtensions.WithDataBindMount(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.SqliteResource!>! builder, string! source) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.SqliteResource!>!
+static Aspire.Hosting.SqliteResourceExtensions.WithReadOnlyReference<TDestination>(this Aspire.Hosting.ApplicationModel.IResourceBuilder<TDestination>! builder, Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.SqliteResource!>! database, string? connectionName = null) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<TDestination>!
+static Aspire.Hosting.SqliteResourceExtensions.WithDataBindMountFromConfiguration(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.SqliteResource!>! builder, string! configurationKey) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.SqliteResource!>!

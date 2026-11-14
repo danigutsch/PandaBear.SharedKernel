@@ -20,9 +20,10 @@ public sealed class ApplyMigrationsTests
             .BuildServiceProvider();
 
         // Act
-        await provider.ApplyMigrations<LedgerDbContext>(TestContext.Current.CancellationToken);
+        var migrated = await provider.ApplyMigrations<LedgerDbContext>(TestContext.Current.CancellationToken);
 
         // Assert
+        migrated.ShouldBeTrue();
         await using var scope = provider.CreateAsyncScope();
         var context = scope.ServiceProvider.GetRequiredService<LedgerDbContext>();
         var applied = (await context.Database.GetAppliedMigrationsAsync(TestContext.Current.CancellationToken)).ToArray();

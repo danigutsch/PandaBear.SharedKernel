@@ -79,7 +79,8 @@ guard. Report that loss as an application rule instead of a provider exception, 
 3. Catch `UniqueConstraintViolationException` in the application handler and return the same validation result as the pre-check.
 
 The parser (`IUniqueViolationParser`) holds all provider knowledge and is registered by the provider package, for example
-`AddSqliteUniqueViolationParser()` from `SharedKernel.EntityFrameworkCore.Sqlite`. A violation is matched to an index by
+`AddSqliteUniqueViolationParser()` from `SharedKernel.EntityFrameworkCore.Sqlite` or `AddNpgsqlUniqueViolationParser()` from
+`SharedKernel.EntityFrameworkCore.Npgsql`. A violation is matched to an index by
 constraint name (the index database name) or by table and every column, ignoring case. Another database needs one parser class.
 
 ### Concurrency conflicts
@@ -99,4 +100,11 @@ Source is public; registry publication remains deferred. Consume a validated can
 ## Applying migrations at start-up
 
 `await app.Services.ApplyMigrations<AppDbContext>();` applies every pending migration of the context in a new service scope and leaves an
-up-to-date database unchanged. Call it once at start-up, before the application accepts requests.
+up-to-date database unchanged. Call it once at start-up, before the application accepts requests. It returns `true` after migrating, and
+`false` without doing anything when the context uses a non-relational provider, such as the in-memory provider of a test host, so a host
+can skip its other relational schema work the same way. `EnsureMigrationsApplied` passes for such a context.
+
+When several hosts share one database and only one owns the schema, the others call
+`await app.Services.EnsureMigrationsApplied<AppDbContext>();` instead. It reads the applied migrations without writing, so it works on a
+read-only connection, and throws `InvalidOperationException` naming the context, the number of pending migrations and the first one while
+the owner has not migrated yet. A missing database counts as one without any migration and is not created.

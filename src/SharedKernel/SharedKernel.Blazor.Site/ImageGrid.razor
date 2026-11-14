@@ -1,0 +1,15 @@
+@inherits SiteComponent
+<div class="@CssClass("site-image-grid")" @attributes="AdditionalAttributes">
+    @for (var index = 0; index < Images.Count; index++)
+    {
+        var image = Images[index];
+        var priority = PrioritizeFirstImage && index == 0;
+        <figure class="site-image-grid__item">
+            @ResponsiveImageMarkup.Render(image.Image, eager: priority || index < EagerCount, highPriority: priority)
+            @if (!string.IsNullOrWhiteSpace(image.Caption))
+            {
+                <figcaption>@image.Caption</figcaption>
+            }
+        </figure>
+    }
+</div>

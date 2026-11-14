@@ -15,6 +15,9 @@ define policy names or limits; each consuming application owns them.
   `AddConfiguredTrustedForwardedHeaders` in `PandaBear.SharedKernel.AspNetCore`).
 - `AddRateLimitEventTelemetry`: logs and counts each rejection with the policy name; an existing `OnRejected` callback keeps
   running afterwards. See [ASP.NET Core error and security telemetry](../../../docs/aspnetcore-error-and-security-telemetry.md).
+- `UseNoStoreRetryAfterRejection` (opt-in): answers a rejection with 429 that browsers and proxies never store (`Cache-Control:
+  no-store`, `Pragma: no-cache`, an expired `Expires`) and with `Retry-After` in whole seconds, rounded up, when the limiter reports when
+  a permit is available. A callback already set on `OnRejected` runs afterwards. Call it inside `AddRateLimiter(options => ...)`.
 
 ## Install
 

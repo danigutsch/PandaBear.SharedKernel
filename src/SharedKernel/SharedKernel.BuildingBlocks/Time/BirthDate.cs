@@ -46,6 +46,23 @@ public sealed class BirthDate : ValueObject
     }
 
     /// <summary>
+    /// For persistence mappers: rebuilds a stored date of birth; the age limits are NOT checked, because they depend on the day and a person
+    /// who was valid when stored can be older than a later limit, so a stored value can always be loaded; never use it for user input.
+    /// </summary>
+    /// <param name="value">The stored date of birth.</param>
+    /// <returns>The date of birth.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is the default date, which <see cref="Create"/> reports as missing.</exception>
+    public static BirthDate Restore(DateOnly value)
+    {
+        if (value == default)
+        {
+            throw new ArgumentOutOfRangeException(nameof(value), value, "A stored birth date cannot be the default date.");
+        }
+
+        return new BirthDate(value);
+    }
+
+    /// <summary>
     /// Gets the age in whole years on a day. A leap-day (29 February) birthday is reached on 29 February in leap years and on
     /// 1 March in other years, so a person born on 29 February completes a year one day later than <c>DateOnly.AddYears</c> implies.
     /// </summary>

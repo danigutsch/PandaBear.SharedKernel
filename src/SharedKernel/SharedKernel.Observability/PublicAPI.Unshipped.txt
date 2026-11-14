@@ -25,3 +25,7 @@ static PandaBear.Observability.ObservabilityBuilderExtensions.AddTelemetryPrivac
 PandaBear.Observability.LogRecordPrivacyProcessor
 PandaBear.Observability.LogRecordPrivacyProcessor.LogRecordPrivacyProcessor(System.Func<string!, bool>? additionalSensitiveAttribute = null) -> void
 override PandaBear.Observability.LogRecordPrivacyProcessor.OnEnd(OpenTelemetry.Logs.LogRecord! data) -> void
+PandaBear.Observability.SharedKernelInstrumentationExtensions
+static PandaBear.Observability.SharedKernelInstrumentationExtensions.AddSharedKernelInstrumentation(this OpenTelemetry.Metrics.MeterProviderBuilder! metrics) -> OpenTelemetry.Metrics.MeterProviderBuilder!
+static PandaBear.Observability.SharedKernelInstrumentationExtensions.AddSharedKernelInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! tracing) -> OpenTelemetry.Trace.TracerProviderBuilder!
+static PandaBear.Observability.SharedKernelInstrumentationExtensions.NamePatterns.get -> System.Collections.Generic.IReadOnlyList<string!>!

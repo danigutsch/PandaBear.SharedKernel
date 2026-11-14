@@ -26,6 +26,21 @@ extension in your application startup and supply any required parameters for ser
 - `ObservabilityBuilderExtensions` — Extension(s) for standardized, DRY OpenTelemetry builder setup
 - `AddTelemetryPrivacy` — Log and trace privacy processors with formatted messages and scopes excluded
 - `PrivacyDataClassifications` — Technical personal, sensitive, credential, and financial classifications for source-generated logging parameters
+- `AddSharedKernelInstrumentation()` — On `MeterProviderBuilder` and `TracerProviderBuilder`: collects the meters and traces the
+  activity sources of every SharedKernel package by name prefix (`PandaBear.*` and `SharedKernel.*`, see `NamePatterns`)
+
+```csharp
+builder.ConfigureOpenTelemetry();
+builder.Services.AddOpenTelemetry()
+    .WithMetrics(metrics => metrics.AddSharedKernelInstrumentation())
+    .WithTracing(tracing => tracing.AddSharedKernelInstrumentation());
+```
+
+The prefixes replace one hard-coded name per package (`PandaBear.AspNetCore`, `PandaBear.Blazor`, `SharedKernel.Mediator`,
+`SharedKernel.EventSourcing.Npgsql`, ...) and need no reference to those packages: a package that is not loaded creates no meter or
+source, so nothing extra is exported. A repository convention test keeps every declared telemetry name under the two prefixes. Each
+package still exposes its own name constant (for example `AspNetCoreTelemetry.MeterName`) for hosts that register names one by one.
+The call is opt-in rather than part of `ConfigureOpenTelemetry()`, so existing hosts export nothing new until they ask for it.
 
 `ConfigureOpenTelemetry()` enables classified logging redaction with the default erasing fallback.
 Applications remain responsible for export-bound trace and exception sanitization because those

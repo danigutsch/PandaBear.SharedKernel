@@ -4,13 +4,16 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Reusable Playwright assertions for SharedKernel browser test suites.
+Reusable Playwright assertions, diagnostics and test bases for SharedKernel browser test suites.
 
 ## Usage
 
 Import `PandaBear.Testing.Playwright` and await `page.ShouldHaveTitle(expectedTitle)` in Playwright tests. Browser creation, readiness, navigation, and test authentication remain owned by the test fixture.
 
 To state why the test expects the title, await `page.ShouldHaveTitle(expectedTitle, userMessage)`. Playwright puts the message before the failure and keeps its own exception type.
+
+`page.GetHeading(name, level)`, `page.GetLink(name)` and `page.GetButton(name)` locate by role and exact accessible name; `page.GetHeading(level)` locates every heading of one level whatever its name. Playwright's
+`GetByRole` matches a name as a case-insensitive substring by default, so `"Save"` would also find "Save draft".
 
 ## Structural accessibility checks
 
@@ -29,7 +32,7 @@ The single checks are `ShouldHaveNoUnlabelledControls`, `ShouldHaveNoUnnamedLink
 `ShouldHaveLanguage`, `ShouldNotScrollHorizontally` and `ShouldHaveFocusWithin`; `ShouldHaveAccessibleStructure` runs the first
 two, the heading check and the scroll check and reports every problem in one failure. A failure throws `PlaywrightException` and names
 the offending elements. The checks read the DOM once and do not wait: call them after the page is interactive and the state under test is
-shown. The control, link and button checks skip elements that are not visible (`display: none`, `visibility: hidden`, the `hidden` attribute) and elements inside `aria-hidden="true"`. They are a structural smoke test, not an audit: `aria-labelledby` is accepted when non-blank without resolving its target, a `title` is accepted as a name even though assistive
+shown. The control, link and button checks skip elements that are not visible (`display: none`, `visibility: hidden`, the `hidden` attribute) and elements inside an `inert` or `aria-hidden="true"` subtree; the heading check skips an `h1` inside such a subtree too, so an inert live preview's `h1` is not a second page heading. They are a structural smoke test, not an audit: `aria-labelledby` is accepted when non-blank without resolving its target, a `title` is accepted as a name even though assistive
 technology treats it as a weak one, `aria-label` on a descendant is accepted for a link or button without checking its role, and
 `<input type="image">` is skipped rather than checked for `alt`. Colour contrast, focus order, landmarks, duplicate ids and the
 accessible names of other roles are not checked; use an engine such as axe-core for those.
@@ -53,6 +56,17 @@ Clicks and typing on a prerendered Blazor page are lost silently until the circu
 `PlaywrightPageExtensions.InteractiveReadySelector`; this package does not reference `SharedKernel.Blazor`, and a test in the Blazor test
 project keeps the selector in sync). Blazor
 commits text on the change event, so blur a field after `FillAsync`.
+
+`TracedPageTest` is the sibling for applications that already run elsewhere, such as an AppHost started by an
+`AspireAppHostFixture` (`PandaBear.SharedKernel.IntegrationTesting`). Each test gets its own browser context, `PageDiagnostics` and a
+trace; when the test fails, `PlaywrightArtifacts.Save` writes a full-page screenshot and the trace zip to `ArtifactsFolder`
+(`TestResults/playwright` next to the test assembly; open the trace with `playwright show-trace`). `GotoInteractive(uri)` opens a Blazor
+page with the diagnosing wait.
+
+`PageDiagnostics` records console messages, page errors, failed requests, error responses and the WebSocket lifecycle of a page.
+`page.WaitForBlazorInteractive(diagnostics, timeout)` reports the ASP.NET Core developer exception page as an `InvalidOperationException`
+and any other failure as a `TimeoutException` carrying the diagnostics and the start of the HTML. `locator.FillAndExpectValue(value)`
+fills, blurs and checks the value, filling again (at most three times) when an interactive render resets the field.
 
 Playwright launches Chromium with `--no-sandbox` by default; Chromium's own sandbox is not needed for an application you start
 yourself, and on Ubuntu 23.10+ AppArmor denies it to unprofiled binaries anyway. Install the browser binaries once with

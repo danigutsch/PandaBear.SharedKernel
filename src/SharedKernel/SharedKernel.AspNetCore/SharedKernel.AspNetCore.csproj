@@ -3,7 +3,7 @@
     <PropertyGroup>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.AspNetCore</PackageId>
-        <Description>Reusable ASP.NET Core helpers for explicit application hosting defaults: security headers, trusted forwarded headers, CORS and unhandled-exception telemetry.</Description>
+        <Description>Reusable ASP.NET Core helpers for explicit application hosting defaults: security headers, trusted forwarded headers, CORS, an immutable file endpoint and unhandled-exception telemetry.</Description>
         <RootNamespace>PandaBear.AspNetCore</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>aspnetcore;security;cors;headers;telemetry;shared-kernel;dotnet</PackageTags>

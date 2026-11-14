@@ -13,10 +13,34 @@ policy. Each consuming application owns those decisions.
 ## What is inside
 
 - `UseSecurityHeaders`: common browser security headers with an application-owned Content Security Policy and optional
-  Permissions Policy.
+  Permissions Policy. `{nonce}` in the policy (`style-src 'self' 'nonce-{nonce}'`) becomes the request's `ICspNonce`, a
+  128-bit random base64 value registered with `AddCspNonce()`. A shared cache must not hand that nonce to another visitor, so
+  when the response already carries a `Cache-Control` with `public` or `s-maxage`, the middleware turns it into `private` and
+  keeps `max-age` (an unreadable `Cache-Control` becomes `private, no-cache`).
 - `AddConfiguredTrustedForwardedHeaders` and `ConfigureTrustedForwardedHeaders`: forwarded-header trust from
   configuration. `AddForwardedClientIp` forwards the resolved visitor identity to a downstream client (see below).
 - `AddConfiguredOriginsPolicy`: a CORS policy from a configuration section of allowed origins.
+- `UsePermanentRedirects`: asks an application resolver where the path of a GET or HEAD request moved and answers with a 301.
+  The resolver returns `PermanentRedirect(path, PreserveQuery: false)` or `null`. Only a plain local path is used: a single leading
+  `/`, printable ASCII, no `\`, `//`, `?`, `#` or white space (percent-encode the rest). Any other target is ignored with a logged
+  warning and the request continues, as it does when the target equals the request path. The location keeps the path base, and the
+  query only when `PreserveQuery` is set.
+
+  ```csharp
+  app.UsePermanentRedirects(context => context.RequestServices.GetRequiredService<MovedPages>().Find(context.Request.Path, context.RequestAborted));
+  ```
+- `MapImmutableFiles`: serves files whose content never changes under their name, such as uploads stored by content hash, from
+  one folder at `{routePrefix}/{fileName}` (GET and HEAD). Only a plain file name (ASCII letters, digits, `.`, `-`, `_`, no
+  leading dot) with an extension from the application's media type map, that the application's `isServed` callback approves
+  (for example because published content uses it) and that exists in the folder is served; everything else is a 404 before the
+  file system is touched. Answers carry the mapped media type, `Cache-Control: public, max-age=31536000, immutable`,
+  `X-Content-Type-Options: nosniff`, `Last-Modified`, and range support.
+
+  ```csharp
+  app.MapImmutableFiles("/media", mediaFolder,
+      new Dictionary<string, string> { [".jpg"] = "image/jpeg", [".png"] = "image/png", [".webp"] = "image/webp" },
+      (context, fileName) => context.RequestServices.GetRequiredService<Gallery>().IsPublished(fileName, context.RequestAborted));
+  ```
 - `AddUnhandledExceptionHandler` and `AspNetCoreTelemetry`: an opt-in unhandled-exception handler and the names of the
   meter, instruments, tags and log event identifiers of the ASP.NET Core telemetry family.
 - `HostEnvironmentVariableNames.AspNetCoreEnvironment` and `HostEnvironmentVariableNames.DotNetEnvironment` for C#
@@ -32,6 +56,7 @@ The concerns that need extra dependencies live in their own packages:
 | --- | --- | --- |
 | JWT bearer authentication, permission policies, claims helpers, antiforgery sign-out | [`PandaBear.SharedKernel.AspNetCore.Authentication`](../SharedKernel.AspNetCore.Authentication/README.md) | `PandaBear.AspNetCore.Authentication` |
 | Remote-IP fixed-window rate limiting | [`PandaBear.SharedKernel.AspNetCore.RateLimiting`](../SharedKernel.AspNetCore.RateLimiting/README.md) | `PandaBear.AspNetCore.RateLimiting` |
+| Culture path prefixes (`/pt/...`), request culture provider, redirect to the best culture | [`PandaBear.SharedKernel.AspNetCore.Localization`](../SharedKernel.AspNetCore.Localization/README.md) | `PandaBear.AspNetCore.Localization` |
 | `robots.txt` and sitemap XML | [`PandaBear.SharedKernel.AspNetCore.Seo`](../SharedKernel.AspNetCore.Seo/README.md) | `PandaBear.AspNetCore.Seo` |
 | `Idempotency-Key` header and key-bound data protector | [`PandaBear.SharedKernel.Idempotency.AspNetCore`](../SharedKernel.Idempotency.AspNetCore/README.md) | `PandaBear.Idempotency.AspNetCore` |
 

@@ -15,9 +15,13 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="xunit.v3.mtp-v2" />
+        <!-- Only to check that the pinned PostgreSQL and Redis coordinates name the images these integrations use. -->
+        <PackageReference Include="Aspire.Hosting.PostgreSQL" />
+        <PackageReference Include="Aspire.Hosting.Redis" />
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.Hosting\SharedKernel.Aspire.Hosting.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.Hosting.ClamAv\SharedKernel.Aspire.Hosting.ClamAv.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.Hosting.Grafana\SharedKernel.Aspire.Hosting.Grafana.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.Hosting.SeaweedFs\SharedKernel.Aspire.Hosting.SeaweedFs.csproj" />

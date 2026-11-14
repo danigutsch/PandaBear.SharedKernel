@@ -1,0 +1,8 @@
+@inherits SiteComponent
+<footer class="@CssClass("site-footer")" @attributes="AdditionalAttributes">
+    <div class="site-footer__content">@ChildContent</div>
+    @if (Legal is not null)
+    {
+        <div class="site-footer__legal">@Legal</div>
+    }
+</footer>

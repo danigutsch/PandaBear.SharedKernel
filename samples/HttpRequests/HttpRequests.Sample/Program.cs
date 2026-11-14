@@ -4,6 +4,7 @@ using HttpRequests.Sample;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http.Resilience;
 using PandaBear.AspNetCore;
 using PandaBear.AspNetCore.Authentication;
 using PandaBear.HttpClients;
@@ -35,8 +36,12 @@ if (retried?.Kind != HttpOutcomeKind.Succeeded || submission.HasPending)
 
 using var handler = new ForwardedAddressHandler();
 var services = new ServiceCollection();
-services.AddServiceDiscovery();
-services.AddHttpClientDefaults(options => options.Retry.MaxRetryAttempts = 1);
+
+services.ConfigureHttpClientDefaults(http => http.AddStandardResilienceHandler(options =>
+{
+    options.Retry.MaxRetryAttempts = 1;
+    options.Retry.DisableForUnsafeHttpMethods();
+}));
 services.AddHttpClient("forwarded-sample", client => client.BaseAddress = new Uri("https://sample.example.test"))
     .AddForwardedClientIp()
     .ConfigurePrimaryHttpMessageHandler(() => handler);

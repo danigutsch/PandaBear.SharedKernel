@@ -1,44 +1,36 @@
 namespace PandaBear.Tabular.Tests;
 
-/// <summary>Tests for <see cref="CsvRow"/> parsing, value trimming and index bounds.</summary>
+/// <summary>Tests for <see cref="CsvRow"/>: values kept as given, list access, line numbers and index bounds.</summary>
 public class CsvRowParsingTests
 {
     [Fact]
-    public void Parse_single_data_row_returns_parsed_row()
+    public void Create_keeps_the_values_as_given()
     {
-        // Arrange
-        const string csvLine = "John,Doe,john.doe@example.com";
-
         // Act
-        var result = CsvRow.Parse(csvLine);
+        var row = CsvRow.Create([" John ", "Doe", ""]);
 
         // Assert
-        _ = result.ShouldNotBeNull();
-        result[0].ShouldBe("John");
-        result[1].ShouldBe("Doe");
-        result[2].ShouldBe("john.doe@example.com");
+        row.Count.ShouldBe(3);
+        row[0].ShouldBe(" John ");
+        row.ToArray().ShouldBe([" John ", "Doe", ""]);
+        row.LineNumber.ShouldBe(0);
     }
 
     [Fact]
-    public void Parse_with_whitespace_trims_values()
+    public void Parsed_rows_know_the_line_they_start_on()
     {
-        // Arrange
-        const string csvLine = " John , Doe , john.doe@example.com ";
-
         // Act
-        var result = CsvRow.Parse(csvLine);
+        var document = CsvDocument.Parse("A,B\n\"x\ny\",1\nz,2").ShouldBeSuccess();
 
         // Assert
-        result[0].ShouldBe("John");
-        result[1].ShouldBe("Doe");
-        result[2].ShouldBe("john.doe@example.com");
+        document.Rows.Select(row => row.LineNumber).ShouldBe([2, 4]);
     }
 
     [Fact]
     public void Index_outofrange_throwsexception()
     {
         // Arrange
-        var row = CsvRow.Parse("John,Doe,john.doe@example.com");
+        var row = CsvRow.Create(["John", "Doe", "john.doe@example.com"]);
 
         // Act, Assert
         ShouldAssertionExtensions.ShouldThrow<IndexOutOfRangeException>((Func<object?>)(() => row[99]));
