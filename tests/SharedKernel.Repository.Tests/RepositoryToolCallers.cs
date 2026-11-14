@@ -14,6 +14,8 @@ internal static partial class RepositoryToolCallers
         ["$GITHUB_REPOSITORY"] = "danigutsch/PandaBear.SharedKernel",
         ["$env:GITHUB_REPOSITORY"] = "danigutsch/PandaBear.SharedKernel",
         ["$SLICE"] = "library",
+        ["$KEEP"] = "3",
+        ["$version"] = "0.1.0-alpha.1.1",
         ["<name>"] = "library",
     };
 

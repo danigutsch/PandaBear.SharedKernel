@@ -262,6 +262,31 @@ public sealed class WorkflowContractTests
     }
 
     [Fact]
+    public void Prerelease_pruning_runs_only_on_dispatch_previews_by_default_and_grants_write_only_to_its_job()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "prune-prereleases.yml")).Replace("\r\n", "\n", StringComparison.Ordinal);
+
+        // Act
+        var trigger = workflow[workflow.IndexOf("\non:\n", StringComparison.Ordinal)..workflow.IndexOf("\npermissions:", StringComparison.Ordinal)];
+        var job = WorkflowJobs.Read(workflow, "prune");
+        var script = job[job.IndexOf("        run: |\n", StringComparison.Ordinal)..];
+
+        // Assert
+        trigger.ShouldStartWith("\non:\n  workflow_dispatch:\n", StringComparison.Ordinal);
+        trigger.Split('\n').Count(static line => line.StartsWith("  ", StringComparison.Ordinal) && !line.StartsWith("   ", StringComparison.Ordinal))
+            .ShouldBe(1, "workflow_dispatch is the only trigger.");
+        workflow.ShouldContain("\n        type: boolean\n        default: false\n", StringComparison.Ordinal);
+        workflow.ShouldContain("\npermissions: {}\n", StringComparison.Ordinal);
+        job.ShouldContain("\n    permissions:\n      contents: write\n    steps:", StringComparison.Ordinal);
+        job.Split("GH_TOKEN").Length.ShouldBe(2, "Only the pruning step receives a token.");
+        job.ShouldContain("persist-credentials: false", StringComparison.Ordinal);
+        script.ShouldNotContain("${{", StringComparison.Ordinal);
+        script.ShouldContain("if [[ \"$APPLY\" == true ]]; then\n            args+=(--force)\n", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Published_candidate_dispatch_consumes_exact_artifacts_on_both_platforms_without_repacking()
     {
         // Arrange

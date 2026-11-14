@@ -1,0 +1,55 @@
+name: Prune prereleases
+on:
+  workflow_dispatch:
+    inputs:
+      keep:
+        description: How many of the newest prereleases stay. Protected versions do not count toward it.
+        required: true
+        type: number
+        default: 3
+      protect:
+        description: Space-separated package versions, without the v of their tags, whose prereleases always stay, such as the versions consumers pin.
+        required: false
+        type: string
+        default: ''
+      apply:
+        description: Delete the listed prereleases. Their tags stay. Deletion cannot be undone. Leave off to only preview.
+        required: false
+        type: boolean
+        default: false
+permissions: {}
+concurrency:
+  group: prune-prereleases
+  cancel-in-progress: false
+jobs:
+  prune:
+    name: Prune prereleases
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Deleting a release needs contents: write; a preview only reads.
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-dotnet-tool
+        with:
+          project: tools/SharedKernel.CI.Tool
+      - name: Keep the newest and the protected prereleases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEEP: ${{ inputs.keep }}
+          PROTECT: ${{ inputs.protect }}
+          APPLY: ${{ inputs.apply }}
+        shell: bash
+        run: |
+          read -ra versions <<< "$PROTECT"
+          args=()
+          for version in "${versions[@]}"; do
+            args+=(--protect "$version")
+          done
+          if [[ "$APPLY" == true ]]; then
+            args+=(--force)
+          fi
+          dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- prune-prereleases --repository "$GITHUB_REPOSITORY" --keep "$KEEP" "${args[@]}"

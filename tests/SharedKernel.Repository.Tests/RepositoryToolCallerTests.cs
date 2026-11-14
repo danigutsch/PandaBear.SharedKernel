@@ -63,6 +63,7 @@ public sealed class RepositoryToolCallerTests
                 "openapi refresh --target library",
                 "install-playwright --project <test-project> --browser chromium --with-dependencies",
                 "stage-candidate --pin <candidate.json> --library-root . --output <feed> --repository danigutsch/PandaBear.SharedKernel",
+                "prune-prereleases --repository danigutsch/PandaBear.SharedKernel --keep 3",
                 "verify-commit-message --event <event.json>",
                 "run-mutation-tests",
                 "run --slice library --coverage --install-playwright --playwright-dependencies --github-summary $GITHUB_STEP_SUMMARY",
@@ -74,6 +75,8 @@ public sealed class RepositoryToolCallerTests
                     + " --repository danigutsch/PandaBear.SharedKernel",
                 "stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed"
                     + " --feed <packages>",
+                "prune-prereleases --repository danigutsch/PandaBear.SharedKernel --keep 3 --protect 0.1.0-alpha.530.1",
+                "prune-prereleases --repository danigutsch/PandaBear.SharedKernel --keep 3 --protect 0.1.0-alpha.530.1 --force",
                 "verify-restore-warnings --log restore.log --report restore-warnings.json",
                 "warning-summary --report restore-warnings.json --report lint-warnings.json --summary $GITHUB_STEP_SUMMARY",
                 "warning-report --tool Markdown lint --outcome $MARKDOWN_OUTCOME --report markdown-warnings.json",
@@ -88,11 +91,13 @@ public sealed class RepositoryToolCallerTests
     [InlineData(".github/workflows/ci.yml", "run")]
     [InlineData(".github/workflows/ci.yml", "stage-candidate")]
     [InlineData(".github/workflows/pr-metadata-reusable.yml", "verify-commit-message")]
+    [InlineData(".github/workflows/prune-prereleases.yml", "prune-prereleases")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "select")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "run")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "refresh")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "install-playwright")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "stage-candidate")]
+    [InlineData("tools/SharedKernel.CI.Tool/README.md", "prune-prereleases")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "verify-commit-message")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "run-mutation-tests")]
     public void Callers_invoke_the_repository_tool_command(string file, string commandName)

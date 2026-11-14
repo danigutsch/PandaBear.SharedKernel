@@ -45,6 +45,18 @@ internal static class RepositoryToolInvocation
             args,
             ct);
 
+    /// <summary>Invokes <paramref name="args"/> with <paramref name="pruning"/> as the prune-prereleases services, and no process runner.</summary>
+    public static Task<RepositoryToolResult> RunPruning(IReadOnlyList<string> args, PrereleasePruningServices pruning, CancellationToken ct) =>
+        Invoke(
+            RepositoryCommandLine.Create(
+                Environment.CurrentDirectory,
+                static (_, _, _, _) => throw new InvalidOperationException("prune-prereleases starts no process."),
+                static (_, _, _, _, _) => throw new InvalidOperationException("prune-prereleases starts no process."),
+                CandidateStagingTestServices.Offline(new CandidateGit()),
+                pruning: pruning),
+            args,
+            ct);
+
     private static async Task<RepositoryToolResult> Invoke(RootCommand command, IReadOnlyList<string> args, CancellationToken ct)
     {
         // Help wraps at the width of the terminal running the tests; unwrapped help keeps assertions independent of it.

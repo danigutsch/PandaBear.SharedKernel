@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -12,6 +13,9 @@ internal static partial class RepositoryCommandLine
 {
     /// <summary>Exit code for a failed selection, run, generation, installation, coverage check, staging, commit message check, or mutation run.</summary>
     private const int FailureExitCode = 2;
+
+    /// <summary>The largest <c>--keep</c> of <c>prune-prereleases</c>.</summary>
+    private const int MaxKeep = 10_000;
 
     /// <summary>Creates the command tree with the Git, network, and clock access that the tool uses.</summary>
     /// <param name="workingDirectory">Directory that relative <c>--root</c>, <c>--event</c>, and <c>--file</c> paths resolve from.</param>
@@ -30,17 +34,19 @@ internal static partial class RepositoryCommandLine
     /// <param name="staging">Supplies what <c>stage-candidate</c> uses to reach Git, the network, and the clock.</param>
     /// <param name="startService">Starts the process of a slice's service from its start information; none starts it with <see cref="Process.Start(ProcessStartInfo)"/>.</param>
     /// <param name="runInstaller">Runs the Playwright installer, whose output is long; none runs it with <paramref name="run"/>.</param>
+    /// <param name="pruning">Supplies what <c>prune-prereleases</c> uses to reach the GitHub API; none uses <see cref="PrereleasePruningServices.Default"/>.</param>
     public static RootCommand Create(
         string workingDirectory,
         Func<string, string[], string, CancellationToken, Task<string>> run,
         Func<string, string[], string, Action<ProcessStartInfo>, CancellationToken, Task<string>> runConfigured,
         CandidateStagingServices staging,
         Func<ProcessStartInfo, Process>? startService = null,
-        Func<string, string[], string, CancellationToken, Task<string>>? runInstaller = null)
+        Func<string, string[], string, CancellationToken, Task<string>>? runInstaller = null,
+        PrereleasePruningServices? pruning = null)
     {
         runInstaller ??= run;
         var root = new RootCommand(
-            "Selects and runs affected test projects, checks changed projects without sockets, generates OpenAPI documents, installs Playwright browsers, verifies changed-code coverage, stages package candidates, verifies commit messages, and runs mutation tests.");
+            "Selects and runs affected test projects, checks changed projects without sockets, generates OpenAPI documents, installs Playwright browsers, verifies changed-code coverage, stages package candidates, prunes old prereleases, verifies commit messages, and runs mutation tests.");
 
         // Consumer caller tests parse command lines with [diagram] without running them.
         root.Directives.Add(new DiagramDirective());
@@ -51,6 +57,7 @@ internal static partial class RepositoryCommandLine
         root.Subcommands.Add(CreateInstallPlaywright(workingDirectory, runInstaller));
         root.Subcommands.Add(CreateCoverage(workingDirectory, run));
         root.Subcommands.Add(CreateStageCandidate(workingDirectory, staging));
+        root.Subcommands.Add(CreatePrunePrereleases(pruning ?? PrereleasePruningServices.Default));
         root.Subcommands.Add(CreateVerifyCommitMessage(workingDirectory));
         root.Subcommands.Add(CreateVerifyRestoreWarnings(workingDirectory));
         root.Subcommands.Add(CreateWarningSummary(workingDirectory));
@@ -488,22 +495,7 @@ internal static partial class RepositoryCommandLine
         libraryRootOption.Required = true;
         var outputOption = PathOption("--output", "Local feed that receives the packages and candidate.json. Relative to the root.", "directory");
         outputOption.Required = true;
-        var repositoryOption = new Option<string>("--repository")
-        {
-            Description = "GitHub repository whose v<version> release supplies the packages.",
-            HelpName = "owner/name",
-        };
-
-        // The value becomes part of an https://github.com/ address, so it may not add path segments or a host.
-        repositoryOption.Validators.Add(static result =>
-        {
-            var repository = result.GetValueOrDefault<string>() ?? string.Empty;
-            if (!Repository().IsMatch(repository) || repository.Split('/')[1] is "." or "..")
-            {
-                result.AddError(
-                    "--repository requires owner/name: letters, digits, and '-' in the owner, also '.' and '_' in the name, which cannot be '.' or '..'.");
-            }
-        });
+        var repositoryOption = RepositoryOption("GitHub repository whose v<version> release supplies the packages.");
         var feedOption = PathOption("--feed", "Directory that holds the packages. Relative to the root.", "directory");
         var rootOption = CreateRootOption();
         var command = new Command(
@@ -547,6 +539,88 @@ internal static partial class RepositoryCommandLine
             },
             ct));
         return command;
+    }
+
+    private static Command CreatePrunePrereleases(PrereleasePruningServices services)
+    {
+        var repositoryOption = RepositoryOption("GitHub repository whose prereleases are pruned.");
+        repositoryOption.Required = true;
+        var keepOption = new Option<int>("--keep")
+        {
+            Description = "How many of the newest prereleases stay, by creation date. Protected versions do not count toward it.",
+            HelpName = "count",
+            Required = true,
+        };
+        // The tokens are checked instead of the value: reading the value of a token that is not a number throws.
+        keepOption.Validators.Add(static result =>
+        {
+            if (result.Tokens is not [var token]
+                || !int.TryParse(token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out var keep)
+                || keep is < 1 or > MaxKeep)
+            {
+                result.AddError($"--keep requires a whole number from 1 to {MaxKeep}.");
+            }
+        });
+        var protectOption = new Option<string[]>("--protect")
+        {
+            Description = "Package version, without the v of its tag, whose prerelease always stays, such as a version that a consumer pins. Repeat for more.",
+            HelpName = "version",
+        };
+        protectOption.Validators.Add(static result =>
+        {
+            foreach (var version in result.GetValueOrDefault<string[]>() ?? [])
+            {
+                if (!PackageVersion().IsMatch(version))
+                {
+                    result.AddError(
+                        $"--protect requires a package version without the v of its tag and without build metadata, such as 1.0.0-alpha.1.1: {ControlCharacters.Escape(version)}.");
+                }
+            }
+        });
+        var forceOption = new Option<bool>("--force")
+        {
+            Description = "Delete the releases that the preview lists. Their tags stay. Without it the command only previews.",
+        };
+        var command = new Command(
+            "prune-prereleases",
+            "Keep the newest prereleases of a GitHub repository and the protected versions, and delete the other prereleases but not their tags. Previews unless --force.")
+        {
+            repositoryOption,
+            keepOption,
+            protectOption,
+            forceOption,
+        };
+        command.SetAction((parseResult, ct) => Execute(
+            parseResult,
+            (output, error) => PrereleasePruning.Run(
+                new PrereleasePruningRequest(
+                    parseResult.GetRequiredValue(repositoryOption),
+                    parseResult.GetValue(keepOption),
+                    [.. (parseResult.GetValue(protectOption) ?? []).Distinct(StringComparer.Ordinal)],
+                    parseResult.GetValue(forceOption)),
+                services,
+                output,
+                error,
+                ct),
+            ct));
+        return command;
+    }
+
+    private static Option<string> RepositoryOption(string description)
+    {
+        var option = new Option<string>("--repository") { Description = description, HelpName = "owner/name" };
+
+        // The value becomes part of a GitHub address, so it may not add path segments or a host.
+        option.Validators.Add(static result =>
+        {
+            var repository = result.GetValueOrDefault<string>() ?? string.Empty;
+            if (!Repository().IsMatch(repository) || repository.Split('/')[1] is "." or "..")
+            {
+                result.AddError(
+                    "--repository requires owner/name: letters, digits, and '-' in the owner, also '.' and '_' in the name, which cannot be '.' or '..'.");
+            }
+        });
+        return option;
     }
 
     private static Command CreateVerifyCommitMessage(string workingDirectory)
@@ -775,4 +849,10 @@ internal static partial class RepositoryCommandLine
 
     [GeneratedRegex(@"\A[A-Za-z][A-Za-z0-9_.-]*\z", RegexOptions.CultureInvariant)]
     private static partial Regex ConfigurationName();
+
+    // A SemVer 2.0 version without build metadata, as NuGet package versions and consumer pins spell it.
+    [GeneratedRegex(
+        @"\A(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(?:-(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?\z",
+        RegexOptions.CultureInvariant)]
+    private static partial Regex PackageVersion();
 }
