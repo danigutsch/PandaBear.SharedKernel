@@ -127,15 +127,7 @@ public sealed class UnhandledExceptionHandlerTests
         // Arrange
         using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var logger = new RecordingLogger<UnhandledExceptionReporter>();
-        await using var app = await UnhandledExceptionTestApp.Start(meters, logger, options => options.CustomizeProblemDetails = context =>
-        {
-            if (context.ProblemDetails.Status < 500)
-            {
-                context.ProblemDetails.Title = "The request could not be read.";
-                context.ProblemDetails.Type = null;
-                context.ProblemDetails.Extensions.Remove("traceId");
-            }
-        });
+        await using var app = await UnhandledExceptionTestApp.Start(meters, logger, UnhandledExceptionTestApp.RetitleUnreadableRequests);
         using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
 
         // Act
@@ -187,15 +179,7 @@ public sealed class UnhandledExceptionHandlerTests
         // Arrange
         using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
         var logger = new RecordingLogger<UnhandledExceptionReporter>();
-        await using var app = await UnhandledExceptionTestApp.Start(meters, logger, options => options.CustomizeProblemDetails = context =>
-        {
-            if (context.ProblemDetails.Status < 500)
-            {
-                context.ProblemDetails.Title = "The request could not be read.";
-                context.ProblemDetails.Type = null;
-                context.ProblemDetails.Extensions.Remove("traceId");
-            }
-        });
+        await using var app = await UnhandledExceptionTestApp.Start(meters, logger, UnhandledExceptionTestApp.RetitleUnreadableRequests);
         using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
         using var request = new HttpRequestMessage(HttpMethod.Post, new Uri("/upload", UriKind.Relative));
         request.Headers.TryAddWithoutValidation("Accept", "text/html");
@@ -285,5 +269,47 @@ public sealed class UnhandledExceptionHandlerTests
         // Assert
         meters.Measurements.Select(static m => m.Tags[AspNetCoreTelemetry.ErrorTypeTag])
             .ShouldBeEquivalentTo("InvalidOperationException", "ArgumentException", "TimeoutException");
+    }
+
+    [Fact]
+    public async Task A_host_customization_keeps_the_title_of_a_problem_that_an_endpoint_wrote_itself()
+    {
+        // Arrange
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
+        var logger = new RecordingLogger<UnhandledExceptionReporter>();
+        await using var app = await UnhandledExceptionTestApp.Start(meters, logger, UnhandledExceptionTestApp.RetitleUnreadableRequests);
+        using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
+
+        // Act
+        using var response = await client.GetAsync(new Uri("/missing", UriKind.Relative), TestContext.Current.CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+        body.RootElement.GetProperty("title").GetString().ShouldBe("Not Found", "the customization must not reach a problem the handler did not write");
+        body.RootElement.GetProperty("detail").GetString().ShouldBe("No such order.");
+    }
+
+    [Fact]
+    public async Task A_customization_that_tests_only_the_status_retitles_every_client_problem_of_the_host()
+    {
+        // Arrange
+        using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
+        var logger = new RecordingLogger<UnhandledExceptionReporter>();
+        await using var app = await UnhandledExceptionTestApp.Start(meters, logger, options => options.CustomizeProblemDetails = context =>
+        {
+            if (context.ProblemDetails.Status < 500)
+            {
+                context.ProblemDetails.Title = "The request could not be read.";
+            }
+        });
+        using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
+
+        // Act
+        using var response = await client.GetAsync(new Uri("/missing", UriKind.Relative), TestContext.Current.CancellationToken);
+
+        // Assert
+        using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+        body.RootElement.GetProperty("title").GetString().ShouldBe("The request could not be read.", "the status alone cannot tell the handler's problems from the endpoints' own");
     }
 }
