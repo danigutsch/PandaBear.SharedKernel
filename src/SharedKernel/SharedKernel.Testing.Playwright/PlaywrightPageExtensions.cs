@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 
 namespace PandaBear.Testing.Playwright;
@@ -86,7 +87,7 @@ public static class PlaywrightPageExtensions
             throw new ArgumentException("The expected address must be absolute.", nameof(expected));
         }
 
-        return Assertions.Expect(page).ToHaveURLAsync(expected.ToString());
+        return ExpectAbsoluteUri(page, expected.AbsoluteUri);
     }
 
     /// <summary>
@@ -124,5 +125,19 @@ public static class PlaywrightPageExtensions
 
         await page.GotoAsync(address.ToString(), new PageGotoOptions { WaitUntil = WaitUntilState.DOMContentLoaded }).ConfigureAwait(false);
         await page.WaitForBlazorInteractive().ConfigureAwait(false);
+    }
+
+    // AbsoluteUri keeps the percent-encoding that the page address uses; ToString() would unescape it. An anchored, escaped expression
+    // compares it as written, because the string overload of ToHaveURLAsync does not match a percent-encoded address.
+    private static async Task ExpectAbsoluteUri(IPage page, string expected)
+    {
+        try
+        {
+            await Assertions.Expect(page).ToHaveURLAsync(new Regex(string.Concat("^", Regex.Escape(expected), "$"))).ConfigureAwait(false);
+        }
+        catch (PlaywrightException exception)
+        {
+            throw new PlaywrightException(string.Concat("The page did not show ", expected, ". ", exception.Message), exception);
+        }
     }
 }

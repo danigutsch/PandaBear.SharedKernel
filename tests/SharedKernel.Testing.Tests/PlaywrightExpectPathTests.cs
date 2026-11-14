@@ -68,6 +68,20 @@ public sealed class PlaywrightExpectPathTests(ChromiumPageFixture chromium) : IC
     }
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task A_non_ascii_path_is_compared_in_its_percent_encoded_form()
+    {
+        // Arrange
+        var page = await ExpectPathPages.Route(await chromium.Show(string.Empty), Origin, redirectDelayMilliseconds: null);
+        _ = await page.GotoAsync(new Uri(Origin, "caf%C3%A9").AbsoluteUri);
+
+        // Act
+        await page.ExpectPath(new Uri(Origin, "café"));
+
+        // Assert
+        page.Url.ShouldBe(new Uri(Origin, "caf%C3%A9").AbsoluteUri);
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public async Task A_page_that_stays_elsewhere_fails_and_names_the_expected_address()
     {
         // Arrange
