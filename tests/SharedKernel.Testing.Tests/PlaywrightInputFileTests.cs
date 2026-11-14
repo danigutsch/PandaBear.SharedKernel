@@ -37,7 +37,6 @@ public sealed class PlaywrightInputFileTests(ChromiumPageFixture chromium) : ICl
         received.ShouldBe(["site.json"]);
     }
 
-    // Stands in for an interactive render that replaces the prerendered input before Blazor sets up the new one.
     private const string ReplacedInputFile = """
         <input type="file" id="upload">
         <script>

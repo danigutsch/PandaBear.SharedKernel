@@ -37,7 +37,6 @@ if (retried?.Kind != HttpOutcomeKind.Succeeded || submission.HasPending)
 using var handler = new ForwardedAddressHandler();
 var services = new ServiceCollection();
 
-// A host without the SharedKernel service defaults configures the standard resilience handler itself.
 services.ConfigureHttpClientDefaults(http => http.AddStandardResilienceHandler(options =>
 {
     options.Retry.MaxRetryAttempts = 1;

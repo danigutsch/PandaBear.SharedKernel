@@ -133,8 +133,6 @@ public static class ImageSanitizer
             return Invalid(options, MalformedMessage);
         }
 
-        // An AVIF can hold more than one image (an alpha plane, a thumbnail), and a WebP bitstream can be larger than its canvas; a later
-        // decoder may decode any of them, so all are bounded.
         if (Math.Max(Math.Max(width, height), largestSide) > options.MaxDimension)
         {
             return Invalid(options, DimensionsTooLargeMessage);

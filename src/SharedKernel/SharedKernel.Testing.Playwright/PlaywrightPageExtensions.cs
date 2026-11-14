@@ -127,8 +127,6 @@ public static class PlaywrightPageExtensions
         await page.WaitForBlazorInteractive().ConfigureAwait(false);
     }
 
-    // AbsoluteUri keeps the percent-encoding that the page address uses; ToString() would unescape it. An anchored, escaped expression
-    // compares it as written, because the string overload of ToHaveURLAsync does not match a percent-encoded address.
     private static async Task ExpectAbsoluteUri(IPage page, string expected)
     {
         try

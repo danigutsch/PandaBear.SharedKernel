@@ -511,7 +511,6 @@ public sealed class UserTokenManagerTests
         // Assert
         var refresh = host.IdentityProvider.Grants("refresh_token").ShouldHaveSingleItem();
         refresh.Form.ContainsKey("client_secret").ShouldBeFalse();
-        // RFC 6749 section 2.3.1 and appendix B: each part is form-encoded (space as '+') before they are joined with ':'.
         refresh.Authorization.ShouldBe("Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes("bff%3Aclient%2B1:s3cret+%25%2B%3Ax")));
     }
 }

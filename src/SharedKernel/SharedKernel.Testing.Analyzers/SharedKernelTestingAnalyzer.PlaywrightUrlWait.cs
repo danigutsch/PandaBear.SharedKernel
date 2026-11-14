@@ -29,7 +29,6 @@ public sealed partial class SharedKernelTestingAnalyzer
             OperationKind.Invocation);
     }
 
-    // Only IPage's string overload has an ExpectPath replacement; regular expressions, predicates and frames are left alone.
     private static void AnalyzePlaywrightUrlWait(OperationAnalysisContext context, INamedTypeSymbol page)
     {
         var invocation = (IInvocationOperation)context.Operation;

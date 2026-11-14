@@ -12,7 +12,6 @@ public static class PlaywrightLocatorExtensions
     // Blazor's InputFile.init sets this property on the element in the same call that attaches the change listener.
     private const string BlazorInputFileReadyScript = "element => element._blazorInputFileNextFileId !== undefined";
 
-    // Playwright's default timeout, and how often the input is checked within it.
     private static readonly TimeSpan InputFileReadyTimeout = TimeSpan.FromSeconds(30);
     private static readonly TimeSpan InputFileReadyPollInterval = TimeSpan.FromMilliseconds(50);
 
@@ -77,8 +76,6 @@ public static class PlaywrightLocatorExtensions
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(file);
 
-        // Poll through the locator, which finds the element again each time: an interactive render can replace the prerendered input,
-        // and a handle to the replaced element would never become ready.
         var waited = Stopwatch.StartNew();
         while (!await input.EvaluateAsync<bool>(BlazorInputFileReadyScript).ConfigureAwait(false))
         {

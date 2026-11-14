@@ -322,7 +322,6 @@ public sealed partial class UserTokenManager
         var outcome = await _identityProvider.Refresh(tokens.RefreshToken, CancellationToken.None).ConfigureAwait(false);
         if (HasEnded(session))
         {
-            // The session ended while the identity provider answered; its entry cannot be written with a past expiry.
             await _store.RemoveUserTokens(session, CancellationToken.None).ConfigureAwait(false);
             return UserTokenResult.Failed(UserTokenFailure.SessionExpired);
         }
@@ -345,7 +344,6 @@ public sealed partial class UserTokenManager
             LogUnusableAnswer(_logger, IdentityProviderClient.RefreshOperation);
             if (!string.IsNullOrWhiteSpace(answer.RefreshToken))
             {
-                // The old refresh token may already be revoked by rotation: keep the new one for the next attempt.
                 var rotated = new UserTokenSet(
                     tokens.AccessToken,
                     tokens.AccessTokenExpiresAt,
@@ -362,7 +360,6 @@ public sealed partial class UserTokenManager
         if (answer.IdentityToken is not null && tokens.IdentityToken is not null
             && !IdentityTokenSubject.Matches(tokens.IdentityToken, answer.IdentityToken))
         {
-            // OpenID Connect Core 1.0 section 12.2: a refreshed ID token must keep the issuer and subject of the login.
             LogIdentityTokenMismatch(_logger);
             return StillValidOrUnavailable(tokens);
         }

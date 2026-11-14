@@ -93,8 +93,6 @@ public static class AspNetCoreSecurityHeadersExtensions
         });
     }
 
-    // A shared cache would hand this request's nonce to every later visitor. The check runs here, where the nonce is written, so a public
-    // header set before or after this callback (other middleware's OnStarting runs in either order) never leaves with the nonce.
     private static void KeepOutOfSharedCaches(HttpResponse response)
     {
         var current = response.Headers.CacheControl;

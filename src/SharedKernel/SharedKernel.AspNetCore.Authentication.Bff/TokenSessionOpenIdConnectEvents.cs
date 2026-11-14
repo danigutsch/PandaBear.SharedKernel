@@ -26,7 +26,6 @@ internal sealed class TokenSessionOpenIdConnectEvents(OpenIdConnectEvents inner)
         var response = context.TokenEndpointResponse;
         if (response is null && !string.IsNullOrEmpty(context.ProtocolMessage?.Code))
         {
-            // Hybrid flow: this is the ID token of the authorization response; the event runs again after the code is redeemed.
             return;
         }
 
@@ -41,7 +40,6 @@ internal sealed class TokenSessionOpenIdConnectEvents(OpenIdConnectEvents inner)
         var manager = services.GetRequiredService<UserTokenManager>();
         if (await CookiePrincipal.Find(context.HttpContext, options.CookieScheme).ConfigureAwait(false) is { } previous)
         {
-            // A login over a live cookie replaces its session: end it and revoke its refresh token rather than orphan them.
             await manager.SignOut(previous, context.HttpContext.RequestAborted).ConfigureAwait(false);
         }
 

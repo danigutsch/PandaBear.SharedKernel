@@ -63,7 +63,6 @@ public static class ServiceDefaultsExtensions
         builder.Services.AddServiceDiscovery();
         builder.Services.ConfigureHttpClientDefaults(http =>
         {
-            // Resilience before discovery: handlers added first run outermost, so every retry resolves the endpoint again.
             if (options.AddResilience)
             {
                 http.AddStandardResilienceHandler(resilience =>

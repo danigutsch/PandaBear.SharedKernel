@@ -28,7 +28,6 @@ public sealed class OnDemandResources<T>(Func<string, CancellationToken, Task<T>
         OnDemandResource<T> resource;
         lock (_gate)
         {
-            // Disposal takes its snapshot under the same gate, so a resource added here is always among those it disposes.
             ObjectDisposedException.ThrowIf(_disposed, this);
             resource = _resources.GetOrAdd(key, name => new OnDemandResource<T>(token => _start(name, token)));
         }

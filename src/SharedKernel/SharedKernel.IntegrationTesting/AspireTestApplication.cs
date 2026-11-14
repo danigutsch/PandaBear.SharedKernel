@@ -466,9 +466,6 @@ public sealed class AspireTestApplication : IAsyncDisposable
         ];
     }
 
-    // Configuration values travel as command-line arguments, the last configuration source a builder adds, so appsettings, user secrets and
-    // environment variables of the developer's machine cannot override them (a data folder pointing at real data). Arguments the caller
-    // passes come after them and win. A null value contributes nothing, as it did as an in-memory value; it must not become an empty one.
     private static string[] ConfigurationArguments(IReadOnlyDictionary<string, string?> configuration) =>
         [.. CheckConfigurationKeys(configuration, nameof(configuration))
             .Where(static pair => pair.Value is not null)

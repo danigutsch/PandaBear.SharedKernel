@@ -121,8 +121,6 @@ public sealed class ContentCulture : ValueObject
                 return false;
             }
 
-            // A singleton (an extension or the private-use x) introduces at least one subtag; an extension's subtags are longer than one
-            // character, while private-use subtags may be single characters.
             if (privateUse || part.Length > 1)
             {
                 continue;

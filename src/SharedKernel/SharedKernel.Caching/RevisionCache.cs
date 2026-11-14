@@ -111,7 +111,6 @@ public sealed class RevisionCache<TKey, TValue>
             }
             catch (OperationCanceledException) when (!ct.IsCancellationRequested)
             {
-                // The caller that started the shared read was cancelled, not this one: read again.
             }
         }
     }
@@ -124,7 +123,6 @@ public sealed class RevisionCache<TKey, TValue>
             var revision = await _readRevision(ct).ConfigureAwait(false);
             lock (_gate)
             {
-                // The revision only grows; a lagging read must not move it back.
                 if (_current is null || revision > _current.Revision)
                 {
                     _current = new Generation(revision);
