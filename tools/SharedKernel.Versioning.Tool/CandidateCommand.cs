@@ -46,7 +46,7 @@ internal static class CandidateCommand
 
         var revision = (await CommandRunner.Run("git", ["rev-parse", "HEAD"], root, ct).ConfigureAwait(false)).Trim();
         var configured = XDocument.Load(Path.Combine(root, "Directory.Build.props")).Descendants("ComputedSemVer").First().Value;
-        version ??= configured.Split('-')[0] + "-alpha.local.t" + timeProvider.GetUtcNow().ToString("yyyyMMddHHmmssfffffff", CultureInfo.InvariantCulture) + ".g" + revision[..12];
+        version ??= DefaultVersion(configured, timeProvider.GetUtcNow(), revision);
         await ApiCompatibilityCommand.Run(new ApiCompatibilityOptions(version, Path.Combine(root, "artifacts/api-compat"), "beta", root, baselineVersion, false), output, ct).ConfigureAwait(false);
         var feed = Path.Combine(root, "artifacts/api-compat/packages", version);
         var hashes = new JsonObject();
@@ -72,6 +72,12 @@ internal static class CandidateCommand
         CandidateManifest.Write(manifest, evidence);
         return manifest;
     }
+
+    /// <summary>
+    /// Creates the default local candidate version from the configured version core, the UTC time and the library revision.
+    /// </summary>
+    internal static string DefaultVersion(string configuredSemVer, DateTimeOffset utcNow, string revision)
+        => configuredSemVer.Split('-')[0] + "-alpha.local.t" + utcNow.UtcDateTime.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture) + ".g" + revision[..7];
 
     /// <summary>Verifies the manifest and installs and runs the listed packages on the current platform, recording the result in the evidence at <paramref name="destination"/>.</summary>
     public static async Task Consume(
