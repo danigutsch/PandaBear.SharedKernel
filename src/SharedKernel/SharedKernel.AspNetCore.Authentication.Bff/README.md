@@ -26,10 +26,10 @@ tested target for token exchange.
   - `GetAccessToken` refreshes the access token with the refresh_token grant when it is within `RefreshBeforeExpiry`
     (default one minute, which also absorbs clock skew) of expiring. Concurrent callers of one session share one refresh.
     A rotated refresh token replaces the old one; an answer without one keeps it;
-  - a rejected refresh, or an expired token without a refresh token, ends the token session and returns the typed failure
-    `UserTokenFailure.RefreshFailed`. The cookie is then rejected and signed out on the next request
-    (`RejectCookieWithoutTokenSession`). An identity provider that fails or times out returns
-    `IdentityProviderUnavailable` and keeps the tokens for a retry;
+  - a refresh rejected with `invalid_grant`, or an expired token without a refresh token, ends the token session and
+    returns the typed failure `UserTokenFailure.RefreshFailed`. The cookie is then rejected and signed out on the next
+    request (`RejectCookieWithoutTokenSession`). An identity provider that fails, times out or answers with another OAuth
+    error returns `IdentityProviderUnavailable` and keeps the tokens for a retry;
   - cookie sign-out removes the tokens and revokes the refresh token (RFC 7009) when discovery names a
     `revocation_endpoint` (`RevokeRefreshTokenOnSignOut`).
 - `AddUserAccessTokenHandler()`: an `HttpClient` handler that attaches the current user's access token.

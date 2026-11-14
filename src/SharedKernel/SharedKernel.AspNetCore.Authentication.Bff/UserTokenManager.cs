@@ -105,9 +105,10 @@ public sealed partial class UserTokenManager
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="user" /> is <see langword="null" />.</exception>
     /// <exception cref="OperationCanceledException">Thrown when <paramref name="ct" /> is canceled.</exception>
     /// <remarks>
-    /// A rejected refresh, or an expired token without a refresh token, ends the token session:
+    /// A refresh rejected with <c>invalid_grant</c>, or an expired token without a refresh token, ends the token session:
     /// <see cref="UserTokenFailure.RefreshFailed" />, and the cookie is rejected on the next request. An identity provider
-    /// that fails or times out yields <see cref="UserTokenFailure.IdentityProviderUnavailable" /> and keeps the tokens.
+    /// that fails, times out or refuses the client or request with another error yields
+    /// <see cref="UserTokenFailure.IdentityProviderUnavailable" /> and keeps the tokens.
     /// </remarks>
     public async Task<UserTokenResult> GetAccessToken(ClaimsPrincipal user, CancellationToken ct)
     {
@@ -306,7 +307,7 @@ public sealed partial class UserTokenManager
         }
 
         var outcome = await _identityProvider.Refresh(tokens.RefreshToken, CancellationToken.None).ConfigureAwait(false);
-        if (outcome.Rejected)
+        if (outcome.GrantRejected)
         {
             LogRefreshRejected(_logger);
             await _store.RemoveUserTokens(session, CancellationToken.None).ConfigureAwait(false);

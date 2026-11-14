@@ -193,6 +193,28 @@ public sealed class UserTokenManagerTests
         active.ShouldBeFalse();
     }
 
+    [Theory]
+    [InlineData(HttpStatusCode.Unauthorized, "invalid_client")]
+    [InlineData(HttpStatusCode.BadRequest, "unauthorized_client")]
+    [InlineData(HttpStatusCode.BadRequest, "invalid_request")]
+    [InlineData(HttpStatusCode.BadRequest, "invalid_scope")]
+    public async Task A_refresh_error_other_than_invalid_grant_keeps_the_token_session(HttpStatusCode status, string error)
+    {
+        // Arrange
+        using var host = new BffTestHost();
+        host.IdentityProvider.Respond = _ => FakeIdentityProvider.Json(status, new { error });
+        var user = await host.SignIn("alice");
+        host.Time.Advance(TimeSpan.FromMinutes(10));
+
+        // Act
+        var failed = await host.Manager.GetAccessToken(user, TestContext.Current.CancellationToken);
+
+        // Assert
+        failed.Failure.ShouldBe(UserTokenFailure.IdentityProviderUnavailable);
+        var tokens = await host.Manager.GetTokens(user, TestContext.Current.CancellationToken);
+        tokens!.RefreshToken.ShouldBe("refresh-0");
+    }
+
     [Fact]
     public async Task An_unavailable_identity_provider_fails_typed_and_keeps_the_tokens_for_a_retry()
     {

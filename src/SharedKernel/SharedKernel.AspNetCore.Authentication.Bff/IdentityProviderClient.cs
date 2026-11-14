@@ -226,7 +226,7 @@ internal sealed partial class IdentityProviderClient
             var error = ReadErrorCode(body);
             LogRejected(_logger, operation, (int)response.StatusCode, error ?? "none");
             return response.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.Unauthorized && error is not null
-                ? TokenEndpointOutcome.Rejection()
+                ? TokenEndpointOutcome.Rejection(error)
                 : TokenEndpointOutcome.Unavailable();
         }
         catch (HttpRequestException exception)
