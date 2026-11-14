@@ -160,6 +160,31 @@ public sealed class ResponsiveImageTests : BunitContext
         mixedOnImg.ShouldThrow<ArgumentException>().ParamName.ShouldBe("srcSet");
     }
 
+    [Fact]
+    public void A_density_is_kept_as_written_to_three_decimals()
+    {
+        // Arrange & Act
+        var candidate = ImageCandidate.AtDensity(Link("/a@1.5x.jpg"), 1.4996m);
+
+        // Assert
+        candidate.Density.ShouldBe(1.5m);
+        candidate.ToString().ShouldBe("/a@1.5x.jpg 1.5x");
+    }
+
+    [Fact]
+    public void Densities_that_are_written_alike_are_a_repeated_descriptor()
+    {
+        // Arrange
+        var one = ImageCandidate.AtDensity(Link("/a.jpg"), 1m);
+        var almostOne = ImageCandidate.AtDensity(Link("/b.jpg"), 1.0004m);
+
+        // Act
+        var repeated = () => ImageSource.Create("image/webp", [one, almostOne]);
+
+        // Assert
+        repeated.ShouldThrow<ArgumentException>().ParamName.ShouldBe("candidates");
+    }
+
     [Theory]
     [InlineData(0)]
     [InlineData(-640)]
@@ -175,6 +200,7 @@ public sealed class ResponsiveImageTests : BunitContext
     [Theory]
     [InlineData("0")]
     [InlineData("-1")]
+    [InlineData("0.0004")]
     public void A_density_descriptor_must_be_positive(string density)
     {
         // Arrange & Act

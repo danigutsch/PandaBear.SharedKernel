@@ -28,7 +28,10 @@ public sealed class ImageCandidate : ValueObject
         get;
     }
 
-    /// <summary>Gets the pixel density this file is for, or <see langword="null" /> for a width descriptor.</summary>
+    /// <summary>
+    /// Gets the pixel density this file is for, rounded to three decimals as it is written in the <c>srcset</c>, or <see langword="null" />
+    /// for a width descriptor.
+    /// </summary>
     public decimal? Density
     {
         get;
@@ -50,16 +53,17 @@ public sealed class ImageCandidate : ValueObject
 
     /// <summary>Creates a candidate with a pixel-density descriptor, for an image shown at one fixed size.</summary>
     /// <param name="src">The address of a file for this density.</param>
-    /// <param name="density">The device pixel ratio, such as 1, 1.5 or 2.</param>
+    /// <param name="density">The device pixel ratio, such as 1, 1.5 or 2; it is rounded to three decimals.</param>
     /// <returns>The candidate.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="src" /> is <see langword="null" />.</exception>
     /// <exception cref="ArgumentException"><paramref name="src" /> is not root-relative or https, or starts or ends with a comma.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="density" /> is not positive.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="density" /> is not positive once rounded to three decimals.</exception>
     public static ImageCandidate AtDensity(LinkTarget src, decimal density)
     {
         RequireImageSource(src);
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(density);
-        return new ImageCandidate(src, width: null, density);
+        var written = Math.Round(density, 3, MidpointRounding.AwayFromZero);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(written, nameof(density));
+        return new ImageCandidate(src, width: null, written);
     }
 
     /// <summary>Returns the candidate as written in a <c>srcset</c>, such as <c>/a-640.jpg 640w</c> or <c>/a@2x.jpg 2x</c>.</summary>
