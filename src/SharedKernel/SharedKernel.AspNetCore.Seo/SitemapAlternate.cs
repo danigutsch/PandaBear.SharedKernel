@@ -1,3 +1,5 @@
+using PandaBear.BuildingBlocks;
+
 namespace PandaBear.AspNetCore.Seo;
 
 /// <summary>
@@ -13,7 +15,10 @@ public sealed class SitemapAlternate
     /// <summary>
     /// Initializes a new instance of the <see cref="SitemapAlternate" /> class.
     /// </summary>
-    /// <param name="language">The <c>hreflang</c> value: a language tag such as <c>pt</c> or <c>pt-BR</c>, or <see cref="DefaultLanguage" />.</param>
+    /// <param name="language">
+    /// The <c>hreflang</c> value: a language tag such as <c>pt</c> or <c>pt-BR</c> that <see cref="ContentCulture.Create" /> accepts,
+    /// or <see cref="DefaultLanguage" />; it is kept in canonical casing.
+    /// </param>
     /// <param name="location">The absolute HTTP or HTTPS URL of the alternate.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="language" /> or <paramref name="location" /> is <see langword="null" />.</exception>
     /// <exception cref="ArgumentException">
@@ -24,10 +29,8 @@ public sealed class SitemapAlternate
         ArgumentNullException.ThrowIfNull(language);
         ArgumentNullException.ThrowIfNull(location);
 
-        if (!IsLanguageTag(language))
-        {
-            throw new ArgumentException("The alternate language must be a language tag such as 'pt-BR' or 'x-default'.", nameof(language));
-        }
+        var hreflang = Hreflang(language)
+            ?? throw new ArgumentException("The alternate language must be a language tag such as 'pt-BR' or 'x-default'.", nameof(language));
 
         if (!location.IsAbsoluteUri
             || (!string.Equals(location.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase)
@@ -36,12 +39,12 @@ public sealed class SitemapAlternate
             throw new ArgumentException("Sitemap alternate locations must be absolute HTTP or HTTPS URLs.", nameof(location));
         }
 
-        Language = language;
+        Language = hreflang;
         Location = location;
     }
 
     /// <summary>
-    /// Gets the <c>hreflang</c> value.
+    /// Gets the <c>hreflang</c> value in canonical casing.
     /// </summary>
     public string Language
     {
@@ -66,25 +69,13 @@ public sealed class SitemapAlternate
         return new SitemapAlternate(DefaultLanguage, location);
     }
 
-    private static bool IsLanguageTag(string value)
+    private static string? Hreflang(string value)
     {
-        var partLength = 0;
-        foreach (var character in value)
+        if (string.Equals(value, DefaultLanguage, StringComparison.OrdinalIgnoreCase))
         {
-            if (char.IsAsciiLetterOrDigit(character))
-            {
-                partLength++;
-            }
-            else if (character == '-' && partLength > 0)
-            {
-                partLength = 0;
-            }
-            else
-            {
-                return false;
-            }
+            return DefaultLanguage;
         }
 
-        return partLength > 0;
+        return ContentCulture.Create(value).TryGetValue(out var culture) ? culture.Value : null;
     }
 }

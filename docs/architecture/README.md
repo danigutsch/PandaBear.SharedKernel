@@ -19,6 +19,7 @@ flowchart TB
     SharedKernel_AspNetCore_Authentication[SharedKernel.AspNetCore.Authentication] --> SharedKernel_OpenApi[SharedKernel.OpenApi]
     SharedKernel_AspNetCore_Localization[SharedKernel.AspNetCore.Localization] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
     SharedKernel_AspNetCore_RateLimiting[SharedKernel.AspNetCore.RateLimiting] --> SharedKernel_AspNetCore[SharedKernel.AspNetCore]
+    SharedKernel_AspNetCore_Seo[SharedKernel.AspNetCore.Seo] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
     SharedKernel_Aspire_Hosting[SharedKernel.Aspire.Hosting] --> SharedKernel_AspNetCore[SharedKernel.AspNetCore]
     SharedKernel_Blazor[SharedKernel.Blazor] --> SharedKernel_HttpClients[SharedKernel.HttpClients]
     SharedKernel_Blazor[SharedKernel.Blazor] --> SharedKernel_Results[SharedKernel.Results]

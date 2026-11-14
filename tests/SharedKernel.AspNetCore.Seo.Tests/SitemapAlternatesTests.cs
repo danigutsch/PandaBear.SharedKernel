@@ -124,6 +124,11 @@ public sealed class SitemapAlternatesTests
     [InlineData("pt br")]
     [InlineData("pt\"")]
     [InlineData("-pt")]
+    [InlineData("1")]
+    [InlineData("a-b-c-d")]
+    [InlineData("en-x")]
+    [InlineData("en-abcdefghi")]
+    [InlineData("x-other")]
     public void Alternate_rejects_invalid_language_tags(string language)
     {
         // Arrange
@@ -134,6 +139,22 @@ public sealed class SitemapAlternatesTests
 
         // Assert
         create.ShouldThrow<ArgumentException>();
+    }
+
+    [Theory]
+    [InlineData("pt-br", "pt-BR")]
+    [InlineData("zh-hant-tw", "zh-Hant-TW")]
+    [InlineData("X-Default", "x-default")]
+    public void Alternate_writes_the_language_in_canonical_casing(string language, string expected)
+    {
+        // Arrange
+        var location = new Uri("https://example.com/");
+
+        // Act
+        var alternate = new SitemapAlternate(language, location);
+
+        // Assert
+        alternate.Language.ShouldBe(expected);
     }
 
     [Theory]
