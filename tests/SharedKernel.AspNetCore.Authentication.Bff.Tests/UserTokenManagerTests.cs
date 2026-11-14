@@ -1,6 +1,8 @@
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
 
@@ -493,7 +495,13 @@ public sealed class UserTokenManagerTests
     public async Task Basic_client_authentication_sends_form_encoded_credentials_in_the_header()
     {
         // Arrange
-        using var host = new BffTestHost(options => options.ClientAuthentication = TokenEndpointClientAuthentication.BasicHeader);
+        using var host = new BffTestHost(
+            options => options.ClientAuthentication = TokenEndpointClientAuthentication.BasicHeader,
+            services: services => services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
+            {
+                options.ClientId = "bff:client+1";
+                options.ClientSecret = "s3cret %+:x";
+            }));
         var user = await host.SignIn("alice");
         host.Time.Advance(TimeSpan.FromMinutes(10));
 
@@ -503,6 +511,7 @@ public sealed class UserTokenManagerTests
         // Assert
         var refresh = host.IdentityProvider.Grants("refresh_token").ShouldHaveSingleItem();
         refresh.Form.ContainsKey("client_secret").ShouldBeFalse();
-        refresh.Authorization.ShouldBe("Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes("bff-client:bff-secret")));
+        // RFC 6749 section 2.3.1 and appendix B: each part is form-encoded (space as '+') before they are joined with ':'.
+        refresh.Authorization.ShouldBe("Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes("bff%3Aclient%2B1:s3cret+%25%2B%3Ax")));
     }
 }

@@ -200,7 +200,7 @@ internal sealed partial class IdentityProviderClient
         if (_options.ClientAuthentication == TokenEndpointClientAuthentication.BasicHeader && client.ClientSecret is not null)
         {
             // RFC 6749 section 2.3.1: the identifier and secret are form-encoded before they are joined and Base64-encoded.
-            var credentials = string.Concat(Uri.EscapeDataString(client.ClientId!), ":", Uri.EscapeDataString(client.ClientSecret));
+            var credentials = string.Concat(FormEncode(client.ClientId!), ":", FormEncode(client.ClientSecret));
             request.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(credentials)));
         }
         else
@@ -239,6 +239,12 @@ internal sealed partial class IdentityProviderClient
             LogUnavailable(_logger, operation, exception.InnerException is TimeoutException ? "Timeout" : exception.GetType().Name);
             return TokenEndpointOutcome.Unavailable();
         }
+    }
+
+    /// <summary>Encodes a value as application/x-www-form-urlencoded (RFC 6749 appendix B): UTF-8, percent-encoded, space as <c>+</c>.</summary>
+    private static string FormEncode(string value)
+    {
+        return Uri.EscapeDataString(value).Replace("%20", "+", StringComparison.Ordinal);
     }
 
     private TokenEndpointOutcome Parse(string operation, byte[] body)
