@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.Playwright;
 
 namespace PandaBear.Testing.Playwright;
@@ -10,6 +11,10 @@ public static class PlaywrightLocatorExtensions
 
     // Blazor's InputFile.init sets this property on the element in the same call that attaches the change listener.
     private const string BlazorInputFileReadyScript = "element => element._blazorInputFileNextFileId !== undefined";
+
+    // Playwright's default timeout, and how often the input is checked within it.
+    private static readonly TimeSpan InputFileReadyTimeout = TimeSpan.FromSeconds(30);
+    private static readonly TimeSpan InputFileReadyPollInterval = TimeSpan.FromMilliseconds(50);
 
     /// <summary>
     /// Fills a field, leaves it (Blazor commits text on the change event) and checks it kept the value; a render that resets the field right
@@ -59,20 +64,32 @@ public static class PlaywrightLocatorExtensions
     /// Chooses a file in a Blazor <c>InputFile</c> once the input can report it. Blazor attaches the input's change listener with a JS
     /// interop call from the component's first interactive after-render, which reaches the browser after the page already shows the
     /// interactivity marker; a file set before that is never sent to the server, and the form then acts as if no file was chosen. The wait
-    /// polls, in the browser, for the property that Blazor's listener setup writes on the element.
+    /// polls, through the locator so that an input replaced by a render is found again, for the property that Blazor's listener setup
+    /// writes on the element.
     /// </summary>
     /// <param name="input">The file input that an <c>InputFile</c> component rendered.</param>
     /// <param name="file">The file to choose.</param>
     /// <returns>A task that completes when the input has been handed the file.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="input"/> or <paramref name="file"/> is <see langword="null"/>.</exception>
-    /// <exception cref="TimeoutException">Blazor did not set up the input within Playwright's default timeout.</exception>
+    /// <exception cref="TimeoutException">Blazor did not set up the input within 30 seconds, Playwright's default timeout.</exception>
     public static async Task SetBlazorInputFile(this ILocator input, FilePayload file)
     {
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(file);
 
-        var element = await input.ElementHandleAsync().ConfigureAwait(false);
-        _ = await input.Page.WaitForFunctionAsync(BlazorInputFileReadyScript, element).ConfigureAwait(false);
+        // Poll through the locator, which finds the element again each time: an interactive render can replace the prerendered input,
+        // and a handle to the replaced element would never become ready.
+        var waited = Stopwatch.StartNew();
+        while (!await input.EvaluateAsync<bool>(BlazorInputFileReadyScript).ConfigureAwait(false))
+        {
+            if (waited.Elapsed > InputFileReadyTimeout)
+            {
+                throw new TimeoutException($"Blazor did not set up the file input within {InputFileReadyTimeout.TotalSeconds} seconds.");
+            }
+
+            await Task.Delay(InputFileReadyPollInterval).ConfigureAwait(false);
+        }
+
         await input.SetInputFilesAsync(file).ConfigureAwait(false);
     }
 

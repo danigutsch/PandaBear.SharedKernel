@@ -37,6 +37,41 @@ public sealed class PlaywrightInputFileTests(ChromiumPageFixture chromium) : ICl
         received.ShouldBe(["site.json"]);
     }
 
+    // Stands in for an interactive render that replaces the prerendered input before Blazor sets up the new one.
+    private const string ReplacedInputFile = """
+        <input type="file" id="upload">
+        <script>
+            window.received = [];
+            setTimeout(() => {
+                const replacement = document.createElement('input');
+                replacement.type = 'file';
+                replacement.id = 'upload';
+                document.getElementById('upload').replaceWith(replacement);
+            }, 100);
+            setTimeout(() => {
+                const input = document.getElementById('upload');
+                input._blazorInputFileNextFileId = 0;
+                input.addEventListener('change', () => window.received.push(...Array.from(input.files, file => file.name)));
+            }, 300);
+        </script>
+        """;
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task An_input_replaced_before_it_is_set_up_is_found_again()
+    {
+        // Arrange
+        var page = await chromium.Show(ReplacedInputFile);
+        page.SetDefaultTimeout(3000);
+        var file = new FilePayload { Name = "site.json", MimeType = "application/json", Buffer = "{}"u8.ToArray() };
+
+        // Act
+        await page.Locator("#upload").SetBlazorInputFile(file);
+
+        // Assert
+        var received = await page.EvaluateAsync<string[]>("() => window.received");
+        received.ShouldBe(["site.json"]);
+    }
+
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public async Task Missing_arguments_are_refused()
     {
