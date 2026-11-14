@@ -50,9 +50,7 @@ public sealed class PlaywrightUrlWaitCodeFixTests
     [InlineData("page.WaitForURLAsync($\"**/{path}\")")]
     [InlineData("page.WaitForURLAsync(path)")]
     [InlineData("page.WaitForURLAsync(\"http://localhost/customers\", new Microsoft.Playwright.PageWaitForURLOptions())")]
-    [InlineData("page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(\"customers$\"))")]
-    [InlineData("frame.WaitForURLAsync(\"http://localhost/customers\")")]
-    public async Task A_pattern_an_option_or_a_frame_is_not_rewritten(string wait)
+    public async Task A_pattern_a_relative_address_or_an_option_is_not_rewritten(string wait)
     {
         // Arrange
         ArgumentNullException.ThrowIfNull(wait);

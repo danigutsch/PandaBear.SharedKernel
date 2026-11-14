@@ -2,7 +2,7 @@ using System.Globalization;
 
 namespace PandaBear.Testing.Analyzers.Tests;
 
-/// <summary>Tests the SKTEST020 rule that reports Playwright's racy <c>WaitForURLAsync</c> on pages and frames.</summary>
+/// <summary>Tests the SKTEST020 rule that reports Playwright's racy <c>WaitForURLAsync</c> string waits on pages.</summary>
 public sealed class PlaywrightUrlWaitAnalyzerTests
 {
     private const string DiagnosticId = TestingDiagnosticIds.PlaywrightUrlWait;
@@ -10,11 +10,8 @@ public sealed class PlaywrightUrlWaitAnalyzerTests
     [Theory]
     [InlineData("await page.WaitForURLAsync(\"http://localhost/customers\");", "IPage")]
     [InlineData("await page.WaitForURLAsync(\"**/customers\", new Microsoft.Playwright.PageWaitForURLOptions());", "IPage")]
-    [InlineData("await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(\"customers$\"));", "IPage")]
-    [InlineData("await page.WaitForURLAsync(url => url.EndsWith(\"customers\", StringComparison.Ordinal));", "IPage")]
-    [InlineData("await frame.WaitForURLAsync(\"**/customers\");", "IFrame")]
-    [InlineData("await page.MainFrame.WaitForURLAsync(\"**/customers\");", "IFrame")]
-    public async Task A_page_or_frame_url_wait_is_reported(string statement, string owner)
+    [InlineData("await page.WaitForURLAsync(path);", "IPage")]
+    public async Task A_page_url_wait_for_a_string_is_reported(string statement, string owner)
     {
         // Arrange
         var source = PlaywrightUrlWaitTestSource.Create(statement);
@@ -33,7 +30,11 @@ public sealed class PlaywrightUrlWaitAnalyzerTests
     [Theory]
     [InlineData("await router.WaitForURLAsync(\"http://localhost/customers\");")]
     [InlineData("await page.ExpectPath(baseAddress, path);")]
-    public async Task Other_waits_are_not_reported(string statement)
+    [InlineData("await page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(\"customers$\"));")]
+    [InlineData("await page.WaitForURLAsync(url => url.EndsWith(\"customers\", StringComparison.Ordinal));")]
+    [InlineData("await frame.WaitForURLAsync(\"**/customers\");")]
+    [InlineData("await page.MainFrame.WaitForURLAsync(\"http://localhost/customers\");")]
+    public async Task Waits_without_an_expect_path_replacement_are_not_reported(string statement)
     {
         // Arrange
         var source = PlaywrightUrlWaitTestSource.Create(statement);

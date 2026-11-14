@@ -19,32 +19,29 @@ public sealed partial class SharedKernelTestingAnalyzer
     private static void RegisterPlaywrightUrlWaitAnalysis(CompilationStartAnalysisContext compilationContext)
     {
         var page = compilationContext.Compilation.GetTypeByMetadataName("Microsoft.Playwright.IPage");
-        var frame = compilationContext.Compilation.GetTypeByMetadataName("Microsoft.Playwright.IFrame");
-        if (page is null && frame is null)
+        if (page is null)
         {
             return;
         }
 
         compilationContext.RegisterOperationAction(
-            operationContext => AnalyzePlaywrightUrlWait(operationContext, page, frame),
+            operationContext => AnalyzePlaywrightUrlWait(operationContext, page),
             OperationKind.Invocation);
     }
 
-    private static void AnalyzePlaywrightUrlWait(OperationAnalysisContext context, INamedTypeSymbol? page, INamedTypeSymbol? frame)
+    // Only IPage's string overload has an ExpectPath replacement; regular expressions, predicates and frames are left alone.
+    private static void AnalyzePlaywrightUrlWait(OperationAnalysisContext context, INamedTypeSymbol page)
     {
         var invocation = (IInvocationOperation)context.Operation;
         var method = invocation.TargetMethod;
-        if (method.Name != PlaywrightUrlWaitMethodName)
+        if (method.Name != PlaywrightUrlWaitMethodName
+            || !SymbolEqualityComparer.Default.Equals(method.ContainingType, page)
+            || method.Parameters.Length == 0
+            || method.Parameters[0].Type.SpecialType != SpecialType.System_String)
         {
             return;
         }
 
-        var owner = method.ContainingType;
-        if (!SymbolEqualityComparer.Default.Equals(owner, page) && !SymbolEqualityComparer.Default.Equals(owner, frame))
-        {
-            return;
-        }
-
-        context.ReportDiagnostic(Diagnostic.Create(PlaywrightUrlWaitRule, invocation.Syntax.GetLocation(), owner.Name));
+        context.ReportDiagnostic(Diagnostic.Create(PlaywrightUrlWaitRule, invocation.Syntax.GetLocation(), page.Name));
     }
 }

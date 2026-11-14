@@ -304,8 +304,9 @@ argument (for example `IHandler<InternalMessage>`) is not checked. The rule is a
 
 Playwright .NET's `IPage.WaitForURLAsync` and `IFrame.WaitForURLAsync` read the current address and only then subscribe to
 navigation events, which arrive on another thread; a navigation that lands in between is lost and the wait times out
-(microsoft/playwright-dotnet#3364). The rule reports every call. `page.ExpectPath(uri)` and `page.ExpectPath(baseUri, "path")`
+(microsoft/playwright-dotnet#3364). The rule reports `IPage.WaitForURLAsync` calls with a string argument, the waits that
+`ExpectPath` can replace; regular expression, predicate and frame waits are not reported. `page.ExpectPath(uri)` and `page.ExpectPath(baseUri, "path")`
 from `SharedKernel.Testing.Playwright` poll the address in the driver instead. The code fix rewrites a page wait for one exact
 absolute `http` or `https` address (a constant, an interpolated string that starts with a literal `http://` or `https://`
-and has no glob characters, or `uri.ToString()`) when `ExpectPath` is referenced; relative addresses, globs, regular
-expressions, predicates, options and frames are left for a person.
+and has no glob characters, or `uri.ToString()`) when `ExpectPath` is referenced; relative addresses, globs and options are left
+for a person.
