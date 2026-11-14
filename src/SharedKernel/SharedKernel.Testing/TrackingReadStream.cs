@@ -2,7 +2,7 @@ namespace PandaBear.Testing;
 
 /// <summary>
 /// Read-only stream over a byte array that records how many bytes and reads were requested and whether it was disposed.
-/// It can pretend to be non-seekable.
+/// It can pretend to be non-seekable and can return fewer bytes per read than requested.
 /// </summary>
 /// <param name="content">The bytes the stream serves.</param>
 /// <param name="seekable">Whether the stream reports and supports seeking, length and position.</param>
@@ -18,6 +18,18 @@ public sealed class TrackingReadStream(byte[] content, bool seekable = false) : 
 
     /// <summary>Number of read calls made against the stream.</summary>
     public int ReadCount { get; private set; }
+
+    /// <summary>Gets the most bytes one read returns, so a non-seekable body arrives in several chunks; unlimited by default.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the value is less than one.</exception>
+    public int MaxBytesPerRead
+    {
+        get;
+        init
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+            field = value;
+        }
+    } = int.MaxValue;
 
     /// <inheritdoc />
     public override bool CanRead => !IsDisposed;
@@ -54,7 +66,7 @@ public sealed class TrackingReadStream(byte[] content, bool seekable = false) : 
     /// <inheritdoc />
     public override int Read(byte[] buffer, int offset, int count)
     {
-        var bytesRead = _inner.Read(buffer, offset, count);
+        var bytesRead = _inner.Read(buffer, offset, Math.Min(count, MaxBytesPerRead));
         RecordRead(bytesRead);
         return bytesRead;
     }
@@ -62,7 +74,7 @@ public sealed class TrackingReadStream(byte[] content, bool seekable = false) : 
     /// <inheritdoc />
     public override int Read(Span<byte> buffer)
     {
-        var bytesRead = _inner.Read(buffer);
+        var bytesRead = _inner.Read(buffer[..Math.Min(buffer.Length, MaxBytesPerRead)]);
         RecordRead(bytesRead);
         return bytesRead;
     }
@@ -74,7 +86,7 @@ public sealed class TrackingReadStream(byte[] content, bool seekable = false) : 
         int count,
         CancellationToken cancellationToken)
     {
-        var bytesRead = await _inner.ReadAsync(buffer.AsMemory(offset, count), cancellationToken).ConfigureAwait(false);
+        var bytesRead = await _inner.ReadAsync(buffer.AsMemory(offset, Math.Min(count, MaxBytesPerRead)), cancellationToken).ConfigureAwait(false);
         RecordRead(bytesRead);
         return bytesRead;
     }
@@ -84,7 +96,7 @@ public sealed class TrackingReadStream(byte[] content, bool seekable = false) : 
         Memory<byte> buffer,
         CancellationToken cancellationToken)
     {
-        var bytesRead = await _inner.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
+        var bytesRead = await _inner.ReadAsync(buffer[..Math.Min(buffer.Length, MaxBytesPerRead)], cancellationToken).ConfigureAwait(false);
         RecordRead(bytesRead);
         return bytesRead;
     }

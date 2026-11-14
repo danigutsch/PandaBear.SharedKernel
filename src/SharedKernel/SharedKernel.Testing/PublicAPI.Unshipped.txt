@@ -276,3 +276,81 @@ override PandaBear.Testing.CountingTimeProvider.TimestampFrequency.get -> long
 PandaBear.Testing.TestCleanup
 static PandaBear.Testing.TestCleanup.DisposeAll(System.Exception? operationFailure, params System.IAsyncDisposable?[]! resources) -> System.Threading.Tasks.Task!
 static PandaBear.Testing.TestCleanup.Run(System.Exception? operationFailure, params System.Func<System.Threading.Tasks.ValueTask>![]! cleanupActions) -> System.Threading.Tasks.Task!
+override PandaBear.Testing.BlockingReadStream.Read(System.Span<byte> buffer) -> int
+PandaBear.Testing.BlockingReadStream.BlockingReadStream(byte[]! prefix, byte[]! remainder) -> void
+PandaBear.Testing.BlockingReadStream.Blocked.get -> System.Threading.Tasks.Task!
+PandaBear.Testing.BlockingReadStream.BlockedReadCancelled.get -> bool
+PandaBear.Testing.BlockingReadStream.BytesRead.get -> long
+PandaBear.Testing.BlockingReadStream.Disposed.get -> System.Threading.Tasks.Task!
+PandaBear.Testing.BlockingReadStream.Release() -> void
+PandaBear.Testing.DisposalTrackingStream
+PandaBear.Testing.DisposalTrackingStream.AsyncDisposeCount.get -> int
+PandaBear.Testing.DisposalTrackingStream.DisposalTrackingStream(System.IO.Stream! inner) -> void
+PandaBear.Testing.DisposalTrackingStream.DisposeCount.get -> int
+PandaBear.Testing.DisposalTrackingStream.Disposed.get -> System.Threading.Tasks.Task!
+PandaBear.Testing.DisposalTrackingStream.InnerStream.get -> System.IO.Stream!
+PandaBear.Testing.DisposalTrackingStream.IsDisposed.get -> bool
+override PandaBear.Testing.DisposalTrackingStream.CanRead.get -> bool
+override PandaBear.Testing.DisposalTrackingStream.CanSeek.get -> bool
+override PandaBear.Testing.DisposalTrackingStream.CanWrite.get -> bool
+override PandaBear.Testing.DisposalTrackingStream.DisposeAsync() -> System.Threading.Tasks.ValueTask
+override PandaBear.Testing.DisposalTrackingStream.Flush() -> void
+override PandaBear.Testing.DisposalTrackingStream.FlushAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+override PandaBear.Testing.DisposalTrackingStream.Length.get -> long
+override PandaBear.Testing.DisposalTrackingStream.Position.get -> long
+override PandaBear.Testing.DisposalTrackingStream.Position.set -> void
+override PandaBear.Testing.DisposalTrackingStream.Read(byte[]! buffer, int offset, int count) -> int
+override PandaBear.Testing.DisposalTrackingStream.Read(System.Span<byte> buffer) -> int
+override PandaBear.Testing.DisposalTrackingStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override PandaBear.Testing.DisposalTrackingStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
+override PandaBear.Testing.DisposalTrackingStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override PandaBear.Testing.DisposalTrackingStream.SetLength(long value) -> void
+override PandaBear.Testing.DisposalTrackingStream.Write(byte[]! buffer, int offset, int count) -> void
+override PandaBear.Testing.DisposalTrackingStream.Write(System.ReadOnlySpan<byte> buffer) -> void
+override PandaBear.Testing.DisposalTrackingStream.WriteAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+override PandaBear.Testing.DisposalTrackingStream.WriteAsync(System.ReadOnlyMemory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.GatedChunkReadStream
+PandaBear.Testing.GatedChunkReadStream.BytesRead.get -> long
+PandaBear.Testing.GatedChunkReadStream.GatedChunkReadStream(byte[]! content, int chunkSize) -> void
+PandaBear.Testing.GatedChunkReadStream.IsDisposed.get -> bool
+PandaBear.Testing.GatedChunkReadStream.LargestRequestedRead.get -> int
+PandaBear.Testing.GatedChunkReadStream.ReadCount.get -> int
+PandaBear.Testing.GatedChunkReadStream.ReleaseAll() -> void
+PandaBear.Testing.GatedChunkReadStream.ReleaseRead() -> void
+PandaBear.Testing.GatedChunkReadStream.WaitForPendingRead(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+override PandaBear.Testing.GatedChunkReadStream.CanRead.get -> bool
+override PandaBear.Testing.GatedChunkReadStream.CanSeek.get -> bool
+override PandaBear.Testing.GatedChunkReadStream.CanWrite.get -> bool
+override PandaBear.Testing.GatedChunkReadStream.Flush() -> void
+override PandaBear.Testing.GatedChunkReadStream.Length.get -> long
+override PandaBear.Testing.GatedChunkReadStream.Position.get -> long
+override PandaBear.Testing.GatedChunkReadStream.Position.set -> void
+override PandaBear.Testing.GatedChunkReadStream.Read(byte[]! buffer, int offset, int count) -> int
+override PandaBear.Testing.GatedChunkReadStream.Read(System.Span<byte> buffer) -> int
+override PandaBear.Testing.GatedChunkReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override PandaBear.Testing.GatedChunkReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
+override PandaBear.Testing.GatedChunkReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override PandaBear.Testing.GatedChunkReadStream.SetLength(long value) -> void
+override PandaBear.Testing.GatedChunkReadStream.Write(byte[]! buffer, int offset, int count) -> void
+PandaBear.Testing.ThrowingReadStream
+PandaBear.Testing.ThrowingReadStream.BytesRead.get -> long
+PandaBear.Testing.ThrowingReadStream.IsDisposed.get -> bool
+PandaBear.Testing.ThrowingReadStream.ReadCount.get -> int
+PandaBear.Testing.ThrowingReadStream.ThrowingReadStream(byte[]! prefix, System.Exception! exception) -> void
+PandaBear.Testing.ThrowingReadStream.ThrowingReadStream(System.Exception! exception) -> void
+override PandaBear.Testing.ThrowingReadStream.CanRead.get -> bool
+override PandaBear.Testing.ThrowingReadStream.CanSeek.get -> bool
+override PandaBear.Testing.ThrowingReadStream.CanWrite.get -> bool
+override PandaBear.Testing.ThrowingReadStream.Flush() -> void
+override PandaBear.Testing.ThrowingReadStream.Length.get -> long
+override PandaBear.Testing.ThrowingReadStream.Position.get -> long
+override PandaBear.Testing.ThrowingReadStream.Position.set -> void
+override PandaBear.Testing.ThrowingReadStream.Read(byte[]! buffer, int offset, int count) -> int
+override PandaBear.Testing.ThrowingReadStream.Read(System.Span<byte> buffer) -> int
+override PandaBear.Testing.ThrowingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override PandaBear.Testing.ThrowingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<int>
+override PandaBear.Testing.ThrowingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override PandaBear.Testing.ThrowingReadStream.SetLength(long value) -> void
+override PandaBear.Testing.ThrowingReadStream.Write(byte[]! buffer, int offset, int count) -> void
+PandaBear.Testing.TrackingReadStream.MaxBytesPerRead.get -> int
+PandaBear.Testing.TrackingReadStream.MaxBytesPerRead.init -> void

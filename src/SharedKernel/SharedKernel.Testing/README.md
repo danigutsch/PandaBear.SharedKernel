@@ -30,8 +30,9 @@ Use `SerialTestJustificationAttribute` on xUnit collection definitions that disa
 
 ## Test doubles
 
-- Streams: `BlockingReadStream`, `GatedCountingReadStream`, `RecordingWriteStream`,
-  `TrackingReadStream` and `UnsizedStream` cover blocking, counting, gating, unknown-length and disposal-tracking cases.
+- Streams: `BlockingReadStream`, `GatedCountingReadStream`, `GatedChunkReadStream`, `ThrowingReadStream`,
+  `DisposalTrackingStream`, `RecordingWriteStream`, `TrackingReadStream` and `UnsizedStream` cover blocking, counting, gating,
+  failing, unknown-length and disposal-tracking cases. See [Streams for cancellation and disposal tests](#streams-for-cancellation-and-disposal-tests).
 - Metrics: `MeterCollector` is an `IMeterFactory` that records the long measurements of its meters (pass a meter
   name to restrict it); `ThrowingMeterFactory` fails every `Create` call.
 - Processes and Git: `TestProcess.Run` runs a process and captures its output; `TestGit` runs Git without the user's
@@ -47,6 +48,35 @@ Use `SerialTestJustificationAttribute` on xUnit collection definitions that disa
   `RecordingFakeExecutable` also records arguments, environment and process ID.
 - File system: `FileSystemProbes` reports `CanCreateSymbolicLinks`, `CanDenyAccess` and `IsCaseSensitive` for
   `SkipUnless` conditions. Use `TemporaryDirectory` for every temporary directory lifetime.
+
+## Streams for cancellation and disposal tests
+
+Every stream below except `GatedCountingReadStream` and `DisposalTrackingStream` is non-seekable and read-only. Signals are tasks
+completed with `RunContinuationsAsynchronously`, so a test awaits them instead of sleeping; give each wait a bounded timeout only as a
+failure guard.
+
+| Stream | Behaviour | Observe |
+| --- | --- | --- |
+| `BlockingReadStream(prefix, remainder)` | Serves `prefix`, blocks the next read until `Release()`, its token fires, or disposal; then serves `remainder`. `new BlockingReadStream()` blocks the first read. | `ReadStarted`, `Blocked`, `BlockedReadCancelled`, `BytesRead`, `IsDisposed`, `Disposed` |
+| `GatedChunkReadStream(content, chunkSize)` | Serves at most `chunkSize` bytes per read and holds every read until `ReleaseRead()` (one read) or `ReleaseAll()`. | `WaitForPendingRead(ct)`, `BytesRead`, `ReadCount`, `LargestRequestedRead`, `IsDisposed` |
+| `GatedCountingReadStream(content)` | Seekable; holds reads until a single `Release()`. | `ReadStarted`, `BytesRead` |
+| `ThrowingReadStream(prefix, exception)` | Serves `prefix`, then every read throws `exception` (asynchronous reads return a faulted task). | `ReadCount`, `BytesRead`, `IsDisposed` |
+| `TrackingReadStream(content, seekable)` | Serves `content`, at most `MaxBytesPerRead` bytes per read. | `ReadCount`, `BytesRead`, `IsDisposed` |
+| `DisposalTrackingStream(inner)` | Delegates to `inner` and disposes it the same way (synchronously or asynchronously). | `IsDisposed`, `Disposed`, `DisposeCount`, `AsyncDisposeCount`, `InnerStream` |
+
+Asynchronous reads honour their cancellation token while held. Synchronous reads cannot be cancelled: they wait until a release or
+disposal, so start them on a dedicated thread. Disposal ends a held read with `ObjectDisposedException`. `CopyTo` and `CopyToAsync` write
+the bytes served before a block or failure to the destination first.
+
+```csharp
+// The handler must cancel the upstream read and dispose the stream when the client disconnects.
+var body = new BlockingReadStream(prefix: "i"u8.ToArray(), remainder: []);
+var tracked = new DisposalTrackingStream(body);
+// ... hand `tracked` to the code under test, read the first byte, then disconnect ...
+await body.Blocked.WaitAsync(TimeSpan.FromSeconds(10), ct);
+await tracked.Disposed.WaitAsync(TimeSpan.FromSeconds(10), ct);
+body.BlockedReadCancelled.ShouldBeTrue();
+```
 
 ## Package identity and availability
 
