@@ -81,6 +81,7 @@ already owns its kind; add a package only when a new kind needs a dependency tha
 | `SharedKernel.Testing.Domain` | Domain event dispatcher and dispatch handler fakes | `SharedKernel.Domain` |
 | `SharedKernel.Testing.Mediator` | Reference mediator test dispatcher | `SharedKernel.Mediator.Abstractions` |
 | `SharedKernel.Testing.Messaging` | Event envelope publisher and integration event handler fakes | `SharedKernel.Messaging`, `SharedKernel.Messaging.IntegrationEvents` |
+| `SharedKernel.Testing.ObjectStorage` | In-memory object store with call recording and failure injection | `SharedKernel.ObjectStorage` |
 | `SharedKernel.Testing.Data` and `SharedKernel.Testing.Snapshots` | Deterministic data and snapshot text helpers | No SharedKernel package |
 | `SharedKernel.Testing.Roslyn` | Compilation, analyzer, and generator test harnesses | Roslyn |
 | `SharedKernel.Testing.Analyzers` and `SharedKernel.Testing.CodeFixes` | Analyzers and code fixes for test conventions | Roslyn; code fixes depend on the analyzers |

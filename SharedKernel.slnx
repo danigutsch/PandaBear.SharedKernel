@@ -85,6 +85,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Testing.Logging/SharedKernel.Testing.Logging.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Mediator/SharedKernel.Testing.Mediator.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Messaging/SharedKernel.Testing.Messaging.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Testing.ObjectStorage/SharedKernel.Testing.ObjectStorage.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Playwright/SharedKernel.Testing.Playwright.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Roslyn/SharedKernel.Testing.Roslyn.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Sqlite/SharedKernel.Testing.Sqlite.csproj" />
@@ -167,6 +168,7 @@
   <Project Path="tests/SharedKernel.Testing.CodeFixRunner.Tests/SharedKernel.Testing.CodeFixRunner.Tests.csproj" />
   <Project Path="tests/SharedKernel.Testing.Contracts/SharedKernel.Testing.Contracts.csproj" />
   <Project Path="tests/SharedKernel.Testing.Integration/SharedKernel.Testing.Integration.csproj" />
+  <Project Path="tests/SharedKernel.Testing.ObjectStorage.Tests/SharedKernel.Testing.ObjectStorage.Tests.csproj" />
   <Project Path="tests/SharedKernel.Testing.Packaging/SharedKernel.Testing.Packaging.csproj" />
   <Project Path="tests/SharedKernel.Testing.Scenarios/SharedKernel.Testing.Scenarios.csproj" />
   <Project Path="tests/SharedKernel.Testing.System/SharedKernel.Testing.System.csproj" />
