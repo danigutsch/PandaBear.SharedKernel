@@ -164,13 +164,18 @@ public sealed partial class UserTokenManager
             ArgumentException.ThrowIfNullOrWhiteSpace(scope);
         }
 
+        var (session, failure) = ActiveSession(user);
+        if (session is null)
+        {
+            return UserTokenResult.Failed(failure);
+        }
+
         var source = await GetAccessToken(user, ct).ConfigureAwait(false);
         if (!source.Succeeded)
         {
             return source;
         }
 
-        var session = ActiveSession(user).Session!;
         var target = new TokenExchangeTarget(audience, scope);
         var cached = await _store.GetExchangedToken(session, target, source.AccessToken, ct).ConfigureAwait(false);
         if (cached is { } hit && IsFresh(hit.ExpiresAt))
@@ -269,7 +274,12 @@ public sealed partial class UserTokenManager
             return (null, UserTokenFailure.NoSession);
         }
 
-        return session.ExpiresAt <= _timeProvider.GetUtcNow() ? (null, UserTokenFailure.SessionExpired) : (session, UserTokenFailure.None);
+        return HasEnded(session) ? (null, UserTokenFailure.SessionExpired) : (session, UserTokenFailure.None);
+    }
+
+    private bool HasEnded(UserSession session)
+    {
+        return session.ExpiresAt <= _timeProvider.GetUtcNow();
     }
 
     private bool IsFresh(DateTimeOffset expiresAt)
@@ -307,6 +317,13 @@ public sealed partial class UserTokenManager
         }
 
         var outcome = await _identityProvider.Refresh(tokens.RefreshToken, CancellationToken.None).ConfigureAwait(false);
+        if (HasEnded(session))
+        {
+            // The session ended while the identity provider answered; its entry cannot be written with a past expiry.
+            await _store.RemoveUserTokens(session, CancellationToken.None).ConfigureAwait(false);
+            return UserTokenResult.Failed(UserTokenFailure.SessionExpired);
+        }
+
         if (outcome.GrantRejected)
         {
             LogRefreshRejected(_logger);
@@ -357,6 +374,11 @@ public sealed partial class UserTokenManager
         CancellationToken ct)
     {
         var outcome = await _identityProvider.Exchange(sourceAccessToken, target, ct).ConfigureAwait(false);
+        if (HasEnded(session))
+        {
+            return UserTokenResult.Failed(UserTokenFailure.SessionExpired);
+        }
+
         if (outcome.Rejected)
         {
             LogExchangeRejected(_logger, target.Audience);

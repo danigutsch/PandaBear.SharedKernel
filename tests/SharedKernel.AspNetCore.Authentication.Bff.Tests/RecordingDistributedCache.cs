@@ -3,8 +3,12 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
 
-/// <summary>A dictionary-backed distributed cache that keeps entries until removed and records each entry's options.</summary>
-internal sealed class RecordingDistributedCache : IDistributedCache
+/// <summary>
+/// A dictionary-backed distributed cache that keeps entries until removed and records each entry's options. Given a clock,
+/// it refuses an absolute expiration that is not in the future, as <c>MemoryDistributedCache</c>, Redis and SQL Server do.
+/// </summary>
+/// <param name="time">The clock that checks absolute expirations, or <see langword="null" /> to accept any.</param>
+internal sealed class RecordingDistributedCache(TimeProvider? time = null) : IDistributedCache
 {
     /// <summary>Stored entries by key.</summary>
     internal ConcurrentDictionary<string, byte[]> Entries { get; } = new(StringComparer.Ordinal);
@@ -52,6 +56,11 @@ internal sealed class RecordingDistributedCache : IDistributedCache
     /// <inheritdoc />
     public void Set(string key, byte[] value, DistributedCacheEntryOptions options)
     {
+        if (time is not null && options.AbsoluteExpiration <= time.GetUtcNow())
+        {
+            throw new ArgumentOutOfRangeException(nameof(options), options.AbsoluteExpiration, "The absolute expiration value must be in the future.");
+        }
+
         Entries[key] = value;
         Options[key] = options;
     }

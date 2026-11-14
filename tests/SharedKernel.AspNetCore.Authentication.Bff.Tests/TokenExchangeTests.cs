@@ -169,4 +169,46 @@ public sealed class TokenExchangeTests
         var exchangeKey = host.Cache.Entries.Keys.Where(key => key.StartsWith("bff:exchanged-token:", StringComparison.Ordinal)).ShouldHaveSingleItem();
         host.Cache.Options[exchangeKey].AbsoluteExpiration.ShouldBe(BffTestHost.Start.AddMinutes(2));
     }
+
+    [Fact]
+    public async Task A_session_that_expires_while_the_source_token_is_refreshed_is_reported_as_expired()
+    {
+        // Arrange
+        using var host = new BffTestHost(options => options.SessionLifetime = TimeSpan.FromMinutes(30));
+        var user = await host.SignIn("alice");
+        host.Time.Advance(TimeSpan.FromMinutes(29));
+        host.IdentityProvider.Respond = request =>
+        {
+            host.Time.Advance(TimeSpan.FromMinutes(2));
+            return null;
+        };
+
+        // Act
+        var result = await host.Manager.GetAudienceAccessToken(user, "orders-api", null, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Failure.ShouldBe(UserTokenFailure.SessionExpired);
+        host.IdentityProvider.Grants(TokenExchangeGrant).ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task A_session_that_expires_during_an_exchange_is_reported_as_expired_and_the_token_is_not_cached()
+    {
+        // Arrange
+        using var host = new BffTestHost(options => options.SessionLifetime = TimeSpan.FromMinutes(30));
+        var user = await host.SignIn("alice", expiresIn: TimeSpan.FromHours(1));
+        host.Time.Advance(TimeSpan.FromMinutes(29));
+        host.IdentityProvider.Respond = request =>
+        {
+            host.Time.Advance(TimeSpan.FromMinutes(2));
+            return null;
+        };
+
+        // Act
+        var result = await host.Manager.GetAudienceAccessToken(user, "orders-api", null, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Failure.ShouldBe(UserTokenFailure.SessionExpired);
+        host.Cache.Entries.Keys.ShouldNotContain(key => key.Contains("exchanged-token", StringComparison.Ordinal));
+    }
 }

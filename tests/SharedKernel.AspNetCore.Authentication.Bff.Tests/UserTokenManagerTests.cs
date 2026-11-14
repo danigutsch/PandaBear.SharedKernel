@@ -351,6 +351,27 @@ public sealed class UserTokenManagerTests
     }
 
     [Fact]
+    public async Task A_session_that_expires_during_a_refresh_is_reported_as_expired_and_its_tokens_are_not_stored()
+    {
+        // Arrange
+        using var host = new BffTestHost(options => options.SessionLifetime = TimeSpan.FromMinutes(30));
+        var user = await host.SignIn("alice");
+        host.Time.Advance(TimeSpan.FromMinutes(29));
+        host.IdentityProvider.Respond = _ =>
+        {
+            host.Time.Advance(TimeSpan.FromMinutes(2));
+            return null;
+        };
+
+        // Act
+        var result = await host.Manager.GetAccessToken(user, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Failure.ShouldBe(UserTokenFailure.SessionExpired);
+        host.Cache.Entries.ShouldBeEmpty();
+    }
+
+    [Fact]
     public async Task A_user_without_a_session_gets_a_typed_failure()
     {
         // Arrange

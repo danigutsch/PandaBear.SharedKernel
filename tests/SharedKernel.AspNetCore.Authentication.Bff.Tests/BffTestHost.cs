@@ -28,6 +28,7 @@ internal sealed class BffTestHost : IDisposable
         bool revocationEndpoint = true,
         Action<IServiceCollection>? services = null)
     {
+        Cache = new RecordingDistributedCache(Time);
         var collection = new ServiceCollection();
         collection.AddLogging(logging => logging.AddProvider(Logs).SetMinimumLevel(LogLevel.Trace));
         collection.AddSingleton<TimeProvider>(Time);
@@ -55,8 +56,11 @@ internal sealed class BffTestHost : IDisposable
     /// <summary>The fake clock.</summary>
     internal FakeTimeProvider Time { get; } = new(Start);
 
-    /// <summary>The recording cache.</summary>
-    internal RecordingDistributedCache Cache { get; } = new();
+    /// <summary>The recording cache; it refuses an absolute expiration in the past.</summary>
+    internal RecordingDistributedCache Cache
+    {
+        get;
+    }
 
     /// <summary>The fake identity provider.</summary>
     internal FakeIdentityProvider IdentityProvider { get; } = new();
