@@ -15,5 +15,11 @@ public enum ImageOutputFormat
     Jpeg,
 
     /// <summary>Windows icon image format.</summary>
-    Ico
+    Ico,
+
+    /// <summary>
+    /// Lossless PNG image format. Images with alpha are written as 8-bit-per-channel RGBA, and no text, time, or EXIF
+    /// chunks are written. The variant quality is still validated but does not affect lossless PNG output.
+    /// </summary>
+    Png
 }

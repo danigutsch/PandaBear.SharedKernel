@@ -6,7 +6,7 @@ namespace PandaBear.ImageProcessing;
 /// <param name="Name">The caller-defined variant name.</param>
 /// <param name="Format">The encoded output format.</param>
 /// <param name="MaxWidth">The maximum output width in pixels.</param>
-/// <param name="Quality">The encoder quality from 1 through 100.</param>
+/// <param name="Quality">The encoder quality from 1 through 100; validated for every format but ignored by lossless <see cref="ImageOutputFormat.Png"/> output.</param>
 /// <param name="MaxHeight">The optional maximum output height in pixels.</param>
 public sealed record ImageVariantRequest(
     string Name,

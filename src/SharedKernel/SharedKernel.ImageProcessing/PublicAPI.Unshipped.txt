@@ -1,9 +1,31 @@
 #nullable enable
+PandaBear.ImageProcessing.ImageAnimationDetector
+PandaBear.ImageProcessing.ImageAnimationStatus
+PandaBear.ImageProcessing.ImageAnimationStatus.Animated = 2 -> PandaBear.ImageProcessing.ImageAnimationStatus
+PandaBear.ImageProcessing.ImageAnimationStatus.Malformed = 0 -> PandaBear.ImageProcessing.ImageAnimationStatus
+PandaBear.ImageProcessing.ImageAnimationStatus.Static = 1 -> PandaBear.ImageProcessing.ImageAnimationStatus
+PandaBear.ImageProcessing.ImageAnimationStatus.Unsupported = 3 -> PandaBear.ImageProcessing.ImageAnimationStatus
+PandaBear.ImageProcessing.ImageInputFormat
+PandaBear.ImageProcessing.ImageInputFormat.Avif = 3 -> PandaBear.ImageProcessing.ImageInputFormat
+PandaBear.ImageProcessing.ImageInputFormat.Jpeg = 0 -> PandaBear.ImageProcessing.ImageInputFormat
+PandaBear.ImageProcessing.ImageInputFormat.Png = 1 -> PandaBear.ImageProcessing.ImageInputFormat
+PandaBear.ImageProcessing.ImageInputFormat.WebP = 2 -> PandaBear.ImageProcessing.ImageInputFormat
 PandaBear.ImageProcessing.ImageOutputFormat
 PandaBear.ImageProcessing.ImageOutputFormat.Avif = 0 -> PandaBear.ImageProcessing.ImageOutputFormat
 PandaBear.ImageProcessing.ImageOutputFormat.Ico = 3 -> PandaBear.ImageProcessing.ImageOutputFormat
 PandaBear.ImageProcessing.ImageOutputFormat.Jpeg = 2 -> PandaBear.ImageProcessing.ImageOutputFormat
+PandaBear.ImageProcessing.ImageOutputFormat.Png = 4 -> PandaBear.ImageProcessing.ImageOutputFormat
 PandaBear.ImageProcessing.ImageOutputFormat.WebP = 1 -> PandaBear.ImageProcessing.ImageOutputFormat
+PandaBear.ImageProcessing.ImageProbeResult
+PandaBear.ImageProcessing.ImageProbeResult.Format.get -> PandaBear.ImageProcessing.ImageInputFormat
+PandaBear.ImageProcessing.ImageProbeResult.Format.init -> void
+PandaBear.ImageProcessing.ImageProbeResult.Height.get -> int
+PandaBear.ImageProcessing.ImageProbeResult.Height.init -> void
+PandaBear.ImageProcessing.ImageProbeResult.ImageProbeResult(PandaBear.ImageProcessing.ImageInputFormat Format, int Width, int Height, bool IsAnimated) -> void
+PandaBear.ImageProcessing.ImageProbeResult.IsAnimated.get -> bool
+PandaBear.ImageProcessing.ImageProbeResult.IsAnimated.init -> void
+PandaBear.ImageProcessing.ImageProbeResult.Width.get -> int
+PandaBear.ImageProcessing.ImageProbeResult.Width.init -> void
 PandaBear.ImageProcessing.ImageProcessingException
 PandaBear.ImageProcessing.ImageProcessingException.ImageProcessingException() -> void
 PandaBear.ImageProcessing.ImageProcessingException.ImageProcessingException(string! message) -> void
@@ -57,5 +79,9 @@ PandaBear.ImageProcessing.ProcessedImageVariant.Name.init -> void
 PandaBear.ImageProcessing.ProcessedImageVariant.ProcessedImageVariant(string! Name, PandaBear.ImageProcessing.ImageOutputFormat Format, int Width, int Height, System.ReadOnlyMemory<byte> Content) -> void
 PandaBear.ImageProcessing.ProcessedImageVariant.Width.get -> int
 PandaBear.ImageProcessing.ProcessedImageVariant.Width.init -> void
+const PandaBear.ImageProcessing.ImageAnimationDetector.MaxChunkCount = 4096 -> int
+static PandaBear.ImageProcessing.ImageAnimationDetector.Detect(System.IO.Stream! content) -> PandaBear.ImageProcessing.ImageAnimationStatus
+static PandaBear.ImageProcessing.ImageAnimationDetector.Detect(System.ReadOnlySpan<byte> content) -> PandaBear.ImageProcessing.ImageAnimationStatus
 static PandaBear.ImageProcessing.ImageProcessingLimits.WebDefault.get -> PandaBear.ImageProcessing.ImageProcessingLimits!
+static PandaBear.ImageProcessing.MagickImageProcessor.Probe(System.IO.Stream! content, PandaBear.ImageProcessing.ImageProcessingLimits! limits) -> PandaBear.ImageProcessing.ImageProbeResult!
 static PandaBear.ImageProcessing.MagickImageProcessor.Process(PandaBear.ImageProcessing.ImageProcessingRequest! request, System.Threading.CancellationToken ct) -> PandaBear.ImageProcessing.ImageProcessingResult!

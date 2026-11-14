@@ -7,6 +7,8 @@ namespace PandaBear.ImageProcessing;
 /// </summary>
 public static class MagickImageProcessor
 {
+    private const uint DefaultPngCompressionQuality = 75;
+
     static MagickImageProcessor()
     {
         ApplyResourceLimits(ImageProcessingLimits.WebDefault);
@@ -36,11 +38,8 @@ public static class MagickImageProcessor
         try
         {
             EnsureStreamCanBeProbed(request.Content);
-            EnsureSupportedInputSignature(request.Content);
-            EnsureLimitValues(request.Limits);
-
-            var imageInfo = ProbeImage(request.Content);
-            EnsureWithinLimits(imageInfo.Width, imageInfo.Height, request.Limits);
+            EnsureSupportedInput(request.Content, request.Limits);
+            ProbeWithinLimits(request.Content, request.Limits);
 
             using var image = new MagickImage(request.Content);
             image.AutoOrient();
@@ -58,6 +57,101 @@ public static class MagickImageProcessor
         catch (MagickException exception)
         {
             throw new ImageProcessingException("Image data could not be decoded or encoded.", exception);
+        }
+    }
+
+    /// <summary>
+    /// Reads the format, stored dimensions, and animation flag of an image from its headers without decoding pixel data.
+    /// The stream must be seekable and positioned at the beginning; its position is restored before the method returns.
+    /// </summary>
+    /// <param name="content">The seekable image stream.</param>
+    /// <param name="limits">The decoded image limits the stored dimensions must satisfy.</param>
+    /// <returns>The probed image details.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/> or <paramref name="limits"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when the stream cannot seek, is not at the beginning, or the limits are invalid.</exception>
+    /// <exception cref="ImageProcessingException">The image format is unsupported, the container is malformed, or the image exceeds the limits.</exception>
+    public static ImageProbeResult Probe(Stream content, ImageProcessingLimits limits)
+    {
+        ArgumentNullException.ThrowIfNull(content);
+        ArgumentNullException.ThrowIfNull(limits);
+        EnsureStreamCanBeProbed(content);
+
+        try
+        {
+            EnsureSupportedInput(content, limits);
+            var imageInfo = ProbeWithinLimits(content, limits);
+            var format = ToInputFormat(imageInfo.Format);
+            var isAnimated = DetectAnimation(content, format);
+
+            return new ImageProbeResult(format, (int)imageInfo.Width, (int)imageInfo.Height, isAnimated);
+        }
+        catch (MagickException exception)
+        {
+            throw new ImageProcessingException("Image data could not be decoded.", exception);
+        }
+        finally
+        {
+            content.Position = 0;
+        }
+    }
+
+    private static void EnsureSupportedInput(Stream content, ImageProcessingLimits limits)
+    {
+        EnsureSupportedInputSignature(content);
+        EnsureLimitValues(limits);
+    }
+
+    private static MagickImageInfo ProbeWithinLimits(Stream content, ImageProcessingLimits limits)
+    {
+        var imageInfo = ProbeImage(content);
+        EnsureWithinLimits(imageInfo.Width, imageInfo.Height, limits);
+
+        return imageInfo;
+    }
+
+    private static ImageInputFormat ToInputFormat(MagickFormat format) => format switch
+    {
+        MagickFormat.Jpeg or MagickFormat.Jpg => ImageInputFormat.Jpeg,
+        MagickFormat.Png
+            or MagickFormat.Png8
+            or MagickFormat.Png24
+            or MagickFormat.Png32
+            or MagickFormat.Png48
+            or MagickFormat.Png64
+            or MagickFormat.APng => ImageInputFormat.Png,
+        MagickFormat.WebP => ImageInputFormat.WebP,
+        MagickFormat.Avif => ImageInputFormat.Avif,
+        _ => throw new ImageProcessingException("Image data uses an unsupported image format.")
+    };
+
+    private static bool DetectAnimation(Stream content, ImageInputFormat format) => format switch
+    {
+        ImageInputFormat.Png or ImageInputFormat.WebP => ImageAnimationDetector.Detect(content) switch
+        {
+            ImageAnimationStatus.Animated => true,
+            ImageAnimationStatus.Static => false,
+            _ => throw new ImageProcessingException("Image container is malformed.")
+        },
+        ImageInputFormat.Avif => HasMultipleFrames(content),
+        ImageInputFormat.Jpeg => false,
+        _ => throw new ArgumentOutOfRangeException(nameof(format), format, "Unsupported image input format.")
+    };
+
+    private static bool HasMultipleFrames(Stream content)
+    {
+        // FrameCount bounds the ping to two frames; ResourceLimits.ListLength does not bound image sequences.
+        var settings = new MagickReadSettings { FrameCount = 2 };
+        var position = content.Position;
+        try
+        {
+            using var frames = new MagickImageCollection();
+            frames.Ping(content, settings);
+
+            return frames.Count > 1;
+        }
+        finally
+        {
+            content.Position = position;
         }
     }
 
@@ -126,7 +220,14 @@ public static class MagickImageProcessor
         }
 
         image.Format = ToMagickFormat(request.Format);
-        image.Quality = (uint)quality;
+        if (request.Format == ImageOutputFormat.Png)
+        {
+            ConfigureLosslessPng((MagickImage)image);
+        }
+        else
+        {
+            image.Quality = (uint)quality;
+        }
 
         using var output = new MemoryStream();
         image.Write(output);
@@ -152,6 +253,23 @@ public static class MagickImageProcessor
         }
     }
 
+    private static void ConfigureLosslessPng(MagickImage image)
+    {
+        // ImageMagick reads PNG "quality" as zlib level and filter digits, not as fidelity, and a clone inherits the
+        // decoded source quality. Pin ImageMagick's own PNG default (zlib level 7, adaptive filtering) instead.
+        image.Quality = DefaultPngCompressionQuality;
+
+        // Write alpha as 8-bit RGBA so semi-transparent pixels never go through a palette reduction.
+        if (image.HasAlpha)
+        {
+            image.Format = MagickFormat.Png32;
+        }
+
+        // Keep timestamps out of the output: "date" drops the date:* tEXt chunks and "time" drops tIME. This adds to
+        // the png:exclude-chunk list Strip() sets, so text, EXIF, and profile chunks stay excluded too.
+        image.Settings.SetDefine(MagickFormat.Png, "exclude-chunks", "date,time");
+    }
+
     private static int ValidateQuality(int quality)
         => quality is < 1 or > 100
             ? throw new ArgumentOutOfRangeException(nameof(quality), quality, "Image variant quality must be between 1 and 100.")
@@ -170,6 +288,7 @@ public static class MagickImageProcessor
         ImageOutputFormat.WebP => MagickFormat.WebP,
         ImageOutputFormat.Jpeg => MagickFormat.Jpeg,
         ImageOutputFormat.Ico => MagickFormat.Ico,
+        ImageOutputFormat.Png => MagickFormat.Png,
         _ => throw new ArgumentOutOfRangeException(nameof(format), format, "Unsupported image output format.")
     };
 
