@@ -10,10 +10,7 @@ public sealed class TrackingHttpContent : HttpContent
     /// <summary>
     /// Gets a value indicating whether disposal has occurred.
     /// </summary>
-    public bool IsDisposed
-    {
-        get; private set;
-    }
+    public bool IsDisposed { get; private set; }
 
     /// <inheritdoc />
     protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)

@@ -52,11 +52,7 @@ public sealed record ImageSanitizerOptions
     /// rewritten, so an accepted AVIF is returned unchanged with <see cref="SanitizedImage.MetadataRemoved"/> <see langword="false"/>. Allow it
     /// only when keeping that metadata is acceptable, or when the application re-encodes the image afterwards.
     /// </summary>
-    public bool AllowAvif
-    {
-        get;
-        init;
-    }
+    public bool AllowAvif { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether animated images are refused with <see cref="ImageSanitizer.AnimatedMessage"/>: an APNG (an
@@ -64,9 +60,5 @@ public sealed record ImageSanitizerOptions
     /// image sequence (the <c>avis</c> brand or a <c>moov</c> box). Default <see langword="false"/>; <see cref="SanitizedImage.IsAnimated"/>
     /// reports animation either way.
     /// </summary>
-    public bool RejectAnimation
-    {
-        get;
-        init;
-    }
+    public bool RejectAnimation { get; init; }
 }

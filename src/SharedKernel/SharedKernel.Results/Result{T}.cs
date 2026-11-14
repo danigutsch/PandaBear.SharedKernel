@@ -45,10 +45,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>, IResultLike<Result<T>>
     /// <summary>
     /// Gets the result status.
     /// </summary>
-    public ResultStatus Status
-    {
-        get;
-    }
+    public ResultStatus Status { get; }
 
     /// <summary>
     /// Gets the success value.

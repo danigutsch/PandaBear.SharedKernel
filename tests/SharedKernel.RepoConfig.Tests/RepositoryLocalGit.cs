@@ -15,10 +15,7 @@ internal sealed class RepositoryLocalGit
     }
 
     /// <summary>Gets the environment variables that put the fake <c>git</c> ahead of the real one and name its marker file.</summary>
-    public IReadOnlyDictionary<string, string?> EnvironmentVariables
-    {
-        get;
-    }
+    public IReadOnlyDictionary<string, string?> EnvironmentVariables { get; }
 
     /// <summary>Gets a value indicating whether the fake <c>git</c> was executed, shown by its marker file existing.</summary>
     public bool Ran => File.Exists(_markerPath);

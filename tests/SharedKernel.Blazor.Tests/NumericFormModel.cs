@@ -4,8 +4,5 @@ namespace PandaBear.Blazor.Tests;
 internal sealed class NumericFormModel
 {
     /// <summary>Gets or sets the quantity.</summary>
-    public int Quantity
-    {
-        get; set;
-    }
+    public int Quantity { get; set; }
 }

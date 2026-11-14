@@ -122,10 +122,7 @@ public static class ResultExtensions
     private static class NonGenericFactories
     {
         /// <summary>Factories that create the non-generic failure results.</summary>
-        internal static FailureResultFactories<Result> Instance
-        {
-            get;
-        } =
+        internal static FailureResultFactories<Result> Instance { get; } =
             new(
                 Result.Invalid,
                 Result.NotFound,

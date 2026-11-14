@@ -24,16 +24,10 @@ internal sealed class TestPrompts(string newPassword, string? filePassword = nul
     public bool IsInteractive { get; init; } = true;
 
     /// <summary>Runs at each new-password prompt before it is answered, for example to cancel the command or to fail.</summary>
-    public Action? OnNewPassword
-    {
-        get; init;
-    }
+    public Action? OnNewPassword { get; init; }
 
     /// <summary>Runs at each file password prompt before it is answered, for example to change the input file.</summary>
-    public Action? OnFilePassword
-    {
-        get; init;
-    }
+    public Action? OnFilePassword { get; init; }
 
     /// <summary>Creates the command environment that records prompts, runs the configured hooks, and uses a clock fixed at <see cref="PipelineInputs.Now"/>.</summary>
     public VaultCommandEnvironment Environment() => new(

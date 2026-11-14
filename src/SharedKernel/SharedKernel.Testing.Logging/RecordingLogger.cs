@@ -10,10 +10,7 @@ public class RecordingLogger : ILogger
     private readonly List<object> _scopes = [];
 
     /// <summary>Gets or sets the lowest level <see cref="IsEnabled" /> reports as enabled; records are kept regardless of level.</summary>
-    public LogLevel MinimumLevel
-    {
-        get; set;
-    } = LogLevel.Trace;
+    public LogLevel MinimumLevel { get; set; } = LogLevel.Trace;
 
     /// <summary>Gets a snapshot of the captured records in logging order.</summary>
     public IReadOnlyList<RecordedLog> Records

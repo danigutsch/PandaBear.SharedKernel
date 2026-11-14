@@ -20,10 +20,7 @@ internal sealed class FakeIdentityProvider : HttpMessageHandler
     internal ConcurrentQueue<IdentityProviderRequest> Requests { get; } = new();
 
     /// <summary>Delay before each answer.</summary>
-    internal TimeSpan Delay
-    {
-        get; set;
-    }
+    internal TimeSpan Delay { get; set; }
 
     /// <summary>Lifetime in seconds of issued tokens.</summary>
     internal int ExpiresIn { get; set; } = 300;
@@ -32,10 +29,7 @@ internal sealed class FakeIdentityProvider : HttpMessageHandler
     internal bool RotateRefreshTokens { get; set; } = true;
 
     /// <summary>Overrides the answer to a request; returning null falls back to the default answer.</summary>
-    internal Func<IdentityProviderRequest, HttpResponseMessage?>? Respond
-    {
-        get; set;
-    }
+    internal Func<IdentityProviderRequest, HttpResponseMessage?>? Respond { get; set; }
 
     /// <summary>The requests with the given grant type.</summary>
     internal IReadOnlyList<IdentityProviderRequest> Grants(string grantType)

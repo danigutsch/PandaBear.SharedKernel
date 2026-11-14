@@ -22,28 +22,16 @@ public sealed class SiteTheme : ValueObject
     public static SiteTheme Default { get; } = CreateDefault();
 
     /// <summary>Gets the colour tokens.</summary>
-    public SiteColors Colors
-    {
-        get;
-    }
+    public SiteColors Colors { get; }
 
     /// <summary>Gets the typography as given; <see cref="Effective" /> fills unset values from <see cref="Default" />.</summary>
-    public SiteTypography Typography
-    {
-        get;
-    }
+    public SiteTypography Typography { get; }
 
     /// <summary>Gets the self-hosted fonts in key order.</summary>
-    public IReadOnlyList<ThemeFont> Fonts
-    {
-        get;
-    }
+    public IReadOnlyList<ThemeFont> Fonts { get; }
 
     /// <summary>Gets a value indicating whether the owner allowed body text below 1rem and other text below 0.875rem.</summary>
-    public bool AllowsSmallText
-    {
-        get;
-    }
+    public bool AllowsSmallText { get; }
 
     /// <summary>Creates a theme that meets every rule.</summary>
     /// <param name="colors">The colours.</param>

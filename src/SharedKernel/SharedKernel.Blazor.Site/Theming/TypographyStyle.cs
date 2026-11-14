@@ -46,52 +46,28 @@ public sealed class TypographyStyle : ValueObject
     public static TypographyStyle Inherit { get; } = new(null, null, null, null, null, null, null, null);
 
     /// <summary>Gets the key of the self-hosted <see cref="ThemeFont" />, or <see langword="null" /> for the system stack.</summary>
-    public string? FontKey
-    {
-        get;
-    }
+    public string? FontKey { get; }
 
     /// <summary>Gets the system stack after the self-hosted font, or the whole family without one.</summary>
-    public GenericFontFamily? Fallback
-    {
-        get;
-    }
+    public GenericFontFamily? Fallback { get; }
 
     /// <summary>Gets the font size.</summary>
-    public FontSize? Size
-    {
-        get;
-    }
+    public FontSize? Size { get; }
 
     /// <summary>Gets the font weight, a multiple of 100 from 100 to 900.</summary>
-    public int? Weight
-    {
-        get;
-    }
+    public int? Weight { get; }
 
     /// <summary>Gets the unitless line height.</summary>
-    public decimal? LineHeight
-    {
-        get;
-    }
+    public decimal? LineHeight { get; }
 
     /// <summary>Gets the letter spacing in em.</summary>
-    public decimal? LetterSpacing
-    {
-        get;
-    }
+    public decimal? LetterSpacing { get; }
 
     /// <summary>Gets the text transform.</summary>
-    public ThemeTextTransform? Transform
-    {
-        get;
-    }
+    public ThemeTextTransform? Transform { get; }
 
     /// <summary>Gets a value indicating whether the text is italic.</summary>
-    public bool? Italic
-    {
-        get;
-    }
+    public bool? Italic { get; }
 
     /// <summary>Gets a value indicating whether the style sets a font family (a font key or a fallback).</summary>
     public bool SetsFamily => FontKey is not null || Fallback is not null;

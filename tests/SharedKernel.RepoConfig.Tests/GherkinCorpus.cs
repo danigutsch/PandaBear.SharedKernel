@@ -28,10 +28,7 @@ internal static class GherkinCorpus
     private static readonly string WideScenarioName = string.Concat(Enumerable.Repeat("\U0001F600", 150));
 
     /// <summary>The corpus files by repository path, with the content of each.</summary>
-    public static IReadOnlyDictionary<string, string> Files
-    {
-        get;
-    } = new Dictionary<string, string>(StringComparer.Ordinal)
+    public static IReadOnlyDictionary<string, string> Files { get; } = new Dictionary<string, string>(StringComparer.Ordinal)
     {
         ["tests/corpus/clean.feature"] = "Feature: Clean\n    Scenario: s\n        Given x\n",
         ["tests/corpus/empty.feature"] = "",
@@ -73,10 +70,7 @@ internal static class GherkinCorpus
     };
 
     /// <summary>The issues that <c>verify-gherkin</c> reports for the whole corpus.</summary>
-    public static IReadOnlyList<string> Issues
-    {
-        get;
-    } =
+    public static IReadOnlyList<string> Issues { get; } =
     [
         "- tests/corpus/bom-comment.feature: Line 1: Trailing whitespace is not allowed.",
         "- tests/corpus/bom.feature: Line 1: A Feature declaration is required.",
@@ -122,10 +116,7 @@ internal static class GherkinCorpus
     ];
 
     /// <summary>The issues that <c>verify-gherkin</c> reports when it is given explicit paths.</summary>
-    public static IReadOnlyList<string> ExplicitPathIssues
-    {
-        get;
-    } =
+    public static IReadOnlyList<string> ExplicitPathIssues { get; } =
     [
         "- tests/corpus/sub/dup-c.feature: Line 1: Duplicate Feature name 'Duplicate'.",
         "- tests/corpus/tags.feature: Line 1: Tag '@Unknown' is not allowed.",

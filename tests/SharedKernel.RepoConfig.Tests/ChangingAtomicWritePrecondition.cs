@@ -5,10 +5,7 @@ namespace PandaBear.RepoConfig.Tests;
 internal sealed class ChangingAtomicWritePrecondition(TemporaryRepoConfigWorkspace workspace)
 {
     /// <summary>The number of times <see cref="Verify"/> has run.</summary>
-    public int VerificationCount
-    {
-        get; private set;
-    }
+    public int VerificationCount { get; private set; }
 
     /// <summary>Overwrites <c>input.json</c> on the first call and throws on later calls because the file differs from its original content.</summary>
     public void Verify()

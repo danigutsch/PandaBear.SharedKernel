@@ -14,16 +14,10 @@ internal sealed partial record SdkVersion
     }
 
     /// <summary>Gets the version text.</summary>
-    public string Value
-    {
-        get;
-    }
+    public string Value { get; }
 
     /// <summary>Gets the major version, which selects the target framework.</summary>
-    public int Major
-    {
-        get;
-    }
+    public int Major { get; }
 
     /// <summary>Parses <paramref name="text"/> as <c>major.minor.patch</c> with an optional dot-separated pre-release part.</summary>
     /// <returns><see langword="false"/> when the text is not such a version or its major version is below 6.</returns>

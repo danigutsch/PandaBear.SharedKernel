@@ -21,10 +21,7 @@ public sealed class ContentCulture : ValueObject
     private ContentCulture(string value) => Value = value;
 
     /// <summary>Gets the canonical culture name.</summary>
-    public string Value
-    {
-        get;
-    }
+    public string Value { get; }
 
     /// <summary>
     /// Gets the culture with the last part removed (<c>pt-BR</c> gives <c>pt</c>), together with a singleton left without a subtag

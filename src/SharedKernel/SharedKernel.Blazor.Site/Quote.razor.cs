@@ -7,16 +7,10 @@ public sealed partial class Quote
 {
     /// <summary>Gets or sets who said it, for example "Ana, Lisbon".</summary>
     [Parameter]
-    public string? Cite
-    {
-        get; set;
-    }
+    public string? Cite { get; set; }
 
     /// <summary>Gets or sets the quoted text.</summary>
     [Parameter]
     [EditorRequired]
-    public RenderFragment? ChildContent
-    {
-        get; set;
-    }
+    public RenderFragment? ChildContent { get; set; }
 }

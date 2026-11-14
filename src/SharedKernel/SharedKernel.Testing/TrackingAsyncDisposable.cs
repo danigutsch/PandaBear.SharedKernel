@@ -12,10 +12,7 @@ public sealed class TrackingAsyncDisposable(
     private int disposed;
 
     /// <summary>Gets a value indicating whether the first disposal call has run.</summary>
-    public bool DisposeCalled
-    {
-        get; private set;
-    }
+    public bool DisposeCalled { get; private set; }
 
     /// <summary>Records the name once and returns the configured failure; repeat calls complete immediately without recording again.</summary>
     /// <returns>A completed task, or a faulted task carrying the configured failure on the first call.</returns>

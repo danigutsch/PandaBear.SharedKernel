@@ -13,10 +13,7 @@ public sealed class TestAreaAttribute(string value) : Attribute, ITraitAttribute
     /// <summary>
     /// Gets the declared value.
     /// </summary>
-    public string Value
-    {
-        get;
-    } = !string.IsNullOrWhiteSpace(value)
+    public string Value { get; } = !string.IsNullOrWhiteSpace(value)
         ? value
         : throw new ArgumentException("Value must not be empty or whitespace.", nameof(value));
 

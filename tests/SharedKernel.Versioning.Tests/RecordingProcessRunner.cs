@@ -10,10 +10,7 @@ internal sealed class RecordingProcessRunner(string? failingFileName = null)
     /// Gets each process in start order, with the content of its <c>--configfile</c> and the entries of its working
     /// directory when it started.
     /// </summary>
-    public List<(string FileName, string[] Arguments, string? WorkingDirectory, string? Configuration, string[] WorkingDirectoryEntries)> Processes
-    {
-        get;
-    } = [];
+    public List<(string FileName, string[] Arguments, string? WorkingDirectory, string? Configuration, string[] WorkingDirectoryEntries)> Processes { get; } = [];
 
     /// <summary>
     /// Records the process with its arguments, configuration file content, and working directory entries, then fails when its name matches the failing file name or returns a fixed output line.

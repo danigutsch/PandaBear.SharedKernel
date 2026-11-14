@@ -15,10 +15,7 @@ public sealed class PackageVersion : ValueObject
     private PackageVersion(string value) => Value = value;
 
     /// <summary>Gets the version text.</summary>
-    public string Value
-    {
-        get;
-    }
+    public string Value { get; }
 
     /// <summary>Creates a version from <paramref name="value"/>, which is not trimmed or changed.</summary>
     /// <param name="value">The candidate version text.</param>

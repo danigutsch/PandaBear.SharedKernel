@@ -31,34 +31,19 @@ public sealed class SanitizedImage
     /// Gets a value indicating whether the image is animated: an APNG, an animated WebP or an AVIF image sequence. Never
     /// <see langword="true"/> when <see cref="ImageSanitizerOptions.RejectAnimation"/> is set, because animated images are refused then.
     /// </summary>
-    public bool IsAnimated
-    {
-        get;
-    }
+    public bool IsAnimated { get; }
 
     /// <summary>Gets the format recognized from the bytes.</summary>
-    public ImageFormat Format
-    {
-        get;
-    }
+    public ImageFormat Format { get; }
 
     /// <summary>Gets the image without the removed metadata; the pixel data is unchanged, nothing is re-encoded.</summary>
-    public ReadOnlyMemory<byte> Bytes
-    {
-        get;
-    }
+    public ReadOnlyMemory<byte> Bytes { get; }
 
     /// <summary>Gets the width in pixels, from the image header.</summary>
-    public int Width
-    {
-        get;
-    }
+    public int Width { get; }
 
     /// <summary>Gets the height in pixels, from the image header.</summary>
-    public int Height
-    {
-        get;
-    }
+    public int Height { get; }
 
     /// <summary>Gets the usual file extension of the format, with its dot: <c>.jpg</c>, <c>.png</c>, <c>.webp</c> or <c>.avif</c>.</summary>
     public string FileExtension => Format switch

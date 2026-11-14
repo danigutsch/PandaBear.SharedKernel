@@ -26,25 +26,13 @@ public sealed class PackageConsumptionWorkspace : IDisposable
         File.WriteAllText(Path.Combine(RootPath, "NuGet.Config"), CreateNuGetConfig(feedPath));
     }
 
-    private string PackageVersion
-    {
-        get;
-    }
+    private string PackageVersion { get; }
 
-    private string RootPath
-    {
-        get;
-    }
+    private string RootPath { get; }
 
-    private string ProjectDirectory
-    {
-        get;
-    }
+    private string ProjectDirectory { get; }
 
-    private string ProjectFilePath
-    {
-        get;
-    }
+    private string ProjectFilePath { get; }
 
     /// <summary>
     /// Writes the project file and source files for the consumer workspace.

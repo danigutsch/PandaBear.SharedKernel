@@ -8,10 +8,7 @@ public sealed class ReferenceCode : ValueObject
     private ReferenceCode(string value) => Value = value;
 
     /// <summary>Gets the upper-case code.</summary>
-    public string Value
-    {
-        get;
-    }
+    public string Value { get; }
 
     /// <summary>Creates a code from text; surrounding whitespace is removed and letters are upper-cased.</summary>
     /// <param name="value">The candidate code.</param>

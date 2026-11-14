@@ -27,22 +27,13 @@ public sealed class PackageUpdate : ValueObject
     }
 
     /// <summary>Gets the package.</summary>
-    public PackageName Package
-    {
-        get;
-    }
+    public PackageName Package { get; }
 
     /// <summary>Gets the installed version.</summary>
-    public PackageVersion InstalledVersion
-    {
-        get;
-    }
+    public PackageVersion InstalledVersion { get; }
 
     /// <summary>Gets the version that could be installed.</summary>
-    public PackageVersion CandidateVersion
-    {
-        get;
-    }
+    public PackageVersion CandidateVersion { get; }
 
     /// <inheritdoc />
     public override string ToString() => $"{Package} {InstalledVersion} -> {CandidateVersion}";

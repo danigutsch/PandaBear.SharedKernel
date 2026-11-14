@@ -14,16 +14,10 @@ internal sealed class PathTooLongExceptionCapture : IDisposable
     }
 
     /// <summary>Gets the first <see cref="IOException" /> observed on the creating thread, or <see langword="null" /> when none occurred.</summary>
-    public IOException? FirstException
-    {
-        get; private set;
-    }
+    public IOException? FirstException { get; private set; }
 
     /// <summary>Gets the first <see cref="IOException" /> observed after <see cref="FirstException" /> that is a different instance, which signals a failure during cleanup.</summary>
-    public IOException? CleanupException
-    {
-        get; private set;
-    }
+    public IOException? CleanupException { get; private set; }
 
     /// <inheritdoc />
     public void Dispose()

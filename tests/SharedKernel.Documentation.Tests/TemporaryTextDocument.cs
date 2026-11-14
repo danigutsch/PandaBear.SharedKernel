@@ -12,10 +12,7 @@ internal sealed class TemporaryTextDocument : IDisposable
     }
 
     /// <summary>Gets the path of the temporary file.</summary>
-    public string Path
-    {
-        get;
-    }
+    public string Path { get; }
 
     /// <inheritdoc />
     public void Dispose()

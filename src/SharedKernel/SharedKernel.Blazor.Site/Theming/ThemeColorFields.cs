@@ -4,14 +4,8 @@ namespace PandaBear.Blazor.Site.Theming;
 public sealed class ThemeColorFields
 {
     /// <summary>Gets or sets the light value, such as <c>#1d4ed8</c>.</summary>
-    public string? Light
-    {
-        get; set;
-    }
+    public string? Light { get; set; }
 
     /// <summary>Gets or sets the dark value.</summary>
-    public string? Dark
-    {
-        get; set;
-    }
+    public string? Dark { get; set; }
 }

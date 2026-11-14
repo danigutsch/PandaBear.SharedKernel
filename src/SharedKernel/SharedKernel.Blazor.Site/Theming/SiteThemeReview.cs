@@ -15,22 +15,13 @@ public sealed class SiteThemeReview
     }
 
     /// <summary>Gets the rule violations.</summary>
-    public IReadOnlyList<ThemeIssue> Errors
-    {
-        get;
-    }
+    public IReadOnlyList<ThemeIssue> Errors { get; }
 
     /// <summary>Gets the findings that do not block saving, such as a heading larger than the level above.</summary>
-    public IReadOnlyList<ThemeIssue> Warnings
-    {
-        get;
-    }
+    public IReadOnlyList<ThemeIssue> Warnings { get; }
 
     /// <summary>Gets the contrast checks, light scheme first, in a stable order.</summary>
-    public IReadOnlyList<ContrastCheck> Contrast
-    {
-        get;
-    }
+    public IReadOnlyList<ContrastCheck> Contrast { get; }
 
     /// <summary>Gets a value indicating whether any rule is violated.</summary>
     public bool HasErrors => Errors.Count > 0;

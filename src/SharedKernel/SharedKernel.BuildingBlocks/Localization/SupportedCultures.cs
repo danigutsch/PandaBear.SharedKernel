@@ -15,10 +15,7 @@ public sealed class SupportedCultures : ValueObject
     }
 
     /// <summary>Gets the default culture. It is one of <see cref="Cultures"/>.</summary>
-    public ContentCulture Default
-    {
-        get;
-    }
+    public ContentCulture Default { get; }
 
     /// <summary>Gets the allowed cultures in declaration order.</summary>
     public IReadOnlyList<ContentCulture> Cultures => _cultures;

@@ -12,8 +12,5 @@ public sealed class CallInfo(string method, IReadOnlyList<object?> args)
     public IReadOnlyList<object?> Args { get; } = args;
 
     /// <summary>Gets the result of the call; set before the after hooks run.</summary>
-    public object? Result
-    {
-        get; internal set;
-    }
+    public object? Result { get; internal set; }
 }

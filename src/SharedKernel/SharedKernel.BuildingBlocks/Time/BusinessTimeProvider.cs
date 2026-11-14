@@ -22,10 +22,7 @@ public sealed class BusinessTimeProvider : TimeProvider
     }
 
     /// <inheritdoc />
-    public override TimeZoneInfo LocalTimeZone
-    {
-        get;
-    }
+    public override TimeZoneInfo LocalTimeZone { get; }
 
     /// <inheritdoc />
     public override DateTimeOffset GetUtcNow() => _inner.GetUtcNow();

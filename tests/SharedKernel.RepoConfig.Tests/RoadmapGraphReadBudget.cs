@@ -5,10 +5,7 @@ namespace PandaBear.RepoConfig.Tests;
 internal sealed class RoadmapGraphReadBudget(int maximumReads)
 {
     /// <summary>Gets the number of reads recorded so far.</summary>
-    public int Reads
-    {
-        get; private set;
-    }
+    public int Reads { get; private set; }
 
     /// <summary>Counts one read and throws <see cref="InvalidOperationException"/> when the count exceeds the maximum.</summary>
     public void RecordRead()

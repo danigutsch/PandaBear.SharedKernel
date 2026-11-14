@@ -17,10 +17,7 @@ internal sealed class UnreapedProcess : IDisposable
     /// <summary>
     /// Gets the background sleep process.
     /// </summary>
-    public Process Process
-    {
-        get;
-    }
+    public Process Process { get; }
 
     /// <summary>Gets whether the process has terminated and still waits for its parent to reap it.</summary>
     public bool IsZombie

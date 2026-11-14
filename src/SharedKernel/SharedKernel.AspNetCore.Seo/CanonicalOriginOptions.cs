@@ -8,11 +8,7 @@ namespace PandaBear.AspNetCore.Seo;
 public sealed class CanonicalOriginOptions
 {
     /// <summary>Gets or sets the configured origin, such as <c>https://example.com</c>; it must pass <see cref="SitemapCanonicalOrigin.IsValid"/>.</summary>
-    public string? Origin
-    {
-        get;
-        set;
-    }
+    public string? Origin { get; set; }
 
     /// <summary>Gets the origin as an absolute URI, such as <c>https://example.com/</c>.</summary>
     /// <exception cref="InvalidOperationException"><see cref="Origin"/> is not a valid canonical origin.</exception>

@@ -39,84 +39,45 @@ internal sealed class RoadmapProject
     }
 
     /// <summary>All roadmap items in ordinal file-name order.</summary>
-    public IReadOnlyList<RoadmapItemSnapshot> Items
-    {
-        get;
-    }
+    public IReadOnlyList<RoadmapItemSnapshot> Items { get; }
 
     /// <summary>Repository root the roadmap was loaded from.</summary>
-    public string RootPath
-    {
-        get;
-    }
+    public string RootPath { get; }
 
     /// <summary>Statuses that count as closed.</summary>
-    public IReadOnlySet<string> ClosedStatuses
-    {
-        get;
-    }
+    public IReadOnlySet<string> ClosedStatuses { get; }
 
     /// <summary>Statuses an item may use.</summary>
-    public IReadOnlySet<string> AllowedStatuses
-    {
-        get;
-    }
+    public IReadOnlySet<string> AllowedStatuses { get; }
 
     /// <summary>Configured GitHub repository, or null when none is set.</summary>
-    public string? GitHubRepository
-    {
-        get;
-    }
+    public string? GitHubRepository { get; }
 
     /// <summary>Whether the GitHub integration is enabled.</summary>
-    public bool GitHubEnabled
-    {
-        get;
-    }
+    public bool GitHubEnabled { get; }
 
     /// <summary>Prefix every item id must start with.</summary>
-    public string ItemIdPrefix
-    {
-        get;
-    }
+    public string ItemIdPrefix { get; }
 
     /// <summary>Theme assigned to items imported from GitHub, or null.</summary>
-    public string? GitHubIntakeTheme
-    {
-        get;
-    }
+    public string? GitHubIntakeTheme { get; }
 
     /// <summary>Status given to imported items whose issue is open, or null.</summary>
-    public string? GitHubIntakeOpenStatus
-    {
-        get;
-    }
+    public string? GitHubIntakeOpenStatus { get; }
 
     /// <summary>Status given to imported items whose issue was closed as completed, or null.</summary>
-    public string? GitHubIntakeClosedStatus
-    {
-        get;
-    }
+    public string? GitHubIntakeClosedStatus { get; }
 
     /// <summary>Status given to imported items whose issue was closed as not planned, or null.</summary>
-    public string? GitHubIntakeNotPlannedStatus
-    {
-        get;
-    }
+    public string? GitHubIntakeNotPlannedStatus { get; }
 
     /// <summary>GitHub project the items are synced to, or null.</summary>
-    public GitHubProjectTarget? GitHubProjectTarget
-    {
-        get;
-    }
+    public GitHubProjectTarget? GitHubProjectTarget { get; }
 
     /// <summary>
     /// The body of the draft pull request that <c>automation publish-result</c> opens, if configured.
     /// </summary>
-    public string? AutomationPullRequestBody
-    {
-        get;
-    }
+    public string? AutomationPullRequestBody { get; }
 
     /// <summary>Verifies the roadmap configuration under <paramref name="rootPath"/> and loads it, throwing when the configuration is invalid.</summary>
     /// <exception cref="InvalidOperationException">The roadmap configuration is invalid or does not define <c>itemIdPrefix</c>.</exception>

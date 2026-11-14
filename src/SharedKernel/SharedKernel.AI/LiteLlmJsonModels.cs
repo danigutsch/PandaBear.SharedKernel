@@ -70,10 +70,7 @@ internal sealed record LiteLlmSchemaProperty
     }
 
     /// <summary>JSON schema type name, or a list of type names for nullable fields.</summary>
-    public object Type
-    {
-        get;
-    }
+    public object Type { get; }
 }
 
 /// <summary>Chat completion response returned by the LiteLLM proxy.</summary>

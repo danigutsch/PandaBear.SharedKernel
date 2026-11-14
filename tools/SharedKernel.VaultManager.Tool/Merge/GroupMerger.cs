@@ -45,10 +45,7 @@ internal sealed class GroupMerger
     public List<FieldResolution> Resolutions { get; } = [];
 
     /// <summary>Conflicts resolved by the policy without a decision.</summary>
-    public int AutoResolved
-    {
-        get; private set;
-    }
+    public int AutoResolved { get; private set; }
 
     /// <summary>Merges the group.</summary>
     /// <returns>The merged item.</returns>

@@ -33,34 +33,19 @@ internal sealed class SolutionGraph
     }
 
     /// <summary>Gets the repository-relative solution path.</summary>
-    public string Solution
-    {
-        get;
-    }
+    public string Solution { get; }
 
     /// <summary>Gets every solution project, in ordinal order.</summary>
-    public string[] Projects
-    {
-        get;
-    }
+    public string[] Projects { get; }
 
     /// <summary>Gets the projects that reference <c>xunit.v3.mtp-v2</c> or set <c>IsTestProject</c> to <c>true</c>.</summary>
-    public HashSet<string> Tests
-    {
-        get;
-    }
+    public HashSet<string> Tests { get; }
 
     /// <summary>Gets the solution projects whose project file cannot be read.</summary>
-    public HashSet<string> Unread
-    {
-        get;
-    }
+    public HashSet<string> Unread { get; }
 
     /// <summary>Gets why the edges are incomplete, or <see langword="null"/> when every project file was read and evaluated.</summary>
-    public string? Uncertainty
-    {
-        get;
-    }
+    public string? Uncertainty { get; }
 
     /// <summary>Loads the solution and its project files under <paramref name="root"/>.</summary>
     /// <exception cref="InvalidOperationException">The solution cannot be read, or names a project outside the root.</exception>

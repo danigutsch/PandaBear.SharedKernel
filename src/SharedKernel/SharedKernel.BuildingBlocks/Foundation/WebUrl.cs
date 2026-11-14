@@ -19,10 +19,7 @@ public sealed class WebUrl : ValueObject
     private WebUrl(string value) => Value = value;
 
     /// <summary>Gets the address with a lower-case scheme and host.</summary>
-    public string Value
-    {
-        get;
-    }
+    public string Value { get; }
 
     /// <summary>
     /// Creates a web address from text. It must start with <c>http://</c> or <c>https://</c> (in any case), name a host and carry no

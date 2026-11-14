@@ -11,34 +11,22 @@ public sealed partial class Hero
     /// <summary>Gets or sets the level-1 heading.</summary>
     [Parameter]
     [EditorRequired]
-    public string Title
-    {
-        get; set;
-    } = string.Empty;
+    public string Title { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the text under the heading.</summary>
     [Parameter]
-    public string? Subtitle
-    {
-        get; set;
-    }
+    public string? Subtitle { get; set; }
 
     /// <summary>
     /// Gets or sets the image, loaded eagerly with <c>fetchpriority="high"</c>. A <see cref="ResponsiveImage" /> with sources
     /// renders a <c>picture</c> with <c>srcset</c> and <c>sizes</c>; one without renders a single <c>img</c>.
     /// </summary>
     [Parameter]
-    public ResponsiveImage? Image
-    {
-        get; set;
-    }
+    public ResponsiveImage? Image { get; set; }
 
     /// <summary>Gets or sets the buttons or links under the subtitle.</summary>
     [Parameter]
-    public RenderFragment? Actions
-    {
-        get; set;
-    }
+    public RenderFragment? Actions { get; set; }
 
     /// <inheritdoc />
     protected override void OnParametersSet()

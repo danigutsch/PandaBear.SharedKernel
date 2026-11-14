@@ -17,10 +17,7 @@ public sealed class PhoneNumber : ValueObject
     private PhoneNumber(string value) => Value = value;
 
     /// <summary>Gets the canonical number: digits only, preceded by <c>+</c> when the input had one. Personal data.</summary>
-    public string Value
-    {
-        get;
-    }
+    public string Value { get; }
 
     /// <summary>Creates a number from text that may use spaces, dashes, dots and parentheses as separators.</summary>
     /// <param name="value">The candidate number.</param>

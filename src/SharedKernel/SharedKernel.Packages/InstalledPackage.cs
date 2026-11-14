@@ -19,16 +19,10 @@ public sealed class InstalledPackage : ValueObject
     }
 
     /// <summary>Gets the package name.</summary>
-    public PackageName Name
-    {
-        get;
-    }
+    public PackageName Name { get; }
 
     /// <summary>Gets the installed version.</summary>
-    public PackageVersion Version
-    {
-        get;
-    }
+    public PackageVersion Version { get; }
 
     /// <inheritdoc />
     public override string ToString() => $"{Name}={Version}";

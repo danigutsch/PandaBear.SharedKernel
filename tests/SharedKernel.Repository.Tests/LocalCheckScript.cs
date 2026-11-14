@@ -31,35 +31,19 @@ internal sealed class LocalCheckScript
     public string Diff { get; init; } = "src/Core/Changed.cs\0";
 
     /// <summary>Gets the changed paths that <c>git diff HEAD</c> (the working tree) answers with, separated by NUL.</summary>
-    public string WorkingDiff
-    {
-        get;
-        init;
-    } = string.Empty;
+    public string WorkingDiff { get; init; } = string.Empty;
 
     /// <summary>Gets the paths that <c>git ls-files --others</c> (untracked, not ignored) answers with, separated by NUL.</summary>
-    public string Untracked
-    {
-        get;
-        init;
-    } = string.Empty;
+    public string Untracked { get; init; } = string.Empty;
 
     /// <summary>Gets what <c>dotnet msbuild -getProperty:TargetPath</c> answers, or <see langword="null"/> for the built test assembly.</summary>
-    public string? Evaluation
-    {
-        get;
-        init;
-    }
+    public string? Evaluation { get; init; }
 
     /// <summary>Gets whether <c>git rev-parse --is-inside-work-tree</c> answers <c>true</c>.</summary>
     public bool InsideWorkTree { get; init; } = true;
 
     /// <summary>Gets the failure message for a request, or <see langword="null"/> when the request succeeds.</summary>
-    public Func<string, string[], string?>? Fail
-    {
-        get;
-        init;
-    }
+    public Func<string, string[], string?>? Fail { get; init; }
 
     /// <summary>Answers a request, or throws the failure that <see cref="Fail"/> names, as the real process runner does.</summary>
     public Task<string> Respond(string fileName, string[] arguments, CancellationToken ct)

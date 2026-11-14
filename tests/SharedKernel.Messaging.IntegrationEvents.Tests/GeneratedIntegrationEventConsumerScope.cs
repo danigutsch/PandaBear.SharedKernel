@@ -24,10 +24,7 @@ internal sealed class GeneratedIntegrationEventConsumerScope : IDisposable
     /// <summary>
     /// Gets the event envelope publisher resolved inside the scope.
     /// </summary>
-    public IEventEnvelopePublisher Publisher
-    {
-        get;
-    }
+    public IEventEnvelopePublisher Publisher { get; }
 
     /// <inheritdoc />
     public void Dispose()

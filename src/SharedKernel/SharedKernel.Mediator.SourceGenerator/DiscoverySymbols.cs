@@ -55,10 +55,7 @@ internal sealed class DiscoverySymbols
 
     public INamedTypeSymbol NotificationHandlerInterface { get; private init; } = null!;
 
-    public INamedTypeSymbol? NotificationDispatchAttribute
-    {
-        get; private init;
-    }
+    public INamedTypeSymbol? NotificationDispatchAttribute { get; private init; }
 
     public INamedTypeSymbol NotificationOrderAttribute { get; private init; } = null!;
 

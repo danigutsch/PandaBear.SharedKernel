@@ -17,49 +17,28 @@ internal sealed class FakeAmazonS3Client : AmazonS3Client
     public List<string> Operations { get; } = [];
 
     /// <summary>Gets whether OpenTelemetry instrumentation was suppressed during the last metadata lookup, or null before any lookup.</summary>
-    public bool? SuppressedDuringMetadataLookup
-    {
-        get; private set;
-    }
+    public bool? SuppressedDuringMetadataLookup { get; private set; }
 
     /// <summary>Gets the most recent upload request, or null before any upload.</summary>
-    public PutObjectRequest? LastPutObjectRequest
-    {
-        get; private set;
-    }
+    public PutObjectRequest? LastPutObjectRequest { get; private set; }
 
     /// <summary>Gets or sets the task a bucket creation waits on, or null to complete immediately.</summary>
-    public Task<PutBucketResponse>? PutBucketTask
-    {
-        get; set;
-    }
+    public Task<PutBucketResponse>? PutBucketTask { get; set; }
 
     /// <summary>Gets or sets the exception a metadata lookup throws, or null to succeed.</summary>
-    public Exception? GetObjectMetadataException
-    {
-        get; set;
-    }
+    public Exception? GetObjectMetadataException { get; set; }
 
     /// <summary>Gets or sets the exception an object read throws, or null to succeed.</summary>
-    public Exception? GetObjectException
-    {
-        get; set;
-    }
+    public Exception? GetObjectException { get; set; }
 
     /// <summary>Gets or sets the last-modified time reported for listed objects.</summary>
     public DateTime ListObjectLastModified { get; set; } = TimeProvider.System.GetUtcNow().UtcDateTime;
 
     /// <summary>Gets or sets the exception a listing throws, or null to succeed.</summary>
-    public Exception? ListObjectsException
-    {
-        get; set;
-    }
+    public Exception? ListObjectsException { get; set; }
 
     /// <summary>Gets or sets whether listing returns no objects.</summary>
-    public bool ReturnEmptyListResponse
-    {
-        get; set;
-    }
+    public bool ReturnEmptyListResponse { get; set; }
 
     public override Task<PutBucketResponse> PutBucketAsync(PutBucketRequest request, CancellationToken cancellationToken = default)
     {

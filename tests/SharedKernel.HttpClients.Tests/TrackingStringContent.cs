@@ -10,10 +10,7 @@ namespace PandaBear.HttpClients.Tests;
 internal sealed class TrackingStringContent(string content, string mediaType) : StringContent(content, Encoding.UTF8, mediaType)
 {
     /// <summary>Whether the content has been disposed.</summary>
-    public bool IsDisposed
-    {
-        get; private set;
-    }
+    public bool IsDisposed { get; private set; }
 
     protected override void Dispose(bool disposing)
     {

@@ -8,18 +8,12 @@ public sealed partial class FactsTable
     /// <summary>Gets or sets the caption, which names the table for assistive technology.</summary>
     [Parameter]
     [EditorRequired]
-    public string Caption
-    {
-        get; set;
-    } = string.Empty;
+    public string Caption { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the rows.</summary>
     [Parameter]
     [EditorRequired]
-    public IReadOnlyList<FactRow> Rows
-    {
-        get; set;
-    } = [];
+    public IReadOnlyList<FactRow> Rows { get; set; } = [];
 
     /// <inheritdoc />
     protected override void OnParametersSet()

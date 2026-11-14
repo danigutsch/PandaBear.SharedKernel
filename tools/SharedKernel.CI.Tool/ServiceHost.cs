@@ -44,10 +44,7 @@ internal sealed class ServiceHost
     }
 
     /// <summary>Gets the slice whose tests the service serves.</summary>
-    public string Slice
-    {
-        get;
-    }
+    public string Slice { get; }
 
     private string StandardOutputLog => PhaseName(Slice) + ".stdout.log";
 

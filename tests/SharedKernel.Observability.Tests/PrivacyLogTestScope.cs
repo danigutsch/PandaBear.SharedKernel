@@ -33,10 +33,7 @@ internal sealed class PrivacyLogTestScope : IDisposable
     public ConcurrentQueue<CapturedPrivacyLogRecord> Records { get; } = new();
 
     /// <summary>Gets a logger resolved from the host whose output flows through the privacy pipeline.</summary>
-    public ILogger Logger
-    {
-        get;
-    }
+    public ILogger Logger { get; }
 
     /// <summary>Disposes the underlying host.</summary>
     public void Dispose() => host.Dispose();

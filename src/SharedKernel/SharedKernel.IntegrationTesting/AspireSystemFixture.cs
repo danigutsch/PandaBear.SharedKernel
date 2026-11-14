@@ -27,10 +27,7 @@ public abstract class AspireSystemFixture : IAsyncDisposable
     public TestWorkspace Workspace => _workspace.Value;
 
     /// <summary>Gets the readable prefix of the workspace folder name.</summary>
-    protected abstract string WorkspaceName
-    {
-        get;
-    }
+    protected abstract string WorkspaceName { get; }
 
     /// <summary>Gets the application of the default profile, starting it on the first demand.</summary>
     /// <param name="ct">The caller's token; cancelling it abandons only this wait.</param>

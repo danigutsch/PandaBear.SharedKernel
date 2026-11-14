@@ -31,10 +31,7 @@ public sealed class SharedKernelResultsAnalyzer : DiagnosticAnalyzer
         description: "A failure Result that nobody inspects looks like success, for example a failed save. Inspect the Result, pass it on, or discard it explicitly with '_ ='.");
 
     /// <inheritdoc />
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-    {
-        get;
-    } =
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(RawResultEndpointRule, DiscardedResultRule);
 
     /// <inheritdoc />

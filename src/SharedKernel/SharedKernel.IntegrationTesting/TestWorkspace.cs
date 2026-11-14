@@ -17,10 +17,7 @@ public sealed class TestWorkspace : IAsyncDisposable
     }
 
     /// <summary>Gets the full path of the folder.</summary>
-    public string Root
-    {
-        get;
-    }
+    public string Root { get; }
 
     /// <summary>Creates a new empty folder under the system's temporary folder.</summary>
     /// <param name="name">A readable prefix of the folder name.</param>

@@ -43,34 +43,19 @@ internal sealed class GitHubRoadmapReconciliation
     }
 
     /// <summary>Blocking edges the manifest declares.</summary>
-    public IReadOnlyList<GitHubRoadmapBlockerEdge> BlockerEdges
-    {
-        get;
-    }
+    public IReadOnlyList<GitHubRoadmapBlockerEdge> BlockerEdges { get; }
 
     /// <summary>External blocking edges the manifest declares.</summary>
-    public IReadOnlyList<GitHubRoadmapExternalBlockerEdge> ExternalBlockerEdges
-    {
-        get;
-    }
+    public IReadOnlyList<GitHubRoadmapExternalBlockerEdge> ExternalBlockerEdges { get; }
 
     /// <summary>State of each closed issue that is an endpoint of a relationship, keyed by issue number.</summary>
-    public IReadOnlyDictionary<int, string> ClosedEndpointStates
-    {
-        get;
-    }
+    public IReadOnlyDictionary<int, string> ClosedEndpointStates { get; }
 
     /// <summary>Close outcome of each closed roadmap item, keyed by issue number.</summary>
-    public IReadOnlyDictionary<int, string> ClosedItemTransitions
-    {
-        get;
-    }
+    public IReadOnlyDictionary<int, string> ClosedItemTransitions { get; }
 
     /// <summary>Close outcomes declared by the manifest; an issue without an entry was completed.</summary>
-    public IReadOnlyDictionary<int, string> ClosedItemCloseReasons
-    {
-        get; private init;
-    } = new Dictionary<int, string>();
+    public IReadOnlyDictionary<int, string> ClosedItemCloseReasons { get; private init; } = new Dictionary<int, string>();
 
     /// <summary>Returns the closed-item transitions ordered by issue number.</summary>
     public IReadOnlyList<RoadmapClosedItemTransition> GetClosedTransitions() =>
@@ -83,70 +68,37 @@ internal sealed class GitHubRoadmapReconciliation
             .ToArray();
 
     /// <summary>Issue numbers of the children of canonical primary issues.</summary>
-    public IReadOnlyList<int> ChildrenOfCanonicalPrimaries
-    {
-        get;
-    }
+    public IReadOnlyList<int> ChildrenOfCanonicalPrimaries { get; }
 
     /// <summary>Canonical primary of each duplicate issue, keyed by issue number.</summary>
-    public IReadOnlyDictionary<int, string> DirectCanonicalPrimaries
-    {
-        get;
-    }
+    public IReadOnlyDictionary<int, string> DirectCanonicalPrimaries { get; }
 
     /// <summary>Issue numbers expected to be open.</summary>
-    public IReadOnlyList<int> ExpectedOpenIssueNumbers
-    {
-        get;
-    }
+    public IReadOnlyList<int> ExpectedOpenIssueNumbers { get; }
 
     /// <summary>Path of the manifest file.</summary>
-    public string ManifestPath
-    {
-        get;
-    }
+    public string ManifestPath { get; }
 
     /// <summary>Repository the manifest applies to, in <c>owner/name</c> form.</summary>
-    public string Repository
-    {
-        get;
-    }
+    public string Repository { get; }
 
     /// <summary>Repository commit the manifest was last reconciled at.</summary>
-    public string? RepositoryCommit
-    {
-        get;
-    }
+    public string? RepositoryCommit { get; }
 
     /// <summary>Version of the reconciliation rules.</summary>
-    public string? RuleVersion
-    {
-        get;
-    }
+    public string? RuleVersion { get; }
 
     /// <summary>Digest of the issue snapshot the manifest was last reconciled with.</summary>
-    public string? SnapshotDigest
-    {
-        get;
-    }
+    public string? SnapshotDigest { get; }
 
     /// <summary>Raw text of the manifest file.</summary>
-    public string SourceContent
-    {
-        get;
-    }
+    public string SourceContent { get; }
 
     /// <summary>Rules used to prioritize roadmap items.</summary>
-    public GitHubRoadmapPriorityPolicy PriorityPolicy
-    {
-        get;
-    }
+    public GitHubRoadmapPriorityPolicy PriorityPolicy { get; }
 
     /// <summary>Issue numbers of open issues not yet mapped to a roadmap item.</summary>
-    public IReadOnlyList<int> UnmappedOpenIssueNumbers
-    {
-        get;
-    }
+    public IReadOnlyList<int> UnmappedOpenIssueNumbers { get; }
 
     /// <summary>Returns the numbers of issues that must be read from GitHub for the project and manifest.</summary>
     /// <param name="project">Roadmap project.</param>

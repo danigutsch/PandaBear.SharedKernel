@@ -21,28 +21,16 @@ public interface IResultLike<TSelf>
     where TSelf : IResultLike<TSelf>
 {
     /// <summary>Gets the status of the result.</summary>
-    ResultStatus Status
-    {
-        get;
-    }
+    ResultStatus Status { get; }
 
     /// <summary>Gets a value indicating whether the result is successful.</summary>
-    bool IsSuccess
-    {
-        get;
-    }
+    bool IsSuccess { get; }
 
     /// <summary>Gets a value indicating whether the result is a failure.</summary>
-    bool IsFailure
-    {
-        get;
-    }
+    bool IsFailure { get; }
 
     /// <summary>Gets the error of a failed result, or <see langword="null"/> when the result is not a failure.</summary>
-    ResultError? ErrorDetails
-    {
-        get;
-    }
+    ResultError? ErrorDetails { get; }
 
     /// <summary>Gets the error of a failed result.</summary>
     /// <param name="currentError">The error when the result is a failure; otherwise <see langword="null"/>.</param>

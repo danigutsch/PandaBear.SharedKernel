@@ -1087,45 +1087,21 @@ internal sealed class SecretScanner
             IsBankOrCard = item is not null && (item.Type == VaultItemType.Card || item.Card is not null || BankWords.Any(word => identity.Contains(word, StringComparison.OrdinalIgnoreCase)));
         }
 
-        public bool IsLogin
-        {
-            get;
-        }
+        public bool IsLogin { get; }
 
-        public bool IsSecureNote
-        {
-            get;
-        }
+        public bool IsSecureNote { get; }
 
-        public bool HasPassword
-        {
-            get;
-        }
+        public bool HasPassword { get; }
 
-        public bool HasUsername
-        {
-            get;
-        }
+        public bool HasUsername { get; }
 
-        public bool HasTotp
-        {
-            get;
-        }
+        public bool HasTotp { get; }
 
-        public string? Host
-        {
-            get;
-        }
+        public string? Host { get; }
 
-        public bool IsBitwarden
-        {
-            get;
-        }
+        public bool IsBitwarden { get; }
 
-        public bool IsBankOrCard
-        {
-            get;
-        }
+        public bool IsBankOrCard { get; }
 
         private static string? HostOf(string value)
         {

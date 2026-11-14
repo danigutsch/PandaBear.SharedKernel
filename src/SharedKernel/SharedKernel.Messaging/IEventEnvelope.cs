@@ -8,24 +8,15 @@ public interface IEventEnvelope : IEventEnvelopeMetadata, IEventEnvelopePayload
     /// <summary>
     /// Gets the envelope specification name.
     /// </summary>
-    string EnvelopeSpec
-    {
-        get;
-    }
+    string EnvelopeSpec { get; }
 
     /// <summary>
     /// Gets the envelope specification version.
     /// </summary>
-    string EnvelopeSpecVersion
-    {
-        get;
-    }
+    string EnvelopeSpecVersion { get; }
 
     /// <summary>
     /// Gets the optional serialized extension attribute object.
     /// </summary>
-    string? ExtensionAttributesJson
-    {
-        get;
-    }
+    string? ExtensionAttributesJson { get; }
 }

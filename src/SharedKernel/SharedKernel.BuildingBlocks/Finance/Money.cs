@@ -19,16 +19,10 @@ public sealed class Money : ValueObject, IFormattable
     }
 
     /// <summary>Gets the amount, already rounded to the currency's minor unit.</summary>
-    public decimal Amount
-    {
-        get;
-    }
+    public decimal Amount { get; }
 
     /// <summary>Gets the currency.</summary>
-    public Currency Currency
-    {
-        get;
-    }
+    public Currency Currency { get; }
 
     /// <summary>Gets a value indicating whether the amount is greater than zero.</summary>
     public bool IsPositive => Amount > 0;

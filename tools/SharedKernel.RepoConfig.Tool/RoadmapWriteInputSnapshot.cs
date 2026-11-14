@@ -17,10 +17,7 @@ internal sealed class RoadmapWriteInputSnapshot
     }
 
     /// <summary>Digest over the captured input paths and contents.</summary>
-    public string Digest
-    {
-        get;
-    }
+    public string Digest { get; }
 
     /// <summary>Reads all roadmap input files under <paramref name="rootPath"/> into a snapshot.</summary>
     /// <exception cref="ArgumentException">Thrown when <paramref name="rootPath"/> is <see langword="null"/>, empty, or white-space.</exception>

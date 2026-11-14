@@ -18,16 +18,10 @@ internal sealed class UserSession
     }
 
     /// <summary>Gets the opaque session identifier.</summary>
-    internal string Id
-    {
-        get;
-    }
+    internal string Id { get; }
 
     /// <summary>Gets the absolute end of the session.</summary>
-    internal DateTimeOffset ExpiresAt
-    {
-        get;
-    }
+    internal DateTimeOffset ExpiresAt { get; }
 
     /// <summary>Reads the session claims of an authenticated principal.</summary>
     /// <param name="user">The principal.</param>

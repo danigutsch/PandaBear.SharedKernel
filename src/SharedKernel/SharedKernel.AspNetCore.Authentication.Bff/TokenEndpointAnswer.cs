@@ -6,46 +6,25 @@ namespace PandaBear.AspNetCore.Authentication.Bff;
 internal sealed class TokenEndpointAnswer
 {
     /// <summary>Gets the <c>access_token</c> field, if present.</summary>
-    internal string? AccessToken
-    {
-        get; init;
-    }
+    internal string? AccessToken { get; init; }
 
     /// <summary>Gets the <c>token_type</c> field, if present.</summary>
-    internal string? TokenType
-    {
-        get; init;
-    }
+    internal string? TokenType { get; init; }
 
     /// <summary>Gets the <c>expires_in</c> field, in seconds, if present; zero when it is present but not a whole number.</summary>
-    internal long? ExpiresIn
-    {
-        get; init;
-    }
+    internal long? ExpiresIn { get; init; }
 
     /// <summary>Gets the <c>refresh_token</c> field, if present.</summary>
-    internal string? RefreshToken
-    {
-        get; init;
-    }
+    internal string? RefreshToken { get; init; }
 
     /// <summary>Gets the <c>id_token</c> field, if present.</summary>
-    internal string? IdentityToken
-    {
-        get; init;
-    }
+    internal string? IdentityToken { get; init; }
 
     /// <summary>Gets the <c>scope</c> field, if present.</summary>
-    internal string? Scope
-    {
-        get; init;
-    }
+    internal string? Scope { get; init; }
 
     /// <summary>Gets the <c>issued_token_type</c> field, if present.</summary>
-    internal string? IssuedTokenType
-    {
-        get; init;
-    }
+    internal string? IssuedTokenType { get; init; }
 
     /// <summary>Returns a description without any token.</summary>
     /// <returns>A redacted description.</returns>

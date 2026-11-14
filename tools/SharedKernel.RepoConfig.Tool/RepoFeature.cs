@@ -55,22 +55,13 @@ internal sealed record RepoFeature
     public static IReadOnlyList<RepoFeature> All { get; } = [Readme, Gitignore, Gitattributes, Editorconfig, Hooks, GitConfig, SignedCommits, Agents, GlobalJson, NugetConfig, BuildProps];
 
     /// <summary>Gets the ID that the <c>--feature</c> option takes.</summary>
-    public string Id
-    {
-        get;
-    }
+    public string Id { get; }
 
     /// <summary>Gets whether <c>new</c> selects the feature when no <c>--feature</c> option is given and the language fits.</summary>
-    public bool SelectedByDefault
-    {
-        get;
-    }
+    public bool SelectedByDefault { get; }
 
     /// <summary>Gets the language that the feature needs, or <see langword="null"/> when it works with every language.</summary>
-    public RepoLanguage? RequiredLanguage
-    {
-        get;
-    }
+    public RepoLanguage? RequiredLanguage { get; }
 
     /// <summary>Gets whether the feature needs <c>--sdk-version</c>.</summary>
     public bool NeedsSdkVersion => this == GlobalJson || this == BuildProps;

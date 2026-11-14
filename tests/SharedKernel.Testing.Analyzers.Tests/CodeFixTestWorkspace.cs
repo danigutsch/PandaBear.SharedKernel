@@ -28,15 +28,9 @@ internal sealed class CodeFixTestWorkspace
     }
 
     /// <summary>Gets the underlying ad hoc workspace holding the project and document.</summary>
-    public AdhocWorkspace Workspace
-    {
-        get;
-    }
+    public AdhocWorkspace Workspace { get; }
 
-    private DocumentId DocumentId
-    {
-        get;
-    }
+    private DocumentId DocumentId { get; }
 
     private Document Document => Workspace.CurrentSolution.GetDocument(DocumentId).ShouldBeOfType<Document>();
 

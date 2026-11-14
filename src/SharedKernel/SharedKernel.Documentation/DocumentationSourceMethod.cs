@@ -10,8 +10,5 @@ internal sealed class DocumentationSourceMethod
     public string MethodName { get; set; } = string.Empty;
 
     /// <summary>Parameter count that selects the overload of the method.</summary>
-    public int ParameterCount
-    {
-        get; set;
-    }
+    public int ParameterCount { get; set; }
 }

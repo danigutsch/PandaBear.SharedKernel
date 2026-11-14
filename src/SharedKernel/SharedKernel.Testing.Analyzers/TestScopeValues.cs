@@ -7,10 +7,7 @@ namespace PandaBear.Testing.Analyzers;
 /// </summary>
 internal static class TestScopeValues
 {
-    public static ImmutableArray<string> All
-    {
-        get;
-    } =
+    public static ImmutableArray<string> All { get; } =
     [
         "unit",
         "behavior",

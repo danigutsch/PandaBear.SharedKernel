@@ -21,22 +21,13 @@ public sealed class UserTokenResult
     public bool Succeeded => Failure == UserTokenFailure.None;
 
     /// <summary>Gets the access token, or <see langword="null" /> when <see cref="Succeeded" /> is false.</summary>
-    public string? AccessToken
-    {
-        get;
-    }
+    public string? AccessToken { get; }
 
     /// <summary>Gets when the access token expires, or <see langword="null" /> when <see cref="Succeeded" /> is false.</summary>
-    public DateTimeOffset? ExpiresAt
-    {
-        get;
-    }
+    public DateTimeOffset? ExpiresAt { get; }
 
     /// <summary>Gets why the token is unavailable, or <see cref="UserTokenFailure.None" />.</summary>
-    public UserTokenFailure Failure
-    {
-        get;
-    }
+    public UserTokenFailure Failure { get; }
 
     /// <summary>Returns a description without the token.</summary>
     /// <returns>A redacted description.</returns>

@@ -15,14 +15,8 @@ public sealed record PermanentRedirect
     }
 
     /// <summary>Gets the local target path.</summary>
-    public string Path
-    {
-        get;
-    }
+    public string Path { get; }
 
     /// <summary>Gets a value indicating whether the request's query string is appended to the target.</summary>
-    public bool PreserveQuery
-    {
-        get;
-    }
+    public bool PreserveQuery { get; }
 }

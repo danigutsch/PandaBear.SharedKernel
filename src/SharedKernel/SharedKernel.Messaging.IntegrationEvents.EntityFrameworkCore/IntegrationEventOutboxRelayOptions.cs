@@ -24,8 +24,5 @@ public sealed class IntegrationEventOutboxRelayOptions
     /// Gets or sets how many times a transport consumer attempts a message before it is poisoned; <see langword="null" />
     /// retries without limit. Outbox relays ignore this setting.
     /// </summary>
-    public int? MaxConsumeAttempts
-    {
-        get; set;
-    }
+    public int? MaxConsumeAttempts { get; set; }
 }

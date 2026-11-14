@@ -8,10 +8,7 @@ public sealed class BirthDate : ValueObject
     private BirthDate(DateOnly value) => Value = value;
 
     /// <summary>Gets the date of birth.</summary>
-    public DateOnly Value
-    {
-        get;
-    }
+    public DateOnly Value { get; }
 
     /// <summary>
     /// Creates a date of birth after validating it against the age limits. Ages follow the 1 March convention for leap-day

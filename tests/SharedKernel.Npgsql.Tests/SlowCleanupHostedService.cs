@@ -6,10 +6,7 @@ namespace PandaBear.Npgsql.Tests;
 internal sealed class SlowCleanupHostedService : IHostedService
 {
     /// <summary>Gets a value indicating whether the slow shutdown ran to completion.</summary>
-    public bool Completed
-    {
-        get; private set;
-    }
+    public bool Completed { get; private set; }
 
     /// <summary>Does nothing on start.</summary>
     public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;

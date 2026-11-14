@@ -13,10 +13,7 @@ internal sealed class TransientAfterCommitHandler(
     int failuresBeforeSuccess = 1) : HttpMessageHandler
 {
     /// <summary>Number of requests the handler has received.</summary>
-    public int AttemptCount
-    {
-        get; private set;
-    }
+    public int AttemptCount { get; private set; }
 
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,

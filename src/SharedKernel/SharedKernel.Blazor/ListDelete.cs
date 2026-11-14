@@ -35,16 +35,10 @@ public sealed class ListDelete<TKey>
     }
 
     /// <summary>Gets the error to show, or <see langword="null"/> when the last deletion needs none.</summary>
-    public string? Error
-    {
-        get; private set;
-    }
+    public string? Error { get; private set; }
 
     /// <summary>Gets whether a deletion is running.</summary>
-    public bool IsRunning
-    {
-        get; private set;
-    }
+    public bool IsRunning { get; private set; }
 
     /// <summary>Gets whether a row waits for confirmation.</summary>
     /// <param name="key">The row key.</param>

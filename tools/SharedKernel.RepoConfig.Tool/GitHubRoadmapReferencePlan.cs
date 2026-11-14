@@ -14,22 +14,13 @@ internal sealed class GitHubRoadmapReferencePlan
     }
 
     /// <summary>Roadmap project after the planned updates.</summary>
-    public RoadmapProject Project
-    {
-        get;
-    }
+    public RoadmapProject Project { get; }
 
     /// <summary>File writes that apply the planned updates.</summary>
-    public IReadOnlyList<AtomicFileWrite> Writes
-    {
-        get;
-    }
+    public IReadOnlyList<AtomicFileWrite> Writes { get; }
 
     /// <summary>Diagnostics found while planning.</summary>
-    public IReadOnlyList<string> Diagnostics
-    {
-        get;
-    }
+    public IReadOnlyList<string> Diagnostics { get; }
 
     /// <summary>Plans reference updates for every item of the project from the snapshot.</summary>
     /// <param name="project">Roadmap project.</param>

@@ -41,58 +41,37 @@ internal sealed class IdempotencyEntryEntity
     /// <summary>
     /// Gets the operation scope.
     /// </summary>
-    public string Scope
-    {
-        get; private set;
-    }
+    public string Scope { get; private set; }
 
     /// <summary>
     /// Gets the operation key.
     /// </summary>
-    public string Key
-    {
-        get; private set;
-    }
+    public string Key { get; private set; }
 
     /// <summary>
     /// Gets the operation state.
     /// </summary>
-    public IdempotencyEntryState State
-    {
-        get; private set;
-    }
+    public IdempotencyEntryState State { get; private set; }
 
     /// <summary>
     /// Gets when the operation started.
     /// </summary>
-    public DateTimeOffset StartedAt
-    {
-        get; private set;
-    }
+    public DateTimeOffset StartedAt { get; private set; }
 
     /// <summary>
     /// Gets when the operation completed.
     /// </summary>
-    public DateTimeOffset? CompletedAt
-    {
-        get; private set;
-    }
+    public DateTimeOffset? CompletedAt { get; private set; }
 
     /// <summary>
     /// Gets the optional result fingerprint.
     /// </summary>
-    public string? ResultFingerprint
-    {
-        get; private set;
-    }
+    public string? ResultFingerprint { get; private set; }
 
     /// <summary>
     /// Gets the optional key of the record that owns the entry for retention purposes.
     /// </summary>
-    public string? RetentionOwner
-    {
-        get; private set;
-    }
+    public string? RetentionOwner { get; private set; }
 
     /// <summary>
     /// Restarts processing for an expired operation.

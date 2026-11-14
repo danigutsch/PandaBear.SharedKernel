@@ -49,10 +49,7 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
 
     /// <summary>Gets or sets the callback raised when the cancel button is activated.</summary>
     [Parameter]
-    public EventCallback OnCancel
-    {
-        get; set;
-    }
+    public EventCallback OnCancel { get; set; }
 
     /// <summary>Gets or sets the cancel button text, "Cancel upload" by default; the accessible name appends the file name.</summary>
     [Parameter]
@@ -68,30 +65,21 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
     /// and the file name. The visible button text stays <see cref="CancelText" />.
     /// </summary>
     [Parameter]
-    public string? CancelLabelFormat
-    {
-        get; set;
-    }
+    public string? CancelLabelFormat { get; set; }
 
     /// <summary>
     /// Gets or sets a composite format for the determinate progress element's accessible name, where <c>{0}</c> is the
     /// bounded file name. When <see langword="null" />, the name is <see cref="ProgressLabel" />, a colon, and the file name.
     /// </summary>
     [Parameter]
-    public string? ProgressLabelFormat
-    {
-        get; set;
-    }
+    public string? ProgressLabelFormat { get; set; }
 
     /// <summary>
     /// Gets or sets a composite format for the indeterminate progress element's accessible name, where <c>{0}</c> is the
     /// bounded file name. When <see langword="null" />, the determinate rule applies, so one label serves both.
     /// </summary>
     [Parameter]
-    public string? IndeterminateProgressLabelFormat
-    {
-        get; set;
-    }
+    public string? IndeterminateProgressLabelFormat { get; set; }
 
     /// <summary>
     /// Gets or sets a composite format for the determinate progress element's fallback content, where <c>{0}</c> is the
@@ -99,34 +87,22 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
     /// content is <c>{0} / {1}</c>.
     /// </summary>
     [Parameter]
-    public string? ProgressTextFormat
-    {
-        get; set;
-    }
+    public string? ProgressTextFormat { get; set; }
 
     /// <summary>Gets or sets the CSS class of the cancel button; no <c>class</c> attribute is rendered when <see langword="null" />.</summary>
     [Parameter]
-    public string? CancelClass
-    {
-        get; set;
-    }
+    public string? CancelClass { get; set; }
 
     /// <summary>Gets or sets the CSS class of the progress element; no <c>class</c> attribute is rendered when <see langword="null" />.</summary>
     [Parameter]
-    public string? ProgressClass
-    {
-        get; set;
-    }
+    public string? ProgressClass { get; set; }
 
     /// <summary>
     /// Gets or sets the CSS class of the <c>role="status"</c> element, for example to hide it visually while it is still
     /// announced; no <c>class</c> attribute is rendered when <see langword="null" />.
     /// </summary>
     [Parameter]
-    public string? StatusClass
-    {
-        get; set;
-    }
+    public string? StatusClass { get; set; }
 
     /// <summary>
     /// Gets or sets whether a failed state's message is rendered inside the live region, <see langword="true" /> by
@@ -142,17 +118,11 @@ public sealed class UploadStatus : ComponentBase, IHandleEvent
     /// encodes its own text.
     /// </summary>
     [Parameter]
-    public RenderFragment<UploadOperationState>? Detail
-    {
-        get; set;
-    }
+    public RenderFragment<UploadOperationState>? Detail { get; set; }
 
     /// <summary>Gets or sets additional attributes applied to the section.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
-    public IReadOnlyDictionary<string, object>? AdditionalAttributes
-    {
-        get; set;
-    }
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
     /// <summary>Handles element events without re-rendering, so focus changes on the cancel button cost no render.</summary>
     /// <param name="callback">The event handler.</param>

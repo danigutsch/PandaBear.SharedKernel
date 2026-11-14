@@ -46,31 +46,19 @@ internal sealed class ServiceRunScope : IDisposable
     public RepositoryTestScope Repository => repository;
 
     /// <summary>Gets the fake host that stands in for the service process.</summary>
-    public FakeServiceHost Host
-    {
-        get;
-    }
+    public FakeServiceHost Host { get; }
 
     /// <summary>Gets the log that records the Git and dotnet requests of a run and answers them through <see cref="Respond"/>.</summary>
-    public ProcessLog Processes
-    {
-        get;
-    }
+    public ProcessLog Processes { get; }
 
     /// <summary>Gets the plan directory.</summary>
-    public string Selection
-    {
-        get;
-    }
+    public string Selection { get; }
 
     /// <summary>Gets the execution directory of <c>run --slice database</c>.</summary>
     public string Execution => Path.Combine(Selection, "execution-database");
 
     /// <summary>Gets or sets how the fake <c>git</c> and <c>dotnet</c> answer; by default <c>git rev-parse</c> says <c>fixture</c> and everything else is silent.</summary>
-    public Func<string, string[], CancellationToken, Task<string>> Respond
-    {
-        get; set;
-    } =
+    public Func<string, string[], CancellationToken, Task<string>> Respond { get; set; } =
         static (fileName, arguments, _) => Task.FromResult(fileName == "git" && arguments is ["rev-parse", ..] ? "fixture" : string.Empty);
 
     /// <summary>Gets the file that the fake host was told to write its value to.</summary>

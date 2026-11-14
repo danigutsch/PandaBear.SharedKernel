@@ -20,10 +20,7 @@ internal sealed class StagingScratch : IDisposable
     private StagingScratch(string fullPath) => FullPath = fullPath;
 
     /// <summary>Gets the absolute directory path.</summary>
-    public string FullPath
-    {
-        get;
-    }
+    public string FullPath { get; }
 
     /// <summary>Deletes the staging directories of <paramref name="output"/> that are older than <see cref="StaleAge"/>.</summary>
     /// <remarks>

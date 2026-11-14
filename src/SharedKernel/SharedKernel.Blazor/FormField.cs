@@ -15,33 +15,21 @@ public sealed class FormField<TValue> : ComponentBase
     /// <summary>Gets or sets the label text.</summary>
     [Parameter]
     [EditorRequired]
-    public string Label
-    {
-        get; set;
-    } = string.Empty;
+    public string Label { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the HTML id of the control, which the label points at and error summary links target.</summary>
     [Parameter]
     [EditorRequired]
-    public string InputId
-    {
-        get; set;
-    } = string.Empty;
+    public string InputId { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the expression that selects the bound field, used to show its validation message.</summary>
     [Parameter]
     [EditorRequired]
-    public Expression<Func<TValue>>? For
-    {
-        get; set;
-    }
+    public Expression<Func<TValue>>? For { get; set; }
 
     /// <summary>Gets or sets the control; give it the id <see cref="InputId"/>.</summary>
     [Parameter]
-    public RenderFragment? ChildContent
-    {
-        get; set;
-    }
+    public RenderFragment? ChildContent { get; set; }
 
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)

@@ -18,28 +18,16 @@ internal sealed class StreamDispatchTestScenario : IDisposable
     }
 
     /// <summary>The runtime context that compiled the scenario source.</summary>
-    public GeneratedMediatorRuntimeContext Runtime
-    {
-        get;
-    }
+    public GeneratedMediatorRuntimeContext Runtime { get; }
 
     /// <summary>The StreamTours request instance sent through both dispatchers.</summary>
-    public IStreamRequest<string> Request
-    {
-        get;
-    }
+    public IStreamRequest<string> Request { get; }
 
     /// <summary>The reference mediator wired with the same handler and pipeline behaviors.</summary>
-    public ReferenceMediator ReferenceDispatcher
-    {
-        get;
-    }
+    public ReferenceMediator ReferenceDispatcher { get; }
 
     /// <summary>The generated mediator built from the same handler and pipeline behaviors.</summary>
-    public IMediator Mediator
-    {
-        get;
-    }
+    public IMediator Mediator { get; }
 
     /// <summary>Compiles the source and builds a Demo.StreamTours request with the given count, plus a generated mediator and a reference dispatcher that share one handler, validation behavior and observability behavior.</summary>
     public static StreamDispatchTestScenario Create(string source, int requestCount)

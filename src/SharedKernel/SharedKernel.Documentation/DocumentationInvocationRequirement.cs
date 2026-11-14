@@ -10,10 +10,7 @@ internal sealed class DocumentationInvocationRequirement
     public string MethodName { get; set; } = string.Empty;
 
     /// <summary>Parameter count that selects the overload of the searched method.</summary>
-    public int ParameterCount
-    {
-        get; set;
-    }
+    public int ParameterCount { get; set; }
 
     /// <summary>Name of the invoked method to count.</summary>
     public string InvokedMethodName { get; set; } = string.Empty;

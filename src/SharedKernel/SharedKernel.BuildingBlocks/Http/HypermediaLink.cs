@@ -33,28 +33,19 @@ public sealed record HypermediaLink
     /// Gets the link relation, such as <c>self</c>.
     /// </summary>
     [JsonPropertyName("rel")]
-    public string Rel
-    {
-        get;
-    }
+    public string Rel { get; }
 
     /// <summary>
     /// Gets the link target.
     /// </summary>
     [JsonPropertyName("href")]
-    public string Href
-    {
-        get;
-    }
+    public string Href { get; }
 
     /// <summary>
     /// Gets the HTTP method to use on the target.
     /// </summary>
     [JsonPropertyName("method")]
-    public string Method
-    {
-        get;
-    }
+    public string Method { get; }
 
     /// <summary>
     /// Creates a link, rejecting blank values.

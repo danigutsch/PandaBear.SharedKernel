@@ -38,16 +38,10 @@ public sealed class ThrowingDistributedCache : IDistributedCache
     }
 
     /// <summary>Gets the entry options passed to the latest set, whether or not it threw.</summary>
-    public DistributedCacheEntryOptions? LastSetOptions
-    {
-        get; private set;
-    }
+    public DistributedCacheEntryOptions? LastSetOptions { get; private set; }
 
     /// <summary>Gets the cancellation token passed to the latest remove; <see cref="CancellationToken.None" /> for synchronous removes.</summary>
-    public CancellationToken LastRemoveCancellationToken
-    {
-        get; private set;
-    }
+    public CancellationToken LastRemoveCancellationToken { get; private set; }
 
     /// <summary>Gets how many sync and async calls of <paramref name="operation" /> were received.</summary>
     /// <param name="operation">The operation to count.</param>

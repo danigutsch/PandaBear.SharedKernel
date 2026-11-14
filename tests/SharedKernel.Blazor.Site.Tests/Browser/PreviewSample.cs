@@ -20,10 +20,7 @@ public sealed class PreviewSample : ComponentBase
 
     /// <summary>Gets or sets the nonce the preview renders.</summary>
     [Parameter]
-    public string? Nonce
-    {
-        get; set;
-    }
+    public string? Nonce { get; set; }
 
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)

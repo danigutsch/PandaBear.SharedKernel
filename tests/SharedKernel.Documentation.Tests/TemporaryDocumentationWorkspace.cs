@@ -15,10 +15,7 @@ internal sealed class TemporaryDocumentationWorkspace : IDisposable
     }
 
     /// <summary>Gets the absolute path of the temporary root directory.</summary>
-    public string RootPath
-    {
-        get;
-    }
+    public string RootPath { get; }
 
     /// <summary>Writes a file into <c>docs/architecture</c>, replacing any existing content.</summary>
     /// <param name="fileName">The file name inside the architecture folder.</param>

@@ -5,10 +5,7 @@ namespace PandaBear.Testing.Tests;
 internal sealed class InconsistentHashIdentityAssertionEntity(int hashCode) : IEquatable<InconsistentHashIdentityAssertionEntity>
 {
     /// <summary>Gets the identity used for equality, which stays <see cref="Guid.Empty" /> because the setter is private and never called.</summary>
-    public Guid Id
-    {
-        get; private init;
-    }
+    public Guid Id { get; private init; }
 
     /// <summary>Returns <see langword="true" /> when <paramref name="other" /> is not null and has the same <see cref="Id" />.</summary>
     /// <param name="other">The entity to compare with.</param>

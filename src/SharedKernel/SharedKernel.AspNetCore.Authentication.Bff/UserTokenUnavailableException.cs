@@ -43,8 +43,5 @@ public sealed class UserTokenUnavailableException : Exception
     }
 
     /// <summary>Gets why the token is unavailable.</summary>
-    public UserTokenFailure Failure
-    {
-        get;
-    }
+    public UserTokenFailure Failure { get; }
 }

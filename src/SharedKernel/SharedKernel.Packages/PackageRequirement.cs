@@ -17,16 +17,10 @@ public sealed class PackageRequirement : ValueObject
     }
 
     /// <summary>Gets the package name.</summary>
-    public PackageName Name
-    {
-        get;
-    }
+    public PackageName Name { get; }
 
     /// <summary>Gets the exact version that is required, or <see langword="null"/> when any version will do.</summary>
-    public PackageVersion? Version
-    {
-        get;
-    }
+    public PackageVersion? Version { get; }
 
     /// <inheritdoc />
     public override string ToString() => Version is null ? Name.Value : $"{Name}={Version}";

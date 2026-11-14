@@ -14,62 +14,38 @@ public sealed partial class ContactCard
 
     /// <summary>Gets or sets the heading text. Without it no heading is rendered.</summary>
     [Parameter]
-    public string? Title
-    {
-        get; set;
-    }
+    public string? Title { get; set; }
 
     /// <summary>Gets or sets the heading level, from 1 to 6. The default is 3.</summary>
     [Parameter]
-    public int HeadingLevel
-    {
-        get; set;
-    } = 3;
+    public int HeadingLevel { get; set; } = 3;
 
     /// <summary>Gets or sets the postal address, one entry per line.</summary>
     [Parameter]
-    public IReadOnlyList<string>? AddressLines
-    {
-        get; set;
-    }
+    public IReadOnlyList<string>? AddressLines { get; set; }
 
     /// <summary>Gets or sets the phone number, linked with <c>tel:</c>.</summary>
     [Parameter]
-    public PhoneNumber? Phone
-    {
-        get; set;
-    }
+    public PhoneNumber? Phone { get; set; }
 
     /// <summary>
     /// Gets or sets the visible text of the phone link, for example <c>+55 (11) 99999-0000</c>. It must be the same number as
     /// <see cref="Phone" />; separators are allowed. Without it the canonical digits are shown.
     /// </summary>
     [Parameter]
-    public string? PhoneText
-    {
-        get; set;
-    }
+    public string? PhoneText { get; set; }
 
     /// <summary>Gets or sets the email address, linked with <c>mailto:</c>.</summary>
     [Parameter]
-    public EmailAddress? Email
-    {
-        get; set;
-    }
+    public EmailAddress? Email { get; set; }
 
     /// <summary>Gets or sets the WhatsApp number, linked with <c>https://wa.me/</c>.</summary>
     [Parameter]
-    public PhoneNumber? WhatsApp
-    {
-        get; set;
-    }
+    public PhoneNumber? WhatsApp { get; set; }
 
     /// <summary>Gets or sets the WhatsApp link text. Caller-supplied so it can be localized.</summary>
     [Parameter]
-    public string WhatsAppLabel
-    {
-        get; set;
-    } = "WhatsApp";
+    public string WhatsAppLabel { get; set; } = "WhatsApp";
 
     private bool HasLines => AddressLines is { Count: > 0 };
 

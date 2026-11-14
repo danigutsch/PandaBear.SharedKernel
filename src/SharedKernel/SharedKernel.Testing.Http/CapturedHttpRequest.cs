@@ -25,26 +25,17 @@ public sealed class CapturedHttpRequest
     /// <summary>
     /// Gets the captured request message.
     /// </summary>
-    public HttpRequestMessage Message
-    {
-        get;
-    }
+    public HttpRequestMessage Message { get; }
 
     /// <summary>
     /// Gets the captured request path and query.
     /// </summary>
-    public string PathAndQuery
-    {
-        get;
-    }
+    public string PathAndQuery { get; }
 
     /// <summary>
     /// Gets the captured request body.
     /// </summary>
-    public string? Body
-    {
-        get;
-    }
+    public string? Body { get; }
 
     /// <summary>
     /// Gets the captured request method.

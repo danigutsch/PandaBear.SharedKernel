@@ -12,16 +12,10 @@ internal sealed class TokenEndpointOutcome
     }
 
     /// <summary>Gets the answer, when the identity provider granted the request.</summary>
-    internal TokenEndpointAnswer? Answer
-    {
-        get;
-    }
+    internal TokenEndpointAnswer? Answer { get; }
 
     /// <summary>Gets the OAuth error code the identity provider refused the request with, if it did.</summary>
-    internal string? Error
-    {
-        get;
-    }
+    internal string? Error { get; }
 
     /// <summary>Gets a value indicating whether the identity provider answered with an OAuth error.</summary>
     internal bool Rejected => Error is not null;

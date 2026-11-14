@@ -31,52 +31,28 @@ internal sealed class RoadmapAutomationResultSeal
     }
 
     /// <summary>Digest of the uploaded result artifact.</summary>
-    public string ArtifactDigest
-    {
-        get;
-    }
+    public string ArtifactDigest { get; }
 
     /// <summary>Commit SHA the result was produced on.</summary>
-    public string BaseSha
-    {
-        get;
-    }
+    public string BaseSha { get; }
 
     /// <summary>Whether the result changes any path.</summary>
-    public bool HasChanges
-    {
-        get;
-    }
+    public bool HasChanges { get; }
 
     /// <summary>Number of paths the result changes.</summary>
-    public int PathCount
-    {
-        get;
-    }
+    public int PathCount { get; }
 
     /// <summary>Digest of the plan this result belongs to.</summary>
-    public string PlanDigest
-    {
-        get;
-    }
+    public string PlanDigest { get; }
 
     /// <summary>Digest of the working-tree change set the result produced.</summary>
-    public string ResultDigest
-    {
-        get;
-    }
+    public string ResultDigest { get; }
 
     /// <summary>Digest over the whole seal content.</summary>
-    public string SealDigest
-    {
-        get;
-    }
+    public string SealDigest { get; }
 
     /// <summary>Digest of the GitHub snapshot from the plan.</summary>
-    public string SnapshotDigest
-    {
-        get;
-    }
+    public string SnapshotDigest { get; }
 
     /// <summary>Validates the digests, requires the path count to agree with <paramref name="hasChanges"/>, and returns the seal bound to <paramref name="plan"/>.</summary>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="plan"/> is <see langword="null"/>.</exception>

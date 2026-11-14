@@ -9,8 +9,5 @@ public interface IIdentified<out TId>
     /// <summary>
     /// Gets the stable identifier.
     /// </summary>
-    TId Id
-    {
-        get;
-    }
+    TId Id { get; }
 }

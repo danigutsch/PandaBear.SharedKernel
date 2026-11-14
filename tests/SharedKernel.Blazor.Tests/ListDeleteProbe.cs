@@ -9,10 +9,7 @@ internal sealed class ListDeleteProbe
     public List<Guid> Removed { get; } = [];
 
     /// <summary>Gets how many times the list was reloaded.</summary>
-    public int Reloads
-    {
-        get; private set;
-    }
+    public int Reloads { get; private set; }
 
     /// <summary>Reads the list again.</summary>
     /// <returns>A completed task.</returns>

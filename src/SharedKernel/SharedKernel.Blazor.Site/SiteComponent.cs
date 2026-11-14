@@ -28,17 +28,11 @@ public abstract class SiteComponent : ComponentBase
 
     /// <summary>Gets or sets CSS classes added to the root element after the component's own classes.</summary>
     [Parameter]
-    public string? Class
-    {
-        get; set;
-    }
+    public string? Class { get; set; }
 
     /// <summary>Gets or sets additional HTML attributes applied to the root element.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
-    public IReadOnlyDictionary<string, object>? AdditionalAttributes
-    {
-        get; set;
-    }
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
     /// <summary>Sets the parameters, then refuses an unmatched attribute that is a misspelled or removed parameter.</summary>
     /// <param name="parameters">The parameters.</param>

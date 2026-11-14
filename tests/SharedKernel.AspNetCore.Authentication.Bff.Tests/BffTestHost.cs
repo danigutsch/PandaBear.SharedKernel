@@ -57,10 +57,7 @@ internal sealed class BffTestHost : IDisposable
     internal FakeTimeProvider Time { get; } = new(Start);
 
     /// <summary>The recording cache; it refuses an absolute expiration in the past.</summary>
-    internal RecordingDistributedCache Cache
-    {
-        get;
-    }
+    internal RecordingDistributedCache Cache { get; }
 
     /// <summary>The fake identity provider.</summary>
     internal FakeIdentityProvider IdentityProvider { get; } = new();

@@ -28,44 +28,29 @@ public sealed partial class ThemePreview
 
     /// <summary>Gets or sets the theme to preview, usually a draft from <see cref="SiteTheme.CreateDraft" />; the default theme when <see langword="null" />.</summary>
     [Parameter]
-    public SiteTheme? Theme
-    {
-        get; set;
-    }
+    public SiteTheme? Theme { get; set; }
 
     /// <summary>
     /// Gets or sets errors from the editor by field path, such as the result of <see cref="ThemeEditorModel.ToDraft" />; they are listed
     /// before the theme's own rule errors and warnings.
     /// </summary>
     [Parameter]
-    public IReadOnlyDictionary<string, string[]>? Errors
-    {
-        get; set;
-    }
+    public IReadOnlyDictionary<string, string[]>? Errors { get; set; }
 
     /// <summary>Gets or sets the scheme shown. The default is <see cref="ColorScheme.Light" />.</summary>
     [Parameter]
-    public ColorScheme Scheme
-    {
-        get; set;
-    }
+    public ColorScheme Scheme { get; set; }
 
     /// <summary>Gets or sets whether the sample is shown at a phone width (22rem), where fluid sizes reach their minimum.</summary>
     [Parameter]
-    public bool Narrow
-    {
-        get; set;
-    }
+    public bool Narrow { get; set; }
 
     /// <summary>
     /// Gets or sets the id of the preview element that the style is scoped to, unique on the page: a letter, then letters, digits,
     /// hyphens or underscores. The default is <c>site-theme-preview</c>.
     /// </summary>
     [Parameter]
-    public string ScopeId
-    {
-        get; set;
-    } = "site-theme-preview";
+    public string ScopeId { get; set; } = "site-theme-preview";
 
     /// <summary>
     /// Gets or sets the Content-Security-Policy nonce of the page's response, written to the <c>style</c> element's <c>nonce</c>
@@ -73,17 +58,11 @@ public sealed partial class ThemePreview
     /// <see langword="null" />.
     /// </summary>
     [Parameter]
-    public string? Nonce
-    {
-        get; set;
-    }
+    public string? Nonce { get; set; }
 
     /// <summary>Gets or sets the texts.</summary>
     [Parameter]
-    public ThemePreviewTexts Texts
-    {
-        get; set;
-    } = new();
+    public ThemePreviewTexts Texts { get; set; } = new();
 
     private string SchemeName => Scheme == ColorScheme.Dark ? Texts.DarkScheme : Texts.LightScheme;
 

@@ -37,18 +37,12 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
     /// <summary>
     /// Create-table SQL generated for FirstMessagingDbContext.
     /// </summary>
-    public string FirstCreateScript
-    {
-        get;
-    }
+    public string FirstCreateScript { get; }
 
     /// <summary>
     /// Create-table SQL generated for SecondMessagingDbContext.
     /// </summary>
-    public string SecondCreateScript
-    {
-        get;
-    }
+    public string SecondCreateScript { get; }
 
     /// <summary>
     /// Creates an isolated PostgreSQL database, builds the two-context provider, creates both contexts' tables and returns the scenario, cleaning up everything if creation fails.

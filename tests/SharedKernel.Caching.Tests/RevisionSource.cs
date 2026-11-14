@@ -4,37 +4,22 @@ namespace PandaBear.Caching.Tests;
 internal sealed class RevisionSource
 {
     /// <summary>Gets or sets the revision the next read returns.</summary>
-    internal long Revision
-    {
-        get; set;
-    }
+    internal long Revision { get; set; }
 
     /// <summary>Gets the number of revision reads.</summary>
-    internal int RevisionReads
-    {
-        get; private set;
-    }
+    internal int RevisionReads { get; private set; }
 
     /// <summary>Gets the keys and revisions the loader was called with, in order.</summary>
     internal List<(string Key, long Revision)> Loads { get; } = [];
 
     /// <summary>Gets or sets a load to hand out instead of completing at once; it is used for one call, then cleared.</summary>
-    internal TaskCompletionSource<string>? PendingLoad
-    {
-        get; set;
-    }
+    internal TaskCompletionSource<string>? PendingLoad { get; set; }
 
     /// <summary>Gets or sets a revision read to hand out instead of completing at once; it is used for one call, then cleared.</summary>
-    internal TaskCompletionSource<long>? PendingRevision
-    {
-        get; set;
-    }
+    internal TaskCompletionSource<long>? PendingRevision { get; set; }
 
     /// <summary>Gets or sets the exception the next load throws; it is used for one call, then cleared.</summary>
-    internal Exception? LoadFailure
-    {
-        get; set;
-    }
+    internal Exception? LoadFailure { get; set; }
 
     /// <summary>Reads the revision.</summary>
     /// <param name="ct">The cancellation token.</param>

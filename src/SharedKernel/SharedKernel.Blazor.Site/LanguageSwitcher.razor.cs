@@ -11,18 +11,12 @@ public sealed partial class LanguageSwitcher
     /// <summary>Gets or sets the accessible name of the navigation, for example "Language". Caller-supplied so it can be localized.</summary>
     [Parameter]
     [EditorRequired]
-    public string Label
-    {
-        get; set;
-    } = string.Empty;
+    public string Label { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the languages.</summary>
     [Parameter]
     [EditorRequired]
-    public IReadOnlyList<LanguageLink> Languages
-    {
-        get; set;
-    } = [];
+    public IReadOnlyList<LanguageLink> Languages { get; set; } = [];
 
     /// <inheritdoc />
     protected override void OnParametersSet()

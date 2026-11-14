@@ -30,10 +30,7 @@ internal sealed class PostgreSqlDomainEventDispatchScenario : IAsyncDisposable
     /// <summary>
     /// Dispatcher that records the events dispatched while saving.
     /// </summary>
-    public PostgreSqlDomainEventDispatcher Dispatcher
-    {
-        get;
-    }
+    public PostgreSqlDomainEventDispatcher Dispatcher { get; }
 
     /// <summary>
     /// Creates an isolated PostgreSQL database, registers domain-event dispatch for PostgreSqlDomainEventDbContext, creates the schema and returns the scenario, cleaning up if creation fails.

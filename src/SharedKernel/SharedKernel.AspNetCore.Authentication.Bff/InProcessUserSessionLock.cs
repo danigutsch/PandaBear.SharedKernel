@@ -54,10 +54,7 @@ internal sealed class InProcessUserSessionLock : IUserSessionLock
     {
         public SemaphoreSlim Semaphore { get; } = new(1, 1);
 
-        public int Users
-        {
-            get; set;
-        }
+        public int Users { get; set; }
     }
 
     private sealed class Releaser(InProcessUserSessionLock owner, string sessionId, Entry entry) : IAsyncDisposable

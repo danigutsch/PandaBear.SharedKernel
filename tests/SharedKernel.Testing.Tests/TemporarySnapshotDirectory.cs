@@ -15,15 +15,9 @@ internal sealed class TemporarySnapshotDirectory : IDisposable
         Directory.CreateDirectory(GeneratedDirectory);
     }
 
-    private string CanonicalDirectory
-    {
-        get;
-    }
+    private string CanonicalDirectory { get; }
 
-    private string GeneratedDirectory
-    {
-        get;
-    }
+    private string GeneratedDirectory { get; }
 
     /// <summary>Creates a new temporary directory with empty canonical and generated subfolders.</summary>
     /// <returns>The new directory wrapper; the caller disposes it.</returns>

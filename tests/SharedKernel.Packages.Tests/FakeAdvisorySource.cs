@@ -6,16 +6,10 @@ namespace PandaBear.Packages.Tests;
 internal sealed class FakeAdvisorySource(Result<IReadOnlyList<Advisory>> result) : IAdvisorySource
 {
     /// <summary>Gets the package versions of the last query.</summary>
-    public IReadOnlyCollection<InstalledPackage>? Asked
-    {
-        get; private set;
-    }
+    public IReadOnlyCollection<InstalledPackage>? Asked { get; private set; }
 
     /// <summary>Gets how many queries were made.</summary>
-    public int Calls
-    {
-        get; private set;
-    }
+    public int Calls { get; private set; }
 
     /// <inheritdoc />
     public Task<Result<IReadOnlyList<Advisory>>> Query(PackageManagerKind manager, IReadOnlyCollection<InstalledPackage> packages, NetworkAccess access, CancellationToken cancellationToken)

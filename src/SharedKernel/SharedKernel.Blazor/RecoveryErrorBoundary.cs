@@ -37,10 +37,7 @@ public sealed class RecoveryErrorBoundary : ErrorBoundaryBase
 
     /// <summary>Gets or sets the label of a button that clears the fault and renders the child again; no button when null or blank.</summary>
     [Parameter]
-    public string? RecoverLabel
-    {
-        get; set;
-    }
+    public string? RecoverLabel { get; set; }
 
     /// <inheritdoc />
     protected override Task OnErrorAsync(Exception exception)

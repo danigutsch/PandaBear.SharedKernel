@@ -45,10 +45,7 @@ public sealed class SharedKernelDomainAnalyzer : DiagnosticAnalyzer
         description: "DateTime.Now, UtcNow, Today and DateTimeOffset.Now, UtcNow read the machine clock and local time zone, which makes domain behavior hard to test and hides the business time zone. Pass the date or time in as an argument or use an injected TimeProvider.");
 
     /// <inheritdoc />
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-    {
-        get;
-    } =
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(NonPrivateSetterRule, MutableCollectionExposureRule, AmbientClockRule);
 
     /// <inheritdoc />

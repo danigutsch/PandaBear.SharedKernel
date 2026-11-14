@@ -46,18 +46,12 @@ public sealed class SitemapAlternate
     /// <summary>
     /// Gets the <c>hreflang</c> value in canonical casing.
     /// </summary>
-    public string Language
-    {
-        get;
-    }
+    public string Language { get; }
 
     /// <summary>
     /// Gets the absolute URL of the alternate.
     /// </summary>
-    public Uri Location
-    {
-        get;
-    }
+    public Uri Location { get; }
 
     /// <summary>
     /// Creates the <see cref="DefaultLanguage" /> alternate for a fallback URL.

@@ -4,20 +4,11 @@ namespace PandaBear.Blazor.Site.Theming;
 public sealed class ThemeFontFaceFields
 {
     /// <summary>Gets or sets the weight.</summary>
-    public int? Weight
-    {
-        get; set;
-    }
+    public int? Weight { get; set; }
 
     /// <summary>Gets or sets the style.</summary>
-    public ThemeFontStyle Style
-    {
-        get; set;
-    }
+    public ThemeFontStyle Style { get; set; }
 
     /// <summary>Gets or sets the address of the uploaded <c>.woff2</c> file.</summary>
-    public string? Src
-    {
-        get; set;
-    }
+    public string? Src { get; set; }
 }

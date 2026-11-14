@@ -6,10 +6,7 @@ namespace PandaBear.VaultManager.Tool.Secrets;
 internal sealed record PlacementResult
 {
     /// <summary>Source item after placement.</summary>
-    public required VaultItem Item
-    {
-        get; init;
-    }
+    public required VaultItem Item { get; init; }
 
     /// <summary>Items created by placement, such as SSH key or card items.</summary>
     public IReadOnlyList<VaultItem> NewItems { get; init; } = [];

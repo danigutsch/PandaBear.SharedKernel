@@ -8,10 +8,7 @@ namespace PandaBear.Blazor.Site.Tests;
 internal static class SiteFixtures
 {
     /// <summary>Gets the header navigation used by the header tests: two links and one group.</summary>
-    public static SiteNavItem[] NavItems
-    {
-        get;
-    } =
+    public static SiteNavItem[] NavItems { get; } =
     [
         new("Home", Link("/")),
         new("Tours", Link("/tours")),

@@ -13,10 +13,7 @@ internal sealed class CandidateGit
     public string Status { get; set; } = string.Empty;
 
     /// <summary>Gets or sets an exception that every command throws instead of answering.</summary>
-    public Exception? Failure
-    {
-        get; set;
-    }
+    public Exception? Failure { get; set; }
 
     /// <summary>Gets the recorded calls, in order.</summary>
     public List<ProcessCall> Calls { get; } = [];

@@ -36,40 +36,22 @@ public sealed class UserTokenSet
     }
 
     /// <summary>Gets the access token.</summary>
-    public string AccessToken
-    {
-        get;
-    }
+    public string AccessToken { get; }
 
     /// <summary>Gets when the access token expires.</summary>
-    public DateTimeOffset AccessTokenExpiresAt
-    {
-        get;
-    }
+    public DateTimeOffset AccessTokenExpiresAt { get; }
 
     /// <summary>Gets the refresh token, if any.</summary>
-    public string? RefreshToken
-    {
-        get;
-    }
+    public string? RefreshToken { get; }
 
     /// <summary>Gets the ID token, if any.</summary>
-    public string? IdentityToken
-    {
-        get;
-    }
+    public string? IdentityToken { get; }
 
     /// <summary>Gets the access token type, if known.</summary>
-    public string? AccessTokenType
-    {
-        get;
-    }
+    public string? AccessTokenType { get; }
 
     /// <summary>Gets the granted scope, if known.</summary>
-    public string? Scope
-    {
-        get;
-    }
+    public string? Scope { get; }
 
     /// <summary>Returns a description without any token.</summary>
     /// <returns>A redacted description.</returns>

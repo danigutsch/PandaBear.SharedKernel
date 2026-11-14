@@ -14,10 +14,7 @@ internal sealed record CandidateDownloadLimits(
     TimeSpan MaxRetryDelay)
 {
     /// <summary>Gets the limits that the tool uses.</summary>
-    public static CandidateDownloadLimits Default
-    {
-        get;
-    } = new(
+    public static CandidateDownloadLimits Default { get; } = new(
         64L * 1024 * 1024,
         256L * 1024 * 1024,
         TimeSpan.FromMinutes(5),

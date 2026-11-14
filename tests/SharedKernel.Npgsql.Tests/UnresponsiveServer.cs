@@ -29,10 +29,7 @@ internal sealed class UnresponsiveServer : IDisposable
     }
 
     /// <summary>Gets the port on which the server listens.</summary>
-    public int Port
-    {
-        get;
-    }
+    public int Port { get; }
 
     /// <summary>
     /// Gets how many connections started a PostgreSQL handshake with a startup message or a request for encryption. A

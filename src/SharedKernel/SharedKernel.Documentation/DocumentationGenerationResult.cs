@@ -19,8 +19,5 @@ public sealed class DocumentationGenerationResult
     /// <summary>
     /// Gets repository-relative file paths changed or stale.
     /// </summary>
-    public IReadOnlyList<string> ChangedFiles
-    {
-        get;
-    }
+    public IReadOnlyList<string> ChangedFiles { get; }
 }

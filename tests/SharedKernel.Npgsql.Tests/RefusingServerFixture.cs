@@ -16,10 +16,7 @@ internal sealed class RefusingServerFixture(Func<string, string?> readEnvironmen
     public int BuilderCalls => Volatile.Read(ref _builderCalls);
 
     /// <summary>Gets the failure that every attempt throws.</summary>
-    public InvalidOperationException BuilderFailure
-    {
-        get;
-    } = new("The Aspire builder is refused in this test.");
+    public InvalidOperationException BuilderFailure { get; } = new("The Aspire builder is refused in this test.");
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     protected override IDistributedApplicationTestingBuilder CreateBuilder()

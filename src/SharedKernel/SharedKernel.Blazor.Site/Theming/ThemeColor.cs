@@ -12,16 +12,10 @@ public sealed class ThemeColor : ValueObject
     }
 
     /// <summary>Gets the value for the light scheme.</summary>
-    public CssColor Light
-    {
-        get;
-    }
+    public CssColor Light { get; }
 
     /// <summary>Gets the value for the dark scheme.</summary>
-    public CssColor Dark
-    {
-        get;
-    }
+    public CssColor Dark { get; }
 
     /// <summary>Creates a colour pair.</summary>
     /// <param name="light">The value for the light scheme.</param>

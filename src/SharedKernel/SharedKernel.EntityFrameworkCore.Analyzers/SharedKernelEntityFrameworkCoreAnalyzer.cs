@@ -22,10 +22,7 @@ public sealed class SharedKernelEntityFrameworkCoreAnalyzer : DiagnosticAnalyzer
         description: "A unique index without a rule still enforces uniqueness in the database, but a violation cannot be reported by rule: it escapes as a raw provider exception and the client gets a server error. Call HasUniqueRule on the index builder so SaveChangesTranslatingUniqueViolations can report the rule.");
 
     /// <inheritdoc />
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-    {
-        get;
-    } = ImmutableArray.Create(UntaggedUniqueIndexRule);
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(UntaggedUniqueIndexRule);
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)

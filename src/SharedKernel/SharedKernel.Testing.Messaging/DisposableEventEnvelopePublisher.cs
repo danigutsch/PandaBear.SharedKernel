@@ -12,18 +12,12 @@ public sealed class DisposableEventEnvelopePublisher : IEventEnvelopePublisher, 
     /// <summary>
     /// Exception thrown by every publish after the attempt is counted, or null to succeed.
     /// </summary>
-    public Exception? Failure
-    {
-        get; init;
-    }
+    public Exception? Failure { get; init; }
 
     /// <summary>
     /// Number of publish calls that got past cancellation and argument checks.
     /// </summary>
-    public int Attempts
-    {
-        get; private set;
-    }
+    public int Attempts { get; private set; }
 
     /// <summary>
     /// Number of times Dispose has been called.

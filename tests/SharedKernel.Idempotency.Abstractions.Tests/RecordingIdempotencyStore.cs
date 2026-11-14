@@ -8,42 +8,27 @@ internal sealed class RecordingIdempotencyStore : IIdempotencyStore
     /// <summary>
     /// Gets the operation passed to the last Complete call, or null before any call.
     /// </summary>
-    public IdempotencyOperation? CompletedOperation
-    {
-        get; private set;
-    }
+    public IdempotencyOperation? CompletedOperation { get; private set; }
 
     /// <summary>
     /// Gets the completion time passed to the last Complete call, or null before any call.
     /// </summary>
-    public DateTimeOffset? CompletedAt
-    {
-        get; private set;
-    }
+    public DateTimeOffset? CompletedAt { get; private set; }
 
     /// <summary>
     /// Gets the result fingerprint passed to the last Complete call, or null.
     /// </summary>
-    public string? ResultFingerprint
-    {
-        get; private set;
-    }
+    public string? ResultFingerprint { get; private set; }
 
     /// <summary>
     /// Gets the cancellation token passed to the last Complete call.
     /// </summary>
-    public CancellationToken CancellationToken
-    {
-        get; private set;
-    }
+    public CancellationToken CancellationToken { get; private set; }
 
     /// <summary>
     /// Gets how many times Complete was called.
     /// </summary>
-    public int CompleteCallCount
-    {
-        get; private set;
-    }
+    public int CompleteCallCount { get; private set; }
 
     /// <summary>
     /// Always throws NotSupportedException because the tests never start operations through this store.

@@ -14,10 +14,7 @@ internal sealed class ScopeMarker : IDisposable
     }
 
     /// <summary>Gets or sets the value copied into the scope.</summary>
-    public string? Value
-    {
-        get; set;
-    }
+    public string? Value { get; set; }
 
     /// <inheritdoc />
     public void Dispose() => _log.Entries.Add("marker disposed");

@@ -32,16 +32,10 @@ public sealed class FontSize : ValueObject
     }
 
     /// <summary>Gets the minimum size in rem; for a fixed size, the size.</summary>
-    public decimal Min
-    {
-        get;
-    }
+    public decimal Min { get; }
 
     /// <summary>Gets the maximum size in rem; for a fixed size, the size.</summary>
-    public decimal Max
-    {
-        get;
-    }
+    public decimal Max { get; }
 
     /// <summary>Gets a value indicating whether the size grows with the viewport.</summary>
     public bool IsFluid => Min != Max;

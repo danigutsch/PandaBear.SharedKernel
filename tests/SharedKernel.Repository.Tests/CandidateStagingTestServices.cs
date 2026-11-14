@@ -6,10 +6,7 @@ namespace PandaBear.Repository.Tests;
 internal static class CandidateStagingTestServices
 {
     /// <summary>Gets small limits, so size tests stay small: the scope's two 4096-byte packages fit them.</summary>
-    public static CandidateDownloadLimits SmallLimits
-    {
-        get;
-    } = CandidateDownloadLimits.Default with
+    public static CandidateDownloadLimits SmallLimits { get; } = CandidateDownloadLimits.Default with
     {
         MaxPackageBytes = 6000,
         MaxTotalBytes = 20000,

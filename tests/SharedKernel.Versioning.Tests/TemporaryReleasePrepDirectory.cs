@@ -32,26 +32,17 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
     /// <summary>
     /// Gets the absolute path of the directory root.
     /// </summary>
-    public string Root
-    {
-        get;
-    }
+    public string Root { get; }
 
     /// <summary>
     /// Gets the directory that holds the candidate packages and manifest.
     /// </summary>
-    public string PackageDirectory
-    {
-        get;
-    }
+    public string PackageDirectory { get; }
 
     /// <summary>
     /// Gets the directory that release preparation writes its output to.
     /// </summary>
-    public string OutputDirectory
-    {
-        get;
-    }
+    public string OutputDirectory { get; }
 
     /// <summary>Writes the version 1.0.0 probe package and a manifest with its hash and the hashes of <paramref name="packages" />.</summary>
     public string WriteCandidate(params string[] packages)

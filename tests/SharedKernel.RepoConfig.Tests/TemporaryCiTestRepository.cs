@@ -21,10 +21,7 @@ internal sealed class TemporaryCiTestRepository : IDisposable
     /// <summary>
     /// Gets the absolute path of the temporary repository root.
     /// </summary>
-    public string RootPath
-    {
-        get;
-    }
+    public string RootPath { get; }
 
     /// <summary>
     /// Writes a plain project at the relative path with the given project references and registers it in the solution.

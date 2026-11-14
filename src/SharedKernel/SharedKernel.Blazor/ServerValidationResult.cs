@@ -13,19 +13,13 @@ public sealed class ServerValidationResult
     }
 
     /// <summary>Gets the messages that were placed on known fields.</summary>
-    public IReadOnlyList<ServerValidationIssue> Issues
-    {
-        get;
-    }
+    public IReadOnlyList<ServerValidationIssue> Issues { get; }
 
     /// <summary>
     /// Gets whether the server reported errors that could not be shown on a known field: model-level
     /// or unknown keys, keys beyond the field cap, and messages beyond the per-field cap. Show caller-chosen fixed copy for them; never show the server text.
     /// </summary>
-    public bool HasUnplacedErrors
-    {
-        get;
-    }
+    public bool HasUnplacedErrors { get; }
 
     /// <summary>Creates error summary entries that link each issue to a form control.</summary>
     /// <param name="fieldId">Maps a known field name to the HTML id of its control.</param>

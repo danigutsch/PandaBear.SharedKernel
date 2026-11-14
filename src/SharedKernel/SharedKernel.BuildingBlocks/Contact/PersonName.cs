@@ -16,16 +16,10 @@ public sealed class PersonName : ValueObject
     }
 
     /// <summary>Gets the first name. Personal data.</summary>
-    public string FirstName
-    {
-        get;
-    }
+    public string FirstName { get; }
 
     /// <summary>Gets the last name. Personal data.</summary>
-    public string LastName
-    {
-        get;
-    }
+    public string LastName { get; }
 
     /// <summary>Gets the first and last name joined by a space.</summary>
     public string FullName => $"{FirstName} {LastName}";

@@ -25,10 +25,7 @@ internal sealed class LoopbackS3Stub : IDisposable
     }
 
     /// <summary>Gets the endpoint base URI.</summary>
-    public Uri BaseUri
-    {
-        get;
-    }
+    public Uri BaseUri { get; }
 
     /// <summary>Gets a snapshot of the requests received so far.</summary>
     public IReadOnlyList<RecordedPutRequest> Requests

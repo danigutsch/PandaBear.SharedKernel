@@ -13,10 +13,7 @@ internal sealed class ContractHttpValidationNotSupportedContent : HttpContent
     }
 
     /// <summary>Gets a value indicating whether serialization or stream creation was attempted.</summary>
-    public bool WasRead
-    {
-        get; private set;
-    }
+    public bool WasRead { get; private set; }
 
     protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)
     {
