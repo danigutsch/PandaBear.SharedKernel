@@ -87,6 +87,36 @@ public sealed class DefaultPublicCachingTests
         response.Headers.CacheControl.ShouldBeNull();
     }
 
+    [Theory]
+    [InlineData("Content-Security-Policy", "script-src 'nonce-abc123'")]
+    [InlineData("Content-Security-Policy", "default-src 'self'; style-src 'NONCE-abc123'")]
+    [InlineData("Content-Security-Policy-Report-Only", "script-src 'nonce-abc123'")]
+    public async Task A_response_whose_content_security_policy_holds_a_nonce_is_left_untouched(string name, string value)
+    {
+        // Arrange
+        await using var host = await CachingTestHost.Start(MaxAge);
+
+        // Act
+        using var response = await host.Send(HttpMethod.Get, $"/header?name={name}&value={Uri.EscapeDataString(value)}");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.Headers.CacheControl.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task A_response_whose_content_security_policy_holds_no_nonce_becomes_public()
+    {
+        // Arrange
+        await using var host = await CachingTestHost.Start(MaxAge);
+
+        // Act
+        using var response = await host.Send(HttpMethod.Get, $"/header?name=Content-Security-Policy&value={Uri.EscapeDataString("default-src 'self'")}");
+
+        // Assert
+        response.Headers.CacheControl.ShouldNotBeNull().ToString().ShouldBe("public, max-age=60");
+    }
+
     [Fact]
     public async Task A_request_with_an_authorization_header_is_left_untouched()
     {

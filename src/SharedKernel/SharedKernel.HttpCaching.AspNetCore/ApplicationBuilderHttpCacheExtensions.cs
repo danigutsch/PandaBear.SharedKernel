@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 
 namespace PandaBear.HttpCaching.AspNetCore;
@@ -50,8 +51,8 @@ public static class ApplicationBuilderHttpCacheExtensions
     /// <summary>
     /// Makes anonymous successful pages publicly cacheable for a short time: when a response starts, it gets
     /// <c>Cache-Control: public, max-age=N</c> only if the request is GET or HEAD, the status is 200, the response has no
-    /// <c>Cache-Control</c> of its own and sets no cookie, the request has no <c>Authorization</c> header, and the user is not authenticated.
-    /// Every other response is left untouched.
+    /// <c>Cache-Control</c> of its own and sets no cookie, its content security policy holds no per-request <c>'nonce-…'</c> source, the
+    /// request has no <c>Authorization</c> header, and the user is not authenticated. Every other response is left untouched.
     /// </summary>
     /// <remarks>
     /// The user is checked when the response starts, so authentication that runs later in the pipeline is seen. Endpoints that want another
@@ -95,5 +96,20 @@ public static class ApplicationBuilderHttpCacheExtensions
         && !context.Response.Headers.ContainsKey(HeaderNames.CacheControl)
         && !context.Response.Headers.ContainsKey(HeaderNames.SetCookie)
         && !context.Request.Headers.ContainsKey(HeaderNames.Authorization)
-        && context.User.Identity?.IsAuthenticated != true;
+        && context.User.Identity?.IsAuthenticated != true
+        && !HoldsNonce(context.Response.Headers[HeaderNames.ContentSecurityPolicy])
+        && !HoldsNonce(context.Response.Headers[HeaderNames.ContentSecurityPolicyReportOnly]);
+
+    private static bool HoldsNonce(StringValues policies)
+    {
+        foreach (var policy in policies)
+        {
+            if (policy?.Contains("'nonce-", StringComparison.OrdinalIgnoreCase) == true)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

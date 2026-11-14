@@ -32,8 +32,8 @@ The parameterless endpoint-filter overload remains available for executed-endpoi
 
 `app.UseDefaultPublicCaching(TimeSpan.FromSeconds(60))` lets browsers and proxies keep anonymous pages briefly. When a response
 starts, it adds `Cache-Control: public, max-age=60` only if all of these hold: the request is GET or HEAD, the status is 200, the
-response has no `Cache-Control` of its own, the response sets no cookie, the request has no `Authorization` header, and the user is
-not authenticated. Every other response is left untouched, so personalized, failed and redirected answers are never made public,
+response has no `Cache-Control` of its own, the response sets no cookie, its content security policy holds no per-request
+`'nonce-…'` source, the request has no `Authorization` header, and the user is not authenticated. Every other response is left untouched, so personalized, failed and redirected answers are never made public,
 and endpoints that choose their own lifetime keep it. The lifetime must be at least one second and is written in whole seconds.
 Register it before the endpoints; the user is checked when the response starts, so later authentication is taken into account.
 

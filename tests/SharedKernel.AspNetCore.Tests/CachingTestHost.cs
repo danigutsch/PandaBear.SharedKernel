@@ -35,6 +35,11 @@ internal static class CachingTestHost
                 context.Response.Headers.CacheControl = "no-cache";
                 return "page";
             });
+            app.MapGet("/header", (HttpContext context, string name, string value) =>
+            {
+                context.Response.Headers.Append(name, value);
+                return "page";
+            });
             app.MapGet("/cookie", (HttpContext context) =>
             {
                 context.Response.Cookies.Append("session", "1");
