@@ -359,6 +359,14 @@ public sealed partial class UserTokenManager
             return StillValidOrUnavailable(tokens);
         }
 
+        if (answer.IdentityToken is not null && tokens.IdentityToken is not null
+            && !IdentityTokenSubject.Matches(tokens.IdentityToken, answer.IdentityToken))
+        {
+            // OpenID Connect Core 1.0 section 12.2: a refreshed ID token must keep the issuer and subject of the login.
+            LogIdentityTokenMismatch(_logger);
+            return StillValidOrUnavailable(tokens);
+        }
+
         var refreshed = new UserTokenSet(
             answer.AccessToken,
             answer.ExpiresIn is { } seconds ? ExpiresAfter(seconds) : _timeProvider.GetUtcNow().Add(_options.DefaultAccessTokenLifetime),
@@ -428,6 +436,9 @@ public sealed partial class UserTokenManager
 
     [LoggerMessage(LogLevel.Warning, "The identity provider {Operation} answer has no usable access token.")]
     private static partial void LogUnusableAnswer(ILogger logger, string operation);
+
+    [LoggerMessage(LogLevel.Warning, "The refreshed ID token names another issuer or subject than the login; the refresh answer was discarded.")]
+    private static partial void LogIdentityTokenMismatch(ILogger logger);
 
     [LoggerMessage(LogLevel.Warning, "The identity provider rejected the token exchange for audience {Audience}.")]
     private static partial void LogExchangeRejected(ILogger logger, string audience);

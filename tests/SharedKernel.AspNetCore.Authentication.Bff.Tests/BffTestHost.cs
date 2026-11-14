@@ -79,14 +79,15 @@ internal sealed class BffTestHost : IDisposable
         string subject,
         string accessToken = "access-0",
         string? refreshToken = "refresh-0",
-        TimeSpan? expiresIn = null)
+        TimeSpan? expiresIn = null,
+        string identityToken = "id-0")
     {
         var principal = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", subject)], "oidc"));
         var tokens = new UserTokenSet(
             accessToken,
             Time.GetUtcNow().Add(expiresIn ?? TimeSpan.FromMinutes(5)),
             refreshToken,
-            identityToken: "id-0",
+            identityToken,
             accessTokenType: "Bearer",
             scope: "openid profile");
         await Manager.StartSession(principal, tokens, CancellationToken.None);

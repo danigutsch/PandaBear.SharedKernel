@@ -171,6 +171,38 @@ public sealed class UserTokenManagerTests
         tokens.AccessToken.ShouldBe("access-0");
     }
 
+    [Theory]
+    [InlineData("https://idp.test/realms/test", "alice", true)]
+    [InlineData("https://idp.test/realms/test", "mallory", false)]
+    [InlineData("https://other.test/realms/test", "alice", false)]
+    public async Task A_refreshed_id_token_is_kept_only_for_the_same_issuer_and_subject(string issuer, string subject, bool kept)
+    {
+        // Arrange
+        using var host = new BffTestHost();
+        var original = UnsignedJwt.Create("https://idp.test/realms/test", "alice");
+        var refreshed = UnsignedJwt.Create(issuer, subject);
+        host.IdentityProvider.Respond = request => request.Form.GetValueOrDefault("grant_type") == "refresh_token"
+            ? FakeIdentityProvider.Json(HttpStatusCode.OK, new Dictionary<string, object>
+            {
+                ["access_token"] = "access-new",
+                ["token_type"] = "Bearer",
+                ["expires_in"] = 300,
+                ["id_token"] = refreshed
+            })
+            : null;
+        var user = await host.SignIn("alice", identityToken: original);
+        host.Time.Advance(TimeSpan.FromMinutes(10));
+
+        // Act
+        var result = await host.Manager.GetAccessToken(user, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Succeeded.ShouldBe(kept);
+        var tokens = await host.Manager.GetTokens(user, TestContext.Current.CancellationToken);
+        tokens!.IdentityToken.ShouldBe(kept ? refreshed : original);
+        tokens.AccessToken.ShouldBe(kept ? "access-new" : "access-0");
+    }
+
     [Fact]
     public async Task A_rejected_refresh_fails_typed_and_ends_the_token_session()
     {
