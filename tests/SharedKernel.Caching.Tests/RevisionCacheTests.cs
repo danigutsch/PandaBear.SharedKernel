@@ -149,6 +149,55 @@ public sealed class RevisionCacheTests
     }
 
     [Fact]
+    public async Task Callers_that_arrive_while_the_revision_is_read_share_that_read()
+    {
+        // Arrange
+        var source = new RevisionSource { Revision = 1 };
+        var time = new FakeTimeProvider();
+        var cache = source.Cache(Interval, time);
+        await cache.Get("pt", TestContext.Current.CancellationToken);
+        var pending = new TaskCompletionSource<long>(TaskCreationOptions.RunContinuationsAsynchronously);
+        source.PendingRevision = pending;
+        time.Advance(Interval);
+        var first = cache.Get("pt", TestContext.Current.CancellationToken).AsTask();
+        var second = cache.Get("en", TestContext.Current.CancellationToken).AsTask();
+
+        // Act
+        pending.SetResult(2);
+        var values = await Task.WhenAll(first, second);
+
+        // Assert
+        values.ShouldBe(["pt@2", "en@2"]);
+        source.RevisionReads.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task A_caller_whose_shared_read_was_cancelled_by_another_caller_reads_again()
+    {
+        // Arrange
+        var source = new RevisionSource { Revision = 1 };
+        var time = new FakeTimeProvider();
+        var cache = source.Cache(Interval, time);
+        await cache.Get("pt", TestContext.Current.CancellationToken);
+        source.PendingRevision = new TaskCompletionSource<long>(TaskCreationOptions.RunContinuationsAsynchronously);
+        source.Revision = 2;
+        time.Advance(Interval);
+        using var cancellation = new CancellationTokenSource();
+        var cancelled = cache.Get("pt", cancellation.Token).AsTask();
+        var waiting = cache.Get("pt", TestContext.Current.CancellationToken).AsTask();
+
+        // Act
+        await cancellation.CancelAsync();
+        var value = await waiting;
+        await Task.WhenAny(cancelled);
+
+        // Assert
+        cancelled.IsCanceled.ShouldBeTrue();
+        value.ShouldBe("pt@2");
+        source.RevisionReads.ShouldBe(3);
+    }
+
+    [Fact]
     public async Task The_cancellation_token_reaches_the_revision_read()
     {
         // Arrange

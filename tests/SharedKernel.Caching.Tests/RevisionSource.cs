@@ -24,6 +24,12 @@ internal sealed class RevisionSource
         get; set;
     }
 
+    /// <summary>Gets or sets a revision read to hand out instead of completing at once; it is used for one call, then cleared.</summary>
+    internal TaskCompletionSource<long>? PendingRevision
+    {
+        get; set;
+    }
+
     /// <summary>Gets or sets the exception the next load throws; it is used for one call, then cleared.</summary>
     internal Exception? LoadFailure
     {
@@ -37,6 +43,12 @@ internal sealed class RevisionSource
     {
         ct.ThrowIfCancellationRequested();
         RevisionReads++;
+        if (PendingRevision is { } pending)
+        {
+            PendingRevision = null;
+            return new ValueTask<long>(pending.Task.WaitAsync(ct));
+        }
+
         return ValueTask.FromResult(Revision);
     }
 

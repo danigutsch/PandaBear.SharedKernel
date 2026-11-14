@@ -11,7 +11,9 @@ namespace PandaBear.Caching;
 /// <typeparam name="TKey">The key, such as a culture.</typeparam>
 /// <typeparam name="TValue">The value; it is shared by every caller, so make it immutable.</typeparam>
 /// <remarks>
-/// Register one instance per value kind as a singleton. It is thread-safe. Two callers that miss the same key at the same time may both load
+/// Register one instance per value kind as a singleton. It is thread-safe. Callers that need the revision while it is being read wait for
+/// that read instead of starting their own; a caller whose own token is not cancelled reads again when the read it waited for was cancelled
+/// by the caller that started it. Two callers that miss the same key at the same time may both load
 /// it; the first stored value wins, so the cache never holds two values of one key at one revision. A failed load is not cached. A load that
 /// finishes after a newer revision was seen returns its value to its own caller without storing it, and a revision lower than one already
 /// seen, such as from a lagging replica, is ignored.
@@ -26,6 +28,7 @@ public sealed class RevisionCache<TKey, TValue>
     private readonly Lock _gate = new();
     private Generation? _current;
     private DateTimeOffset _checkedAt;
+    private Task<Generation>? _reading;
 
     /// <summary>Initializes a new instance of the <see cref="RevisionCache{TKey, TValue}"/> class.</summary>
     /// <param name="readRevision">Reads the current revision.</param>
@@ -76,27 +79,76 @@ public sealed class RevisionCache<TKey, TValue>
 
     private async ValueTask<Generation> CurrentGeneration(CancellationToken ct)
     {
-        var now = _timeProvider.GetUtcNow();
-        lock (_gate)
+        while (true)
         {
-            if (_current is not null && now - _checkedAt < _revisionCheckInterval)
+            var now = _timeProvider.GetUtcNow();
+            TaskCompletionSource<Generation>? owned = null;
+            Task<Generation> reading;
+            lock (_gate)
             {
-                return _current;
+                if (_current is not null && now - _checkedAt < _revisionCheckInterval)
+                {
+                    return _current;
+                }
+
+                if (_reading is null)
+                {
+                    owned = new TaskCompletionSource<Generation>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    _reading = owned.Task;
+                }
+
+                reading = _reading;
+            }
+
+            if (owned is not null)
+            {
+                return await ReadGeneration(owned, now, ct).ConfigureAwait(false);
+            }
+
+            try
+            {
+                return await reading.WaitAsync(ct).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+            {
+                // The caller that started the shared read was cancelled, not this one: read again.
             }
         }
+    }
 
-        var revision = await _readRevision(ct).ConfigureAwait(false);
-        lock (_gate)
+    private async ValueTask<Generation> ReadGeneration(TaskCompletionSource<Generation> reading, DateTimeOffset now, CancellationToken ct)
+    {
+        Generation generation;
+        try
         {
-            // The revision only grows; a slower or lagging read must not move it back.
-            if (_current is null || revision > _current.Revision)
+            var revision = await _readRevision(ct).ConfigureAwait(false);
+            lock (_gate)
             {
-                _current = new Generation(revision);
+                // The revision only grows; a lagging read must not move it back.
+                if (_current is null || revision > _current.Revision)
+                {
+                    _current = new Generation(revision);
+                }
+
+                _checkedAt = now > _checkedAt ? now : _checkedAt;
+                _reading = null;
+                generation = _current;
+            }
+        }
+        catch (Exception exception)
+        {
+            lock (_gate)
+            {
+                _reading = null;
             }
 
-            _checkedAt = now > _checkedAt ? now : _checkedAt;
-            return _current;
+            reading.SetException(exception);
+            _ = reading.Task.Exception;
+            throw;
         }
+
+        reading.SetResult(generation);
+        return generation;
     }
 
     /// <summary>The values cached at one revision.</summary>
