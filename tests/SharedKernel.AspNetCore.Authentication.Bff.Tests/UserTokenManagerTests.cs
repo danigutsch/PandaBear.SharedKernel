@@ -234,6 +234,29 @@ public sealed class UserTokenManagerTests
         retried.AccessToken.ShouldBe("access-1");
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task A_failed_refresh_inside_the_margin_returns_the_still_valid_access_token(bool unusableAnswer)
+    {
+        // Arrange
+        using var host = new BffTestHost(options => options.RefreshBeforeExpiry = TimeSpan.FromMinutes(1));
+        host.IdentityProvider.Respond = _ => unusableAnswer
+            ? FakeIdentityProvider.Json(HttpStatusCode.OK, new Dictionary<string, object> { ["token_type"] = "Bearer", ["expires_in"] = 300 })
+            : new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
+        var user = await host.SignIn("alice", expiresIn: TimeSpan.FromMinutes(5));
+        host.Time.Advance(TimeSpan.FromMinutes(4) + TimeSpan.FromSeconds(30));
+
+        // Act
+        var result = await host.Manager.GetAccessToken(user, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Succeeded.ShouldBeTrue();
+        result.AccessToken.ShouldBe("access-0");
+        result.ExpiresAt.ShouldBe(BffTestHost.Start.AddMinutes(5));
+        host.IdentityProvider.Grants("refresh_token").ShouldHaveSingleItem();
+    }
+
     [Fact]
     public async Task A_slow_identity_provider_is_cut_off_by_the_timeout()
     {

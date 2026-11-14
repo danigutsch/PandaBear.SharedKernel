@@ -29,7 +29,8 @@ tested target for token exchange.
   - a refresh rejected with `invalid_grant`, or an expired token without a refresh token, ends the token session and
     returns the typed failure `UserTokenFailure.RefreshFailed`. The cookie is then rejected and signed out on the next
     request (`RejectCookieWithoutTokenSession`). An identity provider that fails, times out or answers with another OAuth
-    error returns `IdentityProviderUnavailable` and keeps the tokens for a retry;
+    error keeps the tokens for a retry and returns the stored access token while it has not expired, otherwise
+    `IdentityProviderUnavailable`;
   - cookie sign-out removes the tokens and revokes the refresh token (RFC 7009) when discovery names a
     `revocation_endpoint` (`RevokeRefreshTokenOnSignOut`).
 - `AddUserAccessTokenHandler()`: an `HttpClient` handler that attaches the current user's access token.

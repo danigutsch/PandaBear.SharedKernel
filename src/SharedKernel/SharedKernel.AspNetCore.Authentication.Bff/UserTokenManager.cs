@@ -110,8 +110,8 @@ public sealed partial class UserTokenManager
     /// <remarks>
     /// A refresh rejected with <c>invalid_grant</c>, or an expired token without a refresh token, ends the token session:
     /// <see cref="UserTokenFailure.RefreshFailed" />, and the cookie is rejected on the next request. An identity provider
-    /// that fails, times out or refuses the client or request with another error yields
-    /// <see cref="UserTokenFailure.IdentityProviderUnavailable" /> and keeps the tokens.
+    /// that fails, times out, answers unusably or refuses the client or request with another error keeps the tokens and
+    /// yields the stored access token while it has not expired, otherwise <see cref="UserTokenFailure.IdentityProviderUnavailable" />.
     /// </remarks>
     public async Task<UserTokenResult> GetAccessToken(ClaimsPrincipal user, CancellationToken ct)
     {
@@ -337,7 +337,7 @@ public sealed partial class UserTokenManager
         var answer = outcome.Answer;
         if (answer is null)
         {
-            return UserTokenResult.Failed(UserTokenFailure.IdentityProviderUnavailable);
+            return StillValidOrUnavailable(tokens);
         }
 
         if (string.IsNullOrWhiteSpace(answer.AccessToken) || answer.ExpiresIn is <= 0)
@@ -356,7 +356,7 @@ public sealed partial class UserTokenManager
                 await _store.SetUserTokens(session, rotated, CancellationToken.None).ConfigureAwait(false);
             }
 
-            return UserTokenResult.Failed(UserTokenFailure.IdentityProviderUnavailable);
+            return StillValidOrUnavailable(tokens);
         }
 
         var refreshed = new UserTokenSet(
@@ -368,6 +368,17 @@ public sealed partial class UserTokenManager
             answer.Scope ?? tokens.Scope);
         await _store.SetUserTokens(session, refreshed, CancellationToken.None).ConfigureAwait(false);
         return UserTokenResult.Success(refreshed.AccessToken, refreshed.AccessTokenExpiresAt);
+    }
+
+    /// <summary>
+    /// The result of a refresh that got no usable answer: the stored access token while it has not expired, since it was
+    /// refreshed only because it was inside <see cref="UserTokenManagementOptions.RefreshBeforeExpiry" />.
+    /// </summary>
+    private UserTokenResult StillValidOrUnavailable(UserTokenSet tokens)
+    {
+        return tokens.AccessTokenExpiresAt > _timeProvider.GetUtcNow()
+            ? UserTokenResult.Success(tokens.AccessToken, tokens.AccessTokenExpiresAt)
+            : UserTokenResult.Failed(UserTokenFailure.IdentityProviderUnavailable);
     }
 
     private async Task<UserTokenResult> ExchangeLocked(
