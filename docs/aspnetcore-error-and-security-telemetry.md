@@ -78,13 +78,18 @@ that before enabling it in a host that already customizes its error bodies.
 A host that must keep its own error body, for example the title of its existing `400` answer, does not need another
 handler. The handler writes through `IProblemDetailsService`, so the host's own `AddProblemDetails` configuration applies
 to its bodies. Set `ProblemDetailsOptions.CustomizeProblemDetails` to change the `title`, remove the `type`, or remove the
-`traceId` extension for the statuses it wants; the status code, the logging and the counter do not change:
+`traceId` extension; the status code, the logging and the counter do not change.
+
+`CustomizeProblemDetails` runs for every problem details body of the host, not only the handler's: the `404` or `409` of an
+endpoint that returns `Results.Problem` goes through it too. A condition on the status alone, such as `Status < 500`, therefore
+retitles those answers as well. Test for the exception the handler is answering instead, which the exception middleware exposes
+through `IExceptionHandlerFeature`:
 
 ```csharp
 builder.Services.AddUnhandledExceptionHandler();
 builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
 {
-    if (context.ProblemDetails.Status < 500)
+    if (context.HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error is BadHttpRequestException)
     {
         context.ProblemDetails.Title = "The request could not be read.";
         context.ProblemDetails.Type = null;

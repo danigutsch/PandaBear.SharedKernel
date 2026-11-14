@@ -1,5 +1,6 @@
 using System.Diagnostics.Metrics;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,11 +8,24 @@ using Microsoft.Extensions.Logging;
 
 namespace PandaBear.AspNetCore.Tests;
 
-/// <summary>Starts a web application whose only route throws an exception that carries a sensitive message.</summary>
+/// <summary>Starts a web application whose routes throw an exception that carries a sensitive message, or answer a problem of their own.</summary>
 internal static class UnhandledExceptionTestApp
 {
     /// <summary>The exception message that must never be exposed.</summary>
     public const string SensitiveMessage = "secret-connection-string password=hunter2";
+
+    /// <summary>The host customization that the documentation recommends: it retitles only the answer for a request the framework could not read.</summary>
+    /// <param name="options">The problem details options of the host.</param>
+    public static void RetitleUnreadableRequests(ProblemDetailsOptions options) =>
+        options.CustomizeProblemDetails = context =>
+        {
+            if (context.HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error is BadHttpRequestException)
+            {
+                context.ProblemDetails.Title = "The request could not be read.";
+                context.ProblemDetails.Type = null;
+                context.ProblemDetails.Extensions.Remove("traceId");
+            }
+        };
 
     /// <summary>Starts the application with the unhandled-exception handler registered.</summary>
     /// <param name="meters">The meter factory and collector.</param>
@@ -34,6 +48,7 @@ internal static class UnhandledExceptionTestApp
         var app = builder.Build();
         app.UseExceptionHandler();
         app.MapGet("/orders/{id}", string (string id) => throw new InvalidOperationException(SensitiveMessage));
+        app.MapGet("/missing", () => TypedResults.Problem(detail: "No such order.", statusCode: StatusCodes.Status404NotFound));
         app.MapPost("/upload", string () => throw new BadHttpRequestException(SensitiveMessage, StatusCodes.Status413PayloadTooLarge));
         await app.StartAsync(TestContext.Current.CancellationToken);
         return app;
