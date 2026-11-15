@@ -251,9 +251,13 @@ internal static partial class RepositoryCommandLine
             HelpName = "minutes",
             DefaultValueFactory = static _ => 30,
         };
+        // The token is checked instead of the value: reading the value of a token that is not a number throws, and the parser
+        // already reports that token.
         timeoutOption.Validators.Add(static result =>
         {
-            if (result.GetValueOrDefault<int>() is < 1 or > 1440)
+            if (result.Tokens is [.., var token]
+                && int.TryParse(token.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var minutes)
+                && minutes is < 1 or > 1440)
             {
                 result.AddError("--timeout-minutes requires 1 to 1440.");
             }
@@ -702,9 +706,13 @@ internal static partial class RepositoryCommandLine
             HelpName = "count",
             DefaultValueFactory = _ => 0,
         };
+        // The token is checked instead of the value: reading the value of a token that is not a number throws, and the parser
+        // already reports that token.
         advisoryOption.Validators.Add(static result =>
         {
-            if (result.GetValueOrDefault<int>() < 0)
+            if (result.Tokens is [.., var token]
+                && int.TryParse(token.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var advisory)
+                && advisory < 0)
             {
                 result.AddError("Option '--advisory' cannot be negative.");
             }
