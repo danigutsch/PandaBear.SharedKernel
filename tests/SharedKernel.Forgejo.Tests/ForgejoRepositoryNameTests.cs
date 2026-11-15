@@ -50,4 +50,41 @@ public sealed class ForgejoRepositoryNameTests
         // Assert
         parse.ShouldThrow<ArgumentNullException>();
     }
+
+    [Fact]
+    public void Parse_returns_the_owner_and_the_name()
+    {
+        // Act
+        var (owner, name) = ForgejoRepositoryName.Parse("owner/name", "repository");
+
+        // Assert
+        owner.ShouldBe("owner");
+        name.ShouldBe("name");
+    }
+
+    [Theory]
+    [InlineData("owner")]
+    [InlineData("owner/..")]
+    [InlineData("owner/name?x=1")]
+    public void Parse_rejects_anything_else_with_one_argument_exception(string repository)
+    {
+        // Act
+        Action parse = () => _ = ForgejoRepositoryName.Parse(repository, "repo");
+
+        // Assert
+        var exception = parse.ShouldThrow<ArgumentException>();
+        exception.ShouldNotBeOfType<ArgumentNullException>();
+        exception.ParamName.ShouldBe("repo");
+        exception.Message.ShouldBe("The repository must be owner/name, each part of ASCII letters, digits, '-', '.', and '_', and neither part '.' nor '..'. (Parameter 'repo')");
+    }
+
+    [Fact]
+    public void Parse_rejects_a_null_repository_by_its_parameter_name()
+    {
+        // Act
+        Action parse = () => _ = ForgejoRepositoryName.Parse(null!, "repo");
+
+        // Assert
+        parse.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("repo");
+    }
 }

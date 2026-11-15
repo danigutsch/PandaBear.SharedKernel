@@ -27,10 +27,7 @@ public sealed class ForgejoReleaseAssets : IReleaseAssets, IDisposable
         ArgumentNullException.ThrowIfNull(server);
         ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(userAgent);
-        if (!ForgejoRepositoryName.TryParse(repository, out var owner, out var name))
-        {
-            throw new ArgumentException("The repository must be owner/name.", nameof(repository));
-        }
+        var (owner, name) = ForgejoRepositoryName.Parse(repository, nameof(repository));
 
         _tagsPath = "repos/" + Uri.EscapeDataString(owner) + "/" + Uri.EscapeDataString(name) + "/releases/tags/";
         _client = ForgejoApiClient.Create(handler, server, userAgent, token: null);

@@ -308,7 +308,9 @@ public sealed class ForgejoLabelStoreTests
         Action create = () => new ForgejoLabelStore(handler, Server, repository, UserAgent, null).Dispose();
 
         // Assert
-        create.ShouldThrow<InvalidOperationException>().Message.ShouldBe("--repository must name a Forgejo repository as owner/name.");
+        var exception = create.ShouldThrow<ArgumentException>();
+        exception.ParamName.ShouldBe("repository");
+        exception.Message.ShouldBe("The repository must be owner/name, each part of ASCII letters, digits, '-', '.', and '_', and neither part '.' nor '..'. (Parameter 'repository')");
     }
 
     [Fact]

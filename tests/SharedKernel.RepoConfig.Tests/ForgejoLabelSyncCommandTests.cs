@@ -114,6 +114,26 @@ public sealed class ForgejoLabelSyncCommandTests
     }
 
     [Theory]
+    [InlineData("owner")]
+    [InlineData("owner/name/extra")]
+    [InlineData("owner/..")]
+    public async Task A_repository_that_is_not_owner_slash_name_is_rejected_before_any_request(string repository)
+    {
+        // Arrange
+        using var workspace = CreateWorkspace(Configuration);
+        using var handler = new TestHttpMessageHandler();
+
+        // Act
+        var (exitCode, output, error) = await RunForgejo(workspace, handler, force: false, repository: repository);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        output.ShouldBe(string.Empty);
+        error.ShouldBe("sharedkernel-repo: --repository must name a Forgejo repository as owner/name." + Environment.NewLine);
+        handler.Requests.ShouldBeEmpty();
+    }
+
+    [Theory]
     [InlineData("http://codeberg.example")]
     [InlineData("https://codeberg.example/?a=1")]
     [InlineData("codeberg.example")]

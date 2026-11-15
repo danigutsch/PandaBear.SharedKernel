@@ -127,6 +127,23 @@ public sealed class ForgejoReleaseStoreTests
         handler.Requests.Count.ShouldBe(200);
     }
 
+    [Theory]
+    [InlineData("owner")]
+    [InlineData("owner/..")]
+    public void A_repository_that_is_not_owner_slash_name_is_rejected(string repository)
+    {
+        // Arrange
+        using var handler = new ScriptedHandler();
+
+        // Act
+        Action create = () => new ForgejoReleaseStore(handler, Server, repository, UserAgent, null).Dispose();
+
+        // Assert
+        var exception = create.ShouldThrow<ArgumentException>();
+        exception.ParamName.ShouldBe("repository");
+        exception.Message.ShouldBe("The repository must be owner/name, each part of ASCII letters, digits, '-', '.', and '_', and neither part '.' nor '..'. (Parameter 'repository')");
+    }
+
     [Fact]
     public async Task Deleting_a_release_by_its_ID_accepts_only_no_content()
     {

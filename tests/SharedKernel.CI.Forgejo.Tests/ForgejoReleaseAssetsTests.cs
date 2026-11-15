@@ -50,4 +50,19 @@ public sealed class ForgejoReleaseAssetsTests
         missingAttachment.Message.ShouldBe("The release https://forge.example/api/v1/repos/owner/name/releases/tags/v1.0.0-alpha.1 has no attachment named B.nupkg.");
         missingRelease.Message.ShouldBe("GET https://forge.example/api/v1/repos/owner/name/releases/tags/v2.0.0 returned 404 NotFound.");
     }
+
+    [Fact]
+    public void A_repository_that_is_not_owner_slash_name_is_rejected()
+    {
+        // Arrange
+        using var handler = new ScriptedHandler();
+
+        // Act
+        Action create = () => new ForgejoReleaseAssets(handler, new Uri("https://forge.example"), "owner/name/extra", UserAgent).Dispose();
+
+        // Assert
+        var exception = create.ShouldThrow<ArgumentException>();
+        exception.ParamName.ShouldBe("repository");
+        exception.Message.ShouldBe("The repository must be owner/name, each part of ASCII letters, digits, '-', '.', and '_', and neither part '.' nor '..'. (Parameter 'repository')");
+    }
 }

@@ -5,16 +5,17 @@ namespace PandaBear.RepoConfig.Tests;
 /// <summary>Test helpers for the Forgejo label sync command.</summary>
 internal static class ForgejoLabelSyncTestOperations
 {
-    /// <summary>Runs <c>github sync-labels --forgejo</c> against the workspace with the given handler, and returns its exit code, output, and error.</summary>
+    /// <summary>Runs <c>github sync-labels --forgejo</c> for <paramref name="repository"/> against the workspace with the given handler, and returns its exit code, output, and error.</summary>
     public static async Task<(int ExitCode, string Output, string Error)> RunForgejo(
         TemporaryRepoConfigWorkspace workspace,
         TestHttpMessageHandler handler,
         bool force,
-        string server = "https://codeberg.example")
+        string server = "https://codeberg.example",
+        string repository = "owner/repository")
     {
         using var output = new InvariantStringWriter();
         using var error = new InvariantStringWriter();
-        List<string> arguments = ["github", "sync-labels", "--repository", "owner/repository", "--forgejo", server, "--root", workspace.RootPath];
+        List<string> arguments = ["github", "sync-labels", "--repository", repository, "--forgejo", server, "--root", workspace.RootPath];
         if (force)
         {
             arguments.Add("--force");

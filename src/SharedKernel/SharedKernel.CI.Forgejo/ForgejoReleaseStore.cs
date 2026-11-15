@@ -32,10 +32,7 @@ public sealed class ForgejoReleaseStore : IReleaseStore, IDisposable
         ArgumentNullException.ThrowIfNull(server);
         ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(userAgent);
-        if (!ForgejoRepositoryName.TryParse(repository, out var owner, out var name))
-        {
-            throw new ArgumentException("The repository must be owner/name.", nameof(repository));
-        }
+        var (owner, name) = ForgejoRepositoryName.Parse(repository, nameof(repository));
 
         _repository = repository;
         _releasesPath = "repos/" + Uri.EscapeDataString(owner) + "/" + Uri.EscapeDataString(name) + "/releases";

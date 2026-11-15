@@ -35,8 +35,7 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
     /// <param name="userAgent">Names the caller, such as <c>sharedkernel-repo/1.0</c>.</param>
     /// <param name="token">The token from <see cref="ForgejoToken.Find"/>, which writing requires, or <see langword="null"/> to read the labels of a public repository anonymously.</param>
     /// <exception cref="ArgumentNullException"><paramref name="handler"/>, <paramref name="server"/>, <paramref name="repository"/>, or <paramref name="userAgent"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="server"/> is not an absolute HTTPS address without user information, a query, or a fragment, or <paramref name="token"/> is empty or white-space.</exception>
-    /// <exception cref="InvalidOperationException"><paramref name="repository"/> does not name a Forgejo repository as <c>owner/name</c>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="repository"/> is not <c>owner/name</c>, <paramref name="server"/> is not an absolute HTTPS address without user information, a query, or a fragment, or <paramref name="token"/> is empty or white-space.</exception>
     public ForgejoLabelStore(HttpMessageHandler handler, Uri server, string repository, ProductInfoHeaderValue userAgent, string? token)
         : this(handler, server, repository, userAgent, token, TimeProvider.System)
     {
@@ -44,8 +43,7 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
 
     /// <summary>Creates the store with an explicit time source for the request timeout.</summary>
     /// <exception cref="ArgumentNullException">An argument other than <paramref name="token"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="server"/> or <paramref name="token"/> is not valid.</exception>
-    /// <exception cref="InvalidOperationException"><paramref name="repository"/> does not name a Forgejo repository as <c>owner/name</c>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="repository"/>, <paramref name="server"/>, or <paramref name="token"/> is not valid.</exception>
     internal ForgejoLabelStore(
         HttpMessageHandler handler,
         Uri server,
@@ -59,10 +57,7 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
         ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(userAgent);
         ArgumentNullException.ThrowIfNull(timeProvider);
-        if (!ForgejoRepositoryName.TryParse(repository, out var owner, out var name))
-        {
-            throw new InvalidOperationException("--repository must name a Forgejo repository as owner/name.");
-        }
+        var (owner, name) = ForgejoRepositoryName.Parse(repository, nameof(repository));
 
         Repository = repository;
         _labelsPath = "repos/" + Uri.EscapeDataString(owner) + "/" + Uri.EscapeDataString(name) + "/labels";

@@ -31,4 +31,23 @@ public static class ForgejoRepositoryName
         name = string.Empty;
         return false;
     }
+
+    /// <summary>
+    /// Splits <paramref name="repository"/> into its owner and name, as <see cref="TryParse"/> does, or fails with one
+    /// <see cref="ArgumentException"/> that every Forgejo client shares.
+    /// </summary>
+    /// <param name="repository">The repository, such as <c>owner/name</c>.</param>
+    /// <param name="paramName">The name of the caller's parameter that holds <paramref name="repository"/>, for the exception.</param>
+    /// <returns>The owner and the name.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="repository"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="repository"/> is not a valid <c>owner/name</c>.</exception>
+    public static (string Owner, string Name) Parse(string repository, string paramName)
+    {
+        ArgumentNullException.ThrowIfNull(repository, paramName);
+        return TryParse(repository, out var owner, out var name)
+            ? (owner, name)
+            : throw new ArgumentException(
+                "The repository must be owner/name, each part of ASCII letters, digits, '-', '.', and '_', and neither part '.' nor '..'.",
+                paramName);
+    }
 }
