@@ -3,6 +3,7 @@ const PandaBear.AspNetCore.Localization.CulturePathRedirectExtensions.DefaultCoo
 PandaBear.AspNetCore.Localization.CulturePath
 PandaBear.AspNetCore.Localization.CulturePathRedirectExtensions
 PandaBear.AspNetCore.Localization.PathCultureRequestCultureProvider
+PandaBear.AspNetCore.Localization.PathCultureRequestCultureProvider.PathCultureRequestCultureProvider(PandaBear.BuildingBlocks.CultureLanguageTags! languageTags) -> void
 PandaBear.AspNetCore.Localization.PathCultureRequestCultureProvider.PathCultureRequestCultureProvider(PandaBear.BuildingBlocks.SupportedCultures! supportedCultures) -> void
 override PandaBear.AspNetCore.Localization.PathCultureRequestCultureProvider.DetermineProviderCultureResult(Microsoft.AspNetCore.Http.HttpContext! httpContext) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Localization.ProviderCultureResult?>!
 static PandaBear.AspNetCore.Localization.CulturePath.Prepend(Microsoft.AspNetCore.Http.PathString path, PandaBear.BuildingBlocks.ContentCulture! culture, PandaBear.BuildingBlocks.SupportedCultures! supportedCultures) -> Microsoft.AspNetCore.Http.PathString
