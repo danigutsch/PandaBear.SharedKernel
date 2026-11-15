@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.K6.Tool;
 
@@ -83,7 +83,7 @@ internal static class K6Run
         string runDirectory;
         try
         {
-            runDirectory = RepositoryPath.Resolve(options.Root, relativeRunDirectory);
+            runDirectory = RepositoryPath.Parse(relativeRunDirectory).ResolveUnder(options.Root);
         }
         catch (InvalidOperationException exception)
         {
@@ -283,7 +283,7 @@ internal static class K6Run
     {
         try
         {
-            return RepositoryPath.Resolve(root, relativePath);
+            return RepositoryPath.Parse(relativePath).ResolveUnder(root);
         }
         catch (InvalidOperationException exception)
         {

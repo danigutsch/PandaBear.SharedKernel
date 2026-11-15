@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.CI.Tool;
 
@@ -13,6 +13,9 @@ internal static class SliceRun
 {
     /// <summary>The filter that a run writes in its execution directory.</summary>
     public const string FilterFileName = "tests.slnf";
+
+    /// <summary>The filter that a run restores and builds instead when a slice's Playwright project is not a selected test project.</summary>
+    public const string BuildFilterFileName = "build.slnf";
 
     private const int MaxPlanBytes = 16 * 1024 * 1024;
 
@@ -72,14 +75,14 @@ internal static class SliceRun
                 projects = [.. planned.SelectMany(static slice => slice.Tests).Select(static test => test.Project).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)];
 
                 // The plan can come from another job, so it may not point a build outside the checkout.
-                if (projects.FirstOrDefault(static project => !RepositoryPath.IsRelative(project)) is { } outside)
+                if (projects.FirstOrDefault(static project => !RepositoryPath.IsValid(project)) is { } outside)
                 {
                     throw new InvalidDataException(ProjectSelectionPlan.PlanFileName + " names a test project outside the checkout: " + outside);
                 }
 
                 foreach (var project in projects)
                 {
-                    RepositoryPath.Resolve(root, project);
+                    RepositoryPath.Parse(project).ResolveUnder(root);
                 }
 
                 return string.Empty;
@@ -103,7 +106,7 @@ internal static class SliceRun
             ];
             foreach (var (_, service) in services)
             {
-                RepositoryPath.Resolve(root, service.Project);
+                RepositoryPath.Parse(service.Project).ResolveUnder(root);
             }
 
             // Generation builds each target with --no-restore, and a service starts with --no-build --no-restore, so the filter restores and builds them too.
@@ -117,8 +120,17 @@ internal static class SliceRun
                     .Order(StringComparer.Ordinal),
             ];
             await SolutionFilter.Write(root, configuration.Solution, filter, filtered, ct).ConfigureAwait(false);
-            await Phase("restore", () => run("dotnet", ["restore", filter, "--locked-mode"], root, ct)).ConfigureAwait(false);
-            await Phase("build", () => run("dotnet", ["build", filter, "-c", options.Configuration, "--no-restore"], root, ct)).ConfigureAwait(false);
+            PlaywrightConfiguration[] playwright = options.InstallPlaywright ? [.. configured.Select(static slice => slice.Playwright).OfType<PlaywrightConfiguration>()] : [];
+            string[] built = [.. filtered.Union(playwright.Select(static install => install.Project), StringComparer.Ordinal)];
+            var buildFilter = built.Length == filtered.Length ? filter : Path.Combine(execution, BuildFilterFileName);
+            File.Delete(Path.Combine(execution, BuildFilterFileName));
+            if (built.Length > filtered.Length)
+            {
+                await SolutionFilter.Write(root, configuration.Solution, buildFilter, built, ct).ConfigureAwait(false);
+            }
+
+            await Phase("restore", () => run("dotnet", ["restore", buildFilter, "--locked-mode"], root, ct)).ConfigureAwait(false);
+            await Phase("build", () => run("dotnet", ["build", buildFilter, "-c", options.Configuration, "--no-restore"], root, ct)).ConfigureAwait(false);
             foreach (var target in openApi)
             {
                 var name = target.Name;
@@ -127,10 +139,7 @@ internal static class SliceRun
                     .ConfigureAwait(false);
             }
 
-            var playwright = configured.Select(static slice => slice.Playwright).OfType<PlaywrightConfiguration>()
-                .Where(install => projects.Contains(install.Project, StringComparer.Ordinal))
-                .ToArray();
-            if (options.InstallPlaywright && playwright.Length > 0)
+            if (playwright.Length > 0)
             {
                 await Phase("playwright", async () =>
                 {

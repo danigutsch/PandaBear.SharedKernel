@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace PandaBear.Packages.Tests;
 
 /// <summary>An <see cref="IProcessRunner"/> that returns one canned output and records the call.</summary>
@@ -10,10 +12,10 @@ internal sealed class FakeProcessRunner(ProcessOutput output) : IProcessRunner
     public IReadOnlyList<string>? Arguments { get; private set; }
 
     /// <summary>Records the call and returns the canned output.</summary>
-    public Task<ProcessOutput> Run(string executable, IReadOnlyList<string> arguments, CancellationToken cancellationToken)
+    public Task<ProcessOutput> Run(ProcessStartInfo startInfo, TextWriter? forward, CancellationToken cancellationToken)
     {
-        Executable = executable;
-        Arguments = arguments;
+        Executable = startInfo.FileName;
+        Arguments = [.. startInfo.ArgumentList];
         return Task.FromResult(output);
     }
 }

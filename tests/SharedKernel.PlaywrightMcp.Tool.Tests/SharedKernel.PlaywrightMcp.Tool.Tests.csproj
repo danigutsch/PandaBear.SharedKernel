@@ -9,6 +9,7 @@
         <Using Include="PandaBear.Testing" />
         <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="PandaBear.PlaywrightMcp.Tool" />
+        <Using Include="PandaBear.Processes" />
         <Using Include="Xunit" />
     </ItemGroup>
 

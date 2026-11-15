@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
-using PandaBear.Tooling;
+using PandaBear.IO;
+using PandaBear.InputNormalization;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -120,7 +121,7 @@ internal static class NewCommand
 
         foreach (var (seedPath, content) in NewRepositorySeeds.Render(repositoryName, features, sdk))
         {
-            var fullPath = RepositoryPath.Resolve(root, seedPath);
+            var fullPath = RepositoryPath.Parse(seedPath).ResolveUnder(root);
             var exists = File.Exists(fullPath);
             if (exists)
             {

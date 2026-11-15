@@ -36,3 +36,19 @@ PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Source.get 
 PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Source.init -> void
 PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Subject.get -> string?
 PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Subject.init -> void
+PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.<Clone>$() -> PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>!
+PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Deconstruct(out string! Id, out System.Uri! Source, out string! Type, out string! SpecVersion, out System.DateTimeOffset Time, out string? Subject, out string? DataContentType, out System.Uri? DataSchema, out int Version, out TIntegrationEvent Data) -> void
+PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Equals(PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? other) -> bool
+PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.<Clone>$() -> PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata!
+PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Deconstruct(out System.Uri! Source, out string? Subject, out string? DataContentType, out System.Uri? DataSchema) -> void
+PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Equals(PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? other) -> bool
+override PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Equals(object? obj) -> bool
+override PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.GetHashCode() -> int
+override PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.ToString() -> string!
+override PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Equals(object? obj) -> bool
+override PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.GetHashCode() -> int
+override PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.ToString() -> string!
+static PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.operator !=(PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? left, PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? right) -> bool
+static PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.operator ==(PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? left, PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>? right) -> bool
+static PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.operator !=(PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? left, PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? right) -> bool
+static PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.operator ==(PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? left, PandaBear.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata? right) -> bool

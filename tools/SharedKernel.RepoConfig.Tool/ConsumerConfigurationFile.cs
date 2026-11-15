@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -30,7 +30,7 @@ internal static class ConsumerConfigurationFile
         string path;
         try
         {
-            path = RepositoryPath.Resolve(Path.GetFullPath(root), RelativePath);
+            path = RepositoryPath.Parse(RelativePath).ResolveUnder(Path.GetFullPath(root));
         }
         catch (InvalidOperationException exception)
         {
@@ -133,7 +133,7 @@ internal static class ConsumerConfigurationFile
         {
             var path = string.Create(CultureInfo.InvariantCulture, $"$.lockExemptProjects[{index}]");
             var project = projects[index];
-            if (!RepositoryPath.IsRelative(project) || !project.EndsWith("proj", StringComparison.Ordinal))
+            if (!RepositoryPath.IsValid(project) || !project.EndsWith("proj", StringComparison.Ordinal))
             {
                 throw Invalid(path + " must be a repository-relative project file path with '/' separators and without empty, '.', or '..' segments.");
             }
@@ -160,7 +160,7 @@ internal static class ConsumerConfigurationFile
     {
         for (var index = 0; index < patterns.Length; index++)
         {
-            if (!RepositoryPath.IsRelative(patterns[index]))
+            if (!RepositoryPath.IsValid(patterns[index]))
             {
                 throw Invalid(string.Create(CultureInfo.InvariantCulture, $"{path}[{index}] must be a repository-relative path pattern with '/' separators and without empty, '.', or '..' segments."));
             }
@@ -170,7 +170,7 @@ internal static class ConsumerConfigurationFile
     private static void Validate(LicenseExceptionConfiguration licenseExceptions)
     {
         var approval = licenseExceptions.Approval;
-        if (!RepositoryPath.IsRelative(approval.File))
+        if (!RepositoryPath.IsValid(approval.File))
         {
             throw Invalid("$.licenseExceptions.approval.file must be a repository-relative path with '/' separators and without empty, '.', or '..' segments.");
         }

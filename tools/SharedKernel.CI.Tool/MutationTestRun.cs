@@ -1,5 +1,5 @@
 using System.Globalization;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.CI.Tool;
 
@@ -28,7 +28,7 @@ internal static class MutationTestRun
         var configFiles = new string[mutation.ConfigFiles.Length];
         for (var index = 0; index < configFiles.Length; index++)
         {
-            configFiles[index] = RepositoryPath.Resolve(root, mutation.ConfigFiles[index]);
+            configFiles[index] = RepositoryPath.Parse(mutation.ConfigFiles[index]).ResolveUnder(root);
             if (!File.Exists(configFiles[index]))
             {
                 throw CiConfigurationFile.Invalid(

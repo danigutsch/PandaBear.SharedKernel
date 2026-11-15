@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Text.Unicode;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -42,7 +42,7 @@ internal static class LicenseExceptionVerifier
         byte[]? content;
         try
         {
-            content = await RepositoryFile.Read(RepositoryPath.Resolve(root, approval.File), MaxApprovalBytes, cancellationToken).ConfigureAwait(false);
+            content = await RepositoryFile.Read(RepositoryPath.Parse(approval.File).ResolveUnder(root), MaxApprovalBytes, cancellationToken).ConfigureAwait(false);
         }
         catch (InvalidOperationException exception)
         {

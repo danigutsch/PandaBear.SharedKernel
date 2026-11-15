@@ -1,5 +1,6 @@
 using System.CommandLine;
-using PandaBear.Tooling;
+using PandaBear.InputNormalization;
+using PandaBear.Processes;
 
 namespace PandaBear.Packages.Tool;
 

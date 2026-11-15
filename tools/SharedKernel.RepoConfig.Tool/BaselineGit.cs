@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
-using PandaBear.Tooling;
+using PandaBear.Processes;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -66,7 +66,7 @@ internal static class BaselineGit
 
     private static async Task<(int ExitCode, string Output)> Run(string root, string[] arguments, CancellationToken cancellationToken)
     {
-        var git = ExecutableResolver.Resolve("git", Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows())
+        var git = PathExecutableResolver.Default.Find("git")
             ?? throw new InvalidOperationException("Could not resolve git to an absolute executable path.");
         ProcessStartInfo startInfo = new(git)
         {

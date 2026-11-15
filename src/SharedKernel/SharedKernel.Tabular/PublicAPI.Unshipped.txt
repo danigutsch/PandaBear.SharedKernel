@@ -29,3 +29,19 @@ static PandaBear.Tabular.CsvWriter.FormatField(string! value, PandaBear.Tabular.
 static PandaBear.Tabular.CsvWriter.Write(System.Collections.Generic.IReadOnlyList<string!>! headers, System.Collections.Generic.IEnumerable<System.Collections.Generic.IReadOnlyList<string!>!>! rows, PandaBear.Tabular.CsvWriteOptions? options = null) -> string!
 static PandaBear.Tabular.CsvWriter.Write(System.IO.TextWriter! writer, System.Collections.Generic.IReadOnlyList<string!>! headers, System.Collections.Generic.IEnumerable<System.Collections.Generic.IReadOnlyList<string!>!>! rows, PandaBear.Tabular.CsvWriteOptions? options = null) -> void
 static PandaBear.Tabular.DuplicateRowScanner.FindDuplicateLineNumbers(PandaBear.Tabular.CsvDocument! document, System.Func<PandaBear.Tabular.CsvRow!, string?>! keySelector, System.Collections.Generic.IEqualityComparer<string!>? comparer = null) -> System.Collections.Generic.IReadOnlyList<int>!
+PandaBear.Tabular.CsvParseOptions.<Clone>$() -> PandaBear.Tabular.CsvParseOptions!
+PandaBear.Tabular.CsvParseOptions.CsvParseOptions() -> void
+PandaBear.Tabular.CsvParseOptions.Equals(PandaBear.Tabular.CsvParseOptions? other) -> bool
+PandaBear.Tabular.CsvWriteOptions.<Clone>$() -> PandaBear.Tabular.CsvWriteOptions!
+PandaBear.Tabular.CsvWriteOptions.CsvWriteOptions() -> void
+PandaBear.Tabular.CsvWriteOptions.Equals(PandaBear.Tabular.CsvWriteOptions? other) -> bool
+override PandaBear.Tabular.CsvParseOptions.Equals(object? obj) -> bool
+override PandaBear.Tabular.CsvParseOptions.GetHashCode() -> int
+override PandaBear.Tabular.CsvParseOptions.ToString() -> string!
+override PandaBear.Tabular.CsvWriteOptions.Equals(object? obj) -> bool
+override PandaBear.Tabular.CsvWriteOptions.GetHashCode() -> int
+override PandaBear.Tabular.CsvWriteOptions.ToString() -> string!
+static PandaBear.Tabular.CsvParseOptions.operator !=(PandaBear.Tabular.CsvParseOptions? left, PandaBear.Tabular.CsvParseOptions? right) -> bool
+static PandaBear.Tabular.CsvParseOptions.operator ==(PandaBear.Tabular.CsvParseOptions? left, PandaBear.Tabular.CsvParseOptions? right) -> bool
+static PandaBear.Tabular.CsvWriteOptions.operator !=(PandaBear.Tabular.CsvWriteOptions? left, PandaBear.Tabular.CsvWriteOptions? right) -> bool
+static PandaBear.Tabular.CsvWriteOptions.operator ==(PandaBear.Tabular.CsvWriteOptions? left, PandaBear.Tabular.CsvWriteOptions? right) -> bool

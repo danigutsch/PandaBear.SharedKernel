@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.CI.Tool;
 
@@ -29,7 +29,7 @@ internal static partial class CiConfigurationFile
         string path;
         try
         {
-            path = RepositoryPath.Resolve(root, RelativePath);
+            path = RepositoryPath.Parse(RelativePath).ResolveUnder(root);
         }
         catch (InvalidOperationException exception)
         {
@@ -77,7 +77,7 @@ internal static partial class CiConfigurationFile
             throw Invalid("$.version must be 1.");
         }
 
-        if (!RepositoryPath.IsRelative(configuration.Solution) || !configuration.Solution.EndsWith(".slnx", StringComparison.Ordinal))
+        if (!RepositoryPath.IsValid(configuration.Solution) || !configuration.Solution.EndsWith(".slnx", StringComparison.Ordinal))
         {
             throw Invalid("$.solution must be a repository-relative .slnx path with '/' separators and without empty, '.', or '..' segments.");
         }
@@ -109,7 +109,7 @@ internal static partial class CiConfigurationFile
                 throw Invalid(path + ".name repeats the OpenAPI target " + target.Name + ".");
             }
 
-            if (!RepositoryPath.IsRelative(target.Project))
+            if (!RepositoryPath.IsValid(target.Project))
             {
                 throw Invalid(path + ".project must be a repository-relative project path with '/' separators and without empty, '.', or '..' segments.");
             }
@@ -219,7 +219,7 @@ internal static partial class CiConfigurationFile
     private static void ValidateService(
         ServiceConfiguration service, string path, string slice, Dictionary<string, string> testProjects, Dictionary<string, string> handedVariables)
     {
-        if (!RepositoryPath.IsRelative(service.Project))
+        if (!RepositoryPath.IsValid(service.Project))
         {
             throw Invalid(path + ".project must be a repository-relative project path with '/' separators and without empty, '.', or '..' segments.");
         }
@@ -285,7 +285,7 @@ internal static partial class CiConfigurationFile
         {
             var path = "$.mutation.configFiles[" + index.ToString(CultureInfo.InvariantCulture) + "]";
             var configFile = mutation.ConfigFiles[index];
-            if (configFile is null || !RepositoryPath.IsRelative(configFile))
+            if (configFile is null || !RepositoryPath.IsValid(configFile))
             {
                 throw Invalid(path + " must be a repository-relative file path with '/' separators and without empty, '.', or '..' segments.");
             }
@@ -318,7 +318,7 @@ internal static partial class CiConfigurationFile
 
         for (var index = 0; index < coverage.SymbolDirectories.Length; index++)
         {
-            if (!RepositoryPath.IsRelative(coverage.SymbolDirectories[index]))
+            if (!RepositoryPath.IsValid(coverage.SymbolDirectories[index]))
             {
                 throw Invalid("$.coverage.symbolDirectories[" + index.ToString(CultureInfo.InvariantCulture)
                     + "] must be a repository-relative directory with '/' separators and without empty, '.', or '..' segments.");
@@ -369,7 +369,7 @@ internal static partial class CiConfigurationFile
         {
             var itemPath = path + "[" + index.ToString(CultureInfo.InvariantCulture) + "]";
             var project = projects[index];
-            if (project is null || !RepositoryPath.IsRelative(project))
+            if (project is null || !RepositoryPath.IsValid(project))
             {
                 throw Invalid(itemPath + " must be a repository-relative project path with '/' separators and without empty, '.', or '..' segments.");
             }

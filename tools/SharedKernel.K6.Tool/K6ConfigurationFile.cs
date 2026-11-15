@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.K6.Tool;
 
@@ -34,7 +34,7 @@ internal static partial class K6ConfigurationFile
         string path;
         try
         {
-            path = RepositoryPath.Resolve(root, RelativePath);
+            path = RepositoryPath.Parse(RelativePath).ResolveUnder(root);
         }
         catch (InvalidOperationException exception)
         {
@@ -110,12 +110,12 @@ internal static partial class K6ConfigurationFile
             throw Invalid("$.version must be 1.");
         }
 
-        if (!RepositoryPath.IsRelative(configuration.ScriptDirectory))
+        if (!RepositoryPath.IsValid(configuration.ScriptDirectory))
         {
             throw Invalid("$.scriptDirectory must be a repository-relative path " + RelativePathRule);
         }
 
-        if (!RepositoryPath.IsRelative(configuration.ResultsDirectory))
+        if (!RepositoryPath.IsValid(configuration.ResultsDirectory))
         {
             throw Invalid("$.resultsDirectory must be a repository-relative path " + RelativePathRule);
         }
@@ -148,7 +148,7 @@ internal static partial class K6ConfigurationFile
                 throw Invalid(path + ".name repeats the scenario " + scenario.Name + ".");
             }
 
-            if (!RepositoryPath.IsRelative(scenario.Script))
+            if (!RepositoryPath.IsValid(scenario.Script))
             {
                 throw Invalid(path + ".script must be a path relative to $.scriptDirectory " + RelativePathRule);
             }

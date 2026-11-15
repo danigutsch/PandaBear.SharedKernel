@@ -1,8 +1,16 @@
 #nullable enable
+override PandaBear.IO.RepositoryPath.ToString() -> string!
+PandaBear.IO.RepositoryPath
+PandaBear.IO.RepositoryPath.RepositoryPath() -> void
+PandaBear.IO.RepositoryPath.ResolveUnder(string! root) -> string!
+PandaBear.IO.RepositoryPath.Value.get -> string!
 PandaBear.IO.SeekableContent
 PandaBear.IO.SeekableContent.Content.get -> System.IO.Stream!
 PandaBear.IO.SeekableContent.Dispose() -> void
 PandaBear.IO.SeekableContent.DisposeAsync() -> System.Threading.Tasks.ValueTask
+static PandaBear.IO.RepositoryPath.IsValid(string? value) -> bool
+static PandaBear.IO.RepositoryPath.Parse(string? value) -> PandaBear.IO.RepositoryPath
+static PandaBear.IO.RepositoryPath.TryParse(string? value, out PandaBear.IO.RepositoryPath path) -> bool
 static PandaBear.IO.SeekableContent.Create(System.IO.Stream! source, long maxLength, int memoryThreshold, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.IO.SeekableContent!>
 PandaBear.IO.ReadOnlyMemoryStream
 PandaBear.IO.ReadOnlyMemoryStream.ReadOnlyMemoryStream(System.ReadOnlyMemory<byte> memory) -> void
@@ -24,3 +32,8 @@ override PandaBear.IO.ReadOnlyMemoryStream.Seek(long offset, System.IO.SeekOrigi
 override PandaBear.IO.ReadOnlyMemoryStream.SetLength(long value) -> void
 override PandaBear.IO.ReadOnlyMemoryStream.Write(byte[]! buffer, int offset, int count) -> void
 override PandaBear.IO.ReadOnlyMemoryStream.Write(System.ReadOnlySpan<byte> buffer) -> void
+PandaBear.IO.RepositoryPath.Equals(PandaBear.IO.RepositoryPath other) -> bool
+override PandaBear.IO.RepositoryPath.GetHashCode() -> int
+static PandaBear.IO.RepositoryPath.operator !=(PandaBear.IO.RepositoryPath left, PandaBear.IO.RepositoryPath right) -> bool
+static PandaBear.IO.RepositoryPath.operator ==(PandaBear.IO.RepositoryPath left, PandaBear.IO.RepositoryPath right) -> bool
+~override PandaBear.IO.RepositoryPath.Equals(object obj) -> bool

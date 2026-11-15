@@ -21,8 +21,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="../Shared/ControlCharacters.cs" Link="Shared/ControlCharacters.cs" />
-        <Compile Include="../Shared/RepositoryPath.cs" Link="Shared/RepositoryPath.cs" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.IO\SharedKernel.IO.csproj" />
     </ItemGroup>
 
     <ItemGroup>

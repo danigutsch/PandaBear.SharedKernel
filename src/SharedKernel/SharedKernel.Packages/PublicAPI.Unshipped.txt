@@ -11,24 +11,22 @@ PandaBear.Packages.AdvisorySeverity.High = 2 -> PandaBear.Packages.AdvisorySever
 PandaBear.Packages.AdvisorySeverity.Low = 0 -> PandaBear.Packages.AdvisorySeverity
 PandaBear.Packages.AdvisorySeverity.Medium = 1 -> PandaBear.Packages.AdvisorySeverity
 PandaBear.Packages.AptPackageReader
-PandaBear.Packages.AptPackageReader.AptPackageReader(PandaBear.Packages.IProcessRunner! runner, string! dpkgQueryPath) -> void
+PandaBear.Packages.AptPackageReader.AptPackageReader(PandaBear.Processes.IProcessRunner! runner, string! dpkgQueryPath) -> void
 PandaBear.Packages.AptPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
 PandaBear.Packages.BrewPackageReader
-PandaBear.Packages.BrewPackageReader.BrewPackageReader(PandaBear.Packages.IProcessRunner! runner, string! brewPath) -> void
+PandaBear.Packages.BrewPackageReader.BrewPackageReader(PandaBear.Processes.IProcessRunner! runner, string! brewPath) -> void
 PandaBear.Packages.BrewPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
 PandaBear.Packages.CargoPackageReader
-PandaBear.Packages.CargoPackageReader.CargoPackageReader(PandaBear.Packages.IProcessRunner! runner, string! cargoPath) -> void
+PandaBear.Packages.CargoPackageReader.CargoPackageReader(PandaBear.Processes.IProcessRunner! runner, string! cargoPath) -> void
 PandaBear.Packages.CargoPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
 PandaBear.Packages.DeclaredPackages
 PandaBear.Packages.DeclaredPackages.For(PandaBear.Packages.PackageManagerKind manager) -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageRequirement!>!
 PandaBear.Packages.DeclaredPackages.Managers.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageManagerKind>!
 PandaBear.Packages.FlatpakPackageReader
-PandaBear.Packages.FlatpakPackageReader.FlatpakPackageReader(PandaBear.Packages.IProcessRunner! runner, string! flatpakPath) -> void
+PandaBear.Packages.FlatpakPackageReader.FlatpakPackageReader(PandaBear.Processes.IProcessRunner! runner, string! flatpakPath) -> void
 PandaBear.Packages.FlatpakPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
 PandaBear.Packages.IPackageReader
 PandaBear.Packages.IPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
-PandaBear.Packages.IProcessRunner
-PandaBear.Packages.IProcessRunner.Run(string! executable, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Packages.ProcessOutput!>!
 PandaBear.Packages.InstalledPackage
 PandaBear.Packages.InstalledPackage.InstalledPackage(PandaBear.Packages.PackageName! name, PandaBear.Packages.PackageVersion! version) -> void
 PandaBear.Packages.InstalledPackage.Name.get -> PandaBear.Packages.PackageName!
@@ -37,7 +35,7 @@ PandaBear.Packages.MinimumReleaseAge
 PandaBear.Packages.MinimumReleaseAge.Value.get -> System.TimeSpan
 PandaBear.Packages.NpmPackageReader
 PandaBear.Packages.NpmPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
-PandaBear.Packages.NpmPackageReader.NpmPackageReader(PandaBear.Packages.IProcessRunner! runner, string! npmPath) -> void
+PandaBear.Packages.NpmPackageReader.NpmPackageReader(PandaBear.Processes.IProcessRunner! runner, string! npmPath) -> void
 PandaBear.Packages.PackageChange
 PandaBear.Packages.PackageChange.InstalledVersion.get -> PandaBear.Packages.PackageVersion?
 PandaBear.Packages.PackageChange.Kind.get -> PandaBear.Packages.PackageChangeKind
@@ -63,17 +61,9 @@ PandaBear.Packages.PackageRequirement.PackageRequirement(PandaBear.Packages.Pack
 PandaBear.Packages.PackageRequirement.Version.get -> PandaBear.Packages.PackageVersion?
 PandaBear.Packages.PackageVersion
 PandaBear.Packages.PackageVersion.Value.get -> string!
-PandaBear.Packages.ProcessOutput
-PandaBear.Packages.ProcessOutput.ExitCode.get -> int
-PandaBear.Packages.ProcessOutput.ProcessOutput(int exitCode, string! standardOutput, string! standardError = "") -> void
-PandaBear.Packages.ProcessOutput.StandardError.get -> string!
-PandaBear.Packages.ProcessOutput.StandardOutput.get -> string!
 PandaBear.Packages.SnapPackageReader
 PandaBear.Packages.SnapPackageReader.ListInstalled(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.Packages.InstalledPackage!>!>>!
-PandaBear.Packages.SnapPackageReader.SnapPackageReader(PandaBear.Packages.IProcessRunner! runner, string! snapPath) -> void
-PandaBear.Packages.SystemProcessRunner
-PandaBear.Packages.SystemProcessRunner.Run(string! executable, System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Packages.ProcessOutput!>!
-PandaBear.Packages.SystemProcessRunner.SystemProcessRunner() -> void
+PandaBear.Packages.SnapPackageReader.SnapPackageReader(PandaBear.Processes.IProcessRunner! runner, string! snapPath) -> void
 PandaBear.Packages.UpdateCandidate
 PandaBear.Packages.UpdateCandidate.CandidateVersion.get -> PandaBear.Packages.PackageVersion!
 PandaBear.Packages.UpdateCandidate.InstalledVersion.get -> PandaBear.Packages.PackageVersion!

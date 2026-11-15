@@ -41,8 +41,10 @@ dotnet tool run sharedkernel-ci -- verify-commit-message --file <commit-message-
 
 .NET tools run in full trust. Install only from trusted manifests and package sources.
 
-The tool also builds from a cone sparse checkout of `tools/SharedKernel.CI.Tool` and `tools/Shared`, for jobs that
-run before a candidate exists. Its only package dependency is System.CommandLine. In this repository, run the project
+The tool also builds from a cone sparse checkout of `tools/SharedKernel.CI.Tool` and the libraries it references,
+`src/SharedKernel/SharedKernel.InputNormalization`, `SharedKernel.IO`, `SharedKernel.Processes`, and
+`SharedKernel.Versioning`, for jobs that run before a candidate exists. Its only package dependency is
+System.CommandLine. In this repository, run the project
 without installing it:
 
 ```sh
@@ -142,7 +144,7 @@ the file and the JSON path of the problem.
 | `slices[].name` | Lowercase letters and digits in words separated by `-`, other than `build`. It names the matrix entry, the filter, and the `<name>_required` output. |
 | `slices[].projects` | The slice's test projects. Each is a test project of the solution, listed in one slice. Only the default slice may list none. |
 | `slices[].openApi` | Optional names of `openApi` targets that the slice generates after its build and before its tests run. |
-| `slices[].playwright.project` | Optional; a test project that the slice lists, whose build output holds `playwright.ps1`. `run --install-playwright` installs the browsers when this project is selected. |
+| `slices[].playwright.project` | Optional; a test project that the slice lists, whose build output holds `playwright.ps1`. `run --install-playwright` installs the browsers whenever the slice has a selected test project, and builds this project for it when it is not selected. |
 | `slices[].playwright.browsers` | The browsers to install, such as `chromium`: lowercase letters, digits, and `-`, starting with a letter. At least one. |
 | `slices[].playwright.onlyShell` | Optional, default `false`: install only the headless shell of Chromium, not the full browser. Set it when the slice's tests never run headed. |
 | `slices[].service.project` | Optional section. A project of the solution that is not a test project and that no slice lists. `run` starts it with `dotnet run` before the slice's tests and stops it after them; see [Services](#services). |
@@ -237,15 +239,18 @@ slice; several slices run together, and without `--slice` every required slice r
 another revision, an unknown slice, and a plan that names a test project outside the checkout or through a symbolic
 link. When the slices have no selected test project, standard output says so and nothing is built.
 
-The run writes one solution filter, `tests.slnf`, of the selected test projects and the projects of the slices'
+The run writes a solution filter, `tests.slnf`, of the selected test projects and the projects of the slices'
 `openApi` targets and services to its execution directory, `execution-<slice>` (several slices join their names with `+`, as in
-`execution-fast+system`; without `--slice`, `execution`) in the plan directory, and then:
+`execution-fast+system`; without `--slice`, `execution`) in the plan directory. With `--install-playwright`, when a running
+slice's `playwright.project` is not a selected test project, the run also writes `build.slnf`, the projects of `tests.slnf`
+and those `playwright.project`s: restore and build use it, so the installer is built, and the test run still uses
+`tests.slnf`, so only the selected test projects run. The run deletes a `build.slnf` that an earlier run left, and then:
 
-1. `dotnet restore tests.slnf --locked-mode`;
-2. `dotnet build tests.slnf -c <configuration> --no-restore`;
+1. `dotnet restore tests.slnf --locked-mode` (or `build.slnf`);
+2. `dotnet build tests.slnf -c <configuration> --no-restore` (or `build.slnf`);
 3. for each `openApi` target of the slices, in order, the target's build with its generate property, as `openapi
    generate` runs it, with `-c <configuration>`;
-4. with `--install-playwright`, `install-playwright` for each slice whose `playwright.project` is selected, with its
+4. with `--install-playwright`, `install-playwright` for the `playwright.project` of each slice with a selected test project, with its
    browsers, `--configuration <configuration>`, `--only-shell` when `playwright.onlyShell` is set, and, with `--playwright-dependencies`, `--with-dependencies`;
 5. for each slice with a `service`, in configuration order, the service, as [Services](#services) describes;
 6. one `dotnet test --solution tests.slnf -c <configuration> --no-build --no-restore --results-directory results`, with
@@ -352,7 +357,7 @@ reason. Child process output in the report is the last 20 lines, shortened and e
 The report always ends with what the lane does **not** check, so a green result is never read as complete: project-mode
 `dotnet format` style and analyzer rules (CI also reports IDE0002 and others that only that mode finds), coverage
 collection, `dotnet test` itself, and the whitespace of source files that a project compiles from outside its own
-directory, such as `tools/Shared/*.cs`, because folder mode visits only project directories. It also lists each selected test project that was not run, and why.
+directory, such as the diagnostic IDs a code-fix project links from its analyzer project, because folder mode visits only project directories. It also lists each selected test project that was not run, and why.
 
 The exit code is 0 only when at least one lane passed and every lane that ran passed. `--strict` also fails when a lane or a selected test project
 could not run, for CI. The command fails, and checks nothing, outside a Git work tree, for a `--base` that is not a

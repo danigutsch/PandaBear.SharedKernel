@@ -20,7 +20,7 @@ The following placeholders are intentional: replace `<validated-candidate-versio
 dotnet add package PandaBear.SharedKernel.Messaging.IntegrationEvents.SourceGenerator --version <validated-candidate-version> --source <private-candidate-feed>
 ```
 
-Compiler assets are delivered as analyzers. Add the matching runtime contracts explicitly; the runtime package does not bundle this generator. Keep the generator as a development-only reference (`PrivateAssets="all"`) and use a compiler compatible with the documented Roslyn 5.6 baseline.
+Compiler assets are delivered as analyzers. Add the matching runtime contracts explicitly; the runtime package does not bundle this generator. Keep the generator as a development-only reference (`PrivateAssets="all"`) and use a compiler compatible with the documented Roslyn 5.9 baseline.
 
 ```csharp
 using PandaBear.Domain;

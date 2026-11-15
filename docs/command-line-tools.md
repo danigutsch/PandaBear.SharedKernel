@@ -14,10 +14,11 @@ the consuming repository supplies them, as [Consumer configuration](#consumer-co
   beside the analyzers it applies; its test project is `tests/SharedKernel.Testing.CodeFixRunner.Tests`.
 - Candidates pack the tools named in `SharedKernelPackagePlanner.PackagedTools`. A convention test requires every
   `PackAsTool` project in that list, except `SharedKernel.VaultManager.Tool`, which candidates do not ship.
-- `SharedKernel.CI.Tool` and `SharedKernel.RepoConfig.Tool` also run from source before a candidate exists. They
-  reference only System.CommandLine, no other project, and link shared sources only from `tools/Shared`. A
-  convention test keeps them that way, and CI builds each from a cone sparse checkout of its directory and
-  `tools/Shared` on Linux and Windows, then runs it from outside the checkout.
+- `SharedKernel.CI.Tool` and `SharedKernel.RepoConfig.Tool` also run from source before a candidate exists. CI builds
+  each from a cone sparse checkout of its directory and the `src/SharedKernel` libraries it references on Linux and
+  Windows, then runs it from outside the checkout. A change to a tool's project references updates that checkout list
+  in the workflows and in consumers, as [Running before a candidate is staged](#running-before-a-candidate-is-staged)
+  describes.
 - Ship framework-dependent tool packages. Add
   [RID-specific, self-contained, or NativeAOT tool packages](https://learn.microsoft.com/dotnet/core/tools/rid-specific-tools)
   only when CI builds and consumes each claimed platform. NativeAOT packages build on the operating system they
@@ -60,7 +61,7 @@ the consuming repository supplies them, as [Consumer configuration](#consumer-co
   needs longer. A signal that System.CommandLine does not handle, such as one during start-up, ends the
   process with the same codes.
 - Child processes start only from fully qualified paths. A bare command name such as `git` resolves only in the
-  absolute directories of `PATH`, as `ExecutableResolver` does, never in the application directory, the working
+  absolute directories of `PATH`, as `PathExecutableResolver` does, never in the application directory, the working
   directory, or a relative `PATH` entry, so a checkout cannot supply the executable.
 - A factory builds the command tree from injected environment, such as the working directory, a process
   runner, or a clock. Actions write to `ParseResult.InvocationConfiguration.Output` and `Error`.
@@ -155,7 +156,10 @@ A consumer job that runs before its pinned candidate is staged, such as the job 
 `sharedkernel-ci` or `sharedkernel-repo` from SharedKernel source at the pin's `libraryRevision`:
 
 1. Check out that revision of `danigutsch/PandaBear.SharedKernel` into a directory of its own, with a cone sparse
-   checkout of `tools/<project>` and `tools/Shared`.
+   checkout of `tools/<project>` and every `src/SharedKernel/<library>` that the tool references, directly or
+   transitively. Today `SharedKernel.CI.Tool` references `SharedKernel.InputNormalization`, `SharedKernel.IO`,
+   `SharedKernel.Processes`, and `SharedKernel.Versioning`, and `SharedKernel.RepoConfig.Tool` the first three. A full
+   checkout of the revision also works.
 2. Build inside that checkout with `dotnet build tools/<project> -c Release`, so SharedKernel's `global.json`,
    `NuGet.Config`, and the tool's lock file apply.
 3. Run `dotnet run --project <checkout>/tools/<project> -c Release --no-build -- <command>`.
@@ -164,12 +168,24 @@ The consumer and SharedKernel pin the same SDK version and roll-forward policy i
 `sharedkernel-ci stage-candidate` refuses to stage a candidate when they differ. Jobs that run after staging install
 the candidate's tools from that local feed and run them with `dotnet tool run`.
 
-## Shared sources
+## Engines and wrappers
 
-Helpers that two or more tools call live in `tools/Shared`, one internal type per file in the `PandaBear.Tooling`
-namespace. A tool compiles each file it uses as a link, such as
-`<Compile Include="../Shared/ExecutableResolver.cs" Link="Shared/ExecutableResolver.cs" />`. Process runners and
-GitHub HTTP clients stay in each tool.
+A tool is a thin wrapper over an engine library, as the [tool engines ADR](adr/20261115-tool-engines-and-thin-wrappers.md)
+decides. The engine, in `src/SharedKernel/SharedKernel.<Name>`, holds parsing, planning, validation, process and
+forge clients, and rendering; it is host-agnostic, documented, and has PublicAPI files. The tool project in
+`tools/SharedKernel.<Name>.Tool` holds only the System.CommandLine tree, wiring, output, and exit codes, and references
+its engine with a `ProjectReference`; its package carries the engine assembly.
+
+Engines take their side effects as constructor-injected abstractions from `SharedKernel.Processes`: `IProcessRunner`
+(with `SystemProcessRunner` for long-running children and `BoundedProcessRunner` for quick, limited queries) and
+`IExecutableResolver` (with `PathExecutableResolver`). Diagnostics go to a `TextWriter` the host passes, which is
+`InvocationConfiguration.Error` in a tool. Tests replace the abstractions with fakes.
+
+Helpers that two or more tools call live in the library that owns the concept: `RepositoryPath` in `SharedKernel.IO`,
+`ControlCharacters` in `SharedKernel.InputNormalization`, `CandidateManifest` in `SharedKernel.Versioning`, and process
+execution and executable resolution in `SharedKernel.Processes`. Tools reference those projects; they do not link
+source files from other directories. `SharedKernel.PlaywrightMcp.Tool` is the first tool whose logic lives in an
+engine, `SharedKernel.PlaywrightMcp`; the other tools move theirs incrementally.
 
 ## Secrets
 
@@ -209,8 +225,10 @@ GitHub HTTP clients stay in each tool.
 
 ## Adding a tool
 
-1. Create `tools/SharedKernel.<Name>.Tool` in the `PandaBear.<Name>.Tool` namespace, with the packaging properties
-   above, the `sharedkernel-<name>` command name, and the `PandaBear.SharedKernel.<Name>.Tool` package ID. Add it and
+1. Create the engine `src/SharedKernel/SharedKernel.<Name>` in the `PandaBear.<Name>` namespace, with PublicAPI files,
+   a README, and a lock-file decision, and `tools/SharedKernel.<Name>.Tool` in the `PandaBear.<Name>.Tool` namespace,
+   with the packaging properties above, the `sharedkernel-<name>` command name, the
+   `PandaBear.SharedKernel.<Name>.Tool` package ID, and a `ProjectReference` to the engine. Add them and
    `tests/SharedKernel.<Name>.Tool.Tests` to `SharedKernel.slnx`.
 2. Add the project to `SharedKernelPackagePlanner.PackagedTools`, so candidates pack it and candidate consumption
    installs it and runs `sharedkernel-<name> --help` on Linux and Windows.

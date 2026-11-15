@@ -39,3 +39,27 @@ PandaBear.AI.LiteLlmImageTextGeneratorOptions.Model.init -> void
 const PandaBear.AI.LiteLlmImageTextGeneratorOptions.SectionName = "AI:ImageText:LiteLlm" -> string!
 PandaBear.AI.LiteLlmImageTextGeneratorOptions.MaxImageBytes.get -> int
 PandaBear.AI.LiteLlmImageTextGeneratorOptions.MaxImageBytes.init -> void
+PandaBear.AI.ImageTextGenerationRequest.<Clone>$() -> PandaBear.AI.ImageTextGenerationRequest!
+PandaBear.AI.ImageTextGenerationRequest.Equals(PandaBear.AI.ImageTextGenerationRequest? other) -> bool
+PandaBear.AI.ImageTextGenerationRequest.ImageTextGenerationRequest() -> void
+PandaBear.AI.ImageTextGenerationResult.<Clone>$() -> PandaBear.AI.ImageTextGenerationResult!
+PandaBear.AI.ImageTextGenerationResult.Deconstruct(out string! AltText, out string? Caption) -> void
+PandaBear.AI.ImageTextGenerationResult.Equals(PandaBear.AI.ImageTextGenerationResult? other) -> bool
+PandaBear.AI.LiteLlmImageTextGeneratorOptions.<Clone>$() -> PandaBear.AI.LiteLlmImageTextGeneratorOptions!
+PandaBear.AI.LiteLlmImageTextGeneratorOptions.Equals(PandaBear.AI.LiteLlmImageTextGeneratorOptions? other) -> bool
+PandaBear.AI.LiteLlmImageTextGeneratorOptions.LiteLlmImageTextGeneratorOptions() -> void
+override PandaBear.AI.ImageTextGenerationRequest.Equals(object? obj) -> bool
+override PandaBear.AI.ImageTextGenerationRequest.GetHashCode() -> int
+override PandaBear.AI.ImageTextGenerationRequest.ToString() -> string!
+override PandaBear.AI.ImageTextGenerationResult.Equals(object? obj) -> bool
+override PandaBear.AI.ImageTextGenerationResult.GetHashCode() -> int
+override PandaBear.AI.ImageTextGenerationResult.ToString() -> string!
+override PandaBear.AI.LiteLlmImageTextGeneratorOptions.Equals(object? obj) -> bool
+override PandaBear.AI.LiteLlmImageTextGeneratorOptions.GetHashCode() -> int
+override PandaBear.AI.LiteLlmImageTextGeneratorOptions.ToString() -> string!
+static PandaBear.AI.ImageTextGenerationRequest.operator !=(PandaBear.AI.ImageTextGenerationRequest? left, PandaBear.AI.ImageTextGenerationRequest? right) -> bool
+static PandaBear.AI.ImageTextGenerationRequest.operator ==(PandaBear.AI.ImageTextGenerationRequest? left, PandaBear.AI.ImageTextGenerationRequest? right) -> bool
+static PandaBear.AI.ImageTextGenerationResult.operator !=(PandaBear.AI.ImageTextGenerationResult? left, PandaBear.AI.ImageTextGenerationResult? right) -> bool
+static PandaBear.AI.ImageTextGenerationResult.operator ==(PandaBear.AI.ImageTextGenerationResult? left, PandaBear.AI.ImageTextGenerationResult? right) -> bool
+static PandaBear.AI.LiteLlmImageTextGeneratorOptions.operator !=(PandaBear.AI.LiteLlmImageTextGeneratorOptions? left, PandaBear.AI.LiteLlmImageTextGeneratorOptions? right) -> bool
+static PandaBear.AI.LiteLlmImageTextGeneratorOptions.operator ==(PandaBear.AI.LiteLlmImageTextGeneratorOptions? left, PandaBear.AI.LiteLlmImageTextGeneratorOptions? right) -> bool

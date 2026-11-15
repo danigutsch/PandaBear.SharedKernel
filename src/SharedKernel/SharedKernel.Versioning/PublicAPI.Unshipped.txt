@@ -1,4 +1,5 @@
 #nullable enable
+const PandaBear.Versioning.CandidateManifest.FileName = "candidate.json" -> string!
 override PandaBear.Versioning.SemanticVersion.ToString() -> string!
 PandaBear.Versioning.ApiCompatibilityReport
 PandaBear.Versioning.ApiCompatibilityReportOptions
@@ -16,6 +17,10 @@ PandaBear.Versioning.ApiCompatibilityReportOptions.RepoRoot.init -> void
 PandaBear.Versioning.ApiCompatibilityReportOptions.Version.get -> string!
 PandaBear.Versioning.ApiCompatibilityReportOptions.Version.init -> void
 PandaBear.Versioning.BreakingChangeMarker
+PandaBear.Versioning.CandidateManifest
+PandaBear.Versioning.CandidateManifest.CandidateManifest(System.Text.Json.Nodes.JsonObject! evidence) -> void
+PandaBear.Versioning.CandidateManifest.Evidence.get -> System.Text.Json.Nodes.JsonObject!
+PandaBear.Versioning.CandidateManifest.Save(string! path) -> void
 PandaBear.Versioning.CommitMessageInput
 PandaBear.Versioning.ConventionalCommit
 PandaBear.Versioning.ConventionalCommit.Body.get -> string?
@@ -156,6 +161,9 @@ static PandaBear.Versioning.ApiCompatibilityReport.GetReportPath(PandaBear.Versi
 static PandaBear.Versioning.ApiCompatibilityReport.Initialize(PandaBear.Versioning.ApiCompatibilityReportOptions! options) -> System.Threading.Tasks.Task<string!>!
 static PandaBear.Versioning.ApiCompatibilityReport.ShouldTreatFailureAsReportOnly(PandaBear.Versioning.ApiCompatibilityReportOptions! options) -> bool
 static PandaBear.Versioning.BreakingChangeMarker.HasMarker(string! messages) -> bool
+static PandaBear.Versioning.CandidateManifest.Find(string! directory) -> string!
+static PandaBear.Versioning.CandidateManifest.HashPackage(string! path, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+static PandaBear.Versioning.CandidateManifest.Load(string! path) -> PandaBear.Versioning.CandidateManifest!
 static PandaBear.Versioning.CommitMessageInput.ReadMessages(System.IO.TextReader! reader) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
 static PandaBear.Versioning.ConventionalCommitParser.Parse(string! message) -> PandaBear.Versioning.ConventionalCommit!
 static PandaBear.Versioning.ConventionalCommitParser.TryParse(string! message, out PandaBear.Versioning.ConventionalCommit? commit) -> bool
@@ -189,3 +197,82 @@ static PandaBear.Versioning.VersionOutput.Create(PandaBear.Versioning.SemanticVe
 static PandaBear.Versioning.VersionOutputJson.Serialize(PandaBear.Versioning.VersionOutput! output) -> string!
 static PandaBear.Versioning.SharedKernelDevPackPlanner.ParseGlobalPackagesListing(string! output) -> string?
 static PandaBear.Versioning.SharedKernelDevPackPlanner.ResolveGlobalPackagesDirectory(string! consumerDirectory, string? explicitDirectory, string? environmentValue, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<string?>!>? queryDotnet, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+PandaBear.Versioning.ApiCompatibilityReportOptions.<Clone>$() -> PandaBear.Versioning.ApiCompatibilityReportOptions!
+PandaBear.Versioning.ApiCompatibilityReportOptions.Deconstruct(out string! Version, out string! OutputRoot, out string! ReleasePhase, out string! RepoRoot, out string? BaselineVersion, out bool BreakingMarker) -> void
+PandaBear.Versioning.ApiCompatibilityReportOptions.Equals(PandaBear.Versioning.ApiCompatibilityReportOptions? other) -> bool
+PandaBear.Versioning.ConventionalCommit.<Clone>$() -> PandaBear.Versioning.ConventionalCommit!
+PandaBear.Versioning.ConventionalCommit.Deconstruct(out string! Type, out string? Scope, out bool IsBreakingHeader, out string! Description, out string? Body, out System.Collections.Generic.IReadOnlyList<string!>! Footers) -> void
+PandaBear.Versioning.ConventionalCommit.Equals(PandaBear.Versioning.ConventionalCommit? other) -> bool
+PandaBear.Versioning.DevPackStep.<Clone>$() -> PandaBear.Versioning.DevPackStep!
+PandaBear.Versioning.DevPackStep.Deconstruct(out string! Name, out string! ProjectPath, out string! PackageId, out bool Rebuild, out bool Stale) -> void
+PandaBear.Versioning.DevPackStep.Equals(PandaBear.Versioning.DevPackStep? other) -> bool
+PandaBear.Versioning.ReleasePreparationOptions.<Clone>$() -> PandaBear.Versioning.ReleasePreparationOptions!
+PandaBear.Versioning.ReleasePreparationOptions.Deconstruct(out string! Version, out string! PackageDirectory, out string! OutputDirectory, out string! RepositoryRoot, out string? SourceTag, out string? ReleaseImpact, out string? Sha) -> void
+PandaBear.Versioning.ReleasePreparationOptions.Equals(PandaBear.Versioning.ReleasePreparationOptions? other) -> bool
+PandaBear.Versioning.ReleaseVersionCalculationInput.<Clone>$() -> PandaBear.Versioning.ReleaseVersionCalculationInput!
+PandaBear.Versioning.ReleaseVersionCalculationInput.Deconstruct(out string! SourceSha, out string! SourceTag, out string! LogOutput, out string! VersionKind, out string? RunNumber) -> void
+PandaBear.Versioning.ReleaseVersionCalculationInput.Equals(PandaBear.Versioning.ReleaseVersionCalculationInput? other) -> bool
+PandaBear.Versioning.ReleaseVersionCalculationResult.<Clone>$() -> PandaBear.Versioning.ReleaseVersionCalculationResult!
+PandaBear.Versioning.ReleaseVersionCalculationResult.Deconstruct(out string! BaseVersion, out string! SourceTag, out string! VersionJson, out PandaBear.Versioning.VersionOutput! VersionOutput) -> void
+PandaBear.Versioning.ReleaseVersionCalculationResult.Equals(PandaBear.Versioning.ReleaseVersionCalculationResult? other) -> bool
+PandaBear.Versioning.ResolvedNuGetPackage.<Clone>$() -> PandaBear.Versioning.ResolvedNuGetPackage!
+PandaBear.Versioning.ResolvedNuGetPackage.Deconstruct(out string! Id, out string! Version, out System.Collections.Generic.IReadOnlyList<string!>! LockFiles) -> void
+PandaBear.Versioning.ResolvedNuGetPackage.Equals(PandaBear.Versioning.ResolvedNuGetPackage? other) -> bool
+PandaBear.Versioning.SemanticVersion.<Clone>$() -> PandaBear.Versioning.SemanticVersion!
+PandaBear.Versioning.SemanticVersion.Deconstruct(out int Major, out int Minor, out int Patch, out string? Prerelease, out string? BuildMetadata) -> void
+PandaBear.Versioning.SemanticVersion.Equals(PandaBear.Versioning.SemanticVersion? other) -> bool
+PandaBear.Versioning.SharedKernelPackageOptions.<Clone>$() -> PandaBear.Versioning.SharedKernelPackageOptions!
+PandaBear.Versioning.SharedKernelPackageOptions.Deconstruct(out string! Version, out string! OutputRoot, out string! RepoRoot, out string? AssemblyVersion, out string? FileVersion, out string? InformationalVersion) -> void
+PandaBear.Versioning.SharedKernelPackageOptions.Equals(PandaBear.Versioning.SharedKernelPackageOptions? other) -> bool
+PandaBear.Versioning.VersionOutput.<Clone>$() -> PandaBear.Versioning.VersionOutput!
+PandaBear.Versioning.VersionOutput.Deconstruct(out string! SemVer, out PandaBear.Versioning.ReleaseImpact ReleaseImpact, out string! PackageVersion, out string! AssemblyVersion, out string! FileVersion, out string! InformationalVersion) -> void
+PandaBear.Versioning.VersionOutput.Equals(PandaBear.Versioning.VersionOutput? other) -> bool
+override PandaBear.Versioning.ApiCompatibilityReportOptions.Equals(object? obj) -> bool
+override PandaBear.Versioning.ApiCompatibilityReportOptions.GetHashCode() -> int
+override PandaBear.Versioning.ApiCompatibilityReportOptions.ToString() -> string!
+override PandaBear.Versioning.ConventionalCommit.Equals(object? obj) -> bool
+override PandaBear.Versioning.ConventionalCommit.GetHashCode() -> int
+override PandaBear.Versioning.ConventionalCommit.ToString() -> string!
+override PandaBear.Versioning.DevPackStep.Equals(object? obj) -> bool
+override PandaBear.Versioning.DevPackStep.GetHashCode() -> int
+override PandaBear.Versioning.DevPackStep.ToString() -> string!
+override PandaBear.Versioning.ReleasePreparationOptions.Equals(object? obj) -> bool
+override PandaBear.Versioning.ReleasePreparationOptions.GetHashCode() -> int
+override PandaBear.Versioning.ReleasePreparationOptions.ToString() -> string!
+override PandaBear.Versioning.ReleaseVersionCalculationInput.Equals(object? obj) -> bool
+override PandaBear.Versioning.ReleaseVersionCalculationInput.GetHashCode() -> int
+override PandaBear.Versioning.ReleaseVersionCalculationInput.ToString() -> string!
+override PandaBear.Versioning.ReleaseVersionCalculationResult.Equals(object? obj) -> bool
+override PandaBear.Versioning.ReleaseVersionCalculationResult.GetHashCode() -> int
+override PandaBear.Versioning.ReleaseVersionCalculationResult.ToString() -> string!
+override PandaBear.Versioning.ResolvedNuGetPackage.Equals(object? obj) -> bool
+override PandaBear.Versioning.ResolvedNuGetPackage.GetHashCode() -> int
+override PandaBear.Versioning.ResolvedNuGetPackage.ToString() -> string!
+override PandaBear.Versioning.SemanticVersion.Equals(object? obj) -> bool
+override PandaBear.Versioning.SemanticVersion.GetHashCode() -> int
+override PandaBear.Versioning.SharedKernelPackageOptions.Equals(object? obj) -> bool
+override PandaBear.Versioning.SharedKernelPackageOptions.GetHashCode() -> int
+override PandaBear.Versioning.SharedKernelPackageOptions.ToString() -> string!
+override PandaBear.Versioning.VersionOutput.Equals(object? obj) -> bool
+override PandaBear.Versioning.VersionOutput.GetHashCode() -> int
+override PandaBear.Versioning.VersionOutput.ToString() -> string!
+static PandaBear.Versioning.ApiCompatibilityReportOptions.operator !=(PandaBear.Versioning.ApiCompatibilityReportOptions? left, PandaBear.Versioning.ApiCompatibilityReportOptions? right) -> bool
+static PandaBear.Versioning.ApiCompatibilityReportOptions.operator ==(PandaBear.Versioning.ApiCompatibilityReportOptions? left, PandaBear.Versioning.ApiCompatibilityReportOptions? right) -> bool
+static PandaBear.Versioning.ConventionalCommit.operator !=(PandaBear.Versioning.ConventionalCommit? left, PandaBear.Versioning.ConventionalCommit? right) -> bool
+static PandaBear.Versioning.ConventionalCommit.operator ==(PandaBear.Versioning.ConventionalCommit? left, PandaBear.Versioning.ConventionalCommit? right) -> bool
+static PandaBear.Versioning.DevPackStep.operator !=(PandaBear.Versioning.DevPackStep? left, PandaBear.Versioning.DevPackStep? right) -> bool
+static PandaBear.Versioning.DevPackStep.operator ==(PandaBear.Versioning.DevPackStep? left, PandaBear.Versioning.DevPackStep? right) -> bool
+static PandaBear.Versioning.ReleasePreparationOptions.operator !=(PandaBear.Versioning.ReleasePreparationOptions? left, PandaBear.Versioning.ReleasePreparationOptions? right) -> bool
+static PandaBear.Versioning.ReleasePreparationOptions.operator ==(PandaBear.Versioning.ReleasePreparationOptions? left, PandaBear.Versioning.ReleasePreparationOptions? right) -> bool
+static PandaBear.Versioning.ReleaseVersionCalculationInput.operator !=(PandaBear.Versioning.ReleaseVersionCalculationInput? left, PandaBear.Versioning.ReleaseVersionCalculationInput? right) -> bool
+static PandaBear.Versioning.ReleaseVersionCalculationInput.operator ==(PandaBear.Versioning.ReleaseVersionCalculationInput? left, PandaBear.Versioning.ReleaseVersionCalculationInput? right) -> bool
+static PandaBear.Versioning.ReleaseVersionCalculationResult.operator !=(PandaBear.Versioning.ReleaseVersionCalculationResult? left, PandaBear.Versioning.ReleaseVersionCalculationResult? right) -> bool
+static PandaBear.Versioning.ReleaseVersionCalculationResult.operator ==(PandaBear.Versioning.ReleaseVersionCalculationResult? left, PandaBear.Versioning.ReleaseVersionCalculationResult? right) -> bool
+static PandaBear.Versioning.ResolvedNuGetPackage.operator !=(PandaBear.Versioning.ResolvedNuGetPackage? left, PandaBear.Versioning.ResolvedNuGetPackage? right) -> bool
+static PandaBear.Versioning.ResolvedNuGetPackage.operator ==(PandaBear.Versioning.ResolvedNuGetPackage? left, PandaBear.Versioning.ResolvedNuGetPackage? right) -> bool
+static PandaBear.Versioning.SemanticVersion.operator !=(PandaBear.Versioning.SemanticVersion? left, PandaBear.Versioning.SemanticVersion? right) -> bool
+static PandaBear.Versioning.SemanticVersion.operator ==(PandaBear.Versioning.SemanticVersion? left, PandaBear.Versioning.SemanticVersion? right) -> bool
+static PandaBear.Versioning.SharedKernelPackageOptions.operator !=(PandaBear.Versioning.SharedKernelPackageOptions? left, PandaBear.Versioning.SharedKernelPackageOptions? right) -> bool
+static PandaBear.Versioning.SharedKernelPackageOptions.operator ==(PandaBear.Versioning.SharedKernelPackageOptions? left, PandaBear.Versioning.SharedKernelPackageOptions? right) -> bool
+static PandaBear.Versioning.VersionOutput.operator !=(PandaBear.Versioning.VersionOutput? left, PandaBear.Versioning.VersionOutput? right) -> bool
+static PandaBear.Versioning.VersionOutput.operator ==(PandaBear.Versioning.VersionOutput? left, PandaBear.Versioning.VersionOutput? right) -> bool

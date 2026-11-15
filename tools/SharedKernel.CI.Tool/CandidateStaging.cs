@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 using System.Reflection;
-using PandaBear.Tooling;
+using PandaBear.Versioning;
 
 namespace PandaBear.CI.Tool;
 

@@ -36,7 +36,4 @@ internal static class PackageFactory
         var parts = text.Split('=');
         return Require(parts[0], parts.Length > 1 ? parts[1] : null);
     }
-
-    /// <summary>Creates a reader over the UTF-8 bytes of <paramref name="text"/>.</summary>
-    public static StreamReader Reader(string text) => new(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(text)));
 }

@@ -184,10 +184,10 @@ public sealed class AptPackageReaderTests
     }
 
     [Fact]
-    public async Task The_system_runner_rejects_a_relative_executable()
+    public async Task The_bounded_runner_rejects_a_relative_executable()
     {
         // Act
-        Func<Task> act = () => new SystemProcessRunner().Run("dpkg-query", [], TestContext.Current.CancellationToken);
+        Func<Task> act = () => PackageToolProcess.Run("dpkg-query", [], TestContext.Current.CancellationToken);
 
         // Assert
         await act.ShouldThrow<ArgumentException>();

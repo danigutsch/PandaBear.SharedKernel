@@ -1,5 +1,7 @@
 using System.Text.Json;
-using PandaBear.Tooling;
+using PandaBear.IO;
+using PandaBear.InputNormalization;
+using PandaBear.Versioning;
 
 namespace PandaBear.CI.Tool;
 
@@ -23,7 +25,7 @@ internal static class SymbolEvidence
     {
         var revision = (await run("git", ["rev-parse", "HEAD"], root, ct).ConfigureAwait(false)).Trim();
         var paths = coverage.SymbolDirectories
-            .Select(directory => RepositoryPath.Resolve(root, directory))
+            .Select(directory => RepositoryPath.Parse(directory).ResolveUnder(root))
             .Where(Directory.Exists)
             .SelectMany(static directory => Directory.EnumerateFiles(directory, "*.pdb", SearchOption.AllDirectories))
             .Select(file => Path.GetRelativePath(root, file).Replace('\\', '/'))
@@ -74,7 +76,7 @@ internal static class SymbolEvidence
 
         foreach (var (path, hash) in record.Files)
         {
-            if (!RepositoryPath.IsRelative(path)
+            if (!RepositoryPath.IsValid(path)
                 || !path.EndsWith(".pdb", StringComparison.Ordinal)
                 || !path.Contains(ReleaseSegment, StringComparison.Ordinal)
                 || !coverage.SymbolDirectories.Any(directory => path.StartsWith(directory + "/", StringComparison.Ordinal)))
@@ -91,5 +93,5 @@ internal static class SymbolEvidence
         return [.. record.Files.Keys.Order(StringComparer.Ordinal)];
     }
 
-    private static Task<string> Hash(string root, string path, CancellationToken ct) => CandidateManifest.HashPackage(RepositoryPath.Resolve(root, path), ct);
+    private static Task<string> Hash(string root, string path, CancellationToken ct) => CandidateManifest.HashPackage(RepositoryPath.Parse(path).ResolveUnder(root), ct);
 }

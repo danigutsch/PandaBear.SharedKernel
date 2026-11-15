@@ -4,7 +4,7 @@
 Install the SDK pinned in `global.json`. Provider integration tests require a working container runtime; NativeAOT checks also require the platform
 native build toolchain.
 
-Analyzer and source-generator packages retain the Roslyn 5.6 compiler API baseline so consumers can use compatible .NET 10 SDKs without upgrading
+Analyzer and source-generator packages retain the Roslyn 5.9 compiler API baseline, the compiler of .NET SDK 10.0.4xx, so consumers can use compatible .NET 10 SDKs without upgrading
 to this repository's development SDK. The repository SDK and runtime dependencies can advance independently of that compiler compatibility floor.
 
 ```sh
@@ -29,7 +29,7 @@ Build gates retain SDK analyzers (`AnalysisMode=All`), SharedKernel analyzers, w
 and package-consumption checks. No remote analysis upload or proprietary coverage collector is required.
 
 `SharedKernel.CI.Tool` packs as the `sharedkernel-ci` tool and also builds from a sparse checkout of its own directory
-and `tools/Shared`. Selection follows `.config/sharedkernel-ci.json`: it selects the test projects that depend on the
+and the `src/SharedKernel` libraries it references (InputNormalization, IO, Processes, and Versioning). Selection follows `.config/sharedkernel-ci.json`: it selects the test projects that depend on the
 changed projects, writes one solution filter per test slice, and selects every test project when history, a path, or a
 reference is uncertain. A library or tool change selects only the test projects that depend on it, and still runs the
 candidate job, which packs and consumes every package. Full runs happen nightly; selection reasons are retained in CI.

@@ -30,3 +30,17 @@ static PandaBear.Npgsql.PostgreSqlSessionAdvisoryLock.Acquire(Npgsql.NpgsqlDataS
 static PandaBear.Npgsql.PostgreSqlTransactionAdvisoryLock.Acquire(Npgsql.NpgsqlConnection! connection, Npgsql.NpgsqlTransaction! transaction, long lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 static PandaBear.Npgsql.PostgreSqlSessionAdvisoryLock.AcquireKey(Npgsql.NpgsqlDataSource! dataSource, PandaBear.Npgsql.PostgreSqlLockKey lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.IAsyncDisposable!>
 static PandaBear.Npgsql.PostgreSqlTransactionAdvisoryLock.AcquireKey(Npgsql.NpgsqlConnection! connection, Npgsql.NpgsqlTransaction! transaction, PandaBear.Npgsql.PostgreSqlLockKey lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Npgsql.PostgreSqlLockKey.Deconstruct(out long Value) -> void
+PandaBear.Npgsql.PostgreSqlLockKey.Equals(PandaBear.Npgsql.PostgreSqlLockKey other) -> bool
+PandaBear.Npgsql.PostgreSqlTransactionLockRequest.Deconstruct(out int Tier, out string! Name) -> void
+PandaBear.Npgsql.PostgreSqlTransactionLockRequest.Equals(PandaBear.Npgsql.PostgreSqlTransactionLockRequest other) -> bool
+override PandaBear.Npgsql.PostgreSqlLockKey.GetHashCode() -> int
+override PandaBear.Npgsql.PostgreSqlTransactionLockRequest.GetHashCode() -> int
+static PandaBear.Npgsql.PostgreSqlLockKey.operator !=(PandaBear.Npgsql.PostgreSqlLockKey left, PandaBear.Npgsql.PostgreSqlLockKey right) -> bool
+static PandaBear.Npgsql.PostgreSqlLockKey.operator ==(PandaBear.Npgsql.PostgreSqlLockKey left, PandaBear.Npgsql.PostgreSqlLockKey right) -> bool
+static PandaBear.Npgsql.PostgreSqlTransactionLockRequest.operator !=(PandaBear.Npgsql.PostgreSqlTransactionLockRequest left, PandaBear.Npgsql.PostgreSqlTransactionLockRequest right) -> bool
+static PandaBear.Npgsql.PostgreSqlTransactionLockRequest.operator ==(PandaBear.Npgsql.PostgreSqlTransactionLockRequest left, PandaBear.Npgsql.PostgreSqlTransactionLockRequest right) -> bool
+~override PandaBear.Npgsql.PostgreSqlLockKey.Equals(object obj) -> bool
+~override PandaBear.Npgsql.PostgreSqlLockKey.ToString() -> string
+~override PandaBear.Npgsql.PostgreSqlTransactionLockRequest.Equals(object obj) -> bool
+~override PandaBear.Npgsql.PostgreSqlTransactionLockRequest.ToString() -> string

@@ -1,5 +1,4 @@
 using System.Text.Json.Nodes;
-using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tool;
 
@@ -52,7 +51,7 @@ internal static class CandidateEvidenceCommand
             }
         }
 
-        CandidateManifest.Write(destination, merged);
+        new CandidateManifest(merged).Save(destination);
     }
 
     // Evidence travels without the packages, so the package files cannot be hashed here; the recorded hashes must match.
