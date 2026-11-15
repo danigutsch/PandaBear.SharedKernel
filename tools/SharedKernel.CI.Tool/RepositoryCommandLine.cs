@@ -688,7 +688,7 @@ internal static partial class RepositoryCommandLine
         var exceptionsOption = PathOption("--exceptions", "Warning exception ledger JSON. Findings it covers count as accepted, an expired exception is reported as blocking.", "path");
         var command = new Command(
             "verify-restore-warnings",
-            "Fail when a dotnet restore log reports a NuGet vulnerability advisory of any severity; other NuGet warnings stay advisory in the summary.")
+            "Fail when a dotnet restore log reports a NuGet vulnerability advisory of any severity or an audit that could not run; other NuGet warnings stay advisory in the summary.")
         {
             logOption,
             summaryOption,

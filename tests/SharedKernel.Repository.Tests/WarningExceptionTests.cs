@@ -6,6 +6,25 @@ public sealed class WarningExceptionTests
     private const string High = "/r/src/A/A.csproj : warning NU1903: Package 'System.Foo' 1.0.0 has a known high severity vulnerability [/r/App.slnx]";
     private const string HighOther = "/r/src/A/A.csproj : warning NU1903: Package 'System.Foo' 1.1.0 has a known high severity vulnerability [/r/App.slnx]";
     private const string Compatibility = "/r/src/A/A.csproj : warning NU1701: Package 'Legacy' 1.0.0 was restored using '.NETFramework,Version=v4.6.1' [/r/App.slnx]";
+    private const string DataError = "/r/src/A/A.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://feed.example/v3/index.json. [/r/App.slnx]";
+    private const string NoData = "/r/src/A/A.csproj : warning NU1905: Audit source 'nuget.org' did not provide any vulnerability data. [/r/App.slnx]";
+
+    [Theory]
+    [InlineData(DataError, "NU1900", "source")]
+    [InlineData(NoData, "NU1905", "source nuget.org")]
+    [InlineData(NoData, "NU1905", "source")]
+    public async Task An_audit_that_could_not_run_is_accepted_by_an_unexpired_exception_for_its_source(string warning, string rule, string scope)
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+
+        // Act
+        var (result, report) = await WarningToolRuns.Verify($"{warning}\n", WarningToolRuns.Ledger(rule, scope, 1, "2999-01-01"), ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(0);
+        report.ShouldBe(new WarningReportView(0, 0, 1));
+    }
 
     [Fact]
     public async Task A_blocking_finding_inside_an_unexpired_exception_is_accepted()
