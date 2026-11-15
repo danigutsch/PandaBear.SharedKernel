@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.Json;
 
@@ -27,8 +26,8 @@ public sealed class InstalledSecurityScannerTests
         workspace.WriteFile($"{repositoryDirectory}/.worktrees/ignored.fixture", "token = \"" + secret + "\"\n");
         workspace.WriteFile($"{repositoryDirectory}/fixture.txt", "token = \"" + secret + "\"\n");
         var root = Path.Combine(workspace.RootPath, repositoryDirectory);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var detected = await RepoConfigToolRunner.Run(["security", "scan", "--root", root, "--output", "reports"], output, error, root, TestContext.Current.CancellationToken);

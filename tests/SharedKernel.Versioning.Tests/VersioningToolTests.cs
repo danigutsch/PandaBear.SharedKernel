@@ -653,7 +653,7 @@ public static class VersioningToolTests
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        result.Output.ShouldBe("major" + Environment.NewLine);
+        result.Output.ShouldBe("major\n");
         result.Error.ShouldBe(string.Empty);
     }
 
@@ -1782,7 +1782,7 @@ public static class VersioningToolTests
             Path.Combine(temporaryDirectory.OutputDirectory, "release-notes.md"),
             TestContext.Current.CancellationToken);
         result.ExitCode.ShouldBe(0);
-        result.Output.ShouldBe("Release prep artifacts: " + temporaryDirectory.OutputDirectory + Environment.NewLine);
+        result.Output.ShouldBe("Release prep artifacts: " + temporaryDirectory.OutputDirectory + "\n");
         releaseNotes.ShouldContain("- Commit: `abc123`", StringComparison.Ordinal);
         releaseNotes.ShouldContain("- Previous release tag: `v1.2.2`", StringComparison.Ordinal);
         releaseNotes.ShouldContain("- Release impact: `minor`", StringComparison.Ordinal);

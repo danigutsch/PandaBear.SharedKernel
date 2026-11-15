@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text.Json.Nodes;
 
 namespace PandaBear.RepoConfig.Tests;
@@ -11,8 +10,8 @@ public sealed class GitHubRoadmapNewIdentityTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var initialized = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
         initialized.ShouldBe(0);
         GitHubRoadmapReconcileTestOperations.ConfigureEmptySeed(workspace);

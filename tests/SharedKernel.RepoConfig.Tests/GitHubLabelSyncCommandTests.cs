@@ -52,9 +52,9 @@ public sealed class GitHubLabelSyncCommandTests
         exitCode.ShouldBe(0);
         error.ShouldBe(string.Empty);
         output.ShouldBe(
-            "preview: would update label type: epic." + Environment.NewLine
-            + "preview: would create label area: api." + Environment.NewLine
-            + "preview: owner/repository would get 1 created, 1 updated, and 2 unchanged labels; --force writes them." + Environment.NewLine);
+            "preview: would update label type: epic.\n"
+            + "preview: would create label area: api.\n"
+            + "preview: owner/repository would get 1 created, 1 updated, and 2 unchanged labels; --force writes them.\n");
         var request = handler.Requests.ShouldHaveSingleItem();
         request.Method.ShouldBe(HttpMethod.Get);
         request.PathAndQuery.ShouldBe(LabelsPath + "?per_page=100&page=1");
@@ -77,9 +77,9 @@ public sealed class GitHubLabelSyncCommandTests
         exitCode.ShouldBe(0);
         error.ShouldBe(string.Empty);
         output.ShouldBe(
-            "Updated label type: epic." + Environment.NewLine
-            + "Created label area: api." + Environment.NewLine
-            + "owner/repository: 1 created, 1 updated, and 2 unchanged labels." + Environment.NewLine);
+            "Updated label type: epic.\n"
+            + "Created label area: api.\n"
+            + "owner/repository: 1 created, 1 updated, and 2 unchanged labels.\n");
         handler.Requests.Count.ShouldBe(3);
         handler.Requests.ShouldNotContain(request => request.Method == HttpMethod.Delete);
         var update = handler.Requests[1];
@@ -115,7 +115,7 @@ public sealed class GitHubLabelSyncCommandTests
         // Assert
         exitCode.ShouldBe(0);
         error.ShouldBe(string.Empty);
-        output.ShouldEndWith("1 created, 1 updated, and 2 unchanged labels; --force writes them." + Environment.NewLine, StringComparison.Ordinal);
+        output.ShouldEndWith("1 created, 1 updated, and 2 unchanged labels; --force writes them.\n", StringComparison.Ordinal);
         handler.Requests.Select(request => request.PathAndQuery).ShouldBe(
         [
             LabelsPath + "?per_page=100&page=1",
@@ -136,7 +136,7 @@ public sealed class GitHubLabelSyncCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe(string.Empty);
-        error.ShouldBe("sharedkernel-repo: --repository must name a GitHub repository as owner/name." + Environment.NewLine);
+        error.ShouldBe("sharedkernel-repo: --repository must name a GitHub repository as owner/name.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -152,7 +152,7 @@ public sealed class GitHubLabelSyncCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no labels section." + Environment.NewLine);
+        error.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no labels section.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -178,7 +178,7 @@ public sealed class GitHubLabelSyncCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ShouldBe($"sharedkernel-repo: .config/sharedkernel-repo.json: {expectedMessage}" + Environment.NewLine);
+        error.ShouldBe($"sharedkernel-repo: .config/sharedkernel-repo.json: {expectedMessage}\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -194,7 +194,7 @@ public sealed class GitHubLabelSyncCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json: $.labels[0].description must be at most 100 characters without control characters." + Environment.NewLine);
+        error.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json: $.labels[0].description must be at most 100 characters without control characters.\n");
     }
 
     [Theory]
@@ -223,8 +223,8 @@ public sealed class GitHubLabelSyncCommandTests
         using var workspace = CreateWorkspace(Configuration);
         using var ghToken = new EnvironmentVariableScope("GH_TOKEN", null);
         using var githubToken = new EnvironmentVariableScope("GITHUB_TOKEN", null);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -236,7 +236,7 @@ public sealed class GitHubLabelSyncCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ToString().ShouldBe("sharedkernel-repo: Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub label sync." + Environment.NewLine);
+        error.ToString().ShouldBe("sharedkernel-repo: Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub label sync.\n");
     }
 
     [Theory]
@@ -257,7 +257,7 @@ public sealed class GitHubLabelSyncCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe(string.Empty);
-        error.ShouldBe($"sharedkernel-repo: {expectedMessage}" + Environment.NewLine);
+        error.ShouldBe($"sharedkernel-repo: {expectedMessage}\n");
         handler.Requests.ShouldHaveSingleItem();
     }
 
@@ -276,8 +276,8 @@ public sealed class GitHubLabelSyncCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        output.ShouldBe("Updated label type: epic." + Environment.NewLine);
-        error.ShouldBe("sharedkernel-repo: GitHub label sync failed with HTTP 422 for label area: api. Rerun the sync after fixing the cause." + Environment.NewLine);
+        output.ShouldBe("Updated label type: epic.\n");
+        error.ShouldBe("sharedkernel-repo: GitHub label sync failed with HTTP 422 for label area: api. Rerun the sync after fixing the cause.\n");
     }
 
     [Fact]
@@ -296,6 +296,6 @@ public sealed class GitHubLabelSyncCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ShouldBe("sharedkernel-repo: GitHub label sync response exceeded the allowed size." + Environment.NewLine);
+        error.ShouldBe("sharedkernel-repo: GitHub label sync response exceeded the allowed size.\n");
     }
 }

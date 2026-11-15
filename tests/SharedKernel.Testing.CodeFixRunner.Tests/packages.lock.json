@@ -308,6 +308,12 @@
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
+      "PandaBear.SharedKernel.Testing": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.15, )"
+        }
+      },
       "PandaBear.SharedKernel.Testing.Analyzers": {
         "type": "Project"
       },

@@ -32,7 +32,7 @@ public sealed class K6HostTests
         ProcessState.IsRunning(host.ProcessId()).ShouldBeFalse();
         File.Exists(Path.Combine(run, "host.stdout.log")).ShouldBeTrue();
         File.Exists(Path.Combine(run, "host.stderr.log")).ShouldBeTrue();
-        repository.Error.ToString().ShouldContain("Host ready: http://127.0.0.1:" + K6HostScenario.Port(server) + Environment.NewLine, StringComparison.Ordinal);
+        repository.Error.ToString().ShouldContain("Host ready: http://127.0.0.1:" + K6HostScenario.Port(server) + "\n", StringComparison.Ordinal);
     }
 
     [Fact]

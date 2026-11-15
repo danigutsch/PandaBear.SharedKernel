@@ -21,8 +21,8 @@ public sealed class DependencySubmitCommandTests
         workspace.WriteFile(SnapshotPath, Snapshot);
         using var handler = new TestHttpMessageHandler();
         using var httpClient = new HttpClient(handler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -37,7 +37,7 @@ public sealed class DependencySubmitCommandTests
         exitCode.ShouldBe(0);
         error.ToString().ShouldBe(string.Empty);
         output.ToString().ShouldBe(
-            $"preview: dependency submission would send {SnapshotPath} ({Encoding.UTF8.GetByteCount(Snapshot).ToString(CultureInfo.InvariantCulture)} bytes) to {Endpoint}." + Environment.NewLine,
+            $"preview: dependency submission would send {SnapshotPath} ({Encoding.UTF8.GetByteCount(Snapshot).ToString(CultureInfo.InvariantCulture)} bytes) to {Endpoint}.\n",
             "The relative snapshot path resolves against --root, not the working directory.");
         handler.Requests.ShouldBeEmpty();
     }
@@ -50,8 +50,8 @@ public sealed class DependencySubmitCommandTests
         workspace.WriteFile(SnapshotPath, Snapshot);
         using var ghToken = new EnvironmentVariableScope("GH_TOKEN", null);
         using var gitHubToken = new EnvironmentVariableScope("GITHUB_TOKEN", null);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -76,8 +76,8 @@ public sealed class DependencySubmitCommandTests
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.Created, """{"id":12345,"created_at":"2026-10-24T00:00:00Z","message":"Dependency results for the repo have been successfully updated.","result":"SUCCESS"}""");
         using var httpClient = new HttpClient(handler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -92,7 +92,7 @@ public sealed class DependencySubmitCommandTests
         // Assert
         exitCode.ShouldBe(0);
         error.ToString().ShouldBe(string.Empty);
-        output.ToString().ShouldBe("Dependency snapshot submitted to owner/repository: SUCCESS." + Environment.NewLine);
+        output.ToString().ShouldBe("Dependency snapshot submitted to owner/repository: SUCCESS.\n");
         request.Method.ShouldBe(HttpMethod.Post);
         request.Message.RequestUri.ShouldBe(new Uri(Endpoint));
         request.Message.Headers.GetValues("X-GitHub-Api-Version").ShouldBe(["2026-03-10"]);
@@ -108,8 +108,8 @@ public sealed class DependencySubmitCommandTests
         workspace.WriteFile(SnapshotPath, Snapshot);
         using var ghToken = new EnvironmentVariableScope("GH_TOKEN", null);
         using var gitHubToken = new EnvironmentVariableScope("GITHUB_TOKEN", null);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -122,7 +122,7 @@ public sealed class DependencySubmitCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe("sharedkernel-repo: Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub dependency submission." + Environment.NewLine);
+        error.ToString().ShouldBe("sharedkernel-repo: Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub dependency submission.\n");
     }
 
     [Theory]
@@ -141,8 +141,8 @@ public sealed class DependencySubmitCommandTests
         workspace.WriteFile(SnapshotPath, Snapshot);
         using var handler = new TestHttpMessageHandler();
         using var httpClient = new HttpClient(handler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -155,7 +155,7 @@ public sealed class DependencySubmitCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ToString().ShouldBe("sharedkernel-repo: --repository must name a GitHub repository as owner/name." + Environment.NewLine);
+        error.ToString().ShouldBe("sharedkernel-repo: --repository must name a GitHub repository as owner/name.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -170,8 +170,8 @@ public sealed class DependencySubmitCommandTests
         workspace.WriteFile(SnapshotPath, snapshot);
         using var handler = new TestHttpMessageHandler();
         using var httpClient = new HttpClient(handler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -195,8 +195,8 @@ public sealed class DependencySubmitCommandTests
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var handler = new TestHttpMessageHandler();
         using var httpClient = new HttpClient(handler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -209,7 +209,7 @@ public sealed class DependencySubmitCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ToString().ShouldBe($"sharedkernel-repo: {SnapshotPath} does not exist." + Environment.NewLine);
+        error.ToString().ShouldBe($"sharedkernel-repo: {SnapshotPath} does not exist.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -226,8 +226,8 @@ public sealed class DependencySubmitCommandTests
 
         using var handler = new TestHttpMessageHandler();
         using var httpClient = new HttpClient(handler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -240,7 +240,7 @@ public sealed class DependencySubmitCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ToString().ShouldBe($"sharedkernel-repo: {SnapshotPath} exceeds the 32 MiB snapshot size limit." + Environment.NewLine);
+        error.ToString().ShouldBe($"sharedkernel-repo: {SnapshotPath} exceeds the 32 MiB snapshot size limit.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -256,8 +256,8 @@ public sealed class DependencySubmitCommandTests
         using var handler = new TestHttpMessageHandler();
         handler.Enqueue(GitHubSyncTestResponseFactory.UntrustedError(statusCode));
         using var httpClient = new HttpClient(handler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -271,7 +271,7 @@ public sealed class DependencySubmitCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe($"sharedkernel-repo: GitHub dependency submission failed with HTTP {((int)statusCode).ToString(CultureInfo.InvariantCulture)}." + Environment.NewLine);
+        error.ToString().ShouldBe($"sharedkernel-repo: GitHub dependency submission failed with HTTP {((int)statusCode).ToString(CultureInfo.InvariantCulture)}.\n");
     }
 
     [Fact]
@@ -283,8 +283,8 @@ public sealed class DependencySubmitCommandTests
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.Created, """{"id":12345,"created_at":"2026-10-24T00:00:00Z","message":"ghp_untrusted_message","result":"INVALID"}""");
         using var httpClient = new HttpClient(handler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -298,7 +298,7 @@ public sealed class DependencySubmitCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe("sharedkernel-repo: GitHub reported the dependency snapshot as invalid." + Environment.NewLine);
+        error.ToString().ShouldBe("sharedkernel-repo: GitHub reported the dependency snapshot as invalid.\n");
     }
 
     [Fact]
@@ -309,8 +309,8 @@ public sealed class DependencySubmitCommandTests
         workspace.WriteFile(SnapshotPath, Snapshot);
         using var handler = TestHttpMessageHandler.FromException(new HttpRequestException("ghp_transport_detail"));
         using var httpClient = new HttpClient(handler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -323,7 +323,7 @@ public sealed class DependencySubmitCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ToString().ShouldBe("sharedkernel-repo: GitHub dependency submission request failed." + Environment.NewLine);
+        error.ToString().ShouldBe("sharedkernel-repo: GitHub dependency submission request failed.\n");
     }
 
     [Fact]
@@ -338,8 +338,8 @@ public sealed class DependencySubmitCommandTests
             Content = new ByteArrayContent(new byte[(1024 * 1024) + 1]),
         });
         using var httpClient = new HttpClient(handler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -352,7 +352,7 @@ public sealed class DependencySubmitCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ToString().ShouldBe("sharedkernel-repo: GitHub dependency submission response exceeded the allowed size." + Environment.NewLine);
+        error.ToString().ShouldBe("sharedkernel-repo: GitHub dependency submission response exceeded the allowed size.\n");
     }
 
     [Theory]
@@ -363,8 +363,8 @@ public sealed class DependencySubmitCommandTests
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         workspace.WriteFile(SnapshotPath, Snapshot);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -388,8 +388,8 @@ public sealed class DependencySubmitCommandTests
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         workspace.WriteFile(SnapshotPath, Snapshot);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(

@@ -197,7 +197,7 @@ public sealed class ChildProcessEnvironmentTests
         // Assert
         result.ExitCode.ShouldBe(1);
         result.StandardError.ShouldBe(
-            "sharedkernel-repo: Roadmap automation detected a change outside roadmap/**." + Environment.NewLine,
+            "sharedkernel-repo: Roadmap automation detected a change outside roadmap/**.\n",
             "The real Git reads HEAD and lists the untracked fake, and planning accepts changes only under roadmap/**.");
         fakeGit.Ran.ShouldBeFalse("Git resolves only from absolute PATH entries, so the repository-local fake never runs.");
     }

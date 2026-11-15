@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace PandaBear.RepoConfig.Tests;
 
 /// <summary>Tests the <c>verify-podman-dns</c> preflight command.</summary>
@@ -10,8 +8,8 @@ public sealed class PodmanDnsPreflightCommandTests
     public async Task Help_lists_the_verify_podman_dns_command()
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -31,8 +29,8 @@ public sealed class PodmanDnsPreflightCommandTests
     public async Task Command_help_describes_the_verbosity_option()
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(
@@ -795,7 +793,7 @@ public sealed class PodmanDnsPreflightCommandTests
         // Assert
         result.ExitCode.ShouldBe(1);
         result.StandardError.ShouldBe(
-            $"verify-podman-dns: unable to verify safely: podman info failed while reading remote-service mode{Environment.NewLine}");
+            $"verify-podman-dns: unable to verify safely: podman info failed while reading remote-service mode\n");
     }
 
     [Fact]
@@ -812,7 +810,7 @@ public sealed class PodmanDnsPreflightCommandTests
         // Assert
         result.ExitCode.ShouldBe(1);
         result.StandardError.ShouldBe(
-            $"verify-podman-dns: unable to verify safely: podman info failed while reading remote-service mode{Environment.NewLine}");
+            $"verify-podman-dns: unable to verify safely: podman info failed while reading remote-service mode\n");
     }
 
     [Fact]

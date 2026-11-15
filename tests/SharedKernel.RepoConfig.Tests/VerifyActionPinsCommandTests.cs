@@ -50,7 +50,7 @@ public sealed class VerifyActionPinsCommandTests
         // Assert
         result.ExitCode.ShouldBe(0);
         result.StandardError.ShouldBe(string.Empty);
-        result.StandardOutput.ShouldBe("Action pins match the manifest." + Environment.NewLine);
+        result.StandardOutput.ShouldBe("Action pins match the manifest.\n");
     }
 
     [Theory]
@@ -76,8 +76,8 @@ public sealed class VerifyActionPinsCommandTests
         result.ExitCode.ShouldBe(1);
         result.StandardOutput.ShouldBe(string.Empty);
         result.StandardError.ShouldBe(
-            "Action pin verification failed:" + Environment.NewLine
-            + $"- .github/workflows/ci.yml: Line 4: {expectedMessage}" + Environment.NewLine);
+            "Action pin verification failed:\n"
+            + $"- .github/workflows/ci.yml: Line 4: {expectedMessage}\n");
     }
 
     [Fact]
@@ -149,7 +149,7 @@ public sealed class VerifyActionPinsCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: The action pin manifest does not exist." + Environment.NewLine);
+        result.StandardError.ShouldBe("sharedkernel-repo: The action pin manifest does not exist.\n");
     }
 
     [Fact]
@@ -202,8 +202,8 @@ public sealed class VerifyActionPinsCommandTests
         // Assert
         result.ExitCode.ShouldBe(1);
         result.StandardError.ShouldBe(
-            "Action pin verification failed:" + Environment.NewLine
-            + "- .github/workflows/other.yaml: Line 4: 'actions/checkout' must pin a full 40-character lowercase commit SHA, not 'main'." + Environment.NewLine,
+            "Action pin verification failed:\n"
+            + "- .github/workflows/other.yaml: Line 4: 'actions/checkout' must pin a full 40-character lowercase commit SHA, not 'main'.\n",
             "The mixed-case reusable workflow reference matches the manifest and only the .yaml file fails.");
     }
 
@@ -219,6 +219,6 @@ public sealed class VerifyActionPinsCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: The root has no .github/workflows directory, so no action pin was checked." + Environment.NewLine);
+        result.StandardError.ShouldBe("sharedkernel-repo: The root has no .github/workflows directory, so no action pin was checked.\n");
     }
 }

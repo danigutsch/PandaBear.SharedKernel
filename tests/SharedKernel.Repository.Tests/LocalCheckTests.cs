@@ -342,7 +342,7 @@ public sealed class LocalCheckTests
         using var repository = new RepositoryTestScope();
         var processes = new ProcessLog(new LocalCheckScript(repository).Respond);
         var selection = Path.Combine(repository.Root, "TestResults", "local-check");
-        using var output = new StringWriter();
+        using var output = new InvariantStringWriter();
 
         // Act
         await new LocalCheckRunner(processes.Machine(new SteppingTimeProvider())).Run(

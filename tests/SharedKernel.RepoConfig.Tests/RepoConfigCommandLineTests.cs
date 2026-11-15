@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace PandaBear.RepoConfig.Tests;
 
 /// <summary>Checks the repo-config tool's command-line surface: help text, parse errors, the root option and documented command lines.</summary>
@@ -10,8 +8,8 @@ public sealed class RepoConfigCommandLineTests
     public async Task Root_help_lists_every_command()
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(["--help"], output, error, Path.GetTempPath(), TestContext.Current.CancellationToken);
@@ -42,8 +40,8 @@ public sealed class RepoConfigCommandLineTests
     public async Task Missing_command_is_a_parse_error()
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run([], output, error, Path.GetTempPath(), TestContext.Current.CancellationToken);
@@ -57,8 +55,8 @@ public sealed class RepoConfigCommandLineTests
     public async Task Version_option_writes_the_version_to_standard_output()
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(["--version"], output, error, Path.GetTempPath(), TestContext.Current.CancellationToken);
@@ -79,8 +77,8 @@ public sealed class RepoConfigCommandLineTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run([group], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
@@ -95,8 +93,8 @@ public sealed class RepoConfigCommandLineTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(["init"], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
@@ -112,8 +110,8 @@ public sealed class RepoConfigCommandLineTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var workingDirectory = Path.GetDirectoryName(workspace.RootPath).ShouldNotBeNull();
         var relativeRoot = Path.GetFileName(workspace.RootPath);
 
@@ -131,12 +129,12 @@ public sealed class RepoConfigCommandLineTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var verifyOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var verifyError = new StringWriter(CultureInfo.InvariantCulture);
-        using var diffOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var diffError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var verifyOutput = new InvariantStringWriter();
+        using var verifyError = new InvariantStringWriter();
+        using var diffOutput = new InvariantStringWriter();
+        using var diffError = new InvariantStringWriter();
         var initExitCode = await RepoConfigToolRunner.Run(["init", "--root", "."], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         initExitCode.ShouldBe(0);
 
@@ -204,8 +202,8 @@ public sealed class RepoConfigCommandLineTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(["init", "--root", root], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
@@ -221,8 +219,8 @@ public sealed class RepoConfigCommandLineTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var responseFilePath = Path.Combine(workspace.RootPath, "arguments.rsp");
         await File.WriteAllLinesAsync(responseFilePath, ["init", "--root", "a\0b"], TestContext.Current.CancellationToken);
 
@@ -240,8 +238,8 @@ public sealed class RepoConfigCommandLineTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(["init", "--root"], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
@@ -259,8 +257,8 @@ public sealed class RepoConfigCommandLineTests
     public async Task GitHub_command_help_describes_force_and_root(string command)
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(["github", command, "--help"], output, error, Path.GetTempPath(), TestContext.Current.CancellationToken);
@@ -277,8 +275,8 @@ public sealed class RepoConfigCommandLineTests
     public async Task Publish_result_help_describes_force_and_root()
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(["automation", "publish-result", "--help"], output, error, Path.GetTempPath(), TestContext.Current.CancellationToken);
@@ -296,8 +294,8 @@ public sealed class RepoConfigCommandLineTests
     public async Task Get_help_lists_every_query()
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(["get", "--help"], output, error, Path.GetTempPath(), TestContext.Current.CancellationToken);
@@ -327,8 +325,8 @@ public sealed class RepoConfigCommandLineTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(["get", "bogus"], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
@@ -350,8 +348,8 @@ public sealed class RepoConfigCommandLineTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         string[] args = value is null ? ["get", query] : ["get", query, value];
 
         // Act
@@ -368,8 +366,8 @@ public sealed class RepoConfigCommandLineTests
     public async Task Set_help_lists_the_supported_key()
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(["set", "--help"], output, error, Path.GetTempPath(), TestContext.Current.CancellationToken);
@@ -407,8 +405,8 @@ public sealed class RepoConfigCommandLineTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(["[diagram]", "init", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
@@ -425,8 +423,8 @@ public sealed class RepoConfigCommandLineTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(["[diagram]", "init", "--rot", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);

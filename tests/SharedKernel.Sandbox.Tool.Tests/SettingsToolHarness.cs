@@ -1,5 +1,4 @@
 using System.CommandLine;
-using System.Globalization;
 using System.Text.Json.Nodes;
 
 namespace PandaBear.Sandbox.Tool.Tests;
@@ -35,8 +34,8 @@ internal static class SettingsToolHarness
     /// <summary>Runs the <c>settings</c> command line with <paramref name="arguments"/> in <paramref name="environment"/>.</summary>
     public static async Task<(int ExitCode, string Output, string Error)> Run(string root, FakeSandboxEnvironment environment, Action? beforeCommit, params string[] arguments)
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var exitCode = await SandboxCommandLine
             .Create(root, environment, beforeCommit)
             .Parse(["settings", .. arguments, "--root", root])

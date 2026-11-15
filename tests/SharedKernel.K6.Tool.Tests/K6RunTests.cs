@@ -40,7 +40,7 @@ public sealed class K6RunTests
             "2",
             Path.Combine(repository.Root, "perf", "k6", "scenarios", "smoke.js"),
         ]);
-        repository.Error.ToString().ShouldBe("Results: perf/results/" + Path.GetFileName(run) + Environment.NewLine);
+        repository.Error.ToString().ShouldBe("Results: perf/results/" + Path.GetFileName(run) + "\n");
         repository.Output.ToString().ShouldBe(string.Empty);
     }
 
@@ -230,7 +230,7 @@ public sealed class K6RunTests
 
         // Assert
         exitCode.ShouldBe(2);
-        repository.Error.ToString().ShouldBe(message + Environment.NewLine);
+        repository.Error.ToString().ShouldBe(message + "\n");
         repository.RunDirectories().ShouldBe([]);
     }
 
@@ -268,7 +268,7 @@ public sealed class K6RunTests
 
         // Assert
         exitCode.ShouldBe(2);
-        repository.Error.ToString().ShouldBe("-e and --env cannot set APP_PROFILE, which the tool sets from the scenario configuration." + Environment.NewLine);
+        repository.Error.ToString().ShouldBe("-e and --env cannot set APP_PROFILE, which the tool sets from the scenario configuration.\n");
         repository.RunDirectories().ShouldBe([]);
     }
 
@@ -286,7 +286,7 @@ public sealed class K6RunTests
 
         // Assert
         exitCode.ShouldBe(2);
-        repository.Error.ToString().ShouldBe(runner + " was not found in an absolute PATH directory." + Environment.NewLine);
+        repository.Error.ToString().ShouldBe(runner + " was not found in an absolute PATH directory.\n");
     }
 
     [Fact]
@@ -303,7 +303,7 @@ public sealed class K6RunTests
 
         // Assert
         exitCode.ShouldBe(2);
-        repository.Error.ToString().ShouldBe("The script perf/k6/scenarios/smoke.js of scenario smoke does not exist." + Environment.NewLine);
+        repository.Error.ToString().ShouldBe("The script perf/k6/scenarios/smoke.js of scenario smoke does not exist.\n");
     }
 
     [Fact]
@@ -326,7 +326,7 @@ public sealed class K6RunTests
 
         // Assert
         exitCode.ShouldBe(2);
-        repository.Error.ToString().ShouldBe("perf/results: Symbolic links are not followed in repository paths." + Environment.NewLine);
+        repository.Error.ToString().ShouldBe("perf/results: Symbolic links are not followed in repository paths.\n");
         Directory.GetFileSystemEntries(outside.Path).ShouldBe([]);
     }
 

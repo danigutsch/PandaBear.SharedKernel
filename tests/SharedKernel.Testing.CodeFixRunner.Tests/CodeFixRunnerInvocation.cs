@@ -1,6 +1,5 @@
 using System.CommandLine;
 using System.CommandLine.Help;
-using System.Globalization;
 
 namespace PandaBear.Testing.CodeFixRunner.Tests;
 
@@ -35,8 +34,8 @@ internal static class CodeFixRunnerInvocation
         var help = (HelpAction)command.Options.OfType<HelpOption>().First().Action!;
         help.MaxWidth = int.MaxValue;
 
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var configuration = new InvocationConfiguration
         {
             Output = output,

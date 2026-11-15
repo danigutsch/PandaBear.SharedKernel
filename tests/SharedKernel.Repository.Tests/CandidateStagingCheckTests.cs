@@ -162,7 +162,7 @@ public sealed class CandidateStagingCheckTests
 
         // Assert
         result.ExitCode.ShouldBe(2);
-        result.Error.ShouldBe("git failed\\u001B[31m\\u202E" + Environment.NewLine);
+        result.Error.ShouldBe("git failed\\u001B[31m\\u202E\n");
     }
 
     [Fact]
@@ -178,6 +178,6 @@ public sealed class CandidateStagingCheckTests
 
         // Assert
         result.ExitCode.ShouldBe(2);
-        result.Error.ShouldBe("Command failed (128): git status" + Environment.NewLine + "fatal:\\u001B[1m broken" + Environment.NewLine);
+        result.Error.ShouldBe("Command failed (128): git status\n" + "fatal:\\u001B[1m broken\n");
     }
 }

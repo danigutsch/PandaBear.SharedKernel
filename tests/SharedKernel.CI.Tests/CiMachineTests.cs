@@ -30,7 +30,7 @@ public sealed class CiMachineTests
         var (fileName, arguments) = TestShell.Command("echo selected", "Write-Output selected");
 
         // Act
-        using var echo = new StringWriter();
+        using var echo = new InvariantStringWriter();
         var output = await Machine.RunStreaming(fileName, arguments, directory.Path, echo, TestContext.Current.CancellationToken);
 
         // Assert

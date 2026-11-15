@@ -1,6 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Help;
-using System.Globalization;
+using PandaBear.Testing;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
@@ -21,8 +21,8 @@ internal sealed record CommandLineRun(int ExitCode, string Output, string Error)
         var help = (HelpAction)command.Options.OfType<HelpOption>().First().Action!;
         help.MaxWidth = int.MaxValue;
 
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Signal handlers are process-wide, so test invocations leave Ctrl+C and SIGTERM to the test host.
         var configuration = new InvocationConfiguration { Output = output, Error = error, ProcessTerminationTimeout = null };

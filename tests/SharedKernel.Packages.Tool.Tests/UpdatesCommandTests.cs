@@ -336,7 +336,7 @@ public sealed class UpdatesCommandTests
 
         // Assert
         exitCode.ShouldBe(0);
-        output.ShouldBe("All 1 declared packages are installed.\n".ReplaceLineEndings());
+        output.ShouldBe("All 1 declared packages are installed.\n");
     }
 
     [Fact]

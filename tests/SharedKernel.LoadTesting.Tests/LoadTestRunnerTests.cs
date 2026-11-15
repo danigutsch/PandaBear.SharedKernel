@@ -45,7 +45,7 @@ public sealed class LoadTestRunnerTests
             new("APP_VUS", "3"),
         ]);
         generator.CheckedVariables.ShouldBe(["APP_BASE_URL", RecordingLoadGenerator.ControlledVariable, "APP_PROFILE", "APP_VUS"]);
-        repository.Error.ToString().ShouldBe("Results: perf/results/" + Path.GetFileName(directory) + Environment.NewLine);
+        repository.Error.ToString().ShouldBe("Results: perf/results/" + Path.GetFileName(directory) + "\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -188,7 +188,7 @@ public sealed class LoadTestRunnerTests
         handler.Requests.ToArray().ShouldBe([.. Enumerable.Repeat(new Uri("http://127.0.0.1:5123/health"), 3)]);
         host.Arguments().ShouldBe(["--urls", "http://127.0.0.1:0"]);
         generator.Received.ShouldNotBeNull().Variables[0].ShouldBe(new("APP_UPLOAD_URL", "http://127.0.0.1:5123"));
-        repository.Error.ToString().ShouldEndWith("Host ready: http://127.0.0.1:5123" + Environment.NewLine, StringComparison.Ordinal);
+        repository.Error.ToString().ShouldEndWith("Host ready: http://127.0.0.1:5123\n", StringComparison.Ordinal);
     }
 
     [Fact]

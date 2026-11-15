@@ -120,8 +120,8 @@ internal sealed class TemporaryGitRepository : IDisposable
             }
         }
 
-        using var output = new StringWriter(System.Globalization.CultureInfo.InvariantCulture);
-        using var error = new StringWriter(System.Globalization.CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         try
         {
             var exitCode = await RepoConfigToolRunner.Run(

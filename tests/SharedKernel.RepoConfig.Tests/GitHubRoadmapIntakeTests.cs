@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Text.Json;
 
@@ -13,10 +12,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
@@ -80,10 +79,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.Configure(
@@ -136,10 +135,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
@@ -215,12 +214,12 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var firstOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var firstError = new StringWriter(CultureInfo.InvariantCulture);
-        using var secondOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var secondError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var firstOutput = new InvariantStringWriter();
+        using var firstError = new InvariantStringWriter();
+        using var secondOutput = new InvariantStringWriter();
+        using var secondError = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubProjectSyncTestOperations.MapDefaultItem(workspace);
@@ -352,10 +351,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         IReadOnlyList<GitHubRoadmapReconcileIssue> expectedSnapshot =
@@ -420,10 +419,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
@@ -475,7 +474,7 @@ public sealed class GitHubRoadmapIntakeTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe("sharedkernel-repo: GitHub import found an issue with conflicting type labels." + Environment.NewLine);
+        error.ToString().ShouldBe("sharedkernel-repo: GitHub import found an issue with conflicting type labels.\n");
         stateAfter.ShouldBe(stateBefore);
     }
 
@@ -484,10 +483,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         IReadOnlyList<GitHubRoadmapReconcileIssue> expectedSnapshot =
@@ -576,12 +575,12 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var firstOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var firstError = new StringWriter(CultureInfo.InvariantCulture);
-        using var secondOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var secondError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var firstOutput = new InvariantStringWriter();
+        using var firstError = new InvariantStringWriter();
+        using var secondOutput = new InvariantStringWriter();
+        using var secondError = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
@@ -666,12 +665,12 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var firstOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var firstError = new StringWriter(CultureInfo.InvariantCulture);
-        using var secondOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var secondError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var firstOutput = new InvariantStringWriter();
+        using var firstError = new InvariantStringWriter();
+        using var secondOutput = new InvariantStringWriter();
+        using var secondError = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         workspace.WriteFile(
@@ -761,10 +760,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var firstOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var firstError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var firstOutput = new InvariantStringWriter();
+        using var firstError = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
@@ -824,10 +823,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
@@ -903,10 +902,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
@@ -976,10 +975,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
@@ -1041,10 +1040,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var reviewedItem = workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json")
@@ -1106,10 +1105,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
@@ -1171,10 +1170,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenPairWithStaleRelationship(workspace);
@@ -1249,10 +1248,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var repository = "owner/repository";
@@ -1387,10 +1386,10 @@ public sealed class GitHubRoadmapIntakeTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.Configure(

@@ -1,4 +1,5 @@
 using System.Globalization;
+using PandaBear.Testing;
 
 namespace PandaBear.VaultManager.Tool.Tests.IO;
 
@@ -13,7 +14,7 @@ public sealed class PrintableTextWriterTests
     {
         // Arrange
         char[] characters = [.. text];
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
         using var writer = new PrintableTextWriter(output);
 
         // Act

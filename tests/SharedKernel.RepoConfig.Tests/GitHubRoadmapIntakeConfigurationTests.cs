@@ -16,8 +16,8 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var config = workspace.ReadFile("roadmap/config.json")
@@ -37,10 +37,10 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         using var handler = new TestHttpMessageHandler();
@@ -52,7 +52,7 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe("sharedkernel-repo: GitHub import is disabled in roadmap/config.json." + Environment.NewLine);
+        error.ToString().ShouldBe("sharedkernel-repo: GitHub import is disabled in roadmap/config.json.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -61,10 +61,10 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapSnapshotTestOperations.Configure(
@@ -112,7 +112,7 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe("sharedkernel-repo: roadmap/config.json must define integrations.github.intake before GitHub import." + Environment.NewLine);
+        error.ToString().ShouldBe("sharedkernel-repo: roadmap/config.json must define integrations.github.intake before GitHub import.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -123,10 +123,10 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
@@ -144,7 +144,7 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe($"sharedkernel-repo: {expectedError}{Environment.NewLine}");
+        error.ToString().ShouldBe($"sharedkernel-repo: {expectedError}\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -153,10 +153,10 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var config = workspace.ReadFile("roadmap/config.json")

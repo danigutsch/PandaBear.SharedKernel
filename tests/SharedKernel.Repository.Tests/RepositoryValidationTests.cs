@@ -129,7 +129,7 @@ public sealed class RepositoryValidationTests
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        result.Output.ShouldBe("No test projects selected for library" + Environment.NewLine);
+        result.Output.ShouldBe("No test projects selected for library\n");
         result.Error.ShouldBe(string.Empty);
         processes.Calls.ShouldAllSatisfy(call => call.FileName.ShouldBe("git"));
     }

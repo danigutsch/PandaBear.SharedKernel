@@ -1,5 +1,4 @@
 using System.CommandLine;
-using System.Globalization;
 
 namespace PandaBear.Sandbox.Tool.Tests;
 
@@ -22,8 +21,8 @@ internal static class SandboxToolHarness
     /// <summary>Runs <c>doctor</c> against <paramref name="root"/> and returns the exit code, output, and error.</summary>
     public static async Task<(int ExitCode, string Output, string Error)> Run(string root, ISandboxEnvironment environment)
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var exitCode = await SandboxCommandLine
             .Create(root, environment)
             .Parse(["doctor", "--root", root])

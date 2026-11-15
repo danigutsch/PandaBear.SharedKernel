@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace PandaBear.RepoConfig.Tests;
 
 /// <summary>Test helpers for the GitHub label sync command.</summary>
@@ -21,8 +19,8 @@ internal static class GitHubLabelSyncTestOperations
         string repository = "owner/repository")
     {
         using var client = new HttpClient(handler, disposeHandler: false);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         List<string> arguments = ["github", "sync-labels", "--repository", repository, "--root", workspace.RootPath];
         if (force)
         {

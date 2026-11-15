@@ -118,7 +118,7 @@ public sealed class VerifyGherkinCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: " + expectedMessage + Environment.NewLine);
+        result.StandardError.ShouldBe("sharedkernel-repo: " + expectedMessage + "\n");
     }
 
     [Fact]
@@ -135,7 +135,7 @@ public sealed class VerifyGherkinCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        result.StandardOutput.ShouldBe("Repository Gherkin files are valid." + Environment.NewLine);
+        result.StandardOutput.ShouldBe("Repository Gherkin files are valid.\n");
         result.StandardError.ShouldBe(string.Empty);
     }
 
@@ -204,7 +204,7 @@ public sealed class VerifyGherkinCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no gherkin section." + Environment.NewLine);
+        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no gherkin section.\n");
     }
 
     [Theory]
@@ -234,6 +234,6 @@ public sealed class VerifyGherkinCommandTests
         // Assert
         result.ExitCode.ShouldBe(1);
         result.StandardError.ShouldStartWith("sharedkernel-repo: .config/sharedkernel-repo.json" + expectedMessage, StringComparison.Ordinal);
-        result.StandardError.ShouldEndWith(Environment.NewLine, StringComparison.Ordinal);
+        result.StandardError.ShouldEndWith("\n", StringComparison.Ordinal);
     }
 }

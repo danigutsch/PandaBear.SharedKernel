@@ -36,7 +36,7 @@ public sealed class CandidateStagingFeedTests
         git.Calls.ShouldAllSatisfy(call => call.WorkingDirectory.ShouldBe(scope.LibraryRoot));
         server.Requests.ShouldBeEmpty();
         scope.ScratchDirectories().ShouldBeEmpty();
-        result.Output.ShouldBe($"Staged {CandidateStagingScope.Version} in {scope.Output}: 2 packages added, 0 already present." + Environment.NewLine);
+        result.Output.ShouldBe($"Staged {CandidateStagingScope.Version} in {scope.Output}: 2 packages added, 0 already present.\n");
     }
 
     [Fact]

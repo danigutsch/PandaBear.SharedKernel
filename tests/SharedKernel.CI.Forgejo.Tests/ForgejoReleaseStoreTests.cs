@@ -114,7 +114,7 @@ public sealed class ForgejoReleaseStoreTests
             .Respond(HttpStatusCode.OK, Releases.Page(1, 3))
             .Respond(HttpStatusCode.NoContent);
         using var store = new ForgejoReleaseStore(handler, Server, "owner/name", UserAgent, "secret");
-        using var output = new StringWriter();
+        using var output = new InvariantStringWriter();
 
         // Act
         await PrereleasePruner.Prune(new PrereleasePruningRequest("owner/name", 2, [], Force: true), store, output, TextWriter.Null, TestContext.Current.CancellationToken);

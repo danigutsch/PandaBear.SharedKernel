@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace PandaBear.RepoConfig.Tests;
 
 /// <summary>Tests the security scanner's exit codes, report publication, and handling of cancellation, a missing scanner, and unsafe report locations.</summary>
@@ -13,8 +11,8 @@ public sealed class SecurityScannerTests
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var outside = new TemporaryRepoConfigWorkspace();
         Directory.CreateSymbolicLink(Path.Combine(workspace.RootPath, "reports"), outside.RootPath);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var process = new SecurityScannerTestProcess(0, """{"version":"2.1.0","runs":[{"results":[]}]}""");
 
         // Act
@@ -31,8 +29,8 @@ public sealed class SecurityScannerTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
         var process = new SecurityScannerTestProcess(0, null);
@@ -59,8 +57,8 @@ public sealed class SecurityScannerTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var process = new SecurityScannerTestProcess(scannerExit, report);
 
         // Act
@@ -82,8 +80,8 @@ public sealed class SecurityScannerTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var process = new SecurityScannerTestProcess(0, null);
 
         // Act
@@ -102,8 +100,8 @@ public sealed class SecurityScannerTests
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         workspace.WriteFile("reports/gitleaks.sarif", "retained evidence");
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var process = new SecurityScannerTestProcess(0, """{"version":"2.1.0","runs":[{"results":[]}]}""");
 
         // Act

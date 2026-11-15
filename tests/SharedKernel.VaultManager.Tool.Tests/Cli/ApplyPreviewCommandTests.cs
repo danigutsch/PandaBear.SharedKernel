@@ -40,7 +40,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
 
         // Assert
         run.ExitCode.ShouldBe(0);
-        string[] lines = run.Output.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+        string[] lines = run.Output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
         lines.ShouldBe(
         [
             "Changes:",
@@ -85,7 +85,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
         // Assert
         run.ExitCode.ShouldBe(0);
         run.Output.ShouldContain("  " + Item + "text field \"Plan\" removed", StringComparison.Ordinal);
-        run.Output.ShouldEndWith("The dry run wrote nothing. Apply with --allow-removals makes them." + Environment.NewLine, StringComparison.Ordinal);
+        run.Output.ShouldEndWith("The dry run wrote nothing. Apply with --allow-removals makes them.\n", StringComparison.Ordinal);
         File.Exists(output).ShouldBeFalse();
         prompts.NewPasswordPrompts.ShouldBeEmpty();
         existing.ExitCode.ShouldBe(3);
@@ -104,7 +104,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
 
         // Assert
         run.ExitCode.ShouldBe(0);
-        run.Output.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ShouldBe(
+        run.Output.Split('\n', StringSplitOptions.RemoveEmptyEntries).ShouldBe(
         [
             "Changes: none",
             "Items changed: 0",
@@ -218,7 +218,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
 
         // Assert
         run.ExitCode.ShouldBe(0);
-        run.Output.ShouldContain("Items changed: 1" + Environment.NewLine + "Removals: 1", StringComparison.Ordinal);
+        run.Output.ShouldContain("Items changed: 1\n" + "Removals: 1", StringComparison.Ordinal);
         var written = BitwardenJsonReader.Read(await File.ReadAllTextAsync(output, TestContext.Current.CancellationToken), "organized.json");
         written.Items.ShouldHaveSingleItem().Fields.ShouldBeEmpty();
     }

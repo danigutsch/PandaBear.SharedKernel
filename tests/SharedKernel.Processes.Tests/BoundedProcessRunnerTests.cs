@@ -37,7 +37,7 @@ public sealed class BoundedProcessRunnerTests
             return;
         }
 
-        using var forward = new StringWriter();
+        using var forward = new InvariantStringWriter();
 
         // Act
         var output = await new BoundedProcessRunner().Run(ShellStartInfo.Create("echo first; echo second"), forward, TestContext.Current.CancellationToken);
@@ -45,7 +45,7 @@ public sealed class BoundedProcessRunnerTests
         // Assert
         output.ExitCode.ShouldBe(0);
         output.StandardOutput.ShouldBeEmpty();
-        forward.ToString().ShouldBe("first" + Environment.NewLine + "second" + Environment.NewLine);
+        forward.ToString().ShouldBe("first\n" + "second\n");
     }
 
     [Fact]

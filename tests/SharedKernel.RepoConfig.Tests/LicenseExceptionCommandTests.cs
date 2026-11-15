@@ -192,7 +192,7 @@ public sealed class LicenseExceptionCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json does not exist." + Environment.NewLine);
+        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json does not exist.\n");
     }
 
     [Theory]
@@ -210,7 +210,7 @@ public sealed class LicenseExceptionCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no licenseExceptions section." + Environment.NewLine);
+        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no licenseExceptions section.\n");
     }
 
     [Theory]
@@ -268,7 +268,7 @@ public sealed class LicenseExceptionCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json exceeds the 1 MiB configuration size limit." + Environment.NewLine);
+        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json exceeds the 1 MiB configuration size limit.\n");
     }
 
     [Fact]
@@ -320,7 +320,7 @@ public sealed class LicenseExceptionCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json: Symbolic links are not followed in repository paths." + Environment.NewLine);
+        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json: Symbolic links are not followed in repository paths.\n");
     }
 
     [Theory]

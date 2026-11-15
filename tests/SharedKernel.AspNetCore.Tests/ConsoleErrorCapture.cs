@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using PandaBear.Testing;
 
 namespace PandaBear.AspNetCore.Tests;
 
@@ -7,7 +8,7 @@ namespace PandaBear.AspNetCore.Tests;
 internal sealed class ConsoleErrorCapture : IDisposable
 {
     private readonly TextWriter _original = Console.Error;
-    private readonly StringWriter _buffer = new();
+    private readonly StringWriter _buffer = new InvariantStringWriter();
 
     /// <summary>Initializes a new instance of the <see cref="ConsoleErrorCapture" /> class and starts capturing.</summary>
     public ConsoleErrorCapture() => Console.SetError(_buffer);

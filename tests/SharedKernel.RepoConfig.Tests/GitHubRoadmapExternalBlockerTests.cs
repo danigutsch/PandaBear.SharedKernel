@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tests;
@@ -12,8 +11,8 @@ public sealed class GitHubRoadmapExternalBlockerTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var init = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
         init.ShouldBe(0);
         GitHubRoadmapReconcileTestOperations.ConfigureEmptySeed(workspace);

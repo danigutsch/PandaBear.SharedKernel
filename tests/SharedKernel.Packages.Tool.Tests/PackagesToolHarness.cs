@@ -1,5 +1,4 @@
 using System.CommandLine;
-using System.Globalization;
 
 namespace PandaBear.Packages.Tool.Tests;
 
@@ -35,8 +34,8 @@ internal static class PackagesToolHarness
         Func<string, string?> resolve,
         params string[] arguments)
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var exitCode = await PackagesCommandLine
             .Create(root, new FakeExecutables(resolve), runner)
             .Parse(["plan", "--root", root, .. arguments])
@@ -51,8 +50,8 @@ internal static class PackagesToolHarness
         Func<string, string?> resolve,
         params string[] arguments)
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var exitCode = await PackagesCommandLine
             .Create(workingDirectory, new FakeExecutables(resolve), runner)
             .Parse(arguments)

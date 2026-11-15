@@ -47,8 +47,8 @@ public sealed class MutationTestRunTests : IDisposable
             Path.Combine(scope.Root, "tests", "Core.Tests"),
             Path.Combine(scope.Root, "tests", "Other.Tests"),
         ]);
-        result.Output.ShouldContain("==> " + DomainConfig + Environment.NewLine + "mutation score stryker-domain.json", StringComparison.Ordinal);
-        result.Output.ShouldContain("==> " + OtherConfig + Environment.NewLine + "mutation score stryker-config.json", StringComparison.Ordinal);
+        result.Output.ShouldContain("==> " + DomainConfig + "\nmutation score stryker-domain.json", StringComparison.Ordinal);
+        result.Output.ShouldContain("==> " + OtherConfig + "\nmutation score stryker-config.json", StringComparison.Ordinal);
     }
 
     [Fact]

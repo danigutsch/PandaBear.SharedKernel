@@ -178,7 +178,7 @@ public sealed class BaselineGitTests
 
         // Assert
         conflict.ExitCode.ShouldBe(1);
-        conflict.StandardError.ShouldBe("conflict: git config pull.ff is set to a different value; set overwriteExisting on its entry to replace it." + Environment.NewLine);
+        conflict.StandardError.ShouldBe("conflict: git config pull.ff is set to a different value; set overwriteExisting on its entry to replace it.\n");
         hookExistsAfterConflict.ShouldBeFalse("A conflict writes nothing.");
         overwrite.ExitCode.ShouldBe(0, overwrite.StandardError);
         var value5 = await ConfigValue(repository, "pull.ff");

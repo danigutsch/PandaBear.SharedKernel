@@ -1,4 +1,3 @@
-using System.Globalization;
 
 namespace PandaBear.Testing.CodeFixRunner.Tests;
 
@@ -17,7 +16,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.SourceFile, TestContext.Current.CancellationToken);
 
         var options = new CodeFixRunnerOptions(projectPath, "SKTEST006");
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new InvariantStringWriter();
 
         // Act
         var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
@@ -42,7 +41,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.HelperSourceFile, TestContext.Current.CancellationToken);
 
         var options = new CodeFixRunnerOptions(projectPath, "SKTEST004");
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new InvariantStringWriter();
 
         // Act
         var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
@@ -68,7 +67,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.CleanSourceFile, TestContext.Current.CancellationToken);
 
         var options = new CodeFixRunnerOptions(projectPath, "SKTEST006");
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new InvariantStringWriter();
 
         // Act
         var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
@@ -90,7 +89,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.SupportedAndUnsupportedSourceFile, TestContext.Current.CancellationToken);
 
         var options = new CodeFixRunnerOptions(projectPath, "SKTEST006");
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new InvariantStringWriter();
 
         // Act
         var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
@@ -113,7 +112,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.MultipleSupportedSourceFile, TestContext.Current.CancellationToken);
 
         var options = new CodeFixRunnerOptions(projectPath, "SKTEST006");
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new InvariantStringWriter();
 
         // Act
         var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
@@ -142,8 +141,8 @@ public sealed class CodeFixRunEngineTests : IDisposable
             CodeFixRunnerTestProject.UserMessageOverloadEditorConfigFile,
             TestContext.Current.CancellationToken);
         var options = new CodeFixRunnerOptions(projectPath, "SKTEST017");
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
-        using var secondError = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new InvariantStringWriter();
+        using var secondError = new InvariantStringWriter();
 
         // Act
         var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
@@ -173,7 +172,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
             TestContext.Current.CancellationToken);
         CodeFixRunnerTestProject.PinRepositorySdk(projectDirectory.Path);
         var options = new CodeFixRunnerOptions(projectPath, "SKTEST017");
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new InvariantStringWriter();
 
         // Act
         var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
@@ -199,7 +198,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
             CodeFixRunnerTestProject.UserMessageOverloadEditorConfigFile,
             TestContext.Current.CancellationToken);
         var options = new CodeFixRunnerOptions(projectPath, "SKTEST017");
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new InvariantStringWriter();
 
         // Act
         var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
@@ -220,7 +219,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
     {
         // Arrange
         var options = new CodeFixRunnerOptions(Path.Combine(projectDirectory.Path, "sample.txt"), "SKTEST006");
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new InvariantStringWriter();
 
         // Act
         // Assert

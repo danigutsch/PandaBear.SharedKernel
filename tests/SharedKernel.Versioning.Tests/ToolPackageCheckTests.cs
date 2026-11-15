@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -108,7 +107,7 @@ public static class ToolPackageCheckTests
         result.ExitCode.ShouldBe(2, "No hash in the manifest covers the unlisted packages.");
         result.Error.ShouldBe(
             $"Error: Candidate directory {temporary.PackageDirectory} holds packages that the manifest does not list: "
-            + $"{Path.GetFileName(library)}, {Path.GetFileName(tool)}.{Environment.NewLine}",
+            + $"{Path.GetFileName(library)}, {Path.GetFileName(tool)}.\n",
             "The check names every unlisted package and fails before any dotnet or tool process writes output.");
         var retained = await File.ReadAllTextAsync(manifest, TestContext.Current.CancellationToken);
         retained.ShouldBe(original, "A failure before consumption leaves the recorded evidence unchanged.");
@@ -135,7 +134,7 @@ public static class ToolPackageCheckTests
         result.ExitCode.ShouldBe(2, "NuGet can restore the unlisted variant instead of the listed PandaBear.SharedKernel.Probe package.");
         result.Error.ShouldBe(
             $"Error: Candidate directory {temporary.PackageDirectory} holds packages that the manifest does not list: "
-            + $"{Path.GetFileName(variant)}.{Environment.NewLine}",
+            + $"{Path.GetFileName(variant)}.\n",
             "File names match manifest entries by ordinal comparison, so case counts.");
         var retained = await File.ReadAllTextAsync(manifest, TestContext.Current.CancellationToken);
         retained.ShouldBe(original, "A failure before consumption leaves the recorded evidence unchanged.");
@@ -154,7 +153,7 @@ public static class ToolPackageCheckTests
             "1.0.0",
             (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-probe", "sharedkernel-probe-admin")));
         var runner = new RecordingProcessRunner();
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new InvariantStringWriter();
         var executableSuffix = OperatingSystem.IsWindows() ? ".exe" : string.Empty;
 
         // Act

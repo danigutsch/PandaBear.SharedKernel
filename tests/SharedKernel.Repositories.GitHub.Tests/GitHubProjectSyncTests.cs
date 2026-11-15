@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using Microsoft.Extensions.Time.Testing;
 
@@ -12,8 +11,8 @@ public sealed class GitHubProjectSyncTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
         RoadmapInitializer.Initialize(workspace.RootPath);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
         var itemText = workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json");
@@ -285,8 +284,8 @@ public sealed class GitHubProjectSyncTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
         RoadmapInitializer.Initialize(workspace.RootPath);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
         var defaultItem = workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json");
@@ -313,8 +312,8 @@ public sealed class GitHubProjectSyncTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
         RoadmapInitializer.Initialize(workspace.RootPath);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
         var itemText = workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json");

@@ -47,7 +47,7 @@ public sealed class RoadmapPublishResultCommandTests
         // Assert
         result.ExitCode.ShouldBe(1);
         result.Output.ShouldBe(string.Empty);
-        result.Error.ShouldBe("sharedkernel-repo: roadmap/config.json must define automation.pullRequestBody before roadmap publication." + Environment.NewLine);
+        result.Error.ShouldBe("sharedkernel-repo: roadmap/config.json must define automation.pullRequestBody before roadmap publication.\n");
         handler.Requests.ShouldAllSatisfy(request => request.PathAndQuery.ShouldBe("/graphql"));
     }
 
@@ -66,7 +66,7 @@ public sealed class RoadmapPublishResultCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.Error.ShouldBe($"sharedkernel-repo: Roadmap automation requires {missingVariable}." + Environment.NewLine);
+        result.Error.ShouldBe($"sharedkernel-repo: Roadmap automation requires {missingVariable}.\n");
         handler.Requests.ShouldAllSatisfy(request => request.PathAndQuery.ShouldBe("/graphql"));
     }
 
@@ -84,7 +84,7 @@ public sealed class RoadmapPublishResultCommandTests
         // Assert
         result.ExitCode.ShouldBe(1);
         result.Output.ShouldBe(string.Empty);
-        result.Error.ShouldBe("sharedkernel-repo: Roadmap publication did not return a pull request URL." + Environment.NewLine);
+        result.Error.ShouldBe("sharedkernel-repo: Roadmap publication did not return a pull request URL.\n");
         result.Outputs.ShouldBe(string.Empty);
         result.Summary.ShouldBe(string.Empty);
     }

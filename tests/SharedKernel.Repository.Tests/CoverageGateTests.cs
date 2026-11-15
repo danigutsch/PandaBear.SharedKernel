@@ -283,7 +283,7 @@ public sealed class CoverageGateTests
 
         // Assert
         record.ExitCode.ShouldBe(2);
-        record.Error.ShouldBe(".config/sharedkernel-ci.json: $.coverage is required by the coverage commands." + Environment.NewLine);
+        record.Error.ShouldBe(".config/sharedkernel-ci.json: $.coverage is required by the coverage commands.\n");
         verify.ExitCode.ShouldBe(2);
         verify.Error.ShouldBe(record.Error);
     }
@@ -307,7 +307,7 @@ public sealed class CoverageGateTests
 
         // Assert
         result.ExitCode.ShouldBe(2);
-        result.Error.ShouldBe("--base requires a full hexadecimal Git object ID." + Environment.NewLine);
+        result.Error.ShouldBe("--base requires a full hexadecimal Git object ID.\n");
         processes.Calls.ShouldBeEmpty();
     }
 

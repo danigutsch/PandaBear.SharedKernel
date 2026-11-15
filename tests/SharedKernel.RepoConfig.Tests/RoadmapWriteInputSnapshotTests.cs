@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace PandaBear.RepoConfig.Tests;
 
 /// <summary>Tests that the roadmap write-input snapshot digests repository-owned inputs and detects later changes.</summary>
@@ -11,8 +9,8 @@ public sealed class RoadmapWriteInputSnapshotTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var first = RoadmapWriteInputSnapshot.Capture(workspace.RootPath);
@@ -33,8 +31,8 @@ public sealed class RoadmapWriteInputSnapshotTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var snapshot = RoadmapWriteInputSnapshot.Capture(workspace.RootPath);

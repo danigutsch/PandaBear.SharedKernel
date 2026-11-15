@@ -40,7 +40,7 @@ public sealed class PrereleasePrunerTests
             new RepositoryRelease(1, "v1.0.0-alpha.1", false, true, Start.AddDays(1)),
             new RepositoryRelease(2, "v1.0.0-alpha.2", true, true, Start.AddDays(2)),
             new RepositoryRelease(3, "v1.0.0", false, false, Start.AddDays(3)));
-        using var output = new StringWriter();
+        using var output = new InvariantStringWriter();
 
         // Act
         await PrereleasePruner.Prune(new PrereleasePruningRequest("owner/name", 1, [], Force: false), store, output, TextWriter.Null, TestContext.Current.CancellationToken);

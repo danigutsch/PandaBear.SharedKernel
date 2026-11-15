@@ -26,7 +26,7 @@ public sealed class K6ConfigurationFileTests
 
         // Assert
         exitCode.ShouldBe(2);
-        repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json does not exist." + Environment.NewLine);
+        repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json does not exist.\n");
     }
 
     [Theory]
@@ -71,7 +71,7 @@ public sealed class K6ConfigurationFileTests
 
         // Assert
         exitCode.ShouldBe(2);
-        repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json: " + message + Environment.NewLine);
+        repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json: " + message + "\n");
     }
 
     [Theory]
@@ -95,7 +95,7 @@ public sealed class K6ConfigurationFileTests
 
         // Assert
         exitCode.ShouldBe(2);
-        repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json: " + message + Environment.NewLine);
+        repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json: " + message + "\n");
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public sealed class K6ConfigurationFileTests
 
         // Assert
         exitCode.ShouldBe(2);
-        repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json: $.scenarios[1].name repeats the scenario smoke." + Environment.NewLine);
+        repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json: $.scenarios[1].name repeats the scenario smoke.\n");
     }
 
     [Fact]
@@ -125,7 +125,7 @@ public sealed class K6ConfigurationFileTests
 
         // Assert
         exitCode.ShouldBe(2);
-        repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json defines no scenario stress. Scenarios: smoke." + Environment.NewLine);
+        repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json defines no scenario stress. Scenarios: smoke.\n");
     }
 
     [Fact]
@@ -145,6 +145,6 @@ public sealed class K6ConfigurationFileTests
 
         // Assert
         exitCode.ShouldBe(2);
-        repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json: $.container must name the engine and image that --container uses." + Environment.NewLine);
+        repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json: $.container must name the engine and image that --container uses.\n");
     }
 }

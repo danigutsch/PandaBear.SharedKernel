@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace PandaBear.RepoConfig.Tests;
 
 /// <summary>Tests the repo config command line for argument errors, init, diff, set, get, GitHub sync failures, and verify output.</summary>
@@ -11,8 +9,8 @@ public sealed class RepoConfigToolCoverageTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var exitCode = await RepoConfigToolRunner.Run(["unknown"], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
@@ -28,10 +26,10 @@ public sealed class RepoConfigToolCoverageTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var firstOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var firstError = new StringWriter(CultureInfo.InvariantCulture);
-        using var secondOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var secondError = new StringWriter(CultureInfo.InvariantCulture);
+        using var firstOutput = new InvariantStringWriter();
+        using var firstError = new InvariantStringWriter();
+        using var secondOutput = new InvariantStringWriter();
+        using var secondError = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], firstOutput, firstError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
 
@@ -49,12 +47,12 @@ public sealed class RepoConfigToolCoverageTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var validOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var validError = new StringWriter(CultureInfo.InvariantCulture);
-        using var invalidOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var invalidError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var validOutput = new InvariantStringWriter();
+        using var validError = new InvariantStringWriter();
+        using var invalidOutput = new InvariantStringWriter();
+        using var invalidError = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
 
@@ -75,14 +73,14 @@ public sealed class RepoConfigToolCoverageTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var missingOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var missingError = new StringWriter(CultureInfo.InvariantCulture);
-        using var extraOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var extraError = new StringWriter(CultureInfo.InvariantCulture);
-        using var unsupportedOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var unsupportedError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var missingOutput = new InvariantStringWriter();
+        using var missingError = new InvariantStringWriter();
+        using var extraOutput = new InvariantStringWriter();
+        using var extraError = new InvariantStringWriter();
+        using var unsupportedOutput = new InvariantStringWriter();
+        using var unsupportedError = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var configBefore = workspace.ReadFile("roadmap/config.json");
@@ -109,8 +107,8 @@ public sealed class RepoConfigToolCoverageTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var epicText = workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json");
@@ -118,10 +116,10 @@ public sealed class RepoConfigToolCoverageTests
         workspace.WriteFile("roadmap/items/RM-002-follow-up.json", RoadmapTestContent.BlockedIssueJson);
         workspace.WriteFile("roadmap/items/RM-003-enabler.json", RoadmapTestContent.UnblockedEnablerJson);
         workspace.WriteFile("roadmap/order.json", "{ \"items\": [\"RM-001\", \"RM-002\", \"RM-003\"] }");
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
-        using var nextIssueOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var nextIssueError = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
+        using var nextIssueOutput = new InvariantStringWriter();
+        using var nextIssueError = new InvariantStringWriter();
 
         // Act
         var nextPriority = await RepoConfigToolRunner.Run(["get", "next-priority", "--limit", "2", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
@@ -163,8 +161,8 @@ public sealed class RepoConfigToolCoverageTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var missingType = await RepoConfigToolRunner.Run(["get", "next-priority", "--root", workspace.RootPath, "--type"], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
@@ -190,14 +188,14 @@ public sealed class RepoConfigToolCoverageTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var missingOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var missingError = new StringWriter(CultureInfo.InvariantCulture);
-        using var unknownOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var unknownError = new StringWriter(CultureInfo.InvariantCulture);
-        using var previewOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var previewError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var missingOutput = new InvariantStringWriter();
+        using var missingError = new InvariantStringWriter();
+        using var unknownOutput = new InvariantStringWriter();
+        using var unknownError = new InvariantStringWriter();
+        using var previewOutput = new InvariantStringWriter();
+        using var previewError = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
@@ -222,8 +220,8 @@ public sealed class RepoConfigToolCoverageTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
@@ -248,10 +246,10 @@ public sealed class RepoConfigToolCoverageTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
@@ -268,7 +266,7 @@ public sealed class RepoConfigToolCoverageTests
         // Assert
         exitCode.ShouldBe(1);
         outputText.ShouldBe(string.Empty);
-        errorText.ShouldBe("sharedkernel-repo: GitHub sync request failed." + Environment.NewLine);
+        errorText.ShouldBe("sharedkernel-repo: GitHub sync request failed.\n");
         errorText.ShouldNotContain("ghp_transport_token", StringComparison.Ordinal);
     }
 
@@ -277,10 +275,10 @@ public sealed class RepoConfigToolCoverageTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
@@ -297,7 +295,7 @@ public sealed class RepoConfigToolCoverageTests
         // Assert
         exitCode.ShouldBe(1);
         outputText.ShouldBe(string.Empty);
-        errorText.ShouldBe("sharedkernel-repo: GitHub sync timed out after 30 seconds." + Environment.NewLine);
+        errorText.ShouldBe("sharedkernel-repo: GitHub sync timed out after 30 seconds.\n");
     }
 
     [Fact]
@@ -305,10 +303,10 @@ public sealed class RepoConfigToolCoverageTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         workspace.WriteFile("roadmap/config.json", RoadmapTestContent.InvalidConfigJson);

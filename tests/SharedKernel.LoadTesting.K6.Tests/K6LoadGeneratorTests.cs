@@ -155,7 +155,7 @@ public sealed class K6LoadGeneratorTests
 
         // Assert
         var name = runner.Runs[0].ArgumentList[4];
-        workspace.Error.ToString().ShouldBe($"Container {name} may still be running. Remove it with: podman rm --force {name}" + Environment.NewLine);
+        workspace.Error.ToString().ShouldBe($"Container {name} may still be running. Remove it with: podman rm --force {name}\n");
     }
 
     [Fact]

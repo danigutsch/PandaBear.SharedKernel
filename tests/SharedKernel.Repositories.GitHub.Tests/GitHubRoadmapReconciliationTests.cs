@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text.Json.Nodes;
 
 namespace PandaBear.Repositories.GitHub.Tests;
@@ -37,8 +36,8 @@ public sealed class GitHubRoadmapReconciliationTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         RoadmapInitializer.Initialize(workspace.RootPath);
         GitHubRoadmapReconcileTestOperations.ConfigureEmptySeed(workspace);
         var manifestPath = Path.Combine(workspace.RootPath, "roadmap", "reconciliation", "open-issues-test.json");
@@ -91,8 +90,8 @@ public sealed class GitHubRoadmapReconciliationTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var initOutput = new InvariantStringWriter();
+        using var initError = new InvariantStringWriter();
         RoadmapInitializer.Initialize(workspace.RootPath);
         GitHubRoadmapIntakeTestOperations.Configure(
             workspace,
