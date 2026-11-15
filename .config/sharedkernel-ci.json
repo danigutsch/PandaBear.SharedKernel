@@ -77,6 +77,12 @@
         "valueVariable": "SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING",
         "stopTimeoutSeconds": 180
       }
+    },
+    {
+      "name": "umami",
+      "projects": [
+        "tests/SharedKernel.Aspire.Hosting.Umami.Tests/SharedKernel.Aspire.Hosting.Umami.Tests.csproj"
+      ]
     }
   ],
   "defaultSlice": "library"

@@ -1,0 +1,36 @@
+<Project Sdk="Aspire.AppHost.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>PandaBear.Aspire.Hosting.Umami.Tests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="PandaBear.Testing" />
+        <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting.Testing" />
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" />
+        <PackageReference Include="coverlet.MTP">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="xunit.v3.mtp-v2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.Hosting.Umami\SharedKernel.Aspire.Hosting.Umami.csproj" IsAspireProjectResource="false" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.AspNetCore.WebAnalytics\SharedKernel.AspNetCore.WebAnalytics.csproj" IsAspireProjectResource="false" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.IntegrationTesting\SharedKernel.IntegrationTesting.csproj" IsAspireProjectResource="false" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" IsAspireProjectResource="false" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" IsAspireProjectResource="false" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Xunit\SharedKernel.Testing.Xunit.csproj" IsAspireProjectResource="false" />
+    </ItemGroup>
+
+</Project>
