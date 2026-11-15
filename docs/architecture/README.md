@@ -103,6 +103,8 @@ flowchart TB
     SharedKernel_Testing_Playwright[SharedKernel.Testing.Playwright] --> SharedKernel_Testing_AspNetCore[SharedKernel.Testing.AspNetCore]
     SharedKernel_Testing_Xunit[SharedKernel.Testing.Xunit] --> SharedKernel_Testing[SharedKernel.Testing]
     SharedKernel_UploadSanitizing[SharedKernel.UploadSanitizing] --> SharedKernel_Results[SharedKernel.Results]
+    SharedKernel_Versioning[SharedKernel.Versioning] --> SharedKernel_IO[SharedKernel.IO]
+    SharedKernel_Versioning[SharedKernel.Versioning] --> SharedKernel_Processes[SharedKernel.Processes]
 ```
 <!-- generated:library-dependencies:end -->
 

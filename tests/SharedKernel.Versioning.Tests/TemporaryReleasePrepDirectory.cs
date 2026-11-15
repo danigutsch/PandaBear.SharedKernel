@@ -91,7 +91,7 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
             """,
             ct);
         await File.WriteAllTextAsync(Path.Combine(projectDirectory, "Program.cs"), $"System.Console.WriteLine(\"{output} \" + string.Join(' ', args));", ct);
-        await Tool.CommandRunner.Run("dotnet", ["pack", projectDirectory, "-c", "Release", "-o", PackageDirectory], projectDirectory, ct);
+        await SystemCommands.Instance.Run("dotnet", ["pack", projectDirectory, "-c", "Release", "-o", PackageDirectory], projectDirectory, ct);
         return Path.Combine(PackageDirectory, packageId + ".1.0.0.nupkg");
     }
 

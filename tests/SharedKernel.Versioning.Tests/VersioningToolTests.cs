@@ -2,7 +2,7 @@ using Microsoft.Extensions.Time.Testing;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
-using PandaBear.Versioning.Tool;
+using PandaBear.Processes;
 
 namespace PandaBear.Versioning.Tests;
 
@@ -12,6 +12,8 @@ namespace PandaBear.Versioning.Tests;
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VersioningToolTests
 {
+    private static readonly SharedKernelPackager SystemPackager = new(new SystemProcessRunner(), PathExecutableResolver.Default);
+
     [Fact]
     public static void Tool_project_is_packaged_as_dotnet_tool()
     {
@@ -489,10 +491,10 @@ public static class VersioningToolTests
             Path.Combine(packageDirectory, fileName),
             "package"u8.ToArray(),
             TestContext.Current.CancellationToken);
-        var options = new PackSharedKernelOptions("1.2.3", temporaryDirectory.PackageDirectory, VerifyRestore: false, RepoRoot: temporaryDirectory.Root);
+        var options = new SharedKernelPackageOptions("1.2.3", temporaryDirectory.PackageDirectory, temporaryDirectory.Root);
 
         // Act
-        Func<Task> act = () => SharedKernelPackCommand.Run(options, TextWriter.Null, TestContext.Current.CancellationToken);
+        Func<Task> act = () => SystemPackager.Pack(options, verifyRestore: false, TextWriter.Null, TestContext.Current.CancellationToken);
 
         // Assert
         var exception = await act.ShouldThrow<ArgumentException>();
@@ -519,10 +521,10 @@ public static class VersioningToolTests
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         Directory.CreateDirectory(Path.Combine(temporaryDirectory.Root, "src", "SharedKernel"));
-        var options = new PackSharedKernelOptions("1.2.3", "artifacts", VerifyRestore: false, RepoRoot: temporaryDirectory.Root);
+        var options = new SharedKernelPackageOptions("1.2.3", "artifacts", temporaryDirectory.Root);
 
         // Act
-        Func<Task> act = () => SharedKernelPackCommand.Run(options, TextWriter.Null, TestContext.Current.CancellationToken);
+        Func<Task> act = () => SystemPackager.Pack(options, verifyRestore: false, TextWriter.Null, TestContext.Current.CancellationToken);
 
         // Assert
         var exception = await act.ShouldThrow<ArgumentException>();
@@ -879,7 +881,7 @@ public static class VersioningToolTests
 
         // Act
         // Parsing rejects such a range; the command still keeps Git from reading it as an option.
-        var action = () => BreakingChangeMarkerCommand.Run("--output=log.txt", root, TextWriter.Null, TestContext.Current.CancellationToken);
+        var action = () => new ReleaseHistory(new SystemProcessRunner(), PathExecutableResolver.Default).HasBreakingChangeMarker("--output=log.txt", root, TestContext.Current.CancellationToken);
 
         // Assert
         await action.ShouldThrow<InvalidOperationException>();
@@ -893,7 +895,7 @@ public static class VersioningToolTests
         var executableName = "missing-sharedkernel-versioning-tool-command";
 
         // Act
-        Func<Task> action = () => CommandRunner.Run(executableName, [], null, TestContext.Current.CancellationToken);
+        Func<Task> action = () => SystemCommands.Instance.Run(executableName, [], null, TestContext.Current.CancellationToken);
 
         // Assert
         var exception = await action.ShouldThrow<InvalidOperationException>();
@@ -908,7 +910,7 @@ public static class VersioningToolTests
         await cancellation.CancelAsync();
 
         // Act
-        Func<Task> action = () => CommandRunner.Run("missing-sharedkernel-versioning-tool-command", [], null, cancellation.Token);
+        Func<Task> action = () => SystemCommands.Instance.Run("missing-sharedkernel-versioning-tool-command", [], null, cancellation.Token);
 
         // Assert
         await action.ShouldThrow<OperationCanceledException>();
@@ -929,7 +931,7 @@ public static class VersioningToolTests
         });
 
         // Act
-        Func<Task> action = () => CommandRunner.RunOrDefault("missing-sharedkernel-versioning-tool-command", arguments, null, cancellation.Token);
+        Func<Task> action = () => SystemCommands.Instance.RunOrDefault("missing-sharedkernel-versioning-tool-command", arguments, null, cancellation.Token);
 
         // Assert
         await action.ShouldThrow<InvalidOperationException>();
@@ -947,7 +949,7 @@ public static class VersioningToolTests
         using var directory = new TemporaryDirectory();
         var processIdPath = Path.Combine(directory.Path, "child.pid");
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
-        var running = CommandRunner.Run(
+        var running = SystemCommands.Instance.Run(
             "/bin/sh",
             ["-c", "echo $$ > child.pid.tmp && mv child.pid.tmp child.pid && exec sleep 60"],
             directory.Path,

@@ -2,7 +2,7 @@ using System.IO.Compression;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace PandaBear.Versioning.Tool;
+namespace PandaBear.Versioning;
 
 /// <summary>Installs the tool packages of a package feed and runs each of their commands with <c>--help</c>.</summary>
 internal static class ToolPackageCheck
@@ -22,7 +22,7 @@ internal static class ToolPackageCheck
         string feed,
         string version,
         IReadOnlyList<string> packages,
-        Func<string, IEnumerable<string>, string?, CancellationToken, Task<string>> run,
+        ExternalCommands processes,
         TextWriter error,
         CancellationToken ct)
     {
@@ -49,7 +49,7 @@ internal static class ToolPackageCheck
             foreach (var (id, commands) in tools)
             {
                 await RunStep(
-                    run,
+                    processes,
                     "dotnet",
                     ["tool", "install", "--tool-path", toolPath, id, "--version", version, "--configfile", configuration],
                     scratch,
@@ -59,7 +59,7 @@ internal static class ToolPackageCheck
                 foreach (var command in commands)
                 {
                     var shim = Path.Combine(toolPath, OperatingSystem.IsWindows() ? command + ".exe" : command);
-                    await RunStep(run, shim, ["--help"], workingDirectory, $"Tool command {command} of package {id} failed with --help", error, ct)
+                    await RunStep(processes, shim, ["--help"], workingDirectory, $"Tool command {command} of package {id} failed with --help", error, ct)
                         .ConfigureAwait(false);
                 }
             }
@@ -124,7 +124,7 @@ internal static class ToolPackageCheck
 
     /// <summary>Runs a process, writes its output to <paramref name="error" />, and prefixes its failure with <paramref name="failure" />.</summary>
     private static async Task RunStep(
-        Func<string, IEnumerable<string>, string?, CancellationToken, Task<string>> run,
+        ExternalCommands processes,
         string fileName,
         string[] arguments,
         string workingDirectory,
@@ -134,7 +134,7 @@ internal static class ToolPackageCheck
     {
         try
         {
-            await error.WriteAsync(await run(fileName, arguments, workingDirectory, ct).ConfigureAwait(false)).ConfigureAwait(false);
+            await error.WriteAsync(await processes.Run(fileName, arguments, workingDirectory, ct).ConfigureAwait(false)).ConfigureAwait(false);
         }
         catch (InvalidOperationException exception)
         {

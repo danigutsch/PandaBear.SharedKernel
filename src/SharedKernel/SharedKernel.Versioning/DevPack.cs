@@ -1,29 +1,27 @@
-namespace PandaBear.Versioning.Tool;
+namespace PandaBear.Versioning;
 
 /// <summary>Packs SharedKernel projects from the working tree into a feed for a consumer that develops against uncommitted changes.</summary>
-internal static class DevPackCommand
+internal static class DevPack
 {
-    /// <summary>The package version used when none is given.</summary>
-    public const string DefaultVersion = "0.1.0-dev.local";
-
     /// <summary>Packs the planned projects, evicts them from the NuGet cache and reports each step.</summary>
-    /// <param name="options">The command options.</param>
+    /// <param name="commands">Runs <c>dotnet</c>.</param>
+    /// <param name="options">The pack options.</param>
     /// <param name="output">Receives one line per project.</param>
     /// <param name="ct">The cancellation token.</param>
     /// <returns>The feed directory.</returns>
-    public static async Task<string> Run(DevPackOptions options, TextWriter output, CancellationToken ct)
+    public static async Task<string> Run(ExternalCommands commands, DevPackOptions options, TextWriter output, CancellationToken ct)
     {
-        var resolved = new DevPackOptions(options.Feed, options.Version, Path.GetFullPath(options.RepoRoot), options.Projects);
+        var resolved = options with { RepoRoot = Path.GetFullPath(options.RepoRoot) };
         var feed = Path.GetFullPath(options.Feed);
         Directory.CreateDirectory(feed);
 
-        var consumerDirectory = Directory.GetCurrentDirectory();
+        var consumerDirectory = options.ConsumerDirectory;
         var cache = await SharedKernelDevPackPlanner.ResolveGlobalPackagesDirectory(
             consumerDirectory,
             explicitDirectory: null,
-            Environment.GetEnvironmentVariable("NUGET_PACKAGES"),
+            options.NuGetPackages,
             async token => SharedKernelDevPackPlanner.ParseGlobalPackagesListing(
-                await CommandRunner.RunOrDefault("dotnet", ["nuget", "locals", "global-packages", "--list"], consumerDirectory, token).ConfigureAwait(false)),
+                await commands.RunOrDefault("dotnet", ["nuget", "locals", "global-packages", "--list"], consumerDirectory, token).ConfigureAwait(false)),
             ct).ConfigureAwait(false);
 
         foreach (var invocation in CreateInvocations(resolved, feed))
@@ -34,7 +32,7 @@ internal static class DevPackCommand
                 continue;
             }
 
-            await CommandRunner.Run("dotnet", invocation.Arguments, invocation.WorkingDirectory, ct).ConfigureAwait(false);
+            await commands.Run("dotnet", invocation.Arguments, invocation.WorkingDirectory, ct).ConfigureAwait(false);
             var evicted = SharedKernelDevPackPlanner.EvictFromGlobalPackages(invocation.Step.PackageId, resolved.Version, cache);
             await output.WriteLineAsync(
                 "Packed " + invocation.Step.PackageId + " " + options.Version + (evicted ? " (evicted from " + cache + ")" : " (no cached copy in " + cache + ")")).ConfigureAwait(false);
@@ -53,7 +51,7 @@ internal static class DevPackCommand
             : "Kept   " + step.PackageId;
 
     /// <summary>Plans a <c>dotnet pack</c> call for every step (kept steps included, see <see cref="DevPackStep.Rebuild"/>), without running anything.</summary>
-    /// <param name="options">The command options.</param>
+    /// <param name="options">The pack options.</param>
     /// <param name="feed">The absolute feed directory.</param>
     /// <returns>The invocations in dependency order.</returns>
     internal static IReadOnlyList<DevPackInvocation> CreateInvocations(DevPackOptions options, string feed)

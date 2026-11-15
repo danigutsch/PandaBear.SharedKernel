@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.Globalization;
+using PandaBear.Processes;
 
 namespace PandaBear.Versioning.Tool;
 
@@ -13,32 +14,45 @@ internal static class VersioningCommandLine
     private const string BaselineVersionDescription =
         "Published package version to compare APIs against. Requires PandaBear.SharedKernel.* mapped only to an existing local feed in NuGet.Config.";
 
-    /// <summary>Creates the root command with all versioning subcommands, reading piped input from <paramref name="input"/>.</summary>
+    /// <summary>
+    /// Creates the root command with all versioning subcommands, reading piped input from <paramref name="input"/> and
+    /// running processes as they are, with executables resolved from the absolute <c>PATH</c> directories.
+    /// </summary>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="input"/> or <paramref name="timeProvider"/> is <see langword="null"/>.</exception>
-    public static RootCommand Create(TextReader input, TimeProvider timeProvider)
+    public static RootCommand Create(TextReader input, TimeProvider timeProvider) =>
+        Create(input, timeProvider, new SystemProcessRunner(), PathExecutableResolver.Default);
+
+    /// <summary>Creates the root command with all versioning subcommands, reading piped input from <paramref name="input"/>.</summary>
+    /// <exception cref="ArgumentNullException">Thrown when an argument is <see langword="null"/>.</exception>
+    public static RootCommand Create(TextReader input, TimeProvider timeProvider, IProcessRunner processRunner, IExecutableResolver executableResolver)
     {
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(timeProvider);
+        ArgumentNullException.ThrowIfNull(processRunner);
+        ArgumentNullException.ThrowIfNull(executableResolver);
 
+        var packager = new SharedKernelPackager(processRunner, executableResolver);
+        var candidates = new CandidateValidator(processRunner, executableResolver, timeProvider);
+        var history = new ReleaseHistory(processRunner, executableResolver);
         return new RootCommand("Calculates SharedKernel versions, validates, packs, and consumes SharedKernel packages, and verifies consumers against candidates.")
         {
             CreateClassifyCommit(),
             CreateCompute(input),
-            CreateCalculateRelease(),
+            CreateCalculateRelease(history),
             CreateCheckPublicApiBaselines(),
             CreateValidatePackageMetadata(),
-            CreateHasBreakingChangeMarker(),
-            CreateCheckApiCompatibility(timeProvider),
-            CreatePackSharedKernel(timeProvider),
-            CreatePackDev(),
+            CreateHasBreakingChangeMarker(history),
+            CreateCheckApiCompatibility(packager, timeProvider),
+            CreatePackSharedKernel(packager, timeProvider),
+            CreatePackDev(packager),
             CreatePrepareRelease(input),
             CreateVerifyLockCoverage(),
-            CreateCreateCandidate(timeProvider),
-            CreateValidateCandidate(timeProvider),
-            CreateConsumeCandidate(),
-            CreateConsumePackages(),
+            CreateCreateCandidate(candidates),
+            CreateValidateCandidate(candidates),
+            CreateConsumeCandidate(candidates),
+            CreateConsumePackages(packager),
             CreateMergeEvidence(),
-            CreateVerifyConsumer(),
+            CreateVerifyConsumer(new ConsumerVerifier(processRunner, executableResolver)),
 
             // [diagram] is not a default directive. Consuming repositories' caller tests parse their command lines with it,
             // which prints the parse without running the command and exits 1 when the command line does not parse.
@@ -90,7 +104,7 @@ internal static class VersioningCommandLine
         return command;
     }
 
-    private static Command CreateCalculateRelease()
+    private static Command CreateCalculateRelease(ReleaseHistory history)
     {
         var versionKind = new Option<string>("--version-kind")
         {
@@ -121,16 +135,27 @@ internal static class VersioningCommandLine
                 result.AddError($"Option '{runNumber.Name}' is required when '{versionKind.Name}' is prerelease.");
             }
         });
-        SetAction(command, (parseResult, output, ct) => ReleaseVersionCommand.Run(
-            new CalculateReleaseOptions(
-                parseResult.GetRequiredValue(repoRoot),
-                parseResult.GetRequiredValue(versionKind),
-                parseResult.GetValue(runNumber),
-                parseResult.GetValue(sha),
-                parseResult.GetValue(gitHubOutput),
-                parseResult.GetValue(gitHubSummary)),
-            output,
-            ct));
+        SetAction(command, async (parseResult, output, ct) =>
+        {
+            var result = await history.CalculateVersion(
+                new ReleaseVersionOptions(
+                    parseResult.GetRequiredValue(repoRoot),
+                    parseResult.GetRequiredValue(versionKind),
+                    parseResult.GetValue(runNumber),
+                    parseResult.GetValue(sha)),
+                ct).ConfigureAwait(false);
+            if (parseResult.GetValue(gitHubOutput) is { } outputFile && !string.IsNullOrWhiteSpace(outputFile))
+            {
+                await File.AppendAllLinesAsync(outputFile, ReleaseVersionCalculator.CreateGitHubOutputs(result), ct).ConfigureAwait(false);
+            }
+
+            if (parseResult.GetValue(gitHubSummary) is { } summaryFile && !string.IsNullOrWhiteSpace(summaryFile))
+            {
+                await File.AppendAllLinesAsync(summaryFile, ReleaseVersionCalculator.CreateSummary(result), ct).ConfigureAwait(false);
+            }
+
+            await output.WriteLineAsync(result.VersionJson).ConfigureAwait(false);
+        });
         return command;
     }
 
@@ -141,7 +166,11 @@ internal static class VersioningCommandLine
         {
             repoRoot,
         };
-        SetAction(command, (parseResult, output, _) => PublicApiBaselineCommand.Run(parseResult.GetRequiredValue(repoRoot), output));
+        SetAction(command, async (parseResult, output, _) =>
+        {
+            PublicApiBaselineChecker.EnsureBaselinesPresent(parseResult.GetRequiredValue(repoRoot));
+            await output.WriteLineAsync("Public API baselines are present for SharedKernel projects.").ConfigureAwait(false);
+        });
         return command;
     }
 
@@ -152,15 +181,15 @@ internal static class VersioningCommandLine
         {
             repoRoot,
         };
-        SetAction(command, (parseResult, output, _) =>
+        SetAction(command, async (parseResult, output, _) =>
         {
-            PackageMetadataValidationCommand.Run(parseResult.GetRequiredValue(repoRoot), output);
-            return Task.CompletedTask;
+            PackageMetadataValidator.Validate(parseResult.GetRequiredValue(repoRoot));
+            await output.WriteLineAsync("Package metadata validation passed.").ConfigureAwait(false);
         });
         return command;
     }
 
-    private static Command CreateHasBreakingChangeMarker()
+    private static Command CreateHasBreakingChangeMarker(ReleaseHistory history)
     {
         var range = new Argument<string>("git-range") { Description = "Git revision range, such as origin/main..HEAD." };
 
@@ -182,8 +211,9 @@ internal static class VersioningCommandLine
         SetAction(command, async (parseResult, output, ct) =>
         {
             var gitRange = parseResult.GetRequiredValue(range);
-            if (await BreakingChangeMarkerCommand.Run(gitRange, parseResult.GetRequiredValue(repoRoot), output, ct).ConfigureAwait(false))
+            if (await history.HasBreakingChangeMarker(gitRange, parseResult.GetRequiredValue(repoRoot), ct).ConfigureAwait(false))
             {
+                await output.WriteLineAsync("Breaking-change marker found.").ConfigureAwait(false);
                 return 0;
             }
 
@@ -193,7 +223,7 @@ internal static class VersioningCommandLine
         return command;
     }
 
-    private static Command CreateCheckApiCompatibility(TimeProvider timeProvider)
+    private static Command CreateCheckApiCompatibility(SharedKernelPackager packager, TimeProvider timeProvider)
     {
         var version = new Option<string>("--version") { Description = "Package version. Default: 0.1.0-alpha.local.<UTC timestamp>.", HelpName = "version" };
         var releasePhase = new Option<string>("--release-phase")
@@ -220,8 +250,8 @@ internal static class VersioningCommandLine
             outputRoot,
             repoRoot,
         };
-        SetAction(command, (parseResult, output, ct) => ApiCompatibilityCommand.Run(
-            new ApiCompatibilityOptions(
+        SetAction(command, (parseResult, output, ct) => packager.CheckApiCompatibility(
+            new ApiCompatibilityReportOptions(
                 parseResult.GetValue(version) ?? LocalAlphaVersion(timeProvider),
                 parseResult.GetRequiredValue(outputRoot),
                 parseResult.GetRequiredValue(releasePhase),
@@ -233,7 +263,7 @@ internal static class VersioningCommandLine
         return command;
     }
 
-    private static Command CreatePackSharedKernel(TimeProvider timeProvider)
+    private static Command CreatePackSharedKernel(SharedKernelPackager packager, TimeProvider timeProvider)
     {
         var version = new Option<string>("--version") { Description = "Package version. Default: 0.1.0-alpha.local.<UTC timestamp>.", HelpName = "version" };
         var assemblyVersion = new Option<string>("--assembly-version") { Description = "Assembly version.", HelpName = "version" };
@@ -257,21 +287,21 @@ internal static class VersioningCommandLine
             skipRestoreCheck,
             repoRoot,
         };
-        SetAction(command, (parseResult, output, ct) => SharedKernelPackCommand.Run(
-            new PackSharedKernelOptions(
+        SetAction(command, (parseResult, output, ct) => packager.Pack(
+            new SharedKernelPackageOptions(
                 parseResult.GetValue(version) ?? LocalAlphaVersion(timeProvider),
                 parseResult.GetRequiredValue(outputRoot),
-                VerifyRestore: !parseResult.GetValue(skipRestoreCheck),
                 parseResult.GetRequiredValue(repoRoot),
                 parseResult.GetValue(assemblyVersion),
                 parseResult.GetValue(fileVersion),
                 parseResult.GetValue(informationalVersion)),
+            verifyRestore: !parseResult.GetValue(skipRestoreCheck),
             output,
             ct));
         return command;
     }
 
-    private static Command CreatePackDev()
+    private static Command CreatePackDev(SharedKernelPackager packager)
     {
         var projects = new Argument<string[]>("project")
         {
@@ -286,9 +316,9 @@ internal static class VersioningCommandLine
         };
         var version = new Option<string>("--version")
         {
-            Description = "Package version. Default: " + DevPackCommand.DefaultVersion + ".",
+            Description = "Package version. Default: " + DevPackOptions.DefaultVersion + ".",
             HelpName = "version",
-            DefaultValueFactory = static _ => DevPackCommand.DefaultVersion,
+            DefaultValueFactory = static _ => DevPackOptions.DefaultVersion,
         };
         var repoRoot = RepoRootOption();
         var command = new Command(
@@ -300,12 +330,14 @@ internal static class VersioningCommandLine
             version,
             repoRoot,
         };
-        SetAction(command, (parseResult, output, ct) => DevPackCommand.Run(
+        SetAction(command, (parseResult, output, ct) => packager.PackDev(
             new DevPackOptions(
                 parseResult.GetRequiredValue(feed),
                 parseResult.GetRequiredValue(version),
                 parseResult.GetRequiredValue(repoRoot),
-                parseResult.GetValue(projects) ?? []),
+                parseResult.GetValue(projects) ?? [],
+                Directory.GetCurrentDirectory(),
+                Environment.GetEnvironmentVariable("NUGET_PACKAGES")),
             output,
             ct));
         return command;
@@ -363,11 +395,16 @@ internal static class VersioningCommandLine
         {
             repoRoot,
         };
-        SetAction(command, (parseResult, output, _) => LockCoverageCommand.Run(parseResult.GetRequiredValue(repoRoot), output));
+        SetAction(command, async (parseResult, output, _) =>
+        {
+            var checkedProjects = PackageLockInventory.VerifyLockCoverage(parseResult.GetRequiredValue(repoRoot));
+            await output.WriteLineAsync(
+                $"Lock coverage verified: {checkedProjects} lock-free project(s) resolve only packages that a committed lock file resolves.").ConfigureAwait(false);
+        });
         return command;
     }
 
-    private static Command CreateCreateCandidate(TimeProvider timeProvider)
+    private static Command CreateCreateCandidate(CandidateValidator candidates)
     {
         var version = SemanticVersionOption("--version", "Unique prerelease package version. Default: <base>-alpha.local.t<UTC timestamp>.g<revision>.");
         var baselineVersion = SemanticVersionOption("--baseline-version", BaselineVersionDescription);
@@ -378,17 +415,17 @@ internal static class VersioningCommandLine
             baselineVersion,
             repoRoot,
         };
-        SetAction(command, (parseResult, output, ct) => CandidateCommand.Create(
-            Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
-            parseResult.GetValue(version)?.ToString(),
-            parseResult.GetValue(baselineVersion)?.ToString(),
+        SetAction(command, (parseResult, output, ct) => candidates.Create(
+            new CandidateOptions(
+                Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
+                parseResult.GetValue(version)?.ToString(),
+                parseResult.GetValue(baselineVersion)?.ToString()),
             output,
-            timeProvider,
             ct));
         return command;
     }
 
-    private static Command CreateValidateCandidate(TimeProvider timeProvider)
+    private static Command CreateValidateCandidate(CandidateValidator candidates)
     {
         var version = SemanticVersionOption("--version", "Unique prerelease package version. Default: <base>-alpha.local.t<UTC timestamp>.g<revision>.");
         var baselineVersion = SemanticVersionOption("--baseline-version", BaselineVersionDescription);
@@ -401,19 +438,19 @@ internal static class VersioningCommandLine
             aot,
             repoRoot,
         };
-        SetAction(command, (parseResult, output, ct) => CandidateCommand.Run(
-            Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
-            parseResult.GetValue(version)?.ToString(),
-            parseResult.GetValue(baselineVersion)?.ToString(),
-            parseResult.GetValue(aot),
+        SetAction(command, (parseResult, output, ct) => candidates.Validate(
+            new CandidateOptions(
+                Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
+                parseResult.GetValue(version)?.ToString(),
+                parseResult.GetValue(baselineVersion)?.ToString(),
+                parseResult.GetValue(aot)),
             output,
             parseResult.InvocationConfiguration.Error,
-            timeProvider,
             ct));
         return command;
     }
 
-    private static Command CreateConsumeCandidate()
+    private static Command CreateConsumeCandidate(CandidateValidator candidates)
     {
         var candidate = new Option<string>("--candidate") { Description = "Candidate manifest. Specify this or --candidate-directory.", HelpName = "path" };
         var candidateDirectory = new Option<string>("--candidate-directory")
@@ -447,11 +484,12 @@ internal static class VersioningCommandLine
             var manifest = parseResult.GetValue(candidate) is { } path
                 ? Path.GetFullPath(path)
                 : CandidateManifest.Find(Path.GetFullPath(parseResult.GetRequiredValue(candidateDirectory)));
-            return CandidateCommand.Consume(
-                Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
-                manifest,
-                parseResult.GetValue(evidence) is { } destination ? Path.GetFullPath(destination) : manifest,
-                parseResult.GetValue(aot),
+            return candidates.Consume(
+                new CandidateConsumptionOptions(
+                    Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
+                    manifest,
+                    parseResult.GetValue(evidence) is { } destination ? Path.GetFullPath(destination) : manifest,
+                    parseResult.GetValue(aot)),
                 output,
                 parseResult.InvocationConfiguration.Error,
                 ct);
@@ -479,7 +517,7 @@ internal static class VersioningCommandLine
         SetAction(command, (parseResult, output, ct) =>
         {
             var path = Path.GetFullPath(parseResult.GetRequiredValue(candidate));
-            return CandidateEvidenceCommand.Run(
+            return CandidateValidator.MergeEvidence(
                 path,
                 [.. parseResult.GetRequiredValue(evidence).Select(Path.GetFullPath)],
                 parseResult.GetValue(destination) is { } target ? Path.GetFullPath(target) : path,
@@ -489,7 +527,7 @@ internal static class VersioningCommandLine
         return command;
     }
 
-    private static Command CreateConsumePackages()
+    private static Command CreateConsumePackages(SharedKernelPackager packager)
     {
         var feed = new Option<string>("--feed") { Description = "Directory containing the packages.", HelpName = "path", Required = true };
         var version = SemanticVersionOption("--version", "Package version.");
@@ -505,18 +543,19 @@ internal static class VersioningCommandLine
             aot,
             repoRoot,
         };
-        SetAction(command, (parseResult, output, ct) => PackageConsumptionCommand.Run(
-            Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
-            Path.GetFullPath(parseResult.GetRequiredValue(feed)),
-            parseResult.GetRequiredValue(version).ToString(),
-            parseResult.GetValue(aot),
+        SetAction(command, (parseResult, output, ct) => packager.ConsumePackages(
+            new PackageConsumptionOptions(
+                Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
+                Path.GetFullPath(parseResult.GetRequiredValue(feed)),
+                parseResult.GetRequiredValue(version).ToString(),
+                parseResult.GetValue(aot)),
             output,
             parseResult.InvocationConfiguration.Error,
             ct));
         return command;
     }
 
-    private static Command CreateVerifyConsumer()
+    private static Command CreateVerifyConsumer(ConsumerVerifier verifier)
     {
         var candidate = new Option<string>("--candidate")
         {
@@ -531,7 +570,7 @@ internal static class VersioningCommandLine
         };
         var evidence = new Option<string>("--output")
         {
-            Description = "Evidence file to write, never the candidate manifest. Default: " + ConsumerVerificationCommand.DefaultOutput + " in the repository root.",
+            Description = "Evidence file to write, never the candidate manifest. Default: " + ConsumerVerifier.DefaultOutput + " in the repository root.",
             HelpName = "file",
         };
         var repoRoot = RepoRootOption();
@@ -553,12 +592,12 @@ internal static class VersioningCommandLine
         SetAction(command, (parseResult, output, ct) =>
         {
             var root = Path.GetFullPath(parseResult.GetRequiredValue(repoRoot));
-            return ConsumerVerificationCommand.Run(
+            return verifier.Verify(
                 new ConsumerVerificationOptions(
                     root,
                     Path.GetFullPath(parseResult.GetRequiredValue(candidate)),
                     parseResult.GetValue(solution) is { } path ? Path.GetFullPath(path) : null,
-                    Path.GetFullPath(parseResult.GetValue(evidence) ?? Path.Combine(root, ConsumerVerificationCommand.DefaultOutput)),
+                    Path.GetFullPath(parseResult.GetValue(evidence) ?? Path.Combine(root, ConsumerVerifier.DefaultOutput)),
                     parseResult.GetRequiredValue(childCommand)),
                 output,
                 parseResult.InvocationConfiguration.Error,

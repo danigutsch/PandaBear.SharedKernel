@@ -9,6 +9,9 @@ metadata, packs SharedKernel, creates and consumes hashed package candidates, an
 against a candidate. A consumer stages a pinned candidate
 in its local feed with `sharedkernel-ci stage-candidate` from the
 [CI tool](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.CI.Tool/README.md).
+The tool is a thin command line over the release engine in
+[`PandaBear.SharedKernel.Versioning`](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Versioning/README.md),
+which a host can call directly.
 
 ## Prerequisites
 

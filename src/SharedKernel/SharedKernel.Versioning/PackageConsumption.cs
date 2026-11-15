@@ -1,24 +1,26 @@
 using System.Xml.Linq;
 
-namespace PandaBear.Versioning.Tool;
+namespace PandaBear.Versioning;
 
 /// <summary>Verifies that the packed SharedKernel packages work for consumers.</summary>
-internal static class PackageConsumptionCommand
+internal static class PackageConsumption
 {
     /// <summary>
-    /// Installs the tool packages in <paramref name="feed" /> and runs their commands with <c>--help</c>, then restores, builds,
+    /// Installs the tool packages in the feed of <paramref name="options" /> and runs their commands with <c>--help</c>, then restores, builds,
     /// and runs the samples against the packages, writing child process output to <paramref name="error" />.
     /// </summary>
     /// <exception cref="ArgumentException">The feed contains no packages.</exception>
-    public static async Task Run(string root, string feed, string version, bool aot, TextWriter output, TextWriter error, CancellationToken ct)
+    public static async Task Run(ExternalCommands processes, PackageConsumptionOptions options, TextWriter output, TextWriter error, CancellationToken ct)
     {
+        var (root, feed, version, aot) = options;
         var packages = Directory.GetFiles(feed, "*.nupkg");
         if (packages.Length == 0)
         {
             throw new ArgumentException("Candidate feed contains no packages.");
         }
+
         var packageIds = SharedKernelLocalFeed.ReadPackageIds(packages, version);
-        await ToolPackageCheck.Run(root, feed, version, packages, CommandRunner.Run, error, ct).ConfigureAwait(false);
+        await ToolPackageCheck.Run(root, feed, version, packages, processes, error, ct).ConfigureAwait(false);
         var external = XDocument.Load(Path.Combine(root, "Directory.Packages.props"))
             .Descendants("PackageVersion").ToDictionary(x => (string)x.Attribute("Include")!, x => (string)x.Attribute("Version")!, StringComparer.Ordinal);
         var scratch = Path.Combine(Path.GetTempPath(), "sharedkernel-package-check-" + Guid.NewGuid().ToString("N"));
@@ -80,16 +82,16 @@ internal static class PackageConsumptionCommand
             ];
             foreach (var command in commands)
             {
-                await error.WriteAsync(await CommandRunner.Run("dotnet", command, target, ct).ConfigureAwait(false)).ConfigureAwait(false);
+                await error.WriteAsync(await processes.Run("dotnet", command, target, ct).ConfigureAwait(false)).ConfigureAwait(false);
             }
 
             if (aot)
             {
                 var rid = OperatingSystem.IsWindows() ? "win-x64" : "linux-x64";
                 var native = Path.Combine(target, "native");
-                await error.WriteAsync(await CommandRunner.Run("dotnet", ["publish", projectPath, "-c", "Release", "-r", rid,
+                await error.WriteAsync(await processes.Run("dotnet", ["publish", projectPath, "-c", "Release", "-r", rid,
                     "-p:PublishAot=true", "--configfile", config, "--packages", cache, "-o", native], target, ct).ConfigureAwait(false)).ConfigureAwait(false);
-                await error.WriteAsync(await CommandRunner.Run(
+                await error.WriteAsync(await processes.Run(
                     Path.Combine(native, Path.GetFileName(relative) + (OperatingSystem.IsWindows() ? ".exe" : string.Empty)), [], target, ct).ConfigureAwait(false)).ConfigureAwait(false);
             }
         }
