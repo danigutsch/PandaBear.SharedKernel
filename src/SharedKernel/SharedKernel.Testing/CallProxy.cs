@@ -16,7 +16,7 @@ namespace PandaBear.Testing;
 public class CallProxy : DispatchProxy
 {
     private object _inner = null!;
-    private CallHooks _hooks = new();
+    private CallHooks _hooks = null!;
 
     /// <summary>Creates a proxy of <typeparamref name="TService"/> over a real implementation.</summary>
     /// <typeparam name="TService">The service interface; it must be public.</typeparam>
@@ -33,11 +33,24 @@ public class CallProxy : DispatchProxy
     {
         ArgumentNullException.ThrowIfNull(inner);
 
+        var hooks = new CallHooks();
+        configure?.Invoke(hooks);
+        hooks.Validate(typeof(TService));
+        return Wrap(inner, hooks);
+    }
+
+    /// <summary>Creates a proxy of <typeparamref name="TService"/> over a real implementation with hooks that are already validated.</summary>
+    /// <typeparam name="TService">The service interface; it must be public.</typeparam>
+    /// <param name="inner">The real service.</param>
+    /// <param name="hooks">The validated hooks; several proxies may share them, since a call only reads them.</param>
+    /// <returns>The proxy.</returns>
+    internal static TService Wrap<TService>(TService inner, CallHooks hooks)
+        where TService : class
+    {
         var proxy = Create<TService, CallProxy>();
         var callProxy = (CallProxy)(object)proxy;
         callProxy._inner = inner;
-        configure?.Invoke(callProxy._hooks);
-        callProxy._hooks.Validate(typeof(TService));
+        callProxy._hooks = hooks;
         return proxy;
     }
 

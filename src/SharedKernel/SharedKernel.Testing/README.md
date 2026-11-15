@@ -155,3 +155,21 @@ A `Returns` name is valid as long as at least one overload returns a value witho
 
 It fits a test that wraps a real implementation and needs one targeted hold, failure, follow-up or replaced result. It does not replace a
 fake that implements the whole interface with typed recorded state, a service registered by type, or delegate-based fakes.
+
+### Wrapping a registered service
+
+When the application resolves the service from dependency injection, `services.WrapWithCallProxy<IStore>(hooks => ...)` replaces its
+registrations with proxies, so the test hooks the instance the application actually uses:
+
+```csharp
+services.WrapWithCallProxy<ICustomerStore>(hooks => hooks
+    .After(nameof(ICustomerStore.Find), call => DeleteRow(call.Result))
+    .Returns(nameof(ICustomerStore.EmailExists), false));
+```
+
+Call it after the application's own registrations. Every registration of the service without a key is wrapped in place and keeps its
+lifetime (singleton, scoped or transient): the original moves under a private key, so the container still builds the real implementation
+with its dependencies, in the same scope, and disposes it as before, while an instance registration stays undisposed. Keyed registrations
+are left alone. `configure` runs once and the proxies share its hooks, so the hook names are validated when the registration is wrapped,
+with the same exceptions as `Create`; a service without a registration to wrap throws `InvalidOperationException`. The container must
+support keyed services, as `Microsoft.Extensions.DependencyInjection` does from .NET 8.
