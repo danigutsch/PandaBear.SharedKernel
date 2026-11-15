@@ -5,7 +5,7 @@ Classify findings by demonstrated impact and confidence. An actionable security,
 | Signal | Current standalone boundary |
 | --- | --- |
 | Compiler/analyzers | Build errors and unsuppressed warnings under warnings-as-errors block builds. Suggestions remain advice; scoped suppressions remain reviewed debt. |
-| NuGet restore/audit | Failed restores, inconsistent locked graphs, and diagnostics promoted by current configuration block validation. Auditing is enabled for all dependencies at the high threshold; review actionable vulnerabilities and transitive impact explicitly. |
+| NuGet restore/audit | Failed restores, inconsistent locked graphs, and diagnostics promoted by current configuration block validation. Auditing is enabled for all dependencies at NuGet's default level, `low`, so an advisory of any severity fails restore under warnings-as-errors; review actionable vulnerabilities and transitive impact explicitly. |
 | Formatting/generated docs | Nonzero required formatting or generated-diagram checks fail repository quality validation. Preserve drift failures rather than accepting generated output without review. |
 | Tests | Failed tests, host crashes, missing expected execution, and corrupt results require resolution. Repeated reruns do not establish flaky-test acceptance. |
 | Package/API/platform evidence | Missing required API compatibility, package-consumption, hash, or platform evidence prevents the corresponding candidate claim. Keep unavailable evidence pending. |
