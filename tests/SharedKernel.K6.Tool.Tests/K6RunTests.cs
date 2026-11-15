@@ -303,7 +303,7 @@ public sealed class K6RunTests
 
         // Assert
         exitCode.ShouldBe(2);
-        repository.Error.ToString().ShouldContain(Environment.NewLine + "Failed to start " + missing + ": ", StringComparison.Ordinal);
+        repository.Error.ToString().ShouldContain("\nFailed to start " + missing + ": ", StringComparison.Ordinal);
     }
 
     [Fact]

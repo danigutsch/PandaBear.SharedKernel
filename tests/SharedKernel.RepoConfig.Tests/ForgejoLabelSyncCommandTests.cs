@@ -129,7 +129,7 @@ public sealed class ForgejoLabelSyncCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe(string.Empty);
-        error.ShouldBe("sharedkernel-repo: --repository must name a Forgejo repository as owner/name." + Environment.NewLine);
+        error.ShouldBe("sharedkernel-repo: --repository must name a Forgejo repository as owner/name.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
