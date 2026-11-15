@@ -26,7 +26,8 @@ var output = await runner.Run(startInfo, forward: null, cancellationToken);
   tests replace it with a fake and never start a process.
 - `SystemProcessRunner` runs the process as described, without a time or output limit, so it suits a long-running server
   whose standard streams stay attached to the host. Cancellation kills the whole process tree and still throws the
-  cancellation.
+  cancellation. A process that cannot start, such as a missing executable, is reported as `ProcessTree.Start` reports
+  it: `InvalidOperationException` (`Failed to start <file>: <reason>`) with the operating system's error inside.
 - `BoundedProcessRunner` is for quick queries, such as a package manager listing: it redirects and captures both output
   streams, closes a redirected standard input, ends the process after two minutes or above 8 Mi characters on either
   stream, and reports a process that leaves its output open after it exits.

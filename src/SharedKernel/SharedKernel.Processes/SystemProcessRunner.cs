@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace PandaBear.Processes;
@@ -11,6 +12,10 @@ namespace PandaBear.Processes;
 public sealed class SystemProcessRunner : IProcessRunner
 {
     /// <inheritdoc />
+    /// <exception cref="InvalidOperationException">
+    /// The process could not start. The message is <c>Failed to start &lt;file&gt;: &lt;reason&gt;</c> with the operating
+    /// system's reason, which the inner <see cref="Win32Exception"/> also carries, as <see cref="ProcessTree.Start"/> reports it.
+    /// </exception>
     public async Task<ProcessOutput> Run(
         ProcessStartInfo startInfo,
         TextWriter? forward,
@@ -25,9 +30,17 @@ public sealed class SystemProcessRunner : IProcessRunner
         var ct = cancellationToken;
         using var process = new Process { StartInfo = startInfo };
         ct.ThrowIfCancellationRequested();
-        if (!process.Start())
+        try
         {
-            throw new InvalidOperationException($"Could not start {startInfo.FileName}.");
+            if (!process.Start())
+            {
+                throw new InvalidOperationException($"Failed to start {startInfo.FileName}.");
+            }
+        }
+        catch (Win32Exception exception)
+        {
+            // Reported as ProcessTree.Start reports it, so every start failure is the documented InvalidOperationException.
+            throw new InvalidOperationException($"Failed to start {startInfo.FileName}: {exception.Message}", exception);
         }
 
         if (startInfo.RedirectStandardInput)
