@@ -5,6 +5,8 @@ namespace PandaBear.BuildingBlocks;
 /// <summary>A canonical Brazilian CPF with validated check digits; not proof of registration or identity.</summary>
 public sealed class Cpf : ValueObject
 {
+    private const int MaskLength = 14;
+
     private Cpf(string value) => Value = value;
 
     /// <summary>Gets the sensitive, eleven-digit value. Do not log or expose it without authorization.</summary>
@@ -27,9 +29,35 @@ public sealed class Cpf : ValueObject
         return Result.Ok(new Cpf(value));
     }
 
+    /// <summary>
+    /// Creates a CPF from what a person typed: eleven ASCII digits, either bare (<c>52998224725</c>) or in the display mask
+    /// <c>000.000.000-00</c> (<c>529.982.247-25</c>). Surrounding white space is ignored; any other punctuation, spacing or partial mask is
+    /// rejected. The check digits are validated as in <see cref="Create"/>.
+    /// </summary>
+    /// <param name="value">The entered text.</param>
+    /// <returns>
+    /// A validated CPF, or an input-independent validation error on <c>cpf</c>: <c>CPF is required.</c> for missing or blank text and
+    /// <c>CPF is not valid.</c> otherwise.
+    /// </returns>
+    public static Result<Cpf> CreateFromInput(string? value)
+    {
+        var trimmed = value?.Trim();
+        if (string.IsNullOrEmpty(trimmed))
+        {
+            return Result.Invalid<Cpf>(detail: "CPF is required.", field: "cpf", message: "CPF is required.");
+        }
+
+        if (trimmed.Length == MaskLength && trimmed[3] == '.' && trimmed[7] == '.' && trimmed[11] == '-')
+        {
+            trimmed = string.Concat(trimmed.AsSpan(0, 3), trimmed.AsSpan(4, 3), trimmed.AsSpan(8, 3), trimmed.AsSpan(12, 2));
+        }
+
+        return Create(trimmed);
+    }
+
     /// <summary>Gets the sensitive value in the display mask <c>000.000.000-00</c>; a restored value that is not eleven digits is returned unchanged. Personal data: do not log or expose it without authorization. <see cref="ToString"/> stays redacted.</summary>
     public string Formatted => Value.Length == 11 && Value.All(char.IsAsciiDigit)
-        ? string.Create(14, Value, static (span, value) =>
+        ? string.Create(MaskLength, Value, static (span, value) =>
         {
             value.AsSpan(0, 3).CopyTo(span);
             span[3] = '.';

@@ -141,6 +141,10 @@ var pix = PixKey.Create(PixKeyType.Cnpj, "12ABC34501DE35");
 Supply uppercase IBAN/BIC/CNPJ, eleven ASCII digits for CPF, and no display punctuation or spaces. A rejected value gives one
 input-independent message that can be shown to people: `IBAN is not valid.`, `BIC is not valid.`, `CPF is not valid.`,
 `CNPJ is not valid.` or `Pix key is not valid.`, on the field `iban`, `bic`, `cpf`, `cnpj` or `pixKey`.
+
+For a CPF typed into a form, `Cpf.CreateFromInput` also accepts the display mask: `529.982.247-25` and `52998224725` both give the
+CPF `52998224725`. Surrounding white space is ignored and any other punctuation, spacing or partial mask is rejected; blank text gives
+`CPF is required.` and anything else that fails `CPF is not valid.`.
 Pix email and EVP keys must be lowercase. Select `PixKeyType` explicitly; `None` and undefined enum
 values are rejected. Leading zeros are preserved. Equality includes concrete type and canonical value;
 Pix equality includes both type and value. Numeric and alphanumeric CNPJ are supported.

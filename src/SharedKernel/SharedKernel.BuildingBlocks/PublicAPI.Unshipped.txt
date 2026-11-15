@@ -208,3 +208,4 @@ static PandaBear.BuildingBlocks.PostalAddressLabels.Default.get -> PandaBear.Bui
 PandaBear.BuildingBlocks.Iban.Formatted.get -> string!
 static PandaBear.BuildingBlocks.Iban.Restore(string! value) -> PandaBear.BuildingBlocks.Iban!
 static PandaBear.BuildingBlocks.Bic.Restore(string! value) -> PandaBear.BuildingBlocks.Bic!
+static PandaBear.BuildingBlocks.Cpf.CreateFromInput(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Cpf!>
