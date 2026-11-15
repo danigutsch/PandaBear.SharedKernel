@@ -422,6 +422,35 @@ public static class HttpResponseSuccessAssertionExtensions
     public static HttpResponseMessage ShouldHaveHeader(this HttpResponseMessage actual, string name, string expectedValue, string userMessage) =>
         WithUserMessage(userMessage, () => actual.ShouldHaveHeader(name, expectedValue));
 
+    /// <summary>Verifies that a header, looked up by case-insensitive name on the response and its content as <c>ShouldHaveHeader</c> does, is absent.</summary>
+    /// <remarks><see cref="HttpClient"/> files some response headers, such as <c>Expires</c>, under the content headers, so both are checked.</remarks>
+    /// <param name="actual">The response.</param>
+    /// <param name="name">The header name; the case is ignored.</param>
+    /// <returns>The response, for further assertions.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when an argument is null.</exception>
+    /// <exception cref="XunitException">Thrown when the header is present; the values of credential headers are not quoted.</exception>
+    public static HttpResponseMessage ShouldNotHaveHeader(this HttpResponseMessage actual, string name)
+    {
+        ArgumentNullException.ThrowIfNull(actual);
+        ArgumentNullException.ThrowIfNull(name);
+        if (actual.Headers.TryGetValues(name, out var values) || actual.Content.Headers.TryGetValues(name, out values))
+        {
+            var shown = CredentialHeaders.Contains(name) ? "<redacted>" : string.Join(", ", values);
+            throw new XunitException($"Expected no header '{name}' but was '{shown}'.");
+        }
+
+        return actual;
+    }
+
+    /// <summary>Verifies that a header, looked up by case-insensitive name on the response and its content as <c>ShouldHaveHeader</c> does, is absent.</summary>
+    /// <param name="actual">The response.</param>
+    /// <param name="name">The header name; the case is ignored.</param>
+    /// <param name="userMessage">Why the test expects the assertion to hold; the failure message starts with it.</param>
+    /// <returns>The response, for further assertions.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when an argument is null.</exception>
+    public static HttpResponseMessage ShouldNotHaveHeader(this HttpResponseMessage actual, string name, string userMessage) =>
+        WithUserMessage(userMessage, () => actual.ShouldNotHaveHeader(name));
+
     /// <summary>Verifies the headers that <c>HttpCacheHeaders.SetNoStore</c> of <c>PandaBear.SharedKernel.HttpCaching.AspNetCore</c> writes.</summary>
     /// <remarks>Requires <c>Cache-Control: no-store</c>, <c>Pragma: no-cache</c>, and an <c>Expires</c> date that is not in the future.</remarks>
     /// <param name="actual">The response.</param>

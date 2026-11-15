@@ -121,6 +121,118 @@ public sealed class HttpHeaderAssertionTests
     }
 
     [Fact]
+    public void Absent_header_passes_the_absence_assertion()
+    {
+        // Arrange
+        using var response = SuccessResponses.Text(HttpStatusCode.OK, "{}");
+        response.Headers.Add("X-Request-Id", "abc");
+
+        // Act
+        var result = response.ShouldNotHaveHeader("Pragma");
+
+        // Assert
+        result.ShouldBeSameAs(response);
+    }
+
+    [Theory]
+    [InlineData("pragma")]
+    [InlineData("PRAGMA")]
+    [InlineData("Pragma")]
+    public void Header_on_the_response_fails_the_absence_assertion_by_case_insensitive_name(string name)
+    {
+        // Arrange
+        using var response = SuccessResponses.Empty(HttpStatusCode.OK);
+        response.Headers.Pragma.Add(new NameValueHeaderValue("no-cache"));
+        Action assertion = () => response.ShouldNotHaveHeader(name);
+
+        // Act
+        var failure = assertion.ShouldThrow<XunitException>();
+
+        // Assert
+        failure.Message.ShouldBe($"Expected no header '{name}' but was 'no-cache'.");
+    }
+
+    [Fact]
+    public void Header_on_the_content_fails_the_absence_assertion()
+    {
+        // Arrange
+        using var response = SuccessResponses.Text(HttpStatusCode.OK, "{}");
+        response.Content.Headers.Expires = DateTimeOffset.UnixEpoch;
+        Action assertion = () => response.ShouldNotHaveHeader("Expires");
+
+        // Act
+        var failure = assertion.ShouldThrow<XunitException>();
+
+        // Assert
+        failure.Message.ShouldBe("Expected no header 'Expires' but was 'Thu, 01 Jan 1970 00:00:00 GMT'.");
+    }
+
+    [Fact]
+    public void Header_with_several_values_fails_the_absence_assertion_with_all_values()
+    {
+        // Arrange
+        using var response = SuccessResponses.Empty(HttpStatusCode.OK);
+        response.Headers.Add("Vary", "Accept");
+        response.Headers.Add("Vary", "Origin");
+        Action assertion = () => response.ShouldNotHaveHeader("Vary");
+
+        // Act
+        var failure = assertion.ShouldThrow<XunitException>();
+
+        // Assert
+        failure.Message.ShouldBe("Expected no header 'Vary' but was 'Accept, Origin'.");
+    }
+
+    [Theory]
+    [InlineData("Set-Cookie", "session=secret")]
+    [InlineData("authorization", "Bearer secret")]
+    public void Credential_header_values_are_never_quoted_by_the_absence_assertion(string name, string secret)
+    {
+        // Arrange
+        using var response = SuccessResponses.Empty(HttpStatusCode.OK);
+        response.Headers.TryAddWithoutValidation(name, secret);
+        Action assertion = () => response.ShouldNotHaveHeader(name);
+
+        // Act
+        var failure = assertion.ShouldThrow<XunitException>();
+
+        // Assert
+        failure.Message.ShouldBe($"Expected no header '{name}' but was '<redacted>'.");
+    }
+
+    [Fact]
+    public void Absence_assertion_states_the_reason_first()
+    {
+        // Arrange
+        using var response = SuccessResponses.Empty(HttpStatusCode.OK);
+        response.Headers.Add("Strict-Transport-Security", "max-age=31536000");
+        Action assertion = () => response.ShouldNotHaveHeader("Strict-Transport-Security", "HSTS is only sent over HTTPS.");
+
+        // Act
+        var failure = assertion.ShouldThrow<XunitException>();
+
+        // Assert
+        failure.Message.ShouldBe(
+            "HSTS is only sent over HTTPS." + Environment.NewLine + "Expected no header 'Strict-Transport-Security' but was 'max-age=31536000'.");
+    }
+
+    [Fact]
+    public void Absence_assertion_validates_arguments()
+    {
+        // Arrange
+        using var response = SuccessResponses.Empty(HttpStatusCode.OK);
+        HttpResponseMessage missing = null!;
+        Action nullResponse = () => missing.ShouldNotHaveHeader("X-A");
+        Action nullName = () => response.ShouldNotHaveHeader(null!);
+        Action nullMessage = () => response.ShouldNotHaveHeader("X-A", null!);
+
+        // Act, Assert
+        nullResponse.ShouldThrow<ArgumentNullException>();
+        nullName.ShouldThrow<ArgumentNullException>();
+        nullMessage.ShouldThrow<ArgumentNullException>();
+    }
+
+    [Fact]
     public void No_store_accepts_the_headers_written_by_the_HTTP_caching_package()
     {
         // Arrange

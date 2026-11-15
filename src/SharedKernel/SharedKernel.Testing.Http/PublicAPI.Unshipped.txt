@@ -92,3 +92,5 @@ PandaBear.Testing.Http.RoutingHttpMessageHandler.Requests.get -> System.Collecti
 PandaBear.Testing.Http.RoutingHttpMessageHandler.RoutingHttpMessageHandler() -> void
 PandaBear.Testing.Http.RoutingHttpMessageHandler.RoutingHttpMessageHandler(System.Func<PandaBear.Testing.Http.CapturedHttpRequest!, System.Net.Http.HttpResponseMessage!>! fallback) -> void
 PandaBear.Testing.Http.RoutingHttpMessageHandler.WaitForRequests(int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Http.CapturedHttpRequest!>!>!
+static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldNotHaveHeader(this System.Net.Http.HttpResponseMessage! actual, string! name) -> System.Net.Http.HttpResponseMessage!
+static PandaBear.Testing.Http.HttpResponseSuccessAssertionExtensions.ShouldNotHaveHeader(this System.Net.Http.HttpResponseMessage! actual, string! name, string! userMessage) -> System.Net.Http.HttpResponseMessage!

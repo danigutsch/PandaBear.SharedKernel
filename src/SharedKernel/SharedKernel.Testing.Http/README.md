@@ -113,6 +113,7 @@ using PandaBear.Testing.Http;
 var tour = await response.ShouldBeCreated<TourDto>(cancellationToken);   // 201, Location, application/json
 response.ShouldHaveLocation("/api/tours/");                              // path prefix of the Location header
 response.ShouldHaveETag("\"3\"").ShouldBeNoStore();                      // strong tag; no-store headers
+response.ShouldNotHaveHeader("Strict-Transport-Security");               // absent from the response and its content
 
 var dto = await getResponse.ShouldBeOk<TourDto>(cancellationToken);      // 200, application/json, body as TourDto
 await deleteResponse.ShouldBeNoContent(cancellationToken);               // 204 with an empty body
@@ -128,6 +129,7 @@ var bytes = await exportResponse.ShouldBeFile("text/csv", "tours.csv", cancellat
 | `ShouldBeNoContent()` | 204 and an empty body | the response |
 | `ShouldBeFile(contentType, fileName)` | 200, media type, `attachment` disposition, and the name from `filename*` (RFC 5987) or else `filename` | the bytes |
 | `ShouldHaveHeader(name, value)` | a header on the response or its content, by case-insensitive name, with exactly that value | the response |
+| `ShouldNotHaveHeader(name)` | no header of that case-insensitive name on the response or its content (`HttpClient` files `Expires` and other content headers there) | the response |
 | `ShouldBeNoStore()` | what `HttpCacheHeaders.SetNoStore` writes: `Cache-Control: no-store`, `Pragma: no-cache`, `Expires` not in the future | the response |
 | `ShouldHaveETag(quotedTag)` | a strong `ETag` equal to the quoted tag, such as `"v1"` | the response |
 
