@@ -34,6 +34,7 @@ test assertions. Do not apply it to regular production projects.
 | `SKTEST018` | Suggestion | Every xUnit test declares exactly one valid test scope. |
 | `SKTEST020` | Warning | Wait for a page address with `ExpectPath`, not Playwright's `WaitForURLAsync`. |
 | `SKTEST021` | Warning | Entries of `sharedkernel_testing_additional_allowed_segments` must be new letter-and-digit words. |
+| `SKTEST022` | Warning | Capture test output with `InvariantStringWriter` or an explicit `NewLine`, not a `StringWriter` with the platform line ending. |
 | `SKTEST017` | Disabled; opt-in warning | Give every public `Should*` assertion an overload that takes `userMessage`. |
 
 See [test assertion conventions](../../../docs/TEST_GUIDELINES.md) for migrations, exception-testing
@@ -346,3 +347,18 @@ rule reports each entry the analyzer ignores, once per compilation:
 [tests/**.cs]
 sharedkernel_testing_additional_allowed_segments = BFF, IntegrationEvent, Errors
 ```
+
+## SKTEST022
+
+A `StringWriter` ends each line with `Environment.NewLine`: `"\r\n"` on Windows and `"\n"` elsewhere. A test that hands one
+to a command-line tool or a console and compares the captured text with a `"\n"` expectation therefore passes on Linux and
+fails only on Windows. The rule reports each creation of `System.IO.StringWriter` itself, including a target-typed `new()`,
+whose object initializer does not set `NewLine`, in a compilation that references xUnit. Derived writers and
+`InvariantStringWriter` are not reported.
+
+Use `PandaBear.Testing.InvariantStringWriter` from `PandaBear.SharedKernel.Testing`, which ends lines with `"\n"` and formats
+with the invariant culture on every operating system. When a test needs a specific line ending, set it explicitly:
+`new StringWriter(CultureInfo.InvariantCulture) { NewLine = "\r\n" }`. The code fix replaces `new StringWriter()` and
+`new StringWriter(CultureInfo.InvariantCulture)` with `new InvariantStringWriter()` when the compilation references
+`PandaBear.SharedKernel.Testing`; a writer over a caller's `StringBuilder` or with another format provider is left for a
+person, because the replacement would drop the builder or change how values are formatted.

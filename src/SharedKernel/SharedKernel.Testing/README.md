@@ -33,6 +33,9 @@ Use `SerialTestJustificationAttribute` on xUnit collection definitions that disa
 - Streams: `BlockingReadStream`, `GatedCountingReadStream`, `GatedChunkReadStream`, `ThrowingReadStream`,
   `DisposalTrackingStream`, `RecordingWriteStream`, `TrackingReadStream` and `UnsizedStream` cover blocking, counting, gating,
   failing, unknown-length and disposal-tracking cases. See [Streams for cancellation and disposal tests](#streams-for-cancellation-and-disposal-tests).
+- Captured output: `InvariantStringWriter` is a `StringWriter` that ends lines with `"\n"` and formats with the invariant
+  culture, so text captured from a command-line tool or console is the same on every operating system. `SKTEST022`
+  reports a test `StringWriter` that keeps the platform line ending. See [captured output](../../../docs/TEST_GUIDELINES.md#captured-output).
 - Metrics: `MeterCollector` is an `IMeterFactory` that records the long measurements of its meters (pass a meter
   name to restrict it); `ThrowingMeterFactory` fails every `Create` call.
 - Processes and Git: `TestProcess.Run` runs a process and captures its output; `TestGit` runs Git without the user's

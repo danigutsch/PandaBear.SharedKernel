@@ -63,6 +63,19 @@ SKTEST016 keeps explicitly named SUT construction out of a complete explicit AAA
 automatic move/inference fix. SKSTYLE014 requires TimeProvider for wall-clock reads; pass controlled providers
 for time-dependent assertions rather than depending on elapsed real time.
 
+## Captured output
+
+Capture the text a command-line tool, a console or any other `TextWriter` consumer writes with
+`PandaBear.Testing.InvariantStringWriter`. It ends each line with `"\n"` and formats with the invariant culture, so the
+captured text is the same on Linux, macOS and Windows and an expectation is written once with `"\n"`. A plain
+`StringWriter` ends lines with `Environment.NewLine`, so a `"\n"` expectation passes on Linux and fails only on Windows.
+Write expectations for captured lines with `"\n"`, not `Environment.NewLine`; keep `Environment.NewLine` only where the
+code under test writes it explicitly, or for the output of a real child process. A test that needs another line ending,
+such as one that checks a writer passes on its target's line ending, sets it in the initializer:
+`new StringWriter(CultureInfo.InvariantCulture) { NewLine = "\r\n" }`. `SKTEST022` reports every other
+`new StringWriter(...)` in a test project, and its code fix replaces `new StringWriter()` and
+`new StringWriter(CultureInfo.InvariantCulture)` with `new InvariantStringWriter()`.
+
 ## Testing package boundaries
 
 Each testing package owns one kind of helper and takes only the dependencies that kind needs. Add a helper to the package that

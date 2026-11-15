@@ -32,6 +32,7 @@ public sealed class SharedKernelTestingAnalyzerTests
             TestingDiagnosticIds.XunitTestScope,
             TestingDiagnosticIds.PlaywrightUrlWait,
             TestingDiagnosticIds.InvalidAdditionalAllowedSegment,
+            TestingDiagnosticIds.StringWriterNewLine,
         ];
 
         // Act

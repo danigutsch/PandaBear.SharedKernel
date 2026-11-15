@@ -88,4 +88,9 @@ public static class TestingDiagnosticIds
     /// Diagnostic emitted when a <c>sharedkernel_testing_additional_allowed_segments</c> entry cannot name a test method name segment.
     /// </summary>
     public const string InvalidAdditionalAllowedSegment = "SKTEST021";
+
+    /// <summary>
+    /// Diagnostic emitted when a test creates a <c>StringWriter</c> whose captured text would end lines with the platform line ending.
+    /// </summary>
+    public const string StringWriterNewLine = "SKTEST022";
 }
