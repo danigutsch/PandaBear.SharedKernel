@@ -41,7 +41,8 @@ var plan = await new TestSelector(machine).Select(
   release assets). `PandaBear.SharedKernel.CI.GitHub` implements them for GitHub and GitHub Actions. The engine emits
   no workflow annotations, so it defines no annotation seam.
 - The engine reads no environment variable and writes to no console. Service processes never receive a forge token (`GH_TOKEN`,
-  `GITHUB_TOKEN`, or `FORGEJO_TOKEN`); `PandaBear.SharedKernel.Processes` removes them.
+  `GITHUB_TOKEN`, `FORGEJO_TOKEN`, `GH_ENTERPRISE_TOKEN`, or `GITHUB_ENTERPRISE_TOKEN`); `PandaBear.SharedKernel.Processes`
+  removes them, and a service variable cannot be named after one.
 
 ## Package identity and availability
 

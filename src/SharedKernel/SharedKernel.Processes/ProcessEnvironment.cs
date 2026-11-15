@@ -10,10 +10,13 @@ public static class ProcessEnvironment
 {
     /// <summary>
     /// Gets the names of the variables that hold a forge token: <c>GH_TOKEN</c> and <c>GITHUB_TOKEN</c>, which
-    /// <see href="https://cli.github.com/manual/gh_help_environment">gh</see> reads, and <c>FORGEJO_TOKEN</c>, which
-    /// <see href="https://forgejo.org/docs/latest/user/actions/reference/">Forgejo Actions</see> sets.
+    /// <see href="https://cli.github.com/manual/gh_help_environment">gh</see> reads for <c>github.com</c>;
+    /// <c>FORGEJO_TOKEN</c>, which <see href="https://forgejo.org/docs/latest/user/actions/reference/">Forgejo Actions</see>
+    /// sets; and <c>GH_ENTERPRISE_TOKEN</c> and <c>GITHUB_ENTERPRISE_TOKEN</c>, which gh reads for a GitHub Enterprise
+    /// Server host.
     /// </summary>
-    public static IReadOnlyList<string> ForgeTokenVariableNames { get; } = ["GH_TOKEN", "GITHUB_TOKEN", "FORGEJO_TOKEN"];
+    public static IReadOnlyList<string> ForgeTokenVariableNames { get; } =
+        ["GH_TOKEN", "GITHUB_TOKEN", "FORGEJO_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN"];
 
     /// <summary>
     /// Reports whether <paramref name="name"/> is one of <see cref="ForgeTokenVariableNames"/>, compared without regard to
