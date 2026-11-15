@@ -1,0 +1,222 @@
+#nullable enable
+const PandaBear.Repositories.GitHub.RoadmapCloseReason.Completed = "COMPLETED" -> string!
+const PandaBear.Repositories.GitHub.RoadmapCloseReason.NotPlanned = "NOT_PLANNED" -> string!
+override PandaBear.Repositories.GitHub.DependencySnapshotOptions.Equals(object? obj) -> bool
+override PandaBear.Repositories.GitHub.DependencySnapshotOptions.GetHashCode() -> int
+override PandaBear.Repositories.GitHub.DependencySnapshotOptions.ToString() -> string!
+override PandaBear.Repositories.GitHub.DependencySubmitOptions.Equals(object? obj) -> bool
+override PandaBear.Repositories.GitHub.DependencySubmitOptions.GetHashCode() -> int
+override PandaBear.Repositories.GitHub.DependencySubmitOptions.ToString() -> string!
+override PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.Equals(object? obj) -> bool
+override PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.GetHashCode() -> int
+override PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.ToString() -> string!
+override PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.Equals(object? obj) -> bool
+override PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.GetHashCode() -> int
+override PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.ToString() -> string!
+override PandaBear.Repositories.GitHub.GitHubSyncResult.Equals(object? obj) -> bool
+override PandaBear.Repositories.GitHub.GitHubSyncResult.GetHashCode() -> int
+override PandaBear.Repositories.GitHub.GitHubSyncResult.ToString() -> string!
+override PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.Equals(object? obj) -> bool
+override PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.GetHashCode() -> int
+override PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.ToString() -> string!
+override PandaBear.Repositories.GitHub.RoadmapGitHubPublication.Equals(object? obj) -> bool
+override PandaBear.Repositories.GitHub.RoadmapGitHubPublication.GetHashCode() -> int
+override PandaBear.Repositories.GitHub.RoadmapGitHubPublication.ToString() -> string!
+override PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.Equals(object? obj) -> bool
+override PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.GetHashCode() -> int
+override PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.ToString() -> string!
+PandaBear.Repositories.GitHub.DependencySnapshotOptions
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.<Clone>$() -> PandaBear.Repositories.GitHub.DependencySnapshotOptions!
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.Correlator.get -> string!
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.Correlator.init -> void
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.Deconstruct(out string! RootPath, out string! Sha, out string! Reference, out string! Job, out string! Correlator, out string! OutputPath) -> void
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.DependencySnapshotOptions(string! RootPath, string! Sha, string! Reference, string! Job, string! Correlator, string! OutputPath) -> void
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.Equals(PandaBear.Repositories.GitHub.DependencySnapshotOptions? other) -> bool
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.Job.get -> string!
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.Job.init -> void
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.OutputPath.get -> string!
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.OutputPath.init -> void
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.Reference.get -> string!
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.Reference.init -> void
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.RootPath.get -> string!
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.RootPath.init -> void
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.Sha.get -> string!
+PandaBear.Repositories.GitHub.DependencySnapshotOptions.Sha.init -> void
+PandaBear.Repositories.GitHub.DependencySubmitOptions
+PandaBear.Repositories.GitHub.DependencySubmitOptions.<Clone>$() -> PandaBear.Repositories.GitHub.DependencySubmitOptions!
+PandaBear.Repositories.GitHub.DependencySubmitOptions.Deconstruct(out string! RootPath, out string! SnapshotPath, out string! Repository, out bool Force) -> void
+PandaBear.Repositories.GitHub.DependencySubmitOptions.DependencySubmitOptions(string! RootPath, string! SnapshotPath, string! Repository, bool Force) -> void
+PandaBear.Repositories.GitHub.DependencySubmitOptions.Equals(PandaBear.Repositories.GitHub.DependencySubmitOptions? other) -> bool
+PandaBear.Repositories.GitHub.DependencySubmitOptions.Force.get -> bool
+PandaBear.Repositories.GitHub.DependencySubmitOptions.Force.init -> void
+PandaBear.Repositories.GitHub.DependencySubmitOptions.Repository.get -> string!
+PandaBear.Repositories.GitHub.DependencySubmitOptions.Repository.init -> void
+PandaBear.Repositories.GitHub.DependencySubmitOptions.RootPath.get -> string!
+PandaBear.Repositories.GitHub.DependencySubmitOptions.RootPath.init -> void
+PandaBear.Repositories.GitHub.DependencySubmitOptions.SnapshotPath.get -> string!
+PandaBear.Repositories.GitHub.DependencySubmitOptions.SnapshotPath.init -> void
+PandaBear.Repositories.GitHub.GitHubConnection
+PandaBear.Repositories.GitHub.GitHubConnection.Dispose() -> void
+PandaBear.Repositories.GitHub.GitHubConnection.GitHubConnection(System.Net.Http.HttpClient! client) -> void
+PandaBear.Repositories.GitHub.GitHubConnection.GitHubConnection(System.Net.Http.HttpMessageHandler! handler, System.Net.Http.Headers.ProductInfoHeaderValue! userAgent, string? token, string! missingTokenMessage) -> void
+PandaBear.Repositories.GitHub.GitHubDependencySnapshot
+PandaBear.Repositories.GitHub.GitHubDependencySubmission
+PandaBear.Repositories.GitHub.GitHubIssueSnapshotDigest
+PandaBear.Repositories.GitHub.GitHubLabelStore
+PandaBear.Repositories.GitHub.GitHubLabelStore.Create(PandaBear.Repositories.RepositoryLabel! label, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+PandaBear.Repositories.GitHub.GitHubLabelStore.GitHubLabelStore(string! repository, PandaBear.Repositories.GitHub.GitHubConnection! connection) -> void
+PandaBear.Repositories.GitHub.GitHubLabelStore.List(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.RepositoryLabel!>!>!
+PandaBear.Repositories.GitHub.GitHubLabelStore.Repository.get -> string!
+PandaBear.Repositories.GitHub.GitHubLabelStore.Update(string! currentName, PandaBear.Repositories.RepositoryLabel! label, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+PandaBear.Repositories.GitHub.GitHubRoadmapIntake
+PandaBear.Repositories.GitHub.GitHubRoadmapIntake.Apply(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
+PandaBear.Repositories.GitHub.GitHubRoadmapIntake.GitHubRoadmapIntake(PandaBear.Repositories.RoadmapProject! project, PandaBear.Repositories.GitHub.GitHubConnection! connection) -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapIntake.Preview(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.<Clone>$() -> PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue!
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.BlockedBy.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation!>!
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.BlockedBy.init -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.Blocking.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation!>!
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.Blocking.init -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.Deconstruct(out int Number, out string! Title, out string! State, out System.Collections.Generic.IReadOnlyList<string!>! Labels, out PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation? Parent, out System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation!>! SubIssues, out System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation!>! BlockedBy, out System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation!>! Blocking) -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.Equals(PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue? other) -> bool
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.GitHubRoadmapReconcileIssue(int Number, string! Title, string! State, System.Collections.Generic.IReadOnlyList<string!>! Labels, PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation? Parent, System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation!>! SubIssues, System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation!>! BlockedBy, System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation!>! Blocking) -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.Labels.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.Labels.init -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.NodeId.get -> string?
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.NodeId.init -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.Number.get -> int
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.Number.init -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.Parent.get -> PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation?
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.Parent.init -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.State.get -> string!
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.State.init -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.StateReason.get -> string?
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.StateReason.init -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.SubIssues.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation!>!
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.SubIssues.init -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.Title.get -> string!
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.Title.init -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconciler
+PandaBear.Repositories.GitHub.GitHubRoadmapReconciler.Apply(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
+PandaBear.Repositories.GitHub.GitHubRoadmapReconciler.GitHubRoadmapReconciler(PandaBear.Repositories.RoadmapProject! project, PandaBear.Repositories.GitHub.GitHubConnection! connection) -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconciler.Preview(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.<Clone>$() -> PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation!
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.Deconstruct(out int Number, out string! Repository, out string! State) -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.Equals(PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation? other) -> bool
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.GitHubRoadmapReconcileRelation(int Number, string! Repository, string! State) -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.Number.get -> int
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.Number.init -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.Repository.get -> string!
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.Repository.init -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.State.get -> string!
+PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.State.init -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapSyncer
+PandaBear.Repositories.GitHub.GitHubRoadmapSyncer.Apply(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Repositories.GitHub.GitHubSyncResult!>!
+PandaBear.Repositories.GitHub.GitHubRoadmapSyncer.GitHubRoadmapSyncer(PandaBear.Repositories.RoadmapProject! project, PandaBear.Repositories.GitHub.GitHubConnection! connection) -> void
+PandaBear.Repositories.GitHub.GitHubRoadmapSyncer.Preview(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Repositories.GitHub.GitHubSyncResult!>!
+PandaBear.Repositories.GitHub.GitHubSubissueLinker
+PandaBear.Repositories.GitHub.GitHubSyncResult
+PandaBear.Repositories.GitHub.GitHubSyncResult.<Clone>$() -> PandaBear.Repositories.GitHub.GitHubSyncResult!
+PandaBear.Repositories.GitHub.GitHubSyncResult.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! Messages) -> void
+PandaBear.Repositories.GitHub.GitHubSyncResult.Equals(PandaBear.Repositories.GitHub.GitHubSyncResult? other) -> bool
+PandaBear.Repositories.GitHub.GitHubSyncResult.GitHubSyncResult(System.Collections.Generic.IReadOnlyList<string!>! Messages) -> void
+PandaBear.Repositories.GitHub.GitHubSyncResult.Messages.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Repositories.GitHub.GitHubSyncResult.Messages.init -> void
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.ApprovedClosedTransitionsDigest.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.BaselineClosedTransitionsDigest.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.BaseSha.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.BranchName.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.DefaultBranchOid.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.HasChanges.get -> bool
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.PlanDigest.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.ReconciliationManifest.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.Repository.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.RepositoryInputDigest.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.RequiredClosedTransitions.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.GitHub.RoadmapClosedItemTransition!>!
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.RunId.get -> long
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.SnapshotChanged.get -> bool
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.SnapshotDigest.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationPlan.Write(string! path) -> void
+PandaBear.Repositories.GitHub.RoadmapAutomationResultSeal
+PandaBear.Repositories.GitHub.RoadmapAutomationResultSeal.ArtifactDigest.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationResultSeal.BaseSha.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationResultSeal.HasChanges.get -> bool
+PandaBear.Repositories.GitHub.RoadmapAutomationResultSeal.PathCount.get -> int
+PandaBear.Repositories.GitHub.RoadmapAutomationResultSeal.PlanDigest.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationResultSeal.ResultDigest.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationResultSeal.SealDigest.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationResultSeal.SnapshotDigest.get -> string!
+PandaBear.Repositories.GitHub.RoadmapAutomationService
+PandaBear.Repositories.GitHub.RoadmapAutomationService.ApplyPlan(string! expectedPlanDigest, string! expectedRepository, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+PandaBear.Repositories.GitHub.RoadmapAutomationService.CreatePlan(long runId, string! expectedRepository, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Repositories.GitHub.RoadmapAutomationPlan!>!
+PandaBear.Repositories.GitHub.RoadmapAutomationService.PreviewResult(string! expectedPlanDigest, string! expectedArtifactDigest, string! expectedResultDigest, string! expectedRepository, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview!>!
+PandaBear.Repositories.GitHub.RoadmapAutomationService.PublishResult(string! expectedPlanDigest, string! expectedArtifactDigest, string! expectedResultDigest, string! expectedRepository, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Repositories.GitHub.RoadmapGitHubPublication!>!
+PandaBear.Repositories.GitHub.RoadmapAutomationService.RoadmapAutomationService(string! rootPath, PandaBear.Repositories.GitHub.GitHubConnection! connection, PandaBear.Repositories.RoadmapGitRepository? gitRepository = null) -> void
+PandaBear.Repositories.GitHub.RoadmapAutomationService.SealResult(string! expectedPlanDigest, string! expectedArtifactDigest, string! expectedRepository, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Repositories.GitHub.RoadmapAutomationResultSeal!>!
+PandaBear.Repositories.GitHub.RoadmapAutomationService.ValidatePlan(string! expectedPlanDigest, string! expectedRepository, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+PandaBear.Repositories.GitHub.RoadmapAutomationService.VerifyResult(string! expectedPlanDigest, string! expectedArtifactDigest, string! expectedResultDigest, string! expectedRepository, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+PandaBear.Repositories.GitHub.RoadmapClosedItemTransition
+PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.<Clone>$() -> PandaBear.Repositories.GitHub.RoadmapClosedItemTransition!
+PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.CloseReason.get -> string!
+PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.CloseReason.init -> void
+PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.Deconstruct(out int Issue, out string! RoadmapItem, out string! CloseReason) -> void
+PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.Equals(PandaBear.Repositories.GitHub.RoadmapClosedItemTransition? other) -> bool
+PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.Issue.get -> int
+PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.Issue.init -> void
+PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.RoadmapClosedItemTransition(int Issue, string! RoadmapItem, string! CloseReason = "COMPLETED") -> void
+PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.RoadmapItem.get -> string!
+PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.RoadmapItem.init -> void
+PandaBear.Repositories.GitHub.RoadmapCloseReason
+PandaBear.Repositories.GitHub.RoadmapGitHubPublication
+PandaBear.Repositories.GitHub.RoadmapGitHubPublication.<Clone>$() -> PandaBear.Repositories.GitHub.RoadmapGitHubPublication!
+PandaBear.Repositories.GitHub.RoadmapGitHubPublication.CommitSha.get -> string!
+PandaBear.Repositories.GitHub.RoadmapGitHubPublication.CommitSha.init -> void
+PandaBear.Repositories.GitHub.RoadmapGitHubPublication.Deconstruct(out System.Uri! PullRequestUrl, out string! CommitSha) -> void
+PandaBear.Repositories.GitHub.RoadmapGitHubPublication.Equals(PandaBear.Repositories.GitHub.RoadmapGitHubPublication? other) -> bool
+PandaBear.Repositories.GitHub.RoadmapGitHubPublication.PullRequestUrl.get -> System.Uri!
+PandaBear.Repositories.GitHub.RoadmapGitHubPublication.PullRequestUrl.init -> void
+PandaBear.Repositories.GitHub.RoadmapGitHubPublication.RoadmapGitHubPublication(System.Uri! PullRequestUrl, string! CommitSha) -> void
+PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview
+PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.<Clone>$() -> PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview!
+PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.BaseSha.get -> string!
+PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.BaseSha.init -> void
+PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.BranchName.get -> string!
+PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.BranchName.init -> void
+PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.Deconstruct(out string! Repository, out string! BaseSha, out string! BranchName, out System.Collections.Generic.IReadOnlyList<string!>! Paths) -> void
+PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.Equals(PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview? other) -> bool
+PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.Paths.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.Paths.init -> void
+PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.Repository.get -> string!
+PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.Repository.init -> void
+PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.RoadmapGitHubPublicationPreview(string! Repository, string! BaseSha, string! BranchName, System.Collections.Generic.IReadOnlyList<string!>! Paths) -> void
+static PandaBear.Repositories.GitHub.DependencySnapshotOptions.operator !=(PandaBear.Repositories.GitHub.DependencySnapshotOptions? left, PandaBear.Repositories.GitHub.DependencySnapshotOptions? right) -> bool
+static PandaBear.Repositories.GitHub.DependencySnapshotOptions.operator ==(PandaBear.Repositories.GitHub.DependencySnapshotOptions? left, PandaBear.Repositories.GitHub.DependencySnapshotOptions? right) -> bool
+static PandaBear.Repositories.GitHub.DependencySubmitOptions.operator !=(PandaBear.Repositories.GitHub.DependencySubmitOptions? left, PandaBear.Repositories.GitHub.DependencySubmitOptions? right) -> bool
+static PandaBear.Repositories.GitHub.DependencySubmitOptions.operator ==(PandaBear.Repositories.GitHub.DependencySubmitOptions? left, PandaBear.Repositories.GitHub.DependencySubmitOptions? right) -> bool
+static PandaBear.Repositories.GitHub.GitHubDependencySnapshot.TryWrite(PandaBear.Repositories.GitHub.DependencySnapshotOptions! options, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+static PandaBear.Repositories.GitHub.GitHubDependencySubmission.Run(PandaBear.Repositories.GitHub.DependencySubmitOptions! options, PandaBear.Repositories.GitHub.GitHubConnection! connection, System.IO.TextWriter! output, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+static PandaBear.Repositories.GitHub.GitHubIssueSnapshotDigest.Compute(System.Collections.Generic.IEnumerable<PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue!>! issues) -> string!
+static PandaBear.Repositories.GitHub.GitHubIssueSnapshotDigest.ComputeForOpenAndRequiredIssues(System.Collections.Generic.IEnumerable<PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue!>! issues, System.Collections.Generic.IEnumerable<int>! requiredIssueNumbers, string! repository) -> string!
+static PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.operator !=(PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue? left, PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue? right) -> bool
+static PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue.operator ==(PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue? left, PandaBear.Repositories.GitHub.GitHubRoadmapReconcileIssue? right) -> bool
+static PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.operator !=(PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation? left, PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation? right) -> bool
+static PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation.operator ==(PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation? left, PandaBear.Repositories.GitHub.GitHubRoadmapReconcileRelation? right) -> bool
+static PandaBear.Repositories.GitHub.GitHubSubissueLinker.Run(string! repository, int parent, int child, bool force, PandaBear.Repositories.GitHub.GitHubConnection! connection, System.IO.TextWriter! output, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+static PandaBear.Repositories.GitHub.GitHubSyncResult.operator !=(PandaBear.Repositories.GitHub.GitHubSyncResult? left, PandaBear.Repositories.GitHub.GitHubSyncResult? right) -> bool
+static PandaBear.Repositories.GitHub.GitHubSyncResult.operator ==(PandaBear.Repositories.GitHub.GitHubSyncResult? left, PandaBear.Repositories.GitHub.GitHubSyncResult? right) -> bool
+static PandaBear.Repositories.GitHub.RoadmapAutomationPlan.Create(string! repository, long runId, string! baseSha, string! defaultBranchOid, string! snapshotDigest, string! repositoryInputDigest, string! reconciliationManifest, System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.GitHub.RoadmapClosedItemTransition!>! baselineClosedTransitions, System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.GitHub.RoadmapClosedItemTransition!>! requiredClosedTransitions, bool snapshotChanged) -> PandaBear.Repositories.GitHub.RoadmapAutomationPlan!
+static PandaBear.Repositories.GitHub.RoadmapAutomationPlan.Load(string! path, string! expectedPlanDigest) -> PandaBear.Repositories.GitHub.RoadmapAutomationPlan!
+static PandaBear.Repositories.GitHub.RoadmapAutomationResultSeal.Load(string! path, string! expectedPlanDigest, string! expectedArtifactDigest, string! expectedResultDigest) -> PandaBear.Repositories.GitHub.RoadmapAutomationResultSeal!
+static PandaBear.Repositories.GitHub.RoadmapAutomationService.GetPlanPath(string! rootPath) -> string!
+static PandaBear.Repositories.GitHub.RoadmapAutomationService.GetResultSealPath(string! rootPath) -> string!
+static PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.operator !=(PandaBear.Repositories.GitHub.RoadmapClosedItemTransition? left, PandaBear.Repositories.GitHub.RoadmapClosedItemTransition? right) -> bool
+static PandaBear.Repositories.GitHub.RoadmapClosedItemTransition.operator ==(PandaBear.Repositories.GitHub.RoadmapClosedItemTransition? left, PandaBear.Repositories.GitHub.RoadmapClosedItemTransition? right) -> bool
+static PandaBear.Repositories.GitHub.RoadmapCloseReason.FromStateReason(string? stateReason) -> string!
+static PandaBear.Repositories.GitHub.RoadmapCloseReason.IsValid(string? value) -> bool
+static PandaBear.Repositories.GitHub.RoadmapGitHubPublication.operator !=(PandaBear.Repositories.GitHub.RoadmapGitHubPublication? left, PandaBear.Repositories.GitHub.RoadmapGitHubPublication? right) -> bool
+static PandaBear.Repositories.GitHub.RoadmapGitHubPublication.operator ==(PandaBear.Repositories.GitHub.RoadmapGitHubPublication? left, PandaBear.Repositories.GitHub.RoadmapGitHubPublication? right) -> bool
+static PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.operator !=(PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview? left, PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview? right) -> bool
+static PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview.operator ==(PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview? left, PandaBear.Repositories.GitHub.RoadmapGitHubPublicationPreview? right) -> bool

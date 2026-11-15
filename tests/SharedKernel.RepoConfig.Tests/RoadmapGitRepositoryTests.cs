@@ -76,7 +76,7 @@ public sealed class RoadmapGitRepositoryTests
         // Arrange
         var repository = new RoadmapGitRepository((_, _) => Task.FromResult(new RoadmapGitCommandResult(
             1,
-            [],
+            Array.Empty<byte>(),
             "diagnostic-credential-marker",
             OutputLimitExceeded: false,
             ErrorLimitExceeded: false)));

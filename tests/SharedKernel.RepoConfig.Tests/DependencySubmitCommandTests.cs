@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.Net;
 using System.Text;
-using Microsoft.Extensions.Time.Testing;
 
 namespace PandaBear.RepoConfig.Tests;
 
@@ -325,27 +324,6 @@ public sealed class DependencySubmitCommandTests
         // Assert
         exitCode.ShouldBe(1);
         error.ToString().ShouldBe("sharedkernel-repo: GitHub dependency submission request failed." + Environment.NewLine);
-    }
-
-    [Fact]
-    public async Task Submit_times_out_a_request_that_github_does_not_answer()
-    {
-        // Arrange
-        using var workspace = new TemporaryRepoConfigWorkspace();
-        workspace.WriteFile(SnapshotPath, Snapshot);
-        var timeProvider = new FakeTimeProvider();
-        using var handler = new TimingOutHttpMessageHandler(timeProvider);
-        using var httpClient = new HttpClient(handler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        var options = new DependencySubmitOptions(workspace.RootPath, SnapshotPath, "owner/repository", Force: true);
-
-        // Act
-        var action = (Func<Task>)(async () => await DependencySubmitCommand.Run(options, httpClient, timeProvider, output, TestContext.Current.CancellationToken));
-        var exception = await action.ShouldThrow<TimeoutException>();
-
-        // Assert
-        exception.Message.ShouldBe("GitHub dependency submission timed out after 30 seconds.");
-        output.ToString().ShouldBe(string.Empty);
     }
 
     [Fact]

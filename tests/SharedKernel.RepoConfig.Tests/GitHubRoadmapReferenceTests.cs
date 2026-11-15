@@ -24,10 +24,11 @@ public sealed class GitHubRoadmapReferenceTests
         var project = RoadmapProject.Load(workspace.RootPath);
         using var handler = new TestHttpMessageHandler();
         using var client = new HttpClient(handler);
+        using var clientConnection = new GitHubConnection(client);
 
         // Act
         var required = project.GetGitHubIssueNumbers();
-        var result = await new GitHubRoadmapSyncer(project, client).Apply(TestContext.Current.CancellationToken);
+        var result = await new GitHubRoadmapSyncer(project, clientConnection).Apply(TestContext.Current.CancellationToken);
 
         // Assert
         required.ShouldBeEmpty();
@@ -55,7 +56,7 @@ public sealed class GitHubRoadmapReferenceTests
         workspace.WriteFile("roadmap/order.json", order);
 
         // Act
-        var issues = RepoConfigVerifier.Verify(workspace.RootPath);
+        var issues = RoadmapVerifier.Verify(workspace.RootPath);
 
         // Assert
         issues.ShouldBeEmpty();
@@ -137,7 +138,7 @@ public sealed class GitHubRoadmapReferenceTests
             blocker.ShouldBe("RM-018");
         }
 
-        RepoConfigVerifier.Verify(workspace.RootPath).ShouldBeEmpty();
+        RoadmapVerifier.Verify(workspace.RootPath).ShouldBeEmpty();
     }
 
     [Theory]
@@ -184,7 +185,7 @@ public sealed class GitHubRoadmapReferenceTests
             order.ShouldBe(11);
             var previous = github["previousLocations"]![0]!["issue"]!.GetValue<int>();
             previous.ShouldBe(100);
-            RepoConfigVerifier.Verify(workspace.RootPath).ShouldBeEmpty();
+            RoadmapVerifier.Verify(workspace.RootPath).ShouldBeEmpty();
             var state = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
             using var repeatHandler = new TestHttpMessageHandler();
             repeatHandler.Enqueue(GitHubRoadmapSnapshotTestOperations.CreateOpenIssuesResponse([]));
@@ -225,45 +226,6 @@ public sealed class GitHubRoadmapReferenceTests
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task Reconcile_rejects_ambiguous_identity_before_writing(bool nodeCollision)
-    {
-        // Arrange
-        using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var initialization = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        initialization.ShouldBe(0);
-        GitHubRoadmapReconcileTestOperations.ConfigureEmptySeed(workspace);
-        GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
-        var original = workspace.ReadFile("roadmap/items/RM-018-github-100.json");
-        var second = original.Replace("RM-018", "RM-019", StringComparison.Ordinal)
-            .Replace("\"order\": 11", "\"order\": 12", StringComparison.Ordinal)
-            .Replace("\"issue\": 100", "\"issue\": 101", StringComparison.Ordinal);
-        workspace.WriteFile("roadmap/items/RM-019-github-101.json", second);
-        workspace.WriteFile("roadmap/order.json", workspace.ReadFile("roadmap/order.json").Replace("\"RM-018\"", "\"RM-018\", \"RM-019\"", StringComparison.Ordinal));
-        var project = RoadmapProject.Load(workspace.RootPath);
-        var snapshot = new GitHubRoadmapReconcileSnapshot(null, [])
-        {
-            ReferenceResolutions = new Dictionary<string, GitHubIssueReferenceResolution>(StringComparer.Ordinal)
-            {
-                ["RM-018"] = new("other/library", 18, "I_first", null, null),
-                ["RM-019"] = new("other/library", nodeCollision ? 19 : 18, nodeCollision ? "I_first" : "I_second", null, null)
-            }
-        };
-        Action action = () => GitHubRoadmapReferencePlan.Create(project, snapshot);
-
-        // Act
-        var exception = action.ShouldThrow<InvalidOperationException>();
-
-        // Assert
-        exception.Message.ShouldContain("multiple roadmap", StringComparison.Ordinal);
-        workspace.ReadFile("roadmap/items/RM-018-github-100.json").ShouldBe(original);
-        workspace.ReadFile("roadmap/items/RM-019-github-101.json").ShouldBe(second);
-    }
-
-    [Theory]
     [InlineData(System.Net.HttpStatusCode.NotFound, false)]
     [InlineData(System.Net.HttpStatusCode.Gone, false)]
     [InlineData(System.Net.HttpStatusCode.MovedPermanently, false)]
@@ -299,11 +261,12 @@ public sealed class GitHubRoadmapReferenceTests
         handler.EnqueueJson(System.Net.HttpStatusCode.OK, """{"number":101,"node_id":"I_healthy","html_url":"https://github.com/owner/repository/issues/101","labels":[]}""");
         handler.EnqueueJson(System.Net.HttpStatusCode.OK, "{}");
         using var client = new HttpClient(handler);
+        using var clientConnection = new GitHubConnection(client);
         var project = RoadmapProject.Load(workspace.RootPath);
         var state = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
 
         // Act
-        var result = await new GitHubRoadmapSyncer(project, client).Apply(TestContext.Current.CancellationToken);
+        var result = await new GitHubRoadmapSyncer(project, clientConnection).Apply(TestContext.Current.CancellationToken);
 
         // Assert
         result.Messages.ShouldContain(message => message.Contains("unresolved: RM-018", StringComparison.Ordinal));
@@ -342,10 +305,11 @@ public sealed class GitHubRoadmapReferenceTests
         }
 
         using var client = new HttpClient(handler);
+        using var clientConnection = new GitHubConnection(client);
         var project = RoadmapProject.Load(workspace.RootPath);
 
         // Act
-        var result = await new GitHubRoadmapSyncer(project, client).Apply(TestContext.Current.CancellationToken);
+        var result = await new GitHubRoadmapSyncer(project, clientConnection).Apply(TestContext.Current.CancellationToken);
 
         // Assert
         if (transferred)
@@ -420,7 +384,7 @@ public sealed class GitHubRoadmapReferenceTests
             blocked.ShouldBe("RM-019");
             var order = remote["order"]!.GetValue<int>();
             order.ShouldBe(11);
-            RepoConfigVerifier.Verify(workspace.RootPath).ShouldBeEmpty();
+            RoadmapVerifier.Verify(workspace.RootPath).ShouldBeEmpty();
         }
     }
 
@@ -503,5 +467,4 @@ public sealed class GitHubRoadmapReferenceTests
         var after = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
         after.ShouldBe(state);
     }
-
 }

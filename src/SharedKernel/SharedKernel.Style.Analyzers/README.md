@@ -122,7 +122,7 @@ source. Cancellation and asynchronous execution do not impose a size limit. A pr
 `FileInfo.Length` or content-length check alone does not prove the bytes consumed remain bounded.
 Choose bytes versus characters, the maximum accepted size, rejection behavior, cancellation,
 and stream/temp-file ownership explicitly. The existing repository-tool
-[`BoundedHttpContentReader`](../../../tools/SharedKernel.RepoConfig.Tool/BoundedHttpContentReader.cs)
+[`BoundedHttpContentReader`](../SharedKernel.Repositories.GitHub/BoundedHttpContentReader.cs)
 illustrates checking the accumulated byte count while reading; it is not a new public API.
 
 ```ini

@@ -230,6 +230,12 @@
   <Project Path="tools/SharedKernel.RepoConfig.Tool/SharedKernel.RepoConfig.Tool.csproj" />
   <Project Path="tests/SharedKernel.Documentation.Tests/SharedKernel.Documentation.Tests.csproj" />
   <Project Path="tests/SharedKernel.RepoConfig.Tests/SharedKernel.RepoConfig.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Repositories/SharedKernel.Repositories.csproj" />
+  <Project Path="tests/SharedKernel.Repositories.Tests/SharedKernel.Repositories.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Repositories.GitHub/SharedKernel.Repositories.GitHub.csproj" />
+  <Project Path="tests/SharedKernel.Repositories.GitHub.Tests/SharedKernel.Repositories.GitHub.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.DevContainers/SharedKernel.DevContainers.csproj" />
+  <Project Path="tests/SharedKernel.DevContainers.Tests/SharedKernel.DevContainers.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Tabular/SharedKernel.Tabular.csproj" />
   <Project Path="tests/SharedKernel.Tabular.Tests/SharedKernel.Tabular.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Packages/SharedKernel.Packages.csproj" />

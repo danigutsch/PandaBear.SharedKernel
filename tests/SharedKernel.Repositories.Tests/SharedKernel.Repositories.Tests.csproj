@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>PandaBear.Repositories.Tests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="PandaBear.Repositories" />
+        <Using Include="PandaBear.RepoConfig.Tests" />
+        <Using Include="PandaBear.Testing" />
+        <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="PandaBear.Testing.Http" />
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+        <PackageReference Include="coverlet.MTP">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="xunit.v3.mtp-v2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Repositories\SharedKernel.Repositories.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Http\SharedKernel.Testing.Http.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Xunit\SharedKernel.Testing.Xunit.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
+    </ItemGroup>
+
+    <!-- Fixtures shared with the command-line tests of sharedkernel-repo. -->
+    <ItemGroup>
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\TemporaryRepoConfigWorkspace.cs" Link="Shared\TemporaryRepoConfigWorkspace.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\TemporaryRepositoryDirectory.cs" Link="Shared\TemporaryRepositoryDirectory.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\TestTraits.cs" Link="Shared\TestTraits.cs" />
+    </ItemGroup>
+
+</Project>

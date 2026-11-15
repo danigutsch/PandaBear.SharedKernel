@@ -17,11 +17,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.ConfigurationFiles\SharedKernel.ConfigurationFiles.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.DevContainers\SharedKernel.DevContainers.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.GitHub\SharedKernel.GitHub.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.IO\SharedKernel.IO.csproj" />
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Processes\SharedKernel.Processes.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Repositories.GitHub\SharedKernel.Repositories.GitHub.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Repositories\SharedKernel.Repositories.csproj" />
     </ItemGroup>
 
     <ItemGroup>

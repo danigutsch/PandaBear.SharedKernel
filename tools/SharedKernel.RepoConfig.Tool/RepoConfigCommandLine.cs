@@ -1,6 +1,9 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Globalization;
+using PandaBear.DevContainers;
+using PandaBear.Repositories;
+using PandaBear.Repositories.GitHub;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -121,7 +124,7 @@ internal static class RepoConfigCommandLine
 
     private static Command CreateSetCommand(RepoConfigToolEnvironment environment, Option<string> root)
     {
-        string[] keys = [RepoConfigSetter.GitHubRepositoryKey];
+        string[] keys = [RoadmapConfigSetter.GitHubRepositoryKey];
         Argument<string> key = new("key")
         {
             Description = $"Configuration key: {string.Join(", ", keys)}.",
@@ -217,13 +220,13 @@ internal static class RepoConfigCommandLine
     {
         Command verify = new("verify", "Report managed baseline files that are missing, outdated, edited, or unmanaged.") { root };
         SetGuardedAction(verify, (parseResult, output, error, ct) =>
-            BaselineCommand.Verify(ResolveRoot(parseResult, root, environment), output, error, ct));
+            RepositoryBaseline.Verify(ResolveRoot(parseResult, root, environment), output, error, ct));
         Option<bool> force = new("--force")
         {
             Description = "Write the files instead of previewing them. Never replaces an unmanaged or edited file unless its entry sets overwriteExisting."
         };
         Command apply = new("apply", "Create and update the managed baseline files from the consumer configuration. Previews unless --force is given.") { force, root };
-        SetGuardedAction(apply, (parseResult, output, error, ct) => BaselineCommand.Apply(
+        SetGuardedAction(apply, (parseResult, output, error, ct) => RepositoryBaseline.Apply(
             ResolveRoot(parseResult, root, environment), parseResult.GetValue(force), output, error, ct));
         return new Command("baseline", "Verify or apply the repository baseline files: attributes, editor and ignore settings, README, templates, and wrappers.")
         {
@@ -244,8 +247,8 @@ internal static class RepoConfigCommandLine
         };
         Option<string> language = new("--language")
         {
-            Description = "Language that selects feature content: " + string.Join(", ", RepoLanguage.All.Select(static l => l.Id)) + ".",
-            DefaultValueFactory = static _ => RepoLanguage.None.Id
+            Description = "Language that selects feature content: " + string.Join(", ", RepositoryLanguage.All.Select(static l => l.Id)) + ".",
+            DefaultValueFactory = static _ => RepositoryLanguage.None.Id
         };
         Option<string?> sdkVersion = new("--sdk-version")
         {
@@ -253,7 +256,7 @@ internal static class RepoConfigCommandLine
         };
         Option<string[]> feature = new("--feature")
         {
-            Description = "Feature to write; repeat the option to select several: " + string.Join(", ", RepoFeature.All.Select(static f => f.Id)) + ". Defaults to every feature except signed-commits; the dotnet features need --language dotnet."
+            Description = "Feature to write; repeat the option to select several: " + string.Join(", ", RepositoryFeature.All.Select(static f => f.Id)) + ". Defaults to every feature except signed-commits; the dotnet features need --language dotnet."
         };
         Option<bool> force = new("--force")
         {
@@ -263,7 +266,7 @@ internal static class RepoConfigCommandLine
         {
             name, branch, language, sdkVersion, feature, force, root
         };
-        SetGuardedAction(command, (parseResult, output, error, ct) => NewCommand.Run(
+        SetGuardedAction(command, (parseResult, output, error, ct) => RepositoryScaffold.Run(
             ResolveRoot(parseResult, root, environment),
             parseResult.GetValue(name),
             parseResult.GetRequiredValue(branch),
@@ -292,7 +295,7 @@ internal static class RepoConfigCommandLine
         {
             repository, force, root
         };
-        SetGuardedAction(command, (parseResult, output, _, ct) => GitHubLabelSyncCommand.Run(
+        SetGuardedAction(command, (parseResult, output, _, ct) => RepoConfigToolApplication.SyncLabels(
             ResolveRoot(parseResult, root, environment),
             parseResult.GetRequiredValue(repository),
             parseResult.GetValue(force),
@@ -327,7 +330,7 @@ internal static class RepoConfigCommandLine
         {
             repository, parent, child, force
         };
-        SetGuardedAction(command, (parseResult, output, _, ct) => GitHubSubissueCommand.Run(
+        SetGuardedAction(command, (parseResult, output, _, ct) => RepoConfigToolApplication.LinkSubissue(
             parseResult.GetRequiredValue(repository), parseResult.GetRequiredValue(parent), parseResult.GetRequiredValue(child),
             parseResult.GetValue(force), environment.HttpClient, output, ct));
         return command;
@@ -352,10 +355,11 @@ internal static class RepoConfigCommandLine
         Func<RoadmapAutomationService, TextWriter, CancellationToken, Task<int>> step)
     {
         Command command = new(name, description) { root };
-        SetGuardedAction(command, (parseResult, output, _, ct) => step(
-            CreateAutomationService(parseResult, root, environment),
-            output,
-            ct));
+        SetGuardedAction(command, async (parseResult, output, _, ct) =>
+        {
+            using var connection = GitHubConnections.FromGitHubToken(environment.HttpClient, "roadmap automation");
+            return await step(CreateAutomationService(parseResult, root, environment, connection), output, ct).ConfigureAwait(false);
+        });
         return command;
     }
 
@@ -366,19 +370,24 @@ internal static class RepoConfigCommandLine
             Description = "Publish the pull request instead of previewing it. Validation still applies."
         };
         Command command = new("publish-result", "Publish the sealed result as a draft pull request. Previews unless --force is given.") { force, root };
-        SetGuardedAction(command, (parseResult, output, _, ct) => RepoConfigToolApplication.PublishAutomationResult(
-            CreateAutomationService(parseResult, root, environment),
-            parseResult.GetValue(force),
-            output,
-            ct));
+        SetGuardedAction(command, async (parseResult, output, _, ct) =>
+        {
+            using var connection = GitHubConnections.FromGitHubToken(environment.HttpClient, "roadmap automation");
+            return await RepoConfigToolApplication.PublishAutomationResult(
+                CreateAutomationService(parseResult, root, environment, connection),
+                parseResult.GetValue(force),
+                output,
+                ct).ConfigureAwait(false);
+        });
         return command;
     }
 
     private static RoadmapAutomationService CreateAutomationService(
         ParseResult parseResult,
         Option<string> root,
-        RepoConfigToolEnvironment environment) =>
-        new(ResolveRoot(parseResult, root, environment), environment.HttpClient, environment.GitRepository);
+        RepoConfigToolEnvironment environment,
+        GitHubConnection connection) =>
+        new(ResolveRoot(parseResult, root, environment), connection, environment.GitRepository);
 
     private static Command CreateVerifyTextEncodingCommand(RepoConfigToolEnvironment environment, Option<string> root)
     {
@@ -473,7 +482,7 @@ internal static class RepoConfigCommandLine
         };
         verbosity.AcceptOnlyFromAmong(VerbosityLevels);
         Command command = new("verify-podman-dns", "Check rootless Podman aardvark-dns state without changing it.") { verbosity };
-        SetGuardedAction(command, (parseResult, output, error, ct) => PodmanDnsPreflightCommand.Run(
+        SetGuardedAction(command, (parseResult, output, error, ct) => PodmanDnsPreflight.Run(
             environment.PodmanHost ?? PodmanDnsHost.Current(),
             parseResult.GetRequiredValue(verbosity) is "q" or "quiet",
             output,
@@ -513,7 +522,7 @@ internal static class RepoConfigCommandLine
         {
             root, sha, reference, job, correlator, destination
         };
-        SetGuardedAction(snapshot, (parseResult, output, error, cancellationToken) => DependencySnapshotCommand.Run(
+        SetGuardedAction(snapshot, (parseResult, output, error, cancellationToken) => RepoConfigToolApplication.WriteDependencySnapshot(
             new DependencySnapshotOptions(
                 ResolveRoot(parseResult, root, environment),
                 parseResult.GetRequiredValue(sha),
@@ -550,7 +559,7 @@ internal static class RepoConfigCommandLine
         {
             snapshot, repository, force, root
         };
-        SetGuardedAction(command, (parseResult, output, _, ct) => DependencySubmitCommand.Run(
+        SetGuardedAction(command, (parseResult, output, _, ct) => RepoConfigToolApplication.SubmitDependencySnapshot(
             new DependencySubmitOptions(
                 ResolveRoot(parseResult, root, environment),
                 parseResult.GetRequiredValue(snapshot),
@@ -599,7 +608,7 @@ internal static class RepoConfigCommandLine
     private static Command CreateSecurityCommand(RepoConfigToolEnvironment environment, Option<string> root)
     {
         Command baseline = new("baseline", "Verify repository security document contracts.") { root };
-        SetGuardedAction(baseline, (parseResult, output, error, ct) => SecurityCommand.Run(
+        SetGuardedAction(baseline, (parseResult, output, error, ct) => RepositorySecurity.Run(
             ResolveRoot(parseResult, root, environment), null, output, error, ct));
         Option<string> destination = new("--output")
         {
@@ -619,7 +628,7 @@ internal static class RepoConfigCommandLine
             },
         };
         Command scan = new("scan", "Verify the baseline and scan current source with the pinned Gitleaks executable.") { root, destination };
-        SetGuardedAction(scan, (parseResult, output, error, ct) => SecurityCommand.Run(
+        SetGuardedAction(scan, (parseResult, output, error, ct) => RepositorySecurity.Run(
             ResolveRoot(parseResult, root, environment), parseResult.GetRequiredValue(destination), output, error, ct));
         return new Command("security", "Verify security document contracts and scan current source.") { baseline, scan };
     }
@@ -640,7 +649,7 @@ internal static class RepoConfigCommandLine
         });
         Option<string> logDirectory = new("--log-directory")
         {
-            Description = $"Directory that receives the logs and metadata.txt. Relative to the root. Defaults to {VerifyDevcontainerCommand.DefaultLogDirectory}.",
+            Description = $"Directory that receives the logs and metadata.txt. Relative to the root. Defaults to {DevcontainerVerification.DefaultLogDirectory}.",
             HelpName = "directory",
             CustomParser = result =>
             {
@@ -660,7 +669,7 @@ internal static class RepoConfigCommandLine
         };
         var cli = CreatePathOption(
             "--devcontainer-cli",
-            $"Dev Container CLI to run. Relative to the root. Without it, the pinned CLI is bootstrapped under {VerifyDevcontainerCommand.ToolsDirectory} on Linux x64.");
+            $"Dev Container CLI to run. Relative to the root. Without it, the pinned CLI is bootstrapped under {DevcontainerVerification.ToolsDirectory} on Linux x64.");
         Command command = new("verify-devcontainer", "Start the repository dev container, run commands inside it, and remove it.")
         {
             commands, logDirectory, keepContainer, cli, root
@@ -669,11 +678,11 @@ internal static class RepoConfigCommandLine
         {
             var rootPath = ResolveRoot(parseResult, root, environment);
             var cliPath = parseResult.GetValue(cli);
-            return VerifyDevcontainerCommand.Run(
-                new VerifyDevcontainerOptions(
+            return DevcontainerVerification.Run(
+                new DevcontainerVerificationOptions(
                     rootPath,
                     parseResult.GetValue(commands) ?? [],
-                    Path.GetFullPath(parseResult.GetValue(logDirectory) ?? VerifyDevcontainerCommand.DefaultLogDirectory, rootPath),
+                    Path.GetFullPath(parseResult.GetValue(logDirectory) ?? DevcontainerVerification.DefaultLogDirectory, rootPath),
                     parseResult.GetValue(keepContainer),
                     cliPath is null ? null : Path.GetFullPath(cliPath, rootPath)),
                 environment.DevcontainerHost ?? DevcontainerHost.Current(),

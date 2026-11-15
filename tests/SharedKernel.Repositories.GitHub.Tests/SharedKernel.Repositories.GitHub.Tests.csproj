@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>PandaBear.Repositories.GitHub.Tests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="PandaBear.Repositories" />
+        <Using Include="PandaBear.Repositories.GitHub" />
+        <Using Include="PandaBear.RepoConfig.Tests" />
+        <Using Include="PandaBear.Testing" />
+        <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="PandaBear.Testing.Http" />
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+        <PackageReference Include="coverlet.MTP">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="xunit.v3.mtp-v2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Repositories.GitHub\SharedKernel.Repositories.GitHub.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Http\SharedKernel.Testing.Http.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Xunit\SharedKernel.Testing.Xunit.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
+    </ItemGroup>
+
+    <!-- Fixtures shared with the command-line tests of sharedkernel-repo. -->
+    <ItemGroup>
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\GitHubRoadmapIntakeTestOperations.cs" Link="Shared\GitHubRoadmapIntakeTestOperations.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\GitHubRoadmapReconcileTestOperations.cs" Link="Shared\GitHubRoadmapReconcileTestOperations.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\GitHubRoadmapSnapshotTestOperations.cs" Link="Shared\GitHubRoadmapSnapshotTestOperations.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\GitHubSyncTestResponseFactory.cs" Link="Shared\GitHubSyncTestResponseFactory.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\RoadmapAutomationTestGit.cs" Link="Shared\RoadmapAutomationTestGit.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\RoadmapAutomationTestPlan.cs" Link="Shared\RoadmapAutomationTestPlan.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\RoadmapAutomationTestSetup.cs" Link="Shared\RoadmapAutomationTestSetup.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\RoadmapConfigTestOperations.cs" Link="Shared\RoadmapConfigTestOperations.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\RoadmapGitHubPublicationTestOperations.cs" Link="Shared\RoadmapGitHubPublicationTestOperations.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\RoadmapGitStatusTestData.cs" Link="Shared\RoadmapGitStatusTestData.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\RoadmapTestContent.cs" Link="Shared\RoadmapTestContent.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\TemporaryRepoConfigWorkspace.cs" Link="Shared\TemporaryRepoConfigWorkspace.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\TemporaryRepositoryDirectory.cs" Link="Shared\TemporaryRepositoryDirectory.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\TestTraits.cs" Link="Shared\TestTraits.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\TimeAdvancingHttpMessageHandler.cs" Link="Shared\TimeAdvancingHttpMessageHandler.cs" />
+        <Compile Include="..\SharedKernel.RepoConfig.Tests\TimingOutHttpMessageHandler.cs" Link="Shared\TimingOutHttpMessageHandler.cs" />
+    </ItemGroup>
+
+</Project>

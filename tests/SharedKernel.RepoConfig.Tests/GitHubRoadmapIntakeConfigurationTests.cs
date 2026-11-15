@@ -25,62 +25,11 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         workspace.WriteFile("roadmap/config.json", config);
 
         // Act
-        var issues = RepoConfigVerifier.Verify(workspace.RootPath);
+        var issues = RoadmapVerifier.Verify(workspace.RootPath);
         var messages = string.Join('\n', issues.Select(issue => issue.Message));
 
         // Assert
         messages.ShouldContain("itemIdPrefix may contain only ASCII letters, digits, underscores, and hyphens.", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public async Task GitHub_roadmap_reconciliation_load_rejects_an_impact_cap_below_one()
-    {
-        // Arrange
-        using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
-        actualResult.ShouldBe(0);
-        GitHubRoadmapIntakeTestOperations.Configure(
-            workspace,
-            """
-            {
-              "repository": "owner/repository",
-              "snapshotDigest": "0000000000000000000000000000000000000000000000000000000000000000",
-              "mechanicalPriorityOverride": {
-                "firstItemNumber": 18,
-                "reach": 1,
-                "impact": "1 plus direct open blockers, capped at impactCap.",
-                "impactCap": 0.5,
-                "confidence": 0.1,
-                "effort": { "type: epic": 8, "type: feature": 5, "type: enabler": 3, "type: docs": 2, "type: chore": 2, "default": 3 },
-                "order": "Existing reviewed orders remain first; imported work uses topological order, score descending, then canonical ID."
-              },
-              "blockerEdges": [],
-              "closedItemTransitions": [],
-              "directCanonicalPrimaries": [],
-              "childrenOfCanonicalPrimaries": [],
-              "unmappedStructuralRoots": [],
-              "needsHuman": [],
-              "integrity": {
-                "expectedIssueCount": 0,
-                "expectedDirectCanonicalPrimaryCount": 0,
-                "expectedChildrenOfCanonicalPrimaryCount": 0,
-                "expectedUnmappedStructuralRootCount": 0,
-                "expectedNeedsHumanCount": 0,
-                "expectedBlockerEdgeCount": 0,
-                "dispositionsAreDisjoint": true,
-                "dispositionsCoverSnapshot": true
-              }
-            }
-            """);
-        Action load = () => GitHubRoadmapReconciliation.Load(workspace.RootPath);
-
-        // Act
-        var exception = load.ShouldThrow<InvalidOperationException>();
-
-        // Assert
-        exception.Message.ShouldContain("GitHub reconciliation manifest contains invalid mechanical priority values.", StringComparison.Ordinal);
     }
 
     [Fact]

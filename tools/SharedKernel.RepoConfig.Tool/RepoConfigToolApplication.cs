@@ -2,6 +2,8 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using PandaBear.InputNormalization;
+using PandaBear.Repositories;
+using PandaBear.Repositories.GitHub;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -57,7 +59,7 @@ internal static class RepoConfigToolApplication
     /// <summary>Creates the missing repository roadmap structure and lists the paths it created.</summary>
     public static int Init(string rootPath, TextWriter output)
     {
-        var createdPaths = RepoConfigInitializer.Initialize(rootPath);
+        var createdPaths = RoadmapInitializer.Initialize(rootPath);
         if (createdPaths.Count == 0)
         {
             output.WriteLine("Repository roadmap structure is already initialized.");
@@ -76,7 +78,7 @@ internal static class RepoConfigToolApplication
     /// <summary>Verifies the repository configuration and returns 0 when it is valid, otherwise reports the issues and returns 1.</summary>
     public static int Verify(string rootPath, TextWriter output, TextWriter error)
     {
-        var issues = RepoConfigVerifier.Verify(rootPath);
+        var issues = RoadmapVerifier.Verify(rootPath);
         if (issues.Count == 0)
         {
             output.WriteLine("Repository config is valid.");
@@ -90,7 +92,7 @@ internal static class RepoConfigToolApplication
     /// <summary>Reports repository configuration drift and returns 0 when there is none, otherwise 1.</summary>
     public static int Diff(string rootPath, TextWriter output, TextWriter error)
     {
-        var issues = RepoConfigVerifier.Verify(rootPath);
+        var issues = RoadmapVerifier.Verify(rootPath);
         if (issues.Count == 0)
         {
             output.WriteLine("Repository config has no drift.");
@@ -104,7 +106,7 @@ internal static class RepoConfigToolApplication
     /// <summary>Sets one repository configuration value identified by <paramref name="key"/>.</summary>
     public static int Set(string rootPath, string key, string value, TextWriter output)
     {
-        RepoConfigSetter.Set(rootPath, key, value);
+        RoadmapConfigSetter.Set(rootPath, key, value);
         output.WriteLine($"Updated {ControlCharacters.Escape(key)}.");
         return 0;
     }
@@ -192,7 +194,8 @@ internal static class RepoConfigToolApplication
     /// <summary>Previews, or with <paramref name="force"/> applies, the sync of roadmap items to GitHub issues.</summary>
     public static async Task<int> SyncGitHub(string rootPath, bool force, HttpClient? httpClient, TextWriter output, CancellationToken ct)
     {
-        var syncer = new GitHubRoadmapSyncer(RoadmapProject.Load(rootPath), httpClient);
+        using var connection = GitHubConnections.FromEnvironment(httpClient, "sync");
+        var syncer = new GitHubRoadmapSyncer(RoadmapProject.Load(rootPath), connection);
         var result = force
             ? await syncer.Apply(ct).ConfigureAwait(false)
             : await syncer.Preview(ct).ConfigureAwait(false);
@@ -203,7 +206,8 @@ internal static class RepoConfigToolApplication
     /// <summary>Previews, or with <paramref name="force"/> applies, the reconciliation of roadmap items with their GitHub issues.</summary>
     public static async Task<int> ReconcileGitHub(string rootPath, bool force, HttpClient? httpClient, TextWriter output, CancellationToken ct)
     {
-        var reconciler = new GitHubRoadmapReconciler(RoadmapProject.Load(rootPath), httpClient);
+        using var connection = GitHubConnections.FromEnvironment(httpClient, "reconciliation");
+        var reconciler = new GitHubRoadmapReconciler(RoadmapProject.Load(rootPath), connection);
         var messages = force
             ? await reconciler.Apply(ct).ConfigureAwait(false)
             : await reconciler.Preview(ct).ConfigureAwait(false);
@@ -214,11 +218,50 @@ internal static class RepoConfigToolApplication
     /// <summary>Previews, or with <paramref name="force"/> applies, the import of GitHub issues into the roadmap.</summary>
     public static async Task<int> ImportGitHub(string rootPath, bool force, HttpClient? httpClient, TextWriter output, CancellationToken ct)
     {
-        var intake = new GitHubRoadmapIntake(RoadmapProject.Load(rootPath), httpClient);
+        using var connection = GitHubConnections.FromEnvironment(httpClient, "import");
+        var intake = new GitHubRoadmapIntake(RoadmapProject.Load(rootPath), connection);
         var messages = force
             ? await intake.Apply(ct).ConfigureAwait(false)
             : await intake.Preview(ct).ConfigureAwait(false);
         await WriteMessages(output, messages, ct).ConfigureAwait(false);
+        return 0;
+    }
+
+    /// <summary>Previews, or with <paramref name="force"/> writes, the configured labels of a GitHub repository.</summary>
+    public static async Task<int> SyncLabels(string rootPath, string repository, bool force, HttpClient? httpClient, TextWriter output, CancellationToken ct)
+    {
+        using var connection = GitHubConnections.FromEnvironment(httpClient, "label sync");
+        var store = new GitHubLabelStore(repository, connection);
+        await RepositoryLabelSync.Run(rootPath, store, force, output, ct).ConfigureAwait(false);
+        return 0;
+    }
+
+    /// <summary>Previews, or with <paramref name="force"/> creates and verifies, a sub-issue link.</summary>
+    public static async Task<int> LinkSubissue(string repository, int parent, int child, bool force, HttpClient? httpClient, TextWriter output, CancellationToken ct)
+    {
+        using var connection = GitHubConnections.FromEnvironment(httpClient, "subissue linking");
+        await GitHubSubissueLinker.Run(repository, parent, child, force, connection, output, ct).ConfigureAwait(false);
+        return 0;
+    }
+
+    /// <summary>Writes the dependency snapshot and returns 0, or reports why it cannot and returns 1.</summary>
+    public static async Task<int> WriteDependencySnapshot(DependencySnapshotOptions options, TextWriter output, TextWriter error, CancellationToken ct)
+    {
+        if (!await GitHubDependencySnapshot.TryWrite(options, ct).ConfigureAwait(false))
+        {
+            await error.WriteLineAsync("dependency snapshot: Invalid arguments, unsafe paths, incomplete committed dependency inputs, or dependency size limits exceeded.").ConfigureAwait(false);
+            return 1;
+        }
+
+        await output.WriteLineAsync("Dependency snapshot generated from committed lockfiles without package restore.").ConfigureAwait(false);
+        return 0;
+    }
+
+    /// <summary>Previews, or with <see cref="DependencySubmitOptions.Force"/> submits, a dependency snapshot.</summary>
+    public static async Task<int> SubmitDependencySnapshot(DependencySubmitOptions options, HttpClient? httpClient, TextWriter output, CancellationToken ct)
+    {
+        using var connection = GitHubConnections.FromEnvironment(httpClient, "dependency submission");
+        await GitHubDependencySubmission.Run(options, connection, output, ct).ConfigureAwait(false);
         return 0;
     }
 
@@ -299,10 +342,7 @@ internal static class RepoConfigToolApplication
     /// <exception cref="InvalidOperationException">The consumer configuration has no links section.</exception>
     public static async Task<int> VerifyLinks(string rootPath, IReadOnlyList<string> paths, TextWriter output, TextWriter error, CancellationToken ct)
     {
-        var configuration = await ConsumerConfigurationFile.Read(rootPath, ct).ConfigureAwait(false);
-        var links = configuration.Links
-            ?? throw new InvalidOperationException($"{ConsumerConfigurationFile.RelativePath} has no links section.");
-        var (fileCount, issues) = await LinkVerifier.Verify(rootPath, links, paths, ct).ConfigureAwait(false);
+        var (fileCount, issues) = await LinkVerifier.Verify(rootPath, paths, ct).ConfigureAwait(false);
         if (issues.Count == 0)
         {
             await output.WriteLineAsync(string.Create(CultureInfo.InvariantCulture, $"Link validation passed for {fileCount} documentation files.").AsMemory(), ct).ConfigureAwait(false);
@@ -320,10 +360,7 @@ internal static class RepoConfigToolApplication
     /// <exception cref="InvalidOperationException">The consumer configuration has no gherkin section.</exception>
     public static async Task<int> VerifyGherkin(string rootPath, IReadOnlyList<string> paths, TextWriter output, TextWriter error, CancellationToken ct)
     {
-        var configuration = await ConsumerConfigurationFile.Read(rootPath, ct).ConfigureAwait(false);
-        var gherkin = configuration.Gherkin
-            ?? throw new InvalidOperationException($"{ConsumerConfigurationFile.RelativePath} has no gherkin section.");
-        var issues = await GherkinVerifier.Verify(rootPath, gherkin, paths, ct).ConfigureAwait(false);
+        var issues = await GherkinVerifier.Verify(rootPath, paths, ct).ConfigureAwait(false);
         if (issues.Count == 0)
         {
             await output.WriteLineAsync("Repository Gherkin files are valid.".AsMemory(), ct).ConfigureAwait(false);
@@ -341,17 +378,14 @@ internal static class RepoConfigToolApplication
     /// <exception cref="InvalidOperationException">The consumer configuration has no licenseExceptions section.</exception>
     public static async Task<int> VerifyLicenseExceptions(string rootPath, string? githubOutput, TextWriter output, TextWriter error, CancellationToken ct)
     {
-        var configuration = await ConsumerConfigurationFile.Read(rootPath, ct).ConfigureAwait(false);
-        var licenseExceptions = configuration.LicenseExceptions
-            ?? throw new InvalidOperationException($"{ConsumerConfigurationFile.RelativePath} has no licenseExceptions section.");
-        var issues = await LicenseExceptionVerifier.Verify(rootPath, licenseExceptions, ct).ConfigureAwait(false);
+        var (issues, packageUrls) = await LicenseExceptionVerifier.Verify(rootPath, ct).ConfigureAwait(false);
         if (issues.Count > 0)
         {
             WriteIssues(error, "License exception verification failed:", issues);
             return 1;
         }
 
-        var packages = string.Join(',', licenseExceptions.Packages.Select(static package => $"pkg:nuget/{package.Key}@{package.Value}"));
+        var packages = string.Join(',', packageUrls);
         if (githubOutput is not null)
         {
             await File.AppendAllTextAsync(Path.GetFullPath(githubOutput, rootPath), "packages=" + packages + Environment.NewLine, ct).ConfigureAwait(false);
@@ -493,14 +527,14 @@ internal static class RepoConfigToolApplication
             ct).ConfigureAwait(false);
         await AppendWorkflowOutput(
             [
-                ("pull_request_url", publication.PullRequestUrl),
+                ("pull_request_url", publication.PullRequestUrl.OriginalString),
                 ("publication_commit", publication.CommitSha)
             ],
             ct).ConfigureAwait(false);
         await AppendWorkflowSummary(
             "Roadmap maintenance publication",
             [
-                ("Pull request", publication.PullRequestUrl),
+                ("Pull request", publication.PullRequestUrl.OriginalString),
                 ("Commit SHA", publication.CommitSha)
             ],
             ct).ConfigureAwait(false);
@@ -519,7 +553,7 @@ internal static class RepoConfigToolApplication
         }
     }
 
-    private static void WriteIssues(TextWriter error, string heading, IReadOnlyCollection<RepoConfigIssue> issues)
+    private static void WriteIssues(TextWriter error, string heading, IReadOnlyCollection<VerificationIssue> issues)
     {
         error.WriteLine(heading);
         foreach (var issue in issues)

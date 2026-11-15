@@ -288,7 +288,7 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
         var arguments = startInfo.ArgumentList.ToArray();
         if (string.Equals(startInfo.FileName, _systemProcessExecutable, StringComparison.Ordinal))
         {
-            return await PodmanDnsPreflightCommand.RunProcess(startInfo, cancellationToken).ConfigureAwait(false);
+            return await PodmanDnsPreflight.RunProcess(startInfo, cancellationToken).ConfigureAwait(false);
         }
         if (string.Equals(startInfo.FileName, "/usr/bin/stat", StringComparison.Ordinal))
         {
