@@ -43,3 +43,11 @@ PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.Encoding
 PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.Payload.get -> string!
 PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.Payload.init -> void
 PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.SerializedIntegrationEventPayload(string! Payload, PandaBear.Messaging.EventPayloadEncoding Encoding, string! DataContentType) -> void
+PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.<Clone>$() -> PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload!
+PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.Deconstruct(out string! Payload, out PandaBear.Messaging.EventPayloadEncoding Encoding, out string! DataContentType) -> void
+PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.Equals(PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload? other) -> bool
+override PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.Equals(object? obj) -> bool
+override PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.GetHashCode() -> int
+override PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.ToString() -> string!
+static PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.operator !=(PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload? left, PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload? right) -> bool
+static PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.operator ==(PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload? left, PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload? right) -> bool

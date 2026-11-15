@@ -39,3 +39,11 @@ PandaBear.EntityFrameworkCore.DatabaseMigrationExtensions
 static PandaBear.EntityFrameworkCore.DatabaseMigrationExtensions.ApplyMigrations<TContext>(this System.IServiceProvider! services, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<bool>!
 static PandaBear.EntityFrameworkCore.DatabaseMigrationExtensions.EnsureMigrationsApplied<TContext>(this System.IServiceProvider! services, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
 static PandaBear.EntityFrameworkCore.DbContextUniqueViolationExtensions.SaveChangesTranslatingConflicts(this Microsoft.EntityFrameworkCore.DbContext! dbContext, PandaBear.EntityFrameworkCore.IUniqueViolationParser! parser, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+PandaBear.EntityFrameworkCore.UniqueViolation.<Clone>$() -> PandaBear.EntityFrameworkCore.UniqueViolation!
+PandaBear.EntityFrameworkCore.UniqueViolation.Deconstruct(out string? ConstraintName, out string? Table, out System.Collections.Generic.IReadOnlyList<string!>! Columns) -> void
+PandaBear.EntityFrameworkCore.UniqueViolation.Equals(PandaBear.EntityFrameworkCore.UniqueViolation? other) -> bool
+override PandaBear.EntityFrameworkCore.UniqueViolation.Equals(object? obj) -> bool
+override PandaBear.EntityFrameworkCore.UniqueViolation.GetHashCode() -> int
+override PandaBear.EntityFrameworkCore.UniqueViolation.ToString() -> string!
+static PandaBear.EntityFrameworkCore.UniqueViolation.operator !=(PandaBear.EntityFrameworkCore.UniqueViolation? left, PandaBear.EntityFrameworkCore.UniqueViolation? right) -> bool
+static PandaBear.EntityFrameworkCore.UniqueViolation.operator ==(PandaBear.EntityFrameworkCore.UniqueViolation? left, PandaBear.EntityFrameworkCore.UniqueViolation? right) -> bool

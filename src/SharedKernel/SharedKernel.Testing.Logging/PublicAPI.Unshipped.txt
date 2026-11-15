@@ -35,3 +35,11 @@ PandaBear.Testing.Logging.RecordingLoggerProvider.Dispose() -> void
 PandaBear.Testing.Logging.RecordingLoggerProvider.Logger.get -> PandaBear.Testing.Logging.RecordingLogger!
 PandaBear.Testing.Logging.RecordingLoggerProvider.RecordingLoggerProvider() -> void
 PandaBear.Testing.Logging.RecordingLoggerProvider.Records.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.Logging.RecordedLog!>!
+PandaBear.Testing.Logging.RecordedLog.<Clone>$() -> PandaBear.Testing.Logging.RecordedLog!
+PandaBear.Testing.Logging.RecordedLog.Deconstruct(out Microsoft.Extensions.Logging.LogLevel Level, out Microsoft.Extensions.Logging.EventId EventId, out string! Message, out System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, object?>>! State, out System.Exception? Exception) -> void
+PandaBear.Testing.Logging.RecordedLog.Equals(PandaBear.Testing.Logging.RecordedLog? other) -> bool
+override PandaBear.Testing.Logging.RecordedLog.Equals(object? obj) -> bool
+override PandaBear.Testing.Logging.RecordedLog.GetHashCode() -> int
+override PandaBear.Testing.Logging.RecordedLog.ToString() -> string!
+static PandaBear.Testing.Logging.RecordedLog.operator !=(PandaBear.Testing.Logging.RecordedLog? left, PandaBear.Testing.Logging.RecordedLog? right) -> bool
+static PandaBear.Testing.Logging.RecordedLog.operator ==(PandaBear.Testing.Logging.RecordedLog? left, PandaBear.Testing.Logging.RecordedLog? right) -> bool

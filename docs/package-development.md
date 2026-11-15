@@ -4,7 +4,7 @@
 Install the SDK pinned in `global.json`. Provider integration tests require a working container runtime; NativeAOT checks also require the platform
 native build toolchain.
 
-Analyzer and source-generator packages retain the Roslyn 5.6 compiler API baseline so consumers can use compatible .NET 10 SDKs without upgrading
+Analyzer and source-generator packages retain the Roslyn 5.9 compiler API baseline, the compiler of .NET SDK 10.0.4xx, so consumers can use compatible .NET 10 SDKs without upgrading
 to this repository's development SDK. The repository SDK and runtime dependencies can advance independently of that compiler compatibility floor.
 
 ```sh

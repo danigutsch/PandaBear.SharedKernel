@@ -56,3 +56,19 @@ static PandaBear.UploadSanitizing.Images.ImageSanitizer.Sanitize(System.IO.Strea
 static PandaBear.UploadSanitizing.Images.ImageSanitizer.Sanitize(System.ReadOnlySpan<byte> data, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions! options) -> PandaBear.Results.Result<PandaBear.UploadSanitizing.Images.SanitizedImage!>
 static PandaBear.UploadSanitizing.Images.ImageSanitizer.SanitizeInPlace(System.Memory<byte> buffer, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions! options) -> PandaBear.Results.Result<PandaBear.UploadSanitizing.Images.SanitizedImage!>
 static PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.Default.get -> PandaBear.UploadSanitizing.Images.ImageSanitizerOptions!
+PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.<Clone>$() -> PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions!
+PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.Equals(PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions? other) -> bool
+PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.FontSanitizerOptions() -> void
+PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.<Clone>$() -> PandaBear.UploadSanitizing.Images.ImageSanitizerOptions!
+PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.Equals(PandaBear.UploadSanitizing.Images.ImageSanitizerOptions? other) -> bool
+PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.ImageSanitizerOptions() -> void
+override PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.Equals(object? obj) -> bool
+override PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.GetHashCode() -> int
+override PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.ToString() -> string!
+override PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.Equals(object? obj) -> bool
+override PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.GetHashCode() -> int
+override PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.ToString() -> string!
+static PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.operator !=(PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions? left, PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions? right) -> bool
+static PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions.operator ==(PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions? left, PandaBear.UploadSanitizing.Fonts.FontSanitizerOptions? right) -> bool
+static PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.operator !=(PandaBear.UploadSanitizing.Images.ImageSanitizerOptions? left, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions? right) -> bool
+static PandaBear.UploadSanitizing.Images.ImageSanitizerOptions.operator ==(PandaBear.UploadSanitizing.Images.ImageSanitizerOptions? left, PandaBear.UploadSanitizing.Images.ImageSanitizerOptions? right) -> bool

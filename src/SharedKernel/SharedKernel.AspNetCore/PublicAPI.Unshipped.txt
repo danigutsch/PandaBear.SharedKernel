@@ -51,3 +51,10 @@ PandaBear.AspNetCore.ICspNonce.Value.get -> string!
 static PandaBear.AspNetCore.CspNonceServiceCollectionExtensions.AddCspNonce(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 PandaBear.AspNetCore.StatusCodePagesExclusionExtensions
 static PandaBear.AspNetCore.StatusCodePagesExclusionExtensions.UseStatusCodePagesWithReExecuteExcept(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app, string! pathFormat, bool createScopeForStatusCodePages, params Microsoft.AspNetCore.Http.PathString[]! excludedPrefixes) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
+PandaBear.AspNetCore.PermanentRedirect.<Clone>$() -> PandaBear.AspNetCore.PermanentRedirect!
+PandaBear.AspNetCore.PermanentRedirect.Equals(PandaBear.AspNetCore.PermanentRedirect? other) -> bool
+override PandaBear.AspNetCore.PermanentRedirect.Equals(object? obj) -> bool
+override PandaBear.AspNetCore.PermanentRedirect.GetHashCode() -> int
+override PandaBear.AspNetCore.PermanentRedirect.ToString() -> string!
+static PandaBear.AspNetCore.PermanentRedirect.operator !=(PandaBear.AspNetCore.PermanentRedirect? left, PandaBear.AspNetCore.PermanentRedirect? right) -> bool
+static PandaBear.AspNetCore.PermanentRedirect.operator ==(PandaBear.AspNetCore.PermanentRedirect? left, PandaBear.AspNetCore.PermanentRedirect? right) -> bool

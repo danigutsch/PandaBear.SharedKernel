@@ -100,8 +100,8 @@ public static class VersioningCommandLineTests
     [InlineData("Unrecognized command or argument 'unknown'.", "unknown")]
     [InlineData("Unrecognized command or argument '--unknown'.", "check-public-api-baselines", "--unknown", "value")]
     [InlineData("Required argument missing for option: '--version'.", "check-api-compatibility", "--version")]
-    [InlineData("Required argument missing for command: 'classify-commit'.", "classify-commit")]
-    [InlineData("Required argument missing for command: 'has-breaking-change-marker'.", "has-breaking-change-marker")]
+    [InlineData("Required argument 'message' missing for command: 'classify-commit'.", "classify-commit")]
+    [InlineData("Required argument 'git-range' missing for command: 'has-breaking-change-marker'.", "has-breaking-change-marker")]
     [InlineData("Option '--base' is required.", "compute")]
     [InlineData("Option '--version' is required.", "prepare-release", "--package-dir", "packages")]
     [InlineData("Option '--package-dir' is required.", "prepare-release", "--version", "1.2.3")]
@@ -117,7 +117,7 @@ public static class VersioningCommandLineTests
     [InlineData("Option '--candidate' or '--candidate-directory' is required.", "consume-candidate")]
     [InlineData("Options '--candidate' and '--candidate-directory' cannot be combined.", "consume-candidate", "--candidate", "candidate.json", "--candidate-directory", "candidates")]
     [InlineData("Option '--candidate' is required.", "verify-consumer", "--", "dotnet", "test")]
-    [InlineData("Required argument missing for command: 'verify-consumer'.", "verify-consumer", "--candidate", "candidate.json")]
+    [InlineData("Required argument 'command' missing for command: 'verify-consumer'.", "verify-consumer", "--candidate", "candidate.json")]
     public static async Task Invalid_command_lines_are_parse_errors_on_standard_error(string expectedError, params string[] args)
     {
         // Act

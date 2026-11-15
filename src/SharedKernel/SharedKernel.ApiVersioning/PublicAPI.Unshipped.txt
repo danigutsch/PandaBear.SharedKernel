@@ -43,3 +43,24 @@ static PandaBear.ApiVersioning.ApiVersion.operator >=(PandaBear.ApiVersioning.Ap
 PandaBear.ApiVersioning.ApiVersionStatus.Active = 0 -> PandaBear.ApiVersioning.ApiVersionStatus
 PandaBear.ApiVersioning.ApiVersionStatus.Deprecated = 1 -> PandaBear.ApiVersioning.ApiVersionStatus
 PandaBear.ApiVersioning.ApiVersionStatus.Retired = 2 -> PandaBear.ApiVersioning.ApiVersionStatus
+PandaBear.ApiVersioning.ApiDeprecationPolicy.<Clone>$() -> PandaBear.ApiVersioning.ApiDeprecationPolicy!
+PandaBear.ApiVersioning.ApiDeprecationPolicy.Deconstruct(out System.DateOnly? DeprecatedOn, out System.DateOnly? SunsetOn, out System.Uri? InformationUrl) -> void
+PandaBear.ApiVersioning.ApiDeprecationPolicy.Equals(PandaBear.ApiVersioning.ApiDeprecationPolicy? other) -> bool
+PandaBear.ApiVersioning.ApiVersion.Equals(PandaBear.ApiVersioning.ApiVersion other) -> bool
+PandaBear.ApiVersioning.ApiVersionDefinition.<Clone>$() -> PandaBear.ApiVersioning.ApiVersionDefinition!
+PandaBear.ApiVersioning.ApiVersionDefinition.Deconstruct(out PandaBear.ApiVersioning.ApiVersion Version, out PandaBear.ApiVersioning.ApiVersionStatus Status, out PandaBear.ApiVersioning.ApiDeprecationPolicy? Deprecation) -> void
+PandaBear.ApiVersioning.ApiVersionDefinition.Equals(PandaBear.ApiVersioning.ApiVersionDefinition? other) -> bool
+override PandaBear.ApiVersioning.ApiDeprecationPolicy.Equals(object? obj) -> bool
+override PandaBear.ApiVersioning.ApiDeprecationPolicy.GetHashCode() -> int
+override PandaBear.ApiVersioning.ApiDeprecationPolicy.ToString() -> string!
+override PandaBear.ApiVersioning.ApiVersion.GetHashCode() -> int
+override PandaBear.ApiVersioning.ApiVersionDefinition.Equals(object? obj) -> bool
+override PandaBear.ApiVersioning.ApiVersionDefinition.GetHashCode() -> int
+override PandaBear.ApiVersioning.ApiVersionDefinition.ToString() -> string!
+static PandaBear.ApiVersioning.ApiDeprecationPolicy.operator !=(PandaBear.ApiVersioning.ApiDeprecationPolicy? left, PandaBear.ApiVersioning.ApiDeprecationPolicy? right) -> bool
+static PandaBear.ApiVersioning.ApiDeprecationPolicy.operator ==(PandaBear.ApiVersioning.ApiDeprecationPolicy? left, PandaBear.ApiVersioning.ApiDeprecationPolicy? right) -> bool
+static PandaBear.ApiVersioning.ApiVersion.operator !=(PandaBear.ApiVersioning.ApiVersion left, PandaBear.ApiVersioning.ApiVersion right) -> bool
+static PandaBear.ApiVersioning.ApiVersion.operator ==(PandaBear.ApiVersioning.ApiVersion left, PandaBear.ApiVersioning.ApiVersion right) -> bool
+static PandaBear.ApiVersioning.ApiVersionDefinition.operator !=(PandaBear.ApiVersioning.ApiVersionDefinition? left, PandaBear.ApiVersioning.ApiVersionDefinition? right) -> bool
+static PandaBear.ApiVersioning.ApiVersionDefinition.operator ==(PandaBear.ApiVersioning.ApiVersionDefinition? left, PandaBear.ApiVersioning.ApiVersionDefinition? right) -> bool
+~override PandaBear.ApiVersioning.ApiVersion.Equals(object obj) -> bool

@@ -12,7 +12,7 @@
         <None Include="README.md" Pack="true" PackagePath="\" />
         <PackageReference Include="Aspire.Hosting.PostgreSQL" />
         <PackageReference Include="Npgsql" />
-        <PackageReference Include="xunit.v3.extensibility.core" VersionOverride="4.0.2" />
+        <PackageReference Include="xunit.v3.extensibility.core" VersionOverride="4.0.3" />
     </ItemGroup>
 
     <ItemGroup>

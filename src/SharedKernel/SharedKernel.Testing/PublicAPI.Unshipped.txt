@@ -368,3 +368,18 @@ abstract PandaBear.Testing.GeneratedCallHooks<TService>.Wrap(TService! inner) ->
 static PandaBear.Testing.CallProxy.Create<TService>(TService! inner, System.Action<PandaBear.Testing.CallHooks<TService!>!>? configure = null) -> TService!
 static PandaBear.Testing.CallProxy.Register<TService>(System.Func<PandaBear.Testing.GeneratedCallHooks<TService!>!>! create) -> void
 static PandaBear.Testing.CallProxyServiceCollectionExtensions.WrapWithCallProxy<TService>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<PandaBear.Testing.CallHooks<TService!>!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.Testing.Metrics.RecordedMeasurement.<Clone>$() -> PandaBear.Testing.Metrics.RecordedMeasurement!
+PandaBear.Testing.Metrics.RecordedMeasurement.Deconstruct(out string! Instrument, out long Value, out System.Collections.Generic.IReadOnlyDictionary<string!, object?>! Tags) -> void
+PandaBear.Testing.Metrics.RecordedMeasurement.Equals(PandaBear.Testing.Metrics.RecordedMeasurement? other) -> bool
+PandaBear.Testing.TestProcessResult.Deconstruct(out int ExitCode, out string! StandardOutput, out string! StandardError) -> void
+PandaBear.Testing.TestProcessResult.Equals(PandaBear.Testing.TestProcessResult other) -> bool
+override PandaBear.Testing.Metrics.RecordedMeasurement.Equals(object? obj) -> bool
+override PandaBear.Testing.Metrics.RecordedMeasurement.GetHashCode() -> int
+override PandaBear.Testing.Metrics.RecordedMeasurement.ToString() -> string!
+override PandaBear.Testing.TestProcessResult.GetHashCode() -> int
+static PandaBear.Testing.Metrics.RecordedMeasurement.operator !=(PandaBear.Testing.Metrics.RecordedMeasurement? left, PandaBear.Testing.Metrics.RecordedMeasurement? right) -> bool
+static PandaBear.Testing.Metrics.RecordedMeasurement.operator ==(PandaBear.Testing.Metrics.RecordedMeasurement? left, PandaBear.Testing.Metrics.RecordedMeasurement? right) -> bool
+static PandaBear.Testing.TestProcessResult.operator !=(PandaBear.Testing.TestProcessResult left, PandaBear.Testing.TestProcessResult right) -> bool
+static PandaBear.Testing.TestProcessResult.operator ==(PandaBear.Testing.TestProcessResult left, PandaBear.Testing.TestProcessResult right) -> bool
+~override PandaBear.Testing.TestProcessResult.Equals(object obj) -> bool
+~override PandaBear.Testing.TestProcessResult.ToString() -> string

@@ -47,3 +47,14 @@ static PandaBear.DispositionHold.DispositionHoldDecision.Clear.get -> PandaBear.
 static PandaBear.DispositionHold.DispositionHoldDecision.HeldBy(System.Collections.Generic.IReadOnlyList<System.Guid>! holdIds) -> PandaBear.DispositionHold.DispositionHoldDecision
 static PandaBear.DispositionHold.DispositionScope.From(string? kind, string? key) -> PandaBear.DispositionHold.DispositionScope
 static PandaBear.DispositionHold.Hold.Place(PandaBear.DispositionHold.DispositionScope scope, PandaBear.DispositionHold.HoldBasis basis, string? purposeCode, string? authorityReference, string? placedBy, System.DateTimeOffset placedAt, System.DateTimeOffset effectiveFrom, System.DateTimeOffset reviewDueAt, System.DateTimeOffset? expiresAt = null) -> PandaBear.DispositionHold.Hold!
+PandaBear.DispositionHold.DispositionHoldDecision.Equals(PandaBear.DispositionHold.DispositionHoldDecision other) -> bool
+PandaBear.DispositionHold.DispositionScope.Equals(PandaBear.DispositionHold.DispositionScope other) -> bool
+override PandaBear.DispositionHold.DispositionHoldDecision.GetHashCode() -> int
+override PandaBear.DispositionHold.DispositionScope.GetHashCode() -> int
+static PandaBear.DispositionHold.DispositionHoldDecision.operator !=(PandaBear.DispositionHold.DispositionHoldDecision left, PandaBear.DispositionHold.DispositionHoldDecision right) -> bool
+static PandaBear.DispositionHold.DispositionHoldDecision.operator ==(PandaBear.DispositionHold.DispositionHoldDecision left, PandaBear.DispositionHold.DispositionHoldDecision right) -> bool
+static PandaBear.DispositionHold.DispositionScope.operator !=(PandaBear.DispositionHold.DispositionScope left, PandaBear.DispositionHold.DispositionScope right) -> bool
+static PandaBear.DispositionHold.DispositionScope.operator ==(PandaBear.DispositionHold.DispositionScope left, PandaBear.DispositionHold.DispositionScope right) -> bool
+~override PandaBear.DispositionHold.DispositionHoldDecision.Equals(object obj) -> bool
+~override PandaBear.DispositionHold.DispositionHoldDecision.ToString() -> string
+~override PandaBear.DispositionHold.DispositionScope.Equals(object obj) -> bool

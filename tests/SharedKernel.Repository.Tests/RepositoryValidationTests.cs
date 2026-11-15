@@ -14,6 +14,17 @@ public sealed class RepositoryValidationTests
           { "name": "idle", "projects": ["tests/Idle/Idle.csproj"] }
         ]
         """;
+    private const string SiteTests = "tests/Site.Tests/Site.Tests.csproj";
+    private const string BrowserSlices = """
+        [
+          { "name": "library", "projects": [] },
+          {
+            "name": "browser",
+            "projects": ["tests/Core.Tests/Core.Tests.csproj", "tests/Site.Tests/Site.Tests.csproj"],
+            "playwright": { "project": "tests/Core.Tests/Core.Tests.csproj", "browsers": ["chromium"], "onlyShell": true }
+          }
+        ]
+        """;
 
     [Fact]
     public async Task A_slice_restores_builds_and_tests_one_generated_filter_without_capping_test_parallelism()
@@ -462,6 +473,103 @@ public sealed class RepositoryValidationTests
         result.ExitCode.ShouldBe(0);
         processes.Calls.ShouldAllSatisfy(static call => call.FileName.ShouldNotBe("pwsh"));
         processes.Calls.ShouldAllSatisfy(static call => call.Arguments[0].ShouldNotBe("msbuild"));
+    }
+
+    [Fact]
+    public async Task Playwright_installs_for_a_slice_whose_other_project_is_selected_and_builds_the_install_project_without_testing_it()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var scope = new RepositoryTestScope();
+        scope.AddTestProject(SiteTests);
+        scope.Configure(BrowserSlices);
+        scope.WriteFile("tests/Core.Tests/bin/Release/net10.0/playwright.ps1", "# installer");
+        var selection = scope.WriteSelection("fixture", ("library", []), ("browser", [SiteTests]));
+        var execution = Path.Combine(selection, "execution-browser");
+        var processes = new ProcessLog(static (fileName, arguments, _) => Task.FromResult(
+            fileName == "git" ? "fixture" : arguments is ["msbuild", ..] ? "bin\\Release\\net10.0\\" + Environment.NewLine : string.Empty));
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["run", "--slice", "browser", "--install-playwright"], processes.Run, ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        processes.Commands.ShouldBe(
+        [
+            "git rev-parse HEAD",
+            "dotnet restore " + Path.Combine(execution, "build.slnf") + " --locked-mode",
+            "dotnet build " + Path.Combine(execution, "build.slnf") + " -c Release --no-restore",
+            "dotnet msbuild " + Path.GetFullPath(Path.Combine(scope.Root, CoreTests)) + " -getProperty:OutputPath -p:Configuration=Release",
+            "pwsh " + Path.Combine(scope.Root, "tests", "Core.Tests", "bin", "Release", "net10.0", "playwright.ps1") + " install --only-shell chromium",
+            "dotnet test --solution " + Path.Combine(execution, "tests.slnf") + " -c Release --no-build --no-restore --results-directory " + Path.Combine(execution, "results"),
+        ]);
+        var built = await SelectionTestFiles.Projects(execution, "build", ct);
+        built.ShouldBe([CoreTests, SiteTests]);
+        var tested = await SelectionTestFiles.Projects(execution, "tests", ct);
+        tested.ShouldBe([SiteTests]);
+    }
+
+    [Fact]
+    public async Task Playwright_installs_with_one_filter_when_the_install_project_is_selected_and_an_earlier_build_filter_is_deleted()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var scope = new RepositoryTestScope();
+        scope.AddTestProject(SiteTests);
+        scope.Configure(BrowserSlices);
+        scope.WriteFile("tests/Core.Tests/bin/Release/net10.0/playwright.ps1", "# installer");
+        scope.WriteFile("TestResults/selection/execution-browser/build.slnf", "{}");
+        var selection = scope.WriteSelection("fixture", ("library", []), ("browser", [CoreTests, SiteTests]));
+        var execution = Path.Combine(selection, "execution-browser");
+        var filter = Path.Combine(execution, "tests.slnf");
+        var processes = new ProcessLog(static (fileName, arguments, _) => Task.FromResult(
+            fileName == "git" ? "fixture" : arguments is ["msbuild", ..] ? "bin\\Release\\net10.0\\" + Environment.NewLine : string.Empty));
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["run", "--slice", "browser", "--install-playwright"], processes.Run, ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        processes.Commands.ShouldBe(
+        [
+            "git rev-parse HEAD",
+            "dotnet restore " + filter + " --locked-mode",
+            "dotnet build " + filter + " -c Release --no-restore",
+            "dotnet msbuild " + Path.GetFullPath(Path.Combine(scope.Root, CoreTests)) + " -getProperty:OutputPath -p:Configuration=Release",
+            "pwsh " + Path.Combine(scope.Root, "tests", "Core.Tests", "bin", "Release", "net10.0", "playwright.ps1") + " install --only-shell chromium",
+            "dotnet test --solution " + filter + " -c Release --no-build --no-restore --results-directory " + Path.Combine(execution, "results"),
+        ]);
+        var tested = await SelectionTestFiles.Projects(execution, "tests", ct);
+        tested.ShouldBe([CoreTests, SiteTests]);
+        File.Exists(Path.Combine(execution, "build.slnf")).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Playwright_does_not_install_for_a_slice_without_a_selected_project()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var scope = new RepositoryTestScope();
+        scope.AddTestProject(SiteTests);
+        scope.Configure(BrowserSlices);
+        var selection = scope.WriteSelection("fixture", ("library", [HostedTests]), ("browser", []));
+        var execution = Path.Combine(selection, "execution");
+        var filter = Path.Combine(execution, "tests.slnf");
+        var processes = new ProcessLog();
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["run", "--install-playwright"], processes.Run, ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        processes.Commands.ShouldBe(
+        [
+            "git rev-parse HEAD",
+            "dotnet restore " + filter + " --locked-mode",
+            "dotnet build " + filter + " -c Release --no-restore",
+            "dotnet test --solution " + filter + " -c Release --no-build --no-restore --results-directory " + Path.Combine(execution, "results"),
+        ]);
+        File.Exists(Path.Combine(execution, "build.slnf")).ShouldBeFalse();
     }
 
     [Fact]
