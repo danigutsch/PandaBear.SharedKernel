@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework></TargetFramework>
-        <TargetFrameworks>$(SharedKernelTargetFrameworks)</TargetFrameworks>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.ServiceDefaults</PackageId>
         <Description>Aspire service defaults for SharedKernel hosts: service discovery, HTTP resilience, private-by-default OpenTelemetry, and health endpoints.</Description>

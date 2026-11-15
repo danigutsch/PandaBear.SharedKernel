@@ -66,7 +66,7 @@ public static partial class ActionPinVerifier
             return $"'{reference}' is a container reference, which the manifest cannot approve.";
         }
 
-        var at = reference.LastIndexOf('@');
+        var at = reference.LastIndexOf('@', StringComparison.Ordinal);
         var name = at < 0 ? reference : reference[..at];
         var pinned = at < 0 ? string.Empty : reference[(at + 1)..];
         if (!FullSha().IsMatch(pinned))

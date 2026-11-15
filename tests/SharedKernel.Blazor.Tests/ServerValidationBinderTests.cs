@@ -279,11 +279,7 @@ public sealed class ServerValidationBinderTests
     }
 
     [Fact]
-#if NET11_0_OR_GREATER
     public async Task A_new_validation_request_clears_server_messages_so_unchanged_data_can_be_resubmitted()
-#else
-    public void A_new_validation_request_clears_server_messages_so_unchanged_data_can_be_resubmitted()
-#endif
     {
         // Arrange
         var context = new EditContext(new ServerValidationModel());
@@ -291,12 +287,8 @@ public sealed class ServerValidationBinderTests
         binder.Apply(Errors(("Name", ["Name taken."])));
 
         // Act
-#if NET11_0_OR_GREATER
         // .NET 11 makes Validate obsolete in favor of ValidateAsync.
         var valid = await context.ValidateAsync(Xunit.TestContext.Current.CancellationToken);
-#else
-        var valid = context.Validate();
-#endif
 
         // Assert
         valid.ShouldBeTrue();

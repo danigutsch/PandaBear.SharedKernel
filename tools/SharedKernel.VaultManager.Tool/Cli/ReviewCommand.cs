@@ -85,7 +85,7 @@ internal static class ReviewCommand
         TextWriter error = invocation.Error;
         if (!environment.IsInteractive || !terminal.OutputIsTerminal())
         {
-            await error.WriteLineAsync("The review UI needs a terminal, and standard input or output is not one. To decide without the UI, run merge with --decisions <file> and edit the pending entries of that file.").ConfigureAwait(false);
+            await error.WriteLineAsync("The review UI needs a terminal, and standard input or output is not one. To decide without the UI, run merge with --decisions <file> and edit the pending entries of that file.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return ExitCodes.InputOutputProblem;
         }
 

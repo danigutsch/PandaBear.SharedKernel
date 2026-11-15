@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework></TargetFramework>
-        <TargetFrameworks>$(SharedKernelTargetFrameworks)</TargetFrameworks>
         <PackageId>PandaBear.SharedKernel.Blazor</PackageId>
         <Description>Accessible Blazor helpers for HTTP outcome messages, server validation, error summaries, handled-failure reporting, and upload status.</Description>
         <RootNamespace>PandaBear.Blazor</RootNamespace>

@@ -29,7 +29,7 @@ internal static class BaselineMarker
     {
         hash = body = string.Empty;
         var start = MarkerStart(text);
-        var lineEnd = start < 0 ? -1 : text.IndexOf('\n', start);
+        var lineEnd = start < 0 ? -1 : text.IndexOf('\n', start, StringComparison.Ordinal);
         if (start < 0 || lineEnd < 0)
         {
             return false;

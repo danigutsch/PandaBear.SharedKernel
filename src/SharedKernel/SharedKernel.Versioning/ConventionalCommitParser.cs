@@ -61,7 +61,7 @@ public static class ConventionalCommitParser
 
         var prefix = header[..separator];
         var description = header[(separator + 2)..];
-        var isBreaking = prefix.EndsWith('!');
+        var isBreaking = prefix.EndsWith('!', StringComparison.Ordinal);
 
         if (isBreaking)
         {
@@ -73,7 +73,7 @@ public static class ConventionalCommitParser
         var scopeStart = prefix.IndexOf('(', StringComparison.Ordinal);
         if (scopeStart >= 0)
         {
-            if (!prefix.EndsWith(')') || scopeStart == 0 || scopeStart == prefix.Length - 2)
+            if (!prefix.EndsWith(')', StringComparison.Ordinal) || scopeStart == 0 || scopeStart == prefix.Length - 2)
             {
                 throw new ArgumentException("The commit scope must use '<type>(<scope>)'.", nameof(header));
             }

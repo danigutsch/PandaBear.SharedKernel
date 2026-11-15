@@ -54,7 +54,7 @@ public static class RepositoryFrameworks
         foreach (var part in value.Split(';', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
         {
             var framework = part;
-            if (framework.StartsWith("$(", StringComparison.Ordinal) && framework.EndsWith(')'))
+            if (framework.StartsWith("$(", StringComparison.Ordinal) && framework.EndsWith(')', StringComparison.Ordinal))
             {
                 var referenced = framework[2..^1];
                 var matches = properties.Where(property => property.LocalName == referenced).ToList();

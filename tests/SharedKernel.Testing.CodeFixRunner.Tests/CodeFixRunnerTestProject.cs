@@ -5,11 +5,14 @@ namespace PandaBear.Testing.CodeFixRunner.Tests;
 /// <summary>Sample project, solution, source and configuration texts, plus helpers that write them to a temporary directory for code fix runner tests.</summary>
 internal static class CodeFixRunnerTestProject
 {
-    /// <summary>A minimal net10.0 SDK-style project file with restore disabled.</summary>
-    public const string ProjectFile = """
+    private static readonly System.Runtime.Versioning.FrameworkName Running = new(AppContext.TargetFrameworkName!);
+    private static readonly string TargetFramework = string.Create(CultureInfo.InvariantCulture, $"net{Running.Version.Major}.{Running.Version.Minor}");
+
+    /// <summary>A minimal SDK-style project file for the framework of the running tests, with restore disabled.</summary>
+    public static readonly string ProjectFile = $$"""
         <Project Sdk="Microsoft.NET.Sdk">
           <PropertyGroup>
-            <TargetFramework>net10.0</TargetFramework>
+            <TargetFramework>{{TargetFramework}}</TargetFramework>
             <ImplicitUsings>enable</ImplicitUsings>
             <Nullable>enable</Nullable>
             <RestoreProjectStyle>None</RestoreProjectStyle>

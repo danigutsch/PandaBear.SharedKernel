@@ -94,27 +94,27 @@ public sealed class PlaywrightMcpServer
         }
         catch (ArgumentException exception)
         {
-            await error.WriteLineAsync($"Error: {exception.Message}").ConfigureAwait(false);
+            await error.WriteLineAsync($"Error: {exception.Message}".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return 2;
         }
         catch (InvalidOperationException exception)
         {
-            await error.WriteLineAsync($"Error: {exception.Message}").ConfigureAwait(false);
+            await error.WriteLineAsync($"Error: {exception.Message}".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return 1;
         }
         catch (Win32Exception exception)
         {
-            await error.WriteLineAsync($"Error: Could not start Playwright MCP: {exception.Message}").ConfigureAwait(false);
+            await error.WriteLineAsync($"Error: Could not start Playwright MCP: {exception.Message}".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return 1;
         }
         catch (IOException exception)
         {
-            await error.WriteLineAsync($"Error: Playwright MCP process I/O failed: {exception.Message}").ConfigureAwait(false);
+            await error.WriteLineAsync($"Error: Playwright MCP process I/O failed: {exception.Message}".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return 1;
         }
         catch (OperationCanceledException)
         {
-            await error.WriteLineAsync("Error: Playwright MCP was cancelled.").ConfigureAwait(false);
+            await error.WriteLineAsync("Error: Playwright MCP was cancelled.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return 1;
         }
     }

@@ -14,10 +14,9 @@
         <Nullable>enable</Nullable>
         <AuditTrailSourceGeneratorPackageFile Condition="'$(REMOTE_CONTAINERS)' != 'true'">$(MSBuildProjectDirectory)/bin/$(Configuration)/netstandard2.0/$(AssemblyName).dll</AuditTrailSourceGeneratorPackageFile>
         <AuditTrailSourceGeneratorPackageFile Condition="'$(REMOTE_CONTAINERS)' == 'true'">$(MSBuildThisFileDirectory)..\..\..\.build\bin\$(MSBuildProjectName)\$(Configuration)\netstandard2.0\$(AssemblyName).dll</AuditTrailSourceGeneratorPackageFile>
-        <AuditTrailDependencyInjectionPackageVersion>10.0.10</AuditTrailDependencyInjectionPackageVersion>
         <NuspecFile>SharedKernel.AuditTrail.SourceGenerator.nuspec</NuspecFile>
         <NuspecBasePath>$(MSBuildProjectDirectory)</NuspecBasePath>
-        <NuspecProperties>packageVersion=$(PackageVersion);analyzerFile=$(AuditTrailSourceGeneratorPackageFile);dependencyInjectionVersion=$(AuditTrailDependencyInjectionPackageVersion)</NuspecProperties>
+        <NuspecProperties>packageVersion=$(PackageVersion);analyzerFile=$(AuditTrailSourceGeneratorPackageFile);targetFramework=$(SharedKernelTargetFramework)</NuspecProperties>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 

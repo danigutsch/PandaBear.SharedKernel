@@ -525,10 +525,10 @@ internal sealed class SecretScanner
             }
 
             string trimmed = lines[index].Text.Trim();
-            if (trimmed.EndsWith('?') && trimmed.Length is > 3 and <= 120 && next >= 0 && parsed[next] is null or { Class: KeyClass.None })
+            if (trimmed.EndsWith('?', StringComparison.Ordinal) && trimmed.Length is > 3 and <= 120 && next >= 0 && parsed[next] is null or { Class: KeyClass.None })
             {
                 string answerLine = lines[next].Text.Trim();
-                if (answerLine.Length is > 0 and <= 100 && !answerLine.EndsWith('?'))
+                if (answerLine.Length is > 0 and <= 100 && !answerLine.EndsWith('?', StringComparison.Ordinal))
                 {
                     int questionStart = lines[index].Start + lines[index].Text.IndexOf(trimmed, StringComparison.Ordinal);
                     int answerStart = lines[next].Start + lines[next].Text.IndexOf(answerLine, StringComparison.Ordinal);

@@ -54,7 +54,7 @@ internal static partial class DotnetRunScanner
     }
 
     private static bool Continues(string line) =>
-        line.EndsWith('\\') || (line.EndsWith('`') && line.Count(static character => character == '`') % 2 == 1);
+        line.EndsWith('\\', StringComparison.Ordinal) || (line.EndsWith('`', StringComparison.Ordinal) && line.Count(static character => character == '`') % 2 == 1);
 
     [GeneratedRegex(@"\bdotnet\s+run\b", RegexOptions.CultureInvariant)]
     private static partial Regex Run();

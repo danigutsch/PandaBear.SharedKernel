@@ -21,7 +21,7 @@ public static class CsvReader
         var records = new List<CsvRecord>();
         var fields = new List<string>();
         var field = new StringBuilder();
-        int position = text.StartsWith('\uFEFF') ? 1 : 0;
+        int position = text.StartsWith('\uFEFF', StringComparison.Ordinal) ? 1 : 0;
         int line = 1;
         int recordLine = 1;
         bool recordStarted = false;

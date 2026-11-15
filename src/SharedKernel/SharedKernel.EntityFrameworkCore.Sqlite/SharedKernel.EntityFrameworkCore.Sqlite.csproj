@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework></TargetFramework>
-        <TargetFrameworks>$(SharedKernelTargetFrameworks)</TargetFrameworks>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.EntityFrameworkCore.Sqlite</PackageId>
         <Description>SQLite support for shared-kernel Entity Framework Core primitives, starting with unique-violation recognition.</Description>
@@ -17,7 +15,6 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Data.Sqlite.Core" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     </ItemGroup>
 
     <ItemGroup>

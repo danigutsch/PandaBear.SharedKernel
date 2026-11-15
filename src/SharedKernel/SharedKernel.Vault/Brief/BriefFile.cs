@@ -19,10 +19,10 @@ public static class BriefFile
     public const int CurrentVersion = 1;
 
     // Names, folders, and shared notes keep accented letters and apostrophes as typed, as in the catalog.
-    private static readonly JsonTypeInfo<BriefDocument> ReadableDocument = (JsonTypeInfo<BriefDocument>)new JsonSerializerOptions(BriefJsonContext.Default.Options)
+    private static readonly JsonTypeInfo<BriefDocument> ReadableDocument = new JsonSerializerOptions(BriefJsonContext.Default.Options)
     {
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-    }.GetTypeInfo(typeof(BriefDocument));
+    }.GetTypeInfo<BriefDocument>();
 
     /// <summary>Reads a brief file.</summary>
     /// <param name="path">Brief file.</param>

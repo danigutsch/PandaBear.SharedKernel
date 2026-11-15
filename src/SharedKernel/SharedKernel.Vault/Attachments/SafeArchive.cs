@@ -233,7 +233,7 @@ public sealed class SafeArchive : IDisposable
                     $"Archive entry {index} has an unsafe path that could escape the archive."));
             }
 
-            if (path.EndsWith('/') && entry.Length == 0)
+            if (path.EndsWith('/', StringComparison.Ordinal) && entry.Length == 0)
             {
                 continue;
             }

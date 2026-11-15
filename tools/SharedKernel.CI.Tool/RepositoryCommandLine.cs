@@ -851,7 +851,7 @@ internal static partial class RepositoryCommandLine
             // value cannot start a line.
             foreach (var line in ControlCharacters.EscapeLines(exception.Message))
             {
-                await error.WriteLineAsync(line).ConfigureAwait(false);
+                await error.WriteLineAsync(line.AsMemory(), CancellationToken.None).ConfigureAwait(false);
             }
 
             return FailureExitCode;

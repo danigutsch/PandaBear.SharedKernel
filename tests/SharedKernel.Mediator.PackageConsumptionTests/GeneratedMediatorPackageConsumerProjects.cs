@@ -3,7 +3,7 @@ namespace PandaBear.Mediator.PackageConsumptionTests;
 /// <summary>Writes a consumer project that references the packed mediator abstractions, runtime and source generator packages.</summary>
 internal static class GeneratedMediatorPackageConsumerProjects
 {
-    /// <summary>Writes a net10.0 AOT-compatible console project with a query, notification, stream request, open generic timing behavior and a Program that prints dispatch results, timings and scope lifetimes of the generated registrations.</summary>
+    /// <summary>Writes an AOT-compatible console project with a query, notification, stream request, open generic timing behavior and a Program that prints dispatch results, timings and scope lifetimes of the generated registrations.</summary>
     public static void Write(PackageConsumptionWorkspace workspace, MediatorPackageFeedFixture packageFeed)
     {
         var consumerFiles = new (string FileName, string Content)[]
@@ -136,7 +136,7 @@ internal static class GeneratedMediatorPackageConsumerProjects
             $$"""
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
-                <TargetFramework>net10.0</TargetFramework>
+                <TargetFramework>{{TestTargetFramework.Moniker}}</TargetFramework>
                 <OutputType>Exe</OutputType>
                 <ImplicitUsings>enable</ImplicitUsings>
                 <Nullable>enable</Nullable>

@@ -1,10 +1,6 @@
 <Project Sdk="Aspire.AppHost.Sdk">
 
     <PropertyGroup>
-        <!-- Npgsql.EntityFrameworkCore.PostgreSQL has no stable 11.x yet, so the PostgreSQL slice stays on net10.0. A single
-             TargetFramework keeps the Aspire AppHost SDK out of the multi-framework outer build, which it does not support. -->
-        <TargetFrameworks></TargetFrameworks>
-        <TargetFramework>net10.0</TargetFramework>
         <OutputType>Exe</OutputType>
         <RootNamespace>PandaBear.EventSourcing.Npgsql.Tests</RootNamespace>
     </PropertyGroup>

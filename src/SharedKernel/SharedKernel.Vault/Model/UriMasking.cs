@@ -29,12 +29,12 @@ public static class UriMasking
         int authorityStart = SchemeLength(uri);
         int authorityEnd = uri.IndexOfAny(['/', '\\', '?', '#'], authorityStart);
         authorityEnd = authorityEnd < 0 ? uri.Length : authorityEnd;
-        if (uri.IndexOf('@', authorityEnd) >= 0)
+        if (uri.IndexOf('@', authorityEnd, StringComparison.Ordinal) >= 0)
         {
             return MaskAfterScheme(uri, mask);
         }
 
-        int at = authorityEnd > authorityStart ? uri.LastIndexOf('@', authorityEnd - 1, authorityEnd - authorityStart) : -1;
+        int at = authorityEnd > authorityStart ? uri.LastIndexOf('@', authorityEnd - 1, authorityEnd - authorityStart, StringComparison.Ordinal) : -1;
         string authority = at < 0 ? uri[authorityStart..authorityEnd] : mask + uri[at..authorityEnd];
         int rest = uri.IndexOfAny(['?', '#'], authorityEnd);
         string path = rest < 0 ? uri[authorityEnd..] : uri[authorityEnd..rest] + uri[rest] + mask;

@@ -30,7 +30,7 @@ internal sealed record ConnectionParts(string? Username, string? Password, strin
         }
 
         int authorityStart = schemeEnd + 3;
-        int at = value.IndexOf('@', authorityStart);
+        int at = value.IndexOf('@', authorityStart, StringComparison.Ordinal);
         int slash = value.IndexOfAny(['/', '?', '#'], authorityStart);
         if (at < 0 || (slash >= 0 && slash < at))
         {
@@ -48,7 +48,7 @@ internal sealed record ConnectionParts(string? Username, string? Password, strin
         string host = pathStart < 0 ? value[(at + 1)..] : value[(at + 1)..pathStart];
         int query = value.IndexOfAny(['?', '#'], at);
         string address = value[..authorityStart] + (query < 0 ? value[(at + 1)..] : value[(at + 1)..query]);
-        string hostName = host.StartsWith('[') ? host : host.Split(':')[0];
+        string hostName = host.StartsWith('[', StringComparison.Ordinal) ? host : host.Split(':')[0];
         try
         {
             parts = new ConnectionParts(

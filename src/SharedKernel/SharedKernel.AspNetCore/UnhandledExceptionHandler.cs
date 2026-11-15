@@ -77,6 +77,6 @@ internal sealed class UnhandledExceptionHandler(UnhandledExceptionReporter repor
         services.GetRequiredService<IOptions<ProblemDetailsOptions>>().Value.CustomizeProblemDetails?.Invoke(context);
         var serializer = services.GetRequiredService<IOptions<HttpJsonOptions>>().Value.SerializerOptions;
         return context.HttpContext.Response.WriteAsJsonAsync(
-            context.ProblemDetails, serializer.GetTypeInfo(typeof(ProblemDetails)), "application/problem+json");
+            context.ProblemDetails, serializer.GetTypeInfo<ProblemDetails>(), "application/problem+json");
     }
 }

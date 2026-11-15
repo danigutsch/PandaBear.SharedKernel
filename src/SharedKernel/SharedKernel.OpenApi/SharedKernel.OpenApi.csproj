@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework></TargetFramework>
-        <TargetFrameworks>$(SharedKernelTargetFrameworks)</TargetFrameworks>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.OpenApi</PackageId>
         <Description>Reusable OpenAPI helpers for shared-kernel HTTP contract documentation.</Description>

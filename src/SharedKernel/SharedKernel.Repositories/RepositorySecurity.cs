@@ -20,12 +20,12 @@ public static class RepositorySecurity
             var issues = VerifyBaseline(root, cancellationToken);
             foreach (var issue in issues)
             {
-                await error.WriteLineAsync($"security: {ControlCharacters.Escape(issue.Path)}: {issue.Message}").ConfigureAwait(false);
+                await error.WriteLineAsync($"security: {ControlCharacters.Escape(issue.Path)}: {issue.Message}".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             }
 
             if (issues.Count == 0)
             {
-                await output.WriteLineAsync("Security baseline is current.").ConfigureAwait(false);
+                await output.WriteLineAsync("Security baseline is current.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             }
 
             if (destination is null)
@@ -38,7 +38,7 @@ public static class RepositorySecurity
         }
         catch (Exception exception) when (exception is ArgumentException or JsonException or InvalidOperationException or IOException or UnauthorizedAccessException or NotSupportedException)
         {
-            await error.WriteLineAsync("security: Invalid or unreadable baseline configuration, paths, or arguments.").ConfigureAwait(false);
+            await error.WriteLineAsync("security: Invalid or unreadable baseline configuration, paths, or arguments.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return 2;
         }
     }

@@ -71,7 +71,7 @@ internal sealed class MsBuildFileSet
                 return null;
             }
 
-            var separator = current.LastIndexOf('/');
+            var separator = current.LastIndexOf('/', StringComparison.Ordinal);
             current = separator < 0 ? string.Empty : current[..separator];
         }
     }

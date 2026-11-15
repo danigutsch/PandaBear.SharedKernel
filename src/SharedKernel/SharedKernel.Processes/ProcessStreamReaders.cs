@@ -81,7 +81,7 @@ internal sealed class ProcessStreamReaders : IAsyncDisposable
                     return string.Empty;
                 }
 
-                await forward.WriteLineAsync(line).ConfigureAwait(false);
+                await forward.WriteLineAsync(line.AsMemory(), CancellationToken.None).ConfigureAwait(false);
             }
 
             return string.Empty;

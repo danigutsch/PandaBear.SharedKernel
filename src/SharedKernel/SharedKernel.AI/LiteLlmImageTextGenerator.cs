@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
@@ -112,7 +111,7 @@ public sealed class LiteLlmImageTextGenerator(HttpClient httpClient, LiteLlmImag
         }
 
         var path = string.IsNullOrWhiteSpace(options.ChatCompletionsPath) ? "/v1/chat/completions" : options.ChatCompletionsPath;
-        if (!path.StartsWith('/'))
+        if (!path.StartsWith('/', StringComparison.Ordinal))
         {
             throw new InvalidOperationException("LiteLLM chat-completions path must be relative to the endpoint root.");
         }

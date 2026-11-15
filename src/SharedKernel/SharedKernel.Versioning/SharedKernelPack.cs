@@ -47,7 +47,7 @@ internal static class SharedKernelPack
             await VerifyLocalFeed(commands, packageDirectory, options.Version, RepositoryFrameworks.Read(options.RepoRoot)[0], ct).ConfigureAwait(false);
         }
 
-        await output.WriteLineAsync("SharedKernel packages: " + packageDirectory).ConfigureAwait(false);
+        await output.WriteLineAsync(("SharedKernel packages: " + packageDirectory).AsMemory(), CancellationToken.None).ConfigureAwait(false);
         return packageDirectory;
     }
 

@@ -110,7 +110,8 @@ internal static class CoverageGate
 
             passed = total == 0 || covered * 100 >= total * threshold;
             await standardOutput.WriteLineAsync(
-                string.Create(CultureInfo.InvariantCulture, $"Coverage: {covered}/{total} changed executable lines and conditions; required {threshold}%.")).ConfigureAwait(false);
+                string.Create(CultureInfo.InvariantCulture, $"Coverage: {covered}/{total} changed executable lines and conditions; required {threshold}%.").AsMemory(),
+                CancellationToken.None).ConfigureAwait(false);
             if (!passed)
             {
                 throw new InvalidOperationException(

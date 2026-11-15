@@ -37,23 +37,23 @@ internal static class PrereleasePruning
         {
             if (!releases.Any(release => string.Equals(release.TagName, "v" + version, StringComparison.Ordinal)))
             {
-                await error.WriteLineAsync($"warning: protected version {version} has no release v{version}.").ConfigureAwait(false);
+                await error.WriteLineAsync($"warning: protected version {version} has no release v{version}.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             }
         }
 
         await output.WriteLineAsync(string.Create(
             CultureInfo.InvariantCulture,
-            $"{request.Repository}: {Count(plan.Prereleases.Count, "prerelease")}; keeping the newest {plan.Newest.Count} and {plan.Protected.Count} protected.")).ConfigureAwait(false);
+            $"{request.Repository}: {Count(plan.Prereleases.Count, "prerelease")}; keeping the newest {plan.Newest.Count} and {plan.Protected.Count} protected.").AsMemory(), CancellationToken.None).ConfigureAwait(false);
         foreach (var release in plan.Prereleases)
         {
             var action = plan.Newest.Contains(release) ? "keep    {0}  {1}  newest" : plan.Protected.Contains(release) ? "keep    {0}  {1}  protected" : "delete  {0}  {1}";
-            await output.WriteLineAsync(string.Format(CultureInfo.InvariantCulture, action, Tag(release), Date(release))).ConfigureAwait(false);
+            await output.WriteLineAsync((string.Format(CultureInfo.InvariantCulture, action, Tag(release), Date(release))).AsMemory(), CancellationToken.None).ConfigureAwait(false);
         }
 
-        await output.WriteLineAsync($"Ignored {Count(plan.Stable, "stable release")} and {Count(plan.Drafts, "draft")}.").ConfigureAwait(false);
+        await output.WriteLineAsync(($"Ignored {Count(plan.Stable, "stable release")} and {Count(plan.Drafts, "draft")}.").AsMemory(), CancellationToken.None).ConfigureAwait(false);
         if (!request.Force)
         {
-            await output.WriteLineAsync($"preview: would delete {Count(plan.Delete.Count, "prerelease")}; --force deletes them. Tags stay.").ConfigureAwait(false);
+            await output.WriteLineAsync(($"preview: would delete {Count(plan.Delete.Count, "prerelease")}; --force deletes them. Tags stay.").AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return;
         }
 
@@ -62,10 +62,10 @@ internal static class PrereleasePruning
         {
             await Delete(store, release, deleted, ct).ConfigureAwait(false);
             deleted.Add(Tag(release));
-            await output.WriteLineAsync("deleted " + Tag(release)).ConfigureAwait(false);
+            await output.WriteLineAsync(("deleted " + Tag(release)).AsMemory(), CancellationToken.None).ConfigureAwait(false);
         }
 
-        await output.WriteLineAsync($"Deleted {Count(deleted.Count, "prerelease")}; their tags stay.").ConfigureAwait(false);
+        await output.WriteLineAsync(($"Deleted {Count(deleted.Count, "prerelease")}; their tags stay.").AsMemory(), CancellationToken.None).ConfigureAwait(false);
     }
 
     private static string Tag(RepositoryRelease release) => ControlCharacters.Escape(release.TagName);

@@ -84,7 +84,7 @@ internal sealed partial class TargetFrameworkEvaluator
 
     private static string Parent(string path)
     {
-        var separator = path.LastIndexOf('/');
+        var separator = path.LastIndexOf('/', StringComparison.Ordinal);
         return separator < 0 ? string.Empty : path[..separator];
     }
 

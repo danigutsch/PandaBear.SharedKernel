@@ -130,7 +130,7 @@ internal static class DocumentationSourceFacts
             .ToArray();
         if (factLines.Any(line =>
                 !line.StartsWith(factPrefix, StringComparison.Ordinal)
-                || !line.EndsWith('`')))
+                || !line.EndsWith('`', StringComparison.Ordinal)))
         {
             throw new InvalidOperationException(
                 $"Documentation fact section '{markerName}' contains malformed '{factName}' content in '{documentPath}'.");

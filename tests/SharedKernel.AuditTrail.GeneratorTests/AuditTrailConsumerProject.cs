@@ -8,14 +8,14 @@ namespace PandaBear.AuditTrail.GeneratorTests;
 internal static class AuditTrailConsumerProject
 {
     /// <summary>
-    /// Writes a net10.0 project that references the audit trail source generator package, plus a Consumer.cs with a BookingConfirmed event, a BookingAuditEntry and an AuditTrailMapping method, into the workspace.
+    /// Writes a project for the framework of the running tests that references the audit trail source generator package, plus a Consumer.cs with a BookingConfirmed event, a BookingAuditEntry and an AuditTrailMapping method, into the workspace.
     /// </summary>
     public static void Write(PackageConsumptionWorkspace workspace) =>
         workspace.WriteProject(
             $$"""
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
-                <TargetFramework>net10.0</TargetFramework>
+                <TargetFramework>{{TestTargetFramework.Moniker}}</TargetFramework>
                 <ImplicitUsings>enable</ImplicitUsings>
                 <Nullable>enable</Nullable>
                 <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

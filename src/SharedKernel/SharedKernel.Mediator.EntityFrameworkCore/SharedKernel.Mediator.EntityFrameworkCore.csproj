@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework></TargetFramework>
-        <TargetFrameworks>$(SharedKernelTargetFrameworks)</TargetFrameworks>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Mediator.EntityFrameworkCore</PackageId>
         <Description>Mediator pipeline behaviors and dispatch integrations backed by Entity Framework Core.</Description>
         <RootNamespace>PandaBear.Mediator.EntityFrameworkCore</RootNamespace>
@@ -12,7 +11,6 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     </ItemGroup>
 
     <ItemGroup>

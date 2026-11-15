@@ -118,13 +118,13 @@ public sealed class LinkTarget : ValueObject
         var at = address.IndexOf('@', StringComparison.Ordinal);
         return at > 0
             && at < address.Length - 1
-            && address.IndexOf('@', at + 1) < 0
+            && address.IndexOf('@', at + 1, StringComparison.Ordinal) < 0
             && address.IndexOfAny(['?', '&', ';', ',', '%', '/', ':', '<', '>', '"']) < 0;
     }
 
     private static bool IsTelephone(string number)
     {
-        var digits = number.StartsWith('+') ? number[1..] : number;
+        var digits = number.StartsWith('+', StringComparison.Ordinal) ? number[1..] : number;
         return digits.Length > 0 && digits.All(char.IsAsciiDigit);
     }
 

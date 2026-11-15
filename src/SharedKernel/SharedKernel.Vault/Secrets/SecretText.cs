@@ -83,7 +83,7 @@ internal static class SecretText
         int start = 0;
         while (start <= text.Length)
         {
-            int newline = text.IndexOf('\n', start);
+            int newline = text.IndexOf('\n', start, StringComparison.Ordinal);
             int end = newline < 0 ? text.Length : newline;
             int contentEnd = end > start && text[end - 1] == '\r' ? end - 1 : end;
             lines.Add((start, text[start..contentEnd]));
@@ -151,7 +151,7 @@ internal static class SecretText
     private static bool TryDecodeClearingUnusedBits(string compact, Span<byte> buffer, out int written)
     {
         written = 0;
-        int padding = compact.EndsWith("==", StringComparison.Ordinal) ? 2 : compact.EndsWith('=') ? 1 : 0;
+        int padding = compact.EndsWith("==", StringComparison.Ordinal) ? 2 : compact.EndsWith('=', StringComparison.Ordinal) ? 1 : 0;
         if (padding == 0)
         {
             return false;

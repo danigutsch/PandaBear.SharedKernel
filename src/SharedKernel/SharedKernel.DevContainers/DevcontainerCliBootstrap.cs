@@ -170,7 +170,7 @@ internal static class DevcontainerCliBootstrap
             }
 
             var isDirectory = entry.EntryType is TarEntryType.Directory;
-            var name = isDirectory && entry.Name.EndsWith('/') ? entry.Name[..^1] : entry.Name;
+            var name = isDirectory && entry.Name.EndsWith('/', StringComparison.Ordinal) ? entry.Name[..^1] : entry.Name;
             if (!IsPackagePath(name, isDirectory))
             {
                 throw new InvalidOperationException($"Dev Container CLI archive entry '{entry.Name}' has an unsafe path.");

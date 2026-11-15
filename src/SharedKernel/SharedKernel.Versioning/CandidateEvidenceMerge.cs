@@ -51,7 +51,7 @@ internal static class CandidateEvidenceMerge
                         merged[key + "Frameworks"] = frameworks.DeepClone();
                     }
 
-                    await output.WriteLineAsync($"{key}: passed").ConfigureAwait(false);
+                    await output.WriteLineAsync($"{key}: passed".AsMemory(), CancellationToken.None).ConfigureAwait(false);
                 }
             }
         }

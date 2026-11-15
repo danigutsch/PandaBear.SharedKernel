@@ -686,7 +686,7 @@ public static class PodmanDnsPreflight
     {
         var statPath = Path.Combine(processDirectory, "stat");
         var stat = File.ReadAllText(statPath).TrimEnd('\r', '\n');
-        var commandEnd = stat.LastIndexOf(')');
+        var commandEnd = stat.LastIndexOf(')', StringComparison.Ordinal);
         if (commandEnd < 0 || commandEnd + 2 >= stat.Length)
         {
             throw new InvalidOperationException($"{statPath} has an invalid process stat record");

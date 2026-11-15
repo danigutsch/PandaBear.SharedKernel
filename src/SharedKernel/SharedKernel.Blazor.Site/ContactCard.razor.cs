@@ -81,7 +81,7 @@ public sealed partial class ContactCard
             return;
         }
 
-        var digits = number.Value.StartsWith('+') ? number.Value[1..] : number.Value;
+        var digits = number.Value.StartsWith('+', StringComparison.Ordinal) ? number.Value[1..] : number.Value;
         if (digits.Length is < PhoneNumber.MinDigits or > PhoneNumber.MaxDigits || !digits.All(char.IsAsciiDigit))
         {
             throw new ArgumentException("The phone number is not a validated number of digits.", parameterName);

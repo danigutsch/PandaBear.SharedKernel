@@ -129,7 +129,7 @@ internal static class RoadmapGitChangeGuard
                     throw CreateParseException();
                 }
 
-                if (fields[8].StartsWith('C'))
+                if (fields[8].StartsWith('C', StringComparison.Ordinal))
                 {
                     throw new InvalidOperationException("Roadmap automation rejects Git copy changes.");
                 }

@@ -42,12 +42,12 @@ internal static class FormatDetector
         }
 
         string trimmed = text.TrimStart();
-        if (trimmed.StartsWith('['))
+        if (trimmed.StartsWith('[', StringComparison.Ordinal))
         {
             return VaultFileFormat.KeeperJson;
         }
 
-        return trimmed.StartsWith('{') ? DetectJson(text) : DetectCsv(text);
+        return trimmed.StartsWith('{', StringComparison.Ordinal) ? DetectJson(text) : DetectCsv(text);
     }
 
     private static VaultFileFormat DetectJson(string text)

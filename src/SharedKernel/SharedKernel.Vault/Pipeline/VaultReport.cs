@@ -75,7 +75,7 @@ public static class VaultReport
     {
         foreach (string line in markdown.Replace("\r\n", "\n", StringComparison.Ordinal).TrimEnd('\n').Split('\n'))
         {
-            builder.Append(line.StartsWith('#') ? "#" : string.Empty).Append(PrintableText.OneLine(line)).Append('\n');
+            builder.Append(line.StartsWith('#', StringComparison.Ordinal) ? "#" : string.Empty).Append(PrintableText.OneLine(line)).Append('\n');
         }
     }
 

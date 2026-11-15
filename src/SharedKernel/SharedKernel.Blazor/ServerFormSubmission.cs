@@ -119,11 +119,7 @@ public sealed class ServerFormSubmission : IDisposable
         Summary = [];
 
         // Raises OnValidationRequested, which clears the server messages, so only client-side messages can remain.
-#if NET11_0_OR_GREATER
         if (!await _editContext.ValidateAsync(CancellationToken.None).ConfigureAwait(true))
-#else
-        if (!_editContext.Validate())
-#endif
         {
             Summary = ClientMessages();
 

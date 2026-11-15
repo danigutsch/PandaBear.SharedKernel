@@ -252,7 +252,7 @@ internal sealed class ClaudeCodeSettingsDocument : ISandboxSettingsDocument
     {
         var (indentCharacter, indentSize) = DetectIndent(existing);
         var newLine = existing is not null && existing.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
-        var finalNewLine = existing is null || existing.EndsWith('\n');
+        var finalNewLine = existing is null || existing.EndsWith('\n', StringComparison.Ordinal);
         using var stream = new MemoryStream();
         using (var writer = new Utf8JsonWriter(
             stream,

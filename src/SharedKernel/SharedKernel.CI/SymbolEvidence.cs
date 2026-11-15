@@ -49,7 +49,7 @@ internal static class SymbolEvidence
         await File.WriteAllBytesAsync(
             destination, JsonSerializer.SerializeToUtf8Bytes(new SymbolEvidenceFile(revision, files), SymbolEvidenceJsonContext.Default.SymbolEvidenceFile), ct)
             .ConfigureAwait(false);
-        await standardOutput.WriteLineAsync("Recorded " + paths.Length + " Release symbol files of " + revision + " in " + output + ".").ConfigureAwait(false);
+        await standardOutput.WriteLineAsync(("Recorded " + paths.Length + " Release symbol files of " + revision + " in " + output + ".").AsMemory(), CancellationToken.None).ConfigureAwait(false);
     }
 
     /// <summary>

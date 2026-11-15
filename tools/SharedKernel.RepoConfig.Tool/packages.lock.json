@@ -1,12 +1,12 @@
 {
   "version": 2,
   "dependencies": {
-    "net10.0": {
+    "net11.0": {
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[10.0.15, )",
-        "resolved": "10.0.15",
-        "contentHash": "u0WnRcZgBZYHlVFpbe/3Adpmb9rmNJ8/fmEwqc/xjB7fFppq+gfaLJd3Sdaw+J02zV0eP/T9dneQ3Dv5jWw6bw=="
+        "requested": "[11.0.0, )",
+        "resolved": "11.0.0",
+        "contentHash": "gK2aq4XvChj5kvozpPHrkfKkr7zc5Z4xoTrJb4GPZzDEPMlCk0TX632bwY3LsWcX2UVcVRQBBGzsBGC2lq6YhA=="
       },
       "System.CommandLine": {
         "type": "Direct",
@@ -23,13 +23,8 @@
       "PandaBear.SharedKernel.DevContainers": {
         "type": "Project",
         "dependencies": {
+          "PandaBear.SharedKernel.GitHub": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
-        }
-      },
-      "PandaBear.SharedKernel.Forgejo": {
-        "type": "Project",
-        "dependencies": {
           "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
         }
       },
@@ -52,17 +47,10 @@
         "type": "Project",
         "dependencies": {
           "PandaBear.SharedKernel.ConfigurationFiles": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.GitHub": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
-        }
-      },
-      "PandaBear.SharedKernel.Repositories.Forgejo": {
-        "type": "Project",
-        "dependencies": {
-          "PandaBear.SharedKernel.Forgejo": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.Repositories": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Repositories.GitHub": {

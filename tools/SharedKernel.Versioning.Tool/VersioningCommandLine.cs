@@ -74,7 +74,7 @@ internal static class VersioningCommandLine
         SetAction(command, async (parseResult, output, _) =>
         {
             var commit = ConventionalCommitParser.Parse(string.Join(' ', parseResult.GetRequiredValue(message)));
-            await output.WriteLineAsync(ReleaseImpactText.ToOutputValue(commit.Impact)).ConfigureAwait(false);
+            await output.WriteLineAsync((ReleaseImpactText.ToOutputValue(commit.Impact)).AsMemory(), _).ConfigureAwait(false);
         });
         return command;
     }
@@ -99,7 +99,7 @@ internal static class VersioningCommandLine
                 messages,
                 parseResult.GetValue(prerelease),
                 parseResult.GetValue(sha));
-            await output.WriteLineAsync(VersionOutputJson.Serialize(version)).ConfigureAwait(false);
+            await output.WriteLineAsync((VersionOutputJson.Serialize(version)).AsMemory(), _).ConfigureAwait(false);
         });
         return command;
     }
@@ -154,7 +154,7 @@ internal static class VersioningCommandLine
                 await File.AppendAllLinesAsync(summaryFile, ReleaseVersionCalculator.CreateSummary(result), ct).ConfigureAwait(false);
             }
 
-            await output.WriteLineAsync(result.VersionJson).ConfigureAwait(false);
+            await output.WriteLineAsync(result.VersionJson.AsMemory(), CancellationToken.None).ConfigureAwait(false);
         });
         return command;
     }
@@ -169,7 +169,7 @@ internal static class VersioningCommandLine
         SetAction(command, async (parseResult, output, _) =>
         {
             PublicApiBaselineChecker.EnsureBaselinesPresent(parseResult.GetRequiredValue(repoRoot));
-            await output.WriteLineAsync("Public API baselines are present for SharedKernel projects.").ConfigureAwait(false);
+            await output.WriteLineAsync("Public API baselines are present for SharedKernel projects.".AsMemory(), _).ConfigureAwait(false);
         });
         return command;
     }
@@ -184,7 +184,7 @@ internal static class VersioningCommandLine
         SetAction(command, async (parseResult, output, _) =>
         {
             PackageMetadataValidator.Validate(parseResult.GetRequiredValue(repoRoot));
-            await output.WriteLineAsync("Package metadata validation passed.").ConfigureAwait(false);
+            await output.WriteLineAsync("Package metadata validation passed.".AsMemory(), _).ConfigureAwait(false);
         });
         return command;
     }
@@ -197,7 +197,7 @@ internal static class VersioningCommandLine
         range.Validators.Add(static result =>
         {
             var value = result.GetValueOrDefault<string>();
-            if (string.IsNullOrWhiteSpace(value) || value.StartsWith('-'))
+            if (string.IsNullOrWhiteSpace(value) || value.StartsWith('-', StringComparison.Ordinal))
             {
                 result.AddError("<git-range> requires a revision range that is not empty and does not start with '-'.");
             }
@@ -213,11 +213,11 @@ internal static class VersioningCommandLine
             var gitRange = parseResult.GetRequiredValue(range);
             if (await history.HasBreakingChangeMarker(gitRange, parseResult.GetRequiredValue(repoRoot), ct).ConfigureAwait(false))
             {
-                await output.WriteLineAsync("Breaking-change marker found.").ConfigureAwait(false);
+                await output.WriteLineAsync("Breaking-change marker found.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
                 return 0;
             }
 
-            await parseResult.InvocationConfiguration.Error.WriteLineAsync($"No breaking-change marker found in {gitRange}.").ConfigureAwait(false);
+            await parseResult.InvocationConfiguration.Error.WriteLineAsync($"No breaking-change marker found in {gitRange}.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return NoBreakingChangeMarker;
         });
         return command;
@@ -381,7 +381,7 @@ internal static class VersioningCommandLine
                 parseResult.GetValue(sha));
             var changes = await input.ReadToEndAsync(ct).ConfigureAwait(false);
             await ReleasePreparationArtifacts.Write(options, changes).ConfigureAwait(false);
-            await output.WriteLineAsync("Release prep artifacts: " + options.OutputDirectory).ConfigureAwait(false);
+            await output.WriteLineAsync(("Release prep artifacts: " + options.OutputDirectory).AsMemory(), CancellationToken.None).ConfigureAwait(false);
         });
         return command;
     }
@@ -399,7 +399,7 @@ internal static class VersioningCommandLine
         {
             var checkedProjects = PackageLockInventory.VerifyLockCoverage(parseResult.GetRequiredValue(repoRoot));
             await output.WriteLineAsync(
-                $"Lock coverage verified: {checkedProjects} lock-free project(s) resolve only packages that a committed lock file resolves.").ConfigureAwait(false);
+                $"Lock coverage verified: {checkedProjects} lock-free project(s) resolve only packages that a committed lock file resolves.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
         });
         return command;
     }
@@ -702,7 +702,7 @@ internal static class VersioningCommandLine
             }
             catch (Exception exception) when (exception is ArgumentException or InvalidOperationException or IOException)
             {
-                await error.WriteLineAsync("Error: " + exception.Message).ConfigureAwait(false);
+                await error.WriteLineAsync(("Error: " + exception.Message).AsMemory(), CancellationToken.None).ConfigureAwait(false);
                 return CommandFailed;
             }
         });

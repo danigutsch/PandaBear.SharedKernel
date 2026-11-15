@@ -24,10 +24,10 @@ public static class DecisionsFile
     // Item names keep apostrophes and accented letters as typed, so the file stays readable when edited by hand. Relaxed
     // escaping suits a local file that no web page or script embeds. Quotes, backslashes, control characters, and, through
     // EscapeFormatCharacters, format characters stay escaped, so reading the file gives back the same text.
-    private static readonly JsonTypeInfo<DecisionsDocument> ReadableDocument = (JsonTypeInfo<DecisionsDocument>)new JsonSerializerOptions(DecisionsJsonContext.Default.Options)
+    private static readonly JsonTypeInfo<DecisionsDocument> ReadableDocument = new JsonSerializerOptions(DecisionsJsonContext.Default.Options)
     {
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-    }.GetTypeInfo(typeof(DecisionsDocument));
+    }.GetTypeInfo<DecisionsDocument>();
 
     /// <summary>Reads a decisions file.</summary>
     /// <param name="path">Decisions file.</param>

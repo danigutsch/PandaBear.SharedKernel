@@ -127,7 +127,7 @@ public sealed class LoadTestRunner
                 | UnixFileMode.StickyBit);
         }
 
-        await error.WriteLineAsync("Results: " + relativeRunDirectory).ConfigureAwait(false);
+        await error.WriteLineAsync(("Results: " + relativeRunDirectory).AsMemory(), CancellationToken.None).ConfigureAwait(false);
 
         ManagedHost? host = null;
         try
@@ -136,7 +136,7 @@ public sealed class LoadTestRunner
             {
                 host = ManagedHost.Start(hostExecutable, scenario.Name, scenario.Host!, settings.Root, runDirectory, relativeRunDirectory, container is not null);
                 target = await host.WaitUntilReady(settings.AllowExternalTarget, _healthCheckHandler, ct).ConfigureAwait(false);
-                await error.WriteLineAsync("Host ready: " + LoadTestTarget.Format(target)).ConfigureAwait(false);
+                await error.WriteLineAsync(("Host ready: " + LoadTestTarget.Format(target)).AsMemory(), CancellationToken.None).ConfigureAwait(false);
             }
 
             var variables = new List<KeyValuePair<string, string>>

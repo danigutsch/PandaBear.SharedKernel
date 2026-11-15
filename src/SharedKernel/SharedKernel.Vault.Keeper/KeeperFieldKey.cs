@@ -13,7 +13,7 @@ internal static class KeeperFieldKey
 
         string type = "";
         string label = key;
-        if (key.StartsWith('$'))
+        if (key.StartsWith('$', StringComparison.Ordinal))
         {
             int colon = key.IndexOf(':', StringComparison.Ordinal);
             type = (colon > 0 ? key[1..colon] : key[1..]).Trim();

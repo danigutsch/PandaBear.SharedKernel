@@ -33,6 +33,6 @@ internal static class ApiCompatibilityCheck
             }
         }
 
-        await output.WriteLineAsync($"API compatibility report: {reportPath}").ConfigureAwait(false);
+        await output.WriteLineAsync($"API compatibility report: {reportPath}".AsMemory(), CancellationToken.None).ConfigureAwait(false);
     }
 }

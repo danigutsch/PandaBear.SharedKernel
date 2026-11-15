@@ -303,11 +303,11 @@ internal static class RepoConfigToolApplication
     {
         if (!await GitHubDependencySnapshot.TryWrite(options, ct).ConfigureAwait(false))
         {
-            await error.WriteLineAsync("dependency snapshot: Invalid arguments, unsafe paths, incomplete committed dependency inputs, or dependency size limits exceeded.").ConfigureAwait(false);
+            await error.WriteLineAsync("dependency snapshot: Invalid arguments, unsafe paths, incomplete committed dependency inputs, or dependency size limits exceeded.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return 1;
         }
 
-        await output.WriteLineAsync("Dependency snapshot generated from committed lockfiles without package restore.").ConfigureAwait(false);
+        await output.WriteLineAsync("Dependency snapshot generated from committed lockfiles without package restore.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
         return 0;
     }
 

@@ -57,7 +57,7 @@ public sealed class RoutingHttpMessageHandler : HttpMessageHandler
         ArgumentNullException.ThrowIfNull(method);
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(respond);
-        if (!path.StartsWith('/') || path.AsSpan().IndexOfAny('?', '#') >= 0)
+        if (!path.StartsWith('/', StringComparison.Ordinal) || path.AsSpan().IndexOfAny('?', '#') >= 0)
         {
             throw new ArgumentException("The route path must be an absolute path without a query or fragment.", nameof(path));
         }

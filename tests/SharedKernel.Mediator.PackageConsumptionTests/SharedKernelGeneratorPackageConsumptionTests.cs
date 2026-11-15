@@ -20,7 +20,7 @@ public sealed class SharedKernelGeneratorPackageConsumptionTests(MediatorPackage
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
                 <OutputType>Exe</OutputType>
-                <TargetFramework>net10.0</TargetFramework>
+                <TargetFramework>{{TestTargetFramework.Moniker}}</TargetFramework>
                 <ImplicitUsings>enable</ImplicitUsings>
                 <Nullable>enable</Nullable>
                 <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
@@ -81,7 +81,7 @@ public sealed class SharedKernelGeneratorPackageConsumptionTests(MediatorPackage
             $$"""
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
-                <TargetFramework>net10.0</TargetFramework>
+                <TargetFramework>{{TestTargetFramework.Moniker}}</TargetFramework>
                 <ImplicitUsings>enable</ImplicitUsings>
                 <Nullable>enable</Nullable>
                 <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
@@ -125,7 +125,7 @@ public sealed class SharedKernelGeneratorPackageConsumptionTests(MediatorPackage
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
                 <OutputType>Exe</OutputType>
-                <TargetFramework>net10.0</TargetFramework>
+                <TargetFramework>{{TestTargetFramework.Moniker}}</TargetFramework>
                 <ImplicitUsings>enable</ImplicitUsings>
                 <Nullable>enable</Nullable>
                 <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

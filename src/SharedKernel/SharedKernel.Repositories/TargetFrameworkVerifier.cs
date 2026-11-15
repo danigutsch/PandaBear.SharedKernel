@@ -268,7 +268,7 @@ public static partial class TargetFrameworkVerifier
 
     private static bool IsBuildFile(string path)
     {
-        var name = path[(path.LastIndexOf('/') + 1)..];
+        var name = path[(path.LastIndexOf('/', StringComparison.Ordinal) + 1)..];
         return name is "Directory.Build.props" or "Directory.Build.targets";
     }
 
@@ -320,7 +320,7 @@ public static partial class TargetFrameworkVerifier
         List<VerificationIssue> issues,
         CancellationToken cancellationToken)
     {
-        var separator = project.LastIndexOf('/');
+        var separator = project.LastIndexOf('/', StringComparison.Ordinal);
         var path = separator < 0 ? "packages.lock.json" : project[..separator] + "/packages.lock.json";
         if (!tracked.Contains(path))
         {

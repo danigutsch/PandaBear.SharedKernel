@@ -30,7 +30,7 @@ internal static class PackageConsumption
         var scratch = Path.Combine(Path.GetTempPath(), "sharedkernel-package-check-" + Guid.NewGuid().ToString("N"));
         foreach (var framework in options.Frameworks ?? RepositoryFrameworks.Read(root))
         {
-            await error.WriteLineAsync("Consuming the samples as " + framework + ".").ConfigureAwait(false);
+            await error.WriteLineAsync(("Consuming the samples as " + framework + ".").AsMemory(), CancellationToken.None).ConfigureAwait(false);
             try
             {
                 var external = CentralPackageVersions.Read(central, framework);
@@ -43,7 +43,7 @@ internal static class PackageConsumption
             }
         }
 
-        await output.WriteLineAsync("Package consumption checks passed. Evidence workspace: " + scratch).ConfigureAwait(false);
+        await output.WriteLineAsync(("Package consumption checks passed. Evidence workspace: " + scratch).AsMemory(), CancellationToken.None).ConfigureAwait(false);
     }
 
     /// <summary>Adds the properties that every consumer project gets, including its <paramref name="framework" />.</summary>
@@ -112,17 +112,19 @@ internal static class PackageConsumption
             ];
             foreach (var command in commands)
             {
-                await error.WriteAsync(await processes.Run("dotnet", command, target, ct).ConfigureAwait(false)).ConfigureAwait(false);
+                await error.WriteAsync((await processes.Run("dotnet", command, target, ct).ConfigureAwait(false)).AsMemory(), CancellationToken.None).ConfigureAwait(false);
             }
 
             if (aot)
             {
                 var rid = OperatingSystem.IsWindows() ? "win-x64" : "linux-x64";
                 var native = Path.Combine(target, "native");
-                await error.WriteAsync(await processes.Run("dotnet", ["publish", projectPath, "-c", "Release", "-r", rid,
-                    "-p:PublishAot=true", "--configfile", config, "--packages", cache, "-o", native], target, ct).ConfigureAwait(false)).ConfigureAwait(false);
-                await error.WriteAsync(await processes.Run(
-                    Path.Combine(native, Path.GetFileName(relative) + (OperatingSystem.IsWindows() ? ".exe" : string.Empty)), [], target, ct).ConfigureAwait(false)).ConfigureAwait(false);
+                var published = await processes.Run("dotnet", ["publish", projectPath, "-c", "Release", "-r", rid,
+                    "-p:PublishAot=true", "--configfile", config, "--packages", cache, "-o", native], target, ct).ConfigureAwait(false);
+                await error.WriteAsync(published.AsMemory(), CancellationToken.None).ConfigureAwait(false);
+                var ran = await processes.Run(
+                    Path.Combine(native, Path.GetFileName(relative) + (OperatingSystem.IsWindows() ? ".exe" : string.Empty)), [], target, ct).ConfigureAwait(false);
+                await error.WriteAsync(ran.AsMemory(), CancellationToken.None).ConfigureAwait(false);
             }
         }
     }

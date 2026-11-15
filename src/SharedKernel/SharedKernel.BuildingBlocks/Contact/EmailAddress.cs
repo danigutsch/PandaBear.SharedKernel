@@ -33,14 +33,14 @@ public sealed class EmailAddress : ValueObject
         }
 
         var at = sanitized.IndexOf('@', StringComparison.Ordinal);
-        if (at <= 0 || at != sanitized.LastIndexOf('@') || at > MaxLocalPartLength)
+        if (at <= 0 || at != sanitized.LastIndexOf('@', StringComparison.Ordinal) || at > MaxLocalPartLength)
         {
             return Invalid("Email format is invalid.");
         }
 
         var domain = sanitized[(at + 1)..];
-        var dot = domain.LastIndexOf('.');
-        if (sanitized.Contains(' ', StringComparison.Ordinal) || dot < 1 || dot == domain.Length - 1 || domain.StartsWith('.') || domain.Contains("..", StringComparison.Ordinal))
+        var dot = domain.LastIndexOf('.', StringComparison.Ordinal);
+        if (sanitized.Contains(' ', StringComparison.Ordinal) || dot < 1 || dot == domain.Length - 1 || domain.StartsWith('.', StringComparison.Ordinal) || domain.Contains("..", StringComparison.Ordinal))
         {
             return Invalid("Email format is invalid.");
         }

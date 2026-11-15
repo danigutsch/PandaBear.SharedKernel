@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework></TargetFramework>
-        <TargetFrameworks>$(SharedKernelTargetFrameworks)</TargetFrameworks>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.AspNetCore.Authentication</PackageId>
         <Description>JWT bearer API authentication, permission policies, claims helpers, antiforgery sign-out and authentication-event telemetry for ASP.NET Core.</Description>

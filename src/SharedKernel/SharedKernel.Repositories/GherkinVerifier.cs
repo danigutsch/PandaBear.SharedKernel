@@ -151,8 +151,8 @@ public static class GherkinVerifier
         }
 
         var lines = content.Split('\n');
-        var lineCount = content.EndsWith('\n') ? lines.Length - 1 : lines.Length;
-        if (!content.EndsWith('\n'))
+        var lineCount = content.EndsWith('\n', StringComparison.Ordinal) ? lines.Length - 1 : lines.Length;
+        if (!content.EndsWith('\n', StringComparison.Ordinal))
         {
             issues.Add((lineCount, "The file does not end with a newline."));
         }

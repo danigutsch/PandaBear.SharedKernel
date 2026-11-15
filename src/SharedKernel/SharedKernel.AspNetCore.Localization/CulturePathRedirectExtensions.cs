@@ -156,7 +156,7 @@ public static class CulturePathRedirectExtensions
             return false;
         }
 
-        var lastSegment = value.AsSpan(value.LastIndexOf('/') + 1);
+        var lastSegment = value.AsSpan(value.LastIndexOf('/', StringComparison.Ordinal) + 1);
         return lastSegment.Contains('.');
     }
 

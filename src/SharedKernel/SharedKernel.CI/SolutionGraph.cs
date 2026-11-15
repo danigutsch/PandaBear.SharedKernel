@@ -149,8 +149,8 @@ public sealed class SolutionGraph
         var owners = compileInputs.TryGetValue(path, out var inputs) ? new HashSet<string>(inputs, StringComparer.Ordinal) : new HashSet<string>(StringComparer.Ordinal);
         var directoryOwner = Projects
             .Where(project => path == project || (project.Contains('/', StringComparison.Ordinal)
-                && path.StartsWith(project[..(project.LastIndexOf('/') + 1)], StringComparison.Ordinal)))
-            .MaxBy(static project => project.LastIndexOf('/'));
+                && path.StartsWith(project[..(project.LastIndexOf('/', StringComparison.Ordinal) + 1)], StringComparison.Ordinal)))
+            .MaxBy(static project => project.LastIndexOf('/', StringComparison.Ordinal));
         if (directoryOwner is not null)
         {
             owners.Add(directoryOwner);

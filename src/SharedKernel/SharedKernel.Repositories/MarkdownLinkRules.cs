@@ -96,7 +96,7 @@ internal static partial class MarkdownLinkRules
         foreach (var line in SplitLines(text))
         {
             var stripped = TrimStartSpace(line);
-            if (IsFence(line, ref inFence, ref fenceMarker) || inFence || !stripped.StartsWith('#'))
+            if (IsFence(line, ref inFence, ref fenceMarker) || inFence || !stripped.StartsWith('#', StringComparison.Ordinal))
             {
                 continue;
             }
@@ -150,7 +150,7 @@ internal static partial class MarkdownLinkRules
         while (true)
         {
             var start = line.IndexOf("](", searchStart, StringComparison.Ordinal);
-            var end = start < 0 ? -1 : line.IndexOf(')', start + 2);
+            var end = start < 0 ? -1 : line.IndexOf(')', start + 2, StringComparison.Ordinal);
             if (end < 0)
             {
                 break;
@@ -169,7 +169,7 @@ internal static partial class MarkdownLinkRules
         foreach (Match autolink in AutolinkPattern().Matches(line))
         {
             var target = autolink.Groups[1].Value;
-            if (target.Contains("://", StringComparison.Ordinal) || target.StartsWith('#'))
+            if (target.Contains("://", StringComparison.Ordinal) || target.StartsWith('#', StringComparison.Ordinal))
             {
                 yield return target;
             }
@@ -225,7 +225,7 @@ internal static partial class MarkdownLinkRules
 
         var path = url[netlocEnd..];
         path = path.Split('#', 2)[0].Split('?', 2)[0];
-        var parameters = path.IndexOf(';', Math.Max(path.LastIndexOf('/'), 0));
+        var parameters = path.IndexOf(';', Math.Max(path.LastIndexOf('/', StringComparison.Ordinal), 0), StringComparison.Ordinal);
         path = parameters < 0 ? path : path[..parameters];
         var parts = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
         return parts.Length >= 4 && parts[2] is "issues" or "pull" && IsDigits(parts[3]);
@@ -254,7 +254,7 @@ internal static partial class MarkdownLinkRules
     public static string Suffix(string path)
     {
         var name = Path.GetFileName(path);
-        var dot = name.LastIndexOf('.');
+        var dot = name.LastIndexOf('.', StringComparison.Ordinal);
         return dot > 0 && dot < name.Length - 1 ? name[dot..] : string.Empty;
     }
 

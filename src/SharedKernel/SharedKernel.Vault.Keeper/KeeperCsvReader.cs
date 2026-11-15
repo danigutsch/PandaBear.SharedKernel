@@ -85,7 +85,7 @@ public static class KeeperCsvReader
                     type = value.Trim();
                     break;
                 default:
-                    fields.Add(key.StartsWith('$') ? TypedField(key, value) : LabeledField(key, value, ref type));
+                    fields.Add(key.StartsWith('$', StringComparison.Ordinal) ? TypedField(key, value) : LabeledField(key, value, ref type));
                     break;
             }
         }
@@ -133,7 +133,7 @@ public static class KeeperCsvReader
     private static JsonElement TypedValue(string type, string value)
     {
         string trimmed = value.Trim();
-        if (trimmed.StartsWith('{') && trimmed.EndsWith('}') && TryParseObject(trimmed) is { } parsed)
+        if (trimmed.StartsWith('{', StringComparison.Ordinal) && trimmed.EndsWith('}', StringComparison.Ordinal) && TryParseObject(trimmed) is { } parsed)
         {
             return parsed;
         }
@@ -160,7 +160,7 @@ public static class KeeperCsvReader
             case "privateKey":
                 return Object(("privateKey", value));
             case "host":
-                int colon = trimmed.LastIndexOf(':');
+                int colon = trimmed.LastIndexOf(':', StringComparison.Ordinal);
                 return colon > 0 && trimmed[(colon + 1)..].All(char.IsAsciiDigit) && colon + 1 < trimmed.Length
                     ? Object(("hostName", trimmed[..colon]), ("port", trimmed[(colon + 1)..]))
                     : Object(("hostName", trimmed));

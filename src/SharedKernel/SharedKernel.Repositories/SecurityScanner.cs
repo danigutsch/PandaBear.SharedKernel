@@ -34,7 +34,7 @@ public static class SecurityScanner
 
         if (executable is null)
         {
-            await error.WriteLineAsync("security: Gitleaks is not installed.").ConfigureAwait(false);
+            await error.WriteLineAsync("security: Gitleaks is not installed.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return 3;
         }
 
@@ -67,7 +67,7 @@ public static class SecurityScanner
             var exitCode = await runProcess(startInfo, cancellationToken).ConfigureAwait(false);
             if (exitCode is not (0 or 10))
             {
-                await error.WriteLineAsync($"security: Gitleaks failed with exit code {exitCode.ToString(CultureInfo.InvariantCulture)}.").ConfigureAwait(false);
+                await error.WriteLineAsync($"security: Gitleaks failed with exit code {exitCode.ToString(CultureInfo.InvariantCulture)}.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
                 return 3;
             }
 
@@ -91,18 +91,18 @@ public static class SecurityScanner
 
             Directory.CreateDirectory(destination);
             File.Move(report, Path.Combine(destination, "gitleaks.sarif"), overwrite: false);
-            await output.WriteLineAsync($"Security scan completed: {findings.ToString(CultureInfo.InvariantCulture)} finding(s).").ConfigureAwait(false);
+            await output.WriteLineAsync($"Security scan completed: {findings.ToString(CultureInfo.InvariantCulture)} finding(s).".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return findings == 0 ? 0 : 1;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            await error.WriteLineAsync("security: Gitleaks was canceled.").ConfigureAwait(false);
+            await error.WriteLineAsync("security: Gitleaks was canceled.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return 3;
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException
             or JsonException or KeyNotFoundException or Win32Exception or TimeoutException or NotSupportedException)
         {
-            await error.WriteLineAsync("security: Gitleaks execution or report validation failed.").ConfigureAwait(false);
+            await error.WriteLineAsync("security: Gitleaks execution or report validation failed.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return 3;
         }
         finally

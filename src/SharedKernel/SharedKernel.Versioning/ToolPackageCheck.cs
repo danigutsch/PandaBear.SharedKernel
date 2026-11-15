@@ -108,7 +108,7 @@ internal static class ToolPackageCheck
             {
                 // The name becomes the file name of a shim in the tool path, so it must not name another path.
                 var name = (string?)command.Attribute("Name") ?? string.Empty;
-                if (name.Length == 0 || name.StartsWith('.') || name.IndexOfAny(['/', '\\']) >= 0 || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+                if (name.Length == 0 || name.StartsWith('.', StringComparison.Ordinal) || name.IndexOfAny(['/', '\\']) >= 0 || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
                 {
                     throw new ArgumentException($"{package}: invalid command name '{name}' in {entry.FullName}");
                 }
@@ -134,7 +134,7 @@ internal static class ToolPackageCheck
     {
         try
         {
-            await error.WriteAsync(await processes.Run(fileName, arguments, workingDirectory, ct).ConfigureAwait(false)).ConfigureAwait(false);
+            await error.WriteAsync((await processes.Run(fileName, arguments, workingDirectory, ct).ConfigureAwait(false)).AsMemory(), CancellationToken.None).ConfigureAwait(false);
         }
         catch (InvalidOperationException exception)
         {

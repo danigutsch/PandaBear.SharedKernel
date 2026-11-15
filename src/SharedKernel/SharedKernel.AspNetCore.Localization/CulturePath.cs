@@ -127,7 +127,7 @@ public static class CulturePath
             return false;
         }
 
-        var end = value.IndexOf('/', 1);
+        var end = value.IndexOf('/', 1, StringComparison.Ordinal);
         segment = end < 0 ? value[1..] : value[1..end];
         remainder = end < 0 ? PathString.Empty : new PathString(value[end..]);
         return true;
