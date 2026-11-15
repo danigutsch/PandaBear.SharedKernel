@@ -47,7 +47,7 @@ public sealed class CiConfigurationConventionTests
     }
 
     [Fact]
-    public async Task Every_aspire_app_host_test_project_runs_outside_the_default_slice_with_a_service_or_alone()
+    public async Task Every_aspire_app_host_test_project_runs_in_a_slice_with_a_service()
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
@@ -57,21 +57,20 @@ public sealed class CiConfigurationConventionTests
         // Act
         // ponytail: membership only. A hosted project that does not borrow the slice's server still passes, and so does a second
         // kind of hosted project (Redis, ClamAV) in the postgres slice, whose containers would then start beside the shared
-        // server. The hosted projects of the served slice all use PostgreSQL today; require a reference to
-        // SharedKernel.Npgsql.Testing in a served slice, the code that reads the variable, when a project of another kind joins one.
+        // server. All three hosted projects use PostgreSQL today; require a reference to SharedKernel.Npgsql.Testing in a
+        // served slice, the code that reads the variable, when a project of another kind arrives.
         var hosted = graph.Tests
             .Where(project => XDocument.Load(Path.Combine(root, project)).Root?.Attribute("Sdk")?.Value.StartsWith("Aspire.AppHost.Sdk", StringComparison.Ordinal) == true)
             .Order(StringComparer.Ordinal)
             .ToArray();
-        var misplaced = hosted
-            .Where(project => configuration.Slices.SingleOrDefault(slice => slice.Projects.Contains(project, StringComparer.Ordinal)) is not { } slice
-                || slice.Name == configuration.DefaultSlice
-                || (slice.Service is null && slice.Projects.Count != 1))
+        var unserved = hosted
+            .Where(project => configuration.Slices.SingleOrDefault(slice => slice.Projects.Contains(project, StringComparer.Ordinal)) is not { Service: not null } slice
+                || slice.Name == configuration.DefaultSlice)
             .ToArray();
 
         // Assert
         hosted.ShouldNotBeEmpty();
-        misplaced.ShouldBeEmpty("A hosted test project starts containers, so it never runs in the default slice: either a service supplies the server that its slice shares, or it runs alone in a slice of its own and starts only its own containers.");
+        unserved.ShouldBeEmpty("A hosted test project starts its own containers unless a service supplies the server that its slice shares, so it never runs in the default slice or in a slice without a service.");
     }
 
     [Fact]

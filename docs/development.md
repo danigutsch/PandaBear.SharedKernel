@@ -113,8 +113,7 @@ style analyzer tests, or the shared test configuration) selects every test proje
 candidate job, which packs and consumes every package, and repository quality, which builds the whole solution and runs
 the governed literal check (`--explicit only`) against every library. The three PostgreSQL test projects share the
 `postgres` slice, which runs one PostgreSQL server for all of them (see [PostgreSQL test servers](#postgresql-test-servers));
-`SharedKernel.Aspire.Hosting.Umami.Tests` runs alone in the `umami` slice, because it starts Umami and PostgreSQL containers of
-its own; the `library` slice runs every other selected test project. Linux and Windows consume the same candidate bytes
+the `library` slice runs every other selected test project. Linux and Windows consume the same candidate bytes
 in parallel. Repository quality runs on every validation. Standalone repository documentation skips candidates, tests,
 and full-solution bootstrap/formatting while every tracked build file is inert; repository quality then builds only the
 documentation tool and checks generated-document drift. Package READMEs, scripts, and uncertain inputs are not

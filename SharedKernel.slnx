@@ -112,7 +112,6 @@
   <Project Path="tests/SharedKernel.Aspire.CodeFixes.Tests/SharedKernel.Aspire.CodeFixes.Tests.csproj" />
   <Project Path="tests/SharedKernel.Aspire.Hosting.K6.Tests/SharedKernel.Aspire.Hosting.K6.Tests.csproj" />
   <Project Path="tests/SharedKernel.Aspire.Hosting.Tests/SharedKernel.Aspire.Hosting.Tests.csproj" />
-  <Project Path="tests/SharedKernel.Aspire.Hosting.Umami.Tests/SharedKernel.Aspire.Hosting.Umami.Tests.csproj" />
   <Project Path="tests/SharedKernel.AuditTrail.GeneratorTests/SharedKernel.AuditTrail.GeneratorTests.csproj" />
   <Project Path="tests/SharedKernel.Blazor.Tests/SharedKernel.Blazor.Tests.csproj" />
   <Project Path="tests/SharedKernel.Blazor.Analyzers.Tests/SharedKernel.Blazor.Analyzers.Tests.csproj" />
