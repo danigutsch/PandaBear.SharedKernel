@@ -2,10 +2,12 @@ using System.Xml.Linq;
 
 namespace PandaBear.Repository.Tests.Conventions;
 
-/// <summary>Guards this repository's <c>.config/sharedkernel-ci.json</c> against selections that miss a package or a service, and against hosted tests without one.</summary>
+/// <summary>Guards this repository's <c>.config/sharedkernel-ci.json</c> against selections that miss a package or a service, and against tests that borrow a shared server outside its slice.</summary>
 public sealed class CiConfigurationConventionTests
 {
     private const string StyleAnalyzerTests = "tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj";
+
+    private const string SharedPostgreSqlTestingProject = "SharedKernel.Npgsql.Testing.csproj";
 
     [Fact]
     public async Task Every_packable_project_change_requires_a_build_and_so_the_candidate_job()
@@ -47,7 +49,7 @@ public sealed class CiConfigurationConventionTests
     }
 
     [Fact]
-    public async Task Every_aspire_app_host_test_project_runs_in_a_slice_with_a_service()
+    public async Task Every_test_project_that_borrows_the_shared_postgresql_server_runs_in_a_slice_with_a_service()
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
@@ -55,22 +57,19 @@ public sealed class CiConfigurationConventionTests
         var graph = SolutionGraph.Load(root, configuration.Solution);
 
         // Act
-        // ponytail: membership only. A hosted project that does not borrow the slice's server still passes, and so does a second
-        // kind of hosted project (Redis, ClamAV) in the postgres slice, whose containers would then start beside the shared
-        // server. All three hosted projects use PostgreSQL today; require a reference to SharedKernel.Npgsql.Testing in a
-        // served slice, the code that reads the variable, when a project of another kind arrives.
-        var hosted = graph.Tests
-            .Where(project => XDocument.Load(Path.Combine(root, project)).Root?.Attribute("Sdk")?.Value.StartsWith("Aspire.AppHost.Sdk", StringComparison.Ordinal) == true)
+        var borrowing = graph.Tests
+            .Where(project => XDocument.Load(Path.Combine(root, project)).Descendants("ProjectReference")
+                .Any(reference => Path.GetFileName(reference.Attribute("Include")?.Value.Replace('\\', '/') ?? string.Empty) == SharedPostgreSqlTestingProject))
             .Order(StringComparer.Ordinal)
             .ToArray();
-        var unserved = hosted
+        var unserved = borrowing
             .Where(project => configuration.Slices.SingleOrDefault(slice => slice.Projects.Contains(project, StringComparer.Ordinal)) is not { Service: not null } slice
                 || slice.Name == configuration.DefaultSlice)
             .ToArray();
 
         // Assert
-        hosted.ShouldNotBeEmpty();
-        unserved.ShouldBeEmpty("A hosted test project starts its own containers unless a service supplies the server that its slice shares, so it never runs in the default slice or in a slice without a service.");
+        borrowing.ShouldNotBeEmpty();
+        unserved.ShouldBeEmpty("A test project that borrows the shared PostgreSQL server through SharedKernel.Npgsql.Testing runs in the slice whose service supplies that server; otherwise each assembly starts a server of its own.");
     }
 
     [Fact]
