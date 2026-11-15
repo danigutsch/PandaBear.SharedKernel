@@ -1,6 +1,5 @@
 using System.CommandLine;
 using System.Globalization;
-using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tool;
 

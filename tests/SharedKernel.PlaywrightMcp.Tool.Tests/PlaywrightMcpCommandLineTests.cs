@@ -21,7 +21,7 @@ public sealed class PlaywrightMcpCommandLineTests
             (_, _) =>
             {
                 invocation++;
-                return Task.FromResult(new ProcessResult(0, string.Empty, string.Empty));
+                return Task.FromResult(new ProcessOutput(0, string.Empty, string.Empty));
             },
             TestContext.Current.CancellationToken);
 
@@ -36,7 +36,7 @@ public sealed class PlaywrightMcpCommandLineTests
         help.ShouldContain("PLAYWRIGHT_MCP_NETWORK_ACCESS", StringComparison.Ordinal);
         help.ShouldContain("PLAYWRIGHT_MCP_IMAGE_RESPONSES", StringComparison.Ordinal);
         var unwrappedHelp = string.Concat(help.Where(static character => !char.IsWhiteSpace(character)));
-        unwrappedHelp.ShouldContain(PlaywrightMcpCommand.Image, StringComparison.Ordinal);
+        unwrappedHelp.ShouldContain(PlaywrightMcpServer.Image, StringComparison.Ordinal);
         environment.Error.ToString().ShouldBeEmpty();
     }
 
@@ -58,7 +58,7 @@ public sealed class PlaywrightMcpCommandLineTests
             (_, _) =>
             {
                 invocation++;
-                return Task.FromResult(new ProcessResult(0, string.Empty, string.Empty));
+                return Task.FromResult(new ProcessOutput(0, string.Empty, string.Empty));
             },
             TestContext.Current.CancellationToken);
 
@@ -87,7 +87,7 @@ public sealed class PlaywrightMcpCommandLineTests
             (_, _) =>
             {
                 invocation++;
-                return Task.FromResult(new ProcessResult(0, string.Empty, string.Empty));
+                return Task.FromResult(new ProcessOutput(0, string.Empty, string.Empty));
             },
             TestContext.Current.CancellationToken);
 
@@ -104,9 +104,10 @@ public sealed class PlaywrightMcpCommandLineTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         var rootCommand = PlaywrightMcpCommandLine.Create(
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
-            static (_, _, _) => Task.FromResult(new ProcessResult(0, string.Empty, string.Empty)));
+            new PlaywrightMcpServer(
+                new DelegateProcessRunner(static (_, _, _) => Task.FromResult(new ProcessOutput(0, string.Empty, string.Empty))),
+                environment),
+            environment.GetEnvironmentVariable);
         var commandLines = DocumentedCommandLines.Find(DocumentedCommandLines.ReadToolReadme());
 
         // Act
@@ -145,7 +146,7 @@ public sealed class PlaywrightMcpCommandLineTests
             (_, _) =>
             {
                 invocation++;
-                return Task.FromResult(new ProcessResult(0, string.Empty, string.Empty));
+                return Task.FromResult(new ProcessOutput(0, string.Empty, string.Empty));
             },
             TestContext.Current.CancellationToken);
 
@@ -169,7 +170,7 @@ public sealed class PlaywrightMcpCommandLineTests
             (_, _) =>
             {
                 invocation++;
-                return Task.FromResult(new ProcessResult(0, string.Empty, string.Empty));
+                return Task.FromResult(new ProcessOutput(0, string.Empty, string.Empty));
             },
             TestContext.Current.CancellationToken);
 
@@ -200,7 +201,7 @@ public sealed class PlaywrightMcpCommandLineTests
             (_, _) =>
             {
                 invocation++;
-                return Task.FromResult(new ProcessResult(0, string.Empty, string.Empty));
+                return Task.FromResult(new ProcessOutput(0, string.Empty, string.Empty));
             },
             TestContext.Current.CancellationToken);
 
@@ -230,7 +231,7 @@ public sealed class PlaywrightMcpCommandLineTests
             (_, _) =>
             {
                 invocation++;
-                return Task.FromResult(new ProcessResult(0, string.Empty, string.Empty));
+                return Task.FromResult(new ProcessOutput(0, string.Empty, string.Empty));
             },
             TestContext.Current.CancellationToken);
 
@@ -264,17 +265,17 @@ public sealed class PlaywrightMcpCommandLineTests
                 switch (invocation)
                 {
                     case 1:
-                        return new ProcessResult(0, "default", string.Empty);
+                        return new ProcessOutput(0, "default", string.Empty);
                     case 2:
-                        return new ProcessResult(0, "unix:///var/run/docker.sock", string.Empty);
+                        return new ProcessOutput(0, "unix:///var/run/docker.sock", string.Empty);
                     case 3:
                         runtimeStarted.SetResult();
                         await Task.Delay(Timeout.InfiniteTimeSpan, ct);
-                        return new ProcessResult(0, string.Empty, string.Empty);
+                        return new ProcessOutput(0, string.Empty, string.Empty);
                     default:
                         cleanup = startInfo;
                         cleanupTokenWasCancelled = ct.IsCancellationRequested;
-                        return new ProcessResult(0, string.Empty, string.Empty);
+                        return new ProcessOutput(0, string.Empty, string.Empty);
                 }
             },
             cancellation.Token);
@@ -317,15 +318,15 @@ public sealed class PlaywrightMcpCommandLineTests
                 switch (invocation)
                 {
                     case 1:
-                        return new ProcessResult(0, "default", string.Empty);
+                        return new ProcessOutput(0, "default", string.Empty);
                     case 2:
-                        return new ProcessResult(0, "unix:///var/run/docker.sock", string.Empty);
+                        return new ProcessOutput(0, "unix:///var/run/docker.sock", string.Empty);
                     default:
                         // The same Ctrl+C stops the engine, which exits or fails before the runner observes the token.
                         await cancellation.CancelAsync();
                         return engineFails
                             ? throw new IOException("The pipe is broken.")
-                            : new ProcessResult(130, string.Empty, string.Empty);
+                            : new ProcessOutput(130, string.Empty, string.Empty);
                 }
             },
             cancellation.Token);
@@ -360,19 +361,19 @@ public sealed class PlaywrightMcpCommandLineTests
                 switch (invocation)
                 {
                     case 1:
-                        return new ProcessResult(0, "default", string.Empty);
+                        return new ProcessOutput(0, "default", string.Empty);
                     case 2:
-                        return new ProcessResult(0, "unix:///var/run/docker.sock", string.Empty);
+                        return new ProcessOutput(0, "unix:///var/run/docker.sock", string.Empty);
                     case 3:
                         // The same Ctrl+C stops the runtime, which exits or fails before the runner observes the token.
                         await cancellation.CancelAsync();
                         return runtimeFails
                             ? throw new IOException("The pipe is broken.")
-                            : new ProcessResult(130, string.Empty, string.Empty);
+                            : new ProcessOutput(130, string.Empty, string.Empty);
                     default:
                         cleanup = startInfo;
                         cleanupTokenWasCancelled = ct.IsCancellationRequested;
-                        return new ProcessResult(0, string.Empty, string.Empty);
+                        return new ProcessOutput(0, string.Empty, string.Empty);
                 }
             },
             cancellation.Token);
@@ -412,7 +413,7 @@ public sealed class PlaywrightMcpCommandLineTests
                 await cancellation.CancelAsync();
                 return engineFails
                     ? throw new InvalidOperationException("Could not start docker.")
-                    : new ProcessResult(130, string.Empty, "interrupted");
+                    : new ProcessOutput(130, string.Empty, "interrupted");
             },
             cancellation.Token);
 

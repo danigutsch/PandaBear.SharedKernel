@@ -1,5 +1,6 @@
 using System.Text.Json;
-using PandaBear.Tooling;
+using PandaBear.IO;
+using PandaBear.InputNormalization;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -40,7 +41,7 @@ internal static class SecurityCommand
 
     private static List<RepoConfigIssue> VerifyBaseline(string root, CancellationToken cancellationToken)
     {
-        var policyPath = RepositoryPath.Resolve(root, ".config/security-baseline.json");
+        var policyPath = RepositoryPath.Parse(".config/security-baseline.json").ResolveUnder(root);
         using var policy = JsonDocument.Parse(ReadBounded(policyPath, 1_048_576));
         var configuration = policy.RootElement;
         if (!configuration.TryGetProperty("version", out var version) || !version.TryGetInt32(out var number) || number != 1
@@ -65,7 +66,7 @@ internal static class SecurityCommand
                 throw new InvalidOperationException("Only Markdown document contracts are supported.");
             }
 
-            var path = RepositoryPath.Resolve(root, relativePath);
+            var path = RepositoryPath.Parse(relativePath).ResolveUnder(root);
             var markers = required.EnumerateArray().Select(element => element.ValueKind == JsonValueKind.String ? element.GetString() : null).ToArray();
             if (markers.Any(string.IsNullOrWhiteSpace))
             {

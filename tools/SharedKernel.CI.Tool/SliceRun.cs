@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.CI.Tool;
 
@@ -72,14 +72,14 @@ internal static class SliceRun
                 projects = [.. planned.SelectMany(static slice => slice.Tests).Select(static test => test.Project).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)];
 
                 // The plan can come from another job, so it may not point a build outside the checkout.
-                if (projects.FirstOrDefault(static project => !RepositoryPath.IsRelative(project)) is { } outside)
+                if (projects.FirstOrDefault(static project => !RepositoryPath.IsValid(project)) is { } outside)
                 {
                     throw new InvalidDataException(ProjectSelectionPlan.PlanFileName + " names a test project outside the checkout: " + outside);
                 }
 
                 foreach (var project in projects)
                 {
-                    RepositoryPath.Resolve(root, project);
+                    RepositoryPath.Parse(project).ResolveUnder(root);
                 }
 
                 return string.Empty;
@@ -103,7 +103,7 @@ internal static class SliceRun
             ];
             foreach (var (_, service) in services)
             {
-                RepositoryPath.Resolve(root, service.Project);
+                RepositoryPath.Parse(service.Project).ResolveUnder(root);
             }
 
             // Generation builds each target with --no-restore, and a service starts with --no-build --no-restore, so the filter restores and builds them too.

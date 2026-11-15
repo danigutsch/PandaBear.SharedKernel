@@ -14,6 +14,12 @@
         "resolved": "2.0.13",
         "contentHash": "TIO2lMV+sSP7WW7pD/oCRHD9ENWY+jqwXmYzgks3R46cEdDzwjQOAhsiBn+M3EegfGjgTpa2h+eIrcU+AM2k6A=="
       },
+      "PandaBear.SharedKernel.IO": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.Processes": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Versioning": {
         "type": "Project"
       }

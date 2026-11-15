@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using PandaBear.Tooling;
+using PandaBear.InputNormalization;
 
 namespace PandaBear.RepoConfig.Tool;
 

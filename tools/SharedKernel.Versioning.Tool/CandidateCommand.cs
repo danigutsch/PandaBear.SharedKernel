@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
-using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tool;
 
@@ -69,7 +68,7 @@ internal static class CandidateCommand
             ["stablePromotion"] = "pending"
         };
         var manifest = Path.Combine(feed, "candidate.json");
-        CandidateManifest.Write(manifest, evidence);
+        new CandidateManifest(evidence).Save(manifest);
         return manifest;
     }
 
@@ -83,7 +82,7 @@ internal static class CandidateCommand
     public static async Task Consume(
         string root, string manifest, string destination, bool aot, TextWriter output, TextWriter error, CancellationToken ct)
     {
-        var evidence = CandidateManifest.ReadAndVerify(manifest);
+        var evidence = CandidateManifest.Load(manifest).Evidence;
         var version = evidence["packageVersion"]!.GetValue<string>();
         _ = SemanticVersion.Parse(version);
         var feed = Path.GetDirectoryName(manifest)!;
@@ -98,7 +97,7 @@ internal static class CandidateCommand
         {
             // A canceled run proves nothing, so it leaves the recorded evidence unchanged.
             evidence[platform] = "failed";
-            CandidateManifest.Write(destination, evidence);
+            new CandidateManifest(evidence).Save(destination);
             throw;
         }
 
@@ -108,7 +107,7 @@ internal static class CandidateCommand
             evidence[OperatingSystem.IsWindows() ? "windowsNativeAot" : "linuxNativeAot"] = "passed";
         }
 
-        CandidateManifest.Write(destination, evidence);
+        new CandidateManifest(evidence).Save(destination);
     }
 
     /// <summary>

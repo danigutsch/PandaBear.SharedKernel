@@ -1,6 +1,6 @@
 using System.CommandLine;
 using PandaBear.K6.Tool;
-using PandaBear.Tooling;
+using PandaBear.Processes;
 
 var configuration = new InvocationConfiguration
 {
@@ -13,7 +13,7 @@ return await K6CommandLine
     .Create(
         Environment.CurrentDirectory,
         Environment.GetEnvironmentVariable,
-        static command => ExecutableResolver.Resolve(command, Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows()))
+        static command => PathExecutableResolver.Default.Find(command))
     .Parse(args)
     .InvokeAsync(configuration)
     .ConfigureAwait(false);

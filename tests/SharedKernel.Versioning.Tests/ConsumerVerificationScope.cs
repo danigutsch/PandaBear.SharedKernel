@@ -2,7 +2,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using PandaBear.Tooling;
 using PandaBear.Versioning.Tool;
 
 namespace PandaBear.Versioning.Tests;
@@ -124,7 +123,7 @@ internal sealed partial class ConsumerVerificationScope : IDisposable
     /// <summary>Writes the manifest, commits every file, and returns the commit.</summary>
     public async Task<string> Commit(CancellationToken ct)
     {
-        CandidateManifest.Write(Manifest, Candidate);
+        new CandidateManifest(Candidate).Save(Manifest);
         if (!Directory.Exists(Path.Combine(Root, ".git")))
         {
             await repository.Initialize(ct);

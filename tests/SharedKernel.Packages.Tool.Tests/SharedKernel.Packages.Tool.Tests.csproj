@@ -10,6 +10,7 @@
         <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="PandaBear.Packages" />
         <Using Include="PandaBear.Packages.Tool" />
+        <Using Include="PandaBear.Processes" />
         <Using Include="Xunit" />
     </ItemGroup>
 

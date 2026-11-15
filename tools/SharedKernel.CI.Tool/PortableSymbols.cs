@@ -3,7 +3,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using System.Security.Cryptography;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.CI.Tool;
 
@@ -31,12 +31,12 @@ internal static class PortableSymbols
     /// <exception cref="InvalidDataException">A file that starts like a portable PDB is not a valid one.</exception>
     public static bool HasOnlyNonExecutableCode(string root, string path, IEnumerable<string> symbolFiles)
     {
-        var checksum = SHA256.HashData(File.ReadAllBytes(RepositoryPath.Resolve(root, path)));
+        var checksum = SHA256.HashData(File.ReadAllBytes(RepositoryPath.Parse(path).ResolveUnder(root)));
         var found = false;
         var signature = new byte[4];
         foreach (var file in symbolFiles)
         {
-            using var stream = File.OpenRead(RepositoryPath.Resolve(root, file));
+            using var stream = File.OpenRead(RepositoryPath.Parse(file).ResolveUnder(root));
 
             // Windows PDBs carry no portable document table, so they are not evidence.
             if (stream.ReadAtLeast(signature, 4, throwOnEndOfStream: false) != 4 || !signature.AsSpan().SequenceEqual("BSJB"u8))
@@ -75,7 +75,7 @@ internal static class PortableSymbols
                     continue;
                 }
 
-                var generated = CompilerGeneratedMethods(RepositoryPath.Resolve(root, file), reader);
+                var generated = CompilerGeneratedMethods(RepositoryPath.Parse(file).ResolveUnder(root), reader);
                 foreach (var handle in reader.MethodDebugInformation)
                 {
                     if (generated.Contains(MetadataTokens.GetRowNumber(handle)))

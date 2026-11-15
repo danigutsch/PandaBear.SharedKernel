@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using PandaBear.Tooling;
+using PandaBear.Processes;
 
 namespace PandaBear.CI.Tool;
 
@@ -63,7 +63,7 @@ internal static class ProcessRunner
     internal static async Task<string> Run(
         string fileName, string[] arguments, string workingDirectory, TimeSpan timeout, TimeProvider timeProvider, Action<ProcessStartInfo> configure, CancellationToken ct, bool echo = false)
     {
-        var startInfo = new ProcessStartInfo(ExecutableResolver.ResolveCommand(fileName))
+        var startInfo = new ProcessStartInfo(PathExecutableResolver.Default.Resolve(fileName))
         {
             RedirectStandardError = true,
             RedirectStandardOutput = true,

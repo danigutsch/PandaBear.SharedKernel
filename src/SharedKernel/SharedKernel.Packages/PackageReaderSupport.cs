@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using System.Text;
+using PandaBear.Processes;
 using PandaBear.Results;
 
 namespace PandaBear.Packages;
@@ -42,7 +44,7 @@ internal static class PackageReaderSupport
         ProcessOutput output;
         try
         {
-            output = await runner.Run(executable, arguments, cancellationToken).ConfigureAwait(false);
+            output = await runner.Run(CreateStartInfo(executable, arguments), null, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is InvalidOperationException or TimeoutException)
         {
@@ -50,6 +52,33 @@ internal static class PackageReaderSupport
         }
 
         return output.ExitCode == 0 ? (output, null) : (null, $"{tool} failed with exit code {output.ExitCode}.{Detail(output.StandardError)}");
+    }
+
+    /// <summary>
+    /// Describes a tool run from an absolute path without a shell, with redirected streams and an empty standard input, in
+    /// the invariant locale, so the tool prints its tables and messages in English.
+    /// </summary>
+    internal static ProcessStartInfo CreateStartInfo(string executable, IReadOnlyList<string> arguments)
+    {
+        ProcessStartInfo startInfo = new(executable)
+        {
+            CreateNoWindow = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            RedirectStandardInput = true,
+            UseShellExecute = false,
+        };
+        // LC_ALL wins over the others, and LANGUAGE would override LC_MESSAGES.
+        startInfo.Environment["LC_ALL"] = "C";
+        startInfo.Environment["LC_MESSAGES"] = "C";
+        startInfo.Environment["LANG"] = "C";
+        startInfo.Environment.Remove("LANGUAGE");
+        foreach (var argument in arguments)
+        {
+            startInfo.ArgumentList.Add(argument);
+        }
+
+        return startInfo;
     }
 
     /// <summary>Orders the packages by name and fails when one name appears twice, because a plan cannot tell which entry is meant.</summary>

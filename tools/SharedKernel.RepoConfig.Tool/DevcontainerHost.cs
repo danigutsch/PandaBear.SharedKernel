@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using PandaBear.Tooling;
+using PandaBear.Processes;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -15,7 +15,7 @@ internal sealed record DevcontainerHost(string? DockerExecutable, bool IsLinuxX6
     /// <summary>Gets the services of the current machine.</summary>
     public static DevcontainerHost Current() =>
         new(
-            ExecutableResolver.Resolve("docker", Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows()),
+            PathExecutableResolver.Default.Find("docker"),
             OperatingSystem.IsLinux() && RuntimeInformation.OSArchitecture == Architecture.X64,
             null,
             DevcontainerCliPins.Default);

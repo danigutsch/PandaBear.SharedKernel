@@ -1,5 +1,5 @@
 using System.Globalization;
-using PandaBear.Tooling;
+using PandaBear.InputNormalization;
 
 namespace PandaBear.Sandbox.Tool;
 

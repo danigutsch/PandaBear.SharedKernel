@@ -1,6 +1,6 @@
 using System.CommandLine;
 using System.ComponentModel;
-using PandaBear.Tooling;
+using PandaBear.InputNormalization;
 
 namespace PandaBear.K6.Tool;
 

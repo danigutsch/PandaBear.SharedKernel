@@ -1,5 +1,5 @@
 using System.Text;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.Sandbox.Tool;
 
@@ -25,7 +25,7 @@ internal static class SettingsFileStore
 
         try
         {
-            return RepositoryPath.Resolve(root, relativePath);
+            return RepositoryPath.Parse(relativePath).ResolveUnder(root);
         }
         catch (InvalidOperationException exception)
         {

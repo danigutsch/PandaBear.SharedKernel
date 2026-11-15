@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml;
 using System.Xml.Linq;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.Versioning.Tool;
 
@@ -46,7 +46,7 @@ internal static class ConsumerVerificationCommand
             {
                 revision = (await CommandRunner.Run("git", ["rev-parse", "HEAD"], options.RepoRoot, ct).ConfigureAwait(false)).Trim();
                 dirty = (await CommandRunner.Run("git", ["status", "--porcelain"], options.RepoRoot, ct).ConfigureAwait(false)).Length != 0;
-                evidence = CandidateManifest.ReadAndVerify(options.Candidate);
+                evidence = CandidateManifest.Load(options.Candidate).Evidence;
                 var version = evidence["packageVersion"]?.GetValue<string>() ?? throw new ArgumentException("Candidate package version is unavailable.");
                 _ = SemanticVersion.Parse(version);
                 var libraryDirty = evidence["libraryDirty"]?.GetValue<bool>() ?? throw new ArgumentException("Candidate library state is unavailable.");
@@ -98,7 +98,7 @@ internal static class ConsumerVerificationCommand
                 evidence["reason"] = failure.Message.Length <= MaxReasonLength ? failure.Message : failure.Message[..MaxReasonLength] + " (truncated)";
             }
 
-            CandidateManifest.Write(options.Output, evidence);
+            new CandidateManifest(evidence).Save(options.Output);
             await output.WriteLineAsync("Consumer compatibility: " + status + ". Evidence: " + options.Output).ConfigureAwait(false);
             if (failure is not null)
             {
@@ -122,8 +122,8 @@ internal static class ConsumerVerificationCommand
         }
 
         var relative = Path.GetRelativePath(options.RepoRoot, options.Solution).Replace('\\', '/');
-        return RepositoryPath.IsRelative(relative) && relative.EndsWith(".slnx", StringComparison.OrdinalIgnoreCase)
-            ? RepositoryPath.Resolve(clone, relative)
+        return RepositoryPath.IsValid(relative) && relative.EndsWith(".slnx", StringComparison.OrdinalIgnoreCase)
+            ? RepositoryPath.Parse(relative).ResolveUnder(clone)
             : throw new ArgumentException("--solution must name a .slnx file inside the repository: " + options.Solution + ".");
     }
 
@@ -156,7 +156,7 @@ internal static class ConsumerVerificationCommand
             var project = Path.GetFullPath(((string?)entry.Attribute("Path") ?? throw new ArgumentException(Relative(clone, solution) + " lists a project without a path."))
                 .Replace('\\', '/'), solutionDirectory);
             var name = Relative(clone, project);
-            if (!RepositoryPath.IsRelative(name))
+            if (!RepositoryPath.IsValid(name))
             {
                 throw new ArgumentException(Relative(clone, solution) + " lists a project outside the repository: " + name + ".");
             }
@@ -245,12 +245,12 @@ internal static class ConsumerVerificationCommand
         var key = (string?)mapped[0].Attribute("key");
         var added = sources.Elements("add").Where(source => string.Equals((string?)source.Attribute("key"), key, StringComparison.OrdinalIgnoreCase)).ToArray();
         var folder = added.Length == 1 ? (string?)added[0].Attribute("value") ?? string.Empty : string.Empty;
-        if (!RepositoryPath.IsRelative(folder))
+        if (!RepositoryPath.IsValid(folder))
         {
             throw new ArgumentException($"NuGet.Config must add the source {key} of {PackagePattern} once, as a folder inside the repository with '/' separators and without empty, '.', or '..' segments.");
         }
 
-        var target = RepositoryPath.Resolve(clone, folder);
+        var target = RepositoryPath.Parse(folder).ResolveUnder(clone);
         if (Directory.Exists(target) && Directory.EnumerateFiles(target, "*.nupkg", SearchOption.AllDirectories).Any())
         {
             throw new ArgumentException($"The committed package folder {folder} already holds packages, which restore could use instead of the candidate's.");

@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
-using PandaBear.Tooling;
 using PandaBear.Versioning.Tool;
 
 namespace PandaBear.Versioning.Tests;
@@ -33,7 +32,7 @@ public static class ToolPackageCheckTests
         var succeeded = result.ExitCode == 0;
         succeeded.ShouldBeTrue($"consume-candidate exited with {result.ExitCode}. Standard error:{Environment.NewLine}{result.Error}");
         result.Error.ShouldContain(toolOutput + " --help", StringComparison.Ordinal);
-        var recorded = CandidateManifest.ReadAndVerify(manifest)[platform].ShouldNotBeNull().GetValue<string>();
+        var recorded = CandidateManifest.Load(manifest).Evidence[platform].ShouldNotBeNull().GetValue<string>();
         recorded.ShouldBe("passed", "Every tool command answered --help, and the samples ran.");
     }
 
@@ -60,7 +59,7 @@ public static class ToolPackageCheckTests
         // Assert
         result.ExitCode.ShouldBe(2, "The package lacks the entry point that its tool settings name, so dotnet tool install fails.");
         result.Error.ShouldContain("Tool package PandaBear.SharedKernel.Broken.Tool did not install", StringComparison.Ordinal);
-        var recorded = CandidateManifest.ReadAndVerify(manifest)[platform].ShouldNotBeNull().GetValue<string>();
+        var recorded = CandidateManifest.Load(manifest).Evidence[platform].ShouldNotBeNull().GetValue<string>();
         recorded.ShouldBe("failed");
     }
 

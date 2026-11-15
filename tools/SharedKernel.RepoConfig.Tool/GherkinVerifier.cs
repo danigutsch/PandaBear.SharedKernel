@@ -3,7 +3,7 @@ using System.IO.Enumeration;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Text.Unicode;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -61,7 +61,7 @@ internal static class GherkinVerifier
         var names = paths.Select(static path => path.TrimEnd('/')).ToArray();
         for (var index = 0; index < names.Length; index++)
         {
-            if (!RepositoryPath.IsRelative(names[index]))
+            if (!RepositoryPath.IsValid(names[index]))
             {
                 throw new InvalidOperationException($"{paths[index]} must be a repository-relative path with '/' separators and without empty, '.', or '..' segments.");
             }

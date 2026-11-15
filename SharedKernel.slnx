@@ -158,7 +158,9 @@
   <Project Path="tests/SharedKernel.ObjectStorage.S3.Tests/SharedKernel.ObjectStorage.S3.Tests.csproj" />
   <Project Path="tests/SharedKernel.Observability.Tests/SharedKernel.Observability.Tests.csproj" />
   <Project Path="tests/SharedKernel.OpenApi.Tests/SharedKernel.OpenApi.Tests.csproj" />
+  <Project Path="tests/SharedKernel.PlaywrightMcp.Tests/SharedKernel.PlaywrightMcp.Tests.csproj" />
   <Project Path="tests/SharedKernel.PlaywrightMcp.Tool.Tests/SharedKernel.PlaywrightMcp.Tool.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Processes.Tests/SharedKernel.Processes.Tests.csproj" />
   <Project Path="tests/SharedKernel.Results.AspNet.Tests/SharedKernel.Results.AspNet.Tests.csproj" />
   <Project Path="tests/SharedKernel.Results.GeneratorTests/SharedKernel.Results.GeneratorTests.csproj" />
   <Project Path="tests/SharedKernel.Results.Analyzers.Tests/SharedKernel.Results.Analyzers.Tests.csproj" />
@@ -184,6 +186,8 @@
   <Project Path="tools/SharedKernel.K6.Tool/SharedKernel.K6.Tool.csproj" />
   <Project Path="tools/SharedKernel.Sandbox.Tool/SharedKernel.Sandbox.Tool.csproj" />
   <Project Path="tools/SharedKernel.Packages.Tool/SharedKernel.Packages.Tool.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.PlaywrightMcp/SharedKernel.PlaywrightMcp.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Processes/SharedKernel.Processes.csproj" />
   <Project Path="tools/SharedKernel.PlaywrightMcp.Tool/SharedKernel.PlaywrightMcp.Tool.csproj" />
   <Project Path="tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj" />
   <Project Path="tools/SharedKernel.VaultManager.Tool/SharedKernel.VaultManager.Tool.csproj" />

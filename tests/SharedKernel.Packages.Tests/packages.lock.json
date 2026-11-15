@@ -207,8 +207,12 @@
         "type": "Project",
         "dependencies": {
           "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
+      },
+      "PandaBear.SharedKernel.Processes": {
+        "type": "Project"
       },
       "PandaBear.SharedKernel.Results": {
         "type": "Project"

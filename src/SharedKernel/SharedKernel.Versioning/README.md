@@ -12,6 +12,14 @@ It also owns reusable release-artifact, local package-feed, and public API basel
 repo-owned tools. Tool projects should keep command parsing, process execution, and standard IO wiring
 outside this package.
 
+## Candidate manifests
+
+`CandidateManifest` is the `candidate.json` of a package candidate. `Find` locates the single manifest under a
+directory; `Load` reads it and verifies that every package in `packageSha256` lies beside it with an unchanged SHA-256
+hash; `Evidence` is its JSON content, to which validation and consumption add their records; `Save` replaces the file
+through a temporary file, so an interrupted write never leaves a truncated manifest. `HashPackage` computes the
+lowercase hexadecimal hash that the manifest records.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Versioning`. C# namespace: `PandaBear.Versioning`. Assembly/project identity: `SharedKernel.Versioning`.

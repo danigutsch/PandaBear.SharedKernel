@@ -1,7 +1,6 @@
 using System.Security.Cryptography;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
-using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tests;
 
@@ -19,10 +18,10 @@ public static class CandidateManifestTests
         using var stream = File.OpenRead(package);
         var hashes = new JsonObject { [Path.GetFileName(package)] = Convert.ToHexStringLower((await SHA256.HashDataAsync(stream, TestContext.Current.CancellationToken).ConfigureAwait(true))) };
         var manifest = Path.Combine(temporary.PackageDirectory, "candidate.json");
-        CandidateManifest.Write(manifest, new JsonObject { ["packageVersion"] = "1.0.0", ["packageSha256"] = hashes });
+        new CandidateManifest(new JsonObject { ["packageVersion"] = "1.0.0", ["packageSha256"] = hashes }).Save(manifest);
 
         // Act
-        var packageVersion = CandidateManifest.ReadAndVerify(manifest)["packageVersion"]!.GetValue<string>();
+        var packageVersion = CandidateManifest.Load(manifest).Evidence["packageVersion"]!.GetValue<string>();
         Directory.CreateDirectory(temporary.OutputDirectory);
         var ids = SharedKernelLocalFeed.ReadPackageIds([package], "1.0.0");
         await SharedKernelLocalFeed.WriteNuGetConfig(temporary.OutputDirectory, temporary.PackageDirectory, ids, new Uri("https://example.test/v3/index.json"));
@@ -41,8 +40,8 @@ public static class CandidateManifestTests
         using var temporary = new TemporaryReleasePrepDirectory();
         var package = NuGetPackageBuilder.WritePackage(temporary.PackageDirectory, "PandaBear.SharedKernel.Probe", "1.0.0");
         var manifest = Path.Combine(temporary.PackageDirectory, "candidate.json");
-        CandidateManifest.Write(manifest, new JsonObject { ["packageVersion"] = "1.0.0", ["packageSha256"] = new JsonObject { [Path.GetFileName(package)] = "changed" } });
-        Action check = () => CandidateManifest.ReadAndVerify(manifest);
+        new CandidateManifest(new JsonObject { ["packageVersion"] = "1.0.0", ["packageSha256"] = new JsonObject { [Path.GetFileName(package)] = "changed" } }).Save(manifest);
+        Action check = () => CandidateManifest.Load(manifest);
 
         // Act
         var exception = check.ShouldThrow<ArgumentException>();
@@ -57,8 +56,8 @@ public static class CandidateManifestTests
         // Arrange
         using var temporary = new TemporaryReleasePrepDirectory();
         var manifest = Path.Combine(temporary.PackageDirectory, "candidate.json");
-        CandidateManifest.Write(manifest, new JsonObject { ["packageVersion"] = "1.0.0", ["packageSha256"] = new JsonObject { ["../outside.nupkg"] = "changed" } });
-        Action check = () => CandidateManifest.ReadAndVerify(manifest);
+        new CandidateManifest(new JsonObject { ["packageVersion"] = "1.0.0", ["packageSha256"] = new JsonObject { ["../outside.nupkg"] = "changed" } }).Save(manifest);
+        Action check = () => CandidateManifest.Load(manifest);
 
         // Act
         var exception = check.ShouldThrow<ArgumentException>();
@@ -76,7 +75,7 @@ public static class CandidateManifestTests
 
         // Act
         var found = CandidateManifest.Find(temporary.Root);
-        var evidence = CandidateManifest.ReadAndVerify(found);
+        var evidence = CandidateManifest.Load(found).Evidence;
 
         // Assert
         found.ShouldBe(manifest);
@@ -171,10 +170,10 @@ public static class CandidateManifestTests
         // Arrange
         using var temporary = new TemporaryReleasePrepDirectory();
         var manifest = temporary.WriteCandidate();
-        var evidence = CandidateManifest.ReadAndVerify(manifest);
+        var evidence = CandidateManifest.Load(manifest).Evidence;
         evidence["linuxPackageConsumption"] = "passed";
         evidence["windowsPackageConsumption"] = "passed";
-        CandidateManifest.Write(manifest, evidence);
+        new CandidateManifest(evidence).Save(manifest);
         var original = await File.ReadAllTextAsync(manifest, TestContext.Current.CancellationToken);
         await temporary.WriteConsumptionSamples("Canceled sample", TestContext.Current.CancellationToken);
         using var cancellation = new CancellationTokenSource();
@@ -207,7 +206,7 @@ public static class CandidateManifestTests
 
         // Assert
         result.ExitCode.ShouldBe(2);
-        var evidence = CandidateManifest.ReadAndVerify(manifest);
+        var evidence = CandidateManifest.Load(manifest).Evidence;
         evidence[platform].ShouldNotBeNull().GetValue<string>().ShouldBe("failed");
         Directory.GetFiles(temporary.PackageDirectory, "candidate.json*").ShouldBe([manifest]);
     }
