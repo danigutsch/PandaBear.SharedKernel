@@ -31,6 +31,13 @@ public static class ResultErrorCodes
     public const string Conflict = "conflict";
 
     /// <summary>
+    /// The resource changed or was removed since the caller read it (an optimistic-concurrency conflict); the caller can reload it and try
+    /// again. A failure with this code has <see cref="ResultStatus.Conflict"/>, like <see cref="Conflict"/>, so callers that only look at the
+    /// status treat both alike, while callers that must tell a stale version apart compare the code instead of the message.
+    /// </summary>
+    public const string ConcurrencyConflict = "concurrency_conflict";
+
+    /// <summary>
     /// Generic processing failure.
     /// </summary>
     public const string Error = "error";
