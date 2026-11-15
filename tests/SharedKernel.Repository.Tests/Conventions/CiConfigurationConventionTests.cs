@@ -1,5 +1,4 @@
 using System.Xml.Linq;
-using PandaBear.CI.Tool;
 
 namespace PandaBear.Repository.Tests.Conventions;
 
@@ -136,7 +135,7 @@ public sealed class CiConfigurationConventionTests
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
         var graph = SolutionGraph.Load(root, configuration.Solution);
         var served = configuration.Slices.Where(static slice => slice.Service is not null).ToArray();
-        string[] protocol = ["tools/SharedKernel.CI.Tool/ServiceConfiguration.cs", "tools/SharedKernel.CI.Tool/ServiceHost.cs"];
+        string[] protocol = ["src/SharedKernel/SharedKernel.CI/ServiceConfiguration.cs", "src/SharedKernel/SharedKernel.CI/ServiceHost.cs"];
 
         // Act
         var unselected = served
@@ -168,7 +167,7 @@ public sealed class CiConfigurationConventionTests
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
         var graph = SolutionGraph.Load(root, configuration.Solution);
         const string toolTests = "tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj";
-        string[] protocol = ["tools/SharedKernel.CI.Tool/ServiceConfiguration.cs", "tools/SharedKernel.CI.Tool/ServiceHost.cs"];
+        string[] protocol = ["src/SharedKernel/SharedKernel.CI/ServiceConfiguration.cs", "src/SharedKernel/SharedKernel.CI/ServiceHost.cs"];
 
         // Act
         var unselected = protocol

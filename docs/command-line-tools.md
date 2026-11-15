@@ -192,7 +192,9 @@ Helpers that two or more tools call live in the library that owns the concept: `
 source files from other directories. `SharedKernel.PlaywrightMcp.Tool` is the first tool whose logic lives in an
 engine, `SharedKernel.PlaywrightMcp`; the other tools move theirs incrementally.
 `SharedKernel.K6.Tool` wraps the generic `SharedKernel.LoadTesting` core and its k6 provider,
-`SharedKernel.LoadTesting.K6`.
+`SharedKernel.LoadTesting.K6`. `SharedKernel.CI.Tool` wraps the forge-neutral `SharedKernel.CI` engine and its
+`SharedKernel.CI.GitHub` and `SharedKernel.CI.Forgejo` providers; `SharedKernel.Forgejo` is the Forgejo platform base, as
+`SharedKernel.GitHub` is GitHub's.
 
 ## Secrets
 

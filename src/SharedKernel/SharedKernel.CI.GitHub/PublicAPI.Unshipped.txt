@@ -1,0 +1,15 @@
+#nullable enable
+PandaBear.CI.GitHub.GitHubActionsOutputs
+PandaBear.CI.GitHub.GitHubActionsOutputs.GitHubActionsOutputs(string! path) -> void
+PandaBear.CI.GitHub.GitHubActionsOutputs.Write(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string!>>! outputs, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.CI.GitHub.GitHubActionsStepSummary
+PandaBear.CI.GitHub.GitHubActionsStepSummary.Append(string! markdown, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.CI.GitHub.GitHubActionsStepSummary.GitHubActionsStepSummary(string! path) -> void
+PandaBear.CI.GitHub.GitHubReleaseAssets
+PandaBear.CI.GitHub.GitHubReleaseAssets.GitHubReleaseAssets(string! repository) -> void
+PandaBear.CI.GitHub.GitHubReleaseAssets.Locate(string! tag, string! asset, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.Uri!>!
+PandaBear.CI.GitHub.GitHubReleaseStore
+PandaBear.CI.GitHub.GitHubReleaseStore.Delete(PandaBear.CI.RepositoryRelease! release, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.CI.GitHub.GitHubReleaseStore.Dispose() -> void
+PandaBear.CI.GitHub.GitHubReleaseStore.GitHubReleaseStore(System.Net.Http.HttpMessageHandler! handler, string! repository, System.Net.Http.Headers.ProductInfoHeaderValue! userAgent, string? token) -> void
+PandaBear.CI.GitHub.GitHubReleaseStore.List(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.CI.RepositoryRelease!>!>!

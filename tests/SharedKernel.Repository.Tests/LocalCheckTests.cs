@@ -1,36 +1,8 @@
-using PandaBear.CI.Tool;
-
 namespace PandaBear.Repository.Tests;
 
 /// <summary>Guards the <c>local-check</c> command: its lanes, its report of what could not run, its exit codes, and its refusal to pass having checked nothing.</summary>
 public sealed class LocalCheckTests
 {
-    [Fact]
-    public async Task All_lanes_passing_exits_zero_and_the_report_says_what_it_does_not_check()
-    {
-        // Arrange
-        var ct = TestContext.Current.CancellationToken;
-        using var repository = new RepositoryTestScope();
-        var processes = new ProcessLog(new LocalCheckScript(repository).Respond);
-
-        // Act
-        var result = await RepositoryToolInvocation.Run(repository.Root, LocalCheckReport.Check(), processes.Run, ct);
-
-        // Assert
-        result.ExitCode.ShouldBe(0, result.Error);
-        LocalCheckReport.Lane(result.Output, "whitespace").ShouldContain("passed", StringComparison.Ordinal);
-        LocalCheckReport.Lane(result.Output, "build").ShouldContain("passed", StringComparison.Ordinal);
-        LocalCheckReport.Lane(result.Output, "tests").ShouldContain("Core.Tests", StringComparison.Ordinal);
-        result.Output.ShouldContain("This lane does not check:", StringComparison.Ordinal);
-        foreach (var item in LocalCheck.NotCovered)
-        {
-            result.Output.ShouldContain(item, StringComparison.Ordinal);
-        }
-
-        result.Output.ShouldContain("this is not the whole of CI", StringComparison.Ordinal);
-        result.Error.ShouldBe(string.Empty);
-    }
-
     [Fact]
     public async Task The_lanes_run_the_socket_free_commands_with_node_reuse_off_and_the_test_host_directly()
     {
@@ -250,19 +222,6 @@ public sealed class LocalCheckTests
         LocalCheckReport.Lane(result.Output, "tests").ShouldContain("build lane did not pass", StringComparison.Ordinal);
     }
 
-    [Theory]
-    [InlineData("System.Net.Sockets.SocketException (13): Permission denied", true)]
-    [InlineData("connect to the pipe: Permission denied", true)]
-    [InlineData("Unix socket Permission denied", true)]
-    [InlineData("error: Permission denied reading /etc/shadow", false)]
-    [InlineData("System.Net.Sockets.SocketException (111): Connection refused", false)]
-    [InlineData("System.Net.Sockets.SocketException (1): Operation not permitted", true)]
-    [InlineData("/home/me/.nuget/Pipelines/Sockets.Unofficial.dll: Permission denied", false)]
-    [InlineData("Permission denied: /home/me/.nuget/Pipelines/Sockets.Unofficial.dll", false)]
-    [InlineData("error CS0246: type not found", false)]
-    public void Socket_refusal_is_recognized_by_the_exception_or_by_permission_denied_next_to_a_socket(string output, bool refused) =>
-        SocketRefusal.IsRefused(output).ShouldBe(refused);
-
     [Fact]
     public async Task A_failing_test_project_fails_the_tests_lane_and_exit_zero_tests_say_nothing_was_checked()
     {
@@ -386,16 +345,13 @@ public sealed class LocalCheckTests
         using var output = new StringWriter();
 
         // Act
-        await LocalCheck.Run(
+        await new LocalCheckRunner(processes.Machine(new SteppingTimeProvider())).Run(
             repository.Root,
             selection,
             new LocalCheckOptions(null, "Debug", false, [], TimeSpan.FromMinutes(5)),
-            processes.Run,
-            processes.RunConfigured,
             output,
             TextWriter.Null,
-            ct,
-            new SteppingTimeProvider());
+            ct);
 
         // Assert
         LocalCheckReport.Lane(output.ToString(), "whitespace").ShouldContain("(2.0s)", StringComparison.Ordinal);
@@ -495,12 +451,10 @@ public sealed class LocalCheckTests
         var selection = Path.Combine(repository.Root, "TestResults", "local-check");
 
         // Act
-        var run = () => LocalCheck.Run(
+        var run = () => new LocalCheckRunner(processes.Machine()).Run(
             repository.Root,
             selection,
             new LocalCheckOptions(null, "Debug", false, [], TimeSpan.FromMilliseconds(200)),
-            processes.Run,
-            processes.RunConfigured,
             TextWriter.Null,
             TextWriter.Null,
             ct);

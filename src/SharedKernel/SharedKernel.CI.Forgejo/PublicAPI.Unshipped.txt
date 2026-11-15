@@ -1,0 +1,16 @@
+#nullable enable
+PandaBear.CI.Forgejo.ForgejoActionsOutputs
+PandaBear.CI.Forgejo.ForgejoActionsOutputs.ForgejoActionsOutputs(string! path) -> void
+PandaBear.CI.Forgejo.ForgejoActionsOutputs.Write(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string!>>! outputs, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.CI.Forgejo.ForgejoActionsStepSummary
+PandaBear.CI.Forgejo.ForgejoActionsStepSummary.Append(string! markdown, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.CI.Forgejo.ForgejoActionsStepSummary.ForgejoActionsStepSummary(string! path) -> void
+PandaBear.CI.Forgejo.ForgejoReleaseAssets
+PandaBear.CI.Forgejo.ForgejoReleaseAssets.Dispose() -> void
+PandaBear.CI.Forgejo.ForgejoReleaseAssets.ForgejoReleaseAssets(System.Net.Http.HttpMessageHandler! handler, System.Uri! server, string! repository, System.Net.Http.Headers.ProductInfoHeaderValue! userAgent) -> void
+PandaBear.CI.Forgejo.ForgejoReleaseAssets.Locate(string! tag, string! asset, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.Uri!>!
+PandaBear.CI.Forgejo.ForgejoReleaseStore
+PandaBear.CI.Forgejo.ForgejoReleaseStore.Delete(PandaBear.CI.RepositoryRelease! release, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.CI.Forgejo.ForgejoReleaseStore.Dispose() -> void
+PandaBear.CI.Forgejo.ForgejoReleaseStore.ForgejoReleaseStore(System.Net.Http.HttpMessageHandler! handler, System.Uri! server, string! repository, System.Net.Http.Headers.ProductInfoHeaderValue! userAgent, string? token) -> void
+PandaBear.CI.Forgejo.ForgejoReleaseStore.List(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.CI.RepositoryRelease!>!>!

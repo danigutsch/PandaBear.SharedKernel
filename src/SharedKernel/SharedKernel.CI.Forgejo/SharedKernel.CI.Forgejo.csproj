@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.CI.Forgejo</PackageId>
+        <Description>Forgejo provider of the SharedKernel CI engine: Forgejo Actions run outputs and step summaries, and Forgejo releases for prerelease pruning and candidate staging.</Description>
+        <PackageTags>ci;forgejo;forgejo-actions;releases;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.CI.Forgejo.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.CI\SharedKernel.CI.csproj" />
+        <ProjectReference Include="..\SharedKernel.Forgejo\SharedKernel.Forgejo.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

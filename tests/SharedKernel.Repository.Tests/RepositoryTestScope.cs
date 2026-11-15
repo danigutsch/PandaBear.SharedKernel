@@ -1,5 +1,4 @@
 using System.Xml.Linq;
-using PandaBear.CI.Tool;
 
 namespace PandaBear.Repository.Tests;
 
@@ -137,9 +136,7 @@ internal sealed class RepositoryTestScope : IDisposable
             [],
             [],
             [.. slices.Select(static slice => new SliceSelection(slice.Slice, slice.Tests.Length > 0, [.. slice.Tests.Select(static test => new SelectedTest(test, []))]))]);
-        File.WriteAllBytes(
-            Path.Combine(selection, "selection.json"),
-            System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(plan, SelectionPlanJsonContext.Default.SelectionPlan));
+        SelectionPlanFile.Write(plan, selection, CancellationToken.None).GetAwaiter().GetResult();
         return selection;
     }
 

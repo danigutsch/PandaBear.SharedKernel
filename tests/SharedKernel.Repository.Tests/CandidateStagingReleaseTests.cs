@@ -1,7 +1,6 @@
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using PandaBear.CI.Tool;
 
 namespace PandaBear.Repository.Tests;
 

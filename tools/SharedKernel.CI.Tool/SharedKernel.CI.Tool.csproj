@@ -21,12 +21,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.ConfigurationFiles\SharedKernel.ConfigurationFiles.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.CI\SharedKernel.CI.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.CI.Forgejo\SharedKernel.CI.Forgejo.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.CI.GitHub\SharedKernel.CI.GitHub.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Forgejo\SharedKernel.Forgejo.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.GitHub\SharedKernel.GitHub.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.IO\SharedKernel.IO.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Processes\SharedKernel.Processes.csproj" />
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Versioning\SharedKernel.Versioning.csproj" />
     </ItemGroup>
 
     <ItemGroup>

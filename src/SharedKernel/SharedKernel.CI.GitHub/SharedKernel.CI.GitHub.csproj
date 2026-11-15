@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.CI.GitHub</PackageId>
+        <Description>GitHub provider of the SharedKernel CI engine: GitHub Actions run outputs and step summaries, and GitHub releases for prerelease pruning and candidate staging.</Description>
+        <PackageTags>ci;github;github-actions;releases;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.CI.GitHub.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.CI\SharedKernel.CI.csproj" />
+        <ProjectReference Include="..\SharedKernel.GitHub\SharedKernel.GitHub.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

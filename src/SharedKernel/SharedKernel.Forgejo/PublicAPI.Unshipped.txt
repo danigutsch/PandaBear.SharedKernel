@@ -1,0 +1,9 @@
+#nullable enable
+PandaBear.Forgejo.ForgejoApiClient
+PandaBear.Forgejo.ForgejoToken
+static PandaBear.Forgejo.ForgejoApiClient.ApiBase(System.Uri! server) -> System.Uri!
+static PandaBear.Forgejo.ForgejoApiClient.Create(System.Net.Http.HttpMessageHandler! handler, System.Uri! server, System.Net.Http.Headers.ProductInfoHeaderValue! userAgent, string? token) -> System.Net.Http.HttpClient!
+static PandaBear.Forgejo.ForgejoToken.Find(System.Func<string!, string?>! getEnvironmentVariable) -> string?
+static PandaBear.Forgejo.ForgejoToken.IsTokenVariable(string! name) -> bool
+static PandaBear.Forgejo.ForgejoToken.RemoveFrom(System.Diagnostics.ProcessStartInfo! startInfo) -> void
+static PandaBear.Forgejo.ForgejoToken.VariableNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
