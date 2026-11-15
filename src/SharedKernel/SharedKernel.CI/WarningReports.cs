@@ -7,15 +7,15 @@ namespace PandaBear.CI;
 public static class WarningReports
 {
     /// <summary>
-    /// Fails when a <c>dotnet restore</c> log reports a high or critical NuGet vulnerability advisory that no exception
-    /// covers; lower severities and other NuGet warnings stay advisory.
+    /// Fails when a <c>dotnet restore</c> log reports a NuGet vulnerability advisory of any severity, or an audit that could
+    /// not run (NU1900, NU1905), that no exception covers; other NuGet warnings stay advisory.
     /// </summary>
     /// <param name="logPath">The restore log.</param>
     /// <param name="summary">The step summary that receives the classification, or <see langword="null"/>.</param>
     /// <param name="reportPath">The warning report file to write, or <see langword="null"/>.</param>
     /// <param name="exceptionsPath">The warning exception ledger, or <see langword="null"/>.</param>
     /// <param name="ct">Cancels reading and writing.</param>
-    /// <exception cref="InvalidOperationException">The log reports a blocking advisory, or an exception expired.</exception>
+    /// <exception cref="InvalidOperationException">The log reports a blocking advisory or an audit that could not run, or an exception expired.</exception>
     /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
     public static Task VerifyRestore(string logPath, IStepSummary? summary, string? reportPath, string? exceptionsPath, CancellationToken ct)
     {

@@ -524,9 +524,26 @@ dotnet tool run sharedkernel-ci -- verify-restore-warnings --log restore.log --r
   `NU1904` (critical). The command exits 2 and names each `<code> <package> <version>` once, however many projects
   repeat it. Update the package or record a reviewed exception. A restore that sets `NuGetAuditLevel` above `low`
   leaves the lower severities out of the log, so this command cannot see them.
+- An audit that could not run blocks too, because it must not look like a clean audit: the restore passes, but nothing
+  was checked against the advisories.
+  - [`NU1900`](https://learn.microsoft.com/nuget/reference/errors-and-warnings/nu1900): NuGet could not get the
+    vulnerability data from a source ("Error occurred while getting package vulnerability data"), or a source returned an
+    advisory with an invalid severity ("has a known unknown severity vulnerability"). The second form names a package and
+    is named `NU1900 <package> <version>`. The first names neither a package nor a source, and the rest of its text is an
+    error message from the network or the feed, so it is named `NU1900 source`.
+  - [`NU1905`](https://learn.microsoft.com/nuget/reference/errors-and-warnings/nu1905): a source in the `auditSources` of
+    `NuGet.Config` did not provide vulnerability data. It is named `NU1905 source <name>` with the source name that NuGet
+    quotes, or `NU1905 source` when the name has a character outside letters, digits, space, and `._:/-`, so credentials
+    in a source URL are never copied. Microsoft suggests the same for builds: treat `NU1905` as an error "to cause build
+    failures when vulnerability checks could not be performed".
+
+  Restore again once the audit source answers, or record a reviewed exception for the rule and the `source` subject.
+  NuGet raises `NU1905` only for `auditSources`; without them it audits against the package sources, and a source that
+  provides no vulnerability data, such as a local folder, raises neither code.
 - Every other NuGet warning stays advisory and is counted in the summary.
 - `--summary <path>` appends a table of blocking and advisory counts, plus the blocking findings, so a pull request
-  shows them without opening the log. Only the warning code, package id, and package version are copied from the log.
+  shows them without opening the log. Only the warning code, package id and version, and audit source name are copied
+  from the log.
 - `--report <path>` writes the totals as a warning report for `warning-summary`, also when the command fails.
 - `--exceptions <path>` reads a [warning exception ledger](#warning-exception-ledger). Findings it covers count as
   accepted and no longer block; an expired exception is reported as a blocking `expired <rule> <scope>` finding.
@@ -584,7 +601,9 @@ reads it; later producers can reuse it.
 ```
 
 - `rule` is the first word of a finding. `scope` must match the start of the rest of the finding at a word or `/` boundary,
-  so `System.Foo` covers `System.Foo 1.0.0` but not `System.FooBar 1.0.0`.
+  so `System.Foo` covers `System.Foo 1.0.0` but not `System.FooBar 1.0.0`. With rule `NU1905`, scope `source nuget.org`
+  covers `NU1905 source nuget.org` only and scope `source` covers every `NU1905 source <name>`; with rule `NU1900`, scope
+  `source` covers `NU1900 source`.
 - `baseline` caps how many findings the exception accepts; blocking findings are accepted before advisory ones. A finding
   above the cap or outside the scope keeps its classification, so a baseline cannot absorb new findings.
 - `expires` is the last day (UTC) the exception counts. After it the exception accepts nothing and is reported as blocking
