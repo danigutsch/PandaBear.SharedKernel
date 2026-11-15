@@ -1,6 +1,7 @@
 using System.CommandLine;
 using System.Globalization;
 using PandaBear.InputNormalization;
+using PandaBear.Sandbox.ClaudeCode;
 
 namespace PandaBear.Sandbox.Tool;
 
@@ -93,11 +94,10 @@ internal static class SettingsCommand
         var configuration = await SandboxConfigurationFile.Read(root, cancellationToken).ConfigureAwait(false)
             ?? throw new InvalidOperationException($"{SandboxConfigurationFile.RelativePath} does not exist; the settings command needs its $.settings section.");
         var desired = DesiredSettings.Build(configuration, flags, [environment.HomeDirectory, environment.AccountHomeDirectory ?? string.Empty], enforce: mode is SettingsMode.Apply && force);
-        var path = SettingsFileStore.Resolve(root, desired.Target);
-        var existing = await SettingsFileStore.Read(path, desired.Target, cancellationToken).ConfigureAwait(false);
-        var plan = SettingsMerger.Plan(desired, existing, desired.Target);
+        var file = ClaudeCodeSettingsFile.Locate(root, desired.Target);
+        var plan = await file.Plan(desired, cancellationToken).ConfigureAwait(false);
 
-        await WriteLine(output, "settings: " + desired.Target, cancellationToken).ConfigureAwait(false);
+        await WriteLine(output, "settings: " + file.Target, cancellationToken).ConfigureAwait(false);
         foreach (var change in plan.Changes)
         {
             var verb = change.Kind switch
@@ -106,7 +106,7 @@ internal static class SettingsCommand
                 SettingsChangeKind.Remove => "remove",
                 _ => "set",
             };
-            await WriteLine(output, $"{verb} {change.JsonPath}: {change.Value}", cancellationToken).ConfigureAwait(false);
+            await WriteLine(output, $"{verb} {change.Location}: {change.Value}", cancellationToken).ConfigureAwait(false);
         }
 
         foreach (var warning in desired.RiskWarnings.Concat(plan.Warnings))
@@ -127,8 +127,8 @@ internal static class SettingsCommand
                 await WriteLine(output, $"Drift: {count} managed entries differ. Run 'settings apply --force' to add them.", cancellationToken).ConfigureAwait(false);
                 return DriftExitCode;
             case SettingsMode.Apply when force:
-                SettingsFileStore.Write(root, desired.Target, plan.Content, plan.ExpectedContent, beforeCommit);
-                await WriteLine(output, $"Wrote {count} changes to {desired.Target}.", cancellationToken).ConfigureAwait(false);
+                file.Write(plan, beforeCommit);
+                await WriteLine(output, $"Wrote {count} changes to {file.Target}.", cancellationToken).ConfigureAwait(false);
                 return 0;
             default:
                 await WriteLine(output, $"{count} changes planned. Preview only; nothing was written." + (mode is SettingsMode.Apply ? " Pass --force to write." : " Use 'settings apply --force' to write."), cancellationToken).ConfigureAwait(false);

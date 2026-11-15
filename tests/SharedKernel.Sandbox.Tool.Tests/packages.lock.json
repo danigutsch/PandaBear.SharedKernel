@@ -208,12 +208,27 @@
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
-      "PandaBear.SharedKernel.Sandbox.Tool": {
+      "PandaBear.SharedKernel.Sandbox": {
         "type": "Project",
         "dependencies": {
           "PandaBear.SharedKernel.ConfigurationFiles": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Sandbox.ClaudeCode": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Sandbox": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Sandbox.Tool": {
+        "type": "Project",
+        "dependencies": {
           "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Sandbox": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Sandbox.ClaudeCode": "[0.1.0-alpha.0, )",
           "System.CommandLine": "[3.0.0, )"
         }
       },

@@ -127,7 +127,9 @@ non-interactive commands and to how they start a UI.
   entries, preview unless `apply --force`, replace the file atomically, and refuse widening requests unless a flag whose
   name states the risk is passed. The
   [settings section](../tools/SharedKernel.Sandbox.Tool/README.md#settings) and the
-  [ADR](adr/20261109-sandbox-settings.md) describe them.
+  [ADR](adr/20261109-sandbox-settings.md) describe them. The probes, the configuration, and the format-independent
+  plan live in the `SharedKernel.Sandbox` engine; the Claude Code settings file format and its atomic file store live
+  in `SharedKernel.Sandbox.ClaudeCode`.
 - `sharedkernel-packages plan` reads `.config/sharedkernel-packages.json`: the packages that should be installed, per
   package manager. A package may have only one owner, so a name under two managers is an error. The
   [packages tool README](../tools/SharedKernel.Packages.Tool/README.md#configuration) describes the format. The optional

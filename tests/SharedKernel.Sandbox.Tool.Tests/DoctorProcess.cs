@@ -18,7 +18,7 @@ internal static class DoctorProcess
             RedirectStandardError = true,
             UseShellExecute = false,
         };
-        startInfo.ArgumentList.Add(typeof(SystemSandboxEnvironment).Assembly.Location);
+        startInfo.ArgumentList.Add(typeof(SandboxCommandLine).Assembly.Location);
         startInfo.ArgumentList.Add("doctor");
         startInfo.ArgumentList.Add("--root");
         startInfo.ArgumentList.Add(AppContext.BaseDirectory);

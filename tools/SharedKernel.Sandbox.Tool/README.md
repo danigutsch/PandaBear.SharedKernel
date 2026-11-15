@@ -11,6 +11,12 @@ Linux and macOS and the sandbox refuses to create one.
 
 Each probe tries an operation and undoes it (the socket files it binds are removed again). Nothing that lasts is changed, and no network call is made.
 
+The tool is a command-line wrapper over the
+[PandaBear.SharedKernel.Sandbox](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Sandbox/README.md) engine, which holds the probes,
+the configuration, and the settings plan, and
+[PandaBear.SharedKernel.Sandbox.ClaudeCode](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Sandbox.ClaudeCode/README.md), which
+reads and writes the Claude Code settings file.
+
 ## Installation
 
 Install a validated candidate as a local tool from a trusted feed. Add the feed to `NuGet.Config`, map

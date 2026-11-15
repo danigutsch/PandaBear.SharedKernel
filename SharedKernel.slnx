@@ -137,6 +137,8 @@
   <Project Path="tests/SharedKernel.InputNormalization.Tests/SharedKernel.InputNormalization.Tests.csproj" />
   <Project Path="tests/SharedKernel.K6.Tool.Tests/SharedKernel.K6.Tool.Tests.csproj" />
   <Project Path="tests/SharedKernel.Sandbox.Tool.Tests/SharedKernel.Sandbox.Tool.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Sandbox.Tests/SharedKernel.Sandbox.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Sandbox.ClaudeCode.Tests/SharedKernel.Sandbox.ClaudeCode.Tests.csproj" />
   <Project Path="tests/SharedKernel.Packages.Tool.Tests/SharedKernel.Packages.Tool.Tests.csproj" />
   <Project Path="tests/SharedKernel.MalwareScanning.ClamAv.Testing/SharedKernel.MalwareScanning.ClamAv.Testing.csproj" />
   <Project Path="tests/SharedKernel.MalwareScanning.ClamAv.Tests/SharedKernel.MalwareScanning.ClamAv.Tests.csproj" />
@@ -187,6 +189,8 @@
   <Project Path="tools/SharedKernel.Sandbox.Tool/SharedKernel.Sandbox.Tool.csproj" />
   <Project Path="tools/SharedKernel.Packages.Tool/SharedKernel.Packages.Tool.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.PlaywrightMcp/SharedKernel.PlaywrightMcp.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Sandbox/SharedKernel.Sandbox.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Sandbox.ClaudeCode/SharedKernel.Sandbox.ClaudeCode.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Processes/SharedKernel.Processes.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.ConfigurationFiles/SharedKernel.ConfigurationFiles.csproj" />
   <Project Path="tests/SharedKernel.ConfigurationFiles.Tests/SharedKernel.ConfigurationFiles.Tests.csproj" />

@@ -21,9 +21,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.ConfigurationFiles\SharedKernel.ConfigurationFiles.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.IO\SharedKernel.IO.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Sandbox.ClaudeCode\SharedKernel.Sandbox.ClaudeCode.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Sandbox\SharedKernel.Sandbox.csproj" />
     </ItemGroup>
 
     <ItemGroup>
