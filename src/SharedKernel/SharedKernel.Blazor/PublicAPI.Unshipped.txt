@@ -125,6 +125,7 @@ PandaBear.Blazor.FormField<TValue>.Label.set -> void
 PandaBear.Blazor.ServerFormSubmission
 PandaBear.Blazor.ServerFormSubmission.ConflictMessage.get -> string?
 PandaBear.Blazor.ServerFormSubmission.ConflictMessage.init -> void
+PandaBear.Blazor.ServerFormSubmission.ClearError() -> void
 PandaBear.Blazor.ServerFormSubmission.Dispose() -> void
 PandaBear.Blazor.ServerFormSubmission.Error.get -> string?
 PandaBear.Blazor.ServerFormSubmission.IsSaving.get -> bool
@@ -158,7 +159,7 @@ static PandaBear.Blazor.ServerFormSubmission.ForRecord(Microsoft.AspNetCore.Comp
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Context.get -> Microsoft.AspNetCore.Components.Forms.EditContext?
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Dispose() -> void
-PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.EditSession(System.Collections.Generic.IEnumerable<string!>! knownFields, string! idPrefix, string! noun) -> void
+PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.EditSession(System.Collections.Generic.IEnumerable<string!>! knownFields, string! idPrefix, string! noun, string? conflictMessage = null) -> void
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Form.get -> TForm!
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.IsMissing.get -> bool
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Record.get -> TRecord?

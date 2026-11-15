@@ -33,23 +33,33 @@ public sealed class EditSession<TKey, TForm, TRecord> : IDisposable
     private readonly string[] _knownFields;
     private readonly string _idPrefix;
     private readonly string _noun;
+    private readonly string? _conflictMessage;
     private TKey? _requested;
 
     /// <summary>Initializes a session for a form that edits one kind of record.</summary>
     /// <param name="knownFields">The model field names the form can display; see <see cref="ServerFormSubmission.ForRecord"/>.</param>
     /// <param name="idPrefix">The prefix of the control ids; the id of a field is the prefix, a hyphen and the field name.</param>
     /// <param name="noun">The lowercase name of the record, for example <c>customer</c>, used in the default messages.</param>
+    /// <param name="conflictMessage">
+    /// The fixed text the submission shows when a save fails with <see cref="ResultStatus.Conflict"/>, for every key; it is never
+    /// server text. <see langword="null"/> keeps the default of <see cref="ServerFormSubmission.ForRecord"/>.
+    /// </param>
     /// <exception cref="ArgumentNullException"><paramref name="knownFields"/> is null.</exception>
-    /// <exception cref="ArgumentException">The prefix or the noun is blank.</exception>
-    public EditSession(IEnumerable<string> knownFields, string idPrefix, string noun)
+    /// <exception cref="ArgumentException">The prefix or the noun is blank, or a given conflict message is blank.</exception>
+    public EditSession(IEnumerable<string> knownFields, string idPrefix, string noun, string? conflictMessage = null)
     {
         ArgumentNullException.ThrowIfNull(knownFields);
         ArgumentException.ThrowIfNullOrWhiteSpace(idPrefix);
         ArgumentException.ThrowIfNullOrWhiteSpace(noun);
+        if (conflictMessage is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(conflictMessage);
+        }
 
         _knownFields = [.. knownFields];
         _idPrefix = idPrefix;
         _noun = noun;
+        _conflictMessage = conflictMessage;
     }
 
     /// <summary>Gets the form model; it is replaced by a new instance when the key changes.</summary>
@@ -123,7 +133,7 @@ public sealed class EditSession<TKey, TForm, TRecord> : IDisposable
         }
 
         Context = new EditContext(Form);
-        Submission = ServerFormSubmission.ForRecord(Context, _knownFields, _idPrefix, _noun);
+        Submission = ServerFormSubmission.ForRecord(Context, _knownFields, _idPrefix, _noun, conflictMessage: _conflictMessage);
     }
 
     private void Reset()

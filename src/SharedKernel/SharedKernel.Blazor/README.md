@@ -106,7 +106,8 @@ nothing stale; and it calls `EditContext.Validate()` first. If the context holds
 be dropped silently and the old value saved. Messages on fields that are not in `ServerValidationOptions.KnownFields` (or on the model) still block
 the save but have no summary entry; when no message could be listed, `Error` shows the fixed failure message so the user is never
 left with a silent no-op. List every field the form shows. Call `Submit` on the renderer's context (for example
-inside the event handler), not from a background thread.
+inside the event handler), not from a background thread. `ClearError()` hides a stale `Error` without a submit, for example when the
+user acts in another part of the page and the form's old failure no longer applies; the field errors and `Summary` stay.
 
 ```csharp
 _submission = new ServerFormSubmission(_context, options, field => "customer-" + field, "We could not save. Try again later.")
@@ -187,7 +188,9 @@ private void Remove(Guid id) => Customers = [.. Customers!.Where(row => row.Id !
 
 ## Creating or editing a record
 
-`EditSession<TKey, TForm, TRecord>` is the lifecycle of a page that creates a record (no key) or edits one (a key). Call
+`EditSession<TKey, TForm, TRecord>` is the lifecycle of a page that creates a record (no key) or edits one (a key). The constructor
+takes the known fields, the id prefix and the noun of `ServerFormSubmission.ForRecord`, and an optional `conflictMessage` that replaces
+the default conflict text for every key. Call
 `Sync(key, load, fill, onReset)` from `OnParametersSetAsync`: it returns at once while the key is unchanged; when the key changed it drops
 the previous form, record and submission, runs the optional `onReset` for the page's own state, loads the record of an existing key
 (`load` returns a `Result<TRecord>`; a failure sets `IsMissing`), copies it into the form with `fill`, and makes `Context` (the
