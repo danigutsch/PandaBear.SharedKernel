@@ -2,7 +2,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using PandaBear.GitHub;
 using PandaBear.InputNormalization;
+using PandaBear.Processes;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -880,7 +882,7 @@ internal static class PodmanDnsPreflightCommand
             RedirectStandardOutput = true,
             UseShellExecute = false
         };
-        ChildProcessEnvironment.RemoveGitHubTokens(startInfo);
+        GitHubToken.RemoveFrom(startInfo);
         startInfo.Environment["LC_ALL"] = "C";
         startInfo.ArgumentList.Add("-L");
         startInfo.ArgumentList.Add("-c");
@@ -919,7 +921,7 @@ internal static class PodmanDnsPreflightCommand
             RedirectStandardOutput = true,
             UseShellExecute = false
         };
-        ChildProcessEnvironment.RemoveGitHubTokens(startInfo);
+        GitHubToken.RemoveFrom(startInfo);
         startInfo.Environment.Remove("CONTAINER_CONNECTION");
         startInfo.Environment.Remove("CONTAINER_HOST");
         startInfo.ArgumentList.Add("--remote=false");
@@ -984,35 +986,9 @@ internal static class PodmanDnsPreflightCommand
         }
     }
 
-    /// <summary>Kills the process tree if it is still running.</summary>
+    /// <summary>Kills the process tree if it is still running and waits up to five seconds for it to exit.</summary>
     /// <param name="process">Process to stop.</param>
-    internal static async Task Stop(Process process)
-    {
-        try
-        {
-            if (!process.HasExited)
-            {
-                process.Kill(entireProcessTree: true);
-            }
-        }
-        catch (Exception exception) when (exception is InvalidOperationException
-            or Win32Exception
-            or NotSupportedException
-            or AggregateException)
-        {
-            // Best-effort cleanup must not replace the timeout or cancellation that reached this path.
-        }
-
-        using var cleanupTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        try
-        {
-            await process.WaitForExitAsync(cleanupTimeout.Token).ConfigureAwait(false);
-        }
-        catch (Exception exception) when (exception is OperationCanceledException or InvalidOperationException or Win32Exception or NotSupportedException)
-        {
-            // The command-owned process tree was signalled; cleanup must not block the caller indefinitely.
-        }
-    }
+    internal static Task Stop(Process process) => ProcessTree.Terminate(process, TimeSpan.FromSeconds(5));
 
     /// <summary>Reads the stream to the end, keeping only a bounded amount of output.</summary>
     /// <param name="reader">Stream to read.</param>

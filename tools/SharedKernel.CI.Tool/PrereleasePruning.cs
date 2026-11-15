@@ -3,7 +3,9 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text.Json;
+using PandaBear.GitHub;
 using PandaBear.InputNormalization;
+using PandaBear.IO;
 
 namespace PandaBear.CI.Tool;
 
@@ -13,7 +15,6 @@ namespace PandaBear.CI.Tool;
 /// </summary>
 internal static class PrereleasePruning
 {
-    private const string ApiVersion = "2022-11-28";
     private const int PageSize = 100;
     private const int MaxPages = 100;
     private const int MaxPageBytes = 16 * 1024 * 1024;
@@ -40,7 +41,7 @@ internal static class PrereleasePruning
         ArgumentNullException.ThrowIfNull(error);
 
         // gh reads GH_TOKEN before GITHUB_TOKEN. A preview of a public repository works without a token.
-        var token = NonEmpty(services.GetEnvironmentVariable("GH_TOKEN")) ?? NonEmpty(services.GetEnvironmentVariable("GITHUB_TOKEN"));
+        var token = GitHubToken.Find(services.GetEnvironmentVariable);
         if (request.Force && token is null)
         {
             throw new InvalidOperationException(
@@ -88,8 +89,6 @@ internal static class PrereleasePruning
         await output.WriteLineAsync($"Deleted {Count(deleted.Count, "prerelease")}; their tags stay.").ConfigureAwait(false);
     }
 
-    private static string? NonEmpty(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
-
     private static string Tag(GitHubRelease release) => ControlCharacters.Escape(release.TagName);
 
     private static string Date(GitHubRelease release) => release.CreatedAt.UtcDateTime.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture);
@@ -99,15 +98,8 @@ internal static class PrereleasePruning
 
     private static HttpClient CreateClient(HttpMessageHandler handler, string? token)
     {
-        var client = new HttpClient(handler, disposeHandler: true) { Timeout = Timeout.InfiniteTimeSpan };
-        client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("sharedkernel-ci", ToolVersion));
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
-        client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", ApiVersion);
-        if (token is not null)
-        {
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        }
-
+        var client = GitHubApiClient.Create(handler, new ProductInfoHeaderValue("sharedkernel-ci", ToolVersion), token);
+        client.Timeout = Timeout.InfiniteTimeSpan;
         return client;
     }
 
@@ -177,20 +169,8 @@ internal static class PrereleasePruning
         var source = await content.ReadAsStreamAsync(ct).ConfigureAwait(false);
         await using (source.ConfigureAwait(false))
         {
-            using var body = new MemoryStream();
-            var buffer = new byte[81_920];
-            int read;
-            while ((read = await source.ReadAsync(buffer, ct).ConfigureAwait(false)) > 0)
-            {
-                if (body.Length + read > MaxPageBytes)
-                {
-                    throw new InvalidDataException($"GET {uri} returned more than {MaxPageBytes} bytes.");
-                }
-
-                await body.WriteAsync(buffer.AsMemory(0, read), ct).ConfigureAwait(false);
-            }
-
-            return body.ToArray();
+            return await BoundedReader.ReadToEnd(source, MaxPageBytes, ct).ConfigureAwait(false)
+                ?? throw new InvalidDataException($"GET {uri} returned more than {MaxPageBytes} bytes.");
         }
     }
 

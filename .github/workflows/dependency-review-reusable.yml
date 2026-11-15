@@ -87,11 +87,9 @@ jobs:
           path: tool-source
           persist-credentials: false
           sparse-checkout: |
-            tools/SharedKernel.RepoConfig.Tool
-            src/SharedKernel/SharedKernel.InputNormalization
-            src/SharedKernel/SharedKernel.IO
-            src/SharedKernel/SharedKernel.Processes
-            .github/actions/setup-dotnet-tool
+            .github
+            src
+            tools
           sparse-checkout-cone-mode: true
 
       - name: Set up the SDK and build the RepoConfig tool

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using PandaBear.GitHub;
 using PandaBear.Processes;
 
 namespace PandaBear.CI.Tool;
@@ -124,19 +125,10 @@ internal sealed class ServiceHost
             startInfo.ArgumentList.Add(argument);
         }
 
-        RemoveTokens(startInfo);
+        GitHubToken.RemoveFrom(startInfo);
         startInfo.Environment.Remove(configuration.ValueVariable);
         startInfo.Environment[configuration.ReadyFileVariable] = readyFile;
         return startInfo;
-    }
-
-    /// <summary>Removes every GitHub token variable, in any case, from the child environment.</summary>
-    internal static void RemoveTokens(ProcessStartInfo startInfo)
-    {
-        foreach (var name in startInfo.Environment.Keys.Where(CiConfigurationFile.IsTokenVariable).ToArray())
-        {
-            startInfo.Environment.Remove(name);
-        }
     }
 
     /// <summary>
@@ -213,7 +205,7 @@ internal sealed class ServiceHost
         if (!exited)
         {
             // The tree dies here, so a service that ignores its input does not outlive the run; its containers can.
-            await ProcessRunner.Terminate(_process).ConfigureAwait(false);
+            await ProcessTree.Terminate(_process, TimeSpan.FromSeconds(2)).ConfigureAwait(false);
         }
 
         await FinishLogs().ConfigureAwait(false);

@@ -29,4 +29,29 @@ public sealed class ControlCharactersTests
         // Assert
         escaped.ShouldBe("before\\uD800middle\\uDC00after");
     }
+
+    [Theory]
+    [InlineData("", new[] { "" })]
+    [InlineData("one", new[] { "one" })]
+    [InlineData("one\r\ntwo\n\n", new[] { "one", "two" })]
+    [InlineData("one\n\ntwo", new[] { "one", "", "two" })]
+    [InlineData("a\u001B[1mb\nc\rd", new[] { "a\\u001B[1mb", "c\\u000Dd" })]
+    public void EscapeLines_keeps_the_lines_and_escapes_controls_within_each(string value, string[] expected)
+    {
+        // Act
+        var lines = ControlCharacters.EscapeLines(value);
+
+        // Assert
+        lines.ShouldBe(expected);
+    }
+
+    [Fact]
+    public void EscapeLines_rejects_null()
+    {
+        // Act
+        Action escape = () => ControlCharacters.EscapeLines(null!);
+
+        // Assert
+        escape.ShouldThrow<ArgumentNullException>();
+    }
 }

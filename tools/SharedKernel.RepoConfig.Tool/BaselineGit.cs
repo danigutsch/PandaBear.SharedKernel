@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using PandaBear.GitHub;
 using PandaBear.Processes;
 
 namespace PandaBear.RepoConfig.Tool;
@@ -78,12 +79,9 @@ internal static class BaselineGit
         };
 
         // GIT_DIR, GIT_CONFIG_*, and the like would select another repository or configuration.
-        foreach (var variable in startInfo.Environment.Keys.Where(static key => key.StartsWith("GIT_", StringComparison.OrdinalIgnoreCase)).ToArray())
-        {
-            startInfo.Environment.Remove(variable);
-        }
+        ProcessEnvironment.RemoveGitVariables(startInfo);
 
-        ChildProcessEnvironment.RemoveGitHubTokens(startInfo);
+        GitHubToken.RemoveFrom(startInfo);
         startInfo.Environment["GIT_TERMINAL_PROMPT"] = "0";
         foreach (var argument in arguments)
         {

@@ -16,6 +16,24 @@ tools, written as .NET file-based (single-file) apps.
   exposes a small, intention-revealing API: a type named for its role, such as `PlaywrightMcpServer`, whose operations
   take a settings object, and hides the mechanics (argument building, engine selection) as internal types tested
   through `InternalsVisibleTo` for the library's own test project, `tests/SharedKernel.<Name>.Tests`.
+- **An engine is a generic core library plus provider-specific libraries.** The core,
+  `SharedKernel.<Capability>`, holds the logic that does not depend on a forge, vendor, or external program, and
+  defines the seams (interfaces and settings) for the parts that do. Each provider implementation is a separate
+  library, `SharedKernel.<Capability>.<Provider>`, such as `.GitHub`, `.Forgejo`, `.K6`, or `.Bitwarden`, so a consumer
+  references only the providers it uses and a new provider adds a library instead of changing the core. The capability
+  names the engine, not the tool: `sharedkernel-k6` can be a wrapper over a load-testing core and its k6 provider. A
+  provider library exists only for an implementation verified against the provider's current documentation and
+  covered by tests; an empty or speculative provider library is not created.
+- **Platform base libraries hold the low-level access that several providers share.** `SharedKernel.GitHub` holds the
+  GitHub token rules and the REST client headers, and every `.GitHub` provider builds on it; a Forgejo base,
+  `SharedKernel.Forgejo`, would mirror it and is created by the first provider that needs it. A base library holds
+  only client, authentication, and token concerns. A provider library depends on its feature core and its platform
+  base; a platform base never depends on a feature library.
+- **Names are feature first: `SharedKernel.<Feature>.<Provider>`,** such as `CI.GitHub`, `Repositories.GitHub`, or
+  `LoadTesting.K6`. This mirrors the existing `SharedKernel.Npgsql` base with `EntityFrameworkCore.Npgsql`,
+  `EventSourcing.Npgsql`, and `Observability.Npgsql`, and `ObjectStorage.S3` and `MalwareScanning.ClamAv`.
+  Platform-first names (`GitHub.CI`) would invert that convention, and a platform base that depended on feature
+  libraries (`GitHub` on `CI`) would drag every feature into any consumer of the client.
 - **A tool is a thin wrapper.** `tools/SharedKernel.<Name>.Tool` holds only the System.CommandLine tree, the wiring of
   real dependencies, reading the settings, output, and exit codes, and references its engine with a
   `ProjectReference`. Application policy and data still come from the consuming repository's configuration files and
@@ -38,10 +56,9 @@ tools, written as .NET file-based (single-file) apps.
 - **`SourceRunnableToolConventionTests` and its rule are removed.** The rule kept `SharedKernel.CI.Tool` and
   `SharedKernel.RepoConfig.Tool` free of project references so that a sparse checkout of `tools/<tool>` and
   `tools/Shared` could build them. These tools now reference their engines normally. What stays a requirement is that
-  a consumer can still build them from source before a candidate exists: the sparse checkout lists the tool directory
-  and every `src/SharedKernel/<library>` it references. Cone mode also checks out the files directly inside each
-  parent directory, so the root and `src` `Directory.Build.props` and `Directory.Build.targets` come along; the
-  repository's own analyzer projects are referenced only when they exist, so the checkout does not need them.
+  a consumer can still build them from source before a candidate exists. It checks out the fixed cone `src` and
+  `tools` of the revision, so the checkout needs no list of the libraries a tool references (see [Shared capabilities
+  and source builds](#shared-capabilities-and-source-builds)).
 - **Tools move one at a time,** each behind its existing command-line tests with no behavior change.
   `SharedKernel.PlaywrightMcp.Tool` is the pilot: its engine is `SharedKernel.PlaywrightMcp`, and the tool keeps
   `Program.cs` and the command tree. Sandbox, RepoConfig, CI, and VaultManager follow.
@@ -55,10 +72,43 @@ tools, written as .NET file-based (single-file) apps.
   hosts pass the system implementations and tests pass fakes. Diagnostics go to a `TextWriter` that the host passes,
   because System.CommandLine already supplies one per invocation; environment variables are read by the tool into a
   settings object, not by the engine.
+- **Logic that two or more tools need lives in a shared capability library,** not in either engine. See
+  [Shared capabilities and source builds](#shared-capabilities-and-source-builds).
 - **Engines are lock-exempt unless they add a package version.** A new engine with no package dependency of its own
   adds no `Id@Version` pair, so it is listed in `lockExemptProjects` and sets
   `RestorePackagesWithLockFile=false`, as [Lock files](../package-development.md#lock-files) requires. The tools and
   test projects keep their lock files, which now record the engine as a project dependency.
+
+## Shared capabilities and source builds
+
+A survey of every tool before the engine extractions found the same mechanics copied between them. They moved to
+capability libraries, each with its own tests, so the engines start from one implementation:
+
+- `SharedKernel.ConfigurationFiles` (new): `JsonConfigurationFile` reads a strict JSON consumer configuration file
+  under a root, as five tools did with identical messages. The library and namespace say "configuration files"
+  because a `PandaBear.Configuration` namespace would shadow every `Configuration` identifier inside `PandaBear.*`
+  code (CS0118).
+- `SharedKernel.GitHub` (new): `GitHubToken` (find `GH_TOKEN` then `GITHUB_TOKEN`, refuse forwarding them, remove them
+  from a child process) and `GitHubApiClient` (REST headers), which CI, K6, and RepoConfig each implemented.
+- `SharedKernel.Processes`: `ProcessTree` (start, and end a process tree with a bounded wait) and `ProcessEnvironment`
+  (remove `GIT_*` or named variables), copied in CI, K6, Versioning, and four RepoConfig classes.
+- `SharedKernel.IO`: `BoundedReader` (whole file or stream up to a limit, `null` above it).
+- `SharedKernel.InputNormalization`: `ControlCharacters.EscapeLines` for multi-line messages.
+
+An engine change consumes these libraries and does not extend them; logic that a second tool comes to need moves to
+the library that owns its concept in a change of its own.
+
+`sharedkernel-ci` and `sharedkernel-repo` build from a checkout of the revision before a candidate exists. A sparse
+cone listing `tools/<tool>` and each referenced `src/SharedKernel/<library>` had to grow with every engine, here and in
+each consumer. The checkout is now the fixed cone `src` and `tools` at depth 1 (plus `.github` where a job uses the
+repository's actions or action pin manifest), which holds every library and tool, whatever they reference. Measured
+on 2026-11-15 at the revision that merged the pilot: the cone is 13 MB of files against 6 MB for the per-library cone
+and 32 MB for the whole revision (a 4 MiB pack); each fetches and checks out in under half a second locally, and a
+tool builds in 3 to 14 seconds in each, dominated by restore and compiler start. The cone also builds the
+repository's style analyzers, as every other build here does. The whole revision is not an option on Windows:
+generated files under `samples/` and `tests/` have paths of up to 206 characters, which with a runner workspace prefix
+pass the 260-character limit, and `actions/checkout` fails with "Filename too long". The longest path under `src` is
+145 characters and under `tools` 86; a convention test may cap them later if they grow.
 
 ## Packaging evidence
 
@@ -87,10 +137,8 @@ future SDK lets a solution or a test project include one.
 
 - A tool package carries the assemblies of the libraries it references, as it already carried System.CommandLine.
   Each library is also its own preview package.
-- Workflows and consumers that build `sharedkernel-ci` or `sharedkernel-repo` from a sparse checkout list the
-  libraries those tools reference instead of `tools/Shared`: `src/SharedKernel/SharedKernel.InputNormalization`,
-  `SharedKernel.IO`, `SharedKernel.Processes`, and, for the CI tool, `SharedKernel.Versioning`. A tool that comes to
-  reference another library adds it to those lists.
+- Workflows and consumers that build `sharedkernel-ci` or `sharedkernel-repo` from source check out the fixed cone
+  `src` and `tools` instead of a per-library cone, so a new engine reference changes no workflow or consumer.
 - `PandaBear.SharedKernel.Packages` changes its public API: `IProcessRunner`, `ProcessOutput`, and `SystemProcessRunner`
   move to `PandaBear.Processes`, and the bounded runner is `BoundedProcessRunner`. Packages are preview, so this is
   allowed, and consumers update their namespace and runner type.

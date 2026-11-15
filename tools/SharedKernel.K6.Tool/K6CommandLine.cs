@@ -142,9 +142,9 @@ internal static class K6CommandLine
             or Win32Exception)
         {
             // Messages carry environment values and host output, so each line is escaped on its own.
-            foreach (var line in exception.Message.TrimEnd('\r', '\n').Split('\n'))
+            foreach (var line in ControlCharacters.EscapeLines(exception.Message))
             {
-                await error.WriteLineAsync(ControlCharacters.Escape(line.TrimEnd('\r'))).ConfigureAwait(false);
+                await error.WriteLineAsync(line).ConfigureAwait(false);
             }
 
             return FailureExitCode;

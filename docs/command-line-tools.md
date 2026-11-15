@@ -15,10 +15,9 @@ the consuming repository supplies them, as [Consumer configuration](#consumer-co
 - Candidates pack the tools named in `SharedKernelPackagePlanner.PackagedTools`. A convention test requires every
   `PackAsTool` project in that list, except `SharedKernel.VaultManager.Tool`, which candidates do not ship.
 - `SharedKernel.CI.Tool` and `SharedKernel.RepoConfig.Tool` also run from source before a candidate exists. CI builds
-  each from a cone sparse checkout of its directory and the `src/SharedKernel` libraries it references on Linux and
-  Windows, then runs it from outside the checkout. A change to a tool's project references updates that checkout list
-  in the workflows and in consumers, as [Running before a candidate is staged](#running-before-a-candidate-is-staged)
-  describes.
+  each from a cone sparse checkout of `src` and `tools` on Linux and Windows, then runs it from outside the checkout, as
+  [Running before a candidate is staged](#running-before-a-candidate-is-staged) describes. A change to a tool's
+  project references needs no workflow or consumer change.
 - Ship framework-dependent tool packages. Add
   [RID-specific, self-contained, or NativeAOT tool packages](https://learn.microsoft.com/dotnet/core/tools/rid-specific-tools)
   only when CI builds and consumes each claimed platform. NativeAOT packages build on the operating system they
@@ -100,9 +99,10 @@ non-interactive commands and to how they start a UI.
   read `roadmap/config.json`; and `sharedkernel-playwright-mcp`, which reads `PLAYWRIGHT_MCP_*` environment
   variables.
 - The file is strict JSON of at most 1 MiB with `"version": 1`. Property names are camelCase and match exactly;
-  comments, trailing commas, and unknown or repeated properties are errors. Read it with a source-generated
-  `JsonSerializerContext` that sets `UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow` and
-  `AllowDuplicateProperties = false`. Errors name the file and the JSON path of the problem.
+  comments, trailing commas, and unknown or repeated properties are errors. Read it with
+  `PandaBear.ConfigurationFiles.JsonConfigurationFile` and a source-generated `JsonSerializerContext` that sets
+  `UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow` and `AllowDuplicateProperties = false`. Errors name the
+  file and the JSON path of the problem. A leading UTF-8 byte order mark is ignored.
 - A command fails when the file lacks the section it needs.
 - `sharedkernel-ci select`, `run`, `local-check`, `openapi`, `coverage`, and `run-mutation-tests` read `.config/sharedkernel-ci.json`:
   the solution, the full-validation and documentation path patterns, the always-selected test projects, whether changed
@@ -155,11 +155,12 @@ non-interactive commands and to how they start a UI.
 A consumer job that runs before its pinned candidate is staged, such as the job that stages it, builds
 `sharedkernel-ci` or `sharedkernel-repo` from SharedKernel source at the pin's `libraryRevision`:
 
-1. Check out that revision of `danigutsch/PandaBear.SharedKernel` into a directory of its own, with a cone sparse
-   checkout of `tools/<project>` and every `src/SharedKernel/<library>` that the tool references, directly or
-   transitively. Today `SharedKernel.CI.Tool` references `SharedKernel.InputNormalization`, `SharedKernel.IO`,
-   `SharedKernel.Processes`, and `SharedKernel.Versioning`, and `SharedKernel.RepoConfig.Tool` the first three. A full
-   checkout of the revision also works.
+1. Check out that revision of `danigutsch/PandaBear.SharedKernel` at depth 1 into a directory of its own, with a cone
+   sparse checkout of `src` and `tools` (add `.github` when the job also uses the repository's actions or action pin
+   manifest). The cone holds every library a tool can reference, so it never changes when a tool gains an engine. Do
+   not check out the whole revision on Windows: generated files under `samples/` and `tests/` pass the 260-character
+   path limit. The [tool engines ADR](adr/20261115-tool-engines-and-thin-wrappers.md#shared-capabilities-and-source-builds)
+   records the measurements.
 2. Build inside that checkout with `dotnet build tools/<project> -c Release`, so SharedKernel's `global.json`,
    `NuGet.Config`, and the tool's lock file apply.
 3. Run `dotnet run --project <checkout>/tools/<project> -c Release --no-build -- <command>`.
@@ -181,9 +182,11 @@ Engines take their side effects as constructor-injected abstractions from `Share
 `IExecutableResolver` (with `PathExecutableResolver`). Diagnostics go to a `TextWriter` the host passes, which is
 `InvocationConfiguration.Error` in a tool. Tests replace the abstractions with fakes.
 
-Helpers that two or more tools call live in the library that owns the concept: `RepositoryPath` in `SharedKernel.IO`,
-`ControlCharacters` in `SharedKernel.InputNormalization`, `CandidateManifest` in `SharedKernel.Versioning`, and process
-execution and executable resolution in `SharedKernel.Processes`. Tools reference those projects; they do not link
+Helpers that two or more tools call live in the library that owns the concept: `RepositoryPath` and `BoundedReader` in
+`SharedKernel.IO`, `ControlCharacters` (with `EscapeLines` for multi-line messages) in `SharedKernel.InputNormalization`,
+`CandidateManifest` in `SharedKernel.Versioning`, process execution, executable resolution, `ProcessTree`, and
+`ProcessEnvironment` in `SharedKernel.Processes`, `JsonConfigurationFile` in `SharedKernel.ConfigurationFiles`, and
+`GitHubToken` and `GitHubApiClient` in `SharedKernel.GitHub`. Tools reference those projects; they do not link
 source files from other directories. `SharedKernel.PlaywrightMcp.Tool` is the first tool whose logic lives in an
 engine, `SharedKernel.PlaywrightMcp`; the other tools move theirs incrementally.
 
@@ -193,7 +196,7 @@ engine, `SharedKernel.PlaywrightMcp`; the other tools move theirs incrementally.
   standard input. Never from arguments or environment variables, which leak through process listings, shell
   history, and child processes. A GitHub token is the exception: commands that call the GitHub API read it from
   `GH_TOKEN` or `GITHUB_TOKEN`, as [`gh`](https://cli.github.com/manual/gh_help_environment) does, and keep both out of
-  child process environments.
+  child process environments, through `PandaBear.GitHub.GitHubToken`.
 - Do not use `SecureString` ([DE0001](https://github.com/dotnet/platform-compat/blob/master/docs/DE0001.md)).
   Keep secret bytes in arrays you own and clear them with
   [`CryptographicOperations.ZeroMemory`](https://learn.microsoft.com/dotnet/api/system.security.cryptography.cryptographicoperations.zeromemory).
@@ -226,7 +229,8 @@ engine, `SharedKernel.PlaywrightMcp`; the other tools move theirs incrementally.
 ## Adding a tool
 
 1. Create the engine `src/SharedKernel/SharedKernel.<Name>` in the `PandaBear.<Name>` namespace, with PublicAPI files,
-   a README, and a lock-file decision, and `tools/SharedKernel.<Name>.Tool` in the `PandaBear.<Name>.Tool` namespace,
+   a README, and a lock-file decision (a generic core plus one `SharedKernel.<Name>.<Provider>` library per verified
+   provider, as the [tool engines ADR](adr/20261115-tool-engines-and-thin-wrappers.md) decides), and `tools/SharedKernel.<Name>.Tool` in the `PandaBear.<Name>.Tool` namespace,
    with the packaging properties above, the `sharedkernel-<name>` command name, the
    `PandaBear.SharedKernel.<Name>.Tool` package ID, and a `ProjectReference` to the engine. Add them and
    `tests/SharedKernel.<Name>.Tool.Tests` to `SharedKernel.slnx`.

@@ -19,9 +19,9 @@ event, so the squash header and breaking-change footers follow one definition.
 | `source-repository` | empty | Repository that holds the CI tool source. Empty builds the tool from the calling repository, as SharedKernel does. A consumer sets `danigutsch/PandaBear.SharedKernel`. |
 | `source-ref` | empty | Full 40-character lowercase commit SHA of the tool source. Required when `source-repository` is set; the job fails otherwise. |
 
-The job has `contents: read` and receives no secrets. The tool is built from a sparse checkout of
-`tools/SharedKernel.CI.Tool` and the libraries it references (`src/SharedKernel/SharedKernel.InputNormalization`,
-`SharedKernel.IO`, `SharedKernel.Processes`, and `SharedKernel.Versioning`) in locked restore mode with the SDK of that checkout's `global.json`.
+The job has `contents: read` and receives no secrets. The tool is built from a cone sparse checkout of `.github`,
+`src`, and `tools` at the source revision, which needs no list of the libraries the tool references, in locked restore
+mode with the SDK of that checkout's `global.json`.
 
 The caller owns the trigger, the concurrency group, and the `ci:rerun` label rule, because a called workflow cannot
 share the caller's concurrency group without deadlocking. Copy this contract:
@@ -70,8 +70,8 @@ the restore; nothing relaxes it. Steps use `bash`, so the action runs on Linux, 
 | `cache-dependency-path` | `**/packages.lock.json` | Glob of the lock files that key the NuGet cache, relative to the workspace. |
 
 With the defaults the action behaves as before, so existing callers keep their cache keys. The PR Metadata workflow
-calls it from the checked-out tool source (`./tool-source/.github/actions/setup-dotnet-tool`, with the tool source
-in the sparse checkout) and passes `working-directory: tool-source`.
+calls it from the checked-out tool source (`./tool-source/.github/actions/setup-dotnet-tool`, from the checkout of
+the tool source) and passes `working-directory: tool-source`.
 
 A consumer wrapper calls the action by pinned SHA after it checked out the pinned SharedKernel source, or by local
 path from that checkout, and passes its own `project`, `global-json-file`, and `working-directory`. Candidate staging,
@@ -97,8 +97,8 @@ dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release -- verify-act
 ```
 
 A consumer builds the tool from its pinned SharedKernel revision and passes `--manifest` with the manifest of that
-same revision (sparse-check out the `.github` directory next to `tools/`, because cone mode takes directories, not single files; `.github/actions/setup-dotnet-tool` alone does not bring the manifest), so both repositories fail on the same
-drift. The check lists the file, line, and reason for each violation. A `uses:` it cannot parse (value on the next line, flow mapping) is a violation, and a root without `.github/workflows` is an error.
+same revision (add `.github` to the `src` and `tools` cone of that checkout, because cone mode takes directories, not single files), so both
+repositories fail on the same drift. The check lists the file, line, and reason for each violation. A `uses:` it cannot parse (value on the next line, flow mapping) is a violation, and a root without `.github/workflows` is an error.
 
 An action that only a consumer uses must be added to this repository's manifest first; a consumer has no manifest of its own, so an unlisted action fails its check until then.
 

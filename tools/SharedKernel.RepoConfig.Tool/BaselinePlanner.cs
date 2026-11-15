@@ -77,7 +77,7 @@ internal static partial class BaselinePlanner
         var path = Resolve(root, source, file.Path);
         try
         {
-            var bytes = await RepositoryFile.Read(path, MaxBytes, cancellationToken).ConfigureAwait(false)
+            var bytes = await BoundedReader.ReadFile(path, MaxBytes, cancellationToken).ConfigureAwait(false)
                 ?? throw new InvalidOperationException($"{file.Path}: source {source} exceeds the 1 MiB limit.");
             return new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true)
                 .GetString(RepositoryFile.WithoutUtf8ByteOrderMark(bytes).Span);

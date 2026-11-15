@@ -1,0 +1,9 @@
+#nullable enable
+const PandaBear.GitHub.GitHubApiClient.ApiVersion = "2022-11-28" -> string!
+PandaBear.GitHub.GitHubApiClient
+PandaBear.GitHub.GitHubToken
+static PandaBear.GitHub.GitHubApiClient.Create(System.Net.Http.HttpMessageHandler! handler, System.Net.Http.Headers.ProductInfoHeaderValue! userAgent, string? token) -> System.Net.Http.HttpClient!
+static PandaBear.GitHub.GitHubToken.Find(System.Func<string!, string?>! getEnvironmentVariable) -> string?
+static PandaBear.GitHub.GitHubToken.IsTokenVariable(string! name) -> bool
+static PandaBear.GitHub.GitHubToken.RemoveFrom(System.Diagnostics.ProcessStartInfo! startInfo) -> void
+static PandaBear.GitHub.GitHubToken.VariableNames.get -> System.Collections.Generic.IReadOnlyList<string!>!

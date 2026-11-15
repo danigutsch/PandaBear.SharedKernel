@@ -21,6 +21,12 @@
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.ConfigurationFiles": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.InputNormalization": {
         "type": "Project"
       },

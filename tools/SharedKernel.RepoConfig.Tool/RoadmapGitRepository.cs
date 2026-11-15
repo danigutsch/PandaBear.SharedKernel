@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using PandaBear.GitHub;
 using PandaBear.Processes;
 
 namespace PandaBear.RepoConfig.Tool;
@@ -143,7 +144,7 @@ internal sealed class RoadmapGitRepository
         startInfo.Environment["GIT_TERMINAL_PROMPT"] = "0";
         startInfo.Environment.Remove("GIT_ASKPASS");
         startInfo.Environment.Remove("SSH_ASKPASS");
-        ChildProcessEnvironment.RemoveGitHubTokens(startInfo);
+        GitHubToken.RemoveFrom(startInfo);
         return startInfo;
     }
 
@@ -232,23 +233,7 @@ internal sealed class RoadmapGitRepository
         Task<(byte[] Content, bool LimitExceeded)> output,
         Task<(byte[] Content, bool LimitExceeded)> error)
     {
-        try
-        {
-            if (!process.HasExited)
-            {
-                process.Kill(entireProcessTree: true);
-                using var termination = new CancellationTokenSource(TerminationTimeout);
-                await process.WaitForExitAsync(termination.Token).ConfigureAwait(false);
-            }
-        }
-        catch (Exception exception) when (exception is InvalidOperationException
-            or Win32Exception
-            or NotSupportedException
-            or AggregateException
-            or OperationCanceledException)
-        {
-            // Preserve the original cancellation or timeout after best-effort termination.
-        }
+        await ProcessTree.Terminate(process, TerminationTimeout).ConfigureAwait(false);
 
         var drain = Task.WhenAll(output, error);
         try

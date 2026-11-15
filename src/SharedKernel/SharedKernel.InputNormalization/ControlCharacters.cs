@@ -52,4 +52,18 @@ public static class ControlCharacters
 
         return escaped?.ToString() ?? value;
     }
+
+    /// <summary>
+    /// Splits multi-line text, such as an exception message that carries process output, into its lines and escapes each
+    /// line with <see cref="Escape"/>, so the text keeps its line structure but no line can carry a control character.
+    /// Trailing line breaks are dropped, and a <c>\r</c> before a <c>\n</c> ends the line with it.
+    /// </summary>
+    /// <param name="value">The text to split and escape.</param>
+    /// <returns>The escaped lines; one empty line for empty text.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
+    public static string[] EscapeLines(string value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        return [.. value.TrimEnd('\r', '\n').Split('\n').Select(static line => Escape(line.TrimEnd('\r')))];
+    }
 }

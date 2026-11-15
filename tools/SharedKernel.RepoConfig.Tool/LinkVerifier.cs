@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IO.Enumeration;
 using System.Text;
+using PandaBear.IO;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -207,7 +208,7 @@ internal static class LinkVerifier
         byte[]? content;
         try
         {
-            content = await RepositoryFile.Read(path, MaxFileBytes, cancellationToken).ConfigureAwait(false);
+            content = await BoundedReader.ReadFile(path, MaxFileBytes, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
         {

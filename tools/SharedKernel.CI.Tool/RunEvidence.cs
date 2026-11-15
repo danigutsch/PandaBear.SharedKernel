@@ -79,9 +79,9 @@ internal static class RunEvidence
         if (failure is not null)
         {
             diagnostics.Append("\nFailure:\n");
-            foreach (var line in failure.TrimEnd('\r', '\n').Split('\n'))
+            foreach (var line in ControlCharacters.EscapeLines(failure))
             {
-                diagnostics.Append("  ").Append(ControlCharacters.Escape(line.TrimEnd('\r'))).Append('\n');
+                diagnostics.Append("  ").Append(line).Append('\n');
             }
         }
 

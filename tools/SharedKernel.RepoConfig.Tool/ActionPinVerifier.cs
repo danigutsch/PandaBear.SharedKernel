@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using PandaBear.IO;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -127,7 +128,7 @@ internal static partial class ActionPinVerifier
         byte[]? content;
         try
         {
-            content = await RepositoryFile.Read(path, MaxManifestBytes, cancellationToken).ConfigureAwait(false);
+            content = await BoundedReader.ReadFile(path, MaxManifestBytes, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
         {

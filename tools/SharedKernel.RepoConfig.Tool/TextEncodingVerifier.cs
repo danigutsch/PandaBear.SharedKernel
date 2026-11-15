@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using PandaBear.GitHub;
 using PandaBear.Processes;
 
 namespace PandaBear.RepoConfig.Tool;
@@ -561,7 +562,7 @@ internal static class TextEncodingVerifier
         finally
         {
             await CloseStandardInput(process).ConfigureAwait(false);
-            await StopProcess(process).ConfigureAwait(false);
+            await ProcessTree.Terminate(process, ProcessExitTimeout).ConfigureAwait(false);
             await ObserveCleanup(
                 Task.WhenAll(errorDrain, processExit),
                 ProcessExitTimeout).ConfigureAwait(false);
@@ -815,7 +816,7 @@ internal static class TextEncodingVerifier
         {
             if (!completedNormally)
             {
-                await StopProcess(process).ConfigureAwait(false);
+                await ProcessTree.Terminate(process, ProcessExitTimeout).ConfigureAwait(false);
             }
 
             await ObserveCleanup(
@@ -856,13 +857,9 @@ internal static class TextEncodingVerifier
             RedirectStandardError = true,
             UseShellExecute = false
         };
-        foreach (var variable in startInfo.Environment.Keys.Where(
-            key => key.StartsWith("GIT_", StringComparison.OrdinalIgnoreCase)).ToArray())
-        {
-            startInfo.Environment.Remove(variable);
-        }
+        ProcessEnvironment.RemoveGitVariables(startInfo);
 
-        ChildProcessEnvironment.RemoveGitHubTokens(startInfo);
+        GitHubToken.RemoveFrom(startInfo);
         startInfo.Environment["GIT_ATTR_NOSYSTEM"] = "1";
         startInfo.Environment["GIT_CONFIG_GLOBAL"] = invocation.GlobalConfigFile;
         startInfo.Environment["GIT_CONFIG_NOSYSTEM"] = "1";
@@ -946,29 +943,6 @@ internal static class TextEncodingVerifier
             or UnauthorizedAccessException)
         {
             // Cleanup observation must not replace the sanitized result or caller cancellation.
-        }
-    }
-
-    private static async Task StopProcess(Process process)
-    {
-        try
-        {
-            if (!process.HasExited)
-            {
-                process.Kill(entireProcessTree: true);
-                using CancellationTokenSource timeout = new(ProcessExitTimeout);
-                await process.WaitForExitAsync(timeout.Token).ConfigureAwait(false);
-            }
-        }
-        catch (Exception exception) when (exception is InvalidOperationException
-            or Win32Exception
-            or NotSupportedException
-            or OperationCanceledException
-            or IOException
-            or ObjectDisposedException
-            or AggregateException)
-        {
-            // Best effort only; the original sanitized verification failure is retained.
         }
     }
 

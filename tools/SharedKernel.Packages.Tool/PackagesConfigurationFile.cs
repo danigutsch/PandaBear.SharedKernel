@@ -1,6 +1,5 @@
 using System.Globalization;
-using System.Text.Json;
-using PandaBear.IO;
+using PandaBear.ConfigurationFiles;
 
 namespace PandaBear.Packages.Tool;
 
@@ -12,8 +11,6 @@ internal static class PackagesConfigurationFile
 {
     /// <summary>The configuration path relative to the repository root.</summary>
     public const string RelativePath = ".config/sharedkernel-packages.json";
-
-    private const int MaxBytes = 1024 * 1024;
 
     /// <summary>Reads the configuration under <paramref name="root"/> without following symbolic links.</summary>
     /// <exception cref="InvalidOperationException">
@@ -27,51 +24,13 @@ internal static class PackagesConfigurationFile
     /// <exception cref="InvalidOperationException">As <see cref="Read"/>, or <c>minimumReleaseAgeDays</c> is outside 0 to 3650.</exception>
     public static async Task<(DeclaredPackages Packages, int? MinimumReleaseAgeDays)> ReadWithPolicy(string root, CancellationToken cancellationToken)
     {
-        string path;
-        try
-        {
-            path = RepositoryPath.Parse(RelativePath).ResolveUnder(root);
-        }
-        catch (InvalidOperationException exception)
-        {
-            throw new InvalidOperationException($"{RelativePath}: {exception.Message}", exception);
-        }
-
-        byte[] content;
-        try
-        {
-            content = await ReadBounded(path, cancellationToken).ConfigureAwait(false);
-        }
-        catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
-        {
-            throw new InvalidOperationException($"{RelativePath} does not exist.", exception);
-        }
-
-        return Parse(content);
+        var configuration = await JsonConfigurationFile.Read(
+            root, RelativePath, PackagesConfigurationJsonContext.Default.PackagesConfiguration, cancellationToken).ConfigureAwait(false);
+        return Validate(configuration);
     }
 
-    private static (DeclaredPackages Packages, int? MinimumReleaseAgeDays) Parse(byte[] content)
+    private static (DeclaredPackages Packages, int? MinimumReleaseAgeDays) Validate(PackagesConfiguration configuration)
     {
-        PackagesConfiguration? configuration;
-        try
-        {
-            configuration = JsonSerializer.Deserialize(content, PackagesConfigurationJsonContext.Default.PackagesConfiguration);
-        }
-        catch (JsonException exception)
-        {
-            // The serializer's message names .NET types, so only the location is reported.
-            throw new InvalidOperationException(
-                string.Create(
-                    CultureInfo.InvariantCulture,
-                    $"{RelativePath} is not valid at {exception.Path ?? "$"} (line {(exception.LineNumber ?? 0) + 1}). Check for a misspelled, unknown, missing, or repeated property, a value of the wrong type, or broken JSON syntax."),
-                exception);
-        }
-
-        if (configuration is null)
-        {
-            throw new InvalidOperationException($"{RelativePath} must contain a JSON object.");
-        }
-
         if (configuration.Version != 1)
         {
             throw Invalid("$.version must be 1.");
@@ -140,21 +99,4 @@ internal static class PackagesConfigurationFile
     }
 
     private static InvalidOperationException Invalid(string message) => new($"{RelativePath}: {message}");
-
-    private static async Task<byte[]> ReadBounded(string path, CancellationToken cancellationToken)
-    {
-        var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
-        await using (stream.ConfigureAwait(false))
-        {
-            var buffer = new byte[MaxBytes + 1];
-            var length = 0;
-            int read;
-            while (length < buffer.Length && (read = await stream.ReadAsync(buffer.AsMemory(length), cancellationToken).ConfigureAwait(false)) > 0)
-            {
-                length += read;
-            }
-
-            return length > MaxBytes ? throw new InvalidOperationException($"{RelativePath} is larger than 1 MiB.") : buffer[..length];
-        }
-    }
 }
