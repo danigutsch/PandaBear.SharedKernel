@@ -9,6 +9,7 @@
     "src/SharedKernel/SharedKernel.AspNetCore.Localization/SharedKernel.AspNetCore.Localization.csproj",
     "src/SharedKernel/SharedKernel.AspNetCore.RateLimiting/SharedKernel.AspNetCore.RateLimiting.csproj",
     "src/SharedKernel/SharedKernel.AspNetCore.Seo/SharedKernel.AspNetCore.Seo.csproj",
+    "src/SharedKernel/SharedKernel.AspNetCore.WebAnalytics/SharedKernel.AspNetCore.WebAnalytics.csproj",
     "src/SharedKernel/SharedKernel.AspNetCore/SharedKernel.AspNetCore.csproj",
     "src/SharedKernel/SharedKernel.Aspire.Analyzers/SharedKernel.Aspire.Analyzers.csproj",
     "src/SharedKernel/SharedKernel.Aspire.Hosting.ClamAv/SharedKernel.Aspire.Hosting.ClamAv.csproj",

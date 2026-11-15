@@ -66,6 +66,7 @@ The concerns that need extra dependencies live in their own packages:
 | Remote-IP fixed-window rate limiting | [`PandaBear.SharedKernel.AspNetCore.RateLimiting`](../SharedKernel.AspNetCore.RateLimiting/README.md) | `PandaBear.AspNetCore.RateLimiting` |
 | Culture path prefixes (`/pt/...`), request culture provider, redirect to the best culture | [`PandaBear.SharedKernel.AspNetCore.Localization`](../SharedKernel.AspNetCore.Localization/README.md) | `PandaBear.AspNetCore.Localization` |
 | `robots.txt` and sitemap XML | [`PandaBear.SharedKernel.AspNetCore.Seo`](../SharedKernel.AspNetCore.Seo/README.md) | `PandaBear.AspNetCore.Seo` |
+| Server-side, cookieless page views sent to a self-hosted Umami | [`PandaBear.SharedKernel.AspNetCore.WebAnalytics`](../SharedKernel.AspNetCore.WebAnalytics/README.md) | `PandaBear.AspNetCore.WebAnalytics` |
 | `Idempotency-Key` header and key-bound data protector | [`PandaBear.SharedKernel.Idempotency.AspNetCore`](../SharedKernel.Idempotency.AspNetCore/README.md) | `PandaBear.Idempotency.AspNetCore` |
 
 ## Install

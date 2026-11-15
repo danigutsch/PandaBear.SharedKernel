@@ -21,6 +21,7 @@
         <!-- The sibling AspNetCore packages share the internal telemetry helpers and the security-event reporter. -->
         <InternalsVisibleTo Include="SharedKernel.AspNetCore.Authentication" />
         <InternalsVisibleTo Include="SharedKernel.AspNetCore.RateLimiting" />
+        <InternalsVisibleTo Include="SharedKernel.AspNetCore.WebAnalytics" />
         <InternalsVisibleTo Include="SharedKernel.AspNetCore.Tests" />
         <InternalsVisibleTo Include="SharedKernel.AspNetCore.Authentication.Tests" />
         <InternalsVisibleTo Include="SharedKernel.AspNetCore.RateLimiting.Tests" />

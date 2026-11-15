@@ -1,0 +1,36 @@
+#nullable enable
+const PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.MaximumQueueCapacity = 100000 -> int
+const PandaBear.AspNetCore.WebAnalytics.UmamiPageViewServiceCollectionExtensions.HttpClientName = "PandaBear.AspNetCore.WebAnalytics.Umami" -> string!
+const PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry.DroppedPageViewsCounterName = "web_analytics_page_views_dropped_total" -> string!
+const PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry.MeterName = "PandaBear.AspNetCore.WebAnalytics" -> string!
+const PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry.QueueFullReason = "queue_full" -> string!
+const PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry.ReasonTag = "reason" -> string!
+const PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry.RejectedReason = "rejected" -> string!
+const PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry.SendFailedEventId = 4202 -> int
+const PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry.SendFailedReason = "send_failed" -> string!
+const PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry.SendRejectedEventId = 4201 -> int
+const PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry.ShutdownReason = "shutdown" -> string!
+const PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry.UnsentAtShutdownEventId = 4204 -> int
+const PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry.WebsiteIdLookupFailedEventId = 4203 -> int
+PandaBear.AspNetCore.WebAnalytics.IUmamiWebsiteIdProvider
+PandaBear.AspNetCore.WebAnalytics.IUmamiWebsiteIdProvider.GetWebsiteId(Microsoft.AspNetCore.Http.HttpContext! context, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Guid?>
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewApplicationBuilderExtensions
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.ClientIpHeader.get -> string!
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.ClientIpHeader.set -> void
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.Endpoint.get -> System.Uri?
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.Endpoint.set -> void
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.HonorPrivacySignals.get -> bool
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.HonorPrivacySignals.set -> void
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.Hostname.get -> string?
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.Hostname.set -> void
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.QueueCapacity.get -> int
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.QueueCapacity.set -> void
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.ShutdownTimeout.get -> System.TimeSpan
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.ShutdownTimeout.set -> void
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.UmamiPageViewOptions() -> void
+PandaBear.AspNetCore.WebAnalytics.UmamiPageViewServiceCollectionExtensions
+PandaBear.AspNetCore.WebAnalytics.WebAnalyticsTelemetry
+static PandaBear.AspNetCore.WebAnalytics.UmamiPageViewApplicationBuilderExtensions.UseUmamiPageViews(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
+static PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions.MaximumShutdownTimeout.get -> System.TimeSpan
+static PandaBear.AspNetCore.WebAnalytics.UmamiPageViewServiceCollectionExtensions.AddUmamiPageViews<TWebsiteIdProvider>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! endpointConfigurationKey, System.Action<PandaBear.AspNetCore.WebAnalytics.UmamiPageViewOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
