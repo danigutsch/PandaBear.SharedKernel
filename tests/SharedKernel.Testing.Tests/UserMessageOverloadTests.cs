@@ -52,7 +52,7 @@ public sealed class UserMessageOverloadTests
     public void Message_overload_passes_argument_errors_through_unchanged()
     {
         // Arrange
-        Action assertion = () => 1.0.ShouldBe(2.0, 99, Reason);
+        Action assertion = () => 1.0.ShouldBe(2.0, -1, Reason);
 
         // Act, Assert
         assertion.ShouldThrow<ArgumentOutOfRangeException>();

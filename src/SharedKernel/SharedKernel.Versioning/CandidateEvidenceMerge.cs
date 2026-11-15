@@ -46,6 +46,11 @@ internal static class CandidateEvidenceMerge
                 if (result == "passed")
                 {
                     merged[key] = result;
+                    if (evidence[key + "Frameworks"] is { } frameworks)
+                    {
+                        merged[key + "Frameworks"] = frameworks.DeepClone();
+                    }
+
                     await output.WriteLineAsync($"{key}: passed").ConfigureAwait(false);
                 }
             }

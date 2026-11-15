@@ -5,4 +5,8 @@ namespace PandaBear.Versioning;
 /// <param name="Feed">The directory that holds the packages.</param>
 /// <param name="Version">The package version.</param>
 /// <param name="NativeAot">Whether to also publish and run the samples with NativeAOT.</param>
-public sealed record PackageConsumptionOptions(string RepoRoot, string Feed, string Version, bool NativeAot = false);
+public sealed record PackageConsumptionOptions(string RepoRoot, string Feed, string Version, bool NativeAot = false)
+{
+    /// <summary>Gets the target frameworks to build the consumers for, each in turn. Default: <see cref="ConsumerFrameworks.Default"/>.</summary>
+    public IReadOnlyList<string> Frameworks { get; init; } = ConsumerFrameworks.Default;
+}

@@ -2,6 +2,13 @@
 
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)..'))" />
 
+    <!-- A package with several target frameworks must offer the same API from each of them. Without a baseline version,
+         package validation runs only the compatible-framework check, which fails the pack with CP0002 when an asset lacks
+         a member of another. -->
+    <PropertyGroup Condition="'$(EnablePackageValidation)' == '' and $([System.String]::Copy('$(TargetFrameworks)').Contains(';'))">
+        <EnablePackageValidation>true</EnablePackageValidation>
+    </PropertyGroup>
+
     <PropertyGroup>
         <IsAotCompatible Condition="'$(IsAotCompatible)' == '' and $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</IsAotCompatible>
     </PropertyGroup>

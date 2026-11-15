@@ -90,7 +90,7 @@ public static class AntiforgerySignOutEndpointRouteBuilderExtensions
 
     private static bool IsLocalRedirectUri(string redirectUri)
     {
-        return redirectUri.StartsWith('/')
+        return redirectUri.AsSpan().StartsWith('/')
                && !redirectUri.StartsWith("//", StringComparison.Ordinal)
                && !redirectUri.StartsWith("/\\", StringComparison.Ordinal);
     }

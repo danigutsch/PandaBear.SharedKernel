@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <TargetFramework></TargetFramework>
+        <TargetFrameworks>$(SharedKernelTargetFrameworks)</TargetFrameworks>
         <PackageId>PandaBear.SharedKernel.Mediator.EntityFrameworkCore</PackageId>
         <Description>Mediator pipeline behaviors and dispatch integrations backed by Entity Framework Core.</Description>
         <RootNamespace>PandaBear.Mediator.EntityFrameworkCore</RootNamespace>

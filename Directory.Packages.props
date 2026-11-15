@@ -108,4 +108,44 @@
     <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.15" />
     <PackageVersion Include="System.IO.Hashing" Version="10.0.15" />
   </ItemGroup>
+  <!-- net11.0 builds use the .NET 11 line of every package that ships one line per .NET version. The items above hold the
+       net10.0 versions; see docs/dotnet-multi-targeting.md. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
+    <PackageVersion Update="Microsoft.AspNetCore.Authentication.JwtBearer" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.AspNetCore.Components.QuickGrid" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.AspNetCore.OpenApi" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.ApiDescription.Server" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.EntityFrameworkCore.Design" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Data.Sqlite.Core" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.EntityFrameworkCore.InMemory" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.EntityFrameworkCore.Relational" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Compliance.Abstractions" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Compliance.Redaction" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Diagnostics" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Diagnostics.HealthChecks" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Hosting" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Hosting.Abstractions" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Http.Resilience" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Options" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Options.ConfigurationExtensions" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.ServiceDiscovery" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Telemetry" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.AspNetCore.Mvc.Testing" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.AspNetCore.TestHost" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.TimeProvider.Testing" Version="11.0.0" />
+    <PackageVersion Update="System.Security.Cryptography.Pkcs" Version="11.0.0" />
+    <PackageVersion Update="System.Security.Cryptography.Xml" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="11.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.Http" Version="11.0.0" />
+    <PackageVersion Update="System.IO.Hashing" Version="11.0.0" />
+    <!-- Microsoft.AspNetCore.OpenApi 11.0.0 requires Microsoft.OpenApi 3.11.0 or later. -->
+    <PackageVersion Update="Microsoft.OpenApi" Version="3.11.0" />
+  </ItemGroup>
 </Project>

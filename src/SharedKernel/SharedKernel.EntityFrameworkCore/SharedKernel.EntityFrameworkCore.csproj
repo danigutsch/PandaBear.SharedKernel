@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <TargetFramework></TargetFramework>
+        <TargetFrameworks>$(SharedKernelTargetFrameworks)</TargetFrameworks>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.EntityFrameworkCore</PackageId>
         <Description>Reusable Entity Framework Core composition, registration, and transaction primitives for shared-kernel workflows.</Description>

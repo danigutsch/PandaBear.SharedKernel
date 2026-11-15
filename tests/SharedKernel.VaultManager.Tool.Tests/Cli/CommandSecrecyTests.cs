@@ -76,7 +76,7 @@ public sealed class CommandSecrecyTests : IDisposable
         string[] values =
         [
             OldPassword, NewPassword, NotesPassword, KeeperOnlyPassword, UndatedKeeperPassword, UndatedBitwardenPassword, ExportPassword,
-            totp, totpSecret, .. notesCodes, .. fileCodes, .. privateKey.Split('\n').Where(line => !line.StartsWith('-')),
+            totp, totpSecret, .. notesCodes, .. fileCodes, .. privateKey.Split('\n').Where(line => !line.AsSpan().StartsWith('-')),
         ];
         texts.ShouldAllSatisfy(text => values.ShouldAllSatisfy(value => text.ShouldNotContain(value, StringComparison.Ordinal)));
     }
@@ -164,8 +164,8 @@ public sealed class CommandSecrecyTests : IDisposable
         [
             OldPassword, NewPassword, NotesPassword, HistoryPassword, HiddenValue, BitwardenNotes, keeperNotes, keeperTotp, keeperSecret, bitwardenTotp,
             bitwardenSecret, keeperCard, bitwardenCard, "9871", "4567", "fixture-uri-secret", "fixture-uri-token", "fixture-uri-fragment", .. notesCodes,
-            .. fileCodes, .. keeperKey.Split('\n').Where(line => line.Length > 0 && !line.StartsWith('-')),
-            .. bitwardenKey.Split('\n').Where(line => line.Length > 0 && !line.StartsWith('-')),
+            .. fileCodes, .. keeperKey.Split('\n').Where(line => line.Length > 0 && !line.AsSpan().StartsWith('-')),
+            .. bitwardenKey.Split('\n').Where(line => line.Length > 0 && !line.AsSpan().StartsWith('-')),
         ];
         string[] texts = [json, run.Output, run.Error];
         texts.ShouldAllSatisfy(text => values.ShouldAllSatisfy(value => text.ShouldNotContain(value, StringComparison.Ordinal)));

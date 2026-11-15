@@ -25,7 +25,7 @@ public sealed class CiConfigurationConventionTests
                 && !elements.Any(static element => element.Name.LocalName == "IsPackable" && element.Value.Trim() == "false");
         }).ToArray();
         var unbuilt = packable
-            .Where(project => !ProjectSelector.Select(configuration, graph, [project[..(project.LastIndexOf('/') + 1)] + "Source.cs"], null, null).BuildRequired)
+            .Where(project => !ProjectSelector.Select(configuration, graph, [project[..(project.AsSpan().LastIndexOf('/') + 1)] + "Source.cs"], null, null).BuildRequired)
             .ToArray();
 
         // Assert
@@ -44,7 +44,7 @@ public sealed class CiConfigurationConventionTests
 
         // Assert
         ProjectSelector.Match(configuration.Selection.FullValidation, StyleAnalyzerTests).ShouldNotBeNull();
-        ProjectSelector.Match(configuration.Selection.FullValidation, StyleAnalyzerTests[..(StyleAnalyzerTests.LastIndexOf('/') + 1)] + "Source.cs")
+        ProjectSelector.Match(configuration.Selection.FullValidation, StyleAnalyzerTests[..(StyleAnalyzerTests.AsSpan().LastIndexOf('/') + 1)] + "Source.cs")
             .ShouldNotBeNull("The style analyzer tests guard the governed literals of every library, so their change runs every test project.");
     }
 
@@ -140,7 +140,7 @@ public sealed class CiConfigurationConventionTests
         var unselected = served
             .SelectMany(slice =>
             {
-                string[] changes = [slice.Service!.Project[..(slice.Service.Project.LastIndexOf('/') + 1)] + "Source.cs", .. protocol];
+                string[] changes = [slice.Service!.Project[..(slice.Service.Project.AsSpan().LastIndexOf('/') + 1)] + "Source.cs", .. protocol];
                 return changes.Select(changed =>
                 {
                     var plan = ProjectSelector.Select(configuration, graph, [changed], null, null);

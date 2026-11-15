@@ -9,7 +9,12 @@ internal static class PackageConsumption
     /// Installs the tool packages in the feed of <paramref name="options" /> and runs their commands with <c>--help</c>, then restores, builds,
     /// and runs the samples against the packages, writing child process output to <paramref name="error" />.
     /// </summary>
+    /// <remarks>
+    /// The samples are consumed once per framework in <see cref="PackageConsumptionOptions.Frameworks"/>, each in its own workspace and
+    /// package cache, with the central package versions that a project of that framework uses.
+    /// </remarks>
     /// <exception cref="ArgumentException">The feed contains no packages.</exception>
+    /// <exception cref="InvalidOperationException">Consuming the samples failed; the message names the framework.</exception>
     public static async Task Run(ExternalCommands processes, PackageConsumptionOptions options, TextWriter output, TextWriter error, CancellationToken ct)
     {
         var (root, feed, version, aot) = options;
@@ -21,9 +26,37 @@ internal static class PackageConsumption
 
         var packageIds = SharedKernelLocalFeed.ReadPackageIds(packages, version);
         await ToolPackageCheck.Run(root, feed, version, packages, processes, error, ct).ConfigureAwait(false);
-        var external = XDocument.Load(Path.Combine(root, "Directory.Packages.props"))
-            .Descendants("PackageVersion").ToDictionary(x => (string)x.Attribute("Include")!, x => (string)x.Attribute("Version")!, StringComparer.Ordinal);
+        var central = XDocument.Load(Path.Combine(root, "Directory.Packages.props"));
         var scratch = Path.Combine(Path.GetTempPath(), "sharedkernel-package-check-" + Guid.NewGuid().ToString("N"));
+        foreach (var framework in options.Frameworks)
+        {
+            await error.WriteLineAsync("Consuming the samples as " + framework + ".").ConfigureAwait(false);
+            try
+            {
+                var external = CentralPackageVersions.Read(central, framework);
+                await ConsumeSamples(
+                    processes, root, feed, version, aot, framework, Path.Combine(scratch, framework), packageIds, external, error, ct).ConfigureAwait(false);
+            }
+            catch (Exception exception) when (!ct.IsCancellationRequested && exception is InvalidOperationException or IOException)
+            {
+                throw new InvalidOperationException("Package consumption failed for " + framework + ": " + exception.Message, exception);
+            }
+        }
+
+        await output.WriteLineAsync("Package consumption checks passed. Evidence workspace: " + scratch).ConfigureAwait(false);
+    }
+
+    /// <summary>Adds the properties that every consumer project gets, including its <paramref name="framework" />.</summary>
+    internal static void AddConsumerProperties(XDocument project, string framework) =>
+        project.Root!.Add(new XElement("PropertyGroup", new XElement("TargetFramework", framework),
+            new XElement("ImplicitUsings", "enable"), new XElement("Nullable", "enable"),
+            new XElement("TreatWarningsAsErrors", "true"), new XElement("NuGetAudit", "true"),
+            new XElement("NuGetAuditMode", "all")));
+
+    private static async Task ConsumeSamples(
+        ExternalCommands processes, string root, string feed, string version, bool aot, string framework, string scratch,
+        string[] packageIds, Dictionary<string, string> external, TextWriter error, CancellationToken ct)
+    {
         foreach (var relative in new[] { "samples/Results/BasicResults.Sample", "samples/Mediator/Mediator.Sample", "samples/HttpRequests/HttpRequests.Sample" })
         {
             var source = Path.Combine(root, relative);
@@ -60,10 +93,7 @@ internal static class PackageConsumption
                 versions.TryAdd(id, external.GetValueOrDefault(id) ?? "[" + version + "]");
             }
 
-            project.Root!.Add(new XElement("PropertyGroup", new XElement("TargetFramework", "net10.0"),
-                new XElement("ImplicitUsings", "enable"), new XElement("Nullable", "enable"),
-                new XElement("TreatWarningsAsErrors", "true"), new XElement("NuGetAudit", "true"),
-                new XElement("NuGetAuditMode", "all")));
+            AddConsumerProperties(project, framework);
             project.Save(projectPath);
             await File.WriteAllTextAsync(Path.Combine(target, ".editorconfig"), "root = true\n", ct).ConfigureAwait(false);
             await File.WriteAllTextAsync(Path.Combine(target, "Directory.Build.props"), "<Project />\n", ct).ConfigureAwait(false);
@@ -95,7 +125,5 @@ internal static class PackageConsumption
                     Path.Combine(native, Path.GetFileName(relative) + (OperatingSystem.IsWindows() ? ".exe" : string.Empty)), [], target, ct).ConfigureAwait(false)).ConfigureAwait(false);
             }
         }
-
-        await output.WriteLineAsync("Package consumption checks passed. Evidence workspace: " + scratch).ConfigureAwait(false);
     }
 }

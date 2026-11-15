@@ -1,7 +1,8 @@
 using System.Net;
 using System.Runtime.InteropServices;
 using Amazon.S3;
-using PandaBear.IO;
+// .NET 11 adds System.IO.ReadOnlyMemoryStream; the alias keeps this name pointing at the SharedKernel type on both frameworks.
+using ReadOnlyMemoryStream = PandaBear.IO.ReadOnlyMemoryStream;
 
 namespace PandaBear.ObjectStorage.S3.Tests;
 

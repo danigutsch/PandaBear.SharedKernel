@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <TargetFramework></TargetFramework>
+        <TargetFrameworks>$(SharedKernelTargetFrameworks)</TargetFrameworks>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.EntityFrameworkCore.Npgsql</PackageId>
         <Description>PostgreSQL support for shared-kernel Entity Framework Core primitives, starting with unique-violation recognition.</Description>

@@ -41,12 +41,14 @@ dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run --slice librar
 
 Commit changes before creating candidate evidence. Candidates receive unique ordered prerelease versions and are never overwritten.
 `SharedKernel.Versioning.Tool` validates APIs, packs once, records the library revision and SHA-256 package hashes, then installs every packed tool
-and runs each command that its package declares with `--help`, and checks isolated package restore, locked restore, build, run, generators, and optional NativeAOT.
+and runs each command that its package declares with `--help`, and checks isolated package restore, locked restore, build, run, generators, and optional NativeAOT once per `--framework <tfm>` (repeatable; default `net10.0`),
+recording the consumed frameworks in the manifest.
 Candidate manifests mark unavailable consumer, baseline, and platform evidence as pending.
 
 ```sh
 dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- validate-candidate --aot
 dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- consume-candidate --candidate <candidate.json> --aot
+dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- consume-candidate --candidate <candidate.json> --framework net10.0 --framework net11.0
 ```
 
 Candidate packages and their manifest can be copied together to another machine; consumption regenerates configuration for the current feed location.
@@ -93,7 +95,7 @@ and `PublishRepositoryUrl`, so packed metadata and Source Link data come from on
 also pack a `snupkg` symbol package; Roslyn components (`IsRoslynComponent`) are excluded from symbol packages. Repository
 convention tests in `tests/SharedKernel.Repository.Tests` fail the build when a packable project misses any of these. Packed `.nuspec` files record the repository commit through the SDK's Source Link support, with no extra package.
 
-`EnablePackageValidation` stays off. Its baseline validator compares a package with a previously released stable version, and no stable version exists while all packages are preview. Enable it with `PackageValidationBaselineVersion` when the first stable release is authorized.
+`src/Directory.Build.targets` enables `EnablePackageValidation` for every package with more than one target framework. Without `PackageValidationBaselineVersion` it runs only the compatible-framework check, which fails the pack with CP0002 when one framework's assembly lacks an API of another. The baseline validator stays off: it compares a package with a previously released stable version, and no stable version exists while all packages are preview. Set `PackageValidationBaselineVersion` when the first stable release is authorized.
 
 ### Source generator packages
 

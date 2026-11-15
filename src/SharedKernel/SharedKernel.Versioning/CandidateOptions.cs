@@ -11,4 +11,8 @@ namespace PandaBear.Versioning;
 /// <c>PandaBear.SharedKernel.*</c> mapped only to an existing local feed in <c>NuGet.Config</c>.
 /// </param>
 /// <param name="NativeAot">Whether consumption also publishes and runs the samples with NativeAOT.</param>
-public sealed record CandidateOptions(string RepoRoot, string? Version = null, string? BaselineVersion = null, bool NativeAot = false);
+public sealed record CandidateOptions(string RepoRoot, string? Version = null, string? BaselineVersion = null, bool NativeAot = false)
+{
+    /// <summary>Gets the target frameworks to build the consumers for, each in turn. Default: <see cref="ConsumerFrameworks.Default"/>.</summary>
+    public IReadOnlyList<string> Frameworks { get; init; } = ConsumerFrameworks.Default;
+}

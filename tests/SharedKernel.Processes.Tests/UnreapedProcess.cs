@@ -25,7 +25,7 @@ internal sealed class UnreapedProcess : IDisposable
         get
         {
             var status = File.ReadAllText($"/proc/{Process.Id}/stat");
-            return status[status.LastIndexOf(')') + 2] == 'Z';
+            return status[status.AsSpan().LastIndexOf(')') + 2] == 'Z';
         }
     }
 

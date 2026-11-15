@@ -49,7 +49,7 @@ internal sealed record LinuxProcessIdentity(int ProcessId, ulong StartTime)
 
         // The command name can contain spaces and parentheses, so fields are counted after its closing parenthesis.
         // The first of them is the state; the start time is the twentieth.
-        var fields = stat[(stat.LastIndexOf(')') + 2)..].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var fields = stat[(stat.AsSpan().LastIndexOf(')') + 2)..].Split(' ', StringSplitOptions.RemoveEmptyEntries);
         return fields[0] is "Z" or "X"
             ? null
             : ulong.Parse(fields[19], NumberStyles.None, CultureInfo.InvariantCulture);

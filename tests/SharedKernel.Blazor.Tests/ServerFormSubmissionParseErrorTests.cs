@@ -20,11 +20,11 @@ public sealed class ServerFormSubmissionParseErrorTests : BunitContext
         var saves = 0;
 
         // Act
-        var saved = await submission.Submit(() =>
+        var saved = await cut.InvokeAsync(() => submission.Submit(() =>
         {
             saves++;
             return Task.FromResult(Result.Ok());
-        });
+        }));
 
         // Assert
         saved.ShouldBeFalse();

@@ -411,3 +411,12 @@ static PandaBear.Versioning.PackageConsumptionOptions.operator !=(PandaBear.Vers
 static PandaBear.Versioning.PackageConsumptionOptions.operator ==(PandaBear.Versioning.PackageConsumptionOptions? left, PandaBear.Versioning.PackageConsumptionOptions? right) -> bool
 static PandaBear.Versioning.ReleaseVersionOptions.operator !=(PandaBear.Versioning.ReleaseVersionOptions? left, PandaBear.Versioning.ReleaseVersionOptions? right) -> bool
 static PandaBear.Versioning.ReleaseVersionOptions.operator ==(PandaBear.Versioning.ReleaseVersionOptions? left, PandaBear.Versioning.ReleaseVersionOptions? right) -> bool
+PandaBear.Versioning.CandidateConsumptionOptions.Frameworks.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Versioning.CandidateConsumptionOptions.Frameworks.init -> void
+PandaBear.Versioning.CandidateOptions.Frameworks.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Versioning.CandidateOptions.Frameworks.init -> void
+PandaBear.Versioning.ConsumerFrameworks
+PandaBear.Versioning.PackageConsumptionOptions.Frameworks.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Versioning.PackageConsumptionOptions.Frameworks.init -> void
+static PandaBear.Versioning.ConsumerFrameworks.Default.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.Versioning.ConsumerFrameworks.IsValid(string? value) -> bool

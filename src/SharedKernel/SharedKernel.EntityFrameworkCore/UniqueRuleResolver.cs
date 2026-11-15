@@ -51,7 +51,12 @@ internal static class UniqueRuleResolver
             return false;
         }
 
+#if NET11_0_OR_GREATER
+        // EF Core 11 indexes list IPropertyBase; only a scalar property has a column, so any other one cannot match.
+        var columns = index.Properties.Select(property => property is IReadOnlyProperty scalar ? scalar.GetColumnName(store) : null).ToList();
+#else
         var columns = index.Properties.Select(property => property.GetColumnName(store)).ToList();
+#endif
         return columns.Count == violation.Columns.Count
             && columns.All(column => violation.Columns.Contains(column, StringComparer.OrdinalIgnoreCase));
     }

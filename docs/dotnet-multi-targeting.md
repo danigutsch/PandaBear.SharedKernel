@@ -92,8 +92,8 @@ when .NET 10 is installed. The costs, *verified locally*:
 
   OpenTelemetry's CI uses this form. Confirm it against the README of the pinned action version, and add it to
   `.github/actions/setup-dotnet-tool/action.yml` and every job that runs tests or consumes candidates.
-- SDK 10.0.404 (runtime 10.0.15, 2026-11-10) fixes 17 CVEs; the repository pins 10.0.403. Moving the pin to the
-  current patch is a separate change from the move to SDK 11.
+- Keep the `net10.0` runtime current too: the SDK 11 pin does not update it. Runtime 10.0.15 (2026-11-10) fixed 17
+  CVEs; install the newest 10.0 SDK or runtime beside SDK 11.
 
 ### Declaring target frameworks
 
@@ -197,40 +197,57 @@ Under Microsoft.Testing.Platform, `dotnet test --solution` runs every TFM of eac
 one for local debugging. Expect test time to roughly double for the projects that target two frameworks, and measure
 before and after.
 
-## Repository changes
+## Repository state
 
-| Area | Now | Change |
-| --- | --- | --- |
-| `global.json` | SDK 10.0.403, `rollForward: disable` | 11.0.100 for the SDK move; 10.0.404 before it for the security fixes. |
-| Root `Directory.Build.props` | `TargetFramework` `net10.0` | Stays the default; project kinds that multi-target clear it. |
-| `tools/Directory.Build.props` | `SharedKernelToolTargetFrameworks` `net10.0`, `RollForward` `Major` | Add `net11.0` only when a tool needs it. |
-| `tests/Directory.Build.props` | inherits `net10.0` | Add a test TFM property with `net10.0;net11.0`. |
-| `Directory.Packages.props` | ASP.NET Core, EF Core, `Microsoft.Extensions.*` 10.0.14; OpenTelemetry 1.20 | `net11.0` version groups; OpenTelemetry 1.21 ships `net10.0` and `net11.0` assets. |
-| Packed-consumer check | `tools/SharedKernel.Versioning.Tool/PackageConsumptionCommand.cs` writes `net10.0` consumers | Consume each candidate as `net10.0` and `net11.0`, including NativeAOT, on Linux and Windows. |
-| `SharedKernelLocalFeed.WriteRestoreProject` | writes a `net10.0` restore project (public API) | Take the TFM as an argument in an API change. |
-| Test helpers | `PackageConsumptionWorkspace` defaults to `net10.0`; Mediator consumer templates and tool package tests name `net10.0` | Parameterize where a test must cover both TFMs. |
-| `sharedkernel-repo new` | seeds `net<SDK major>.0` | Unchanged: seeds follow the SDK major, so with SDK 11 a new repository starts on `net11.0`. |
-| CI | installs only the `global.json` SDK | Add the 10.0 runtime where `net10.0` tests or consumers run. |
-| Lock files | 111 `net10.0` sections, 1 `netstandard2.0` | Regenerate with each TFM change; re-run lock retention. |
+| Area | State |
+| --- | --- |
+| `global.json` | SDK 11.0.100, `rollForward: disable`. It builds `net10.0` and `net11.0`. |
+| Root `Directory.Build.props` | `TargetFramework` `net10.0` is the default; `SharedKernelTargetFrameworks` lists `net10.0;net11.0`. |
+| Libraries | The 27 libraries that reference a per-version package set `TargetFrameworks` to `$(SharedKernelTargetFrameworks)` and clear `TargetFramework`. The other libraries build `net10.0`; analyzers, code fixes, and generators build `netstandard2.0`. |
+| `tests/Directory.Build.props` | Test projects build `$(SharedKernelTargetFrameworks)`. The PostgreSQL slice (three test projects and their Aspire host) stays on `net10.0`: `Npgsql.EntityFrameworkCore.PostgreSQL` has no stable 11.x, and the Aspire AppHost SDK 13.6.5 fails in a multi-framework outer build (MSB4036 for `PickBestRid`), so these projects set a single `TargetFramework`. |
+| `tools/Directory.Build.props` | Tools build `net10.0` with `RollForward` `Major` (`LatestMajor` for the code-fix runner). |
+| `Directory.Packages.props` | The items hold the `net10.0` versions; a `net11.0` group moves every per-version package to 11.0.0 and `Microsoft.OpenApi` to 3.11.0. `Npgsql` 10.0.3 has no 11.x and serves both frameworks. |
+| CI | `setup-dotnet-tool` takes `dotnet-version`; the jobs that run tests or consume packages add `10.0.x` beside the SDK 11 from `global.json`. The sparse tool builds install only SDK 11, which checks the tools' roll-forward. |
+| Packed consumers | `sharedkernel-version` consumes candidates once per `--framework`. |
+| Policy | `.config/sharedkernel-repo.json` lists the frameworks of every project; `sharedkernel-repo verify-target-frameworks` checks them. |
+
+## What .NET 11 changed for this repository
+
+Building `net11.0` surfaced these differences; each is handled with a `net11.0` branch or a form that compiles the same
+on both frameworks.
+
+- `string.StartsWith`, `EndsWith`, and `LastIndexOf` gained `(char, StringComparison)` overloads, so CA1307 reports the
+  `char` overloads in `net11.0` builds. The `ReadOnlySpan<char>` forms (`value.AsSpan().StartsWith('/')`) are ordinal on
+  both frameworks.
+- `System.IO.ReadOnlyMemoryStream` is new and public. Code that imports `PandaBear.IO` and `System.IO` (an implicit
+  using) gets CS0104 for `ReadOnlyMemoryStream` and must qualify the name.
+- EF Core 11 lists `IIndex.Properties` as `IPropertyBase`; only a scalar property has a column.
+- ASP.NET Core 11 makes `EditContext.Validate()` obsolete in favor of `ValidateAsync`.
+- `Microsoft.AspNetCore.OpenApi` 11 requires `Microsoft.OpenApi` 3.x, whose content maps hold `IOpenApiMediaType`.
+
+The .NET 11 runtime also behaves differently, which reaches `net10.0` assemblies that run on it (tests built for
+`net11.0`, tools that roll forward, and consumers on .NET 11):
+
+- `Convert.ToDecimal(double)` and `new decimal(double)` are exact: `1.005d` converts to `1.0049999999999998934…`
+  instead of `1.005`. xUnit converts `[InlineData]` doubles for `decimal` parameters this way, so decimal test data is
+  written as strings and parsed with the invariant culture. No library code converts a double to a decimal.
+- `Math.Round(double, digits)` accepts more than 15 digits instead of throwing `ArgumentOutOfRangeException`.
+- `Convert.TryFromBase64String` rejects padded text whose last character has nonzero unused bits (`QR==`), which
+  .NET 10 decoded like `QQ==`. The vault manager clears those bits before it retries. Verified locally; no breaking-change
+  notice was found.
+- `UseExceptionHandler` keeps the 400 status of a `BadHttpRequestException`; earlier runtimes answer 500.
+- `EditContext.ValidateAsync` must run on the renderer's dispatcher, as Blazor event handlers do.
 
 ## Order of changes
 
-Each step is one reviewable change. Before each, edit the `targetFrameworks` policy in `.config/sharedkernel-repo.json`;
+Before each step, edit the `targetFrameworks` policy in `.config/sharedkernel-repo.json`;
 `sharedkernel-repo verify-target-frameworks` then lists the projects, lock files, SDK pin, and `dotnet run` calls to fix.
 
-1. **SDK 10 (done in this change)**: this guide, the agent skill, `verify-target-frameworks`, and tools on a central
-   TFM property with roll-forward.
-2. **SDK patch**: move `global.json` to 10.0.404.
-3. **SDK 11, same TFMs**: move `global.json` to 11.0.100, install the 10.0 runtime in CI, regenerate the lock files,
-   and run full validation. A trial on 2026-11-15 needed nothing else: `--locked-mode` failed with NU1004 in 14 lock
-   files because the SDK's implicit `Microsoft.NET.ILLink.Tasks` moved from 10.0.14 to 10.0.15, `--force-evaluate`
-   rewrote only those entries, the solution built with no warnings, and the tests that ran passed. Expect the same
-   lock change from SDK 10.0.404, which carries runtime 10.0.15.
-4. **Tests on both runtimes**: test projects target `net10.0;net11.0`.
-5. **Packed consumers on both TFMs**: the Versioning tool consumes candidates as `net10.0` and `net11.0`.
-6. **Libraries with per-major dependencies**: multi-target, add `net11.0` version groups, enable package validation,
-   and split public API files only where the surface differs. Npgsql EF and Aspire libraries wait for their 11.x
-   releases.
+1. Guide, agent skill, `verify-target-frameworks`, and tools on a central TFM property with roll-forward. Done.
+2. SDK 10.0.404 and the 10.0.15 packages. Done.
+3. SDK 11.0.100, the `net11.0` version group, `net11.0` for tests and for libraries with per-version dependencies, the
+   10.0 runtime in CI, and packed consumers per framework. Done.
+4. Move the PostgreSQL slice to both frameworks once `Npgsql.EntityFrameworkCore.PostgreSQL` 11 is stable.
 
 To drop a TFM later, reverse the steps: change the policy, run the check, remove the TFM, its version groups, and its
 `#if` branches, and regenerate the lock files.
@@ -239,10 +256,11 @@ To drop a TFM later, reverse the steps: change the policy, run the check, remove
 
 | Decision | Options and cost | Recommendation |
 | --- | --- | --- |
-| Library TFMs | `net10.0` only (no `net11.0` asset for EF/ASP.NET libraries); multi-target all (double build time, no consumer benefit for dependency-free libraries); selective (two policies to maintain) | Selective, as in the policy table. |
-| Tool TFMs | Roll-forward (one asset; runs on .NET 10 when installed); multi-target (two assets, `--framework` everywhere) | Roll-forward; multi-target a tool only when it needs .NET 11 APIs. |
-| Npgsql EF and Aspire | Ship on release candidates; wait | Wait for stable releases. |
-| `LangVersion=preview` | Keep (C# preview on `net10.0`, unsupported); use the TFM default | Decide before the SDK 11 move; the trial build passed with `preview`. |
+| Library TFMs | `net10.0` only (no `net11.0` asset for EF/ASP.NET libraries); multi-target all (double build time, no consumer benefit for dependency-free libraries); selective (two policies to maintain) | Selective, as in the policy table. Applied. |
+| Tool TFMs | Roll-forward (one asset; runs on .NET 10 when installed); multi-target (two assets, `--framework` everywhere) | Roll-forward; multi-target a tool only when it needs .NET 11 APIs. Applied. |
+| Npgsql EF | Ship on a release candidate; wait | Wait for a stable release. |
+| `LangVersion=preview` | Keep (C# preview on `net10.0`, unsupported); use the TFM default | Open; both frameworks build with `preview` under SDK 11.0.100. |
+| `PandaBear.IO.ReadOnlyMemoryStream` | Keep (consumers on .NET 11 qualify the name); rename; obsolete it in favor of `System.IO.ReadOnlyMemoryStream` on `net11.0` | Open. |
 
 ## Sources
 

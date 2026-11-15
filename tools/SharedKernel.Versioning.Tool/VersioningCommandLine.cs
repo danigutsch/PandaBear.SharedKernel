@@ -430,12 +430,14 @@ internal static class VersioningCommandLine
         var version = SemanticVersionOption("--version", "Unique prerelease package version. Default: <base>-alpha.local.t<UTC timestamp>.g<revision>.");
         var baselineVersion = SemanticVersionOption("--baseline-version", BaselineVersionDescription);
         var aot = AotOption();
+        var framework = FrameworkOption();
         var repoRoot = RepoRootOption();
         var command = new Command("validate-candidate", "Creates a candidate and consumes its packages on this platform.")
         {
             version,
             baselineVersion,
             aot,
+            framework,
             repoRoot,
         };
         SetAction(command, (parseResult, output, ct) => candidates.Validate(
@@ -443,7 +445,10 @@ internal static class VersioningCommandLine
                 Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
                 parseResult.GetValue(version)?.ToString(),
                 parseResult.GetValue(baselineVersion)?.ToString(),
-                parseResult.GetValue(aot)),
+                parseResult.GetValue(aot))
+            {
+                Frameworks = parseResult.GetRequiredValue(framework),
+            },
             output,
             parseResult.InvocationConfiguration.Error,
             ct));
@@ -460,6 +465,7 @@ internal static class VersioningCommandLine
         };
         var evidence = new Option<string>("--output") { Description = "Evidence file to write. Default: the candidate manifest.", HelpName = "path" };
         var aot = AotOption();
+        var framework = FrameworkOption();
         var repoRoot = RepoRootOption();
         var command = new Command("consume-candidate", "Verifies candidate package hashes, consumes the packages on this platform, and records the result.")
         {
@@ -467,6 +473,7 @@ internal static class VersioningCommandLine
             candidateDirectory,
             evidence,
             aot,
+            framework,
             repoRoot,
         };
         command.Validators.Add(result =>
@@ -489,7 +496,10 @@ internal static class VersioningCommandLine
                     Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
                     manifest,
                     parseResult.GetValue(evidence) is { } destination ? Path.GetFullPath(destination) : manifest,
-                    parseResult.GetValue(aot)),
+                    parseResult.GetValue(aot))
+                {
+                    Frameworks = parseResult.GetRequiredValue(framework),
+                },
                 output,
                 parseResult.InvocationConfiguration.Error,
                 ct);
@@ -533,6 +543,7 @@ internal static class VersioningCommandLine
         var version = SemanticVersionOption("--version", "Package version.");
         version.Required = true;
         var aot = AotOption();
+        var framework = FrameworkOption();
         var repoRoot = RepoRootOption();
         var command = new Command(
             "consume-packages",
@@ -541,6 +552,7 @@ internal static class VersioningCommandLine
             feed,
             version,
             aot,
+            framework,
             repoRoot,
         };
         SetAction(command, (parseResult, output, ct) => packager.ConsumePackages(
@@ -548,7 +560,10 @@ internal static class VersioningCommandLine
                 Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
                 Path.GetFullPath(parseResult.GetRequiredValue(feed)),
                 parseResult.GetRequiredValue(version).ToString(),
-                parseResult.GetValue(aot)),
+                parseResult.GetValue(aot))
+            {
+                Frameworks = parseResult.GetRequiredValue(framework),
+            },
             output,
             parseResult.InvocationConfiguration.Error,
             ct));
@@ -614,6 +629,33 @@ internal static class VersioningCommandLine
     };
 
     private static Option<bool> AotOption() => new("--aot") { Description = "Also publishes and runs the samples with NativeAOT." };
+
+    private static Option<string[]> FrameworkOption() => new("--framework")
+    {
+        Description = "Target framework to build the packed consumers for, such as net11.0. Repeat it to consume each framework in turn. Default: net10.0.",
+        HelpName = "tfm",
+        DefaultValueFactory = static _ => [.. ConsumerFrameworks.Default],
+        CustomParser = result =>
+        {
+            var values = result.Tokens.Select(static token => token.Value).ToArray();
+            foreach (var value in values)
+            {
+                if (!ConsumerFrameworks.IsValid(value))
+                {
+                    result.AddError($"Option '--framework' expects a target framework such as net10.0, but got '{value}'.");
+                    return null;
+                }
+            }
+
+            if (values.Distinct(StringComparer.Ordinal).Count() != values.Length)
+            {
+                result.AddError($"Option '--framework' lists '{values.GroupBy(static v => v, StringComparer.Ordinal).First(static g => g.Count() > 1).Key}' more than once.");
+                return null;
+            }
+
+            return values;
+        },
+    };
 
     private static Option<SemanticVersion> SemanticVersionOption(string name, string description) => new(name)
     {

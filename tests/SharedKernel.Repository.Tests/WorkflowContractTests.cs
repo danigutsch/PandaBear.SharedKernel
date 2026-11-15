@@ -197,7 +197,7 @@ public sealed class WorkflowContractTests
             var name = Path.GetFileName(file);
             var lines = File.ReadAllText(file).Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n');
             var jobsStart = Array.IndexOf(lines, "jobs:");
-            var jobKeys = lines.Skip(jobsStart + 1).TakeWhile(static line => line.Length == 0 || line.StartsWith(' ')).Where(static line => line.StartsWith("  ", StringComparison.Ordinal) && !line.StartsWith("   ", StringComparison.Ordinal) && line.EndsWith(':')).Select(static line => line.Trim().TrimEnd(':')).ToArray();
+            var jobKeys = lines.Skip(jobsStart + 1).TakeWhile(static line => line.Length == 0 || line.AsSpan().StartsWith(' ')).Where(static line => line.StartsWith("  ", StringComparison.Ordinal) && !line.StartsWith("   ", StringComparison.Ordinal) && line.AsSpan().EndsWith(':')).Select(static line => line.Trim().TrimEnd(':')).ToArray();
             var workflow = string.Join('\n', lines);
             if (workflow.Contains("secrets:", StringComparison.Ordinal))
             {
@@ -224,7 +224,7 @@ public sealed class WorkflowContractTests
                 if (line.TrimStart().StartsWith("run:", StringComparison.Ordinal))
                 {
                     var indent = line.Length - line.TrimStart().Length;
-                    var block = line.TrimEnd().EndsWith('|') || line.TrimEnd().EndsWith('>')
+                    var block = line.TrimEnd().AsSpan().EndsWith('|') || line.TrimEnd().AsSpan().EndsWith('>')
                         ? lines.Skip(index + 1).TakeWhile(next => next.Length == 0 || next.Length - next.TrimStart().Length > indent)
                         : [line];
                     if (block.Any(static text => text.Contains("${{ inputs.", StringComparison.Ordinal)))
@@ -316,7 +316,7 @@ public sealed class WorkflowContractTests
         consumption.ShouldContain("project: tools/SharedKernel.Versioning.Tool\n", StringComparison.Ordinal);
         consumption.ShouldContain(
             "-- stage-candidate --pin $manifest --library-root . --output $feed --repository $env:GITHUB_REPOSITORY\n", StringComparison.Ordinal);
-        consumption.ShouldContain("-- consume-candidate --candidate $staged --output $evidence --aot\n", StringComparison.Ordinal);
+        consumption.ShouldContain("-- consume-candidate --candidate $staged --output $evidence --framework net10.0 --framework net11.0 --aot\n", StringComparison.Ordinal);
         consumption.ShouldNotContain("Verify exact clean source revision", StringComparison.Ordinal);
         consumption.ShouldNotContain("-- create-candidate", StringComparison.Ordinal);
         consumption.ShouldContain("if: always()", StringComparison.Ordinal);

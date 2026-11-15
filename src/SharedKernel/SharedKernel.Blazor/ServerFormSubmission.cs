@@ -10,6 +10,7 @@ namespace PandaBear.Blazor;
 /// <remarks>
 /// Replaces the saving flag, the binder and the error bookkeeping each form would otherwise repeat. The saving flag is reset even when
 /// the save throws, so a failed call never leaves the form stuck. Dispose it with the form. Use it on the renderer's synchronization context.
+/// <see cref="Submit"/> must be called on the renderer's dispatcher, as a component event handler does; from other code use <c>InvokeAsync</c>.
 /// </remarks>
 public sealed class ServerFormSubmission : IDisposable
 {
@@ -118,7 +119,11 @@ public sealed class ServerFormSubmission : IDisposable
         Summary = [];
 
         // Raises OnValidationRequested, which clears the server messages, so only client-side messages can remain.
+#if NET11_0_OR_GREATER
+        if (!await _editContext.ValidateAsync(CancellationToken.None).ConfigureAwait(true))
+#else
         if (!_editContext.Validate())
+#endif
         {
             Summary = ClientMessages();
 

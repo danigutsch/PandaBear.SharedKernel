@@ -61,7 +61,7 @@ internal static partial class CallerCommandLine
                 ? text[command.Length..]
                 : null)
             .OfType<string>()
-            .Where(static arguments => !arguments.StartsWith('<'))
+            .Where(static arguments => !arguments.AsSpan().StartsWith('<'))
             .Select(static arguments => (
                 arguments.Split(' ', 2)[0],
                 OptionName().Matches(arguments).Select(static match => match.Value).ToArray()))];

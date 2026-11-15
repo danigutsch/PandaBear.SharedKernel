@@ -61,7 +61,7 @@ public sealed class ShouldAssertionExtensionsTests
         ActualValue.ShouldBe(1.23, 2);
         ActualName.ShouldNotBe("beta", StringComparer.OrdinalIgnoreCase);
         contains("alphabet", "alpha");
-        values.ShouldContain(static value => value.StartsWith('b'));
+        values.ShouldContain(static value => value.AsSpan().StartsWith('b'));
         values.ShouldNotBeEmpty();
         BookingReference.ShouldMatch(new Regex(@"^booking-\d+$", RegexOptions.None, TimeSpan.FromSeconds(1)));
     }

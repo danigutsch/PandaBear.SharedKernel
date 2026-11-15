@@ -63,3 +63,6 @@ A change that adds, moves, or drops a TFM or the SDK pin contains each of these,
 | Shipping a dependency on a release candidate to unblock a TFM | Keep that library on the old TFM until the dependency is stable |
 | Guessing the latest SDK or package version | Check the dotnet/core release notes and nuget.org; cite them |
 | Skipping the older runtime's build because it compiled once | Language and API features can fail only there; CI must build and test it |
+| `TargetFrameworks` on an Aspire AppHost-SDK project | The SDK fails in the multi-framework outer build (MSB4036 `PickBestRid`); clear `TargetFrameworks` and set one `TargetFramework` |
+| Adding `StringComparison` to a `char` overload that only the newer TFM has | Use `value.AsSpan().StartsWith('x')`, which is ordinal and compiles on both |
+| Treating a test that fails only on the newer runtime as flaky | Find the runtime change (the guide lists known ones); fix the code or make the test data exact, never skip a framework |

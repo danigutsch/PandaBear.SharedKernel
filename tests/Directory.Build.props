@@ -2,6 +2,9 @@
 	<Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" Condition="'' != $([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
 	<PropertyGroup>
+		<!-- Tests run on every supported runtime. A project that must stay on one framework sets TargetFrameworks itself. -->
+		<TargetFramework></TargetFramework>
+		<TargetFrameworks>$(SharedKernelTargetFrameworks)</TargetFrameworks>
 		<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
 		<TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
 		<TestingPlatformCaptureOutput>false</TestingPlatformCaptureOutput>

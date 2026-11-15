@@ -72,8 +72,8 @@ sharedkernel-version pack-sharedkernel [--version <version>] [--assembly-version
 sharedkernel-version pack-dev --feed <path> [--version <version>] [--repo-root <path>] [<project>...]
 sharedkernel-version prepare-release --version <version> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes
 sharedkernel-version create-candidate [--version <version>] [--baseline-version <version>]
-sharedkernel-version validate-candidate [--version <version>] [--baseline-version <version>] [--aot]
-sharedkernel-version consume-candidate (--candidate <path> | --candidate-directory <path>) [--output <path>] [--aot]
+sharedkernel-version validate-candidate [--version <version>] [--baseline-version <version>] [--aot] [--framework <tfm>]...
+sharedkernel-version consume-candidate (--candidate <path> | --candidate-directory <path>) [--output <path>] [--aot] [--framework <tfm>]...
 sharedkernel-version consume-packages --feed <path> --version <version> [--aot]
 sharedkernel-version merge-evidence --candidate <path> --evidence <path>... [--output <path>]
 sharedkernel-version verify-consumer --candidate <file> [--solution <file>] [--output <file>] -- <command>...
@@ -169,6 +169,7 @@ checks and records no manifest, so its output is never a candidate; use `create-
 ```text
 sharedkernel-version validate-candidate --aot
 sharedkernel-version consume-candidate --candidate-directory artifacts/candidate --aot
+sharedkernel-version consume-candidate --candidate-directory artifacts/candidate --framework net10.0 --framework net11.0
 sharedkernel-version consume-packages --feed artifacts/api-compat/packages/0.2.0-alpha.1 --version 0.2.0-alpha.1
 ```
 
@@ -191,6 +192,13 @@ NativeAOT run with `--aot`, in the manifest or in `--output`. It replaces that f
 same directory, so an interrupted write never truncates it, and Ctrl+C or SIGTERM leaves the file unchanged. The
 sample projects treat warnings as errors and audit every direct and transitive package at NuGet's default level,
 `low`, so an advisory of any severity fails consumption.
+`--framework <tfm>` (`consume-candidate`, `consume-packages`, `validate-candidate`) names a target framework to build the
+consumers for, such as `net11.0`; repeat it for several. It defaults to `net10.0` alone, and a value must be `net` plus
+`<major>.<minor>` in lowercase, listed once. The restore, locked restore, build, run, and optional NativeAOT publish run once per
+framework, each in its own workspace and package cache, with the central package versions that a project of that framework
+uses, and a failure names the framework. The manifest records
+the consumed frameworks beside the result, as `<platform>PackageConsumptionFrameworks` and, with `--aot`,
+`<platform>NativeAotFrameworks`; `merge-evidence` copies them with the result. The SDK must be able to build each framework.
 `--candidate-directory` must contain exactly one `candidate.json`, searched recursively. `consume-packages` runs
 the same checks against a feed without a manifest.
 `validate-candidate` runs `create-candidate` and then `consume-candidate` on the manifest it wrote.

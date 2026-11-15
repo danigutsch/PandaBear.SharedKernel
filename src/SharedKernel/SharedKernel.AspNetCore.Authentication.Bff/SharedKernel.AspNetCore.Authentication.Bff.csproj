@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <TargetFramework></TargetFramework>
+        <TargetFrameworks>$(SharedKernelTargetFrameworks)</TargetFrameworks>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.AspNetCore.Authentication.Bff</PackageId>
         <Description>Backend-for-frontend token handling for ASP.NET Core and Blazor Server: a server-side cookie ticket store, protected per-session user tokens with coalesced refresh and sign-out revocation, an access-token HttpClient handler and RFC 8693 token exchange per audience.</Description>
