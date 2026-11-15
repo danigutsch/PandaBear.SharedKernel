@@ -49,3 +49,5 @@ PandaBear.AspNetCore.CspNonceServiceCollectionExtensions
 PandaBear.AspNetCore.ICspNonce
 PandaBear.AspNetCore.ICspNonce.Value.get -> string!
 static PandaBear.AspNetCore.CspNonceServiceCollectionExtensions.AddCspNonce(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.AspNetCore.StatusCodePagesExclusionExtensions
+static PandaBear.AspNetCore.StatusCodePagesExclusionExtensions.UseStatusCodePagesWithReExecuteExcept(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app, string! pathFormat, bool createScopeForStatusCodePages, params Microsoft.AspNetCore.Http.PathString[]! excludedPrefixes) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
