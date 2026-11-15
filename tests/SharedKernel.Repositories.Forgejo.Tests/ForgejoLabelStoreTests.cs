@@ -67,11 +67,38 @@ public sealed class ForgejoLabelStoreTests
     }
 
     [Fact]
-    public async Task Listing_without_paging_headers_stops_at_a_short_page()
+    public async Task Listing_without_paging_headers_reads_past_short_pages_until_an_empty_page()
+    {
+        // Arrange
+        // An instance with max_response_items 30, or a proxy that strips the headers, answers limit=50 with 30 labels.
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.OK, LinkedPages.Labels(1, 30));
+        handler.EnqueueJson(HttpStatusCode.OK, LinkedPages.Labels(31, 30));
+        handler.EnqueueJson(HttpStatusCode.OK, LinkedPages.Labels(61, 30));
+        handler.EnqueueJson(HttpStatusCode.OK, "[]");
+        using var store = new ForgejoLabelStore(handler, Server, "owner/name", UserAgent, null);
+
+        // Act
+        var labels = await store.List(TestContext.Current.CancellationToken);
+
+        // Assert
+        labels.Select(static label => label.Name).ShouldBe([.. Enumerable.Range(1, 90).Select(static id => "label-" + id.ToString(System.Globalization.CultureInfo.InvariantCulture))]);
+        handler.Requests.Select(static request => request.PathAndQuery).ShouldBe(
+        [
+            LabelsPath + "?limit=50&page=1",
+            LabelsPath + "?limit=50&page=2",
+            LabelsPath + "?limit=50&page=3",
+            LabelsPath + "?limit=50&page=4",
+        ]);
+    }
+
+    [Fact]
+    public async Task Listing_without_paging_headers_ends_at_an_empty_page()
     {
         // Arrange
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.OK, """[{ "id": 1, "name": "a", "color": "000000", "description": "" }]""");
+        handler.EnqueueJson(HttpStatusCode.OK, "[]");
         using var store = new ForgejoLabelStore(handler, Server, "owner/name", UserAgent, null);
 
         // Act
@@ -79,7 +106,7 @@ public sealed class ForgejoLabelStoreTests
 
         // Assert
         labels.ShouldHaveSingleItem().Name.ShouldBe("a");
-        handler.Requests.ShouldHaveSingleItem();
+        handler.Requests.Count.ShouldBe(2);
     }
 
     [Fact]

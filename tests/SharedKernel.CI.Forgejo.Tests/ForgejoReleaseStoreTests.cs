@@ -55,10 +55,11 @@ public sealed class ForgejoReleaseStoreTests
     }
 
     [Fact]
-    public async Task A_single_page_without_a_link_header_is_the_whole_list()
+    public async Task Without_paging_headers_the_list_ends_at_an_empty_page()
     {
         // Arrange
-        using var handler = new ScriptedHandler().Respond(HttpStatusCode.OK, Releases.Page(1, 3));
+        // A short page proves nothing without headers: the instance can page by fewer than 50, so an empty page ends the list.
+        using var handler = new ScriptedHandler().Respond(HttpStatusCode.OK, Releases.Page(1, 3)).Respond(HttpStatusCode.OK, "[]");
         using var store = new ForgejoReleaseStore(handler, Server, "owner/name", UserAgent, null);
 
         // Act
@@ -66,7 +67,7 @@ public sealed class ForgejoReleaseStoreTests
 
         // Assert
         releases.Count.ShouldBe(3);
-        handler.Requests.Count.ShouldBe(1);
+        handler.Requests.Count.ShouldBe(2);
         handler.Requests[0].Headers.Authorization.ShouldBeNull();
     }
 
@@ -155,6 +156,7 @@ public sealed class ForgejoReleaseStoreTests
         // Arrange
         using var handler = new ScriptedHandler()
             .Respond(HttpStatusCode.OK, Releases.Page(1, 3))
+            .Respond(HttpStatusCode.OK, "[]")
             .Respond(HttpStatusCode.NoContent);
         using var store = new ForgejoReleaseStore(handler, Server, "owner/name", UserAgent, "secret");
         using var output = new InvariantStringWriter();

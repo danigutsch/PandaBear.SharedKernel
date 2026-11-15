@@ -7,8 +7,8 @@ namespace PandaBear.Forgejo;
 /// Reads every page of a Forgejo list. <see href="https://forgejo.org/docs/latest/user/api-usage/">API usage</see>
 /// documents <c>page</c> and <c>limit</c>, a <c>Link</c> header with the next, previous, and last pages when there is more
 /// than one page, and <c>X-Total-Count</c>; the instance caps <c>limit</c> at its <c>max_response_items</c>, 50 by
-/// default. Not every list sends a <c>Link</c> header: Forgejo 17 answers the labels of a repository with
-/// <c>X-Total-Count</c> only.
+/// default and configurable lower. Not every list sends a <c>Link</c> header: Forgejo 17 answers the labels of a
+/// repository with <c>X-Total-Count</c> only, and a proxy can strip both headers.
 /// </summary>
 public static class ForgejoPager
 {
@@ -18,8 +18,9 @@ public static class ForgejoPager
     /// <summary>
     /// Reads pages 1, 2, and so on through <paramref name="readPage"/> and returns their items in order. After each page
     /// it stops when the page is empty; otherwise, when the page has a <c>Link</c> header, when that header has no
-    /// <c>next</c> relation; otherwise, when it has an <c>X-Total-Count</c>, when that many items have been read;
-    /// otherwise, when the page holds fewer than <see cref="PageSize"/> items.
+    /// <c>next</c> relation; otherwise, when it has an <c>X-Total-Count</c>, when that many items have been read. A page
+    /// with neither header and fewer than <see cref="PageSize"/> items does not end the list, because the instance can
+    /// cap <c>limit</c> below <see cref="PageSize"/>; reading goes on to the first empty page.
     /// </summary>
     /// <typeparam name="T">The type of the items.</typeparam>
     /// <param name="readPage">Reads the page with the given 1-based number, requested with <c>limit=</c><see cref="PageSize"/>.</param>
@@ -91,6 +92,8 @@ public static class ForgejoPager
             return read >= total;
         }
 
-        return page.Items.Count < PageSize;
+        // Without headers a short page proves nothing: the instance can cap limit below PageSize, or a proxy can strip
+        // the headers, so only an empty page ends the list, and maxPages bounds the reading.
+        return false;
     }
 }

@@ -78,7 +78,7 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
     /// <remarks>
     /// Reads <c>GET /repos/{owner}/{repo}/labels</c> with <c>limit=50</c> through <see cref="ForgejoPager"/>, which follows
     /// the <c>Link</c> header, or the <c>X-Total-Count</c> header without one (Forgejo 17 sends no <c>Link</c> header for
-    /// this list), and fails above 100 pages. Colors are returned without a leading <c>#</c>.
+    /// this list), or else reads to the first empty page, and fails above 100 pages. Colors are returned without a leading <c>#</c>.
     /// </remarks>
     /// <exception cref="InvalidOperationException">Forgejo rejects a request or returns an invalid response, or the repository has more than 100 pages of labels.</exception>
     /// <exception cref="TimeoutException">Forgejo does not answer a request within 30 seconds.</exception>

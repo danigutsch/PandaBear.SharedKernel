@@ -36,8 +36,9 @@ using var response = await client.GetAsync("repos/owner/name/releases?limit=50&p
   [API usage](https://forgejo.org/docs/latest/user/api-usage/) documents, sends `X-Total-Count` and, when there is more
   than one page, a `Link` header with a `next` relation. Not every list sends `Link`: Forgejo 17.0.1 answers the labels
   of a repository with `X-Total-Count` only, while the repositories of a user have both. The pager stops at an empty
-  page; otherwise it follows `Link` when present, then `X-Total-Count`, and without either stops at a page shorter than
-  `PageSize`. Above the caller's page cap it throws `InvalidDataException`, a server answering more pages than allowed,
+  page; otherwise it follows `Link` when present, then `X-Total-Count`. Without either it reads on to the first empty
+  page: an instance can set `max_response_items` below `PageSize`, and a proxy can strip the headers, so a short page
+  does not prove the end of the list. Above the caller's page cap it throws `InvalidDataException`, a server answering more pages than allowed,
   instead of returning part of the list.
   `ForgejoPager.Page(items, headers)` builds a `ForgejoPage<T>` from a response's headers.
 

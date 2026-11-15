@@ -52,16 +52,45 @@ public sealed class ForgejoPagerTests
     }
 
     [Fact]
-    public async Task Without_paging_headers_a_short_page_is_the_last()
+    public async Task Without_paging_headers_a_short_page_is_not_the_last()
     {
         // Arrange
-        var pages = new ScriptedPages([ScriptedPages.Page(50), ScriptedPages.Page(49)]);
+        // An instance with max_response_items 30, or a proxy that strips the headers, answers limit=50 with 30 items.
+        var pages = new ScriptedPages([ScriptedPages.Page(30), ScriptedPages.Page(30), ScriptedPages.Page(30), ScriptedPages.Page(0)]);
+
+        // Act
+        var items = await ForgejoPager.ReadAll(pages.Read, 10, "the list", TestContext.Current.CancellationToken);
+
+        // Assert
+        items.Count.ShouldBe(90);
+        pages.Requested.ShouldBe([1, 2, 3, 4]);
+    }
+
+    [Fact]
+    public async Task Without_paging_headers_an_empty_page_ends_the_list()
+    {
+        // Arrange
+        var pages = new ScriptedPages([ScriptedPages.Page(50), ScriptedPages.Page(49), ScriptedPages.Page(0)]);
 
         // Act
         var items = await ForgejoPager.ReadAll(pages.Read, 10, "the list", TestContext.Current.CancellationToken);
 
         // Assert
         items.Count.ShouldBe(99);
+        pages.Requested.ShouldBe([1, 2, 3]);
+    }
+
+    [Fact]
+    public async Task Without_paging_headers_the_page_cap_still_bounds_the_list()
+    {
+        // Arrange
+        var pages = new ScriptedPages([ScriptedPages.Page(30), ScriptedPages.Page(30)]);
+
+        // Act
+        Func<Task> read = () => ForgejoPager.ReadAll(pages.Read, 2, "the list", TestContext.Current.CancellationToken);
+
+        // Assert
+        await read.ShouldThrow<InvalidDataException>();
         pages.Requested.ShouldBe([1, 2]);
     }
 
