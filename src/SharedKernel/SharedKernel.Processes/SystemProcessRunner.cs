@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Diagnostics;
 
 namespace PandaBear.Processes;
@@ -51,23 +50,8 @@ public sealed class SystemProcessRunner : IProcessRunner
         }
         catch (OperationCanceledException)
         {
-            try
-            {
-                if (!process.HasExited)
-                {
-                    process.Kill(entireProcessTree: true);
-                    using var terminationTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(2));
-                    await process.WaitForExitAsync(terminationTimeout.Token).ConfigureAwait(false);
-                }
-            }
-            catch (Exception exception) when (exception is InvalidOperationException
-                or Win32Exception
-                or NotSupportedException
-                or AggregateException
-                or OperationCanceledException)
-            {
-                // Preserve cancellation so the caller can force-remove the named container.
-            }
+            // Preserve cancellation so the caller can force-remove the named container.
+            await ProcessTree.Terminate(process, TimeSpan.FromSeconds(2)).ConfigureAwait(false);
 
             var outputDrain = Task.WhenAll(standardOutput, standardError);
             try

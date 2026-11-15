@@ -92,19 +92,6 @@ public sealed class ProcessRunnerTests
     }
 
     [Fact]
-    public async Task Termination_ignores_a_process_object_without_a_running_process()
-    {
-        // Arrange
-        using Process process = new();
-
-        // Act
-        var exception = await Record.ExceptionAsync(() => ProcessRunner.Terminate(process));
-
-        // Assert
-        exception.ShouldBeNull();
-    }
-
-    [Fact]
     public async Task Timed_out_process_is_terminated_and_reported_as_a_timeout()
     {
         // Arrange
@@ -129,23 +116,5 @@ public sealed class ProcessRunnerTests
         exception.Message.ShouldContain("did not exit within 600 seconds", StringComparison.Ordinal);
         var lookup = () => Process.GetProcessById(processId);
         lookup.ShouldThrow<ArgumentException>();
-    }
-
-    [Fact]
-    public void Git_runs_without_inherited_git_variables()
-    {
-        // Arrange
-        var startInfo = new ProcessStartInfo("git");
-        startInfo.Environment["GIT_DIR"] = "/elsewhere/.git";
-        startInfo.Environment["GIT_WORK_TREE"] = "/elsewhere";
-        startInfo.Environment["git_index_file"] = "/elsewhere/index";
-        startInfo.Environment["SHAREDKERNEL_UNRELATED"] = "kept";
-
-        // Act
-        ProcessRunner.RemoveGitVariables(startInfo);
-
-        // Assert
-        startInfo.Environment.Keys.ShouldNotContain(static name => name.StartsWith("GIT_", StringComparison.OrdinalIgnoreCase), "Git reads repository locations from these variables.");
-        startInfo.Environment["SHAREDKERNEL_UNRELATED"].ShouldBe("kept");
     }
 }

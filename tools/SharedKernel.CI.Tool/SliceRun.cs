@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using PandaBear.IO;
+using PandaBear.Processes;
 
 namespace PandaBear.CI.Tool;
 
@@ -37,7 +38,7 @@ internal static class SliceRun
         Func<string, string[], string, CancellationToken, Task<string>>? runInstaller = null)
     {
         var time = timeProvider ?? TimeProvider.System;
-        var start = startService ?? ProcessRunner.Start;
+        var start = startService ?? ProcessTree.Start;
         var execution = Path.Combine(selection, options.Slices.Length == 0 ? "execution" : "execution-" + string.Join('+', options.Slices));
         Directory.CreateDirectory(execution);
         var phases = new List<RunPhase>();

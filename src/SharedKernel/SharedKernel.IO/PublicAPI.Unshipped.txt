@@ -37,3 +37,6 @@ override PandaBear.IO.RepositoryPath.GetHashCode() -> int
 static PandaBear.IO.RepositoryPath.operator !=(PandaBear.IO.RepositoryPath left, PandaBear.IO.RepositoryPath right) -> bool
 static PandaBear.IO.RepositoryPath.operator ==(PandaBear.IO.RepositoryPath left, PandaBear.IO.RepositoryPath right) -> bool
 ~override PandaBear.IO.RepositoryPath.Equals(object obj) -> bool
+PandaBear.IO.BoundedReader
+static PandaBear.IO.BoundedReader.ReadFile(string! path, int maxBytes, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<byte[]?>!
+static PandaBear.IO.BoundedReader.ReadToEnd(System.IO.Stream! source, int maxBytes, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<byte[]?>!

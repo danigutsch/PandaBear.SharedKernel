@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using PandaBear.GitHub;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -12,7 +13,7 @@ internal static class GitHubHttpClient
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(operation);
 
-        var token = Environment.GetEnvironmentVariable("GH_TOKEN") ?? Environment.GetEnvironmentVariable("GITHUB_TOKEN");
+        var token = GitHubToken.Find(Environment.GetEnvironmentVariable);
         return Create(token, $"Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub {operation}.");
     }
 
@@ -34,24 +35,15 @@ internal static class GitHubHttpClient
             throw new InvalidOperationException(missingTokenMessage);
         }
 
-        HttpClientHandler? handler = null;
-        HttpClient? httpClient = null;
+        var handler = new HttpClientHandler { AllowAutoRedirect = false, CheckCertificateRevocationList = true };
         try
         {
-            handler = new HttpClientHandler { AllowAutoRedirect = false, CheckCertificateRevocationList = true };
-            httpClient = new HttpClient(handler, disposeHandler: true);
-            handler = null;
-            httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("sharedkernel-repo", "1.0"));
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
-            var result = httpClient;
-            httpClient = null;
-            return result;
+            return GitHubApiClient.Create(handler, new ProductInfoHeaderValue("sharedkernel-repo", "1.0"), token);
         }
-        finally
+        catch
         {
-            handler?.Dispose();
-            httpClient?.Dispose();
+            handler.Dispose();
+            throw;
         }
     }
 }

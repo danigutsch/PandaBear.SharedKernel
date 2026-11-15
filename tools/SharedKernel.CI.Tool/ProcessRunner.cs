@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
@@ -43,16 +42,7 @@ internal static class ProcessRunner
     /// <exception cref="TimeoutException">Git did not exit within a minute; its process tree is terminated first.</exception>
     /// <exception cref="OperationCanceledException"><paramref name="ct"/> was cancelled; the process tree is terminated first.</exception>
     public static Task<string> RunGit(string[] arguments, string workingDirectory, CancellationToken ct) =>
-        Run("git", arguments, workingDirectory, GitTimeout, TimeProvider.System, RemoveGitVariables, ct);
-
-    /// <summary>Removes every <c>GIT_*</c> variable, in any case, from the child environment.</summary>
-    internal static void RemoveGitVariables(ProcessStartInfo startInfo)
-    {
-        foreach (var name in startInfo.Environment.Keys.Where(static name => name.StartsWith("GIT_", StringComparison.OrdinalIgnoreCase)).ToArray())
-        {
-            startInfo.Environment.Remove(name);
-        }
-    }
+        Run("git", arguments, workingDirectory, GitTimeout, TimeProvider.System, ProcessEnvironment.RemoveGitVariables, ct);
 
     /// <summary>
     /// Runs a process with a configured start and a timeout that <paramref name="timeProvider"/> times, and returns its
@@ -76,7 +66,7 @@ internal static class ProcessRunner
         }
 
         configure(startInfo);
-        using var process = Start(startInfo);
+        using var process = ProcessTree.Start(startInfo);
         var standardOutput = echo ? ReadEchoed(process.StandardOutput, timeProvider) : process.StandardOutput.ReadToEndAsync(CancellationToken.None);
         var standardError = echo ? ReadEchoed(process.StandardError, timeProvider) : process.StandardError.ReadToEndAsync(CancellationToken.None);
         using var timeoutSource = new CancellationTokenSource(timeout, timeProvider);
@@ -87,7 +77,7 @@ internal static class ProcessRunner
         }
         catch (OperationCanceledException exception)
         {
-            await Terminate(process).ConfigureAwait(false);
+            await ProcessTree.Terminate(process, TerminationTimeout).ConfigureAwait(false);
             if (timeoutSource.IsCancellationRequested && !ct.IsCancellationRequested)
             {
                 throw new TimeoutException(
@@ -120,42 +110,5 @@ internal static class ProcessRunner
         }
 
         return text.ToString();
-    }
-
-    /// <summary>Kills the process tree unless the process has exited, and waits up to two seconds for it to exit.</summary>
-    /// <remarks>Termination failures are ignored, so the cancellation that started cleanup reaches the caller.</remarks>
-    internal static async Task Terminate(Process process)
-    {
-        try
-        {
-            if (!process.HasExited)
-            {
-                process.Kill(entireProcessTree: true);
-                using var termination = new CancellationTokenSource(TerminationTimeout);
-                await process.WaitForExitAsync(termination.Token).ConfigureAwait(false);
-            }
-        }
-        catch (Exception exception) when (exception is InvalidOperationException
-            or Win32Exception
-            or NotSupportedException
-            or AggregateException
-            or OperationCanceledException)
-        {
-            // Best-effort cleanup must not replace the caller's cancellation.
-        }
-    }
-
-    /// <summary>Starts a process, reporting a start failure as an invalid operation.</summary>
-    /// <exception cref="InvalidOperationException">The process could not start.</exception>
-    internal static Process Start(ProcessStartInfo startInfo)
-    {
-        try
-        {
-            return Process.Start(startInfo) ?? throw new InvalidOperationException($"Failed to start {startInfo.FileName}.");
-        }
-        catch (Win32Exception exception)
-        {
-            throw new InvalidOperationException($"Failed to start {startInfo.FileName}.", exception);
-        }
     }
 }

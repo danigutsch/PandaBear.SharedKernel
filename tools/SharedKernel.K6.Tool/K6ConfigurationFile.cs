@@ -1,6 +1,7 @@
 using System.Globalization;
-using System.Text.Json;
 using System.Text.RegularExpressions;
+using PandaBear.ConfigurationFiles;
+using PandaBear.GitHub;
 using PandaBear.IO;
 
 namespace PandaBear.K6.Tool;
@@ -16,14 +17,9 @@ internal static partial class K6ConfigurationFile
     /// <summary>The k6 variable that the tool sets so k6 sends no usage report.</summary>
     public const string UsageReportVariable = "K6_NO_USAGE_REPORT";
 
-    private const int MaxBytes = 1024 * 1024;
-
     private const int MaxTimeoutSeconds = 3600;
 
     private const string RelativePathRule = "with '/' separators and without empty, '.', or '..' segments.";
-
-    /// <summary>The variables that never reach a child process, because they hold a GitHub token.</summary>
-    private static readonly string[] TokenVariables = ["GH_TOKEN", "GITHUB_TOKEN"];
 
     /// <summary>Reads the configuration under <paramref name="root"/> without following symbolic links.</summary>
     /// <exception cref="InvalidOperationException">
@@ -31,46 +27,7 @@ internal static partial class K6ConfigurationFile
     /// </exception>
     public static async Task<K6Configuration> Read(string root, CancellationToken ct)
     {
-        string path;
-        try
-        {
-            path = RepositoryPath.Parse(RelativePath).ResolveUnder(root);
-        }
-        catch (InvalidOperationException exception)
-        {
-            throw new InvalidOperationException($"{RelativePath}: {exception.Message}", exception);
-        }
-
-        byte[] content;
-        try
-        {
-            content = await ReadBounded(path, ct).ConfigureAwait(false);
-        }
-        catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
-        {
-            throw new InvalidOperationException($"{RelativePath} does not exist.", exception);
-        }
-
-        K6Configuration? configuration;
-        try
-        {
-            configuration = JsonSerializer.Deserialize(content, K6ConfigurationJsonContext.Default.K6Configuration);
-        }
-        catch (JsonException exception)
-        {
-            // The serializer's message names .NET types, so only the location is reported.
-            throw new InvalidOperationException(
-                string.Create(
-                    CultureInfo.InvariantCulture,
-                    $"{RelativePath} is not valid at {exception.Path ?? "$"} (line {(exception.LineNumber ?? 0) + 1}). Check for a misspelled, unknown, missing, or repeated property, a value of the wrong type, or broken JSON syntax."),
-                exception);
-        }
-
-        if (configuration is null)
-        {
-            throw new InvalidOperationException($"{RelativePath} must contain a JSON object.");
-        }
-
+        var configuration = await JsonConfigurationFile.Read(root, RelativePath, K6ConfigurationJsonContext.Default.K6Configuration, ct).ConfigureAwait(false);
         Validate(configuration);
         return configuration;
     }
@@ -80,28 +37,6 @@ internal static partial class K6ConfigurationFile
 
     /// <summary>Creates the error for a value at a JSON path of the file.</summary>
     public static InvalidOperationException Invalid(string message) => new($"{RelativePath}: {message}");
-
-    private static async Task<byte[]> ReadBounded(string path, CancellationToken ct)
-    {
-        var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
-        await using (stream.ConfigureAwait(false))
-        {
-            var buffer = new byte[MaxBytes + 1];
-            var length = 0;
-            int read;
-            while (length < buffer.Length && (read = await stream.ReadAsync(buffer.AsMemory(length), ct).ConfigureAwait(false)) > 0)
-            {
-                length += read;
-            }
-
-            if (length > MaxBytes)
-            {
-                throw new InvalidOperationException($"{RelativePath} is larger than 1 MiB.");
-            }
-
-            return buffer[..length];
-        }
-    }
 
     private static void Validate(K6Configuration configuration)
     {
@@ -213,7 +148,7 @@ internal static partial class K6ConfigurationFile
             throw Invalid(path + " must be an environment variable name: letters, digits, and '_', not starting with a digit.");
         }
 
-        if (TokenVariables.Contains(name, StringComparer.OrdinalIgnoreCase))
+        if (GitHubToken.IsTokenVariable(name))
         {
             throw Invalid(path + " names " + name + ", which the tool never passes to a child process.");
         }

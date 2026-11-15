@@ -58,9 +58,9 @@ internal static class PackagesCommandLine
         }
         catch (Exception exception) when (exception is InvalidOperationException or IOException or UnauthorizedAccessException)
         {
-            foreach (var line in exception.Message.TrimEnd('\r', '\n').Split('\n'))
+            foreach (var line in ControlCharacters.EscapeLines(exception.Message))
             {
-                await error.WriteLineAsync(ControlCharacters.Escape(line.TrimEnd('\r')).AsMemory(), cancellationToken).ConfigureAwait(false);
+                await error.WriteLineAsync(line.AsMemory(), cancellationToken).ConfigureAwait(false);
             }
 
             return PlanCommand.FailureExitCode;

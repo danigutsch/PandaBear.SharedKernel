@@ -1,6 +1,5 @@
 using System.Globalization;
-using System.Text.Json;
-using PandaBear.IO;
+using PandaBear.ConfigurationFiles;
 
 namespace PandaBear.Sandbox.Tool;
 
@@ -10,7 +9,6 @@ internal static class SandboxConfigurationFile
     /// <summary>The configuration path relative to the repository root.</summary>
     public const string RelativePath = ".config/sharedkernel-sandbox.json";
 
-    private const int MaxBytes = 1024 * 1024;
     private const int MaxPaths = 100;
     private const int MaxPathLength = 1024;
 
@@ -19,57 +17,13 @@ internal static class SandboxConfigurationFile
     /// <exception cref="InvalidOperationException">The file is larger than 1 MiB or not a valid configuration of version 1.</exception>
     public static async Task<SandboxConfiguration?> Read(string root, CancellationToken cancellationToken)
     {
-        string path;
-        try
-        {
-            path = RepositoryPath.Parse(RelativePath).ResolveUnder(root);
-        }
-        catch (InvalidOperationException exception)
-        {
-            throw new InvalidOperationException($"{RelativePath}: {exception.Message}", exception);
-        }
-
-        if (!File.Exists(path))
-        {
-            return null;
-        }
-
-        var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
-        await using (stream.ConfigureAwait(false))
-        {
-            var buffer = new byte[MaxBytes + 1];
-            var length = 0;
-            int read;
-            while (length < buffer.Length && (read = await stream.ReadAsync(buffer.AsMemory(length), cancellationToken).ConfigureAwait(false)) > 0)
-            {
-                length += read;
-            }
-
-            return length > MaxBytes ? throw new InvalidOperationException($"{RelativePath} is larger than 1 MiB.") : Parse(buffer[..length]);
-        }
+        var configuration = await JsonConfigurationFile.ReadOptional(
+            root, RelativePath, SandboxConfigurationJsonContext.Default.SandboxConfiguration, cancellationToken).ConfigureAwait(false);
+        return configuration is null ? null : Validate(configuration);
     }
 
-    private static SandboxConfiguration Parse(byte[] content)
+    private static SandboxConfiguration Validate(SandboxConfiguration configuration)
     {
-        SandboxConfiguration? configuration;
-        try
-        {
-            configuration = JsonSerializer.Deserialize(content, SandboxConfigurationJsonContext.Default.SandboxConfiguration);
-        }
-        catch (JsonException exception)
-        {
-            throw new InvalidOperationException(
-                string.Create(
-                    CultureInfo.InvariantCulture,
-                    $"{RelativePath} is not valid at {exception.Path ?? "$"} (line {(exception.LineNumber ?? 0) + 1}). Check for a misspelled, unknown, missing, or repeated property, a value of the wrong type, or broken JSON syntax."),
-                exception);
-        }
-
-        if (configuration is null)
-        {
-            throw new InvalidOperationException($"{RelativePath} must contain a JSON object.");
-        }
-
         if (configuration.Version != 1)
         {
             throw new InvalidOperationException($"{RelativePath}: $.version must be 1.");

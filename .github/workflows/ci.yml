@@ -95,17 +95,10 @@ jobs:
         with:
           path: source-build
           persist-credentials: false
-          sparse-checkout: |
-            tools/${{ matrix.tool }}
-            src/SharedKernel/SharedKernel.InputNormalization
-            src/SharedKernel/SharedKernel.IO
-            src/SharedKernel/SharedKernel.Processes
-            src/SharedKernel/SharedKernel.Versioning
-          sparse-checkout-cone-mode: true
       - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
         with:
           global-json-file: source-build/global.json
-      - name: Build the tool from its sparse checkout
+      - name: Build the tool from its checkout
         working-directory: source-build
         shell: bash
         env:

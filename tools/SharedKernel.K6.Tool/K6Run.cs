@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Globalization;
+using PandaBear.GitHub;
 using PandaBear.IO;
+using PandaBear.Processes;
 
 namespace PandaBear.K6.Tool;
 
@@ -179,7 +181,7 @@ internal static class K6Run
     {
         var name = "sharedkernel-k6-" + Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture);
         var startInfo = new ProcessStartInfo(engine) { UseShellExecute = false, WorkingDirectory = options.Root };
-        ChildProcess.RemoveTokens(startInfo);
+        GitHubToken.RemoveFrom(startInfo);
         foreach (var argument in new[] { "run", "--rm", "--pull=never", "--name", name })
         {
             startInfo.ArgumentList.Add(argument);
@@ -227,7 +229,7 @@ internal static class K6Run
             RedirectStandardOutput = true,
             RedirectStandardError = true,
         };
-        ChildProcess.RemoveTokens(startInfo);
+        GitHubToken.RemoveFrom(startInfo);
         foreach (var argument in new[] { "rm", "--force", name })
         {
             startInfo.ArgumentList.Add(argument);
@@ -236,7 +238,7 @@ internal static class K6Run
         try
         {
             using var removal = new CancellationTokenSource(ContainerRemovalTimeout);
-            using var process = ChildProcess.Start(startInfo);
+            using var process = ProcessTree.Start(startInfo);
             var drain = Task.WhenAll(process.StandardOutput.ReadToEndAsync(removal.Token), process.StandardError.ReadToEndAsync(removal.Token));
             await process.WaitForExitAsync(removal.Token).ConfigureAwait(false);
             await drain.ConfigureAwait(false);

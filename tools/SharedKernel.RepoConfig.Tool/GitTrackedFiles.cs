@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using PandaBear.GitHub;
 using PandaBear.Processes;
 
 namespace PandaBear.RepoConfig.Tool;
@@ -89,12 +90,9 @@ internal static class GitTrackedFiles
         };
 
         // GIT_DIR, GIT_INDEX_FILE, and the GIT_*_PATHSPECS variables would select another index or change how paths match.
-        foreach (var variable in startInfo.Environment.Keys.Where(static key => key.StartsWith("GIT_", StringComparison.OrdinalIgnoreCase)).ToArray())
-        {
-            startInfo.Environment.Remove(variable);
-        }
+        ProcessEnvironment.RemoveGitVariables(startInfo);
 
-        ChildProcessEnvironment.RemoveGitHubTokens(startInfo);
+        GitHubToken.RemoveFrom(startInfo);
         startInfo.Environment["GIT_TERMINAL_PROMPT"] = "0";
         foreach (var argument in arguments)
         {
@@ -172,23 +170,7 @@ internal static class GitTrackedFiles
 
     private static async Task Terminate(Process process, Task output, Task error)
     {
-        try
-        {
-            if (!process.HasExited)
-            {
-                process.Kill(entireProcessTree: true);
-                using var termination = new CancellationTokenSource(TerminationTimeout);
-                await process.WaitForExitAsync(termination.Token).ConfigureAwait(false);
-            }
-        }
-        catch (Exception exception) when (exception is InvalidOperationException
-            or Win32Exception
-            or NotSupportedException
-            or AggregateException
-            or OperationCanceledException)
-        {
-            // Preserve the original cancellation, timeout, or failure after best-effort termination.
-        }
+        await ProcessTree.Terminate(process, TerminationTimeout).ConfigureAwait(false);
 
         var drain = Task.WhenAll(output, error);
         try

@@ -1,6 +1,7 @@
 using System.Globalization;
-using System.Text.Json;
 using System.Text.RegularExpressions;
+using PandaBear.ConfigurationFiles;
+using PandaBear.GitHub;
 using PandaBear.IO;
 
 namespace PandaBear.CI.Tool;
@@ -16,56 +17,13 @@ internal static partial class CiConfigurationFile
     /// <summary>The file name that <c>select</c> reserves for the filter of the selected non-test projects.</summary>
     public const string BuildFilterName = "build";
 
-    private const int MaxBytes = 1024 * 1024;
-
-    private static readonly string[] TokenVariables = ["GH_TOKEN", "GITHUB_TOKEN"];
-
     /// <summary>Reads the configuration under <paramref name="root"/> without following symbolic links.</summary>
     /// <exception cref="InvalidOperationException">
     /// The file is missing, unreadable, larger than 1 MiB, or not a valid configuration of version 1.
     /// </exception>
     public static async Task<CiConfiguration> Read(string root, CancellationToken ct)
     {
-        string path;
-        try
-        {
-            path = RepositoryPath.Parse(RelativePath).ResolveUnder(root);
-        }
-        catch (InvalidOperationException exception)
-        {
-            throw new InvalidOperationException($"{RelativePath}: {exception.Message}", exception);
-        }
-
-        byte[] content;
-        try
-        {
-            content = await BoundedFile.Read(path, MaxBytes, RelativePath, ct).ConfigureAwait(false);
-        }
-        catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
-        {
-            throw new InvalidOperationException($"{RelativePath} does not exist.", exception);
-        }
-
-        CiConfiguration? configuration;
-        try
-        {
-            configuration = JsonSerializer.Deserialize(content, CiConfigurationJsonContext.Default.CiConfiguration);
-        }
-        catch (JsonException exception)
-        {
-            // The serializer's message names .NET types, so only the location is reported.
-            throw new InvalidOperationException(
-                string.Create(
-                    CultureInfo.InvariantCulture,
-                    $"{RelativePath} is not valid at {exception.Path ?? "$"} (line {(exception.LineNumber ?? 0) + 1}). Check for a misspelled, unknown, missing, or repeated property, a value of the wrong type, or broken JSON syntax."),
-                exception);
-        }
-
-        if (configuration is null)
-        {
-            throw new InvalidOperationException($"{RelativePath} must contain a JSON object.");
-        }
-
+        var configuration = await JsonConfigurationFile.Read(root, RelativePath, CiConfigurationJsonContext.Default.CiConfiguration, ct).ConfigureAwait(false);
         Validate(configuration);
         return configuration;
     }
@@ -253,7 +211,7 @@ internal static partial class CiConfigurationFile
             throw Invalid(path + " must be an environment variable name: letters, digits, and '_', not starting with a digit.");
         }
 
-        if (IsTokenVariable(name))
+        if (GitHubToken.IsTokenVariable(name))
         {
             throw Invalid(path + " names " + name + ", a GitHub token variable that the tool removes from the service's environment; use another name.");
         }
@@ -391,9 +349,6 @@ internal static partial class CiConfigurationFile
 
     /// <summary>Reports whether <paramref name="browser"/> is a Playwright browser name: lowercase letters, digits, and <c>-</c>, starting with a letter.</summary>
     public static bool IsBrowser(string browser) => Browser().IsMatch(browser);
-
-    /// <summary>Reports whether <paramref name="name"/> is, in any case, a variable that holds a GitHub token and that the tool removes from the service's environment.</summary>
-    public static bool IsTokenVariable(string name) => TokenVariables.Contains(name, StringComparer.OrdinalIgnoreCase);
 
     private static void ValidatePreservedEnvironment(string[] names, string path)
     {

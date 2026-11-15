@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using PandaBear.CI.Tool;
 
 namespace PandaBear.Repository.Tests;
@@ -41,26 +40,6 @@ public sealed class ServiceHostTests
         // Assert
         startInfo.Environment["APP_READY_FILE"].ShouldBe(readyFile);
         startInfo.Environment.ContainsKey("PATH").ShouldBeFalse("The service creates what the value stands for, so it must not borrow an inherited one.");
-    }
-
-    [Fact]
-    public void Tokens_never_reach_the_service_in_any_case()
-    {
-        // Arrange
-        var startInfo = new ProcessStartInfo("dotnet");
-        startInfo.Environment["GH_TOKEN"] = "token";
-        startInfo.Environment["GITHUB_TOKEN"] = "token";
-        startInfo.Environment["github_token"] = "token";
-        startInfo.Environment["SHAREDKERNEL_UNRELATED"] = "kept";
-
-        // Act
-        ServiceHost.RemoveTokens(startInfo);
-
-        // Assert
-        startInfo.Environment.Keys.ShouldNotContain(
-            static name => name.Equals("GH_TOKEN", StringComparison.OrdinalIgnoreCase) || name.Equals("GITHUB_TOKEN", StringComparison.OrdinalIgnoreCase),
-            "These variables hold a GitHub token.");
-        startInfo.Environment["SHAREDKERNEL_UNRELATED"].ShouldBe("kept");
     }
 
     [Theory]

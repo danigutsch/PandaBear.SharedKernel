@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using PandaBear.Processes;
@@ -16,7 +15,7 @@ internal static class CommandRunner
     {
         ct.ThrowIfCancellationRequested();
         var argumentList = arguments.ToArray();
-        using var process = StartProcess(CreateStartInfo(PathExecutableResolver.Default.Resolve(fileName), argumentList, workingDirectory), fileName);
+        using var process = ProcessTree.Start(CreateStartInfo(PathExecutableResolver.Default.Resolve(fileName), argumentList, workingDirectory));
         var outputTask = process.StandardOutput.ReadToEndAsync(ct);
         var errorTask = process.StandardError.ReadToEndAsync(ct);
         try
@@ -25,7 +24,7 @@ internal static class CommandRunner
         }
         catch (OperationCanceledException)
         {
-            await Terminate(process).ConfigureAwait(false);
+            await ProcessTree.Terminate(process, TerminationTimeout).ConfigureAwait(false);
             throw;
         }
 
@@ -59,7 +58,7 @@ internal static class CommandRunner
             }
         }
 
-        using var process = StartProcess(startInfo, fileName);
+        using var process = ProcessTree.Start(startInfo);
         var synchronized = TextWriter.Synchronized(sink);
         var pumps = Task.WhenAll(Pump(standardError: false), Pump(standardError: true));
         try
@@ -68,7 +67,7 @@ internal static class CommandRunner
         }
         catch (OperationCanceledException)
         {
-            await Terminate(process).ConfigureAwait(false);
+            await ProcessTree.Terminate(process, TerminationTimeout).ConfigureAwait(false);
 
             // The killed process tree closes its pipes; a descendant that escaped it cannot hold the cancellation.
             await pumps.WaitAsync(TerminationTimeout, CancellationToken.None).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
@@ -101,29 +100,6 @@ internal static class CommandRunner
         catch (InvalidOperationException) when (!ct.IsCancellationRequested)
         {
             return string.Empty;
-        }
-    }
-
-    /// <summary>Kills the process tree unless the process has exited, and waits up to two seconds for it to exit.</summary>
-    /// <remarks>Termination failures are ignored, so the cancellation that started cleanup reaches the caller.</remarks>
-    internal static async Task Terminate(Process process)
-    {
-        try
-        {
-            if (!process.HasExited)
-            {
-                process.Kill(entireProcessTree: true);
-                using var termination = new CancellationTokenSource(TerminationTimeout);
-                await process.WaitForExitAsync(termination.Token).ConfigureAwait(false);
-            }
-        }
-        catch (Exception exception) when (exception is InvalidOperationException
-            or Win32Exception
-            or NotSupportedException
-            or AggregateException
-            or OperationCanceledException)
-        {
-            // Best-effort cleanup must not replace the caller's cancellation.
         }
     }
 
@@ -163,17 +139,5 @@ internal static class CommandRunner
         }
 
         throw new InvalidOperationException($"Command failed ({process.ExitCode}): {command}{Environment.NewLine}{output}{Environment.NewLine}{error}");
-    }
-
-    private static Process StartProcess(ProcessStartInfo startInfo, string fileName)
-    {
-        try
-        {
-            return Process.Start(startInfo) ?? throw new InvalidOperationException($"Failed to start {fileName}.");
-        }
-        catch (Exception ex) when (ex is not InvalidOperationException)
-        {
-            throw new InvalidOperationException($"Failed to start {fileName}.", ex);
-        }
     }
 }

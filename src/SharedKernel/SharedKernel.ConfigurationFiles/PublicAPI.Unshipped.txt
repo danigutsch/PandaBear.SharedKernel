@@ -1,0 +1,6 @@
+#nullable enable
+const PandaBear.ConfigurationFiles.JsonConfigurationFile.MaxBytes = 1048576 -> int
+PandaBear.ConfigurationFiles.JsonConfigurationFile
+static PandaBear.ConfigurationFiles.JsonConfigurationFile.Parse<T>(System.ReadOnlySpan<byte> content, string! description, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T!>! typeInfo) -> T!
+static PandaBear.ConfigurationFiles.JsonConfigurationFile.Read<T>(string! root, string! relativePath, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T!>! typeInfo, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<T!>!
+static PandaBear.ConfigurationFiles.JsonConfigurationFile.ReadOptional<T>(string! root, string! relativePath, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T!>! typeInfo, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<T?>!

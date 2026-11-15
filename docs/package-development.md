@@ -28,8 +28,8 @@ reports are evidence for those projects, not whole-repository coverage trends. T
 Build gates retain SDK analyzers (`AnalysisMode=All`), SharedKernel analyzers, warnings as errors, public API checks, dependency vulnerability auditing,
 and package-consumption checks. No remote analysis upload or proprietary coverage collector is required.
 
-`SharedKernel.CI.Tool` packs as the `sharedkernel-ci` tool and also builds from a sparse checkout of its own directory
-and the `src/SharedKernel` libraries it references (InputNormalization, IO, Processes, and Versioning). Selection follows `.config/sharedkernel-ci.json`: it selects the test projects that depend on the
+`SharedKernel.CI.Tool` packs as the `sharedkernel-ci` tool and also builds from a depth-1 checkout of the revision,
+before a candidate exists. Selection follows `.config/sharedkernel-ci.json`: it selects the test projects that depend on the
 changed projects, writes one solution filter per test slice, and selects every test project when history, a path, or a
 reference is uncertain. A library or tool change selects only the test projects that depend on it, and still runs the
 candidate job, which packs and consumes every package. Full runs happen nightly; selection reasons are retained in CI.

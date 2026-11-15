@@ -14,6 +14,18 @@
         "resolved": "3.0.0",
         "contentHash": "swNpSTl0iYJeBuvYYfaY+VxzZ5YC8wklwkqDCNOq2aTQqJzjauJfh/O3Zw93nwxspWrxvZTjT45f8VPR0ParEA=="
       },
+      "PandaBear.SharedKernel.ConfigurationFiles": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.GitHub": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.InputNormalization": {
         "type": "Project"
       },

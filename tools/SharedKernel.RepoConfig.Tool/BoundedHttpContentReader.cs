@@ -1,3 +1,5 @@
+using PandaBear.IO;
+
 namespace PandaBear.RepoConfig.Tool;
 
 /// <summary>Reads HTTP content while enforcing a maximum size.</summary>
@@ -22,8 +24,7 @@ internal static class BoundedHttpContentReader
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxBytes);
         ArgumentException.ThrowIfNullOrWhiteSpace(limitMessage);
 
-        var contentLength = content.Headers.ContentLength;
-        if (contentLength.HasValue && contentLength.Value > maxBytes)
+        if (content.Headers.ContentLength > maxBytes)
         {
             throw new InvalidOperationException(limitMessage);
         }
@@ -31,26 +32,8 @@ internal static class BoundedHttpContentReader
         var source = await content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
         await using (source.ConfigureAwait(false))
         {
-            var destination = new MemoryStream();
-            await using (destination.ConfigureAwait(false))
-            {
-                var buffer = new byte[8192];
-                while (true)
-                {
-                    var read = await source.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
-                    if (read == 0)
-                    {
-                        return destination.ToArray();
-                    }
-
-                    if (destination.Length + read > maxBytes)
-                    {
-                        throw new InvalidOperationException(limitMessage);
-                    }
-
-                    await destination.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
-                }
-            }
+            return await BoundedReader.ReadToEnd(source, maxBytes, cancellationToken).ConfigureAwait(false)
+                ?? throw new InvalidOperationException(limitMessage);
         }
     }
 }

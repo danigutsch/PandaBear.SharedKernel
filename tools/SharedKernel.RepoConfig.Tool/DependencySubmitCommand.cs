@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Unicode;
+using PandaBear.IO;
 using PandaBear.InputNormalization;
 
 namespace PandaBear.RepoConfig.Tool;
@@ -82,7 +83,7 @@ internal static class DependencySubmitCommand
         byte[]? content;
         try
         {
-            content = await RepositoryFile.Read(Path.GetFullPath(snapshotPath, root), MaxSnapshotBytes, cancellationToken).ConfigureAwait(false);
+            content = await BoundedReader.ReadFile(Path.GetFullPath(snapshotPath, root), MaxSnapshotBytes, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
         {

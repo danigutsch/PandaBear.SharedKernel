@@ -42,7 +42,7 @@ internal static class LicenseExceptionVerifier
         byte[]? content;
         try
         {
-            content = await RepositoryFile.Read(RepositoryPath.Parse(approval.File).ResolveUnder(root), MaxApprovalBytes, cancellationToken).ConfigureAwait(false);
+            content = await BoundedReader.ReadFile(RepositoryPath.Parse(approval.File).ResolveUnder(root), MaxApprovalBytes, cancellationToken).ConfigureAwait(false);
         }
         catch (InvalidOperationException exception)
         {

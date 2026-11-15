@@ -86,13 +86,6 @@ jobs:
           ref: ${{ inputs.source-ref }}
           path: tool-source
           persist-credentials: false
-          sparse-checkout: |
-            tools/SharedKernel.RepoConfig.Tool
-            src/SharedKernel/SharedKernel.InputNormalization
-            src/SharedKernel/SharedKernel.IO
-            src/SharedKernel/SharedKernel.Processes
-            .github/actions/setup-dotnet-tool
-          sparse-checkout-cone-mode: true
 
       - name: Set up the SDK and build the RepoConfig tool
         if: inputs.review-required == 'true' && inputs.verify-license-exceptions

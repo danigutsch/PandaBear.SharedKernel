@@ -824,9 +824,9 @@ internal static partial class RepositoryCommandLine
             // Messages carry text from files, processes, and the network. Each line is escaped on its own, so process
             // output keeps its lines; messages escape the pin, global.json, and release values they embed, so such a
             // value cannot start a line.
-            foreach (var line in exception.Message.TrimEnd('\r', '\n').Split('\n'))
+            foreach (var line in ControlCharacters.EscapeLines(exception.Message))
             {
-                await error.WriteLineAsync(ControlCharacters.Escape(line.TrimEnd('\r'))).ConfigureAwait(false);
+                await error.WriteLineAsync(line).ConfigureAwait(false);
             }
 
             return FailureExitCode;

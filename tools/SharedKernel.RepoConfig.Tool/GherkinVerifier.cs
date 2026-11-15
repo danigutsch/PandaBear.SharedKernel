@@ -90,7 +90,7 @@ internal static class GherkinVerifier
         byte[]? content;
         try
         {
-            content = await RepositoryFile.Read(Path.Combine(root, path), MaxFileBytes, cancellationToken).ConfigureAwait(false);
+            content = await BoundedReader.ReadFile(Path.Combine(root, path), MaxFileBytes, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
         {

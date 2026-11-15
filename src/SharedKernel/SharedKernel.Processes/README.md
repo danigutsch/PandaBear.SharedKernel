@@ -36,6 +36,14 @@ var output = await runner.Run(startInfo, forward: null, cancellationToken);
   tried first. `PathExecutableResolver.Default` reads the process `PATH` on every call, and `Resolve` returns a fully
   qualified file name unchanged or throws when no directory contains the command.
 
+- `ProcessTree` serves hosts that keep a child running, such as a service started for the length of a test run:
+  `Start` reports a start failure as `InvalidOperationException` (`Failed to start <file>: <reason>`), and `Terminate(process,
+  exitTimeout)` kills the whole tree unless it has exited and waits a bounded time, ignoring cleanup failures so the
+  failure or cancellation that started the cleanup is what the caller sees.
+- `ProcessEnvironment` keeps inherited values away from a child: `RemoveGitVariables` drops every `GIT_*` variable, which
+  could point Git at another repository, index, or configuration, and `Remove(startInfo, names)` drops named variables,
+  such as `PandaBear.GitHub.GitHubToken.VariableNames`. Names compare without regard to case.
+
 The runners pass arguments one by one without a shell. They set no environment; a caller that parses a tool's output
 sets the locale on the start information, as `PandaBear.SharedKernel.Packages` does.
 

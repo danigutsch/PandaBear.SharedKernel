@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using System.Text.Unicode;
+using PandaBear.IO;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -55,7 +56,7 @@ internal static class JsonVerifier
     {
         try
         {
-            var content = await RepositoryFile.Read(Path.Combine(root, path), MaxFileBytes, cancellationToken).ConfigureAwait(false);
+            var content = await BoundedReader.ReadFile(Path.Combine(root, path), MaxFileBytes, cancellationToken).ConfigureAwait(false);
             return content is null ? (null, "Exceeds the 64 MiB JSON size limit.") : (content, null);
         }
         catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)

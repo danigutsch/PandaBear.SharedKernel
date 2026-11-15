@@ -45,6 +45,15 @@ if (!RepositoryPath.TryParse(configuredScript, out var script))
 var fullPath = script.ResolveUnder(root);
 ```
 
+## Bounded whole reads
+
+`BoundedReader.ReadFile(path, maxBytes, ct)` and `BoundedReader.ReadToEnd(stream, maxBytes, ct)` read small inputs, such
+as configuration files, reports, and API responses, whole into a `byte[]`, and return `null` as soon as the input holds
+more than `maxBytes` bytes, also when a file grows while it is read. The caller words the size error. A seekable stream
+whose remaining length is already over the limit is refused without reading. `ReadFile` lets other processes write,
+rename, or delete the file during the read and lets `FileNotFoundException`, `DirectoryNotFoundException`, and other
+I/O errors propagate.
+
 The optional `PandaBear.SharedKernel.IO.Analyzers` package flags unbounded buffering of request and upload
 streams (`SKIO001`) and hand-rolled copy loops into a `MemoryStream` (`SKIO002`) and points to this API.
 

@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using PandaBear.ConfigurationFiles;
 using PandaBear.IO;
 
 namespace PandaBear.RepoConfig.Tool;
@@ -15,7 +16,6 @@ internal static class ConsumerConfigurationFile
     /// </summary>
     public const string RelativePath = ".config/sharedkernel-repo.json";
 
-    private const int MaxBytes = 1024 * 1024;
     private const int MaxPackageIdLength = 100;
     private const int MaxVersionLength = 128;
 
@@ -40,7 +40,7 @@ internal static class ConsumerConfigurationFile
         byte[]? content;
         try
         {
-            content = await RepositoryFile.Read(path, MaxBytes, cancellationToken).ConfigureAwait(false);
+            content = await BoundedReader.ReadFile(path, JsonConfigurationFile.MaxBytes, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
         {
@@ -66,28 +66,7 @@ internal static class ConsumerConfigurationFile
     /// <exception cref="InvalidOperationException">The content is not a valid configuration of version 1.</exception>
     public static ConsumerConfiguration Parse(byte[] content)
     {
-        ConsumerConfiguration? configuration;
-        try
-        {
-            configuration = JsonSerializer.Deserialize(
-                RepositoryFile.WithoutUtf8ByteOrderMark(content).Span,
-                ConsumerConfigurationJsonContext.Default.ConsumerConfiguration);
-        }
-        catch (JsonException exception)
-        {
-            // The serializer's message names .NET types, so only the location is reported.
-            throw new InvalidOperationException(
-                string.Create(
-                    CultureInfo.InvariantCulture,
-                    $"{RelativePath} is not valid at {exception.Path ?? "$"} (line {(exception.LineNumber ?? 0) + 1}). Check for a misspelled, unknown, missing, or repeated property, a value of the wrong type, or broken JSON syntax."),
-                exception);
-        }
-
-        if (configuration is null)
-        {
-            throw new InvalidOperationException($"{RelativePath} must contain a JSON object.");
-        }
-
+        var configuration = JsonConfigurationFile.Parse(content, RelativePath, ConsumerConfigurationJsonContext.Default.ConsumerConfiguration);
         if (configuration.Version != 1)
         {
             throw Invalid("$.version must be 1.");

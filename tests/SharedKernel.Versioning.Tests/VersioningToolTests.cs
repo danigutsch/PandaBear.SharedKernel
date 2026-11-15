@@ -969,38 +969,6 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static async Task Termination_ignores_a_process_object_without_a_running_process()
-    {
-        // Arrange
-        using Process process = new();
-
-        // Act
-        var exception = await Record.ExceptionAsync(() => CommandRunner.Terminate(process));
-
-        // Assert
-        exception.ShouldBeNull();
-    }
-
-    [Fact]
-    public static async Task Termination_stops_waiting_when_a_killed_process_never_reports_its_exit()
-    {
-        // Arrange
-        if (!OperatingSystem.IsLinux())
-        {
-            return;
-        }
-
-        using var unreaped = await UnreapedProcess.Start(TestContext.Current.CancellationToken);
-
-        // Act
-        await CommandRunner.Terminate(unreaped.Process).WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
-
-        // Assert
-        unreaped.IsZombie.ShouldBeTrue();
-        unreaped.Process.HasExited.ShouldBeFalse();
-    }
-
-    [Fact]
     public static async Task Writes_release_preparation_artifacts()
     {
         // Arrange

@@ -18,3 +18,4 @@ static PandaBear.InputNormalization.WebAssetUriSanitizer.ToRootRelativeOrHttpsUr
 static PandaBear.InputNormalization.StringSanitizer.TryNormalizeKey(string! value, out string? key) -> bool
 static PandaBear.InputNormalization.StringSanitizer.TrySanitize(string? value, out string? sanitized) -> bool
 static PandaBear.InputNormalization.StringSanitizer.TrySanitizeNotes(string? value, out string? sanitized) -> bool
+static PandaBear.InputNormalization.ControlCharacters.EscapeLines(string! value) -> string![]!

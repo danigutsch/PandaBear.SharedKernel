@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using PandaBear.GitHub;
+using PandaBear.Processes;
 
 namespace PandaBear.K6.Tool;
 
@@ -69,10 +71,10 @@ internal sealed class ManagedHost : IAsyncDisposable
             startInfo.ArgumentList.Add(argument == ListenUrlPlaceholder ? listenUrl : argument);
         }
 
-        ChildProcess.RemoveTokens(startInfo);
+        GitHubToken.RemoveFrom(startInfo);
         var readyFile = Path.Combine(runDirectory, "host.url");
         startInfo.Environment[configuration.ReadyFileVariable] = readyFile;
-        var process = ChildProcess.Start(startInfo);
+        var process = ProcessTree.Start(startInfo);
         var logs = Task.WhenAll(
             Copy(process.StandardOutput.BaseStream, Path.Combine(runDirectory, "host.stdout.log")),
             Copy(process.StandardError.BaseStream, Path.Combine(runDirectory, "host.stderr.log")));
@@ -110,7 +112,7 @@ internal sealed class ManagedHost : IAsyncDisposable
     /// <summary>Stops the host process tree and finishes its logs.</summary>
     public async ValueTask DisposeAsync()
     {
-        await ChildProcess.Terminate(_process).ConfigureAwait(false);
+        await ProcessTree.Terminate(_process, ChildProcess.TerminationTimeout).ConfigureAwait(false);
         try
         {
             await _logs.WaitAsync(LogDrainTimeout).ConfigureAwait(false);
