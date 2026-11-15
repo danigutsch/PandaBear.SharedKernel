@@ -61,7 +61,7 @@ internal static class PackageConsumptionCommand
             project.Root!.Add(new XElement("PropertyGroup", new XElement("TargetFramework", "net10.0"),
                 new XElement("ImplicitUsings", "enable"), new XElement("Nullable", "enable"),
                 new XElement("TreatWarningsAsErrors", "true"), new XElement("NuGetAudit", "true"),
-                new XElement("NuGetAuditMode", "all"), new XElement("NuGetAuditLevel", "high")));
+                new XElement("NuGetAuditMode", "all")));
             project.Save(projectPath);
             await File.WriteAllTextAsync(Path.Combine(target, ".editorconfig"), "root = true\n", ct).ConfigureAwait(false);
             await File.WriteAllTextAsync(Path.Combine(target, "Directory.Build.props"), "<Project />\n", ct).ConfigureAwait(false);

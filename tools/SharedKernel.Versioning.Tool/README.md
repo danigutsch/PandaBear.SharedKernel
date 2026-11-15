@@ -185,7 +185,9 @@ scratch directory afterwards. The check fails when a package does not install or
 code, and the error names the package and any failing command. It then restores, builds, and runs the samples against
 the packages with isolated caches, and records `passed` or `failed` for this platform's package consumption, and its
 NativeAOT run with `--aot`, in the manifest or in `--output`. It replaces that file through a temporary file in the
-same directory, so an interrupted write never truncates it, and Ctrl+C or SIGTERM leaves the file unchanged.
+same directory, so an interrupted write never truncates it, and Ctrl+C or SIGTERM leaves the file unchanged. The
+sample projects treat warnings as errors and audit every direct and transitive package at NuGet's default level,
+`low`, so an advisory of any severity fails consumption.
 `--candidate-directory` must contain exactly one `candidate.json`, searched recursively. `consume-packages` runs
 the same checks against a feed without a manifest.
 `validate-candidate` runs `create-candidate` and then `consume-candidate` on the manifest it wrote.
