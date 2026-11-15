@@ -234,6 +234,25 @@ public sealed class NewCommandTests
     }
 
     [Theory]
+    [InlineData("10.0.100")]
+    [InlineData("9.0.300")]
+    public async Task New_seeds_a_nuget_audit_of_every_dependency_at_every_severity(string sdkVersion)
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+
+        // Act
+        var (exitCode, _, _) = await Run(workspace, "--name", "example-repo", "--language", "dotnet", "--sdk-version", sdkVersion, "--force");
+
+        // Assert
+        exitCode.ShouldBe(0);
+        var buildProps = workspace.ReadFile("Directory.Build.props");
+        buildProps.ShouldContain("<NuGetAudit>true</NuGetAudit>", StringComparison.Ordinal);
+        buildProps.ShouldContain("<NuGetAuditMode>all</NuGetAuditMode>", StringComparison.Ordinal, "Transitive packages are audited also before net10.0, where the default mode is direct.");
+        buildProps.ShouldNotContain("NuGetAuditLevel", StringComparison.Ordinal, "NuGet's default level, low, reports advisories of every severity.");
+    }
+
+    [Theory]
     [InlineData(new[] { "--language", "dotnet" }, "needs --sdk-version")]
     [InlineData(new[] { "--language", "dotnet", "--sdk-version", "ten" }, "invalid --sdk-version")]
     [InlineData(new[] { "--language", "dotnet", "--sdk-version", "5.0.100" }, "invalid --sdk-version")]

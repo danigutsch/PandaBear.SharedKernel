@@ -5,7 +5,7 @@ public sealed class WarningExceptionTests
 {
     private const string High = "/r/src/A/A.csproj : warning NU1903: Package 'System.Foo' 1.0.0 has a known high severity vulnerability [/r/App.slnx]";
     private const string HighOther = "/r/src/A/A.csproj : warning NU1903: Package 'System.Foo' 1.1.0 has a known high severity vulnerability [/r/App.slnx]";
-    private const string Low = "/r/src/A/A.csproj : warning NU1901: Package 'System.Qux' 4.0.0 has a known low severity vulnerability [/r/App.slnx]";
+    private const string Compatibility = "/r/src/A/A.csproj : warning NU1701: Package 'Legacy' 1.0.0 was restored using '.NETFramework,Version=v4.6.1' [/r/App.slnx]";
 
     [Fact]
     public async Task A_blocking_finding_inside_an_unexpired_exception_is_accepted()
@@ -28,7 +28,7 @@ public sealed class WarningExceptionTests
         var ct = TestContext.Current.CancellationToken;
 
         // Act
-        var (_, report) = await WarningToolRuns.Verify($"{Low}\n", WarningToolRuns.Ledger("NU1901", "System.Qux", 1, "2999-01-01"), ct);
+        var (_, report) = await WarningToolRuns.Verify($"{Compatibility}\n", WarningToolRuns.Ledger("NU1701", "Legacy", 1, "2999-01-01"), ct);
 
         // Assert
         report.ShouldBe(new WarningReportView(0, 0, 1));
@@ -69,11 +69,11 @@ public sealed class WarningExceptionTests
         var ct = TestContext.Current.CancellationToken;
 
         // Act
-        var (result, report) = await WarningToolRuns.Verify($"{Low}\n", WarningToolRuns.Ledger("NU1901", "System.Qux", 1, "2000-01-01"), ct);
+        var (result, report) = await WarningToolRuns.Verify($"{Compatibility}\n", WarningToolRuns.Ledger("NU1701", "Legacy", 1, "2000-01-01"), ct);
 
         // Assert
         result.ExitCode.ShouldBe(2);
-        result.Error.ShouldContain("expired NU1901 System.Qux", StringComparison.Ordinal);
+        result.Error.ShouldContain("expired NU1701 Legacy", StringComparison.Ordinal);
         report.ShouldBe(new WarningReportView(1, 1, 0));
     }
 

@@ -512,10 +512,11 @@ dotnet restore App.slnx --locked-mode 2>&1 | tee restore.log
 dotnet tool run sharedkernel-ci -- verify-restore-warnings --log restore.log --report restore-warnings.json
 ```
 
-- `NU1903` (high) and `NU1904` (critical) vulnerability advisories block: the command exits 2 and names each
-  `<code> <package> <version>` once, however many projects repeat it. Update the package or record a reviewed
-  exception.
-- Every other NuGet warning, including `NU1901` and `NU1902` advisories, stays advisory and is counted in the summary.
+- Vulnerability advisories of every severity block: `NU1901` (low), `NU1902` (moderate), `NU1903` (high), and
+  `NU1904` (critical). The command exits 2 and names each `<code> <package> <version>` once, however many projects
+  repeat it. Update the package or record a reviewed exception. A restore that sets `NuGetAuditLevel` above `low`
+  leaves the lower severities out of the log, so this command cannot see them.
+- Every other NuGet warning stays advisory and is counted in the summary.
 - `--summary <path>` appends a table of blocking and advisory counts, plus the blocking findings, so a pull request
   shows them without opening the log. Only the warning code, package id, and package version are copied from the log.
 - `--report <path>` writes the totals as a warning report for `warning-summary`, also when the command fails.

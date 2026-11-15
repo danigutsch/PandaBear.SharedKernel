@@ -72,7 +72,7 @@ internal static class NewRepositorySeeds
             <AnalysisMode>All</AnalysisMode>
             <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
             <NuGetAudit>true</NuGetAudit>
-            <NuGetAuditLevel>high</NuGetAuditLevel>
+            <NuGetAuditMode>all</NuGetAuditMode>
             <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
           </PropertyGroup>
           <PropertyGroup Condition="'$(CI)' == 'true'">
