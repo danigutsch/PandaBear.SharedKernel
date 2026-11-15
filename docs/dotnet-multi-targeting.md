@@ -222,7 +222,16 @@ on both frameworks.
   `char` overloads in `net11.0` builds. The `ReadOnlySpan<char>` forms (`value.AsSpan().StartsWith('/')`) are ordinal on
   both frameworks.
 - `System.IO.ReadOnlyMemoryStream` is new and public. Code that imports `PandaBear.IO` and `System.IO` (an implicit
-  using) gets CS0104 for `ReadOnlyMemoryStream` and must qualify the name.
+  using) gets CS0104 for `ReadOnlyMemoryStream` and must qualify the name. The BCL type has the same constructor and
+  members as ours (*verified locally* by reflection and against the `release/11.0` source); it also caches the completed
+  read task, throws for `WriteAsync` and `WriteByte` directly, and rejects positions beyond `int.MaxValue`. It is the
+  only public type of this repository that .NET 11 or ASP.NET Core 11 adds under the same name (*verified locally* by
+  diffing the 10.0.15 and 11.0.0 reference packs).
+- `Microsoft.NETCore.App` 11 contains the `Microsoft.Extensions.*.Abstractions` packages for caching, configuration,
+  dependency injection, diagnostics, file providers, hosting, and logging, plus `Microsoft.Extensions.Options` and
+  `Microsoft.Extensions.Primitives`; in 10.0 they were only in `Microsoft.AspNetCore.App`. `Microsoft.AspNetCore.App` 11
+  adds `System.Security.Cryptography.Pkcs`. NuGet prunes these packages from `net11.0` restores (the targeting packs'
+  `data/PackageOverrides.txt`), so a `net11.0` lock file lists them only as direct references.
 - EF Core 11 lists `IIndex.Properties` as `IPropertyBase`; only a scalar property has a column.
 - ASP.NET Core 11 makes `EditContext.Validate()` obsolete in favor of `ValidateAsync`.
 - `Microsoft.AspNetCore.OpenApi` 11 requires `Microsoft.OpenApi` 3.x, whose content maps hold `IOpenApiMediaType`.
@@ -260,7 +269,7 @@ To drop a TFM later, reverse the steps: change the policy, run the check, remove
 | --- | --- | --- |
 | Library TFMs | `net10.0` only (no `net11.0` asset for EF/ASP.NET libraries); multi-target all (double build time, no consumer benefit for dependency-free libraries); selective (two policies to maintain) | Selective, as in the policy table. Applied. |
 | Tool TFMs | Roll-forward (one asset; runs on .NET 10 when installed); multi-target (two assets, `--framework` everywhere) | Roll-forward; multi-target a tool only when it needs .NET 11 APIs. Applied. |
-| Npgsql EF | Ship on a release candidate; wait | Wait for a stable release. |
+| Npgsql EF | Ship on a release candidate; wait | Wait for a stable release. `11.0.0-rc.3` requires exactly EF Core `11.0.0-rc.3.26522.148`, so it cannot be used with EF Core 11.0.0 at all (nuspec checked 2026-11-15). |
 | `LangVersion=preview` | Keep (C# preview on `net10.0`, unsupported); use the TFM default | Use the TFM default. Applied. |
 | `PandaBear.IO.ReadOnlyMemoryStream` | Keep (consumers on .NET 11 qualify the name); rename; obsolete it in favor of `System.IO.ReadOnlyMemoryStream` on `net11.0` | Open. |
 
