@@ -359,6 +359,8 @@ public sealed class WorkflowContractTests
         runtimeStep.ShouldContain("-getProperty:SharedKernelTargetFramework", StringComparison.Ordinal);
         runtimeStep.ShouldContain("dotnet --version", StringComparison.Ordinal);
         runtimeStep.ShouldContain("-lt", StringComparison.Ordinal);
+        runtimeStep.ShouldContain("-getProperty:SharedKernelTargetFramework | tail -n 1", StringComparison.Ordinal, "Banner lines before the property value must not hide it.");
+        runtimeStep.ShouldContain("exit 1", StringComparison.Ordinal, "A value that is not a framework moniker fails the setup instead of installing no runtime.");
         runtimeStep.ShouldContain("steps.framework.outputs.runtime != ''", StringComparison.Ordinal);
         runtimeStep.ShouldContain("dotnet-version: ${{ steps.framework.outputs.runtime }}", StringComparison.Ordinal);
         runtimeStep.ShouldContain("actions/setup-dotnet@", StringComparison.Ordinal);

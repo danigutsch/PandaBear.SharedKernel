@@ -43,7 +43,7 @@ runs:
           framework="$(cd "$root" && dotnet msbuild Directory.Build.props -getProperty:SharedKernelTargetFramework | tail -n 1 | tr -d '[:space:]')"
           sdk="$(cd "$root" && dotnet --version | tail -n 1)"
           if [[ "$framework" =~ ^net([0-9]+)\.[0-9]+$ ]]; then
-            if (( BASH_REMATCH[1] < ${sdk%%.*} )); then
+            if [[ "${BASH_REMATCH[1]}" -lt "${sdk%%.*}" ]]; then
               runtime="${BASH_REMATCH[1]}.0.x"
             fi
           elif [[ -n "$framework" ]]; then
