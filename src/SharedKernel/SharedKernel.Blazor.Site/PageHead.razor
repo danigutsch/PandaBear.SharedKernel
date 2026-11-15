@@ -5,6 +5,10 @@
     {
         <meta name="description" content="@Description" />
     }
+    @if (!string.IsNullOrWhiteSpace(Robots))
+    {
+        <meta name="robots" content="@Robots" />
+    }
     @if (CanonicalUrl is not null)
     {
         <link rel="canonical" href="@CanonicalUrl.AbsoluteUri" />

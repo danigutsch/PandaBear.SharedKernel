@@ -119,6 +119,59 @@ public sealed class SiteThemeTests
     }
 
     [Fact]
+    public void Contrast_messages_name_the_colours_by_their_CSS_names_without_labels()
+    {
+        // Arrange
+        var draft = ThemeFixtures.PaleMutedDraft();
+
+        // Act
+        var review = draft.Review();
+
+        // Assert
+        review.Errors.Select(issue => issue.Message).ShouldBe(
+        [
+            "muted on surface is 1.47:1 in the light scheme; text needs at least 4.5:1 (WCAG 2.2 SC 1.4.3).",
+            "muted on surface-alt is 1.33:1 in the light scheme; text needs at least 4.5:1 (WCAG 2.2 SC 1.4.3).",
+        ]);
+    }
+
+    [Fact]
+    public void Contrast_messages_name_the_colours_by_the_labels_the_host_gives()
+    {
+        // Arrange
+        var colors = ThemeFixtures.PaleMutedDraft().Colors;
+
+        // Act
+        var review = SiteTheme.CreateDraft(colors, SiteTheme.Default.Typography).ShouldBeSuccess().Review(ThemeFixtures.EditorLabel);
+        var created = SiteTheme.Create(colors, SiteTheme.Default.Typography, colorLabel: ThemeFixtures.EditorLabel);
+
+        // Assert
+        review.Errors.Select(issue => issue.Message).ShouldBe(
+        [
+            "Muted text on Page background is 1.47:1 in the light scheme; text needs at least 4.5:1 (WCAG 2.2 SC 1.4.3).",
+            "Muted text on Card background is 1.33:1 in the light scheme; text needs at least 4.5:1 (WCAG 2.2 SC 1.4.3).",
+        ]);
+        created.FieldErrors()["colors.muted"].ShouldBe(review.Errors.Select(issue => issue.Message));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("  ")]
+    [InlineData(null)]
+    public void A_role_the_host_gives_no_label_keeps_its_CSS_name(string? label)
+    {
+        // Arrange
+        var draft = ThemeFixtures.PaleMutedDraft();
+
+        // Act
+        var review = draft.Review(role => role == ThemeColorRole.Muted ? label : ThemeFixtures.EditorLabel(role));
+
+        // Assert
+        review.Errors[0].Message.ShouldStartWith("muted on Page background is ", StringComparison.Ordinal);
+        review.Errors[1].Message.ShouldStartWith("muted on Card background is ", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Hover_colours_that_are_not_given_are_derived_by_mixing_with_the_text_colour()
     {
         // Arrange

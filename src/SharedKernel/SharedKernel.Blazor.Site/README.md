@@ -79,7 +79,7 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `ImageGrid` | `figure` per `GalleryImage` (a `ResponsiveImage` and an optional caption), lazy loading except the first `EagerCount`; `PrioritizeFirstImage` loads the first one eagerly with `fetchpriority="high"`. |
 | `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links; no `address` when there are no lines and no channels. `PhoneText` shows the number as written (`+55 (11) 99999-0000`) while the link uses the digits; it must be the same number as `Phone`. The WhatsApp link shows `WhatsAppLabel`. |
 | `LanguageSwitcher` | Labelled `nav` of links with `hreflang`, `lang` and `aria-current="true"` on the current language. |
-| `PageHead` | Title, description, canonical link, OpenGraph basics and `hreflang` alternates including `x-default`. |
+| `PageHead` | Title, description, canonical link, OpenGraph basics and `hreflang` alternates including `x-default`; each optional tag is left out when its parameter is unset. `Robots` writes `<meta name="robots">` (`noindex`, `noindex, nofollow`). An error or not-found page sets `Robots="noindex"` and no `CanonicalUrl`, `Alternates` or `DefaultAlternateUrl`, so it has no canonical, `og:url` or `hreflang` link. |
 
 Content without a heading, such as a page's opening text or a contact block, goes in `<div class="site-container">`: the
 `site-container` class gives it the content width and side gutter of `Section`, `Hero`, the header and the footer, so it lines up
@@ -225,10 +225,15 @@ that `site.css` consumes. Without a theme nothing changes: every per-role variab
   `LinkTarget` that is root-relative or https and names a `.woff2` file, without `" ' ( ) < >` or a fragment. The family name allows
   letters, digits, single inner spaces, hyphens and underscores (at most 64 characters); the key is a lower-case slug. A role's
   `fallback` (`SansSerif`, `Serif`, `Monospace`) is the system stack written after the uploaded family.
-- `SiteTheme.Create(colors, typography, fonts?, allowSmallText)` enforces every rule; `SiteTheme.CreateDraft(...)` only requires
-  unique font keys and existing font references, so a preview can show a theme that still breaks a rule. `theme.Review()` returns the
-  errors, the warnings and every `ContrastCheck`. `SiteTheme.Default` is `site.css` as a theme. Every value object factory returns a
-  `Result`; errors carry field paths such as `colors.muted`, `typography.h1.size`, `typography.body.lineHeight`, `fonts[0].key`.
+- `SiteTheme.Create(colors, typography, fonts?, allowSmallText, colorLabel?)` enforces every rule; `SiteTheme.CreateDraft(...)` only
+  requires unique font keys and existing font references, so a preview can show a theme that still breaks a rule.
+  `theme.Review(colorLabel?)` returns the errors, the warnings and every `ContrastCheck`. `SiteTheme.Default` is `site.css` as a
+  theme. Every value object factory returns a `Result`; errors carry field paths such as `colors.muted`, `typography.h1.size`,
+  `typography.body.lineHeight`, `fonts[0].key`.
+- Contrast messages name the colours by their CSS names (`muted on surface-alt is 1.33:1 in the light scheme; …`). A host whose
+  editor shows other names passes `colorLabel`, a `Func<ThemeColorRole, string?>` such as `role => role switch { ThemeColorRole.SurfaceAlt
+  => "Card background", … }`, to `Review`, `Create`, `ThemeEditorModel.ToTheme` and `ThemePreview.ColorLabel`; the message then reads
+  `Muted text on Card background is …`. A role it returns `null` or white space for keeps its CSS name; field paths do not change.
 
 ### Rules
 
@@ -278,8 +283,10 @@ file intake and store only their addresses in the theme.
 
 `ThemePreview` shows a small sample (navigation strip, h1 to h3, a paragraph with a link, small print, a primary and a secondary
 button, a card) styled by a `style` element scoped to `ScopeId`, then a contrast table for the shown scheme (pair, ratio rounded
-down, minimum, `Pass` or `Fail` in text) and the errors and warnings by field path. The sample is `inert`, so its headings and links
-stay out of the page outline and tab order. It needs no script and re-renders on every parameter change:
+down, minimum, `Pass` or `Fail` in text) and the errors and warnings by field path. The sample's headings are `div` elements styled
+with the h1 to h3 roles (classes `site-theme-preview__h1` to `__h3`), not heading elements, so the page's outline and heading
+navigation keep only the host's own headings. The sample is `inert`, so its links stay out of the tab order; the contrast table and
+the issue list are outside it. It needs no script and re-renders on every parameter change:
 
 ```razor
 <ThemePreview Theme="_draft" Errors="_errors" Scheme="_dark ? ColorScheme.Dark : ColorScheme.Light" Narrow="_narrow" ScopeId="brand-preview" />
@@ -305,8 +312,13 @@ the document's response: read it in the static `App`, pass it to the interactive
 circuit's own scope has a different one and interactive navigation sends no new response. The public site loads `/theme.css` from a
 URL instead.
 
+`ColorLabel` names the colours of the contrast table's pairs and of the contrast messages by the host's labels (`Body text on Page
+background`); the swatches keep the CSS names in `data-foreground` and `data-background`. Give `ToTheme` the same labels, so a save
+error reads like the preview's issue and, passed back in `Errors`, is listed once.
+
 `ThemeEditorModel` is the form model: string colour fields (`colors.primary.light`), nullable numbers for sizes, weight and spacing,
-and fonts with faces. `ToDraft()` and `ToTheme()` return every error at once on its field path. Both hover fields empty means derived.
+and fonts with faces. `ToDraft()` and `ToTheme(colorLabel?)` return every error at once on its field path. Both hover fields empty
+means derived.
 
 ### Mapping the earlier Branding settings
 

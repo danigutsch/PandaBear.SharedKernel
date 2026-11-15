@@ -51,7 +51,7 @@ public static class SiteThemeStylesheet
     /// <summary>
     /// Renders the stylesheet of a theme scoped to one element (the preview): the custom properties on <c>#scopeId</c>, the colour
     /// scheme from its <c>data-theme</c> attribute, fluid sizes against its width (<c>cqi</c>), the rules that apply the roles
-    /// to the sample and the colours of the contrast swatches by their <c>data-foreground</c> and <c>data-background</c> roles, so the
+    /// to the sample (the heading roles by the <c>site-theme-preview__h1</c> to <c>__h6</c> classes, not by heading elements) and the colours of the contrast swatches by their <c>data-foreground</c> and <c>data-background</c> roles, so the
     /// preview needs neither <c>site.css</c>, script nor style attributes.
     /// </summary>
     /// <param name="theme">The theme.</param>
@@ -73,14 +73,16 @@ public static class SiteThemeStylesheet
         css.Append(scope).Append("[data-theme=\"dark\"] {\n    color-scheme: dark;\n}\n");
         css.Append(scope).Append("[data-width=\"narrow\"] {\n    max-width: 22rem;\n}\n");
         AppendRule(css, sample, TypographyRole.Body, "padding: 1rem; background: var(--site-color-surface); color: var(--site-color-text);");
+        var headings = new List<string>();
         for (var heading = TypographyRole.H1; heading <= TypographyRole.H6; heading++)
         {
-            AppendRule(css, sample + " " + ThemeNames.Css(heading), heading, "margin: 0 0 0.5rem;");
+            headings.Add(".site-theme-preview__" + ThemeNames.Css(heading));
+            AppendRule(css, sample + " " + headings[^1], heading, "margin: 0 0 0.5rem;");
         }
 
         AppendRule(css, sample + " small", TypographyRole.Small, string.Empty);
         AppendRule(css, sample + " a", TypographyRole.Link, "color: var(--site-color-primary);");
-        css.Append(sample).Append(" :is(h1, h2, h3, h4, h5, h6) a {\n    font: inherit;\n    letter-spacing: inherit;\n    text-transform: inherit;\n}\n");
+        css.Append(sample).Append(" :is(").AppendJoin(", ", headings).Append(") a {\n    font: inherit;\n    letter-spacing: inherit;\n    text-transform: inherit;\n}\n");
         AppendRule(css, sample + " .site-button", TypographyRole.Button, "display: inline-block; margin: 0 0.5rem 0.5rem 0; padding: 0.5rem 1.5rem; border-radius: 0.5rem; text-decoration: none;");
         AppendRule(css, sample + " .site-nav a", TypographyRole.Nav, "color: var(--site-color-text); text-decoration: none;");
         css.Append(sample).Append(" .site-button--primary {\n    background: var(--site-color-primary);\n    color: var(--site-color-on-primary);\n}\n");

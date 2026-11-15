@@ -24,6 +24,13 @@ internal static class ThemeNames
         _ => throw new ArgumentOutOfRangeException(nameof(role), role, "The colour role is not defined."),
     };
 
+    /// <summary>Gets the name a reader sees for a colour role: the host's label, or the CSS name when the host gives none.</summary>
+    /// <param name="role">The role.</param>
+    /// <param name="colorLabel">The host's labels; <see langword="null" />, or a <see langword="null" /> or white-space label, keeps the CSS name.</param>
+    /// <returns>The name, such as <c>Card background</c> or <c>surface-alt</c>.</returns>
+    public static string Label(ThemeColorRole role, Func<ThemeColorRole, string?>? colorLabel) =>
+        colorLabel?.Invoke(role) is { } label && !string.IsNullOrWhiteSpace(label) ? label : Css(role);
+
     /// <summary>Gets the field-path name of a colour role, such as <c>surfaceAlt</c>.</summary>
     /// <param name="role">The role.</param>
     /// <returns>The name.</returns>

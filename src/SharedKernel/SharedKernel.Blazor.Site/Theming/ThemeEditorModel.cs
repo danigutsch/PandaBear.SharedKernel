@@ -79,8 +79,10 @@ public sealed class ThemeEditorModel
     public Result<SiteTheme> ToDraft() => Build(SiteTheme.CreateDraft);
 
     /// <summary>Builds a theme that meets every rule, ready to store.</summary>
+    /// <param name="colorLabel">The names of the colour roles in contrast messages, as in <see cref="SiteTheme.Review" />.</param>
     /// <returns>The theme, or every field and rule error at once.</returns>
-    public Result<SiteTheme> ToTheme() => Build(SiteTheme.Create);
+    public Result<SiteTheme> ToTheme(Func<ThemeColorRole, string?>? colorLabel = null) =>
+        Build((colors, typography, fonts, allowSmallText) => SiteTheme.Create(colors, typography, fonts, allowSmallText, colorLabel));
 
     private static string? Blank(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
 

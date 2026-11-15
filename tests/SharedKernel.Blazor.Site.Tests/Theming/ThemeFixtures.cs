@@ -52,4 +52,21 @@ internal static class ThemeFixtures
     /// <param name="style">The new style.</param>
     /// <returns>The typography.</returns>
     public static SiteTypography DefaultTypographyWith(TypographyRole role, TypographyStyle style) => SiteTheme.Default.Typography.With(role, style);
+
+    /// <summary>Gives the colour labels of a host's theme editor for some roles, and none for the others.</summary>
+    /// <param name="role">The role.</param>
+    /// <returns>The label, or <see langword="null" /> to keep the default name.</returns>
+    public static string? EditorLabel(ThemeColorRole role) => role switch
+    {
+        ThemeColorRole.Text => "Body text",
+        ThemeColorRole.Muted => "Muted text",
+        ThemeColorRole.Surface => "Page background",
+        ThemeColorRole.SurfaceAlt => "Card background",
+        _ => null,
+    };
+
+    /// <summary>Creates a draft whose light muted colour <c>#d1d5db</c> fails on surface and on surface-alt.</summary>
+    /// <returns>The draft.</returns>
+    public static SiteTheme PaleMutedDraft() =>
+        SiteTheme.CreateDraft(DefaultColorsWith(ThemeColorRole.Muted, Pair("#d1d5db", "#9ca3af")), SiteTheme.Default.Typography).ShouldBeSuccess();
 }

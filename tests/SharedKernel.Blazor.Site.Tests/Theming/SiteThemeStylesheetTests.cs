@@ -172,6 +172,24 @@ public sealed class SiteThemeStylesheetTests
     }
 
     [Theory]
+    [InlineData("h1")]
+    [InlineData("h2")]
+    [InlineData("h3")]
+    [InlineData("h6")]
+    public void Scoped_output_styles_the_sample_headings_by_class_not_by_heading_element(string level)
+    {
+        // Arrange & Act
+        var css = SiteThemeStylesheet.RenderScoped(SiteTheme.Default, "preview-1");
+
+        // Assert
+        var rule = SiteFiles.Rule(css, "#preview-1 .site-theme-preview__sample .site-theme-preview__" + level);
+        rule.ShouldContain($"font-size: var(--site-{level}-font-size, inherit)", StringComparison.Ordinal);
+        rule.ShouldContain("margin: 0 0 0.5rem", StringComparison.Ordinal);
+        css.ShouldNotContain("#preview-1 .site-theme-preview__sample " + level + " {", StringComparison.Ordinal);
+        css.ShouldNotContain(":is(h1", StringComparison.Ordinal);
+    }
+
+    [Theory]
     [InlineData("")]
     [InlineData("1abc")]
     [InlineData("a b")]

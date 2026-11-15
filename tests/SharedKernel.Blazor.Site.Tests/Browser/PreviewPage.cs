@@ -69,9 +69,28 @@ internal sealed class PreviewPage : IAsyncDisposable
         return [.. events, .. _console.Where(text => text.Contains("Content Security Policy", StringComparison.OrdinalIgnoreCase))];
     }
 
-    /// <summary>Gets the computed colour of the preview's first heading.</summary>
+    /// <summary>Gets the computed colour of the sample's level 1 heading.</summary>
     /// <returns>The colour, such as <c>rgb(31, 41, 55)</c>.</returns>
-    public Task<string> HeadingColor() => Page.EvaluateAsync<string>("() => getComputedStyle(document.querySelector('#preview h1')).color");
+    public Task<string> HeadingColor() => Page.EvaluateAsync<string>("() => getComputedStyle(document.querySelector('#preview .site-theme-preview__h1')).color");
+
+    /// <summary>
+    /// Gets the computed font size in pixels and the weight of the sample's level 1, 2 and 3 headings, the card title and the
+    /// paragraph, in that order.
+    /// </summary>
+    /// <returns>The size and weight of each, such as <c>(55.6, "700")</c>.</returns>
+    public async Task<IReadOnlyList<(double Size, string Weight)>> SampleTypography()
+    {
+        var values = await Page.EvaluateAsync<string[][]>("""
+            () => ['.site-theme-preview__h1', '.site-theme-preview__h2', '.site-theme-preview__h3', '.site-card__title', '.site-theme-preview__sample > p']
+                .map(selector => getComputedStyle(document.querySelector('#preview ' + selector)))
+                .map(style => [style.fontSize, style.fontWeight])
+            """);
+        return [.. values.Select(value => (double.Parse(value[0].TrimEnd('p', 'x'), CultureInfo.InvariantCulture), value[1]))];
+    }
+
+    /// <summary>Counts the elements in the preview that have the heading role, including those hidden from assistive technology.</summary>
+    /// <returns>The count.</returns>
+    public Task<int> HeadingCount() => Page.Locator("#preview").GetByRole(AriaRole.Heading, new LocatorGetByRoleOptions { IncludeHidden = true }).CountAsync();
 
     /// <summary>Gets the nonce in the preview style element's internal slot, which a browser hides from the content attribute.</summary>
     /// <returns>The nonce.</returns>

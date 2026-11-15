@@ -11,6 +11,26 @@ public sealed class ThemePreviewStrictPolicyTests(ChromiumFixture chromium) : IC
     private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task The_sample_headings_keep_the_heading_typography_without_a_heading_role()
+    {
+        // Arrange
+        await using var host = await PreviewHost.Start(new PreviewHostOptions(RenderNonce: true));
+
+        // Act
+        await using var page = await PreviewPage.Open(chromium.Browser, host);
+
+        // Assert
+        var headings = await page.HeadingCount();
+        var typography = await page.SampleTypography();
+        headings.ShouldBe(0);
+        typography.Select(style => style.Weight).ShouldBe(["700", "700", "700", "700", "400"]);
+        typography[0].Size.ShouldBeGreaterThan(typography[1].Size);
+        typography[1].Size.ShouldBeGreaterThan(typography[2].Size);
+        typography[3].Size.ShouldBe(typography[2].Size);
+        typography[2].Size.ShouldBeGreaterThan(typography[4].Size);
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public async Task The_preview_with_the_response_nonce_is_applied_without_a_violation()
     {
         // Arrange
