@@ -7,3 +7,5 @@ static PandaBear.Forgejo.ForgejoToken.Find(System.Func<string!, string?>! getEnv
 static PandaBear.Forgejo.ForgejoToken.IsTokenVariable(string! name) -> bool
 static PandaBear.Forgejo.ForgejoToken.RemoveFrom(System.Diagnostics.ProcessStartInfo! startInfo) -> void
 static PandaBear.Forgejo.ForgejoToken.VariableNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Forgejo.ForgejoRepositoryName
+static PandaBear.Forgejo.ForgejoRepositoryName.TryParse(string! repository, out string! owner, out string! name) -> bool

@@ -29,6 +29,8 @@ using var response = await client.GetAsync("repos/owner/name/releases?limit=50&p
   `<server>/api/v1/`, that sends the user agent, `Accept: application/json`, and `Authorization: token <token>`, the
   header form that [API usage](https://forgejo.org/docs/latest/user/api-usage/) documents. The server must be HTTPS. It
   keeps the default `HttpClient.Timeout`; redirect and certificate policy belong to the handler the caller passes.
+- `ForgejoRepositoryName.TryParse` splits `owner/name` and refuses anything that could add a path segment or a query
+  to a request address: each part holds only ASCII letters, digits, `-`, `.`, and `_`, and is neither `.` nor `..`.
 - Forgejo pages lists with `page` and `limit`, caps `limit` at the instance's `max_response_items` (50 by default), and
   sends a `Link` header with a `next` relation while more pages follow.
 
