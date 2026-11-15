@@ -22,6 +22,5 @@ const PandaBear.Testing.Analyzers.TestingDiagnosticIds.ActivityListenerSourceIde
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.SutConstructionInAct = "SKTEST016" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.AssertionUserMessageOverload = "SKTEST017" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestScope = "SKTEST018" -> string!
-const PandaBear.Testing.Analyzers.TestingDiagnosticIds.CallProxyServiceType = "SKTEST019" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.PlaywrightUrlWait = "SKTEST020" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.InvalidAdditionalAllowedSegment = "SKTEST021" -> string!

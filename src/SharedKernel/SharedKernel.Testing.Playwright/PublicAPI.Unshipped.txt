@@ -53,3 +53,14 @@ static PandaBear.Testing.Playwright.PlaywrightRoleLocatorExtensions.GetHeading(t
 static PandaBear.Testing.Playwright.PlaywrightPageExtensions.ExpectPath(this Microsoft.Playwright.IPage! page, System.Uri! expected) -> System.Threading.Tasks.Task!
 static PandaBear.Testing.Playwright.PlaywrightPageExtensions.ExpectPath(this Microsoft.Playwright.IPage! page, System.Uri! baseAddress, string! relativePath) -> System.Threading.Tasks.Task!
 static PandaBear.Testing.Playwright.PlaywrightLocatorExtensions.SetBlazorInputFile(this Microsoft.Playwright.ILocator! input, Microsoft.Playwright.FilePayload! file) -> System.Threading.Tasks.Task!
+PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.KestrelPageTest(PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint!>! sharedHost) -> void
+PandaBear.Testing.Playwright.KestrelPageTest<TEntryPoint>.Services.get -> System.IServiceProvider!
+PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>
+PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.KestrelHostFixture() -> void
+PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.BaseAddress.get -> System.Uri!
+PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.Services.get -> System.IServiceProvider!
+virtual PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.EnvironmentName.get -> string!
+virtual PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.Configuration.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string?>?
+virtual PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.InitializeAsync() -> System.Threading.Tasks.ValueTask
+virtual PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+virtual PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void

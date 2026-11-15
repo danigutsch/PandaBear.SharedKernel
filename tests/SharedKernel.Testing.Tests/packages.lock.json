@@ -451,7 +451,10 @@
         "type": "Project"
       },
       "PandaBear.SharedKernel.Testing": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.15, )"
+        }
       },
       "PandaBear.SharedKernel.Testing.AspNetCore": {
         "type": "Project",
@@ -521,6 +524,9 @@
           "PandaBear.SharedKernel.Testing": "[0.1.0-alpha.0, )",
           "xunit.v3.extensibility.core": "[4.0.0, )"
         }
+      },
+      "sharedkernel.testing.aspnetcore.testapp": {
+        "type": "Project"
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "CentralTransitive",

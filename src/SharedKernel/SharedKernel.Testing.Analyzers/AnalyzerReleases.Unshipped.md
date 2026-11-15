@@ -20,6 +20,5 @@ SKTEST010 | Testing | Warning | Test activity listeners should filter by source 
 SKTEST016 | Testing | Warning | Construct the system under test in Arrange
 SKTEST017 | Testing | Disabled | Public assertions should have a userMessage overload; enable warning severity in assertion libraries
 SKTEST018 | Testing | Info | xUnit test methods should declare exactly one valid test scope
-SKTEST019 | Testing | Warning | CallProxy can only wrap a public interface
 SKTEST020 | Testing | Warning | Wait for a page address with ExpectPath, not WaitForURLAsync
 SKTEST021 | Testing | Warning | Configured test method name segments must be new letter-and-digit words

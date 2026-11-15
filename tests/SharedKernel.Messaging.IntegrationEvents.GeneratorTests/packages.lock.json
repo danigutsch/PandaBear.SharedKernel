@@ -259,7 +259,10 @@
         "type": "Project"
       },
       "PandaBear.SharedKernel.Testing": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.15, )"
+        }
       },
       "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",

@@ -7,12 +7,8 @@ public sealed class CallProxyValueTaskAndSyncTests
     public async Task A_value_task_with_a_result_passes_through_and_is_followed_up()
     {
         // Arrange
-        object? seen = null;
-        var proxy = CallProxy.Create<ICallProbe>(new CallProbe(), hooks => hooks.After(nameof(ICallProbe.Thrice), call =>
-        {
-            seen = call.Result;
-            return Task.CompletedTask;
-        }));
+        var seen = 0;
+        var proxy = CallProxy.Create<ICallProbe>(new CallProbe(), hooks => hooks.Thrice.After(call => seen = call.Result));
 
         // Act
         var value = await proxy.Thrice(4);
@@ -27,7 +23,7 @@ public sealed class CallProxyValueTaskAndSyncTests
     {
         // Arrange
         var inner = new CallProbe();
-        var proxy = CallProxy.Create<ICallProbe>(inner, hooks => hooks.Returns(nameof(ICallProbe.Thrice), 7));
+        var proxy = CallProxy.Create<ICallProbe>(inner, hooks => hooks.Thrice.Returns(7));
 
         // Act
         var value = await proxy.Thrice(1);
@@ -43,7 +39,7 @@ public sealed class CallProxyValueTaskAndSyncTests
         // Arrange
         var inner = new CallProbe();
         var release = new TaskCompletionSource();
-        var proxy = CallProxy.Create<ICallProbe>(inner, hooks => hooks.Before(nameof(ICallProbe.Pause), _ => release.Task));
+        var proxy = CallProxy.Create<ICallProbe>(inner, hooks => hooks.Pause.Before(_ => release.Task));
 
         // Act
         var pending = proxy.Pause();
@@ -61,7 +57,7 @@ public sealed class CallProxyValueTaskAndSyncTests
     {
         // Arrange
         var inner = new CallProbe();
-        var proxy = CallProxy.Create<ICallProbe>(inner, hooks => hooks.Before(nameof(ICallProbe.Thrice), _ => throw new InvalidOperationException("blocked")));
+        var proxy = CallProxy.Create<ICallProbe>(inner, hooks => hooks.Thrice.Before(_ => throw new InvalidOperationException("blocked")));
 
         // Act
         Func<Task> act = async () => await proxy.Thrice(1);
@@ -77,16 +73,12 @@ public sealed class CallProxyValueTaskAndSyncTests
     {
         // Arrange
         var order = new List<string>();
-        var proxy = CallProxy.Create<ICallProbe>(new CallProbe(), hooks => hooks
-            .Before(nameof(ICallProbe.Add), call =>
+        var proxy = CallProxy.Create<ICallProbe>(new CallProbe(), hooks => hooks.Add
+            .Before(call => order.Add($"before {call.Left}+{call.Right}"))
+            .After(async call =>
             {
-                order.Add($"before {call.Args[0]}+{call.Args[1]}");
-                return Task.CompletedTask;
-            })
-            .After(nameof(ICallProbe.Add), call =>
-            {
+                await Task.Yield();
                 order.Add($"after {call.Result}");
-                return Task.CompletedTask;
             }));
 
         // Act
@@ -102,7 +94,7 @@ public sealed class CallProxyValueTaskAndSyncTests
     {
         // Arrange
         var inner = new CallProbe();
-        var proxy = CallProxy.Create<ICallProbe>(inner, hooks => hooks.Returns(nameof(ICallProbe.Add), 100));
+        var proxy = CallProxy.Create<ICallProbe>(inner, hooks => hooks.Add.Returns(100));
 
         // Act
         var sum = proxy.Add(1, 1);
@@ -113,11 +105,28 @@ public sealed class CallProxyValueTaskAndSyncTests
     }
 
     [Fact]
+    public void A_void_method_runs_its_hooks_around_the_inner_call()
+    {
+        // Arrange
+        var inner = new CallProbe();
+        var order = new List<string>();
+        var proxy = CallProxy.Create<ICallProbe>(inner, hooks => hooks.Touch
+            .Before(_ => order.Add($"before {inner.Calls.Count}"))
+            .After(_ => order.Add($"after {inner.Calls.Count}")));
+
+        // Act
+        proxy.Touch();
+
+        // Assert
+        order.ShouldBe(["before 0", "after 1"]);
+    }
+
+    [Fact]
     public void A_before_hook_that_throws_stops_a_synchronous_call_with_the_original_exception()
     {
         // Arrange
         var inner = new CallProbe();
-        var proxy = CallProxy.Create<ICallProbe>(inner, hooks => hooks.Before(nameof(ICallProbe.Touch), _ => throw new InvalidOperationException("blocked")));
+        var proxy = CallProxy.Create<ICallProbe>(inner, hooks => hooks.Touch.Before(_ => Task.FromException(new InvalidOperationException("blocked"))));
 
         // Act
         Action act = () => proxy.Touch();
@@ -125,5 +134,18 @@ public sealed class CallProxyValueTaskAndSyncTests
         // Assert
         act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("blocked");
         inner.Calls.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void An_exception_of_a_synchronous_inner_service_arrives_unwrapped()
+    {
+        // Arrange
+        var proxy = CallProxy.Create<ICallProbe>(new CallProbe());
+
+        // Act
+        Action act = () => proxy.Break();
+
+        // Assert
+        act.ShouldThrow<InvalidOperationException>().Message.ShouldBe("inner failure");
     }
 }

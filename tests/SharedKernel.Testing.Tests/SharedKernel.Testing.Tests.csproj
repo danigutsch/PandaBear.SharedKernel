@@ -21,6 +21,9 @@
 
     <ItemGroup>
         <ProjectReference Include="../../src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj" />
+        <ProjectReference Include="../../src/SharedKernel/SharedKernel.Testing.SourceGenerator/SharedKernel.Testing.SourceGenerator.csproj"
+                          OutputItemType="Analyzer"
+                          ReferenceOutputAssembly="false" />
         <ProjectReference Include="../../src/SharedKernel/SharedKernel.Testing.Xunit/SharedKernel.Testing.Xunit.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Data\SharedKernel.Testing.Data.csproj" />
@@ -32,6 +35,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Snapshots\SharedKernel.Testing.Snapshots.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Web\SharedKernel.Testing.Web.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Playwright\SharedKernel.Testing.Playwright.csproj" />
+        <ProjectReference Include="..\SharedKernel.Testing.AspNetCore.TestApp\SharedKernel.Testing.AspNetCore.TestApp.csproj" />
     </ItemGroup>
 
 </Project>

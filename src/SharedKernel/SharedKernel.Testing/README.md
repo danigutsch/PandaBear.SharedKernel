@@ -4,7 +4,7 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Reusable test traits, environment scopes, and temporary-directory lifetimes.
+Reusable test traits, environment scopes, temporary-directory lifetimes, and source-generated call proxies.
 
 ## Trait taxonomy
 
@@ -125,33 +125,75 @@ catch (Exception setupFailure)
 ## Call proxy
 
 `CallProxy.Create<IStore>(realStore, hooks => ...)` wraps a service so a test can hold, fail, follow up or replace a call without a
-decorator class per service. Hooks are chosen by method name and apply to methods that return `Task`, `Task<T>`, `ValueTask`,
-`ValueTask<T>`, a value, or nothing:
+decorator class per service. The proxy is generated at compile time by the source generator that ships in this package, for every
+interface named in `CallProxy.Create<T>` or `WrapWithCallProxy<T>` or hooked through `CallHooks<T>`. Each method of the interface gets a
+hooks member of the same name with typed arguments and result, so no method name is a string, and a hook that does not fit the method
+does not compile:
 
 ```csharp
-var store = CallProxy.Create<IOrderStore>(real, hooks => hooks
-    .Before(nameof(IOrderStore.Find), call => gate.Wait((Guid)call.Args[0]!))   // hold until released, or throw to fail
-    .After(nameof(IOrderStore.Find), call => DeleteRow(call.Result))            // follow up with call.Result set
-    .Returns(nameof(IOrderStore.EmailExists), false));                          // replace the result, real service not called
+var store = CallProxy.Create<IOrderStore>(real, hooks =>
+{
+    hooks.Find.Before(call => gate.Wait(call.Id));      // hold until released, or throw to fail
+    hooks.Find.After(call => DeleteRow(call.Result));   // follow up with the typed result
+    hooks.EmailExists.Returns(false);                   // replace the result, real service not called
+});
 ```
 
-Exceptions of the real service arrive unwrapped. The service must be a public interface (the runtime generates the proxy type), not an
-abstract class. Hooks are chosen by method name only, so overloads (and same-named methods of different interfaces) share their hooks.
-Hooks of a synchronous method are waited for on the calling thread, so keep them short. `out` and `ref` values written by the real
-service reach the caller, and `call.Args` shows them to after hooks. A `Returns` value that does not fit the method's result type (for
-example `null` for an `int`) throws an `InvalidOperationException` naming the method when the call is made.
+- `Before` and `After` take an `Action<TCall>` or a `Func<TCall, Task>`. The call has a property per argument, the parameter name with an
+  upper-case first letter (`call.Id` for `Guid id`, `call.Ct` for `CancellationToken ct`), and `Result` for a method that returns a value.
+  Hooks of a method run in the order they were added. A before hook that throws stops the call; one that stays pending holds it. After
+  hooks run once the call completed; an exception of the real service arrives unwrapped and skips them.
+- `Returns(value)` exists only on a method with a result (`T`, `Task<T>` or `ValueTask<T>`) and takes a `T`; the before and after hooks
+  still run, the real service does not. A later `Returns` replaces the value.
+- Methods returning `Task`, `ValueTask`, `Task<T>` or `ValueTask<T>` are awaited. Every other method is synchronous: its hooks are waited
+  for on the calling thread, so keep them short and never let them wait for the caller.
+- Overloads get members named after their parameter types, such as `hooks.Save_Int32` and `hooks.Save_NoParameters`. The
+  [generator README](../SharedKernel.Testing.SourceGenerator/README.md) lists every naming rule and the generated code.
+- The interface may be public or internal, generic (closed, such as `IRepository<Order>`) and inherit other interfaces. Properties,
+  indexers, events, generic methods, `ref`, `out` and `in` parameters, by-reference results and ref struct parameters have no typed hooks,
+  so such an interface fails the build with `SKPRX003`; a class fails with `SKPRX001` and an inaccessible interface with `SKPRX002`.
 
-`Create` validates the registrations after `configure` ran, so a test never passes while believing a call was stubbed. Hooks and
-replacements are keyed by name and apply to every overload of that name. It throws:
-
-- `ArgumentException` when a `Before`, `After` or `Returns` name matches no method of the service or its inherited interfaces; the
-  message lists the unknown names and the available method names.
-- `InvalidOperationException` ("Returns cannot be used for 'Save', which returns no value") when `Returns` targets a name whose methods
-  all return `Task`, `ValueTask` or `void`.
-- `InvalidOperationException` when every value-returning method of a `Returns` name has `out` or `ref` parameters, which cannot be
-  stubbed; use `After` or `Before` and let the real call run.
-
-A `Returns` name is valid as long as at least one overload returns a value without `out`/`ref` parameters.
+Reference `PandaBear.SharedKernel.Testing` directly from the test project, since a package that depends on it does not pass its analyzers
+on, and compile C# 14, the default for .NET 10 (`SKPRX004` otherwise). A generic helper that wraps its own type parameter is not seen by the
+generator: `CallProxy.Create` then throws an `InvalidOperationException` that names the interface, unless the interface is also named in
+one of the forms above. No reflection or runtime code generation runs: the proxy is a plain generated class.
 
 It fits a test that wraps a real implementation and needs one targeted hold, failure, follow-up or replaced result. It does not replace a
-fake that implements the whole interface with typed recorded state, a service registered by type, or delegate-based fakes.
+fake that implements the whole interface with recorded state.
+
+### Wrapping a registered service
+
+When the application resolves the service from dependency injection, `services.WrapWithCallProxy<IStore>(hooks => ...)` replaces its
+registrations with proxies, so the test hooks the instance the application actually uses:
+
+```csharp
+services.WrapWithCallProxy<ICustomerStore>(hooks =>
+{
+    hooks.Find.After(call => DeleteRow(call.Result));
+    hooks.EmailExists.Returns(false);
+});
+```
+
+Call it after the application's own registrations. Every registration of the service without a key is wrapped in place and keeps its
+lifetime (singleton, scoped or transient): the original moves under a private key, so the container still builds the real implementation
+with its dependencies, in the same scope, and disposes it as before, while an instance registration stays undisposed. Keyed registrations
+are left alone. `configure` runs once and the proxies share its hooks. A service without a registration to wrap throws
+`InvalidOperationException`. The container must support keyed services, as `Microsoft.Extensions.DependencyInjection` does from .NET 8.
+
+### Migrating from the string hooks
+
+The string hooks (`hooks.Before(nameof(IStore.Find), ...)`, `CallInfo` with `Args` and an `object?` `Result`) are gone. Use the member of
+the method instead, read typed properties instead of `call.Args[i]` and casts, and drop `return Task.CompletedTask` from hooks that do not
+wait:
+
+| Before | After |
+| --- | --- |
+| `hooks.Returns(nameof(IStore.EmailExists), false)` | `hooks.EmailExists.Returns(false)` |
+| `hooks.Before(nameof(IStore.Find), call => Gate.Wait((Guid)call.Args[0]!))` | `hooks.Find.Before(call => Gate.Wait(call.Id))` |
+| `hooks.After(nameof(IStore.Find), call => call.Result is null ? Task.CompletedTask : Delete((Guid)call.Args[0]!))` | `hooks.Find.After(call => call.Result is null ? Task.CompletedTask : Delete(call.Id))` |
+| `Action<CallHooks>` | `Action<CallHooks<IStore>>` |
+
+A hook shared by several interfaces, such as a `Func<CallInfo, Task>` that reads `call.Args[0]`, becomes a method that takes the values
+it needs (`Delete(string table, Guid id)`) and a lambda per interface that passes them. A runtime `ArgumentException` or
+`InvalidOperationException` for an unknown name, a `Returns` on a method without a result, or a replacement of the wrong type is now a
+compile error.

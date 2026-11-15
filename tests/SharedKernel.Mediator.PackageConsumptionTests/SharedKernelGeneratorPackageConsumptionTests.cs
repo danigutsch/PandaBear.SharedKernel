@@ -3,7 +3,7 @@ using PandaBear.Testing;
 namespace PandaBear.Mediator.PackageConsumptionTests;
 
 /// <summary>
-/// Builds fresh consumer projects against the packed Domain and Results packages to prove their bundled source generators run for package consumers.
+/// Builds fresh consumer projects against the packed Domain, Results and Testing packages to prove their source generators run for package consumers.
 /// </summary>
 /// <param name="packageFeed">The shared local package feed the consumer workspaces restore from.</param>
 [Collection(MediatorPackageFeedSharing.Name)]
@@ -113,5 +113,78 @@ public sealed class SharedKernelGeneratorPackageConsumptionTests(MediatorPackage
         // Assert
         buildOutput.ShouldContain("Build succeeded.", StringComparison.Ordinal);
         generatedFiles.Select(File.ReadAllText).ShouldHaveSingleItem().ShouldContain("consumer-tourerrors-notfound", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Testing_package_bundles_the_call_proxy_generator_that_builds_typed_hooks_in_a_strict_fresh_project()
+    {
+        // Arrange
+        using var workspace = packageFeed.CreateWorkspace("CallProxyGeneratedConsumer");
+        workspace.WriteProject(
+            $$"""
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <OutputType>Exe</OutputType>
+                <TargetFramework>net10.0</TargetFramework>
+                <ImplicitUsings>enable</ImplicitUsings>
+                <Nullable>enable</Nullable>
+                <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+                <AnalysisMode>All</AnalysisMode>
+                <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+                <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+              </PropertyGroup>
+              <ItemGroup>
+                <Compile Remove="Generated/**/*.cs" />
+              </ItemGroup>
+              <ItemGroup>
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Testing")}}
+              </ItemGroup>
+            </Project>
+            """,
+            ("Consumer.cs", """
+            using System.Globalization;
+            using PandaBear.Testing;
+
+            namespace Consumer;
+
+            internal interface IGreeter
+            {
+                string Greet(string name);
+
+                Task<int> Count(CancellationToken cancellationToken);
+            }
+
+            internal sealed class Greeter : IGreeter
+            {
+                public string Greet(string name) => "Hello " + name;
+
+                public Task<int> Count(CancellationToken cancellationToken) => Task.FromResult(1);
+            }
+
+            internal static class Program
+            {
+                public static async Task Main()
+                {
+                    var seen = new List<string>();
+                    var greeter = CallProxy.Create<IGreeter>(new Greeter(), hooks =>
+                    {
+                        hooks.Greet.After(call => seen.Add(call.Name + "=" + call.Result));
+                        hooks.Count.Returns(5);
+                    });
+                    var count = await greeter.Count(CancellationToken.None).ConfigureAwait(false);
+                    Console.WriteLine(greeter.Greet("Ana") + " " + count.ToString(CultureInfo.InvariantCulture) + " " + string.Join(",", seen));
+                }
+            }
+            """));
+
+        // Act
+        var buildOutput = await workspace.Build();
+        var runOutput = await workspace.Run();
+        var generatedFiles = workspace.GetGeneratedFiles("CallProxy.Consumer_IGreeter.g.cs");
+
+        // Assert
+        buildOutput.ShouldContain("Build succeeded.", StringComparison.Ordinal);
+        runOutput.ShouldContain("Hello Ana 5 Ana=Hello Ana", StringComparison.Ordinal);
+        generatedFiles.ShouldHaveSingleItem();
     }
 }
