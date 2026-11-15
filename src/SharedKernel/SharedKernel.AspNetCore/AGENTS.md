@@ -10,9 +10,10 @@ Instructions for `src/SharedKernel/SharedKernel.AspNetCore/`.
   and holds security headers, forwarded headers, CORS, the immutable file endpoint, permanent redirects, status-code pages with excluded prefixes, the unhandled-exception handler and the telemetry names. Add a new
   package for a concern that needs another dependency instead of widening the core:
   `SharedKernel.AspNetCore.Authentication` (the only JwtBearer consumer), `SharedKernel.AspNetCore.RateLimiting`,
-  `SharedKernel.AspNetCore.Localization`, `SharedKernel.AspNetCore.Seo` and `SharedKernel.Idempotency.AspNetCore`.
-- The core exposes its internal telemetry helpers and `SecurityEventReporter` to the Authentication and RateLimiting packages
-  with `InternalsVisibleTo`; keep them internal rather than publishing them.
+  `SharedKernel.AspNetCore.Localization`, `SharedKernel.AspNetCore.Seo`, `SharedKernel.AspNetCore.WebAnalytics` and
+  `SharedKernel.Idempotency.AspNetCore`.
+- The core exposes its internal telemetry helpers and `SecurityEventReporter` to the Authentication, RateLimiting and WebAnalytics
+  packages with `InternalsVisibleTo`; keep them internal rather than publishing them.
 
 ## Rules
 

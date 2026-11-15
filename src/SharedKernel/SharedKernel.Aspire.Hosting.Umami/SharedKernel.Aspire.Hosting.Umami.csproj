@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.Aspire.Hosting.Umami</PackageId>
+        <Description>Aspire hosting integration for a self-hosted Umami web analytics container with its own PostgreSQL database, a generated app secret and a pinned image.</Description>
+        <RootNamespace>PandaBear.Aspire.Hosting.Umami</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>aspire;umami;analytics;privacy;postgresql;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting" />
+        <PackageReference Include="Aspire.Hosting.PostgreSQL" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- The pinned PostgreSQL image of the database server. -->
+        <ProjectReference Include="..\SharedKernel.Aspire.Hosting\SharedKernel.Aspire.Hosting.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>
