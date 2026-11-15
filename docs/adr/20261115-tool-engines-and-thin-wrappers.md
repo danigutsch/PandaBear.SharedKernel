@@ -26,8 +26,14 @@ tools, written as .NET file-based (single-file) apps.
   covered by tests; an empty or speculative provider library is not created.
 - **Platform base libraries hold the low-level access that several providers share.** `SharedKernel.GitHub` holds the
   GitHub token rules and the REST client headers, and every `.GitHub` provider builds on it; a Forgejo base,
-  `SharedKernel.Forgejo`, would mirror it and is created by the first provider that needs it. A base library holds no
-  capability logic.
+  `SharedKernel.Forgejo`, would mirror it and is created by the first provider that needs it. A base library holds
+  only client, authentication, and token concerns. A provider library depends on its feature core and its platform
+  base; a platform base never depends on a feature library.
+- **Names are feature first: `SharedKernel.<Feature>.<Provider>`,** such as `CI.GitHub`, `Repositories.GitHub`, or
+  `LoadTesting.K6`. This mirrors the existing `SharedKernel.Npgsql` base with `EntityFrameworkCore.Npgsql`,
+  `EventSourcing.Npgsql`, and `Observability.Npgsql`, and `ObjectStorage.S3` and `MalwareScanning.ClamAv`.
+  Platform-first names (`GitHub.CI`) would invert that convention, and a platform base that depended on feature
+  libraries (`GitHub` on `CI`) would drag every feature into any consumer of the client.
 - **A tool is a thin wrapper.** `tools/SharedKernel.<Name>.Tool` holds only the System.CommandLine tree, the wiring of
   real dependencies, reading the settings, output, and exit codes, and references its engine with a
   `ProjectReference`. Application policy and data still come from the consuming repository's configuration files and
