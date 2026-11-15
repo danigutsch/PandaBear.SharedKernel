@@ -32,6 +32,7 @@ public sealed class SharedKernelTestingAnalyzerTests
             TestingDiagnosticIds.XunitTestScope,
             TestingDiagnosticIds.CallProxyServiceType,
             TestingDiagnosticIds.PlaywrightUrlWait,
+            TestingDiagnosticIds.InvalidAdditionalAllowedSegment,
         ];
 
         // Act
@@ -74,7 +75,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     private const string XunitTraitConstantUsageDiagnosticId = TestingDiagnosticIds.XunitTraitConstantUsage;
 
     [Fact]
-    public async Task Direct_xunit_assertion_reports_SKTEST006()
+    public async Task Direct_xUnit_assertion_reports_SKTEST006()
     {
         // Arrange
         const string source = """
@@ -368,7 +369,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Strict_test_naming_allows_configured_acronym_and_xunit_segments()
+    public async Task Strict_test_naming_allows_configured_acronym_and_xUnit_segments()
     {
         // Arrange
         const string source = """
@@ -811,7 +812,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Reused_private_static_helper_method_in_xunit_test_class_reports_SKTEST004()
+    public async Task Reused_private_static_helper_method_in_xUnit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -846,7 +847,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Reused_internal_static_helper_method_in_xunit_test_class_reports_SKTEST004()
+    public async Task Reused_internal_static_helper_method_in_xUnit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -881,7 +882,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Single_use_internal_static_helper_method_in_xunit_test_class_reports_SKTEST004()
+    public async Task Single_use_internal_static_helper_method_in_xUnit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -910,7 +911,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Public_helper_method_in_xunit_test_class_reports_SKTEST004()
+    public async Task Public_helper_method_in_xUnit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -938,7 +939,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_static_helper_method_in_xunit_test_class_reports_SKTEST004()
+    public async Task Private_static_helper_method_in_xUnit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -967,7 +968,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_instance_helper_method_in_xunit_test_class_reports_SKTEST004()
+    public async Task Private_instance_helper_method_in_xUnit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -995,7 +996,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Implicit_private_helper_method_in_xunit_test_class_reports_SKTEST004()
+    public async Task Implicit_private_helper_method_in_xUnit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -1047,7 +1048,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Expression_bodied_local_helper_function_in_xunit_test_method_reports_SKTEST004()
+    public async Task Expression_bodied_local_helper_function_in_xUnit_test_method_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -1073,7 +1074,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Block_bodied_local_helper_function_in_xunit_test_method_reports_SKTEST004()
+    public async Task Block_bodied_local_helper_function_in_xUnit_test_method_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -1130,7 +1131,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_nested_helper_class_in_xunit_test_class_reports_SKTEST004()
+    public async Task Private_nested_helper_class_in_xUnit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -1161,7 +1162,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Implicit_private_nested_helper_class_in_xunit_test_class_reports_SKTEST004()
+    public async Task Implicit_private_nested_helper_class_in_xUnit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -1188,7 +1189,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_nested_helper_record_in_xunit_test_class_reports_SKTEST004()
+    public async Task Private_nested_helper_record_in_xUnit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -1213,7 +1214,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Public_nested_helper_class_in_xunit_test_class_reports_SKTEST004()
+    public async Task Public_nested_helper_class_in_xUnit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -1322,7 +1323,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_dispose_helper_method_in_xunit_test_class_reports_SKTEST004()
+    public async Task Private_dispose_helper_method_in_xUnit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -1785,7 +1786,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Try_finally_inside_xunit_helper_method_does_not_report_SKTEST008()
+    public async Task Try_finally_inside_xUnit_helper_method_does_not_report_SKTEST008()
     {
         // Arrange
         const string source = """

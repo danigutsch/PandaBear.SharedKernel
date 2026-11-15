@@ -55,8 +55,19 @@ internal static class AnalyzerTestHarness
             compilation = RemoveSharedKernelTestingReference(compilation);
         }
 
+        return await GetAnalyzerDiagnostics(
+            compilation,
+            new TestAnalyzerConfigOptionsProvider(analyzerOptions ?? ImmutableDictionary<string, string>.Empty)).ConfigureAwait(false);
+    }
+
+    /// <summary>Runs SharedKernelTestingAnalyzer over a compilation with the given options provider and returns its diagnostics.</summary>
+    /// <param name="compilation">Compilation to analyze.</param>
+    /// <param name="optionsProvider">Analyzer config options, for example per-file options.</param>
+    public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
+        CSharpCompilation compilation,
+        AnalyzerConfigOptionsProvider optionsProvider)
+    {
         var analyzer = new SharedKernelTestingAnalyzer();
-        var optionsProvider = new TestAnalyzerConfigOptionsProvider(analyzerOptions ?? ImmutableDictionary<string, string>.Empty);
         var options = new AnalyzerOptions([]);
         var compilationOptions = new CompilationWithAnalyzersOptions(
             options,
@@ -65,7 +76,7 @@ internal static class AnalyzerTestHarness
             logAnalyzerExecutionTime: false,
             reportSuppressedDiagnostics: false,
             analyzerExceptionFilter: null,
-            _ => (AnalyzerConfigOptionsProvider)optionsProvider);
+            _ => optionsProvider);
         var compilationWithAnalyzers = compilation.WithAnalyzers([analyzer], compilationOptions);
 
         return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);

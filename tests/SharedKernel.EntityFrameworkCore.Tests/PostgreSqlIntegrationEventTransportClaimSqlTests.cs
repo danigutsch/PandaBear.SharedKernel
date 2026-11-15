@@ -11,7 +11,7 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 public sealed class PostgreSqlIntegrationEventTransportClaimSqlTests
 {
     [Fact]
-    public async Task ClaimPending_rejects_non_postgresql_provider_before_executing_sql()
+    public async Task ClaimPending_rejects_non_postgresql_provider_before_executing_SQL()
     {
         // Arrange
         var options = new DbContextOptionsBuilder<TransportProviderGuardDbContext>()

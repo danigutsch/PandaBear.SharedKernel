@@ -24,3 +24,4 @@ const PandaBear.Testing.Analyzers.TestingDiagnosticIds.AssertionUserMessageOverl
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestScope = "SKTEST018" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.CallProxyServiceType = "SKTEST019" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.PlaywrightUrlWait = "SKTEST020" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.InvalidAdditionalAllowedSegment = "SKTEST021" -> string!

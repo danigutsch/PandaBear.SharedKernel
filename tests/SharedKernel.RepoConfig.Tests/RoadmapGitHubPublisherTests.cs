@@ -389,7 +389,7 @@ public sealed class RoadmapGitHubPublisherTests
     }
 
     [Fact]
-    public async Task Publication_rejects_an_empty_pull_request_url()
+    public async Task Publication_rejects_an_empty_pull_request_URL()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();

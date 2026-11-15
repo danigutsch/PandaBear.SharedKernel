@@ -27,7 +27,7 @@ public sealed class EfCoreCommandTransactionScopeGuardTests
     }
 
     [Fact]
-    public async Task Rejects_missing_dbcontext()
+    public async Task Rejects_missing_DbContext()
     {
         // Arrange
         TestDbContext? dbContext = null;

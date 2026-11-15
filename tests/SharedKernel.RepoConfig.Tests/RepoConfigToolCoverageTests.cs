@@ -218,7 +218,7 @@ public sealed class RepoConfigToolCoverageTests
     }
 
     [Fact]
-    public async Task GitHub_roadmap_syncer_apply_propagates_http_request_errors_for_application_boundary()
+    public async Task GitHub_roadmap_syncer_apply_propagates_HTTP_request_errors_for_application_boundary()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -243,7 +243,7 @@ public sealed class RepoConfigToolCoverageTests
     }
 
     [Fact]
-    public async Task GitHub_sync_force_reports_safe_diagnostic_for_http_request_errors()
+    public async Task GitHub_sync_force_reports_safe_diagnostic_for_HTTP_request_errors()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -272,7 +272,7 @@ public sealed class RepoConfigToolCoverageTests
     }
 
     [Fact]
-    public void Try_parse_json_file_reports_read_failures_as_issues()
+    public void Try_parse_JSON_file_reports_read_failures_as_issues()
     {
         // Arrange
         List<RepoConfigIssue> issues = [];

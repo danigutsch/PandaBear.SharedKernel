@@ -13,7 +13,7 @@ namespace PandaBear.OpenApi.Tests;
 public sealed class OpenApiApplicationBuilderExtensionsTests
 {
     [Fact]
-    public void Maps_openapi_endpoints_for_development()
+    public void Maps_OpenApi_endpoints_for_development()
     {
         // Arrange
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
@@ -29,7 +29,7 @@ public sealed class OpenApiApplicationBuilderExtensionsTests
     }
 
     [Fact]
-    public void Does_not_map_openapi_endpoints_outside_development()
+    public void Does_not_map_OpenApi_endpoints_outside_development()
     {
         // Arrange
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = Environments.Production });

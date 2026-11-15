@@ -14,7 +14,7 @@ public sealed class PasswordProtectedExportTests
     private static readonly KdfConfig SmallArgon2id = new(KdfType.Argon2id, 2, 16, 1);
 
     [Fact]
-    public void Encrypt_then_decrypt_with_pbkdf2_returns_original_json()
+    public void Encrypt_then_decrypt_with_pbkdf2_returns_original_JSON()
     {
         // Act
         var envelope = PasswordProtectedExport.Encrypt(EmptyExport, "secret", FastPbkdf2);
@@ -25,7 +25,7 @@ public sealed class PasswordProtectedExportTests
     }
 
     [Fact]
-    public void Encrypt_then_decrypt_with_argon2id_returns_original_json()
+    public void Encrypt_then_decrypt_with_argon2id_returns_original_JSON()
     {
         // Act
         var envelope = PasswordProtectedExport.Encrypt(EmptyExport, "secret", SmallArgon2id);

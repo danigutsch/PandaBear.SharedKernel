@@ -121,7 +121,7 @@ public sealed class HttpHeaderAssertionTests
     }
 
     [Fact]
-    public void No_store_accepts_the_headers_written_by_the_http_caching_package()
+    public void No_store_accepts_the_headers_written_by_the_HTTP_caching_package()
     {
         // Arrange
         using var response = SuccessResponses.NoStore();

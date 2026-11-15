@@ -23,7 +23,7 @@ public sealed class SelfOriginTests
     }
 
     [Fact]
-    public async Task Without_an_endpoint_name_and_without_https_the_http_endpoint_is_used()
+    public async Task Without_an_endpoint_name_and_without_https_the_HTTP_endpoint_is_used()
     {
         // Arrange
         var builder = DistributedApplication.CreateBuilder([]);
@@ -73,7 +73,7 @@ public sealed class SelfOriginTests
     }
 
     [Fact]
-    public async Task A_resource_without_http_or_https_endpoints_fails()
+    public async Task A_resource_without_HTTP_or_https_endpoints_fails()
     {
         // Arrange
         var builder = DistributedApplication.CreateBuilder([]);

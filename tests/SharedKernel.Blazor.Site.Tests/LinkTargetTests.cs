@@ -145,7 +145,7 @@ public sealed class LinkTargetTests
     }
 
     [Fact]
-    public void An_http_address_with_an_empty_user_information_is_invalid()
+    public void An_HTTP_address_with_an_empty_user_information_is_invalid()
     {
         // Arrange & Act
         var result = LinkTarget.Create("https://@example.org/");

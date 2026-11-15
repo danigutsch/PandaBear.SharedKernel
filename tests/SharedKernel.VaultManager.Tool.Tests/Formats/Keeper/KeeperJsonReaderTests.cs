@@ -411,7 +411,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
     }
 
     [Fact]
-    public void ReadZip_without_export_json_throws_invalid_data()
+    public void ReadZip_without_export_JSON_throws_invalid_data()
     {
         // Arrange
         string path = Path.Combine(DirectoryPath, "other.zip");

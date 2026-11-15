@@ -278,7 +278,7 @@ public sealed class PlanCommandTests
     [InlineData("""{"version":1,"packages":{"apt":["git"],"apt":["curl"]}}""", "is not valid at")]
     [InlineData("""{"version":1}""", "is not valid at")]
     [InlineData("not json", "is not valid at")]
-    public async Task An_invalid_configuration_is_reported_with_its_json_path(string configuration, string expected)
+    public async Task An_invalid_configuration_is_reported_with_its_JSON_path(string configuration, string expected)
     {
         // Arrange
         using var repository = CreateRepository(configuration);

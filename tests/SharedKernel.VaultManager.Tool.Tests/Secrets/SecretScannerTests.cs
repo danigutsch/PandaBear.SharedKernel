@@ -44,7 +44,7 @@ public sealed class SecretScannerTests
     }
 
     [Fact]
-    public void Scan_otpauth_uri_in_notes_proposes_login_totp_with_parameters_preserved()
+    public void Scan_otpauth_URI_in_notes_proposes_login_totp_with_parameters_preserved()
     {
         // Arrange
         string secret = TestSecrets.Base32Encode(TestSecrets.Bytes(1, 20));
@@ -394,7 +394,7 @@ public sealed class SecretScannerTests
     }
 
     [Fact]
-    public void Scan_postgres_uri_with_password_splits_into_login_fields()
+    public void Scan_postgres_URI_with_password_splits_into_login_fields()
     {
         // Arrange
         const string Uri = "postgresql://app_user:s3cr3t-Pa55@db.internal.example:5432/orders?sslmode=require";

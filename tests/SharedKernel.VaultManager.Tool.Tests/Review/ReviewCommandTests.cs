@@ -175,7 +175,7 @@ public sealed class ReviewCommandTests : IDisposable
     }
 
     [Fact]
-    public async Task Review_asks_input_passwords_on_the_console_before_the_ui_starts()
+    public async Task Review_asks_input_passwords_on_the_console_before_the_UI_starts()
     {
         // Arrange
         var prompts = new TestPrompts(ExportPassword, FilePassword);
@@ -193,7 +193,7 @@ public sealed class ReviewCommandTests : IDisposable
     }
 
     [Fact]
-    public async Task Wrong_input_password_exits_3_without_starting_the_ui()
+    public async Task Wrong_input_password_exits_3_without_starting_the_UI()
     {
         // Arrange
         var terminal = new FakeTerminal();
@@ -377,7 +377,7 @@ public sealed class ReviewCommandTests : IDisposable
     }
 
     [Fact]
-    public async Task Review_canceled_before_it_starts_exits_1_without_starting_the_ui()
+    public async Task Review_canceled_before_it_starts_exits_1_without_starting_the_UI()
     {
         // Arrange
         var terminal = new FakeTerminal();

@@ -11,7 +11,7 @@ public sealed class HttpClientDefaultsTests
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task Every_http_client_gets_the_standard_resilience_handler_unless_it_is_turned_off(bool addResilience)
+    public async Task Every_HTTP_client_gets_the_standard_resilience_handler_unless_it_is_turned_off(bool addResilience)
     {
         // Arrange
         await using var app = DefaultsApplication.Build("Production", options => options.AddResilience = addResilience);

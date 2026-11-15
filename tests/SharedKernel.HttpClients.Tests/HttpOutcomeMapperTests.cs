@@ -152,7 +152,7 @@ public sealed class HttpOutcomeMapperTests
     [Theory]
     [InlineData("Name")]
     [InlineData("")]
-    public async Task Send_returns_validation_problem_from_problem_json(string fieldName)
+    public async Task Send_returns_validation_problem_from_problem_JSON(string fieldName)
     {
         // Arrange
         using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
@@ -203,7 +203,7 @@ public sealed class HttpOutcomeMapperTests
     [Theory]
     [InlineData("not-json")]
     [InlineData("null")]
-    public async Task Send_returns_malformed_body_for_invalid_or_null_json(string content)
+    public async Task Send_returns_malformed_body_for_invalid_or_null_JSON(string content)
     {
         // Arrange
         using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
@@ -286,7 +286,7 @@ public sealed class HttpOutcomeMapperTests
 
     [Fact]
     [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
-    public async Task Send_returns_malformed_body_after_reading_only_the_bounded_oversized_json_prefix()
+    public async Task Send_returns_malformed_body_after_reading_only_the_bounded_oversized_JSON_prefix()
     {
         // Arrange
         const int responseBodyLimit = 64;
@@ -533,7 +533,7 @@ public sealed class HttpOutcomeMapperTests
     }
 
     [Fact]
-    public async Task Send_rejects_a_known_oversized_json_body_without_reading_it()
+    public async Task Send_rejects_a_known_oversized_JSON_body_without_reading_it()
     {
         // Arrange
         const int responseBodyLimit = 64;

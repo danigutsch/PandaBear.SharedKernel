@@ -53,7 +53,7 @@ public sealed class HttpCreatedLocationAssertionTests
     [InlineData("/api/tours/7", UriKind.Relative)]
     [InlineData("https://example.test/api/tours/7", UriKind.Absolute)]
     [InlineData("https://example.test/api/tours/7?page=2#top", UriKind.Absolute)]
-    public void Location_with_the_path_prefix_returns_the_uri(string location, UriKind kind)
+    public void Location_with_the_path_prefix_returns_the_URI(string location, UriKind kind)
     {
         // Arrange
         using var response = SuccessResponses.Empty(HttpStatusCode.Created);

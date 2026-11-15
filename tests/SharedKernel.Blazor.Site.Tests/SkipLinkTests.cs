@@ -17,7 +17,7 @@ public sealed class SkipLinkTests : BunitContext
     }
 
     [Fact]
-    public void Target_id_and_extra_attributes_are_applied()
+    public void Target_ID_and_extra_attributes_are_applied()
     {
         // Arrange & Act
         var cut = Render<SkipLink>(parameters => parameters
@@ -50,7 +50,7 @@ public sealed class SkipLinkTests : BunitContext
     }
 
     [Fact]
-    public void Blank_target_id_is_rejected()
+    public void Blank_target_ID_is_rejected()
     {
         // Arrange & Act
         var render = () => Render<SkipLink>(parameters => parameters

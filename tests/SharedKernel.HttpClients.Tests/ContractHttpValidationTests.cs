@@ -26,7 +26,7 @@ public sealed class ContractHttpValidationTests
     }
 
     [Fact]
-    public async Task Ensure_success_throws_http_exception_for_non_validation_failures()
+    public async Task Ensure_success_throws_HTTP_exception_for_non_validation_failures()
     {
         // Arrange
         using var response = new HttpResponseMessage(HttpStatusCode.NotFound);
@@ -72,7 +72,7 @@ public sealed class ContractHttpValidationTests
     }
 
     [Fact]
-    public async Task Ensure_success_preserves_json_exception_for_malformed_validation_problem()
+    public async Task Ensure_success_preserves_JSON_exception_for_malformed_validation_problem()
     {
         // Arrange
         using var response = new HttpResponseMessage(HttpStatusCode.BadRequest)
@@ -193,7 +193,7 @@ public sealed class ContractHttpValidationTests
     }
 
     [Fact]
-    public async Task Send_returns_generic_malformed_body_message_for_invalid_validation_problem_json()
+    public async Task Send_returns_generic_malformed_body_message_for_invalid_validation_problem_JSON()
     {
         // Arrange
         using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(

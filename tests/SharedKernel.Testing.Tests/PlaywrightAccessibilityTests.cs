@@ -24,7 +24,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
     }
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
-    public async Task Unlabelled_controls_are_listed_with_their_tag_and_id_or_name()
+    public async Task Unlabelled_controls_are_listed_with_their_tag_and_ID_or_name()
     {
         // Arrange
         var page = await chromium.Show("""<input id="email"><select name="country"></select><textarea></textarea><input aria-label=" ">""");

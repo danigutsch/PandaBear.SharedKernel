@@ -78,7 +78,7 @@ public sealed class EditSessionTests
     }
 
     [Fact]
-    public async Task The_same_id_again_changes_nothing()
+    public async Task The_same_ID_again_changes_nothing()
     {
         // Arrange
         using var session = EditSessionFixtures.Create();
@@ -100,7 +100,7 @@ public sealed class EditSessionTests
     }
 
     [Fact]
-    public async Task Another_id_starts_over_and_runs_the_reset()
+    public async Task Another_ID_starts_over_and_runs_the_reset()
     {
         // Arrange
         using var session = EditSessionFixtures.Create();
@@ -138,7 +138,7 @@ public sealed class EditSessionTests
     }
 
     [Fact]
-    public async Task A_missing_record_is_forgotten_when_the_id_changes()
+    public async Task A_missing_record_is_forgotten_when_the_ID_changes()
     {
         // Arrange
         using var session = EditSessionFixtures.Create();

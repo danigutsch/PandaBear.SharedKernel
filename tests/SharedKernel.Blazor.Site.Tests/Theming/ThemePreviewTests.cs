@@ -6,7 +6,7 @@ namespace PandaBear.Blazor.Site.Tests.Theming;
 public sealed class ThemePreviewTests : BunitContext
 {
     [Fact]
-    public void The_draft_is_applied_through_a_style_block_scoped_to_the_preview_id()
+    public void The_draft_is_applied_through_a_style_block_scoped_to_the_preview_ID()
     {
         // Arrange & Act
         var cut = Render<ThemePreview>(parameters => parameters
@@ -60,7 +60,7 @@ public sealed class ThemePreviewTests : BunitContext
     }
 
     [Fact]
-    public void Additional_attributes_cannot_replace_the_id_theme_or_width_the_preview_owns()
+    public void Additional_attributes_cannot_replace_the_ID_theme_or_width_the_preview_owns()
     {
         // Arrange & Act
         var cut = Render<ThemePreview>(parameters => parameters
@@ -260,7 +260,7 @@ public sealed class ThemePreviewTests : BunitContext
     }
 
     [Fact]
-    public void An_unsafe_scope_id_is_refused()
+    public void An_unsafe_scope_ID_is_refused()
     {
         // Arrange & Act
         var render = () => Render<ThemePreview>(parameters => parameters

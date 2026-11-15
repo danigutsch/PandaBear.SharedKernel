@@ -105,7 +105,7 @@ public sealed class SecretValidatorTests
     }
 
     [Fact]
-    public void Jwt_header_must_decode_to_json_with_alg()
+    public void JWT_header_must_decode_to_JSON_with_alg()
     {
         // Act
         var valid = JwtValidator.HasAlgorithmHeader(TestSecrets.Jwt(1));

@@ -24,7 +24,7 @@ public sealed class ServerFormSubmissionForRecordTests
     }
 
     [Fact]
-    public async Task Field_errors_link_to_the_prefixed_control_ids_with_the_default_invalid_message()
+    public async Task Field_errors_link_to_the_prefixed_control_IDs_with_the_default_invalid_message()
     {
         // Arrange
         using var submission = ServerFormSubmission.ForRecord(new EditContext(new ServerValidationModel()), ["Name"], "tour", "tour");

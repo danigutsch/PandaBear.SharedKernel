@@ -38,11 +38,21 @@ public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     private static readonly DiagnosticDescriptor XunitTestMethodNamingRule = new(
         TestingDiagnosticIds.XunitTestMethodNaming,
         title: "xUnit test methods should follow the underscore naming convention",
-        messageFormat: "xUnit test method '{0}' should follow the underscore naming convention",
+        messageFormat: "xUnit test method '{0}' should follow the underscore naming convention{1}",
         category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository testing rules require xUnit test methods to use descriptive underscore-separated names such as 'Creates_a_tour_when_the_request_is_valid'.");
+
+    private static readonly DiagnosticDescriptor InvalidAdditionalAllowedSegmentRule = new(
+        TestingDiagnosticIds.InvalidAdditionalAllowedSegment,
+        title: "Configured test method name segments must be new letter-and-digit words",
+        messageFormat: "sharedkernel_testing_additional_allowed_segments entry '{0}' is ignored: an entry must start with a letter, contain only letters and digits, and not repeat a built-in segment",
+        category: TestingCategory,
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Each comma-separated entry of sharedkernel_testing_additional_allowed_segments names one whole test method name segment, so it cannot be empty or contain underscores or other separators. An entry that equals a built-in segment ignoring case would override its forced spelling, so it is ignored too.",
+        helpLinkUri: "https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Testing.Analyzers/README.md#sktest021");
 
     private static readonly DiagnosticDescriptor XunitTestMethodRequiredTraitRule = new(
         TestingDiagnosticIds.XunitTestMethodRequiredTrait,
@@ -151,7 +161,7 @@ public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [ActivityListenerSourceIdentityRule, SutConstructionRule, TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule, AssertionDelegateInliningRule, SingleAssertionRule, ParenthesizedAssertionRule, ConditionalAssertionRule, PlaywrightAssertionRule, AssertionUserMessageOverloadRule, XunitTestScopeRule, CallProxyServiceTypeRule, PlaywrightUrlWaitRule];
+        [ActivityListenerSourceIdentityRule, SutConstructionRule, TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, InvalidAdditionalAllowedSegmentRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule, AssertionDelegateInliningRule, SingleAssertionRule, ParenthesizedAssertionRule, ConditionalAssertionRule, PlaywrightAssertionRule, AssertionUserMessageOverloadRule, XunitTestScopeRule, CallProxyServiceTypeRule, PlaywrightUrlWaitRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -171,8 +181,9 @@ public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         context.RegisterCompilationStartAction(static compilationContext =>
         {
             var optionsByTree = new ConcurrentDictionary<SyntaxTree, TestingAnalyzerConfigOptions>();
+            var reportedInvalidSegments = new ConcurrentDictionary<string, byte>(StringComparer.Ordinal);
             compilationContext.RegisterSyntaxNodeAction(
-                context => AnalyzeMethodDeclaration(context, optionsByTree),
+                context => AnalyzeMethodDeclaration(context, optionsByTree, reportedInvalidSegments),
                 SyntaxKind.MethodDeclaration);
             compilationContext.RegisterSyntaxNodeAction(
                 AnalyzeTypeDeclaration,
@@ -511,7 +522,8 @@ public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     private static void AnalyzeMethodDeclaration(
         SyntaxNodeAnalysisContext context,
-        ConcurrentDictionary<SyntaxTree, TestingAnalyzerConfigOptions> optionsByTree)
+        ConcurrentDictionary<SyntaxTree, TestingAnalyzerConfigOptions> optionsByTree,
+        ConcurrentDictionary<string, byte> reportedInvalidSegments)
     {
         if (context.Node is not MethodDeclarationSyntax methodDeclaration)
         {
@@ -540,13 +552,29 @@ public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             methodDeclaration.SyntaxTree,
             syntaxTree => TestingAnalyzerConfigOptions.Parse(context.Options.AnalyzerConfigOptionsProvider, syntaxTree));
 
-        if (!HasValidXunitMethodName(methodSymbol.Name, options.StrictTestMethodCasing))
+        foreach (var invalidSegment in options.InvalidAdditionalAllowedSegments)
         {
+            if (reportedInvalidSegments.TryAdd(invalidSegment, 0))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(InvalidAdditionalAllowedSegmentRule, Location.None, invalidSegment));
+            }
+        }
+
+        if (!HasValidXunitMethodName(methodSymbol.Name, options.StrictTestMethodCasing, options.AdditionalAllowedSegments))
+        {
+            var properties = options.AdditionalAllowedSegments.IsEmpty
+                ? ImmutableDictionary<string, string?>.Empty
+                : ImmutableDictionary<string, string?>.Empty.Add(
+                    TestMethodNameSegments.AdditionalSegmentsProperty,
+                    string.Join(",", options.AdditionalAllowedSegments));
+
             context.ReportDiagnostic(
                 Diagnostic.Create(
                     XunitTestMethodNamingRule,
                     methodDeclaration.Identifier.GetLocation(),
-                    methodSymbol.Name));
+                    properties,
+                    methodSymbol.Name,
+                    DescribeMisCasedSegments(methodSymbol.Name, options.StrictTestMethodCasing, options.AdditionalAllowedSegments)));
         }
 
         foreach (var requiredTrait in options.RequiredTraits)
@@ -753,14 +781,14 @@ public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         return methodDeclaration.Parent is TypeDeclarationSyntax;
     }
 
-    private static bool HasValidXunitMethodName(string methodName, bool strictTestMethodCasing)
+    private static bool HasValidXunitMethodName(string methodName, bool strictTestMethodCasing, ImmutableArray<string> additionalSegments)
     {
         return strictTestMethodCasing
-            ? HasStrictSentenceStyleXunitMethodName(methodName)
+            ? HasStrictSentenceStyleXunitMethodName(methodName, additionalSegments)
             : XunitMethodNamingRegex.IsMatch(methodName);
     }
 
-    private static bool HasStrictSentenceStyleXunitMethodName(string methodName)
+    private static bool HasStrictSentenceStyleXunitMethodName(string methodName, ImmutableArray<string> additionalSegments)
     {
         var segments = methodName.Split('_');
 
@@ -768,17 +796,43 @@ public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             && segments.All(static segment => segment.Length != 0)
             && char.IsUpper(segments[0][0])
             && segments[0].All(char.IsLetterOrDigit)
-            && (TestMethodNameSegments.Canonical(segments[0]) is not { } firstCanonical || firstCanonical == segments[0])
-            && segments.Skip(1).All(IsStrictSentenceStyleSegment);
+            && (TestMethodNameSegments.Canonical(segments[0], additionalSegments) is not { } firstCanonical
+                || TestMethodNameSegments.IsAcceptedSpelling(segments[0], firstCanonical)
+                || string.Equals(segments[0], Capitalize(firstCanonical), StringComparison.Ordinal))
+            && segments.Skip(1).All(segment => IsStrictSentenceStyleSegment(segment, additionalSegments));
     }
 
-    private static bool IsStrictSentenceStyleSegment(string segment)
+    private static bool IsStrictSentenceStyleSegment(string segment, ImmutableArray<string> additionalSegments)
     {
-        var canonical = TestMethodNameSegments.Canonical(segment);
+        var canonical = TestMethodNameSegments.Canonical(segment, additionalSegments);
         return segment.All(char.IsLetterOrDigit)
             && (canonical is not null
-                ? canonical == segment
+                ? TestMethodNameSegments.IsAcceptedSpelling(segment, canonical)
                 : segment.All(static character => char.IsLower(character) || char.IsDigit(character)));
+    }
+
+    private static string DescribeMisCasedSegments(string methodName, bool strictTestMethodCasing, ImmutableArray<string> additionalSegments)
+    {
+        if (!strictTestMethodCasing)
+        {
+            return string.Empty;
+        }
+
+        var corrections = methodName.Split('_')
+            .Select((segment, index) => (Segment: segment, Canonical: TestMethodNameSegments.Canonical(segment, additionalSegments), Index: index))
+            .Where(static candidate => candidate.Canonical is { } canonical
+                && !TestMethodNameSegments.IsAcceptedSpelling(candidate.Segment, canonical)
+                && !(candidate.Index == 0 && string.Equals(candidate.Segment, Capitalize(canonical), StringComparison.Ordinal)))
+            .Select(static candidate => $"'{candidate.Segment}' as '{candidate.Canonical}'")
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+
+        return corrections.Length == 0 ? string.Empty : "; write " + string.Join(", ", corrections);
+    }
+
+    private static string Capitalize(string value)
+    {
+        return value.Length == 0 ? value : char.ToUpperInvariant(value[0]) + value.Substring(1);
     }
 
     private static bool IsXunitLifecycleMethod(IMethodSymbol methodSymbol)

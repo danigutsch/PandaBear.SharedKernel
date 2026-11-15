@@ -59,7 +59,7 @@ public sealed class CancellableChildProcessTests
     }
 
     [Fact]
-    public void Reused_process_ids_do_not_match_the_original_child_identity()
+    public void Reused_process_IDs_do_not_match_the_original_child_identity()
     {
         // Arrange
         using var process = Process.GetCurrentProcess();

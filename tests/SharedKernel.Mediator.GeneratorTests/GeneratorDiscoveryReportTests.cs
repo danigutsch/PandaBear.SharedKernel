@@ -30,7 +30,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_call_graph_Json_artifact_is_not_emitted_by_default()
+    public void Generate_call_graph_JSON_artifact_is_not_emitted_by_default()
     {
         // Arrange
         var source = TestSources.DemoHeader + TestSources.GetTourWithHandler;
@@ -45,7 +45,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_call_graph_Json_artifact_when_enabled()
+    public void Generate_call_graph_JSON_artifact_when_enabled()
     {
         // Arrange
         var source = TestSources.ModuleHeader
@@ -701,7 +701,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_discovery_report_stream_handler_missing_cancellationtoken_invalid_signature_diagnostic()
+    public void Generate_discovery_report_stream_handler_missing_CancellationToken_invalid_signature_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """

@@ -26,7 +26,7 @@ public static class SharedKernelLocalFeedTests
     }
 
     [Fact]
-    public static void Reads_package_ids_from_valid_packages()
+    public static void Reads_package_IDs_from_valid_packages()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
@@ -99,7 +99,7 @@ public static class SharedKernelLocalFeedTests
     }
 
     [Fact]
-    public static void Rejects_duplicate_package_ids()
+    public static void Rejects_duplicate_package_IDs()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
@@ -135,7 +135,7 @@ public static class SharedKernelLocalFeedTests
     }
 
     [Fact]
-    public static async Task Rejects_relative_nuget_source_url()
+    public static async Task Rejects_relative_nuget_source_URL()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();

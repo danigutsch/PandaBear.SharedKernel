@@ -24,7 +24,7 @@ public sealed class K6ArgumentPolicyTests
     [Theory]
     [InlineData("--http-debug")]
     [InlineData("--http-debug=full")]
-    public void Rejects_http_debug_unless_allowed(string argument)
+    public void Rejects_HTTP_debug_unless_allowed(string argument)
     {
         // Arrange
         string[] arguments = [argument];

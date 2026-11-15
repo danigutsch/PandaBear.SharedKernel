@@ -63,7 +63,7 @@ public sealed class BitwardenCsvReaderTests
     }
 
     [Fact]
-    public void Read_warns_that_csv_omits_data_and_recommends_JSON()
+    public void Read_warns_that_CSV_omits_data_and_recommends_JSON()
     {
         // Act
         var result = BitwardenCsvReader.Read(Fixture.Read("bitwarden-csv/organization.csv"), "organization.csv");

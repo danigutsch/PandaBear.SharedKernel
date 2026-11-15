@@ -259,7 +259,7 @@ public sealed class DecisionsFileTests : IDisposable
     [InlineData("""{"version":2,"groups":[{"groupKey":"g","choices":[{"fieldPath":"notes","kind":"Pending","options":[{"originKey":"k","name":"n"}]}]}],"links":[],"splits":[]}""", "$.groups[0].choices[0].options[0].name")]
     [InlineData("""{"version":2,"groups":[],"links":[{"first":"a","second":"b","third":"c"}],"splits":[]}""", "$.links[0].third")]
     [InlineData("""{"version":2,"groups":[],"links":[],"splits":[],"findings":[{"originKey":"k","choices":[{"findingId":"f","decision":"Rejected","reason":"r"}]}]}""", "$.findings[0].choices[0].reason")]
-    public void Decisions_with_an_unknown_property_are_rejected_with_its_json_path(string json, string jsonPath)
+    public void Decisions_with_an_unknown_property_are_rejected_with_its_JSON_path(string json, string jsonPath)
     {
         // Arrange
         var action = () => DecisionsFile.Deserialize(json);
@@ -279,7 +279,7 @@ public sealed class DecisionsFileTests : IDisposable
     [InlineData("""{"version":2,"groups":[],"links":[],"splits":[{"first":"a","second":"b"}],"splits":[]}""", "$.splits")]
     [InlineData("""{"version":2,"groups":[],"links":[],"splits":[],"findings":[{"originKey":"k","choices":[{"findingId":"f","decision":"Rejected","decision":"Accepted"}]}]}""", "$.findings[0].choices[0].decision")]
     [InlineData("""{"version":2,"groups":[{"groupKey":"g","choices":[{"fieldPath":"notes","kind":"Member","originKey":"a","originKey":"b"}]}],"links":[],"splits":[]}""", "$.groups[0].choices[0].originKey")]
-    public void Decisions_with_a_repeated_property_are_rejected_with_its_json_path(string json, string jsonPath)
+    public void Decisions_with_a_repeated_property_are_rejected_with_its_JSON_path(string json, string jsonPath)
     {
         // Arrange
         var action = () => DecisionsFile.Deserialize(json);
@@ -292,7 +292,7 @@ public sealed class DecisionsFileTests : IDisposable
     }
 
     [Fact]
-    public void Read_names_the_file_and_the_json_path_of_an_unknown_property_without_its_value()
+    public void Read_names_the_file_and_the_JSON_path_of_an_unknown_property_without_its_value()
     {
         // Arrange
         const string Value = "fixture-value-in-an-unknown-property";

@@ -12,7 +12,7 @@ public sealed class ActivityPrivacyExportTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void Trace_export_removes_sensitive_http_database_object_storage_and_messaging_fields(bool upperCase)
+    public void Trace_export_removes_sensitive_HTTP_database_object_storage_and_messaging_fields(bool upperCase)
     {
         // Arrange
         string[] sensitiveAttributes =

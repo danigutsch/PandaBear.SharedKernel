@@ -454,7 +454,7 @@ public sealed class LocalCheckTests
     [Theory]
     [InlineData("""[{ "name": "hosted", "projects": ["tests/Core.Tests/Core.Tests.csproj"], "openApi": ["docs"] }]""", "generated OpenAPI documents")]
     [InlineData("""[{ "name": "hosted", "projects": ["tests/Core.Tests/Core.Tests.csproj"], "playwright": { "project": "tests/Core.Tests/Core.Tests.csproj", "browsers": ["chromium"] } }]""", "Playwright browsers")]
-    public async Task A_test_project_of_a_slice_that_needs_openapi_documents_or_browsers_is_not_run(string slices, string needs)
+    public async Task A_test_project_of_a_slice_that_needs_OpenApi_documents_or_browsers_is_not_run(string slices, string needs)
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;

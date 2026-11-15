@@ -177,7 +177,7 @@ public sealed class UserTokenManagerTests
     [InlineData("https://idp.test/realms/test", "alice", true)]
     [InlineData("https://idp.test/realms/test", "mallory", false)]
     [InlineData("https://other.test/realms/test", "alice", false)]
-    public async Task A_refreshed_id_token_is_kept_only_for_the_same_issuer_and_subject(string issuer, string subject, bool kept)
+    public async Task A_refreshed_ID_token_is_kept_only_for_the_same_issuer_and_subject(string issuer, string subject, bool kept)
     {
         // Arrange
         using var host = new BffTestHost();

@@ -160,7 +160,7 @@ public sealed class SitemapAlternatesTests
     [Theory]
     [InlineData("/relative")]
     [InlineData("ftp://example.com/file")]
-    public void Alternate_rejects_locations_that_are_not_absolute_http_urls(string location)
+    public void Alternate_rejects_locations_that_are_not_absolute_HTTP_urls(string location)
     {
         // Arrange
         var uri = new Uri(location, UriKind.RelativeOrAbsolute);

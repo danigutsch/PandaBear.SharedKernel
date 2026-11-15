@@ -317,7 +317,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
     }
 
     [Fact]
-    public async Task Working_directory_global_json_that_pins_a_missing_sdk_returns_two_with_a_one_line_error()
+    public async Task Working_directory_global_JSON_that_pins_a_missing_sdk_returns_two_with_a_one_line_error()
     {
         // Arrange
         var (_, sourcePath) = await CodeFixRunnerTestProject.Write(

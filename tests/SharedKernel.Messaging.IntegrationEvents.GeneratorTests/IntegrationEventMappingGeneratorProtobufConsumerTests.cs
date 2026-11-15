@@ -6,7 +6,7 @@ namespace PandaBear.Messaging.IntegrationEvents.GeneratorTests;
 public sealed class IntegrationEventMappingGeneratorProtobufConsumerTests
 {
     [Fact]
-    public void Protobuf_consumer_generates_a_binary_delivery_branch_without_json_metadata()
+    public void Protobuf_consumer_generates_a_binary_delivery_branch_without_JSON_metadata()
     {
         // Arrange
         const string source = """
@@ -114,7 +114,7 @@ public sealed class IntegrationEventMappingGeneratorProtobufConsumerTests
     }
 
     [Fact]
-    public void Json_and_protobuf_consumers_with_one_event_type_report_duplicate_event_types()
+    public void JSON_and_protobuf_consumers_with_one_event_type_report_duplicate_event_types()
     {
         // Arrange
         const string source = """

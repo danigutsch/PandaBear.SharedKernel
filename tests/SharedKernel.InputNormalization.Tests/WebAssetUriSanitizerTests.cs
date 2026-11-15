@@ -53,7 +53,7 @@ public sealed class WebAssetUriSanitizerTests
     }
 
     [Fact]
-    public void NormalizeRootRelativeOrHttps_rejects_overlong_uri()
+    public void NormalizeRootRelativeOrHttps_rejects_overlong_URI()
     {
         // Arrange
         const int maxLength = 2048;
@@ -140,7 +140,7 @@ public sealed class WebAssetUriSanitizerTests
     }
 
     [Fact]
-    public void NormalizeRasterDataImage_rejects_a_uri_longer_than_the_limit_and_null()
+    public void NormalizeRasterDataImage_rejects_a_URI_longer_than_the_limit_and_null()
     {
         // Arrange
         const string candidate = "data:image/png;base64,iVBORw0KGgo=";

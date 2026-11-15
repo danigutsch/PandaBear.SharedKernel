@@ -93,7 +93,7 @@ public sealed class AuthenticationEventTests
     }
 
     [Fact]
-    public async Task The_hybrid_flow_id_token_from_the_authorization_response_waits_for_the_code_redemption()
+    public async Task The_hybrid_flow_ID_token_from_the_authorization_response_waits_for_the_code_redemption()
     {
         // Arrange
         using var host = new BffTestHost();

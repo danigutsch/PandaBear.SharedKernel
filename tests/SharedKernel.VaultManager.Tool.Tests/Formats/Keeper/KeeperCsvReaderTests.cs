@@ -79,7 +79,7 @@ public sealed class KeeperCsvReaderTests
     }
 
     [Fact]
-    public void Read_warns_that_csv_loses_structure_and_recommends_JSON()
+    public void Read_warns_that_CSV_loses_structure_and_recommends_JSON()
     {
         // Act
         var result = KeeperCsvReader.Read(Fixture.Read("keeper/web.csv"), "web.csv");

@@ -111,7 +111,7 @@ public sealed class EventEnvelopeTests
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
-    public void Rejects_blank_event_id(string? eventId)
+    public void Rejects_blank_event_ID(string? eventId)
     {
         // Arrange
         Action create = () =>

@@ -75,7 +75,7 @@ public sealed class SecretRuleCatalogTests
     }
 
     [Fact]
-    public void Aws_secret_without_keyword_is_found_within_five_lines_of_an_access_key_id()
+    public void Aws_secret_without_keyword_is_found_within_five_lines_of_an_access_key_ID()
     {
         // Arrange
         string keyId = "AKIA" + TestSecrets.FromAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567", 16, 130);

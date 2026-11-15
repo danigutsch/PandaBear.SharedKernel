@@ -88,7 +88,7 @@ public sealed class InMemoryObjectStoreFailureTests
     }
 
     [Fact]
-    public static void A_get_public_uri_failure_throws_synchronously()
+    public static void A_get_public_URI_failure_throws_synchronously()
     {
         // Arrange
         var store = new InMemoryObjectStore();

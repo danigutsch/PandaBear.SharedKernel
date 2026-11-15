@@ -155,7 +155,7 @@ public sealed class SiteThemeStylesheetTests
     }
 
     [Fact]
-    public void Scoped_output_replaces_root_with_the_preview_id_and_uses_container_units()
+    public void Scoped_output_replaces_root_with_the_preview_ID_and_uses_container_units()
     {
         // Arrange & Act
         var css = SiteThemeStylesheet.RenderScoped(SiteTheme.Default, "preview-1");
@@ -177,7 +177,7 @@ public sealed class SiteThemeStylesheetTests
     [InlineData("a b")]
     [InlineData("a{}")]
     [InlineData("a\"")]
-    public void Scoped_output_refuses_an_unsafe_scope_id(string scopeId)
+    public void Scoped_output_refuses_an_unsafe_scope_ID(string scopeId)
     {
         // Arrange & Act
         var render = () => SiteThemeStylesheet.RenderScoped(SiteTheme.Default, scopeId);

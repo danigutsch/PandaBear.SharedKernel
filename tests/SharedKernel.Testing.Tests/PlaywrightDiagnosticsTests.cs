@@ -9,7 +9,7 @@ public sealed class PlaywrightDiagnosticsTests(ChromiumPageFixture chromium) : I
     private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
-    public async Task Diagnostics_describe_the_address_the_console_and_the_html()
+    public async Task Diagnostics_describe_the_address_the_console_and_the_HTML()
     {
         // Arrange
         var page = await chromium.Show("<p id='text'>Hello</p>");

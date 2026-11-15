@@ -102,7 +102,7 @@ public sealed class ErrorSummaryTests : BunitContext
     }
 
     [Fact]
-    public void Missing_title_items_or_target_ids_are_rejected()
+    public void Missing_title_items_or_target_IDs_are_rejected()
     {
         // Arrange
         var noTitle = () => this.RenderSummary(null!, Items(("a", "b")));

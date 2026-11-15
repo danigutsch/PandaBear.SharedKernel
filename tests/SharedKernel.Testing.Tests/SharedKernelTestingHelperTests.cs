@@ -17,7 +17,7 @@ namespace PandaBear.Testing.Tests;
 public sealed class SharedKernelTestingHelperTests
 {
     [Fact]
-    public static void Test_unique_id_creates_prefixed_values()
+    public static void Test_unique_ID_creates_prefixed_values()
     {
         // Act
         var value = TestUniqueId.Create("booking");
@@ -28,7 +28,7 @@ public sealed class SharedKernelTestingHelperTests
     }
 
     [Fact]
-    public static void Test_unique_id_rejects_blank_prefixes()
+    public static void Test_unique_ID_rejects_blank_prefixes()
     {
         // Arrange
         Action action = () => TestUniqueId.Create(" ");
@@ -38,7 +38,7 @@ public sealed class SharedKernelTestingHelperTests
     }
 
     [Fact]
-    public static async Task Http_response_factory_creates_utf8_json_response()
+    public static async Task HTTP_response_factory_creates_utf8_JSON_response()
     {
         // Act
         using var response = HttpResponseFactory.Json("{\"status\":\"ok\"}", HttpStatusCode.Accepted);
@@ -51,7 +51,7 @@ public sealed class SharedKernelTestingHelperTests
     }
 
     [Fact]
-    public static void Http_response_factory_rejects_null_json()
+    public static void HTTP_response_factory_rejects_null_JSON()
     {
         // Arrange
         Action action = () => HttpResponseFactory.Json(null!);
@@ -81,7 +81,7 @@ public sealed class SharedKernelTestingHelperTests
     }
 
     [Fact]
-    public static void Json_snapshot_artifact_set_matches_semantically_equal_json()
+    public static void JSON_snapshot_artifact_set_matches_semantically_equal_JSON()
     {
         // Arrange
         using var directory = TemporarySnapshotDirectory.Create();
@@ -97,7 +97,7 @@ public sealed class SharedKernelTestingHelperTests
     }
 
     [Fact]
-    public static void Json_snapshot_artifact_set_rejects_drift()
+    public static void JSON_snapshot_artifact_set_rejects_drift()
     {
         // Arrange
         using var directory = TemporarySnapshotDirectory.Create();
@@ -114,7 +114,7 @@ public sealed class SharedKernelTestingHelperTests
     }
 
     [Fact]
-    public static void Json_snapshot_artifact_set_supports_generated_file_name_overrides()
+    public static void JSON_snapshot_artifact_set_supports_generated_file_name_overrides()
     {
         // Arrange
         using var directory = TemporarySnapshotDirectory.Create();
@@ -234,7 +234,7 @@ public sealed class SharedKernelTestingHelperTests
     }
 
     [Fact]
-    public async Task Test_assert_wraps_remaining_xunit_shapes()
+    public async Task Test_assert_wraps_remaining_xUnit_shapes()
     {
         // Arrange
         int[] singleItem = [1];
@@ -289,7 +289,7 @@ public sealed class SharedKernelTestingHelperTests
     }
 
     [Fact]
-    public static async Task Should_extensions_wrap_remaining_xunit_shapes()
+    public static async Task Should_extensions_wrap_remaining_xUnit_shapes()
     {
         // Act, Assert
         "alpha".ShouldBe("ALPHA", StringComparer.OrdinalIgnoreCase);

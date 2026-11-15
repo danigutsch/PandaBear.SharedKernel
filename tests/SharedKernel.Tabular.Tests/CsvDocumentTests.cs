@@ -211,7 +211,7 @@ public class CsvDocumentTests
     }
 
     [Fact]
-    public void Create_with_rows_of_different_lengths_includes_csv_line_number_in_error_detail()
+    public void Create_with_rows_of_different_lengths_includes_CSV_line_number_in_error_detail()
     {
         // Arrange
         CsvRow[] rows =

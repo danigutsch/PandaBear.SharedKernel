@@ -94,7 +94,7 @@ public sealed class PackageValueDisplayTests
     }
 
     [Fact]
-    public void An_advisory_prints_its_id_severity_and_package_and_lists_its_affected_versions_in_order()
+    public void An_advisory_prints_its_ID_severity_and_package_and_lists_its_affected_versions_in_order()
     {
         // Act
         var advisory = AdvisoryFor("bat", "GHSA-9", "2", "1");

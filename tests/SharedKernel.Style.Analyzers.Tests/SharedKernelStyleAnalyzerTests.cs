@@ -255,7 +255,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Local_function_cancellationtoken_parameter_name_reports_skstyle002()
+    public async Task Local_function_CancellationToken_parameter_name_reports_skstyle002()
     {
         // Arrange
         const string source = """
@@ -285,7 +285,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Lambda_cancellationtoken_parameter_name_reports_skstyle002()
+    public async Task Lambda_CancellationToken_parameter_name_reports_skstyle002()
     {
         // Arrange
         const string source = """
@@ -400,7 +400,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Lambda_cancellationtoken_discard_does_not_report_skstyle002()
+    public async Task Lambda_CancellationToken_discard_does_not_report_skstyle002()
     {
         // Arrange
         const string source = """

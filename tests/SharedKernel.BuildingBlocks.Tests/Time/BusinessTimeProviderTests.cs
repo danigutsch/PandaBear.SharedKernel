@@ -23,7 +23,7 @@ public sealed class BusinessTimeProviderTests
     }
 
     [Fact]
-    public void A_utc_business_zone_keeps_the_utc_date()
+    public void A_UTC_business_zone_keeps_the_UTC_date()
     {
         // Arrange
         var provider = new BusinessTimeProvider(TimeZoneInfo.Utc, new FixedTimeProvider(Instant));

@@ -44,10 +44,12 @@ The Single fix is offered only when the resulting invocation binds to the reposi
 and compiles. Unsupported predicate expression trees, named argument forms, conditional shapes,
 and incompatible overloads require a manual migration. Fix All remains unavailable for these fixes.
 
-Strict test names preserve established terms such as `API`, `AsyncAPI`, `HTTP2`, `ValueTask`,
-`HttpClient`, `OpenApi`, `ID`, `GUID`, `CSV`, `UI`, `xUnit`, and diagnostic IDs such as `SKTEST004`.
-Standalone `Api`/`api` and `AsyncApi` are noncanonical; unrelated words ending in `api` are not
-special keywords. Canonical terms are preserved by the underscore-name code fix.
+Strict test names write listed terms in their listed spelling, such as `API`, `AsyncAPI`, `HTTP2`, `JSON`, `GUID`,
+`ID`, `UI`, `ValueTask`, `HttpClient`, `DbContext`, `xUnit`, and diagnostic IDs such as `SKTEST004`: `json` or `Json`
+as a whole segment is reported, while words that merely contain a term, such as `main`, are not. A repository adds its
+own terms with `sharedkernel_testing_additional_allowed_segments`. The underscore-name code fix applies the listed
+spelling. See the [testing analyzer README](../src/SharedKernel/SharedKernel.Testing.Analyzers/README.md#listed-segments)
+for the full list and rules.
 
 These diagnostics remain in the testing analyzer package; no Playwright dependency is added to
 neutral metadata or generic assertions. Production methods and unrelated same-named APIs are not

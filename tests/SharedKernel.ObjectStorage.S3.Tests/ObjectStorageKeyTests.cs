@@ -5,7 +5,7 @@ namespace PandaBear.ObjectStorage.S3.Tests;
 public sealed class ObjectStorageKeyTests
 {
     [Fact]
-    public void Upload_requests_preserve_the_existing_json_constructor_and_wire_shape()
+    public void Upload_requests_preserve_the_existing_JSON_constructor_and_wire_shape()
     {
         // Arrange
         var request = ObjectUploadRequest.Create(ObjectStorageKey.From("media/Case.jpg"), "image/jpeg", 10, TimeSpan.FromMinutes(5));

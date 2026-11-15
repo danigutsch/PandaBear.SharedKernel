@@ -12,7 +12,7 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
     [InlineData("../outside")]
     [InlineData("/tmp/outside")]
     [InlineData("RM/child")]
-    public async Task Verify_rejects_an_unsafe_item_id_prefix(string itemIdPrefix)
+    public async Task Verify_rejects_an_unsafe_item_ID_prefix(string itemIdPrefix)
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();

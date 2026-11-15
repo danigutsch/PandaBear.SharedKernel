@@ -10,7 +10,7 @@ namespace PandaBear.AspNetCore.Authentication.Bff.Tests;
 public sealed class CurrentUserAccessorTests
 {
     [Fact]
-    public async Task Without_blazor_the_user_comes_from_the_http_context()
+    public async Task Without_blazor_the_user_comes_from_the_HTTP_context()
     {
         // Arrange
         using var provider = CurrentUserTestServices.Build(blazor: false);

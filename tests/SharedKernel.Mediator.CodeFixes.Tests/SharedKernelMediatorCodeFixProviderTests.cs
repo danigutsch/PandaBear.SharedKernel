@@ -72,7 +72,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public void Fixable_diagnostic_ids_match_registered_mediator_fixes()
+    public void Fixable_diagnostic_IDs_match_registered_mediator_fixes()
     {
         // Arrange
         var provider = new SharedKernelMediatorCodeFixProvider();
@@ -1007,7 +1007,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_cancellationtoken_adds_parameter_to_public_handle_method()
+    public async Task Missing_CancellationToken_adds_parameter_to_public_handle_method()
     {
         // Arrange
         const string source = """
@@ -1048,7 +1048,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_cancellationtoken_forwarding_adds_ct_argument()
+    public async Task Missing_CancellationToken_forwarding_adds_ct_argument()
     {
         // Arrange
         const string source = """
@@ -1162,7 +1162,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Wrong_cancellationtoken_forwarding_replaces_argument_with_ct()
+    public async Task Wrong_CancellationToken_forwarding_replaces_argument_with_ct()
     {
         // Arrange
         const string source = """
@@ -1301,7 +1301,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_cancellationtoken_forwarding_title_uses_actual_parameter_name()
+    public async Task Missing_CancellationToken_forwarding_title_uses_actual_parameter_name()
     {
         // Arrange
         const string source = """
@@ -1338,7 +1338,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_cancellationtoken_forwarding_does_not_register_when_no_cancellationtoken_in_scope()
+    public async Task Missing_CancellationToken_forwarding_does_not_register_when_no_CancellationToken_in_scope()
     {
         // Arrange
         const string source = """
@@ -1414,7 +1414,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_cancellationtoken_adds_parameter_to_void_command_handler()
+    public async Task Missing_CancellationToken_adds_parameter_to_void_command_handler()
     {
         // Arrange
         const string source = """
@@ -1455,7 +1455,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_cancellationtoken_does_not_register_when_method_name_is_not_handle()
+    public async Task Missing_CancellationToken_does_not_register_when_method_name_is_not_handle()
     {
         // Arrange
         const string source = """
@@ -1493,7 +1493,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_cancellationtoken_forwarding_adds_ct_argument_for_publish()
+    public async Task Missing_CancellationToken_forwarding_adds_ct_argument_for_publish()
     {
         // Arrange
         const string source = """

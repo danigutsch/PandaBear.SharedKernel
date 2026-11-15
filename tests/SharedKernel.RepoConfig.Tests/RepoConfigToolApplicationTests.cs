@@ -156,7 +156,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Verify_does_not_emit_control_characters_from_an_invalid_item_id_prefix()
+    public async Task Verify_does_not_emit_control_characters_from_an_invalid_item_ID_prefix()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -183,7 +183,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Get_blocking_overview_escapes_control_characters_in_item_ids()
+    public async Task Get_blocking_overview_escapes_control_characters_in_item_IDs()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -248,7 +248,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Verify_rejects_untriaged_items_in_order_json()
+    public async Task Verify_rejects_untriaged_items_in_order_JSON()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -490,7 +490,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Verify_reports_duplicate_roadmap_ids_without_aborting_diagnostics()
+    public async Task Verify_reports_duplicate_roadmap_IDs_without_aborting_diagnostics()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -655,7 +655,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Verify_reports_missing_item_id_prefix()
+    public async Task Verify_reports_missing_item_ID_prefix()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -842,7 +842,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Verify_reports_malformed_item_integrations_when_the_item_id_is_invalid()
+    public async Task Verify_reports_malformed_item_integrations_when_the_item_ID_is_invalid()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1924,7 +1924,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Verify_reports_malformed_json_files_with_paths()
+    public async Task Verify_reports_malformed_JSON_files_with_paths()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2029,7 +2029,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Get_next_priority_orders_items_by_order_score_and_id()
+    public async Task Get_next_priority_orders_items_by_order_score_and_ID()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2068,7 +2068,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Get_next_blockers_orders_equal_blockers_by_id()
+    public async Task Get_next_blockers_orders_equal_blockers_by_ID()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2099,7 +2099,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Get_low_hanging_fruit_orders_equal_items_by_id()
+    public async Task Get_low_hanging_fruit_orders_equal_items_by_ID()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2130,7 +2130,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Get_pareto_orders_equal_score_and_effort_by_order_then_id()
+    public async Task Get_pareto_orders_equal_score_and_effort_by_order_then_ID()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2274,7 +2274,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_roadmap_syncer_preview_describes_explicit_issue_creation_without_http()
+    public async Task GitHub_roadmap_syncer_preview_describes_explicit_issue_creation_without_HTTP()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2723,7 +2723,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_project_client_rejects_missing_issue_node_id()
+    public async Task GitHub_project_client_rejects_missing_issue_node_ID()
     {
         // Arrange
         using var handler = new TestHttpMessageHandler();
@@ -2740,7 +2740,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_project_client_rejects_http_failure()
+    public async Task GitHub_project_client_rejects_HTTP_failure()
     {
         // Arrange
         using var handler = new TestHttpMessageHandler();
@@ -3541,7 +3541,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_roadmap_syncer_apply_rejects_held_issue_creation_locks_without_http_requests()
+    public async Task GitHub_roadmap_syncer_apply_rejects_held_issue_creation_locks_without_HTTP_requests()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -3569,7 +3569,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_roadmap_syncer_apply_aborts_without_http_when_create_intent_changes()
+    public async Task GitHub_roadmap_syncer_apply_aborts_without_HTTP_when_create_intent_changes()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();

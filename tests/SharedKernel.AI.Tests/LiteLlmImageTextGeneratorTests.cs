@@ -69,7 +69,7 @@ public sealed class LiteLlmImageTextGeneratorTests
     }
 
     [Fact]
-    public async Task Generate_image_text_rejects_malformed_generated_json()
+    public async Task Generate_image_text_rejects_malformed_generated_JSON()
     {
         // Arrange
         using var response = new HttpResponseMessage(HttpStatusCode.OK)
@@ -112,7 +112,7 @@ public sealed class LiteLlmImageTextGeneratorTests
     }
 
     [Fact]
-    public async Task Generate_image_text_wraps_litellm_http_failures()
+    public async Task Generate_image_text_wraps_litellm_HTTP_failures()
     {
         // Arrange
         using var response = new HttpResponseMessage(HttpStatusCode.BadGateway);
