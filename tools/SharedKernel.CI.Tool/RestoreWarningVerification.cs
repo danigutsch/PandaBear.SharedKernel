@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace PandaBear.CI.Tool;
 
 /// <summary>
-/// Classifies the NuGet restore and audit warnings in a <c>dotnet restore</c> log: high and critical vulnerability advisories
+/// Classifies the NuGet restore and audit warnings in a <c>dotnet restore</c> log: vulnerability advisories of every severity
 /// block, every other NuGet warning stays advisory. Only the warning code, package id, and package version reach the output,
 /// because restore logs carry text from package feeds.
 /// </summary>
@@ -14,11 +14,11 @@ internal static partial class RestoreWarningVerification
 {
     private const int MaxLogBytes = 16 * 1024 * 1024;
 
-    // NU1903 is a high and NU1904 a critical severity advisory; NU1901 and NU1902 are low and moderate.
-    private static readonly string[] BlockingCodes = ["NU1903", "NU1904"];
+    // NU1901, NU1902, NU1903, and NU1904 are the low, moderate, high, and critical severity advisories.
+    private static readonly string[] BlockingCodes = ["NU1901", "NU1902", "NU1903", "NU1904"];
 
     /// <summary>Verifies the log, appends a summary and writes a warning report when requested, and fails when a blocking advisory is present.</summary>
-    /// <exception cref="InvalidOperationException">The log contains a high or critical vulnerability advisory.</exception>
+    /// <exception cref="InvalidOperationException">The log contains a vulnerability advisory or an expired exception.</exception>
     public static async Task Verify(string logPath, string? summaryPath, string? reportPath, string? exceptionsPath, CancellationToken ct)
     {
         var ledger = exceptionsPath is null ? WarningExceptionLedger.Empty : await WarningExceptionLedger.Read(exceptionsPath, ct).ConfigureAwait(false);
@@ -54,7 +54,7 @@ internal static partial class RestoreWarningVerification
         if (report.Blocking > 0)
         {
             throw new InvalidOperationException(
-                "NuGet restore reported high or critical vulnerability advisories or expired exceptions:\n"
+                "NuGet restore reported vulnerability advisories or expired exceptions:\n"
                 + string.Join('\n', report.BlockingFindings.Select(static finding => "- " + finding))
                 + "\nUpdate the package or record a reviewed exception before merging.");
         }

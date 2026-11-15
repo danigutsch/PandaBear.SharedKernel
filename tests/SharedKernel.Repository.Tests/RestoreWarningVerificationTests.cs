@@ -1,6 +1,6 @@
 namespace PandaBear.Repository.Tests;
 
-/// <summary>Guards the <c>verify-restore-warnings</c> command, which fails on high and critical NuGet vulnerability warnings and reports the rest.</summary>
+/// <summary>Guards the <c>verify-restore-warnings</c> command, which fails on NuGet vulnerability warnings of every severity and reports the rest.</summary>
 public sealed class RestoreWarningVerificationTests
 {
     private const string High = "/r/src/A/A.csproj : warning NU1903: Package 'System.Foo' 1.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-aaaa-bbbb-cccc [/r/App.slnx]";
@@ -8,11 +8,14 @@ public sealed class RestoreWarningVerificationTests
     private const string Moderate = "/r/src/A/A.csproj : warning NU1902: Package 'System.Baz' 3.0.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-gggg-hhhh-iiii [/r/App.slnx]";
     private const string Low = "/r/src/A/A.csproj : warning NU1901: Package 'System.Qux' 4.0.0 has a known low severity vulnerability, https://github.com/advisories/GHSA-jjjj-kkkk-llll [/r/App.slnx]";
     private const string Compatibility = "/r/src/A/A.csproj : warning NU1701: Package 'Legacy' 1.0.0 was restored using '.NETFramework,Version=v4.6.1' [/r/App.slnx]";
+    private const string Approximation = "/r/src/A/A.csproj : warning NU1603: A 1.0.0 depends on Dep (>= 1.0.0) but Dep 1.0.0 was not found. Dep 1.0.1 was resolved instead. [/r/App.slnx]";
 
     [Theory]
+    [InlineData(Low, "NU1901 System.Qux 4.0.0")]
+    [InlineData(Moderate, "NU1902 System.Baz 3.0.0")]
     [InlineData(High, "NU1903 System.Foo 1.0.0")]
     [InlineData(Critical, "NU1904 System.Bar 2.1.0")]
-    public async Task High_and_critical_vulnerabilities_fail_with_a_remediation_and_a_summary(string warning, string finding)
+    public async Task Vulnerabilities_of_every_severity_fail_with_a_remediation_and_a_summary(string warning, string finding)
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
@@ -34,12 +37,12 @@ public sealed class RestoreWarningVerificationTests
     }
 
     [Fact]
-    public async Task Lower_severity_and_other_restore_warnings_stay_advisory_and_visible()
+    public async Task Restore_warnings_that_are_not_vulnerabilities_stay_advisory_and_visible()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
         using var scope = new RepositoryTestScope();
-        await File.WriteAllTextAsync(Path.Combine(scope.Root, "restore.log"), $"{Moderate}\n{Low}\n{Compatibility}\n", ct);
+        await File.WriteAllTextAsync(Path.Combine(scope.Root, "restore.log"), $"{Compatibility}\n{Approximation}\n", ct);
         var processes = new ProcessLog();
 
         // Act
@@ -50,7 +53,7 @@ public sealed class RestoreWarningVerificationTests
         result.ExitCode.ShouldBe(0);
         result.Error.ShouldBe(string.Empty);
         summary.ShouldContain("| Blocking | 0 |", StringComparison.Ordinal);
-        summary.ShouldContain("| Advisory | 3 |", StringComparison.Ordinal);
+        summary.ShouldContain("| Advisory | 2 |", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -61,7 +64,7 @@ public sealed class RestoreWarningVerificationTests
         using var scope = new RepositoryTestScope();
         var summaryPath = Path.Combine(scope.Root, "summary.md");
         await File.WriteAllTextAsync(summaryPath, "earlier step\n", ct);
-        await File.WriteAllTextAsync(Path.Combine(scope.Root, "restore.log"), $"{Low}\n{Low.Replace("/A/A.csproj", "/C/C.csproj", StringComparison.Ordinal)}\n", ct);
+        await File.WriteAllTextAsync(Path.Combine(scope.Root, "restore.log"), $"{Compatibility}\n{Compatibility.Replace("/A/A.csproj", "/C/C.csproj", StringComparison.Ordinal)}\n", ct);
         var processes = new ProcessLog();
 
         // Act

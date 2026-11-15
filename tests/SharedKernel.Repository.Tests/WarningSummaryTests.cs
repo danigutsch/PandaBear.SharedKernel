@@ -78,7 +78,7 @@ public sealed class WarningSummaryTests
         var ct = TestContext.Current.CancellationToken;
         using var scope = new RepositoryTestScope();
         const string Log = "/r/A.csproj : warning NU1903: Package 'System.Foo' 1.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-aaaa-bbbb-cccc [/r/App.slnx]\n"
-            + "/r/A.csproj : warning NU1901: Package 'System.Qux' 4.0.0 has a known low severity vulnerability, https://github.com/advisories/GHSA-jjjj-kkkk-llll [/r/App.slnx]\n";
+            + "/r/A.csproj : warning NU1701: Package 'Legacy' 1.0.0 was restored using '.NETFramework,Version=v4.6.1' [/r/App.slnx]\n";
         await File.WriteAllTextAsync(Path.Combine(scope.Root, "restore.log"), Log, ct);
         var processes = new ProcessLog();
 
