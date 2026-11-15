@@ -104,6 +104,35 @@ public sealed class ServerFormSubmissionTests : IDisposable
     }
 
     [Fact]
+    public async Task Clearing_the_error_hides_a_stale_general_error_and_keeps_the_field_errors()
+    {
+        // Arrange
+        var errors = ServerValidationFixtures.Errors(("Email", ["Email is required."]), ("Unknown", ["Hidden."]));
+        await _submission.Submit(() => Task.FromResult(Result.Invalid("bad", errors)));
+
+        // Act
+        var before = _submission.Error;
+        _submission.ClearError();
+
+        // Assert
+        before.ShouldBe(FailureMessage);
+        _submission.Error.ShouldBeNull();
+        _submission.Summary.Select(item => item.TargetId).ShouldBe(["form-Email"]);
+        _context.GetValidationMessages(_context.Field("Email")).ShouldBe(["Email is required."]);
+    }
+
+    [Fact]
+    public void Clearing_the_error_without_one_changes_nothing()
+    {
+        // Act
+        _submission.ClearError();
+
+        // Assert
+        _submission.Error.ShouldBeNull();
+        _submission.Summary.Count.ShouldBe(0);
+    }
+
+    [Fact]
     public async Task A_throwing_save_propagates_and_leaves_the_form_usable()
     {
         // Act

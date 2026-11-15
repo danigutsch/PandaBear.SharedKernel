@@ -12,6 +12,7 @@ public sealed class FocusFailureTests : BunitContext
     [Theory]
     [InlineData("disconnected")]
     [InlineData("canceled")]
+    [InlineData("removed")]
     [InlineData("disposed")]
     public void Error_summary_survives_a_focus_failure(string kind)
     {
@@ -30,6 +31,7 @@ public sealed class FocusFailureTests : BunitContext
     [Theory]
     [InlineData("disconnected")]
     [InlineData("canceled")]
+    [InlineData("removed")]
     [InlineData("disposed")]
     public void Upload_status_survives_a_focus_failure(string kind)
     {
@@ -52,6 +54,7 @@ public sealed class FocusFailureTests : BunitContext
     [Theory]
     [InlineData("disconnected")]
     [InlineData("canceled")]
+    [InlineData("removed")]
     [InlineData("disposed")]
     public void Error_boundary_survives_a_focus_failure(string kind)
     {

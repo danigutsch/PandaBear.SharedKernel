@@ -188,6 +188,34 @@ public sealed class EditSessionTests
     }
 
     [Fact]
+    public async Task A_conflict_message_given_to_the_session_is_shown_for_every_key()
+    {
+        // Arrange
+        using var session = new EditSession<Guid, EditSessionForm, EditSessionRecord>(["Name"], "item", "item", conflictMessage: "Someone else saved first.");
+        await session.Sync(null, _ => ValueTask.FromResult(Result.Ok(new EditSessionRecord("x", 1))), EditSessionFixtures.Fill);
+        await session.Submission!.Submit(() => Task.FromResult(Result.Conflict("stale")));
+        var forNew = session.Submission.Error;
+
+        // Act
+        await session.Sync(Guid.NewGuid(), _ => ValueTask.FromResult(Result.Ok(new EditSessionRecord("Bia", 3))), EditSessionFixtures.Fill);
+        await session.Submission!.Submit(() => Task.FromResult(Result.Conflict("stale")));
+
+        // Assert
+        forNew.ShouldBe("Someone else saved first.");
+        session.Submission.Error.ShouldBe("Someone else saved first.");
+    }
+
+    [Fact]
+    public void A_blank_conflict_message_is_rejected()
+    {
+        // Act
+        Action blank = () => _ = new EditSession<Guid, EditSessionForm, EditSessionRecord>(["Name"], "item", "item", conflictMessage: " ");
+
+        // Assert
+        blank.ShouldThrow<ArgumentException>().ParamName.ShouldBe("conflictMessage");
+    }
+
+    [Fact]
     public async Task Sync_rejects_missing_callbacks()
     {
         // Arrange

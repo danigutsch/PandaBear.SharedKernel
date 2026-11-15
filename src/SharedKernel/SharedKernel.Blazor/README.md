@@ -97,8 +97,6 @@ not a validation failure shows the constructor's `failureMessage`, except `Resul
 where retrying cannot help: set the optional init properties `ConflictMessage` and `NotFoundMessage` (fixed, caller-authored
 text; `null` falls back to `failureMessage`). A validation failure shows `Error` (the `failureMessage`) whenever the server errors left nothing to list in `Summary` or some could not
 be placed, so a failed save is never silent. Server error text is never copied into `Error`.
-`FormField<TValue>` renders a
-label tied to its control and the field's `ValidationMessage`.
 
 `Submit` is safe to wire to `EditForm` `OnSubmit`: a call made while a save is running returns `false` without running the save
 (a double click cannot save twice); every accepted call first clears the previous `Summary` and `Error`, so a throwing save leaves
@@ -108,7 +106,8 @@ nothing stale; and it calls `EditContext.Validate()` first. If the context holds
 be dropped silently and the old value saved. Messages on fields that are not in `ServerValidationOptions.KnownFields` (or on the model) still block
 the save but have no summary entry; when no message could be listed, `Error` shows the fixed failure message so the user is never
 left with a silent no-op. List every field the form shows. Call `Submit` on the renderer's context (for example
-inside the event handler), not from a background thread.
+inside the event handler), not from a background thread. `ClearError()` hides a stale `Error` without a submit, for example when the
+user acts in another part of the page and the form's old failure no longer applies; the field errors and `Summary` stay.
 
 ```csharp
 _submission = new ServerFormSubmission(_context, options, field => "customer-" + field, "We could not save. Try again later.")
@@ -124,11 +123,27 @@ not save the customer. Try again later.", "The customer was changed or removed b
 "That customer no longer exists."). Each message can be replaced through the optional `invalidMessage`, `failureMessage`,
 `conflictMessage` and `notFoundMessage` parameters.
 
+### Form fields
+
+`FormField<TValue>` renders a label tied to its control and the messages of the bound field, and ties the messages to the control
+for assistive technology (WCAG 1.3.1 and 3.3.1). Each message is a `div class="validation-message"` with a stable id,
+`{InputId}-error` for the first and `{InputId}-error-2` and so on for more. The field hands the control its attributes as the child
+content's context; spread them with `@attributes="context"`: `aria-describedby` lists the ids in `DescribedBy` (a help text, for
+example) and then the message ids, and `aria-invalid="true"` is set while the field has a message. A valid field without
+`DescribedBy` hands the control nothing. Pass the help id in `DescribedBy` rather than writing `aria-describedby` on the control,
+which would replace the field's attribute. The field re-renders when the validation state changes and must be inside an `EditForm`.
+
 ```razor
-<FormField Label="Email" InputId="customer-Email" For="() => _form.Email">
-    <InputText id="customer-Email" @bind-Value="_form.Email" />
-</FormField>
+<EditForm EditContext="_context" OnSubmit="Save" Context="form">
+    <FormField Label="Email" InputId="customer-Email" For="() => _form.Email" DescribedBy="customer-Email-help">
+        <InputText id="customer-Email" @bind-Value="_form.Email" @attributes="context" />
+        <p id="customer-Email-help">We send the booking confirmation here.</p>
+    </FormField>
+</EditForm>
 ```
+
+`EditForm` and `FormField` both name their child content's parameter `context`, so name one of them (`Context="form"` above);
+otherwise Razor reports RZ9999.
 
 ## Notes
 
@@ -147,6 +162,24 @@ Blazor keeps one component instance when the route changes between URLs that map
 `OnInitializedAsync` goes stale. Load in `OnParametersSetAsync` and ask a `ParameterTracker<T>` whether the value really changed:
 `Update(value)` returns `Initial`, `Unchanged` or `Changed`. `ConfirmationState<TKey>` keeps the "confirm this row's delete" state of a list.
 
+## Keeping focus on an inline confirmation
+
+When a button is replaced by a confirmation, the focused element leaves the page and keyboard focus falls to the document.
+`ConfirmationState<TKey>` (and `ListDelete<TKey>`, which uses it) keeps focus where the user is. Capture two elements with `@ref`:
+the control that opens each row's confirmation in `Openers[key]`, and the first harmless control inside the open confirmation
+(its Cancel button, or an optional reason field; never the confirming button) in `SafeControl`. Then call `MoveFocus()` from
+`OnAfterRenderAsync`:
+
+- `Ask(key)` moves focus to `SafeControl`.
+- `Cancel()` closes the confirmation and moves focus back to the opener of the row that was waiting.
+- `Close()` closes it without moving focus; use it after acting on the confirmation or when the page resets, where the opener may
+  not come back.
+
+Focus moves once per request, after the render that captured the element; an element that is not captured is not focused, so the
+focus handling is opt-in. `FocusHelper.TryFocus(element)` is the focus call underneath, public for a page's own focus moves: it does
+nothing for a reference no render captured, a disconnected circuit, a disposed renderer or JavaScript runtime, or an element a later
+render removed, so a focus move never fails the page. It uses `ElementReference.FocusAsync`, and the package ships no script.
+
 ## Deleting a row from a list
 
 `ListDelete<TKey>` is the whole delete flow of a list page: `Ask(key)` and `Cancel()` drive the confirmation, `IsPending(key)`
@@ -158,22 +191,51 @@ optional `conflictMessage`). `delete` returns a `ValueTask<Result>`, so `Mediato
 The class keeps no rows and no `[PersistentState]`: the page keeps its own rows (loaded with `[PersistentState]` and `??=`) and passes
 the callbacks.
 
+Focus follows the confirmation as described in [Keeping focus on an inline confirmation](#keeping-focus-on-an-inline-confirmation).
+After `Run`, a deletion that succeeded shows the optional `deletedStatus` text (caller-authored, for example "Ana Souza was
+deleted.") in `Status` and moves focus to `StatusRegion`, because the row and its buttons are gone; render `Status` in a polite status
+region (`role="status"`, `tabindex="-1"`). A conflict or another failure moves focus back to the row's opener while the page shows
+`Error`; a row that was already gone moves no focus. A deletion that ends while the user has opened another row's confirmation
+leaves focus in that confirmation. The next `Ask` or `Run` clears `Status`, and a deleted row's opener is forgotten.
+
 ```razor
-<button type="button" disabled="@_delete.IsRunning" @onclick="() => _delete.Run(row.Id, () => Mediator.Send(new DeleteCustomer(row.Id)), Reload, Remove)">Confirm</button>
+@if (_delete.Status is not null)
+{
+    <p role="status" tabindex="-1" @ref="_delete.StatusRegion">@_delete.Status</p>
+}
+@foreach (var row in Customers)
+{
+    @if (_delete.IsPending(row.Id))
+    {
+        <button type="button" disabled="@_delete.IsRunning" @onclick="() => Delete(row)">Confirm delete @row.Name</button>
+        <button type="button" @ref="_delete.SafeControl" @onclick="_delete.Cancel">Cancel</button>
+    }
+    else
+    {
+        <button type="button" @ref="_delete.Openers[row.Id]" @onclick="() => _delete.Ask(row.Id)">Delete @row.Name</button>
+    }
+}
 ```
 
 ```csharp
 private readonly ListDelete<Guid> _delete = new("We could not delete the customer. It may already be gone.");
 
+private Task Delete(CustomerListItem row) =>
+    _delete.Run(row.Id, () => Mediator.Send(new DeleteCustomer(row.Id)), Reload, Remove, $"{row.Name} was deleted.");
+
 private async Task Reload() => Customers = await Mediator.Send(new ListCustomers());
 
 private void Remove(Guid id) => Customers = [.. Customers!.Where(row => row.Id != id)];
+
+protected override Task OnAfterRenderAsync(bool firstRender) => _delete.MoveFocus();
 ```
 
 
 ## Creating or editing a record
 
-`EditSession<TKey, TForm, TRecord>` is the lifecycle of a page that creates a record (no key) or edits one (a key). Call
+`EditSession<TKey, TForm, TRecord>` is the lifecycle of a page that creates a record (no key) or edits one (a key). The constructor
+takes the known fields, the id prefix and the noun of `ServerFormSubmission.ForRecord`, and an optional `conflictMessage` that replaces
+the default conflict text for every key. Call
 `Sync(key, load, fill, onReset)` from `OnParametersSetAsync`: it returns at once while the key is unchanged; when the key changed it drops
 the previous form, record and submission, runs the optional `onReset` for the page's own state, loads the record of an existing key
 (`load` returns a `Result<TRecord>`; a failure sets `IsMissing`), copies it into the form with `fill`, and makes `Context` (the

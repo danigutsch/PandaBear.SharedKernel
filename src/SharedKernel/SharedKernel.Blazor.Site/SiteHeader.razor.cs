@@ -4,7 +4,8 @@ namespace PandaBear.Blazor.Site;
 
 /// <summary>
 /// The page banner: a brand slot, a labelled navigation and an actions slot. A navigation item with children is a native
-/// <c>details</c> disclosure, so no script is needed. The item for <see cref="CurrentPath" /> gets <c>aria-current="page"</c>.
+/// <c>details</c> disclosure, so no script is needed; it starts closed. The item for <see cref="CurrentPath" /> gets
+/// <c>aria-current="page"</c>, and the summary of the group that holds it gets <c>aria-current="true"</c>.
 /// </summary>
 /// <remarks>
 /// Matching compares paths only: the query and fragment are ignored, a missing leading slash is added, a trailing slash is
@@ -82,7 +83,7 @@ public sealed partial class SiteHeader
     private bool IsCurrent(SiteNavItem item) => CurrentPath is not null && item.Href is not null
         && string.Equals(Normalize(item.Href.Value), Normalize(CurrentPath), StringComparison.OrdinalIgnoreCase);
 
-    private bool HasCurrentChild(SiteNavItem item) => item.Children?.Any(IsCurrent) == true;
+    private string? CurrentGroup(SiteNavItem item) => item.Children?.Any(IsCurrent) == true ? "true" : null;
 
     private static string Normalize(string path)
     {
