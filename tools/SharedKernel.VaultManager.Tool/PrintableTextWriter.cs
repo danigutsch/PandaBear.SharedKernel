@@ -6,14 +6,19 @@ namespace PandaBear.VaultManager.Tool;
 
 /// <summary>
 /// Writes text to another writer as <see cref="PrintableText.OneLine"/> does, except that line breaks stay: a line feed,
-/// and a carriage return directly before a line feed in the same write. Every other control character and every
-/// bidirectional embedding, override, and isolate becomes <see cref="PrintableText.Replacement"/>, and a tab, any other
-/// carriage return, and a line or paragraph separator become spaces. Each write goes through at once; the writer does not own the other writer.
+/// and a carriage return directly before a line feed in the same write. Every other control character, every format
+/// character, such as a bidirectional mark, embedding, override, or isolate or a zero-width character, every other
+/// default ignorable code point except a variation selector, and every unpaired surrogate becomes
+/// <see cref="PrintableText.Replacement"/>, and a tab, any other carriage return, and a line or paragraph separator become
+/// spaces. Each write goes through at once, except a high surrogate at its end, which waits for the low surrogate that the
+/// next write may start with, so that a surrogate pair written in two parts stays; <see cref="Flush"/> and disposal write a
+/// high surrogate still waiting as <see cref="PrintableText.Replacement"/>. The writer does not own the other writer.
 /// </summary>
 [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "The other writer belongs to the caller, such as the console.")]
 internal sealed class PrintableTextWriter : TextWriter
 {
     private readonly TextWriter inner;
+    private char? pendingHighSurrogate;
 
     /// <summary>Creates a writer that writes printable text to another writer, with the line break of that writer.</summary>
     /// <param name="inner">Writer that receives the printable text.</param>
@@ -30,22 +35,37 @@ internal sealed class PrintableTextWriter : TextWriter
     public override Encoding Encoding => inner.Encoding;
 
     /// <inheritdoc/>
-    public override void Write(char value) => inner.Write(value == '\n' ? "\n" : PrintableText.OneLine(value.ToString()));
+    public override void Write(char value) => WritePrintable(value.ToString());
 
     /// <inheritdoc/>
     public override void Write(string? value)
     {
         if (value is not null)
         {
-            inner.Write(Printable(value));
+            WritePrintable(value);
         }
     }
 
     /// <inheritdoc/>
-    public override void Write(char[] buffer, int index, int count) => inner.Write(Printable(new string(buffer, index, count)));
+    public override void Write(char[] buffer, int index, int count) => WritePrintable(new string(buffer, index, count));
 
     /// <inheritdoc/>
-    public override void Flush() => inner.Flush();
+    public override void Flush()
+    {
+        WritePendingHighSurrogate();
+        inner.Flush();
+    }
+
+    /// <inheritdoc/>
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            WritePendingHighSurrogate();
+        }
+
+        base.Dispose(disposing);
+    }
 
     private static string Printable(string text)
     {
@@ -55,15 +75,51 @@ internal sealed class PrintableTextWriter : TextWriter
             return text;
         }
 
-        return string.Create(text.Length, (Source: text, Printable: printable), static (span, texts) =>
+        // OneLine can shorten the text, so each line is made printable on its own and the line breaks are kept between.
+        var lines = new StringBuilder(text.Length);
+        int start = 0;
+        for (int index = 0; index < text.Length; index++)
         {
-            string source = texts.Source;
-            for (int index = 0; index < source.Length; index++)
+            int lineBreak = text[index] == '\n' ? 1
+                : text[index] == '\r' && index + 1 < text.Length && text[index + 1] == '\n' ? 2
+                : 0;
+            if (lineBreak > 0)
             {
-                char character = source[index];
-                bool lineBreak = character == '\n' || (character == '\r' && index + 1 < source.Length && source[index + 1] == '\n');
-                span[index] = lineBreak ? character : texts.Printable[index];
+                lines.Append(PrintableText.OneLine(text[start..index])).Append(text, index, lineBreak);
+                index += lineBreak - 1;
+                start = index + 1;
             }
-        });
+        }
+
+        return lines.Append(PrintableText.OneLine(text[start..])).ToString();
+    }
+
+    private void WritePrintable(string text)
+    {
+        if (pendingHighSurrogate is char highSurrogate)
+        {
+            pendingHighSurrogate = null;
+            text = highSurrogate + text;
+        }
+
+        if (text.Length > 0 && char.IsHighSurrogate(text[^1]))
+        {
+            pendingHighSurrogate = text[^1];
+            text = text[..^1];
+        }
+
+        if (text.Length > 0)
+        {
+            inner.Write(Printable(text));
+        }
+    }
+
+    private void WritePendingHighSurrogate()
+    {
+        if (pendingHighSurrogate is not null)
+        {
+            pendingHighSurrogate = null;
+            inner.Write(PrintableText.Replacement);
+        }
     }
 }

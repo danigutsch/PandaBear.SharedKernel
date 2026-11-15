@@ -1,4 +1,6 @@
 using System.Buffers;
+using System.Globalization;
+using System.Text;
 
 namespace PandaBear.Vault.IO;
 
@@ -9,25 +11,37 @@ namespace PandaBear.Vault.IO;
 public static class PrintableText
 {
     /// <summary>
-    /// Character printed in place of a control character other than a line break or tab, and in place of a bidirectional
-    /// embedding, override, or isolate: U+FFFD.
+    /// Character printed in place of a control character other than a line break or tab, a format character such as a
+    /// bidirectional mark, embedding, override, or isolate or a zero-width character, another default ignorable code
+    /// point, and an unpaired surrogate: U+FFFD.
     /// </summary>
-    public const char Replacement = '\uFFFD';
-
-    // C0 controls, DEL, and C1 controls; the line and paragraph separators; and the bidirectional embeddings, overrides,
-    // and isolates, which reorder the text around them.
-    private static readonly SearchValues<char> Unprintable = SearchValues.Create(
-        "\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u0008\u0009\u000A\u000B\u000C\u000D\u000E\u000F"
-        + "\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001A\u001B\u001C\u001D\u001E\u001F"
-        + "\u007F\u0080\u0081\u0082\u0083\u0084\u0085\u0086\u0087\u0088\u0089\u008A\u008B\u008C\u008D\u008E\u008F"
-        + "\u0090\u0091\u0092\u0093\u0094\u0095\u0096\u0097\u0098\u0099\u009A\u009B\u009C\u009D\u009E\u009F"
-        + "\u2028\u2029\u202A\u202B\u202C\u202D\u202E\u2066\u2067\u2068\u2069");
+    public const char Replacement = '�';
 
     /// <summary>
-    /// Returns the text on one line: carriage returns, line feeds, tabs, and the line and paragraph separators U+2028 and
-    /// U+2029 become spaces, and every other control character (C0, DEL, and C1) and every bidirectional embedding,
-    /// override, and isolate (U+202A to U+202E and U+2066 to U+2069) becomes <see cref="Replacement"/>. The text can
-    /// therefore neither start a line, nor carry a terminal escape sequence, nor reorder the text printed around it.
+    /// Returns the text on one line, with every character that is invisible or changes how the text around it shows
+    /// neutralized, code point by code point:
+    /// <list type="bullet">
+    /// <item><description>
+    /// Carriage returns, line feeds, tabs, and the line and paragraph separators U+2028 and U+2029 become spaces.
+    /// </description></item>
+    /// <item><description>
+    /// Every other code point in the general category Cc (control: C0, DEL, and C1) or Cf (format, such as the
+    /// bidirectional marks U+200E, U+200F, and U+061C, the embeddings, overrides, and isolates U+202A to U+202E and U+2066
+    /// to U+2069, the zero-width characters U+200B to U+200D, U+2060, and U+FEFF, the soft hyphen U+00AD, and the tag
+    /// characters U+E0001 and U+E0020 to U+E007F) becomes one <see cref="Replacement"/>.
+    /// </description></item>
+    /// <item><description>
+    /// Every other code point with the Unicode property Default_Ignorable_Code_Point, other than a variation selector,
+    /// becomes one <see cref="Replacement"/>: U+034F, the Hangul fillers U+115F, U+1160, U+3164, and U+FFA0, U+17B4,
+    /// U+17B5, and the reserved U+2065, U+FFF0 to U+FFF8, U+E0000, U+E0002 to U+E001F, U+E0080 to U+E00FF, and U+E01F0
+    /// to U+E0FFF.
+    /// </description></item>
+    /// <item><description>Each unpaired surrogate becomes one <see cref="Replacement"/>.</description></item>
+    /// </list>
+    /// A code point outside the Basic Multilingual Plane, two UTF-16 code units, also becomes a single
+    /// <see cref="Replacement"/>, so the result can be shorter than <paramref name="text"/>. Every other code point,
+    /// including a valid surrogate pair such as an emoji, stays as it is. The text can therefore neither start a line, nor
+    /// carry a terminal escape sequence, nor reorder the text printed around it, nor hold a character that does not show.
     /// </summary>
     /// <param name="text">Text.</param>
     /// <returns>The printable text, or <paramref name="text"/> itself when it has no such character.</returns>
@@ -36,24 +50,42 @@ public static class PrintableText
     {
         ArgumentNullException.ThrowIfNull(text);
 
-        if (!text.AsSpan().ContainsAny(Unprintable))
+        int first = IndexOfUnprintable(text);
+        if (first < 0)
         {
             return text;
         }
 
-        return string.Create(text.Length, text, static (span, source) =>
+        var printable = new StringBuilder(text.Length);
+        printable.Append(text, 0, first);
+        int index = first;
+        while (index < text.Length)
         {
-            for (int index = 0; index < source.Length; index++)
+            if (Rune.DecodeFromUtf16(text.AsSpan(index), out Rune rune, out int length) != OperationStatus.Done)
             {
-                char character = source[index];
-                span[index] = character switch
-                {
-                    '\r' or '\n' or '\t' or '\u2028' or '\u2029' => ' ',
-                    _ when Unprintable.Contains(character) => Replacement,
-                    _ => character,
-                };
+                // An unpaired surrogate: a high surrogate without a low one after it, or a low one without a high one.
+                printable.Append(Replacement);
+                index += Math.Max(length, 1);
+                continue;
             }
-        });
+
+            if (rune.Value is '\r' or '\n' or '\t' or 0x2028 or 0x2029)
+            {
+                printable.Append(' ');
+            }
+            else if (IsUnprintable(rune))
+            {
+                printable.Append(Replacement);
+            }
+            else
+            {
+                printable.Append(text, index, length);
+            }
+
+            index += length;
+        }
+
+        return printable.ToString();
     }
 
     /// <summary>Returns <see cref="OneLine"/> text with every <c>|</c> escaped, for a Markdown table cell.</summary>
@@ -61,4 +93,36 @@ public static class PrintableText
     /// <returns>The cell text.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
     public static string TableCell(string text) => OneLine(text).Replace("|", "\\|", StringComparison.Ordinal);
+
+    private static int IndexOfUnprintable(string text)
+    {
+        int index = 0;
+        while (index < text.Length)
+        {
+            if (Rune.DecodeFromUtf16(text.AsSpan(index), out Rune rune, out int length) != OperationStatus.Done
+                || IsUnprintable(rune))
+            {
+                return index;
+            }
+
+            index += length;
+        }
+
+        return -1;
+    }
+
+    private static bool IsUnprintable(Rune rune) =>
+        Rune.GetUnicodeCategory(rune) is UnicodeCategory.Control or UnicodeCategory.Format or UnicodeCategory.LineSeparator
+            or UnicodeCategory.ParagraphSeparator
+        || IsOtherDefaultIgnorable(rune.Value);
+
+    // The code points with Default_Ignorable_Code_Point=Yes (DerivedCoreProperties.txt, Unicode 18.0) outside Cf, other
+    // than the variation selectors U+180B to U+180D, U+180F, U+FE00 to U+FE0F, and U+E0100 to U+E01EF, which select the
+    // glyph of the character before them and are part of emoji and ideographic variation sequences. The reserved ones
+    // are kept for future format characters, so they are neutralized before a terminal with newer Unicode data hides them.
+    private static bool IsOtherDefaultIgnorable(int codePoint) =>
+        codePoint is 0x034F or 0x115F or 0x1160 or 0x17B4 or 0x17B5 or 0x2065 or 0x3164 or 0xFFA0
+            or (>= 0xFFF0 and <= 0xFFF8)
+            or (>= 0xE0000 and <= 0xE00FF)
+            or (>= 0xE01F0 and <= 0xE0FFF);
 }

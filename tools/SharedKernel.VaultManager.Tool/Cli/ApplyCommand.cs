@@ -250,8 +250,10 @@ internal static class ApplyCommand
     }
 
     // A change line names items, fields, folders, and addresses read from the vault or typed into the catalog. Control,
-    // bidirectional, zero-width, and other format characters show visibly, so they cannot spoof a name on the terminal.
-    private static string Printable(string line) => DecisionsFile.EscapeFormatCharacters(PrintableText.OneLine(line));
+    // bidirectional, zero-width, and other format characters show visibly, so they cannot spoof a name on the terminal:
+    // format characters are escaped as \uXXXX first, so they show by code point rather than as U+FFFD, and PrintableText
+    // then neutralizes the rest, such as controls, other default ignorable code points, and unpaired surrogates.
+    private static string Printable(string line) => PrintableText.OneLine(DecisionsFile.EscapeFormatCharacters(line));
 
     private static bool PasswordsCanBeAsked(ApplyArguments arguments, IReadOnlyList<VaultFileFormat?> formats, bool isInteractive, TextWriter error)
     {
