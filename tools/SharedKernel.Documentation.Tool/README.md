@@ -9,7 +9,7 @@ against source files.
 
 ## Prerequisites
 
-The tool targets .NET 10 and rolls forward to a later major runtime, such as .NET 11, when .NET 10 is not installed. Run the tool from the repository root. The `--config` path, `docsPath`, and every `sourcePath`
+The tool targets the repository's .NET version (`SharedKernelTargetFramework`) and rolls forward to a later major runtime when that one is not installed. Run the tool from the repository root. The `--config` path, `docsPath`, and every `sourcePath`
 and `documentPath` in the configuration resolve against the current directory; each block's `targetPath`
 resolves against `docsPath`. `docsPath` must stay inside the current directory, and `check` accepts only
 relative paths inside the current directory.

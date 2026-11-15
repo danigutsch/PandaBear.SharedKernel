@@ -18,11 +18,11 @@ sharedkernel-codefix --version
 
 ## Prerequisites
 
-The tool runs on the newest installed .NET runtime, .NET 10 or later, and loads the target through MSBuildLocator and MSBuildWorkspace. Each starts from
+The tool runs on the newest installed .NET runtime, at least the repository's .NET version (`SharedKernelTargetFramework`, .NET 11), and loads the target through MSBuildLocator and MSBuildWorkspace. Each starts from
 the .NET SDK that `dotnet` selects for a directory, honoring `global.json`:
 
-- A .NET 10 SDK. MSBuildLocator loads MSBuild into the tool from the SDK selected for the current
-  directory, or from the newest installed .NET 10 SDK when the selected SDK is newer than .NET 10.
+- An SDK of the tool's .NET version or later. MSBuildLocator loads MSBuild into the tool from the SDK selected for the
+  current directory, or from the newest installed SDK that the runtime can load when the selected SDK is newer.
 - An SDK that can build the target. MSBuildWorkspace loads the target in a separate build host with the
   SDK selected for the target's directory.
 - A restored target. Without restored packages, symbols such as xUnit's `[Fact]` do not resolve, and the

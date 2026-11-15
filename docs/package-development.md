@@ -4,8 +4,8 @@
 Install the SDK pinned in `global.json`. Provider integration tests require a working container runtime; NativeAOT checks also require the platform
 native build toolchain.
 
-Analyzer and source-generator packages retain the Roslyn 5.9 compiler API baseline, the compiler of .NET SDK 10.0.4xx, so consumers can use compatible .NET 10 SDKs without upgrading
-to this repository's development SDK. The repository SDK and runtime dependencies can advance independently of that compiler compatibility floor.
+Analyzer and source-generator packages retain the Roslyn 5.12 compiler API baseline, the compiler of .NET SDK 11.0.100, which every consumer
+needs to target .NET 11, so consumers do not have to move to a newer SDK than the one their target framework requires. The repository SDK and runtime dependencies can advance independently of that compiler compatibility floor.
 
 ```sh
 dotnet restore SharedKernel.slnx --locked-mode
@@ -48,7 +48,6 @@ Candidate manifests mark unavailable consumer, baseline, and platform evidence a
 ```sh
 dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- validate-candidate --aot
 dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- consume-candidate --candidate <candidate.json> --aot
-dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- consume-candidate --candidate <candidate.json> --framework net10.0 --framework net11.0
 ```
 
 Candidate packages and their manifest can be copied together to another machine; consumption regenerates configuration for the current feed location.
@@ -95,7 +94,7 @@ and `PublishRepositoryUrl`, so packed metadata and Source Link data come from on
 also pack a `snupkg` symbol package; Roslyn components (`IsRoslynComponent`) are excluded from symbol packages. Repository
 convention tests in `tests/SharedKernel.Repository.Tests` fail the build when a packable project misses any of these. Packed `.nuspec` files record the repository commit through the SDK's Source Link support, with no extra package.
 
-`src/Directory.Build.targets` enables `EnablePackageValidation` for every package with more than one target framework. Without `PackageValidationBaselineVersion` it runs only the compatible-framework check, which fails the pack with CP0002 when one framework's assembly lacks an API of another. The baseline validator stays off: it compares a package with a previously released stable version, and no stable version exists while all packages are preview. Set `PackageValidationBaselineVersion` when the first stable release is authorized.
+Every package builds one target framework, so package validation is off. A package with several frameworks would set `EnablePackageValidation`; without `PackageValidationBaselineVersion` it runs only the compatible-framework check (CP0002). The baseline validator stays off: it compares a package with a previously released stable version, and no stable version exists while all packages are preview. Set `PackageValidationBaselineVersion` when the first stable release is authorized.
 
 ### Source generator packages
 

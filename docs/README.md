@@ -15,7 +15,7 @@
 - [Package development and validation](package-development.md)
 - [API contract versioning](API_VERSIONING.md)
 - [Exception documentation](EXCEPTION_DOCUMENTATION.md)
-- [Supporting .NET 10 and .NET 11](dotnet-multi-targeting.md)
+- [.NET versions and target frameworks](dotnet-multi-targeting.md)
 - [Rich domain model agent skill](../.agents/skills/ddd-rich-domain-model/SKILL.md)
 - [Multi-targeting agent skill](../.agents/skills/dotnet-multi-targeting/SKILL.md)
 - [ASP.NET Core error and security telemetry](aspnetcore-error-and-security-telemetry.md)
