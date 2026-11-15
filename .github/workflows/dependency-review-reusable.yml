@@ -86,6 +86,11 @@ jobs:
           ref: ${{ inputs.source-ref }}
           path: tool-source
           persist-credentials: false
+          sparse-checkout: |
+            .github
+            src
+            tools
+          sparse-checkout-cone-mode: true
 
       - name: Set up the SDK and build the RepoConfig tool
         if: inputs.review-required == 'true' && inputs.verify-license-exceptions

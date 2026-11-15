@@ -106,7 +106,7 @@ account. Unrelated labels use separate concurrency groups and cannot cancel vali
 
 The source workflow selects test projects once with `sharedkernel-ci select`, as `.config/sharedkernel-ci.json`
 configures, then overlaps one `validate` job per test slice with selected test projects, which runs `sharedkernel-ci run
---slice <name>`, source builds of the CI and RepoConfig tools from a checkout of the revision on Linux and Windows, and candidate
+--slice <name>`, source builds of the CI and RepoConfig tools from a `src` and `tools` cone checkout on Linux and Windows, and candidate
 creation. A change to a project selects the test projects that depend on it; a change to a repository-wide build input
 (`.config`, `.github`, `*.props`, `*.targets`, `*.slnx`, analyzer configuration, `global.json`, `NuGet.Config`, the
 style analyzer tests, or the shared test configuration) selects every test project. Any project change runs the

@@ -58,6 +58,11 @@ jobs:
           ref: ${{ inputs.source-ref }}
           path: tool-source
           persist-credentials: false
+          sparse-checkout: |
+            .github
+            src
+            tools
+          sparse-checkout-cone-mode: true
 
       - name: Checkout exact dependency inputs
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2

@@ -19,9 +19,9 @@ event, so the squash header and breaking-change footers follow one definition.
 | `source-repository` | empty | Repository that holds the CI tool source. Empty builds the tool from the calling repository, as SharedKernel does. A consumer sets `danigutsch/PandaBear.SharedKernel`. |
 | `source-ref` | empty | Full 40-character lowercase commit SHA of the tool source. Required when `source-repository` is set; the job fails otherwise. |
 
-The job has `contents: read` and receives no secrets. The tool is built from a depth-1 checkout of the whole
-source revision, so it needs no list of the libraries the tool references, in locked restore mode with the SDK of that
-checkout's `global.json`.
+The job has `contents: read` and receives no secrets. The tool is built from a cone sparse checkout of `.github`,
+`src`, and `tools` at the source revision, which needs no list of the libraries the tool references, in locked restore
+mode with the SDK of that checkout's `global.json`.
 
 The caller owns the trigger, the concurrency group, and the `ci:rerun` label rule, because a called workflow cannot
 share the caller's concurrency group without deadlocking. Copy this contract:
@@ -97,7 +97,7 @@ dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release -- verify-act
 ```
 
 A consumer builds the tool from its pinned SharedKernel revision and passes `--manifest` with the manifest of that
-same revision (the depth-1 checkout of the whole revision already contains `.github/action-pins.json`), so both
+same revision (add `.github` to the `src` and `tools` cone of that checkout, because cone mode takes directories, not single files), so both
 repositories fail on the same drift. The check lists the file, line, and reason for each violation. A `uses:` it cannot parse (value on the next line, flow mapping) is a violation, and a root without `.github/workflows` is an error.
 
 An action that only a consumer uses must be added to this repository's manifest first; a consumer has no manifest of its own, so an unlisted action fails its check until then.

@@ -41,8 +41,8 @@ dotnet tool run sharedkernel-ci -- verify-commit-message --file <commit-message-
 
 .NET tools run in full trust. Install only from trusted manifests and package sources.
 
-The tool also builds from a depth-1 checkout of the SharedKernel revision, for jobs that run before a candidate
-exists. Its only package dependency is
+The tool also builds from a cone sparse checkout of `src` and `tools` at the SharedKernel revision, for jobs that run
+before a candidate exists. Its only package dependency is
 System.CommandLine. In this repository, run the project
 without installing it:
 

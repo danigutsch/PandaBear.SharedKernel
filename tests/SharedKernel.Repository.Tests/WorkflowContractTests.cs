@@ -29,7 +29,7 @@ public sealed class WorkflowContractTests
     }
 
     [Fact]
-    public void Source_build_builds_each_source_runnable_tool_from_a_full_checkout_and_runs_it_from_outside()
+    public void Source_build_builds_each_source_runnable_tool_from_the_src_and_tools_cone_and_runs_it_from_outside()
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
@@ -53,9 +53,9 @@ public sealed class WorkflowContractTests
         job.ShouldContain("    needs: selection\n    if: needs.selection.outputs.build_required == 'true'\n", StringComparison.Ordinal);
         job.ShouldContain("        os: [ubuntu-latest, windows-latest]\n        tool: [SharedKernel.CI.Tool, SharedKernel.RepoConfig.Tool]\n", StringComparison.Ordinal);
         job.ShouldContain(
-            "      " + checkout + "\n        with:\n          path: source-build\n          persist-credentials: false\n      - uses:",
+            "      " + checkout + "\n        with:\n          path: source-build\n          persist-credentials: false\n"
+                + "          sparse-checkout: |\n            src\n            tools\n          sparse-checkout-cone-mode: true\n      - uses:",
             StringComparison.Ordinal);
-        job.ShouldNotContain("sparse-checkout", "A full checkout of the revision needs no list of the libraries each tool references.");
         job.ShouldContain("          global-json-file: source-build/global.json\n", StringComparison.Ordinal);
         job.ShouldContain(
             "        working-directory: source-build\n        shell: bash\n        env:\n          TOOL: ${{ matrix.tool }}\n"

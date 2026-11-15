@@ -38,9 +38,9 @@ tools, written as .NET file-based (single-file) apps.
 - **`SourceRunnableToolConventionTests` and its rule are removed.** The rule kept `SharedKernel.CI.Tool` and
   `SharedKernel.RepoConfig.Tool` free of project references so that a sparse checkout of `tools/<tool>` and
   `tools/Shared` could build them. These tools now reference their engines normally. What stays a requirement is that
-  a consumer can still build them from source before a candidate exists. It checks out the whole revision at depth 1,
-  so the checkout needs no list of the libraries a tool references (see [Shared capabilities and source
-  builds](#shared-capabilities-and-source-builds)).
+  a consumer can still build them from source before a candidate exists. It checks out the fixed cone `src` and
+  `tools` of the revision, so the checkout needs no list of the libraries a tool references (see [Shared capabilities
+  and source builds](#shared-capabilities-and-source-builds)).
 - **Tools move one at a time,** each behind its existing command-line tests with no behavior change.
   `SharedKernel.PlaywrightMcp.Tool` is the pilot: its engine is `SharedKernel.PlaywrightMcp`, and the tool keeps
   `Program.cs` and the command tree. Sandbox, RepoConfig, CI, and VaultManager follow.
@@ -84,11 +84,15 @@ shared change, not inside an engine.
 
 `sharedkernel-ci` and `sharedkernel-repo` build from a checkout of the revision before a candidate exists. A sparse
 cone listing `tools/<tool>` and each referenced `src/SharedKernel/<library>` had to grow with every engine, here and in
-each consumer. Measured on 2026-11-15 at the revision that merged the pilot: a depth-1 checkout of the whole revision
-is a 4 MiB pack and 32 MB of files against 6 MB for the sparse cone, both fetched and checked out in under a second
-locally, and building either tool took 3 to 10 seconds in both, dominated by restore and compiler start. The full
-checkout also builds the repository's style analyzers, as every other build here does. Workflows and consumers
-therefore check out the whole revision at depth 1 (the `actions/checkout` default) and keep no library list.
+each consumer. The checkout is now the fixed cone `src` and `tools` at depth 1 (plus `.github` where a job uses the
+repository's actions or action pin manifest), which holds every library and tool, whatever they reference. Measured
+on 2026-11-15 at the revision that merged the pilot: the cone is 13 MB of files against 6 MB for the per-library cone
+and 32 MB for the whole revision (a 4 MiB pack); each fetches and checks out in under half a second locally, and a
+tool builds in 3 to 14 seconds in each, dominated by restore and compiler start. The cone also builds the
+repository's style analyzers, as every other build here does. The whole revision is not an option on Windows:
+generated files under `samples/` and `tests/` have paths of up to 206 characters, which with a runner workspace prefix
+pass the 260-character limit, and `actions/checkout` fails with "Filename too long". The longest path under `src` is
+145 characters and under `tools` 86; a convention test may cap them later if they grow.
 
 ## Packaging evidence
 
@@ -117,8 +121,8 @@ future SDK lets a solution or a test project include one.
 
 - A tool package carries the assemblies of the libraries it references, as it already carried System.CommandLine.
   Each library is also its own preview package.
-- Workflows and consumers that build `sharedkernel-ci` or `sharedkernel-repo` from source check out the whole revision
-  at depth 1 instead of a sparse cone, so a new engine reference changes no workflow or consumer.
+- Workflows and consumers that build `sharedkernel-ci` or `sharedkernel-repo` from source check out the fixed cone
+  `src` and `tools` instead of a per-library cone, so a new engine reference changes no workflow or consumer.
 - `PandaBear.SharedKernel.Packages` changes its public API: `IProcessRunner`, `ProcessOutput`, and `SystemProcessRunner`
   move to `PandaBear.Processes`, and the bounded runner is `BoundedProcessRunner`. Packages are preview, so this is
   allowed, and consumers update their namespace and runner type.

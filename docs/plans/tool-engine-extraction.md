@@ -75,13 +75,13 @@ project, its engine libraries and their test projects, and its own README and do
 
 Phase 2 owners keep every command, option, exit code, output, and README command line unchanged, and the tool's
 command-line tests pass with unchanged assertions; engine unit tests go to the engine's own test project. Owners A
-and B need no workflow or consumer change for their new engine references, because source builds check out the whole
-revision.
+and B need no workflow or consumer change for their new engine references, because source builds check out the fixed
+`src` and `tools` cone.
 
 ## Building CI and RepoConfig from source
 
 Workflows and consumers build `sharedkernel-ci` and `sharedkernel-repo` from a checkout of the revision before a
 candidate exists. Each new engine reference used to add a `src/SharedKernel/<library>` line to every sparse checkout
-list here and in consumers. The checkout is now the whole revision at depth 1, so the lists need no maintenance. See
-[Running before a candidate is staged](../command-line-tools.md#running-before-a-candidate-is-staged) for the cost
-comparison.
+list here and in consumers. The checkout is now the fixed cone `src` and `tools` (plus `.github` where needed), so the
+lists need no maintenance. The whole revision does not check out on Windows because of long generated paths under
+`samples/` and `tests/`. See [Running before a candidate is staged](../command-line-tools.md#running-before-a-candidate-is-staged).

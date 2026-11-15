@@ -15,7 +15,7 @@ the consuming repository supplies them, as [Consumer configuration](#consumer-co
 - Candidates pack the tools named in `SharedKernelPackagePlanner.PackagedTools`. A convention test requires every
   `PackAsTool` project in that list, except `SharedKernel.VaultManager.Tool`, which candidates do not ship.
 - `SharedKernel.CI.Tool` and `SharedKernel.RepoConfig.Tool` also run from source before a candidate exists. CI builds
-  each from a depth-1 checkout of the whole revision on Linux and Windows, then runs it from outside the checkout, as
+  each from a cone sparse checkout of `src` and `tools` on Linux and Windows, then runs it from outside the checkout, as
   [Running before a candidate is staged](#running-before-a-candidate-is-staged) describes. A change to a tool's
   project references needs no workflow or consumer change.
 - Ship framework-dependent tool packages. Add
@@ -155,13 +155,12 @@ non-interactive commands and to how they start a UI.
 A consumer job that runs before its pinned candidate is staged, such as the job that stages it, builds
 `sharedkernel-ci` or `sharedkernel-repo` from SharedKernel source at the pin's `libraryRevision`:
 
-1. Check out that whole revision of `danigutsch/PandaBear.SharedKernel` at depth 1 into a directory of its own, as
-   `actions/checkout` does by default. Do not use a sparse checkout: it would have to list every
-   `src/SharedKernel/<library>` the tool references, directly or transitively, and that list grows with each engine.
-   Measured at the revision that merged the engine pilot, the whole revision is a 4 MiB pack and 32 MB of files
-   against 6 MB for the sparse cone, fetch and checkout take under a second either way, and the tool builds take the
-   same few seconds; the [tool engines ADR](adr/20261115-tool-engines-and-thin-wrappers.md#shared-capabilities-and-source-builds)
-   records the comparison.
+1. Check out that revision of `danigutsch/PandaBear.SharedKernel` at depth 1 into a directory of its own, with a cone
+   sparse checkout of `src` and `tools` (add `.github` when the job also uses the repository's actions or action pin
+   manifest). The cone holds every library a tool can reference, so it never changes when a tool gains an engine. Do
+   not check out the whole revision on Windows: generated files under `samples/` and `tests/` pass the 260-character
+   path limit. The [tool engines ADR](adr/20261115-tool-engines-and-thin-wrappers.md#shared-capabilities-and-source-builds)
+   records the measurements.
 2. Build inside that checkout with `dotnet build tools/<project> -c Release`, so SharedKernel's `global.json`,
    `NuGet.Config`, and the tool's lock file apply.
 3. Run `dotnet run --project <checkout>/tools/<project> -c Release --no-build -- <command>`.
