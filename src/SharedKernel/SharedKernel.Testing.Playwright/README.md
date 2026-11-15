@@ -40,8 +40,8 @@ accessible names of other roles are not checked; use an engine such as axe-core 
 ## Browser tests of a Blazor application
 
 `KestrelPageTest<TEntryPoint>` is the base class for tests that run the application's real entry point on Kestrel and drive it with
-Playwright's `PageTest` (`Page`, browser context). Each test starts its own application, so tests that use their own database stay
-isolated. Override `EnvironmentName`, `Configuration` and `ConfigureServices` to arrange it and call `NavigateTo("customers/new")`, which
+Playwright's `PageTest` (`Page`, browser context). By default each test starts its own application, so tests that use their own database
+stay isolated. Override `EnvironmentName`, `Configuration` and `ConfigureServices` to arrange it and call `NavigateTo("customers/new")`, which
 opens the page and waits until it is interactive.
 
 ```csharp
@@ -50,6 +50,29 @@ public abstract class AppBrowserTest : KestrelPageTest<WebMarker>
     protected override IReadOnlyDictionary<string, string?>? Configuration => new Dictionary<string, string?> { ["ConnectionStrings:Default"] = "..." };
 }
 ```
+
+`Services` is the started application's root service provider, so a test can seed data or read a `TimeProvider` through the application's
+own services; like `BaseUri`, it throws `InvalidOperationException` before the application starts.
+
+A class whose tests only read can share one application instead of starting one per test: derive a `KestrelHostFixture<TEntryPoint>`,
+arrange it with the same `EnvironmentName`, `Configuration` and `ConfigureServices` overrides (and `InitializeAsync`, to prepare a
+database before calling the base), and pass it to the test's constructor as an xUnit class fixture:
+
+```csharp
+public sealed class PublicSiteHost : KestrelHostFixture<PublicMarker>
+{
+    protected override IReadOnlyDictionary<string, string?>? Configuration => new Dictionary<string, string?> { ["ConnectionStrings:Site"] = "..." };
+}
+
+public sealed class HomePageTests(PublicSiteHost host) : KestrelPageTest<PublicMarker>(host), IClassFixture<PublicSiteHost>
+{
+}
+```
+
+The fixture starts the application before the first test of the class and stops it after the last; each test still gets its own browser
+context and page, and `BaseUri` and `Services` come from the fixture. The test's own `EnvironmentName`, `Configuration` and
+`ConfigureServices` are then not used. The trade-off is isolation: every test of the class sees the database, caches and singletons the
+others left behind, so share a host only when no test depends on another's absence. Per-test applications stay the default.
 
 Clicks and typing on a prerendered Blazor page are lost silently until the circuit connects. Render `<InteractiveMarker />` from
 `SharedKernel.Blazor` once in the layout; `page.WaitForBlazorInteractive()` and `page.GotoInteractive(uri)` wait for it (they look for `data-interactive='true'`, exposed as

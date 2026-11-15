@@ -32,6 +32,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Snapshots\SharedKernel.Testing.Snapshots.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Web\SharedKernel.Testing.Web.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Playwright\SharedKernel.Testing.Playwright.csproj" />
+        <ProjectReference Include="..\SharedKernel.Testing.AspNetCore.TestApp\SharedKernel.Testing.AspNetCore.TestApp.csproj" />
     </ItemGroup>
 
 </Project>

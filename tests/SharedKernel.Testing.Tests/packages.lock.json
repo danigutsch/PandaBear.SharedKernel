@@ -525,6 +525,9 @@
           "xunit.v3.extensibility.core": "[4.0.0, )"
         }
       },
+      "sharedkernel.testing.aspnetcore.testapp": {
+        "type": "Project"
+      },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "CentralTransitive",
         "requested": "[10.0.14, )",
