@@ -1,0 +1,15 @@
+#nullable enable
+PandaBear.Tooling.CandidateManifest
+PandaBear.Tooling.ControlCharacters
+PandaBear.Tooling.ExecutableResolver
+PandaBear.Tooling.RepositoryPath
+static PandaBear.Tooling.CandidateManifest.Find(string! directory) -> string!
+static PandaBear.Tooling.CandidateManifest.HashPackage(string! path, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+static PandaBear.Tooling.CandidateManifest.ReadAndVerify(string! path) -> System.Text.Json.Nodes.JsonObject!
+static PandaBear.Tooling.CandidateManifest.Write(string! path, System.Text.Json.Nodes.JsonObject! evidence) -> void
+static PandaBear.Tooling.ControlCharacters.Escape(string! value) -> string!
+static PandaBear.Tooling.ExecutableResolver.HasUnixExecutePermission(System.IO.UnixFileMode mode) -> bool
+static PandaBear.Tooling.ExecutableResolver.Resolve(string! command, string? path, bool isWindows) -> string?
+static PandaBear.Tooling.ExecutableResolver.ResolveCommand(string! fileName) -> string!
+static PandaBear.Tooling.RepositoryPath.IsRelative(string! path) -> bool
+static PandaBear.Tooling.RepositoryPath.Resolve(string! root, string! relativePath) -> string!

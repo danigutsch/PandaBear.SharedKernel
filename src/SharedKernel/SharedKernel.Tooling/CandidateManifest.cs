@@ -7,7 +7,7 @@ namespace PandaBear.Tooling;
 /// Finds, reads, and writes <c>candidate.json</c>, which records a candidate's library revision, package version, and
 /// the SHA-256 hash of each package.
 /// </summary>
-internal static class CandidateManifest
+public static class CandidateManifest
 {
     /// <summary>Returns the path of the single <c>candidate.json</c> found recursively under the directory, and throws when there is not exactly one.</summary>
     /// <param name="directory">Directory to search.</param>
@@ -58,6 +58,8 @@ internal static class CandidateManifest
     }
 
     /// <summary>Returns the SHA-256 hash of a package file as the lowercase hexadecimal text that <c>packageSha256</c> records.</summary>
+    /// <param name="path">Path of the package file.</param>
+    /// <param name="ct">Cancels reading the file.</param>
     public static async Task<string> HashPackage(string path, CancellationToken ct)
     {
         var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 81_920, useAsync: true);
@@ -71,8 +73,12 @@ internal static class CandidateManifest
     /// Replaces <paramref name="path" /> through a temporary file in the same directory, so an interrupted write never
     /// leaves a truncated manifest.
     /// </summary>
+    /// <param name="path">Path of the <c>candidate.json</c> file to replace.</param>
+    /// <param name="evidence">Manifest to write as indented JSON.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="evidence"/> is <see langword="null"/>.</exception>
     public static void Write(string path, JsonObject evidence)
     {
+        ArgumentNullException.ThrowIfNull(evidence);
         var fullPath = Path.GetFullPath(path);
         Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
         var temporary = fullPath + "." + Guid.NewGuid().ToString("N") + ".tmp";

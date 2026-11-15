@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.PlaywrightMcp</PackageId>
+        <Description>Engine of the Playwright MCP tool: runs the digest-pinned Playwright MCP image on a local Docker or rootless Podman engine.</Description>
+        <RootNamespace>PandaBear.PlaywrightMcp</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <PackageTags>playwright;mcp;containers;docker;podman;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.PlaywrightMcp.Tool.Tests" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Tooling\SharedKernel.Tooling.csproj" />
+    </ItemGroup>
+
+</Project>

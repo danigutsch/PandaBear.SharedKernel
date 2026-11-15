@@ -60,7 +60,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             tools/SharedKernel.RepoConfig.Tool
-            tools/Shared
+            src/SharedKernel/SharedKernel.Tooling
             .github/actions/setup-dotnet-tool
           sparse-checkout-cone-mode: true
 

@@ -182,6 +182,7 @@
   <Project Path="tools/SharedKernel.K6.Tool/SharedKernel.K6.Tool.csproj" />
   <Project Path="tools/SharedKernel.Sandbox.Tool/SharedKernel.Sandbox.Tool.csproj" />
   <Project Path="tools/SharedKernel.Packages.Tool/SharedKernel.Packages.Tool.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.PlaywrightMcp/SharedKernel.PlaywrightMcp.csproj" />
   <Project Path="tools/SharedKernel.PlaywrightMcp.Tool/SharedKernel.PlaywrightMcp.Tool.csproj" />
   <Project Path="tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj" />
   <Project Path="tools/SharedKernel.VaultManager.Tool/SharedKernel.VaultManager.Tool.csproj" />
@@ -202,6 +203,7 @@
   <Project Path="tests/SharedKernel.Documentation.Tests/SharedKernel.Documentation.Tests.csproj" />
   <Project Path="tests/SharedKernel.RepoConfig.Tests/SharedKernel.RepoConfig.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Tabular/SharedKernel.Tabular.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Tooling/SharedKernel.Tooling.csproj" />
   <Project Path="tests/SharedKernel.Tabular.Tests/SharedKernel.Tabular.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Packages/SharedKernel.Packages.csproj" />
   <Project Path="tests/SharedKernel.Packages.Tests/SharedKernel.Packages.Tests.csproj" />

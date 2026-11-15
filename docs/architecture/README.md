@@ -71,6 +71,7 @@ flowchart TB
     SharedKernel_OpenApi[SharedKernel.OpenApi] --> SharedKernel_ApiVersioning[SharedKernel.ApiVersioning]
     SharedKernel_Packages[SharedKernel.Packages] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
     SharedKernel_Packages[SharedKernel.Packages] --> SharedKernel_Results[SharedKernel.Results]
+    SharedKernel_PlaywrightMcp[SharedKernel.PlaywrightMcp] --> SharedKernel_Tooling[SharedKernel.Tooling]
     SharedKernel_Results[SharedKernel.Results] --> SharedKernel_Results_SourceGenerator[SharedKernel.Results.SourceGenerator]
     SharedKernel_Results_AspNet[SharedKernel.Results.AspNet] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_ServiceDefaults[SharedKernel.ServiceDefaults] --> SharedKernel_Observability[SharedKernel.Observability]

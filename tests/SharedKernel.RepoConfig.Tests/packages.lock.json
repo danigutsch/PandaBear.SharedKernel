@@ -202,6 +202,7 @@
       "PandaBear.SharedKernel.RepoConfig.Tool": {
         "type": "Project",
         "dependencies": {
+          "PandaBear.SharedKernel.Tooling": "[0.1.0-alpha.0, )",
           "System.CommandLine": "[2.0.13, )"
         }
       },
@@ -230,6 +231,9 @@
           "PandaBear.SharedKernel.Testing": "[0.1.0-alpha.0, )",
           "xunit.v3.extensibility.core": "[4.0.0, )"
         }
+      },
+      "PandaBear.SharedKernel.Tooling": {
+        "type": "Project"
       },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "CentralTransitive",

@@ -17,9 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="../Shared/ControlCharacters.cs" Link="Shared/ControlCharacters.cs" />
-        <Compile Include="../Shared/ExecutableResolver.cs" Link="Shared/ExecutableResolver.cs" />
-        <Compile Include="../Shared/RepositoryPath.cs" Link="Shared/RepositoryPath.cs" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Tooling\SharedKernel.Tooling.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -47,7 +47,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             tools/SharedKernel.CI.Tool
-            tools/Shared
+            src/SharedKernel/SharedKernel.Tooling
             .github/actions/setup-dotnet-tool
           sparse-checkout-cone-mode: true
       - name: Set up the SDK and build the CI tool

@@ -3,41 +3,72 @@ using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using PandaBear.Tooling;
 
-namespace PandaBear.PlaywrightMcp.Tool;
+namespace PandaBear.PlaywrightMcp;
 
-/// <summary>Runs the Playwright MCP container commands against the selected container engine.</summary>
-/// <param name="getEnvironmentVariable">Reads an environment variable by name.</param>
-/// <param name="resolveExecutable">Finds an executable on the path by command name.</param>
-/// <param name="runProcess">Starts a process and returns its result.</param>
-internal sealed class PlaywrightMcpApplication(
-    Func<string, string?> getEnvironmentVariable,
-    Func<string, string?> resolveExecutable,
-    Func<ProcessStartInfo, TextWriter?, CancellationToken, Task<ProcessResult>> runProcess)
+/// <summary>
+/// Runs the pinned Playwright MCP container image against a local Docker or rootless Podman engine. The environment,
+/// executable lookup, and process runner are injected, so a host supplies them and tests replace them.
+/// </summary>
+public sealed class PlaywrightMcpApplication
 {
-    /// <summary>Starts the Playwright MCP container server and returns its exit code.</summary>
+    private readonly Func<string, string?> getEnvironmentVariable;
+    private readonly Func<string, string?> resolveExecutable;
+    private readonly Func<ProcessStartInfo, TextWriter?, CancellationToken, Task<ProcessResult>> runProcess;
+
+    /// <summary>Creates the application from the environment it reads and the process runner it starts engines with.</summary>
+    /// <param name="getEnvironmentVariable">Reads an environment variable by name, such as <see cref="Environment.GetEnvironmentVariable(string)"/>.</param>
+    /// <param name="resolveExecutable">Finds an executable by command name, such as <see cref="ResolveExecutable"/>.</param>
+    /// <param name="runProcess">Starts a process and returns its result, such as <see cref="RunProcess"/>.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="getEnvironmentVariable"/>, <paramref name="resolveExecutable"/>, or <paramref name="runProcess"/> is <see langword="null"/>.</exception>
+    public PlaywrightMcpApplication(
+        Func<string, string?> getEnvironmentVariable,
+        Func<string, string?> resolveExecutable,
+        Func<ProcessStartInfo, TextWriter?, CancellationToken, Task<ProcessResult>> runProcess)
+    {
+        ArgumentNullException.ThrowIfNull(getEnvironmentVariable);
+        ArgumentNullException.ThrowIfNull(resolveExecutable);
+        ArgumentNullException.ThrowIfNull(runProcess);
+        this.getEnvironmentVariable = getEnvironmentVariable;
+        this.resolveExecutable = resolveExecutable;
+        this.runProcess = runProcess;
+    }
+
+    /// <summary>Gets the digest-pinned Playwright MCP image reference that every command uses.</summary>
+    public static string Image => PlaywrightMcpCommand.Image;
+
+    /// <summary>
+    /// Starts the Playwright MCP container server on standard input and output and returns its exit code: the server's
+    /// exit code, 2 for an invalid environment, or 1 for an engine, I/O, cleanup, or cancellation failure.
+    /// </summary>
     /// <param name="error">Writer for diagnostics.</param>
     /// <param name="ct">Cancellation token.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="error"/> is <see langword="null"/>.</exception>
     public Task<int> Serve(TextWriter error, CancellationToken ct)
     {
+        ArgumentNullException.ThrowIfNull(error);
         return Run(error, RunServer, ct);
     }
 
-    /// <summary>Pulls the Playwright MCP container image and returns the exit code.</summary>
+    /// <summary>Pulls the Playwright MCP container image and returns the engine's exit code, 2 for an invalid environment, or 1 for a failure.</summary>
     /// <param name="error">Writer for diagnostics.</param>
     /// <param name="ct">Cancellation token.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="error"/> is <see langword="null"/>.</exception>
     public Task<int> Prepare(TextWriter error, CancellationToken ct)
     {
+        ArgumentNullException.ThrowIfNull(error);
         return Run(
             error,
             (options, token) => RunToExit(PlaywrightMcpCommand.CreatePullStartInfo(options), error, token),
             ct);
     }
 
-    /// <summary>Removes the Playwright MCP container image and returns the exit code.</summary>
+    /// <summary>Removes the Playwright MCP container image and returns the engine's exit code, 2 for an invalid environment, or 1 for a failure.</summary>
     /// <param name="error">Writer for diagnostics.</param>
     /// <param name="ct">Cancellation token.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="error"/> is <see langword="null"/>.</exception>
     public Task<int> Clean(TextWriter error, CancellationToken ct)
     {
+        ArgumentNullException.ThrowIfNull(error);
         return Run(
             error,
             (options, token) => RunToExit(PlaywrightMcpCommand.CreateImageRemoveStartInfo(options), error, token),
@@ -251,12 +282,15 @@ internal sealed class PlaywrightMcpApplication(
     /// no output; <see langword="null"/> collects the output in the result.
     /// </param>
     /// <param name="ct">Cancels the run and kills the process tree.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="startInfo"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">The process could not be started.</exception>
-    internal static async Task<ProcessResult> RunProcess(
+    /// <exception cref="OperationCanceledException"><paramref name="ct"/> was canceled; the process tree has been killed.</exception>
+    public static async Task<ProcessResult> RunProcess(
         ProcessStartInfo startInfo,
         TextWriter? forward,
         CancellationToken ct)
     {
+        ArgumentNullException.ThrowIfNull(startInfo);
         using var process = new Process { StartInfo = startInfo };
         ct.ThrowIfCancellationRequested();
         if (!process.Start())
@@ -338,6 +372,6 @@ internal sealed class PlaywrightMcpApplication(
     }
 
     /// <summary>Resolves a command to an executable path using the <c>PATH</c> environment variable, or returns <see langword="null" /> when it is not found.</summary>
-    internal static string? ResolveExecutable(string command) =>
+    public static string? ResolveExecutable(string command) =>
         ExecutableResolver.Resolve(command, Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows());
 }

@@ -1,4 +1,4 @@
-namespace PandaBear.PlaywrightMcp.Tool;
+namespace PandaBear.PlaywrightMcp;
 
 /// <summary>Container engine used to run the Playwright MCP image.</summary>
 internal enum ContainerEngine

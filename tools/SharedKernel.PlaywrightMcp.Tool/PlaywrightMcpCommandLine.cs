@@ -6,9 +6,9 @@ namespace PandaBear.PlaywrightMcp.Tool;
 /// <summary>Builds the command-line interface of the Playwright MCP tool.</summary>
 internal static class PlaywrightMcpCommandLine
 {
-    private const string Description = $"""
+    private static readonly string Description = $"""
         Run the pinned Playwright MCP image on local Docker or rootless Podman.
-        Image: {PlaywrightMcpCommand.Image}
+        Image: {PlaywrightMcpApplication.Image}
 
         Environment variables:
           PLAYWRIGHT_MCP_ENGINE           docker or podman; required when both are installed

@@ -1,0 +1,18 @@
+#nullable enable
+PandaBear.PlaywrightMcp.PlaywrightMcpApplication
+PandaBear.PlaywrightMcp.PlaywrightMcpApplication.Clean(System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+PandaBear.PlaywrightMcp.PlaywrightMcpApplication.PlaywrightMcpApplication(System.Func<string!, string?>! getEnvironmentVariable, System.Func<string!, string?>! resolveExecutable, System.Func<System.Diagnostics.ProcessStartInfo!, System.IO.TextWriter?, System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.PlaywrightMcp.ProcessResult>!>! runProcess) -> void
+PandaBear.PlaywrightMcp.PlaywrightMcpApplication.Prepare(System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+PandaBear.PlaywrightMcp.PlaywrightMcpApplication.Serve(System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+PandaBear.PlaywrightMcp.ProcessResult
+PandaBear.PlaywrightMcp.ProcessResult.ExitCode.get -> int
+PandaBear.PlaywrightMcp.ProcessResult.ExitCode.init -> void
+PandaBear.PlaywrightMcp.ProcessResult.ProcessResult() -> void
+PandaBear.PlaywrightMcp.ProcessResult.ProcessResult(int ExitCode, string! StandardOutput, string! StandardError) -> void
+PandaBear.PlaywrightMcp.ProcessResult.StandardError.get -> string!
+PandaBear.PlaywrightMcp.ProcessResult.StandardError.init -> void
+PandaBear.PlaywrightMcp.ProcessResult.StandardOutput.get -> string!
+PandaBear.PlaywrightMcp.ProcessResult.StandardOutput.init -> void
+static PandaBear.PlaywrightMcp.PlaywrightMcpApplication.Image.get -> string!
+static PandaBear.PlaywrightMcp.PlaywrightMcpApplication.ResolveExecutable(string! command) -> string?
+static PandaBear.PlaywrightMcp.PlaywrightMcpApplication.RunProcess(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.PlaywrightMcp.ProcessResult>!

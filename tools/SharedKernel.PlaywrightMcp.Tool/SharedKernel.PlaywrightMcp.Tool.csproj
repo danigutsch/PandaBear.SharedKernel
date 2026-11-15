@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="../Shared/ExecutableResolver.cs" Link="Shared/ExecutableResolver.cs" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.PlaywrightMcp\SharedKernel.PlaywrightMcp.csproj" />
     </ItemGroup>
 
     <ItemGroup>

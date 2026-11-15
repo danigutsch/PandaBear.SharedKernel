@@ -1,4 +1,4 @@
-namespace PandaBear.PlaywrightMcp.Tool;
+namespace PandaBear.PlaywrightMcp;
 
 /// <summary>Resolved settings for running the Playwright MCP container.</summary>
 /// <param name="Engine">Container engine to use.</param>

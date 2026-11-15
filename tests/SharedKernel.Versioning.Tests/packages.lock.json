@@ -212,12 +212,16 @@
           "xunit.v3.assert": "[4.0.0, )"
         }
       },
+      "PandaBear.SharedKernel.Tooling": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Versioning": {
         "type": "Project"
       },
       "PandaBear.SharedKernel.Versioning.Tool": {
         "type": "Project",
         "dependencies": {
+          "PandaBear.SharedKernel.Tooling": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Versioning": "[0.1.0-alpha.0, )",
           "System.CommandLine": "[2.0.13, )"
         }

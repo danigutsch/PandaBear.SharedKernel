@@ -54,7 +54,7 @@ public sealed class WorkflowContractTests
         job.ShouldContain("        os: [ubuntu-latest, windows-latest]\n        tool: [SharedKernel.CI.Tool, SharedKernel.RepoConfig.Tool]\n", StringComparison.Ordinal);
         job.ShouldContain(
             "      " + checkout + "\n        with:\n          path: source-build\n          persist-credentials: false\n"
-                + "          sparse-checkout: |\n            tools/${{ matrix.tool }}\n            tools/Shared\n          sparse-checkout-cone-mode: true\n",
+                + "          sparse-checkout: |\n            tools/${{ matrix.tool }}\n            src/SharedKernel/SharedKernel.Tooling\n          sparse-checkout-cone-mode: true\n",
             StringComparison.Ordinal);
         job.ShouldContain("          global-json-file: source-build/global.json\n", StringComparison.Ordinal);
         job.ShouldContain(

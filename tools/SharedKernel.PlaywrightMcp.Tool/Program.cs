@@ -1,4 +1,5 @@
 using System.CommandLine;
+using PandaBear.PlaywrightMcp;
 using PandaBear.PlaywrightMcp.Tool;
 
 var configuration = new InvocationConfiguration

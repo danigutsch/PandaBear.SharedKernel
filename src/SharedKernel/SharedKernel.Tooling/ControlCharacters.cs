@@ -7,7 +7,7 @@ namespace PandaBear.Tooling;
 /// <summary>
 /// Escapes text from files, processes, and the network before a tool writes it to a terminal or a CI log.
 /// </summary>
-internal static class ControlCharacters
+public static class ControlCharacters
 {
     /// <summary>
     /// Replaces control, format, line separator, and paragraph separator characters, and lone surrogates, with
@@ -15,8 +15,10 @@ internal static class ControlCharacters
     /// </summary>
     /// <param name="value">The text to escape.</param>
     /// <returns>The escaped text, or <paramref name="value"/> itself when nothing needs escaping.</returns>
-    internal static string Escape(string value)
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
+    public static string Escape(string value)
     {
+        ArgumentNullException.ThrowIfNull(value);
         StringBuilder? escaped = null;
         var index = 0;
         while (index < value.Length)

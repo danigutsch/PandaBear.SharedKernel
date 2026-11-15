@@ -5,7 +5,7 @@ namespace PandaBear.Tooling;
 /// <see cref="System.Diagnostics.Process"/> is also looked up in the application and current directories, and relative
 /// <c>PATH</c> entries resolve from the current directory, so a repository could otherwise supply the executable.
 /// </summary>
-internal static class ExecutableResolver
+public static class ExecutableResolver
 {
     /// <summary>
     /// Returns <paramref name="fileName"/> when it is a fully qualified path, otherwise the executable that
@@ -14,7 +14,7 @@ internal static class ExecutableResolver
     /// <param name="fileName">A command name or a fully qualified executable path.</param>
     /// <returns>The absolute executable path to start.</returns>
     /// <exception cref="InvalidOperationException">No absolute <c>PATH</c> directory contains the command.</exception>
-    internal static string ResolveCommand(string fileName) =>
+    public static string ResolveCommand(string fileName) =>
         Path.IsPathFullyQualified(fileName)
             ? fileName
             : Resolve(fileName, Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows())
@@ -26,7 +26,7 @@ internal static class ExecutableResolver
     /// <param name="isWindows">Whether to try <c>&lt;command&gt;.exe</c> first and skip the Unix execute-permission check.</param>
     /// <returns>The absolute executable path, or <see langword="null"/> when no absolute directory contains it.</returns>
     /// <exception cref="ArgumentException">Thrown when <paramref name="command"/> is <see langword="null"/>, empty, or white-space.</exception>
-    internal static string? Resolve(string command, string? path, bool isWindows)
+    public static string? Resolve(string command, string? path, bool isWindows)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(command);
         if (string.IsNullOrWhiteSpace(path))
@@ -78,6 +78,6 @@ internal static class ExecutableResolver
     }
 
     /// <summary>Returns whether the file mode grants execute permission to the user, group, or others.</summary>
-    internal static bool HasUnixExecutePermission(UnixFileMode mode) =>
+    public static bool HasUnixExecutePermission(UnixFileMode mode) =>
         (mode & (UnixFileMode.UserExecute | UnixFileMode.GroupExecute | UnixFileMode.OtherExecute)) != 0;
 }

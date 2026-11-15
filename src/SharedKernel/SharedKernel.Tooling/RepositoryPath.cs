@@ -3,7 +3,7 @@ namespace PandaBear.Tooling;
 /// <summary>
 /// Validates and resolves the repository-relative paths that configuration files name.
 /// </summary>
-internal static class RepositoryPath
+public static class RepositoryPath
 {
     /// <summary>
     /// Reports whether <paramref name="path"/> is repository-relative: segments separated by <c>/</c>, none of them
