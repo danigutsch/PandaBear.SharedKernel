@@ -15,7 +15,7 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="xunit.v3.mtp-v2" />
-        <!-- Only to check that the pinned PostgreSQL and Redis coordinates name the images these integrations use. -->
+        <!-- To check that the pinned PostgreSQL and Redis coordinates name the images these integrations use; Umami also brings PostgreSQL. -->
         <PackageReference Include="Aspire.Hosting.PostgreSQL" />
         <PackageReference Include="Aspire.Hosting.Redis" />
     </ItemGroup>
@@ -26,6 +26,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.Hosting.Grafana\SharedKernel.Aspire.Hosting.Grafana.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.Hosting.SeaweedFs\SharedKernel.Aspire.Hosting.SeaweedFs.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.Hosting.Sqlite\SharedKernel.Aspire.Hosting.Sqlite.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.Hosting.Umami\SharedKernel.Aspire.Hosting.Umami.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
     </ItemGroup>
 

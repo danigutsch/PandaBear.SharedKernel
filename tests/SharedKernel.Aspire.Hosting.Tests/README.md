@@ -1,6 +1,6 @@
 # SharedKernel.Aspire.Hosting.Tests
 
-Tests for `SharedKernel.Aspire.Hosting.ClamAv`, `.SeaweedFs`, `.Sqlite`, and `.Grafana`.
+Tests for `SharedKernel.Aspire.Hosting` and its `.ClamAv`, `.SeaweedFs`, `.Sqlite`, `.Grafana` and `.Umami` integrations.
 
 ## Scope
 

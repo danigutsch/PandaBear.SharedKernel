@@ -712,6 +712,14 @@
           "Microsoft.Extensions.Diagnostics.HealthChecks": "[10.0.15, )"
         }
       },
+      "PandaBear.SharedKernel.Aspire.Hosting.Umami": {
+        "type": "Project",
+        "dependencies": {
+          "Aspire.Hosting": "[13.6.5, )",
+          "Aspire.Hosting.PostgreSQL": "[13.6.5, )",
+          "PandaBear.SharedKernel.Aspire.Hosting": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.AspNetCore": {
         "type": "Project",
         "dependencies": {
