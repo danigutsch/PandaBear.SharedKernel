@@ -17,7 +17,6 @@
 		<AnalysisMode>All</AnalysisMode>
 		<NuGetAudit>true</NuGetAudit>
 		<NuGetAuditMode>all</NuGetAuditMode>
-		<NuGetAuditLevel>high</NuGetAuditLevel>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(IsAspireHost)' == 'true'">
