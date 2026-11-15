@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace PandaBear.Vault.Brief;
 
 /// <summary>A member of a brief group: an input item as the merge sees it, after accepted findings are placed.</summary>
@@ -19,4 +21,18 @@ public sealed record BriefMember(
     string? Username,
     DateTimeOffset? Modified,
     bool Newest,
-    IReadOnlyList<BriefFinding> Findings);
+    IReadOnlyList<BriefFinding> Findings)
+{
+    /// <summary>Prints no user name, like <see cref="Model.LoginData"/>, so it never reaches logs or messages through <c>ToString</c>.</summary>
+    private bool PrintMembers(StringBuilder builder)
+    {
+        builder.Append("OriginKey = ").Append(OriginKey)
+            .Append(", SourceFile = ").Append(SourceFile)
+            .Append(", Name = ").Append(Name)
+            .Append(", Folder = ").Append(Folder)
+            .Append(", Host = ").Append(Host)
+            .Append(", Newest = ").Append(Newest)
+            .Append(", Findings = ").Append(Findings.Count);
+        return true;
+    }
+}

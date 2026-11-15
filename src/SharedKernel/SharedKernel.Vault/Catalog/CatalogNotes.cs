@@ -1,3 +1,4 @@
+using System.Text;
 using PandaBear.Vault.Merge;
 
 namespace PandaBear.Vault.Catalog;
@@ -8,4 +9,12 @@ namespace PandaBear.Vault.Catalog;
 /// The notes when <paramref name="Decision"/> is <see cref="NotesDecision.Share"/>; otherwise <see langword="null"/>,
 /// and it must stay so.
 /// </param>
-public sealed record CatalogNotes(NotesDecision Decision, string? Text = null);
+public sealed record CatalogNotes(NotesDecision Decision, string? Text = null)
+{
+    /// <summary>Prints only non-secret members, so values never reach logs or messages through <c>ToString</c>.</summary>
+    private bool PrintMembers(StringBuilder builder)
+    {
+        builder.Append("Decision = ").Append(Decision).Append(", HasText = ").Append(Text is not null);
+        return true;
+    }
+}

@@ -1,3 +1,4 @@
+using System.Text;
 using PandaBear.Vault.Model;
 
 namespace PandaBear.Vault.Catalog;
@@ -22,4 +23,18 @@ public sealed record CatalogInfo(
     int Passkeys,
     int PasswordHistory,
     IReadOnlyList<string> ProtectedFields,
-    IReadOnlyList<CatalogAttachment> Attachments);
+    IReadOnlyList<CatalogAttachment> Attachments)
+{
+    /// <summary>Prints no user name, like <see cref="LoginData"/>, so it never reaches logs or messages through <c>ToString</c>.</summary>
+    private bool PrintMembers(StringBuilder builder)
+    {
+        builder.Append("Type = ").Append(Type)
+            .Append(", HasPassword = ").Append(HasPassword)
+            .Append(", HasTotp = ").Append(HasTotp)
+            .Append(", Passkeys = ").Append(Passkeys)
+            .Append(", PasswordHistory = ").Append(PasswordHistory)
+            .Append(", ProtectedFields = ").Append(ProtectedFields.Count)
+            .Append(", Attachments = ").Append(Attachments.Count);
+        return true;
+    }
+}

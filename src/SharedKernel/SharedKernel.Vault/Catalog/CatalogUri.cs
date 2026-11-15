@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using PandaBear.Vault.Model;
 
@@ -16,4 +17,12 @@ public sealed record CatalogUri(
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? Value = null,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] UriMatch? Match = null,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? Masked = null,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] int? Index = null);
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] int? Index = null)
+{
+    /// <summary>Prints the masked address, the match detection, and the position only, never an address as stored.</summary>
+    private bool PrintMembers(StringBuilder builder)
+    {
+        builder.Append("Match = ").Append(Match).Append(", Masked = ").Append(Masked).Append(", Index = ").Append(Index);
+        return true;
+    }
+}

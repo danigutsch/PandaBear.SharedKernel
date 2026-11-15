@@ -1,8 +1,12 @@
+using PandaBear.Vault.Brief;
+using PandaBear.Vault.Catalog;
+using PandaBear.Vault.Formats;
+using PandaBear.Vault.Merge;
 using PandaBear.Vault.Model;
 
 namespace PandaBear.Vault.Tests.Model;
 
-/// <summary>Tests that <c>ToString</c> on vault model records hides secret values.</summary>
+/// <summary>Tests that <c>ToString</c> on public vault records hides secret values.</summary>
 public sealed class RedactionTests
 {
     private const string Secret = "fixture-secret-value";
@@ -63,5 +67,45 @@ public sealed class RedactionTests
         // Assert
         printed.ShouldNotContain(Hash, StringComparison.Ordinal);
         printed.ShouldContain("codes.txt", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ToString_of_a_write_result_never_contains_the_export()
+    {
+        // Arrange
+        var written = new VaultWriteResult("{\"items\":[{\"password\":\"" + Secret + "\"}]}", ["error"], []);
+
+        // Act
+        string printed = written.ToString();
+
+        // Assert
+        printed.ShouldNotContain(Secret, StringComparison.Ordinal);
+        printed.ShouldNotContain("items", StringComparison.Ordinal);
+        printed.ShouldContain("Errors = 1", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ToString_of_public_records_with_addresses_user_names_or_field_values_never_contains_them()
+    {
+        // Arrange
+        const string Address = "https://user:" + Secret + "@example.com/?token=" + Secret;
+        const string Username = "fixture-user-name";
+
+        // Act
+        string[] printed =
+        [
+            new LoginUri(Address).ToString(),
+            new CatalogUri(Value: "https://" + Secret + ".example.com").ToString(),
+            new CatalogField("label", Secret).ToString(),
+            new CatalogNotes(NotesDecision.Share, Secret).ToString(),
+            new CatalogInfo(VaultItemType.Login, Username, true, false, 0, 0, [], []).ToString(),
+            new BriefMember("key", "file.json", "visible name", null, "example.com", Username, null, false, []).ToString(),
+        ];
+
+        // Assert
+        printed.ShouldAllSatisfy(text => text.ShouldNotContain(Secret, StringComparison.Ordinal));
+        printed.ShouldAllSatisfy(text => text.ShouldNotContain(Username, StringComparison.Ordinal));
+        printed[2].ShouldContain("label", StringComparison.Ordinal);
+        printed[5].ShouldContain("visible name", StringComparison.Ordinal);
     }
 }
