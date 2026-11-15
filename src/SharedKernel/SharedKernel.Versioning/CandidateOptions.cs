@@ -13,6 +13,6 @@ namespace PandaBear.Versioning;
 /// <param name="NativeAot">Whether consumption also publishes and runs the samples with NativeAOT.</param>
 public sealed record CandidateOptions(string RepoRoot, string? Version = null, string? BaselineVersion = null, bool NativeAot = false)
 {
-    /// <summary>Gets the target frameworks to build the consumers for, each in turn. Default: <see cref="ConsumerFrameworks.Default"/>.</summary>
-    public IReadOnlyList<string> Frameworks { get; init; } = ConsumerFrameworks.Default;
+    /// <summary>Gets the target frameworks to build the consumers for, each in turn. Default: the frameworks <see cref="RepositoryFrameworks.Read"/> reads from the repository root.</summary>
+    public IReadOnlyList<string>? Frameworks { get; init; }
 }

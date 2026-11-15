@@ -12,14 +12,15 @@ public static class ConsumerFrameworkTests
     [InlineData("validate-candidate")]
     [InlineData("consume-candidate", "--candidate-directory", "artifacts/candidate")]
     [InlineData("consume-packages", "--feed", "packages", "--version", "1.2.3")]
-    public static void Frameworks_default_to_net10(params string[] args)
+    public static void Without_framework_the_option_is_empty(params string[] args)
     {
         // Act
         var parseResult = VersioningCommandLineRunner.Parse(args);
 
         // Assert
         parseResult.Errors.ShouldBeEmpty();
-        parseResult.GetValue<string[]>("--framework").ShouldBe(["net10.0"]);
+        var frameworks = parseResult.GetValue<string[]>("--framework") ?? [];
+        frameworks.ShouldBeEmpty();
     }
 
     [Theory]
@@ -98,6 +99,46 @@ public static class ConsumerFrameworkTests
         var recorded = CandidateManifest.Load(manifest).Evidence;
         var platform = OperatingSystem.IsWindows() ? "windows" : "linux";
         recorded[platform + "PackageConsumptionFrameworks"]!.AsArray().Select(static x => x!.GetValue<string>()).ShouldBe(["net10.0"]);
+    }
+
+    [Fact]
+    public static async Task Consumption_without_framework_uses_the_repository_framework()
+    {
+        // Arrange
+        using var temporary = new TemporaryReleasePrepDirectory();
+        var manifest = temporary.WriteCandidate();
+        await temporary.WriteConsumptionSamples("Consumed sample", TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(
+            ["consume-candidate", "--candidate", manifest, "--repo-root", temporary.Root],
+            TestContext.Current.CancellationToken);
+        using var evidence = new EvidenceWorkspaces(result);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        var recorded = CandidateManifest.Load(manifest).Evidence;
+        var platform = OperatingSystem.IsWindows() ? "windows" : "linux";
+        recorded[platform + "PackageConsumptionFrameworks"]!.AsArray().Select(static x => x!.GetValue<string>()).ShouldBe([TestFramework.Current]);
+    }
+
+    [Fact]
+    public static async Task A_repository_without_a_framework_setting_fails_naming_its_props_file()
+    {
+        // Arrange
+        using var temporary = new TemporaryReleasePrepDirectory();
+        var manifest = temporary.WriteCandidate();
+        await temporary.WriteConsumptionSamples("Consumed sample", TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(Path.Combine(temporary.Root, "Directory.Build.props"), "<Project />", TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(
+            ["consume-candidate", "--candidate", manifest, "--repo-root", temporary.Root],
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldNotBe(0);
+        result.Error.ShouldContain(Path.Combine(temporary.Root, "Directory.Build.props"), StringComparison.Ordinal);
     }
 
     [Fact]

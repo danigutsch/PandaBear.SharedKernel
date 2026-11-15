@@ -28,7 +28,7 @@ internal static class PackageConsumption
         await ToolPackageCheck.Run(root, feed, version, packages, processes, error, ct).ConfigureAwait(false);
         var central = XDocument.Load(Path.Combine(root, "Directory.Packages.props"));
         var scratch = Path.Combine(Path.GetTempPath(), "sharedkernel-package-check-" + Guid.NewGuid().ToString("N"));
-        foreach (var framework in options.Frameworks)
+        foreach (var framework in options.Frameworks ?? RepositoryFrameworks.Read(root))
         {
             await error.WriteLineAsync("Consuming the samples as " + framework + ".").ConfigureAwait(false);
             try

@@ -193,7 +193,7 @@ same directory, so an interrupted write never truncates it, and Ctrl+C or SIGTER
 sample projects treat warnings as errors and audit every direct and transitive package at NuGet's default level,
 `low`, so an advisory of any severity fails consumption.
 `--framework <tfm>` (`consume-candidate`, `consume-packages`, `validate-candidate`) names a target framework to build the
-consumers for, such as `net11.0`; repeat it for several. It defaults to `net10.0` alone, and a value must be `net` plus
+consumers for, such as `net11.0`; repeat it for several. Without it, the tool consumes the framework(s) set in the repository root's `Directory.Build.props` (`TargetFrameworks`, else `TargetFramework`, with `$(Name)` references resolved in that file) and fails naming the file when that setting is missing or conditional. A value must be `net` plus
 `<major>.<minor>` in lowercase, listed once. The restore, locked restore, build, run, and optional NativeAOT publish run once per
 framework, each in its own workspace and package cache, with the central package versions that a project of that framework
 uses, and a failure names the framework. The manifest records

@@ -447,7 +447,7 @@ internal static class VersioningCommandLine
                 parseResult.GetValue(baselineVersion)?.ToString(),
                 parseResult.GetValue(aot))
             {
-                Frameworks = parseResult.GetRequiredValue(framework),
+                Frameworks = parseResult.GetValue(framework) is { Length: > 0 } frameworks ? frameworks : null,
             },
             output,
             parseResult.InvocationConfiguration.Error,
@@ -498,7 +498,7 @@ internal static class VersioningCommandLine
                     parseResult.GetValue(evidence) is { } destination ? Path.GetFullPath(destination) : manifest,
                     parseResult.GetValue(aot))
                 {
-                    Frameworks = parseResult.GetRequiredValue(framework),
+                    Frameworks = parseResult.GetValue(framework) is { Length: > 0 } frameworks ? frameworks : null,
                 },
                 output,
                 parseResult.InvocationConfiguration.Error,
@@ -562,7 +562,7 @@ internal static class VersioningCommandLine
                 parseResult.GetRequiredValue(version).ToString(),
                 parseResult.GetValue(aot))
             {
-                Frameworks = parseResult.GetRequiredValue(framework),
+                Frameworks = parseResult.GetValue(framework) is { Length: > 0 } frameworks ? frameworks : null,
             },
             output,
             parseResult.InvocationConfiguration.Error,
@@ -632,9 +632,8 @@ internal static class VersioningCommandLine
 
     private static Option<string[]> FrameworkOption() => new("--framework")
     {
-        Description = "Target framework to build the packed consumers for, such as net11.0. Repeat it to consume each framework in turn. Default: net10.0.",
+        Description = "Target framework to build the packed consumers for, such as net11.0. Repeat it to consume each framework in turn. Default: the framework of the repository root's Directory.Build.props.",
         HelpName = "tfm",
-        DefaultValueFactory = static _ => [.. ConsumerFrameworks.Default],
         CustomParser = result =>
         {
             var values = result.Tokens.Select(static token => token.Value).ToArray();

@@ -3,9 +3,6 @@ namespace PandaBear.Versioning;
 /// <summary>The target frameworks that packed consumers are built for.</summary>
 public static class ConsumerFrameworks
 {
-    /// <summary>Gets the frameworks consumed when none are given: <c>net10.0</c>.</summary>
-    public static IReadOnlyList<string> Default { get; } = ["net10.0"];
-
     /// <summary>
     /// Determines whether the value is a simple target framework moniker: <c>net</c>, a major version, a dot, and a minor
     /// version, in lowercase, such as <c>net10.0</c>.

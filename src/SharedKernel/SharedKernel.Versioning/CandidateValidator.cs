@@ -178,11 +178,12 @@ public sealed class CandidateValidator
         var feed = Path.GetDirectoryName(manifest)!;
         RequireListedPackagesOnly(feed, evidence["packageSha256"]!.AsObject());
         var platform = OperatingSystem.IsWindows() ? "windowsPackageConsumption" : "linuxPackageConsumption";
-        var consumed = new JsonArray([.. options.Frameworks.Select(static framework => JsonValue.Create(framework))]);
+        var frameworks = options.Frameworks ?? RepositoryFrameworks.Read(root);
+        var consumed = new JsonArray([.. frameworks.Select(static framework => JsonValue.Create(framework))]);
         try
         {
             await PackageConsumption.Run(
-                _commands, new PackageConsumptionOptions(root, feed, version, aot) { Frameworks = options.Frameworks }, output, error, ct)
+                _commands, new PackageConsumptionOptions(root, feed, version, aot) { Frameworks = frameworks }, output, error, ct)
                 .ConfigureAwait(false);
         }
         catch (Exception) when (!ct.IsCancellationRequested)

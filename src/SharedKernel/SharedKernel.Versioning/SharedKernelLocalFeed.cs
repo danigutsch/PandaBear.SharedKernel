@@ -92,14 +92,16 @@ public static class SharedKernelLocalFeed
     /// <param name="restoreDirectory">The scratch restore directory.</param>
     /// <param name="packageIds">The package IDs to reference.</param>
     /// <param name="version">The package version.</param>
+    /// <param name="framework">The target framework of the restore project, such as <c>net11.0</c>.</param>
     /// <returns>A task that completes when the project file is written.</returns>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="restoreDirectory"/> or <paramref name="version"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="restoreDirectory"/>, <paramref name="version"/>, or <paramref name="framework"/> is <see langword="null"/>, empty, or white-space.</exception>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="packageIds"/> is <see langword="null"/>.</exception>
-    public static async Task WriteRestoreProject(string restoreDirectory, string[] packageIds, string version)
+    public static async Task WriteRestoreProject(string restoreDirectory, string[] packageIds, string version, string framework)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(restoreDirectory);
         ArgumentNullException.ThrowIfNull(packageIds);
         ArgumentException.ThrowIfNullOrWhiteSpace(version);
+        ArgumentException.ThrowIfNullOrWhiteSpace(framework);
 
         await File.WriteAllTextAsync(Path.Combine(restoreDirectory, "Directory.Build.props"), "<Project />" + Environment.NewLine).ConfigureAwait(false);
         await File.WriteAllTextAsync(Path.Combine(restoreDirectory, "Directory.Packages.props"), "<Project />" + Environment.NewLine).ConfigureAwait(false);
@@ -107,10 +109,10 @@ public static class SharedKernelLocalFeed
         var references = string.Join(
             Environment.NewLine,
             packageIds.Select(packageId => "    <PackageReference Include=\"" + packageId + "\" Version=\"" + version + "\" />"));
-        var project = """
+        var project = $"""
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
-                <TargetFramework>net10.0</TargetFramework>
+                <TargetFramework>{framework}</TargetFramework>
               </PropertyGroup>
               <ItemGroup>
             """ + Environment.NewLine + references + Environment.NewLine + """
