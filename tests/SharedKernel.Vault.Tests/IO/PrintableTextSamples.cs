@@ -13,7 +13,8 @@ internal static class PrintableTextSamples
     /// <summary>
     /// Returns whether the code point must not reach the output: it is in the general category Cc, Cf, Zl, Zp, or Cs, or
     /// it has the Unicode property Default_Ignorable_Code_Point (DerivedCoreProperties.txt, Unicode 18.0) and is not a
-    /// variation selector.
+    /// variation selector. A zero width joiner or non-joiner or a tag character is kept only next to particular
+    /// characters, which a Latin letter on each side is not, so it must be neutralized here too.
     /// </summary>
     /// <param name="codePoint">Code point, a surrogate included.</param>
     /// <returns><see langword="true"/> when the code point must be neutralized.</returns>
