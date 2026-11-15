@@ -148,6 +148,29 @@ public sealed class ThemePreviewTests : BunitContext
     }
 
     [Fact]
+    public void Colour_labels_from_the_host_name_the_table_pairs_and_the_contrast_messages()
+    {
+        // Arrange
+        var draft = ThemeFixtures.PaleMutedDraft();
+
+        // Act
+        var cut = Render<ThemePreview>(parameters => parameters
+            .Add(component => component.Theme, draft)
+            .Add(component => component.ColorLabel, ThemeFixtures.EditorLabel));
+
+        // Assert
+        var rows = cut.FindAll("table.site-theme-preview__contrast tbody tr");
+        rows[0].QuerySelector("th")!.TextContent.ShouldContain("Body text on Page background", StringComparison.Ordinal);
+        rows[0].QuerySelector(".site-theme-preview__swatch")!.GetAttribute("data-foreground").ShouldBe("text");
+        rows.Where(row => row.TextContent.Contains("Fail", StringComparison.Ordinal))
+            .Select(row => row.QuerySelector("th")!.TextContent.Replace("Aa", string.Empty, StringComparison.Ordinal).Trim())
+            .ShouldBe(["Muted text on Page background", "Muted text on Card background"]);
+        rows.ShouldContain(row => row.TextContent.Contains("on-primary on primary", StringComparison.Ordinal));
+        cut.FindAll(".site-theme-preview__issues li[data-field=\"colors.muted\"]")
+            .ShouldAllSatisfy(issue => issue.TextContent.ShouldContain("Muted text on ", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void Errors_from_the_editor_and_rule_warnings_are_shown_once_each()
     {
         // Arrange

@@ -38,8 +38,14 @@ public sealed class SiteTheme : ValueObject
     /// <param name="typography">The typography.</param>
     /// <param name="fonts">The self-hosted fonts, if any.</param>
     /// <param name="allowSmallText">Whether body text below 1rem and other text below 0.875rem is allowed.</param>
+    /// <param name="colorLabel">The names of the colour roles in contrast messages, as in <see cref="Review" />.</param>
     /// <returns>The theme, or validation errors by field path, such as <c>colors.muted</c> or <c>typography.body.lineHeight</c>.</returns>
-    public static Result<SiteTheme> Create(SiteColors colors, SiteTypography typography, IEnumerable<ThemeFont>? fonts = null, bool allowSmallText = false)
+    public static Result<SiteTheme> Create(
+        SiteColors colors,
+        SiteTypography typography,
+        IEnumerable<ThemeFont>? fonts = null,
+        bool allowSmallText = false,
+        Func<ThemeColorRole, string?>? colorLabel = null)
     {
         var draft = CreateDraft(colors, typography, fonts, allowSmallText);
         if (!draft.TryGetValue(out var theme))
@@ -47,7 +53,7 @@ public sealed class SiteTheme : ValueObject
             return draft;
         }
 
-        var review = theme.Review();
+        var review = theme.Review(colorLabel);
         return review.HasErrors ? Result.Invalid<SiteTheme>("The site theme breaks a readability rule.", review.ToValidationErrors()) : draft;
     }
 
@@ -92,8 +98,14 @@ public sealed class SiteTheme : ValueObject
     }
 
     /// <summary>Checks the readability rules.</summary>
+    /// <param name="colorLabel">
+    /// The names a reader sees for the colour roles in contrast messages, such as <c>Card background</c> for
+    /// <see cref="ThemeColorRole.SurfaceAlt" />, so the messages read like the host's editor. A role it gives <see langword="null" />
+    /// or white space for, or every role when it is <see langword="null" />, keeps its CSS name, such as <c>surface-alt</c>. Field
+    /// paths do not change.
+    /// </param>
     /// <returns>The errors, warnings and contrast checks.</returns>
-    public SiteThemeReview Review() => SiteThemeRules.Review(this);
+    public SiteThemeReview Review(Func<ThemeColorRole, string?>? colorLabel = null) => SiteThemeRules.Review(this, colorLabel);
 
     /// <summary>Gets the style of a role with every unset value taken from <see cref="Default" />.</summary>
     /// <param name="role">The role.</param>

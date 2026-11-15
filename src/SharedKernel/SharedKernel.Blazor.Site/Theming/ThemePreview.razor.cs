@@ -65,6 +65,17 @@ public sealed partial class ThemePreview
     [Parameter]
     public ThemePreviewTexts Texts { get; set; } = new();
 
+    /// <summary>
+    /// Gets or sets the names a reader sees for the colour roles, such as <c>Card background</c> for
+    /// <see cref="ThemeColorRole.SurfaceAlt" />, in the contrast table's pairs and in the contrast messages (see
+    /// <see cref="SiteTheme.Review" />). A role it gives <see langword="null" /> or white space for, or every role when it is
+    /// <see langword="null" />, keeps its CSS name, such as <c>surface-alt</c>. Pass the same labels to
+    /// <see cref="ThemeEditorModel.ToTheme" />, so a save error reads like the preview's issue and, passed back in <see cref="Errors" />,
+    /// is listed once.
+    /// </summary>
+    [Parameter]
+    public Func<ThemeColorRole, string?>? ColorLabel { get; set; }
+
     private string SchemeName => Scheme == ColorScheme.Dark ? Texts.DarkScheme : Texts.LightScheme;
 
     /// <inheritdoc />
@@ -74,7 +85,7 @@ public sealed partial class ThemePreview
         RequireNonce(Nonce);
         ArgumentNullException.ThrowIfNull(Texts);
         var theme = Theme ?? SiteTheme.Default;
-        var review = theme.Review();
+        var review = theme.Review(ColorLabel);
         _css = SiteThemeStylesheet.RenderScoped(theme, ScopeId);
         _contrast = [.. review.Contrast.Where(check => check.Scheme == Scheme)];
         var issues = new List<(string Field, string Message, bool IsError)>();
@@ -88,7 +99,8 @@ public sealed partial class ThemePreview
         _issues = [.. issues.Distinct()];
     }
 
-    private string PairName(ContrastCheck check) => $"{ThemeNames.Css(check.Foreground)} {Texts.On} {ThemeNames.Css(check.Background)}";
+    private string PairName(ContrastCheck check) =>
+        $"{ThemeNames.Label(check.Foreground, ColorLabel)} {Texts.On} {ThemeNames.Label(check.Background, ColorLabel)}";
 
     private static void RequireNonce(string? nonce)
     {

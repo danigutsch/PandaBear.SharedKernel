@@ -47,8 +47,9 @@ internal static class SiteThemeRules
 
     /// <summary>Checks a theme.</summary>
     /// <param name="theme">The theme.</param>
+    /// <param name="colorLabel">The host's names of the colour roles in contrast messages; a role without one keeps its CSS name.</param>
     /// <returns>The review.</returns>
-    public static SiteThemeReview Review(SiteTheme theme)
+    public static SiteThemeReview Review(SiteTheme theme, Func<ThemeColorRole, string?>? colorLabel = null)
     {
         var errors = new List<ThemeIssue>();
         var warnings = new List<ThemeIssue>();
@@ -60,7 +61,7 @@ internal static class SiteThemeRules
                 "colors." + ThemeNames.Field(check.Foreground),
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"{ThemeNames.Css(check.Foreground)} on {ThemeNames.Css(check.Background)} is {FormatRatio(check.Ratio)} in the {ThemeNames.Css(check.Scheme)} scheme; {kind} needs at least {FormatMinimum(check.Minimum)} (WCAG 2.2 SC {check.Criterion}).")));
+                    $"{ThemeNames.Label(check.Foreground, colorLabel)} on {ThemeNames.Label(check.Background, colorLabel)} is {FormatRatio(check.Ratio)} in the {ThemeNames.Css(check.Scheme)} scheme; {kind} needs at least {FormatMinimum(check.Minimum)} (WCAG 2.2 SC {check.Criterion}).")));
         }
 
         CheckSizes(theme, errors);

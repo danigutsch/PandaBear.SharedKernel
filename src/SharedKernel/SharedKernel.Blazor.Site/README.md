@@ -225,10 +225,15 @@ that `site.css` consumes. Without a theme nothing changes: every per-role variab
   `LinkTarget` that is root-relative or https and names a `.woff2` file, without `" ' ( ) < >` or a fragment. The family name allows
   letters, digits, single inner spaces, hyphens and underscores (at most 64 characters); the key is a lower-case slug. A role's
   `fallback` (`SansSerif`, `Serif`, `Monospace`) is the system stack written after the uploaded family.
-- `SiteTheme.Create(colors, typography, fonts?, allowSmallText)` enforces every rule; `SiteTheme.CreateDraft(...)` only requires
-  unique font keys and existing font references, so a preview can show a theme that still breaks a rule. `theme.Review()` returns the
-  errors, the warnings and every `ContrastCheck`. `SiteTheme.Default` is `site.css` as a theme. Every value object factory returns a
-  `Result`; errors carry field paths such as `colors.muted`, `typography.h1.size`, `typography.body.lineHeight`, `fonts[0].key`.
+- `SiteTheme.Create(colors, typography, fonts?, allowSmallText, colorLabel?)` enforces every rule; `SiteTheme.CreateDraft(...)` only
+  requires unique font keys and existing font references, so a preview can show a theme that still breaks a rule.
+  `theme.Review(colorLabel?)` returns the errors, the warnings and every `ContrastCheck`. `SiteTheme.Default` is `site.css` as a
+  theme. Every value object factory returns a `Result`; errors carry field paths such as `colors.muted`, `typography.h1.size`,
+  `typography.body.lineHeight`, `fonts[0].key`.
+- Contrast messages name the colours by their CSS names (`muted on surface-alt is 1.33:1 in the light scheme; …`). A host whose
+  editor shows other names passes `colorLabel`, a `Func<ThemeColorRole, string?>` such as `role => role switch { ThemeColorRole.SurfaceAlt
+  => "Card background", … }`, to `Review`, `Create`, `ThemeEditorModel.ToTheme` and `ThemePreview.ColorLabel`; the message then reads
+  `Muted text on Card background is …`. A role it returns `null` or white space for keeps its CSS name; field paths do not change.
 
 ### Rules
 
@@ -307,8 +312,13 @@ the document's response: read it in the static `App`, pass it to the interactive
 circuit's own scope has a different one and interactive navigation sends no new response. The public site loads `/theme.css` from a
 URL instead.
 
+`ColorLabel` names the colours of the contrast table's pairs and of the contrast messages by the host's labels (`Body text on Page
+background`); the swatches keep the CSS names in `data-foreground` and `data-background`. Give `ToTheme` the same labels, so a save
+error reads like the preview's issue and, passed back in `Errors`, is listed once.
+
 `ThemeEditorModel` is the form model: string colour fields (`colors.primary.light`), nullable numbers for sizes, weight and spacing,
-and fonts with faces. `ToDraft()` and `ToTheme()` return every error at once on its field path. Both hover fields empty means derived.
+and fonts with faces. `ToDraft()` and `ToTheme(colorLabel?)` return every error at once on its field path. Both hover fields empty
+means derived.
 
 ### Mapping the earlier Branding settings
 

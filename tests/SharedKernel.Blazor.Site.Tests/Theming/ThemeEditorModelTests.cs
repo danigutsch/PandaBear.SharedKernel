@@ -103,6 +103,21 @@ public sealed class ThemeEditorModelTests
     }
 
     [Fact]
+    public void Rule_errors_of_the_theme_name_the_colours_by_the_hosts_labels()
+    {
+        // Arrange
+        var model = ThemeEditorModel.FromTheme(SiteTheme.Default);
+        model.Colors[ThemeColorRole.Muted].Light = "#d1d5db";
+
+        // Act
+        var theme = model.ToTheme(ThemeFixtures.EditorLabel);
+
+        // Assert
+        theme.FieldErrors()["colors.muted"].ShouldAllSatisfy(message => message.ShouldStartWith("Muted text on ", StringComparison.Ordinal));
+        theme.FieldErrors()["colors.muted"].Length.ShouldBe(2);
+    }
+
+    [Fact]
     public void Font_reference_errors_from_the_theme_keep_their_typography_path()
     {
         // Arrange

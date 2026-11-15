@@ -289,7 +289,7 @@ PandaBear.Blazor.Site.Theming.SiteTheme.Colors.get -> PandaBear.Blazor.Site.Them
 PandaBear.Blazor.Site.Theming.SiteTheme.Effective(PandaBear.Blazor.Site.Theming.TypographyRole role) -> PandaBear.Blazor.Site.Theming.TypographyStyle!
 PandaBear.Blazor.Site.Theming.SiteTheme.Font(string! key) -> PandaBear.Blazor.Site.Theming.ThemeFont?
 PandaBear.Blazor.Site.Theming.SiteTheme.Fonts.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.Theming.ThemeFont!>!
-PandaBear.Blazor.Site.Theming.SiteTheme.Review() -> PandaBear.Blazor.Site.Theming.SiteThemeReview!
+PandaBear.Blazor.Site.Theming.SiteTheme.Review(System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null) -> PandaBear.Blazor.Site.Theming.SiteThemeReview!
 PandaBear.Blazor.Site.Theming.SiteTheme.Typography.get -> PandaBear.Blazor.Site.Theming.SiteTypography!
 PandaBear.Blazor.Site.Theming.SiteThemeReview
 PandaBear.Blazor.Site.Theming.SiteThemeReview.Contrast.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.Theming.ContrastCheck!>!
@@ -331,7 +331,7 @@ PandaBear.Blazor.Site.Theming.ThemeEditorModel.Colors.get -> System.Collections.
 PandaBear.Blazor.Site.Theming.ThemeEditorModel.Fonts.get -> System.Collections.ObjectModel.Collection<PandaBear.Blazor.Site.Theming.ThemeFontFields!>!
 PandaBear.Blazor.Site.Theming.ThemeEditorModel.ThemeEditorModel() -> void
 PandaBear.Blazor.Site.Theming.ThemeEditorModel.ToDraft() -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
-PandaBear.Blazor.Site.Theming.ThemeEditorModel.ToTheme() -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.ToTheme(System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
 PandaBear.Blazor.Site.Theming.ThemeEditorModel.Typography.get -> System.Collections.Generic.IReadOnlyDictionary<PandaBear.Blazor.Site.Theming.TypographyRole, PandaBear.Blazor.Site.Theming.TypographyFields!>!
 PandaBear.Blazor.Site.Theming.ThemeFont
 PandaBear.Blazor.Site.Theming.ThemeFont.Faces.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.Theming.ThemeFontFace!>!
@@ -366,6 +366,8 @@ PandaBear.Blazor.Site.Theming.ThemeIssue.Message.get -> string!
 PandaBear.Blazor.Site.Theming.ThemeIssue.Message.init -> void
 PandaBear.Blazor.Site.Theming.ThemeIssue.ThemeIssue(string! Field, string! Message) -> void
 PandaBear.Blazor.Site.Theming.ThemePreview
+PandaBear.Blazor.Site.Theming.ThemePreview.ColorLabel.get -> System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>?
+PandaBear.Blazor.Site.Theming.ThemePreview.ColorLabel.set -> void
 PandaBear.Blazor.Site.Theming.ThemePreview.Errors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>?
 PandaBear.Blazor.Site.Theming.ThemePreview.Errors.set -> void
 PandaBear.Blazor.Site.Theming.ThemePreview.Narrow.get -> bool
@@ -502,7 +504,7 @@ static PandaBear.Blazor.Site.Theming.CssColor.FromString(string! value) -> Panda
 static PandaBear.Blazor.Site.Theming.FontSize.Fixed(decimal rem) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.FontSize!>
 static PandaBear.Blazor.Site.Theming.FontSize.Fluid(decimal minRem, decimal maxRem) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.FontSize!>
 static PandaBear.Blazor.Site.Theming.SiteColors.Create(PandaBear.Blazor.Site.Theming.ThemeColor! primary, PandaBear.Blazor.Site.Theming.ThemeColor! onPrimary, PandaBear.Blazor.Site.Theming.ThemeColor! accent, PandaBear.Blazor.Site.Theming.ThemeColor! onAccent, PandaBear.Blazor.Site.Theming.ThemeColor! text, PandaBear.Blazor.Site.Theming.ThemeColor! muted, PandaBear.Blazor.Site.Theming.ThemeColor! surface, PandaBear.Blazor.Site.Theming.ThemeColor! surfaceAlt, PandaBear.Blazor.Site.Theming.ThemeColor! border, PandaBear.Blazor.Site.Theming.ThemeColor! focus, PandaBear.Blazor.Site.Theming.ThemeColor? primaryHover = null, PandaBear.Blazor.Site.Theming.ThemeColor? accentHover = null) -> PandaBear.Blazor.Site.Theming.SiteColors!
-static PandaBear.Blazor.Site.Theming.SiteTheme.Create(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
+static PandaBear.Blazor.Site.Theming.SiteTheme.Create(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
 static PandaBear.Blazor.Site.Theming.SiteTheme.CreateDraft(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
 static PandaBear.Blazor.Site.Theming.SiteTheme.Default.get -> PandaBear.Blazor.Site.Theming.SiteTheme!
 static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.ColorVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
