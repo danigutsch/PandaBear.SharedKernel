@@ -16,6 +16,18 @@ tools, written as .NET file-based (single-file) apps.
   exposes a small, intention-revealing API: a type named for its role, such as `PlaywrightMcpServer`, whose operations
   take a settings object, and hides the mechanics (argument building, engine selection) as internal types tested
   through `InternalsVisibleTo` for the library's own test project, `tests/SharedKernel.<Name>.Tests`.
+- **An engine is a generic core library plus provider-specific libraries.** The core,
+  `SharedKernel.<Capability>`, holds the logic that does not depend on a forge, vendor, or external program, and
+  defines the seams (interfaces and settings) for the parts that do. Each provider implementation is a separate
+  library, `SharedKernel.<Capability>.<Provider>`, such as `.GitHub`, `.Forgejo`, `.K6`, or `.Bitwarden`, so a consumer
+  references only the providers it uses and a new provider adds a library instead of changing the core. The capability
+  names the engine, not the tool: `sharedkernel-k6` can be a wrapper over a load-testing core and its k6 provider. A
+  provider library exists only for an implementation verified against the provider's current documentation and
+  covered by tests; an empty or speculative provider library is not created.
+- **Platform base libraries hold the low-level access that several providers share.** `SharedKernel.GitHub` holds the
+  GitHub token rules and the REST client headers, and every `.GitHub` provider builds on it; a Forgejo base,
+  `SharedKernel.Forgejo`, would mirror it and is created by the first provider that needs it. A base library holds no
+  capability logic.
 - **A tool is a thin wrapper.** `tools/SharedKernel.<Name>.Tool` holds only the System.CommandLine tree, the wiring of
   real dependencies, reading the settings, output, and exit codes, and references its engine with a
   `ProjectReference`. Application policy and data still come from the consuming repository's configuration files and
@@ -54,9 +66,7 @@ tools, written as .NET file-based (single-file) apps.
   hosts pass the system implementations and tests pass fakes. Diagnostics go to a `TextWriter` that the host passes,
   because System.CommandLine already supplies one per invocation; environment variables are read by the tool into a
   settings object, not by the engine.
-- **Logic that two or more tools need lives in a shared capability library, created before the engines.** The
-  [extraction map](../plans/tool-engine-extraction.md) records the survey of every tool, the shared libraries, and,
-  per tool, the engine library, its dependencies, and its single owner. See
+- **Logic that two or more tools need lives in a shared capability library,** not in either engine. See
   [Shared capabilities and source builds](#shared-capabilities-and-source-builds).
 - **Engines are lock-exempt unless they add a package version.** A new engine with no package dependency of its own
   adds no `Id@Version` pair, so it is listed in `lockExemptProjects` and sets
@@ -65,7 +75,7 @@ tools, written as .NET file-based (single-file) apps.
 
 ## Shared capabilities and source builds
 
-A survey of all tools before the per-tool extractions found the same mechanics copied between them. They moved to
+A survey of every tool before the engine extractions found the same mechanics copied between them. They moved to
 capability libraries, each with its own tests, so the engines start from one implementation:
 
 - `SharedKernel.ConfigurationFiles` (new): `JsonConfigurationFile` reads a strict JSON consumer configuration file
@@ -79,8 +89,8 @@ capability libraries, each with its own tests, so the engines start from one imp
 - `SharedKernel.IO`: `BoundedReader` (whole file or stream up to a limit, `null` above it).
 - `SharedKernel.InputNormalization`: `ControlCharacters.EscapeLines` for multi-line messages.
 
-Phase 2 owners consume these libraries and do not edit them; a capability that a second tool needs is promoted in a
-shared change, not inside an engine.
+An engine change consumes these libraries and does not extend them; logic that a second tool comes to need moves to
+the library that owns its concept in a change of its own.
 
 `sharedkernel-ci` and `sharedkernel-repo` build from a checkout of the revision before a candidate exists. A sparse
 cone listing `tools/<tool>` and each referenced `src/SharedKernel/<library>` had to grow with every engine, here and in

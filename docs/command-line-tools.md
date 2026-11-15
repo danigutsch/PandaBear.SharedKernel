@@ -186,8 +186,7 @@ Helpers that two or more tools call live in the library that owns the concept: `
 `SharedKernel.IO`, `ControlCharacters` (with `EscapeLines` for multi-line messages) in `SharedKernel.InputNormalization`,
 `CandidateManifest` in `SharedKernel.Versioning`, process execution, executable resolution, `ProcessTree`, and
 `ProcessEnvironment` in `SharedKernel.Processes`, `JsonConfigurationFile` in `SharedKernel.ConfigurationFiles`, and
-`GitHubToken` and `GitHubApiClient` in `SharedKernel.GitHub`. The [extraction map](plans/tool-engine-extraction.md)
-lists each tool's engine, its dependencies, and its owner. Tools reference those projects; they do not link
+`GitHubToken` and `GitHubApiClient` in `SharedKernel.GitHub`. Tools reference those projects; they do not link
 source files from other directories. `SharedKernel.PlaywrightMcp.Tool` is the first tool whose logic lives in an
 engine, `SharedKernel.PlaywrightMcp`; the other tools move theirs incrementally.
 
@@ -230,7 +229,8 @@ engine, `SharedKernel.PlaywrightMcp`; the other tools move theirs incrementally.
 ## Adding a tool
 
 1. Create the engine `src/SharedKernel/SharedKernel.<Name>` in the `PandaBear.<Name>` namespace, with PublicAPI files,
-   a README, and a lock-file decision, and `tools/SharedKernel.<Name>.Tool` in the `PandaBear.<Name>.Tool` namespace,
+   a README, and a lock-file decision (a generic core plus one `SharedKernel.<Name>.<Provider>` library per verified
+   provider, as the [tool engines ADR](adr/20261115-tool-engines-and-thin-wrappers.md) decides), and `tools/SharedKernel.<Name>.Tool` in the `PandaBear.<Name>.Tool` namespace,
    with the packaging properties above, the `sharedkernel-<name>` command name, the
    `PandaBear.SharedKernel.<Name>.Tool` package ID, and a `ProjectReference` to the engine. Add them and
    `tests/SharedKernel.<Name>.Tool.Tests` to `SharedKernel.slnx`.
