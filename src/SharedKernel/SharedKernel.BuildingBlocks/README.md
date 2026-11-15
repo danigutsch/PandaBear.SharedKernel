@@ -259,6 +259,23 @@ formats every culture like the invariant culture, and a container image without 
 - `BirthDate.Create(value, today, minAgeYears, maxAgeYears)`: required, not in the future, within the age limits; `AgeOn(day)` gives whole years. Leap-day births follow the 1 March convention: in a non-leap year the birthday is reached on 1 March (not 28 February), which is the stricter reading for minimum-age checks; in leap years it is 29 February.
 - `ReferenceCode.Create(value, maxLength, field, label)`: ASCII letters, digits, `-` and `_`, trimmed and upper-cased, so codes that differ only in case are equal.
 - `Money.CreateExact(amount, currency, field, label)`: like `Money.Create` but rejects an amount with more decimals than the currency's minor unit instead of rounding it.
+- `Money.CreateFromInput(amount, currency, field, label)`: for an amount a person typed. Like `Money.CreateExact`, but it also counts the decimal places the amount was written with, trailing zeros included, so `1.500` EUR is refused instead of saved as 1.50 (it is most likely 1500 typed with a thousands separator).
+
+A `decimal` keeps the decimal places it was written with: `decimal.Parse("1.500")` and the JSON number `1.500` read by
+System.Text.Json have three, which `CreateExact` accepts because the value fits the currency. `CreateFromInput` refuses them and names
+the currency's decimal places, with examples that have that many:
+
+```csharp
+var price = Money.CreateFromInput(request.BasePrice, Currency.Eur, field: "basePrice", label: "Base price");
+// 1500    -> EUR 1500.00
+// 1500.50 -> EUR 1500.50
+// 1.500   -> "Base price must have at most 2 decimal places, like 1500 or 1500.50." on basePrice
+```
+
+A currency without decimals, such as JPY, refuses `1500.0` with `Base price must be a whole number, like 1500.`; one with three, such
+as KWD, refuses `1.5000` with `... at most 3 decimal places, like 1500 or 1500.500.`.
+
+Pass the amount as it was parsed. A computed amount such as `1000.00m * 0.30m` has four decimal places, so it belongs in `CreateExact`.
 
 ## Business time
 

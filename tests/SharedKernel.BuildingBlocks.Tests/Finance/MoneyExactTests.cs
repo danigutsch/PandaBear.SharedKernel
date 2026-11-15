@@ -40,6 +40,33 @@ public sealed class MoneyExactTests
     }
 
     [Fact]
+    public void An_amount_with_zeros_beyond_the_currencys_precision_is_accepted()
+    {
+        // Arrange
+        var amount = decimal.Parse("1.500", System.Globalization.CultureInfo.InvariantCulture);
+
+        // Act
+        var result = Money.CreateExact(amount, Currency.Eur);
+
+        // Assert
+        result.ShouldBeSuccess().Amount.ShouldBe(1.50m, "only the value must fit the currency, not the decimal places it was written with");
+    }
+
+    [Fact]
+    public void A_computed_amount_whose_scale_exceeds_the_currencys_precision_is_accepted()
+    {
+        // Arrange
+        var amount = 1000.00m * 0.30m;
+
+        // Act
+        var result = Money.CreateExact(amount, Currency.Eur);
+
+        // Assert
+        amount.Scale.ShouldBe(4, "a product keeps the decimal places of both factors");
+        result.ShouldBeSuccess().ToString().ShouldBe("EUR 300.00");
+    }
+
+    [Fact]
     public void The_field_and_label_of_the_error_can_be_chosen()
     {
         // Act

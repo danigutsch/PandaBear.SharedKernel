@@ -129,6 +129,7 @@ PandaBear.BuildingBlocks.ReferenceCode.Value.get -> string!
 override PandaBear.BuildingBlocks.ReferenceCode.ToString() -> string!
 static PandaBear.BuildingBlocks.ReferenceCode.Create(string? value, int maxLength, string! field = "code", string! label = "Code") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.ReferenceCode!>
 static PandaBear.BuildingBlocks.Money.CreateExact(decimal amount, PandaBear.BuildingBlocks.Currency? currency, string! field = "amount", string! label = "Amount") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Money!>
+static PandaBear.BuildingBlocks.Money.CreateFromInput(decimal amount, PandaBear.BuildingBlocks.Currency? currency, string! field = "amount", string! label = "Amount") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Money!>
 PandaBear.BuildingBlocks.BusinessTimeProvider
 PandaBear.BuildingBlocks.BusinessTimeProvider.BusinessTimeProvider(System.TimeZoneInfo! businessTimeZone, System.TimeProvider? inner = null) -> void
 PandaBear.BuildingBlocks.ConcurrencyConflictException
