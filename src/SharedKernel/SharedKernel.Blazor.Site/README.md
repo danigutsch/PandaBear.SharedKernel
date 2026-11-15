@@ -278,8 +278,10 @@ file intake and store only their addresses in the theme.
 
 `ThemePreview` shows a small sample (navigation strip, h1 to h3, a paragraph with a link, small print, a primary and a secondary
 button, a card) styled by a `style` element scoped to `ScopeId`, then a contrast table for the shown scheme (pair, ratio rounded
-down, minimum, `Pass` or `Fail` in text) and the errors and warnings by field path. The sample is `inert`, so its headings and links
-stay out of the page outline and tab order. It needs no script and re-renders on every parameter change:
+down, minimum, `Pass` or `Fail` in text) and the errors and warnings by field path. The sample's headings are `div` elements styled
+with the h1 to h3 roles (classes `site-theme-preview__h1` to `__h3`), not heading elements, so the page's outline and heading
+navigation keep only the host's own headings. The sample is `inert`, so its links stay out of the tab order; the contrast table and
+the issue list are outside it. It needs no script and re-renders on every parameter change:
 
 ```razor
 <ThemePreview Theme="_draft" Errors="_errors" Scheme="_dark ? ColorScheme.Dark : ColorScheme.Light" Narrow="_narrow" ScopeId="brand-preview" />

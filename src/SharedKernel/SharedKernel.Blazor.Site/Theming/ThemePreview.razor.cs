@@ -6,8 +6,9 @@ namespace PandaBear.Blazor.Site.Theming;
 /// A small live preview of a theme draft: headings, text with a link, small print, a primary and a secondary button, a card and a
 /// navigation strip, styled by a <c>style</c> element scoped to <see cref="ScopeId" />, followed by the contrast of every colour pair
 /// in the shown scheme as text (ratio, minimum, pass or fail) and the errors and warnings by field path. The parent owns the
-/// scheme and width toggles; the component needs no script and re-renders on every parameter change. The sample is
-/// <c>inert</c>, so its headings and links do not join the page's outline or tab order.
+/// scheme and width toggles; the component needs no script and re-renders on every parameter change. The sample's headings are
+/// text styled with the heading roles, not heading elements, so the page's outline keeps only the host's own headings; the sample
+/// is <c>inert</c>, so its links stay out of the tab order. The contrast table and the issue list are outside the sample.
 /// </summary>
 /// <remarks>
 /// The inline <c>style</c> element needs a CSP3 nonce source (<c>style-src 'nonce-…'</c>) in the Content-Security-Policy of the page

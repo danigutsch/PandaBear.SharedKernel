@@ -31,15 +31,42 @@ public sealed class ThemePreviewTests : BunitContext
         // Assert
         var sample = cut.Find(".site-theme-preview__sample");
         sample.HasAttribute("inert").ShouldBeTrue();
-        sample.QuerySelector("h1").ShouldNotBeNull();
-        sample.QuerySelector("h2").ShouldNotBeNull();
-        sample.QuerySelector("h3").ShouldNotBeNull();
+        sample.QuerySelector(".site-theme-preview__h1")!.TextContent.ShouldBe("Heading one");
+        sample.QuerySelector(".site-theme-preview__h2")!.TextContent.ShouldBe("Heading two");
+        sample.QuerySelector(".site-theme-preview__h3")!.TextContent.ShouldBe("Heading three");
         sample.QuerySelector("p a").ShouldNotBeNull();
         sample.QuerySelector("small").ShouldNotBeNull();
         sample.QuerySelector(".site-button--primary").ShouldNotBeNull();
         sample.QuerySelector(".site-button--secondary").ShouldNotBeNull();
-        sample.QuerySelector(".site-card").ShouldNotBeNull();
+        sample.QuerySelector(".site-card .site-card__title.site-theme-preview__h3")!.TextContent.ShouldBe("Card");
         sample.QuerySelector("nav.site-nav a[aria-current=\"page\"]").ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void The_sample_headings_are_styled_text_so_the_page_outline_keeps_only_the_hosts_headings()
+    {
+        // Arrange & Act
+        var cut = Render<ThemePreview>(parameters => parameters.Add(component => component.Theme, SiteTheme.Default));
+
+        // Assert
+        cut.FindAll("h1, h2, h3, h4, h5, h6, [role=\"heading\"]").ShouldBeEmpty();
+        cut.Find(".site-theme-preview__sample").QuerySelectorAll(".site-theme-preview__h1, .site-theme-preview__h2, .site-theme-preview__h3").Length.ShouldBe(4);
+    }
+
+    [Fact]
+    public void The_contrast_table_and_the_issue_list_stay_outside_the_inert_sample()
+    {
+        // Arrange
+        var colors = ThemeFixtures.DefaultColorsWith(ThemeColorRole.Muted, ThemeFixtures.Pair("#d1d5db", "#9ca3af"));
+        var draft = SiteTheme.CreateDraft(colors, SiteTheme.Default.Typography).ShouldBeSuccess();
+
+        // Act
+        var cut = Render<ThemePreview>(parameters => parameters.Add(component => component.Theme, draft));
+
+        // Assert
+        cut.FindAll("[aria-hidden=\"true\"]").ShouldAllSatisfy(hidden => hidden.ClassList.ShouldContain("site-theme-preview__swatch"));
+        cut.Find("table.site-theme-preview__contrast").Closest("[inert]").ShouldBeNull();
+        cut.Find(".site-theme-preview__issues").Closest("[inert]").ShouldBeNull();
     }
 
     [Theory]
