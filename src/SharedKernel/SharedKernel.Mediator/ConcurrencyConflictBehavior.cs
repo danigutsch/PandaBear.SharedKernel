@@ -5,13 +5,15 @@ namespace PandaBear.Mediator;
 
 /// <summary>
 /// Converts a <see cref="ConcurrencyConflictException"/> thrown while a request runs into a failed result with
-/// <see cref="ResultStatus.Conflict"/>, so handlers that return <see cref="Result"/> or <see cref="Result{T}"/> need no try/catch of their own.
+/// <see cref="ResultStatus.Conflict"/> and the error code <see cref="ResultErrorCodes.ConcurrencyConflict"/>, so handlers that return
+/// <see cref="Result"/> or <see cref="Result{T}"/> need no try/catch of their own.
 /// </summary>
 /// <remarks>
 /// <para>
 /// Only <see cref="ConcurrencyConflictException"/> is converted. Every other exception, including <see cref="OperationCanceledException"/>,
-/// propagates unchanged, and a returned result passes through untouched. The result carries <see cref="ConflictMessage"/>; the exception
-/// text and its inner exception are never copied into it.
+/// propagates unchanged, and a returned result passes through untouched. The result carries <see cref="ConflictMessage"/> and the code
+/// <see cref="ResultErrorCodes.ConcurrencyConflict"/>, which tells a stale version apart from any other conflict without comparing the
+/// message; the exception text and its inner exception are never copied into it.
 /// </para>
 /// <para>
 /// The package assembly is not a mediator module, so the generator does not discover this class. Derive a sealed class in your own module
@@ -40,7 +42,7 @@ public class ConcurrencyConflictBehavior<TRequest, TResponse> : IPipelineBehavio
         }
         catch (ConcurrencyConflictException)
         {
-            return TResponse.Conflict(ConflictMessage);
+            return TResponse.FromError(new ResultError(ConflictMessage, ResultErrorCodes.ConcurrencyConflict));
         }
     }
 }
