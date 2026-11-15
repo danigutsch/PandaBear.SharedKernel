@@ -1,11 +1,17 @@
-using System.Text.RegularExpressions;
+using System.Buffers;
 using PandaBear.Results;
 
 namespace PandaBear.BuildingBlocks;
 
 /// <summary>A typed canonical Pix key with validated format; not proof of DICT registration or recipient ownership.</summary>
-public sealed partial class PixKey : ValueObject
+public sealed class PixKey : ValueObject
 {
+    private static readonly SearchValues<char> EmailLocalCharacters =
+        SearchValues.Create("abcdefghijklmnopqrstuvwxyz0123456789.!#$'*+/=?^_`{|}~-");
+
+    private static readonly SearchValues<char> DomainLabelCharacters =
+        SearchValues.Create("abcdefghijklmnopqrstuvwxyz0123456789-");
+
     private PixKey(PixKeyType type, string value)
     {
         Type = type;
@@ -36,7 +42,7 @@ public sealed partial class PixKey : ValueObject
             PixKeyType.Phone => value.Length is >= 3 and <= 16
                 && value[0] == '+' && value[1] is >= '1' and <= '9'
                 && value.AsSpan(2).IndexOfAnyExceptInRange('0', '9') < 0,
-            PixKeyType.Email => EmailPattern().IsMatch(value),
+            PixKeyType.Email => IsEmail(value),
             PixKeyType.Evp => value.Length == 36
                 && !value.Any(static character => !char.IsAsciiHexDigitLower(character) && character != '-')
                 && Guid.TryParseExact(value, "D", out _),
@@ -59,6 +65,25 @@ public sealed partial class PixKey : ValueObject
     private static Result<PixKey> Invalid() =>
         Result.Invalid<PixKey>(detail: "Pix key is not valid.", field: "pixKey", message: "Pix key is not valid.");
 
-    [GeneratedRegex(@"\A[a-z0-9.!#$'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*\z", RegexOptions.CultureInvariant, 100)]
-    private static partial Regex EmailPattern();
+    // Parses the DICT email format without a regular expression, so a busy host cannot turn a match timeout into an exception.
+    private static bool IsEmail(ReadOnlySpan<char> value)
+    {
+        var at = value.IndexOf('@');
+        if (at <= 0 || value[..at].ContainsAnyExcept(EmailLocalCharacters))
+        {
+            return false;
+        }
+
+        var domain = value[(at + 1)..];
+        foreach (var range in domain.Split('.'))
+        {
+            var label = domain[range];
+            if (label.Length is 0 or > 63 || label[0] == '-' || label[^1] == '-' || label.ContainsAnyExcept(DomainLabelCharacters))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
