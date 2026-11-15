@@ -30,7 +30,9 @@ internal sealed class ExternalCommands
     {
         ct.ThrowIfCancellationRequested();
         var argumentList = arguments.ToArray();
-        var result = await Start(CreateStartInfo(fileName, argumentList, workingDirectory), forward: null, ct).ConfigureAwait(false);
+        // A start failure is the InvalidOperationException that IProcessRunner documents. SystemProcessRunner and
+        // BoundedProcessRunner put the file name and the operating system's reason in its message; another runner may not.
+        var result = await _processRunner.Run(CreateStartInfo(fileName, argumentList, workingDirectory), forward: null, ct).ConfigureAwait(false);
         if (result.ExitCode == 0)
         {
             return result.StandardOutput;
@@ -69,7 +71,7 @@ internal sealed class ExternalCommands
             }
         }
 
-        var result = await Start(startInfo, sink, ct).ConfigureAwait(false);
+        var result = await _processRunner.Run(startInfo, sink, ct).ConfigureAwait(false);
         if (result.ExitCode != 0)
         {
             throw new InvalidOperationException($"Command failed ({result.ExitCode}): {fileName} {string.Join(' ', arguments)}");
@@ -88,11 +90,6 @@ internal sealed class ExternalCommands
             return string.Empty;
         }
     }
-
-    // A start failure is the InvalidOperationException that IProcessRunner documents. SystemProcessRunner and
-    // BoundedProcessRunner put the file name and the operating system's reason in its message; another runner may not.
-    private Task<ProcessOutput> Start(ProcessStartInfo startInfo, TextWriter? forward, CancellationToken ct) =>
-        _processRunner.Run(startInfo, forward, ct);
 
     private ProcessStartInfo CreateStartInfo(string fileName, string[] arguments, string? workingDirectory)
     {
