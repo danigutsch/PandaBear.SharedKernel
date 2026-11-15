@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using PandaBear.Processes;
 
 namespace PandaBear.GitHub.Tests;
 
@@ -66,5 +67,23 @@ public sealed class GitHubTokenTests
         find.ShouldThrow<ArgumentNullException>();
         isToken.ShouldThrow<ArgumentNullException>();
         remove.ShouldThrow<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Forge_neutral_removal_covers_every_token_variable()
+    {
+        // Arrange
+        var startInfo = new ProcessStartInfo("child");
+        foreach (var name in GitHubToken.VariableNames)
+        {
+            startInfo.Environment[name] = "secret";
+        }
+
+        // Act
+        ProcessEnvironment.RemoveForgeTokens(startInfo);
+
+        // Assert
+        GitHubToken.VariableNames.ShouldAllSatisfy(static name => ProcessEnvironment.ForgeTokenVariableNames.ShouldContain(name));
+        startInfo.Environment.Keys.ShouldNotContain(name => GitHubToken.IsTokenVariable(name));
     }
 }

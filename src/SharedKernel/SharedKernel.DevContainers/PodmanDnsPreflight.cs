@@ -2,7 +2,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using PandaBear.GitHub;
 using PandaBear.InputNormalization;
 using PandaBear.Processes;
 
@@ -882,7 +881,7 @@ public static class PodmanDnsPreflight
             RedirectStandardOutput = true,
             UseShellExecute = false
         };
-        GitHubToken.RemoveFrom(startInfo);
+        ProcessEnvironment.RemoveForgeTokens(startInfo);
         startInfo.Environment["LC_ALL"] = "C";
         startInfo.ArgumentList.Add("-L");
         startInfo.ArgumentList.Add("-c");
@@ -921,7 +920,7 @@ public static class PodmanDnsPreflight
             RedirectStandardOutput = true,
             UseShellExecute = false
         };
-        GitHubToken.RemoveFrom(startInfo);
+        ProcessEnvironment.RemoveForgeTokens(startInfo);
         startInfo.Environment.Remove("CONTAINER_CONNECTION");
         startInfo.Environment.Remove("CONTAINER_HOST");
         startInfo.ArgumentList.Add("--remote=false");

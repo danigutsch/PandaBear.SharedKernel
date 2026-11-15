@@ -2,7 +2,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using PandaBear.GitHub;
 using PandaBear.Processes;
 
 namespace PandaBear.Repositories;
@@ -859,7 +858,7 @@ public static class TextEncodingVerifier
         };
         ProcessEnvironment.RemoveGitVariables(startInfo);
 
-        GitHubToken.RemoveFrom(startInfo);
+        ProcessEnvironment.RemoveForgeTokens(startInfo);
         startInfo.Environment["GIT_ATTR_NOSYSTEM"] = "1";
         startInfo.Environment["GIT_CONFIG_GLOBAL"] = invocation.GlobalConfigFile;
         startInfo.Environment["GIT_CONFIG_NOSYSTEM"] = "1";

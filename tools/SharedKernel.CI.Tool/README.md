@@ -154,7 +154,7 @@ the file and the JSON path of the problem.
 | `slices[].playwright.browsers` | The browsers to install, such as `chromium`: lowercase letters, digits, and `-`, starting with a letter. At least one. |
 | `slices[].playwright.onlyShell` | Optional, default `false`: install only the headless shell of Chromium, not the full browser. Set it when the slice's tests never run headed. |
 | `slices[].service.project` | Optional section. A project of the solution that is not a test project and that no slice lists. `run` starts it with `dotnet run` before the slice's tests and stops it after them; see [Services](#services). |
-| `slices[].service.readyFileVariable` | The environment variable, in the service's environment, that names the file where the service writes its value: letters, digits, and `_`, not starting with a digit, and not `GH_TOKEN` or `GITHUB_TOKEN`. |
+| `slices[].service.readyFileVariable` | The environment variable, in the service's environment, that names the file where the service writes its value: letters, digits, and `_`, not starting with a digit, and not `GH_TOKEN`, `GITHUB_TOKEN`, or `FORGEJO_TOKEN`. |
 | `slices[].service.valueVariable` | The environment variable that carries the written value into the slice's test run, and only there. It follows the rules of `readyFileVariable`, differs from it, and differs from the `valueVariable` of every other slice. |
 | `slices[].service.readyTimeoutSeconds` | Optional, from 1 to 3600, default 300: how long the service has to write its value, enough for an image pull on a cold runner. |
 | `slices[].service.stopTimeoutSeconds` | Optional, from 1 to 3600, default 60: how long the service has to exit after its standard input closes before its process tree is killed. A service that removes containers needs more than the two minutes that the container runtime may take, because it removes them while it exits and a kill interrupts that; a helper that the service detached, such as Aspire's DCP process, can still remove what a killed service left, but that is a safety net and not the plan. |
@@ -292,9 +292,9 @@ value, and the variable that hands the value to the tests. The protocol is:
    --no-build --no-restore --no-launch-profile`. `dotnet run` passes its redirected standard input to the application,
    so closing the input reaches the service as end-of-file, and the application's exit code is the exit code of
    `dotnet run`.
-2. The service's environment is the tool's, without `GH_TOKEN` and `GITHUB_TOKEN`, without `valueVariable`, and with
-   `readyFileVariable` set to the absolute path of a file in a fresh temporary directory. Only the current user can
-   enter that directory (mode 0700 on Unix), and it lies outside the execution directory, which CI uploads as an
+2. The service's environment is the tool's, without `GH_TOKEN`, `GITHUB_TOKEN`, and `FORGEJO_TOKEN`, without
+   `valueVariable`, and with `readyFileVariable` set to the absolute path of a file in a fresh temporary directory.
+   Only the current user can enter that directory (mode 0700 on Unix), and it lies outside the execution directory, which CI uploads as an
    artifact. Standard input is a pipe that the tool holds open. Standard output and standard error stream to
    `service-<slice>.stdout.log` and `service-<slice>.stderr.log` in the execution directory, where the `service-<slice>`
    phase log names them.

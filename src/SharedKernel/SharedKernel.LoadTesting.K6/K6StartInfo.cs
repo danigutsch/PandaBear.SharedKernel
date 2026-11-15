@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using PandaBear.GitHub;
+using PandaBear.Processes;
 
 namespace PandaBear.LoadTesting.K6;
 
@@ -40,7 +40,7 @@ internal static class K6StartInfo
     public static ProcessStartInfo Container(LoadGeneratorRun run, LoadTestContainer container, string name)
     {
         var startInfo = new ProcessStartInfo(run.Executable) { UseShellExecute = false, WorkingDirectory = run.Root };
-        GitHubToken.RemoveFrom(startInfo);
+        ProcessEnvironment.RemoveForgeTokens(startInfo);
         foreach (var argument in new[] { "run", "--rm", "--pull=never", "--name", name })
         {
             startInfo.ArgumentList.Add(argument);
@@ -74,7 +74,7 @@ internal static class K6StartInfo
             RedirectStandardOutput = true,
             RedirectStandardError = true,
         };
-        GitHubToken.RemoveFrom(startInfo);
+        ProcessEnvironment.RemoveForgeTokens(startInfo);
         foreach (var argument in new[] { "rm", "--force", name })
         {
             startInfo.ArgumentList.Add(argument);

@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using PandaBear.GitHub;
 using PandaBear.Processes;
 
 namespace PandaBear.CI;
@@ -125,7 +124,7 @@ internal sealed class ServiceHost
             startInfo.ArgumentList.Add(argument);
         }
 
-        GitHubToken.RemoveFrom(startInfo);
+        ProcessEnvironment.RemoveForgeTokens(startInfo);
         startInfo.Environment.Remove(configuration.ValueVariable);
         startInfo.Environment[configuration.ReadyFileVariable] = readyFile;
         return startInfo;

@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
-using PandaBear.GitHub;
+using PandaBear.Processes;
 
 namespace PandaBear.DevContainers;
 
@@ -33,7 +33,7 @@ internal static class DevcontainerProcess
         startInfo.RedirectStandardInput = true;
         startInfo.RedirectStandardOutput = true;
         startInfo.RedirectStandardError = true;
-        GitHubToken.RemoveFrom(startInfo);
+        ProcessEnvironment.RemoveForgeTokens(startInfo);
         ct.ThrowIfCancellationRequested();
 
         using var process = Start(startInfo);

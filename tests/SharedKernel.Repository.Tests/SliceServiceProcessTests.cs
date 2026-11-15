@@ -51,6 +51,7 @@ public sealed class SliceServiceProcessTests
             ["GH_TOKEN"] = "token-canary",
             ["GITHUB_TOKEN"] = "token-canary",
             ["github_token"] = "token-canary",
+            ["FORGEJO_TOKEN"] = "token-canary",
             ["SHAREDKERNEL_UNRELATED"] = "kept",
         });
 
@@ -61,7 +62,9 @@ public sealed class SliceServiceProcessTests
         result.ExitCode.ShouldBe(0, result.Error);
         var service = scope.Run.Host.Environment(Database);
         service.Keys.ShouldNotContain(
-            static name => name.Equals("GH_TOKEN", StringComparison.OrdinalIgnoreCase) || name.Equals("GITHUB_TOKEN", StringComparison.OrdinalIgnoreCase),
+            static name => name.Equals("GH_TOKEN", StringComparison.OrdinalIgnoreCase)
+                || name.Equals("GITHUB_TOKEN", StringComparison.OrdinalIgnoreCase)
+                || name.Equals("FORGEJO_TOKEN", StringComparison.OrdinalIgnoreCase),
             "A service starts containers and downloads images; it needs no token of the job.");
         service["SHAREDKERNEL_UNRELATED"].ShouldBe("kept", "Only the tokens are removed from the inherited environment.");
     }

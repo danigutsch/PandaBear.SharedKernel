@@ -91,7 +91,9 @@ capability libraries, each with its own tests, so the engines start from one imp
 - `SharedKernel.GitHub` (new): `GitHubToken` (find `GH_TOKEN` then `GITHUB_TOKEN`, refuse forwarding them, remove them
   from a child process) and `GitHubApiClient` (REST headers), which CI, K6, and RepoConfig each implemented.
 - `SharedKernel.Processes`: `ProcessTree` (start, and end a process tree with a bounded wait) and `ProcessEnvironment`
-  (remove `GIT_*` or named variables), copied in CI, K6, Versioning, and four RepoConfig classes.
+  (remove `GIT_*` or named variables), copied in CI, K6, Versioning, and four RepoConfig classes. `ProcessEnvironment`
+  also removes every forge token variable (`GH_TOKEN`, `GITHUB_TOKEN`, `FORGEJO_TOKEN`) from a child, so an engine that
+  only keeps tokens away from its children does not reference a forge platform base for it.
 - `SharedKernel.IO`: `BoundedReader` (whole file or stream up to a limit, `null` above it).
 - `SharedKernel.InputNormalization`: `ControlCharacters.EscapeLines` for multi-line messages.
 

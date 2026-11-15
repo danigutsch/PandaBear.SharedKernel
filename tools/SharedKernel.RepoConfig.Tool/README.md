@@ -482,8 +482,8 @@ default-branch commit moved while it was read.
 ## Security
 
 - Tokens come only from the environment. GitHub transport failures are reported without request details.
-- Child processes (Git, Podman, `stat`, Docker, and the Dev Container CLI) start without `GH_TOKEN` and
-  `GITHUB_TOKEN`.
+- Child processes (Git, Podman, `stat`, Docker, and the Dev Container CLI) start without `GH_TOKEN`, `GITHUB_TOKEN`, and
+  `FORGEJO_TOKEN`.
 - Git and Docker start from the first absolute `PATH` entry that holds them, never from the current directory
   or a relative or empty `PATH` entry.
 - `verify-devcontainer` checks each downloaded archive against the hash pinned in the tool before reading it,
