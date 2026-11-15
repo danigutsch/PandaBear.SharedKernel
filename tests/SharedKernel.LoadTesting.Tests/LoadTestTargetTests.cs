@@ -1,7 +1,7 @@
-namespace PandaBear.K6.Tool.Tests;
+namespace PandaBear.LoadTesting.Tests;
 
-/// <summary>Tests validation and rewriting of the k6 target URL.</summary>
-public sealed class K6TargetTests
+/// <summary>Tests validation and rewriting of the load-test target URL.</summary>
+public sealed class LoadTestTargetTests
 {
     [Theory]
     [InlineData("http://localhost:5000", "http://localhost:5000")]
@@ -12,10 +12,10 @@ public sealed class K6TargetTests
     public void Allows_loopback_targets(string value, string expected)
     {
         // Act
-        var target = K6Target.Parse(value, "APP_BASE_URL", allowExternal: false);
+        var target = LoadTestTarget.Parse(value, "APP_BASE_URL", allowExternal: false);
 
         // Assert
-        K6Target.Format(target).ShouldBe(expected);
+        LoadTestTarget.Format(target).ShouldBe(expected);
     }
 
     [Theory]
@@ -27,8 +27,8 @@ public sealed class K6TargetTests
     public void Rejects_external_targets_unless_allowed(string value)
     {
         // Act
-        var rejected = Record.Exception(() => K6Target.Parse(value, "APP_BASE_URL", allowExternal: false));
-        var allowed = Record.Exception(() => K6Target.Parse(value, "APP_BASE_URL", allowExternal: true));
+        var rejected = Record.Exception(() => LoadTestTarget.Parse(value, "APP_BASE_URL", allowExternal: false));
+        var allowed = Record.Exception(() => LoadTestTarget.Parse(value, "APP_BASE_URL", allowExternal: true));
 
         // Assert
         rejected.ShouldBeOfType<InvalidOperationException>().Message
@@ -46,7 +46,7 @@ public sealed class K6TargetTests
     public void Rejects_malformed_targets_even_when_external_targets_are_allowed(string value, string message)
     {
         // Act
-        var exception = Record.Exception(() => K6Target.Parse(value, "APP_BASE_URL", allowExternal: true));
+        var exception = Record.Exception(() => LoadTestTarget.Parse(value, "APP_BASE_URL", allowExternal: true));
 
         // Assert
         exception.ShouldBeOfType<InvalidOperationException>().Message.ShouldBe(message);
@@ -63,7 +63,7 @@ public sealed class K6TargetTests
     public void Container_targets_reach_loopback_hosts_through_host_docker_internal(string value, string expected)
     {
         // Act
-        var target = K6Target.ForContainer(new Uri(value, UriKind.Absolute));
+        var target = LoadTestTarget.ForContainer(new Uri(value, UriKind.Absolute));
 
         // Assert
         target.ShouldBe(expected);
@@ -77,7 +77,7 @@ public sealed class K6TargetTests
     public void Unspecified_host_addresses_become_the_loopback_address(string value, string expected)
     {
         // Act
-        var target = K6Target.ToLoopback(value);
+        var target = LoadTestTarget.ToLoopback(value);
 
         // Assert
         target.ShouldBe(expected);

@@ -21,11 +21,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.ConfigurationFiles\SharedKernel.ConfigurationFiles.csproj" />
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.GitHub\SharedKernel.GitHub.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.IO\SharedKernel.IO.csproj" />
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Processes\SharedKernel.Processes.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.LoadTesting.K6\SharedKernel.LoadTesting.K6.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.LoadTesting\SharedKernel.LoadTesting.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -192,6 +192,10 @@
   <Project Path="tests/SharedKernel.ConfigurationFiles.Tests/SharedKernel.ConfigurationFiles.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.GitHub/SharedKernel.GitHub.csproj" />
   <Project Path="tests/SharedKernel.GitHub.Tests/SharedKernel.GitHub.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.LoadTesting/SharedKernel.LoadTesting.csproj" />
+  <Project Path="tests/SharedKernel.LoadTesting.Tests/SharedKernel.LoadTesting.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.LoadTesting.K6/SharedKernel.LoadTesting.K6.csproj" />
+  <Project Path="tests/SharedKernel.LoadTesting.K6.Tests/SharedKernel.LoadTesting.K6.Tests.csproj" />
   <Project Path="tools/SharedKernel.PlaywrightMcp.Tool/SharedKernel.PlaywrightMcp.Tool.csproj" />
   <Project Path="tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj" />
   <Project Path="tools/SharedKernel.VaultManager.Tool/SharedKernel.VaultManager.Tool.csproj" />
