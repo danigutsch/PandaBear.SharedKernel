@@ -97,3 +97,61 @@ static PandaBear.ObjectStorage.ObjectStoreValueExtensions.ListObjects(this Panda
 static PandaBear.ObjectStorage.ObjectStoreValueExtensions.OpenRead(this PandaBear.ObjectStorage.IObjectStore! store, PandaBear.ObjectStorage.ObjectStorageKey objectKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.ObjectStorage.ObjectReadResult!>
 static PandaBear.ObjectStorage.ObjectWriteRequest.Create(PandaBear.ObjectStorage.ObjectStorageKey objectKey, System.IO.Stream! content, string! contentType, long length, string? checksum = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> PandaBear.ObjectStorage.ObjectWriteRequest!
 static PandaBear.ObjectStorage.ObjectUploadRequest.Create(PandaBear.ObjectStorage.ObjectStorageKey objectKey, string! contentType, long length, System.TimeSpan expiresAfter) -> PandaBear.ObjectStorage.ObjectUploadRequest!
+PandaBear.ObjectStorage.ObjectInventoryItem.<Clone>$() -> PandaBear.ObjectStorage.ObjectInventoryItem!
+PandaBear.ObjectStorage.ObjectInventoryItem.Deconstruct(out string! ObjectKey, out System.DateTimeOffset LastModifiedAt) -> void
+PandaBear.ObjectStorage.ObjectInventoryItem.Equals(PandaBear.ObjectStorage.ObjectInventoryItem? other) -> bool
+PandaBear.ObjectStorage.ObjectReadResult.<Clone>$() -> PandaBear.ObjectStorage.ObjectReadResult!
+PandaBear.ObjectStorage.ObjectReadResult.Deconstruct(out string! ObjectKey, out System.IO.Stream! Content, out string! ContentType, out long Length, out string? Checksum) -> void
+PandaBear.ObjectStorage.ObjectReadResult.Equals(PandaBear.ObjectStorage.ObjectReadResult? other) -> bool
+PandaBear.ObjectStorage.ObjectStorageKey.Equals(PandaBear.ObjectStorage.ObjectStorageKey other) -> bool
+PandaBear.ObjectStorage.ObjectStoragePrefix.Equals(PandaBear.ObjectStorage.ObjectStoragePrefix other) -> bool
+PandaBear.ObjectStorage.ObjectUploadRequest.<Clone>$() -> PandaBear.ObjectStorage.ObjectUploadRequest!
+PandaBear.ObjectStorage.ObjectUploadRequest.Deconstruct(out string! ObjectKey, out string! ContentType, out long Length, out System.TimeSpan ExpiresAfter) -> void
+PandaBear.ObjectStorage.ObjectUploadRequest.Equals(PandaBear.ObjectStorage.ObjectUploadRequest? other) -> bool
+PandaBear.ObjectStorage.ObjectUploadTicket.<Clone>$() -> PandaBear.ObjectStorage.ObjectUploadTicket!
+PandaBear.ObjectStorage.ObjectUploadTicket.Deconstruct(out string! ObjectKey, out System.Uri! UploadUri, out System.DateTimeOffset ExpiresAt, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! RequiredHeaders) -> void
+PandaBear.ObjectStorage.ObjectUploadTicket.Equals(PandaBear.ObjectStorage.ObjectUploadTicket? other) -> bool
+PandaBear.ObjectStorage.ObjectWriteRequest.<Clone>$() -> PandaBear.ObjectStorage.ObjectWriteRequest!
+PandaBear.ObjectStorage.ObjectWriteRequest.Deconstruct(out string! ObjectKey, out System.IO.Stream! Content, out string! ContentType, out long Length, out string? Checksum, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>? Metadata) -> void
+PandaBear.ObjectStorage.ObjectWriteRequest.Equals(PandaBear.ObjectStorage.ObjectWriteRequest? other) -> bool
+PandaBear.ObjectStorage.ObjectWriteResult.<Clone>$() -> PandaBear.ObjectStorage.ObjectWriteResult!
+PandaBear.ObjectStorage.ObjectWriteResult.Deconstruct(out string! ObjectKey, out System.Uri! StorageUri, out System.Uri! PublicUri, out string! ContentType, out long Length, out string? Checksum) -> void
+PandaBear.ObjectStorage.ObjectWriteResult.Equals(PandaBear.ObjectStorage.ObjectWriteResult? other) -> bool
+override PandaBear.ObjectStorage.ObjectInventoryItem.Equals(object? obj) -> bool
+override PandaBear.ObjectStorage.ObjectInventoryItem.GetHashCode() -> int
+override PandaBear.ObjectStorage.ObjectInventoryItem.ToString() -> string!
+override PandaBear.ObjectStorage.ObjectReadResult.Equals(object? obj) -> bool
+override PandaBear.ObjectStorage.ObjectReadResult.GetHashCode() -> int
+override PandaBear.ObjectStorage.ObjectReadResult.ToString() -> string!
+override PandaBear.ObjectStorage.ObjectStorageKey.GetHashCode() -> int
+override PandaBear.ObjectStorage.ObjectStoragePrefix.GetHashCode() -> int
+override PandaBear.ObjectStorage.ObjectUploadRequest.Equals(object? obj) -> bool
+override PandaBear.ObjectStorage.ObjectUploadRequest.GetHashCode() -> int
+override PandaBear.ObjectStorage.ObjectUploadRequest.ToString() -> string!
+override PandaBear.ObjectStorage.ObjectUploadTicket.Equals(object? obj) -> bool
+override PandaBear.ObjectStorage.ObjectUploadTicket.GetHashCode() -> int
+override PandaBear.ObjectStorage.ObjectUploadTicket.ToString() -> string!
+override PandaBear.ObjectStorage.ObjectWriteRequest.Equals(object? obj) -> bool
+override PandaBear.ObjectStorage.ObjectWriteRequest.GetHashCode() -> int
+override PandaBear.ObjectStorage.ObjectWriteRequest.ToString() -> string!
+override PandaBear.ObjectStorage.ObjectWriteResult.Equals(object? obj) -> bool
+override PandaBear.ObjectStorage.ObjectWriteResult.GetHashCode() -> int
+override PandaBear.ObjectStorage.ObjectWriteResult.ToString() -> string!
+static PandaBear.ObjectStorage.ObjectInventoryItem.operator !=(PandaBear.ObjectStorage.ObjectInventoryItem? left, PandaBear.ObjectStorage.ObjectInventoryItem? right) -> bool
+static PandaBear.ObjectStorage.ObjectInventoryItem.operator ==(PandaBear.ObjectStorage.ObjectInventoryItem? left, PandaBear.ObjectStorage.ObjectInventoryItem? right) -> bool
+static PandaBear.ObjectStorage.ObjectReadResult.operator !=(PandaBear.ObjectStorage.ObjectReadResult? left, PandaBear.ObjectStorage.ObjectReadResult? right) -> bool
+static PandaBear.ObjectStorage.ObjectReadResult.operator ==(PandaBear.ObjectStorage.ObjectReadResult? left, PandaBear.ObjectStorage.ObjectReadResult? right) -> bool
+static PandaBear.ObjectStorage.ObjectStorageKey.operator !=(PandaBear.ObjectStorage.ObjectStorageKey left, PandaBear.ObjectStorage.ObjectStorageKey right) -> bool
+static PandaBear.ObjectStorage.ObjectStorageKey.operator ==(PandaBear.ObjectStorage.ObjectStorageKey left, PandaBear.ObjectStorage.ObjectStorageKey right) -> bool
+static PandaBear.ObjectStorage.ObjectStoragePrefix.operator !=(PandaBear.ObjectStorage.ObjectStoragePrefix left, PandaBear.ObjectStorage.ObjectStoragePrefix right) -> bool
+static PandaBear.ObjectStorage.ObjectStoragePrefix.operator ==(PandaBear.ObjectStorage.ObjectStoragePrefix left, PandaBear.ObjectStorage.ObjectStoragePrefix right) -> bool
+static PandaBear.ObjectStorage.ObjectUploadRequest.operator !=(PandaBear.ObjectStorage.ObjectUploadRequest? left, PandaBear.ObjectStorage.ObjectUploadRequest? right) -> bool
+static PandaBear.ObjectStorage.ObjectUploadRequest.operator ==(PandaBear.ObjectStorage.ObjectUploadRequest? left, PandaBear.ObjectStorage.ObjectUploadRequest? right) -> bool
+static PandaBear.ObjectStorage.ObjectUploadTicket.operator !=(PandaBear.ObjectStorage.ObjectUploadTicket? left, PandaBear.ObjectStorage.ObjectUploadTicket? right) -> bool
+static PandaBear.ObjectStorage.ObjectUploadTicket.operator ==(PandaBear.ObjectStorage.ObjectUploadTicket? left, PandaBear.ObjectStorage.ObjectUploadTicket? right) -> bool
+static PandaBear.ObjectStorage.ObjectWriteRequest.operator !=(PandaBear.ObjectStorage.ObjectWriteRequest? left, PandaBear.ObjectStorage.ObjectWriteRequest? right) -> bool
+static PandaBear.ObjectStorage.ObjectWriteRequest.operator ==(PandaBear.ObjectStorage.ObjectWriteRequest? left, PandaBear.ObjectStorage.ObjectWriteRequest? right) -> bool
+static PandaBear.ObjectStorage.ObjectWriteResult.operator !=(PandaBear.ObjectStorage.ObjectWriteResult? left, PandaBear.ObjectStorage.ObjectWriteResult? right) -> bool
+static PandaBear.ObjectStorage.ObjectWriteResult.operator ==(PandaBear.ObjectStorage.ObjectWriteResult? left, PandaBear.ObjectStorage.ObjectWriteResult? right) -> bool
+~override PandaBear.ObjectStorage.ObjectStorageKey.Equals(object obj) -> bool
+~override PandaBear.ObjectStorage.ObjectStoragePrefix.Equals(object obj) -> bool

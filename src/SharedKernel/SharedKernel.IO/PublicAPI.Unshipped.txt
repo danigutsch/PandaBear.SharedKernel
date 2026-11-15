@@ -32,3 +32,8 @@ override PandaBear.IO.ReadOnlyMemoryStream.Seek(long offset, System.IO.SeekOrigi
 override PandaBear.IO.ReadOnlyMemoryStream.SetLength(long value) -> void
 override PandaBear.IO.ReadOnlyMemoryStream.Write(byte[]! buffer, int offset, int count) -> void
 override PandaBear.IO.ReadOnlyMemoryStream.Write(System.ReadOnlySpan<byte> buffer) -> void
+PandaBear.IO.RepositoryPath.Equals(PandaBear.IO.RepositoryPath other) -> bool
+override PandaBear.IO.RepositoryPath.GetHashCode() -> int
+static PandaBear.IO.RepositoryPath.operator !=(PandaBear.IO.RepositoryPath left, PandaBear.IO.RepositoryPath right) -> bool
+static PandaBear.IO.RepositoryPath.operator ==(PandaBear.IO.RepositoryPath left, PandaBear.IO.RepositoryPath right) -> bool
+~override PandaBear.IO.RepositoryPath.Equals(object obj) -> bool

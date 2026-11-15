@@ -95,7 +95,7 @@ public sealed class RepoConfigToolCoverageTests
 
         // Assert
         missingExitCode.ShouldBe(1);
-        missingError.ToString().ShouldContain("Required argument missing for command: 'set'.", StringComparison.Ordinal);
+        missingError.ToString().ShouldContain("Required argument 'key' missing for command: 'set'.", StringComparison.Ordinal);
         extraExitCode.ShouldBe(1);
         extraError.ToString().ShouldContain("Unrecognized command or argument 'extra'.", StringComparison.Ordinal);
         unsupportedExitCode.ShouldBe(1);

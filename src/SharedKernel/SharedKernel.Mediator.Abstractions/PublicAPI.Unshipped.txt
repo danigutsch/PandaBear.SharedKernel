@@ -89,3 +89,11 @@ PandaBear.Mediator.StreamHandlerContinuation<TResponse>
 PandaBear.Mediator.Unit
 PandaBear.Mediator.Unit.Unit() -> void
 static PandaBear.Mediator.Unit.Value.get -> PandaBear.Mediator.Unit
+PandaBear.Mediator.Unit.Equals(PandaBear.Mediator.Unit other) -> bool
+override PandaBear.Mediator.Unit.GetHashCode() -> int
+static PandaBear.Mediator.Unit.operator !=(PandaBear.Mediator.Unit left, PandaBear.Mediator.Unit right) -> bool
+static PandaBear.Mediator.Unit.operator ==(PandaBear.Mediator.Unit left, PandaBear.Mediator.Unit right) -> bool
+virtual PandaBear.Mediator.RequestHandlerContinuation<TResponse>.Invoke() -> System.Threading.Tasks.ValueTask<TResponse>
+virtual PandaBear.Mediator.StreamHandlerContinuation<TResponse>.Invoke() -> System.Collections.Generic.IAsyncEnumerable<TResponse>!
+~override PandaBear.Mediator.Unit.Equals(object obj) -> bool
+~override PandaBear.Mediator.Unit.ToString() -> string

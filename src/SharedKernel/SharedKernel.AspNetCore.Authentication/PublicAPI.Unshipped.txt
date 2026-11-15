@@ -31,3 +31,11 @@ static PandaBear.AspNetCore.Authentication.ApiSecurityApplicationBuilderExtensio
 static PandaBear.AspNetCore.Authentication.AuthenticationEventTelemetryServiceCollectionExtensions.AddAuthenticationEventTelemetry(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static PandaBear.AspNetCore.Authentication.AuthorizationPolicyBuilderExtensions.RequirePermission(this Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder! builder, string! permission) -> Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder!
 static PandaBear.AspNetCore.Authentication.ClaimsPrincipalExtensions.GetSubjectId(this System.Security.Claims.ClaimsPrincipal! principal) -> string?
+PandaBear.AspNetCore.Authentication.ApiBearerScheme.<Clone>$() -> PandaBear.AspNetCore.Authentication.ApiBearerScheme!
+PandaBear.AspNetCore.Authentication.ApiBearerScheme.Deconstruct(out string! Name, out string! Audience, out System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! PermissionsByRole) -> void
+PandaBear.AspNetCore.Authentication.ApiBearerScheme.Equals(PandaBear.AspNetCore.Authentication.ApiBearerScheme? other) -> bool
+override PandaBear.AspNetCore.Authentication.ApiBearerScheme.Equals(object? obj) -> bool
+override PandaBear.AspNetCore.Authentication.ApiBearerScheme.GetHashCode() -> int
+override PandaBear.AspNetCore.Authentication.ApiBearerScheme.ToString() -> string!
+static PandaBear.AspNetCore.Authentication.ApiBearerScheme.operator !=(PandaBear.AspNetCore.Authentication.ApiBearerScheme? left, PandaBear.AspNetCore.Authentication.ApiBearerScheme? right) -> bool
+static PandaBear.AspNetCore.Authentication.ApiBearerScheme.operator ==(PandaBear.AspNetCore.Authentication.ApiBearerScheme? left, PandaBear.AspNetCore.Authentication.ApiBearerScheme? right) -> bool

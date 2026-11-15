@@ -97,3 +97,27 @@ PandaBear.HttpClients.IdempotentSubmission<T>.Submit(string! operation, System.F
 PandaBear.HttpClients.IdempotentSubmission<T>.Retry(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.HttpClients.HttpOutcome<T>?>!
 PandaBear.HttpClients.HttpResilienceOptionsExtensions
 static PandaBear.HttpClients.HttpResilienceOptionsExtensions.DisableRetryOnTooManyRequests(this Microsoft.Extensions.Http.Resilience.HttpStandardResilienceOptions! options, System.Func<System.Net.Http.HttpRequestMessage!, bool>? appliesTo = null) -> Microsoft.Extensions.Http.Resilience.HttpStandardResilienceOptions!
+PandaBear.HttpClients.ContractValidationProblemDto.<Clone>$() -> PandaBear.HttpClients.ContractValidationProblemDto!
+PandaBear.HttpClients.ContractValidationProblemDto.ContractValidationProblemDto() -> void
+PandaBear.HttpClients.ContractValidationProblemDto.Equals(PandaBear.HttpClients.ContractValidationProblemDto? other) -> bool
+PandaBear.HttpClients.HttpOutcome.<Clone>$() -> PandaBear.HttpClients.HttpOutcome!
+PandaBear.HttpClients.HttpOutcome.Equals(PandaBear.HttpClients.HttpOutcome? other) -> bool
+PandaBear.HttpClients.HttpOutcome.HttpOutcome() -> void
+PandaBear.HttpClients.HttpOutcome<TValue>.<Clone>$() -> PandaBear.HttpClients.HttpOutcome<TValue>!
+PandaBear.HttpClients.HttpOutcome<TValue>.Equals(PandaBear.HttpClients.HttpOutcome<TValue>? other) -> bool
+PandaBear.HttpClients.HttpOutcome<TValue>.HttpOutcome() -> void
+override PandaBear.HttpClients.ContractValidationProblemDto.Equals(object? obj) -> bool
+override PandaBear.HttpClients.ContractValidationProblemDto.GetHashCode() -> int
+override PandaBear.HttpClients.ContractValidationProblemDto.ToString() -> string!
+override PandaBear.HttpClients.HttpOutcome.Equals(object? obj) -> bool
+override PandaBear.HttpClients.HttpOutcome.GetHashCode() -> int
+override PandaBear.HttpClients.HttpOutcome.ToString() -> string!
+override PandaBear.HttpClients.HttpOutcome<TValue>.Equals(object? obj) -> bool
+override PandaBear.HttpClients.HttpOutcome<TValue>.GetHashCode() -> int
+override PandaBear.HttpClients.HttpOutcome<TValue>.ToString() -> string!
+static PandaBear.HttpClients.ContractValidationProblemDto.operator !=(PandaBear.HttpClients.ContractValidationProblemDto? left, PandaBear.HttpClients.ContractValidationProblemDto? right) -> bool
+static PandaBear.HttpClients.ContractValidationProblemDto.operator ==(PandaBear.HttpClients.ContractValidationProblemDto? left, PandaBear.HttpClients.ContractValidationProblemDto? right) -> bool
+static PandaBear.HttpClients.HttpOutcome.operator !=(PandaBear.HttpClients.HttpOutcome? left, PandaBear.HttpClients.HttpOutcome? right) -> bool
+static PandaBear.HttpClients.HttpOutcome.operator ==(PandaBear.HttpClients.HttpOutcome? left, PandaBear.HttpClients.HttpOutcome? right) -> bool
+static PandaBear.HttpClients.HttpOutcome<TValue>.operator !=(PandaBear.HttpClients.HttpOutcome<TValue>? left, PandaBear.HttpClients.HttpOutcome<TValue>? right) -> bool
+static PandaBear.HttpClients.HttpOutcome<TValue>.operator ==(PandaBear.HttpClients.HttpOutcome<TValue>? left, PandaBear.HttpClients.HttpOutcome<TValue>? right) -> bool
