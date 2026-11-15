@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.LoadTesting</PackageId>
+        <Description>Runs configured load-test scenarios through a pluggable load generator, with strict configuration, loopback targets, confined results directories, and a managed host process with health checks.</Description>
+        <PackageTags>load-testing;performance;benchmark;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.LoadTesting.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.ConfigurationFiles\SharedKernel.ConfigurationFiles.csproj" />
+        <ProjectReference Include="..\SharedKernel.GitHub\SharedKernel.GitHub.csproj" />
+        <ProjectReference Include="..\SharedKernel.IO\SharedKernel.IO.csproj" />
+        <ProjectReference Include="..\SharedKernel.Processes\SharedKernel.Processes.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

@@ -1,5 +1,8 @@
+using System.Collections;
 using System.CommandLine;
 using PandaBear.K6.Tool;
+using PandaBear.LoadTesting;
+using PandaBear.LoadTesting.K6;
 using PandaBear.Processes;
 
 var configuration = new InvocationConfiguration
@@ -9,11 +12,22 @@ var configuration = new InvocationConfiguration
     ProcessTerminationTimeout = TimeSpan.FromSeconds(20),
 };
 
+// Windows matches variable names without regard to case.
+var environment = new Dictionary<string, string>(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+foreach (DictionaryEntry variable in Environment.GetEnvironmentVariables())
+{
+    if (variable.Key is string name && variable.Value is string value)
+    {
+        environment[name] = value;
+    }
+}
+
+// The health probe reaches only the host: no proxy, and a redirect is not followed.
+using var healthCheckHandler = new SocketsHttpHandler { UseProxy = false, AllowAutoRedirect = false };
+var runner = new LoadTestRunner(new K6LoadGenerator(new SystemProcessRunner()), PathExecutableResolver.Default, healthCheckHandler);
+
 return await K6CommandLine
-    .Create(
-        Environment.CurrentDirectory,
-        Environment.GetEnvironmentVariable,
-        static command => PathExecutableResolver.Default.Find(command))
+    .Create(Environment.CurrentDirectory, environment, runner)
     .Parse(args)
     .InvokeAsync(configuration)
     .ConfigureAwait(false);

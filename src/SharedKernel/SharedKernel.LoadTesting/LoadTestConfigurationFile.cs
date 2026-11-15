@@ -4,41 +4,37 @@ using PandaBear.ConfigurationFiles;
 using PandaBear.GitHub;
 using PandaBear.IO;
 
-namespace PandaBear.K6.Tool;
+namespace PandaBear.LoadTesting;
 
 /// <summary>
-/// Reads and validates <c>.config/sharedkernel-k6.json</c>. Errors name the file and the JSON path of the problem.
+/// Reads and validates a load-test configuration file. Errors name the file and the JSON path of the problem.
 /// </summary>
-internal static partial class K6ConfigurationFile
+/// <param name="relativePath">The configuration path relative to the repository root, such as <c>.config/sharedkernel-k6.json</c>.</param>
+/// <param name="reservedVariables">The variables that the load generator sets, which the scenarios cannot name.</param>
+internal sealed partial class LoadTestConfigurationFile(string relativePath, IReadOnlyCollection<string> reservedVariables)
 {
-    /// <summary>The configuration path relative to the repository root.</summary>
-    public const string RelativePath = ".config/sharedkernel-k6.json";
-
-    /// <summary>The k6 variable that the tool sets so k6 sends no usage report.</summary>
-    public const string UsageReportVariable = "K6_NO_USAGE_REPORT";
-
     private const int MaxTimeoutSeconds = 3600;
 
     private const string RelativePathRule = "with '/' separators and without empty, '.', or '..' segments.";
+
+    /// <summary>Gets the configuration path relative to the repository root.</summary>
+    public string RelativePath => relativePath;
 
     /// <summary>Reads the configuration under <paramref name="root"/> without following symbolic links.</summary>
     /// <exception cref="InvalidOperationException">
     /// The file is missing, unreadable, larger than 1 MiB, or not a valid configuration of version 1.
     /// </exception>
-    public static async Task<K6Configuration> Read(string root, CancellationToken ct)
+    public async Task<LoadTestConfiguration> Read(string root, CancellationToken ct)
     {
-        var configuration = await JsonConfigurationFile.Read(root, RelativePath, K6ConfigurationJsonContext.Default.K6Configuration, ct).ConfigureAwait(false);
+        var configuration = await JsonConfigurationFile.Read(root, relativePath, LoadTestConfigurationJsonContext.Default.LoadTestConfiguration, ct).ConfigureAwait(false);
         Validate(configuration);
         return configuration;
     }
 
-    /// <summary>Reports whether <paramref name="image"/> is an image reference pinned by a SHA-256 digest.</summary>
-    public static bool IsDigestPinned(string image) => DigestPinnedImage().IsMatch(image);
-
     /// <summary>Creates the error for a value at a JSON path of the file.</summary>
-    public static InvalidOperationException Invalid(string message) => new($"{RelativePath}: {message}");
+    public InvalidOperationException Invalid(string message) => new($"{relativePath}: {message}");
 
-    private static void Validate(K6Configuration configuration)
+    private void Validate(LoadTestConfiguration configuration)
     {
         if (configuration.Version != 1)
         {
@@ -62,7 +58,7 @@ internal static partial class K6ConfigurationFile
                 throw Invalid("$.container.engine must be docker or podman.");
             }
 
-            if (!IsDigestPinned(container.Image))
+            if (!LoadTestContainer.IsDigestPinned(container.Image))
             {
                 throw Invalid("$.container.image must be an image reference pinned by digest, such as grafana/k6:<tag>@sha256:<digest>.");
             }
@@ -109,7 +105,7 @@ internal static partial class K6ConfigurationFile
         }
     }
 
-    private static void ValidateHost(K6HostConfiguration host, string path)
+    private void ValidateHost(HostConfiguration host, string path)
     {
         if (!CommandName().IsMatch(host.Command))
         {
@@ -141,7 +137,7 @@ internal static partial class K6ConfigurationFile
         }
     }
 
-    private static void ValidateVariable(string name, string path)
+    private void ValidateVariable(string name, string path)
     {
         if (!VariableName().IsMatch(name))
         {
@@ -153,7 +149,7 @@ internal static partial class K6ConfigurationFile
             throw Invalid(path + " names " + name + ", which the tool never passes to a child process.");
         }
 
-        if (string.Equals(name, UsageReportVariable, StringComparison.Ordinal))
+        if (reservedVariables.Contains(name, StringComparer.Ordinal))
         {
             throw Invalid(path + " names " + name + ", which the tool sets.");
         }
@@ -172,8 +168,4 @@ internal static partial class K6ConfigurationFile
 
     [GeneratedRegex(@"\A/(?:[A-Za-z0-9._~-]+/?)*\z", RegexOptions.CultureInvariant)]
     private static partial Regex HealthPath();
-
-    // The reference starts with a lowercase letter or digit, so it can never read as an engine option.
-    [GeneratedRegex(@"\A[a-z0-9][^\s@]*@sha256:[0-9a-f]{64}\z", RegexOptions.CultureInvariant)]
-    private static partial Regex DigestPinnedImage();
 }

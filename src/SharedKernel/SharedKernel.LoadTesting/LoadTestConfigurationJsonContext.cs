@@ -1,10 +1,10 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.K6.Tool;
+namespace PandaBear.LoadTesting;
 
 /// <summary>
-/// Source-generated metadata for <c>.config/sharedkernel-k6.json</c>. Property names are camelCase and match exactly.
-/// A property that the format does not define, a property given twice in one object, a missing required property, a
+/// Source-generated metadata for the load-test configuration file. Property names are camelCase and match exactly. A
+/// property that the format does not define, a property given twice in one object, a missing required property, a
 /// <see langword="null"/> where a value is required, a comment, and a trailing comma fail reading.
 /// </summary>
 [JsonSourceGenerationOptions(
@@ -13,5 +13,5 @@ namespace PandaBear.K6.Tool;
     RespectRequiredConstructorParameters = true,
     UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
     AllowDuplicateProperties = false)]
-[JsonSerializable(typeof(K6Configuration))]
-internal sealed partial class K6ConfigurationJsonContext : JsonSerializerContext;
+[JsonSerializable(typeof(LoadTestConfiguration))]
+internal sealed partial class LoadTestConfigurationJsonContext : JsonSerializerContext;

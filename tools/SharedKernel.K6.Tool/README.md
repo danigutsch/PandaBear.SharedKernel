@@ -9,6 +9,10 @@ Runs the [k6](https://grafana.com/docs/k6/latest/) scenarios that a repository c
 arguments, keeps the target on a loopback host, gives local k6 a minimal environment, writes each run's results to a
 directory of its own, and can start, wait for, and stop the process that serves the target.
 
+The tool is a command-line wrapper over the
+[`PandaBear.SharedKernel.LoadTesting`](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.LoadTesting/README.md) runner and its k6
+provider, [`PandaBear.SharedKernel.LoadTesting.K6`](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.LoadTesting.K6/README.md).
+
 ## Prerequisites
 
 A local `k6` on `PATH`, or, with `--container`, the configured Docker or Podman engine with the configured image

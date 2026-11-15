@@ -52,6 +52,8 @@
     "src/SharedKernel/SharedKernel.ImageProcessing/SharedKernel.ImageProcessing.csproj",
     "src/SharedKernel/SharedKernel.InputNormalization/SharedKernel.InputNormalization.csproj",
     "src/SharedKernel/SharedKernel.IntegrationTesting/SharedKernel.IntegrationTesting.csproj",
+    "src/SharedKernel/SharedKernel.LoadTesting.K6/SharedKernel.LoadTesting.K6.csproj",
+    "src/SharedKernel/SharedKernel.LoadTesting/SharedKernel.LoadTesting.csproj",
     "src/SharedKernel/SharedKernel.MalwareScanning.ClamAv/SharedKernel.MalwareScanning.ClamAv.csproj",
     "src/SharedKernel/SharedKernel.MalwareScanning/SharedKernel.MalwareScanning.csproj",
     "src/SharedKernel/SharedKernel.Mediator.Abstractions/SharedKernel.Mediator.Abstractions.csproj",

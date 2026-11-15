@@ -1,4 +1,6 @@
 using System.CommandLine;
+using PandaBear.LoadTesting;
+using PandaBear.LoadTesting.K6;
 
 namespace PandaBear.K6.Tool.Tests;
 
@@ -29,6 +31,7 @@ internal sealed class K6TestRepository : IDisposable
     private readonly TemporaryDirectory _directory = new();
     private readonly Dictionary<string, string?> _environment = new(StringComparer.Ordinal);
     private readonly Dictionary<string, string> _executables = new(StringComparer.Ordinal);
+    private readonly SocketsHttpHandler _healthCheckHandler = new() { UseProxy = false, AllowAutoRedirect = false };
 
     /// <summary>Creates the repository layout with a smoke script and writes <c>configuration</c> as the configuration file.</summary>
     public K6TestRepository(string configuration = DefaultConfiguration)
@@ -100,8 +103,15 @@ internal sealed class K6TestRepository : IDisposable
 
     /// <summary>Creates the root command wired to this repository's root, environment, and executables.</summary>
     public RootCommand Create() =>
-        K6CommandLine.Create(Root, _environment.GetValueOrDefault, name => _executables.GetValueOrDefault(name));
+        K6CommandLine.Create(
+            Root,
+            _environment.Where(static variable => variable.Value is not null).ToDictionary(static variable => variable.Key, static variable => variable.Value!, StringComparer.Ordinal),
+            new LoadTestRunner(new K6LoadGenerator(new SystemProcessRunner()), new MappedExecutableResolver(_executables), _healthCheckHandler));
 
     /// <summary>Deletes the temporary repository.</summary>
-    public void Dispose() => _directory.Dispose();
+    public void Dispose()
+    {
+        _healthCheckHandler.Dispose();
+        _directory.Dispose();
+    }
 }

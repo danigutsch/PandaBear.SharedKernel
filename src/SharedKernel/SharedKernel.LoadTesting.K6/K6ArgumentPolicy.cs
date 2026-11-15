@@ -1,4 +1,4 @@
-namespace PandaBear.K6.Tool;
+namespace PandaBear.LoadTesting.K6;
 
 /// <summary>Rejects k6 arguments that would widen what a run can read, send, or write.</summary>
 internal static class K6ArgumentPolicy
