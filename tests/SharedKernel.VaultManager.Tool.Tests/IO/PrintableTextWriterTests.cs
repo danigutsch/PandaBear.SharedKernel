@@ -50,7 +50,7 @@ public sealed class PrintableTextWriterTests
     public void Writes_replace_invisible_format_characters_and_keep_line_breaks(string text, string expected)
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
         using var writer = new PrintableTextWriter(output);
 
         // Act
@@ -65,7 +65,7 @@ public sealed class PrintableTextWriterTests
     public void Write_replaces_an_unpaired_surrogate_and_keeps_a_surrogate_pair_and_line_break()
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
         using var writer = new PrintableTextWriter(output);
 
         // Act
@@ -80,7 +80,7 @@ public sealed class PrintableTextWriterTests
     public void Write_keeps_a_surrogate_pair_written_one_character_at_a_time()
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
         using var writer = new PrintableTextWriter(output);
 
         // Act
@@ -101,7 +101,7 @@ public sealed class PrintableTextWriterTests
     public void Flush_keeps_a_high_surrogate_waiting_for_the_low_surrogate_of_the_next_write()
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
         using var writer = new PrintableTextWriter(output);
 
         // Act
@@ -120,7 +120,7 @@ public sealed class PrintableTextWriterTests
     public void Dispose_replaces_a_high_surrogate_that_no_low_surrogate_follows()
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
         var writer = new PrintableTextWriter(output);
         writer.Write("end\uD83D");
         writer.Flush();
@@ -139,7 +139,7 @@ public sealed class PrintableTextWriterTests
     public void Write_keeps_joiners_and_tag_sequences_where_one_line_keeps_them_and_keeps_line_breaks(string text, string expected)
     {
         // Arrange
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
         using var writer = new PrintableTextWriter(output);
 
         // Act
