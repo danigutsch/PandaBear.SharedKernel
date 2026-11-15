@@ -43,4 +43,72 @@ public sealed class PrintableTextWriterTests
         // Assert
         output.ToString().ShouldBe("x\uFFFDy\r\n\r\n");
     }
+
+    [Theory]
+    [InlineData("Git\u200BHub\u200E\uFEFF\u00AD", "Git\uFFFDHub\uFFFD\uFFFD\uFFFD")]
+    [InlineData("tag\U000E0041\nnext\r\nend", "tag\uFFFD\nnext\r\nend")]
+    public void Writes_replace_invisible_format_characters_and_keep_line_breaks(string text, string expected)
+    {
+        // Arrange
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var writer = new PrintableTextWriter(output);
+
+        // Act
+        writer.Write(text);
+        writer.Flush();
+
+        // Assert
+        output.ToString().ShouldBe(expected);
+    }
+
+    [Fact]
+    public void Write_replaces_an_unpaired_surrogate_and_keeps_a_surrogate_pair_and_line_break()
+    {
+        // Arrange
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var writer = new PrintableTextWriter(output);
+
+        // Act
+        writer.Write("lone\uD800\nkept \U0001F600");
+        writer.Flush();
+
+        // Assert
+        output.ToString().ShouldBe("lone\uFFFD\nkept \U0001F600");
+    }
+
+    [Fact]
+    public void Write_keeps_a_surrogate_pair_written_one_character_at_a_time()
+    {
+        // Arrange
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var writer = new PrintableTextWriter(output);
+
+        // Act
+        foreach (char character in "a\U0001F600b")
+        {
+            writer.Write(character);
+        }
+
+        writer.Write("\uD83D");
+        writer.Write("\uDC4D!");
+        writer.Flush();
+
+        // Assert
+        output.ToString().ShouldBe("a\U0001F600b\U0001F44D!");
+    }
+
+    [Fact]
+    public void Flush_replaces_a_high_surrogate_that_no_low_surrogate_follows()
+    {
+        // Arrange
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var writer = new PrintableTextWriter(output);
+
+        // Act
+        writer.Write("end\uD83D");
+        writer.Flush();
+
+        // Assert
+        output.ToString().ShouldBe("end\uFFFD");
+    }
 }

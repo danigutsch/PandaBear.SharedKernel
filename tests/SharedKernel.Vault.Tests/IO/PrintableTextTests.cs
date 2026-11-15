@@ -85,7 +85,11 @@ public sealed class PrintableTextTests
     [Theory]
     [InlineData("Bank | Visa ü €")]
     [InlineData("Bob's Café Bank \u00A0€ 😀")]
-    [InlineData("\u05D1\u05E0\u05E7 \u200FBank\u200E")]
+    [InlineData("\u05D1\u05E0\u05E7 Bank \u0628\u0646\u0643")]
+    [InlineData("\u9280\u884C \uC740\uD589 \u3042")]
+    [InlineData("e\u0301 a\u0308 \u0915\u094D\u0937")]
+    [InlineData("\uD83D\uDE00 \uD83D\uDC4D\uD83C\uDFFD \uD835\uDD18 \uD840\uDC0B")]
+    [InlineData("\u2764\uFE0F \u845B\uDB40\uDD00 \uE000 \u00A0\u3000")]
     public void OneLine_returns_text_without_control_characters_as_it_is(string text)
     {
         // Act
@@ -93,6 +97,97 @@ public sealed class PrintableTextTests
 
         // Assert
         printable.ShouldBeSameAs(text);
+    }
+
+    [Theory]
+    [InlineData(0x00AD)]
+    [InlineData(0x034F)]
+    [InlineData(0x0600)]
+    [InlineData(0x061C)]
+    [InlineData(0x070F)]
+    [InlineData(0x115F)]
+    [InlineData(0x1160)]
+    [InlineData(0x17B4)]
+    [InlineData(0x180E)]
+    [InlineData(0x200B)]
+    [InlineData(0x200C)]
+    [InlineData(0x200D)]
+    [InlineData(0x200E)]
+    [InlineData(0x200F)]
+    [InlineData(0x2060)]
+    [InlineData(0x2064)]
+    [InlineData(0x2065)]
+    [InlineData(0x206F)]
+    [InlineData(0x3164)]
+    [InlineData(0xFEFF)]
+    [InlineData(0xFFA0)]
+    [InlineData(0xFFF0)]
+    [InlineData(0xFFF9)]
+    [InlineData(0xFFFB)]
+    public void OneLine_replaces_each_invisible_format_character(int formatCharacter)
+    {
+        // Arrange
+        string text = string.Concat("before", PrintableTextSamples.Text(formatCharacter), "after");
+
+        // Act
+        string printable = PrintableText.OneLine(text);
+
+        // Assert
+        printable.ShouldBe(string.Concat("before", PrintableText.Replacement, "after"));
+    }
+
+    [Theory]
+    [InlineData(0x110BD)]
+    [InlineData(0x1BCA0)]
+    [InlineData(0x1D173)]
+    [InlineData(0x1D17A)]
+    [InlineData(0xE0000)]
+    [InlineData(0xE0001)]
+    [InlineData(0xE0020)]
+    [InlineData(0xE0041)]
+    [InlineData(0xE007F)]
+    [InlineData(0xE0FFF)]
+    public void OneLine_replaces_each_supplementary_format_character_with_one_replacement_character(int formatCharacter)
+    {
+        // Arrange
+        string text = string.Concat("before", PrintableTextSamples.Text(formatCharacter), "after");
+
+        // Act
+        string printable = PrintableText.OneLine(text);
+
+        // Assert
+        printable.ShouldBe(string.Concat("before", PrintableText.Replacement, "after"));
+    }
+
+    // The text is given as UTF-16 code units, because an attribute stores a string as UTF-8, which cannot hold an
+    // unpaired surrogate.
+    [Theory]
+    [InlineData(new[] { 'a', '\uD800', 'b' }, "a\uFFFDb")]
+    [InlineData(new[] { 'a', '\uDFFF', 'b' }, "a\uFFFDb")]
+    [InlineData(new[] { 'e', 'n', 'd', '\uD83D' }, "end\uFFFD")]
+    [InlineData(new[] { '\uDE00', 'g', 'o' }, "\uFFFDgo")]
+    [InlineData(new[] { 'a', '\uDE00', '\uD83D', 'b' }, "a\uFFFD\uFFFDb")]
+    [InlineData(new[] { '\uD83D', '\uD83D', '\uDE00' }, "\uFFFD\U0001F600")]
+    public void OneLine_replaces_each_unpaired_surrogate_with_one_replacement_character(char[] codeUnits, string expected)
+    {
+        // Arrange
+        string text = new(codeUnits);
+
+        // Act
+        string printable = PrintableText.OneLine(text);
+
+        // Assert
+        printable.ShouldBe(expected);
+    }
+
+    [Fact]
+    public void OneLine_neutralizes_every_control_format_separator_and_surrogate_code_point_and_keeps_every_other()
+    {
+        // Act
+        IReadOnlyList<string> wronglyPrinted = PrintableTextSamples.WronglyPrinted();
+
+        // Assert
+        wronglyPrinted.ShouldBeEmpty("every Cc, Cf, Zl, Zp, and Cs code point and every other default ignorable one except a variation selector must be neutralized, and nothing else");
     }
 
     [Fact]
