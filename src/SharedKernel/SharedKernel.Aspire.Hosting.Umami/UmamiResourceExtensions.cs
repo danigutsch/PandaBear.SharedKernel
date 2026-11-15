@@ -1,4 +1,6 @@
+using System.Text.RegularExpressions;
 using Aspire.Hosting.ApplicationModel;
+using Microsoft.Extensions.DependencyInjection;
 using PandaBear.Aspire.Hosting;
 
 namespace Aspire.Hosting;
@@ -6,14 +8,16 @@ namespace Aspire.Hosting;
 /// <summary>
 /// Provides extension methods for adding a self-hosted Umami web analytics resource to the application model.
 /// </summary>
-public static class UmamiResourceExtensions
+public static partial class UmamiResourceExtensions
 {
-    /// <summary>The header Umami reads the visitor's address from, the default of the server-side page-view forwarder.</summary>
+    /// <summary>The header Umami reads the visitor's address from, the default of the Umami page-view target.</summary>
     public const string ClientIpHeader = "X-Forwarded-For";
 
     private const int HttpPort = 3000;
     private const string HeartbeatPath = "/api/heartbeat";
     private const string DatabaseName = "umami";
+    private const string WebsiteResourceType = "UmamiWebsite";
+    private const int MaximumDomainLength = 500;
 
     /// <summary>
     /// Adds an Umami container with its own PostgreSQL server and database to the application model.
@@ -34,14 +38,14 @@ public static class UmamiResourceExtensions
     /// <para>
     /// This resource includes a built-in health check of <c>/api/heartbeat</c> and waits for its database. When it is referenced as a
     /// dependency using the <see cref="ResourceBuilderExtensions.WaitFor{T}(IResourceBuilder{T}, IResourceBuilder{IResource})"/>
-    /// extension method then the dependent resource will wait until Umami answers. A site gets the base address of Umami as the
-    /// connection string <c>ConnectionStrings__{name}</c> with <c>WithReference</c>.
+    /// extension method then the dependent resource will wait until Umami answers. A site that sends page views references a website of
+    /// it, added with <see cref="AddWebsite"/>, which is created in Umami when Umami is ready.
     /// </para>
     /// <para>
-    /// Without <c>WithDataVolume</c> or <c>WithDataBindMount</c> the analytics data lives and dies with the PostgreSQL container. On the
-    /// first login with the default <c>admin</c> / <c>umami</c>, change the password, add the website and give its website id to the site.
-    /// This version of the package uses the <inheritdoc cref="UmamiContainerImageTags.Image"/> container image from
-    /// <inheritdoc cref="UmamiContainerImageTags.Registry"/>, pinned by digest to its <inheritdoc cref="UmamiContainerImageTags.Tag"/> tag.
+    /// Like every Aspire resource it lives as long as the AppHost run: without <c>WithDataVolume</c> or <c>WithDataBindMount</c> the
+    /// analytics data is discarded with the PostgreSQL container. This version of the package uses the
+    /// <inheritdoc cref="UmamiContainerImageTags.Image"/> container image from <inheritdoc cref="UmamiContainerImageTags.Registry"/>,
+    /// pinned by digest to its <inheritdoc cref="UmamiContainerImageTags.Tag"/> tag.
     /// </para>
     /// </remarks>
     public static IResourceBuilder<UmamiResource> AddUmami(this IDistributedApplicationBuilder builder, [ResourceName] string name)
@@ -125,6 +129,112 @@ public static class UmamiResourceExtensions
 
         return builder.WithEndpoint(UmamiResource.HttpEndpointName, endpoint => endpoint.Port = port);
     }
+
+    /// <summary>
+    /// Adds a website to Umami, shown under it, whose connection string <c>Endpoint={Umami's base address};WebsiteId={id}</c> a site
+    /// receives with <c>WithReference(website, connectionName: "umami")</c>. In run mode, as soon as Umami is ready, the website is
+    /// created in Umami with that id unless it exists, so the site's page views are recorded with nothing to set up by hand.
+    /// </summary>
+    /// <param name="builder">The Umami resource builder.</param>
+    /// <param name="name">The name of the resource, which is also the website's name in Umami.</param>
+    /// <param name="domain">
+    /// The website's public domain, such as <c>example.com</c>, in the lower-case form Umami 3.4 accepts (<c>localhost</c> with an
+    /// optional port is accepted too); Umami uses it to keep the site's own pages out of the referrers.
+    /// </param>
+    /// <returns>The website resource builder.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="name"/> is blank, or <paramref name="domain"/> is not a domain Umami accepts.</exception>
+    /// <remarks>
+    /// <para>
+    /// The website id is a name-based UUID (RFC 9562, version 5) of the Umami resource name, the website name and the domain, so with
+    /// <c>WithDataVolume</c> the next run finds the same website without storing anything; <see cref="WithWebsiteId"/> sets it instead.
+    /// Setting it up signs in as <c>admin</c> with Umami's default password <c>umami</c>, which a fresh database has, or with the password
+    /// of <see cref="WithAdminPassword"/>, and runs in the background: the website resource is <c>Waiting</c> until Umami is ready,
+    /// <c>Starting</c> while it is set up, then <c>Running</c>, or <c>FailedToStart</c> with a log line that names the request and
+    /// Umami's status code. A failure stops no other resource, and no log or state shows the password or the token.
+    /// </para>
+    /// <para>
+    /// A site needs no <c>WaitFor</c> on the website: page views sent before it exists are refused by Umami, and the site drops and counts
+    /// them. In publish mode nothing is set up; a deployment creates the website in its Umami and gives the site the same connection string.
+    /// </para>
+    /// </remarks>
+    public static IResourceBuilder<UmamiWebsiteResource> AddWebsite(this IResourceBuilder<UmamiResource> builder, [ResourceName] string name, string domain)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        if (string.IsNullOrEmpty(domain) || domain.Length > MaximumDomainLength || !UmamiDomain().IsMatch(domain))
+        {
+            throw new ArgumentException(
+                "The domain must be a lower-case domain such as example.com, without scheme or path, or localhost with an optional port.",
+                nameof(domain));
+        }
+
+        var applicationBuilder = builder.ApplicationBuilder;
+        var website = applicationBuilder.AddResource(new UmamiWebsiteResource(name, domain, builder.Resource))
+            .WithParentRelationship(builder)
+            .WithInitialState(new CustomResourceSnapshot
+            {
+                ResourceType = WebsiteResourceType,
+                State = KnownResourceStates.Waiting,
+                Properties = [],
+            });
+        if (applicationBuilder.ExecutionContext.IsRunMode)
+        {
+            applicationBuilder.Services.AddHttpClient(UmamiWebsiteProvisioner.HttpClientName).RedactLoggedHeaders(static _ => true);
+            applicationBuilder.Eventing.Subscribe<ResourceReadyEvent>(builder.Resource, (ready, ct) =>
+            {
+                var services = ready.Services;
+                var provisioner = new UmamiWebsiteProvisioner(
+                    services.GetRequiredService<ResourceNotificationService>(),
+                    services.GetRequiredService<ResourceLoggerService>(),
+                    services.GetRequiredService<IHttpClientFactory>());
+                _ = Task.Run(() => provisioner.Provision(website.Resource, ct), CancellationToken.None);
+                return Task.CompletedTask;
+            });
+        }
+
+        return website;
+    }
+
+    /// <summary>Sets the website id instead of the name-based one, for a website that exists in Umami with another id.</summary>
+    /// <param name="builder">The website resource builder.</param>
+    /// <param name="websiteId">The website id: a UUID of version 1 to 8 with the variant of RFC 9562, which Umami 3.4 requires.</param>
+    /// <returns>The same builder.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="websiteId"/> is not a UUID that Umami accepts.</exception>
+    public static IResourceBuilder<UmamiWebsiteResource> WithWebsiteId(this IResourceBuilder<UmamiWebsiteResource> builder, Guid websiteId)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        if (!UmamiWebsiteIds.IsAccepted(websiteId))
+        {
+            throw new ArgumentException("The website id must be a UUID of version 1 to 8 with the variant of RFC 9562, as Umami requires.", nameof(websiteId));
+        }
+
+        builder.Resource.WebsiteId = websiteId;
+        return builder;
+    }
+
+    /// <summary>
+    /// Sets the password of Umami's <c>admin</c> user that setting up a website signs in with, for an Umami whose data is kept and whose
+    /// password was changed. Without it, Umami's default password <c>umami</c> is used, the one a fresh database has.
+    /// </summary>
+    /// <param name="builder">The Umami resource builder.</param>
+    /// <param name="password">The secret parameter that holds the password.</param>
+    /// <returns>The same builder.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="password"/> is <see langword="null"/>.</exception>
+    public static IResourceBuilder<UmamiResource> WithAdminPassword(this IResourceBuilder<UmamiResource> builder, IResourceBuilder<ParameterResource> password)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(password);
+
+        builder.Resource.AdminPasswordParameter = password.Resource;
+        return builder;
+    }
+
+    /// <summary>The <c>DOMAIN_REGEX</c> that Umami 3.4.1 checks a website domain with (<c>src/lib/constants.ts</c>), anchored at the very end.</summary>
+    /// <returns>The expression.</returns>
+    [GeneratedRegex(@"^(localhost(:[1-9][0-9]{0,4})?|((?=[a-z0-9_-]{1,63}\.)(xn--)?[a-z0-9_-]+(-[a-z0-9_-]+)*\.)+(xn--)?[a-z0-9_-]{2,63})\z", RegexOptions.CultureInvariant)]
+    private static partial Regex UmamiDomain();
 
     private static IResourceBuilder<PostgresServerResource> PostgresServer(IResourceBuilder<UmamiResource> builder) =>
         builder.ApplicationBuilder.CreateResourceBuilder(builder.Resource.Database.Parent);
