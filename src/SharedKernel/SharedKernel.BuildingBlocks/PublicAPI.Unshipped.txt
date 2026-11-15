@@ -178,6 +178,25 @@ static PandaBear.BuildingBlocks.Slug.IsCanonical(string? value, int maxLength = 
 static PandaBear.BuildingBlocks.Slug.Restore(string! value) -> PandaBear.BuildingBlocks.Slug!
 static PandaBear.BuildingBlocks.SupportedCultures.Create(PandaBear.BuildingBlocks.ContentCulture! defaultCulture, System.Collections.Generic.IEnumerable<PandaBear.BuildingBlocks.ContentCulture!>! cultures) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.SupportedCultures!>
 static PandaBear.BuildingBlocks.TranslationSet.Create<T>(System.Collections.Generic.IEnumerable<T!>! translations, System.Func<T!, PandaBear.BuildingBlocks.ContentCulture!>! cultureSelector) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.TranslationSet<T!>!>
+PandaBear.BuildingBlocks.CultureLanguageTag
+PandaBear.BuildingBlocks.CultureLanguageTag.<Clone>$() -> PandaBear.BuildingBlocks.CultureLanguageTag!
+PandaBear.BuildingBlocks.CultureLanguageTag.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
+PandaBear.BuildingBlocks.CultureLanguageTag.CultureLanguageTag(PandaBear.BuildingBlocks.ContentCulture! culture, PandaBear.BuildingBlocks.ContentCulture! languageTag) -> void
+PandaBear.BuildingBlocks.CultureLanguageTag.Equals(PandaBear.BuildingBlocks.CultureLanguageTag? other) -> bool
+PandaBear.BuildingBlocks.CultureLanguageTag.LanguageTag.get -> PandaBear.BuildingBlocks.ContentCulture!
+PandaBear.BuildingBlocks.CultureLanguageTags
+PandaBear.BuildingBlocks.CultureLanguageTags.Cultures.get -> PandaBear.BuildingBlocks.SupportedCultures!
+PandaBear.BuildingBlocks.CultureLanguageTags.DefaultLanguageTag.get -> PandaBear.BuildingBlocks.ContentCulture!
+PandaBear.BuildingBlocks.CultureLanguageTags.LanguageTagOf(PandaBear.BuildingBlocks.ContentCulture! culture) -> PandaBear.BuildingBlocks.ContentCulture!
+PandaBear.BuildingBlocks.CultureLanguageTags.LanguageTags.get -> System.Collections.Generic.IReadOnlyList<PandaBear.BuildingBlocks.ContentCulture!>!
+PandaBear.BuildingBlocks.CultureLanguageTags.TryGetCulture(PandaBear.BuildingBlocks.ContentCulture? languageTag, out PandaBear.BuildingBlocks.ContentCulture? culture) -> bool
+PandaBear.BuildingBlocks.CultureLanguageTags.TryGetCulture(string? languageTag, out PandaBear.BuildingBlocks.ContentCulture? culture) -> bool
+override PandaBear.BuildingBlocks.CultureLanguageTag.Equals(object? obj) -> bool
+override PandaBear.BuildingBlocks.CultureLanguageTag.GetHashCode() -> int
+override PandaBear.BuildingBlocks.CultureLanguageTag.ToString() -> string!
+static PandaBear.BuildingBlocks.CultureLanguageTag.operator !=(PandaBear.BuildingBlocks.CultureLanguageTag? left, PandaBear.BuildingBlocks.CultureLanguageTag? right) -> bool
+static PandaBear.BuildingBlocks.CultureLanguageTag.operator ==(PandaBear.BuildingBlocks.CultureLanguageTag? left, PandaBear.BuildingBlocks.CultureLanguageTag? right) -> bool
+static PandaBear.BuildingBlocks.CultureLanguageTags.Create(PandaBear.BuildingBlocks.SupportedCultures! cultures, System.Collections.Generic.IEnumerable<PandaBear.BuildingBlocks.CultureLanguageTag!>! languageTags) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.CultureLanguageTags!>
 const PandaBear.BuildingBlocks.WebUrl.MaxLength = 2048 -> int
 PandaBear.BuildingBlocks.WebUrl
 PandaBear.BuildingBlocks.WebUrl.Value.get -> string!

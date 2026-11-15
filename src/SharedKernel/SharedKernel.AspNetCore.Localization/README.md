@@ -13,7 +13,9 @@ mechanics. It builds on the `SupportedCultures` and `ContentCulture` value objec
 
 - `PathCultureRequestCultureProvider`: a `RequestCultureProvider` that reads the first path segment against a
   `SupportedCultures` set, for `UseRequestLocalization`. Like `CulturePath.TryParse`, it accepts only the exact canonical
-  segment (`/en/tours`, not `/EN/tours`).
+  segment (`/en/tours`, not `/EN/tours`). The request culture is the segment, or, when the provider is created with
+  `CultureLanguageTags`, the language tag the segment's culture declares (`/pt/tours` gives `pt-BR`). See
+  [Language tags other than the segment](#language-tags-other-than-the-segment).
 - `UseCulturePathRedirect`: redirects GET and HEAD requests without a supported prefix (`/`, `/tours`, `/fr/tours`) to the
   same local path under the best culture, with a 302. The culture is the remembered-choice cookie, then the Accept-Language
   header by quality, then the default culture. The response carries `Vary: Accept-Language, Cookie`. A first segment that
@@ -66,6 +68,47 @@ app.UseRequestLocalization(options =>
 // In a language switcher: the same page under another culture.
 var switchPath = CulturePath.Switch(new PathString("/pt/tours/42"), ContentCulture.Restore("en"), supported); // /en/tours/42
 ```
+
+## Language tags other than the segment
+
+A site can keep short addresses and content keys (`/pt/...`, stored under `pt`) while its pages declare a regional language
+(`pt-BR`) in `<html lang>`, `Content-Language`, `hreflang`, and `og:locale`, and format numbers and dates with it. Describe the
+mapping once with `CultureLanguageTags` from `PandaBear.SharedKernel.BuildingBlocks` and pass it to the provider. Only the
+cultures that declare another tag are listed; the others declare themselves, so without a mapping the behavior is the same as
+the `SupportedCultures` constructor. `CultureLanguageTags.Create` rejects a culture that is not supported, a culture with two
+tags, and a tag that two cultures would declare, so `.Value` stops the application at start-up with that message.
+
+Register the tags, not the segments, as the supported cultures and UI cultures: the middleware accepts only a provider result it
+supports, and would otherwise fall back to a parent (`pt`) or the default. The address segment stays the culture:
+`/pt-BR/tours` is not a localized address, and `CulturePath`, `UseCulturePathRedirect`, and `RememberCulture` keep working with
+the `SupportedCultures` set. The redirect matches `Accept-Language` against the segments with `SupportedCultures.Resolve`, so a
+tag that refines its segment's language (`pt-BR` for `pt`) is matched through its parent.
+
+```csharp
+var pt = ContentCulture.Restore("pt");
+var en = ContentCulture.Restore("en");
+var supported = SupportedCultures.Create(pt, [pt, en]).Value;
+var languageTags = CultureLanguageTags.Create(supported, [new CultureLanguageTag(pt, ContentCulture.Restore("pt-BR"))]).Value;
+string[] requestCultures = [.. languageTags.LanguageTags.Select(static tag => tag.Value)]; // pt-BR, en
+
+app.UseRequestLocalization(options =>
+{
+    options.SetDefaultCulture(languageTags.DefaultLanguageTag.Value)
+        .AddSupportedCultures(requestCultures)
+        .AddSupportedUICultures(requestCultures);
+    options.ApplyCurrentCultureToResponseHeaders = true;
+    options.RequestCultureProviders = [new PathCultureRequestCultureProvider(languageTags)];
+});
+
+// A page under /pt/ runs as pt-BR. Build its links from the culture, and declare the tag:
+var page = languageTags.TryGetCulture(CultureInfo.CurrentUICulture.Name, out var culture) ? culture : supported.Default; // pt
+var english = CulturePath.Switch(new PathString("/pt/tours/42"), en, supported);                                         // /en/tours/42
+var hreflang = languageTags.LanguageTagOf(en).Value;                                                                     // en
+```
+
+The head and link helpers take the language tag to declare, not the segment: `AlternateLink`, `LanguageLink`, and
+`PageHead.Locale` in `PandaBear.SharedKernel.Blazor.Site`, and `SitemapAlternate` in `PandaBear.SharedKernel.AspNetCore.Seo`.
+Pass `languageTags.LanguageTagOf(culture)`.
 
 ## Package identity and availability
 

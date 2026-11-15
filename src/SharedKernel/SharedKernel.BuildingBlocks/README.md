@@ -14,7 +14,7 @@ Source files are grouped by topic. The folders are organization only: every publ
 | Folder | Contents |
 | --- | --- |
 | `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, `Slug`, `WebUrl`, text rules, option-to-result helpers |
-| `Localization` | `ContentCulture`, `SupportedCultures`, `TranslationSet` |
+| `Localization` | `ContentCulture`, `SupportedCultures`, `CultureLanguageTags`, `TranslationSet` |
 | `Contact` | `EmailAddress`, `PhoneNumber`, `PersonName`, `PostalAddress` |
 | `Geography` | `CountryCode`, `CountryNames` |
 | `Finance` | `Money`, `Currency`, `CurrencyCodes`, `Iban`, `Bic` |
@@ -64,6 +64,27 @@ are not checked; `Parent` drops a singleton left without a subtag (`en-x-ab` giv
 text such as a URL segment. `TranslationSet.Create` holds the translations of one entity, and `TryResolve` resolves in the same
 order as `SupportedCultures.Resolve`: the requested culture, its neutral parents, the first translation of the same language in
 the order given (`pt` to `pt-BR`), then the default culture and its parents, or reports none.
+
+`CultureLanguageTags` names the language each supported culture's content is written in, for a site whose culture (the content key
+and the address segment, `pt`) is not that language (`pt-BR`). Pages declare the tag (`lang`, `hreflang`, `Content-Language`,
+`og:locale`) and format with it, while addresses and stored keys keep the culture. `Create` takes only the cultures that declare
+another tag (`new CultureLanguageTag(pt, ptBR)`); every other culture declares itself. It is invalid, with a message that names the
+culture or tag, when a culture is not supported, has two tags, or when two cultures would declare the same tag (a mapping to `en`
+while `en` declares itself), so a failed set stops the application at start-up through `.Value`. `LanguageTagOf` maps a culture to
+its tag, `LanguageTags` and `DefaultLanguageTag` list them in culture order for request localization, and `TryGetCulture` maps a tag
+(exact, ignoring case, such as `CultureInfo.CurrentUICulture.Name`) back to its culture for building addresses. The ASP.NET Core
+`PathCultureRequestCultureProvider` in `PandaBear.SharedKernel.AspNetCore.Localization` takes it to make the tag the request culture.
+
+```csharp
+var pt = ContentCulture.Restore("pt");
+var en = ContentCulture.Restore("en");
+var supported = SupportedCultures.Create(pt, [pt, en]).Value;
+var languageTags = CultureLanguageTags.Create(supported, [new CultureLanguageTag(pt, ContentCulture.Restore("pt-BR"))]).Value;
+
+languageTags.LanguageTagOf(pt);                     // pt-BR
+languageTags.LanguageTagOf(en);                     // en
+languageTags.TryGetCulture("pt-BR", out var key);   // true, key = pt
+```
 
 ## Identity and optional lookups
 
