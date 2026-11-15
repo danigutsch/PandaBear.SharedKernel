@@ -32,12 +32,13 @@ internal static class ComponentFixtures
     };
 
     /// <summary>Creates the exception a focus call raises when the circuit is gone.</summary>
-    /// <param name="kind">The failure kind: disconnected, canceled, or disposed.</param>
+    /// <param name="kind">The failure kind: disconnected, canceled, removed (the element left the page), or disposed.</param>
     /// <returns>The exception.</returns>
     public static Exception FocusFailure(string kind) => kind switch
     {
         "disconnected" => new Microsoft.JSInterop.JSDisconnectedException("gone"),
         "canceled" => new TaskCanceledException(),
+        "removed" => new Microsoft.JSInterop.JSException("Unable to focus an invalid element."),
         _ => new ObjectDisposedException("renderer"),
     };
 

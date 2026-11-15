@@ -162,6 +162,24 @@ Blazor keeps one component instance when the route changes between URLs that map
 `OnInitializedAsync` goes stale. Load in `OnParametersSetAsync` and ask a `ParameterTracker<T>` whether the value really changed:
 `Update(value)` returns `Initial`, `Unchanged` or `Changed`. `ConfirmationState<TKey>` keeps the "confirm this row's delete" state of a list.
 
+## Keeping focus on an inline confirmation
+
+When a button is replaced by a confirmation, the focused element leaves the page and keyboard focus falls to the document.
+`ConfirmationState<TKey>` (and `ListDelete<TKey>`, which uses it) keeps focus where the user is. Capture two elements with `@ref`:
+the control that opens each row's confirmation in `Openers[key]`, and the first harmless control inside the open confirmation
+(its Cancel button, or an optional reason field; never the confirming button) in `SafeControl`. Then call `MoveFocus()` from
+`OnAfterRenderAsync`:
+
+- `Ask(key)` moves focus to `SafeControl`.
+- `Cancel()` closes the confirmation and moves focus back to the opener of the row that was waiting.
+- `Close()` closes it without moving focus; use it after acting on the confirmation or when the page resets, where the opener may
+  not come back.
+
+Focus moves once per request, after the render that captured the element; an element that is not captured is not focused, so the
+focus handling is opt-in. `FocusHelper.TryFocus(element)` is the focus call underneath, public for a page's own focus moves: it does
+nothing for a reference no render captured, a disconnected circuit, a disposed renderer or JavaScript runtime, or an element a later
+render removed, so a focus move never fails the page. It uses `ElementReference.FocusAsync`, and the package ships no script.
+
 ## Deleting a row from a list
 
 `ListDelete<TKey>` is the whole delete flow of a list page: `Ask(key)` and `Cancel()` drive the confirmation, `IsPending(key)`
@@ -173,16 +191,43 @@ optional `conflictMessage`). `delete` returns a `ValueTask<Result>`, so `Mediato
 The class keeps no rows and no `[PersistentState]`: the page keeps its own rows (loaded with `[PersistentState]` and `??=`) and passes
 the callbacks.
 
+Focus follows the confirmation as described in [Keeping focus on an inline confirmation](#keeping-focus-on-an-inline-confirmation).
+After `Run`, a deletion that succeeded shows the optional `deletedStatus` text (caller-authored, for example "Ana Souza was
+deleted.") in `Status` and moves focus to `StatusRegion`, because the row and its buttons are gone; render `Status` in a polite status
+region (`role="status"`, `tabindex="-1"`). A conflict or another failure moves focus back to the row's opener while the page shows
+`Error`; a row that was already gone moves no focus. A deletion that ends while the user has opened another row's confirmation
+leaves focus in that confirmation. The next `Ask` or `Run` clears `Status`, and a deleted row's opener is forgotten.
+
 ```razor
-<button type="button" disabled="@_delete.IsRunning" @onclick="() => _delete.Run(row.Id, () => Mediator.Send(new DeleteCustomer(row.Id)), Reload, Remove)">Confirm</button>
+@if (_delete.Status is not null)
+{
+    <p role="status" tabindex="-1" @ref="_delete.StatusRegion">@_delete.Status</p>
+}
+@foreach (var row in Customers)
+{
+    @if (_delete.IsPending(row.Id))
+    {
+        <button type="button" disabled="@_delete.IsRunning" @onclick="() => Delete(row)">Confirm delete @row.Name</button>
+        <button type="button" @ref="_delete.SafeControl" @onclick="_delete.Cancel">Cancel</button>
+    }
+    else
+    {
+        <button type="button" @ref="_delete.Openers[row.Id]" @onclick="() => _delete.Ask(row.Id)">Delete @row.Name</button>
+    }
+}
 ```
 
 ```csharp
 private readonly ListDelete<Guid> _delete = new("We could not delete the customer. It may already be gone.");
 
+private Task Delete(CustomerListItem row) =>
+    _delete.Run(row.Id, () => Mediator.Send(new DeleteCustomer(row.Id)), Reload, Remove, $"{row.Name} was deleted.");
+
 private async Task Reload() => Customers = await Mediator.Send(new ListCustomers());
 
 private void Remove(Guid id) => Customers = [.. Customers!.Where(row => row.Id != id)];
+
+protected override Task OnAfterRenderAsync(bool firstRender) => _delete.MoveFocus();
 ```
 
 
