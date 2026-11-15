@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.CI</PackageId>
+        <Description>Forge-neutral CI engine: test project selection, slice runs with services and evidence, socket-free local checks, changed-code coverage, warning reports, package candidate staging, prerelease pruning, mutation runs, OpenAPI generation, and commit message checks, with seams for forge outputs, step summaries, and releases.</Description>
+        <PackageTags>ci;continuous-integration;test-selection;coverage;package-candidate;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.CI.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.ConfigurationFiles\SharedKernel.ConfigurationFiles.csproj" />
+        <ProjectReference Include="..\SharedKernel.GitHub\SharedKernel.GitHub.csproj" />
+        <ProjectReference Include="..\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
+        <ProjectReference Include="..\SharedKernel.IO\SharedKernel.IO.csproj" />
+        <ProjectReference Include="..\SharedKernel.Processes\SharedKernel.Processes.csproj" />
+        <ProjectReference Include="..\SharedKernel.Versioning\SharedKernel.Versioning.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

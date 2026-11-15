@@ -1,5 +1,3 @@
-using PandaBear.CI.Tool;
-
 namespace PandaBear.Repository.Tests;
 
 /// <summary>Builds stage-candidate services from test doubles, so no test reaches Git or the network.</summary>

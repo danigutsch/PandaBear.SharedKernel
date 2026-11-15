@@ -1,5 +1,3 @@
-using PandaBear.CI.Tool;
-
 namespace PandaBear.Repository.Tests;
 
 /// <summary>Runs <c>prune-prereleases</c> through the real command tree against a <see cref="FakeGitHubReleasesApi"/>.</summary>

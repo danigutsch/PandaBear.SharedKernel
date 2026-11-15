@@ -1,5 +1,4 @@
 using System.Text.Json;
-using PandaBear.CI.Tool;
 
 namespace PandaBear.Repository.Tests;
 
@@ -22,12 +21,12 @@ internal static class SelectionTestFiles
         {
             "merge-base" => Task.FromResult(string.Empty),
             "diff" => Task.FromResult(path + "\0"),
-            _ => ProcessRunner.Run(fileName, arguments, directory, ct),
+            _ => RealProcess.Run(fileName, arguments, directory, ct),
         };
 
     /// <summary>Deserializes the <c>selection.json</c> plan in the <paramref name="selection"/> directory.</summary>
     public static async Task<SelectionPlan> ReadPlan(string selection, CancellationToken ct) =>
-        JsonSerializer.Deserialize(await File.ReadAllBytesAsync(Path.Combine(selection, "selection.json"), ct), SelectionPlanJsonContext.Default.SelectionPlan)!;
+        await SelectionPlanFile.Read(selection, ct);
 
     /// <summary>Returns the projects that a filter in the plan directory lists.</summary>
     public static async Task<string[]> Projects(string selection, string filter, CancellationToken ct)

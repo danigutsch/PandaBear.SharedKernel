@@ -9,7 +9,13 @@ configures, writes a solution filter for each CI test slice, runs the selected t
 through one solution filter with the slices' services running around the tests, checks the changed projects without a Unix
 domain socket for a sandbox that refuses them, generates OpenAPI documents, installs
 Playwright browsers, verifies the coverage of changed code, stages pinned package candidates in a local feed, deletes
-GitHub prereleases older than the newest few while keeping protected versions and every tag, verifies Conventional Commit messages in pull request events and git commit message files, and runs Stryker.NET mutation tests.
+GitHub or Forgejo prereleases older than the newest few while keeping protected versions and every tag, verifies Conventional Commit messages in pull request events and git commit message files, and runs Stryker.NET mutation tests.
+
+The tool is a command-line wrapper over the
+[`PandaBear.SharedKernel.CI`](../../src/SharedKernel/SharedKernel.CI/README.md) engine and its
+[GitHub](../../src/SharedKernel/SharedKernel.CI.GitHub/README.md) and
+[Forgejo](../../src/SharedKernel/SharedKernel.CI.Forgejo/README.md) providers; a host other than this tool can call the
+same operations.
 
 ## Prerequisites
 
@@ -21,8 +27,9 @@ Git checkout, and `run` reads the configuration and the plan that `select` wrote
 `run` for a slice with a `service` starts the service's project with `dotnet run`, so it needs whatever that project
 needs, such as a container runtime;
 `stage-candidate` reads a clean SharedKernel checkout and, with `--repository`, needs HTTPS access to `github.com` and
-`release-assets.githubusercontent.com`; `prune-prereleases` needs HTTPS access to `api.github.com` and, to delete,
-a token in `GH_TOKEN` or `GITHUB_TOKEN` that may write the repository's contents; `verify-commit-message` reads only its event or message file;
+`release-assets.githubusercontent.com`, or with `--forgejo`, to that Forgejo instance; `prune-prereleases` needs HTTPS
+access to `api.github.com` and, to delete, a token in `GH_TOKEN` or `GITHUB_TOKEN` that may write the repository's
+contents, or with `--forgejo`, access to that instance and, to delete, a token in `FORGEJO_TOKEN`; `verify-commit-message` reads only its event or message file;
 `run-mutation-tests` reads the configuration and, until the configured `dotnet-stryker` is installed, needs a NuGet
 source, as the root's `NuGet.Config` names it, that serves the `dotnet-stryker` package.
 
@@ -440,7 +447,8 @@ dotnet tool run sharedkernel-ci -- stage-candidate --pin .config/sharedkernel-ca
 Stages the packages of a pinned candidate in a local feed. `--pin` names the candidate manifest that the consumer
 pins, `--library-root` a SharedKernel checkout, and `--output` the local feed. Exactly one source is required:
 `--repository`, the GitHub `owner/name` whose `v<packageVersion>` release holds the packages, or `--feed`, a directory
-that holds them. `--root` names the consumer repository.
+that holds them. `--root` names the consumer repository. With `--forgejo <url>`, such as `https://codeberg.org`, the
+`--repository` release is on that Forgejo instance instead of GitHub; `--forgejo` requires `--repository`.
 
 Before it sends a request or changes a file, the command checks the pin: strict JSON of at most 1 MiB, without
 comments, trailing commas, or a repeated property; `libraryRevision` of 40 lowercase hexadecimal characters;
@@ -477,8 +485,8 @@ dotnet tool run sharedkernel-ci -- prune-prereleases --repository danigutsch/Pan
 dotnet tool run sharedkernel-ci -- prune-prereleases --repository danigutsch/PandaBear.SharedKernel --keep 3 --protect 0.1.0-alpha.530.1 --force
 ```
 
-Keeps the newest prereleases of a GitHub repository and deletes the older ones. `--repository` names the repository as
-`owner/name`, and `--keep`, from 1 to 10000, how many of the newest prereleases stay. `--protect`, repeated as needed,
+Keeps the newest prereleases of a GitHub repository, or with `--forgejo <url>` of a repository on that Forgejo
+instance, and deletes the older ones. `--repository` names the repository as `owner/name`, and `--keep`, from 1 to 10000, how many of the newest prereleases stay. `--protect`, repeated as needed,
 names a package version without the `v` of its tag, such as `0.1.0-alpha.530.1` for the release `v0.1.0-alpha.530.1`,
 whose prerelease always stays; protected prereleases do not count toward `--keep`. A protected version is a SemVer 2.0
 version without build metadata, as consumers pin it. A protected version without a release writes a warning to standard
@@ -675,3 +683,12 @@ argument; it sends the token as a `Bearer` `Authorization` header and never writ
 for a public repository; `--force` fails before any request without one. The token needs `contents: write` to delete
 releases. Redirects are refused rather than followed, so the token never reaches another address, and each request
 times out after a minute. A release list page is at most 16 MiB, and release tags are escaped before they are written.
+
+With `--forgejo <url>`, which must be an absolute HTTPS address without user information, a query, or a fragment,
+`prune-prereleases` sends requests only to `<url>/api/v1/repos/<owner>/<name>/releases`, 50 releases a page and following
+the `Link` header's `next` relation, at most 200 pages, with the token of `FORGEJO_TOKEN` as an `Authorization: token`
+header; `--force` fails before any request without one. `stage-candidate --repository --forgejo <url>` reads
+`<url>/api/v1/repos/<owner>/<name>/releases/tags/v<version>` once, without credentials, and downloads each asset from the
+`browser_download_url` that the release lists, under the same HTTPS, redirect, retry, and size rules as from GitHub.
+The outputs and summaries of `select`, `run`, `verify-restore-warnings`, and `warning-summary` keep the GitHub Actions
+file format, which Forgejo Actions also reads from `GITHUB_OUTPUT` and `GITHUB_STEP_SUMMARY`.

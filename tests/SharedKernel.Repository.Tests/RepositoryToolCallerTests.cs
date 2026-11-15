@@ -1,5 +1,4 @@
 using System.CommandLine;
-using PandaBear.CI.Tool;
 using PandaBear.Repository.Tests.Conventions;
 
 namespace PandaBear.Repository.Tests;
@@ -12,7 +11,7 @@ public sealed class RepositoryToolCallerTests
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
-        var command = RepositoryCommandLine.Create(root, static (_, _, _, _) => Task.FromResult(string.Empty));
+        var command = RepositoryToolInvocation.CreateCommand(root);
 
         // Act
         var failures = RepositoryToolCallers.Find(root)
@@ -104,7 +103,7 @@ public sealed class RepositoryToolCallerTests
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
-        var command = RepositoryCommandLine.Create(root, static (_, _, _, _) => Task.FromResult(string.Empty));
+        var command = RepositoryToolInvocation.CreateCommand(root);
 
         // Act
         var commandNames = RepositoryToolCallers.Find(root)

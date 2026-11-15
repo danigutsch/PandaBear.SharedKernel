@@ -24,13 +24,23 @@ internal static class RepositoryToolInvocation
         CandidateStagingServices staging,
         CancellationToken ct)
     {
-        // OpenAPI generation reaches the same recorder; its environment is tested on its own.
-        var command = RepositoryCommandLine.Create(workingDirectory, run, (fileName, arguments, directory, _, token) => run(fileName, arguments, directory, token), staging);
-        return Invoke(command, args, ct);
+        // Only stage-candidate reaches the staging Git; OpenAPI generation reaches the same recorder, and its environment is tested on its own.
+        var git = args is ["stage-candidate", ..] ? staging.Git : null;
+        var runner = new DelegateProcessRunner((startInfo, token) => git is not null && startInfo.FileName == "git"
+            ? git([.. startInfo.ArgumentList], startInfo.WorkingDirectory, token)
+            : run(startInfo.FileName, [.. startInfo.ArgumentList], startInfo.WorkingDirectory, token));
+        var services = new CiToolServices(
+            new CiMachine(runner, BareNameResolver.Instance, TimeProvider.System),
+            staging.CreateHttpHandler,
+            staging.Limits,
+            static () => throw new InvalidOperationException("Only prune-prereleases calls the API."),
+            static _ => null,
+            staging.TimeProvider);
+        return Invoke(RepositoryCommandLine.Create(workingDirectory, services), args, ct);
     }
 
     /// <summary>
-    /// Invokes with <paramref name="processes"/> as both runners, so it records the environment of a configured process, and with
+    /// Invokes with <paramref name="processes"/> as the process runner, so it records the environment of each process, and with
     /// <paramref name="startService"/> as the start of the service processes of a slice.
     /// </summary>
     public static Task<RepositoryToolResult> Run(
@@ -39,23 +49,32 @@ internal static class RepositoryToolInvocation
         ProcessLog processes,
         Func<ProcessStartInfo, Process> startService,
         CancellationToken ct) =>
-        Invoke(
-            RepositoryCommandLine.Create(
-                workingDirectory, processes.Run, processes.RunConfigured, CandidateStagingTestServices.Offline(new CandidateGit()), startService),
-            args,
-            ct);
+        Invoke(RepositoryCommandLine.Create(workingDirectory, Services(processes.Machine(startService: startService))), args, ct);
 
     /// <summary>Invokes <paramref name="args"/> with <paramref name="pruning"/> as the prune-prereleases services, and no process runner.</summary>
-    public static Task<RepositoryToolResult> RunPruning(IReadOnlyList<string> args, PrereleasePruningServices pruning, CancellationToken ct) =>
-        Invoke(
-            RepositoryCommandLine.Create(
-                Environment.CurrentDirectory,
-                static (_, _, _, _) => throw new InvalidOperationException("prune-prereleases starts no process."),
-                static (_, _, _, _, _) => throw new InvalidOperationException("prune-prereleases starts no process."),
-                CandidateStagingTestServices.Offline(new CandidateGit()),
-                pruning: pruning),
-            args,
-            ct);
+    public static Task<RepositoryToolResult> RunPruning(IReadOnlyList<string> args, PrereleasePruningServices pruning, CancellationToken ct)
+    {
+        var machine = new CiMachine(
+            new DelegateProcessRunner(static (_, _) => throw new InvalidOperationException("prune-prereleases starts no process.")),
+            BareNameResolver.Instance,
+            TimeProvider.System);
+        return Invoke(RepositoryCommandLine.Create(Environment.CurrentDirectory, Services(machine) with
+        {
+            CreateApiHandler = pruning.CreateHttpHandler,
+            GetEnvironmentVariable = pruning.GetEnvironmentVariable,
+        }), args, ct);
+    }
+
+    /// <summary>Creates the command tree with processes that answer nothing, for tests that only parse.</summary>
+    public static RootCommand CreateCommand(string workingDirectory) =>
+        RepositoryCommandLine.Create(workingDirectory, Services(new ProcessLog(static (_, _, _) => Task.FromResult(string.Empty)).Machine()));
+
+    private static CiToolServices Services(CiMachine machine) => new(
+        machine,
+        static () => new FakeReleaseServer(),
+        CandidateDownloadLimits.Default,
+        static () => throw new InvalidOperationException("Only prune-prereleases calls the API."),
+        static _ => null);
 
     private static async Task<RepositoryToolResult> Invoke(RootCommand command, IReadOnlyList<string> args, CancellationToken ct)
     {

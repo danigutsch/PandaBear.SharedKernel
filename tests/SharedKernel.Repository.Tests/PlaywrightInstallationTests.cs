@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using PandaBear.CI.Tool;
 
 namespace PandaBear.Repository.Tests;
 
@@ -142,36 +141,6 @@ public sealed class PlaywrightInstallationTests : IDisposable
         result.ExitCode.ShouldBe(0, result.Error);
         Regex.IsMatch(result.Error, @"^playwright: msbuild evaluation took \d+\.\ds; install took \d+\.\ds").ShouldBeTrue();
         result.Error.ShouldContain("installed", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public async Task A_stalled_installer_is_stopped_with_a_timeout()
-    {
-        // Arrange
-        scope.WriteFile("tests/Core.Tests/bin/Debug/net10.0/playwright.ps1", "# installer");
-
-        // Act
-        var action = async () => await PlaywrightInstallation.Run(
-            scope.Root,
-            Project,
-            [],
-            false,
-            null,
-            async (fileName, _, _, ct) =>
-            {
-                if (fileName == "dotnet")
-                {
-                    return "bin/Debug/net10.0/";
-                }
-
-                await Task.Delay(Timeout.InfiniteTimeSpan, ct);
-                return string.Empty;
-            },
-            TestContext.Current.CancellationToken,
-            TimeSpan.FromMilliseconds(100));
-
-        // Assert
-        (await action.ShouldThrow<TimeoutException>()).Message.ShouldContain("did not finish within", StringComparison.Ordinal);
     }
 
     /// <inheritdoc />

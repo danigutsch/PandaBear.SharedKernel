@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using System.Text.Json;
-using PandaBear.CI.Tool;
 
 namespace PandaBear.Repository.Tests;
 
@@ -335,9 +334,9 @@ public sealed class CoverageGateTests
             + "</classes></package></packages></coverage>");
 
         // Act
-        var record = await RepositoryToolInvocation.Run(scope.Root, ["coverage", "record-symbols"], ProcessRunner.Run, ct);
+        var record = await RepositoryToolInvocation.Run(scope.Root, ["coverage", "record-symbols"], RealProcess.Run, ct);
         var result = await RepositoryToolInvocation.Run(
-            scope.Root, ["coverage", "verify", "--report", "results", "--base", target, "--symbols", "TestResults/symbol-evidence.json"], ProcessRunner.Run, ct);
+            scope.Root, ["coverage", "verify", "--report", "results", "--base", target, "--symbols", "TestResults/symbol-evidence.json"], RealProcess.Run, ct);
 
         // Assert
         record.ExitCode.ShouldBe(0, record.Error);
@@ -361,7 +360,7 @@ public sealed class CoverageGateTests
         scope.WriteFile("src/PublicOrigin.cs", "public interface IPublicOrigin { }\n");
         await TestGit.Commit(scope.Root, ct);
         scope.WriteFile("results/coverage.cobertura.xml", "<coverage><packages /></coverage>");
-        var record = await RepositoryToolInvocation.Run(scope.Root, ["coverage", "record-symbols"], ProcessRunner.Run, ct);
+        var record = await RepositoryToolInvocation.Run(scope.Root, ["coverage", "record-symbols"], RealProcess.Run, ct);
         if (change == "deleted")
         {
             File.Delete(Path.Combine(scope.Root, "src/PublicOrigin.cs"));
@@ -373,7 +372,7 @@ public sealed class CoverageGateTests
 
         // Act
         var result = await RepositoryToolInvocation.Run(
-            scope.Root, ["coverage", "verify", "--report", "results", "--base", baseRevision, "--symbols", "TestResults/symbol-evidence.json"], ProcessRunner.Run, ct);
+            scope.Root, ["coverage", "verify", "--report", "results", "--base", baseRevision, "--symbols", "TestResults/symbol-evidence.json"], RealProcess.Run, ct);
 
         // Assert
         record.ExitCode.ShouldBe(0, record.Error);
@@ -424,9 +423,9 @@ public sealed class CoverageGateTests
             + "</classes></package></packages></coverage>");
 
         // Act
-        var record = await RepositoryToolInvocation.Run(scope.Root, ["coverage", "record-symbols"], ProcessRunner.Run, ct);
+        var record = await RepositoryToolInvocation.Run(scope.Root, ["coverage", "record-symbols"], RealProcess.Run, ct);
         var result = await RepositoryToolInvocation.Run(
-            scope.Root, ["coverage", "verify", "--report", "results", "--base", baseRevision, "--symbols", "TestResults/symbol-evidence.json"], ProcessRunner.Run, ct);
+            scope.Root, ["coverage", "verify", "--report", "results", "--base", baseRevision, "--symbols", "TestResults/symbol-evidence.json"], RealProcess.Run, ct);
 
         // Assert
         record.ExitCode.ShouldBe(0, record.Error);

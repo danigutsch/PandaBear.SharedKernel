@@ -213,6 +213,14 @@
   <Project Path="benchmarks/SharedKernel.Results.Benchmarks/SharedKernel.Results.Benchmarks.csproj" />
   <Project Path="benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj" />
   <Project Path="tools/SharedKernel.CI.Tool/SharedKernel.CI.Tool.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.CI/SharedKernel.CI.csproj" />
+  <Project Path="tests/SharedKernel.CI.Tests/SharedKernel.CI.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.CI.GitHub/SharedKernel.CI.GitHub.csproj" />
+  <Project Path="tests/SharedKernel.CI.GitHub.Tests/SharedKernel.CI.GitHub.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.CI.Forgejo/SharedKernel.CI.Forgejo.csproj" />
+  <Project Path="tests/SharedKernel.CI.Forgejo.Tests/SharedKernel.CI.Forgejo.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Forgejo/SharedKernel.Forgejo.csproj" />
+  <Project Path="tests/SharedKernel.Forgejo.Tests/SharedKernel.Forgejo.Tests.csproj" />
   <Project Path="tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.DispositionHold.Abstractions/SharedKernel.DispositionHold.Abstractions.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.DispositionHold.EntityFrameworkCore/SharedKernel.DispositionHold.EntityFrameworkCore.csproj" />

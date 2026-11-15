@@ -24,12 +24,22 @@ internal sealed class ProcessLog(Func<string, string[], CancellationToken, Task<
         return respond(fileName, arguments, ct);
     }
 
-    /// <summary>Records a request together with the environment that its start-information change produces.</summary>
-    public Task<string> RunConfigured(string fileName, string[] arguments, string workingDirectory, Action<ProcessStartInfo> configure, CancellationToken ct)
+    /// <summary>Records a request together with its environment when its start information changed the inherited one.</summary>
+    public Task<string> Run(ProcessStartInfo startInfo, CancellationToken ct)
     {
-        var startInfo = new ProcessStartInfo(fileName);
-        configure(startInfo);
-        Calls.Add(new ProcessCall(fileName, arguments, workingDirectory, ct, new Dictionary<string, string?>(startInfo.Environment)));
-        return respond(fileName, arguments, ct);
+        string[] arguments = [.. startInfo.ArgumentList];
+        var inherited = new ProcessStartInfo().Environment;
+        var configured = inherited.Count != startInfo.Environment.Count
+            || startInfo.Environment.Any(variable => !inherited.TryGetValue(variable.Key, out var value) || value != variable.Value);
+        Calls.Add(new ProcessCall(
+            startInfo.FileName, arguments, startInfo.WorkingDirectory, ct, configured ? new Dictionary<string, string?>(startInfo.Environment) : null));
+        return respond(startInfo.FileName, arguments, ct);
+    }
+
+    /// <summary>Creates a machine whose processes this log answers, with bare command names, and the clock and service start given.</summary>
+    public CiMachine Machine(TimeProvider? timeProvider = null, Func<ProcessStartInfo, Process>? startService = null)
+    {
+        var machine = new CiMachine(new DelegateProcessRunner(Run), BareNameResolver.Instance, timeProvider ?? TimeProvider.System);
+        return startService is null ? machine : new CiMachine(machine.ProcessRunner, machine.ExecutableResolver, machine.TimeProvider) { StartService = startService };
     }
 }

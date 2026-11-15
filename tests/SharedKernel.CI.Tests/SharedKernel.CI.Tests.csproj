@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>PandaBear.CI.Tests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="PandaBear.CI" />
+        <Using Include="PandaBear.Repository.Tests" />
+        <Using Include="PandaBear.Testing" />
+        <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- The repository fixtures that the tool's command-line tests use also build the engine's inputs. -->
+        <Compile Include="..\SharedKernel.Repository.Tests\BareNameResolver.cs" Link="Fixtures\BareNameResolver.cs" />
+        <Compile Include="..\SharedKernel.Repository.Tests\ChildProcessId.cs" Link="Fixtures\ChildProcessId.cs" />
+        <Compile Include="..\SharedKernel.Repository.Tests\DelegateProcessRunner.cs" Link="Fixtures\DelegateProcessRunner.cs" />
+        <Compile Include="..\SharedKernel.Repository.Tests\ImmediateTimer.cs" Link="Fixtures\ImmediateTimer.cs" />
+        <Compile Include="..\SharedKernel.Repository.Tests\LocalCheckReport.cs" Link="Fixtures\LocalCheckReport.cs" />
+        <Compile Include="..\SharedKernel.Repository.Tests\LocalCheckScript.cs" Link="Fixtures\LocalCheckScript.cs" />
+        <Compile Include="..\SharedKernel.Repository.Tests\ManualTimeProvider.cs" Link="Fixtures\ManualTimeProvider.cs" />
+        <Compile Include="..\SharedKernel.Repository.Tests\ProcessCall.cs" Link="Fixtures\ProcessCall.cs" />
+        <Compile Include="..\SharedKernel.Repository.Tests\ProcessLog.cs" Link="Fixtures\ProcessLog.cs" />
+        <Compile Include="..\SharedKernel.Repository.Tests\RepositoryTestScope.cs" Link="Fixtures\RepositoryTestScope.cs" />
+        <Compile Include="..\SharedKernel.Repository.Tests\TestShell.cs" Link="Fixtures\TestShell.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.MTP">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="xunit.v3.mtp-v2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.CI\SharedKernel.CI.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
+    </ItemGroup>
+
+</Project>

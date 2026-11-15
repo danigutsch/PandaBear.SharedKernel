@@ -36,8 +36,9 @@
         ]
       },
       {
-        "paths": ["tools/SharedKernel.CI.Tool/ServiceConfiguration.cs", "tools/SharedKernel.CI.Tool/ServiceHost.cs"],
+        "paths": ["src/SharedKernel/SharedKernel.CI/ServiceConfiguration.cs", "src/SharedKernel/SharedKernel.CI/ServiceHost.cs"],
         "tests": [
+          "tests/SharedKernel.CI.Tests/SharedKernel.CI.Tests.csproj",
           "tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj",
           "tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj",
           "tests/SharedKernel.Npgsql.Tests/SharedKernel.Npgsql.Tests.csproj",

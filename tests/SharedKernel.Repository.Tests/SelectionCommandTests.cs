@@ -1,4 +1,3 @@
-using PandaBear.CI.Tool;
 using PandaBear.Repository.Tests.Conventions;
 
 namespace PandaBear.Repository.Tests;
@@ -262,8 +261,8 @@ public static class SelectionCommandTests
         using var output = new StringWriter();
 
         // Act
-        await ProjectSelectionPlan.Write(
-            repository.Root, Path.Combine(repository.Root, "plan"), BaseRevision, null, processes.Run, output, TextWriter.Null, ct, time);
+        await new TestSelector(processes.Machine(time)).Select(
+            repository.Root, Path.Combine(repository.Root, "plan"), BaseRevision, null, output, TextWriter.Null, ct);
 
         // Assert
         time.Timers.ShouldAllSatisfy(static timer => timer.ShouldBe(TimeSpan.FromSeconds(30)));
