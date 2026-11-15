@@ -189,6 +189,8 @@ Helpers that two or more tools call live in the library that owns the concept: `
 `GitHubToken` and `GitHubApiClient` in `SharedKernel.GitHub`. Tools reference those projects; they do not link
 source files from other directories. `SharedKernel.PlaywrightMcp.Tool` is the first tool whose logic lives in an
 engine, `SharedKernel.PlaywrightMcp`; the other tools move theirs incrementally.
+`SharedKernel.K6.Tool` wraps the generic `SharedKernel.LoadTesting` core and its k6 provider,
+`SharedKernel.LoadTesting.K6`.
 
 ## Secrets
 

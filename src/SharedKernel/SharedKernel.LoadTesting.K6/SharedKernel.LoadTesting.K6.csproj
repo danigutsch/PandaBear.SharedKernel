@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.LoadTesting.K6</PackageId>
+        <Description>Runs k6 as the load generator of PandaBear.SharedKernel.LoadTesting, locally with a minimal environment or in a digest-pinned container, with unsafe k6 arguments refused and the end-of-test summary exported to the run directory.</Description>
+        <PackageTags>k6;load-testing;performance;benchmark;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.LoadTesting.K6.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.GitHub\SharedKernel.GitHub.csproj" />
+        <ProjectReference Include="..\SharedKernel.LoadTesting\SharedKernel.LoadTesting.csproj" />
+        <ProjectReference Include="..\SharedKernel.Processes\SharedKernel.Processes.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

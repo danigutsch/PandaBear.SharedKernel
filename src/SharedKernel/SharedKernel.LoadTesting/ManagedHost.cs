@@ -4,10 +4,10 @@ using System.Text;
 using PandaBear.GitHub;
 using PandaBear.Processes;
 
-namespace PandaBear.K6.Tool;
+namespace PandaBear.LoadTesting;
 
 /// <summary>
-/// A process that serves the k6 target for the duration of a run. It writes its base URL to a ready file and answers
+/// A process that serves the load-test target for the duration of a run. It writes its base URL to a ready file and answers
 /// a health path; its output goes to log files in the directory of the run.
 /// </summary>
 internal sealed class ManagedHost : IAsyncDisposable
@@ -23,14 +23,17 @@ internal sealed class ManagedHost : IAsyncDisposable
 
     private static readonly TimeSpan LogDrainTimeout = TimeSpan.FromSeconds(5);
 
+    /// <summary>How long a killed process tree may take to exit.</summary>
+    private static readonly TimeSpan TerminationTimeout = TimeSpan.FromSeconds(5);
+
     private readonly Process _process;
     private readonly Task _logs;
     private readonly string _scenario;
-    private readonly K6HostConfiguration _configuration;
+    private readonly HostConfiguration _configuration;
     private readonly string _readyFile;
     private readonly string _logHint;
 
-    private ManagedHost(Process process, Task logs, string scenario, K6HostConfiguration configuration, string readyFile, string logHint)
+    private ManagedHost(Process process, Task logs, string scenario, HostConfiguration configuration, string readyFile, string logHint)
     {
         _process = process;
         _logs = logs;
@@ -47,12 +50,12 @@ internal sealed class ManagedHost : IAsyncDisposable
     /// <param name="root">The repository root.</param>
     /// <param name="runDirectory">The absolute directory of the run, which receives the ready file and the logs.</param>
     /// <param name="relativeRunDirectory">The run directory relative to the root, for errors.</param>
-    /// <param name="container">Whether k6 runs in a container, so the host binds every address instead of the loopback address.</param>
+    /// <param name="container">Whether the load generator runs in a container, so the host binds every address instead of the loopback address.</param>
     /// <exception cref="InvalidOperationException">The host could not start.</exception>
     public static ManagedHost Start(
         string executable,
         string scenario,
-        K6HostConfiguration configuration,
+        HostConfiguration configuration,
         string root,
         string runDirectory,
         string relativeRunDirectory,
@@ -84,10 +87,11 @@ internal sealed class ManagedHost : IAsyncDisposable
 
     /// <summary>Waits for the ready file and then for a success status from the health path.</summary>
     /// <param name="allowExternal">Whether the host may report a base URL other than a loopback host.</param>
+    /// <param name="healthCheckHandler">Sends the health probes; it should use no proxy and follow no redirect.</param>
     /// <param name="ct">Cancels the wait.</param>
     /// <returns>The validated base URL, with an unspecified address replaced by the loopback address.</returns>
     /// <exception cref="InvalidOperationException">The host exited, reported an invalid base URL, or timed out.</exception>
-    public async Task<Uri> WaitUntilReady(bool allowExternal, CancellationToken ct)
+    public async Task<Uri> WaitUntilReady(bool allowExternal, HttpMessageHandler healthCheckHandler, CancellationToken ct)
     {
         var started = Stopwatch.GetTimestamp();
         string? value;
@@ -104,15 +108,15 @@ internal sealed class ManagedHost : IAsyncDisposable
             await Task.Delay(PollInterval, ct).ConfigureAwait(false);
         }
 
-        var target = K6Target.Parse(K6Target.ToLoopback(value), _configuration.ReadyFileVariable, allowExternal);
-        await WaitForHealth(new Uri(K6Target.Format(target) + _configuration.HealthPath, UriKind.Absolute), ct).ConfigureAwait(false);
+        var target = LoadTestTarget.Parse(LoadTestTarget.ToLoopback(value), _configuration.ReadyFileVariable, allowExternal);
+        await WaitForHealth(new Uri(LoadTestTarget.Format(target) + _configuration.HealthPath, UriKind.Absolute), healthCheckHandler, ct).ConfigureAwait(false);
         return target;
     }
 
     /// <summary>Stops the host process tree and finishes its logs.</summary>
     public async ValueTask DisposeAsync()
     {
-        await ProcessTree.Terminate(_process, ChildProcess.TerminationTimeout).ConfigureAwait(false);
+        await ProcessTree.Terminate(_process, TerminationTimeout).ConfigureAwait(false);
         try
         {
             await _logs.WaitAsync(LogDrainTimeout).ConfigureAwait(false);
@@ -125,11 +129,10 @@ internal sealed class ManagedHost : IAsyncDisposable
         _process.Dispose();
     }
 
-    private async Task WaitForHealth(Uri health, CancellationToken ct)
+    private async Task WaitForHealth(Uri health, HttpMessageHandler healthCheckHandler, CancellationToken ct)
     {
-        // The probe reaches only the host: no proxy, and a redirect is not followed.
-        using var handler = new SocketsHttpHandler { UseProxy = false, AllowAutoRedirect = false };
-        using var client = new HttpClient(handler) { Timeout = Timeout.InfiniteTimeSpan };
+        // The handler belongs to the caller, which configures it to reach only the host: no proxy and no redirect.
+        using var client = new HttpClient(healthCheckHandler, disposeHandler: false) { Timeout = Timeout.InfiniteTimeSpan };
         var started = Stopwatch.GetTimestamp();
         while (true)
         {
