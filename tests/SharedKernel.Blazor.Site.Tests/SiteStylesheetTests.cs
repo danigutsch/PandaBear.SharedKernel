@@ -190,6 +190,80 @@ public sealed partial class SiteStylesheetTests
     }
 
     [Fact]
+    public void Navigation_groups_show_their_own_disclosure_marker_that_turns_when_open()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Assert
+        SiteFiles.Rule(css, ".site-nav__group > summary").ShouldContain("list-style: none", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-nav__group > summary::-webkit-details-marker").ShouldContain("display: none", StringComparison.Ordinal);
+        var marker = SiteFiles.Rule(css, ".site-nav__group > summary::after");
+        marker.ShouldContain("content: \"\"", StringComparison.Ordinal);
+        marker.ShouldContain("border-right: 2px solid currentColor", StringComparison.Ordinal);
+        marker.ShouldContain("border-bottom: 2px solid currentColor", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-nav__group[open] > summary::after").ShouldContain("rotate(-135deg)", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void The_group_of_the_current_page_is_styled_like_the_current_link()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+        var selectors = Regex.Match(css, @"^\.site-nav a\[aria-current=""page""\][^{]*\{", RegexOptions.Multiline, TimeSpan.FromSeconds(1)).Value;
+
+        // Assert
+        selectors.ShouldContain(".site-nav__group > summary[aria-current=\"true\"]", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void An_open_navigation_group_stacks_the_navigation_below_the_breakpoint()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Assert
+        SiteFiles.Rule(css, ".site-nav:has(.site-nav__group[open])").ShouldContain("flex-basis: 100%", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-nav__list:has(> .site-nav__item > .site-nav__group[open])").ShouldContain("flex-direction: column", StringComparison.Ordinal);
+        css.ShouldContain("""
+                .site-nav:has(.site-nav__group[open]) {
+                    flex-basis: auto;
+                }
+            """, StringComparison.Ordinal);
+        css.ShouldContain("""
+                .site-nav__list:has(> .site-nav__item > .site-nav__group[open]) {
+                    flex-direction: row;
+                }
+            """, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void A_card_grid_keeps_empty_columns_so_a_lone_card_has_the_width_of_one_column()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Assert
+        SiteFiles.Rule(css, ".site-card-grid").ShouldContain("grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--site-card-min-width)), 1fr))", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void The_gutter_container_shares_the_content_width_rule_and_the_readme_documents_it()
+    {
+        // Arrange
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+        var readme = File.ReadAllText(SiteFiles.ReadmePath());
+
+        // Act
+        var selectors = Regex.Match(css, @"^\.site-header__inner,[^{]*\{", RegexOptions.Multiline, TimeSpan.FromSeconds(1)).Value;
+
+        // Assert
+        selectors.ShouldContain(".site-container", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-header__inner").ShouldNotContain("padding", StringComparison.Ordinal);
+        readme.ShouldContain("`site-container`", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Stylesheet_honours_reduced_motion_and_keyboard_focus_and_loads_nothing_external()
     {
         // Arrange & Act

@@ -67,12 +67,12 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | Component | Renders |
 | --- | --- |
 | `SkipLink` | The first link of the page; `TargetId` defaults to `main-content`. Extra attributes cannot replace its `href` or `class`. |
-| `SiteHeader` | `header` with a brand slot, a labelled `nav` (`Label` is required when there are items), and an actions slot. An item has either an `Href` or one level of children; an item with children is a native `details`. The item that matches `CurrentPath` gets `aria-current="page"` and opens its group. |
+| `SiteHeader` | `header` with a brand slot, a labelled `nav` (`Label` is required when there are items), and an actions slot. An item has either an `Href` or one level of children; an item with children is a native `details` that starts closed and shows a chevron that turns when it opens. The item that matches `CurrentPath` gets `aria-current="page"`, and the summary of its group gets `aria-current="true"` and the current item's style, so the group stays closed and does not cover the page. Below the `48rem` breakpoint an open group stacks the navigation on a row of its own, the group's links under its summary; from the breakpoint on they drop down over the page. |
 | `SiteFooter` | `footer` with a content slot and an optional `Legal` line. |
 | `Hero` | The page's one `h1`, a subtitle, an image loaded eagerly with `fetchpriority="high"`, and an actions slot. |
 | `Section` | `section` with a heading (`Level`, default 2), a decorative divider and an intro. Set `HeadingId` to give the heading that id and label the section by it (`aria-labelledby`), which makes it a named region; without it no id is generated, so prerendered and interactive markup match. |
 | `ButtonLink` | A link styled as a button (`Primary`, `Secondary`, `Outline`). `NewTab` adds `target="_blank"`, `rel="noopener noreferrer"` and a visually hidden `NewTabHint`. |
-| `Card`, `CardGrid` | `article` with an optional lazy image, a heading (`HeadingLevel`, default 3) whose link covers the card, text and actions; an auto-fit grid. Links, buttons, form controls, `summary` and `[tabindex]` elements in the body and the actions are raised above the covering link, so they stay clickable; any other interactive element you put in the body needs `position: relative; z-index: 1`. The focus ring is drawn on the card while a control in it has keyboard focus (`:has(:focus-visible)`). |
+| `Card`, `CardGrid` | `article` with an optional lazy image, a heading (`HeadingLevel`, default 3) whose link covers the card, text and actions; an auto-fill grid whose columns are at least `--site-card-min-width` wide and that keeps empty columns, so a lone card has the width of one column instead of the whole row. Links, buttons, form controls, `summary` and `[tabindex]` elements in the body and the actions are raised above the covering link, so they stay clickable; any other interactive element you put in the body needs `position: relative; z-index: 1`. The focus ring is drawn on the card while a control in it has keyboard focus (`:has(:focus-visible)`). |
 | `FactsTable` | `table` with a required `caption` and `th scope="row"` headers. |
 | `Disclosure` | Native `details` and `summary`; a tab substitute without script. |
 | `Quote` | `figure` with a `blockquote` and a `cite` caption. |
@@ -80,6 +80,10 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links; no `address` when there are no lines and no channels. `PhoneText` shows the number as written (`+55 (11) 99999-0000`) while the link uses the digits; it must be the same number as `Phone`. The WhatsApp link shows `WhatsAppLabel`. |
 | `LanguageSwitcher` | Labelled `nav` of links with `hreflang`, `lang` and `aria-current="true"` on the current language. |
 | `PageHead` | Title, description, canonical link, OpenGraph basics and `hreflang` alternates including `x-default`. |
+
+Content without a heading, such as a page's opening text or a contact block, goes in `<div class="site-container">`: the
+`site-container` class gives it the content width and side gutter of `Section`, `Hero`, the header and the footer, so it lines up
+with them, without a section's vertical padding. Space it from its neighbours yourself.
 
 `SiteHeader.CurrentPath` matching compares paths only: the query and fragment are ignored, a missing leading slash is added
 (`Navigation.ToBaseRelativePath(...)` returns `tours`, which matches `/tours`), a trailing slash is ignored, and the comparison is

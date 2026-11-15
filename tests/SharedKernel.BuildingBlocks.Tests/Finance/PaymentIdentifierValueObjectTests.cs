@@ -105,8 +105,7 @@ public sealed class PaymentIdentifierValueObjectTests
 
         // Assert
         var details = errors.Select(static error => error.ShouldNotBeNull().Detail).ToArray();
-        details.ShouldBe(["Invalid canonical IBAN.", "Invalid canonical BIC.", "Invalid canonical CPF.",
-            "Invalid canonical CNPJ.", "Invalid canonical Pix key."]);
+        details.ShouldBe(["IBAN is not valid.", "BIC is not valid.", "CPF is not valid.", "CNPJ is not valid.", "Pix key is not valid."]);
         var messages = errors.SelectMany(static error => error.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull().Values)
             .SelectMany(static messages => messages).ToArray();
         messages.ShouldBe(details);

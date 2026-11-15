@@ -52,6 +52,10 @@ public sealed class PostalAddress : ValueObject
     /// <param name="city">The city.</param>
     /// <param name="state">The optional state or region.</param>
     /// <param name="country">The ISO 3166-1 alpha-2 country code.</param>
+    /// <param name="labels">
+    /// The labels that start the validation messages of each part, such as the form labels; <see langword="null"/> uses
+    /// <see cref="PostalAddressLabels.Default"/>. The field keys (<c>street</c>, <c>postalCode</c> and so on) do not change.
+    /// </param>
     /// <returns>The address or validation errors for each invalid part.</returns>
     public static Result<PostalAddress> Create(
         string? street,
@@ -60,19 +64,24 @@ public sealed class PostalAddress : ValueObject
         string? postalCode,
         string? city,
         string? state,
-        string? country)
+        string? country,
+        PostalAddressLabels? labels = null)
     {
+        labels ??= PostalAddressLabels.Default;
         var errors = new ValidationErrors();
-        var validStreet = TextRules.Required(errors, street, "street", "Street", MaxPartLength);
-        var validComplement = TextRules.Optional(errors, complement, "complement", "Complement", MaxPartLength);
-        var validNeighborhood = TextRules.Optional(errors, neighborhood, "neighborhood", "Neighborhood", MaxPartLength);
-        var validPostalCode = TextRules.Required(errors, postalCode, "postalCode", "Postal code", MaxPostalCodeLength);
-        var validCity = TextRules.Required(errors, city, "city", "City", MaxPartLength);
-        var validState = TextRules.Optional(errors, state, "state", "State", MaxPartLength);
+        var validStreet = TextRules.Required(errors, street, "street", labels.Street, MaxPartLength);
+        var validComplement = TextRules.Optional(errors, complement, "complement", labels.Complement, MaxPartLength);
+        var validNeighborhood = TextRules.Optional(errors, neighborhood, "neighborhood", labels.Neighborhood, MaxPartLength);
+        var validPostalCode = TextRules.Required(errors, postalCode, "postalCode", labels.PostalCode, MaxPostalCodeLength);
+        var validCity = TextRules.Required(errors, city, "city", labels.City, MaxPartLength);
+        var validState = TextRules.Optional(errors, state, "state", labels.State, MaxPartLength);
         var countryResult = CountryCode.Create(country);
         if (countryResult.IsFailure)
         {
-            errors.Add(Result.Invalid(detail: "Country is invalid.", field: "country", message: "Country must be a valid ISO 3166-1 alpha-2 code."));
+            errors.Add(Result.Invalid(
+                detail: $"{labels.Country} is invalid.",
+                field: "country",
+                message: $"{labels.Country} must be a valid ISO 3166-1 alpha-2 code."));
         }
 
         return errors.HasErrors

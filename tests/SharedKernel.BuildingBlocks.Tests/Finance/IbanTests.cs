@@ -97,4 +97,37 @@ public sealed class IbanTests
         // Assert
         result.Status.ShouldBe(ResultStatus.Invalid);
     }
+
+    [Theory]
+    [InlineData("DE89370400440532013000", "DE89 3704 0044 0532 0130 00")]
+    [InlineData("NO9386011117947", "NO93 8601 1117 947")]
+    [InlineData("GB29NWBK60161331926819", "GB29 NWBK 6016 1331 9268 19")]
+    public void Formatted_groups_the_iban_in_fours_while_to_string_stays_redacted(string value, string expected)
+    {
+        // Arrange
+        var iban = Iban.Create(value).ShouldBeSuccess();
+
+        // Act
+        var formatted = iban.Formatted;
+
+        // Assert
+        formatted.ShouldBe(expected);
+        iban.Value.ShouldBe(value);
+        iban.ToString().ShouldBe("Iban [redacted]");
+    }
+
+    [Theory]
+    [InlineData("DE89 3704 0044 0532 0130 00")]
+    [InlineData("legacy-iban")]
+    public void Formatted_returns_a_restored_value_unchanged_when_it_is_not_letters_and_digits(string value)
+    {
+        // Arrange
+        var iban = Iban.Restore(value);
+
+        // Act
+        var formatted = iban.Formatted;
+
+        // Assert
+        formatted.ShouldBe(value);
+    }
 }

@@ -16,6 +16,7 @@ public sealed class ConcurrencyConflictResultsTests
         // Assert
         result.Status.ShouldBe(ResultStatus.Conflict);
         result.ErrorDetails.ShouldNotBeNull().Detail.ShouldBe(ConcurrencyConflictBehavior<ConcurrencyConflictTestTypes.RenameTour, Result>.ConflictMessage);
+        result.ErrorDetails.Code.ShouldBe(ResultErrorCodes.ConcurrencyConflict);
     }
 
     [Fact]
@@ -28,5 +29,6 @@ public sealed class ConcurrencyConflictResultsTests
         // Assert
         result.Status.ShouldBe(ResultStatus.Conflict);
         result.ErrorDetails.ShouldNotBeNull().Detail.ShouldBe(ConcurrencyConflictBehavior<ConcurrencyConflictTestTypes.LoadTour, Result<string>>.ConflictMessage);
+        result.ErrorDetails.Code.ShouldBe(ResultErrorCodes.ConcurrencyConflict);
     }
 }

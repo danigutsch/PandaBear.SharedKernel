@@ -144,6 +144,13 @@ public sealed class ServerFormSubmission : IDisposable
         return result.IsSuccess;
     }
 
+    /// <summary>
+    /// Hides the general <see cref="Error"/>, for example when the user acts in another part of the page and the old message no longer
+    /// applies. The field errors and <see cref="Summary"/> stay, because they still describe the fields; the next <see cref="Submit"/> clears
+    /// everything anyway.
+    /// </summary>
+    public void ClearError() => Error = null;
+
     /// <summary>Chooses the general error for a finished save.</summary>
     /// <param name="status">The status of the save result.</param>
     /// <param name="isSuccess">Whether the save succeeded.</param>

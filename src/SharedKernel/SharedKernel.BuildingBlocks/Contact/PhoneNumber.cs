@@ -21,18 +21,20 @@ public sealed class PhoneNumber : ValueObject
 
     /// <summary>Creates a number from text that may use spaces, dashes, dots and parentheses as separators.</summary>
     /// <param name="value">The candidate number.</param>
+    /// <param name="field">The field name used in validation errors.</param>
+    /// <param name="label">The label that starts each validation message, such as the form label of the field.</param>
     /// <returns>The number or an input-independent validation error.</returns>
-    public static Result<PhoneNumber> Create(string? value)
+    public static Result<PhoneNumber> Create(string? value, string field = "phone", string label = "Phone number")
     {
         var sanitized = StringSanitizer.Sanitize(value) ?? string.Empty;
         if (sanitized.Length == 0)
         {
-            return Invalid("Phone number is required.");
+            return Invalid(field, $"{label} is required.");
         }
 
         if (sanitized.Length > MaxInputLength)
         {
-            return Invalid("Phone number is too long.");
+            return Invalid(field, $"{label} is too long.");
         }
 
         var plus = sanitized[0] == '+';
@@ -47,13 +49,13 @@ public sealed class PhoneNumber : ValueObject
             }
             else if (character is not (' ' or '-' or '.' or '(' or ')'))
             {
-                return Invalid("Phone number format is invalid.");
+                return Invalid(field, $"{label} format is invalid.");
             }
         }
 
         if (count is < MinDigits or > MaxDigits)
         {
-            return Invalid($"Phone number must have {MinDigits} to {MaxDigits} digits.");
+            return Invalid(field, $"{label} must have {MinDigits} to {MaxDigits} digits.");
         }
 
         return Result.Ok(new PhoneNumber((plus ? "+" : string.Empty) + new string(digits, 0, count)));
@@ -81,6 +83,6 @@ public sealed class PhoneNumber : ValueObject
         yield return Value;
     }
 
-    private static Result<PhoneNumber> Invalid(string message) =>
-        Result.Invalid<PhoneNumber>(detail: message, field: "phone", message: message);
+    private static Result<PhoneNumber> Invalid(string field, string message) =>
+        Result.Invalid<PhoneNumber>(detail: message, field: field, message: message);
 }

@@ -110,8 +110,11 @@ PandaBear.Blazor.UploadStatus.StatusClass.set -> void
 PandaBear.Blazor.UploadStatus.UploadStatus() -> void
 static PandaBear.Blazor.BlazorServiceCollectionExtensions.AddUiFailureReporting(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 PandaBear.Blazor.FormField<TValue>
-PandaBear.Blazor.FormField<TValue>.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.FormField<TValue>.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment<System.Collections.Generic.IReadOnlyDictionary<string!, object!>!>?
 PandaBear.Blazor.FormField<TValue>.ChildContent.set -> void
+PandaBear.Blazor.FormField<TValue>.DescribedBy.get -> string?
+PandaBear.Blazor.FormField<TValue>.DescribedBy.set -> void
+PandaBear.Blazor.FormField<TValue>.Dispose() -> void
 PandaBear.Blazor.FormField<TValue>.For.get -> System.Linq.Expressions.Expression<System.Func<TValue>!>?
 PandaBear.Blazor.FormField<TValue>.For.set -> void
 PandaBear.Blazor.FormField<TValue>.FormField() -> void
@@ -122,6 +125,7 @@ PandaBear.Blazor.FormField<TValue>.Label.set -> void
 PandaBear.Blazor.ServerFormSubmission
 PandaBear.Blazor.ServerFormSubmission.ConflictMessage.get -> string?
 PandaBear.Blazor.ServerFormSubmission.ConflictMessage.init -> void
+PandaBear.Blazor.ServerFormSubmission.ClearError() -> void
 PandaBear.Blazor.ServerFormSubmission.Dispose() -> void
 PandaBear.Blazor.ServerFormSubmission.Error.get -> string?
 PandaBear.Blazor.ServerFormSubmission.IsSaving.get -> bool
@@ -133,6 +137,11 @@ PandaBear.Blazor.ServerFormSubmission.Summary.get -> System.Collections.Generic.
 PandaBear.Blazor.ConfirmationState<TKey>
 PandaBear.Blazor.ConfirmationState<TKey>.Ask(TKey key) -> void
 PandaBear.Blazor.ConfirmationState<TKey>.Cancel() -> void
+PandaBear.Blazor.ConfirmationState<TKey>.Close() -> void
+PandaBear.Blazor.ConfirmationState<TKey>.MoveFocus() -> System.Threading.Tasks.Task!
+PandaBear.Blazor.ConfirmationState<TKey>.Openers.get -> System.Collections.Generic.IDictionary<TKey, Microsoft.AspNetCore.Components.ElementReference>!
+PandaBear.Blazor.ConfirmationState<TKey>.SafeControl.get -> Microsoft.AspNetCore.Components.ElementReference
+PandaBear.Blazor.ConfirmationState<TKey>.SafeControl.set -> void
 PandaBear.Blazor.ConfirmationState<TKey>.ConfirmationState() -> void
 PandaBear.Blazor.ConfirmationState<TKey>.HasPending.get -> bool
 PandaBear.Blazor.ConfirmationState<TKey>.IsPending(TKey key) -> bool
@@ -150,14 +159,23 @@ PandaBear.Blazor.ListDelete<TKey>.Error.get -> string?
 PandaBear.Blazor.ListDelete<TKey>.IsPending(TKey key) -> bool
 PandaBear.Blazor.ListDelete<TKey>.IsRunning.get -> bool
 PandaBear.Blazor.ListDelete<TKey>.ListDelete(string! failureMessage, string? conflictMessage = null) -> void
-PandaBear.Blazor.ListDelete<TKey>.Run(TKey key, System.Func<System.Threading.Tasks.ValueTask<PandaBear.Results.Result>>! delete, System.Func<System.Threading.Tasks.Task!>! reload, System.Action<TKey>! removeLocal) -> System.Threading.Tasks.Task!
+PandaBear.Blazor.ListDelete<TKey>.Run(TKey key, System.Func<System.Threading.Tasks.ValueTask<PandaBear.Results.Result>>! delete, System.Func<System.Threading.Tasks.Task!>! reload, System.Action<TKey>! removeLocal, string? deletedStatus = null) -> System.Threading.Tasks.Task!
+PandaBear.Blazor.ListDelete<TKey>.MoveFocus() -> System.Threading.Tasks.Task!
+PandaBear.Blazor.ListDelete<TKey>.Openers.get -> System.Collections.Generic.IDictionary<TKey, Microsoft.AspNetCore.Components.ElementReference>!
+PandaBear.Blazor.ListDelete<TKey>.SafeControl.get -> Microsoft.AspNetCore.Components.ElementReference
+PandaBear.Blazor.ListDelete<TKey>.SafeControl.set -> void
+PandaBear.Blazor.ListDelete<TKey>.Status.get -> string?
+PandaBear.Blazor.ListDelete<TKey>.StatusRegion.get -> Microsoft.AspNetCore.Components.ElementReference
+PandaBear.Blazor.ListDelete<TKey>.StatusRegion.set -> void
 static PandaBear.Blazor.ServerFormSubmission.ForRecord(Microsoft.AspNetCore.Components.Forms.EditContext! editContext, System.Collections.Generic.IEnumerable<string!>! knownFields, string! idPrefix, string! noun, string? invalidMessage = null, string? failureMessage = null, string? conflictMessage = null, string? notFoundMessage = null) -> PandaBear.Blazor.ServerFormSubmission!
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Context.get -> Microsoft.AspNetCore.Components.Forms.EditContext?
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Dispose() -> void
-PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.EditSession(System.Collections.Generic.IEnumerable<string!>! knownFields, string! idPrefix, string! noun) -> void
+PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.EditSession(System.Collections.Generic.IEnumerable<string!>! knownFields, string! idPrefix, string! noun, string? conflictMessage = null) -> void
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Form.get -> TForm!
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.IsMissing.get -> bool
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Record.get -> TRecord?
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Record.set -> void
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Submission.get -> PandaBear.Blazor.ServerFormSubmission?
+PandaBear.Blazor.FocusHelper
+static PandaBear.Blazor.FocusHelper.TryFocus(Microsoft.AspNetCore.Components.ElementReference element) -> System.Threading.Tasks.ValueTask

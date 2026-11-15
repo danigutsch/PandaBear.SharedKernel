@@ -61,14 +61,27 @@ public sealed class SiteHeaderTests : BunitContext
     }
 
     [Fact]
-    public void A_child_page_is_marked_and_its_disclosure_is_open()
+    public void A_child_page_is_marked_and_its_group_is_marked_but_stays_closed()
     {
         // Arrange & Act
         var cut = this.RenderHeader("/about/team");
 
         // Assert
-        cut.Find("[aria-current]").GetAttribute("href").ShouldBe("/about/team");
-        cut.Find("nav details").HasAttribute("open").ShouldBeTrue();
+        cut.Find("[aria-current=page]").GetAttribute("href").ShouldBe("/about/team");
+        cut.Find("nav details").HasAttribute("open").ShouldBeFalse();
+        cut.Find("nav details > summary").GetAttribute("aria-current").ShouldBe("true");
+        cut.FindAll("[aria-current]").Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public void A_group_without_the_current_page_is_neither_marked_nor_open()
+    {
+        // Arrange & Act
+        var cut = this.RenderHeader("/tours");
+
+        // Assert
+        cut.Find("nav details").HasAttribute("open").ShouldBeFalse();
+        cut.Find("nav details > summary").HasAttribute("aria-current").ShouldBeFalse();
     }
 
     [Theory]

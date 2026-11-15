@@ -42,6 +42,34 @@ public sealed class ResultConvertErrorTests
     }
 
     [Fact]
+    public void Keeps_a_concurrency_conflict_a_conflict_when_converting()
+    {
+        // Arrange
+        var source = Result.FromError(new ResultError("Reload and try again.", ResultErrorCodes.ConcurrencyConflict));
+
+        // Act
+        var converted = source.ConvertError<string>();
+
+        // Assert
+        converted.Status.ShouldBe(ResultStatus.Conflict);
+        converted.ErrorDetails.ShouldNotBeNull().Code.ShouldBe(ResultErrorCodes.ConcurrencyConflict);
+    }
+
+    [Fact]
+    public void Keeps_a_custom_error_code_when_converting()
+    {
+        // Arrange
+        var source = Result<int>.FromError(new ResultError("Quota reached.", "quota.exceeded"));
+
+        // Act
+        var converted = source.ConvertError<int, string>();
+
+        // Assert
+        converted.Status.ShouldBe(ResultStatus.Error);
+        converted.ErrorDetails.ShouldBe(source.ErrorDetails);
+    }
+
+    [Fact]
     public void Converts_a_generic_failure_to_another_generic_failure()
     {
         // Arrange

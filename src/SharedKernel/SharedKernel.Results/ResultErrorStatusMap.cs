@@ -22,7 +22,7 @@ internal static class ResultErrorStatusMap
             ResultErrorCodes.NotFound => ResultStatus.NotFound,
             ResultErrorCodes.Unauthorized => ResultStatus.Unauthorized,
             ResultErrorCodes.Forbidden => ResultStatus.Forbidden,
-            ResultErrorCodes.Conflict => ResultStatus.Conflict,
+            ResultErrorCodes.Conflict or ResultErrorCodes.ConcurrencyConflict => ResultStatus.Conflict,
             ResultErrorCodes.CriticalError => ResultStatus.CriticalError,
             ResultErrorCodes.Unavailable => ResultStatus.Unavailable,
             _ => ResultStatus.Error,
