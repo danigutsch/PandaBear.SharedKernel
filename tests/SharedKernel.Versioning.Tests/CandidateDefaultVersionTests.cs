@@ -1,5 +1,3 @@
-using PandaBear.Versioning.Tool;
-
 namespace PandaBear.Versioning.Tests;
 
 /// <summary>
@@ -21,7 +19,7 @@ public static class CandidateDefaultVersionTests
         var now = new DateTimeOffset(2026, 11, 14, 19, 25, 37, 365, TimeSpan.Zero);
 
         // Act
-        var version = CandidateCommand.DefaultVersion("0.1.0-alpha.1", now, Revision);
+        var version = CandidateValidator.DefaultVersion("0.1.0-alpha.1", now, Revision);
 
         // Assert
         version.ShouldBe("0.1.0-alpha.local.t20261114192537.ge7a988d");
@@ -34,7 +32,7 @@ public static class CandidateDefaultVersionTests
         var now = new DateTimeOffset(2026, 11, 14, 20, 25, 37, TimeSpan.FromHours(1));
 
         // Act
-        var version = CandidateCommand.DefaultVersion("0.1.0", now, Revision);
+        var version = CandidateValidator.DefaultVersion("0.1.0", now, Revision);
 
         // Assert
         version.ShouldBe("0.1.0-alpha.local.t20261114192537.ge7a988d");
@@ -47,7 +45,7 @@ public static class CandidateDefaultVersionTests
         var now = new DateTimeOffset(9999, 12, 31, 23, 59, 59, 999, TimeSpan.Zero);
 
         // Act
-        var version = CandidateCommand.DefaultVersion("10.10.10-preview.1", now, Revision);
+        var version = CandidateValidator.DefaultVersion("10.10.10-preview.1", now, Revision);
 
         // Assert
         version.Length.ShouldBeLessThanOrEqualTo(MaxDefaultVersionLength);

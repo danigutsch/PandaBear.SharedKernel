@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
-using PandaBear.Versioning.Tool;
 
 namespace PandaBear.Versioning.Tests;
 
@@ -159,7 +158,7 @@ public static class ToolPackageCheckTests
         var executableSuffix = OperatingSystem.IsWindows() ? ".exe" : string.Empty;
 
         // Act
-        await ToolPackageCheck.Run(temporary.Root, temporary.PackageDirectory, "1.0.0", [library, tool], runner.Run, error, TestContext.Current.CancellationToken);
+        await ToolPackageCheck.Run(temporary.Root, temporary.PackageDirectory, "1.0.0", [library, tool], runner.Commands, error, TestContext.Current.CancellationToken);
 
         // Assert
         runner.Processes.Count.ShouldBe(3, "The library package is not a tool; the tool package installs once and declares two commands.");
@@ -201,7 +200,7 @@ public static class ToolPackageCheckTests
             (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-probe")));
         var runner = new RecordingProcessRunner(failingFileName: "dotnet");
         Func<Task> check = () => ToolPackageCheck.Run(
-            temporary.Root, temporary.PackageDirectory, "1.0.0", [tool], runner.Run, TextWriter.Null, TestContext.Current.CancellationToken);
+            temporary.Root, temporary.PackageDirectory, "1.0.0", [tool], runner.Commands, TextWriter.Null, TestContext.Current.CancellationToken);
 
         // Act
         var exception = await check.ShouldThrow<InvalidOperationException>();
@@ -225,7 +224,7 @@ public static class ToolPackageCheckTests
             (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-probe")));
         var runner = new RecordingProcessRunner(failingFileName: "sharedkernel-probe");
         Func<Task> check = () => ToolPackageCheck.Run(
-            temporary.Root, temporary.PackageDirectory, "1.0.0", [tool], runner.Run, TextWriter.Null, TestContext.Current.CancellationToken);
+            temporary.Root, temporary.PackageDirectory, "1.0.0", [tool], runner.Commands, TextWriter.Null, TestContext.Current.CancellationToken);
 
         // Act
         var exception = await check.ShouldThrow<InvalidOperationException>();

@@ -1,10 +1,8 @@
-using PandaBear.Versioning.Tool;
-
 namespace PandaBear.Versioning.Tests;
 
-/// <summary>Tests how the <c>pack-dev</c> command turns its options into pack invocations.</summary>
+/// <summary>Tests how the dev pack turns its options into pack invocations.</summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
-public static class DevPackCommandTests
+public static class DevPackTests
 {
     private const string Version = "0.1.0-dev.local";
 
@@ -16,10 +14,10 @@ public static class DevPackCommandTests
         using var repository = new DevPackRepository();
         var project = repository.AddProject("SharedKernel.Results", "PandaBear.SharedKernel.Results");
         var relativeRoot = Path.GetRelativePath(Directory.GetCurrentDirectory(), repository.Root);
-        var options = new DevPackOptions(repository.Feed, Version, relativeRoot, []);
+        var options = new DevPackOptions(repository.Feed, Version, relativeRoot, [], Directory.GetCurrentDirectory(), NuGetPackages: null);
 
         // Act
-        var invocation = DevPackCommand.CreateInvocations(options, repository.Feed).ShouldHaveSingleItem();
+        var invocation = DevPack.CreateInvocations(options, repository.Feed).ShouldHaveSingleItem();
 
         // Assert
         invocation.WorkingDirectory.ShouldBe(repository.Root);
@@ -35,7 +33,7 @@ public static class DevPackCommandTests
         var step = new DevPackStep("SharedKernel.Results", "/repo/Results.csproj", "PandaBear.SharedKernel.Results", Rebuild: false, Stale: true);
 
         // Act
-        var line = DevPackCommand.FormatKept(step);
+        var line = DevPack.FormatKept(step);
 
         // Assert
         line.ShouldBe("Kept   PandaBear.SharedKernel.Results (stale: sources changed after it was packed; name it to repack)");
@@ -49,7 +47,7 @@ public static class DevPackCommandTests
         var step = new DevPackStep("SharedKernel.Results", "/repo/Results.csproj", "PandaBear.SharedKernel.Results", Rebuild: false);
 
         // Act
-        var line = DevPackCommand.FormatKept(step);
+        var line = DevPack.FormatKept(step);
 
         // Assert
         line.ShouldBe("Kept   PandaBear.SharedKernel.Results");

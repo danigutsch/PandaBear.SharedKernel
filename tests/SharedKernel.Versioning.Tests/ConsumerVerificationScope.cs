@@ -2,7 +2,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using PandaBear.Versioning.Tool;
 
 namespace PandaBear.Versioning.Tests;
 
@@ -129,9 +128,9 @@ internal sealed partial class ConsumerVerificationScope : IDisposable
             await repository.Initialize(ct);
         }
 
-        await CommandRunner.Run("git", ["add", "--all"], Root, ct);
-        await CommandRunner.Run("git", ["commit", "--quiet", "--message", "test: consumer"], Root, ct);
-        return (await CommandRunner.Run("git", ["rev-parse", "HEAD"], Root, ct)).Trim();
+        await SystemCommands.Instance.Run("git", ["add", "--all"], Root, ct);
+        await SystemCommands.Instance.Run("git", ["commit", "--quiet", "--message", "test: consumer"], Root, ct);
+        return (await SystemCommands.Instance.Run("git", ["rev-parse", "HEAD"], Root, ct)).Trim();
     }
 
     /// <summary>

@@ -3,13 +3,19 @@
     <PropertyGroup>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.Versioning</PackageId>
-        <Description>Reusable SemVer and Conventional Commit release-impact primitives.</Description>
-        <RootNamespace>PandaBear.Versioning</RootNamespace>
+        <Description>SemVer and Conventional Commit release-impact primitives, and the SharedKernel release engine: packing, API compatibility, release candidates with consumption evidence, and consumer verification.</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <PackageTags>versioning;semver;conventional-commits;shared-kernel;dotnet</PackageTags>
+        <PackageTags>versioning;semver;conventional-commits;release-candidates;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.Versioning.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.IO\SharedKernel.IO.csproj" />
+        <ProjectReference Include="..\SharedKernel.Processes\SharedKernel.Processes.csproj" />
+    </ItemGroup>
 
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />

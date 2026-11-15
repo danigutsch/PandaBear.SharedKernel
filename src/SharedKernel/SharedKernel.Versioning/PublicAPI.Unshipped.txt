@@ -276,3 +276,138 @@ static PandaBear.Versioning.SharedKernelPackageOptions.operator !=(PandaBear.Ver
 static PandaBear.Versioning.SharedKernelPackageOptions.operator ==(PandaBear.Versioning.SharedKernelPackageOptions? left, PandaBear.Versioning.SharedKernelPackageOptions? right) -> bool
 static PandaBear.Versioning.VersionOutput.operator !=(PandaBear.Versioning.VersionOutput? left, PandaBear.Versioning.VersionOutput? right) -> bool
 static PandaBear.Versioning.VersionOutput.operator ==(PandaBear.Versioning.VersionOutput? left, PandaBear.Versioning.VersionOutput? right) -> bool
+PandaBear.Versioning.CandidateConsumptionOptions
+PandaBear.Versioning.CandidateConsumptionOptions.<Clone>$() -> PandaBear.Versioning.CandidateConsumptionOptions!
+PandaBear.Versioning.CandidateConsumptionOptions.CandidateConsumptionOptions(string! RepoRoot, string! Manifest, string! Destination, bool NativeAot = false) -> void
+PandaBear.Versioning.CandidateConsumptionOptions.Deconstruct(out string! RepoRoot, out string! Manifest, out string! Destination, out bool NativeAot) -> void
+PandaBear.Versioning.CandidateConsumptionOptions.Destination.get -> string!
+PandaBear.Versioning.CandidateConsumptionOptions.Destination.init -> void
+PandaBear.Versioning.CandidateConsumptionOptions.Equals(PandaBear.Versioning.CandidateConsumptionOptions? other) -> bool
+PandaBear.Versioning.CandidateConsumptionOptions.Manifest.get -> string!
+PandaBear.Versioning.CandidateConsumptionOptions.Manifest.init -> void
+PandaBear.Versioning.CandidateConsumptionOptions.NativeAot.get -> bool
+PandaBear.Versioning.CandidateConsumptionOptions.NativeAot.init -> void
+PandaBear.Versioning.CandidateConsumptionOptions.RepoRoot.get -> string!
+PandaBear.Versioning.CandidateConsumptionOptions.RepoRoot.init -> void
+PandaBear.Versioning.CandidateOptions
+PandaBear.Versioning.CandidateOptions.<Clone>$() -> PandaBear.Versioning.CandidateOptions!
+PandaBear.Versioning.CandidateOptions.BaselineVersion.get -> string?
+PandaBear.Versioning.CandidateOptions.BaselineVersion.init -> void
+PandaBear.Versioning.CandidateOptions.CandidateOptions(string! RepoRoot, string? Version = null, string? BaselineVersion = null, bool NativeAot = false) -> void
+PandaBear.Versioning.CandidateOptions.Deconstruct(out string! RepoRoot, out string? Version, out string? BaselineVersion, out bool NativeAot) -> void
+PandaBear.Versioning.CandidateOptions.Equals(PandaBear.Versioning.CandidateOptions? other) -> bool
+PandaBear.Versioning.CandidateOptions.NativeAot.get -> bool
+PandaBear.Versioning.CandidateOptions.NativeAot.init -> void
+PandaBear.Versioning.CandidateOptions.RepoRoot.get -> string!
+PandaBear.Versioning.CandidateOptions.RepoRoot.init -> void
+PandaBear.Versioning.CandidateOptions.Version.get -> string?
+PandaBear.Versioning.CandidateOptions.Version.init -> void
+PandaBear.Versioning.CandidateValidator
+PandaBear.Versioning.CandidateValidator.CandidateValidator(PandaBear.Processes.IProcessRunner! processRunner, PandaBear.Processes.IExecutableResolver! executableResolver, System.TimeProvider! timeProvider) -> void
+PandaBear.Versioning.CandidateValidator.Consume(PandaBear.Versioning.CandidateConsumptionOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.Versioning.CandidateValidator.Create(PandaBear.Versioning.CandidateOptions! options, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+PandaBear.Versioning.CandidateValidator.Validate(PandaBear.Versioning.CandidateOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+PandaBear.Versioning.ConsumerVerificationOptions
+PandaBear.Versioning.ConsumerVerificationOptions.<Clone>$() -> PandaBear.Versioning.ConsumerVerificationOptions!
+PandaBear.Versioning.ConsumerVerificationOptions.Candidate.get -> string!
+PandaBear.Versioning.ConsumerVerificationOptions.Candidate.init -> void
+PandaBear.Versioning.ConsumerVerificationOptions.Command.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Versioning.ConsumerVerificationOptions.Command.init -> void
+PandaBear.Versioning.ConsumerVerificationOptions.ConsumerVerificationOptions(string! RepoRoot, string! Candidate, string? Solution, string! Output, System.Collections.Generic.IReadOnlyList<string!>! Command) -> void
+PandaBear.Versioning.ConsumerVerificationOptions.Deconstruct(out string! RepoRoot, out string! Candidate, out string? Solution, out string! Output, out System.Collections.Generic.IReadOnlyList<string!>! Command) -> void
+PandaBear.Versioning.ConsumerVerificationOptions.Equals(PandaBear.Versioning.ConsumerVerificationOptions? other) -> bool
+PandaBear.Versioning.ConsumerVerificationOptions.Output.get -> string!
+PandaBear.Versioning.ConsumerVerificationOptions.Output.init -> void
+PandaBear.Versioning.ConsumerVerificationOptions.RepoRoot.get -> string!
+PandaBear.Versioning.ConsumerVerificationOptions.RepoRoot.init -> void
+PandaBear.Versioning.ConsumerVerificationOptions.Solution.get -> string?
+PandaBear.Versioning.ConsumerVerificationOptions.Solution.init -> void
+PandaBear.Versioning.ConsumerVerifier
+PandaBear.Versioning.ConsumerVerifier.ConsumerVerifier(PandaBear.Processes.IProcessRunner! processRunner, PandaBear.Processes.IExecutableResolver! executableResolver) -> void
+PandaBear.Versioning.ConsumerVerifier.Verify(PandaBear.Versioning.ConsumerVerificationOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.Versioning.DevPackOptions
+PandaBear.Versioning.DevPackOptions.<Clone>$() -> PandaBear.Versioning.DevPackOptions!
+PandaBear.Versioning.DevPackOptions.ConsumerDirectory.get -> string!
+PandaBear.Versioning.DevPackOptions.ConsumerDirectory.init -> void
+PandaBear.Versioning.DevPackOptions.Deconstruct(out string! Feed, out string! Version, out string! RepoRoot, out System.Collections.Generic.IReadOnlyList<string!>! Projects, out string! ConsumerDirectory, out string? NuGetPackages) -> void
+PandaBear.Versioning.DevPackOptions.DevPackOptions(string! Feed, string! Version, string! RepoRoot, System.Collections.Generic.IReadOnlyList<string!>! Projects, string! ConsumerDirectory, string? NuGetPackages) -> void
+PandaBear.Versioning.DevPackOptions.Equals(PandaBear.Versioning.DevPackOptions? other) -> bool
+PandaBear.Versioning.DevPackOptions.Feed.get -> string!
+PandaBear.Versioning.DevPackOptions.Feed.init -> void
+PandaBear.Versioning.DevPackOptions.NuGetPackages.get -> string?
+PandaBear.Versioning.DevPackOptions.NuGetPackages.init -> void
+PandaBear.Versioning.DevPackOptions.Projects.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Versioning.DevPackOptions.Projects.init -> void
+PandaBear.Versioning.DevPackOptions.RepoRoot.get -> string!
+PandaBear.Versioning.DevPackOptions.RepoRoot.init -> void
+PandaBear.Versioning.DevPackOptions.Version.get -> string!
+PandaBear.Versioning.DevPackOptions.Version.init -> void
+PandaBear.Versioning.PackageConsumptionOptions
+PandaBear.Versioning.PackageConsumptionOptions.<Clone>$() -> PandaBear.Versioning.PackageConsumptionOptions!
+PandaBear.Versioning.PackageConsumptionOptions.Deconstruct(out string! RepoRoot, out string! Feed, out string! Version, out bool NativeAot) -> void
+PandaBear.Versioning.PackageConsumptionOptions.Equals(PandaBear.Versioning.PackageConsumptionOptions? other) -> bool
+PandaBear.Versioning.PackageConsumptionOptions.Feed.get -> string!
+PandaBear.Versioning.PackageConsumptionOptions.Feed.init -> void
+PandaBear.Versioning.PackageConsumptionOptions.NativeAot.get -> bool
+PandaBear.Versioning.PackageConsumptionOptions.NativeAot.init -> void
+PandaBear.Versioning.PackageConsumptionOptions.PackageConsumptionOptions(string! RepoRoot, string! Feed, string! Version, bool NativeAot = false) -> void
+PandaBear.Versioning.PackageConsumptionOptions.RepoRoot.get -> string!
+PandaBear.Versioning.PackageConsumptionOptions.RepoRoot.init -> void
+PandaBear.Versioning.PackageConsumptionOptions.Version.get -> string!
+PandaBear.Versioning.PackageConsumptionOptions.Version.init -> void
+PandaBear.Versioning.ReleaseHistory
+PandaBear.Versioning.ReleaseHistory.CalculateVersion(PandaBear.Versioning.ReleaseVersionOptions! options, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Versioning.ReleaseVersionCalculationResult!>!
+PandaBear.Versioning.ReleaseHistory.HasBreakingChangeMarker(string! range, string! repoRoot, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+PandaBear.Versioning.ReleaseHistory.ReleaseHistory(PandaBear.Processes.IProcessRunner! processRunner, PandaBear.Processes.IExecutableResolver! executableResolver) -> void
+PandaBear.Versioning.ReleaseVersionOptions
+PandaBear.Versioning.ReleaseVersionOptions.<Clone>$() -> PandaBear.Versioning.ReleaseVersionOptions!
+PandaBear.Versioning.ReleaseVersionOptions.Deconstruct(out string! RepoRoot, out string! VersionKind, out string? RunNumber, out string? Sha) -> void
+PandaBear.Versioning.ReleaseVersionOptions.Equals(PandaBear.Versioning.ReleaseVersionOptions? other) -> bool
+PandaBear.Versioning.ReleaseVersionOptions.ReleaseVersionOptions(string! RepoRoot, string! VersionKind, string? RunNumber = null, string? Sha = null) -> void
+PandaBear.Versioning.ReleaseVersionOptions.RepoRoot.get -> string!
+PandaBear.Versioning.ReleaseVersionOptions.RepoRoot.init -> void
+PandaBear.Versioning.ReleaseVersionOptions.RunNumber.get -> string?
+PandaBear.Versioning.ReleaseVersionOptions.RunNumber.init -> void
+PandaBear.Versioning.ReleaseVersionOptions.Sha.get -> string?
+PandaBear.Versioning.ReleaseVersionOptions.Sha.init -> void
+PandaBear.Versioning.ReleaseVersionOptions.VersionKind.get -> string!
+PandaBear.Versioning.ReleaseVersionOptions.VersionKind.init -> void
+PandaBear.Versioning.SharedKernelPackager
+PandaBear.Versioning.SharedKernelPackager.CheckApiCompatibility(PandaBear.Versioning.ApiCompatibilityReportOptions! options, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.Versioning.SharedKernelPackager.ConsumePackages(PandaBear.Versioning.PackageConsumptionOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.Versioning.SharedKernelPackager.Pack(PandaBear.Versioning.SharedKernelPackageOptions! options, bool verifyRestore, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+PandaBear.Versioning.SharedKernelPackager.PackDev(PandaBear.Versioning.DevPackOptions! options, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+PandaBear.Versioning.SharedKernelPackager.SharedKernelPackager(PandaBear.Processes.IProcessRunner! processRunner, PandaBear.Processes.IExecutableResolver! executableResolver) -> void
+const PandaBear.Versioning.ConsumerVerifier.DefaultOutput = "TestResults/consumer-compatibility.json" -> string!
+const PandaBear.Versioning.DevPackOptions.DefaultVersion = "0.1.0-dev.local" -> string!
+override PandaBear.Versioning.CandidateConsumptionOptions.Equals(object? obj) -> bool
+override PandaBear.Versioning.CandidateConsumptionOptions.GetHashCode() -> int
+override PandaBear.Versioning.CandidateConsumptionOptions.ToString() -> string!
+override PandaBear.Versioning.CandidateOptions.Equals(object? obj) -> bool
+override PandaBear.Versioning.CandidateOptions.GetHashCode() -> int
+override PandaBear.Versioning.CandidateOptions.ToString() -> string!
+override PandaBear.Versioning.ConsumerVerificationOptions.Equals(object? obj) -> bool
+override PandaBear.Versioning.ConsumerVerificationOptions.GetHashCode() -> int
+override PandaBear.Versioning.ConsumerVerificationOptions.ToString() -> string!
+override PandaBear.Versioning.DevPackOptions.Equals(object? obj) -> bool
+override PandaBear.Versioning.DevPackOptions.GetHashCode() -> int
+override PandaBear.Versioning.DevPackOptions.ToString() -> string!
+override PandaBear.Versioning.PackageConsumptionOptions.Equals(object? obj) -> bool
+override PandaBear.Versioning.PackageConsumptionOptions.GetHashCode() -> int
+override PandaBear.Versioning.PackageConsumptionOptions.ToString() -> string!
+override PandaBear.Versioning.ReleaseVersionOptions.Equals(object? obj) -> bool
+override PandaBear.Versioning.ReleaseVersionOptions.GetHashCode() -> int
+override PandaBear.Versioning.ReleaseVersionOptions.ToString() -> string!
+static PandaBear.Versioning.CandidateConsumptionOptions.operator !=(PandaBear.Versioning.CandidateConsumptionOptions? left, PandaBear.Versioning.CandidateConsumptionOptions? right) -> bool
+static PandaBear.Versioning.CandidateConsumptionOptions.operator ==(PandaBear.Versioning.CandidateConsumptionOptions? left, PandaBear.Versioning.CandidateConsumptionOptions? right) -> bool
+static PandaBear.Versioning.CandidateOptions.operator !=(PandaBear.Versioning.CandidateOptions? left, PandaBear.Versioning.CandidateOptions? right) -> bool
+static PandaBear.Versioning.CandidateOptions.operator ==(PandaBear.Versioning.CandidateOptions? left, PandaBear.Versioning.CandidateOptions? right) -> bool
+static PandaBear.Versioning.CandidateValidator.MergeEvidence(string! candidate, System.Collections.Generic.IReadOnlyList<string!>! evidenceFiles, string! destination, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+static PandaBear.Versioning.ConsumerVerificationOptions.operator !=(PandaBear.Versioning.ConsumerVerificationOptions? left, PandaBear.Versioning.ConsumerVerificationOptions? right) -> bool
+static PandaBear.Versioning.ConsumerVerificationOptions.operator ==(PandaBear.Versioning.ConsumerVerificationOptions? left, PandaBear.Versioning.ConsumerVerificationOptions? right) -> bool
+static PandaBear.Versioning.DevPackOptions.operator !=(PandaBear.Versioning.DevPackOptions? left, PandaBear.Versioning.DevPackOptions? right) -> bool
+static PandaBear.Versioning.DevPackOptions.operator ==(PandaBear.Versioning.DevPackOptions? left, PandaBear.Versioning.DevPackOptions? right) -> bool
+static PandaBear.Versioning.PackageConsumptionOptions.operator !=(PandaBear.Versioning.PackageConsumptionOptions? left, PandaBear.Versioning.PackageConsumptionOptions? right) -> bool
+static PandaBear.Versioning.PackageConsumptionOptions.operator ==(PandaBear.Versioning.PackageConsumptionOptions? left, PandaBear.Versioning.PackageConsumptionOptions? right) -> bool
+static PandaBear.Versioning.ReleaseVersionOptions.operator !=(PandaBear.Versioning.ReleaseVersionOptions? left, PandaBear.Versioning.ReleaseVersionOptions? right) -> bool
+static PandaBear.Versioning.ReleaseVersionOptions.operator ==(PandaBear.Versioning.ReleaseVersionOptions? left, PandaBear.Versioning.ReleaseVersionOptions? right) -> bool

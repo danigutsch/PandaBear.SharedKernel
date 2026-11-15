@@ -1,24 +1,26 @@
 using System.Xml.Linq;
 
-namespace PandaBear.Versioning.Tool;
+namespace PandaBear.Versioning;
 
 /// <summary>Packs all SharedKernel projects into a local package directory.</summary>
-internal static class SharedKernelPackCommand
+internal static class SharedKernelPack
 {
     private static readonly Uri NuGetSourceUrl = new(string.Concat("https://api.nuget.org", "/v3/index.json"));
 
-    /// <summary>Packs the projects with the requested versions, optionally verifies restore from the resulting feed, and returns the package directory.</summary>
+    /// <summary>
+    /// Packs the projects with the requested versions, validated against <paramref name="baselineVersion"/> when one is
+    /// given, optionally verifies restore from the resulting feed, and returns the package directory.
+    /// </summary>
     /// <exception cref="ArgumentException">No SharedKernel projects are found.</exception>
-    public static async Task<string> Run(PackSharedKernelOptions options, TextWriter output, CancellationToken ct)
+    public static async Task<string> Run(
+        ExternalCommands commands,
+        SharedKernelPackageOptions options,
+        bool verifyRestore,
+        string? baselineVersion,
+        TextWriter output,
+        CancellationToken ct)
     {
-        var packageOptions = new SharedKernelPackageOptions(
-            options.Version,
-            options.OutputRoot,
-            options.RepoRoot,
-            options.AssemblyVersion,
-            options.FileVersion,
-            options.InformationalVersion);
-        var packageDirectory = SharedKernelPackagePlanner.ResolvePackageDirectory(packageOptions);
+        var packageDirectory = SharedKernelPackagePlanner.ResolvePackageDirectory(options);
         SharedKernelPackagePlanner.EnsurePackageVersionDoesNotExist(packageDirectory, options.Version);
 
         Directory.CreateDirectory(packageDirectory);
@@ -31,26 +33,25 @@ internal static class SharedKernelPackCommand
         var solution = Path.Combine(packageDirectory, ".pack.slnx");
         new XDocument(new XElement("Solution", projects.Select(project =>
             new XElement("Project", new XAttribute("Path", Path.GetFullPath(project)))))).Save(solution);
-        var baselineVersion = options.PackageValidationBaselineVersion;
-        await CommandRunner.Run(
+        await commands.Run(
             "dotnet",
             SharedKernelPackagePlanner.CreatePackArguments(
-                solution, packageOptions, packageDirectory,
+                solution, options, packageDirectory,
                 string.IsNullOrWhiteSpace(baselineVersion) ? null : "true",
                 baselineVersion),
             options.RepoRoot,
             ct).ConfigureAwait(false);
 
-        if (options.VerifyRestore)
+        if (verifyRestore)
         {
-            await VerifyLocalFeed(packageDirectory, options.Version, ct).ConfigureAwait(false);
+            await VerifyLocalFeed(commands, packageDirectory, options.Version, ct).ConfigureAwait(false);
         }
 
         await output.WriteLineAsync("SharedKernel packages: " + packageDirectory).ConfigureAwait(false);
         return packageDirectory;
     }
 
-    private static async Task VerifyLocalFeed(string packageDirectory, string version, CancellationToken ct)
+    private static async Task VerifyLocalFeed(ExternalCommands commands, string packageDirectory, string version, CancellationToken ct)
     {
         var packages = Directory.GetFiles(packageDirectory, "PandaBear.SharedKernel.*.nupkg")
             .Where(path => !path.EndsWith(".symbols.nupkg", StringComparison.Ordinal))
@@ -74,7 +75,7 @@ internal static class SharedKernelPackCommand
         await SharedKernelLocalFeed.WriteRestoreProject(restoreDirectory, packageIds, version).ConfigureAwait(false);
         await SharedKernelLocalFeed.WriteNuGetConfig(restoreDirectory, packageDirectory, packageIds, NuGetSourceUrl).ConfigureAwait(false);
         var packageCache = Path.Combine(restoreDirectory, "packages");
-        await CommandRunner.Run(
+        await commands.Run(
             "dotnet",
             [
                 "restore",
@@ -92,7 +93,7 @@ internal static class SharedKernelPackCommand
         foreach (var tool in tools)
         {
             var id = SharedKernelLocalFeed.ReadPackageIds([tool], version).Single();
-            await CommandRunner.Run("dotnet", ["tool", "install", id, "--version", version,
+            await commands.Run("dotnet", ["tool", "install", id, "--version", version,
                 "--tool-path", Path.Combine(restoreDirectory, "tools", id), "--configfile",
                 Path.Combine(restoreDirectory, "NuGet.config"), "--no-cache"], restoreDirectory, ct).ConfigureAwait(false);
         }
@@ -103,5 +104,4 @@ internal static class SharedKernelPackCommand
             throw new ArgumentException("packages not restored from local feed: " + string.Join(", ", missing));
         }
     }
-
 }

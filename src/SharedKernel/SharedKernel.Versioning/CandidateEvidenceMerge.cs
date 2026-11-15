@@ -1,12 +1,12 @@
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Versioning.Tool;
+namespace PandaBear.Versioning;
 
 /// <summary>
 /// Merges the per-platform results that <c>consume-candidate</c> recorded in separate evidence files into a candidate
 /// manifest, so a consumer pin does not carry hand-edited results.
 /// </summary>
-internal static class CandidateEvidenceCommand
+internal static class CandidateEvidenceMerge
 {
     private static readonly string[] PlatformResults =
     [

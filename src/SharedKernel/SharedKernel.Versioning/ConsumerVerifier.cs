@@ -3,14 +3,18 @@ using System.Text.Json.Nodes;
 using System.Xml;
 using System.Xml.Linq;
 using PandaBear.IO;
+using PandaBear.Processes;
 
-namespace PandaBear.Versioning.Tool;
+namespace PandaBear.Versioning;
 
 /// <summary>
 /// Runs a consumer repository's command on a clean clone of its committed revision, with a candidate's packages staged
 /// in the clone's own SharedKernel package folder, and records the result as consumer compatibility evidence.
 /// </summary>
-internal static class ConsumerVerificationCommand
+/// <param name="processRunner">Runs <c>git</c> and the consumer's command, such as <see cref="SystemProcessRunner"/>.</param>
+/// <param name="executableResolver">Finds <c>git</c> and a bare command name, such as <see cref="PathExecutableResolver.Default"/>.</param>
+/// <exception cref="ArgumentNullException">Thrown when <paramref name="processRunner"/> or <paramref name="executableResolver"/> is <see langword="null"/>.</exception>
+public sealed class ConsumerVerifier(IProcessRunner processRunner, IExecutableResolver executableResolver)
 {
     /// <summary>The default evidence path, relative to the repository root.</summary>
     public const string DefaultOutput = "TestResults/consumer-compatibility.json";
@@ -21,14 +25,30 @@ internal static class ConsumerVerificationCommand
 
     private const int MaxReasonLength = 4096;
 
+    private readonly ExternalCommands _commands = new(processRunner, executableResolver);
+
     /// <summary>
     /// Verifies the candidate and the consumer, runs the command, and writes the evidence with <c>passed</c>,
     /// <c>failed</c>, or <c>pending</c>. A canceled run writes no evidence. The scratch directory is always deleted.
     /// </summary>
-    /// <exception cref="ArgumentException">The evidence file would replace the candidate manifest.</exception>
+    /// <param name="options">The consumer, candidate, solution, evidence file, and command.</param>
+    /// <param name="output">Receives the result line.</param>
+    /// <param name="error">Receives the output of the command and a scratch directory that could not be deleted.</param>
+    /// <param name="ct">Cancels the run and ends the running process tree.</param>
+    /// <returns>A task that completes when the evidence is <c>passed</c>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when an argument is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">The evidence file would replace the candidate manifest, or no command is given.</exception>
     /// <exception cref="InvalidOperationException">The evidence is not <c>passed</c>; the message gives the reason.</exception>
-    public static async Task Run(ConsumerVerificationOptions options, TextWriter output, TextWriter error, CancellationToken ct)
+    public async Task Verify(ConsumerVerificationOptions options, TextWriter output, TextWriter error, CancellationToken ct)
     {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(output);
+        ArgumentNullException.ThrowIfNull(error);
+        if (options.Command.Count == 0)
+        {
+            throw new ArgumentException("The consumer verification needs a command to run.", nameof(options));
+        }
+
         if (string.Equals(options.Output, options.Candidate, StringComparison.OrdinalIgnoreCase))
         {
             throw new ArgumentException("--output names the candidate manifest, which keeps the evidence that the library recorded.");
@@ -44,8 +64,8 @@ internal static class ConsumerVerificationCommand
         {
             try
             {
-                revision = (await CommandRunner.Run("git", ["rev-parse", "HEAD"], options.RepoRoot, ct).ConfigureAwait(false)).Trim();
-                dirty = (await CommandRunner.Run("git", ["status", "--porcelain"], options.RepoRoot, ct).ConfigureAwait(false)).Length != 0;
+                revision = (await _commands.Run("git", ["rev-parse", "HEAD"], options.RepoRoot, ct).ConfigureAwait(false)).Trim();
+                dirty = (await _commands.Run("git", ["status", "--porcelain"], options.RepoRoot, ct).ConfigureAwait(false)).Length != 0;
                 evidence = CandidateManifest.Load(options.Candidate).Evidence;
                 var version = evidence["packageVersion"]?.GetValue<string>() ?? throw new ArgumentException("Candidate package version is unavailable.");
                 _ = SemanticVersion.Parse(version);
@@ -58,8 +78,8 @@ internal static class ConsumerVerificationCommand
 
                 var clone = Path.Combine(scratch, "consumer");
                 Directory.CreateDirectory(scratch);
-                await CommandRunner.Run("git", ["clone", "--quiet", "--no-checkout", "--shared", "--", options.RepoRoot, clone], scratch, ct).ConfigureAwait(false);
-                await CommandRunner.Run("git", ["checkout", "--quiet", "--detach", revision], clone, ct).ConfigureAwait(false);
+                await _commands.Run("git", ["clone", "--quiet", "--no-checkout", "--shared", "--", options.RepoRoot, clone], scratch, ct).ConfigureAwait(false);
+                await _commands.Run("git", ["checkout", "--quiet", "--detach", revision], clone, ct).ConfigureAwait(false);
                 ValidateConsumer(clone, Solution(clone, options), version);
                 await StagePackages(clone, options.Candidate, evidence["packageSha256"]!.AsObject(), ct).ConfigureAwait(false);
                 var environment = new Dictionary<string, string?>(StringComparer.Ordinal)
@@ -68,7 +88,7 @@ internal static class ConsumerVerificationCommand
                     ["NUGET_HTTP_CACHE_PATH"] = Path.Combine(scratch, "http-cache"),
                     ["NUGET_FALLBACK_PACKAGES"] = null,
                 };
-                await CommandRunner.RunStreaming(options.Command[0], options.Command[1..], clone, environment, error, ct).ConfigureAwait(false);
+                await _commands.RunStreaming(options.Command[0], [.. options.Command.Skip(1)], clone, environment, error, ct).ConfigureAwait(false);
                 status = "passed";
             }
             catch (Exception exception) when (!ct.IsCancellationRequested && exception is ArgumentException
