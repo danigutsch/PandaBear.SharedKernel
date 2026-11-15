@@ -1,4 +1,5 @@
 using System.CommandLine;
+using System.CommandLine.Parsing;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
@@ -250,14 +251,8 @@ internal static partial class RepositoryCommandLine
             Description = "How long each child process may run before it is killed and its lane fails.",
             HelpName = "minutes",
             DefaultValueFactory = static _ => 30,
+            CustomParser = static result => ParseWholeNumber(result, 1, 1440, "--timeout-minutes requires 1 to 1440.", 30),
         };
-        timeoutOption.Validators.Add(static result =>
-        {
-            if (result.GetValueOrDefault<int>() is < 1 or > 1440)
-            {
-                result.AddError("--timeout-minutes requires 1 to 1440.");
-            }
-        });
         var rootOption = CreateRootOption();
         var selectionOption = PathOption("--selection", "Directory for the plan, the solution filter, and the lane logs, relative to the root.", "directory");
         selectionOption.DefaultValueFactory = static _ => "TestResults/local-check";
@@ -701,14 +696,8 @@ internal static partial class RepositoryCommandLine
             Description = "Number of advisory findings the step reported.",
             HelpName = "count",
             DefaultValueFactory = _ => 0,
+            CustomParser = static result => ParseWholeNumber(result, 0, int.MaxValue, "Option '--advisory' cannot be negative.", 0),
         };
-        advisoryOption.Validators.Add(static result =>
-        {
-            if (result.GetValueOrDefault<int>() < 0)
-            {
-                result.AddError("Option '--advisory' cannot be negative.");
-            }
-        });
         var reportOption = PathOption("--report", "File that receives the warning report for warning-summary. Replaced if it exists.", "path");
         reportOption.Required = true;
         var command = new Command(
@@ -855,4 +844,29 @@ internal static partial class RepositoryCommandLine
         @"\A(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(?:-(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?\z",
         RegexOptions.CultureInvariant)]
     private static partial Regex PackageVersion();
+
+    // One invariant-culture parse, so the range check and the value the command uses can never disagree.
+    private static int ParseWholeNumber(ArgumentResult result, int minimum, int maximum, string rangeError, int fallback)
+    {
+        var option = result.Parent is OptionResult optionResult ? optionResult.Option.Name : "The option";
+        if (result.Tokens is not [.., var token])
+        {
+            result.AddError($"{option} requires a whole number.");
+            return fallback;
+        }
+
+        if (!int.TryParse(token.Value, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var value))
+        {
+            result.AddError($"{option} requires a whole number: '{token.Value}'.");
+            return fallback;
+        }
+
+        if (value < minimum || value > maximum)
+        {
+            result.AddError(rangeError);
+            return fallback;
+        }
+
+        return value;
+    }
 }

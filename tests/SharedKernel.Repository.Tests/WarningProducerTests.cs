@@ -48,6 +48,41 @@ public sealed class WarningProducerTests
         report.ShouldBeNull();
     }
 
+    [Theory]
+    [InlineData("abc")]
+    [InlineData("1.5")]
+    [InlineData("99999999999")]
+    [InlineData("+")]
+    public async Task An_advisory_count_that_is_not_a_whole_number_is_a_parse_error_without_a_report(string advisory)
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+
+        // Act
+        var (result, report) = await WarningToolRuns.Produce(["--tool", "Build", "--outcome", "success", "--advisory", advisory], ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(1, "A value that is not a number is reported as a parse error, not thrown.");
+        result.Error.ShouldContain("'" + advisory + "'", StringComparison.Ordinal);
+        result.Error.ShouldContain("--advisory", StringComparison.Ordinal);
+        report.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task A_negative_advisory_count_fails_without_a_report()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+
+        // Act
+        var (result, report) = await WarningToolRuns.Produce(["--tool", "Build", "--outcome", "success", "--advisory", "-1"], ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(1, result.Error);
+        result.Error.ShouldContain("Option '--advisory' cannot be negative.", StringComparison.Ordinal);
+        report.ShouldBeNull();
+    }
+
     [Fact]
     public async Task A_tool_name_that_could_inject_markup_fails_without_a_report()
     {

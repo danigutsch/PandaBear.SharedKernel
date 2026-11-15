@@ -578,6 +578,7 @@ public sealed class LocalCheckTests
 
     [Theory]
     [InlineData("0", false)]
+    [InlineData("-1", false)]
     [InlineData("1441", false)]
     [InlineData("1", true)]
     [InlineData("1440", true)]
@@ -601,5 +602,28 @@ public sealed class LocalCheckTests
             result.ExitCode.ShouldBe(1);
             result.Error.ShouldContain("--timeout-minutes requires 1 to 1440.", StringComparison.Ordinal);
         }
+    }
+
+    [Theory]
+    [InlineData("abc")]
+    [InlineData("1.5")]
+    [InlineData("99999999999")]
+    [InlineData(null)]
+    public async Task A_timeout_that_is_not_a_whole_number_is_a_parse_error(string? minutes)
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var repository = new RepositoryTestScope();
+        var processes = new ProcessLog(new LocalCheckScript(repository).Respond);
+
+        // Act
+        string[] arguments = minutes is null ? LocalCheckReport.Check("--timeout-minutes") : LocalCheckReport.Check("--timeout-minutes", minutes);
+        var result = await RepositoryToolInvocation.Run(repository.Root, arguments, processes.Run, ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(1, "A missing value or one that is not a number is reported as a parse error, not thrown.");
+        result.Error.ShouldContain(minutes is null ? "--timeout-minutes" : "'" + minutes + "'", StringComparison.Ordinal);
+        result.Error.ShouldContain("--timeout-minutes", StringComparison.Ordinal);
+        processes.Calls.ShouldBeEmpty();
     }
 }
