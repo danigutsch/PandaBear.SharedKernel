@@ -38,7 +38,7 @@ public sealed class VerifyDependabotCommandTests
         // Assert
         result.ExitCode.ShouldBe(0);
         result.StandardError.ShouldBe(string.Empty);
-        result.StandardOutput.ShouldBe("Dependabot ignore entries leave security updates enabled." + Environment.NewLine);
+        result.StandardOutput.ShouldBe("Dependabot ignore entries leave security updates enabled.\n");
     }
 
     [Theory]
@@ -58,8 +58,8 @@ public sealed class VerifyDependabotCommandTests
         result.ExitCode.ShouldBe(1);
         result.StandardOutput.ShouldBe(string.Empty);
         result.StandardError.ShouldBe(
-            "Dependabot ignore verification failed:" + Environment.NewLine
-            + $"- .github/dependabot.yml: Line {line}: The ignore entry '{name}' has no update-types, so it also blocks security updates; add the version-update types to ignore." + Environment.NewLine);
+            "Dependabot ignore verification failed:\n"
+            + $"- .github/dependabot.yml: Line {line}: The ignore entry '{name}' has no update-types, so it also blocks security updates; add the version-update types to ignore.\n");
     }
 
     [Fact]
@@ -91,8 +91,8 @@ public sealed class VerifyDependabotCommandTests
         // Assert
         result.ExitCode.ShouldBe(1);
         result.StandardError.ShouldBe(
-            "Dependabot ignore verification failed:" + Environment.NewLine
-            + "- .github/dependabot.yml: Line 3: The ignore list must be block-style; this line cannot be checked." + Environment.NewLine);
+            "Dependabot ignore verification failed:\n"
+            + "- .github/dependabot.yml: Line 3: The ignore list must be block-style; this line cannot be checked.\n");
     }
 
     [Fact]
@@ -141,6 +141,6 @@ public sealed class VerifyDependabotCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: The root has no .github/dependabot.yml or .github/dependabot.yaml file." + Environment.NewLine);
+        result.StandardError.ShouldBe("sharedkernel-repo: The root has no .github/dependabot.yml or .github/dependabot.yaml file.\n");
     }
 }

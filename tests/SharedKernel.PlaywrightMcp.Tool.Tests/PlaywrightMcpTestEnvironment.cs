@@ -10,10 +10,10 @@ internal sealed class PlaywrightMcpTestEnvironment : IExecutableResolver
     private readonly Dictionary<string, string?> _executables = new(StringComparer.Ordinal);
 
     /// <summary>Captures standard output.</summary>
-    public StringWriter Output { get; } = new();
+    public StringWriter Output { get; } = new InvariantStringWriter();
 
     /// <summary>Captures standard error.</summary>
-    public StringWriter Error { get; } = new();
+    public StringWriter Error { get; } = new InvariantStringWriter();
 
     /// <summary>Returns a variable set with <c>SetEnvironmentVariable</c>, or <c>null</c>.</summary>
     public string? GetEnvironmentVariable(string name)

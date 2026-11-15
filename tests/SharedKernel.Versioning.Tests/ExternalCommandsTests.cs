@@ -79,7 +79,7 @@ public static class ExternalCommandsTests
         // Arrange
         var runner = new ScriptedProcessRunner(static _ => new ProcessOutput(0, string.Empty));
         var commands = new ExternalCommands(runner, runner);
-        using var sink = new StringWriter();
+        using var sink = new InvariantStringWriter();
         var environment = new Dictionary<string, string?>(StringComparer.Ordinal)
         {
             ["NUGET_PACKAGES"] = "/scratch/packages",

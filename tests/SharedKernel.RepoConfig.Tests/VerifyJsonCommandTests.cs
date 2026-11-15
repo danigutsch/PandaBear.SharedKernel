@@ -183,7 +183,7 @@ public sealed class VerifyJsonCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: Git index inspection failed." + Environment.NewLine);
+        result.StandardError.ShouldBe("sharedkernel-repo: Git index inspection failed.\n");
     }
 
     [Fact]

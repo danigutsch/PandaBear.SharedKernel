@@ -11,7 +11,7 @@ internal sealed class K6RunWorkspace : IDisposable
     public string Root => _directory.Path;
 
     /// <summary>Gets what the generator writes to its diagnostics.</summary>
-    public StringWriter Error { get; } = new();
+    public StringWriter Error { get; } = new InvariantStringWriter();
 
     /// <summary>Creates an answer that writes the summary into the mounted results directory and exits with <paramref name="exitCode"/>.</summary>
     public static Func<ProcessStartInfo, CancellationToken, ProcessOutput> WritesSummary(int exitCode) => (startInfo, _) =>

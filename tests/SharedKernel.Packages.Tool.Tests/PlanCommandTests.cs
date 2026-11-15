@@ -25,7 +25,7 @@ public sealed class PlanCommandTests
         // Assert
         exitCode.ShouldBe(1);
         error.ShouldBe(string.Empty);
-        output.ShouldBe("apt: install libreoffice\ncargo: change ripgrep from 13.0.0 to 14.1.0\n2 of 4 declared packages need a change.\n".ReplaceLineEndings());
+        output.ShouldBe("apt: install libreoffice\ncargo: change ripgrep from 13.0.0 to 14.1.0\n2 of 4 declared packages need a change.\n");
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public sealed class PlanCommandTests
         // Assert
         exitCode.ShouldBe(0);
         error.ShouldBe(string.Empty);
-        output.ShouldBe("All 2 declared packages are installed.\n".ReplaceLineEndings());
+        output.ShouldBe("All 2 declared packages are installed.\n");
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public sealed class PlanCommandTests
         // Assert
         exitCode.ShouldBe(1);
         error.ShouldBe(string.Empty);
-        output.ShouldBe("snap: change firefox from 157.0 to 158.0-2\nbrew: install ripgrep\n2 of 4 declared packages need a change.\n".ReplaceLineEndings());
+        output.ShouldBe("snap: change firefox from 157.0 to 158.0-2\nbrew: install ripgrep\n2 of 4 declared packages need a change.\n");
     }
 
     [Fact]

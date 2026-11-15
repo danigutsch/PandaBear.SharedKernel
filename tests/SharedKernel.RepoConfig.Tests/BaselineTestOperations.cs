@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace PandaBear.RepoConfig.Tests;
 
 /// <summary>Test helpers for the <c>baseline</c> commands.</summary>
@@ -36,8 +34,8 @@ internal static class BaselineTestOperations
         string verb,
         bool force = false)
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         List<string> arguments = ["baseline", verb, "--root", workspace.RootPath];
         if (force)
         {

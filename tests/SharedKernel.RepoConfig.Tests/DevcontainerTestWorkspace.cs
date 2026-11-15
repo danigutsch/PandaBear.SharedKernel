@@ -91,8 +91,8 @@ internal sealed class DevcontainerTestWorkspace : IDisposable
         DevcontainerHost? host = null,
         CancellationToken? cancellationToken = null)
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var exitCode = await RepoConfigToolRunner.Run(
             ["verify-devcontainer", .. arguments],
             output,

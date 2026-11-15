@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Diagnostics;
 
 namespace PandaBear.RepoConfig.Tests;
@@ -13,8 +12,8 @@ internal static class NewTestOperations
     /// <summary>Runs <c>new --root &lt;root&gt;</c> with <paramref name="options"/>.</summary>
     public static async Task<(int ExitCode, string Output, string Error)> RunAt(string root, params string[] options)
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         List<string> arguments = ["new", "--root", root, .. options];
         var exitCode = await RepoConfigToolRunner.Run(arguments, output, error, Path.GetTempPath(), TestContext.Current.CancellationToken);
         return (exitCode, output.ToString(), error.ToString());
@@ -23,8 +22,8 @@ internal static class NewTestOperations
     /// <summary>Runs <c>baseline verify</c> against the workspace.</summary>
     public static async Task<(int ExitCode, string Output, string Error)> BaselineVerify(TemporaryRepoConfigWorkspace workspace)
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var exitCode = await RepoConfigToolRunner.Run(["baseline", "verify", "--root", workspace.RootPath], output, error, Path.GetTempPath(), TestContext.Current.CancellationToken);
         return (exitCode, output.ToString(), error.ToString());
     }

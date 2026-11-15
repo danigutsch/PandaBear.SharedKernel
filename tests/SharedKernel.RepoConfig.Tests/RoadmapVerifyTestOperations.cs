@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace PandaBear.RepoConfig.Tests;
 
 /// <summary>Runs <c>verify</c> on a temporary workspace through the command line.</summary>
@@ -11,8 +9,8 @@ internal static class RoadmapVerifyTestOperations
     {
         ArgumentNullException.ThrowIfNull(workspace);
 
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var exitCode = await RepoConfigToolRunner.Run(["verify", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
         return (exitCode, output.ToString(), error.ToString());
     }

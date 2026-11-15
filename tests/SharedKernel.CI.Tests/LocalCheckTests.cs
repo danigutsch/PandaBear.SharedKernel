@@ -10,8 +10,8 @@ public sealed class LocalCheckTests
         var ct = TestContext.Current.CancellationToken;
         using var repository = new RepositoryTestScope();
         var processes = new ProcessLog(new LocalCheckScript(repository).Respond);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         await new LocalCheckRunner(processes.Machine()).Run(

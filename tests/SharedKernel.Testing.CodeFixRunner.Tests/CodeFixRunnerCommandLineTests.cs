@@ -235,7 +235,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        result.Output.ShouldBe($"Fixed 1 SKTEST006 diagnostic(s).{Environment.NewLine}");
+        result.Output.ShouldBe($"Fixed 1 SKTEST006 diagnostic(s).\n");
         result.Error.ShouldBe(string.Empty);
         source.ShouldContain("(true).ShouldBeTrue()", StringComparison.Ordinal);
     }
@@ -255,7 +255,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        result.Output.ShouldBe($"Fixed 1 SKTEST004 diagnostic(s).{Environment.NewLine}");
+        result.Output.ShouldBe($"Fixed 1 SKTEST004 diagnostic(s).\n");
         result.Error.ShouldBe(string.Empty);
         source.ShouldContain("SampleTestsHelpers.CreateTourId()", StringComparison.Ordinal);
     }
@@ -274,7 +274,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        result.Output.ShouldBe($"Fixed 1 SKTEST006 diagnostic(s).{Environment.NewLine}");
+        result.Output.ShouldBe($"Fixed 1 SKTEST006 diagnostic(s).\n");
         result.Error.ShouldContain("No code fix available for SKTEST006", StringComparison.Ordinal);
     }
 

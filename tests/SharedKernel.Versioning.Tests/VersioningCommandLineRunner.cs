@@ -1,6 +1,5 @@
 using System.CommandLine;
 using System.CommandLine.Help;
-using System.Globalization;
 using PandaBear.Versioning.Tool;
 
 namespace PandaBear.Versioning.Tests;
@@ -52,8 +51,8 @@ internal static class VersioningCommandLineRunner
     /// </summary>
     public static async Task<CommandLineInvocation> Invoke(string[] args, TextReader input, TimeProvider timeProvider, CancellationToken ct)
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var command = VersioningCommandLine.Create(input, timeProvider);
 
         // Help wraps at the width of the terminal running the tests; unwrapped help keeps assertions independent of it.

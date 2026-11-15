@@ -72,7 +72,7 @@ public sealed class CommitMessageVerificationTests
 
         // Assert
         result.ExitCode.ShouldBe(2);
-        result.Error.ShouldBe(expectedError + Environment.NewLine, "Errors never repeat the title or body, which the pull request author controls.");
+        result.Error.ShouldBe(expectedError + "\n", "Errors never repeat the title or body, which the pull request author controls.");
     }
 
     [Theory]
@@ -135,7 +135,7 @@ public sealed class CommitMessageVerificationTests
 
         // Assert
         result.ExitCode.ShouldBe(2);
-        result.Error.ShouldBe(expectedError + Environment.NewLine, "Errors never repeat the message, which the commit author controls.");
+        result.Error.ShouldBe(expectedError + "\n", "Errors never repeat the message, which the commit author controls.");
         result.Output.ShouldBe(string.Empty);
         processes.Calls.ShouldBeEmpty();
     }

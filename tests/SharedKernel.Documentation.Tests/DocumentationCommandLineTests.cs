@@ -301,7 +301,7 @@ public sealed class DocumentationCommandLineTests
         workspace.WriteArchitectureDoc("overview.md", staleDocument);
         workspace.WriteConfig(DocumentationTestContent.GeneratorConfig("newNode[New node]"));
         var expectedError = string.Join(
-            Environment.NewLine,
+            "\n",
             "Generated documentation is stale:",
             "- docs/architecture/overview.md",
             $"Run 'generate --config {GeneratorConfigPath}' to refresh generated documentation.",

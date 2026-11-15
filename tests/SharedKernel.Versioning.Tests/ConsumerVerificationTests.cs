@@ -18,7 +18,7 @@ public sealed class ConsumerVerificationTests
 
         // Assert
         result.ExitCode.ShouldBe(0, result.Error);
-        result.Output.ShouldBe("Consumer compatibility: passed. Evidence: " + scope.EvidencePath + Environment.NewLine);
+        result.Output.ShouldBe("Consumer compatibility: passed. Evidence: " + scope.EvidencePath + "\n");
         result.Error.ShouldContain(ConsumerVerificationScope.Package, StringComparison.Ordinal);
         result.Error.ShouldContain(revision, StringComparison.Ordinal);
         var scratch = ConsumerVerificationScope.ScratchDirectory(result.Error);
@@ -225,7 +225,7 @@ public sealed class ConsumerVerificationTests
 
         // Assert
         result.ExitCode.ShouldBe(2);
-        result.Error.ShouldBe("Error: --output names the candidate manifest, which keeps the evidence that the library recorded." + Environment.NewLine);
+        result.Error.ShouldBe("Error: --output names the candidate manifest, which keeps the evidence that the library recorded.\n");
         var unchanged = await File.ReadAllTextAsync(scope.Manifest, ct);
         unchanged.ShouldBe(manifest);
         File.Exists(scope.EvidencePath).ShouldBeFalse();

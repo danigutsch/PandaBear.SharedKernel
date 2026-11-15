@@ -250,8 +250,8 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
         string? statExecutable = "/usr/bin/stat",
         bool isLinux = true)
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var environment = new RepoConfigToolEnvironment(RootPath)
         {
             PodmanHost = new PodmanDnsHost(podmanExecutable, statExecutable, ProcRoot, isLinux, RunProcess)

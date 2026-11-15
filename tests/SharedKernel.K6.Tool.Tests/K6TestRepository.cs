@@ -49,10 +49,10 @@ internal sealed class K6TestRepository : IDisposable
     public string ResultsDirectory => Path.Combine(Root, "perf", "results");
 
     /// <summary>Captures what the command line writes to standard output.</summary>
-    public StringWriter Output { get; } = new();
+    public StringWriter Output { get; } = new InvariantStringWriter();
 
     /// <summary>Captures what the command line writes to standard error.</summary>
-    public StringWriter Error { get; } = new();
+    public StringWriter Error { get; } = new InvariantStringWriter();
 
     /// <summary>Replaces the repository's k6 configuration file.</summary>
     public void WriteConfiguration(string configuration) =>

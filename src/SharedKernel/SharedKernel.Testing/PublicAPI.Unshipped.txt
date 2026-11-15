@@ -119,6 +119,8 @@ PandaBear.Testing.GatedCountingReadStream.BytesRead.get -> long
 PandaBear.Testing.GatedCountingReadStream.GatedCountingReadStream(byte[]! content) -> void
 PandaBear.Testing.GatedCountingReadStream.ReadStarted.get -> System.Threading.Tasks.Task!
 PandaBear.Testing.GatedCountingReadStream.Release() -> void
+PandaBear.Testing.InvariantStringWriter
+PandaBear.Testing.InvariantStringWriter.InvariantStringWriter() -> void
 PandaBear.Testing.LoopbackPort
 PandaBear.Testing.Metrics.MeterCollector
 PandaBear.Testing.Metrics.MeterCollector.Create(System.Diagnostics.Metrics.MeterOptions! options) -> System.Diagnostics.Metrics.Meter!

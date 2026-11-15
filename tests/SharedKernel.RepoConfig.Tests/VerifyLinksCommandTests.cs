@@ -70,7 +70,7 @@ public sealed class VerifyLinksCommandTests
         // Assert
         result.ExitCode.ShouldBe(0, "Explicit paths resolve against --root; the excluded file and the non-Markdown path are skipped.");
         result.StandardError.ShouldBe(string.Empty);
-        result.StandardOutput.ShouldBe("Link validation passed for 2 documentation files." + Environment.NewLine);
+        result.StandardOutput.ShouldBe("Link validation passed for 2 documentation files.\n");
     }
 
     [Fact]
@@ -149,7 +149,7 @@ public sealed class VerifyLinksCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        result.StandardOutput.ShouldBe("Link validation passed for 1 documentation files." + Environment.NewLine);
+        result.StandardOutput.ShouldBe("Link validation passed for 1 documentation files.\n");
     }
 
     [Theory]
@@ -184,7 +184,7 @@ public sealed class VerifyLinksCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no links section." + Environment.NewLine);
+        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no links section.\n");
     }
 
     [Theory]

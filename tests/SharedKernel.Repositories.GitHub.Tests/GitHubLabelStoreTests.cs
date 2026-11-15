@@ -1,4 +1,3 @@
-using System.Globalization;
 using Microsoft.Extensions.Time.Testing;
 
 namespace PandaBear.Repositories.GitHub.Tests;
@@ -28,7 +27,7 @@ public sealed class GitHubLabelStoreTests
         using var handler = new TimingOutHttpMessageHandler(timeProvider);
         using var httpClient = new HttpClient(handler);
         using var connection = new GitHubConnection(httpClient);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
         var store = new GitHubLabelStore("owner/repository", connection, timeProvider);
 
         // Act

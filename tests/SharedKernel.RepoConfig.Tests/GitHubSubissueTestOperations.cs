@@ -40,8 +40,8 @@ internal static class GitHubSubissueTestOperations
         CancellationToken? cancellationToken = null)
     {
         using var client = new HttpClient(handler, disposeHandler: false);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         List<string> arguments = ["github", "link-subissue", "--repository", repository, "--parent", parent, "--child", child];
         if (force)
         {

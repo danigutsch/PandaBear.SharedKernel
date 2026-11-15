@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace PandaBear.RepoConfig.Tests;
 
 /// <summary>Tests the <c>automation</c> command group for argument errors, required environment, workflow outputs, and publish previews.</summary>
@@ -12,8 +10,8 @@ public sealed class RoadmapAutomationCommandTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         using var repository = new EnvironmentVariableScope("GITHUB_REPOSITORY", null);
 
         // Act
@@ -42,8 +40,8 @@ public sealed class RoadmapAutomationCommandTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         using var repository = new EnvironmentVariableScope("GITHUB_REPOSITORY", null);
 
         // Act
@@ -57,7 +55,7 @@ public sealed class RoadmapAutomationCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe("sharedkernel-repo: Roadmap automation requires GITHUB_REPOSITORY." + Environment.NewLine);
+        error.ToString().ShouldBe("sharedkernel-repo: Roadmap automation requires GITHUB_REPOSITORY.\n");
     }
 
     [Fact]
@@ -77,8 +75,8 @@ public sealed class RoadmapAutomationCommandTests
         using var handler = new TestHttpMessageHandler();
         GitHubRoadmapSnapshotTestOperations.Enqueue(handler, snapshot);
         using var httpClient = new HttpClient(handler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var githubOutputPath = Path.Combine(workspace.RootPath, "github-output.txt");
         var githubSummaryPath = Path.Combine(workspace.RootPath, "github-summary.md");
         using var runId = new EnvironmentVariableScope("GITHUB_RUN_ID", "42");
@@ -135,8 +133,8 @@ public sealed class RoadmapAutomationCommandTests
         using var previewHandler = new TestHttpMessageHandler();
         GitHubRoadmapSnapshotTestOperations.Enqueue(previewHandler, snapshot);
         using var previewClient = new HttpClient(previewHandler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var githubOutputPath = Path.Combine(workspace.RootPath, "publish-output.txt");
         var githubSummaryPath = Path.Combine(workspace.RootPath, "publish-summary.md");
         using var repository = new EnvironmentVariableScope("GITHUB_REPOSITORY", "owner/repository");
@@ -161,8 +159,8 @@ public sealed class RoadmapAutomationCommandTests
         exitCode.ShouldBe(0);
         error.ToString().ShouldBe(string.Empty);
         output.ToString().ShouldBe(
-            $"preview: roadmap publication would create branch {plan.BranchName} from {RoadmapAutomationTestPlan.BaseSha} in owner/repository and open a draft pull request.{Environment.NewLine}"
-            + $"preview: roadmap publication would change roadmap/reconciliation/open-issues-test.json.{Environment.NewLine}");
+            $"preview: roadmap publication would create branch {plan.BranchName} from {RoadmapAutomationTestPlan.BaseSha} in owner/repository and open a draft pull request.\n"
+            + $"preview: roadmap publication would change roadmap/reconciliation/open-issues-test.json.\n");
         previewHandler.Requests.ShouldNotBeEmpty();
         previewHandler.Requests.ShouldAllSatisfy(request =>
         {
@@ -194,8 +192,8 @@ public sealed class RoadmapAutomationCommandTests
         using var previewHandler = new TestHttpMessageHandler();
         GitHubRoadmapSnapshotTestOperations.Enqueue(previewHandler, snapshot);
         using var previewClient = new HttpClient(previewHandler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var githubOutputPath = Path.Combine(workspace.RootPath, "publish-output.txt");
         var githubSummaryPath = Path.Combine(workspace.RootPath, "publish-summary.md");
         using var repository = new EnvironmentVariableScope("GITHUB_REPOSITORY", "owner/repository");
@@ -219,7 +217,7 @@ public sealed class RoadmapAutomationCommandTests
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
         error.ToString().ShouldBe(
-            "sharedkernel-repo: Roadmap automation result seal is invalid or was tampered with." + Environment.NewLine);
+            "sharedkernel-repo: Roadmap automation result seal is invalid or was tampered with.\n");
         previewHandler.Requests.ShouldAllSatisfy(request =>
         {
             request.PathAndQuery.ShouldBe("/graphql");
@@ -254,8 +252,8 @@ public sealed class RoadmapAutomationCommandTests
         RoadmapGitHubPublicationTestOperations.EnqueueDefaultBranch(publishHandler, RoadmapGitHubPublicationTestOperations.BaseSha);
         RoadmapGitHubPublicationTestOperations.EnqueuePullRequest(publishHandler);
         using var publishClient = new HttpClient(publishHandler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var githubOutputPath = Path.Combine(workspace.RootPath, "publish-output.txt");
         var githubSummaryPath = Path.Combine(workspace.RootPath, "publish-summary.md");
         using var repository = new EnvironmentVariableScope("GITHUB_REPOSITORY", "owner/repository");
@@ -279,7 +277,7 @@ public sealed class RoadmapAutomationCommandTests
         // Assert
         exitCode.ShouldBe(0);
         error.ToString().ShouldBe(string.Empty);
-        output.ToString().ShouldBe("Roadmap automation pull request published." + Environment.NewLine);
+        output.ToString().ShouldBe("Roadmap automation pull request published.\n");
         workflowOutputs.ShouldContain(
             $"pull_request_url={RoadmapGitHubPublicationTestOperations.PullRequestUrl}",
             StringComparison.Ordinal);
@@ -294,8 +292,8 @@ public sealed class RoadmapAutomationCommandTests
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         RoadmapAutomationTestSetup.Configure(workspace);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         using var runId = new EnvironmentVariableScope("GITHUB_RUN_ID", "42");
         using var repository = new EnvironmentVariableScope("GITHUB_REPOSITORY", "owner/repository");
         using var githubToken = new EnvironmentVariableScope("GITHUB_TOKEN", null);

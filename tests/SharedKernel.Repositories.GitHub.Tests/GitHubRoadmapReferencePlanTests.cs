@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace PandaBear.Repositories.GitHub.Tests;
 
 /// <summary>Engine tests split from the command-line tests in GitHubRoadmapReferenceTests.</summary>
@@ -12,8 +10,8 @@ public sealed class GitHubRoadmapReferencePlanTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         RoadmapInitializer.Initialize(workspace.RootPath);
         GitHubRoadmapReconcileTestOperations.ConfigureEmptySeed(workspace);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);

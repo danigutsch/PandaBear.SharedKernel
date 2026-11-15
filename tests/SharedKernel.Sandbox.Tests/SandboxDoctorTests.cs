@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace PandaBear.Sandbox.Tests;
 
 /// <summary>Tests the doctor against a scripted environment.</summary>
@@ -62,7 +60,7 @@ public sealed class SandboxDoctorTests
         // Arrange
         var environment = new FakeSandboxEnvironment();
         environment.Reads["/etc/secret"] = (ProbeOutcome.Allowed, "readable");
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
 
         // Act
         var exitCode = await new SandboxDoctor(environment).Run(new SandboxConfiguration(1, ["/etc/secret"]), output, TestContext.Current.CancellationToken);

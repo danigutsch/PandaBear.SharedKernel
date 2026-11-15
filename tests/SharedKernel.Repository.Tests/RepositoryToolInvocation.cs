@@ -82,8 +82,8 @@ internal static class RepositoryToolInvocation
         var help = (HelpAction)command.Options.OfType<HelpOption>().First().Action!;
         help.MaxWidth = int.MaxValue;
 
-        using var output = new StringWriter();
-        using var error = new StringWriter();
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Signal handlers are process-wide, so test invocations leave Ctrl+C and SIGTERM to the test host.
         var configuration = new InvocationConfiguration { Output = output, Error = error, ProcessTerminationTimeout = null };

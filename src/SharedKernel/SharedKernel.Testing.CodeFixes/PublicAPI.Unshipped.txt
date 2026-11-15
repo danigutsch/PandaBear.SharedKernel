@@ -25,3 +25,4 @@ const PandaBear.Testing.Analyzers.TestingDiagnosticIds.SutConstructionInAct = "S
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.AssertionUserMessageOverload = "SKTEST017" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.PlaywrightUrlWait = "SKTEST020" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.InvalidAdditionalAllowedSegment = "SKTEST021" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.StringWriterNewLine = "SKTEST022" -> string!

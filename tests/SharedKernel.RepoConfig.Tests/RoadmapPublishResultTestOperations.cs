@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace PandaBear.RepoConfig.Tests;
 
 /// <summary>Prepares a sealed automation result with scripted GitHub responses and runs <c>automation publish-result</c> against it.</summary>
@@ -50,8 +48,8 @@ internal static class RoadmapPublishResultTestOperations
         string? missingVariable = null)
     {
         using var client = new HttpClient(publication.Handler, disposeHandler: false);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var outputPath = Path.Combine(workspace.RootPath, "publish-output.txt");
         var summaryPath = Path.Combine(workspace.RootPath, "publish-summary.md");
         using var repository = new EnvironmentVariableScope("GITHUB_REPOSITORY", "owner/repository");

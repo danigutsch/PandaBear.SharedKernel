@@ -94,7 +94,7 @@ public sealed class PlaywrightMcpCommandLineTests
         // Assert
         exitCode.ShouldBe(0);
         invocation.ShouldBe(0);
-        environment.Output.ToString().ShouldBe(expectedVersion + Environment.NewLine);
+        environment.Output.ToString().ShouldBe(expectedVersion + "\n");
         environment.Error.ToString().ShouldBeEmpty();
     }
 
@@ -239,7 +239,7 @@ public sealed class PlaywrightMcpCommandLineTests
         exitCode.ShouldBe(2);
         invocation.ShouldBe(0);
         environment.Error.ToString().ShouldBe(
-            "Error: Refusing Docker host or context overrides for Playwright MCP." + Environment.NewLine);
+            "Error: Refusing Docker host or context overrides for Playwright MCP.\n");
         environment.Output.ToString().ShouldBeEmpty();
     }
 
@@ -291,7 +291,7 @@ public sealed class PlaywrightMcpCommandLineTests
         var cleanupStartInfo = cleanup.ShouldNotBeNull();
         cleanupStartInfo.ArgumentList.ShouldContain("rm");
         cleanupStartInfo.ArgumentList.ShouldContain("--force");
-        environment.Error.ToString().ShouldBe("Error: Playwright MCP was cancelled." + Environment.NewLine);
+        environment.Error.ToString().ShouldBe("Error: Playwright MCP was cancelled.\n");
         environment.Output.ToString().ShouldBeEmpty();
     }
 
@@ -334,7 +334,7 @@ public sealed class PlaywrightMcpCommandLineTests
         // Assert
         exitCode.ShouldBe(1);
         invocation.ShouldBe(3);
-        environment.Error.ToString().ShouldBe("Error: Playwright MCP was cancelled." + Environment.NewLine);
+        environment.Error.ToString().ShouldBe("Error: Playwright MCP was cancelled.\n");
         environment.Output.ToString().ShouldBeEmpty();
     }
 
@@ -386,7 +386,7 @@ public sealed class PlaywrightMcpCommandLineTests
         cleanupStartInfo.ArgumentList.ShouldContain("rm");
         cleanupStartInfo.ArgumentList.ShouldContain("--force");
         cleanupStartInfo.ArgumentList.ShouldContain(static argument => argument.StartsWith("sharedkernel-playwright-mcp-", StringComparison.Ordinal));
-        environment.Error.ToString().ShouldBe("Error: Playwright MCP was cancelled." + Environment.NewLine);
+        environment.Error.ToString().ShouldBe("Error: Playwright MCP was cancelled.\n");
         environment.Output.ToString().ShouldBeEmpty();
     }
 
@@ -420,7 +420,7 @@ public sealed class PlaywrightMcpCommandLineTests
         // Assert
         exitCode.ShouldBe(1);
         invocation.ShouldBe(1);
-        environment.Error.ToString().ShouldBe("Error: Playwright MCP was cancelled." + Environment.NewLine);
+        environment.Error.ToString().ShouldBe("Error: Playwright MCP was cancelled.\n");
         environment.Output.ToString().ShouldBeEmpty();
     }
 }

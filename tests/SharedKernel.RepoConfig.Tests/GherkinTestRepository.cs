@@ -21,7 +21,7 @@ internal static class GherkinTestRepository
 
     /// <summary>Returns the non-empty lines of the standard error of a command.</summary>
     public static string[] ErrorLines(TemporaryGitRepository.CommandResult result) =>
-        result.StandardError.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+        result.StandardError.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
     /// <summary>Creates a Git repository that holds the configuration and stages each file outside a <c>bin</c> directory.</summary>
     public static async Task<TemporaryGitRepository> Create(IReadOnlyDictionary<string, string> files, string configuration)

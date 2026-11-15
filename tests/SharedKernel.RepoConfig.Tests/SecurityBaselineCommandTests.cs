@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace PandaBear.RepoConfig.Tests;
 
 /// <summary>Tests the <c>security baseline</c> command's document policy checks and the <c>security</c> option parser.</summary>
@@ -13,8 +11,8 @@ public sealed class SecurityBaselineCommandTests
         using var workspace = new TemporaryRepoConfigWorkspace();
         workspace.WriteFile(".config/security-baseline.json", """{"version":1,"documents":[{"path":"docs/security.md","requiredText":["Controls"]}]}""");
         workspace.WriteFile("docs/security.md", "# Controls\nDocumented policy.");
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var result = await RepoConfigToolRunner.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
@@ -36,8 +34,8 @@ public sealed class SecurityBaselineCommandTests
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         workspace.WriteFile(".config/security-baseline.json", policy);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var result = await RepoConfigToolRunner.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
@@ -53,8 +51,8 @@ public sealed class SecurityBaselineCommandTests
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         workspace.WriteFile(".config/security-baseline.json", """{"version":1,"documents":[{"path":"docs/security.md","requiredText":[]}]}""");
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var result = await RepoConfigToolRunner.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
@@ -71,8 +69,8 @@ public sealed class SecurityBaselineCommandTests
         using var workspace = new TemporaryRepoConfigWorkspace();
         workspace.WriteFile(".config/security-baseline.json", """{"version":1,"documents":[{"path":"docs/security.md","requiredText":["#815"]}]}""");
         workspace.WriteFile("docs/security.md", "# Policy\nprivate-document-value");
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var result = await RepoConfigToolRunner.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
@@ -92,8 +90,8 @@ public sealed class SecurityBaselineCommandTests
         workspace.WriteFile(".config/security-baseline.json", """{"version":1,"documents":[{"path":"docs/security.md","requiredText":[]}]}""");
         outside.WriteFile("security.md", "outside-private-value");
         Directory.CreateSymbolicLink(Path.Combine(workspace.RootPath, "docs"), outside.RootPath);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var result = await RepoConfigToolRunner.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
@@ -115,8 +113,8 @@ public sealed class SecurityBaselineCommandTests
         using var workspace = new TemporaryRepoConfigWorkspace();
         workspace.WriteFile(".config/security-baseline.json", """{"version":1,"documents":[{"path":"docs/security.md","requiredText":[]}]}""");
         workspace.WriteFile("docs/security.md", "Policy");
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
 
         // Act
         var result = await RepoConfigToolRunner.Run(["security", .. arguments], output, error, workspace.RootPath, TestContext.Current.CancellationToken);

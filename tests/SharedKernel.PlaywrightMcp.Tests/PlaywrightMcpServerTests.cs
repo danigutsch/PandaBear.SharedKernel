@@ -18,7 +18,7 @@ public sealed class PlaywrightMcpServerTests
             new ProcessOutput(0, "default"),
             new ProcessOutput(0, LocalDockerEndpoint),
             new ProcessOutput(0, string.Empty));
-        using var diagnostics = new StringWriter();
+        using var diagnostics = new InvariantStringWriter();
 
         // Act
         var exitCode = await new PlaywrightMcpServer(runner, machine).Prepare(machine.Settings, diagnostics, TestContext.Current.CancellationToken);
@@ -41,7 +41,7 @@ public sealed class PlaywrightMcpServerTests
             new ProcessOutput(0, "default"),
             new ProcessOutput(0, LocalDockerEndpoint),
             new ProcessOutput(5, string.Empty));
-        using var diagnostics = new StringWriter();
+        using var diagnostics = new InvariantStringWriter();
 
         // Act
         var exitCode = await new PlaywrightMcpServer(runner, machine).Clean(machine.Settings, diagnostics, TestContext.Current.CancellationToken);
@@ -61,7 +61,7 @@ public sealed class PlaywrightMcpServerTests
             new ProcessOutput(0, "true"),
             new ProcessOutput(0, string.Empty),
             new ProcessOutput(0, string.Empty));
-        using var diagnostics = new StringWriter();
+        using var diagnostics = new InvariantStringWriter();
 
         // Act
         var exitCode = await new PlaywrightMcpServer(runner, machine).Serve(machine.Settings, diagnostics, TestContext.Current.CancellationToken);
@@ -85,7 +85,7 @@ public sealed class PlaywrightMcpServerTests
         machine.SetExecutable("docker", FakeMachine.GetExecutablePath("docker"));
         machine.SetEnvironmentVariable("DOCKER_HOST", "tcp://remote:2375");
         var runner = new ScriptedProcessRunner();
-        using var diagnostics = new StringWriter();
+        using var diagnostics = new InvariantStringWriter();
 
         // Act
         var exitCode = await new PlaywrightMcpServer(runner, machine).Serve(machine.Settings, diagnostics, TestContext.Current.CancellationToken);
@@ -93,7 +93,7 @@ public sealed class PlaywrightMcpServerTests
         // Assert
         exitCode.ShouldBe(2);
         runner.Runs.ShouldBeEmpty();
-        diagnostics.ToString().ShouldBe("Error: Refusing Docker host or context overrides for Playwright MCP." + Environment.NewLine);
+        diagnostics.ToString().ShouldBe("Error: Refusing Docker host or context overrides for Playwright MCP.\n");
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public sealed class PlaywrightMcpServerTests
         var runner = new ScriptedProcessRunner(
             new ProcessOutput(0, "remote-builder"),
             new ProcessOutput(0, "tcp://builder.example:2376"));
-        using var diagnostics = new StringWriter();
+        using var diagnostics = new InvariantStringWriter();
 
         // Act
         var exitCode = await new PlaywrightMcpServer(runner, machine).Prepare(machine.Settings, diagnostics, TestContext.Current.CancellationToken);

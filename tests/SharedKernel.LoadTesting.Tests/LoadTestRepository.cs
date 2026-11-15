@@ -50,7 +50,7 @@ internal sealed class LoadTestRepository : IDisposable
     public MappedExecutableResolver Executables { get; } = new();
 
     /// <summary>Gets what the runner writes to its diagnostics.</summary>
-    public StringWriter Error { get; } = new();
+    public StringWriter Error { get; } = new InvariantStringWriter();
 
     /// <summary>Builds a configuration whose <c>upload</c> scenario has a host command <c>app-host</c>.</summary>
     public static string HostConfiguration(int healthTimeoutSeconds = 10) => $$"""

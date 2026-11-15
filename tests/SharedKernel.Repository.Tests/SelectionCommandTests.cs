@@ -24,7 +24,7 @@ public static class SelectionCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        result.Output.ShouldBe("No path changed between the base and HEAD." + Environment.NewLine);
+        result.Output.ShouldBe("No path changed between the base and HEAD.\n");
         var outputs = await File.ReadAllTextAsync(githubOutput, ct);
         outputs.ShouldBe("existing=value\nbuild_required=false\ndocumentation_only=true\nmatrix=[]\nlibrary_required=false\n");
         var selection = Path.Combine(repository.Root, "TestResults", "selection");
@@ -141,7 +141,7 @@ public static class SelectionCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        result.Output.ShouldBe("Full validation: no --base revision." + Environment.NewLine);
+        result.Output.ShouldBe("Full validation: no --base revision.\n");
         var selection = Path.Combine(repository.Root, "TestResults", "selection");
         var library = await SelectionTestFiles.Projects(selection, "library", ct);
         var hosted = await SelectionTestFiles.Projects(selection, "hosted", ct);
@@ -194,8 +194,7 @@ public static class SelectionCommandTests
         result.ExitCode.ShouldBe(0);
         processes.Commands.ShouldContain("git ls-files -z -- *.csproj *.props *.targets");
         result.Output.ShouldBe(
-            "Full validation: docs/guide.md: documentation patterns apply only while every tracked build file is inert, and src/Core/Core.csproj uses Exec."
-                + Environment.NewLine);
+            "Full validation: docs/guide.md: documentation patterns apply only while every tracked build file is inert, and src/Core/Core.csproj uses Exec.\n");
     }
 
     [Theory]
@@ -215,7 +214,7 @@ public static class SelectionCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        result.Output.ShouldBe(reason + Environment.NewLine);
+        result.Output.ShouldBe(reason + "\n");
         processes.Commands.ShouldBe(["git rev-parse HEAD"]);
         File.Exists(Path.Combine(repository.Root, "changes.txt")).ShouldBeFalse();
     }
@@ -238,7 +237,7 @@ public static class SelectionCommandTests
         // Assert
         result.ExitCode.ShouldBe(0);
         var plan = await SelectionTestFiles.ReadPlan(Path.Combine(repository.Root, "TestResults", "selection"), ct);
-        result.Output.ShouldBe(reason + Environment.NewLine);
+        result.Output.ShouldBe(reason + "\n");
         plan.FullValidation.ShouldBeTrue();
     }
 
@@ -258,7 +257,7 @@ public static class SelectionCommandTests
 
             return arguments[0] == "rev-parse" ? "fixture" : string.Empty;
         });
-        using var output = new StringWriter();
+        using var output = new InvariantStringWriter();
 
         // Act
         await new TestSelector(processes.Machine(time)).Select(
@@ -266,7 +265,7 @@ public static class SelectionCommandTests
 
         // Assert
         time.Timers.ShouldAllSatisfy(static timer => timer.ShouldBe(TimeSpan.FromSeconds(30)));
-        output.ToString().ShouldBe("Full validation: git diff " + BaseRevision + "...HEAD failed or did not finish within 30 seconds." + Environment.NewLine);
+        output.ToString().ShouldBe("Full validation: git diff " + BaseRevision + "...HEAD failed or did not finish within 30 seconds.\n");
     }
 
     [Fact]
@@ -353,7 +352,7 @@ public static class SelectionCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        var lines = result.Output.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+        var lines = result.Output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
         lines.ShouldNotContain(static line => line.StartsWith("b_required", StringComparison.Ordinal));
         lines[0].ShouldStartWith("src/Core/a", StringComparison.Ordinal);
     }

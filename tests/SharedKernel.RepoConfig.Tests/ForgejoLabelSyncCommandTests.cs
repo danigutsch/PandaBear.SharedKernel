@@ -50,9 +50,9 @@ public sealed class ForgejoLabelSyncCommandTests
         exitCode.ShouldBe(0);
         error.ShouldBe(string.Empty);
         output.ShouldBe(
-            "preview: would update label type: epic." + Environment.NewLine
-            + "preview: would create label area: api." + Environment.NewLine
-            + "preview: owner/repository would get 1 created, 1 updated, and 1 unchanged labels; --force writes them." + Environment.NewLine);
+            "preview: would update label type: epic.\n"
+            + "preview: would create label area: api.\n"
+            + "preview: owner/repository would get 1 created, 1 updated, and 1 unchanged labels; --force writes them.\n");
         var request = handler.Requests.ShouldHaveSingleItem();
         request.Method.ShouldBe(HttpMethod.Get);
         request.Message.RequestUri!.AbsoluteUri.ShouldBe("https://codeberg.example" + LabelsPath + "?limit=50&page=1");
@@ -77,9 +77,9 @@ public sealed class ForgejoLabelSyncCommandTests
         exitCode.ShouldBe(0);
         error.ShouldBe(string.Empty);
         output.ShouldBe(
-            "Updated label type: epic." + Environment.NewLine
-            + "Created label area: api." + Environment.NewLine
-            + "owner/repository: 1 created, 1 updated, and 1 unchanged labels." + Environment.NewLine);
+            "Updated label type: epic.\n"
+            + "Created label area: api.\n"
+            + "owner/repository: 1 created, 1 updated, and 1 unchanged labels.\n");
         handler.Requests.ShouldAllSatisfy(static request =>
             request.Message.Headers.Authorization!.ToString().ShouldBe("token forgejo-secret"));
         var update = handler.Requests[1];
@@ -109,7 +109,7 @@ public sealed class ForgejoLabelSyncCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe(string.Empty);
-        error.ShouldBe("sharedkernel-repo: Set FORGEJO_TOKEN to a token that may write the labels of owner/repository; --force sent no request." + Environment.NewLine);
+        error.ShouldBe("sharedkernel-repo: Set FORGEJO_TOKEN to a token that may write the labels of owner/repository; --force sent no request.\n");
         handler.Requests.ShouldBeEmpty();
     }
 

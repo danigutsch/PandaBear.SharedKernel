@@ -28,8 +28,8 @@ public sealed class VerifyLineEndingsCommandTests
         result.ExitCode.ShouldBe(1, "The working tree holds LF, so only the staged blob has CRLF.");
         result.StandardOutput.ShouldBe(string.Empty);
         result.StandardError.ShouldBe(
-            "Repository line-ending verification failed:" + Environment.NewLine
-            + "- blob.txt: Expected LF line endings." + Environment.NewLine);
+            "Repository line-ending verification failed:\n"
+            + "- blob.txt: Expected LF line endings.\n");
     }
 
     [Theory]
@@ -78,7 +78,7 @@ public sealed class VerifyLineEndingsCommandTests
         // Assert
         result.ExitCode.ShouldBe(0, "Binary files, deleted index entries, and untracked files are not checked.");
         result.StandardError.ShouldBe(string.Empty);
-        result.StandardOutput.ShouldBe("Repository line endings match their attributes." + Environment.NewLine);
+        result.StandardOutput.ShouldBe("Repository line endings match their attributes.\n");
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public sealed class VerifyLineEndingsCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe(string.Join(Environment.NewLine, LinkCorpus.ExpectedLineEndingFindings) + Environment.NewLine);
+        result.StandardError.ShouldBe(string.Join("\n", LinkCorpus.ExpectedLineEndingFindings) + "\n");
     }
 
     [Fact]
@@ -112,6 +112,6 @@ public sealed class VerifyLineEndingsCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: Git index inspection failed." + Environment.NewLine);
+        result.StandardError.ShouldBe("sharedkernel-repo: Git index inspection failed.\n");
     }
 }

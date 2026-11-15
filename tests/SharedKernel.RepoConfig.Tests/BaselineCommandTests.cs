@@ -40,10 +40,10 @@ public sealed class BaselineCommandTests
         exitCode.ShouldBe(0, "A preview succeeds.");
         error.ShouldBe(string.Empty);
         output.ShouldBe(
-            "preview: would create .gitattributes." + Environment.NewLine
-            + "preview: would create docs/README.md." + Environment.NewLine
-            + "preview: would create CODEOWNERS." + Environment.NewLine
-            + "preview: 3 would be created, 0 updated, 0 overwritten, and 0 unchanged; --force writes them." + Environment.NewLine);
+            "preview: would create .gitattributes.\n"
+            + "preview: would create docs/README.md.\n"
+            + "preview: would create CODEOWNERS.\n"
+            + "preview: 3 would be created, 0 updated, 0 overwritten, and 0 unchanged; --force writes them.\n");
         workspace.FileExists(".gitattributes").ShouldBeFalse("A preview writes nothing.");
         workspace.FileExists("docs/README.md").ShouldBeFalse("A preview writes nothing.");
     }
@@ -62,10 +62,10 @@ public sealed class BaselineCommandTests
         exitCode.ShouldBe(0);
         error.ShouldBe(string.Empty);
         output.ShouldBe(
-            "Created .gitattributes." + Environment.NewLine
-            + "Created docs/README.md." + Environment.NewLine
-            + "Created CODEOWNERS." + Environment.NewLine
-            + "example-repo: 3 created, 0 updated, 0 overwritten, and 0 unchanged files." + Environment.NewLine);
+            "Created .gitattributes.\n"
+            + "Created docs/README.md.\n"
+            + "Created CODEOWNERS.\n"
+            + "example-repo: 3 created, 0 updated, 0 overwritten, and 0 unchanged files.\n");
         workspace.ReadFile(".gitattributes").ShouldStartWith("# Managed by sharedkernel-repo baseline (sha256 ", StringComparison.Ordinal, "Hash-comment marker on a non-Markdown file.");
         var readme = workspace.ReadFile("docs/README.md");
         readme.ShouldStartWith("<!-- Managed by sharedkernel-repo baseline (sha256 ", StringComparison.Ordinal, "HTML-comment marker on a Markdown file.");
@@ -73,7 +73,7 @@ public sealed class BaselineCommandTests
         workspace.ReadFile("CODEOWNERS").ShouldContain("# default branch: trunk", StringComparison.Ordinal, "The default branch variable is substituted in sourced content.");
         workspace.ReadFile("CODEOWNERS").ShouldNotContain("@@", StringComparison.Ordinal, "No placeholder remains.");
         verification.ExitCode.ShouldBe(0, "Applied files match the baseline.");
-        verification.Output.ShouldBe("Repository baseline matches 3 files." + Environment.NewLine);
+        verification.Output.ShouldBe("Repository baseline matches 3 files.\n");
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public sealed class BaselineCommandTests
         // Assert
         exitCode.ShouldBe(0);
         error.ShouldBe(string.Empty);
-        output.ShouldBe("example-repo: 0 created, 0 updated, 0 overwritten, and 3 unchanged files." + Environment.NewLine);
+        output.ShouldBe("example-repo: 0 created, 0 updated, 0 overwritten, and 3 unchanged files.\n");
         ManagedPaths.Select(workspace.ReadFile).ToArray()
             .ShouldBe(before, "Content is identical.");
         ManagedPaths
@@ -116,9 +116,9 @@ public sealed class BaselineCommandTests
         exitCode.ShouldBe(1, "Drift fails verification.");
         output.ShouldBe(string.Empty);
         error.ShouldBe(
-            "Repository baseline verification failed:" + Environment.NewLine
-            + "- .gitattributes: exists without the baseline marker." + Environment.NewLine
-            + "- CODEOWNERS: missing." + Environment.NewLine);
+            "Repository baseline verification failed:\n"
+            + "- .gitattributes: exists without the baseline marker.\n"
+            + "- CODEOWNERS: missing.\n");
     }
 
     [Fact]
@@ -133,7 +133,7 @@ public sealed class BaselineCommandTests
 
         // Assert
         exitCode.ShouldBe(1, "A conflict fails the command.");
-        error.ShouldBe("conflict: CODEOWNERS exists without the baseline marker; set overwriteExisting on its entry to replace it." + Environment.NewLine);
+        error.ShouldBe("conflict: CODEOWNERS exists without the baseline marker; set overwriteExisting on its entry to replace it.\n");
         workspace.ReadFile("CODEOWNERS").ShouldBe("* @someone-else\n", "The unmanaged file is untouched.");
         workspace.FileExists(".gitattributes").ShouldBeFalse("A conflict anywhere writes nothing.");
     }
@@ -192,7 +192,7 @@ public sealed class BaselineCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ShouldBe("conflict: CODEOWNERS was edited after the baseline wrote it; set overwriteExisting on its entry to replace it." + Environment.NewLine);
+        error.ShouldBe("conflict: CODEOWNERS was edited after the baseline wrote it; set overwriteExisting on its entry to replace it.\n");
         workspace.ReadFile("CODEOWNERS").ShouldContain("@hand-edit", StringComparison.Ordinal, "The edit is preserved.");
     }
 

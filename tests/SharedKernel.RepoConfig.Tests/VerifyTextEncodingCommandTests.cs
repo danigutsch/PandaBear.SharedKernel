@@ -190,7 +190,7 @@ public sealed class VerifyTextEncodingCommandTests
         var result = await repository.RunCommand(
             ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
-        var lines = result.StandardError.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+        var lines = result.StandardError.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
         // Assert
         result.ExitCode.ShouldBe(1);

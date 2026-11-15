@@ -1,5 +1,4 @@
 using System.CommandLine;
-using System.Globalization;
 using PandaBear.Results;
 
 namespace PandaBear.Packages.Tool.Tests;
@@ -21,8 +20,8 @@ internal static class UpdatesToolHarness
         Func<UpdateSources> createSources,
         params string[] arguments)
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var exitCode = await PackagesCommandLine
             .Create(root, new FakeExecutables(resolve), runner, createSources)
             .Parse(["updates", "--root", root, .. arguments])

@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text;
 
 namespace PandaBear.RepoConfig.Tests;
@@ -42,8 +41,8 @@ internal static class LinkTestRepository
         IReadOnlyList<string> arguments,
         CancellationToken cancellationToken)
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var exitCode = await RepoConfigToolRunner.Run(arguments, output, error, workspace.RootPath, cancellationToken);
         return new TemporaryGitRepository.CommandResult(exitCode, output.ToString(), error.ToString());
     }

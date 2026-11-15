@@ -1,5 +1,5 @@
 using System.CommandLine;
-using System.Globalization;
+using PandaBear.Testing;
 
 namespace PandaBear.Documentation.Tests;
 
@@ -34,8 +34,8 @@ internal sealed class DocumentationCommandLineRun
     /// <returns>The captured run.</returns>
     public static DocumentationCommandLineRun Invoke(ParseResult parseResult)
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         var configuration = new InvocationConfiguration { Output = output, Error = error };
 
         var exitCode = parseResult.Invoke(configuration);

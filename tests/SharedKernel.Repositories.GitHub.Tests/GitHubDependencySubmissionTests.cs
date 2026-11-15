@@ -1,4 +1,3 @@
-using System.Globalization;
 using Microsoft.Extensions.Time.Testing;
 
 namespace PandaBear.Repositories.GitHub.Tests;
@@ -19,7 +18,7 @@ public sealed class GitHubDependencySubmissionTests
         using var handler = new TimingOutHttpMessageHandler(timeProvider);
         using var httpClient = new HttpClient(handler);
         using var connection = new GitHubConnection(httpClient);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
         var options = new DependencySubmitOptions(workspace.RootPath, SnapshotPath, "owner/repository", Force: true);
 
         // Act

@@ -12,8 +12,8 @@ internal static class ForgejoLabelSyncTestOperations
         bool force,
         string server = "https://codeberg.example")
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         List<string> arguments = ["github", "sync-labels", "--repository", "owner/repository", "--forgejo", server, "--root", workspace.RootPath];
         if (force)
         {
