@@ -42,6 +42,7 @@ public sealed class Money : ValueObject, IFormattable
     }
 
     /// <summary>Creates a money value that must already have no more decimals than the currency's minor unit; the amount is never rounded.</summary>
+    /// <remarks>For an amount a person typed, use <see cref="CreateFromInput"/>, which also counts the decimal places it was written with.</remarks>
     /// <param name="amount">The amount.</param>
     /// <param name="currency">The currency.</param>
     /// <param name="field">The field name used in the validation error.</param>
@@ -63,6 +64,39 @@ public sealed class Money : ValueObject, IFormattable
         }
 
         return Result.Ok(new Money(amount, currency));
+    }
+
+    /// <summary>
+    /// Creates money from an amount a person typed, in a form or a request body: like <see cref="CreateExact"/>, but an amount written
+    /// with more decimal places than the currency's minor unit is refused even when the extra places are zeros. For EUR, <c>1.500</c> is
+    /// refused, not read as 1.50, because it is most likely 1500 typed with a thousands separator. The amount is never rounded.
+    /// </summary>
+    /// <remarks>
+    /// A <see cref="decimal"/> keeps the decimal places it was written with (its scale): <c>decimal.Parse("1.500")</c> and the JSON number
+    /// <c>1.500</c> read by System.Text.Json both have three. Pass the amount as it was parsed. Arithmetic changes the scale, so a computed
+    /// amount such as <c>1000.00m * 0.30m</c>, which has four, belongs in <see cref="CreateExact"/>.
+    /// </remarks>
+    /// <param name="amount">The amount as typed, with the decimal places it was written with.</param>
+    /// <param name="currency">The currency.</param>
+    /// <param name="field">The field name used in the validation error.</param>
+    /// <param name="label">The label used in the validation message, for example <c>Base price</c>.</param>
+    /// <returns>
+    /// The money value, or a validation error: <c>Currency is required.</c> on <c>currency</c> when the currency is missing; otherwise, on
+    /// <paramref name="field"/>, <c>{label} must be a whole number, like 1500.</c> for a currency without decimals and
+    /// <c>{label} must have at most 2 decimal places, like 1500 or 1500.50.</c> for one with two, the example having as many decimal places
+    /// as the currency.
+    /// </returns>
+    public static Result<Money> CreateFromInput(decimal amount, Currency? currency, string field = "amount", string label = "Amount")
+    {
+        if (currency is not null && amount.Scale > currency.MinorUnits)
+        {
+            var message = currency.MinorUnits == 0
+                ? $"{label} must be a whole number, like 1500."
+                : $"{label} must have at most {currency.MinorUnits} decimal places, like 1500 or 1500.5{new string('0', currency.MinorUnits - 1)}.";
+            return Result.Invalid<Money>(detail: message, field: field, message: message);
+        }
+
+        return CreateExact(amount, currency, field, label);
     }
 
     /// <summary>For persistence mappers: rebuilds a value from a stored amount and currency; the amount is NOT rounded and the currency is not checked against the allow-list, so a stored value that a newer rule would reject can still be loaded; never use it for user input.</summary>
