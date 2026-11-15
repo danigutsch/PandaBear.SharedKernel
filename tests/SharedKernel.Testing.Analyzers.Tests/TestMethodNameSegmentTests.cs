@@ -224,6 +224,7 @@ public sealed class TestMethodNameSegmentTests
             ]);
         diagnostics.Where(static diagnostic => diagnostic.Id == NamingDiagnosticId)
             .Select(static diagnostic => diagnostic.GetMessage(CultureInfo.InvariantCulture))
+            .Order(StringComparer.Ordinal)
             .ToArray()
             .ShouldBe(
             [
