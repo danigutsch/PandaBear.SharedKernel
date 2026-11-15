@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using PandaBear.Processes;
 
 namespace PandaBear.Forgejo.Tests;
 
@@ -43,5 +44,23 @@ public sealed class ForgejoTokenTests
         startInfo.Environment.Keys.ShouldNotContain("FORGEJO_TOKEN");
         startInfo.Environment.Keys.ShouldNotContain("forgejo_token");
         startInfo.Environment["FORGEJO_SERVER_URL"].ShouldBe("https://codeberg.org");
+    }
+
+    [Fact]
+    public void Forge_neutral_removal_covers_every_token_variable()
+    {
+        // Arrange
+        var startInfo = new ProcessStartInfo("child");
+        foreach (var name in ForgejoToken.VariableNames)
+        {
+            startInfo.Environment[name] = "secret";
+        }
+
+        // Act
+        ProcessEnvironment.RemoveForgeTokens(startInfo);
+
+        // Assert
+        ForgejoToken.VariableNames.ShouldAllSatisfy(static name => ProcessEnvironment.ForgeTokenVariableNames.ShouldContain(name));
+        startInfo.Environment.Keys.ShouldNotContain(name => ForgejoToken.IsTokenVariable(name));
     }
 }

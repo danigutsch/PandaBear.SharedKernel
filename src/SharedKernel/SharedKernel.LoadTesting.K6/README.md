@@ -26,8 +26,8 @@ var runner = new LoadTestRunner(new K6LoadGenerator(new SystemProcessRunner()), 
   with an empty environment except `PATHEXT`, `SystemRoot`, and `WINDIR`.
 - A container run uses `run --rm --pull=never --name sharedkernel-k6-<id>`, adds
   `--add-host host.docker.internal:host-gateway` for Docker, mounts the script directory read-only at `/k6` and the run
-  directory at `/results`, and removes `GH_TOKEN` and `GITHUB_TOKEN` from the engine's environment. Cancellation
-  force-removes the container. k6 exits 0 when it cannot write the summary, so a container run that exits 0 without
+  directory at `/results`, and removes `GH_TOKEN`, `GITHUB_TOKEN`, and `FORGEJO_TOKEN` from the engine's environment.
+  Cancellation force-removes the container. k6 exits 0 when it cannot write the summary, so a container run that exits 0 without
   `k6-summary.json` throws `InvalidOperationException`.
 - The arguments cannot pass `--include-system-env-vars`, `--insecure-skip-tls-verify`, or `--summary-export`, or set a
   controlled variable with `-e` or `--env`. `--http-debug` needs `AllowHttpDebug`; `--out`, `-o`, `--log-output`,

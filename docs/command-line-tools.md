@@ -189,23 +189,30 @@ Helpers that two or more tools call live in the library that owns the concept: `
 `CandidateManifest` in `SharedKernel.Versioning`, process execution, executable resolution, `ProcessTree`, and
 `ProcessEnvironment` in `SharedKernel.Processes`, `JsonConfigurationFile` in `SharedKernel.ConfigurationFiles`, and
 `GitHubToken` and `GitHubApiClient` in `SharedKernel.GitHub`. Tools reference those projects; they do not link
-source files from other directories. `SharedKernel.PlaywrightMcp.Tool` is the first tool whose logic lives in an
-engine, `SharedKernel.PlaywrightMcp`; the other tools move theirs incrementally.
-`SharedKernel.K6.Tool` wraps the generic `SharedKernel.LoadTesting` core and its k6 provider,
-`SharedKernel.LoadTesting.K6`. `SharedKernel.CI.Tool` wraps the forge-neutral `SharedKernel.CI` engine and its
-`SharedKernel.CI.GitHub` and `SharedKernel.CI.Forgejo` providers; `SharedKernel.Forgejo` is the Forgejo platform base, as
-`SharedKernel.GitHub` is GitHub's. `SharedKernel.RepoConfig.Tool` wraps the forge-neutral `SharedKernel.Repositories`
-core, its `SharedKernel.Repositories.GitHub` provider, and `SharedKernel.DevContainers`, which holds the dev container and
-rootless Podman host checks. `SharedKernel.VaultManager.Tool` wraps
-`SharedKernel.Vault` and its `SharedKernel.Vault.Bitwarden` and `SharedKernel.Vault.Keeper` providers.
+source files from other directories.
+
+`SharedKernel.PlaywrightMcp.Tool` is the first tool whose logic lives in an engine; the other tools move theirs
+incrementally. Each wrapped tool and the libraries it wraps:
+
+- `SharedKernel.PlaywrightMcp.Tool`: the `SharedKernel.PlaywrightMcp` engine.
+- `SharedKernel.K6.Tool`: the generic `SharedKernel.LoadTesting` core and its k6 provider, `SharedKernel.LoadTesting.K6`.
+- `SharedKernel.CI.Tool`: the forge-neutral `SharedKernel.CI` engine and its `SharedKernel.CI.GitHub` and
+  `SharedKernel.CI.Forgejo` providers. `SharedKernel.Forgejo` is the Forgejo platform base, as `SharedKernel.GitHub` is
+  GitHub's.
+- `SharedKernel.RepoConfig.Tool`: the forge-neutral `SharedKernel.Repositories` core, its
+  `SharedKernel.Repositories.GitHub` and `SharedKernel.Repositories.Forgejo` providers, and `SharedKernel.DevContainers`,
+  which holds the dev container and rootless Podman host checks.
+- `SharedKernel.VaultManager.Tool`: `SharedKernel.Vault` and its `SharedKernel.Vault.Bitwarden` and
+  `SharedKernel.Vault.Keeper` providers.
 
 ## Secrets
 
 - Read secrets from a terminal prompt without echo (`Console.ReadKey(intercept: true)`), from a file, or from
   standard input. Never from arguments or environment variables, which leak through process listings, shell
   history, and child processes. A GitHub token is the exception: commands that call the GitHub API read it from
-  `GH_TOKEN` or `GITHUB_TOKEN`, as [`gh`](https://cli.github.com/manual/gh_help_environment) does, and keep both out of
-  child process environments, through `PandaBear.GitHub.GitHubToken`.
+  `GH_TOKEN` or `GITHUB_TOKEN`, as [`gh`](https://cli.github.com/manual/gh_help_environment) does, and a Forgejo token
+  from `FORGEJO_TOKEN`. Every child process that needs no forge access starts without any of them, through
+  `PandaBear.Processes.ProcessEnvironment.RemoveForgeTokens`.
 - Do not use `SecureString` ([DE0001](https://github.com/dotnet/platform-compat/blob/master/docs/DE0001.md)).
   Keep secret bytes in arrays you own and clear them with
   [`CryptographicOperations.ZeroMemory`](https://learn.microsoft.com/dotnet/api/system.security.cryptography.cryptographicoperations.zeromemory).

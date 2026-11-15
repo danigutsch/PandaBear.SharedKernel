@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using PandaBear.ConfigurationFiles;
-using PandaBear.GitHub;
 using PandaBear.IO;
+using PandaBear.Processes;
 
 namespace PandaBear.CI;
 
@@ -211,9 +211,9 @@ public static partial class CiConfigurationFile
             throw Invalid(path + " must be an environment variable name: letters, digits, and '_', not starting with a digit.");
         }
 
-        if (GitHubToken.IsTokenVariable(name))
+        if (ProcessEnvironment.IsForgeTokenVariable(name))
         {
-            throw Invalid(path + " names " + name + ", a GitHub token variable that the tool removes from the service's environment; use another name.");
+            throw Invalid(path + " names " + name + ", a forge token variable that the tool removes from the service's environment; use another name.");
         }
     }
 

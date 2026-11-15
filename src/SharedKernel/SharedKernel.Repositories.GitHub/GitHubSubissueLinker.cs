@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using PandaBear.GitHub;
 
 namespace PandaBear.Repositories.GitHub;
 
@@ -12,7 +13,6 @@ namespace PandaBear.Repositories.GitHub;
 public static class GitHubSubissueLinker
 {
     private const int MaxResponseBytes = 1024 * 1024;
-    private const string ApiVersion = "2022-11-28";
 
     /// <summary>
     /// Previews a link without network access, or resolves, links, and verifies it when forced.
@@ -171,7 +171,7 @@ public static class GitHubSubissueLinker
 
     private static async Task<HttpResponseMessage> Send(HttpClient client, HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        request.Headers.Add("X-GitHub-Api-Version", ApiVersion);
+        request.Headers.Add("X-GitHub-Api-Version", GitHubApiClient.ApiVersion);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
         return await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
     }

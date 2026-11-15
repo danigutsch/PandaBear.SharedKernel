@@ -13,7 +13,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\SharedKernel.GitHub\SharedKernel.GitHub.csproj" />
         <ProjectReference Include="..\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
         <ProjectReference Include="..\SharedKernel.Processes\SharedKernel.Processes.csproj" />
     </ItemGroup>

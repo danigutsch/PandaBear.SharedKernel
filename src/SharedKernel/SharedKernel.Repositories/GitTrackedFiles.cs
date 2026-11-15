@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
-using PandaBear.GitHub;
 using PandaBear.Processes;
 
 namespace PandaBear.Repositories;
@@ -92,7 +91,7 @@ internal static class GitTrackedFiles
         // GIT_DIR, GIT_INDEX_FILE, and the GIT_*_PATHSPECS variables would select another index or change how paths match.
         ProcessEnvironment.RemoveGitVariables(startInfo);
 
-        GitHubToken.RemoveFrom(startInfo);
+        ProcessEnvironment.RemoveForgeTokens(startInfo);
         startInfo.Environment["GIT_TERMINAL_PROMPT"] = "0";
         foreach (var argument in arguments)
         {

@@ -19,7 +19,7 @@ public sealed class GitHubApiClientTests
         var request = handler.Request.ShouldNotBeNull();
         request.Headers.UserAgent.ToString().ShouldBe("sharedkernel-test/1.0");
         request.Headers.Accept.ToString().ShouldBe("application/vnd.github+json");
-        request.Headers.GetValues("X-GitHub-Api-Version").ShouldBe(["2022-11-28"]);
+        request.Headers.GetValues("X-GitHub-Api-Version").ShouldBe(["2026-03-10"]);
         request.Headers.Authorization.ShouldBe(new AuthenticationHeaderValue("Bearer", "secret"));
     }
 

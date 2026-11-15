@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.Repositories.Forgejo</PackageId>
+        <Description>Forgejo provider for PandaBear.SharedKernel.Repositories: repository label sync through the Forgejo REST API.</Description>
+        <PackageTags>repository;forgejo;labels;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.Repositories.Forgejo.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Forgejo\SharedKernel.Forgejo.csproj" />
+        <ProjectReference Include="..\SharedKernel.IO\SharedKernel.IO.csproj" />
+        <ProjectReference Include="..\SharedKernel.Repositories\SharedKernel.Repositories.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

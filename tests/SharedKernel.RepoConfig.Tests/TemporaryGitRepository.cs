@@ -216,6 +216,7 @@ internal sealed class TemporaryGitRepository : IDisposable
                 echo git-shim
                 [ -n "${GH_TOKEN+set}" ] && echo GH_TOKEN
                 [ -n "${GITHUB_TOKEN+set}" ] && echo GITHUB_TOKEN
+                [ -n "${FORGEJO_TOKEN+set}" ] && echo FORGEJO_TOKEN
               } >> "$TEXT_ENCODING_GIT_SHIM_ENVIRONMENT_LOG"
             fi
             case "${TEXT_ENCODING_GIT_SHIM_MODE:-}" in

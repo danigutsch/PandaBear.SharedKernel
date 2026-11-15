@@ -6,11 +6,11 @@ namespace PandaBear.GitHub;
 public static class GitHubApiClient
 {
     /// <summary>The REST API version that every request names.</summary>
-    public const string ApiVersion = "2022-11-28";
+    public const string ApiVersion = "2026-03-10";
 
     /// <summary>
     /// Creates a client that owns <paramref name="handler"/> and sends, with every request, <paramref name="userAgent"/>,
-    /// <c>Accept: application/vnd.github+json</c>, <c>X-GitHub-Api-Version: 2022-11-28</c>, and, when
+    /// <c>Accept: application/vnd.github+json</c>, <c>X-GitHub-Api-Version: 2026-03-10</c>, and, when
     /// <paramref name="token"/> is set, <c>Authorization: Bearer &lt;token&gt;</c>. The client keeps the default
     /// <see cref="HttpClient.Timeout"/>; a caller that times each request itself sets it.
     /// </summary>

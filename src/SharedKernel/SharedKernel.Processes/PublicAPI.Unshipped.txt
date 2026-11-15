@@ -25,3 +25,6 @@ static PandaBear.Processes.ProcessEnvironment.Remove(System.Diagnostics.ProcessS
 static PandaBear.Processes.ProcessEnvironment.RemoveGitVariables(System.Diagnostics.ProcessStartInfo! startInfo) -> void
 static PandaBear.Processes.ProcessTree.Start(System.Diagnostics.ProcessStartInfo! startInfo) -> System.Diagnostics.Process!
 static PandaBear.Processes.ProcessTree.Terminate(System.Diagnostics.Process! process, System.TimeSpan exitTimeout) -> System.Threading.Tasks.Task!
+static PandaBear.Processes.ProcessEnvironment.ForgeTokenVariableNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.Processes.ProcessEnvironment.IsForgeTokenVariable(string! name) -> bool
+static PandaBear.Processes.ProcessEnvironment.RemoveForgeTokens(System.Diagnostics.ProcessStartInfo! startInfo) -> void

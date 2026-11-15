@@ -2,7 +2,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using PandaBear.GitHub;
 using PandaBear.Processes;
 
 namespace PandaBear.Repositories;
@@ -144,7 +143,7 @@ public sealed class RoadmapGitRepository
         startInfo.Environment["GIT_TERMINAL_PROMPT"] = "0";
         startInfo.Environment.Remove("GIT_ASKPASS");
         startInfo.Environment.Remove("SSH_ASKPASS");
-        GitHubToken.RemoveFrom(startInfo);
+        ProcessEnvironment.RemoveForgeTokens(startInfo);
         return startInfo;
     }
 

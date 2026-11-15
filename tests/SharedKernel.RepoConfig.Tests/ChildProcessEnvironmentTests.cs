@@ -11,6 +11,7 @@ public sealed class ChildProcessEnvironmentTests
         // Arrange
         using var ghTokenScope = new EnvironmentVariableScope("GH_TOKEN", "credential-marker");
         using var gitHubTokenScope = new EnvironmentVariableScope("GITHUB_TOKEN", "credential-marker");
+        using var forgejoTokenScope = new EnvironmentVariableScope("FORGEJO_TOKEN", "credential-marker");
         using var context = new PodmanDnsPreflightTestContext
         {
             Networks = "trip\n",
@@ -35,6 +36,7 @@ public sealed class ChildProcessEnvironmentTests
         {
             startInfo.Environment.ContainsKey("GH_TOKEN").ShouldBeFalse();
             startInfo.Environment.ContainsKey("GITHUB_TOKEN").ShouldBeFalse();
+            startInfo.Environment.ContainsKey("FORGEJO_TOKEN").ShouldBeFalse();
         });
     }
 
@@ -57,7 +59,8 @@ public sealed class ChildProcessEnvironmentTests
             ["PATH"] = repository.CreateGitShim(),
             ["TEXT_ENCODING_GIT_SHIM_ENVIRONMENT_LOG"] = environmentLogPath,
             ["GH_TOKEN"] = "credential-marker",
-            ["GITHUB_TOKEN"] = "credential-marker"
+            ["GITHUB_TOKEN"] = "credential-marker",
+            ["FORGEJO_TOKEN"] = "credential-marker"
         };
 
         // Act
@@ -72,6 +75,7 @@ public sealed class ChildProcessEnvironmentTests
         gitEnvironment.ShouldContain("git-shim");
         gitEnvironment.ShouldNotContain("GH_TOKEN");
         gitEnvironment.ShouldNotContain("GITHUB_TOKEN");
+        gitEnvironment.ShouldNotContain("FORGEJO_TOKEN");
     }
 
     [Fact]
@@ -93,7 +97,8 @@ public sealed class ChildProcessEnvironmentTests
             ["PATH"] = repository.CreateGitShim(),
             ["TEXT_ENCODING_GIT_SHIM_ENVIRONMENT_LOG"] = environmentLogPath,
             ["GH_TOKEN"] = "credential-marker",
-            ["GITHUB_TOKEN"] = "credential-marker"
+            ["GITHUB_TOKEN"] = "credential-marker",
+            ["FORGEJO_TOKEN"] = "credential-marker"
         };
 
         // Act
@@ -108,6 +113,7 @@ public sealed class ChildProcessEnvironmentTests
         gitEnvironment.ShouldContain(static line => line == "git-shim", "Git is resolved through PATH, where the shim comes first.");
         gitEnvironment.ShouldNotContain("GH_TOKEN");
         gitEnvironment.ShouldNotContain("GITHUB_TOKEN");
+        gitEnvironment.ShouldNotContain("FORGEJO_TOKEN");
     }
 
     [Theory]

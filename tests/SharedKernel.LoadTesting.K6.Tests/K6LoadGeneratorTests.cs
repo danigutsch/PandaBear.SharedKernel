@@ -13,7 +13,7 @@ public sealed class K6LoadGeneratorTests
         // Arrange
         using var workspace = new K6RunWorkspace();
         var runner = new ScriptedProcessRunner(ScriptedProcessRunner.Exit(99));
-        var run = workspace.Run(environment: new Dictionary<string, string>(StringComparer.Ordinal) { ["PATHEXT"] = ".EXE", ["GH_TOKEN"] = "secret", ["HOME"] = "/home/user" });
+        var run = workspace.Run(environment: new Dictionary<string, string>(StringComparer.Ordinal) { ["PATHEXT"] = ".EXE", ["GH_TOKEN"] = "secret", ["FORGEJO_TOKEN"] = "secret", ["HOME"] = "/home/user" });
 
         // Act
         var exitCode = await new K6LoadGenerator(runner).Run(run, TestContext.Current.CancellationToken);
@@ -86,6 +86,7 @@ public sealed class K6LoadGeneratorTests
         ]);
         runner.Runs[0].Environment.ContainsKey("GH_TOKEN").ShouldBeFalse();
         runner.Runs[0].Environment.ContainsKey("GITHUB_TOKEN").ShouldBeFalse();
+        runner.Runs[0].Environment.ContainsKey("FORGEJO_TOKEN").ShouldBeFalse();
     }
 
     [Fact]

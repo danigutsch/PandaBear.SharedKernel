@@ -15,6 +15,12 @@ internal sealed record RepoConfigToolEnvironment(string WorkingDirectory)
     public HttpClient? HttpClient { get; init; }
 
     /// <summary>
+    /// Gets the handler for Forgejo requests, which the label store disposes, or <see langword="null"/> for one that
+    /// refuses redirects.
+    /// </summary>
+    public HttpMessageHandler? ForgejoHandler { get; init; }
+
+    /// <summary>
     /// Gets the Git repository adapter for automation steps, or <see langword="null"/> to run Git.
     /// </summary>
     public RoadmapGitRepository? GitRepository { get; init; }

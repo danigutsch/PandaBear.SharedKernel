@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using PandaBear.GitHub;
 using PandaBear.Processes;
 
 namespace PandaBear.LoadTesting;
@@ -74,7 +73,7 @@ internal sealed class ManagedHost : IAsyncDisposable
             startInfo.ArgumentList.Add(argument == ListenUrlPlaceholder ? listenUrl : argument);
         }
 
-        GitHubToken.RemoveFrom(startInfo);
+        ProcessEnvironment.RemoveForgeTokens(startInfo);
         var readyFile = Path.Combine(runDirectory, "host.url");
         startInfo.Environment[configuration.ReadyFileVariable] = readyFile;
         var process = ProcessTree.Start(startInfo);

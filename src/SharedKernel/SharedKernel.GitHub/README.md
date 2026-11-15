@@ -26,7 +26,7 @@ using var client = GitHubApiClient.Create(
 - `GitHubToken.RemoveFrom(startInfo)` removes both variables, in any case, from a child process environment, and
   `IsTokenVariable` lets a configuration reader refuse a request to forward one. A token is never an argument.
 - `GitHubApiClient.Create(handler, userAgent, token)` returns a client that owns the handler and sends the user agent,
-  `Accept: application/vnd.github+json`, `X-GitHub-Api-Version: 2022-11-28`, and the bearer token when one is given. It
+  `Accept: application/vnd.github+json`, `X-GitHub-Api-Version: 2026-03-10`, and the bearer token when one is given. It
   keeps the default `HttpClient.Timeout`; a caller that times each request with its own token sets
   `Timeout.InfiniteTimeSpan`. Redirect and certificate policy belong to the handler the caller passes.
 

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace PandaBear.Processes.Tests;
@@ -82,5 +83,21 @@ public sealed class SystemProcessRunnerTests
 
         // Assert
         await run.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact]
+    public async Task A_missing_executable_is_reported_as_process_tree_reports_it()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var missing = Path.Combine(directory.Path, "missing-sharedkernel-command");
+
+        // Act
+        Func<Task> run = () => new SystemProcessRunner().Run(new ProcessStartInfo(missing) { UseShellExecute = false }, null, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await run.ShouldThrow<InvalidOperationException>();
+        exception.InnerException.ShouldBeOfType<Win32Exception>();
+        exception.Message.ShouldBe($"Failed to start {missing}: {exception.InnerException.ShouldNotBeNull().Message}");
     }
 }

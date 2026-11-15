@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using PandaBear.GitHub;
 
 namespace PandaBear.Repositories.GitHub;
 
@@ -12,7 +13,6 @@ namespace PandaBear.Repositories.GitHub;
 /// </summary>
 public sealed class GitHubLabelStore : IRepositoryLabelStore
 {
-    private const string ApiVersion = "2022-11-28";
     private const int MaxResponseBytes = 1024 * 1024;
     private const int PageSize = 100;
     private const int MaxPages = 100;
@@ -168,7 +168,7 @@ public sealed class GitHubLabelStore : IRepositoryLabelStore
         CancellationToken cancellationToken)
     {
         using var request = new HttpRequestMessage(method, uri);
-        request.Headers.Add("X-GitHub-Api-Version", ApiVersion);
+        request.Headers.Add("X-GitHub-Api-Version", GitHubApiClient.ApiVersion);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
         if (body is not null)
         {

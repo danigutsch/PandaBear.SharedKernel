@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using PandaBear.ConfigurationFiles;
-using PandaBear.GitHub;
 using PandaBear.IO;
+using PandaBear.Processes;
 
 namespace PandaBear.LoadTesting;
 
@@ -144,7 +144,7 @@ internal sealed partial class LoadTestConfigurationFile(string relativePath, IRe
             throw Invalid(path + " must be an environment variable name: letters, digits, and '_', not starting with a digit.");
         }
 
-        if (GitHubToken.IsTokenVariable(name))
+        if (ProcessEnvironment.IsForgeTokenVariable(name))
         {
             throw Invalid(path + " names " + name + ", which the tool never passes to a child process.");
         }
