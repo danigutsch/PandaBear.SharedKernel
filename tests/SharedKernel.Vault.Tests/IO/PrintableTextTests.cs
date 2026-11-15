@@ -83,6 +83,8 @@ public sealed class PrintableTextTests
     }
 
     [Theory]
+    [InlineData("")]
+    [InlineData("Bank | Visa ~ {Login} 42!")]
     [InlineData("Bank | Visa ü €")]
     [InlineData("Bob's Café Bank \u00A0€ 😀")]
     [InlineData("\u05D1\u05E0\u05E7 Bank \u0628\u0646\u0643")]
@@ -173,6 +175,123 @@ public sealed class PrintableTextTests
         // Arrange
         string text = new(codeUnits);
 
+        // Act
+        string printable = PrintableText.OneLine(text);
+
+        // Assert
+        printable.ShouldBe(expected);
+    }
+
+    [Theory]
+    [InlineData("\U0001F469\u200D\U0001F4BB")]
+    [InlineData("Bank \U0001F468\u200D\U0001F469\u200D\U0001F467\u200D\U0001F466 team")]
+    [InlineData("\U0001F3F3\uFE0F\u200D\U0001F308")]
+    [InlineData("\u2764\uFE0F\u200D\U0001F525")]
+    [InlineData("\U0001F9D1\U0001F3FD\u200D\U0001F4BB")]
+    [InlineData("\U0001F408\u200D\u2B1B")]
+    public void OneLine_keeps_a_zero_width_joiner_between_two_emoji_of_an_emoji_zwj_sequence(string text)
+    {
+        // Act
+        string printable = PrintableText.OneLine(text);
+
+        // Assert
+        printable.ShouldBeSameAs(text);
+    }
+
+    [Theory]
+    [InlineData("\U0001F3F4\U000E0067\U000E0062\U000E0065\U000E006E\U000E0067\U000E007F")]
+    [InlineData("Glasgow \U0001F3F4\U000E0067\U000E0062\U000E0073\U000E0063\U000E0074\U000E007F Bank")]
+    [InlineData("\U0001F3F4\U000E0067\U000E0062\U000E0077\U000E006C\U000E0073\U000E007F\U0001F3F4\U000E0075\U000E0073\U000E0074\U000E0078\U000E007F")]
+    public void OneLine_keeps_the_tag_characters_of_a_well_formed_emoji_tag_sequence(string text)
+    {
+        // Act
+        string printable = PrintableText.OneLine(text);
+
+        // Assert
+        printable.ShouldBeSameAs(text);
+    }
+
+    [Theory]
+    [InlineData("\u0645\u06CC\u200C\u062E\u0648\u0627\u0647\u0645")]
+    [InlineData("\u0628\u0647\u200C\u0631\u0648\u0632")]
+    [InlineData("\u0646\u0627\u0645\u0647\u200C\u0627\u06CC")]
+    [InlineData("\u0628\u064E\u200C\u0631")]
+    [InlineData("\u0D26\u0D43\u0D15\u0D4D\u200C\u0D38\u0D3E\u0D15\u0D4D\u0D37\u0D3F")]
+    [InlineData("\u0915\u094D\u200C\u0937")]
+    [InlineData("\u0DC1\u0DCA\u200D\u0DBB\u0DD3 \u0DBD\u0D82\u0D9A\u0DCF")]
+    [InlineData("\u0915\u094D\u200D\u0937")]
+    public void OneLine_keeps_a_joiner_or_non_joiner_in_the_joining_contexts_of_uts39(string text)
+    {
+        // Act
+        string printable = PrintableText.OneLine(text);
+
+        // Assert
+        printable.ShouldBeSameAs(text);
+    }
+
+    [Theory]
+    [InlineData("\u200D\U0001F469", "\uFFFD\U0001F469")]
+    [InlineData("\U0001F469\u200D", "\U0001F469\uFFFD")]
+    [InlineData("\U0001F469 \u200D\U0001F4BB", "\U0001F469 \uFFFD\U0001F4BB")]
+    [InlineData("\U0001F469\u200D \U0001F4BB", "\U0001F469\uFFFD \U0001F4BB")]
+    [InlineData("\U0001F469\u200D\u200D\U0001F4BB", "\U0001F469\uFFFD\uFFFD\U0001F4BB")]
+    [InlineData("\U0001F469\u200C\U0001F4BB", "\U0001F469\uFFFD\U0001F4BB")]
+    [InlineData("Git\u200DHub", "Git\uFFFDHub")]
+    [InlineData("f\u200Dinland", "f\uFFFDinland")]
+    [InlineData("V\u200Cersion", "V\uFFFDersion")]
+    [InlineData("\U0001F469\u200Da", "\U0001F469\uFFFDa")]
+    [InlineData("a\u200D\U0001F4BB", "a\uFFFD\U0001F4BB")]
+    [InlineData("\U0001F469\u200D\u202E\U0001F4BB", "\U0001F469\uFFFD\uFFFD\U0001F4BB")]
+    [InlineData("\U0001F469\u200D\r\U0001F4BB", "\U0001F469\uFFFD \U0001F4BB")]
+    public void OneLine_replaces_a_zero_width_joiner_or_non_joiner_outside_an_emoji_zwj_sequence(string text, string expected)
+    {
+        // Act
+        string printable = PrintableText.OneLine(text);
+
+        // Assert
+        printable.ShouldBe(expected);
+    }
+
+    [Theory]
+    [InlineData("\u200C\u0628\u0631", "\uFFFD\u0628\u0631")]
+    [InlineData("\u0628\u200C", "\u0628\uFFFD")]
+    [InlineData("\u0628\u200C\u200C\u0631", "\u0628\uFFFD\uFFFD\u0631")]
+    [InlineData("\u0628 \u200C\u0631", "\u0628 \uFFFD\u0631")]
+    [InlineData("\u0628\u0647\u200C\u0631\u0648\u200C\u0632", "\u0628\u0647\u200C\u0631\u0648\uFFFD\u0632")]
+    [InlineData("\u0627\u200C\u0628", "\u0627\uFFFD\u0628")]
+    [InlineData("\u0628\u200C\u0621", "\u0628\uFFFD\u0621")]
+    [InlineData("\u0628\u200D\u0631", "\u0628\uFFFD\u0631")]
+    [InlineData("\u0915\u200D\u0937", "\u0915\uFFFD\u0937")]
+    [InlineData("\u0915\u200C\u0937", "\u0915\uFFFD\u0937")]
+    [InlineData("\u0915\u094D\u200D", "\u0915\u094D\uFFFD")]
+    [InlineData("\u0915\u094D\u200C", "\u0915\u094D\uFFFD")]
+    [InlineData("\u0915\u094D\u200D\u093F", "\u0915\u094D\uFFFD\u093F")]
+    [InlineData("\u0915\u094D\u200D \u0937", "\u0915\u094D\uFFFD \u0937")]
+    [InlineData("\u094D\u200D\u0937", "\u094D\uFFFD\u0937")]
+    [InlineData("\u0915\u094D\u200D\u200D\u0937", "\u0915\u094D\uFFFD\uFFFD\u0937")]
+    public void OneLine_replaces_a_zero_width_joiner_or_non_joiner_outside_the_joining_contexts_of_uts39(string text, string expected)
+    {
+        // Act
+        string printable = PrintableText.OneLine(text);
+
+        // Assert
+        printable.ShouldBe(expected);
+    }
+
+    [Theory]
+    [InlineData("\U0001F3F4\U000E0067\U000E0062\U000E0065\U000E006E\U000E0067", "\U0001F3F4\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD")]
+    [InlineData("\U0001F3F4\U000E0067\U000E0062 x", "\U0001F3F4\uFFFD\uFFFD x")]
+    [InlineData("x\U000E0067\U000E0062\U000E0065\U000E006E\U000E0067\U000E007F", "x\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD")]
+    [InlineData("\U0001F600\U000E0067\U000E0062\U000E0065\U000E006E\U000E0067\U000E007F", "\U0001F600\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD")]
+    [InlineData("\U0001F3F4\U000E007F", "\U0001F3F4\uFFFD")]
+    [InlineData("\U0001F3F4 \U000E0067\U000E0062\U000E0065\U000E006E\U000E0067\U000E007F", "\U0001F3F4 \uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD")]
+    [InlineData("\U0001F3F4\U000E0067\U000E0062\U000E0065\U000E006E\U000E0067\U000E007F\U000E007F", "\U0001F3F4\U000E0067\U000E0062\U000E0065\U000E006E\U000E0067\U000E007F\uFFFD")]
+    [InlineData("\U0001F3F4\U000E0047\U000E0042\U000E0045\U000E004E\U000E0047\U000E007F", "\U0001F3F4\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD")]
+    [InlineData("\U0001F3F4\U000E0067\U000E0062\U000E0020\U000E006E\U000E007F", "\U0001F3F4\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD")]
+    [InlineData("\U0001F3F4\U000E0001\U000E0067\U000E0062\U000E0065\U000E007F", "\U0001F3F4\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD")]
+    [InlineData("\U0001F3F4\U000E0069\U000E0067\U000E006E\U000E006F\U000E0072\U000E0065\U000E0061\U000E006C\U000E007F", "\U0001F3F4\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD\uFFFD")]
+    public void OneLine_replaces_each_tag_character_outside_a_well_formed_emoji_tag_sequence(string text, string expected)
+    {
         // Act
         string printable = PrintableText.OneLine(text);
 
