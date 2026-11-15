@@ -72,6 +72,7 @@ flowchart TB
     SharedKernel_ObjectStorage_S3[SharedKernel.ObjectStorage.S3] --> SharedKernel_ObjectStorage[SharedKernel.ObjectStorage]
     SharedKernel_OpenApi[SharedKernel.OpenApi] --> SharedKernel_ApiVersioning[SharedKernel.ApiVersioning]
     SharedKernel_Packages[SharedKernel.Packages] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
+    SharedKernel_Packages[SharedKernel.Packages] --> SharedKernel_ConfigurationFiles[SharedKernel.ConfigurationFiles]
     SharedKernel_Packages[SharedKernel.Packages] --> SharedKernel_Processes[SharedKernel.Processes]
     SharedKernel_Packages[SharedKernel.Packages] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_PlaywrightMcp[SharedKernel.PlaywrightMcp] --> SharedKernel_Processes[SharedKernel.Processes]

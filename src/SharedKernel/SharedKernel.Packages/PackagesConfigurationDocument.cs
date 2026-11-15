@@ -1,4 +1,4 @@
-namespace PandaBear.Packages.Tool;
+namespace PandaBear.Packages;
 
 /// <summary>The consumer policy in <c>.config/sharedkernel-packages.json</c>.</summary>
 /// <param name="Version">Format version; only <c>1</c> is supported.</param>
@@ -10,4 +10,4 @@ namespace PandaBear.Packages.Tool;
 /// Optional. How many days a release must have been public before <c>updates</c> allows it; 0 to 3650. Absent means
 /// that <c>updates</c> needs <c>--minimum-release-age-days</c>.
 /// </param>
-internal sealed record PackagesConfiguration(int Version, Dictionary<string, string[]> Packages, int? MinimumReleaseAgeDays = null);
+internal sealed record PackagesConfigurationDocument(int Version, Dictionary<string, string[]> Packages, int? MinimumReleaseAgeDays = null);

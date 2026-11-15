@@ -1,48 +1,63 @@
 using System.Globalization;
 using PandaBear.ConfigurationFiles;
 
-namespace PandaBear.Packages.Tool;
+namespace PandaBear.Packages;
 
 /// <summary>
-/// Reads and validates <c>.config/sharedkernel-packages.json</c> into <see cref="DeclaredPackages"/>. Errors name the
-/// file and the JSON path of the problem.
+/// The consumer policy in <c>.config/sharedkernel-packages.json</c>: the declared packages per package manager and the
+/// optional minimum release age. <see cref="Read"/> validates the whole file; errors name the file and the JSON path of
+/// the problem.
 /// </summary>
-internal static class PackagesConfigurationFile
+public sealed class PackagesConfiguration
 {
     /// <summary>The configuration path relative to the repository root.</summary>
     public const string RelativePath = ".config/sharedkernel-packages.json";
 
-    /// <summary>Reads the configuration under <paramref name="root"/> without following symbolic links.</summary>
-    /// <exception cref="InvalidOperationException">
-    /// The file is missing, larger than 1 MiB, or not a valid configuration of version 1, a manager ID or an entry is
-    /// invalid, or a package has more than one owner.
-    /// </exception>
-    public static async Task<DeclaredPackages> Read(string root, CancellationToken cancellationToken) =>
-        (await ReadWithPolicy(root, cancellationToken).ConfigureAwait(false)).Packages;
-
-    /// <summary>Reads the configuration like <see cref="Read"/> and also returns the optional <c>minimumReleaseAgeDays</c>.</summary>
-    /// <exception cref="InvalidOperationException">As <see cref="Read"/>, or <c>minimumReleaseAgeDays</c> is outside 0 to 3650.</exception>
-    public static async Task<(DeclaredPackages Packages, int? MinimumReleaseAgeDays)> ReadWithPolicy(string root, CancellationToken cancellationToken)
+    private PackagesConfiguration(DeclaredPackages packages, MinimumReleaseAge? minimumReleaseAge)
     {
-        var configuration = await JsonConfigurationFile.Read(
-            root, RelativePath, PackagesConfigurationJsonContext.Default.PackagesConfiguration, cancellationToken).ConfigureAwait(false);
-        return Validate(configuration);
+        Packages = packages;
+        MinimumReleaseAge = minimumReleaseAge;
     }
 
-    private static (DeclaredPackages Packages, int? MinimumReleaseAgeDays) Validate(PackagesConfiguration configuration)
+    /// <summary>Gets the declared packages, each with exactly one owning package manager.</summary>
+    public DeclaredPackages Packages { get; }
+
+    /// <summary>Gets the configured <c>minimumReleaseAgeDays</c>, or <see langword="null"/> when the file does not set it.</summary>
+    public MinimumReleaseAge? MinimumReleaseAge { get; }
+
+    /// <summary>Reads and validates the configuration under <paramref name="root"/> without following symbolic links.</summary>
+    /// <param name="root">The repository root directory.</param>
+    /// <param name="cancellationToken">Cancels the read.</param>
+    /// <returns>The validated configuration.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="root"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// The file is missing, larger than 1 MiB, or not a valid configuration of version 1, a manager ID or an entry is
+    /// invalid, a package has more than one owner, or <c>minimumReleaseAgeDays</c> is outside 0 to 3650.
+    /// </exception>
+    public static async Task<PackagesConfiguration> Read(string root, CancellationToken cancellationToken)
     {
-        if (configuration.Version != 1)
+        ArgumentNullException.ThrowIfNull(root);
+        var document = await JsonConfigurationFile.Read(
+            root, RelativePath, PackagesConfigurationJsonContext.Default.PackagesConfigurationDocument, cancellationToken).ConfigureAwait(false);
+        return Validate(document);
+    }
+
+    private static PackagesConfiguration Validate(PackagesConfigurationDocument document)
+    {
+        if (document.Version != 1)
         {
             throw Invalid("$.version must be 1.");
         }
 
-        if (configuration.MinimumReleaseAgeDays is { } days && MinimumReleaseAge.FromDays(days).IsFailure)
+        MinimumReleaseAge? minimumAge = null;
+        if (document.MinimumReleaseAgeDays is { } days)
         {
-            throw Invalid($"$.minimumReleaseAgeDays must be from 0 to {MinimumReleaseAge.MaxDays}.");
+            var age = MinimumReleaseAge.FromDays(days);
+            minimumAge = age.IsSuccess ? age.Value : throw Invalid($"$.minimumReleaseAgeDays must be from 0 to {MinimumReleaseAge.MaxDays}.");
         }
 
         Dictionary<PackageManagerKind, IReadOnlyList<PackageRequirement>> declared = [];
-        foreach (var (id, entries) in configuration.Packages)
+        foreach (var (id, entries) in document.Packages)
         {
             if (!PackageManagers.TryParse(id, out var manager))
             {
@@ -71,7 +86,7 @@ internal static class PackagesConfigurationFile
             throw Invalid("$.packages gives a package more than one owner:" + string.Concat(messages.Select(static m => "\n- " + m)));
         }
 
-        return (result.Value, configuration.MinimumReleaseAgeDays);
+        return new PackagesConfiguration(result.Value, minimumAge);
     }
 
     private static PackageRequirement ParseEntry(string manager, int index, string? entry)

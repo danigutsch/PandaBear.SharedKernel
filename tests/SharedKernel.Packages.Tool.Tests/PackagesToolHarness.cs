@@ -38,7 +38,7 @@ internal static class PackagesToolHarness
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
         var exitCode = await PackagesCommandLine
-            .Create(root, resolve, runner)
+            .Create(root, new FakeExecutables(resolve), runner)
             .Parse(["plan", "--root", root, .. arguments])
             .InvokeAsync(new InvocationConfiguration { Output = output, Error = error, ProcessTerminationTimeout = null }, TestContext.Current.CancellationToken);
         return (exitCode, output.ToString(), error.ToString());
@@ -54,7 +54,7 @@ internal static class PackagesToolHarness
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
         var exitCode = await PackagesCommandLine
-            .Create(workingDirectory, resolve, runner)
+            .Create(workingDirectory, new FakeExecutables(resolve), runner)
             .Parse(arguments)
             .InvokeAsync(new InvocationConfiguration { Output = output, Error = error, ProcessTerminationTimeout = null }, TestContext.Current.CancellationToken);
         return (exitCode, output.ToString(), error.ToString());

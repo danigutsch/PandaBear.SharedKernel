@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PandaBear.Packages.Tool;
+namespace PandaBear.Packages;
 
 /// <summary>
 /// Source-generated metadata for <c>.config/sharedkernel-packages.json</c>. Property names are camelCase and match
@@ -13,5 +13,5 @@ namespace PandaBear.Packages.Tool;
     RespectRequiredConstructorParameters = true,
     UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
     AllowDuplicateProperties = false)]
-[JsonSerializable(typeof(PackagesConfiguration))]
+[JsonSerializable(typeof(PackagesConfigurationDocument))]
 internal sealed partial class PackagesConfigurationJsonContext : JsonSerializerContext;

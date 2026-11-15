@@ -1,22 +1,48 @@
 # PandaBear.SharedKernel.Packages
 
-A small model of the packages on a machine: validated names and versions, a reader for installed packages, and a
-read-only comparison with what should be installed. Targets .NET 10. It installs, removes, and updates nothing.
+A small model of the packages on a machine and the read-only engine behind `sharedkernel-packages`: validated names and
+versions, the `.config/sharedkernel-packages.json` declaration, readers for installed packages, a comparison with what
+should be installed, and update decisions against advisories and a minimum release age. Targets .NET 10. It installs,
+removes, and updates nothing.
 
 ```csharp
 using PandaBear.Packages;
 using PandaBear.Processes;
 
-var reader = new AptPackageReader(new BoundedProcessRunner(), "/usr/bin/dpkg-query");
-var installed = (await reader.ListInstalled(ct)).Value;
+var configuration = await PackagesConfiguration.Read(repositoryRoot, ct);
+var inventory = new PackageInventory(new BoundedProcessRunner(), PathExecutableResolver.Default);
 
-PackageRequirement[] wanted = [new(PackageName.Create("git").Value), new(PackageName.Create("ripgrep").Value, PackageVersion.Create("14.1.0-1").Value)];
-foreach (var change in PackagePlanner.Plan(wanted, installed))
+var plan = await inventory.Plan(configuration.Packages, ct);
+foreach (var manager in plan.Managers)
 {
-    Console.WriteLine($"{change.Kind}: {change.Requirement.Name}");
+    foreach (var change in manager.Changes)
+    {
+        Console.WriteLine($"{PackageManagers.Id(manager.Manager)}: {change}");
+    }
 }
+
+var updates = await inventory.CheckUpdates(
+    configuration.Packages, configuration.MinimumReleaseAge ?? MinimumReleaseAge.FromDays(7).Value,
+    NetworkAccess.Allowed, UpdateSources.CreateDefault, ct);
 ```
 
+- `PackagesConfiguration.Read` reads `.config/sharedkernel-packages.json` under a root through
+  `PandaBear.SharedKernel.ConfigurationFiles` (at most 1 MiB, no symbolic links, strict source-generated JSON) and
+  validates it: version 1, known manager IDs, `name` or `name=version` entries, one owner per package, and an optional
+  `minimumReleaseAgeDays` from 0 to 3650. Any problem throws `InvalidOperationException` whose message names the file
+  and the JSON path.
+- `PackageInventory` is the engine. It takes an `IProcessRunner` and an `IExecutableResolver` and returns reports, not
+  text: the host decides how to print them and which exit codes they map to. `Plan` finds every manager's listing
+  program first and runs nothing when one is missing (`PackagePlanReport.MissingTools`); otherwise each `ManagerPlan`
+  carries its changes or the reason its installed list could not be read. `CheckUpdates` judges the declared, installed,
+  unpinned cargo and npm packages; other managers are `Unsupported`, pinned packages and packages the registry does not
+  know are listed per `ManagerUpdates`, and a failed list or lookup gives that manager an `Error` and no decisions. It
+  creates the `UpdateSources` only when there is a manager to check and disposes them before it returns.
+  `PackageUpdatesReport.HasFailure` and `HasSkipped` tell a complete answer from a partial one. Error texts can carry
+  tool or registry output; escape them before printing.
+- `UpdateSources` bundles the advisory, release-date, and latest-version sources with the clock.
+  `UpdateSources.CreateDefault()` builds `OsvAdvisorySource` and `RegistryReleaseSource` over one HTTP client from
+  `PackageHttp.CreateHandler()` and contacts nothing until asked.
 - `PackageName` and `PackageVersion` are value objects. `Create` returns a `Result` with a validation error that never
   repeats the input. Names and versions are kept exactly as written; versions only compare for equality, because
   ordering is specific to each package manager.
@@ -55,7 +81,10 @@ foreach (var change in PackagePlanner.Plan(wanted, installed))
   every other lookup succeeded. See the
   [advisory ADR](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/adr/20261109-package-advisories.md).
 
-Snap and Homebrew readers and applying changes are separate packages and issues; see the
+The package manager readers and the OSV and registry sources stay in this package rather than in
+`SharedKernel.Packages.<Provider>` libraries: the managers are a closed `PackageManagerKind` set that the configuration
+format names, so a new manager changes this package either way, and none of them adds a package dependency a consumer
+could avoid. Applying changes is a separate issue; see the
 [package management tooling epic](https://github.com/danigutsch/PandaBear.SharedKernel/issues/344).
 
 ## Limits to know

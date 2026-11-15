@@ -9,16 +9,17 @@ internal static class PackagesCommandLine
 {
     /// <summary>Creates the root command.</summary>
     /// <param name="workingDirectory">The directory that a relative <c>--root</c> and the default root are resolved from.</param>
-    /// <param name="resolveExecutable">Finds a program by name and returns its absolute path, or <see langword="null"/>.</param>
+    /// <param name="executables">Finds a program by name and returns its absolute path.</param>
     /// <param name="runner">Runs the package tools.</param>
     /// <param name="createUpdateSources">Creates the network sources for <c>updates</c>; the real ones when <see langword="null"/>. Called only after <c>--allow-network</c>.</param>
     /// <exception cref="ArgumentNullException">A required argument is <see langword="null"/>.</exception>
-    public static RootCommand Create(string workingDirectory, Func<string, string?> resolveExecutable, IProcessRunner runner, Func<UpdateSources>? createUpdateSources = null)
+    public static RootCommand Create(string workingDirectory, IExecutableResolver executables, IProcessRunner runner, Func<UpdateSources>? createUpdateSources = null)
     {
         ArgumentNullException.ThrowIfNull(workingDirectory);
-        ArgumentNullException.ThrowIfNull(resolveExecutable);
+        ArgumentNullException.ThrowIfNull(executables);
         ArgumentNullException.ThrowIfNull(runner);
 
+        var inventory = new PackageInventory(runner, executables);
         var rootOption = new Option<string>("--root")
         {
             Description = "Repository root directory. Defaults to the current directory.",
@@ -32,8 +33,7 @@ internal static class PackagesCommandLine
             parseResult,
             (output, error) => PlanCommand.Run(
                 Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory),
-                resolveExecutable,
-                runner,
+                inventory,
                 output,
                 error,
                 cancellationToken),
@@ -44,7 +44,7 @@ internal static class PackagesCommandLine
         // Consumer caller tests parse command lines with [diagram] without running them.
         root.Directives.Add(new DiagramDirective());
         root.Subcommands.Add(plan);
-        root.Subcommands.Add(UpdatesCommand.Create(workingDirectory, resolveExecutable, runner, createUpdateSources ?? UpdateSources.CreateDefault));
+        root.Subcommands.Add(UpdatesCommand.Create(workingDirectory, inventory, createUpdateSources ?? UpdateSources.CreateDefault));
         return root;
     }
 
@@ -66,4 +66,17 @@ internal static class PackagesCommandLine
             return PlanCommand.FailureExitCode;
         }
     }
+
+    /// <summary>Prints that each missing program was not found.</summary>
+    internal static async Task WriteMissing(TextWriter error, IReadOnlyList<MissingTool> missing, CancellationToken cancellationToken)
+    {
+        foreach (var tool in missing)
+        {
+            await error.WriteLineAsync($"{tool.Executable} was not found on PATH; {PackageManagers.Id(tool.Manager)} packages are declared.".AsMemory(), cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>Prints <paramref name="detail"/> for <paramref name="manager"/> with its control characters escaped.</summary>
+    internal static Task WriteError(TextWriter error, PackageManagerKind manager, string detail, CancellationToken cancellationToken) =>
+        error.WriteLineAsync($"{PackageManagers.Id(manager)}: {ControlCharacters.Escape(detail)}".AsMemory(), cancellationToken);
 }
