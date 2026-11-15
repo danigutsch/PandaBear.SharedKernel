@@ -58,6 +58,7 @@ public sealed class WorkflowContractTests
                 + "          sparse-checkout: |\n            src\n            tools\n          sparse-checkout-cone-mode: true\n      - uses:",
             StringComparison.Ordinal);
         job.ShouldContain("          global-json-file: source-build/global.json\n", StringComparison.Ordinal);
+        job.ShouldNotContain("./.github/actions/", StringComparison.Ordinal, "The sparse checkout has no .github folder, so a local action cannot run.");
         job.ShouldContain(
             "        working-directory: source-build\n        shell: bash\n        env:\n          TOOL: ${{ matrix.tool }}\n"
                 + "        run: dotnet build \"tools/$TOOL\" -c Release\n",

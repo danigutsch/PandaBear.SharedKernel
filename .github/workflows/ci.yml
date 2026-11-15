@@ -99,7 +99,9 @@ jobs:
             src
             tools
           sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/setup-dotnet-tool
+      # The sparse checkout has no .github folder, so the shared setup action is not available here. The tools build the
+      # SDK's own framework, so no other runtime is needed.
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
         with:
           global-json-file: source-build/global.json
       - name: Build the tool from its checkout
