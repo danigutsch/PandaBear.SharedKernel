@@ -26,17 +26,6 @@ internal static class RoadmapGitHubPublicationTestOperations
     /// <summary>The tree SHA of the base commit.</summary>
     public const string BaseTreeSha = "2222222222222222222222222222222222222222";
 
-    /// <summary>Writes <c>roadmap/items/RM-100.json</c> in the workspace and captures it as the only changed file.</summary>
-    /// <param name="workspace">The workspace that receives the file.</param>
-    public static RoadmapGitChangeSet CreateChanges(TemporaryRepoConfigWorkspace workspace)
-    {
-        ArgumentNullException.ThrowIfNull(workspace);
-        workspace.WriteFile("roadmap/items/RM-100.json", "{}\n");
-        return RoadmapGitChangeGuard.Capture(
-            workspace.RootPath,
-            RoadmapGitStatusTestData.Ordinary("roadmap/items/RM-100.json"));
-    }
-
     /// <summary>Queues the responses for reading the default branch and base commit and creating the blob, tree, and commit.</summary>
     /// <param name="handler">The handler that receives the queued responses.</param>
     /// <param name="verified">Whether the created commit reports a valid signature; otherwise it reports <c>unsigned</c>.</param>

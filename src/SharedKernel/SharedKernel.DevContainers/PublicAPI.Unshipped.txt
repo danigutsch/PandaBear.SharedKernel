@@ -1,0 +1,107 @@
+#nullable enable
+const PandaBear.DevContainers.DevcontainerVerification.DefaultLogDirectory = "TestResults/devcontainer-smoke" -> string!
+const PandaBear.DevContainers.DevcontainerVerification.ToolsDirectory = "TestResults/devcontainer-tools" -> string!
+override PandaBear.DevContainers.DevcontainerCliPins.Equals(object? obj) -> bool
+override PandaBear.DevContainers.DevcontainerCliPins.GetHashCode() -> int
+override PandaBear.DevContainers.DevcontainerCliPins.ToString() -> string!
+override PandaBear.DevContainers.DevcontainerHost.Equals(object? obj) -> bool
+override PandaBear.DevContainers.DevcontainerHost.GetHashCode() -> int
+override PandaBear.DevContainers.DevcontainerHost.ToString() -> string!
+override PandaBear.DevContainers.DevcontainerVerificationOptions.Equals(object? obj) -> bool
+override PandaBear.DevContainers.DevcontainerVerificationOptions.GetHashCode() -> int
+override PandaBear.DevContainers.DevcontainerVerificationOptions.ToString() -> string!
+override PandaBear.DevContainers.PodmanCommandResult.Equals(object? obj) -> bool
+override PandaBear.DevContainers.PodmanCommandResult.GetHashCode() -> int
+override PandaBear.DevContainers.PodmanCommandResult.ToString() -> string!
+override PandaBear.DevContainers.PodmanDnsHost.Equals(object? obj) -> bool
+override PandaBear.DevContainers.PodmanDnsHost.GetHashCode() -> int
+override PandaBear.DevContainers.PodmanDnsHost.ToString() -> string!
+PandaBear.DevContainers.DevcontainerCliPins
+PandaBear.DevContainers.DevcontainerCliPins.<Clone>$() -> PandaBear.DevContainers.DevcontainerCliPins!
+PandaBear.DevContainers.DevcontainerCliPins.CliArchive.get -> System.Uri!
+PandaBear.DevContainers.DevcontainerCliPins.CliArchive.init -> void
+PandaBear.DevContainers.DevcontainerCliPins.CliIntegrity.get -> string!
+PandaBear.DevContainers.DevcontainerCliPins.CliIntegrity.init -> void
+PandaBear.DevContainers.DevcontainerCliPins.CliVersion.get -> string!
+PandaBear.DevContainers.DevcontainerCliPins.CliVersion.init -> void
+PandaBear.DevContainers.DevcontainerCliPins.Deconstruct(out string! NodeVersion, out System.Uri! NodeArchive, out string! NodeSha256, out string! CliVersion, out System.Uri! CliArchive, out string! CliIntegrity) -> void
+PandaBear.DevContainers.DevcontainerCliPins.DevcontainerCliPins(string! NodeVersion, System.Uri! NodeArchive, string! NodeSha256, string! CliVersion, System.Uri! CliArchive, string! CliIntegrity) -> void
+PandaBear.DevContainers.DevcontainerCliPins.Equals(PandaBear.DevContainers.DevcontainerCliPins? other) -> bool
+PandaBear.DevContainers.DevcontainerCliPins.NodeArchive.get -> System.Uri!
+PandaBear.DevContainers.DevcontainerCliPins.NodeArchive.init -> void
+PandaBear.DevContainers.DevcontainerCliPins.NodeSha256.get -> string!
+PandaBear.DevContainers.DevcontainerCliPins.NodeSha256.init -> void
+PandaBear.DevContainers.DevcontainerCliPins.NodeVersion.get -> string!
+PandaBear.DevContainers.DevcontainerCliPins.NodeVersion.init -> void
+PandaBear.DevContainers.DevcontainerHost
+PandaBear.DevContainers.DevcontainerHost.<Clone>$() -> PandaBear.DevContainers.DevcontainerHost!
+PandaBear.DevContainers.DevcontainerHost.Deconstruct(out string? DockerExecutable, out bool IsLinuxX64, out System.Net.Http.HttpClient? HttpClient, out PandaBear.DevContainers.DevcontainerCliPins! Pins) -> void
+PandaBear.DevContainers.DevcontainerHost.DevcontainerHost(string? DockerExecutable, bool IsLinuxX64, System.Net.Http.HttpClient? HttpClient, PandaBear.DevContainers.DevcontainerCliPins! Pins) -> void
+PandaBear.DevContainers.DevcontainerHost.DockerExecutable.get -> string?
+PandaBear.DevContainers.DevcontainerHost.DockerExecutable.init -> void
+PandaBear.DevContainers.DevcontainerHost.Equals(PandaBear.DevContainers.DevcontainerHost? other) -> bool
+PandaBear.DevContainers.DevcontainerHost.HttpClient.get -> System.Net.Http.HttpClient?
+PandaBear.DevContainers.DevcontainerHost.HttpClient.init -> void
+PandaBear.DevContainers.DevcontainerHost.IsLinuxX64.get -> bool
+PandaBear.DevContainers.DevcontainerHost.IsLinuxX64.init -> void
+PandaBear.DevContainers.DevcontainerHost.Pins.get -> PandaBear.DevContainers.DevcontainerCliPins!
+PandaBear.DevContainers.DevcontainerHost.Pins.init -> void
+PandaBear.DevContainers.DevcontainerVerification
+PandaBear.DevContainers.DevcontainerVerificationOptions
+PandaBear.DevContainers.DevcontainerVerificationOptions.<Clone>$() -> PandaBear.DevContainers.DevcontainerVerificationOptions!
+PandaBear.DevContainers.DevcontainerVerificationOptions.Commands.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.DevContainers.DevcontainerVerificationOptions.Commands.init -> void
+PandaBear.DevContainers.DevcontainerVerificationOptions.Deconstruct(out string! Root, out System.Collections.Generic.IReadOnlyList<string!>! Commands, out string! LogDirectory, out bool KeepContainer, out string? DevcontainerCli) -> void
+PandaBear.DevContainers.DevcontainerVerificationOptions.DevcontainerCli.get -> string?
+PandaBear.DevContainers.DevcontainerVerificationOptions.DevcontainerCli.init -> void
+PandaBear.DevContainers.DevcontainerVerificationOptions.DevcontainerVerificationOptions(string! Root, System.Collections.Generic.IReadOnlyList<string!>! Commands, string! LogDirectory, bool KeepContainer, string? DevcontainerCli) -> void
+PandaBear.DevContainers.DevcontainerVerificationOptions.Equals(PandaBear.DevContainers.DevcontainerVerificationOptions? other) -> bool
+PandaBear.DevContainers.DevcontainerVerificationOptions.KeepContainer.get -> bool
+PandaBear.DevContainers.DevcontainerVerificationOptions.KeepContainer.init -> void
+PandaBear.DevContainers.DevcontainerVerificationOptions.LogDirectory.get -> string!
+PandaBear.DevContainers.DevcontainerVerificationOptions.LogDirectory.init -> void
+PandaBear.DevContainers.DevcontainerVerificationOptions.Root.get -> string!
+PandaBear.DevContainers.DevcontainerVerificationOptions.Root.init -> void
+PandaBear.DevContainers.PodmanCommandResult
+PandaBear.DevContainers.PodmanCommandResult.<Clone>$() -> PandaBear.DevContainers.PodmanCommandResult!
+PandaBear.DevContainers.PodmanCommandResult.Deconstruct(out int ExitCode, out string! StandardOutput, out string! StandardError) -> void
+PandaBear.DevContainers.PodmanCommandResult.Equals(PandaBear.DevContainers.PodmanCommandResult? other) -> bool
+PandaBear.DevContainers.PodmanCommandResult.ExitCode.get -> int
+PandaBear.DevContainers.PodmanCommandResult.ExitCode.init -> void
+PandaBear.DevContainers.PodmanCommandResult.PodmanCommandResult(int ExitCode, string! StandardOutput, string! StandardError) -> void
+PandaBear.DevContainers.PodmanCommandResult.StandardError.get -> string!
+PandaBear.DevContainers.PodmanCommandResult.StandardError.init -> void
+PandaBear.DevContainers.PodmanCommandResult.StandardOutput.get -> string!
+PandaBear.DevContainers.PodmanCommandResult.StandardOutput.init -> void
+PandaBear.DevContainers.PodmanDnsHost
+PandaBear.DevContainers.PodmanDnsHost.<Clone>$() -> PandaBear.DevContainers.PodmanDnsHost!
+PandaBear.DevContainers.PodmanDnsHost.Deconstruct(out string? PodmanExecutable, out string? StatExecutable, out string! ProcRoot, out bool IsLinux, out System.Func<System.Diagnostics.ProcessStartInfo!, System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.DevContainers.PodmanCommandResult!>!>! RunProcess) -> void
+PandaBear.DevContainers.PodmanDnsHost.Equals(PandaBear.DevContainers.PodmanDnsHost? other) -> bool
+PandaBear.DevContainers.PodmanDnsHost.IsLinux.get -> bool
+PandaBear.DevContainers.PodmanDnsHost.IsLinux.init -> void
+PandaBear.DevContainers.PodmanDnsHost.PodmanDnsHost(string? PodmanExecutable, string? StatExecutable, string! ProcRoot, bool IsLinux, System.Func<System.Diagnostics.ProcessStartInfo!, System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.DevContainers.PodmanCommandResult!>!>! RunProcess) -> void
+PandaBear.DevContainers.PodmanDnsHost.PodmanExecutable.get -> string?
+PandaBear.DevContainers.PodmanDnsHost.PodmanExecutable.init -> void
+PandaBear.DevContainers.PodmanDnsHost.ProcRoot.get -> string!
+PandaBear.DevContainers.PodmanDnsHost.ProcRoot.init -> void
+PandaBear.DevContainers.PodmanDnsHost.RunProcess.get -> System.Func<System.Diagnostics.ProcessStartInfo!, System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.DevContainers.PodmanCommandResult!>!>!
+PandaBear.DevContainers.PodmanDnsHost.RunProcess.init -> void
+PandaBear.DevContainers.PodmanDnsHost.StatExecutable.get -> string?
+PandaBear.DevContainers.PodmanDnsHost.StatExecutable.init -> void
+PandaBear.DevContainers.PodmanDnsPreflight
+static PandaBear.DevContainers.DevcontainerCliPins.Default.get -> PandaBear.DevContainers.DevcontainerCliPins!
+static PandaBear.DevContainers.DevcontainerCliPins.operator !=(PandaBear.DevContainers.DevcontainerCliPins? left, PandaBear.DevContainers.DevcontainerCliPins? right) -> bool
+static PandaBear.DevContainers.DevcontainerCliPins.operator ==(PandaBear.DevContainers.DevcontainerCliPins? left, PandaBear.DevContainers.DevcontainerCliPins? right) -> bool
+static PandaBear.DevContainers.DevcontainerHost.Current() -> PandaBear.DevContainers.DevcontainerHost!
+static PandaBear.DevContainers.DevcontainerHost.operator !=(PandaBear.DevContainers.DevcontainerHost? left, PandaBear.DevContainers.DevcontainerHost? right) -> bool
+static PandaBear.DevContainers.DevcontainerHost.operator ==(PandaBear.DevContainers.DevcontainerHost? left, PandaBear.DevContainers.DevcontainerHost? right) -> bool
+static PandaBear.DevContainers.DevcontainerVerification.Run(PandaBear.DevContainers.DevcontainerVerificationOptions! options, PandaBear.DevContainers.DevcontainerHost! host, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+static PandaBear.DevContainers.DevcontainerVerificationOptions.operator !=(PandaBear.DevContainers.DevcontainerVerificationOptions? left, PandaBear.DevContainers.DevcontainerVerificationOptions? right) -> bool
+static PandaBear.DevContainers.DevcontainerVerificationOptions.operator ==(PandaBear.DevContainers.DevcontainerVerificationOptions? left, PandaBear.DevContainers.DevcontainerVerificationOptions? right) -> bool
+static PandaBear.DevContainers.PodmanCommandResult.operator !=(PandaBear.DevContainers.PodmanCommandResult? left, PandaBear.DevContainers.PodmanCommandResult? right) -> bool
+static PandaBear.DevContainers.PodmanCommandResult.operator ==(PandaBear.DevContainers.PodmanCommandResult? left, PandaBear.DevContainers.PodmanCommandResult? right) -> bool
+static PandaBear.DevContainers.PodmanDnsHost.Current() -> PandaBear.DevContainers.PodmanDnsHost!
+static PandaBear.DevContainers.PodmanDnsHost.operator !=(PandaBear.DevContainers.PodmanDnsHost? left, PandaBear.DevContainers.PodmanDnsHost? right) -> bool
+static PandaBear.DevContainers.PodmanDnsHost.operator ==(PandaBear.DevContainers.PodmanDnsHost? left, PandaBear.DevContainers.PodmanDnsHost? right) -> bool
+static PandaBear.DevContainers.PodmanDnsPreflight.Run(PandaBear.DevContainers.PodmanDnsHost! host, bool quiet, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static PandaBear.DevContainers.PodmanDnsPreflight.RunProcess(System.Diagnostics.ProcessStartInfo! startInfo, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.DevContainers.PodmanCommandResult!>!

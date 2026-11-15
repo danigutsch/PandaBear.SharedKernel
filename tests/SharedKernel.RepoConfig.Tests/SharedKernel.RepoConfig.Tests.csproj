@@ -9,7 +9,10 @@
         <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="PandaBear.Testing.Http" />
         <Using Include="PandaBear.Testing" />
+        <Using Include="PandaBear.DevContainers" />
         <Using Include="PandaBear.RepoConfig.Tool" />
+        <Using Include="PandaBear.Repositories" />
+        <Using Include="PandaBear.Repositories.GitHub" />
         <Using Include="Xunit" />
     </ItemGroup>
 

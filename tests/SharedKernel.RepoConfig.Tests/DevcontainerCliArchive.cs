@@ -40,24 +40,6 @@ internal static class DevcontainerCliArchive
         return archive.ToArray();
     }
 
-    /// <summary>Runs the bootstrap against the given Node.js and CLI archives in a temporary directory, then asserts that it left no files behind.</summary>
-    public static async Task Bootstrap(byte[] node, byte[] cli)
-    {
-        using var directory = new TemporaryDirectory();
-        using var handler = new TestHttpMessageHandler();
-        handler.Enqueue(Response(node));
-        handler.Enqueue(Response(cli));
-        using var httpClient = new HttpClient(handler);
-        try
-        {
-            await DevcontainerCliBootstrap.Ensure(directory.Path, Pins(node, cli), httpClient, TestContext.Current.CancellationToken);
-        }
-        finally
-        {
-            Directory.EnumerateFiles(directory.Path, "*", SearchOption.AllDirectories).ShouldBeEmpty();
-        }
-    }
-
     /// <summary>Builds a Node.js archive whose <c>node</c> binary holds <paramref name="nodeScript"/>, with an <c>npm</c> link and a README.</summary>
     public static byte[] NodeArchive(string nodeScript) =>
         Create(

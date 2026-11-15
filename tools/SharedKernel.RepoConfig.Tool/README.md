@@ -5,9 +5,11 @@
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
 `sharedkernel-repo` maintains repository roadmap configuration, its optional GitHub projection, dependency
-snapshots, and repository checks. The tool holds generic engines; the consuming repository owns its policy and
-data, such as the license exceptions and documentation link scope in `.config/sharedkernel-repo.json`, its workflows,
-and protected-environment approvals.
+snapshots, and repository checks. It is a command-line wrapper over generic engines: the forge-neutral
+`PandaBear.SharedKernel.Repositories` library, its GitHub provider `PandaBear.SharedKernel.Repositories.GitHub`, and
+`PandaBear.SharedKernel.DevContainers` for the dev container and Podman checks. The consuming repository owns its policy
+and data, such as the license exceptions and documentation link scope in `.config/sharedkernel-repo.json`, its
+workflows, and protected-environment approvals.
 
 ## Prerequisites
 

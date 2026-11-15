@@ -1,0 +1,39 @@
+using PandaBear.IO;
+
+namespace PandaBear.Repositories.GitHub;
+
+/// <summary>Reads HTTP content while enforcing a maximum size.</summary>
+internal static class BoundedHttpContentReader
+{
+    /// <summary>Reads the content into a byte array and throws with the given message when it exceeds the limit.</summary>
+    /// <param name="content">Content to read.</param>
+    /// <param name="maxBytes">Maximum number of bytes allowed.</param>
+    /// <param name="limitMessage">Message of the exception thrown when the limit is exceeded.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="maxBytes"/> is not positive.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="limitMessage"/> is <see langword="null"/>, empty, or white-space.</exception>
+    /// <exception cref="InvalidOperationException">The content exceeds <paramref name="maxBytes"/>.</exception>
+    public static async Task<byte[]> Read(
+        HttpContent content,
+        int maxBytes,
+        string limitMessage,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(content);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxBytes);
+        ArgumentException.ThrowIfNullOrWhiteSpace(limitMessage);
+
+        if (content.Headers.ContentLength > maxBytes)
+        {
+            throw new InvalidOperationException(limitMessage);
+        }
+
+        var source = await content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        await using (source.ConfigureAwait(false))
+        {
+            return await BoundedReader.ReadToEnd(source, maxBytes, cancellationToken).ConfigureAwait(false)
+                ?? throw new InvalidOperationException(limitMessage);
+        }
+    }
+}

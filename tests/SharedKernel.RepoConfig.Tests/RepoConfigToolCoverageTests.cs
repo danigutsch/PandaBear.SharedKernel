@@ -232,7 +232,8 @@ public sealed class RepoConfigToolCoverageTests
         var project = RoadmapProject.Load(workspace.RootPath);
         using var handler = TestHttpMessageHandler.FromException(new HttpRequestException("network unavailable"));
         using var httpClient = new HttpClient(handler);
-        var syncer = new GitHubRoadmapSyncer(project, httpClient);
+        using var connection = new GitHubConnection(httpClient);
+        var syncer = new GitHubRoadmapSyncer(project, connection);
 
         // Act
         Func<Task> action = () => syncer.Apply(TestContext.Current.CancellationToken);
@@ -272,22 +273,6 @@ public sealed class RepoConfigToolCoverageTests
     }
 
     [Fact]
-    public void Try_parse_JSON_file_reports_read_failures_as_issues()
-    {
-        // Arrange
-        List<RepoConfigIssue> issues = [];
-
-        // Act
-        var document = RepoConfigVerifier.TryParseJsonFile("/repository", "/repository/roadmap/config.json", issues, _ => throw new IOException("simulated read failure"));
-
-        // Assert
-        document.ShouldBeNull();
-        issues.Count.ShouldBe(1);
-        issues[0].Path.ShouldBe("roadmap/config.json");
-        issues[0].Message.ShouldBe("Unable to read JSON: simulated read failure");
-    }
-
-    [Fact]
     public async Task GitHub_sync_force_reports_safe_diagnostic_for_timeouts()
     {
         // Arrange
@@ -301,7 +286,7 @@ public sealed class RepoConfigToolCoverageTests
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
         var itemText = workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json");
         workspace.WriteFile("roadmap/items/RM-001-roadmap-gitops.json", itemText.Replace("\"labels\": [", "\"integrations\": { \"github\": { \"issue\": 997 } },\n  \"labels\": [", StringComparison.Ordinal));
-        using var handler = TestHttpMessageHandler.FromException(GitHubRequestTimeout.Create("sync"));
+        using var handler = TestHttpMessageHandler.FromException(new TimeoutException("GitHub sync timed out after 30 seconds."));
         using var httpClient = new HttpClient(handler);
 
         // Act

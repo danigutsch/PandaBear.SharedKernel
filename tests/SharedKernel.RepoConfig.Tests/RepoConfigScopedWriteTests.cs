@@ -38,7 +38,7 @@ public sealed class RepoConfigScopedWriteTests
             File.CreateSymbolicLink(Path.Combine(root, "roadmap/config.json"), target);
         }
 
-        Action initialize = () => RepoConfigInitializer.Initialize(root);
+        Action initialize = () => RoadmapInitializer.Initialize(root);
 
         // Act
         initialize.ShouldThrow<InvalidOperationException>();
@@ -59,7 +59,7 @@ public sealed class RepoConfigScopedWriteTests
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var outside = new TemporaryRepoConfigWorkspace();
-        RepoConfigInitializer.Initialize(outside.RootPath);
+        RoadmapInitializer.Initialize(outside.RootPath);
         var original = outside.ReadFile("roadmap/config.json");
         if (linkedParent)
         {
@@ -71,7 +71,7 @@ public sealed class RepoConfigScopedWriteTests
             File.CreateSymbolicLink(Path.Combine(workspace.RootPath, "roadmap/config.json"), Path.Combine(outside.RootPath, "roadmap/config.json"));
         }
 
-        Action set = () => RepoConfigSetter.Set(workspace.RootPath, "github.repository", "new/repository");
+        Action set = () => RoadmapConfigSetter.Set(workspace.RootPath, "github.repository", "new/repository");
 
         // Act
         set.ShouldThrow<InvalidOperationException>();
@@ -86,7 +86,7 @@ public sealed class RepoConfigScopedWriteTests
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var outside = new TemporaryRepoConfigWorkspace();
-        RepoConfigInitializer.Initialize(workspace.RootPath);
+        RoadmapInitializer.Initialize(workspace.RootPath);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
         const string itemPath = "roadmap/items/RM-001-roadmap-gitops.json";
         var content = workspace.ReadFile(itemPath).Replace("\"labels\": [", "\"integrations\": { \"github\": { \"issue\": \"create\" } },\n  \"labels\": [", StringComparison.Ordinal);
@@ -98,7 +98,8 @@ public sealed class RepoConfigScopedWriteTests
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.Created, "{ \"number\": 1200 }");
         using var client = new HttpClient(handler);
-        var syncer = new GitHubRoadmapSyncer(project, client);
+        using var clientConnection = new GitHubConnection(client);
+        var syncer = new GitHubRoadmapSyncer(project, clientConnection);
 
         // Act
         Func<Task> sync = () => syncer.Apply(TestContext.Current.CancellationToken);
@@ -115,7 +116,7 @@ public sealed class RepoConfigScopedWriteTests
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var outside = new TemporaryRepoConfigWorkspace();
-        RepoConfigInitializer.Initialize(workspace.RootPath);
+        RoadmapInitializer.Initialize(workspace.RootPath);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
         const string itemPath = "roadmap/items/RM-001-roadmap-gitops.json";
         workspace.WriteFile(itemPath, workspace.ReadFile(itemPath).Replace("\"labels\": [", "\"integrations\": { \"github\": { \"issue\": \"create\" } },\n  \"labels\": [", StringComparison.Ordinal));
@@ -127,7 +128,8 @@ public sealed class RepoConfigScopedWriteTests
         handler.EnqueueJson(HttpStatusCode.OK, GitHubSyncTestResponseFactory.IssueMetadata(1200));
         handler.EnqueueJson(HttpStatusCode.OK, "{}");
         using var client = new HttpClient(handler);
-        var syncer = new GitHubRoadmapSyncer(RoadmapProject.Load(workspace.RootPath), client);
+        using var clientConnection = new GitHubConnection(client);
+        var syncer = new GitHubRoadmapSyncer(RoadmapProject.Load(workspace.RootPath), clientConnection);
 
         // Act
         await syncer.Apply(TestContext.Current.CancellationToken);
@@ -144,7 +146,7 @@ public sealed class RepoConfigScopedWriteTests
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var outside = new TemporaryRepoConfigWorkspace();
-        RepoConfigInitializer.Initialize(workspace.RootPath);
+        RoadmapInitializer.Initialize(workspace.RootPath);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
         const string itemPath = "roadmap/items/RM-001-roadmap-gitops.json";
         workspace.WriteFile(itemPath, workspace.ReadFile(itemPath).Replace("\"labels\": [", "\"integrations\": { \"github\": { \"issue\": \"create\" } },\n  \"labels\": [", StringComparison.Ordinal));
@@ -159,7 +161,8 @@ public sealed class RepoConfigScopedWriteTests
                 File.CreateSymbolicLink(Path.Combine(workspace.RootPath, itemPath), Path.Combine(outside.RootPath, "target.json"));
             });
         using var client = new HttpClient(handler);
-        var syncer = new GitHubRoadmapSyncer(project, client);
+        using var clientConnection = new GitHubConnection(client);
+        var syncer = new GitHubRoadmapSyncer(project, clientConnection);
 
         // Act
         Func<Task> sync = () => syncer.Apply(TestContext.Current.CancellationToken);

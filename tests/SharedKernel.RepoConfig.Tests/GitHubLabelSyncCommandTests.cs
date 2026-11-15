@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Time.Testing;
 
 using static PandaBear.RepoConfig.Tests.GitHubLabelSyncTestOperations;
 
@@ -298,25 +297,5 @@ public sealed class GitHubLabelSyncCommandTests
         // Assert
         exitCode.ShouldBe(1);
         error.ShouldBe("sharedkernel-repo: GitHub label sync response exceeded the allowed size." + Environment.NewLine);
-    }
-
-    [Fact]
-    public async Task Sync_labels_times_out_a_request_that_github_does_not_answer()
-    {
-        // Arrange
-        using var workspace = CreateWorkspace(Configuration);
-        var timeProvider = new FakeTimeProvider();
-        using var handler = new TimingOutHttpMessageHandler(timeProvider);
-        using var httpClient = new HttpClient(handler);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-
-        // Act
-        var action = (Func<Task>)(async () => await GitHubLabelSyncCommand.Run(
-            workspace.RootPath, "owner/repository", force: true, httpClient, timeProvider, output, TestContext.Current.CancellationToken));
-        var exception = await action.ShouldThrow<TimeoutException>();
-
-        // Assert
-        exception.Message.ShouldBe("GitHub label sync timed out after 30 seconds.");
-        output.ToString().ShouldBe(string.Empty);
     }
 }

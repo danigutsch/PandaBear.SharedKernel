@@ -22,9 +22,10 @@ internal static class RoadmapAutomationTestSetup
         using var handler = new TestHttpMessageHandler();
         GitHubRoadmapSnapshotTestOperations.Enqueue(handler, snapshot, head);
         using var httpClient = new HttpClient(handler);
+        using var connection = new GitHubConnection(httpClient);
         var service = new RoadmapAutomationService(
             workspace.RootPath,
-            httpClient,
+            connection,
             RoadmapAutomationTestGit.Create(head: head));
         await service.ApplyPlan(plan.PlanDigest, "owner/repository", cancellationToken);
     }
@@ -34,7 +35,7 @@ internal static class RoadmapAutomationTestSetup
     public static void Configure(TemporaryRepoConfigWorkspace workspace)
     {
         ArgumentNullException.ThrowIfNull(workspace);
-        _ = RepoConfigInitializer.Initialize(workspace.RootPath);
+        _ = RoadmapInitializer.Initialize(workspace.RootPath);
         GitHubRoadmapIntakeTestOperations.Configure(
             workspace,
             """
@@ -88,9 +89,10 @@ internal static class RoadmapAutomationTestSetup
         using var handler = new TestHttpMessageHandler();
         GitHubRoadmapSnapshotTestOperations.Enqueue(handler, snapshot);
         using var httpClient = new HttpClient(handler);
+        using var connection = new GitHubConnection(httpClient);
         var service = new RoadmapAutomationService(
             workspace.RootPath,
-            httpClient,
+            connection,
             RoadmapAutomationTestGit.Create());
         return await service.CreatePlan(42, "owner/repository", cancellationToken);
     }
@@ -121,9 +123,10 @@ internal static class RoadmapAutomationTestSetup
         using var handler = new TestHttpMessageHandler();
         GitHubRoadmapSnapshotTestOperations.Enqueue(handler, snapshot);
         using var httpClient = new HttpClient(handler);
+        using var connection = new GitHubConnection(httpClient);
         var service = new RoadmapAutomationService(
             workspace.RootPath,
-            httpClient,
+            connection,
             RoadmapAutomationTestGit.Create(status));
         var seal = await service.SealResult(plan.PlanDigest, artifactDigest, "owner/repository", cancellationToken);
         return (plan, seal);
@@ -145,7 +148,8 @@ internal static class RoadmapAutomationTestSetup
         using var handler = new TestHttpMessageHandler();
         GitHubRoadmapSnapshotTestOperations.Enqueue(handler, snapshot, head);
         using var httpClient = new HttpClient(handler);
-        var reconciler = new GitHubRoadmapReconciler(RoadmapProject.Load(workspace.RootPath), httpClient);
+        using var connection = new GitHubConnection(httpClient);
+        var reconciler = new GitHubRoadmapReconciler(RoadmapProject.Load(workspace.RootPath), connection);
         _ = await reconciler.Apply(cancellationToken);
     }
 }

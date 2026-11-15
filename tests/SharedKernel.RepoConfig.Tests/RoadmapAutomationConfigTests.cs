@@ -40,11 +40,11 @@ public sealed class RoadmapAutomationConfigTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        _ = RepoConfigInitializer.Initialize(workspace.RootPath);
+        _ = RoadmapInitializer.Initialize(workspace.RootPath);
         RoadmapConfigTestOperations.SetProperty(workspace, "automation", null);
 
         // Act
-        var (exitCode, _, error) = await RoadmapConfigTestOperations.Verify(workspace);
+        var (exitCode, _, error) = await RoadmapVerifyTestOperations.Verify(workspace);
 
         // Assert
         exitCode.ShouldBe(0, error);
@@ -60,11 +60,11 @@ public sealed class RoadmapAutomationConfigTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        _ = RepoConfigInitializer.Initialize(workspace.RootPath);
+        _ = RoadmapInitializer.Initialize(workspace.RootPath);
         RoadmapConfigTestOperations.SetProperty(workspace, "automation", JsonNode.Parse(automation));
 
         // Act
-        var (exitCode, _, error) = await RoadmapConfigTestOperations.Verify(workspace);
+        var (exitCode, _, error) = await RoadmapVerifyTestOperations.Verify(workspace);
 
         // Assert
         exitCode.ShouldBe(1);
@@ -76,11 +76,11 @@ public sealed class RoadmapAutomationConfigTests
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        _ = RepoConfigInitializer.Initialize(workspace.RootPath);
+        _ = RoadmapInitializer.Initialize(workspace.RootPath);
         RoadmapConfigTestOperations.SetProperty(workspace, "automation", new JsonObject { ["pullRequestBody"] = new string('b', 65537) });
 
         // Act
-        var (exitCode, _, error) = await RoadmapConfigTestOperations.Verify(workspace);
+        var (exitCode, _, error) = await RoadmapVerifyTestOperations.Verify(workspace);
 
         // Assert
         exitCode.ShouldBe(1);
