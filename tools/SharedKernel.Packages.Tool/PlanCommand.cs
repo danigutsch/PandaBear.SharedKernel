@@ -1,12 +1,10 @@
 using System.Globalization;
-using PandaBear.InputNormalization;
-using PandaBear.Processes;
 
 namespace PandaBear.Packages.Tool;
 
 /// <summary>
-/// Implements <c>plan</c>: reads the declaration, checks that every package has one owner, reads what each declared
-/// manager has installed, and prints what is missing or at another version. It changes nothing.
+/// Implements <c>plan</c>: reads the declaration, has <see cref="PackageInventory"/> compare it with the installed
+/// packages, and prints what is missing or at another version. It changes nothing.
 /// </summary>
 internal static class PlanCommand
 {
@@ -21,57 +19,27 @@ internal static class PlanCommand
     /// differs, and <see cref="FailureExitCode"/> when a tool cannot be found or read or the configuration is invalid.
     /// Nothing is run before the configuration is valid.
     /// </summary>
-    public static async Task<int> Run(
-        string root,
-        Func<string, string?> resolveExecutable,
-        IProcessRunner runner,
-        TextWriter output,
-        TextWriter error,
-        CancellationToken cancellationToken)
+    public static async Task<int> Run(string root, PackageInventory inventory, TextWriter output, TextWriter error, CancellationToken cancellationToken)
     {
-        var declared = await PackagesConfigurationFile.Read(root, cancellationToken).ConfigureAwait(false);
-
-        // Resolve every tool first: a missing tool fails the run before any tool is started.
-        var readers = new List<(PackageManagerKind Manager, IPackageReader Reader)>();
-        var missing = false;
-        foreach (var manager in declared.Managers)
+        var configuration = await PackagesConfiguration.Read(root, cancellationToken).ConfigureAwait(false);
+        var report = await inventory.Plan(configuration.Packages, cancellationToken).ConfigureAwait(false);
+        if (report.MissingTools.Count > 0)
         {
-            var command = Command(manager);
-            var path = resolveExecutable(command);
-            if (path is null)
-            {
-                await error.WriteLineAsync($"{command} was not found on PATH; {PackageManagers.Id(manager)} packages are declared.".AsMemory(), cancellationToken).ConfigureAwait(false);
-                missing = true;
-                continue;
-            }
-
-            readers.Add((manager, CreateReader(manager, runner, path)));
-        }
-
-        if (missing)
-        {
+            await PackagesCommandLine.WriteMissing(error, report.MissingTools, cancellationToken).ConfigureAwait(false);
             return FailureExitCode;
         }
 
-        var failed = false;
-        var changes = 0;
-        var total = 0;
-        foreach (var (manager, reader) in readers)
+        foreach (var manager in report.Managers)
         {
-            var id = PackageManagers.Id(manager);
-            var requirements = declared.For(manager);
-            total += requirements.Count;
-            var installed = await reader.ListInstalled(cancellationToken).ConfigureAwait(false);
-            if (installed.IsFailure)
+            if (manager.Error is not null)
             {
-                await error.WriteLineAsync($"{id}: {ControlCharacters.Escape(installed.ErrorDetails?.Detail ?? "could not read the installed packages.")}".AsMemory(), cancellationToken).ConfigureAwait(false);
-                failed = true;
+                await PackagesCommandLine.WriteError(error, manager.Manager, manager.Error, cancellationToken).ConfigureAwait(false);
                 continue;
             }
 
-            foreach (var change in PackagePlanner.Plan(requirements, installed.Value))
+            var id = PackageManagers.Id(manager.Manager);
+            foreach (var change in manager.Changes)
             {
-                changes++;
                 var line = change.Kind == PackageChangeKind.Install
                     ? $"{id}: install {change.Requirement}"
                     : $"{id}: change {change.Requirement.Name} from {change.InstalledVersion} to {change.Requirement.Version}";
@@ -79,38 +47,17 @@ internal static class PlanCommand
             }
         }
 
-        if (failed)
+        if (!report.IsComplete)
         {
             return FailureExitCode;
         }
 
+        var changes = report.ChangeCount;
         await output.WriteLineAsync(
             (changes == 0
-                ? string.Create(CultureInfo.InvariantCulture, $"All {total} declared packages are installed.")
-                : string.Create(CultureInfo.InvariantCulture, $"{changes} of {total} declared packages need a change.")).AsMemory(),
+                ? string.Create(CultureInfo.InvariantCulture, $"All {report.DeclaredCount} declared packages are installed.")
+                : string.Create(CultureInfo.InvariantCulture, $"{changes} of {report.DeclaredCount} declared packages need a change.")).AsMemory(),
             cancellationToken).ConfigureAwait(false);
         return changes == 0 ? 0 : DifferencesExitCode;
     }
-
-    private static string Command(PackageManagerKind manager) => manager switch
-    {
-        PackageManagerKind.Apt => "dpkg-query",
-        PackageManagerKind.Cargo => "cargo",
-        PackageManagerKind.Npm => "npm",
-        PackageManagerKind.Flatpak => "flatpak",
-        PackageManagerKind.Snap => "snap",
-        PackageManagerKind.Brew => "brew",
-        _ => throw new ArgumentOutOfRangeException(nameof(manager)),
-    };
-
-    private static IPackageReader CreateReader(PackageManagerKind manager, IProcessRunner runner, string path) => manager switch
-    {
-        PackageManagerKind.Apt => new AptPackageReader(runner, path),
-        PackageManagerKind.Cargo => new CargoPackageReader(runner, path),
-        PackageManagerKind.Npm => new NpmPackageReader(runner, path),
-        PackageManagerKind.Flatpak => new FlatpakPackageReader(runner, path),
-        PackageManagerKind.Snap => new SnapPackageReader(runner, path),
-        PackageManagerKind.Brew => new BrewPackageReader(runner, path),
-        _ => throw new ArgumentOutOfRangeException(nameof(manager)),
-    };
 }

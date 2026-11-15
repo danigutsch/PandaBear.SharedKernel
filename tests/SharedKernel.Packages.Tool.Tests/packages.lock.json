@@ -216,6 +216,7 @@
         "type": "Project",
         "dependencies": {
           "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.ConfigurationFiles": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
@@ -223,7 +224,6 @@
       "PandaBear.SharedKernel.Packages.Tool": {
         "type": "Project",
         "dependencies": {
-          "PandaBear.SharedKernel.ConfigurationFiles": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Packages": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",

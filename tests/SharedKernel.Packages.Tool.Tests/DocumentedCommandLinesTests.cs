@@ -10,7 +10,7 @@ public sealed class DocumentedCommandLinesTests
     public void Every_readme_command_line_parses_to_the_plan_command()
     {
         // Arrange
-        var root = PackagesCommandLine.Create(Path.GetTempPath(), static _ => null, new RoutingProcessRunner([]));
+        var root = PackagesCommandLine.Create(Path.GetTempPath(), new FakeExecutables(static _ => null), new RoutingProcessRunner([]));
         var commandLines = DocumentedCommandLines.Find(DocumentedCommandLines.ReadToolReadme());
 
         // Act

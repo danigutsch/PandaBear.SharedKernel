@@ -145,3 +145,49 @@ PandaBear.Packages.UpdateSearch
 PandaBear.Packages.UpdateSearch.NotOnRegistry.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageName!>!
 PandaBear.Packages.UpdateSearch.UpdateSearch(System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageUpdate!>! updates, System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageName!>! notOnRegistry) -> void
 PandaBear.Packages.UpdateSearch.Updates.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageUpdate!>!
+PandaBear.Packages.ManagerPlan
+PandaBear.Packages.ManagerPlan.Changes.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageChange!>!
+PandaBear.Packages.ManagerPlan.DeclaredCount.get -> int
+PandaBear.Packages.ManagerPlan.Error.get -> string?
+PandaBear.Packages.ManagerPlan.Manager.get -> PandaBear.Packages.PackageManagerKind
+PandaBear.Packages.ManagerUpdates
+PandaBear.Packages.ManagerUpdates.CheckedCount.get -> int
+PandaBear.Packages.ManagerUpdates.Decisions.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.UpdateDecision!>!
+PandaBear.Packages.ManagerUpdates.Error.get -> string?
+PandaBear.Packages.ManagerUpdates.Manager.get -> PandaBear.Packages.PackageManagerKind
+PandaBear.Packages.ManagerUpdates.NotOnRegistry.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageName!>!
+PandaBear.Packages.ManagerUpdates.Pinned.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageRequirement!>!
+PandaBear.Packages.MissingTool
+PandaBear.Packages.MissingTool.Executable.get -> string!
+PandaBear.Packages.MissingTool.Manager.get -> PandaBear.Packages.PackageManagerKind
+PandaBear.Packages.PackageInventory
+PandaBear.Packages.PackageInventory.CheckUpdates(PandaBear.Packages.DeclaredPackages! declared, PandaBear.Packages.MinimumReleaseAge! minimumAge, PandaBear.Packages.NetworkAccess access, System.Func<PandaBear.Packages.UpdateSources!>! createSources, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Packages.PackageUpdatesReport!>!
+PandaBear.Packages.PackageInventory.PackageInventory(PandaBear.Processes.IProcessRunner! runner, PandaBear.Processes.IExecutableResolver! executables) -> void
+PandaBear.Packages.PackageInventory.Plan(PandaBear.Packages.DeclaredPackages! declared, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Packages.PackagePlanReport!>!
+PandaBear.Packages.PackagePlanReport
+PandaBear.Packages.PackagePlanReport.ChangeCount.get -> int
+PandaBear.Packages.PackagePlanReport.DeclaredCount.get -> int
+PandaBear.Packages.PackagePlanReport.IsComplete.get -> bool
+PandaBear.Packages.PackagePlanReport.Managers.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.ManagerPlan!>!
+PandaBear.Packages.PackagePlanReport.MissingTools.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.MissingTool!>!
+PandaBear.Packages.PackagesConfiguration
+PandaBear.Packages.PackagesConfiguration.MinimumReleaseAge.get -> PandaBear.Packages.MinimumReleaseAge?
+PandaBear.Packages.PackagesConfiguration.Packages.get -> PandaBear.Packages.DeclaredPackages!
+PandaBear.Packages.PackageUpdatesReport
+PandaBear.Packages.PackageUpdatesReport.CheckedCount.get -> int
+PandaBear.Packages.PackageUpdatesReport.HasFailure.get -> bool
+PandaBear.Packages.PackageUpdatesReport.HasSkipped.get -> bool
+PandaBear.Packages.PackageUpdatesReport.Managers.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.ManagerUpdates!>!
+PandaBear.Packages.PackageUpdatesReport.MissingTools.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.MissingTool!>!
+PandaBear.Packages.PackageUpdatesReport.Unsupported.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Packages.PackageManagerKind>!
+PandaBear.Packages.PackageUpdatesReport.UpdateCount.get -> int
+PandaBear.Packages.UpdateSources
+PandaBear.Packages.UpdateSources.Advisories.get -> PandaBear.Packages.IAdvisorySource!
+PandaBear.Packages.UpdateSources.Dispose() -> void
+PandaBear.Packages.UpdateSources.Latest.get -> PandaBear.Packages.ILatestVersionSource!
+PandaBear.Packages.UpdateSources.ReleaseDates.get -> PandaBear.Packages.IReleaseDateSource!
+PandaBear.Packages.UpdateSources.Time.get -> System.TimeProvider!
+PandaBear.Packages.UpdateSources.UpdateSources(PandaBear.Packages.IAdvisorySource! advisories, PandaBear.Packages.IReleaseDateSource! releaseDates, PandaBear.Packages.ILatestVersionSource! latest, System.TimeProvider! time, System.IDisposable? owned = null) -> void
+const PandaBear.Packages.PackagesConfiguration.RelativePath = ".config/sharedkernel-packages.json" -> string!
+static PandaBear.Packages.PackagesConfiguration.Read(string! root, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Packages.PackagesConfiguration!>!
+static PandaBear.Packages.UpdateSources.CreateDefault() -> PandaBear.Packages.UpdateSources!

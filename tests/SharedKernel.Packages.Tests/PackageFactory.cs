@@ -36,4 +36,7 @@ internal static class PackageFactory
         var parts = text.Split('=');
         return Require(parts[0], parts.Length > 1 ? parts[1] : null);
     }
+
+    /// <summary>Builds a valid declaration; an entry is a name or <c>name=version</c>.</summary>
+    public static DeclaredPackages Declared(params (PackageManagerKind Manager, string[] Entries)[] groups) => DeclaredPackages.Create(Declare(groups)).Value;
 }

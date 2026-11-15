@@ -200,13 +200,23 @@
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.ConfigurationFiles": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.InputNormalization": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.IO": {
         "type": "Project"
       },
       "PandaBear.SharedKernel.Packages": {
         "type": "Project",
         "dependencies": {
           "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.ConfigurationFiles": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
