@@ -189,15 +189,21 @@ Helpers that two or more tools call live in the library that owns the concept: `
 `CandidateManifest` in `SharedKernel.Versioning`, process execution, executable resolution, `ProcessTree`, and
 `ProcessEnvironment` in `SharedKernel.Processes`, `JsonConfigurationFile` in `SharedKernel.ConfigurationFiles`, and
 `GitHubToken` and `GitHubApiClient` in `SharedKernel.GitHub`. Tools reference those projects; they do not link
-source files from other directories. `SharedKernel.PlaywrightMcp.Tool` is the first tool whose logic lives in an
-engine, `SharedKernel.PlaywrightMcp`; the other tools move theirs incrementally.
-`SharedKernel.K6.Tool` wraps the generic `SharedKernel.LoadTesting` core and its k6 provider,
-`SharedKernel.LoadTesting.K6`. `SharedKernel.CI.Tool` wraps the forge-neutral `SharedKernel.CI` engine and its
-`SharedKernel.CI.GitHub` and `SharedKernel.CI.Forgejo` providers; `SharedKernel.Forgejo` is the Forgejo platform base, as
-`SharedKernel.GitHub` is GitHub's. `SharedKernel.RepoConfig.Tool` wraps the forge-neutral `SharedKernel.Repositories`
-core, its `SharedKernel.Repositories.GitHub` provider, and `SharedKernel.DevContainers`, which holds the dev container and
-rootless Podman host checks. `SharedKernel.VaultManager.Tool` wraps
-`SharedKernel.Vault` and its `SharedKernel.Vault.Bitwarden` and `SharedKernel.Vault.Keeper` providers.
+source files from other directories.
+
+`SharedKernel.PlaywrightMcp.Tool` is the first tool whose logic lives in an engine; the other tools move theirs
+incrementally. Each wrapped tool and the libraries it wraps:
+
+- `SharedKernel.PlaywrightMcp.Tool`: the `SharedKernel.PlaywrightMcp` engine.
+- `SharedKernel.K6.Tool`: the generic `SharedKernel.LoadTesting` core and its k6 provider, `SharedKernel.LoadTesting.K6`.
+- `SharedKernel.CI.Tool`: the forge-neutral `SharedKernel.CI` engine and its `SharedKernel.CI.GitHub` and
+  `SharedKernel.CI.Forgejo` providers. `SharedKernel.Forgejo` is the Forgejo platform base, as `SharedKernel.GitHub` is
+  GitHub's.
+- `SharedKernel.RepoConfig.Tool`: the forge-neutral `SharedKernel.Repositories` core, its
+  `SharedKernel.Repositories.GitHub` provider, and `SharedKernel.DevContainers`, which holds the dev container and
+  rootless Podman host checks.
+- `SharedKernel.VaultManager.Tool`: `SharedKernel.Vault` and its `SharedKernel.Vault.Bitwarden` and
+  `SharedKernel.Vault.Keeper` providers.
 
 ## Secrets
 
