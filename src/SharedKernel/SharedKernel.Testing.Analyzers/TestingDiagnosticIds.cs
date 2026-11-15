@@ -80,11 +80,6 @@ public static class TestingDiagnosticIds
     public const string XunitTestScope = "SKTEST018";
 
     /// <summary>
-    /// Diagnostic emitted when CallProxy.Create wraps a type that is not a public interface.
-    /// </summary>
-    public const string CallProxyServiceType = "SKTEST019";
-
-    /// <summary>
     /// Diagnostic emitted when code waits for a page or frame address with Playwright's <c>WaitForURLAsync</c>.
     /// </summary>
     public const string PlaywrightUrlWait = "SKTEST020";

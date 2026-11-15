@@ -32,7 +32,6 @@ test assertions. Do not apply it to regular production projects.
 | `SKTEST010` | Warning | Compare test activity source instances by identity. |
 | `SKTEST016` | Warning | Construct explicitly named SUTs in Arrange. |
 | `SKTEST018` | Suggestion | Every xUnit test declares exactly one valid test scope. |
-| `SKTEST019` | Warning | `CallProxy.Create<TService>` must wrap a public interface. |
 | `SKTEST020` | Warning | Wait for a page address with `ExpectPath`, not Playwright's `WaitForURLAsync`. |
 | `SKTEST021` | Warning | Entries of `sharedkernel_testing_additional_allowed_segments` must be new letter-and-digit words. |
 | `SKTEST017` | Disabled; opt-in warning | Give every public `Should*` assertion an overload that takes `userMessage`. |
@@ -55,7 +54,6 @@ dotnet_diagnostic.SKTEST007.severity = warning
 dotnet_diagnostic.SKTEST008.severity = warning
 dotnet_diagnostic.SKTEST009.severity = warning
 dotnet_diagnostic.SKTEST011.severity = suggestion
-dotnet_diagnostic.SKTEST019.severity = warning
 sharedkernel_testing_required_traits = Category=Smoke
 sharedkernel_testing_strict_test_method_casing = false
 
@@ -315,24 +313,13 @@ dotnet_diagnostic.SKTEST018.severity = warning
 The code fix, offered only for a missing scope, adds one action per allowed scope to the test class. It writes the typed
 attribute when `PandaBear.Testing.TestScopeAttribute` is referenced and `[Trait("Scope", ...)]` otherwise.
 
-## SKTEST019
+## SKTEST019 (retired)
 
-`PandaBear.Testing.CallProxy.Create<TService>(...)` generates its proxy type at run time, which only works for a public
-interface; anything else fails with an obscure `ArgumentException`. The rule reports an invocation whose `TService`, explicit
-or inferred, is not an interface (message ends `is not an interface`) or is an interface that is not public (declared
-`internal`, or nested in a type that is not `public`; message ends `is not public`). The diagnostic points at the type
-argument when it is written explicitly and at the whole invocation when it is inferred.
-
-```csharp
-internal interface IClock { }
-
-var proxy = CallProxy.Create<IClock>(clock); // SKTEST019: 'IClock' is not public
-```
-
-Not reported: public interfaces (including public nested interfaces of public types), type parameters, and compilations that
-do not reference `SharedKernel.Testing`. Limitation: an interface that is public but constructed over a non-public type
-argument (for example `IHandler<InternalMessage>`) is not checked. The rule is a warning, like its siblings; tune it with
-`dotnet_diagnostic.SKTEST019.severity`.
+`SKTEST019` checked that `CallProxy.Create<TService>` wrapped a public interface, which the runtime-generated proxy needed.
+`CallProxy` is now source-generated: the CallProxy generator in `PandaBear.SharedKernel.Testing` reports a type that is not
+an interface as `SKPRX001` and an interface the test assembly cannot implement as `SKPRX002`, both as errors (see
+[the generator README](../SharedKernel.Testing.SourceGenerator/README.md)). Internal interfaces are supported now. Remove any
+`dotnet_diagnostic.SKTEST019.severity` setting.
 
 ## SKTEST020
 

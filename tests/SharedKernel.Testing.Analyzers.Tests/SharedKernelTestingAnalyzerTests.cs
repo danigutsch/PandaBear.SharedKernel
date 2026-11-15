@@ -30,7 +30,6 @@ public sealed class SharedKernelTestingAnalyzerTests
             TestingDiagnosticIds.SutConstructionInAct,
             TestingDiagnosticIds.AssertionUserMessageOverload,
             TestingDiagnosticIds.XunitTestScope,
-            TestingDiagnosticIds.CallProxyServiceType,
             TestingDiagnosticIds.PlaywrightUrlWait,
             TestingDiagnosticIds.InvalidAdditionalAllowedSegment,
         ];
