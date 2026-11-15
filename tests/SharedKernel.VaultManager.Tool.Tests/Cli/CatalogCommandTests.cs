@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
 using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Formats.Bitwarden;
-using PandaBear.VaultManager.Tool.Merge;
+using PandaBear.Vault.Bitwarden;
+using PandaBear.Vault.Merge;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;

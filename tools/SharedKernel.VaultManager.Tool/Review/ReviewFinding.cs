@@ -1,6 +1,6 @@
 using System.Text;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Secrets;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Review;
 

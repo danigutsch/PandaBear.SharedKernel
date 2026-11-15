@@ -1,0 +1,1664 @@
+#nullable enable
+const PandaBear.Vault.Analysis.PasswordHealthReport.MaxRelatedItemNames = 3 -> int
+const PandaBear.Vault.Analysis.PasswordHealthReport.MinimumLength = 12 -> int
+const PandaBear.Vault.Attachments.TextExtractor.MaxBytes = 10485760 -> int
+const PandaBear.Vault.Attachments.TextExtractor.MaxLineLength = 65536 -> int
+const PandaBear.Vault.Brief.BriefFile.CurrentVersion = 1 -> int
+const PandaBear.Vault.Catalog.CatalogApplier.HiddenNotesField = "Notes" -> string!
+const PandaBear.Vault.Catalog.CatalogFile.CurrentVersion = 1 -> int
+const PandaBear.Vault.Formats.BitwardenLimits.NotesEncryptedLength = 10000 -> int
+const PandaBear.Vault.Formats.BitwardenLimits.PasswordHistoryEntries = 5 -> int
+const PandaBear.Vault.Formats.BitwardenLimits.ShortEncryptedLength = 1000 -> int
+const PandaBear.Vault.Formats.BitwardenLimits.ValueEncryptedLength = 5000 -> int
+const PandaBear.Vault.Formats.BitwardenLimits.VaultwardenImportBytes = 20000000 -> long
+const PandaBear.Vault.IO.FilePaths.MaxLinks = 40 -> int
+const PandaBear.Vault.IO.PrintableText.Replacement = '�' -> char
+const PandaBear.Vault.Merge.DecisionsFile.CurrentVersion = 2 -> int
+const PandaBear.Vault.Merge.FieldPaths.CardPrefix = "card." -> string!
+const PandaBear.Vault.Merge.FieldPaths.Favorite = "favorite" -> string!
+const PandaBear.Vault.Merge.FieldPaths.Fields = "fields" -> string!
+const PandaBear.Vault.Merge.FieldPaths.Folder = "folder" -> string!
+const PandaBear.Vault.Merge.FieldPaths.IdentityPrefix = "identity." -> string!
+const PandaBear.Vault.Merge.FieldPaths.LoginFido2Credentials = "login.fido2Credentials" -> string!
+const PandaBear.Vault.Merge.FieldPaths.LoginPassword = "login.password" -> string!
+const PandaBear.Vault.Merge.FieldPaths.LoginTotp = "login.totp" -> string!
+const PandaBear.Vault.Merge.FieldPaths.LoginUris = "login.uris" -> string!
+const PandaBear.Vault.Merge.FieldPaths.LoginUsername = "login.username" -> string!
+const PandaBear.Vault.Merge.FieldPaths.Name = "name" -> string!
+const PandaBear.Vault.Merge.FieldPaths.Notes = "notes" -> string!
+const PandaBear.Vault.Merge.FieldPaths.PasswordHistory = "passwordHistory" -> string!
+const PandaBear.Vault.Merge.FieldPaths.Reprompt = "reprompt" -> string!
+const PandaBear.Vault.Merge.FieldPaths.SshKeyPrefix = "sshKey." -> string!
+const PandaBear.Vault.Merge.FieldPaths.Type = "type" -> string!
+const PandaBear.Vault.Model.AdditionalFolders.FieldName = "Additional folders" -> string!
+const PandaBear.Vault.Pipeline.SshKeyNormalizer.FingerprintField = "Key fingerprint" -> string!
+const PandaBear.Vault.Pipeline.SshKeyNormalizer.OtherTextField = "Private key (other text)" -> string!
+const PandaBear.Vault.Pipeline.SshKeyNormalizer.PrivateKeyField = "Private key" -> string!
+const PandaBear.Vault.Pipeline.SshKeyNormalizer.PublicKeyField = "Public key" -> string!
+const PandaBear.Vault.Pipeline.SshKeyNormalizer.SourceSuffix = " (from source)" -> string!
+const PandaBear.Vault.Pipeline.VaultPipeline.MaxAttachmentFindings = 1000 -> int
+const PandaBear.Vault.Pipeline.VaultPipeline.MinimumNewPasswordLength = 12 -> int
+const PandaBear.Vault.Pipeline.VaultPipeline.NewExportPasswordPrompt = "Password for the new export" -> string!
+const PandaBear.Vault.Secrets.SecretLocation.AttachmentPrefix = "attachment:" -> string!
+const PandaBear.Vault.Secrets.SecretLocation.CardNumber = "card.number" -> string!
+const PandaBear.Vault.Secrets.SecretLocation.LoginPassword = "login.password" -> string!
+const PandaBear.Vault.Secrets.SecretLocation.LoginTotp = "login.totp" -> string!
+const PandaBear.Vault.Secrets.SecretLocation.LoginUsername = "login.username" -> string!
+const PandaBear.Vault.Secrets.SecretLocation.Notes = "notes" -> string!
+override PandaBear.Vault.Analysis.PasswordCheck.Equals(object? obj) -> bool
+override PandaBear.Vault.Analysis.PasswordCheck.GetHashCode() -> int
+override PandaBear.Vault.Analysis.PasswordCheck.ToString() -> string!
+override PandaBear.Vault.Analysis.PasswordHealthReport.Equals(object? obj) -> bool
+override PandaBear.Vault.Analysis.PasswordHealthReport.GetHashCode() -> int
+override PandaBear.Vault.Analysis.PasswordHealthReport.ToString() -> string!
+override PandaBear.Vault.Analysis.PasswordIssue.Equals(object? obj) -> bool
+override PandaBear.Vault.Analysis.PasswordIssue.GetHashCode() -> int
+override PandaBear.Vault.Analysis.PasswordIssue.ToString() -> string!
+override PandaBear.Vault.Attachments.ArchiveEntryInfo.Equals(object? obj) -> bool
+override PandaBear.Vault.Attachments.ArchiveEntryInfo.GetHashCode() -> int
+override PandaBear.Vault.Attachments.ArchiveEntryInfo.ToString() -> string!
+override PandaBear.Vault.Attachments.ArchiveLimits.Equals(object? obj) -> bool
+override PandaBear.Vault.Attachments.ArchiveLimits.GetHashCode() -> int
+override PandaBear.Vault.Attachments.ArchiveLimits.ToString() -> string!
+override PandaBear.Vault.Attachments.ExtractedText.Equals(object? obj) -> bool
+override PandaBear.Vault.Attachments.ExtractedText.GetHashCode() -> int
+override PandaBear.Vault.Attachments.ExtractedText.ToString() -> string!
+override PandaBear.Vault.Brief.BriefDocument.Equals(object? obj) -> bool
+override PandaBear.Vault.Brief.BriefDocument.GetHashCode() -> int
+override PandaBear.Vault.Brief.BriefDocument.ToString() -> string!
+override PandaBear.Vault.Brief.BriefField.Equals(object? obj) -> bool
+override PandaBear.Vault.Brief.BriefField.GetHashCode() -> int
+override PandaBear.Vault.Brief.BriefField.ToString() -> string!
+override PandaBear.Vault.Brief.BriefFinding.Equals(object? obj) -> bool
+override PandaBear.Vault.Brief.BriefFinding.GetHashCode() -> int
+override PandaBear.Vault.Brief.BriefFinding.ToString() -> string!
+override PandaBear.Vault.Brief.BriefGroup.Equals(object? obj) -> bool
+override PandaBear.Vault.Brief.BriefGroup.GetHashCode() -> int
+override PandaBear.Vault.Brief.BriefGroup.ToString() -> string!
+override PandaBear.Vault.Brief.BriefHolder.Equals(object? obj) -> bool
+override PandaBear.Vault.Brief.BriefHolder.GetHashCode() -> int
+override PandaBear.Vault.Brief.BriefHolder.ToString() -> string!
+override PandaBear.Vault.Brief.BriefMember.Equals(object? obj) -> bool
+override PandaBear.Vault.Brief.BriefMember.GetHashCode() -> int
+override PandaBear.Vault.Brief.BriefMember.ToString() -> string!
+override PandaBear.Vault.Brief.BriefSummary.Equals(object? obj) -> bool
+override PandaBear.Vault.Brief.BriefSummary.GetHashCode() -> int
+override PandaBear.Vault.Brief.BriefSummary.ToString() -> string!
+override PandaBear.Vault.Catalog.CatalogApplyResult.Equals(object? obj) -> bool
+override PandaBear.Vault.Catalog.CatalogApplyResult.GetHashCode() -> int
+override PandaBear.Vault.Catalog.CatalogApplyResult.ToString() -> string!
+override PandaBear.Vault.Catalog.CatalogAttachment.Equals(object? obj) -> bool
+override PandaBear.Vault.Catalog.CatalogAttachment.GetHashCode() -> int
+override PandaBear.Vault.Catalog.CatalogAttachment.ToString() -> string!
+override PandaBear.Vault.Catalog.CatalogBuild.Equals(object? obj) -> bool
+override PandaBear.Vault.Catalog.CatalogBuild.GetHashCode() -> int
+override PandaBear.Vault.Catalog.CatalogBuild.ToString() -> string!
+override PandaBear.Vault.Catalog.CatalogDocument.Equals(object? obj) -> bool
+override PandaBear.Vault.Catalog.CatalogDocument.GetHashCode() -> int
+override PandaBear.Vault.Catalog.CatalogDocument.ToString() -> string!
+override PandaBear.Vault.Catalog.CatalogField.Equals(object? obj) -> bool
+override PandaBear.Vault.Catalog.CatalogField.GetHashCode() -> int
+override PandaBear.Vault.Catalog.CatalogField.ToString() -> string!
+override PandaBear.Vault.Catalog.CatalogInfo.Equals(object? obj) -> bool
+override PandaBear.Vault.Catalog.CatalogInfo.GetHashCode() -> int
+override PandaBear.Vault.Catalog.CatalogInfo.ToString() -> string!
+override PandaBear.Vault.Catalog.CatalogItem.Equals(object? obj) -> bool
+override PandaBear.Vault.Catalog.CatalogItem.GetHashCode() -> int
+override PandaBear.Vault.Catalog.CatalogItem.ToString() -> string!
+override PandaBear.Vault.Catalog.CatalogNotes.Equals(object? obj) -> bool
+override PandaBear.Vault.Catalog.CatalogNotes.GetHashCode() -> int
+override PandaBear.Vault.Catalog.CatalogNotes.ToString() -> string!
+override PandaBear.Vault.Catalog.CatalogSource.Equals(object? obj) -> bool
+override PandaBear.Vault.Catalog.CatalogSource.GetHashCode() -> int
+override PandaBear.Vault.Catalog.CatalogSource.ToString() -> string!
+override PandaBear.Vault.Catalog.CatalogUri.Equals(object? obj) -> bool
+override PandaBear.Vault.Catalog.CatalogUri.GetHashCode() -> int
+override PandaBear.Vault.Catalog.CatalogUri.ToString() -> string!
+override PandaBear.Vault.Csv.CsvRecord.Equals(object? obj) -> bool
+override PandaBear.Vault.Csv.CsvRecord.GetHashCode() -> int
+override PandaBear.Vault.Csv.CsvRecord.ToString() -> string!
+override PandaBear.Vault.Formats.UnassignedAttachmentFolder.Equals(object? obj) -> bool
+override PandaBear.Vault.Formats.UnassignedAttachmentFolder.GetHashCode() -> int
+override PandaBear.Vault.Formats.UnassignedAttachmentFolder.ToString() -> string!
+override PandaBear.Vault.Formats.VaultReadResult.Equals(object? obj) -> bool
+override PandaBear.Vault.Formats.VaultReadResult.GetHashCode() -> int
+override PandaBear.Vault.Formats.VaultReadResult.ToString() -> string!
+override PandaBear.Vault.Formats.VaultWriteResult.Equals(object? obj) -> bool
+override PandaBear.Vault.Formats.VaultWriteResult.GetHashCode() -> int
+override PandaBear.Vault.Formats.VaultWriteResult.ToString() -> string!
+override PandaBear.Vault.Matching.MatchGroup.Equals(object? obj) -> bool
+override PandaBear.Vault.Matching.MatchGroup.GetHashCode() -> int
+override PandaBear.Vault.Matching.MatchGroup.ToString() -> string!
+override PandaBear.Vault.Matching.MatchOverrides.Equals(object? obj) -> bool
+override PandaBear.Vault.Matching.MatchOverrides.GetHashCode() -> int
+override PandaBear.Vault.Matching.MatchOverrides.ToString() -> string!
+override PandaBear.Vault.Matching.MatchResult.Equals(object? obj) -> bool
+override PandaBear.Vault.Matching.MatchResult.GetHashCode() -> int
+override PandaBear.Vault.Matching.MatchResult.ToString() -> string!
+override PandaBear.Vault.Matching.MatchSuggestion.Equals(object? obj) -> bool
+override PandaBear.Vault.Matching.MatchSuggestion.GetHashCode() -> int
+override PandaBear.Vault.Matching.MatchSuggestion.ToString() -> string!
+override PandaBear.Vault.Matching.OriginKeyPair.Equals(object? obj) -> bool
+override PandaBear.Vault.Matching.OriginKeyPair.GetHashCode() -> int
+override PandaBear.Vault.Matching.OriginKeyPair.ToString() -> string!
+override PandaBear.Vault.Merge.FieldChoice.Equals(object? obj) -> bool
+override PandaBear.Vault.Merge.FieldChoice.GetHashCode() -> int
+override PandaBear.Vault.Merge.FieldChoice.ToString() -> string!
+override PandaBear.Vault.Merge.FieldChoiceOption.Equals(object? obj) -> bool
+override PandaBear.Vault.Merge.FieldChoiceOption.GetHashCode() -> int
+override PandaBear.Vault.Merge.FieldChoiceOption.ToString() -> string!
+override PandaBear.Vault.Merge.FieldResolution.Equals(object? obj) -> bool
+override PandaBear.Vault.Merge.FieldResolution.GetHashCode() -> int
+override PandaBear.Vault.Merge.FieldResolution.ToString() -> string!
+override PandaBear.Vault.Merge.FindingChoice.Equals(object? obj) -> bool
+override PandaBear.Vault.Merge.FindingChoice.GetHashCode() -> int
+override PandaBear.Vault.Merge.FindingChoice.ToString() -> string!
+override PandaBear.Vault.Merge.GroupDecision.Equals(object? obj) -> bool
+override PandaBear.Vault.Merge.GroupDecision.GetHashCode() -> int
+override PandaBear.Vault.Merge.GroupDecision.ToString() -> string!
+override PandaBear.Vault.Merge.GroupReport.Equals(object? obj) -> bool
+override PandaBear.Vault.Merge.GroupReport.GetHashCode() -> int
+override PandaBear.Vault.Merge.GroupReport.ToString() -> string!
+override PandaBear.Vault.Merge.ItemFindingDecisions.Equals(object? obj) -> bool
+override PandaBear.Vault.Merge.ItemFindingDecisions.GetHashCode() -> int
+override PandaBear.Vault.Merge.ItemFindingDecisions.ToString() -> string!
+override PandaBear.Vault.Merge.ItemNotesDecision.Equals(object? obj) -> bool
+override PandaBear.Vault.Merge.ItemNotesDecision.GetHashCode() -> int
+override PandaBear.Vault.Merge.ItemNotesDecision.ToString() -> string!
+override PandaBear.Vault.Merge.MergeDecisions.Equals(object? obj) -> bool
+override PandaBear.Vault.Merge.MergeDecisions.GetHashCode() -> int
+override PandaBear.Vault.Merge.MergeDecisions.ToString() -> string!
+override PandaBear.Vault.Merge.MergePolicy.Equals(object? obj) -> bool
+override PandaBear.Vault.Merge.MergePolicy.GetHashCode() -> int
+override PandaBear.Vault.Merge.MergePolicy.ToString() -> string!
+override PandaBear.Vault.Merge.MergeReport.Equals(object? obj) -> bool
+override PandaBear.Vault.Merge.MergeReport.GetHashCode() -> int
+override PandaBear.Vault.Merge.MergeReport.ToString() -> string!
+override PandaBear.Vault.Merge.ScalarField.Equals(object? obj) -> bool
+override PandaBear.Vault.Merge.ScalarField.GetHashCode() -> int
+override PandaBear.Vault.Merge.ScalarField.ToString() -> string!
+override PandaBear.Vault.Merge.UnresolvedConflict.Equals(object? obj) -> bool
+override PandaBear.Vault.Merge.UnresolvedConflict.GetHashCode() -> int
+override PandaBear.Vault.Merge.UnresolvedConflict.ToString() -> string!
+override PandaBear.Vault.Model.AttachmentRef.Equals(object? obj) -> bool
+override PandaBear.Vault.Model.AttachmentRef.GetHashCode() -> int
+override PandaBear.Vault.Model.AttachmentRef.ToString() -> string!
+override PandaBear.Vault.Model.CardData.Equals(object? obj) -> bool
+override PandaBear.Vault.Model.CardData.GetHashCode() -> int
+override PandaBear.Vault.Model.CardData.ToString() -> string!
+override PandaBear.Vault.Model.CustomField.Equals(object? obj) -> bool
+override PandaBear.Vault.Model.CustomField.GetHashCode() -> int
+override PandaBear.Vault.Model.CustomField.ToString() -> string!
+override PandaBear.Vault.Model.Fido2Credential.Equals(object? obj) -> bool
+override PandaBear.Vault.Model.Fido2Credential.GetHashCode() -> int
+override PandaBear.Vault.Model.Fido2Credential.ToString() -> string!
+override PandaBear.Vault.Model.IdentityData.Equals(object? obj) -> bool
+override PandaBear.Vault.Model.IdentityData.GetHashCode() -> int
+override PandaBear.Vault.Model.IdentityData.ToString() -> string!
+override PandaBear.Vault.Model.ItemOrigin.Equals(object? obj) -> bool
+override PandaBear.Vault.Model.ItemOrigin.GetHashCode() -> int
+override PandaBear.Vault.Model.ItemOrigin.ToString() -> string!
+override PandaBear.Vault.Model.LoginData.Equals(object? obj) -> bool
+override PandaBear.Vault.Model.LoginData.GetHashCode() -> int
+override PandaBear.Vault.Model.LoginData.ToString() -> string!
+override PandaBear.Vault.Model.LoginUri.Equals(object? obj) -> bool
+override PandaBear.Vault.Model.LoginUri.GetHashCode() -> int
+override PandaBear.Vault.Model.LoginUri.ToString() -> string!
+override PandaBear.Vault.Model.PasswordHistoryEntry.Equals(object? obj) -> bool
+override PandaBear.Vault.Model.PasswordHistoryEntry.GetHashCode() -> int
+override PandaBear.Vault.Model.PasswordHistoryEntry.ToString() -> string!
+override PandaBear.Vault.Model.SshKeyData.Equals(object? obj) -> bool
+override PandaBear.Vault.Model.SshKeyData.GetHashCode() -> int
+override PandaBear.Vault.Model.SshKeyData.ToString() -> string!
+override PandaBear.Vault.Model.VaultExport.Equals(object? obj) -> bool
+override PandaBear.Vault.Model.VaultExport.GetHashCode() -> int
+override PandaBear.Vault.Model.VaultExport.ToString() -> string!
+override PandaBear.Vault.Model.VaultItem.Equals(object? obj) -> bool
+override PandaBear.Vault.Model.VaultItem.GetHashCode() -> int
+override PandaBear.Vault.Model.VaultItem.ToString() -> string!
+override PandaBear.Vault.Pipeline.ItemFindingsResult.Equals(object? obj) -> bool
+override PandaBear.Vault.Pipeline.ItemFindingsResult.GetHashCode() -> int
+override PandaBear.Vault.Pipeline.ItemFindingsResult.ToString() -> string!
+override PandaBear.Vault.Pipeline.LoadedVault.Equals(object? obj) -> bool
+override PandaBear.Vault.Pipeline.LoadedVault.GetHashCode() -> int
+override PandaBear.Vault.Pipeline.LoadedVault.ToString() -> string!
+override PandaBear.Vault.Pipeline.ManualAttachment.Equals(object? obj) -> bool
+override PandaBear.Vault.Pipeline.ManualAttachment.GetHashCode() -> int
+override PandaBear.Vault.Pipeline.ManualAttachment.ToString() -> string!
+override PandaBear.Vault.Pipeline.MergeRequest.Equals(object? obj) -> bool
+override PandaBear.Vault.Pipeline.MergeRequest.GetHashCode() -> int
+override PandaBear.Vault.Pipeline.MergeRequest.ToString() -> string!
+override PandaBear.Vault.Pipeline.PipelineOutput.Equals(object? obj) -> bool
+override PandaBear.Vault.Pipeline.PipelineOutput.GetHashCode() -> int
+override PandaBear.Vault.Pipeline.PipelineOutput.ToString() -> string!
+override PandaBear.Vault.Pipeline.PipelineRequest.<Clone>$() -> PandaBear.Vault.Pipeline.PipelineRequest!
+override PandaBear.Vault.Pipeline.PipelineRequest.Equals(object? obj) -> bool
+override PandaBear.Vault.Pipeline.PipelineRequest.GetHashCode() -> int
+override PandaBear.Vault.Pipeline.PipelineRequest.ToString() -> string!
+override PandaBear.Vault.Pipeline.PipelineResult.Equals(object? obj) -> bool
+override PandaBear.Vault.Pipeline.PipelineResult.GetHashCode() -> int
+override PandaBear.Vault.Pipeline.PipelineResult.ToString() -> string!
+override PandaBear.Vault.Pipeline.PlacementProblem.Equals(object? obj) -> bool
+override PandaBear.Vault.Pipeline.PlacementProblem.GetHashCode() -> int
+override PandaBear.Vault.Pipeline.PlacementProblem.ToString() -> string!
+override PandaBear.Vault.Pipeline.ScannedItem.Equals(object? obj) -> bool
+override PandaBear.Vault.Pipeline.ScannedItem.GetHashCode() -> int
+override PandaBear.Vault.Pipeline.ScannedItem.ToString() -> string!
+override PandaBear.Vault.Pipeline.ScannedVault.Equals(object? obj) -> bool
+override PandaBear.Vault.Pipeline.ScannedVault.GetHashCode() -> int
+override PandaBear.Vault.Pipeline.ScannedVault.ToString() -> string!
+override PandaBear.Vault.Pipeline.SourceItem.Equals(object? obj) -> bool
+override PandaBear.Vault.Pipeline.SourceItem.GetHashCode() -> int
+override PandaBear.Vault.Pipeline.SourceItem.ToString() -> string!
+override PandaBear.Vault.Pipeline.VaultPasswordPrompts.Equals(object? obj) -> bool
+override PandaBear.Vault.Pipeline.VaultPasswordPrompts.GetHashCode() -> int
+override PandaBear.Vault.Pipeline.VaultPasswordPrompts.ToString() -> string!
+override PandaBear.Vault.Secrets.PlacementTarget.Equals(object? obj) -> bool
+override PandaBear.Vault.Secrets.PlacementTarget.GetHashCode() -> int
+override PandaBear.Vault.Secrets.PlacementTarget.ToString() -> string!
+override PandaBear.Vault.Secrets.SecretFinding.Equals(object? obj) -> bool
+override PandaBear.Vault.Secrets.SecretFinding.GetHashCode() -> int
+override PandaBear.Vault.Secrets.SecretFinding.ToString() -> string!
+override PandaBear.Vault.Secrets.SecretLocation.Equals(object? obj) -> bool
+override PandaBear.Vault.Secrets.SecretLocation.GetHashCode() -> int
+override PandaBear.Vault.Secrets.SecretLocation.ToString() -> string!
+override sealed PandaBear.Vault.Pipeline.PipelineRequest.Equals(PandaBear.Vault.Pipeline.MergeRequest? other) -> bool
+PandaBear.Vault.Analysis.PasswordCheck
+PandaBear.Vault.Analysis.PasswordCheck.<Clone>$() -> PandaBear.Vault.Analysis.PasswordCheck!
+PandaBear.Vault.Analysis.PasswordCheck.Deconstruct(out bool Weak, out bool Reused, out bool InOtherHistory) -> void
+PandaBear.Vault.Analysis.PasswordCheck.Equals(PandaBear.Vault.Analysis.PasswordCheck? other) -> bool
+PandaBear.Vault.Analysis.PasswordCheck.InOtherHistory.get -> bool
+PandaBear.Vault.Analysis.PasswordCheck.InOtherHistory.init -> void
+PandaBear.Vault.Analysis.PasswordCheck.PasswordCheck(bool Weak, bool Reused, bool InOtherHistory) -> void
+PandaBear.Vault.Analysis.PasswordCheck.Reused.get -> bool
+PandaBear.Vault.Analysis.PasswordCheck.Reused.init -> void
+PandaBear.Vault.Analysis.PasswordCheck.Weak.get -> bool
+PandaBear.Vault.Analysis.PasswordCheck.Weak.init -> void
+PandaBear.Vault.Analysis.PasswordHealthReport
+PandaBear.Vault.Analysis.PasswordHealthReport.<Clone>$() -> PandaBear.Vault.Analysis.PasswordHealthReport!
+PandaBear.Vault.Analysis.PasswordHealthReport.Deconstruct(out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Analysis.PasswordIssue!>! Issues) -> void
+PandaBear.Vault.Analysis.PasswordHealthReport.Equals(PandaBear.Vault.Analysis.PasswordHealthReport? other) -> bool
+PandaBear.Vault.Analysis.PasswordHealthReport.Issues.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Analysis.PasswordIssue!>!
+PandaBear.Vault.Analysis.PasswordHealthReport.Issues.init -> void
+PandaBear.Vault.Analysis.PasswordHealthReport.PasswordHealthReport(System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Analysis.PasswordIssue!>! Issues) -> void
+PandaBear.Vault.Analysis.PasswordIssue
+PandaBear.Vault.Analysis.PasswordIssue.<Clone>$() -> PandaBear.Vault.Analysis.PasswordIssue!
+PandaBear.Vault.Analysis.PasswordIssue.Deconstruct(out string! ItemName, out PandaBear.Vault.Analysis.PasswordIssueKind Kind, out System.Collections.Generic.IReadOnlyList<string!>! RelatedItemNames, out int RelatedItemCount) -> void
+PandaBear.Vault.Analysis.PasswordIssue.Equals(PandaBear.Vault.Analysis.PasswordIssue? other) -> bool
+PandaBear.Vault.Analysis.PasswordIssue.ItemName.get -> string!
+PandaBear.Vault.Analysis.PasswordIssue.ItemName.init -> void
+PandaBear.Vault.Analysis.PasswordIssue.Kind.get -> PandaBear.Vault.Analysis.PasswordIssueKind
+PandaBear.Vault.Analysis.PasswordIssue.Kind.init -> void
+PandaBear.Vault.Analysis.PasswordIssue.PasswordIssue(string! ItemName, PandaBear.Vault.Analysis.PasswordIssueKind Kind, System.Collections.Generic.IReadOnlyList<string!>! RelatedItemNames, int RelatedItemCount) -> void
+PandaBear.Vault.Analysis.PasswordIssue.RelatedItemCount.get -> int
+PandaBear.Vault.Analysis.PasswordIssue.RelatedItemCount.init -> void
+PandaBear.Vault.Analysis.PasswordIssue.RelatedItemNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Analysis.PasswordIssue.RelatedItemNames.init -> void
+PandaBear.Vault.Analysis.PasswordIssueKind
+PandaBear.Vault.Analysis.PasswordIssueKind.Reused = 0 -> PandaBear.Vault.Analysis.PasswordIssueKind
+PandaBear.Vault.Analysis.PasswordIssueKind.Weak = 1 -> PandaBear.Vault.Analysis.PasswordIssueKind
+PandaBear.Vault.Attachments.ArchiveEntryInfo
+PandaBear.Vault.Attachments.ArchiveEntryInfo.<Clone>$() -> PandaBear.Vault.Attachments.ArchiveEntryInfo!
+PandaBear.Vault.Attachments.ArchiveEntryInfo.ArchiveEntryInfo(string! Path, long Size, PandaBear.Vault.Attachments.AttachmentKind Kind) -> void
+PandaBear.Vault.Attachments.ArchiveEntryInfo.Deconstruct(out string! Path, out long Size, out PandaBear.Vault.Attachments.AttachmentKind Kind) -> void
+PandaBear.Vault.Attachments.ArchiveEntryInfo.Equals(PandaBear.Vault.Attachments.ArchiveEntryInfo? other) -> bool
+PandaBear.Vault.Attachments.ArchiveEntryInfo.Kind.get -> PandaBear.Vault.Attachments.AttachmentKind
+PandaBear.Vault.Attachments.ArchiveEntryInfo.Kind.init -> void
+PandaBear.Vault.Attachments.ArchiveEntryInfo.Path.get -> string!
+PandaBear.Vault.Attachments.ArchiveEntryInfo.Path.init -> void
+PandaBear.Vault.Attachments.ArchiveEntryInfo.Size.get -> long
+PandaBear.Vault.Attachments.ArchiveEntryInfo.Size.init -> void
+PandaBear.Vault.Attachments.ArchiveLimits
+PandaBear.Vault.Attachments.ArchiveLimits.<Clone>$() -> PandaBear.Vault.Attachments.ArchiveLimits!
+PandaBear.Vault.Attachments.ArchiveLimits.ArchiveLimits() -> void
+PandaBear.Vault.Attachments.ArchiveLimits.Equals(PandaBear.Vault.Attachments.ArchiveLimits? other) -> bool
+PandaBear.Vault.Attachments.ArchiveLimits.MaxCompressionRatio.get -> int
+PandaBear.Vault.Attachments.ArchiveLimits.MaxCompressionRatio.init -> void
+PandaBear.Vault.Attachments.ArchiveLimits.MaxEntries.get -> int
+PandaBear.Vault.Attachments.ArchiveLimits.MaxEntries.init -> void
+PandaBear.Vault.Attachments.ArchiveLimits.MaxExpandedBytes.get -> long
+PandaBear.Vault.Attachments.ArchiveLimits.MaxExpandedBytes.init -> void
+PandaBear.Vault.Attachments.ArchiveLimits.MaxNestingDepth.get -> int
+PandaBear.Vault.Attachments.ArchiveLimits.MaxNestingDepth.init -> void
+PandaBear.Vault.Attachments.ArchiveLimits.RatioExemptBytes.get -> long
+PandaBear.Vault.Attachments.ArchiveLimits.RatioExemptBytes.init -> void
+PandaBear.Vault.Attachments.AttachmentKind
+PandaBear.Vault.Attachments.AttachmentKind.BerkeleyDb = 7 -> PandaBear.Vault.Attachments.AttachmentKind
+PandaBear.Vault.Attachments.AttachmentKind.Binary = 0 -> PandaBear.Vault.Attachments.AttachmentKind
+PandaBear.Vault.Attachments.AttachmentKind.EthereumKeystore = 8 -> PandaBear.Vault.Attachments.AttachmentKind
+PandaBear.Vault.Attachments.AttachmentKind.KeePass = 3 -> PandaBear.Vault.Attachments.AttachmentKind
+PandaBear.Vault.Attachments.AttachmentKind.Pdf = 9 -> PandaBear.Vault.Attachments.AttachmentKind
+PandaBear.Vault.Attachments.AttachmentKind.Pkcs12 = 4 -> PandaBear.Vault.Attachments.AttachmentKind
+PandaBear.Vault.Attachments.AttachmentKind.PrivateKeyText = 2 -> PandaBear.Vault.Attachments.AttachmentKind
+PandaBear.Vault.Attachments.AttachmentKind.Sqlite = 6 -> PandaBear.Vault.Attachments.AttachmentKind
+PandaBear.Vault.Attachments.AttachmentKind.Text = 1 -> PandaBear.Vault.Attachments.AttachmentKind
+PandaBear.Vault.Attachments.AttachmentKind.Zip = 5 -> PandaBear.Vault.Attachments.AttachmentKind
+PandaBear.Vault.Attachments.ExtractedText
+PandaBear.Vault.Attachments.ExtractedText.<Clone>$() -> PandaBear.Vault.Attachments.ExtractedText!
+PandaBear.Vault.Attachments.ExtractedText.Deconstruct(out string! Text, out bool Truncated, out int TruncatedLines) -> void
+PandaBear.Vault.Attachments.ExtractedText.Equals(PandaBear.Vault.Attachments.ExtractedText? other) -> bool
+PandaBear.Vault.Attachments.ExtractedText.ExtractedText(string! Text, bool Truncated, int TruncatedLines) -> void
+PandaBear.Vault.Attachments.ExtractedText.Text.get -> string!
+PandaBear.Vault.Attachments.ExtractedText.Text.init -> void
+PandaBear.Vault.Attachments.ExtractedText.Truncated.get -> bool
+PandaBear.Vault.Attachments.ExtractedText.Truncated.init -> void
+PandaBear.Vault.Attachments.ExtractedText.TruncatedLines.get -> int
+PandaBear.Vault.Attachments.ExtractedText.TruncatedLines.init -> void
+PandaBear.Vault.Attachments.SafeArchive
+PandaBear.Vault.Attachments.SafeArchive.ComputeSha256(PandaBear.Vault.Attachments.ArchiveEntryInfo! entry) -> byte[]!
+PandaBear.Vault.Attachments.SafeArchive.Dispose() -> void
+PandaBear.Vault.Attachments.SafeArchive.Entries.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Attachments.ArchiveEntryInfo!>!
+PandaBear.Vault.Attachments.SafeArchive.Find(string! path) -> PandaBear.Vault.Attachments.ArchiveEntryInfo?
+PandaBear.Vault.Attachments.SafeArchive.ReadAllBytes(PandaBear.Vault.Attachments.ArchiveEntryInfo! entry) -> byte[]!
+PandaBear.Vault.Attachments.SafeArchive.ReadText(PandaBear.Vault.Attachments.ArchiveEntryInfo! entry) -> PandaBear.Vault.Attachments.ExtractedText?
+PandaBear.Vault.Attachments.SafeArchive.ReadUtf8(PandaBear.Vault.Attachments.ArchiveEntryInfo! entry) -> string!
+PandaBear.Vault.Attachments.TextExtractor
+PandaBear.Vault.Brief.AgentDecisions
+PandaBear.Vault.Brief.BriefBuilder
+PandaBear.Vault.Brief.BriefDocument
+PandaBear.Vault.Brief.BriefDocument.<Clone>$() -> PandaBear.Vault.Brief.BriefDocument!
+PandaBear.Vault.Brief.BriefDocument.BriefDocument(int Version, System.Collections.Generic.IReadOnlyList<string!>! Inputs, PandaBear.Vault.Brief.BriefSummary! Summary, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefGroup!>! Groups, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.MatchSuggestion!>! Suggestions) -> void
+PandaBear.Vault.Brief.BriefDocument.Deconstruct(out int Version, out System.Collections.Generic.IReadOnlyList<string!>! Inputs, out PandaBear.Vault.Brief.BriefSummary! Summary, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefGroup!>! Groups, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.MatchSuggestion!>! Suggestions) -> void
+PandaBear.Vault.Brief.BriefDocument.Equals(PandaBear.Vault.Brief.BriefDocument? other) -> bool
+PandaBear.Vault.Brief.BriefDocument.Groups.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefGroup!>!
+PandaBear.Vault.Brief.BriefDocument.Groups.init -> void
+PandaBear.Vault.Brief.BriefDocument.Inputs.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Brief.BriefDocument.Inputs.init -> void
+PandaBear.Vault.Brief.BriefDocument.Suggestions.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.MatchSuggestion!>!
+PandaBear.Vault.Brief.BriefDocument.Suggestions.init -> void
+PandaBear.Vault.Brief.BriefDocument.Summary.get -> PandaBear.Vault.Brief.BriefSummary!
+PandaBear.Vault.Brief.BriefDocument.Summary.init -> void
+PandaBear.Vault.Brief.BriefDocument.Version.get -> int
+PandaBear.Vault.Brief.BriefDocument.Version.init -> void
+PandaBear.Vault.Brief.BriefField
+PandaBear.Vault.Brief.BriefField.<Clone>$() -> PandaBear.Vault.Brief.BriefField!
+PandaBear.Vault.Brief.BriefField.AgentMayDecide.get -> bool
+PandaBear.Vault.Brief.BriefField.AgentMayDecide.init -> void
+PandaBear.Vault.Brief.BriefField.BriefField(string! FieldPath, bool NeedsDecision, bool AgentMayDecide, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefHolder!>! Holders) -> void
+PandaBear.Vault.Brief.BriefField.Deconstruct(out string! FieldPath, out bool NeedsDecision, out bool AgentMayDecide, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefHolder!>! Holders) -> void
+PandaBear.Vault.Brief.BriefField.Equals(PandaBear.Vault.Brief.BriefField? other) -> bool
+PandaBear.Vault.Brief.BriefField.FieldPath.get -> string!
+PandaBear.Vault.Brief.BriefField.FieldPath.init -> void
+PandaBear.Vault.Brief.BriefField.Holders.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefHolder!>!
+PandaBear.Vault.Brief.BriefField.Holders.init -> void
+PandaBear.Vault.Brief.BriefField.NeedsDecision.get -> bool
+PandaBear.Vault.Brief.BriefField.NeedsDecision.init -> void
+PandaBear.Vault.Brief.BriefFile
+PandaBear.Vault.Brief.BriefFinding
+PandaBear.Vault.Brief.BriefFinding.<Clone>$() -> PandaBear.Vault.Brief.BriefFinding!
+PandaBear.Vault.Brief.BriefFinding.AgentMayAccept.get -> bool
+PandaBear.Vault.Brief.BriefFinding.AgentMayAccept.init -> void
+PandaBear.Vault.Brief.BriefFinding.AgentMayReject.get -> bool
+PandaBear.Vault.Brief.BriefFinding.AgentMayReject.init -> void
+PandaBear.Vault.Brief.BriefFinding.BriefFinding(string! Id, PandaBear.Vault.Secrets.SecretKind Kind, PandaBear.Vault.Secrets.Confidence Confidence, string! FieldPath, int? Line, string! ProposedTarget, bool PreAccepted, bool NeedsDecision, bool AgentMayAccept, bool AgentMayReject) -> void
+PandaBear.Vault.Brief.BriefFinding.Confidence.get -> PandaBear.Vault.Secrets.Confidence
+PandaBear.Vault.Brief.BriefFinding.Confidence.init -> void
+PandaBear.Vault.Brief.BriefFinding.Deconstruct(out string! Id, out PandaBear.Vault.Secrets.SecretKind Kind, out PandaBear.Vault.Secrets.Confidence Confidence, out string! FieldPath, out int? Line, out string! ProposedTarget, out bool PreAccepted, out bool NeedsDecision, out bool AgentMayAccept, out bool AgentMayReject) -> void
+PandaBear.Vault.Brief.BriefFinding.Equals(PandaBear.Vault.Brief.BriefFinding? other) -> bool
+PandaBear.Vault.Brief.BriefFinding.FieldPath.get -> string!
+PandaBear.Vault.Brief.BriefFinding.FieldPath.init -> void
+PandaBear.Vault.Brief.BriefFinding.Id.get -> string!
+PandaBear.Vault.Brief.BriefFinding.Id.init -> void
+PandaBear.Vault.Brief.BriefFinding.Kind.get -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Brief.BriefFinding.Kind.init -> void
+PandaBear.Vault.Brief.BriefFinding.Line.get -> int?
+PandaBear.Vault.Brief.BriefFinding.Line.init -> void
+PandaBear.Vault.Brief.BriefFinding.NeedsDecision.get -> bool
+PandaBear.Vault.Brief.BriefFinding.NeedsDecision.init -> void
+PandaBear.Vault.Brief.BriefFinding.PreAccepted.get -> bool
+PandaBear.Vault.Brief.BriefFinding.PreAccepted.init -> void
+PandaBear.Vault.Brief.BriefFinding.ProposedTarget.get -> string!
+PandaBear.Vault.Brief.BriefFinding.ProposedTarget.init -> void
+PandaBear.Vault.Brief.BriefGroup
+PandaBear.Vault.Brief.BriefGroup.<Clone>$() -> PandaBear.Vault.Brief.BriefGroup!
+PandaBear.Vault.Brief.BriefGroup.BriefGroup(string! Key, PandaBear.Vault.Model.VaultItemType Type, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefMember!>! Members, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefField!>! Fields) -> void
+PandaBear.Vault.Brief.BriefGroup.Deconstruct(out string! Key, out PandaBear.Vault.Model.VaultItemType Type, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefMember!>! Members, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefField!>! Fields) -> void
+PandaBear.Vault.Brief.BriefGroup.Equals(PandaBear.Vault.Brief.BriefGroup? other) -> bool
+PandaBear.Vault.Brief.BriefGroup.Fields.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefField!>!
+PandaBear.Vault.Brief.BriefGroup.Fields.init -> void
+PandaBear.Vault.Brief.BriefGroup.Key.get -> string!
+PandaBear.Vault.Brief.BriefGroup.Key.init -> void
+PandaBear.Vault.Brief.BriefGroup.Members.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefMember!>!
+PandaBear.Vault.Brief.BriefGroup.Members.init -> void
+PandaBear.Vault.Brief.BriefGroup.Type.get -> PandaBear.Vault.Model.VaultItemType
+PandaBear.Vault.Brief.BriefGroup.Type.init -> void
+PandaBear.Vault.Brief.BriefHolder
+PandaBear.Vault.Brief.BriefHolder.<Clone>$() -> PandaBear.Vault.Brief.BriefHolder!
+PandaBear.Vault.Brief.BriefHolder.BriefHolder(string! OriginKey, bool Newest, string? Value = null, System.Collections.Generic.IReadOnlyList<string!>? Values = null, bool? Weak = null, bool? Reused = null, bool? InOtherHistory = null) -> void
+PandaBear.Vault.Brief.BriefHolder.Deconstruct(out string! OriginKey, out bool Newest, out string? Value, out System.Collections.Generic.IReadOnlyList<string!>? Values, out bool? Weak, out bool? Reused, out bool? InOtherHistory) -> void
+PandaBear.Vault.Brief.BriefHolder.Equals(PandaBear.Vault.Brief.BriefHolder? other) -> bool
+PandaBear.Vault.Brief.BriefHolder.InOtherHistory.get -> bool?
+PandaBear.Vault.Brief.BriefHolder.InOtherHistory.init -> void
+PandaBear.Vault.Brief.BriefHolder.Newest.get -> bool
+PandaBear.Vault.Brief.BriefHolder.Newest.init -> void
+PandaBear.Vault.Brief.BriefHolder.OriginKey.get -> string!
+PandaBear.Vault.Brief.BriefHolder.OriginKey.init -> void
+PandaBear.Vault.Brief.BriefHolder.Reused.get -> bool?
+PandaBear.Vault.Brief.BriefHolder.Reused.init -> void
+PandaBear.Vault.Brief.BriefHolder.Value.get -> string?
+PandaBear.Vault.Brief.BriefHolder.Value.init -> void
+PandaBear.Vault.Brief.BriefHolder.Values.get -> System.Collections.Generic.IReadOnlyList<string!>?
+PandaBear.Vault.Brief.BriefHolder.Values.init -> void
+PandaBear.Vault.Brief.BriefHolder.Weak.get -> bool?
+PandaBear.Vault.Brief.BriefHolder.Weak.init -> void
+PandaBear.Vault.Brief.BriefMember
+PandaBear.Vault.Brief.BriefMember.<Clone>$() -> PandaBear.Vault.Brief.BriefMember!
+PandaBear.Vault.Brief.BriefMember.BriefMember(string! OriginKey, string! SourceFile, string! Name, string? Folder, string? Host, string? Username, System.DateTimeOffset? Modified, bool Newest, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefFinding!>! Findings) -> void
+PandaBear.Vault.Brief.BriefMember.Deconstruct(out string! OriginKey, out string! SourceFile, out string! Name, out string? Folder, out string? Host, out string? Username, out System.DateTimeOffset? Modified, out bool Newest, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefFinding!>! Findings) -> void
+PandaBear.Vault.Brief.BriefMember.Equals(PandaBear.Vault.Brief.BriefMember? other) -> bool
+PandaBear.Vault.Brief.BriefMember.Findings.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Brief.BriefFinding!>!
+PandaBear.Vault.Brief.BriefMember.Findings.init -> void
+PandaBear.Vault.Brief.BriefMember.Folder.get -> string?
+PandaBear.Vault.Brief.BriefMember.Folder.init -> void
+PandaBear.Vault.Brief.BriefMember.Host.get -> string?
+PandaBear.Vault.Brief.BriefMember.Host.init -> void
+PandaBear.Vault.Brief.BriefMember.Modified.get -> System.DateTimeOffset?
+PandaBear.Vault.Brief.BriefMember.Modified.init -> void
+PandaBear.Vault.Brief.BriefMember.Name.get -> string!
+PandaBear.Vault.Brief.BriefMember.Name.init -> void
+PandaBear.Vault.Brief.BriefMember.Newest.get -> bool
+PandaBear.Vault.Brief.BriefMember.Newest.init -> void
+PandaBear.Vault.Brief.BriefMember.OriginKey.get -> string!
+PandaBear.Vault.Brief.BriefMember.OriginKey.init -> void
+PandaBear.Vault.Brief.BriefMember.SourceFile.get -> string!
+PandaBear.Vault.Brief.BriefMember.SourceFile.init -> void
+PandaBear.Vault.Brief.BriefMember.Username.get -> string?
+PandaBear.Vault.Brief.BriefMember.Username.init -> void
+PandaBear.Vault.Brief.BriefSummary
+PandaBear.Vault.Brief.BriefSummary.<Clone>$() -> PandaBear.Vault.Brief.BriefSummary!
+PandaBear.Vault.Brief.BriefSummary.AttachmentsToUpload.get -> int
+PandaBear.Vault.Brief.BriefSummary.AttachmentsToUpload.init -> void
+PandaBear.Vault.Brief.BriefSummary.BriefSummary(int Items, int MergedGroups, int ConflictsResolvedByPolicy, int FieldsNeedingDecision, int Findings, int FindingsApplied, int FindingsNeedingDecision, int PasswordIssues, int AttachmentsToUpload) -> void
+PandaBear.Vault.Brief.BriefSummary.ConflictsResolvedByPolicy.get -> int
+PandaBear.Vault.Brief.BriefSummary.ConflictsResolvedByPolicy.init -> void
+PandaBear.Vault.Brief.BriefSummary.Deconstruct(out int Items, out int MergedGroups, out int ConflictsResolvedByPolicy, out int FieldsNeedingDecision, out int Findings, out int FindingsApplied, out int FindingsNeedingDecision, out int PasswordIssues, out int AttachmentsToUpload) -> void
+PandaBear.Vault.Brief.BriefSummary.Equals(PandaBear.Vault.Brief.BriefSummary? other) -> bool
+PandaBear.Vault.Brief.BriefSummary.FieldsNeedingDecision.get -> int
+PandaBear.Vault.Brief.BriefSummary.FieldsNeedingDecision.init -> void
+PandaBear.Vault.Brief.BriefSummary.Findings.get -> int
+PandaBear.Vault.Brief.BriefSummary.Findings.init -> void
+PandaBear.Vault.Brief.BriefSummary.FindingsApplied.get -> int
+PandaBear.Vault.Brief.BriefSummary.FindingsApplied.init -> void
+PandaBear.Vault.Brief.BriefSummary.FindingsNeedingDecision.get -> int
+PandaBear.Vault.Brief.BriefSummary.FindingsNeedingDecision.init -> void
+PandaBear.Vault.Brief.BriefSummary.Items.get -> int
+PandaBear.Vault.Brief.BriefSummary.Items.init -> void
+PandaBear.Vault.Brief.BriefSummary.MergedGroups.get -> int
+PandaBear.Vault.Brief.BriefSummary.MergedGroups.init -> void
+PandaBear.Vault.Brief.BriefSummary.PasswordIssues.get -> int
+PandaBear.Vault.Brief.BriefSummary.PasswordIssues.init -> void
+PandaBear.Vault.Catalog.CatalogApplier
+PandaBear.Vault.Catalog.CatalogApplyResult
+PandaBear.Vault.Catalog.CatalogApplyResult.<Clone>$() -> PandaBear.Vault.Catalog.CatalogApplyResult!
+PandaBear.Vault.Catalog.CatalogApplyResult.CatalogApplyResult(PandaBear.Vault.Model.VaultExport? Vault, int ChangedItems, System.Collections.Generic.IReadOnlyList<string!>! Problems) -> void
+PandaBear.Vault.Catalog.CatalogApplyResult.ChangedItems.get -> int
+PandaBear.Vault.Catalog.CatalogApplyResult.ChangedItems.init -> void
+PandaBear.Vault.Catalog.CatalogApplyResult.Changes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Catalog.CatalogApplyResult.Changes.init -> void
+PandaBear.Vault.Catalog.CatalogApplyResult.Deconstruct(out PandaBear.Vault.Model.VaultExport? Vault, out int ChangedItems, out System.Collections.Generic.IReadOnlyList<string!>! Problems) -> void
+PandaBear.Vault.Catalog.CatalogApplyResult.Equals(PandaBear.Vault.Catalog.CatalogApplyResult? other) -> bool
+PandaBear.Vault.Catalog.CatalogApplyResult.Problems.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Catalog.CatalogApplyResult.Problems.init -> void
+PandaBear.Vault.Catalog.CatalogApplyResult.Removals.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Catalog.CatalogApplyResult.Removals.init -> void
+PandaBear.Vault.Catalog.CatalogApplyResult.Vault.get -> PandaBear.Vault.Model.VaultExport?
+PandaBear.Vault.Catalog.CatalogApplyResult.Vault.init -> void
+PandaBear.Vault.Catalog.CatalogAttachment
+PandaBear.Vault.Catalog.CatalogAttachment.<Clone>$() -> PandaBear.Vault.Catalog.CatalogAttachment!
+PandaBear.Vault.Catalog.CatalogAttachment.CatalogAttachment(string! Name, long? Size) -> void
+PandaBear.Vault.Catalog.CatalogAttachment.Deconstruct(out string! Name, out long? Size) -> void
+PandaBear.Vault.Catalog.CatalogAttachment.Equals(PandaBear.Vault.Catalog.CatalogAttachment? other) -> bool
+PandaBear.Vault.Catalog.CatalogAttachment.Name.get -> string!
+PandaBear.Vault.Catalog.CatalogAttachment.Name.init -> void
+PandaBear.Vault.Catalog.CatalogAttachment.Size.get -> long?
+PandaBear.Vault.Catalog.CatalogAttachment.Size.init -> void
+PandaBear.Vault.Catalog.CatalogBuild
+PandaBear.Vault.Catalog.CatalogBuild.<Clone>$() -> PandaBear.Vault.Catalog.CatalogBuild!
+PandaBear.Vault.Catalog.CatalogBuild.Catalog.get -> PandaBear.Vault.Catalog.CatalogDocument!
+PandaBear.Vault.Catalog.CatalogBuild.Catalog.init -> void
+PandaBear.Vault.Catalog.CatalogBuild.CatalogBuild(PandaBear.Vault.Catalog.CatalogDocument! Catalog, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.ItemNotesDecision!>! NotesUpdates, PandaBear.Vault.Catalog.CatalogCounts! Counts) -> void
+PandaBear.Vault.Catalog.CatalogBuild.Counts.get -> PandaBear.Vault.Catalog.CatalogCounts!
+PandaBear.Vault.Catalog.CatalogBuild.Counts.init -> void
+PandaBear.Vault.Catalog.CatalogBuild.Deconstruct(out PandaBear.Vault.Catalog.CatalogDocument! Catalog, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.ItemNotesDecision!>! NotesUpdates, out PandaBear.Vault.Catalog.CatalogCounts! Counts) -> void
+PandaBear.Vault.Catalog.CatalogBuild.Equals(PandaBear.Vault.Catalog.CatalogBuild? other) -> bool
+PandaBear.Vault.Catalog.CatalogBuild.NotesUpdates.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.ItemNotesDecision!>!
+PandaBear.Vault.Catalog.CatalogBuild.NotesUpdates.init -> void
+PandaBear.Vault.Catalog.CatalogBuilder
+PandaBear.Vault.Catalog.CatalogCounts
+PandaBear.Vault.Catalog.CatalogCounts.CatalogCounts() -> void
+PandaBear.Vault.Catalog.CatalogCounts.Count(PandaBear.Vault.Merge.NotesDecision decision) -> void
+PandaBear.Vault.Catalog.CatalogCounts.HiddenNotes.get -> int
+PandaBear.Vault.Catalog.CatalogCounts.MaskedUris.get -> int
+PandaBear.Vault.Catalog.CatalogCounts.MaskedUris.set -> void
+PandaBear.Vault.Catalog.CatalogCounts.PendingNotes.get -> int
+PandaBear.Vault.Catalog.CatalogCounts.PrivateNotes.get -> int
+PandaBear.Vault.Catalog.CatalogCounts.ProtectedFields.get -> int
+PandaBear.Vault.Catalog.CatalogCounts.ProtectedFields.set -> void
+PandaBear.Vault.Catalog.CatalogCounts.SharedNotes.get -> int
+PandaBear.Vault.Catalog.CatalogDocument
+PandaBear.Vault.Catalog.CatalogDocument.<Clone>$() -> PandaBear.Vault.Catalog.CatalogDocument!
+PandaBear.Vault.Catalog.CatalogDocument.CatalogDocument(int Version, PandaBear.Vault.Catalog.CatalogSource! Source, System.Collections.Generic.IReadOnlyList<string!>! Folders, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Catalog.CatalogItem!>! Items) -> void
+PandaBear.Vault.Catalog.CatalogDocument.Deconstruct(out int Version, out PandaBear.Vault.Catalog.CatalogSource! Source, out System.Collections.Generic.IReadOnlyList<string!>! Folders, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Catalog.CatalogItem!>! Items) -> void
+PandaBear.Vault.Catalog.CatalogDocument.Equals(PandaBear.Vault.Catalog.CatalogDocument? other) -> bool
+PandaBear.Vault.Catalog.CatalogDocument.Folders.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Catalog.CatalogDocument.Folders.init -> void
+PandaBear.Vault.Catalog.CatalogDocument.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Catalog.CatalogItem!>!
+PandaBear.Vault.Catalog.CatalogDocument.Items.init -> void
+PandaBear.Vault.Catalog.CatalogDocument.Source.get -> PandaBear.Vault.Catalog.CatalogSource!
+PandaBear.Vault.Catalog.CatalogDocument.Source.init -> void
+PandaBear.Vault.Catalog.CatalogDocument.Version.get -> int
+PandaBear.Vault.Catalog.CatalogDocument.Version.init -> void
+PandaBear.Vault.Catalog.CatalogField
+PandaBear.Vault.Catalog.CatalogField.<Clone>$() -> PandaBear.Vault.Catalog.CatalogField!
+PandaBear.Vault.Catalog.CatalogField.CatalogField(string! Name, string! Value) -> void
+PandaBear.Vault.Catalog.CatalogField.Deconstruct(out string! Name, out string! Value) -> void
+PandaBear.Vault.Catalog.CatalogField.Equals(PandaBear.Vault.Catalog.CatalogField? other) -> bool
+PandaBear.Vault.Catalog.CatalogField.Name.get -> string!
+PandaBear.Vault.Catalog.CatalogField.Name.init -> void
+PandaBear.Vault.Catalog.CatalogField.Value.get -> string!
+PandaBear.Vault.Catalog.CatalogField.Value.init -> void
+PandaBear.Vault.Catalog.CatalogFile
+PandaBear.Vault.Catalog.CatalogInfo
+PandaBear.Vault.Catalog.CatalogInfo.<Clone>$() -> PandaBear.Vault.Catalog.CatalogInfo!
+PandaBear.Vault.Catalog.CatalogInfo.Attachments.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Catalog.CatalogAttachment!>!
+PandaBear.Vault.Catalog.CatalogInfo.Attachments.init -> void
+PandaBear.Vault.Catalog.CatalogInfo.CatalogInfo(PandaBear.Vault.Model.VaultItemType Type, string? Username, bool HasPassword, bool HasTotp, int Passkeys, int PasswordHistory, System.Collections.Generic.IReadOnlyList<string!>! ProtectedFields, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Catalog.CatalogAttachment!>! Attachments) -> void
+PandaBear.Vault.Catalog.CatalogInfo.Deconstruct(out PandaBear.Vault.Model.VaultItemType Type, out string? Username, out bool HasPassword, out bool HasTotp, out int Passkeys, out int PasswordHistory, out System.Collections.Generic.IReadOnlyList<string!>! ProtectedFields, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Catalog.CatalogAttachment!>! Attachments) -> void
+PandaBear.Vault.Catalog.CatalogInfo.Equals(PandaBear.Vault.Catalog.CatalogInfo? other) -> bool
+PandaBear.Vault.Catalog.CatalogInfo.HasPassword.get -> bool
+PandaBear.Vault.Catalog.CatalogInfo.HasPassword.init -> void
+PandaBear.Vault.Catalog.CatalogInfo.HasTotp.get -> bool
+PandaBear.Vault.Catalog.CatalogInfo.HasTotp.init -> void
+PandaBear.Vault.Catalog.CatalogInfo.Passkeys.get -> int
+PandaBear.Vault.Catalog.CatalogInfo.Passkeys.init -> void
+PandaBear.Vault.Catalog.CatalogInfo.PasswordHistory.get -> int
+PandaBear.Vault.Catalog.CatalogInfo.PasswordHistory.init -> void
+PandaBear.Vault.Catalog.CatalogInfo.ProtectedFields.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Catalog.CatalogInfo.ProtectedFields.init -> void
+PandaBear.Vault.Catalog.CatalogInfo.Type.get -> PandaBear.Vault.Model.VaultItemType
+PandaBear.Vault.Catalog.CatalogInfo.Type.init -> void
+PandaBear.Vault.Catalog.CatalogInfo.Username.get -> string?
+PandaBear.Vault.Catalog.CatalogInfo.Username.init -> void
+PandaBear.Vault.Catalog.CatalogItem
+PandaBear.Vault.Catalog.CatalogItem.<Clone>$() -> PandaBear.Vault.Catalog.CatalogItem!
+PandaBear.Vault.Catalog.CatalogItem.AdditionalFolders.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Catalog.CatalogItem.AdditionalFolders.init -> void
+PandaBear.Vault.Catalog.CatalogItem.CatalogItem(string! Key, string! Name, string? Folder, System.Collections.Generic.IReadOnlyList<string!>! AdditionalFolders, bool Favorite, PandaBear.Vault.Catalog.CatalogNotes? Notes, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Catalog.CatalogUri!>! Uris, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Catalog.CatalogField!>! Fields, PandaBear.Vault.Catalog.CatalogInfo! Info) -> void
+PandaBear.Vault.Catalog.CatalogItem.Deconstruct(out string! Key, out string! Name, out string? Folder, out System.Collections.Generic.IReadOnlyList<string!>! AdditionalFolders, out bool Favorite, out PandaBear.Vault.Catalog.CatalogNotes? Notes, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Catalog.CatalogUri!>! Uris, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Catalog.CatalogField!>! Fields, out PandaBear.Vault.Catalog.CatalogInfo! Info) -> void
+PandaBear.Vault.Catalog.CatalogItem.Equals(PandaBear.Vault.Catalog.CatalogItem? other) -> bool
+PandaBear.Vault.Catalog.CatalogItem.Favorite.get -> bool
+PandaBear.Vault.Catalog.CatalogItem.Favorite.init -> void
+PandaBear.Vault.Catalog.CatalogItem.Fields.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Catalog.CatalogField!>!
+PandaBear.Vault.Catalog.CatalogItem.Fields.init -> void
+PandaBear.Vault.Catalog.CatalogItem.Folder.get -> string?
+PandaBear.Vault.Catalog.CatalogItem.Folder.init -> void
+PandaBear.Vault.Catalog.CatalogItem.Info.get -> PandaBear.Vault.Catalog.CatalogInfo!
+PandaBear.Vault.Catalog.CatalogItem.Info.init -> void
+PandaBear.Vault.Catalog.CatalogItem.Key.get -> string!
+PandaBear.Vault.Catalog.CatalogItem.Key.init -> void
+PandaBear.Vault.Catalog.CatalogItem.Name.get -> string!
+PandaBear.Vault.Catalog.CatalogItem.Name.init -> void
+PandaBear.Vault.Catalog.CatalogItem.Notes.get -> PandaBear.Vault.Catalog.CatalogNotes?
+PandaBear.Vault.Catalog.CatalogItem.Notes.init -> void
+PandaBear.Vault.Catalog.CatalogItem.Uris.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Catalog.CatalogUri!>!
+PandaBear.Vault.Catalog.CatalogItem.Uris.init -> void
+PandaBear.Vault.Catalog.CatalogNotes
+PandaBear.Vault.Catalog.CatalogNotes.<Clone>$() -> PandaBear.Vault.Catalog.CatalogNotes!
+PandaBear.Vault.Catalog.CatalogNotes.CatalogNotes(PandaBear.Vault.Merge.NotesDecision Decision, string? Text = null) -> void
+PandaBear.Vault.Catalog.CatalogNotes.Decision.get -> PandaBear.Vault.Merge.NotesDecision
+PandaBear.Vault.Catalog.CatalogNotes.Decision.init -> void
+PandaBear.Vault.Catalog.CatalogNotes.Deconstruct(out PandaBear.Vault.Merge.NotesDecision Decision, out string? Text) -> void
+PandaBear.Vault.Catalog.CatalogNotes.Equals(PandaBear.Vault.Catalog.CatalogNotes? other) -> bool
+PandaBear.Vault.Catalog.CatalogNotes.Text.get -> string?
+PandaBear.Vault.Catalog.CatalogNotes.Text.init -> void
+PandaBear.Vault.Catalog.CatalogSource
+PandaBear.Vault.Catalog.CatalogSource.<Clone>$() -> PandaBear.Vault.Catalog.CatalogSource!
+PandaBear.Vault.Catalog.CatalogSource.CatalogSource(string! File, string! Sha256) -> void
+PandaBear.Vault.Catalog.CatalogSource.Deconstruct(out string! File, out string! Sha256) -> void
+PandaBear.Vault.Catalog.CatalogSource.Equals(PandaBear.Vault.Catalog.CatalogSource? other) -> bool
+PandaBear.Vault.Catalog.CatalogSource.File.get -> string!
+PandaBear.Vault.Catalog.CatalogSource.File.init -> void
+PandaBear.Vault.Catalog.CatalogSource.Sha256.get -> string!
+PandaBear.Vault.Catalog.CatalogSource.Sha256.init -> void
+PandaBear.Vault.Catalog.CatalogUri
+PandaBear.Vault.Catalog.CatalogUri.<Clone>$() -> PandaBear.Vault.Catalog.CatalogUri!
+PandaBear.Vault.Catalog.CatalogUri.CatalogUri(string? Value = null, PandaBear.Vault.Model.UriMatch? Match = null, string? Masked = null, int? Index = null) -> void
+PandaBear.Vault.Catalog.CatalogUri.Deconstruct(out string? Value, out PandaBear.Vault.Model.UriMatch? Match, out string? Masked, out int? Index) -> void
+PandaBear.Vault.Catalog.CatalogUri.Equals(PandaBear.Vault.Catalog.CatalogUri? other) -> bool
+PandaBear.Vault.Catalog.CatalogUri.Index.get -> int?
+PandaBear.Vault.Catalog.CatalogUri.Index.init -> void
+PandaBear.Vault.Catalog.CatalogUri.Masked.get -> string?
+PandaBear.Vault.Catalog.CatalogUri.Masked.init -> void
+PandaBear.Vault.Catalog.CatalogUri.Match.get -> PandaBear.Vault.Model.UriMatch?
+PandaBear.Vault.Catalog.CatalogUri.Match.init -> void
+PandaBear.Vault.Catalog.CatalogUri.Value.get -> string?
+PandaBear.Vault.Catalog.CatalogUri.Value.init -> void
+PandaBear.Vault.Csv.CsvReader
+PandaBear.Vault.Csv.CsvRecord
+PandaBear.Vault.Csv.CsvRecord.<Clone>$() -> PandaBear.Vault.Csv.CsvRecord!
+PandaBear.Vault.Csv.CsvRecord.CsvRecord(int LineNumber, System.Collections.Generic.IReadOnlyList<string!>! Fields) -> void
+PandaBear.Vault.Csv.CsvRecord.Deconstruct(out int LineNumber, out System.Collections.Generic.IReadOnlyList<string!>! Fields) -> void
+PandaBear.Vault.Csv.CsvRecord.Equals(PandaBear.Vault.Csv.CsvRecord? other) -> bool
+PandaBear.Vault.Csv.CsvRecord.Fields.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Csv.CsvRecord.Fields.init -> void
+PandaBear.Vault.Csv.CsvRecord.LineNumber.get -> int
+PandaBear.Vault.Csv.CsvRecord.LineNumber.init -> void
+PandaBear.Vault.Formats.BitwardenLimits
+PandaBear.Vault.Formats.IVaultExportReader
+PandaBear.Vault.Formats.IVaultExportReader.Read(string! path, System.Func<string!, string!>! passwordProvider) -> PandaBear.Vault.Formats.VaultReadResult!
+PandaBear.Vault.Formats.IVaultExportWriter
+PandaBear.Vault.Formats.IVaultExportWriter.Encrypt(string! json, string! password) -> string!
+PandaBear.Vault.Formats.IVaultExportWriter.Write(PandaBear.Vault.Model.VaultExport! vault) -> PandaBear.Vault.Formats.VaultWriteResult!
+PandaBear.Vault.Formats.UnassignedAttachmentFolder
+PandaBear.Vault.Formats.UnassignedAttachmentFolder.<Clone>$() -> PandaBear.Vault.Formats.UnassignedAttachmentFolder!
+PandaBear.Vault.Formats.UnassignedAttachmentFolder.Deconstruct(out string! SourceFile, out string! FolderName, out int MatchingItemCount, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.AttachmentRef!>! Files) -> void
+PandaBear.Vault.Formats.UnassignedAttachmentFolder.Equals(PandaBear.Vault.Formats.UnassignedAttachmentFolder? other) -> bool
+PandaBear.Vault.Formats.UnassignedAttachmentFolder.Files.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.AttachmentRef!>!
+PandaBear.Vault.Formats.UnassignedAttachmentFolder.Files.init -> void
+PandaBear.Vault.Formats.UnassignedAttachmentFolder.FolderName.get -> string!
+PandaBear.Vault.Formats.UnassignedAttachmentFolder.FolderName.init -> void
+PandaBear.Vault.Formats.UnassignedAttachmentFolder.MatchingItemCount.get -> int
+PandaBear.Vault.Formats.UnassignedAttachmentFolder.MatchingItemCount.init -> void
+PandaBear.Vault.Formats.UnassignedAttachmentFolder.SourceFile.get -> string!
+PandaBear.Vault.Formats.UnassignedAttachmentFolder.SourceFile.init -> void
+PandaBear.Vault.Formats.UnassignedAttachmentFolder.UnassignedAttachmentFolder(string! SourceFile, string! FolderName, int MatchingItemCount, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.AttachmentRef!>! Files) -> void
+PandaBear.Vault.Formats.VaultReadResult
+PandaBear.Vault.Formats.VaultReadResult.<Clone>$() -> PandaBear.Vault.Formats.VaultReadResult!
+PandaBear.Vault.Formats.VaultReadResult.Deconstruct(out PandaBear.Vault.Model.VaultExport! Export, out System.Collections.Generic.IReadOnlyList<string!>! Warnings) -> void
+PandaBear.Vault.Formats.VaultReadResult.Equals(PandaBear.Vault.Formats.VaultReadResult? other) -> bool
+PandaBear.Vault.Formats.VaultReadResult.Export.get -> PandaBear.Vault.Model.VaultExport!
+PandaBear.Vault.Formats.VaultReadResult.Export.init -> void
+PandaBear.Vault.Formats.VaultReadResult.UnassignedAttachmentFolders.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Formats.UnassignedAttachmentFolder!>!
+PandaBear.Vault.Formats.VaultReadResult.UnassignedAttachmentFolders.init -> void
+PandaBear.Vault.Formats.VaultReadResult.VaultReadResult(PandaBear.Vault.Model.VaultExport! Export, System.Collections.Generic.IReadOnlyList<string!>! Warnings) -> void
+PandaBear.Vault.Formats.VaultReadResult.Warnings.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Formats.VaultReadResult.Warnings.init -> void
+PandaBear.Vault.Formats.VaultWriteResult
+PandaBear.Vault.Formats.VaultWriteResult.<Clone>$() -> PandaBear.Vault.Formats.VaultWriteResult!
+PandaBear.Vault.Formats.VaultWriteResult.Deconstruct(out string! Json, out System.Collections.Generic.IReadOnlyList<string!>! Errors, out System.Collections.Generic.IReadOnlyList<string!>! Warnings) -> void
+PandaBear.Vault.Formats.VaultWriteResult.Equals(PandaBear.Vault.Formats.VaultWriteResult? other) -> bool
+PandaBear.Vault.Formats.VaultWriteResult.Errors.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Formats.VaultWriteResult.Errors.init -> void
+PandaBear.Vault.Formats.VaultWriteResult.Json.get -> string!
+PandaBear.Vault.Formats.VaultWriteResult.Json.init -> void
+PandaBear.Vault.Formats.VaultWriteResult.VaultWriteResult(string! Json, System.Collections.Generic.IReadOnlyList<string!>! Errors, System.Collections.Generic.IReadOnlyList<string!>! Warnings) -> void
+PandaBear.Vault.Formats.VaultWriteResult.Warnings.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Formats.VaultWriteResult.Warnings.init -> void
+PandaBear.Vault.IO.FilePaths
+PandaBear.Vault.IO.PrintableText
+PandaBear.Vault.IO.SecureFile
+PandaBear.Vault.Matching.ItemNormalizer
+PandaBear.Vault.Matching.MatchGroup
+PandaBear.Vault.Matching.MatchGroup.<Clone>$() -> PandaBear.Vault.Matching.MatchGroup!
+PandaBear.Vault.Matching.MatchGroup.Deconstruct(out string! Key, out PandaBear.Vault.Matching.MatchStatus Status, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.VaultItem!>! Members, out System.Collections.Generic.IReadOnlyList<string!>! MemberKeys) -> void
+PandaBear.Vault.Matching.MatchGroup.Equals(PandaBear.Vault.Matching.MatchGroup? other) -> bool
+PandaBear.Vault.Matching.MatchGroup.Key.get -> string!
+PandaBear.Vault.Matching.MatchGroup.Key.init -> void
+PandaBear.Vault.Matching.MatchGroup.MatchGroup(string! Key, PandaBear.Vault.Matching.MatchStatus Status, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.VaultItem!>! Members, System.Collections.Generic.IReadOnlyList<string!>! MemberKeys) -> void
+PandaBear.Vault.Matching.MatchGroup.MemberKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Matching.MatchGroup.MemberKeys.init -> void
+PandaBear.Vault.Matching.MatchGroup.Members.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.VaultItem!>!
+PandaBear.Vault.Matching.MatchGroup.Members.init -> void
+PandaBear.Vault.Matching.MatchGroup.Status.get -> PandaBear.Vault.Matching.MatchStatus
+PandaBear.Vault.Matching.MatchGroup.Status.init -> void
+PandaBear.Vault.Matching.MatchOverrides
+PandaBear.Vault.Matching.MatchOverrides.<Clone>$() -> PandaBear.Vault.Matching.MatchOverrides!
+PandaBear.Vault.Matching.MatchOverrides.Deconstruct(out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.OriginKeyPair!>! Links, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.OriginKeyPair!>! Splits) -> void
+PandaBear.Vault.Matching.MatchOverrides.Equals(PandaBear.Vault.Matching.MatchOverrides? other) -> bool
+PandaBear.Vault.Matching.MatchOverrides.Links.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.OriginKeyPair!>!
+PandaBear.Vault.Matching.MatchOverrides.Links.init -> void
+PandaBear.Vault.Matching.MatchOverrides.MatchOverrides(System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.OriginKeyPair!>! Links, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.OriginKeyPair!>! Splits) -> void
+PandaBear.Vault.Matching.MatchOverrides.Splits.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.OriginKeyPair!>!
+PandaBear.Vault.Matching.MatchOverrides.Splits.init -> void
+PandaBear.Vault.Matching.MatchResult
+PandaBear.Vault.Matching.MatchResult.<Clone>$() -> PandaBear.Vault.Matching.MatchResult!
+PandaBear.Vault.Matching.MatchResult.Deconstruct(out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.MatchGroup!>! Groups, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.MatchSuggestion!>! Suggestions) -> void
+PandaBear.Vault.Matching.MatchResult.Equals(PandaBear.Vault.Matching.MatchResult? other) -> bool
+PandaBear.Vault.Matching.MatchResult.Groups.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.MatchGroup!>!
+PandaBear.Vault.Matching.MatchResult.Groups.init -> void
+PandaBear.Vault.Matching.MatchResult.MatchResult(System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.MatchGroup!>! Groups, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.MatchSuggestion!>! Suggestions) -> void
+PandaBear.Vault.Matching.MatchResult.Suggestions.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Matching.MatchSuggestion!>!
+PandaBear.Vault.Matching.MatchResult.Suggestions.init -> void
+PandaBear.Vault.Matching.MatchStatus
+PandaBear.Vault.Matching.MatchStatus.Different = 2 -> PandaBear.Vault.Matching.MatchStatus
+PandaBear.Vault.Matching.MatchStatus.Identical = 1 -> PandaBear.Vault.Matching.MatchStatus
+PandaBear.Vault.Matching.MatchStatus.Unique = 0 -> PandaBear.Vault.Matching.MatchStatus
+PandaBear.Vault.Matching.MatchSuggestion
+PandaBear.Vault.Matching.MatchSuggestion.<Clone>$() -> PandaBear.Vault.Matching.MatchSuggestion!
+PandaBear.Vault.Matching.MatchSuggestion.Deconstruct(out PandaBear.Vault.Matching.MatchSuggestionKind Kind, out string! FirstOriginKey, out string! SecondOriginKey, out string! FirstName, out string! SecondName) -> void
+PandaBear.Vault.Matching.MatchSuggestion.Equals(PandaBear.Vault.Matching.MatchSuggestion? other) -> bool
+PandaBear.Vault.Matching.MatchSuggestion.FirstName.get -> string!
+PandaBear.Vault.Matching.MatchSuggestion.FirstName.init -> void
+PandaBear.Vault.Matching.MatchSuggestion.FirstOriginKey.get -> string!
+PandaBear.Vault.Matching.MatchSuggestion.FirstOriginKey.init -> void
+PandaBear.Vault.Matching.MatchSuggestion.Kind.get -> PandaBear.Vault.Matching.MatchSuggestionKind
+PandaBear.Vault.Matching.MatchSuggestion.Kind.init -> void
+PandaBear.Vault.Matching.MatchSuggestion.MatchSuggestion(PandaBear.Vault.Matching.MatchSuggestionKind Kind, string! FirstOriginKey, string! SecondOriginKey, string! FirstName, string! SecondName) -> void
+PandaBear.Vault.Matching.MatchSuggestion.SecondName.get -> string!
+PandaBear.Vault.Matching.MatchSuggestion.SecondName.init -> void
+PandaBear.Vault.Matching.MatchSuggestion.SecondOriginKey.get -> string!
+PandaBear.Vault.Matching.MatchSuggestion.SecondOriginKey.init -> void
+PandaBear.Vault.Matching.MatchSuggestionKind
+PandaBear.Vault.Matching.MatchSuggestionKind.SameHostDifferentUsername = 0 -> PandaBear.Vault.Matching.MatchSuggestionKind
+PandaBear.Vault.Matching.MatchSuggestionKind.SameTitle = 1 -> PandaBear.Vault.Matching.MatchSuggestionKind
+PandaBear.Vault.Matching.OriginKeyPair
+PandaBear.Vault.Matching.OriginKeyPair.<Clone>$() -> PandaBear.Vault.Matching.OriginKeyPair!
+PandaBear.Vault.Matching.OriginKeyPair.Deconstruct(out string! First, out string! Second) -> void
+PandaBear.Vault.Matching.OriginKeyPair.Equals(PandaBear.Vault.Matching.OriginKeyPair? other) -> bool
+PandaBear.Vault.Matching.OriginKeyPair.First.get -> string!
+PandaBear.Vault.Matching.OriginKeyPair.First.init -> void
+PandaBear.Vault.Matching.OriginKeyPair.OriginKeyPair(string! First, string! Second) -> void
+PandaBear.Vault.Matching.OriginKeyPair.Second.get -> string!
+PandaBear.Vault.Matching.OriginKeyPair.Second.init -> void
+PandaBear.Vault.Matching.OriginKeys
+PandaBear.Vault.Merge.DecisionsFile
+PandaBear.Vault.Merge.FieldChoice
+PandaBear.Vault.Merge.FieldChoice.<Clone>$() -> PandaBear.Vault.Merge.FieldChoice!
+PandaBear.Vault.Merge.FieldChoice.Deconstruct(out string! FieldPath, out PandaBear.Vault.Merge.FieldChoiceKind Kind, out string? OriginKey, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.FieldChoiceOption!>? Options) -> void
+PandaBear.Vault.Merge.FieldChoice.Equals(PandaBear.Vault.Merge.FieldChoice? other) -> bool
+PandaBear.Vault.Merge.FieldChoice.FieldChoice(string! FieldPath, PandaBear.Vault.Merge.FieldChoiceKind Kind, string? OriginKey = null, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.FieldChoiceOption!>? Options = null) -> void
+PandaBear.Vault.Merge.FieldChoice.FieldPath.get -> string!
+PandaBear.Vault.Merge.FieldChoice.FieldPath.init -> void
+PandaBear.Vault.Merge.FieldChoice.Kind.get -> PandaBear.Vault.Merge.FieldChoiceKind
+PandaBear.Vault.Merge.FieldChoice.Kind.init -> void
+PandaBear.Vault.Merge.FieldChoice.Options.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.FieldChoiceOption!>?
+PandaBear.Vault.Merge.FieldChoice.Options.init -> void
+PandaBear.Vault.Merge.FieldChoice.OriginKey.get -> string?
+PandaBear.Vault.Merge.FieldChoice.OriginKey.init -> void
+PandaBear.Vault.Merge.FieldChoiceKind
+PandaBear.Vault.Merge.FieldChoiceKind.Empty = 2 -> PandaBear.Vault.Merge.FieldChoiceKind
+PandaBear.Vault.Merge.FieldChoiceKind.Member = 1 -> PandaBear.Vault.Merge.FieldChoiceKind
+PandaBear.Vault.Merge.FieldChoiceKind.Pending = 0 -> PandaBear.Vault.Merge.FieldChoiceKind
+PandaBear.Vault.Merge.FieldChoiceOption
+PandaBear.Vault.Merge.FieldChoiceOption.<Clone>$() -> PandaBear.Vault.Merge.FieldChoiceOption!
+PandaBear.Vault.Merge.FieldChoiceOption.Deconstruct(out string! OriginKey, out string! ItemName) -> void
+PandaBear.Vault.Merge.FieldChoiceOption.Equals(PandaBear.Vault.Merge.FieldChoiceOption? other) -> bool
+PandaBear.Vault.Merge.FieldChoiceOption.FieldChoiceOption(string! OriginKey, string! ItemName) -> void
+PandaBear.Vault.Merge.FieldChoiceOption.ItemName.get -> string!
+PandaBear.Vault.Merge.FieldChoiceOption.ItemName.init -> void
+PandaBear.Vault.Merge.FieldChoiceOption.OriginKey.get -> string!
+PandaBear.Vault.Merge.FieldChoiceOption.OriginKey.init -> void
+PandaBear.Vault.Merge.FieldDiff
+PandaBear.Vault.Merge.FieldPaths
+PandaBear.Vault.Merge.FieldResolution
+PandaBear.Vault.Merge.FieldResolution.<Clone>$() -> PandaBear.Vault.Merge.FieldResolution!
+PandaBear.Vault.Merge.FieldResolution.Deconstruct(out string! FieldPath, out PandaBear.Vault.Merge.ResolutionKind Resolution) -> void
+PandaBear.Vault.Merge.FieldResolution.Equals(PandaBear.Vault.Merge.FieldResolution? other) -> bool
+PandaBear.Vault.Merge.FieldResolution.FieldPath.get -> string!
+PandaBear.Vault.Merge.FieldResolution.FieldPath.init -> void
+PandaBear.Vault.Merge.FieldResolution.FieldResolution(string! FieldPath, PandaBear.Vault.Merge.ResolutionKind Resolution) -> void
+PandaBear.Vault.Merge.FieldResolution.Resolution.get -> PandaBear.Vault.Merge.ResolutionKind
+PandaBear.Vault.Merge.FieldResolution.Resolution.init -> void
+PandaBear.Vault.Merge.FindingChoice
+PandaBear.Vault.Merge.FindingChoice.<Clone>$() -> PandaBear.Vault.Merge.FindingChoice!
+PandaBear.Vault.Merge.FindingChoice.Decision.get -> PandaBear.Vault.Merge.FindingDecision
+PandaBear.Vault.Merge.FindingChoice.Decision.init -> void
+PandaBear.Vault.Merge.FindingChoice.Deconstruct(out string! FindingId, out PandaBear.Vault.Merge.FindingDecision Decision) -> void
+PandaBear.Vault.Merge.FindingChoice.Equals(PandaBear.Vault.Merge.FindingChoice? other) -> bool
+PandaBear.Vault.Merge.FindingChoice.FindingChoice(string! FindingId, PandaBear.Vault.Merge.FindingDecision Decision) -> void
+PandaBear.Vault.Merge.FindingChoice.FindingId.get -> string!
+PandaBear.Vault.Merge.FindingChoice.FindingId.init -> void
+PandaBear.Vault.Merge.FindingDecision
+PandaBear.Vault.Merge.FindingDecision.Accepted = 1 -> PandaBear.Vault.Merge.FindingDecision
+PandaBear.Vault.Merge.FindingDecision.Pending = 0 -> PandaBear.Vault.Merge.FindingDecision
+PandaBear.Vault.Merge.FindingDecision.Rejected = 2 -> PandaBear.Vault.Merge.FindingDecision
+PandaBear.Vault.Merge.GroupDecision
+PandaBear.Vault.Merge.GroupDecision.<Clone>$() -> PandaBear.Vault.Merge.GroupDecision!
+PandaBear.Vault.Merge.GroupDecision.Choices.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.FieldChoice!>!
+PandaBear.Vault.Merge.GroupDecision.Choices.init -> void
+PandaBear.Vault.Merge.GroupDecision.Deconstruct(out string! GroupKey, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.FieldChoice!>! Choices) -> void
+PandaBear.Vault.Merge.GroupDecision.Equals(PandaBear.Vault.Merge.GroupDecision? other) -> bool
+PandaBear.Vault.Merge.GroupDecision.GroupDecision(string! GroupKey, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.FieldChoice!>! Choices) -> void
+PandaBear.Vault.Merge.GroupDecision.GroupKey.get -> string!
+PandaBear.Vault.Merge.GroupDecision.GroupKey.init -> void
+PandaBear.Vault.Merge.GroupReport
+PandaBear.Vault.Merge.GroupReport.<Clone>$() -> PandaBear.Vault.Merge.GroupReport!
+PandaBear.Vault.Merge.GroupReport.Deconstruct(out string! GroupKey, out System.Collections.Generic.IReadOnlyList<string!>! MemberNames, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.FieldResolution!>! Fields) -> void
+PandaBear.Vault.Merge.GroupReport.Equals(PandaBear.Vault.Merge.GroupReport? other) -> bool
+PandaBear.Vault.Merge.GroupReport.Fields.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.FieldResolution!>!
+PandaBear.Vault.Merge.GroupReport.Fields.init -> void
+PandaBear.Vault.Merge.GroupReport.GroupKey.get -> string!
+PandaBear.Vault.Merge.GroupReport.GroupKey.init -> void
+PandaBear.Vault.Merge.GroupReport.GroupReport(string! GroupKey, System.Collections.Generic.IReadOnlyList<string!>! MemberNames, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.FieldResolution!>! Fields) -> void
+PandaBear.Vault.Merge.GroupReport.MemberNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Merge.GroupReport.MemberNames.init -> void
+PandaBear.Vault.Merge.ItemFindingDecisions
+PandaBear.Vault.Merge.ItemFindingDecisions.<Clone>$() -> PandaBear.Vault.Merge.ItemFindingDecisions!
+PandaBear.Vault.Merge.ItemFindingDecisions.Choices.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.FindingChoice!>!
+PandaBear.Vault.Merge.ItemFindingDecisions.Choices.init -> void
+PandaBear.Vault.Merge.ItemFindingDecisions.Deconstruct(out string! OriginKey, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.FindingChoice!>! Choices, out string? ItemName) -> void
+PandaBear.Vault.Merge.ItemFindingDecisions.Equals(PandaBear.Vault.Merge.ItemFindingDecisions? other) -> bool
+PandaBear.Vault.Merge.ItemFindingDecisions.ItemFindingDecisions(string! OriginKey, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.FindingChoice!>! Choices, string? ItemName = null) -> void
+PandaBear.Vault.Merge.ItemFindingDecisions.ItemName.get -> string?
+PandaBear.Vault.Merge.ItemFindingDecisions.ItemName.init -> void
+PandaBear.Vault.Merge.ItemFindingDecisions.OriginKey.get -> string!
+PandaBear.Vault.Merge.ItemFindingDecisions.OriginKey.init -> void
+PandaBear.Vault.Merge.ItemNotesDecision
+PandaBear.Vault.Merge.ItemNotesDecision.<Clone>$() -> PandaBear.Vault.Merge.ItemNotesDecision!
+PandaBear.Vault.Merge.ItemNotesDecision.Decision.get -> PandaBear.Vault.Merge.NotesDecision
+PandaBear.Vault.Merge.ItemNotesDecision.Decision.init -> void
+PandaBear.Vault.Merge.ItemNotesDecision.Deconstruct(out string! OriginKey, out PandaBear.Vault.Merge.NotesDecision Decision, out string? ItemName, out int? Findings, out string? NotesSha256) -> void
+PandaBear.Vault.Merge.ItemNotesDecision.Equals(PandaBear.Vault.Merge.ItemNotesDecision? other) -> bool
+PandaBear.Vault.Merge.ItemNotesDecision.Findings.get -> int?
+PandaBear.Vault.Merge.ItemNotesDecision.Findings.init -> void
+PandaBear.Vault.Merge.ItemNotesDecision.ItemName.get -> string?
+PandaBear.Vault.Merge.ItemNotesDecision.ItemName.init -> void
+PandaBear.Vault.Merge.ItemNotesDecision.ItemNotesDecision(string! OriginKey, PandaBear.Vault.Merge.NotesDecision Decision, string? ItemName = null, int? Findings = null, string? NotesSha256 = null) -> void
+PandaBear.Vault.Merge.ItemNotesDecision.NotesSha256.get -> string?
+PandaBear.Vault.Merge.ItemNotesDecision.NotesSha256.init -> void
+PandaBear.Vault.Merge.ItemNotesDecision.OriginKey.get -> string!
+PandaBear.Vault.Merge.ItemNotesDecision.OriginKey.init -> void
+PandaBear.Vault.Merge.MergeDecisions
+PandaBear.Vault.Merge.MergeDecisions.<Clone>$() -> PandaBear.Vault.Merge.MergeDecisions!
+PandaBear.Vault.Merge.MergeDecisions.Applies(string! originKey, PandaBear.Vault.Secrets.SecretFinding! finding) -> bool
+PandaBear.Vault.Merge.MergeDecisions.Deconstruct(out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.GroupDecision!>! Groups, out PandaBear.Vault.Matching.MatchOverrides! Overrides) -> void
+PandaBear.Vault.Merge.MergeDecisions.Equals(PandaBear.Vault.Merge.MergeDecisions? other) -> bool
+PandaBear.Vault.Merge.MergeDecisions.Find(string! groupKey, string! fieldPath) -> PandaBear.Vault.Merge.FieldChoice?
+PandaBear.Vault.Merge.MergeDecisions.FindFinding(string! originKey, string! findingId) -> PandaBear.Vault.Merge.FindingDecision?
+PandaBear.Vault.Merge.MergeDecisions.Findings.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.ItemFindingDecisions!>!
+PandaBear.Vault.Merge.MergeDecisions.Findings.init -> void
+PandaBear.Vault.Merge.MergeDecisions.FindNotes(string! originKey) -> PandaBear.Vault.Merge.NotesDecision
+PandaBear.Vault.Merge.MergeDecisions.FindNotesEntry(string! originKey) -> PandaBear.Vault.Merge.ItemNotesDecision?
+PandaBear.Vault.Merge.MergeDecisions.Groups.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.GroupDecision!>!
+PandaBear.Vault.Merge.MergeDecisions.Groups.init -> void
+PandaBear.Vault.Merge.MergeDecisions.MergeDecisions(System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.GroupDecision!>! Groups, PandaBear.Vault.Matching.MatchOverrides! Overrides) -> void
+PandaBear.Vault.Merge.MergeDecisions.Notes.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.ItemNotesDecision!>!
+PandaBear.Vault.Merge.MergeDecisions.Notes.init -> void
+PandaBear.Vault.Merge.MergeDecisions.Overrides.get -> PandaBear.Vault.Matching.MatchOverrides!
+PandaBear.Vault.Merge.MergeDecisions.Overrides.init -> void
+PandaBear.Vault.Merge.MergeDecisions.SharesNotes(string! originKey, string! notes) -> bool
+PandaBear.Vault.Merge.MergeDecisions.WithNotes(System.Collections.Generic.IEnumerable<PandaBear.Vault.Merge.ItemNotesDecision!>! updates) -> PandaBear.Vault.Merge.MergeDecisions!
+PandaBear.Vault.Merge.MergeDecisions.WithPending(System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.UnresolvedConflict!>! fields, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.ItemFindingDecisions!>! findings) -> PandaBear.Vault.Merge.MergeDecisions!
+PandaBear.Vault.Merge.MergePolicy
+PandaBear.Vault.Merge.MergePolicy.<Clone>$() -> PandaBear.Vault.Merge.MergePolicy!
+PandaBear.Vault.Merge.MergePolicy.Deconstruct(out PandaBear.Vault.Merge.MergePolicyKind Kind, out string? PreferredSourceFile) -> void
+PandaBear.Vault.Merge.MergePolicy.Equals(PandaBear.Vault.Merge.MergePolicy? other) -> bool
+PandaBear.Vault.Merge.MergePolicy.Kind.get -> PandaBear.Vault.Merge.MergePolicyKind
+PandaBear.Vault.Merge.MergePolicy.Kind.init -> void
+PandaBear.Vault.Merge.MergePolicy.MergePolicy(PandaBear.Vault.Merge.MergePolicyKind Kind = PandaBear.Vault.Merge.MergePolicyKind.NewestWins, string? PreferredSourceFile = null) -> void
+PandaBear.Vault.Merge.MergePolicy.PreferredSourceFile.get -> string?
+PandaBear.Vault.Merge.MergePolicy.PreferredSourceFile.init -> void
+PandaBear.Vault.Merge.MergePolicyKind
+PandaBear.Vault.Merge.MergePolicyKind.Ask = 2 -> PandaBear.Vault.Merge.MergePolicyKind
+PandaBear.Vault.Merge.MergePolicyKind.NewestWins = 0 -> PandaBear.Vault.Merge.MergePolicyKind
+PandaBear.Vault.Merge.MergePolicyKind.PreferSource = 1 -> PandaBear.Vault.Merge.MergePolicyKind
+PandaBear.Vault.Merge.MergeReport
+PandaBear.Vault.Merge.MergeReport.<Clone>$() -> PandaBear.Vault.Merge.MergeReport!
+PandaBear.Vault.Merge.MergeReport.AutoResolvedConflicts.get -> int
+PandaBear.Vault.Merge.MergeReport.AutoResolvedConflicts.init -> void
+PandaBear.Vault.Merge.MergeReport.ConversionNotes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Merge.MergeReport.ConversionNotes.init -> void
+PandaBear.Vault.Merge.MergeReport.DifferentGroups.get -> int
+PandaBear.Vault.Merge.MergeReport.DifferentGroups.init -> void
+PandaBear.Vault.Merge.MergeReport.Equals(PandaBear.Vault.Merge.MergeReport? other) -> bool
+PandaBear.Vault.Merge.MergeReport.Groups.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.GroupReport!>!
+PandaBear.Vault.Merge.MergeReport.Groups.init -> void
+PandaBear.Vault.Merge.MergeReport.IdenticalGroups.get -> int
+PandaBear.Vault.Merge.MergeReport.IdenticalGroups.init -> void
+PandaBear.Vault.Merge.MergeReport.MergedItems.get -> int
+PandaBear.Vault.Merge.MergeReport.MergedItems.init -> void
+PandaBear.Vault.Merge.MergeReport.MergeReport() -> void
+PandaBear.Vault.Merge.MergeReport.ToMarkdown() -> string!
+PandaBear.Vault.Merge.MergeReport.UniqueGroups.get -> int
+PandaBear.Vault.Merge.MergeReport.UniqueGroups.init -> void
+PandaBear.Vault.Merge.MergeReport.UnresolvedConflicts.get -> int
+PandaBear.Vault.Merge.MergeReport.UnresolvedConflicts.init -> void
+PandaBear.Vault.Merge.NotesDecision
+PandaBear.Vault.Merge.NotesDecision.Hidden = 3 -> PandaBear.Vault.Merge.NotesDecision
+PandaBear.Vault.Merge.NotesDecision.Pending = 0 -> PandaBear.Vault.Merge.NotesDecision
+PandaBear.Vault.Merge.NotesDecision.Private = 2 -> PandaBear.Vault.Merge.NotesDecision
+PandaBear.Vault.Merge.NotesDecision.Share = 1 -> PandaBear.Vault.Merge.NotesDecision
+PandaBear.Vault.Merge.ResolutionKind
+PandaBear.Vault.Merge.ResolutionKind.Decision = 5 -> PandaBear.Vault.Merge.ResolutionKind
+PandaBear.Vault.Merge.ResolutionKind.Equal = 0 -> PandaBear.Vault.Merge.ResolutionKind
+PandaBear.Vault.Merge.ResolutionKind.Newest = 3 -> PandaBear.Vault.Merge.ResolutionKind
+PandaBear.Vault.Merge.ResolutionKind.OneSided = 1 -> PandaBear.Vault.Merge.ResolutionKind
+PandaBear.Vault.Merge.ResolutionKind.PreferredSource = 4 -> PandaBear.Vault.Merge.ResolutionKind
+PandaBear.Vault.Merge.ResolutionKind.Union = 2 -> PandaBear.Vault.Merge.ResolutionKind
+PandaBear.Vault.Merge.ResolutionKind.Unresolved = 6 -> PandaBear.Vault.Merge.ResolutionKind
+PandaBear.Vault.Merge.ScalarField
+PandaBear.Vault.Merge.ScalarField.<Clone>$() -> PandaBear.Vault.Merge.ScalarField!
+PandaBear.Vault.Merge.ScalarField.AppliesTo(PandaBear.Vault.Model.VaultItemType type) -> bool
+PandaBear.Vault.Merge.ScalarField.Deconstruct(out string! Path, out string! Label, out PandaBear.Vault.Model.VaultItemType? Owner, out System.Func<PandaBear.Vault.Model.VaultItem!, string?>! Get, out System.Func<PandaBear.Vault.Model.VaultItem!, string?, PandaBear.Vault.Model.VaultItem!>! Set, out System.Func<string!, string!>! Key) -> void
+PandaBear.Vault.Merge.ScalarField.Equals(PandaBear.Vault.Merge.ScalarField? other) -> bool
+PandaBear.Vault.Merge.ScalarField.Get.get -> System.Func<PandaBear.Vault.Model.VaultItem!, string?>!
+PandaBear.Vault.Merge.ScalarField.Get.init -> void
+PandaBear.Vault.Merge.ScalarField.Key.get -> System.Func<string!, string!>!
+PandaBear.Vault.Merge.ScalarField.Key.init -> void
+PandaBear.Vault.Merge.ScalarField.Label.get -> string!
+PandaBear.Vault.Merge.ScalarField.Label.init -> void
+PandaBear.Vault.Merge.ScalarField.Owner.get -> PandaBear.Vault.Model.VaultItemType?
+PandaBear.Vault.Merge.ScalarField.Owner.init -> void
+PandaBear.Vault.Merge.ScalarField.Path.get -> string!
+PandaBear.Vault.Merge.ScalarField.Path.init -> void
+PandaBear.Vault.Merge.ScalarField.ScalarField(string! Path, string! Label, PandaBear.Vault.Model.VaultItemType? Owner, System.Func<PandaBear.Vault.Model.VaultItem!, string?>! Get, System.Func<PandaBear.Vault.Model.VaultItem!, string?, PandaBear.Vault.Model.VaultItem!>! Set, System.Func<string!, string!>! Key) -> void
+PandaBear.Vault.Merge.ScalarField.Set.get -> System.Func<PandaBear.Vault.Model.VaultItem!, string?, PandaBear.Vault.Model.VaultItem!>!
+PandaBear.Vault.Merge.ScalarField.Set.init -> void
+PandaBear.Vault.Merge.ScalarFields
+PandaBear.Vault.Merge.UnresolvedConflict
+PandaBear.Vault.Merge.UnresolvedConflict.<Clone>$() -> PandaBear.Vault.Merge.UnresolvedConflict!
+PandaBear.Vault.Merge.UnresolvedConflict.Deconstruct(out string! GroupKey, out string! FieldPath, out System.Collections.Generic.IReadOnlyList<string!>! MemberOriginKeys, out System.Collections.Generic.IReadOnlyList<string!>! MemberNames) -> void
+PandaBear.Vault.Merge.UnresolvedConflict.Equals(PandaBear.Vault.Merge.UnresolvedConflict? other) -> bool
+PandaBear.Vault.Merge.UnresolvedConflict.FieldPath.get -> string!
+PandaBear.Vault.Merge.UnresolvedConflict.FieldPath.init -> void
+PandaBear.Vault.Merge.UnresolvedConflict.GroupKey.get -> string!
+PandaBear.Vault.Merge.UnresolvedConflict.GroupKey.init -> void
+PandaBear.Vault.Merge.UnresolvedConflict.MemberNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Merge.UnresolvedConflict.MemberNames.init -> void
+PandaBear.Vault.Merge.UnresolvedConflict.MemberOriginKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Merge.UnresolvedConflict.MemberOriginKeys.init -> void
+PandaBear.Vault.Merge.UnresolvedConflict.UnresolvedConflict(string! GroupKey, string! FieldPath, System.Collections.Generic.IReadOnlyList<string!>! MemberOriginKeys, System.Collections.Generic.IReadOnlyList<string!>! MemberNames) -> void
+PandaBear.Vault.Model.AdditionalFolders
+PandaBear.Vault.Model.AttachmentRef
+PandaBear.Vault.Model.AttachmentRef.<Clone>$() -> PandaBear.Vault.Model.AttachmentRef!
+PandaBear.Vault.Model.AttachmentRef.AttachmentRef(string! FileName, long? Size, string? SourcePath) -> void
+PandaBear.Vault.Model.AttachmentRef.ContentHash.get -> string?
+PandaBear.Vault.Model.AttachmentRef.ContentHash.init -> void
+PandaBear.Vault.Model.AttachmentRef.Deconstruct(out string! FileName, out long? Size, out string? SourcePath) -> void
+PandaBear.Vault.Model.AttachmentRef.Equals(PandaBear.Vault.Model.AttachmentRef? other) -> bool
+PandaBear.Vault.Model.AttachmentRef.FileName.get -> string!
+PandaBear.Vault.Model.AttachmentRef.FileName.init -> void
+PandaBear.Vault.Model.AttachmentRef.Size.get -> long?
+PandaBear.Vault.Model.AttachmentRef.Size.init -> void
+PandaBear.Vault.Model.AttachmentRef.SourcePath.get -> string?
+PandaBear.Vault.Model.AttachmentRef.SourcePath.init -> void
+PandaBear.Vault.Model.CardData
+PandaBear.Vault.Model.CardData.<Clone>$() -> PandaBear.Vault.Model.CardData!
+PandaBear.Vault.Model.CardData.Brand.get -> string?
+PandaBear.Vault.Model.CardData.Brand.init -> void
+PandaBear.Vault.Model.CardData.CardData() -> void
+PandaBear.Vault.Model.CardData.CardholderName.get -> string?
+PandaBear.Vault.Model.CardData.CardholderName.init -> void
+PandaBear.Vault.Model.CardData.Code.get -> string?
+PandaBear.Vault.Model.CardData.Code.init -> void
+PandaBear.Vault.Model.CardData.Equals(PandaBear.Vault.Model.CardData? other) -> bool
+PandaBear.Vault.Model.CardData.ExpMonth.get -> string?
+PandaBear.Vault.Model.CardData.ExpMonth.init -> void
+PandaBear.Vault.Model.CardData.ExpYear.get -> string?
+PandaBear.Vault.Model.CardData.ExpYear.init -> void
+PandaBear.Vault.Model.CardData.Number.get -> string?
+PandaBear.Vault.Model.CardData.Number.init -> void
+PandaBear.Vault.Model.CustomField
+PandaBear.Vault.Model.CustomField.<Clone>$() -> PandaBear.Vault.Model.CustomField!
+PandaBear.Vault.Model.CustomField.CustomField(string? Name, string? Value, PandaBear.Vault.Model.CustomFieldType Type, int? LinkedId = null) -> void
+PandaBear.Vault.Model.CustomField.Deconstruct(out string? Name, out string? Value, out PandaBear.Vault.Model.CustomFieldType Type, out int? LinkedId) -> void
+PandaBear.Vault.Model.CustomField.Equals(PandaBear.Vault.Model.CustomField? other) -> bool
+PandaBear.Vault.Model.CustomField.LinkedId.get -> int?
+PandaBear.Vault.Model.CustomField.LinkedId.init -> void
+PandaBear.Vault.Model.CustomField.Name.get -> string?
+PandaBear.Vault.Model.CustomField.Name.init -> void
+PandaBear.Vault.Model.CustomField.Type.get -> PandaBear.Vault.Model.CustomFieldType
+PandaBear.Vault.Model.CustomField.Type.init -> void
+PandaBear.Vault.Model.CustomField.Value.get -> string?
+PandaBear.Vault.Model.CustomField.Value.init -> void
+PandaBear.Vault.Model.CustomFieldType
+PandaBear.Vault.Model.CustomFieldType.Boolean = 2 -> PandaBear.Vault.Model.CustomFieldType
+PandaBear.Vault.Model.CustomFieldType.Hidden = 1 -> PandaBear.Vault.Model.CustomFieldType
+PandaBear.Vault.Model.CustomFieldType.Linked = 3 -> PandaBear.Vault.Model.CustomFieldType
+PandaBear.Vault.Model.CustomFieldType.Text = 0 -> PandaBear.Vault.Model.CustomFieldType
+PandaBear.Vault.Model.Fido2Credential
+PandaBear.Vault.Model.Fido2Credential.<Clone>$() -> PandaBear.Vault.Model.Fido2Credential!
+PandaBear.Vault.Model.Fido2Credential.Counter.get -> string!
+PandaBear.Vault.Model.Fido2Credential.Counter.init -> void
+PandaBear.Vault.Model.Fido2Credential.CreationDate.get -> System.DateTimeOffset
+PandaBear.Vault.Model.Fido2Credential.CreationDate.init -> void
+PandaBear.Vault.Model.Fido2Credential.CredentialId.get -> string!
+PandaBear.Vault.Model.Fido2Credential.CredentialId.init -> void
+PandaBear.Vault.Model.Fido2Credential.Discoverable.get -> string!
+PandaBear.Vault.Model.Fido2Credential.Discoverable.init -> void
+PandaBear.Vault.Model.Fido2Credential.Equals(PandaBear.Vault.Model.Fido2Credential? other) -> bool
+PandaBear.Vault.Model.Fido2Credential.Fido2Credential() -> void
+PandaBear.Vault.Model.Fido2Credential.KeyAlgorithm.get -> string!
+PandaBear.Vault.Model.Fido2Credential.KeyAlgorithm.init -> void
+PandaBear.Vault.Model.Fido2Credential.KeyCurve.get -> string!
+PandaBear.Vault.Model.Fido2Credential.KeyCurve.init -> void
+PandaBear.Vault.Model.Fido2Credential.KeyType.get -> string!
+PandaBear.Vault.Model.Fido2Credential.KeyType.init -> void
+PandaBear.Vault.Model.Fido2Credential.KeyValue.get -> string!
+PandaBear.Vault.Model.Fido2Credential.KeyValue.init -> void
+PandaBear.Vault.Model.Fido2Credential.RpId.get -> string!
+PandaBear.Vault.Model.Fido2Credential.RpId.init -> void
+PandaBear.Vault.Model.Fido2Credential.RpName.get -> string?
+PandaBear.Vault.Model.Fido2Credential.RpName.init -> void
+PandaBear.Vault.Model.Fido2Credential.UserDisplayName.get -> string?
+PandaBear.Vault.Model.Fido2Credential.UserDisplayName.init -> void
+PandaBear.Vault.Model.Fido2Credential.UserHandle.get -> string?
+PandaBear.Vault.Model.Fido2Credential.UserHandle.init -> void
+PandaBear.Vault.Model.Fido2Credential.UserName.get -> string?
+PandaBear.Vault.Model.Fido2Credential.UserName.init -> void
+PandaBear.Vault.Model.FolderTree
+PandaBear.Vault.Model.IdentityData
+PandaBear.Vault.Model.IdentityData.<Clone>$() -> PandaBear.Vault.Model.IdentityData!
+PandaBear.Vault.Model.IdentityData.Address1.get -> string?
+PandaBear.Vault.Model.IdentityData.Address1.init -> void
+PandaBear.Vault.Model.IdentityData.Address2.get -> string?
+PandaBear.Vault.Model.IdentityData.Address2.init -> void
+PandaBear.Vault.Model.IdentityData.Address3.get -> string?
+PandaBear.Vault.Model.IdentityData.Address3.init -> void
+PandaBear.Vault.Model.IdentityData.City.get -> string?
+PandaBear.Vault.Model.IdentityData.City.init -> void
+PandaBear.Vault.Model.IdentityData.Company.get -> string?
+PandaBear.Vault.Model.IdentityData.Company.init -> void
+PandaBear.Vault.Model.IdentityData.Country.get -> string?
+PandaBear.Vault.Model.IdentityData.Country.init -> void
+PandaBear.Vault.Model.IdentityData.Email.get -> string?
+PandaBear.Vault.Model.IdentityData.Email.init -> void
+PandaBear.Vault.Model.IdentityData.Equals(PandaBear.Vault.Model.IdentityData? other) -> bool
+PandaBear.Vault.Model.IdentityData.FirstName.get -> string?
+PandaBear.Vault.Model.IdentityData.FirstName.init -> void
+PandaBear.Vault.Model.IdentityData.IdentityData() -> void
+PandaBear.Vault.Model.IdentityData.LastName.get -> string?
+PandaBear.Vault.Model.IdentityData.LastName.init -> void
+PandaBear.Vault.Model.IdentityData.LicenseNumber.get -> string?
+PandaBear.Vault.Model.IdentityData.LicenseNumber.init -> void
+PandaBear.Vault.Model.IdentityData.MiddleName.get -> string?
+PandaBear.Vault.Model.IdentityData.MiddleName.init -> void
+PandaBear.Vault.Model.IdentityData.PassportNumber.get -> string?
+PandaBear.Vault.Model.IdentityData.PassportNumber.init -> void
+PandaBear.Vault.Model.IdentityData.Phone.get -> string?
+PandaBear.Vault.Model.IdentityData.Phone.init -> void
+PandaBear.Vault.Model.IdentityData.PostalCode.get -> string?
+PandaBear.Vault.Model.IdentityData.PostalCode.init -> void
+PandaBear.Vault.Model.IdentityData.Ssn.get -> string?
+PandaBear.Vault.Model.IdentityData.Ssn.init -> void
+PandaBear.Vault.Model.IdentityData.State.get -> string?
+PandaBear.Vault.Model.IdentityData.State.init -> void
+PandaBear.Vault.Model.IdentityData.Title.get -> string?
+PandaBear.Vault.Model.IdentityData.Title.init -> void
+PandaBear.Vault.Model.IdentityData.Username.get -> string?
+PandaBear.Vault.Model.IdentityData.Username.init -> void
+PandaBear.Vault.Model.ItemOrigin
+PandaBear.Vault.Model.ItemOrigin.<Clone>$() -> PandaBear.Vault.Model.ItemOrigin!
+PandaBear.Vault.Model.ItemOrigin.Deconstruct(out string! Provider, out string! SourceFile, out string? OriginalId, out System.DateTimeOffset? Modified) -> void
+PandaBear.Vault.Model.ItemOrigin.Equals(PandaBear.Vault.Model.ItemOrigin? other) -> bool
+PandaBear.Vault.Model.ItemOrigin.ItemOrigin(string! Provider, string! SourceFile, string? OriginalId, System.DateTimeOffset? Modified) -> void
+PandaBear.Vault.Model.ItemOrigin.Modified.get -> System.DateTimeOffset?
+PandaBear.Vault.Model.ItemOrigin.Modified.init -> void
+PandaBear.Vault.Model.ItemOrigin.OriginalId.get -> string?
+PandaBear.Vault.Model.ItemOrigin.OriginalId.init -> void
+PandaBear.Vault.Model.ItemOrigin.Provider.get -> string!
+PandaBear.Vault.Model.ItemOrigin.Provider.init -> void
+PandaBear.Vault.Model.ItemOrigin.SourceFile.get -> string!
+PandaBear.Vault.Model.ItemOrigin.SourceFile.init -> void
+PandaBear.Vault.Model.LoginData
+PandaBear.Vault.Model.LoginData.<Clone>$() -> PandaBear.Vault.Model.LoginData!
+PandaBear.Vault.Model.LoginData.Equals(PandaBear.Vault.Model.LoginData? other) -> bool
+PandaBear.Vault.Model.LoginData.Fido2Credentials.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.Fido2Credential!>!
+PandaBear.Vault.Model.LoginData.Fido2Credentials.init -> void
+PandaBear.Vault.Model.LoginData.LoginData() -> void
+PandaBear.Vault.Model.LoginData.Password.get -> string?
+PandaBear.Vault.Model.LoginData.Password.init -> void
+PandaBear.Vault.Model.LoginData.Totp.get -> string?
+PandaBear.Vault.Model.LoginData.Totp.init -> void
+PandaBear.Vault.Model.LoginData.Uris.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.LoginUri!>!
+PandaBear.Vault.Model.LoginData.Uris.init -> void
+PandaBear.Vault.Model.LoginData.Username.get -> string?
+PandaBear.Vault.Model.LoginData.Username.init -> void
+PandaBear.Vault.Model.LoginUri
+PandaBear.Vault.Model.LoginUri.<Clone>$() -> PandaBear.Vault.Model.LoginUri!
+PandaBear.Vault.Model.LoginUri.Deconstruct(out string! Value, out PandaBear.Vault.Model.UriMatch? Match) -> void
+PandaBear.Vault.Model.LoginUri.Equals(PandaBear.Vault.Model.LoginUri? other) -> bool
+PandaBear.Vault.Model.LoginUri.LoginUri(string! Value, PandaBear.Vault.Model.UriMatch? Match = null) -> void
+PandaBear.Vault.Model.LoginUri.Match.get -> PandaBear.Vault.Model.UriMatch?
+PandaBear.Vault.Model.LoginUri.Match.init -> void
+PandaBear.Vault.Model.LoginUri.Value.get -> string!
+PandaBear.Vault.Model.LoginUri.Value.init -> void
+PandaBear.Vault.Model.PasswordHistoryEntry
+PandaBear.Vault.Model.PasswordHistoryEntry.<Clone>$() -> PandaBear.Vault.Model.PasswordHistoryEntry!
+PandaBear.Vault.Model.PasswordHistoryEntry.Deconstruct(out string! Password, out System.DateTimeOffset LastUsedDate) -> void
+PandaBear.Vault.Model.PasswordHistoryEntry.Equals(PandaBear.Vault.Model.PasswordHistoryEntry? other) -> bool
+PandaBear.Vault.Model.PasswordHistoryEntry.LastUsedDate.get -> System.DateTimeOffset
+PandaBear.Vault.Model.PasswordHistoryEntry.LastUsedDate.init -> void
+PandaBear.Vault.Model.PasswordHistoryEntry.Password.get -> string!
+PandaBear.Vault.Model.PasswordHistoryEntry.Password.init -> void
+PandaBear.Vault.Model.PasswordHistoryEntry.PasswordHistoryEntry(string! Password, System.DateTimeOffset LastUsedDate) -> void
+PandaBear.Vault.Model.SshKeyData
+PandaBear.Vault.Model.SshKeyData.<Clone>$() -> PandaBear.Vault.Model.SshKeyData!
+PandaBear.Vault.Model.SshKeyData.Equals(PandaBear.Vault.Model.SshKeyData? other) -> bool
+PandaBear.Vault.Model.SshKeyData.KeyFingerprint.get -> string?
+PandaBear.Vault.Model.SshKeyData.KeyFingerprint.init -> void
+PandaBear.Vault.Model.SshKeyData.PrivateKey.get -> string?
+PandaBear.Vault.Model.SshKeyData.PrivateKey.init -> void
+PandaBear.Vault.Model.SshKeyData.PublicKey.get -> string?
+PandaBear.Vault.Model.SshKeyData.PublicKey.init -> void
+PandaBear.Vault.Model.SshKeyData.SshKeyData() -> void
+PandaBear.Vault.Model.UriMasking
+PandaBear.Vault.Model.UriMatch
+PandaBear.Vault.Model.UriMatch.Domain = 0 -> PandaBear.Vault.Model.UriMatch
+PandaBear.Vault.Model.UriMatch.Exact = 3 -> PandaBear.Vault.Model.UriMatch
+PandaBear.Vault.Model.UriMatch.Host = 1 -> PandaBear.Vault.Model.UriMatch
+PandaBear.Vault.Model.UriMatch.Never = 5 -> PandaBear.Vault.Model.UriMatch
+PandaBear.Vault.Model.UriMatch.RegularExpression = 4 -> PandaBear.Vault.Model.UriMatch
+PandaBear.Vault.Model.UriMatch.StartsWith = 2 -> PandaBear.Vault.Model.UriMatch
+PandaBear.Vault.Model.VaultExport
+PandaBear.Vault.Model.VaultExport.<Clone>$() -> PandaBear.Vault.Model.VaultExport!
+PandaBear.Vault.Model.VaultExport.Deconstruct(out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.VaultItem!>! Items) -> void
+PandaBear.Vault.Model.VaultExport.Equals(PandaBear.Vault.Model.VaultExport? other) -> bool
+PandaBear.Vault.Model.VaultExport.Folders.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Model.VaultExport.Folders.init -> void
+PandaBear.Vault.Model.VaultExport.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.VaultItem!>!
+PandaBear.Vault.Model.VaultExport.Items.init -> void
+PandaBear.Vault.Model.VaultExport.VaultExport(System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.VaultItem!>! Items) -> void
+PandaBear.Vault.Model.VaultItem
+PandaBear.Vault.Model.VaultItem.<Clone>$() -> PandaBear.Vault.Model.VaultItem!
+PandaBear.Vault.Model.VaultItem.Attachments.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.AttachmentRef!>!
+PandaBear.Vault.Model.VaultItem.Attachments.init -> void
+PandaBear.Vault.Model.VaultItem.Card.get -> PandaBear.Vault.Model.CardData?
+PandaBear.Vault.Model.VaultItem.Card.init -> void
+PandaBear.Vault.Model.VaultItem.ConversionNotes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Model.VaultItem.ConversionNotes.init -> void
+PandaBear.Vault.Model.VaultItem.CreationDate.get -> System.DateTimeOffset?
+PandaBear.Vault.Model.VaultItem.CreationDate.init -> void
+PandaBear.Vault.Model.VaultItem.Equals(PandaBear.Vault.Model.VaultItem? other) -> bool
+PandaBear.Vault.Model.VaultItem.Favorite.get -> bool
+PandaBear.Vault.Model.VaultItem.Favorite.init -> void
+PandaBear.Vault.Model.VaultItem.Fields.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.CustomField!>!
+PandaBear.Vault.Model.VaultItem.Fields.init -> void
+PandaBear.Vault.Model.VaultItem.FolderPath.get -> string?
+PandaBear.Vault.Model.VaultItem.FolderPath.init -> void
+PandaBear.Vault.Model.VaultItem.Identity.get -> PandaBear.Vault.Model.IdentityData?
+PandaBear.Vault.Model.VaultItem.Identity.init -> void
+PandaBear.Vault.Model.VaultItem.LastModified.get -> System.DateTimeOffset?
+PandaBear.Vault.Model.VaultItem.Login.get -> PandaBear.Vault.Model.LoginData?
+PandaBear.Vault.Model.VaultItem.Login.init -> void
+PandaBear.Vault.Model.VaultItem.Name.get -> string!
+PandaBear.Vault.Model.VaultItem.Name.init -> void
+PandaBear.Vault.Model.VaultItem.Notes.get -> string?
+PandaBear.Vault.Model.VaultItem.Notes.init -> void
+PandaBear.Vault.Model.VaultItem.Origin.get -> PandaBear.Vault.Model.ItemOrigin!
+PandaBear.Vault.Model.VaultItem.Origin.init -> void
+PandaBear.Vault.Model.VaultItem.PasswordHistory.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.PasswordHistoryEntry!>!
+PandaBear.Vault.Model.VaultItem.PasswordHistory.init -> void
+PandaBear.Vault.Model.VaultItem.Reprompt.get -> bool
+PandaBear.Vault.Model.VaultItem.Reprompt.init -> void
+PandaBear.Vault.Model.VaultItem.RevisionDate.get -> System.DateTimeOffset?
+PandaBear.Vault.Model.VaultItem.RevisionDate.init -> void
+PandaBear.Vault.Model.VaultItem.SshKey.get -> PandaBear.Vault.Model.SshKeyData?
+PandaBear.Vault.Model.VaultItem.SshKey.init -> void
+PandaBear.Vault.Model.VaultItem.Type.get -> PandaBear.Vault.Model.VaultItemType
+PandaBear.Vault.Model.VaultItem.Type.init -> void
+PandaBear.Vault.Model.VaultItem.VaultItem() -> void
+PandaBear.Vault.Model.VaultItemType
+PandaBear.Vault.Model.VaultItemType.Card = 3 -> PandaBear.Vault.Model.VaultItemType
+PandaBear.Vault.Model.VaultItemType.Identity = 4 -> PandaBear.Vault.Model.VaultItemType
+PandaBear.Vault.Model.VaultItemType.Login = 1 -> PandaBear.Vault.Model.VaultItemType
+PandaBear.Vault.Model.VaultItemType.SecureNote = 2 -> PandaBear.Vault.Model.VaultItemType
+PandaBear.Vault.Model.VaultItemType.SshKey = 5 -> PandaBear.Vault.Model.VaultItemType
+PandaBear.Vault.Pipeline.ItemFindingsResult
+PandaBear.Vault.Pipeline.ItemFindingsResult.<Clone>$() -> PandaBear.Vault.Pipeline.ItemFindingsResult!
+PandaBear.Vault.Pipeline.ItemFindingsResult.AcceptedFindingIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Pipeline.ItemFindingsResult.AcceptedFindingIds.init -> void
+PandaBear.Vault.Pipeline.ItemFindingsResult.Deconstruct(out string! OriginKey, out string! ItemName, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Secrets.SecretFinding!>! Findings, out System.Collections.Generic.IReadOnlyList<string!>! AcceptedFindingIds) -> void
+PandaBear.Vault.Pipeline.ItemFindingsResult.Equals(PandaBear.Vault.Pipeline.ItemFindingsResult? other) -> bool
+PandaBear.Vault.Pipeline.ItemFindingsResult.Findings.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Secrets.SecretFinding!>!
+PandaBear.Vault.Pipeline.ItemFindingsResult.Findings.init -> void
+PandaBear.Vault.Pipeline.ItemFindingsResult.ItemFindingsResult(string! OriginKey, string! ItemName, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Secrets.SecretFinding!>! Findings, System.Collections.Generic.IReadOnlyList<string!>! AcceptedFindingIds) -> void
+PandaBear.Vault.Pipeline.ItemFindingsResult.ItemName.get -> string!
+PandaBear.Vault.Pipeline.ItemFindingsResult.ItemName.init -> void
+PandaBear.Vault.Pipeline.ItemFindingsResult.OriginKey.get -> string!
+PandaBear.Vault.Pipeline.ItemFindingsResult.OriginKey.init -> void
+PandaBear.Vault.Pipeline.LoadedVault
+PandaBear.Vault.Pipeline.LoadedVault.<Clone>$() -> PandaBear.Vault.Pipeline.LoadedVault!
+PandaBear.Vault.Pipeline.LoadedVault.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! InputPaths, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Pipeline.SourceItem!>! Items, out System.Collections.Generic.IReadOnlyList<string!>! Warnings) -> void
+PandaBear.Vault.Pipeline.LoadedVault.Equals(PandaBear.Vault.Pipeline.LoadedVault? other) -> bool
+PandaBear.Vault.Pipeline.LoadedVault.Folders.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Pipeline.LoadedVault.Folders.init -> void
+PandaBear.Vault.Pipeline.LoadedVault.InputPaths.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Pipeline.LoadedVault.InputPaths.init -> void
+PandaBear.Vault.Pipeline.LoadedVault.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Pipeline.SourceItem!>!
+PandaBear.Vault.Pipeline.LoadedVault.Items.init -> void
+PandaBear.Vault.Pipeline.LoadedVault.LoadedVault(System.Collections.Generic.IReadOnlyList<string!>! InputPaths, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Pipeline.SourceItem!>! Items, System.Collections.Generic.IReadOnlyList<string!>! Warnings) -> void
+PandaBear.Vault.Pipeline.LoadedVault.UnassignedAttachmentFolders.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Formats.UnassignedAttachmentFolder!>!
+PandaBear.Vault.Pipeline.LoadedVault.UnassignedAttachmentFolders.init -> void
+PandaBear.Vault.Pipeline.LoadedVault.Warnings.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Pipeline.LoadedVault.Warnings.init -> void
+PandaBear.Vault.Pipeline.ManualAttachment
+PandaBear.Vault.Pipeline.ManualAttachment.<Clone>$() -> PandaBear.Vault.Pipeline.ManualAttachment!
+PandaBear.Vault.Pipeline.ManualAttachment.ArchivePath.get -> string?
+PandaBear.Vault.Pipeline.ManualAttachment.ArchivePath.init -> void
+PandaBear.Vault.Pipeline.ManualAttachment.Deconstruct(out string! ItemName, out string! FileName, out string! SourceFile, out string? ArchivePath) -> void
+PandaBear.Vault.Pipeline.ManualAttachment.Equals(PandaBear.Vault.Pipeline.ManualAttachment? other) -> bool
+PandaBear.Vault.Pipeline.ManualAttachment.FileName.get -> string!
+PandaBear.Vault.Pipeline.ManualAttachment.FileName.init -> void
+PandaBear.Vault.Pipeline.ManualAttachment.ItemName.get -> string!
+PandaBear.Vault.Pipeline.ManualAttachment.ItemName.init -> void
+PandaBear.Vault.Pipeline.ManualAttachment.ManualAttachment(string! ItemName, string! FileName, string! SourceFile, string? ArchivePath) -> void
+PandaBear.Vault.Pipeline.ManualAttachment.SourceFile.get -> string!
+PandaBear.Vault.Pipeline.ManualAttachment.SourceFile.init -> void
+PandaBear.Vault.Pipeline.MergeRequest
+PandaBear.Vault.Pipeline.MergeRequest.Decisions.get -> PandaBear.Vault.Merge.MergeDecisions!
+PandaBear.Vault.Pipeline.MergeRequest.Decisions.init -> void
+PandaBear.Vault.Pipeline.MergeRequest.MergeRequest() -> void
+PandaBear.Vault.Pipeline.MergeRequest.MergeRequest(PandaBear.Vault.Pipeline.MergeRequest! original) -> void
+PandaBear.Vault.Pipeline.MergeRequest.Output.get -> PandaBear.Vault.Pipeline.PipelineOutput?
+PandaBear.Vault.Pipeline.MergeRequest.Output.init -> void
+PandaBear.Vault.Pipeline.MergeRequest.Policy.get -> PandaBear.Vault.Merge.MergePolicy!
+PandaBear.Vault.Pipeline.MergeRequest.Policy.init -> void
+PandaBear.Vault.Pipeline.PipelineOutput
+PandaBear.Vault.Pipeline.PipelineOutput.<Clone>$() -> PandaBear.Vault.Pipeline.PipelineOutput!
+PandaBear.Vault.Pipeline.PipelineOutput.Deconstruct(out string! Path, out bool Plaintext, out bool Force) -> void
+PandaBear.Vault.Pipeline.PipelineOutput.Equals(PandaBear.Vault.Pipeline.PipelineOutput? other) -> bool
+PandaBear.Vault.Pipeline.PipelineOutput.Force.get -> bool
+PandaBear.Vault.Pipeline.PipelineOutput.Force.init -> void
+PandaBear.Vault.Pipeline.PipelineOutput.Path.get -> string!
+PandaBear.Vault.Pipeline.PipelineOutput.Path.init -> void
+PandaBear.Vault.Pipeline.PipelineOutput.PipelineOutput(string! Path, bool Plaintext = false, bool Force = false) -> void
+PandaBear.Vault.Pipeline.PipelineOutput.Plaintext.get -> bool
+PandaBear.Vault.Pipeline.PipelineOutput.Plaintext.init -> void
+PandaBear.Vault.Pipeline.PipelineRequest
+PandaBear.Vault.Pipeline.PipelineRequest.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! Inputs) -> void
+PandaBear.Vault.Pipeline.PipelineRequest.Equals(PandaBear.Vault.Pipeline.PipelineRequest? other) -> bool
+PandaBear.Vault.Pipeline.PipelineRequest.Inputs.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Pipeline.PipelineRequest.Inputs.init -> void
+PandaBear.Vault.Pipeline.PipelineRequest.PipelineRequest(System.Collections.Generic.IReadOnlyList<string!>! Inputs) -> void
+PandaBear.Vault.Pipeline.PipelineResult
+PandaBear.Vault.Pipeline.PipelineResult.<Clone>$() -> PandaBear.Vault.Pipeline.PipelineResult!
+PandaBear.Vault.Pipeline.PipelineResult.AttachmentUploadCount.get -> int
+PandaBear.Vault.Pipeline.PipelineResult.Equals(PandaBear.Vault.Pipeline.PipelineResult? other) -> bool
+PandaBear.Vault.Pipeline.PipelineResult.Findings.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Pipeline.ItemFindingsResult!>!
+PandaBear.Vault.Pipeline.PipelineResult.Findings.init -> void
+PandaBear.Vault.Pipeline.PipelineResult.HasUnresolvedConflicts.get -> bool
+PandaBear.Vault.Pipeline.PipelineResult.HasWriteErrors.get -> bool
+PandaBear.Vault.Pipeline.PipelineResult.ManualAttachments.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Pipeline.ManualAttachment!>!
+PandaBear.Vault.Pipeline.PipelineResult.ManualAttachments.init -> void
+PandaBear.Vault.Pipeline.PipelineResult.Match.get -> PandaBear.Vault.Matching.MatchResult!
+PandaBear.Vault.Pipeline.PipelineResult.Match.init -> void
+PandaBear.Vault.Pipeline.PipelineResult.Merged.get -> PandaBear.Vault.Model.VaultExport!
+PandaBear.Vault.Pipeline.PipelineResult.Merged.init -> void
+PandaBear.Vault.Pipeline.PipelineResult.MergeReport.get -> PandaBear.Vault.Merge.MergeReport!
+PandaBear.Vault.Pipeline.PipelineResult.MergeReport.init -> void
+PandaBear.Vault.Pipeline.PipelineResult.Output.get -> PandaBear.Vault.Pipeline.PipelineOutput?
+PandaBear.Vault.Pipeline.PipelineResult.Output.init -> void
+PandaBear.Vault.Pipeline.PipelineResult.OutputWritten.get -> bool
+PandaBear.Vault.Pipeline.PipelineResult.OutputWritten.init -> void
+PandaBear.Vault.Pipeline.PipelineResult.PasswordHealth.get -> PandaBear.Vault.Analysis.PasswordHealthReport!
+PandaBear.Vault.Pipeline.PipelineResult.PasswordHealth.init -> void
+PandaBear.Vault.Pipeline.PipelineResult.PendingFindingCount.get -> int
+PandaBear.Vault.Pipeline.PipelineResult.PendingFindings.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.ItemFindingDecisions!>!
+PandaBear.Vault.Pipeline.PipelineResult.PendingFindings.init -> void
+PandaBear.Vault.Pipeline.PipelineResult.PipelineResult() -> void
+PandaBear.Vault.Pipeline.PipelineResult.PlacementProblems.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Pipeline.PlacementProblem!>!
+PandaBear.Vault.Pipeline.PipelineResult.PlacementProblems.init -> void
+PandaBear.Vault.Pipeline.PipelineResult.ReadWarnings.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Pipeline.PipelineResult.ReadWarnings.init -> void
+PandaBear.Vault.Pipeline.PipelineResult.UnassignedAttachmentFolders.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Formats.UnassignedAttachmentFolder!>!
+PandaBear.Vault.Pipeline.PipelineResult.UnassignedAttachmentFolders.init -> void
+PandaBear.Vault.Pipeline.PipelineResult.Unresolved.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.UnresolvedConflict!>!
+PandaBear.Vault.Pipeline.PipelineResult.Unresolved.init -> void
+PandaBear.Vault.Pipeline.PipelineResult.WriteErrors.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Pipeline.PipelineResult.WriteErrors.init -> void
+PandaBear.Vault.Pipeline.PipelineResult.WriteWarnings.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Pipeline.PipelineResult.WriteWarnings.init -> void
+PandaBear.Vault.Pipeline.PlacementProblem
+PandaBear.Vault.Pipeline.PlacementProblem.<Clone>$() -> PandaBear.Vault.Pipeline.PlacementProblem!
+PandaBear.Vault.Pipeline.PlacementProblem.Deconstruct(out string! ItemName, out string! OriginKey, out string! Problem) -> void
+PandaBear.Vault.Pipeline.PlacementProblem.Equals(PandaBear.Vault.Pipeline.PlacementProblem? other) -> bool
+PandaBear.Vault.Pipeline.PlacementProblem.ItemName.get -> string!
+PandaBear.Vault.Pipeline.PlacementProblem.ItemName.init -> void
+PandaBear.Vault.Pipeline.PlacementProblem.OriginKey.get -> string!
+PandaBear.Vault.Pipeline.PlacementProblem.OriginKey.init -> void
+PandaBear.Vault.Pipeline.PlacementProblem.PlacementProblem(string! ItemName, string! OriginKey, string! Problem) -> void
+PandaBear.Vault.Pipeline.PlacementProblem.Problem.get -> string!
+PandaBear.Vault.Pipeline.PlacementProblem.Problem.init -> void
+PandaBear.Vault.Pipeline.ScannedItem
+PandaBear.Vault.Pipeline.ScannedItem.<Clone>$() -> PandaBear.Vault.Pipeline.ScannedItem!
+PandaBear.Vault.Pipeline.ScannedItem.AttachmentTexts.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+PandaBear.Vault.Pipeline.ScannedItem.AttachmentTexts.init -> void
+PandaBear.Vault.Pipeline.ScannedItem.Deconstruct(out PandaBear.Vault.Pipeline.SourceItem! Source, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Secrets.SecretFinding!>! Findings, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! AttachmentTexts) -> void
+PandaBear.Vault.Pipeline.ScannedItem.Equals(PandaBear.Vault.Pipeline.ScannedItem? other) -> bool
+PandaBear.Vault.Pipeline.ScannedItem.Findings.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Secrets.SecretFinding!>!
+PandaBear.Vault.Pipeline.ScannedItem.Findings.init -> void
+PandaBear.Vault.Pipeline.ScannedItem.ScannedItem(PandaBear.Vault.Pipeline.SourceItem! Source, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Secrets.SecretFinding!>! Findings, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! AttachmentTexts) -> void
+PandaBear.Vault.Pipeline.ScannedItem.Source.get -> PandaBear.Vault.Pipeline.SourceItem!
+PandaBear.Vault.Pipeline.ScannedItem.Source.init -> void
+PandaBear.Vault.Pipeline.ScannedVault
+PandaBear.Vault.Pipeline.ScannedVault.<Clone>$() -> PandaBear.Vault.Pipeline.ScannedVault!
+PandaBear.Vault.Pipeline.ScannedVault.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! InputPaths, out System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Pipeline.ScannedItem!>! Items, out System.Collections.Generic.IReadOnlyList<string!>! Warnings) -> void
+PandaBear.Vault.Pipeline.ScannedVault.Equals(PandaBear.Vault.Pipeline.ScannedVault? other) -> bool
+PandaBear.Vault.Pipeline.ScannedVault.Folders.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Pipeline.ScannedVault.Folders.init -> void
+PandaBear.Vault.Pipeline.ScannedVault.InputPaths.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Pipeline.ScannedVault.InputPaths.init -> void
+PandaBear.Vault.Pipeline.ScannedVault.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Pipeline.ScannedItem!>!
+PandaBear.Vault.Pipeline.ScannedVault.Items.init -> void
+PandaBear.Vault.Pipeline.ScannedVault.ScannedVault(System.Collections.Generic.IReadOnlyList<string!>! InputPaths, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Pipeline.ScannedItem!>! Items, System.Collections.Generic.IReadOnlyList<string!>! Warnings) -> void
+PandaBear.Vault.Pipeline.ScannedVault.UnassignedAttachmentFolders.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Formats.UnassignedAttachmentFolder!>!
+PandaBear.Vault.Pipeline.ScannedVault.UnassignedAttachmentFolders.init -> void
+PandaBear.Vault.Pipeline.ScannedVault.Warnings.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Vault.Pipeline.ScannedVault.Warnings.init -> void
+PandaBear.Vault.Pipeline.SourceItem
+PandaBear.Vault.Pipeline.SourceItem.<Clone>$() -> PandaBear.Vault.Pipeline.SourceItem!
+PandaBear.Vault.Pipeline.SourceItem.Deconstruct(out PandaBear.Vault.Model.VaultItem! Item, out string! OriginKey, out string! InputPath) -> void
+PandaBear.Vault.Pipeline.SourceItem.Equals(PandaBear.Vault.Pipeline.SourceItem? other) -> bool
+PandaBear.Vault.Pipeline.SourceItem.InputPath.get -> string!
+PandaBear.Vault.Pipeline.SourceItem.InputPath.init -> void
+PandaBear.Vault.Pipeline.SourceItem.Item.get -> PandaBear.Vault.Model.VaultItem!
+PandaBear.Vault.Pipeline.SourceItem.Item.init -> void
+PandaBear.Vault.Pipeline.SourceItem.OriginKey.get -> string!
+PandaBear.Vault.Pipeline.SourceItem.OriginKey.init -> void
+PandaBear.Vault.Pipeline.SourceItem.SourceItem(PandaBear.Vault.Model.VaultItem! Item, string! OriginKey, string! InputPath) -> void
+PandaBear.Vault.Pipeline.SshKeyNormalizer
+PandaBear.Vault.Pipeline.VaultPasswordPrompts
+PandaBear.Vault.Pipeline.VaultPasswordPrompts.<Clone>$() -> PandaBear.Vault.Pipeline.VaultPasswordPrompts!
+PandaBear.Vault.Pipeline.VaultPasswordPrompts.Deconstruct(out System.Func<string!, string!>! ReadPassword, out System.Func<string!, string!>! ReadNewPassword) -> void
+PandaBear.Vault.Pipeline.VaultPasswordPrompts.Equals(PandaBear.Vault.Pipeline.VaultPasswordPrompts? other) -> bool
+PandaBear.Vault.Pipeline.VaultPasswordPrompts.ReadNewPassword.get -> System.Func<string!, string!>!
+PandaBear.Vault.Pipeline.VaultPasswordPrompts.ReadNewPassword.init -> void
+PandaBear.Vault.Pipeline.VaultPasswordPrompts.ReadPassword.get -> System.Func<string!, string!>!
+PandaBear.Vault.Pipeline.VaultPasswordPrompts.ReadPassword.init -> void
+PandaBear.Vault.Pipeline.VaultPasswordPrompts.VaultPasswordPrompts(System.Func<string!, string!>! ReadPassword, System.Func<string!, string!>! ReadNewPassword) -> void
+PandaBear.Vault.Pipeline.VaultPipeline
+PandaBear.Vault.Pipeline.VaultPipeline.Load(System.Collections.Generic.IReadOnlyList<string!>! inputPaths, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> PandaBear.Vault.Pipeline.LoadedVault!
+PandaBear.Vault.Pipeline.VaultPipeline.Merge(PandaBear.Vault.Pipeline.ScannedVault! scanned, PandaBear.Vault.Pipeline.MergeRequest! request, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> PandaBear.Vault.Pipeline.PipelineResult!
+PandaBear.Vault.Pipeline.VaultPipeline.Run(PandaBear.Vault.Pipeline.PipelineRequest! request) -> PandaBear.Vault.Pipeline.PipelineResult!
+PandaBear.Vault.Pipeline.VaultPipeline.VaultPipeline(PandaBear.Vault.Formats.IVaultExportReader! reader, PandaBear.Vault.Formats.IVaultExportWriter! writer, PandaBear.Vault.Pipeline.VaultPasswordPrompts! passwords, System.TimeProvider! time) -> void
+PandaBear.Vault.Pipeline.VaultPipeline.Write(PandaBear.Vault.Model.VaultExport! vault, PandaBear.Vault.Pipeline.PipelineOutput! output, System.Collections.Generic.IReadOnlyList<string!>! inputPaths, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> PandaBear.Vault.Formats.VaultWriteResult!
+PandaBear.Vault.Pipeline.VaultReport
+PandaBear.Vault.Secrets.Confidence
+PandaBear.Vault.Secrets.Confidence.High = 3 -> PandaBear.Vault.Secrets.Confidence
+PandaBear.Vault.Secrets.Confidence.Low = 1 -> PandaBear.Vault.Secrets.Confidence
+PandaBear.Vault.Secrets.Confidence.Medium = 2 -> PandaBear.Vault.Secrets.Confidence
+PandaBear.Vault.Secrets.Confidence.Suggestion = 0 -> PandaBear.Vault.Secrets.Confidence
+PandaBear.Vault.Secrets.PlacementTarget
+PandaBear.Vault.Secrets.PlacementTarget.<Clone>$() -> PandaBear.Vault.Secrets.PlacementTarget!
+PandaBear.Vault.Secrets.PlacementTarget.Deconstruct(out PandaBear.Vault.Secrets.PlacementTargetKind Kind, out string? FieldName, out bool NameFromLabel, out string? Reason) -> void
+PandaBear.Vault.Secrets.PlacementTarget.Equals(PandaBear.Vault.Secrets.PlacementTarget? other) -> bool
+PandaBear.Vault.Secrets.PlacementTarget.FieldName.get -> string?
+PandaBear.Vault.Secrets.PlacementTarget.FieldName.init -> void
+PandaBear.Vault.Secrets.PlacementTarget.Kind.get -> PandaBear.Vault.Secrets.PlacementTargetKind
+PandaBear.Vault.Secrets.PlacementTarget.Kind.init -> void
+PandaBear.Vault.Secrets.PlacementTarget.NameFromLabel.get -> bool
+PandaBear.Vault.Secrets.PlacementTarget.NameFromLabel.init -> void
+PandaBear.Vault.Secrets.PlacementTarget.PlacementTarget(PandaBear.Vault.Secrets.PlacementTargetKind Kind, string? FieldName = null, bool NameFromLabel = false, string? Reason = null) -> void
+PandaBear.Vault.Secrets.PlacementTarget.Reason.get -> string?
+PandaBear.Vault.Secrets.PlacementTarget.Reason.init -> void
+PandaBear.Vault.Secrets.PlacementTargetKind
+PandaBear.Vault.Secrets.PlacementTargetKind.HiddenField = 5 -> PandaBear.Vault.Secrets.PlacementTargetKind
+PandaBear.Vault.Secrets.PlacementTargetKind.LoginFromConnection = 4 -> PandaBear.Vault.Secrets.PlacementTargetKind
+PandaBear.Vault.Secrets.PlacementTargetKind.LoginPassword = 1 -> PandaBear.Vault.Secrets.PlacementTargetKind
+PandaBear.Vault.Secrets.PlacementTargetKind.LoginTotp = 0 -> PandaBear.Vault.Secrets.PlacementTargetKind
+PandaBear.Vault.Secrets.PlacementTargetKind.LoginUris = 3 -> PandaBear.Vault.Secrets.PlacementTargetKind
+PandaBear.Vault.Secrets.PlacementTargetKind.LoginUsername = 2 -> PandaBear.Vault.Secrets.PlacementTargetKind
+PandaBear.Vault.Secrets.PlacementTargetKind.NewCardItem = 8 -> PandaBear.Vault.Secrets.PlacementTargetKind
+PandaBear.Vault.Secrets.PlacementTargetKind.NewSshKeyItem = 7 -> PandaBear.Vault.Secrets.PlacementTargetKind
+PandaBear.Vault.Secrets.PlacementTargetKind.NotMoved = 9 -> PandaBear.Vault.Secrets.PlacementTargetKind
+PandaBear.Vault.Secrets.PlacementTargetKind.TextField = 6 -> PandaBear.Vault.Secrets.PlacementTargetKind
+PandaBear.Vault.Secrets.SecretFinding
+PandaBear.Vault.Secrets.SecretFinding.<Clone>$() -> PandaBear.Vault.Secrets.SecretFinding!
+PandaBear.Vault.Secrets.SecretFinding.Confidence.get -> PandaBear.Vault.Secrets.Confidence
+PandaBear.Vault.Secrets.SecretFinding.Confidence.init -> void
+PandaBear.Vault.Secrets.SecretFinding.Equals(PandaBear.Vault.Secrets.SecretFinding? other) -> bool
+PandaBear.Vault.Secrets.SecretFinding.Id.get -> string!
+PandaBear.Vault.Secrets.SecretFinding.IsPreAccepted.get -> bool
+PandaBear.Vault.Secrets.SecretFinding.Kind.get -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretFinding.Kind.init -> void
+PandaBear.Vault.Secrets.SecretFinding.LabelLocation.get -> PandaBear.Vault.Secrets.SecretLocation?
+PandaBear.Vault.Secrets.SecretFinding.LabelLocation.init -> void
+PandaBear.Vault.Secrets.SecretFinding.Location.get -> PandaBear.Vault.Secrets.SecretLocation!
+PandaBear.Vault.Secrets.SecretFinding.Location.init -> void
+PandaBear.Vault.Secrets.SecretFinding.Message.get -> string!
+PandaBear.Vault.Secrets.SecretFinding.Message.init -> void
+PandaBear.Vault.Secrets.SecretFinding.NeedsReview.get -> bool
+PandaBear.Vault.Secrets.SecretFinding.NeedsReview.init -> void
+PandaBear.Vault.Secrets.SecretFinding.ProposedTarget.get -> PandaBear.Vault.Secrets.PlacementTarget!
+PandaBear.Vault.Secrets.SecretFinding.ProposedTarget.init -> void
+PandaBear.Vault.Secrets.SecretFinding.RuleId.get -> string!
+PandaBear.Vault.Secrets.SecretFinding.RuleId.init -> void
+PandaBear.Vault.Secrets.SecretFinding.SecretFinding() -> void
+PandaBear.Vault.Secrets.SecretFinding.ValueLength.get -> int
+PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.AccessKeyId = 8 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.ApiToken = 7 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.BitwardenRecoveryCode = 2 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.CardNumber = 13 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.ConnectionString = 15 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.GenericSecret = 18 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.Iban = 14 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.Jwt = 17 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.NeedsReview = 19 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.Password = 5 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.PgpPrivateKey = 10 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.Pin = 4 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.PrivateKey = 9 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.PuttyKey = 11 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.RecoveryCodes = 1 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.SecurityQuestion = 3 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.SeedPhrase = 12 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.Totp = 0 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.UrlCredentials = 16 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretKind.Username = 6 -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretLocation
+PandaBear.Vault.Secrets.SecretLocation.<Clone>$() -> PandaBear.Vault.Secrets.SecretLocation!
+PandaBear.Vault.Secrets.SecretLocation.Deconstruct(out string! FieldPath, out int Start, out int Length, out int? FirstLine, out int? LastLine) -> void
+PandaBear.Vault.Secrets.SecretLocation.End.get -> int
+PandaBear.Vault.Secrets.SecretLocation.Equals(PandaBear.Vault.Secrets.SecretLocation? other) -> bool
+PandaBear.Vault.Secrets.SecretLocation.FieldPath.get -> string!
+PandaBear.Vault.Secrets.SecretLocation.FieldPath.init -> void
+PandaBear.Vault.Secrets.SecretLocation.FirstLine.get -> int?
+PandaBear.Vault.Secrets.SecretLocation.FirstLine.init -> void
+PandaBear.Vault.Secrets.SecretLocation.LastLine.get -> int?
+PandaBear.Vault.Secrets.SecretLocation.LastLine.init -> void
+PandaBear.Vault.Secrets.SecretLocation.Length.get -> int
+PandaBear.Vault.Secrets.SecretLocation.Length.init -> void
+PandaBear.Vault.Secrets.SecretLocation.SecretLocation(string! FieldPath, int Start, int Length, int? FirstLine = null, int? LastLine = null) -> void
+PandaBear.Vault.Secrets.SecretLocation.Start.get -> int
+PandaBear.Vault.Secrets.SecretLocation.Start.init -> void
+PandaBear.Vault.Secrets.SecretPlacer
+static PandaBear.Vault.Analysis.PasswordCheck.operator !=(PandaBear.Vault.Analysis.PasswordCheck? left, PandaBear.Vault.Analysis.PasswordCheck? right) -> bool
+static PandaBear.Vault.Analysis.PasswordCheck.operator ==(PandaBear.Vault.Analysis.PasswordCheck? left, PandaBear.Vault.Analysis.PasswordCheck? right) -> bool
+static PandaBear.Vault.Analysis.PasswordHealthReport.Analyze(PandaBear.Vault.Model.VaultExport! export) -> PandaBear.Vault.Analysis.PasswordHealthReport!
+static PandaBear.Vault.Analysis.PasswordHealthReport.CheckMembers(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.VaultItem!>!>! groups) -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Analysis.PasswordCheck!>!>!
+static PandaBear.Vault.Analysis.PasswordHealthReport.operator !=(PandaBear.Vault.Analysis.PasswordHealthReport? left, PandaBear.Vault.Analysis.PasswordHealthReport? right) -> bool
+static PandaBear.Vault.Analysis.PasswordHealthReport.operator ==(PandaBear.Vault.Analysis.PasswordHealthReport? left, PandaBear.Vault.Analysis.PasswordHealthReport? right) -> bool
+static PandaBear.Vault.Analysis.PasswordIssue.operator !=(PandaBear.Vault.Analysis.PasswordIssue? left, PandaBear.Vault.Analysis.PasswordIssue? right) -> bool
+static PandaBear.Vault.Analysis.PasswordIssue.operator ==(PandaBear.Vault.Analysis.PasswordIssue? left, PandaBear.Vault.Analysis.PasswordIssue? right) -> bool
+static PandaBear.Vault.Attachments.ArchiveEntryInfo.operator !=(PandaBear.Vault.Attachments.ArchiveEntryInfo? left, PandaBear.Vault.Attachments.ArchiveEntryInfo? right) -> bool
+static PandaBear.Vault.Attachments.ArchiveEntryInfo.operator ==(PandaBear.Vault.Attachments.ArchiveEntryInfo? left, PandaBear.Vault.Attachments.ArchiveEntryInfo? right) -> bool
+static PandaBear.Vault.Attachments.ArchiveLimits.Default.get -> PandaBear.Vault.Attachments.ArchiveLimits!
+static PandaBear.Vault.Attachments.ArchiveLimits.operator !=(PandaBear.Vault.Attachments.ArchiveLimits? left, PandaBear.Vault.Attachments.ArchiveLimits? right) -> bool
+static PandaBear.Vault.Attachments.ArchiveLimits.operator ==(PandaBear.Vault.Attachments.ArchiveLimits? left, PandaBear.Vault.Attachments.ArchiveLimits? right) -> bool
+static PandaBear.Vault.Attachments.ExtractedText.operator !=(PandaBear.Vault.Attachments.ExtractedText? left, PandaBear.Vault.Attachments.ExtractedText? right) -> bool
+static PandaBear.Vault.Attachments.ExtractedText.operator ==(PandaBear.Vault.Attachments.ExtractedText? left, PandaBear.Vault.Attachments.ExtractedText? right) -> bool
+static PandaBear.Vault.Attachments.SafeArchive.Open(string! path) -> PandaBear.Vault.Attachments.SafeArchive!
+static PandaBear.Vault.Attachments.SafeArchive.Open(System.IO.Stream! stream, PandaBear.Vault.Attachments.ArchiveLimits! limits) -> PandaBear.Vault.Attachments.SafeArchive!
+static PandaBear.Vault.Brief.AgentDecisions.Check(PandaBear.Vault.Merge.MergeDecisions! agent, PandaBear.Vault.Brief.BriefDocument! brief) -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.Vault.Brief.AgentDecisions.Combine(PandaBear.Vault.Merge.MergeDecisions! user, PandaBear.Vault.Merge.MergeDecisions! agent) -> PandaBear.Vault.Merge.MergeDecisions!
+static PandaBear.Vault.Brief.AgentDecisions.Conflicts(PandaBear.Vault.Pipeline.PipelineResult! userOnly, PandaBear.Vault.Pipeline.PipelineResult! applied, PandaBear.Vault.Merge.MergeDecisions! decisions) -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.Vault.Brief.AgentDecisions.Effective(PandaBear.Vault.Merge.MergeDecisions! user, PandaBear.Vault.Merge.MergeDecisions! agent) -> PandaBear.Vault.Merge.MergeDecisions!
+static PandaBear.Vault.Brief.AgentDecisions.RejectedByAgent(PandaBear.Vault.Merge.MergeDecisions! user, PandaBear.Vault.Merge.MergeDecisions! agent, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Pipeline.ItemFindingsResult!>! findings) -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.ItemFindingDecisions!>!
+static PandaBear.Vault.Brief.BriefBuilder.Build(System.Collections.Generic.IReadOnlyList<string!>! inputs, PandaBear.Vault.Pipeline.ScannedVault! scanned, PandaBear.Vault.Pipeline.PipelineResult! result, PandaBear.Vault.Merge.MergeDecisions! decisions, bool everyGroup = false) -> PandaBear.Vault.Brief.BriefDocument!
+static PandaBear.Vault.Brief.BriefDocument.operator !=(PandaBear.Vault.Brief.BriefDocument? left, PandaBear.Vault.Brief.BriefDocument? right) -> bool
+static PandaBear.Vault.Brief.BriefDocument.operator ==(PandaBear.Vault.Brief.BriefDocument? left, PandaBear.Vault.Brief.BriefDocument? right) -> bool
+static PandaBear.Vault.Brief.BriefField.operator !=(PandaBear.Vault.Brief.BriefField? left, PandaBear.Vault.Brief.BriefField? right) -> bool
+static PandaBear.Vault.Brief.BriefField.operator ==(PandaBear.Vault.Brief.BriefField? left, PandaBear.Vault.Brief.BriefField? right) -> bool
+static PandaBear.Vault.Brief.BriefFile.Deserialize(string! json) -> PandaBear.Vault.Brief.BriefDocument!
+static PandaBear.Vault.Brief.BriefFile.Read(string! path) -> PandaBear.Vault.Brief.BriefDocument!
+static PandaBear.Vault.Brief.BriefFile.Serialize(PandaBear.Vault.Brief.BriefDocument! brief) -> string!
+static PandaBear.Vault.Brief.BriefFile.Write(string! path, PandaBear.Vault.Brief.BriefDocument! brief, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> void
+static PandaBear.Vault.Brief.BriefFinding.operator !=(PandaBear.Vault.Brief.BriefFinding? left, PandaBear.Vault.Brief.BriefFinding? right) -> bool
+static PandaBear.Vault.Brief.BriefFinding.operator ==(PandaBear.Vault.Brief.BriefFinding? left, PandaBear.Vault.Brief.BriefFinding? right) -> bool
+static PandaBear.Vault.Brief.BriefGroup.operator !=(PandaBear.Vault.Brief.BriefGroup? left, PandaBear.Vault.Brief.BriefGroup? right) -> bool
+static PandaBear.Vault.Brief.BriefGroup.operator ==(PandaBear.Vault.Brief.BriefGroup? left, PandaBear.Vault.Brief.BriefGroup? right) -> bool
+static PandaBear.Vault.Brief.BriefHolder.operator !=(PandaBear.Vault.Brief.BriefHolder? left, PandaBear.Vault.Brief.BriefHolder? right) -> bool
+static PandaBear.Vault.Brief.BriefHolder.operator ==(PandaBear.Vault.Brief.BriefHolder? left, PandaBear.Vault.Brief.BriefHolder? right) -> bool
+static PandaBear.Vault.Brief.BriefMember.operator !=(PandaBear.Vault.Brief.BriefMember? left, PandaBear.Vault.Brief.BriefMember? right) -> bool
+static PandaBear.Vault.Brief.BriefMember.operator ==(PandaBear.Vault.Brief.BriefMember? left, PandaBear.Vault.Brief.BriefMember? right) -> bool
+static PandaBear.Vault.Brief.BriefSummary.operator !=(PandaBear.Vault.Brief.BriefSummary? left, PandaBear.Vault.Brief.BriefSummary? right) -> bool
+static PandaBear.Vault.Brief.BriefSummary.operator ==(PandaBear.Vault.Brief.BriefSummary? left, PandaBear.Vault.Brief.BriefSummary? right) -> bool
+static PandaBear.Vault.Catalog.CatalogApplier.Apply(PandaBear.Vault.Pipeline.LoadedVault! vault, PandaBear.Vault.Catalog.CatalogDocument! catalog, PandaBear.Vault.Merge.MergeDecisions! decisions) -> PandaBear.Vault.Catalog.CatalogApplyResult!
+static PandaBear.Vault.Catalog.CatalogApplyResult.operator !=(PandaBear.Vault.Catalog.CatalogApplyResult? left, PandaBear.Vault.Catalog.CatalogApplyResult? right) -> bool
+static PandaBear.Vault.Catalog.CatalogApplyResult.operator ==(PandaBear.Vault.Catalog.CatalogApplyResult? left, PandaBear.Vault.Catalog.CatalogApplyResult? right) -> bool
+static PandaBear.Vault.Catalog.CatalogAttachment.operator !=(PandaBear.Vault.Catalog.CatalogAttachment? left, PandaBear.Vault.Catalog.CatalogAttachment? right) -> bool
+static PandaBear.Vault.Catalog.CatalogAttachment.operator ==(PandaBear.Vault.Catalog.CatalogAttachment? left, PandaBear.Vault.Catalog.CatalogAttachment? right) -> bool
+static PandaBear.Vault.Catalog.CatalogBuild.operator !=(PandaBear.Vault.Catalog.CatalogBuild? left, PandaBear.Vault.Catalog.CatalogBuild? right) -> bool
+static PandaBear.Vault.Catalog.CatalogBuild.operator ==(PandaBear.Vault.Catalog.CatalogBuild? left, PandaBear.Vault.Catalog.CatalogBuild? right) -> bool
+static PandaBear.Vault.Catalog.CatalogBuilder.Build(PandaBear.Vault.Pipeline.LoadedVault! vault, string! sha256, PandaBear.Vault.Merge.MergeDecisions! decisions) -> PandaBear.Vault.Catalog.CatalogBuild!
+static PandaBear.Vault.Catalog.CatalogBuilder.ToCatalog(PandaBear.Vault.Model.LoginUri! uri, int index) -> PandaBear.Vault.Catalog.CatalogUri!
+static PandaBear.Vault.Catalog.CatalogDocument.operator !=(PandaBear.Vault.Catalog.CatalogDocument? left, PandaBear.Vault.Catalog.CatalogDocument? right) -> bool
+static PandaBear.Vault.Catalog.CatalogDocument.operator ==(PandaBear.Vault.Catalog.CatalogDocument? left, PandaBear.Vault.Catalog.CatalogDocument? right) -> bool
+static PandaBear.Vault.Catalog.CatalogField.operator !=(PandaBear.Vault.Catalog.CatalogField? left, PandaBear.Vault.Catalog.CatalogField? right) -> bool
+static PandaBear.Vault.Catalog.CatalogField.operator ==(PandaBear.Vault.Catalog.CatalogField? left, PandaBear.Vault.Catalog.CatalogField? right) -> bool
+static PandaBear.Vault.Catalog.CatalogFile.Deserialize(string! json) -> PandaBear.Vault.Catalog.CatalogDocument!
+static PandaBear.Vault.Catalog.CatalogFile.Hash(string! path) -> string!
+static PandaBear.Vault.Catalog.CatalogFile.Read(string! path) -> PandaBear.Vault.Catalog.CatalogDocument!
+static PandaBear.Vault.Catalog.CatalogFile.Serialize(PandaBear.Vault.Catalog.CatalogDocument! catalog) -> string!
+static PandaBear.Vault.Catalog.CatalogFile.Write(string! path, PandaBear.Vault.Catalog.CatalogDocument! catalog, bool overwrite) -> void
+static PandaBear.Vault.Catalog.CatalogInfo.operator !=(PandaBear.Vault.Catalog.CatalogInfo? left, PandaBear.Vault.Catalog.CatalogInfo? right) -> bool
+static PandaBear.Vault.Catalog.CatalogInfo.operator ==(PandaBear.Vault.Catalog.CatalogInfo? left, PandaBear.Vault.Catalog.CatalogInfo? right) -> bool
+static PandaBear.Vault.Catalog.CatalogItem.operator !=(PandaBear.Vault.Catalog.CatalogItem? left, PandaBear.Vault.Catalog.CatalogItem? right) -> bool
+static PandaBear.Vault.Catalog.CatalogItem.operator ==(PandaBear.Vault.Catalog.CatalogItem? left, PandaBear.Vault.Catalog.CatalogItem? right) -> bool
+static PandaBear.Vault.Catalog.CatalogNotes.operator !=(PandaBear.Vault.Catalog.CatalogNotes? left, PandaBear.Vault.Catalog.CatalogNotes? right) -> bool
+static PandaBear.Vault.Catalog.CatalogNotes.operator ==(PandaBear.Vault.Catalog.CatalogNotes? left, PandaBear.Vault.Catalog.CatalogNotes? right) -> bool
+static PandaBear.Vault.Catalog.CatalogSource.operator !=(PandaBear.Vault.Catalog.CatalogSource? left, PandaBear.Vault.Catalog.CatalogSource? right) -> bool
+static PandaBear.Vault.Catalog.CatalogSource.operator ==(PandaBear.Vault.Catalog.CatalogSource? left, PandaBear.Vault.Catalog.CatalogSource? right) -> bool
+static PandaBear.Vault.Catalog.CatalogUri.operator !=(PandaBear.Vault.Catalog.CatalogUri? left, PandaBear.Vault.Catalog.CatalogUri? right) -> bool
+static PandaBear.Vault.Catalog.CatalogUri.operator ==(PandaBear.Vault.Catalog.CatalogUri? left, PandaBear.Vault.Catalog.CatalogUri? right) -> bool
+static PandaBear.Vault.Csv.CsvReader.Parse(string! text) -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Csv.CsvRecord!>!
+static PandaBear.Vault.Csv.CsvRecord.operator !=(PandaBear.Vault.Csv.CsvRecord? left, PandaBear.Vault.Csv.CsvRecord? right) -> bool
+static PandaBear.Vault.Csv.CsvRecord.operator ==(PandaBear.Vault.Csv.CsvRecord? left, PandaBear.Vault.Csv.CsvRecord? right) -> bool
+static PandaBear.Vault.Formats.BitwardenLimits.EncryptedLength(string! value) -> int
+static PandaBear.Vault.Formats.BitwardenLimits.Fits(string? value, int encryptedLimit) -> bool
+static PandaBear.Vault.Formats.UnassignedAttachmentFolder.operator !=(PandaBear.Vault.Formats.UnassignedAttachmentFolder? left, PandaBear.Vault.Formats.UnassignedAttachmentFolder? right) -> bool
+static PandaBear.Vault.Formats.UnassignedAttachmentFolder.operator ==(PandaBear.Vault.Formats.UnassignedAttachmentFolder? left, PandaBear.Vault.Formats.UnassignedAttachmentFolder? right) -> bool
+static PandaBear.Vault.Formats.VaultReadResult.operator !=(PandaBear.Vault.Formats.VaultReadResult? left, PandaBear.Vault.Formats.VaultReadResult? right) -> bool
+static PandaBear.Vault.Formats.VaultReadResult.operator ==(PandaBear.Vault.Formats.VaultReadResult? left, PandaBear.Vault.Formats.VaultReadResult? right) -> bool
+static PandaBear.Vault.Formats.VaultWriteResult.operator !=(PandaBear.Vault.Formats.VaultWriteResult? left, PandaBear.Vault.Formats.VaultWriteResult? right) -> bool
+static PandaBear.Vault.Formats.VaultWriteResult.operator ==(PandaBear.Vault.Formats.VaultWriteResult? left, PandaBear.Vault.Formats.VaultWriteResult? right) -> bool
+static PandaBear.Vault.IO.FilePaths.MayNameSameFile(string! first, string! second) -> bool
+static PandaBear.Vault.IO.FilePaths.ResolveLinks(string! path) -> string!
+static PandaBear.Vault.IO.PrintableText.OneLine(string! text) -> string!
+static PandaBear.Vault.IO.PrintableText.TableCell(string! text) -> string!
+static PandaBear.Vault.IO.SecureFile.WriteAllText(string! path, string! contents, bool overwrite) -> void
+static PandaBear.Vault.IO.SecureFile.WriteAllText(string! path, System.ReadOnlySpan<char> contents, bool overwrite, System.Threading.CancellationToken ct) -> void
+static PandaBear.Vault.Matching.ItemNormalizer.Title(string? value) -> string!
+static PandaBear.Vault.Matching.MatchGroup.operator !=(PandaBear.Vault.Matching.MatchGroup? left, PandaBear.Vault.Matching.MatchGroup? right) -> bool
+static PandaBear.Vault.Matching.MatchGroup.operator ==(PandaBear.Vault.Matching.MatchGroup? left, PandaBear.Vault.Matching.MatchGroup? right) -> bool
+static PandaBear.Vault.Matching.MatchOverrides.None.get -> PandaBear.Vault.Matching.MatchOverrides!
+static PandaBear.Vault.Matching.MatchOverrides.operator !=(PandaBear.Vault.Matching.MatchOverrides? left, PandaBear.Vault.Matching.MatchOverrides? right) -> bool
+static PandaBear.Vault.Matching.MatchOverrides.operator ==(PandaBear.Vault.Matching.MatchOverrides? left, PandaBear.Vault.Matching.MatchOverrides? right) -> bool
+static PandaBear.Vault.Matching.MatchResult.operator !=(PandaBear.Vault.Matching.MatchResult? left, PandaBear.Vault.Matching.MatchResult? right) -> bool
+static PandaBear.Vault.Matching.MatchResult.operator ==(PandaBear.Vault.Matching.MatchResult? left, PandaBear.Vault.Matching.MatchResult? right) -> bool
+static PandaBear.Vault.Matching.MatchSuggestion.operator !=(PandaBear.Vault.Matching.MatchSuggestion? left, PandaBear.Vault.Matching.MatchSuggestion? right) -> bool
+static PandaBear.Vault.Matching.MatchSuggestion.operator ==(PandaBear.Vault.Matching.MatchSuggestion? left, PandaBear.Vault.Matching.MatchSuggestion? right) -> bool
+static PandaBear.Vault.Matching.OriginKeyPair.operator !=(PandaBear.Vault.Matching.OriginKeyPair? left, PandaBear.Vault.Matching.OriginKeyPair? right) -> bool
+static PandaBear.Vault.Matching.OriginKeyPair.operator ==(PandaBear.Vault.Matching.OriginKeyPair? left, PandaBear.Vault.Matching.OriginKeyPair? right) -> bool
+static PandaBear.Vault.Matching.OriginKeys.Compute(System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.VaultItem!>! items) -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.Vault.Merge.DecisionsFile.Deserialize(string! json) -> PandaBear.Vault.Merge.MergeDecisions!
+static PandaBear.Vault.Merge.DecisionsFile.EscapeFormatCharacters(string! json) -> string!
+static PandaBear.Vault.Merge.DecisionsFile.Read(string! path) -> PandaBear.Vault.Merge.MergeDecisions!
+static PandaBear.Vault.Merge.DecisionsFile.Serialize(PandaBear.Vault.Merge.MergeDecisions! decisions) -> string!
+static PandaBear.Vault.Merge.DecisionsFile.Write(string! path, PandaBear.Vault.Merge.MergeDecisions! decisions) -> void
+static PandaBear.Vault.Merge.FieldChoice.Empty(string! fieldPath) -> PandaBear.Vault.Merge.FieldChoice!
+static PandaBear.Vault.Merge.FieldChoice.Member(string! fieldPath, string! originKey) -> PandaBear.Vault.Merge.FieldChoice!
+static PandaBear.Vault.Merge.FieldChoice.operator !=(PandaBear.Vault.Merge.FieldChoice? left, PandaBear.Vault.Merge.FieldChoice? right) -> bool
+static PandaBear.Vault.Merge.FieldChoice.operator ==(PandaBear.Vault.Merge.FieldChoice? left, PandaBear.Vault.Merge.FieldChoice? right) -> bool
+static PandaBear.Vault.Merge.FieldChoice.Pending(string! fieldPath, System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.FieldChoiceOption!>! options) -> PandaBear.Vault.Merge.FieldChoice!
+static PandaBear.Vault.Merge.FieldChoiceOption.operator !=(PandaBear.Vault.Merge.FieldChoiceOption? left, PandaBear.Vault.Merge.FieldChoiceOption? right) -> bool
+static PandaBear.Vault.Merge.FieldChoiceOption.operator ==(PandaBear.Vault.Merge.FieldChoiceOption? left, PandaBear.Vault.Merge.FieldChoiceOption? right) -> bool
+static PandaBear.Vault.Merge.FieldDiff.ChangedPaths(System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.VaultItem!>! members) -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.Vault.Merge.FieldDiff.ScalarKey(PandaBear.Vault.Merge.ScalarField! field, PandaBear.Vault.Model.VaultItem! item) -> string!
+static PandaBear.Vault.Merge.FieldResolution.operator !=(PandaBear.Vault.Merge.FieldResolution? left, PandaBear.Vault.Merge.FieldResolution? right) -> bool
+static PandaBear.Vault.Merge.FieldResolution.operator ==(PandaBear.Vault.Merge.FieldResolution? left, PandaBear.Vault.Merge.FieldResolution? right) -> bool
+static PandaBear.Vault.Merge.FindingChoice.operator !=(PandaBear.Vault.Merge.FindingChoice? left, PandaBear.Vault.Merge.FindingChoice? right) -> bool
+static PandaBear.Vault.Merge.FindingChoice.operator ==(PandaBear.Vault.Merge.FindingChoice? left, PandaBear.Vault.Merge.FindingChoice? right) -> bool
+static PandaBear.Vault.Merge.GroupDecision.operator !=(PandaBear.Vault.Merge.GroupDecision? left, PandaBear.Vault.Merge.GroupDecision? right) -> bool
+static PandaBear.Vault.Merge.GroupDecision.operator ==(PandaBear.Vault.Merge.GroupDecision? left, PandaBear.Vault.Merge.GroupDecision? right) -> bool
+static PandaBear.Vault.Merge.GroupReport.operator !=(PandaBear.Vault.Merge.GroupReport? left, PandaBear.Vault.Merge.GroupReport? right) -> bool
+static PandaBear.Vault.Merge.GroupReport.operator ==(PandaBear.Vault.Merge.GroupReport? left, PandaBear.Vault.Merge.GroupReport? right) -> bool
+static PandaBear.Vault.Merge.ItemFindingDecisions.operator !=(PandaBear.Vault.Merge.ItemFindingDecisions? left, PandaBear.Vault.Merge.ItemFindingDecisions? right) -> bool
+static PandaBear.Vault.Merge.ItemFindingDecisions.operator ==(PandaBear.Vault.Merge.ItemFindingDecisions? left, PandaBear.Vault.Merge.ItemFindingDecisions? right) -> bool
+static PandaBear.Vault.Merge.ItemNotesDecision.HashOf(string! notes) -> string!
+static PandaBear.Vault.Merge.ItemNotesDecision.operator !=(PandaBear.Vault.Merge.ItemNotesDecision? left, PandaBear.Vault.Merge.ItemNotesDecision? right) -> bool
+static PandaBear.Vault.Merge.ItemNotesDecision.operator ==(PandaBear.Vault.Merge.ItemNotesDecision? left, PandaBear.Vault.Merge.ItemNotesDecision? right) -> bool
+static PandaBear.Vault.Merge.MergeDecisions.None.get -> PandaBear.Vault.Merge.MergeDecisions!
+static PandaBear.Vault.Merge.MergeDecisions.operator !=(PandaBear.Vault.Merge.MergeDecisions? left, PandaBear.Vault.Merge.MergeDecisions? right) -> bool
+static PandaBear.Vault.Merge.MergeDecisions.operator ==(PandaBear.Vault.Merge.MergeDecisions? left, PandaBear.Vault.Merge.MergeDecisions? right) -> bool
+static PandaBear.Vault.Merge.MergePolicy.operator !=(PandaBear.Vault.Merge.MergePolicy? left, PandaBear.Vault.Merge.MergePolicy? right) -> bool
+static PandaBear.Vault.Merge.MergePolicy.operator ==(PandaBear.Vault.Merge.MergePolicy? left, PandaBear.Vault.Merge.MergePolicy? right) -> bool
+static PandaBear.Vault.Merge.MergeReport.operator !=(PandaBear.Vault.Merge.MergeReport? left, PandaBear.Vault.Merge.MergeReport? right) -> bool
+static PandaBear.Vault.Merge.MergeReport.operator ==(PandaBear.Vault.Merge.MergeReport? left, PandaBear.Vault.Merge.MergeReport? right) -> bool
+static PandaBear.Vault.Merge.ScalarField.operator !=(PandaBear.Vault.Merge.ScalarField? left, PandaBear.Vault.Merge.ScalarField? right) -> bool
+static PandaBear.Vault.Merge.ScalarField.operator ==(PandaBear.Vault.Merge.ScalarField? left, PandaBear.Vault.Merge.ScalarField? right) -> bool
+static PandaBear.Vault.Merge.ScalarFields.All.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Merge.ScalarField!>!
+static PandaBear.Vault.Merge.UnresolvedConflict.operator !=(PandaBear.Vault.Merge.UnresolvedConflict? left, PandaBear.Vault.Merge.UnresolvedConflict? right) -> bool
+static PandaBear.Vault.Merge.UnresolvedConflict.operator ==(PandaBear.Vault.Merge.UnresolvedConflict? left, PandaBear.Vault.Merge.UnresolvedConflict? right) -> bool
+static PandaBear.Vault.Model.AdditionalFolders.Add(System.Collections.Generic.IEnumerable<PandaBear.Vault.Model.CustomField!>! fields, System.Collections.Generic.IEnumerable<string!>! folders, string? folder) -> System.Collections.Generic.IReadOnlyList<PandaBear.Vault.Model.CustomField!>!
+static PandaBear.Vault.Model.AdditionalFolders.Read(System.Collections.Generic.IEnumerable<PandaBear.Vault.Model.CustomField!>! fields) -> System.Collections.Generic.IEnumerable<string!>!
+static PandaBear.Vault.Model.AttachmentRef.operator !=(PandaBear.Vault.Model.AttachmentRef? left, PandaBear.Vault.Model.AttachmentRef? right) -> bool
+static PandaBear.Vault.Model.AttachmentRef.operator ==(PandaBear.Vault.Model.AttachmentRef? left, PandaBear.Vault.Model.AttachmentRef? right) -> bool
+static PandaBear.Vault.Model.CardData.operator !=(PandaBear.Vault.Model.CardData? left, PandaBear.Vault.Model.CardData? right) -> bool
+static PandaBear.Vault.Model.CardData.operator ==(PandaBear.Vault.Model.CardData? left, PandaBear.Vault.Model.CardData? right) -> bool
+static PandaBear.Vault.Model.CustomField.operator !=(PandaBear.Vault.Model.CustomField? left, PandaBear.Vault.Model.CustomField? right) -> bool
+static PandaBear.Vault.Model.CustomField.operator ==(PandaBear.Vault.Model.CustomField? left, PandaBear.Vault.Model.CustomField? right) -> bool
+static PandaBear.Vault.Model.Fido2Credential.operator !=(PandaBear.Vault.Model.Fido2Credential? left, PandaBear.Vault.Model.Fido2Credential? right) -> bool
+static PandaBear.Vault.Model.Fido2Credential.operator ==(PandaBear.Vault.Model.Fido2Credential? left, PandaBear.Vault.Model.Fido2Credential? right) -> bool
+static PandaBear.Vault.Model.FolderTree.WithParents(System.Collections.Generic.IEnumerable<string?>! paths) -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.Vault.Model.IdentityData.operator !=(PandaBear.Vault.Model.IdentityData? left, PandaBear.Vault.Model.IdentityData? right) -> bool
+static PandaBear.Vault.Model.IdentityData.operator ==(PandaBear.Vault.Model.IdentityData? left, PandaBear.Vault.Model.IdentityData? right) -> bool
+static PandaBear.Vault.Model.ItemOrigin.operator !=(PandaBear.Vault.Model.ItemOrigin? left, PandaBear.Vault.Model.ItemOrigin? right) -> bool
+static PandaBear.Vault.Model.ItemOrigin.operator ==(PandaBear.Vault.Model.ItemOrigin? left, PandaBear.Vault.Model.ItemOrigin? right) -> bool
+static PandaBear.Vault.Model.LoginData.operator !=(PandaBear.Vault.Model.LoginData? left, PandaBear.Vault.Model.LoginData? right) -> bool
+static PandaBear.Vault.Model.LoginData.operator ==(PandaBear.Vault.Model.LoginData? left, PandaBear.Vault.Model.LoginData? right) -> bool
+static PandaBear.Vault.Model.LoginUri.operator !=(PandaBear.Vault.Model.LoginUri? left, PandaBear.Vault.Model.LoginUri? right) -> bool
+static PandaBear.Vault.Model.LoginUri.operator ==(PandaBear.Vault.Model.LoginUri? left, PandaBear.Vault.Model.LoginUri? right) -> bool
+static PandaBear.Vault.Model.PasswordHistoryEntry.operator !=(PandaBear.Vault.Model.PasswordHistoryEntry? left, PandaBear.Vault.Model.PasswordHistoryEntry? right) -> bool
+static PandaBear.Vault.Model.PasswordHistoryEntry.operator ==(PandaBear.Vault.Model.PasswordHistoryEntry? left, PandaBear.Vault.Model.PasswordHistoryEntry? right) -> bool
+static PandaBear.Vault.Model.SshKeyData.operator !=(PandaBear.Vault.Model.SshKeyData? left, PandaBear.Vault.Model.SshKeyData? right) -> bool
+static PandaBear.Vault.Model.SshKeyData.operator ==(PandaBear.Vault.Model.SshKeyData? left, PandaBear.Vault.Model.SshKeyData? right) -> bool
+static PandaBear.Vault.Model.UriMasking.Mask(string! uri, string! mask) -> string!
+static PandaBear.Vault.Model.VaultExport.operator !=(PandaBear.Vault.Model.VaultExport? left, PandaBear.Vault.Model.VaultExport? right) -> bool
+static PandaBear.Vault.Model.VaultExport.operator ==(PandaBear.Vault.Model.VaultExport? left, PandaBear.Vault.Model.VaultExport? right) -> bool
+static PandaBear.Vault.Model.VaultItem.operator !=(PandaBear.Vault.Model.VaultItem? left, PandaBear.Vault.Model.VaultItem? right) -> bool
+static PandaBear.Vault.Model.VaultItem.operator ==(PandaBear.Vault.Model.VaultItem? left, PandaBear.Vault.Model.VaultItem? right) -> bool
+static PandaBear.Vault.Pipeline.ItemFindingsResult.operator !=(PandaBear.Vault.Pipeline.ItemFindingsResult? left, PandaBear.Vault.Pipeline.ItemFindingsResult? right) -> bool
+static PandaBear.Vault.Pipeline.ItemFindingsResult.operator ==(PandaBear.Vault.Pipeline.ItemFindingsResult? left, PandaBear.Vault.Pipeline.ItemFindingsResult? right) -> bool
+static PandaBear.Vault.Pipeline.LoadedVault.operator !=(PandaBear.Vault.Pipeline.LoadedVault? left, PandaBear.Vault.Pipeline.LoadedVault? right) -> bool
+static PandaBear.Vault.Pipeline.LoadedVault.operator ==(PandaBear.Vault.Pipeline.LoadedVault? left, PandaBear.Vault.Pipeline.LoadedVault? right) -> bool
+static PandaBear.Vault.Pipeline.ManualAttachment.operator !=(PandaBear.Vault.Pipeline.ManualAttachment? left, PandaBear.Vault.Pipeline.ManualAttachment? right) -> bool
+static PandaBear.Vault.Pipeline.ManualAttachment.operator ==(PandaBear.Vault.Pipeline.ManualAttachment? left, PandaBear.Vault.Pipeline.ManualAttachment? right) -> bool
+static PandaBear.Vault.Pipeline.MergeRequest.operator !=(PandaBear.Vault.Pipeline.MergeRequest? left, PandaBear.Vault.Pipeline.MergeRequest? right) -> bool
+static PandaBear.Vault.Pipeline.MergeRequest.operator ==(PandaBear.Vault.Pipeline.MergeRequest? left, PandaBear.Vault.Pipeline.MergeRequest? right) -> bool
+static PandaBear.Vault.Pipeline.PipelineOutput.operator !=(PandaBear.Vault.Pipeline.PipelineOutput? left, PandaBear.Vault.Pipeline.PipelineOutput? right) -> bool
+static PandaBear.Vault.Pipeline.PipelineOutput.operator ==(PandaBear.Vault.Pipeline.PipelineOutput? left, PandaBear.Vault.Pipeline.PipelineOutput? right) -> bool
+static PandaBear.Vault.Pipeline.PipelineRequest.operator !=(PandaBear.Vault.Pipeline.PipelineRequest? left, PandaBear.Vault.Pipeline.PipelineRequest? right) -> bool
+static PandaBear.Vault.Pipeline.PipelineRequest.operator ==(PandaBear.Vault.Pipeline.PipelineRequest? left, PandaBear.Vault.Pipeline.PipelineRequest? right) -> bool
+static PandaBear.Vault.Pipeline.PipelineResult.operator !=(PandaBear.Vault.Pipeline.PipelineResult? left, PandaBear.Vault.Pipeline.PipelineResult? right) -> bool
+static PandaBear.Vault.Pipeline.PipelineResult.operator ==(PandaBear.Vault.Pipeline.PipelineResult? left, PandaBear.Vault.Pipeline.PipelineResult? right) -> bool
+static PandaBear.Vault.Pipeline.PlacementProblem.operator !=(PandaBear.Vault.Pipeline.PlacementProblem? left, PandaBear.Vault.Pipeline.PlacementProblem? right) -> bool
+static PandaBear.Vault.Pipeline.PlacementProblem.operator ==(PandaBear.Vault.Pipeline.PlacementProblem? left, PandaBear.Vault.Pipeline.PlacementProblem? right) -> bool
+static PandaBear.Vault.Pipeline.ScannedItem.operator !=(PandaBear.Vault.Pipeline.ScannedItem? left, PandaBear.Vault.Pipeline.ScannedItem? right) -> bool
+static PandaBear.Vault.Pipeline.ScannedItem.operator ==(PandaBear.Vault.Pipeline.ScannedItem? left, PandaBear.Vault.Pipeline.ScannedItem? right) -> bool
+static PandaBear.Vault.Pipeline.ScannedVault.operator !=(PandaBear.Vault.Pipeline.ScannedVault? left, PandaBear.Vault.Pipeline.ScannedVault? right) -> bool
+static PandaBear.Vault.Pipeline.ScannedVault.operator ==(PandaBear.Vault.Pipeline.ScannedVault? left, PandaBear.Vault.Pipeline.ScannedVault? right) -> bool
+static PandaBear.Vault.Pipeline.SourceItem.operator !=(PandaBear.Vault.Pipeline.SourceItem? left, PandaBear.Vault.Pipeline.SourceItem? right) -> bool
+static PandaBear.Vault.Pipeline.SourceItem.operator ==(PandaBear.Vault.Pipeline.SourceItem? left, PandaBear.Vault.Pipeline.SourceItem? right) -> bool
+static PandaBear.Vault.Pipeline.VaultPasswordPrompts.operator !=(PandaBear.Vault.Pipeline.VaultPasswordPrompts? left, PandaBear.Vault.Pipeline.VaultPasswordPrompts? right) -> bool
+static PandaBear.Vault.Pipeline.VaultPasswordPrompts.operator ==(PandaBear.Vault.Pipeline.VaultPasswordPrompts? left, PandaBear.Vault.Pipeline.VaultPasswordPrompts? right) -> bool
+static PandaBear.Vault.Pipeline.VaultPipeline.Scan(PandaBear.Vault.Pipeline.LoadedVault! vault, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> PandaBear.Vault.Pipeline.ScannedVault!
+static PandaBear.Vault.Pipeline.VaultReport.ToMarkdown(PandaBear.Vault.Pipeline.PipelineResult! result) -> string!
+static PandaBear.Vault.Secrets.PlacementTarget.Hidden(string! name) -> PandaBear.Vault.Secrets.PlacementTarget!
+static PandaBear.Vault.Secrets.PlacementTarget.HiddenNamedByLabel(string! fallbackName) -> PandaBear.Vault.Secrets.PlacementTarget!
+static PandaBear.Vault.Secrets.PlacementTarget.LoginFromConnection.get -> PandaBear.Vault.Secrets.PlacementTarget!
+static PandaBear.Vault.Secrets.PlacementTarget.LoginPassword.get -> PandaBear.Vault.Secrets.PlacementTarget!
+static PandaBear.Vault.Secrets.PlacementTarget.LoginTotp.get -> PandaBear.Vault.Secrets.PlacementTarget!
+static PandaBear.Vault.Secrets.PlacementTarget.LoginUris.get -> PandaBear.Vault.Secrets.PlacementTarget!
+static PandaBear.Vault.Secrets.PlacementTarget.LoginUsername.get -> PandaBear.Vault.Secrets.PlacementTarget!
+static PandaBear.Vault.Secrets.PlacementTarget.NewCardItem.get -> PandaBear.Vault.Secrets.PlacementTarget!
+static PandaBear.Vault.Secrets.PlacementTarget.NewSshKeyItem.get -> PandaBear.Vault.Secrets.PlacementTarget!
+static PandaBear.Vault.Secrets.PlacementTarget.NotMoved(string! reason) -> PandaBear.Vault.Secrets.PlacementTarget!
+static PandaBear.Vault.Secrets.PlacementTarget.operator !=(PandaBear.Vault.Secrets.PlacementTarget? left, PandaBear.Vault.Secrets.PlacementTarget? right) -> bool
+static PandaBear.Vault.Secrets.PlacementTarget.operator ==(PandaBear.Vault.Secrets.PlacementTarget? left, PandaBear.Vault.Secrets.PlacementTarget? right) -> bool
+static PandaBear.Vault.Secrets.PlacementTarget.Text(string! name) -> PandaBear.Vault.Secrets.PlacementTarget!
+static PandaBear.Vault.Secrets.SecretFinding.operator !=(PandaBear.Vault.Secrets.SecretFinding? left, PandaBear.Vault.Secrets.SecretFinding? right) -> bool
+static PandaBear.Vault.Secrets.SecretFinding.operator ==(PandaBear.Vault.Secrets.SecretFinding? left, PandaBear.Vault.Secrets.SecretFinding? right) -> bool
+static PandaBear.Vault.Secrets.SecretLocation.Attachment(string! fileName) -> string!
+static PandaBear.Vault.Secrets.SecretLocation.FieldName(int index) -> string!
+static PandaBear.Vault.Secrets.SecretLocation.FieldValue(int index) -> string!
+static PandaBear.Vault.Secrets.SecretLocation.operator !=(PandaBear.Vault.Secrets.SecretLocation? left, PandaBear.Vault.Secrets.SecretLocation? right) -> bool
+static PandaBear.Vault.Secrets.SecretLocation.operator ==(PandaBear.Vault.Secrets.SecretLocation? left, PandaBear.Vault.Secrets.SecretLocation? right) -> bool
+static PandaBear.Vault.Secrets.SecretLocation.TryParseField(string! fieldPath, out int index, out bool isName) -> bool
+static PandaBear.Vault.Secrets.SecretPlacer.TryRead(PandaBear.Vault.Model.VaultItem! item, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? attachmentTexts, PandaBear.Vault.Secrets.SecretLocation! location, out string? value) -> bool
+virtual PandaBear.Vault.Pipeline.MergeRequest.<Clone>$() -> PandaBear.Vault.Pipeline.MergeRequest!
+virtual PandaBear.Vault.Pipeline.MergeRequest.EqualityContract.get -> System.Type!
+virtual PandaBear.Vault.Pipeline.MergeRequest.Equals(PandaBear.Vault.Pipeline.MergeRequest? other) -> bool
+virtual PandaBear.Vault.Pipeline.MergeRequest.PrintMembers(System.Text.StringBuilder! builder) -> bool

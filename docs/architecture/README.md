@@ -132,6 +132,10 @@ flowchart TB
     SharedKernel_Testing_Playwright[SharedKernel.Testing.Playwright] --> SharedKernel_Testing_AspNetCore[SharedKernel.Testing.AspNetCore]
     SharedKernel_Testing_Xunit[SharedKernel.Testing.Xunit] --> SharedKernel_Testing[SharedKernel.Testing]
     SharedKernel_UploadSanitizing[SharedKernel.UploadSanitizing] --> SharedKernel_Results[SharedKernel.Results]
+    SharedKernel_Vault[SharedKernel.Vault] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
+    SharedKernel_Vault[SharedKernel.Vault] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
+    SharedKernel_Vault_Bitwarden[SharedKernel.Vault.Bitwarden] --> SharedKernel_Vault[SharedKernel.Vault]
+    SharedKernel_Vault_Keeper[SharedKernel.Vault.Keeper] --> SharedKernel_Vault[SharedKernel.Vault]
     SharedKernel_Versioning[SharedKernel.Versioning] --> SharedKernel_IO[SharedKernel.IO]
     SharedKernel_Versioning[SharedKernel.Versioning] --> SharedKernel_Processes[SharedKernel.Processes]
 ```

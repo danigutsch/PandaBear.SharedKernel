@@ -1,4 +1,4 @@
-using PandaBear.VaultManager.Tool.IO;
+using PandaBear.Vault.IO;
 
 namespace PandaBear.VaultManager.Tool.Review;
 

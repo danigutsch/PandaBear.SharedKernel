@@ -1,5 +1,5 @@
 using System.Text;
-using PandaBear.VaultManager.Tool.IO;
+using PandaBear.Vault.IO;
 
 namespace PandaBear.VaultManager.Tool.Cli;
 

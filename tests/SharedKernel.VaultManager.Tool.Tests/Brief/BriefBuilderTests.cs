@@ -1,9 +1,9 @@
 using System.Text.Json.Nodes;
 using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Brief;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Model;
-using PandaBear.VaultManager.Tool.Secrets;
+using PandaBear.Vault.Brief;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Model;
+using PandaBear.Vault.Secrets;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 

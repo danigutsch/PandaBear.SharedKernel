@@ -1,6 +1,5 @@
 using System.CommandLine;
 using PandaBear.VaultManager.Tool.Cli;
-using PandaBear.VaultManager.Tool.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 

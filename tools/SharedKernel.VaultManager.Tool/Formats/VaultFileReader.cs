@@ -1,7 +1,8 @@
 using System.Globalization;
 using System.Text;
-using PandaBear.VaultManager.Tool.Formats.Bitwarden;
-using PandaBear.VaultManager.Tool.Formats.Keeper;
+using PandaBear.Vault.Bitwarden;
+using PandaBear.Vault.Formats;
+using PandaBear.Vault.Keeper;
 
 namespace PandaBear.VaultManager.Tool.Formats;
 

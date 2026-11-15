@@ -1,10 +1,10 @@
 using System.Security.Cryptography;
 using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Matching;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Model;
+using PandaBear.Vault.Matching;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Model;
 using PandaBear.VaultManager.Tool.Review;
-using PandaBear.VaultManager.Tool.Secrets;
+using PandaBear.Vault.Secrets;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 using PandaBear.VaultManager.Tool.Tests.Secrets;
 using static PandaBear.VaultManager.Tool.Tests.Review.ReviewVaults;

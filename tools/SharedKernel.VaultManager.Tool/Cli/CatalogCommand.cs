@@ -1,9 +1,9 @@
 using System.CommandLine;
-using PandaBear.VaultManager.Tool.Catalog;
+using PandaBear.Vault.Catalog;
 using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.VaultManager.Tool.IO;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Pipeline;
+using PandaBear.Vault.IO;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Cli;
 
@@ -76,7 +76,7 @@ internal static class CatalogCommand
 
         MergeDecisions decisions = decisionsPath is not null ? DecisionsFile.Read(decisionsPath) : MergeDecisions.None;
         string sha256 = CatalogFile.Hash(input);
-        LoadedVault vault = new VaultPipeline(prompts.Environment).Load(inputs, ct);
+        LoadedVault vault = prompts.Environment.CreatePipeline().Load(inputs, ct);
         CatalogBuild built = CatalogBuilder.Build(vault, sha256, decisions);
         foreach (string warning in vault.Warnings)
         {

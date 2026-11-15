@@ -1,5 +1,5 @@
-using PandaBear.VaultManager.Tool.Matching;
-using PandaBear.VaultManager.Tool.Merge;
+using PandaBear.Vault.Matching;
+using PandaBear.Vault.Merge;
 
 namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
 

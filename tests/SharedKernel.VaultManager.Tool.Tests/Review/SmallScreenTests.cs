@@ -1,6 +1,6 @@
 using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Pipeline;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Pipeline;
 using PandaBear.VaultManager.Tool.Review;
 using Terminal.Gui.App;
 using static PandaBear.VaultManager.Tool.Tests.Review.ReviewVaults;

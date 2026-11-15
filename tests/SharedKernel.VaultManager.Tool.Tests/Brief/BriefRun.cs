@@ -1,7 +1,7 @@
-using PandaBear.VaultManager.Tool.Brief;
-using PandaBear.VaultManager.Tool.Matching;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Pipeline;
+using PandaBear.Vault.Brief;
+using PandaBear.Vault.Matching;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Pipeline;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Brief;
@@ -13,7 +13,7 @@ internal static class BriefRun
     public static (BriefDocument Brief, PipelineResult Result) Build(IReadOnlyList<string> inputs, MergeDecisions? decisions = null, MergePolicy? policy = null)
     {
         decisions ??= MergeDecisions.None;
-        var pipeline = new VaultPipeline(new TestPrompts("fixture export password").Environment());
+        var pipeline = new TestPrompts("fixture export password").Environment().CreatePipeline();
         ScannedVault scanned = VaultPipeline.Scan(pipeline.Load(inputs));
         PipelineResult result = pipeline.Merge(scanned, new MergeRequest { Policy = policy ?? new MergePolicy(), Decisions = decisions });
         return (BriefBuilder.Build([.. inputs.Select(Path.GetFileName).OfType<string>()], scanned, result, decisions), result);

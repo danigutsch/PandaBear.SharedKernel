@@ -1,4 +1,5 @@
 using System.Text;
+using PandaBear.Vault.Pipeline;
 
 namespace PandaBear.VaultManager.Tool;
 
@@ -8,7 +9,7 @@ namespace PandaBear.VaultManager.Tool;
 internal sealed class PasswordReader(Func<ConsoleKeyInfo> readKey, TextWriter output)
 {
     /// <summary>Minimum length of a password that protects a new export file.</summary>
-    public const int MinimumNewPasswordLength = 12;
+    public const int MinimumNewPasswordLength = VaultPipeline.MinimumNewPasswordLength;
 
     private const int Attempts = 3;
 

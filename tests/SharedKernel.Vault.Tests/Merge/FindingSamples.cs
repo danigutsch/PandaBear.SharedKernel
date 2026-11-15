@@ -1,0 +1,30 @@
+using PandaBear.Vault.Matching;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Secrets;
+
+namespace PandaBear.Vault.Tests.Merge;
+
+/// <summary>Builds secret findings and finding decisions without scanning an item.</summary>
+internal static class FindingSamples
+{
+    /// <summary>Creates a generic-secret finding of the given confidence at offset 0 length 8 of the notes field.</summary>
+    public static SecretFinding Finding(Confidence confidence) => new()
+    {
+        RuleId = "fixture-rule",
+        Kind = SecretKind.GenericSecret,
+        Confidence = confidence,
+        Location = new SecretLocation(SecretLocation.Notes, 0, 8),
+        ProposedTarget = PlacementTarget.Hidden("Secret"),
+        Message = "Fixture finding",
+    };
+
+    /// <summary>A medium-confidence finding at the start of a field.</summary>
+    public static SecretFinding At(string fieldPath) => Finding(Confidence.Medium) with { Location = new SecretLocation(fieldPath, 0, 4) };
+
+    /// <summary>Creates merge decisions with no group decisions or overrides and one finding choice for the given item.</summary>
+    public static MergeDecisions Decide(string originKey, SecretFinding finding, FindingDecision decision) =>
+        new([], MatchOverrides.None)
+        {
+            Findings = [new ItemFindingDecisions(originKey, [new FindingChoice(finding.Id, decision)])]
+        };
+}

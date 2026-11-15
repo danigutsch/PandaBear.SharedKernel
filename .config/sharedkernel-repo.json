@@ -117,6 +117,9 @@
     "src/SharedKernel/SharedKernel.Testing.Web/SharedKernel.Testing.Web.csproj",
     "src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj",
     "src/SharedKernel/SharedKernel.UploadSanitizing/SharedKernel.UploadSanitizing.csproj",
+    "src/SharedKernel/SharedKernel.Vault.Bitwarden/SharedKernel.Vault.Bitwarden.csproj",
+    "src/SharedKernel/SharedKernel.Vault.Keeper/SharedKernel.Vault.Keeper.csproj",
+    "src/SharedKernel/SharedKernel.Vault/SharedKernel.Vault.csproj",
     "src/SharedKernel/SharedKernel.Versioning/SharedKernel.Versioning.csproj"
   ]
 }

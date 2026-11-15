@@ -672,6 +672,10 @@ that System.CommandLine repeats cannot send escape sequences either.
 Package ID: `PandaBear.SharedKernel.VaultManager.Tool`. C# namespace: `PandaBear.VaultManager.Tool`.
 Assembly and project identity: `SharedKernel.VaultManager.Tool`. Command: `sharedkernel-vault`.
 
+The tool is a command-line wrapper over the vault engine: `SharedKernel.Vault` (matching, merging, secret scanning,
+reports, and the pipeline), `SharedKernel.Vault.Bitwarden`, and `SharedKernel.Vault.Keeper`. The tool keeps the
+command tree, the format detection that picks a provider's reader, the review UI, and the password prompts.
+
 The source is public. Registry publication remains deferred. Consume a validated candidate from an explicitly
 configured local or private feed. This README does not imply the package is available on nuget.org.
 

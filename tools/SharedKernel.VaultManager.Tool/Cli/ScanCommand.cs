@@ -1,8 +1,8 @@
 using System.CommandLine;
-using PandaBear.VaultManager.Tool.Analysis;
+using PandaBear.Vault.Analysis;
 using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.VaultManager.Tool.IO;
-using PandaBear.VaultManager.Tool.Pipeline;
+using PandaBear.Vault.IO;
+using PandaBear.Vault.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Cli;
 
@@ -44,7 +44,7 @@ internal static class ScanCommand
             return ExitCodes.InputOutputProblem;
         }
 
-        var pipeline = new VaultPipeline(prompts.Environment);
+        var pipeline = prompts.Environment.CreatePipeline();
         PipelineResult result = pipeline.Merge(VaultPipeline.Scan(pipeline.Load(inputs, ct), ct), new MergeRequest(), ct);
         foreach (string warning in result.ReadWarnings)
         {

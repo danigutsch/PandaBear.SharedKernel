@@ -18,12 +18,20 @@ The tool never contacts a vault service. The user imports the output.
 
 - Package ID `PandaBear.SharedKernel.VaultManager.Tool`, namespace `PandaBear.VaultManager.Tool`, project and
   assembly `SharedKernel.VaultManager.Tool`, command `sharedkernel-vault`.
-- One project holds the whole tool. Every type is internal; tests use `InternalsVisibleTo`. If another consumer
-  needs this logic later, extract a library then.
-- Tests live in `tests/SharedKernel.VaultManager.Tool.Tests` and use the repository assertion API.
+- The logic lives in an engine, as the [tool engines decision](../adr/20261115-tool-engines-and-thin-wrappers.md)
+  describes: `SharedKernel.Vault` (namespace `PandaBear.Vault`) holds the model, matching, merging, decisions, secret
+  scanning and placement, briefs, catalogs, password health, reports, and the pipeline, which reads and writes through
+  `IVaultExportReader` and `IVaultExportWriter`. `SharedKernel.Vault.Bitwarden` reads Bitwarden exports, writes and
+  encrypts Bitwarden exports, and holds the Bitwarden key derivation; `SharedKernel.Vault.Keeper` reads Keeper exports.
+  The tool keeps the command tree, the format detection that picks a reader, the review UI, and the password prompts.
+  Shipping these libraries is the same separate decision as shipping the tool, so they are not packable yet.
+- Engine tests live in `tests/SharedKernel.Vault.Tests`, `tests/SharedKernel.Vault.Bitwarden.Tests`, and
+  `tests/SharedKernel.Vault.Keeper.Tests`; command-line, review, and end-to-end pipeline tests live in
+  `tests/SharedKernel.VaultManager.Tool.Tests`. All use the repository assertion API.
 - Dependencies:
   - System.CommandLine for parsing; it has no transitive packages on .NET 10.
-  - Konscious.Security.Cryptography.Argon2 (with Konscious Blake2) to read Argon2id-protected Bitwarden exports.
+  - Konscious.Security.Cryptography.Argon2 (with Konscious Blake2), referenced by `SharedKernel.Vault.Bitwarden`, to
+    read Argon2id-protected Bitwarden exports.
   - Terminal.Gui for the review UI. It brings 23 transitive packages, including `Onigwrap` with a native
     `libonigwrap`.
   - Existing repository modules where they fit: `SharedKernel.BuildingBlocks` for IBAN and BIC validation.

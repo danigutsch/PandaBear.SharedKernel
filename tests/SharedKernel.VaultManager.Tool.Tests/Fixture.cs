@@ -1,5 +1,5 @@
-using PandaBear.VaultManager.Tool.Formats.Bitwarden;
-using PandaBear.VaultManager.Tool.Model;
+using PandaBear.Vault.Bitwarden;
+using PandaBear.Vault.Model;
 
 namespace PandaBear.VaultManager.Tool.Tests;
 

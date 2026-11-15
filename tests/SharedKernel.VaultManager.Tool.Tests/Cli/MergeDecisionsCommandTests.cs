@@ -1,10 +1,10 @@
 using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Formats.Bitwarden;
-using PandaBear.VaultManager.Tool.Matching;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Model;
-using PandaBear.VaultManager.Tool.Pipeline;
-using PandaBear.VaultManager.Tool.Secrets;
+using PandaBear.Vault.Bitwarden;
+using PandaBear.Vault.Matching;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Model;
+using PandaBear.Vault.Pipeline;
+using PandaBear.Vault.Secrets;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
@@ -127,7 +127,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         string input = CliInputs.CodesAndPasswordInNotes(DirectoryPath, codes);
         string output = Path.Combine(DirectoryPath, "merged.json");
         string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
-        var findings = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Run(new PipelineRequest([input])).Findings.ShouldHaveSingleItem();
+        var findings = new TestPrompts(ExportPassword).Environment().CreatePipeline().Run(new PipelineRequest([input])).Findings.ShouldHaveSingleItem();
         string codesId = findings.Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.RecoveryCodes).Id;
         string passwordId = findings.Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.Password).Id;
         var split = new OriginKeyPair(CliInputs.GitHubKey, "keeper|keeper.json|rec-github/" + codesId);
@@ -154,7 +154,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         string[] inputs = CliInputs.CodesInKeeperNotes(DirectoryPath, codes);
         string output = Path.Combine(DirectoryPath, "merged.json");
         string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
-        var planned = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Run(new PipelineRequest(inputs));
+        var planned = new TestPrompts(ExportPassword).Environment().CreatePipeline().Run(new PipelineRequest(inputs));
         var group = planned.Match.Groups.ShouldHaveSingleItem(candidate => candidate.Members.Count == 2);
         string codesId = planned.Findings.ShouldHaveSingleItem().Findings.ShouldHaveSingleItem().Id;
         var decisions = new MergeDecisions(
@@ -202,7 +202,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(1030);
         string[] inputs = CliInputs.CodesInKeeperNotes(DirectoryPath, codes);
         string output = Path.Combine(DirectoryPath, "merged.json");
-        var planned = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Run(new PipelineRequest(inputs));
+        var planned = new TestPrompts(ExportPassword).Environment().CreatePipeline().Run(new PipelineRequest(inputs));
         string codesId = planned.Findings.ShouldHaveSingleItem().Findings.ShouldHaveSingleItem().Id;
         string json = $$"""{"version":2,"groups":[],"links":[],"splits":[],"finding":[{"originKey":"{{CliInputs.GitHubKey}}","choices":[{"findingId":"{{codesId}}","decision":"Rejected"}]}]}""";
         string decisionsPath = PipelineInputs.Write(DirectoryPath, "decisions.json", json);
@@ -228,7 +228,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(1040);
         string[] inputs = CliInputs.CodesInKeeperNotes(DirectoryPath, codes);
         string output = Path.Combine(DirectoryPath, "merged.json");
-        var planned = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Run(new PipelineRequest(inputs));
+        var planned = new TestPrompts(ExportPassword).Environment().CreatePipeline().Run(new PipelineRequest(inputs));
         string codesId = planned.Findings
             .ShouldHaveSingleItem(item => string.Equals(item.OriginKey, CliInputs.GitHubKey, StringComparison.Ordinal)).Findings
             .ShouldHaveSingleItem(finding => finding.Kind == SecretKind.RecoveryCodes).Id;
@@ -268,7 +268,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         string output = Path.Combine(DirectoryPath, "merged.json");
         string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
         string[] args = ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--plaintext"];
-        var conflict = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Run(new PipelineRequest(inputs)).Unresolved.ShouldHaveSingleItem();
+        var conflict = new TestPrompts(ExportPassword).Environment().CreatePipeline().Run(new PipelineRequest(inputs)).Unresolved.ShouldHaveSingleItem();
         DecisionsFile.Write(decisionsPath, new MergeDecisions([new GroupDecision(conflict.GroupKey, [FieldChoice.Member(conflict.FieldPath, "keeper|keeper.json|rec-gone")])], MatchOverrides.None));
 
         // Act

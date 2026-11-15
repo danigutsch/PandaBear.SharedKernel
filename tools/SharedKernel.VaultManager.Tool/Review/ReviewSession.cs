@@ -1,11 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using PandaBear.VaultManager.Tool.Cli;
-using PandaBear.VaultManager.Tool.Matching;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Model;
-using PandaBear.VaultManager.Tool.Pipeline;
-using PandaBear.VaultManager.Tool.Secrets;
+using PandaBear.Vault.Matching;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Model;
+using PandaBear.Vault.Pipeline;
+using PandaBear.Vault.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Review;
 
@@ -582,10 +582,10 @@ internal sealed class ReviewSession
                 nameof(exportPassword));
         }
 
-        var writer = new VaultPipeline(environment with
+        var writer = (environment with
         {
             ReadNewPassword = _ => exportPassword ?? string.Empty
-        });
+        }).CreatePipeline();
         PipelineResult written = writer.Merge(scanned, new MergeRequest { Policy = Policy, Decisions = Decisions, Output = output });
         if (!written.OutputWritten)
         {
@@ -723,7 +723,7 @@ internal sealed class ReviewSession
     [MemberNotNull(nameof(Result))]
     private void Update()
     {
-        Result = new VaultPipeline(environment).Merge(scanned, new MergeRequest { Policy = Policy, Decisions = Decisions });
+        Result = environment.CreatePipeline().Merge(scanned, new MergeRequest { Policy = Policy, Decisions = Decisions });
         Pending = PendingDecisions.Find(Result, Decisions);
         findingsByItem.Clear();
         foreach (ItemFindingsResult item in Result.Findings)
@@ -910,7 +910,7 @@ internal sealed class ReviewSession
 
     private string? FindingText(string originKey, SecretFinding finding) =>
         sources.TryGetValue(originKey, out ScannedItem? item)
-        && new PlacementState(item.Source.Item, item.AttachmentTexts).TryRead(finding.Location, out string? text)
+        && SecretPlacer.TryRead(item.Source.Item, item.AttachmentTexts, finding.Location, out string? text)
             ? text
             : null;
 

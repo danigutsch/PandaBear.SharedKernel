@@ -1,5 +1,5 @@
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Pipeline;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Cli;
 

@@ -1,10 +1,11 @@
 using System.CommandLine;
 using System.Globalization;
+using PandaBear.Vault.Formats;
 using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.VaultManager.Tool.IO;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Model;
-using PandaBear.VaultManager.Tool.Pipeline;
+using PandaBear.Vault.IO;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Model;
+using PandaBear.Vault.Pipeline;
 using PandaBear.VaultManager.Tool.Review;
 
 namespace PandaBear.VaultManager.Tool.Cli;
@@ -121,7 +122,7 @@ internal static class ReviewCommand
         }
 
         MergeDecisions decisions = arguments.Decisions is { } decisionsPath ? DecisionsFile.Read(decisionsPath) : MergeDecisions.None;
-        ScannedVault scanned = VaultPipeline.Scan(new VaultPipeline(prompts.Environment).Load(arguments.Inputs, ct), ct);
+        ScannedVault scanned = VaultPipeline.Scan(prompts.Environment.CreatePipeline().Load(arguments.Inputs, ct), ct);
         PipelineOutput? output = arguments.Output is { } outputPath ? new PipelineOutput(outputPath, arguments.Plaintext, arguments.Force) : null;
         var session = new ReviewSession(prompts.Environment, scanned, decisions, new ReviewFiles(arguments.Decisions, output));
 

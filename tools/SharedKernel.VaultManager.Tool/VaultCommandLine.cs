@@ -1,8 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using PandaBear.VaultManager.Tool.Cli;
-using PandaBear.VaultManager.Tool.IO;
-using PandaBear.VaultManager.Tool.Pipeline;
 
 namespace PandaBear.VaultManager.Tool;
 

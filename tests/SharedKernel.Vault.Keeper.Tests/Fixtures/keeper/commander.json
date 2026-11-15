@@ -1,0 +1,215 @@
+{
+  "shared_folders": [
+    {
+      "uid": "sf-team",
+      "path": "Team\\Shared",
+      "manage_users": false,
+      "manage_records": true,
+      "can_edit": true,
+      "can_share": false,
+      "permissions": [
+        { "name": "member@example.com", "manage_users": false, "manage_records": true }
+      ]
+    }
+  ],
+  "records": [
+    {
+      "title": "Example login",
+      "uid": "rec-login",
+      "login": "alice",
+      "password": "fixture-password-1",
+      "login_url": "https://example.com/login",
+      "notes": "login notes",
+      "$type": "login",
+      "last_modified": 1767225600,
+      "custom_fields": {
+        "$oneTimeCode": [
+          "otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP&issuer=Example",
+          "otpauth://totp/Example:backup?secret=KRSXG5CTMVRXEZLU&issuer=Example"
+        ],
+        "$url:account": "https://accounts.example.com",
+        "Plain label": "plain value",
+        "$text:Nickname": "ali",
+        "$checkbox:Active": true,
+        "$securityQuestion": [
+          { "question": "First pet?", "answer": "fixture-answer-1" },
+          { "question": "Birth town?", "answer": "fixture-answer-2" }
+        ]
+      },
+      "schema": ["$login", "$password", "$url", "$fileRef", "$oneTimeCode"],
+      "references": { "$addressRef": ["rec-address"] },
+      "folders": [
+        { "shared_folder": "Team\\Shared", "folder": "Web\\Sites", "can_edit": true },
+        { "folder": "Personal" }
+      ]
+    },
+    {
+      "title": "Checking account",
+      "uid": "rec-bank-account",
+      "$type": "bankAccount",
+      "last_modified": 1767225600,
+      "custom_fields": {
+        "$bankAccount": { "accountType": "Checking", "routingNumber": "021000021", "accountNumber": "12345678", "otherType": "" },
+        "$name": { "first": "Alice", "middle": "", "last": "Example" }
+      }
+    },
+    {
+      "title": "Home address",
+      "uid": "rec-address",
+      "$type": "address",
+      "custom_fields": {
+        "$address": { "street1": "1 Main St", "street2": "Apt 2", "city": "Springfield", "state": "IL", "zip": "62701", "country": "US" }
+      }
+    },
+    {
+      "title": "Example card",
+      "uid": "rec-card",
+      "login": "card-user",
+      "$type": "bankCard",
+      "custom_fields": {
+        "$paymentCard": { "cardNumber": "4111111111111111", "cardExpirationDate": "03/2030", "cardSecurityCode": "123" },
+        "$text:cardholderName": "Alice Example",
+        "$pinCode": "4321"
+      }
+    },
+    {
+      "title": "Birth certificate",
+      "uid": "rec-birth",
+      "$type": "birthCertificate",
+      "custom_fields": {
+        "$name": { "first": "Alice", "middle": "Q", "last": "Example" },
+        "$birthDate": 632361600000
+      }
+    },
+    {
+      "title": "Bob contact",
+      "uid": "rec-contact",
+      "$type": "contact",
+      "custom_fields": {
+        "$name": { "first": "Bob", "last": "Builder" },
+        "$text:company": "Example Corp",
+        "$email": "bob@example.com",
+        "$phone": [
+          { "region": "US", "number": "555-0100", "ext": "12", "type": "Work" },
+          { "number": "555-0199", "type": "Mobile" }
+        ]
+      }
+    },
+    {
+      "title": "Driver license",
+      "uid": "rec-dl",
+      "$type": "driverLicense",
+      "custom_fields": {
+        "$accountNumber:dlNumber": "D1234567",
+        "$name": { "first": "Alice", "last": "Example" },
+        "$birthDate": 632361600000,
+        "$expirationDate": 1893456000000
+      }
+    },
+    {
+      "title": "Secret note",
+      "uid": "rec-note",
+      "notes": "plain notes",
+      "$type": "encryptedNotes",
+      "custom_fields": { "$note": "secured note text", "$date": 1751241600000 }
+    },
+    {
+      "title": "Scanned file",
+      "uid": "rec-file",
+      "$type": "file",
+      "attachments": [ { "file_uid": "file-1", "name": "scan.pdf", "mime": "application/pdf" } ]
+    },
+    {
+      "title": "Health plan",
+      "uid": "rec-health",
+      "login": "member-1",
+      "$type": "healthInsurance",
+      "custom_fields": { "$accountNumber": "H-998877" }
+    },
+    {
+      "title": "Gym membership",
+      "uid": "rec-membership",
+      "$type": "membership",
+      "custom_fields": { "$accountNumber": "M-1", "$name": { "first": "Alice", "last": "Example" } }
+    },
+    {
+      "title": "Passport",
+      "uid": "rec-passport",
+      "$type": "passport",
+      "custom_fields": {
+        "$accountNumber:passportNumber": "X1234567",
+        "$name": { "first": "Alice", "last": "Example" },
+        "$date:dateIssued": 1751241600000
+      }
+    },
+    {
+      "title": "Holiday photo",
+      "uid": "rec-photo",
+      "$type": "photo"
+    },
+    {
+      "title": "Prod server",
+      "uid": "rec-server",
+      "login": "root",
+      "password": "fixture-server-password",
+      "$type": "serverCredentials",
+      "custom_fields": { "$host": { "hostName": "server.example.com", "port": "2222" } }
+    },
+    {
+      "title": "Editor license",
+      "uid": "rec-software",
+      "$type": "softwareLicense",
+      "custom_fields": { "$licenseNumber": "LIC-0001", "$date:dateActive": 1751241600000 }
+    },
+    {
+      "title": "Social security",
+      "uid": "rec-ssn",
+      "$type": "ssnCard",
+      "custom_fields": { "$accountNumber:identityNumber": "000-00-0000", "$name": { "first": "Alice", "last": "Example" } }
+    },
+    {
+      "title": "General record",
+      "uid": "rec-general",
+      "login": "general-user",
+      "password": "fixture-general-password",
+      "$type": "general"
+    },
+    {
+      "title": "Key without private part",
+      "uid": "rec-ssh-public",
+      "login": "deploy",
+      "password": "fixture-passphrase",
+      "$type": "sshKeys",
+      "custom_fields": { "$keyPair": { "publicKey": "ssh-ed25519 AAAAfixture deploy@example" } }
+    },
+    {
+      "title": "Main database",
+      "uid": "rec-db",
+      "login": "dbuser",
+      "password": "fixture-db-password",
+      "$type": "databaseCredentials",
+      "custom_fields": { "$text:type": "postgres", "$host": { "hostName": "db.example.com", "port": "5432" } }
+    },
+    {
+      "title": "Home wifi",
+      "uid": "rec-wifi",
+      "password": "fixture-wifi-password",
+      "$type": "wifiCredentials",
+      "custom_fields": { "$text:SSID": "ExampleNet" }
+    },
+    {
+      "title": "PAM machine",
+      "uid": "rec-pam",
+      "login": "admin",
+      "password": "fixture-pam-password",
+      "$type": "pamMachine",
+      "custom_fields": { "$pamHostname": { "hostName": "pam.example.com", "port": "22" }, "$pamSettings": { "connection": { "protocol": "ssh" } } }
+    },
+    {
+      "title": "Custom API record",
+      "uid": "rec-custom",
+      "$type": "myApiKeys",
+      "custom_fields": { "$secret:API key": "fixture-api-key", "$multiline:Comment": "first\nsecond" }
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+collections,type,name,notes,fields,reprompt,login_uri,login_username,login_password,login_totp
+"Shared,Other",login,Org login,,,0,https://org.example.com,bob,fixture-password-2,

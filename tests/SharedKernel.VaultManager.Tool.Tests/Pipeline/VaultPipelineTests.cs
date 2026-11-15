@@ -1,12 +1,12 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.VaultManager.Tool.Formats.Bitwarden;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Model;
-using PandaBear.VaultManager.Tool.Pipeline;
-using PandaBear.VaultManager.Tool.Secrets;
+using PandaBear.Vault.Formats;
+using PandaBear.Vault.Bitwarden;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Model;
+using PandaBear.Vault.Pipeline;
+using PandaBear.Vault.Secrets;
 using PandaBear.VaultManager.Tool.Tests.Secrets;
 using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
@@ -32,7 +32,7 @@ public sealed class VaultPipelineTests : IDisposable
         // Arrange
         string keeper = Write(DirectoryPath, "keeper.json", """{"shared_folders":[{"uid":"s1","path":"Team\\Empty"}],"records":[]}""");
         string bitwarden = Write(DirectoryPath, "bitwarden.json", """{"encrypted":false,"folders":[{"id":"f","name":"Archive"}],"items":[]}""");
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper, bitwarden]));
@@ -50,7 +50,7 @@ public sealed class VaultPipelineTests : IDisposable
         string bitwarden = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-github", "GitHub", "alice", NewPassword, "https://github.com")));
         string output = Path.Combine(DirectoryPath, "merged.json");
         var prompts = new TestPrompts(ExportPassword);
-        var pipeline = new VaultPipeline(prompts.Environment());
+        var pipeline = prompts.Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper, bitwarden]) { Output = new PipelineOutput(output) });
@@ -77,7 +77,7 @@ public sealed class VaultPipelineTests : IDisposable
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(400);
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(
             KeeperLogin("rec-github", "GitHub", "alice", url: "https://github.com", notes: PipelineSecrets.RecoveryNotes(codes, NotesPassword))));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper]));
@@ -108,7 +108,7 @@ public sealed class VaultPipelineTests : IDisposable
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(410);
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(
             KeeperLogin("rec-github", "GitHub", "alice", url: "https://github.com", notes: PipelineSecrets.RecoveryNotes(codes, NotesPassword))));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
         var findings = pipeline.Run(new PipelineRequest([keeper])).Findings.ShouldHaveSingleItem();
         var passwordFinding = findings.Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.Password);
         var decisions = PipelineDecisions.Findings(findings.OriginKey, new FindingChoice(passwordFinding.Id, FindingDecision.Accepted));
@@ -134,7 +134,7 @@ public sealed class VaultPipelineTests : IDisposable
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(420);
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(
             KeeperLogin("rec-github", "GitHub", "alice", url: "https://github.com", notes: PipelineSecrets.RecoveryNotes(codes, NotesPassword))));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
         var findings = pipeline.Run(new PipelineRequest([keeper])).Findings.ShouldHaveSingleItem();
         var codesFinding = findings.Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.RecoveryCodes);
         var passwordFinding = findings.Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.Password);
@@ -164,7 +164,7 @@ public sealed class VaultPipelineTests : IDisposable
             KeeperLogin("rec-keeper", "Keeper only", "carol", "fixture-keeper-only-password", "https://keeper-only.example.com")));
         string bitwarden = Write(DirectoryPath, "bitwarden.json", BitwardenJson(
             BitwardenLogin("bw-only", "Bitwarden only", "dave", "fixture-bitwarden-only-password", "https://bitwarden-only.example.com")));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper, bitwarden]));
@@ -184,7 +184,7 @@ public sealed class VaultPipelineTests : IDisposable
         string publicKey = PemFixtures.Ed25519PublicKey + " deploy@example";
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperSshKey("rec-ssh", "Deploy key", PemFixtures.Ed25519OpenSsh(), publicKey)));
         string output = Path.Combine(DirectoryPath, "merged.json");
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper]) { Output = new PipelineOutput(output, Plaintext: true) });
@@ -207,7 +207,7 @@ public sealed class VaultPipelineTests : IDisposable
         string privateKey = PemFixtures.WithBrokenBody(PemFixtures.RsaPkcs1(rsa), shortenLine: false);
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperSshKey("rec-ssh", "Deploy key", privateKey, string.Empty)));
         string output = Path.Combine(DirectoryPath, "merged.json");
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
         var proposed = pipeline.Run(new PipelineRequest([keeper])).PendingFindings.ShouldHaveSingleItem();
         var rejected = PipelineDecisions.Findings(proposed.OriginKey, [.. proposed.Choices.Select(choice => choice with { Decision = FindingDecision.Rejected })]);
 
@@ -231,7 +231,7 @@ public sealed class VaultPipelineTests : IDisposable
         string privateKey = PemFixtures.Sec1(explicitCurve);
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperSshKey("rec-ssh", "Deploy key", privateKey, string.Empty)));
         string output = Path.Combine(DirectoryPath, "merged.json");
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper]) { Output = new PipelineOutput(output, Plaintext: true) });
@@ -254,7 +254,7 @@ public sealed class VaultPipelineTests : IDisposable
         string stored = Label + "\n" + PemFixtures.Ed25519OpenSsh() + "\n" + HostLine;
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperSshKey("rec-ssh", "Deploy key", stored, string.Empty)));
         string output = Path.Combine(DirectoryPath, "merged.json");
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper]) { Output = new PipelineOutput(output, Plaintext: true) });
@@ -274,7 +274,7 @@ public sealed class VaultPipelineTests : IDisposable
         string zip = Write(DirectoryPath, "keeper.zip", CommanderZip(
             KeeperJson(KeeperFileRecord("rec-files", "GitHub backup", "file-codes", "github-recovery-codes.txt")),
             ("files/file-codes", string.Join('\n', codes) + "\n")));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([zip]));
@@ -298,7 +298,7 @@ public sealed class VaultPipelineTests : IDisposable
     {
         // Arrange
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperFileRecord("rec-files", "GitHub backup", "file-codes", "github-recovery-codes.txt")));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper]));
@@ -313,7 +313,7 @@ public sealed class VaultPipelineTests : IDisposable
     {
         // Arrange
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperFileRecord("rec-files", "Scans", ("file-one", "scan.pdf"), ("file-two", "scan.pdf"))));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper]));
@@ -334,7 +334,7 @@ public sealed class VaultPipelineTests : IDisposable
             KeeperJson(KeeperFileRecord("rec-files", "Scans", ("file-one", "scan.txt"), ("file-two", "scan.txt"))),
             ("files/file-one", "first scan text\n"),
             ("files/file-two", "other scan text\n")));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([zip]));
@@ -358,7 +358,7 @@ public sealed class VaultPipelineTests : IDisposable
             ("files/file-a", "first codes\n"),
             ("files/file-b", "other codes\n"),
             ("files/file-c", "first codes\n")));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([zip]));
@@ -383,7 +383,7 @@ public sealed class VaultPipelineTests : IDisposable
             KeeperJson(older, newer),
             ("files/file-old", "old1-aaaa old2-bbbb\n"),
             ("files/file-new", "new1-cccc new2-dddd\n")));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([zip]));
@@ -408,7 +408,7 @@ public sealed class VaultPipelineTests : IDisposable
         string bitwarden = Write(DirectoryPath, "bitwarden.zip", TestZip.Create(
             ("data.json", TestZip.Utf8(BitwardenJson(BitwardenLogin("bw-github", "GitHub", "alice", NewPassword, "https://github.com")))),
             ("attachments/GitHub/scan.pdf", scan)));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper, bitwarden]));
@@ -425,7 +425,7 @@ public sealed class VaultPipelineTests : IDisposable
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(
             WithAttachments(KeeperLogin("rec-one", "GitHub", "alice", OldPassword, "https://github.com"), ("file-one", "scan.pdf")),
             WithAttachments(KeeperLogin("rec-two", "GitHub", "alice", OldPassword, "https://github.com"), ("file-two", "scan.pdf"))));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper]));
@@ -445,7 +445,7 @@ public sealed class VaultPipelineTests : IDisposable
         // Arrange
         string notes = "deploy key\n" + PemFixtures.Ed25519OpenSsh();
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperNote("rec-server", "Server", notes)));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
         string findingId = pipeline.Run(new PipelineRequest([keeper])).Findings.ShouldHaveSingleItem().Findings.ShouldHaveSingleItem().Id;
         string createdId = "rec-server/" + findingId;
         Write(DirectoryPath, "keeper.json", KeeperJson(KeeperNote("rec-server", "Server", notes), KeeperNote(createdId, "Other", "plain note")));
@@ -468,7 +468,7 @@ public sealed class VaultPipelineTests : IDisposable
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(
             KeeperLogin("rec-github", "GitHub", "alice", url: "https://github.com", notes: PipelineSecrets.RecoveryNotes(codes, NotesPassword))));
         var prompts = new TestPrompts(ExportPassword);
-        var pipeline = new VaultPipeline(prompts.Environment());
+        var pipeline = prompts.Environment().CreatePipeline();
         var scanned = VaultPipeline.Scan(pipeline.Load([keeper], TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);
         var proposed = pipeline.Merge(scanned, new MergeRequest(), TestContext.Current.CancellationToken);
         var findings = proposed.Findings.ShouldHaveSingleItem();
@@ -493,7 +493,7 @@ public sealed class VaultPipelineTests : IDisposable
         string json = BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", NewPassword, "https://example.com"));
         string input = Write(DirectoryPath, "bitwarden.json", json);
         var prompts = new TestPrompts(ExportPassword);
-        var pipeline = new VaultPipeline(prompts.Environment());
+        var pipeline = prompts.Environment().CreatePipeline();
         var scanned = VaultPipeline.Scan(pipeline.Load([input], TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);
 
         var overInput = () => pipeline.Merge(scanned, new MergeRequest { Output = new PipelineOutput(input, Plaintext: true, Force: true) }, TestContext.Current.CancellationToken);
@@ -518,7 +518,7 @@ public sealed class VaultPipelineTests : IDisposable
         string zip = Write(DirectoryPath, "keeper.zip", CommanderZip(
             KeeperJson(KeeperFileRecord("rec-files", "GitHub backup", "file-codes", "github-recovery-codes.txt")),
             ("files/file-codes", string.Join('\n', codes))));
-        var loaded = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Load([zip], TestContext.Current.CancellationToken);
+        var loaded = new TestPrompts(ExportPassword).Environment().CreatePipeline().Load([zip], TestContext.Current.CancellationToken);
         File.Delete(zip);
 
         // Act
@@ -534,7 +534,7 @@ public sealed class VaultPipelineTests : IDisposable
     {
         // Arrange
         string zip = Write(DirectoryPath, "bitwarden.zip", TwoBanksZip());
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var loaded = pipeline.Load([zip], TestContext.Current.CancellationToken);
@@ -560,7 +560,7 @@ public sealed class VaultPipelineTests : IDisposable
         // Arrange
         const string Value = "fixture-unquoted-secret";
         string keeper = Write(DirectoryPath, "keeper.json", "[{\"title\": \"Example\", \"password\": " + Value + "}]");
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         var action = () => pipeline.Load([keeper], TestContext.Current.CancellationToken);
 
@@ -579,7 +579,7 @@ public sealed class VaultPipelineTests : IDisposable
     {
         // Arrange
         string input = Write(DirectoryPath, "bitwarden.json", """{"encrypted":false,"folders":[],"items":[null]}""");
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         var action = () => pipeline.Load([input], TestContext.Current.CancellationToken);
 
@@ -594,7 +594,7 @@ public sealed class VaultPipelineTests : IDisposable
     public void Load_needs_at_least_one_input()
     {
         // Arrange
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         var action = () => pipeline.Load([], TestContext.Current.CancellationToken);
 
@@ -609,7 +609,7 @@ public sealed class VaultPipelineTests : IDisposable
         string notes = "deploy key\n" + PemFixtures.Ed25519OpenSsh();
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperNote("rec-server", "Server", notes)));
         string bitwarden = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenNote("bw-server", "Server", notes)));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var first = pipeline.Run(new PipelineRequest([keeper, bitwarden]));
@@ -640,7 +640,7 @@ public sealed class VaultPipelineTests : IDisposable
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperNote("rec-cards", "Bank cards", "Visa " + visa + "\nMastercard " + mastercard)));
         string output = Path.Combine(DirectoryPath, "merged.json");
         var policy = preferKeeper ? new MergePolicy(MergePolicyKind.PreferSource, "keeper.json") : new MergePolicy();
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper]) { Policy = policy, Output = new PipelineOutput(output, Plaintext: true) });
@@ -663,7 +663,7 @@ public sealed class VaultPipelineTests : IDisposable
         string notes = "Visa " + visa + "\nMastercard " + mastercard;
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperNote("rec-cards", "Bank cards", notes)));
         string bitwarden = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenNote("bw-cards", "Bank cards", notes)));
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper, bitwarden]));
@@ -689,7 +689,7 @@ public sealed class VaultPipelineTests : IDisposable
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperNote("rec-servers", "Servers", notes)));
         string output = Path.Combine(DirectoryPath, "merged.json");
         var policy = preferKeeper ? new MergePolicy(MergePolicyKind.PreferSource, "keeper.json") : new MergePolicy();
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper]) { Policy = policy, Output = new PipelineOutput(output, Plaintext: true) });
@@ -712,7 +712,7 @@ public sealed class VaultPipelineTests : IDisposable
         string privateKeys = PemFixtures.RsaPkcs1(first) + "\n" + PemFixtures.RsaPkcs1(second);
         string keeper = Write(DirectoryPath, "keeper.json", KeeperJson(KeeperSshKey("rec-ssh", "Deploy keys", privateKeys, string.Empty)));
         string output = Path.Combine(DirectoryPath, "merged.json");
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
 
         // Act
         var result = pipeline.Run(new PipelineRequest([keeper]) { Output = new PipelineOutput(output, Plaintext: true) });
@@ -735,7 +735,7 @@ public sealed class VaultPipelineTests : IDisposable
             "bitwarden.csv",
             "folder,favorite,type,name,notes,fields,reprompt,login_uri,login_username,login_password,login_totp\n"
             + ",,login,Example,Username: alice,,0,https://example.com,,fixture-csv-password,\n");
-        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var pipeline = new TestPrompts(ExportPassword).Environment().CreatePipeline();
         var findings = pipeline.Run(new PipelineRequest([csv])).Findings.ShouldHaveSingleItem();
         var username = findings.Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.Username);
         var decisions = PipelineDecisions.Findings(findings.OriginKey, new FindingChoice(username.Id, FindingDecision.Accepted));
