@@ -39,10 +39,16 @@ runs:
         root="$(dirname "$GLOBAL_JSON_FILE")"
         runtime=''
         if [[ -f "$root/Directory.Build.props" ]]; then
-          framework="$(cd "$root" && dotnet msbuild Directory.Build.props -getProperty:SharedKernelTargetFramework | tr -d '[:space:]')"
-          sdk="$(cd "$root" && dotnet --version)"
-          if [[ "$framework" =~ ^net([0-9]+)\.[0-9]+$ && "${BASH_REMATCH[1]}" -lt "${sdk%%.*}" ]]; then
-            runtime="${BASH_REMATCH[1]}.0.x"
+          # The property is the last line: the dotnet CLI can print banner lines first.
+          framework="$(cd "$root" && dotnet msbuild Directory.Build.props -getProperty:SharedKernelTargetFramework | tail -n 1 | tr -d '[:space:]')"
+          sdk="$(cd "$root" && dotnet --version | tail -n 1)"
+          if [[ "$framework" =~ ^net([0-9]+)\.[0-9]+$ ]]; then
+            if (( BASH_REMATCH[1] < ${sdk%%.*} )); then
+              runtime="${BASH_REMATCH[1]}.0.x"
+            fi
+          elif [[ -n "$framework" ]]; then
+            echo "::error file=$root/Directory.Build.props::SharedKernelTargetFramework is '$framework', not a framework such as net<major>.<minor>."
+            exit 1
           fi
         fi
         echo "runtime=$runtime" >> "$GITHUB_OUTPUT"
