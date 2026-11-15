@@ -6,43 +6,130 @@ using Microsoft.AspNetCore.Components.Rendering;
 namespace PandaBear.Blazor;
 
 /// <summary>
-/// One form field: a label tied to its control, the control itself, and the validation message of the bound field.
-/// Render it inside an <c>EditForm</c>.
+/// One form field: a label tied to its control, the control itself, and the validation messages of the bound field, which describe
+/// the control. Render it inside an <c>EditForm</c>.
 /// </summary>
+/// <remarks>
+/// Each message is a <c>div class="validation-message"</c> with a stable id: <c>{InputId}-error</c> for the first, then
+/// <c>{InputId}-error-2</c> and so on. The control receives its accessibility attributes as the context of <see cref="ChildContent"/>
+/// and spreads them with <c>@attributes="context"</c>: <c>aria-describedby</c> lists <see cref="DescribedBy"/> and then the message ids,
+/// and <c>aria-invalid="true"</c> is set while the field has a message. A valid field without <see cref="DescribedBy"/> gets neither.
+/// The field re-renders when the validation state of the edit context changes.
+/// </remarks>
 /// <typeparam name="TValue">The type of the bound value.</typeparam>
-public sealed class FormField<TValue> : ComponentBase
+public sealed class FormField<TValue> : ComponentBase, IDisposable
 {
+    private EditContext? _subscribed;
+    private Expression<Func<TValue>>? _for;
+    private FieldIdentifier _field;
+
     /// <summary>Gets or sets the label text.</summary>
     [Parameter]
     [EditorRequired]
     public string Label { get; set; } = string.Empty;
 
-    /// <summary>Gets or sets the HTML id of the control, which the label points at and error summary links target.</summary>
+    /// <summary>Gets or sets the HTML id of the control, which the label points at, error summary links target, and the message ids start with.</summary>
     [Parameter]
     [EditorRequired]
     public string InputId { get; set; } = string.Empty;
 
-    /// <summary>Gets or sets the expression that selects the bound field, used to show its validation message.</summary>
+    /// <summary>Gets or sets the expression that selects the bound field, whose validation messages are shown.</summary>
     [Parameter]
     [EditorRequired]
     public Expression<Func<TValue>>? For { get; set; }
 
-    /// <summary>Gets or sets the control; give it the id <see cref="InputId"/>.</summary>
+    /// <summary>
+    /// Gets or sets the ids of other elements that describe the control, such as a help text, separated by spaces. They come first in
+    /// the control's <c>aria-describedby</c>, also while the field is valid. Pass them here instead of setting <c>aria-describedby</c> on the
+    /// control, which would replace the attribute the field hands it.
+    /// </summary>
     [Parameter]
-    public RenderFragment? ChildContent { get; set; }
+    public string? DescribedBy { get; set; }
+
+    /// <summary>
+    /// Gets or sets the control; give it the id <see cref="InputId"/> and spread the context, the field's attributes for the control, with
+    /// <c>@attributes="context"</c>. Inside an <c>EditForm</c> whose child content also uses the implicit <c>context</c> name, rename one of
+    /// them with the <c>Context</c> attribute (for example <c>&lt;EditForm Context="form"&gt;</c>).
+    /// </summary>
+    [Parameter]
+    public RenderFragment<IReadOnlyDictionary<string, object>>? ChildContent { get; set; }
+
+    [CascadingParameter]
+    private EditContext? CurrentEditContext { get; set; }
+
+    /// <inheritdoc />
+    /// <exception cref="InvalidOperationException">The field is not inside an <c>EditForm</c>, or <see cref="For"/> is not set.</exception>
+    protected override void OnParametersSet()
+    {
+        if (CurrentEditContext is null)
+        {
+            throw new InvalidOperationException($"{nameof(FormField<TValue>)} requires a cascading {nameof(EditContext)}; render it inside an EditForm.");
+        }
+
+        if (For is null)
+        {
+            throw new InvalidOperationException($"{nameof(FormField<TValue>)} requires a value for the '{nameof(For)}' parameter.");
+        }
+
+        if (!ReferenceEquals(For, _for))
+        {
+            _for = For;
+            _field = FieldIdentifier.Create(For);
+        }
+
+        if (!ReferenceEquals(CurrentEditContext, _subscribed))
+        {
+            Unsubscribe();
+            _subscribed = CurrentEditContext;
+            _subscribed.OnValidationStateChanged += Refresh;
+        }
+    }
 
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
+        string[] messages = _subscribed is null ? [] : [.. _subscribed.GetValidationMessages(_field)];
         builder.OpenElement(0, "label");
         builder.AddAttribute(1, "for", InputId);
         builder.AddContent(2, Label);
         builder.CloseElement();
-        builder.AddContent(3, ChildContent);
-        builder.OpenComponent<ValidationMessage<TValue>>(4);
-        builder.AddComponentParameter(5, nameof(ValidationMessage<TValue>.For), For);
-        builder.CloseComponent();
+        builder.AddContent(3, ChildContent, ControlAttributes(messages.Length));
+        for (var index = 0; index < messages.Length; index++)
+        {
+            builder.OpenElement(4, "div");
+            builder.AddAttribute(5, "id", MessageId(index));
+            builder.AddAttribute(6, "class", "validation-message");
+            builder.AddContent(7, messages[index]);
+            builder.CloseElement();
+        }
     }
+
+    /// <inheritdoc />
+    public void Dispose() => Unsubscribe();
+
+    private Dictionary<string, object> ControlAttributes(int messageCount)
+    {
+        var ids = Enumerable.Range(0, messageCount).Select(MessageId).Prepend(DescribedBy?.Trim() ?? string.Empty).Where(id => id.Length > 0);
+        var describedBy = string.Join(' ', ids);
+        var attributes = new Dictionary<string, object>(StringComparer.Ordinal);
+        if (describedBy.Length > 0)
+        {
+            attributes["aria-describedby"] = describedBy;
+        }
+
+        if (messageCount > 0)
+        {
+            attributes["aria-invalid"] = "true";
+        }
+
+        return attributes;
+    }
+
+    private string MessageId(int index) => index == 0 ? InputId + "-error" : $"{InputId}-error-{index + 1}";
+
+    private void Refresh(object? sender, ValidationStateChangedEventArgs e) => StateHasChanged();
+
+    private void Unsubscribe() => _subscribed?.OnValidationStateChanged -= Refresh;
 }

@@ -110,8 +110,11 @@ PandaBear.Blazor.UploadStatus.StatusClass.set -> void
 PandaBear.Blazor.UploadStatus.UploadStatus() -> void
 static PandaBear.Blazor.BlazorServiceCollectionExtensions.AddUiFailureReporting(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 PandaBear.Blazor.FormField<TValue>
-PandaBear.Blazor.FormField<TValue>.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.FormField<TValue>.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment<System.Collections.Generic.IReadOnlyDictionary<string!, object!>!>?
 PandaBear.Blazor.FormField<TValue>.ChildContent.set -> void
+PandaBear.Blazor.FormField<TValue>.DescribedBy.get -> string?
+PandaBear.Blazor.FormField<TValue>.DescribedBy.set -> void
+PandaBear.Blazor.FormField<TValue>.Dispose() -> void
 PandaBear.Blazor.FormField<TValue>.For.get -> System.Linq.Expressions.Expression<System.Func<TValue>!>?
 PandaBear.Blazor.FormField<TValue>.For.set -> void
 PandaBear.Blazor.FormField<TValue>.FormField() -> void

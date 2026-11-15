@@ -97,8 +97,6 @@ not a validation failure shows the constructor's `failureMessage`, except `Resul
 where retrying cannot help: set the optional init properties `ConflictMessage` and `NotFoundMessage` (fixed, caller-authored
 text; `null` falls back to `failureMessage`). A validation failure shows `Error` (the `failureMessage`) whenever the server errors left nothing to list in `Summary` or some could not
 be placed, so a failed save is never silent. Server error text is never copied into `Error`.
-`FormField<TValue>` renders a
-label tied to its control and the field's `ValidationMessage`.
 
 `Submit` is safe to wire to `EditForm` `OnSubmit`: a call made while a save is running returns `false` without running the save
 (a double click cannot save twice); every accepted call first clears the previous `Summary` and `Error`, so a throwing save leaves
@@ -124,11 +122,27 @@ not save the customer. Try again later.", "The customer was changed or removed b
 "That customer no longer exists."). Each message can be replaced through the optional `invalidMessage`, `failureMessage`,
 `conflictMessage` and `notFoundMessage` parameters.
 
+### Form fields
+
+`FormField<TValue>` renders a label tied to its control and the messages of the bound field, and ties the messages to the control
+for assistive technology (WCAG 1.3.1 and 3.3.1). Each message is a `div class="validation-message"` with a stable id,
+`{InputId}-error` for the first and `{InputId}-error-2` and so on for more. The field hands the control its attributes as the child
+content's context; spread them with `@attributes="context"`: `aria-describedby` lists the ids in `DescribedBy` (a help text, for
+example) and then the message ids, and `aria-invalid="true"` is set while the field has a message. A valid field without
+`DescribedBy` hands the control nothing. Pass the help id in `DescribedBy` rather than writing `aria-describedby` on the control,
+which would replace the field's attribute. The field re-renders when the validation state changes and must be inside an `EditForm`.
+
 ```razor
-<FormField Label="Email" InputId="customer-Email" For="() => _form.Email">
-    <InputText id="customer-Email" @bind-Value="_form.Email" />
-</FormField>
+<EditForm EditContext="_context" OnSubmit="Save" Context="form">
+    <FormField Label="Email" InputId="customer-Email" For="() => _form.Email" DescribedBy="customer-Email-help">
+        <InputText id="customer-Email" @bind-Value="_form.Email" @attributes="context" />
+        <p id="customer-Email-help">We send the booking confirmation here.</p>
+    </FormField>
+</EditForm>
 ```
+
+`EditForm` and `FormField` both name their child content's parameter `context`, so name one of them (`Context="form"` above);
+otherwise Razor reports RZ9999.
 
 ## Notes
 
