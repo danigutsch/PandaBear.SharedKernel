@@ -60,6 +60,40 @@ public sealed class Iban : ValueObject
         return remainder == 1 ? Result.Ok(new Iban(value)) : Invalid();
     }
 
+    /// <summary>
+    /// Gets the sensitive value in the print format of ISO 13616: groups of four characters separated by a space, for example
+    /// <c>DE89 3704 0044 0532 0130 00</c>; a restored value that is not only ASCII letters and digits is returned unchanged. Do not log or
+    /// expose it without authorization. <see cref="ToString"/> stays redacted.
+    /// </summary>
+    public string Formatted => Value.Length > 0 && Value.All(char.IsAsciiLetterOrDigit)
+        ? string.Create(Value.Length + (Value.Length - 1) / 4, Value, static (span, value) =>
+        {
+            var position = 0;
+            for (var index = 0; index < value.Length; index++)
+            {
+                if (index > 0 && index % 4 == 0)
+                {
+                    span[position++] = ' ';
+                }
+
+                span[position++] = value[index];
+            }
+        })
+        : Value;
+
+    /// <summary>
+    /// For persistence mappers: rebuilds an IBAN from text that was produced by this type earlier; it performs NO validation beyond
+    /// null/blank checks and trimming, so a stored value that a newer rule would reject can still be loaded; never use it for user input.
+    /// </summary>
+    /// <param name="value">The stored value.</param>
+    /// <returns>The IBAN.</returns>
+    /// <exception cref="ArgumentException"><paramref name="value"/> is <see langword="null"/>, empty or blank.</exception>
+    public static Iban Restore(string value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(value);
+        return new Iban(value.Trim());
+    }
+
     /// <inheritdoc />
     public override string ToString() => "Iban [redacted]";
 

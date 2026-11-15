@@ -205,3 +205,6 @@ PandaBear.BuildingBlocks.PostalAddressLabels.State.init -> void
 PandaBear.BuildingBlocks.PostalAddressLabels.Street.get -> string!
 PandaBear.BuildingBlocks.PostalAddressLabels.Street.init -> void
 static PandaBear.BuildingBlocks.PostalAddressLabels.Default.get -> PandaBear.BuildingBlocks.PostalAddressLabels!
+PandaBear.BuildingBlocks.Iban.Formatted.get -> string!
+static PandaBear.BuildingBlocks.Iban.Restore(string! value) -> PandaBear.BuildingBlocks.Iban!
+static PandaBear.BuildingBlocks.Bic.Restore(string! value) -> PandaBear.BuildingBlocks.Bic!

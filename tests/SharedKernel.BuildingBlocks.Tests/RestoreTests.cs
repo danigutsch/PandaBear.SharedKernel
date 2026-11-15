@@ -194,6 +194,62 @@ public sealed class RestoreTests
         restored.ToString().ShouldBe("Cpf [redacted]");
     }
 
+    [Theory]
+    [InlineData("DE89370400440532013000", "DE89370400440532013000")]
+    [InlineData(" NO9386011117947 ", "NO9386011117947")]
+    public void Iban_restore_equals_create_for_valid_values(string input, string canonical)
+    {
+        // Arrange
+        var created = Iban.Create(canonical).ShouldBeSuccess();
+
+        // Act
+        var restored = Iban.Restore(input);
+
+        // Assert
+        restored.ShouldBe(created);
+        restored.GetHashCode().ShouldBe(created.GetHashCode());
+        restored.ToString().ShouldBe("Iban [redacted]");
+    }
+
+    [Fact]
+    public void Iban_restore_keeps_a_stored_value_that_create_rejects()
+    {
+        // Act
+        var restored = Iban.Restore("DE00000000000000000066");
+
+        // Assert
+        Iban.Create("DE00000000000000000066").Status.ShouldBe(Results.ResultStatus.Invalid);
+        restored.Value.ShouldBe("DE00000000000000000066");
+    }
+
+    [Theory]
+    [InlineData("DEUTDEFF", "DEUTDEFF")]
+    [InlineData(" DEUTDEFF500 ", "DEUTDEFF500")]
+    public void Bic_restore_equals_create_for_valid_values(string input, string canonical)
+    {
+        // Arrange
+        var created = Bic.Create(canonical).ShouldBeSuccess();
+
+        // Act
+        var restored = Bic.Restore(input);
+
+        // Assert
+        restored.ShouldBe(created);
+        restored.GetHashCode().ShouldBe(created.GetHashCode());
+        restored.ToString().ShouldBe("Bic [redacted]");
+    }
+
+    [Fact]
+    public void Bic_restore_keeps_a_stored_value_that_create_rejects()
+    {
+        // Act
+        var restored = Bic.Restore("DEUT1EFF");
+
+        // Assert
+        Bic.Create("DEUT1EFF").Status.ShouldBe(Results.ResultStatus.Invalid);
+        restored.Value.ShouldBe("DEUT1EFF");
+    }
+
     [Fact]
     public void Postal_address_restore_equals_create_for_valid_values()
     {
@@ -251,12 +307,16 @@ public sealed class RestoreTests
         var firstName = () => PersonName.Restore(input, "Silva");
         var lastName = () => PersonName.Restore("Ana", input);
         var cpf = () => Cpf.Restore(input);
+        var iban = () => Iban.Restore(input);
+        var bic = () => Bic.Restore(input);
         var street = () => PostalAddress.Restore(input, null, null, "01000", "Sao Paulo", null, CountryCode.Restore("BR"));
         var postalCode = () => PostalAddress.Restore("Rua A", null, null, input, "Sao Paulo", null, CountryCode.Restore("BR"));
         var city = () => PostalAddress.Restore("Rua A", null, null, "01000", input, null, CountryCode.Restore("BR"));
 
         // Act & Assert
         cpf.ShouldThrow<ArgumentException>();
+        iban.ShouldThrow<ArgumentException>();
+        bic.ShouldThrow<ArgumentException>();
         street.ShouldThrow<ArgumentException>();
         postalCode.ShouldThrow<ArgumentException>();
         city.ShouldThrow<ArgumentException>();
@@ -278,6 +338,8 @@ public sealed class RestoreTests
         var currency = () => Currency.Restore(null!);
         var name = () => PersonName.Restore(null!, null!);
         var cpf = () => Cpf.Restore(null!);
+        var iban = () => Iban.Restore(null!);
+        var bic = () => Bic.Restore(null!);
         var street = () => PostalAddress.Restore(null!, null, null, "01000", "Sao Paulo", null, CountryCode.Restore("BR"));
         var postalCode = () => PostalAddress.Restore("Rua A", null, null, null!, "Sao Paulo", null, CountryCode.Restore("BR"));
         var city = () => PostalAddress.Restore("Rua A", null, null, "01000", null!, null, CountryCode.Restore("BR"));
@@ -285,6 +347,8 @@ public sealed class RestoreTests
 
         // Act & Assert
         cpf.ShouldThrow<ArgumentNullException>();
+        iban.ShouldThrow<ArgumentNullException>();
+        bic.ShouldThrow<ArgumentNullException>();
         street.ShouldThrow<ArgumentNullException>();
         postalCode.ShouldThrow<ArgumentNullException>();
         city.ShouldThrow<ArgumentNullException>();
