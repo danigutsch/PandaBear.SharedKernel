@@ -25,6 +25,21 @@
       },
       "PandaBear.SharedKernel.IO": {
         "type": "Project"
+      },
+      "PandaBear.SharedKernel.Sandbox": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.ConfigurationFiles": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Sandbox.ClaudeCode": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Sandbox": "[0.1.0-alpha.0, )"
+        }
       }
     }
   }

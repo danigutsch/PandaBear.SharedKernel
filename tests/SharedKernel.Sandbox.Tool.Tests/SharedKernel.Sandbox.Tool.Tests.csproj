@@ -8,6 +8,7 @@
     <ItemGroup>
         <Using Include="PandaBear.Testing" />
         <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="PandaBear.Sandbox" />
         <Using Include="PandaBear.Sandbox.Tool" />
         <Using Include="Xunit" />
     </ItemGroup>

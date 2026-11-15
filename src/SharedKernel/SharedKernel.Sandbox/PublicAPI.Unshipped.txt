@@ -1,0 +1,224 @@
+#nullable enable
+PandaBear.Sandbox.DesiredSettings
+PandaBear.Sandbox.DesiredSettings.<Clone>$() -> PandaBear.Sandbox.DesiredSettings!
+PandaBear.Sandbox.DesiredSettings.AllowAllUnixSockets.get -> bool
+PandaBear.Sandbox.DesiredSettings.AllowAllUnixSockets.init -> void
+PandaBear.Sandbox.DesiredSettings.AllowWrite.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Sandbox.DesiredSettings.AllowWrite.init -> void
+PandaBear.Sandbox.DesiredSettings.AllowedDomains.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Sandbox.DesiredSettings.AllowedDomains.init -> void
+PandaBear.Sandbox.DesiredSettings.Deconstruct(out string? Target, out System.Collections.Generic.IReadOnlyList<string!>! AllowWrite, out System.Collections.Generic.IReadOnlyList<string!>! DenyWrite, out System.Collections.Generic.IReadOnlyList<string!>! DenyRead, out System.Collections.Generic.IReadOnlyList<string!>! AllowedDomains, out System.Collections.Generic.IReadOnlyList<string!>! ExcludedCommands, out System.Collections.Generic.IReadOnlyList<string!>! RemoveDenyRead, out bool AllowAllUnixSockets, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Environment, out System.Collections.Generic.IReadOnlyList<string!>! RiskWarnings) -> void
+PandaBear.Sandbox.DesiredSettings.DenyRead.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Sandbox.DesiredSettings.DenyRead.init -> void
+PandaBear.Sandbox.DesiredSettings.DenyWrite.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Sandbox.DesiredSettings.DenyWrite.init -> void
+PandaBear.Sandbox.DesiredSettings.DesiredSettings(string? Target, System.Collections.Generic.IReadOnlyList<string!>! AllowWrite, System.Collections.Generic.IReadOnlyList<string!>! DenyWrite, System.Collections.Generic.IReadOnlyList<string!>! DenyRead, System.Collections.Generic.IReadOnlyList<string!>! AllowedDomains, System.Collections.Generic.IReadOnlyList<string!>! ExcludedCommands, System.Collections.Generic.IReadOnlyList<string!>! RemoveDenyRead, bool AllowAllUnixSockets, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Environment, System.Collections.Generic.IReadOnlyList<string!>! RiskWarnings) -> void
+PandaBear.Sandbox.DesiredSettings.Environment.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+PandaBear.Sandbox.DesiredSettings.Environment.init -> void
+PandaBear.Sandbox.DesiredSettings.Equals(PandaBear.Sandbox.DesiredSettings? other) -> bool
+PandaBear.Sandbox.DesiredSettings.ExcludedCommands.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Sandbox.DesiredSettings.ExcludedCommands.init -> void
+PandaBear.Sandbox.DesiredSettings.RemoveDenyRead.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Sandbox.DesiredSettings.RemoveDenyRead.init -> void
+PandaBear.Sandbox.DesiredSettings.RiskWarnings.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Sandbox.DesiredSettings.RiskWarnings.init -> void
+PandaBear.Sandbox.DesiredSettings.Target.get -> string?
+PandaBear.Sandbox.DesiredSettings.Target.init -> void
+PandaBear.Sandbox.ISandboxEnvironment
+PandaBear.Sandbox.ISandboxEnvironment.AccountHomeDirectory.get -> string?
+PandaBear.Sandbox.ISandboxEnvironment.CreateNamedPipe() -> (PandaBear.Sandbox.ProbeOutcome Outcome, string! Detail)
+PandaBear.Sandbox.ISandboxEnvironment.CreateUnixSocket() -> (PandaBear.Sandbox.ProbeOutcome Outcome, string! Detail)
+PandaBear.Sandbox.ISandboxEnvironment.HomeDirectory.get -> string!
+PandaBear.Sandbox.ISandboxEnvironment.NuGetPackagesDirectory.get -> string?
+PandaBear.Sandbox.ISandboxEnvironment.ReadPath(string! path) -> (PandaBear.Sandbox.ProbeOutcome Outcome, string! Detail)
+PandaBear.Sandbox.ISandboxEnvironment.TempDirectory.get -> string!
+PandaBear.Sandbox.ISandboxEnvironment.WriteFile(string! directory) -> (PandaBear.Sandbox.ProbeOutcome Outcome, string! Detail)
+PandaBear.Sandbox.ISandboxSettingsDocument
+PandaBear.Sandbox.ISandboxSettingsDocument.AddEntry(PandaBear.Sandbox.SandboxSetting setting, string! entry) -> void
+PandaBear.Sandbox.ISandboxSettingsDocument.GetEntries(PandaBear.Sandbox.SandboxSetting setting) -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Sandbox.ISandboxSettingsDocument.GetFlag(PandaBear.Sandbox.SandboxSetting setting) -> bool?
+PandaBear.Sandbox.ISandboxSettingsDocument.LocationOf(PandaBear.Sandbox.SandboxSetting setting) -> string!
+PandaBear.Sandbox.ISandboxSettingsDocument.Name.get -> string!
+PandaBear.Sandbox.ISandboxSettingsDocument.RemoveEntry(PandaBear.Sandbox.SandboxSetting setting, int index) -> void
+PandaBear.Sandbox.ISandboxSettingsDocument.Serialize() -> string!
+PandaBear.Sandbox.ISandboxSettingsDocument.SetEnvironmentVariable(string! name, string! value) -> void
+PandaBear.Sandbox.ISandboxSettingsDocument.SetFlag(PandaBear.Sandbox.SandboxSetting setting) -> void
+PandaBear.Sandbox.ISandboxSettingsDocument.Text.get -> string?
+PandaBear.Sandbox.ISandboxSettingsDocument.TryGetEnvironmentVariable(string! name, out string? value) -> bool
+PandaBear.Sandbox.ProbeKind
+PandaBear.Sandbox.ProbeKind.Capability = 0 -> PandaBear.Sandbox.ProbeKind
+PandaBear.Sandbox.ProbeKind.Protection = 1 -> PandaBear.Sandbox.ProbeKind
+PandaBear.Sandbox.ProbeOutcome
+PandaBear.Sandbox.ProbeOutcome.Allowed = 0 -> PandaBear.Sandbox.ProbeOutcome
+PandaBear.Sandbox.ProbeOutcome.Denied = 1 -> PandaBear.Sandbox.ProbeOutcome
+PandaBear.Sandbox.ProbeOutcome.Failed = 2 -> PandaBear.Sandbox.ProbeOutcome
+PandaBear.Sandbox.ProbeOutcome.Skipped = 3 -> PandaBear.Sandbox.ProbeOutcome
+PandaBear.Sandbox.ProbeResult
+PandaBear.Sandbox.ProbeResult.<Clone>$() -> PandaBear.Sandbox.ProbeResult!
+PandaBear.Sandbox.ProbeResult.Advice.get -> string?
+PandaBear.Sandbox.ProbeResult.Advice.init -> void
+PandaBear.Sandbox.ProbeResult.Deconstruct(out string! Id, out PandaBear.Sandbox.ProbeKind Kind, out PandaBear.Sandbox.ProbeOutcome Outcome, out bool Required, out string! Detail, out string? Advice) -> void
+PandaBear.Sandbox.ProbeResult.Detail.get -> string!
+PandaBear.Sandbox.ProbeResult.Detail.init -> void
+PandaBear.Sandbox.ProbeResult.Equals(PandaBear.Sandbox.ProbeResult? other) -> bool
+PandaBear.Sandbox.ProbeResult.Fails.get -> bool
+PandaBear.Sandbox.ProbeResult.Id.get -> string!
+PandaBear.Sandbox.ProbeResult.Id.init -> void
+PandaBear.Sandbox.ProbeResult.IsGood.get -> bool
+PandaBear.Sandbox.ProbeResult.IsSkipped.get -> bool
+PandaBear.Sandbox.ProbeResult.Kind.get -> PandaBear.Sandbox.ProbeKind
+PandaBear.Sandbox.ProbeResult.Kind.init -> void
+PandaBear.Sandbox.ProbeResult.Outcome.get -> PandaBear.Sandbox.ProbeOutcome
+PandaBear.Sandbox.ProbeResult.Outcome.init -> void
+PandaBear.Sandbox.ProbeResult.ProbeResult(string! Id, PandaBear.Sandbox.ProbeKind Kind, PandaBear.Sandbox.ProbeOutcome Outcome, bool Required, string! Detail, string? Advice = null) -> void
+PandaBear.Sandbox.ProbeResult.Required.get -> bool
+PandaBear.Sandbox.ProbeResult.Required.init -> void
+PandaBear.Sandbox.ProbeResult.Word.get -> string!
+PandaBear.Sandbox.SandboxConfiguration
+PandaBear.Sandbox.SandboxConfiguration.<Clone>$() -> PandaBear.Sandbox.SandboxConfiguration!
+PandaBear.Sandbox.SandboxConfiguration.Deconstruct(out int Version, out System.Collections.Generic.IReadOnlyList<string!>! DeniedReadPaths, out PandaBear.Sandbox.SettingsConfiguration? Settings) -> void
+PandaBear.Sandbox.SandboxConfiguration.DeniedReadPaths.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Sandbox.SandboxConfiguration.DeniedReadPaths.init -> void
+PandaBear.Sandbox.SandboxConfiguration.Equals(PandaBear.Sandbox.SandboxConfiguration? other) -> bool
+PandaBear.Sandbox.SandboxConfiguration.SandboxConfiguration(int Version, System.Collections.Generic.IReadOnlyList<string!>! DeniedReadPaths, PandaBear.Sandbox.SettingsConfiguration? Settings = null) -> void
+PandaBear.Sandbox.SandboxConfiguration.Settings.get -> PandaBear.Sandbox.SettingsConfiguration?
+PandaBear.Sandbox.SandboxConfiguration.Settings.init -> void
+PandaBear.Sandbox.SandboxConfiguration.Version.get -> int
+PandaBear.Sandbox.SandboxConfiguration.Version.init -> void
+PandaBear.Sandbox.SandboxConfigurationFile
+PandaBear.Sandbox.SandboxDoctor
+PandaBear.Sandbox.SandboxDoctor.Probe(PandaBear.Sandbox.SandboxConfiguration? configuration) -> System.Collections.Generic.IReadOnlyList<PandaBear.Sandbox.ProbeResult!>!
+PandaBear.Sandbox.SandboxDoctor.Run(PandaBear.Sandbox.SandboxConfiguration? configuration, System.IO.TextWriter! output, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+PandaBear.Sandbox.SandboxDoctor.SandboxDoctor(PandaBear.Sandbox.ISandboxEnvironment! environment) -> void
+PandaBear.Sandbox.SandboxSetting
+PandaBear.Sandbox.SandboxSetting.AllowAllUnixSockets = 5 -> PandaBear.Sandbox.SandboxSetting
+PandaBear.Sandbox.SandboxSetting.AllowWrite = 0 -> PandaBear.Sandbox.SandboxSetting
+PandaBear.Sandbox.SandboxSetting.AllowedDomains = 3 -> PandaBear.Sandbox.SandboxSetting
+PandaBear.Sandbox.SandboxSetting.DenyRead = 2 -> PandaBear.Sandbox.SandboxSetting
+PandaBear.Sandbox.SandboxSetting.DenyWrite = 1 -> PandaBear.Sandbox.SandboxSetting
+PandaBear.Sandbox.SandboxSetting.Environment = 6 -> PandaBear.Sandbox.SandboxSetting
+PandaBear.Sandbox.SandboxSetting.ExcludedCommands = 4 -> PandaBear.Sandbox.SandboxSetting
+PandaBear.Sandbox.SettingsChange
+PandaBear.Sandbox.SettingsChange.<Clone>$() -> PandaBear.Sandbox.SettingsChange!
+PandaBear.Sandbox.SettingsChange.Deconstruct(out PandaBear.Sandbox.SettingsChangeKind Kind, out string! Location, out string! Value) -> void
+PandaBear.Sandbox.SettingsChange.Equals(PandaBear.Sandbox.SettingsChange? other) -> bool
+PandaBear.Sandbox.SettingsChange.Kind.get -> PandaBear.Sandbox.SettingsChangeKind
+PandaBear.Sandbox.SettingsChange.Kind.init -> void
+PandaBear.Sandbox.SettingsChange.Location.get -> string!
+PandaBear.Sandbox.SettingsChange.Location.init -> void
+PandaBear.Sandbox.SettingsChange.SettingsChange(PandaBear.Sandbox.SettingsChangeKind Kind, string! Location, string! Value) -> void
+PandaBear.Sandbox.SettingsChange.Value.get -> string!
+PandaBear.Sandbox.SettingsChange.Value.init -> void
+PandaBear.Sandbox.SettingsChangeKind
+PandaBear.Sandbox.SettingsChangeKind.Add = 0 -> PandaBear.Sandbox.SettingsChangeKind
+PandaBear.Sandbox.SettingsChangeKind.Remove = 1 -> PandaBear.Sandbox.SettingsChangeKind
+PandaBear.Sandbox.SettingsChangeKind.Set = 2 -> PandaBear.Sandbox.SettingsChangeKind
+PandaBear.Sandbox.SettingsConfiguration
+PandaBear.Sandbox.SettingsConfiguration.<Clone>$() -> PandaBear.Sandbox.SettingsConfiguration!
+PandaBear.Sandbox.SettingsConfiguration.AllowAllUnixSockets.get -> bool
+PandaBear.Sandbox.SettingsConfiguration.AllowAllUnixSockets.init -> void
+PandaBear.Sandbox.SettingsConfiguration.AllowSdkDownload.get -> bool
+PandaBear.Sandbox.SettingsConfiguration.AllowSdkDownload.init -> void
+PandaBear.Sandbox.SettingsConfiguration.AllowWrite.get -> System.Collections.Generic.IReadOnlyList<string!>?
+PandaBear.Sandbox.SettingsConfiguration.AllowWrite.init -> void
+PandaBear.Sandbox.SettingsConfiguration.AllowedDomains.get -> System.Collections.Generic.IReadOnlyList<string!>?
+PandaBear.Sandbox.SettingsConfiguration.AllowedDomains.init -> void
+PandaBear.Sandbox.SettingsConfiguration.Deconstruct(out string? Profile, out string? Target, out System.Collections.Generic.IReadOnlyList<string!>? AllowWrite, out System.Collections.Generic.IReadOnlyList<string!>? DenyWrite, out System.Collections.Generic.IReadOnlyList<string!>? DenyRead, out System.Collections.Generic.IReadOnlyList<string!>? AllowedDomains, out System.Collections.Generic.IReadOnlyList<string!>? ExcludedCommands, out System.Collections.Generic.IReadOnlyList<string!>? RemoveDenyRead, out bool AllowAllUnixSockets, out bool WriteNuGetFolders, out bool WriteDotnetHome, out bool AllowSdkDownload, out bool Environment) -> void
+PandaBear.Sandbox.SettingsConfiguration.DenyRead.get -> System.Collections.Generic.IReadOnlyList<string!>?
+PandaBear.Sandbox.SettingsConfiguration.DenyRead.init -> void
+PandaBear.Sandbox.SettingsConfiguration.DenyWrite.get -> System.Collections.Generic.IReadOnlyList<string!>?
+PandaBear.Sandbox.SettingsConfiguration.DenyWrite.init -> void
+PandaBear.Sandbox.SettingsConfiguration.Environment.get -> bool
+PandaBear.Sandbox.SettingsConfiguration.Environment.init -> void
+PandaBear.Sandbox.SettingsConfiguration.Equals(PandaBear.Sandbox.SettingsConfiguration? other) -> bool
+PandaBear.Sandbox.SettingsConfiguration.ExcludedCommands.get -> System.Collections.Generic.IReadOnlyList<string!>?
+PandaBear.Sandbox.SettingsConfiguration.ExcludedCommands.init -> void
+PandaBear.Sandbox.SettingsConfiguration.Profile.get -> string?
+PandaBear.Sandbox.SettingsConfiguration.Profile.init -> void
+PandaBear.Sandbox.SettingsConfiguration.RemoveDenyRead.get -> System.Collections.Generic.IReadOnlyList<string!>?
+PandaBear.Sandbox.SettingsConfiguration.RemoveDenyRead.init -> void
+PandaBear.Sandbox.SettingsConfiguration.SettingsConfiguration(string? Profile = null, string? Target = null, System.Collections.Generic.IReadOnlyList<string!>? AllowWrite = null, System.Collections.Generic.IReadOnlyList<string!>? DenyWrite = null, System.Collections.Generic.IReadOnlyList<string!>? DenyRead = null, System.Collections.Generic.IReadOnlyList<string!>? AllowedDomains = null, System.Collections.Generic.IReadOnlyList<string!>? ExcludedCommands = null, System.Collections.Generic.IReadOnlyList<string!>? RemoveDenyRead = null, bool AllowAllUnixSockets = false, bool WriteNuGetFolders = false, bool WriteDotnetHome = false, bool AllowSdkDownload = false, bool Environment = true) -> void
+PandaBear.Sandbox.SettingsConfiguration.Target.get -> string?
+PandaBear.Sandbox.SettingsConfiguration.Target.init -> void
+PandaBear.Sandbox.SettingsConfiguration.WriteDotnetHome.get -> bool
+PandaBear.Sandbox.SettingsConfiguration.WriteDotnetHome.init -> void
+PandaBear.Sandbox.SettingsConfiguration.WriteNuGetFolders.get -> bool
+PandaBear.Sandbox.SettingsConfiguration.WriteNuGetFolders.init -> void
+PandaBear.Sandbox.SettingsMerger
+PandaBear.Sandbox.SettingsPlan
+PandaBear.Sandbox.SettingsPlan.<Clone>$() -> PandaBear.Sandbox.SettingsPlan!
+PandaBear.Sandbox.SettingsPlan.Changes.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Sandbox.SettingsChange!>!
+PandaBear.Sandbox.SettingsPlan.Changes.init -> void
+PandaBear.Sandbox.SettingsPlan.Content.get -> string!
+PandaBear.Sandbox.SettingsPlan.Content.init -> void
+PandaBear.Sandbox.SettingsPlan.Deconstruct(out System.Collections.Generic.IReadOnlyList<PandaBear.Sandbox.SettingsChange!>! Changes, out System.Collections.Generic.IReadOnlyList<string!>! Warnings, out string! Content, out string? ExpectedContent) -> void
+PandaBear.Sandbox.SettingsPlan.Equals(PandaBear.Sandbox.SettingsPlan? other) -> bool
+PandaBear.Sandbox.SettingsPlan.ExpectedContent.get -> string?
+PandaBear.Sandbox.SettingsPlan.ExpectedContent.init -> void
+PandaBear.Sandbox.SettingsPlan.SettingsPlan(System.Collections.Generic.IReadOnlyList<PandaBear.Sandbox.SettingsChange!>! Changes, System.Collections.Generic.IReadOnlyList<string!>! Warnings, string! Content, string? ExpectedContent) -> void
+PandaBear.Sandbox.SettingsPlan.Warnings.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Sandbox.SettingsPlan.Warnings.init -> void
+PandaBear.Sandbox.SettingsRiskFlags
+PandaBear.Sandbox.SettingsRiskFlags.<Clone>$() -> PandaBear.Sandbox.SettingsRiskFlags!
+PandaBear.Sandbox.SettingsRiskFlags.AllowAllUnixSockets.get -> bool
+PandaBear.Sandbox.SettingsRiskFlags.AllowAllUnixSockets.init -> void
+PandaBear.Sandbox.SettingsRiskFlags.BroadWrite.get -> bool
+PandaBear.Sandbox.SettingsRiskFlags.BroadWrite.init -> void
+PandaBear.Sandbox.SettingsRiskFlags.Deconstruct(out bool AllowAllUnixSockets, out bool ExcludedCommands, out bool RemoveDenyRead, out bool BroadWrite, out bool SensitiveWrite) -> void
+PandaBear.Sandbox.SettingsRiskFlags.Equals(PandaBear.Sandbox.SettingsRiskFlags? other) -> bool
+PandaBear.Sandbox.SettingsRiskFlags.ExcludedCommands.get -> bool
+PandaBear.Sandbox.SettingsRiskFlags.ExcludedCommands.init -> void
+PandaBear.Sandbox.SettingsRiskFlags.RemoveDenyRead.get -> bool
+PandaBear.Sandbox.SettingsRiskFlags.RemoveDenyRead.init -> void
+PandaBear.Sandbox.SettingsRiskFlags.SensitiveWrite.get -> bool
+PandaBear.Sandbox.SettingsRiskFlags.SensitiveWrite.init -> void
+PandaBear.Sandbox.SettingsRiskFlags.SettingsRiskFlags(bool AllowAllUnixSockets, bool ExcludedCommands, bool RemoveDenyRead, bool BroadWrite = false, bool SensitiveWrite = false) -> void
+PandaBear.Sandbox.SystemSandboxEnvironment
+PandaBear.Sandbox.SystemSandboxEnvironment.AccountHomeDirectory.get -> string?
+PandaBear.Sandbox.SystemSandboxEnvironment.CreateNamedPipe() -> (PandaBear.Sandbox.ProbeOutcome Outcome, string! Detail)
+PandaBear.Sandbox.SystemSandboxEnvironment.CreateUnixSocket() -> (PandaBear.Sandbox.ProbeOutcome Outcome, string! Detail)
+PandaBear.Sandbox.SystemSandboxEnvironment.HomeDirectory.get -> string!
+PandaBear.Sandbox.SystemSandboxEnvironment.NuGetPackagesDirectory.get -> string?
+PandaBear.Sandbox.SystemSandboxEnvironment.ReadPath(string! path) -> (PandaBear.Sandbox.ProbeOutcome Outcome, string! Detail)
+PandaBear.Sandbox.SystemSandboxEnvironment.SystemSandboxEnvironment() -> void
+PandaBear.Sandbox.SystemSandboxEnvironment.TempDirectory.get -> string!
+PandaBear.Sandbox.SystemSandboxEnvironment.WriteFile(string! directory) -> (PandaBear.Sandbox.ProbeOutcome Outcome, string! Detail)
+const PandaBear.Sandbox.SandboxConfigurationFile.RelativePath = ".config/sharedkernel-sandbox.json" -> string!
+override PandaBear.Sandbox.DesiredSettings.Equals(object? obj) -> bool
+override PandaBear.Sandbox.DesiredSettings.GetHashCode() -> int
+override PandaBear.Sandbox.DesiredSettings.ToString() -> string!
+override PandaBear.Sandbox.ProbeResult.Equals(object? obj) -> bool
+override PandaBear.Sandbox.ProbeResult.GetHashCode() -> int
+override PandaBear.Sandbox.ProbeResult.ToString() -> string!
+override PandaBear.Sandbox.SandboxConfiguration.Equals(object? obj) -> bool
+override PandaBear.Sandbox.SandboxConfiguration.GetHashCode() -> int
+override PandaBear.Sandbox.SandboxConfiguration.ToString() -> string!
+override PandaBear.Sandbox.SettingsChange.Equals(object? obj) -> bool
+override PandaBear.Sandbox.SettingsChange.GetHashCode() -> int
+override PandaBear.Sandbox.SettingsChange.ToString() -> string!
+override PandaBear.Sandbox.SettingsConfiguration.Equals(object? obj) -> bool
+override PandaBear.Sandbox.SettingsConfiguration.GetHashCode() -> int
+override PandaBear.Sandbox.SettingsConfiguration.ToString() -> string!
+override PandaBear.Sandbox.SettingsPlan.Equals(object? obj) -> bool
+override PandaBear.Sandbox.SettingsPlan.GetHashCode() -> int
+override PandaBear.Sandbox.SettingsPlan.ToString() -> string!
+override PandaBear.Sandbox.SettingsRiskFlags.Equals(object? obj) -> bool
+override PandaBear.Sandbox.SettingsRiskFlags.GetHashCode() -> int
+override PandaBear.Sandbox.SettingsRiskFlags.ToString() -> string!
+static PandaBear.Sandbox.DesiredSettings.Build(PandaBear.Sandbox.SandboxConfiguration! configuration, PandaBear.Sandbox.SettingsRiskFlags! flags, System.Collections.Generic.IReadOnlyList<string!>! homeDirectories, bool enforce) -> PandaBear.Sandbox.DesiredSettings!
+static PandaBear.Sandbox.DesiredSettings.operator !=(PandaBear.Sandbox.DesiredSettings? left, PandaBear.Sandbox.DesiredSettings? right) -> bool
+static PandaBear.Sandbox.DesiredSettings.operator ==(PandaBear.Sandbox.DesiredSettings? left, PandaBear.Sandbox.DesiredSettings? right) -> bool
+static PandaBear.Sandbox.ProbeResult.operator !=(PandaBear.Sandbox.ProbeResult? left, PandaBear.Sandbox.ProbeResult? right) -> bool
+static PandaBear.Sandbox.ProbeResult.operator ==(PandaBear.Sandbox.ProbeResult? left, PandaBear.Sandbox.ProbeResult? right) -> bool
+static PandaBear.Sandbox.SandboxConfiguration.operator !=(PandaBear.Sandbox.SandboxConfiguration? left, PandaBear.Sandbox.SandboxConfiguration? right) -> bool
+static PandaBear.Sandbox.SandboxConfiguration.operator ==(PandaBear.Sandbox.SandboxConfiguration? left, PandaBear.Sandbox.SandboxConfiguration? right) -> bool
+static PandaBear.Sandbox.SandboxConfigurationFile.Read(string! root, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Sandbox.SandboxConfiguration?>!
+static PandaBear.Sandbox.SettingsChange.operator !=(PandaBear.Sandbox.SettingsChange? left, PandaBear.Sandbox.SettingsChange? right) -> bool
+static PandaBear.Sandbox.SettingsChange.operator ==(PandaBear.Sandbox.SettingsChange? left, PandaBear.Sandbox.SettingsChange? right) -> bool
+static PandaBear.Sandbox.SettingsConfiguration.operator !=(PandaBear.Sandbox.SettingsConfiguration? left, PandaBear.Sandbox.SettingsConfiguration? right) -> bool
+static PandaBear.Sandbox.SettingsConfiguration.operator ==(PandaBear.Sandbox.SettingsConfiguration? left, PandaBear.Sandbox.SettingsConfiguration? right) -> bool
+static PandaBear.Sandbox.SettingsMerger.Plan(PandaBear.Sandbox.DesiredSettings! desired, PandaBear.Sandbox.ISandboxSettingsDocument! document) -> PandaBear.Sandbox.SettingsPlan!
+static PandaBear.Sandbox.SettingsPlan.operator !=(PandaBear.Sandbox.SettingsPlan? left, PandaBear.Sandbox.SettingsPlan? right) -> bool
+static PandaBear.Sandbox.SettingsPlan.operator ==(PandaBear.Sandbox.SettingsPlan? left, PandaBear.Sandbox.SettingsPlan? right) -> bool
+static PandaBear.Sandbox.SettingsRiskFlags.operator !=(PandaBear.Sandbox.SettingsRiskFlags? left, PandaBear.Sandbox.SettingsRiskFlags? right) -> bool
+static PandaBear.Sandbox.SettingsRiskFlags.operator ==(PandaBear.Sandbox.SettingsRiskFlags? left, PandaBear.Sandbox.SettingsRiskFlags? right) -> bool

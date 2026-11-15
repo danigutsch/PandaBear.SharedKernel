@@ -1,0 +1,7 @@
+#nullable enable
+PandaBear.Sandbox.ClaudeCode.ClaudeCodeSettingsFile
+PandaBear.Sandbox.ClaudeCode.ClaudeCodeSettingsFile.Plan(PandaBear.Sandbox.DesiredSettings! desired, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Sandbox.SettingsPlan!>!
+PandaBear.Sandbox.ClaudeCode.ClaudeCodeSettingsFile.Target.get -> string!
+PandaBear.Sandbox.ClaudeCode.ClaudeCodeSettingsFile.Write(PandaBear.Sandbox.SettingsPlan! plan, System.Action? beforeCommit = null) -> void
+const PandaBear.Sandbox.ClaudeCode.ClaudeCodeSettingsFile.DefaultTarget = ".claude/settings.json" -> string!
+static PandaBear.Sandbox.ClaudeCode.ClaudeCodeSettingsFile.Locate(string! root, string? target) -> PandaBear.Sandbox.ClaudeCode.ClaudeCodeSettingsFile!

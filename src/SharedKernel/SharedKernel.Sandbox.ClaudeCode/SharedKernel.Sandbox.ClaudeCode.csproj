@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.Sandbox.ClaudeCode</PackageId>
+        <Description>Merges planned sandbox entries into a Claude Code settings file, such as .claude/settings.json, keeping every other key, its order, indentation, and line endings, and replaces the file atomically without following symbolic links.</Description>
+        <PackageTags>sandbox;claude-code;agents;settings;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.Sandbox.ClaudeCode.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.IO\SharedKernel.IO.csproj" />
+        <ProjectReference Include="..\SharedKernel.Sandbox\SharedKernel.Sandbox.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

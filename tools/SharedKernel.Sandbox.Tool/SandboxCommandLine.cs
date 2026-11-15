@@ -41,7 +41,7 @@ internal static class SandboxCommandLine
                 }
 
                 var configuration = await SandboxConfigurationFile.Read(root, cancellationToken).ConfigureAwait(false);
-                return await DoctorCommand.Run(environment, configuration, parseResult.InvocationConfiguration.Output, cancellationToken).ConfigureAwait(false);
+                return await new SandboxDoctor(environment).Run(configuration, parseResult.InvocationConfiguration.Output, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception exception) when (exception is InvalidOperationException or IOException or UnauthorizedAccessException)
             {
