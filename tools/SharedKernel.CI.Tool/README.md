@@ -353,7 +353,7 @@ reason. Child process output in the report is the last 20 lines, shortened and e
 The report always ends with what the lane does **not** check, so a green result is never read as complete: project-mode
 `dotnet format` style and analyzer rules (CI also reports IDE0002 and others that only that mode finds), coverage
 collection, `dotnet test` itself, and the whitespace of source files that a project compiles from outside its own
-directory, such as `tools/Shared/*.cs`, because folder mode visits only project directories. It also lists each selected test project that was not run, and why.
+directory, such as the diagnostic IDs a code-fix project links from its analyzer project, because folder mode visits only project directories. It also lists each selected test project that was not run, and why.
 
 The exit code is 0 only when at least one lane passed and every lane that ran passed. `--strict` also fails when a lane or a selected test project
 could not run, for CI. The command fails, and checks nothing, outside a Git work tree, for a `--base` that is not a

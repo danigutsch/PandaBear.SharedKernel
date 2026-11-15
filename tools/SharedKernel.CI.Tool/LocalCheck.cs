@@ -17,7 +17,7 @@ internal static partial class LocalCheck
     [
         "project-mode `dotnet format` style and analyzer rules, such as IDE0002, because the Roslyn build host uses a Unix domain socket; CI's `dotnet format --verify-no-changes` still checks them.",
         "coverage collection, because the coverlet host pipe is a Unix domain socket; the changed-code coverage gate needs a run where sockets are allowed.",
-        "whitespace of source files that a project compiles from outside its own directory, such as `tools/Shared/*.cs`, because folder mode visits only project directories.",
+        "whitespace of source files that a project compiles from outside its own directory, such as the diagnostic IDs a code-fix project links from its analyzer project, because folder mode visits only project directories.",
         "`dotnet test` itself, so the test executables run directly and test projects that need a slice service, generated OpenAPI documents, or Playwright browsers are not run.",
     ];
 
