@@ -10,14 +10,11 @@ using PandaBear.Testing.Metrics;
 namespace PandaBear.AspNetCore.WebAnalytics.Tests;
 
 /// <summary>
-/// A site on a test server that records page views into a fake Umami: every path answers an HTML page, except <c>/site.css</c>
-/// (a stylesheet), <c>/missing</c> (404) and <c>/moved</c> (302), and <c>POST /form</c> answers an HTML page too.
+/// A site on a test server that records page views into a fake Umami and any further targets: every path answers an HTML page, except
+/// <c>/site.css</c> (a stylesheet), <c>/missing</c> (404) and <c>/moved</c> (302), and <c>POST /form</c> answers an HTML page too.
 /// </summary>
 internal sealed class PageViewTestApp : IAsyncDisposable
 {
-    /// <summary>The configuration key of the Umami endpoint.</summary>
-    internal const string EndpointKey = "Umami:Endpoint";
-
     /// <summary>The page every HTML route answers.</summary>
     internal const string PageHtml = "<!doctype html><html lang=\"pt\"><title>Viagens</title><h1>Viagens</h1></html>";
 
@@ -30,32 +27,42 @@ internal sealed class PageViewTestApp : IAsyncDisposable
         Meters = meters;
     }
 
-    /// <summary>Gets the log entries of the forwarder and of its HTTP client, at every level.</summary>
+    /// <summary>Gets the log entries of the page views and of their HTTP client, at every level.</summary>
     internal RecordingLoggerProvider Logs { get; }
 
     /// <summary>Gets the measurements of the site.</summary>
     internal MeterCollector Meters { get; }
 
+    /// <summary>Gets the services of the site.</summary>
+    internal IServiceProvider Services => _app.Services;
+
     /// <summary>Starts the site.</summary>
     /// <param name="umami">The fake Umami that receives the page views.</param>
-    /// <param name="endpoint">The Umami endpoint.</param>
-    /// <param name="configure">Further forwarder settings.</param>
+    /// <param name="connectionString">The Umami connection string, or <see langword="null"/> for none.</param>
+    /// <param name="configure">Further page-view settings.</param>
+    /// <param name="configureUmami">Further Umami target settings.</param>
+    /// <param name="addTargets">Adds further targets.</param>
     /// <returns>The started site.</returns>
-    internal static async Task<PageViewTestApp> Start(HttpMessageHandler umami, string endpoint = "http://umami.test/", Action<UmamiPageViewOptions>? configure = null)
+    internal static async Task<PageViewTestApp> Start(
+        HttpMessageHandler umami,
+        string? connectionString,
+        Action<PageViewOptions>? configure = null,
+        Action<UmamiPageViewTargetOptions>? configureUmami = null,
+        Action<PageViewBuilder>? addTargets = null)
     {
         var logs = new RecordingLoggerProvider();
         var meters = new MeterCollector(WebAnalyticsTelemetry.MeterName);
-        var builder = WebApplication.CreateBuilder();
-        builder.WebHost.UseTestServer();
+        var builder = TestWebHosts.CreateBuilder();
         builder.Logging.ClearProviders();
         builder.Logging.AddProvider(logs);
         builder.Logging.SetMinimumLevel(LogLevel.None);
         builder.Logging.AddFilter("PandaBear", LogLevel.Trace);
         builder.Logging.AddFilter("System.Net.Http.HttpClient", LogLevel.Trace);
-        builder.Configuration[EndpointKey] = endpoint;
+        builder.Configuration[UmamiConnections.Key] = connectionString;
         builder.Services.AddSingleton<IMeterFactory>(meters);
-        builder.Services.AddUmamiPageViews<FixedWebsiteIdProvider>(EndpointKey, configure);
-        builder.Services.AddHttpClient(UmamiPageViewServiceCollectionExtensions.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => umami);
+        var pageViews = builder.AddPageViews(configure).AddUmami(configure: configureUmami);
+        addTargets?.Invoke(pageViews);
+        builder.Services.AddHttpClient(UmamiPageViewBuilderExtensions.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => umami);
 
         var app = builder.Build();
         app.Use((context, next) =>
@@ -63,7 +70,7 @@ internal sealed class PageViewTestApp : IAsyncDisposable
             context.Connection.RemoteIpAddress = PageContexts.VisitorAddress;
             return next(context);
         });
-        app.UseUmamiPageViews();
+        app.UsePageViews();
         app.MapGet("/site.css", () => TypedResults.Text("body { color: black; }", "text/css"));
         app.MapGet("/missing", () => TypedResults.NotFound());
         app.MapGet("/moved", () => TypedResults.Redirect("/pt"));
@@ -90,6 +97,10 @@ internal sealed class PageViewTestApp : IAsyncDisposable
 
         return await client.SendAsync(request, TestContext.Current.CancellationToken);
     }
+
+    /// <summary>Stops the site, which first sends what is still queued.</summary>
+    /// <returns>A task that completes when the site has stopped.</returns>
+    internal Task Stop() => _app.StopAsync(TestContext.Current.CancellationToken);
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()

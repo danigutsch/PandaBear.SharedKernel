@@ -4,121 +4,170 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Server-side, cookieless page-view analytics for ASP.NET Core. The server records each page it answers and sends it to a
-self-hosted [Umami](https://umami.is) through Umami's documented `POST /api/send`. The page gets no script, no cookie and no
-client-side storage, so a site without scripts stays without them and needs no consent banner for the analytics. The Aspire
-resource for Umami is in [`SharedKernel.Aspire.Hosting.Umami`](../SharedKernel.Aspire.Hosting.Umami/README.md).
+Server-side, cookieless page-view analytics for ASP.NET Core. The server records each page it answers and sends it to every configured
+target: a self-hosted [Umami](https://umami.is) is built in, and any other service is a class that implements `IPageViewTarget`. The
+page gets no script, no cookie and no client-side storage, so a site without scripts stays without them and needs no consent banner for
+the analytics. The Aspire resource for Umami is in
+[`SharedKernel.Aspire.Hosting.Umami`](../SharedKernel.Aspire.Hosting.Umami/README.md).
 
 ## Usage
 
 ```csharp
 using PandaBear.AspNetCore.WebAnalytics;
 
-builder.Services.AddUmamiPageViews<SettingsWebsiteIdProvider>(
-    "ConnectionStrings:umami",
-    options => options.Hostname = "example.com");
+builder.AddPageViews(options => options.Hostname = "example.com")
+    .AddUmami();
 
 var app = builder.Build();
 app.UseForwardedHeaders();
-app.UseUmamiPageViews();
+app.UsePageViews();
 ```
 
-```csharp
-public sealed class SettingsWebsiteIdProvider(ISiteSettingsReader settings) : IUmamiWebsiteIdProvider
-{
-    public async ValueTask<Guid?> GetWebsiteId(HttpContext context, CancellationToken ct) =>
-        (await settings.Current(ct)).UmamiWebsiteId;
-}
-```
-
-- `AddUmamiPageViews<TWebsiteIdProvider>(endpointConfigurationKey, configure)` reads the Umami base address from one configuration
-  value, such as `ConnectionStrings:umami` that an Aspire AppHost sets with `WithReference(umami)`, and checks the settings when the
-  host starts: a missing or invalid address stops the host with an `OptionsValidationException` naming the key. The value is read
-  without the reflection-based binder and the body is serialized by a source-generated context, so the package is trimming- and
-  NativeAOT-safe.
-- `IUmamiWebsiteIdProvider` is the application's source of the Umami website id, registered as scoped. It can read a setting the site
-  owner edits, so the id changes without a restart. `null` records nothing. It is called once per page view after the page is answered,
-  so keep it cheap (a cached settings snapshot); a throwing lookup is logged with its type name and the page view is skipped.
-- `UseUmamiPageViews()` goes after `UseForwardedHeaders` (so the address is the visitor's, not your proxy's) and before middleware that
+- `builder.AddPageViews(configure)` registers the settings every target shares (`PageViewOptions`, checked when the host starts) and
+  returns a `PageViewBuilder` that adds the targets.
+- `.AddUmami(connectionName = "umami", configure)` adds Umami when `ConnectionStrings:{connectionName}` is present, in the form
+  `Endpoint=<Umami's base address>;WebsiteId=<the website id>`. An Aspire AppHost sets it with
+  `WithReference(website, connectionName: "umami")` on the Umami website resource. The target's name, in logs and metrics, is the
+  connection name.
+- `UsePageViews()` goes after `UseForwardedHeaders` (so the address is the visitor's, not your proxy's) and before middleware that
   can answer without the rest of the pipeline, such as output caching (so cached pages are counted).
 
-| `UmamiPageViewOptions` | Default | Meaning |
+Nothing is read with the reflection-based configuration binder and the Umami body is serialized by a source-generated context, so the
+package is trimming- and NativeAOT-safe.
+
+### A target only when its setting is there
+
+Page views are configured like telemetry in the service defaults, which add the OTLP exporter only when `OTEL_EXPORTER_OTLP_ENDPOINT`
+is set: each target adds itself only when its own setting is present (Umami: `ConnectionStrings:{name}`), and page views are captured
+only when at least one target exists. Without a target, `UsePageViews` adds nothing to the pipeline, no queue or background service
+exists, and the site logs once, at information level, that page views are off (event `4205`). A blank connection string counts as
+absent. A connection string that is present but not of the form above stops the host at start with an `OptionsValidationException` that
+names the key and never repeats the value.
+
+| `PageViewOptions` | Default | Meaning |
 | --- | --- | --- |
-| `Endpoint` | from the configuration key | Umami's base address; page views go to `api/send` below it, keeping its path. |
-| `Hostname` | the request host | The `hostname` sent. Set it to the canonical host unless `AllowedHosts` filters the `Host` header. |
+| `Hostname` | the request host | The host name of every page view. Set it to the canonical host unless `AllowedHosts` filters the `Host` header. |
 | `HonorPrivacySignals` | `true` | Leave out requests with `Sec-GPC: 1` or `DNT: 1`. |
-| `ClientIpHeader` | `X-Forwarded-For` | The header that carries the visitor's address to Umami (see below). |
-| `QueueCapacity` | 1000 | Page views waiting for the sender, 1 to 100 000. A full queue drops and counts. |
+| `QueueCapacity` | 1000 | Page views waiting for each target, 1 to 100 000. A full queue drops and counts for that target. |
 | `ShutdownTimeout` | 5 seconds | How long stopping the host keeps sending what is queued, at most one minute. |
+
+| `UmamiPageViewTargetOptions` | Default | Meaning |
+| --- | --- | --- |
+| `ClientIpHeader` | `X-Forwarded-For` | The header that carries the visitor's address to Umami (see below). |
 
 ## What counts as a page view
 
 A request is recorded only when all of these hold, checked after the page answered:
 
+- at least one target is configured;
 - the method is `GET` (never `HEAD`, `POST` or any other);
 - the answer is `200` (never a redirect, `304`, `404`, an error page, or any other status) with an HTML content type (never a
   stylesheet, script, image, font, sitemap, `robots.txt`, health probe or API answer);
 - it is not a prefetch or prerender: no `Sec-Purpose` or `Purpose` header naming `prefetch`;
 - the visitor did not send `Sec-GPC: 1` or `DNT: 1` (unless `HonorPrivacySignals` is off);
-- the request has a `User-Agent`, which Umami needs to register it and to drop bots;
-- the provider returns a website id.
+- the request has a `User-Agent`, which Umami needs to register it and to drop bots.
 
 ## Privacy
 
-What is sent to Umami, and only to Umami:
+A `PageView`, which every target receives, carries only:
 
 | Field | Value |
 | --- | --- |
-| `url` | the path, with only the `utm_*` query values (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`); every other query value is dropped |
-| `referrer` | the referring page on another site as scheme, host, port and path; no query, fragment or user info; none when it is the same site (the request host or `Hostname`, ignoring `www.`) or not an `http`/`https` address |
-| `language` | the first tag of `Accept-Language`, such as `pt-BR`; none when it is `*` or malformed |
-| `hostname` | `Hostname`, or the request host without its port |
-| `website` | the id from `IUmamiWebsiteIdProvider` |
-| `User-Agent` header | the visitor's, so Umami can derive browser, OS and device and drop bots |
-| `ClientIpHeader` header | the visitor's address (IPv4-mapped addresses as IPv4, no IPv6 scope), so Umami can derive the country and the anonymous visitor hash |
+| `PathAndQuery` | the path, with only the `utm_*` query values (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`); every other query value is dropped |
+| `Referrer` | the referring page on another site as scheme, host, port and path; no query, fragment or user info; none when it is the same site (the request host or `Hostname`, ignoring `www.`) or not an `http`/`https` address |
+| `Language` | the first tag of `Accept-Language`, such as `pt-BR`; none when it is `*` or malformed |
+| `Hostname` | `Hostname`, or the request host without its port |
+| `UserAgent` | the visitor's, so a target can derive browser, OS and device and drop bots |
+| `ClientIp` | the visitor's address (IPv4-mapped addresses as IPv4, no IPv6 scope), so a target can derive the country and an anonymous visitor hash |
 
-What is never sent or kept: other query values (search terms, e-mail addresses, tokens, click ids such as `gclid` or `fbclid`), the
-referrer's query and fragment, cookies, request bodies, the page title, the screen size, and any identifier of the visitor. Nothing is
-written to the browser. The address and the `User-Agent` are never logged: log entries carry an Umami status code, an exception type
-name or a count, and the named `HttpClient` redacts every logged header value. Its own request log entries name only the Umami address.
+Umami receives `url`, `referrer`, `language`, `hostname` and the `website` id from the connection string in the body, the `User-Agent`
+header, and the address in `ClientIpHeader`. What is never sent or kept: other query values (search terms, e-mail addresses, tokens,
+click ids such as `gclid` or `fbclid`), the referrer's query and fragment, cookies, request bodies, the page title, the screen size, and
+any identifier of the visitor. Nothing is written to the browser. `PageView` has no `ToString` that prints the address or the
+`User-Agent`, and neither is ever logged: log entries carry a target name, a status code, an exception type name or a count, and the
+Umami `HttpClient` redacts every logged header value. Its own request log entries name only the Umami address.
 
 Umami turns the address and `User-Agent` into a salted visitor hash and a location and does not store the address. It is personal
 data in transit all the same, so **the site's privacy notice must name the self-hosted analytics**: what is collected (the table above),
 the purpose (aggregate visit statistics), that it runs on the operator's own server with no third party, that no cookie is set, that
-`Sec-GPC` and `DNT` are honoured, and how long Umami keeps the data.
+`Sec-GPC` and `DNT` are honoured, and how long Umami keeps the data. Every other target needs the same review.
 
 ## The visitor's address
 
 Umami 3.4 takes the address from the header named by its `CLIENT_IP_HEADER` variable when the request has it, and otherwise from the
 first present of `true-client-ip`, `cf-connecting-ip`, `x-real-ip`, ..., `x-forwarded-for` (leftmost entry). Without that variable a
 reverse proxy in front of Umami that sets `X-Real-IP` would make every visitor look like your web server. The
-[Aspire resource](../SharedKernel.Aspire.Hosting.Umami/README.md) sets `CLIENT_IP_HEADER=X-Forwarded-For`, the forwarder's default.
+[Aspire resource](../SharedKernel.Aspire.Hosting.Umami/README.md) sets `CLIENT_IP_HEADER=X-Forwarded-For`, the target's default.
 Elsewhere, set it yourself and make any proxy between the site and Umami append to `X-Forwarded-For`, never replace it. Umami 3.5
 adds `TRUSTED_PROXIES`, which makes it read `X-Forwarded-For` from the right and skip the listed proxies: if you set it, list every
 proxy between the site and Umami, otherwise Umami takes the last proxy's address instead of the visitor's.
 
 ## Delivery
 
-`UseUmamiPageViews` never waits for Umami. The page view is put on a bounded queue without blocking, and a hosted service sends the
-queue in order, one `POST api/send` per page view, because the visitor's `User-Agent` and address travel as request headers (a batch
-shares one set of headers). It uses the named client `UmamiPageViewServiceCollectionExtensions.HttpClientName`, so the host's HTTP client
-defaults apply; with `PandaBear.SharedKernel.ServiceDefaults` that is the standard resilience handler, which never retries a `POST`,
-so a page view is not counted twice. Nothing it does can fail or change a page.
+`UsePageViews` never waits for a target. Each target has its own bounded queue and its own background loop, so a slow or broken target
+delays or loses only its own page views. A page view is put on every queue without blocking, and each loop sends its queue in order,
+one page view at a time. Umami gets one `POST api/send` per page view, because the visitor's `User-Agent` and address travel as request
+headers (a batch shares one set of headers), through the named client `UmamiPageViewBuilderExtensions.HttpClientName`, so the host's
+HTTP client defaults apply; with `PandaBear.SharedKernel.ServiceDefaults` that is the standard resilience handler, which never retries
+a `POST`, so a page view is not counted twice. Nothing a target does can fail or change a page.
 
-A page view is dropped, counted on the counter `web_analytics_page_views_dropped_total` of the meter
-`PandaBear.AspNetCore.WebAnalytics` (registered by `AddSharedKernelInstrumentation`) with the tag `reason`, when:
+A page view is dropped for one target, counted on the counter `web_analytics_page_views_dropped_total` of the meter
+`PandaBear.AspNetCore.WebAnalytics` (registered by `AddSharedKernelInstrumentation`) with the tags `target` (the target's name) and
+`reason`, when:
 
 | `reason` | When | Logged |
 | --- | --- | --- |
-| `queue_full` | the queue is full | no, to keep a slow Umami from flooding the log |
-| `rejected` | Umami answered other than 2xx | warning `4201` with the status code |
-| `send_failed` | the request failed or timed out | warning `4202` with the exception type name |
-| `shutdown` | it came after the host began stopping, or was still queued or in flight when `ShutdownTimeout` ended | warning `4204` with the count |
+| `queue_full` | the target's queue is full | no, to keep a slow target from flooding the log |
+| `rejected` | the target answered other than 2xx | warning `4201` with the target and the status code |
+| `send_failed` | the send failed or timed out | warning `4202` with the target and the exception type name |
+| `shutdown` | it came after the host began stopping, or was still queued or in flight when `ShutdownTimeout` ended | warning `4204` with the count and the target |
 
-A failing website id lookup is warning `4203` with the exception type name. `WebAnalyticsTelemetry` names the meter, counter, tag,
-reasons and event ids. A meter listener that throws never reaches the request.
+`WebAnalyticsTelemetry` names the meter, counter, tags, reasons and event ids. A meter listener that throws never reaches the request.
+Two targets with the same name stop the host at start.
 
 Not counted on purpose: `304` revalidations of a cached page and pages re-executed by the exception handler or status-code pages.
+
+## Adding another target
+
+Implement `IPageViewTarget` and add it from an extension that reads the target's own setting, so the target exists only when that
+setting is present:
+
+```csharp
+public sealed class MyAnalyticsTarget(IHttpClientFactory clients) : IPageViewTarget
+{
+    public string Name => "my-analytics";
+
+    public async Task Send(PageView pageView, CancellationToken ct)
+    {
+        using var client = clients.CreateClient("my-analytics");
+        using var response = await client.PostAsync(/* the service's endpoint and body */, ct);
+        response.EnsureSuccessStatusCode();
+    }
+}
+
+public static PageViewBuilder AddMyAnalytics(this PageViewBuilder builder) =>
+    string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString("my-analytics"))
+        ? builder
+        : builder.AddTarget<MyAnalyticsTarget>();
+```
+
+`Send` is called from the target's own loop, one page view at a time. Report a failure by throwing: an `HttpRequestException` with a
+status code (what `EnsureSuccessStatusCode` throws) counts as `rejected`, anything else as `send_failed`; the message is never logged.
+`AddTarget(services => ...)` takes a factory when the target needs its settings at creation. Never log a `PageView`.
+
+Before choosing another service, weigh what it costs:
+
+- **Google Analytics 4** has a server-side
+  [Measurement Protocol](https://developers.google.com/analytics/devguides/collection/protocol/ga4), but Google states that its intent
+  "is to augment automatic collection through gtag, Tag Manager, and Google Analytics for Firebase, not to replace it" (checked
+  2026-11-15). Every event needs a `client_id` (or `app_instance_id`) that identifies the browser, which a script or a cookie normally
+  provides, so a GA4 target brings back the cookie and consent question this package avoids, and its reports join events through that
+  id.
+- **History does not move between products** through these collection APIs: they record new page views, they do not import old ones.
+  The targets fan out, so during a switch the old and the new target can run side by side until the new one has enough history.
+- **Self-hosted Umami keeps everything in its PostgreSQL database**, so its data is exported by querying that database (the
+  `website_event` table). Umami's CSV export is a feature of Umami Cloud
+  ([Export data](https://docs.umami.is/docs/cloud/export-data)), not of the self-hosted server.
 
 ## Package identity and availability
 

@@ -1,26 +1,28 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.TestHost;
 
 namespace PandaBear.AspNetCore.WebAnalytics.Tests;
 
-/// <summary>Builds a site with the forwarder registered on <see cref="EndpointKey"/>, so starting it checks the settings.</summary>
+/// <summary>Builds a site with page views and the Umami target on <see cref="UmamiConnections.Key"/>, so starting it checks the settings.</summary>
 internal static class OptionsTestHost
 {
-    /// <summary>The configuration key of the Umami endpoint, as an Aspire reference sets it.</summary>
-    internal const string EndpointKey = "ConnectionStrings:umami";
-
-    /// <summary>Builds, without starting, a site whose endpoint setting is <paramref name="endpoint"/>.</summary>
-    /// <param name="endpoint">The configured endpoint, or <see langword="null"/> for none.</param>
-    /// <param name="configure">Further settings.</param>
+    /// <summary>Builds, without starting, a site whose Umami connection string is <paramref name="connectionString"/>.</summary>
+    /// <param name="connectionString">The Umami connection string, or <see langword="null"/> for none.</param>
+    /// <param name="configure">Further page-view settings.</param>
+    /// <param name="configureUmami">Further Umami target settings.</param>
+    /// <param name="addTargets">Adds further targets.</param>
     /// <returns>The site.</returns>
-    internal static WebApplication Build(string? endpoint, Action<UmamiPageViewOptions>? configure = null)
+    internal static WebApplication Build(
+        string? connectionString,
+        Action<PageViewOptions>? configure = null,
+        Action<UmamiPageViewTargetOptions>? configureUmami = null,
+        Action<PageViewBuilder>? addTargets = null)
     {
-        var builder = WebApplication.CreateBuilder();
-        builder.WebHost.UseTestServer();
-        builder.Configuration[EndpointKey] = endpoint;
-        builder.Services.AddUmamiPageViews<FixedWebsiteIdProvider>(EndpointKey, configure);
+        var builder = TestWebHosts.CreateBuilder();
+        builder.Configuration[UmamiConnections.Key] = connectionString;
+        var pageViews = builder.AddPageViews(configure).AddUmami(configure: configureUmami);
+        addTargets?.Invoke(pageViews);
         var app = builder.Build();
-        app.UseUmamiPageViews();
+        app.UsePageViews();
         return app;
     }
 }

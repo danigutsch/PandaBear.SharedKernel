@@ -3,7 +3,7 @@
     <PropertyGroup>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.AspNetCore.WebAnalytics</PackageId>
-        <Description>Server-side, cookieless page-view analytics for ASP.NET Core: records HTML page views after the response and sends them to a self-hosted Umami from a background queue, without a script, a cookie or the visitor's query values.</Description>
+        <Description>Server-side, cookieless page-view analytics for ASP.NET Core: records HTML page views after the response and sends them from background queues to the configured targets, such as a self-hosted Umami, without a script, a cookie or the visitor's query values.</Description>
         <RootNamespace>PandaBear.AspNetCore.WebAnalytics</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>aspnetcore;analytics;umami;privacy;page-views;shared-kernel;dotnet</PackageTags>

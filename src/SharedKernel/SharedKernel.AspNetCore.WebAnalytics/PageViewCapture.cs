@@ -7,7 +7,7 @@ using Microsoft.Net.Http.Headers;
 
 namespace PandaBear.AspNetCore.WebAnalytics;
 
-/// <summary>Decides from an answered request whether it is a page view, and keeps of it only what Umami needs.</summary>
+/// <summary>Decides from an answered request whether it is a page view, and keeps of it only what the targets need.</summary>
 internal static class PageViewCapture
 {
     private const string SecPurposeHeader = "Sec-Purpose";
@@ -42,20 +42,18 @@ internal static class PageViewCapture
             && !StringValues.IsNullOrEmpty(request.Headers.UserAgent);
     }
 
-    /// <summary>Keeps of a page view only what Umami needs: no query value except <c>utm_*</c>, no referrer query or fragment, no same-site referrer.</summary>
+    /// <summary>Keeps of a page view only what the targets need: no query value except <c>utm_*</c>, no referrer query or fragment, no same-site referrer.</summary>
     /// <param name="context">The request of the page view.</param>
-    /// <param name="websiteId">The Umami website id.</param>
     /// <param name="configuredHostname">The configured host name, or <see langword="null"/> to use the request host.</param>
     /// <returns>The page view.</returns>
-    public static PageView Capture(HttpContext context, Guid websiteId, string? configuredHostname)
+    public static PageView Capture(HttpContext context, string? configuredHostname)
     {
         var request = context.Request;
         var requestHost = request.Host.HasValue ? request.Host.Host : null;
         return new PageView
         {
-            WebsiteId = websiteId,
             Hostname = configuredHostname ?? requestHost,
-            Url = Url(request),
+            PathAndQuery = PathAndQuery(request),
             Referrer = Referrer(request.Headers.Referer, requestHost, configuredHostname),
             Language = Language(request.Headers.AcceptLanguage),
             UserAgent = request.Headers.UserAgent.ToString(),
@@ -92,7 +90,7 @@ internal static class PageViewCapture
     private static bool IsSet(StringValues values) =>
         values.Count > 0 && string.Equals(values[0]?.Trim(), SignalSet, StringComparison.Ordinal);
 
-    private static string Url(HttpRequest request)
+    private static string PathAndQuery(HttpRequest request)
     {
         var path = (request.PathBase + request.Path).ToUriComponent();
         var campaign = request.Query
