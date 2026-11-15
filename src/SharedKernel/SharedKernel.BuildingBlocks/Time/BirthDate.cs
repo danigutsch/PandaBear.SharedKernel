@@ -18,27 +18,29 @@ public sealed class BirthDate : ValueObject
     /// <param name="today">The current business date.</param>
     /// <param name="minAgeYears">The youngest allowed age in whole years.</param>
     /// <param name="maxAgeYears">The oldest allowed age in whole years.</param>
-    /// <returns>The date of birth or a validation error on <c>birthDate</c>.</returns>
-    public static Result<BirthDate> Create(DateOnly value, DateOnly today, int minAgeYears, int maxAgeYears)
+    /// <param name="field">The field name used in validation errors.</param>
+    /// <param name="label">The label of the date in the required and future-date messages, such as the form label of the field.</param>
+    /// <returns>The date of birth or a validation error on <paramref name="field"/>.</returns>
+    public static Result<BirthDate> Create(DateOnly value, DateOnly today, int minAgeYears, int maxAgeYears, string field = "birthDate", string label = "Birth date")
     {
         if (value == default)
         {
-            return Invalid("Birth date is required.");
+            return Invalid(field, $"{label} is required.");
         }
 
         if (value > today)
         {
-            return Invalid("Birth date cannot be in the future.");
+            return Invalid(field, $"{label} cannot be in the future.");
         }
 
         var age = AgeOn(value, today);
         if (age < minAgeYears)
         {
-            return Invalid($"Age must be at least {minAgeYears} years.");
+            return Invalid(field, $"Age must be at least {minAgeYears} years.");
         }
 
         return age > maxAgeYears
-            ? Invalid($"Age cannot exceed {maxAgeYears} years.")
+            ? Invalid(field, $"Age cannot exceed {maxAgeYears} years.")
             : Result.Ok(new BirthDate(value));
     }
 
@@ -76,8 +78,8 @@ public sealed class BirthDate : ValueObject
         return birthday > day ? age - 1 : age;
     }
 
-    private static Result<BirthDate> Invalid(string message) =>
-        Result.Invalid<BirthDate>(detail: message, field: "birthDate", message: message);
+    private static Result<BirthDate> Invalid(string field, string message) =>
+        Result.Invalid<BirthDate>(detail: message, field: field, message: message);
 
     /// <inheritdoc />
     public override string ToString() => "BirthDate [redacted]";

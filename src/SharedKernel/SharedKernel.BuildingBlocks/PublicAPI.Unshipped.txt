@@ -70,8 +70,8 @@ static PandaBear.BuildingBlocks.ExceptionCancellationExtensions.ShouldHandleAsFa
 static PandaBear.BuildingBlocks.Money.Create(decimal amount, PandaBear.BuildingBlocks.Currency? currency) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Money!>
 static PandaBear.BuildingBlocks.OptionResultExtensions.ToNotFoundResult<TEntity, TId>(this PandaBear.Results.Option<TEntity> source, TId id, string? container = null) -> PandaBear.Results.Result<TEntity>
 static PandaBear.BuildingBlocks.PersonName.Create(string? firstName, string? lastName) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.PersonName!>
-static PandaBear.BuildingBlocks.PhoneNumber.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.PhoneNumber!>
-static PandaBear.BuildingBlocks.PostalAddress.Create(string? street, string? complement, string? neighborhood, string? postalCode, string? city, string? state, string? country) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.PostalAddress!>
+static PandaBear.BuildingBlocks.PhoneNumber.Create(string? value, string! field = "phone", string! label = "Phone number") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.PhoneNumber!>
+static PandaBear.BuildingBlocks.PostalAddress.Create(string? street, string? complement, string? neighborhood, string? postalCode, string? city, string? state, string? country, PandaBear.BuildingBlocks.PostalAddressLabels? labels = null) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.PostalAddress!>
 static PandaBear.BuildingBlocks.ValueObject.operator !=(PandaBear.BuildingBlocks.ValueObject? left, PandaBear.BuildingBlocks.ValueObject? right) -> bool
 static PandaBear.BuildingBlocks.ValueObject.operator ==(PandaBear.BuildingBlocks.ValueObject? left, PandaBear.BuildingBlocks.ValueObject? right) -> bool
 PandaBear.BuildingBlocks.Compensation
@@ -118,7 +118,7 @@ PandaBear.BuildingBlocks.BirthDate
 PandaBear.BuildingBlocks.BirthDate.AgeOn(System.DateOnly day) -> int
 PandaBear.BuildingBlocks.BirthDate.Value.get -> System.DateOnly
 override PandaBear.BuildingBlocks.BirthDate.ToString() -> string!
-static PandaBear.BuildingBlocks.BirthDate.Create(System.DateOnly value, System.DateOnly today, int minAgeYears, int maxAgeYears) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.BirthDate!>
+static PandaBear.BuildingBlocks.BirthDate.Create(System.DateOnly value, System.DateOnly today, int minAgeYears, int maxAgeYears, string! field = "birthDate", string! label = "Birth date") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.BirthDate!>
 PandaBear.BuildingBlocks.DateOnlyRange
 PandaBear.BuildingBlocks.DateOnlyRange.Days.get -> int
 PandaBear.BuildingBlocks.DateOnlyRange.EndDate.get -> System.DateOnly
@@ -188,3 +188,20 @@ PandaBear.BuildingBlocks.Currency.Symbol.get -> string!
 PandaBear.BuildingBlocks.Money.ToDisplayString(System.IFormatProvider! provider) -> string!
 PandaBear.BuildingBlocks.Money.ToString(string? format, System.IFormatProvider? formatProvider) -> string!
 static PandaBear.BuildingBlocks.BirthDate.Restore(System.DateOnly value) -> PandaBear.BuildingBlocks.BirthDate!
+PandaBear.BuildingBlocks.PostalAddressLabels
+PandaBear.BuildingBlocks.PostalAddressLabels.City.get -> string!
+PandaBear.BuildingBlocks.PostalAddressLabels.City.init -> void
+PandaBear.BuildingBlocks.PostalAddressLabels.Complement.get -> string!
+PandaBear.BuildingBlocks.PostalAddressLabels.Complement.init -> void
+PandaBear.BuildingBlocks.PostalAddressLabels.Country.get -> string!
+PandaBear.BuildingBlocks.PostalAddressLabels.Country.init -> void
+PandaBear.BuildingBlocks.PostalAddressLabels.Neighborhood.get -> string!
+PandaBear.BuildingBlocks.PostalAddressLabels.Neighborhood.init -> void
+PandaBear.BuildingBlocks.PostalAddressLabels.PostalAddressLabels() -> void
+PandaBear.BuildingBlocks.PostalAddressLabels.PostalCode.get -> string!
+PandaBear.BuildingBlocks.PostalAddressLabels.PostalCode.init -> void
+PandaBear.BuildingBlocks.PostalAddressLabels.State.get -> string!
+PandaBear.BuildingBlocks.PostalAddressLabels.State.init -> void
+PandaBear.BuildingBlocks.PostalAddressLabels.Street.get -> string!
+PandaBear.BuildingBlocks.PostalAddressLabels.Street.init -> void
+static PandaBear.BuildingBlocks.PostalAddressLabels.Default.get -> PandaBear.BuildingBlocks.PostalAddressLabels!

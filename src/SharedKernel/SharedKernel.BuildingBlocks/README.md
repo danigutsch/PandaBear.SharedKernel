@@ -108,6 +108,16 @@ var price = Money.Create(1999.995m, Currency.Brl);               // BRL 2000.00
 var address = PostalAddress.Create("Rua A, 10", null, null, "01000-000", "Sao Paulo", "SP", "BR");
 ```
 
+The messages start with an English noun (`Phone number is required.`, `Birth date cannot be in the future.`, `Street is required.`). To
+make them match a form's labels, pass `field` and `label` to `PhoneNumber.Create(value, field, label)` and
+`BirthDate.Create(value, today, minAgeYears, maxAgeYears, field, label)` (the age messages start with `Age`), and a
+`PostalAddressLabels` to `PostalAddress.Create`, setting only the parts that differ; the address keeps its field keys:
+
+```csharp
+var whatsapp = PhoneNumber.Create(input, field: "whatsapp", label: "WhatsApp");   // "WhatsApp is required."
+var home = PostalAddress.Create(street, null, null, cep, city, state, "BR", new PostalAddressLabels { PostalCode = "CEP" });
+```
+
 ## Payment identifiers
 
 `Iban`, `Bic`, `Cpf`, `Cnpj`, and `PixKey` are immutable value objects in `PandaBear.BuildingBlocks`.

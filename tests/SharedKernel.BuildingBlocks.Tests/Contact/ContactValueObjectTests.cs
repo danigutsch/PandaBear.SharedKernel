@@ -108,6 +108,38 @@ public sealed class ContactValueObjectTests
         valid.ToString().ShouldBe("PhoneNumber [redacted]");
     }
 
+    [Theory]
+    [InlineData(null, "Phone number is required.")]
+    [InlineData("12345a7890", "Phone number format is invalid.")]
+    [InlineData("123456", "Phone number must have 7 to 15 digits.")]
+    public void Phone_messages_name_the_phone_number_by_default(string? input, string expected)
+    {
+        // Act
+        var result = PhoneNumber.Create(input);
+
+        // Assert
+        var errors = result.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull();
+        errors.Keys.ShouldBe(["phone"]);
+        errors["phone"].ShouldBe([expected]);
+    }
+
+    [Theory]
+    [InlineData(null, "WhatsApp is required.")]
+    [InlineData("12345a7890", "WhatsApp format is invalid.")]
+    [InlineData("123456", "WhatsApp must have 7 to 15 digits.")]
+    [InlineData("1111111111111111111111111111111111111111111111111111111111111111111", "WhatsApp is too long.")]
+    public void Phone_messages_use_the_given_field_and_label(string? input, string expected)
+    {
+        // Act
+        var result = PhoneNumber.Create(input, field: "whatsapp", label: "WhatsApp");
+
+        // Assert
+        var error = result.ErrorDetails.ShouldNotBeNull();
+        error.Detail.ShouldBe(expected);
+        error.ValidationErrors.ShouldNotBeNull().Keys.ShouldBe(["whatsapp"]);
+        error.ValidationErrors["whatsapp"].ShouldBe([expected]);
+    }
+
     [Fact]
     public void Name_is_sanitized_and_exposes_full_name()
     {
