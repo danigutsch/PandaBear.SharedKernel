@@ -62,7 +62,7 @@ public sealed class RestoreWarningVerificationTests
 
         // Assert
         result.ExitCode.ShouldBe(2);
-        result.Error.ReplaceLineEndings("\n").ShouldContain($"- {finding}\n", StringComparison.Ordinal);
+        result.Error.ShouldContain($"- {finding}\n", StringComparison.Ordinal);
         result.Error.ShouldContain("the vulnerability audit could not run", StringComparison.Ordinal);
         summary.ShouldContain($"- {finding}\n", StringComparison.Ordinal);
         combined.ExitCode.ShouldBe(0);
