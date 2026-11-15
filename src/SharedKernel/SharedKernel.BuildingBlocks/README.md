@@ -34,6 +34,13 @@ ones), `/ \ ? #`, `.`, and any other non-ASCII character are rejected rather tha
 echoes the input. A slug therefore never contains `.`, which keeps it apart from file names in paths.
 `Slug.IsCanonical` checks an already-stored slug.
 
+`Slug.CreateLenient` never rejects a character: it strips diacritics like `Create`, lowercases, turns every run of other characters
+(punctuation, `/ \ ? # .`, control characters, surrogates, letters without an ASCII base such as `ß` or `東`) into one hyphen, trims
+the hyphens at both ends and cuts a slug longer than `maxLength` without leaving a trailing hyphen. Use it to derive a name from text a
+person wrote, such as a download file name from a trip code (`ÁLPES/2027 ..\x` gives `alpes-2027-x`). It fails only when the text is
+blank (`{label} is required.`) or keeps no ASCII letter or digit (`中国` gives `{label} must contain a letter or a digit.`), so the caller
+can fall back to a fixed name. Unicode normalization comes from .NET; there is no transliteration table.
+
 ## Web addresses
 
 `WebUrl.Create` accepts an absolute `http` or `https` address that is safe to render as a link, such as a sign-up form or a
