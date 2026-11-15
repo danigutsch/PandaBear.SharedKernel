@@ -10,7 +10,7 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class RoadmapPublishResultCommandTests
 {
     [Fact]
-    public async Task Publish_sends_the_configured_pull_request_body_and_summarizes_the_url()
+    public async Task Publish_sends_the_configured_pull_request_body_and_summarizes_the_URL()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -71,7 +71,7 @@ public sealed class RoadmapPublishResultCommandTests
     }
 
     [Fact]
-    public async Task Publish_fails_and_writes_no_outputs_without_a_pull_request_url()
+    public async Task Publish_fails_and_writes_no_outputs_without_a_pull_request_URL()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();

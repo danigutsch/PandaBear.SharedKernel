@@ -11,7 +11,7 @@ public sealed class PackageManagersTests
     [InlineData(PackageManagerKind.Flatpak, "flatpak")]
     [InlineData(PackageManagerKind.Snap, "snap")]
     [InlineData(PackageManagerKind.Brew, "brew")]
-    public void Each_manager_has_its_id_and_the_id_parses_back_to_it(PackageManagerKind manager, string id)
+    public void Each_manager_has_its_ID_and_the_ID_parses_back_to_it(PackageManagerKind manager, string id)
     {
         // Act
         var parsed = PackageManagers.TryParse(id, out var found);
@@ -23,7 +23,7 @@ public sealed class PackageManagersTests
     }
 
     [Fact]
-    public void The_list_of_ids_covers_every_defined_manager_in_enum_order()
+    public void The_list_of_IDs_covers_every_defined_manager_in_enum_order()
     {
         // Act
         var ids = Enum.GetValues<PackageManagerKind>().Select(PackageManagers.Id).ToArray();
@@ -38,7 +38,7 @@ public sealed class PackageManagersTests
     [InlineData("APT")]
     [InlineData(" apt")]
     [InlineData("pip")]
-    public void An_unknown_or_differently_written_id_does_not_parse(string? id)
+    public void An_unknown_or_differently_written_ID_does_not_parse(string? id)
     {
         // Act
         var parsed = PackageManagers.TryParse(id, out var found);
@@ -49,7 +49,7 @@ public sealed class PackageManagersTests
     }
 
     [Fact]
-    public void An_undefined_manager_has_no_id()
+    public void An_undefined_manager_has_no_ID()
     {
         // Act
         Func<object?> act = () => PackageManagers.Id((PackageManagerKind)99);

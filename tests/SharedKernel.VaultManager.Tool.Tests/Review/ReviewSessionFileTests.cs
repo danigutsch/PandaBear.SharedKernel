@@ -158,7 +158,7 @@ public sealed class ReviewSessionFileTests : IDisposable
     }
 
     [Fact]
-    public void Plaintext_output_is_written_as_unencrypted_json_without_a_password()
+    public void Plaintext_output_is_written_as_unencrypted_JSON_without_a_password()
     {
         // Arrange
         string output = Path.Combine(DirectoryPath, "merged.json");

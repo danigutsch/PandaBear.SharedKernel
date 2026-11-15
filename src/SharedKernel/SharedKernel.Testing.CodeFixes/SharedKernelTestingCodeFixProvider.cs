@@ -144,7 +144,11 @@ public sealed partial class SharedKernelTestingCodeFixProvider : CodeFixProvider
             return;
         }
 
-        var targetName = TryConvertToUnderscoreName(methodSymbol.Name);
+        var additionalSegments = diagnostic.Properties.TryGetValue(TestMethodNameSegments.AdditionalSegmentsProperty, out var configuredSegments)
+            && configuredSegments is { Length: > 0 }
+                ? configuredSegments.Split(',').ToImmutableArray()
+                : [];
+        var targetName = TryConvertToUnderscoreName(methodSymbol.Name, additionalSegments);
         if (targetName is null
             || string.Equals(targetName, methodSymbol.Name, StringComparison.Ordinal)
             || HasRenameConflict(semanticModel, methodDeclaration, methodSymbol, targetName))
@@ -864,19 +868,20 @@ public sealed partial class SharedKernelTestingCodeFixProvider : CodeFixProvider
             .Any(candidate => !SymbolEqualityComparer.Default.Equals(candidate.OriginalDefinition, methodSymbol.OriginalDefinition));
     }
 
-    private static string? TryConvertToUnderscoreName(string methodName)
+    private static string? TryConvertToUnderscoreName(string methodName, ImmutableArray<string> additionalSegments)
     {
         if (string.IsNullOrWhiteSpace(methodName))
         {
             return null;
         }
 
+        var wordPattern = WordPattern(additionalSegments);
         var tokens = methodName.Split('_').SelectMany(segment =>
-                TestMethodNameSegments.Canonical(segment) is { } canonical
-                    ? new[] { canonical }
-                    : Regex.Matches(segment,
-                        @"AsyncAPI|AsyncApi|HTTP2|ValueTask|HttpClient|OpenApi|xUnit|SKTEST[0-9]+|[A-Z]+[0-9]*(?=$|[A-Z][a-z])|[A-Z]?[a-z0-9]+",
-                        RegexOptions.CultureInvariant, RegexTimeout).Cast<Match>().Select(static match => match.Value))
+                TestMethodNameSegments.Canonical(segment, additionalSegments) is not null
+                    ? new[] { segment }
+                    : Regex.Matches(segment, wordPattern, RegexOptions.CultureInvariant, RegexTimeout)
+                        .Cast<Match>()
+                        .Select(static match => match.Value))
             .ToArray();
 
         if (tokens.Length < 2)
@@ -884,14 +889,28 @@ public sealed partial class SharedKernelTestingCodeFixProvider : CodeFixProvider
             return null;
         }
 
-        return string.Join("_", tokens.Select(NormalizeToken));
+        return string.Join("_", tokens.Select((token, index) => NormalizeToken(token, index, additionalSegments)));
     }
 
-    private static string NormalizeToken(string token, int index)
+    private static string WordPattern(ImmutableArray<string> additionalSegments)
     {
-        if (TestMethodNameSegments.Canonical(token) is { } canonical)
+        var compounds = TestMethodNameSegments.BuiltIn
+            .Where(TestMethodNameSegments.IsCompound)
+            .Concat(additionalSegments.Where(TestMethodNameSegments.IsCompound))
+            .Append("AsyncApi")
+            .Distinct(StringComparer.Ordinal)
+            .OrderByDescending(static entry => entry.Length)
+            .Select(Regex.Escape);
+
+        return string.Join("|", compounds) + "|SKTEST[0-9]+|[A-Z]+[0-9]*(?=$|[A-Z][a-z])|[A-Z]?[a-z0-9]+";
+    }
+
+    private static string NormalizeToken(string token, int index, ImmutableArray<string> additionalSegments)
+    {
+        if (TestMethodNameSegments.Canonical(token, additionalSegments) is { } canonical)
         {
-            return canonical;
+            var spelling = TestMethodNameSegments.IsAcceptedSpelling(token, canonical) ? token : canonical;
+            return index == 0 ? char.ToUpperInvariant(spelling[0]) + spelling.Substring(1) : spelling;
         }
 
         if (token.All(char.IsDigit))

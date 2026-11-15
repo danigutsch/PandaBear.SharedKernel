@@ -26,7 +26,7 @@ public sealed class GeneratedIntegrationEventDispatchTests
     }
 
     [Fact]
-    public void Contract_registration_allows_the_same_json_metadata_instance_twice()
+    public void Contract_registration_allows_the_same_JSON_metadata_instance_twice()
     {
         // Arrange
         var scenario = new IntegrationEventContractRegistrationScenario();
@@ -41,7 +41,7 @@ public sealed class GeneratedIntegrationEventDispatchTests
     }
 
     [Fact]
-    public void Contract_registration_rejects_different_json_metadata_for_the_same_contract()
+    public void Contract_registration_rejects_different_JSON_metadata_for_the_same_contract()
     {
         // Arrange
         var scenario = new IntegrationEventContractRegistrationScenario();
@@ -61,7 +61,7 @@ public sealed class GeneratedIntegrationEventDispatchTests
     }
 
     [Fact]
-    public void Contract_registration_rejects_ambiguous_existing_json_metadata()
+    public void Contract_registration_rejects_ambiguous_existing_JSON_metadata()
     {
         // Arrange
         var scenario = new IntegrationEventContractRegistrationScenario();
@@ -82,7 +82,7 @@ public sealed class GeneratedIntegrationEventDispatchTests
     }
 
     [Fact]
-    public void Contract_registration_ignores_keyed_json_metadata()
+    public void Contract_registration_ignores_keyed_JSON_metadata()
     {
         // Arrange
         var scenario = new IntegrationEventContractRegistrationScenario();
@@ -100,7 +100,7 @@ public sealed class GeneratedIntegrationEventDispatchTests
     }
 
     [Fact]
-    public void Serialize_uses_registered_json_metadata()
+    public void Serialize_uses_registered_JSON_metadata()
     {
         // Arrange
         var serializer = GeneratedIntegrationEventTestServices.CreateSerializer();

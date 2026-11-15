@@ -190,7 +190,7 @@ public sealed class CiConfigurationFileTests : IDisposable
     [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP_VALUE\", \"stopTimeoutSeconds\": 0 }", ": $.slices[0].service.stopTimeoutSeconds must be from 1 to 3600.")]
     [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP_VALUE\", \"stopTimeoutSeconds\": -5 }", ": $.slices[0].service.stopTimeoutSeconds must be from 1 to 3600.")]
     [InlineData("\"slices\": [{ \"name\": \"library\", \"projects\": [] }]", "\"slices\": [{ \"name\": \"library\", \"projects\": [], \"service\": " + HostService + " }, { \"name\": \"other\", \"projects\": [\"tests/A/A.csproj\"], \"service\": { \"project\": \"tests/Other/Other.csproj\", \"readyFileVariable\": \"OTHER_READY_FILE\", \"valueVariable\": \"APP_VALUE\" } }]", ": $.slices[1].service.valueVariable repeats APP_VALUE, which the service of slice library already hands to its tests.")]
-    public async Task Invalid_configuration_names_the_file_and_the_json_path(string original, string replacement, string expected)
+    public async Task Invalid_configuration_names_the_file_and_the_JSON_path(string original, string replacement, string expected)
     {
         // Arrange
         var content = RepositoryTestScope.DefaultConfiguration.Replace(original, replacement, StringComparison.Ordinal);

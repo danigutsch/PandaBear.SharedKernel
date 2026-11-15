@@ -10,17 +10,24 @@ namespace PandaBear.Testing.Analyzers;
 internal sealed class TestingAnalyzerConfigOptions(
     ImmutableArray<RequiredTrait> requiredTraits,
     bool strictTestMethodCasing,
-    ImmutableArray<string> allowedScopes)
+    ImmutableArray<string> allowedScopes,
+    ImmutableArray<string> additionalAllowedSegments,
+    ImmutableArray<string> invalidAdditionalAllowedSegments)
 {
     private const string RequiredTraitsKey = "sharedkernel_testing_required_traits";
     private const string StrictTestMethodCasingKey = "sharedkernel_testing_strict_test_method_casing";
     private const string AllowedScopesKey = "sharedkernel_testing_allowed_scopes";
+    private const string AdditionalAllowedSegmentsKey = "sharedkernel_testing_additional_allowed_segments";
 
     public ImmutableArray<RequiredTrait> RequiredTraits { get; } = requiredTraits;
 
     public bool StrictTestMethodCasing { get; } = strictTestMethodCasing;
 
     public ImmutableArray<string> AllowedScopes { get; } = allowedScopes;
+
+    public ImmutableArray<string> AdditionalAllowedSegments { get; } = additionalAllowedSegments;
+
+    public ImmutableArray<string> InvalidAdditionalAllowedSegments { get; } = invalidAdditionalAllowedSegments;
 
     public static TestingAnalyzerConfigOptions Parse(AnalyzerConfigOptionsProvider optionsProvider, SyntaxTree? syntaxTree)
     {
@@ -34,10 +41,11 @@ internal sealed class TestingAnalyzerConfigOptions(
             "false",
             StringComparison.OrdinalIgnoreCase);
         var allowedScopes = ParseAllowedScopes(TryGetOption(optionsProvider, syntaxTree, AllowedScopesKey));
+        var (additionalSegments, invalidSegments) = ParseAdditionalAllowedSegments(TryGetOption(optionsProvider, syntaxTree, AdditionalAllowedSegmentsKey));
         var value = TryGetOption(optionsProvider, syntaxTree, RequiredTraitsKey);
         if (value is not { } configuredTraits || string.IsNullOrWhiteSpace(configuredTraits))
         {
-            return new TestingAnalyzerConfigOptions([], strictTestMethodCasing, allowedScopes);
+            return new TestingAnalyzerConfigOptions([], strictTestMethodCasing, allowedScopes, additionalSegments, invalidSegments);
         }
 
         var traits = configuredTraits.Split([';'], StringSplitOptions.RemoveEmptyEntries)
@@ -46,7 +54,7 @@ internal sealed class TestingAnalyzerConfigOptions(
             .Select(static parts => new RequiredTrait(parts[0].Trim(), parts[1].Trim()))
             .ToImmutableArray();
 
-        return new TestingAnalyzerConfigOptions(traits, strictTestMethodCasing, allowedScopes);
+        return new TestingAnalyzerConfigOptions(traits, strictTestMethodCasing, allowedScopes, additionalSegments, invalidSegments);
     }
 
     private static ImmutableArray<string> ParseAllowedScopes(string? configured)
@@ -63,6 +71,27 @@ internal sealed class TestingAnalyzerConfigOptions(
             .ToImmutableArray();
 
         return scopes.IsDefaultOrEmpty ? TestScopeValues.All : scopes;
+    }
+
+    private static (ImmutableArray<string> Valid, ImmutableArray<string> Invalid) ParseAdditionalAllowedSegments(string? configured)
+    {
+        if (string.IsNullOrWhiteSpace(configured))
+        {
+            return ([], []);
+        }
+
+        var valid = ImmutableArray.CreateBuilder<string>();
+        var invalid = ImmutableArray.CreateBuilder<string>();
+        foreach (var entry in configured!.Split([',']).Select(static entry => entry.Trim()))
+        {
+            var target = entry.Length != 0 && char.IsLetter(entry[0]) && entry.All(char.IsLetterOrDigit) ? valid : invalid;
+            if (!target.Contains(entry))
+            {
+                target.Add(entry);
+            }
+        }
+
+        return (valid.ToImmutable(), invalid.ToImmutable());
     }
 
     private static string? TryGetOption(AnalyzerConfigOptionsProvider optionsProvider, SyntaxTree? syntaxTree, string key)

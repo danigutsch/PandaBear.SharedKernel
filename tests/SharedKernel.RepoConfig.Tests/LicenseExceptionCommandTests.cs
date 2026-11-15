@@ -65,7 +65,7 @@ public sealed class LicenseExceptionCommandTests
     }
 
     [Fact]
-    public async Task Verify_license_exceptions_matches_locked_package_ids_ignoring_case()
+    public async Task Verify_license_exceptions_matches_locked_package_IDs_ignoring_case()
     {
         // Arrange
         using var repository = await LicenseExceptionTestRepository.Create(new LicenseScenario(PackageName: "streamjsonrpc", DependencyVersion: "2.25.30"));
@@ -238,7 +238,7 @@ public sealed class LicenseExceptionCommandTests
     [InlineData("""{"version":1,"licenseExceptions":{"approval":{"file":"pin.json","values":{"a":"b"}},"packages":{"A,B":"1.0.0"}}}""", ".config/sharedkernel-repo.json: $.licenseExceptions.packages['A,B'] must be a NuGet package ID.")]
     [InlineData("""{"version":1,"licenseExceptions":{"approval":{"file":"pin.json","values":{"a":"b"}},"packages":{"A":"1.0.0\npackages=other"}}}""", ".config/sharedkernel-repo.json: $.licenseExceptions.packages['A'] must be a NuGet version.")]
     [InlineData("""{"version":1,"licenseExceptions":{"approval":{"file":"pin.json","values":{"a":"b"}},"packages":{"A":null}}}""", ".config/sharedkernel-repo.json: $.licenseExceptions.packages['A'] must be a NuGet version.")]
-    public async Task Verify_license_exceptions_names_the_file_and_json_path_of_an_invalid_configuration(string configuration, string expectedError)
+    public async Task Verify_license_exceptions_names_the_file_and_JSON_path_of_an_invalid_configuration(string configuration, string expectedError)
     {
         // Arrange
         using var repository = await LicenseExceptionTestRepository.Create(new LicenseScenario(), configuration);

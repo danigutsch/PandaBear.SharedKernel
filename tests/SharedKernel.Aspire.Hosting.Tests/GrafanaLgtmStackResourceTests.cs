@@ -126,7 +126,7 @@ public sealed class GrafanaLgtmStackResourceTests
     }
 
     [Fact]
-    public void AddTempo_adds_a_readiness_check_on_the_http_port()
+    public void AddTempo_adds_a_readiness_check_on_the_HTTP_port()
     {
         // Arrange
         var builder = DistributedApplication.CreateBuilder([]);

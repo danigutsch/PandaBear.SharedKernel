@@ -151,7 +151,7 @@ public sealed class SharedKernelAspireCodeFixProviderTests
     }
 
     [Fact]
-    public void Fixable_diagnostic_ids_match_registered_aspire_fixes()
+    public void Fixable_diagnostic_IDs_match_registered_aspire_fixes()
     {
         // Arrange
         var provider = new SharedKernelAspireCodeFixProvider();

@@ -33,7 +33,7 @@ public sealed class ThemeFontTests
     [InlineData("/fonts/x\");}*{color:red}/*.woff2")]
     [InlineData("/fonts/x<b.woff2")]
     [InlineData("mailto:a@example.org")]
-    public void A_face_refuses_other_files_schemes_and_css_breaking_characters(string src)
+    public void A_face_refuses_other_files_schemes_and_CSS_breaking_characters(string src)
     {
         // Arrange & Act
         var result = ThemeFontFace.Create(400, ThemeFontStyle.Normal, LinkTarget.FromString(src));
@@ -84,7 +84,7 @@ public sealed class ThemeFontTests
     [InlineData("Inter\n")]
     [InlineData("")]
     [InlineData(null)]
-    public void Font_family_names_that_could_break_out_of_a_css_string_are_invalid(string? family)
+    public void Font_family_names_that_could_break_out_of_a_CSS_string_are_invalid(string? family)
     {
         // Arrange & Act
         var result = ThemeFont.Create("brand", family, [ThemeFixtures.Face(400)]);

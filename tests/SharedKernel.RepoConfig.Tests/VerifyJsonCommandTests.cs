@@ -15,7 +15,7 @@ public sealed class VerifyJsonCommandTests
     [Theory]
     [InlineData("jsonc")]
     [InlineData("utf8-bom")]
-    public async Task Verify_json_accepts_tracked_jsonc_without_traversing_untracked_caches(string scenario)
+    public async Task Verify_JSON_accepts_tracked_jsonc_without_traversing_untracked_caches(string scenario)
     {
         // Arrange
         using var repository = await VerifyJsonTestRepository.Create(TestContext.Current.CancellationToken);
@@ -39,7 +39,7 @@ public sealed class VerifyJsonCommandTests
     [InlineData("invalid-utf8", "Invalid UTF-8 at line 1, byte 3.")]
     [InlineData("empty", "Invalid JSON at line 1, byte 1: The input does not contain any JSON tokens.")]
     [InlineData("missing-tracked-file", "Is missing from the working tree.")]
-    public async Task Verify_json_reports_the_tracked_path_and_location_of_each_failure(string scenario, string expectedMessage)
+    public async Task Verify_JSON_reports_the_tracked_path_and_location_of_each_failure(string scenario, string expectedMessage)
     {
         // Arrange
         using var repository = await VerifyJsonTestRepository.Create(TestContext.Current.CancellationToken);
@@ -70,7 +70,7 @@ public sealed class VerifyJsonCommandTests
     }
 
     [Fact]
-    public async Task Verify_json_reports_every_malformed_file()
+    public async Task Verify_JSON_reports_every_malformed_file()
     {
         // Arrange
         using var repository = await VerifyJsonTestRepository.Create(TestContext.Current.CancellationToken);
@@ -94,7 +94,7 @@ public sealed class VerifyJsonCommandTests
     [Theory]
     [InlineData("{}", "{\"value\":", 1)]
     [InlineData("{\"value\":", "{}", 0)]
-    public async Task Verify_json_reads_working_tree_content_instead_of_the_staged_blob(string staged, string workingTree, int expectedExitCode)
+    public async Task Verify_JSON_reads_working_tree_content_instead_of_the_staged_blob(string staged, string workingTree, int expectedExitCode)
     {
         // Arrange
         using var repository = await VerifyJsonTestRepository.Create(TestContext.Current.CancellationToken);
@@ -110,7 +110,7 @@ public sealed class VerifyJsonCommandTests
     }
 
     [Fact]
-    public async Task Verify_json_rejects_a_file_larger_than_the_size_limit()
+    public async Task Verify_JSON_rejects_a_file_larger_than_the_size_limit()
     {
         // Arrange
         using var repository = await VerifyJsonTestRepository.Create(TestContext.Current.CancellationToken);
@@ -130,7 +130,7 @@ public sealed class VerifyJsonCommandTests
     }
 
     [Fact]
-    public async Task Verify_json_does_not_follow_a_tracked_symbolic_link()
+    public async Task Verify_JSON_does_not_follow_a_tracked_symbolic_link()
     {
         // Arrange
         if (OperatingSystem.IsWindows())
@@ -154,7 +154,7 @@ public sealed class VerifyJsonCommandTests
     }
 
     [Fact]
-    public async Task Verify_json_uses_the_working_directory_when_root_is_omitted()
+    public async Task Verify_JSON_uses_the_working_directory_when_root_is_omitted()
     {
         // Arrange
         using var repository = await VerifyJsonTestRepository.Create(TestContext.Current.CancellationToken);
@@ -170,7 +170,7 @@ public sealed class VerifyJsonCommandTests
     }
 
     [Fact]
-    public async Task Verify_json_reports_an_unreadable_index_without_raw_git_details()
+    public async Task Verify_JSON_reports_an_unreadable_index_without_raw_git_details()
     {
         // Arrange
         using var repository = await VerifyJsonTestRepository.Create(TestContext.Current.CancellationToken);
@@ -187,7 +187,7 @@ public sealed class VerifyJsonCommandTests
     }
 
     [Fact]
-    public async Task Verify_json_rejects_arguments_instead_of_skipping_validation()
+    public async Task Verify_JSON_rejects_arguments_instead_of_skipping_validation()
     {
         // Arrange
         using var repository = await VerifyJsonTestRepository.Create(TestContext.Current.CancellationToken);

@@ -6,7 +6,7 @@ namespace PandaBear.ApiVersioning.Tests;
 public sealed class ApiVersionDefinitionTests
 {
     [Fact]
-    public void Uses_route_segment_as_default_openapi_document_name()
+    public void Uses_route_segment_as_default_OpenApi_document_name()
     {
         // Arrange
         var definition = new ApiVersionDefinition(new ApiVersion(1));

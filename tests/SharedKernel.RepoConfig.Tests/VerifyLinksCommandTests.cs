@@ -74,7 +74,7 @@ public sealed class VerifyLinksCommandTests
     }
 
     [Fact]
-    public async Task Verify_links_matches_python_line_splitting_lowercasing_and_url_parsing()
+    public async Task Verify_links_matches_python_line_splitting_lowercasing_and_URL_parsing()
     {
         // Arrange
         using var workspace = LinkTestRepository.CreateWorkspace(DocsConfiguration);
@@ -194,7 +194,7 @@ public sealed class VerifyLinksCommandTests
     [InlineData("""{"version":1,"links":{"include":["../*.md"],"exclude":[]}}""", ".config/sharedkernel-repo.json: $.links.include[0] must be a repository-relative path pattern with '/' separators and without empty, '.', or '..' segments.")]
     [InlineData("""{"version":1,"links":{"include":["*.md"],"exclude":["docs\\*.md"]}}""", ".config/sharedkernel-repo.json: $.links.exclude[0] must be a repository-relative path pattern with '/' separators and without empty, '.', or '..' segments.")]
     [InlineData("""{"version":1,"links":{"include":["*.md","/docs/*.md"],"exclude":[]}}""", ".config/sharedkernel-repo.json: $.links.include[1] must be a repository-relative path pattern with '/' separators and without empty, '.', or '..' segments.")]
-    public async Task Verify_links_names_the_file_and_json_path_of_an_invalid_links_section(string configuration, string expectedError)
+    public async Task Verify_links_names_the_file_and_JSON_path_of_an_invalid_links_section(string configuration, string expectedError)
     {
         // Arrange
         using var workspace = LinkTestRepository.CreateWorkspace(configuration);

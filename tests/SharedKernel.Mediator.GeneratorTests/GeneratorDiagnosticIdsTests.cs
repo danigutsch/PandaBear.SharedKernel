@@ -5,7 +5,7 @@ namespace PandaBear.Mediator.GeneratorTests;
 public sealed class GeneratorDiagnosticIdsTests
 {
     [Fact]
-    public void Mediator_diagnostic_ids_remain_stable()
+    public void Mediator_diagnostic_IDs_remain_stable()
     {
         // Act, Assert
         MediatorDiagnosticIds.MissingHandler.ShouldBe("SKMED001");
@@ -30,7 +30,7 @@ public sealed class GeneratorDiagnosticIdsTests
     }
 
     [Fact]
-    public void Analyzer_releases_unshipped_lists_the_current_mediator_diagnostic_ids()
+    public void Analyzer_releases_unshipped_lists_the_current_mediator_diagnostic_IDs()
     {
         // Act
         var analyzerReleaseIds = File.ReadAllLines(GeneratorDiagnosticIdsTestsHelpers.GetAnalyzerReleasesPath())

@@ -230,7 +230,7 @@ public sealed class RoadmapAutomationCommandTests
     }
 
     [Fact]
-    public async Task Publish_command_with_force_writes_a_nonempty_pull_request_url()
+    public async Task Publish_command_with_force_writes_a_nonempty_pull_request_URL()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();

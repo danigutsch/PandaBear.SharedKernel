@@ -379,7 +379,7 @@ public sealed class SharedKernelAspireAnalyzerTests
     }
 
     [Fact]
-    public async Task Postgre_sql_redis_and_companion_image_pins_with_tags_do_not_report_ska_spire001()
+    public async Task Postgre_SQL_redis_and_companion_image_pins_with_tags_do_not_report_ska_spire001()
     {
         // Arrange
         const string source = """

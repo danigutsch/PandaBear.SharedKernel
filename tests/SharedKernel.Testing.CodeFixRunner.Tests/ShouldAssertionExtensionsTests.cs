@@ -20,7 +20,7 @@ public sealed class ShouldAssertionExtensionsTests
     }
 
     [Fact]
-    public void Should_assertion_extensions_support_migrated_xunit_assertion_overloads()
+    public void Should_assertion_extensions_support_migrated_xUnit_assertion_overloads()
     {
         // Arrange
         string[] values = ["alpha", "beta"];

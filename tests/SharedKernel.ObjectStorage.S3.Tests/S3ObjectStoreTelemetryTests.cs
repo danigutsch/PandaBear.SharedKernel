@@ -6,7 +6,7 @@ namespace PandaBear.ObjectStorage.S3.Tests;
 public sealed class S3ObjectStoreTelemetryTests
 {
     [Fact]
-    public async Task Operations_emit_activities_without_bucket_key_or_url_tags()
+    public async Task Operations_emit_activities_without_bucket_key_or_URL_tags()
     {
         // Arrange
         var expectedSource = S3ObjectStoreTelemetry.ActivitySource;
@@ -34,7 +34,7 @@ public sealed class S3ObjectStoreTelemetryTests
     }
 
     [Fact]
-    public async Task Operations_suppress_downstream_http_instrumentation_and_restore_it()
+    public async Task Operations_suppress_downstream_HTTP_instrumentation_and_restore_it()
     {
         // Arrange
         using var client = new FakeAmazonS3Client();

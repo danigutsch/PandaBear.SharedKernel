@@ -341,7 +341,7 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public async Task Permits_http_authority_only_with_the_development_opt_in()
+    public async Task Permits_HTTP_authority_only_with_the_development_opt_in()
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
@@ -363,7 +363,7 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void Rejects_http_authority_without_the_development_opt_in()
+    public void Rejects_HTTP_authority_without_the_development_opt_in()
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(

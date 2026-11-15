@@ -38,7 +38,7 @@ public sealed class TotpUriTests
     }
 
     [Fact]
-    public void Steam_uri_keeps_native_steam_form()
+    public void Steam_URI_keeps_native_steam_form()
     {
         // Arrange
         string secret = TestSecrets.Base32Encode(TestSecrets.Bytes(3, 10));

@@ -58,7 +58,7 @@ public sealed class DuplicateMatcherTests
     }
 
     [Fact]
-    public void Match_title_and_type_fallback_without_uri()
+    public void Match_title_and_type_fallback_without_URI()
     {
         // Arrange
         var first = Note("n1", "Home  WiFi");

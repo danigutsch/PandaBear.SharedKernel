@@ -151,7 +151,7 @@ public sealed class HttpJsonSuccessAssertionTests
     }
 
     [Fact]
-    public async Task Ok_rejects_a_json_null_body()
+    public async Task Ok_rejects_a_JSON_null_body()
     {
         // Arrange
         using var response = SuccessResponses.Text(HttpStatusCode.OK, "null");

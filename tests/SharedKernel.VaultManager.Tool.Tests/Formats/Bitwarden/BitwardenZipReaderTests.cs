@@ -93,7 +93,7 @@ public sealed class BitwardenZipReaderTests : IDisposable
     }
 
     [Fact]
-    public void Read_zip_without_data_json_throws_invalid_data()
+    public void Read_zip_without_data_JSON_throws_invalid_data()
     {
         // Arrange
         string path = Path.Combine(DirectoryPath, "empty.zip");

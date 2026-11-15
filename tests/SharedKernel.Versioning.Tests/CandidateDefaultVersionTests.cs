@@ -28,7 +28,7 @@ public static class CandidateDefaultVersionTests
     }
 
     [Fact]
-    public static void Default_version_converts_the_time_to_utc()
+    public static void Default_version_converts_the_time_to_UTC()
     {
         // Arrange
         var now = new DateTimeOffset(2026, 11, 14, 20, 25, 37, TimeSpan.FromHours(1));

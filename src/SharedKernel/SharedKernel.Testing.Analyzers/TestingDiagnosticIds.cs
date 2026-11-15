@@ -88,4 +88,9 @@ public static class TestingDiagnosticIds
     /// Diagnostic emitted when code waits for a page or frame address with Playwright's <c>WaitForURLAsync</c>.
     /// </summary>
     public const string PlaywrightUrlWait = "SKTEST020";
+
+    /// <summary>
+    /// Diagnostic emitted when a <c>sharedkernel_testing_additional_allowed_segments</c> entry cannot name a test method name segment.
+    /// </summary>
+    public const string InvalidAdditionalAllowedSegment = "SKTEST021";
 }

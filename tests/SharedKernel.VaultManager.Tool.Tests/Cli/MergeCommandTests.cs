@@ -65,7 +65,7 @@ public sealed class MergeCommandTests : IDisposable
     }
 
     [Fact]
-    public async Task Merge_with_plaintext_writes_unencrypted_json_without_asking_for_a_password()
+    public async Task Merge_with_plaintext_writes_unencrypted_JSON_without_asking_for_a_password()
     {
         // Arrange
         string[] inputs = CliInputs.NewerBitwardenLogin(DirectoryPath);

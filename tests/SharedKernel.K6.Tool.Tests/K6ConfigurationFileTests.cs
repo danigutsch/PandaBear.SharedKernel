@@ -34,7 +34,7 @@ public sealed class K6ConfigurationFileTests
     [InlineData("""{ "version": 1, "scriptDirectory": "perf/k6", "resultsDirectory": "perf/results", "scenarios": [{ "name": "smoke", "script": "a.js" }] }""", "$.scenarios[0]")]
     [InlineData("""{ "version": 1, "version": 1, "scriptDirectory": "perf/k6", "resultsDirectory": "perf/results", "scenarios": [] }""", "$.version")]
     [InlineData("""{ "version": 1, /* comment */ "scriptDirectory": "perf/k6", "resultsDirectory": "perf/results", "scenarios": [] }""", "$")]
-    public async Task Malformed_json_fails_with_the_json_path(string configuration, string path)
+    public async Task Malformed_JSON_fails_with_the_JSON_path(string configuration, string path)
     {
         // Arrange
         using var repository = new K6TestRepository(configuration);
@@ -60,7 +60,7 @@ public sealed class K6ConfigurationFileTests
     [InlineData("\"APP_VUS\"", "\"K6_NO_USAGE_REPORT\"", "$.scenarios[0].environment[1] names K6_NO_USAGE_REPORT, which the tool sets.")]
     [InlineData("\"podman\"", "\"lxc\"", "$.container.engine must be docker or podman.")]
     [InlineData("@sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "", "$.container.image must be an image reference pinned by digest, such as grafana/k6:<tag>@sha256:<digest>.")]
-    public async Task Invalid_values_fail_with_the_json_path(string original, string replacement, string message)
+    public async Task Invalid_values_fail_with_the_JSON_path(string original, string replacement, string message)
     {
         // Arrange
         using var repository = new K6TestRepository(K6TestRepository.DefaultConfiguration.Replace(original, replacement, StringComparison.Ordinal));
@@ -80,7 +80,7 @@ public sealed class K6ConfigurationFileTests
     [InlineData("\"/health\"", "\"//evil.example/health\"", "$.scenarios[0].host.healthPath must be a path that starts with '/', without a query or fragment.")]
     [InlineData("\"readyTimeoutSeconds\": 5", "\"readyTimeoutSeconds\": 0", "$.scenarios[0].host.readyTimeoutSeconds must be from 1 to 3600.")]
     [InlineData("\"healthTimeoutSeconds\": 5", "\"healthTimeoutSeconds\": 3601", "$.scenarios[0].host.healthTimeoutSeconds must be from 1 to 3600.")]
-    public async Task Invalid_host_values_fail_with_the_json_path(string original, string replacement, string message)
+    public async Task Invalid_host_values_fail_with_the_JSON_path(string original, string replacement, string message)
     {
         // Arrange
         var configuration = K6TestRepository.DefaultConfiguration

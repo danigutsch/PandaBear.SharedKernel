@@ -9,7 +9,7 @@ namespace PandaBear.Blazor.Tests;
 public sealed class UiFailureReporterTests
 {
     [Fact]
-    public void Report_logs_only_type_operation_and_trace_id_and_increments_the_counter()
+    public void Report_logs_only_type_operation_and_trace_ID_and_increments_the_counter()
     {
         // Arrange
         var logger = new CapturingLogger<UiFailureReporter>();

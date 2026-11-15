@@ -109,7 +109,7 @@ public sealed class SecurityEventTelemetryTests
     }
 
     [Fact]
-    public async Task Existing_jwt_bearer_event_handlers_still_run_after_the_report()
+    public async Task Existing_JWT_bearer_event_handlers_still_run_after_the_report()
     {
         // Arrange
         var ran = false;

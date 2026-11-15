@@ -66,7 +66,7 @@ public sealed class IntegrationEventOutboxMessageTests
     }
 
     [Fact]
-    public void Rejects_empty_message_id()
+    public void Rejects_empty_message_ID()
     {
         // Arrange
         Action create = () =>
@@ -371,7 +371,7 @@ public sealed class IntegrationEventOutboxMessageTests
     }
 
     [Fact]
-    public async Task PostgreSql_atomic_claim_sql_uses_skip_locked()
+    public async Task PostgreSql_atomic_claim_SQL_uses_skip_locked()
     {
         // Arrange
         await using var scope = ConsumerMessagingTestServices.CreateOutboxScope();
@@ -391,7 +391,7 @@ public sealed class IntegrationEventOutboxMessageTests
     }
 
     [Fact]
-    public async Task PostgreSql_transport_claim_sql_uses_skip_locked_and_consumer_filter()
+    public async Task PostgreSql_transport_claim_SQL_uses_skip_locked_and_consumer_filter()
     {
         // Arrange
         await using var scenario = ConsumerMessagingTestServices.CreateTransportScenario();
@@ -435,7 +435,7 @@ public sealed class IntegrationEventOutboxMessageTests
     }
 
     [Fact]
-    public async Task Transport_model_uses_consumer_and_event_id_as_inbox_duplicate_key()
+    public async Task Transport_model_uses_consumer_and_event_ID_as_inbox_duplicate_key()
     {
         // Arrange
         await using var scenario = ConsumerMessagingTestServices.CreateTransportScenario();

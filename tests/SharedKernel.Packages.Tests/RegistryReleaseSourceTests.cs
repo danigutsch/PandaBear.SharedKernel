@@ -153,7 +153,7 @@ public sealed class RegistryReleaseSourceTests
     [InlineData(HttpStatusCode.InternalServerError, ResultStatus.Unavailable)]
     [InlineData(HttpStatusCode.TooManyRequests, ResultStatus.Unavailable)]
     [InlineData(HttpStatusCode.Redirect, ResultStatus.Unavailable)]
-    public async Task An_http_error_is_a_failure_with_a_matching_status(HttpStatusCode code, ResultStatus expected)
+    public async Task An_HTTP_error_is_a_failure_with_a_matching_status(HttpStatusCode code, ResultStatus expected)
     {
         // Arrange
         using var handler = FakeHttpHandler.Answering(_ => FakeHttpHandler.Json("secret-body", code));

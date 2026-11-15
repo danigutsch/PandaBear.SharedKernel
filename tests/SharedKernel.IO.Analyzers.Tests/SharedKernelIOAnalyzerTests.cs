@@ -67,7 +67,7 @@ public sealed class SharedKernelIOAnalyzerTests
     }
 
     [Fact]
-    public async Task Copy_to_memory_stream_from_http_content_stream_reports_skio001()
+    public async Task Copy_to_memory_stream_from_HTTP_content_stream_reports_skio001()
     {
         // Arrange
         const string source = """

@@ -647,7 +647,7 @@ public sealed class SettingsCommandTests
     [InlineData("""{ "excludedCommands": [""] }""", "$.settings.excludedCommands[0]")]
     [InlineData("""{ "denyRead": ["~/a\u0007"] }""", "$.settings.denyRead[0]")]
     [InlineData("""{ "bogus": 1 }""", "$.settings.bogus")]
-    public async Task An_invalid_settings_section_fails_with_exit_two_naming_the_json_path(string settings, string expected)
+    public async Task An_invalid_settings_section_fails_with_exit_two_naming_the_JSON_path(string settings, string expected)
     {
         // Arrange
         using var repository = CreateRepository(Configuration(settings));

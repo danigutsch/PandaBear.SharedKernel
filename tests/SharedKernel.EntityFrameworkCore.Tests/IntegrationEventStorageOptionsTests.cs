@@ -199,7 +199,7 @@ public sealed class IntegrationEventStorageOptionsTests
     }
 
     [Fact]
-    public async Task PostgreSql_claim_sql_uses_each_effective_table_schema()
+    public async Task PostgreSql_claim_SQL_uses_each_effective_table_schema()
     {
         // Act
         var storage = await ContextQualifiedMessagingScenario.GetSplitSchemaStorage();
@@ -210,7 +210,7 @@ public sealed class IntegrationEventStorageOptionsTests
     }
 
     [Fact]
-    public async Task PostgreSql_claim_sql_uses_each_contexts_validated_metadata_identifiers()
+    public async Task PostgreSql_claim_SQL_uses_each_contexts_validated_metadata_identifiers()
     {
         // Arrange
         await using var scenario = ContextQualifiedMessagingScenario.Create();

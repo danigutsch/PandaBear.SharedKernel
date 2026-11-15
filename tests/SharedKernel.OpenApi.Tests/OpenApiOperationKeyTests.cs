@@ -9,7 +9,7 @@ public sealed class OpenApiOperationKeyTests
     [Xunit.InlineData(" ")]
     [Xunit.InlineData("GET POST")]
     [Xunit.InlineData("GET\n")]
-    public void Invalid_http_method_tokens_cannot_form_operation_keys(string method)
+    public void Invalid_HTTP_method_tokens_cannot_form_operation_keys(string method)
     {
         // Act
         Action create = () => _ = OpenApiOperationKey.Create("files", method);

@@ -263,7 +263,7 @@ public sealed class ModelIdentityGeneratorTests
     }
 
     [Fact]
-    public void Reports_diagnostic_when_id_property_is_missing()
+    public void Reports_diagnostic_when_ID_property_is_missing()
     {
         // Arrange
         const string source = """
@@ -286,7 +286,7 @@ public sealed class ModelIdentityGeneratorTests
     }
 
     [Fact]
-    public void Reports_diagnostic_when_id_type_does_not_match_identified_interface()
+    public void Reports_diagnostic_when_ID_type_does_not_match_identified_interface()
     {
         // Arrange
         const string source = """
@@ -466,7 +466,7 @@ public sealed class ModelIdentityGeneratorTests
     [InlineData("public int Id { get; set; }")]
     [InlineData("public int Id { get; init; }")]
     [InlineData("public static int Id => 42;")]
-    public void Reports_diagnostic_when_id_shape_is_not_stable(string idProperty)
+    public void Reports_diagnostic_when_ID_shape_is_not_stable(string idProperty)
     {
         // Arrange
         var source = $$"""
@@ -489,7 +489,7 @@ public sealed class ModelIdentityGeneratorTests
     }
 
     [Fact]
-    public void Allows_get_only_id_properties()
+    public void Allows_get_only_ID_properties()
     {
         // Arrange
         const string source = """

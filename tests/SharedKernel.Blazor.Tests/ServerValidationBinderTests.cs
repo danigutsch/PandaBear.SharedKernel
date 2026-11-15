@@ -190,7 +190,7 @@ public sealed class ServerValidationBinderTests
     }
 
     [Fact]
-    public void Summary_items_link_each_issue_to_the_field_id_chosen_by_the_caller()
+    public void Summary_items_link_each_issue_to_the_field_ID_chosen_by_the_caller()
     {
         // Arrange
         var context = new EditContext(new ServerValidationModel());

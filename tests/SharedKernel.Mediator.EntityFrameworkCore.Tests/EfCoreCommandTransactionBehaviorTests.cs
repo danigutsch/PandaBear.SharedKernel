@@ -100,7 +100,7 @@ public sealed class EfCoreCommandTransactionBehaviorTests
     }
 
     [Fact]
-    public void Registers_closed_transaction_behavior_without_global_dbcontext()
+    public void Registers_closed_transaction_behavior_without_global_DbContext()
     {
         // Arrange
         using var scope = new EfCoreMediatorTestScope();

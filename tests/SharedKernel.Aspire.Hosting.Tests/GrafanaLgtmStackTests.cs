@@ -56,7 +56,7 @@ public sealed class GrafanaLgtmStackTests
     }
 
     [Fact]
-    public async Task AddOpenTelemetryCollectorGateway_routes_http_protobuf_to_the_http_endpoint_and_waits_for_health()
+    public async Task AddOpenTelemetryCollectorGateway_routes_HTTP_protobuf_to_the_HTTP_endpoint_and_waits_for_health()
     {
         // Arrange
         var builder = DistributedApplication.CreateBuilder(["--operation", "publish"]);

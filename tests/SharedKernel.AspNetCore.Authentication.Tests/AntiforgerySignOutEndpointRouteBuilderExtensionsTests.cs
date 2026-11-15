@@ -26,7 +26,7 @@ public sealed class AntiforgerySignOutEndpointRouteBuilderExtensionsTests
     }
 
     [Fact]
-    public void Accepts_a_local_uri_sign_out_redirect()
+    public void Accepts_a_local_URI_sign_out_redirect()
     {
         // Arrange
         var builder = WebApplication.CreateBuilder();

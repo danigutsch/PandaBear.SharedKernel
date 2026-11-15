@@ -32,7 +32,7 @@ public sealed class GitHubSubissueCommandTests
     }
 
     [Fact]
-    public async Task Link_resolves_native_id_and_verifies_the_parent_after_posting()
+    public async Task Link_resolves_native_ID_and_verifies_the_parent_after_posting()
     {
         // Arrange
         using var handler = Unparented();

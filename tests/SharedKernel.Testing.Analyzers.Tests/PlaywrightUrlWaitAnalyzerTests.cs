@@ -11,7 +11,7 @@ public sealed class PlaywrightUrlWaitAnalyzerTests
     [InlineData("await page.WaitForURLAsync(\"http://localhost/customers\");", "IPage")]
     [InlineData("await page.WaitForURLAsync(\"**/customers\", new Microsoft.Playwright.PageWaitForURLOptions());", "IPage")]
     [InlineData("await page.WaitForURLAsync(path);", "IPage")]
-    public async Task A_page_url_wait_for_a_string_is_reported(string statement, string owner)
+    public async Task A_page_URL_wait_for_a_string_is_reported(string statement, string owner)
     {
         // Arrange
         var source = PlaywrightUrlWaitTestSource.Create(statement);

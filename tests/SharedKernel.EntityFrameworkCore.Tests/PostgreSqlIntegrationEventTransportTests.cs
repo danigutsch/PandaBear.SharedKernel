@@ -53,7 +53,7 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
     }
 
     [Fact]
-    public async Task Duplicate_delivery_for_same_consumer_and_event_id_is_rejected_by_inbox_key()
+    public async Task Duplicate_delivery_for_same_consumer_and_event_ID_is_rejected_by_inbox_key()
     {
         // Arrange
         await Scenario.StageDuplicateDelivery(TestContext.Current.CancellationToken);

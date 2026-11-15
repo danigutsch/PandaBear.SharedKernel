@@ -51,7 +51,7 @@ public sealed class ResultErrorCatalogGeneratorTests
     }
 
     [Fact]
-    public void Generates_error_catalog_for_result_error_factory_without_http_metadata()
+    public void Generates_error_catalog_for_result_error_factory_without_HTTP_metadata()
     {
         // Arrange
         const string source = """

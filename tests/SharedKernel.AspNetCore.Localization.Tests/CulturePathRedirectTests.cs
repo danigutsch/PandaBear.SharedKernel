@@ -377,7 +377,7 @@ public sealed class CulturePathRedirectTests
     }
 
     [Fact]
-    public void RememberCulture_writes_the_culture_as_a_lax_http_only_cookie()
+    public void RememberCulture_writes_the_culture_as_a_lax_HTTP_only_cookie()
     {
         // Arrange
         var context = new DefaultHttpContext();

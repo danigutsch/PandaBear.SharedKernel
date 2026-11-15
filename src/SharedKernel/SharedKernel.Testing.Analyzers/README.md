@@ -34,6 +34,7 @@ test assertions. Do not apply it to regular production projects.
 | `SKTEST018` | Suggestion | Every xUnit test declares exactly one valid test scope. |
 | `SKTEST019` | Warning | `CallProxy.Create<TService>` must wrap a public interface. |
 | `SKTEST020` | Warning | Wait for a page address with `ExpectPath`, not Playwright's `WaitForURLAsync`. |
+| `SKTEST021` | Warning | Entries of `sharedkernel_testing_additional_allowed_segments` must start with a letter and contain only letters and digits. |
 | `SKTEST017` | Disabled; opt-in warning | Give every public `Should*` assertion an overload that takes `userMessage`. |
 
 See [test assertion conventions](../../../docs/TEST_GUIDELINES.md) for migrations, exception-testing
@@ -57,6 +58,9 @@ dotnet_diagnostic.SKTEST011.severity = suggestion
 dotnet_diagnostic.SKTEST019.severity = warning
 sharedkernel_testing_required_traits = Category=Smoke
 sharedkernel_testing_strict_test_method_casing = false
+
+[tests/**.cs]
+sharedkernel_testing_additional_allowed_segments = Errors, IntegrationEvent, BFF
 ```
 
 `SKTEST007` is intentionally opt-in by syntax: it only checks methods that already contain a single
@@ -79,10 +83,40 @@ Keep existing `SKTEST001`–`SKTEST009` diagnostics at `warning`; repository war
 the build without changing analyzer descriptor severity.
 
 `sharedkernel_testing_strict_test_method_casing` defaults to `true` and requires sentence-style
-underscore names like `Creates_a_tour_when_the_request_is_valid` while allowing known terms such as
-`API`, `AsyncAPI`, `HTTP2`, `SKTEST004`, `xUnit`, `IDs`, `Task`, `ValueTask`, `HttpClient`, `OpenApi`, `UI`,
-`NavMenu`, `NavLink`, and `DataAnnotationsValidator`. Set it to `false` only for temporary
-migration windows.
+underscore names like `Creates_a_tour_when_the_request_is_valid`: after the first segment, every segment is lowercase
+letters and digits unless it is a listed segment. Set it to `false` only for temporary migration windows.
+
+### Listed segments
+
+A segment matches a listed entry when it equals the entry ignoring case, as a whole segment between underscores, never
+as a substring: `ai` in `Opens_the_main_page` is untouched, while `Calls_the_ai` must be written `Calls_the_AI`. A
+matching segment must use the listed spelling, and the message names each correction, for example
+`write 'json' as 'JSON'`. The `SKTEST002` rename fix applies the listed spelling. The one exception is an entry that is
+a capitalised plain word, such as `Task` or a configured `Errors`: its lowercase form is an ordinary English word and
+stays allowed. The first segment may also capitalise an entry that starts in lower case, such as `XUnit`.
+
+The built-in entries are always on and cannot be removed. They are widely used acronyms, protocols and formats, and
+public .NET, ASP.NET Core and test framework type names. Each concept has one spelling: acronyms are upper case and type
+names keep their declared casing:
+
+`AI`, `API`, `AsyncAPI`, `CORS`, `CSP`, `CSS`, `CSV`, `CancellationToken`, `ClaimsPrincipal`, `DTO`,
+`DataAnnotationsValidator`, `DateOnly`, `DateTime`, `DbContext`, `EF`, `ETag`, `EditContext`, `GUID`, `HTML`, `HTTP`,
+`HTTP2`, `HttpClient`, `HttpContext`, `HttpRequest`, `HttpResponse`, `HttpStatusCode`, `ID`, `IDs`, `IQueryable`, `JSON`,
+`JWT`, `NavLink`, `NavLinks`, `NavMenu`, `OAuth`, `OIDC`, `OpenApi`, `PDF`, `ProblemDetails`, `QuickGrid`, `SKTEST`
+(and diagnostic IDs such as `SKTEST004`), `SQL`, `Task`, `TimeOnly`, `TimeSpan`, `URI`, `URL`, `UI`, `UTC`,
+`ValidationMessage`, `ValueTask`, `XML`, and `xUnit`.
+
+`Json` and `Guid` are no longer accepted; write `JSON` and `GUID`.
+
+### Repository segments
+
+Names that exist in one repository, such as its own types or domain abbreviations, do not belong in the built-in list.
+Declare them with `sharedkernel_testing_additional_allowed_segments`, a comma-separated list read per file, so an
+`.editorconfig` section can limit it to a folder. A configured entry follows the same rules as a built-in one: it is
+matched exactly, forces its spelling (`bff` must be written `BFF` once `BFF` is configured) unless it is a capitalised
+plain word, and never relaxes the rule for any other segment. An entry that is empty, starts with a digit, or contains
+an underscore or another character that is not a letter or digit is ignored and reported once as `SKTEST021`. There is
+no setting to remove a built-in entry.
 
 ## Package boundary
 

@@ -611,7 +611,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static void Serializes_version_output_json()
+    public static void Serializes_version_output_JSON()
     {
         // Arrange
         var output = VersionOutput.Create(new SemanticVersion(1, 2, 3), ReleaseImpact.Minor, "abc123");
@@ -1192,7 +1192,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static async Task Writes_spdx_json_when_repository_url_property_uses_msbuild_casing()
+    public static async Task Writes_spdx_JSON_when_repository_URL_property_uses_msbuild_casing()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();

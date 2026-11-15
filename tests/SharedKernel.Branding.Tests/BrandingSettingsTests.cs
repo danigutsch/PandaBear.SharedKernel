@@ -29,7 +29,7 @@ public sealed class BrandingSettingsTests
     }
 
     [Fact]
-    public void Create_sanitizes_brand_name_and_round_trips_to_dto()
+    public void Create_sanitizes_brand_name_and_round_trips_to_DTO()
     {
         // Arrange
         var request = BrandingSettingsTestData.ValidRequest();
@@ -120,7 +120,7 @@ public sealed class BrandingSettingsTests
     [InlineData("  /images/logo.svg  ", "/images/logo.svg")]
     [InlineData(null, null)]
     [InlineData("", null)]
-    public void Create_allows_optional_root_relative_or_https_logo_uri(string? logoValue, string? expected)
+    public void Create_allows_optional_root_relative_or_https_logo_URI(string? logoValue, string? expected)
     {
         // Arrange
         var request = BrandingSettingsTestData.ValidRequest();
@@ -147,7 +147,7 @@ public sealed class BrandingSettingsTests
     [InlineData("/images/logo\0.svg")]
     [InlineData("https://cdn.example.test/logo\0.svg")]
     [InlineData("https://cdn.example.test/logo\u001F.svg")]
-    public void Create_rejects_unsafe_logo_uri(string logoValue)
+    public void Create_rejects_unsafe_logo_URI(string logoValue)
     {
         // Arrange
         var request = BrandingSettingsTestData.ValidRequest();

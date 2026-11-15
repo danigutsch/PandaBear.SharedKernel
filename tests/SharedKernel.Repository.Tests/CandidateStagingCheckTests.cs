@@ -54,7 +54,7 @@ public sealed class CandidateStagingCheckTests
     [InlineData("""{ "sdk": { "version": "10.0.401", "rollForward": "disable" } }""", "sdk.version 10.0.401 and sdk.rollForward disable")]
     [InlineData("""{ "sdk": { "version": "10.0.402", "rollForward": "latestPatch" } }""", "sdk.version 10.0.402 and sdk.rollForward latestPatch")]
     [InlineData("""{ "sdk": { "version": "10.0.402" } }""", "sdk.version 10.0.402 and sdk.rollForward (not set)")]
-    public async Task Sdk_lockstep_compares_both_global_json_files_before_git_runs(string libraryGlobalJson, string expectedLibraryValues)
+    public async Task Sdk_lockstep_compares_both_global_JSON_files_before_git_runs(string libraryGlobalJson, string expectedLibraryValues)
     {
         // Arrange
         using var scope = new CandidateStagingScope();
@@ -74,7 +74,7 @@ public sealed class CandidateStagingCheckTests
     }
 
     [Fact]
-    public async Task Sdk_lockstep_requires_the_consumer_global_json()
+    public async Task Sdk_lockstep_requires_the_consumer_global_JSON()
     {
         // Arrange
         using var scope = new CandidateStagingScope();

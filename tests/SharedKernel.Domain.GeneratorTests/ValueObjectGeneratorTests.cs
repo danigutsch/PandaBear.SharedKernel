@@ -67,7 +67,7 @@ public sealed class ValueObjectGeneratorTests
     }
 
     [Fact]
-    public void Generates_json_converter_when_json_is_requested()
+    public void Generates_JSON_converter_when_JSON_is_requested()
     {
         // Arrange
         const string source = """
@@ -95,7 +95,7 @@ public sealed class ValueObjectGeneratorTests
     }
 
     [Fact]
-    public void Generates_json_converter_with_json_exceptions_for_invalid_scalar_values()
+    public void Generates_JSON_converter_with_JSON_exceptions_for_invalid_scalar_values()
     {
         // Arrange
         const string source = """
@@ -139,7 +139,7 @@ public sealed class ValueObjectGeneratorTests
     }
 
     [Fact]
-    public void Generates_ef_core_converter_when_ef_core_is_requested_and_referenced()
+    public void Generates_EF_core_converter_when_EF_core_is_requested_and_referenced()
     {
         // Arrange
         const string source = """
@@ -273,7 +273,7 @@ public sealed class ValueObjectGeneratorTests
     }
 
     [Fact]
-    public void Reports_diagnostic_when_ef_core_is_requested_without_reference()
+    public void Reports_diagnostic_when_EF_core_is_requested_without_reference()
     {
         // Arrange
         const string source = """

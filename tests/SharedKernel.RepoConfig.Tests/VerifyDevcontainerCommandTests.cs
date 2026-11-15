@@ -75,7 +75,7 @@ public sealed class VerifyDevcontainerCommandTests
     }
 
     [Fact]
-    public async Task Cleanup_removes_the_last_container_id_in_the_trace_log()
+    public async Task Cleanup_removes_the_last_container_ID_in_the_trace_log()
     {
         // Arrange
         if (OperatingSystem.IsWindows())
@@ -116,7 +116,7 @@ public sealed class VerifyDevcontainerCommandTests
     }
 
     [Fact]
-    public async Task Missing_container_id_fails_without_metadata_or_cleanup()
+    public async Task Missing_container_ID_fails_without_metadata_or_cleanup()
     {
         // Arrange
         if (OperatingSystem.IsWindows())

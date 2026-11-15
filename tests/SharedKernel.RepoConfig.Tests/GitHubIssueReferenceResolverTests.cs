@@ -50,7 +50,7 @@ public sealed class GitHubIssueReferenceResolverTests
     }
 
     [Fact]
-    public async Task Resolve_refreshes_migrated_node_id_without_decoding()
+    public async Task Resolve_refreshes_migrated_node_ID_without_decoding()
     {
         // Arrange
         using var handler = new TestHttpMessageHandler();

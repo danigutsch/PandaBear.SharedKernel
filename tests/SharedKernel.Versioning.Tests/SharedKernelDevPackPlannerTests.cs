@@ -86,7 +86,7 @@ public static class SharedKernelDevPackPlannerTests
     }
 
     [Fact]
-    public static void The_package_id_comes_from_the_project_file_with_the_project_name_as_fallback()
+    public static void The_package_ID_comes_from_the_project_file_with_the_project_name_as_fallback()
     {
         // Arrange
         using var repository = new DevPackRepository();

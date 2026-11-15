@@ -165,7 +165,7 @@ public sealed class DoctorCommandTests
     [InlineData("""{"version":1}""", "is not valid at")]
     [InlineData("""{"version":1,"deniedReadPaths":[],"extra":1}""", "is not valid at")]
     [InlineData("not json", "is not valid at")]
-    public async Task An_invalid_configuration_is_reported_with_its_json_path_and_nothing_is_probed(string configuration, string expected)
+    public async Task An_invalid_configuration_is_reported_with_its_JSON_path_and_nothing_is_probed(string configuration, string expected)
     {
         // Arrange
         using var repository = CreateRepository(configuration);

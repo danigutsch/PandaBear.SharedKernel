@@ -6,7 +6,7 @@ namespace PandaBear.Messaging.IntegrationEvents.GeneratorTests;
 public sealed class IntegrationEventMappingGeneratorProtobufTests
 {
     [Fact]
-    public void Mapped_protobuf_event_is_serialized_as_base64_without_json_metadata()
+    public void Mapped_protobuf_event_is_serialized_as_base64_without_JSON_metadata()
     {
         // Arrange
         const string source = """
@@ -42,7 +42,7 @@ public sealed class IntegrationEventMappingGeneratorProtobufTests
     }
 
     [Fact]
-    public void Mixed_json_and_protobuf_mappings_take_json_metadata_only_for_the_json_event()
+    public void Mixed_JSON_and_protobuf_mappings_take_JSON_metadata_only_for_the_JSON_event()
     {
         // Arrange
         const string source = """
@@ -90,7 +90,7 @@ public sealed class IntegrationEventMappingGeneratorProtobufTests
     }
 
     [Fact]
-    public void Explicit_json_registration_keeps_a_mapped_protobuf_event_on_json()
+    public void Explicit_JSON_registration_keeps_a_mapped_protobuf_event_on_JSON()
     {
         // Arrange
         const string source = """
@@ -124,7 +124,7 @@ public sealed class IntegrationEventMappingGeneratorProtobufTests
     }
 
     [Fact]
-    public void Protobuf_and_json_contracts_with_one_event_type_still_fail_the_duplicate_check()
+    public void Protobuf_and_JSON_contracts_with_one_event_type_still_fail_the_duplicate_check()
     {
         // Arrange
         const string source = """

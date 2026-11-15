@@ -75,7 +75,7 @@ public sealed class ChildProcessEnvironmentTests
     }
 
     [Fact]
-    public async Task Verify_json_starts_git_from_path_without_github_tokens()
+    public async Task Verify_JSON_starts_git_from_path_without_github_tokens()
     {
         // Arrange
         if (OperatingSystem.IsWindows())

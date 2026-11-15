@@ -293,7 +293,7 @@ public sealed class CoverageGateTests
     [InlineData("HEAD~1")]
     [InlineData("0123456789abcdef0123456789abcdef0123456g")]
     [InlineData("0123456789abcdef")]
-    public async Task The_base_must_be_a_full_object_id(string baseRevision)
+    public async Task The_base_must_be_a_full_object_ID(string baseRevision)
     {
         // Arrange
         using var scope = new CoverageTestScope(5);

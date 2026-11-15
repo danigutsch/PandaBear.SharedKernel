@@ -4,7 +4,7 @@ namespace PandaBear.Repository.Tests;
 public sealed class RepositoryCommandLineTests
 {
     [Fact]
-    public async Task Help_lists_the_select_run_openapi_install_playwright_coverage_stage_candidate_verify_commit_message_and_run_mutation_tests_commands()
+    public async Task Help_lists_the_select_run_OpenApi_install_playwright_coverage_stage_candidate_verify_commit_message_and_run_mutation_tests_commands()
     {
         // Arrange
         using var scope = new RepositoryTestScope();

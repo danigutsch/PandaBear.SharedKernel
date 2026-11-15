@@ -46,7 +46,7 @@ public sealed class SiteComponentAttributeTests : BunitContext
     [InlineData("dir")]
     [InlineData("lang")]
     [InlineData("tabindex")]
-    public void Html_attributes_still_pass_through_to_the_root_element(string name)
+    public void HTML_attributes_still_pass_through_to_the_root_element(string name)
     {
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
@@ -62,7 +62,7 @@ public sealed class SiteComponentAttributeTests : BunitContext
     [InlineData("a\"b")]
     [InlineData("a=b")]
     [InlineData("a>b")]
-    public void An_attribute_name_that_html_cannot_hold_throws(string name)
+    public void An_attribute_name_that_HTML_cannot_hold_throws(string name)
     {
         // Arrange & Act
         var render = () => Render<Section>(parameters => parameters

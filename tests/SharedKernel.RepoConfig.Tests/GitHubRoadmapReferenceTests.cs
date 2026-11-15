@@ -316,7 +316,7 @@ public sealed class GitHubRoadmapReferenceTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task Fresh_sync_verifies_changed_node_id_without_rejecting_valid_format_migration(bool transferred)
+    public async Task Fresh_sync_verifies_changed_node_ID_without_rejecting_valid_format_migration(bool transferred)
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();

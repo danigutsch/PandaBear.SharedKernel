@@ -164,7 +164,7 @@ public sealed class DependencySubmitCommandTests
     [InlineData("[]", "sharedkernel-repo: TestResults/dependency-snapshot.json must contain a JSON object.")]
     [InlineData("{", "sharedkernel-repo: TestResults/dependency-snapshot.json: Invalid JSON at line 1, byte 2: Expected depth to be zero at the end of the JSON payload.")]
     [InlineData("{} // comment", "sharedkernel-repo: TestResults/dependency-snapshot.json: Invalid JSON at line 1, byte 4:")]
-    public async Task Submit_requires_a_json_object_snapshot_before_any_request(string snapshot, string expectedError)
+    public async Task Submit_requires_a_JSON_object_snapshot_before_any_request(string snapshot, string expectedError)
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();

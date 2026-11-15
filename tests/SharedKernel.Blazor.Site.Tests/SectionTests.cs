@@ -4,7 +4,7 @@ namespace PandaBear.Blazor.Site.Tests;
 public sealed class SectionTests : BunitContext
 {
     [Fact]
-    public void Section_has_a_level_two_heading_intro_and_body_and_no_generated_id()
+    public void Section_has_a_level_two_heading_intro_and_body_and_no_generated_ID()
     {
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
@@ -33,7 +33,7 @@ public sealed class SectionTests : BunitContext
     }
 
     [Fact]
-    public void A_heading_id_labels_the_section_by_its_heading()
+    public void A_heading_ID_labels_the_section_by_its_heading()
     {
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters
@@ -49,7 +49,7 @@ public sealed class SectionTests : BunitContext
     [InlineData("")]
     [InlineData(" ")]
     [InlineData("two words")]
-    public void A_blank_or_spaced_heading_id_is_rejected(string id)
+    public void A_blank_or_spaced_heading_ID_is_rejected(string id)
     {
         // Arrange & Act
         var render = () => Render<Section>(parameters => parameters

@@ -9,7 +9,7 @@ public sealed class UnhandledExceptionHandlerTests
     private const string SensitiveMessage = "secret-connection-string password=hunter2";
 
     [Fact]
-    public async Task Unhandled_exception_returns_problem_details_with_trace_id_and_no_exception_text()
+    public async Task Unhandled_exception_returns_problem_details_with_trace_ID_and_no_exception_text()
     {
         // Arrange
         using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
@@ -102,7 +102,7 @@ public sealed class UnhandledExceptionHandlerTests
     }
 
     [Fact]
-    public async Task Bad_http_request_keeps_its_status_and_is_not_counted_as_an_unhandled_exception()
+    public async Task Bad_HTTP_request_keeps_its_status_and_is_not_counted_as_an_unhandled_exception()
     {
         // Arrange
         using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
@@ -148,7 +148,7 @@ public sealed class UnhandledExceptionHandlerTests
     }
 
     [Fact]
-    public async Task A_client_that_accepts_only_html_still_receives_the_problem_body_with_the_same_status()
+    public async Task A_client_that_accepts_only_HTML_still_receives_the_problem_body_with_the_same_status()
     {
         // Arrange
         using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);
@@ -174,7 +174,7 @@ public sealed class UnhandledExceptionHandlerTests
     }
 
     [Fact]
-    public async Task A_host_customization_also_shapes_the_body_of_a_client_that_accepts_only_html()
+    public async Task A_host_customization_also_shapes_the_body_of_a_client_that_accepts_only_HTML()
     {
         // Arrange
         using var meters = new MeterCollector(AspNetCoreTelemetry.MeterName);

@@ -153,7 +153,7 @@ public sealed class S3ObjectStoreTests
     }
 
     [Fact]
-    public async Task ListObjects_treats_unspecified_s3_timestamps_as_utc()
+    public async Task ListObjects_treats_unspecified_s3_timestamps_as_UTC()
     {
         // Arrange
         var unspecifiedTimestamp = new DateTime(2026, 7, 12, 12, 30, 0, DateTimeKind.Unspecified);
@@ -184,7 +184,7 @@ public sealed class S3ObjectStoreTests
     }
 
     [Fact]
-    public async Task Put_stores_checksum_metadata_and_returns_escaped_public_uri()
+    public async Task Put_stores_checksum_metadata_and_returns_escaped_public_URI()
     {
         // Arrange
         using var client = new FakeAmazonS3Client();

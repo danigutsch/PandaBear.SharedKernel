@@ -8,7 +8,7 @@ public sealed class SitemapXmlSerializerTests
     private static readonly XNamespace Sitemap = "http://www.sitemaps.org/schemas/sitemap/0.9";
 
     [Fact]
-    public async Task Serializes_locations_and_utc_last_modified_timestamps()
+    public async Task Serializes_locations_and_UTC_last_modified_timestamps()
     {
         // Arrange
         SitemapEntry[] entries =
@@ -47,7 +47,7 @@ public sealed class SitemapXmlSerializerTests
     [Theory]
     [InlineData("/relative")]
     [InlineData("ftp://example.com/file")]
-    public void Entry_rejects_locations_that_are_not_absolute_http_urls(string location)
+    public void Entry_rejects_locations_that_are_not_absolute_HTTP_urls(string location)
     {
         // Arrange
         var uri = new Uri(location, UriKind.RelativeOrAbsolute);
@@ -69,7 +69,7 @@ public sealed class SitemapXmlSerializerTests
     [InlineData(" https://example.com/", false)]
     [InlineData("", false)]
     [InlineData(null, false)]
-    public void Canonical_origin_accepts_only_bare_http_and_https_origins(string? value, bool expected)
+    public void Canonical_origin_accepts_only_bare_HTTP_and_https_origins(string? value, bool expected)
     {
         // Act
         var valid = SitemapCanonicalOrigin.IsValid(value);

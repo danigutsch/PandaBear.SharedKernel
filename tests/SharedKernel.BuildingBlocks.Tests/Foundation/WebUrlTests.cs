@@ -18,7 +18,7 @@ public sealed class WebUrlTests
     [InlineData("https://[2001:DB8::1]/x", "https://[2001:db8::1]/x")]
     [InlineData("https://bücher.example/a", "https://bücher.example/a")]
     [InlineData("https://example.org/a%20b", "https://example.org/a%20b")]
-    public void Absolute_http_and_https_addresses_are_accepted_with_a_lower_case_scheme_and_host(string input, string expected)
+    public void Absolute_HTTP_and_https_addresses_are_accepted_with_a_lower_case_scheme_and_host(string input, string expected)
     {
         // Act
         var url = WebUrl.Create(input).ShouldBeSuccess();
@@ -65,7 +65,7 @@ public sealed class WebUrlTests
     [InlineData("https://example.com\\@evil.example")]
     [InlineData("https:\\\\evil.example")]
     [InlineData("https://example.org:99999/")]
-    public void Anything_but_an_absolute_http_or_https_address_is_rejected_without_echoing_it(string? input)
+    public void Anything_but_an_absolute_HTTP_or_https_address_is_rejected_without_echoing_it(string? input)
     {
         // Act
         var result = WebUrl.Create(input, "signUpLink", "Sign-up link");
