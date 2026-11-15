@@ -24,6 +24,7 @@ public sealed class ConcurrencyConflictBehaviorTests
         // Assert
         result.Status.ShouldBe(ResultStatus.Conflict);
         result.ErrorDetails.ShouldNotBeNull().Detail.ShouldBe(ExpectedMessage);
+        result.ErrorDetails.Code.ShouldBe(ResultErrorCodes.ConcurrencyConflict);
     }
 
     [Fact]
@@ -41,6 +42,7 @@ public sealed class ConcurrencyConflictBehaviorTests
         // Assert
         result.Status.ShouldBe(ResultStatus.Conflict);
         result.ErrorDetails.ShouldNotBeNull().Detail.ShouldBe(ExpectedMessage);
+        result.ErrorDetails.Code.ShouldBe(ResultErrorCodes.ConcurrencyConflict);
     }
 
     [Fact]

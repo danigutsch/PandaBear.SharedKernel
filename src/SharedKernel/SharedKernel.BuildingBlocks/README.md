@@ -34,6 +34,13 @@ ones), `/ \ ? #`, `.`, and any other non-ASCII character are rejected rather tha
 echoes the input. A slug therefore never contains `.`, which keeps it apart from file names in paths.
 `Slug.IsCanonical` checks an already-stored slug.
 
+`Slug.CreateLenient` never rejects a character: it strips diacritics like `Create`, lowercases, turns every run of other characters
+(punctuation, `/ \ ? # .`, control characters, surrogates, letters without an ASCII base such as `ß` or `東`) into one hyphen, trims
+the hyphens at both ends and cuts a slug longer than `maxLength` without leaving a trailing hyphen. Use it to derive a name from text a
+person wrote, such as a download file name from a trip code (`ÁLPES/2027 ..\x` gives `alpes-2027-x`). It fails only when the text is
+blank (`{label} is required.`) or keeps no ASCII letter or digit (`中国` gives `{label} must contain a letter or a digit.`), so the caller
+can fall back to a fixed name. Unicode normalization comes from .NET; there is no transliteration table.
+
 ## Web addresses
 
 `WebUrl.Create` accepts an absolute `http` or `https` address that is safe to render as a link, such as a sign-up form or a
@@ -108,6 +115,16 @@ var price = Money.Create(1999.995m, Currency.Brl);               // BRL 2000.00
 var address = PostalAddress.Create("Rua A, 10", null, null, "01000-000", "Sao Paulo", "SP", "BR");
 ```
 
+The messages start with an English noun (`Phone number is required.`, `Birth date cannot be in the future.`, `Street is required.`). To
+make them match a form's labels, pass `field` and `label` to `PhoneNumber.Create(value, field, label)` and
+`BirthDate.Create(value, today, minAgeYears, maxAgeYears, field, label)` (the age messages start with `Age`), and a
+`PostalAddressLabels` to `PostalAddress.Create`, setting only the parts that differ; the address keeps its field keys:
+
+```csharp
+var whatsapp = PhoneNumber.Create(input, field: "whatsapp", label: "WhatsApp");   // "WhatsApp is required."
+var home = PostalAddress.Create(street, null, null, cep, city, state, "BR", new PostalAddressLabels { PostalCode = "CEP" });
+```
+
 ## Payment identifiers
 
 `Iban`, `Bic`, `Cpf`, `Cnpj`, and `PixKey` are immutable value objects in `PandaBear.BuildingBlocks`.
@@ -128,7 +145,13 @@ var company = Cnpj.Create("12ABC34501DE35");
 var pix = PixKey.Create(PixKeyType.Cnpj, "12ABC34501DE35");
 ```
 
-Supply uppercase IBAN/BIC/CNPJ, eleven ASCII digits for CPF, and no display punctuation or spaces.
+Supply uppercase IBAN/BIC/CNPJ, eleven ASCII digits for CPF, and no display punctuation or spaces. A rejected value gives one
+input-independent message that can be shown to people: `IBAN is not valid.`, `BIC is not valid.`, `CPF is not valid.`,
+`CNPJ is not valid.` or `Pix key is not valid.`, on the field `iban`, `bic`, `cpf`, `cnpj` or `pixKey`.
+
+For a CPF typed into a form, `Cpf.CreateFromInput` also accepts the display mask: `529.982.247-25` and `52998224725` both give the
+CPF `52998224725`. Surrounding white space is ignored and any other punctuation, spacing or partial mask is rejected; blank text gives
+`CPF is required.` and anything else that fails `CPF is not valid.`.
 Pix email and EVP keys must be lowercase. Select `PixKeyType` explicitly; `None` and undefined enum
 values are rejected. Leading zeros are preserved. Equality includes concrete type and canonical value;
 Pix equality includes both type and value. Numeric and alphanumeric CNPJ are supported.
@@ -148,19 +171,23 @@ expose `Value`. Do not destructure these objects in logs. JSON/EF adapters must 
 handle validation failure. Persistence mappers (EF value converters) that rebuild a value from stored text must use the
 `Restore` factories instead of `Create(...).Value`: `EmailAddress.Restore`, `PhoneNumber.Restore`, `CountryCode.Restore`,
 `Currency.Restore`, `PersonName.Restore(firstName, lastName)`, `Money.Restore(amount, currency)`, `Cpf.Restore(value)`,
+`Iban.Restore(value)`, `Bic.Restore(value)`,
 `BirthDate.Restore(value)` and `PostalAddress.Restore(street, complement, neighborhood, postalCode, city, state, country)`.
 `BirthDate.Restore` skips the age limits, which depend on the day, and refuses only the default date
 (`ArgumentOutOfRangeException`). `Restore` is for persistence mappers
 only: it rebuilds a value from text this type produced earlier, performs no validation beyond null/blank checks (`ArgumentException`) and
 the same trim and case normalization as `Create`, so a stored value that a newer rule rejects (an allow-list that tightened, a
 longer-than-now name) still loads instead of throwing on every query. `CountryCode.Restore` keeps a code outside the assigned set (its
-`EnglishName` is the code), `Currency.Restore` keeps a delisted code (2 minor units) and `Money.Restore` does not round. `Cpf.Restore`
-trims and keeps a value whose check digits fail; `PostalAddress.Restore` sanitizes each part like `Create`, turns blank optional parts into
+`EnglishName` is the code), `Currency.Restore` keeps a delisted code (2 minor units) and `Money.Restore` does not round. `Cpf.Restore`,
+`Iban.Restore` and `Bic.Restore` trim and keep a value whose check digits or layout fail; `PostalAddress.Restore` sanitizes each part like `Create`, turns blank optional parts into
 `null`, requires street, postal code and city, takes an already restored `CountryCode`, and does not enforce the part length limits. Never
 use `Restore` for user input.
 
 `Cpf.Formatted` returns the sensitive display mask `000.000.000-00` (for example on a printed contract); it is personal data like `Value`,
 while `ToString()` stays redacted. A restored value that is not eleven digits is returned unchanged.
+
+`Iban.Formatted` returns the sensitive ISO 13616 print format, groups of four separated by a space (`DE89 3704 0044 0532 0130 00`), for a
+page or a printed contract; `ToString()` stays redacted. A restored value that is not only ASCII letters and digits is returned unchanged.
 
 ## Country names
 

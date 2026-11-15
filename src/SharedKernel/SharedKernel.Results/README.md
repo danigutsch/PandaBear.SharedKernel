@@ -54,3 +54,11 @@ the value while keeping success or the failure.
 `ValidationErrors.AddIfFailed(result)` collects the failure of one validation step and ignores a success, so a `Validate` method can
 run every step, then return `errors.HasErrors ? errors.ToResult<TData>() : Result.Ok(data)`. A failure that is not `Invalid` throws
 `InvalidOperationException`, like `Add`.
+
+## Error codes
+
+`ResultErrorCodes` holds the stable codes; `Result.FromError` derives the status from the code, and an unknown code is an `Error`.
+`ResultErrorCodes.ConcurrencyConflict` (`concurrency_conflict`) marks a record that changed or disappeared since the caller read it: its
+status is `Conflict`, like `ResultErrorCodes.Conflict`, so status-based mappings (409, a form's conflict message) treat both alike, and a
+caller that must recognize a stale version compares `ErrorDetails.Code` instead of the message. `ConvertError` keeps the status and the
+whole error, including a custom code.

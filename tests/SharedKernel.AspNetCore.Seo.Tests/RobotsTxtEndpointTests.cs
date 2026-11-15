@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 
@@ -25,6 +26,27 @@ public sealed class RobotsTxtEndpointTests
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.Content.Headers.ContentType.ShouldNotBeNull().ToString().ShouldBe("text/plain; charset=utf-8");
         body.ShouldBe("User-agent: *\nDisallow: /admin\n");
+    }
+
+    [Fact]
+    public async Task Answers_head_with_the_headers_of_get()
+    {
+        // Arrange
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        await using var app = builder.Build();
+        app.MapRobotsTxt("User-agent: *\nDisallow: /admin\n");
+        await app.StartAsync(TestContext.Current.CancellationToken);
+        using var client = app.GetTestClient();
+        using var request = new HttpRequestMessage(HttpMethod.Head, new Uri("/robots.txt", UriKind.Relative));
+
+        // Act
+        using var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.Content.Headers.ContentType.ShouldNotBeNull().ToString().ShouldBe("text/plain; charset=utf-8");
+        response.Content.Headers.ContentLength.ShouldBe(31);
     }
 
     [Fact]

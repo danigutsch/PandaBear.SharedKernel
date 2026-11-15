@@ -20,10 +20,23 @@ public sealed class Bic : ValueObject
             || value[4] is < 'A' or > 'Z'
             || value[5] is < 'A' or > 'Z')
         {
-            return Result.Invalid<Bic>(detail: "Invalid canonical BIC.", field: "bic", message: "Invalid canonical BIC.");
+            return Result.Invalid<Bic>(detail: "BIC is not valid.", field: "bic", message: "BIC is not valid.");
         }
 
         return Result.Ok(new Bic(value));
+    }
+
+    /// <summary>
+    /// For persistence mappers: rebuilds a BIC from text that was produced by this type earlier; it performs NO validation beyond
+    /// null/blank checks and trimming, so a stored value that a newer rule would reject can still be loaded; never use it for user input.
+    /// </summary>
+    /// <param name="value">The stored value.</param>
+    /// <returns>The BIC.</returns>
+    /// <exception cref="ArgumentException"><paramref name="value"/> is <see langword="null"/>, empty or blank.</exception>
+    public static Bic Restore(string value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(value);
+        return new Bic(value.Trim());
     }
 
     /// <inheritdoc />

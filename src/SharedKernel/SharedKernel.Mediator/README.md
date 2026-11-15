@@ -30,9 +30,12 @@ The package now also exposes an optional activity-based observability behavior:
 
 `ConcurrencyConflictBehavior<TRequest, TResponse>` lets a command that returns `Result` or `Result<T>` stay free of try/catch for
 optimistic-concurrency failures. When the request throws `PandaBear.BuildingBlocks.ConcurrencyConflictException` (a row changed or
-disappeared since it was read), the behavior returns a failed result with `ResultStatus.Conflict` and the fixed message
-`The data was changed or removed by someone else. Reload it and try again.`; the HTTP and UI edges then map it through the existing
-result status mapping (409 Conflict).
+disappeared since it was read), the behavior returns a failed result with `ResultStatus.Conflict`, the error code
+`ResultErrorCodes.ConcurrencyConflict` (`concurrency_conflict`) and the fixed message `ConflictMessage`
+(`The data was changed or removed by someone else. Reload it and try again.`); the HTTP and UI edges then map it through the existing
+result status mapping (409 Conflict). To recognize a stale version, compare the code, not the message:
+`result.ErrorDetails?.Code == ResultErrorCodes.ConcurrencyConflict`. Other conflicts, such as an unmapped unique violation, keep the code
+`conflict`.
 
 - **Converts:** only `ConcurrencyConflictException`. The exception text and inner exception are never copied into the result.
 - **Does not convert:** any other exception, including `OperationCanceledException`, which propagate unchanged. A returned result,
@@ -57,8 +60,8 @@ public sealed class ConflictBehavior<TRequest, TResponse> : ConcurrencyConflictB
   transaction that the exception has already invalidated.
 
 - **Stale data found by the handler:** when a handler compares the loaded version with the caller's and finds it outdated, return
-  `ConcurrencyConflictResults.Stale()` (or `Stale<T>()`). It is the same `Conflict` result and message as the behavior's, so a stale form and a
-  lost race look identical.
+  `ConcurrencyConflictResults.Stale()` (or `Stale<T>()`). It is the same `Conflict` result, code and message as the behavior's, so a stale
+  form and a lost race look identical.
 
 
 ## Unique violation handling

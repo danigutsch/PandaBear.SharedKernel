@@ -49,6 +49,63 @@ public sealed class PostalAddressTests
     }
 
     [Fact]
+    public void Address_messages_name_the_parts_in_english_by_default()
+    {
+        // Act
+        var result = PostalAddress.Create(null, new string('c', PostalAddress.MaxPartLength + 1), null, " ", "", null, "ZZ");
+
+        // Assert
+        var errors = result.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull();
+        errors["street"].ShouldBe(["Street is required."]);
+        errors["complement"].ShouldBe([$"Complement cannot exceed {PostalAddress.MaxPartLength} characters."]);
+        errors["postalCode"].ShouldBe(["Postal code is required."]);
+        errors["city"].ShouldBe(["City is required."]);
+        errors["country"].ShouldBe(["Country must be a valid ISO 3166-1 alpha-2 code."]);
+    }
+
+    [Fact]
+    public void Address_messages_use_the_given_labels_and_keep_the_field_keys()
+    {
+        // Arrange
+        var labels = new PostalAddressLabels
+        {
+            Street = "Street and number",
+            Complement = "Apartment",
+            Neighborhood = "District",
+            PostalCode = "CEP",
+            City = "Town",
+            State = "Province",
+            Country = "Country of the address",
+        };
+        var tooLong = new string('x', PostalAddress.MaxPartLength + 1);
+
+        // Act
+        var result = PostalAddress.Create(" ", tooLong, tooLong, null, null, tooLong, null, labels);
+
+        // Assert
+        var errors = result.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull();
+        errors.Keys.Order(StringComparer.Ordinal).ToArray().ShouldBe(["city", "complement", "country", "neighborhood", "postalCode", "state", "street"]);
+        errors["street"].ShouldBe(["Street and number is required."]);
+        errors["complement"].ShouldBe([$"Apartment cannot exceed {PostalAddress.MaxPartLength} characters."]);
+        errors["neighborhood"].ShouldBe([$"District cannot exceed {PostalAddress.MaxPartLength} characters."]);
+        errors["postalCode"].ShouldBe(["CEP is required."]);
+        errors["city"].ShouldBe(["Town is required."]);
+        errors["state"].ShouldBe([$"Province cannot exceed {PostalAddress.MaxPartLength} characters."]);
+        errors["country"].ShouldBe(["Country of the address must be a valid ISO 3166-1 alpha-2 code."]);
+    }
+
+    [Fact]
+    public void Address_labels_default_to_the_english_part_names()
+    {
+        // Act
+        var labels = PostalAddressLabels.Default;
+
+        // Assert
+        string[] names = [labels.Street, labels.Complement, labels.Neighborhood, labels.PostalCode, labels.City, labels.State, labels.Country];
+        names.ShouldBe(["Street", "Complement", "Neighborhood", "Postal code", "City", "State", "Country"]);
+    }
+
+    [Fact]
     public void Addresses_with_equal_parts_are_equal()
     {
         // Act

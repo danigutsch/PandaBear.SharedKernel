@@ -13,20 +13,28 @@ public static class ResultExtensions
     /// </summary>
     /// <typeparam name="TTarget">The target success value type.</typeparam>
     /// <param name="source">The source failed result.</param>
-    /// <returns>A failed generic result with the same error information.</returns>
+    /// <returns>A failed generic result with the same status and the same error, including its code.</returns>
     public static Result<TTarget> ConvertError<TTarget>(this Result source)
-        where TTarget : notnull =>
-        ConvertFailureResult(source.Status, source.ErrorDetails, CreateGenericFactories<TTarget>());
+        where TTarget : notnull
+    {
+        var status = source.Status;
+        var error = RequireConvertibleFailure(status, source.ErrorDetails);
+        return new Result<TTarget>(status, default, error);
+    }
 
     /// <summary>
     /// Converts a failed generic result to a non-generic result.
     /// </summary>
     /// <typeparam name="TSource">The source success value type.</typeparam>
     /// <param name="source">The source failed result.</param>
-    /// <returns>A failed non-generic result with the same error information.</returns>
+    /// <returns>A failed non-generic result with the same status and the same error, including its code.</returns>
     public static Result ConvertError<TSource>(this Result<TSource> source)
-        where TSource : notnull =>
-        ConvertFailureResult(source.Status, source.ErrorDetails, NonGenericFactories.Instance);
+        where TSource : notnull
+    {
+        var status = source.Status;
+        var error = RequireConvertibleFailure(status, source.ErrorDetails);
+        return new Result(status, error);
+    }
 
     /// <summary>
     /// Converts a failed generic result to another generic result type.
@@ -34,28 +42,17 @@ public static class ResultExtensions
     /// <typeparam name="TSource">The source success value type.</typeparam>
     /// <typeparam name="TTarget">The target success value type.</typeparam>
     /// <param name="source">The source failed result.</param>
-    /// <returns>A failed generic result with the same error information.</returns>
+    /// <returns>A failed generic result with the same status and the same error, including its code.</returns>
     public static Result<TTarget> ConvertError<TSource, TTarget>(this Result<TSource> source)
         where TSource : notnull
-        where TTarget : notnull =>
-        ConvertFailureResult(source.Status, source.ErrorDetails, CreateGenericFactories<TTarget>());
+        where TTarget : notnull
+    {
+        var status = source.Status;
+        var error = RequireConvertibleFailure(status, source.ErrorDetails);
+        return new Result<TTarget>(status, default, error);
+    }
 
-    private static FailureResultFactories<Result<TTarget>> CreateGenericFactories<TTarget>()
-        where TTarget : notnull =>
-        new(
-            Result.Invalid<TTarget>,
-            Result.NotFound<TTarget>,
-            Result.Unauthorized<TTarget>,
-            Result.Forbidden<TTarget>,
-            Result.Error<TTarget>,
-            Result.Conflict<TTarget>,
-            Result.CriticalError<TTarget>,
-            Result.Unavailable<TTarget>);
-
-    private static TResult ConvertFailureResult<TResult>(
-        ResultStatus status,
-        ResultError? errorDetails,
-        FailureResultFactories<TResult> factories)
+    private static ResultError RequireConvertibleFailure(ResultStatus status, ResultError? errorDetails)
     {
         if (status is ResultStatus.Ok or ResultStatus.Created or ResultStatus.Accepted or ResultStatus.NoContent)
         {
@@ -68,69 +65,11 @@ public static class ResultExtensions
         }
 
         var details = errorDetails ?? throw new InvalidOperationException(FailedResultMustContainErrorDetailsMessage);
-
-        return status switch
-        {
-            ResultStatus.Invalid => factories.Invalid(details.Detail, ToValidationDictionary(details.ValidationErrors)),
-            ResultStatus.NotFound => factories.NotFound(details.Detail),
-            ResultStatus.Unauthorized => factories.Unauthorized(details.Detail),
-            ResultStatus.Forbidden => factories.Forbidden(details.Detail),
-            ResultStatus.Error => factories.Error(details.Detail),
-            ResultStatus.Conflict => factories.Conflict(details.Detail),
-            ResultStatus.CriticalError => factories.CriticalError(details.Detail),
-            ResultStatus.Unavailable => factories.Unavailable(details.Detail),
-            _ => throw new InvalidOperationException($"Unsupported result status: {status}"),
-        };
-    }
-
-    private static Dictionary<string, string[]> ToValidationDictionary(IReadOnlyDictionary<string, IReadOnlyList<string>>? validationErrors)
-    {
-        if (validationErrors is null)
+        if (status is ResultStatus.Invalid && (details.ValidationErrors is null || details.ValidationErrors.Count == 0))
         {
             throw new InvalidOperationException(ResultInvariantMessages.ValidationErrorsMustContainFieldDetails);
         }
 
-        var result = new Dictionary<string, string[]>(validationErrors.Count, StringComparer.Ordinal);
-        foreach (var (field, messages) in validationErrors)
-        {
-            result[field] = [.. messages];
-        }
-
-        return result;
-    }
-
-    /// <summary>Factories that create each failure kind of a result type from an error message.</summary>
-    /// <typeparam name="TResult">The result type the factories create.</typeparam>
-    /// <param name="Invalid">Creates an invalid result from a message and per-field validation errors.</param>
-    /// <param name="NotFound">Creates a not-found result from a message.</param>
-    /// <param name="Unauthorized">Creates an unauthorized result from a message.</param>
-    /// <param name="Forbidden">Creates a forbidden result from a message.</param>
-    /// <param name="Error">Creates a general error result from a message.</param>
-    /// <param name="Conflict">Creates a conflict result from a message.</param>
-    /// <param name="CriticalError">Creates a critical error result from a message.</param>
-    /// <param name="Unavailable">Creates an unavailable result from a message.</param>
-    private readonly record struct FailureResultFactories<TResult>(
-        Func<string, Dictionary<string, string[]>, TResult> Invalid,
-        Func<string, TResult> NotFound,
-        Func<string, TResult> Unauthorized,
-        Func<string, TResult> Forbidden,
-        Func<string, TResult> Error,
-        Func<string, TResult> Conflict,
-        Func<string, TResult> CriticalError,
-        Func<string, TResult> Unavailable);
-
-    private static class NonGenericFactories
-    {
-        /// <summary>Factories that create the non-generic failure results.</summary>
-        internal static FailureResultFactories<Result> Instance { get; } =
-            new(
-                Result.Invalid,
-                Result.NotFound,
-                Result.Unauthorized,
-                Result.Forbidden,
-                Result.Error,
-                Result.Conflict,
-                Result.CriticalError,
-                Result.Unavailable);
+        return details;
     }
 }

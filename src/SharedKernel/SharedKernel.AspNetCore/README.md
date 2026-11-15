@@ -41,6 +41,14 @@ policy. Each consuming application owns those decisions.
       new Dictionary<string, string> { [".jpg"] = "image/jpeg", [".png"] = "image/png", [".webp"] = "image/webp" },
       (context, fileName) => context.RequestServices.GetRequiredService<Gallery>().IsPublished(fileName, context.RequestAborted));
   ```
+- `UseStatusCodePagesWithReExecuteExcept`: `UseStatusCodePagesWithReExecute` for every request except those under the given path
+  prefixes (whole segments, ignoring case), whose answers stay as the endpoints wrote them, for example an API that answers with
+  problem details while the site shows its error page. Call it on the application, not inside a `UseWhen` branch, which has no global
+  route builder, so the re-executed request would not find the page.
+
+  ```csharp
+  app.UseStatusCodePagesWithReExecuteExcept("/not-found", createScopeForStatusCodePages: true, "/api");
+  ```
 - `AddUnhandledExceptionHandler` and `AspNetCoreTelemetry`: an opt-in unhandled-exception handler and the names of the
   meter, instruments, tags and log event identifiers of the ASP.NET Core telemetry family.
 - `HostEnvironmentVariableNames.AspNetCoreEnvironment` and `HostEnvironmentVariableNames.DotNetEnvironment` for C#

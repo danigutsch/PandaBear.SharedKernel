@@ -41,6 +41,22 @@ public sealed class BirthDateTests
     }
 
     [Theory]
+    [InlineData(1, 1, 1, "Date of birth is required.")]
+    [InlineData(2026, 11, 6, "Date of birth cannot be in the future.")]
+    [InlineData(2016, 11, 6, "Age must be at least 10 years.")]
+    public void A_given_field_and_label_name_the_date_in_messages(int year, int month, int day, string message)
+    {
+        // Act
+        var result = BirthDate.Create(new DateOnly(year, month, day), Today, 10, 120, field: "dateOfBirth", label: "Date of birth");
+
+        // Assert
+        var error = result.ErrorDetails.ShouldNotBeNull();
+        error.Detail.ShouldBe(message);
+        error.ValidationErrors.ShouldNotBeNull().Keys.ShouldBe(["dateOfBirth"]);
+        error.ValidationErrors["dateOfBirth"].ShouldBe([message]);
+    }
+
+    [Theory]
     [InlineData(2026, 11, 6, "Birth date cannot be in the future.")]
     [InlineData(2016, 11, 6, "Age must be at least 10 years.")]
     [InlineData(1905, 11, 5, "Age cannot exceed 120 years.")]

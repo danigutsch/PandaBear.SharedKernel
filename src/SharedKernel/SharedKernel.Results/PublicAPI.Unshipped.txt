@@ -52,3 +52,4 @@ static PandaBear.Results.ResultValidationExtensions.ValidationErrors(this PandaB
 static PandaBear.Results.ResultValidationExtensions.WithoutValue<T>(this PandaBear.Results.Result<T> result) -> PandaBear.Results.Result
 PandaBear.Results.ValidationErrors.AddIfFailed(PandaBear.Results.Result result) -> void
 PandaBear.Results.ValidationErrors.AddIfFailed<T>(PandaBear.Results.Result<T> result) -> void
+const PandaBear.Results.ResultErrorCodes.ConcurrencyConflict = "concurrency_conflict" -> string!

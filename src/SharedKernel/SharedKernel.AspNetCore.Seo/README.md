@@ -9,7 +9,8 @@ application keeps the crawler policy and the URL inclusion policy.
 
 ## What is inside
 
-- `MapRobotsTxt`: exposes an application-owned crawler policy at `/robots.txt` with `text/plain; charset=utf-8`.
+- `MapRobotsTxt`: exposes an application-owned crawler policy at `/robots.txt` with `text/plain; charset=utf-8` for `GET` and
+  `HEAD` (the same headers, including `Content-Length`, without the body).
 - `SitemapXmlSerializer`: generates sitemap XML (`SitemapXmlSerializer.ContentType`, at most
   `SitemapXmlSerializer.MaximumUrlCount` URLs) from `SitemapEntry` values.
 - `SitemapAlternate`: an alternate-language URL of a `SitemapEntry` (`new SitemapEntry(uri, lastModified, alternates)`),

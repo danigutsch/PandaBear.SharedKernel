@@ -51,6 +51,7 @@ public sealed class ResultContractTests
     [InlineData(ResultErrorCodes.Unauthorized, ResultStatus.Unauthorized)]
     [InlineData(ResultErrorCodes.Forbidden, ResultStatus.Forbidden)]
     [InlineData(ResultErrorCodes.Conflict, ResultStatus.Conflict)]
+    [InlineData(ResultErrorCodes.ConcurrencyConflict, ResultStatus.Conflict)]
     [InlineData(ResultErrorCodes.Unavailable, ResultStatus.Unavailable)]
     [InlineData(ResultErrorCodes.Error, ResultStatus.Error)]
     [InlineData(ResultErrorCodes.CriticalError, ResultStatus.CriticalError)]
