@@ -1,5 +1,5 @@
 #nullable enable
-const PandaBear.GitHub.GitHubApiClient.ApiVersion = "2022-11-28" -> string!
+const PandaBear.GitHub.GitHubApiClient.ApiVersion = "2026-03-10" -> string!
 PandaBear.GitHub.GitHubApiClient
 PandaBear.GitHub.GitHubToken
 static PandaBear.GitHub.GitHubApiClient.Create(System.Net.Http.HttpMessageHandler! handler, System.Net.Http.Headers.ProductInfoHeaderValue! userAgent, string? token) -> System.Net.Http.HttpClient!

@@ -95,7 +95,7 @@ public sealed class DependencySubmitCommandTests
         output.ToString().ShouldBe("Dependency snapshot submitted to owner/repository: SUCCESS." + Environment.NewLine);
         request.Method.ShouldBe(HttpMethod.Post);
         request.Message.RequestUri.ShouldBe(new Uri(Endpoint));
-        request.Message.Headers.GetValues("X-GitHub-Api-Version").ShouldBe(["2022-11-28"]);
+        request.Message.Headers.GetValues("X-GitHub-Api-Version").ShouldBe(["2026-03-10"]);
         request.Message.Content.ShouldNotBeNull().Headers.ContentType.ShouldNotBeNull().MediaType.ShouldBe("application/json");
         request.Body.ShouldBe(Snapshot);
     }

@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Unicode;
+using PandaBear.GitHub;
 using PandaBear.IO;
 using PandaBear.InputNormalization;
 
@@ -12,7 +13,6 @@ namespace PandaBear.Repositories.GitHub;
 /// </summary>
 public static class GitHubDependencySubmission
 {
-    private const string ApiVersion = "2022-11-28";
     private const int MaxResponseBytes = 1024 * 1024;
 
     // Every snapshot that "dependency snapshot" writes fits: its JSON budget and the line break that ends the file.
@@ -124,7 +124,7 @@ public static class GitHubDependencySubmission
         CancellationToken cancellationToken)
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
-        request.Headers.Add("X-GitHub-Api-Version", ApiVersion);
+        request.Headers.Add("X-GitHub-Api-Version", GitHubApiClient.ApiVersion);
         request.Content = new ByteArrayContent(snapshot);
         request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" };
         using var timeout = new CancellationTokenSource(GitHubRequestTimeout.Duration, timeProvider);

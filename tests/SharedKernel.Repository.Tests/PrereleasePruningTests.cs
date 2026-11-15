@@ -105,7 +105,7 @@ public sealed class PrereleasePruningTests
             request.Uri.AbsolutePath.ShouldNotContain("/tags", StringComparison.Ordinal);
             request.Authorization.ShouldBe("Bearer " + PrereleasePruningRuns.Token);
             request.UserAgent.ShouldStartWith("sharedkernel-ci/", StringComparison.Ordinal);
-            request.ApiVersion.ShouldBe("2022-11-28");
+            request.ApiVersion.ShouldBe("2026-03-10");
         });
         result.Output.ShouldContain("deleted v0.1.0-alpha.2.1", StringComparison.Ordinal);
         result.Output.ShouldContain("Deleted 2 prereleases; their tags stay.", StringComparison.Ordinal);

@@ -2,13 +2,13 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using PandaBear.GitHub;
 
 namespace PandaBear.Repositories.GitHub;
 
 /// <summary>Publishes verified roadmap changes to GitHub through the REST API as a signed-off commit, branch, and pull request.</summary>
 internal sealed class RoadmapGitHubPublisher
 {
-    private const string ApiVersion = "2022-11-28";
     private const string BaseBranch = "main";
     private const string CommitMessage = "chore(roadmap): refresh GitHub reconciliation";
     private const int MaxChangedEntries = 512;
@@ -430,7 +430,7 @@ internal sealed class RoadmapGitHubPublisher
         string? branchCollisionMessage = null)
     {
         using var request = new HttpRequestMessage(method, endpoint);
-        request.Headers.Add("X-GitHub-Api-Version", ApiVersion);
+        request.Headers.Add("X-GitHub-Api-Version", GitHubApiClient.ApiVersion);
         if (writeBody is not null)
         {
             request.Content = CreateJsonContent(writeBody);
