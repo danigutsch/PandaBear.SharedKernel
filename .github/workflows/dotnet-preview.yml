@@ -1,0 +1,53 @@
+name: .NET preview
+on:
+  schedule:
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: dotnet-preview
+  cancel-in-progress: true
+jobs:
+  preview:
+    name: Build on the next .NET preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Find the next .NET major and its preview
+        id: next
+        shell: bash
+        env:
+          RELEASES_INDEX: https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json
+        run: |
+          current="$(jq -r '.sdk.version' global.json)"
+          next="$(( ${current%%.*} + 1 ))"
+          index="$(curl --fail --silent --show-error --location --max-time 60 "$RELEASES_INDEX")"
+          if [[ "$(jq --arg channel "$next.0" '[.["releases-index"][] | select(.["channel-version"] == $channel)] | length' <<< "$index")" -eq 0 ]]; then
+            echo "::notice::No .NET $next preview is published yet, so there is nothing to build."
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "major=$next" >> "$GITHUB_OUTPUT"
+      - name: Install the preview SDK
+        if: steps.next.outputs.available == 'true'
+        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+        with:
+          dotnet-version: ${{ steps.next.outputs.major }}.0.x
+          dotnet-quality: preview
+      - name: Restore, build, and test for the preview framework
+        if: steps.next.outputs.available == 'true'
+        shell: bash
+        env:
+          NEXT_MAJOR: ${{ steps.next.outputs.major }}
+        run: |
+          # global.json pins the current SDK with rollForward disabled, so the preview SDK needs it gone.
+          rm global.json
+          properties=("-p:SharedKernelTargetFramework=net$NEXT_MAJOR.0" -p:RestorePackagesWithLockFile=false -p:RestoreLockedMode=false)
+          dotnet restore SharedKernel.slnx "${properties[@]}"
+          dotnet build SharedKernel.slnx -c Release --no-restore "${properties[@]}"
+          dotnet test --solution SharedKernel.slnx -c Release --no-build --no-restore "${properties[@]}"

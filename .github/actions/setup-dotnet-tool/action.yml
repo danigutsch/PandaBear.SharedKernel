@@ -1,11 +1,13 @@
 name: Set up repository tooling
 description: >-
-  Set up the .NET SDK pinned by global.json with the lock-file NuGet cache, restore a repository-owned
-  .NET CLI project in locked mode, and build it in Release. A stale lock file fails the restore.
+  Set up the .NET SDK pinned by global.json with the lock-file NuGet cache, add the runtime of the repository's
+  framework when that framework is older than the SDK, then restore a repository-owned .NET CLI project in locked
+  mode and build it in Release. A stale lock file fails the restore.
 inputs:
   project:
-    description: Tool project to restore and build, relative to working-directory.
-    required: true
+    description: Tool project to restore and build, relative to working-directory. Empty only sets up the SDK.
+    required: false
+    default: ''
   global-json-file:
     description: Path of the global.json that pins the SDK, relative to the workspace.
     required: false
@@ -18,22 +20,39 @@ inputs:
     description: Glob of the lock files that key the NuGet cache, relative to the workspace.
     required: false
     default: '**/packages.lock.json'
-  dotnet-version:
-    description: >-
-      SDK versions to install beside the global.json SDK, one per line, such as 10.0.x for tests and package consumers
-      that run on the .NET 10 runtime. Empty installs only the global.json SDK.
-    required: false
-    default: ''
 runs:
   using: composite
   steps:
     - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
       with:
         global-json-file: ${{ inputs.global-json-file }}
-        dotnet-version: ${{ inputs.dotnet-version }}
         cache: true
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
+    - name: Find the runtime of the repository framework
+      id: framework
+      shell: bash
+      env:
+        GLOBAL_JSON_FILE: ${{ inputs.global-json-file }}
+      run: |
+        # The framework is the SharedKernelTargetFramework property of the Directory.Build.props beside global.json.
+        # An empty property installs nothing; the SDK covers a framework of its own major.
+        root="$(dirname "$GLOBAL_JSON_FILE")"
+        runtime=''
+        if [[ -f "$root/Directory.Build.props" ]]; then
+          framework="$(cd "$root" && dotnet msbuild Directory.Build.props -getProperty:SharedKernelTargetFramework | tr -d '[:space:]')"
+          sdk="$(cd "$root" && dotnet --version)"
+          if [[ "$framework" =~ ^net([0-9]+)\.[0-9]+$ && "${BASH_REMATCH[1]}" -lt "${sdk%%.*}" ]]; then
+            runtime="${BASH_REMATCH[1]}.0.x"
+          fi
+        fi
+        echo "runtime=$runtime" >> "$GITHUB_OUTPUT"
+    - name: Install the runtime of the older repository framework
+      if: steps.framework.outputs.runtime != ''
+      uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+      with:
+        dotnet-version: ${{ steps.framework.outputs.runtime }}
     - name: Build the selected repository tool
+      if: inputs.project != ''
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       env:
