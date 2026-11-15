@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tool;
+namespace PandaBear.Repositories;
 
 /// <summary>
 /// A <c>dotnet run --project</c> command found in a file.

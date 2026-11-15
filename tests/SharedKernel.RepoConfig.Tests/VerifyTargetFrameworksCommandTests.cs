@@ -335,7 +335,7 @@ public sealed class VerifyTargetFrameworksCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: The consumer configuration has no targetFrameworks section." + Environment.NewLine);
+        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no targetFrameworks section." + Environment.NewLine);
     }
 
     [Theory]

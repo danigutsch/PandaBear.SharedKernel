@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace PandaBear.RepoConfig.Tool;
+namespace PandaBear.Repositories;
 
 /// <summary>
 /// Finds the <c>dotnet run --project</c> commands in the text of a script, workflow, or document.

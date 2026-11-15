@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tool;
+namespace PandaBear.Repositories;
 
 /// <summary>
 /// What a static evaluation of one project file found.
@@ -13,7 +13,7 @@ internal sealed record TargetFrameworkEvaluation(
     string TargetFrameworks,
     string TargetFrameworkFile,
     string RollForward,
-    IReadOnlyList<RepoConfigIssue> Issues)
+    IReadOnlyList<VerificationIssue> Issues)
 {
     /// <summary>
     /// Returns the frameworks that <c>TargetFrameworks</c> lists: split on <c>;</c>, trimmed, without empty entries or

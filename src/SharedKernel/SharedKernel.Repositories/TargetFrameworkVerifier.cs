@@ -3,21 +3,43 @@ using System.IO.Enumeration;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using PandaBear.IO;
 
-namespace PandaBear.RepoConfig.Tool;
+namespace PandaBear.Repositories;
 
 /// <summary>
 /// Audits the target frameworks of the tracked project files against a consumer-owned policy, without building. The
 /// properties are read by <see cref="TargetFrameworkEvaluator"/>, whose limits apply.
 /// </summary>
-internal static partial class TargetFrameworkVerifier
+public static partial class TargetFrameworkVerifier
 {
     /// <summary>
     /// The largest lock file, global.json, or command file, in bytes, that the tool reads.
     /// </summary>
-    public const int MaxFileBytes = 16 * 1024 * 1024;
+    internal const int MaxFileBytes = 16 * 1024 * 1024;
 
     private static readonly string[] ProjectExtensions = [".csproj", ".fsproj", ".vbproj"];
+
+    /// <summary>
+    /// Checks the tracked projects against the <c>targetFrameworks</c> policy of the consumer configuration under
+    /// <paramref name="rootPath"/>; see <see cref="Verify(string, TargetFrameworkConfiguration, CancellationToken)"/> for the findings.
+    /// </summary>
+    /// <param name="rootPath">The repository root.</param>
+    /// <param name="cancellationToken">Cancels the check.</param>
+    /// <returns>The deviations, or none when the projects follow the policy.</returns>
+    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/> or empty.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// The consumer configuration is invalid or has no targetFrameworks section, or Git cannot list the index.
+    /// </exception>
+    /// <exception cref="TimeoutException">Git does not list the index in time.</exception>
+    public static async Task<IReadOnlyList<VerificationIssue>> Verify(string rootPath, CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(rootPath);
+        var configuration = await ConsumerConfigurationFile.Read(rootPath, cancellationToken).ConfigureAwait(false);
+        var targetFrameworks = configuration.TargetFrameworks
+            ?? throw new InvalidOperationException($"{ConsumerConfigurationFile.RelativePath} has no targetFrameworks section.");
+        return await Verify(rootPath, targetFrameworks, cancellationToken).ConfigureAwait(false);
+    }
 
     /// <summary>
     /// Reports each deviation from the policy: first, for each project in ordinal path order, a missing rule or, in this
@@ -27,13 +49,21 @@ internal static partial class TargetFrameworkVerifier
     /// <c>--framework</c>, by file and line. A project with an unreadable property has no further findings. A finding
     /// that repeats, such as an unreadable property in a shared props file, is reported once.
     /// </summary>
+    /// <param name="rootPath">The repository root.</param>
+    /// <param name="configuration">The policy to check the projects against.</param>
+    /// <param name="cancellationToken">Cancels the check.</param>
+    /// <returns>The deviations, or none when the projects follow the policy.</returns>
+    /// <exception cref="ArgumentException"><paramref name="rootPath"/> is <see langword="null"/> or empty.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="configuration"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidOperationException">Git cannot list the index.</exception>
     /// <exception cref="TimeoutException">Git does not list the index in time.</exception>
-    public static async Task<IReadOnlyList<RepoConfigIssue>> Verify(
+    public static async Task<IReadOnlyList<VerificationIssue>> Verify(
         string rootPath,
         TargetFrameworkConfiguration configuration,
         CancellationToken cancellationToken)
     {
+        ArgumentException.ThrowIfNullOrEmpty(rootPath);
+        ArgumentNullException.ThrowIfNull(configuration);
         var root = Path.GetFullPath(rootPath);
         var tracked = await GitTrackedFiles.Read(root, ["."], cancellationToken).ConfigureAwait(false);
         var trackedSet = tracked.ToHashSet(StringComparer.Ordinal);
@@ -41,14 +71,14 @@ internal static partial class TargetFrameworkVerifier
         var buildFiles = tracked.Where(static path => IsBuildFile(path));
         var files = await MsBuildFileSet.Read(root, projects.Concat(buildFiles), cancellationToken).ConfigureAwait(false);
 
-        List<RepoConfigIssue> issues = [];
+        List<VerificationIssue> issues = [];
         Dictionary<string, IReadOnlyList<string>> effectiveByProject = new(StringComparer.Ordinal);
         foreach (var project in projects)
         {
             var rule = configuration.Projects.FirstOrDefault(rule => Matches(rule.Include, project));
             if (rule is null)
             {
-                issues.Add(new RepoConfigIssue(project, "No targetFrameworks.projects rule includes this project."));
+                issues.Add(new VerificationIssue(project, "No targetFrameworks.projects rule includes this project."));
                 continue;
             }
 
@@ -89,12 +119,12 @@ internal static partial class TargetFrameworkVerifier
     private static string Join(IEnumerable<string> frameworks) => string.Join(';', frameworks);
 
     // Reports the shadowing, framework, and RollForward findings of one project and returns the frameworks that it builds.
-    private static IReadOnlyList<string> Check(string project, TargetFrameworkRule rule, TargetFrameworkEvaluation evaluation, List<RepoConfigIssue> issues)
+    private static IReadOnlyList<string> Check(string project, TargetFrameworkRule rule, TargetFrameworkEvaluation evaluation, List<VerificationIssue> issues)
     {
         var listed = evaluation.Listed();
         if (evaluation.TargetFramework.Length > 0 && listed.Count > 0)
         {
-            issues.Add(new RepoConfigIssue(
+            issues.Add(new VerificationIssue(
                 project,
                 $"TargetFramework '{evaluation.TargetFramework}' from {evaluation.TargetFrameworkFile} overrides TargetFrameworks '{evaluation.TargetFrameworks}', so the project builds only {evaluation.TargetFramework}; clear it with <TargetFramework></TargetFramework> where TargetFrameworks is set."));
         }
@@ -102,13 +132,13 @@ internal static partial class TargetFrameworkVerifier
         var declared = evaluation.Declared();
         if (declared.Count == 0)
         {
-            issues.Add(new RepoConfigIssue(project, "Declares no target framework."));
+            issues.Add(new VerificationIssue(project, "Declares no target framework."));
             return [];
         }
 
         if (!declared.ToHashSet(StringComparer.OrdinalIgnoreCase).SetEquals(rule.Frameworks))
         {
-            issues.Add(new RepoConfigIssue(project, $"Declares {Join(declared)}, but the rule '{rule.Include}' expects {Join(rule.Frameworks)}."));
+            issues.Add(new VerificationIssue(project, $"Declares {Join(declared)}, but the rule '{rule.Include}' expects {Join(rule.Frameworks)}."));
         }
 
         if (rule.RollForward is not null)
@@ -117,7 +147,7 @@ internal static partial class TargetFrameworkVerifier
             if (!actual.Equals(rule.RollForward, StringComparison.OrdinalIgnoreCase))
             {
                 var shown = evaluation.RollForward.Length == 0 ? "Minor (default)" : evaluation.RollForward;
-                issues.Add(new RepoConfigIssue(project, $"RollForward is '{shown}', but the rule '{rule.Include}' expects '{rule.RollForward}'."));
+                issues.Add(new VerificationIssue(project, $"RollForward is '{shown}', but the rule '{rule.Include}' expects '{rule.RollForward}'."));
             }
         }
 
@@ -129,7 +159,7 @@ internal static partial class TargetFrameworkVerifier
         string project,
         HashSet<string> tracked,
         IReadOnlyList<string> effective,
-        List<RepoConfigIssue> issues,
+        List<VerificationIssue> issues,
         CancellationToken cancellationToken)
     {
         var separator = project.LastIndexOf('/');
@@ -142,21 +172,21 @@ internal static partial class TargetFrameworkVerifier
         var (content, failure) = await Read(root, path, cancellationToken).ConfigureAwait(false);
         if (content is null)
         {
-            issues.Add(new RepoConfigIssue(path, failure!));
+            issues.Add(new VerificationIssue(path, failure!));
             return;
         }
 
         var locked = LockFileFrameworks.Read(RepositoryFile.WithoutUtf8ByteOrderMark(content));
         if (locked is null)
         {
-            issues.Add(new RepoConfigIssue(path, "Is not a lock file."));
+            issues.Add(new VerificationIssue(path, "Is not a lock file."));
             return;
         }
 
         var built = effective.ToHashSet(StringComparer.OrdinalIgnoreCase);
         if (!built.SetEquals(locked))
         {
-            issues.Add(new RepoConfigIssue(path, $"Locks {Join(locked)}, but {project} builds {Join(effective)}; restore without --locked-mode to regenerate it."));
+            issues.Add(new VerificationIssue(path, $"Locks {Join(locked)}, but {project} builds {Join(effective)}; restore without --locked-mode to regenerate it."));
         }
     }
 
@@ -164,7 +194,7 @@ internal static partial class TargetFrameworkVerifier
         string root,
         string[] projects,
         Dictionary<string, IReadOnlyList<string>> effectiveByProject,
-        List<RepoConfigIssue> issues,
+        List<VerificationIssue> issues,
         CancellationToken cancellationToken)
     {
         var (content, _) = await Read(root, "global.json", cancellationToken).ConfigureAwait(false);
@@ -190,7 +220,7 @@ internal static partial class TargetFrameworkVerifier
 
         foreach (var (framework, (major, project)) in required)
         {
-            issues.Add(new RepoConfigIssue(
+            issues.Add(new VerificationIssue(
                 "global.json",
                 string.Create(CultureInfo.InvariantCulture, $"SDK {version} cannot build {framework} (first required by {project}); pin an SDK {major}.0.100 or later.")));
         }
@@ -229,7 +259,7 @@ internal static partial class TargetFrameworkVerifier
         IReadOnlyList<string> tracked,
         string[] projects,
         Dictionary<string, IReadOnlyList<string>> effectiveByProject,
-        List<RepoConfigIssue> issues,
+        List<VerificationIssue> issues,
         CancellationToken cancellationToken)
     {
         var patterns = configuration.CommandFiles ?? [];
@@ -248,7 +278,7 @@ internal static partial class TargetFrameworkVerifier
                     continue;
                 }
 
-                issues.Add(new RepoConfigIssue(
+                issues.Add(new VerificationIssue(
                     file,
                     string.Create(CultureInfo.InvariantCulture, $"Line {run.Line}: dotnet run --project {run.Project} needs --framework because the project builds {Join(effective)}.")));
             }
@@ -268,7 +298,7 @@ internal static partial class TargetFrameworkVerifier
     {
         try
         {
-            var content = await RepositoryFile.Read(Path.Combine(root, path), MaxFileBytes, cancellationToken).ConfigureAwait(false);
+            var content = await BoundedReader.ReadFile(Path.Combine(root, path), MaxFileBytes, cancellationToken).ConfigureAwait(false);
             return content is null ? (null, "Exceeds the 16 MiB file size limit.") : (content, null);
         }
         catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)

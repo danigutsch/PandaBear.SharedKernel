@@ -429,13 +429,10 @@ internal static class RepoConfigToolApplication
     /// Verifies the target frameworks of the tracked project files against the <c>targetFrameworks</c> section of the
     /// consumer configuration.
     /// </summary>
-    /// <exception cref="InvalidOperationException">The consumer configuration has no targetFrameworks section.</exception>
+    /// <exception cref="InvalidOperationException">The consumer configuration is invalid or has no targetFrameworks section.</exception>
     public static async Task<int> VerifyTargetFrameworks(string rootPath, TextWriter output, TextWriter error, CancellationToken ct)
     {
-        var configuration = await ConsumerConfigurationFile.Read(rootPath, ct).ConfigureAwait(false);
-        var targetFrameworks = configuration.TargetFrameworks
-            ?? throw new InvalidOperationException("The consumer configuration has no targetFrameworks section.");
-        var issues = await TargetFrameworkVerifier.Verify(rootPath, targetFrameworks, ct).ConfigureAwait(false);
+        var issues = await TargetFrameworkVerifier.Verify(rootPath, ct).ConfigureAwait(false);
         if (issues.Count == 0)
         {
             await output.WriteLineAsync("Target frameworks match the configured policy.".AsMemory(), ct).ConfigureAwait(false);

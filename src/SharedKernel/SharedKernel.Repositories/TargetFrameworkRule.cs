@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tool;
+namespace PandaBear.Repositories;
 
 /// <summary>
 /// The target frameworks that the projects matching one pattern must build.
@@ -8,4 +8,4 @@ namespace PandaBear.RepoConfig.Tool;
 /// <param name="RollForward">
 /// The <c>RollForward</c> value that each covered project must have, or <see langword="null"/> to leave it unchecked.
 /// </param>
-internal sealed record TargetFrameworkRule(string Include, string[] Frameworks, string? RollForward = null);
+public sealed record TargetFrameworkRule(string Include, IReadOnlyList<string> Frameworks, string? RollForward = null);

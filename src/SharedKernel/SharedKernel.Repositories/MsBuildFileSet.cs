@@ -1,7 +1,8 @@
 using System.Xml;
 using System.Xml.Linq;
+using PandaBear.IO;
 
-namespace PandaBear.RepoConfig.Tool;
+namespace PandaBear.Repositories;
 
 /// <summary>
 /// The tracked project, <c>Directory.Build.props</c>, and <c>Directory.Build.targets</c> files of a repository, read and
@@ -80,7 +81,7 @@ internal sealed class MsBuildFileSet
         byte[]? content;
         try
         {
-            content = await RepositoryFile.Read(Path.Combine(root, path), MaxFileBytes, cancellationToken).ConfigureAwait(false);
+            content = await BoundedReader.ReadFile(Path.Combine(root, path), MaxFileBytes, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
         {

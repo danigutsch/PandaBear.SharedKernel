@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace PandaBear.RepoConfig.Tool;
+namespace PandaBear.Repositories;
 
 /// <summary>
 /// Statically evaluates the <c>TargetFramework</c>, <c>TargetFrameworks</c>, and <c>RollForward</c> properties of a
@@ -31,7 +31,7 @@ internal sealed partial class TargetFrameworkEvaluator
     private readonly MsBuildFileSet _files;
     private readonly bool _checkRollForward;
     private readonly Dictionary<string, string> _properties = new(StringComparer.OrdinalIgnoreCase);
-    private readonly List<RepoConfigIssue> _issues = [];
+    private readonly List<VerificationIssue> _issues = [];
     private bool _inTargets;
     private string _targetFrameworkFile = string.Empty;
 
@@ -93,7 +93,7 @@ internal sealed partial class TargetFrameworkEvaluator
         var root = _files.Find(path, out var failure);
         if (root is null)
         {
-            _issues.Add(new RepoConfigIssue(path, failure ?? "Is missing from the working tree."));
+            _issues.Add(new VerificationIssue(path, failure ?? "Is missing from the working tree."));
             return;
         }
 
@@ -144,7 +144,7 @@ internal sealed partial class TargetFrameworkEvaluator
         {
             if (IsReported(name))
             {
-                _issues.Add(new RepoConfigIssue(path, $"Cannot evaluate the condition of {name}; the check reads only '…' == '…' conditions."));
+                _issues.Add(new VerificationIssue(path, $"Cannot evaluate the condition of {name}; the check reads only '…' == '…' conditions."));
             }
 
             return;
@@ -153,7 +153,7 @@ internal sealed partial class TargetFrameworkEvaluator
         var value = Substitute(property.Value.Trim());
         if (IsReported(name) && MsBuildCondition.Unresolved(value))
         {
-            _issues.Add(new RepoConfigIssue(path, $"Cannot evaluate the value of {name}; the check reads only text and $(Property) references."));
+            _issues.Add(new VerificationIssue(path, $"Cannot evaluate the value of {name}; the check reads only text and $(Property) references."));
             return;
         }
 

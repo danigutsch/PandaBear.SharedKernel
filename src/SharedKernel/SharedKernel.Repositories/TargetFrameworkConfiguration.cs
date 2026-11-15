@@ -2,14 +2,14 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using PandaBear.IO;
 
-namespace PandaBear.RepoConfig.Tool;
+namespace PandaBear.Repositories;
 
 /// <summary>
 /// The target framework policy that <c>verify-target-frameworks</c> checks the projects against.
 /// </summary>
 /// <param name="Projects">The rules in priority order; the first rule whose pattern matches a project applies to it.</param>
 /// <param name="CommandFiles">Path patterns of the tracked files whose <c>dotnet run --project</c> lines are checked, if any.</param>
-internal sealed partial record TargetFrameworkConfiguration(IReadOnlyList<TargetFrameworkRule> Projects, string[]? CommandFiles = null)
+public sealed partial record TargetFrameworkConfiguration(IReadOnlyList<TargetFrameworkRule> Projects, IReadOnlyList<string>? CommandFiles = null)
 {
     private const string PatternHint = "must be a repository-relative path pattern with '/' separators and without empty, '.', or '..' segments.";
     private static readonly string[] RollForwardValues = ["Minor", "Major", "LatestPatch", "LatestMinor", "LatestMajor", "Disable"];
@@ -33,7 +33,7 @@ internal sealed partial record TargetFrameworkConfiguration(IReadOnlyList<Target
             }
         }
 
-        for (var index = 0; index < (CommandFiles?.Length ?? 0); index++)
+        for (var index = 0; index < (CommandFiles?.Count ?? 0); index++)
         {
             if (!RepositoryPath.IsValid(CommandFiles![index]))
             {
@@ -51,13 +51,13 @@ internal sealed partial record TargetFrameworkConfiguration(IReadOnlyList<Target
             return $"{path}.include {PatternHint}";
         }
 
-        if (rule.Frameworks.Length == 0)
+        if (rule.Frameworks.Count == 0)
         {
             return $"{path}.frameworks must name at least one target framework.";
         }
 
         HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
-        for (var index = 0; index < rule.Frameworks.Length; index++)
+        for (var index = 0; index < rule.Frameworks.Count; index++)
         {
             var element = string.Create(CultureInfo.InvariantCulture, $"{path}.frameworks[{index}]");
             if (!Moniker().IsMatch(rule.Frameworks[index]))
