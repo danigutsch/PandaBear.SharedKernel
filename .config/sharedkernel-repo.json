@@ -84,6 +84,7 @@
     "src/SharedKernel/SharedKernel.Packages/SharedKernel.Packages.csproj",
     "src/SharedKernel/SharedKernel.PlaywrightMcp/SharedKernel.PlaywrightMcp.csproj",
     "src/SharedKernel/SharedKernel.Processes/SharedKernel.Processes.csproj",
+    "src/SharedKernel/SharedKernel.Repositories.Forgejo/SharedKernel.Repositories.Forgejo.csproj",
     "src/SharedKernel/SharedKernel.Repositories.GitHub/SharedKernel.Repositories.GitHub.csproj",
     "src/SharedKernel/SharedKernel.Repositories/SharedKernel.Repositories.csproj",
     "src/SharedKernel/SharedKernel.Results.Analyzers/SharedKernel.Results.Analyzers.csproj",

@@ -1,0 +1,8 @@
+#nullable enable
+PandaBear.Repositories.Forgejo.ForgejoLabelStore
+PandaBear.Repositories.Forgejo.ForgejoLabelStore.Create(PandaBear.Repositories.RepositoryLabel! label, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+PandaBear.Repositories.Forgejo.ForgejoLabelStore.Dispose() -> void
+PandaBear.Repositories.Forgejo.ForgejoLabelStore.ForgejoLabelStore(System.Net.Http.HttpMessageHandler! handler, System.Uri! server, string! repository, System.Net.Http.Headers.ProductInfoHeaderValue! userAgent, string? token) -> void
+PandaBear.Repositories.Forgejo.ForgejoLabelStore.List(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.RepositoryLabel!>!>!
+PandaBear.Repositories.Forgejo.ForgejoLabelStore.Repository.get -> string!
+PandaBear.Repositories.Forgejo.ForgejoLabelStore.Update(string! currentName, PandaBear.Repositories.RepositoryLabel! label, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!

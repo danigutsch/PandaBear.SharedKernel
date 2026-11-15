@@ -240,6 +240,8 @@
   <Project Path="tests/SharedKernel.Repositories.Tests/SharedKernel.Repositories.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Repositories.GitHub/SharedKernel.Repositories.GitHub.csproj" />
   <Project Path="tests/SharedKernel.Repositories.GitHub.Tests/SharedKernel.Repositories.GitHub.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Repositories.Forgejo/SharedKernel.Repositories.Forgejo.csproj" />
+  <Project Path="tests/SharedKernel.Repositories.Forgejo.Tests/SharedKernel.Repositories.Forgejo.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.DevContainers/SharedKernel.DevContainers.csproj" />
   <Project Path="tests/SharedKernel.DevContainers.Tests/SharedKernel.DevContainers.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Tabular/SharedKernel.Tabular.csproj" />

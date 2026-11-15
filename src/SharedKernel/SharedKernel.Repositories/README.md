@@ -39,8 +39,9 @@ foreach (var issue in links.Issues)
   `RollbackFileWriteBatch` and `AtomicFileWrite` write several files atomically under a lock, and
   `RoadmapGitRepository` reads Git state through bounded, time-limited processes that never receive a forge token.
 - **Forge seams:** `IRepositoryLabelStore` is a repository's labels on a forge, and `RepositoryLabelSync` creates and
-  updates the configured labels through it and never deletes one. A provider package, such as
-  `PandaBear.SharedKernel.Repositories.GitHub`, implements the seam for its forge.
+  updates the configured labels through it and never deletes one. A provider package,
+  `PandaBear.SharedKernel.Repositories.GitHub` or `PandaBear.SharedKernel.Repositories.Forgejo`, implements the seam
+  for its forge.
 
 ## Package identity and availability
 

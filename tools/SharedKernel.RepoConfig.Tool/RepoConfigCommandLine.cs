@@ -2,6 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Globalization;
 using PandaBear.DevContainers;
+using PandaBear.Forgejo;
 using PandaBear.Repositories;
 using PandaBear.Repositories.GitHub;
 
@@ -285,25 +286,59 @@ internal static class RepoConfigCommandLine
         Option<string> repository = new("--repository")
         {
             Required = true,
-            Description = "GitHub repository whose labels are synchronized, as owner/name."
+            Description = "GitHub repository whose labels are synchronized, as owner/name; with --forgejo, a repository of that Forgejo instance."
         };
         Option<bool> force = new("--force")
         {
             Description = "Create and update the labels instead of previewing them. Never deletes a label."
         };
+        var forgejo = ForgejoOption("Forgejo instance, such as https://codeberg.org, that hosts --repository instead of GitHub. Its token comes from FORGEJO_TOKEN.");
         Command command = new("sync-labels", "Create missing and update changed GitHub labels from the consumer configuration. Previews unless --force is given.")
         {
-            repository, force, root
+            repository, force, forgejo, root
         };
-        SetGuardedAction(command, (parseResult, output, _, ct) => RepoConfigToolApplication.SyncLabels(
-            ResolveRoot(parseResult, root, environment),
-            parseResult.GetRequiredValue(repository),
-            parseResult.GetValue(force),
-            environment.HttpClient,
-            output,
-            ct));
+        SetGuardedAction(command, (parseResult, output, _, ct) => parseResult.GetValue(forgejo) is { } server
+            ? RepoConfigToolApplication.SyncForgejoLabels(
+                ResolveRoot(parseResult, root, environment),
+                parseResult.GetRequiredValue(repository),
+                server,
+                parseResult.GetValue(force),
+                environment.ForgejoHandler,
+                output,
+                ct)
+            : RepoConfigToolApplication.SyncLabels(
+                ResolveRoot(parseResult, root, environment),
+                parseResult.GetRequiredValue(repository),
+                parseResult.GetValue(force),
+                environment.HttpClient,
+                output,
+                ct));
         return command;
     }
+
+    private static Option<Uri> ForgejoOption(string description) => new("--forgejo")
+    {
+        Description = description,
+        HelpName = "url",
+        CustomParser = static result =>
+        {
+            var value = result.Tokens is [.., var token] ? token.Value : string.Empty;
+            if (Uri.TryCreate(value, UriKind.Absolute, out var server))
+            {
+                try
+                {
+                    ForgejoApiClient.ApiBase(server);
+                    return server;
+                }
+                catch (ArgumentException)
+                {
+                }
+            }
+
+            result.AddError("--forgejo requires an absolute HTTPS address without user information, a query, or a fragment, such as https://codeberg.org.");
+            return null;
+        },
+    };
 
     private static Command CreateLinkSubissueCommand(RepoConfigToolEnvironment environment)
     {

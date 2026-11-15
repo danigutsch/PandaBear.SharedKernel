@@ -200,8 +200,8 @@ incrementally. Each wrapped tool and the libraries it wraps:
   `SharedKernel.CI.Forgejo` providers. `SharedKernel.Forgejo` is the Forgejo platform base, as `SharedKernel.GitHub` is
   GitHub's.
 - `SharedKernel.RepoConfig.Tool`: the forge-neutral `SharedKernel.Repositories` core, its
-  `SharedKernel.Repositories.GitHub` provider, and `SharedKernel.DevContainers`, which holds the dev container and
-  rootless Podman host checks.
+  `SharedKernel.Repositories.GitHub` and `SharedKernel.Repositories.Forgejo` providers, and `SharedKernel.DevContainers`,
+  which holds the dev container and rootless Podman host checks.
 - `SharedKernel.VaultManager.Tool`: `SharedKernel.Vault` and its `SharedKernel.Vault.Bitwarden` and
   `SharedKernel.Vault.Keeper` providers.
 

@@ -1,8 +1,12 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using PandaBear.Forgejo;
 using PandaBear.InputNormalization;
 using PandaBear.Repositories;
+using PandaBear.Repositories.Forgejo;
 using PandaBear.Repositories.GitHub;
 
 namespace PandaBear.RepoConfig.Tool;
@@ -233,6 +237,50 @@ internal static class RepoConfigToolApplication
         using var connection = GitHubConnections.FromEnvironment(httpClient, "label sync");
         var store = new GitHubLabelStore(repository, connection);
         await RepositoryLabelSync.Run(rootPath, store, force, output, ct).ConfigureAwait(false);
+        return 0;
+    }
+
+    /// <summary>
+    /// Previews, or with <paramref name="force"/> writes, the configured labels of a repository on the Forgejo instance
+    /// <paramref name="server"/>. A preview reads a public repository without a token; writing needs <c>FORGEJO_TOKEN</c>.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">
+    /// <paramref name="force"/> is set without <c>FORGEJO_TOKEN</c>, the repository is not <c>owner/name</c>, the
+    /// configuration is invalid, or Forgejo rejects a request.
+    /// </exception>
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "The store owns and disposes the handler.")]
+    public static async Task<int> SyncForgejoLabels(
+        string rootPath,
+        string repository,
+        Uri server,
+        bool force,
+        HttpMessageHandler? handler,
+        TextWriter output,
+        CancellationToken ct)
+    {
+        var token = ForgejoToken.Find(Environment.GetEnvironmentVariable);
+        if (force && token is null)
+        {
+            throw new InvalidOperationException($"Set FORGEJO_TOKEN to a token that may write the labels of {repository}; --force sent no request.");
+        }
+
+        handler ??= new HttpClientHandler { AllowAutoRedirect = false, CheckCertificateRevocationList = true };
+        ForgejoLabelStore store;
+        try
+        {
+            store = new ForgejoLabelStore(handler, server, repository, new ProductInfoHeaderValue("sharedkernel-repo", "1.0"), token);
+        }
+        catch
+        {
+            handler.Dispose();
+            throw;
+        }
+
+        using (store)
+        {
+            await RepositoryLabelSync.Run(rootPath, store, force, output, ct).ConfigureAwait(false);
+        }
+
         return 0;
     }
 

@@ -6,10 +6,11 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 `sharedkernel-repo` maintains repository roadmap configuration, its optional GitHub projection, dependency
 snapshots, and repository checks. It is a command-line wrapper over generic engines: the forge-neutral
-`PandaBear.SharedKernel.Repositories` library, its GitHub provider `PandaBear.SharedKernel.Repositories.GitHub`, and
-`PandaBear.SharedKernel.DevContainers` for the dev container and Podman checks. The consuming repository owns its policy
-and data, such as the license exceptions and documentation link scope in `.config/sharedkernel-repo.json`, its
-workflows, and protected-environment approvals.
+`PandaBear.SharedKernel.Repositories` library, its GitHub provider `PandaBear.SharedKernel.Repositories.GitHub`, its
+Forgejo provider `PandaBear.SharedKernel.Repositories.Forgejo` for label sync, and `PandaBear.SharedKernel.DevContainers`
+for the dev container and Podman checks. The consuming repository owns its policy and data, such as the license
+exceptions and documentation link scope in `.config/sharedkernel-repo.json`, its workflows, and protected-environment
+approvals.
 
 ## Prerequisites
 
@@ -52,6 +53,7 @@ sharedkernel-repo github link-subissue --repository owner/repository --parent 10
 sharedkernel-repo github link-subissue --repository owner/repository --parent 10 --child 20 --force
 sharedkernel-repo github sync-labels --repository owner/repository
 sharedkernel-repo github sync-labels --repository owner/repository --force
+sharedkernel-repo github sync-labels --repository owner/repository --forgejo https://codeberg.org --force
 sharedkernel-repo baseline verify
 sharedkernel-repo baseline apply
 sharedkernel-repo baseline apply --force
@@ -83,7 +85,7 @@ sharedkernel-repo verify-devcontainer --exec "dotnet --version" --exec "git --ve
 | `github reconcile` | Reconciles the GitHub snapshot and resolves transferred issue identities. |
 | `github import` | Imports the reconciled issue snapshot into roadmap items. |
 | `github link-subissue` | Previews or creates a native GitHub parent/subissue link between existing issues in the same repository. |
-| `github sync-labels` | Creates the configured labels that are missing and updates those that differ; see [Repository labels](#repository-labels). |
+| `github sync-labels` | Creates the configured labels that are missing and updates those that differ, on GitHub or, with `--forgejo <url>`, on a Forgejo instance; see [Repository labels](#repository-labels). |
 | `baseline verify` | Fails when a managed baseline file is missing, outdated, edited by hand, or unmanaged; see [Repository baseline](#repository-baseline). |
 | `baseline apply` | Creates and updates the managed baseline files; previews unless `--force` is given. |
 | `new` | Starts a repository from a language and features: writes the baseline files and their configuration and initializes Git; previews unless `--force` is given. See [Starting a repository](#starting-a-repository). |
@@ -291,6 +293,14 @@ permission. Requests go only to api.github.com, do not follow redirects, read re
 time out after 30 seconds each. Errors report status codes without echoing response bodies. A failed write
 names its label; changes written before it remain, and rerunning the command applies the rest.
 
+With `--forgejo <url>`, such as `--forgejo https://codeberg.org`, the command synchronizes the labels of `--repository`
+on that Forgejo instance instead, through `<url>/api/v1/repos/<owner>/<name>/labels`. The address must be HTTPS without
+user information, a query, or a fragment. A preview reads a public repository without a token; `--force` reads the
+token from `FORGEJO_TOKEN` and sends no request without one, and never uses a GitHub token. Forgejo edits a label by
+its ID, so an update goes to the ID that the listing read for the label. Colors are sent as `#rrggbb`, as the Forgejo
+API documents, and compared without the `#`. The limits, redirects, timeouts, and error reporting are those of GitHub.
+The other `github` commands work only with GitHub and have no `--forgejo` option.
+
 ## Repository baseline
 
 `baseline verify` and `baseline apply` read the `baseline` section and keep a set of repository files at the
@@ -443,6 +453,7 @@ default-branch commit moved while it was read.
 | Variable | Read by |
 | --- | --- |
 | `GH_TOKEN`, then `GITHUB_TOKEN` | `github` commands and `dependency submit --force`. |
+| `FORGEJO_TOKEN` | `github sync-labels --forgejo <url>`; required with `--force`. |
 | `GITHUB_TOKEN` | `automation` steps that call GitHub. |
 | `GITHUB_REPOSITORY` | `automation` steps. |
 | `GITHUB_RUN_ID` | `automation plan-github`. |
