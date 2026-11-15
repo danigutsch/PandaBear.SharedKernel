@@ -249,20 +249,6 @@ PandaBear.Testing.TestPriorityExtensions
 static PandaBear.Testing.TestPriorityExtensions.ToTraitValue(this PandaBear.Testing.TestPriority priority) -> string!
 const PandaBear.Testing.TestTraitNames.FocusName = "Focus" -> string!
 const PandaBear.Testing.TestTraitNames.PriorityName = "Priority" -> string!
-PandaBear.Testing.CallHooks
-PandaBear.Testing.CallHooks.After(string! method, System.Func<PandaBear.Testing.CallInfo!, System.Threading.Tasks.Task!>! hook) -> PandaBear.Testing.CallHooks!
-PandaBear.Testing.CallHooks.CallHooks() -> void
-PandaBear.Testing.CallHooks.Before(string! method, System.Func<PandaBear.Testing.CallInfo!, System.Threading.Tasks.Task!>! hook) -> PandaBear.Testing.CallHooks!
-PandaBear.Testing.CallHooks.Returns(string! method, object? value) -> PandaBear.Testing.CallHooks!
-PandaBear.Testing.CallInfo
-PandaBear.Testing.CallInfo.Args.get -> System.Collections.Generic.IReadOnlyList<object?>!
-PandaBear.Testing.CallInfo.CallInfo(string! method, System.Collections.Generic.IReadOnlyList<object?>! args) -> void
-PandaBear.Testing.CallInfo.Method.get -> string!
-PandaBear.Testing.CallInfo.Result.get -> object?
-PandaBear.Testing.CallProxy
-PandaBear.Testing.CallProxy.CallProxy() -> void
-override PandaBear.Testing.CallProxy.Invoke(System.Reflection.MethodInfo? targetMethod, object?[]? args) -> object?
-static PandaBear.Testing.CallProxy.Create<TService>(TService! inner, System.Action<PandaBear.Testing.CallHooks!>? configure = null) -> TService!
 PandaBear.Testing.CountingTimeProvider
 PandaBear.Testing.CountingTimeProvider.CountingTimeProvider() -> void
 PandaBear.Testing.CountingTimeProvider.CountingTimeProvider(System.TimeProvider! inner) -> void
@@ -355,4 +341,30 @@ override PandaBear.Testing.ThrowingReadStream.Write(byte[]! buffer, int offset, 
 PandaBear.Testing.TrackingReadStream.MaxBytesPerRead.get -> int
 PandaBear.Testing.TrackingReadStream.MaxBytesPerRead.init -> void
 PandaBear.Testing.CallProxyServiceCollectionExtensions
-static PandaBear.Testing.CallProxyServiceCollectionExtensions.WrapWithCallProxy<TService>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<PandaBear.Testing.CallHooks!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.Testing.CallHooks<TService>
+PandaBear.Testing.CallHooks<TService>.Generated<THooks>() -> THooks!
+PandaBear.Testing.CallProxy
+PandaBear.Testing.GeneratedCallHooks<TService>
+PandaBear.Testing.GeneratedCallHooks<TService>.GeneratedCallHooks() -> void
+PandaBear.Testing.MethodHooks<TCall, TResult>
+PandaBear.Testing.MethodHooks<TCall, TResult>.After(System.Action<TCall>! hook) -> PandaBear.Testing.MethodHooks<TCall, TResult>!
+PandaBear.Testing.MethodHooks<TCall, TResult>.After(System.Func<TCall, System.Threading.Tasks.Task!>! hook) -> PandaBear.Testing.MethodHooks<TCall, TResult>!
+PandaBear.Testing.MethodHooks<TCall, TResult>.Before(System.Action<TCall>! hook) -> PandaBear.Testing.MethodHooks<TCall, TResult>!
+PandaBear.Testing.MethodHooks<TCall, TResult>.Before(System.Func<TCall, System.Threading.Tasks.Task!>! hook) -> PandaBear.Testing.MethodHooks<TCall, TResult>!
+PandaBear.Testing.MethodHooks<TCall, TResult>.MethodHooks() -> void
+PandaBear.Testing.MethodHooks<TCall, TResult>.Returns(TResult value) -> PandaBear.Testing.MethodHooks<TCall, TResult>!
+PandaBear.Testing.MethodHooks<TCall, TResult>.RunAfter(TCall call) -> System.Threading.Tasks.Task!
+PandaBear.Testing.MethodHooks<TCall, TResult>.RunBefore(TCall call) -> System.Threading.Tasks.Task!
+PandaBear.Testing.MethodHooks<TCall, TResult>.TryGetReplacement(out TResult value) -> bool
+PandaBear.Testing.MethodHooks<TCall>
+PandaBear.Testing.MethodHooks<TCall>.After(System.Action<TCall>! hook) -> PandaBear.Testing.MethodHooks<TCall>!
+PandaBear.Testing.MethodHooks<TCall>.After(System.Func<TCall, System.Threading.Tasks.Task!>! hook) -> PandaBear.Testing.MethodHooks<TCall>!
+PandaBear.Testing.MethodHooks<TCall>.Before(System.Action<TCall>! hook) -> PandaBear.Testing.MethodHooks<TCall>!
+PandaBear.Testing.MethodHooks<TCall>.Before(System.Func<TCall, System.Threading.Tasks.Task!>! hook) -> PandaBear.Testing.MethodHooks<TCall>!
+PandaBear.Testing.MethodHooks<TCall>.MethodHooks() -> void
+PandaBear.Testing.MethodHooks<TCall>.RunAfter(TCall call) -> System.Threading.Tasks.Task!
+PandaBear.Testing.MethodHooks<TCall>.RunBefore(TCall call) -> System.Threading.Tasks.Task!
+abstract PandaBear.Testing.GeneratedCallHooks<TService>.Wrap(TService! inner) -> TService!
+static PandaBear.Testing.CallProxy.Create<TService>(TService! inner, System.Action<PandaBear.Testing.CallHooks<TService!>!>? configure = null) -> TService!
+static PandaBear.Testing.CallProxy.Register<TService>(System.Func<PandaBear.Testing.GeneratedCallHooks<TService!>!>! create) -> void
+static PandaBear.Testing.CallProxyServiceCollectionExtensions.WrapWithCallProxy<TService>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<PandaBear.Testing.CallHooks<TService!>!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

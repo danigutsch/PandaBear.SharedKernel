@@ -52,18 +52,10 @@ internal sealed class CallProbe : ICallProbe
     public void Touch() => Calls.Add(nameof(Touch));
 
     /// <inheritdoc />
-    public bool TryGet(string key, out string? value)
+    public void Break()
     {
-        Calls.Add(nameof(TryGet));
-        value = key == "known" ? "found" : null;
-        return value is not null;
-    }
-
-    /// <inheritdoc />
-    public void Increment(ref int value)
-    {
-        Calls.Add(nameof(Increment));
-        value++;
+        Calls.Add(nameof(Break));
+        throw new InvalidOperationException("inner failure");
     }
 
     /// <inheritdoc />
@@ -78,6 +70,14 @@ internal sealed class CallProbe : ICallProbe
     {
         Calls.Add(nameof(FindNumber));
         return Task.FromResult<int?>(7);
+    }
+
+    /// <inheritdoc />
+    public Task<int> Count(int value, CancellationToken cancellationToken)
+    {
+        Calls.Add(nameof(Count));
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(value);
     }
 
     /// <inheritdoc />

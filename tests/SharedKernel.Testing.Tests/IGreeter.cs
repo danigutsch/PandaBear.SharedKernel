@@ -1,6 +1,6 @@
 namespace PandaBear.Testing.Tests;
 
-/// <summary>A service the registration tests wrap in a <see cref="CallProxy"/>; public because proxies can only implement public interfaces.</summary>
+/// <summary>A service the registration tests wrap in a <see cref="CallProxy"/>.</summary>
 public interface IGreeter
 {
     /// <summary>Greets someone.</summary>

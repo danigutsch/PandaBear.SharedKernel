@@ -15,25 +15,23 @@ public static class CallProxyServiceCollectionExtensions
     /// and every proxy shares the hooks. Keyed registrations of <typeparamref name="TService"/> are left alone. Call it after the
     /// application's own registrations.
     /// </remarks>
-    /// <typeparam name="TService">The service interface; it must be public.</typeparam>
+    /// <typeparam name="TService">The service interface.</typeparam>
     /// <param name="services">The service collection.</param>
     /// <param name="configure">Adds the hooks.</param>
     /// <returns>The same service collection.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="services"/> or <paramref name="configure"/> is null.</exception>
-    /// <exception cref="ArgumentException">A hook or replacement is registered for a name that matches no method of the service.</exception>
     /// <exception cref="InvalidOperationException">
-    /// <typeparamref name="TService"/> has no registration without a key, or <see cref="CallHooks.Returns"/> is registered for a name whose
-    /// methods all return no value or all have out or ref parameters.
+    /// No proxy was generated for <typeparamref name="TService"/>, or <typeparamref name="TService"/> has no registration without a key.
     /// </exception>
-    public static IServiceCollection WrapWithCallProxy<TService>(this IServiceCollection services, Action<CallHooks> configure)
+    public static IServiceCollection WrapWithCallProxy<TService>(this IServiceCollection services, Action<CallHooks<TService>> configure)
         where TService : class
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configure);
 
-        var hooks = new CallHooks();
+        var hooks = new CallHooks<TService>();
         configure(hooks);
-        hooks.Validate(typeof(TService));
+        var generated = hooks.Resolve();
 
         var wrapped = 0;
         var count = services.Count;
@@ -49,7 +47,7 @@ public static class CallProxyServiceCollectionExtensions
             services.Add(WithKey(original, key));
             services[index] = new ServiceDescriptor(
                 typeof(TService),
-                provider => CallProxy.Wrap((TService)provider.GetRequiredKeyedService(typeof(TService), key), hooks),
+                provider => generated.Wrap(provider.GetRequiredKeyedService<TService>(key)),
                 original.Lifetime);
             wrapped++;
         }

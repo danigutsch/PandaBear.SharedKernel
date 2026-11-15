@@ -76,6 +76,7 @@ flowchart TB
     SharedKernel_ServiceDefaults[SharedKernel.ServiceDefaults] --> SharedKernel_Observability[SharedKernel.Observability]
     SharedKernel_Style_CodeFixes[SharedKernel.Style.CodeFixes] --> SharedKernel_Style_Analyzers[SharedKernel.Style.Analyzers]
     SharedKernel_Tabular[SharedKernel.Tabular] --> SharedKernel_Results[SharedKernel.Results]
+    SharedKernel_Testing[SharedKernel.Testing] --> SharedKernel_Testing_SourceGenerator[SharedKernel.Testing.SourceGenerator]
     SharedKernel_Testing_Assertions[SharedKernel.Testing.Assertions] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_Testing_CodeFixes[SharedKernel.Testing.CodeFixes] --> SharedKernel_Testing_Analyzers[SharedKernel.Testing.Analyzers]
     SharedKernel_Testing_Domain[SharedKernel.Testing.Domain] --> SharedKernel_Domain[SharedKernel.Domain]

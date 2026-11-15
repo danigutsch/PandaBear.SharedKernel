@@ -1,6 +1,6 @@
 namespace PandaBear.Testing.Tests;
 
-/// <summary>A small service the <see cref="CallProxy"/> tests wrap; public because proxies can only implement public interfaces.</summary>
+/// <summary>A small service the <see cref="CallProxy"/> tests wrap.</summary>
 public interface ICallProbe : ICallProbeBase
 {
     /// <summary>Doubles a number.</summary>
@@ -34,15 +34,8 @@ public interface ICallProbe : ICallProbeBase
     /// <summary>Counts a synchronous call.</summary>
     void Touch();
 
-    /// <summary>Looks a key up and hands the value back through an out parameter.</summary>
-    /// <param name="key">The key.</param>
-    /// <param name="value">The value found, or null.</param>
-    /// <returns>True when the key is known.</returns>
-    bool TryGet(string key, out string? value);
-
-    /// <summary>Increments a number passed by reference.</summary>
-    /// <param name="value">The number to increment in place.</param>
-    void Increment(ref int value);
+    /// <summary>Fails synchronously with an invalid-operation exception.</summary>
+    void Break();
 
     /// <summary>Finds a name, or nothing.</summary>
     /// <returns>A task with the name, or null.</returns>
@@ -51,6 +44,12 @@ public interface ICallProbe : ICallProbeBase
     /// <summary>Finds a number, or nothing.</summary>
     /// <returns>A task with the number, or null.</returns>
     Task<int?> FindNumber();
+
+    /// <summary>Counts up to a number and honours cancellation.</summary>
+    /// <param name="value">The number.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A task with the number.</returns>
+    Task<int> Count(int value, CancellationToken cancellationToken);
 
     /// <summary>Saves nothing, without a result.</summary>
     /// <returns>A task that completes when done.</returns>
