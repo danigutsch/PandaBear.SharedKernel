@@ -1,6 +1,4 @@
 using System.Xml.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace PandaBear.Style.Analyzers.Tests;
 
@@ -26,29 +24,29 @@ public sealed class GovernedLiteralRepositoryTests
                 || (XDocument.Load(project).Descendants("PackageId")
                     .Any(id => id.Value.StartsWith("PandaBear.SharedKernel.", StringComparison.Ordinal))
                 && !XDocument.Load(project).Descendants("IsPackable").Any(value => value.Value == "false")));
-        var compilations = new List<CSharpCompilation>();
+        var manifests = new List<string[]>();
         foreach (var project in projects)
         {
             var inventory = Path.Combine(repository, "TestResults", "governed-literals", "Release", Path.GetFileNameWithoutExtension(project));
             Directory.Exists(inventory).ShouldBeTrue($"Build SharedKernel.slnx in Release before running the guard: missing {inventory}");
-            foreach (var manifest in Directory.EnumerateFiles(inventory, "*.inputs"))
-            {
-                var lines = File.ReadAllLines(manifest).Select(line => line.Split('|', 2)).ToArray();
-                var assembly = lines.ShouldHaveSingleItem(line => line[0] == "assembly")[1];
-                var defines = lines.ShouldHaveSingleItem(line => line[0] == "defines")[1].Split(',', StringSplitOptions.RemoveEmptyEntries);
-                var options = new CSharpParseOptions(LanguageVersion.Preview, preprocessorSymbols: defines);
-                var trees = lines.Where(line => line[0] == "source").Select(line =>
-                    CSharpSyntaxTree.ParseText(File.ReadAllText(line[1]), options, line[1]));
-                var references = lines.Where(line => line[0] == "reference").Select(line => MetadataReference.CreateFromFile(line[1]));
-                compilations.Add(CSharpCompilation.Create(assembly, trees, references,
-                    new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)));
-            }
+            manifests.Add([.. Directory.EnumerateFiles(inventory, "*.inputs").Order(StringComparer.Ordinal)]);
         }
 
+        // A project that builds several frameworks records one manifest per framework. Each framework is checked on its
+        // own, with every other project's manifest for that framework or, without one, its first.
+        var frameworks = manifests.Where(static files => files.Length > 1).SelectMany(static files => files)
+            .Select(static file => Path.GetFileNameWithoutExtension(file)).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
         var catalog = File.ReadAllText(Path.Combine(repository, "src", "SharedKernel", "SharedKernel.Style.Analyzers", "GovernedLiterals.txt"));
+        var errors = new List<string>();
 
         // Act
-        var errors = GovernedConstantGuard.Validate(compilations, catalog);
+        foreach (var framework in frameworks.DefaultIfEmpty(string.Empty))
+        {
+            var compilations = manifests.Where(static files => files.Length > 0)
+                .Select(files => GovernedLiteralManifest.Compile(files.FirstOrDefault(file => Path.GetFileNameWithoutExtension(file) == framework) ?? files[0]))
+                .ToList();
+            errors.AddRange(GovernedConstantGuard.Validate(compilations, catalog).Select(error => framework.Length == 0 ? error : framework + ": " + error));
+        }
 
         // Assert
         errors.ShouldBeEmpty();

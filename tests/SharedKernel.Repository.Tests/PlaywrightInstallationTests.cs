@@ -53,6 +53,23 @@ public sealed class PlaywrightInstallationTests : IDisposable
     }
 
     [Fact]
+    public async Task A_multi_framework_project_uses_the_installer_of_its_first_framework()
+    {
+        // Arrange
+        // The outer build of a project with several target frameworks reports the output path without a framework folder.
+        scope.WriteFile("tests/Core.Tests/bin/Release/net11.0/playwright.ps1", "# installer");
+        scope.WriteFile("tests/Core.Tests/bin/Release/net10.0/playwright.ps1", "# installer");
+        var processes = new ProcessLog(static (fileName, _, _) => Task.FromResult(fileName == "dotnet" ? "bin/Release/" : string.Empty));
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["install-playwright", "--project", Project], processes.Run, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        processes.Commands.ShouldContain("pwsh " + Path.Combine(scope.Root, "tests", "Core.Tests", "bin", "Release", "net10.0", "playwright.ps1") + " install");
+    }
+
+    [Fact]
     public async Task An_absolute_output_path_and_a_configuration_are_honored_without_dependencies()
     {
         // Arrange
