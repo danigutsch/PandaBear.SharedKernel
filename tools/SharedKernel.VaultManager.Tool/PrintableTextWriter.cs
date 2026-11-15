@@ -10,9 +10,12 @@ namespace PandaBear.VaultManager.Tool;
 /// character, such as a bidirectional mark, embedding, override, or isolate or a zero-width character, every other
 /// default ignorable code point except a variation selector, and every unpaired surrogate becomes
 /// <see cref="PrintableText.Replacement"/>, and a tab, any other carriage return, and a line or paragraph separator become
-/// spaces. Each write goes through at once, except a high surrogate at its end, which waits for the low surrogate that the
-/// next write may start with, so that a surrogate pair written in two parts stays; <see cref="Flush"/> and disposal write a
-/// high surrogate still waiting as <see cref="PrintableText.Replacement"/>. The writer does not own the other writer.
+/// spaces. A zero width joiner or non-joiner and the tag characters stay where <see cref="PrintableText.OneLine"/> keeps
+/// them, judged within one line of one write, so a sequence split between two writes or two lines is replaced.
+/// Each write goes through at once, except a high surrogate at its end, which waits for the low surrogate that the next
+/// write may start with, so that a surrogate pair written in two parts stays. <see cref="Flush"/> keeps that high
+/// surrogate waiting; disposal writes a high surrogate still waiting as <see cref="PrintableText.Replacement"/> and
+/// flushes the other writer. The writer does not own the other writer and does not dispose it.
 /// </summary>
 [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "The other writer belongs to the caller, such as the console.")]
 internal sealed class PrintableTextWriter : TextWriter
@@ -50,11 +53,7 @@ internal sealed class PrintableTextWriter : TextWriter
     public override void Write(char[] buffer, int index, int count) => WritePrintable(new string(buffer, index, count));
 
     /// <inheritdoc/>
-    public override void Flush()
-    {
-        WritePendingHighSurrogate();
-        inner.Flush();
-    }
+    public override void Flush() => inner.Flush();
 
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
@@ -62,6 +61,7 @@ internal sealed class PrintableTextWriter : TextWriter
         if (disposing)
         {
             WritePendingHighSurrogate();
+            inner.Flush();
         }
 
         base.Dispose(disposing);
@@ -69,10 +69,9 @@ internal sealed class PrintableTextWriter : TextWriter
 
     private static string Printable(string text)
     {
-        string printable = PrintableText.OneLine(text);
-        if (ReferenceEquals(printable, text))
+        if (text.AsSpan().IndexOfAny('\r', '\n') < 0)
         {
-            return text;
+            return PrintableText.OneLine(text);
         }
 
         // OneLine can shorten the text, so each line is made printable on its own and the line breaks are kept between.

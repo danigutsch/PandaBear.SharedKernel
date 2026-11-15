@@ -54,7 +54,9 @@ internal static class VaultCommandLine
 
     /// <summary>
     /// Parses a command line with <see cref="Parse"/> and invokes it. A command line with parse errors gets
-    /// System.CommandLine's error output, typo corrections, and help, written through <see cref="PrintableTextWriter"/>.
+    /// System.CommandLine's error output, typo corrections, and help, written through <see cref="PrintableTextWriter"/>
+    /// writers that are disposed when the command ends; the output and error writers of
+    /// <paramref name="configuration"/> stay open.
     /// </summary>
     /// <param name="rootCommand">Root command from <see cref="Create"/>.</param>
     /// <param name="args">Command-line arguments.</param>
@@ -62,25 +64,30 @@ internal static class VaultCommandLine
     /// <param name="ct">Cancels the command.</param>
     /// <returns>The exit code.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="configuration"/> is <see langword="null"/>.</exception>
-    public static Task<int> Invoke(RootCommand rootCommand, IReadOnlyList<string> args, InvocationConfiguration configuration, CancellationToken ct)
+    public static async Task<int> Invoke(RootCommand rootCommand, IReadOnlyList<string> args, InvocationConfiguration configuration, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(configuration);
 
         ParseResult parseResult = Parse(rootCommand, args);
-        if (parseResult.Action is ParseErrorAction)
+        if (parseResult.Action is not ParseErrorAction)
         {
-            // System.CommandLine's parse errors and typo corrections repeat the arguments verbatim, so an argument with an
-            // escape sequence or a bidirectional override would reach the terminal. Everything else the tool prints goes
-            // through PrintableText, so the error output does too; its text, exit code 1, and streams stay the default.
-            configuration = new InvocationConfiguration
-            {
-                Output = new PrintableTextWriter(configuration.Output),
-                Error = new PrintableTextWriter(configuration.Error),
-                EnableDefaultExceptionHandler = configuration.EnableDefaultExceptionHandler,
-                ProcessTerminationTimeout = configuration.ProcessTerminationTimeout,
-            };
+            return await parseResult.InvokeAsync(configuration, ct).ConfigureAwait(false);
         }
 
-        return parseResult.InvokeAsync(configuration, ct);
+        // System.CommandLine's parse errors and typo corrections repeat the arguments verbatim, so an argument with an
+        // escape sequence or a bidirectional override would reach the terminal. Everything else the tool prints goes
+        // through PrintableText, so the error output does too; its text, exit code 1, and streams stay the default.
+        // Disposing the printable writers writes a high surrogate still waiting for its low surrogate and flushes the
+        // writers they wrap, which stay open: they belong to the caller, such as the console.
+        using var output = new PrintableTextWriter(configuration.Output);
+        using var error = new PrintableTextWriter(configuration.Error);
+        var printableConfiguration = new InvocationConfiguration
+        {
+            Output = output,
+            Error = error,
+            EnableDefaultExceptionHandler = configuration.EnableDefaultExceptionHandler,
+            ProcessTerminationTimeout = configuration.ProcessTerminationTimeout,
+        };
+        return await parseResult.InvokeAsync(printableConfiguration, ct).ConfigureAwait(false);
     }
 }
