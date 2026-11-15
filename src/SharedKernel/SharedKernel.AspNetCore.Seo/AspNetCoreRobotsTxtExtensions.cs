@@ -15,7 +15,8 @@ public static class AspNetCoreRobotsTxtExtensions
     private const string RobotsTxtContentType = "text/plain; charset=utf-8";
 
     /// <summary>
-    /// Maps an anonymous root robots.txt endpoint with application-owned crawler policy text.
+    /// Maps an anonymous root robots.txt endpoint with application-owned crawler policy text for <c>GET</c> and <c>HEAD</c>. Both answer
+    /// with <c>text/plain; charset=utf-8</c> and the <c>Content-Length</c> of the text; only <c>GET</c> writes the body.
     /// </summary>
     /// <param name="app">The endpoint route builder.</param>
     /// <param name="robotsTxt">The robots.txt content owned by the consuming application.</param>
@@ -27,14 +28,18 @@ public static class AspNetCoreRobotsTxtExtensions
         ArgumentNullException.ThrowIfNull(app);
         ArgumentException.ThrowIfNullOrWhiteSpace(robotsTxt);
 
-        return app.MapGet(RobotsTxtPath, context => WriteRobotsTxt(context, robotsTxt))
+        var body = Encoding.UTF8.GetBytes(robotsTxt);
+        return app.MapMethods(RobotsTxtPath, [HttpMethods.Get, HttpMethods.Head], context => WriteRobotsTxt(context, body))
             .ExcludeFromDescription()
             .AllowAnonymous();
     }
 
-    private static Task WriteRobotsTxt(HttpContext context, string robotsTxt)
+    private static Task WriteRobotsTxt(HttpContext context, byte[] body)
     {
         context.Response.ContentType = RobotsTxtContentType;
-        return context.Response.WriteAsync(robotsTxt, Encoding.UTF8, context.RequestAborted);
+        context.Response.ContentLength = body.Length;
+        return HttpMethods.IsHead(context.Request.Method)
+            ? Task.CompletedTask
+            : context.Response.Body.WriteAsync(body, context.RequestAborted).AsTask();
     }
 }
