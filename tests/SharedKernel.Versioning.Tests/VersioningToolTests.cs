@@ -91,16 +91,17 @@ public static class VersioningToolTests
 
             // Act
             var project = System.Xml.Linq.XDocument.Load(projectPath);
-            var properties = project.Descendants().Where(element => element.Parent?.Name.LocalName == "PropertyGroup").ToDictionary(
+            var properties = project.Descendants().Where(element => element.Parent?.Name.LocalName == "PropertyGroup").ToLookup(
                 element => element.Name.LocalName,
-                element => element.Value);
+                element => element.Value,
+                StringComparer.Ordinal);
             var readmeItem = project.Descendants("None").SingleOrDefault(element =>
                 string.Equals((string?)element.Attribute("Include"), "README.md", StringComparison.Ordinal));
 
             // Assert
-            properties["PackageId"].ShouldBe(packageId);
-            properties["PackageReadmeFile"].ShouldBe("README.md");
-            properties["IsAotCompatible"].ShouldBe("false");
+            properties["PackageId"].ShouldHaveSingleItem().ShouldBe(packageId);
+            properties["PackageReadmeFile"].ShouldHaveSingleItem().ShouldBe("README.md");
+            properties["IsAotCompatible"].ShouldHaveSingleItem().ShouldBe("false");
             readmeItem.ShouldNotBeNull();
         }
     }
