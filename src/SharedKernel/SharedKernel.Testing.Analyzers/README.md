@@ -34,7 +34,7 @@ test assertions. Do not apply it to regular production projects.
 | `SKTEST018` | Suggestion | Every xUnit test declares exactly one valid test scope. |
 | `SKTEST019` | Warning | `CallProxy.Create<TService>` must wrap a public interface. |
 | `SKTEST020` | Warning | Wait for a page address with `ExpectPath`, not Playwright's `WaitForURLAsync`. |
-| `SKTEST021` | Warning | Entries of `sharedkernel_testing_additional_allowed_segments` must start with a letter and contain only letters and digits. |
+| `SKTEST021` | Warning | Entries of `sharedkernel_testing_additional_allowed_segments` must be new letter-and-digit words. |
 | `SKTEST017` | Disabled; opt-in warning | Give every public `Should*` assertion an overload that takes `userMessage`. |
 
 See [test assertion conventions](../../../docs/TEST_GUIDELINES.md) for migrations, exception-testing
@@ -114,9 +114,9 @@ Names that exist in one repository, such as its own types or domain abbreviation
 Declare them with `sharedkernel_testing_additional_allowed_segments`, a comma-separated list read per file, so an
 `.editorconfig` section can limit it to a folder. A configured entry follows the same rules as a built-in one: it is
 matched exactly, forces its spelling (`bff` must be written `BFF` once `BFF` is configured) unless it is a capitalised
-plain word, and never relaxes the rule for any other segment. An entry that is empty, starts with a digit, or contains
-an underscore or another character that is not a letter or digit is ignored and reported once as `SKTEST021`. There is
-no setting to remove a built-in entry.
+plain word, and never relaxes the rule for any other segment. A capitalised plain word has at least one lowercase letter:
+`S3` is an acronym and forces its spelling. An invalid entry is ignored and reported once as [`SKTEST021`](#sktest021).
+There is no setting to remove or respell a built-in entry.
 
 ## Package boundary
 
@@ -344,3 +344,18 @@ from `SharedKernel.Testing.Playwright` poll the address in the driver instead. T
 absolute `http` or `https` address (a constant, an interpolated string that starts with a literal `http://` or `https://`
 and has no glob characters, or `uri.ToString()`) when `ExpectPath` is referenced; relative addresses, globs and options are left
 for a person.
+
+## SKTEST021
+
+`sharedkernel_testing_additional_allowed_segments` takes a comma-separated list of whole test method name segments. The
+rule reports each entry the analyzer ignores, once per compilation:
+
+- an empty entry, for example from `BFF,,Errors` or a trailing comma;
+- an entry that starts with a digit (`2FA`) or contains an underscore, hyphen or other character that is not a letter or
+  digit (`Integration_Event`, `Foo-Bar`);
+- an entry that equals a built-in segment ignoring case (`Json`), because it would override the built-in spelling.
+
+```ini
+[tests/**.cs]
+sharedkernel_testing_additional_allowed_segments = BFF, IntegrationEvent, Errors
+```

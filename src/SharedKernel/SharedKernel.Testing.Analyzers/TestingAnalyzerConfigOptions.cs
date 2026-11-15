@@ -84,7 +84,9 @@ internal sealed class TestingAnalyzerConfigOptions(
         var invalid = ImmutableArray.CreateBuilder<string>();
         foreach (var entry in configured!.Split([',']).Select(static entry => entry.Trim()))
         {
-            var target = entry.Length != 0 && char.IsLetter(entry[0]) && entry.All(char.IsLetterOrDigit) ? valid : invalid;
+            var target = entry.Length != 0 && char.IsLetter(entry[0]) && entry.All(char.IsLetterOrDigit) && !TestMethodNameSegments.IsBuiltIn(entry)
+                ? valid
+                : invalid;
             if (!target.Contains(entry))
             {
                 target.Add(entry);

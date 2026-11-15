@@ -118,7 +118,7 @@ internal static class TestMethodNameSegments
 
     /// <summary>Reports whether an entry must always be written in its listed spelling.</summary>
     /// <param name="entry">A built-in or configured entry.</param>
-    /// <returns>False for a capitalised plain word such as <c>Task</c>, whose lowercase form stays allowed.</returns>
+    /// <returns>False for a capitalised plain word such as <c>Task</c>, whose lowercase form stays allowed; true for acronyms such as <c>S3</c>.</returns>
     public static bool ForcesCasing(string entry)
     {
         if (entry is null)
@@ -126,7 +126,18 @@ internal static class TestMethodNameSegments
             throw new ArgumentNullException(nameof(entry));
         }
 
-        return !entry.Skip(1).All(static character => char.IsLower(character) || char.IsDigit(character));
+        var isCapitalisedWord = entry.Length > 1
+            && char.IsUpper(entry[0])
+            && entry.Skip(1).Any(char.IsLower)
+            && entry.Skip(1).All(static character => char.IsLower(character) || char.IsDigit(character));
+        return !isCapitalisedWord;
+    }
+
+    /// <summary>Reports whether an entry names the same segment as a built-in entry, ignoring case.</summary>
+    /// <param name="entry">A configured entry.</param>
+    public static bool IsBuiltIn(string entry)
+    {
+        return Find(entry, [], StringComparison.OrdinalIgnoreCase) is not null;
     }
 
     /// <summary>Reports whether a segment is an accepted spelling of the entry it matches.</summary>

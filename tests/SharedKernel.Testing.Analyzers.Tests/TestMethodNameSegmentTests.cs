@@ -135,19 +135,20 @@ public sealed class TestMethodNameSegmentTests
     [Theory]
     [InlineData("Calls_the_bff", "'bff' as 'BFF'")]
     [InlineData("Publishes_the_integrationevent", "'integrationevent' as 'IntegrationEvent'")]
+    [InlineData("Stores_in_s3", "'s3' as 'S3'")]
     public async Task Configured_segments_force_their_spelling(string methodName, string correction)
     {
         // Arrange
         var source = TestMethodNameTestSource.Create(methodName);
 
         // Act
-        var diagnostics = await AnalyzerTestHarness.GetDiagnosticsById(NamingDiagnosticId, source, TestMethodNameTestSource.Configured("BFF,IntegrationEvent"));
+        var diagnostics = await AnalyzerTestHarness.GetDiagnosticsById(NamingDiagnosticId, source, TestMethodNameTestSource.Configured("BFF,IntegrationEvent,S3"));
 
         // Assert
         var diagnostic = diagnostics.ShouldHaveSingleItem();
         diagnostic.GetMessage(CultureInfo.InvariantCulture).ShouldBe(
             $"xUnit test method '{methodName}' should follow the underscore naming convention; write {correction}");
-        diagnostic.Properties[TestMethodNameSegments.AdditionalSegmentsProperty].ShouldBe("BFF,IntegrationEvent");
+        diagnostic.Properties[TestMethodNameSegments.AdditionalSegmentsProperty].ShouldBe("BFF,IntegrationEvent,S3");
     }
 
     [Theory]
@@ -196,9 +197,14 @@ public sealed class TestMethodNameSegmentTests
                 public void Calls_the_Integration_Event()
                 {
                 }
+
+                [Fact]
+                public void Parses_the_Json_payload()
+                {
+                }
             }
             """;
-        var options = TestMethodNameTestSource.Configured("BFF, Integration_Event, , Foo-Bar, 2FA");
+        var options = TestMethodNameTestSource.Configured("BFF, Integration_Event, , Foo-Bar, 2FA, Json");
 
         // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
@@ -210,15 +216,20 @@ public sealed class TestMethodNameSegmentTests
             .ToArray()
             .ShouldBe(
             [
-                "sharedkernel_testing_additional_allowed_segments entry '' is ignored: an entry must start with a letter and contain only letters and digits",
-                "sharedkernel_testing_additional_allowed_segments entry '2FA' is ignored: an entry must start with a letter and contain only letters and digits",
-                "sharedkernel_testing_additional_allowed_segments entry 'Foo-Bar' is ignored: an entry must start with a letter and contain only letters and digits",
-                "sharedkernel_testing_additional_allowed_segments entry 'Integration_Event' is ignored: an entry must start with a letter and contain only letters and digits",
+                "sharedkernel_testing_additional_allowed_segments entry '' is ignored: an entry must start with a letter, contain only letters and digits, and not repeat a built-in segment",
+                "sharedkernel_testing_additional_allowed_segments entry '2FA' is ignored: an entry must start with a letter, contain only letters and digits, and not repeat a built-in segment",
+                "sharedkernel_testing_additional_allowed_segments entry 'Foo-Bar' is ignored: an entry must start with a letter, contain only letters and digits, and not repeat a built-in segment",
+                "sharedkernel_testing_additional_allowed_segments entry 'Integration_Event' is ignored: an entry must start with a letter, contain only letters and digits, and not repeat a built-in segment",
+                "sharedkernel_testing_additional_allowed_segments entry 'Json' is ignored: an entry must start with a letter, contain only letters and digits, and not repeat a built-in segment",
             ]);
         diagnostics.Where(static diagnostic => diagnostic.Id == NamingDiagnosticId)
             .Select(static diagnostic => diagnostic.GetMessage(CultureInfo.InvariantCulture))
             .ToArray()
-            .ShouldBe(["xUnit test method 'Calls_the_Integration_Event' should follow the underscore naming convention"]);
+            .ShouldBe(
+            [
+                "xUnit test method 'Calls_the_Integration_Event' should follow the underscore naming convention",
+                "xUnit test method 'Parses_the_Json_payload' should follow the underscore naming convention; write 'Json' as 'JSON'",
+            ]);
     }
 
     [Theory]

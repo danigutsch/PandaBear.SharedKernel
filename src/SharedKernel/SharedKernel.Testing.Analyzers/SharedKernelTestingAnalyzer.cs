@@ -46,12 +46,12 @@ public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     private static readonly DiagnosticDescriptor InvalidAdditionalAllowedSegmentRule = new(
         TestingDiagnosticIds.InvalidAdditionalAllowedSegment,
-        title: "Configured test method name segments must be letters and digits",
-        messageFormat: "sharedkernel_testing_additional_allowed_segments entry '{0}' is ignored: an entry must start with a letter and contain only letters and digits",
+        title: "Configured test method name segments must be new letter-and-digit words",
+        messageFormat: "sharedkernel_testing_additional_allowed_segments entry '{0}' is ignored: an entry must start with a letter, contain only letters and digits, and not repeat a built-in segment",
         category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Each comma-separated entry of sharedkernel_testing_additional_allowed_segments names one whole test method name segment, so it cannot be empty or contain underscores or other separators.",
+        description: "Each comma-separated entry of sharedkernel_testing_additional_allowed_segments names one whole test method name segment, so it cannot be empty or contain underscores or other separators. An entry that equals a built-in segment ignoring case would override its forced spelling, so it is ignored too.",
         helpLinkUri: "https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Testing.Analyzers/README.md#sktest021");
 
     private static readonly DiagnosticDescriptor XunitTestMethodRequiredTraitRule = new(
