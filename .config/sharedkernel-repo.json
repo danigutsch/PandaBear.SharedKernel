@@ -122,5 +122,16 @@
     "src/SharedKernel/SharedKernel.Vault.Keeper/SharedKernel.Vault.Keeper.csproj",
     "src/SharedKernel/SharedKernel.Vault/SharedKernel.Vault.csproj",
     "src/SharedKernel/SharedKernel.Versioning/SharedKernel.Versioning.csproj"
-  ]
+  ],
+  "targetFrameworks": {
+    "projects": [
+      { "include": "src/SharedKernel/*.Analyzers/*.csproj", "frameworks": ["netstandard2.0"] },
+      { "include": "src/SharedKernel/*.CodeFixes/*.csproj", "frameworks": ["netstandard2.0"] },
+      { "include": "src/SharedKernel/*.SourceGenerator/*.csproj", "frameworks": ["netstandard2.0"] },
+      { "include": "tools/SharedKernel.Testing.CodeFixRunner/*.csproj", "frameworks": ["net10.0"], "rollForward": "LatestMajor" },
+      { "include": "tools/*.csproj", "frameworks": ["net10.0"], "rollForward": "Major" },
+      { "include": "*.csproj", "frameworks": ["net10.0"] }
+    ],
+    "commandFiles": [".github/*", "*.sh", "*.ps1", "*.md"]
+  }
 }

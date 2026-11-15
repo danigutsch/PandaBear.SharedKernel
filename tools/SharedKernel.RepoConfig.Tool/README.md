@@ -14,7 +14,8 @@ approvals.
 
 ## Prerequisites
 
-The tool runs on .NET 10. `verify-text-encoding`, `verify-line-endings`, `verify-json`, `verify-gherkin`,
+The tool targets .NET 10 and rolls forward to a later major runtime, such as .NET 11, when .NET 10 is not installed.
+`verify-text-encoding`, `verify-line-endings`, `verify-json`, `verify-gherkin`, `verify-target-frameworks`,
 `dependency snapshot`, `dependency verify-license-exceptions`, and the `automation` steps also need Git on an absolute
 `PATH` entry.
 `verify-devcontainer` needs Docker on an absolute `PATH` entry, a container image with `bash`, and, without
@@ -70,6 +71,8 @@ sharedkernel-repo verify-gherkin tests/Features/booking.feature tests/Features/T
 sharedkernel-repo verify-action-pins
 sharedkernel-repo verify-action-pins --manifest .github/action-pins.json
 sharedkernel-repo verify-dependabot
+sharedkernel-repo verify-target-frameworks
+sharedkernel-repo verify-target-frameworks --root path/to/repository
 sharedkernel-repo dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository
 sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_OUTPUT"
 sharedkernel-repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
@@ -98,6 +101,7 @@ sharedkernel-repo verify-devcontainer --exec "dotnet --version" --exec "git --ve
 | `verify-gherkin [<path>...]` | Checks tracked Gherkin feature files against the configured rules; see [Gherkin feature files](#gherkin-feature-files). |
 | `verify-action-pins [--manifest <path>]` | Fails when an external `uses:` reference in `.github/workflows` or `.github/actions` is not pinned to a full 40-character commit SHA, is absent from the manifest (default `.github/action-pins.json`), pins another SHA than the manifest, or lacks the manifest version as its trailing comment. Local `./` references are skipped, `docker://` references fail, and `firstParty` repositories need only the full SHA. See [reusable workflows](../../docs/ci/reusable-workflows.md#pinned-third-party-actions). |
 | `verify-dependabot` | Fails when an `ignore` entry in `.github/dependabot.yml` has no `update-types`. GitHub applies such an entry to security updates as well, so the dependency would never receive a security pull request; list the `version-update:semver-*` types instead. The check is line based and expects block-style YAML. |
+| `verify-target-frameworks` | Checks the target frameworks, roll-forward, lock files, pinned SDK, and `dotnet run --project` lines of the tracked project files against the configured policy; see [Target frameworks](#target-frameworks). |
 | `dependency snapshot` | Generates a dependency snapshot from committed lock files; see [Offline dependency snapshots](#offline-dependency-snapshots). |
 | `dependency submit` | Submits a dependency snapshot to the GitHub dependency graph. |
 | `dependency verify-license-exceptions` | Verifies the configured license exceptions; see [License exceptions](#license-exceptions). |
@@ -271,6 +275,75 @@ first `#` in any other line is ignored, also inside a name. A keyword counts onl
 before a colon, or alone, which leaves its name empty. `Example:`, `Scenario Template:`, and `Scenarios:` are not
 keywords, so a file whose scenarios all use `Example:` has no scenario. A UTF-8 byte order mark stays part of the
 first line, which is then neither a keyword, a tag, nor a comment.
+
+### Target frameworks
+
+`verify-target-frameworks` audits the target frameworks of the tracked `*.csproj`, `*.fsproj`, and `*.vbproj` files
+against the `targetFrameworks` section without building anything, so that a framework change is an edit of the
+policy, a run of the check, and the fixes it reports:
+
+```json
+{
+  "version": 1,
+  "targetFrameworks": {
+    "projects": [
+      { "include": "src/*.Analyzers/*.csproj", "frameworks": ["netstandard2.0"] },
+      { "include": "tools/*.csproj", "frameworks": ["net10.0"], "rollForward": "Major" },
+      { "include": "*.csproj", "frameworks": ["net10.0", "net11.0"] }
+    ],
+    "commandFiles": [".github/*", "*.sh", "*.md"]
+  }
+}
+```
+
+- `projects` is a nonempty list of rules. The first rule whose `include` pattern matches a project applies to it;
+  patterns match the whole path case-sensitively, and `*` also matches `/`. `frameworks` is a nonempty list of
+  distinct target framework monikers such as `net10.0`, `netstandard2.0`, or `net10.0-windows`. `rollForward` is
+  optional: `Minor`, `Major`, `LatestPatch`, `LatestMinor`, `LatestMajor`, or `Disable`, in any case.
+- `commandFiles` is an optional list of path patterns of tracked files whose `dotnet run` lines are checked.
+
+Each finding names the project, lock file, `global.json`, or command file. Projects come first in ordinal path
+order, then SDK findings, then command file findings. The command checks, for each project:
+
+- A project that no rule includes is reported, and gets no other check.
+- `TargetFramework` and `TargetFrameworks` as the evaluation below finds them. A non-empty `TargetFramework`
+  together with a non-empty `TargetFrameworks` is reported, because the SDK cross-targets only when
+  `TargetFramework` is empty, so the project builds only that one framework. The fix is to clear it with
+  `<TargetFramework></TargetFramework>` where `TargetFrameworks` is set.
+- The declared frameworks, which are the `TargetFrameworks` list or else `TargetFramework`, must be the rule's
+  `frameworks`, in any order and ignoring case. A project that declares none is reported.
+- When the rule sets `rollForward`, the final `RollForward` value must equal it ignoring case. An unset value is
+  `Minor`.
+- When `packages.lock.json` next to the project is tracked, the frameworks that its top-level `dependencies` keys
+  name must be the frameworks that the project builds. A key loses a `/` runtime identifier suffix, and
+  `.NETStandard,Version=v2.0`, `.NETCoreApp,Version=v10.0`, and `.NETFramework,Version=v4.8` become
+  `netstandard2.0`, `net10.0`, and `net48`.
+- When a tracked `global.json` at the root sets `sdk.version`, each framework of the form `netN.M` or `netcoreappN.M`
+  with `N` of at least 5 whose major version is above that of the SDK is reported once, with the first project that
+  builds it.
+- In a tracked file that `commandFiles` selects, a line with `dotnet run` and `--project <path>` is reported when
+  the path names a tracked project, or a directory that holds exactly one tracked project file, that builds more
+  than one framework, and the line has no `-f` or `--framework`. A line that ends with `\`, or with a backtick
+  after an odd number of backticks, continues on the next line. A path with `$`, `{`, `%`, or `<`, or that names
+  no tracked project, is skipped.
+
+The properties are read statically, like a local build with no global properties and no environment variables:
+
+- The `Directory.Build.props` chain applies first: the nearest tracked file at or above the project directory, but not
+  above `--root`. The project file body follows. For `RollForward` only, the `Directory.Build.targets` chain
+  follows that.
+- Only top-level `PropertyGroup` elements and `Import` elements are read, in document order. An `Import` whose
+  `Project` calls `GetPathOfFileAbove` for the same file name continues with the nearest such file above the
+  importing file's directory, at that point; other imports are ignored.
+- Property names are case-insensitive, and `$(Name)` becomes the current value or an empty string. Every property
+  that is set by an applicable group is tracked, so a central `$(RepoFrameworks)` resolves.
+- A `Condition` on a group, a property, or an import supports `'a' == 'b'` and `'a' != 'b'` terms joined by `and` and
+  `or`, where `and` binds tighter, without parentheses, comparing ignoring case after substitution. Any other
+  condition, such as `Exists(...)`, a property function, or an unquoted operand, skips the assignment. When that
+  property is `TargetFramework`, `TargetFrameworks`, or `RollForward` (the last only when a rule checks it), the
+  command reports it, and so for a value of those properties that still holds `$(`, `@(`, or `%(`. The project has
+  no other findings then. An import with such a condition is followed.
+- `Choose`, targets, item metadata, SDK-provided properties, and files outside the Git index are not read.
 
 ### Repository labels
 
@@ -475,6 +548,7 @@ default-branch commit moved while it was read.
   with LF in the index, so only the working tree is checked for it. Files missing from the working tree are
   checked only in the index.
 - `verify-links` reads the working tree, not the Git index, and fails on files larger than 64 MiB.
+- `verify-target-frameworks` reads the working-tree content of the regular files in the Git index, skips files it cannot read in command files, and reports a project or props file larger than 4 MiB or another file larger than 16 MiB.
 - `dependency verify-license-exceptions` reads the working-tree content of the regular `packages.lock.json`
   files in the Git index, and fails on an approval file larger than 1 MiB or a lock file larger than 64 MiB.
 - `dependency submit` accepts a snapshot of at most 32 MiB, the size that `dependency snapshot` writes.
@@ -487,7 +561,7 @@ default-branch commit moved while it was read.
 | Code | Meaning |
 | --- | --- |
 | 0 | Success, including previews and a healthy or inapplicable Podman state. |
-| 1 | Verification failure or drift, invalid text encoding or JSON, a line-ending, link, or Gherkin finding, a license exception finding, baseline drift or a baseline conflict (also in a preview), stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a failed dev container start, command, or CLI bootstrap, a command-line error, or cancellation. |
+| 1 | Verification failure or drift, invalid text encoding or JSON, a line-ending, link, Gherkin, or target framework finding, a license exception finding, baseline drift or a baseline conflict (also in a preview), stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a failed dev container start, command, or CLI bootstrap, a command-line error, or cancellation. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or the command did not stop within two seconds. |
 
 ## Security

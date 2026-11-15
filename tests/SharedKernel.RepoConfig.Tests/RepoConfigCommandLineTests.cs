@@ -32,6 +32,7 @@ public sealed class RepoConfigCommandLineTests
         outputText.ShouldContain("  verify-links ", StringComparison.Ordinal);
         outputText.ShouldContain("  verify-gherkin ", StringComparison.Ordinal);
         outputText.ShouldContain("  verify-action-pins ", StringComparison.Ordinal);
+        outputText.ShouldContain("  verify-target-frameworks ", StringComparison.Ordinal);
         outputText.ShouldContain("  security ", StringComparison.Ordinal);
         outputText.ShouldContain("  dependency ", StringComparison.Ordinal);
     }
@@ -175,6 +176,8 @@ public sealed class RepoConfigCommandLineTests
     [InlineData("verify-links roadmap/README.md docs --root .", "verify-links")]
     [InlineData("verify-action-pins", "verify-action-pins")]
     [InlineData("verify-action-pins --manifest .github/action-pins.json --root .", "verify-action-pins")]
+    [InlineData("verify-target-frameworks", "verify-target-frameworks")]
+    [InlineData("verify-target-frameworks --root .", "verify-target-frameworks")]
     [InlineData("verify-gherkin", "verify-gherkin")]
     [InlineData("verify-gherkin tests/Features tests/a.feature --root .", "verify-gherkin")]
     [InlineData("dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository", "submit")]

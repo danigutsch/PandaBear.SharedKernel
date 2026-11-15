@@ -426,6 +426,27 @@ internal static class RepoConfigToolApplication
     }
 
     /// <summary>
+    /// Verifies the target frameworks of the tracked project files against the <c>targetFrameworks</c> section of the
+    /// consumer configuration.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The consumer configuration has no targetFrameworks section.</exception>
+    public static async Task<int> VerifyTargetFrameworks(string rootPath, TextWriter output, TextWriter error, CancellationToken ct)
+    {
+        var configuration = await ConsumerConfigurationFile.Read(rootPath, ct).ConfigureAwait(false);
+        var targetFrameworks = configuration.TargetFrameworks
+            ?? throw new InvalidOperationException("The consumer configuration has no targetFrameworks section.");
+        var issues = await TargetFrameworkVerifier.Verify(rootPath, targetFrameworks, ct).ConfigureAwait(false);
+        if (issues.Count == 0)
+        {
+            await output.WriteLineAsync("Target frameworks match the configured policy.".AsMemory(), ct).ConfigureAwait(false);
+            return 0;
+        }
+
+        WriteIssues(error, "Target framework verification failed:", issues);
+        return 1;
+    }
+
+    /// <summary>
     /// Verifies the license exceptions in the consumer configuration. On success, appends
     /// <c>packages=pkg:nuget/&lt;id&gt;@&lt;version&gt;,...</c> to <paramref name="githubOutput"/> when it is given.
     /// </summary>

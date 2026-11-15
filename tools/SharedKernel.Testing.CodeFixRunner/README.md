@@ -18,7 +18,7 @@ sharedkernel-codefix --version
 
 ## Prerequisites
 
-The tool runs on .NET 10 and loads the target through MSBuildLocator and MSBuildWorkspace. Each starts from
+The tool runs on the newest installed .NET runtime, .NET 10 or later, and loads the target through MSBuildLocator and MSBuildWorkspace. Each starts from
 the .NET SDK that `dotnet` selects for a directory, honoring `global.json`:
 
 - A .NET 10 SDK. MSBuildLocator loads MSBuild into the tool from the SDK selected for the current

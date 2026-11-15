@@ -27,7 +27,7 @@ address with another match setting, and a TOTP key with another issuer or label.
 
 ## Prerequisites and installation
 
-The tool is a framework-dependent .NET tool and needs the .NET 10 runtime. Install a validated candidate package
+The tool is a framework-dependent .NET tool and targets .NET 10; it rolls forward to a later major runtime, such as .NET 11, when .NET 10 is not installed. Install a validated candidate package
 from a local or private feed:
 
 ```sh
