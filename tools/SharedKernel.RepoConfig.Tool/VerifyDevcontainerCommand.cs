@@ -2,7 +2,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using PandaBear.Tooling;
+using PandaBear.InputNormalization;
+using PandaBear.Processes;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -126,7 +127,7 @@ internal static partial class VerifyDevcontainerCommand
     // A linked worktree's .git file points into the main repository, which the container needs for Git to work.
     private static async Task<string?> FindGitCommonDirectory(string root, CancellationToken ct)
     {
-        var git = ExecutableResolver.Resolve("git", Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows());
+        var git = PathExecutableResolver.Default.Find("git");
         if (!File.Exists(Path.Combine(root, ".git")) || git is null)
         {
             return null;

@@ -1,4 +1,3 @@
-using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tests;
 
@@ -54,11 +53,11 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
         }
 
         var path = Path.Combine(PackageDirectory, "candidate.json");
-        CandidateManifest.Write(path, new System.Text.Json.Nodes.JsonObject
+        new CandidateManifest(new System.Text.Json.Nodes.JsonObject
         {
             ["packageVersion"] = "1.0.0",
             ["packageSha256"] = hashes
-        });
+        }).Save(path);
         return path;
     }
 

@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Xml;
-using PandaBear.Tooling;
+using PandaBear.InputNormalization;
 
 namespace PandaBear.CI.Tool;
 

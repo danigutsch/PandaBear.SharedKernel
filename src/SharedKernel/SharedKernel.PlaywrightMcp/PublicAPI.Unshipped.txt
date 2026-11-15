@@ -1,18 +1,23 @@
 #nullable enable
-PandaBear.PlaywrightMcp.PlaywrightMcpApplication
-PandaBear.PlaywrightMcp.PlaywrightMcpApplication.Clean(System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
-PandaBear.PlaywrightMcp.PlaywrightMcpApplication.PlaywrightMcpApplication(System.Func<string!, string?>! getEnvironmentVariable, System.Func<string!, string?>! resolveExecutable, System.Func<System.Diagnostics.ProcessStartInfo!, System.IO.TextWriter?, System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.PlaywrightMcp.ProcessResult>!>! runProcess) -> void
-PandaBear.PlaywrightMcp.PlaywrightMcpApplication.Prepare(System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
-PandaBear.PlaywrightMcp.PlaywrightMcpApplication.Serve(System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
-PandaBear.PlaywrightMcp.ProcessResult
-PandaBear.PlaywrightMcp.ProcessResult.ExitCode.get -> int
-PandaBear.PlaywrightMcp.ProcessResult.ExitCode.init -> void
-PandaBear.PlaywrightMcp.ProcessResult.ProcessResult() -> void
-PandaBear.PlaywrightMcp.ProcessResult.ProcessResult(int ExitCode, string! StandardOutput, string! StandardError) -> void
-PandaBear.PlaywrightMcp.ProcessResult.StandardError.get -> string!
-PandaBear.PlaywrightMcp.ProcessResult.StandardError.init -> void
-PandaBear.PlaywrightMcp.ProcessResult.StandardOutput.get -> string!
-PandaBear.PlaywrightMcp.ProcessResult.StandardOutput.init -> void
-static PandaBear.PlaywrightMcp.PlaywrightMcpApplication.Image.get -> string!
-static PandaBear.PlaywrightMcp.PlaywrightMcpApplication.ResolveExecutable(string! command) -> string?
-static PandaBear.PlaywrightMcp.PlaywrightMcpApplication.RunProcess(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.PlaywrightMcp.ProcessResult>!
+PandaBear.PlaywrightMcp.PlaywrightMcpServer
+PandaBear.PlaywrightMcp.PlaywrightMcpServer.Clean(PandaBear.PlaywrightMcp.PlaywrightMcpSettings! settings, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+PandaBear.PlaywrightMcp.PlaywrightMcpServer.PlaywrightMcpServer(PandaBear.Processes.IProcessRunner! processRunner, PandaBear.Processes.IExecutableResolver! executableResolver) -> void
+PandaBear.PlaywrightMcp.PlaywrightMcpServer.Prepare(PandaBear.PlaywrightMcp.PlaywrightMcpSettings! settings, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+PandaBear.PlaywrightMcp.PlaywrightMcpServer.Serve(PandaBear.PlaywrightMcp.PlaywrightMcpSettings! settings, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.ContainerConnection.get -> string?
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.ContainerConnection.init -> void
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.ContainerHost.get -> string?
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.ContainerHost.init -> void
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.DockerContext.get -> string?
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.DockerContext.init -> void
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.DockerHost.get -> string?
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.DockerHost.init -> void
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.Engine.get -> string?
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.Engine.init -> void
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.ImageResponses.get -> string?
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.ImageResponses.init -> void
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.NetworkAccess.get -> string?
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.NetworkAccess.init -> void
+static PandaBear.PlaywrightMcp.PlaywrightMcpServer.Image.get -> string!
+static PandaBear.PlaywrightMcp.PlaywrightMcpSettings.FromEnvironment(System.Func<string!, string?>! getEnvironmentVariable) -> PandaBear.PlaywrightMcp.PlaywrightMcpSettings!

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using PandaBear.Tooling;
+using PandaBear.Processes;
 
 namespace PandaBear.CI.Tool;
 
@@ -110,7 +110,7 @@ internal sealed class ServiceHost
     /// </summary>
     internal static ProcessStartInfo CreateStartInfo(ServiceConfiguration configuration, string buildConfiguration, string root, string readyFile)
     {
-        var startInfo = new ProcessStartInfo(ExecutableResolver.ResolveCommand("dotnet"))
+        var startInfo = new ProcessStartInfo(PathExecutableResolver.Default.Resolve("dotnet"))
         {
             RedirectStandardInput = true,
             RedirectStandardOutput = true,

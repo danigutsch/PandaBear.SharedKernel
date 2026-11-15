@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using PandaBear.Tooling;
+using PandaBear.Processes;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -125,7 +125,7 @@ internal sealed class RoadmapGitRepository
 
     private static ProcessStartInfo CreateStartInfo(string rootPath, IEnumerable<string> arguments)
     {
-        var git = ExecutableResolver.Resolve("git", Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows())
+        var git = PathExecutableResolver.Default.Find("git")
             ?? throw new InvalidOperationException("Could not resolve git to an absolute executable path.");
         var startInfo = new ProcessStartInfo(git)
         {

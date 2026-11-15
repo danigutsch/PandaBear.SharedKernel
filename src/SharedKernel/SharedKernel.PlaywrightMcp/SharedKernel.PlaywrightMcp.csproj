@@ -3,21 +3,21 @@
     <PropertyGroup>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.PlaywrightMcp</PackageId>
-        <Description>Engine of the Playwright MCP tool: runs the digest-pinned Playwright MCP image on a local Docker or rootless Podman engine.</Description>
-        <RootNamespace>PandaBear.PlaywrightMcp</RootNamespace>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <Description>Runs the digest-pinned Playwright MCP image as a stdio MCP server on a local Docker engine or rootless Podman, with remote engine overrides refused and container cleanup on cancellation.</Description>
         <PackageTags>playwright;mcp;containers;docker;podman;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="SharedKernel.PlaywrightMcp.Tool.Tests" />
-        <None Include="README.md" Pack="true" PackagePath="\" />
+        <InternalsVisibleTo Include="SharedKernel.PlaywrightMcp.Tests" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\SharedKernel.Tooling\SharedKernel.Tooling.csproj" />
+        <ProjectReference Include="..\SharedKernel.Processes\SharedKernel.Processes.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

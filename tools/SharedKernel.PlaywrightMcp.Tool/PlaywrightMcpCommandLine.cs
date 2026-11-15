@@ -1,5 +1,4 @@
 using System.CommandLine;
-using System.Diagnostics;
 
 namespace PandaBear.PlaywrightMcp.Tool;
 
@@ -8,7 +7,7 @@ internal static class PlaywrightMcpCommandLine
 {
     private static readonly string Description = $"""
         Run the pinned Playwright MCP image on local Docker or rootless Podman.
-        Image: {PlaywrightMcpApplication.Image}
+        Image: {PlaywrightMcpServer.Image}
 
         Environment variables:
           PLAYWRIGHT_MCP_ENGINE           docker or podman; required when both are installed
@@ -16,26 +15,25 @@ internal static class PlaywrightMcpCommandLine
           PLAYWRIGHT_MCP_IMAGE_RESPONSES  allow sends images to the MCP client; default omit
         """;
 
-    /// <summary>Creates the root command with its serve, prepare, and clean subcommands.</summary>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="getEnvironmentVariable"/>, <paramref name="resolveExecutable"/>, or <paramref name="runProcess"/> is <see langword="null"/>.</exception>
-    public static RootCommand Create(
-        Func<string, string?> getEnvironmentVariable,
-        Func<string, string?> resolveExecutable,
-        Func<ProcessStartInfo, TextWriter?, CancellationToken, Task<ProcessResult>> runProcess)
+    /// <summary>
+    /// Creates the root command with its serve, prepare, and clean subcommands. Each action reads the settings from the
+    /// environment when it runs and passes them to <paramref name="server"/>.
+    /// </summary>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="server"/> or <paramref name="getEnvironmentVariable"/> is <see langword="null"/>.</exception>
+    public static RootCommand Create(PlaywrightMcpServer server, Func<string, string?> getEnvironmentVariable)
     {
+        ArgumentNullException.ThrowIfNull(server);
         ArgumentNullException.ThrowIfNull(getEnvironmentVariable);
-        ArgumentNullException.ThrowIfNull(resolveExecutable);
-        ArgumentNullException.ThrowIfNull(runProcess);
-        var application = new PlaywrightMcpApplication(getEnvironmentVariable, resolveExecutable, runProcess);
+        PlaywrightMcpSettings Settings() => PlaywrightMcpSettings.FromEnvironment(getEnvironmentVariable);
 
         var serve = new Command("serve", "Run the pinned Playwright MCP image as a stdio MCP server");
-        serve.SetAction((parseResult, ct) => application.Serve(parseResult.InvocationConfiguration.Error, ct));
+        serve.SetAction((parseResult, ct) => server.Serve(Settings(), parseResult.InvocationConfiguration.Error, ct));
 
         var prepare = new Command("prepare", "Pull the pinned Playwright MCP image into the local container engine");
-        prepare.SetAction((parseResult, ct) => application.Prepare(parseResult.InvocationConfiguration.Error, ct));
+        prepare.SetAction((parseResult, ct) => server.Prepare(Settings(), parseResult.InvocationConfiguration.Error, ct));
 
         var clean = new Command("clean", "Remove the pinned Playwright MCP image from the local container engine");
-        clean.SetAction((parseResult, ct) => application.Clean(parseResult.InvocationConfiguration.Error, ct));
+        clean.SetAction((parseResult, ct) => server.Clean(Settings(), parseResult.InvocationConfiguration.Error, ct));
 
         var root = new RootCommand(Description);
 

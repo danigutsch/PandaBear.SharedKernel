@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using PandaBear.Tooling;
+using PandaBear.Processes;
 
 namespace PandaBear.Repository.Tests;
 
@@ -30,7 +30,7 @@ internal static class CiToolProcess
         IReadOnlyDictionary<string, string?> environment)
     {
         // The test process resolves dotnet, so a dotnet on the PATH that the tool gets cannot stand in for the host.
-        var startInfo = new ProcessStartInfo(ExecutableResolver.ResolveCommand("dotnet"))
+        var startInfo = new ProcessStartInfo(PathExecutableResolver.Default.Resolve("dotnet"))
         {
             WorkingDirectory = workingDirectory,
             RedirectStandardOutput = true,

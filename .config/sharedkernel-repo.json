@@ -72,6 +72,7 @@
     "src/SharedKernel/SharedKernel.OpenApi/SharedKernel.OpenApi.csproj",
     "src/SharedKernel/SharedKernel.Packages/SharedKernel.Packages.csproj",
     "src/SharedKernel/SharedKernel.PlaywrightMcp/SharedKernel.PlaywrightMcp.csproj",
+    "src/SharedKernel/SharedKernel.Processes/SharedKernel.Processes.csproj",
     "src/SharedKernel/SharedKernel.Results.Analyzers/SharedKernel.Results.Analyzers.csproj",
     "src/SharedKernel/SharedKernel.Results.AspNet/SharedKernel.Results.AspNet.csproj",
     "src/SharedKernel/SharedKernel.Results.SourceGenerator/SharedKernel.Results.SourceGenerator.csproj",
@@ -99,7 +100,6 @@
     "src/SharedKernel/SharedKernel.Testing.Sqlite/SharedKernel.Testing.Sqlite.csproj",
     "src/SharedKernel/SharedKernel.Testing.Web/SharedKernel.Testing.Web.csproj",
     "src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj",
-    "src/SharedKernel/SharedKernel.Tooling/SharedKernel.Tooling.csproj",
     "src/SharedKernel/SharedKernel.UploadSanitizing/SharedKernel.UploadSanitizing.csproj",
     "src/SharedKernel/SharedKernel.Versioning/SharedKernel.Versioning.csproj"
   ]

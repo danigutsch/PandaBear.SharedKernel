@@ -19,11 +19,9 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.IO\SharedKernel.IO.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Processes\SharedKernel.Processes.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Versioning\SharedKernel.Versioning.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Tooling\SharedKernel.Tooling.csproj" />
     </ItemGroup>
 
     <ItemGroup>

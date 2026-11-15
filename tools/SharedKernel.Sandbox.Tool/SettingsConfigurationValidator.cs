@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.Sandbox.Tool;
 
@@ -21,7 +21,7 @@ internal static partial class SettingsConfigurationValidator
             throw Error("$.settings.profile", "must be \"dotnet\" when given");
         }
 
-        if (settings.Target is not null && (!RepositoryPath.IsRelative(settings.Target) || !settings.Target.EndsWith(".json", StringComparison.Ordinal)))
+        if (settings.Target is not null && (!RepositoryPath.IsValid(settings.Target) || !settings.Target.EndsWith(".json", StringComparison.Ordinal)))
         {
             throw Error("$.settings.target", "must be a repository-relative path with '/' separators that names a .json file");
         }

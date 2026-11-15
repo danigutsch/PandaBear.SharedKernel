@@ -1,5 +1,4 @@
 using System.Text.Json.Nodes;
-using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tests;
 
@@ -43,7 +42,7 @@ public static class CandidateEvidenceMergeTests
         var other = CandidateEvidenceFiles.Write(temporary.Root, "other.json", ("linuxPackageConsumption", "passed"));
         var json = JsonNode.Parse(await File.ReadAllTextAsync(other, TestContext.Current.CancellationToken))!.AsObject();
         json["libraryRevision"] = "0000000000000000000000000000000000000000";
-        CandidateManifest.Write(other, json);
+        new CandidateManifest(json).Save(other);
         var output = Path.Combine(temporary.Root, "merged.json");
 
         // Act

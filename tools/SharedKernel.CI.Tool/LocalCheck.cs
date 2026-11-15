@@ -2,7 +2,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using PandaBear.Tooling;
+using PandaBear.IO;
+using PandaBear.InputNormalization;
 
 namespace PandaBear.CI.Tool;
 
@@ -101,7 +102,7 @@ internal static partial class LocalCheck
 
         foreach (var project in selected)
         {
-            RepositoryPath.Resolve(root, project);
+            RepositoryPath.Parse(project).ResolveUnder(root);
         }
 
         var lanes = new List<LaneResult>();

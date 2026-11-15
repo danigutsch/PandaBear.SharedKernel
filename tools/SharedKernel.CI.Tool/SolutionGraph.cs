@@ -1,6 +1,6 @@
 using System.Xml;
 using System.Xml.Linq;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.CI.Tool;
 
@@ -54,7 +54,7 @@ internal sealed class SolutionGraph
         XDocument document;
         try
         {
-            document = XDocument.Load(RepositoryPath.Resolve(root, solution));
+            document = XDocument.Load(RepositoryPath.Parse(solution).ResolveUnder(root));
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or XmlException or InvalidOperationException)
         {
@@ -79,7 +79,7 @@ internal sealed class SolutionGraph
             XDocument projectDocument;
             try
             {
-                projectDocument = XDocument.Load(RepositoryPath.Resolve(root, project));
+                projectDocument = XDocument.Load(RepositoryPath.Parse(project).ResolveUnder(root));
             }
             catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or XmlException or InvalidOperationException)
             {

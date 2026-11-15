@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Unicode;
-using PandaBear.Tooling;
+using PandaBear.InputNormalization;
 
 namespace PandaBear.RepoConfig.Tool;
 

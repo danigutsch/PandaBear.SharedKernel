@@ -21,6 +21,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.PlaywrightMcp\SharedKernel.PlaywrightMcp.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Processes\SharedKernel.Processes.csproj" />
     </ItemGroup>
 
     <ItemGroup>

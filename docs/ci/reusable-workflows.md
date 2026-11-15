@@ -20,7 +20,8 @@ event, so the squash header and breaking-change footers follow one definition.
 | `source-ref` | empty | Full 40-character lowercase commit SHA of the tool source. Required when `source-repository` is set; the job fails otherwise. |
 
 The job has `contents: read` and receives no secrets. The tool is built from a sparse checkout of
-`tools/SharedKernel.CI.Tool` and `src/SharedKernel/SharedKernel.Tooling` in locked restore mode with the SDK of that checkout's `global.json`.
+`tools/SharedKernel.CI.Tool` and the libraries it references (`src/SharedKernel/SharedKernel.InputNormalization`,
+`SharedKernel.IO`, `SharedKernel.Processes`, and `SharedKernel.Versioning`) in locked restore mode with the SDK of that checkout's `global.json`.
 
 The caller owns the trigger, the concurrency group, and the `ci:rerun` label rule, because a called workflow cannot
 share the caller's concurrency group without deadlocking. Copy this contract:

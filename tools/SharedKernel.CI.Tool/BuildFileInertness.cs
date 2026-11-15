@@ -1,7 +1,7 @@
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.CI.Tool;
 
@@ -30,7 +30,7 @@ internal static class BuildFileInertness
             XDocument document;
             try
             {
-                var content = Encoding.UTF8.GetString(await BoundedFile.Read(RepositoryPath.Resolve(root, file), MaxBytes, file, ct).ConfigureAwait(false));
+                var content = Encoding.UTF8.GetString(await BoundedFile.Read(RepositoryPath.Parse(file).ResolveUnder(root), MaxBytes, file, ct).ConfigureAwait(false));
                 if (content.Contains("System.IO.File", StringComparison.Ordinal))
                 {
                     return file + " calls System.IO.File.";

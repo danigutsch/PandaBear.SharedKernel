@@ -196,15 +196,19 @@
       "PandaBear.SharedKernel.PlaywrightMcp": {
         "type": "Project",
         "dependencies": {
-          "PandaBear.SharedKernel.Tooling": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.PlaywrightMcp.Tool": {
         "type": "Project",
         "dependencies": {
           "PandaBear.SharedKernel.PlaywrightMcp": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
           "System.CommandLine": "[2.0.13, )"
         }
+      },
+      "PandaBear.SharedKernel.Processes": {
+        "type": "Project"
       },
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
@@ -218,9 +222,6 @@
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )",
           "xunit.v3.assert": "[4.0.0, )"
         }
-      },
-      "PandaBear.SharedKernel.Tooling": {
-        "type": "Project"
       },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "CentralTransitive",

@@ -10,23 +10,31 @@ tools, written as .NET file-based (single-file) apps.
 
 ## Decision
 
-- **Engines live in `src/SharedKernel/SharedKernel.<Name>`.** An engine holds parsing, planning, validation, process
-  and forge clients, and rendering. It is host-agnostic, trimming- and NativeAOT-compatible, documented like every
-  other package (README, PublicAPI files, XML documentation), and takes the environment, process runner, and clock
-  as injected delegates or interfaces. It exposes the smallest public API the wrapper needs; types that only its
-  tests need stay internal, with `InternalsVisibleTo` for the test project.
+- **Engines live in `src/SharedKernel/SharedKernel.<Name>`, named by the capability or role they provide.** An engine
+  holds parsing, planning, validation, process and forge clients, and rendering. It is host-agnostic, trimming- and
+  NativeAOT-compatible, and documented like every other package (README, PublicAPI files, XML documentation). It
+  exposes a small, intention-revealing API: a type named for its role, such as `PlaywrightMcpServer`, whose operations
+  take a settings object, and hides the mechanics (argument building, engine selection) as internal types tested
+  through `InternalsVisibleTo` for the library's own test project, `tests/SharedKernel.<Name>.Tests`.
 - **A tool is a thin wrapper.** `tools/SharedKernel.<Name>.Tool` holds only the System.CommandLine tree, the wiring of
-  real dependencies, output, and exit codes, and references its engine with a `ProjectReference`. Application policy
-  and data still come from the consuming repository's configuration files and arguments.
+  real dependencies, reading the settings, output, and exit codes, and references its engine with a
+  `ProjectReference`. Application policy and data still come from the consuming repository's configuration files and
+  arguments.
 - **Wrappers stay conventional `.csproj` projects, not file-based apps,** for the reasons under
   [Packaging evidence](#packaging-evidence).
-- **Shared helpers are a library.** `ExecutableResolver`, `RepositoryPath`, `ControlCharacters`, and
-  `CandidateManifest` move from `tools/Shared` to `src/SharedKernel/SharedKernel.Tooling` (package
-  `PandaBear.SharedKernel.Tooling`, namespace `PandaBear.Tooling`) as a small public API. They are internal to no
-  single tool, seven tool assemblies use them, and a public type is the way a packed library shares code with them;
-  `InternalsVisibleTo` across separately versioned packages would be a hidden contract. `ControlCharacters.Escape` and
-  `CandidateManifest.Write` now throw `ArgumentNullException` for a null argument where they used to throw
-  `NullReferenceException`; nothing else changes.
+- **Shared helpers go to the library that owns the concept,** not to a grab-bag. The four `tools/Shared` files become
+  public API, because seven tool assemblies use them and `InternalsVisibleTo` across separately versioned packages
+  would be a hidden contract:
+  - `ExecutableResolver` becomes `IExecutableResolver` and `PathExecutableResolver` in a new
+    `SharedKernel.Processes` library, with process execution (below).
+  - `RepositoryPath` becomes a value type in `SharedKernel.IO`, which owns file and stream concepts: `IsValid`,
+    `TryParse`, `Parse`, and `ResolveUnder(root)`.
+  - `ControlCharacters` joins `SharedKernel.InputNormalization`, which already sanitizes untrusted text; `Escape` is a
+    pure function and stays static.
+  - `CandidateManifest` joins `SharedKernel.Versioning`, which owns candidates and release artifacts, as a class with
+    `Find`, `Load` (read and verify the package hashes), `Evidence`, and `Save`.
+  `ControlCharacters.Escape` and saving a manifest throw `ArgumentNullException` for a null argument where they used to
+  throw `NullReferenceException`; the tools' observable behavior is otherwise unchanged.
 - **`SourceRunnableToolConventionTests` and its rule are removed.** The rule kept `SharedKernel.CI.Tool` and
   `SharedKernel.RepoConfig.Tool` free of project references so that a sparse checkout of `tools/<tool>` and
   `tools/Shared` could build them. These tools now reference their engines normally. What stays a requirement is that
@@ -37,6 +45,16 @@ tools, written as .NET file-based (single-file) apps.
 - **Tools move one at a time,** each behind its existing command-line tests with no behavior change.
   `SharedKernel.PlaywrightMcp.Tool` is the pilot: its engine is `SharedKernel.PlaywrightMcp`, and the tool keeps
   `Program.cs` and the command tree. Sandbox, RepoConfig, CI, and VaultManager follow.
+- **Side effects sit behind small abstractions in `SharedKernel.Processes`.** `IProcessRunner` runs a
+  `ProcessStartInfo` and returns a `ProcessOutput`, optionally forwarding each output line to a writer.
+  `SystemProcessRunner` runs it as described and kills the process tree on cancellation; `BoundedProcessRunner` adds a
+  two-minute limit and output limits for quick queries. `IExecutableResolver.Find` returns an executable from the
+  absolute `PATH` directories. `SharedKernel.Packages` had its own `IProcessRunner`, `ProcessOutput`, and
+  `SystemProcessRunner`; they are replaced by these, and Packages builds its start information (the `C` locale, an
+  empty standard input) and passes it to the shared runner. Engines take the abstractions through their constructors;
+  hosts pass the system implementations and tests pass fakes. Diagnostics go to a `TextWriter` that the host passes,
+  because System.CommandLine already supplies one per invocation; environment variables are read by the tool into a
+  settings object, not by the engine.
 - **Engines are lock-exempt unless they add a package version.** A new engine with no package dependency of its own
   adds no `Id@Version` pair, so it is listed in `lockExemptProjects` and sets
   `RestorePackagesWithLockFile=false`, as [Lock files](../package-development.md#lock-files) requires. The tools and
@@ -67,9 +85,14 @@ future SDK lets a solution or a test project include one.
 
 ## Consequences
 
-- A tool package carries its engine and `SharedKernel.Tooling` assemblies, as it already carried System.CommandLine.
-  The engine is also its own preview package.
-- Workflows and consumers that build `sharedkernel-ci` or `sharedkernel-repo` from a sparse checkout list
-  `src/SharedKernel/SharedKernel.Tooling` instead of `tools/Shared`, and add each engine those tools come to reference.
-- Engine tests can call the engine directly. The pilot keeps its tests in `SharedKernel.PlaywrightMcp.Tool.Tests`, as
-  `SharedKernel.Versioning.Tests` covers both the Versioning library and tool.
+- A tool package carries the assemblies of the libraries it references, as it already carried System.CommandLine.
+  Each library is also its own preview package.
+- Workflows and consumers that build `sharedkernel-ci` or `sharedkernel-repo` from a sparse checkout list the
+  libraries those tools reference instead of `tools/Shared`: `src/SharedKernel/SharedKernel.InputNormalization`,
+  `SharedKernel.IO`, `SharedKernel.Processes`, and, for the CI tool, `SharedKernel.Versioning`. A tool that comes to
+  reference another library adds it to those lists.
+- `PandaBear.SharedKernel.Packages` changes its public API: `IProcessRunner`, `ProcessOutput`, and `SystemProcessRunner`
+  move to `PandaBear.Processes`, and the bounded runner is `BoundedProcessRunner`. Packages are preview, so this is
+  allowed, and consumers update their namespace and runner type.
+- Engine unit tests live in the library's own test project, such as `tests/SharedKernel.PlaywrightMcp.Tests`, and
+  use fakes of the abstractions; the tool's test project keeps the command-line contract tests.

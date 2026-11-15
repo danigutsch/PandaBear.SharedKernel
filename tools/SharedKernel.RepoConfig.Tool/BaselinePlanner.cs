@@ -1,6 +1,6 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -63,7 +63,7 @@ internal static partial class BaselinePlanner
     {
         try
         {
-            return RepositoryPath.Resolve(root, relativePath);
+            return RepositoryPath.Parse(relativePath).ResolveUnder(root);
         }
         catch (InvalidOperationException exception)
         {

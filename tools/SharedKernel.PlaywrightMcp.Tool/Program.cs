@@ -1,6 +1,7 @@
 using System.CommandLine;
 using PandaBear.PlaywrightMcp;
 using PandaBear.PlaywrightMcp.Tool;
+using PandaBear.Processes;
 
 var configuration = new InvocationConfiguration
 {
@@ -9,8 +10,9 @@ var configuration = new InvocationConfiguration
     ProcessTerminationTimeout = TimeSpan.FromSeconds(20)
 };
 
+var server = new PlaywrightMcpServer(new SystemProcessRunner(), PathExecutableResolver.Default);
 return await PlaywrightMcpCommandLine
-    .Create(Environment.GetEnvironmentVariable, PlaywrightMcpApplication.ResolveExecutable, PlaywrightMcpApplication.RunProcess)
+    .Create(server, Environment.GetEnvironmentVariable)
     .Parse(args)
     .InvokeAsync(configuration)
     .ConfigureAwait(false);

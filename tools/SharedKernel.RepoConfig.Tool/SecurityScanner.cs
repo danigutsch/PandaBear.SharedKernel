@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
-using PandaBear.Tooling;
+using PandaBear.Processes;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -12,7 +12,7 @@ internal static class SecurityScanner
     /// <summary>Runs Gitleaks resolved from PATH with the real process runner.</summary>
     public static Task<int> Run(string root, string destination, TextWriter output, TextWriter error, CancellationToken cancellationToken) =>
         Run(root, destination, output, error,
-            ExecutableResolver.Resolve("gitleaks", Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows()),
+            PathExecutableResolver.Default.Find("gitleaks"),
             RunProcess, cancellationToken);
 
     /// <summary>Runs the scan with an injected executable and process runner, validates the SARIF report, and returns 0 for no findings, 1 for findings, 3 for scanner failure.</summary>

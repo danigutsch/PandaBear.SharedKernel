@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.CI.Tool;
 
@@ -51,7 +51,7 @@ internal static partial class ChangedLines
                 }
 
                 path = name == "/dev/null" ? null : name.StartsWith("b/", StringComparison.Ordinal) ? name[2..] : name;
-                if (path is not null && !RepositoryPath.IsRelative(path))
+                if (path is not null && !RepositoryPath.IsValid(path))
                 {
                     throw new InvalidDataException("The diff names a path outside the repository: " + name + ".");
                 }

@@ -61,7 +61,7 @@ the consuming repository supplies them, as [Consumer configuration](#consumer-co
   needs longer. A signal that System.CommandLine does not handle, such as one during start-up, ends the
   process with the same codes.
 - Child processes start only from fully qualified paths. A bare command name such as `git` resolves only in the
-  absolute directories of `PATH`, as `ExecutableResolver` does, never in the application directory, the working
+  absolute directories of `PATH`, as `PathExecutableResolver` does, never in the application directory, the working
   directory, or a relative `PATH` entry, so a checkout cannot supply the executable.
 - A factory builds the command tree from injected environment, such as the working directory, a process
   runner, or a clock. Actions write to `ParseResult.InvocationConfiguration.Output` and `Error`.
@@ -157,8 +157,9 @@ A consumer job that runs before its pinned candidate is staged, such as the job 
 
 1. Check out that revision of `danigutsch/PandaBear.SharedKernel` into a directory of its own, with a cone sparse
    checkout of `tools/<project>` and every `src/SharedKernel/<library>` that the tool references, directly or
-   transitively; today both tools reference only `src/SharedKernel/SharedKernel.Tooling`. A full checkout of the
-   revision also works.
+   transitively. Today `SharedKernel.CI.Tool` references `SharedKernel.InputNormalization`, `SharedKernel.IO`,
+   `SharedKernel.Processes`, and `SharedKernel.Versioning`, and `SharedKernel.RepoConfig.Tool` the first three. A full
+   checkout of the revision also works.
 2. Build inside that checkout with `dotnet build tools/<project> -c Release`, so SharedKernel's `global.json`,
    `NuGet.Config`, and the tool's lock file apply.
 3. Run `dotnet run --project <checkout>/tools/<project> -c Release --no-build -- <command>`.
@@ -175,10 +176,16 @@ forge clients, and rendering; it is host-agnostic, documented, and has PublicAPI
 `tools/SharedKernel.<Name>.Tool` holds only the System.CommandLine tree, wiring, output, and exit codes, and references
 its engine with a `ProjectReference`; its package carries the engine assembly.
 
-Helpers that two or more tools call live in `src/SharedKernel/SharedKernel.Tooling` in the `PandaBear.Tooling`
-namespace: `ExecutableResolver`, `RepositoryPath`, `ControlCharacters`, and `CandidateManifest`. Tools reference that
-project; they do not link source files from other directories. `SharedKernel.PlaywrightMcp.Tool` is the first tool
-whose logic lives in an engine, `SharedKernel.PlaywrightMcp`; the other tools move theirs incrementally.
+Engines take their side effects as constructor-injected abstractions from `SharedKernel.Processes`: `IProcessRunner`
+(with `SystemProcessRunner` for long-running children and `BoundedProcessRunner` for quick, limited queries) and
+`IExecutableResolver` (with `PathExecutableResolver`). Diagnostics go to a `TextWriter` the host passes, which is
+`InvocationConfiguration.Error` in a tool. Tests replace the abstractions with fakes.
+
+Helpers that two or more tools call live in the library that owns the concept: `RepositoryPath` in `SharedKernel.IO`,
+`ControlCharacters` in `SharedKernel.InputNormalization`, `CandidateManifest` in `SharedKernel.Versioning`, and process
+execution and executable resolution in `SharedKernel.Processes`. Tools reference those projects; they do not link
+source files from other directories. `SharedKernel.PlaywrightMcp.Tool` is the first tool whose logic lives in an
+engine, `SharedKernel.PlaywrightMcp`; the other tools move theirs incrementally.
 
 ## Secrets
 
