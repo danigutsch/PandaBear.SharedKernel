@@ -179,3 +179,26 @@ PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Record.set -> void
 PandaBear.Blazor.EditSession<TKey, TForm, TRecord>.Submission.get -> PandaBear.Blazor.ServerFormSubmission?
 PandaBear.Blazor.FocusHelper
 static PandaBear.Blazor.FocusHelper.TryFocus(Microsoft.AspNetCore.Components.ElementReference element) -> System.Threading.Tasks.ValueTask
+PandaBear.Blazor.ErrorSummaryItem.<Clone>$() -> PandaBear.Blazor.ErrorSummaryItem!
+PandaBear.Blazor.ErrorSummaryItem.Deconstruct(out string! TargetId, out string! Message) -> void
+PandaBear.Blazor.ErrorSummaryItem.Equals(PandaBear.Blazor.ErrorSummaryItem? other) -> bool
+PandaBear.Blazor.ServerValidationIssue.<Clone>$() -> PandaBear.Blazor.ServerValidationIssue!
+PandaBear.Blazor.ServerValidationIssue.Deconstruct(out string! FieldName, out string! Message) -> void
+PandaBear.Blazor.ServerValidationIssue.Equals(PandaBear.Blazor.ServerValidationIssue? other) -> bool
+PandaBear.Blazor.ServerValidationOptions.<Clone>$() -> PandaBear.Blazor.ServerValidationOptions!
+PandaBear.Blazor.ServerValidationOptions.Equals(PandaBear.Blazor.ServerValidationOptions? other) -> bool
+override PandaBear.Blazor.ErrorSummaryItem.Equals(object? obj) -> bool
+override PandaBear.Blazor.ErrorSummaryItem.GetHashCode() -> int
+override PandaBear.Blazor.ErrorSummaryItem.ToString() -> string!
+override PandaBear.Blazor.ServerValidationIssue.Equals(object? obj) -> bool
+override PandaBear.Blazor.ServerValidationIssue.GetHashCode() -> int
+override PandaBear.Blazor.ServerValidationIssue.ToString() -> string!
+override PandaBear.Blazor.ServerValidationOptions.Equals(object? obj) -> bool
+override PandaBear.Blazor.ServerValidationOptions.GetHashCode() -> int
+override PandaBear.Blazor.ServerValidationOptions.ToString() -> string!
+static PandaBear.Blazor.ErrorSummaryItem.operator !=(PandaBear.Blazor.ErrorSummaryItem? left, PandaBear.Blazor.ErrorSummaryItem? right) -> bool
+static PandaBear.Blazor.ErrorSummaryItem.operator ==(PandaBear.Blazor.ErrorSummaryItem? left, PandaBear.Blazor.ErrorSummaryItem? right) -> bool
+static PandaBear.Blazor.ServerValidationIssue.operator !=(PandaBear.Blazor.ServerValidationIssue? left, PandaBear.Blazor.ServerValidationIssue? right) -> bool
+static PandaBear.Blazor.ServerValidationIssue.operator ==(PandaBear.Blazor.ServerValidationIssue? left, PandaBear.Blazor.ServerValidationIssue? right) -> bool
+static PandaBear.Blazor.ServerValidationOptions.operator !=(PandaBear.Blazor.ServerValidationOptions? left, PandaBear.Blazor.ServerValidationOptions? right) -> bool
+static PandaBear.Blazor.ServerValidationOptions.operator ==(PandaBear.Blazor.ServerValidationOptions? left, PandaBear.Blazor.ServerValidationOptions? right) -> bool

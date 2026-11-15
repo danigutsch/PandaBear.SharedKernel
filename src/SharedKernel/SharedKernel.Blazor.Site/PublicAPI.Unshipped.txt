@@ -516,3 +516,59 @@ static PandaBear.Blazor.Site.Theming.ThemeFontFace.Create(int weight, PandaBear.
 static PandaBear.Blazor.Site.Theming.TypographyStyle.Create(string? fontKey = null, PandaBear.Blazor.Site.Theming.GenericFontFamily? fallback = null, PandaBear.Blazor.Site.Theming.FontSize? size = null, int? weight = null, decimal? lineHeight = null, decimal? letterSpacing = null, PandaBear.Blazor.Site.Theming.ThemeTextTransform? transform = null, bool? italic = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.TypographyStyle!>
 static PandaBear.Blazor.Site.Theming.TypographyStyle.Inherit.get -> PandaBear.Blazor.Site.Theming.TypographyStyle!
 override PandaBear.Blazor.Site.SiteComponent.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView parameters) -> System.Threading.Tasks.Task!
+PandaBear.Blazor.Site.AlternateLink.<Clone>$() -> PandaBear.Blazor.Site.AlternateLink!
+PandaBear.Blazor.Site.AlternateLink.Deconstruct(out PandaBear.BuildingBlocks.ContentCulture! Culture, out System.Uri! Href) -> void
+PandaBear.Blazor.Site.AlternateLink.Equals(PandaBear.Blazor.Site.AlternateLink? other) -> bool
+PandaBear.Blazor.Site.FactRow.<Clone>$() -> PandaBear.Blazor.Site.FactRow!
+PandaBear.Blazor.Site.FactRow.Deconstruct(out string! Label, out string! Value) -> void
+PandaBear.Blazor.Site.FactRow.Equals(PandaBear.Blazor.Site.FactRow? other) -> bool
+PandaBear.Blazor.Site.GalleryImage.<Clone>$() -> PandaBear.Blazor.Site.GalleryImage!
+PandaBear.Blazor.Site.GalleryImage.Deconstruct(out PandaBear.Blazor.Site.ResponsiveImage! Image, out string? Caption) -> void
+PandaBear.Blazor.Site.GalleryImage.Equals(PandaBear.Blazor.Site.GalleryImage? other) -> bool
+PandaBear.Blazor.Site.LanguageLink.<Clone>$() -> PandaBear.Blazor.Site.LanguageLink!
+PandaBear.Blazor.Site.LanguageLink.Deconstruct(out PandaBear.BuildingBlocks.ContentCulture! Culture, out string! Label, out PandaBear.Blazor.Site.LinkTarget! Href, out bool IsCurrent) -> void
+PandaBear.Blazor.Site.LanguageLink.Equals(PandaBear.Blazor.Site.LanguageLink? other) -> bool
+PandaBear.Blazor.Site.SiteNavItem.<Clone>$() -> PandaBear.Blazor.Site.SiteNavItem!
+PandaBear.Blazor.Site.SiteNavItem.Deconstruct(out string! Text, out PandaBear.Blazor.Site.LinkTarget? Href, out System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.SiteNavItem!>? Children) -> void
+PandaBear.Blazor.Site.SiteNavItem.Equals(PandaBear.Blazor.Site.SiteNavItem? other) -> bool
+PandaBear.Blazor.Site.Theming.ContrastCheck.<Clone>$() -> PandaBear.Blazor.Site.Theming.ContrastCheck!
+PandaBear.Blazor.Site.Theming.ContrastCheck.Deconstruct(out PandaBear.Blazor.Site.Theming.ThemeColorRole Foreground, out PandaBear.Blazor.Site.Theming.ThemeColorRole Background, out PandaBear.Blazor.Site.Theming.ColorScheme Scheme, out double Ratio, out double Minimum, out string! Criterion) -> void
+PandaBear.Blazor.Site.Theming.ContrastCheck.Equals(PandaBear.Blazor.Site.Theming.ContrastCheck? other) -> bool
+PandaBear.Blazor.Site.Theming.ThemeIssue.<Clone>$() -> PandaBear.Blazor.Site.Theming.ThemeIssue!
+PandaBear.Blazor.Site.Theming.ThemeIssue.Deconstruct(out string! Field, out string! Message) -> void
+PandaBear.Blazor.Site.Theming.ThemeIssue.Equals(PandaBear.Blazor.Site.Theming.ThemeIssue? other) -> bool
+override PandaBear.Blazor.Site.AlternateLink.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.AlternateLink.GetHashCode() -> int
+override PandaBear.Blazor.Site.AlternateLink.ToString() -> string!
+override PandaBear.Blazor.Site.FactRow.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.FactRow.GetHashCode() -> int
+override PandaBear.Blazor.Site.FactRow.ToString() -> string!
+override PandaBear.Blazor.Site.GalleryImage.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.GalleryImage.GetHashCode() -> int
+override PandaBear.Blazor.Site.GalleryImage.ToString() -> string!
+override PandaBear.Blazor.Site.LanguageLink.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.LanguageLink.GetHashCode() -> int
+override PandaBear.Blazor.Site.LanguageLink.ToString() -> string!
+override PandaBear.Blazor.Site.SiteNavItem.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.SiteNavItem.GetHashCode() -> int
+override PandaBear.Blazor.Site.SiteNavItem.ToString() -> string!
+override PandaBear.Blazor.Site.Theming.ContrastCheck.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.Theming.ContrastCheck.GetHashCode() -> int
+override PandaBear.Blazor.Site.Theming.ContrastCheck.ToString() -> string!
+override PandaBear.Blazor.Site.Theming.ThemeIssue.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.Theming.ThemeIssue.GetHashCode() -> int
+override PandaBear.Blazor.Site.Theming.ThemeIssue.ToString() -> string!
+static PandaBear.Blazor.Site.AlternateLink.operator !=(PandaBear.Blazor.Site.AlternateLink? left, PandaBear.Blazor.Site.AlternateLink? right) -> bool
+static PandaBear.Blazor.Site.AlternateLink.operator ==(PandaBear.Blazor.Site.AlternateLink? left, PandaBear.Blazor.Site.AlternateLink? right) -> bool
+static PandaBear.Blazor.Site.FactRow.operator !=(PandaBear.Blazor.Site.FactRow? left, PandaBear.Blazor.Site.FactRow? right) -> bool
+static PandaBear.Blazor.Site.FactRow.operator ==(PandaBear.Blazor.Site.FactRow? left, PandaBear.Blazor.Site.FactRow? right) -> bool
+static PandaBear.Blazor.Site.GalleryImage.operator !=(PandaBear.Blazor.Site.GalleryImage? left, PandaBear.Blazor.Site.GalleryImage? right) -> bool
+static PandaBear.Blazor.Site.GalleryImage.operator ==(PandaBear.Blazor.Site.GalleryImage? left, PandaBear.Blazor.Site.GalleryImage? right) -> bool
+static PandaBear.Blazor.Site.LanguageLink.operator !=(PandaBear.Blazor.Site.LanguageLink? left, PandaBear.Blazor.Site.LanguageLink? right) -> bool
+static PandaBear.Blazor.Site.LanguageLink.operator ==(PandaBear.Blazor.Site.LanguageLink? left, PandaBear.Blazor.Site.LanguageLink? right) -> bool
+static PandaBear.Blazor.Site.SiteNavItem.operator !=(PandaBear.Blazor.Site.SiteNavItem? left, PandaBear.Blazor.Site.SiteNavItem? right) -> bool
+static PandaBear.Blazor.Site.SiteNavItem.operator ==(PandaBear.Blazor.Site.SiteNavItem? left, PandaBear.Blazor.Site.SiteNavItem? right) -> bool
+static PandaBear.Blazor.Site.Theming.ContrastCheck.operator !=(PandaBear.Blazor.Site.Theming.ContrastCheck? left, PandaBear.Blazor.Site.Theming.ContrastCheck? right) -> bool
+static PandaBear.Blazor.Site.Theming.ContrastCheck.operator ==(PandaBear.Blazor.Site.Theming.ContrastCheck? left, PandaBear.Blazor.Site.Theming.ContrastCheck? right) -> bool
+static PandaBear.Blazor.Site.Theming.ThemeIssue.operator !=(PandaBear.Blazor.Site.Theming.ThemeIssue? left, PandaBear.Blazor.Site.Theming.ThemeIssue? right) -> bool
+static PandaBear.Blazor.Site.Theming.ThemeIssue.operator ==(PandaBear.Blazor.Site.Theming.ThemeIssue? left, PandaBear.Blazor.Site.Theming.ThemeIssue? right) -> bool

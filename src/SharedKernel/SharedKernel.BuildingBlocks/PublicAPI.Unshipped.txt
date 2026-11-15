@@ -210,3 +210,10 @@ static PandaBear.BuildingBlocks.Iban.Restore(string! value) -> PandaBear.Buildin
 static PandaBear.BuildingBlocks.Bic.Restore(string! value) -> PandaBear.BuildingBlocks.Bic!
 static PandaBear.BuildingBlocks.Cpf.CreateFromInput(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Cpf!>
 static PandaBear.BuildingBlocks.Slug.CreateLenient(string? value, int maxLength = 128, string! field = "slug", string! label = "Slug") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Slug!>
+PandaBear.BuildingBlocks.HypermediaLink.<Clone>$() -> PandaBear.BuildingBlocks.HypermediaLink!
+PandaBear.BuildingBlocks.HypermediaLink.Equals(PandaBear.BuildingBlocks.HypermediaLink? other) -> bool
+override PandaBear.BuildingBlocks.HypermediaLink.Equals(object? obj) -> bool
+override PandaBear.BuildingBlocks.HypermediaLink.GetHashCode() -> int
+override PandaBear.BuildingBlocks.HypermediaLink.ToString() -> string!
+static PandaBear.BuildingBlocks.HypermediaLink.operator !=(PandaBear.BuildingBlocks.HypermediaLink? left, PandaBear.BuildingBlocks.HypermediaLink? right) -> bool
+static PandaBear.BuildingBlocks.HypermediaLink.operator ==(PandaBear.BuildingBlocks.HypermediaLink? left, PandaBear.BuildingBlocks.HypermediaLink? right) -> bool

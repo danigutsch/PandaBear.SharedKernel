@@ -85,3 +85,27 @@ PandaBear.Testing.ObjectStorage.StoredObject.Metadata.init -> void
 PandaBear.Testing.ObjectStorage.StoredObject.ObjectKey.get -> string!
 PandaBear.Testing.ObjectStorage.StoredObject.ObjectKey.init -> void
 PandaBear.Testing.ObjectStorage.StoredObject.StoredObject(string! ObjectKey, System.ReadOnlyMemory<byte> Content, string! ContentType, string? Checksum, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Metadata, System.DateTimeOffset LastModifiedAt) -> void
+PandaBear.Testing.ObjectStorage.ObjectStoreCall.<Clone>$() -> PandaBear.Testing.ObjectStorage.ObjectStoreCall!
+PandaBear.Testing.ObjectStorage.ObjectStoreCall.Deconstruct(out PandaBear.Testing.ObjectStorage.ObjectStoreOperation Operation, out string! Target) -> void
+PandaBear.Testing.ObjectStorage.ObjectStoreCall.Equals(PandaBear.Testing.ObjectStorage.ObjectStoreCall? other) -> bool
+PandaBear.Testing.ObjectStorage.RecordedObjectPut.<Clone>$() -> PandaBear.Testing.ObjectStorage.RecordedObjectPut!
+PandaBear.Testing.ObjectStorage.RecordedObjectPut.Deconstruct(out string! ObjectKey, out string! ContentType, out long DeclaredLength, out string? Checksum, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>? Metadata, out long? StartPosition, out bool ContentCanWrite, out System.Type! ContentStreamType, out long BytesRead, out System.ReadOnlyMemory<byte> Content) -> void
+PandaBear.Testing.ObjectStorage.RecordedObjectPut.Equals(PandaBear.Testing.ObjectStorage.RecordedObjectPut? other) -> bool
+PandaBear.Testing.ObjectStorage.StoredObject.<Clone>$() -> PandaBear.Testing.ObjectStorage.StoredObject!
+PandaBear.Testing.ObjectStorage.StoredObject.Deconstruct(out string! ObjectKey, out System.ReadOnlyMemory<byte> Content, out string! ContentType, out string? Checksum, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Metadata, out System.DateTimeOffset LastModifiedAt) -> void
+PandaBear.Testing.ObjectStorage.StoredObject.Equals(PandaBear.Testing.ObjectStorage.StoredObject? other) -> bool
+override PandaBear.Testing.ObjectStorage.ObjectStoreCall.Equals(object? obj) -> bool
+override PandaBear.Testing.ObjectStorage.ObjectStoreCall.GetHashCode() -> int
+override PandaBear.Testing.ObjectStorage.ObjectStoreCall.ToString() -> string!
+override PandaBear.Testing.ObjectStorage.RecordedObjectPut.Equals(object? obj) -> bool
+override PandaBear.Testing.ObjectStorage.RecordedObjectPut.GetHashCode() -> int
+override PandaBear.Testing.ObjectStorage.RecordedObjectPut.ToString() -> string!
+override PandaBear.Testing.ObjectStorage.StoredObject.Equals(object? obj) -> bool
+override PandaBear.Testing.ObjectStorage.StoredObject.GetHashCode() -> int
+override PandaBear.Testing.ObjectStorage.StoredObject.ToString() -> string!
+static PandaBear.Testing.ObjectStorage.ObjectStoreCall.operator !=(PandaBear.Testing.ObjectStorage.ObjectStoreCall? left, PandaBear.Testing.ObjectStorage.ObjectStoreCall? right) -> bool
+static PandaBear.Testing.ObjectStorage.ObjectStoreCall.operator ==(PandaBear.Testing.ObjectStorage.ObjectStoreCall? left, PandaBear.Testing.ObjectStorage.ObjectStoreCall? right) -> bool
+static PandaBear.Testing.ObjectStorage.RecordedObjectPut.operator !=(PandaBear.Testing.ObjectStorage.RecordedObjectPut? left, PandaBear.Testing.ObjectStorage.RecordedObjectPut? right) -> bool
+static PandaBear.Testing.ObjectStorage.RecordedObjectPut.operator ==(PandaBear.Testing.ObjectStorage.RecordedObjectPut? left, PandaBear.Testing.ObjectStorage.RecordedObjectPut? right) -> bool
+static PandaBear.Testing.ObjectStorage.StoredObject.operator !=(PandaBear.Testing.ObjectStorage.StoredObject? left, PandaBear.Testing.ObjectStorage.StoredObject? right) -> bool
+static PandaBear.Testing.ObjectStorage.StoredObject.operator ==(PandaBear.Testing.ObjectStorage.StoredObject? left, PandaBear.Testing.ObjectStorage.StoredObject? right) -> bool

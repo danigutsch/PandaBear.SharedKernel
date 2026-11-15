@@ -354,3 +354,18 @@ override PandaBear.Testing.ThrowingReadStream.SetLength(long value) -> void
 override PandaBear.Testing.ThrowingReadStream.Write(byte[]! buffer, int offset, int count) -> void
 PandaBear.Testing.TrackingReadStream.MaxBytesPerRead.get -> int
 PandaBear.Testing.TrackingReadStream.MaxBytesPerRead.init -> void
+PandaBear.Testing.Metrics.RecordedMeasurement.<Clone>$() -> PandaBear.Testing.Metrics.RecordedMeasurement!
+PandaBear.Testing.Metrics.RecordedMeasurement.Deconstruct(out string! Instrument, out long Value, out System.Collections.Generic.IReadOnlyDictionary<string!, object?>! Tags) -> void
+PandaBear.Testing.Metrics.RecordedMeasurement.Equals(PandaBear.Testing.Metrics.RecordedMeasurement? other) -> bool
+PandaBear.Testing.TestProcessResult.Deconstruct(out int ExitCode, out string! StandardOutput, out string! StandardError) -> void
+PandaBear.Testing.TestProcessResult.Equals(PandaBear.Testing.TestProcessResult other) -> bool
+override PandaBear.Testing.Metrics.RecordedMeasurement.Equals(object? obj) -> bool
+override PandaBear.Testing.Metrics.RecordedMeasurement.GetHashCode() -> int
+override PandaBear.Testing.Metrics.RecordedMeasurement.ToString() -> string!
+override PandaBear.Testing.TestProcessResult.GetHashCode() -> int
+static PandaBear.Testing.Metrics.RecordedMeasurement.operator !=(PandaBear.Testing.Metrics.RecordedMeasurement? left, PandaBear.Testing.Metrics.RecordedMeasurement? right) -> bool
+static PandaBear.Testing.Metrics.RecordedMeasurement.operator ==(PandaBear.Testing.Metrics.RecordedMeasurement? left, PandaBear.Testing.Metrics.RecordedMeasurement? right) -> bool
+static PandaBear.Testing.TestProcessResult.operator !=(PandaBear.Testing.TestProcessResult left, PandaBear.Testing.TestProcessResult right) -> bool
+static PandaBear.Testing.TestProcessResult.operator ==(PandaBear.Testing.TestProcessResult left, PandaBear.Testing.TestProcessResult right) -> bool
+~override PandaBear.Testing.TestProcessResult.Equals(object obj) -> bool
+~override PandaBear.Testing.TestProcessResult.ToString() -> string

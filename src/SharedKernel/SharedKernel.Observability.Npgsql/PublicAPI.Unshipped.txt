@@ -79,3 +79,27 @@ PandaBear.Observability.Npgsql.PostgreSqlIndexHealthTelemetry
 const PandaBear.Observability.Npgsql.PostgreSqlIndexHealthTelemetry.AssessmentMetricName = "postgresql.index_health.assessments" -> string!
 const PandaBear.Observability.Npgsql.PostgreSqlIndexHealthTelemetry.MeterName = "SharedKernel.Observability.Npgsql" -> string!
 static PandaBear.Observability.Npgsql.PostgreSqlIndexHealthServiceCollectionExtensions.AddPostgreSqlIndexHealthMonitoring(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IEnumerable<string!>! connectionStrings, PandaBear.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions! options) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.<Clone>$() -> PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence!
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.Equals(PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence? other) -> bool
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.PostgreSqlIndexEvidence() -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.<Clone>$() -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment!
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Deconstruct(out PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence! Evidence, out PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction Action, out PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason Reason) -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Equals(PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment? other) -> bool
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.<Clone>$() -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult!
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.Deconstruct(out PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome Outcome, out System.Collections.Generic.IReadOnlyList<PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment!>! Assessments) -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.Equals(PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult? other) -> bool
+override PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.Equals(object? obj) -> bool
+override PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.GetHashCode() -> int
+override PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.ToString() -> string!
+override PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Equals(object? obj) -> bool
+override PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.GetHashCode() -> int
+override PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.ToString() -> string!
+override PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.Equals(object? obj) -> bool
+override PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.GetHashCode() -> int
+override PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.ToString() -> string!
+static PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.operator !=(PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence? left, PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence? right) -> bool
+static PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.operator ==(PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence? left, PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence? right) -> bool
+static PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.operator !=(PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment? left, PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment? right) -> bool
+static PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.operator ==(PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment? left, PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment? right) -> bool
+static PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.operator !=(PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult? left, PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult? right) -> bool
+static PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.operator ==(PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult? left, PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult? right) -> bool

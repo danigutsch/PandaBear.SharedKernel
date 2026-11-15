@@ -27,3 +27,11 @@ const PandaBear.OpenApi.ConditionalRequestEndpointExtensions.IfMatchDescription 
 PandaBear.OpenApi.ConditionalRequestEndpointExtensions
 static PandaBear.OpenApi.ConditionalRequestEndpointExtensions.WithEntityTagResponseHeader<TBuilder>(this TBuilder builder, string? description = null, int statusCode = 200) -> TBuilder
 static PandaBear.OpenApi.ConditionalRequestEndpointExtensions.WithIfMatchPrecondition<TBuilder>(this TBuilder builder, string? description = null) -> TBuilder
+PandaBear.OpenApi.OpenApiBoundaryDocument.<Clone>$() -> PandaBear.OpenApi.OpenApiBoundaryDocument!
+PandaBear.OpenApi.OpenApiBoundaryDocument.Deconstruct(out string! DocumentName, out string! RoutePrefix) -> void
+PandaBear.OpenApi.OpenApiBoundaryDocument.Equals(PandaBear.OpenApi.OpenApiBoundaryDocument? other) -> bool
+override PandaBear.OpenApi.OpenApiBoundaryDocument.Equals(object? obj) -> bool
+override PandaBear.OpenApi.OpenApiBoundaryDocument.GetHashCode() -> int
+override PandaBear.OpenApi.OpenApiBoundaryDocument.ToString() -> string!
+static PandaBear.OpenApi.OpenApiBoundaryDocument.operator !=(PandaBear.OpenApi.OpenApiBoundaryDocument? left, PandaBear.OpenApi.OpenApiBoundaryDocument? right) -> bool
+static PandaBear.OpenApi.OpenApiBoundaryDocument.operator ==(PandaBear.OpenApi.OpenApiBoundaryDocument? left, PandaBear.OpenApi.OpenApiBoundaryDocument? right) -> bool

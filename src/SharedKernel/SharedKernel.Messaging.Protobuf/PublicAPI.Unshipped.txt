@@ -16,3 +16,11 @@ PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer
 PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.EventType.get -> string!
 PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.EventType.init -> void
 PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.ProtobufGeneratedConsumer(string! EventType) -> void
+PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.<Clone>$() -> PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer!
+PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.Deconstruct(out string! EventType) -> void
+PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.Equals(PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer? other) -> bool
+override PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.Equals(object? obj) -> bool
+override PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.GetHashCode() -> int
+override PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.ToString() -> string!
+static PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.operator !=(PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer? left, PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer? right) -> bool
+static PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.operator ==(PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer? left, PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer? right) -> bool

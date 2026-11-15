@@ -14,3 +14,11 @@ static PandaBear.AspNetCore.RateLimiting.AspNetCoreRateLimitingExtensions.AddRem
 static PandaBear.AspNetCore.RateLimiting.RateLimitEventTelemetryServiceCollectionExtensions.AddRateLimitEventTelemetry(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 PandaBear.AspNetCore.RateLimiting.RateLimitRejectionExtensions
 static PandaBear.AspNetCore.RateLimiting.RateLimitRejectionExtensions.UseNoStoreRetryAfterRejection(this Microsoft.AspNetCore.RateLimiting.RateLimiterOptions! options) -> Microsoft.AspNetCore.RateLimiting.RateLimiterOptions!
+PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.<Clone>$() -> PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy!
+PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.Deconstruct(out string! Name, out int PermitLimit, out System.TimeSpan Window) -> void
+PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.Equals(PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy? other) -> bool
+override PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.Equals(object? obj) -> bool
+override PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.GetHashCode() -> int
+override PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.ToString() -> string!
+static PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.operator !=(PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy? left, PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy? right) -> bool
+static PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy.operator ==(PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy? left, PandaBear.AspNetCore.RateLimiting.RemoteIpFixedWindowRateLimitPolicy? right) -> bool

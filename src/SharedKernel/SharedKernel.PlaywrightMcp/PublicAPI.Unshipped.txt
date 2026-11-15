@@ -21,3 +21,11 @@ PandaBear.PlaywrightMcp.PlaywrightMcpSettings.NetworkAccess.get -> string?
 PandaBear.PlaywrightMcp.PlaywrightMcpSettings.NetworkAccess.init -> void
 static PandaBear.PlaywrightMcp.PlaywrightMcpServer.Image.get -> string!
 static PandaBear.PlaywrightMcp.PlaywrightMcpSettings.FromEnvironment(System.Func<string!, string?>! getEnvironmentVariable) -> PandaBear.PlaywrightMcp.PlaywrightMcpSettings!
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.<Clone>$() -> PandaBear.PlaywrightMcp.PlaywrightMcpSettings!
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.Equals(PandaBear.PlaywrightMcp.PlaywrightMcpSettings? other) -> bool
+PandaBear.PlaywrightMcp.PlaywrightMcpSettings.PlaywrightMcpSettings() -> void
+override PandaBear.PlaywrightMcp.PlaywrightMcpSettings.Equals(object? obj) -> bool
+override PandaBear.PlaywrightMcp.PlaywrightMcpSettings.GetHashCode() -> int
+override PandaBear.PlaywrightMcp.PlaywrightMcpSettings.ToString() -> string!
+static PandaBear.PlaywrightMcp.PlaywrightMcpSettings.operator !=(PandaBear.PlaywrightMcp.PlaywrightMcpSettings? left, PandaBear.PlaywrightMcp.PlaywrightMcpSettings? right) -> bool
+static PandaBear.PlaywrightMcp.PlaywrightMcpSettings.operator ==(PandaBear.PlaywrightMcp.PlaywrightMcpSettings? left, PandaBear.PlaywrightMcp.PlaywrightMcpSettings? right) -> bool

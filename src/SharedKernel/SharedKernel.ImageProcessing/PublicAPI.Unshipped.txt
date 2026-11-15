@@ -85,3 +85,51 @@ static PandaBear.ImageProcessing.ImageAnimationDetector.Detect(System.ReadOnlySp
 static PandaBear.ImageProcessing.ImageProcessingLimits.WebDefault.get -> PandaBear.ImageProcessing.ImageProcessingLimits!
 static PandaBear.ImageProcessing.MagickImageProcessor.Probe(System.IO.Stream! content, PandaBear.ImageProcessing.ImageProcessingLimits! limits) -> PandaBear.ImageProcessing.ImageProbeResult!
 static PandaBear.ImageProcessing.MagickImageProcessor.Process(PandaBear.ImageProcessing.ImageProcessingRequest! request, System.Threading.CancellationToken ct) -> PandaBear.ImageProcessing.ImageProcessingResult!
+PandaBear.ImageProcessing.ImageProbeResult.<Clone>$() -> PandaBear.ImageProcessing.ImageProbeResult!
+PandaBear.ImageProcessing.ImageProbeResult.Deconstruct(out PandaBear.ImageProcessing.ImageInputFormat Format, out int Width, out int Height, out bool IsAnimated) -> void
+PandaBear.ImageProcessing.ImageProbeResult.Equals(PandaBear.ImageProcessing.ImageProbeResult? other) -> bool
+PandaBear.ImageProcessing.ImageProcessingLimits.<Clone>$() -> PandaBear.ImageProcessing.ImageProcessingLimits!
+PandaBear.ImageProcessing.ImageProcessingLimits.Deconstruct(out int MaxWidth, out int MaxHeight, out long MaxPixelCount) -> void
+PandaBear.ImageProcessing.ImageProcessingLimits.Equals(PandaBear.ImageProcessing.ImageProcessingLimits? other) -> bool
+PandaBear.ImageProcessing.ImageProcessingRequest.<Clone>$() -> PandaBear.ImageProcessing.ImageProcessingRequest!
+PandaBear.ImageProcessing.ImageProcessingRequest.Deconstruct(out System.IO.Stream! Content, out System.Collections.Generic.IReadOnlyList<PandaBear.ImageProcessing.ImageVariantRequest!>! Variants, out PandaBear.ImageProcessing.ImageProcessingLimits! Limits) -> void
+PandaBear.ImageProcessing.ImageProcessingRequest.Equals(PandaBear.ImageProcessing.ImageProcessingRequest? other) -> bool
+PandaBear.ImageProcessing.ImageProcessingResult.<Clone>$() -> PandaBear.ImageProcessing.ImageProcessingResult!
+PandaBear.ImageProcessing.ImageProcessingResult.Deconstruct(out int Width, out int Height, out System.Collections.Generic.IReadOnlyList<PandaBear.ImageProcessing.ProcessedImageVariant!>! Variants) -> void
+PandaBear.ImageProcessing.ImageProcessingResult.Equals(PandaBear.ImageProcessing.ImageProcessingResult? other) -> bool
+PandaBear.ImageProcessing.ImageVariantRequest.<Clone>$() -> PandaBear.ImageProcessing.ImageVariantRequest!
+PandaBear.ImageProcessing.ImageVariantRequest.Deconstruct(out string! Name, out PandaBear.ImageProcessing.ImageOutputFormat Format, out int MaxWidth, out int Quality, out int? MaxHeight) -> void
+PandaBear.ImageProcessing.ImageVariantRequest.Equals(PandaBear.ImageProcessing.ImageVariantRequest? other) -> bool
+PandaBear.ImageProcessing.ProcessedImageVariant.<Clone>$() -> PandaBear.ImageProcessing.ProcessedImageVariant!
+PandaBear.ImageProcessing.ProcessedImageVariant.Deconstruct(out string! Name, out PandaBear.ImageProcessing.ImageOutputFormat Format, out int Width, out int Height, out System.ReadOnlyMemory<byte> Content) -> void
+PandaBear.ImageProcessing.ProcessedImageVariant.Equals(PandaBear.ImageProcessing.ProcessedImageVariant? other) -> bool
+override PandaBear.ImageProcessing.ImageProbeResult.Equals(object? obj) -> bool
+override PandaBear.ImageProcessing.ImageProbeResult.GetHashCode() -> int
+override PandaBear.ImageProcessing.ImageProbeResult.ToString() -> string!
+override PandaBear.ImageProcessing.ImageProcessingLimits.Equals(object? obj) -> bool
+override PandaBear.ImageProcessing.ImageProcessingLimits.GetHashCode() -> int
+override PandaBear.ImageProcessing.ImageProcessingLimits.ToString() -> string!
+override PandaBear.ImageProcessing.ImageProcessingRequest.Equals(object? obj) -> bool
+override PandaBear.ImageProcessing.ImageProcessingRequest.GetHashCode() -> int
+override PandaBear.ImageProcessing.ImageProcessingRequest.ToString() -> string!
+override PandaBear.ImageProcessing.ImageProcessingResult.Equals(object? obj) -> bool
+override PandaBear.ImageProcessing.ImageProcessingResult.GetHashCode() -> int
+override PandaBear.ImageProcessing.ImageProcessingResult.ToString() -> string!
+override PandaBear.ImageProcessing.ImageVariantRequest.Equals(object? obj) -> bool
+override PandaBear.ImageProcessing.ImageVariantRequest.GetHashCode() -> int
+override PandaBear.ImageProcessing.ImageVariantRequest.ToString() -> string!
+override PandaBear.ImageProcessing.ProcessedImageVariant.Equals(object? obj) -> bool
+override PandaBear.ImageProcessing.ProcessedImageVariant.GetHashCode() -> int
+override PandaBear.ImageProcessing.ProcessedImageVariant.ToString() -> string!
+static PandaBear.ImageProcessing.ImageProbeResult.operator !=(PandaBear.ImageProcessing.ImageProbeResult? left, PandaBear.ImageProcessing.ImageProbeResult? right) -> bool
+static PandaBear.ImageProcessing.ImageProbeResult.operator ==(PandaBear.ImageProcessing.ImageProbeResult? left, PandaBear.ImageProcessing.ImageProbeResult? right) -> bool
+static PandaBear.ImageProcessing.ImageProcessingLimits.operator !=(PandaBear.ImageProcessing.ImageProcessingLimits? left, PandaBear.ImageProcessing.ImageProcessingLimits? right) -> bool
+static PandaBear.ImageProcessing.ImageProcessingLimits.operator ==(PandaBear.ImageProcessing.ImageProcessingLimits? left, PandaBear.ImageProcessing.ImageProcessingLimits? right) -> bool
+static PandaBear.ImageProcessing.ImageProcessingRequest.operator !=(PandaBear.ImageProcessing.ImageProcessingRequest? left, PandaBear.ImageProcessing.ImageProcessingRequest? right) -> bool
+static PandaBear.ImageProcessing.ImageProcessingRequest.operator ==(PandaBear.ImageProcessing.ImageProcessingRequest? left, PandaBear.ImageProcessing.ImageProcessingRequest? right) -> bool
+static PandaBear.ImageProcessing.ImageProcessingResult.operator !=(PandaBear.ImageProcessing.ImageProcessingResult? left, PandaBear.ImageProcessing.ImageProcessingResult? right) -> bool
+static PandaBear.ImageProcessing.ImageProcessingResult.operator ==(PandaBear.ImageProcessing.ImageProcessingResult? left, PandaBear.ImageProcessing.ImageProcessingResult? right) -> bool
+static PandaBear.ImageProcessing.ImageVariantRequest.operator !=(PandaBear.ImageProcessing.ImageVariantRequest? left, PandaBear.ImageProcessing.ImageVariantRequest? right) -> bool
+static PandaBear.ImageProcessing.ImageVariantRequest.operator ==(PandaBear.ImageProcessing.ImageVariantRequest? left, PandaBear.ImageProcessing.ImageVariantRequest? right) -> bool
+static PandaBear.ImageProcessing.ProcessedImageVariant.operator !=(PandaBear.ImageProcessing.ProcessedImageVariant? left, PandaBear.ImageProcessing.ProcessedImageVariant? right) -> bool
+static PandaBear.ImageProcessing.ProcessedImageVariant.operator ==(PandaBear.ImageProcessing.ProcessedImageVariant? left, PandaBear.ImageProcessing.ProcessedImageVariant? right) -> bool

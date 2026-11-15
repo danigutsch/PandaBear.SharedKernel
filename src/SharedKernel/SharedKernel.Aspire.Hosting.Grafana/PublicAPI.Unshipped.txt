@@ -54,3 +54,11 @@ static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.WithDataVolume(this Asp
 static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.WithDataBindMount(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.TempoResource!>! builder, string! source, bool isReadOnly = false) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.TempoResource!>!
 static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.WithDataVolume(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.PrometheusResource!>! builder, string? name = null, bool isReadOnly = false) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.PrometheusResource!>!
 static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.WithDataBindMount(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.PrometheusResource!>! builder, string! source, bool isReadOnly = false) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.PrometheusResource!>!
+Aspire.Hosting.GrafanaLgtmStackResourceNames.<Clone>$() -> Aspire.Hosting.GrafanaLgtmStackResourceNames!
+Aspire.Hosting.GrafanaLgtmStackResourceNames.Deconstruct(out string! OpenTelemetryCollector, out string! Grafana, out string! Loki, out string! Tempo, out string! Prometheus) -> void
+Aspire.Hosting.GrafanaLgtmStackResourceNames.Equals(Aspire.Hosting.GrafanaLgtmStackResourceNames? other) -> bool
+override Aspire.Hosting.GrafanaLgtmStackResourceNames.Equals(object? obj) -> bool
+override Aspire.Hosting.GrafanaLgtmStackResourceNames.GetHashCode() -> int
+override Aspire.Hosting.GrafanaLgtmStackResourceNames.ToString() -> string!
+static Aspire.Hosting.GrafanaLgtmStackResourceNames.operator !=(Aspire.Hosting.GrafanaLgtmStackResourceNames? left, Aspire.Hosting.GrafanaLgtmStackResourceNames? right) -> bool
+static Aspire.Hosting.GrafanaLgtmStackResourceNames.operator ==(Aspire.Hosting.GrafanaLgtmStackResourceNames? left, Aspire.Hosting.GrafanaLgtmStackResourceNames? right) -> bool

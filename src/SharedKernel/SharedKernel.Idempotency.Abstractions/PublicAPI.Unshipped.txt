@@ -58,3 +58,43 @@ PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Purged.init -> void
 PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Unattributed.get -> long
 PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Unattributed.init -> void
 PandaBear.Idempotency.IIdempotencyRetentionStore.PurgeExpired(System.DateTimeOffset cutoff, string? ownerTrackedScopePrefix, System.Collections.Generic.IReadOnlyCollection<string!>! heldRetentionOwners, int batchSize, System.Func<System.Collections.Generic.IReadOnlyCollection<string!>!, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlySet<string!>!>>! guard, System.Threading.CancellationToken ct, string? scopePrefix = null) -> System.Threading.Tasks.ValueTask<PandaBear.Idempotency.IdempotencyRetentionPurgeResult!>
+PandaBear.Idempotency.IdempotencyEntry.<Clone>$() -> PandaBear.Idempotency.IdempotencyEntry!
+PandaBear.Idempotency.IdempotencyEntry.Deconstruct(out PandaBear.Idempotency.IdempotencyOperation Operation, out PandaBear.Idempotency.IdempotencyEntryState State, out System.DateTimeOffset StartedAt, out System.DateTimeOffset? CompletedAt, out string? ResultFingerprint) -> void
+PandaBear.Idempotency.IdempotencyEntry.Equals(PandaBear.Idempotency.IdempotencyEntry? other) -> bool
+PandaBear.Idempotency.IdempotencyKey.Equals(PandaBear.Idempotency.IdempotencyKey other) -> bool
+PandaBear.Idempotency.IdempotencyOperation.Deconstruct(out PandaBear.Idempotency.IdempotencyScope Scope, out PandaBear.Idempotency.IdempotencyKey Key) -> void
+PandaBear.Idempotency.IdempotencyOperation.Equals(PandaBear.Idempotency.IdempotencyOperation other) -> bool
+PandaBear.Idempotency.IdempotencyRetentionPurgeResult.<Clone>$() -> PandaBear.Idempotency.IdempotencyRetentionPurgeResult!
+PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Deconstruct(out long Purged, out long Held, out long Unattributed) -> void
+PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Equals(PandaBear.Idempotency.IdempotencyRetentionPurgeResult? other) -> bool
+PandaBear.Idempotency.IdempotencyScope.Equals(PandaBear.Idempotency.IdempotencyScope other) -> bool
+PandaBear.Idempotency.IdempotencyStartResult.<Clone>$() -> PandaBear.Idempotency.IdempotencyStartResult!
+PandaBear.Idempotency.IdempotencyStartResult.Equals(PandaBear.Idempotency.IdempotencyStartResult? other) -> bool
+override PandaBear.Idempotency.IdempotencyEntry.Equals(object? obj) -> bool
+override PandaBear.Idempotency.IdempotencyEntry.GetHashCode() -> int
+override PandaBear.Idempotency.IdempotencyEntry.ToString() -> string!
+override PandaBear.Idempotency.IdempotencyKey.GetHashCode() -> int
+override PandaBear.Idempotency.IdempotencyOperation.GetHashCode() -> int
+override PandaBear.Idempotency.IdempotencyRetentionPurgeResult.Equals(object? obj) -> bool
+override PandaBear.Idempotency.IdempotencyRetentionPurgeResult.GetHashCode() -> int
+override PandaBear.Idempotency.IdempotencyRetentionPurgeResult.ToString() -> string!
+override PandaBear.Idempotency.IdempotencyScope.GetHashCode() -> int
+override PandaBear.Idempotency.IdempotencyStartResult.Equals(object? obj) -> bool
+override PandaBear.Idempotency.IdempotencyStartResult.GetHashCode() -> int
+override PandaBear.Idempotency.IdempotencyStartResult.ToString() -> string!
+static PandaBear.Idempotency.IdempotencyEntry.operator !=(PandaBear.Idempotency.IdempotencyEntry? left, PandaBear.Idempotency.IdempotencyEntry? right) -> bool
+static PandaBear.Idempotency.IdempotencyEntry.operator ==(PandaBear.Idempotency.IdempotencyEntry? left, PandaBear.Idempotency.IdempotencyEntry? right) -> bool
+static PandaBear.Idempotency.IdempotencyKey.operator !=(PandaBear.Idempotency.IdempotencyKey left, PandaBear.Idempotency.IdempotencyKey right) -> bool
+static PandaBear.Idempotency.IdempotencyKey.operator ==(PandaBear.Idempotency.IdempotencyKey left, PandaBear.Idempotency.IdempotencyKey right) -> bool
+static PandaBear.Idempotency.IdempotencyOperation.operator !=(PandaBear.Idempotency.IdempotencyOperation left, PandaBear.Idempotency.IdempotencyOperation right) -> bool
+static PandaBear.Idempotency.IdempotencyOperation.operator ==(PandaBear.Idempotency.IdempotencyOperation left, PandaBear.Idempotency.IdempotencyOperation right) -> bool
+static PandaBear.Idempotency.IdempotencyRetentionPurgeResult.operator !=(PandaBear.Idempotency.IdempotencyRetentionPurgeResult? left, PandaBear.Idempotency.IdempotencyRetentionPurgeResult? right) -> bool
+static PandaBear.Idempotency.IdempotencyRetentionPurgeResult.operator ==(PandaBear.Idempotency.IdempotencyRetentionPurgeResult? left, PandaBear.Idempotency.IdempotencyRetentionPurgeResult? right) -> bool
+static PandaBear.Idempotency.IdempotencyScope.operator !=(PandaBear.Idempotency.IdempotencyScope left, PandaBear.Idempotency.IdempotencyScope right) -> bool
+static PandaBear.Idempotency.IdempotencyScope.operator ==(PandaBear.Idempotency.IdempotencyScope left, PandaBear.Idempotency.IdempotencyScope right) -> bool
+static PandaBear.Idempotency.IdempotencyStartResult.operator !=(PandaBear.Idempotency.IdempotencyStartResult? left, PandaBear.Idempotency.IdempotencyStartResult? right) -> bool
+static PandaBear.Idempotency.IdempotencyStartResult.operator ==(PandaBear.Idempotency.IdempotencyStartResult? left, PandaBear.Idempotency.IdempotencyStartResult? right) -> bool
+~override PandaBear.Idempotency.IdempotencyKey.Equals(object obj) -> bool
+~override PandaBear.Idempotency.IdempotencyOperation.Equals(object obj) -> bool
+~override PandaBear.Idempotency.IdempotencyOperation.ToString() -> string
+~override PandaBear.Idempotency.IdempotencyScope.Equals(object obj) -> bool

@@ -68,3 +68,36 @@ PandaBear.EventSourcing.StreamRevision.Value.get -> long
 static PandaBear.EventSourcing.ExpectedStreamRevision.Any.get -> PandaBear.EventSourcing.ExpectedStreamRevision
 static PandaBear.EventSourcing.ExpectedStreamRevision.From(PandaBear.EventSourcing.StreamRevision value) -> PandaBear.EventSourcing.ExpectedStreamRevision
 static PandaBear.EventSourcing.ExpectedStreamRevision.NoStream.get -> PandaBear.EventSourcing.ExpectedStreamRevision
+PandaBear.EventSourcing.EventEnvelope.<Clone>$() -> PandaBear.EventSourcing.EventEnvelope!
+PandaBear.EventSourcing.EventEnvelope.Deconstruct(out PandaBear.EventSourcing.StreamId StreamId, out long Position, out PandaBear.EventSourcing.StreamRevision Revision, out System.Guid EventId, out string! EventType, out object! Data, out System.DateTimeOffset RecordedAt) -> void
+PandaBear.EventSourcing.EventEnvelope.Equals(PandaBear.EventSourcing.EventEnvelope? other) -> bool
+PandaBear.EventSourcing.ExpectedStreamRevision.Equals(PandaBear.EventSourcing.ExpectedStreamRevision other) -> bool
+PandaBear.EventSourcing.ProjectionCheckpoint.<Clone>$() -> PandaBear.EventSourcing.ProjectionCheckpoint!
+PandaBear.EventSourcing.ProjectionCheckpoint.Deconstruct(out string! ProjectionName, out long Position) -> void
+PandaBear.EventSourcing.ProjectionCheckpoint.Equals(PandaBear.EventSourcing.ProjectionCheckpoint? other) -> bool
+PandaBear.EventSourcing.StreamId.Equals(PandaBear.EventSourcing.StreamId other) -> bool
+PandaBear.EventSourcing.StreamRevision.Equals(PandaBear.EventSourcing.StreamRevision other) -> bool
+override PandaBear.EventSourcing.EventEnvelope.Equals(object? obj) -> bool
+override PandaBear.EventSourcing.EventEnvelope.GetHashCode() -> int
+override PandaBear.EventSourcing.EventEnvelope.ToString() -> string!
+override PandaBear.EventSourcing.ExpectedStreamRevision.GetHashCode() -> int
+override PandaBear.EventSourcing.ProjectionCheckpoint.Equals(object? obj) -> bool
+override PandaBear.EventSourcing.ProjectionCheckpoint.GetHashCode() -> int
+override PandaBear.EventSourcing.ProjectionCheckpoint.ToString() -> string!
+override PandaBear.EventSourcing.StreamId.GetHashCode() -> int
+override PandaBear.EventSourcing.StreamRevision.GetHashCode() -> int
+static PandaBear.EventSourcing.EventEnvelope.operator !=(PandaBear.EventSourcing.EventEnvelope? left, PandaBear.EventSourcing.EventEnvelope? right) -> bool
+static PandaBear.EventSourcing.EventEnvelope.operator ==(PandaBear.EventSourcing.EventEnvelope? left, PandaBear.EventSourcing.EventEnvelope? right) -> bool
+static PandaBear.EventSourcing.ExpectedStreamRevision.operator !=(PandaBear.EventSourcing.ExpectedStreamRevision left, PandaBear.EventSourcing.ExpectedStreamRevision right) -> bool
+static PandaBear.EventSourcing.ExpectedStreamRevision.operator ==(PandaBear.EventSourcing.ExpectedStreamRevision left, PandaBear.EventSourcing.ExpectedStreamRevision right) -> bool
+static PandaBear.EventSourcing.ProjectionCheckpoint.operator !=(PandaBear.EventSourcing.ProjectionCheckpoint? left, PandaBear.EventSourcing.ProjectionCheckpoint? right) -> bool
+static PandaBear.EventSourcing.ProjectionCheckpoint.operator ==(PandaBear.EventSourcing.ProjectionCheckpoint? left, PandaBear.EventSourcing.ProjectionCheckpoint? right) -> bool
+static PandaBear.EventSourcing.StreamId.operator !=(PandaBear.EventSourcing.StreamId left, PandaBear.EventSourcing.StreamId right) -> bool
+static PandaBear.EventSourcing.StreamId.operator ==(PandaBear.EventSourcing.StreamId left, PandaBear.EventSourcing.StreamId right) -> bool
+static PandaBear.EventSourcing.StreamRevision.operator !=(PandaBear.EventSourcing.StreamRevision left, PandaBear.EventSourcing.StreamRevision right) -> bool
+static PandaBear.EventSourcing.StreamRevision.operator ==(PandaBear.EventSourcing.StreamRevision left, PandaBear.EventSourcing.StreamRevision right) -> bool
+~override PandaBear.EventSourcing.ExpectedStreamRevision.Equals(object obj) -> bool
+~override PandaBear.EventSourcing.ExpectedStreamRevision.ToString() -> string
+~override PandaBear.EventSourcing.StreamId.Equals(object obj) -> bool
+~override PandaBear.EventSourcing.StreamRevision.Equals(object obj) -> bool
+~override PandaBear.EventSourcing.StreamRevision.ToString() -> string
