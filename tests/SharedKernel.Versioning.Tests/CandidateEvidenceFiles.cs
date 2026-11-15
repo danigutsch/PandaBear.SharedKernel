@@ -1,5 +1,4 @@
 using System.Text.Json.Nodes;
-using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tests;
 
@@ -31,7 +30,7 @@ internal static class CandidateEvidenceFiles
         }
 
         var path = Path.Combine(directory, name);
-        CandidateManifest.Write(path, manifest);
+        new CandidateManifest(manifest).Save(path);
         return path;
     }
 }

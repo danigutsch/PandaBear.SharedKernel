@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using PandaBear.Tooling;
+using PandaBear.Processes;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -23,8 +23,8 @@ internal sealed record PodmanDnsHost(
     /// </summary>
     public static PodmanDnsHost Current() =>
         new(
-            ExecutableResolver.Resolve("podman", Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows()),
-            ExecutableResolver.Resolve("stat", string.Concat("/usr/bin", Path.PathSeparator, "/bin"), isWindows: false),
+            PathExecutableResolver.Default.Find("podman"),
+            new PathExecutableResolver(string.Concat("/usr/bin", Path.PathSeparator, "/bin"), isWindows: false).Find("stat"),
             "/proc",
             OperatingSystem.IsLinux(),
             PodmanDnsPreflightCommand.RunProcess);

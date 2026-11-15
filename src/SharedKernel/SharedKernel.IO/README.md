@@ -28,6 +28,23 @@ To hand bytes you already hold to a `Stream` API without copying, wrap them in
 `new ReadOnlyMemoryStream(memory)`: a read-only, seekable stream over any `ReadOnlyMemory<byte>`, array-backed or not.
 The memory is not owned or copied; keep it unchanged while the stream is in use. A canceled token makes asynchronous reads throw.
 
+## Repository paths
+
+`RepositoryPath` is a path that a configuration file names relative to a repository root: `/` separators, no root,
+no `\` or `:`, and no empty, `.`, or `..` segment. `IsValid` and `TryParse` check text; `Parse` throws
+`InvalidOperationException` for invalid text, because configuration readers validate first. `ResolveUnder(root)`
+combines the path with the root and refuses a symbolic link in the path or any of its parent directories, so a
+checkout cannot point a configured path outside itself.
+
+```csharp
+if (!RepositoryPath.TryParse(configuredScript, out var script))
+{
+    return Invalid("$.script must be repository-relative.");
+}
+
+var fullPath = script.ResolveUnder(root);
+```
+
 The optional `PandaBear.SharedKernel.IO.Analyzers` package flags unbounded buffering of request and upload
 streams (`SKIO001`) and hand-rolled copy loops into a `MemoryStream` (`SKIO002`) and points to this API.
 

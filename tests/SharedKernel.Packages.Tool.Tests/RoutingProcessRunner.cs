@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace PandaBear.Packages.Tool.Tests;
 
 /// <summary>An <see cref="IProcessRunner"/> that answers by executable path and records every call.</summary>
@@ -9,9 +11,9 @@ internal sealed class RoutingProcessRunner(Dictionary<string, ProcessOutput> ans
     public IReadOnlyList<string> Calls => _calls;
 
     /// <summary>Records the call and returns the answer for the executable.</summary>
-    public Task<ProcessOutput> Run(string executable, IReadOnlyList<string> arguments, CancellationToken cancellationToken)
+    public Task<ProcessOutput> Run(ProcessStartInfo startInfo, TextWriter? forward, CancellationToken cancellationToken)
     {
-        _calls.Add(executable);
-        return Task.FromResult(answers[executable]);
+        _calls.Add(startInfo.FileName);
+        return Task.FromResult(answers[startInfo.FileName]);
     }
 }

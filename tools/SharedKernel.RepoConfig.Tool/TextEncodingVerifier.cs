@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using PandaBear.Tooling;
+using PandaBear.Processes;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -846,10 +846,7 @@ internal static class TextEncodingVerifier
 
     private static Process StartGit(GitInvocation invocation, IReadOnlyList<string> arguments)
     {
-        var gitExecutable = ExecutableResolver.Resolve(
-            "git",
-            Environment.GetEnvironmentVariable("PATH"),
-            OperatingSystem.IsWindows())
+        var gitExecutable = PathExecutableResolver.Default.Find("git")
             ?? throw new InvalidOperationException("Could not resolve git to an absolute executable path.");
         ProcessStartInfo startInfo = new(gitExecutable)
         {

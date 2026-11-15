@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
-using PandaBear.Tooling;
+using PandaBear.Processes;
 
 namespace PandaBear.Versioning.Tool;
 
@@ -16,7 +16,7 @@ internal static class CommandRunner
     {
         ct.ThrowIfCancellationRequested();
         var argumentList = arguments.ToArray();
-        using var process = StartProcess(CreateStartInfo(ExecutableResolver.ResolveCommand(fileName), argumentList, workingDirectory), fileName);
+        using var process = StartProcess(CreateStartInfo(PathExecutableResolver.Default.Resolve(fileName), argumentList, workingDirectory), fileName);
         var outputTask = process.StandardOutput.ReadToEndAsync(ct);
         var errorTask = process.StandardError.ReadToEndAsync(ct);
         try
@@ -46,7 +46,7 @@ internal static class CommandRunner
         string fileName, IReadOnlyList<string> arguments, string workingDirectory, IReadOnlyDictionary<string, string?> environment, TextWriter sink, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
-        var startInfo = CreateStartInfo(ExecutableResolver.ResolveCommand(fileName), [.. arguments], workingDirectory);
+        var startInfo = CreateStartInfo(PathExecutableResolver.Default.Resolve(fileName), [.. arguments], workingDirectory);
         foreach (var (name, value) in environment)
         {
             if (value is null)

@@ -1,4 +1,5 @@
 #nullable enable
+const PandaBear.Versioning.CandidateManifest.FileName = "candidate.json" -> string!
 override PandaBear.Versioning.SemanticVersion.ToString() -> string!
 PandaBear.Versioning.ApiCompatibilityReport
 PandaBear.Versioning.ApiCompatibilityReportOptions
@@ -16,6 +17,10 @@ PandaBear.Versioning.ApiCompatibilityReportOptions.RepoRoot.init -> void
 PandaBear.Versioning.ApiCompatibilityReportOptions.Version.get -> string!
 PandaBear.Versioning.ApiCompatibilityReportOptions.Version.init -> void
 PandaBear.Versioning.BreakingChangeMarker
+PandaBear.Versioning.CandidateManifest
+PandaBear.Versioning.CandidateManifest.CandidateManifest(System.Text.Json.Nodes.JsonObject! evidence) -> void
+PandaBear.Versioning.CandidateManifest.Evidence.get -> System.Text.Json.Nodes.JsonObject!
+PandaBear.Versioning.CandidateManifest.Save(string! path) -> void
 PandaBear.Versioning.CommitMessageInput
 PandaBear.Versioning.ConventionalCommit
 PandaBear.Versioning.ConventionalCommit.Body.get -> string?
@@ -156,6 +161,9 @@ static PandaBear.Versioning.ApiCompatibilityReport.GetReportPath(PandaBear.Versi
 static PandaBear.Versioning.ApiCompatibilityReport.Initialize(PandaBear.Versioning.ApiCompatibilityReportOptions! options) -> System.Threading.Tasks.Task<string!>!
 static PandaBear.Versioning.ApiCompatibilityReport.ShouldTreatFailureAsReportOnly(PandaBear.Versioning.ApiCompatibilityReportOptions! options) -> bool
 static PandaBear.Versioning.BreakingChangeMarker.HasMarker(string! messages) -> bool
+static PandaBear.Versioning.CandidateManifest.Find(string! directory) -> string!
+static PandaBear.Versioning.CandidateManifest.HashPackage(string! path, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+static PandaBear.Versioning.CandidateManifest.Load(string! path) -> PandaBear.Versioning.CandidateManifest!
 static PandaBear.Versioning.CommitMessageInput.ReadMessages(System.IO.TextReader! reader) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
 static PandaBear.Versioning.ConventionalCommitParser.Parse(string! message) -> PandaBear.Versioning.ConventionalCommit!
 static PandaBear.Versioning.ConventionalCommitParser.TryParse(string! message, out PandaBear.Versioning.ConventionalCommit? commit) -> bool

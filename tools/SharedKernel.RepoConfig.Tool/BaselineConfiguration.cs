@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Text.Json.Serialization;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -174,7 +174,7 @@ internal sealed record BaselineConfiguration(
         }
 
         if (source is not null
-            && (!RepositoryPath.IsRelative(source) || source.Any(char.IsControl) || source.Equals(target, StringComparison.OrdinalIgnoreCase)))
+            && (!RepositoryPath.IsValid(source) || source.Any(char.IsControl) || source.Equals(target, StringComparison.OrdinalIgnoreCase)))
         {
             return path + ".source must be a repository-relative path with '/' separators and without empty, '.', or '..' segments, and differ from the target path.";
         }
@@ -186,7 +186,7 @@ internal sealed record BaselineConfiguration(
         "must be a repository-relative path with '/' separators and without empty, '.', or '..' segments, without a .git directory at any depth, and without a segment that contains '~' or ends in '.' or a space (Windows aliases of .git and of JSON suffixes).";
 
     private static bool IsSafePath(string path) =>
-        RepositoryPath.IsRelative(path) && !path.Any(char.IsControl) && !path.Split('/').Any(IsUnsafeSegment);
+        RepositoryPath.IsValid(path) && !path.Any(char.IsControl) && !path.Split('/').Any(IsUnsafeSegment);
 
     // Windows resolves "x.json." and ".git " to "x.json" and ".git", and "GIT~1" to ".git"; the rule applies on every
     // platform so that one configuration behaves the same everywhere.

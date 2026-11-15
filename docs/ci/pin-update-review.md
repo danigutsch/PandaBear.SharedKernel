@@ -8,7 +8,7 @@ Pin external Actions to immutable full commit SHAs listed in `.github/action-pin
 | --- | --- |
 | `.github/action-pins.json` and every external `uses:` in `.github/workflows` and `.github/actions` | Library CI maintainers verify upstream SHA, release changes, permissions, nested Actions, downloaded tools, runner compatibility, and artifact behavior. |
 | `src/SharedKernel/SharedKernel.Aspire.Hosting.ClamAv`, `.SeaweedFs`, and `.Grafana` (`*ContainerImageTags.cs`), and `.K6` (resource extensions) | Hosting package maintainers verify registry tag/digest, supported architectures, configuration compatibility, resource health, persistence, and telemetry/privacy behavior. |
-| `tools/SharedKernel.PlaywrightMcp.Tool/PlaywrightMcpCommand.cs` | Tool maintainers review the pinned image, local engine isolation, explicit image preparation, network restrictions, and browser/MCP compatibility. |
+| `src/SharedKernel/SharedKernel.PlaywrightMcp/PlaywrightMcpContainerArguments.cs` | Tool maintainers review the pinned image, local engine isolation, explicit image preparation, network restrictions, and browser/MCP compatibility. |
 
 This checkout has no tracked Dependabot configuration or Dev Container configuration. Do not imply that bots update these C# image constants or that an application updater covers library-owned declarations. SDK and NuGet changes follow the existing central version/locked-restore workflow and [release policy](../release-policy.md).
 

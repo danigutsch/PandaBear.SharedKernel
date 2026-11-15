@@ -1,0 +1,21 @@
+#nullable enable
+PandaBear.Processes.BoundedProcessRunner
+PandaBear.Processes.BoundedProcessRunner.BoundedProcessRunner() -> void
+PandaBear.Processes.BoundedProcessRunner.Run(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Processes.ProcessOutput!>!
+PandaBear.Processes.IExecutableResolver
+PandaBear.Processes.IExecutableResolver.Find(string! command) -> string?
+PandaBear.Processes.IProcessRunner
+PandaBear.Processes.IProcessRunner.Run(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Processes.ProcessOutput!>!
+PandaBear.Processes.PathExecutableResolver
+PandaBear.Processes.PathExecutableResolver.Find(string! command) -> string?
+PandaBear.Processes.PathExecutableResolver.PathExecutableResolver(string? path, bool isWindows) -> void
+PandaBear.Processes.PathExecutableResolver.Resolve(string! fileName) -> string!
+PandaBear.Processes.ProcessOutput
+PandaBear.Processes.ProcessOutput.ExitCode.get -> int
+PandaBear.Processes.ProcessOutput.ProcessOutput(int exitCode, string! standardOutput, string! standardError = "") -> void
+PandaBear.Processes.ProcessOutput.StandardError.get -> string!
+PandaBear.Processes.ProcessOutput.StandardOutput.get -> string!
+PandaBear.Processes.SystemProcessRunner
+PandaBear.Processes.SystemProcessRunner.Run(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Processes.ProcessOutput!>!
+PandaBear.Processes.SystemProcessRunner.SystemProcessRunner() -> void
+static PandaBear.Processes.PathExecutableResolver.Default.get -> PandaBear.Processes.PathExecutableResolver!

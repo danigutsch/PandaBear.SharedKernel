@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.Json;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.CI.Tool;
 
@@ -65,7 +65,7 @@ internal static class CoverageGate
             var coverage = configuration.Coverage ?? throw CiConfigurationFile.Invalid("$.coverage is required by the coverage commands.");
             threshold = coverage.ThresholdPercent;
             configurationHash = Convert.ToHexStringLower(SHA256.HashData(await BoundedFile.Read(
-                RepositoryPath.Resolve(root, CiConfigurationFile.RelativePath), MaxConfigurationBytes, CiConfigurationFile.RelativePath, ct).ConfigureAwait(false)));
+                RepositoryPath.Parse(CiConfigurationFile.RelativePath).ResolveUnder(root), MaxConfigurationBytes, CiConfigurationFile.RelativePath, ct).ConfigureAwait(false)));
             revision = (await run("git", ["rev-parse", "HEAD"], root, ct).ConfigureAwait(false)).Trim();
             parents = (await run("git", ["rev-parse", "HEAD^@"], root, ct).ConfigureAwait(false)).Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 

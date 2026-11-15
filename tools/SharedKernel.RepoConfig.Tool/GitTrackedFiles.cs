@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
-using PandaBear.Tooling;
+using PandaBear.Processes;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -77,7 +77,7 @@ internal static class GitTrackedFiles
 
     private static ProcessStartInfo CreateStartInfo(string rootPath, IReadOnlyList<string> arguments)
     {
-        var git = ExecutableResolver.Resolve("git", Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows())
+        var git = PathExecutableResolver.Default.Find("git")
             ?? throw new InvalidOperationException("Could not resolve git to an absolute executable path.");
         ProcessStartInfo startInfo = new(git)
         {
