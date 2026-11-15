@@ -30,7 +30,8 @@ var output = await runner.Run(startInfo, forward: null, cancellationToken);
   it: `InvalidOperationException` (`Failed to start <file>: <reason>`) with the operating system's error inside.
 - `BoundedProcessRunner` is for quick queries, such as a package manager listing: it redirects and captures both output
   streams, closes a redirected standard input, ends the process after two minutes or above 8 Mi characters on either
-  stream, and reports a process that leaves its output open after it exits.
+  stream, and reports a process that leaves its output open after it exits. It reports a start failure as
+  `SystemProcessRunner` does.
 - `IExecutableResolver` finds the executable that a command name starts. `PathExecutableResolver` looks only in the
   absolute directories of `PATH`, never in the application directory, the working directory, or a relative `PATH`
   entry, so a checkout cannot supply the executable. On Unix a file needs an execute bit; on Windows `<command>.exe` is

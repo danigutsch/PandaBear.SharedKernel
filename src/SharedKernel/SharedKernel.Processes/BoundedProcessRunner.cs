@@ -16,7 +16,11 @@ public sealed class BoundedProcessRunner : IProcessRunner
     private static readonly TimeSpan DrainTimeout = TimeSpan.FromSeconds(5);
 
     /// <inheritdoc />
-    /// <exception cref="InvalidOperationException">The process cannot be started, writes more than the output limit, or leaves its output open after it exits.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// The process cannot be started, writes more than the output limit, or leaves its output open after it exits. A start
+    /// failure has the message <c>Failed to start &lt;file&gt;: &lt;reason&gt;</c> with the operating system's reason, which the
+    /// inner <see cref="Win32Exception"/> also carries, as <see cref="ProcessTree.Start"/> reports it.
+    /// </exception>
     /// <exception cref="TimeoutException">The process runs longer than two minutes.</exception>
     public async Task<ProcessOutput> Run(ProcessStartInfo startInfo, TextWriter? forward, CancellationToken cancellationToken)
     {
@@ -38,12 +42,13 @@ public sealed class BoundedProcessRunner : IProcessRunner
         {
             if (!process.Start())
             {
-                throw new InvalidOperationException("Could not start the process.");
+                throw new InvalidOperationException($"Failed to start {startInfo.FileName}.");
             }
         }
         catch (Win32Exception exception)
         {
-            throw new InvalidOperationException("Could not start the process.", exception);
+            // Reported as ProcessTree.Start reports it, so every start failure is the documented InvalidOperationException.
+            throw new InvalidOperationException($"Failed to start {startInfo.FileName}: {exception.Message}", exception);
         }
 
         if (startInfo.RedirectStandardInput)

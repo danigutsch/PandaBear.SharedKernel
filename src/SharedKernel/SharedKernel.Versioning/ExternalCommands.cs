@@ -89,7 +89,8 @@ internal sealed class ExternalCommands
         }
     }
 
-    // A start failure is the InvalidOperationException that IProcessRunner documents, carrying the reason.
+    // A start failure is the InvalidOperationException that IProcessRunner documents. SystemProcessRunner and
+    // BoundedProcessRunner put the file name and the operating system's reason in its message; another runner may not.
     private Task<ProcessOutput> Start(ProcessStartInfo startInfo, TextWriter? forward, CancellationToken ct) =>
         _processRunner.Run(startInfo, forward, ct);
 
