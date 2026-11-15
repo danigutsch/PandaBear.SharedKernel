@@ -1,6 +1,5 @@
 using System.Text.Json.Nodes;
-using PandaBear.VaultManager.Tool.Crypto;
-using PandaBear.VaultManager.Tool.Formats.Bitwarden;
+using PandaBear.Vault.Bitwarden;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
@@ -21,8 +20,6 @@ internal static class CliInputs
     public const string BitwardenKey = "bitwarden|bitwarden.json|bw-1";
     /// <summary>The origin key of the Keeper GitHub login.</summary>
     public const string GitHubKey = "keeper|keeper.json|rec-github";
-
-    private static readonly KdfConfig FastPbkdf2 = new(KdfType.Pbkdf2Sha256, 5_000);
 
     /// <summary>A Bitwarden JSON export with one login in the folder <c>Work</c> that has notes.</summary>
     public static string LoginWithNotesInFolder(string directory, string password, string notes)
@@ -75,12 +72,11 @@ internal static class CliInputs
         Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-github", "GitHub", "alice", BitwardenPassword, "https://github.com"))),
     ];
 
-    /// <summary>A Bitwarden export protected with a file password, with fast key derivation.</summary>
+    /// <summary>A Bitwarden export protected with a file password, with the key derivation of the tool's own exports.</summary>
     public static string ProtectedBitwarden(string directory, string filePassword) =>
-        Write(directory, "protected.json", PasswordProtectedExport.Encrypt(
+        Write(directory, "protected.json", BitwardenExportWriter.Instance.Encrypt(
             BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", BitwardenPassword, "https://example.com")),
-            filePassword,
-            FastPbkdf2));
+            filePassword));
 
     /// <summary>
     /// A Keeper Commander zip with a login in a folder and a file record that lists one file included in the zip and one

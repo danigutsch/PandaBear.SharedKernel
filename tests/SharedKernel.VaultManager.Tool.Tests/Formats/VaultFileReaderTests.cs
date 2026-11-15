@@ -1,6 +1,6 @@
 using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.VaultManager.Tool.Model;
+using PandaBear.Vault.Model;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats;
 

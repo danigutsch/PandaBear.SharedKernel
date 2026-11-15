@@ -1,5 +1,4 @@
-using PandaBear.VaultManager.Tool.IO;
-using PandaBear.VaultManager.Tool.Pipeline;
+using PandaBear.Vault.IO;
 
 namespace PandaBear.VaultManager.Tool.Cli;
 

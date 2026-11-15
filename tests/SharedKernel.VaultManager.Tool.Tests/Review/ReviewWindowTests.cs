@@ -1,11 +1,11 @@
 using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Formats.Bitwarden;
-using PandaBear.VaultManager.Tool.Matching;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Model;
-using PandaBear.VaultManager.Tool.Pipeline;
+using PandaBear.Vault.Bitwarden;
+using PandaBear.Vault.Matching;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Model;
+using PandaBear.Vault.Pipeline;
 using PandaBear.VaultManager.Tool.Review;
-using PandaBear.VaultManager.Tool.Secrets;
+using PandaBear.Vault.Secrets;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 using Terminal.Gui.App;
 using Terminal.Gui.Input;

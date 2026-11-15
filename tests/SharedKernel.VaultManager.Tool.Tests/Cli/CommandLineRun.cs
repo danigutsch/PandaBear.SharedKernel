@@ -1,7 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Help;
 using System.Globalization;
-using PandaBear.VaultManager.Tool.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 

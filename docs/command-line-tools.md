@@ -196,7 +196,8 @@ engine, `SharedKernel.PlaywrightMcp`; the other tools move theirs incrementally.
 `SharedKernel.CI.GitHub` and `SharedKernel.CI.Forgejo` providers; `SharedKernel.Forgejo` is the Forgejo platform base, as
 `SharedKernel.GitHub` is GitHub's. `SharedKernel.RepoConfig.Tool` wraps the forge-neutral `SharedKernel.Repositories`
 core, its `SharedKernel.Repositories.GitHub` provider, and `SharedKernel.DevContainers`, which holds the dev container and
-rootless Podman host checks.
+rootless Podman host checks. `SharedKernel.VaultManager.Tool` wraps
+`SharedKernel.Vault` and its `SharedKernel.Vault.Bitwarden` and `SharedKernel.Vault.Keeper` providers.
 
 ## Secrets
 

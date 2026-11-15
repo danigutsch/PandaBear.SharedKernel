@@ -1,11 +1,11 @@
 using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Brief;
-using PandaBear.VaultManager.Tool.Formats.Bitwarden;
-using PandaBear.VaultManager.Tool.Matching;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Model;
-using PandaBear.VaultManager.Tool.Pipeline;
-using PandaBear.VaultManager.Tool.Secrets;
+using PandaBear.Vault.Brief;
+using PandaBear.Vault.Bitwarden;
+using PandaBear.Vault.Matching;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Model;
+using PandaBear.Vault.Pipeline;
+using PandaBear.Vault.Secrets;
 using PandaBear.VaultManager.Tool.Tests.Brief;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
@@ -65,7 +65,7 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         string decisionsPath = Path.Combine(DirectoryPath, "decisions.json");
         string briefPath = Path.Combine(DirectoryPath, "brief.json");
         string agentPath = Path.Combine(DirectoryPath, "agent.json");
-        string groupKey = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Run(new PipelineRequest(inputs)).Unresolved[0].GroupKey;
+        string groupKey = new TestPrompts(ExportPassword).Environment().CreatePipeline().Run(new PipelineRequest(inputs)).Unresolved[0].GroupKey;
         DecisionsFile.Write(decisionsPath, new MergeDecisions([new GroupDecision(groupKey, [FieldChoice.Member(FieldPaths.LoginPassword, CliInputs.KeeperKey)])], MatchOverrides.None));
         string[] args = ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--brief", briefPath, "--plaintext"];
         var briefRun = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), args, TestContext.Current.CancellationToken);

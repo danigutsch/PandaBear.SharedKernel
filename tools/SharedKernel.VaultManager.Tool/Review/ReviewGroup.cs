@@ -1,5 +1,5 @@
-using PandaBear.VaultManager.Tool.Matching;
-using PandaBear.VaultManager.Tool.Model;
+using PandaBear.Vault.Matching;
+using PandaBear.Vault.Model;
 
 namespace PandaBear.VaultManager.Tool.Review;
 

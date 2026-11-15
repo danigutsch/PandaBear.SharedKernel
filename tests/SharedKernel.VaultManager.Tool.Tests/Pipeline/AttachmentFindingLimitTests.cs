@@ -1,7 +1,7 @@
 using System.Globalization;
 using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Attachments;
-using PandaBear.VaultManager.Tool.Pipeline;
+using PandaBear.Vault.Attachments;
+using PandaBear.Vault.Pipeline;
 using PandaBear.VaultManager.Tool.Tests.Secrets;
 using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
@@ -26,7 +26,7 @@ public sealed class AttachmentFindingLimitTests : IDisposable
         string zip = Write(DirectoryPath, "keeper.zip", CommanderZip(
             KeeperJson(KeeperFileRecord("rec-files", "Door codes", "file-codes", "door-codes.txt")),
             ("files/file-codes", text)));
-        var loaded = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Load([zip], TestContext.Current.CancellationToken);
+        var loaded = new TestPrompts(ExportPassword).Environment().CreatePipeline().Load([zip], TestContext.Current.CancellationToken);
 
         // Act
         var scanned = await Task.Run(() => VaultPipeline.Scan(loaded, TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <!-- Shipping the vault manager is a separate decision, so candidates do not pack its engine either. -->
+        <IsPackable>false</IsPackable>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.Vault.Keeper</PackageId>
+        <Description>Keeper provider for the SharedKernel vault engine: reads Keeper JSON, Keeper Commander zip, and Keeper CSV exports offline into provider-neutral vault items.</Description>
+        <PackageTags>password-manager;vault;keeper;migration;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.Vault.Keeper.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Vault\SharedKernel.Vault.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

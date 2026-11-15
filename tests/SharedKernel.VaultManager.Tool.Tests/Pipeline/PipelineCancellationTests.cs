@@ -1,5 +1,5 @@
 using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Pipeline;
+using PandaBear.Vault.Pipeline;
 using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
@@ -24,7 +24,7 @@ public sealed class PipelineCancellationTests : IDisposable
         string output = Path.Combine(DirectoryPath, "merged.json");
         using var cancellation = new CancellationTokenSource();
         var prompts = new TestPrompts(ExportPassword) { OnNewPassword = cancellation.Cancel };
-        var pipeline = new VaultPipeline(prompts.Environment());
+        var pipeline = prompts.Environment().CreatePipeline();
         var scanned = VaultPipeline.Scan(pipeline.Load([input], TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);
 
         var action = () => pipeline.Merge(scanned, new MergeRequest { Output = new PipelineOutput(output) }, cancellation.Token);
@@ -44,7 +44,7 @@ public sealed class PipelineCancellationTests : IDisposable
         string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
         string output = Path.Combine(DirectoryPath, "merged.json");
         var prompts = new TestPrompts(ExportPassword);
-        var pipeline = new VaultPipeline(prompts.Environment());
+        var pipeline = prompts.Environment().CreatePipeline();
         var scanned = VaultPipeline.Scan(pipeline.Load([input], TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
@@ -65,7 +65,7 @@ public sealed class PipelineCancellationTests : IDisposable
         // Arrange
         string input = Path.Combine(AppContext.BaseDirectory, "Fixtures", "bitwarden", "protected-pbkdf2.json");
         var prompts = new TestPrompts(ExportPassword);
-        var pipeline = new VaultPipeline(prompts.Environment());
+        var pipeline = prompts.Environment().CreatePipeline();
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 
@@ -83,7 +83,7 @@ public sealed class PipelineCancellationTests : IDisposable
     {
         // Arrange
         string input = Write(DirectoryPath, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
-        var loaded = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Load([input], TestContext.Current.CancellationToken);
+        var loaded = new TestPrompts(ExportPassword).Environment().CreatePipeline().Load([input], TestContext.Current.CancellationToken);
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 

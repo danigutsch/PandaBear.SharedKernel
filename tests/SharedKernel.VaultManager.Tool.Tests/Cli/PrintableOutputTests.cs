@@ -1,6 +1,6 @@
 using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Matching;
-using PandaBear.VaultManager.Tool.Merge;
+using PandaBear.Vault.Matching;
+using PandaBear.Vault.Merge;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 using PandaBear.VaultManager.Tool.Tests.Review;
 

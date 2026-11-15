@@ -1,11 +1,12 @@
 using System.CommandLine;
-using PandaBear.VaultManager.Tool.Catalog;
+using PandaBear.Vault.Catalog;
+using PandaBear.Vault.Formats;
 using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.VaultManager.Tool.Formats.Bitwarden;
-using PandaBear.VaultManager.Tool.IO;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Model;
-using PandaBear.VaultManager.Tool.Pipeline;
+using PandaBear.Vault.Bitwarden;
+using PandaBear.Vault.IO;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Model;
+using PandaBear.Vault.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Cli;
 
@@ -122,7 +123,7 @@ internal static class ApplyCommand
         }
 
         MergeDecisions decisions = arguments.Decisions is { } decisionsPath ? DecisionsFile.Read(decisionsPath) : MergeDecisions.None;
-        var pipeline = new VaultPipeline(prompts.Environment);
+        var pipeline = prompts.Environment.CreatePipeline();
         LoadedVault vault = pipeline.Load(inputs, ct);
         foreach (string warning in vault.Warnings)
         {
@@ -159,7 +160,7 @@ internal static class ApplyCommand
 
         ct.ThrowIfCancellationRequested();
         string outputFile = arguments.Output ?? throw new InvalidOperationException("apply needs --output unless --dry-run is given.");
-        BitwardenWriteResult written = pipeline.Write(edited, new PipelineOutput(outputFile, arguments.Plaintext, arguments.Force), [arguments.Input, arguments.Catalog], ct);
+        VaultWriteResult written = pipeline.Write(edited, new PipelineOutput(outputFile, arguments.Plaintext, arguments.Force), [arguments.Input, arguments.Catalog], ct);
         if (!Reported(written, error))
         {
             return ExitCodes.InputOutputProblem;
@@ -191,7 +192,7 @@ internal static class ApplyCommand
     // Checks the edited vault as the real run writes it, in memory and unencrypted, and prints every change.
     private static int Preview(CatalogApplyResult applied, VaultExport edited, bool allowRemovals, TextWriter output, TextWriter error)
     {
-        if (!Reported(BitwardenJsonWriter.Write(edited), error))
+        if (!Reported(BitwardenExportWriter.Instance.Write(edited), error))
         {
             return ExitCodes.InputOutputProblem;
         }
@@ -227,7 +228,7 @@ internal static class ApplyCommand
     }
 
     // Prints the writer's warnings and errors. Returns false when Bitwarden would reject the import.
-    private static bool Reported(BitwardenWriteResult written, TextWriter error)
+    private static bool Reported(VaultWriteResult written, TextWriter error)
     {
         foreach (string warning in written.Warnings)
         {

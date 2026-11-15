@@ -1,7 +1,7 @@
 using System.Text.Json;
-using PandaBear.VaultManager.Tool.Attachments;
-using PandaBear.VaultManager.Tool.Formats.Bitwarden;
-using PandaBear.VaultManager.Tool.Formats.Csv;
+using PandaBear.Vault.Attachments;
+using PandaBear.Vault.Bitwarden;
+using PandaBear.Vault.Csv;
 
 namespace PandaBear.VaultManager.Tool.Formats;
 

@@ -1,8 +1,8 @@
-using PandaBear.VaultManager.Tool.Brief;
-using PandaBear.VaultManager.Tool.Matching;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Model;
-using PandaBear.VaultManager.Tool.Secrets;
+using PandaBear.Vault.Brief;
+using PandaBear.Vault.Matching;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Model;
+using PandaBear.Vault.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Brief;
 

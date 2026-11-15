@@ -1,7 +1,7 @@
 using PandaBear.Testing;
 using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.VaultManager.Tool.Formats.Bitwarden;
-using PandaBear.VaultManager.Tool.Pipeline;
+using PandaBear.Vault.Bitwarden;
+using PandaBear.Vault.Pipeline;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 

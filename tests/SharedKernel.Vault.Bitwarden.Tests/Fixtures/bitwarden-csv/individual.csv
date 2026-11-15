@@ -1,0 +1,5 @@
+folder,favorite,type,name,notes,fields,reprompt,archivedDate,login_uri,login_username,login_password,login_totp
+Work/Servers,1,login,"Example, login","note with ""quotes""","PIN: 1234
+Label: with: colons",1,,"https://example.com,https://accounts.example.com",alice,fixture-password-1,otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP
+,,note,Plain note,"multi
+line",,0,2026-01-01T00:00:00.000Z,,,,

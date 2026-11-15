@@ -2,11 +2,11 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Globalization;
 using System.Text;
-using PandaBear.VaultManager.Tool.Brief;
+using PandaBear.Vault.Brief;
 using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.VaultManager.Tool.IO;
-using PandaBear.VaultManager.Tool.Merge;
-using PandaBear.VaultManager.Tool.Pipeline;
+using PandaBear.Vault.IO;
+using PandaBear.Vault.Merge;
+using PandaBear.Vault.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Cli;
 
@@ -179,7 +179,7 @@ internal static class MergeCommand
             agent = fromAgent;
         }
 
-        var pipeline = new VaultPipeline(prompts.Environment);
+        var pipeline = prompts.Environment.CreatePipeline();
         ScannedVault scanned = VaultPipeline.Scan(pipeline.Load(arguments.Inputs, ct), ct);
         var request = new MergeRequest { Policy = arguments.Policy, Decisions = decisions };
 

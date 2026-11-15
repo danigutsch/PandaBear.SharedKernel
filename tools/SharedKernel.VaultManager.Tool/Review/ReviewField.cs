@@ -1,5 +1,5 @@
 using System.Text;
-using PandaBear.VaultManager.Tool.Merge;
+using PandaBear.Vault.Merge;
 
 namespace PandaBear.VaultManager.Tool.Review;
 

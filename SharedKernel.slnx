@@ -203,6 +203,12 @@
   <Project Path="tests/SharedKernel.LoadTesting.Tests/SharedKernel.LoadTesting.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.LoadTesting.K6/SharedKernel.LoadTesting.K6.csproj" />
   <Project Path="tests/SharedKernel.LoadTesting.K6.Tests/SharedKernel.LoadTesting.K6.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Vault/SharedKernel.Vault.csproj" />
+  <Project Path="tests/SharedKernel.Vault.Tests/SharedKernel.Vault.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Vault.Bitwarden/SharedKernel.Vault.Bitwarden.csproj" />
+  <Project Path="tests/SharedKernel.Vault.Bitwarden.Tests/SharedKernel.Vault.Bitwarden.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Vault.Keeper/SharedKernel.Vault.Keeper.csproj" />
+  <Project Path="tests/SharedKernel.Vault.Keeper.Tests/SharedKernel.Vault.Keeper.Tests.csproj" />
   <Project Path="tools/SharedKernel.PlaywrightMcp.Tool/SharedKernel.PlaywrightMcp.Tool.csproj" />
   <Project Path="tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj" />
   <Project Path="tools/SharedKernel.VaultManager.Tool/SharedKernel.VaultManager.Tool.csproj" />

@@ -1,0 +1,6 @@
+#nullable enable
+PandaBear.Vault.Keeper.KeeperCsvReader
+PandaBear.Vault.Keeper.KeeperJsonReader
+static PandaBear.Vault.Keeper.KeeperCsvReader.Read(string! text, string! sourceFile) -> PandaBear.Vault.Formats.VaultReadResult!
+static PandaBear.Vault.Keeper.KeeperJsonReader.Read(string! json, string! sourceFile) -> PandaBear.Vault.Formats.VaultReadResult!
+static PandaBear.Vault.Keeper.KeeperJsonReader.ReadZip(string! path) -> PandaBear.Vault.Formats.VaultReadResult!

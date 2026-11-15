@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Formats.Bitwarden;
+using PandaBear.Vault.Bitwarden;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 using static PandaBear.VaultManager.Tool.Tests.Cli.PreviewInputs;
 

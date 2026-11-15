@@ -18,18 +18,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Konscious.Security.Cryptography.Argon2" />
         <PackageReference Include="System.CommandLine" />
         <PackageReference Include="Terminal.Gui" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.BuildingBlocks\SharedKernel.BuildingBlocks.csproj" />
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <EmbeddedResource Include="Secrets\bip39-english.txt" LogicalName="PandaBear.VaultManager.Tool.Secrets.bip39-english.txt" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Vault.Bitwarden\SharedKernel.Vault.Bitwarden.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Vault.Keeper\SharedKernel.Vault.Keeper.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Vault\SharedKernel.Vault.csproj" />
     </ItemGroup>
 
     <ItemGroup>
