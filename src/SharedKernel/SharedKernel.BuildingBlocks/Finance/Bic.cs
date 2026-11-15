@@ -20,7 +20,7 @@ public sealed class Bic : ValueObject
             || value[4] is < 'A' or > 'Z'
             || value[5] is < 'A' or > 'Z')
         {
-            return Result.Invalid<Bic>(detail: "Invalid canonical BIC.", field: "bic", message: "Invalid canonical BIC.");
+            return Result.Invalid<Bic>(detail: "BIC is not valid.", field: "bic", message: "BIC is not valid.");
         }
 
         return Result.Ok(new Bic(value));

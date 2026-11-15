@@ -21,7 +21,7 @@ public sealed class Cpf : ValueObject
             || value[9] - '0' != BrazilianCheckDigits.Calculate(value.AsSpan(0, 9), 10)
             || value[10] - '0' != BrazilianCheckDigits.Calculate(value.AsSpan(0, 10), 11))
         {
-            return Result.Invalid<Cpf>(detail: "Invalid canonical CPF.", field: "cpf", message: "Invalid canonical CPF.");
+            return Result.Invalid<Cpf>(detail: "CPF is not valid.", field: "cpf", message: "CPF is not valid.");
         }
 
         return Result.Ok(new Cpf(value));

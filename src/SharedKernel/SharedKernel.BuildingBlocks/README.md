@@ -128,7 +128,9 @@ var company = Cnpj.Create("12ABC34501DE35");
 var pix = PixKey.Create(PixKeyType.Cnpj, "12ABC34501DE35");
 ```
 
-Supply uppercase IBAN/BIC/CNPJ, eleven ASCII digits for CPF, and no display punctuation or spaces.
+Supply uppercase IBAN/BIC/CNPJ, eleven ASCII digits for CPF, and no display punctuation or spaces. A rejected value gives one
+input-independent message that can be shown to people: `IBAN is not valid.`, `BIC is not valid.`, `CPF is not valid.`,
+`CNPJ is not valid.` or `Pix key is not valid.`, on the field `iban`, `bic`, `cpf`, `cnpj` or `pixKey`.
 Pix email and EVP keys must be lowercase. Select `PixKeyType` explicitly; `None` and undefined enum
 values are rejected. Leading zeros are preserved. Equality includes concrete type and canonical value;
 Pix equality includes both type and value. Numeric and alphanumeric CNPJ are supported.

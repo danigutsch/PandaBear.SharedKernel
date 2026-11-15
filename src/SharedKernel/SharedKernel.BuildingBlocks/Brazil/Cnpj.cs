@@ -23,7 +23,7 @@ public sealed class Cnpj : ValueObject
             || value[12] - '0' != BrazilianCheckDigits.Calculate(value.AsSpan(0, 12), 5)
             || value[13] - '0' != BrazilianCheckDigits.Calculate(value.AsSpan(0, 13), 6))
         {
-            return Result.Invalid<Cnpj>(detail: "Invalid canonical CNPJ.", field: "cnpj", message: "Invalid canonical CNPJ.");
+            return Result.Invalid<Cnpj>(detail: "CNPJ is not valid.", field: "cnpj", message: "CNPJ is not valid.");
         }
 
         return Result.Ok(new Cnpj(value));

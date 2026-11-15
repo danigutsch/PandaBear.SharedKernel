@@ -70,7 +70,7 @@ public sealed class Iban : ValueObject
     }
 
     private static Result<Iban> Invalid() =>
-        Result.Invalid<Iban>(detail: "Invalid canonical IBAN.", field: "iban", message: "Invalid canonical IBAN.");
+        Result.Invalid<Iban>(detail: "IBAN is not valid.", field: "iban", message: "IBAN is not valid.");
 
     // Country layouts, including check digits: SWIFT IBAN Registry release 103, September 2026.
     // n = ASCII digit; a = uppercase ASCII letter; c = either.

@@ -57,7 +57,7 @@ public sealed partial class PixKey : ValueObject
     }
 
     private static Result<PixKey> Invalid() =>
-        Result.Invalid<PixKey>(detail: "Invalid canonical Pix key.", field: "pixKey", message: "Invalid canonical Pix key.");
+        Result.Invalid<PixKey>(detail: "Pix key is not valid.", field: "pixKey", message: "Pix key is not valid.");
 
     [GeneratedRegex(@"\A[a-z0-9.!#$'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*\z", RegexOptions.CultureInvariant, 100)]
     private static partial Regex EmailPattern();
