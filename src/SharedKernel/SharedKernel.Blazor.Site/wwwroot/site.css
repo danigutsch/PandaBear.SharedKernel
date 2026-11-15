@@ -199,10 +199,12 @@ a {
     border-bottom: 1px solid var(--site-color-border);
 }
 
+/* The content width and side gutter. .site-container has them alone, for content without a section's heading and vertical padding. */
 .site-header__inner,
 .site-footer,
 .site-section,
-.site-hero {
+.site-hero,
+.site-container {
     width: min(100% - 2 * var(--site-space-3), var(--site-content-width));
     margin-inline: auto;
 }
@@ -236,6 +238,18 @@ a {
     gap: var(--site-space-2) var(--site-space-4);
 }
 
+/*
+ * Below the breakpoint an open group stacks the navigation on a row of its own, so the group's links sit under its summary, no item
+ * is left beside them, and the brand keeps its place.
+ */
+.site-nav:has(.site-nav__group[open]) {
+    flex-basis: 100%;
+}
+
+.site-nav__list:has(> .site-nav__item > .site-nav__group[open]) {
+    flex-direction: column;
+}
+
 .site-nav a,
 .site-nav summary {
     display: inline-block;
@@ -257,7 +271,8 @@ a {
     color: var(--site-color-primary);
 }
 
-.site-nav a[aria-current="page"] {
+.site-nav a[aria-current="page"],
+.site-nav__group > summary[aria-current="true"] {
     color: var(--site-color-primary);
     font-weight: 700;
     text-decoration: underline;
@@ -265,6 +280,31 @@ a {
 
 .site-nav__group {
     position: relative;
+}
+
+/* A group starts closed; its own marker, a chevron that turns when the group opens, shows that it expands. */
+.site-nav__group > summary {
+    list-style: none;
+}
+
+.site-nav__group > summary::-webkit-details-marker {
+    display: none;
+}
+
+.site-nav__group > summary::after {
+    content: "";
+    display: inline-block;
+    width: 0.4em;
+    height: 0.4em;
+    margin-inline-start: 0.5em;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    vertical-align: middle;
+    transform: translateY(-0.2em) rotate(45deg);
+}
+
+.site-nav__group[open] > summary::after {
+    transform: translateY(0.1em) rotate(-135deg);
 }
 
 .site-nav__sublist {
@@ -378,10 +418,13 @@ a {
     color: var(--site-color-primary-hover);
 }
 
-/* Cards: the title link covers the card; links and controls in the body and the actions stay clickable above it. */
+/*
+ * Cards: the grid keeps empty columns (auto-fill), so a lone card has the width of one column. The title link covers the card;
+ * links and controls in the body and the actions stay clickable above it.
+ */
 .site-card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--site-card-min-width)), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--site-card-min-width)), 1fr));
     gap: var(--site-space-4);
 }
 
@@ -571,6 +614,14 @@ a {
 @media (min-width: 48rem) {
     .site-hero {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .site-nav:has(.site-nav__group[open]) {
+        flex-basis: auto;
+    }
+
+    .site-nav__list:has(> .site-nav__item > .site-nav__group[open]) {
+        flex-direction: row;
     }
 
     .site-nav__group[open] > .site-nav__sublist {

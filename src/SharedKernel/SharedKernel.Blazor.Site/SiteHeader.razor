@@ -14,8 +14,8 @@
                         @if (item.Children is { Count: > 0 } children)
                         {
                             <li class="site-nav__item">
-                                <details class="site-nav__group" open="@HasCurrentChild(item)">
-                                    <summary>@item.Text</summary>
+                                <details class="site-nav__group">
+                                    <summary aria-current="@CurrentGroup(item)">@item.Text</summary>
                                     <ul class="site-nav__sublist">
                                         @foreach (var child in children)
                                         {
