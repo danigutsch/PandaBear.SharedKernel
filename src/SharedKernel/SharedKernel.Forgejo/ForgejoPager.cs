@@ -29,7 +29,7 @@ public static class ForgejoPager
     /// <returns>Every item of the list.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="readPage"/> or <paramref name="description"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxPages"/> is less than 1.</exception>
-    /// <exception cref="InvalidOperationException">The list has more than <paramref name="maxPages"/> pages.</exception>
+    /// <exception cref="InvalidDataException">The server answers more than <paramref name="maxPages"/> pages, so the list is too large to return.</exception>
     public static async Task<IReadOnlyList<T>> ReadAll<T>(
         Func<int, CancellationToken, Task<ForgejoPage<T>>> readPage,
         int maxPages,
@@ -51,7 +51,7 @@ public static class ForgejoPager
             }
         }
 
-        throw new InvalidOperationException(string.Create(
+        throw new InvalidDataException(string.Create(
             CultureInfo.InvariantCulture,
             $"{description} span more than {maxPages} pages of {PageSize} items; nothing was read from a partial list."));
     }

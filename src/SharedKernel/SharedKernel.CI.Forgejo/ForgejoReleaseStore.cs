@@ -48,7 +48,7 @@ public sealed class ForgejoReleaseStore : IReleaseStore, IDisposable
     /// Reads <c>GET /repos/{owner}/{repo}/releases</c> with <c>limit=50</c> through <see cref="ForgejoPager"/>, which follows
     /// the <c>Link</c> header, or the <c>X-Total-Count</c> header without one, and fails above 200 pages.
     /// </remarks>
-    /// <exception cref="InvalidOperationException">The repository has more than 200 pages of releases.</exception>
+    /// <exception cref="InvalidDataException">A page is not a valid release list, or the repository has more than 200 pages of releases.</exception>
     public Task<IReadOnlyList<RepositoryRelease>> List(CancellationToken ct) =>
         ForgejoPager.ReadAll(ReadPage, MaxPages, "The releases of " + _repository, ct);
 

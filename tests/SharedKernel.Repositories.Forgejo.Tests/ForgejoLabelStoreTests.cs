@@ -101,6 +101,27 @@ public sealed class ForgejoLabelStoreTests
     }
 
     [Fact]
+    public async Task A_label_list_longer_than_one_hundred_pages_fails_instead_of_being_cut()
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        for (var page = 0; page < 100; page++)
+        {
+            handler.Enqueue(LinkedPages.Counted(LinkedPages.Labels((page * 50) + 1, 50), 10_000));
+        }
+
+        using var store = new ForgejoLabelStore(handler, Server, "owner/name", UserAgent, null);
+        Func<Task> list = () => store.List(TestContext.Current.CancellationToken);
+
+        // Act
+        var exception = await list.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldBe("The labels of owner/name span more than 100 pages of 50 items; nothing was read from a partial list.");
+        handler.Requests.Count.ShouldBe(100);
+    }
+
+    [Fact]
     public async Task Creating_posts_the_name_the_color_with_a_hash_and_the_description()
     {
         // Arrange

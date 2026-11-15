@@ -33,7 +33,7 @@ Checked on 2026-11-15 against the Forgejo documentation and the API description 
   summary beyond 1 MiB.
 - `ForgejoReleaseStore` lists `GET /api/v1/repos/{owner}/{repo}/releases` with `limit=50` and `page` through
   `ForgejoPager` of `PandaBear.SharedKernel.Forgejo`, which follows the `Link` header, or `X-Total-Count` without one, and
-  fails above 200 pages; it reads every page before anything is deleted, bounds each page to 16 MiB and each request to
+  fails with `InvalidDataException` above 200 pages; it reads every page before anything is deleted, bounds each page to 16 MiB and each request to
   one minute, and deletes with `DELETE /api/v1/repos/{owner}/{repo}/releases/{id}` (204 No Content), which keeps the
   tag.
 - `ForgejoReleaseAssets` reads `GET /api/v1/repos/{owner}/{repo}/releases/tags/{tag}` once per tag without credentials

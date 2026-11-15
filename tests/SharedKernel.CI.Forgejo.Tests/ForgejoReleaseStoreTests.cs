@@ -106,6 +106,27 @@ public sealed class ForgejoReleaseStoreTests
     }
 
     [Fact]
+    public async Task A_release_list_longer_than_two_hundred_pages_fails_as_invalid_data_through_the_release_store()
+    {
+        // Arrange
+        using var handler = new ScriptedHandler();
+        for (var page = 0; page < 200; page++)
+        {
+            _ = handler.Respond(HttpStatusCode.OK, Releases.Page((page * 50) + 1, 50), totalCount: 20_000);
+        }
+
+        using var store = new ForgejoReleaseStore(handler, Server, "owner/name", UserAgent, null);
+        Func<Task> list = () => ((IReleaseStore)store).List(TestContext.Current.CancellationToken);
+
+        // Act
+        var exception = await list.ShouldThrow<InvalidDataException>();
+
+        // Assert
+        exception.Message.ShouldBe("The releases of owner/name span more than 200 pages of 50 items; nothing was read from a partial list.");
+        handler.Requests.Count.ShouldBe(200);
+    }
+
+    [Fact]
     public async Task Deleting_a_release_by_its_ID_accepts_only_no_content()
     {
         // Arrange

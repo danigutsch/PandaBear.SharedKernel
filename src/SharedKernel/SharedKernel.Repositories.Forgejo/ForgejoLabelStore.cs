@@ -84,7 +84,17 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
     /// <exception cref="TimeoutException">Forgejo does not answer a request within 30 seconds.</exception>
     public async Task<IReadOnlyList<RepositoryLabel>> List(CancellationToken cancellationToken)
     {
-        var entries = await ForgejoPager.ReadAll(ReadPage, MaxPages, "The labels of " + Repository, cancellationToken).ConfigureAwait(false);
+        IReadOnlyList<(long Id, RepositoryLabel Label)> entries;
+        try
+        {
+            entries = await ForgejoPager.ReadAll(ReadPage, MaxPages, "The labels of " + Repository, cancellationToken).ConfigureAwait(false);
+        }
+        catch (InvalidDataException exception)
+        {
+            // Every listing failure of this store is an InvalidOperationException, which the label sync tool reports.
+            throw new InvalidOperationException(exception.Message, exception);
+        }
+
         Dictionary<string, RepositoryLabel> labels = new(StringComparer.OrdinalIgnoreCase);
         _ids.Clear();
         foreach (var (id, label) in entries)

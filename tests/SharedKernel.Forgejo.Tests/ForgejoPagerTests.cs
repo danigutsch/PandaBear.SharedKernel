@@ -89,7 +89,7 @@ public sealed class ForgejoPagerTests
         Func<Task> read = () => ForgejoPager.ReadAll(pages.Read, 2, "The releases of owner/name", TestContext.Current.CancellationToken);
 
         // Assert
-        var exception = await read.ShouldThrow<InvalidOperationException>();
+        var exception = await read.ShouldThrow<InvalidDataException>();
         exception.Message.ShouldBe("The releases of owner/name span more than 2 pages of 50 items; nothing was read from a partial list.");
         pages.Requested.ShouldBe([1, 2]);
     }
