@@ -86,7 +86,13 @@ public sealed class CpfTests
     [InlineData("52998224725", "52998224725")]
     [InlineData("  012.345.678-90 ", "01234567890")]
     [InlineData("\t01234567890\n", "01234567890")]
-    public void Create_from_input_accepts_the_display_mask_or_digits_only(string input, string expected)
+    [InlineData("529982247-25", "52998224725")]
+    [InlineData("529.982.24725", "52998224725")]
+    [InlineData("529 982 247 25", "52998224725")]
+    [InlineData("529-982-247.25", "52998224725")]
+    [InlineData("529.982.247–25", "52998224725")]
+    [InlineData("529 . 982 . 247 — 25", "52998224725")]
+    public void Create_from_input_ignores_spaces_dots_and_dashes_anywhere(string input, string expected)
     {
         // Act
         var result = Cpf.CreateFromInput(input);
@@ -97,18 +103,15 @@ public sealed class CpfTests
     }
 
     [Theory]
-    [InlineData("529982247-25")]
-    [InlineData("529.982.24725")]
-    [InlineData("529 982 247 25")]
-    [InlineData("529-982-247.25")]
     [InlineData("529.982.247-2")]
     [InlineData("529.982.247-255")]
     [InlineData("529.982.247-24")]
     [InlineData("111.111.111-11")]
     [InlineData("529.98a.247-25")]
-    [InlineData("529.982.247–25")]
+    [InlineData("529/982/247-25")]
+    [InlineData("529,982,247-25")]
     [InlineData("５29.982.247-25")]
-    public void Create_from_input_rejects_any_other_form_without_echoing_it(string input)
+    public void Create_from_input_rejects_other_characters_and_wrong_digits_without_echoing_it(string input)
     {
         // Act
         var result = Cpf.CreateFromInput(input);
@@ -123,6 +126,7 @@ public sealed class CpfTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
+    [InlineData(" . - ")]
     public void Create_from_input_reports_a_missing_cpf_as_required(string? input)
     {
         // Act

@@ -170,9 +170,11 @@ Supply uppercase IBAN/BIC/CNPJ, eleven ASCII digits for CPF, and no display punc
 input-independent message that can be shown to people: `IBAN is not valid.`, `BIC is not valid.`, `CPF is not valid.`,
 `CNPJ is not valid.` or `Pix key is not valid.`, on the field `iban`, `bic`, `cpf`, `cnpj` or `pixKey`.
 
-For a CPF typed into a form, `Cpf.CreateFromInput` also accepts the display mask: `529.982.247-25` and `52998224725` both give the
-CPF `52998224725`. Surrounding white space is ignored and any other punctuation, spacing or partial mask is rejected; blank text gives
-`CPF is required.` and anything else that fails `CPF is not valid.`.
+For a CPF typed into a form, `Cpf.CreateFromInput` lets the person group the digits as they are used to: white space, dots and dashes
+are ignored wherever they appear, so `529.982.247-25`, `529 982 247 25`, `529982247-25` and `52998224725` all give the CPF
+`52998224725` (GOV.UK: [ignore unwanted characters before validating](https://design-system.service.gov.uk/patterns/national-insurance-numbers/),
+[allow additional spaces, hyphens and dashes](https://design-system.service.gov.uk/patterns/bank-details/)). Any other character is
+rejected. Text with nothing but separators gives `CPF is required.` and anything else that fails `CPF is not valid.`.
 Pix email and EVP keys must be lowercase. Select `PixKeyType` explicitly; `None` and undefined enum
 values are rejected. Leading zeros are preserved. Equality includes concrete type and canonical value;
 Pix equality includes both type and value. Numeric and alphanumeric CNPJ are supported.
