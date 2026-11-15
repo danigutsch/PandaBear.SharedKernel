@@ -1,4 +1,12 @@
 <Project>
+    <!--
+      Each .NET framework compiles its default C# version: C# 14 for net10.0 and C# 15 for net11.0, so code shared by both
+      frameworks is C# 14. .NET Standard 2.0 defaults to C# 7.3, so analyzers and generators compile C# 14 like the net10.0 code.
+    -->
+    <PropertyGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard'">
+        <LangVersion>14</LangVersion>
+    </PropertyGroup>
+
     <!-- Export actual compiler inputs for the repository-wide governed-constant test. -->
     <Target Name="RecordGovernedLiteralInputs" AfterTargets="CoreCompile"
             Condition="'$(GovernedLiteralProject)' == 'true' or ($([System.String]::Copy('$(PackageId)').StartsWith('PandaBear.SharedKernel.')) and '$(IsPackable)' != 'false')">

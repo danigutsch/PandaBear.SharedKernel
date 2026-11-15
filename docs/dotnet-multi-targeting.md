@@ -181,8 +181,10 @@ a new `net11.0` section adds `Id@Version` pairs, which can make a lock-exempt li
   SDK 11.0.100 and `10.0` in SDK 10.0.403). The solution built with no warnings under SDK 11.0.100 on 2026-11-15, so
   the move needs no pin today. If a later SDK adds findings under `AnalysisMode=All` and warnings as errors, pin
   `<AnalysisLevel>10.0</AnalysisLevel>` in the SDK change and fix the findings in their own change.
-- `LangVersion=preview` on SDK 11 means the next C# preview, on every TFM. A language feature that needs .NET 11 types
-  fails only in the `net10.0` build, which is why that build must run in CI.
+- No project sets `LangVersion` to `preview`. Each .NET framework compiles its default C# version, C# 14 for `net10.0` and
+  C# 15 for `net11.0` (*verified locally* with `dotnet msbuild -getProperty:LangVersion` under SDK 11.0.100), so code that
+  both frameworks compile is C# 14 and a C# 15 feature needs a `#if NET11_0_OR_GREATER` branch. .NET Standard 2.0
+  defaults to C# 7.3, so the root `Directory.Build.targets` sets C# 14 for the analyzers, code fixes, and generators.
 
 ### NativeAOT and trimming
 
@@ -202,7 +204,7 @@ before and after.
 | Area | State |
 | --- | --- |
 | `global.json` | SDK 11.0.100, `rollForward: disable`. It builds `net10.0` and `net11.0`. |
-| Root `Directory.Build.props` | `TargetFramework` `net10.0` is the default; `SharedKernelTargetFrameworks` lists `net10.0;net11.0`. |
+| Root `Directory.Build.props` | `TargetFramework` `net10.0` is the default; `SharedKernelTargetFrameworks` lists `net10.0;net11.0`. No `LangVersion`: each framework uses its default C# version, and the root `Directory.Build.targets` sets C# 14 for `netstandard2.0`. |
 | Libraries | The 27 libraries that reference a per-version package set `TargetFrameworks` to `$(SharedKernelTargetFrameworks)` and clear `TargetFramework`. The other libraries build `net10.0`; analyzers, code fixes, and generators build `netstandard2.0`. |
 | `tests/Directory.Build.props` | Test projects build `$(SharedKernelTargetFrameworks)`. The PostgreSQL slice (three test projects and their Aspire host) stays on `net10.0`: `Npgsql.EntityFrameworkCore.PostgreSQL` has no stable 11.x, and the Aspire AppHost SDK 13.6.5 fails in a multi-framework outer build (MSB4036 for `PickBestRid`), so these projects set a single `TargetFramework`. |
 | `tools/Directory.Build.props` | Tools build `net10.0` with `RollForward` `Major` (`LatestMajor` for the code-fix runner). |
@@ -259,7 +261,7 @@ To drop a TFM later, reverse the steps: change the policy, run the check, remove
 | Library TFMs | `net10.0` only (no `net11.0` asset for EF/ASP.NET libraries); multi-target all (double build time, no consumer benefit for dependency-free libraries); selective (two policies to maintain) | Selective, as in the policy table. Applied. |
 | Tool TFMs | Roll-forward (one asset; runs on .NET 10 when installed); multi-target (two assets, `--framework` everywhere) | Roll-forward; multi-target a tool only when it needs .NET 11 APIs. Applied. |
 | Npgsql EF | Ship on a release candidate; wait | Wait for a stable release. |
-| `LangVersion=preview` | Keep (C# preview on `net10.0`, unsupported); use the TFM default | Open; both frameworks build with `preview` under SDK 11.0.100. |
+| `LangVersion=preview` | Keep (C# preview on `net10.0`, unsupported); use the TFM default | Use the TFM default. Applied. |
 | `PandaBear.IO.ReadOnlyMemoryStream` | Keep (consumers on .NET 11 qualify the name); rename; obsolete it in favor of `System.IO.ReadOnlyMemoryStream` on `net11.0` | Open. |
 
 ## Sources
