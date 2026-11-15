@@ -345,6 +345,8 @@ public sealed class VerifyTargetFrameworksCommandTests
     [InlineData("""{"version":1,"targetFrameworks":{"projects":[{"include":"*.csproj","frameworks":[]}]}}""", ": $.targetFrameworks.projects[0].frameworks must name at least one target framework.")]
     [InlineData("""{"version":1,"targetFrameworks":{"projects":[{"include":"*.csproj","frameworks":["net10.0","NET10.0"]}]}}""", ": $.targetFrameworks.projects[0].frameworks[1] repeats a target framework.")]
     [InlineData("""{"version":1,"targetFrameworks":{"projects":[{"include":"*.csproj","frameworks":["net10.0","10 net"]}]}}""", ": $.targetFrameworks.projects[0].frameworks[1] must be a target framework moniker such as net10.0 or netstandard2.0.")]
+    [InlineData("""{"version":1,"targetFrameworks":{"projects":[{"include":"*.csproj","frameworks":["$(Fw)"]}]}}""", ": $.targetFrameworks.projects[0].frameworks[0] names a property but $.targetFrameworks.frameworkProperties is not set.")]
+    [InlineData("""{"version":1,"targetFrameworks":{"projects":[{"include":"*.csproj","frameworks":["net10.0"]}],"frameworkProperties":"../x"}}""", ": $.targetFrameworks.frameworkProperties must be a repository-relative path with '/' separators and without empty, '.', or '..' segments.")]
     [InlineData("""{"version":1,"targetFrameworks":{"projects":[{"include":"*.csproj","frameworks":["net10.0"],"rollForward":"Sideways"}]}}""", ": $.targetFrameworks.projects[0].rollForward must be one of Minor, Major, LatestPatch, LatestMinor, LatestMajor, Disable.")]
     [InlineData("""{"version":1,"targetFrameworks":{"projects":[{"include":"*.csproj","frameworks":["net10.0"]}],"commandFiles":["ok","../x"]}}""", ": $.targetFrameworks.commandFiles[1] must be a repository-relative path pattern with '/' separators and without empty, '.', or '..' segments.")]
     public async Task Verify_target_frameworks_rejects_an_invalid_target_frameworks_section(string configuration, string expectedMessage)
@@ -361,5 +363,130 @@ public sealed class VerifyTargetFrameworksCommandTests
         result.ExitCode.ShouldBe(1);
         result.StandardError.ShouldStartWith("sharedkernel-repo: .config/sharedkernel-repo.json" + expectedMessage, StringComparison.Ordinal);
         result.StandardError.ShouldEndWith(Environment.NewLine, StringComparison.Ordinal);
+    }
+
+    private const string FrameworksFile = TargetFrameworkTestRepository.FrameworksFile;
+
+    [Fact]
+    public async Task Verify_target_frameworks_matches_a_rule_that_names_a_property_to_its_value()
+    {
+        // Arrange
+        using var repository = await TargetFrameworkTestRepository.Create(
+            TargetFrameworkTestRepository.Files(
+                (FrameworksFile, TargetFrameworkTestRepository.Props("<PropertyGroup><Fw>net11.0</Fw><TargetFramework>$(Fw)</TargetFramework></PropertyGroup>")),
+                ("app/App.csproj", TargetFrameworkTestRepository.Project(string.Empty))),
+            TargetFrameworkTestRepository.PropertyPolicy());
+
+        // Act
+        var result = await TargetFrameworkTestRepository.Run(repository);
+
+        // Assert
+        result.StandardError.ShouldBe(string.Empty);
+        result.ExitCode.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Verify_target_frameworks_reports_a_rule_that_names_an_undefined_property()
+    {
+        // Arrange
+        using var repository = await TargetFrameworkTestRepository.Create(
+            TargetFrameworkTestRepository.Files(
+                (FrameworksFile, TargetFrameworkTestRepository.Props("<PropertyGroup><Fw>net11.0</Fw><TargetFramework>$(Fw)</TargetFramework></PropertyGroup>")),
+                ("app/App.csproj", TargetFrameworkTestRepository.Project(string.Empty))),
+            TargetFrameworkTestRepository.PropertyPolicy("$(Missing)"));
+
+        // Act
+        var result = await TargetFrameworkTestRepository.Run(repository);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        TargetFrameworkTestRepository.ErrorLines(result).ShouldContain(
+            "- .config/sharedkernel-repo.json: The rule '*.csproj' names '$(Missing)', which Directory.Build.props does not define.");
+    }
+
+    [Theory]
+    [InlineData("net12.0;net11.0")]
+    [InlineData("net11.0;net11.0")]
+    public async Task Verify_target_frameworks_reports_a_framework_property_that_is_not_ascending_and_unique(string value)
+    {
+        // Arrange
+        using var repository = await TargetFrameworkTestRepository.Create(
+            TargetFrameworkTestRepository.Files(
+                (FrameworksFile, TargetFrameworkTestRepository.Props("<PropertyGroup><Fws>" + value + "</Fws><TargetFrameworks>$(Fws)</TargetFrameworks></PropertyGroup>")),
+                ("app/App.csproj", TargetFrameworkTestRepository.Project(string.Empty))),
+            TargetFrameworkTestRepository.PropertyPolicy("$(Fws)"));
+
+        // Act
+        var result = await TargetFrameworkTestRepository.Run(repository);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        TargetFrameworkTestRepository.ErrorLines(result).ShouldContain(
+            "- Directory.Build.props: Property 'Fws' lists '" + value + "'; its frameworks must be unique and ascending.");
+    }
+
+    [Fact]
+    public async Task Verify_target_frameworks_reports_a_framework_name_outside_the_framework_properties_file()
+    {
+        // Arrange
+        using var repository = await TargetFrameworkTestRepository.Create(
+            TargetFrameworkTestRepository.Files(
+                (FrameworksFile, TargetFrameworkTestRepository.Props("<PropertyGroup><Fw>net11.0</Fw><TargetFramework>$(Fw)</TargetFramework></PropertyGroup>")),
+                ("tools/x.csproj", TargetFrameworkTestRepository.Project("<TargetFramework>net11.0</TargetFramework>")),
+                (".github/workflows/ci.yml", "jobs:\n  build:\n    run: dotnet test --framework net11.0\n"),
+                ("build.sh", "echo ok\necho net11.0-windows\n")),
+            TargetFrameworkTestRepository.PropertyPolicy());
+
+        // Act
+        var result = await TargetFrameworkTestRepository.Run(repository);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        TargetFrameworkTestRepository.ErrorLines(result).ShouldBe(
+        [
+            Heading,
+            "- .github/workflows/ci.yml: Line 3: Names .NET framework 'net11.0'; use $(Fw) from Directory.Build.props.",
+            "- build.sh: Line 2: Names .NET framework 'net11.0-windows'; use $(Fw) from Directory.Build.props.",
+            "- tools/x.csproj: Line 3: Names .NET framework 'net11.0'; use $(Fw) from Directory.Build.props.",
+        ]);
+    }
+
+    [Fact]
+    public async Task Verify_target_frameworks_allows_version_group_conditions_and_netstandard_beside_the_framework_properties_file()
+    {
+        // Arrange
+        using var repository = await TargetFrameworkTestRepository.Create(
+            TargetFrameworkTestRepository.Files(
+                (FrameworksFile, TargetFrameworkTestRepository.Props("<PropertyGroup><Fw>net11.0</Fw></PropertyGroup>")),
+                ("Directory.Packages.props", TargetFrameworkTestRepository.Props("<ItemGroup Condition=\"'$(TargetFramework)' == 'net12.0'\"><PackageVersion Include=\"A\" Version=\"1.0.0\" /></ItemGroup>")),
+                ("src/A.Analyzers/A.Analyzers.csproj", TargetFrameworkTestRepository.Project("<TargetFramework>netstandard2.0</TargetFramework>"))),
+            TargetFrameworkTestRepository.Configuration(
+                """[{ "include": "src/*.Analyzers/*.csproj", "frameworks": ["netstandard2.0"] }]""",
+                frameworkProperties: FrameworksFile));
+
+        // Act
+        var result = await TargetFrameworkTestRepository.Run(repository);
+
+        // Assert
+        result.StandardError.ShouldBe(string.Empty);
+        result.ExitCode.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Verify_target_frameworks_does_not_scan_for_framework_names_without_framework_properties()
+    {
+        // Arrange
+        using var repository = await TargetFrameworkTestRepository.Create(
+            TargetFrameworkTestRepository.Files(
+                ("app/App.csproj", TargetFrameworkTestRepository.Project("<TargetFramework>net10.0</TargetFramework>")),
+                (".github/workflows/ci.yml", "run: dotnet test --framework net10.0\n")),
+            TargetFrameworkTestRepository.Configuration("""[{ "include": "*.csproj", "frameworks": ["net10.0"] }]"""));
+
+        // Act
+        var result = await TargetFrameworkTestRepository.Run(repository);
+
+        // Assert
+        result.StandardError.ShouldBe(string.Empty);
+        result.ExitCode.ShouldBe(0);
     }
 }

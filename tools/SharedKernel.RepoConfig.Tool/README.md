@@ -301,6 +301,16 @@ policy, a run of the check, and the fixes it reports:
   distinct target framework monikers such as `net10.0`, `netstandard2.0`, or `net10.0-windows`. `rollForward` is
   optional: `Minor`, `Major`, `LatestPatch`, `LatestMinor`, `LatestMajor`, or `Disable`, in any case.
 - `commandFiles` is an optional list of path patterns of tracked files whose `dotnet run` lines are checked.
+- `frameworkProperties` is an optional repository-relative path of an MSBuild file that defines framework properties.
+  A rule's `frameworks` entry may then be `$(Name)`, which stands for the `;`-separated list that the property holds
+  in that file, evaluated as described below. A reference needs `frameworkProperties`, and a property that the file
+  does not define is reported against the policy file, naming the rule. A referenced list must be unique and
+  ascending by version, or the file is reported. With `frameworkProperties` set, the check also scans the tracked
+  `*.csproj`, `*.fsproj`, `*.vbproj`, `*.props`, `*.targets`, `*.nuspec`, `.github/**/*.yml`, `.github/**/*.yaml`,
+  `*.sh`, and `*.ps1` files and the policy file for .NET framework names, `net<major>.<minor>` with an optional
+  `-platform` suffix such as `net11.0-windows`, and reports each with its line number. `netstandard` and `netcoreapp`
+  names, the `frameworkProperties` file, and the right side of a `'$(TargetFramework)' == '…'` condition are not
+  reported. Without `frameworkProperties`, no file is scanned and rules name frameworks literally.
 
 Each finding names the project, lock file, `global.json`, or command file. Projects come first in ordinal path
 order, then SDK findings, then command file findings. The command checks, for each project:

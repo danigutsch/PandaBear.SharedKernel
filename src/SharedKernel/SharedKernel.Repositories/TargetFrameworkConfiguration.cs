@@ -9,7 +9,14 @@ namespace PandaBear.Repositories;
 /// </summary>
 /// <param name="Projects">The rules in priority order; the first rule whose pattern matches a project applies to it.</param>
 /// <param name="CommandFiles">Path patterns of the tracked files whose <c>dotnet run --project</c> lines are checked, if any.</param>
-public sealed partial record TargetFrameworkConfiguration(IReadOnlyList<TargetFrameworkRule> Projects, IReadOnlyList<string>? CommandFiles = null)
+/// <param name="FrameworkProperties">
+/// The repository-relative MSBuild file that defines the framework properties that rules reference as <c>$(Name)</c>, or
+/// <see langword="null"/> when rules name frameworks literally. When set, other files must not name a .NET framework.
+/// </param>
+public sealed partial record TargetFrameworkConfiguration(
+    IReadOnlyList<TargetFrameworkRule> Projects,
+    IReadOnlyList<string>? CommandFiles = null,
+    string? FrameworkProperties = null)
 {
     private const string PatternHint = "must be a repository-relative path pattern with '/' separators and without empty, '.', or '..' segments.";
     private static readonly string[] RollForwardValues = ["Minor", "Major", "LatestPatch", "LatestMinor", "LatestMajor", "Disable"];
@@ -22,6 +29,11 @@ public sealed partial record TargetFrameworkConfiguration(IReadOnlyList<TargetFr
         if (Projects.Count == 0)
         {
             return "$.targetFrameworks.projects must name at least one rule.";
+        }
+
+        if (FrameworkProperties is not null && !RepositoryPath.IsValid(FrameworkProperties))
+        {
+            return "$.targetFrameworks.frameworkProperties must be a repository-relative path with '/' separators and without empty, '.', or '..' segments.";
         }
 
         for (var index = 0; index < Projects.Count; index++)
@@ -44,7 +56,7 @@ public sealed partial record TargetFrameworkConfiguration(IReadOnlyList<TargetFr
         return null;
     }
 
-    private static string? FindError(TargetFrameworkRule rule, string path)
+    private string? FindError(TargetFrameworkRule rule, string path)
     {
         if (!RepositoryPath.IsValid(rule.Include))
         {
@@ -60,7 +72,14 @@ public sealed partial record TargetFrameworkConfiguration(IReadOnlyList<TargetFr
         for (var index = 0; index < rule.Frameworks.Count; index++)
         {
             var element = string.Create(CultureInfo.InvariantCulture, $"{path}.frameworks[{index}]");
-            if (!Moniker().IsMatch(rule.Frameworks[index]))
+            if (PropertyReference().IsMatch(rule.Frameworks[index]))
+            {
+                if (FrameworkProperties is null)
+                {
+                    return element + " names a property but $.targetFrameworks.frameworkProperties is not set.";
+                }
+            }
+            else if (!Moniker().IsMatch(rule.Frameworks[index]))
             {
                 return element + " must be a target framework moniker such as net10.0 or netstandard2.0.";
             }
@@ -75,6 +94,15 @@ public sealed partial record TargetFrameworkConfiguration(IReadOnlyList<TargetFr
             ? null
             : $"{path}.rollForward must be one of {string.Join(", ", RollForwardValues)}.";
     }
+
+    /// <summary>
+    /// Returns the property name when <paramref name="framework"/> is a <c>$(Name)</c> reference, otherwise <see langword="null"/>.
+    /// </summary>
+    internal static string? PropertyName(string framework) =>
+        PropertyReference().Match(framework) is { Success: true } match ? match.Groups[1].Value : null;
+
+    [GeneratedRegex(@"^\$\(([A-Za-z_][A-Za-z0-9_.\-]*)\)$", RegexOptions.CultureInvariant)]
+    private static partial Regex PropertyReference();
 
     [GeneratedRegex(@"^[a-z][a-z0-9.\-]*[0-9a-z]$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex Moniker();

@@ -69,6 +69,19 @@ internal sealed partial class TargetFrameworkEvaluator
         return new TargetFrameworkEvaluation(targetFramework, targetFrameworks, targetFrameworkFile, evaluator.Get("RollForward"), evaluator._issues);
     }
 
+    /// <summary>
+    /// Evaluates the top-level properties of one file, which stands alone: no <c>Directory.Build.props</c> chain is read.
+    /// </summary>
+    /// <param name="files">The files that the evaluation may read.</param>
+    /// <param name="path">The repository-relative path of the file; it must have been read into <paramref name="files"/>.</param>
+    /// <returns>The final value of each property, by case-insensitive name.</returns>
+    public static IReadOnlyDictionary<string, string> EvaluateProperties(MsBuildFileSet files, string path)
+    {
+        TargetFrameworkEvaluator evaluator = new(files, checkRollForward: false);
+        evaluator.Process(path);
+        return evaluator._properties;
+    }
+
     private static string Parent(string path)
     {
         var separator = path.LastIndexOf('/');

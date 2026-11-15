@@ -69,9 +69,16 @@ public static partial class TargetFrameworkVerifier
         var trackedSet = tracked.ToHashSet(StringComparer.Ordinal);
         var projects = tracked.Where(static path => ProjectExtensions.Any(extension => path.EndsWith(extension, StringComparison.Ordinal))).Order(StringComparer.Ordinal).ToArray();
         var buildFiles = tracked.Where(static path => IsBuildFile(path));
-        var files = await MsBuildFileSet.Read(root, projects.Concat(buildFiles), cancellationToken).ConfigureAwait(false);
+        var readPaths = projects.Concat(buildFiles);
+        if (configuration.FrameworkProperties is { } propertiesFile)
+        {
+            readPaths = readPaths.Append(propertiesFile);
+        }
+
+        var files = await MsBuildFileSet.Read(root, readPaths.Distinct(StringComparer.Ordinal), cancellationToken).ConfigureAwait(false);
 
         List<VerificationIssue> issues = [];
+        var frameworkProperties = ReadFrameworkProperties(configuration, files, issues);
         Dictionary<string, IReadOnlyList<string>> effectiveByProject = new(StringComparer.Ordinal);
         foreach (var project in projects)
         {
@@ -81,6 +88,13 @@ public static partial class TargetFrameworkVerifier
                 issues.Add(new VerificationIssue(project, "No targetFrameworks.projects rule includes this project."));
                 continue;
             }
+
+            if (ResolveRule(rule, configuration.FrameworkProperties, frameworkProperties, issues) is not { } resolved)
+            {
+                continue;
+            }
+
+            rule = rule with { Frameworks = resolved };
 
             var evaluation = TargetFrameworkEvaluator.Evaluate(files, project, rule.RollForward is not null);
             issues.AddRange(evaluation.Issues);
@@ -104,8 +118,152 @@ public static partial class TargetFrameworkVerifier
 
         await CheckCommandFiles(root, configuration, tracked, projects, effectiveByProject, issues, cancellationToken).ConfigureAwait(false);
 
+        if (configuration.FrameworkProperties is not null)
+        {
+            await CheckFrameworkNames(root, configuration.FrameworkProperties, frameworkProperties, tracked, issues, cancellationToken).ConfigureAwait(false);
+        }
+
         HashSet<(string, string)> seen = [];
         return issues.Where(issue => seen.Add((issue.Path, issue.Message))).ToArray();
+    }
+
+    // Evaluates the framework properties file and reports a property list that is not unique and ascending. Returns null when no file is configured.
+    private static IReadOnlyDictionary<string, string>? ReadFrameworkProperties(
+        TargetFrameworkConfiguration configuration,
+        MsBuildFileSet files,
+        List<VerificationIssue> issues)
+    {
+        if (configuration.FrameworkProperties is not { } path)
+        {
+            return null;
+        }
+
+        if (files.Find(path, out var failure) is null)
+        {
+            issues.Add(new VerificationIssue(path, failure ?? "Is missing from the working tree."));
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        var properties = TargetFrameworkEvaluator.EvaluateProperties(files, path);
+        var referenced = configuration.Projects
+            .SelectMany(static rule => rule.Frameworks)
+            .Select(TargetFrameworkConfiguration.PropertyName)
+            .OfType<string>()
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Order(StringComparer.Ordinal);
+        foreach (var name in referenced)
+        {
+            if (properties.TryGetValue(name, out var value) && !IsAscendingAndUnique(Split(value)))
+            {
+                issues.Add(new VerificationIssue(path, $"Property '{name}' lists '{value}'; its frameworks must be unique and ascending."));
+            }
+        }
+
+        return properties;
+    }
+
+    // Replaces each $(Name) framework of the rule with the frameworks that the property lists; null when a property is undefined.
+    private static List<string>? ResolveRule(
+        TargetFrameworkRule rule,
+        string? propertiesFile,
+        IReadOnlyDictionary<string, string>? properties,
+        List<VerificationIssue> issues)
+    {
+        List<string> resolved = [];
+        var complete = true;
+        foreach (var framework in rule.Frameworks)
+        {
+            if (TargetFrameworkConfiguration.PropertyName(framework) is not { } name)
+            {
+                resolved.Add(framework);
+            }
+            else if (properties is not null && properties.TryGetValue(name, out var value) && Split(value) is { Length: > 0 } listed)
+            {
+                resolved.AddRange(listed);
+            }
+            else
+            {
+                complete = false;
+                issues.Add(new VerificationIssue(
+                    ConsumerConfigurationFile.RelativePath,
+                    $"The rule '{rule.Include}' names '{framework}', which {propertiesFile ?? "frameworkProperties"} does not define."));
+            }
+        }
+
+        return complete ? resolved : null;
+    }
+
+    private static string[] Split(string value) =>
+        value.Split(';', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+    private static bool IsAscendingAndUnique(string[] frameworks)
+    {
+        for (var index = 1; index < frameworks.Length; index++)
+        {
+            if (CompareFrameworks(frameworks[index - 1], frameworks[index]) >= 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static int CompareFrameworks(string left, string right)
+    {
+        var leftMatch = Modern().Match(left);
+        var rightMatch = Modern().Match(right);
+        if (leftMatch.Success && rightMatch.Success)
+        {
+            var byMajor = int.Parse(leftMatch.Groups[1].Value, CultureInfo.InvariantCulture).CompareTo(int.Parse(rightMatch.Groups[1].Value, CultureInfo.InvariantCulture));
+            if (byMajor != 0)
+            {
+                return byMajor;
+            }
+        }
+
+        return StringComparer.OrdinalIgnoreCase.Compare(left, right);
+    }
+
+    private static async Task CheckFrameworkNames(
+        string root,
+        string propertiesFile,
+        IReadOnlyDictionary<string, string>? properties,
+        IReadOnlyList<string> tracked,
+        List<VerificationIssue> issues,
+        CancellationToken cancellationToken)
+    {
+        foreach (var file in tracked.Where(path => path != propertiesFile && IsScanned(path)).Order(StringComparer.Ordinal))
+        {
+            var (content, _) = await Read(root, file, cancellationToken).ConfigureAwait(false);
+            if (content is null)
+            {
+                continue;
+            }
+
+            foreach (var (line, name) in FrameworkNameScanner.Scan(Encoding.UTF8.GetString(content)))
+            {
+                var baseName = name.Split('-')[0];
+                var property = properties?.FirstOrDefault(entry => Split(entry.Value).Contains(baseName, StringComparer.OrdinalIgnoreCase)).Key;
+                var use = property is null ? "a property" : $"$({property})";
+                issues.Add(new VerificationIssue(
+                    file,
+                    string.Create(CultureInfo.InvariantCulture, $"Line {line}: Names .NET framework '{name}'; use {use} from {propertiesFile}.")));
+            }
+        }
+    }
+
+    private static bool IsScanned(string path)
+    {
+        if (path == ConsumerConfigurationFile.RelativePath)
+        {
+            return true;
+        }
+
+        string[] extensions = [".csproj", ".fsproj", ".vbproj", ".props", ".targets", ".nuspec", ".sh", ".ps1"];
+        return extensions.Any(extension => path.EndsWith(extension, StringComparison.Ordinal))
+            || (path.StartsWith(".github/", StringComparison.Ordinal)
+                && (path.EndsWith(".yml", StringComparison.Ordinal) || path.EndsWith(".yaml", StringComparison.Ordinal)));
     }
 
     private static bool IsBuildFile(string path)

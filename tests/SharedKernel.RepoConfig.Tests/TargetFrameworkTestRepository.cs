@@ -15,17 +15,26 @@ internal static class TargetFrameworkTestRepository
         ]
         """;
 
-    /// <summary>Returns a configuration whose <c>targetFrameworks</c> section has the given rules and command file patterns.</summary>
-    public static string Configuration(string projects = Policy, string commandFiles = """[".github/*", "*.sh", "*.md"]""") =>
+    /// <summary>Returns a configuration whose <c>targetFrameworks</c> section has the given rules, command file patterns, and optional framework properties file.</summary>
+    public static string Configuration(string projects = Policy, string commandFiles = """[".github/*", "*.sh", "*.md"]""", string? frameworkProperties = null) =>
         $$"""
         {
           "version": 1,
           "targetFrameworks": {
             "projects": {{projects}},
-            "commandFiles": {{commandFiles}}
+            "commandFiles": {{commandFiles}}{{(frameworkProperties is null ? string.Empty : $",\n    \"frameworkProperties\": \"{frameworkProperties}\"")}}
           }
         }
         """;
+
+    /// <summary>The file that holds the framework properties of the property-based policies.</summary>
+    public const string FrameworksFile = "Directory.Build.props";
+
+    /// <summary>Returns a configuration with one rule for every project that names <paramref name="framework"/> and reads properties from <see cref="FrameworksFile"/>.</summary>
+    public static string PropertyPolicy(string framework = "$(Fw)") =>
+        Configuration(
+            "[{ \"include\": \"*.csproj\", \"frameworks\": [\"" + framework + "\"] }]",
+            frameworkProperties: FrameworksFile);
 
     /// <summary>Returns a project file that sets the given properties in one property group.</summary>
     public static string Project(string properties) =>

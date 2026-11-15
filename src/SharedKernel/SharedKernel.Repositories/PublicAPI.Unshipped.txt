@@ -350,12 +350,14 @@ PandaBear.Repositories.TargetFrameworkConfiguration
 PandaBear.Repositories.TargetFrameworkConfiguration.<Clone>$() -> PandaBear.Repositories.TargetFrameworkConfiguration!
 PandaBear.Repositories.TargetFrameworkConfiguration.CommandFiles.get -> System.Collections.Generic.IReadOnlyList<string!>?
 PandaBear.Repositories.TargetFrameworkConfiguration.CommandFiles.init -> void
-PandaBear.Repositories.TargetFrameworkConfiguration.Deconstruct(out System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.TargetFrameworkRule!>! Projects, out System.Collections.Generic.IReadOnlyList<string!>? CommandFiles) -> void
+PandaBear.Repositories.TargetFrameworkConfiguration.Deconstruct(out System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.TargetFrameworkRule!>! Projects, out System.Collections.Generic.IReadOnlyList<string!>? CommandFiles, out string? FrameworkProperties) -> void
 PandaBear.Repositories.TargetFrameworkConfiguration.Equals(PandaBear.Repositories.TargetFrameworkConfiguration? other) -> bool
 PandaBear.Repositories.TargetFrameworkConfiguration.FindError() -> string?
+PandaBear.Repositories.TargetFrameworkConfiguration.FrameworkProperties.get -> string?
+PandaBear.Repositories.TargetFrameworkConfiguration.FrameworkProperties.init -> void
 PandaBear.Repositories.TargetFrameworkConfiguration.Projects.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.TargetFrameworkRule!>!
 PandaBear.Repositories.TargetFrameworkConfiguration.Projects.init -> void
-PandaBear.Repositories.TargetFrameworkConfiguration.TargetFrameworkConfiguration(System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.TargetFrameworkRule!>! Projects, System.Collections.Generic.IReadOnlyList<string!>? CommandFiles = null) -> void
+PandaBear.Repositories.TargetFrameworkConfiguration.TargetFrameworkConfiguration(System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.TargetFrameworkRule!>! Projects, System.Collections.Generic.IReadOnlyList<string!>? CommandFiles = null, string? FrameworkProperties = null) -> void
 PandaBear.Repositories.TargetFrameworkRule
 PandaBear.Repositories.TargetFrameworkRule.<Clone>$() -> PandaBear.Repositories.TargetFrameworkRule!
 PandaBear.Repositories.TargetFrameworkRule.Deconstruct(out string! Include, out System.Collections.Generic.IReadOnlyList<string!>! Frameworks, out string? RollForward) -> void
