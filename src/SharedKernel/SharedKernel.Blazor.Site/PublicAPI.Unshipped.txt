@@ -164,6 +164,8 @@ PandaBear.Blazor.Site.PageHead.ImageUrl.set -> void
 PandaBear.Blazor.Site.PageHead.Locale.get -> PandaBear.BuildingBlocks.ContentCulture?
 PandaBear.Blazor.Site.PageHead.Locale.set -> void
 PandaBear.Blazor.Site.PageHead.PageHead() -> void
+PandaBear.Blazor.Site.PageHead.Robots.get -> string?
+PandaBear.Blazor.Site.PageHead.Robots.set -> void
 PandaBear.Blazor.Site.PageHead.SiteName.get -> string?
 PandaBear.Blazor.Site.PageHead.SiteName.set -> void
 PandaBear.Blazor.Site.PageHead.Title.get -> string!

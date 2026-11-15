@@ -4,10 +4,15 @@ using PandaBear.BuildingBlocks;
 namespace PandaBear.Blazor.Site;
 
 /// <summary>
-/// The search and sharing metadata of a page, rendered into the host's <c>HeadOutlet</c>: title, description, canonical link,
-/// OpenGraph basics and <c>hreflang</c> alternates including <c>x-default</c>. Addresses are absolute http or https <see cref="Uri" />
-/// values. A component cannot set <c>&lt;html lang&gt;</c>; the host sets it from the request culture.
+/// The search and sharing metadata of a page, rendered into the host's <c>HeadOutlet</c>: title, description, robots directive,
+/// canonical link, OpenGraph basics and <c>hreflang</c> alternates including <c>x-default</c>. Addresses are absolute http or https
+/// <see cref="Uri" /> values. A component cannot set <c>&lt;html lang&gt;</c>; the host sets it from the request culture.
 /// </summary>
+/// <remarks>
+/// A page kept out of search results, such as an error or not-found page, sets <see cref="Robots" /> to <c>noindex</c> and leaves
+/// <see cref="CanonicalUrl" />, <see cref="Alternates" /> and <see cref="DefaultAlternateUrl" /> unset, so it renders no canonical,
+/// <c>og:url</c> or <c>hreflang</c> link.
+/// </remarks>
 public sealed partial class PageHead
 {
     /// <summary>Gets or sets the page title, also used for <c>og:title</c>.</summary>
@@ -18,6 +23,13 @@ public sealed partial class PageHead
     /// <summary>Gets or sets the meta description, also used for <c>og:description</c>.</summary>
     [Parameter]
     public string? Description { get; set; }
+
+    /// <summary>
+    /// Gets or sets the content of <c>&lt;meta name="robots"&gt;</c>, such as <c>noindex</c> or <c>noindex, nofollow</c>. No tag when
+    /// <see langword="null" /> or white space, which leaves the page indexable.
+    /// </summary>
+    [Parameter]
+    public string? Robots { get; set; }
 
     /// <summary>Gets or sets the canonical address, also used for <c>og:url</c>.</summary>
     [Parameter]

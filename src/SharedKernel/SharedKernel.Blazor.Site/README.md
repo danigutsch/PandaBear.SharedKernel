@@ -79,7 +79,7 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `ImageGrid` | `figure` per `GalleryImage` (a `ResponsiveImage` and an optional caption), lazy loading except the first `EagerCount`; `PrioritizeFirstImage` loads the first one eagerly with `fetchpriority="high"`. |
 | `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links; no `address` when there are no lines and no channels. `PhoneText` shows the number as written (`+55 (11) 99999-0000`) while the link uses the digits; it must be the same number as `Phone`. The WhatsApp link shows `WhatsAppLabel`. |
 | `LanguageSwitcher` | Labelled `nav` of links with `hreflang`, `lang` and `aria-current="true"` on the current language. |
-| `PageHead` | Title, description, canonical link, OpenGraph basics and `hreflang` alternates including `x-default`. |
+| `PageHead` | Title, description, canonical link, OpenGraph basics and `hreflang` alternates including `x-default`; each optional tag is left out when its parameter is unset. `Robots` writes `<meta name="robots">` (`noindex`, `noindex, nofollow`). An error or not-found page sets `Robots="noindex"` and no `CanonicalUrl`, `Alternates` or `DefaultAlternateUrl`, so it has no canonical, `og:url` or `hreflang` link. |
 
 Content without a heading, such as a page's opening text or a contact block, goes in `<div class="site-container">`: the
 `site-container` class gives it the content width and side gutter of `Section`, `Hero`, the header and the footer, so it lines up

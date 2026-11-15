@@ -74,9 +74,56 @@ public sealed class PageHeadTests : BunitContext
         // Assert
         head.Find("title").TextContent.ShouldBe("Atacama");
         head.FindAll("meta[name=description]").ShouldBeEmpty();
+        head.FindAll("meta[name=robots]").ShouldBeEmpty();
         head.FindAll("link[rel=canonical]").ShouldBeEmpty();
         head.FindAll("link[rel=alternate]").ShouldBeEmpty();
+        head.FindAll("meta[property='og:url']").ShouldBeEmpty();
         head.FindAll("meta[property='og:image']").ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("noindex")]
+    [InlineData("noindex, nofollow")]
+    public void A_robots_directive_is_rendered_as_the_robots_meta_tag(string directive)
+    {
+        // Arrange & Act
+        var head = this.RenderHead(parameters => parameters
+            .Add(component => component.Title, "Page not found | Brand")
+            .Add(component => component.Robots, directive));
+
+        // Assert
+        head.Find("title").TextContent.ShouldBe("Page not found | Brand");
+        head.FindAll("meta[name=robots]").ShouldHaveSingleItem().GetAttribute("content").ShouldBe(directive);
+        head.FindAll("link[rel=canonical]").ShouldBeEmpty();
+        head.FindAll("link[rel=alternate]").ShouldBeEmpty();
+        head.FindAll("meta[property='og:url']").ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void A_blank_robots_directive_renders_no_robots_meta_tag(string directive)
+    {
+        // Arrange & Act
+        var head = this.RenderHead(parameters => parameters
+            .Add(component => component.Title, "Atacama")
+            .Add(component => component.Robots, directive));
+
+        // Assert
+        head.FindAll("meta[name=robots]").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Robots_directive_is_encoded()
+    {
+        // Arrange & Act
+        var head = this.RenderHead(parameters => parameters
+            .Add(component => component.Title, "x")
+            .Add(component => component.Robots, "noindex\"><script>alert(1)</script>"));
+
+        // Assert
+        head.FindAll("script").ShouldBeEmpty();
+        head.Find("meta[name=robots]").GetAttribute("content").ShouldBe("noindex\"><script>alert(1)</script>");
     }
 
     [Theory]
