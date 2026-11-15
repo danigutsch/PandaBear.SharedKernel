@@ -26,10 +26,9 @@ await RepositoryLabelSync.Run(repositoryRoot, labels, force: false, Console.Out,
 Checked on 2026-11-15 against the [API usage](https://forgejo.org/docs/latest/user/api-usage/) documentation and the
 API description of Forgejo 17 (`swagger.v1.json`, [reference](https://code.forgejo.org/api/swagger)):
 
-- `List` reads `GET /api/v1/repos/{owner}/{repo}/labels` with `limit=50` and `page` (50 is the default
-  `max_response_items`) until the pages hold the `X-Total-Count` labels, a `Link` header has no `next` relation, or a
-  page is empty, at most 100 pages. Forgejo 17.0.1 answers the label list with `X-Total-Count` and no `Link` header,
-  so the total is what ends the listing. Forgejo returns colors as `rrggbb`; a leading `#` is removed in case an
+- `List` reads `GET /api/v1/repos/{owner}/{repo}/labels` with `limit=50` and `page` through `ForgejoPager` of
+  `PandaBear.SharedKernel.Forgejo`, and fails above 100 pages. Forgejo 17.0.1 answers the label list with
+  `X-Total-Count` and no `Link` header, so the total is what ends the listing. Forgejo returns colors as `rrggbb`; a leading `#` is removed in case an
   instance returns one.
 - `Create` sends `POST /api/v1/repos/{owner}/{repo}/labels` (`CreateLabelOption`: `name`, `color` as `#rrggbb`,
   `description`) and expects 201 Created.

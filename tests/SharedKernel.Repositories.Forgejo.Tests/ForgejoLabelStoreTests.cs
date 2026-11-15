@@ -67,12 +67,11 @@ public sealed class ForgejoLabelStoreTests
     }
 
     [Fact]
-    public async Task Listing_without_paging_headers_reads_until_an_empty_page()
+    public async Task Listing_without_paging_headers_stops_at_a_short_page()
     {
         // Arrange
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.OK, """[{ "id": 1, "name": "a", "color": "000000", "description": "" }]""");
-        handler.EnqueueJson(HttpStatusCode.OK, "[]");
         using var store = new ForgejoLabelStore(handler, Server, "owner/name", UserAgent, null);
 
         // Act
@@ -80,7 +79,7 @@ public sealed class ForgejoLabelStoreTests
 
         // Assert
         labels.ShouldHaveSingleItem().Name.ShouldBe("a");
-        handler.Requests.Count.ShouldBe(2);
+        handler.Requests.ShouldHaveSingleItem();
     }
 
     [Fact]

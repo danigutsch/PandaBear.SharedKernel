@@ -47,7 +47,7 @@ public sealed class ForgejoReleaseAssets : IReleaseAssets, IDisposable
         var uri = new Uri(_client.BaseAddress!, _tagsPath + Uri.EscapeDataString(tag));
         if (!_releases.TryGetValue(tag, out var assets))
         {
-            var (release, _) = await ForgejoResponses.Get(_client, uri, ForgejoJsonContext.Default.ForgejoTaggedRelease, "a release", ct).ConfigureAwait(false);
+            var release = await ForgejoResponses.Get(_client, uri, ForgejoJsonContext.Default.ForgejoTaggedRelease, "a release", static (value, _) => value, ct).ConfigureAwait(false);
             assets = release.Assets.Any(static item => item is null)
                 ? throw new InvalidDataException($"GET {uri} returned a release that is not valid: an attachment is null.")
                 : release.Assets;

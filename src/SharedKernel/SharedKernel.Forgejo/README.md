@@ -31,8 +31,14 @@ using var response = await client.GetAsync("repos/owner/name/releases?limit=50&p
   keeps the default `HttpClient.Timeout`; redirect and certificate policy belong to the handler the caller passes.
 - `ForgejoRepositoryName.TryParse` splits `owner/name` and refuses anything that could add a path segment or a query
   to a request address: each part holds only ASCII letters, digits, `-`, `.`, and `_`, and is neither `.` nor `..`.
-- Forgejo pages lists with `page` and `limit`, caps `limit` at the instance's `max_response_items` (50 by default), and
-  sends a `Link` header with a `next` relation while more pages follow.
+- `ForgejoPager.ReadAll` reads every page of a list. Forgejo pages lists with `page` and `limit`, caps `limit` at the
+  instance's `max_response_items` (50 by default, `ForgejoPager.PageSize`), and, as
+  [API usage](https://forgejo.org/docs/latest/user/api-usage/) documents, sends `X-Total-Count` and, when there is more
+  than one page, a `Link` header with a `next` relation. Not every list sends `Link`: Forgejo 17.0.1 answers the labels
+  of a repository with `X-Total-Count` only, while the repositories of a user have both. The pager stops at an empty
+  page; otherwise it follows `Link` when present, then `X-Total-Count`, and without either stops at a page shorter than
+  `PageSize`. Above the caller's page cap it throws `InvalidOperationException` instead of returning part of the list.
+  `ForgejoPager.Page(items, headers)` builds a `ForgejoPage<T>` from a response's headers.
 
 ## Package identity and availability
 

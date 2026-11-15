@@ -33,6 +33,28 @@ public sealed class ForgejoReleaseStoreTests
     }
 
     [Fact]
+    public async Task Listing_without_a_link_header_reads_pages_until_the_total_count()
+    {
+        // Arrange
+        // Forgejo 17 answers some lists, such as the labels of a repository, with X-Total-Count and no Link header.
+        using var handler = new ScriptedHandler()
+            .Respond(HttpStatusCode.OK, Releases.Page(1, 50), totalCount: 60)
+            .Respond(HttpStatusCode.OK, Releases.Page(51, 10), totalCount: 60);
+        using var store = new ForgejoReleaseStore(handler, Server, "owner/name", UserAgent, null);
+
+        // Act
+        var releases = await store.List(TestContext.Current.CancellationToken);
+
+        // Assert
+        releases.Count.ShouldBe(60);
+        handler.Requests.Select(static request => request.RequestUri!.ToString()).ShouldBe(
+        [
+            "https://forge.example/api/v1/repos/owner/name/releases?limit=50&page=1",
+            "https://forge.example/api/v1/repos/owner/name/releases?limit=50&page=2",
+        ]);
+    }
+
+    [Fact]
     public async Task A_single_page_without_a_link_header_is_the_whole_list()
     {
         // Arrange

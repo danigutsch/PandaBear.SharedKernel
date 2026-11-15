@@ -12,12 +12,11 @@ namespace PandaBear.CI.Forgejo;
 /// </summary>
 public sealed class ForgejoReleaseStore : IReleaseStore, IDisposable
 {
-    // Forgejo caps limit at max_response_items, 50 unless the instance changes it, so the pages follow its Link header.
-    private const int PageSize = 50;
     private const int MaxPages = 200;
 
     private readonly HttpClient _client;
     private readonly string _releasesPath;
+    private readonly string _repository;
 
     /// <summary>Creates the store of the releases of <paramref name="repository"/> on <paramref name="server"/>.</summary>
     /// <param name="handler">Sends the requests; the store disposes it. It should refuse redirects, so the token never reaches another address.</param>
@@ -38,33 +37,20 @@ public sealed class ForgejoReleaseStore : IReleaseStore, IDisposable
             throw new ArgumentException("The repository must be owner/name.", nameof(repository));
         }
 
+        _repository = repository;
         _releasesPath = "repos/" + Uri.EscapeDataString(owner) + "/" + Uri.EscapeDataString(name) + "/releases";
         _client = ForgejoApiClient.Create(handler, server, userAgent, token);
         _client.Timeout = Timeout.InfiniteTimeSpan;
     }
 
     /// <inheritdoc />
-    public async Task<IReadOnlyList<RepositoryRelease>> List(CancellationToken ct)
-    {
-        List<RepositoryRelease> releases = [];
-        for (var page = 1; page <= MaxPages; page++)
-        {
-            var uri = new Uri(_client.BaseAddress!, string.Create(CultureInfo.InvariantCulture, $"{_releasesPath}?limit={PageSize}&page={page}"));
-            var (items, link) = await ForgejoResponses.Get(_client, uri, ForgejoJsonContext.Default.ForgejoReleaseArray, "a release list", ct).ConfigureAwait(false);
-            if (items.Any(static item => item is null))
-            {
-                throw new InvalidDataException($"GET {uri} returned a release list that is not valid: a release is null.");
-            }
-
-            releases.AddRange(items.Select(static item => new RepositoryRelease(item.Id, item.TagName, item.Draft, item.Prerelease, item.CreatedAt)));
-            if (items.Length == 0 || !HasNextPage(link))
-            {
-                return releases;
-            }
-        }
-
-        throw new InvalidDataException(string.Create(CultureInfo.InvariantCulture, $"{new Uri(_client.BaseAddress!, _releasesPath)} lists more than {MaxPages} pages of releases."));
-    }
+    /// <remarks>
+    /// Reads <c>GET /repos/{owner}/{repo}/releases</c> with <c>limit=50</c> through <see cref="ForgejoPager"/>, which follows
+    /// the <c>Link</c> header, or the <c>X-Total-Count</c> header without one, and fails above 200 pages.
+    /// </remarks>
+    /// <exception cref="InvalidOperationException">The repository has more than 200 pages of releases.</exception>
+    public Task<IReadOnlyList<RepositoryRelease>> List(CancellationToken ct) =>
+        ForgejoPager.ReadAll(ReadPage, MaxPages, "The releases of " + _repository, ct);
 
     /// <inheritdoc />
     /// <remarks><c>DELETE /repos/{owner}/{repo}/releases/{id}</c> removes the release and its attachments; the tag stays. Any answer but 204 No Content fails.</remarks>
@@ -100,10 +86,27 @@ public sealed class ForgejoReleaseStore : IReleaseStore, IDisposable
         }
     }
 
+    private async Task<ForgejoPage<RepositoryRelease>> ReadPage(int page, CancellationToken ct)
+    {
+        var uri = new Uri(_client.BaseAddress!, string.Create(CultureInfo.InvariantCulture, $"{_releasesPath}?limit={ForgejoPager.PageSize}&page={page}"));
+        return await ForgejoResponses.Get(
+            _client,
+            uri,
+            ForgejoJsonContext.Default.ForgejoReleaseArray,
+            "a release list",
+            (items, response) =>
+            {
+                if (items.Any(static item => item is null))
+                {
+                    throw new InvalidDataException($"GET {uri} returned a release list that is not valid: a release is null.");
+                }
+
+                RepositoryRelease[] releases = [.. items.Select(static item => new RepositoryRelease(item.Id, item.TagName, item.Draft, item.Prerelease, item.CreatedAt))];
+                return ForgejoPager.Page(releases, response.Headers);
+            },
+            ct).ConfigureAwait(false);
+    }
+
     /// <summary>Disposes the client and its handler.</summary>
     public void Dispose() => _client.Dispose();
-
-    // Forgejo sends rel="next" while a later page exists; a missing header means one page.
-    private static bool HasNextPage(string? link) =>
-        link is not null && link.Split(',').Any(static part => part.Contains("rel=\"next\"", StringComparison.Ordinal));
 }
