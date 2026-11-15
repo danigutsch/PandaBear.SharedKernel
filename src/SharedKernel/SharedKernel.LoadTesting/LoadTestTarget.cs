@@ -1,13 +1,10 @@
 using System.Net;
 
-namespace PandaBear.K6.Tool;
+namespace PandaBear.LoadTesting;
 
-/// <summary>Validates the base URL that k6 targets and rewrites it for k6 in a container.</summary>
-internal static class K6Target
+/// <summary>Validates the base URL that the load generator targets and rewrites it for a generator in a container.</summary>
+internal static class LoadTestTarget
 {
-    /// <summary>The host name through which a container reaches the machine that runs it.</summary>
-    public const string ContainerHostAlias = "host.docker.internal";
-
     /// <summary>Parses and validates a base URL.</summary>
     /// <param name="value">The URL text; surrounding white space is ignored.</param>
     /// <param name="source">Names where the URL came from in errors.</param>
@@ -42,10 +39,10 @@ internal static class K6Target
     /// <summary>Formats a base URL without a trailing <c>/</c>.</summary>
     public static string Format(Uri target) => target.AbsoluteUri.TrimEnd('/');
 
-    /// <summary>Formats a base URL for k6 in a container, which reaches loopback and unspecified hosts through the host alias.</summary>
+    /// <summary>Formats a base URL for a load generator in a container, which reaches loopback and unspecified hosts through the host alias.</summary>
     public static string ForContainer(Uri target) =>
         target.IsLoopback || IsUnspecified(target)
-            ? Format(new UriBuilder(target) { Host = ContainerHostAlias }.Uri)
+            ? Format(new UriBuilder(target) { Host = LoadTestContainer.HostAlias }.Uri)
             : Format(target);
 
     /// <summary>Replaces the unspecified address that a host bound to, such as <c>0.0.0.0</c>, with <c>127.0.0.1</c>.</summary>

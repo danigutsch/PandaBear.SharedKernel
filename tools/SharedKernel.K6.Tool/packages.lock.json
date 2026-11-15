@@ -32,6 +32,23 @@
       "PandaBear.SharedKernel.IO": {
         "type": "Project"
       },
+      "PandaBear.SharedKernel.LoadTesting": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.ConfigurationFiles": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.GitHub": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.LoadTesting.K6": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.GitHub": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.LoadTesting": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.Processes": {
         "type": "Project"
       }

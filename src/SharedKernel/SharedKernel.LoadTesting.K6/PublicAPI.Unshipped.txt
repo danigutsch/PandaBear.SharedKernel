@@ -1,0 +1,8 @@
+#nullable enable
+PandaBear.LoadTesting.K6.K6LoadGenerator
+PandaBear.LoadTesting.K6.K6LoadGenerator.Command.get -> string!
+PandaBear.LoadTesting.K6.K6LoadGenerator.ControlledVariables.get -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string!>>!
+PandaBear.LoadTesting.K6.K6LoadGenerator.K6LoadGenerator(PandaBear.Processes.IProcessRunner! processRunner) -> void
+PandaBear.LoadTesting.K6.K6LoadGenerator.Run(PandaBear.LoadTesting.LoadGeneratorRun! run, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+PandaBear.LoadTesting.K6.K6LoadGenerator.ValidateArguments(System.Collections.Generic.IReadOnlyList<string!>! arguments, System.Collections.Generic.IReadOnlyCollection<string!>! controlledVariables, PandaBear.LoadTesting.LoadTestSettings! settings) -> void
+const PandaBear.LoadTesting.K6.K6LoadGenerator.UsageReportVariable = "K6_NO_USAGE_REPORT" -> string!
