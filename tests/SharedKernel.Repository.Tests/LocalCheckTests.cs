@@ -578,6 +578,7 @@ public sealed class LocalCheckTests
 
     [Theory]
     [InlineData("0", false)]
+    [InlineData("-1", false)]
     [InlineData("1441", false)]
     [InlineData("1", true)]
     [InlineData("1440", true)]
