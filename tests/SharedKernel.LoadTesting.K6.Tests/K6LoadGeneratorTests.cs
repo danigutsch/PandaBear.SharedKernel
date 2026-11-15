@@ -163,13 +163,15 @@ public sealed class K6LoadGeneratorTests
     {
         // Arrange
         using var workspace = new K6RunWorkspace();
-        var runner = new ScriptedProcessRunner(ScriptedProcessRunner.Throw(new Win32Exception("No such file or directory")));
+        var missing = Path.Combine(workspace.Root, "missing", "k6");
 
         // Act
-        var exception = await Record.ExceptionAsync(() => new K6LoadGenerator(runner).Run(workspace.Run(), TestContext.Current.CancellationToken));
+        var exception = await Record.ExceptionAsync(() => new K6LoadGenerator(new SystemProcessRunner()).Run(workspace.Run(executable: missing), TestContext.Current.CancellationToken));
 
         // Assert
-        exception.ShouldBeOfType<InvalidOperationException>().Message.ShouldBe("Failed to start /usr/bin/k6: No such file or directory");
+        var failure = exception.ShouldBeOfType<InvalidOperationException>();
+        failure.Message.ShouldStartWith("Failed to start " + missing + ": ", StringComparison.Ordinal);
+        failure.InnerException.ShouldBeOfType<Win32Exception>();
     }
 
     [Fact]

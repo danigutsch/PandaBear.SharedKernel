@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using PandaBear.Processes;
@@ -90,17 +89,9 @@ internal sealed class ExternalCommands
         }
     }
 
-    private async Task<ProcessOutput> Start(ProcessStartInfo startInfo, TextWriter? forward, CancellationToken ct)
-    {
-        try
-        {
-            return await _processRunner.Run(startInfo, forward, ct).ConfigureAwait(false);
-        }
-        catch (Win32Exception exception)
-        {
-            throw new InvalidOperationException($"Failed to start {startInfo.FileName}: {exception.Message}", exception);
-        }
-    }
+    // A start failure is the InvalidOperationException that IProcessRunner documents, carrying the reason.
+    private Task<ProcessOutput> Start(ProcessStartInfo startInfo, TextWriter? forward, CancellationToken ct) =>
+        _processRunner.Run(startInfo, forward, ct);
 
     private ProcessStartInfo CreateStartInfo(string fileName, string[] arguments, string? workingDirectory)
     {

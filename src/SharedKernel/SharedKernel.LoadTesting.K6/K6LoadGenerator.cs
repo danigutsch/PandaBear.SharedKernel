@@ -87,16 +87,8 @@ public sealed class K6LoadGenerator : ILoadGenerator
 
     private async Task<int> RunToExit(ProcessStartInfo startInfo, CancellationToken ct)
     {
-        ProcessOutput output;
-        try
-        {
-            output = await _processRunner.Run(startInfo, null, ct).ConfigureAwait(false);
-        }
-        catch (Win32Exception exception)
-        {
-            throw new InvalidOperationException($"Failed to start {startInfo.FileName}: {exception.Message}", exception);
-        }
-
+        // A start failure is the InvalidOperationException that IProcessRunner documents, carrying the reason.
+        var output = await _processRunner.Run(startInfo, null, ct).ConfigureAwait(false);
         ct.ThrowIfCancellationRequested();
         return output.ExitCode;
     }
