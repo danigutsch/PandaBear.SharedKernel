@@ -49,11 +49,11 @@ public sealed class EditorCommand
 
         if (Path.IsPathFullyQualified(commandLine) && File.Exists(commandLine))
         {
-            return Result.Ok(new EditorCommand(commandLine, []));
+            return HasQuote(commandLine) ? QuotedPath() : Result.Ok(new EditorCommand(commandLine, []));
         }
 
         var words = commandLine.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries);
-        if (words.Any(static word => word.Contains('\'', StringComparison.Ordinal) || word.Contains('"', StringComparison.Ordinal)))
+        if (words.Any(HasQuote))
         {
             return Invalid("The editor command cannot contain quotes; name a program and its arguments separated by spaces.");
         }
@@ -69,9 +69,12 @@ public sealed class EditorCommand
             executable = program.Contains('/', StringComparison.Ordinal) || program.Contains('\\', StringComparison.Ordinal) ? null : executableResolver.Find(program);
         }
 
-        return executable is null
-            ? Invalid("The editor was not found: name an absolute path or a command in an absolute directory of PATH.")
-            : Result.Ok(new EditorCommand(executable, words[1..]));
+        if (executable is null)
+        {
+            return Invalid("The editor was not found: name an absolute path or a command in an absolute directory of PATH.");
+        }
+
+        return HasQuote(executable) ? QuotedPath() : Result.Ok(new EditorCommand(executable, words[1..]));
     }
 
     /// <summary>
@@ -80,6 +83,10 @@ public sealed class EditorCommand
     /// </summary>
     /// <returns>The quoted command.</returns>
     public string ToShellWords() => string.Join(' ', new[] { Executable }.Concat(Arguments).Select(static word => $"'{word}'"));
+
+    private static bool HasQuote(string text) => text.Contains('\'', StringComparison.Ordinal) || text.Contains('"', StringComparison.Ordinal);
+
+    private static Result<EditorCommand> QuotedPath() => Invalid("The editor's path cannot contain quotes, because sops splits the editor command again.");
 
     private static Result<EditorCommand> Invalid(string message) => Result.Invalid<EditorCommand>(message, "editor", message);
 }

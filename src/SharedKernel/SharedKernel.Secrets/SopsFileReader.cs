@@ -7,7 +7,6 @@ namespace PandaBear.Secrets;
 /// <summary>Reads the key holders of a SOPS file from disk, without a process and without decrypting.</summary>
 public static class SopsFileReader
 {
-    private const int MaxFileBytes = 16 * 1024 * 1024;
     private static readonly TimeSpan DefaultReadTimeout = TimeSpan.FromSeconds(10);
 
     /// <summary>
@@ -40,7 +39,7 @@ public static class SopsFileReader
         string text;
         try
         {
-            var bytes = await Task.Run(() => BoundedReader.ReadFile(absoluteFile, MaxFileBytes, cancellationToken), cancellationToken).WaitAsync(readTimeout ?? DefaultReadTimeout, cancellationToken).ConfigureAwait(false);
+            var bytes = await Task.Run(() => BoundedReader.ReadFile(absoluteFile, SopsFileLimits.MaxBytes, cancellationToken), cancellationToken).WaitAsync(readTimeout ?? DefaultReadTimeout, cancellationToken).ConfigureAwait(false);
             text = bytes is null ? string.Empty : Encoding.UTF8.GetString(bytes);
         }
         catch (TimeoutException)

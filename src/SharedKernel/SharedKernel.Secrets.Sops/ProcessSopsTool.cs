@@ -162,7 +162,7 @@ public sealed class ProcessSopsTool : ISopsTool
             var configuration = Path.Combine(directory.FullName, ".sops.yaml");
             try
             {
-                File.Copy(absoluteFile, copy);
+                CopyWritable(absoluteFile, copy);
             }
             catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
             {
@@ -170,7 +170,7 @@ public sealed class ProcessSopsTool : ISopsTool
             }
 
             await File.WriteAllTextAsync(configuration, $"creation_rules:\n  - age: \"{AgeList(recipients.Recipients)}\"\n", cancellationToken).ConfigureAwait(false);
-            var request = Request(["updatekeys", "--yes", copy], identity, default, directory.FullName, configuration);
+            var request = Request(["updatekeys", "--yes", "--input-type", TypeOf(absoluteFile), copy], identity, default, directory.FullName, configuration);
             var (run, problem) = await ProgramInvocation.Run(_runner, "sops", request, cancellationToken).ConfigureAwait(false);
             if (run is null)
             {
@@ -206,7 +206,7 @@ public sealed class ProcessSopsTool : ISopsTool
             var copy = Path.Combine(data, Path.GetFileName(absoluteFile));
             try
             {
-                File.Copy(absoluteFile, copy);
+                CopyWritable(absoluteFile, copy);
             }
             catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
             {
@@ -220,7 +220,7 @@ public sealed class ProcessSopsTool : ISopsTool
                 ["EDITOR"] = session.Editor.ToShellWords(),
                 [AgeKeyFile] = identity.Path,
             };
-            var request = new ToolRequest(_sops, ["--config", "/dev/null", "edit", copy], environment, default, session.PrivateDirectory);
+            var request = new ToolRequest(_sops, ["--config", "/dev/null", "edit", "--input-type", TypeOf(absoluteFile), "--output-type", TypeOf(absoluteFile), copy], environment, default, session.PrivateDirectory);
             int exitCode;
             try
             {
@@ -263,7 +263,7 @@ public sealed class ProcessSopsTool : ISopsTool
             return ProgramInvocation.Error<string>(current.ErrorDetails?.Detail ?? "The recipients cannot be read.");
         }
 
-        List<string> arguments = ["rotate"];
+        List<string> arguments = ["rotate", "--input-type", TypeOf(absoluteFile), "--output-type", TypeOf(absoluteFile)];
         var added = recipients.Recipients.Where(recipient => !current.Value.Age.Contains(recipient)).ToArray();
         var removed = current.Value.Age.Where(recipient => !recipients.Contains(recipient)).ToArray();
         if (added.Length > 0)
@@ -304,6 +304,19 @@ public sealed class ProcessSopsTool : ISopsTool
     }
 
     private static string FormatName(SopsFormat format) => format == SopsFormat.Json ? "json" : "yaml";
+
+    // sops infers the format only from a lowercase extension, so the rewriting calls name it.
+    private static string TypeOf(string file) => Path.GetExtension(file).ToUpperInvariant() is ".JSON" ? "json" : "yaml";
+
+    // File.Copy keeps the source's mode, and sops must be able to write the copy of a read-only file.
+    private static void CopyWritable(string source, string copy)
+    {
+        File.Copy(source, copy);
+        if (!OperatingSystem.IsWindows())
+        {
+            File.SetUnixFileMode(copy, UnixFileMode.UserRead | UnixFileMode.UserWrite);
+        }
+    }
 
     private static string AgeList(IEnumerable<AgeRecipient> recipients) => string.Join(',', recipients.Select(static item => item.Value));
 

@@ -16,7 +16,6 @@ internal static class VerifyOperation
     public const string ProofNote = "Note: this proves labels and structure, not who can decrypt. Compare with a base revision (--base) or trial-decrypt (recipients check --prove-with-identity) to go further.";
 
     private const string SopsConfigurationName = ".sops.yaml";
-    private const int MaxFileBytes = 16 * 1024 * 1024;
 
     private static readonly string[] ProbeNames =
     [
@@ -109,7 +108,7 @@ internal static class VerifyOperation
             return;
         }
 
-        var (bytes, problem) = await GuardedFileReader.Read(entry.AbsolutePath, MaxFileBytes, programs.FileReadTimeout, cancellationToken).ConfigureAwait(false);
+        var (bytes, problem) = await GuardedFileReader.Read(entry.AbsolutePath, SopsFileLimits.MaxBytes, programs.FileReadTimeout, cancellationToken).ConfigureAwait(false);
         if (problem is not null)
         {
             if (named)

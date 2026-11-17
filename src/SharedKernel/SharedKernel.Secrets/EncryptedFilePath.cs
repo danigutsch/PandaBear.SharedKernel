@@ -23,16 +23,16 @@ public sealed class EncryptedFilePath : ValueObject
         get;
     }
 
-    /// <summary>Gets the document format taken from the last extension, or <see langword="null"/> when it is not YAML or JSON.</summary>
+    /// <summary>Gets the document format taken from the last extension in any letter case, or <see langword="null"/> when it is not YAML or JSON.</summary>
     public SopsFormat? Format
     {
         get
         {
-            var extension = Path.GetExtension(Value);
+            var extension = Path.GetExtension(Value).ToUpperInvariant();
             return extension switch
             {
-                ".yaml" or ".yml" => SopsFormat.Yaml,
-                ".json" => SopsFormat.Json,
+                ".YAML" or ".YML" => SopsFormat.Yaml,
+                ".JSON" => SopsFormat.Json,
                 _ => null,
             };
         }

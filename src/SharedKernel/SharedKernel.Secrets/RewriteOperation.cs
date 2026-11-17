@@ -1,4 +1,5 @@
 using System.Text;
+using PandaBear.Results;
 
 namespace PandaBear.Secrets;
 
@@ -9,8 +10,6 @@ namespace PandaBear.Secrets;
 /// </summary>
 internal static class RewriteOperation
 {
-    private const int MaxFileBytes = 16 * 1024 * 1024;
-
     /// <summary>Makes the file's recipients exactly its rule's, keeping the data key.</summary>
     /// <exception cref="InvalidOperationException">The request is invalid or refused, or sops failed.</exception>
     public static async Task<int> UpdateRecipients(string root, SecretsPrograms programs, UpdateRecipientsSettings settings, TextWriter output, CancellationToken cancellationToken)
@@ -90,7 +89,7 @@ internal static class RewriteOperation
 
         var sops = programs.Sops();
         var directory = MemoryBackedDirectory.Create(settings.TemporaryRoot);
-        string document;
+        Result<string> edited;
         try
         {
             var session = new SopsEditSession
@@ -99,12 +98,35 @@ internal static class RewriteOperation
                 PrivateDirectory = directory,
                 TerminalEnvironment = TerminalEnvironment(settings.TerminalEnvironment),
             };
-            var edited = await sops.Edit(target.AbsolutePath, identity, session, cancellationToken).ConfigureAwait(false);
-            document = edited.IsSuccess ? edited.Value : throw Failed(edited.ErrorDetails?.Detail);
+            edited = await sops.Edit(target.AbsolutePath, identity, session, cancellationToken).ConfigureAwait(false);
         }
-        finally
+        catch
         {
             MemoryBackedDirectory.Remove(directory);
+            throw;
+        }
+
+        // A directory that cannot be removed must not discard an edit sops completed, nor hide why sops failed.
+        string? leftover = null;
+        try
+        {
+            MemoryBackedDirectory.Remove(directory);
+        }
+        catch (InvalidOperationException exception)
+        {
+            leftover = exception.Message;
+        }
+
+        if (edited.IsFailure)
+        {
+            throw Failed(leftover is null ? edited.ErrorDetails?.Detail : $"{edited.ErrorDetails?.Detail} {leftover}");
+        }
+
+        var document = edited.Value;
+        if (leftover is not null)
+        {
+            await target.Replace(document, cancellationToken).ConfigureAwait(false);
+            throw new InvalidOperationException($"{target.Path}: saved, but {leftover}");
         }
 
         if (Encoding.UTF8.GetBytes(document).AsSpan().SequenceEqual(target.Bytes))
@@ -228,7 +250,7 @@ internal static class RewriteOperation
                 throw new InvalidOperationException($"{path}: the file does not exist.");
             }
 
-            var (bytes, problem) = await GuardedFileReader.Read(absolute, MaxFileBytes, programs.FileReadTimeout, cancellationToken).ConfigureAwait(false);
+            var (bytes, problem) = await GuardedFileReader.Read(absolute, SopsFileLimits.MaxBytes, programs.FileReadTimeout, cancellationToken).ConfigureAwait(false);
             if (problem is not null)
             {
                 throw new InvalidOperationException($"{path}: {problem}");

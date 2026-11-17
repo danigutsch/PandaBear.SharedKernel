@@ -116,7 +116,10 @@ What they do not establish:
 - **What `verify` reads.** Inside a rule's scope only files named `*.sops.*` are read (everything else is rejected by name); outside every rule only files named `*.sops.*` or with a yaml, yml, json, env, or ini extension are read, by a best-effort heuristic. A SOPS document with another name and extension outside every rule goes unnoticed. A directory whose children a rule could match is probed with sample child names, so an exotic expression could still hide a link.
 - **A race on `decrypt --output`.** The destination is resolved without symbolic links and the file is renamed into place without overwriting, but a parent directory swapped for a link between the check and the rename is not detected. The temporary name is random and created exclusively, and it is removed on any failure, including cancellation.
 - **A race on a replacement.** The file is compared with the bytes it was read with just before the rename, so a change during a
-  long edit is refused, but a change between that comparison and the rename is lost.
+  long edit is refused, but a change between that comparison and the rename is lost. The new version's data is flushed to
+  disk before the rename, but the directory is not, so a crash right after the rename can leave the previous version. The
+  sops provider reads the file again to copy it or to list its recipients; a file swapped for a FIFO between the two reads
+  can still block that copy.
 - **Editors that leave the private directory.** An editor that hands the file to an already running instance (`code --wait`,
   `emacsclient`) runs outside the private `HOME` and `TMPDIR`, and that instance may keep history, backups, or caches of the
   plaintext elsewhere. A tmpfs can be written to swap. Neither is detectable here.

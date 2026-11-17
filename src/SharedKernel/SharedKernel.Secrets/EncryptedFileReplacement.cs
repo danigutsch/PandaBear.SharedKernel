@@ -5,18 +5,18 @@ namespace PandaBear.Secrets;
 
 /// <summary>
 /// Replaces an encrypted file with a new version through a temporary file in the same directory and a rename, and only
-/// when the file still holds the bytes the operation started from, so neither a failure nor a concurrent change leaves a
-/// partial or lost version.
+/// when the file still holds the bytes the operation started from. A failure never leaves a partial version, and a change
+/// made before the final comparison is refused; one made between that comparison and the rename is lost. The new
+/// version's data is flushed to disk before the rename, but the directory is not, so a crash right after the rename can
+/// leave the previous version in place.
 /// </summary>
 internal static class EncryptedFileReplacement
 {
-    private const int MaxBytes = 16 * 1024 * 1024;
-
     /// <summary>Writes <paramref name="document"/> in place of <paramref name="destination"/> when it still holds <paramref name="expected"/>.</summary>
     /// <exception cref="InvalidOperationException">The file changed since it was read.</exception>
     public static async Task Replace(string destination, byte[] expected, string document, TimeSpan readTimeout, CancellationToken cancellationToken)
     {
-        var (current, problem) = await GuardedFileReader.Read(destination, MaxBytes, readTimeout, cancellationToken).ConfigureAwait(false);
+        var (current, problem) = await GuardedFileReader.Read(destination, SopsFileLimits.MaxBytes, readTimeout, cancellationToken).ConfigureAwait(false);
         if (problem is not null || !current.AsSpan().SequenceEqual(expected))
         {
             throw new InvalidOperationException("The file changed while the operation ran; nothing was written. Run it again.");

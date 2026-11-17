@@ -36,7 +36,7 @@ public sealed class ProcessSopsToolEditTests
         // Assert
         result.ShouldBeSuccess().ShouldBe("edited: document\n");
         var request = runner.Requests.ShouldHaveSingleItem();
-        request.Arguments.ShouldBe(["--config", "/dev/null", "edit", Path.Combine(private_.Path, "data", "app.sops.yaml")]);
+        request.Arguments.ShouldBe(["--config", "/dev/null", "edit", "--input-type", "yaml", "--output-type", "yaml", Path.Combine(private_.Path, "data", "app.sops.yaml")]);
         request.WorkingDirectory.ShouldBe(private_.Path);
         request.Environment.ShouldBe(new Dictionary<string, string>
         {

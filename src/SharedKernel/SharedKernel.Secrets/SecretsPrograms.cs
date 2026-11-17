@@ -5,7 +5,7 @@ namespace PandaBear.Secrets;
 /// <summary>
 /// The programs that <see cref="SecretsRepository"/> runs, injected so a host passes the real ones and a test passes fakes.
 /// <see cref="Age"/> and <see cref="Sops"/> are called only by the operations that need them, so a missing program fails
-/// only those.
+/// only those, and those also in a preview, so that a preview never promises what cannot run.
 /// </summary>
 public sealed record SecretsPrograms
 {

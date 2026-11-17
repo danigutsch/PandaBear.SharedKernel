@@ -34,7 +34,7 @@ public sealed class ProcessSopsToolRewriteTests
         result.ShouldBeSuccess().ShouldBe("updated: document\n");
         var request = runner.Requests.ShouldHaveSingleItem();
         request.Arguments[0].ShouldBe("--config");
-        request.Arguments.Skip(2).ToArray().ShouldBe(["updatekeys", "--yes", Path.Combine(workingDirectory!, "data", "app.sops.yaml")]);
+        request.Arguments.Skip(2).ToArray().ShouldBe(["updatekeys", "--yes", "--input-type", "yaml", Path.Combine(workingDirectory!, "data", "app.sops.yaml")]);
         request.Arguments[1].ShouldBe(Path.Combine(workingDirectory!, ".sops.yaml"));
         config.ShouldBe($"creation_rules:\n  - age: \"{TestRecipients.Second},{TestRecipients.First}\"\n");
         request.Environment.ShouldBe(new Dictionary<string, string> { ["HOME"] = workingDirectory!, ["SOPS_AGE_KEY_FILE"] = Identity.Path });
@@ -80,7 +80,7 @@ public sealed class ProcessSopsToolRewriteTests
         // Assert
         result.ShouldBeSuccess().ShouldBe("rotated: document\n");
         var request = runner.Requests.ShouldHaveSingleItem();
-        request.Arguments.ShouldBe(["--config", "/dev/null", "rotate", "--add-age", TestRecipients.Second, "--rm-age", TestRecipients.Third, file]);
+        request.Arguments.ShouldBe(["--config", "/dev/null", "rotate", "--input-type", "yaml", "--output-type", "yaml", "--add-age", TestRecipients.Second, "--rm-age", TestRecipients.Third, file]);
         request.Environment["SOPS_AGE_KEY_FILE"].ShouldBe(Identity.Path);
     }
 
@@ -98,7 +98,7 @@ public sealed class ProcessSopsToolRewriteTests
 
         // Assert
         result.ShouldBeSuccess();
-        runner.Requests.ShouldHaveSingleItem().Arguments.ShouldBe(["--config", "/dev/null", "rotate", file]);
+        runner.Requests.ShouldHaveSingleItem().Arguments.ShouldBe(["--config", "/dev/null", "rotate", "--input-type", "json", "--output-type", "json", file]);
     }
 
     [Fact]
