@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.Collections.Frozen;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using PandaBear.BuildingBlocks;
@@ -52,11 +53,18 @@ public sealed class SecretScanner
     {
         ArgumentNullException.ThrowIfNull(rules);
         this.rules = rules;
+        RuleIds = rules.Select(rule => rule.Id).Concat(DetectorRuleIds.All).ToFrozenSet(StringComparer.Ordinal);
         keywords = SearchValues.Create([.. rules.SelectMany(rule => rule.Keywords).Distinct(StringComparer.OrdinalIgnoreCase)], StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>Scanner over the built-in catalog.</summary>
     public static SecretScanner Default { get; } = new(SecretRuleCatalog.All);
+
+    /// <summary>
+    /// Identifiers of every rule whose findings this scanner can report: its catalog rules and its structural detectors. A
+    /// caller that maps rule identifiers to its own decisions can check its map against them.
+    /// </summary>
+    public IReadOnlySet<string> RuleIds { get; }
 
     /// <summary>Scans <paramref name="text"/> and returns what it finds, without the values.</summary>
     /// <param name="text">The text.</param>
@@ -111,7 +119,7 @@ public sealed class SecretScanner
             string trimmed = text.Trim();
             if (trimmed.Length is >= 16 and <= 128 && !SecretText.HasWhitespace(trimmed))
             {
-                findings.Add(Finding("mega-recovery-key", SecretKind.RecoveryCodes, Confidence.High, new SecretLocation(path, text.IndexOf(trimmed, StringComparison.Ordinal), trimmed.Length), "MEGA recovery key", trimmed));
+                findings.Add(Finding(DetectorRuleIds.MegaRecoveryKey, SecretKind.RecoveryCodes, Confidence.High, new SecretLocation(path, text.IndexOf(trimmed, StringComparison.Ordinal), trimmed.Length), "MEGA recovery key", trimmed));
             }
         }
 
@@ -373,7 +381,7 @@ public sealed class SecretScanner
 
             if (!PatternRetry.TryRun(() => SecretPatterns.NotesLine().Match(line), out var match))
             {
-                findings.Add(TimeoutFinding("notes-line", path, lines[index].Start, line.Length));
+                findings.Add(TimeoutFinding(DetectorRuleIds.NotesLine, path, lines[index].Start, line.Length));
             }
             else if (match.Success)
             {
@@ -436,7 +444,7 @@ public sealed class SecretScanner
     private static Hit QuestionFinding(string path, int questionStart, int questionLength, int answerStart, string answer, int questionLine, int answerLine, Confidence confidence)
     {
         var location = new SecretLocation(path, answerStart, answer.Length, questionLine, answerLine);
-        Hit finding = Finding("security-question", SecretKind.SecurityQuestion, confidence, location, "Security question and answer", answer);
+        Hit finding = Finding(DetectorRuleIds.SecurityQuestion, SecretKind.SecurityQuestion, confidence, location, "Security question and answer", answer);
         return finding with
         {
             LabelLocation = new SecretLocation(path, questionStart, questionLength)
@@ -452,30 +460,30 @@ public sealed class SecretScanner
         {
             case KeyClass.Password when !rejected:
                 bool bip39Passphrase = seedNearby && normalizedKey is "passphrase" or "bip39passphrase";
-                return Finding(bip39Passphrase ? "notes-passphrase" : "notes-password", SecretKind.Password, Confidence.Medium, location, "Password line", value);
+                return Finding(bip39Passphrase ? DetectorRuleIds.NotesPassphrase : DetectorRuleIds.NotesPassword, SecretKind.Password, Confidence.Medium, location, "Password line", value);
             case KeyClass.Pin when value.Length is >= 3 and <= 12 && !SecretText.HasWhitespace(value) && !CandidateFilter.IsPlaceholder(value):
-                return Finding("notes-pin", SecretKind.Pin, Confidence.Medium, location, "PIN line", value);
+                return Finding(DetectorRuleIds.NotesPin, SecretKind.Pin, Confidence.Medium, location, "PIN line", value);
             case KeyClass.Username when context.ExpectsUsername && !CandidateFilter.IsPlaceholder(value) && value.Length <= 256:
-                return Finding("notes-username", SecretKind.Username, Confidence.Medium, location, "User name line", value);
+                return Finding(DetectorRuleIds.NotesUsername, SecretKind.Username, Confidence.Medium, location, "User name line", value);
             case KeyClass.Token when !rejected && value.Length is >= 8 and <= 512 && !SecretText.HasWhitespace(value) && SecretText.ShannonEntropy(value) >= 3.0:
                 var label = new SecretLocation(path, keyStart, key.Length);
-                return Finding("notes-token", SecretKind.ApiToken, Confidence.Low, location, "Token line", value) with
+                return Finding(DetectorRuleIds.NotesToken, SecretKind.ApiToken, Confidence.Low, location, "Token line", value) with
                 {
                     LabelLocation = label
                 };
             case KeyClass.Recovery when context.IsBitwardenAccount && IsBitwardenRecoveryCode(value):
-                return Finding("bitwarden-recovery-code", SecretKind.BitwardenRecoveryCode, Confidence.Medium, location, "Bitwarden account recovery code", value) with
+                return Finding(DetectorRuleIds.BitwardenRecoveryCode, SecretKind.BitwardenRecoveryCode, Confidence.Medium, location, "Bitwarden account recovery code", value) with
                 {
                     NeedsReview = true
                 };
             case KeyClass.Recovery when !rejected && value.Length >= 8:
-                return Finding("notes-recovery-code", SecretKind.RecoveryCodes, Confidence.Medium, location, "Recovery code line", value);
+                return Finding(DetectorRuleIds.NotesRecoveryCode, SecretKind.RecoveryCodes, Confidence.Medium, location, "Recovery code line", value);
             case KeyClass.Seed when value.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length >= 12:
-                return Finding("notes-seed", SecretKind.SeedPhrase, Confidence.Low, location, "Seed phrase line", value);
+                return Finding(DetectorRuleIds.NotesSeed, SecretKind.SeedPhrase, Confidence.Low, location, "Seed phrase line", value);
             case KeyClass.Totp when TotpUri.TryNormalize(value, null, null, out _):
-                return Finding("notes-totp", SecretKind.Totp, Confidence.Medium, location, "TOTP secret line", value);
+                return Finding(DetectorRuleIds.NotesTotp, SecretKind.Totp, Confidence.Medium, location, "TOTP secret line", value);
             case KeyClass.Bic when Bic.Create(value.Replace(" ", string.Empty, StringComparison.Ordinal).ToUpperInvariant()).IsSuccess:
-                return Finding("bic", SecretKind.Iban, Confidence.Medium, location, "BIC line", value);
+                return Finding(DetectorRuleIds.Bic, SecretKind.Iban, Confidence.Medium, location, "BIC line", value);
             default:
                 return null;
         }
@@ -525,7 +533,7 @@ public sealed class SecretScanner
             bool boundary = end >= text.Length || !(char.IsAsciiLetterOrDigit(text[end]) || (text[end] is '.' or ',' && end + 1 < text.Length && char.IsAsciiDigit(text[end + 1])));
             if (boundary && CardNumberValidator.TryGetBrand(number, out string? brand) && !CandidateFilter.IsRepeatedOrSequential(number))
             {
-                findings.Add(Finding("card-number", SecretKind.CardNumber, Confidence.High, new SecretLocation(path, index, end - index), brand + " card number", number));
+                findings.Add(Finding(DetectorRuleIds.CardNumber, SecretKind.CardNumber, Confidence.High, new SecretLocation(path, index, end - index), brand + " card number", number));
             }
 
             index = Math.Max(end, index + 1);
@@ -573,7 +581,7 @@ public sealed class SecretScanner
 
             if (bestEnd > 0)
             {
-                findings.Add(Finding("iban", SecretKind.Iban, Confidence.High, new SecretLocation(path, index, bestEnd - index), "IBAN", text[index..bestEnd]));
+                findings.Add(Finding(DetectorRuleIds.Iban, SecretKind.Iban, Confidence.High, new SecretLocation(path, index, bestEnd - index), "IBAN", text[index..bestEnd]));
                 index = bestEnd;
             }
         }
@@ -657,14 +665,14 @@ public sealed class SecretScanner
                 continue;
             }
 
-            Add(run.Skip(offset).Take(matched).ToList(), "bip39-seed", "BIP39 seed phrase");
+            Add(run.Skip(offset).Take(matched).ToList(), DetectorRuleIds.Bip39Seed, "BIP39 seed phrase");
             found = true;
             offset += matched;
         }
 
         if (!found && run.Count is 12 or 13 or 24 && Bip39.IsElectrumSeed([.. run.Select(entry => entry.Word)]))
         {
-            Add(run, "electrum-seed", "Electrum seed phrase");
+            Add(run, DetectorRuleIds.ElectrumSeed, "Electrum seed phrase");
         }
 
         void Add(List<(string Word, int Start, int End)> words, string ruleId, string message)
@@ -711,7 +719,7 @@ public sealed class SecretScanner
                 string token = text[index..tokenEnd];
                 if (SecretText.IsBase64Alphabet(token) && SecretText.CharacterClasses(token) >= 2 && SecretText.ShannonEntropy(token) >= 4.5 && !CandidateFilter.IsRejected(token))
                 {
-                    findings.Add(Finding("generic-high-entropy", SecretKind.GenericSecret, Confidence.Suggestion, new SecretLocation(path, index, length), "High-entropy string", token));
+                    findings.Add(Finding(DetectorRuleIds.GenericHighEntropy, SecretKind.GenericSecret, Confidence.Suggestion, new SecretLocation(path, index, length), "High-entropy string", token));
                 }
             }
 
@@ -726,7 +734,7 @@ public sealed class SecretScanner
         var findings = new List<Hit>();
         if (!PatternRetry.TryRun(() => (Shared: SecretPatterns.MaFileSharedSecret().Match(text), Revocation: SecretPatterns.MaFileRevocationCode().Match(text)), out var matches))
         {
-            findings.Add(TimeoutFinding("steam-mafile", path, 0, text.Length));
+            findings.Add(TimeoutFinding(DetectorRuleIds.SteamMaFile, path, 0, text.Length));
             return findings;
         }
 
@@ -737,7 +745,7 @@ public sealed class SecretScanner
 
         if (matches.Revocation.Success && matches.Revocation.Groups["secret"] is { } code)
         {
-            findings.Add(Finding("steam-mafile-revocation-code", SecretKind.RecoveryCodes, Confidence.High, new SecretLocation(path, code.Index, code.Length), "Steam Guard revocation code", code.Value));
+            findings.Add(Finding(DetectorRuleIds.SteamMaFileRevocationCode, SecretKind.RecoveryCodes, Confidence.High, new SecretLocation(path, code.Index, code.Length), "Steam Guard revocation code", code.Value));
         }
 
         return findings;
@@ -785,8 +793,8 @@ public sealed class SecretScanner
     {
         return ruleId switch
         {
-            "generic-high-entropy" => 0,
-            "security-question" or "bitwarden-recovery-code" => 3,
+            DetectorRuleIds.GenericHighEntropy => 0,
+            DetectorRuleIds.SecurityQuestion or DetectorRuleIds.BitwardenRecoveryCode => 3,
             _ when ruleId.StartsWith("notes-", StringComparison.Ordinal) => 1,
             _ => 2,
         };
@@ -842,6 +850,4 @@ public sealed class SecretScanner
             Value = value,
         };
     }
-
-
 }

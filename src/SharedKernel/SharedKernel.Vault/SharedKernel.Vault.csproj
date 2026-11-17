@@ -22,7 +22,6 @@
         <ProjectReference Include="..\SharedKernel.SecretScanning\SharedKernel.SecretScanning.csproj" />
     </ItemGroup>
 
-
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>

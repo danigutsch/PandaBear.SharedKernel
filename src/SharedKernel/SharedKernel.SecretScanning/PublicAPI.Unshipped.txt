@@ -157,6 +157,7 @@ static PandaBear.SecretScanning.SecretScanContext.operator !=(PandaBear.SecretSc
 static PandaBear.SecretScanning.SecretScanContext.operator ==(PandaBear.SecretScanning.SecretScanContext? left, PandaBear.SecretScanning.SecretScanContext? right) -> bool
 PandaBear.SecretScanning.SecretScanner
 static PandaBear.SecretScanning.SecretScanner.Default.get -> PandaBear.SecretScanning.SecretScanner!
+PandaBear.SecretScanning.SecretScanner.RuleIds.get -> System.Collections.Generic.IReadOnlySet<string!>!
 const PandaBear.SecretScanning.SecretScanner.MaFileSharedSecretRule = "steam-mafile-shared-secret" -> string!
 PandaBear.SecretScanning.SecretScanner.Scan(string! text, string! location, PandaBear.SecretScanning.SecretScanContext! context) -> System.Collections.Generic.IReadOnlyList<PandaBear.SecretScanning.DetectedSecret!>!
 PandaBear.SecretScanning.SecretScanner.Scan<T>(string! text, string! location, PandaBear.SecretScanning.SecretScanContext! context, System.Func<PandaBear.SecretScanning.DetectedSecret!, string?, T>! project) -> System.Collections.Generic.IReadOnlyList<T>!

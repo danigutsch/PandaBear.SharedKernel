@@ -38,7 +38,6 @@ internal sealed record SecretRule
     /// </summary>
     public Func<string, int, int?>? Extent { get; init; }
 
-
     /// <summary>Whether the rule finds a public identifier rather than a secret.</summary>
     public bool IsIdentifier { get; init; }
 

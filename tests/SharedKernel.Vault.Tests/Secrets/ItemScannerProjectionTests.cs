@@ -58,4 +58,14 @@ public sealed class ItemScannerProjectionTests
         token.ProposedTarget.ShouldBe(PlacementTarget.Hidden("GitHub token"));
         keyId.ProposedTarget.ShouldBe(PlacementTarget.Text("AWS access key ID"));
     }
+
+    [Fact]
+    public void Every_rule_with_a_listed_target_is_one_the_scanner_reports()
+    {
+        // Act
+        var unknown = ItemScanner.RuleTargets.Keys.Except(SecretScanner.Default.RuleIds);
+
+        // Assert
+        unknown.ShouldBeEmpty();
+    }
 }

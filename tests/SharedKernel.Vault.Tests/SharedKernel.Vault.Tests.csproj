@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="PandaBear.SecretScanning.Tests" />
         <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>
@@ -25,7 +26,20 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="..\SharedKernel.SecretScanning.Tests\Bech32Reference.cs" Link="SecretScanning\Bech32Reference.cs" />
+        <Compile Include="..\SharedKernel.SecretScanning.Tests\Bip39Reference.cs" Link="SecretScanning\Bip39Reference.cs" />
+        <Compile Include="..\SharedKernel.SecretScanning.Tests\Crc32Reference.cs" Link="SecretScanning\Crc32Reference.cs" />
+        <Compile Include="..\SharedKernel.SecretScanning.Tests\Fixture.cs" Link="SecretScanning\Fixture.cs" />
+        <Compile Include="..\SharedKernel.SecretScanning.Tests\MigrationPayloadBuilder.cs" Link="SecretScanning\MigrationPayloadBuilder.cs" />
+        <Compile Include="..\SharedKernel.SecretScanning.Tests\OpenSshContainer.cs" Link="SecretScanning\OpenSshContainer.cs" />
+        <Compile Include="..\SharedKernel.SecretScanning.Tests\PemFixtures.cs" Link="SecretScanning\PemFixtures.cs" />
+        <Compile Include="..\SharedKernel.SecretScanning.Tests\RuleSamples.cs" Link="SecretScanning\RuleSamples.cs" />
+        <Compile Include="..\SharedKernel.SecretScanning.Tests\TestSecrets.cs" Link="SecretScanning\TestSecrets.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
         <None Include="Fixtures\**" CopyToOutputDirectory="PreserveNewest" />
+        <None Include="..\SharedKernel.SecretScanning.Tests\Fixtures\secrets\ed25519-openssh.body.b64" Link="Fixtures\secrets\ed25519-openssh.body.b64" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
 </Project>

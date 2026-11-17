@@ -16,9 +16,11 @@ internal sealed class ItemScanner
     private static readonly string[] BankWords =
         ["bank", "card", "karte", "visa", "mastercard", "amex", "credit", "debit", "kredit", "sparkasse", "volksbank", "giro", "atm"];
 
-    // Where the finding of each rule or detector goes, unless the item says otherwise (see AssignTargets). Catalog rules
-    // that are not listed go where their kind suggests (DefaultTarget).
-    private static readonly FrozenDictionary<string, PlacementTarget> RuleTargets = new Dictionary<string, PlacementTarget>(StringComparer.Ordinal)
+    /// <summary>
+    /// Where the finding of each rule or detector goes, unless the item says otherwise (see AssignTargets). Catalog rules
+    /// that are not listed go where their kind suggests (DefaultTarget).
+    /// </summary>
+    internal static readonly FrozenDictionary<string, PlacementTarget> RuleTargets = new Dictionary<string, PlacementTarget>(StringComparer.Ordinal)
     {
         ["pgp-private-key"] = PlacementTarget.Hidden("PGP private key"),
         ["putty-private-key"] = PlacementTarget.Hidden("PuTTY private key"),
@@ -46,7 +48,7 @@ internal sealed class ItemScanner
         ["card-number"] = PlacementTarget.Hidden("Card number"),
         ["iban"] = PlacementTarget.Hidden("IBAN"),
         ["generic-high-entropy"] = PlacementTarget.Hidden("Secret"),
-        ["steam-mafile-shared-secret"] = PlacementTarget.LoginTotp,
+        [SecretScanner.MaFileSharedSecretRule] = PlacementTarget.LoginTotp,
         ["steam-mafile-revocation-code"] = PlacementTarget.Hidden("Steam revocation code"),
         ["bip39-seed"] = PlacementTarget.Hidden("Seed phrase"),
         ["electrum-seed"] = PlacementTarget.Hidden("Seed phrase"),

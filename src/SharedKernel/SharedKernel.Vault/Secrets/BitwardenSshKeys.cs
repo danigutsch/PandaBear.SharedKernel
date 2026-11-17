@@ -36,10 +36,10 @@ internal static class BitwardenSshKeys
     /// <exception cref="InvalidOperationException">The inspected key can no longer be parsed as a PEM block.</exception>
     public static BitwardenSshKey Convert(string pem, string? suppliedPublicKey = null)
     {
-        SshKeyInspection inspection = Inspect(pem);
-        if (!inspection.CanConvert)
+        // SshKeyConverter.Convert inspects the key itself; only a key that does not fit needs the inspection here.
+        if (!BitwardenLimits.Fits(pem, BitwardenLimits.ValueEncryptedLength))
         {
-            return new BitwardenSshKey(null, inspection.Problem);
+            return new BitwardenSshKey(null, Inspect(pem).Problem);
         }
 
         SshKeyConversion conversion = SshKeyConverter.Convert(pem, suppliedPublicKey);

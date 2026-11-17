@@ -1,11 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using PandaBear.VaultManager.Tool.Cli;
 using PandaBear.Vault.Matching;
 using PandaBear.Vault.Merge;
 using PandaBear.Vault.Model;
 using PandaBear.Vault.Pipeline;
 using PandaBear.Vault.Secrets;
+using PandaBear.VaultManager.Tool.Cli;
 
 namespace PandaBear.VaultManager.Tool.Review;
 

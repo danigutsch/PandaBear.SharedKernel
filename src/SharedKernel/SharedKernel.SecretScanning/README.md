@@ -44,6 +44,9 @@ var placed = SecretScanner.Default.Scan(text, "notes", context, (finding, value)
 The value is `null` for a finding that spans text that is not one value: a seed phrase, a block of recovery codes, or a region
 the patterns timed out on.
 
+Findings come back in the order of the text. `RuleIds` lists every rule identifier a scanner can report, its catalog rules and
+its structural detectors, so a caller that maps rule identifiers to its own decisions can test its map against them.
+
 `SecretScanContext` says what is known about the text: the file it came from (`FileName`, which recognises `.maFile` and
 `MEGA-RECOVERYKEY.txt` files and file names that announce recovery codes), the account's `Host`, whether the account still
 `ExpectsUsername`, whether it `IsBitwardenAccount` (whose recovery code it may hold), and `CatalogRulesOnly` to skip the
