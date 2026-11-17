@@ -139,7 +139,9 @@ sharedkernel-version prepare-release --version 0.2.0 --package-dir artifacts/pac
 
 `pack-sharedkernel` packs the `src/SharedKernel` projects, the consumer-support test projects, and the packaged
 tools into `<output-root>/<version>`, which defaults to `artifacts/packages/local/<version>`. It refuses an existing
-version and, unless `--skip-restore-check` is set, restores the packages and installs the tools from that folder.
+version and, unless `--skip-restore-check` is set, restores the packages and installs the tools from that folder. That
+restore treats warnings as errors and audits like the sample projects of `consume-candidate`, and the packages that the
+tools carry are audited as `consume-candidate` does before the tools install (see [Candidates](#candidates)).
 Without `--version`, the version is `0.1.0-alpha.local.<UTC timestamp>`.
 
 `prepare-release` reads change lines from standard input and writes `release-notes.md`, `CHANGELOG.md`,
@@ -182,16 +184,27 @@ version and file path together exceed its path limit (NU5123), and the longest p
 to an existing local feed in `NuGet.Config`.
 
 `consume-candidate` verifies the hashes and requires the manifest to list the exact file name of every package in its
-directory, and every package to have the candidate version. It installs each tool package into a scratch tool path,
-from a generated NuGet configuration whose only source is that directory, and runs each command that the package's
-`tools/<tfm>/any/DotnetToolSettings.xml` declares with `--help` from an empty scratch directory. It deletes the
-scratch directory afterwards. The check fails when a package does not install or a command exits with a non-zero
-code, and the error names the package and any failing command. It then restores, builds, and runs the samples against
-the packages with isolated caches, and records `passed` or `failed` for this platform's package consumption, and its
-NativeAOT run with `--aot`, in the manifest or in `--output`. It replaces that file through a temporary file in the
-same directory, so an interrupted write never truncates it, and Ctrl+C or SIGTERM leaves the file unchanged. The
-sample projects treat warnings as errors and audit every direct and transitive package at NuGet's default level,
-`low`, so an advisory of any severity fails consumption.
+directory, and every package to have the candidate version. It first audits the packages that each tool package
+carries. `dotnet tool install` restores no project, so NuGet Audit never sees what it installs, and NuGet refuses a
+tool package as a project's package reference (`NU1212`). Each `tools/<tfm>/any` folder that holds a
+`DotnetToolSettings.xml` must therefore hold the dependency manifest (`*.deps.json`) that the build writes beside the
+tool; for each framework whose manifest lists a library of type `package`, the check restores a scratch project that
+references each of them at its exact version. A failed restore fails the check, and the error names the tool package
+and the framework. It then installs each tool package into a scratch tool path, from a generated NuGet configuration
+whose only source is that directory, and runs each command that the package's `tools/<tfm>/any/DotnetToolSettings.xml`
+declares with `--help` from an empty scratch directory. It deletes the scratch directory afterwards. The check fails
+when a package does not install or a command exits with a non-zero code, and the error names the package and any
+failing command. It then restores, builds, and runs the samples against the packages with isolated caches, and records
+`passed` or `failed` for this platform's package consumption, and its NativeAOT run with `--aot`, in the manifest or in
+`--output`. It replaces that file through a temporary file in the same directory, so an interrupted write never
+truncates it, and Ctrl+C or SIGTERM leaves the file unchanged.
+
+The sample projects and the tool audit projects treat warnings as errors and audit every direct and transitive package
+at NuGet's default level, `low`, so an advisory of any severity fails consumption. Their generated `NuGet.config` names
+nuget.org as the only [audit source](https://learn.microsoft.com/nuget/concepts/auditing-packages#audit-sources), so
+an audit that gets no vulnerability data fails as well, with `NU1900` (nuget.org did not answer) or `NU1905` (it
+provided no vulnerability data). Without an audit source NuGet audits against the package sources and suppresses
+`NU1905`, so a package source without vulnerability data, such as the candidate folder, goes unreported.
 `--framework <tfm>` (`consume-candidate`, `consume-packages`, `validate-candidate`) names a target framework to build the
 consumers for, such as `net11.0`; repeat it for several. Without it, the tool consumes the framework(s) set in the repository root's `Directory.Build.props` (`TargetFrameworks`, else `TargetFramework`, with `$(Name)` references resolved in that file) and fails naming the file when that setting is missing or conditional. A value must be `net` plus
 `<major>.<minor>` in lowercase, listed once. The restore, locked restore, build, run, and optional NativeAOT publish run once per
@@ -262,9 +275,11 @@ has observed Ctrl+C or SIGTERM counts as the cancellation.
 - `has-breaking-change-marker` rejects an empty range or one that starts with `-`, and passes the range to Git after
   `--end-of-options`, so Git cannot read it as an option.
 - Packing and consumption restore third-party packages from nuget.org. Generated NuGet configurations map
-  `PandaBear.SharedKernel.*` only to the local feed, so internal packages never resolve from nuget.org.
+  `PandaBear.SharedKernel.*` only to the local feed, so internal packages never resolve from nuget.org, and name
+  nuget.org as their only audit source, so an audit without vulnerability data fails instead of passing empty.
 - Consumption installs tool packages only from the candidate directory, and reads their tool settings without
-  document type definitions, so no entity expands and no external resource is read.
+  document type definitions, so no entity expands and no external resource is read. Before a tool installs or runs,
+  NuGet Audit checks the packages that its dependency manifest lists.
 - Candidate commands verify SHA-256 package hashes before consuming packages.
 - `verify-consumer` runs its command on a clone of the committed revision, never in the working tree, with NuGet caches
   of its own, and verifies the staged package copies against their hashes.

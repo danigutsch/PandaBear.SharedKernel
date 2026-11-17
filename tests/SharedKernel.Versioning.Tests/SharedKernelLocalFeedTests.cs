@@ -1,3 +1,5 @@
+using System.Xml.Linq;
+
 namespace PandaBear.Versioning.Tests;
 
 /// <summary>
@@ -23,6 +25,50 @@ public static class SharedKernelLocalFeedTests
 
         // Assert
         config.ShouldContain("pattern=\"PandaBear.SharedKernel.*\"", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Generated_configuration_audits_against_the_nuget_source_alone()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        Directory.CreateDirectory(temporaryDirectory.OutputDirectory);
+        var source = new Uri("https://example.test/v3/index.json");
+
+        // Act
+        await SharedKernelLocalFeed.WriteNuGetConfig(
+            temporaryDirectory.OutputDirectory,
+            temporaryDirectory.PackageDirectory,
+            ["PandaBear.SharedKernel.Results"],
+            source);
+        var config = XDocument.Load(Path.Combine(temporaryDirectory.OutputDirectory, "NuGet.config"));
+
+        // Assert
+        var auditSources = config.Root.ShouldNotBeNull().Elements("auditSources").ShouldHaveSingleItem().Elements().ToArray();
+        auditSources.Select(static element => element.Name.LocalName).ShouldBe(
+            ["clear", "add"],
+            "Without audit sources NuGet audits against the package sources and suppresses NU1905, and the local folder has no vulnerability data.");
+        auditSources[1].Attribute("value").ShouldNotBeNull().Value.ShouldBe(source.AbsoluteUri);
+    }
+
+    [Fact]
+    public static async Task Restore_project_audits_every_dependency_at_every_severity_as_errors()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        Directory.CreateDirectory(temporaryDirectory.OutputDirectory);
+
+        // Act
+        await SharedKernelLocalFeed.WriteRestoreProject(temporaryDirectory.OutputDirectory, ["PandaBear.SharedKernel.Results"], "1.2.3", ["net11.0"]);
+        var project = await File.ReadAllTextAsync(
+            Path.Combine(temporaryDirectory.OutputDirectory, "SharedKernel.LocalFeedRestore.csproj"),
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        project.ShouldContain("<TreatWarningsAsErrors>true</TreatWarningsAsErrors>", StringComparison.Ordinal, "An audit that could not run (NU1900, NU1905) or an advisory fails the restore.");
+        project.ShouldContain("<NuGetAudit>true</NuGetAudit>", StringComparison.Ordinal);
+        project.ShouldContain("<NuGetAuditMode>all</NuGetAuditMode>", StringComparison.Ordinal);
+        project.ShouldNotContain("NuGetAuditLevel", StringComparison.Ordinal, "NuGet's default level, low, reports advisories of every severity.");
     }
 
     [Fact]
