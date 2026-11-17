@@ -208,4 +208,22 @@ public sealed class RewriteCommandTests
         update.Error.ShouldContain("cannot be read", StringComparison.Ordinal);
         rotate.ExitCode.ShouldBe(2);
     }
+
+    [Fact]
+    public async Task The_previews_of_update_and_rotate_need_no_sops()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, File, TestRecipients.Yaml([TestRecipients.First, TestRecipients.Third]));
+
+        // Act
+        var update = await Run(repository.Path, ScriptedToolRunner.Unused(), ResolveNone, null, null, "recipients", "update", File);
+        var rotate = await Run(repository.Path, ScriptedToolRunner.Unused(), ResolveNone, null, null, "rotate", File);
+
+        // Assert
+        update.ExitCode.ShouldBe(0, update.Error);
+        update.Output.ShouldContain($"remove recipient {TestRecipients.Third}", StringComparison.Ordinal);
+        rotate.ExitCode.ShouldBe(0, rotate.Error);
+        rotate.Output.ShouldContain("Preview: nothing was written.", StringComparison.Ordinal);
+    }
 }

@@ -14,7 +14,12 @@ internal static class EncryptedFileReplacement
 {
     /// <summary>Writes <paramref name="document"/> in place of <paramref name="destination"/> when it still holds <paramref name="expected"/>.</summary>
     /// <exception cref="InvalidOperationException">The file changed since it was read.</exception>
-    public static async Task Replace(string destination, byte[] expected, string document, TimeSpan readTimeout, CancellationToken cancellationToken)
+    public static Task Replace(string destination, byte[] expected, string document, TimeSpan readTimeout, CancellationToken cancellationToken) =>
+        Replace(destination, expected, document, readTimeout, beforeSwap: null, cancellationToken);
+
+    /// <summary>Replaces the file like the other overload, and calls <paramref name="beforeSwap"/> just before the new version takes its place.</summary>
+    /// <exception cref="InvalidOperationException">The file changed since it was read.</exception>
+    internal static async Task Replace(string destination, byte[] expected, string document, TimeSpan readTimeout, Action? beforeSwap, CancellationToken cancellationToken)
     {
         var (current, problem) = await GuardedFileReader.Read(destination, SopsFileLimits.MaxBytes, readTimeout, cancellationToken).ConfigureAwait(false);
         if (problem is not null || !current.AsSpan().SequenceEqual(expected))
@@ -50,6 +55,7 @@ internal static class EncryptedFileReplacement
                 File.SetUnixFileMode(temporary, mode);
             }
 
+            beforeSwap?.Invoke();
             File.Move(temporary, destination, overwrite: true);
         }
         catch

@@ -12,6 +12,9 @@ internal static class MemoryFileSystem
     /// <summary>Gets a value indicating whether files have Unix modes.</summary>
     public static bool UnixFileModes => !OperatingSystem.IsWindows();
 
+    /// <summary>Gets a value indicating whether the platform is Linux.</summary>
+    public static bool Linux => OperatingSystem.IsLinux();
+
     /// <summary>Gets the test output directory.</summary>
     public static string Disk => AppContext.BaseDirectory.TrimEnd('/');
 }

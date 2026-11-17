@@ -77,4 +77,51 @@ public sealed class EncryptedFileReplacementTests
         // Assert
         File.GetUnixFileMode(file).ShouldBe(mode);
     }
+
+    [Fact(SkipType = typeof(MemoryFileSystem), SkipUnless = nameof(MemoryFileSystem.Linux), Skip = "The atomic exchange is Linux only.")]
+    public async Task A_version_renamed_into_place_just_before_the_swap_is_kept()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var file = Path.Combine(directory.Path, "app.sops.yaml");
+        await File.WriteAllTextAsync(file, "old", TestContext.Current.CancellationToken);
+        var theirs = Path.Combine(directory.Path, "theirs.tmp");
+
+        // Act
+        var replace = () => EncryptedFileReplacement.Replace(
+            file,
+            Encoding.UTF8.GetBytes("old"),
+            "new",
+            TimeSpan.FromSeconds(5),
+            () =>
+            {
+                File.WriteAllText(theirs, "theirs");
+                File.Move(theirs, file, overwrite: true);
+            },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        await replace.ShouldThrow<InvalidOperationException>();
+        var content = await File.ReadAllTextAsync(file, TestContext.Current.CancellationToken);
+        content.ShouldBe("theirs");
+        Directory.EnumerateFiles(directory.Path).ShouldHaveSingleItem();
+    }
+
+    [Fact(SkipType = typeof(MemoryFileSystem), SkipUnless = nameof(MemoryFileSystem.Linux), Skip = "The atomic exchange is Linux only.")]
+    public async Task A_version_written_in_place_just_before_the_swap_is_kept()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var file = Path.Combine(directory.Path, "app.sops.yaml");
+        await File.WriteAllTextAsync(file, "old", TestContext.Current.CancellationToken);
+
+        // Act
+        var replace = () => EncryptedFileReplacement.Replace(file, Encoding.UTF8.GetBytes("old"), "new", TimeSpan.FromSeconds(5), () => File.WriteAllText(file, "theirs"), TestContext.Current.CancellationToken);
+
+        // Assert
+        await replace.ShouldThrow<InvalidOperationException>();
+        var content = await File.ReadAllTextAsync(file, TestContext.Current.CancellationToken);
+        content.ShouldBe("theirs");
+        Directory.EnumerateFiles(directory.Path).ShouldHaveSingleItem();
+    }
 }
