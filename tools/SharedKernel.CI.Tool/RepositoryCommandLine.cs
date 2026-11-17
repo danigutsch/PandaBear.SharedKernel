@@ -263,7 +263,7 @@ internal static partial class RepositoryCommandLine
         return separator > 0
             && separator < trait.Length - 1
             && trait[0] != '-'
-            && !trait.Any(char.IsWhiteSpace);
+            && !trait.AsSpan().ContainsAnyWhiteSpace();
     }
 
     private static Command CreateOpenApi(string workingDirectory, CiMachine machine)

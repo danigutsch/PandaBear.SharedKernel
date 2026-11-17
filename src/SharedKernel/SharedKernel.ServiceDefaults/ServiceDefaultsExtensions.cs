@@ -141,7 +141,7 @@ public static class ServiceDefaultsExtensions
             : null;
     }
 
-    private static bool IsPath(string? path) => path is { Length: > 1 } && path[0] == '/' && !path.Any(char.IsWhiteSpace);
+    private static bool IsPath(string? path) => path is { Length: > 1 } && path[0] == '/' && !path.AsSpan().ContainsAnyWhiteSpace();
 
     private static bool IsHealthRequest(HttpContext context, ServiceDefaultsOptions options) =>
         context.Request.Path.StartsWithSegments(options.HealthPath, StringComparison.OrdinalIgnoreCase)

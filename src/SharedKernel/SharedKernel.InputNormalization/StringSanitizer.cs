@@ -1,8 +1,8 @@
-using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Text.Unicode;
 
 namespace PandaBear.InputNormalization;
 
@@ -172,15 +172,9 @@ public static partial class StringSanitizer
     private static bool TryNormalize(string value, [NotNullWhen(true)] out string? normalized)
     {
         normalized = null;
-        var remaining = value.AsSpan();
-        while (!remaining.IsEmpty)
+        if (!Utf16.IsValid(value))
         {
-            if (Rune.DecodeFromUtf16(remaining, out _, out var consumed) != OperationStatus.Done)
-            {
-                return false;
-            }
-
-            remaining = remaining[consumed..];
+            return false;
         }
 
         try

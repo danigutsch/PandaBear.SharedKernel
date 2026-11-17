@@ -34,6 +34,8 @@ public sealed class WebAssetUriSanitizerTests
     [InlineData("https://cdn.example.test\\logo.svg")]
     [InlineData("logo.svg")]
     [InlineData("/images/my logo.svg")]
+    [InlineData("/images/my\u00A0logo.svg")]
+    [InlineData("/images/my\u2003logo.svg")]
     [InlineData("/images\\logo.svg")]
     [InlineData("/images/logo\0.svg")]
     [InlineData("https://cdn.example.test/logo\0.svg")]

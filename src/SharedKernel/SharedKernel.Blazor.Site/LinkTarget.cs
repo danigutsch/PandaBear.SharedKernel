@@ -37,7 +37,7 @@ public sealed class LinkTarget : ValueObject
     /// <returns>The target, or an input-independent validation error.</returns>
     public static Result<LinkTarget> Create(string? value)
     {
-        if (string.IsNullOrEmpty(value) || value.All(char.IsWhiteSpace))
+        if (string.IsNullOrEmpty(value) || value.AsSpan().IsWhiteSpace())
         {
             return Invalid("A link address is required.");
         }

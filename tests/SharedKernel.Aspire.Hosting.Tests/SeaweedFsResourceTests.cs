@@ -260,15 +260,19 @@ public sealed class SeaweedFsResourceTests
         variables["S3_BUCKET"].ShouldBe("media,thumbnails,export-files");
     }
 
-    [Fact]
-    public void AddBucket_rejects_a_bucket_name_that_would_break_the_comma_separated_list()
+    [Theory]
+    [InlineData("a,b")]
+    [InlineData("a b")]
+    [InlineData("a\u00A0b")]
+    [InlineData("a\u2003b")]
+    public void AddBucket_rejects_a_bucket_name_that_would_break_the_comma_separated_list(string bucketName)
     {
         // Arrange
         var builder = DistributedApplication.CreateBuilder([]);
         var seaweedFs = builder.AddSeaweedFs("seaweed", "media");
 
         // Act
-        var action = () => seaweedFs.AddBucket("thumbnails", "a,b");
+        var action = () => seaweedFs.AddBucket("thumbnails", bucketName);
 
         // Assert
         action.ShouldThrow<ArgumentException>().ParamName.ShouldBe("bucketName");

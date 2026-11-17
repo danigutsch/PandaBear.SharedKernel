@@ -53,8 +53,7 @@ internal static class EncString
             throw new InvalidDataException("Encrypted value has an invalid IV or MAC length.");
         }
 
-        byte[] expectedMac = ComputeMac(keys.MacKey, iv, ciphertext);
-        if (!CryptographicOperations.FixedTimeEquals(mac, expectedMac))
+        if (!CryptographicOperations.VerifyHmac(HashAlgorithmName.SHA256, keys.MacKey, MacInput(iv, ciphertext), mac))
         {
             throw new InvalidDataException("The password is wrong or the file was altered.");
         }
@@ -71,11 +70,13 @@ internal static class EncString
         }
     }
 
-    private static byte[] ComputeMac(byte[] macKey, byte[] iv, byte[] ciphertext)
+    private static byte[] ComputeMac(byte[] macKey, byte[] iv, byte[] ciphertext) => HMACSHA256.HashData(macKey, MacInput(iv, ciphertext));
+
+    private static byte[] MacInput(byte[] iv, byte[] ciphertext)
     {
         var data = new byte[iv.Length + ciphertext.Length];
         iv.CopyTo(data, 0);
         ciphertext.CopyTo(data, iv.Length);
-        return HMACSHA256.HashData(macKey, data);
+        return data;
     }
 }

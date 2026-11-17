@@ -9,6 +9,7 @@ public sealed class ObjectStorageKeyValidatorTests
     [Theory]
     [InlineData("media/source.jpg")]
     [InlineData("media/2026/source.avif")]
+    [InlineData("media/caf\u00E9-\uD83D\uDE00.jpg")]
     public void IsValidRelativeKey_accepts_safe_slash_delimited_keys(string candidate)
     {
         // Arrange
@@ -46,6 +47,21 @@ public sealed class ObjectStorageKeyValidatorTests
 
         // Assert
         isValid.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void IsValidRelativeKey_rejects_malformed_surrogates()
+    {
+        // Arrange
+        // Lone surrogates are built in code: attribute arguments are stored as UTF-8 and would arrive as U+FFFD.
+        const int maxLength = 1024;
+        string[] candidates = ["media/source\uD800.jpg", "media/source\uDC00.jpg", "media/source\uDE00\uD83D.jpg", "media/source\uD83D"];
+
+        // Act
+        var results = candidates.Select(static candidate => ObjectStorageKeyValidator.IsValidRelativeKey(candidate, maxLength)).ToList();
+
+        // Assert
+        results.ShouldBe([false, false, false, false]);
     }
 
     [Fact]

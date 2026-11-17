@@ -63,7 +63,7 @@ internal sealed record GherkinConfiguration(
         for (var index = 0; index < ForbiddenTags.Length; index++)
         {
             var tag = ForbiddenTags[index];
-            if (tag is not ['@', ..] || tag.Any(char.IsWhiteSpace))
+            if (tag is not ['@', ..] || tag.AsSpan().ContainsAnyWhiteSpace())
             {
                 return Element("$.gherkin.forbiddenTags", index) + " must be a tag that starts with '@' and has no whitespace.";
             }

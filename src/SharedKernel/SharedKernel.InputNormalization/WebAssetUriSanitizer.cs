@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Unicode;
 
 namespace PandaBear.InputNormalization;
 
@@ -28,7 +29,7 @@ public static class WebAssetUriSanitizer
         }
 
         // A lone surrogate is rejected before Normalize, which throws on one.
-        if (ContainsControlCharacter(value) || ContainsLoneSurrogate(value))
+        if (ContainsControlCharacter(value) || !Utf16.IsValid(value))
         {
             return null;
         }
@@ -143,22 +144,5 @@ public static class WebAssetUriSanitizer
 
     private static bool ContainsControlCharacter(string value) => value.Any(char.IsControl);
 
-    private static bool ContainsWhitespace(string value) => value.Any(char.IsWhiteSpace);
-
-    private static bool ContainsLoneSurrogate(string value)
-    {
-        for (var index = 0; index < value.Length; index++)
-        {
-            if (char.IsHighSurrogate(value[index]) && index + 1 < value.Length && char.IsLowSurrogate(value[index + 1]))
-            {
-                index++;
-            }
-            else if (char.IsSurrogate(value[index]))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    private static bool ContainsWhitespace(string value) => value.AsSpan().ContainsAnyWhiteSpace();
 }
