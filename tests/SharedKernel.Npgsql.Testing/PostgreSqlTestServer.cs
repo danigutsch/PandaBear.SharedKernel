@@ -1,4 +1,5 @@
 using Aspire.Hosting;
+using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
 using Npgsql;
 using PandaBear.IntegrationTesting;
@@ -14,10 +15,8 @@ internal static class PostgreSqlTestServer
     /// <summary>Names the environment variable that carries the connection string of a server another process owns.</summary>
     internal const string ConnectionStringVariable = "SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING";
 
-    /// <summary>Names the environment variable that tells the owner host where to write its ready file.</summary>
-    internal const string ReadyFileVariable = "SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE";
-
-    private const string ResourceName = "postgres";
+    /// <summary>The name of the PostgreSQL server resource.</summary>
+    internal const string ResourceName = "postgres";
 
     /// <summary>Reads the connection string of a server that another process owns.</summary>
     /// <param name="readEnvironment">Reads an environment variable; returns <see langword="null"/> when it is not set.</param>
@@ -66,8 +65,7 @@ internal static class PostgreSqlTestServer
     /// <returns>The started server. Disposing it stops the container.</returns>
     internal static async Task<StartedPostgreSqlTestServer> Start(IDistributedApplicationTestingBuilder builder, CancellationToken ct)
     {
-        ArgumentNullException.ThrowIfNull(builder);
-        _ = builder.AddPostgres(ResourceName);
+        _ = Add(builder);
 
         var app = await AspireTestApplication.Start(builder, [ResourceName], resourceStartupTimeout: null, ct).ConfigureAwait(false);
         try
@@ -80,6 +78,15 @@ internal static class PostgreSqlTestServer
             await PostgreSqlTestCleanup.Run(initializationFailure, app.DisposeAsync).ConfigureAwait(false);
             throw;
         }
+    }
+
+    /// <summary>Adds the server to <paramref name="builder"/>, so an owner can start it together with services that keep their data on it.</summary>
+    /// <param name="builder">The builder.</param>
+    /// <returns>The server resource builder.</returns>
+    internal static IResourceBuilder<PostgresServerResource> Add(IDistributedApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        return builder.AddPostgres(ResourceName);
     }
 
     private static bool HasHost(string connectionString)

@@ -4,8 +4,8 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Aspire hosting integration for a self-hosted [Umami](https://umami.is) web analytics container with its own PostgreSQL database, and
-the websites in it. Pair it with [`SharedKernel.AspNetCore.WebAnalytics`](../SharedKernel.AspNetCore.WebAnalytics/README.md), which
+Aspire hosting integration for a self-hosted [Umami](https://umami.is) web analytics container with its own PostgreSQL database, or
+a database on a PostgreSQL server that the AppHost already has, and the websites in it. Pair it with [`SharedKernel.AspNetCore.WebAnalytics`](../SharedKernel.AspNetCore.WebAnalytics/README.md), which
 sends page views from the server, so the site needs no tracking script.
 
 ## Usage
@@ -39,6 +39,7 @@ Umami's own connection string is its address alone, which the page-view target r
 
 | Method | Effect |
 | --- | --- |
+| `AddUmami(name, database)` | Umami with its data in an existing database instead of a server of its own; see [On an existing PostgreSQL server](#on-an-existing-postgresql-server). |
 | `AddWebsite(name, domain)` | A website in Umami, shown under it, whose connection string a site references; it is created in Umami when Umami is ready. |
 | `WithWebsiteId(id)` | Uses this website id instead of the name-based one, for a website that exists with another id. |
 | `WithAdminPassword(parameter)` | The `admin` password to sign in with, for a kept Umami whose password was changed. |
@@ -48,6 +49,22 @@ Umami's own connection string is its address alone, which the page-view target r
 
 `UmamiResource.Database` (with its `Parent` server) and `UmamiResource.AppSecretParameter` are there for further configuration, such as
 a PostgreSQL password parameter or pgAdmin.
+
+## On an existing PostgreSQL server
+
+When the AppHost already runs a PostgreSQL server, Umami can keep its data in a database there instead of starting a server of its
+own:
+
+```csharp
+var postgres = builder.AddPostgres("postgres");
+var umami = builder.AddUmami("umami", postgres.AddDatabase("umami-db", "umami"));
+```
+
+Umami gets that database as `DATABASE_URL`, waits until it is healthy and creates its tables in it on its first start, so give it a
+database of its own; the other databases on the server are untouched. Umami 3.4.1 supports PostgreSQL 12.14 and later, the server's
+image is the caller's choice. Everything else is as with `AddUmami(name)`: the app secret, the environment, the health check, the
+websites. The server belongs to whoever added it, so `WithDataVolume` and `WithDataBindMount` on Umami throw
+`InvalidOperationException`; keep the data with the server's own `WithDataVolume` or `WithDataBindMount`.
 
 ## Nothing to set up
 

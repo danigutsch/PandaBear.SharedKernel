@@ -111,7 +111,7 @@ public static class SelectionCommandTests
         repository.AddProject("tests/Host/Host.csproj", """<Project />""");
         var processes = new ProcessLog(SelectionTestFiles.Git(diff: "src/Core/Changed.cs\0"));
         const string hosted = """{ "name": "hosted", "projects": ["tests/Hosted.Tests/Hosted.Tests.csproj"]""";
-        const string service = """, "service": { "project": "tests/Host/Host.csproj", "readyFileVariable": "APP_READY_FILE", "valueVariable": "APP_VALUE" }""";
+        const string service = """, "service": { "project": "tests/Host/Host.csproj", "readyFileVariable": "APP_READY_FILE", "valueVariables": ["APP_VALUE"] }""";
 
         // Act
         var without = await SelectionTestFiles.SelectedFiles(repository, processes, "[" + LibrarySlice + ", " + hosted + " }]", "without", BaseRevision, ct);

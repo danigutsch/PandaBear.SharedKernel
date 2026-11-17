@@ -8,11 +8,11 @@ public sealed class PostgreSqlTestServerBorrowTests
     {
         // Act
         var connectionStringVariable = PostgreSqlTestServer.ConnectionStringVariable;
-        var readyFileVariable = PostgreSqlTestServer.ReadyFileVariable;
+        var readyFileVariable = TestServices.Host.ReadyFile.Variable;
 
         // Assert
         connectionStringVariable.ShouldBe("SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING", "the CI tool exports this name to the test phase");
-        readyFileVariable.ShouldBe("SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE", "the CI tool passes this name to the owner host");
+        readyFileVariable.ShouldBe("SHAREDKERNEL_TESTING_SERVICES_READY_FILE", "the CI tool passes this name to the test-services host");
     }
 
     [Theory]

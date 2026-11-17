@@ -106,8 +106,8 @@ already owns its kind; add a package only when a new kind needs a dependency tha
 | `SharedKernel.Testing.Contracts` | Contract test marker and trait contracts | No SharedKernel package |
 
 Projects under `tests/` that are not packable (`SharedKernel.Testing.Packaging`, `SharedKernel.CodeFixes.Testing`,
-`SharedKernel.Testing.Integration`, `SharedKernel.Testing.Scenarios`, `SharedKernel.Testing.System`, and
-`SharedKernel.Npgsql.Testing.Host`) serve this repository's own suites and are not part of the public surface. Assertion
+`SharedKernel.Testing.Integration`, `SharedKernel.Testing.Scenarios`, `SharedKernel.Testing.System`,
+`SharedKernel.Aspire.Hosting.Umami.Testing`, and `SharedKernel.TestServices.Host`) serve this repository's own suites and are not part of the public surface. Assertion
 packages never depend on a browser, web, or database package, so a consumer takes only the assertions it uses.
 
 
@@ -122,7 +122,7 @@ packable project has no such test project and no entry in the reviewed exception
 | Kind | Direct owner | Also required |
 | --- | --- | --- |
 | Library | A `SharedKernel.<Name>.Tests` project that exercises its public behavior | Public API baselines |
-| Provider module (PostgreSQL, ClamAV, K6) | A test project that runs against the real provider or its Aspire resource | The shared server rules in [development guidance](development.md#postgresql-test-servers) |
+| Provider module (PostgreSQL, ClamAV, K6) | A test project that runs against the real provider or its Aspire resource | The shared service rules in [development guidance](development.md#shared-test-services) |
 | Analyzer | `SharedKernel.<Name>.Analyzers.Tests` with diagnostic and no-diagnostic cases | Repository convention tests for the package layout |
 | Source generator | `SharedKernel.<Name>.GeneratorTests` with snapshot and hint-name assertions | A package-consumption test that builds a fresh project from the packed package |
 | Code fix | `SharedKernel.<Name>.CodeFixes.Tests` with before and after sources | Code-fix runner coverage where the fix ships in a testing package |

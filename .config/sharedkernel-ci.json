@@ -28,8 +28,9 @@
     "requireCoveringTests": false,
     "testPaths": [
       {
-        "paths": ["tests/SharedKernel.Npgsql.Testing.Host/*"],
+        "paths": ["tests/SharedKernel.TestServices.Host/*"],
         "tests": [
+          "tests/SharedKernel.Aspire.Hosting.Umami.Tests/SharedKernel.Aspire.Hosting.Umami.Tests.csproj",
           "tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj",
           "tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj",
           "tests/SharedKernel.Npgsql.Tests/SharedKernel.Npgsql.Tests.csproj"
@@ -38,6 +39,7 @@
       {
         "paths": ["src/SharedKernel/SharedKernel.CI/ServiceConfiguration.cs", "src/SharedKernel/SharedKernel.CI/ServiceHost.cs"],
         "tests": [
+          "tests/SharedKernel.Aspire.Hosting.Umami.Tests/SharedKernel.Aspire.Hosting.Umami.Tests.csproj",
           "tests/SharedKernel.CI.Tests/SharedKernel.CI.Tests.csproj",
           "tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj",
           "tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj",
@@ -65,16 +67,18 @@
       }
     },
     {
-      "name": "postgres",
+      "name": "services",
       "projects": [
+        "tests/SharedKernel.Aspire.Hosting.Umami.Tests/SharedKernel.Aspire.Hosting.Umami.Tests.csproj",
         "tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj",
         "tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj",
         "tests/SharedKernel.Npgsql.Tests/SharedKernel.Npgsql.Tests.csproj"
       ],
       "service": {
-        "project": "tests/SharedKernel.Npgsql.Testing.Host/SharedKernel.Npgsql.Testing.Host.csproj",
-        "readyFileVariable": "SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE",
-        "valueVariable": "SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING",
+        "project": "tests/SharedKernel.TestServices.Host/SharedKernel.TestServices.Host.csproj",
+        "readyFileVariable": "SHAREDKERNEL_TESTING_SERVICES_READY_FILE",
+        "valueVariables": ["SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING", "SHAREDKERNEL_TESTING_UMAMI_CONNECTION_STRING"],
+        "readyTimeoutSeconds": 600,
         "stopTimeoutSeconds": 180
       }
     }

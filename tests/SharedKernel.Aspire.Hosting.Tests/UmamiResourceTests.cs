@@ -192,6 +192,89 @@ public sealed class UmamiResourceTests
         umami.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem().Port.ShouldBe(3300);
     }
 
+    [Fact]
+    public void AddUmami_on_an_existing_database_keeps_its_data_there_and_adds_no_server_of_its_own()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var server = builder.AddPostgres("shared-postgres");
+        var database = server.AddDatabase("analytics", "umami");
+
+        // Act
+        var umami = builder.AddUmami("umami", database);
+
+        // Assert
+        umami.Resource.Database.ShouldBeSameAs(database.Resource);
+        builder.Resources.OfType<PostgresServerResource>().ShouldHaveSingleItem().ShouldBeSameAs(server.Resource);
+        builder.Resources.OfType<PostgresDatabaseResource>().ShouldHaveSingleItem().ShouldBeSameAs(database.Resource);
+        umami.Resource.Annotations.OfType<WaitAnnotation>().ShouldContain(wait => ReferenceEquals(wait.Resource, database.Resource));
+        umami.Resource.AppSecretParameter.Name.ShouldBe("umami-app-secret");
+    }
+
+    [Fact]
+    public async Task AddUmami_on_an_existing_database_gives_umami_the_URL_of_that_database_on_its_server()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var server = builder.AddPostgres("shared-postgres");
+        var umami = builder.AddUmami("umami", server.AddDatabase("analytics", "umami_data"));
+        AllocatedEndpoints.Allocate(server.Resource, "tcp", 5432);
+        AllocatedEndpoints.AllocateInContainerNetwork(server.Resource, "tcp", "shared-postgres", 5432);
+
+        // Act
+        var variables = await EnvironmentVariables.Of(umami.Resource);
+
+        // Assert
+        var databaseUrl = new Uri(variables["DATABASE_URL"]);
+        databaseUrl.Host.ShouldBe("shared-postgres", "Umami reaches the shared server in the container network");
+        databaseUrl.AbsolutePath.ShouldBe("/umami_data");
+    }
+
+    [Fact]
+    public void AddUmami_on_an_existing_database_refuses_a_data_volume_on_the_server_it_does_not_own()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var server = builder.AddPostgres("shared-postgres");
+        var umami = builder.AddUmami("umami", server.AddDatabase("analytics"));
+
+        // Act
+        var keep = () => umami.WithDataVolume("umami-data");
+
+        // Assert
+        keep.ShouldThrow<InvalidOperationException>().Message.ShouldContain("shared-postgres", StringComparison.Ordinal);
+        server.Resource.Annotations.OfType<ContainerMountAnnotation>().ShouldBeEmpty("the server's owner decides where its data lives");
+    }
+
+    [Fact]
+    public void AddUmami_on_an_existing_database_refuses_a_data_bind_mount_on_the_server_it_does_not_own()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var server = builder.AddPostgres("shared-postgres");
+        var umami = builder.AddUmami("umami", server.AddDatabase("analytics"));
+
+        // Act
+        var keep = () => umami.WithDataBindMount(Path.Combine(Path.GetTempPath(), "umami-data"));
+
+        // Assert
+        keep.ShouldThrow<InvalidOperationException>().Message.ShouldContain("shared-postgres", StringComparison.Ordinal);
+        server.Resource.Annotations.OfType<ContainerMountAnnotation>().ShouldBeEmpty("the server's owner decides where its data lives");
+    }
+
+    [Fact]
+    public void AddUmami_rejects_a_null_database()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+
+        // Act
+        var add = () => builder.AddUmami("umami", null!);
+
+        // Assert
+        add.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("database");
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData(" ")]

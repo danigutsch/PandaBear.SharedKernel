@@ -14,7 +14,7 @@ public sealed class SliceServiceProcessTests
 
     // The stop takes longer than the two seconds that System.CommandLine allows a cancelled invocation by default, as the
     // real host's does while its Aspire application removes the container.
-    private static readonly string SlowToStop = FakeServiceHost.Ready(ServiceRunScope.Value)
+    private static readonly string SlowToStop = ServiceRunScope.Ready
         + FakeServiceHost.WaitForEndOfInput
         + "sleep 4\n: > \"$FAKE_MARKERS/service.stopped\"\n";
 
@@ -45,7 +45,7 @@ public sealed class SliceServiceProcessTests
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        using var scope = new ServiceToolProcess(FakeServiceHost.Ready(ServiceRunScope.Value) + FakeServiceHost.WaitForEndOfInput, "exit 0\n");
+        using var scope = new ServiceToolProcess(ServiceRunScope.Ready + FakeServiceHost.WaitForEndOfInput, "exit 0\n");
         using var tool = scope.Start(new Dictionary<string, string?>
         {
             ["GH_TOKEN"] = "token-canary",
