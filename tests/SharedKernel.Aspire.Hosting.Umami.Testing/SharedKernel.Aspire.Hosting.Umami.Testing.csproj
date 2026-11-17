@@ -13,6 +13,7 @@
         <ProjectReference Include="../../src/SharedKernel/SharedKernel.Aspire.Hosting.Umami/SharedKernel.Aspire.Hosting.Umami.csproj" />
         <ProjectReference Include="../../src/SharedKernel/SharedKernel.IntegrationTesting/SharedKernel.IntegrationTesting.csproj" />
         <InternalsVisibleTo Include="SharedKernel.Aspire.Hosting.Umami.Tests" />
+        <InternalsVisibleTo Include="SharedKernel.TestServices.Host" />
     </ItemGroup>
 
 </Project>

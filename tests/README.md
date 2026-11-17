@@ -6,10 +6,32 @@ Provider integration tests require a working local container runtime. Preserve m
 
 Coverage uses the existing `coverlet.MTP` extension; collection and its limits are documented in the root README. No hosted coverage percentage or service is implied. The two explicitly packaged test-support projects have their own package README files; ordinary test projects remain non-packable.
 
-## Database test assemblies
+## Shared test services
 
-`SharedKernel.Npgsql.Tests`, `SharedKernel.EventSourcing.Npgsql.Tests` and `SharedKernel.EntityFrameworkCore.Tests` need PostgreSQL. Their fixtures start nothing until a test needs a database, and then borrow a server or start one of their own (see `SharedKernel.Npgsql.Testing/README.md`). The three stay separate assemblies and run in parallel.
+`SharedKernel.Npgsql.Tests`, `SharedKernel.EventSourcing.Npgsql.Tests` and `SharedKernel.EntityFrameworkCore.Tests` need PostgreSQL;
+`SharedKernel.Aspire.Hosting.Umami.Tests` needs Umami with a website. Their fixtures start nothing until a test needs the service, and
+then borrow it or start one of their own (see `SharedKernel.Npgsql.Testing/README.md` and
+`SharedKernel.Aspire.Hosting.Umami.Testing/README.md`). The assemblies stay separate and run in parallel.
 
-- CI runs them together in the `postgres` slice (`sharedkernel-ci run --slice postgres`). The tool starts the owner host `SharedKernel.Npgsql.Testing.Host` once, waits for its ready file, runs the tests with the server connection string in `SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING`, and stops the host afterwards, so a complete run creates one PostgreSQL container.
-- A plain `dotnet test --solution` or `dotnet test --project` starts no host. Each assembly that runs a test that needs a database starts one server of its own on first demand, so a complete run creates up to one container per assembly, and a run that selects no such test creates none.
-- To run assemblies against one server by hand, follow what the tool does: start `dotnet SharedKernel.Npgsql.Testing.Host.dll` from the Release build with standard input from a pipe that you keep open and `SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE` set to a new file path in a private directory; wait for that file, which holds the line `SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING=<connection string>`; export that variable with the rest of the line as its value for the test run only; then close the pipe, or send SIGTERM, and wait for the host to exit, which removes the container. A second signal ends the host at once, and so does a kill; Aspire's DCP process runs detached and then removes the container within seconds, so that is the way out of a stop that hangs. While Aspire checks for a container runtime the host does not look at stop requests, which takes about a minute when there is none. The host prints neither the connection string nor the password, and exits 1 without a ready file when the server does not start. The borrowed server must be one that Aspire started: `AspireTestApplicationTests` asserts that it listens on a port in DCP's range, so a PostgreSQL on port 5432 fails that test. Aspire hands the generated password to the container runtime as an `-e` argument, so other local users of a shared machine can read it in the process list for about a second while the container is created.
+- CI runs them together in the `services` slice (`sharedkernel-ci run --slice services`). The tool starts the host
+  `SharedKernel.TestServices.Host` once, waits for its ready file, runs the tests with the PostgreSQL server connection string in
+  `SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING` and the Umami website connection string in
+  `SHAREDKERNEL_TESTING_UMAMI_CONNECTION_STRING`, and stops the host afterwards, so a complete run creates one PostgreSQL container
+  and one Umami container, which keeps its data in a database on that server.
+- A plain `dotnet test --solution` or `dotnet test --project` starts no host. Each assembly that runs a test that needs a service
+  starts one of its own on first demand, once for the assembly, so a complete run creates up to one PostgreSQL container per
+  PostgreSQL assembly, and one Umami container with a PostgreSQL container of its own for the Umami assembly; a run that selects no
+  such test creates none.
+- To run assemblies against one instance of each service by hand, follow what the tool does: start `dotnet
+  SharedKernel.TestServices.Host.dll` from the Release build with standard input from a pipe that you keep open and
+  `SHAREDKERNEL_TESTING_SERVICES_READY_FILE` set to a new file path in a private directory; wait for that file, which holds one
+  `NAME=value` line for each of the two variables; export each variable with the rest of its line as its value for the test run
+  only; then close the pipe, or send SIGTERM, and wait for the host to exit, which removes the containers. A second signal ends the
+  host at once, and so does a kill; Aspire's DCP process runs detached and then removes the containers within seconds, so that is the
+  way out of a stop that hangs. While Aspire checks for a container runtime the host does not look at stop requests, which takes
+  about a minute when there is none. The host prints no value it hands over and no password. It exits 1 without a ready file when the
+  PostgreSQL server does not start; when Umami does not start, it writes why to standard error and hands over `Unavailable` for
+  Umami, so only the Umami tests fail. The borrowed server must be one that Aspire started: `AspireTestApplicationTests` asserts that
+  it listens on a port in DCP's range, so a PostgreSQL on port 5432 fails that test. Aspire hands the generated password to the
+  container runtime as an `-e` argument, so other local users of a shared machine can read it in the process list for about a
+  second while the container is created.

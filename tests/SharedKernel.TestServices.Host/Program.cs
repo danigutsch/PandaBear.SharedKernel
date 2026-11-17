@@ -1,17 +1,19 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Aspire.Hosting.Testing;
+using PandaBear.Aspire.Hosting.Umami.Testing;
 using PandaBear.IntegrationTesting;
 
-namespace PandaBear.Npgsql.Testing.Host;
+namespace PandaBear.TestServices.Host;
 
 /// <summary>
-/// Owns the one PostgreSQL server that the database test assemblies of a CI slice borrow. The CI tool starts it with
-/// standard input redirected and <see cref="PostgreSqlTestServer.ReadyFileVariable"/> set, waits for the ready file,
-/// runs the tests with the connection string it holds, and then closes standard input. The host stops the server and
-/// exits 0 when standard input ends or fails or SIGTERM, SIGINT or SIGHUP arrives; a second signal ends the process at
-/// once, and a failure to start the server exits 1 and leaves no ready file. It never prints the connection string, which
-/// carries the password.
+/// Owns the services that the test assemblies of a CI slice borrow, one of each: the PostgreSQL server, and Umami with its
+/// test website on that server (see <see cref="SharedTestServices"/>). The CI tool starts it with standard input redirected and
+/// <see cref="ReadyFile.Variable"/> set, waits for the ready file, runs the tests with the values it holds, one per variable,
+/// and then closes standard input. The host stops the services and exits 0 when standard input ends or fails or SIGTERM,
+/// SIGINT or SIGHUP arrives; a second signal ends the process at once. A failure to start the PostgreSQL server exits 1 and
+/// leaves no ready file; Umami that does not start is reported on standard error and handed over as unavailable. It never
+/// prints a value it hands over, which can carry a password.
 /// </summary>
 internal static class Program
 {
@@ -30,16 +32,17 @@ internal static class Program
         try
         {
             var readyFile = ReadyFile.Resolve(Environment.GetEnvironmentVariable);
-            await using var server = await PostgreSqlTestServer.Start(CreateBuilder(), shutdown.Token).ConfigureAwait(false);
-            ReadyFile.Publish(readyFile, [(PostgreSqlTestServer.ConnectionStringVariable, server.ConnectionString)]);
-            await Console.Out.WriteLineAsync("The PostgreSQL test server accepts connections and the ready file is written.").ConfigureAwait(false);
+            await using var services = await SharedTestServices.Start(CreateBuilder(), Console.Error, shutdown.Token).ConfigureAwait(false);
+            ReadyFile.Publish(readyFile, services.Values);
+            var handedOver = string.Join(", ", services.Values.Select(static value => value.Value == UmamiTestWebsite.Unavailable ? value.Variable + " (unavailable)" : value.Variable));
+            await Console.Out.WriteLineAsync($"The test services are ready and the ready file hands over {handedOver}.").ConfigureAwait(false);
             await shutdown.Wait().ConfigureAwait(false);
-            await Console.Out.WriteLineAsync($"Stopping the PostgreSQL test server: {shutdown.Reason}.").ConfigureAwait(false);
+            await Console.Out.WriteLineAsync($"Stopping the test services: {shutdown.Reason}.").ConfigureAwait(false);
             return 0;
         }
         catch (OperationCanceledException) when (shutdown.Token.IsCancellationRequested)
         {
-            await Console.Out.WriteLineAsync($"Stopped before the PostgreSQL test server was ready: {shutdown.Reason}.").ConfigureAwait(false);
+            await Console.Out.WriteLineAsync($"Stopped before the test services were ready: {shutdown.Reason}.").ConfigureAwait(false);
             return 0;
         }
         catch (Exception failure)

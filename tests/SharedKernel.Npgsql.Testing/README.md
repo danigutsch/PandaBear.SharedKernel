@@ -59,8 +59,9 @@ the call stack to find generated DCP metadata; the fixture calls it only when it
 
 Several assemblies can borrow one server. Whoever runs the tests starts a PostgreSQL server, exports its
 connection string in the variable for the test processes, and removes the server after the run. This
-repository does that in CI for its three database test assemblies with a small host project that is not part
-of the package (see `tests/README.md` in the repository).
+repository does that in CI for its three database test assemblies with its test-services host, a project that
+is not part of the package and that also keeps the shared Umami's database on the same server (see
+`tests/README.md` in the repository).
 
 An application that owns its test infrastructure can reuse the building blocks instead of an assembly fixture
 of its own: `OnDemandResource<T>` starts the infrastructure on first use and shares it among concurrent tests,

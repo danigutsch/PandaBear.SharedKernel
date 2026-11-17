@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace PandaBear.Npgsql.Testing.Host;
+namespace PandaBear.TestServices.Host;
 
 /// <summary>
 /// The file in which the host tells its owner that its services are ready: it holds one UTF-8 <c>NAME=value</c> line for each
@@ -9,6 +9,9 @@ namespace PandaBear.Npgsql.Testing.Host;
 /// </summary>
 internal static class ReadyFile
 {
+    /// <summary>Names the environment variable that tells the host where to write its ready file.</summary>
+    internal const string Variable = "SHAREDKERNEL_TESTING_SERVICES_READY_FILE";
+
     private static readonly UTF8Encoding Utf8WithoutByteOrderMark = new(encoderShouldEmitUTF8Identifier: false);
 
     /// <summary>Reads where the ready file goes and refuses a location that would fail or mislead after the server started.</summary>
@@ -21,9 +24,9 @@ internal static class ReadyFile
     /// </exception>
     internal static string Resolve(Func<string, string?> readEnvironment)
     {
-        var path = readEnvironment(PostgreSqlTestServer.ReadyFileVariable)?.Trim();
+        var path = readEnvironment(Variable)?.Trim();
         return string.IsNullOrEmpty(path) || !Path.IsPathFullyQualified(path) || !Directory.Exists(Path.GetDirectoryName(path)) || File.Exists(path)
-            ? throw new InvalidOperationException($"The environment variable {PostgreSqlTestServer.ReadyFileVariable} must name a file that does not exist yet, by an absolute path in an existing directory.")
+            ? throw new InvalidOperationException($"The environment variable {Variable} must name a file that does not exist yet, by an absolute path in an existing directory.")
             : path;
     }
 

@@ -101,7 +101,7 @@ public sealed class CiConfigurationConventionTests
     }
 
     [Fact]
-    public async Task The_postgres_slice_shares_one_server_through_the_variables_that_the_test_assemblies_and_the_host_read()
+    public async Task The_services_slice_shares_one_instance_of_each_service_through_the_variables_that_the_test_assemblies_and_the_host_read()
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
@@ -110,21 +110,27 @@ public sealed class CiConfigurationConventionTests
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
 
         // Assert
-        var postgres = configuration.Slices.ShouldHaveSingleItem(static slice => slice.Name == "postgres");
-        postgres.Projects.ShouldBe(
+        var services = configuration.Slices.ShouldHaveSingleItem(static slice => slice.Service is not null);
+        services.Name.ShouldBe("services");
+        services.Projects.ShouldBe(
         [
+            "tests/SharedKernel.Aspire.Hosting.Umami.Tests/SharedKernel.Aspire.Hosting.Umami.Tests.csproj",
             "tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj",
             "tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj",
             "tests/SharedKernel.Npgsql.Tests/SharedKernel.Npgsql.Tests.csproj",
         ]);
-        var service = postgres.Service.ShouldNotBeNull();
-        service.Project.ShouldBe("tests/SharedKernel.Npgsql.Testing.Host/SharedKernel.Npgsql.Testing.Host.csproj");
-        service.ReadyFileVariable.ShouldBe("SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE", "The names are the contract between the CI tool, the owner host, and the test assemblies.");
-        service.ValueVariables.ShouldBe(["SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING"], "The names are the contract between the CI tool, the owner host, and the test assemblies.");
-        service.ReadyTimeoutSeconds.ShouldBe(ServiceConfiguration.DefaultReadyTimeoutSeconds);
+        var service = services.Service.ShouldNotBeNull();
+        service.Project.ShouldBe("tests/SharedKernel.TestServices.Host/SharedKernel.TestServices.Host.csproj");
+        service.ReadyFileVariable.ShouldBe("SHAREDKERNEL_TESTING_SERVICES_READY_FILE", "The names are the contract between the CI tool, the host, and the test assemblies.");
+        service.ValueVariables.ShouldBe(
+            ["SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING", "SHAREDKERNEL_TESTING_UMAMI_CONNECTION_STRING"],
+            "The names are the contract between the CI tool, the host, and the test assemblies.");
+        service.ReadyTimeoutSeconds.ShouldBe(
+            600,
+            "The host hands over PostgreSQL after up to 90 seconds and Umami after up to five more minutes, so the tool must not give up before the host reports an Umami that did not start.");
         service.StopTimeoutSeconds.ShouldBe(
             180,
-            "The stop timeout outlasts the two minutes that the container runtime may take to remove the server, because the host removes its container while it exits and a kill earlier would interrupt that.");
+            "The stop timeout outlasts the two minutes that the container runtime may take to remove the containers, because the host removes them while it exits and a kill earlier would interrupt that.");
     }
 
     [Fact]

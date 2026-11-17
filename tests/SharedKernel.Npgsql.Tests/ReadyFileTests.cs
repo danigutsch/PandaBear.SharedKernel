@@ -1,5 +1,5 @@
 using System.Text;
-using PandaBear.Npgsql.Testing.Host;
+using PandaBear.TestServices.Host;
 
 namespace PandaBear.Npgsql.Tests;
 
@@ -23,7 +23,7 @@ public sealed class ReadyFileTests : IDisposable
         var failure = resolve.ShouldThrow<InvalidOperationException>();
 
         // Assert
-        failure.Message.ShouldContain(PostgreSqlTestServer.ReadyFileVariable, "the message must tell the reader which variable to set");
+        failure.Message.ShouldContain(ReadyFile.Variable, "the message must tell the reader which variable to set");
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public sealed class ReadyFileTests : IDisposable
         var failure = resolve.ShouldThrow<InvalidOperationException>();
 
         // Assert
-        failure.Message.ShouldContain(PostgreSqlTestServer.ReadyFileVariable, "the message must tell the reader which variable to fix");
+        failure.Message.ShouldContain(ReadyFile.Variable, "the message must tell the reader which variable to fix");
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public sealed class ReadyFileTests : IDisposable
         var failure = resolve.ShouldThrow<InvalidOperationException>();
 
         // Assert
-        failure.Message.ShouldContain(PostgreSqlTestServer.ReadyFileVariable, "the message must tell the reader which variable to fix");
+        failure.Message.ShouldContain(ReadyFile.Variable, "the message must tell the reader which variable to fix");
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public sealed class ReadyFileTests : IDisposable
         var failure = resolve.ShouldThrow<InvalidOperationException>();
 
         // Assert
-        failure.Message.ShouldContain(PostgreSqlTestServer.ReadyFileVariable, "the message must tell the reader which variable to fix");
+        failure.Message.ShouldContain(ReadyFile.Variable, "the message must tell the reader which variable to fix");
         File.ReadAllText(path).ShouldBe("Host=stale;Password=stale-secret", "a refused file is left alone");
     }
 

@@ -160,7 +160,6 @@
   <Project Path="tests/SharedKernel.Messaging.Protobuf.Tests/SharedKernel.Messaging.Protobuf.Tests.csproj" />
   <Project Path="tests/SharedKernel.Messaging.Tests/SharedKernel.Messaging.Tests.csproj" />
   <Project Path="tests/SharedKernel.Npgsql.Testing/SharedKernel.Npgsql.Testing.csproj" />
-  <Project Path="tests/SharedKernel.Npgsql.Testing.Host/SharedKernel.Npgsql.Testing.Host.csproj" />
   <Project Path="tests/SharedKernel.Npgsql.Tests/SharedKernel.Npgsql.Tests.csproj" />
   <Project Path="tests/SharedKernel.ObjectStorage.S3.Tests/SharedKernel.ObjectStorage.S3.Tests.csproj" />
   <Project Path="tests/SharedKernel.Observability.Tests/SharedKernel.Observability.Tests.csproj" />
@@ -175,6 +174,7 @@
   <Project Path="tests/SharedKernel.ServiceDefaults.Tests/SharedKernel.ServiceDefaults.Tests.csproj" />
   <Project Path="tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.Style.CodeFixes.Tests/SharedKernel.Style.CodeFixes.Tests.csproj" />
+  <Project Path="tests/SharedKernel.TestServices.Host/SharedKernel.TestServices.Host.csproj" />
   <Project Path="tests/SharedKernel.Testing.Analyzers.Tests/SharedKernel.Testing.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.Testing.CodeFixRunner.Tests/SharedKernel.Testing.CodeFixRunner.Tests.csproj" />
   <Project Path="tests/SharedKernel.Testing.GeneratorTests/SharedKernel.Testing.GeneratorTests.csproj" />
