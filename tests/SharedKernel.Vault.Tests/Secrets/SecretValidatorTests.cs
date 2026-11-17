@@ -153,4 +153,19 @@ public sealed class SecretValidatorTests
         valid.ShouldBeTrue();
         invalid.ShouldBeFalse();
     }
+
+    [Fact]
+    public void An_age_identity_in_mixed_case_is_not_a_key_because_bech32_and_age_refuse_it()
+    {
+        // Arrange
+        string key = Bech32Reference.Encode("age-secret-key-", TestSecrets.Bytes(4, 32)).ToUpperInvariant();
+        string mixed = key[..^1] + char.ToLowerInvariant(key[^1]);
+
+        // Act
+        var valid = Bech32.IsValidAgeSecretKey(mixed);
+
+        // Assert
+        char.IsAsciiLetter(key[^1]).ShouldBeTrue();
+        valid.ShouldBeFalse();
+    }
 }
