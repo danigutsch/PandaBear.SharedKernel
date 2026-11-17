@@ -13,7 +13,7 @@ SharedKernel seed and should stay reusable outside this repository.
 - Unique DCP resource-name suffixes for test-created Aspire AppHosts.
 - Aspire testing defaults that disable the dashboard and randomize resource ports for concurrent test hosts.
 - Direct container endpoints with Aspire-allocated dynamic ports; project endpoints retain Aspire proxies.
-- Resource health waits with explicit timeouts and cancellation.
+- Resource health and state waits with explicit timeouts and cancellation, and resource lookups on the running application model.
 - A two-minute host shutdown budget aligned with DCP resource cleanup, with cleanup failures preserved.
 - PostgreSQL public-schema resets for known-baseline tests.
 - Start-on-first-demand sharing of an expensive test resource with `OnDemandResource<T>`.
@@ -89,6 +89,30 @@ public sealed class SystemFixture : AspireAppHostFixture<Projects.MyApp_AppHost>
   retrying while a stopped process still holds a file. `TestWorkspace.Create(name, releaseFiles)` runs `releaseFiles` once before the
   delete; for SQLite files in the folder pass `SqliteConnection.ClearAllPools`, because pooled connections keep the files open and Windows
   refuses to delete an open file.
+
+## Resources of a running application
+
+A started `AspireTestApplication` answers for the resources of its application model by name, without handing out the
+`DistributedApplication`:
+
+```csharp
+var app = await fixture.Application("analytics-off", ct);
+app.HasResource("analytics").ShouldBeFalse();
+
+var website = await app.WaitForState("website", KnownResourceStates.Running, TimeSpan.FromMinutes(3), ct);
+var connectionString = await app.GetConnectionString("website", ct);
+```
+
+- `HasResource(name)` tells whether the model has a resource, started or not, so a test of a setting that leaves resources out
+  asserts that they are not there. Names are compared as Aspire compares them, ignoring case; `StartResource` and `WaitForState`
+  find resources the same way.
+- `WaitForState(name, state, timeout, ct)` waits until a resource reaches a state of `KnownResourceStates`, healthy or not, and returns
+  at once when it is in that state already. Use it where the state is what the test needs, such as a resource without a health check
+  that is `Running`; use `WaitForHealthy` to wait for health. It returns the resource's `ResourceEvent`, whose snapshot holds the state,
+  health, URLs and properties. A resource the model does not have throws `InvalidOperationException` at once; a wait that runs out of
+  time throws `TimeoutException` with the resource's state and last log lines.
+- `GetConnectionString(name, ct)` reads a resource's connection string. A resource the model does not have, or one without a
+  connection string, throws `ArgumentException`.
 
 ## Reading the application model
 
