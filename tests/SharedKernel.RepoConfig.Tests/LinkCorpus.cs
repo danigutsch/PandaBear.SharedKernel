@@ -2,7 +2,8 @@ namespace PandaBear.RepoConfig.Tests;
 
 /// <summary>
 /// A repository seeded with one violation per link and line-ending rule. The expected findings are the output of the
-/// Python link linter and line-ending script that <c>verify-links</c> and <c>verify-line-endings</c> reproduce.
+/// Python link linter and line-ending script that <c>verify-links</c> and <c>verify-line-endings</c> reproduce, except
+/// for heading anchors, which follow GitHub's.
 /// </summary>
 internal static class LinkCorpus
 {
@@ -37,6 +38,7 @@ internal static class LinkCorpus
         "- docs/headings.md:16: missing Markdown anchor 'version-12--cafe' in docs/headings.md",
         "- docs/headings.md:20: missing Markdown anchor 'fenced' in docs/headings.md",
         "- docs/headings.md:24: missing Markdown anchor 'nope' in sub/target.md",
+        "- docs/headings.md:25: missing Markdown anchor 'version-1.2--caf' in docs/headings.md",
         "- docs/parens.md:1: missing local link target: file(1",
         $"- docs/policy.md:1: direct GitHub issue/PR link is not allowed; {Tracker}",
         $"- docs/policy.md:2: direct GitHub issue/PR link is not allowed; {Tracker}",
@@ -77,11 +79,11 @@ internal static class LinkCorpus
     [
         (".gitattributes", "* text=auto eol=lf\n*.md text eol=lf\n*.txt text eol=lf\n*.cmd text eol=crlf\n*.png binary\n"),
         (".config/sharedkernel-repo.json", Configuration + "\n"),
-        ("README.md", "# Corpus\n\nSee [headings](docs/headings.md#version-1.2--caf) and [license](LICENSE.txt).\n"),
+        ("README.md", "# Corpus\n\nSee [headings](docs/headings.md#version-12--caf\u00e9) and [license](LICENSE.txt).\n"),
         ("LICENSE.txt", "Tracked separately in #945.\n"),
         ("docs/headings.md", "# Version 1.2 \u2014 Caf\u00e9\n\n#hashtag line\n\n# Dup\n\n# Dup\n\n## <b>Tagged</b> `code` *Emph*\n\n```text\n# Fenced\n```\n\n"
-            + "- [ok](#version-1.2--caf)\n- [ascii only](#version-12--cafe)\n- [hashtag](#hashtag-line)\n- [dup](#dup-1)\n- [upper](#DUP)\n- [fenced](#fenced)\n"
-            + "- [tagged](#tagged-code-emph)\n- [encoded](#version-1.2%2D%2Dcaf)\n- [other file](sub/target.md#target-heading)\n- [other missing](sub/target.md#nope)\n"),
+            + "- [ok](#version-12--caf\u00e9)\n- [ascii only](#version-12--cafe)\n- [hashtag](#hashtag-line)\n- [dup](#dup-1)\n- [upper](#DUP)\n- [fenced](#fenced)\n"
+            + "- [tagged](#tagged-code-emph)\n- [encoded](#version-12%2D%2Dcaf%C3%A9)\n- [other file](sub/target.md#target-heading)\n- [other missing](sub/target.md#nope)\n- [python anchor](#version-1.2--caf)\n"),
         ("docs/sub/target.md", "# Target heading\n"),
         ("docs/bom.md", "\ufeff# Title\n\n[title](#title)\n"),
         ("docs/crlf.md", "# Crlf\r\n\r\n[x](missing-crlf.md)\r\nline\rcr\r[x](missing-cr.md)\n\f[x](missing-ff.md)\n"),
