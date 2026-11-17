@@ -45,5 +45,5 @@ Module README files beside source own consumer usage and examples. Samples and b
 - [Packages tool](adr/20261108-packages-tool.md)
 - [Package advisories and release dates](adr/20261109-package-advisories.md)
 - [Socket-free check lane](adr/20261109-socket-free-check-lane.md)
-- [Tool engines and thin wrappers](adr/20261115-tool-engines-and-thin-wrappers.md)
 - [Secrets engine and tool](adr/20261109-secrets-engine.md)
+- [Tool engines and thin wrappers](adr/20261115-tool-engines-and-thin-wrappers.md)

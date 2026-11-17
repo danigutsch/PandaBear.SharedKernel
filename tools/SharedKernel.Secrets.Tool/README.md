@@ -4,10 +4,11 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Generates [age](https://age-encryption.org) identities, encrypts and decrypts [SOPS](https://getsops.io) files, and checks that
-every encrypted file in a repository is encrypted to exactly the recipients of its creation rule. It is a thin command line over
-`PandaBear.SharedKernel.Secrets`. **Secrets are never arguments**: plaintext travels on standard input and output only, and the
-programs it runs get no environment except `LC_ALL=C` and, for `sops`, the path in `SOPS_AGE_KEY_FILE`. Every `sops` call passes `--config /dev/null` and starts in an empty directory, so a `.sops.yaml` in the repository cannot change how data is encrypted.
+Generates [age](https://age-encryption.org) identities; encrypts, decrypts, and edits [SOPS](https://getsops.io) files; updates
+their recipients and rotates their data keys; and checks that every encrypted file in a repository is encrypted to exactly the
+recipients of its creation rule. It is a thin command line over `PandaBear.SharedKernel.Secrets` and its age and sops providers. **Secrets are never arguments**: plaintext travels on standard input and output only, and the
+programs it runs get no environment except `LC_ALL=C` and, for `sops`, the path in `SOPS_AGE_KEY_FILE` (and for `edit`, the
+editor and the terminal variables listed below). No program ever gets a forge token such as `GH_TOKEN`. Every `sops` call passes `--config /dev/null` and starts in an empty directory, so a `.sops.yaml` in the repository cannot change how data is encrypted.
 
 ## Prerequisites
 
@@ -43,6 +44,11 @@ sharedkernel-secrets recipients list secrets/app.sops.yaml
 sharedkernel-secrets recipients check secrets/app.sops.yaml
 sharedkernel-secrets recipients check secrets/app.sops.yaml --prove-with-identity ~/.config/age/work.txt
 sharedkernel-secrets recipients check secrets/app.sops.yaml --prove-with-identity ~/.config/age/work.txt --prove-absent-identity ~/.config/age/revoked.txt
+sharedkernel-secrets recipients update secrets/app.sops.yaml
+sharedkernel-secrets recipients update secrets/app.sops.yaml --identity ~/.config/age/work.txt --force
+sharedkernel-secrets rotate secrets/app.sops.yaml
+sharedkernel-secrets rotate secrets/app.sops.yaml --identity ~/.config/age/work.txt --force
+sharedkernel-secrets edit secrets/app.sops.yaml --identity ~/.config/age/work.txt
 sharedkernel-secrets verify
 sharedkernel-secrets verify --base origin/main
 sharedkernel-secrets verify --base origin/main --allow-changed-recipients
@@ -83,6 +89,24 @@ sharedkernel-secrets --help
   - Only two outcomes are verdicts about an identity: success, and sops saying the identity matches none of the file's recipients.
     Every other failure (a bad MAC, a parse error, a corrupted `enc`, a missing file, an unreadable identity, a timeout) is exit 2 and
     says `file could not be decrypted (not an identity verdict)`. A corrupted file therefore never reads as "this holder cannot decrypt".
+- `recipients update` makes a file's recipients exactly its rule's while keeping the data key, as `sops updatekeys` does. **To
+  change who can read a file, change its rule** in the configuration and run it: it previews the recipients it would add and
+  remove, and with `--force` (and an identity that can decrypt) writes the new version. When it removes a recipient or another
+  key holder it says to run `rotate`, because that holder may already know the data key.
+- `rotate` encrypts every value again with a new data key for exactly the rule's recipients, as `sops rotate` does, so a removed
+  recipient's copy of the old key reads nothing new. It previews unless `--force` is given.
+- `edit` opens the decrypted document in `VISUAL` or `EDITOR` through `sops edit`, which keeps the data key, so labels do not change.
+  It needs a terminal and a file whose recipients already match its rule. The plaintext exists only in a new owner-only directory
+  under `XDG_RUNTIME_DIR`, or `/dev/shm` when that is unset, which must be a **tmpfs or ramfs**: on a disk the command refuses. That
+  directory is also the editor's `HOME` and `TMPDIR`, so its swap, backup, and history files stay there, and it is removed afterwards.
+  The editor is an absolute path or a command in an absolute `PATH` directory, with arguments separated by spaces and no quotes, and it
+  gets only `TERM`, `COLORTERM`, `LANG`, `LC_ALL`, `LC_CTYPE`, `LC_MESSAGES`, the absolute directories of `PATH`, `DISPLAY`,
+  `WAYLAND_DISPLAY`, and `XDG_RUNTIME_DIR`. Use an editor that runs in the terminal: one that hands the file to an already running
+  instance (`code --wait`, `emacsclient`) works outside that directory and may keep copies.
+- `recipients update`, `rotate`, and `edit` refuse a weakened file, because sops keeps the weakening in every new version, and they
+  write a new version only when it carries exactly the rule's recipients with nothing weakened. They replace the file through a
+  temporary file and a rename, and only when it still holds the bytes it was read with, so a failure or a concurrent change leaves the
+  file as it was.
 - `verify` judges **only files named `*.sops.*`** (any letter case), and it rejects everything else in a rule's scope. This is a structural
   rule with no content inspection: inside the scope of any creation rule (the paths its expression matches), every regular file must be named
   `*.sops.<ext>`, or the run is exit 2 and lists the file as `not judged: name does not mark it as SOPS-encrypted (rename it to *.sops.<ext>, or
@@ -143,7 +167,7 @@ properties are errors):
 | --- | --- |
 | 0 | Success (for a check: labels consistent, and any requested proof or base comparison passed), or a preview that changed nothing. |
 | 1 | A check ran and found a file whose recipients are not exactly its rule's recipients, a weakened file, a failed proof, or (for `verify`) a file that no rule covers or a label that changed since `--base`; or a command-line parse error. |
-| 2 | The result cannot be known or the request was refused: invalid or missing configuration, no matching rule, a missing program, a failed program, `--output` without `--force` or outside the root, an existing output file, `verify` with nothing to verify, a file, link, or directory that cannot be read, understood, or judged, an unusable `--base`, or `--prove-absent-identity` without `--prove-with-identity`. |
+| 2 | The result cannot be known or the request was refused: invalid or missing configuration, no matching rule, a missing program, a failed program, `--output` without `--force` or outside the root, an existing output file, `verify` with nothing to verify, a file, link, or directory that cannot be read, understood, or judged, an unusable `--base`, `--prove-absent-identity` without `--prove-with-identity`, a weakened file or a new version that is not exactly the rule's, a file that changed while it was rewritten, or `edit` without a terminal, an editor, a memory-backed temporary root, or a file that matches its rule. |
 
 ## Limits
 
@@ -158,4 +182,6 @@ properties are errors):
   tool does not remove them.
 - .NET cannot guarantee that no copy of decrypted data remains in memory. The
   [library README](../../src/SharedKernel/SharedKernel.Secrets/README.md#what-net-cannot-guarantee) says what is and is not cleared.
-- Rotating keys and changing recipients are not offered: they rewrite files in place, and the tool has no command with a preview and an atomic write for them yet.
+- The commands that run `sops` are for Unix-like systems: `sops` reads plaintext from `/dev/stdin`, and `edit` needs a tmpfs or ramfs,
+  which Windows and macOS do not offer. `verify`, `recipients list`, and `recipients check` without a proof run anywhere.
+- A tmpfs can be written to swap; `edit` cannot prevent that.

@@ -137,7 +137,8 @@ non-interactive commands and to how they start a UI.
   request unless `--allow-network` is given.
 - `sharedkernel-secrets` reads `.config/sharedkernel-secrets.json`: the creation rules, each with a path expression, the exact
   recipients, and the least number of recipients. The tool hard-codes no policy, so the minimum is the consumer's. It
-  previews by default and changes files only with `--force`, never overwrites, and takes plaintext only on standard input.
+  previews by default and changes files only with `--force` (`edit` instead needs a terminal), never overwrites a file it
+  creates, replaces an encrypted file only through a checked, atomic rename, and takes plaintext only on standard input.
   The [secrets tool README](../tools/SharedKernel.Secrets.Tool/README.md#configuration) describes the format.
 - Paths in the file are relative to the root and use `/`. They are never rooted, have no empty, `.`, or `..`
   segments, and resolve under the root without following symbolic links.
@@ -208,6 +209,8 @@ incrementally. Each wrapped tool and the libraries it wraps:
   which holds the dev container and rootless Podman host checks.
 - `SharedKernel.VaultManager.Tool`: `SharedKernel.Vault` and its `SharedKernel.Vault.Bitwarden` and
   `SharedKernel.Vault.Keeper` providers.
+- `SharedKernel.Secrets.Tool`: the `SharedKernel.Secrets` core and its `SharedKernel.Secrets.Age` and `SharedKernel.Secrets.Sops`
+  providers, which run the local `age`, `age-keygen`, and `sops` programs.
 
 ## Secrets
 

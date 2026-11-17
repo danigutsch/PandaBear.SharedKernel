@@ -1,27 +1,37 @@
 # PandaBear.SharedKernel.Secrets
 
 An engine for secrets that live in git as [age](https://age-encryption.org) and [SOPS](https://getsops.io) files:
-validated public recipients, references to identity files (never keys), creation rules, process adapters for `age`,
-`age-keygen`, and `sops` that keep secrets on standard input and output, and an exact recipient-set check. Targets .NET 10.
-It has no NuGet dependency beyond the other SharedKernel libraries, and it does not implement any cryptography: the programs do.
+validated public recipients, references to identity files (never keys), creation rules, a SOPS metadata reader that fails
+closed, repository verification, and `SecretsRepository`, which runs the operations of `sharedkernel-secrets` over two seams,
+`IAgeTool` and `ISopsTool`. The providers that run the local programs are separate packages:
+[PandaBear.SharedKernel.Secrets.Age](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Secrets.Age/README.md)
+and [PandaBear.SharedKernel.Secrets.Sops](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Secrets.Sops/README.md).
+It has no NuGet dependency beyond other SharedKernel libraries, makes no network request, and implements no cryptography:
+the programs do.
 
 ```csharp
+using PandaBear.Processes;
 using PandaBear.Secrets;
+using PandaBear.Secrets.Age;
+using PandaBear.Secrets.Sops;
 
 var runner = new SystemToolRunner();
-var age = new ProcessAgeTool(runner, "/usr/bin/age", "/usr/bin/age-keygen");
+var repository = new SecretsRepository("/repo", new SecretsPrograms
+{
+    Runner = runner,
+    ExecutableResolver = PathExecutableResolver.Default,
+    Age = () => ProcessAgeTool.Find(runner, PathExecutableResolver.Default),
+    Sops = () => ProcessSopsTool.Find(runner, PathExecutableResolver.Default),
+});
 
-var identity = AgeIdentityRef.Create("/home/me/.config/age/work.txt").Value;
-var recipient = (await age.GenerateIdentity(identity, ct)).Value;        // writes the 0600 identity file; returns the public recipient
+// 0 when every SOPS file matches its rule, 1 for a difference, 2 when the result cannot be known.
+var exitCode = await repository.Verify(new VerifySettings { BaseRevision = "origin/main" }, Console.Out, Console.Error, ct);
 
-var recipients = AgeRecipientSet.Create([recipient, AgeRecipient.Create("age1...").Value]).Value;
-var rule = SopsCreationRule.Create(@"^secrets/.*\.sops\.ya?ml$", recipients, minimumRecipients: 2).Value;
-
-var sops = new ProcessSopsTool(runner, "/usr/local/bin/sops");
-var check = (await sops.VerifyRecipients("/repo/secrets/app.sops.yaml", rule, ct)).Value;
-if (!check.IsExact) { /* check.Missing, check.Unexpected, check.OtherKeyTypes */ }
-
-using var password = (await sops.DecryptValue("/repo", SecretRef.Create("secrets/app.sops.yaml#db.password").Value, identity, ct)).Value;
+// The value objects and the reader work on their own, without a program.
+var rules = await SecretsConfigurationFile.Read("/repo", ct);
+var path = EncryptedFilePath.Create("secrets/app.sops.yaml").Value;
+var holders = (await SopsFileReader.ReadRecipients("/repo/secrets/app.sops.yaml", ct)).Value;
+var check = RecipientVerification.Compare(holders, rules.FirstMatch(path)!);
 ```
 
 ## Value objects
@@ -51,26 +61,44 @@ the input.
 Bech32 is the BIP-173 variant (not Bech32m) with no length limit, which is what the [age specification](https://github.com/C2SP/C2SP/blob/main/age.md)
 requires. The checksum code is checked against the BIP-173 vectors and the Bech32m vectors are rejected.
 
-## Ports and adapters
+## Repository operations
 
-`IAgeTool` (`GenerateIdentity`, `Encrypt`, `Decrypt`) and `ISopsTool` (`Encrypt`, `Decrypt`, `DecryptValue`,
-`ListRecipients`, `VerifyRecipients`) have process adapters, `ProcessAgeTool` and `ProcessSopsTool`,
-over `IToolRunner`. `SystemToolRunner` is the real runner:
+`SecretsRepository` takes the root and the programs, and each operation takes a settings record, writes what it reports with
+control characters escaped, writes a refusal or failure to the error writer, and returns `SecretsExitCodes.Success` (0),
+`Differences` (1), or `Failure` (2). Plaintext travels only through the streams the settings open.
+
+- `CreateIdentity`, `Encrypt`, and `Decrypt` with `OutputPath` preview without `Force`, and never overwrite a file.
+- `ListRecipients` and `CheckRecipients` read metadata; `CheckRecipients` proves identities by a trial decryption.
+- `UpdateRecipients` (keep the data key) and `Rotate` (a new data key) make a file's recipients exactly its rule's, and preview
+  without `Force`. `Edit` lets a person edit the document through `sops edit` in a new owner-only directory under
+  `EditSettings.TemporaryRoot`, which must be on a tmpfs or ramfs, and removes it afterwards. All three refuse a weakened
+  file, check that the new version carries exactly the rule's recipients with nothing weakened, and replace the file through a
+  temporary file and a rename only when it still holds the bytes it was read with.
+- `Verify` judges every file named `*.sops.*` against its rule, rejects every other file in a rule's scope, and with a base
+  revision reports each label whose `enc` changed.
+
+`SecretsConfigurationFile` reads `.config/sharedkernel-secrets.json` with `PandaBear.ConfigurationFiles.JsonConfigurationFile`.
+The [tool README](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.Secrets.Tool/README.md) describes the
+format and each command's exact behavior.
+
+## Seams and the runner
+
+`IAgeTool` (`GenerateIdentity`, `Encrypt`, `Decrypt`) and `ISopsTool` (`Encrypt`, `Decrypt`, `DecryptValue`, `UpdateKeys`,
+`Rotate`, `Edit`, `TrialDecrypt`, `ListRecipients`, `VerifyRecipients`) are what the providers implement over `IToolRunner`.
+`UpdateKeys`, `Rotate`, and `Edit` return the new encrypted document and never write the file. `SystemToolRunner` is the real
+runner:
 
 - the program path is absolute and arguments go one by one, without a shell;
 - plaintext, ciphertext, and documents go on standard input and come back on standard output, never in an argument or an
   environment variable; a `ToolRequest` that carries `AGE-SECRET-KEY-` or `AGE-PLUGIN-` text in an argument or environment value is refused;
-- the child inherits **no** environment: it gets `LC_ALL=C` and the variables of the request. `sops` gets only
-  `SOPS_AGE_KEY_FILE`, set to the identity file's path; `age` and `age-keygen` get nothing;
-- standard output is limited to 16 MiB and standard error to 64 KiB (more ends the process), and a run has a two-minute limit;
-- nothing is logged. An adapter's failure message holds the tool name, the exit code, and the first error line, cleaned of
-  control characters and cut at 200 characters.
-
-`age-keygen` writes the identity file itself with mode 0600; the adapter refuses an existing path (it never overwrites a key),
-prints only the public recipient, and fails if the file is readable by others. Every `sops` call passes `--config /dev/null` and
-runs in a new empty working directory that is deleted afterwards, because sops reads `.sops.yaml` from its working directory and a
-creation rule there (`unencrypted_regex: '.*'`) would otherwise write plaintext. There is no `rotate` or `updatekeys` in the public
-API: they rewrite a file in place without a backup, and they return when a command with a preview and an atomic write exists.
+- the child inherits **no** environment: it gets `LC_ALL=C` and the variables of the request, except a forge token (`GH_TOKEN`,
+  `GITHUB_TOKEN`, `FORGEJO_TOKEN`, and the GitHub Enterprise tokens), which `ProcessEnvironment.RemoveForgeTokens` removes even when a
+  request names it;
+- standard output is limited to 16 MiB and standard error to 64 KiB (more ends the process), a run has a two-minute limit, and
+  `ProcessTree` ends the whole process tree on a failure or cancellation;
+- `RunAttached` runs a child on the caller's terminal with no time limit and without forcing `LC_ALL`, for the editor;
+- nothing is logged. `ToolResult.Describe` is the failure line the providers use: the tool name, the exit code, and the first
+  error line, cleaned of control characters and cut at 200 characters.
 
 ## Reading and checking recipients
 
@@ -105,6 +133,6 @@ Keep decrypted values short-lived, dispose them, and write them only where you m
 
 ## Limits
 
-- The process adapters are for Unix-like systems (`sops encrypt` reads `/dev/stdin`).
+- The sops provider is for Unix-like systems (`sops encrypt` reads `/dev/stdin`), and `Edit` needs a tmpfs or ramfs.
 - Plugin recipients validate here, but the program you run must support them; `sops` support for plugin recipients is its own.
 - Reading the key groups of a file with Shamir thresholds lists every holder; it does not judge the threshold.
