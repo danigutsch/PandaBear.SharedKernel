@@ -207,6 +207,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
     /// <param name="resourceName">The Aspire resource name.</param>
     /// <param name="ct">A cancellation token.</param>
     /// <returns>The configured connection string.</returns>
+    /// <exception cref="ArgumentException">Thrown when the application has no such resource, or the resource does not expose a connection string.</exception>
     /// <exception cref="InvalidOperationException">Thrown when the resource has no configured connection string.</exception>
     public async Task<string> GetConnectionString(string resourceName, CancellationToken ct)
     {
@@ -224,6 +225,61 @@ public sealed class AspireTestApplication : IAsyncDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);
         _ = App;
         return _logs?.Lines(resourceName) ?? [];
+    }
+
+    /// <summary>
+    /// Tells whether the application model has a resource, started or not. A test of a setting that leaves resources out asserts that they
+    /// are not there. Names are compared as Aspire compares them, ignoring case.
+    /// </summary>
+    /// <param name="resourceName">The resource name.</param>
+    /// <returns><see langword="true"/> when the model has a resource of that name; otherwise <see langword="false"/>.</returns>
+    /// <exception cref="ArgumentException"><paramref name="resourceName"/> is blank.</exception>
+    /// <exception cref="InvalidOperationException">The application was disposed.</exception>
+    public bool HasResource(string resourceName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);
+        return FindResource(App, resourceName) is not null;
+    }
+
+    /// <summary>
+    /// Waits until a resource reaches a state, healthy or not, and returns at once when it is in that state already. Use it where the state
+    /// is what a test needs, such as a resource without a health check that is <see cref="KnownResourceStates.Running"/>; use
+    /// <see cref="WaitForHealthy(IEnumerable{string}, TimeSpan, CancellationToken)"/> to wait for health.
+    /// </summary>
+    /// <param name="resourceName">The resource name.</param>
+    /// <param name="state">The state, one of <see cref="KnownResourceStates"/> such as <see cref="KnownResourceStates.Running"/>.</param>
+    /// <param name="timeout">How long to wait.</param>
+    /// <param name="ct">A cancellation token.</param>
+    /// <returns>The resource's event in that state; its snapshot holds the state, health, URLs and properties.</returns>
+    /// <exception cref="ArgumentException"><paramref name="resourceName"/> or <paramref name="state"/> is blank.</exception>
+    /// <exception cref="InvalidOperationException">The application has no such resource, or it was disposed.</exception>
+    /// <exception cref="TimeoutException">The resource did not reach the state in time; the message holds its state and last log lines.</exception>
+    /// <exception cref="OperationCanceledException"><paramref name="ct"/> was cancelled.</exception>
+    public async Task<ResourceEvent> WaitForState(string resourceName, string state, TimeSpan timeout, CancellationToken ct)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        var app = App;
+        var name = Resource(app, resourceName).Name;
+        var notifications = app.Services.GetRequiredService<ResourceNotificationService>();
+        using var deadline = new CancellationTokenSource(timeout);
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, deadline.Token);
+        try
+        {
+            return await notifications.WaitForResourceAsync(
+                name,
+                current => string.Equals(current.Snapshot.State?.Text, state, StringComparison.OrdinalIgnoreCase),
+                linked.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException cancellation) when (deadline.IsCancellationRequested && !ct.IsCancellationRequested)
+        {
+            throw NotReady(
+                string.Create(CultureInfo.InvariantCulture, $"'{name}' did not reach the state {state} within {timeout}."),
+                notifications,
+                _logs!,
+                [name],
+                cancellation);
+        }
     }
 
     /// <summary>Waits until resources report healthy.</summary>
@@ -256,19 +312,17 @@ public sealed class AspireTestApplication : IAsyncDisposable
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);
         var app = App;
-        var resource = app.Services.GetRequiredService<DistributedApplicationModel>().Resources
-            .FirstOrDefault(candidate => string.Equals(candidate.Name, resourceName, StringComparison.Ordinal))
-            ?? throw new InvalidOperationException($"The application has no resource named '{resourceName}'.");
+        var resource = Resource(app, resourceName);
         using var deadline = new CancellationTokenSource(timeout);
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, deadline.Token);
         var started = await app.Services.GetRequiredService<ResourceCommandService>()
             .ExecuteCommandAsync(resource, KnownResourceCommands.StartCommand, linked.Token).ConfigureAwait(false);
         if (!started.Success)
         {
-            throw new InvalidOperationException($"Starting '{resourceName}' failed: {started.Message}");
+            throw new InvalidOperationException($"Starting '{resource.Name}' failed: {started.Message}");
         }
 
-        await WaitForHealthy(app, _logs!, [resourceName], timeout, deadline, linked.Token, ct).ConfigureAwait(false);
+        await WaitForHealthy(app, _logs!, [resource.Name], timeout, deadline, linked.Token, ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -340,22 +394,60 @@ public sealed class AspireTestApplication : IAsyncDisposable
         }
         catch (OperationCanceledException cancellation) when (deadline.IsCancellationRequested && !ct.IsCancellationRequested)
         {
-            var report = new StringBuilder().Append(CultureInfo.InvariantCulture, $"Resources were not healthy within {timeout}.");
-            foreach (var name in resourceNames)
-            {
-                var state = notifications.TryGetCurrentState(name, out var current)
-                    ? $"{current.Snapshot.State?.Text ?? "unknown"}, health {current.Snapshot.HealthStatus?.ToString() ?? "unknown"}"
-                    : "no state";
-                _ = report.AppendLine().Append(CultureInfo.InvariantCulture, $"- {name}: {state}; last log lines:");
-                foreach (var line in logs.Lines(name))
-                {
-                    _ = report.AppendLine().Append("    ").Append(line);
-                }
-            }
-
-            throw new TimeoutException(report.ToString(), cancellation);
+            throw NotReady(
+                string.Create(CultureInfo.InvariantCulture, $"Resources were not healthy within {timeout}."),
+                notifications,
+                logs,
+                resourceNames,
+                cancellation);
         }
     }
+
+    /// <summary>Reports a wait that ran out of time, with each resource's state, health and last log lines.</summary>
+    /// <param name="headline">What the wait waited for.</param>
+    /// <param name="notifications">The application's resource notifications.</param>
+    /// <param name="logs">The application's log tail.</param>
+    /// <param name="resourceNames">The resources the wait waited for.</param>
+    /// <param name="cancellation">The cancellation that ended the wait.</param>
+    /// <returns>The exception to throw.</returns>
+    private static TimeoutException NotReady(
+        string headline,
+        ResourceNotificationService notifications,
+        ResourceLogTail logs,
+        IReadOnlyList<string> resourceNames,
+        OperationCanceledException cancellation)
+    {
+        var report = new StringBuilder().Append(headline);
+        foreach (var name in resourceNames)
+        {
+            var state = notifications.TryGetCurrentState(name, out var current)
+                ? $"{current.Snapshot.State?.Text ?? "unknown"}, health {current.Snapshot.HealthStatus?.ToString() ?? "unknown"}"
+                : "no state";
+            _ = report.AppendLine().Append(CultureInfo.InvariantCulture, $"- {name}: {state}; last log lines:");
+            foreach (var line in logs.Lines(name))
+            {
+                _ = report.AppendLine().Append("    ").Append(line);
+            }
+        }
+
+        return new TimeoutException(report.ToString(), cancellation);
+    }
+
+    /// <summary>Finds a resource of the application model by name, ignoring case as Aspire does.</summary>
+    /// <param name="app">The application.</param>
+    /// <param name="resourceName">The resource name.</param>
+    /// <returns>The resource, or <see langword="null"/> when the model has none of that name.</returns>
+    private static IResource? FindResource(DistributedApplication app, string resourceName) =>
+        app.Services.GetRequiredService<DistributedApplicationModel>().Resources
+            .FirstOrDefault(candidate => string.Equals(candidate.Name, resourceName, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>Gets a resource of the application model by name, ignoring case as Aspire does.</summary>
+    /// <param name="app">The application.</param>
+    /// <param name="resourceName">The resource name.</param>
+    /// <returns>The resource.</returns>
+    /// <exception cref="InvalidOperationException">The model has no resource of that name.</exception>
+    private static IResource Resource(DistributedApplication app, string resourceName) =>
+        FindResource(app, resourceName) ?? throw new InvalidOperationException($"The application has no resource named '{resourceName}'.");
 
     private static void ConfigureTestResources(IDistributedApplicationTestingBuilder builder)
     {
