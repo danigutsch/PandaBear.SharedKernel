@@ -131,6 +131,62 @@ public sealed class SecretsRepository
         return Guard(error, () => VerifyOperation.Run(_root, _programs, settings, output, error, cancellationToken), cancellationToken);
     }
 
+    /// <summary>
+    /// Makes a file's recipients exactly those of its creation rule while keeping its data key, as <c>sops updatekeys</c>
+    /// does. To change who can read a file, change its rule in the configuration and run this. A removed recipient may
+    /// already know the data key; <see cref="Rotate"/> replaces it. Without <see cref="UpdateRecipientsSettings.Force"/> it
+    /// only previews.
+    /// </summary>
+    /// <param name="settings">The file and the identity that can decrypt it.</param>
+    /// <param name="output">Receives the recipients that are added and removed, and the result.</param>
+    /// <param name="error">Receives a refusal or failure.</param>
+    /// <param name="cancellationToken">Cancels the operation and ends sops.</param>
+    /// <returns>The exit code.</returns>
+    /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    public Task<int> UpdateRecipients(UpdateRecipientsSettings settings, TextWriter output, TextWriter error, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+        ArgumentNullException.ThrowIfNull(output);
+        return Guard(error, () => RewriteOperation.UpdateRecipients(_root, _programs, settings, output, cancellationToken), cancellationToken);
+    }
+
+    /// <summary>
+    /// Encrypts a file again with a new data key for exactly the recipients of its creation rule, as <c>sops rotate</c>
+    /// does, so that a removed recipient's copy of the old data key no longer reads it. Without
+    /// <see cref="RotateSettings.Force"/> it only previews.
+    /// </summary>
+    /// <param name="settings">The file and the identity that can decrypt it.</param>
+    /// <param name="output">Receives the recipients that are added and removed, and the result.</param>
+    /// <param name="error">Receives a refusal or failure.</param>
+    /// <param name="cancellationToken">Cancels the operation and ends sops.</param>
+    /// <returns>The exit code.</returns>
+    /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    public Task<int> Rotate(RotateSettings settings, TextWriter output, TextWriter error, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+        ArgumentNullException.ThrowIfNull(output);
+        return Guard(error, () => RewriteOperation.Rotate(_root, _programs, settings, output, cancellationToken), cancellationToken);
+    }
+
+    /// <summary>
+    /// Lets a person edit a file's decrypted document in their editor through <c>sops edit</c>, which keeps the data key. The
+    /// plaintext exists only in a new owner-only directory under <see cref="EditSettings.TemporaryRoot"/>, which must be on
+    /// a memory-backed file system, and that directory is removed afterwards. The file must carry exactly its rule's
+    /// recipients before and after.
+    /// </summary>
+    /// <param name="settings">The file, the identity, the editor, and the temporary root.</param>
+    /// <param name="output">Receives whether the file was saved or unchanged.</param>
+    /// <param name="error">Receives a refusal or failure.</param>
+    /// <param name="cancellationToken">Cancels the operation and ends sops and the editor.</param>
+    /// <returns>The exit code.</returns>
+    /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    public Task<int> Edit(EditSettings settings, TextWriter output, TextWriter error, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+        ArgumentNullException.ThrowIfNull(output);
+        return Guard(error, () => RewriteOperation.Edit(_root, _programs, settings, output, cancellationToken), cancellationToken);
+    }
+
     private static async Task<int> Guard(TextWriter error, Func<Task<int>> operation, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(error);

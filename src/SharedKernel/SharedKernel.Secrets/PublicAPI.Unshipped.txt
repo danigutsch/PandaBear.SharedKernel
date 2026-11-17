@@ -70,6 +70,26 @@ PandaBear.Secrets.DecryptSettings.Target.init -> void
 override PandaBear.Secrets.DecryptSettings.ToString() -> string!
 static PandaBear.Secrets.DecryptSettings.operator !=(PandaBear.Secrets.DecryptSettings? left, PandaBear.Secrets.DecryptSettings? right) -> bool
 static PandaBear.Secrets.DecryptSettings.operator ==(PandaBear.Secrets.DecryptSettings? left, PandaBear.Secrets.DecryptSettings? right) -> bool
+PandaBear.Secrets.EditSettings
+PandaBear.Secrets.EditSettings.<Clone>$() -> PandaBear.Secrets.EditSettings!
+PandaBear.Secrets.EditSettings.EditSettings() -> void
+PandaBear.Secrets.EditSettings.Editor.get -> string?
+PandaBear.Secrets.EditSettings.Editor.init -> void
+PandaBear.Secrets.EditSettings.Equals(PandaBear.Secrets.EditSettings? other) -> bool
+override PandaBear.Secrets.EditSettings.Equals(object? obj) -> bool
+PandaBear.Secrets.EditSettings.File.get -> string!
+PandaBear.Secrets.EditSettings.File.init -> void
+override PandaBear.Secrets.EditSettings.GetHashCode() -> int
+PandaBear.Secrets.EditSettings.IdentityPath.get -> string!
+PandaBear.Secrets.EditSettings.IdentityPath.init -> void
+PandaBear.Secrets.EditSettings.TemporaryRoot.get -> string!
+PandaBear.Secrets.EditSettings.TemporaryRoot.init -> void
+PandaBear.Secrets.EditSettings.TerminalEnvironment.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+PandaBear.Secrets.EditSettings.TerminalEnvironment.init -> void
+static PandaBear.Secrets.EditSettings.TerminalVariableNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+override PandaBear.Secrets.EditSettings.ToString() -> string!
+static PandaBear.Secrets.EditSettings.operator !=(PandaBear.Secrets.EditSettings? left, PandaBear.Secrets.EditSettings? right) -> bool
+static PandaBear.Secrets.EditSettings.operator ==(PandaBear.Secrets.EditSettings? left, PandaBear.Secrets.EditSettings? right) -> bool
 PandaBear.Secrets.EditorCommand
 PandaBear.Secrets.EditorCommand.Arguments.get -> System.Collections.Generic.IReadOnlyList<string!>!
 static PandaBear.Secrets.EditorCommand.Create(string? commandLine, PandaBear.Processes.IExecutableResolver! executableResolver) -> PandaBear.Results.Result<PandaBear.Secrets.EditorCommand!>
@@ -121,6 +141,21 @@ PandaBear.Secrets.RecipientVerification.IsExact.get -> bool
 PandaBear.Secrets.RecipientVerification.Missing.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Secrets.AgeRecipient!>!
 PandaBear.Secrets.RecipientVerification.OtherKeyTypes.get -> System.Collections.Generic.IReadOnlyList<string!>!
 PandaBear.Secrets.RecipientVerification.Unexpected.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Secrets.AgeRecipient!>!
+PandaBear.Secrets.RotateSettings
+PandaBear.Secrets.RotateSettings.<Clone>$() -> PandaBear.Secrets.RotateSettings!
+PandaBear.Secrets.RotateSettings.Equals(PandaBear.Secrets.RotateSettings? other) -> bool
+override PandaBear.Secrets.RotateSettings.Equals(object? obj) -> bool
+PandaBear.Secrets.RotateSettings.File.get -> string!
+PandaBear.Secrets.RotateSettings.File.init -> void
+PandaBear.Secrets.RotateSettings.Force.get -> bool
+PandaBear.Secrets.RotateSettings.Force.init -> void
+override PandaBear.Secrets.RotateSettings.GetHashCode() -> int
+PandaBear.Secrets.RotateSettings.IdentityPath.get -> string?
+PandaBear.Secrets.RotateSettings.IdentityPath.init -> void
+PandaBear.Secrets.RotateSettings.RotateSettings() -> void
+override PandaBear.Secrets.RotateSettings.ToString() -> string!
+static PandaBear.Secrets.RotateSettings.operator !=(PandaBear.Secrets.RotateSettings? left, PandaBear.Secrets.RotateSettings? right) -> bool
+static PandaBear.Secrets.RotateSettings.operator ==(PandaBear.Secrets.RotateSettings? left, PandaBear.Secrets.RotateSettings? right) -> bool
 PandaBear.Secrets.SecretBytes
 PandaBear.Secrets.SecretBytes.AsSpan() -> System.ReadOnlySpan<byte>
 static PandaBear.Secrets.SecretBytes.CopyOf(System.ReadOnlySpan<byte> bytes) -> PandaBear.Secrets.SecretBytes!
@@ -166,9 +201,12 @@ PandaBear.Secrets.SecretsRepository
 PandaBear.Secrets.SecretsRepository.CheckRecipients(PandaBear.Secrets.CheckRecipientsSettings! settings, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 PandaBear.Secrets.SecretsRepository.CreateIdentity(PandaBear.Secrets.CreateIdentitySettings! settings, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 PandaBear.Secrets.SecretsRepository.Decrypt(PandaBear.Secrets.DecryptSettings! settings, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+PandaBear.Secrets.SecretsRepository.Edit(PandaBear.Secrets.EditSettings! settings, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 PandaBear.Secrets.SecretsRepository.Encrypt(PandaBear.Secrets.EncryptSettings! settings, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 PandaBear.Secrets.SecretsRepository.ListRecipients(string! file, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+PandaBear.Secrets.SecretsRepository.Rotate(PandaBear.Secrets.RotateSettings! settings, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 PandaBear.Secrets.SecretsRepository.SecretsRepository(string! root, PandaBear.Secrets.SecretsPrograms! programs) -> void
+PandaBear.Secrets.SecretsRepository.UpdateRecipients(PandaBear.Secrets.UpdateRecipientsSettings! settings, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 PandaBear.Secrets.SecretsRepository.Verify(PandaBear.Secrets.VerifySettings! settings, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 PandaBear.Secrets.SopsCreationRule
 static PandaBear.Secrets.SopsCreationRule.Create(string? pathRegex, PandaBear.Secrets.AgeRecipientSet? recipients, int minimumRecipients) -> PandaBear.Results.Result<PandaBear.Secrets.SopsCreationRule!>
@@ -239,6 +277,21 @@ PandaBear.Secrets.ToolResult.ExitCode.get -> int
 PandaBear.Secrets.ToolResult.StandardError.get -> string!
 PandaBear.Secrets.ToolResult.StandardOutput.get -> PandaBear.Secrets.SecretBytes!
 PandaBear.Secrets.ToolResult.ToolResult(int exitCode, PandaBear.Secrets.SecretBytes! standardOutput, string! standardError = "") -> void
+PandaBear.Secrets.UpdateRecipientsSettings
+PandaBear.Secrets.UpdateRecipientsSettings.<Clone>$() -> PandaBear.Secrets.UpdateRecipientsSettings!
+PandaBear.Secrets.UpdateRecipientsSettings.Equals(PandaBear.Secrets.UpdateRecipientsSettings? other) -> bool
+override PandaBear.Secrets.UpdateRecipientsSettings.Equals(object? obj) -> bool
+PandaBear.Secrets.UpdateRecipientsSettings.File.get -> string!
+PandaBear.Secrets.UpdateRecipientsSettings.File.init -> void
+PandaBear.Secrets.UpdateRecipientsSettings.Force.get -> bool
+PandaBear.Secrets.UpdateRecipientsSettings.Force.init -> void
+override PandaBear.Secrets.UpdateRecipientsSettings.GetHashCode() -> int
+PandaBear.Secrets.UpdateRecipientsSettings.IdentityPath.get -> string?
+PandaBear.Secrets.UpdateRecipientsSettings.IdentityPath.init -> void
+override PandaBear.Secrets.UpdateRecipientsSettings.ToString() -> string!
+PandaBear.Secrets.UpdateRecipientsSettings.UpdateRecipientsSettings() -> void
+static PandaBear.Secrets.UpdateRecipientsSettings.operator !=(PandaBear.Secrets.UpdateRecipientsSettings? left, PandaBear.Secrets.UpdateRecipientsSettings? right) -> bool
+static PandaBear.Secrets.UpdateRecipientsSettings.operator ==(PandaBear.Secrets.UpdateRecipientsSettings? left, PandaBear.Secrets.UpdateRecipientsSettings? right) -> bool
 PandaBear.Secrets.VerifySettings
 PandaBear.Secrets.VerifySettings.<Clone>$() -> PandaBear.Secrets.VerifySettings!
 PandaBear.Secrets.VerifySettings.AllowChangedRecipients.get -> bool

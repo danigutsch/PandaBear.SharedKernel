@@ -32,14 +32,45 @@ internal static class SecretsToolHarness
         File.WriteAllText(path, content);
     }
 
-    /// <summary>Runs <paramref name="arguments"/> in <paramref name="workingDirectory"/>.</summary>
-    public static async Task<ToolRun> Run(
+    /// <summary>Reads a repository file as text.</summary>
+    public static Task<string> ReadText(string root, string relativePath) =>
+        File.ReadAllTextAsync(Path.Combine(root, relativePath), TestContext.Current.CancellationToken);
+
+    /// <summary>Runs <paramref name="arguments"/> in <paramref name="workingDirectory"/>, with standard streams that are not a terminal.</summary>
+    public static Task<ToolRun> Run(
         string workingDirectory,
         IToolRunner runner,
         Func<string, string?> resolve,
         byte[]? standardInput,
         IReadOnlyDictionary<string, string>? variables,
-        params string[] arguments)
+        params string[] arguments) =>
+        Run(workingDirectory, runner, resolve, standardInput, variables, isTerminal: false, arguments);
+
+    /// <summary>Runs <paramref name="arguments"/> in <paramref name="workingDirectory"/> as if the standard streams were a terminal.</summary>
+    public static Task<ToolRun> RunInTerminal(
+        string workingDirectory,
+        IToolRunner runner,
+        IReadOnlyDictionary<string, string>? variables,
+        params string[] arguments) =>
+        Run(workingDirectory, runner, ResolveAll, null, variables, isTerminal: true, arguments);
+
+    /// <summary>Runs <paramref name="arguments"/> as if the standard streams were a terminal, finding programs with <paramref name="resolve"/>.</summary>
+    public static Task<ToolRun> RunInTerminal(
+        string workingDirectory,
+        IToolRunner runner,
+        Func<string, string?> resolve,
+        IReadOnlyDictionary<string, string>? variables,
+        params string[] arguments) =>
+        Run(workingDirectory, runner, resolve, null, variables, isTerminal: true, arguments);
+
+    private static async Task<ToolRun> Run(
+        string workingDirectory,
+        IToolRunner runner,
+        Func<string, string?> resolve,
+        byte[]? standardInput,
+        IReadOnlyDictionary<string, string>? variables,
+        bool isTerminal,
+        string[] arguments)
     {
         using var output = new InvariantStringWriter();
         using var error = new InvariantStringWriter();
@@ -52,6 +83,7 @@ internal static class SecretsToolHarness
             () => input,
             () => new NonClosingStream(standardOutput),
             name => variables is not null && variables.TryGetValue(name, out var value) ? value : null,
+            () => isTerminal,
             TimeSpan.FromMilliseconds(500));
         var exitCode = await SecretsCommandLine
             .Create(environment)

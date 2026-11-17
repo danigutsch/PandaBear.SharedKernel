@@ -9,7 +9,8 @@ return await SecretsCommandLine
         new SystemToolRunner(),
         Console.OpenStandardInput,
         Console.OpenStandardOutput,
-        Environment.GetEnvironmentVariable))
+        Environment.GetEnvironmentVariable,
+        static () => !Console.IsInputRedirected && !Console.IsOutputRedirected))
     .Parse(args)
     .InvokeAsync()
     .ConfigureAwait(false);

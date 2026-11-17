@@ -6,6 +6,9 @@ internal static class RealPrograms
     /// <summary>Gets a value indicating whether <c>age</c>, <c>age-keygen</c>, and <c>sops</c> are all installed.</summary>
     public static bool AllAvailable => Find("age") is not null && Find("age-keygen") is not null && Find("sops") is not null;
 
+    /// <summary>Gets a value indicating whether the programs are installed and <c>/dev/shm</c> is a tmpfs, which <c>edit</c> needs.</summary>
+    public static bool EditAvailable => AllAvailable && MemoryRoot.Available;
+
     /// <summary>Gets a value indicating whether <c>git</c> is installed.</summary>
     public static bool GitAvailable => Find("git") is not null;
 
