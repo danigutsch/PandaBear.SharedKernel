@@ -1,7 +1,7 @@
-namespace PandaBear.Secrets.Tests;
+namespace PandaBear.Encodings.Tests;
 
 /// <summary>Tests Bech32 against the BIP-173 vectors. age uses Bech32, not Bech32m, and applies no length limit.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.EncodingsCapability)]
 public sealed class Bech32Tests
 {
     [Theory]
@@ -89,8 +89,8 @@ public sealed class Bech32Tests
     public void An_age_x25519_recipient_decodes_to_a_32_byte_key()
     {
         // Act
-        var valid = Bech32.TryDecode(TestRecipients.First, maxLength: null, out var hrp, out var data);
-        var bytes = Bech32.TryToBytes(data, out var key);
+        var valid = Bech32.TryDecode("age1s6ljywnmxkxndew9qztcjgfa3lsqfwe0rec66a9jjugzuxaagg3sgumkyf", maxLength: null, out var hrp, out var data);
+        var bytes = Bech32.TryConvertToBytes(data, out var key);
 
         // Assert
         valid.ShouldBeTrue();
@@ -103,7 +103,7 @@ public sealed class Bech32Tests
     public void Padding_bits_that_are_not_zero_are_rejected()
     {
         // Act
-        var valid = Bech32.TryToBytes([31], out _);
+        var valid = Bech32.TryConvertToBytes([31], out _);
 
         // Assert
         valid.ShouldBeFalse();

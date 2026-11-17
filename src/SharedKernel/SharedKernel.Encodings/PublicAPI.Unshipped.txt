@@ -1,0 +1,9 @@
+#nullable enable
+PandaBear.Encodings.Base32
+const PandaBear.Encodings.Base32.Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567" -> string!
+static PandaBear.Encodings.Base32.Encode(System.ReadOnlySpan<byte> data) -> string!
+static PandaBear.Encodings.Base32.Normalize(string! value) -> string!
+PandaBear.Encodings.Bech32
+const PandaBear.Encodings.Bech32.Bip173MaxLength = 90 -> int
+static PandaBear.Encodings.Bech32.TryConvertToBytes(System.ReadOnlySpan<byte> fiveBit, out byte[]! bytes) -> bool
+static PandaBear.Encodings.Bech32.TryDecode(string! text, int? maxLength, out string! humanReadablePart, out byte[]! data) -> bool

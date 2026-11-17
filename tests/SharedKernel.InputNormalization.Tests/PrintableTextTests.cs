@@ -1,6 +1,4 @@
-using PandaBear.Vault.IO;
-
-namespace PandaBear.Vault.Tests.IO;
+namespace PandaBear.InputNormalization.Tests;
 
 /// <summary>Tests that text is made safe for printing on one line.</summary>
 public sealed class PrintableTextTests

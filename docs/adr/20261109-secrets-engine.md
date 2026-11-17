@@ -140,7 +140,7 @@ no files, an unjudgeable path, or uncovered files; and an SSH recipient with whi
 
 ## Deferred
 
-- Extracting the vault manager's Bech32, redaction, and PEM helpers (issue 335) onto this library's Bech32.
+- Extracting the vault manager's redaction and PEM helpers (issue 335). Bech32 has moved to `SharedKernel.Encodings`, which this library and the vault manager share.
 - Byte input and output in `SharedKernel.Processes`, once a second engine needs it, so `SystemToolRunner` can move there.
 - An `edit` for systems without a memory-backed file system, such as Windows and macOS.
 - dotenv, ini, and binary SOPS formats; SOPS key groups with thresholds beyond listing their holders.

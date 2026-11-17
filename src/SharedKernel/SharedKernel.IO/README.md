@@ -27,6 +27,28 @@ NativeAOT analyzers are enabled; packed NativeAOT and Windows execution are not 
 To hand bytes you already hold to a `Stream` API without copying, use .NET's `System.IO.ReadOnlyMemoryStream`, which
 replaced this package's type of the same name in .NET 11.
 
+## Secret files and path identity
+
+`SecureFile.WriteAllText` writes text that should stay private, such as a decrypted export: on Unix the file is readable and
+writable only by its owner. It writes a temporary file in the same directory and moves it into place, so an interrupted write
+leaves no partial file and a replaced file never keeps wider permissions; a canceled or failed write deletes the temporary
+file. Without `overwrite` an existing file is refused.
+
+`FilePaths.ResolveLinks` returns a path with every symbolic link in it resolved, component by component as the operating
+system follows them, and `FilePaths.MayNameSameFile` tells whether two paths may reach the same file, ignoring case because a
+case-sensitive system can mount a case-insensitive volume. Use it to refuse writing an output over one of the inputs.
+
+```csharp
+using PandaBear.IO;
+
+if (FilePaths.MayNameSameFile(outputPath, inputPath))
+{
+    throw new InvalidOperationException("The output would overwrite the input.");
+}
+
+SecureFile.WriteAllText(outputPath, report, overwrite: false);
+```
+
 ## Repository paths
 
 `RepositoryPath` is a path that a configuration file names relative to a repository root: `/` separators, no root,

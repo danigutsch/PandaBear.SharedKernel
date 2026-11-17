@@ -59,7 +59,8 @@ the input.
   look-around and back-references are refused. `SopsCreationRuleSet.FirstMatch` returns the first matching rule, as SOPS does.
 
 Bech32 is the BIP-173 variant (not Bech32m) with no length limit, which is what the [age specification](https://github.com/C2SP/C2SP/blob/main/age.md)
-requires. The checksum code is checked against the BIP-173 vectors and the Bech32m vectors are rejected.
+requires. It comes from [PandaBear.SharedKernel.Encodings](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Encodings/README.md),
+whose tests check it against the BIP-173 vectors and reject the Bech32m vectors.
 
 ## Repository operations
 

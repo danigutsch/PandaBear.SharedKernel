@@ -1,7 +1,4 @@
-using PandaBear.Testing;
-using PandaBear.Vault.IO;
-
-namespace PandaBear.Vault.Tests.IO;
+namespace PandaBear.IO.Tests;
 
 /// <summary>Tests the detection of two paths that name the same file through symbolic links.</summary>
 public sealed class FilePathsTests : IDisposable

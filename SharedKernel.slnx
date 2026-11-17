@@ -256,6 +256,8 @@
   <Project Path="tests/SharedKernel.Tabular.Tests/SharedKernel.Tabular.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Packages/SharedKernel.Packages.csproj" />
   <Project Path="tests/SharedKernel.Packages.Tests/SharedKernel.Packages.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Encodings/SharedKernel.Encodings.csproj" />
+  <Project Path="tests/SharedKernel.Encodings.Tests/SharedKernel.Encodings.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Secrets/SharedKernel.Secrets.csproj" />
   <Project Path="tests/SharedKernel.Secrets.Tests/SharedKernel.Secrets.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.IO/SharedKernel.IO.csproj" />

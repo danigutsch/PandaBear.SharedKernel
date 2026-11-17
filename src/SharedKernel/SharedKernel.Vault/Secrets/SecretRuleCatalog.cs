@@ -300,7 +300,7 @@ internal static class SecretRuleCatalog
             new()
             {
                 Id = "age-secret-key", DisplayName = "age identity", Kind = SecretKind.GenericSecret, Confidence = Confidence.High,
-                Validator = Bech32.IsValidAgeSecretKey, Keywords = ["AGE-SECRET-KEY-1"], Pattern = SecretPatterns.AgeSecretKey(),
+                Validator = AgeSecretKey.IsValid, Keywords = ["AGE-SECRET-KEY-1"], Pattern = SecretPatterns.AgeSecretKey(),
                 Source = Gitleaks + "age-secret-key; bech32 checksum per BIP173",
             },
             new()

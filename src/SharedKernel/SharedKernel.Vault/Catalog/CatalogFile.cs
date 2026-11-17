@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using PandaBear.Vault.IO;
+using System.Text.Json;
+using PandaBear.IO;
 using PandaBear.Vault.Merge;
 
 namespace PandaBear.Vault.Catalog;

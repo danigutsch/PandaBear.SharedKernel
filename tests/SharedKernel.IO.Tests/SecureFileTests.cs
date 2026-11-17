@@ -1,7 +1,4 @@
-using PandaBear.Testing;
-using PandaBear.Vault.IO;
-
-namespace PandaBear.Vault.Tests.IO;
+namespace PandaBear.IO.Tests;
 
 /// <summary>Tests that secure file writes are owner-only, atomic, and cancelable.</summary>
 public sealed class SecureFileTests : IDisposable

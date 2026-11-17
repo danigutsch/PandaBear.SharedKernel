@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using PandaBear.Vault.IO;
+using PandaBear.InputNormalization;
 
 namespace PandaBear.VaultManager.Tool;
 
