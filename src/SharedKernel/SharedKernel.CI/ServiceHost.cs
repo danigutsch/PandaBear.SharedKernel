@@ -7,7 +7,7 @@ namespace PandaBear.CI;
 
 /// <summary>
 /// A slice's service while its tests run. The tool starts it with <c>dotnet run</c> and redirected standard input, output, and
-/// error, waits for the ready file in which it writes its value, deletes that file as soon as it has read the value, and stops
+/// error, waits for the ready file in which it writes its values, deletes that file as soon as it has read them, and stops
 /// it by closing its standard input, which it reads as end-of-file. Its output goes straight to log files in the execution
 /// directory. The ready file lives in a private temporary directory, because the execution directory is uploaded as a CI
 /// artifact.
@@ -105,8 +105,8 @@ internal sealed class ServiceHost
 
     /// <summary>
     /// Creates the start information of <c>dotnet run</c> for the built service project, with all three streams redirected and the
-    /// ready file in the environment. The environment has no GitHub token, and no value variable, because the service creates what the
-    /// value stands for and must not borrow it.
+    /// ready file in the environment. The environment has no GitHub token, and none of the value variables, because the service creates
+    /// what the values stand for and must not borrow them.
     /// </summary>
     internal static ProcessStartInfo CreateStartInfo(ServiceConfiguration configuration, string buildConfiguration, string root, string readyFile)
     {
@@ -125,47 +125,92 @@ internal sealed class ServiceHost
         }
 
         ProcessEnvironment.RemoveForgeTokens(startInfo);
-        startInfo.Environment.Remove(configuration.ValueVariable);
+        foreach (var variable in configuration.ValueVariables)
+        {
+            startInfo.Environment.Remove(variable);
+        }
+
         startInfo.Environment[configuration.ReadyFileVariable] = readyFile;
         return startInfo;
     }
 
     /// <summary>
-    /// Reads the value from the text of the ready file: its first line without a byte order mark or surrounding whitespace.
+    /// Reads the values from the text of the ready file, after a byte order mark: one <c>NAME=value</c> line for each of
+    /// <paramref name="variables"/> in any order, where <c>NAME</c> is the variable exactly and the value, without surrounding
+    /// whitespace, is not empty and holds no control character. No other line is allowed.
     /// </summary>
-    /// <returns>The value, or <see langword="null"/> when the first line is empty.</returns>
-    /// <exception cref="InvalidDataException">The value contains a control character, so it cannot travel in an environment variable.</exception>
-    internal static string? ParseValue(string text, string slice)
+    /// <param name="text">The text of the ready file.</param>
+    /// <param name="variables">The value variables of the service.</param>
+    /// <param name="slice">The slice that owns the service.</param>
+    /// <returns>
+    /// The variables with their values, in the order of <paramref name="variables"/>, or <see langword="null"/> when the text is only
+    /// white space, which is a file whose service has not written it yet.
+    /// </returns>
+    /// <exception cref="InvalidDataException">
+    /// A line names no value variable or repeats one, a value is empty or holds a control character, or a value variable is missing. The
+    /// message names the line and the variable, never a value, and never what a line that names no variable holds.
+    /// </exception>
+    internal static IReadOnlyList<(string Variable, string Value)>? ParseValues(string text, IReadOnlyList<string> variables, string slice)
     {
-        var line = new StringReader(text).ReadLine()?.TrimStart('\uFEFF').Trim() ?? string.Empty;
-        if (line.Length == 0)
+        var content = text.TrimStart('\uFEFF');
+        if (string.IsNullOrWhiteSpace(content))
         {
             return null;
         }
 
-        return line.Any(char.IsControl)
-            ? throw new InvalidDataException($"The ready file of the service of slice {slice} must hold one line without control characters.")
-            : line;
+        var prefix = $"The ready file of the service of slice {slice} must hold one NAME=value line for each of its value variables ({string.Join(", ", variables)}); ";
+        var values = new Dictionary<string, string>(StringComparer.Ordinal);
+        using var reader = new StringReader(content);
+        var number = 0;
+        while (reader.ReadLine() is { } line)
+        {
+            number++;
+            var separator = line.IndexOf('=', StringComparison.Ordinal);
+            var variable = (separator < 0 ? null : variables.FirstOrDefault(candidate => string.Equals(candidate, line[..separator], StringComparison.Ordinal)))
+                ?? throw new InvalidDataException(string.Create(CultureInfo.InvariantCulture, $"{prefix}line {number} names none of them."));
+
+            var value = line[(separator + 1)..].Trim();
+            if (value.Length == 0)
+            {
+                throw new InvalidDataException(string.Create(CultureInfo.InvariantCulture, $"{prefix}line {number} gives {variable} no value."));
+            }
+
+            if (value.Any(char.IsControl))
+            {
+                throw new InvalidDataException(string.Create(CultureInfo.InvariantCulture, $"{prefix}line {number} gives {variable} a value with a control character."));
+            }
+
+            if (!values.TryAdd(variable, value))
+            {
+                throw new InvalidDataException(string.Create(CultureInfo.InvariantCulture, $"{prefix}line {number} repeats {variable}."));
+            }
+        }
+
+        var missing = variables.Where(variable => !values.ContainsKey(variable)).ToArray();
+        return missing.Length > 0
+            ? throw new InvalidDataException(prefix + "it lacks " + string.Join(", ", missing) + ".")
+            : [.. variables.Select(variable => (variable, values[variable]))];
     }
 
     /// <summary>Describes the started service and where its output goes.</summary>
     public string ReadyMessage() =>
         $"The service of slice {Slice} is ready: {_configuration.Project}{Environment.NewLine}Output: {StandardOutputLog}, {StandardErrorLog}{Environment.NewLine}";
 
-    /// <summary>Waits for the service to write its value to the ready file.</summary>
+    /// <summary>Waits for the service to write its values to the ready file.</summary>
     /// <param name="ct">Cancels the wait.</param>
-    /// <returns>The value, which is never part of a message.</returns>
-    /// <exception cref="InvalidOperationException">The service exited, or did not write a value in time.</exception>
-    public async Task<string> WaitUntilReady(CancellationToken ct)
+    /// <returns>The value variables with their values, in the order of the configuration; a value is never part of a message.</returns>
+    /// <exception cref="InvalidOperationException">The service exited, or did not write its values in time.</exception>
+    /// <exception cref="InvalidDataException">The ready file is larger than 4 KiB or does not hand over each value variable once.</exception>
+    public async Task<IReadOnlyList<(string Variable, string Value)>> WaitUntilReady(CancellationToken ct)
     {
         var started = Stopwatch.GetTimestamp();
         var timeout = TimeSpan.FromSeconds(_configuration.ReadyTimeoutSeconds);
         while (true)
         {
-            if (await ReadValue(ct).ConfigureAwait(false) is { } value)
+            if (await ReadValues(ct).ConfigureAwait(false) is { } values)
             {
                 DeleteReadyFile();
-                return value;
+                return values;
             }
 
             if (_process.HasExited)
@@ -245,7 +290,7 @@ internal sealed class ServiceHost
                 $"Stopped the service of slice {Slice} in {Stopwatch.GetElapsedTime(started).TotalSeconds:F1} seconds; exit code {exitCode}.{Environment.NewLine}");
     }
 
-    private async Task<string?> ReadValue(CancellationToken ct)
+    private async Task<IReadOnlyList<(string Variable, string Value)>?> ReadValues(CancellationToken ct)
     {
         byte[] content;
         try
@@ -257,10 +302,10 @@ internal sealed class ServiceHost
             return null;
         }
 
-        return ParseValue(Encoding.UTF8.GetString(content), Slice);
+        return ParseValues(Encoding.UTF8.GetString(content), _configuration.ValueVariables, Slice);
     }
 
-    // The value is in memory from here on, and the file is the only place on disk that holds it, so a run that is cut short,
+    // The values are in memory from here on, and the file is the only place on disk that holds them, so a run that is cut short,
     // even killed, leaves an empty directory and not a credential.
     private void DeleteReadyFile()
     {

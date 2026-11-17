@@ -18,8 +18,14 @@ internal sealed class ServiceRunScope : IDisposable
     /// <summary>The project that the <c>database</c> slice starts as its service.</summary>
     public const string DatabaseHost = "tests/Database.Host/Database.Host.csproj";
 
-    /// <summary>The value that the fake host hands over. The tests look for it everywhere it must not appear.</summary>
+    /// <summary>The first value that the fake host hands over, in <c>FAKE_SERVICE_VALUE</c>. The tests look for it everywhere it must not appear.</summary>
     public const string Value = "Host=127.0.0.1;Port=5432;Username=postgres;Password=canary-9f2c1b";
+
+    /// <summary>The second value that the fake host hands over, in <c>FAKE_SERVICE_ENDPOINT</c>. The tests look for it everywhere it must not appear.</summary>
+    public const string Endpoint = "Endpoint=http://127.0.0.1:3000;WebsiteId=canary-7d41e0";
+
+    /// <summary>Writes both values to the ready file, atomically as the protocol requires.</summary>
+    public static readonly string Ready = FakeServiceHost.Ready([("FAKE_SERVICE_VALUE", Value), ("FAKE_SERVICE_ENDPOINT", Endpoint)]);
 
     private readonly RepositoryTestScope repository = new();
 
@@ -36,7 +42,7 @@ internal sealed class ServiceRunScope : IDisposable
         repository.Configure($$"""
             [
               { "name": "library", "projects": [] },
-              { "name": "database", "projects": ["{{DatabaseTests}}"], "service": { "project": "{{DatabaseHost}}", "readyFileVariable": "FAKE_READY_FILE", "valueVariable": "FAKE_SERVICE_VALUE", "readyTimeoutSeconds": {{readyTimeoutSeconds}}, "stopTimeoutSeconds": {{stopTimeoutSeconds}} } }
+              { "name": "database", "projects": ["{{DatabaseTests}}"], "service": { "project": "{{DatabaseHost}}", "readyFileVariable": "FAKE_READY_FILE", "valueVariables": ["FAKE_SERVICE_VALUE", "FAKE_SERVICE_ENDPOINT"], "readyTimeoutSeconds": {{readyTimeoutSeconds}}, "stopTimeoutSeconds": {{stopTimeoutSeconds}} } }
             ]
             """);
         Selection = repository.WriteSelection("fixture", ("library", [CoreTests]), ("database", [DatabaseTests]));

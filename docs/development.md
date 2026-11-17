@@ -28,8 +28,9 @@ databases on a PostgreSQL server, and where that server comes from depends on th
 CI shares one server instead. `.config/sharedkernel-ci.json` lists the three projects in the `postgres` slice and gives
 it a `service`: the project `tests/SharedKernel.Npgsql.Testing.Host`. `sharedkernel-ci run --slice postgres` starts that
 host after the build, waits for it to write its connection string to the file that
-`SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE` names, hands the string to the test run alone through
-`SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING`, and stops the host after the tests by closing its standard input, which
+`SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE` names, as the line `SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING=<connection
+string>` for the one variable that the service's `valueVariables` lists, hands the string to the test run alone through that
+variable, and stops the host after the tests by closing its standard input, which
 makes the host remove its container. The host's output is in `service-postgres.stdout.log` and
 `service-postgres.stderr.log` beside the other logs of the slice's evidence, and the connection string is in no log. The
 [CI tool README](../tools/SharedKernel.CI.Tool/README.md#services) describes the protocol. Parallel test modules stay

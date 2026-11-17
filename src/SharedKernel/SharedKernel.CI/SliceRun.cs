@@ -157,7 +157,7 @@ internal static class SliceRun
                 {
                     var host = ServiceHost.Start(slice, service, options.Configuration, root, execution, start);
                     hosts.Add(host);
-                    handed.Add((service.ValueVariable, await host.WaitUntilReady(ct).ConfigureAwait(false)));
+                    handed.AddRange(await host.WaitUntilReady(ct).ConfigureAwait(false));
                     return host.ReadyMessage();
                 }).ConfigureAwait(false);
             }

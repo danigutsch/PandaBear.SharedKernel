@@ -74,7 +74,7 @@
       "service": {
         "project": "tests/SharedKernel.Npgsql.Testing.Host/SharedKernel.Npgsql.Testing.Host.csproj",
         "readyFileVariable": "SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE",
-        "valueVariable": "SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING",
+        "valueVariables": ["SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING"],
         "stopTimeoutSeconds": 180
       }
     }

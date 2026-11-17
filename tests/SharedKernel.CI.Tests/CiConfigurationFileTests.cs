@@ -10,7 +10,7 @@ public sealed class CiConfigurationFileTests : IDisposable
     private const string Library = "\"name\": \"library\", \"projects\": []";
 
     private const string HostService =
-        """{ "project": "tests/Host/Host.csproj", "readyFileVariable": "APP_READY_FILE", "valueVariable": "APP_VALUE" }""";
+        """{ "project": "tests/Host/Host.csproj", "readyFileVariable": "APP_READY_FILE", "valueVariables": ["APP_VALUE"] }""";
 
     private readonly RepositoryTestScope scope = new();
 
@@ -84,7 +84,12 @@ public sealed class CiConfigurationFileTests : IDisposable
         var configuration = await CiConfigurationFile.Read(scope.Root, TestContext.Current.CancellationToken);
 
         // Assert
-        configuration.Slices.ShouldHaveSingleItem().Service.ShouldBe(new ServiceConfiguration("tests/Host/Host.csproj", "APP_READY_FILE", "APP_VALUE", 300, 60));
+        var service = configuration.Slices.ShouldHaveSingleItem().Service.ShouldNotBeNull();
+        service.Project.ShouldBe("tests/Host/Host.csproj");
+        service.ReadyFileVariable.ShouldBe("APP_READY_FILE");
+        service.ValueVariables.ShouldBe(["APP_VALUE"]);
+        service.ReadyTimeoutSeconds.ShouldBe(300);
+        service.StopTimeoutSeconds.ShouldBe(60);
     }
 
     [Fact]
@@ -93,14 +98,32 @@ public sealed class CiConfigurationFileTests : IDisposable
         // Arrange
         scope.WriteFile(".config/sharedkernel-ci.json", RepositoryTestScope.DefaultConfiguration.Replace(
             Library,
-            Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP_VALUE\", \"readyTimeoutSeconds\": 3600, \"stopTimeoutSeconds\": 1 }",
+            Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_VALUE\"], \"readyTimeoutSeconds\": 3600, \"stopTimeoutSeconds\": 1 }",
             StringComparison.Ordinal));
 
         // Act
         var configuration = await CiConfigurationFile.Read(scope.Root, TestContext.Current.CancellationToken);
 
         // Assert
-        configuration.Slices.ShouldHaveSingleItem().Service.ShouldBe(new ServiceConfiguration("tests/Host/Host.csproj", "APP_READY_FILE", "APP_VALUE", 3600, 1));
+        var service = configuration.Slices.ShouldHaveSingleItem().Service.ShouldNotBeNull();
+        service.ReadyTimeoutSeconds.ShouldBe(3600);
+        service.StopTimeoutSeconds.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task A_slice_service_reads_every_variable_that_it_hands_to_the_tests_in_order()
+    {
+        // Arrange
+        scope.WriteFile(".config/sharedkernel-ci.json", RepositoryTestScope.DefaultConfiguration.Replace(
+            Library,
+            Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_DATABASE\", \"APP_ANALYTICS\"] }",
+            StringComparison.Ordinal));
+
+        // Act
+        var configuration = await CiConfigurationFile.Read(scope.Root, TestContext.Current.CancellationToken);
+
+        // Assert
+        configuration.Slices.ShouldHaveSingleItem().Service.ShouldNotBeNull().ValueVariables.ShouldBe(["APP_DATABASE", "APP_ANALYTICS"]);
     }
 
     [Fact]
@@ -174,26 +197,31 @@ public sealed class CiConfigurationFileTests : IDisposable
     [InlineData("\"version\": 1,", "\"version\": 1, \"mutation\": { \"strykerVersion\": \"4.15.0\", \"configFiles\": [\"tests/A/stryker.json\", \"tests/A/stryker.json\"] },", ": $.mutation.configFiles[1] repeats tests/A/stryker.json.")]
     [InlineData("\"version\": 1,", "\"version\": 1, \"mutation\": { \"strykerVersion\": \"4.15.0\" },", " is not valid at $.mutation")]
     [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\" }", " is not valid at $.slices[0].service")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP_VALUE\", \"extra\": true }", " is not valid at $.slices[0].service.extra")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": null }", " is not valid at $.slices[0].service.valueVariable")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP_VALUE\", \"readyTimeoutSeconds\": \"soon\" }", " is not valid at $.slices[0].service.readyTimeoutSeconds")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"../Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP_VALUE\" }", ": $.slices[0].service.project must be a repository-relative project path")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests\\\\Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP_VALUE\" }", ": $.slices[0].service.project must be a repository-relative project path")]
-    [InlineData("\"name\": \"library\", \"projects\": []", "\"name\": \"library\", \"projects\": [\"tests/A/A.csproj\"], \"service\": { \"project\": \"tests/A/A.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP_VALUE\" }", ": $.slices[0].service.project names tests/A/A.csproj, which slice library lists as a test project; a service is not a test project.")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"1_READY\", \"valueVariable\": \"APP_VALUE\" }", ": $.slices[0].service.readyFileVariable must be an environment variable name: letters, digits, and '_', not starting with a digit.")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP-VALUE\" }", ": $.slices[0].service.valueVariable must be an environment variable name: letters, digits, and '_', not starting with a digit.")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP=VALUE\" }", ": $.slices[0].service.valueVariable must be an environment variable name: letters, digits, and '_', not starting with a digit.")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"GITHUB_TOKEN\", \"valueVariable\": \"APP_VALUE\" }", ": $.slices[0].service.readyFileVariable names GITHUB_TOKEN, a forge token variable that the tool removes from the service's environment; use another name.")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"gh_token\" }", ": $.slices[0].service.valueVariable names gh_token, a forge token variable that the tool removes from the service's environment; use another name.")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"FORGEJO_TOKEN\" }", ": $.slices[0].service.valueVariable names FORGEJO_TOKEN, a forge token variable that the tool removes from the service's environment; use another name.")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"GH_ENTERPRISE_TOKEN\", \"valueVariable\": \"APP_VALUE\" }", ": $.slices[0].service.readyFileVariable names GH_ENTERPRISE_TOKEN, a forge token variable that the tool removes from the service's environment; use another name.")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"Github_Enterprise_Token\" }", ": $.slices[0].service.valueVariable names Github_Enterprise_Token, a forge token variable that the tool removes from the service's environment; use another name.")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_VALUE\", \"valueVariable\": \"APP_VALUE\" }", ": $.slices[0].service.valueVariable repeats readyFileVariable APP_VALUE.")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP_VALUE\", \"readyTimeoutSeconds\": 0 }", ": $.slices[0].service.readyTimeoutSeconds must be from 1 to 3600.")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP_VALUE\", \"readyTimeoutSeconds\": 3601 }", ": $.slices[0].service.readyTimeoutSeconds must be from 1 to 3600.")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP_VALUE\", \"stopTimeoutSeconds\": 0 }", ": $.slices[0].service.stopTimeoutSeconds must be from 1 to 3600.")]
-    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP_VALUE\", \"stopTimeoutSeconds\": -5 }", ": $.slices[0].service.stopTimeoutSeconds must be from 1 to 3600.")]
-    [InlineData("\"slices\": [{ \"name\": \"library\", \"projects\": [] }]", "\"slices\": [{ \"name\": \"library\", \"projects\": [], \"service\": " + HostService + " }, { \"name\": \"other\", \"projects\": [\"tests/A/A.csproj\"], \"service\": { \"project\": \"tests/Other/Other.csproj\", \"readyFileVariable\": \"OTHER_READY_FILE\", \"valueVariable\": \"APP_VALUE\" } }]", ": $.slices[1].service.valueVariable repeats APP_VALUE, which the service of slice library already hands to its tests.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_VALUE\"], \"extra\": true }", " is not valid at $.slices[0].service.extra")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": null }", " is not valid at $.slices[0].service.valueVariables")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariable\": \"APP_VALUE\" }", " is not valid at $.slices[0].service.valueVariable")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": \"APP_VALUE\" }", " is not valid at $.slices[0].service.valueVariables")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [] }", ": $.slices[0].service.valueVariables must name at least one variable.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_VALUE\", null] }", ": $.slices[0].service.valueVariables[1] must be an environment variable name: letters, digits, and '_', not starting with a digit.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_VALUE\", \"App_Value\"] }", ": $.slices[0].service.valueVariables[1] repeats App_Value.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_VALUE\"], \"readyTimeoutSeconds\": \"soon\" }", " is not valid at $.slices[0].service.readyTimeoutSeconds")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"../Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_VALUE\"] }", ": $.slices[0].service.project must be a repository-relative project path")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests\\\\Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_VALUE\"] }", ": $.slices[0].service.project must be a repository-relative project path")]
+    [InlineData("\"name\": \"library\", \"projects\": []", "\"name\": \"library\", \"projects\": [\"tests/A/A.csproj\"], \"service\": { \"project\": \"tests/A/A.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_VALUE\"] }", ": $.slices[0].service.project names tests/A/A.csproj, which slice library lists as a test project; a service is not a test project.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"1_READY\", \"valueVariables\": [\"APP_VALUE\"] }", ": $.slices[0].service.readyFileVariable must be an environment variable name: letters, digits, and '_', not starting with a digit.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP-VALUE\"] }", ": $.slices[0].service.valueVariables[0] must be an environment variable name: letters, digits, and '_', not starting with a digit.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP=VALUE\"] }", ": $.slices[0].service.valueVariables[0] must be an environment variable name: letters, digits, and '_', not starting with a digit.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"GITHUB_TOKEN\", \"valueVariables\": [\"APP_VALUE\"] }", ": $.slices[0].service.readyFileVariable names GITHUB_TOKEN, a forge token variable that the tool removes from the service's environment; use another name.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"gh_token\"] }", ": $.slices[0].service.valueVariables[0] names gh_token, a forge token variable that the tool removes from the service's environment; use another name.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_VALUE\", \"FORGEJO_TOKEN\"] }", ": $.slices[0].service.valueVariables[1] names FORGEJO_TOKEN, a forge token variable that the tool removes from the service's environment; use another name.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"GH_ENTERPRISE_TOKEN\", \"valueVariables\": [\"APP_VALUE\"] }", ": $.slices[0].service.readyFileVariable names GH_ENTERPRISE_TOKEN, a forge token variable that the tool removes from the service's environment; use another name.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"Github_Enterprise_Token\"] }", ": $.slices[0].service.valueVariables[0] names Github_Enterprise_Token, a forge token variable that the tool removes from the service's environment; use another name.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_VALUE\", \"app_ready_file\"] }", ": $.slices[0].service.valueVariables[1] repeats readyFileVariable APP_READY_FILE.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_VALUE\"], \"readyTimeoutSeconds\": 0 }", ": $.slices[0].service.readyTimeoutSeconds must be from 1 to 3600.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_VALUE\"], \"readyTimeoutSeconds\": 3601 }", ": $.slices[0].service.readyTimeoutSeconds must be from 1 to 3600.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_VALUE\"], \"stopTimeoutSeconds\": 0 }", ": $.slices[0].service.stopTimeoutSeconds must be from 1 to 3600.")]
+    [InlineData(Library, Library + ", \"service\": { \"project\": \"tests/Host/Host.csproj\", \"readyFileVariable\": \"APP_READY_FILE\", \"valueVariables\": [\"APP_VALUE\"], \"stopTimeoutSeconds\": -5 }", ": $.slices[0].service.stopTimeoutSeconds must be from 1 to 3600.")]
+    [InlineData("\"slices\": [{ \"name\": \"library\", \"projects\": [] }]", "\"slices\": [{ \"name\": \"library\", \"projects\": [], \"service\": " + HostService + " }, { \"name\": \"other\", \"projects\": [\"tests/A/A.csproj\"], \"service\": { \"project\": \"tests/Other/Other.csproj\", \"readyFileVariable\": \"OTHER_READY_FILE\", \"valueVariables\": [\"OTHER_VALUE\", \"app_value\"] } }]", ": $.slices[1].service.valueVariables[1] repeats app_value, which the service of slice library already hands to its tests.")]
     public async Task Invalid_configuration_names_the_file_and_the_JSON_path(string original, string replacement, string expected)
     {
         // Arrange

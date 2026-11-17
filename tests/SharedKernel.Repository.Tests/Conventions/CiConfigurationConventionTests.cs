@@ -83,7 +83,7 @@ public sealed class CiConfigurationConventionTests
         // Act
         var services = configuration.Slices.Where(static slice => slice.Service is not null).Select(static slice => (slice.Name, Service: slice.Service!)).ToArray();
         var invalid = services
-            .SelectMany(static slice => new[] { slice.Service.ReadyFileVariable, slice.Service.ValueVariable })
+            .SelectMany(static slice => slice.Service.ValueVariables.Prepend(slice.Service.ReadyFileVariable))
             .Where(static variable => variable.Length == 0 || char.IsAsciiDigit(variable[0]) || !variable.All(static character => char.IsAsciiLetterOrDigit(character) || character == '_'))
             .ToArray();
 
@@ -92,11 +92,11 @@ public sealed class CiConfigurationConventionTests
         services.ShouldAllSatisfy(slice =>
         {
             graph.Tests.ShouldNotContain(slice.Service.Project, "A service is a host, not a test project.");
-            slice.Service.ReadyFileVariable.ShouldNotBe(slice.Service.ValueVariable, "The service and the tests read different variables.");
+            slice.Service.ValueVariables.ShouldNotContain(slice.Service.ReadyFileVariable, "The service and the tests read different variables.");
         });
         invalid.ShouldBeEmpty("An environment variable name is letters, digits, and '_', and does not start with a digit.");
-        services.Select(static slice => slice.Service.ValueVariable).ShouldBe(
-            [.. services.Select(static slice => slice.Service.ValueVariable).Distinct(StringComparer.OrdinalIgnoreCase)],
+        services.SelectMany(static slice => slice.Service.ValueVariables).ShouldBe(
+            [.. services.SelectMany(static slice => slice.Service.ValueVariables).Distinct(StringComparer.OrdinalIgnoreCase)],
             "Slices that run together share one test environment, so they cannot hand over the same variable.");
     }
 
@@ -117,13 +117,14 @@ public sealed class CiConfigurationConventionTests
             "tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj",
             "tests/SharedKernel.Npgsql.Tests/SharedKernel.Npgsql.Tests.csproj",
         ]);
-        postgres.Service.ShouldBe(
-            new ServiceConfiguration(
-                "tests/SharedKernel.Npgsql.Testing.Host/SharedKernel.Npgsql.Testing.Host.csproj",
-                "SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE",
-                "SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING",
-                StopTimeoutSeconds: 180),
-            "The names are the contract between the CI tool, the owner host, and the test assemblies, and the stop timeout outlasts the two minutes that the container runtime may take to remove the server, because the host removes its container while it exits and a kill earlier would interrupt that.");
+        var service = postgres.Service.ShouldNotBeNull();
+        service.Project.ShouldBe("tests/SharedKernel.Npgsql.Testing.Host/SharedKernel.Npgsql.Testing.Host.csproj");
+        service.ReadyFileVariable.ShouldBe("SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE", "The names are the contract between the CI tool, the owner host, and the test assemblies.");
+        service.ValueVariables.ShouldBe(["SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING"], "The names are the contract between the CI tool, the owner host, and the test assemblies.");
+        service.ReadyTimeoutSeconds.ShouldBe(ServiceConfiguration.DefaultReadyTimeoutSeconds);
+        service.StopTimeoutSeconds.ShouldBe(
+            180,
+            "The stop timeout outlasts the two minutes that the container runtime may take to remove the server, because the host removes its container while it exits and a kill earlier would interrupt that.");
     }
 
     [Fact]

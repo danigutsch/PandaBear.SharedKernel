@@ -436,7 +436,7 @@ public sealed class ProjectSelectorTests : IDisposable
     {
         // Arrange
         scope.Configure($$"""
-            [{ "name": "library", "projects": [], "service": { "project": "{{project}}", "readyFileVariable": "APP_READY_FILE", "valueVariable": "APP_VALUE" } }]
+            [{ "name": "library", "projects": [], "service": { "project": "{{project}}", "readyFileVariable": "APP_READY_FILE", "valueVariables": ["APP_VALUE"] } }]
             """);
 
         // Act

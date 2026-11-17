@@ -31,7 +31,7 @@ internal static class Program
         {
             var readyFile = ReadyFile.Resolve(Environment.GetEnvironmentVariable);
             await using var server = await PostgreSqlTestServer.Start(CreateBuilder(), shutdown.Token).ConfigureAwait(false);
-            ReadyFile.Publish(readyFile, server.ConnectionString);
+            ReadyFile.Publish(readyFile, [(PostgreSqlTestServer.ConnectionStringVariable, server.ConnectionString)]);
             await Console.Out.WriteLineAsync("The PostgreSQL test server accepts connections and the ready file is written.").ConfigureAwait(false);
             await shutdown.Wait().ConfigureAwait(false);
             await Console.Out.WriteLineAsync($"Stopping the PostgreSQL test server: {shutdown.Reason}.").ConfigureAwait(false);

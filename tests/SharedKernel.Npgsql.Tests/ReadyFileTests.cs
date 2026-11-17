@@ -3,7 +3,7 @@ using PandaBear.Npgsql.Testing.Host;
 
 namespace PandaBear.Npgsql.Tests;
 
-/// <summary>Tests resolving and publishing the ready file through which the owner host announces its server's connection string. Each test uses its own temporary directory, removed on disposal.</summary>
+/// <summary>Tests resolving and publishing the ready file through which the owner host hands over the values of its services. Each test uses its own temporary directory, removed on disposal.</summary>
 public sealed class ReadyFileTests : IDisposable
 {
     private readonly TemporaryDirectory temporaryDirectory = new();
@@ -84,18 +84,40 @@ public sealed class ReadyFileTests : IDisposable
     }
 
     [Fact]
-    public void The_connection_string_is_published_as_one_utf8_line_without_a_byte_order_mark()
+    public void Each_value_is_published_as_one_utf8_name_value_line_without_a_byte_order_mark()
     {
         // Arrange
         var path = Path.Combine(DirectoryPath, "ready.txt");
         const string connectionString = "Host=127.0.0.1;Port=41234;Username=postgres;Password=\"p\u00e4ssw\u00f6rd\"";
 
         // Act
-        ReadyFile.Publish(path, connectionString);
+        ReadyFile.Publish(path, [("APP_DATABASE", connectionString), ("APP_ANALYTICS", "Endpoint=http://localhost:3000;WebsiteId=a1")]);
         var content = File.ReadAllBytes(path);
 
         // Assert
-        content.ShouldBe(Encoding.UTF8.GetBytes(connectionString + "\n"), "the owner reads the first line; a byte order mark would become part of the Host keyword");
+        content.ShouldBe(
+            Encoding.UTF8.GetBytes("APP_DATABASE=" + connectionString + "\nAPP_ANALYTICS=Endpoint=http://localhost:3000;WebsiteId=a1\n"),
+            "the owner reads one NAME=value line per variable; a byte order mark would become part of the first name");
+    }
+
+    [Theory]
+    [InlineData("APP_DATABASE", "Host=127.0.0.1;Password=owner\nsecret")]
+    [InlineData("APP_DATABASE", "Host=127.0.0.1;Password=owner\tsecret")]
+    [InlineData("APP_DATABASE", "")]
+    [InlineData("APP=DATABASE", "Host=127.0.0.1;Password=owner-secret")]
+    [InlineData("", "Host=127.0.0.1;Password=owner-secret")]
+    public void A_value_or_name_that_cannot_travel_as_one_line_is_refused_without_repeating_the_value_and_nothing_is_written(string variable, string value)
+    {
+        // Arrange
+        var path = Path.Combine(DirectoryPath, "ready.txt");
+        Action publish = () => ReadyFile.Publish(path, [(variable, value)]);
+
+        // Act
+        var failure = publish.ShouldThrow<ArgumentException>();
+
+        // Assert
+        failure.Message.ShouldNotContain("secret", StringComparison.Ordinal);
+        Directory.GetFiles(DirectoryPath).ShouldBeEmpty("the owner would read a partial file as the values of the services");
     }
 
     [Fact]
@@ -103,15 +125,15 @@ public sealed class ReadyFileTests : IDisposable
     {
         // Arrange
         var path = Path.Combine(DirectoryPath, "ready.txt");
-        ReadyFile.Publish(path, "Host=first");
+        ReadyFile.Publish(path, [("APP_DATABASE", "Host=first")]);
 
         // Act
-        ReadyFile.Publish(path, "Host=second");
+        ReadyFile.Publish(path, [("APP_DATABASE", "Host=second")]);
         var files = Directory.GetFiles(DirectoryPath).Select(Path.GetFileName).ToArray();
 
         // Assert
-        File.ReadAllText(path).ShouldBe("Host=second\n");
-        files.ShouldBe(["ready.txt"], "the line is written to a temporary file first and moved over the ready file, so the owner never reads a partial line");
+        File.ReadAllText(path).ShouldBe("APP_DATABASE=Host=second\n");
+        files.ShouldBe(["ready.txt"], "the lines are written to a temporary file first and moved over the ready file, so the owner never reads a partial file");
     }
 
     [Fact]
@@ -122,13 +144,13 @@ public sealed class ReadyFileTests : IDisposable
 
         // The temporary file cannot be created, which stands for a write that fails half way.
         _ = Directory.CreateDirectory(path + ".tmp");
-        Action publish = () => ReadyFile.Publish(path, "Host=127.0.0.1;Password=owner-secret");
+        Action publish = () => ReadyFile.Publish(path, [("APP_DATABASE", "Host=127.0.0.1;Password=owner-secret")]);
 
         // Act
         _ = publish.ShouldThrow<UnauthorizedAccessException>();
 
         // Assert
-        File.Exists(path).ShouldBeFalse("the owner treats the existence of the ready file as the signal that the line is complete");
+        File.Exists(path).ShouldBeFalse("the owner treats the existence of the ready file as the signal that every line is complete");
     }
 
     [Fact]
@@ -143,7 +165,7 @@ public sealed class ReadyFileTests : IDisposable
         var path = Path.Combine(DirectoryPath, "ready.txt");
 
         // Act
-        ReadyFile.Publish(path, "Host=127.0.0.1;Password=owner-secret");
+        ReadyFile.Publish(path, [("APP_DATABASE", "Host=127.0.0.1;Password=owner-secret")]);
         var mode = File.GetUnixFileMode(path);
 
         // Assert
