@@ -35,7 +35,7 @@ public sealed class AgeIdentityRef : ValueObject
             { Length: > MaxLength } => $"Identity file path cannot exceed {MaxLength} characters.",
             _ when value.Any(char.IsControl) => "Identity file path cannot contain control characters.",
             _ when !System.IO.Path.IsPathFullyQualified(value) => "Identity file path must be absolute.",
-            _ when value.EndsWith('/') || value.Split('/', '\\').Contains("..") => "Identity file path must name a file without '..' segments.",
+            _ when value.EndsWith('/', StringComparison.Ordinal) || value.Split('/', '\\').Contains("..") => "Identity file path must name a file without '..' segments.",
             _ => null,
         };
         return problem is null ? Result.Ok(new AgeIdentityRef(value!)) : Result.Invalid<AgeIdentityRef>(problem, field, problem);

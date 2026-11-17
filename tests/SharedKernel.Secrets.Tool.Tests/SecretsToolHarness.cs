@@ -1,5 +1,4 @@
 using System.CommandLine;
-using System.Globalization;
 
 namespace PandaBear.Secrets.Tool.Tests;
 
@@ -42,8 +41,8 @@ internal static class SecretsToolHarness
         IReadOnlyDictionary<string, string>? variables,
         params string[] arguments)
     {
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new InvariantStringWriter();
+        using var error = new InvariantStringWriter();
         using var standardOutput = new MemoryStream();
         var input = new MemoryStream(standardInput ?? []);
         var environment = new SecretsEnvironment(

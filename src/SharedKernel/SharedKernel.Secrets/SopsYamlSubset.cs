@@ -105,12 +105,12 @@ internal static class SopsYamlSubset
         foreach (var line in yaml.ReplaceLineEndings("\n").Split('\n'))
         {
             var trimmed = line.TrimStart(' ', '\t');
-            if (trimmed.StartsWith('%') || trimmed.StartsWith('!'))
+            if (trimmed.StartsWith('%', StringComparison.Ordinal) || trimmed.StartsWith('!', StringComparison.Ordinal))
             {
                 return true;
             }
 
-            for (var index = line.IndexOf('!', StringComparison.Ordinal); index > 0; index = line.IndexOf('!', index + 1))
+            for (var index = line.IndexOf('!', StringComparison.Ordinal); index > 0; index = line.IndexOf('!', index + 1, StringComparison.Ordinal))
             {
                 if (line[index - 1] is ' ' or '\t' or '[' or '{' or ',')
                 {
@@ -137,7 +137,7 @@ internal static class SopsYamlSubset
             return TopLevel.Other;
         }
 
-        if (line[0] == '\t' || line.TrimStart(' ').StartsWith('\t'))
+        if (line[0] == '\t' || line.TrimStart(' ').StartsWith('\t', StringComparison.Ordinal))
         {
             return TopLevel.Invalid;
         }
@@ -182,7 +182,7 @@ internal static class SopsYamlSubset
     {
         if (text[0] is '"' or '\'')
         {
-            var close = text.IndexOf(text[0], 1);
+            var close = text.IndexOf(text[0], 1, StringComparison.Ordinal);
             if (close < 0)
             {
                 return -1;
@@ -414,7 +414,7 @@ internal static class SopsYamlSubset
                 return text;
             }
 
-            var close = text.IndexOf(text[0], 1);
+            var close = text.IndexOf(text[0], 1, StringComparison.Ordinal);
             if (close < 0 || (text[0] == '"' && text.Contains('\\', StringComparison.Ordinal)))
             {
                 return null;

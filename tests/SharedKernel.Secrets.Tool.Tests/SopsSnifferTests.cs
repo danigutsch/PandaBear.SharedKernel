@@ -139,7 +139,7 @@ public sealed class SopsSnifferTests
     }
 
     [Fact]
-    public void A_json_document_and_a_yaml_key_that_are_positively_sops_are_recognised_with_their_format()
+    public void A_JSON_document_and_a_yaml_key_that_are_positively_sops_are_recognised_with_their_format()
     {
         // Act
         var json = SopsSniffer.Classify(Encoding.UTF8.GetBytes(TestRecipients.Json([TestRecipients.First])), out var jsonFormat, out _);

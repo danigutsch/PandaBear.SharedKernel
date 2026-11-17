@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 using PandaBear.Results;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.Secrets.Tool;
 
@@ -85,12 +85,12 @@ internal static class DecryptCommand
     /// <summary>Resolves <paramref name="output"/> under <paramref name="root"/>: relative, no <c>..</c>, no symbolic link in any segment, an existing directory, and no file there yet.</summary>
     private static string ResolveOutput(string root, string output)
     {
-        if (!RepositoryPath.IsRelative(output))
+        if (!RepositoryPath.TryParse(output, out var relative))
         {
             throw new InvalidOperationException("--output must be a path inside the root: relative, with '/' separators and without empty, '.', or '..' segments.");
         }
 
-        var destination = RepositoryPath.Resolve(root, output);
+        var destination = relative.ResolveUnder(root);
         var directory = Path.GetDirectoryName(destination);
         if (directory is null || !Directory.Exists(directory))
         {

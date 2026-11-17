@@ -1,11 +1,11 @@
 using PandaBear.Secrets;
 using PandaBear.Secrets.Tool;
-using PandaBear.Tooling;
+using PandaBear.Processes;
 
 return await SecretsCommandLine
     .Create(new SecretsEnvironment(
         Environment.CurrentDirectory,
-        static command => ExecutableResolver.Resolve(command, Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows()),
+        PathExecutableResolver.Default.Find,
         new SystemToolRunner(),
         Console.OpenStandardInput,
         Console.OpenStandardOutput,

@@ -95,7 +95,7 @@ public sealed class EncryptedFilePath : ValueObject
 
     private static bool HasSopsName(string value)
     {
-        var name = value[(value.LastIndexOf('/') + 1)..];
+        var name = value[(value.LastIndexOf('/', StringComparison.Ordinal) + 1)..];
         var index = name.IndexOf(Marker, StringComparison.Ordinal);
         return index > 0 && index + Marker.Length < name.Length;
     }

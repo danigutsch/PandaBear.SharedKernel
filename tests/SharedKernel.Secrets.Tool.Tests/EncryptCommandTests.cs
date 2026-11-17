@@ -159,7 +159,7 @@ public sealed class EncryptCommandTests
     }
 
     [Fact]
-    public async Task Json_files_are_encrypted_with_the_json_types()
+    public async Task JSON_files_are_encrypted_with_the_JSON_types()
     {
         // Arrange
         using var repository = CreateRepository(Config);

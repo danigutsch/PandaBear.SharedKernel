@@ -113,7 +113,7 @@ internal static class PlainValueScanner
     /// <summary>Returns whether <paramref name="value"/> is a complete value as sops writes it: the cipher, base64 data, a 32-byte iv, a 16-byte tag, and a known type.</summary>
     internal static bool IsWellFormedEncryptedValue(string value)
     {
-        if (!value.StartsWith("ENC[", StringComparison.Ordinal) || !value.EndsWith(']'))
+        if (!value.StartsWith("ENC[", StringComparison.Ordinal) || !value.EndsWith(']', StringComparison.Ordinal))
         {
             return false;
         }
@@ -177,7 +177,7 @@ internal static class PlainValueScanner
         var tail = string.Empty;
         if (value.Length > 0 && value[0] is '"' or '\'')
         {
-            var close = value.IndexOf(value[0], 1);
+            var close = value.IndexOf(value[0], 1, StringComparison.Ordinal);
             if (close >= 0)
             {
                 end = close + 1;

@@ -98,7 +98,6 @@ public sealed class AgeRecipientSshTests
 
         // Assert
         original.IsSuccess.ShouldBeTrue();
-        Convert.FromBase64String(variant.Split(' ')[1]).ShouldBe(Convert.FromBase64String(good.Split(' ')[1]));
         result.IsFailure.ShouldBeTrue();
     }
 

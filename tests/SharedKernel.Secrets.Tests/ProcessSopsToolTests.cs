@@ -34,7 +34,7 @@ public sealed class ProcessSopsToolTests
     }
 
     [Fact]
-    public async Task Encrypt_uses_the_json_types_for_json()
+    public async Task Encrypt_uses_the_JSON_types_for_JSON()
     {
         // Arrange
         var runner = FakeToolRunner.Succeeding("{}");

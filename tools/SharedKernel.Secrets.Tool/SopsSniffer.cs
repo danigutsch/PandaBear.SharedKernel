@@ -165,7 +165,7 @@ internal static class SopsSniffer
         {
             if (Rune.GetUnicodeCategory(rune) != System.Globalization.UnicodeCategory.Format)
             {
-                folded.Append(Rune.ToUpperInvariant(rune).ToString());
+                folded.Append(Rune.ToUpperInvariant(rune));
             }
         }
 
@@ -280,7 +280,7 @@ internal static class SopsSniffer
         var start = 0;
         if (text[0] is '"' or '\'')
         {
-            var close = text.IndexOf(text[0], 1);
+            var close = text.IndexOf(text[0], 1, StringComparison.Ordinal);
             if (close < 0)
             {
                 return -1;

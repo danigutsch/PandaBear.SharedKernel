@@ -93,7 +93,7 @@ public sealed class RealToolsTests
     }
 
     [Fact(SkipType = typeof(RealTools), SkipUnless = nameof(RealTools.AllAvailable), Skip = AllSkip)]
-    public async Task Sops_round_trip_with_real_tools_in_yaml_and_json()
+    public async Task Sops_round_trip_with_real_tools_in_yaml_and_JSON()
     {
         // Arrange
         using var directory = new TemporaryDirectory();

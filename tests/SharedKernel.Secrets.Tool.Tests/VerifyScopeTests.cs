@@ -60,7 +60,7 @@ public sealed class VerifyScopeTests
     }
 
     [Fact]
-    public async Task A_sops_json_document_named_sops_passes_with_the_right_recipients_and_the_root_configuration_is_skipped()
+    public async Task A_sops_JSON_document_named_sops_passes_with_the_right_recipients_and_the_root_configuration_is_skipped()
     {
         // Arrange
         using var repository = CreateRepository(Config);
@@ -273,7 +273,7 @@ public sealed class VerifyScopeTests
 
 
     [Fact]
-    public async Task A_sops_json_document_outside_every_rule_is_uncovered_whatever_its_name()
+    public async Task A_sops_JSON_document_outside_every_rule_is_uncovered_whatever_its_name()
     {
         // Arrange
         using var repository = CreateRepository(Config);

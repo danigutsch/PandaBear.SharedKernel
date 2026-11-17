@@ -51,7 +51,7 @@ public sealed class SopsMetadataSecondReviewTests
     [InlineData(",\"Unencrypted_Regex\":\".*\"", "unencrypted_regex")]
     [InlineData(",\"ENCRYPTED_SUFFIX\":\"_s\"", "encrypted_suffix")]
     [InlineData(",\"Unencrypted_Suffix\":\"_clear\"", "unencrypted_suffix")]
-    public void Json_setting_names_are_compared_without_regard_to_case_as_go_does(string member, string setting)
+    public void JSON_setting_names_are_compared_without_regard_to_case_as_go_does(string member, string setting)
     {
         // Act
         var holders = SopsMetadataReader.Read(SopsSamples.Json(Both, member), SopsFormat.Json).ShouldBeSuccess();

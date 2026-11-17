@@ -64,7 +64,7 @@ public sealed class ConfigurationTests
     [InlineData("\"" + TestRecipients.First + "\"", 2, "x", "$.creationRules[0].recipients")]
     [InlineData("\"" + TestRecipients.First + "\"", 0, "x", "$.creationRules[0].minimumRecipients")]
     [InlineData("\"" + TestRecipients.First + "\"", 1, "(?=x)", "$.creationRules[0].pathRegex")]
-    public async Task An_invalid_rule_is_a_failure_at_its_json_path_without_echoing_the_value(string recipients, int minimum, string pattern, string location)
+    public async Task An_invalid_rule_is_a_failure_at_its_JSON_path_without_echoing_the_value(string recipients, int minimum, string pattern, string location)
     {
         // Arrange
         using var repository = CreateRepository($"{{\"version\":1,\"creationRules\":[{{\"pathRegex\":\"{pattern}\",\"recipients\":[{recipients}],\"minimumRecipients\":{minimum}}}]}}");

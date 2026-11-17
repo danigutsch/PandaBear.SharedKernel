@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
-using PandaBear.Tooling;
+using PandaBear.IO;
 
 namespace PandaBear.Secrets.Tool;
 
@@ -22,7 +22,7 @@ internal static class SecretsConfigurationFile
         string path;
         try
         {
-            path = RepositoryPath.Resolve(root, RelativePath);
+            path = RepositoryPath.Parse(RelativePath).ResolveUnder(root);
         }
         catch (InvalidOperationException exception)
         {

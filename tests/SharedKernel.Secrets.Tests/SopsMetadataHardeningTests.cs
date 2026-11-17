@@ -186,7 +186,7 @@ public sealed class SopsMetadataHardeningTests
     }
 
     [Fact]
-    public void A_json_byte_order_mark_or_second_document_is_refused()
+    public void A_JSON_byte_order_mark_or_second_document_is_refused()
     {
         // Act
         var bom = SopsMetadataReader.Read("\uFEFF" + SopsSamples.Json(Both), SopsFormat.Json);
@@ -315,7 +315,7 @@ public sealed class SopsMetadataHardeningTests
     }
 
     [Fact]
-    public void A_non_default_unencrypted_suffix_and_json_settings_are_concerns()
+    public void A_non_default_unencrypted_suffix_and_JSON_settings_are_concerns()
     {
         // Act
         var suffix = SopsMetadataReader.Read(SopsSamples.Yaml(Both).Replace("_unencrypted", "_clear", StringComparison.Ordinal), SopsFormat.Yaml).ShouldBeSuccess();
@@ -331,7 +331,7 @@ public sealed class SopsMetadataHardeningTests
     }
 
     [Fact]
-    public void A_plaintext_value_in_yaml_or_json_is_a_concern()
+    public void A_plaintext_value_in_yaml_or_JSON_is_a_concern()
     {
         // Act
         var yaml = SopsMetadataReader.Read(SopsSamples.Yaml(Both, dataLines: "token: hunter2\n"), SopsFormat.Yaml).ShouldBeSuccess();

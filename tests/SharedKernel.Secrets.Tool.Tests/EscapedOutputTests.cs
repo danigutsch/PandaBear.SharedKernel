@@ -8,7 +8,7 @@ public sealed class EscapedOutputTests
     public async Task Control_characters_are_escaped_and_ordinary_text_is_kept()
     {
         // Arrange
-        using var writer = new StringWriter();
+        using var writer = new InvariantStringWriter();
 
         // Act
         await EscapedOutput.Line(writer, "a\u001b[31mred\nforged: line café", TestContext.Current.CancellationToken);

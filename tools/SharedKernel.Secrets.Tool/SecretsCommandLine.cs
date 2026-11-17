@@ -1,5 +1,5 @@
 using System.CommandLine;
-using PandaBear.Tooling;
+using PandaBear.InputNormalization;
 
 namespace PandaBear.Secrets.Tool;
 

@@ -52,7 +52,7 @@ public sealed class SecretRef : ValueObject
         }
 
         var separator = value.IndexOf('#', StringComparison.Ordinal);
-        if (separator < 0 || value.IndexOf('#', separator + 1) >= 0)
+        if (separator < 0 || value.IndexOf('#', separator + 1, StringComparison.Ordinal) >= 0)
         {
             return Invalid(field, "Secret reference must be '<file>#<key path>'.");
         }
