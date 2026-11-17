@@ -1,5 +1,4 @@
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
@@ -17,7 +16,7 @@ internal sealed class UmamiApiClient(HttpClient client, Uri endpoint)
     /// <summary>The user that Umami creates on its first start and that provisioning signs in as.</summary>
     public const string AdminUsername = "admin";
 
-    private readonly Uri _base = endpoint.AbsolutePath.EndsWith('/') ? endpoint : new Uri(endpoint.AbsoluteUri + "/");
+    private readonly Uri _base = endpoint.AbsolutePath.EndsWith('/', StringComparison.Ordinal) ? endpoint : new Uri(endpoint.AbsoluteUri + "/");
 
     /// <summary>Signs in as <see cref="AdminUsername"/> and creates the website with its id unless a website with that id exists.</summary>
     /// <param name="password">The admin password.</param>
