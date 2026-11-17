@@ -682,5 +682,3 @@ command tree, the format detection that picks a provider's reader, the review UI
 
 The source is public. Registry publication remains deferred. Consume a validated candidate from an explicitly
 configured local or private feed. This README does not imply the package is available on nuget.org.
-
-The design and its upstream evidence are in [the vault manager plan](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/plans/vault-manager.md).
