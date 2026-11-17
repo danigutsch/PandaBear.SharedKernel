@@ -287,7 +287,6 @@ public sealed class ServerValidationBinderTests
         binder.Apply(Errors(("Name", ["Name taken."])));
 
         // Act
-        // .NET 11 makes Validate obsolete in favor of ValidateAsync.
         var valid = await context.ValidateAsync(Xunit.TestContext.Current.CancellationToken);
 
         // Assert

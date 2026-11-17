@@ -51,8 +51,6 @@ internal static class UniqueRuleResolver
             return false;
         }
 
-        // EF Core 11 lists index members as IPropertyBase and EF Core 10 as IProperty. Only a scalar property has a column, so
-        // any other member cannot match. This form compiles against both.
         var columns = index.Properties.Select(property => property is IReadOnlyProperty scalar ? scalar.GetColumnName(store) : null).ToList();
         return columns.Count == violation.Columns.Count
             && columns.All(column => violation.Columns.Contains(column, StringComparer.OrdinalIgnoreCase));

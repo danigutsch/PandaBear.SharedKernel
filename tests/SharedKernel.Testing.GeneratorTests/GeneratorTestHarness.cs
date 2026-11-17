@@ -35,8 +35,7 @@ internal static class GeneratorTestHarness
                 MetadataReference.CreateFromFile(typeof(CallProxy).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(IServiceCollection).Assembly.Location),
             ]);
-        // Like the SDK, which suppresses CS1701 and CS1702 by default: on .NET 11, SharedKernel.Testing, built for net10.0,
-        // references Microsoft.Extensions.DependencyInjection.Abstractions 10.0, which unifies with the framework's 11.0.
+        // Like the SDK, which suppresses the CS1701 and CS1702 assembly unification warnings by default.
         return compilation.WithOptions(compilation.Options
             .WithNullableContextOptions(NullableContextOptions.Enable)
             .WithSpecificDiagnosticOptions(compilation.Options.SpecificDiagnosticOptions

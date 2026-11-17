@@ -146,8 +146,8 @@ internal static class SecretText
         return false;
     }
 
-    // .NET 11 rejects padded base64 whose final character has nonzero unused bits; .NET 10 and other tools ignore those
-    // bits. Clearing them accepts the same keys on every runtime and decodes to the same bytes as the canonical text.
+    // Other tools accept padded base64 whose final character has nonzero unused bits, which Convert.TryFromBase64String
+    // rejects. Clearing them accepts those keys and decodes to the same bytes as the canonical text.
     private static bool TryDecodeClearingUnusedBits(string compact, Span<byte> buffer, out int written)
     {
         written = 0;
