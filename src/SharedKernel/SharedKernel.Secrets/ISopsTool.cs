@@ -30,6 +30,30 @@ public interface ISopsTool
     Task<Result<SecretBytes>> DecryptValue(string root, SecretRef reference, AgeIdentityRef identity, CancellationToken cancellationToken);
 
     /// <summary>
+    /// Returns the file re-encrypted for exactly <paramref name="recipients"/> with the same data key, as <c>sops updatekeys</c>
+    /// does: values keep their ciphertext and only the recipients' copies of the data key change. The file itself is not
+    /// written. A recipient that is removed this way may already know the data key; <see cref="Rotate"/> replaces it.
+    /// </summary>
+    /// <param name="absoluteFile">The encrypted file.</param>
+    /// <param name="identity">An identity file that can decrypt the data key.</param>
+    /// <param name="recipients">The recipients the new version is encrypted to.</param>
+    /// <param name="cancellationToken">Cancels the run.</param>
+    /// <returns>The new encrypted document.</returns>
+    Task<Result<string>> UpdateKeys(string absoluteFile, AgeIdentityRef identity, AgeRecipientSet recipients, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Returns the file re-encrypted with a new data key for exactly <paramref name="recipients"/>, as <c>sops rotate</c> does.
+    /// Every value gets new ciphertext, so a removed recipient's knowledge of the old data key is worthless for the new
+    /// version. The file itself is not written.
+    /// </summary>
+    /// <param name="absoluteFile">The encrypted file.</param>
+    /// <param name="identity">An identity file that can decrypt the data key.</param>
+    /// <param name="recipients">The recipients the new version is encrypted to.</param>
+    /// <param name="cancellationToken">Cancels the run.</param>
+    /// <returns>The new encrypted document.</returns>
+    Task<Result<string>> Rotate(string absoluteFile, AgeIdentityRef identity, AgeRecipientSet recipients, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Tries to decrypt the file with the identity and discards the plaintext unread. Only a failure that sops attributes to the identity not matching
     /// any recipient is <see cref="SopsTrialOutcome.NoMatchingIdentity"/>; every other failure is <see cref="SopsTrialOutcome.Failed"/>.
     /// </summary>

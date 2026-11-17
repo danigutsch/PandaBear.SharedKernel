@@ -58,7 +58,7 @@ public sealed class ProcessSopsTool : ISopsTool
     {
         ArgumentNullException.ThrowIfNull(recipients);
         var type = FormatName(format);
-        string[] arguments = ["encrypt", "--age", string.Join(',', recipients.Recipients.Select(static item => item.Value)), "--input-type", type, "--output-type", type, "/dev/stdin"];
+        string[] arguments = ["encrypt", "--age", AgeList(recipients.Recipients), "--input-type", type, "--output-type", type, "/dev/stdin"];
         var (run, problem) = await RunSops(arguments, null, plaintext, cancellationToken).ConfigureAwait(false);
         if (run is null)
         {
@@ -137,6 +137,98 @@ public sealed class ProcessSopsTool : ISopsTool
     }
 
     /// <inheritdoc />
+    /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    public async Task<Result<string>> UpdateKeys(string absoluteFile, AgeIdentityRef identity, AgeRecipientSet recipients, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(absoluteFile);
+        ArgumentNullException.ThrowIfNull(identity);
+        ArgumentNullException.ThrowIfNull(recipients);
+        var invalid = ProgramInvocation.CheckFile(absoluteFile);
+        if (invalid is not null)
+        {
+            return Result.Invalid<string>(invalid, "file", invalid);
+        }
+
+        // updatekeys rewrites the file it is given and takes the recipients only from a configuration file, so it gets a
+        // private copy and a configuration that lists exactly the recipients and nothing else.
+        var directory = Directory.CreateTempSubdirectory("sops-");
+        try
+        {
+            var data = Directory.CreateDirectory(Path.Combine(directory.FullName, "data"));
+            var copy = Path.Combine(data.FullName, Path.GetFileName(absoluteFile));
+            var configuration = Path.Combine(directory.FullName, ".sops.yaml");
+            try
+            {
+                File.Copy(absoluteFile, copy);
+            }
+            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+            {
+                return ProgramInvocation.Error<string>("The file cannot be read.");
+            }
+
+            await File.WriteAllTextAsync(configuration, $"creation_rules:\n  - age: \"{AgeList(recipients.Recipients)}\"\n", cancellationToken).ConfigureAwait(false);
+            var request = Request(["updatekeys", "--yes", copy], identity, default, directory.FullName, configuration);
+            var (run, problem) = await ProgramInvocation.Run(_runner, "sops", request, cancellationToken).ConfigureAwait(false);
+            if (run is null)
+            {
+                return ProgramInvocation.Error<string>(problem!);
+            }
+
+            run.Dispose();
+            return Result.Ok(await File.ReadAllTextAsync(copy, cancellationToken).ConfigureAwait(false));
+        }
+        finally
+        {
+            directory.Delete(recursive: true);
+        }
+    }
+
+    /// <inheritdoc />
+    /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    public async Task<Result<string>> Rotate(string absoluteFile, AgeIdentityRef identity, AgeRecipientSet recipients, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(absoluteFile);
+        ArgumentNullException.ThrowIfNull(identity);
+        ArgumentNullException.ThrowIfNull(recipients);
+        var invalid = ProgramInvocation.CheckFile(absoluteFile);
+        if (invalid is not null)
+        {
+            return Result.Invalid<string>(invalid, "file", invalid);
+        }
+
+        var current = await SopsFileReader.ReadRecipients(absoluteFile, cancellationToken).ConfigureAwait(false);
+        if (current.IsFailure)
+        {
+            return ProgramInvocation.Error<string>(current.ErrorDetails?.Detail ?? "The recipients cannot be read.");
+        }
+
+        List<string> arguments = ["rotate"];
+        var added = recipients.Recipients.Where(recipient => !current.Value.Age.Contains(recipient)).ToArray();
+        var removed = current.Value.Age.Where(recipient => !recipients.Contains(recipient)).ToArray();
+        if (added.Length > 0)
+        {
+            arguments.AddRange(["--add-age", AgeList(added)]);
+        }
+
+        if (removed.Length > 0)
+        {
+            arguments.AddRange(["--rm-age", AgeList(removed)]);
+        }
+
+        arguments.Add(absoluteFile);
+        var (run, problem) = await RunSops(arguments, identity, default, cancellationToken).ConfigureAwait(false);
+        if (run is null)
+        {
+            return ProgramInvocation.Error<string>(problem!);
+        }
+
+        using (run)
+        {
+            return Result.Ok(Encoding.UTF8.GetString(run.StandardOutput.AsSpan()));
+        }
+    }
+
+    /// <inheritdoc />
     /// <exception cref="ArgumentNullException"><paramref name="absoluteFile"/> is <see langword="null"/>.</exception>
     public Task<Result<SopsFileRecipients>> ListRecipients(string absoluteFile, CancellationToken cancellationToken) =>
         SopsFileReader.ReadRecipients(absoluteFile, cancellationToken);
@@ -151,6 +243,8 @@ public sealed class ProcessSopsTool : ISopsTool
     }
 
     private static string FormatName(SopsFormat format) => format == SopsFormat.Json ? "json" : "yaml";
+
+    private static string AgeList(IEnumerable<AgeRecipient> recipients) => string.Join(',', recipients.Select(static item => item.Value));
 
     /// <summary>
     /// Runs sops with <c>--config /dev/null</c> and in a new empty directory, so a <c>.sops.yaml</c> in the caller's working directory (a creation rule with
@@ -173,7 +267,7 @@ public sealed class ProcessSopsTool : ISopsTool
     /// The request for one sops call. <c>HOME</c> is the empty working directory, so sops cannot find SSH keys or a key file in the caller's home
     /// directory: only the identity that was given can decrypt.
     /// </summary>
-    private ToolRequest Request(IReadOnlyList<string> arguments, AgeIdentityRef? identity, ReadOnlyMemory<byte> standardInput, string directory)
+    private ToolRequest Request(IReadOnlyList<string> arguments, AgeIdentityRef? identity, ReadOnlyMemory<byte> standardInput, string directory, string configuration = "/dev/null")
     {
         Dictionary<string, string> environment = new(StringComparer.Ordinal)
         {
@@ -184,7 +278,7 @@ public sealed class ProcessSopsTool : ISopsTool
             environment[AgeKeyFile] = identity.Path;
         }
 
-        return new ToolRequest(_sops, ["--config", "/dev/null", .. arguments], environment, standardInput, directory);
+        return new ToolRequest(_sops, ["--config", configuration, .. arguments], environment, standardInput, directory);
     }
 
     private async Task<Result<SecretBytes>> RunForOutput(IReadOnlyList<string> arguments, string absoluteFile, AgeIdentityRef identity, CancellationToken cancellationToken)
