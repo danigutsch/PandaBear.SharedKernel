@@ -59,4 +59,22 @@ public sealed class EncryptedFileReplacementTests
         // Assert
         File.GetUnixFileMode(file).ShouldBe(UnixFileMode.UserRead | UnixFileMode.UserWrite);
     }
+
+    [Fact(SkipType = typeof(MemoryFileSystem), SkipUnless = nameof(MemoryFileSystem.UnixFileModes), Skip = "Unix file modes only.")]
+    [UnsupportedOSPlatform("windows")]
+    public async Task A_mode_that_the_umask_would_narrow_survives_the_replacement()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var file = Path.Combine(directory.Path, "app.sops.yaml");
+        await File.WriteAllTextAsync(file, "old", TestContext.Current.CancellationToken);
+        const UnixFileMode mode = UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.OtherRead | UnixFileMode.OtherWrite;
+        File.SetUnixFileMode(file, mode);
+
+        // Act
+        await EncryptedFileReplacement.Replace(file, Encoding.UTF8.GetBytes("old"), "new", TestContext.Current.CancellationToken);
+
+        // Assert
+        File.GetUnixFileMode(file).ShouldBe(mode);
+    }
 }

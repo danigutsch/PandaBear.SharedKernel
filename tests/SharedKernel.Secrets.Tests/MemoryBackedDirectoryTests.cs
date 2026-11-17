@@ -52,4 +52,21 @@ public sealed class MemoryBackedDirectoryTests
         // Assert
         create.ShouldThrow<InvalidOperationException>().Message.ShouldContain("not a link", StringComparison.Ordinal);
     }
+
+    [Fact(SkipType = typeof(MemoryFileSystem), SkipUnless = nameof(MemoryFileSystem.SharedMemoryAvailable), Skip = "/dev/shm is not a tmpfs here.")]
+    [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
+    public void A_read_only_directory_that_an_editor_left_behind_is_still_removed()
+    {
+        // Arrange
+        var directory = MemoryBackedDirectory.Create("/dev/shm");
+        var locked = Directory.CreateDirectory(Path.Combine(directory, "backup")).FullName;
+        File.WriteAllText(Path.Combine(locked, "plain.txt"), "plaintext");
+        File.SetUnixFileMode(locked, UnixFileMode.UserRead | UnixFileMode.UserExecute);
+
+        // Act
+        MemoryBackedDirectory.Remove(directory);
+
+        // Assert
+        Directory.Exists(directory).ShouldBeFalse();
+    }
 }

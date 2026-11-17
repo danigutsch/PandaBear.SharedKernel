@@ -170,4 +170,42 @@ public sealed class RewriteCommandTests
         var contents = await ReadText(repository.Path, File);
         contents.ShouldBe(original);
     }
+
+    [Fact]
+    public async Task Rotate_refuses_a_file_with_a_non_age_key_holder_before_running_sops()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        WriteFile(repository.Path, "secrets/vault.sops.json", TestRecipients.Json([TestRecipients.First, TestRecipients.Second], ",\"hc_vault\":[{\"vault_address\":\"https://v\"}]"));
+        var runner = ScriptedToolRunner.Unused();
+
+        // Act
+        var run = await Run(repository.Path, runner, ResolveAll, null, null, "rotate", "secrets/vault.sops.json", "--identity", "/keys/id.txt", "--force");
+
+        // Assert
+        run.ExitCode.ShouldBe(2);
+        run.Error.ShouldContain("run 'recipients update secrets/vault.sops.json' first", StringComparison.Ordinal);
+        run.Output.ShouldNotContain("remove non-age key holder", StringComparison.Ordinal);
+        runner.Requests.ShouldBeEmpty();
+    }
+
+    [Fact]
+    [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
+    public async Task A_fifo_named_like_a_sops_file_does_not_hang_the_rewriting_commands()
+    {
+        // Arrange
+        using var repository = CreateRepository(Config);
+        Directory.CreateDirectory(Path.Combine(repository.Path, "secrets"));
+        using var made = await new SystemToolRunner().Run(new ToolRequest("/usr/bin/mkfifo", [Path.Combine(repository.Path, File)]), TestContext.Current.CancellationToken);
+
+        // Act
+        var update = await Run(repository.Path, "recipients", "update", File).WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
+        var rotate = await Run(repository.Path, "rotate", File).WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
+
+        // Assert
+        made.ExitCode.ShouldBe(0);
+        update.ExitCode.ShouldBe(2);
+        update.Error.ShouldContain("cannot be read", StringComparison.Ordinal);
+        rotate.ExitCode.ShouldBe(2);
+    }
 }
