@@ -32,6 +32,11 @@ using var password = (await sops.DecryptValue("/repo", SecretRef.Create("secrets
 - `TrialDecrypt` discards the plaintext unread. Only sops reporting that the identity matches none of the recipients is
   `NoMatchingIdentity`; every other failure, such as a bad MAC or an unreadable identity, is `Failed`, so a broken file
   is never mistaken for an identity that cannot decrypt.
+- `UpdateKeys`, `Rotate`, and `Edit` take the encrypted document as bytes, never the file: sops works on an owner-only copy
+  named with a lowercase extension, in a directory that is removed afterwards, and the type is passed with `--input-type` and
+  `--output-type`. `UpdateKeys` runs `sops updatekeys` with a configuration that lists exactly the recipients; `Rotate` runs
+  `sops rotate --add-age --rm-age` for the difference; `Edit` runs `sops edit` on the caller's terminal inside the session's
+  private directory. Each returns the new document for the caller to check and write.
 - `ListRecipients` and `VerifyRecipients` read the file's metadata with the core library's `SopsFileReader` and start
   no process.
 

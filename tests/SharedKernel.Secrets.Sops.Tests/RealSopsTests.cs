@@ -170,7 +170,7 @@ public sealed class RealSopsTests
         var original = await File.ReadAllTextAsync(file, token);
 
         // Act
-        var result = await sops.UpdateKeys(file, identityA, AgeRecipientSet.Create([recipientA, recipientB]).ShouldBeSuccess(), token);
+        var result = await sops.UpdateKeys(await File.ReadAllBytesAsync(file, token), SopsFormat.Yaml, identityA, AgeRecipientSet.Create([recipientA, recipientB]).ShouldBeSuccess(), token);
         var updated = result.ShouldBeSuccess();
         await File.WriteAllTextAsync(file, updated, token);
         var viaBResult = await sops.Decrypt(file, identityB, token);
@@ -199,7 +199,7 @@ public sealed class RealSopsTests
         await File.WriteAllTextAsync(file, original, token);
 
         // Act
-        var result = await sops.Rotate(file, identityA, AgeRecipientSet.Create([recipientA]).ShouldBeSuccess(), token);
+        var result = await sops.Rotate(await File.ReadAllBytesAsync(file, token), SopsFormat.Json, identityA, AgeRecipientSet.Create([recipientA]).ShouldBeSuccess(), token);
         var rotated = result.ShouldBeSuccess();
         await File.WriteAllTextAsync(file, rotated, token);
         var viaAResult = await sops.Decrypt(file, identityA, token);
@@ -236,7 +236,7 @@ public sealed class RealSopsTests
         };
 
         // Act
-        var result = await sops.Edit(file, identity, session, token);
+        var result = await sops.Edit(await File.ReadAllBytesAsync(file, token), SopsFormat.Yaml, identity, session, token);
         var edited = result.ShouldBeSuccess();
         await File.WriteAllTextAsync(file, edited, token);
         var plaintextResult = await sops.Decrypt(file, identity, token);

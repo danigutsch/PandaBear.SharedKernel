@@ -124,12 +124,12 @@ PandaBear.Secrets.IAgeTool.GenerateIdentity(PandaBear.Secrets.AgeIdentityRef! de
 PandaBear.Secrets.ISopsTool
 PandaBear.Secrets.ISopsTool.Decrypt(string! absoluteFile, PandaBear.Secrets.AgeIdentityRef! identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SecretBytes!>>!
 PandaBear.Secrets.ISopsTool.DecryptValue(string! root, PandaBear.Secrets.SecretRef! reference, PandaBear.Secrets.AgeIdentityRef! identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SecretBytes!>>!
-PandaBear.Secrets.ISopsTool.Edit(string! absoluteFile, PandaBear.Secrets.AgeIdentityRef! identity, PandaBear.Secrets.SopsEditSession! session, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<string!>>!
+PandaBear.Secrets.ISopsTool.Edit(System.ReadOnlyMemory<byte> document, PandaBear.Secrets.SopsFormat format, PandaBear.Secrets.AgeIdentityRef! identity, PandaBear.Secrets.SopsEditSession! session, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<string!>>!
 PandaBear.Secrets.ISopsTool.Encrypt(PandaBear.Secrets.SopsFormat format, PandaBear.Secrets.AgeRecipientSet! recipients, System.ReadOnlyMemory<byte> plaintext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<string!>>!
 PandaBear.Secrets.ISopsTool.ListRecipients(string! absoluteFile, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.SopsFileRecipients!>>!
-PandaBear.Secrets.ISopsTool.Rotate(string! absoluteFile, PandaBear.Secrets.AgeIdentityRef! identity, PandaBear.Secrets.AgeRecipientSet! recipients, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<string!>>!
+PandaBear.Secrets.ISopsTool.Rotate(System.ReadOnlyMemory<byte> document, PandaBear.Secrets.SopsFormat format, PandaBear.Secrets.AgeIdentityRef! identity, PandaBear.Secrets.AgeRecipientSet! recipients, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<string!>>!
 PandaBear.Secrets.ISopsTool.TrialDecrypt(string! absoluteFile, PandaBear.Secrets.AgeIdentityRef! identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Secrets.SopsTrial!>!
-PandaBear.Secrets.ISopsTool.UpdateKeys(string! absoluteFile, PandaBear.Secrets.AgeIdentityRef! identity, PandaBear.Secrets.AgeRecipientSet! recipients, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<string!>>!
+PandaBear.Secrets.ISopsTool.UpdateKeys(System.ReadOnlyMemory<byte> document, PandaBear.Secrets.SopsFormat format, PandaBear.Secrets.AgeIdentityRef! identity, PandaBear.Secrets.AgeRecipientSet! recipients, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<string!>>!
 PandaBear.Secrets.ISopsTool.VerifyRecipients(string! absoluteFile, PandaBear.Secrets.SopsCreationRule! rule, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.RecipientVerification!>>!
 PandaBear.Secrets.IToolRunner
 PandaBear.Secrets.IToolRunner.Run(PandaBear.Secrets.ToolRequest! request, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Secrets.ToolResult!>!
@@ -277,6 +277,9 @@ PandaBear.Secrets.ToolResult.ExitCode.get -> int
 PandaBear.Secrets.ToolResult.StandardError.get -> string!
 PandaBear.Secrets.ToolResult.StandardOutput.get -> PandaBear.Secrets.SecretBytes!
 PandaBear.Secrets.ToolResult.ToolResult(int exitCode, PandaBear.Secrets.SecretBytes! standardOutput, string! standardError = "") -> void
+PandaBear.Secrets.ToolRuns
+static PandaBear.Secrets.ToolRuns.CheckFileArgument(string? path) -> string?
+static PandaBear.Secrets.ToolRuns.RunToSuccess(this PandaBear.Secrets.IToolRunner! runner, string! tool, PandaBear.Secrets.ToolRequest! request, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Results.Result<PandaBear.Secrets.ToolResult!>>!
 PandaBear.Secrets.UpdateRecipientsSettings
 PandaBear.Secrets.UpdateRecipientsSettings.<Clone>$() -> PandaBear.Secrets.UpdateRecipientsSettings!
 PandaBear.Secrets.UpdateRecipientsSettings.Equals(PandaBear.Secrets.UpdateRecipientsSettings? other) -> bool

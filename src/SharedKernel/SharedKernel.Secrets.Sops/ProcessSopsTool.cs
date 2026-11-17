@@ -62,11 +62,13 @@ public sealed class ProcessSopsTool : ISopsTool
         ArgumentNullException.ThrowIfNull(recipients);
         var type = FormatName(format);
         string[] arguments = ["encrypt", "--age", AgeList(recipients.Recipients), "--input-type", type, "--output-type", type, "/dev/stdin"];
-        var (run, problem) = await RunSops(arguments, null, plaintext, cancellationToken).ConfigureAwait(false);
-        if (run is null)
+        var completed = await RunSops(arguments, null, plaintext, cancellationToken).ConfigureAwait(false);
+        if (completed.IsFailure)
         {
-            return ProgramInvocation.Error<string>(problem!);
+            return Result.Error<string>(completed.ErrorDetails?.Detail ?? "The program failed.");
         }
+
+        var run = completed.Value;
 
         using (run)
         {
@@ -102,7 +104,7 @@ public sealed class ProcessSopsTool : ISopsTool
     {
         ArgumentNullException.ThrowIfNull(absoluteFile);
         ArgumentNullException.ThrowIfNull(identity);
-        var invalid = ProgramInvocation.CheckFile(absoluteFile);
+        var invalid = ToolRuns.CheckFileArgument(absoluteFile);
         if (invalid is not null)
         {
             return new SopsTrial(SopsTrialOutcome.Failed, invalid);
@@ -141,43 +143,27 @@ public sealed class ProcessSopsTool : ISopsTool
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
-    public async Task<Result<string>> UpdateKeys(string absoluteFile, AgeIdentityRef identity, AgeRecipientSet recipients, CancellationToken cancellationToken)
+    public async Task<Result<string>> UpdateKeys(ReadOnlyMemory<byte> document, SopsFormat format, AgeIdentityRef identity, AgeRecipientSet recipients, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(absoluteFile);
         ArgumentNullException.ThrowIfNull(identity);
         ArgumentNullException.ThrowIfNull(recipients);
-        var invalid = ProgramInvocation.CheckFile(absoluteFile);
-        if (invalid is not null)
-        {
-            return Result.Invalid<string>(invalid, "file", invalid);
-        }
 
         // updatekeys rewrites the file it is given and takes the recipients only from a configuration file, so it gets a
         // private copy and a configuration that lists exactly the recipients and nothing else.
         var directory = Directory.CreateTempSubdirectory("sops-");
         try
         {
-            var data = Directory.CreateDirectory(Path.Combine(directory.FullName, "data"));
-            var copy = Path.Combine(data.FullName, Path.GetFileName(absoluteFile));
+            var copy = await WritePrivateCopy(Directory.CreateDirectory(Path.Combine(directory.FullName, "data")).FullName, document, format, cancellationToken).ConfigureAwait(false);
             var configuration = Path.Combine(directory.FullName, ".sops.yaml");
-            try
-            {
-                CopyWritable(absoluteFile, copy);
-            }
-            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
-            {
-                return ProgramInvocation.Error<string>("The file cannot be read.");
-            }
-
             await File.WriteAllTextAsync(configuration, $"creation_rules:\n  - age: \"{AgeList(recipients.Recipients)}\"\n", cancellationToken).ConfigureAwait(false);
-            var request = Request(["updatekeys", "--yes", "--input-type", TypeOf(absoluteFile), copy], identity, default, directory.FullName, configuration);
-            var (run, problem) = await ProgramInvocation.Run(_runner, "sops", request, cancellationToken).ConfigureAwait(false);
-            if (run is null)
+            var request = Request(["updatekeys", "--yes", "--input-type", FormatName(format), copy], identity, default, directory.FullName, configuration);
+            var run = await _runner.RunToSuccess("sops", request, cancellationToken).ConfigureAwait(false);
+            if (run.IsFailure)
             {
-                return ProgramInvocation.Error<string>(problem!);
+                return Result.Error<string>(run.ErrorDetails?.Detail ?? "sops failed.");
             }
 
-            run.Dispose();
+            run.Value.Dispose();
             return Result.Ok(await File.ReadAllTextAsync(copy, cancellationToken).ConfigureAwait(false));
         }
         finally
@@ -188,31 +174,19 @@ public sealed class ProcessSopsTool : ISopsTool
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
-    public async Task<Result<string>> Edit(string absoluteFile, AgeIdentityRef identity, SopsEditSession session, CancellationToken cancellationToken)
+    public async Task<Result<string>> Edit(ReadOnlyMemory<byte> document, SopsFormat format, AgeIdentityRef identity, SopsEditSession session, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(absoluteFile);
         ArgumentNullException.ThrowIfNull(identity);
         ArgumentNullException.ThrowIfNull(session);
-        var invalid = ProgramInvocation.CheckFile(absoluteFile) ?? (Path.IsPathFullyQualified(session.PrivateDirectory) ? null : "The private directory must be absolute.");
-        if (invalid is not null)
+        if (!Path.IsPathFullyQualified(session.PrivateDirectory))
         {
-            return Result.Invalid<string>(invalid, "file", invalid);
+            return Result.Invalid<string>("The private directory must be absolute.", "privateDirectory", "The private directory must be absolute.");
         }
 
         var data = Path.Combine(session.PrivateDirectory, "data");
         try
         {
-            Directory.CreateDirectory(data);
-            var copy = Path.Combine(data, Path.GetFileName(absoluteFile));
-            try
-            {
-                CopyWritable(absoluteFile, copy);
-            }
-            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
-            {
-                return ProgramInvocation.Error<string>("The file cannot be read.");
-            }
-
+            var copy = await WritePrivateCopy(Directory.CreateDirectory(data).FullName, document, format, cancellationToken).ConfigureAwait(false);
             Dictionary<string, string> environment = new(session.TerminalEnvironment, StringComparer.Ordinal)
             {
                 ["HOME"] = session.PrivateDirectory,
@@ -220,7 +194,8 @@ public sealed class ProcessSopsTool : ISopsTool
                 ["EDITOR"] = session.Editor.ToShellWords(),
                 [AgeKeyFile] = identity.Path,
             };
-            var request = new ToolRequest(_sops, ["--config", "/dev/null", "edit", "--input-type", TypeOf(absoluteFile), "--output-type", TypeOf(absoluteFile), copy], environment, default, session.PrivateDirectory);
+            var type = FormatName(format);
+            var request = new ToolRequest(_sops, ["--config", "/dev/null", "edit", "--input-type", type, "--output-type", type, copy], environment, default, session.PrivateDirectory);
             int exitCode;
             try
             {
@@ -228,12 +203,12 @@ public sealed class ProcessSopsTool : ISopsTool
             }
             catch (InvalidOperationException exception)
             {
-                return ProgramInvocation.Error<string>($"sops could not run: {exception.Message}");
+                return Result.Error<string>($"sops could not run: {exception.Message}");
             }
 
             return exitCode is 0 or FileHasNotBeenModified
                 ? Result.Ok(await File.ReadAllTextAsync(copy, cancellationToken).ConfigureAwait(false))
-                : ProgramInvocation.Error<string>($"sops edit exited with code {exitCode}.");
+                : Result.Error<string>($"sops edit exited with code {exitCode}.");
         }
         finally
         {
@@ -246,24 +221,18 @@ public sealed class ProcessSopsTool : ISopsTool
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
-    public async Task<Result<string>> Rotate(string absoluteFile, AgeIdentityRef identity, AgeRecipientSet recipients, CancellationToken cancellationToken)
+    public async Task<Result<string>> Rotate(ReadOnlyMemory<byte> document, SopsFormat format, AgeIdentityRef identity, AgeRecipientSet recipients, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(absoluteFile);
         ArgumentNullException.ThrowIfNull(identity);
         ArgumentNullException.ThrowIfNull(recipients);
-        var invalid = ProgramInvocation.CheckFile(absoluteFile);
-        if (invalid is not null)
-        {
-            return Result.Invalid<string>(invalid, "file", invalid);
-        }
-
-        var current = await SopsFileReader.ReadRecipients(absoluteFile, cancellationToken).ConfigureAwait(false);
+        var current = SopsMetadataReader.Read(Encoding.UTF8.GetString(document.Span), format);
         if (current.IsFailure)
         {
-            return ProgramInvocation.Error<string>(current.ErrorDetails?.Detail ?? "The recipients cannot be read.");
+            return Result.Error<string>(current.ErrorDetails?.Detail ?? "The recipients cannot be read.");
         }
 
-        List<string> arguments = ["rotate", "--input-type", TypeOf(absoluteFile), "--output-type", TypeOf(absoluteFile)];
+        var type = FormatName(format);
+        List<string> arguments = ["rotate", "--input-type", type, "--output-type", type];
         var added = recipients.Recipients.Where(recipient => !current.Value.Age.Contains(recipient)).ToArray();
         var removed = current.Value.Age.Where(recipient => !recipients.Contains(recipient)).ToArray();
         if (added.Length > 0)
@@ -276,16 +245,25 @@ public sealed class ProcessSopsTool : ISopsTool
             arguments.AddRange(["--rm-age", AgeList(removed)]);
         }
 
-        arguments.Add(absoluteFile);
-        var (run, problem) = await RunSops(arguments, identity, default, cancellationToken).ConfigureAwait(false);
-        if (run is null)
+        // rotate writes the new version to standard output; the copy only gives sops a file to read.
+        var directory = Directory.CreateTempSubdirectory("sops-");
+        try
         {
-            return ProgramInvocation.Error<string>(problem!);
-        }
+            arguments.Add(await WritePrivateCopy(directory.FullName, document, format, cancellationToken).ConfigureAwait(false));
+            var run = await _runner.RunToSuccess("sops", Request(arguments, identity, default, directory.FullName), cancellationToken).ConfigureAwait(false);
+            if (run.IsFailure)
+            {
+                return Result.Error<string>(run.ErrorDetails?.Detail ?? "sops failed.");
+            }
 
-        using (run)
+            using (run.Value)
+            {
+                return Result.Ok(Encoding.UTF8.GetString(run.Value.StandardOutput.AsSpan()));
+            }
+        }
+        finally
         {
-            return Result.Ok(Encoding.UTF8.GetString(run.StandardOutput.AsSpan()));
+            directory.Delete(recursive: true);
         }
     }
 
@@ -300,22 +278,29 @@ public sealed class ProcessSopsTool : ISopsTool
     {
         ArgumentNullException.ThrowIfNull(rule);
         var actual = await ListRecipients(absoluteFile, cancellationToken).ConfigureAwait(false);
-        return actual.IsFailure ? ProgramInvocation.Error<RecipientVerification>(actual.ErrorDetails?.Detail ?? "The recipients cannot be read.") : Result.Ok(RecipientVerification.Compare(actual.Value, rule));
+        return actual.IsFailure ? Result.Error<RecipientVerification>(actual.ErrorDetails?.Detail ?? "The recipients cannot be read.") : Result.Ok(RecipientVerification.Compare(actual.Value, rule));
     }
 
     private static string FormatName(SopsFormat format) => format == SopsFormat.Json ? "json" : "yaml";
 
-    // sops infers the format only from a lowercase extension, so the rewriting calls name it.
-    private static string TypeOf(string file) => Path.GetExtension(file).ToUpperInvariant() is ".JSON" ? "json" : "yaml";
-
-    // File.Copy keeps the source's mode, and sops must be able to write the copy of a read-only file.
-    private static void CopyWritable(string source, string copy)
+    // The copy that sops reads and, for updatekeys and edit, rewrites: owner-only, so sops can write it whatever the
+    // original's mode, and named with a lowercase extension, as sops expects.
+    private static async Task<string> WritePrivateCopy(string directory, ReadOnlyMemory<byte> document, SopsFormat format, CancellationToken cancellationToken)
     {
-        File.Copy(source, copy);
+        var copy = Path.Combine(directory, "document.sops." + FormatName(format));
+        FileStreamOptions options = new() { Mode = FileMode.CreateNew, Access = FileAccess.Write, Share = FileShare.None };
         if (!OperatingSystem.IsWindows())
         {
-            File.SetUnixFileMode(copy, UnixFileMode.UserRead | UnixFileMode.UserWrite);
+            options.UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
         }
+
+        var stream = new FileStream(copy, options);
+        await using (stream.ConfigureAwait(false))
+        {
+            await stream.WriteAsync(document, cancellationToken).ConfigureAwait(false);
+        }
+
+        return copy;
     }
 
     private static string AgeList(IEnumerable<AgeRecipient> recipients) => string.Join(',', recipients.Select(static item => item.Value));
@@ -324,12 +309,12 @@ public sealed class ProcessSopsTool : ISopsTool
     /// Runs sops with <c>--config /dev/null</c> and in a new empty directory, so a <c>.sops.yaml</c> in the caller's working directory (a creation rule with
     /// <c>unencrypted_regex</c>, say) can neither change how data is encrypted nor leave plaintext in the result.
     /// </summary>
-    private async Task<(ToolResult? Run, string? Problem)> RunSops(IReadOnlyList<string> arguments, AgeIdentityRef? identity, ReadOnlyMemory<byte> standardInput, CancellationToken cancellationToken)
+    private async Task<Result<ToolResult>> RunSops(IReadOnlyList<string> arguments, AgeIdentityRef? identity, ReadOnlyMemory<byte> standardInput, CancellationToken cancellationToken)
     {
         var directory = Directory.CreateTempSubdirectory("sops-");
         try
         {
-            return await ProgramInvocation.Run(_runner, "sops", Request(arguments, identity, standardInput, directory.FullName), cancellationToken).ConfigureAwait(false);
+            return await _runner.RunToSuccess("sops", Request(arguments, identity, standardInput, directory.FullName), cancellationToken).ConfigureAwait(false);
         }
         finally
         {
@@ -357,15 +342,15 @@ public sealed class ProcessSopsTool : ISopsTool
 
     private async Task<Result<SecretBytes>> RunForOutput(IReadOnlyList<string> arguments, string absoluteFile, AgeIdentityRef identity, CancellationToken cancellationToken)
     {
-        var invalid = ProgramInvocation.CheckFile(absoluteFile);
+        var invalid = ToolRuns.CheckFileArgument(absoluteFile);
         if (invalid is not null)
         {
             return Result.Invalid<SecretBytes>(invalid, "file", invalid);
         }
 
-        var (run, problem) = await RunSops(arguments, identity, default, cancellationToken).ConfigureAwait(false);
+        var completed = await RunSops(arguments, identity, default, cancellationToken).ConfigureAwait(false);
 
         // The output moves out of the result; the caller now owns and disposes the bytes.
-        return run is null ? ProgramInvocation.Error<SecretBytes>(problem!) : Result.Ok(run.StandardOutput);
+        return completed.IsFailure ? Result.Error<SecretBytes>(completed.ErrorDetails?.Detail ?? "The program failed.") : Result.Ok(completed.Value.StandardOutput);
     }
 }

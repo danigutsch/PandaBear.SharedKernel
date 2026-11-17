@@ -22,7 +22,6 @@ internal static class RewriteOperation
             return SecretsExitCodes.Success;
         }
 
-        var sops = programs.Sops();
         await ReportChanges(output, target, cancellationToken).ConfigureAwait(false);
         if (!settings.Force)
         {
@@ -31,7 +30,7 @@ internal static class RewriteOperation
         }
 
         var identity = Identity(settings.IdentityPath);
-        var updated = await sops.UpdateKeys(target.AbsolutePath, identity, target.Rule.Recipients, cancellationToken).ConfigureAwait(false);
+        var updated = await programs.Sops().UpdateKeys(target.Bytes, target.Format, identity, target.Rule.Recipients, cancellationToken).ConfigureAwait(false);
         await target.Replace(updated.IsSuccess ? updated.Value : throw Failed(updated.ErrorDetails?.Detail), cancellationToken).ConfigureAwait(false);
         await EscapedOutput.Line(output, $"{target.Path}: recipients updated; the data key is unchanged.", cancellationToken).ConfigureAwait(false);
         if (target.Verification.Unexpected.Count > 0 || target.Verification.OtherKeyTypes.Count > 0)
@@ -53,7 +52,6 @@ internal static class RewriteOperation
             throw new InvalidOperationException($"{target.Path}: a non-age key holder ({string.Join(", ", target.Verification.OtherKeyTypes)}) holds a key, which rotate cannot remove; run 'recipients update {target.Path}' first.");
         }
 
-        var sops = programs.Sops();
         await ReportChanges(output, target, cancellationToken).ConfigureAwait(false);
         await EscapedOutput.Line(output, $"{target.Path}: a new data key for the {target.Rule.Recipients.Count} recipients of its rule; every value is encrypted again.", cancellationToken).ConfigureAwait(false);
         if (!settings.Force)
@@ -63,7 +61,7 @@ internal static class RewriteOperation
         }
 
         var identity = Identity(settings.IdentityPath);
-        var rotated = await sops.Rotate(target.AbsolutePath, identity, target.Rule.Recipients, cancellationToken).ConfigureAwait(false);
+        var rotated = await programs.Sops().Rotate(target.Bytes, target.Format, identity, target.Rule.Recipients, cancellationToken).ConfigureAwait(false);
         await target.Replace(rotated.IsSuccess ? rotated.Value : throw Failed(rotated.ErrorDetails?.Detail), cancellationToken).ConfigureAwait(false);
         await EscapedOutput.Line(output, $"{target.Path}: rotated.", cancellationToken).ConfigureAwait(false);
         return SecretsExitCodes.Success;
@@ -98,7 +96,7 @@ internal static class RewriteOperation
                 PrivateDirectory = directory,
                 TerminalEnvironment = TerminalEnvironment(settings.TerminalEnvironment),
             };
-            edited = await sops.Edit(target.AbsolutePath, identity, session, cancellationToken).ConfigureAwait(false);
+            edited = await sops.Edit(target.Bytes, target.Format, identity, session, cancellationToken).ConfigureAwait(false);
         }
         catch
         {

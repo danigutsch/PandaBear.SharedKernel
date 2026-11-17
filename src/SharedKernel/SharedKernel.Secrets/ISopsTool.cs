@@ -31,40 +31,43 @@ public interface ISopsTool
 
     /// <summary>
     /// Returns the file re-encrypted for exactly <paramref name="recipients"/> with the same data key, as <c>sops updatekeys</c>
-    /// does: values keep their ciphertext and only the recipients' copies of the data key change. The file itself is not
-    /// written. A recipient that is removed this way may already know the data key; <see cref="Rotate"/> replaces it.
+    /// does: values keep their ciphertext and only the recipients' copies of the data key change. The provider works on the
+    /// document it is given and never reads or writes the file. A recipient that is removed this way may already know the data key; <see cref="Rotate"/> replaces it.
     /// </summary>
-    /// <param name="absoluteFile">The encrypted file.</param>
+    /// <param name="document">The encrypted document, as read from the file.</param>
+    /// <param name="format">The document's format.</param>
     /// <param name="identity">An identity file that can decrypt the data key.</param>
     /// <param name="recipients">The recipients the new version is encrypted to.</param>
     /// <param name="cancellationToken">Cancels the run.</param>
     /// <returns>The new encrypted document.</returns>
-    Task<Result<string>> UpdateKeys(string absoluteFile, AgeIdentityRef identity, AgeRecipientSet recipients, CancellationToken cancellationToken);
+    Task<Result<string>> UpdateKeys(ReadOnlyMemory<byte> document, SopsFormat format, AgeIdentityRef identity, AgeRecipientSet recipients, CancellationToken cancellationToken);
 
     /// <summary>
     /// Returns the file re-encrypted with a new data key for exactly <paramref name="recipients"/>, as <c>sops rotate</c> does.
     /// Every value gets new ciphertext, so a removed recipient's knowledge of the old data key is worthless for the new
-    /// version. The file itself is not written.
+    /// version. The provider works on the document it is given and never reads or writes the file.
     /// </summary>
-    /// <param name="absoluteFile">The encrypted file.</param>
+    /// <param name="document">The encrypted document, as read from the file.</param>
+    /// <param name="format">The document's format.</param>
     /// <param name="identity">An identity file that can decrypt the data key.</param>
     /// <param name="recipients">The recipients the new version is encrypted to.</param>
     /// <param name="cancellationToken">Cancels the run.</param>
     /// <returns>The new encrypted document.</returns>
-    Task<Result<string>> Rotate(string absoluteFile, AgeIdentityRef identity, AgeRecipientSet recipients, CancellationToken cancellationToken);
+    Task<Result<string>> Rotate(ReadOnlyMemory<byte> document, SopsFormat format, AgeIdentityRef identity, AgeRecipientSet recipients, CancellationToken cancellationToken);
 
     /// <summary>
     /// Lets a person edit the decrypted document with <c>sops edit</c> on the caller's terminal and returns the new
     /// encrypted document, or the document as it was when nothing changed. The data key is kept. sops decrypts a copy of
     /// the file inside <see cref="SopsEditSession.PrivateDirectory"/> and removes its plaintext there; the adapter removes
-    /// the copy. The file itself is not written.
+    /// the copy. The provider works on the document it is given and never reads or writes the file.
     /// </summary>
-    /// <param name="absoluteFile">The encrypted file.</param>
+    /// <param name="document">The encrypted document, as read from the file.</param>
+    /// <param name="format">The document's format.</param>
     /// <param name="identity">An identity file that can decrypt the data key.</param>
     /// <param name="session">The editor, the private directory, and the terminal variables.</param>
     /// <param name="cancellationToken">Cancels the run.</param>
     /// <returns>The encrypted document after the edit.</returns>
-    Task<Result<string>> Edit(string absoluteFile, AgeIdentityRef identity, SopsEditSession session, CancellationToken cancellationToken);
+    Task<Result<string>> Edit(ReadOnlyMemory<byte> document, SopsFormat format, AgeIdentityRef identity, SopsEditSession session, CancellationToken cancellationToken);
 
     /// <summary>
     /// Tries to decrypt the file with the identity and discards the plaintext unread. Only a failure that sops attributes to the identity not matching

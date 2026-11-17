@@ -21,7 +21,7 @@ public static class SopsFileReader
     public static async Task<Result<SopsFileRecipients>> ReadRecipients(string absoluteFile, CancellationToken cancellationToken, TimeSpan? readTimeout = null)
     {
         ArgumentNullException.ThrowIfNull(absoluteFile);
-        var invalid = ToolInvocation.CheckFile(absoluteFile);
+        var invalid = ToolRuns.CheckFileArgument(absoluteFile);
         if (invalid is not null)
         {
             return Result.Invalid<SopsFileRecipients>(invalid, "file", invalid);
@@ -33,7 +33,7 @@ public static class SopsFileReader
             : extension.Equals(".json", StringComparison.OrdinalIgnoreCase) ? SopsFormat.Json : null;
         if (format is null)
         {
-            return ToolInvocation.Error<SopsFileRecipients>("Only YAML and JSON SOPS files have readable recipients.");
+            return Result.Error<SopsFileRecipients>("Only YAML and JSON SOPS files have readable recipients.");
         }
 
         string text;
@@ -44,7 +44,7 @@ public static class SopsFileReader
         }
         catch (TimeoutException)
         {
-            return ToolInvocation.Error<SopsFileRecipients>("The file did not finish reading (is it a FIFO or a device?).");
+            return Result.Error<SopsFileRecipients>("The file did not finish reading (is it a FIFO or a device?).");
         }
         catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
         {
@@ -52,9 +52,9 @@ public static class SopsFileReader
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
         {
-            return ToolInvocation.Error<SopsFileRecipients>("The file cannot be read.");
+            return Result.Error<SopsFileRecipients>("The file cannot be read.");
         }
 
-        return text.Length == 0 ? ToolInvocation.Error<SopsFileRecipients>("The file is empty or larger than 16 MiB.") : SopsMetadataReader.Read(text, format.Value);
+        return text.Length == 0 ? Result.Error<SopsFileRecipients>("The file is empty or larger than 16 MiB.") : SopsMetadataReader.Read(text, format.Value);
     }
 }

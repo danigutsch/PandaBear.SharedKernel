@@ -105,10 +105,11 @@ sharedkernel-secrets --help
   `WAYLAND_DISPLAY`, and `XDG_RUNTIME_DIR`. Use an editor that runs in the terminal: one that hands the file to an already running
   instance (`code --wait`, `emacsclient`) works outside that directory and may keep copies.
 - `recipients update`, `rotate`, and `edit` refuse a weakened file, because sops keeps the weakening in every new version, and they
-  write a new version only when it carries exactly the rule's recipients with nothing weakened. They replace the file through a
-  temporary file and a rename, and only when it still holds the bytes it was read with, so a failure or a concurrent change leaves the
-  file as it was. For `edit` that means an edit is discarded when the file changed while the editor was open; run it again. The new
-  version is flushed to disk before the rename and keeps the mode of the file it replaces.
+  write a new version only when it carries exactly the rule's recipients with nothing weakened. The new version is written next to the
+  file, flushed to disk, and given the file's mode. On Linux it then swaps names with the file in one step and is kept only when the
+  version it displaced is still the one that was read, so another writer's change is never overwritten; the directory is flushed
+  afterwards, so the change survives a crash. Elsewhere the file is compared just before a rename. For `edit` a concurrent change
+  means the edit is discarded; run it again.
 - `verify` judges **only files named `*.sops.*`** (any letter case), and it rejects everything else in a rule's scope. This is a structural
   rule with no content inspection: inside the scope of any creation rule (the paths its expression matches), every regular file must be named
   `*.sops.<ext>`, or the run is exit 2 and lists the file as `not judged: name does not mark it as SOPS-encrypted (rename it to *.sops.<ext>, or

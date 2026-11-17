@@ -66,32 +66,34 @@ public sealed class ProcessAgeTool : IAgeTool
         var directory = Path.GetDirectoryName(destination.Path);
         if (directory is null || !Directory.Exists(directory))
         {
-            return ProgramInvocation.Error<AgeRecipient>("The directory of the identity file does not exist.");
+            return Result.Error<AgeRecipient>("The directory of the identity file does not exist.");
         }
 
-        var (run, problem) = await ProgramInvocation.Run(_runner, "age-keygen", new ToolRequest(_keygen, ["-o", destination.Path]), cancellationToken).ConfigureAwait(false);
-        if (run is null)
+        var completed = await _runner.RunToSuccess("age-keygen", new ToolRequest(_keygen, ["-o", destination.Path]), cancellationToken).ConfigureAwait(false);
+        if (completed.IsFailure)
         {
-            return ProgramInvocation.Error<AgeRecipient>(problem!);
+            return Result.Error<AgeRecipient>(completed.ErrorDetails?.Detail ?? "The program failed.");
         }
+
+        var run = completed.Value;
 
         using (run)
         {
             var recipient = FindPublicKey(run.StandardError) ?? FindPublicKey(Encoding.UTF8.GetString(run.StandardOutput.AsSpan()));
             if (recipient is null)
             {
-                return ProgramInvocation.Error<AgeRecipient>("age-keygen did not print a public key.");
+                return Result.Error<AgeRecipient>("age-keygen did not print a public key.");
             }
 
             var parsed = AgeRecipient.Create(recipient);
             if (parsed.IsFailure)
             {
-                return ProgramInvocation.Error<AgeRecipient>("age-keygen printed a public key that is not a valid recipient.");
+                return Result.Error<AgeRecipient>("age-keygen printed a public key that is not a valid recipient.");
             }
 
             if (!OperatingSystem.IsWindows() && File.Exists(destination.Path) && (File.GetUnixFileMode(destination.Path) & (UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.GroupExecute | UnixFileMode.OtherRead | UnixFileMode.OtherWrite | UnixFileMode.OtherExecute)) != 0)
             {
-                return ProgramInvocation.Error<AgeRecipient>("The identity file was created readable by others; restrict it to the owner.");
+                return Result.Error<AgeRecipient>("The identity file was created readable by others; restrict it to the owner.");
             }
 
             return parsed;
@@ -110,11 +112,13 @@ public sealed class ProcessAgeTool : IAgeTool
             arguments.Add(recipient.Value);
         }
 
-        var (run, problem) = await ProgramInvocation.Run(_runner, "age", new ToolRequest(_age, arguments, standardInput: plaintext), cancellationToken).ConfigureAwait(false);
-        if (run is null)
+        var completed = await _runner.RunToSuccess("age", new ToolRequest(_age, arguments, standardInput: plaintext), cancellationToken).ConfigureAwait(false);
+        if (completed.IsFailure)
         {
-            return ProgramInvocation.Error<string>(problem!);
+            return Result.Error<string>(completed.ErrorDetails?.Detail ?? "The program failed.");
         }
+
+        var run = completed.Value;
 
         using (run)
         {
@@ -127,9 +131,9 @@ public sealed class ProcessAgeTool : IAgeTool
     public async Task<Result<SecretBytes>> Decrypt(AgeIdentityRef identity, ReadOnlyMemory<byte> ciphertext, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(identity);
-        var (run, problem) = await ProgramInvocation.Run(_runner, "age", new ToolRequest(_age, ["--decrypt", "-i", identity.Path], standardInput: ciphertext), cancellationToken).ConfigureAwait(false);
+        var completed = await _runner.RunToSuccess("age", new ToolRequest(_age, ["--decrypt", "-i", identity.Path], standardInput: ciphertext), cancellationToken).ConfigureAwait(false);
         // The output moves out of the result; the caller now owns and disposes the bytes.
-        return run is null ? ProgramInvocation.Error<SecretBytes>(problem!) : Result.Ok(run.StandardOutput);
+        return completed.IsFailure ? Result.Error<SecretBytes>(completed.ErrorDetails?.Detail ?? "The program failed.") : Result.Ok(completed.Value.StandardOutput);
     }
 
     private static string Require(IExecutableResolver executableResolver, string command) =>

@@ -72,8 +72,9 @@ control characters escaped, writes a refusal or failure to the error writer, and
 - `UpdateRecipients` (keep the data key) and `Rotate` (a new data key) make a file's recipients exactly its rule's, and preview
   without `Force`. `Edit` lets a person edit the document through `sops edit` in a new owner-only directory under
   `EditSettings.TemporaryRoot`, which must be on a tmpfs or ramfs, and removes it afterwards. All three refuse a weakened
-  file, check that the new version carries exactly the rule's recipients with nothing weakened, and replace the file through a
-  temporary file and a rename only when it still holds the bytes it was read with.
+  file, check that the new version carries exactly the rule's recipients with nothing weakened, and replace the file only when
+  it still holds the bytes it was read with: on Linux by swapping names with a flushed temporary file in one step and undoing
+  the swap if another writer got there first, elsewhere by a comparison just before a rename. The directory is flushed to disk.
 - `Verify` judges every file named `*.sops.*` against its rule, rejects every other file in a rule's scope, and with a base
   revision reports each label whose `enc` changed.
 
@@ -85,7 +86,9 @@ format and each command's exact behavior.
 
 `IAgeTool` (`GenerateIdentity`, `Encrypt`, `Decrypt`) and `ISopsTool` (`Encrypt`, `Decrypt`, `DecryptValue`, `UpdateKeys`,
 `Rotate`, `Edit`, `TrialDecrypt`, `ListRecipients`, `VerifyRecipients`) are what the providers implement over `IToolRunner`.
-`UpdateKeys`, `Rotate`, and `Edit` return the new encrypted document and never write the file. `SystemToolRunner` is the real
+`UpdateKeys`, `Rotate`, and `Edit` take the encrypted document the caller read, work on a private copy, and return the new
+encrypted document; they never read or write the file. `ToolRuns.RunToSuccess` turns a run into a result whose error is one
+line without the program's output, and `ToolRuns.CheckFileArgument` checks a path before it becomes an argument. `SystemToolRunner` is the real
 runner:
 
 - the program path is absolute and arguments go one by one, without a shell;

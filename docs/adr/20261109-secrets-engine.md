@@ -16,7 +16,7 @@ primitives here (`AgeRecipientSet`, `RecipientVerification`) instead of repeatin
   configuration file, repository verification, the byte runner, and `SecretsRepository`, whose operations take settings
   records and return exit codes. It defines the `IAgeTool` and `ISopsTool` seams. `ProcessAgeTool` and `ProcessSopsTool` are
   the providers, one library each, so a consumer that only verifies references neither. They share no internals with the core;
-  `ToolResult.Describe` is the public failure line both use.
+  `ToolRuns.RunToSuccess` and `ToolRuns.CheckFileArgument` are the public helpers both use.
 
 - **No cryptography and no new dependency.** The engine runs the `age`, `age-keygen`, and `sops` programs. It adds no NuGet
   package, direct or transitive, beyond the SharedKernel libraries it already references. The programs themselves are a
@@ -50,10 +50,15 @@ primitives here (`AgeRecipientSet`, `RecipientVerification`) instead of repeatin
   empty flow collections), converts it to JSON, and reuses the JSON reader. Everything else is an error. The reader fails
   closed: an unreadable file is never an empty recipient list, a repeated key is an error, and a non-age key holder (`kms`,
   `pgp`, `hc_vault`, or any other non-empty holder list) makes a file inexact, because its holder can read the file.
-- **New versions are checked and replaced atomically.** `ISopsTool.UpdateKeys`, `Rotate`, and `Edit` return the new encrypted
-  document and never write the file. `SecretsRepository` refuses a weakened file (sops would keep the weakening), checks that the
-  new version carries exactly the rule's recipients with nothing weakened, and replaces the file through a temporary file and a
-  rename only when it still holds the bytes it was read with. `updatekeys` takes recipients only from a configuration file and
+- **New versions are checked and replaced atomically.** `ISopsTool.UpdateKeys`, `Rotate`, and `Edit` take the document that
+  `SecretsRepository` read and checked, work on a private copy of those bytes, and return the new encrypted document; they never
+  read or write the file. `SecretsRepository` refuses a weakened file (sops would keep the weakening), checks that the new
+  version carries exactly the rule's recipients with nothing weakened, and writes it to a temporary file in the same directory,
+  flushed to disk with the file's mode. On Linux it swaps that file with the original in one step (`renameat2` with
+  `RENAME_EXCHANGE`) and compares the version it displaced with the bytes it read: if another writer replaced or rewrote the file
+  before the swap, the swap is undone and the operation refused, so that version is kept. The directory is then flushed to disk,
+  so the new name survives a crash. Where the exchange is missing (glibc before 2.28, musl, macOS, Windows, or a file system that
+  answers `EINVAL`), the file is compared just before a rename instead, and a directory that cannot be flushed is skipped. `updatekeys` takes recipients only from a configuration file and
   rewrites the file it is given, so it runs on a private copy with a configuration that lists exactly the rule's recipients.
   `rotate` adds and removes only the difference with `--add-age` and `--rm-age` and writes to standard output.
 - **Changing recipients means changing the rule.** There is no command that edits the configuration. A consumer changes a
@@ -67,6 +72,12 @@ primitives here (`AgeRecipientSet`, `RecipientVerification`) instead of repeatin
   locale, display, and absolute `PATH` variables.
 - **sops runs with no ambient configuration.** sops reads `.sops.yaml` from its working directory. Every call passes `--config
   /dev/null` and runs in a new empty directory, so a repository file cannot turn on `unencrypted_regex` and make `encrypt` write plaintext.
+- **A small, checked native boundary.** .NET cannot swap two names or open a directory to flush it, so `Libc` declares
+  `renameat2`, `open`, `fsync`, and `close` with source-generated `LibraryImport` (NativeAOT- and trim-safe; the project sets
+  `AllowUnsafeBlocks` for the generated code), named and typed as in the C headers, from `libc.so.6` as Microsoft's Linux
+  samples do, and only from the system loader's directories (`DllImportSearchPath.System32`), so a planted copy next to the
+  application is never loaded. Errors are read with `Marshal.GetLastPInvokeError` right after each call, and the directory
+  descriptor is a `SafeHandle`. A missing library or entry point falls back to the portable path instead of failing.
 - **Honest memory handling.** `SecretBytes` is a pinned array, overwritten on dispose, with a fixed `ToString`. .NET cannot
   guarantee that no copy exists (strings, streams, swap, core dumps); the README says so.
 
@@ -115,11 +126,8 @@ What they do not establish:
 - **Nothing in scope is skipped by content.** Content inspection cannot be made airtight: the fourth, fifth, and sixth reviews each found a spelling go-yaml reads that the detector did not (a complex key, a tag, an anchor, a trailing tab, a backslash before U+2028, and finally `!!binary c29wcw==:`, a base64-encoded `sops` key with base64 `ENC[...]` values, none of whose letters appear in the file). So `verify` uses a structural rule: inside the scope of any creation rule every regular file must be named `*.sops.*`, or the run is exit 2 and lists it as not judged; there is no sniffing in scope and no ignore list. The price is that a `.gitkeep`, a README, or any non-secret file in a scoped directory must be renamed or moved out. Files named `*.sops.*` are judged by the metadata reader, which fails closed, and which now refuses every YAML tag and `%` directive anywhere in the file because go-yaml decodes tagged scalars. The content heuristic that remains (token search after unescaping, normalisation, and separator removal) only serves outside every rule, where it lists files that look like SOPS as uncovered on a best-effort basis; it is incomplete by nature. Recommended: let rule scope directories hold only sops-named files, and have CI also run `recipients check --prove-with-identity` for a current holder and `--prove-absent-identity` for each retired key.
 - **What `verify` reads.** Inside a rule's scope only files named `*.sops.*` are read (everything else is rejected by name); outside every rule only files named `*.sops.*` or with a yaml, yml, json, env, or ini extension are read, by a best-effort heuristic. A SOPS document with another name and extension outside every rule goes unnoticed. A directory whose children a rule could match is probed with sample child names, so an exotic expression could still hide a link.
 - **A race on `decrypt --output`.** The destination is resolved without symbolic links and the file is renamed into place without overwriting, but a parent directory swapped for a link between the check and the rename is not detected. The temporary name is random and created exclusively, and it is removed on any failure, including cancellation.
-- **A race on a replacement.** The file is compared with the bytes it was read with just before the rename, so a change during a
-  long edit is refused, but a change between that comparison and the rename is lost. The new version's data is flushed to
-  disk before the rename, but the directory is not, so a crash right after the rename can leave the previous version. The
-  sops provider reads the file again to copy it or to list its recipients; a file swapped for a FIFO between the two reads
-  can still block that copy.
+- **A replacement without the exchange.** Where the platform or the file system cannot swap names, a change made between
+  the final comparison and the rename is lost.
 - **Editors that leave the private directory.** An editor that hands the file to an already running instance (`code --wait`,
   `emacsclient`) runs outside the private `HOME` and `TMPDIR`, and that instance may keep history, backups, or caches of the
   plaintext elsewhere. A tmpfs can be written to swap. Neither is detectable here.

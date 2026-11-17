@@ -147,7 +147,8 @@ public sealed class RewriteCommandTests
         preview.Output.ShouldContain("Preview: nothing was written.", StringComparison.Ordinal);
         forced.ExitCode.ShouldBe(0, forced.Error);
         forced.Output.ShouldContain($"{File}: rotated.", StringComparison.Ordinal);
-        runner.Requests.ShouldHaveSingleItem().Arguments.ShouldBe(["--config", "/dev/null", "rotate", "--input-type", "yaml", "--output-type", "yaml", Path.Combine(repository.Path, "secrets", "app.sops.yaml")]);
+        var request = runner.Requests.ShouldHaveSingleItem();
+        request.Arguments.ShouldBe(["--config", "/dev/null", "rotate", "--input-type", "yaml", "--output-type", "yaml", Path.Combine(request.WorkingDirectory!, "document.sops.yaml")]);
         var contents = await ReadText(repository.Path, File);
         contents.ShouldBe(rotated);
     }
