@@ -38,7 +38,7 @@ public sealed record RepositoryFeature
     /// <summary>A <c>global.json</c> that pins the .NET SDK, written once. Needs <c>--sdk-version</c>.</summary>
     public static readonly RepositoryFeature GlobalJson = new("global-json", selectedByDefault: true, RepositoryLanguage.Dotnet);
 
-    /// <summary>A <c>NuGet.Config</c> that uses nuget.org only with source mapping, written once.</summary>
+    /// <summary>A <c>NuGet.Config</c> that uses nuget.org only with source mapping, and as its only audit source, written once.</summary>
     public static readonly RepositoryFeature NugetConfig = new("nuget-config", selectedByDefault: true, RepositoryLanguage.Dotnet);
 
     /// <summary>A <c>Directory.Build.props</c> with strict compiler and analysis settings, written once. Needs <c>--sdk-version</c>.</summary>

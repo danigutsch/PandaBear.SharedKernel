@@ -54,6 +54,10 @@ internal static class NewRepositorySeeds
             <clear />
             <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
           </packageSources>
+          <auditSources>
+            <clear />
+            <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+          </auditSources>
           <packageSourceMapping>
             <packageSource key="nuget.org">
               <package pattern="*" />
