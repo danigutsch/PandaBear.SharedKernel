@@ -64,10 +64,10 @@ STS releases are supported for 24 months since .NET 9, so .NET 10 and .NET 11 en
 A package keeps an older major version when that version works on the repository's framework and nothing requires the
 newer one:
 
-- ASP.NET Core, `Microsoft.Extensions.*`, `System.Security.*`, and `Microsoft.Data.Sqlite` use 11.0.0, and
+- ASP.NET Core, `Microsoft.Extensions.*`, and `System.Security.*` use 11.0.0, and
   `Microsoft.OpenApi` 3.11.0, which `Microsoft.AspNetCore.OpenApi` 11 requires.
 - The EF family stays on 10.x until `Npgsql.EntityFrameworkCore.PostgreSQL` 11.0.0 is stable: every package whose 11.x
-  requires EF Core 11.
+  requires EF Core 11, and `Microsoft.Data.Sqlite.Core`, which the EF Core Sqlite provider is built against.
   - Npgsql's 10.0.3 provider requires EF Core `[10.0.4, 11.0.0)`, and `11.0.0-rc.3` requires exactly EF Core
     `11.0.0-rc.3.26522.148` (nuspecs checked 2026-11-15).
   - EF Core 10 targets .NET 10, works from `net11.0`, and is supported until 2028-11-10.
@@ -115,7 +115,8 @@ A repository that builds several frameworks needs these patterns (*verified loca
 - `string.StartsWith`, `EndsWith`, `IndexOf`, and `LastIndexOf` gained `(char, StringComparison)` overloads, so CA1307
   reports the `char` overloads; the code passes `StringComparison.Ordinal`, which is what the `char` overloads did.
 - CA2016 reports `TextWriter.WriteAsync` and `WriteLineAsync` calls that do not pass the cancellation token; the code
-  passes it through the `ReadOnlyMemory<char>` overloads. CA2263 prefers `JsonSerializerOptions.GetTypeInfo<T>()`.
+  passes `CancellationToken.None` through the `ReadOnlyMemory<char>` overloads, which keeps the old behavior: a write that
+  reports a cancellation must not throw. CA2263 prefers `JsonSerializerOptions.GetTypeInfo<T>()`.
 - `System.Net.Http.Json` is an implicit using of `Microsoft.NET.Sdk` projects for `net11.0`, so explicit `using`
   directives for it are unnecessary.
 - `System.IO.ReadOnlyMemoryStream` is new and public, with the same constructor and members as

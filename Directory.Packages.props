@@ -32,7 +32,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
-    <PackageVersion Include="Microsoft.Data.Sqlite.Core" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Data.Sqlite.Core" Version="10.0.15" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.15" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.15" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.15" />
@@ -99,7 +99,7 @@
     <PackageVersion Include="MessagePack" Version="2.5.307" />
     <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="11.0.0" />
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="11.0.0" />
-    <!-- .NET 10.0.15 security release (2026-11-10). Aspire 13.6.5, Microsoft.Extensions.Http.Diagnostics 10.11.0, and StackExchange.Redis 2.13.17 still request older versions, and no newer release of them requests 10.0.15. Remove each pin when every package that requests it requires 10.0.15 or later. -->
+    <!-- Transitive pins. Aspire 13.6.5, Microsoft.Extensions.Http.Diagnostics 10.11.0, and StackExchange.Redis 2.13.17 request older, vulnerable versions of these packages. The EF Core health check stays on the EF Core 10 line with the rest of the EF family. Remove a pin when every package that requests it requires a patched version. -->
     <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.15" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="11.0.0" />
     <PackageVersion Include="System.IO.Hashing" Version="11.0.0" />

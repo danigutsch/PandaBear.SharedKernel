@@ -55,6 +55,17 @@ public static class ConsumerFrameworkTests
     }
 
     [Fact]
+    public static async Task A_framework_option_without_a_value_is_a_parse_error()
+    {
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(["validate-candidate", "--framework"], TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Error.ShouldContain("Required argument missing for option: '--framework'.", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static async Task Duplicate_frameworks_are_a_parse_error()
     {
         // Act

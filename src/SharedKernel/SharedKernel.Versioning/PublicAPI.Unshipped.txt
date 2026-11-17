@@ -187,7 +187,7 @@ static PandaBear.Versioning.SharedKernelDevPackPlanner.Plan(string! repoRoot, Sy
 static PandaBear.Versioning.SharedKernelLocalFeed.PackageWasRestored(string! packageCache, string! packageId, string! version) -> bool
 static PandaBear.Versioning.SharedKernelLocalFeed.ReadPackageIds(string![]! packages, string! version) -> string![]!
 static PandaBear.Versioning.SharedKernelLocalFeed.WriteNuGetConfig(string! restoreDirectory, string! packageDirectory, string![]! packageIds, System.Uri! nugetSourceUrl) -> System.Threading.Tasks.Task!
-static PandaBear.Versioning.SharedKernelLocalFeed.WriteRestoreProject(string! restoreDirectory, string![]! packageIds, string! version, string! framework) -> System.Threading.Tasks.Task!
+static PandaBear.Versioning.SharedKernelLocalFeed.WriteRestoreProject(string! restoreDirectory, string![]! packageIds, string! version, System.Collections.Generic.IReadOnlyList<string!>! frameworks) -> System.Threading.Tasks.Task!
 static PandaBear.Versioning.SharedKernelPackagePlanner.CreatePackArguments(string! project, PandaBear.Versioning.SharedKernelPackageOptions! options, string! packageDirectory, string? enablePackageValidation = null, string? baselineVersion = null) -> string![]!
 static PandaBear.Versioning.SharedKernelPackagePlanner.EnsurePackageVersionDoesNotExist(string! packageDirectory, string! version) -> void
 static PandaBear.Versioning.SharedKernelPackagePlanner.FindProjects(string! repoRoot) -> string![]!

@@ -202,6 +202,22 @@ public sealed class VerifyTargetFrameworksCommandTests
     }
 
     [Fact]
+    public async Task Verify_target_frameworks_matches_a_platform_framework_to_its_lock_key_with_the_platform_version()
+    {
+        // Arrange
+        // NuGet writes the lock key of net11.0-windows with the default platform version, net11.0-windows7.0.
+        using var repository = await TargetFrameworkTestRepository.Create(TargetFrameworkTestRepository.Files(
+            ("src/Lib/Lib.csproj", TargetFrameworkTestRepository.Project("<TargetFrameworks>net11.0-windows;net11.0</TargetFrameworks>")),
+            ("src/Lib/packages.lock.json", TargetFrameworkTestRepository.Lock("net11.0-windows7.0", "net11.0"))));
+
+        // Act
+        var result = await TargetFrameworkTestRepository.Run(repository);
+
+        // Assert
+        TargetFrameworkTestRepository.ErrorLines(result).ShouldNotContain(static line => line.Contains("packages.lock.json", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public async Task Verify_target_frameworks_reports_a_lock_file_for_other_frameworks()
     {
         // Arrange
@@ -407,6 +423,8 @@ public sealed class VerifyTargetFrameworksCommandTests
     [Theory]
     [InlineData("net12.0;net11.0")]
     [InlineData("net11.0;net11.0")]
+    [InlineData("net8.0;netstandard2.0")]
+    [InlineData("net48;net472")]
     public async Task Verify_target_frameworks_reports_a_framework_property_that_is_not_ascending_and_unique(string value)
     {
         // Arrange
@@ -423,6 +441,47 @@ public sealed class VerifyTargetFrameworksCommandTests
         result.ExitCode.ShouldBe(1);
         TargetFrameworkTestRepository.ErrorLines(result).ShouldContain(
             "- Directory.Build.props: Property 'Fws' lists '" + value + "'; its frameworks must be unique and ascending.");
+    }
+
+    [Theory]
+    [InlineData("netstandard2.0;net8.0;net11.0")]
+    [InlineData("net48;netstandard2.0;net11.0")]
+    [InlineData("net9.0;net10.0")]
+    [InlineData("net462;net472;net48")]
+    public async Task Verify_target_frameworks_orders_framework_families_and_versions_naturally(string value)
+    {
+        // Arrange
+        using var repository = await TargetFrameworkTestRepository.Create(
+            TargetFrameworkTestRepository.Files(
+                (FrameworksFile, TargetFrameworkTestRepository.Props("<PropertyGroup><Fws>" + value + "</Fws><TargetFrameworks>$(Fws)</TargetFrameworks></PropertyGroup>")),
+                ("app/App.csproj", TargetFrameworkTestRepository.Project(string.Empty))),
+            TargetFrameworkTestRepository.PropertyPolicy("$(Fws)"));
+
+        // Act
+        var result = await TargetFrameworkTestRepository.Run(repository);
+
+        // Assert
+        TargetFrameworkTestRepository.ErrorLines(result).ShouldNotContain(static line => line.Contains("must be unique and ascending", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task Verify_target_frameworks_reports_a_scanned_file_that_cannot_be_read()
+    {
+        // Arrange
+        using var repository = await TargetFrameworkTestRepository.Create(
+            TargetFrameworkTestRepository.Files(
+                (FrameworksFile, TargetFrameworkTestRepository.Props("<PropertyGroup><Fw>net11.0</Fw><TargetFramework>$(Fw)</TargetFramework></PropertyGroup>")),
+                ("app/App.csproj", TargetFrameworkTestRepository.Project(string.Empty)),
+                ("build.sh", "echo net11.0\n")),
+            TargetFrameworkTestRepository.PropertyPolicy());
+        File.Delete(Path.Combine(repository.RootPath, "build.sh"));
+
+        // Act
+        var result = await TargetFrameworkTestRepository.Run(repository);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        TargetFrameworkTestRepository.ErrorLines(result).ShouldContain("- build.sh: Is missing from the working tree.");
     }
 
     [Fact]

@@ -44,14 +44,14 @@ internal static class SharedKernelPack
 
         if (verifyRestore)
         {
-            await VerifyLocalFeed(commands, packageDirectory, options.Version, RepositoryFrameworks.Read(options.RepoRoot)[0], ct).ConfigureAwait(false);
+            await VerifyLocalFeed(commands, packageDirectory, options.Version, RepositoryFrameworks.Read(options.RepoRoot), ct).ConfigureAwait(false);
         }
 
         await output.WriteLineAsync(("SharedKernel packages: " + packageDirectory).AsMemory(), CancellationToken.None).ConfigureAwait(false);
         return packageDirectory;
     }
 
-    private static async Task VerifyLocalFeed(ExternalCommands commands, string packageDirectory, string version, string framework, CancellationToken ct)
+    private static async Task VerifyLocalFeed(ExternalCommands commands, string packageDirectory, string version, IReadOnlyList<string> frameworks, CancellationToken ct)
     {
         var packages = Directory.GetFiles(packageDirectory, "PandaBear.SharedKernel.*.nupkg")
             .Where(path => !path.EndsWith(".symbols.nupkg", StringComparison.Ordinal))
@@ -72,7 +72,7 @@ internal static class SharedKernelPack
         }
 
         Directory.CreateDirectory(restoreDirectory);
-        await SharedKernelLocalFeed.WriteRestoreProject(restoreDirectory, packageIds, version, framework).ConfigureAwait(false);
+        await SharedKernelLocalFeed.WriteRestoreProject(restoreDirectory, packageIds, version, frameworks).ConfigureAwait(false);
         await SharedKernelLocalFeed.WriteNuGetConfig(restoreDirectory, packageDirectory, packageIds, NuGetSourceUrl).ConfigureAwait(false);
         var packageCache = Path.Combine(restoreDirectory, "packages");
         await commands.Run(

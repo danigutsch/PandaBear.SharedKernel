@@ -165,7 +165,7 @@ public static class SharedKernelLocalFeedTests
             temporaryDirectory.OutputDirectory,
             ["PandaBear.SharedKernel.Results"],
             "1.2.3",
-            "net11.0");
+            ["net11.0", "net12.0"]);
         await SharedKernelLocalFeed.WriteNuGetConfig(
             temporaryDirectory.OutputDirectory,
             temporaryDirectory.PackageDirectory,
@@ -180,7 +180,7 @@ public static class SharedKernelLocalFeedTests
             Path.Combine(temporaryDirectory.OutputDirectory, "NuGet.config"),
             TestContext.Current.CancellationToken);
         project.ShouldContain("PackageReference Include=\"PandaBear.SharedKernel.Results\" Version=\"1.2.3\"", StringComparison.Ordinal);
-        project.ShouldContain("<TargetFramework>net11.0</TargetFramework>", StringComparison.Ordinal);
+        project.ShouldContain("<TargetFrameworks>net11.0;net12.0</TargetFrameworks>", StringComparison.Ordinal);
         nugetConfig.ShouldContain("<clear />", StringComparison.Ordinal);
         nugetConfig.ShouldContain("pattern=\"PandaBear.SharedKernel.Results\"", StringComparison.Ordinal);
         nugetConfig.ShouldContain("https://example.test/v3/index.json", StringComparison.Ordinal);

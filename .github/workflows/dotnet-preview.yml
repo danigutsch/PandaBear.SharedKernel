@@ -45,8 +45,11 @@ jobs:
         env:
           NEXT_MAJOR: ${{ steps.next.outputs.major }}
         run: |
-          # global.json pins the current SDK with rollForward disabled, so the preview SDK needs it gone.
-          rm global.json
+          # global.json pins the current SDK with rollForward disabled. Let it select the newest installed SDK, the preview,
+          # and keep its Aspire AppHost SDK pin and its Microsoft.Testing.Platform runner.
+          jq '.sdk = {"rollForward": "latestMajor", "allowPrerelease": true}' global.json > global.json.preview
+          mv global.json.preview global.json
+          dotnet --version
           properties=("-p:SharedKernelTargetFramework=net$NEXT_MAJOR.0" -p:RestorePackagesWithLockFile=false -p:RestoreLockedMode=false)
           dotnet restore SharedKernel.slnx "${properties[@]}"
           dotnet build SharedKernel.slnx -c Release --no-restore "${properties[@]}"

@@ -74,7 +74,7 @@ internal static class VersioningCommandLine
         SetAction(command, async (parseResult, output, _) =>
         {
             var commit = ConventionalCommitParser.Parse(string.Join(' ', parseResult.GetRequiredValue(message)));
-            await output.WriteLineAsync((ReleaseImpactText.ToOutputValue(commit.Impact)).AsMemory(), _).ConfigureAwait(false);
+            await output.WriteLineAsync(ReleaseImpactText.ToOutputValue(commit.Impact).AsMemory(), CancellationToken.None).ConfigureAwait(false);
         });
         return command;
     }
@@ -99,7 +99,7 @@ internal static class VersioningCommandLine
                 messages,
                 parseResult.GetValue(prerelease),
                 parseResult.GetValue(sha));
-            await output.WriteLineAsync((VersionOutputJson.Serialize(version)).AsMemory(), _).ConfigureAwait(false);
+            await output.WriteLineAsync(VersionOutputJson.Serialize(version).AsMemory(), CancellationToken.None).ConfigureAwait(false);
         });
         return command;
     }
@@ -169,7 +169,7 @@ internal static class VersioningCommandLine
         SetAction(command, async (parseResult, output, _) =>
         {
             PublicApiBaselineChecker.EnsureBaselinesPresent(parseResult.GetRequiredValue(repoRoot));
-            await output.WriteLineAsync("Public API baselines are present for SharedKernel projects.".AsMemory(), _).ConfigureAwait(false);
+            await output.WriteLineAsync("Public API baselines are present for SharedKernel projects.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
         });
         return command;
     }
@@ -184,7 +184,7 @@ internal static class VersioningCommandLine
         SetAction(command, async (parseResult, output, _) =>
         {
             PackageMetadataValidator.Validate(parseResult.GetRequiredValue(repoRoot));
-            await output.WriteLineAsync("Package metadata validation passed.".AsMemory(), _).ConfigureAwait(false);
+            await output.WriteLineAsync("Package metadata validation passed.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
         });
         return command;
     }

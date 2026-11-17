@@ -392,6 +392,8 @@ public sealed class WorkflowContractTests
         workflow.ShouldContain("-p:RestoreLockedMode=false", StringComparison.Ordinal);
         workflow.ShouldContain("-p:SharedKernelTargetFramework=", StringComparison.Ordinal);
         workflow.ShouldContain("dotnet-quality: preview", StringComparison.Ordinal);
+        workflow.ShouldNotContain("rm global.json", StringComparison.Ordinal, "global.json also pins the Aspire AppHost SDK and selects the Microsoft.Testing.Platform runner.");
+        workflow.ShouldContain("\"allowPrerelease\": true", StringComparison.Ordinal);
         uses.ShouldNotBeEmpty();
         uses.Where(use => !Regex.IsMatch(use, "@[0-9a-f]{40}$", RegexOptions.CultureInvariant) || !pins.Contains(use.Split('@')[0], StringComparison.Ordinal))
             .ShouldBeEmpty("Every action is pinned to a full SHA listed in .github/action-pins.json.");

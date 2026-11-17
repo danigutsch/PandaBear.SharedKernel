@@ -209,20 +209,46 @@ public static partial class TargetFrameworkVerifier
         return true;
     }
 
+    // .NET Framework (net48) sorts before .NET Standard, which sorts before .NET (netcoreapp3.1, net10.0); each family
+    // sorts by version. Names outside these families compare ordinally after them.
     private static int CompareFrameworks(string left, string right)
     {
-        var leftMatch = Modern().Match(left);
-        var rightMatch = Modern().Match(right);
-        if (leftMatch.Success && rightMatch.Success)
+        var (leftRank, rightRank) = (Rank(left), Rank(right));
+        if (leftRank is { } l && rightRank is { } r)
         {
-            var byMajor = int.Parse(leftMatch.Groups[1].Value, CultureInfo.InvariantCulture).CompareTo(int.Parse(rightMatch.Groups[1].Value, CultureInfo.InvariantCulture));
-            if (byMajor != 0)
+            var byRank = (l.Family, l.Major, l.Minor).CompareTo((r.Family, r.Major, r.Minor));
+            if (byRank != 0)
             {
-                return byMajor;
+                return byRank;
             }
+        }
+        else if (leftRank is not null || rightRank is not null)
+        {
+            return leftRank is null ? 1 : -1;
         }
 
         return StringComparer.OrdinalIgnoreCase.Compare(left, right);
+    }
+
+    private static (int Family, int Major, int Minor)? Rank(string framework)
+    {
+        if (FrameworkVersion().Match(framework) is not { Success: true } match)
+        {
+            return null;
+        }
+
+        var family = match.Groups["family"].Value.ToUpperInvariant() switch
+        {
+            "NETSTANDARD" => 1,
+            "NETCOREAPP" => 2,
+            _ when match.Groups["minor"].Success => 2,
+            _ => 0,
+        };
+        var major = int.Parse(match.Groups["major"].Value, CultureInfo.InvariantCulture);
+        var minor = match.Groups["minor"].Success
+            ? int.Parse(match.Groups["minor"].Value, CultureInfo.InvariantCulture)
+            : int.Parse(match.Groups["framework"].Value[1..].PadRight(2, '0'), CultureInfo.InvariantCulture);
+        return (family, major, minor);
     }
 
     private static async Task CheckFrameworkNames(
@@ -235,9 +261,10 @@ public static partial class TargetFrameworkVerifier
     {
         foreach (var file in tracked.Where(path => path != propertiesFile && IsScanned(path)).Order(StringComparer.Ordinal))
         {
-            var (content, _) = await Read(root, file, cancellationToken).ConfigureAwait(false);
+            var (content, failure) = await Read(root, file, cancellationToken).ConfigureAwait(false);
             if (content is null)
             {
+                issues.Add(new VerificationIssue(file, failure!));
                 continue;
             }
 
@@ -341,8 +368,10 @@ public static partial class TargetFrameworkVerifier
             return;
         }
 
-        var built = effective.ToHashSet(StringComparer.OrdinalIgnoreCase);
-        if (!built.SetEquals(locked))
+        // A lock key carries the platform version that a declared platform framework leaves to its default, such as
+        // net11.0-windows7.0 for net11.0-windows, so platform versions are not compared.
+        var built = effective.Select(WithoutPlatformVersion).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (!built.SetEquals(locked.Select(WithoutPlatformVersion)))
         {
             issues.Add(new VerificationIssue(path, $"Locks {Join(locked)}, but {project} builds {Join(effective)}; restore without --locked-mode to regenerate it."));
         }
@@ -355,8 +384,15 @@ public static partial class TargetFrameworkVerifier
         List<VerificationIssue> issues,
         CancellationToken cancellationToken)
     {
-        var (content, _) = await Read(root, "global.json", cancellationToken).ConfigureAwait(false);
-        if (content is null || SdkVersion(content) is not { } version || Major(version) is not { } sdkMajor)
+        var (content, failure) = await Read(root, "global.json", cancellationToken).ConfigureAwait(false);
+        if (content is null)
+        {
+            issues.Add(new VerificationIssue("global.json", failure!));
+            return;
+        }
+
+        // A global.json without an SDK version pins nothing to check.
+        if (SdkVersion(content) is not { } version || Major(version) is not { } sdkMajor)
         {
             return;
         }
@@ -423,9 +459,10 @@ public static partial class TargetFrameworkVerifier
         var patterns = configuration.CommandFiles ?? [];
         foreach (var file in tracked.Where(path => patterns.Any(pattern => Matches(pattern, path))).Order(StringComparer.Ordinal))
         {
-            var (content, _) = await Read(root, file, cancellationToken).ConfigureAwait(false);
+            var (content, failure) = await Read(root, file, cancellationToken).ConfigureAwait(false);
             if (content is null)
             {
+                issues.Add(new VerificationIssue(file, failure!));
                 continue;
             }
 
@@ -469,6 +506,15 @@ public static partial class TargetFrameworkVerifier
         }
     }
 
+    private static string WithoutPlatformVersion(string framework) => PlatformVersion().Replace(framework, string.Empty);
+
     [GeneratedRegex(@"^net(?:coreapp)?(\d+)\.\d+", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex Modern();
+
+    [GeneratedRegex(@"(?<=^net\d+\.\d+-[a-z]+)[\d.]+$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex PlatformVersion();
+
+    // net10.0, netcoreapp3.1, netstandard2.0, or a .NET Framework name such as net48 or net472, optionally with a platform.
+    [GeneratedRegex(@"^(?<family>netstandard|netcoreapp|net)(?:(?<major>\d+)\.(?<minor>\d+)|(?<framework>(?<major>\d)\d{1,2}))(?:-.*)?$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex FrameworkVersion();
 }

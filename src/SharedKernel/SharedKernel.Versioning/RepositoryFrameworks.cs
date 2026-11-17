@@ -42,13 +42,20 @@ public static class RepositoryFrameworks
                 throw new InvalidOperationException($"The property '{name}' in '{path}' is conditional; the repository's target framework must be set unconditionally.");
             }
 
-            return Resolve(matches[^1].Value, name, properties, path);
+            // MSBuild builds TargetFramework when TargetFrameworks is empty, as a project that clears the list does.
+            if (name == "TargetFrameworks" && matches[^1].Value.Trim().Length == 0)
+            {
+                continue;
+            }
+
+            return Resolve(matches[^1].Value, name, properties, path, [name]);
         }
 
         throw new InvalidOperationException($"'{path}' sets neither 'TargetFrameworks' nor 'TargetFramework'.");
     }
 
-    private static List<string> Resolve(string value, string name, List<(string LocalName, string Value, bool Conditional)> properties, string path)
+    private static List<string> Resolve(
+        string value, string name, List<(string LocalName, string Value, bool Conditional)> properties, string path, HashSet<string> resolving)
     {
         var frameworks = new List<string>();
         foreach (var part in value.Split(';', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
@@ -57,13 +64,19 @@ public static class RepositoryFrameworks
             if (framework.StartsWith("$(", StringComparison.Ordinal) && framework.EndsWith(')', StringComparison.Ordinal))
             {
                 var referenced = framework[2..^1];
+                if (!resolving.Add(referenced))
+                {
+                    throw new InvalidOperationException($"The property '{name}' in '{path}' references '{framework}', which refers to itself.");
+                }
+
                 var matches = properties.Where(property => property.LocalName == referenced).ToList();
                 if (matches.Count == 0 || matches.Exists(static property => property.Conditional))
                 {
                     throw new InvalidOperationException($"The property '{name}' in '{path}' references '{framework}', which is {(matches.Count == 0 ? "not defined" : "conditional")} in that file.");
                 }
 
-                frameworks.AddRange(Resolve(matches[^1].Value, referenced, properties, path));
+                frameworks.AddRange(Resolve(matches[^1].Value, referenced, properties, path, resolving));
+                resolving.Remove(referenced);
                 continue;
             }
 
