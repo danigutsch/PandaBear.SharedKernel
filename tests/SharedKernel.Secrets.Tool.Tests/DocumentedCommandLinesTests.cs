@@ -10,7 +10,7 @@ public sealed class DocumentedCommandLinesTests
     public void Every_readme_command_line_parses_to_a_command_of_the_tool()
     {
         // Arrange
-        var environment = new SecretsEnvironment(Path.GetTempPath(), SecretsToolHarness.ResolveNone, ScriptedToolRunner.Unused(), () => Stream.Null, () => Stream.Null, static _ => null);
+        var environment = new SecretsEnvironment(Path.GetTempPath(), new FakeExecutableResolver(SecretsToolHarness.ResolveNone), ScriptedToolRunner.Unused(), () => Stream.Null, () => Stream.Null, static _ => null);
         var root = SecretsCommandLine.Create(environment);
         var commandLines = DocumentedCommandLines.Find(DocumentedCommandLines.ReadToolReadme());
 

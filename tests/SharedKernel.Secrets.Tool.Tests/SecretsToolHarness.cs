@@ -47,7 +47,7 @@ internal static class SecretsToolHarness
         var input = new MemoryStream(standardInput ?? []);
         var environment = new SecretsEnvironment(
             workingDirectory,
-            resolve,
+            new FakeExecutableResolver(resolve),
             runner,
             () => input,
             () => new NonClosingStream(standardOutput),

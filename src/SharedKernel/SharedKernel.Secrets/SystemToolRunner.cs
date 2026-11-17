@@ -1,12 +1,12 @@
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using PandaBear.Processes;
 
 namespace PandaBear.Secrets;
 
 /// <summary>
 /// Runs a real child process from an absolute path without a shell. The child inherits <b>no</b> environment: it gets
-/// <c>LC_ALL=C</c> and the variables of the request. Standard input is written from the request and closed, standard output
+/// <c>LC_ALL=C</c> and the variables of the request, except a forge token (<see cref="ProcessEnvironment.ForgeTokenVariableNames"/>), which never reaches it. Standard input is written from the request and closed, standard output
 /// is limited to 16 MiB (more ends the process), standard error is limited to 64 KiB (more ends the process too), and the run has a time limit
 /// (two minutes by default).
 /// </summary>
@@ -69,22 +69,12 @@ public sealed class SystemToolRunner : IToolRunner
         }
 
         startInfo.Environment["LC_ALL"] = "C";
+        ProcessEnvironment.RemoveForgeTokens(startInfo);
 
         using CancellationTokenSource timeout = new(_timeout);
         using CancellationTokenSource overflow = new();
         using var execution = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeout.Token, overflow.Token);
-        using var process = new Process { StartInfo = startInfo };
-        try
-        {
-            if (!process.Start())
-            {
-                throw new InvalidOperationException("Could not start the process.");
-            }
-        }
-        catch (Win32Exception exception)
-        {
-            throw new InvalidOperationException("Could not start the process.", exception);
-        }
+        using var process = ProcessTree.Start(startInfo);
 
         ToolOutputBuffer output = new(MaxOutputBytes);
         ToolOutputBuffer error = new(MaxErrorBytes);
@@ -138,25 +128,10 @@ public sealed class SystemToolRunner : IToolRunner
             if (!finished)
             {
                 // Stop the process tree and cancel the transfers so that disposing the streams cannot wait on an open pipe.
-                Stop(process);
+                await ProcessTree.Terminate(process, DrainTimeout).ConfigureAwait(false);
                 await execution.CancelAsync().ConfigureAwait(false);
                 output.Clear();
             }
-        }
-    }
-
-    private static void Stop(Process process)
-    {
-        try
-        {
-            if (!process.HasExited)
-            {
-                process.Kill(entireProcessTree: true);
-            }
-        }
-        catch (Exception exception) when (exception is InvalidOperationException or Win32Exception)
-        {
-            // The process ended between the check and the kill.
         }
     }
 }

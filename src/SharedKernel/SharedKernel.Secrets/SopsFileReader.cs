@@ -1,4 +1,5 @@
 using System.Text;
+using PandaBear.IO;
 using PandaBear.Results;
 
 namespace PandaBear.Secrets;
@@ -39,7 +40,8 @@ public static class SopsFileReader
         string text;
         try
         {
-            text = await Task.Run(() => ReadBounded(absoluteFile), cancellationToken).WaitAsync(readTimeout ?? DefaultReadTimeout, cancellationToken).ConfigureAwait(false);
+            var bytes = await Task.Run(() => BoundedReader.ReadFile(absoluteFile, MaxFileBytes, cancellationToken), cancellationToken).WaitAsync(readTimeout ?? DefaultReadTimeout, cancellationToken).ConfigureAwait(false);
+            text = bytes is null ? string.Empty : Encoding.UTF8.GetString(bytes);
         }
         catch (TimeoutException)
         {
@@ -55,19 +57,5 @@ public static class SopsFileReader
         }
 
         return text.Length == 0 ? ToolInvocation.Error<SopsFileRecipients>("The file is empty or larger than 16 MiB.") : SopsMetadataReader.Read(text, format.Value);
-    }
-
-    private static string ReadBounded(string path)
-    {
-        using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.None);
-        var buffer = new byte[MaxFileBytes + 1];
-        var length = 0;
-        int read;
-        while (length < buffer.Length && (read = stream.Read(buffer, length, buffer.Length - length)) > 0)
-        {
-            length += read;
-        }
-
-        return length > MaxFileBytes ? string.Empty : Encoding.UTF8.GetString(buffer.AsSpan(0, length));
     }
 }

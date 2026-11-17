@@ -168,6 +168,12 @@
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.ConfigurationFiles": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.InputNormalization": {
         "type": "Project"
       },
@@ -184,16 +190,34 @@
         "type": "Project",
         "dependencies": {
           "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.ConfigurationFiles": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Secrets.Age": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Secrets": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Secrets.Sops": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Secrets": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Secrets.Tool": {
         "type": "Project",
         "dependencies": {
-          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Secrets": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Secrets.Age": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Secrets.Sops": "[0.1.0-alpha.0, )",
           "System.CommandLine": "[3.0.0, )"
         }
       },

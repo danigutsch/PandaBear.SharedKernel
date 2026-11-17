@@ -52,6 +52,19 @@ public sealed class SystemToolRunnerTests
     }
 
     [Fact(SkipType = typeof(UnixToolsProbe), SkipUnless = nameof(UnixToolsProbe.IsAvailable), Skip = SkipReason)]
+    public async Task A_forge_token_in_the_request_never_reaches_the_child()
+    {
+        // Arrange
+        var request = new ToolRequest(UnixToolsProbe.Env, [], new Dictionary<string, string> { ["GH_TOKEN"] = "token", ["forgejo_token"] = "token", ["KEPT"] = "value" });
+
+        // Act
+        using var result = await new SystemToolRunner().Run(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.StandardOutput.RevealUtf8().Split('\n', StringSplitOptions.RemoveEmptyEntries).Order(StringComparer.Ordinal).ToArray().ShouldBe(["KEPT=value", "LC_ALL=C"]);
+    }
+
+    [Fact(SkipType = typeof(UnixToolsProbe), SkipUnless = nameof(UnixToolsProbe.IsAvailable), Skip = SkipReason)]
     public async Task The_child_starts_in_the_requested_working_directory()
     {
         // Arrange
