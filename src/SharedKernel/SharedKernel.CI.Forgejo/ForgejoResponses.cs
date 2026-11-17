@@ -14,11 +14,20 @@ internal static class ForgejoResponses
 
     private const int MaxBodyBytes = 16 * 1024 * 1024;
 
-    /// <summary>Gets <paramref name="uri"/> and reads its body as <typeparamref name="T"/>, with the <c>Link</c> header of the response.</summary>
+    /// <summary>
+    /// Gets <paramref name="uri"/>, reads its body as <typeparamref name="T"/>, and returns what <paramref name="map"/> makes
+    /// of the body and the response, such as a page with its paging headers.
+    /// </summary>
     /// <exception cref="HttpRequestException">The server answered with another status than 200 OK.</exception>
     /// <exception cref="InvalidDataException">The body is larger than 16 MiB or not valid.</exception>
     /// <exception cref="TimeoutException">The request took longer than a minute.</exception>
-    public static async Task<(T Value, string? Link)> Get<T>(HttpClient client, Uri uri, JsonTypeInfo<T> typeInfo, string what, CancellationToken ct)
+    public static async Task<TResult> Get<T, TResult>(
+        HttpClient client,
+        Uri uri,
+        JsonTypeInfo<T> typeInfo,
+        string what,
+        Func<T, HttpResponseMessage, TResult> map,
+        CancellationToken ct)
     {
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
         timeout.CancelAfter(RequestTimeout);
@@ -47,8 +56,7 @@ internal static class ForgejoResponses
                 throw new InvalidDataException($"GET {uri} returned {what} that is not valid: it is null.");
             }
 
-            var link = response.Headers.TryGetValues("Link", out var links) ? string.Join(',', links) : null;
-            return (value, link);
+            return map(value, response);
         }
         catch (OperationCanceledException exception) when (!ct.IsCancellationRequested)
         {

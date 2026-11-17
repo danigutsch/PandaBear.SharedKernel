@@ -128,14 +128,14 @@ repeated properties, comments, and trailing commas are errors that name the JSON
 | `scenarios[].host.healthTimeoutSeconds` | Seconds, 1 to 3600, for the health path to answer a success status. |
 
 Paths use `/`, have no empty, `.`, or `..` segments, and resolve under the root without following symbolic links.
-Variable names are letters, digits, and `_`; `GH_TOKEN`, `GITHUB_TOKEN`, `FORGEJO_TOKEN`, and `K6_NO_USAGE_REPORT` are
-rejected.
+Variable names are letters, digits, and `_`; `GH_TOKEN`, `GITHUB_TOKEN`, `FORGEJO_TOKEN`, `GH_ENTERPRISE_TOKEN`,
+`GITHUB_ENTERPRISE_TOKEN`, and `K6_NO_USAGE_REPORT` are rejected in any case.
 
 ## Security
 
 - Local k6 starts with an empty environment except `PATHEXT`, `SystemRoot`, and `WINDIR`, so only the `-e` values
-  reach the script. The container engine and the host inherit the environment without `GH_TOKEN`, `GITHUB_TOKEN`, and
-  `FORGEJO_TOKEN`.
+  reach the script. The container engine and the host inherit the environment without `GH_TOKEN`, `GITHUB_TOKEN`,
+  `FORGEJO_TOKEN`, `GH_ENTERPRISE_TOKEN`, and `GITHUB_ENTERPRISE_TOKEN`.
 - `environment` values appear on the k6 command line; never name a secret there.
 - The target must be an absolute `http://` or `https://` URL without user information, query, or fragment, on a
   loopback host (`localhost`, `127.0.0.0/8`, `[::1]`), unless `--allow-external-target` is passed. The host's

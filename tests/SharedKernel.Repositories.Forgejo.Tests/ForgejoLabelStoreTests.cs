@@ -67,7 +67,33 @@ public sealed class ForgejoLabelStoreTests
     }
 
     [Fact]
-    public async Task Listing_without_paging_headers_reads_until_an_empty_page()
+    public async Task Listing_without_paging_headers_reads_past_short_pages_until_an_empty_page()
+    {
+        // Arrange
+        // An instance with max_response_items 30, or a proxy that strips the headers, answers limit=50 with 30 labels.
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.OK, LinkedPages.Labels(1, 30));
+        handler.EnqueueJson(HttpStatusCode.OK, LinkedPages.Labels(31, 30));
+        handler.EnqueueJson(HttpStatusCode.OK, LinkedPages.Labels(61, 30));
+        handler.EnqueueJson(HttpStatusCode.OK, "[]");
+        using var store = new ForgejoLabelStore(handler, Server, "owner/name", UserAgent, null);
+
+        // Act
+        var labels = await store.List(TestContext.Current.CancellationToken);
+
+        // Assert
+        labels.Select(static label => label.Name).ShouldBe([.. Enumerable.Range(1, 90).Select(static id => "label-" + id.ToString(System.Globalization.CultureInfo.InvariantCulture))]);
+        handler.Requests.Select(static request => request.PathAndQuery).ShouldBe(
+        [
+            LabelsPath + "?limit=50&page=1",
+            LabelsPath + "?limit=50&page=2",
+            LabelsPath + "?limit=50&page=3",
+            LabelsPath + "?limit=50&page=4",
+        ]);
+    }
+
+    [Fact]
+    public async Task Listing_without_paging_headers_ends_at_an_empty_page()
     {
         // Arrange
         using var handler = new TestHttpMessageHandler();
@@ -99,6 +125,27 @@ public sealed class ForgejoLabelStoreTests
         var request = handler.Requests.ShouldHaveSingleItem();
         request.PathAndQuery.ShouldBe("/forgejo" + LabelsPath + "?limit=50&page=1");
         request.Message.Headers.Authorization.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task A_label_list_longer_than_one_hundred_pages_fails_instead_of_being_cut()
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        for (var page = 0; page < 100; page++)
+        {
+            handler.Enqueue(LinkedPages.Counted(LinkedPages.Labels((page * 50) + 1, 50), 10_000));
+        }
+
+        using var store = new ForgejoLabelStore(handler, Server, "owner/name", UserAgent, null);
+        Func<Task> list = () => store.List(TestContext.Current.CancellationToken);
+
+        // Act
+        var exception = await list.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldBe("The labels of owner/name span more than 100 pages of 50 items; nothing was read from a partial list.");
+        handler.Requests.Count.ShouldBe(100);
     }
 
     [Fact]
@@ -261,7 +308,9 @@ public sealed class ForgejoLabelStoreTests
         Action create = () => new ForgejoLabelStore(handler, Server, repository, UserAgent, null).Dispose();
 
         // Assert
-        create.ShouldThrow<InvalidOperationException>().Message.ShouldBe("--repository must name a Forgejo repository as owner/name.");
+        var exception = create.ShouldThrow<ArgumentException>();
+        exception.ParamName.ShouldBe("repository");
+        exception.Message.ShouldBe("The repository must be owner/name, each part of ASCII letters, digits, '-', '.', and '_', and neither part '.' nor '..'. (Parameter 'repository')");
     }
 
     [Fact]

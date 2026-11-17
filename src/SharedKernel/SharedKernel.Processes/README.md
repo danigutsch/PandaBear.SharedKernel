@@ -30,7 +30,8 @@ var output = await runner.Run(startInfo, forward: null, cancellationToken);
   it: `InvalidOperationException` (`Failed to start <file>: <reason>`) with the operating system's error inside.
 - `BoundedProcessRunner` is for quick queries, such as a package manager listing: it redirects and captures both output
   streams, closes a redirected standard input, ends the process after two minutes or above 8 Mi characters on either
-  stream, and reports a process that leaves its output open after it exits.
+  stream, and reports a process that leaves its output open after it exits. It reports a start failure as
+  `SystemProcessRunner` does.
 - `IExecutableResolver` finds the executable that a command name starts. `PathExecutableResolver` looks only in the
   absolute directories of `PATH`, never in the application directory, the working directory, or a relative `PATH`
   entry, so a checkout cannot supply the executable. On Unix a file needs an execute bit; on Windows `<command>.exe` is
@@ -42,7 +43,8 @@ var output = await runner.Run(startInfo, forward: null, cancellationToken);
   exitTimeout)` kills the whole tree unless it has exited and waits a bounded time, ignoring cleanup failures so the
   failure or cancellation that started the cleanup is what the caller sees.
 - `ProcessEnvironment` keeps inherited values away from a child: `RemoveForgeTokens` drops every forge token variable
-  (`GH_TOKEN`, `GITHUB_TOKEN`, and `FORGEJO_TOKEN`, listed in `ForgeTokenVariableNames`), so an engine keeps tokens away
+  (`GH_TOKEN`, `GITHUB_TOKEN`, `FORGEJO_TOKEN`, `GH_ENTERPRISE_TOKEN`, and `GITHUB_ENTERPRISE_TOKEN`, listed in
+  `ForgeTokenVariableNames`), so an engine keeps tokens away
   from its children without depending on a forge library, and `IsForgeTokenVariable` tells a configuration that names
   one apart. `RemoveGitVariables` drops every `GIT_*` variable, which could point Git at another repository, index, or
   configuration, and `Remove(startInfo, names)` drops named variables. Names compare without regard to case.

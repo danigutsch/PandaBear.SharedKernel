@@ -31,9 +31,10 @@ Checked on 2026-11-15 against the Forgejo documentation and the API description 
 - `ForgejoActionsStepSummary(path)` appends Markdown to the `FORGEJO_STEP_SUMMARY` file, which
   [Job summaries](https://forgejo.org/docs/latest/user/actions/advanced-features/) documents; Forgejo truncates a step's
   summary beyond 1 MiB.
-- `ForgejoReleaseStore` lists `GET /api/v1/repos/{owner}/{repo}/releases` with `limit=50` and `page`, following the
-  `Link` header's `next` relation that [API usage](https://forgejo.org/docs/latest/user/api-usage/) documents, reads every
-  page before anything is deleted, bounds each page to 16 MiB and each request to one minute, and deletes with
+- `ForgejoReleaseStore` lists `GET /api/v1/repos/{owner}/{repo}/releases` with `limit=50` and `page` through
+  `ForgejoPager` of `PandaBear.SharedKernel.Forgejo`, which follows the `Link` header, or `X-Total-Count` without one, or
+  else reads to the first empty page, and fails with `InvalidDataException` above 200 pages; it reads every page before
+  anything is deleted, bounds each page to 16 MiB and each request to one minute, and deletes with
   `DELETE /api/v1/repos/{owner}/{repo}/releases/{id}` (204 No Content), which keeps the tag.
 - `ForgejoReleaseAssets` reads `GET /api/v1/repos/{owner}/{repo}/releases/tags/{tag}` once per tag without credentials
   and returns the `browser_download_url` of the attachment with the requested name.

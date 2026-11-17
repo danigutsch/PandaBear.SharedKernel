@@ -290,6 +290,23 @@ public sealed class K6RunTests
     }
 
     [Fact]
+    public async Task A_k6_that_cannot_start_exits_2_with_the_operating_system_reason()
+    {
+        // Arrange
+        using var repository = new K6TestRepository();
+        var missing = Path.Combine(repository.Root, "missing", "k6");
+        repository.SetExecutable("k6", missing);
+        repository.SetEnvironment("APP_BASE_URL", "http://localhost:5000");
+
+        // Act
+        var exitCode = await repository.Invoke(["run", "--scenario", "smoke"], TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        repository.Error.ToString().ShouldContain("\nFailed to start " + missing + ": ", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task A_missing_script_fails()
     {
         // Arrange

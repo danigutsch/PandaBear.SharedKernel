@@ -14,9 +14,11 @@ internal static class ReviewText
     /// <summary>
     /// Returns text on one line. Each line break that <see cref="string.ReplaceLineEndings(string)"/> recognizes, such as a
     /// line feed, a carriage return, or the line separator U+2028, becomes <see cref="LineBreak"/>. The rest is made
-    /// printable by <see cref="PrintableText.OneLine"/>: tabs become spaces, and other control characters and bidirectional
-    /// embeddings, overrides, and isolates become U+FFFD. A name or value can then neither break the layout, nor send
-    /// control sequences to the terminal, nor reorder the text around it.
+    /// printable by <see cref="PrintableText.OneLine"/>: tabs become spaces, and other control characters, format
+    /// characters such as bidirectional marks, embeddings, overrides, and isolates and zero-width characters, other default
+    /// ignorable code points except variation selectors, and unpaired surrogates become U+FFFD. A name or value can then
+    /// neither break the layout, nor send control sequences to the terminal, nor reorder the text around it, nor hold a
+    /// character that does not show.
     /// </summary>
     /// <param name="text">Text, or <see langword="null"/>.</param>
     /// <returns>The text on one line; empty for <see langword="null"/>.</returns>

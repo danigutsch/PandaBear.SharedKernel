@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using PandaBear.Processes;
@@ -31,7 +30,9 @@ internal sealed class ExternalCommands
     {
         ct.ThrowIfCancellationRequested();
         var argumentList = arguments.ToArray();
-        var result = await Start(CreateStartInfo(fileName, argumentList, workingDirectory), forward: null, ct).ConfigureAwait(false);
+        // A start failure is the InvalidOperationException that IProcessRunner documents. SystemProcessRunner and
+        // BoundedProcessRunner put the file name and the operating system's reason in its message; another runner may not.
+        var result = await _processRunner.Run(CreateStartInfo(fileName, argumentList, workingDirectory), forward: null, ct).ConfigureAwait(false);
         if (result.ExitCode == 0)
         {
             return result.StandardOutput;
@@ -70,7 +71,7 @@ internal sealed class ExternalCommands
             }
         }
 
-        var result = await Start(startInfo, sink, ct).ConfigureAwait(false);
+        var result = await _processRunner.Run(startInfo, sink, ct).ConfigureAwait(false);
         if (result.ExitCode != 0)
         {
             throw new InvalidOperationException($"Command failed ({result.ExitCode}): {fileName} {string.Join(' ', arguments)}");
@@ -87,18 +88,6 @@ internal sealed class ExternalCommands
         catch (InvalidOperationException) when (!ct.IsCancellationRequested)
         {
             return string.Empty;
-        }
-    }
-
-    private async Task<ProcessOutput> Start(ProcessStartInfo startInfo, TextWriter? forward, CancellationToken ct)
-    {
-        try
-        {
-            return await _processRunner.Run(startInfo, forward, ct).ConfigureAwait(false);
-        }
-        catch (Win32Exception exception)
-        {
-            throw new InvalidOperationException($"Failed to start {startInfo.FileName}: {exception.Message}", exception);
         }
     }
 

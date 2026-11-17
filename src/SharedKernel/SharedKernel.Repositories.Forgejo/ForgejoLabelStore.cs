@@ -19,10 +19,6 @@ namespace PandaBear.Repositories.Forgejo;
 /// </remarks>
 public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
 {
-    // Forgejo caps limit at max_response_items, 50 unless the instance changes it. The label list answers with
-    // X-Total-Count and, on Forgejo 17, no Link header, so the pages end at the total, at a Link header without a next
-    // relation, or at an empty page.
-    private const int PageSize = 50;
     private const int MaxPages = 100;
     private const int MaxResponseBytes = 1024 * 1024;
     private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(30);
@@ -39,8 +35,7 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
     /// <param name="userAgent">Names the caller, such as <c>sharedkernel-repo/1.0</c>.</param>
     /// <param name="token">The token from <see cref="ForgejoToken.Find"/>, which writing requires, or <see langword="null"/> to read the labels of a public repository anonymously.</param>
     /// <exception cref="ArgumentNullException"><paramref name="handler"/>, <paramref name="server"/>, <paramref name="repository"/>, or <paramref name="userAgent"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="server"/> is not an absolute HTTPS address without user information, a query, or a fragment, or <paramref name="token"/> is empty or white-space.</exception>
-    /// <exception cref="InvalidOperationException"><paramref name="repository"/> does not name a Forgejo repository as <c>owner/name</c>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="repository"/> is not <c>owner/name</c>, <paramref name="server"/> is not an absolute HTTPS address without user information, a query, or a fragment, or <paramref name="token"/> is empty or white-space.</exception>
     public ForgejoLabelStore(HttpMessageHandler handler, Uri server, string repository, ProductInfoHeaderValue userAgent, string? token)
         : this(handler, server, repository, userAgent, token, TimeProvider.System)
     {
@@ -48,8 +43,7 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
 
     /// <summary>Creates the store with an explicit time source for the request timeout.</summary>
     /// <exception cref="ArgumentNullException">An argument other than <paramref name="token"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="server"/> or <paramref name="token"/> is not valid.</exception>
-    /// <exception cref="InvalidOperationException"><paramref name="repository"/> does not name a Forgejo repository as <c>owner/name</c>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="repository"/>, <paramref name="server"/>, or <paramref name="token"/> is not valid.</exception>
     internal ForgejoLabelStore(
         HttpMessageHandler handler,
         Uri server,
@@ -63,10 +57,7 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
         ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(userAgent);
         ArgumentNullException.ThrowIfNull(timeProvider);
-        if (!ForgejoRepositoryName.TryParse(repository, out var owner, out var name))
-        {
-            throw new InvalidOperationException("--repository must name a Forgejo repository as owner/name.");
-        }
+        var (owner, name) = ForgejoRepositoryName.Parse(repository, nameof(repository));
 
         Repository = repository;
         _labelsPath = "repos/" + Uri.EscapeDataString(owner) + "/" + Uri.EscapeDataString(name) + "/labels";
@@ -80,36 +71,36 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
 
     /// <inheritdoc />
     /// <remarks>
-    /// Reads <c>GET /repos/{owner}/{repo}/labels</c> with <c>limit=50</c> and <c>page</c> until the pages hold the
-    /// <c>X-Total-Count</c> labels, a <c>Link</c> header has no <c>next</c> relation, or a page is empty, at most 100
-    /// pages. Colors are returned without a leading <c>#</c>.
+    /// Reads <c>GET /repos/{owner}/{repo}/labels</c> with <c>limit=50</c> through <see cref="ForgejoPager"/>, which follows
+    /// the <c>Link</c> header, or the <c>X-Total-Count</c> header without one (Forgejo 17 sends no <c>Link</c> header for
+    /// this list), or else reads to the first empty page, and fails above 100 pages. Colors are returned without a leading <c>#</c>.
     /// </remarks>
-    /// <exception cref="InvalidOperationException">Forgejo rejects a request or returns an invalid response, or the repository has more than 5000 labels.</exception>
+    /// <exception cref="InvalidOperationException">Forgejo rejects a request or returns an invalid response, or the repository has more than 100 pages of labels.</exception>
     /// <exception cref="TimeoutException">Forgejo does not answer a request within 30 seconds.</exception>
     public async Task<IReadOnlyList<RepositoryLabel>> List(CancellationToken cancellationToken)
     {
-        Dictionary<string, RepositoryLabel> labels = new(StringComparer.OrdinalIgnoreCase);
-        Dictionary<string, long> ids = new(StringComparer.OrdinalIgnoreCase);
-        long seen = 0;
-        for (var page = 1; page <= MaxPages; page++)
+        IReadOnlyList<(long Id, RepositoryLabel Label)> entries;
+        try
         {
-            var uri = new Uri(_client.BaseAddress!, string.Create(CultureInfo.InvariantCulture, $"{_labelsPath}?limit={PageSize}&page={page}"));
-            var (content, link, total) = await Send(HttpMethod.Get, uri, null, HttpStatusCode.OK, null, cancellationToken).ConfigureAwait(false);
-            var count = ReadPage(content, labels, ids);
-            seen += count;
-            if (count == 0 || seen >= total || (link is not null && !HasNextPage(link)))
-            {
-                _ids.Clear();
-                foreach (var (labelName, id) in ids)
-                {
-                    _ids[labelName] = id;
-                }
+            entries = await ForgejoPager.ReadAll(ReadPage, MaxPages, "The labels of " + Repository, cancellationToken).ConfigureAwait(false);
+        }
+        catch (InvalidDataException exception)
+        {
+            // Every listing failure of this store is an InvalidOperationException, which the label sync tool reports.
+            throw new InvalidOperationException(exception.Message, exception);
+        }
 
-                return [.. labels.Values];
+        Dictionary<string, RepositoryLabel> labels = new(StringComparer.OrdinalIgnoreCase);
+        _ids.Clear();
+        foreach (var (id, label) in entries)
+        {
+            if (labels.TryAdd(label.Name, label))
+            {
+                _ids[label.Name] = id;
             }
         }
 
-        throw new InvalidOperationException(string.Create(CultureInfo.InvariantCulture, $"Forgejo label sync reads at most {MaxPages * PageSize} repository labels."));
+        return [.. labels.Values];
     }
 
     /// <inheritdoc />
@@ -147,11 +138,7 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
     /// <summary>Disposes the client and its handler.</summary>
     public void Dispose() => _client.Dispose();
 
-    // A Link header, when Forgejo sends one, has rel="next" while a later page exists.
-    private static bool HasNextPage(string? link) =>
-        link is not null && link.Split(',').Any(static part => part.Contains("rel=\"next\"", StringComparison.Ordinal));
-
-    private static int ReadPage(byte[] content, Dictionary<string, RepositoryLabel> labels, Dictionary<string, long> ids)
+    private static List<(long Id, RepositoryLabel Label)> ReadLabels(byte[] content)
     {
         try
         {
@@ -161,6 +148,7 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
                 throw InvalidResponse();
             }
 
+            List<(long Id, RepositoryLabel Label)> labels = [];
             foreach (var element in document.RootElement.EnumerateArray())
             {
                 if (element.ValueKind != JsonValueKind.Object
@@ -172,17 +160,13 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
                     throw InvalidResponse();
                 }
 
-                var label = new RepositoryLabel(
+                labels.Add((labelId, new RepositoryLabel(
                     name.GetString()!,
                     color.GetString()!.TrimStart('#'),
-                    element.TryGetProperty("description", out var text) ? text.GetString() ?? string.Empty : string.Empty);
-                if (labels.TryAdd(label.Name, label))
-                {
-                    ids[label.Name] = labelId;
-                }
+                    element.TryGetProperty("description", out var text) ? text.GetString() ?? string.Empty : string.Empty)));
             }
 
-            return document.RootElement.GetArrayLength();
+            return labels;
         }
         catch (Exception exception) when (exception is JsonException or FormatException)
         {
@@ -191,6 +175,13 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
     }
 
     private static InvalidOperationException InvalidResponse() => new("Forgejo label sync returned an invalid label response.");
+
+    private async Task<ForgejoPage<(long Id, RepositoryLabel Label)>> ReadPage(int page, CancellationToken cancellationToken)
+    {
+        var uri = new Uri(_client.BaseAddress!, string.Create(CultureInfo.InvariantCulture, $"{_labelsPath}?limit={ForgejoPager.PageSize}&page={page}"));
+        var (content, headers) = await Send(HttpMethod.Get, uri, null, HttpStatusCode.OK, null, cancellationToken).ConfigureAwait(false);
+        return ForgejoPager.Page(ReadLabels(content), headers);
+    }
 
     private async Task Write(HttpMethod method, Uri uri, RepositoryLabel label, HttpStatusCode expectedStatus, CancellationToken cancellationToken)
     {
@@ -207,7 +198,7 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
         _ = await Send(method, uri, stream.ToArray(), expectedStatus, label.Name, cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task<(byte[] Content, string? Link, long Total)> Send(
+    private async Task<(byte[] Content, HttpResponseHeaders Headers)> Send(
         HttpMethod method,
         Uri uri,
         byte[]? body,
@@ -247,12 +238,7 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
                 content = await BoundedReader.ReadToEnd(source, MaxResponseBytes, requestCancellation.Token).ConfigureAwait(false);
             }
 
-            var link = response.Headers.TryGetValues("Link", out var links) ? string.Join(',', links) : null;
-            var total = response.Headers.TryGetValues("X-Total-Count", out var totals)
-                && long.TryParse(totals.FirstOrDefault(), NumberStyles.None, CultureInfo.InvariantCulture, out var count)
-                    ? count
-                    : long.MaxValue;
-            return (content ?? throw new InvalidOperationException("Forgejo label sync response exceeded the allowed size."), link, total);
+            return (content ?? throw new InvalidOperationException("Forgejo label sync response exceeded the allowed size."), response.Headers);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

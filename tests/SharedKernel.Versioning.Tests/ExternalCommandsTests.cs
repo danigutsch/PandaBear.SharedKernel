@@ -47,7 +47,7 @@ public static class ExternalCommandsTests
     public static async Task Run_reports_an_executable_that_cannot_start_as_an_invalid_operation()
     {
         // Arrange
-        var commands = new ExternalCommands(new ThrowingProcessRunner(), PathExecutableResolver.Default);
+        var commands = SystemCommands.Instance;
         var missing = Path.Combine(Path.GetTempPath(), "missing-" + Guid.NewGuid().ToString("N"));
 
         // Act

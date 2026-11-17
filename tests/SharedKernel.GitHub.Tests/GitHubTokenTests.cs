@@ -25,9 +25,30 @@ public sealed class GitHubTokenTests
         token.ShouldBe(expected);
     }
 
+    [Fact]
+    public void Enterprise_server_tokens_are_never_read_for_github_com()
+    {
+        // Arrange
+        Dictionary<string, string?> variables = new(StringComparer.Ordinal)
+        {
+            ["GH_ENTERPRISE_TOKEN"] = "enterprise",
+            ["GITHUB_ENTERPRISE_TOKEN"] = "enterprise",
+        };
+
+        // Act
+        var token = GitHubToken.Find(name => variables.GetValueOrDefault(name));
+
+        // Assert
+        token.ShouldBeNull();
+        GitHubToken.VariableNames.ShouldBe(["GH_TOKEN", "GITHUB_TOKEN"]);
+    }
+
     [Theory]
     [InlineData("GH_TOKEN", true)]
     [InlineData("github_token", true)]
+    [InlineData("GH_ENTERPRISE_TOKEN", true)]
+    [InlineData("gh_enterprise_token", true)]
+    [InlineData("Github_Enterprise_Token", true)]
     [InlineData("GITHUB_SHA", false)]
     public void Token_variables_are_recognized_in_any_case(string name, bool expected)
     {
@@ -46,6 +67,8 @@ public sealed class GitHubTokenTests
         startInfo.Environment.Clear();
         startInfo.Environment["GH_TOKEN"] = "a";
         startInfo.Environment["Github_Token"] = "b";
+        startInfo.Environment["gh_enterprise_token"] = "c";
+        startInfo.Environment["GitHub_Enterprise_Token"] = "d";
         startInfo.Environment["HOME"] = "/home/user";
 
         // Act
@@ -85,5 +108,24 @@ public sealed class GitHubTokenTests
         // Assert
         GitHubToken.VariableNames.ShouldAllSatisfy(static name => ProcessEnvironment.ForgeTokenVariableNames.ShouldContain(name));
         startInfo.Environment.Keys.ShouldNotContain(name => GitHubToken.IsTokenVariable(name));
+    }
+
+    [Fact]
+    public void Removal_covers_every_forge_token_variable()
+    {
+        // Arrange
+        var startInfo = new ProcessStartInfo("child");
+        startInfo.Environment.Clear();
+        foreach (var name in ProcessEnvironment.ForgeTokenVariableNames)
+        {
+            startInfo.Environment[name] = "secret";
+        }
+
+        // Act
+        GitHubToken.RemoveFrom(startInfo);
+
+        // Assert
+        startInfo.Environment.Keys.ShouldBeEmpty();
+        ProcessEnvironment.ForgeTokenVariableNames.ShouldAllSatisfy(static name => GitHubToken.IsTokenVariable(name).ShouldBeTrue(name));
     }
 }

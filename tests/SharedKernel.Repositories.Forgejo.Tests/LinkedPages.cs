@@ -18,4 +18,10 @@ internal static class LinkedPages
         response.Headers.TryAddWithoutValidation("X-Total-Count", total.ToString(System.Globalization.CultureInfo.InvariantCulture));
         return response;
     }
+
+    /// <summary>Returns a JSON label list of <paramref name="count"/> labels with IDs from <paramref name="first"/>, named <c>label-</c> and their ID.</summary>
+    public static string Labels(int first, int count) =>
+        "[" + string.Join(',', Enumerable.Range(first, count).Select(static id => string.Create(
+            System.Globalization.CultureInfo.InvariantCulture,
+            $$"""{ "id": {{id}}, "name": "label-{{id}}", "color": "000000", "description": "" }"""))) + "]";
 }

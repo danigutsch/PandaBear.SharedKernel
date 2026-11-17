@@ -29,8 +29,20 @@ using var response = await client.GetAsync("repos/owner/name/releases?limit=50&p
   `<server>/api/v1/`, that sends the user agent, `Accept: application/json`, and `Authorization: token <token>`, the
   header form that [API usage](https://forgejo.org/docs/latest/user/api-usage/) documents. The server must be HTTPS. It
   keeps the default `HttpClient.Timeout`; redirect and certificate policy belong to the handler the caller passes.
-- Forgejo pages lists with `page` and `limit`, caps `limit` at the instance's `max_response_items` (50 by default), and
-  sends a `Link` header with a `next` relation while more pages follow.
+- `ForgejoRepositoryName.TryParse` splits `owner/name` and refuses anything that could add a path segment or a query
+  to a request address: each part holds only ASCII letters, digits, `-`, `.`, and `_`, and is neither `.` nor `..`.
+  `ForgejoRepositoryName.Parse(repository, paramName)` returns the owner and the name or throws one
+  `ArgumentException` for the caller's parameter; the Forgejo release store, release assets, and label store use it.
+- `ForgejoPager.ReadAll` reads every page of a list. Forgejo pages lists with `page` and `limit`, caps `limit` at the
+  instance's `max_response_items` (50 by default, `ForgejoPager.PageSize`), and, as
+  [API usage](https://forgejo.org/docs/latest/user/api-usage/) documents, sends `X-Total-Count` and, when there is more
+  than one page, a `Link` header with a `next` relation. Not every list sends `Link`: Forgejo 17.0.1 answers the labels
+  of a repository with `X-Total-Count` only, while the repositories of a user have both. The pager stops at an empty
+  page; otherwise it follows `Link` when present, then `X-Total-Count`. Without either it reads on to the first empty
+  page: an instance can set `max_response_items` below `PageSize`, and a proxy can strip the headers, so a short page
+  does not prove the end of the list. Above the caller's page cap it throws `InvalidDataException`, a server answering more pages than allowed,
+  instead of returning part of the list.
+  `ForgejoPager.Page(items, headers)` builds a `ForgejoPage<T>` from a response's headers.
 
 ## Package identity and availability
 

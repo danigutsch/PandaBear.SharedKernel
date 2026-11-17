@@ -292,12 +292,20 @@ Password-protected inputs and an encrypted output need a terminal: without one, 
 fails with exit code 3 before doing any work and names the input or output that needs it. The `inspect` report and
 the `scan`, `merge`, and `review` summaries go to standard output; diagnostics, warnings, errors, and prompts go to
 standard error. Every printed or reported name, path, key, warning, message, prompt, and report table cell goes
-through `PrintableText`: carriage returns, line feeds, tabs, and the separators U+2028 and U+2029 become spaces, and
-every other control character (C0, DEL, and C1) and every bidirectional embedding, override, and isolate (U+202A to
-U+202E and U+2066 to U+2069) becomes U+FFFD. A crafted export can therefore neither send escape sequences to the
-terminal nor reorder the text around a name. `VaultCommandLine.Invoke` writes System.CommandLine's parse errors, typo
-corrections, and help through `PrintableTextWriter`, which keeps line breaks and replaces the same characters, because
-System.CommandLine repeats arguments verbatim. Report table cells also escape `|`. Report, brief, and decisions files are
+through `PrintableText`, code point by code point: carriage returns, line feeds, tabs, and the separators U+2028 and
+U+2029 become spaces, and every other code point in the general category Cc or Cf, every other default ignorable code
+point except a variation selector, and every unpaired surrogate becomes one U+FFFD. That covers C0, DEL, and C1
+controls, the bidirectional marks, embeddings, overrides, and isolates (U+061C, U+200E, U+200F, U+202A to U+202E, and
+U+2066 to U+2069), the zero-width characters, U+FEFF, the soft hyphen, the Hangul fillers, and the supplementary tag
+characters, following the Trojan Source guidance (CVE-2021-42574), UTS #55, and UTS #39. Only where they change how
+the text shows do the zero width joiner and non-joiner and the tag characters stay: U+200D between two emoji of an emoji
+ZWJ sequence (UTS #51 ED-16), U+200C and U+200D in the joining contexts A1, A2, and B of UTS #39 section 3.1.1.1, as in
+Persian and Indic words, and the tags of a well-formed flag emoji tag sequence (UTS #51 ED-14a and Annex C), such as the
+flag of England. A crafted export can therefore neither send escape sequences to the terminal, nor reorder the text
+around a name, nor hide a character in it.
+`VaultCommandLine.Invoke` writes System.CommandLine's parse errors, typo corrections, and help through
+`PrintableTextWriter`, which keeps line breaks and replaces the same characters, because System.CommandLine repeats
+arguments verbatim. Report table cells also escape `|`. Report, brief, and decisions files are
 created readable only by their owner.
 
 ## Catalog

@@ -33,10 +33,33 @@ public sealed class ForgejoReleaseStoreTests
     }
 
     [Fact]
-    public async Task A_single_page_without_a_link_header_is_the_whole_list()
+    public async Task Listing_without_a_link_header_reads_pages_until_the_total_count()
     {
         // Arrange
-        using var handler = new ScriptedHandler().Respond(HttpStatusCode.OK, Releases.Page(1, 3));
+        // Forgejo 17 answers some lists, such as the labels of a repository, with X-Total-Count and no Link header.
+        using var handler = new ScriptedHandler()
+            .Respond(HttpStatusCode.OK, Releases.Page(1, 50), totalCount: 60)
+            .Respond(HttpStatusCode.OK, Releases.Page(51, 10), totalCount: 60);
+        using var store = new ForgejoReleaseStore(handler, Server, "owner/name", UserAgent, null);
+
+        // Act
+        var releases = await store.List(TestContext.Current.CancellationToken);
+
+        // Assert
+        releases.Count.ShouldBe(60);
+        handler.Requests.Select(static request => request.RequestUri!.ToString()).ShouldBe(
+        [
+            "https://forge.example/api/v1/repos/owner/name/releases?limit=50&page=1",
+            "https://forge.example/api/v1/repos/owner/name/releases?limit=50&page=2",
+        ]);
+    }
+
+    [Fact]
+    public async Task Without_paging_headers_the_list_ends_at_an_empty_page()
+    {
+        // Arrange
+        // A short page proves nothing without headers: the instance can page by fewer than 50, so an empty page ends the list.
+        using var handler = new ScriptedHandler().Respond(HttpStatusCode.OK, Releases.Page(1, 3)).Respond(HttpStatusCode.OK, "[]");
         using var store = new ForgejoReleaseStore(handler, Server, "owner/name", UserAgent, null);
 
         // Act
@@ -44,7 +67,7 @@ public sealed class ForgejoReleaseStoreTests
 
         // Assert
         releases.Count.ShouldBe(3);
-        handler.Requests.Count.ShouldBe(1);
+        handler.Requests.Count.ShouldBe(2);
         handler.Requests[0].Headers.Authorization.ShouldBeNull();
     }
 
@@ -84,6 +107,44 @@ public sealed class ForgejoReleaseStoreTests
     }
 
     [Fact]
+    public async Task A_release_list_longer_than_two_hundred_pages_fails_as_invalid_data_through_the_release_store()
+    {
+        // Arrange
+        using var handler = new ScriptedHandler();
+        for (var page = 0; page < 200; page++)
+        {
+            _ = handler.Respond(HttpStatusCode.OK, Releases.Page((page * 50) + 1, 50), totalCount: 20_000);
+        }
+
+        using var store = new ForgejoReleaseStore(handler, Server, "owner/name", UserAgent, null);
+        Func<Task> list = () => ((IReleaseStore)store).List(TestContext.Current.CancellationToken);
+
+        // Act
+        var exception = await list.ShouldThrow<InvalidDataException>();
+
+        // Assert
+        exception.Message.ShouldBe("The releases of owner/name span more than 200 pages of 50 items; nothing was read from a partial list.");
+        handler.Requests.Count.ShouldBe(200);
+    }
+
+    [Theory]
+    [InlineData("owner")]
+    [InlineData("owner/..")]
+    public void A_repository_that_is_not_owner_slash_name_is_rejected(string repository)
+    {
+        // Arrange
+        using var handler = new ScriptedHandler();
+
+        // Act
+        Action create = () => new ForgejoReleaseStore(handler, Server, repository, UserAgent, null).Dispose();
+
+        // Assert
+        var exception = create.ShouldThrow<ArgumentException>();
+        exception.ParamName.ShouldBe("repository");
+        exception.Message.ShouldBe("The repository must be owner/name, each part of ASCII letters, digits, '-', '.', and '_', and neither part '.' nor '..'. (Parameter 'repository')");
+    }
+
+    [Fact]
     public async Task Deleting_a_release_by_its_ID_accepts_only_no_content()
     {
         // Arrange
@@ -112,6 +173,7 @@ public sealed class ForgejoReleaseStoreTests
         // Arrange
         using var handler = new ScriptedHandler()
             .Respond(HttpStatusCode.OK, Releases.Page(1, 3))
+            .Respond(HttpStatusCode.OK, "[]")
             .Respond(HttpStatusCode.NoContent);
         using var store = new ForgejoReleaseStore(handler, Server, "owner/name", UserAgent, "secret");
         using var output = new InvariantStringWriter();

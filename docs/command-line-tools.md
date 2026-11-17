@@ -211,7 +211,8 @@ incrementally. Each wrapped tool and the libraries it wraps:
   standard input. Never from arguments or environment variables, which leak through process listings, shell
   history, and child processes. A GitHub token is the exception: commands that call the GitHub API read it from
   `GH_TOKEN` or `GITHUB_TOKEN`, as [`gh`](https://cli.github.com/manual/gh_help_environment) does, and a Forgejo token
-  from `FORGEJO_TOKEN`. Every child process that needs no forge access starts without any of them, through
+  from `FORGEJO_TOKEN`. Every child process that needs no forge access starts without any of them, nor gh's GitHub
+  Enterprise Server tokens `GH_ENTERPRISE_TOKEN` and `GITHUB_ENTERPRISE_TOKEN`, through
   `PandaBear.Processes.ProcessEnvironment.RemoveForgeTokens`.
 - Do not use `SecureString` ([DE0001](https://github.com/dotnet/platform-compat/blob/master/docs/DE0001.md)).
   Keep secret bytes in arrays you own and clear them with

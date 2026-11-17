@@ -258,6 +258,12 @@ internal static class RepoConfigToolApplication
         TextWriter output,
         CancellationToken ct)
     {
+        // The CLI names the option; the store's ArgumentException names its parameter.
+        if (!ForgejoRepositoryName.TryParse(repository, out _, out _))
+        {
+            throw new InvalidOperationException("--repository must name a Forgejo repository as owner/name.");
+        }
+
         var token = ForgejoToken.Find(Environment.GetEnvironmentVariable);
         if (force && token is null)
         {

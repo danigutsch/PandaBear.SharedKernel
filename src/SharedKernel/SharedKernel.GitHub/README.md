@@ -23,8 +23,12 @@ using var client = GitHubApiClient.Create(
 - `GitHubToken.Find` returns the first of `GH_TOKEN` and `GITHUB_TOKEN` that is not empty or white-space, the order
   [`gh`](https://cli.github.com/manual/gh_help_environment) uses, or `null`. The caller decides whether a missing token
   is an error and words the message; an engine takes the reader as a `Func<string, string?>`, so tests pass a fake.
-- `GitHubToken.RemoveFrom(startInfo)` removes both variables, in any case, from a child process environment, and
-  `IsTokenVariable` lets a configuration reader refuse a request to forward one. A token is never an argument.
+  `GitHubToken.VariableNames` lists only those two: a GitHub Enterprise Server token (`GH_ENTERPRISE_TOKEN`,
+  `GITHUB_ENTERPRISE_TOKEN`) is never read, so it is never sent to `api.github.com`.
+- `GitHubToken.RemoveFrom(startInfo)` removes every forge token variable, in any case, from a child process
+  environment: both variables above, the Enterprise Server ones, and the rest of
+  `ProcessEnvironment.ForgeTokenVariableNames`. `IsTokenVariable` reports the same names, so a configuration reader
+  refuses a request to forward any of them. A token is never an argument.
 - `GitHubApiClient.Create(handler, userAgent, token)` returns a client that owns the handler and sends the user agent,
   `Accept: application/vnd.github+json`, `X-GitHub-Api-Version: 2026-03-10`, and the bearer token when one is given. It
   keeps the default `HttpClient.Timeout`; a caller that times each request with its own token sets

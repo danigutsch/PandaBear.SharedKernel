@@ -602,8 +602,12 @@ summary there when the UI closes.
 Warnings, errors, and password prompts go to standard error. Messages name inputs, items, fields, origin keys, and
 finding IDs, never values. In the names, paths, keys, prompts, and messages that the commands print and the reports
 hold, carriage returns, line feeds, tabs, and the line and paragraph separators U+2028 and U+2029 show as spaces, and
-every other control character and every bidirectional embedding, override, and isolate shows as U+FFFD, so an export
-can neither send escape sequences to the terminal nor reorder the text around a name. The error, typo corrections,
+every other control character, every format character, such as a bidirectional mark, embedding, override, or isolate
+or a zero-width character, every other invisible (default ignorable) character except a variation selector, and every
+unpaired surrogate shows as U+FFFD, so an export can neither send escape sequences to the terminal, nor reorder the text
+around a name, nor hide a character in it. A zero width joiner or non-joiner stays only inside an emoji ZWJ sequence,
+such as the technologist U+1F469 U+200D U+1F4BB, or where a Persian or Indic word needs it, and tag characters stay
+only inside a flag emoji tag sequence, such as the flag of England. The error, typo corrections,
 and help of an invalid command line keep their line breaks and show other characters the same way, so an argument
 that System.CommandLine repeats cannot send escape sequences either.
 
