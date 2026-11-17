@@ -94,7 +94,8 @@ sharedkernel-secrets --help
   remove, and with `--force` (and an identity that can decrypt) writes the new version. When it removes a recipient or another
   key holder it says to run `rotate`, because that holder may already know the data key.
 - `rotate` encrypts every value again with a new data key for exactly the rule's recipients, as `sops rotate` does, so a removed
-  recipient's copy of the old key reads nothing new. It previews unless `--force` is given.
+  recipient's copy of the old key reads nothing new. It previews unless `--force` is given. A file with a non-age key holder
+  (`kms`, `pgp`, ...) is refused: run `recipients update` first, which removes it.
 - `edit` opens the decrypted document in `VISUAL` or `EDITOR` through `sops edit`, which keeps the data key, so labels do not change.
   It needs a terminal and a file whose recipients already match its rule. The plaintext exists only in a new owner-only directory
   under `XDG_RUNTIME_DIR`, or `/dev/shm` when that is unset, which must be a **tmpfs or ramfs**: on a disk the command refuses. That
@@ -106,7 +107,8 @@ sharedkernel-secrets --help
 - `recipients update`, `rotate`, and `edit` refuse a weakened file, because sops keeps the weakening in every new version, and they
   write a new version only when it carries exactly the rule's recipients with nothing weakened. They replace the file through a
   temporary file and a rename, and only when it still holds the bytes it was read with, so a failure or a concurrent change leaves the
-  file as it was.
+  file as it was. For `edit` that means an edit is discarded when the file changed while the editor was open; run it again. The new
+  version is flushed to disk before the rename and keeps the mode of the file it replaces.
 - `verify` judges **only files named `*.sops.*`** (any letter case), and it rejects everything else in a rule's scope. This is a structural
   rule with no content inspection: inside the scope of any creation rule (the paths its expression matches), every regular file must be named
   `*.sops.<ext>`, or the run is exit 2 and lists the file as `not judged: name does not mark it as SOPS-encrypted (rename it to *.sops.<ext>, or

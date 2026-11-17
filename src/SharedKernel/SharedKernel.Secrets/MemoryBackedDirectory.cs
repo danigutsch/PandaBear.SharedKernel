@@ -34,12 +34,43 @@ internal static class MemoryBackedDirectory
         return directory;
     }
 
-    /// <summary>Removes <paramref name="directory"/> and everything in it, if it still exists.</summary>
+    /// <summary>
+    /// Removes <paramref name="directory"/> and everything in it, if it still exists. An entry an editor left without write
+    /// permission is made writable for its owner first.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The directory could not be removed, so plaintext may remain in it.</exception>
     public static void Remove(string directory)
     {
-        if (Directory.Exists(directory))
+        if (!Directory.Exists(directory))
+        {
+            return;
+        }
+
+        try
         {
             Directory.Delete(directory, recursive: true);
+            return;
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            // Retried below with permissions restored.
+        }
+
+        try
+        {
+            if (!OperatingSystem.IsWindows())
+            {
+                foreach (var child in Directory.EnumerateDirectories(directory, "*", SearchOption.AllDirectories).Prepend(directory))
+                {
+                    File.SetUnixFileMode(child, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+                }
+            }
+
+            Directory.Delete(directory, recursive: true);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            throw new InvalidOperationException($"Plaintext may remain in {directory}: it could not be removed ({exception.Message}). Remove it yourself.", exception);
         }
     }
 

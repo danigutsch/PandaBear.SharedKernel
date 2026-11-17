@@ -1,5 +1,4 @@
 using System.Text;
-using PandaBear.IO;
 
 namespace PandaBear.Secrets;
 
@@ -16,7 +15,7 @@ internal static class RewriteOperation
     /// <exception cref="InvalidOperationException">The request is invalid or refused, or sops failed.</exception>
     public static async Task<int> UpdateRecipients(string root, SecretsPrograms programs, UpdateRecipientsSettings settings, TextWriter output, CancellationToken cancellationToken)
     {
-        var target = await Target.Read(root, settings.File, cancellationToken).ConfigureAwait(false);
+        var target = await Target.Read(root, programs, settings.File, cancellationToken).ConfigureAwait(false);
         target.RefuseWeakened();
         if (target.Verification.IsExact)
         {
@@ -48,8 +47,13 @@ internal static class RewriteOperation
     /// <exception cref="InvalidOperationException">The request is invalid or refused, or sops failed.</exception>
     public static async Task<int> Rotate(string root, SecretsPrograms programs, RotateSettings settings, TextWriter output, CancellationToken cancellationToken)
     {
-        var target = await Target.Read(root, settings.File, cancellationToken).ConfigureAwait(false);
+        var target = await Target.Read(root, programs, settings.File, cancellationToken).ConfigureAwait(false);
         target.RefuseWeakened();
+        if (target.Verification.OtherKeyTypes.Count > 0)
+        {
+            throw new InvalidOperationException($"{target.Path}: a non-age key holder ({string.Join(", ", target.Verification.OtherKeyTypes)}) holds a key, which rotate cannot remove; run 'recipients update {target.Path}' first.");
+        }
+
         var sops = programs.Sops();
         await ReportChanges(output, target, cancellationToken).ConfigureAwait(false);
         await EscapedOutput.Line(output, $"{target.Path}: a new data key for the {target.Rule.Recipients.Count} recipients of its rule; every value is encrypted again.", cancellationToken).ConfigureAwait(false);
@@ -70,7 +74,7 @@ internal static class RewriteOperation
     /// <exception cref="InvalidOperationException">The request is invalid or refused, or sops failed.</exception>
     public static async Task<int> Edit(string root, SecretsPrograms programs, EditSettings settings, TextWriter output, CancellationToken cancellationToken)
     {
-        var target = await Target.Read(root, settings.File, cancellationToken).ConfigureAwait(false);
+        var target = await Target.Read(root, programs, settings.File, cancellationToken).ConfigureAwait(false);
         target.RefuseWeakened();
         if (!target.Verification.IsExact)
         {
@@ -164,8 +168,9 @@ internal static class RewriteOperation
     /// <summary>A file, its rule, the bytes it was read with, and how its labels compare with the rule.</summary>
     private sealed class Target
     {
-        private Target(EncryptedFilePath path, string absolutePath, SopsFormat format, SopsCreationRule rule, byte[] bytes, RecipientVerification verification)
+        private Target(EncryptedFilePath path, string absolutePath, SopsFormat format, SopsCreationRule rule, byte[] bytes, RecipientVerification verification, TimeSpan readTimeout)
         {
+            ReadTimeout = readTimeout;
             Path = path;
             AbsolutePath = absolutePath;
             Format = format;
@@ -204,7 +209,12 @@ internal static class RewriteOperation
             get;
         }
 
-        public static async Task<Target> Read(string root, string file, CancellationToken cancellationToken)
+        public TimeSpan ReadTimeout
+        {
+            get;
+        }
+
+        public static async Task<Target> Read(string root, SecretsPrograms programs, string file, CancellationToken cancellationToken)
         {
             var rules = await SecretsConfigurationFile.Read(root, cancellationToken).ConfigureAwait(false);
             var created = EncryptedFilePath.Create(file);
@@ -213,24 +223,20 @@ internal static class RewriteOperation
             var format = path.Format ?? throw new InvalidOperationException("Only YAML and JSON SOPS files can be rewritten.");
             var resolved = path.ResolveUnder(root);
             var absolute = resolved.IsSuccess ? resolved.Value : throw new InvalidOperationException(resolved.ErrorDetails?.Detail ?? "The file path cannot be resolved under the root.");
-            byte[]? bytes;
-            try
+            if (!File.Exists(absolute))
             {
-                bytes = await BoundedReader.ReadFile(absolute, MaxFileBytes, cancellationToken).ConfigureAwait(false);
-            }
-            catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
-            {
-                throw new InvalidOperationException($"{path}: the file does not exist.", exception);
+                throw new InvalidOperationException($"{path}: the file does not exist.");
             }
 
-            if (bytes is null)
+            var (bytes, problem) = await GuardedFileReader.Read(absolute, MaxFileBytes, programs.FileReadTimeout, cancellationToken).ConfigureAwait(false);
+            if (problem is not null)
             {
-                throw new InvalidOperationException($"{path}: the file is larger than 16 MiB.");
+                throw new InvalidOperationException($"{path}: {problem}");
             }
 
             var holders = SopsMetadataReader.Read(Encoding.UTF8.GetString(bytes), format);
             return holders.IsSuccess
-                ? new Target(path, absolute, format, rule, bytes, RecipientVerification.Compare(holders.Value, rule))
+                ? new Target(path, absolute, format, rule, bytes, RecipientVerification.Compare(holders.Value, rule), programs.FileReadTimeout)
                 : throw new InvalidOperationException($"{path}: {holders.ErrorDetails?.Detail}");
         }
 
@@ -251,7 +257,7 @@ internal static class RewriteOperation
                 throw new InvalidOperationException($"{Path}: the new version does not carry exactly the rule's recipients with nothing weakened; nothing was written.");
             }
 
-            await EncryptedFileReplacement.Replace(AbsolutePath, Bytes, document, cancellationToken).ConfigureAwait(false);
+            await EncryptedFileReplacement.Replace(AbsolutePath, Bytes, document, ReadTimeout, cancellationToken).ConfigureAwait(false);
         }
     }
 }

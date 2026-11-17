@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using System.Text;
-using PandaBear.IO;
 
 namespace PandaBear.Secrets;
 
@@ -15,10 +14,10 @@ internal static class EncryptedFileReplacement
 
     /// <summary>Writes <paramref name="document"/> in place of <paramref name="destination"/> when it still holds <paramref name="expected"/>.</summary>
     /// <exception cref="InvalidOperationException">The file changed since it was read.</exception>
-    public static async Task Replace(string destination, byte[] expected, string document, CancellationToken cancellationToken)
+    public static async Task Replace(string destination, byte[] expected, string document, TimeSpan readTimeout, CancellationToken cancellationToken)
     {
-        var current = await BoundedReader.ReadFile(destination, MaxBytes, cancellationToken).ConfigureAwait(false);
-        if (current is null || !current.AsSpan().SequenceEqual(expected))
+        var (current, problem) = await GuardedFileReader.Read(destination, MaxBytes, readTimeout, cancellationToken).ConfigureAwait(false);
+        if (problem is not null || !current.AsSpan().SequenceEqual(expected))
         {
             throw new InvalidOperationException("The file changed while the operation ran; nothing was written. Run it again.");
         }
@@ -30,9 +29,10 @@ internal static class EncryptedFileReplacement
             Access = FileAccess.Write,
             Share = FileShare.None,
         };
+        var mode = OperatingSystem.IsWindows() ? default : File.GetUnixFileMode(destination);
         if (!OperatingSystem.IsWindows())
         {
-            options.UnixCreateMode = File.GetUnixFileMode(destination);
+            options.UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
         }
 
         try
@@ -41,7 +41,13 @@ internal static class EncryptedFileReplacement
             await using (stream.ConfigureAwait(false))
             {
                 await stream.WriteAsync(Encoding.UTF8.GetBytes(document), cancellationToken).ConfigureAwait(false);
-                await stream.FlushAsync(cancellationToken).ConfigureAwait(false);
+                await Task.Run(() => stream.Flush(flushToDisk: true), cancellationToken).ConfigureAwait(false);
+            }
+
+            // The creation mode passes through the umask, so the mode of the file being replaced is set explicitly.
+            if (!OperatingSystem.IsWindows())
+            {
+                File.SetUnixFileMode(temporary, mode);
             }
 
             File.Move(temporary, destination, overwrite: true);

@@ -16,7 +16,7 @@ public sealed class EncryptedFileReplacementTests
         await File.WriteAllTextAsync(file, "old", TestContext.Current.CancellationToken);
 
         // Act
-        await EncryptedFileReplacement.Replace(file, Encoding.UTF8.GetBytes("old"), "new", TestContext.Current.CancellationToken);
+        await EncryptedFileReplacement.Replace(file, Encoding.UTF8.GetBytes("old"), "new", TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
 
         // Assert
         var content = await File.ReadAllTextAsync(file, TestContext.Current.CancellationToken);
@@ -33,7 +33,7 @@ public sealed class EncryptedFileReplacementTests
         await File.WriteAllTextAsync(file, "changed by someone else", TestContext.Current.CancellationToken);
 
         // Act
-        var replace = () => EncryptedFileReplacement.Replace(file, Encoding.UTF8.GetBytes("old"), "new", TestContext.Current.CancellationToken);
+        var replace = () => EncryptedFileReplacement.Replace(file, Encoding.UTF8.GetBytes("old"), "new", TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
 
         // Assert
         var exception = await replace.ShouldThrow<InvalidOperationException>();
@@ -54,7 +54,7 @@ public sealed class EncryptedFileReplacementTests
         File.SetUnixFileMode(file, UnixFileMode.UserRead | UnixFileMode.UserWrite);
 
         // Act
-        await EncryptedFileReplacement.Replace(file, Encoding.UTF8.GetBytes("old"), "new", TestContext.Current.CancellationToken);
+        await EncryptedFileReplacement.Replace(file, Encoding.UTF8.GetBytes("old"), "new", TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
 
         // Assert
         File.GetUnixFileMode(file).ShouldBe(UnixFileMode.UserRead | UnixFileMode.UserWrite);
@@ -72,7 +72,7 @@ public sealed class EncryptedFileReplacementTests
         File.SetUnixFileMode(file, mode);
 
         // Act
-        await EncryptedFileReplacement.Replace(file, Encoding.UTF8.GetBytes("old"), "new", TestContext.Current.CancellationToken);
+        await EncryptedFileReplacement.Replace(file, Encoding.UTF8.GetBytes("old"), "new", TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
 
         // Assert
         File.GetUnixFileMode(file).ShouldBe(mode);
