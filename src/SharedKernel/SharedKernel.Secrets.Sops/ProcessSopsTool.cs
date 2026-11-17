@@ -13,6 +13,9 @@ public sealed class ProcessSopsTool : ISopsTool
 {
     private const string AgeKeyFile = "SOPS_AGE_KEY_FILE";
 
+    // The exit code of sops edit when the document was saved unchanged.
+    private const int FileHasNotBeenModified = 200;
+
     // What sops prints (through age) when it read the file and the identity and the identity matches none of the recipients. Anything that
     // says the identity file, the header, or the file could not be read or parsed is not that verdict, even though sops uses the same first line.
     private const string NoMatchMarker = "identity did not match any of the recipients";
@@ -180,6 +183,64 @@ public sealed class ProcessSopsTool : ISopsTool
         finally
         {
             directory.Delete(recursive: true);
+        }
+    }
+
+    /// <inheritdoc />
+    /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    public async Task<Result<string>> Edit(string absoluteFile, AgeIdentityRef identity, SopsEditSession session, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(absoluteFile);
+        ArgumentNullException.ThrowIfNull(identity);
+        ArgumentNullException.ThrowIfNull(session);
+        var invalid = ProgramInvocation.CheckFile(absoluteFile) ?? (Path.IsPathFullyQualified(session.PrivateDirectory) ? null : "The private directory must be absolute.");
+        if (invalid is not null)
+        {
+            return Result.Invalid<string>(invalid, "file", invalid);
+        }
+
+        var data = Path.Combine(session.PrivateDirectory, "data");
+        try
+        {
+            Directory.CreateDirectory(data);
+            var copy = Path.Combine(data, Path.GetFileName(absoluteFile));
+            try
+            {
+                File.Copy(absoluteFile, copy);
+            }
+            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+            {
+                return ProgramInvocation.Error<string>("The file cannot be read.");
+            }
+
+            Dictionary<string, string> environment = new(session.TerminalEnvironment, StringComparer.Ordinal)
+            {
+                ["HOME"] = session.PrivateDirectory,
+                ["TMPDIR"] = session.PrivateDirectory,
+                ["EDITOR"] = session.Editor.ToShellWords(),
+                [AgeKeyFile] = identity.Path,
+            };
+            var request = new ToolRequest(_sops, ["--config", "/dev/null", "edit", copy], environment, default, session.PrivateDirectory);
+            int exitCode;
+            try
+            {
+                exitCode = await _runner.RunAttached(request, cancellationToken).ConfigureAwait(false);
+            }
+            catch (InvalidOperationException exception)
+            {
+                return ProgramInvocation.Error<string>($"sops could not run: {exception.Message}");
+            }
+
+            return exitCode is 0 or FileHasNotBeenModified
+                ? Result.Ok(await File.ReadAllTextAsync(copy, cancellationToken).ConfigureAwait(false))
+                : ProgramInvocation.Error<string>($"sops edit exited with code {exitCode}.");
+        }
+        finally
+        {
+            if (Directory.Exists(data))
+            {
+                Directory.Delete(data, recursive: true);
+            }
         }
     }
 

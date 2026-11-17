@@ -8,4 +8,8 @@ internal sealed class WorkingDirectoryOverridingRunner(string directory) : ITool
     /// <inheritdoc />
     public Task<ToolResult> Run(ToolRequest request, CancellationToken cancellationToken) =>
         _inner.Run(new ToolRequest(request.Executable, request.Arguments, request.Environment, request.StandardInput, directory), cancellationToken);
+
+    /// <inheritdoc />
+    public Task<int> RunAttached(ToolRequest request, CancellationToken cancellationToken) =>
+        _inner.RunAttached(new ToolRequest(request.Executable, request.Arguments, request.Environment, request.StandardInput, directory), cancellationToken);
 }

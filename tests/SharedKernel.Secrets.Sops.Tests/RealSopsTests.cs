@@ -212,4 +212,41 @@ public sealed class RealSopsTests
         viaB.Outcome.ShouldBe(SopsTrialOutcome.NoMatchingIdentity);
         SopsDocumentLines.Mac(rotated).ShouldNotBe(SopsDocumentLines.Mac(original));
     }
+
+    [Fact(SkipType = typeof(RealTools), SkipUnless = nameof(RealTools.AllAvailable), Skip = AllSkip)]
+    [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
+    public async Task Edit_with_real_sops_saves_the_change_keeps_the_data_key_and_leaves_the_private_directory_empty()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        using var privateDirectory = new TemporaryDirectory();
+        var token = TestContext.Current.CancellationToken;
+        var (identity, recipient) = await RealTools.NewKey(directory.Path, "a.txt", token);
+        var sops = RealTools.Sops();
+        var file = Path.Combine(directory.Path, "app.sops.yaml");
+        await RealTools.EncryptToFile(sops, file, AgeRecipientSet.Create([recipient]).ShouldBeSuccess(), "db:\n  password: hunter2\n", token);
+        var original = await File.ReadAllTextAsync(file, token);
+        var editor = Path.Combine(directory.Path, "editor.sh");
+        await File.WriteAllTextAsync(editor, "#!/bin/sh\nsed -i 's/hunter2/correct-horse/' \"$1\"\n", token);
+        File.SetUnixFileMode(editor, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+        var session = new SopsEditSession
+        {
+            Editor = EditorCommand.Create(editor, new NoExecutables()).ShouldBeSuccess(),
+            PrivateDirectory = privateDirectory.Path,
+        };
+
+        // Act
+        var result = await sops.Edit(file, identity, session, token);
+        var edited = result.ShouldBeSuccess();
+        await File.WriteAllTextAsync(file, edited, token);
+        var plaintextResult = await sops.Decrypt(file, identity, token);
+        using var plaintext = plaintextResult.ShouldBeSuccess();
+
+        // Assert
+        plaintext.RevealUtf8().ShouldContain("correct-horse", StringComparison.Ordinal);
+        edited.ShouldNotContain("correct-horse", StringComparison.Ordinal);
+        SopsDocumentLines.Mac(edited).ShouldNotBe(SopsDocumentLines.Mac(original));
+        SopsMetadataReader.Read(edited, SopsFormat.Yaml).ShouldBeSuccess().Envelopes.ShouldBe(SopsMetadataReader.Read(original, SopsFormat.Yaml).ShouldBeSuccess().Envelopes);
+        Directory.EnumerateFileSystemEntries(privateDirectory.Path, "*", SearchOption.AllDirectories).ShouldBeEmpty();
+    }
 }

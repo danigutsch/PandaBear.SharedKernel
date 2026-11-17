@@ -134,4 +134,52 @@ public sealed class SystemToolRunner : IToolRunner
             }
         }
     }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// The child gets the variables of the request and nothing else, except a forge token, which never reaches it; unlike
+    /// <see cref="Run"/>, <c>LC_ALL</c> is not set, so an editor shows text in the locale the request gives it.
+    /// </remarks>
+    /// <exception cref="ArgumentNullException"><paramref name="request"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">The request has standard input.</exception>
+    /// <exception cref="InvalidOperationException">The process cannot be started.</exception>
+    public async Task<int> RunAttached(ToolRequest request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        if (!request.StandardInput.IsEmpty)
+        {
+            throw new ArgumentException("An attached process reads the caller's standard input; the request cannot carry any.", nameof(request));
+        }
+
+        ProcessStartInfo startInfo = new(request.Executable) { UseShellExecute = false };
+        if (request.WorkingDirectory is not null)
+        {
+            startInfo.WorkingDirectory = request.WorkingDirectory;
+        }
+
+        startInfo.Environment.Clear();
+        foreach (var argument in request.Arguments)
+        {
+            startInfo.ArgumentList.Add(argument);
+        }
+
+        foreach (var (name, value) in request.Environment)
+        {
+            startInfo.Environment[name] = value;
+        }
+
+        ProcessEnvironment.RemoveForgeTokens(startInfo);
+        using var process = ProcessTree.Start(startInfo);
+        try
+        {
+            await process.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            await ProcessTree.Terminate(process, DrainTimeout).ConfigureAwait(false);
+            throw;
+        }
+
+        return process.ExitCode;
+    }
 }

@@ -8,6 +8,9 @@ internal sealed class ScriptedToolRunner(Func<ToolRequest, ToolResult> respond) 
     /// <summary>Gets the requests in the order they arrived.</summary>
     public List<ToolRequest> Requests { get; } = [];
 
+    /// <summary>Gets or sets what an attached run does with its request and the exit code it returns.</summary>
+    public Func<ToolRequest, int> Attached { get; set; } = static _ => throw new InvalidOperationException("No attached run was expected.");
+
     /// <summary>Gets the standard input bytes of each request.</summary>
     public List<byte[]> Inputs { get; } = [];
 
@@ -30,5 +33,12 @@ internal sealed class ScriptedToolRunner(Func<ToolRequest, ToolResult> respond) 
         Requests.Add(request);
         Inputs.Add(request.StandardInput.ToArray());
         return Task.FromResult(respond(request));
+    }
+
+    /// <inheritdoc />
+    public Task<int> RunAttached(ToolRequest request, CancellationToken cancellationToken)
+    {
+        Requests.Add(request);
+        return Task.FromResult(Attached(request));
     }
 }

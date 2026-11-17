@@ -65,6 +65,45 @@ public sealed class SystemToolRunnerTests
     }
 
     [Fact(SkipType = typeof(UnixToolsProbe), SkipUnless = nameof(UnixToolsProbe.IsAvailable), Skip = SkipReason)]
+    public async Task An_attached_child_returns_its_exit_code()
+    {
+        // Act
+        var exitCode = await new SystemToolRunner().RunAttached(new ToolRequest(UnixToolsProbe.Shell, ["-c", "exit 3"]), TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(3);
+    }
+
+    [Fact(SkipType = typeof(UnixToolsProbe), SkipUnless = nameof(UnixToolsProbe.IsAvailable), Skip = SkipReason)]
+    public async Task An_attached_child_gets_only_the_request_environment_without_forge_tokens_or_a_forced_locale()
+    {
+        // Arrange
+        var request = new ToolRequest(
+            UnixToolsProbe.Shell,
+            ["-c", "[ \"$KEPT\" = value ] && [ -z \"$GH_TOKEN\" ] && [ -z \"$LC_ALL\" ] && [ -z \"$USER\" ]"],
+            new Dictionary<string, string> { ["KEPT"] = "value", ["GH_TOKEN"] = "token" });
+
+        // Act
+        var exitCode = await new SystemToolRunner().RunAttached(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task An_attached_request_with_standard_input_is_refused()
+    {
+        // Arrange
+        var request = new ToolRequest(Environment.ProcessPath!, [], standardInput: "data"u8.ToArray());
+
+        // Act
+        var run = () => new SystemToolRunner().RunAttached(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        await run.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact(SkipType = typeof(UnixToolsProbe), SkipUnless = nameof(UnixToolsProbe.IsAvailable), Skip = SkipReason)]
     public async Task The_child_starts_in_the_requested_working_directory()
     {
         // Arrange

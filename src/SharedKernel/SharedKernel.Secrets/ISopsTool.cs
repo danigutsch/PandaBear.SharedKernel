@@ -54,6 +54,19 @@ public interface ISopsTool
     Task<Result<string>> Rotate(string absoluteFile, AgeIdentityRef identity, AgeRecipientSet recipients, CancellationToken cancellationToken);
 
     /// <summary>
+    /// Lets a person edit the decrypted document with <c>sops edit</c> on the caller's terminal and returns the new
+    /// encrypted document, or the document as it was when nothing changed. The data key is kept. sops decrypts a copy of
+    /// the file inside <see cref="SopsEditSession.PrivateDirectory"/> and removes its plaintext there; the adapter removes
+    /// the copy. The file itself is not written.
+    /// </summary>
+    /// <param name="absoluteFile">The encrypted file.</param>
+    /// <param name="identity">An identity file that can decrypt the data key.</param>
+    /// <param name="session">The editor, the private directory, and the terminal variables.</param>
+    /// <param name="cancellationToken">Cancels the run.</param>
+    /// <returns>The encrypted document after the edit.</returns>
+    Task<Result<string>> Edit(string absoluteFile, AgeIdentityRef identity, SopsEditSession session, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Tries to decrypt the file with the identity and discards the plaintext unread. Only a failure that sops attributes to the identity not matching
     /// any recipient is <see cref="SopsTrialOutcome.NoMatchingIdentity"/>; every other failure is <see cref="SopsTrialOutcome.Failed"/>.
     /// </summary>
