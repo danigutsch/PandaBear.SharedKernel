@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RootNamespace>PandaBear.Aspire.Hosting.Umami.Testing</RootNamespace>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="xunit.v3.extensibility.core" VersionOverride="4.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../../src/SharedKernel/SharedKernel.Aspire.Hosting.Umami/SharedKernel.Aspire.Hosting.Umami.csproj" />
+        <ProjectReference Include="../../src/SharedKernel/SharedKernel.IntegrationTesting/SharedKernel.IntegrationTesting.csproj" />
+        <InternalsVisibleTo Include="SharedKernel.Aspire.Hosting.Umami.Tests" />
+    </ItemGroup>
+
+</Project>

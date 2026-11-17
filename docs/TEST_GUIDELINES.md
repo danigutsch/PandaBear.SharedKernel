@@ -106,8 +106,8 @@ already owns its kind; add a package only when a new kind needs a dependency tha
 | `SharedKernel.Testing.Contracts` | Contract test marker and trait contracts | No SharedKernel package |
 
 Projects under `tests/` that are not packable (`SharedKernel.Testing.Packaging`, `SharedKernel.CodeFixes.Testing`,
-`SharedKernel.Testing.Integration`, `SharedKernel.Testing.Scenarios`, `SharedKernel.Testing.System`, and
-`SharedKernel.Npgsql.Testing.Host`) serve this repository's own suites and are not part of the public surface. Assertion
+`SharedKernel.Testing.Integration`, `SharedKernel.Testing.Scenarios`, `SharedKernel.Testing.System`,
+`SharedKernel.Aspire.Hosting.Umami.Testing`, and `SharedKernel.Npgsql.Testing.Host`) serve this repository's own suites and are not part of the public surface. Assertion
 packages never depend on a browser, web, or database package, so a consumer takes only the assertions it uses.
 
 
