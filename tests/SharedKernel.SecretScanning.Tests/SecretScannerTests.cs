@@ -100,6 +100,33 @@ public sealed class SecretScannerTests
     }
 
     [Fact]
+    public void Catalog_rules_only_returns_the_findings_in_the_order_of_the_text()
+    {
+        // Arrange
+        string text = "session " + TestSecrets.Jwt(119) + "\ngithub " + TestSecrets.GitHubToken("ghp", 1) + "\n";
+
+        // Act
+        var findings = SecretScanner.Default.Scan(text, "notes", new SecretScanContext { CatalogRulesOnly = true });
+
+        // Assert
+        findings.Select(found => found.RuleId).ShouldBe(["jwt", "github-token"]);
+    }
+
+    [Fact]
+    public void A_steam_authenticator_file_returns_its_findings_in_the_order_of_the_text()
+    {
+        // Arrange
+        string sharedSecret = Convert.ToBase64String(TestSecrets.Bytes(7, 20));
+        string text = "{\"revocation_code\":\"R12345\",\"shared_secret\":\"" + sharedSecret + "\"}";
+
+        // Act
+        var findings = SecretScanner.Default.Scan(text, "attachment:76561197960287930.maFile", new SecretScanContext { FileName = "76561197960287930.maFile" });
+
+        // Assert
+        findings.Select(found => found.RuleId).ShouldBe(["steam-mafile-revocation-code", SecretScanner.MaFileSharedSecretRule]);
+    }
+
+    [Fact]
     public void A_mega_recovery_key_file_is_recognised_by_its_name()
     {
         // Arrange
