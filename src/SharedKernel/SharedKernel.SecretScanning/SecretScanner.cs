@@ -86,7 +86,8 @@ public sealed class SecretScanner
         ArgumentNullException.ThrowIfNull(location);
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(project);
-        List<Hit> hits = context.CatalogRulesOnly ? ScanCatalog(text, location) : ScanAll(text, location, context);
+        List<Hit> found = context.CatalogRulesOnly ? ScanCatalog(text, location) : ScanAll(text, location, context);
+        List<Hit> hits = [.. found.OrderBy(hit => hit.Location.Start)];
         var result = new List<T>(hits.Count);
         foreach (Hit hit in hits)
         {
