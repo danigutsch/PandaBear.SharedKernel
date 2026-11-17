@@ -95,6 +95,7 @@
     "src/SharedKernel/SharedKernel.Sandbox.ClaudeCode/SharedKernel.Sandbox.ClaudeCode.csproj",
     "src/SharedKernel/SharedKernel.Sandbox/SharedKernel.Sandbox.csproj",
     "src/SharedKernel/SharedKernel.Scheduling/SharedKernel.Scheduling.csproj",
+    "src/SharedKernel/SharedKernel.SecretScanning/SharedKernel.SecretScanning.csproj",
     "src/SharedKernel/SharedKernel.Secrets.Age/SharedKernel.Secrets.Age.csproj",
     "src/SharedKernel/SharedKernel.Secrets.Sops/SharedKernel.Secrets.Sops.csproj",
     "src/SharedKernel/SharedKernel.Secrets/SharedKernel.Secrets.csproj",

@@ -136,7 +136,7 @@ public sealed class VaultPipeline
         foreach (SourceItem source in vault.Items)
         {
             ct.ThrowIfCancellationRequested();
-            var findings = new List<SecretFinding>(SecretScanner.Default.Scan(source.Item));
+            var findings = new List<SecretFinding>(ItemScanner.Default.Scan(source.Item));
             var texts = new Dictionary<string, string>(StringComparer.Ordinal);
             var attachments = new List<AttachmentRef>(source.Item.Attachments.Count);
             foreach (AttachmentRef attachment in source.Item.Attachments)
@@ -159,7 +159,7 @@ public sealed class VaultPipeline
 
                 string fieldPath = UniqueAttachmentPath(attachment.FileName, texts);
                 texts.Add(fieldPath, text);
-                IReadOnlyList<SecretFinding> attachmentFindings = SecretScanner.Default.ScanText(text, fieldPath, attachment.FileName, source.Item);
+                IReadOnlyList<SecretFinding> attachmentFindings = ItemScanner.Default.ScanText(text, fieldPath, attachment.FileName, source.Item);
                 findings.AddRange(LimitFindings(attachmentFindings, source, attachment, warnings));
             }
 
@@ -383,10 +383,10 @@ public sealed class VaultPipeline
     // Two attachments of one item can share a file name; their findings still need distinct field paths.
     private static string UniqueAttachmentPath(string fileName, Dictionary<string, string> texts)
     {
-        string path = SecretLocation.Attachment(fileName);
+        string path = ItemFieldPaths.Attachment(fileName);
         for (int number = 2; texts.ContainsKey(path); number++)
         {
-            path = SecretLocation.Attachment(string.Create(CultureInfo.InvariantCulture, $"{fileName} ({number})"));
+            path = ItemFieldPaths.Attachment(string.Create(CultureInfo.InvariantCulture, $"{fileName} ({number})"));
         }
 
         return path;

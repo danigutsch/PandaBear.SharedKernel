@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using System.Text;
-using PandaBear.Vault.Secrets;
 
 namespace PandaBear.Vault.Tests.Secrets;
 
@@ -76,7 +75,7 @@ internal static class Bip39Reference
 
     private static string[] LoadWords()
     {
-        using Stream stream = typeof(SecretScanner).Assembly.GetManifestResourceStream("PandaBear.Vault.Secrets.bip39-english.txt")
+        using Stream stream = typeof(SecretScanning.SecretScanner).Assembly.GetManifestResourceStream("PandaBear.SecretScanning.bip39-english.txt")
             ?? throw new InvalidOperationException("Wordlist resource missing.");
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd().Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);

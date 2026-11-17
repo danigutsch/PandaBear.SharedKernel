@@ -1,0 +1,223 @@
+#nullable enable
+PandaBear.SecretScanning.CardNumberValidator
+static PandaBear.SecretScanning.CardNumberValidator.TryGetBrand(string! digits, out string? brand) -> bool
+PandaBear.SecretScanning.Confidence
+PandaBear.SecretScanning.Confidence.High = 3 -> PandaBear.SecretScanning.Confidence
+PandaBear.SecretScanning.Confidence.Low = 1 -> PandaBear.SecretScanning.Confidence
+PandaBear.SecretScanning.Confidence.Medium = 2 -> PandaBear.SecretScanning.Confidence
+PandaBear.SecretScanning.Confidence.Suggestion = 0 -> PandaBear.SecretScanning.Confidence
+PandaBear.SecretScanning.ConnectionParts
+PandaBear.SecretScanning.ConnectionParts.<Clone>$() -> PandaBear.SecretScanning.ConnectionParts!
+PandaBear.SecretScanning.ConnectionParts.Address.get -> string?
+PandaBear.SecretScanning.ConnectionParts.Address.init -> void
+PandaBear.SecretScanning.ConnectionParts.ConnectionParts(string? Username, string? Password, string? Host, string? Address) -> void
+PandaBear.SecretScanning.ConnectionParts.Deconstruct(out string? Username, out string? Password, out string? Host, out string? Address) -> void
+PandaBear.SecretScanning.ConnectionParts.Equals(PandaBear.SecretScanning.ConnectionParts? other) -> bool
+override PandaBear.SecretScanning.ConnectionParts.Equals(object? obj) -> bool
+override PandaBear.SecretScanning.ConnectionParts.GetHashCode() -> int
+PandaBear.SecretScanning.ConnectionParts.Host.get -> string?
+PandaBear.SecretScanning.ConnectionParts.Host.init -> void
+PandaBear.SecretScanning.ConnectionParts.Password.get -> string?
+PandaBear.SecretScanning.ConnectionParts.Password.init -> void
+override PandaBear.SecretScanning.ConnectionParts.ToString() -> string!
+static PandaBear.SecretScanning.ConnectionParts.TryParseConnectionString(string! value, out PandaBear.SecretScanning.ConnectionParts? parts) -> bool
+static PandaBear.SecretScanning.ConnectionParts.TryParseUri(string! value, out PandaBear.SecretScanning.ConnectionParts? parts) -> bool
+PandaBear.SecretScanning.ConnectionParts.Username.get -> string?
+PandaBear.SecretScanning.ConnectionParts.Username.init -> void
+static PandaBear.SecretScanning.ConnectionParts.operator !=(PandaBear.SecretScanning.ConnectionParts? left, PandaBear.SecretScanning.ConnectionParts? right) -> bool
+static PandaBear.SecretScanning.ConnectionParts.operator ==(PandaBear.SecretScanning.ConnectionParts? left, PandaBear.SecretScanning.ConnectionParts? right) -> bool
+PandaBear.SecretScanning.DetectedSecret
+PandaBear.SecretScanning.DetectedSecret.<Clone>$() -> PandaBear.SecretScanning.DetectedSecret!
+PandaBear.SecretScanning.DetectedSecret.Confidence.get -> PandaBear.SecretScanning.Confidence
+PandaBear.SecretScanning.DetectedSecret.Confidence.init -> void
+PandaBear.SecretScanning.DetectedSecret.DetectedSecret() -> void
+PandaBear.SecretScanning.DetectedSecret.Equals(PandaBear.SecretScanning.DetectedSecret? other) -> bool
+override PandaBear.SecretScanning.DetectedSecret.Equals(object? obj) -> bool
+override PandaBear.SecretScanning.DetectedSecret.GetHashCode() -> int
+PandaBear.SecretScanning.DetectedSecret.Id.get -> string!
+PandaBear.SecretScanning.DetectedSecret.Kind.get -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.DetectedSecret.Kind.init -> void
+PandaBear.SecretScanning.DetectedSecret.LabelLocation.get -> PandaBear.SecretScanning.SecretLocation?
+PandaBear.SecretScanning.DetectedSecret.LabelLocation.init -> void
+PandaBear.SecretScanning.DetectedSecret.Location.get -> PandaBear.SecretScanning.SecretLocation!
+PandaBear.SecretScanning.DetectedSecret.Location.init -> void
+PandaBear.SecretScanning.DetectedSecret.Message.get -> string!
+PandaBear.SecretScanning.DetectedSecret.Message.init -> void
+PandaBear.SecretScanning.DetectedSecret.NeedsReview.get -> bool
+PandaBear.SecretScanning.DetectedSecret.NeedsReview.init -> void
+PandaBear.SecretScanning.DetectedSecret.RuleId.get -> string!
+PandaBear.SecretScanning.DetectedSecret.RuleId.init -> void
+PandaBear.SecretScanning.DetectedSecret.RuleName.get -> string?
+PandaBear.SecretScanning.DetectedSecret.RuleName.init -> void
+PandaBear.SecretScanning.DetectedSecret.TimedOut.get -> bool
+PandaBear.SecretScanning.DetectedSecret.TimedOut.init -> void
+override PandaBear.SecretScanning.DetectedSecret.ToString() -> string!
+static PandaBear.SecretScanning.DetectedSecret.operator !=(PandaBear.SecretScanning.DetectedSecret? left, PandaBear.SecretScanning.DetectedSecret? right) -> bool
+static PandaBear.SecretScanning.DetectedSecret.operator ==(PandaBear.SecretScanning.DetectedSecret? left, PandaBear.SecretScanning.DetectedSecret? right) -> bool
+PandaBear.SecretScanning.MigratedOtp
+PandaBear.SecretScanning.MigratedOtp.<Clone>$() -> PandaBear.SecretScanning.MigratedOtp!
+PandaBear.SecretScanning.MigratedOtp.Deconstruct(out string! Name, out string! Issuer, out bool IsSupported, out string? Totp, out string? Problem) -> void
+PandaBear.SecretScanning.MigratedOtp.Equals(PandaBear.SecretScanning.MigratedOtp? other) -> bool
+override PandaBear.SecretScanning.MigratedOtp.Equals(object? obj) -> bool
+override PandaBear.SecretScanning.MigratedOtp.GetHashCode() -> int
+PandaBear.SecretScanning.MigratedOtp.IsSupported.get -> bool
+PandaBear.SecretScanning.MigratedOtp.IsSupported.init -> void
+PandaBear.SecretScanning.MigratedOtp.Issuer.get -> string!
+PandaBear.SecretScanning.MigratedOtp.Issuer.init -> void
+PandaBear.SecretScanning.MigratedOtp.MigratedOtp(string! Name, string! Issuer, bool IsSupported, string? Totp, string? Problem) -> void
+PandaBear.SecretScanning.MigratedOtp.Name.get -> string!
+PandaBear.SecretScanning.MigratedOtp.Name.init -> void
+PandaBear.SecretScanning.MigratedOtp.Problem.get -> string?
+PandaBear.SecretScanning.MigratedOtp.Problem.init -> void
+override PandaBear.SecretScanning.MigratedOtp.ToString() -> string!
+PandaBear.SecretScanning.MigratedOtp.Totp.get -> string?
+PandaBear.SecretScanning.MigratedOtp.Totp.init -> void
+static PandaBear.SecretScanning.MigratedOtp.operator !=(PandaBear.SecretScanning.MigratedOtp? left, PandaBear.SecretScanning.MigratedOtp? right) -> bool
+static PandaBear.SecretScanning.MigratedOtp.operator ==(PandaBear.SecretScanning.MigratedOtp? left, PandaBear.SecretScanning.MigratedOtp? right) -> bool
+PandaBear.SecretScanning.PemBlock
+PandaBear.SecretScanning.PemBlock.<Clone>$() -> PandaBear.SecretScanning.PemBlock!
+PandaBear.SecretScanning.PemBlock.Body.get -> string!
+PandaBear.SecretScanning.PemBlock.Body.init -> void
+PandaBear.SecretScanning.PemBlock.Deconstruct(out string! Label, out System.Collections.Generic.IReadOnlyList<string!>! Headers, out string! Body) -> void
+PandaBear.SecretScanning.PemBlock.Equals(PandaBear.SecretScanning.PemBlock? other) -> bool
+override PandaBear.SecretScanning.PemBlock.Equals(object? obj) -> bool
+override PandaBear.SecretScanning.PemBlock.GetHashCode() -> int
+PandaBear.SecretScanning.PemBlock.HasEncryptedHeader.get -> bool
+PandaBear.SecretScanning.PemBlock.Headers.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.SecretScanning.PemBlock.Headers.init -> void
+PandaBear.SecretScanning.PemBlock.Label.get -> string!
+PandaBear.SecretScanning.PemBlock.Label.init -> void
+PandaBear.SecretScanning.PemBlock.PemBlock(string! Label, System.Collections.Generic.IReadOnlyList<string!>! Headers, string! Body) -> void
+override PandaBear.SecretScanning.PemBlock.ToString() -> string!
+static PandaBear.SecretScanning.PemBlock.TryParse(string! text, out PandaBear.SecretScanning.PemBlock? block) -> bool
+static PandaBear.SecretScanning.PemBlock.TryParse(string! text, out PandaBear.SecretScanning.PemBlock? block, out System.Range extent) -> bool
+static PandaBear.SecretScanning.PemBlock.operator !=(PandaBear.SecretScanning.PemBlock? left, PandaBear.SecretScanning.PemBlock? right) -> bool
+static PandaBear.SecretScanning.PemBlock.operator ==(PandaBear.SecretScanning.PemBlock? left, PandaBear.SecretScanning.PemBlock? right) -> bool
+PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.AccessKeyId = 8 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.ApiToken = 7 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.BitwardenRecoveryCode = 2 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.CardNumber = 13 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.ConnectionString = 15 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.GenericSecret = 18 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.Iban = 14 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.Jwt = 17 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.NeedsReview = 19 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.Password = 5 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.PgpPrivateKey = 10 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.Pin = 4 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.PrivateKey = 9 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.PuttyKey = 11 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.RecoveryCodes = 1 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.SecurityQuestion = 3 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.SeedPhrase = 12 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.Totp = 0 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.UrlCredentials = 16 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretKind.Username = 6 -> PandaBear.SecretScanning.SecretKind
+PandaBear.SecretScanning.SecretLocation
+PandaBear.SecretScanning.SecretLocation.<Clone>$() -> PandaBear.SecretScanning.SecretLocation!
+PandaBear.SecretScanning.SecretLocation.Deconstruct(out string! FieldPath, out int Start, out int Length, out int? FirstLine, out int? LastLine) -> void
+PandaBear.SecretScanning.SecretLocation.End.get -> int
+PandaBear.SecretScanning.SecretLocation.Equals(PandaBear.SecretScanning.SecretLocation? other) -> bool
+override PandaBear.SecretScanning.SecretLocation.Equals(object? obj) -> bool
+PandaBear.SecretScanning.SecretLocation.FieldPath.get -> string!
+PandaBear.SecretScanning.SecretLocation.FieldPath.init -> void
+PandaBear.SecretScanning.SecretLocation.FirstLine.get -> int?
+PandaBear.SecretScanning.SecretLocation.FirstLine.init -> void
+override PandaBear.SecretScanning.SecretLocation.GetHashCode() -> int
+PandaBear.SecretScanning.SecretLocation.LastLine.get -> int?
+PandaBear.SecretScanning.SecretLocation.LastLine.init -> void
+PandaBear.SecretScanning.SecretLocation.Length.get -> int
+PandaBear.SecretScanning.SecretLocation.Length.init -> void
+PandaBear.SecretScanning.SecretLocation.SecretLocation(string! FieldPath, int Start, int Length, int? FirstLine = null, int? LastLine = null) -> void
+PandaBear.SecretScanning.SecretLocation.Start.get -> int
+PandaBear.SecretScanning.SecretLocation.Start.init -> void
+override PandaBear.SecretScanning.SecretLocation.ToString() -> string!
+static PandaBear.SecretScanning.SecretLocation.operator !=(PandaBear.SecretScanning.SecretLocation? left, PandaBear.SecretScanning.SecretLocation? right) -> bool
+static PandaBear.SecretScanning.SecretLocation.operator ==(PandaBear.SecretScanning.SecretLocation? left, PandaBear.SecretScanning.SecretLocation? right) -> bool
+PandaBear.SecretScanning.SecretScanContext
+PandaBear.SecretScanning.SecretScanContext.<Clone>$() -> PandaBear.SecretScanning.SecretScanContext!
+PandaBear.SecretScanning.SecretScanContext.CatalogRulesOnly.get -> bool
+PandaBear.SecretScanning.SecretScanContext.CatalogRulesOnly.init -> void
+PandaBear.SecretScanning.SecretScanContext.Equals(PandaBear.SecretScanning.SecretScanContext? other) -> bool
+override PandaBear.SecretScanning.SecretScanContext.Equals(object? obj) -> bool
+PandaBear.SecretScanning.SecretScanContext.ExpectsUsername.get -> bool
+PandaBear.SecretScanning.SecretScanContext.ExpectsUsername.init -> void
+PandaBear.SecretScanning.SecretScanContext.FileName.get -> string?
+PandaBear.SecretScanning.SecretScanContext.FileName.init -> void
+override PandaBear.SecretScanning.SecretScanContext.GetHashCode() -> int
+PandaBear.SecretScanning.SecretScanContext.Host.get -> string?
+PandaBear.SecretScanning.SecretScanContext.Host.init -> void
+PandaBear.SecretScanning.SecretScanContext.IsBitwardenAccount.get -> bool
+PandaBear.SecretScanning.SecretScanContext.IsBitwardenAccount.init -> void
+static PandaBear.SecretScanning.SecretScanContext.None.get -> PandaBear.SecretScanning.SecretScanContext!
+PandaBear.SecretScanning.SecretScanContext.SecretScanContext() -> void
+override PandaBear.SecretScanning.SecretScanContext.ToString() -> string!
+static PandaBear.SecretScanning.SecretScanContext.operator !=(PandaBear.SecretScanning.SecretScanContext? left, PandaBear.SecretScanning.SecretScanContext? right) -> bool
+static PandaBear.SecretScanning.SecretScanContext.operator ==(PandaBear.SecretScanning.SecretScanContext? left, PandaBear.SecretScanning.SecretScanContext? right) -> bool
+PandaBear.SecretScanning.SecretScanner
+static PandaBear.SecretScanning.SecretScanner.Default.get -> PandaBear.SecretScanning.SecretScanner!
+const PandaBear.SecretScanning.SecretScanner.MaFileSharedSecretRule = "steam-mafile-shared-secret" -> string!
+PandaBear.SecretScanning.SecretScanner.Scan(string! text, string! location, PandaBear.SecretScanning.SecretScanContext! context) -> System.Collections.Generic.IReadOnlyList<PandaBear.SecretScanning.DetectedSecret!>!
+PandaBear.SecretScanning.SecretScanner.Scan<T>(string! text, string! location, PandaBear.SecretScanning.SecretScanContext! context, System.Func<PandaBear.SecretScanning.DetectedSecret!, string?, T>! project) -> System.Collections.Generic.IReadOnlyList<T>!
+PandaBear.SecretScanning.SecretText
+static PandaBear.SecretScanning.SecretText.HasWhitespace(System.ReadOnlySpan<char> value) -> bool
+static PandaBear.SecretScanning.SecretText.ShannonEntropy(System.ReadOnlySpan<char> value) -> double
+static PandaBear.SecretScanning.SecretText.TryDecodeBase64(string! value, out byte[]? bytes) -> bool
+PandaBear.SecretScanning.SshKeyConversion
+PandaBear.SecretScanning.SshKeyConversion.<Clone>$() -> PandaBear.SecretScanning.SshKeyConversion!
+PandaBear.SecretScanning.SshKeyConversion.Deconstruct(out PandaBear.SecretScanning.SshKeyPair? Key, out string? Problem) -> void
+PandaBear.SecretScanning.SshKeyConversion.Equals(PandaBear.SecretScanning.SshKeyConversion? other) -> bool
+override PandaBear.SecretScanning.SshKeyConversion.Equals(object? obj) -> bool
+override PandaBear.SecretScanning.SshKeyConversion.GetHashCode() -> int
+PandaBear.SecretScanning.SshKeyConversion.Key.get -> PandaBear.SecretScanning.SshKeyPair?
+PandaBear.SecretScanning.SshKeyConversion.Key.init -> void
+PandaBear.SecretScanning.SshKeyConversion.Problem.get -> string?
+PandaBear.SecretScanning.SshKeyConversion.Problem.init -> void
+PandaBear.SecretScanning.SshKeyConversion.SshKeyConversion(PandaBear.SecretScanning.SshKeyPair? Key, string? Problem) -> void
+override PandaBear.SecretScanning.SshKeyConversion.ToString() -> string!
+static PandaBear.SecretScanning.SshKeyConversion.operator !=(PandaBear.SecretScanning.SshKeyConversion? left, PandaBear.SecretScanning.SshKeyConversion? right) -> bool
+static PandaBear.SecretScanning.SshKeyConversion.operator ==(PandaBear.SecretScanning.SshKeyConversion? left, PandaBear.SecretScanning.SshKeyConversion? right) -> bool
+PandaBear.SecretScanning.SshKeyConverter
+static PandaBear.SecretScanning.SshKeyConverter.Convert(string! pem, string? suppliedPublicKey = null) -> PandaBear.SecretScanning.SshKeyConversion!
+static PandaBear.SecretScanning.SshKeyConverter.Fingerprint(System.ReadOnlySpan<byte> blob) -> string!
+static PandaBear.SecretScanning.SshKeyConverter.Inspect(string! pem) -> PandaBear.SecretScanning.SshKeyInspection!
+PandaBear.SecretScanning.SshKeyInspection
+PandaBear.SecretScanning.SshKeyInspection.<Clone>$() -> PandaBear.SecretScanning.SshKeyInspection!
+PandaBear.SecretScanning.SshKeyInspection.Algorithm.get -> string?
+PandaBear.SecretScanning.SshKeyInspection.Algorithm.init -> void
+PandaBear.SecretScanning.SshKeyInspection.CanConvert.get -> bool
+PandaBear.SecretScanning.SshKeyInspection.CanConvert.init -> void
+PandaBear.SecretScanning.SshKeyInspection.Deconstruct(out string! Format, out string? Algorithm, out bool IsEncrypted, out bool CanConvert, out string? Problem) -> void
+PandaBear.SecretScanning.SshKeyInspection.Equals(PandaBear.SecretScanning.SshKeyInspection? other) -> bool
+override PandaBear.SecretScanning.SshKeyInspection.Equals(object? obj) -> bool
+PandaBear.SecretScanning.SshKeyInspection.Format.get -> string!
+PandaBear.SecretScanning.SshKeyInspection.Format.init -> void
+override PandaBear.SecretScanning.SshKeyInspection.GetHashCode() -> int
+PandaBear.SecretScanning.SshKeyInspection.IsEncrypted.get -> bool
+PandaBear.SecretScanning.SshKeyInspection.IsEncrypted.init -> void
+PandaBear.SecretScanning.SshKeyInspection.Problem.get -> string?
+PandaBear.SecretScanning.SshKeyInspection.Problem.init -> void
+PandaBear.SecretScanning.SshKeyInspection.SshKeyInspection(string! Format, string? Algorithm, bool IsEncrypted, bool CanConvert, string? Problem) -> void
+override PandaBear.SecretScanning.SshKeyInspection.ToString() -> string!
+static PandaBear.SecretScanning.SshKeyInspection.operator !=(PandaBear.SecretScanning.SshKeyInspection? left, PandaBear.SecretScanning.SshKeyInspection? right) -> bool
+static PandaBear.SecretScanning.SshKeyInspection.operator ==(PandaBear.SecretScanning.SshKeyInspection? left, PandaBear.SecretScanning.SshKeyInspection? right) -> bool
+PandaBear.SecretScanning.SshKeyPair
+PandaBear.SecretScanning.SshKeyPair.<Clone>$() -> PandaBear.SecretScanning.SshKeyPair!
+PandaBear.SecretScanning.SshKeyPair.Deconstruct(out string! PrivateKey, out string! PublicKey, out string! Fingerprint) -> void
+PandaBear.SecretScanning.SshKeyPair.Equals(PandaBear.SecretScanning.SshKeyPair? other) -> bool
+override PandaBear.SecretScanning.SshKeyPair.Equals(object? obj) -> bool
+PandaBear.SecretScanning.SshKeyPair.Fingerprint.get -> string!
+PandaBear.SecretScanning.SshKeyPair.Fingerprint.init -> void
+override PandaBear.SecretScanning.SshKeyPair.GetHashCode() -> int
+PandaBear.SecretScanning.SshKeyPair.PrivateKey.get -> string!
+PandaBear.SecretScanning.SshKeyPair.PrivateKey.init -> void
+PandaBear.SecretScanning.SshKeyPair.PublicKey.get -> string!
+PandaBear.SecretScanning.SshKeyPair.PublicKey.init -> void
+PandaBear.SecretScanning.SshKeyPair.SshKeyPair(string! PrivateKey, string! PublicKey, string! Fingerprint) -> void
+override PandaBear.SecretScanning.SshKeyPair.ToString() -> string!
+static PandaBear.SecretScanning.SshKeyPair.operator !=(PandaBear.SecretScanning.SshKeyPair? left, PandaBear.SecretScanning.SshKeyPair? right) -> bool
+static PandaBear.SecretScanning.SshKeyPair.operator ==(PandaBear.SecretScanning.SshKeyPair? left, PandaBear.SecretScanning.SshKeyPair? right) -> bool
+PandaBear.SecretScanning.TotpUri
+static PandaBear.SecretScanning.TotpUri.DecodeMigration(string! value) -> System.Collections.Generic.IReadOnlyList<PandaBear.SecretScanning.MigratedOtp!>!
+static PandaBear.SecretScanning.TotpUri.TryNormalize(string! value, string? defaultIssuer, string? defaultAccount, out string? normalized) -> bool

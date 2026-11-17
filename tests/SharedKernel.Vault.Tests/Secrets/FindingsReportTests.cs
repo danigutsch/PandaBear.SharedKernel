@@ -14,7 +14,7 @@ public sealed class FindingsReportTests
         const string Password = "Tr0ub4dor&3x";
         const string Answer = "Rex the dog";
         var item = SecretTestItems.Login(name: "visible item", notes: $"token {token}\nPassword: {Password}\ncard {card}\nQ: First pet?\nA: {Answer}");
-        var findings = SecretScanner.Default.Scan(item);
+        var findings = ItemScanner.Default.Scan(item);
 
         // Act
         string markdown = FindingsReport.Render([new ItemFindings(item.Name, findings)], ReportFormat.Markdown);
@@ -42,7 +42,7 @@ public sealed class FindingsReportTests
     {
         // Arrange
         var item = SecretTestItems.Login(name: "visible\u001b[31m item\u009b", notes: "Password: Tr0ub4dor&3x");
-        var findings = SecretScanner.Default.Scan(item);
+        var findings = ItemScanner.Default.Scan(item);
 
         // Act
         string markdown = FindingsReport.Render([new ItemFindings(item.Name, findings)], ReportFormat.Markdown);
@@ -64,7 +64,7 @@ public sealed class FindingsReportTests
         var item = SecretTestItems.Login(notes: $"{token}\nQuestion: City of birth?\nAnswer: {Answer}");
 
         // Act
-        var findings = SecretScanner.Default.Scan(item);
+        var findings = ItemScanner.Default.Scan(item);
 
         // Assert
         findings.ShouldHaveCount(2);

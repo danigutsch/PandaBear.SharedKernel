@@ -186,10 +186,10 @@ PandaBear.Vault.Brief.BriefFinding.AgentMayAccept.get -> bool
 PandaBear.Vault.Brief.BriefFinding.AgentMayAccept.init -> void
 PandaBear.Vault.Brief.BriefFinding.AgentMayReject.get -> bool
 PandaBear.Vault.Brief.BriefFinding.AgentMayReject.init -> void
-PandaBear.Vault.Brief.BriefFinding.BriefFinding(string! Id, PandaBear.Vault.Secrets.SecretKind Kind, PandaBear.Vault.Secrets.Confidence Confidence, string! FieldPath, int? Line, string! ProposedTarget, bool PreAccepted, bool NeedsDecision, bool AgentMayAccept, bool AgentMayReject) -> void
-PandaBear.Vault.Brief.BriefFinding.Confidence.get -> PandaBear.Vault.Secrets.Confidence
+PandaBear.Vault.Brief.BriefFinding.BriefFinding(string! Id, PandaBear.SecretScanning.SecretKind Kind, PandaBear.SecretScanning.Confidence Confidence, string! FieldPath, int? Line, string! ProposedTarget, bool PreAccepted, bool NeedsDecision, bool AgentMayAccept, bool AgentMayReject) -> void
+PandaBear.Vault.Brief.BriefFinding.Confidence.get -> PandaBear.SecretScanning.Confidence
 PandaBear.Vault.Brief.BriefFinding.Confidence.init -> void
-PandaBear.Vault.Brief.BriefFinding.Deconstruct(out string! Id, out PandaBear.Vault.Secrets.SecretKind Kind, out PandaBear.Vault.Secrets.Confidence Confidence, out string! FieldPath, out int? Line, out string! ProposedTarget, out bool PreAccepted, out bool NeedsDecision, out bool AgentMayAccept, out bool AgentMayReject) -> void
+PandaBear.Vault.Brief.BriefFinding.Deconstruct(out string! Id, out PandaBear.SecretScanning.SecretKind Kind, out PandaBear.SecretScanning.Confidence Confidence, out string! FieldPath, out int? Line, out string! ProposedTarget, out bool PreAccepted, out bool NeedsDecision, out bool AgentMayAccept, out bool AgentMayReject) -> void
 PandaBear.Vault.Brief.BriefFinding.Equals(PandaBear.Vault.Brief.BriefFinding? other) -> bool
 override PandaBear.Vault.Brief.BriefFinding.Equals(object? obj) -> bool
 PandaBear.Vault.Brief.BriefFinding.FieldPath.get -> string!
@@ -197,7 +197,7 @@ PandaBear.Vault.Brief.BriefFinding.FieldPath.init -> void
 override PandaBear.Vault.Brief.BriefFinding.GetHashCode() -> int
 PandaBear.Vault.Brief.BriefFinding.Id.get -> string!
 PandaBear.Vault.Brief.BriefFinding.Id.init -> void
-PandaBear.Vault.Brief.BriefFinding.Kind.get -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Brief.BriefFinding.Kind.get -> PandaBear.SecretScanning.SecretKind
 PandaBear.Vault.Brief.BriefFinding.Kind.init -> void
 PandaBear.Vault.Brief.BriefFinding.Line.get -> int?
 PandaBear.Vault.Brief.BriefFinding.Line.init -> void
@@ -1523,11 +1523,17 @@ PandaBear.Vault.Pipeline.VaultPipeline.VaultPipeline(PandaBear.Vault.Formats.IVa
 PandaBear.Vault.Pipeline.VaultPipeline.Write(PandaBear.Vault.Model.VaultExport! vault, PandaBear.Vault.Pipeline.PipelineOutput! output, System.Collections.Generic.IReadOnlyList<string!>! inputPaths, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> PandaBear.Vault.Formats.VaultWriteResult!
 PandaBear.Vault.Pipeline.VaultReport
 static PandaBear.Vault.Pipeline.VaultReport.ToMarkdown(PandaBear.Vault.Pipeline.PipelineResult! result) -> string!
-PandaBear.Vault.Secrets.Confidence
-PandaBear.Vault.Secrets.Confidence.High = 3 -> PandaBear.Vault.Secrets.Confidence
-PandaBear.Vault.Secrets.Confidence.Low = 1 -> PandaBear.Vault.Secrets.Confidence
-PandaBear.Vault.Secrets.Confidence.Medium = 2 -> PandaBear.Vault.Secrets.Confidence
-PandaBear.Vault.Secrets.Confidence.Suggestion = 0 -> PandaBear.Vault.Secrets.Confidence
+PandaBear.Vault.Secrets.ItemFieldPaths
+static PandaBear.Vault.Secrets.ItemFieldPaths.Attachment(string! fileName) -> string!
+const PandaBear.Vault.Secrets.ItemFieldPaths.AttachmentPrefix = "attachment:" -> string!
+const PandaBear.Vault.Secrets.ItemFieldPaths.CardNumber = "card.number" -> string!
+static PandaBear.Vault.Secrets.ItemFieldPaths.FieldName(int index) -> string!
+static PandaBear.Vault.Secrets.ItemFieldPaths.FieldValue(int index) -> string!
+const PandaBear.Vault.Secrets.ItemFieldPaths.LoginPassword = "login.password" -> string!
+const PandaBear.Vault.Secrets.ItemFieldPaths.LoginTotp = "login.totp" -> string!
+const PandaBear.Vault.Secrets.ItemFieldPaths.LoginUsername = "login.username" -> string!
+const PandaBear.Vault.Secrets.ItemFieldPaths.Notes = "notes" -> string!
+static PandaBear.Vault.Secrets.ItemFieldPaths.TryParseField(string! fieldPath, out int index, out bool isName) -> bool
 PandaBear.Vault.Secrets.PlacementTarget
 PandaBear.Vault.Secrets.PlacementTarget.<Clone>$() -> PandaBear.Vault.Secrets.PlacementTarget!
 PandaBear.Vault.Secrets.PlacementTarget.Deconstruct(out PandaBear.Vault.Secrets.PlacementTargetKind Kind, out string? FieldName, out bool NameFromLabel, out string? Reason) -> void
@@ -1570,18 +1576,18 @@ PandaBear.Vault.Secrets.PlacementTargetKind.NotMoved = 9 -> PandaBear.Vault.Secr
 PandaBear.Vault.Secrets.PlacementTargetKind.TextField = 6 -> PandaBear.Vault.Secrets.PlacementTargetKind
 PandaBear.Vault.Secrets.SecretFinding
 PandaBear.Vault.Secrets.SecretFinding.<Clone>$() -> PandaBear.Vault.Secrets.SecretFinding!
-PandaBear.Vault.Secrets.SecretFinding.Confidence.get -> PandaBear.Vault.Secrets.Confidence
+PandaBear.Vault.Secrets.SecretFinding.Confidence.get -> PandaBear.SecretScanning.Confidence
 PandaBear.Vault.Secrets.SecretFinding.Confidence.init -> void
 PandaBear.Vault.Secrets.SecretFinding.Equals(PandaBear.Vault.Secrets.SecretFinding? other) -> bool
 override PandaBear.Vault.Secrets.SecretFinding.Equals(object? obj) -> bool
 override PandaBear.Vault.Secrets.SecretFinding.GetHashCode() -> int
 PandaBear.Vault.Secrets.SecretFinding.Id.get -> string!
 PandaBear.Vault.Secrets.SecretFinding.IsPreAccepted.get -> bool
-PandaBear.Vault.Secrets.SecretFinding.Kind.get -> PandaBear.Vault.Secrets.SecretKind
+PandaBear.Vault.Secrets.SecretFinding.Kind.get -> PandaBear.SecretScanning.SecretKind
 PandaBear.Vault.Secrets.SecretFinding.Kind.init -> void
-PandaBear.Vault.Secrets.SecretFinding.LabelLocation.get -> PandaBear.Vault.Secrets.SecretLocation?
+PandaBear.Vault.Secrets.SecretFinding.LabelLocation.get -> PandaBear.SecretScanning.SecretLocation?
 PandaBear.Vault.Secrets.SecretFinding.LabelLocation.init -> void
-PandaBear.Vault.Secrets.SecretFinding.Location.get -> PandaBear.Vault.Secrets.SecretLocation!
+PandaBear.Vault.Secrets.SecretFinding.Location.get -> PandaBear.SecretScanning.SecretLocation!
 PandaBear.Vault.Secrets.SecretFinding.Location.init -> void
 PandaBear.Vault.Secrets.SecretFinding.Message.get -> string!
 PandaBear.Vault.Secrets.SecretFinding.Message.init -> void
@@ -1596,58 +1602,6 @@ override PandaBear.Vault.Secrets.SecretFinding.ToString() -> string!
 PandaBear.Vault.Secrets.SecretFinding.ValueLength.get -> int
 static PandaBear.Vault.Secrets.SecretFinding.operator !=(PandaBear.Vault.Secrets.SecretFinding? left, PandaBear.Vault.Secrets.SecretFinding? right) -> bool
 static PandaBear.Vault.Secrets.SecretFinding.operator ==(PandaBear.Vault.Secrets.SecretFinding? left, PandaBear.Vault.Secrets.SecretFinding? right) -> bool
-PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.AccessKeyId = 8 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.ApiToken = 7 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.BitwardenRecoveryCode = 2 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.CardNumber = 13 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.ConnectionString = 15 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.GenericSecret = 18 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.Iban = 14 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.Jwt = 17 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.NeedsReview = 19 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.Password = 5 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.PgpPrivateKey = 10 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.Pin = 4 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.PrivateKey = 9 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.PuttyKey = 11 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.RecoveryCodes = 1 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.SecurityQuestion = 3 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.SeedPhrase = 12 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.Totp = 0 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.UrlCredentials = 16 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretKind.Username = 6 -> PandaBear.Vault.Secrets.SecretKind
-PandaBear.Vault.Secrets.SecretLocation
-PandaBear.Vault.Secrets.SecretLocation.<Clone>$() -> PandaBear.Vault.Secrets.SecretLocation!
-static PandaBear.Vault.Secrets.SecretLocation.Attachment(string! fileName) -> string!
-const PandaBear.Vault.Secrets.SecretLocation.AttachmentPrefix = "attachment:" -> string!
-const PandaBear.Vault.Secrets.SecretLocation.CardNumber = "card.number" -> string!
-PandaBear.Vault.Secrets.SecretLocation.Deconstruct(out string! FieldPath, out int Start, out int Length, out int? FirstLine, out int? LastLine) -> void
-PandaBear.Vault.Secrets.SecretLocation.End.get -> int
-PandaBear.Vault.Secrets.SecretLocation.Equals(PandaBear.Vault.Secrets.SecretLocation? other) -> bool
-override PandaBear.Vault.Secrets.SecretLocation.Equals(object? obj) -> bool
-static PandaBear.Vault.Secrets.SecretLocation.FieldName(int index) -> string!
-PandaBear.Vault.Secrets.SecretLocation.FieldPath.get -> string!
-PandaBear.Vault.Secrets.SecretLocation.FieldPath.init -> void
-static PandaBear.Vault.Secrets.SecretLocation.FieldValue(int index) -> string!
-PandaBear.Vault.Secrets.SecretLocation.FirstLine.get -> int?
-PandaBear.Vault.Secrets.SecretLocation.FirstLine.init -> void
-override PandaBear.Vault.Secrets.SecretLocation.GetHashCode() -> int
-PandaBear.Vault.Secrets.SecretLocation.LastLine.get -> int?
-PandaBear.Vault.Secrets.SecretLocation.LastLine.init -> void
-PandaBear.Vault.Secrets.SecretLocation.Length.get -> int
-PandaBear.Vault.Secrets.SecretLocation.Length.init -> void
-const PandaBear.Vault.Secrets.SecretLocation.LoginPassword = "login.password" -> string!
-const PandaBear.Vault.Secrets.SecretLocation.LoginTotp = "login.totp" -> string!
-const PandaBear.Vault.Secrets.SecretLocation.LoginUsername = "login.username" -> string!
-const PandaBear.Vault.Secrets.SecretLocation.Notes = "notes" -> string!
-PandaBear.Vault.Secrets.SecretLocation.SecretLocation(string! FieldPath, int Start, int Length, int? FirstLine = null, int? LastLine = null) -> void
-PandaBear.Vault.Secrets.SecretLocation.Start.get -> int
-PandaBear.Vault.Secrets.SecretLocation.Start.init -> void
-override PandaBear.Vault.Secrets.SecretLocation.ToString() -> string!
-static PandaBear.Vault.Secrets.SecretLocation.TryParseField(string! fieldPath, out int index, out bool isName) -> bool
-static PandaBear.Vault.Secrets.SecretLocation.operator !=(PandaBear.Vault.Secrets.SecretLocation? left, PandaBear.Vault.Secrets.SecretLocation? right) -> bool
-static PandaBear.Vault.Secrets.SecretLocation.operator ==(PandaBear.Vault.Secrets.SecretLocation? left, PandaBear.Vault.Secrets.SecretLocation? right) -> bool
 PandaBear.Vault.Secrets.SecretPlacer
-static PandaBear.Vault.Secrets.SecretPlacer.TryRead(PandaBear.Vault.Model.VaultItem! item, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? attachmentTexts, PandaBear.Vault.Secrets.SecretLocation! location, out string? value) -> bool
+static PandaBear.Vault.Secrets.SecretPlacer.TryRead(PandaBear.Vault.Model.VaultItem! item, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? attachmentTexts, PandaBear.SecretScanning.SecretLocation! location, out string? value) -> bool
 override sealed PandaBear.Vault.Pipeline.PipelineRequest.Equals(PandaBear.Vault.Pipeline.MergeRequest? other) -> bool

@@ -1,3 +1,4 @@
+using PandaBear.SecretScanning;
 using PandaBear.Vault.Model;
 using PandaBear.Vault.Secrets;
 
@@ -11,7 +12,7 @@ public sealed class SecretPlacerTests
     {
         // Arrange
         var item = SecretTestItems.Login(notes: "Password: Tr0ub4dor&3x\nPIN: 4821");
-        var findings = SecretScanner.Default.Scan(item);
+        var findings = ItemScanner.Default.Scan(item);
 
         // Act
         var placed = SecretPlacer.Apply(item, []);
@@ -29,7 +30,7 @@ public sealed class SecretPlacerTests
         // Arrange
         const string Notes = "Password: Tr0ub4dor&3x\nPIN: 4821\nkeep this line";
         var item = SecretTestItems.Login(notes: Notes);
-        var findings = SecretScanner.Default.Scan(item);
+        var findings = ItemScanner.Default.Scan(item);
         var pin = findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.Pin);
 
         // Act
@@ -52,7 +53,7 @@ public sealed class SecretPlacerTests
         string huge = TestSecrets.FromAlphabet(TestSecrets.Base64, 4000, 40);
         string notes = "Password: " + huge;
         var item = SecretTestItems.Login(notes: notes);
-        var finding = SecretScanner.Default.Scan(item).ShouldHaveSingleItem(found => found.Kind == SecretKind.Password);
+        var finding = ItemScanner.Default.Scan(item).ShouldHaveSingleItem(found => found.Kind == SecretKind.Password);
 
         // Act
         var placed = SecretPlacer.Apply(item, [finding]);
@@ -71,7 +72,7 @@ public sealed class SecretPlacerTests
     {
         // Arrange
         var item = SecretTestItems.Login(notes: "PIN: 4821");
-        var finding = SecretScanner.Default.Scan(item).ShouldHaveSingleItem();
+        var finding = ItemScanner.Default.Scan(item).ShouldHaveSingleItem();
         var changed = item with
         {
             Notes = "PIN"
@@ -92,7 +93,7 @@ public sealed class SecretPlacerTests
         // Arrange
         string number = TestSecrets.CardNumber("4", 16);
         var item = SecretTestItems.Note("Travel card " + number, "Visa travel");
-        var finding = SecretScanner.Default.Scan(item).ShouldHaveSingleItem();
+        var finding = ItemScanner.Default.Scan(item).ShouldHaveSingleItem();
 
         // Act
         var placed = SecretPlacer.Apply(item, [finding]);
@@ -115,7 +116,7 @@ public sealed class SecretPlacerTests
         string mastercard = TestSecrets.CardNumber("51", 16);
         string amex = TestSecrets.CardNumber("34", 15);
         var item = SecretTestItems.Note("Visa " + visa + "\nMastercard " + mastercard + "\nAmex " + amex, "Bank cards");
-        var findings = SecretScanner.Default.Scan(item);
+        var findings = ItemScanner.Default.Scan(item);
 
         // Act
         var placed = SecretPlacer.Apply(item, findings);
@@ -135,7 +136,7 @@ public sealed class SecretPlacerTests
         string first = TestSecrets.GitHubToken("ghp", 50);
         string second = TestSecrets.NpmToken(51);
         var item = SecretTestItems.Login(notes: first + "\n" + second);
-        var findings = SecretScanner.Default.Scan(item);
+        var findings = ItemScanner.Default.Scan(item);
 
         // Act
         var placed = SecretPlacer.Apply(item, findings);
@@ -155,7 +156,7 @@ public sealed class SecretPlacerTests
         string prod = TestSecrets.GitHubToken("ghp", 52);
         string staging = TestSecrets.GitHubToken("ghp", 53);
         var item = SecretTestItems.Login(notes: "Server notes\nacme-prod-ci api token: " + prod + "\nacme-staging-ci api token: " + staging + "\nend");
-        var findings = SecretScanner.Default.Scan(item);
+        var findings = ItemScanner.Default.Scan(item);
 
         // Act
         var placed = SecretPlacer.Apply(item, findings);
@@ -175,7 +176,7 @@ public sealed class SecretPlacerTests
         // Arrange
         string codes = string.Join('\n', Enumerable.Range(0, 6).Select(index => TestSecrets.FromAlphabet(TestSecrets.LowerHex, 10, 300 + index)));
         var item = SecretTestItems.Note("Backup codes - door PIN 4417, ask Bob:\n" + codes + "\nend of list");
-        var finding = SecretScanner.Default.Scan(item).ShouldHaveSingleItem();
+        var finding = ItemScanner.Default.Scan(item).ShouldHaveSingleItem();
 
         // Act
         var placed = SecretPlacer.Apply(item, [finding]);
@@ -194,9 +195,9 @@ public sealed class SecretPlacerTests
         // Arrange
         string secret = TestSecrets.Base32Encode(TestSecrets.Bytes(60, 20));
         string text = "otpauth://totp/Example?secret=" + secret;
-        string path = SecretLocation.Attachment("totp.txt");
+        string path = ItemFieldPaths.Attachment("totp.txt");
         var item = SecretTestItems.Login(notes: "unrelated");
-        var finding = SecretScanner.Default.ScanText(text, path, "totp.txt", item).ShouldHaveSingleItem();
+        var finding = ItemScanner.Default.ScanText(text, path, "totp.txt", item).ShouldHaveSingleItem();
 
         // Act
         var placed = SecretPlacer.Apply(item, [finding], new Dictionary<string, string> { [path] = text });

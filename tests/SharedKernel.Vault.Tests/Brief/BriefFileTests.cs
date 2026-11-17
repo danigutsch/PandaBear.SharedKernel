@@ -1,8 +1,8 @@
+using PandaBear.SecretScanning;
 using PandaBear.Testing;
 using PandaBear.Vault.Brief;
 using PandaBear.Vault.Matching;
 using PandaBear.Vault.Model;
-using PandaBear.Vault.Secrets;
 
 namespace PandaBear.Vault.Tests.Brief;
 

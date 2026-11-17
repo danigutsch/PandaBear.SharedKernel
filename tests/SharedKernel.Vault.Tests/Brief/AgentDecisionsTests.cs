@@ -1,8 +1,8 @@
+using PandaBear.SecretScanning;
 using PandaBear.Vault.Brief;
 using PandaBear.Vault.Matching;
 using PandaBear.Vault.Merge;
 using PandaBear.Vault.Pipeline;
-using PandaBear.Vault.Secrets;
 using PandaBear.Vault.Tests.Merge;
 using static PandaBear.Vault.Tests.Brief.BriefSamples;
 

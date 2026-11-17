@@ -51,7 +51,7 @@ public static class CatalogApplier
             }
 
             var itemProblems = new List<string>();
-            IReadOnlyList<SecretFinding> findings = SecretScanner.Default.Scan(source.Item);
+            IReadOnlyList<SecretFinding> findings = ItemScanner.Default.Scan(source.Item);
             VaultItem edited = Edit(source, entry, findings, decisions, itemProblems);
             problems.AddRange(itemProblems.Select(problem => $"{source.OriginKey} (\"{source.Item.Name}\"): {problem}"));
             // An item counts as changed when a line describes a change of it.

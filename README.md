@@ -24,6 +24,7 @@ Choose the packages your project needs. Each package has its own README with req
 | Accept JPEG, PNG and WebP uploads by their bytes and strip location and camera metadata, and accept WOFF2 font uploads only when their structure is sound, without a native library | [Upload sanitizing](src/SharedKernel/SharedKernel.UploadSanitizing/README.md) |
 | Rewind bounded uploads or imports for multiple passes, and write private files | [IO](src/SharedKernel/SharedKernel.IO/README.md) · [IO analyzers](src/SharedKernel/SharedKernel.IO.Analyzers/README.md) |
 | Decode Bech32 (age keys) and encode Base32 (TOTP secrets) | [Encodings](src/SharedKernel/SharedKernel.Encodings/README.md) |
+| Find credentials, keys, tokens, recovery codes, and seed phrases in text, and inspect and convert SSH private keys | [Secret scanning](src/SharedKernel/SharedKernel.SecretScanning/README.md) |
 | Parse simple comma-delimited rows and detect duplicates | [Tabular](src/SharedKernel/SharedKernel.Tabular/README.md) |
 | Model installed packages and plan what is missing, read-only | [Packages](src/SharedKernel/SharedKernel.Packages/README.md) |
 | Wire Aspire hosts: service defaults with private telemetry and health endpoints, AppHost secrets, origins, health checks and image pins | [Service defaults](src/SharedKernel/SharedKernel.ServiceDefaults/README.md) · [Aspire hosting](src/SharedKernel/SharedKernel.Aspire.Hosting/README.md) |

@@ -1,3 +1,4 @@
+using PandaBear.SecretScanning;
 using PandaBear.Vault.Secrets;
 
 namespace PandaBear.Vault.Tests.Secrets;

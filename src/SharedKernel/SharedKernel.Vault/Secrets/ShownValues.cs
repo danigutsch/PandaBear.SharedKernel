@@ -32,7 +32,7 @@ internal static class ShownValues
 
         return field.Type == CustomFieldType.Text
             && !IsAdditionalFolders(field)
-            && !findings.Any(finding => SecretLocation.TryParseField(finding.Location.FieldPath, out int inField, out _) && inField == index);
+            && !findings.Any(finding => ItemFieldPaths.TryParseField(finding.Location.FieldPath, out int inField, out _) && inField == index);
     }
 
     /// <summary>Whether a custom field is the additional folders field, which is shown as a list of folders.</summary>
@@ -85,11 +85,11 @@ internal static class ShownValues
 
         string? username = item.Login?.Username;
         return username is null
-            || findings.Any(finding => string.Equals(finding.Location.FieldPath, SecretLocation.LoginUsername, StringComparison.Ordinal))
-            || HoldsSecret(username, SecretLocation.LoginUsername)
+            || findings.Any(finding => string.Equals(finding.Location.FieldPath, ItemFieldPaths.LoginUsername, StringComparison.Ordinal))
+            || HoldsSecret(username, ItemFieldPaths.LoginUsername)
                 ? null
                 : username;
     }
 
-    private static bool HoldsSecret(string text, string fieldPath) => SecretScanner.Default.ScanText(text, fieldPath, null).Count > 0;
+    private static bool HoldsSecret(string text, string fieldPath) => ItemScanner.Default.ScanText(text, fieldPath, null).Count > 0;
 }

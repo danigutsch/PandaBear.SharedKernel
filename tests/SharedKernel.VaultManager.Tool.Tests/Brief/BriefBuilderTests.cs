@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using PandaBear.SecretScanning;
 using PandaBear.Testing;
 using PandaBear.Vault.Brief;
 using PandaBear.Vault.Merge;
@@ -177,7 +178,7 @@ public sealed class BriefBuilderTests : IDisposable
         SecretFinding[] findings = [.. result.Findings.ShouldHaveSingleItem().Findings];
         member.Findings.Select(finding => finding.Id).ShouldBe(findings.Select(finding => finding.Id));
         var password = member.Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.Password);
-        password.ShouldBe(new BriefFinding(password.Id, SecretKind.Password, Confidence.Medium, SecretLocation.Notes, 19, "login.password", PreAccepted: false, NeedsDecision: true, AgentMayAccept: true, AgentMayReject: true));
+        password.ShouldBe(new BriefFinding(password.Id, SecretKind.Password, Confidence.Medium, ItemFieldPaths.Notes, 19, "login.password", PreAccepted: false, NeedsDecision: true, AgentMayAccept: true, AgentMayReject: true));
         var recovery = member.Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.RecoveryCodes);
         recovery.PreAccepted.ShouldBeTrue();
         recovery.NeedsDecision.ShouldBeFalse();

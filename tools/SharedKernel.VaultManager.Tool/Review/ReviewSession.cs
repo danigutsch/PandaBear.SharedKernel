@@ -774,7 +774,7 @@ internal sealed class ReviewSession
     }
 
     private static int NotesFindings(ScannedItem item) =>
-        item.Findings.Count(finding => string.Equals(finding.Location.FieldPath, SecretLocation.Notes, StringComparison.Ordinal));
+        item.Findings.Count(finding => string.Equals(finding.Location.FieldPath, ItemFieldPaths.Notes, StringComparison.Ordinal));
 
     private void Change(MergeDecisions decisions)
     {
@@ -881,7 +881,7 @@ internal sealed class ReviewSession
             return new Cell(null, Secret: false);
         }
 
-        bool findingInFields = HasFinding(originKey, path => SecretLocation.TryParseField(path, out _, out _));
+        bool findingInFields = HasFinding(originKey, path => ItemFieldPaths.TryParseField(path, out _, out _));
         bool secret = findingInFields || member.Fields.Any(field => field.Type == CustomFieldType.Hidden);
         string shown = string.Join("; ", member.Fields.Select(field => Describe(field, mask: false)));
         string masked = string.Join("; ", member.Fields.Select(field => Describe(field, mask: findingInFields || field.Type == CustomFieldType.Hidden)));
