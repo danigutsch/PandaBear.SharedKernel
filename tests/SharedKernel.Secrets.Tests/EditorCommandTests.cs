@@ -63,4 +63,25 @@ public sealed class EditorCommandTests
         // Assert
         result.ErrorDetails.ShouldNotBeNull().Detail.ShouldNotContain("not-installed-editor", StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void An_editor_whose_path_holds_a_quote_is_refused_because_sops_could_not_split_it_back()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var quoted = Directory.CreateDirectory(Path.Combine(directory.Path, "o'brien")).FullName;
+        var path = Path.Combine(quoted, "vim");
+        File.WriteAllText(path, string.Empty);
+        var resolver = new FixedExecutableResolver(new Dictionary<string, string> { ["vim"] = path });
+
+        // Act
+        var absolute = EditorCommand.Create(path, resolver);
+        var withArguments = EditorCommand.Create(path + " -n", resolver);
+        var resolved = EditorCommand.Create("vim -n", resolver);
+
+        // Assert
+        absolute.IsFailure.ShouldBeTrue();
+        withArguments.IsFailure.ShouldBeTrue();
+        resolved.IsFailure.ShouldBeTrue();
+    }
 }

@@ -163,4 +163,28 @@ public sealed class ProcessSopsToolRewriteTests
             await call.ShouldThrow<ArgumentNullException>();
         }
     }
+
+    [Fact(SkipType = typeof(UnixModes), SkipUnless = nameof(UnixModes.Available), Skip = "Unix file modes only.")]
+    [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
+    public async Task The_copy_that_updatekeys_rewrites_is_writable_even_for_a_read_only_file()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var file = Path.Combine(directory.Path, "app.sops.yaml");
+        await File.WriteAllTextAsync(file, SopsSamples.Yaml([TestRecipients.First]), TestContext.Current.CancellationToken);
+        File.SetUnixFileMode(file, UnixFileMode.UserRead);
+        UnixFileMode? copyMode = null;
+        var runner = new FakeToolRunner(request =>
+        {
+            copyMode = File.GetUnixFileMode(request.Arguments[^1]);
+            return FakeToolRunner.Result(0, string.Empty);
+        });
+
+        // Act
+        var result = await new ProcessSopsTool(runner, Sops).UpdateKeys(file, Identity, TestRecipients.Set(TestRecipients.Second), TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ShouldBeSuccess();
+        copyMode.ShouldBe(UnixFileMode.UserRead | UnixFileMode.UserWrite);
+    }
 }

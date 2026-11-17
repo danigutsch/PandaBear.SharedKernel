@@ -115,4 +115,17 @@ public sealed class EncryptedFilePathTests
         Action act1 = () => TestRecipients.File("app.sops.yaml").ResolveUnder(null!);
         act1.ShouldThrow<ArgumentNullException>();
     }
+
+    [Theory]
+    [InlineData("app.sops.YAML", SopsFormat.Yaml)]
+    [InlineData("app.sops.Yml", SopsFormat.Yaml)]
+    [InlineData("app.sops.JSON", SopsFormat.Json)]
+    public void The_format_ignores_the_letter_case_of_the_extension_as_the_reader_does(string input, SopsFormat format)
+    {
+        // Act
+        var path = EncryptedFilePath.Create(input).ShouldBeSuccess();
+
+        // Assert
+        path.Format.ShouldBe(format);
+    }
 }

@@ -129,4 +129,30 @@ public sealed class ProcessSopsToolEditTests
             await call.ShouldThrow<ArgumentNullException>();
         }
     }
+
+    [Fact(SkipType = typeof(UnixModes), SkipUnless = nameof(UnixModes.Available), Skip = "Unix file modes only.")]
+    [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
+    public async Task The_copy_of_a_read_only_file_is_writable_so_sops_can_save_the_edit()
+    {
+        // Arrange
+        using var repository = new TemporaryDirectory();
+        using var private_ = new TemporaryDirectory();
+        var file = Path.Combine(repository.Path, "app.sops.yaml");
+        await File.WriteAllTextAsync(file, "original: document\n", TestContext.Current.CancellationToken);
+        File.SetUnixFileMode(file, UnixFileMode.UserRead | UnixFileMode.GroupRead | UnixFileMode.OtherRead);
+        UnixFileMode? copyMode = null;
+        var runner = FakeToolRunner.Succeeding();
+        runner.Attached = request =>
+        {
+            copyMode = File.GetUnixFileMode(request.Arguments[^1]);
+            return 200;
+        };
+
+        // Act
+        var result = await new ProcessSopsTool(runner, Sops).Edit(file, Identity, EditSessions.For(private_.Path), TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ShouldBeSuccess();
+        copyMode.ShouldBe(UnixFileMode.UserRead | UnixFileMode.UserWrite);
+    }
 }
