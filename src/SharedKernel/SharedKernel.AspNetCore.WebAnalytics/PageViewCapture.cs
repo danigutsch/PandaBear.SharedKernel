@@ -19,6 +19,8 @@ internal static class PageViewCapture
     private const string CampaignKeyPrefix = "utm_";
     private const string WorldWideWebPrefix = "www.";
     private const int MaximumLanguageSubtagLength = 8;
+    private const int IPv4NetworkBytes = 3;
+    private const int IPv6NetworkBytes = 6;
 
     private static readonly char[] ListSeparators = [',', ';'];
 
@@ -42,7 +44,10 @@ internal static class PageViewCapture
             && !StringValues.IsNullOrEmpty(request.Headers.UserAgent);
     }
 
-    /// <summary>Keeps of a page view only what the targets need: no query value except <c>utm_*</c>, no referrer query or fragment, no same-site referrer.</summary>
+    /// <summary>
+    /// Keeps of a page view only what the targets need: no query value except <c>utm_*</c>, no referrer query or fragment, no same-site
+    /// referrer, and the visitor's address shortened to its network (see <see cref="PageView.ClientIp"/>).
+    /// </summary>
     /// <param name="context">The request of the page view.</param>
     /// <param name="configuredHostname">The configured host name, or <see langword="null"/> to use the request host.</param>
     /// <returns>The page view.</returns>
@@ -57,7 +62,7 @@ internal static class PageViewCapture
             Referrer = Referrer(request.Headers.Referer, requestHost, configuredHostname),
             Language = Language(request.Headers.AcceptLanguage),
             UserAgent = request.Headers.UserAgent.ToString(),
-            ClientIp = Normalize(context.Connection.RemoteIpAddress),
+            ClientIp = Shorten(context.Connection.RemoteIpAddress),
         };
     }
 
@@ -135,20 +140,17 @@ internal static class PageViewCapture
             && subtags.All(static subtag => subtag.Length is > 0 and <= MaximumLanguageSubtagLength && subtag.All(char.IsAsciiLetterOrDigit));
     }
 
-    private static IPAddress? Normalize(IPAddress? address)
+    private static IPAddress? Shorten(IPAddress? address)
     {
         if (address is null)
         {
             return null;
         }
 
-        if (address.IsIPv4MappedToIPv6)
-        {
-            return address.MapToIPv4();
-        }
-
-        return address.AddressFamily == AddressFamily.InterNetworkV6 && address.ScopeId != 0
-            ? new IPAddress(address.GetAddressBytes())
-            : address;
+        var visitor = address.IsIPv4MappedToIPv6 ? address.MapToIPv4() : address;
+        var bytes = visitor.GetAddressBytes();
+        var networkBytes = visitor.AddressFamily == AddressFamily.InterNetwork ? IPv4NetworkBytes : IPv6NetworkBytes;
+        bytes.AsSpan(networkBytes).Clear();
+        return new IPAddress(bytes);
     }
 }

@@ -9,8 +9,9 @@ namespace PandaBear.AspNetCore.WebAnalytics;
 public sealed class UmamiPageViewTargetOptions
 {
     /// <summary>
-    /// Gets or sets the request header that carries the visitor's address to Umami, <c>X-Forwarded-For</c> by default. Umami must read
-    /// the address from it: the Umami Aspire resource sets its <c>CLIENT_IP_HEADER</c> to the default.
+    /// Gets or sets the request header that carries the visitor's shortened address (<see cref="PageView.ClientIp"/>) to Umami,
+    /// <c>X-Forwarded-For</c> by default. Umami must read the address from it: the Umami Aspire resource sets its <c>CLIENT_IP_HEADER</c>
+    /// to the default.
     /// </summary>
     public string ClientIpHeader { get; set; } = ForwardedHeadersDefaults.XForwardedForHeaderName;
 

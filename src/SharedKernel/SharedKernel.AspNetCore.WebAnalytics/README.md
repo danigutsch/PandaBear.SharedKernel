@@ -53,7 +53,7 @@ names the key and never repeats the value.
 
 | `UmamiPageViewTargetOptions` | Default | Meaning |
 | --- | --- | --- |
-| `ClientIpHeader` | `X-Forwarded-For` | The header that carries the visitor's address to Umami (see below). |
+| `ClientIpHeader` | `X-Forwarded-For` | The header that carries the visitor's shortened address to Umami (see below). |
 
 ## What counts as a page view
 
@@ -78,19 +78,35 @@ A `PageView`, which every target receives, carries only:
 | `Language` | the first tag of `Accept-Language`, such as `pt-BR`; none when it is `*` or malformed |
 | `Hostname` | `Hostname`, or the request host without its port |
 | `UserAgent` | the visitor's, so a target can derive browser, OS and device and drop bots |
-| `ClientIp` | the visitor's address (IPv4-mapped addresses as IPv4, no IPv6 scope), so a target can derive the country and an anonymous visitor hash |
+| `ClientIp` | the visitor's address shortened to its network (see below), so a target can derive the country and an anonymous visitor hash |
+
+The address is shortened when the request becomes a `PageView`, before it is queued, so no queue and no target ever holds the full
+address. There is no setting that turns it off.
+
+| Address | Kept | Example |
+| --- | --- | --- |
+| IPv4 | the first 24 bits; the last octet becomes `0` | `203.0.113.7` becomes `203.0.113.0` |
+| IPv6 | the first 48 bits; the rest becomes `0`, and no scope is kept | `2001:db8:85a3:8d3::7` becomes `2001:db8:85a3::` |
+| IPv4-mapped IPv6 | shortened as the IPv4 address it maps | `::ffff:198.51.100.9` becomes `198.51.100.0` |
+| none | none | |
+
+The reason is data minimisation (GDPR art. 5(1)(c)): a target should get no more of the address than it needs. Umami 3.4 uses the
+address only while it handles the page view, for the session id (a hash of the website, the address, the `User-Agent` and a monthly
+salt) and to look up the country, region and city, and it stores no address. A shortened address keeps the country statistics and
+roughly right visitor counts: visitors of the same network with the same browser count as one visitor in a month, and the region and
+city are only as precise as the network.
 
 Umami receives `url`, `referrer`, `language`, `hostname` and the `website` id from the connection string in the body, the `User-Agent`
-header, and the address in `ClientIpHeader`. What is never sent or kept: other query values (search terms, e-mail addresses, tokens,
-click ids such as `gclid` or `fbclid`), the referrer's query and fragment, cookies, request bodies, the page title, the screen size, and
-any identifier of the visitor. Nothing is written to the browser. `PageView` has no `ToString` that prints the address or the
-`User-Agent`, and neither is ever logged: log entries carry a target name, a status code, an exception type name or a count, and the
-Umami `HttpClient` redacts every logged header value. Its own request log entries name only the Umami address.
+header, and the shortened address in `ClientIpHeader`. What is never sent or kept: the full address, other query values (search terms,
+e-mail addresses, tokens, click ids such as `gclid` or `fbclid`), the referrer's query and fragment, cookies, request bodies, the page
+title, the screen size, and any identifier of the visitor. Nothing is written to the browser. `PageView` has no `ToString` that prints
+the address or the `User-Agent`, and neither is ever logged: log entries carry a target name, a status code, an exception type name or
+a count, and the Umami `HttpClient` redacts every logged header value. Its own request log entries name only the Umami address.
 
-Umami turns the address and `User-Agent` into a salted visitor hash and a location and does not store the address. It is personal
-data in transit all the same, so **the site's privacy notice must name the self-hosted analytics**: what is collected (the table above),
-the purpose (aggregate visit statistics), that it runs on the operator's own server with no third party, that no cookie is set, that
-`Sec-GPC` and `DNT` are honoured, and how long Umami keeps the data. Every other target needs the same review.
+Even shortened, the address together with the `User-Agent` is personal data in transit, so **the site's privacy notice must name the
+self-hosted analytics**: what is collected (the table above, with the address shortened), the purpose (aggregate visit statistics),
+that it runs on the operator's own server with no third party, that no cookie is set, that `Sec-GPC` and `DNT` are honoured, and how
+long Umami keeps the data. Every other target needs the same review.
 
 ## The visitor's address
 

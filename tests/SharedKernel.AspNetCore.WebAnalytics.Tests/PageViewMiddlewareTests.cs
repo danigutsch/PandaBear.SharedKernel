@@ -11,7 +11,7 @@ public sealed class PageViewMiddlewareTests
     private const string TransportFailureMessage = "transport-detail";
 
     [Fact]
-    public async Task A_page_view_is_posted_to_umami_with_the_visitors_browser_and_address()
+    public async Task A_page_view_is_posted_to_umami_with_the_visitors_browser_and_shortened_address()
     {
         // Arrange
         using var umami = new RecordingHttpMessageHandler();
@@ -31,7 +31,7 @@ public sealed class PageViewMiddlewareTests
         sent.Method.ShouldBe(HttpMethod.Post);
         sent.Message.RequestUri.ShouldBe(new Uri("http://umami.test/api/send"));
         sent.Message.Headers.NonValidated["User-Agent"].ToString().ShouldBe(PageContexts.VisitorAgent);
-        sent.Message.Headers.NonValidated["X-Forwarded-For"].ToString().ShouldBe("203.0.113.7");
+        sent.Message.Headers.NonValidated["X-Forwarded-For"].ToString().ShouldBe("203.0.113.0");
         sent.Message.Content.ShouldNotBeNull().Headers.ContentType.ShouldNotBeNull().MediaType.ShouldBe("application/json");
         using var body = JsonDocument.Parse(sent.Body.ShouldNotBeNull());
         UmamiBodies.PropertyNames(body.RootElement).ShouldBe(["payload", "type"]);
@@ -95,8 +95,28 @@ public sealed class PageViewMiddlewareTests
         var sent = arrived.ShouldHaveSingleItem();
 
         // Assert
-        sent.Message.Headers.NonValidated["X-Visitor-IP"].ToString().ShouldBe("203.0.113.7");
+        sent.Message.Headers.NonValidated["X-Visitor-IP"].ToString().ShouldBe("203.0.113.0");
         sent.Message.Headers.Contains("X-Forwarded-For").ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData("203.0.113.7", "203.0.113.0")]
+    [InlineData("2001:db8:85a3:8d3:1319:8a2e:370:7348", "2001:db8:85a3::")]
+    [InlineData("::ffff:198.51.100.9", "198.51.100.0")]
+    public async Task Umami_receives_only_the_shortened_address_of_the_visitor(string visitor, string expected)
+    {
+        // Arrange
+        using var umami = new RecordingHttpMessageHandler();
+        await using var site = await PageViewTestApp.Start(umami, UmamiConnections.Default, visitorAddress: IPAddress.Parse(visitor));
+
+        // Act
+        using var page = await site.Visit(HttpMethod.Get, "/pt");
+        var arrived = await umami.WaitForRequests(1, TestContext.Current.CancellationToken);
+        var sent = arrived.ShouldHaveSingleItem();
+
+        // Assert
+        page.StatusCode.ShouldBe(HttpStatusCode.OK);
+        sent.Message.Headers.NonValidated["X-Forwarded-For"].ToString().ShouldBe(expected);
     }
 
     [Fact]
@@ -193,7 +213,7 @@ public sealed class PageViewMiddlewareTests
         sentToSecond.ShouldAllSatisfy(pageView =>
         {
             pageView.UserAgent.ShouldBe(PageContexts.VisitorAgent);
-            pageView.ClientIp.ShouldBe(PageContexts.VisitorAddress);
+            pageView.ClientIp.ShouldBe(PageContexts.ShortenedVisitorAddress);
             pageView.Hostname.ShouldBe("localhost");
         });
         broken.Calls.ShouldBe(2);

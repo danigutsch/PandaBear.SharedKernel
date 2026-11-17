@@ -12,6 +12,9 @@ internal static class PageContexts
     /// <summary>The visitor's address.</summary>
     internal static IPAddress VisitorAddress { get; } = IPAddress.Parse("203.0.113.7");
 
+    /// <summary>The visitor's address as a page view carries it: <see cref="VisitorAddress"/> without its last octet.</summary>
+    internal static IPAddress ShortenedVisitorAddress { get; } = IPAddress.Parse("203.0.113.0");
+
     /// <summary>Creates a GET of <paramref name="path"/> on <c>www.example.com</c> answered with 200 and an HTML page.</summary>
     /// <param name="path">The path, with an optional query string.</param>
     /// <returns>The context.</returns>
