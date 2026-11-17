@@ -68,7 +68,11 @@ through `selection.testPaths`, because only `SharedKernel.Npgsql.Tests` referenc
 through the real tool and host proves the start, the hand-over, and the stop of the services.
 
 A new shared service follows the same pattern: a helper with a borrow-or-start fixture that reads one variable, the
-service composed in the host, and its variable and test projects added to the `services` slice.
+service composed in the host, and its variable and test projects added to the `services` slice. The conventions in
+`CiConfigurationConventionTests` keep that true: every variable that a slice service hands over is read by a helper, every
+test project that references a helper runs in the slice whose service hands over its variable, and every hosted test
+project (one built with the Aspire AppHost SDK) runs in a slice with a service and borrows from it, so CI never starts a
+second instance of a shared service.
 
 ## JavaScript tooling
 
