@@ -24,6 +24,12 @@ public sealed class UmamiResource(
     /// <summary>Gets the PostgreSQL database Umami keeps its data in; its <see cref="PostgresDatabaseResource.Parent"/> is the server.</summary>
     public PostgresDatabaseResource Database { get; } = database;
 
+    /// <summary>
+    /// Gets whether <c>AddUmami</c> added the PostgreSQL server for Umami alone, so Umami's data methods may configure it; a server that
+    /// Umami shares belongs to whoever added it.
+    /// </summary>
+    internal bool OwnsDatabaseServer { get; init; }
+
     /// <summary>Gets the parameter that contains Umami's <c>APP_SECRET</c>, which signs its login and cache tokens.</summary>
     public ParameterResource AppSecretParameter { get; } = appSecretParameter;
 
