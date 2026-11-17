@@ -532,6 +532,14 @@
           "xunit.v3.extensibility.core": "[4.0.0, )"
         }
       },
+      "sharedkernel.aspire.hosting.umami.testing": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Aspire.Hosting.Umami": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.IntegrationTesting": "[0.1.0-alpha.0, )",
+          "xunit.v3.extensibility.core": "[4.0.3, )"
+        }
+      },
       "Aspire.Hosting": {
         "type": "CentralTransitive",
         "requested": "[13.6.5, )",

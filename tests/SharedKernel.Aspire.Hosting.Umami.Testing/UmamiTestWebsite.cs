@@ -164,9 +164,9 @@ internal static class UmamiTestWebsite
         catch (Exception failure) when (!ct.IsCancellationRequested)
         {
             await error.WriteLineAsync(
-                $"Umami did not start, so {ConnectionStringVariable} is {Unavailable}: the tests that borrow Umami fail, the other services are handed over.")
+                $"Umami did not start, so {ConnectionStringVariable} is {Unavailable}: the tests that borrow Umami fail, the other services are handed over.", ct)
                 .ConfigureAwait(false);
-            await error.WriteLineAsync(failure.ToString()).ConfigureAwait(false);
+            await error.WriteLineAsync(failure.ToString(), ct).ConfigureAwait(false);
             return Unavailable;
         }
     }
