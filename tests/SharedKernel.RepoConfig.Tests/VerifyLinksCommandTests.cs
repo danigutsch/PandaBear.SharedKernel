@@ -80,8 +80,8 @@ public sealed class VerifyLinksCommandTests
         using var workspace = LinkTestRepository.CreateWorkspace(DocsConfiguration);
         workspace.WriteFile(
             "docs/u.md",
-            "# \u00dcn\u00efcode \u0130stanbul Kelvin\u212a\n[k2](#ncode-istanbul-kelvink)\n[k3](#NCODE-%C4%B0STANBUL-KELVINK)\n"
-            + "[k4](#ncode-istanbul-kelvin%E2%84%AA)\nissues/945\u00b2\n#945\u0301\nPR-1_\nhttps://GitHub.com/o/r/issues/1\n"
+            "# \u00dcn\u00efcode \u0130stanbul Kelvin\u212a\n[k2](#\u00fcn\u00efcode-i\u0307stanbul-kelvink)\n[k3](#%C3%9CN%C3%8FCODE-%C4%B0STANBUL-KELVINK)\n"
+            + "[k4](#\u00fcn\u00efcode-i\u0307stanbul-kelvin%E2%84%AA)\nissues/945\u00b2\n#945\u0301\nPR-1_\nhttps://GitHub.com/o/r/issues/1\n"
             + "https://github.com/o/r/issues/1;x\nhttps://github.com/o/r/issues/\u00b2\n(https://github.com/o/r/pull/3?x#y)\n"
             + "http://github.com/o/r/issues\n\u0001https://github.com/o/r/issues/4\n[x](%ZZ.md)\n[x](%C3%28.md)\n"
             + "a\u2028[x](m1.md)\n\u0085[x](m2.md)\n\u001f[r]: m3.md\n\u001d# Grp\n[g](#grp)\n");
@@ -98,7 +98,6 @@ public sealed class VerifyLinksCommandTests
             $"- docs/u.md:10: direct GitHub issue/PR link is not allowed; {Tracker}",
             $"- docs/u.md:11: direct GitHub issue/PR link is not allowed; {Tracker}",
             $"- docs/u.md:13: direct GitHub issue/PR link is not allowed; {Tracker}",
-            "- docs/u.md:3: missing Markdown anchor 'NCODE-%C4%B0STANBUL-KELVINK' in docs/u.md",
             "- docs/u.md:14: missing local link target: %ZZ.md",
             "- docs/u.md:15: missing local link target: %C3%28.md",
             "- docs/u.md:17: missing local link target: m1.md",
