@@ -1,10 +1,10 @@
 <Project>
     <!--
-      Projects compile the default C# version of their framework, C# 15 for .NET 11. .NET Standard 2.0 defaults to C# 7.3, so
-      analyzers, code fixes, and generators compile C# 15 like the rest of the repository.
+      Projects compile the default C# version of their framework. .NET Standard 2.0 defaults to C# 7.3, so analyzers, code
+      fixes, and generators compile the newest released C# version that the SDK supports, which moves with the SDK.
     -->
     <PropertyGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard'">
-        <LangVersion>15</LangVersion>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <!-- Export actual compiler inputs for the repository-wide governed-constant test. -->
