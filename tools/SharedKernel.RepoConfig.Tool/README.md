@@ -218,9 +218,11 @@ comments, is checked:
 - A local target is percent-decoded, resolves against the file's directory through symbolic links, and must exist
   inside the root. A target that starts with `/` resolves from the file system root, so it leaves the repository.
 - A fragment in a link to a Markdown file must name a heading anchor of that file, ignoring case. Every line that
-  starts with `#` is a heading. Its anchor drops HTML tags and `` ` ``, `*`, `_`, `~`, `[`, `]`, `(`, and `)`, is
-  lowercased, keeps only ASCII letters, digits, spaces, `.`, `_`, and `-`, and turns each space into `-`; a repeated
-  anchor gets the suffix `-1`, `-2`, and so on.
+  starts with `#` is a heading. Its anchor is the one GitHub generates, as
+  [github-slugger](https://github.com/Flet/github-slugger) reproduces it: the lowercased heading keeps letters of any
+  script, marks, decimal and letter numbers, connector punctuation such as `_`, spaces, and `-`, and turns each space
+  into `-`, so `ASP.NET Core` becomes `aspnet-core` and a leading emoji leaves a leading `-`. HTML tags are dropped, and
+  so are underscores that delimit emphasis outside code spans. A repeated anchor gets the suffix `-1`, `-2`, and so on.
 - GitHub issue and pull request URLs, repository-relative `issues/<n>` and `pull/<n>` paths, and bare references
   such as `#123`, `GH-123`, `PR-123`, `issue-123`, and `owner/name#123` are findings. Color values such as
   `fill:#e7f5ff`, URL fragments, and `Unicode Standard Annex #15` or `UAX #15` are not.

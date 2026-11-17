@@ -9,7 +9,7 @@ namespace PandaBear.Repositories;
 /// The text rules of <c>verify-links</c>: lines, fenced code, headings and their anchors, link targets, and issue and
 /// pull request references. Whitespace, word boundaries, lowercasing, line breaks, percent-decoding, and URL parsing
 /// follow Python's <c>str</c>, <c>re</c>, and <c>urllib.parse</c>, so that results match the Python link linter that
-/// the command replaces.
+/// the command replaces. Heading anchors follow GitHub's instead, because GitHub renders the documents.
 /// </summary>
 internal static partial class MarkdownLinkRules
 {
@@ -85,7 +85,10 @@ internal static partial class MarkdownLinkRules
 
     /// <summary>
     /// Returns the anchors of the headings in <paramref name="text"/>. Every line outside fenced code that starts with
-    /// <c>#</c> after leading whitespace is a heading; a repeated slug gets the suffix <c>-1</c>, <c>-2</c>, and so on.
+    /// <c>#</c> after leading whitespace is a heading. Its anchor is the one GitHub generates, as github-slugger
+    /// reproduces it: the lowercased text keeps letters, marks, decimal and letter numbers, connector punctuation such
+    /// as <c>_</c>, spaces, and <c>-</c>, and each space becomes <c>-</c>. HTML tags drop, and so do underscores that
+    /// delimit emphasis outside code spans. A repeated slug gets the suffix <c>-1</c>, <c>-2</c>, and so on.
     /// </summary>
     public static HashSet<string> Anchors(string text)
     {
@@ -282,10 +285,48 @@ internal static partial class MarkdownLinkRules
 
     private static string Slugify(string heading)
     {
-        var value = MarkupPattern().Replace(HtmlTagPattern().Replace(heading, string.Empty), string.Empty);
-        value = NonSlugPattern().Replace(TrimSpace(Lower(value)), string.Empty);
-        return value.Replace(' ', '-').Trim('-');
+        var slug = new StringBuilder(heading.Length);
+        foreach (var rune in Lower(HeadingText(HtmlTagPattern().Replace(heading, string.Empty))).EnumerateRunes())
+        {
+            if (rune.Value == ' ')
+            {
+                slug.Append('-');
+            }
+            else if (rune.Value == '-' || IsAnchorCategory(Rune.GetUnicodeCategory(rune)))
+            {
+                slug.Append(rune);
+            }
+        }
+
+        return slug.ToString();
     }
+
+    private static string HeadingText(string heading)
+    {
+        // Code spans render their content literally; elsewhere a pair of underscore runs around text is emphasis.
+        var text = new StringBuilder(heading.Length);
+        var start = 0;
+        foreach (Match span in CodeSpanPattern().Matches(heading))
+        {
+            text.Append(EmphasisUnderscorePattern().Replace(heading[start..span.Index], "$2")).Append(span.Value);
+            start = span.Index + span.Length;
+        }
+
+        return text.Append(EmphasisUnderscorePattern().Replace(heading[start..], "$2")).ToString();
+    }
+
+    private static bool IsAnchorCategory(UnicodeCategory category) => category
+        is UnicodeCategory.UppercaseLetter
+        or UnicodeCategory.LowercaseLetter
+        or UnicodeCategory.TitlecaseLetter
+        or UnicodeCategory.ModifierLetter
+        or UnicodeCategory.OtherLetter
+        or UnicodeCategory.NonSpacingMark
+        or UnicodeCategory.SpacingCombiningMark
+        or UnicodeCategory.EnclosingMark
+        or UnicodeCategory.DecimalDigitNumber
+        or UnicodeCategory.LetterNumber
+        or UnicodeCategory.ConnectorPunctuation;
 
     private static bool IsDigits(string value)
     {
@@ -378,11 +419,11 @@ internal static partial class MarkdownLinkRules
     [GeneratedRegex("<[^>]+>")]
     private static partial Regex HtmlTagPattern();
 
-    [GeneratedRegex(@"[`*_~\[\]()]")]
-    private static partial Regex MarkupPattern();
+    [GeneratedRegex("(`+)(?!`).*?(?<!`)\\1(?!`)")]
+    private static partial Regex CodeSpanPattern();
 
-    [GeneratedRegex("[^a-z0-9 _.-]")]
-    private static partial Regex NonSlugPattern();
+    [GeneratedRegex(@"(?<![\p{L}\p{N}])(_+)(?![\s_])(.+?)(?<![\s_])\1(?![\p{L}\p{N}])")]
+    private static partial Regex EmphasisUnderscorePattern();
 
     [GeneratedRegex("(?:%[0-9a-fA-F]{2})+")]
     private static partial Regex PercentEscapesPattern();
