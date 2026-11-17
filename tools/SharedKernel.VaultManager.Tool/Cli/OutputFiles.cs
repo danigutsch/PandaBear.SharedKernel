@@ -1,6 +1,6 @@
 using System.Text;
-using PandaBear.IO;
 using PandaBear.InputNormalization;
+using PandaBear.IO;
 
 namespace PandaBear.VaultManager.Tool.Cli;
 

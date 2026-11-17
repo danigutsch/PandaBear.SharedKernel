@@ -1,9 +1,9 @@
-using System.CommandLine.Parsing;
 using System.CommandLine;
+using System.CommandLine.Parsing;
 using System.Globalization;
 using System.Text;
-using PandaBear.IO;
 using PandaBear.InputNormalization;
+using PandaBear.IO;
 using PandaBear.Vault.Brief;
 using PandaBear.Vault.Merge;
 using PandaBear.Vault.Pipeline;

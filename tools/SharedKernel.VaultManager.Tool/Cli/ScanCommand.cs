@@ -1,6 +1,6 @@
 using System.CommandLine;
-using PandaBear.IO;
 using PandaBear.InputNormalization;
+using PandaBear.IO;
 using PandaBear.Vault.Analysis;
 using PandaBear.Vault.Pipeline;
 using PandaBear.VaultManager.Tool.Formats;
