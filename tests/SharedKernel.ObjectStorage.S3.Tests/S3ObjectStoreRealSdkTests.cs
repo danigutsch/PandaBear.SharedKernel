@@ -1,7 +1,6 @@
 using System.Net;
 using System.Runtime.InteropServices;
 using Amazon.S3;
-using PandaBear.IO;
 
 namespace PandaBear.ObjectStorage.S3.Tests;
 

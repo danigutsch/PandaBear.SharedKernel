@@ -96,7 +96,7 @@ public static partial class DevcontainerVerification
             }
 
             await WriteStep(output, "Devcontainer validation completed successfully").ConfigureAwait(false);
-            await output.WriteLineAsync($"Logs written to '{options.LogDirectory}'.").ConfigureAwait(false);
+            await output.WriteLineAsync($"Logs written to '{options.LogDirectory}'.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return 0;
         }
         finally

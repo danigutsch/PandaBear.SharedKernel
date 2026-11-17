@@ -249,7 +249,7 @@ public sealed class SharedKernelTestingHelperTests
         var convertedValue2 = (bool?)false;
         convertedValue2.ShouldBeFalse();
         1.234.ShouldBe(1.23, 2);
-        1.235.ShouldBe(1.23, 2, MidpointRounding.ToZero);
+        1.129.ShouldBe(1.121, 2, MidpointRounding.ToZero);
         "beta".ShouldNotBe("alpha");
         var convertedValue3 = (object?)null;
         convertedValue3.ShouldBeNull();

@@ -83,7 +83,7 @@ internal static class SecretText
         int start = 0;
         while (start <= text.Length)
         {
-            int newline = text.IndexOf('\n', start);
+            int newline = text.IndexOf('\n', start, StringComparison.Ordinal);
             int end = newline < 0 ? text.Length : newline;
             int contentEnd = end > start && text[end - 1] == '\r' ? end - 1 : end;
             lines.Add((start, text[start..contentEnd]));
@@ -137,13 +137,35 @@ internal static class SecretText
         }
 
         byte[] buffer = new byte[compact.Length / 4 * 3];
-        if (Convert.TryFromBase64String(compact, buffer, out int written))
+        if (Convert.TryFromBase64String(compact, buffer, out int written) || TryDecodeClearingUnusedBits(compact, buffer, out written))
         {
             bytes = buffer[..written];
             return true;
         }
 
         return false;
+    }
+
+    // Other tools accept padded base64 whose final character has nonzero unused bits, which Convert.TryFromBase64String
+    // rejects. Clearing them accepts those keys and decodes to the same bytes as the canonical text.
+    private static bool TryDecodeClearingUnusedBits(string compact, Span<byte> buffer, out int written)
+    {
+        written = 0;
+        int padding = compact.EndsWith("==", StringComparison.Ordinal) ? 2 : compact.EndsWith('=', StringComparison.Ordinal) ? 1 : 0;
+        if (padding == 0)
+        {
+            return false;
+        }
+
+        int index = compact.Length - padding - 1;
+        int value = Base64Alphabet.IndexOf(compact[index], StringComparison.Ordinal);
+        if (value < 0)
+        {
+            return false;
+        }
+
+        char canonical = Base64Alphabet[value & ~(padding == 2 ? 0x0F : 0x03)];
+        return Convert.TryFromBase64String(string.Concat(compact.AsSpan(0, index), new ReadOnlySpan<char>(in canonical), compact.AsSpan(index + 1)), buffer, out written);
     }
 
     /// <summary>Whether the text uses only the base64 or base64url alphabet, with optional padding.</summary>
@@ -161,6 +183,8 @@ internal static class SecretText
     {
         return !value.ContainsAnyExcept(HexCharacters);
     }
+
+    private const string Base64Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
     private static readonly SearchValues<char> Base64Characters =
         SearchValues.Create("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/-_");

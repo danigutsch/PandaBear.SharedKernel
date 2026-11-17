@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using PandaBear.Repository.Tests.Conventions;
 
@@ -57,6 +58,7 @@ public sealed class WorkflowContractTests
                 + "          sparse-checkout: |\n            src\n            tools\n          sparse-checkout-cone-mode: true\n      - uses:",
             StringComparison.Ordinal);
         job.ShouldContain("          global-json-file: source-build/global.json\n", StringComparison.Ordinal);
+        job.ShouldNotContain("./.github/actions/", StringComparison.Ordinal, "The sparse checkout has no .github folder, so a local action cannot run.");
         job.ShouldContain(
             "        working-directory: source-build\n        shell: bash\n        env:\n          TOOL: ${{ matrix.tool }}\n"
                 + "        run: dotnet build \"tools/$TOOL\" -c Release\n",
@@ -197,7 +199,7 @@ public sealed class WorkflowContractTests
             var name = Path.GetFileName(file);
             var lines = File.ReadAllText(file).Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n');
             var jobsStart = Array.IndexOf(lines, "jobs:");
-            var jobKeys = lines.Skip(jobsStart + 1).TakeWhile(static line => line.Length == 0 || line.StartsWith(' ')).Where(static line => line.StartsWith("  ", StringComparison.Ordinal) && !line.StartsWith("   ", StringComparison.Ordinal) && line.EndsWith(':')).Select(static line => line.Trim().TrimEnd(':')).ToArray();
+            var jobKeys = lines.Skip(jobsStart + 1).TakeWhile(static line => line.Length == 0 || line.AsSpan().StartsWith(' ')).Where(static line => line.StartsWith("  ", StringComparison.Ordinal) && !line.StartsWith("   ", StringComparison.Ordinal) && line.AsSpan().EndsWith(':')).Select(static line => line.Trim().TrimEnd(':')).ToArray();
             var workflow = string.Join('\n', lines);
             if (workflow.Contains("secrets:", StringComparison.Ordinal))
             {
@@ -224,7 +226,7 @@ public sealed class WorkflowContractTests
                 if (line.TrimStart().StartsWith("run:", StringComparison.Ordinal))
                 {
                     var indent = line.Length - line.TrimStart().Length;
-                    var block = line.TrimEnd().EndsWith('|') || line.TrimEnd().EndsWith('>')
+                    var block = line.TrimEnd().AsSpan().EndsWith('|') || line.TrimEnd().AsSpan().EndsWith('>')
                         ? lines.Skip(index + 1).TakeWhile(next => next.Length == 0 || next.Length - next.TrimStart().Length > indent)
                         : [line];
                     if (block.Any(static text => text.Contains("${{ inputs.", StringComparison.Ordinal)))
@@ -322,5 +324,78 @@ public sealed class WorkflowContractTests
         consumption.ShouldContain("if: always()", StringComparison.Ordinal);
         consumption.ShouldContain("published-candidate/consumption.json", StringComparison.Ordinal);
         workflow.ShouldContain("test \"$PUBLISHED_CANDIDATE_RESULT\" = success", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Workflows_name_no_framework_or_runtime_version()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var files = Directory.GetFiles(Path.Combine(root, ".github", "workflows"), "*.yml");
+
+        // Act
+        var violations = files
+            .SelectMany(static file => File.ReadAllLines(file).Select((line, index) => (Name: Path.GetFileName(file), Line: index + 1, Text: line)))
+            .Where(static entry => Regex.IsMatch(entry.Text, @"--framework\b|dotnet-version:\s*\d|\bnet\d+\.\d+\b|\b\d+\.0\.x\b", RegexOptions.CultureInvariant))
+            .Select(static entry => entry.Name + ":" + entry.Line + ": " + entry.Text.Trim())
+            .ToArray();
+
+        // Assert
+        files.ShouldNotBeEmpty();
+        violations.ShouldBeEmpty("The repository's framework comes from SharedKernelTargetFramework; workflows derive runtimes from it.");
+    }
+
+    [Fact]
+    public void The_setup_action_installs_the_runtime_of_an_older_framework()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var action = File.ReadAllText(Path.Combine(root, ".github", "actions", "setup-dotnet-tool", "action.yml")).Replace("\r\n", "\n", StringComparison.Ordinal);
+
+        // Act
+        var runtimeStep = action[action.IndexOf("id: framework", StringComparison.Ordinal)..];
+
+        // Assert
+        action.ShouldNotContain("dotnet-version: ${{ inputs.dotnet-version }}", StringComparison.Ordinal);
+        runtimeStep.ShouldContain("-getProperty:SharedKernelTargetFramework", StringComparison.Ordinal);
+        runtimeStep.ShouldContain("dotnet --version", StringComparison.Ordinal);
+        runtimeStep.ShouldContain("-lt", StringComparison.Ordinal);
+        runtimeStep.ShouldContain("-getProperty:SharedKernelTargetFramework | tail -n 1", StringComparison.Ordinal, "Banner lines before the property value must not hide it.");
+        runtimeStep.ShouldContain("exit 1", StringComparison.Ordinal, "A value that is not a framework moniker fails the setup instead of installing no runtime.");
+        runtimeStep.ShouldContain("steps.framework.outputs.runtime != ''", StringComparison.Ordinal);
+        runtimeStep.ShouldContain("dotnet-version: ${{ steps.framework.outputs.runtime }}", StringComparison.Ordinal);
+        runtimeStep.ShouldContain("actions/setup-dotnet@", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void The_preview_workflow_is_manual_and_scheduled_and_not_required()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "dotnet-preview.yml")).Replace("\r\n", "\n", StringComparison.Ordinal);
+        var pins = File.ReadAllText(Path.Combine(root, ".github", "action-pins.json"));
+
+        // Act
+        var trigger = workflow[workflow.IndexOf("\non:\n", StringComparison.Ordinal)..workflow.IndexOf("\npermissions:", StringComparison.Ordinal)];
+        var uses = Regex.Matches(workflow, @"uses:\s*(\S+)", RegexOptions.CultureInvariant).Select(static match => match.Groups[1].Value).ToArray();
+
+        // Assert
+        trigger.ShouldContain("\n  schedule:\n", StringComparison.Ordinal);
+        trigger.ShouldContain("\n  workflow_dispatch:", StringComparison.Ordinal);
+        trigger.ShouldNotContain("pull_request", StringComparison.Ordinal);
+        trigger.ShouldNotContain("push:", StringComparison.Ordinal);
+        workflow.ShouldContain("\npermissions:\n  contents: read\n", StringComparison.Ordinal);
+        workflow.ShouldNotContain("write", StringComparison.Ordinal);
+        workflow.ShouldContain("releases-index.json", StringComparison.Ordinal);
+        workflow.ShouldContain("::notice::", StringComparison.Ordinal);
+        workflow.ShouldContain("-p:RestorePackagesWithLockFile=false", StringComparison.Ordinal);
+        workflow.ShouldContain("-p:RestoreLockedMode=false", StringComparison.Ordinal);
+        workflow.ShouldContain("-p:SharedKernelTargetFramework=", StringComparison.Ordinal);
+        workflow.ShouldContain("dotnet-quality: preview", StringComparison.Ordinal);
+        workflow.ShouldNotContain("rm global.json", StringComparison.Ordinal, "global.json also pins the Aspire AppHost SDK and selects the Microsoft.Testing.Platform runner.");
+        workflow.ShouldContain("\"allowPrerelease\": true", StringComparison.Ordinal);
+        uses.ShouldNotBeEmpty();
+        uses.Where(use => !Regex.IsMatch(use, "@[0-9a-f]{40}$", RegexOptions.CultureInvariant) || !pins.Contains(use.Split('@')[0], StringComparison.Ordinal))
+            .ShouldBeEmpty("Every action is pinned to a full SHA listed in .github/action-pins.json.");
     }
 }

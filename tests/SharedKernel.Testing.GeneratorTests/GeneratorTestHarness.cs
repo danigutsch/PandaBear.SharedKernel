@@ -35,7 +35,12 @@ internal static class GeneratorTestHarness
                 MetadataReference.CreateFromFile(typeof(CallProxy).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(IServiceCollection).Assembly.Location),
             ]);
-        return compilation.WithOptions(compilation.Options.WithNullableContextOptions(NullableContextOptions.Enable));
+        // Like the SDK, which suppresses the CS1701 and CS1702 assembly unification warnings by default.
+        return compilation.WithOptions(compilation.Options
+            .WithNullableContextOptions(NullableContextOptions.Enable)
+            .WithSpecificDiagnosticOptions(compilation.Options.SpecificDiagnosticOptions
+                .SetItem("CS1701", ReportDiagnostic.Suppress)
+                .SetItem("CS1702", ReportDiagnostic.Suppress)));
     }
 
     /// <summary>Runs the CallProxy generator over the compilation.</summary>

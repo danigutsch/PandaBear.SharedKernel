@@ -19,9 +19,10 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
         Directory.CreateDirectory(PackageDirectory);
         File.WriteAllText(
             Path.Combine(Root, "Directory.Build.props"),
-            """
+            $"""
             <Project>
               <PropertyGroup>
+                <TargetFramework>{TestTargetFramework.Moniker}</TargetFramework>
                 <RepositoryUrl>https://github.com/danigutsch/PandaBear.SharedKernel</RepositoryUrl>
               </PropertyGroup>
             </Project>

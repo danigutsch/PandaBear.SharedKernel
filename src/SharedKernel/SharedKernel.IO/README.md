@@ -24,9 +24,8 @@ The threshold bounds retained content, not all process allocations. Hosts own re
 private temporary storage, disk quotas, and crash cleanup. Do not log input or temporary file paths.
 NativeAOT analyzers are enabled; packed NativeAOT and Windows execution are not yet proven for this package.
 
-To hand bytes you already hold to a `Stream` API without copying, wrap them in
-`new ReadOnlyMemoryStream(memory)`: a read-only, seekable stream over any `ReadOnlyMemory<byte>`, array-backed or not.
-The memory is not owned or copied; keep it unchanged while the stream is in use. A canceled token makes asynchronous reads throw.
+To hand bytes you already hold to a `Stream` API without copying, use .NET's `System.IO.ReadOnlyMemoryStream`, which
+replaced this package's type of the same name in .NET 11.
 
 ## Repository paths
 

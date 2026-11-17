@@ -1,11 +1,13 @@
 name: Set up repository tooling
 description: >-
-  Set up the .NET SDK pinned by global.json with the lock-file NuGet cache, restore a repository-owned
-  .NET CLI project in locked mode, and build it in Release. A stale lock file fails the restore.
+  Set up the .NET SDK pinned by global.json with the lock-file NuGet cache, add the runtime of the repository's
+  framework when that framework is older than the SDK, then restore a repository-owned .NET CLI project in locked
+  mode and build it in Release. A stale lock file fails the restore.
 inputs:
   project:
-    description: Tool project to restore and build, relative to working-directory.
-    required: true
+    description: Tool project to restore and build, relative to working-directory. Empty only sets up the SDK.
+    required: false
+    default: ''
   global-json-file:
     description: Path of the global.json that pins the SDK, relative to the workspace.
     required: false
@@ -26,7 +28,37 @@ runs:
         global-json-file: ${{ inputs.global-json-file }}
         cache: true
         cache-dependency-path: ${{ inputs.cache-dependency-path }}
+    - name: Find the runtime of the repository framework
+      id: framework
+      shell: bash
+      env:
+        GLOBAL_JSON_FILE: ${{ inputs.global-json-file }}
+      run: |
+        # The framework is the SharedKernelTargetFramework property of the Directory.Build.props beside global.json.
+        # An empty property installs nothing; the SDK covers a framework of its own major.
+        root="$(dirname "$GLOBAL_JSON_FILE")"
+        runtime=''
+        if [[ -f "$root/Directory.Build.props" ]]; then
+          # The property is the last line: the dotnet CLI can print banner lines first.
+          framework="$(cd "$root" && dotnet msbuild Directory.Build.props -getProperty:SharedKernelTargetFramework | tail -n 1 | tr -d '[:space:]')"
+          sdk="$(cd "$root" && dotnet --version | tail -n 1)"
+          if [[ "$framework" =~ ^net([0-9]+)\.[0-9]+$ ]]; then
+            if [[ "${BASH_REMATCH[1]}" -lt "${sdk%%.*}" ]]; then
+              runtime="${BASH_REMATCH[1]}.0.x"
+            fi
+          elif [[ -n "$framework" ]]; then
+            echo "::error file=$root/Directory.Build.props::SharedKernelTargetFramework is '$framework', not a framework such as net<major>.<minor>."
+            exit 1
+          fi
+        fi
+        echo "runtime=$runtime" >> "$GITHUB_OUTPUT"
+    - name: Install the runtime of the older repository framework
+      if: steps.framework.outputs.runtime != ''
+      uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+      with:
+        dotnet-version: ${{ steps.framework.outputs.runtime }}
     - name: Build the selected repository tool
+      if: inputs.project != ''
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       env:

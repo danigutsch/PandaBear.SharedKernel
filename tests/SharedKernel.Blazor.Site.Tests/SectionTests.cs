@@ -49,6 +49,8 @@ public sealed class SectionTests : BunitContext
     [InlineData("")]
     [InlineData(" ")]
     [InlineData("two words")]
+    [InlineData("two\u00A0words")]
+    [InlineData("two\u2003words")]
     public void A_blank_or_spaced_heading_ID_is_rejected(string id)
     {
         // Arrange & Act

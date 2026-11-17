@@ -1,5 +1,6 @@
 using Microsoft.OpenApi;
 using System.Reflection;
+using MediaTypeMap = System.Collections.Generic.Dictionary<string, Microsoft.OpenApi.IOpenApiMediaType>;
 
 namespace PandaBear.OpenApi.Tests;
 
@@ -42,9 +43,9 @@ internal static class MultipartFormRequestBodyDocumentTransformerTestsHelpers
                         {
                             RequestBody = new OpenApiRequestBody
                             {
-                                Content = new Dictionary<string, OpenApiMediaType>
+                                Content = new MediaTypeMap
                                 {
-                                    ["multipart/form-data"] = new()
+                                    ["multipart/form-data"] = new OpenApiMediaType
                                     {
                                         Schema = new OpenApiSchema
                                         {

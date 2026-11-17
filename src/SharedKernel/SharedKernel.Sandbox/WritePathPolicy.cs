@@ -33,7 +33,7 @@ internal static class WritePathPolicy
 
         var risk = WriteRisk.None;
         var tilde = entry.StartsWith("~/", StringComparison.Ordinal);
-        var absolute = entry.StartsWith('/');
+        var absolute = entry.StartsWith('/', StringComparison.Ordinal);
         var lexical = Segments(tilde ? entry[2..] : entry);
         if (HasSensitiveGit(lexical))
         {

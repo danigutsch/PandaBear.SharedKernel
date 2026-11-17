@@ -46,8 +46,8 @@ internal static class OpenApiGeneration
         var host = DotnetHostPath();
         foreach (var target in selected)
         {
-            await error.WriteAsync(await runConfigured(
-                host, Arguments(target, refresh, buildConfiguration), root, startInfo => ApplyEnvironment(startInfo, target.PreserveEnvironment), ct).ConfigureAwait(false))
+            await error.WriteAsync((await runConfigured(
+                host, Arguments(target, refresh, buildConfiguration), root, startInfo => ApplyEnvironment(startInfo, target.PreserveEnvironment), ct).ConfigureAwait(false)).AsMemory(), CancellationToken.None)
                 .ConfigureAwait(false);
         }
     }

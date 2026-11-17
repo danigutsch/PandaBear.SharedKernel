@@ -41,7 +41,7 @@ internal static partial class CommitMessageVerification
         var lines = message.Split(LineBreaks, StringSplitOptions.None)
             .Select(static line => line.TrimEnd())
             .TakeWhile(static line => line != ScissorsLine)
-            .Where(static line => !line.TrimStart().StartsWith('#'))
+            .Where(static line => !line.TrimStart().StartsWith('#', StringComparison.Ordinal))
             .SkipWhile(static line => line.Length == 0)
             .ToArray();
         if (lines.Length == 0)

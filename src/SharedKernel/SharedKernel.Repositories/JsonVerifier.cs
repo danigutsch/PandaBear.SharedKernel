@@ -1,6 +1,4 @@
-using System.Buffers;
 using System.Globalization;
-using System.Text;
 using System.Text.Json;
 using System.Text.Unicode;
 using PandaBear.IO;
@@ -91,11 +89,8 @@ public static class JsonVerifier
     /// </summary>
     public static string DescribeInvalidUtf8(ReadOnlySpan<byte> content)
     {
-        var offset = 0;
-        while (Rune.DecodeFromUtf8(content[offset..], out _, out var consumed) == OperationStatus.Done)
-        {
-            offset += consumed;
-        }
+        var invalid = Utf8.IndexOfInvalidSubsequence(content);
+        var offset = invalid < 0 ? content.Length : invalid;
 
         var preceding = content[..offset];
         var line = preceding.Count((byte)'\n') + 1;

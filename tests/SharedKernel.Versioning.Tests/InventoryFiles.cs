@@ -31,7 +31,7 @@ internal static class InventoryFiles
 
     private static (string Left, string Right) Split(string value, char separator)
     {
-        var index = value.LastIndexOf(separator);
+        var index = value.AsSpan().LastIndexOf(separator);
         return (value[..index], value[(index + 1)..]);
     }
 

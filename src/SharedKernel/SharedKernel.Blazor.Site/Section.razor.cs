@@ -41,7 +41,7 @@ public sealed partial class Section
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(Title);
         Heading.RequireLevel(Level, nameof(Level));
-        if (HeadingId is not null && (HeadingId.Length == 0 || HeadingId.Any(char.IsWhiteSpace)))
+        if (HeadingId is not null && (HeadingId.Length == 0 || HeadingId.AsSpan().ContainsAnyWhiteSpace()))
         {
             throw new ArgumentException("A heading id must not be empty or contain white space.", nameof(HeadingId));
         }

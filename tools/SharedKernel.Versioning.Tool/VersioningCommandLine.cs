@@ -74,7 +74,7 @@ internal static class VersioningCommandLine
         SetAction(command, async (parseResult, output, _) =>
         {
             var commit = ConventionalCommitParser.Parse(string.Join(' ', parseResult.GetRequiredValue(message)));
-            await output.WriteLineAsync(ReleaseImpactText.ToOutputValue(commit.Impact)).ConfigureAwait(false);
+            await output.WriteLineAsync(ReleaseImpactText.ToOutputValue(commit.Impact).AsMemory(), CancellationToken.None).ConfigureAwait(false);
         });
         return command;
     }
@@ -99,7 +99,7 @@ internal static class VersioningCommandLine
                 messages,
                 parseResult.GetValue(prerelease),
                 parseResult.GetValue(sha));
-            await output.WriteLineAsync(VersionOutputJson.Serialize(version)).ConfigureAwait(false);
+            await output.WriteLineAsync(VersionOutputJson.Serialize(version).AsMemory(), CancellationToken.None).ConfigureAwait(false);
         });
         return command;
     }
@@ -154,7 +154,7 @@ internal static class VersioningCommandLine
                 await File.AppendAllLinesAsync(summaryFile, ReleaseVersionCalculator.CreateSummary(result), ct).ConfigureAwait(false);
             }
 
-            await output.WriteLineAsync(result.VersionJson).ConfigureAwait(false);
+            await output.WriteLineAsync(result.VersionJson.AsMemory(), CancellationToken.None).ConfigureAwait(false);
         });
         return command;
     }
@@ -169,7 +169,7 @@ internal static class VersioningCommandLine
         SetAction(command, async (parseResult, output, _) =>
         {
             PublicApiBaselineChecker.EnsureBaselinesPresent(parseResult.GetRequiredValue(repoRoot));
-            await output.WriteLineAsync("Public API baselines are present for SharedKernel projects.").ConfigureAwait(false);
+            await output.WriteLineAsync("Public API baselines are present for SharedKernel projects.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
         });
         return command;
     }
@@ -184,7 +184,7 @@ internal static class VersioningCommandLine
         SetAction(command, async (parseResult, output, _) =>
         {
             PackageMetadataValidator.Validate(parseResult.GetRequiredValue(repoRoot));
-            await output.WriteLineAsync("Package metadata validation passed.").ConfigureAwait(false);
+            await output.WriteLineAsync("Package metadata validation passed.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
         });
         return command;
     }
@@ -197,7 +197,7 @@ internal static class VersioningCommandLine
         range.Validators.Add(static result =>
         {
             var value = result.GetValueOrDefault<string>();
-            if (string.IsNullOrWhiteSpace(value) || value.StartsWith('-'))
+            if (string.IsNullOrWhiteSpace(value) || value.StartsWith('-', StringComparison.Ordinal))
             {
                 result.AddError("<git-range> requires a revision range that is not empty and does not start with '-'.");
             }
@@ -213,11 +213,11 @@ internal static class VersioningCommandLine
             var gitRange = parseResult.GetRequiredValue(range);
             if (await history.HasBreakingChangeMarker(gitRange, parseResult.GetRequiredValue(repoRoot), ct).ConfigureAwait(false))
             {
-                await output.WriteLineAsync("Breaking-change marker found.").ConfigureAwait(false);
+                await output.WriteLineAsync("Breaking-change marker found.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
                 return 0;
             }
 
-            await parseResult.InvocationConfiguration.Error.WriteLineAsync($"No breaking-change marker found in {gitRange}.").ConfigureAwait(false);
+            await parseResult.InvocationConfiguration.Error.WriteLineAsync($"No breaking-change marker found in {gitRange}.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return NoBreakingChangeMarker;
         });
         return command;
@@ -381,7 +381,7 @@ internal static class VersioningCommandLine
                 parseResult.GetValue(sha));
             var changes = await input.ReadToEndAsync(ct).ConfigureAwait(false);
             await ReleasePreparationArtifacts.Write(options, changes).ConfigureAwait(false);
-            await output.WriteLineAsync("Release prep artifacts: " + options.OutputDirectory).ConfigureAwait(false);
+            await output.WriteLineAsync(("Release prep artifacts: " + options.OutputDirectory).AsMemory(), CancellationToken.None).ConfigureAwait(false);
         });
         return command;
     }
@@ -399,7 +399,7 @@ internal static class VersioningCommandLine
         {
             var checkedProjects = PackageLockInventory.VerifyLockCoverage(parseResult.GetRequiredValue(repoRoot));
             await output.WriteLineAsync(
-                $"Lock coverage verified: {checkedProjects} lock-free project(s) resolve only packages that a committed lock file resolves.").ConfigureAwait(false);
+                $"Lock coverage verified: {checkedProjects} lock-free project(s) resolve only packages that a committed lock file resolves.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
         });
         return command;
     }
@@ -430,12 +430,14 @@ internal static class VersioningCommandLine
         var version = SemanticVersionOption("--version", "Unique prerelease package version. Default: <base>-alpha.local.t<UTC timestamp>.g<revision>.");
         var baselineVersion = SemanticVersionOption("--baseline-version", BaselineVersionDescription);
         var aot = AotOption();
+        var framework = FrameworkOption();
         var repoRoot = RepoRootOption();
         var command = new Command("validate-candidate", "Creates a candidate and consumes its packages on this platform.")
         {
             version,
             baselineVersion,
             aot,
+            framework,
             repoRoot,
         };
         SetAction(command, (parseResult, output, ct) => candidates.Validate(
@@ -443,7 +445,10 @@ internal static class VersioningCommandLine
                 Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
                 parseResult.GetValue(version)?.ToString(),
                 parseResult.GetValue(baselineVersion)?.ToString(),
-                parseResult.GetValue(aot)),
+                parseResult.GetValue(aot))
+            {
+                Frameworks = parseResult.GetValue(framework) is { Length: > 0 } frameworks ? frameworks : null,
+            },
             output,
             parseResult.InvocationConfiguration.Error,
             ct));
@@ -460,6 +465,7 @@ internal static class VersioningCommandLine
         };
         var evidence = new Option<string>("--output") { Description = "Evidence file to write. Default: the candidate manifest.", HelpName = "path" };
         var aot = AotOption();
+        var framework = FrameworkOption();
         var repoRoot = RepoRootOption();
         var command = new Command("consume-candidate", "Verifies candidate package hashes, consumes the packages on this platform, and records the result.")
         {
@@ -467,6 +473,7 @@ internal static class VersioningCommandLine
             candidateDirectory,
             evidence,
             aot,
+            framework,
             repoRoot,
         };
         command.Validators.Add(result =>
@@ -489,7 +496,10 @@ internal static class VersioningCommandLine
                     Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
                     manifest,
                     parseResult.GetValue(evidence) is { } destination ? Path.GetFullPath(destination) : manifest,
-                    parseResult.GetValue(aot)),
+                    parseResult.GetValue(aot))
+                {
+                    Frameworks = parseResult.GetValue(framework) is { Length: > 0 } frameworks ? frameworks : null,
+                },
                 output,
                 parseResult.InvocationConfiguration.Error,
                 ct);
@@ -533,6 +543,7 @@ internal static class VersioningCommandLine
         var version = SemanticVersionOption("--version", "Package version.");
         version.Required = true;
         var aot = AotOption();
+        var framework = FrameworkOption();
         var repoRoot = RepoRootOption();
         var command = new Command(
             "consume-packages",
@@ -541,6 +552,7 @@ internal static class VersioningCommandLine
             feed,
             version,
             aot,
+            framework,
             repoRoot,
         };
         SetAction(command, (parseResult, output, ct) => packager.ConsumePackages(
@@ -548,7 +560,10 @@ internal static class VersioningCommandLine
                 Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
                 Path.GetFullPath(parseResult.GetRequiredValue(feed)),
                 parseResult.GetRequiredValue(version).ToString(),
-                parseResult.GetValue(aot)),
+                parseResult.GetValue(aot))
+            {
+                Frameworks = parseResult.GetValue(framework) is { Length: > 0 } frameworks ? frameworks : null,
+            },
             output,
             parseResult.InvocationConfiguration.Error,
             ct));
@@ -615,6 +630,32 @@ internal static class VersioningCommandLine
 
     private static Option<bool> AotOption() => new("--aot") { Description = "Also publishes and runs the samples with NativeAOT." };
 
+    private static Option<string[]> FrameworkOption() => new("--framework")
+    {
+        Description = "Target framework to build the packed consumers for, such as net11.0. Repeat it to consume each framework in turn. Default: the framework of the repository root's Directory.Build.props.",
+        HelpName = "tfm",
+        CustomParser = result =>
+        {
+            var values = result.Tokens.Select(static token => token.Value).ToArray();
+            foreach (var value in values)
+            {
+                if (!ConsumerFrameworks.IsValid(value))
+                {
+                    result.AddError($"Option '--framework' expects a target framework such as net10.0, but got '{value}'.");
+                    return null;
+                }
+            }
+
+            if (values.Distinct(StringComparer.Ordinal).Count() != values.Length)
+            {
+                result.AddError($"Option '--framework' lists '{values.GroupBy(static v => v, StringComparer.Ordinal).First(static g => g.Count() > 1).Key}' more than once.");
+                return null;
+            }
+
+            return values;
+        },
+    };
+
     private static Option<SemanticVersion> SemanticVersionOption(string name, string description) => new(name)
     {
         Description = description,
@@ -661,7 +702,7 @@ internal static class VersioningCommandLine
             }
             catch (Exception exception) when (exception is ArgumentException or InvalidOperationException or IOException)
             {
-                await error.WriteLineAsync("Error: " + exception.Message).ConfigureAwait(false);
+                await error.WriteLineAsync(("Error: " + exception.Message).AsMemory(), CancellationToken.None).ConfigureAwait(false);
                 return CommandFailed;
             }
         });

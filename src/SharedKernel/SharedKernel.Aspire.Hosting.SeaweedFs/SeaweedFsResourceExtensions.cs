@@ -128,7 +128,7 @@ public static class SeaweedFsResourceExtensions
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         var bucket = bucketName ?? name;
-        if (string.IsNullOrWhiteSpace(bucket) || bucket.Contains(',', StringComparison.Ordinal) || bucket.Any(char.IsWhiteSpace))
+        if (string.IsNullOrWhiteSpace(bucket) || bucket.Contains(',', StringComparison.Ordinal) || bucket.AsSpan().ContainsAnyWhiteSpace())
         {
             throw new ArgumentException("A bucket name must not be blank or contain commas or whitespace.", nameof(bucketName));
         }

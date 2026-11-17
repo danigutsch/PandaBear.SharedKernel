@@ -84,17 +84,17 @@ public sealed class PackageConsumptionWorkspace : IDisposable
     /// Gets the publish directory for the current consumer project.
     /// </summary>
     /// <param name="configuration">The build configuration. Defaults to <c>Release</c>.</param>
-    /// <param name="targetFramework">The target framework. Defaults to <c>net10.0</c>.</param>
+    /// <param name="targetFramework">The target framework, or <see langword="null"/> for <see cref="TestTargetFramework.Moniker"/>.</param>
     /// <param name="runtimeIdentifier">The runtime identifier when publish output is RID-specific.</param>
     /// <returns>The publish directory path.</returns>
     public string GetPublishDirectory(
         string configuration = "Release",
-        string targetFramework = "net10.0",
+        string? targetFramework = null,
         string? runtimeIdentifier = null)
     {
         return runtimeIdentifier is null
-            ? Path.Combine(ProjectDirectory, "bin", configuration, targetFramework, "publish")
-            : Path.Combine(ProjectDirectory, "bin", configuration, targetFramework, runtimeIdentifier, "publish");
+            ? Path.Combine(ProjectDirectory, "bin", configuration, targetFramework ?? TestTargetFramework.Moniker, "publish")
+            : Path.Combine(ProjectDirectory, "bin", configuration, targetFramework ?? TestTargetFramework.Moniker, runtimeIdentifier, "publish");
     }
 
     /// <summary>
@@ -102,12 +102,12 @@ public sealed class PackageConsumptionWorkspace : IDisposable
     /// </summary>
     /// <param name="runtimeIdentifier">The runtime identifier used for publish.</param>
     /// <param name="configuration">The build configuration. Defaults to <c>Release</c>.</param>
-    /// <param name="targetFramework">The target framework. Defaults to <c>net10.0</c>.</param>
+    /// <param name="targetFramework">The target framework, or <see langword="null"/> for <see cref="TestTargetFramework.Moniker"/>.</param>
     /// <returns>The published executable path.</returns>
     public string GetPublishedExecutablePath(
         string runtimeIdentifier,
         string configuration = "Release",
-        string targetFramework = "net10.0")
+        string? targetFramework = null)
     {
         var extension = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".exe" : string.Empty;
         var projectName = Path.GetFileNameWithoutExtension(ProjectFilePath);

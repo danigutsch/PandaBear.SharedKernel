@@ -23,7 +23,7 @@ public static class FolderTree
             }
 
             result.Add(path);
-            for (int index = path.IndexOf('/', StringComparison.Ordinal); index >= 0; index = path.IndexOf('/', index + 1))
+            for (int index = path.IndexOf('/', StringComparison.Ordinal); index >= 0; index = path.IndexOf('/', index + 1, StringComparison.Ordinal))
             {
                 if (index > 0 && path[index - 1] != '/')
                 {

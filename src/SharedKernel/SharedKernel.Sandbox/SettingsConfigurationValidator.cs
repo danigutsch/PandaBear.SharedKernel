@@ -72,7 +72,7 @@ internal static partial class SettingsConfigurationValidator
     {
         var segments = entry.Split('/', StringSplitOptions.RemoveEmptyEntries).Where(static segment => segment != ".");
         var joined = string.Join('/', segments);
-        return entry.StartsWith('/') ? "/" + joined : entry.StartsWith("~/", StringComparison.Ordinal) ? joined.Length == 0 ? "~" : joined : joined;
+        return entry.StartsWith('/', StringComparison.Ordinal) ? "/" + joined : entry.StartsWith("~/", StringComparison.Ordinal) ? joined.Length == 0 ? "~" : joined : joined;
     }
 
     private static readonly string[] GenericSecondLevelLabels = ["co", "com", "org", "net", "gov", "edu", "ac"];
@@ -98,7 +98,7 @@ internal static partial class SettingsConfigurationValidator
     }
 
     private static bool IsSandboxPath(string entry) =>
-        (entry.StartsWith('/') || entry.StartsWith("~/", StringComparison.Ordinal) || entry.StartsWith("./", StringComparison.Ordinal))
+        (entry.StartsWith('/', StringComparison.Ordinal) || entry.StartsWith("~/", StringComparison.Ordinal) || entry.StartsWith("./", StringComparison.Ordinal))
         && !entry.Split('/').Contains("..");
 
     private static InvalidOperationException Error(string jsonPath, string message) =>

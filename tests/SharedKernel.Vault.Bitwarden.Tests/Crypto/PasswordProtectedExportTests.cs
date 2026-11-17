@@ -50,6 +50,37 @@ public sealed class PasswordProtectedExportTests
         document["data"].ShouldNotBeNull().GetValue<string>().ShouldStartWith("2.", StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Decrypt_with_a_tampered_mac_throws_invalid_data()
+    {
+        // Arrange
+        var document = JsonNode.Parse(Fixture.Read("bitwarden/protected-pbkdf2.json")).ShouldNotBeNull();
+        var parts = document["data"].ShouldNotBeNull().GetValue<string>()[2..].Split('|');
+        var mac = Convert.FromBase64String(parts[2]);
+        mac[^1] ^= 0x01;
+        document["data"] = $"2.{parts[0]}|{parts[1]}|{Convert.ToBase64String(mac)}";
+        var tampered = document.ToJsonString();
+        var action = () => PasswordProtectedExport.Decrypt(tampered, FixturePassword);
+
+        // Act, Assert
+        action.ShouldThrow<InvalidDataException>().Message.ShouldBe("The password is wrong or the file was altered.");
+    }
+
+    [Fact]
+    public void Decrypt_with_a_truncated_mac_throws_invalid_data()
+    {
+        // Arrange
+        var document = JsonNode.Parse(Fixture.Read("bitwarden/protected-pbkdf2.json")).ShouldNotBeNull();
+        var parts = document["data"].ShouldNotBeNull().GetValue<string>()[2..].Split('|');
+        var mac = Convert.FromBase64String(parts[2])[..^1];
+        document["data"] = $"2.{parts[0]}|{parts[1]}|{Convert.ToBase64String(mac)}";
+        var truncated = document.ToJsonString();
+        var action = () => PasswordProtectedExport.Decrypt(truncated, FixturePassword);
+
+        // Act, Assert
+        action.ShouldThrow<InvalidDataException>().Message.ShouldBe("Encrypted value has an invalid IV or MAC length.");
+    }
+
     [Theory]
     [InlineData("bitwarden/protected-pbkdf2.json")]
     [InlineData("bitwarden/protected-argon2id.json")]

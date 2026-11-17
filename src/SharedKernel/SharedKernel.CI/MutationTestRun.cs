@@ -41,16 +41,16 @@ internal static class MutationTestRun
         var stryker = Path.Combine(toolPath, OperatingSystem.IsWindows() ? PackageId + ".exe" : PackageId);
         if (!File.Exists(stryker))
         {
-            await output.WriteAsync(await run(
-                "dotnet", ["tool", "install", PackageId, "--version", mutation.StrykerVersion, "--tool-path", toolPath], root, ct).ConfigureAwait(false))
+            await output.WriteAsync((await run(
+                "dotnet", ["tool", "install", PackageId, "--version", mutation.StrykerVersion, "--tool-path", toolPath], root, ct).ConfigureAwait(false)).AsMemory(), CancellationToken.None)
                 .ConfigureAwait(false);
         }
 
         for (var index = 0; index < configFiles.Length; index++)
         {
-            await output.WriteLineAsync("==> " + mutation.ConfigFiles[index]).ConfigureAwait(false);
-            await output.WriteAsync(await run(
-                stryker, ["--config-file", Path.GetFileName(configFiles[index])], Path.GetDirectoryName(configFiles[index])!, ct).ConfigureAwait(false))
+            await output.WriteLineAsync(("==> " + mutation.ConfigFiles[index]).AsMemory(), CancellationToken.None).ConfigureAwait(false);
+            await output.WriteAsync((await run(
+                stryker, ["--config-file", Path.GetFileName(configFiles[index])], Path.GetDirectoryName(configFiles[index])!, ct).ConfigureAwait(false)).AsMemory(), CancellationToken.None)
                 .ConfigureAwait(false);
         }
     }

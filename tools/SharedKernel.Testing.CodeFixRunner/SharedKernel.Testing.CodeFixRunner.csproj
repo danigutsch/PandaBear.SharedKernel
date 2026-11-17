@@ -16,7 +16,8 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net10.0</TargetFramework>
+        <!-- MSBuildLocator.RegisterDefaults() registers the SDK's MSBuild in process (CodeFixRunEngine.cs), so the tool must run on the newest installed runtime to load an 11.0 SDK's MSBuild. -->
+        <RollForward>LatestMajor</RollForward>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PackAsTool>true</PackAsTool>

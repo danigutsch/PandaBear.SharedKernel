@@ -51,7 +51,7 @@ internal static class UniqueRuleResolver
             return false;
         }
 
-        var columns = index.Properties.Select(property => property.GetColumnName(store)).ToList();
+        var columns = index.Properties.Select(property => property is IReadOnlyProperty scalar ? scalar.GetColumnName(store) : null).ToList();
         return columns.Count == violation.Columns.Count
             && columns.All(column => violation.Columns.Contains(column, StringComparer.OrdinalIgnoreCase));
     }

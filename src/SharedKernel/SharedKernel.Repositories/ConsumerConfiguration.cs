@@ -13,6 +13,7 @@ namespace PandaBear.Repositories;
 /// The solution projects, as repository-relative project file paths, that keep no <c>packages.lock.json</c>, which
 /// <c>dependency snapshot</c> then does not require. A project that is not listed must still have a lock file.
 /// </param>
+/// <param name="TargetFrameworks">The target framework policy that <c>verify-target-frameworks</c> checks the projects against, if any.</param>
 internal sealed record ConsumerConfiguration(
     int Version,
     LicenseExceptionConfiguration? LicenseExceptions = null,
@@ -20,4 +21,5 @@ internal sealed record ConsumerConfiguration(
     GherkinConfiguration? Gherkin = null,
     IReadOnlyList<RepositoryLabel>? Labels = null,
     BaselineConfiguration? Baseline = null,
-    IReadOnlyList<string>? LockExemptProjects = null);
+    IReadOnlyList<string>? LockExemptProjects = null,
+    TargetFrameworkConfiguration? TargetFrameworks = null);

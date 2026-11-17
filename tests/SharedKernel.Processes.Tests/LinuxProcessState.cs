@@ -29,7 +29,7 @@ internal static class LinuxProcessState
         try
         {
             var status = File.ReadAllText($"/proc/{processId.ToString(CultureInfo.InvariantCulture)}/stat");
-            return status[status.LastIndexOf(')') + 2] != 'Z';
+            return status[status.AsSpan().LastIndexOf(')') + 2] != 'Z';
         }
         catch (IOException)
         {

@@ -1,8 +1,9 @@
 <Project>
 
 	<PropertyGroup>
-		<TargetFramework>net10.0</TargetFramework>
-		<LangVersion>preview</LangVersion>
+		<!-- The .NET version that every project builds. It is the only place that names it; see docs/dotnet-multi-targeting.md. -->
+		<SharedKernelTargetFramework>net11.0</SharedKernelTargetFramework>
+		<TargetFramework>$(SharedKernelTargetFramework)</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<RootNamespace Condition="'$(RootNamespace)' == '' and $([System.String]::Copy('$(MSBuildProjectName)').StartsWith('SharedKernel.'))">$([System.String]::Copy('$(MSBuildProjectName)').Replace('SharedKernel.', 'PandaBear.'))</RootNamespace>

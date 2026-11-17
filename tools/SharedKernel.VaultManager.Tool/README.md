@@ -27,7 +27,7 @@ address with another match setting, and a TOTP key with another issuer or label.
 
 ## Prerequisites and installation
 
-The tool is a framework-dependent .NET tool and needs the .NET 10 runtime. Install a validated candidate package
+The tool is a framework-dependent .NET tool and targets the repository's .NET version (`SharedKernelTargetFramework`); it rolls forward to a later major runtime when that one is not installed. Install a validated candidate package
 from a local or private feed:
 
 ```sh
@@ -682,5 +682,3 @@ command tree, the format detection that picks a provider's reader, the review UI
 
 The source is public. Registry publication remains deferred. Consume a validated candidate from an explicitly
 configured local or private feed. This README does not imply the package is available on nuget.org.
-
-The design and its upstream evidence are in [the vault manager plan](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/plans/vault-manager.md).

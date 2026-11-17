@@ -271,7 +271,7 @@ public static class PackageLockInventory
                     continue;
                 }
 
-                var separator = entry.Name.LastIndexOf('/');
+                var separator = entry.Name.LastIndexOf('/', StringComparison.Ordinal);
                 if (separator <= 0 || separator == entry.Name.Length - 1)
                 {
                     throw new ArgumentException($"Package entry {entry.Name} in {assetsFile} has no resolved version.");
@@ -371,7 +371,7 @@ public static class PackageLockInventory
         packages
             .Select(entry =>
             {
-                var separator = entry.Key.LastIndexOf('@');
+                var separator = entry.Key.LastIndexOf('@', StringComparison.Ordinal);
                 return new ResolvedNuGetPackage(entry.Key[..separator], entry.Key[(separator + 1)..], entry.Value.ToArray());
             })
             .OrderBy(package => package.Id, StringComparer.OrdinalIgnoreCase)

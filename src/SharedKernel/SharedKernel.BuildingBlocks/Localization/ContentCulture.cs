@@ -34,7 +34,7 @@ public sealed class ContentCulture : ValueObject
             var parent = Value;
             do
             {
-                var index = parent.LastIndexOf('-');
+                var index = parent.LastIndexOf('-', StringComparison.Ordinal);
                 if (index <= 0)
                 {
                     return null;

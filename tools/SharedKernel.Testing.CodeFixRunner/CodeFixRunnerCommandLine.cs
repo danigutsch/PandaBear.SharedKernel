@@ -65,7 +65,7 @@ internal static class CodeFixRunnerCommandLine
             }
 
             var output = parseResult.InvocationConfiguration.Output;
-            await output.WriteLineAsync($"Fixed {fixedCount} {options.DiagnosticId} diagnostic(s).").ConfigureAwait(false);
+            await output.WriteLineAsync($"Fixed {fixedCount} {options.DiagnosticId} diagnostic(s).".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return 0;
         });
 

@@ -45,7 +45,7 @@ internal static partial class ChangedLines
                 hasFileHeader = true;
                 awaitingHunk = true;
                 var name = text[4..].TrimEnd('\r').Split('\t', 2)[0];
-                if (name.StartsWith('"'))
+                if (name.StartsWith('"', StringComparison.Ordinal))
                 {
                     throw new InvalidDataException("The diff quotes the path " + name + "; coverage reads only paths that Git does not quote.");
                 }
@@ -107,7 +107,7 @@ internal static partial class ChangedLines
                 continue;
             }
 
-            if (text.StartsWith('+'))
+            if (text.StartsWith('+', StringComparison.Ordinal))
             {
                 if (path is not null && isIncluded(path))
                 {
@@ -117,11 +117,11 @@ internal static partial class ChangedLines
                 next++;
                 remaining--;
             }
-            else if (text.StartsWith('-'))
+            else if (text.StartsWith('-', StringComparison.Ordinal))
             {
                 removedRemaining--;
             }
-            else if (text.StartsWith(' '))
+            else if (text.StartsWith(' ', StringComparison.Ordinal))
             {
                 next++;
                 remaining--;

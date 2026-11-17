@@ -28,17 +28,18 @@ internal static class DevPack
         {
             if (!invocation.Step.Rebuild)
             {
-                await output.WriteLineAsync(FormatKept(invocation.Step)).ConfigureAwait(false);
+                await output.WriteLineAsync((FormatKept(invocation.Step)).AsMemory(), CancellationToken.None).ConfigureAwait(false);
                 continue;
             }
 
             await commands.Run("dotnet", invocation.Arguments, invocation.WorkingDirectory, ct).ConfigureAwait(false);
             var evicted = SharedKernelDevPackPlanner.EvictFromGlobalPackages(invocation.Step.PackageId, resolved.Version, cache);
             await output.WriteLineAsync(
-                "Packed " + invocation.Step.PackageId + " " + options.Version + (evicted ? " (evicted from " + cache + ")" : " (no cached copy in " + cache + ")")).ConfigureAwait(false);
+                ("Packed " + invocation.Step.PackageId + " " + options.Version + (evicted ? " (evicted from " + cache + ")" : " (no cached copy in " + cache + ")")).AsMemory(),
+                CancellationToken.None).ConfigureAwait(false);
         }
 
-        await output.WriteLineAsync("SharedKernel dev packages: " + feed).ConfigureAwait(false);
+        await output.WriteLineAsync(("SharedKernel dev packages: " + feed).AsMemory(), CancellationToken.None).ConfigureAwait(false);
         return feed;
     }
 

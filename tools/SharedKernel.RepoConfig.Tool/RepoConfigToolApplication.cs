@@ -303,11 +303,11 @@ internal static class RepoConfigToolApplication
     {
         if (!await GitHubDependencySnapshot.TryWrite(options, ct).ConfigureAwait(false))
         {
-            await error.WriteLineAsync("dependency snapshot: Invalid arguments, unsafe paths, incomplete committed dependency inputs, or dependency size limits exceeded.").ConfigureAwait(false);
+            await error.WriteLineAsync("dependency snapshot: Invalid arguments, unsafe paths, incomplete committed dependency inputs, or dependency size limits exceeded.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return 1;
         }
 
-        await output.WriteLineAsync("Dependency snapshot generated from committed lockfiles without package restore.").ConfigureAwait(false);
+        await output.WriteLineAsync("Dependency snapshot generated from committed lockfiles without package restore.".AsMemory(), CancellationToken.None).ConfigureAwait(false);
         return 0;
     }
 
@@ -422,6 +422,24 @@ internal static class RepoConfigToolApplication
         }
 
         WriteIssues(error, "Repository Gherkin verification failed:", issues);
+        return 1;
+    }
+
+    /// <summary>
+    /// Verifies the target frameworks of the tracked project files against the <c>targetFrameworks</c> section of the
+    /// consumer configuration.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The consumer configuration is invalid or has no targetFrameworks section.</exception>
+    public static async Task<int> VerifyTargetFrameworks(string rootPath, TextWriter output, TextWriter error, CancellationToken ct)
+    {
+        var issues = await TargetFrameworkVerifier.Verify(rootPath, ct).ConfigureAwait(false);
+        if (issues.Count == 0)
+        {
+            await output.WriteLineAsync("Target frameworks match the configured policy.".AsMemory(), ct).ConfigureAwait(false);
+            return 0;
+        }
+
+        WriteIssues(error, "Target framework verification failed:", issues);
         return 1;
     }
 

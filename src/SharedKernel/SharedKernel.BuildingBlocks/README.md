@@ -182,9 +182,9 @@ Pix equality includes both type and value. Numeric and alphanumeric CNPJ are sup
 IBAN checks use all 89 layouts in SWIFT Registry release 103 (September 2026), valid check digits
 and MOD97-10; national bank-specific checksum algorithms are outside this contract. BIC checks ISO
 9362 eight/eleven-character syntax, not country assignment, registration or network reachability.
-Pix checks BCB DICT API 2.12.1 formats, including alphanumeric CNPJ, and CPF/CNPJ check digits.
-The CNPJ algorithm follows Receita Federal's alphanumeric specification. See the
-[payment identifier plan and sources](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/plans/payment-identifiers.md).
+Pix checks [BCB DICT API](https://www.bcb.gov.br/content/estabilidadefinanceira/pix/API-DICT.html) 2.12.1 formats,
+including alphanumeric CNPJ, and CPF/CNPJ check digits. The CNPJ algorithm follows Receita Federal's
+[alphanumeric check-digit specification](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/documentos-tecnicos/cnpj/manual-dv-cnpj.pdf).
 
 Format validation never proves ownership, registration or account existence. Canonicalization,
 recipient verification, masking, authorization, encryption and financial policy belong to consumers.

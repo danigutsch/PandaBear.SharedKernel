@@ -59,7 +59,7 @@ internal static class CodeFixRunEngine
         if (RegisterMSBuild() is { } registrationFailure)
         {
             ct.ThrowIfCancellationRequested();
-            await error.WriteLineAsync(registrationFailure).ConfigureAwait(false);
+            await error.WriteLineAsync(registrationFailure.AsMemory(), CancellationToken.None).ConfigureAwait(false);
             return null;
         }
 

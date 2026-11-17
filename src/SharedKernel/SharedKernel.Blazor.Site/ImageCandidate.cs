@@ -83,7 +83,7 @@ public sealed class ImageCandidate : ValueObject
         }
 
         // A srcset splits candidates on commas that follow an address, so an address may not start or end with one.
-        if (src.Value.StartsWith(',') || src.Value.EndsWith(','))
+        if (src.Value.StartsWith(',', StringComparison.Ordinal) || src.Value.EndsWith(',', StringComparison.Ordinal))
         {
             throw new ArgumentException("An image candidate address must not start or end with a comma.", nameof(src));
         }

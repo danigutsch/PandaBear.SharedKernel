@@ -346,3 +346,39 @@ static readonly PandaBear.Repositories.RepositoryLanguage.Dotnet -> PandaBear.Re
 static readonly PandaBear.Repositories.RepositoryLanguage.None -> PandaBear.Repositories.RepositoryLanguage!
 static readonly PandaBear.Repositories.RoadmapPaths.RequiredDirectories -> string![]!
 static readonly PandaBear.Repositories.RoadmapPaths.RequiredFiles -> string![]!
+PandaBear.Repositories.TargetFrameworkConfiguration
+PandaBear.Repositories.TargetFrameworkConfiguration.<Clone>$() -> PandaBear.Repositories.TargetFrameworkConfiguration!
+PandaBear.Repositories.TargetFrameworkConfiguration.CommandFiles.get -> System.Collections.Generic.IReadOnlyList<string!>?
+PandaBear.Repositories.TargetFrameworkConfiguration.CommandFiles.init -> void
+PandaBear.Repositories.TargetFrameworkConfiguration.Deconstruct(out System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.TargetFrameworkRule!>! Projects, out System.Collections.Generic.IReadOnlyList<string!>? CommandFiles, out string? FrameworkProperties) -> void
+PandaBear.Repositories.TargetFrameworkConfiguration.Equals(PandaBear.Repositories.TargetFrameworkConfiguration? other) -> bool
+PandaBear.Repositories.TargetFrameworkConfiguration.FindError() -> string?
+PandaBear.Repositories.TargetFrameworkConfiguration.FrameworkProperties.get -> string?
+PandaBear.Repositories.TargetFrameworkConfiguration.FrameworkProperties.init -> void
+PandaBear.Repositories.TargetFrameworkConfiguration.Projects.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.TargetFrameworkRule!>!
+PandaBear.Repositories.TargetFrameworkConfiguration.Projects.init -> void
+PandaBear.Repositories.TargetFrameworkConfiguration.TargetFrameworkConfiguration(System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.TargetFrameworkRule!>! Projects, System.Collections.Generic.IReadOnlyList<string!>? CommandFiles = null, string? FrameworkProperties = null) -> void
+PandaBear.Repositories.TargetFrameworkRule
+PandaBear.Repositories.TargetFrameworkRule.<Clone>$() -> PandaBear.Repositories.TargetFrameworkRule!
+PandaBear.Repositories.TargetFrameworkRule.Deconstruct(out string! Include, out System.Collections.Generic.IReadOnlyList<string!>! Frameworks, out string? RollForward) -> void
+PandaBear.Repositories.TargetFrameworkRule.Equals(PandaBear.Repositories.TargetFrameworkRule? other) -> bool
+PandaBear.Repositories.TargetFrameworkRule.Frameworks.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Repositories.TargetFrameworkRule.Frameworks.init -> void
+PandaBear.Repositories.TargetFrameworkRule.Include.get -> string!
+PandaBear.Repositories.TargetFrameworkRule.Include.init -> void
+PandaBear.Repositories.TargetFrameworkRule.RollForward.get -> string?
+PandaBear.Repositories.TargetFrameworkRule.RollForward.init -> void
+PandaBear.Repositories.TargetFrameworkRule.TargetFrameworkRule(string! Include, System.Collections.Generic.IReadOnlyList<string!>! Frameworks, string? RollForward = null) -> void
+PandaBear.Repositories.TargetFrameworkVerifier
+override PandaBear.Repositories.TargetFrameworkConfiguration.Equals(object? obj) -> bool
+override PandaBear.Repositories.TargetFrameworkConfiguration.GetHashCode() -> int
+override PandaBear.Repositories.TargetFrameworkConfiguration.ToString() -> string!
+override PandaBear.Repositories.TargetFrameworkRule.Equals(object? obj) -> bool
+override PandaBear.Repositories.TargetFrameworkRule.GetHashCode() -> int
+override PandaBear.Repositories.TargetFrameworkRule.ToString() -> string!
+static PandaBear.Repositories.TargetFrameworkConfiguration.operator !=(PandaBear.Repositories.TargetFrameworkConfiguration? left, PandaBear.Repositories.TargetFrameworkConfiguration? right) -> bool
+static PandaBear.Repositories.TargetFrameworkConfiguration.operator ==(PandaBear.Repositories.TargetFrameworkConfiguration? left, PandaBear.Repositories.TargetFrameworkConfiguration? right) -> bool
+static PandaBear.Repositories.TargetFrameworkRule.operator !=(PandaBear.Repositories.TargetFrameworkRule? left, PandaBear.Repositories.TargetFrameworkRule? right) -> bool
+static PandaBear.Repositories.TargetFrameworkRule.operator ==(PandaBear.Repositories.TargetFrameworkRule? left, PandaBear.Repositories.TargetFrameworkRule? right) -> bool
+static PandaBear.Repositories.TargetFrameworkVerifier.Verify(string! rootPath, PandaBear.Repositories.TargetFrameworkConfiguration! configuration, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!>!
+static PandaBear.Repositories.TargetFrameworkVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!>!

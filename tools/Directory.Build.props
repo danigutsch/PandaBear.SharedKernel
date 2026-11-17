@@ -1,0 +1,10 @@
+<Project>
+
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..'))" />
+
+    <PropertyGroup>
+        <!-- A tool also runs where only a later major runtime is installed. -->
+        <RollForward>Major</RollForward>
+    </PropertyGroup>
+
+</Project>

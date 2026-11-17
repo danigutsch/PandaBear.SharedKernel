@@ -67,7 +67,7 @@ internal sealed class UmamiConnection
 
     private static Uri SendAddressBelow(Uri endpoint)
     {
-        var path = endpoint.AbsolutePath.EndsWith('/') ? endpoint.AbsoluteUri : endpoint.AbsoluteUri + "/";
+        var path = endpoint.AbsolutePath.EndsWith('/', StringComparison.Ordinal) ? endpoint.AbsoluteUri : endpoint.AbsoluteUri + "/";
         return new Uri(new Uri(path, UriKind.Absolute), SendPath);
     }
 }

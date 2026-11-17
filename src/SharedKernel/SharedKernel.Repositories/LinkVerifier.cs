@@ -192,7 +192,7 @@ public static class LinkVerifier
             }
 
             // Only the directory before the first wildcard can hold a match.
-            var directory = pattern.LastIndexOf('/', wildcard);
+            var directory = pattern.LastIndexOf('/', wildcard, StringComparison.Ordinal);
             var start = directory < 0 ? root : Path.Combine(root, pattern[..directory]);
             if (Directory.Exists(start))
             {

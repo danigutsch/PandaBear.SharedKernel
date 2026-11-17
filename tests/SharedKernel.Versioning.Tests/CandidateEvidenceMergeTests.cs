@@ -34,6 +34,29 @@ public static class CandidateEvidenceMergeTests
     }
 
     [Fact]
+    public static async Task Consumed_frameworks_are_merged_with_their_passed_result()
+    {
+        // Arrange
+        using var temporary = new TemporaryReleasePrepDirectory();
+        var candidate = CandidateEvidenceFiles.Write(temporary.Root, "candidate.json");
+        var linux = CandidateEvidenceFiles.Write(temporary.Root, "linux.json", ("linuxPackageConsumption", "passed"));
+        var recorded = JsonNode.Parse(await File.ReadAllTextAsync(linux, TestContext.Current.CancellationToken))!.AsObject();
+        recorded["linuxPackageConsumptionFrameworks"] = new JsonArray("net10.0", "net11.0");
+        new CandidateManifest(recorded).Save(linux);
+        var output = Path.Combine(temporary.Root, "merged.json");
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(
+            ["merge-evidence", "--candidate", candidate, "--evidence", linux, "--output", output],
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        var merged = JsonNode.Parse(await File.ReadAllTextAsync(output, TestContext.Current.CancellationToken))!.AsObject();
+        merged["linuxPackageConsumptionFrameworks"]!.ToJsonString().ShouldBe("[\"net10.0\",\"net11.0\"]");
+    }
+
+    [Fact]
     public static async Task Evidence_for_another_revision_is_rejected_and_nothing_is_written()
     {
         // Arrange

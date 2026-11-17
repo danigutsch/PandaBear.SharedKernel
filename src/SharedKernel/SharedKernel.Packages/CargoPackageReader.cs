@@ -43,7 +43,7 @@ public sealed class CargoPackageReader : IPackageReader
             }
 
             var parts = line.TrimEnd(':').Split(' ', 3);
-            var version = parts.Length >= 2 && parts[1].StartsWith('v') ? parts[1][1..] : string.Empty;
+            var version = parts.Length >= 2 && parts[1].StartsWith('v', StringComparison.Ordinal) ? parts[1][1..] : string.Empty;
             var package = PackageReaderSupport.TryCreate(parts[0], version);
             if (package is null)
             {

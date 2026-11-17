@@ -1,4 +1,6 @@
 
+using System.Globalization;
+
 namespace PandaBear.InputNormalization.Tests;
 
 /// <summary>Unit tests for NumericSanitizer.SanitizePrice rounding to two decimal places.</summary>
@@ -55,24 +57,24 @@ public sealed class NumericSanitizerTests
     }
 
     [Theory]
-    [InlineData(10.00, 10.00)]
-    [InlineData(10.01, 10.01)]
-    [InlineData(10.10, 10.10)]
-    [InlineData(10.99, 10.99)]
-    [InlineData(10.994, 10.99)]
-    [InlineData(10.995, 11.00)]
-    [InlineData(10.996, 11.00)]
-    [InlineData(1.001, 1.00)]
-    [InlineData(1.004, 1.00)]
-    [InlineData(1.005, 1.01)]
-    [InlineData(1.006, 1.01)]
-    [InlineData(1.009, 1.01)]
-    public void Sanitize_price_rounds_correctly_for_various_inputs(decimal input, decimal expected)
+    [InlineData("10.00", "10.00")]
+    [InlineData("10.01", "10.01")]
+    [InlineData("10.10", "10.10")]
+    [InlineData("10.99", "10.99")]
+    [InlineData("10.994", "10.99")]
+    [InlineData("10.995", "11.00")]
+    [InlineData("10.996", "11.00")]
+    [InlineData("1.001", "1.00")]
+    [InlineData("1.004", "1.00")]
+    [InlineData("1.005", "1.01")]
+    [InlineData("1.006", "1.01")]
+    [InlineData("1.009", "1.01")]
+    public void Sanitize_price_rounds_correctly_for_various_inputs(string input, string expected)
     {
         // Act
-        var result = NumericSanitizer.SanitizePrice(input);
+        var result = NumericSanitizer.SanitizePrice(decimal.Parse(input, CultureInfo.InvariantCulture));
 
         // Assert
-        result.ShouldBe(expected);
+        result.ShouldBe(decimal.Parse(expected, CultureInfo.InvariantCulture));
     }
 }

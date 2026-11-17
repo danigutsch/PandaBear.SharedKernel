@@ -153,6 +153,8 @@ public sealed class HealthEndpointTests
     [Theory]
     [InlineData("health", "/alive")]
     [InlineData("/health", " ")]
+    [InlineData("/health", "/a\u00A0b")]
+    [InlineData("/a\u2003b", "/alive")]
     [InlineData("/same", "/same")]
     public void Paths_that_do_not_start_with_a_slash_or_that_collide_are_refused(string healthPath, string alivePath)
     {

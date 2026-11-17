@@ -116,6 +116,11 @@ public static class ConsumerConfigurationFile
             ValidateLockExemptProjects(lockExemptProjects);
         }
 
+        if (configuration.TargetFrameworks?.FindError() is { } targetFrameworksError)
+        {
+            throw Invalid(targetFrameworksError);
+        }
+
         return configuration;
     }
 

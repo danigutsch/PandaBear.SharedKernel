@@ -45,7 +45,7 @@ public static class ItemNormalizer
 
         int end = text.IndexOfAny(['/', '?', '#', '\\']);
         string authority = end < 0 ? text : text[..end];
-        int at = authority.LastIndexOf('@');
+        int at = authority.LastIndexOf('@', StringComparison.Ordinal);
         if (at >= 0)
         {
             authority = authority[(at + 1)..];
@@ -170,14 +170,14 @@ public static class ItemNormalizer
 
     private static string StripPort(string authority)
     {
-        if (authority.StartsWith('['))
+        if (authority.StartsWith('[', StringComparison.Ordinal))
         {
             int close = authority.IndexOf(']', StringComparison.Ordinal);
             return close < 0 ? authority : authority[..(close + 1)];
         }
 
         int colon = authority.IndexOf(':', StringComparison.Ordinal);
-        return colon >= 0 && colon == authority.LastIndexOf(':') ? authority[..colon] : authority;
+        return colon >= 0 && colon == authority.LastIndexOf(':', StringComparison.Ordinal) ? authority[..colon] : authority;
     }
 
     private static string? QueryParameter(string uri, string name)
@@ -188,7 +188,7 @@ public static class ItemNormalizer
             return null;
         }
 
-        int fragment = uri.IndexOf('#', query);
+        int fragment = uri.IndexOf('#', query, StringComparison.Ordinal);
         string text = fragment < 0 ? uri[(query + 1)..] : uri[(query + 1)..fragment];
         foreach (string pair in text.Split('&'))
         {

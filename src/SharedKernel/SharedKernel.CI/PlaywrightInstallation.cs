@@ -67,11 +67,8 @@ internal static class PlaywrightInstallation
         var outputPath = (evaluated.Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? string.Empty)
             .Replace('\\', Path.DirectorySeparatorChar)
             .Replace('/', Path.DirectorySeparatorChar);
-        var script = outputPath.Length == 0 ? string.Empty : Path.Combine(Path.GetFullPath(outputPath, Path.GetDirectoryName(projectPath)!), "playwright.ps1");
-        if (!File.Exists(script))
-        {
-            throw new InvalidOperationException("playwright.ps1 is not in the build output of " + project + "; build it first.");
-        }
+        var script = (outputPath.Length == 0 ? null : FindInstaller(Path.GetFullPath(outputPath, Path.GetDirectoryName(projectPath)!)))
+            ?? throw new InvalidOperationException("playwright.ps1 is not in the build output of " + project + "; build it first.");
 
         string[] install = [script, "install", .. withDependencies ? ["--with-deps"] : Array.Empty<string>(), .. onlyShell ? ["--only-shell"] : Array.Empty<string>(), .. browsers];
         var installStarted = Stopwatch.GetTimestamp();
@@ -79,5 +76,22 @@ internal static class PlaywrightInstallation
         return string.Create(
             CultureInfo.InvariantCulture,
             $"playwright: msbuild evaluation took {evaluation.TotalSeconds:F1}s; install took {Stopwatch.GetElapsedTime(installStarted).TotalSeconds:F1}s{Environment.NewLine}{output}");
+    }
+
+    /// <summary>
+    /// Returns the installer in <paramref name="output"/> or, for a project with several target frameworks, whose outer
+    /// build reports the output path without a framework folder, the installer of its first framework folder in ordinal order.
+    /// </summary>
+    private static string? FindInstaller(string output)
+    {
+        var script = Path.Combine(output, "playwright.ps1");
+        if (File.Exists(script))
+        {
+            return script;
+        }
+
+        return Directory.Exists(output)
+            ? Directory.EnumerateDirectories(output).Order(StringComparer.Ordinal).Select(static folder => Path.Combine(folder, "playwright.ps1")).FirstOrDefault(File.Exists)
+            : null;
     }
 }

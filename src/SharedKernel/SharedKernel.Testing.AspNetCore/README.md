@@ -75,6 +75,11 @@ Tests that specifically inspect binding exceptions can opt out with their normal
 The default is registered before caller overrides. This controls rejection behavior; it never
 accepts or retains an invalid body.
 
+With the opt-out the endpoint throws `BadHttpRequestException`, and the status code comes from the
+host's exception handler, so it depends on the ASP.NET Core runtime: `UseExceptionHandler` answers
+500 on ASP.NET Core 10 and earlier but preserves `BadHttpRequestException.StatusCode` (400) on
+ASP.NET Core 11. Assert on the exception, not on a 500.
+
 ## Output-cache eviction
 
 `RecordingOutputCacheStore` implements `IOutputCacheStore` for tests interested in eviction.

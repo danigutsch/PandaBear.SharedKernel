@@ -42,7 +42,9 @@ public sealed class CandidateValidator
         ArgumentNullException.ThrowIfNull(output);
         ArgumentNullException.ThrowIfNull(error);
         var manifest = await Create(options, output, ct).ConfigureAwait(false);
-        await Consume(new CandidateConsumptionOptions(options.RepoRoot, manifest, manifest, options.NativeAot), output, error, ct).ConfigureAwait(false);
+        await Consume(
+            new CandidateConsumptionOptions(options.RepoRoot, manifest, manifest, options.NativeAot) { Frameworks = options.Frameworks }, output, error, ct)
+            .ConfigureAwait(false);
         return manifest;
     }
 
@@ -152,10 +154,11 @@ public sealed class CandidateValidator
 
     /// <summary>
     /// Verifies the manifest and its package hashes, requires the candidate directory to hold only the listed packages,
-    /// then installs and runs the packages on the current platform and records <c>passed</c> or <c>failed</c> in the
-    /// evidence at the destination. A canceled run records nothing.
+    /// then installs and runs the packages on the current platform for each framework and records <c>passed</c> or <c>failed</c> in the
+    /// evidence at the destination, with the consumed frameworks under <c>&lt;platform&gt;PackageConsumptionFrameworks</c> and, with
+    /// NativeAOT, <c>&lt;platform&gt;NativeAotFrameworks</c>. A canceled run records nothing.
     /// </summary>
-    /// <param name="options">The manifest, destination, repository root, and NativeAOT choice.</param>
+    /// <param name="options">The manifest, destination, repository root, frameworks, and NativeAOT choice.</param>
     /// <param name="output">Receives the result line.</param>
     /// <param name="error">Receives the output of the child processes.</param>
     /// <param name="ct">Cancels the run and ends the running process tree.</param>
@@ -175,22 +178,30 @@ public sealed class CandidateValidator
         var feed = Path.GetDirectoryName(manifest)!;
         RequireListedPackagesOnly(feed, evidence["packageSha256"]!.AsObject());
         var platform = OperatingSystem.IsWindows() ? "windowsPackageConsumption" : "linuxPackageConsumption";
+        var frameworks = options.Frameworks ?? RepositoryFrameworks.Read(root);
+        var consumed = new JsonArray([.. frameworks.Select(static framework => JsonValue.Create(framework))]);
         try
         {
-            await PackageConsumption.Run(_commands, new PackageConsumptionOptions(root, feed, version, aot), output, error, ct).ConfigureAwait(false);
+            await PackageConsumption.Run(
+                _commands, new PackageConsumptionOptions(root, feed, version, aot) { Frameworks = frameworks }, output, error, ct)
+                .ConfigureAwait(false);
         }
         catch (Exception) when (!ct.IsCancellationRequested)
         {
             // A canceled run proves nothing, so it leaves the recorded evidence unchanged.
             evidence[platform] = "failed";
+            evidence.Remove(platform + "Frameworks");
             new CandidateManifest(evidence).Save(destination);
             throw;
         }
 
         evidence[platform] = "passed";
+        evidence[platform + "Frameworks"] = consumed;
         if (aot)
         {
-            evidence[OperatingSystem.IsWindows() ? "windowsNativeAot" : "linuxNativeAot"] = "passed";
+            var nativeAot = OperatingSystem.IsWindows() ? "windowsNativeAot" : "linuxNativeAot";
+            evidence[nativeAot] = "passed";
+            evidence[nativeAot + "Frameworks"] = consumed.DeepClone();
         }
 
         new CandidateManifest(evidence).Save(destination);

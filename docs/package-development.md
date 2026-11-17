@@ -4,8 +4,8 @@
 Install the SDK pinned in `global.json`. Provider integration tests require a working container runtime; NativeAOT checks also require the platform
 native build toolchain.
 
-Analyzer and source-generator packages retain the Roslyn 5.9 compiler API baseline, the compiler of .NET SDK 10.0.4xx, so consumers can use compatible .NET 10 SDKs without upgrading
-to this repository's development SDK. The repository SDK and runtime dependencies can advance independently of that compiler compatibility floor.
+Analyzer and source-generator packages retain the Roslyn 5.12 compiler API baseline, the compiler of .NET SDK 11.0.100, which every consumer
+needs to target .NET 11, so consumers do not have to move to a newer SDK than the one their target framework requires. The repository SDK and runtime dependencies can advance independently of that compiler compatibility floor.
 
 ```sh
 dotnet restore SharedKernel.slnx --locked-mode
@@ -41,7 +41,8 @@ dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run --slice librar
 
 Commit changes before creating candidate evidence. Candidates receive unique ordered prerelease versions and are never overwritten.
 `SharedKernel.Versioning.Tool` validates APIs, packs once, records the library revision and SHA-256 package hashes, then installs every packed tool
-and runs each command that its package declares with `--help`, and checks isolated package restore, locked restore, build, run, generators, and optional NativeAOT.
+and runs each command that its package declares with `--help`, and checks isolated package restore, locked restore, build, run, generators, and optional NativeAOT once per `--framework <tfm>` (repeatable; default `net10.0`),
+recording the consumed frameworks in the manifest.
 Candidate manifests mark unavailable consumer, baseline, and platform evidence as pending.
 
 ```sh
@@ -93,7 +94,7 @@ and `PublishRepositoryUrl`, so packed metadata and Source Link data come from on
 also pack a `snupkg` symbol package; Roslyn components (`IsRoslynComponent`) are excluded from symbol packages. Repository
 convention tests in `tests/SharedKernel.Repository.Tests` fail the build when a packable project misses any of these. Packed `.nuspec` files record the repository commit through the SDK's Source Link support, with no extra package.
 
-`EnablePackageValidation` stays off. Its baseline validator compares a package with a previously released stable version, and no stable version exists while all packages are preview. Enable it with `PackageValidationBaselineVersion` when the first stable release is authorized.
+Every package builds one target framework, so package validation is off. A package with several frameworks would set `EnablePackageValidation`; without `PackageValidationBaselineVersion` it runs only the compatible-framework check (CP0002). The baseline validator stays off: it compares a package with a previously released stable version, and no stable version exists while all packages are preview. Set `PackageValidationBaselineVersion` when the first stable release is authorized.
 
 ### Source generator packages
 

@@ -97,7 +97,7 @@ internal static partial class EndpointRouteMarkdownTable
         return TrimTrailingSlash(NormalizePath(combined));
     }
 
-    private static string NormalizePath(string path) => path.StartsWith('/') ? path : $"/{path}";
+    private static string NormalizePath(string path) => path.StartsWith('/', StringComparison.Ordinal) ? path : $"/{path}";
 
     private static string TrimTrailingSlash(string path) => path.Length > 1 ? path.TrimEnd('/') : path;
 

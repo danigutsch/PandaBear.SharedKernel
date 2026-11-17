@@ -52,7 +52,7 @@ public static class ImmutableFileEndpointExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(folder);
         ArgumentNullException.ThrowIfNull(contentTypes);
         ArgumentNullException.ThrowIfNull(isServed);
-        if (!routePrefix.StartsWith('/'))
+        if (!routePrefix.StartsWith('/', StringComparison.Ordinal))
         {
             throw new ArgumentException("The route prefix must start with '/'.", nameof(routePrefix));
         }

@@ -1,4 +1,12 @@
 <Project>
+    <!--
+      Projects compile the default C# version of their framework, C# 15 for .NET 11. .NET Standard 2.0 defaults to C# 7.3, so
+      analyzers, code fixes, and generators compile C# 15 like the rest of the repository.
+    -->
+    <PropertyGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard'">
+        <LangVersion>15</LangVersion>
+    </PropertyGroup>
+
     <!-- Export actual compiler inputs for the repository-wide governed-constant test. -->
     <Target Name="RecordGovernedLiteralInputs" AfterTargets="CoreCompile"
             Condition="'$(GovernedLiteralProject)' == 'true' or ($([System.String]::Copy('$(PackageId)').StartsWith('PandaBear.SharedKernel.')) and '$(IsPackable)' != 'false')">

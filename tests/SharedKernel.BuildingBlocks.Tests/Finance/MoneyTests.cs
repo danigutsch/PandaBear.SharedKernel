@@ -48,16 +48,16 @@ public sealed class MoneyTests
     }
 
     [Theory]
-    [InlineData("10.005", 10.01)]
-    [InlineData("10.004", 10.00)]
-    [InlineData("-10.005", -10.01)]
-    public void Money_rounds_away_from_zero_to_minor_units(string amount, double expected)
+    [InlineData("10.005", "10.01")]
+    [InlineData("10.004", "10.00")]
+    [InlineData("-10.005", "-10.01")]
+    public void Money_rounds_away_from_zero_to_minor_units(string amount, string expected)
     {
         // Act
         var money = Money.Create(decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture), Currency.Brl).ShouldBeSuccess();
 
         // Assert
-        money.Amount.ShouldBe((decimal)expected);
+        money.Amount.ShouldBe(decimal.Parse(expected, System.Globalization.CultureInfo.InvariantCulture));
     }
 
     [Fact]

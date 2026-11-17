@@ -49,12 +49,7 @@ internal static class SettingsFileStore
         await using (stream.ConfigureAwait(false))
         {
             var buffer = new byte[MaxBytes + 1];
-            var length = 0;
-            int read;
-            while (length < buffer.Length && (read = await stream.ReadAsync(buffer.AsMemory(length), cancellationToken).ConfigureAwait(false)) > 0)
-            {
-                length += read;
-            }
+            var length = await stream.ReadAtLeastAsync(buffer, buffer.Length, throwOnEndOfStream: false, cancellationToken).ConfigureAwait(false);
 
             if (length > MaxBytes)
             {

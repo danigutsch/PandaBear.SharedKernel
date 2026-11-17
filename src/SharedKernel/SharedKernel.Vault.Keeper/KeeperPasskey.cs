@@ -1,3 +1,4 @@
+using System.Buffers.Text;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -118,6 +119,5 @@ internal static class KeeperPasskey
         return result;
     }
 
-    private static string EncodeBase64Url(byte[] bytes) =>
-        Convert.ToBase64String(bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+    private static string EncodeBase64Url(byte[] bytes) => Base64Url.EncodeToString(bytes);
 }

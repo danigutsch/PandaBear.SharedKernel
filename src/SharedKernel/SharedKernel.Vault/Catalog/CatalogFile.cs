@@ -21,10 +21,10 @@ public static class CatalogFile
 
     // Names and notes keep accented letters and apostrophes as typed, so the file stays readable when edited, as in the
     // decisions file.
-    private static readonly JsonTypeInfo<CatalogDocument> ReadableDocument = (JsonTypeInfo<CatalogDocument>)new JsonSerializerOptions(CatalogJsonContext.Default.Options)
+    private static readonly JsonTypeInfo<CatalogDocument> ReadableDocument = new JsonSerializerOptions(CatalogJsonContext.Default.Options)
     {
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-    }.GetTypeInfo(typeof(CatalogDocument));
+    }.GetTypeInfo<CatalogDocument>();
 
     /// <summary>Reads a catalog file.</summary>
     /// <param name="path">Catalog file.</param>

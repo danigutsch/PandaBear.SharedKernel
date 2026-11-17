@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,17 +16,19 @@ namespace PandaBear.AspNetCore.Tests;
 public sealed class TestRequestBindingDefaultsTests
 {
     [Theory]
-    [InlineData("Development", false, HttpStatusCode.BadRequest)]
-    [InlineData("Production", false, HttpStatusCode.BadRequest)]
-    [InlineData("Development", true, HttpStatusCode.InternalServerError)]
+    [InlineData("Development", false, false)]
+    [InlineData("Production", false, false)]
+    [InlineData("Development", true, true)]
     public static async Task Invalid_bodies_are_rejected_before_execution_with_explicit_diagnostic_opt_out(
-        string environment, bool enableDiagnosticExceptions, HttpStatusCode expected)
+        string environment, bool enableDiagnosticExceptions, bool expectBindingException)
     {
         // Arrange
         ArgumentException.ThrowIfNullOrWhiteSpace(environment);
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = environment });
         builder.WebHost.UseTestServer();
         builder.Services.AddProblemDetails();
+        var handler = new RecordingExceptionHandler();
+        builder.Services.AddSingleton<IExceptionHandler>(handler);
         builder.Services.AddTestRequestBindingDefaults();
         if (enableDiagnosticExceptions)
         {
@@ -42,8 +46,22 @@ public sealed class TestRequestBindingDefaultsTests
         using var response = await client.PostAsync(new Uri("/", UriKind.Relative), body, TestContext.Current.CancellationToken);
 
         // Assert
+        // The status of a thrown binding exception depends on the ASP.NET Core runtime: ASP.NET Core 11 preserves
+        // BadHttpRequestException.StatusCode (400) in UseExceptionHandler, earlier runtimes answer 500.
+        // https://learn.microsoft.com/aspnet/core/fundamentals/error-handling-api#problem-details
+        var expected = !expectBindingException || Environment.Version.Major >= 11
+            ? HttpStatusCode.BadRequest
+            : HttpStatusCode.InternalServerError;
         response.StatusCode.ShouldBe(expected);
         calls.ShouldBe(0);
+        if (expectBindingException)
+        {
+            handler.Exceptions.ShouldHaveSingleItem().ShouldBeOfType<BadHttpRequestException>();
+        }
+        else
+        {
+            handler.Exceptions.ShouldBeEmpty();
+        }
     }
 
     [Fact]

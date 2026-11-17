@@ -6,9 +6,8 @@ vaults, merge the exports offline with `sharedkernel-vault`, and import the resu
 vault.
 
 The tool is under development. Read the status in the
-[tool README](../tools/SharedKernel.VaultManager.Tool/README.md) before you use it on real vault data. The
-[vault manager plan](plans/vault-manager.md) describes the design. Commands are for bash or zsh on Linux or
-macOS. Statements about Keeper, Bitwarden, and Vaultwarden link to their sources.
+[tool README](../tools/SharedKernel.VaultManager.Tool/README.md) before you use it on real vault data. Commands
+are for bash or zsh on Linux or macOS. Statements about Keeper, Bitwarden, and Vaultwarden link to their sources.
 Anything marked unverified could not be confirmed in those sources.
 
 ## How the merge treats your data

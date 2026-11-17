@@ -119,7 +119,7 @@ public sealed class ConsumerVerifier(IProcessRunner processRunner, IExecutableRe
             }
 
             new CandidateManifest(evidence).Save(options.Output);
-            await output.WriteLineAsync("Consumer compatibility: " + status + ". Evidence: " + options.Output).ConfigureAwait(false);
+            await output.WriteLineAsync(("Consumer compatibility: " + status + ". Evidence: " + options.Output).AsMemory(), CancellationToken.None).ConfigureAwait(false);
             if (failure is not null)
             {
                 throw new InvalidOperationException(failure.Message, failure);

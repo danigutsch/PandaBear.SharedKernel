@@ -369,6 +369,8 @@ public sealed class RepositoryValidationTests
     [InlineData("Requires=")]
     [InlineData("--Requires=x")]
     [InlineData("Requires=a b")]
+    [InlineData("Requires=a\u00A0b")]
+    [InlineData("Requires=a\u2003b")]
     public async Task Excluded_trait_must_be_a_name_and_value_pair_before_running_processes(string trait)
     {
         // Arrange

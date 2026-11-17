@@ -73,7 +73,7 @@ internal static partial class LocalCheck
         string? baseId = null;
         if (options.Base is { } requested)
         {
-            if (requested.StartsWith('-') || requested.Length == 0)
+            if (requested.StartsWith('-', StringComparison.Ordinal) || requested.Length == 0)
             {
                 throw new InvalidOperationException("--base must be a revision, not an option.");
             }

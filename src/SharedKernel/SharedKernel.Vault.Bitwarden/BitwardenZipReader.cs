@@ -37,7 +37,7 @@ public static class BitwardenZipReader
         var attachments = new Dictionary<VaultItem, List<AttachmentRef>>(ReferenceEqualityComparer.Instance);
         foreach (IGrouping<string, ArchiveEntryInfo> folder in GroupByFolder(archive.Entries, warnings))
         {
-            AttachmentRef[] files = [.. folder.Select(entry => new AttachmentRef(entry.Path[(entry.Path.LastIndexOf('/') + 1)..], entry.Size, entry.Path))];
+            AttachmentRef[] files = [.. folder.Select(entry => new AttachmentRef(entry.Path[(entry.Path.LastIndexOf('/', StringComparison.Ordinal) + 1)..], entry.Size, entry.Path))];
             VaultItem[] candidates = [.. export.Items.Where(item => Produces(item.Name, folder.Key))];
             if (candidates.Length != 1)
             {
@@ -116,7 +116,7 @@ public static class BitwardenZipReader
             return true;
         }
 
-        int underscore = folder.LastIndexOf('_');
+        int underscore = folder.LastIndexOf('_', StringComparison.Ordinal);
         return underscore > 0
             && underscore + 1 < folder.Length
             && folder[(underscore + 1)..].All(char.IsAsciiDigit)

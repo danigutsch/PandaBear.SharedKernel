@@ -279,7 +279,7 @@ public sealed class ServerValidationBinderTests
     }
 
     [Fact]
-    public void A_new_validation_request_clears_server_messages_so_unchanged_data_can_be_resubmitted()
+    public async Task A_new_validation_request_clears_server_messages_so_unchanged_data_can_be_resubmitted()
     {
         // Arrange
         var context = new EditContext(new ServerValidationModel());
@@ -287,7 +287,7 @@ public sealed class ServerValidationBinderTests
         binder.Apply(Errors(("Name", ["Name taken."])));
 
         // Act
-        var valid = context.Validate();
+        var valid = await context.ValidateAsync(Xunit.TestContext.Current.CancellationToken);
 
         // Assert
         valid.ShouldBeTrue();

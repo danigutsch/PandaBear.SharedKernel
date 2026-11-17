@@ -153,7 +153,7 @@ public static class ReleasePreparationArtifacts
     private static string RemoveShortHashSuffix(string subject)
     {
         var suffixStart = subject.LastIndexOf(" (", StringComparison.Ordinal);
-        if (suffixStart < 0 || !subject.EndsWith(')'))
+        if (suffixStart < 0 || !subject.EndsWith(')', StringComparison.Ordinal))
         {
             return subject;
         }

@@ -501,7 +501,7 @@ public sealed class InMemoryObjectStore : IObjectStore
         metadata is null ? null : new Dictionary<string, string>(metadata, StringComparer.Ordinal).AsReadOnly();
 
     private static Uri WithTrailingSlash(Uri baseUri) =>
-        baseUri.OriginalString.EndsWith('/')
+        baseUri.OriginalString.EndsWith('/', StringComparison.Ordinal)
             ? baseUri
             : new Uri(baseUri.OriginalString + "/", baseUri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative);
 

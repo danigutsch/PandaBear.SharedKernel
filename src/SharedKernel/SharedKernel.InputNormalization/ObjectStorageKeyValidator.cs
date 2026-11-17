@@ -1,3 +1,5 @@
+using System.Text.Unicode;
+
 namespace PandaBear.InputNormalization;
 
 /// <summary>
@@ -32,24 +34,14 @@ public static class ObjectStorageKeyValidator
 
     private static bool HasInvalidText(string value)
     {
-        for (var index = 0; index < value.Length; index++)
+        foreach (var character in value)
         {
-            if (char.IsControl(value[index]))
+            if (char.IsControl(character))
             {
                 return true;
             }
-
-            if (char.IsSurrogate(value[index]))
-            {
-                if (!char.IsSurrogatePair(value, index))
-                {
-                    return true;
-                }
-
-                index++;
-            }
         }
 
-        return false;
+        return !Utf16.IsValid(value);
     }
 }

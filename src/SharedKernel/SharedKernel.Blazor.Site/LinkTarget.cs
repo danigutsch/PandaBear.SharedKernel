@@ -37,7 +37,7 @@ public sealed class LinkTarget : ValueObject
     /// <returns>The target, or an input-independent validation error.</returns>
     public static Result<LinkTarget> Create(string? value)
     {
-        if (string.IsNullOrEmpty(value) || value.All(char.IsWhiteSpace))
+        if (string.IsNullOrEmpty(value) || value.AsSpan().IsWhiteSpace())
         {
             return Invalid("A link address is required.");
         }
@@ -118,13 +118,13 @@ public sealed class LinkTarget : ValueObject
         var at = address.IndexOf('@', StringComparison.Ordinal);
         return at > 0
             && at < address.Length - 1
-            && address.IndexOf('@', at + 1) < 0
+            && address.IndexOf('@', at + 1, StringComparison.Ordinal) < 0
             && address.IndexOfAny(['?', '&', ';', ',', '%', '/', ':', '<', '>', '"']) < 0;
     }
 
     private static bool IsTelephone(string number)
     {
-        var digits = number.StartsWith('+') ? number[1..] : number;
+        var digits = number.StartsWith('+', StringComparison.Ordinal) ? number[1..] : number;
         return digits.Length > 0 && digits.All(char.IsAsciiDigit);
     }
 

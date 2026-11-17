@@ -57,8 +57,8 @@ internal static class SourceTextEditor
 
     private static (int Start, int End) SpanRange(string text, int start, int end)
     {
-        int lineStart = start == 0 ? 0 : text.LastIndexOf('\n', start - 1) + 1;
-        int lineEnd = text.IndexOf('\n', end);
+        int lineStart = start == 0 ? 0 : text.LastIndexOf('\n', start - 1, StringComparison.Ordinal) + 1;
+        int lineEnd = text.IndexOf('\n', end, StringComparison.Ordinal);
         lineEnd = lineEnd < 0 ? text.Length : lineEnd;
         bool emptyBefore = text.AsSpan(lineStart, start - lineStart).Trim().IsEmpty;
         bool emptyAfter = text.AsSpan(end, lineEnd - end).Trim().IsEmpty;
@@ -91,7 +91,7 @@ internal static class SourceTextEditor
         int offset = 0;
         for (int current = 1; current < line; current++)
         {
-            int newline = text.IndexOf('\n', offset);
+            int newline = text.IndexOf('\n', offset, StringComparison.Ordinal);
             if (newline < 0)
             {
                 return -1;

@@ -150,7 +150,7 @@ internal static class K6CommandLine
             // Messages carry environment values and host output, so each line is escaped on its own.
             foreach (var line in ControlCharacters.EscapeLines(exception.Message))
             {
-                await error.WriteLineAsync(line).ConfigureAwait(false);
+                await error.WriteLineAsync(line.AsMemory(), CancellationToken.None).ConfigureAwait(false);
             }
 
             return FailureExitCode;

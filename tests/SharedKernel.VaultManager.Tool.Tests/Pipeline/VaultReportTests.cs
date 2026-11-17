@@ -62,7 +62,7 @@ public sealed class VaultReportTests : IDisposable
         string[] values =
         [
             OldPassword, NewPassword, NotesPassword, KeeperOnlyPassword, ExportPassword, totp, totpSecret,
-            .. notesCodes, .. fileCodes, .. privateKey.Split('\n').Where(line => !line.StartsWith('-')),
+            .. notesCodes, .. fileCodes, .. privateKey.Split('\n').Where(line => !line.AsSpan().StartsWith('-')),
         ];
         string[] texts = [report, decisionsFile, printed];
         texts.ShouldAllSatisfy(text => values.ShouldAllSatisfy(value => text.ShouldNotContain(value, StringComparison.Ordinal)));
@@ -202,7 +202,7 @@ public sealed class VaultReportTests : IDisposable
         string report = VaultReport.ToMarkdown(result);
 
         // Assert
-        string[] headings = [.. report.Split('\n').Where(line => line.StartsWith('#'))];
+        string[] headings = [.. report.Split('\n').Where(line => line.AsSpan().StartsWith('#'))];
         headings.ShouldContain(heading => heading.StartsWith("#### Bank # Injected heading (`", StringComparison.Ordinal));
         headings.ShouldNotContain(heading => heading.Contains("Injected", StringComparison.Ordinal) && !heading.StartsWith("#### Bank", StringComparison.Ordinal));
         report.ShouldNotContain("\u2028", StringComparison.Ordinal);

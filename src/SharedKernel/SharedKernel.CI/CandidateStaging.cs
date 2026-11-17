@@ -82,7 +82,8 @@ internal static class CandidateStaging
 
         var present = pin.PackageSha256.Count - missing.Count;
         await output.WriteLineAsync(
-            $"Staged {pin.PackageVersion} in {request.Output}: {Packages(missing.Count)} added, {present} already present.").ConfigureAwait(false);
+            ($"Staged {pin.PackageVersion} in {request.Output}: {Packages(missing.Count)} added, {present} already present.").AsMemory(),
+            CancellationToken.None).ConfigureAwait(false);
     }
 
     private static HttpClient CreateHttpClient(HttpMessageHandler handler, CandidateStagingServices services)

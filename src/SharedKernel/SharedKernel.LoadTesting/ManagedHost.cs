@@ -173,12 +173,7 @@ internal sealed class ManagedHost : IAsyncDisposable
             await using (stream.ConfigureAwait(false))
             {
                 var buffer = new byte[MaxReadyFileBytes];
-                var length = 0;
-                int read;
-                while (length < buffer.Length && (read = await stream.ReadAsync(buffer.AsMemory(length), ct).ConfigureAwait(false)) > 0)
-                {
-                    length += read;
-                }
+                var length = await stream.ReadAtLeastAsync(buffer, buffer.Length, throwOnEndOfStream: false, ct).ConfigureAwait(false);
 
                 var value = Encoding.UTF8.GetString(buffer, 0, length).Trim();
                 return value.Length == 0 ? null : value;

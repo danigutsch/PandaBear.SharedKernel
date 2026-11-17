@@ -61,6 +61,8 @@ public sealed class LinkTargetTests
     [InlineData("tel:55+11")]
     [InlineData("")]
     [InlineData("  ")]
+    [InlineData("\u00A0")]
+    [InlineData("\u2003\u00A0")]
     [InlineData(null)]
     public void Unsafe_links_are_invalid(string? href)
     {
