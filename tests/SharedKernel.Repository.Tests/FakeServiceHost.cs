@@ -101,9 +101,9 @@ internal sealed class FakeServiceHost
         }
     }
 
-    /// <summary>Writes <paramref name="value"/> to the file that <paramref name="readyVariable"/> names, atomically as the protocol requires.</summary>
-    public static string Ready(string value, string readyVariable = "FAKE_READY_FILE") =>
-        $"printf '%s\\n' {Quote(value)} > \"${readyVariable}.tmp\"\nmv \"${readyVariable}.tmp\" \"${readyVariable}\"\n";
+    /// <summary>Writes one <c>NAME=value</c> line for each of <paramref name="values"/> to the file that <paramref name="readyVariable"/> names, atomically as the protocol requires.</summary>
+    public static string Ready(IEnumerable<(string Variable, string Value)> values, string readyVariable = "FAKE_READY_FILE") =>
+        $"printf '%s\\n' {string.Join(' ', values.Select(static value => Quote(value.Variable + "=" + value.Value)))} > \"${readyVariable}.tmp\"\nmv \"${readyVariable}.tmp\" \"${readyVariable}\"\n";
 
     /// <summary>Blocks until the standard input reaches end-of-file.</summary>
     public const string WaitForEndOfInput = "cat > /dev/null\n";

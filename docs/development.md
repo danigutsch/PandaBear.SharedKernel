@@ -8,46 +8,71 @@ Run `dotnet format SharedKernel.slnx --verify-no-changes --no-restore`, then `do
 
 Use file-scoped namespaces, nullable references, four spaces, one top-level type per new file, and XML documentation on public APIs. Do not append `Async` to methods. Preserve warnings-as-errors, vulnerability auditing, public API validation, authorization, validation, privacy, and meaningful regressions. Prove actionable behavior gaps with failing tests before production changes. Prefer existing .NET tools and platform APIs; review any new dependency, including transitives.
 
-## PostgreSQL test servers
+## Shared test services
 
-The three PostgreSQL test assemblies, `SharedKernel.Npgsql.Tests`, `SharedKernel.EventSourcing.Npgsql.Tests`, and
-`SharedKernel.EntityFrameworkCore.Tests`, stay separate assemblies. Each creates and drops only its own isolated
-databases on a PostgreSQL server, and where that server comes from depends on the environment variable
-`SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING`:
+Every service that tests need runs once per test run, and every test assembly that needs it borrows that one instance;
+a service can consist of several containers. Today there are two: a PostgreSQL server, and Umami with a test website,
+which keeps its data in a database of its own on that same server. No kind of container gets a CI slice or a convention
+exception of its own.
 
-- When it holds a connection string, the assembly borrows that server. It never starts, stops, or replaces it, and a
-  value that is present but malformed fails on first use with a message that names the variable, never one that repeats
-  the value. A server that does not accept a connection fails on first use too, once for the assembly: the failure is
-  cached, so a server that accepts connections and never answers costs one connection timeout, not one per test. It
-  does not fall back to a server of its own, because that would hide a broken owner and start a second container.
+Each service has a helper that its test assemblies reference, and the helper reads one environment variable:
+
+| Service | Helper | Variable | Test assemblies |
+| --- | --- | --- | --- |
+| PostgreSQL server | `tests/SharedKernel.Npgsql.Testing` | `SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING` | `SharedKernel.Npgsql.Tests`, `SharedKernel.EventSourcing.Npgsql.Tests`, `SharedKernel.EntityFrameworkCore.Tests` |
+| Umami website | `tests/SharedKernel.Aspire.Hosting.Umami.Testing` | `SHAREDKERNEL_TESTING_UMAMI_CONNECTION_STRING` | `SharedKernel.Aspire.Hosting.Umami.Tests` |
+
+The assemblies stay separate. Each fixture starts nothing until a test needs its service, and then:
+
+- When the variable holds a value, the assembly borrows the service that another process owns. It never starts, stops, or
+  replaces it. A PostgreSQL assembly creates and drops only its own isolated databases; the Umami test only sends page
+  views to the website and reads them back. A value that is present but malformed fails on first use with a message that
+  names the variable, never one that repeats the value. A PostgreSQL server that does not accept a connection fails on
+  first use too, once for the assembly: the failure is cached, so a server that accepts connections and never answers
+  costs one connection timeout, not one per test. A set variable never falls back to an instance of the assembly's own,
+  because that would hide a broken owner and start a second instance.
 - When it is absent or blank, as in a plain `dotnet test --solution SharedKernel.slnx -c Release --no-build
-  --no-restore`, each assembly starts a server of its own through Aspire on its first database use and stops it when its
-  tests end. A test that needs no database starts no container, so a complete local run starts one server per assembly
-  that needs one, up to three.
+  --no-restore`, the assembly starts an instance of its own through Aspire on first use, once for the assembly, and stops
+  it when its tests end. A test that needs no service starts no container, so a complete local run starts one instance per
+  assembly that needs one: up to three PostgreSQL servers, and one Umami with a PostgreSQL server of its own.
 
-CI shares one server instead. `.config/sharedkernel-ci.json` lists the three projects in the `postgres` slice and gives
-it a `service`: the project `tests/SharedKernel.Npgsql.Testing.Host`. `sharedkernel-ci run --slice postgres` starts that
-host after the build, waits for it to write its connection string to the file that
-`SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE` names, hands the string to the test run alone through
-`SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING`, and stops the host after the tests by closing its standard input, which
-makes the host remove its container. The host's output is in `service-postgres.stdout.log` and
-`service-postgres.stderr.log` beside the other logs of the slice's evidence, and the connection string is in no log. The
-[CI tool README](../tools/SharedKernel.CI.Tool/README.md#services) describes the protocol. Parallel test modules stay
-enabled, so the three assemblies run at the same time against the one server.
+CI shares one instance of each instead. `.config/sharedkernel-ci.json` lists the four projects in the `services` slice and
+gives it a `service`: the project `tests/SharedKernel.TestServices.Host`, which composes every service with its helper.
+`sharedkernel-ci run --slice services` starts that host after the build. The host starts the PostgreSQL server, then Umami
+with its database on that server and the website `site`, which the website resource sets up in Umami through `AddWebsite`.
+It writes the file that `SHAREDKERNEL_TESTING_SERVICES_READY_FILE` names, one `NAME=value` line for each variable that the
+service's `valueVariables` lists, and the tool hands each value to the test run alone through its variable. After the
+tests the tool closes the host's standard input, which makes the host remove its containers. The host's output is in
+`service-services.stdout.log` and `service-services.stderr.log` beside the other logs of the slice's evidence, and no value
+is in a log. The [CI tool README](../tools/SharedKernel.CI.Tool/README.md#services) describes the protocol. Parallel test
+modules stay enabled, so the four assemblies run at the same time against the one server and the one Umami.
+
+The PostgreSQL server must start, or the host exits 1 without a ready file and the slice fails before its tests. Umami
+must not hold back the tests that need only PostgreSQL: when it does not start within five minutes, or its website cannot
+be set up, the host writes why to standard error and hands over `Unavailable` as the Umami value, so the PostgreSQL tests
+run and the Umami tests fail with a message that points at that report. The slice's `readyTimeoutSeconds` of 600 outlasts
+both waits.
 
 To run the slice as CI does, with a working container runtime:
 
 ```sh
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- select
-dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run --slice postgres
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run --slice services
 ```
 
 `select` without `--base` selects every test project and writes the plan to `TestResults/selection`. `run` restores and
-builds the slice, runs the host, runs the three projects with the connection string, and stops the host. The evidence
-is in `TestResults/selection/execution-postgres`. A change under `tests/SharedKernel.Npgsql.Testing.Host` selects the
-three projects through `selection.testPaths`, because only `SharedKernel.Npgsql.Tests` references the host. So does a
-change to `ServiceHost.cs` or `ServiceConfiguration.cs` of the CI tool, which also selects the tests of the tool, because
-only a run through the real tool and host proves the start, the hand-over, and the stop of the server.
+builds the slice, runs the host, runs the four projects with the values, and stops the host. The evidence is in
+`TestResults/selection/execution-services`. A change under `tests/SharedKernel.TestServices.Host` selects the four projects
+through `selection.testPaths`, because only `SharedKernel.Npgsql.Tests` references the host. So does a change to
+`ServiceHost.cs` or `ServiceConfiguration.cs` of the CI tool, which also selects the tests of the tool, because only a run
+through the real tool and host proves the start, the hand-over, and the stop of the services.
+
+A new shared service follows the same pattern: a helper with a borrow-or-start fixture that reads one variable, the
+service composed in the host, and its variable and test projects added to the `services` slice. The conventions in
+`CiConfigurationConventionTests` keep that true: every variable that a slice service hands over is read by a helper, every
+test project that references a helper runs in the slice whose service hands over its variable, and every hosted test
+project (one built with the Aspire AppHost SDK) runs in a slice with a service and borrows from it, so CI never starts a
+second instance of a shared service.
 
 ## JavaScript tooling
 
@@ -111,8 +136,8 @@ creation. A change to a project selects the test projects that depend on it; a c
 (`.config`, `.github`, `*.props`, `*.targets`, `*.slnx`, analyzer configuration, `global.json`, `NuGet.Config`, the
 style analyzer tests, or the shared test configuration) selects every test project. Any project change runs the
 candidate job, which packs and consumes every package, and repository quality, which builds the whole solution and runs
-the governed literal check (`--explicit only`) against every library. The three PostgreSQL test projects share the
-`postgres` slice, which runs one PostgreSQL server for all of them (see [PostgreSQL test servers](#postgresql-test-servers));
+the governed literal check (`--explicit only`) against every library. The test projects that borrow a shared service share the
+`services` slice, which runs one instance of every shared test service for all of them (see [Shared test services](#shared-test-services));
 the `library` slice runs every other selected test project. Linux and Windows consume the same candidate bytes
 in parallel. Repository quality runs on every validation. Standalone repository documentation skips candidates, tests,
 and full-solution bootstrap/formatting while every tracked build file is inert; repository quality then builds only the

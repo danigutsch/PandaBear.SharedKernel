@@ -1,3 +1,5 @@
+using PandaBear.TestServices.Host;
+
 namespace PandaBear.Npgsql.Tests;
 
 /// <summary>Stands in for the process environment, so a test never changes a process-wide variable.</summary>
@@ -23,7 +25,7 @@ internal static class FakeEnvironment
     /// </summary>
     public static Func<string, string?> WithReadyFile(string? value)
     {
-        return name => string.Equals(name, PostgreSqlTestServer.ReadyFileVariable, StringComparison.Ordinal)
+        return name => string.Equals(name, ReadyFile.Variable, StringComparison.Ordinal)
             ? value
             : throw new InvalidOperationException($"The test environment defines no variable '{name}'.");
     }

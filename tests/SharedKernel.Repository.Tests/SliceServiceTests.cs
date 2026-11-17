@@ -6,14 +6,15 @@ namespace PandaBear.Repository.Tests;
 
 /// <summary>
 /// Guards <c>run</c> for a slice with a service: the order of the phases, who sees the service's value, and that the service is
-/// stopped, its ready file removed, and its failures reported whatever else fails. The service is a fake shell script.
+/// stopped, its ready file removed, and its failures reported whatever else fails. The service is a fake shell script that hands
+/// over two values.
 /// </summary>
 [UnsupportedOSPlatform("windows")]
 public sealed class SliceServiceTests
 {
     private const string Database = ServiceRunScope.DatabaseHost;
 
-    private static readonly string HostReady = FakeServiceHost.Ready(ServiceRunScope.Value) + FakeServiceHost.WaitForEndOfInput;
+    private static readonly string HostReady = ServiceRunScope.Ready + FakeServiceHost.WaitForEndOfInput;
 
     [PosixFact]
     public async Task The_service_starts_after_the_build_serves_the_test_phase_and_is_stopped_after_it()
@@ -54,7 +55,7 @@ public sealed class SliceServiceTests
     }
 
     [PosixFact]
-    public async Task Only_the_test_phase_receives_the_value_and_the_service_receives_only_the_ready_file()
+    public async Task Only_the_test_phase_receives_the_values_and_the_service_receives_only_the_ready_file()
     {
         // Arrange
         using var run = new ServiceRunScope(HostReady);
@@ -67,31 +68,41 @@ public sealed class SliceServiceTests
         var receiving = run.Processes.Calls.Where(static call => call.Environment?.ContainsKey("FAKE_SERVICE_VALUE") == true).ShouldHaveSingleItem();
         receiving.Arguments[0].ShouldBe("test");
         receiving.Environment!["FAKE_SERVICE_VALUE"].ShouldBe(ServiceRunScope.Value);
+        receiving.Environment["FAKE_SERVICE_ENDPOINT"].ShouldBe(ServiceRunScope.Endpoint, "Each line of the ready file reaches the variable it names.");
+        run.Processes.Calls.Where(static call => call.Environment?.ContainsKey("FAKE_SERVICE_ENDPOINT") == true).ShouldHaveSingleItem().ShouldBeSameAs(receiving);
         receiving.Environment.ContainsKey("FAKE_READY_FILE").ShouldBeFalse("The ready file belongs to the service alone.");
         var service = run.Host.Environment(Database);
         service["FAKE_READY_FILE"].ShouldEndWith("ready", StringComparison.Ordinal);
-        service.ContainsKey("FAKE_SERVICE_VALUE").ShouldBeFalse("The service never receives the value it hands over.");
+        service.ContainsKey("FAKE_SERVICE_VALUE").ShouldBeFalse("The service never receives a value it hands over.");
+        service.ContainsKey("FAKE_SERVICE_ENDPOINT").ShouldBeFalse("The service never receives a value it hands over.");
     }
 
     [PosixFact]
-    public async Task The_value_is_in_no_file_and_no_message_even_when_the_tests_print_it()
+    public async Task The_values_are_in_no_file_and_no_message_even_when_the_tests_print_them()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
         using var run = new ServiceRunScope(HostReady);
         run.Respond = (fileName, arguments, _) => Task.FromResult(
-            fileName == "git" ? "fixture" : arguments is ["test", ..] ? "connected to " + ServiceRunScope.Value + Environment.NewLine : string.Empty);
+            fileName == "git"
+                ? "fixture"
+                : arguments is ["test", ..] ? "connected to " + ServiceRunScope.Value + " and " + ServiceRunScope.Endpoint + Environment.NewLine : string.Empty);
 
         // Act
         var result = await run.Run(["run", "--slice", "database"], ct);
 
         // Assert
         result.ExitCode.ShouldBe(0, result.Error);
-        (await run.FilesWith(ServiceRunScope.Value, ct)).ShouldBeEmpty();
-        result.Output.ShouldNotContain(ServiceRunScope.Value, StringComparison.Ordinal);
-        result.Error.ShouldNotContain(ServiceRunScope.Value, StringComparison.Ordinal);
-        result.Error.ShouldContain("connected to [redacted]", StringComparison.Ordinal);
-        (await File.ReadAllTextAsync(Path.Combine(run.Execution, "test.log"), ct)).ShouldBe("connected to [redacted]" + Environment.NewLine);
+        string[] values = [ServiceRunScope.Value, ServiceRunScope.Endpoint];
+        foreach (var value in values)
+        {
+            (await run.FilesWith(value, ct)).ShouldBeEmpty();
+            result.Output.ShouldNotContain(value, StringComparison.Ordinal);
+            result.Error.ShouldNotContain(value, StringComparison.Ordinal);
+        }
+
+        result.Error.ShouldContain("connected to [redacted] and [redacted]", StringComparison.Ordinal);
+        (await File.ReadAllTextAsync(Path.Combine(run.Execution, "test.log"), ct)).ShouldBe("connected to [redacted] and [redacted]" + Environment.NewLine);
     }
 
     [PosixFact]
@@ -226,17 +237,42 @@ public sealed class SliceServiceTests
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        using var run = new ServiceRunScope("printf 'canary\\tvalue\\n' > \"$FAKE_READY_FILE.tmp\"\nmv \"$FAKE_READY_FILE.tmp\" \"$FAKE_READY_FILE\"\n" + FakeServiceHost.WaitForEndOfInput);
+        using var run = new ServiceRunScope(
+            "printf 'FAKE_SERVICE_VALUE=canary\\tvalue\\nFAKE_SERVICE_ENDPOINT=canary-endpoint\\n' > \"$FAKE_READY_FILE.tmp\"\nmv \"$FAKE_READY_FILE.tmp\" \"$FAKE_READY_FILE\"\n"
+            + FakeServiceHost.WaitForEndOfInput);
 
         // Act
         var result = await run.Run(["run", "--slice", "database"], ct);
 
         // Assert
         result.ExitCode.ShouldBe(2);
-        result.Error.ShouldContain("The ready file of the service of slice database must hold one line without control characters.", StringComparison.Ordinal);
+        result.Error.ShouldContain(
+            "The ready file of the service of slice database must hold one NAME=value line for each of its value variables (FAKE_SERVICE_VALUE, FAKE_SERVICE_ENDPOINT); line 1 gives FAKE_SERVICE_VALUE a value with a control character.",
+            StringComparison.Ordinal);
         result.Error.ShouldNotContain("canary", StringComparison.Ordinal);
         (await run.FilesWith("canary", ct)).ShouldBeEmpty();
         run.Host.IsRunning(Database).ShouldBeFalse();
+    }
+
+    [PosixFact]
+    public async Task A_ready_file_that_lacks_a_value_variable_fails_the_run_before_the_tests_without_repeating_a_value()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var run = new ServiceRunScope(FakeServiceHost.Ready([("FAKE_SERVICE_VALUE", ServiceRunScope.Value)]) + FakeServiceHost.WaitForEndOfInput);
+
+        // Act
+        var result = await run.Run(["run", "--slice", "database"], ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("; it lacks FAKE_SERVICE_ENDPOINT.", StringComparison.Ordinal);
+        result.Error.ShouldNotContain(ServiceRunScope.Value, StringComparison.Ordinal);
+        (await run.FilesWith(ServiceRunScope.Value, ct)).ShouldBeEmpty();
+        run.Processes.Commands.ShouldNotContain(static command => command.StartsWith("dotnet test", StringComparison.Ordinal));
+        run.Host.IsRunning(Database).ShouldBeFalse();
+        (await ServiceRunScope.Phases(run.Execution, ct)).ShouldBe(
+            ["load passed", "restore passed", "build passed", "service-database failed", "service-stop-database passed", "total failed"]);
     }
 
     [PosixFact]
@@ -295,7 +331,7 @@ public sealed class SliceServiceTests
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        using var run = new ServiceRunScope(FakeServiceHost.Ready(ServiceRunScope.Value) + "exec sleep 300\n", stopTimeoutSeconds: 1);
+        using var run = new ServiceRunScope(ServiceRunScope.Ready + "exec sleep 300\n", stopTimeoutSeconds: 1);
         var stopwatch = Stopwatch.StartNew();
 
         // Act
@@ -335,7 +371,7 @@ public sealed class SliceServiceTests
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        using var run = new ServiceRunScope(FakeServiceHost.Ready(ServiceRunScope.Value) + "exit 5\n");
+        using var run = new ServiceRunScope(ServiceRunScope.Ready + "exit 5\n");
         run.Respond = async (fileName, arguments, token) =>
         {
             if (arguments is ["test", ..])
@@ -454,12 +490,12 @@ public sealed class SliceServiceTests
         const string queueHost = "tests/Queue.Host/Queue.Host.csproj";
         run.Repository.AddTestProject(queueTests, "src/Core/Core.csproj");
         run.Repository.AddProject(queueHost, "<Project />");
-        run.Host.Add(queueHost, FakeServiceHost.Ready("queue-value") + FakeServiceHost.WaitForEndOfInput);
+        run.Host.Add(queueHost, FakeServiceHost.Ready([("FAKE_QUEUE_VALUE", "queue-value")]) + FakeServiceHost.WaitForEndOfInput);
         run.Repository.Configure($$"""
             [
               { "name": "library", "projects": [] },
-              { "name": "database", "projects": ["{{ServiceRunScope.DatabaseTests}}"], "service": { "project": "{{Database}}", "readyFileVariable": "FAKE_READY_FILE", "valueVariable": "FAKE_SERVICE_VALUE" } },
-              { "name": "queue", "projects": ["{{queueTests}}"], "service": { "project": "{{queueHost}}", "readyFileVariable": "FAKE_READY_FILE", "valueVariable": "FAKE_QUEUE_VALUE" } }
+              { "name": "database", "projects": ["{{ServiceRunScope.DatabaseTests}}"], "service": { "project": "{{Database}}", "readyFileVariable": "FAKE_READY_FILE", "valueVariables": ["FAKE_SERVICE_VALUE", "FAKE_SERVICE_ENDPOINT"] } },
+              { "name": "queue", "projects": ["{{queueTests}}"], "service": { "project": "{{queueHost}}", "readyFileVariable": "FAKE_READY_FILE", "valueVariables": ["FAKE_QUEUE_VALUE"] } }
             ]
             """);
         var selection = run.Repository.WriteSelection("fixture", ("database", [ServiceRunScope.DatabaseTests]), ("queue", [queueTests]));
@@ -476,6 +512,7 @@ public sealed class SliceServiceTests
         ]);
         var test = run.Processes.Calls.Single(static call => call.Arguments[0] == "test");
         test.Environment!["FAKE_SERVICE_VALUE"].ShouldBe(ServiceRunScope.Value);
+        test.Environment["FAKE_SERVICE_ENDPOINT"].ShouldBe(ServiceRunScope.Endpoint);
         test.Environment["FAKE_QUEUE_VALUE"].ShouldBe("queue-value");
         run.Host.IsRunning(Database).ShouldBeFalse();
         run.Host.IsRunning(queueHost).ShouldBeFalse();

@@ -53,32 +53,44 @@ public static partial class UmamiResourceExtensions
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
-        var appSecret = builder.AddParameter(
-            $"{name}-app-secret",
-            new GenerateParameterDefault { MinLength = 64, Special = false },
-            secret: true,
-            persist: true);
         var database = builder.AddPostgres($"{name}-postgres")
             .WithImageTag(PostgresContainerImageTags.Tag)
             .WithImageSHA256(PostgresContainerImageTags.Digest)
             .AddDatabase($"{name}-db", DatabaseName);
-        var resource = new UmamiResource(name, database.Resource, appSecret.Resource);
+        return AddUmami(builder, name, database, ownsDatabaseServer: true);
+    }
 
-        return builder.AddResource(resource)
-            .WithImage(UmamiContainerImageTags.Image, UmamiContainerImageTags.Tag)
-            .WithImageRegistry(UmamiContainerImageTags.Registry)
-            .WithImageSHA256(UmamiContainerImageTags.Digest)
-            .WithHttpEndpoint(targetPort: HttpPort, name: UmamiResource.HttpEndpointName)
-            .WithEnvironment(context =>
-            {
-                context.EnvironmentVariables["DATABASE_URL"] = resource.Database.UriExpression;
-                context.EnvironmentVariables["APP_SECRET"] = resource.AppSecretParameter;
-                context.EnvironmentVariables["HOSTNAME"] = "0.0.0.0";
-                context.EnvironmentVariables["CLIENT_IP_HEADER"] = ClientIpHeader;
-                context.EnvironmentVariables["DISABLE_TELEMETRY"] = "1";
-            })
-            .WithHttpHealthCheck(HeartbeatPath, endpointName: UmamiResource.HttpEndpointName)
-            .WaitFor(database);
+    /// <summary>
+    /// Adds an Umami container that keeps its data in an existing PostgreSQL database, such as one of a server that other resources
+    /// share, to the application model.
+    /// </summary>
+    /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
+    /// <param name="name">The name of the resource.</param>
+    /// <param name="database">
+    /// The database Umami keeps its data in, added with <c>AddDatabase</c> on a PostgreSQL server of the application. Umami creates its
+    /// tables in it on its first start, so give it a database of its own.
+    /// </param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="database"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="name"/> is blank.</exception>
+    /// <remarks>
+    /// <para>
+    /// Umami gets the database as <c>DATABASE_URL</c> and waits until it is healthy; everything else is as in
+    /// <see cref="AddUmami(IDistributedApplicationBuilder, string)"/>, which adds a server of its own instead. The server belongs to
+    /// whoever added it, so <see cref="WithDataVolume"/> and <see cref="WithDataBindMount"/> refuse to change it: keep the analytics data
+    /// with the server's own <c>WithDataVolume</c> or <c>WithDataBindMount</c>.
+    /// </para>
+    /// </remarks>
+    public static IResourceBuilder<UmamiResource> AddUmami(
+        this IDistributedApplicationBuilder builder,
+        [ResourceName] string name,
+        IResourceBuilder<PostgresDatabaseResource> database)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ArgumentNullException.ThrowIfNull(database);
+
+        return AddUmami(builder, name, database, ownsDatabaseServer: false);
     }
 
     /// <summary>
@@ -89,6 +101,7 @@ public static partial class UmamiResourceExtensions
     /// <param name="isReadOnly">A flag that indicates if this is a read-only volume.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Umami keeps its data on a PostgreSQL server that <c>AddUmami</c> did not add.</exception>
     /// <remarks>The Umami container keeps no state of its own; everything it records is in PostgreSQL.</remarks>
     public static IResourceBuilder<UmamiResource> WithDataVolume(this IResourceBuilder<UmamiResource> builder, string? name = null, bool isReadOnly = false)
     {
@@ -107,6 +120,7 @@ public static partial class UmamiResourceExtensions
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
     /// <exception cref="ArgumentException"><paramref name="source"/> is <see langword="null"/>, empty, or white-space.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidOperationException">Umami keeps its data on a PostgreSQL server that <c>AddUmami</c> did not add.</exception>
     public static IResourceBuilder<UmamiResource> WithDataBindMount(this IResourceBuilder<UmamiResource> builder, string source, bool isReadOnly = false)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -236,6 +250,43 @@ public static partial class UmamiResourceExtensions
     [GeneratedRegex(@"^(localhost(:[1-9][0-9]{0,4})?|((?=[a-z0-9_-]{1,63}\.)(xn--)?[a-z0-9_-]+(-[a-z0-9_-]+)*\.)+(xn--)?[a-z0-9_-]{2,63})\z", RegexOptions.CultureInvariant)]
     private static partial Regex UmamiDomain();
 
-    private static IResourceBuilder<PostgresServerResource> PostgresServer(IResourceBuilder<UmamiResource> builder) =>
-        builder.ApplicationBuilder.CreateResourceBuilder(builder.Resource.Database.Parent);
+    private static IResourceBuilder<UmamiResource> AddUmami(
+        IDistributedApplicationBuilder builder,
+        string name,
+        IResourceBuilder<PostgresDatabaseResource> database,
+        bool ownsDatabaseServer)
+    {
+        var appSecret = builder.AddParameter(
+            $"{name}-app-secret",
+            new GenerateParameterDefault { MinLength = 64, Special = false },
+            secret: true,
+            persist: true);
+        var resource = new UmamiResource(name, database.Resource, appSecret.Resource) { OwnsDatabaseServer = ownsDatabaseServer };
+
+        return builder.AddResource(resource)
+            .WithImage(UmamiContainerImageTags.Image, UmamiContainerImageTags.Tag)
+            .WithImageRegistry(UmamiContainerImageTags.Registry)
+            .WithImageSHA256(UmamiContainerImageTags.Digest)
+            .WithHttpEndpoint(targetPort: HttpPort, name: UmamiResource.HttpEndpointName)
+            .WithEnvironment(context =>
+            {
+                context.EnvironmentVariables["DATABASE_URL"] = resource.Database.UriExpression;
+                context.EnvironmentVariables["APP_SECRET"] = resource.AppSecretParameter;
+                context.EnvironmentVariables["HOSTNAME"] = "0.0.0.0";
+                context.EnvironmentVariables["CLIENT_IP_HEADER"] = ClientIpHeader;
+                context.EnvironmentVariables["DISABLE_TELEMETRY"] = "1";
+            })
+            .WithHttpHealthCheck(HeartbeatPath, endpointName: UmamiResource.HttpEndpointName)
+            .WaitFor(database);
+    }
+
+    private static IResourceBuilder<PostgresServerResource> PostgresServer(IResourceBuilder<UmamiResource> builder)
+    {
+        var resource = builder.Resource;
+        return resource.OwnsDatabaseServer
+            ? builder.ApplicationBuilder.CreateResourceBuilder(resource.Database.Parent)
+            : throw new InvalidOperationException(
+                $"Umami '{resource.Name}' keeps its data in the database '{resource.Database.Name}' of the PostgreSQL server '{resource.Database.Parent.Name}', "
+                + "which AddUmami did not add; keep the data with that server's own WithDataVolume or WithDataBindMount.");
+    }
 }

@@ -2,12 +2,13 @@ using System.Xml.Linq;
 
 namespace PandaBear.Repository.Tests.Conventions;
 
-/// <summary>Guards this repository's <c>.config/sharedkernel-ci.json</c> against selections that miss a package or a service, and against tests that borrow a shared server outside its slice.</summary>
+/// <summary>
+/// Guards this repository's <c>.config/sharedkernel-ci.json</c> against selections that miss a package or a service, and against tests that
+/// borrow a shared service outside the slice whose service supplies it or that start a second instance of one in CI.
+/// </summary>
 public sealed class CiConfigurationConventionTests
 {
     private const string StyleAnalyzerTests = "tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj";
-
-    private const string SharedPostgreSqlTestingProject = "SharedKernel.Npgsql.Testing.csproj";
 
     [Fact]
     public async Task Every_packable_project_change_requires_a_build_and_so_the_candidate_job()
@@ -49,7 +50,7 @@ public sealed class CiConfigurationConventionTests
     }
 
     [Fact]
-    public async Task Every_test_project_that_borrows_the_shared_postgresql_server_runs_in_a_slice_with_a_service()
+    public async Task Every_variable_that_a_slice_service_hands_over_is_read_by_a_helper_that_is_neither_a_test_nor_a_service()
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
@@ -57,19 +58,69 @@ public sealed class CiConfigurationConventionTests
         var graph = SolutionGraph.Load(root, configuration.Solution);
 
         // Act
+        var helpers = SharedServiceHelpers.Find(root, configuration, graph);
+        var unread = configuration.Slices
+            .SelectMany(static slice => slice.Service?.ValueVariables ?? [])
+            .Where(variable => !helpers.ContainsKey(variable))
+            .ToArray();
+
+        // Assert
+        helpers.ShouldNotBeEmpty();
+        unread.ShouldBeEmpty("A variable that no helper reads is handed to no test, so the service starts something that nothing borrows.");
+    }
+
+    [Fact]
+    public async Task Every_test_project_that_borrows_a_shared_service_runs_in_the_slice_whose_service_supplies_it()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
+        var graph = SolutionGraph.Load(root, configuration.Solution);
+        var helpers = SharedServiceHelpers.Find(root, configuration, graph);
+
+        // Act
         var borrowing = graph.Tests
-            .Where(project => XDocument.Load(Path.Combine(root, project)).Descendants("ProjectReference")
-                .Any(reference => Path.GetFileName(reference.Attribute("Include")?.Value.Replace('\\', '/') ?? string.Empty) == SharedPostgreSqlTestingProject))
             .Order(StringComparer.Ordinal)
+            .Select(project => (Project: project, Variables: SharedServiceHelpers.Borrowed(root, project, helpers)))
+            .Where(static test => test.Variables.Length > 0)
             .ToArray();
         var unserved = borrowing
-            .Where(project => configuration.Slices.SingleOrDefault(slice => slice.Projects.Contains(project, StringComparer.Ordinal)) is not { Service: not null } slice
-                || slice.Name == configuration.DefaultSlice)
+            .SelectMany(test => test.Variables
+                .Where(variable => configuration.Slices.SingleOrDefault(slice => slice.Projects.Contains(test.Project, StringComparer.Ordinal))?.Service?.ValueVariables
+                    .Contains(variable, StringComparer.Ordinal) != true)
+                .Select(variable => test.Project + " borrows " + variable))
             .ToArray();
 
         // Assert
         borrowing.ShouldNotBeEmpty();
-        unserved.ShouldBeEmpty("A test project that borrows the shared PostgreSQL server through SharedKernel.Npgsql.Testing runs in the slice whose service supplies that server; otherwise each assembly starts a server of its own.");
+        unserved.ShouldBeEmpty(
+            "A test project that references the helper that reads a variable of a slice service runs in that slice; elsewhere the variable is not set, and each assembly starts an instance of its own.");
+    }
+
+    [Fact]
+    public async Task Every_hosted_test_project_runs_in_a_slice_with_a_service_and_borrows_from_it()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
+        var graph = SolutionGraph.Load(root, configuration.Solution);
+        var helpers = SharedServiceHelpers.Find(root, configuration, graph);
+
+        // Act
+        var hosted = graph.Tests
+            .Where(project => XDocument.Load(Path.Combine(root, project)).Root?.Attribute("Sdk")?.Value.StartsWith("Aspire.AppHost.Sdk", StringComparison.Ordinal) == true)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+        var unserved = hosted
+            .Where(project => configuration.Slices.SingleOrDefault(slice => slice.Projects.Contains(project, StringComparer.Ordinal)) is not { Service: { } service } slice
+                || slice.Name == configuration.DefaultSlice
+                || !SharedServiceHelpers.Borrowed(root, project, helpers).Any(variable => service.ValueVariables.Contains(variable, StringComparer.Ordinal)))
+            .ToArray();
+
+        // Assert
+        hosted.ShouldNotBeEmpty();
+        unserved.ShouldBeEmpty(
+            "A hosted test project starts containers on its own unless it borrows them. Every service that tests need runs once per CI run in the host of a slice service, so a hosted test project runs in that slice and borrows from it instead of starting a second instance.");
     }
 
     [Fact]
@@ -83,7 +134,7 @@ public sealed class CiConfigurationConventionTests
         // Act
         var services = configuration.Slices.Where(static slice => slice.Service is not null).Select(static slice => (slice.Name, Service: slice.Service!)).ToArray();
         var invalid = services
-            .SelectMany(static slice => new[] { slice.Service.ReadyFileVariable, slice.Service.ValueVariable })
+            .SelectMany(static slice => slice.Service.ValueVariables.Prepend(slice.Service.ReadyFileVariable))
             .Where(static variable => variable.Length == 0 || char.IsAsciiDigit(variable[0]) || !variable.All(static character => char.IsAsciiLetterOrDigit(character) || character == '_'))
             .ToArray();
 
@@ -92,16 +143,16 @@ public sealed class CiConfigurationConventionTests
         services.ShouldAllSatisfy(slice =>
         {
             graph.Tests.ShouldNotContain(slice.Service.Project, "A service is a host, not a test project.");
-            slice.Service.ReadyFileVariable.ShouldNotBe(slice.Service.ValueVariable, "The service and the tests read different variables.");
+            slice.Service.ValueVariables.ShouldNotContain(slice.Service.ReadyFileVariable, "The service and the tests read different variables.");
         });
         invalid.ShouldBeEmpty("An environment variable name is letters, digits, and '_', and does not start with a digit.");
-        services.Select(static slice => slice.Service.ValueVariable).ShouldBe(
-            [.. services.Select(static slice => slice.Service.ValueVariable).Distinct(StringComparer.OrdinalIgnoreCase)],
+        services.SelectMany(static slice => slice.Service.ValueVariables).ShouldBe(
+            [.. services.SelectMany(static slice => slice.Service.ValueVariables).Distinct(StringComparer.OrdinalIgnoreCase)],
             "Slices that run together share one test environment, so they cannot hand over the same variable.");
     }
 
     [Fact]
-    public async Task The_postgres_slice_shares_one_server_through_the_variables_that_the_test_assemblies_and_the_host_read()
+    public async Task The_services_slice_shares_one_instance_of_each_service_through_the_variables_that_the_test_assemblies_and_the_host_read()
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
@@ -110,20 +161,27 @@ public sealed class CiConfigurationConventionTests
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
 
         // Assert
-        var postgres = configuration.Slices.ShouldHaveSingleItem(static slice => slice.Name == "postgres");
-        postgres.Projects.ShouldBe(
+        var services = configuration.Slices.ShouldHaveSingleItem(static slice => slice.Service is not null);
+        services.Name.ShouldBe("services");
+        services.Projects.ShouldBe(
         [
+            "tests/SharedKernel.Aspire.Hosting.Umami.Tests/SharedKernel.Aspire.Hosting.Umami.Tests.csproj",
             "tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj",
             "tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj",
             "tests/SharedKernel.Npgsql.Tests/SharedKernel.Npgsql.Tests.csproj",
         ]);
-        postgres.Service.ShouldBe(
-            new ServiceConfiguration(
-                "tests/SharedKernel.Npgsql.Testing.Host/SharedKernel.Npgsql.Testing.Host.csproj",
-                "SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE",
-                "SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING",
-                StopTimeoutSeconds: 180),
-            "The names are the contract between the CI tool, the owner host, and the test assemblies, and the stop timeout outlasts the two minutes that the container runtime may take to remove the server, because the host removes its container while it exits and a kill earlier would interrupt that.");
+        var service = services.Service.ShouldNotBeNull();
+        service.Project.ShouldBe("tests/SharedKernel.TestServices.Host/SharedKernel.TestServices.Host.csproj");
+        service.ReadyFileVariable.ShouldBe("SHAREDKERNEL_TESTING_SERVICES_READY_FILE", "The names are the contract between the CI tool, the host, and the test assemblies.");
+        service.ValueVariables.ShouldBe(
+            ["SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING", "SHAREDKERNEL_TESTING_UMAMI_CONNECTION_STRING"],
+            "The names are the contract between the CI tool, the host, and the test assemblies.");
+        service.ReadyTimeoutSeconds.ShouldBe(
+            600,
+            "The host hands over PostgreSQL after up to 90 seconds and Umami after up to five more minutes, so the tool must not give up before the host reports an Umami that did not start.");
+        service.StopTimeoutSeconds.ShouldBe(
+            180,
+            "The stop timeout outlasts the two minutes that the container runtime may take to remove the containers, because the host removes them while it exits and a kill earlier would interrupt that.");
     }
 
     [Fact]

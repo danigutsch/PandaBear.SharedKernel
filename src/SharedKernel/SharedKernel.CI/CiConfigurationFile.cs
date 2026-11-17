@@ -188,16 +188,31 @@ public static partial class CiConfigurationFile
         }
 
         ValidateVariable(service.ReadyFileVariable, path + ".readyFileVariable");
-        ValidateVariable(service.ValueVariable, path + ".valueVariable");
-        if (string.Equals(service.ValueVariable, service.ReadyFileVariable, StringComparison.OrdinalIgnoreCase))
+        if (service.ValueVariables.Count == 0)
         {
-            throw Invalid(path + ".valueVariable repeats readyFileVariable " + service.ReadyFileVariable + ".");
+            throw Invalid(path + ".valueVariables must name at least one variable.");
         }
 
-        // The test run of a run that merges slices has one environment, so two services cannot hand over the same variable.
-        if (!handedVariables.TryAdd(service.ValueVariable, slice))
+        var own = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        for (var index = 0; index < service.ValueVariables.Count; index++)
         {
-            throw Invalid(path + ".valueVariable repeats " + service.ValueVariable + ", which the service of slice " + handedVariables[service.ValueVariable] + " already hands to its tests.");
+            var variable = service.ValueVariables[index];
+            var variablePath = path + ".valueVariables[" + index.ToString(CultureInfo.InvariantCulture) + "]";
+            ValidateVariable(variable ?? string.Empty, variablePath);
+            if (string.Equals(variable, service.ReadyFileVariable, StringComparison.OrdinalIgnoreCase))
+            {
+                throw Invalid(variablePath + " repeats readyFileVariable " + service.ReadyFileVariable + ".");
+            }
+
+            if (!own.Add(variable!))
+            {
+                throw Invalid(variablePath + " repeats " + variable + ".");
+            }
+
+            if (!handedVariables.TryAdd(variable!, slice))
+            {
+                throw Invalid(variablePath + " repeats " + variable + ", which the service of slice " + handedVariables[variable!] + " already hands to its tests.");
+            }
         }
 
         ValidateTimeout(service.ReadyTimeoutSeconds, path + ".readyTimeoutSeconds");

@@ -232,7 +232,7 @@ PandaBear.CI.SelectionPlan.Slices.init -> void
 PandaBear.CI.SelectionPlanFile
 PandaBear.CI.ServiceConfiguration
 PandaBear.CI.ServiceConfiguration.<Clone>$() -> PandaBear.CI.ServiceConfiguration!
-PandaBear.CI.ServiceConfiguration.Deconstruct(out string! Project, out string! ReadyFileVariable, out string! ValueVariable, out int ReadyTimeoutSeconds, out int StopTimeoutSeconds) -> void
+PandaBear.CI.ServiceConfiguration.Deconstruct(out string! Project, out string! ReadyFileVariable, out System.Collections.Generic.IReadOnlyList<string!>! ValueVariables, out int ReadyTimeoutSeconds, out int StopTimeoutSeconds) -> void
 PandaBear.CI.ServiceConfiguration.Equals(PandaBear.CI.ServiceConfiguration? other) -> bool
 PandaBear.CI.ServiceConfiguration.Project.get -> string!
 PandaBear.CI.ServiceConfiguration.Project.init -> void
@@ -240,11 +240,11 @@ PandaBear.CI.ServiceConfiguration.ReadyFileVariable.get -> string!
 PandaBear.CI.ServiceConfiguration.ReadyFileVariable.init -> void
 PandaBear.CI.ServiceConfiguration.ReadyTimeoutSeconds.get -> int
 PandaBear.CI.ServiceConfiguration.ReadyTimeoutSeconds.init -> void
-PandaBear.CI.ServiceConfiguration.ServiceConfiguration(string! Project, string! ReadyFileVariable, string! ValueVariable, int ReadyTimeoutSeconds = 300, int StopTimeoutSeconds = 60) -> void
+PandaBear.CI.ServiceConfiguration.ServiceConfiguration(string! Project, string! ReadyFileVariable, System.Collections.Generic.IReadOnlyList<string!>! ValueVariables, int ReadyTimeoutSeconds = 300, int StopTimeoutSeconds = 60) -> void
 PandaBear.CI.ServiceConfiguration.StopTimeoutSeconds.get -> int
 PandaBear.CI.ServiceConfiguration.StopTimeoutSeconds.init -> void
-PandaBear.CI.ServiceConfiguration.ValueVariable.get -> string!
-PandaBear.CI.ServiceConfiguration.ValueVariable.init -> void
+PandaBear.CI.ServiceConfiguration.ValueVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.CI.ServiceConfiguration.ValueVariables.init -> void
 PandaBear.CI.SliceConfiguration
 PandaBear.CI.SliceConfiguration.<Clone>$() -> PandaBear.CI.SliceConfiguration!
 PandaBear.CI.SliceConfiguration.Deconstruct(out string! Name, out System.Collections.Generic.IReadOnlyList<string!>! Projects, out System.Collections.Generic.IReadOnlyList<string!>? OpenApi, out PandaBear.CI.PlaywrightConfiguration? Playwright, out PandaBear.CI.ServiceConfiguration? Service) -> void

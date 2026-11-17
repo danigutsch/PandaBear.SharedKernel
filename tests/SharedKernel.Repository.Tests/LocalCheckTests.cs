@@ -158,7 +158,7 @@ public sealed class LocalCheckTests
               {
                 "name": "hosted",
                 "projects": ["tests/Core.Tests/Core.Tests.csproj"],
-                "service": { "project": "tests/Host/Host.csproj", "readyFileVariable": "APP_READY_FILE", "valueVariable": "APP_VALUE" }
+                "service": { "project": "tests/Host/Host.csproj", "readyFileVariable": "APP_READY_FILE", "valueVariables": ["APP_VALUE"] }
               }
             ]
             """);

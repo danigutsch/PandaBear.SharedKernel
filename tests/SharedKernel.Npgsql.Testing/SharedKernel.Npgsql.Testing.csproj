@@ -20,7 +20,7 @@
         <InternalsVisibleTo Include="SharedKernel.Npgsql.Tests" />
         <InternalsVisibleTo Include="SharedKernel.EventSourcing.Npgsql.Tests" />
         <InternalsVisibleTo Include="SharedKernel.EntityFrameworkCore.Tests" />
-        <InternalsVisibleTo Include="SharedKernel.Npgsql.Testing.Host" />
+        <InternalsVisibleTo Include="SharedKernel.TestServices.Host" />
     </ItemGroup>
 
 </Project>

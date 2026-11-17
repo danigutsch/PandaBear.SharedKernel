@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using PandaBear.Npgsql.Testing.Host;
+using PandaBear.TestServices.Host;
 
 namespace PandaBear.Npgsql.Tests;
 
