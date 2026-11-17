@@ -1,0 +1,63 @@
+{
+  "version": 2,
+  "dependencies": {
+    "net11.0": {
+      "System.CommandLine": {
+        "type": "Direct",
+        "requested": "[3.0.0, )",
+        "resolved": "3.0.0",
+        "contentHash": "swNpSTl0iYJeBuvYYfaY+VxzZ5YC8wklwkqDCNOq2aTQqJzjauJfh/O3Zw93nwxspWrxvZTjT45f8VPR0ParEA=="
+      },
+      "PandaBear.SharedKernel.BuildingBlocks": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.ConfigurationFiles": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.InputNormalization": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.IO": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.Processes": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.Results": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.Secrets": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.ConfigurationFiles": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Secrets.Age": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Secrets": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Secrets.Sops": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Secrets": "[0.1.0-alpha.0, )"
+        }
+      }
+    }
+  }
+}

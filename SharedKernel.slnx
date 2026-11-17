@@ -145,6 +145,9 @@
   <Project Path="tests/SharedKernel.Sandbox.Tests/SharedKernel.Sandbox.Tests.csproj" />
   <Project Path="tests/SharedKernel.Sandbox.ClaudeCode.Tests/SharedKernel.Sandbox.ClaudeCode.Tests.csproj" />
   <Project Path="tests/SharedKernel.Packages.Tool.Tests/SharedKernel.Packages.Tool.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Secrets.Tool.Tests/SharedKernel.Secrets.Tool.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Secrets.Age.Tests/SharedKernel.Secrets.Age.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Secrets.Sops.Tests/SharedKernel.Secrets.Sops.Tests.csproj" />
   <Project Path="tests/SharedKernel.MalwareScanning.ClamAv.Testing/SharedKernel.MalwareScanning.ClamAv.Testing.csproj" />
   <Project Path="tests/SharedKernel.MalwareScanning.ClamAv.Tests/SharedKernel.MalwareScanning.ClamAv.Tests.csproj" />
   <Project Path="tests/SharedKernel.Mediator.Analyzers.Tests/SharedKernel.Mediator.Analyzers.Tests.csproj" />
@@ -211,6 +214,9 @@
   <Project Path="tests/SharedKernel.Vault.Bitwarden.Tests/SharedKernel.Vault.Bitwarden.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Vault.Keeper/SharedKernel.Vault.Keeper.csproj" />
   <Project Path="tests/SharedKernel.Vault.Keeper.Tests/SharedKernel.Vault.Keeper.Tests.csproj" />
+  <Project Path="tools/SharedKernel.Secrets.Tool/SharedKernel.Secrets.Tool.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Secrets.Age/SharedKernel.Secrets.Age.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Secrets.Sops/SharedKernel.Secrets.Sops.csproj" />
   <Project Path="tools/SharedKernel.PlaywrightMcp.Tool/SharedKernel.PlaywrightMcp.Tool.csproj" />
   <Project Path="tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj" />
   <Project Path="tools/SharedKernel.VaultManager.Tool/SharedKernel.VaultManager.Tool.csproj" />
@@ -250,6 +256,8 @@
   <Project Path="tests/SharedKernel.Tabular.Tests/SharedKernel.Tabular.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Packages/SharedKernel.Packages.csproj" />
   <Project Path="tests/SharedKernel.Packages.Tests/SharedKernel.Packages.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Secrets/SharedKernel.Secrets.csproj" />
+  <Project Path="tests/SharedKernel.Secrets.Tests/SharedKernel.Secrets.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.IO/SharedKernel.IO.csproj" />
   <Project Path="tests/SharedKernel.IO.Tests/SharedKernel.IO.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.IO.Analyzers/SharedKernel.IO.Analyzers.csproj" />

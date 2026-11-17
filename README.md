@@ -27,10 +27,12 @@ Choose the packages your project needs. Each package has its own README with req
 | Model installed packages and plan what is missing, read-only | [Packages](src/SharedKernel/SharedKernel.Packages/README.md) |
 | Wire Aspire hosts: service defaults with private telemetry and health endpoints, AppHost secrets, origins, health checks and image pins | [Service defaults](src/SharedKernel/SharedKernel.ServiceDefaults/README.md) · [Aspire hosting](src/SharedKernel/SharedKernel.Aspire.Hosting/README.md) |
 | Build focused tests and container-backed integration tests | [Testing](src/SharedKernel/SharedKernel.Testing/README.md) · [Integration testing](src/SharedKernel/SharedKernel.IntegrationTesting/README.md) · [SQLite testing](src/SharedKernel/SharedKernel.Testing.Sqlite/README.md) |
+| Keep secrets in git as age and SOPS files: validated recipients, creation rules, exact recipient-set checks, and stdin-only providers for age and sops | [Secrets](src/SharedKernel/SharedKernel.Secrets/README.md) · [age](src/SharedKernel/SharedKernel.Secrets.Age/README.md) · [sops](src/SharedKernel/SharedKernel.Secrets.Sops/README.md) |
 | Automate documentation, package maintenance, and CI validation | [Documentation tool](tools/SharedKernel.Documentation.Tool/README.md) · [Versioning tool](tools/SharedKernel.Versioning.Tool/README.md) · [CI tool](tools/SharedKernel.CI.Tool/README.md) |
 | Run configured k6 load scenarios against local targets | [k6 tool](tools/SharedKernel.K6.Tool/README.md) |
 | Probe what a sandboxed environment allows and what that means for .NET tools | [Sandbox tool](tools/SharedKernel.Sandbox.Tool/README.md) |
 | Compare declared packages with installed ones, one owner per package | [Packages tool](tools/SharedKernel.Packages.Tool/README.md) |
+| Generate age keys; encrypt, decrypt, and edit SOPS files; update recipients and rotate data keys; and verify every file's recipients against its creation rule | [Secrets tool](tools/SharedKernel.Secrets.Tool/README.md) |
 | Merge and migrate password vault exports offline | [Vault manager tool](tools/SharedKernel.VaultManager.Tool/README.md) |
 
 ## Try it
