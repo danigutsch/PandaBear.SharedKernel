@@ -1,14 +1,24 @@
 #nullable enable
 Aspire.Hosting.ApplicationModel.UmamiResource
+Aspire.Hosting.ApplicationModel.UmamiResource.AdminPasswordParameter.get -> Aspire.Hosting.ApplicationModel.ParameterResource?
 Aspire.Hosting.ApplicationModel.UmamiResource.AppSecretParameter.get -> Aspire.Hosting.ApplicationModel.ParameterResource!
 Aspire.Hosting.ApplicationModel.UmamiResource.ConnectionStringExpression.get -> Aspire.Hosting.ApplicationModel.ReferenceExpression!
 Aspire.Hosting.ApplicationModel.UmamiResource.Database.get -> Aspire.Hosting.ApplicationModel.PostgresDatabaseResource!
 Aspire.Hosting.ApplicationModel.UmamiResource.PrimaryEndpoint.get -> Aspire.Hosting.ApplicationModel.EndpointReference!
 Aspire.Hosting.ApplicationModel.UmamiResource.UmamiResource(string! name, Aspire.Hosting.ApplicationModel.PostgresDatabaseResource! database, Aspire.Hosting.ApplicationModel.ParameterResource! appSecretParameter) -> void
+Aspire.Hosting.ApplicationModel.UmamiWebsiteResource
+Aspire.Hosting.ApplicationModel.UmamiWebsiteResource.ConnectionStringExpression.get -> Aspire.Hosting.ApplicationModel.ReferenceExpression!
+Aspire.Hosting.ApplicationModel.UmamiWebsiteResource.Domain.get -> string!
+Aspire.Hosting.ApplicationModel.UmamiWebsiteResource.Umami.get -> Aspire.Hosting.ApplicationModel.UmamiResource!
+Aspire.Hosting.ApplicationModel.UmamiWebsiteResource.UmamiWebsiteResource(string! name, string! domain, Aspire.Hosting.ApplicationModel.UmamiResource! umami) -> void
+Aspire.Hosting.ApplicationModel.UmamiWebsiteResource.WebsiteId.get -> System.Guid
 Aspire.Hosting.UmamiResourceExtensions
 const Aspire.Hosting.ApplicationModel.UmamiResource.HttpEndpointName = "http" -> string!
 const Aspire.Hosting.UmamiResourceExtensions.ClientIpHeader = "X-Forwarded-For" -> string!
 static Aspire.Hosting.UmamiResourceExtensions.AddUmami(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.UmamiResource!>!
+static Aspire.Hosting.UmamiResourceExtensions.AddWebsite(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.UmamiResource!>! builder, string! name, string! domain) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.UmamiWebsiteResource!>!
+static Aspire.Hosting.UmamiResourceExtensions.WithAdminPassword(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.UmamiResource!>! builder, Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.ParameterResource!>! password) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.UmamiResource!>!
 static Aspire.Hosting.UmamiResourceExtensions.WithDataBindMount(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.UmamiResource!>! builder, string! source, bool isReadOnly = false) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.UmamiResource!>!
 static Aspire.Hosting.UmamiResourceExtensions.WithDataVolume(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.UmamiResource!>! builder, string? name = null, bool isReadOnly = false) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.UmamiResource!>!
 static Aspire.Hosting.UmamiResourceExtensions.WithHostPort(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.UmamiResource!>! builder, int? port) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.UmamiResource!>!
+static Aspire.Hosting.UmamiResourceExtensions.WithWebsiteId(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.UmamiWebsiteResource!>! builder, System.Guid websiteId) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.UmamiWebsiteResource!>!

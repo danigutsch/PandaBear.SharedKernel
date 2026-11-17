@@ -1,5 +1,4 @@
 using System.Diagnostics.Metrics;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -8,59 +7,62 @@ using PandaBear.Testing.Metrics;
 
 namespace PandaBear.AspNetCore.WebAnalytics.Tests;
 
-/// <summary>Builds the forwarder's services without a web host, to drive the queue and the sender directly.</summary>
+/// <summary>Builds the page-view services with the Umami target, without a web server, to drive the queues and the dispatcher directly.</summary>
 internal static class SenderTestServices
 {
-    /// <summary>Builds the services with a fake Umami, a meter collector, and optionally a log recorder and a clock.</summary>
+    /// <summary>Builds, without starting, a host with a fake Umami, a meter collector, and optionally a log recorder, a clock and further targets.</summary>
     /// <param name="umami">The fake Umami.</param>
-    /// <param name="meters">The collector of the forwarder's measurements.</param>
+    /// <param name="meters">The collector of the page-view measurements.</param>
     /// <param name="configure">Further settings.</param>
     /// <param name="logs">The log recorder, or <see langword="null"/>.</param>
     /// <param name="time">The clock, or <see langword="null"/> for the system clock.</param>
-    /// <returns>The services.</returns>
-    internal static ServiceProvider Build(
+    /// <param name="addTargets">Adds further targets.</param>
+    /// <returns>The host.</returns>
+    internal static IHost Build(
         HttpMessageHandler umami,
         MeterCollector meters,
-        Action<UmamiPageViewOptions>? configure = null,
+        Action<PageViewOptions>? configure = null,
         RecordingLoggerProvider? logs = null,
-        TimeProvider? time = null)
+        TimeProvider? time = null,
+        Action<PageViewBuilder>? addTargets = null)
     {
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection([new KeyValuePair<string, string?>(PageViewTestApp.EndpointKey, "http://umami.test/")])
-            .Build();
-        var services = new ServiceCollection();
-        services.AddSingleton<IConfiguration>(configuration);
-        services.AddLogging(logging =>
+        var builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings());
+        builder.ConfigureContainer(new DefaultServiceProviderFactory(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true }));
+        builder.Configuration[UmamiConnections.Key] = UmamiConnections.Default;
+        if (logs is not null)
         {
-            if (logs is not null)
-            {
-                logging.AddProvider(logs);
-            }
-        });
-        services.AddSingleton<IMeterFactory>(meters);
-        if (time is not null)
-        {
-            services.AddSingleton(time);
+            builder.Logging.AddProvider(logs);
         }
 
-        services.AddUmamiPageViews<FixedWebsiteIdProvider>(PageViewTestApp.EndpointKey, configure);
-        services.AddHttpClient(UmamiPageViewServiceCollectionExtensions.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => umami);
-        return services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
+        builder.Services.AddSingleton<IMeterFactory>(meters);
+        if (time is not null)
+        {
+            builder.Services.AddSingleton(time);
+        }
+
+        var pageViews = builder.AddPageViews(configure).AddUmami();
+        addTargets?.Invoke(pageViews);
+        builder.Services.AddHttpClient(UmamiPageViewBuilderExtensions.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => umami);
+        return builder.Build();
     }
 
-    /// <summary>Gets the background sender among the hosted services.</summary>
-    /// <param name="services">The services.</param>
-    /// <returns>The sender.</returns>
-    internal static UmamiPageViewSender Sender(IServiceProvider services) =>
-        services.GetServices<IHostedService>().OfType<UmamiPageViewSender>().ShouldHaveSingleItem();
+    /// <summary>Gets the background dispatcher among the hosted services.</summary>
+    /// <param name="host">The host.</param>
+    /// <returns>The dispatcher.</returns>
+    internal static PageViewDispatcher Dispatcher(IHost host) =>
+        host.Services.GetServices<IHostedService>().OfType<PageViewDispatcher>().ShouldHaveSingleItem();
+
+    /// <summary>Gets the queues of the targets.</summary>
+    /// <param name="host">The host.</param>
+    /// <returns>The queues.</returns>
+    internal static PageViewQueues Queues(IHost host) => host.Services.GetRequiredService<PageViewQueues>();
 
     /// <summary>Creates a page view of <paramref name="url"/> by the test visitor.</summary>
     /// <param name="url">The URL.</param>
     /// <returns>The page view.</returns>
     internal static PageView PageView(string url) => new()
     {
-        WebsiteId = FixedWebsiteIdProvider.WebsiteId,
-        Url = url,
+        PathAndQuery = url,
         UserAgent = PageContexts.VisitorAgent,
         ClientIp = PageContexts.VisitorAddress,
     };

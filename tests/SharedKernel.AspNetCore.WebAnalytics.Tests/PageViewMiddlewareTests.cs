@@ -1,11 +1,12 @@
 using System.Net;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using PandaBear.Testing.Http;
 
 namespace PandaBear.AspNetCore.WebAnalytics.Tests;
 
-/// <summary>Tests the forwarder in a running site: what reaches Umami for a page view, and that Umami or the website lookup can never fail or change a page.</summary>
-public sealed class UmamiPageViewMiddlewareTests
+/// <summary>Tests page views in a running site: what reaches Umami and every other target, and that no target can ever fail or change a page.</summary>
+public sealed class PageViewMiddlewareTests
 {
     private const string TransportFailureMessage = "transport-detail";
 
@@ -14,7 +15,7 @@ public sealed class UmamiPageViewMiddlewareTests
     {
         // Arrange
         using var umami = new RecordingHttpMessageHandler();
-        await using var site = await PageViewTestApp.Start(umami);
+        await using var site = await PageViewTestApp.Start(umami, UmamiConnections.Default);
 
         // Act
         using var page = await site.Visit(
@@ -49,7 +50,7 @@ public sealed class UmamiPageViewMiddlewareTests
     {
         // Arrange
         using var umami = new RecordingHttpMessageHandler();
-        await using var site = await PageViewTestApp.Start(umami, configure: options => options.Hostname = "viajantes.example");
+        await using var site = await PageViewTestApp.Start(umami, UmamiConnections.Default, options => options.Hostname = "viajantes.example");
 
         // Act
         using var page = await site.Visit(HttpMethod.Get, "/en/tours");
@@ -70,7 +71,7 @@ public sealed class UmamiPageViewMiddlewareTests
     {
         // Arrange
         using var umami = new RecordingHttpMessageHandler();
-        await using var site = await PageViewTestApp.Start(umami, endpoint);
+        await using var site = await PageViewTestApp.Start(umami, UmamiConnections.For(endpoint));
 
         // Act
         using var page = await site.Visit(HttpMethod.Get, "/pt");
@@ -86,7 +87,7 @@ public sealed class UmamiPageViewMiddlewareTests
     {
         // Arrange
         using var umami = new RecordingHttpMessageHandler();
-        await using var site = await PageViewTestApp.Start(umami, configure: options => options.ClientIpHeader = "X-Visitor-IP");
+        await using var site = await PageViewTestApp.Start(umami, UmamiConnections.Default, configureUmami: options => options.ClientIpHeader = "X-Visitor-IP");
 
         // Act
         using var page = await site.Visit(HttpMethod.Get, "/pt");
@@ -103,7 +104,7 @@ public sealed class UmamiPageViewMiddlewareTests
     {
         // Arrange
         using var umami = new RecordingHttpMessageHandler();
-        await using var site = await PageViewTestApp.Start(umami);
+        await using var site = await PageViewTestApp.Start(umami, UmamiConnections.Default);
 
         // Act
         (await site.Visit(HttpMethod.Head, "/pt")).Dispose();
@@ -115,7 +116,6 @@ public sealed class UmamiPageViewMiddlewareTests
         (await site.Visit(HttpMethod.Get, "/pt", ("Purpose", "prefetch"))).Dispose();
         (await site.Visit(HttpMethod.Get, "/pt", ("Sec-GPC", "1"))).Dispose();
         (await site.Visit(HttpMethod.Get, "/pt", ("DNT", "1"))).Dispose();
-        (await site.Visit(HttpMethod.Get, FixedWebsiteIdProvider.UntrackedPath)).Dispose();
         (await site.Visit(HttpMethod.Get, "/marker")).Dispose();
         var arrived = await umami.WaitForRequests(1, TestContext.Current.CancellationToken);
 
@@ -135,7 +135,7 @@ public sealed class UmamiPageViewMiddlewareTests
             2 => throw new HttpRequestException(TransportFailureMessage),
             _ => new HttpResponseMessage(HttpStatusCode.OK),
         });
-        await using var site = await PageViewTestApp.Start(umami);
+        await using var site = await PageViewTestApp.Start(umami, UmamiConnections.Default);
 
         // Act
         using var first = await site.Visit(HttpMethod.Get, VisitorDataAssertions.SecretPath, ("Referer", $"https://{VisitorDataAssertions.SecretReferrerHost}/inbox"));
@@ -153,36 +153,66 @@ public sealed class UmamiPageViewMiddlewareTests
 
         var warnings = site.Logs.Records.Where(record => record.EventId.Id is WebAnalyticsTelemetry.SendRejectedEventId or WebAnalyticsTelemetry.SendFailedEventId).ToArray();
         warnings.Length.ShouldBe(2);
-        warnings.ShouldAllSatisfy(warning => warning.Level.ShouldBe(Microsoft.Extensions.Logging.LogLevel.Warning));
+        warnings.ShouldAllSatisfy(warning => warning.Level.ShouldBe(LogLevel.Warning));
         warnings.ShouldAllSatisfy(warning => warning.Exception.ShouldBeNull());
         warnings.ShouldAllSatisfy(warning => warning.Message.ShouldNotContain(TransportFailureMessage, StringComparison.Ordinal));
+        warnings.ShouldAllSatisfy(warning => warning.Message.ShouldContain("umami", StringComparison.Ordinal));
         site.Logs.Records.ShouldAllSatisfy(record => record.ShouldHoldNoVisitorData());
-        site.Meters.Measurements.Where(measurement => measurement.Instrument == WebAnalyticsTelemetry.DroppedPageViewsCounterName)
-            .Select(measurement => (string?)measurement.Tags[WebAnalyticsTelemetry.ReasonTag])
+        var dropped = site.Meters.Measurements.Where(measurement => measurement.Instrument == WebAnalyticsTelemetry.DroppedPageViewsCounterName).ToArray();
+        dropped.ShouldAllSatisfy(measurement => measurement.Tags[WebAnalyticsTelemetry.TargetTag].ShouldBe("umami"));
+        dropped.Select(measurement => (string?)measurement.Tags[WebAnalyticsTelemetry.ReasonTag])
             .Order(StringComparer.Ordinal)
             .ToArray()
             .ShouldBe([WebAnalyticsTelemetry.RejectedReason, WebAnalyticsTelemetry.SendFailedReason]);
     }
 
     [Fact]
-    public async Task A_failing_website_lookup_never_changes_the_page_and_is_logged_without_its_message()
+    public async Task Every_target_receives_each_page_view_and_a_failing_target_stops_none_of_the_others()
     {
         // Arrange
         using var umami = new RecordingHttpMessageHandler();
-        await using var site = await PageViewTestApp.Start(umami);
+        var broken = new FailingPageViewTarget("broken");
+        var second = new RecordingPageViewTarget("second");
+        await using var site = await PageViewTestApp.Start(
+            umami,
+            UmamiConnections.Default,
+            addTargets: pageViews => pageViews.AddTarget(_ => broken).AddTarget(_ => second));
 
         // Act
-        using var page = await site.Visit(HttpMethod.Get, FixedWebsiteIdProvider.FailingPath);
+        using var first = await site.Visit(HttpMethod.Get, VisitorDataAssertions.SecretPath);
+        using var again = await site.Visit(HttpMethod.Get, "/en");
+        var sentToUmami = await umami.WaitForRequests(2, TestContext.Current.CancellationToken);
+        var sentToSecond = await second.WaitFor(2, TestContext.Current.CancellationToken);
+        await site.Stop();
 
         // Assert
-        var html = await page.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
-        page.StatusCode.ShouldBe(HttpStatusCode.OK);
-        html.ShouldBe(PageViewTestApp.PageHtml);
-        var warning = site.Logs.Records.ShouldHaveSingleItem(record => record.EventId.Id == WebAnalyticsTelemetry.WebsiteIdLookupFailedEventId);
-        warning.Level.ShouldBe(Microsoft.Extensions.Logging.LogLevel.Warning);
-        warning.Message.ShouldContain(nameof(InvalidOperationException), StringComparison.Ordinal);
-        warning.Exception.ShouldBeNull();
-        site.Logs.Records.ShouldAllSatisfy(record => record.Message.ShouldNotContain(FixedWebsiteIdProvider.FailureMessage, StringComparison.Ordinal));
-        umami.Requests.ShouldBeEmpty();
+        first.StatusCode.ShouldBe(HttpStatusCode.OK);
+        again.StatusCode.ShouldBe(HttpStatusCode.OK);
+        sentToUmami.Select(request => UmamiBodies.UrlOf(request.Body)).ToArray().ShouldBe([VisitorDataAssertions.SecretPath, "/en"]);
+        sentToSecond.Select(pageView => pageView.PathAndQuery).ToArray().ShouldBe([VisitorDataAssertions.SecretPath, "/en"]);
+        sentToSecond.ShouldAllSatisfy(pageView =>
+        {
+            pageView.UserAgent.ShouldBe(PageContexts.VisitorAgent);
+            pageView.ClientIp.ShouldBe(PageContexts.VisitorAddress);
+            pageView.Hostname.ShouldBe("localhost");
+        });
+        broken.Calls.ShouldBe(2);
+        var dropped = site.Meters.Measurements.Where(measurement => measurement.Instrument == WebAnalyticsTelemetry.DroppedPageViewsCounterName).ToArray();
+        dropped.Length.ShouldBe(2);
+        dropped.ShouldAllSatisfy(measurement =>
+        {
+            measurement.Tags[WebAnalyticsTelemetry.TargetTag].ShouldBe("broken");
+            measurement.Tags[WebAnalyticsTelemetry.ReasonTag].ShouldBe(WebAnalyticsTelemetry.SendFailedReason);
+        });
+        var failures = site.Logs.Records.Where(record => record.EventId.Id == WebAnalyticsTelemetry.SendFailedEventId).ToArray();
+        failures.Length.ShouldBe(2);
+        failures.ShouldAllSatisfy(failure =>
+        {
+            failure.Message.ShouldContain("broken", StringComparison.Ordinal);
+            failure.Message.ShouldContain(nameof(InvalidOperationException), StringComparison.Ordinal);
+            failure.Message.ShouldNotContain(FailingPageViewTarget.FailureMessage, StringComparison.Ordinal);
+            failure.Exception.ShouldBeNull();
+        });
+        site.Logs.Records.ShouldAllSatisfy(record => record.ShouldHoldNoVisitorData());
     }
 }

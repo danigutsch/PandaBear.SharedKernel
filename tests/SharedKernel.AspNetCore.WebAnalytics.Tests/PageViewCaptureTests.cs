@@ -6,19 +6,17 @@ namespace PandaBear.AspNetCore.WebAnalytics.Tests;
 /// <summary>Tests what a page view keeps of the request: the path with only the <c>utm_*</c> query values, the referrer without query or fragment, the first language, the host, the browser and the address.</summary>
 public sealed class PageViewCaptureTests
 {
-    private static readonly Guid WebsiteId = Guid.Parse("8f1d8a3e-7c2b-4d5e-9f60-1a2b3c4d5e6f");
-
     [Fact]
-    public void The_URL_is_the_path_without_a_query_when_the_request_has_none()
+    public void The_path_and_query_is_the_path_when_the_request_has_no_query()
     {
         // Arrange
         var context = PageContexts.AnsweredPage("/pt/viagens/patagonia");
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: null);
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
 
         // Assert
-        pageView.Url.ShouldBe("/pt/viagens/patagonia");
+        pageView.PathAndQuery.ShouldBe("/pt/viagens/patagonia");
     }
 
     [Fact]
@@ -28,10 +26,10 @@ public sealed class PageViewCaptureTests
         var context = PageContexts.AnsweredPage("/pt/viagens?email=visitor%40example.com&utm_source=newsletter&gclid=abc&utm_campaign=spring%20sale&token=secret");
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: null);
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
 
         // Assert
-        pageView.Url.ShouldBe("/pt/viagens?utm_campaign=spring%20sale&utm_source=newsletter");
+        pageView.PathAndQuery.ShouldBe("/pt/viagens?utm_campaign=spring%20sale&utm_source=newsletter");
     }
 
     [Fact]
@@ -41,14 +39,14 @@ public sealed class PageViewCaptureTests
         var context = PageContexts.AnsweredPage("/en/tours?UTM_SOURCE=upper&utmsource=joined&xutm_source=prefixed");
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: null);
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
 
         // Assert
-        pageView.Url.ShouldBe("/en/tours");
+        pageView.PathAndQuery.ShouldBe("/en/tours");
     }
 
     [Fact]
-    public void The_URL_keeps_the_path_base_and_the_escaping_of_the_path()
+    public void The_path_and_query_keeps_the_path_base_and_the_escaping_of_the_path()
     {
         // Arrange
         var context = PageContexts.AnsweredPage();
@@ -56,10 +54,10 @@ public sealed class PageViewCaptureTests
         context.Request.Path = "/pt/viagens/são-tomé";
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: null);
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
 
         // Assert
-        pageView.Url.ShouldBe("/site/pt/viagens/s%C3%A3o-tom%C3%A9");
+        pageView.PathAndQuery.ShouldBe("/site/pt/viagens/s%C3%A3o-tom%C3%A9");
     }
 
     [Theory]
@@ -74,7 +72,7 @@ public sealed class PageViewCaptureTests
         context.Request.Headers.Referer = referer;
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: null);
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
 
         // Assert
         pageView.Referrer.ShouldBe(expected);
@@ -91,7 +89,7 @@ public sealed class PageViewCaptureTests
         context.Request.Headers.Referer = referer;
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: null);
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
 
         // Assert
         pageView.Referrer.ShouldBeNull();
@@ -106,7 +104,7 @@ public sealed class PageViewCaptureTests
         context.Request.Headers.Referer = "https://viajantes.example/pt";
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: "viajantes.example");
+        var pageView = PageViewCapture.Capture(context, configuredHostname: "viajantes.example");
 
         // Assert
         pageView.Referrer.ShouldBeNull();
@@ -125,7 +123,7 @@ public sealed class PageViewCaptureTests
         context.Request.Headers.Referer = referer;
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: null);
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
 
         // Assert
         pageView.Referrer.ShouldBeNull();
@@ -143,7 +141,7 @@ public sealed class PageViewCaptureTests
         context.Request.Headers.AcceptLanguage = acceptLanguage;
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: null);
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
 
         // Assert
         pageView.Language.ShouldBe(expected);
@@ -163,7 +161,7 @@ public sealed class PageViewCaptureTests
         context.Request.Headers.AcceptLanguage = acceptLanguage;
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: null);
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
 
         // Assert
         pageView.Language.ShouldBeNull();
@@ -177,7 +175,7 @@ public sealed class PageViewCaptureTests
         context.Request.Host = new HostString("www.example.com", 8443);
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: null);
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
 
         // Assert
         pageView.Hostname.ShouldBe("www.example.com");
@@ -191,23 +189,22 @@ public sealed class PageViewCaptureTests
         context.Request.Host = new HostString("10.0.0.5", 8080);
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: "viajantes.example");
+        var pageView = PageViewCapture.Capture(context, configuredHostname: "viajantes.example");
 
         // Assert
         pageView.Hostname.ShouldBe("viajantes.example");
     }
 
     [Fact]
-    public void The_website_and_the_visitors_browser_and_address_are_kept_for_umami()
+    public void The_visitors_browser_and_address_are_kept_for_the_targets()
     {
         // Arrange
         var context = PageContexts.AnsweredPage();
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: null);
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
 
         // Assert
-        pageView.WebsiteId.ShouldBe(WebsiteId);
         pageView.UserAgent.ShouldBe(PageContexts.VisitorAgent);
         pageView.ClientIp.ShouldBe(PageContexts.VisitorAddress);
     }
@@ -223,7 +220,7 @@ public sealed class PageViewCaptureTests
         context.Connection.RemoteIpAddress = IPAddress.Parse(address);
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: null);
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
 
         // Assert
         pageView.ClientIp.ShouldNotBeNull().ToString().ShouldBe(expected);
@@ -237,7 +234,7 @@ public sealed class PageViewCaptureTests
         context.Connection.RemoteIpAddress = null;
 
         // Act
-        var pageView = PageViewCapture.Capture(context, WebsiteId, configuredHostname: null);
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
 
         // Assert
         pageView.ClientIp.ShouldBeNull();
