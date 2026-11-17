@@ -16,7 +16,8 @@ The root `Directory.Build.props` names the framework once:
 ```
 
 Libraries, tests, samples, and tools inherit it. Analyzers, code fixes, and generators set `netstandard2.0`, which is not
-a .NET version; they compile C# 15 like the rest of the repository (root `Directory.Build.targets`). Tools keep
+a .NET version; they set `LangVersion` to `latest`, the newest released C# version the SDK supports, so they move with the
+SDK like the rest of the repository (root `Directory.Build.targets`). Tools keep
 `RollForward` `Major` (`LatestMajor` for the code-fix runner, which loads the SDK's MSBuild), so they also run where only
 a later runtime is installed.
 
