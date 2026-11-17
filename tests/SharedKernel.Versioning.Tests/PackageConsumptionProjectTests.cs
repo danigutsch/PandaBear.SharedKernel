@@ -28,7 +28,7 @@ public static class PackageConsumptionProjectTests
         foreach (var sample in new[] { "BasicResults.Sample", "Mediator.Sample", "HttpRequests.Sample" })
         {
             // Without --framework, the samples are consumed as the repository framework in that framework's folder of the workspace.
-            var project = await File.ReadAllTextAsync(Path.Combine(workspace, TestFramework.Current, sample, sample + ".csproj"), TestContext.Current.CancellationToken);
+            var project = await File.ReadAllTextAsync(Path.Combine(workspace, TestTargetFramework.Moniker, sample, sample + ".csproj"), TestContext.Current.CancellationToken);
             project.ShouldContain("<TreatWarningsAsErrors>true</TreatWarningsAsErrors>", StringComparison.Ordinal, sample);
             project.ShouldContain("<NuGetAudit>true</NuGetAudit>", StringComparison.Ordinal, sample);
             project.ShouldContain("<NuGetAuditMode>all</NuGetAuditMode>", StringComparison.Ordinal, sample);

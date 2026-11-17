@@ -22,7 +22,7 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
             $"""
             <Project>
               <PropertyGroup>
-                <TargetFramework>{TestFramework.Current}</TargetFramework>
+                <TargetFramework>{TestTargetFramework.Moniker}</TargetFramework>
                 <RepositoryUrl>https://github.com/danigutsch/PandaBear.SharedKernel</RepositoryUrl>
               </PropertyGroup>
             </Project>

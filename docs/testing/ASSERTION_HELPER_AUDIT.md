@@ -54,7 +54,7 @@ Candidate: `ShouldContainKey` and `ShouldNotContainKey`, optionally returning th
 
 ### 6. Stream length and position
 
-- `Length.ShouldBe` and `Position.ShouldBe`: 113 lines in 53 files, but many are `FileInfo.Length`, byte arrays or checkpoint positions that are not streams. A stream-only count was not isolated. Example: `SharedKernel.IO.Tests/ReadOnlyMemoryStreamTests.cs:26`.
+- `Length.ShouldBe` and `Position.ShouldBe`: 113 lines in 53 files, but many are `FileInfo.Length`, byte arrays or checkpoint positions that are not streams. A stream-only count was not isolated. Example: `SharedKernel.AI.Tests/ImageInputLimitTests.cs:90`.
 
 Candidate: low priority. A stream assertion would only pay off in the IO-related projects, and a precise count is needed before accepting it.
 

@@ -119,7 +119,7 @@ public static class ConsumerFrameworkTests
         result.ExitCode.ShouldBe(0, result.Error);
         var recorded = CandidateManifest.Load(manifest).Evidence;
         var platform = OperatingSystem.IsWindows() ? "windows" : "linux";
-        recorded[platform + "PackageConsumptionFrameworks"]!.AsArray().Select(static x => x!.GetValue<string>()).ShouldBe([TestFramework.Current]);
+        recorded[platform + "PackageConsumptionFrameworks"]!.AsArray().Select(static x => x!.GetValue<string>()).ShouldBe([TestTargetFramework.Moniker]);
     }
 
     [Fact]

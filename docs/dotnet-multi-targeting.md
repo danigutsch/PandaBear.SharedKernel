@@ -118,12 +118,12 @@ A repository that builds several frameworks needs these patterns (*verified loca
   passes it through the `ReadOnlyMemory<char>` overloads. CA2263 prefers `JsonSerializerOptions.GetTypeInfo<T>()`.
 - `System.Net.Http.Json` is an implicit using of `Microsoft.NET.Sdk` projects for `net11.0`, so explicit `using`
   directives for it are unnecessary.
-- `System.IO.ReadOnlyMemoryStream` is new and public. Code that imports `PandaBear.IO` gets CS0104 for
-  `ReadOnlyMemoryStream` (`System.IO` is an implicit using) and must qualify or alias the name. The BCL type has the same
-  constructor and members as ours (*verified locally* by reflection and against the `release/11.0` source); it also
+- `System.IO.ReadOnlyMemoryStream` is new and public, with the same constructor and members as
+  `PandaBear.IO.ReadOnlyMemoryStream` (*verified locally* by reflection and against the `release/11.0` source). It also
   caches the completed read task, throws for `WriteAsync` and `WriteByte` directly, and rejects positions beyond
-  `int.MaxValue`. It is the only public type of this repository that .NET 11 or ASP.NET Core 11 adds under the same
-  name (*verified locally* by diffing the 10.0.15 and 11.0.0 reference packs).
+  `int.MaxValue`. Ours is removed: an unqualified name would be ambiguous (CS0104) for code that imports `PandaBear.IO`,
+  because `System.IO` is an implicit using. It was the only public type of this repository that .NET 11 or ASP.NET
+  Core 11 adds under the same name (*verified locally* by diffing the 10.0.15 and 11.0.0 reference packs).
 - EF Core 11 lists `IIndex.Properties` as `IPropertyBase`; `UniqueRuleResolver` handles both that and EF Core 10's
   `IProperty`.
 - ASP.NET Core 11 makes `EditContext.Validate()` obsolete in favor of `ValidateAsync`, which must run on the renderer's
