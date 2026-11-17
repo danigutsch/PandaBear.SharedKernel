@@ -19,6 +19,11 @@ across ASP.NET Core test projects.
 - Never watch configuration files: `WebApplicationTestHost` and `KestrelTestHost` (and so `KestrelPageTest` of
   SharedKernel.Testing.Playwright) set `hostBuilder:reloadConfigOnChange=false`, because one appsettings watcher per file and host
   exhausts the per-user inotify limit when many test hosts run in parallel. A `configuration` value for that key turns it back on.
+- Log to the test, not to the console: the hosts replace the application's console logger with `TestOutputLoggerProvider`
+  (SharedKernel.Testing.Xunit). An entry goes to the output of the test it belongs to, which the runner shows only when that
+  test fails; an entry logged on a server or background thread belongs to the test that created the host. `dotnet test`
+  (.NET 11 SDK) streams what a test process writes to its console for every test, passing or not, so a console logger would
+  print every log line of every run. The `configureTestServices` callback runs after the replacement and can add providers.
 
 ## Service overrides
 

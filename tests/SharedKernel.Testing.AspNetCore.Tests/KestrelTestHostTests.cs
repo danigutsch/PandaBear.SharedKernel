@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace PandaBear.Testing.AspNetCore.Tests;
 
 /// <summary>Tests that an application's real entry point is reachable over a real socket.</summary>
-[Trait("Scope", "Integration")]
+[Trait(TestTraitNames.ScopeName, "Integration")]
 [Trait("Capability", "KestrelTestHost")]
 public sealed class KestrelTestHostTests
 {

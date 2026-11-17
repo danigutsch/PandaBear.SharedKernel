@@ -386,7 +386,8 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[11.0.0, )",
-          "Microsoft.AspNetCore.Mvc.Testing": "[11.0.0, )"
+          "Microsoft.AspNetCore.Mvc.Testing": "[11.0.0, )",
+          "PandaBear.SharedKernel.Testing.Xunit": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Testing.Assertions": {

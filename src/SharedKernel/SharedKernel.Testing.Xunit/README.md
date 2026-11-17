@@ -2,7 +2,8 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-xUnit v3 trait attributes for the shared test taxonomy. `SharedKernel.Testing` stays free of an xUnit dependency.
+xUnit v3 trait attributes for the shared test taxonomy, and a logger provider that writes to the test output.
+`SharedKernel.Testing` stays free of an xUnit dependency.
 
 ## Test scope
 
@@ -35,6 +36,22 @@ All attributes emit plain traits, so existing filters keep working. Only `Scope`
 
 Enum values are the kebab-case member names. `TestFocus` and `TestPriority` apply to classes and methods only;
 the others also apply to assemblies. Define repository-specific `Area` and `Surface` values once as constants.
+
+## Logging to the test output
+
+`TestOutputLoggerProvider` is an `ILoggerProvider` that writes each entry, as `level: category[event id] message` and its
+exception, to the output of the xUnit test it belongs to, never to the process console. The runner shows a test's output
+only when the test fails, while `dotnet test` (.NET 11 SDK) streams what the test process writes to its console for every
+test. An entry belongs to the test running where it is logged; an entry logged outside any test, such as on a server's
+request threads or in background work, belongs to the test that created the provider while that test runs. Any other entry
+goes to the xUnit diagnostic messages of its context, if it has one, which `--xunit-diagnostics on` shows.
+
+```csharp
+services.AddLogging(logging => logging.AddProvider(new TestOutputLoggerProvider()));
+```
+
+`WebApplicationTestHost` and `KestrelTestHost` (SharedKernel.Testing.AspNetCore) and `AspireTestApplication`
+(SharedKernel.IntegrationTesting) use it in place of the console logger.
 
 ## Package identity and availability
 

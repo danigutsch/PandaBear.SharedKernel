@@ -50,6 +50,12 @@ SharedKernel seed and should stay reusable outside this repository.
 - Every project resource the application starts gets `DOTNET_hostBuilder__reloadConfigOnChange=false`: tests never reload configuration,
   and one appsettings watcher per file and host exhausts the per-user inotify limit when many hosts run in parallel
   (`IOException: The configured user limit (128) on the number of inotify instances has been reached`).
+- Started from an xUnit test or fixture, the application logs, including the log lines Aspire forwards from every resource, to the
+  test output instead of the console: `TestOutputLoggerProvider` (SharedKernel.Testing.Xunit) replaces the console logger. An entry
+  goes to the test running where it is logged, else to the test that started the application while that test runs, else to xUnit's
+  diagnostic messages (`--xunit-diagnostics on`). `dotnet test` (.NET 11 SDK) streams what a test process writes to its console for
+  every test, so a console logger would print every resource's log of every run. Started outside xUnit, such as by a process that
+  serves the services tests borrow, it keeps the console. A resource that is not healthy in time still reports its last log lines.
 - Dispose the returned application in the fixture `DisposeAsync` path.
 - Reset PostgreSQL with `PostgreSqlPublicSchemaReset.Reset(connection, ct)` before serial tests that need
   a known database baseline.

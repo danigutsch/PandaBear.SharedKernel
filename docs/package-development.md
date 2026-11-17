@@ -40,7 +40,8 @@ dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run --slice librar
 ```
 
 Commit changes before creating candidate evidence. Candidates receive unique ordered prerelease versions and are never overwritten.
-`SharedKernel.Versioning.Tool` validates APIs, packs once, records the library revision and SHA-256 package hashes, then installs every packed tool
+`SharedKernel.Versioning.Tool` validates APIs, packs once, records the library revision and SHA-256 package hashes, then audits the packages that
+every packed tool carries (its `*.deps.json`; `dotnet tool install` runs no NuGet Audit), installs every packed tool
 and runs each command that its package declares with `--help`, and checks isolated package restore, locked restore, build, run, generators, and optional NativeAOT once per `--framework <tfm>` (repeatable; default `net10.0`),
 recording the consumed frameworks in the manifest.
 Candidate manifests mark unavailable consumer, baseline, and platform evidence as pending.

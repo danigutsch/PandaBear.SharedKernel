@@ -8,6 +8,9 @@ internal static class DotnetToolSettings
     /// </summary>
     public const string EntryPath = "tools/net10.0/any/DotnetToolSettings.xml";
 
+    /// <summary>Returns the path of the tool settings file inside a .NET tool package for <paramref name="framework" />, such as <c>net11.0</c>.</summary>
+    public static string EntryPathFor(string framework) => $"tools/{framework}/any/DotnetToolSettings.xml";
+
     /// <summary>Returns tool settings that declare <paramref name="commands" />, each run by <c>dotnet</c> from <c>Probe.Tool.dll</c>.</summary>
     public static string Declaring(params string[] commands) =>
         """<?xml version="1.0" encoding="utf-8"?>""" + Environment.NewLine

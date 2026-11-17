@@ -509,7 +509,8 @@
       "PandaBear.SharedKernel.IntegrationTesting": {
         "type": "Project",
         "dependencies": {
-          "Aspire.Hosting.Testing": "[13.6.5, )"
+          "Aspire.Hosting.Testing": "[13.6.5, )",
+          "PandaBear.SharedKernel.Testing.Xunit": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Results": {

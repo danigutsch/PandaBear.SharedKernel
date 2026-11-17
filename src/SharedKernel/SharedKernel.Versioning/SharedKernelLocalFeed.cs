@@ -87,7 +87,9 @@ public static class SharedKernelLocalFeed
     }
 
     /// <summary>
-    /// Writes a scratch restore project for local-feed validation.
+    /// Writes a scratch restore project for local-feed validation. It treats warnings as errors and audits every direct and
+    /// transitive package at NuGet's default level, so an advisory of any severity, or an audit that gets no vulnerability data,
+    /// fails the restore.
     /// </summary>
     /// <param name="restoreDirectory">The scratch restore directory.</param>
     /// <param name="packageIds">The package IDs to reference.</param>
@@ -120,6 +122,9 @@ public static class SharedKernelLocalFeed
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
                 <TargetFrameworks>{string.Join(';', frameworks)}</TargetFrameworks>
+                <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+                <NuGetAudit>true</NuGetAudit>
+                <NuGetAuditMode>all</NuGetAuditMode>
               </PropertyGroup>
               <ItemGroup>
             """ + Environment.NewLine + references + Environment.NewLine + """
@@ -130,12 +135,15 @@ public static class SharedKernelLocalFeed
     }
 
     /// <summary>
-    /// Writes a NuGet configuration that maps SharedKernel packages to a local package directory.
+    /// Writes a NuGet configuration that maps SharedKernel packages to a local package directory and every other package to
+    /// <paramref name="nugetSourceUrl" />, which is also its only audit source. Without an audit source NuGet audits against the
+    /// package sources and suppresses NU1905, and the local directory provides no vulnerability data; with one, a restore that
+    /// cannot get vulnerability data from it reports NU1900 or NU1905.
     /// </summary>
     /// <param name="restoreDirectory">The scratch restore directory.</param>
     /// <param name="packageDirectory">The local package directory.</param>
     /// <param name="packageIds">The package IDs restored from the local feed.</param>
-    /// <param name="nugetSourceUrl">The fallback NuGet source URL.</param>
+    /// <param name="nugetSourceUrl">The NuGet source URL of every other package and of the vulnerability data.</param>
     /// <returns>A task that completes when the configuration file is written.</returns>
     /// <exception cref="ArgumentException">Thrown when <paramref name="restoreDirectory"/> or <paramref name="packageDirectory"/> is <see langword="null"/>, empty, or white-space, or <paramref name="nugetSourceUrl"/> is not absolute.</exception>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="packageIds"/> or <paramref name="nugetSourceUrl"/> is <see langword="null"/>.</exception>
@@ -160,6 +168,11 @@ public static class SharedKernelLocalFeed
                     new XAttribute("key", "nuget.org"),
                     new XAttribute("value", nugetSourceUrl.AbsoluteUri),
                     new XAttribute("protocolVersion", "3"))),
+            new XElement("auditSources",
+                new XElement("clear"),
+                new XElement("add",
+                    new XAttribute("key", "nuget.org"),
+                    new XAttribute("value", nugetSourceUrl.AbsoluteUri))),
             new XElement("packageSourceMapping",
                 new XElement("packageSource",
                     new XAttribute("key", "sharedkernel-local"),

@@ -3,9 +3,13 @@ using Aspire.Hosting.Testing;
 using Aspire.Hosting.ApplicationModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+using PandaBear.Testing;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
+using Xunit;
 
 namespace PandaBear.IntegrationTesting;
 
@@ -13,6 +17,9 @@ namespace PandaBear.IntegrationTesting;
 /// Owns an Aspire distributed application lifetime for integration tests. It follows the log lines of every resource from the start, so a
 /// readiness wait that runs out of time reports each pending resource's state and its last log lines. Every project resource it starts gets
 /// <c>DOTNET_hostBuilder__reloadConfigOnChange=false</c>, so parallel test hosts do not exhaust the per-user file-watcher (inotify) limit.
+/// Started from an xUnit test or fixture, the application logs, with the log lines it forwards from every resource, to the test output
+/// (<see cref="TestOutputLoggerProvider"/>) instead of the console, which <c>dotnet test</c> streams for every test; started anywhere else,
+/// it keeps the console.
 /// </summary>
 public sealed class AspireTestApplication : IAsyncDisposable
 {
@@ -453,6 +460,11 @@ public sealed class AspireTestApplication : IAsyncDisposable
     {
         // DCP allows up to two minutes for resource cleanup; the host must not cancel it at 30 seconds.
         builder.Services.Configure<HostOptions>(options => options.ShutdownTimeout = DefaultResourceTeardownTimeout);
+        if (TestContext.Current.PipelineStage is not TestPipelineStage.Unknown)
+        {
+            LogToTestOutput(builder.Services);
+        }
+
         builder.Eventing.Subscribe<BeforeStartEvent>((beforeStart, _) =>
         {
             // Aspire allocates proxyless ports outside the OS ephemeral range. Mixing DCP-reserved
@@ -472,6 +484,17 @@ public sealed class AspireTestApplication : IAsyncDisposable
 
             return Task.CompletedTask;
         });
+    }
+
+    private static void LogToTestOutput(IServiceCollection services)
+    {
+        foreach (var console in services.Where(static service =>
+                     service.ServiceType == typeof(ILoggerProvider) && service.ImplementationType == typeof(ConsoleLoggerProvider)).ToArray())
+        {
+            services.Remove(console);
+        }
+
+        services.AddSingleton<ILoggerProvider>(new TestOutputLoggerProvider());
     }
 
     private static async Task<List<Exception>> Teardown(

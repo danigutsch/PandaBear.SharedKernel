@@ -9,6 +9,8 @@ namespace PandaBear.Versioning.Tests;
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class ToolPackageCheckTests
 {
+    private static readonly Uri NuGetOrg = new("https://api.nuget.org/v3/index.json");
+
     [Fact]
     public static async Task Consume_candidate_installs_each_tool_package_and_runs_its_command_with_help()
     {
@@ -43,7 +45,8 @@ public static class ToolPackageCheckTests
             temporary.PackageDirectory,
             "PandaBear.SharedKernel.Broken.Tool",
             "1.0.0",
-            (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-broken")));
+            (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-broken")),
+            (ToolDependencyManifest.EntryPath, ToolDependencyManifest.Listing()));
         var manifest = temporary.WriteCandidate(tool);
         await temporary.WriteConsumptionSamples("Consumed sample", TestContext.Current.CancellationToken);
         var platform = OperatingSystem.IsWindows() ? "windowsPackageConsumption" : "linuxPackageConsumption";
@@ -151,16 +154,17 @@ public static class ToolPackageCheckTests
             temporary.PackageDirectory,
             "PandaBear.SharedKernel.Probe.Tool",
             "1.0.0",
-            (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-probe", "sharedkernel-probe-admin")));
+            (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-probe", "sharedkernel-probe-admin")),
+            (ToolDependencyManifest.EntryPath, ToolDependencyManifest.Listing()));
         var runner = new RecordingProcessRunner();
         using var error = new InvariantStringWriter();
         var executableSuffix = OperatingSystem.IsWindows() ? ".exe" : string.Empty;
 
         // Act
-        await ToolPackageCheck.Run(temporary.Root, temporary.PackageDirectory, "1.0.0", [library, tool], runner.Commands, error, TestContext.Current.CancellationToken);
+        await ToolPackageCheck.Run(temporary.Root, temporary.PackageDirectory, "1.0.0", [library, tool], NuGetOrg, runner.Commands, error, TestContext.Current.CancellationToken);
 
         // Assert
-        runner.Processes.Count.ShouldBe(3, "The library package is not a tool; the tool package installs once and declares two commands.");
+        runner.Processes.Count.ShouldBe(3, "The library package is not a tool; the tool carries no package to audit, installs once, and declares two commands.");
         var (installFileName, installArguments, scratch, configuration, installEntries) = runner.Processes[0];
         var toolPath = Path.Combine(scratch.ShouldNotBeNull(), "tools");
         installFileName.ShouldBe("dotnet");
@@ -196,10 +200,11 @@ public static class ToolPackageCheckTests
             temporary.PackageDirectory,
             "PandaBear.SharedKernel.Probe.Tool",
             "1.0.0",
-            (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-probe")));
+            (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-probe")),
+            (ToolDependencyManifest.EntryPath, ToolDependencyManifest.Listing()));
         var runner = new RecordingProcessRunner(failingFileName: "dotnet");
         Func<Task> check = () => ToolPackageCheck.Run(
-            temporary.Root, temporary.PackageDirectory, "1.0.0", [tool], runner.Commands, TextWriter.Null, TestContext.Current.CancellationToken);
+            temporary.Root, temporary.PackageDirectory, "1.0.0", [tool], NuGetOrg, runner.Commands, TextWriter.Null, TestContext.Current.CancellationToken);
 
         // Act
         var exception = await check.ShouldThrow<InvalidOperationException>();
@@ -220,10 +225,11 @@ public static class ToolPackageCheckTests
             temporary.PackageDirectory,
             "PandaBear.SharedKernel.Probe.Tool",
             "1.0.0",
-            (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-probe")));
+            (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-probe")),
+            (ToolDependencyManifest.EntryPath, ToolDependencyManifest.Listing()));
         var runner = new RecordingProcessRunner(failingFileName: "sharedkernel-probe");
         Func<Task> check = () => ToolPackageCheck.Run(
-            temporary.Root, temporary.PackageDirectory, "1.0.0", [tool], runner.Commands, TextWriter.Null, TestContext.Current.CancellationToken);
+            temporary.Root, temporary.PackageDirectory, "1.0.0", [tool], NuGetOrg, runner.Commands, TextWriter.Null, TestContext.Current.CancellationToken);
 
         // Act
         var exception = await check.ShouldThrow<InvalidOperationException>();
@@ -235,6 +241,187 @@ public static class ToolPackageCheckTests
         runner.Processes.Count.ShouldBe(2, "The command runs after its package installs.");
         var scratch = runner.Processes[0].WorkingDirectory.ShouldNotBeNull();
         Directory.Exists(scratch).ShouldBeFalse("The scratch directory is deleted when the check fails.");
+    }
+
+    [Fact]
+    public static async Task Tool_check_audits_the_packages_that_a_tool_carries_before_it_installs_the_tool()
+    {
+        // Arrange
+        using var temporary = new TemporaryReleasePrepDirectory();
+        File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(temporary.Root, "global.json"));
+        var tool = NuGetPackageBuilder.WriteToolPackage(
+            temporary.PackageDirectory,
+            "PandaBear.SharedKernel.Probe.Tool",
+            "1.0.0",
+            (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-probe")),
+            (ToolDependencyManifest.EntryPath, ToolDependencyManifest.Listing("System.CommandLine/3.0.0")));
+        var auditSource = new Uri("https://audit.example.test/v3/index.json");
+        var runner = new RecordingProcessRunner();
+
+        // Act
+        await ToolPackageCheck.Run(temporary.Root, temporary.PackageDirectory, "1.0.0", [tool], auditSource, runner.Commands, TextWriter.Null, TestContext.Current.CancellationToken);
+
+        // Assert
+        runner.Processes.Select(static process => process.Arguments[0]).ShouldBe(
+            ["restore", "tool", "--help"],
+            "dotnet tool install runs no NuGet audit, so a restore audits the packages that the tool carries before the tool installs or runs.");
+        var (_, restoreArguments, projectDirectory, configuration, _) = runner.Processes[0];
+        var auditDirectory = Path.GetDirectoryName(projectDirectory.ShouldNotBeNull()).ShouldNotBeNull();
+        restoreArguments.ShouldBe(
+            ["restore", Path.Combine(projectDirectory, "ToolAudit.csproj"), "--configfile", Path.Combine(auditDirectory, "NuGet.config"), "--packages", Path.Combine(auditDirectory, "packages"), "--no-http-cache"],
+            "The audit restores into a package folder of its own and fetches the vulnerability data again.");
+        var root = XDocument.Parse(configuration.ShouldNotBeNull()).Root.ShouldNotBeNull();
+        var auditSources = root.Elements("auditSources").ShouldHaveSingleItem().Elements().ToArray();
+        auditSources.Select(static source => source.Name.LocalName).ShouldBe(["clear", "add"], "The audit source replaces the package sources, which include the candidate folder that has no vulnerability data.");
+        auditSources[1].Attribute("value").ShouldNotBeNull().Value.ShouldBe(auditSource.AbsoluteUri);
+        runner.Processes[1].Configuration.ShouldNotBeNull().ShouldNotContain("auditSources", StringComparison.Ordinal, "The install configuration keeps the candidate folder as its only source.");
+    }
+
+    [Fact]
+    public static async Task Tool_audit_fails_naming_the_tool_and_the_known_vulnerability_of_a_package_it_carries()
+    {
+        // Arrange
+        using var temporary = new TemporaryReleasePrepDirectory();
+        File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(temporary.Root, "global.json"));
+        var tool = NuGetPackageBuilder.WriteToolPackage(
+            temporary.PackageDirectory,
+            "PandaBear.SharedKernel.Probe.Tool",
+            "1.0.0",
+            (DotnetToolSettings.EntryPathFor(TestTargetFramework.Moniker), DotnetToolSettings.Declaring("sharedkernel-probe")),
+            (ToolDependencyManifest.EntryPathFor(TestTargetFramework.Moniker), ToolDependencyManifest.Listing("Newtonsoft.Json/12.0.1")));
+        Func<Task> audit = () => ToolPackageCheck.Audit(
+            Path.Combine(temporary.Root, "audit"), temporary.PackageDirectory, "1.0.0", [tool], NuGetOrg, SystemCommands.Instance, TextWriter.Null, TestContext.Current.CancellationToken);
+
+        // Act
+        var exception = await audit.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldStartWith(
+            $"Tool package PandaBear.SharedKernel.Probe.Tool failed the NuGet audit of the packages it carries for {TestTargetFramework.Moniker}: ",
+            StringComparison.Ordinal);
+        exception.Message.ShouldContain("NU1903", StringComparison.Ordinal, "Newtonsoft.Json 12.0.1 has the high severity advisory GHSA-5crp-9r3c-p9vr.");
+        exception.Message.ShouldContain("Newtonsoft.Json", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Tool_audit_fails_when_the_audit_source_does_not_answer()
+    {
+        // Arrange
+        using var temporary = new TemporaryReleasePrepDirectory();
+        File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(temporary.Root, "global.json"));
+        var library = NuGetPackageBuilder.WritePackage(temporary.PackageDirectory, "PandaBear.SharedKernel.Probe", "1.0.0");
+        var tool = NuGetPackageBuilder.WriteToolPackage(
+            temporary.PackageDirectory,
+            "PandaBear.SharedKernel.Probe.Tool",
+            "1.0.0",
+            (DotnetToolSettings.EntryPathFor(TestTargetFramework.Moniker), DotnetToolSettings.Declaring("sharedkernel-probe")),
+            (ToolDependencyManifest.EntryPathFor(TestTargetFramework.Moniker), ToolDependencyManifest.Listing("PandaBear.SharedKernel.Probe/1.0.0")));
+        var closed = new Uri("https://127.0.0.1:1/v3/index.json");
+        Func<Task> audit = () => ToolPackageCheck.Audit(
+            Path.Combine(temporary.Root, "audit"), temporary.PackageDirectory, "1.0.0", [library, tool], closed, SystemCommands.Instance, TextWriter.Null, TestContext.Current.CancellationToken);
+
+        // Act
+        var exception = await audit.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldStartWith(
+            $"Tool package PandaBear.SharedKernel.Probe.Tool failed the NuGet audit of the packages it carries for {TestTargetFramework.Moniker}: ",
+            StringComparison.Ordinal);
+        exception.Message.ShouldContain("NU1900", StringComparison.Ordinal, "The package restores from the candidate folder, but no vulnerability data arrives, so nothing was checked.");
+    }
+
+    [Fact]
+    public static async Task Tool_audit_passes_when_the_audit_source_answers_and_reports_no_vulnerability()
+    {
+        // Arrange
+        using var temporary = new TemporaryReleasePrepDirectory();
+        File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(temporary.Root, "global.json"));
+        var library = NuGetPackageBuilder.WritePackage(temporary.PackageDirectory, "PandaBear.SharedKernel.Probe", "1.0.0");
+        var tool = NuGetPackageBuilder.WriteToolPackage(
+            temporary.PackageDirectory,
+            "PandaBear.SharedKernel.Probe.Tool",
+            "1.0.0",
+            (DotnetToolSettings.EntryPathFor(TestTargetFramework.Moniker), DotnetToolSettings.Declaring("sharedkernel-probe")),
+            (ToolDependencyManifest.EntryPathFor(TestTargetFramework.Moniker), ToolDependencyManifest.Listing("PandaBear.SharedKernel.Probe/1.0.0")));
+        using var error = new InvariantStringWriter();
+
+        // Act
+        await ToolPackageCheck.Audit(
+            Path.Combine(temporary.Root, "audit"), temporary.PackageDirectory, "1.0.0", [library, tool], NuGetOrg, SystemCommands.Instance, error, TestContext.Current.CancellationToken);
+
+        // Assert
+        error.ToString().ShouldNotContain("NU19", StringComparison.Ordinal, "nuget.org answered and lists no advisory for the package.");
+    }
+
+    [Fact]
+    public static void Tool_packages_are_read_from_the_dependency_manifests_of_every_framework_dependent_folder()
+    {
+        // Arrange
+        using var temporary = new TemporaryReleasePrepDirectory();
+        var tool = NuGetPackageBuilder.WriteToolPackage(
+            temporary.PackageDirectory,
+            "PandaBear.SharedKernel.Probe.Tool",
+            "1.0.0",
+            (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-probe")),
+            (ToolDependencyManifest.EntryPath, ToolDependencyManifest.Listing("System.CommandLine/3.0.0", "Microsoft.CodeAnalysis.Common/5.12.0")),
+            ("tools/net11.0/any/DotnetToolSettings.xml", DotnetToolSettings.Declaring("sharedkernel-probe")),
+            (ToolDependencyManifest.EntryPathFor("net11.0"), ToolDependencyManifest.Listing()),
+            ("tools/net12.0/linux-x64/Probe.Tool.deps.json", ToolDependencyManifest.Listing("Native.Only/1.0.0")));
+
+        // Act
+        var frameworks = ToolPackageCheck.ReadCarriedPackages(tool);
+
+        // Assert
+        frameworks.Select(static framework => framework.Framework).ShouldBe(["net10.0", "net11.0"], "Only framework-dependent tool folders install with a tool path, as their commands do.");
+        frameworks[0].Packages.ShouldBe(
+            [("Microsoft.CodeAnalysis.Common", "5.12.0"), ("System.CommandLine", "3.0.0")],
+            "Only package libraries are audited; the tool's own project is not a package.");
+        frameworks[1].Packages.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public static void Tool_package_without_a_dependency_manifest_is_rejected()
+    {
+        // Arrange
+        using var temporary = new TemporaryReleasePrepDirectory();
+        var tool = NuGetPackageBuilder.WriteToolPackage(
+            temporary.PackageDirectory,
+            "PandaBear.SharedKernel.Probe.Tool",
+            "1.0.0",
+            (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-probe")));
+        Action read = () => ToolPackageCheck.ReadCarriedPackages(tool);
+
+        // Act
+        var exception = read.ShouldThrow<ArgumentException>();
+
+        // Assert
+        exception.Message.ShouldBe(tool + ": expected a dependency manifest tools/net10.0/any/*.deps.json, which lists the packages to audit");
+    }
+
+    [Theory]
+    [InlineData("{")]
+    [InlineData("[]")]
+    [InlineData("""{"libraries":[]}""")]
+    [InlineData("""{"libraries":{"System.CommandLine":{"type":"package"}}}""")]
+    [InlineData("""{"libraries":{"/3.0.0":{"type":"package"}}}""")]
+    [InlineData("""{"libraries":{"System.CommandLine/3.0.0":[]}}""")]
+    public static void Tool_dependency_manifest_that_does_not_list_its_libraries_is_rejected(string manifest)
+    {
+        // Arrange
+        using var temporary = new TemporaryReleasePrepDirectory();
+        var tool = NuGetPackageBuilder.WriteToolPackage(
+            temporary.PackageDirectory,
+            "PandaBear.SharedKernel.Probe.Tool",
+            "1.0.0",
+            (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-probe")),
+            (ToolDependencyManifest.EntryPath, manifest));
+        Action read = () => ToolPackageCheck.ReadCarriedPackages(tool);
+
+        // Act
+        var exception = read.ShouldThrow<ArgumentException>();
+
+        // Assert
+        exception.Message.ShouldStartWith(tool + ": invalid " + ToolDependencyManifest.EntryPath + ": ", StringComparison.Ordinal);
     }
 
     [Fact]

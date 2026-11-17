@@ -9,7 +9,8 @@ internal static class SharedKernelPack
 
     /// <summary>
     /// Packs the projects with the requested versions, validated against <paramref name="baselineVersion"/> when one is
-    /// given, optionally verifies restore from the resulting feed, and returns the package directory.
+    /// given, optionally verifies restore from the resulting feed, with NuGet Audit of the packages and of the packages that
+    /// the tools carry, and returns the package directory.
     /// </summary>
     /// <exception cref="ArgumentException">No SharedKernel projects are found.</exception>
     public static async Task<string> Run(
@@ -90,6 +91,8 @@ internal static class SharedKernelPack
             null,
             ct).ConfigureAwait(false);
 
+        await ToolPackageCheck.Audit(Path.Combine(restoreDirectory, "tool-audit"), packageDirectory, version, packages, NuGetSourceUrl, commands, TextWriter.Null, ct)
+            .ConfigureAwait(false);
         foreach (var tool in tools)
         {
             var id = SharedKernelLocalFeed.ReadPackageIds([tool], version).Single();

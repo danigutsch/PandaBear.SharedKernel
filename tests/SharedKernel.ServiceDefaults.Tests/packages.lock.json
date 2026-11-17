@@ -294,11 +294,15 @@
           "PandaBear.SharedKernel.Observability": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.Testing": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Testing.AspNetCore": {
         "type": "Project",
         "dependencies": {
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[11.0.0, )",
-          "Microsoft.AspNetCore.Mvc.Testing": "[11.0.0, )"
+          "Microsoft.AspNetCore.Mvc.Testing": "[11.0.0, )",
+          "PandaBear.SharedKernel.Testing.Xunit": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Testing.Assertions": {
@@ -306,6 +310,13 @@
         "dependencies": {
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )",
           "xunit.v3.assert": "[4.0.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Testing.Xunit": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Testing": "[0.1.0-alpha.0, )",
+          "xunit.v3.extensibility.core": "[4.0.0, )"
         }
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {

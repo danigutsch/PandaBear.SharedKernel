@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 using static PandaBear.RepoConfig.Tests.NewTestOperations;
 
 namespace PandaBear.RepoConfig.Tests;
@@ -216,6 +217,25 @@ public sealed class NewCommandTests
         workspace.ReadFile("Directory.Build.props").ShouldContain("<TargetFramework>net10.0</TargetFramework>", StringComparison.Ordinal, "The target framework follows the SDK major version.");
         workspace.ReadFile("AGENTS.md").ShouldContain("example-repo", StringComparison.Ordinal, "The name is substituted.");
         verification.ExitCode.ShouldBe(0, "Seed files are not managed, so verify ignores them.");
+    }
+
+    [Fact]
+    public async Task New_with_the_dotnet_language_writes_a_nuget_configuration_that_audits_against_nuget_org()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+
+        // Act
+        var (exitCode, _, error) = await Run(workspace, "--name", "example-repo", "--language", "dotnet", "--sdk-version", "10.0.100", "--force");
+
+        // Assert
+        exitCode.ShouldBe(0, error);
+        var configuration = XDocument.Parse(workspace.ReadFile("NuGet.Config")).Root.ShouldNotBeNull();
+        var auditSources = configuration.Elements("auditSources").ShouldHaveSingleItem().Elements().ToArray();
+        auditSources.Select(static source => source.Name.LocalName).ShouldBe(
+            ["clear", "add"],
+            "Audit sources keep the audit on nuget.org when a package source is added, and make NuGet report NU1905 when it has no vulnerability data.");
+        auditSources[1].Attribute("value").ShouldNotBeNull().Value.ShouldBe("https://api.nuget.org/v3/index.json");
     }
 
     [Fact]

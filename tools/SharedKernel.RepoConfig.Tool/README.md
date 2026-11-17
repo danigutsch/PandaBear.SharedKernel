@@ -456,6 +456,9 @@ The features are `readme`, `gitignore`, `gitattributes`, `editorconfig`, `hooks`
 (`commit.gpgsign`, `tag.gpgsign`, `gpg.format=ssh`). Four more features are written once and never managed, because they
 have no comment for the marker or are meant to be edited: `agents` (`AGENTS.md`), and with `--language dotnet`
 `global-json`, `nuget-config`, and `build-props`. `new` never replaces such a file: if one exists it is a conflict.
+`nuget-config` makes nuget.org the only package source, with source mapping, and the only
+[audit source](https://learn.microsoft.com/nuget/concepts/auditing-packages#audit-sources), so the audit stays on
+nuget.org when a feed is added and NuGet reports `NU1905` when the source provides no vulnerability data.
 `signed-commits` is opt-in because signing needs a key that you
 provide, and commits fail without one. An unknown language or feature, an invalid name, an existing configuration
 file, or a conflict with an existing unmanaged file or different Git setting is reported on standard error and the

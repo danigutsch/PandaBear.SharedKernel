@@ -525,7 +525,8 @@
       "PandaBear.SharedKernel.IntegrationTesting": {
         "type": "Project",
         "dependencies": {
-          "Aspire.Hosting.Testing": "[13.6.5, )"
+          "Aspire.Hosting.Testing": "[13.6.5, )",
+          "PandaBear.SharedKernel.Testing.Xunit": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Npgsql.Testing": {
@@ -535,6 +536,16 @@
           "Npgsql": "[10.0.3, )",
           "PandaBear.SharedKernel.IntegrationTesting": "[0.1.0-alpha.0, )",
           "xunit.v3.extensibility.core": "[4.0.3, )"
+        }
+      },
+      "PandaBear.SharedKernel.Testing": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.Testing.Xunit": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Testing": "[0.1.0-alpha.0, )",
+          "xunit.v3.extensibility.core": "[4.0.0, )"
         }
       },
       "sharedkernel.aspire.hosting.umami.testing": {

@@ -5,9 +5,11 @@ namespace PandaBear.Versioning;
 /// <summary>Verifies that the packed SharedKernel packages work for consumers.</summary>
 internal static class PackageConsumption
 {
+    private static readonly Uri NuGetSource = new(string.Concat("https://api.nuget.org", "/v3/index.json"));
+
     /// <summary>
-    /// Installs the tool packages in the feed of <paramref name="options" /> and runs their commands with <c>--help</c>, then restores, builds,
-    /// and runs the samples against the packages, writing child process output to <paramref name="error" />.
+    /// Audits the packages that the tool packages in the feed of <paramref name="options" /> carry, installs the tools and runs their commands
+    /// with <c>--help</c>, then restores, builds, and runs the samples against the packages, writing child process output to <paramref name="error" />.
     /// </summary>
     /// <remarks>
     /// The samples are consumed once per framework in <see cref="PackageConsumptionOptions.Frameworks"/>, each in its own workspace and
@@ -25,7 +27,7 @@ internal static class PackageConsumption
         }
 
         var packageIds = SharedKernelLocalFeed.ReadPackageIds(packages, version);
-        await ToolPackageCheck.Run(root, feed, version, packages, processes, error, ct).ConfigureAwait(false);
+        await ToolPackageCheck.Run(root, feed, version, packages, NuGetSource, processes, error, ct).ConfigureAwait(false);
         var central = XDocument.Load(Path.Combine(root, "Directory.Packages.props"));
         var scratch = Path.Combine(Path.GetTempPath(), "sharedkernel-package-check-" + Guid.NewGuid().ToString("N"));
         foreach (var framework in options.Frameworks ?? RepositoryFrameworks.Read(root))
@@ -101,7 +103,7 @@ internal static class PackageConsumption
             new XDocument(new XElement("Project", new XElement("PropertyGroup", new XElement("ManagePackageVersionsCentrally", "true")),
                 new XElement("ItemGroup", versions.Select(pair => new XElement("PackageVersion", new XAttribute("Include", pair.Key), new XAttribute("Version", pair.Value))))))
                 .Save(Path.Combine(target, "Directory.Packages.props"));
-            await SharedKernelLocalFeed.WriteNuGetConfig(target, feed, packageIds, new Uri(string.Concat("https://api.nuget.org", "/v3/index.json"))).ConfigureAwait(false);
+            await SharedKernelLocalFeed.WriteNuGetConfig(target, feed, packageIds, NuGetSource).ConfigureAwait(false);
             var config = Path.Combine(target, "NuGet.config");
             var cache = Path.Combine(scratch, "packages-" + Path.GetFileName(relative));
             string[][] commands = [
