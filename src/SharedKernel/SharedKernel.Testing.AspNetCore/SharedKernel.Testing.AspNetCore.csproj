@@ -16,6 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Testing.Xunit\SharedKernel.Testing.Xunit.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -23,3 +23,8 @@ PandaBear.Testing.TestSurfaceAttribute.GetTraits() -> System.Collections.Generic
 PandaBear.Testing.TestSurfaceAttribute.TestSurfaceAttribute(string! value) -> void
 PandaBear.Testing.TestAreaAttribute.Value.get -> string!
 PandaBear.Testing.TestSurfaceAttribute.Value.get -> string!
+PandaBear.Testing.TestOutputLoggerProvider
+PandaBear.Testing.TestOutputLoggerProvider.CreateLogger(string! categoryName) -> Microsoft.Extensions.Logging.ILogger!
+PandaBear.Testing.TestOutputLoggerProvider.Dispose() -> void
+PandaBear.Testing.TestOutputLoggerProvider.TestOutputLoggerProvider() -> void
+PandaBear.Testing.TestOutputLoggerProvider.TestOutputLoggerProvider(Xunit.ITestOutputHelper? owner) -> void

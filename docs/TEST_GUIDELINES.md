@@ -76,6 +76,15 @@ such as one that checks a writer passes on its target's line ending, sets it in 
 `new StringWriter(...)` in a test project, and its code fix replaces `new StringWriter()` and
 `new StringWriter(CultureInfo.InvariantCulture)` with `new InvariantStringWriter()`.
 
+## Log output
+
+Code under test logs to the output of the test it runs for, never to the process console. `dotnet test` (.NET 11 SDK)
+streams what a test process writes to its console for every test, passing or not, while the runner shows a test's own
+output only when the test fails. `PandaBear.Testing.TestOutputLoggerProvider` writes each entry to the test it belongs to
+(the test running where it is logged, else the test that created the provider); `WebApplicationTestHost`,
+`KestrelTestHost` and `AspireTestApplication` use it in place of the console logger. Add it to a service collection a test
+builds itself: `services.AddLogging(logging => logging.AddProvider(new TestOutputLoggerProvider()))`.
+
 ## Testing package boundaries
 
 Each testing package owns one kind of helper and takes only the dependencies that kind needs. Add a helper to the package that
@@ -85,13 +94,13 @@ already owns its kind; add a package only when a new kind needs a dependency tha
 | --- | --- | --- |
 | `SharedKernel.Testing` | Traits, environment scopes, temporary directories, stream and executable doubles, file-system probes | Test framework only |
 | `SharedKernel.Testing.Assertions` | `Should*` assertions for xUnit, `Result` and entity identity | `SharedKernel.Results` |
-| `SharedKernel.Testing.Xunit` | Typed trait attributes (`TestScope`, `TestHost`, `TestFocus`, `TestPriority`, `TestArea`, `TestSurface`) | `SharedKernel.Testing` |
+| `SharedKernel.Testing.Xunit` | Typed trait attributes (`TestScope`, `TestHost`, `TestFocus`, `TestPriority`, `TestArea`, `TestSurface`), `TestOutputLoggerProvider` | `SharedKernel.Testing`, xUnit |
 | `SharedKernel.Testing.Http` | Assertions on HTTP responses and problem details, delegate handler, tracking content | `SharedKernel.Testing.Assertions` |
 | `SharedKernel.Testing.EntityFrameworkCore` | Minimal `TestDbContext` and `TestEntity` | `Microsoft.EntityFrameworkCore.Relational` |
 | `SharedKernel.Testing.Sqlite` | Private in-memory SQLite database per test | `Microsoft.Data.Sqlite.Core` |
 | `SharedKernel.Testing.Logging` | Recording and throwing `ILogger` fakes | `Microsoft.Extensions.Logging.Abstractions` |
 | `SharedKernel.Testing.MalwareScanning` | Clean, infected, throwing, blocking, and recording `IMalwareScanner` fakes | `SharedKernel.MalwareScanning` |
-| `SharedKernel.Testing.AspNetCore` | Web application factory helpers, form-file, browser-file and throwing-cache fakes | ASP.NET Core testing |
+| `SharedKernel.Testing.AspNetCore` | Web application factory helpers, form-file, browser-file and throwing-cache fakes | ASP.NET Core testing, `SharedKernel.Testing.Xunit` |
 | `SharedKernel.Testing.Web` | bUnit element assertions | bUnit |
 | `SharedKernel.Testing.Playwright` | Playwright assertions | Playwright |
 | `SharedKernel.Testing.Domain` | Domain event dispatcher and dispatch handler fakes | `SharedKernel.Domain` |
@@ -101,7 +110,7 @@ already owns its kind; add a package only when a new kind needs a dependency tha
 | `SharedKernel.Testing.Data` and `SharedKernel.Testing.Snapshots` | Deterministic data and snapshot text helpers | No SharedKernel package |
 | `SharedKernel.Testing.Roslyn` | Compilation, analyzer, and generator test harnesses | Roslyn |
 | `SharedKernel.Testing.Analyzers` and `SharedKernel.Testing.CodeFixes` | Analyzers and code fixes for test conventions | Roslyn; code fixes depend on the analyzers |
-| `SharedKernel.IntegrationTesting` | Aspire and PostgreSQL integration-test helpers | Aspire testing |
+| `SharedKernel.IntegrationTesting` | Aspire and PostgreSQL integration-test helpers | Aspire testing, `SharedKernel.Testing.Xunit` |
 | `SharedKernel.Npgsql.Testing` | PostgreSQL database leases and xUnit fixtures | `SharedKernel.IntegrationTesting` |
 | `SharedKernel.Testing.Contracts` | Contract test marker and trait contracts | No SharedKernel package |
 

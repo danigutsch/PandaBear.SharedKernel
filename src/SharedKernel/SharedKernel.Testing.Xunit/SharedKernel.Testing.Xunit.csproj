@@ -2,10 +2,10 @@
 
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Testing.Xunit</PackageId>
-        <Description>xUnit v3 trait attributes for declaring the test seam a test exercises.</Description>
+        <Description>xUnit v3 trait attributes for declaring the test seam a test exercises, and a logger provider that writes to the test output.</Description>
         <RootNamespace>PandaBear.Testing</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageTags>testing;traits;xunit;shared-kernel;dotnet</PackageTags>
+        <PackageTags>testing;traits;logging;xunit;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>
     </PropertyGroup>
 
