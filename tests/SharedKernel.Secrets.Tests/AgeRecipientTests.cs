@@ -154,8 +154,8 @@ public sealed class AgeRecipientTests
     }
 
     [Theory]
-    [InlineData("AGE-SECRET-KEY-1QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")]
-    [InlineData("age-secret-key-1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")]
+    [InlineData(FakeKeys.Secret)]
+    [InlineData(FakeKeys.LowercaseSecret)]
     [InlineData("AGE-PLUGIN-YUBIKEY-1QQQQQQQQQQQQ")]
     public void A_private_identity_is_rejected_as_a_recipient_with_a_clear_message(string identity)
     {

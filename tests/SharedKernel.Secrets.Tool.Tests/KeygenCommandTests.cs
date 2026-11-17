@@ -111,7 +111,7 @@ public sealed class KeygenCommandTests
     {
         // Arrange
         using var directory = new TemporaryDirectory();
-        const string key = "AGE-SECRET-KEY-1QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ";
+        const string key = FakeKeys.Secret;
 
         // Act
         var run = await Run(directory.Path, ScriptedToolRunner.Unused(), ResolveAll, null, null, "keygen", "--output", key, "--force");

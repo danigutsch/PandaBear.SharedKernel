@@ -16,9 +16,9 @@ public sealed class AgeIdentityRefTests
     }
 
     [Theory]
-    [InlineData("AGE-SECRET-KEY-1QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")]
-    [InlineData("age-secret-key-1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")]
-    [InlineData("# created: 2026\nAGE-SECRET-KEY-1QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")]
+    [InlineData(FakeKeys.Secret)]
+    [InlineData(FakeKeys.LowercaseSecret)]
+    [InlineData("# created: 2026\n" + FakeKeys.Secret)]
     [InlineData("/tmp/AGE-SECRET-KEY-1QQQQQ")]
     [InlineData("AGE-PLUGIN-YUBIKEY-1QQQQQQQQQQQQQQQQQ")]
     public void Text_that_looks_like_key_material_is_rejected_with_a_message_that_says_to_pass_a_file(string material)

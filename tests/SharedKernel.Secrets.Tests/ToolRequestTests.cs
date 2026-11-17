@@ -4,12 +4,12 @@ namespace PandaBear.Secrets.Tests;
 [Trait("Capability", "Secrets")]
 public sealed class ToolRequestTests
 {
-    private const string Key = "AGE-SECRET-KEY-1QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ";
+    private const string Key = FakeKeys.Secret;
 
     [Theory]
     [InlineData(Key)]
     [InlineData("prefix " + Key)]
-    [InlineData("age-secret-key-1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")]
+    [InlineData(FakeKeys.LowercaseSecret)]
     [InlineData("AGE-PLUGIN-YUBIKEY-1QQQQQQ")]
     public void Key_material_in_an_argument_is_refused_without_echoing_it(string argument)
     {

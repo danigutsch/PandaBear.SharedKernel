@@ -81,7 +81,7 @@ public sealed class DecryptCommandTests
     {
         // Arrange
         using var repository = CreateRepository(Config);
-        const string key = "AGE-SECRET-KEY-1QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ";
+        const string key = FakeKeys.Secret;
         var runner = ScriptedToolRunner.Unused();
 
         // Act

@@ -43,7 +43,7 @@ internal static class ToolScripts
     public const string NoMatchingIdentityMessage = "Failed to get the data key required to decrypt the SOPS file.\n\nGroup 0: FAILED\n  age1x: FAILED\n    - | failed to create reader for decrypting sops data key with\n      | age: identity did not match any of the recipients: incorrect\n      | identity for recipient block.\n";
 
     /// <summary>A syntactically valid age identity file (the key is made up; no real key is involved).</summary>
-    public const string IdentityText = "# created: 2026-01-01T00:00:00Z\n# public key: age1x\nAGE-SECRET-KEY-1QPZRY9X8GF2TVDW0S3JN54KHCE6MUA7LQPZRY9X8GF2TVDW0S3JN54KHCE\n";
+    public const string IdentityText = "# created: 2026-01-01T00:00:00Z\n# public key: age1x\n" + FakeKeys.Varied + "\n";
 
     /// <summary>Writes an identity file in <paramref name="directory"/> and returns its path.</summary>
     public static string IdentityFile(string directory, string name, string? content = null)

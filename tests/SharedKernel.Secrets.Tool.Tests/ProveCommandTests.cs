@@ -217,7 +217,7 @@ public sealed class ProveCommandTests
     {
         // Arrange
         using var repository = ToolScripts.ProveRepository();
-        const string key = "AGE-SECRET-KEY-1QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ";
+        const string key = FakeKeys.Secret;
         var runner = ScriptedToolRunner.Unused();
 
         // Act
