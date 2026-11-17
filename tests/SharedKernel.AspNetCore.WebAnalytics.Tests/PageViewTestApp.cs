@@ -1,4 +1,5 @@
 using System.Diagnostics.Metrics;
+using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
@@ -42,13 +43,15 @@ internal sealed class PageViewTestApp : IAsyncDisposable
     /// <param name="configure">Further page-view settings.</param>
     /// <param name="configureUmami">Further Umami target settings.</param>
     /// <param name="addTargets">Adds further targets.</param>
+    /// <param name="visitorAddress">The address every request comes from, or <see langword="null"/> for <see cref="PageContexts.VisitorAddress"/>.</param>
     /// <returns>The started site.</returns>
     internal static async Task<PageViewTestApp> Start(
         HttpMessageHandler umami,
         string? connectionString,
         Action<PageViewOptions>? configure = null,
         Action<UmamiPageViewTargetOptions>? configureUmami = null,
-        Action<PageViewBuilder>? addTargets = null)
+        Action<PageViewBuilder>? addTargets = null,
+        IPAddress? visitorAddress = null)
     {
         var logs = new RecordingLoggerProvider();
         var meters = new MeterCollector(WebAnalyticsTelemetry.MeterName);
@@ -67,7 +70,7 @@ internal sealed class PageViewTestApp : IAsyncDisposable
         var app = builder.Build();
         app.Use((context, next) =>
         {
-            context.Connection.RemoteIpAddress = PageContexts.VisitorAddress;
+            context.Connection.RemoteIpAddress = visitorAddress ?? PageContexts.VisitorAddress;
             return next(context);
         });
         app.UsePageViews();

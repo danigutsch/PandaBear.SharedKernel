@@ -14,7 +14,7 @@ namespace PandaBear.AspNetCore.WebAnalytics;
 /// </summary>
 /// <param name="name">The name of the target: its connection name.</param>
 /// <param name="connection">Umami's address and the website id.</param>
-/// <param name="clientIpHeader">The header that carries the visitor's address.</param>
+/// <param name="clientIpHeader">The header that carries the visitor's shortened address.</param>
 /// <param name="httpClientFactory">The factory of the named Umami client.</param>
 internal sealed class UmamiPageViewTarget(string name, UmamiConnection connection, string clientIpHeader, IHttpClientFactory httpClientFactory) : IPageViewTarget
 {

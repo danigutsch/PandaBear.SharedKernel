@@ -1,9 +1,10 @@
 using System.Net;
+using System.Net.Sockets;
 using Microsoft.AspNetCore.Http;
 
 namespace PandaBear.AspNetCore.WebAnalytics.Tests;
 
-/// <summary>Tests what a page view keeps of the request: the path with only the <c>utm_*</c> query values, the referrer without query or fragment, the first language, the host, the browser and the address.</summary>
+/// <summary>Tests what a page view keeps of the request: the path with only the <c>utm_*</c> query values, the referrer without query or fragment, the first language, the host, the browser and the shortened address.</summary>
 public sealed class PageViewCaptureTests
 {
     [Fact]
@@ -196,7 +197,7 @@ public sealed class PageViewCaptureTests
     }
 
     [Fact]
-    public void The_visitors_browser_and_address_are_kept_for_the_targets()
+    public void The_visitors_browser_and_shortened_address_are_kept_for_the_targets()
     {
         // Arrange
         var context = PageContexts.AnsweredPage();
@@ -206,14 +207,14 @@ public sealed class PageViewCaptureTests
 
         // Assert
         pageView.UserAgent.ShouldBe(PageContexts.VisitorAgent);
-        pageView.ClientIp.ShouldBe(PageContexts.VisitorAddress);
+        pageView.ClientIp.ShouldBe(PageContexts.ShortenedVisitorAddress);
     }
 
     [Theory]
-    [InlineData("::ffff:198.51.100.9", "198.51.100.9")]
-    [InlineData("fe80::1%3", "fe80::1")]
-    [InlineData("2001:db8::7", "2001:db8::7")]
-    public void The_address_is_normalized(string address, string expected)
+    [InlineData("203.0.113.7", "203.0.113.0")]
+    [InlineData("198.51.100.255", "198.51.100.0")]
+    [InlineData("192.0.2.0", "192.0.2.0")]
+    public void An_ipv4_address_keeps_its_first_24_bits_and_loses_the_last_octet(string address, string expected)
     {
         // Arrange
         var context = PageContexts.AnsweredPage();
@@ -223,7 +224,48 @@ public sealed class PageViewCaptureTests
         var pageView = PageViewCapture.Capture(context, configuredHostname: null);
 
         // Assert
-        pageView.ClientIp.ShouldNotBeNull().ToString().ShouldBe(expected);
+        var shortened = pageView.ClientIp.ShouldNotBeNull();
+        shortened.AddressFamily.ShouldBe(AddressFamily.InterNetwork);
+        shortened.ToString().ShouldBe(expected);
+    }
+
+    [Theory]
+    [InlineData("2001:db8:85a3:8d3:1319:8a2e:370:7348", "2001:db8:85a3::")]
+    [InlineData("2001:db8:85a3:ffff:ffff:ffff:ffff:ffff", "2001:db8:85a3::")]
+    [InlineData("2001:db8::7", "2001:db8::")]
+    [InlineData("fe80::1%3", "fe80::")]
+    public void An_ipv6_address_keeps_its_first_48_bits_and_no_scope(string address, string expected)
+    {
+        // Arrange
+        var context = PageContexts.AnsweredPage();
+        context.Connection.RemoteIpAddress = IPAddress.Parse(address);
+
+        // Act
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
+
+        // Assert
+        var shortened = pageView.ClientIp.ShouldNotBeNull();
+        shortened.AddressFamily.ShouldBe(AddressFamily.InterNetworkV6);
+        shortened.ScopeId.ShouldBe(0);
+        shortened.ToString().ShouldBe(expected);
+    }
+
+    [Theory]
+    [InlineData("::ffff:198.51.100.9", "198.51.100.0")]
+    [InlineData("::ffff:203.0.113.255", "203.0.113.0")]
+    public void An_ipv4_mapped_ipv6_address_is_shortened_as_its_ipv4_address(string address, string expected)
+    {
+        // Arrange
+        var context = PageContexts.AnsweredPage();
+        context.Connection.RemoteIpAddress = IPAddress.Parse(address);
+
+        // Act
+        var pageView = PageViewCapture.Capture(context, configuredHostname: null);
+
+        // Assert
+        var shortened = pageView.ClientIp.ShouldNotBeNull();
+        shortened.AddressFamily.ShouldBe(AddressFamily.InterNetwork);
+        shortened.ToString().ShouldBe(expected);
     }
 
     [Fact]
