@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using PandaBear.InputNormalization;
-using PandaBear.Vault.Secrets;
+using PandaBear.SecretScanning;
 
 namespace PandaBear.Vault.Matching;
 

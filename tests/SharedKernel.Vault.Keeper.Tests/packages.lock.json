@@ -180,6 +180,13 @@
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
+      "PandaBear.SharedKernel.SecretScanning": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Encodings": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.Testing": {
         "type": "Project"
       },
@@ -196,7 +203,8 @@
           "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Encodings": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.SecretScanning": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Vault.Keeper": {

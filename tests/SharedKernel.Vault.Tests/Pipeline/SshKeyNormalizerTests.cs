@@ -1,7 +1,6 @@
 using System.Security.Cryptography;
 using PandaBear.Vault.Model;
 using PandaBear.Vault.Pipeline;
-using PandaBear.Vault.Tests.Secrets;
 
 namespace PandaBear.Vault.Tests.Pipeline;
 

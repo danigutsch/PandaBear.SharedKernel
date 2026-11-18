@@ -1,3 +1,4 @@
+using PandaBear.SecretScanning;
 using PandaBear.Vault.Secrets;
 
 namespace PandaBear.Vault.Tests.Secrets;
@@ -15,7 +16,7 @@ public sealed class RecoveryCodeDetectorTests
         var item = SecretTestItems.Login(notes: notes, uri: "https://accounts.google.com");
 
         // Act
-        var findings = SecretScanner.Default.Scan(item);
+        var findings = ItemScanner.Default.Scan(item);
 
         // Assert
         var finding = findings.ShouldHaveSingleItem();
@@ -32,7 +33,7 @@ public sealed class RecoveryCodeDetectorTests
         var item = SecretTestItems.Login(notes: "GitLab recovery codes:\n" + string.Join('\n', lines), uri: "https://gitlab.com");
 
         // Act
-        var findings = SecretScanner.Default.Scan(item);
+        var findings = ItemScanner.Default.Scan(item);
 
         // Assert
         var finding = findings.ShouldHaveSingleItem();
@@ -53,7 +54,7 @@ public sealed class RecoveryCodeDetectorTests
         var item = SecretTestItems.Note("Backup codes\n" + string.Join('\n', lines));
 
         // Act
-        var findings = SecretScanner.Default.Scan(item);
+        var findings = ItemScanner.Default.Scan(item);
 
         // Assert
         findings.ShouldNotContain(finding => finding.Kind == SecretKind.RecoveryCodes);
@@ -67,8 +68,8 @@ public sealed class RecoveryCodeDetectorTests
         string mixed = string.Join('\n', Enumerable.Range(0, 8).Select(index => TestSecrets.FromAlphabet(TestSecrets.LowerHex, 8 + index, index)));
 
         // Act
-        var fourFindings = SecretScanner.Default.Scan(SecretTestItems.Note("recovery codes\n" + four));
-        var mixedFindings = SecretScanner.Default.Scan(SecretTestItems.Note("recovery codes\n" + mixed));
+        var fourFindings = ItemScanner.Default.Scan(SecretTestItems.Note("recovery codes\n" + four));
+        var mixedFindings = ItemScanner.Default.Scan(SecretTestItems.Note("recovery codes\n" + mixed));
 
         // Assert
         fourFindings.ShouldNotContain(finding => finding.Kind == SecretKind.RecoveryCodes);
@@ -83,7 +84,7 @@ public sealed class RecoveryCodeDetectorTests
         var item = SecretTestItems.Login(notes: "Recovery code: " + code, uri: "https://account.microsoft.com");
 
         // Act
-        var findings = SecretScanner.Default.Scan(item);
+        var findings = ItemScanner.Default.Scan(item);
 
         // Assert
         var finding = findings.ShouldHaveSingleItem();
@@ -99,7 +100,7 @@ public sealed class RecoveryCodeDetectorTests
         string text = "{\"shared_secret\":\"" + shared + "\",\"account_name\":\"gamer\",\"revocation_code\":\"R12345\"}";
 
         // Act
-        var findings = SecretScanner.Default.ScanText(text, SecretLocation.Attachment("76561198000000000.maFile"), "76561198000000000.maFile");
+        var findings = ItemScanner.Default.ScanText(text, ItemFieldPaths.Attachment("76561198000000000.maFile"), "76561198000000000.maFile");
 
         // Assert
         findings.ShouldContain(finding => finding.Kind == SecretKind.Totp && finding.RuleId == "steam-mafile-shared-secret");

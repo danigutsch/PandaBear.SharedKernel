@@ -35,7 +35,7 @@ public static class CatalogBuilder
         foreach (SourceItem source in vault.Items)
         {
             VaultItem item = source.Item;
-            IReadOnlyList<SecretFinding> findings = SecretScanner.Default.Scan(item);
+            IReadOnlyList<SecretFinding> findings = ItemScanner.Default.Scan(item);
             CatalogNotes? notes = null;
             if (!string.IsNullOrEmpty(item.Notes))
             {
@@ -98,7 +98,7 @@ public static class CatalogBuilder
         string originKey, VaultItem item, IReadOnlyList<SecretFinding> findings, MergeDecisions decisions)
     {
         string notes = item.Notes!;
-        int inNotes = findings.Count(finding => string.Equals(finding.Location.FieldPath, SecretLocation.Notes, StringComparison.Ordinal));
+        int inNotes = findings.Count(finding => string.Equals(finding.Location.FieldPath, ItemFieldPaths.Notes, StringComparison.Ordinal));
         ItemNotesDecision? entry = decisions.FindNotesEntry(originKey);
         NotesDecision decision = entry?.Decision ?? NotesDecision.Pending;
         if (decision == NotesDecision.Share && entry!.NotesSha256 is null)

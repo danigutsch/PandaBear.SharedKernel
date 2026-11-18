@@ -1,3 +1,4 @@
+using PandaBear.SecretScanning;
 using PandaBear.Vault.Matching;
 using PandaBear.Vault.Merge;
 using PandaBear.Vault.Secrets;
@@ -13,7 +14,7 @@ internal static class FindingSamples
         RuleId = "fixture-rule",
         Kind = SecretKind.GenericSecret,
         Confidence = confidence,
-        Location = new SecretLocation(SecretLocation.Notes, 0, 8),
+        Location = new SecretLocation(ItemFieldPaths.Notes, 0, 8),
         ProposedTarget = PlacementTarget.Hidden("Secret"),
         Message = "Fixture finding",
     };

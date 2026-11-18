@@ -1,3 +1,4 @@
+using PandaBear.SecretScanning;
 using PandaBear.Vault.Brief;
 using PandaBear.Vault.Matching;
 using PandaBear.Vault.Merge;
@@ -41,13 +42,13 @@ internal static class BriefSamples
                 [
                     new BriefMember(First, "keeper.json", "Example", null, "example.com", "alice", null, Newest: false,
                     [
-                        new BriefFinding(PreAccepted, SecretKind.RecoveryCodes, Confidence.High, SecretLocation.Notes, 2, "hidden field 'Recovery codes'", PreAccepted: true, NeedsDecision: false, AgentMayAccept: true, AgentMayReject: true),
-                        new BriefFinding(Proposed, SecretKind.Password, Confidence.Medium, SecretLocation.Notes, 1, "login.password", PreAccepted: false, NeedsDecision: true, AgentMayAccept: true, AgentMayReject: true),
-                        new BriefFinding(Username, SecretKind.Username, Confidence.Medium, SecretLocation.Notes, 3, "login.username", PreAccepted: false, NeedsDecision: true, AgentMayAccept: false, AgentMayReject: true),
+                        new BriefFinding(PreAccepted, SecretKind.RecoveryCodes, Confidence.High, ItemFieldPaths.Notes, 2, "hidden field 'Recovery codes'", PreAccepted: true, NeedsDecision: false, AgentMayAccept: true, AgentMayReject: true),
+                        new BriefFinding(Proposed, SecretKind.Password, Confidence.Medium, ItemFieldPaths.Notes, 1, "login.password", PreAccepted: false, NeedsDecision: true, AgentMayAccept: true, AgentMayReject: true),
+                        new BriefFinding(Username, SecretKind.Username, Confidence.Medium, ItemFieldPaths.Notes, 3, "login.username", PreAccepted: false, NeedsDecision: true, AgentMayAccept: false, AgentMayReject: true),
                     ]),
                     new BriefMember(Second, "bitwarden.json", "Example", null, null, "alice", null, Newest: false,
                     [
-                        new BriefFinding(PrivateKey, SecretKind.PrivateKey, Confidence.High, SecretLocation.Notes, 1, "new SSH key item", PreAccepted: true, NeedsDecision: false, AgentMayAccept: true, AgentMayReject: false),
+                        new BriefFinding(PrivateKey, SecretKind.PrivateKey, Confidence.High, ItemFieldPaths.Notes, 1, "new SSH key item", PreAccepted: true, NeedsDecision: false, AgentMayAccept: true, AgentMayReject: false),
                     ]),
                 ],
                 [

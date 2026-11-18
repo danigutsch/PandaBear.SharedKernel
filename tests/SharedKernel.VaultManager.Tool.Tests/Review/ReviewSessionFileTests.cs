@@ -1,12 +1,12 @@
+using PandaBear.SecretScanning;
 using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.Vault.Bitwarden;
 using PandaBear.Vault.Matching;
 using PandaBear.Vault.Merge;
 using PandaBear.Vault.Model;
 using PandaBear.Vault.Pipeline;
+using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.VaultManager.Tool.Review;
-using PandaBear.Vault.Secrets;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 using static PandaBear.VaultManager.Tool.Tests.Review.ReviewVaults;
 

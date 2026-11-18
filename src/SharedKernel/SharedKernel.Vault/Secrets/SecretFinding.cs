@@ -1,4 +1,5 @@
 using System.Globalization;
+using PandaBear.SecretScanning;
 
 namespace PandaBear.Vault.Secrets;
 

@@ -1,3 +1,4 @@
+using PandaBear.SecretScanning;
 using PandaBear.Vault.Matching;
 using PandaBear.Vault.Model;
 using PandaBear.Vault.Secrets;
@@ -60,7 +61,7 @@ public static class SshKeyNormalizer
         }
 
         (string firstKey, string? otherText) = SplitFirstBlock(key.PrivateKey!);
-        SshKeyConversion conversion = SshKeyConverter.Convert(firstKey, key.PublicKey);
+        BitwardenSshKey conversion = BitwardenSshKeys.Convert(firstKey, key.PublicKey);
         return conversion.Key is { } converted
             ? Complete(item, key, converted, firstKey, otherText)
             : ToSecureNote(item, key, $"SSH key was not converted ({conversion.Problem}), so the item is a secure note with the private key in the hidden field \"{PrivateKeyField}\".");
