@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using PandaBear.Encodings;
 
 namespace PandaBear.Vault.Secrets;
 
@@ -51,7 +52,7 @@ internal static class TotpUri
         if (trimmed.StartsWith(SteamPrefix, StringComparison.OrdinalIgnoreCase))
         {
             string steamSecret = Base32.Normalize(trimmed[SteamPrefix.Length..]);
-            if (!Base32.IsTotpSecret(steamSecret))
+            if (!TotpSecret.IsValid(steamSecret))
             {
                 return false;
             }
@@ -66,7 +67,7 @@ internal static class TotpUri
         }
 
         string secret = Base32.Normalize(trimmed);
-        if (!Base32.IsTotpSecret(secret))
+        if (!TotpSecret.IsValid(secret))
         {
             return false;
         }
@@ -189,7 +190,7 @@ internal static class TotpUri
         };
         string? problem = type == 1 ? "HOTP is not supported by Bitwarden"
             : algorithmName is null ? "MD5 or unknown algorithm is not supported by Bitwarden"
-            : secret.Length * 8 < Base32.MinimumTotpBits ? "secret shorter than 80 bits"
+            : secret.Length * 8 < TotpSecret.MinimumBits ? "secret shorter than 80 bits"
             : null;
         string? uri = problem is null
             ? Build(issuer.Length == 0 ? null : issuer, account.Length == 0 ? null : account, Base32.Encode(secret), algorithmName!, digits == 2 ? 8 : 6, 30)
@@ -271,7 +272,7 @@ internal static class TotpUri
             }
         }
 
-        if (secret is null || !Base32.IsTotpSecret(secret))
+        if (secret is null || !TotpSecret.IsValid(secret))
         {
             return false;
         }

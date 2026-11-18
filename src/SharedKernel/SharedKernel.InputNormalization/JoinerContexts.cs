@@ -2,7 +2,7 @@ using System.Buffers;
 using System.Globalization;
 using System.Text;
 
-namespace PandaBear.Vault.IO;
+namespace PandaBear.InputNormalization;
 
 /// <summary>
 /// Decides where <see cref="PrintableText"/> keeps a zero width joiner, a zero width non-joiner, or a tag character: only

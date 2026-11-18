@@ -2,11 +2,12 @@ using System.Buffers;
 using System.Globalization;
 using System.Text;
 
-namespace PandaBear.Vault.IO;
+namespace PandaBear.InputNormalization;
 
 /// <summary>
-/// Makes the text that the commands, the review, and the reports show safe to print in reports and on a terminal: names
-/// read from a vault, such as item, folder, and file names, and paths, keys, warnings, and messages.
+/// Makes untrusted text safe to show on one line of a terminal or a Markdown report, such as names read from a file or a
+/// vault export, paths, keys, warnings, and messages. Unlike <see cref="ControlCharacters"/>, which escapes such characters
+/// as <c>\uXXXX</c> so a log keeps them, it replaces them, so the text reads as it would display.
 /// </summary>
 public static class PrintableText
 {

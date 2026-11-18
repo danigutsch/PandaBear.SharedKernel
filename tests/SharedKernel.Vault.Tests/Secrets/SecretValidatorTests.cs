@@ -61,9 +61,9 @@ public sealed class SecretValidatorTests
     public void Base32_secret_needs_at_least_eighty_bits()
     {
         // Act
-        var enough = Base32.IsTotpSecret(TestSecrets.Base32Encode(TestSecrets.Bytes(1, 10)));
-        var tooShort = Base32.IsTotpSecret(TestSecrets.Base32Encode(TestSecrets.Bytes(1, 9)));
-        var invalid = Base32.IsTotpSecret("ABCDEFGHIJKLMNO1");
+        var enough = TotpSecret.IsValid(TestSecrets.Base32Encode(TestSecrets.Bytes(1, 10)));
+        var tooShort = TotpSecret.IsValid(TestSecrets.Base32Encode(TestSecrets.Bytes(1, 9)));
+        var invalid = TotpSecret.IsValid("ABCDEFGHIJKLMNO1");
 
         // Assert
         enough.ShouldBeTrue();
@@ -146,11 +146,26 @@ public sealed class SecretValidatorTests
         string broken = key[..20] + (key[20] == 'Q' ? 'P' : 'Q') + key[21..];
 
         // Act
-        var valid = Bech32.IsValidAgeSecretKey(key);
-        var invalid = Bech32.IsValidAgeSecretKey(broken);
+        var valid = AgeSecretKey.IsValid(key);
+        var invalid = AgeSecretKey.IsValid(broken);
 
         // Assert
         valid.ShouldBeTrue();
         invalid.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void An_age_identity_in_mixed_case_is_not_a_key_because_bech32_and_age_refuse_it()
+    {
+        // Arrange
+        string key = Bech32Reference.Encode("age-secret-key-", TestSecrets.Bytes(4, 32)).ToUpperInvariant();
+        string mixed = key[..^1] + char.ToLowerInvariant(key[^1]);
+
+        // Act
+        var valid = AgeSecretKey.IsValid(mixed);
+
+        // Assert
+        char.IsAsciiLetter(key[^1]).ShouldBeTrue();
+        valid.ShouldBeFalse();
     }
 }

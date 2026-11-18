@@ -1,17 +1,14 @@
-namespace PandaBear.Vault.Secrets;
+namespace PandaBear.Encodings;
 
-/// <summary>RFC 4648 base32 helpers for TOTP secrets.</summary>
-internal static class Base32
+/// <summary>RFC 4648 Base32, the encoding of TOTP secrets, which .NET does not provide.</summary>
+public static class Base32
 {
     /// <summary>Base32 alphabet.</summary>
     public const string Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
-    /// <summary>Smallest accepted TOTP secret, in bits.</summary>
-    public const int MinimumTotpBits = 80;
-
-    /// <summary>Uppercases a secret and drops characters outside A-Z and 2-7, such as spaces, dashes, and padding.</summary>
-    /// <param name="value">Raw secret.</param>
-    /// <returns>Normalized secret.</returns>
+    /// <summary>Uppercases text and drops characters outside A-Z and 2-7, such as spaces, dashes, and padding.</summary>
+    /// <param name="value">Raw text.</param>
+    /// <returns>The normalized text.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
     public static string Normalize(string value)
     {
@@ -28,30 +25,6 @@ internal static class Base32
         }
 
         return new string(characters, 0, written);
-    }
-
-    /// <summary>Whether text is a strict base32 TOTP secret of at least 80 bits: A-Z, 2-7, and optional padding.</summary>
-    /// <param name="value">Candidate, already free of separators.</param>
-    /// <returns><see langword="true"/> when the candidate qualifies.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
-    public static bool IsTotpSecret(string value)
-    {
-        ArgumentNullException.ThrowIfNull(value);
-        string trimmed = value.TrimEnd('=');
-        if (trimmed.Length * 5 < MinimumTotpBits)
-        {
-            return false;
-        }
-
-        foreach (char character in trimmed)
-        {
-            if (character is not ((>= 'A' and <= 'Z') or (>= '2' and <= '7')))
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /// <summary>Encodes bytes without padding.</summary>

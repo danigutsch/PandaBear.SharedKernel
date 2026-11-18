@@ -1,4 +1,4 @@
-namespace PandaBear.Vault.IO;
+namespace PandaBear.IO;
 
 /// <summary>Compares file paths by the file they reach rather than by how they are written.</summary>
 public static class FilePaths

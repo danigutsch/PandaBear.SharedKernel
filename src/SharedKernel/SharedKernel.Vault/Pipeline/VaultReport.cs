@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text;
+using PandaBear.InputNormalization;
 using PandaBear.Vault.Analysis;
 using PandaBear.Vault.Formats;
-using PandaBear.Vault.IO;
 using PandaBear.Vault.Model;
 using PandaBear.Vault.Secrets;
 

@@ -1,4 +1,5 @@
 using System.Globalization;
+using PandaBear.Encodings;
 using PandaBear.Vault.Formats;
 using PandaBear.Vault.Model;
 

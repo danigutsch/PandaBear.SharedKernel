@@ -1,13 +1,14 @@
-namespace PandaBear.Secrets;
+namespace PandaBear.Encodings;
 
 /// <summary>
 /// Bech32 as BIP-173 specifies it (not Bech32m), which is what age uses for recipients and identities. age lifts the
-/// 90-character limit, so the limit is a parameter.
+/// 90-character limit, so the limit is a parameter. The checksum catches a mistyped or truncated string, so a value that
+/// decodes is the value that was meant.
 /// </summary>
-internal static class Bech32
+public static class Bech32
 {
     /// <summary>The BIP-173 length limit that age does not apply.</summary>
-    internal const int Bip173MaxLength = 90;
+    public const int Bip173MaxLength = 90;
 
     private const string Charset = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
     private const int ChecksumLength = 6;
@@ -19,8 +20,10 @@ internal static class Bech32
     /// <param name="humanReadablePart">The lowercase human-readable part.</param>
     /// <param name="data">The 5-bit data values without the checksum.</param>
     /// <returns><see langword="true"/> when the text is valid Bech32.</returns>
-    internal static bool TryDecode(string text, int? maxLength, out string humanReadablePart, out byte[] data)
+    /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
+    public static bool TryDecode(string text, int? maxLength, out string humanReadablePart, out byte[] data)
     {
+        ArgumentNullException.ThrowIfNull(text);
         humanReadablePart = string.Empty;
         data = [];
         if (text.Length == 0 || (maxLength is { } limit && text.Length > limit))
@@ -78,8 +81,11 @@ internal static class Bech32
         return true;
     }
 
-    /// <summary>Regroups 5-bit values into bytes. Padding must be fewer than five bits, all zero.</summary>
-    internal static bool TryToBytes(ReadOnlySpan<byte> fiveBit, out byte[] bytes)
+    /// <summary>Regroups the 5-bit values that <see cref="TryDecode"/> returns into bytes. Padding must be fewer than five bits, all zero.</summary>
+    /// <param name="fiveBit">The 5-bit values.</param>
+    /// <param name="bytes">The bytes.</param>
+    /// <returns><see langword="true"/> when the padding is valid.</returns>
+    public static bool TryConvertToBytes(ReadOnlySpan<byte> fiveBit, out byte[] bytes)
     {
         List<byte> result = [];
         var accumulator = 0;

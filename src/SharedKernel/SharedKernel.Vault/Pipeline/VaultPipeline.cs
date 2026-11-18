@@ -1,8 +1,8 @@
 using System.Globalization;
+using PandaBear.IO;
 using PandaBear.Vault.Analysis;
 using PandaBear.Vault.Attachments;
 using PandaBear.Vault.Formats;
-using PandaBear.Vault.IO;
 using PandaBear.Vault.Matching;
 using PandaBear.Vault.Merge;
 using PandaBear.Vault.Model;

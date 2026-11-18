@@ -2,11 +2,12 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Globalization;
 using System.Text;
+using PandaBear.InputNormalization;
+using PandaBear.IO;
 using PandaBear.Vault.Brief;
-using PandaBear.VaultManager.Tool.Formats;
-using PandaBear.Vault.IO;
 using PandaBear.Vault.Merge;
 using PandaBear.Vault.Pipeline;
+using PandaBear.VaultManager.Tool.Formats;
 
 namespace PandaBear.VaultManager.Tool.Cli;
 

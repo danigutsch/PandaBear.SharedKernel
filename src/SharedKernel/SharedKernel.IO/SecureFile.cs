@@ -1,8 +1,8 @@
 using System.Text;
 
-namespace PandaBear.Vault.IO;
+namespace PandaBear.IO;
 
-/// <summary>Writes files that hold vault secrets.</summary>
+/// <summary>Writes files that hold secrets, such as a decrypted export or a report that names them.</summary>
 public static class SecureFile
 {
     private static readonly UTF8Encoding Utf8 = new(encoderShouldEmitUTF8Identifier: false);

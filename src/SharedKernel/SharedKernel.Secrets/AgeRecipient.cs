@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using PandaBear.BuildingBlocks;
+using PandaBear.Encodings;
 using PandaBear.Results;
 
 namespace PandaBear.Secrets;
@@ -106,7 +107,7 @@ public sealed class AgeRecipient : ValueObject
             return "Recipient has no data.";
         }
 
-        if (kind == AgeRecipientKind.X25519 && !(Bech32.TryToBytes(data, out var bytes) && bytes.Length == X25519KeyLength))
+        if (kind == AgeRecipientKind.X25519 && !(Bech32.TryConvertToBytes(data, out var bytes) && bytes.Length == X25519KeyLength))
         {
             return "An age recipient must carry a 32-byte X25519 public key.";
         }

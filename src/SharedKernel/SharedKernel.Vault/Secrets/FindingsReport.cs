@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Text;
-using PandaBear.Vault.IO;
+using PandaBear.InputNormalization;
 
 namespace PandaBear.Vault.Secrets;
 

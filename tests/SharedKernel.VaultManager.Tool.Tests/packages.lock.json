@@ -253,7 +253,13 @@
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.Encodings": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.InputNormalization": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.IO": {
         "type": "Project"
       },
       "PandaBear.SharedKernel.Results": {
@@ -273,6 +279,8 @@
         "type": "Project",
         "dependencies": {
           "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Encodings": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )"
         }
       },
