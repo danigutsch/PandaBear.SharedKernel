@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using PandaBear.Mediator;
 using PandaBear.Mediator.EntityFrameworkCore;
 using PandaBear.Results;
 
@@ -38,11 +39,18 @@ internal sealed class ResultTransactionTestScenario : IAsyncDisposable
 
     /// <summary>Creates a behavior with its own scope and context, as a request would get.</summary>
     /// <returns>The behavior and the context it uses.</returns>
-    public (ResultTransactionTestBehavior Behavior, TestDbContext Context, IServiceScope Scope) CreateBehavior()
+    public (ResultTransactionTestBehavior<ResultTransactionTestCommand> Behavior, TestDbContext Context, IServiceScope Scope) CreateBehavior() =>
+        CreateBehavior<ResultTransactionTestCommand>();
+
+    /// <summary>Creates a behavior for an explicitly selected command contract, with its own scope and context.</summary>
+    /// <typeparam name="TCommand">The command handled by the behavior.</typeparam>
+    /// <returns>The behavior and the context it uses.</returns>
+    public (ResultTransactionTestBehavior<TCommand> Behavior, TestDbContext Context, IServiceScope Scope) CreateBehavior<TCommand>()
+        where TCommand : ICommand<Result>
     {
         var scope = provider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-        var behavior = new ResultTransactionTestBehavior(context, provider.GetRequiredService<IServiceScopeFactory>(), Logger);
+        var behavior = new ResultTransactionTestBehavior<TCommand>(context, provider.GetRequiredService<IServiceScopeFactory>(), Logger);
         return (behavior, context, scope);
     }
 
