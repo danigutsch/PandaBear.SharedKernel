@@ -107,6 +107,8 @@ PandaBear.Blazor.Site.GalleryImage.Image.init -> void
 PandaBear.Blazor.Site.Hero
 PandaBear.Blazor.Site.Hero.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
 PandaBear.Blazor.Site.Hero.Actions.set -> void
+PandaBear.Blazor.Site.Hero.Eyebrow.get -> string?
+PandaBear.Blazor.Site.Hero.Eyebrow.set -> void
 PandaBear.Blazor.Site.Hero.Hero() -> void
 PandaBear.Blazor.Site.Hero.Image.get -> PandaBear.Blazor.Site.ResponsiveImage?
 PandaBear.Blazor.Site.Hero.Image.set -> void

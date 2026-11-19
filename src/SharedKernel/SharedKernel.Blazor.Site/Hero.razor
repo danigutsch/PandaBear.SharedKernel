@@ -1,10 +1,23 @@
 @inherits SiteComponent
 <section class="@CssClass("site-hero")" @attributes="AdditionalAttributes">
     <div class="site-hero__text">
-        <h1 class="site-hero__title">@Title</h1>
-        @if (!string.IsNullOrWhiteSpace(Subtitle))
+        @if (HasEyebrow || HasSubtitle)
         {
-            <p class="site-hero__subtitle">@Subtitle</p>
+            <hgroup class="site-hero__heading">
+                @if (HasEyebrow)
+                {
+                    <p class="site-hero__eyebrow">@Eyebrow</p>
+                }
+                <h1 class="site-hero__title">@Title</h1>
+                @if (HasSubtitle)
+                {
+                    <p class="site-hero__subtitle">@Subtitle</p>
+                }
+            </hgroup>
+        }
+        else
+        {
+            <h1 class="site-hero__title">@Title</h1>
         }
         @if (Actions is not null)
         {

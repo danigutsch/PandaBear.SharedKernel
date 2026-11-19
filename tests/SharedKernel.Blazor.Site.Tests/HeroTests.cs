@@ -21,6 +21,89 @@ public sealed class HeroTests : BunitContext
     }
 
     [Fact]
+    public void Eyebrow_comes_before_the_heading_and_subtitle_after_it_in_one_hgroup()
+    {
+        // Arrange & Act
+        var cut = Render<Hero>(parameters => parameters
+            .Add(component => component.Eyebrow, "Since 2004")
+            .Add(component => component.Title, "Discover")
+            .Add(component => component.Subtitle, "Small groups"));
+
+        // Assert
+        var heading = cut.Find(".site-hero__text > hgroup.site-hero__heading");
+        heading.Children.Select(child => child.TagName).ShouldBe(["P", "H1", "P"]);
+        heading.Children[0].ClassName.ShouldBe("site-hero__eyebrow");
+        heading.Children[0].TextContent.ShouldBe("Since 2004");
+        heading.Children[1].ClassName.ShouldBe("site-hero__title");
+        heading.Children[1].TextContent.ShouldBe("Discover");
+        heading.Children[2].ClassName.ShouldBe("site-hero__subtitle");
+        heading.Children[2].TextContent.ShouldBe("Small groups");
+        cut.FindAll("h1").Count.ShouldBe(1);
+    }
+
+    [Fact]
+    public void Eyebrow_alone_is_grouped_before_the_heading()
+    {
+        // Arrange & Act
+        var cut = Render<Hero>(parameters => parameters
+            .Add(component => component.Eyebrow, "Since 2004")
+            .Add(component => component.Title, "Discover"));
+
+        // Assert
+        var heading = cut.Find("hgroup.site-hero__heading");
+        heading.Children.Select(child => child.ClassName).ShouldBe(["site-hero__eyebrow", "site-hero__title"]);
+        cut.FindAll(".site-hero__subtitle").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Subtitle_alone_is_grouped_after_the_heading()
+    {
+        // Arrange & Act
+        var cut = Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Discover")
+            .Add(component => component.Subtitle, "Small groups"));
+
+        // Assert
+        var heading = cut.Find("hgroup.site-hero__heading");
+        heading.Children.Select(child => child.ClassName).ShouldBe(["site-hero__title", "site-hero__subtitle"]);
+        cut.FindAll(".site-hero__eyebrow").ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(null, null)]
+    [InlineData("", "")]
+    [InlineData(" ", "\t")]
+    public void Without_an_eyebrow_or_subtitle_the_heading_stands_alone(string? eyebrow, string? subtitle)
+    {
+        // Arrange & Act
+        var cut = Render<Hero>(parameters => parameters
+            .Add(component => component.Eyebrow, eyebrow)
+            .Add(component => component.Title, "Discover")
+            .Add(component => component.Subtitle, subtitle));
+
+        // Assert
+        cut.FindAll("hgroup").ShouldBeEmpty();
+        cut.FindAll("p").ShouldBeEmpty();
+        cut.Find(".site-hero__text > h1.site-hero__title").TextContent.ShouldBe("Discover");
+    }
+
+    [Fact]
+    public void Eyebrow_and_subtitle_text_is_encoded()
+    {
+        // Arrange & Act
+        var cut = Render<Hero>(parameters => parameters
+            .Add(component => component.Eyebrow, "<b>New</b> & safe")
+            .Add(component => component.Title, "Discover")
+            .Add(component => component.Subtitle, "<i>Small</i> groups"));
+
+        // Assert
+        cut.FindAll("b").ShouldBeEmpty();
+        cut.FindAll("i").ShouldBeEmpty();
+        cut.Find(".site-hero__eyebrow").TextContent.ShouldBe("<b>New</b> & safe");
+        cut.Find(".site-hero__subtitle").TextContent.ShouldBe("<i>Small</i> groups");
+    }
+
+    [Fact]
     public void Image_is_rendered_eagerly_with_its_alt_and_dimensions()
     {
         // Arrange & Act
