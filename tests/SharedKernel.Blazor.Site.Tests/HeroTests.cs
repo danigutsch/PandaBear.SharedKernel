@@ -188,4 +188,46 @@ public sealed class HeroTests : BunitContext
         // Assert
         render.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe(nameof(Hero.Layout));
     }
+
+    [Fact]
+    public void A_cover_hero_is_a_page_cover_by_default_and_a_landing_cover_on_request()
+    {
+        // Arrange & Act
+        var page = Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Tours")
+            .Add(component => component.Layout, HeroLayout.Cover));
+        var landing = Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Travel with feeling")
+            .Add(component => component.Layout, HeroLayout.Cover)
+            .Add(component => component.CoverHeight, CoverHeight.Landing));
+
+        // Assert
+        page.Find(".site-hero").ClassName.ShouldBe("site-hero site-hero--cover");
+        landing.Find(".site-hero").ClassName.ShouldBe("site-hero site-hero--cover site-hero--landing");
+    }
+
+    [Fact]
+    public void A_landing_height_on_a_split_hero_is_rejected_instead_of_ignored()
+    {
+        // Arrange & Act
+        var render = () => Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Tours")
+            .Add(component => component.CoverHeight, CoverHeight.Landing));
+
+        // Assert
+        render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(Hero.CoverHeight));
+    }
+
+    [Fact]
+    public void An_undefined_cover_height_is_rejected()
+    {
+        // Arrange & Act
+        var render = () => Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Tours")
+            .Add(component => component.Layout, HeroLayout.Cover)
+            .Add(component => component.CoverHeight, (CoverHeight)4));
+
+        // Assert
+        render.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe(nameof(Hero.CoverHeight));
+    }
 }

@@ -506,8 +506,6 @@ static PandaBear.Blazor.Site.Theming.CssColor.FromString(string! value) -> Panda
 static PandaBear.Blazor.Site.Theming.FontSize.Fixed(decimal rem) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.FontSize!>
 static PandaBear.Blazor.Site.Theming.FontSize.Fluid(decimal minRem, decimal maxRem) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.FontSize!>
 static PandaBear.Blazor.Site.Theming.SiteColors.Create(PandaBear.Blazor.Site.Theming.ThemeColor! primary, PandaBear.Blazor.Site.Theming.ThemeColor! onPrimary, PandaBear.Blazor.Site.Theming.ThemeColor! accent, PandaBear.Blazor.Site.Theming.ThemeColor! onAccent, PandaBear.Blazor.Site.Theming.ThemeColor! text, PandaBear.Blazor.Site.Theming.ThemeColor! muted, PandaBear.Blazor.Site.Theming.ThemeColor! surface, PandaBear.Blazor.Site.Theming.ThemeColor! surfaceAlt, PandaBear.Blazor.Site.Theming.ThemeColor! border, PandaBear.Blazor.Site.Theming.ThemeColor! focus, PandaBear.Blazor.Site.Theming.ThemeColor? primaryHover = null, PandaBear.Blazor.Site.Theming.ThemeColor? accentHover = null) -> PandaBear.Blazor.Site.Theming.SiteColors!
-static PandaBear.Blazor.Site.Theming.SiteTheme.Create(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
-static PandaBear.Blazor.Site.Theming.SiteTheme.CreateDraft(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
 static PandaBear.Blazor.Site.Theming.SiteTheme.Default.get -> PandaBear.Blazor.Site.Theming.SiteTheme!
 static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.ColorVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
 static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.Hash(PandaBear.Blazor.Site.Theming.SiteTheme! theme) -> string!
@@ -647,3 +645,18 @@ PandaBear.Blazor.Site.VideoLink.SiteHint.set -> void
 PandaBear.Blazor.Site.VideoLink.Title.get -> string!
 PandaBear.Blazor.Site.VideoLink.Title.set -> void
 PandaBear.Blazor.Site.VideoLink.VideoLink() -> void
+PandaBear.Blazor.Site.CoverHeight
+PandaBear.Blazor.Site.CoverHeight.Landing = 1 -> PandaBear.Blazor.Site.CoverHeight
+PandaBear.Blazor.Site.CoverHeight.Page = 0 -> PandaBear.Blazor.Site.CoverHeight
+PandaBear.Blazor.Site.Hero.CoverHeight.get -> PandaBear.Blazor.Site.CoverHeight
+PandaBear.Blazor.Site.Hero.CoverHeight.set -> void
+PandaBear.Blazor.Site.Theming.SiteTheme.BrandHeight.get -> decimal
+PandaBear.Blazor.Site.Theming.SiteTheme.HeaderHeight.get -> decimal
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.BrandHeight.get -> decimal?
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.BrandHeight.set -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Brand.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Brand.init -> void
+const PandaBear.Blazor.Site.Theming.SiteTheme.DefaultBrandHeight = 2.5 -> decimal
+static PandaBear.Blazor.Site.Theming.SiteTheme.Create(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, decimal brandHeight = 2.5, System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
+static PandaBear.Blazor.Site.Theming.SiteTheme.CreateDraft(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, decimal brandHeight = 2.5) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
+static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.HeaderVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!

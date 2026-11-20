@@ -37,9 +37,23 @@ public sealed partial class Hero
     [Parameter]
     public HeroLayout Layout { get; set; }
 
+    /// <summary>
+    /// Gets or sets how tall a <see cref="HeroLayout.Cover" /> hero is at least. The default is <see cref="CoverHeight.Page" />;
+    /// <see cref="CoverHeight.Landing" /> on a split hero is refused.
+    /// </summary>
+    [Parameter]
+    public CoverHeight CoverHeight { get; set; }
+
     /// <summary>Gets or sets the buttons or links under the subtitle.</summary>
     [Parameter]
     public RenderFragment? Actions { get; set; }
+
+    private string RootClass => (Layout, CoverHeight) switch
+    {
+        (HeroLayout.Cover, CoverHeight.Landing) => "site-hero site-hero--cover site-hero--landing",
+        (HeroLayout.Cover, _) => "site-hero site-hero--cover",
+        _ => "site-hero",
+    };
 
     private bool HasEyebrow => !string.IsNullOrWhiteSpace(Eyebrow);
 
@@ -52,6 +66,16 @@ public sealed partial class Hero
         if (!Enum.IsDefined(Layout))
         {
             throw new ArgumentOutOfRangeException(nameof(Layout), Layout, "The hero layout is not defined.");
+        }
+
+        if (!Enum.IsDefined(CoverHeight))
+        {
+            throw new ArgumentOutOfRangeException(nameof(CoverHeight), CoverHeight, "The cover height is not defined.");
+        }
+
+        if (CoverHeight != CoverHeight.Page && Layout != HeroLayout.Cover)
+        {
+            throw new ArgumentException("Only a cover hero has a cover height; set the layout to Cover or leave the height out.", nameof(CoverHeight));
         }
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 namespace PandaBear.Blazor.Site.Tests.Browser;
 
 /// <summary>
-/// A public page for the band tests: a collapsible header over a cover hero whose photo is all white (the worst photo for white text),
+/// A public page for the band tests: a collapsible header with a logo over a cover hero whose photo is all white (the worst photo for white text),
 /// a primary band with a quote, an image band, a muted band with a split section and a mosaic, a byline, a video link, the footer and
 /// a floating link.
 /// </summary>
@@ -25,6 +25,10 @@ public sealed class BandsSample : ComponentBase
     [Parameter]
     public HeaderPlacement Placement { get; set; } = HeaderPlacement.OverHero;
 
+    /// <summary>Gets or sets the height of the cover hero.</summary>
+    [Parameter]
+    public CoverHeight CoverHeight { get; set; }
+
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -33,7 +37,7 @@ public sealed class BandsSample : ComponentBase
         builder.AddComponentParameter(1, nameof(SiteHeader.Label), "Main");
         builder.AddComponentParameter(2, nameof(SiteHeader.Items), LayoutSample.Navigation);
         builder.AddComponentParameter(3, nameof(SiteHeader.CurrentPath), "/gallery");
-        builder.AddComponentParameter(4, nameof(SiteHeader.Brand), (RenderFragment)(brand => brand.AddMarkupContent(0, "<a id=\"brand\" href=\"/\">Brand</a>")));
+        builder.AddComponentParameter(4, nameof(SiteHeader.Brand), (RenderFragment)(brand => brand.AddMarkupContent(0, "<a id=\"brand\" href=\"/\"><img src=\"/white.svg\" alt=\"Brand\" width=\"160\" height=\"90\"></a>")));
         builder.AddComponentParameter(5, nameof(SiteHeader.Placement), Placement);
         builder.AddComponentParameter(6, nameof(SiteHeader.MenuLabel), "Menu");
         builder.AddComponentParameter(7, nameof(SiteHeader.Actions), (RenderFragment)(actions => actions.AddMarkupContent(0, "<a id=\"action\" href=\"/en\">EN</a>")));
@@ -55,16 +59,17 @@ public sealed class BandsSample : ComponentBase
         }
 
         builder.AddComponentParameter(16, nameof(Hero.Actions), (RenderFragment)HeroActions);
+        builder.AddComponentParameter(17, nameof(Hero.CoverHeight), CoverHeight);
         builder.CloseComponent();
-        builder.AddContent(17, Bands);
+        builder.AddContent(18, Bands);
         builder.CloseElement();
-        builder.OpenComponent<SiteFooter>(18);
-        builder.AddComponentParameter(19, nameof(SiteFooter.ChildContent), (RenderFragment)(footer => footer.AddMarkupContent(0, "<p><a id=\"footer-link\" href=\"/privacy\">Privacy</a></p><p id=\"footer-end\">Viajantes, São Paulo</p>")));
+        builder.OpenComponent<SiteFooter>(19);
+        builder.AddComponentParameter(20, nameof(SiteFooter.ChildContent), (RenderFragment)(footer => footer.AddMarkupContent(0, "<p><a id=\"footer-link\" href=\"/privacy\">Privacy</a></p><p id=\"footer-end\">Viajantes, São Paulo</p>")));
         builder.CloseComponent();
-        builder.OpenComponent<FloatingLink>(20);
-        builder.AddComponentParameter(21, nameof(FloatingLink.Href), LinkTarget.FromString("https://wa.me/5511999990000"));
-        builder.AddComponentParameter(22, nameof(FloatingLink.Label), "Chat on WhatsApp");
-        builder.AddComponentParameter(23, nameof(FloatingLink.ChildContent), (RenderFragment)(icon => icon.AddMarkupContent(0, "<svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" /></svg>")));
+        builder.OpenComponent<FloatingLink>(21);
+        builder.AddComponentParameter(22, nameof(FloatingLink.Href), LinkTarget.FromString("https://wa.me/5511999990000"));
+        builder.AddComponentParameter(23, nameof(FloatingLink.Label), "Chat on WhatsApp");
+        builder.AddComponentParameter(24, nameof(FloatingLink.ChildContent), (RenderFragment)(icon => icon.AddMarkupContent(0, "<svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" /></svg>")));
         builder.CloseComponent();
     }
 

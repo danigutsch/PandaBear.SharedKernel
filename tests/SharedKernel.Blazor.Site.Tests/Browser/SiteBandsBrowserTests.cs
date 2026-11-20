@@ -171,10 +171,10 @@ public sealed class SiteBandsBrowserTests(ChromiumFixture chromium) : IClassFixt
     }
 
     [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
-    [InlineData(375, false, nameof(HeaderPlacement.OverHero))]
-    [InlineData(1280, true, nameof(HeaderPlacement.OverHero))]
-    [InlineData(1280, false, nameof(HeaderPlacement.Above))]
-    public async Task The_header_stays_above_the_page_on_a_phone_before_other_content_and_when_placed_above(int width, bool leadText, string placement)
+    [InlineData(375, false, nameof(HeaderPlacement.OverHero), "rgb(29, 78, 216)", "rgb(255, 255, 255)")]
+    [InlineData(1280, true, nameof(HeaderPlacement.OverHero), "rgb(29, 78, 216)", "rgb(255, 255, 255)")]
+    [InlineData(1280, false, nameof(HeaderPlacement.Above), "rgb(255, 255, 255)", "rgb(31, 41, 55)")]
+    public async Task The_header_stays_above_the_page_on_a_phone_before_other_content_and_when_placed_above(int width, bool leadText, string placement, string background, string linkColor)
     {
         // Arrange & Act
         await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, width, new Dictionary<string, object?>
@@ -190,7 +190,70 @@ public sealed class SiteBandsBrowserTests(ChromiumFixture chromium) : IClassFixt
         var headerPosition = await page.Style(".site-header", "position");
         headerPosition.ShouldBe("static");
         var headerBackground = await page.Style(".site-header", "background-color");
-        headerBackground.ShouldBe("rgb(255, 255, 255)");
+        headerBackground.ShouldBe(background);
+        var toggleColor = await page.Style(".site-header__toggle", "color");
+        toggleColor.ShouldBe(linkColor);
+        var brandColor = await page.Style("#brand", "color");
+        brandColor.ShouldBe(placement == nameof(HeaderPlacement.OverHero) ? linkColor : "rgb(29, 78, 216)");
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task On_a_phone_the_open_menu_of_a_header_placed_over_the_hero_is_on_the_primary_band()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, 375);
+
+        // Act
+        await page.Page.ClickAsync(".site-header__toggle");
+
+        // Assert
+        var linkColor = await page.Style(".site-nav__item > a", "color");
+        linkColor.ShouldBe("rgb(255, 255, 255)");
+        var actionColor = await page.Style("#action", "color");
+        actionColor.ShouldBe("rgb(255, 255, 255)");
+        var behindLink = await page.Pixel(2, (await page.Box(".site-nav__item > a")).Y + 2);
+        behindLink.ShouldBe("#1d4ed8");
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task On_a_desktop_the_header_over_the_hero_is_exactly_the_header_height_and_sizes_the_logo()
+    {
+        // Arrange & Act
+        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, 1280);
+        await page.ShowLoaded(".site-header");
+
+        // Assert
+        var header = await page.Box(".site-header");
+        var logo = await page.Box(".site-header__brand img");
+        var item = await page.Box(".site-nav__list > .site-nav__item");
+        header.Height.ShouldBe((double)(SiteTheme.Default.HeaderHeight * 16));
+        logo.Height.ShouldBe((double)(SiteTheme.Default.BrandHeight * 16));
+        var natural = Math.Max(logo.Height, item.Height) + 32;
+        natural.ShouldBeLessThanOrEqualTo(header.Height);
+    }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(1280, nameof(CoverHeight.Page), 550)]
+    [InlineData(1280, nameof(CoverHeight.Landing), 765)]
+    [InlineData(375, nameof(CoverHeight.Page), 320)]
+    [InlineData(375, nameof(CoverHeight.Landing), 320)]
+    public async Task A_cover_hero_is_at_least_as_tall_as_its_cover_height(int width, string height, int minimum)
+    {
+        // Arrange & Act
+        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, width, new Dictionary<string, object?>
+        {
+            [nameof(BandsSample.CoverHeight)] = Enum.Parse<CoverHeight>(height),
+        });
+
+        // Assert
+        var hero = await page.Box(".site-hero");
+        var minHeight = await page.Style(".site-hero", "min-height");
+        minHeight.ShouldBe($"{minimum}px");
+        hero.Height.ShouldBeGreaterThanOrEqualTo(minimum);
+        if (width >= 768)
+        {
+            hero.Height.ShouldBe(minimum);
+        }
     }
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]

@@ -321,4 +321,24 @@ public sealed class ThemePreviewTests : BunitContext
         // Assert
         render.ShouldThrow<ArgumentException>();
     }
+
+    [Fact]
+    public void The_navigation_strip_starts_with_a_brand_box_of_the_brand_height()
+    {
+        // Arrange
+        var theme = SiteTheme.Create(SiteTheme.Default.Colors, SiteTheme.Default.Typography, brandHeight: 3.5m).ShouldBeSuccess();
+
+        // Act
+        var cut = Render<ThemePreview>(parameters => parameters
+            .Add(component => component.Theme, theme)
+            .Add(component => component.ScopeId, "brand-preview")
+            .Add(component => component.Texts, new ThemePreviewTexts { Brand = "Logo" }));
+
+        // Assert
+        var brand = cut.Find(".site-theme-preview__sample .site-nav > .site-theme-preview__brand");
+        brand.TextContent.ShouldBe("Logo");
+        var style = cut.Find("style").TextContent;
+        style.ShouldContain("--site-brand-height: 3.5rem;", StringComparison.Ordinal);
+        SiteFiles.Rule(style, "#brand-preview .site-theme-preview__brand").ShouldContain("height: var(--site-brand-height)", StringComparison.Ordinal);
+    }
 }

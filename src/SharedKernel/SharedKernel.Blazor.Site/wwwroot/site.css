@@ -42,7 +42,9 @@
     --site-scrim: 64%;
     --site-scrim-large: 50%;
     --site-scrim-boost: 28%;
-    --site-header-height: 5rem;
+    /* The brand (logo) height of the theme and the header height computed from it; a theme stylesheet writes its own. */
+    --site-brand-height: 2.5rem;
+    --site-header-height: 4.5rem;
     --site-floating-link-size: 3.5rem;
 }
 
@@ -234,6 +236,15 @@ a {
     font-size: var(--site-font-size-lg);
 }
 
+/* A logo in the brand slot takes the theme's brand height, which the header height of a header over a hero is computed from. */
+.site-header__brand img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: var(--site-brand-height);
+    object-fit: contain;
+}
+
 .site-nav__list,
 .site-nav__sublist,
 .site-language-switcher ul,
@@ -370,6 +381,40 @@ a {
 
 .site-header__menu .site-header__actions {
     margin-top: var(--site-space-3);
+}
+
+/*
+ * A header placed over the hero is a band of the primary colour wherever it does not lie over one: its brand, links, menu button
+ * and focus ring take the on-primary colour in the light scheme, and an open group drops down on the primary colour.
+ */
+.site-header--over-hero {
+    color-scheme: light;
+    background: var(--site-color-primary);
+    border-bottom: 0;
+    color: var(--site-color-on-primary);
+}
+
+.site-header--over-hero :is(a:not(.site-button), .site-nav summary) {
+    color: inherit;
+}
+
+.site-header--over-hero :is(.site-nav a, .site-nav summary):hover {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.site-header--over-hero .site-nav__group[open] > .site-nav__sublist {
+    background: var(--site-color-primary);
+    border-color: transparent;
+}
+
+.site-header--over-hero .site-language-switcher a[aria-current="true"] {
+    background: var(--site-color-on-primary);
+    color: var(--site-color-primary);
+}
+
+.site-header--over-hero :focus-visible {
+    outline-color: var(--site-color-on-primary);
 }
 
 /* Footer. */
@@ -1041,8 +1086,9 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
 
 /*
  * From the breakpoint on, a header placed over the hero lies transparent over a cover hero that is the first child of the element
- * right after it, and the hero makes room for it. Over a photo the header adds the scrim boost, fading out below it, so its text
- * keeps 4.5:1 while the hero's large text has the large-text scrim. Any other page keeps the header above its content.
+ * right after it, and the hero leaves the header's height free. Over a photo the header adds the scrim boost, fading out below it, so
+ * its text keeps 4.5:1 while the hero's large text has the large-text scrim. Below the breakpoint, and on a page that does not open
+ * with a cover hero, the header stays above the content as its primary band.
  */
 @media (min-width: 48rem) {
     .site-header--over-hero:has(+ * > .site-hero--cover:first-child) {
@@ -1050,10 +1096,7 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
         inset: 0 0 auto;
         z-index: 10;
         isolation: isolate;
-        color-scheme: light;
         background: transparent;
-        border-bottom-color: transparent;
-        color: var(--site-color-on-primary);
     }
 
     .site-header--over-hero:has(+ * > .site-hero--cover:first-child > .site-hero__media)::before {
@@ -1068,31 +1111,16 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
         min-height: var(--site-header-height);
     }
 
-    .site-header--over-hero:has(+ * > .site-hero--cover:first-child) :is(a:not(.site-button), .site-nav summary) {
-        color: inherit;
-    }
-
-    .site-header--over-hero:has(+ * > .site-hero--cover:first-child) :is(.site-nav a, .site-nav summary):hover {
-        color: inherit;
-        text-decoration: underline;
-    }
-
-    .site-header--over-hero:has(+ * > .site-hero--cover:first-child) .site-nav__group[open] > .site-nav__sublist {
-        background: var(--site-color-primary);
-        border-color: transparent;
-    }
-
-    .site-header--over-hero:has(+ * > .site-hero--cover:first-child) .site-language-switcher a[aria-current="true"] {
-        background: var(--site-color-on-primary);
-        color: var(--site-color-primary);
-    }
-
-    .site-header--over-hero:has(+ * > .site-hero--cover:first-child) :focus-visible {
-        outline-color: var(--site-color-on-primary);
-    }
-
     .site-header--over-hero + * > .site-hero--cover:first-child {
         padding-top: calc(var(--site-header-height) + var(--site-space-5));
+    }
+
+    .site-hero--cover {
+        min-height: 34.375rem;
+    }
+
+    .site-hero--landing {
+        min-height: clamp(34.375rem, 85svh, 52rem);
     }
 }
 

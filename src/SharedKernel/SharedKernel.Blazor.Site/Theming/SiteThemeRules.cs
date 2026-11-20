@@ -25,6 +25,12 @@ internal static class SiteThemeRules
     /// <summary>The largest ratio of a fluid size's maximum to its minimum, so 200% zoom still doubles the text (SC 1.4.4).</summary>
     public const decimal MaxFluidRatio = 2.5m;
 
+    /// <summary>The smallest brand height in rem: 24px, below which a logo is hard to read.</summary>
+    public const decimal MinBrandHeight = 1.5m;
+
+    /// <summary>The largest brand height in rem: 128px, above which the header takes too much of a cover hero.</summary>
+    public const decimal MaxBrandHeight = 8m;
+
     /// <summary>The smallest page heading size in rem that is large text at any weight: 18pt.</summary>
     public const decimal LargeTextSize = 1.5m;
 
@@ -87,6 +93,7 @@ internal static class SiteThemeRules
 
         CheckSizes(theme, errors);
         CheckPageHeading(theme, errors);
+        CheckBrandHeight(theme, errors);
         CheckBodyLineHeight(theme, errors);
         CheckHeadingOrder(theme, warnings);
         return new SiteThemeReview(errors, warnings, contrast);
@@ -132,6 +139,16 @@ internal static class SiteThemeRules
 
     private static bool IsScrimCheck(ContrastCheck check) =>
         check.Foreground == ThemeColorRole.OnPrimary && check.Background == ThemeColorRole.Text;
+
+    private static void CheckBrandHeight(SiteTheme theme, List<ThemeIssue> errors)
+    {
+        if (theme.BrandHeight is < MinBrandHeight or > MaxBrandHeight)
+        {
+            errors.Add(new ThemeIssue(
+                "header.brandHeight",
+                $"The brand height must be from {CssText.Number(MinBrandHeight)}rem to {CssText.Number(MaxBrandHeight)}rem."));
+        }
+    }
 
     private static void CheckPageHeading(SiteTheme theme, List<ThemeIssue> errors)
     {
