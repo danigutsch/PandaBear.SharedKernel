@@ -1,5 +1,5 @@
 @inherits SiteComponent
-<section class="@CssClass("site-hero")" @attributes="AdditionalAttributes">
+<section class="@CssClass(Layout == HeroLayout.Cover ? "site-hero site-hero--cover" : "site-hero")" @attributes="AdditionalAttributes">
     <div class="site-hero__text">
         @if (HasEyebrow || HasSubtitle)
         {

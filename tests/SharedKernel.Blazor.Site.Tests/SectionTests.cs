@@ -120,4 +120,35 @@ public sealed class SectionTests : BunitContext
         BunitElementAssertions.HasClass(section.ClassList, "extra");
         section.Id.ShouldBe("tours");
     }
+
+    [Fact]
+    public void A_section_without_media_keeps_its_header_and_body_as_children()
+    {
+        // Arrange & Act
+        var cut = Render<Section>(parameters => parameters.Add(component => component.Title, "Trips"));
+
+        // Assert
+        var section = cut.Find("section");
+        section.ClassName.ShouldBe("site-section");
+        section.Children.Select(child => child.ClassName).ShouldBe(["site-section__header", "site-section__body"]);
+    }
+
+    [Fact]
+    public void Media_splits_the_section_into_the_text_then_the_media_in_reading_order()
+    {
+        // Arrange & Act
+        var cut = Render<Section>(parameters => parameters
+            .Add(component => component.Title, "Past trips")
+            .Add(component => component.Media, "<img id=\"photo\" src=\"/p.jpg\" alt=\"\">")
+            .AddChildContent("<a id=\"more\" href=\"/trips\">More</a>"));
+
+        // Assert
+        var section = cut.Find("section");
+        BunitElementAssertions.HasClass(section.ClassList, "site-section--split");
+        section.Children.Select(child => child.ClassName).ShouldBe(["site-section__main", "site-section__media"]);
+        section.Children[0].Children.Select(child => child.ClassName).ShouldBe(["site-section__header", "site-section__body"]);
+        cut.Find(".site-section__main #more").ShouldNotBeNull();
+        cut.Find(".site-section__media #photo").ShouldNotBeNull();
+        cut.FindAll("aside").ShouldBeEmpty();
+    }
 }

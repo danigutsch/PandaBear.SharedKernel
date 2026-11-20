@@ -34,6 +34,16 @@
     --site-content-width: 72rem;
     --site-card-min-width: 16rem;
     --site-focus-ring: 3px solid var(--site-color-focus);
+    /*
+     * The photo scrim: the least opacity of the text colour over a photo at which on-primary text reaches 4.5:1 (normal text), 3:1
+     * (large text), and the boost that brings the large-text scrim up to the normal-text one. A theme stylesheet computes them from
+     * its colours; these are the values of the default colours.
+     */
+    --site-scrim: 64%;
+    --site-scrim-large: 50%;
+    --site-scrim-boost: 28%;
+    --site-header-height: 5rem;
+    --site-floating-link-size: 3.5rem;
 }
 
 *,
@@ -204,6 +214,7 @@ a {
 .site-footer,
 .site-section,
 .site-hero,
+.site-band__inner,
 .site-container {
     width: min(100% - 2 * var(--site-space-3), var(--site-content-width));
     margin-inline: auto;
@@ -311,6 +322,56 @@ a {
     padding: var(--site-space-2) var(--site-space-3);
 }
 
+/*
+ * The menu: a details element whose summary is the menu button. It generates no box, so its button and, when open, its content take
+ * part in the header's row; the content takes a row of its own under the brand and the button.
+ */
+.site-header__menu {
+    display: contents;
+}
+
+.site-header__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--site-space-2);
+    padding: var(--site-space-1) var(--site-space-3);
+    border: 2px solid currentColor;
+    border-radius: var(--site-radius);
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+}
+
+.site-header__toggle::-webkit-details-marker {
+    display: none;
+}
+
+.site-header__toggle::before {
+    content: "";
+    width: 1em;
+    height: 0.75em;
+    background:
+        linear-gradient(currentColor, currentColor) top / 100% 2px no-repeat,
+        linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat,
+        linear-gradient(currentColor, currentColor) bottom / 100% 2px no-repeat;
+}
+
+.site-header__menu:not([open])::details-content {
+    display: none;
+}
+
+.site-header__menu[open]::details-content {
+    flex-basis: 100%;
+}
+
+.site-header__menu .site-nav__list {
+    flex-direction: column;
+}
+
+.site-header__menu .site-header__actions {
+    margin-top: var(--site-space-3);
+}
+
 /* Footer. */
 .site-footer {
     margin-top: var(--site-space-6);
@@ -362,6 +423,145 @@ a {
     border-radius: var(--site-radius);
 }
 
+/*
+ * Bands on the primary colour or a photo: the full width, the light scheme, and the on-primary colour for text, links, headings,
+ * secondary text and the focus ring. A photo lies behind the content, darkened by the scrim of its text: large text in a cover hero,
+ * normal text in an image band. A cover hero without a photo is a band of the primary colour.
+ */
+.site-hero--cover {
+    position: relative;
+    isolation: isolate;
+    color-scheme: light;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    width: 100%;
+    min-height: 20rem;
+    padding: var(--site-space-6) max(var(--site-space-3), (100% - var(--site-content-width)) / 2);
+    background: var(--site-color-primary);
+    color: var(--site-color-on-primary);
+    text-align: center;
+}
+
+.site-hero--cover .site-hero__text {
+    max-width: 60rem;
+    min-width: 0;
+}
+
+/* The eyebrow and the subtitle are large text, like the heading, because they sit on the large-text scrim. */
+.site-hero--cover :is(.site-hero__eyebrow, .site-hero__subtitle) {
+    font-size: max(1.5rem, var(--site-font-size-lg));
+    font-weight: 600;
+}
+
+.site-hero--cover .site-hero__title {
+    overflow-wrap: break-word;
+}
+
+.site-hero--cover .site-hero__actions {
+    justify-content: center;
+}
+
+/* Normal-size text without a filled background gets the boost behind it, so it reaches 4.5:1 over the large-text scrim. */
+.site-hero--cover .site-hero__actions :is(.site-button--outline, a:not(.site-button)) {
+    background: color-mix(in srgb, var(--site-color-text) var(--site-scrim-boost), transparent);
+}
+
+.site-band {
+    padding-block: var(--site-space-5);
+}
+
+.site-band--muted {
+    background: var(--site-color-surface-alt);
+}
+
+.site-band--primary,
+.site-band--image {
+    color-scheme: light;
+    background: var(--site-color-primary);
+    color: var(--site-color-on-primary);
+}
+
+.site-band--image {
+    position: relative;
+    isolation: isolate;
+}
+
+.site-band__inner > .site-section {
+    width: 100%;
+    padding-block: 0;
+}
+
+.site-hero--cover .site-hero__media,
+.site-band__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+}
+
+.site-hero--cover .site-hero__media::after,
+.site-band__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.site-hero--cover .site-hero__media::after {
+    background: color-mix(in srgb, var(--site-color-text) var(--site-scrim-large), transparent);
+}
+
+.site-band__media::after {
+    background: color-mix(in srgb, var(--site-color-text) var(--site-scrim), transparent);
+}
+
+.site-hero--cover .site-hero__media :is(picture, img),
+.site-band__media :is(picture, img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.site-hero--cover .site-hero__media img,
+.site-band__media img {
+    object-fit: cover;
+    border-radius: 0;
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) :is(h1, h2, h3, h4, h5, h6, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title) {
+    color: inherit;
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) a:not(.site-button) {
+    color: inherit;
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) :focus-visible {
+    outline-color: var(--site-color-on-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-divider {
+    background: currentColor;
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-button--primary {
+    background: var(--site-color-on-primary);
+    color: var(--site-color-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-button--primary:hover {
+    background: var(--site-color-primary-hover);
+    color: var(--site-color-on-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) :is(.site-button--outline, .site-button--outline:hover) {
+    border-color: currentColor;
+    color: var(--site-color-on-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-quote {
+    background: transparent;
+    border-inline-start-color: currentColor;
+}
+
 /* Section. */
 .site-section {
     padding-block: var(--site-space-5);
@@ -383,6 +583,11 @@ a {
     margin: 0;
     color: var(--site-color-muted);
     max-width: 60ch;
+}
+
+/* A section with media: the media follows the text below the breakpoint and fills the second column from it on. */
+.site-section__media {
+    margin-top: var(--site-space-4);
 }
 
 /* Buttons. */
@@ -442,6 +647,7 @@ a {
 
 .site-card {
     position: relative;
+    color: var(--site-color-text);
     display: flex;
     flex-direction: column;
     background: var(--site-color-surface-alt);
@@ -587,8 +793,154 @@ a {
     font-size: var(--site-font-size-sm);
 }
 
+/*
+ * Mosaic: columns at least 14rem wide that the images fill from top to bottom, in document order, each at its own aspect ratio.
+ */
+.site-image-grid--mosaic {
+    display: block;
+    columns: 14rem;
+    column-gap: var(--site-space-3);
+}
+
+.site-image-grid--mosaic .site-image-grid__item {
+    break-inside: avoid;
+    margin-bottom: var(--site-space-3);
+}
+
+/* Byline: a round photo beside the name and the job title. */
+.site-byline {
+    display: flex;
+    align-items: center;
+    gap: var(--site-space-3);
+}
+
+.site-byline__photo {
+    flex: none;
+}
+
+.site-byline__photo img {
+    display: block;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.site-byline__text p {
+    margin: 0;
+}
+
+.site-byline__name {
+    font-weight: 700;
+}
+
+.site-byline__job-title {
+    color: var(--site-color-muted);
+}
+
+/*
+ * Video link: the poster with the play mark centred on it, then the title. The mark is the on-primary colour on a circle of the
+ * normal-text scrim, so it keeps 4.5:1 on any poster.
+ */
+.site-video-link {
+    display: grid;
+    grid-template-areas: "media" "title";
+    color: var(--site-color-primary);
+    text-decoration: none;
+}
+
+.site-video-link__poster {
+    grid-area: media;
+}
+
+.site-video-link__poster img {
+    display: block;
+    width: 100%;
+    border-radius: var(--site-radius);
+}
+
+.site-video-link__play {
+    position: relative;
+    grid-area: media;
+    place-self: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    color-scheme: light;
+    background: color-mix(in srgb, var(--site-color-text) var(--site-scrim), transparent);
+}
+
+.site-video-link__play::before {
+    content: "";
+    position: absolute;
+    inset: 30% 26% 30% 38%;
+    background: var(--site-color-on-primary);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.site-video-link__title {
+    grid-area: title;
+    margin-top: var(--site-space-2);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.site-video-link:hover .site-video-link__title {
+    text-decoration-thickness: 2px;
+}
+
+/*
+ * Floating link: fixed in the bottom corner. While it is on the page, focused elements scroll clear of it and the footer, or the
+ * body without a footer, ends with room for it.
+ */
+.site-floating-link {
+    position: fixed;
+    inset-block-end: var(--site-space-3);
+    inset-inline-end: var(--site-space-3);
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    width: var(--site-floating-link-size);
+    height: var(--site-floating-link-size);
+    border-radius: 50%;
+    background: var(--site-color-primary);
+    color: var(--site-color-on-primary);
+    box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 0.25);
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.site-floating-link:hover {
+    background: var(--site-color-primary-hover);
+    transform: scale(1.05);
+}
+
+.site-floating-link__icon {
+    display: grid;
+    width: 50%;
+    height: 50%;
+}
+
+.site-floating-link__icon > svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+}
+
+:root:has(.site-floating-link) {
+    scroll-padding-block-end: calc(var(--site-floating-link-size) + 2 * var(--site-space-3));
+}
+
+body:has(.site-floating-link) .site-footer {
+    padding-block-end: calc(var(--site-space-4) + var(--site-floating-link-size) + var(--site-space-3));
+}
+
+body:has(.site-floating-link):not(:has(.site-footer)) {
+    padding-block-end: calc(var(--site-floating-link-size) + 2 * var(--site-space-3));
+}
+
 /* Contact card. */
 .site-contact-card {
+    color: var(--site-color-text);
     padding: var(--site-space-4);
     background: var(--site-color-surface-alt);
     border-radius: var(--site-radius);
@@ -628,6 +980,29 @@ a {
         grid-template-columns: 1fr 1fr;
     }
 
+    .site-hero--cover {
+        grid-template-columns: 1fr;
+    }
+
+    .site-section--split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--site-space-5);
+        align-items: center;
+    }
+
+    .site-section--split .site-section__media {
+        margin-top: 0;
+    }
+
+    .site-header__menu .site-nav__list {
+        flex-direction: row;
+    }
+
+    .site-header__menu .site-header__actions {
+        margin-top: 0;
+    }
+
     .site-nav:has(.site-nav__group[open]) {
         flex-basis: auto;
     }
@@ -643,6 +1018,81 @@ a {
         background: var(--site-color-surface);
         border: 1px solid var(--site-color-border);
         border-radius: var(--site-radius);
+    }
+}
+
+/*
+ * From the breakpoint on, a browser that can style the content of a details element shows the menu's content inline and hides its
+ * button; an older one keeps the button.
+ */
+@media (min-width: 48rem) {
+    @supports selector(::details-content) {
+        .site-header__toggle {
+            display: none;
+        }
+
+        .site-header__menu:not([open])::details-content,
+        .site-header__menu[open]::details-content {
+            display: contents;
+            content-visibility: visible;
+        }
+    }
+}
+
+/*
+ * From the breakpoint on, a header placed over the hero lies transparent over a cover hero that is the first child of the element
+ * right after it, and the hero makes room for it. Over a photo the header adds the scrim boost, fading out below it, so its text
+ * keeps 4.5:1 while the hero's large text has the large-text scrim. Any other page keeps the header above its content.
+ */
+@media (min-width: 48rem) {
+    .site-header--over-hero:has(+ * > .site-hero--cover:first-child) {
+        position: absolute;
+        inset: 0 0 auto;
+        z-index: 10;
+        isolation: isolate;
+        color-scheme: light;
+        background: transparent;
+        border-bottom-color: transparent;
+        color: var(--site-color-on-primary);
+    }
+
+    .site-header--over-hero:has(+ * > .site-hero--cover:first-child > .site-hero__media)::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 calc(-1 * var(--site-space-5));
+        z-index: -1;
+        background: linear-gradient(color-mix(in srgb, var(--site-color-text) var(--site-scrim-boost), transparent) calc(100% - var(--site-space-5)), transparent);
+    }
+
+    .site-header--over-hero:has(+ * > .site-hero--cover:first-child) .site-header__inner {
+        min-height: var(--site-header-height);
+    }
+
+    .site-header--over-hero:has(+ * > .site-hero--cover:first-child) :is(a:not(.site-button), .site-nav summary) {
+        color: inherit;
+    }
+
+    .site-header--over-hero:has(+ * > .site-hero--cover:first-child) :is(.site-nav a, .site-nav summary):hover {
+        color: inherit;
+        text-decoration: underline;
+    }
+
+    .site-header--over-hero:has(+ * > .site-hero--cover:first-child) .site-nav__group[open] > .site-nav__sublist {
+        background: var(--site-color-primary);
+        border-color: transparent;
+    }
+
+    .site-header--over-hero:has(+ * > .site-hero--cover:first-child) .site-language-switcher a[aria-current="true"] {
+        background: var(--site-color-on-primary);
+        color: var(--site-color-primary);
+    }
+
+    .site-header--over-hero:has(+ * > .site-hero--cover:first-child) :focus-visible {
+        outline-color: var(--site-color-on-primary);
+    }
+
+    .site-header--over-hero + * > .site-hero--cover:first-child {
+        padding-top: calc(var(--site-header-height) + var(--site-space-5));
     }
 }
 

@@ -5,7 +5,10 @@ namespace PandaBear.Blazor.Site;
 /// <summary>
 /// The page banner: a brand slot, a labelled navigation and an actions slot. A navigation item with children is a native
 /// <c>details</c> disclosure, so no script is needed; it starts closed. The item for <see cref="CurrentPath" /> gets
-/// <c>aria-current="page"</c>, and the summary of the group that holds it gets <c>aria-current="true"</c>.
+/// <c>aria-current="page"</c>, and the summary of the group that holds it gets <c>aria-current="true"</c>. With
+/// <see cref="MenuLabel" /> the navigation and the actions are the content of one more <c>details</c>, whose summary is the menu
+/// button below the breakpoint; from the breakpoint on, a browser that supports <c>::details-content</c> shows them inline without
+/// the button, and an older one keeps the button. <see cref="Placement" /> lays the header over a cover hero.
 /// </summary>
 /// <remarks>
 /// Matching compares paths only: the query and fragment are ignored, a missing leading slash is added, a trailing slash is
@@ -37,6 +40,18 @@ public sealed partial class SiteHeader
     [Parameter]
     public string? CurrentPath { get; set; }
 
+    /// <summary>Gets or sets where the header lies. The default is <see cref="HeaderPlacement.Above" />.</summary>
+    [Parameter]
+    public HeaderPlacement Placement { get; set; }
+
+    /// <summary>
+    /// Gets or sets the label of the menu button, for example "Menu". Caller-supplied so it can be localized. When set, the navigation
+    /// and the actions collapse behind that button below the <c>48rem</c> breakpoint; from it on they show inline and the button is
+    /// hidden. Null or blank keeps them always shown.
+    /// </summary>
+    [Parameter]
+    public string? MenuLabel { get; set; }
+
     /// <summary>Gets or sets content after the navigation, for example a language switcher.</summary>
     [Parameter]
     public RenderFragment? Actions { get; set; }
@@ -45,6 +60,11 @@ public sealed partial class SiteHeader
     protected override void OnParametersSet()
     {
         ArgumentNullException.ThrowIfNull(Items);
+        if (!Enum.IsDefined(Placement))
+        {
+            throw new ArgumentOutOfRangeException(nameof(Placement), Placement, "The header placement is not defined.");
+        }
+
         if (Items.Count > 0)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(Label);
@@ -77,6 +97,8 @@ public sealed partial class SiteHeader
         }
     }
 #pragma warning restore CA2208
+
+    private bool HasMenu => !string.IsNullOrWhiteSpace(MenuLabel) && (Items.Count > 0 || Actions is not null);
 
     private string? Current(SiteNavItem item) => IsCurrent(item) ? "page" : null;
 

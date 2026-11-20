@@ -578,3 +578,72 @@ static PandaBear.Blazor.Site.Theming.ContrastCheck.operator !=(PandaBear.Blazor.
 static PandaBear.Blazor.Site.Theming.ContrastCheck.operator ==(PandaBear.Blazor.Site.Theming.ContrastCheck? left, PandaBear.Blazor.Site.Theming.ContrastCheck? right) -> bool
 static PandaBear.Blazor.Site.Theming.ThemeIssue.operator !=(PandaBear.Blazor.Site.Theming.ThemeIssue? left, PandaBear.Blazor.Site.Theming.ThemeIssue? right) -> bool
 static PandaBear.Blazor.Site.Theming.ThemeIssue.operator ==(PandaBear.Blazor.Site.Theming.ThemeIssue? left, PandaBear.Blazor.Site.Theming.ThemeIssue? right) -> bool
+PandaBear.Blazor.Site.Theming.SiteScrim
+PandaBear.Blazor.Site.Theming.SiteScrim.Boost.get -> int
+PandaBear.Blazor.Site.Theming.SiteScrim.IsReachable.get -> bool
+PandaBear.Blazor.Site.Theming.SiteScrim.LargeText.get -> int
+PandaBear.Blazor.Site.Theming.SiteScrim.Text.get -> int
+const PandaBear.Blazor.Site.Theming.SiteScrim.LargeTextMinimum = 3 -> double
+const PandaBear.Blazor.Site.Theming.SiteScrim.TextMinimum = 4.5 -> double
+static PandaBear.Blazor.Site.Theming.SiteScrim.For(PandaBear.Blazor.Site.Theming.SiteColors! colors) -> PandaBear.Blazor.Site.Theming.SiteScrim!
+static PandaBear.Blazor.Site.Theming.SiteScrim.MinimumPercent(PandaBear.Blazor.Site.Theming.CssColor! foreground, PandaBear.Blazor.Site.Theming.CssColor! scrim, double minimum) -> int?
+static PandaBear.Blazor.Site.Theming.SiteScrim.WorstRatio(PandaBear.Blazor.Site.Theming.CssColor! foreground, PandaBear.Blazor.Site.Theming.CssColor! scrim, int percent) -> double
+static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.ScrimVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Blazor.Site.Band
+PandaBear.Blazor.Site.Band.Band() -> void
+PandaBear.Blazor.Site.Band.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.Band.ChildContent.set -> void
+PandaBear.Blazor.Site.Band.Image.get -> PandaBear.Blazor.Site.ResponsiveImage?
+PandaBear.Blazor.Site.Band.Image.set -> void
+PandaBear.Blazor.Site.Band.Tone.get -> PandaBear.Blazor.Site.BandTone
+PandaBear.Blazor.Site.Band.Tone.set -> void
+PandaBear.Blazor.Site.BandTone
+PandaBear.Blazor.Site.BandTone.Default = 0 -> PandaBear.Blazor.Site.BandTone
+PandaBear.Blazor.Site.BandTone.Image = 3 -> PandaBear.Blazor.Site.BandTone
+PandaBear.Blazor.Site.BandTone.Muted = 1 -> PandaBear.Blazor.Site.BandTone
+PandaBear.Blazor.Site.BandTone.Primary = 2 -> PandaBear.Blazor.Site.BandTone
+PandaBear.Blazor.Site.Byline
+PandaBear.Blazor.Site.Byline.Byline() -> void
+PandaBear.Blazor.Site.Byline.JobTitle.get -> string?
+PandaBear.Blazor.Site.Byline.JobTitle.set -> void
+PandaBear.Blazor.Site.Byline.Name.get -> string!
+PandaBear.Blazor.Site.Byline.Name.set -> void
+PandaBear.Blazor.Site.Byline.Photo.get -> PandaBear.Blazor.Site.ResponsiveImage?
+PandaBear.Blazor.Site.Byline.Photo.set -> void
+PandaBear.Blazor.Site.FloatingLink
+PandaBear.Blazor.Site.FloatingLink.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.FloatingLink.ChildContent.set -> void
+PandaBear.Blazor.Site.FloatingLink.FloatingLink() -> void
+PandaBear.Blazor.Site.FloatingLink.Href.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.FloatingLink.Href.set -> void
+PandaBear.Blazor.Site.FloatingLink.Label.get -> string!
+PandaBear.Blazor.Site.FloatingLink.Label.set -> void
+PandaBear.Blazor.Site.HeaderPlacement
+PandaBear.Blazor.Site.HeaderPlacement.Above = 0 -> PandaBear.Blazor.Site.HeaderPlacement
+PandaBear.Blazor.Site.HeaderPlacement.OverHero = 1 -> PandaBear.Blazor.Site.HeaderPlacement
+PandaBear.Blazor.Site.Hero.Layout.get -> PandaBear.Blazor.Site.HeroLayout
+PandaBear.Blazor.Site.Hero.Layout.set -> void
+PandaBear.Blazor.Site.HeroLayout
+PandaBear.Blazor.Site.HeroLayout.Cover = 1 -> PandaBear.Blazor.Site.HeroLayout
+PandaBear.Blazor.Site.HeroLayout.Split = 0 -> PandaBear.Blazor.Site.HeroLayout
+PandaBear.Blazor.Site.ImageGrid.Layout.get -> PandaBear.Blazor.Site.ImageGridLayout
+PandaBear.Blazor.Site.ImageGrid.Layout.set -> void
+PandaBear.Blazor.Site.ImageGridLayout
+PandaBear.Blazor.Site.ImageGridLayout.Grid = 0 -> PandaBear.Blazor.Site.ImageGridLayout
+PandaBear.Blazor.Site.ImageGridLayout.Mosaic = 1 -> PandaBear.Blazor.Site.ImageGridLayout
+PandaBear.Blazor.Site.Section.Media.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.Section.Media.set -> void
+PandaBear.Blazor.Site.SiteHeader.MenuLabel.get -> string?
+PandaBear.Blazor.Site.SiteHeader.MenuLabel.set -> void
+PandaBear.Blazor.Site.SiteHeader.Placement.get -> PandaBear.Blazor.Site.HeaderPlacement
+PandaBear.Blazor.Site.SiteHeader.Placement.set -> void
+PandaBear.Blazor.Site.VideoLink
+PandaBear.Blazor.Site.VideoLink.Href.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.VideoLink.Href.set -> void
+PandaBear.Blazor.Site.VideoLink.Poster.get -> PandaBear.Blazor.Site.ResponsiveImage?
+PandaBear.Blazor.Site.VideoLink.Poster.set -> void
+PandaBear.Blazor.Site.VideoLink.SiteHint.get -> string!
+PandaBear.Blazor.Site.VideoLink.SiteHint.set -> void
+PandaBear.Blazor.Site.VideoLink.Title.get -> string!
+PandaBear.Blazor.Site.VideoLink.Title.set -> void
+PandaBear.Blazor.Site.VideoLink.VideoLink() -> void

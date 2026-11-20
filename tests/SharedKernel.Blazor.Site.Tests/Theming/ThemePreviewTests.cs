@@ -120,6 +120,7 @@ public sealed class ThemePreviewTests : BunitContext
         table.QuerySelector("caption")!.TextContent.ShouldContain("dark", StringComparison.Ordinal);
         var rows = table.QuerySelectorAll("tbody tr");
         rows.Length.ShouldBe(14);
+        rows.ShouldAllSatisfy(row => row.TextContent.ShouldNotContain("on-primary on text", StringComparison.Ordinal));
         var first = rows[0].TextContent;
         first.ShouldContain("text on surface", StringComparison.Ordinal);
         first.ShouldContain(":1", StringComparison.Ordinal);

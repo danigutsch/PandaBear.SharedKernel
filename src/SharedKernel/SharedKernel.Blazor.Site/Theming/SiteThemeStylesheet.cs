@@ -5,8 +5,8 @@ namespace PandaBear.Blazor.Site.Theming;
 
 /// <summary>
 /// Renders a <see cref="SiteTheme" /> as a stylesheet that <c>site.css</c> consumes: <c>@font-face</c> rules with
-/// <c>font-display: swap</c>, then <c>:root</c> custom properties, every colour as <c>light-dark()</c> and every set typography value
-/// as <c>--site-{role}-{property}</c>. The output depends only on the theme, in a fixed order, so <see cref="Hash" /> can version
+/// <c>font-display: swap</c>, then <c>:root</c> custom properties, every colour as <c>light-dark()</c>, the photo scrim of
+/// <see cref="SiteScrim" /> as percentages and every set typography value as <c>--site-{role}-{property}</c>. The output depends only on the theme, in a fixed order, so <see cref="Hash" /> can version
 /// an immutable <c>/theme.css?v=…</c> address. Every value comes from a validated value object and strings are escaped as well.
 /// </summary>
 public static class SiteThemeStylesheet
@@ -20,6 +20,12 @@ public static class SiteThemeStylesheet
     /// <summary>Gets the colour custom properties, in render order, such as <c>--site-color-surface-alt</c>.</summary>
     public static IReadOnlyList<string> ColorVariables { get; } =
         [.. Enum.GetValues<ThemeColorRole>().Select(role => "--site-color-" + ThemeNames.Css(role))];
+
+    /// <summary>
+    /// Gets the scrim custom properties, in render order: the opacities of <see cref="SiteScrim.Text" />,
+    /// <see cref="SiteScrim.LargeText" /> and <see cref="SiteScrim.Boost" /> as percentages.
+    /// </summary>
+    public static IReadOnlyList<string> ScrimVariables { get; } = ["--site-scrim", "--site-scrim-large", "--site-scrim-boost"];
 
     /// <summary>Gets the per-role custom properties, in render order, such as <c>--site-h1-font-size</c>.</summary>
     public static IReadOnlyList<string> RoleVariables { get; } =
@@ -142,6 +148,14 @@ public static class SiteThemeStylesheet
             var color = theme.Colors[role];
             css.Append("    --site-color-").Append(ThemeNames.Css(role)).Append(": light-dark(")
                 .Append(color.Light.Value).Append(", ").Append(color.Dark.Value).Append(");\n");
+        }
+
+        var scrim = SiteScrim.For(theme.Colors);
+        int[] percents = [scrim.Text, scrim.LargeText, scrim.Boost];
+        for (var index = 0; index < percents.Length; index++)
+        {
+            css.Append("    ").Append(ScrimVariables[index]).Append(": ")
+                .Append(percents[index].ToString(System.Globalization.CultureInfo.InvariantCulture)).Append("%;\n");
         }
 
         foreach (var role in Enum.GetValues<TypographyRole>())
