@@ -43,6 +43,12 @@ tested target for token exchange.
 - `IUserSessionLock`: serializes refresh, exchange and sign-out per session. The default locks in-process. Register a
   distributed implementation (for example a PostgreSQL advisory lock) when one session's requests can reach several
   instances at once.
+- `IUserTokenCacheConcurrency`: register a singleton adapter for the same cache backing store to make refresh writes
+  and cleanup atomic across processes. The protected value read under the session lock serves as the opaque version.
+  Atomically update a matching, active entry with its original session expiration, and delete a matching entry only.
+  A lost comparison makes the refresh use the currently persisted access token if it is still valid. Otherwise the
+  refresh returns the current session or token failure. Without this adapter, refresh uses a value recheck under the
+  session lock.
 
 When no token can be attached, the handlers throw `UserTokenUnavailableException` with the `UserTokenFailure` and send
 nothing.

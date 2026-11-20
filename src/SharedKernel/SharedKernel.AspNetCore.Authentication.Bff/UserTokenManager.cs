@@ -54,6 +54,31 @@ public sealed partial class UserTokenManager
         IUserSessionLock sessionLock,
         TimeProvider timeProvider,
         ILogger<UserTokenManager> logger)
+        : this(cache, dataProtectionProvider, httpClientFactory, openIdConnectOptions, options, sessionLock, timeProvider, logger, null)
+    {
+    }
+
+    /// <summary>Initializes token management with atomic conditional user-token mutations.</summary>
+    /// <param name="cache">The distributed cache that holds the protected tokens.</param>
+    /// <param name="dataProtectionProvider">Protects the tokens at rest.</param>
+    /// <param name="httpClientFactory">Creates the identity provider client.</param>
+    /// <param name="openIdConnectOptions">Supplies the client credentials and discovery document.</param>
+    /// <param name="options">The token management options.</param>
+    /// <param name="sessionLock">Serializes token operations of one session.</param>
+    /// <param name="timeProvider">The clock.</param>
+    /// <param name="logger">The logger.</param>
+    /// <param name="concurrency">Atomic mutation support for the same backing store, or null for a cache recheck under the session lock.</param>
+    /// <exception cref="ArgumentNullException">Thrown when a required argument is null.</exception>
+    public UserTokenManager(
+        IDistributedCache cache,
+        IDataProtectionProvider dataProtectionProvider,
+        IHttpClientFactory httpClientFactory,
+        IOptionsMonitor<OpenIdConnectOptions> openIdConnectOptions,
+        IOptions<UserTokenManagementOptions> options,
+        IUserSessionLock sessionLock,
+        TimeProvider timeProvider,
+        ILogger<UserTokenManager> logger,
+        IUserTokenCacheConcurrency? concurrency)
     {
         ArgumentNullException.ThrowIfNull(cache);
         ArgumentNullException.ThrowIfNull(dataProtectionProvider);
@@ -65,7 +90,7 @@ public sealed partial class UserTokenManager
         ArgumentNullException.ThrowIfNull(logger);
 
         _options = options.Value;
-        _store = new ProtectedTokenCache(cache, dataProtectionProvider, _options.CacheKeyPrefix);
+        _store = new ProtectedTokenCache(cache, dataProtectionProvider, _options.CacheKeyPrefix, concurrency);
         _identityProvider = new IdentityProviderClient(httpClientFactory, openIdConnectOptions, _options, logger);
         _sessionLock = sessionLock;
         _timeProvider = timeProvider;
@@ -301,12 +326,13 @@ public sealed partial class UserTokenManager
     /// </summary>
     private async Task<UserTokenResult> GetOrRefreshLocked(UserSession session)
     {
-        var tokens = await _store.GetUserTokens(session, CancellationToken.None).ConfigureAwait(false);
-        if (tokens is null)
+        var entry = await _store.GetUserTokenVersion(session, CancellationToken.None).ConfigureAwait(false);
+        if (entry is not { } current)
         {
             return UserTokenResult.Failed(UserTokenFailure.NoTokens);
         }
 
+        var (tokens, version) = current;
         if (IsFresh(tokens.AccessTokenExpiresAt))
         {
             return UserTokenResult.Success(tokens.AccessToken, tokens.AccessTokenExpiresAt);
@@ -315,28 +341,26 @@ public sealed partial class UserTokenManager
         if (tokens.RefreshToken is null)
         {
             LogExpiredWithoutRefreshToken(_logger);
-            await _store.RemoveUserTokens(session, CancellationToken.None).ConfigureAwait(false);
-            return UserTokenResult.Failed(UserTokenFailure.RefreshFailed);
+            return await RemoveRejectedTokens(session, version).ConfigureAwait(false);
         }
 
         var outcome = await _identityProvider.Refresh(tokens.RefreshToken, CancellationToken.None).ConfigureAwait(false);
         if (HasEnded(session))
         {
-            await _store.RemoveUserTokens(session, CancellationToken.None).ConfigureAwait(false);
+            _ = await _store.TryRemoveUserTokens(session, version, CancellationToken.None).ConfigureAwait(false);
             return UserTokenResult.Failed(UserTokenFailure.SessionExpired);
         }
 
         if (outcome.GrantRejected)
         {
             LogRefreshRejected(_logger);
-            await _store.RemoveUserTokens(session, CancellationToken.None).ConfigureAwait(false);
-            return UserTokenResult.Failed(UserTokenFailure.RefreshFailed);
+            return await RemoveRejectedTokens(session, version).ConfigureAwait(false);
         }
 
         var answer = outcome.Answer;
         if (answer is null)
         {
-            return StillValidOrUnavailable(tokens);
+            return await ReadCurrentAccessToken(session).ConfigureAwait(false);
         }
 
         if (string.IsNullOrWhiteSpace(answer.AccessToken) || answer.ExpiresIn is <= 0)
@@ -351,17 +375,20 @@ public sealed partial class UserTokenManager
                     tokens.IdentityToken,
                     tokens.AccessTokenType,
                     tokens.Scope);
-                await _store.SetUserTokens(session, rotated, CancellationToken.None).ConfigureAwait(false);
+                if (await _store.TryReplaceUserTokens(session, version, rotated, CancellationToken.None).ConfigureAwait(false))
+                {
+                    return StillValidOrUnavailable(rotated);
+                }
             }
 
-            return StillValidOrUnavailable(tokens);
+            return await ReadCurrentAccessToken(session).ConfigureAwait(false);
         }
 
         if (answer.IdentityToken is not null && tokens.IdentityToken is not null
             && !IdentityTokenSubject.Matches(tokens.IdentityToken, answer.IdentityToken))
         {
             LogIdentityTokenMismatch(_logger);
-            return StillValidOrUnavailable(tokens);
+            return await ReadCurrentAccessToken(session).ConfigureAwait(false);
         }
 
         var refreshed = new UserTokenSet(
@@ -371,8 +398,27 @@ public sealed partial class UserTokenManager
             answer.IdentityToken ?? tokens.IdentityToken,
             answer.TokenType ?? tokens.AccessTokenType,
             answer.Scope ?? tokens.Scope);
-        await _store.SetUserTokens(session, refreshed, CancellationToken.None).ConfigureAwait(false);
-        return UserTokenResult.Success(refreshed.AccessToken, refreshed.AccessTokenExpiresAt);
+        return await _store.TryReplaceUserTokens(session, version, refreshed, CancellationToken.None).ConfigureAwait(false)
+            ? UserTokenResult.Success(refreshed.AccessToken, refreshed.AccessTokenExpiresAt)
+            : await ReadCurrentAccessToken(session).ConfigureAwait(false);
+    }
+
+    private async Task<UserTokenResult> RemoveRejectedTokens(UserSession session, byte[] version)
+    {
+        return await _store.TryRemoveUserTokens(session, version, CancellationToken.None).ConfigureAwait(false)
+            ? UserTokenResult.Failed(UserTokenFailure.RefreshFailed)
+            : await ReadCurrentAccessToken(session).ConfigureAwait(false);
+    }
+
+    private async Task<UserTokenResult> ReadCurrentAccessToken(UserSession session)
+    {
+        if (HasEnded(session))
+        {
+            return UserTokenResult.Failed(UserTokenFailure.SessionExpired);
+        }
+
+        var tokens = await _store.GetUserTokens(session, CancellationToken.None).ConfigureAwait(false);
+        return tokens is null ? UserTokenResult.Failed(UserTokenFailure.NoTokens) : StillValidOrUnavailable(tokens);
     }
 
     /// <summary>

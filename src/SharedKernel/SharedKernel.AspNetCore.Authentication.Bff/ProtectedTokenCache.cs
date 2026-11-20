@@ -18,6 +18,7 @@ internal sealed class ProtectedTokenCache
     private const int FingerprintLength = 32;
 
     private readonly IDistributedCache _cache;
+    private readonly IUserTokenCacheConcurrency? _concurrency;
     private readonly IDataProtector _userTokensProtector;
     private readonly IDataProtector _exchangedTokenProtector;
     private readonly string _keyPrefix;
@@ -26,9 +27,15 @@ internal sealed class ProtectedTokenCache
     /// <param name="cache">The distributed cache.</param>
     /// <param name="dataProtectionProvider">Protects every entry.</param>
     /// <param name="keyPrefix">The prefix of every key.</param>
-    internal ProtectedTokenCache(IDistributedCache cache, IDataProtectionProvider dataProtectionProvider, string keyPrefix)
+    /// <param name="concurrency">Optional atomic conditional writes and removals for user tokens.</param>
+    internal ProtectedTokenCache(
+        IDistributedCache cache,
+        IDataProtectionProvider dataProtectionProvider,
+        string keyPrefix,
+        IUserTokenCacheConcurrency? concurrency = null)
     {
         _cache = cache;
+        _concurrency = concurrency;
         _userTokensProtector = dataProtectionProvider.CreateProtector(UserTokensPurpose);
         _exchangedTokenProtector = dataProtectionProvider.CreateProtector(ExchangedTokenPurpose);
         _keyPrefix = keyPrefix;
@@ -40,6 +47,13 @@ internal sealed class ProtectedTokenCache
     /// <returns>The tokens, or <see langword="null" />.</returns>
     internal async Task<UserTokenSet?> GetUserTokens(UserSession session, CancellationToken ct)
     {
+        var entry = await GetUserTokenVersion(session, ct).ConfigureAwait(false);
+        return entry?.Tokens;
+    }
+
+    /// <summary>Reads a session's tokens and the protected cache value used for conditional mutations.</summary>
+    internal async Task<(UserTokenSet Tokens, byte[] Version)?> GetUserTokenVersion(UserSession session, CancellationToken ct)
+    {
         var key = UserTokensKey(session);
         var stored = await _cache.GetAsync(key, ct).ConfigureAwait(false);
         if (stored is null)
@@ -48,12 +62,13 @@ internal sealed class ProtectedTokenCache
         }
 
         var tokens = TryRead(_userTokensProtector, key, stored, ReadUserTokens);
-        if (tokens is null)
+        if (tokens is not null)
         {
-            await _cache.RemoveAsync(key, ct).ConfigureAwait(false);
+            return (tokens, stored);
         }
 
-        return tokens;
+        _ = await TryRemoveUserTokens(session, stored, ct).ConfigureAwait(false);
+        return null;
     }
 
     /// <summary>Writes the tokens of a session; the entry expires with the session.</summary>
@@ -64,6 +79,58 @@ internal sealed class ProtectedTokenCache
     internal Task SetUserTokens(UserSession session, UserTokenSet tokens, CancellationToken ct)
     {
         var key = UserTokensKey(session);
+        return _cache.SetAsync(
+            key,
+            ProtectUserTokens(key, tokens),
+            new DistributedCacheEntryOptions { AbsoluteExpiration = session.ExpiresAt },
+            ct);
+    }
+
+    /// <summary>Replaces tokens only while the cache still contains the expected protected entry.</summary>
+    internal async Task<bool> TryReplaceUserTokens(UserSession session, byte[] expectedValue, UserTokenSet tokens, CancellationToken ct)
+    {
+        var key = UserTokensKey(session);
+        if (_concurrency is not null)
+        {
+            return await _concurrency.TryReplace(key, expectedValue, ProtectUserTokens(key, tokens), session.ExpiresAt, ct)
+                .ConfigureAwait(false);
+        }
+
+        if (!await HasUserTokenVersion(key, expectedValue, ct).ConfigureAwait(false))
+        {
+            return false;
+        }
+
+        await SetUserTokens(session, tokens, ct).ConfigureAwait(false);
+        return true;
+    }
+
+    /// <summary>Removes tokens only while the cache still contains the expected protected entry.</summary>
+    internal async Task<bool> TryRemoveUserTokens(UserSession session, byte[] expectedValue, CancellationToken ct)
+    {
+        var key = UserTokensKey(session);
+        if (_concurrency is not null)
+        {
+            return await _concurrency.TryRemove(key, expectedValue, ct).ConfigureAwait(false);
+        }
+
+        if (!await HasUserTokenVersion(key, expectedValue, ct).ConfigureAwait(false))
+        {
+            return false;
+        }
+
+        await _cache.RemoveAsync(key, ct).ConfigureAwait(false);
+        return true;
+    }
+
+    private async Task<bool> HasUserTokenVersion(string key, byte[] expectedValue, CancellationToken ct)
+    {
+        var current = await _cache.GetAsync(key, ct).ConfigureAwait(false);
+        return current is not null && CryptographicOperations.FixedTimeEquals(expectedValue, current);
+    }
+
+    private byte[] ProtectUserTokens(string key, UserTokenSet tokens)
+    {
         var plaintext = Write(writer =>
         {
             writer.Write(tokens.AccessToken);
@@ -73,11 +140,7 @@ internal sealed class ProtectedTokenCache
             WriteOptional(writer, tokens.AccessTokenType);
             WriteOptional(writer, tokens.Scope);
         });
-        return _cache.SetAsync(
-            key,
-            _userTokensProtector.CreateProtector(key).Protect(plaintext),
-            new DistributedCacheEntryOptions { AbsoluteExpiration = session.ExpiresAt },
-            ct);
+        return _userTokensProtector.CreateProtector(key).Protect(plaintext);
     }
 
     /// <summary>Removes the tokens of a session.</summary>
