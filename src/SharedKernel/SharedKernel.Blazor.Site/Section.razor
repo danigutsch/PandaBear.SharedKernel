@@ -1,15 +1,30 @@
 @inherits SiteComponent
 <section class="@CssClass("site-section")" aria-labelledby="@HeadingId" @attributes="AdditionalAttributes">
-    <div class="site-section__header">
-        @Heading.Render(Level, "site-section__title", HeadingId, @<text>@Title</text>)
-        @if (Divider)
-        {
-            <div class="site-divider" aria-hidden="true"></div>
-        }
-        @if (!string.IsNullOrWhiteSpace(Intro))
-        {
-            <p class="site-section__intro">@Intro</p>
-        }
-    </div>
-    <div class="site-section__body">@ChildContent</div>
+    @if (Media is null)
+    {
+        @Text
+    }
+    else
+    {
+        <Split Media="Media">@Text</Split>
+    }
 </section>
+
+@code {
+    private RenderFragment TitleText => builder => builder.AddContent(0, Title);
+
+    private RenderFragment Text => @<text>
+        <div class="site-section__header">
+            @Heading.Render(Level, "site-section__title", HeadingId, TitleText)
+            @if (Divider)
+            {
+                <div class="site-divider" aria-hidden="true"></div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Intro))
+            {
+                <p class="site-section__intro">@Intro</p>
+            }
+        </div>
+        <div class="site-section__body">@ChildContent</div>
+    </text>;
+}

@@ -214,4 +214,135 @@ public sealed class SiteHeaderTests : BunitContext
         // Assert
         cut.Find("header #slot").ShouldNotBeNull();
     }
+
+    [Fact]
+    public void A_header_above_the_page_has_no_placement_class()
+    {
+        // Arrange & Act
+        var cut = this.RenderHeader();
+
+        // Assert
+        cut.Find("header").ClassName.ShouldBe("site-header");
+    }
+
+    [Fact]
+    public void A_header_over_the_hero_is_marked_for_the_overlay()
+    {
+        // Arrange & Act
+        var cut = Render<SiteHeader>(parameters => parameters
+            .Add(component => component.Label, "Main")
+            .Add(component => component.Items, NavItems)
+            .Add(component => component.Placement, HeaderPlacement.OverHero));
+
+        // Assert
+        BunitElementAssertions.HasClass(cut.Find("header").ClassList, "site-header--over-hero");
+    }
+
+    [Fact]
+    public void An_undefined_placement_is_rejected()
+    {
+        // Arrange & Act
+        var render = () => Render<SiteHeader>(parameters => parameters.Add(component => component.Placement, (HeaderPlacement)5));
+
+        // Assert
+        render.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe(nameof(SiteHeader.Placement));
+    }
+
+    [Fact]
+    public void Without_a_menu_label_the_navigation_and_actions_are_not_collapsible()
+    {
+        // Arrange & Act
+        var cut = Render<SiteHeader>(parameters => parameters
+            .Add(component => component.Label, "Main")
+            .Add(component => component.Items, NavItems)
+            .Add(component => component.Actions, "<span id=\"slot\">x</span>"));
+
+        // Assert
+        cut.FindAll(".site-header__menu").ShouldBeEmpty();
+        cut.Find(".site-header__inner > nav.site-nav").ShouldNotBeNull();
+        cut.Find(".site-header__inner > .site-header__actions #slot").ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void A_menu_label_puts_the_one_navigation_and_the_actions_behind_a_closed_disclosure()
+    {
+        // Arrange & Act
+        var cut = Render<SiteHeader>(parameters => parameters
+            .Add(component => component.Label, "Main")
+            .Add(component => component.Brand, "<a href=\"/\">Brand</a>")
+            .Add(component => component.Items, NavItems)
+            .Add(component => component.MenuLabel, "Menu")
+            .Add(component => component.Actions, "<span id=\"slot\">x</span>"));
+
+        // Assert
+        var menu = cut.Find(".site-header__inner > details.site-header__menu");
+        menu.HasAttribute("open").ShouldBeFalse();
+        menu.Children.Select(child => child.TagName).ShouldBe(["SUMMARY", "NAV", "DIV"]);
+        var toggle = menu.Children[0];
+        toggle.ClassName.ShouldBe("site-header__toggle");
+        toggle.TextContent.Trim().ShouldBe("Menu");
+        menu.Children[1].GetAttribute("aria-label").ShouldBe("Main");
+        menu.Children[2].ClassName.ShouldBe("site-header__actions");
+        menu.QuerySelector("#slot").ShouldNotBeNull();
+        cut.FindAll("nav").Count.ShouldBe(1);
+        cut.Find(".site-header__inner").Children[0].ClassName.ShouldBe("site-header__brand");
+    }
+
+    [Fact]
+    public void Inside_the_menu_groups_stay_disclosures_and_the_current_page_is_marked()
+    {
+        // Arrange & Act
+        var cut = Render<SiteHeader>(parameters => parameters
+            .Add(component => component.Label, "Main")
+            .Add(component => component.Items, NavItems)
+            .Add(component => component.MenuLabel, "Menu")
+            .Add(component => component.CurrentPath, "/about/team"));
+
+        // Assert
+        cut.Find(".site-header__menu nav details.site-nav__group > summary").GetAttribute("aria-current").ShouldBe("true");
+        cut.Find(".site-header__menu [aria-current=page]").GetAttribute("href").ShouldBe("/about/team");
+        cut.Find(".site-header__menu").HasAttribute("open").ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("  ")]
+    public void A_blank_menu_label_leaves_the_menu_out(string? label)
+    {
+        // Arrange & Act
+        var cut = Render<SiteHeader>(parameters => parameters
+            .Add(component => component.Label, "Main")
+            .Add(component => component.Items, NavItems)
+            .Add(component => component.MenuLabel, label));
+
+        // Assert
+        cut.FindAll("details.site-header__menu").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void A_header_with_nothing_to_collapse_has_no_menu()
+    {
+        // Arrange & Act
+        var cut = Render<SiteHeader>(parameters => parameters
+            .Add(component => component.Brand, "<a href=\"/\">Brand</a>")
+            .Add(component => component.MenuLabel, "Menu"));
+
+        // Assert
+        cut.FindAll(".site-header__menu").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void The_menu_label_is_encoded()
+    {
+        // Arrange & Act
+        var cut = Render<SiteHeader>(parameters => parameters
+            .Add(component => component.Label, "Main")
+            .Add(component => component.Items, NavItems)
+            .Add(component => component.MenuLabel, "<b>Menu</b>"));
+
+        // Assert
+        cut.FindAll(".site-header__toggle b").ShouldBeEmpty();
+        cut.Find(".site-header__toggle").TextContent.Trim().ShouldBe("<b>Menu</b>");
+    }
 }

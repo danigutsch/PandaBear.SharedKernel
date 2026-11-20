@@ -1,0 +1,8 @@
+@inherits SiteComponent
+<div class="@CssClass(ToneClass)" @attributes="AdditionalAttributes">
+    <div class="site-band__inner">@ChildContent</div>
+    @if (Image is not null)
+    {
+        <div class="site-band__media">@ResponsiveImageMarkup.Render(Image, eager: false, highPriority: false)</div>
+    }
+</div>

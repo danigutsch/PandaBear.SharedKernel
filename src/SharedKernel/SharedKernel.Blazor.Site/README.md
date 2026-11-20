@@ -67,16 +67,21 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | Component | Renders |
 | --- | --- |
 | `SkipLink` | The first link of the page; `TargetId` defaults to `main-content`. Extra attributes cannot replace its `href` or `class`. |
-| `SiteHeader` | `header` with a brand slot, a labelled `nav` (`Label` is required when there are items), and an actions slot. An item has either an `Href` or one level of children; an item with children is a native `details` that starts closed and shows a chevron that turns when it opens. The item that matches `CurrentPath` gets `aria-current="page"`, and the summary of its group gets `aria-current="true"` and the current item's style, so the group stays closed and does not cover the page. Below the `48rem` breakpoint an open group stacks the navigation on a row of its own, the group's links under its summary; from the breakpoint on they drop down over the page. |
+| `SiteHeader` | `header` with a brand slot, a labelled `nav` (`Label` is required when there are items), and an actions slot (`site-header__actions`). An item has either an `Href` or one level of children; an item with children is a native `details` that starts closed and shows a chevron that turns when it opens. The item that matches `CurrentPath` gets `aria-current="page"`, and the summary of its group gets `aria-current="true"` and the current item's style, so the group stays closed and does not cover the page. Below the `48rem` breakpoint an open group stacks the navigation on a row of its own, the group's links under its summary; from the breakpoint on they drop down over the page. `MenuLabel` collapses the navigation and the actions behind a menu button below the breakpoint, and `Placement` lays the header over a cover hero; see [Menu](#menu) and [Bands and photos](#bands-and-photos). |
 | `SiteFooter` | `footer` with a content slot and an optional `Legal` line. |
-| `Hero` | The page's one `h1`, an optional `Eyebrow` line above it and `Subtitle` line under it, an image loaded eagerly with `fetchpriority="high"`, and an actions slot. With an eyebrow or a subtitle the heading is an `hgroup` (`site-hero__heading`): the eyebrow `p` (`site-hero__eyebrow`), the `h1` (`site-hero__title`), then the subtitle `p` (`site-hero__subtitle`), so reading order matches visual order and neither line enters the outline; with neither it is the `h1` alone. |
-| `Section` | `section` with a heading (`Level`, default 2), a decorative divider and an intro. Set `HeadingId` to give the heading that id and label the section by it (`aria-labelledby`), which makes it a named region; without it no id is generated, so prerendered and interactive markup match. |
+| `Hero` | `Layout` `Split` (the default: text and image side by side from the breakpoint on) or `Cover` (the text centred over the image; see [Bands and photos](#bands-and-photos)). A cover's `CoverHeight` is `Page` (the default: at least 20rem below the breakpoint, 34.375rem from it on) or `Landing` (`site-hero--landing`: at least 20rem below the breakpoint, from it on 85% of the small viewport height between 34.375rem and 52rem); content can make either taller, and `Landing` on a split hero throws `ArgumentException`. The page's one `h1`, an optional `Eyebrow` line above it and `Subtitle` line under it, an image loaded eagerly with `fetchpriority="high"`, and an actions slot. With an eyebrow or a subtitle the heading is an `hgroup` (`site-hero__heading`): the eyebrow `p` (`site-hero__eyebrow`), the `h1` (`site-hero__title`), then the subtitle `p` (`site-hero__subtitle`), so reading order matches visual order and neither line enters the outline; with neither it is the `h1` alone. |
+| `Section` | `section` with a heading (`Level`, default 2), a decorative divider and an intro. Set `HeadingId` to give the heading that id and label the section by it (`aria-labelledby`), which makes it a named region; without it no id is generated, so prerendered and interactive markup match. `Media` makes its content a `Split`: the heading, intro and body in `site-split__main`, then the media in `site-split__media`. |
+| `Split` | Text (`ChildContent`) beside media (`Media`, required: `ArgumentNullException` without it), without a heading of its own: a plain `div`, never a landmark, so a heading-less band can put text and photos side by side. The text is in `site-split__main` and the media in `site-split__media`, two equal columns from the `48rem` breakpoint on and the media after the text below it, so reading order matches visual order; the media fills its column. `Section.Media` uses it, so both are one layout. |
+| `Band` | A full-width `div` (never a landmark) around content of the content width: a `Section`, or content without a heading such as a tagline and a `Byline`. `Tone` is `Default`, `Muted` (surface-alt), `Primary` (primary background, on-primary text) or `Image` (a lazy photo darkened by the normal-text scrim, on-primary text), which requires `Image`; an `Image` on another tone throws `ArgumentException`. A section inside a band loses its own vertical padding and keeps its semantics. |
+| `Byline` | A person: a lazy round photo (`Photo`, usually decorative), the `Name` and the `JobTitle`, each a `p`. |
+| `VideoLink` | A link to a video on its own site instead of an embedded player: a lazy, decorative and self-hosted `Poster` (a described or remote poster throws `ArgumentException`), a play mark on the normal-text scrim, the visible `Title`, and a visually hidden `SiteHint` such as "(opens YouTube)"; the link's name is the title then the hint. `Href` must be an address that `WebUrl.CreateHttps` accepts (absolute `https`); the link carries `rel="noreferrer"`. No frame, no script, and no request to the video's site before the visitor's click. |
+| `FloatingLink` | A round link fixed in the bottom corner, such as a chat link: the icon in `ChildContent` is hidden from assistive technology and the required `Label` names the link in visually hidden text. While it is on the page, focused elements scroll clear of it (`scroll-padding`) and the footer, or the body without a footer, ends with room for it, so it never covers the end of the page. Its hover grows it with a transition that `prefers-reduced-motion` turns off. |
 | `ButtonLink` | A link styled as a button (`Primary`, `Secondary`, `Outline`). `NewTab` adds `target="_blank"`, `rel="noopener noreferrer"` and a visually hidden `NewTabHint`. |
 | `Card`, `CardGrid` | `article` with an optional lazy image, a heading (`HeadingLevel`, default 3) whose link covers the card, text and actions; an auto-fill grid whose columns are at least `--site-card-min-width` wide and that keeps empty columns, so a lone card has the width of one column instead of the whole row. Links, buttons, form controls, `summary` and `[tabindex]` elements in the body and the actions are raised above the covering link, so they stay clickable; any other interactive element you put in the body needs `position: relative; z-index: 1`. The focus ring is drawn on the card while a control in it has keyboard focus (`:has(:focus-visible)`). |
 | `FactsTable` | `table` with a required `caption` and `th scope="row"` headers. |
 | `Disclosure` | Native `details` and `summary`; a tab substitute without script. |
-| `Quote` | `figure` with a `blockquote` and a `cite` caption. |
-| `ImageGrid` | `figure` per `GalleryImage` (a `ResponsiveImage` and an optional caption), lazy loading except the first `EagerCount`; `PrioritizeFirstImage` loads the first one eagerly with `fetchpriority="high"`. |
+| `Quote` | `figure` with a `blockquote` and a `cite` caption. In a `Primary` or `Image` band it drops its background and takes the on-primary colour, its rule included. |
+| `ImageGrid` | `figure` per `GalleryImage` (a `ResponsiveImage` and an optional caption), lazy loading except the first `EagerCount`; `PrioritizeFirstImage` loads the first one eagerly with `fetchpriority="high"`. `Layout` `Grid` (the default) is rows of equal columns; `Mosaic` (`site-image-grid--mosaic`) is a collage of mixed aspect ratios: columns filled from top to bottom in document order, each image at its own aspect ratio, never cropped. In both, columns are at least 14rem wide and share the full width of the container, as many as there are images while they fit, so one image fills its container, in a section or in a `Split`'s media column. An image is at most 40rem or 80% of the viewport tall; a taller one is shown whole within that height (`object-fit: contain`). |
 | `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links; no `address` when there are no lines and no channels. `PhoneText` shows the number as written (`+55 (11) 99999-0000`) while the link uses the digits; it must be the same number as `Phone`. The WhatsApp link shows `WhatsAppLabel`. |
 | `LanguageSwitcher` | Labelled `nav` of links with `hreflang`, `lang` and `aria-current="true"` on the current language. |
 | `PageHead` | Title, description, canonical link, OpenGraph basics and `hreflang` alternates including `x-default`; each optional tag is left out when its parameter is unset. `Robots` writes `<meta name="robots">` (`noindex`, `noindex, nofollow`). An error or not-found page sets `Robots="noindex"` and no `CanonicalUrl`, `Alternates` or `DefaultAlternateUrl`, so it has no canonical, `og:url` or `hreflang` link. |
@@ -89,7 +94,54 @@ with them, without a section's vertical padding. Space it from its neighbours yo
 (`Navigation.ToBaseRelativePath(...)` returns `tours`, which matches `/tours`), a trailing slash is ignored, and the comparison is
 ordinal and ignores case. The empty path matches `/`. An item with an absolute address never matches.
 
-Texts that people read (labels, the new-tab hint, the WhatsApp link text) are parameters so the caller can localize them.
+Texts that people read (labels, the menu button, the new-tab and video hints, the WhatsApp link text) are parameters so the caller can
+localize them.
+
+### Menu
+
+With `MenuLabel` (for example "Menu") the navigation and the actions are the content of a `details` element whose `summary`, with
+three bars before the label, is the menu button. Below the `60rem` header breakpoint the button sits beside the brand, starts closed, and opens
+the navigation as a column with the actions under it, in a row of its own; it works with the mouse, Enter and Space, and Chromium
+exposes it as a disclosure with its expanded state. From the breakpoint on, a browser that supports `::details-content` (Baseline
+2025: Chrome 131, Safari 18.4, Firefox 143) shows the content inline and hides the button, and an older browser keeps the button, so
+the menu works everywhere without script or form. There is one `nav` in the document; while the menu is closed below the breakpoint it
+is hidden, so assistive technology never meets it twice. `details`/`summary` was chosen over the Popover API (`popovertarget`): the
+popover is Baseline 2025 too, but it opens centred in the top layer, and placing it under its button needs anchor positioning
+(Baseline 2026), while a closed `details` falls back to a working button everywhere.
+
+The header breakpoint is `60rem` (960px), above the `48rem` layout breakpoint: a header with a brand, five links and two language
+links wraps to two rows at 800px, and the consumer's earlier site switched to its menu button below about 921px; 60rem is the next
+round step above that, with room for labels that are longer in another language. One breakpoint serves the menu and the header over
+the hero, so between 48rem and 60rem the header is the primary band with its menu button above the hero, and an open group stays in
+the menu's column. A site's header that needs more room breaks to two rows above it; keep the navigation short.
+
+### Bands and photos
+
+On the primary colour or a photo, text is the on-primary colour in the light scheme (`color-scheme: light`), whatever the visitor's
+scheme: a `Primary` or `Image` band and a `Cover` hero. Inside them headings, links, the intro, the eyebrow and the subtitle, a
+quote and a byline's job title take that colour, the focus ring is the on-primary colour, a primary button turns to the on-primary
+colour with primary text, and an outline button to an on-primary border and text. Cards and the contact card keep the text colour on
+their own background.
+
+A photo lies behind the content, darkened by the theme's text colour at the computed scrim (see [Scrim](#scrim)), so the text is
+readable on any photo the owner uploads, an all-white one included:
+
+- an `Image` band uses `--site-scrim` (normal text reaches 4.5:1);
+- a `Cover` hero uses `--site-scrim-large` (its text is large: the `h1`, and the eyebrow and subtitle, which a cover hero sets at
+  least 1.5rem; the theme rules keep the `h1` large text). An outline button and a plain link in its actions get a backing of
+  `--site-scrim-boost`, so their normal-size text reaches 4.5:1 too. Without an image a cover hero is a band of the primary colour.
+
+`SiteHeader` with `Placement="HeaderPlacement.OverHero"` is a band of the primary colour, its brand, links, menu button and focus ring
+the on-primary colour in the light scheme, and from the `60rem` header breakpoint (see [Menu](#menu)) on it lies over the hero: transparent, with no strip. It does so only when a `Cover` hero is the first child of the element right after the header,
+as in `<SiteHeader … /><main><Hero Layout="HeroLayout.Cover" … />…</main>`; on any other page, and below the breakpoint, it stays above
+the content as its primary band, so it can never cover a page that does not open with a cover hero. The rule is structural (`:has(+ * > .site-hero--cover:first-child)`)
+instead of a second parameter on `Hero`, so the two cannot disagree. That hero leaves the header's height free: its top padding is
+`--site-header-height` plus the section spacing, and the header over it is exactly that tall. The theme computes the height
+(`SiteTheme.HeaderHeight`, see [Header](#header)) from its brand height, which also sizes an `img` in the brand slot
+(`--site-brand-height`), so a site never sets a height of its own. Over a photo the header adds a layer of `--site-scrim-boost`, sized to the header itself and fading out below it, so
+behind the menu the photo is darkened to at least `--site-scrim` (4.5:1) and fades to `--site-scrim-large` (3:1) where the hero's large
+text sits, even when the header wraps to more lines than the room. Over a cover hero without a photo there is no layer: the header
+text is on the primary colour.
 
 ## Value objects
 
@@ -196,13 +248,19 @@ dark surface too. `light-dark()` needs a 2024 or later browser (Chrome 123, Fire
 | `--site-radius` | `0.5rem` | Corner radius |
 | `--site-content-width` | `72rem` | Maximum content width |
 | `--site-card-min-width` | `16rem` | Smallest card column of `CardGrid` |
+| `--site-scrim` | `64%` | Darkening of a photo behind normal on-primary text (image bands, the video play mark); computed by the theme |
+| `--site-scrim-large` | `50%` | Darkening of a photo behind large on-primary text (cover hero); computed by the theme |
+| `--site-scrim-boost` | `28%` | Second layer that brings `--site-scrim-large` up to `--site-scrim` (the header over a hero, outline buttons in a cover hero); computed by the theme |
+| `--site-brand-height` | `2.5rem` | Height of an `img` in the header's brand slot; the theme's `BrandHeight` |
+| `--site-header-height` | `4.5rem` | Height of a header over a hero, and the room the hero leaves for it; computed by the theme |
+| `--site-floating-link-size` | `3.5rem` | Diameter of `FloatingLink`, and the room the end of the page keeps for it |
 
 Every default text pair reaches a WCAG contrast ratio of at least 4.5:1 in both schemes (text, muted and primary on surface and
 surface-alt, accent on surface, on-primary on primary and on primary-hover, on-accent on accent and on accent-hover, primary-hover on
 surface and surface-alt); a test computes the ratios for both sides of every `light-dark()` pair. Buttons change to the hover tokens
 on hover, never to a filter, so the hover state keeps the checked contrast. Light
 values: text 14.7:1, muted 7.6:1, primary 6.7:1 and accent 5.0:1 on white. The stylesheet respects `prefers-reduced-motion`, shows a
-visible `:focus-visible` ring, is mobile first with one `48rem` breakpoint, and loads no fonts, images or other URLs.
+visible `:focus-visible` ring, is mobile first with a `48rem` layout breakpoint and a `60rem` header breakpoint, and loads no fonts, images or other URLs.
 
 ## Owner-editable theme
 
@@ -225,15 +283,35 @@ that `site.css` consumes. Without a theme nothing changes: every per-role variab
   `LinkTarget` that is root-relative or https and names a `.woff2` file, without `" ' ( ) < >` or a fragment. The family name allows
   letters, digits, single inner spaces, hyphens and underscores (at most 64 characters); the key is a lower-case slug. A role's
   `fallback` (`SansSerif`, `Serif`, `Monospace`) is the system stack written after the uploaded family.
-- `SiteTheme.Create(colors, typography, fonts?, allowSmallText, colorLabel?)` enforces every rule; `SiteTheme.CreateDraft(...)` only
-  requires unique font keys and existing font references, so a preview can show a theme that still breaks a rule.
+- `SiteTheme.Create(colors, typography, fonts?, allowSmallText, brandHeight, colorLabel?)` enforces every rule;
+  `SiteTheme.CreateDraft(...)` only requires unique font keys, existing font references and a positive brand height with at most four
+  decimals, so a preview can show a theme that still breaks a rule. `brandHeight` defaults to `SiteTheme.DefaultBrandHeight` (2.5rem).
   `theme.Review(colorLabel?)` returns the errors, the warnings and every `ContrastCheck`. `SiteTheme.Default` is `site.css` as a
   theme. Every value object factory returns a `Result`; errors carry field paths such as `colors.muted`, `typography.h1.size`,
-  `typography.body.lineHeight`, `fonts[0].key`.
+  `typography.body.lineHeight`, `fonts[0].key`, `header.brandHeight`.
 - Contrast messages name the colours by their CSS names (`muted on surface-alt is 1.33:1 in the light scheme; …`). A host whose
   editor shows other names passes `colorLabel`, a `Func<ThemeColorRole, string?>` such as `role => role switch { ThemeColorRole.SurfaceAlt
   => "Card background", … }`, to `Review`, `Create`, `ThemeEditorModel.ToTheme` and `ThemePreview.ColorLabel`; the message then reads
   `Muted text on Card background is …`. A role it returns `null` or white space for keeps its CSS name; field paths do not change.
+
+### Scrim
+
+`SiteScrim.For(colors)` computes, from the light colours, the least whole percent of the text colour laid over a photo
+(`color-mix(in srgb, var(--site-color-text) p%, transparent)`) at which the on-primary colour reaches a contrast on any photo: `Text`
+for 4.5:1, `LargeText` for 3:1, and `Boost`, the opacity of a second layer over `LargeText` that reaches at least `Text`
+(`1 - (1 - Text) / (1 - LargeText)`, rounded up). Any photo means the worst one: white for a light on-primary colour, black for a dark
+one; a channel is rounded towards that photo, so the browser's rounding never lowers the contrast. With the default colours (white on
+`#1f2937`) the values are 64%, 50% and 28%. `SiteScrim.MinimumPercent(foreground, scrim, minimum)` and `SiteScrim.WorstRatio(foreground,
+scrim, percent)` expose the computation. When even an opaque scrim does not give 4.5:1 (`IsReachable` is false; the on-primary colour
+on the text colour is below 4.5:1), the theme review reports an error and the values are 100, the best a draft can show.
+
+### Header
+
+`SiteTheme.BrandHeight` is the height in rem of the logo in the header's brand slot. `SiteTheme.HeaderHeight` is the height of the
+header in one row: its block padding (2 × 1rem, `--site-space-3`) plus the taller of the brand height and a navigation line, which is
+the navigation role's largest font size (the body's when that role sets none) times its line height (the body's when unset), plus the
+links' block padding (2 × 0.25rem, `--site-space-1`), rounded up to four decimals. With the default theme: 2rem + max(2.5rem,
+1.125rem × 1.6 + 0.5rem) = 4.5rem; a 3.5rem logo gives 5.5rem. A test keeps those paddings and `site.css` in step.
 
 ### Rules
 
@@ -241,9 +319,12 @@ that `site.css` consumes. Without a theme nothing changes: every per-role variab
 | --- | --- | --- | --- |
 | Text pairs: text, muted, primary and primary-hover on surface and surface-alt; on-primary on primary and primary-hover; on-accent on accent and accent-hover | 4.5:1 in the light and the dark scheme | Error on `colors.{foreground}` | WCAG 2.2 SC 1.4.3 |
 | Focus ring on surface and surface-alt | 3:1 in both schemes | Error on `colors.focus` | WCAG 2.2 SC 1.4.11 |
+| On-primary over a photo darkened by the text colour: on-primary on text, the opaque scrim | 4.5:1 in the light scheme | Error on `colors.onPrimary` | WCAG 2.2 SC 1.4.3 |
+| Page heading (`h1`, smallest value) | large text: at least 1.5rem, or 1.1667rem (14pt) at weight 700 or more, because it sits on the large-text scrim of a cover hero | Error on `typography.h1.size` | WCAG 2.2 SC 1.4.3 |
 | Body size (smallest value of a fluid size) | at least 1rem unless `allowSmallText` | Error | readability policy |
 | Every other role with a size | at least 0.875rem unless `allowSmallText` | Error | readability policy |
 | Body line height | 1.3 to 2 | Error | readability policy |
+| Brand height | 1.5rem to 8rem | Error on `header.brandHeight` | layout policy: a smaller logo is hard to read, a taller header takes too much of a cover hero |
 | Fluid size | maximum at most 2.5 times the minimum | Error | WCAG 2.2 SC 1.4.4 (zoom must still double the text) |
 | Heading order: each level not larger than the level above, minimum and maximum compared | — | Warning on the smaller level's `size` | design guidance |
 | Font references and keys | key exists, keys unique | Error, also for drafts | rendering |
@@ -256,7 +337,9 @@ heading markup (SC 1.3.1), not size, and a design can mark a level with weight, 
 ### Stylesheet
 
 `SiteThemeStylesheet.Render(theme)` writes `@font-face` rules (`font-display: swap`, key then weight order), then `:root` with the 12
-colour tokens as `light-dark(light, dark)` and the set typography values as `--site-{role}-{property}`, where role is `h1` … `h6`,
+colour tokens as `light-dark(light, dark)`, the three scrim tokens as percentages (`SiteThemeStylesheet.ScrimVariables`), the brand and header heights in rem
+(`SiteThemeStylesheet.HeaderVariables`: `--site-brand-height`, `--site-header-height`) and the set
+typography values as `--site-{role}-{property}`, where role is `h1` … `h6`,
 `body`, `small`, `link`, `button` or `nav`, and property is `font-family`, `font-size`, `font-weight`, `line-height`,
 `letter-spacing`, `text-transform` or `font-style` (`SiteThemeStylesheet.RoleVariables`). The output is deterministic; every value
 comes from a validated value object, and strings are escaped again. `SiteThemeStylesheet.Hash(theme)` is the first 16 hex digits of
@@ -281,7 +364,7 @@ file intake and store only their addresses in the theme.
 
 ### Preview
 
-`ThemePreview` shows a small sample (navigation strip, h1 to h3, a paragraph with a link, small print, a primary and a secondary
+`ThemePreview` shows a small sample (navigation strip that starts with a brand box of the brand height, labelled `Texts.Brand`, h1 to h3, a paragraph with a link, small print, a primary and a secondary
 button, a card) styled by a `style` element scoped to `ScopeId`, then a contrast table for the shown scheme (pair, ratio rounded
 down, minimum, `Pass` or `Fail` in text) and the errors and warnings by field path. The sample's headings are `div` elements styled
 with the h1 to h3 roles (classes `site-theme-preview__h1` to `__h3`), not heading elements, so the page's outline and heading
@@ -317,7 +400,7 @@ background`); the swatches keep the CSS names in `data-foreground` and `data-bac
 error reads like the preview's issue and, passed back in `Errors`, is listed once.
 
 `ThemeEditorModel` is the form model: string colour fields (`colors.primary.light`), nullable numbers for sizes, weight and spacing,
-and fonts with faces. `ToDraft()` and `ToTheme(colorLabel?)` return every error at once on its field path. Both hover fields empty
+fonts with faces, and `BrandHeight` (empty means the default). `ToDraft()` and `ToTheme(colorLabel?)` return every error at once on its field path. Both hover fields empty
 means derived.
 
 ### Mapping the earlier Branding settings

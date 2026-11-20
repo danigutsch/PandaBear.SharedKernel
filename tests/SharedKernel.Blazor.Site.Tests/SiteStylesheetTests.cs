@@ -278,6 +278,39 @@ public sealed partial class SiteStylesheetTests
         css.ShouldNotContain("url(", StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Photo_scrims_use_the_computed_theme_tokens_instead_of_fixed_opacities()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Assert
+        css.ShouldContain("color-mix(in srgb, var(--site-color-text) var(--site-scrim), transparent)", StringComparison.Ordinal);
+        css.ShouldContain("color-mix(in srgb, var(--site-color-text) var(--site-scrim-large), transparent)", StringComparison.Ordinal);
+        css.ShouldContain("color-mix(in srgb, var(--site-color-text) var(--site-scrim-boost), transparent)", StringComparison.Ordinal);
+        var mixes = MixPattern().Matches(css).Select(match => match.Groups["amount"].Value).ToArray();
+        mixes.Length.ShouldBe(css.Split("color-mix(").Length - 1);
+        mixes.ShouldAllSatisfy(amount => amount.ShouldStartWith("var(--site-scrim", StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData(".site-band--primary")]
+    [InlineData(".site-hero--cover")]
+    public void Bands_on_the_primary_colour_or_a_photo_use_the_light_scheme_and_the_on_primary_colour(string selector)
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+        var rule = SiteFiles.Rule(css, selector);
+
+        // Assert
+        rule.ShouldContain("color-scheme: light", StringComparison.Ordinal);
+        rule.ShouldContain("background: var(--site-color-primary)", StringComparison.Ordinal);
+        rule.ShouldContain("color: var(--site-color-on-primary)", StringComparison.Ordinal);
+    }
+
+    [GeneratedRegex(@"color-mix\(in srgb, var\(--site-color-[a-z-]+\) (?<amount>[^,]+), transparent\)")]
+    private static partial Regex MixPattern();
+
     [GeneratedRegex(@"--site-([a-z0-9-]+)\s*:")]
     private static partial Regex TokenPattern();
 

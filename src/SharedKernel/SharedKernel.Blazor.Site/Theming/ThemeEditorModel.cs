@@ -26,6 +26,9 @@ public sealed class ThemeEditorModel
     /// <summary>Gets the fonts.</summary>
     public Collection<ThemeFontFields> Fonts { get; } = [];
 
+    /// <summary>Gets or sets the brand height in rem; empty means <see cref="SiteTheme.DefaultBrandHeight" />.</summary>
+    public decimal? BrandHeight { get; set; }
+
     /// <summary>Gets or sets whether body text below 1rem and other text below 0.875rem is allowed.</summary>
     public bool AllowSmallText { get; set; }
 
@@ -36,7 +39,7 @@ public sealed class ThemeEditorModel
     public static ThemeEditorModel FromTheme(SiteTheme theme)
     {
         ArgumentNullException.ThrowIfNull(theme);
-        var model = new ThemeEditorModel { AllowSmallText = theme.AllowsSmallText };
+        var model = new ThemeEditorModel { AllowSmallText = theme.AllowsSmallText, BrandHeight = theme.BrandHeight };
         foreach (var (role, fields) in model.Colors)
         {
             if (!theme.Colors.IsDerived(role))
@@ -82,11 +85,11 @@ public sealed class ThemeEditorModel
     /// <param name="colorLabel">The names of the colour roles in contrast messages, as in <see cref="SiteTheme.Review" />.</param>
     /// <returns>The theme, or every field and rule error at once.</returns>
     public Result<SiteTheme> ToTheme(Func<ThemeColorRole, string?>? colorLabel = null) =>
-        Build((colors, typography, fonts, allowSmallText) => SiteTheme.Create(colors, typography, fonts, allowSmallText, colorLabel));
+        Build((colors, typography, fonts, allowSmallText, brandHeight) => SiteTheme.Create(colors, typography, fonts, allowSmallText, brandHeight, colorLabel));
 
     private static string? Blank(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
 
-    private Result<SiteTheme> Build(Func<SiteColors, SiteTypography, IEnumerable<ThemeFont>, bool, Result<SiteTheme>> create)
+    private Result<SiteTheme> Build(Func<SiteColors, SiteTypography, IEnumerable<ThemeFont>, bool, decimal, Result<SiteTheme>> create)
     {
         var errors = new ThemeErrors();
         var colors = BuildColors(errors);
@@ -94,7 +97,7 @@ public sealed class ThemeEditorModel
         var fonts = BuildFonts(errors);
         return errors.HasErrors || colors is null
             ? errors.ToResult<SiteTheme>("The site theme has invalid fields.")
-            : create(colors, typography, fonts, AllowSmallText);
+            : create(colors, typography, fonts, AllowSmallText, BrandHeight ?? SiteTheme.DefaultBrandHeight);
     }
 
     private SiteColors? BuildColors(ThemeErrors errors)

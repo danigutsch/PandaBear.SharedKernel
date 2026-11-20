@@ -4,14 +4,24 @@ using PandaBear.Results;
 namespace PandaBear.Blazor.Site.Theming;
 
 /// <summary>
-/// An owner-editable site theme: colour tokens with a light and a dark value, typography per role, and self-hosted fonts.
+/// An owner-editable site theme: colour tokens with a light and a dark value, typography per role, self-hosted fonts, and the
+/// height of the brand image in the header, from which the header's own height follows.
 /// <see cref="Create" /> enforces every rule (see <see cref="Review" />); <see cref="CreateDraft" /> only enforces what rendering
 /// needs (unique font keys and existing font references), so an editor can preview a theme that still breaks a rule.
 /// </summary>
 public sealed class SiteTheme : ValueObject
 {
-    private SiteTheme(SiteColors colors, SiteTypography typography, IReadOnlyList<ThemeFont> fonts, bool allowsSmallText)
+    /// <summary>The brand height in rem of a theme that sets none: 2.5rem (40px).</summary>
+    public const decimal DefaultBrandHeight = 2.5m;
+
+    private const decimal HeaderPadding = 2m;
+    private const decimal NavigationLinkPadding = 0.5m;
+    private const decimal FallbackNavigationSize = 1.125m;
+    private const decimal FallbackLineHeight = 1.6m;
+
+    private SiteTheme(SiteColors colors, SiteTypography typography, IReadOnlyList<ThemeFont> fonts, bool allowsSmallText, decimal brandHeight)
     {
+        BrandHeight = brandHeight;
         Colors = colors;
         Typography = typography;
         Fonts = fonts;
@@ -30,6 +40,28 @@ public sealed class SiteTheme : ValueObject
     /// <summary>Gets the self-hosted fonts in key order.</summary>
     public IReadOnlyList<ThemeFont> Fonts { get; }
 
+    /// <summary>Gets the height in rem of the brand image (the logo) in the header.</summary>
+    public decimal BrandHeight { get; }
+
+    /// <summary>
+    /// Gets the height in rem of the header in one row, which a cover hero leaves free for a header over it: the header's block
+    /// padding (2 × 1rem) plus the taller of <see cref="BrandHeight" /> and a navigation line. That line is the largest navigation
+    /// font size (the body's when the navigation role sets none) times its line height, plus the links' block padding (2 × 0.25rem),
+    /// rounded up to four decimals.
+    /// </summary>
+    public decimal HeaderHeight
+    {
+        get
+        {
+            var navigation = Effective(TypographyRole.Nav);
+            var body = Effective(TypographyRole.Body);
+            var size = (navigation.Size ?? body.Size)?.Max ?? FallbackNavigationSize;
+            var lineHeight = navigation.LineHeight ?? body.LineHeight ?? FallbackLineHeight;
+            var height = HeaderPadding + Math.Max(BrandHeight, (size * lineHeight) + NavigationLinkPadding);
+            return Math.Ceiling(height * 10000m) / 10000m;
+        }
+    }
+
     /// <summary>Gets a value indicating whether the owner allowed body text below 1rem and other text below 0.875rem.</summary>
     public bool AllowsSmallText { get; }
 
@@ -38,6 +70,7 @@ public sealed class SiteTheme : ValueObject
     /// <param name="typography">The typography.</param>
     /// <param name="fonts">The self-hosted fonts, if any.</param>
     /// <param name="allowSmallText">Whether body text below 1rem and other text below 0.875rem is allowed.</param>
+    /// <param name="brandHeight">The height in rem of the brand image in the header, from 1.5rem to 8rem.</param>
     /// <param name="colorLabel">The names of the colour roles in contrast messages, as in <see cref="Review" />.</param>
     /// <returns>The theme, or validation errors by field path, such as <c>colors.muted</c> or <c>typography.body.lineHeight</c>.</returns>
     public static Result<SiteTheme> Create(
@@ -45,9 +78,10 @@ public sealed class SiteTheme : ValueObject
         SiteTypography typography,
         IEnumerable<ThemeFont>? fonts = null,
         bool allowSmallText = false,
+        decimal brandHeight = DefaultBrandHeight,
         Func<ThemeColorRole, string?>? colorLabel = null)
     {
-        var draft = CreateDraft(colors, typography, fonts, allowSmallText);
+        var draft = CreateDraft(colors, typography, fonts, allowSmallText, brandHeight);
         if (!draft.TryGetValue(out var theme))
         {
             return draft;
@@ -62,9 +96,18 @@ public sealed class SiteTheme : ValueObject
     /// <param name="typography">The typography.</param>
     /// <param name="fonts">The self-hosted fonts, if any.</param>
     /// <param name="allowSmallText">Whether body text below 1rem and other text below 0.875rem is allowed.</param>
-    /// <returns>The theme, or errors on <c>fonts[i].key</c> for a repeated key and <c>typography.{role}.fontKey</c> for a missing font.</returns>
+    /// <param name="brandHeight">The height in rem of the brand image in the header; a draft only needs it positive.</param>
+    /// <returns>
+    /// The theme, or errors on <c>fonts[i].key</c> for a repeated key, <c>typography.{role}.fontKey</c> for a missing font and
+    /// <c>header.brandHeight</c> for a brand height that is not positive or has more than four decimals.
+    /// </returns>
     /// <exception cref="ArgumentNullException"><paramref name="colors" />, <paramref name="typography" /> or a font is <see langword="null" />.</exception>
-    public static Result<SiteTheme> CreateDraft(SiteColors colors, SiteTypography typography, IEnumerable<ThemeFont>? fonts = null, bool allowSmallText = false)
+    public static Result<SiteTheme> CreateDraft(
+        SiteColors colors,
+        SiteTypography typography,
+        IEnumerable<ThemeFont>? fonts = null,
+        bool allowSmallText = false,
+        decimal brandHeight = DefaultBrandHeight)
     {
         ArgumentNullException.ThrowIfNull(colors);
         ArgumentNullException.ThrowIfNull(typography);
@@ -92,9 +135,14 @@ public sealed class SiteTheme : ValueObject
             }
         }
 
+        if (brandHeight <= 0 || CssText.Round(brandHeight) != brandHeight)
+        {
+            errors.Add("header.brandHeight", "The brand height must be a positive size in rem with at most four decimals.");
+        }
+
         return errors.HasErrors
             ? errors.ToResult<SiteTheme>("The site theme is incomplete.")
-            : Result.Ok(new SiteTheme(colors, typography, list.OrderBy(font => font.Key, StringComparer.Ordinal).ToArray(), allowSmallText));
+            : Result.Ok(new SiteTheme(colors, typography, list.OrderBy(font => font.Key, StringComparer.Ordinal).ToArray(), allowSmallText, brandHeight));
     }
 
     /// <summary>Checks the readability rules.</summary>
@@ -126,6 +174,7 @@ public sealed class SiteTheme : ValueObject
         yield return Colors;
         yield return Typography;
         yield return AllowsSmallText;
+        yield return BrandHeight;
         yield return Fonts.Count;
         foreach (var font in Fonts)
         {
@@ -160,7 +209,7 @@ public sealed class SiteTheme : ValueObject
             [TypographyRole.Small] = TypographyStyle.Create(size: Fluid(0.875m, 0.9375m)).Value,
             [TypographyRole.Button] = TypographyStyle.Create(weight: 600).Value,
         });
-        return new SiteTheme(colors, typography, [], false);
+        return new SiteTheme(colors, typography, [], false, DefaultBrandHeight);
 
         static ThemeColor Pair(string light, string dark) => ThemeColor.Create(CssColor.FromString(light), CssColor.FromString(dark));
         static FontSize Fluid(decimal min, decimal max) => FontSize.Fluid(min, max).Value;
