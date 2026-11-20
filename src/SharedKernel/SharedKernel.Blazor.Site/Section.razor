@@ -1,13 +1,12 @@
 @inherits SiteComponent
-<section class="@CssClass(Media is null ? "site-section" : "site-section site-section--split")" aria-labelledby="@HeadingId" @attributes="AdditionalAttributes">
+<section class="@CssClass("site-section")" aria-labelledby="@HeadingId" @attributes="AdditionalAttributes">
     @if (Media is null)
     {
         @Text
     }
     else
     {
-        <div class="site-section__main">@Text</div>
-        <div class="site-section__media">@Media</div>
+        <Split Media="Media">@Text</Split>
     }
 </section>
 

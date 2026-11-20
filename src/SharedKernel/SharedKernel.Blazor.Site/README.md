@@ -70,7 +70,8 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `SiteHeader` | `header` with a brand slot, a labelled `nav` (`Label` is required when there are items), and an actions slot (`site-header__actions`). An item has either an `Href` or one level of children; an item with children is a native `details` that starts closed and shows a chevron that turns when it opens. The item that matches `CurrentPath` gets `aria-current="page"`, and the summary of its group gets `aria-current="true"` and the current item's style, so the group stays closed and does not cover the page. Below the `48rem` breakpoint an open group stacks the navigation on a row of its own, the group's links under its summary; from the breakpoint on they drop down over the page. `MenuLabel` collapses the navigation and the actions behind a menu button below the breakpoint, and `Placement` lays the header over a cover hero; see [Menu](#menu) and [Bands and photos](#bands-and-photos). |
 | `SiteFooter` | `footer` with a content slot and an optional `Legal` line. |
 | `Hero` | `Layout` `Split` (the default: text and image side by side from the breakpoint on) or `Cover` (the text centred over the image; see [Bands and photos](#bands-and-photos)). A cover's `CoverHeight` is `Page` (the default: at least 20rem below the breakpoint, 34.375rem from it on) or `Landing` (`site-hero--landing`: at least 20rem below the breakpoint, from it on 85% of the small viewport height between 34.375rem and 52rem); content can make either taller, and `Landing` on a split hero throws `ArgumentException`. The page's one `h1`, an optional `Eyebrow` line above it and `Subtitle` line under it, an image loaded eagerly with `fetchpriority="high"`, and an actions slot. With an eyebrow or a subtitle the heading is an `hgroup` (`site-hero__heading`): the eyebrow `p` (`site-hero__eyebrow`), the `h1` (`site-hero__title`), then the subtitle `p` (`site-hero__subtitle`), so reading order matches visual order and neither line enters the outline; with neither it is the `h1` alone. |
-| `Section` | `section` with a heading (`Level`, default 2), a decorative divider and an intro. Set `HeadingId` to give the heading that id and label the section by it (`aria-labelledby`), which makes it a named region; without it no id is generated, so prerendered and interactive markup match. `Media` splits it (`site-section--split`): the heading, intro and body in `site-section__main`, then the media in `site-section__media`, side by side from the breakpoint on and stacked below it, so reading order matches visual order. |
+| `Section` | `section` with a heading (`Level`, default 2), a decorative divider and an intro. Set `HeadingId` to give the heading that id and label the section by it (`aria-labelledby`), which makes it a named region; without it no id is generated, so prerendered and interactive markup match. `Media` makes its content a `Split`: the heading, intro and body in `site-split__main`, then the media in `site-split__media`. |
+| `Split` | Text (`ChildContent`) beside media (`Media`, required: `ArgumentNullException` without it), without a heading of its own: a plain `div`, never a landmark, so a heading-less band can put text and photos side by side. The text is in `site-split__main` and the media in `site-split__media`, two equal columns from the `48rem` breakpoint on and the media after the text below it, so reading order matches visual order; the media fills its column. `Section.Media` uses it, so both are one layout. |
 | `Band` | A full-width `div` (never a landmark) around content of the content width: a `Section`, or content without a heading such as a tagline and a `Byline`. `Tone` is `Default`, `Muted` (surface-alt), `Primary` (primary background, on-primary text) or `Image` (a lazy photo darkened by the normal-text scrim, on-primary text), which requires `Image`; an `Image` on another tone throws `ArgumentException`. A section inside a band loses its own vertical padding and keeps its semantics. |
 | `Byline` | A person: a lazy round photo (`Photo`, usually decorative), the `Name` and the `JobTitle`, each a `p`. |
 | `VideoLink` | A link to a video on its own site instead of an embedded player: a lazy, decorative and self-hosted `Poster` (a described or remote poster throws `ArgumentException`), a play mark on the normal-text scrim, the visible `Title`, and a visually hidden `SiteHint` such as "(opens YouTube)"; the link's name is the title then the hint. `Href` must be an address that `WebUrl.CreateHttps` accepts (absolute `https`); the link carries `rel="noreferrer"`. No frame, no script, and no request to the video's site before the visitor's click. |
@@ -80,7 +81,7 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `FactsTable` | `table` with a required `caption` and `th scope="row"` headers. |
 | `Disclosure` | Native `details` and `summary`; a tab substitute without script. |
 | `Quote` | `figure` with a `blockquote` and a `cite` caption. In a `Primary` or `Image` band it drops its background and takes the on-primary colour, its rule included. |
-| `ImageGrid` | `figure` per `GalleryImage` (a `ResponsiveImage` and an optional caption), lazy loading except the first `EagerCount`; `PrioritizeFirstImage` loads the first one eagerly with `fetchpriority="high"`. `Layout` `Grid` (the default) is rows of equal columns; `Mosaic` (`site-image-grid--mosaic`) is a collage of mixed aspect ratios: columns at least 14rem wide filled from top to bottom in document order, each image at its own aspect ratio, never cropped. |
+| `ImageGrid` | `figure` per `GalleryImage` (a `ResponsiveImage` and an optional caption), lazy loading except the first `EagerCount`; `PrioritizeFirstImage` loads the first one eagerly with `fetchpriority="high"`. `Layout` `Grid` (the default) is rows of equal columns; `Mosaic` (`site-image-grid--mosaic`) is a collage of mixed aspect ratios: columns filled from top to bottom in document order, each image at its own aspect ratio, never cropped. In both, columns are at least 14rem wide and share the full width of the container, as many as there are images while they fit, so one image fills its container, in a section or in a `Split`'s media column. An image is at most 40rem or 80% of the viewport tall; a taller one is shown whole within that height (`object-fit: contain`). |
 | `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links; no `address` when there are no lines and no channels. `PhoneText` shows the number as written (`+55 (11) 99999-0000`) while the link uses the digits; it must be the same number as `Phone`. The WhatsApp link shows `WhatsAppLabel`. |
 | `LanguageSwitcher` | Labelled `nav` of links with `hreflang`, `lang` and `aria-current="true"` on the current language. |
 | `PageHead` | Title, description, canonical link, OpenGraph basics and `hreflang` alternates including `x-default`; each optional tag is left out when its parameter is unset. `Robots` writes `<meta name="robots">` (`noindex`, `noindex, nofollow`). An error or not-found page sets `Robots="noindex"` and no `CanonicalUrl`, `Alternates` or `DefaultAlternateUrl`, so it has no canonical, `og:url` or `hreflang` link. |
@@ -99,7 +100,7 @@ localize them.
 ### Menu
 
 With `MenuLabel` (for example "Menu") the navigation and the actions are the content of a `details` element whose `summary`, with
-three bars before the label, is the menu button. Below the `48rem` breakpoint the button sits beside the brand, starts closed, and opens
+three bars before the label, is the menu button. Below the `60rem` header breakpoint the button sits beside the brand, starts closed, and opens
 the navigation as a column with the actions under it, in a row of its own; it works with the mouse, Enter and Space, and Chromium
 exposes it as a disclosure with its expanded state. From the breakpoint on, a browser that supports `::details-content` (Baseline
 2025: Chrome 131, Safari 18.4, Firefox 143) shows the content inline and hides the button, and an older browser keeps the button, so
@@ -107,6 +108,12 @@ the menu works everywhere without script or form. There is one `nav` in the docu
 is hidden, so assistive technology never meets it twice. `details`/`summary` was chosen over the Popover API (`popovertarget`): the
 popover is Baseline 2025 too, but it opens centred in the top layer, and placing it under its button needs anchor positioning
 (Baseline 2026), while a closed `details` falls back to a working button everywhere.
+
+The header breakpoint is `60rem` (960px), above the `48rem` layout breakpoint: a header with a brand, five links and two language
+links wraps to two rows at 800px, and the consumer's earlier site switched to its menu button below about 921px; 60rem is the next
+round step above that, with room for labels that are longer in another language. One breakpoint serves the menu and the header over
+the hero, so between 48rem and 60rem the header is the primary band with its menu button above the hero, and an open group stays in
+the menu's column. A site's header that needs more room breaks to two rows above it; keep the navigation short.
 
 ### Bands and photos
 
@@ -125,7 +132,7 @@ readable on any photo the owner uploads, an all-white one included:
   `--site-scrim-boost`, so their normal-size text reaches 4.5:1 too. Without an image a cover hero is a band of the primary colour.
 
 `SiteHeader` with `Placement="HeaderPlacement.OverHero"` is a band of the primary colour, its brand, links, menu button and focus ring
-the on-primary colour in the light scheme, and from the `48rem` breakpoint on it lies over the hero: transparent, with no strip. It does so only when a `Cover` hero is the first child of the element right after the header,
+the on-primary colour in the light scheme, and from the `60rem` header breakpoint (see [Menu](#menu)) on it lies over the hero: transparent, with no strip. It does so only when a `Cover` hero is the first child of the element right after the header,
 as in `<SiteHeader … /><main><Hero Layout="HeroLayout.Cover" … />…</main>`; on any other page, and below the breakpoint, it stays above
 the content as its primary band, so it can never cover a page that does not open with a cover hero. The rule is structural (`:has(+ * > .site-hero--cover:first-child)`)
 instead of a second parameter on `Hero`, so the two cannot disagree. That hero leaves the header's height free: its top padding is
@@ -253,7 +260,7 @@ surface-alt, accent on surface, on-primary on primary and on primary-hover, on-a
 surface and surface-alt); a test computes the ratios for both sides of every `light-dark()` pair. Buttons change to the hover tokens
 on hover, never to a filter, so the hover state keeps the checked contrast. Light
 values: text 14.7:1, muted 7.6:1, primary 6.7:1 and accent 5.0:1 on white. The stylesheet respects `prefers-reduced-motion`, shows a
-visible `:focus-visible` ring, is mobile first with one `48rem` breakpoint, and loads no fonts, images or other URLs.
+visible `:focus-visible` ring, is mobile first with a `48rem` layout breakpoint and a `60rem` header breakpoint, and loads no fonts, images or other URLs.
 
 ## Owner-editable theme
 

@@ -630,8 +630,16 @@ a {
     max-width: 60ch;
 }
 
-/* A section with media: the media follows the text below the breakpoint and fills the second column from it on. */
-.site-section__media {
+/*
+ * Split: text then media, with or without a section around them. Below the breakpoint the media follows the text; from it on they are
+ * two equal columns and the media fills its column.
+ */
+.site-split__main,
+.site-split__media {
+    min-width: 0;
+}
+
+.site-split__media {
     margin-top: var(--site-space-4);
 }
 
@@ -816,9 +824,13 @@ a {
 }
 
 /* Image grid. */
+/*
+ * Image grid: columns at least 14rem wide that share the full width, as many as there are images while they fit, so one image fills
+ * its container. An image is never taller than 40rem or 80% of the viewport; a taller one is shown whole inside that height.
+ */
 .site-image-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
     gap: var(--site-space-3);
 }
 
@@ -829,6 +841,8 @@ a {
 .site-image-grid__item img {
     display: block;
     width: 100%;
+    max-height: min(40rem, 80svh);
+    object-fit: contain;
     border-radius: var(--site-radius);
 }
 
@@ -850,6 +864,23 @@ a {
 .site-image-grid--mosaic .site-image-grid__item {
     break-inside: avoid;
     margin-bottom: var(--site-space-3);
+}
+
+/* With fewer images than would fit, the mosaic has one column per image, so they share the full width. */
+.site-image-grid--mosaic:has(> :last-child:nth-child(1)) {
+    columns: 14rem 1;
+}
+
+.site-image-grid--mosaic:has(> :last-child:nth-child(2)) {
+    columns: 14rem 2;
+}
+
+.site-image-grid--mosaic:has(> :last-child:nth-child(3)) {
+    columns: 14rem 3;
+}
+
+.site-image-grid--mosaic:has(> :last-child:nth-child(4)) {
+    columns: 14rem 4;
 }
 
 /* Byline: a round photo beside the name and the job title. */
@@ -1029,23 +1060,23 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
         grid-template-columns: 1fr;
     }
 
-    .site-section--split {
+    .site-split {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: var(--site-space-5);
         align-items: center;
     }
 
-    .site-section--split .site-section__media {
+    .site-split__media {
         margin-top: 0;
     }
 
-    .site-header__menu .site-nav__list {
-        flex-direction: row;
+    .site-hero--cover {
+        min-height: 34.375rem;
     }
 
-    .site-header__menu .site-header__actions {
-        margin-top: 0;
+    .site-hero--landing {
+        min-height: clamp(34.375rem, 85svh, 52rem);
     }
 
     .site-nav:has(.site-nav__group[open]) {
@@ -1067,10 +1098,32 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
 }
 
 /*
- * From the breakpoint on, a browser that can style the content of a details element shows the menu's content inline and hides its
- * button; an older one keeps the button.
+ * The header breakpoint, 60rem: below it a header with a menu shows the menu button, and a header placed over the hero is the primary
+ * band above it. Between the 48rem layout breakpoint and it, the open menu keeps its column and an open group stays in it.
  */
-@media (min-width: 48rem) {
+@media (48rem <= width < 60rem) {
+    .site-header__menu .site-nav__list:has(> .site-nav__item > .site-nav__group[open]) {
+        flex-direction: column;
+    }
+
+    .site-header__menu .site-nav__group[open] > .site-nav__sublist {
+        position: static;
+        min-width: 0;
+        background: none;
+        border: 0;
+    }
+}
+
+@media (min-width: 60rem) {
+    .site-header__menu .site-nav__list {
+        flex-direction: row;
+    }
+
+    .site-header__menu .site-header__actions {
+        margin-top: 0;
+    }
+
+    /* A browser that can style the content of a details element shows the menu's content inline and hides its button. */
     @supports selector(::details-content) {
         .site-header__toggle {
             display: none;
@@ -1082,15 +1135,13 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
             content-visibility: visible;
         }
     }
-}
 
-/*
- * From the breakpoint on, a header placed over the hero lies transparent over a cover hero that is the first child of the element
- * right after it, and the hero leaves the header's height free. Over a photo the header adds the scrim boost, fading out below it, so
- * its text keeps 4.5:1 while the hero's large text has the large-text scrim. Below the breakpoint, and on a page that does not open
- * with a cover hero, the header stays above the content as its primary band.
- */
-@media (min-width: 48rem) {
+    /*
+     * A header placed over the hero lies transparent over a cover hero that is the first child of the element right after it, and
+     * the hero leaves the header's height free. Over a photo the header adds the scrim boost, fading out below it, so its text keeps
+     * 4.5:1 while the hero's large text has the large-text scrim. On a page that does not open with a cover hero the header stays
+     * above the content as its primary band.
+     */
     .site-header--over-hero:has(+ * > .site-hero--cover:first-child) {
         position: absolute;
         inset: 0 0 auto;
@@ -1113,14 +1164,6 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
 
     .site-header--over-hero + * > .site-hero--cover:first-child {
         padding-top: calc(var(--site-header-height) + var(--site-space-5));
-    }
-
-    .site-hero--cover {
-        min-height: 34.375rem;
-    }
-
-    .site-hero--landing {
-        min-height: clamp(34.375rem, 85svh, 52rem);
     }
 }
 

@@ -32,7 +32,8 @@ internal sealed class LayoutPage : IAsyncDisposable
 
     /// <summary>
     /// Renders a component as static server-side rendering does and serves it from <c>http://site.test/</c> with the stylesheet
-    /// inlined, and every other address of that site as the all-white photo <see cref="BandsSample.WhitePhoto" />, so images load
+    /// inlined, and every other address of that site as an all-white photo, 9 by 16 for <see cref="GallerySample.TallPhoto" /> and 16 by
+    /// 9 otherwise, so images load
     /// from root-relative addresses and nothing leaves the browser.
     /// </summary>
     /// <typeparam name="TComponent">The component.</typeparam>
@@ -50,7 +51,7 @@ internal sealed class LayoutPage : IAsyncDisposable
         await page.RouteAsync("**/*", route => route.Request.Url == "http://site.test/"
             ? route.FulfillAsync(new RouteFulfillOptions { ContentType = "text/html; charset=utf-8", Body = html })
             : route.Request.Url.StartsWith("http://site.test/", StringComparison.Ordinal)
-                ? route.FulfillAsync(new RouteFulfillOptions { ContentType = "image/svg+xml", Body = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"9\"><rect width=\"16\" height=\"9\" fill=\"#ffffff\"/></svg>" })
+                ? route.FulfillAsync(new RouteFulfillOptions { ContentType = "image/svg+xml", Body = route.Request.Url.EndsWith(GallerySample.TallPhoto, StringComparison.Ordinal) ? WhiteSvg(9, 16) : WhiteSvg(16, 9) })
                 : route.AbortAsync());
         await page.GotoAsync("http://site.test/");
         return new LayoutPage(page);
@@ -190,6 +191,9 @@ internal sealed class LayoutPage : IAsyncDisposable
     private static ElementBox ToBox(LocatorBoundingBoxResult? box, string selector) => box is null
         ? throw new InvalidOperationException($"An element of {selector} is not rendered.")
         : new ElementBox(Math.Round(box.X, 1), Math.Round(box.Y, 1), Math.Round(box.Width, 1), Math.Round(box.Height, 1));
+
+    private static string WhiteSvg(int width, int height) =>
+        $"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{width}\" height=\"{height}\"><rect width=\"{width}\" height=\"{height}\" fill=\"#ffffff\"/></svg>";
 
     private static async Task<string> Render<TComponent>(IDictionary<string, object?> parameters)
         where TComponent : IComponent

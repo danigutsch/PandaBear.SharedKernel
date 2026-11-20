@@ -144,11 +144,13 @@ public sealed class SectionTests : BunitContext
 
         // Assert
         var section = cut.Find("section");
-        BunitElementAssertions.HasClass(section.ClassList, "site-section--split");
-        section.Children.Select(child => child.ClassName).ShouldBe(["site-section__main", "site-section__media"]);
-        section.Children[0].Children.Select(child => child.ClassName).ShouldBe(["site-section__header", "site-section__body"]);
-        cut.Find(".site-section__main #more").ShouldNotBeNull();
-        cut.Find(".site-section__media #photo").ShouldNotBeNull();
+        section.ClassName.ShouldBe("site-section");
+        var split = section.Children.ShouldHaveSingleItem();
+        split.ClassName.ShouldBe("site-split");
+        split.Children.Select(child => child.ClassName).ShouldBe(["site-split__main", "site-split__media"]);
+        split.Children[0].Children.Select(child => child.ClassName).ShouldBe(["site-section__header", "site-section__body"]);
+        cut.Find(".site-split__main #more").ShouldNotBeNull();
+        cut.Find(".site-split__media #photo").ShouldNotBeNull();
         cut.FindAll("aside").ShouldBeEmpty();
     }
 }

@@ -33,8 +33,9 @@ public sealed partial class Section
     public bool Divider { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets content beside the text, such as photos: from the <c>48rem</c> breakpoint on it fills the second column, after the
-    /// heading, intro and body, and below the breakpoint it follows them, so reading order matches visual order.
+    /// Gets or sets content beside the text, such as photos. The section's content is then a <see cref="Split" />: the heading, intro
+    /// and body in its first column and the media in the second from the <c>48rem</c> breakpoint on, the media after them below it,
+    /// so reading order matches visual order.
     /// </summary>
     [Parameter]
     public RenderFragment? Media { get; set; }

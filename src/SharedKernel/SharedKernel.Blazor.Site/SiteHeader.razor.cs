@@ -46,7 +46,7 @@ public sealed partial class SiteHeader
 
     /// <summary>
     /// Gets or sets the label of the menu button, for example "Menu". Caller-supplied so it can be localized. When set, the navigation
-    /// and the actions collapse behind that button below the <c>48rem</c> breakpoint; from it on they show inline and the button is
+    /// and the actions collapse behind that button below the <c>60rem</c> header breakpoint; from it on they show inline and the button is
     /// hidden. Null or blank keeps them always shown.
     /// </summary>
     [Parameter]

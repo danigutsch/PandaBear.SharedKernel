@@ -11,11 +11,14 @@ public sealed class SiteBandsBrowserTests(ChromiumFixture chromium) : IClassFixt
 {
     private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
-    public async Task On_a_phone_the_menu_hides_the_navigation_and_actions_until_its_toggle_opens_them()
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(375)]
+    [InlineData(800)]
+    [InlineData(959)]
+    public async Task Below_the_header_breakpoint_the_menu_hides_the_navigation_and_actions_until_its_toggle_opens_them(int width)
     {
         // Arrange
-        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, 375);
+        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, width);
         var landmarksBefore = await page.NavigationLandmarks();
         var navigationBefore = await page.IsVisible(".site-nav");
         var actionBefore = await page.IsVisible("#action");
@@ -45,7 +48,28 @@ public sealed class SiteBandsBrowserTests(ChromiumFixture chromium) : IClassFixt
         toggle.Y.ShouldBeLessThan(brand.Bottom);
         navigation.Y.ShouldBeGreaterThanOrEqualTo(toggle.Bottom);
         var scrollWidth = await page.ScrollWidth();
-        scrollWidth.ShouldBeLessThanOrEqualTo(375);
+        scrollWidth.ShouldBeLessThanOrEqualTo(width);
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task Between_the_layout_and_header_breakpoints_an_open_group_stays_in_the_menu_column()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, 800);
+        await page.Page.ClickAsync(".site-header__toggle");
+
+        // Act
+        await page.OpenGroup();
+
+        // Assert
+        var items = await page.Boxes(".site-nav__list > .site-nav__item");
+        var summary = await page.Box(".site-nav__group > summary");
+        var sublist = await page.Box(".site-nav__sublist");
+        var position = await page.Style(".site-nav__sublist", "position");
+        position.ShouldBe("static");
+        items.Select(item => item.X).Distinct().ShouldHaveSingleItem();
+        sublist.Y.ShouldBeGreaterThanOrEqualTo(summary.Bottom);
+        items[2].Y.ShouldBeGreaterThanOrEqualTo(sublist.Bottom);
     }
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
@@ -69,11 +93,13 @@ public sealed class SiteBandsBrowserTests(ChromiumFixture chromium) : IClassFixt
         landmarks.ShouldBe(1);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
-    public async Task On_a_desktop_the_menu_shows_inline_without_a_toggle_and_one_navigation_landmark()
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(960)]
+    [InlineData(1280)]
+    public async Task From_the_header_breakpoint_the_menu_shows_inline_without_a_toggle_and_one_navigation_landmark(int width)
     {
         // Arrange & Act
-        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, 1280);
+        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, width);
 
         // Assert
         var toggleVisible = await page.IsVisible(".site-header__toggle");
@@ -99,11 +125,13 @@ public sealed class SiteBandsBrowserTests(ChromiumFixture chromium) : IClassFixt
         focused.ShouldBe("Home");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
-    public async Task On_a_desktop_the_header_lies_over_the_cover_hero_and_the_scrim_fades_from_normal_to_large_text_contrast()
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(960)]
+    [InlineData(1280)]
+    public async Task On_a_desktop_the_header_lies_over_the_cover_hero_and_the_scrim_fades_from_normal_to_large_text_contrast(int width)
     {
         // Arrange
-        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, 1280);
+        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, width);
         await page.ShowLoaded(".site-hero");
         var header = await page.Box(".site-header");
         var hero = await page.Box(".site-hero");
@@ -172,6 +200,8 @@ public sealed class SiteBandsBrowserTests(ChromiumFixture chromium) : IClassFixt
 
     [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     [InlineData(375, false, nameof(HeaderPlacement.OverHero), "rgb(29, 78, 216)", "rgb(255, 255, 255)")]
+    [InlineData(800, false, nameof(HeaderPlacement.OverHero), "rgb(29, 78, 216)", "rgb(255, 255, 255)")]
+    [InlineData(959, false, nameof(HeaderPlacement.OverHero), "rgb(29, 78, 216)", "rgb(255, 255, 255)")]
     [InlineData(1280, true, nameof(HeaderPlacement.OverHero), "rgb(29, 78, 216)", "rgb(255, 255, 255)")]
     [InlineData(1280, false, nameof(HeaderPlacement.Above), "rgb(255, 255, 255)", "rgb(31, 41, 55)")]
     public async Task The_header_stays_above_the_page_on_a_phone_before_other_content_and_when_placed_above(int width, bool leadText, string placement, string background, string linkColor)
@@ -215,11 +245,13 @@ public sealed class SiteBandsBrowserTests(ChromiumFixture chromium) : IClassFixt
         behindLink.ShouldBe("#1d4ed8");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
-    public async Task On_a_desktop_the_header_over_the_hero_is_exactly_the_header_height_and_sizes_the_logo()
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(960)]
+    [InlineData(1280)]
+    public async Task On_a_desktop_the_header_over_the_hero_is_exactly_the_header_height_and_sizes_the_logo(int width)
     {
         // Arrange & Act
-        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, 1280);
+        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, width);
         await page.ShowLoaded(".site-header");
 
         // Assert
@@ -291,11 +323,11 @@ public sealed class SiteBandsBrowserTests(ChromiumFixture chromium) : IClassFixt
     {
         // Arrange & Act
         await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, width);
-        await page.ShowLoaded(".site-section--split");
+        await page.ShowLoaded(".site-section .site-split");
 
         // Assert
-        var main = await page.Box(".site-section__main");
-        var media = await page.Box(".site-section__media");
+        var main = await page.Box(".site-section .site-split__main");
+        var media = await page.Box(".site-section .site-split__media");
         if (width < 768)
         {
             media.Y.ShouldBeGreaterThanOrEqualTo(main.Bottom);
@@ -321,7 +353,7 @@ public sealed class SiteBandsBrowserTests(ChromiumFixture chromium) : IClassFixt
         // Act
         var figures = await page.Boxes(".site-image-grid--mosaic .site-image-grid__item");
         var cropped = await page.Page.EvaluateAsync<int>(
-            "() => [...document.querySelectorAll('.site-image-grid--mosaic img')].filter(image => Math.abs(image.clientWidth / image.clientHeight - image.naturalWidth / image.naturalHeight) > 0.02 || getComputedStyle(image).objectFit !== 'fill').length");
+            "() => [...document.querySelectorAll('.site-image-grid--mosaic img')].filter(image => getComputedStyle(image).objectFit !== 'contain' && (getComputedStyle(image).objectFit !== 'fill' || Math.abs(image.clientWidth / image.clientHeight - image.naturalWidth / image.naturalHeight) > 0.02)).length");
 
         // Assert
         figures.Select(figure => figure.X).Distinct().Count().ShouldBeGreaterThan(1);

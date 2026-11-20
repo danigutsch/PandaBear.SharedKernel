@@ -660,3 +660,9 @@ const PandaBear.Blazor.Site.Theming.SiteTheme.DefaultBrandHeight = 2.5 -> decima
 static PandaBear.Blazor.Site.Theming.SiteTheme.Create(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, decimal brandHeight = 2.5, System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
 static PandaBear.Blazor.Site.Theming.SiteTheme.CreateDraft(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, decimal brandHeight = 2.5) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
 static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.HeaderVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Blazor.Site.Split
+PandaBear.Blazor.Site.Split.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.Split.ChildContent.set -> void
+PandaBear.Blazor.Site.Split.Media.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.Split.Media.set -> void
+PandaBear.Blazor.Site.Split.Split() -> void

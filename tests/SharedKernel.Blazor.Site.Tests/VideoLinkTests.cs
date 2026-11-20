@@ -107,11 +107,13 @@ public sealed class VideoLinkTests : BunitContext
             .Add(component => component.SiteHint, "(opens Vimeo)")
             .Add(component => component.Poster, Image("/poster.jpg", ImageAlternative.Decorative()))
             .Add(component => component.Class, "extra")
-            .AddUnmatched("hreflang", "pt"));
+            .AddUnmatched("hreflang", "pt")
+            .AddUnmatched("lang", "pt-BR"));
 
         // Assert
         var link = cut.Find("a");
         BunitElementAssertions.HasClass(link.ClassList, "extra");
         link.GetAttribute("hreflang").ShouldBe("pt");
+        link.GetAttribute("lang").ShouldBe("pt-BR");
     }
 }
