@@ -27,6 +27,16 @@ NativeAOT analyzers are enabled; packed NativeAOT and Windows execution are not 
 To hand bytes you already hold to a `Stream` API without copying, use .NET's `System.IO.ReadOnlyMemoryStream`, which
 replaced this package's type of the same name in .NET 11.
 
+## Atomic streaming writes
+
+`AtomicFile.CreateIfAbsent` publishes a new file and returns whether this call won publication.
+`AtomicFile.Replace` publishes over any previous contents. Both take a callback that can stream and
+verify content before publication. Create the destination directory before calling either method.
+If an existing file inventory reserves a temporary name prefix, pass that prefix to the
+`Replace` overload. Temporary names consist of the prefix, a 32-digit hexadecimal identifier,
+and `.tmp`.
+For text files containing secrets, use `SecureFile.WriteAllText` for owner-only Unix permissions.
+
 ## Secret files and path identity
 
 `SecureFile.WriteAllText` writes text that should stay private, such as a decrypted export: on Unix the file is readable and

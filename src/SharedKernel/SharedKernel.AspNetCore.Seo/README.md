@@ -22,6 +22,13 @@ application keeps the crawler policy and the URL inclusion policy.
   `CanonicalOriginOptions.Value` is the origin and `Absolute("/path")` builds an address on it. Build canonical, `hreflang`, OpenGraph and
   sitemap addresses from it, never from the request's `Host` header. The value is read without the reflection-based binder.
 
+## Localized pages
+
+Pass each published language link and its optional last-modified value to `LocalizedSitemap.Build`.
+The builder emits one entry per link, in the same order, with the full set of reciprocal alternates.
+Supply the fallback URI separately when the site uses `x-default`, including when that URI redirects.
+Pass the resulting entries to `SitemapXmlSerializer.Serialize`.
+
 ## Install
 
 ```sh
