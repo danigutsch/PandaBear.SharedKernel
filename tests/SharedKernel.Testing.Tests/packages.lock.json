@@ -364,6 +364,9 @@
           "xunit.v3.runner.common": "[4.0.3]"
         }
       },
+      "PandaBear.SharedKernel.IO": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.MalwareScanning": {
         "type": "Project"
       },
@@ -437,7 +440,10 @@
         }
       },
       "PandaBear.SharedKernel.Testing.Snapshots": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )"
+        }
       },
       "PandaBear.SharedKernel.Testing.Web": {
         "type": "Project"
