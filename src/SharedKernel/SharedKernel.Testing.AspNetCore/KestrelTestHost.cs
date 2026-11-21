@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +9,8 @@ namespace PandaBear.Testing.AspNetCore;
 /// <summary>Starts applications on Kestrel for out-of-process test clients such as browsers.</summary>
 public static class KestrelTestHost
 {
+    private const string LoopbackAddress = "http://127.0.0.1:0";
+
     /// <summary>Starts the application's real entry point on Kestrel at a loopback address with an ephemeral port.</summary>
     /// <remarks>
     /// The listening address is supplied as the <c>urls</c> setting before the host is built, not through
@@ -30,9 +34,30 @@ public static class KestrelTestHost
         var settings = configuration is null
             ? new Dictionary<string, string?>()
             : new Dictionary<string, string?>(configuration);
-        settings["urls"] = "http://127.0.0.1:0";
+        settings[WebHostDefaults.ServerUrlsKey] = LoopbackAddress;
 
         var factory = WebApplicationTestHost.Create<TEntryPoint>(environment, configureTestServices, null, settings);
+        return StartConfiguredFactory(factory);
+    }
+
+    /// <summary>Starts a derived factory on loopback Kestrel while keeping existing host and service overrides.</summary>
+    /// <typeparam name="TEntryPoint">A type from the application's entry-point assembly.</typeparam>
+    /// <param name="factory">The existing factory. Its lifetime remains the caller's responsibility.</param>
+    /// <returns>The running host, which owns the derived factory.</returns>
+    /// <exception cref="ArgumentNullException">The factory is null.</exception>
+    /// <exception cref="InvalidOperationException">The server published no listening address.</exception>
+    public static KestrelTestHost<TEntryPoint> StartFromFactory<TEntryPoint>(WebApplicationFactory<TEntryPoint> factory)
+        where TEntryPoint : class
+    {
+        ArgumentNullException.ThrowIfNull(factory);
+
+        var derived = factory.WithWebHostBuilder(static builder => builder.UseSetting(WebHostDefaults.ServerUrlsKey, LoopbackAddress));
+        return StartConfiguredFactory(derived);
+    }
+
+    private static KestrelTestHost<TEntryPoint> StartConfiguredFactory<TEntryPoint>(WebApplicationFactory<TEntryPoint> factory)
+        where TEntryPoint : class
+    {
         try
         {
             factory.UseKestrel();
