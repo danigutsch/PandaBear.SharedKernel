@@ -86,7 +86,7 @@ These commands and workload requirements follow the [official NativeAOT prerequi
 
 ## Status evidence
 
-The repository-wide build badge links to the [main validation workflow](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml); it reports repository validation rather than per-package coverage or publication. Coverage is collected locally with `coverlet.MTP`; no hosted coverage service or percentage is configured. Registry publication is deferred, so no version/publication badge may claim a public package exists. Add badges only when intended readers can access their actual evidence without credentials in URLs.
+The repository-wide build badge links to the [main validation workflow](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml); it reports repository validation rather than per-package coverage or publication. Coverage is collected locally with `coverlet.MTP`; no hosted coverage service is configured. The `coverage-gate` job of the main validation workflow enforces 90% coverage of the changed executable lines and conditions of a pull request. Registry publication is deferred, so no version/publication badge may claim a public package exists. Add badges only when intended readers can access their actual evidence without credentials in URLs.
 
 ## Engineering review guidance
 
