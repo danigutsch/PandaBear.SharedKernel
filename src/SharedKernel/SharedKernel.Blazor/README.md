@@ -153,6 +153,18 @@ attributes. Set `Help` for an inline description or `Inline` for a label that fo
 Leave `InputId` unset to render just the messages for a group. `EditContextErrorSummary.Build` accepts
 an ordered sequence of field identifiers and focus target IDs for use with `ErrorSummary`.
 
+## Text input with a typed value
+
+Use `ParsedTextInputState<TValue>` to display edited text that may be temporarily invalid. Give it a value
+formatter and a parser that returns the typed value and an optional validation message. Bind it to the
+current `EditContext`, `FieldIdentifier` and value on each parameter update. Display its `Text` and send a
+changed value back to the model only when `TrySetText` returns true.
+
+The form's validation request rechecks the text and attaches the parser's message to the field. Rerenders
+with the same accepted value keep the text, even if the bound field moves. A different model value resets
+the text. Dispose the state with its owning component to detach validation and clear its messages. The
+caller supplies number styles, scale, optionality, messages and the rendered control.
+
 ## Notes
 
 - Link targets in `ErrorSummary` are fragment links on the current page; browsers move focus to a focusable target of a fragment navigation.

@@ -221,3 +221,9 @@ PandaBear.Blazor.NamedFormField.InputId.set -> void
 PandaBear.Blazor.NamedFormField.Label.get -> string?
 PandaBear.Blazor.NamedFormField.Label.set -> void
 static PandaBear.Blazor.EditContextErrorSummary.Build(Microsoft.AspNetCore.Components.Forms.EditContext! context, System.Collections.Generic.IEnumerable<(Microsoft.AspNetCore.Components.Forms.FieldIdentifier Field, string! TargetId)>! fields) -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.ErrorSummaryItem!>!
+PandaBear.Blazor.ParsedTextInputState<TValue>
+PandaBear.Blazor.ParsedTextInputState<TValue>.Bind(Microsoft.AspNetCore.Components.Forms.EditContext! context, Microsoft.AspNetCore.Components.Forms.FieldIdentifier field, TValue value) -> void
+PandaBear.Blazor.ParsedTextInputState<TValue>.Dispose() -> void
+PandaBear.Blazor.ParsedTextInputState<TValue>.ParsedTextInputState(System.Func<TValue, string?>! format, System.Func<string!, (TValue Value, string? Error)>! parse) -> void
+PandaBear.Blazor.ParsedTextInputState<TValue>.Text.get -> string!
+PandaBear.Blazor.ParsedTextInputState<TValue>.TrySetText(string! text, out TValue value) -> bool
