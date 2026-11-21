@@ -145,6 +145,7 @@ flowchart TB
     SharedKernel_Testing_Messaging[SharedKernel.Testing.Messaging] --> SharedKernel_Messaging_IntegrationEvents[SharedKernel.Messaging.IntegrationEvents]
     SharedKernel_Testing_ObjectStorage[SharedKernel.Testing.ObjectStorage] --> SharedKernel_ObjectStorage[SharedKernel.ObjectStorage]
     SharedKernel_Testing_Playwright[SharedKernel.Testing.Playwright] --> SharedKernel_Testing_AspNetCore[SharedKernel.Testing.AspNetCore]
+    SharedKernel_Testing_Snapshots[SharedKernel.Testing.Snapshots] --> SharedKernel_IO[SharedKernel.IO]
     SharedKernel_Testing_Xunit[SharedKernel.Testing.Xunit] --> SharedKernel_Testing[SharedKernel.Testing]
     SharedKernel_UploadSanitizing[SharedKernel.UploadSanitizing] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_Vault[SharedKernel.Vault] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
