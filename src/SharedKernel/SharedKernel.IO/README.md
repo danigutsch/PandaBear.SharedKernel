@@ -32,6 +32,7 @@ replaced this package's type of the same name in .NET 11.
 `AtomicFile.CreateIfAbsent` publishes a new file and returns whether this call won publication.
 `AtomicFile.Replace` publishes over any previous contents. Both take a callback that can stream and
 verify content before publication. Create the destination directory before calling either method.
+On Unix, create-if-absent publication requires a filesystem that supports hard links.
 If an existing file inventory reserves a temporary name prefix, pass that prefix to the
 `Replace` overload. Temporary names consist of the prefix, a 32-digit hexadecimal identifier,
 and `.tmp`.
