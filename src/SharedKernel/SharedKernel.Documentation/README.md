@@ -124,3 +124,13 @@ generator sorts those inputs and escapes their display text. It applies the
 same generated marker, path ownership, atomic update, and check-only behavior
 as the configuration-file entry point. Keep the source metadata, its
 validation, table classifications, and displayed labels in the caller.
+
+## Grafana verification
+
+`GrafanaVerification` compares typed panel observations and target sequences. Callers
+provide required-data panel titles, renderer observations, and the expected and observed
+query targets. The panel result identifies missing required panels, rendering failures,
+query errors, and empty panels that should contain data. Provisioning checks compare
+ordered target identities and original query expressions. A `GrafanaQueryObservation`
+checks expected data after query execution. Hosts own browser observation, datasource
+requests, dashboard inputs, smoke traffic, and alert requirements.

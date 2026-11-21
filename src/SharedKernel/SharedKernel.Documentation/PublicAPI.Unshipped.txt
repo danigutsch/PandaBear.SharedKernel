@@ -50,3 +50,78 @@ PandaBear.Documentation.DataOwnershipNode.DataOwnershipNode(string! id, string! 
 PandaBear.Documentation.DataOwnershipNode.Id.get -> string!
 PandaBear.Documentation.DataOwnershipNode.LabelLines.get -> System.Collections.Generic.IReadOnlyList<string!>!
 static PandaBear.Documentation.DocumentationGenerator.RunDataOwnership(string! rootPath, string! docsPath, string! generatorName, string! blockName, string! targetPath, PandaBear.Documentation.DataOwnershipDiagram! diagram, bool checkOnly) -> PandaBear.Documentation.DocumentationGenerationResult!
+PandaBear.Documentation.GrafanaPanelIssues
+PandaBear.Documentation.GrafanaPanelIssues.Missing = 1 -> PandaBear.Documentation.GrafanaPanelIssues
+PandaBear.Documentation.GrafanaPanelIssues.NoData = 8 -> PandaBear.Documentation.GrafanaPanelIssues
+PandaBear.Documentation.GrafanaPanelIssues.None = 0 -> PandaBear.Documentation.GrafanaPanelIssues
+PandaBear.Documentation.GrafanaPanelIssues.NotDrawn = 2 -> PandaBear.Documentation.GrafanaPanelIssues
+PandaBear.Documentation.GrafanaPanelIssues.QueryError = 4 -> PandaBear.Documentation.GrafanaPanelIssues
+PandaBear.Documentation.GrafanaPanelObservation
+PandaBear.Documentation.GrafanaPanelObservation.<Clone>$() -> PandaBear.Documentation.GrafanaPanelObservation!
+PandaBear.Documentation.GrafanaPanelObservation.Deconstruct(out string! Title, out bool Drawn, out bool NoData, out bool QueryError) -> void
+PandaBear.Documentation.GrafanaPanelObservation.Drawn.get -> bool
+PandaBear.Documentation.GrafanaPanelObservation.Drawn.init -> void
+PandaBear.Documentation.GrafanaPanelObservation.Equals(PandaBear.Documentation.GrafanaPanelObservation? other) -> bool
+PandaBear.Documentation.GrafanaPanelObservation.GrafanaPanelObservation(string! Title, bool Drawn, bool NoData, bool QueryError) -> void
+PandaBear.Documentation.GrafanaPanelObservation.NoData.get -> bool
+PandaBear.Documentation.GrafanaPanelObservation.NoData.init -> void
+PandaBear.Documentation.GrafanaPanelObservation.QueryError.get -> bool
+PandaBear.Documentation.GrafanaPanelObservation.QueryError.init -> void
+PandaBear.Documentation.GrafanaPanelObservation.Title.get -> string!
+PandaBear.Documentation.GrafanaPanelObservation.Title.init -> void
+PandaBear.Documentation.GrafanaPanelResult
+PandaBear.Documentation.GrafanaPanelResult.Issues.get -> PandaBear.Documentation.GrafanaPanelIssues
+PandaBear.Documentation.GrafanaPanelResult.Observation.get -> PandaBear.Documentation.GrafanaPanelObservation?
+PandaBear.Documentation.GrafanaPanelResult.Passed.get -> bool
+PandaBear.Documentation.GrafanaPanelResult.Title.get -> string!
+PandaBear.Documentation.GrafanaProvisioningStatus
+PandaBear.Documentation.GrafanaProvisioningStatus.Current = 0 -> PandaBear.Documentation.GrafanaProvisioningStatus
+PandaBear.Documentation.GrafanaProvisioningStatus.NotProvisioned = 1 -> PandaBear.Documentation.GrafanaProvisioningStatus
+PandaBear.Documentation.GrafanaProvisioningStatus.TargetsDiffer = 2 -> PandaBear.Documentation.GrafanaProvisioningStatus
+PandaBear.Documentation.GrafanaQueryObservation
+PandaBear.Documentation.GrafanaQueryObservation.<Clone>$() -> PandaBear.Documentation.GrafanaQueryObservation!
+PandaBear.Documentation.GrafanaQueryObservation.Deconstruct(out bool Succeeded, out int SeriesCount) -> void
+PandaBear.Documentation.GrafanaQueryObservation.Equals(PandaBear.Documentation.GrafanaQueryObservation? other) -> bool
+PandaBear.Documentation.GrafanaQueryObservation.GrafanaQueryObservation(bool Succeeded, int SeriesCount) -> void
+PandaBear.Documentation.GrafanaQueryObservation.Passes(bool requireData) -> bool
+PandaBear.Documentation.GrafanaQueryObservation.SeriesCount.get -> int
+PandaBear.Documentation.GrafanaQueryObservation.SeriesCount.init -> void
+PandaBear.Documentation.GrafanaQueryObservation.Succeeded.get -> bool
+PandaBear.Documentation.GrafanaQueryObservation.Succeeded.init -> void
+PandaBear.Documentation.GrafanaQueryTarget
+PandaBear.Documentation.GrafanaQueryTarget.<Clone>$() -> PandaBear.Documentation.GrafanaQueryTarget!
+PandaBear.Documentation.GrafanaQueryTarget.DatasourceType.get -> string!
+PandaBear.Documentation.GrafanaQueryTarget.DatasourceType.init -> void
+PandaBear.Documentation.GrafanaQueryTarget.DatasourceUid.get -> string!
+PandaBear.Documentation.GrafanaQueryTarget.DatasourceUid.init -> void
+PandaBear.Documentation.GrafanaQueryTarget.Deconstruct(out int PanelId, out string! Title, out string! RefId, out string! DatasourceType, out string! DatasourceUid, out string! Query, out string! VerificationMode) -> void
+PandaBear.Documentation.GrafanaQueryTarget.Equals(PandaBear.Documentation.GrafanaQueryTarget? other) -> bool
+PandaBear.Documentation.GrafanaQueryTarget.GrafanaQueryTarget(int PanelId, string! Title, string! RefId, string! DatasourceType, string! DatasourceUid, string! Query, string! VerificationMode) -> void
+PandaBear.Documentation.GrafanaQueryTarget.PanelId.get -> int
+PandaBear.Documentation.GrafanaQueryTarget.PanelId.init -> void
+PandaBear.Documentation.GrafanaQueryTarget.Query.get -> string!
+PandaBear.Documentation.GrafanaQueryTarget.Query.init -> void
+PandaBear.Documentation.GrafanaQueryTarget.RefId.get -> string!
+PandaBear.Documentation.GrafanaQueryTarget.RefId.init -> void
+PandaBear.Documentation.GrafanaQueryTarget.Title.get -> string!
+PandaBear.Documentation.GrafanaQueryTarget.Title.init -> void
+PandaBear.Documentation.GrafanaQueryTarget.VerificationMode.get -> string!
+PandaBear.Documentation.GrafanaQueryTarget.VerificationMode.init -> void
+PandaBear.Documentation.GrafanaVerification
+override PandaBear.Documentation.GrafanaPanelObservation.Equals(object? obj) -> bool
+override PandaBear.Documentation.GrafanaPanelObservation.GetHashCode() -> int
+override PandaBear.Documentation.GrafanaPanelObservation.ToString() -> string!
+override PandaBear.Documentation.GrafanaQueryObservation.Equals(object? obj) -> bool
+override PandaBear.Documentation.GrafanaQueryObservation.GetHashCode() -> int
+override PandaBear.Documentation.GrafanaQueryObservation.ToString() -> string!
+override PandaBear.Documentation.GrafanaQueryTarget.Equals(object? obj) -> bool
+override PandaBear.Documentation.GrafanaQueryTarget.GetHashCode() -> int
+override PandaBear.Documentation.GrafanaQueryTarget.ToString() -> string!
+static PandaBear.Documentation.GrafanaPanelObservation.operator !=(PandaBear.Documentation.GrafanaPanelObservation? left, PandaBear.Documentation.GrafanaPanelObservation? right) -> bool
+static PandaBear.Documentation.GrafanaPanelObservation.operator ==(PandaBear.Documentation.GrafanaPanelObservation? left, PandaBear.Documentation.GrafanaPanelObservation? right) -> bool
+static PandaBear.Documentation.GrafanaQueryObservation.operator !=(PandaBear.Documentation.GrafanaQueryObservation? left, PandaBear.Documentation.GrafanaQueryObservation? right) -> bool
+static PandaBear.Documentation.GrafanaQueryObservation.operator ==(PandaBear.Documentation.GrafanaQueryObservation? left, PandaBear.Documentation.GrafanaQueryObservation? right) -> bool
+static PandaBear.Documentation.GrafanaQueryTarget.operator !=(PandaBear.Documentation.GrafanaQueryTarget? left, PandaBear.Documentation.GrafanaQueryTarget? right) -> bool
+static PandaBear.Documentation.GrafanaQueryTarget.operator ==(PandaBear.Documentation.GrafanaQueryTarget? left, PandaBear.Documentation.GrafanaQueryTarget? right) -> bool
+static PandaBear.Documentation.GrafanaVerification.CheckPanels(System.Collections.Generic.IEnumerable<string!>! requiredDataTitles, System.Collections.Generic.IEnumerable<PandaBear.Documentation.GrafanaPanelObservation!>! observations) -> System.Collections.Generic.IReadOnlyList<PandaBear.Documentation.GrafanaPanelResult!>!
+static PandaBear.Documentation.GrafanaVerification.CheckProvisioning(bool provisioned, System.Collections.Generic.IEnumerable<PandaBear.Documentation.GrafanaQueryTarget!>! expected, System.Collections.Generic.IEnumerable<PandaBear.Documentation.GrafanaQueryTarget!>! observed) -> PandaBear.Documentation.GrafanaProvisioningStatus
