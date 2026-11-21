@@ -97,3 +97,30 @@ labels belong in the consumer configuration rather than this engine.
 Package ID: `PandaBear.SharedKernel.Documentation`. C# namespace: `PandaBear.Documentation`. Assembly/project identity: `SharedKernel.Documentation`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+## AsyncAPI artifacts
+
+`AsyncApiDocument.Render` generates AsyncAPI 3.0.0 JSON for caller-supplied
+`AsyncApiMessage` descriptions. Supply the same source-generated
+`JsonTypeInfo` instances used at runtime. The renderer exports their payload
+schemas, including the serializer's field names, and resolves local schema
+references within each message's schema component.
+
+The application supplies channel addresses, message and schema IDs, operation
+IDs and summaries, header schemas, and any `x-` extensions. Messages that share
+an address share its channel definition. The renderer orders channels and
+messages ordinally and preserves the supplied header and extension ordering.
+Pass `JsonSchemaExporterOptions` for application-specific payload formats.
+`AsyncApiDocument.MatchesFile` compares an existing artifact to the generated
+text. Use it in a read-only verification command and keep artifact paths,
+refresh commands, and failure output with the host.
+
+## Typed data ownership diagrams
+
+Use `DocumentationGenerator.RunDataOwnership` when a host already has typed
+architecture facts. Pass the trust boundaries, the service and store nodes,
+their label lines, and access edges in a `DataOwnershipDiagram`. The shared
+generator sorts those inputs and escapes their display text. It applies the
+same generated marker, path ownership, atomic update, and check-only behavior
+as the configuration-file entry point. Keep the source metadata, its
+validation, table classifications, and displayed labels in the caller.
