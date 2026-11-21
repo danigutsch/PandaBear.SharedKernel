@@ -10,6 +10,7 @@ public static class AtomicFile
     /// <param name="write">Writes and optionally verifies the content. Leave the supplied stream open.</param>
     /// <param name="ct">Cancellation observed during the write and before publication.</param>
     /// <returns>Whether this call published the file.</returns>
+    /// <remarks>On Unix, the destination filesystem must support hard links.</remarks>
     /// <exception cref="ArgumentException">The path is invalid.</exception>
     /// <exception cref="ArgumentNullException">The writer is null.</exception>
     /// <exception cref="IOException">The file cannot be written or the temporary file cannot be removed.</exception>
@@ -87,24 +88,32 @@ public static class AtomicFile
             }
 
             ct.ThrowIfCancellationRequested();
+            if (overwrite)
+            {
+                MoveReplacement(temporary, destination, ct);
+                created = false;
+                return true;
+            }
+
             try
             {
-                if (overwrite)
+                if (OperatingSystem.IsWindows())
                 {
-                    MoveReplacement(temporary, destination, ct);
+                    File.Move(temporary, destination);
+                    created = false;
                 }
                 else
                 {
-                    File.Move(temporary, destination);
+                    // Unix File.Move can race between its existence check and rename.
+                    File.CreateHardLink(destination, temporary);
                 }
+
+                return true;
             }
-            catch (IOException) when (!overwrite && File.Exists(destination))
+            catch (IOException) when (File.Exists(destination))
             {
                 return false;
             }
-
-            created = false;
-            return true;
         }
         finally
         {
