@@ -167,6 +167,7 @@ flowchart TB
     trigger[Pull request, main push, nightly, or manual run]
     selection[selection]
     validate[validate]
+    coverage_gate[coverage-gate]
     source_build[source-build]
     candidate[candidate]
     linux_package_consumption[linux-package-consumption]
@@ -176,6 +177,8 @@ flowchart TB
     validation_summary[validation-summary]
     trigger --> selection
     selection --> validate
+    selection --> coverage_gate
+    validate --> coverage_gate
     selection --> source_build
     selection --> candidate
     candidate --> linux_package_consumption
