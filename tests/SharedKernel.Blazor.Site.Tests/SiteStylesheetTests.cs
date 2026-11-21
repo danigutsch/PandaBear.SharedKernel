@@ -325,6 +325,31 @@ public sealed partial class SiteStylesheetTests
     }
 
     [Fact]
+    public void Fact_grid_column_modifiers_set_equal_columns_only_from_the_breakpoint_on()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+        var modifiers = Regex.Matches(css, @"site-fact-grid--columns-(\d+)", RegexOptions.None, TimeSpan.FromSeconds(1)).Select(match => match.Groups[1].Value).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+        var breakpoint = css.IndexOf("@media (min-width: 48rem) {", StringComparison.Ordinal);
+        var breakpointEnd = css.IndexOf("\n}", breakpoint, StringComparison.Ordinal);
+
+        // Assert
+        modifiers.ShouldBe(["1", "2", "3", "4"]);
+        foreach (var columns in modifiers)
+        {
+            css.ShouldContain($$"""
+                    .site-fact-grid--columns-{{columns}} {
+                        grid-template-columns: repeat({{columns}}, minmax(0, 1fr));
+                    }
+                """, StringComparison.Ordinal);
+        }
+
+        Regex.IsMatch(css, @"^\.site-fact-grid--columns", RegexOptions.Multiline, TimeSpan.FromSeconds(1)).ShouldBeFalse();
+        css.IndexOf(".site-fact-grid--columns-", StringComparison.Ordinal).ShouldBeGreaterThan(breakpoint);
+        css.LastIndexOf(".site-fact-grid--columns-", StringComparison.Ordinal).ShouldBeLessThan(breakpointEnd);
+    }
+
+    [Fact]
     public void A_fact_label_takes_the_on_primary_colour_on_the_primary_colour_or_a_photo()
     {
         // Arrange & Act

@@ -4,11 +4,27 @@ using Microsoft.AspNetCore.Components.Rendering;
 namespace PandaBear.Blazor.Site.Tests.Browser;
 
 /// <summary>
-/// A page for the tests of the smaller page parts, in the gutter container: a split with its media on the start side, a grid of five
-/// fact cards (the first with an icon), and a row of two button links and a plain link.
+/// A page for the tests of the smaller page parts, in the gutter container: a split with its media on the start side, a grid of fact
+/// cards (five by default, the first with an icon), and a row of two button links and a plain link.
 /// </summary>
 public sealed class PartsSample : ComponentBase
 {
+    private static readonly FactCard[] Facts =
+    [
+        new("Duration", ["8 days", "7 nights"], icon => icon.AddMarkupContent(0, "<svg id=\"clock\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" /></svg>")),
+        new("Group", ["Up to 12"]),
+        new("Level", ["Moderate"]),
+        new("Guide", ["Portuguese", "English"]),
+        new("Season", ["March to November"]),
+        new("Departure", ["Santiago"]),
+        new("Meals", ["Breakfast"]),
+        new("Transport", ["Minibus"]),
+    ];
+
+    /// <summary>Gets or sets the number of fact cards, from one to eight.</summary>
+    [Parameter]
+    public int Cards { get; set; } = 5;
+
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -22,14 +38,7 @@ public sealed class PartsSample : ComponentBase
         builder.AddComponentParameter(6, nameof(Split.Media), (RenderFragment)(media => media.AddMarkupContent(0, $"<img src=\"{BandsSample.WhitePhoto}\" width=\"1600\" height=\"900\" alt=\"\">")));
         builder.CloseComponent();
         builder.OpenComponent<FactGrid>(7);
-        builder.AddComponentParameter(8, nameof(FactGrid.Cards), new FactCard[]
-        {
-            new("Duration", ["8 days", "7 nights"], icon => icon.AddMarkupContent(0, "<svg id=\"clock\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" /></svg>")),
-            new("Group", ["Up to 12"]),
-            new("Level", ["Moderate"]),
-            new("Guide", ["Portuguese", "English"]),
-            new("Season", ["March to November"]),
-        });
+        builder.AddComponentParameter(8, nameof(FactGrid.Cards), Facts[..Cards]);
         builder.CloseComponent();
         builder.OpenComponent<ActionRow>(9);
         builder.AddComponentParameter(10, nameof(ActionRow.ChildContent), (RenderFragment)Actions);

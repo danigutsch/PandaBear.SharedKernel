@@ -41,12 +41,12 @@ public sealed class SitePartsBrowserTests(ChromiumFixture chromium) : IClassFixt
     }
 
     [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
-    [InlineData(375)]
-    [InlineData(1280)]
-    public async Task Fact_cards_share_the_full_width_of_the_grid_in_equal_columns(int width)
+    [InlineData(5)]
+    [InlineData(8)]
+    public async Task On_a_phone_fact_cards_keep_the_auto_fit_columns_at_the_full_width(int count)
     {
         // Arrange
-        await using var page = await LayoutPage.Serve<PartsSample>(chromium.Browser, width);
+        await using var page = await LayoutPage.Serve<PartsSample>(chromium.Browser, 375, new Dictionary<string, object?> { [nameof(PartsSample.Cards)] = count });
 
         // Act
         var grid = await page.Box(".site-fact-grid");
@@ -54,21 +54,37 @@ public sealed class SitePartsBrowserTests(ChromiumFixture chromium) : IClassFixt
         var scrollWidth = await page.ScrollWidth();
 
         // Assert
-        cards.Count.ShouldBe(5);
-        cards[0].X.ShouldBe(grid.X + Border);
-        if (width < 768)
-        {
-            cards.ShouldAllSatisfy(card => card.X.ShouldBe(cards[0].X));
-            cards.ShouldAllSatisfy(card => Math.Abs(card.X + card.Width - (grid.X + grid.Width)).ShouldBeLessThanOrEqualTo(0.1));
-        }
-        else
-        {
-            cards.Select(card => card.Y).Distinct().Count().ShouldBe(1);
-            cards.ShouldAllSatisfy(card => Math.Abs(card.Width - cards[0].Width).ShouldBeLessThanOrEqualTo(1));
-            Math.Abs(cards[4].X + cards[4].Width - (grid.X + grid.Width)).ShouldBeLessThanOrEqualTo(0.1);
-        }
+        cards.Count.ShouldBe(count);
+        cards.ShouldAllSatisfy(card => card.X.ShouldBe(grid.X + Border));
+        cards.ShouldAllSatisfy(card => Math.Abs(card.X + card.Width - (grid.X + grid.Width)).ShouldBeLessThanOrEqualTo(0.1));
+        scrollWidth.ShouldBeLessThanOrEqualTo(375);
+    }
 
-        scrollWidth.ShouldBeLessThanOrEqualTo(width);
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(4, 4, 1)]
+    [InlineData(5, 3, 2)]
+    [InlineData(6, 3, 2)]
+    [InlineData(8, 4, 2)]
+    public async Task On_a_desktop_fact_cards_form_balanced_rows_of_equal_columns_across_the_grid(int count, int columns, int rows)
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<PartsSample>(chromium.Browser, 1280, new Dictionary<string, object?> { [nameof(PartsSample.Cards)] = count });
+
+        // Act
+        var grid = await page.Box(".site-fact-grid");
+        var cards = await page.Boxes(".site-fact-grid__item");
+        var scrollWidth = await page.ScrollWidth();
+
+        // Assert
+        cards.Count.ShouldBe(count);
+        cards.Select(card => card.X).Distinct().Count().ShouldBe(columns);
+        cards.Select(card => card.Y).Distinct().Count().ShouldBe(rows);
+        cards.Take(columns).Select(card => card.Y).Distinct().Count().ShouldBe(1);
+        cards[0].X.ShouldBe(grid.X + Border);
+        cards.ShouldAllSatisfy(card => Math.Abs(card.Width - cards[0].Width).ShouldBeLessThanOrEqualTo(1));
+        var lastInRow = cards[columns - 1];
+        Math.Abs(lastInRow.X + lastInRow.Width - (grid.X + grid.Width)).ShouldBeLessThanOrEqualTo(0.1);
+        scrollWidth.ShouldBeLessThanOrEqualTo(1280);
     }
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]

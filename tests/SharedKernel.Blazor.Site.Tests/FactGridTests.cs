@@ -19,7 +19,7 @@ public sealed class FactGridTests : BunitContext
 
         // Assert
         var list = cut.Find("dl");
-        list.ClassName.ShouldBe("site-fact-grid");
+        list.ClassName.ShouldBe("site-fact-grid site-fact-grid--columns-2");
         list.Children.Select(child => child.TagName).ShouldBe(["DIV", "DIV"]);
         list.Children.Select(child => child.ClassName).ShouldBe(["site-fact-grid__item", "site-fact-grid__item"]);
         var first = list.Children[0];
@@ -64,7 +64,34 @@ public sealed class FactGridTests : BunitContext
         var cut = Render<FactGrid>(parameters => parameters.Add(component => component.Cards, []));
 
         // Assert
-        cut.Find("dl.site-fact-grid").ChildElementCount.ShouldBe(0);
+        var list = cut.Find("dl.site-fact-grid");
+        list.ChildElementCount.ShouldBe(0);
+        list.ClassName.ShouldBe("site-fact-grid");
+    }
+
+    [Theory]
+    [InlineData(1, 1)]
+    [InlineData(2, 2)]
+    [InlineData(3, 3)]
+    [InlineData(4, 4)]
+    [InlineData(5, 3)]
+    [InlineData(6, 3)]
+    [InlineData(7, 4)]
+    [InlineData(8, 4)]
+    [InlineData(9, 3)]
+    [InlineData(10, 4)]
+    [InlineData(12, 4)]
+    [InlineData(13, 4)]
+    public void The_column_count_balances_the_rows_with_at_most_four_columns(int count, int columns)
+    {
+        // Arrange
+        var cards = Enumerable.Range(1, count).Select(index => new FactCard($"Fact {index}", ["Value"])).ToArray();
+
+        // Act
+        var cut = Render<FactGrid>(parameters => parameters.Add(component => component.Cards, cards));
+
+        // Assert
+        cut.Find("dl").ClassName.ShouldBe($"site-fact-grid site-fact-grid--columns-{columns}");
     }
 
     [Theory]
@@ -126,7 +153,7 @@ public sealed class FactGridTests : BunitContext
 
         // Assert
         var list = cut.Find("dl");
-        list.ClassName.ShouldBe("site-fact-grid extra");
+        list.ClassName.ShouldBe("site-fact-grid site-fact-grid--columns-1 extra");
         list.GetAttribute("aria-label").ShouldBe("Basic information");
     }
 }

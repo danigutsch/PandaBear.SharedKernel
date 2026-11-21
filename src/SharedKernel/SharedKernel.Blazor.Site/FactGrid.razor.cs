@@ -4,15 +4,21 @@ namespace PandaBear.Blazor.Site;
 
 /// <summary>
 /// A grid of fact cards, such as a tour's basic information: a <c>dl</c> whose cards are <c>div</c> groups of the <c>dt</c> label, with
-/// the optional decorative icon inside it, and one <c>dd</c> per value. The cards are centred, bordered like the cells of a table, in
-/// columns at least 11rem wide that share the full width of the container.
+/// the optional decorative icon inside it, and one <c>dd</c> per value. The cards are centred and bordered like the cells of a table.
+/// Below the <c>48rem</c> breakpoint they fill columns at least 11rem wide; from it on the grid has the balanced column count of
+/// <c>site-fact-grid--columns-1</c> to <c>site-fact-grid--columns-4</c>: as many columns as cards up to four, then the fewest rows of
+/// at most four cards with the cards spread as evenly as possible over them.
 /// </summary>
 public sealed partial class FactGrid
 {
+    private const int MaxColumns = 4;
+
     /// <summary>Gets or sets the cards, in reading order.</summary>
     [Parameter]
     [EditorRequired]
     public IReadOnlyList<FactCard> Cards { get; set; } = [];
+
+    private string RootClass => Cards.Count == 0 ? "site-fact-grid" : $"site-fact-grid site-fact-grid--columns-{Columns(Cards.Count)}";
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException"><see cref="Cards" /> is null.</exception>
@@ -42,5 +48,11 @@ public sealed partial class FactGrid
                 throw new ArgumentException($"The fact card '{card.Label}' has a blank value.", nameof(Cards));
             }
         }
+    }
+
+    private static int Columns(int count)
+    {
+        var rows = (count + MaxColumns - 1) / MaxColumns;
+        return (count + rows - 1) / rows;
     }
 }
