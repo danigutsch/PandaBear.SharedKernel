@@ -68,8 +68,8 @@ else
     private string PeerPage => Site.PathFor(_page?.Key == "visit" ? "workshops" : "visit", Language);
 
     private IReadOnlyList<FactCard> Facts => Portuguese
-        ? [new("Horário", ["Terça a sábado", "10h–18h"]), new("Entrada", ["Gratuita"]), new("Acesso", ["Sem degraus"])]
-        : [new("Opening hours", ["Tuesday to Saturday", "10 a.m.–6 p.m."]), new("Admission", ["Free"]), new("Access", ["Step-free"])];
+        ? [new("Horário", [new("Terça a sábado"), new("10h–18h")]), new("Entrada", [new("Gratuita")]), new("Acesso", [new("Sem degraus")])]
+        : [new("Opening hours", [new("Tuesday to Saturday"), new("10 a.m.–6 p.m.")]), new("Admission", [new("Free")]), new("Access", [new("Step-free")])];
 
     /// <inheritdoc />
     protected override void OnParametersSet()

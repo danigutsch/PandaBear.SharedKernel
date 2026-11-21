@@ -13,8 +13,8 @@ public sealed class FactGridTests : BunitContext
         // Arrange & Act
         var cut = Render<FactGrid>(parameters => parameters.Add(component => component.Cards,
         [
-            new FactCard("Duration", ["8 days", "7 nights"]),
-            new FactCard("Group", ["Up to 12"]),
+            new FactCard("Duration", [new("8 days"), new("7 nights")]),
+            new FactCard("Group", [new("Up to 12")]),
         ]));
 
         // Assert
@@ -33,7 +33,7 @@ public sealed class FactGridTests : BunitContext
     public void An_icon_is_hidden_from_assistive_technology_inside_the_term_before_the_label()
     {
         // Arrange & Act
-        var cut = Render<FactGrid>(parameters => parameters.Add(component => component.Cards, [new FactCard("Duration", ["8 days"], ClockIcon)]));
+        var cut = Render<FactGrid>(parameters => parameters.Add(component => component.Cards, [new FactCard("Duration", [new("8 days")], ClockIcon)]));
 
         // Assert
         var term = cut.Find(".site-fact-grid__item > dt");
@@ -47,10 +47,60 @@ public sealed class FactGridTests : BunitContext
     }
 
     [Fact]
+    public void A_linked_value_is_a_link_in_its_definition_that_opens_in_the_same_tab()
+    {
+        // Arrange & Act
+        var cut = Render<FactGrid>(parameters => parameters.Add(component => component.Cards,
+        [
+            new FactCard("E-mail", [new("info@example.org", LinkTarget.FromString("mailto:info@example.org"))]),
+            new FactCard("Phone", [new("+55 (11) 99999-0000", LinkTarget.FromString("tel:+5511999990000"))]),
+            new FactCard("WhatsApp", [new("Chat with us", LinkTarget.FromString("https://wa.me/5511999990000"))]),
+        ]));
+
+        // Assert
+        var values = cut.FindAll("dd.site-fact-grid__value");
+        values.Select(value => value.InnerHtml).ShouldBe(
+        [
+            "<a href=\"mailto:info@example.org\">info@example.org</a>",
+            "<a href=\"tel:+5511999990000\">+55 (11) 99999-0000</a>",
+            "<a href=\"https://wa.me/5511999990000\">Chat with us</a>",
+        ]);
+        cut.FindAll("a[target], a[rel]").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Plain_and_linked_values_can_share_a_card_and_a_plain_value_has_no_link()
+    {
+        // Arrange & Act
+        var cut = Render<FactGrid>(parameters => parameters.Add(component => component.Cards,
+        [
+            new FactCard("Office", [new("Mon to Fri, 9 a.m.–6 p.m."), new("Directions", LinkTarget.FromString("/contact#map"))]),
+        ]));
+
+        // Assert
+        var values = cut.FindAll("dd.site-fact-grid__value");
+        values.Select(value => value.InnerHtml).ShouldBe(["Mon to Fri, 9 a.m.–6 p.m.", "<a href=\"/contact#map\">Directions</a>"]);
+    }
+
+    [Fact]
+    public void Value_text_is_encoded_with_or_without_a_link()
+    {
+        // Arrange & Act
+        var cut = Render<FactGrid>(parameters => parameters.Add(component => component.Cards,
+        [
+            new FactCard("Note", [new("<b>Free</b> & open"), new("<i>Map</i>", LinkTarget.FromString("/map"))]),
+        ]));
+
+        // Assert
+        cut.FindAll("b, i").ShouldBeEmpty();
+        cut.FindAll("dd").Select(value => value.TextContent).ShouldBe(["<b>Free</b> & open", "<i>Map</i>"]);
+    }
+
+    [Fact]
     public void A_card_without_an_icon_renders_no_icon_element()
     {
         // Arrange & Act
-        var cut = Render<FactGrid>(parameters => parameters.Add(component => component.Cards, [new FactCard("Group", ["Up to 12"])]));
+        var cut = Render<FactGrid>(parameters => parameters.Add(component => component.Cards, [new FactCard("Group", [new("Up to 12")])]));
 
         // Assert
         cut.FindAll(".site-fact-grid__icon").ShouldBeEmpty();
@@ -85,7 +135,7 @@ public sealed class FactGridTests : BunitContext
     public void The_column_count_balances_the_rows_with_at_most_four_columns(int count, int columns)
     {
         // Arrange
-        var cards = Enumerable.Range(1, count).Select(index => new FactCard($"Fact {index}", ["Value"])).ToArray();
+        var cards = Enumerable.Range(1, count).Select(index => new FactCard($"Fact {index}", [new("Value")])).ToArray();
 
         // Act
         var cut = Render<FactGrid>(parameters => parameters.Add(component => component.Cards, cards));
@@ -100,7 +150,7 @@ public sealed class FactGridTests : BunitContext
     public void A_card_without_a_label_is_rejected(string label)
     {
         // Arrange & Act
-        var render = () => Render<FactGrid>(parameters => parameters.Add(component => component.Cards, [new FactCard(label, ["8 days"])]));
+        var render = () => Render<FactGrid>(parameters => parameters.Add(component => component.Cards, [new FactCard(label, [new("8 days")])]));
 
         // Assert
         render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(FactGrid.Cards));
@@ -122,7 +172,7 @@ public sealed class FactGridTests : BunitContext
     public void A_card_with_a_blank_value_is_rejected_instead_of_rendering_an_empty_definition(string value)
     {
         // Arrange & Act
-        var render = () => Render<FactGrid>(parameters => parameters.Add(component => component.Cards, [new FactCard("Duration", ["8 days", value])]));
+        var render = () => Render<FactGrid>(parameters => parameters.Add(component => component.Cards, [new FactCard("Duration", [new("8 days"), new(value)])]));
 
         // Assert
         render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(FactGrid.Cards));
@@ -135,11 +185,15 @@ public sealed class FactGridTests : BunitContext
         var renderNullCards = () => Render<FactGrid>(parameters => parameters.Add(component => component.Cards, null!));
         var renderNullCard = () => Render<FactGrid>(parameters => parameters.Add(component => component.Cards, [null!]));
         var renderNullValues = () => Render<FactGrid>(parameters => parameters.Add(component => component.Cards, [new FactCard("Duration", null!)]));
+        var renderNullValue = () => Render<FactGrid>(parameters => parameters.Add(component => component.Cards, [new FactCard("Duration", [new("8 days"), null!])]));
+        var renderNullText = () => Render<FactGrid>(parameters => parameters.Add(component => component.Cards, [new FactCard("Duration", [new(null!)])]));
 
         // Assert
         renderNullCards.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe(nameof(FactGrid.Cards));
         renderNullCard.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(FactGrid.Cards));
         renderNullValues.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(FactGrid.Cards));
+        renderNullValue.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(FactGrid.Cards));
+        renderNullText.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(FactGrid.Cards));
     }
 
     [Fact]
@@ -147,7 +201,7 @@ public sealed class FactGridTests : BunitContext
     {
         // Arrange & Act
         var cut = Render<FactGrid>(parameters => parameters
-            .Add(component => component.Cards, [new FactCard("Duration", ["8 days"])])
+            .Add(component => component.Cards, [new FactCard("Duration", [new("8 days")])])
             .Add(component => component.Class, "extra")
             .AddUnmatched("aria-label", "Basic information"));
 

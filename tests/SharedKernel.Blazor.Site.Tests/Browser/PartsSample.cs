@@ -5,20 +5,20 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// A page for the tests of the smaller page parts, in the gutter container: a split with its media on the start side, a grid of fact
-/// cards (five by default, the first with an icon), and a row of two button links and a plain link.
+/// cards (five by default, the first with an icon and the fifth with a long e-mail link), and a row of two button links and a plain link.
 /// </summary>
 public sealed class PartsSample : ComponentBase
 {
     private static readonly FactCard[] Facts =
     [
-        new("Duration", ["8 days", "7 nights"], icon => icon.AddMarkupContent(0, "<svg id=\"clock\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" /></svg>")),
-        new("Group", ["Up to 12"]),
-        new("Level", ["Moderate"]),
-        new("Guide", ["Portuguese", "English"]),
-        new("Season", ["March to November"]),
-        new("Departure", ["Santiago"]),
-        new("Meals", ["Breakfast"]),
-        new("Transport", ["Minibus"]),
+        new("Duration", [new("8 days"), new("7 nights")], icon => icon.AddMarkupContent(0, "<svg id=\"clock\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" /></svg>")),
+        new("Group", [new("Up to 12")]),
+        new("Level", [new("Moderate")]),
+        new("Guide", [new("Portuguese"), new("English")]),
+        new("Contact", [new("reservations.and.small.groups@travel.example.org", LinkTarget.FromString("mailto:reservations.and.small.groups@travel.example.org"))]),
+        new("Departure", [new("Santiago")]),
+        new("Meals", [new("Breakfast")]),
+        new("Transport", [new("Minibus")]),
     ];
 
     /// <summary>Gets or sets the number of fact cards, from one to eight.</summary>

@@ -147,6 +147,31 @@ public sealed class SitePartsBrowserTests(ChromiumFixture chromium) : IClassFixt
         scrollWidth.ShouldBeLessThanOrEqualTo(width);
     }
 
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(375)]
+    [InlineData(1280)]
+    public async Task A_long_linked_fact_value_wraps_inside_its_card_as_a_primary_link(int width)
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<PartsSample>(chromium.Browser, width);
+
+        // Act
+        var cards = await page.Boxes(".site-fact-grid__item");
+        var link = await page.Box(".site-fact-grid__value a");
+        var color = await page.Style(".site-fact-grid__value a", "color");
+        var decoration = await page.Style(".site-fact-grid__value a", "text-decoration-line");
+        var scrollWidth = await page.ScrollWidth();
+
+        // Assert
+        var card = cards[4];
+        var linkEnd = link.X + link.Width;
+        link.X.ShouldBeGreaterThanOrEqualTo(card.X);
+        linkEnd.ShouldBeLessThanOrEqualTo(card.X + card.Width);
+        color.ShouldBe(Primary);
+        decoration.ShouldBe("underline");
+        scrollWidth.ShouldBeLessThanOrEqualTo(width);
+    }
+
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public async Task A_plain_link_in_an_action_row_reads_as_a_primary_link()
     {
