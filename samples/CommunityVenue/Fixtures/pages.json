@@ -1,0 +1,42 @@
+[
+    {
+        "key": "visit",
+        "language": "en",
+        "slug": "visit",
+        "title": "Visit Riverbank Hall",
+        "intro": "A neighborhood hall for making things together.",
+        "heading": "Come by the hall",
+        "body": "Read in the courtyard, borrow a board game, or use the shared tables to work on a project. The entrance and main room are step-free.",
+        "modified": "2026-06-01T00:00:00Z"
+    },
+    {
+        "key": "visit",
+        "language": "pt",
+        "slug": "visita",
+        "title": "Visite a Casa da Margem",
+        "intro": "Uma casa de bairro para criar em conjunto.",
+        "heading": "Passe pela Casa",
+        "body": "Leia no pátio, peça um jogo emprestado ou use as mesas partilhadas para trabalhar num projeto. A entrada e a sala principal não têm degraus.",
+        "modified": "2026-06-03T00:00:00Z"
+    },
+    {
+        "key": "workshops",
+        "language": "en",
+        "slug": "workshops",
+        "title": "Workshops",
+        "intro": "Try printmaking or learn to mend everyday clothes.",
+        "heading": "Work alongside a neighbor",
+        "body": "The workshop has basic tools and recycled materials. Bring a small project or start with the materials on the table.",
+        "modified": "2026-06-05T00:00:00Z"
+    },
+    {
+        "key": "workshops",
+        "language": "pt",
+        "slug": "oficinas",
+        "title": "Oficinas",
+        "intro": "Experimente a gravura ou aprenda a remendar roupa.",
+        "heading": "Trabalhe com alguém do bairro",
+        "body": "A oficina tem ferramentas básicas e materiais reciclados. Traga um pequeno projeto ou comece com os materiais que estão na mesa.",
+        "modified": "2026-06-06T00:00:00Z"
+    }
+]
