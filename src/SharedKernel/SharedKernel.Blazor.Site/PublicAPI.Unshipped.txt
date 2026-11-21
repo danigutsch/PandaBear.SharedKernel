@@ -695,3 +695,4 @@ override PandaBear.Blazor.Site.FactCard.GetHashCode() -> int
 override PandaBear.Blazor.Site.FactCard.ToString() -> string!
 static PandaBear.Blazor.Site.FactCard.operator !=(PandaBear.Blazor.Site.FactCard? left, PandaBear.Blazor.Site.FactCard? right) -> bool
 static PandaBear.Blazor.Site.FactCard.operator ==(PandaBear.Blazor.Site.FactCard? left, PandaBear.Blazor.Site.FactCard? right) -> bool
+static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.RenderVersioned(PandaBear.Blazor.Site.Theming.SiteTheme! theme) -> (string! Css, string! Version)

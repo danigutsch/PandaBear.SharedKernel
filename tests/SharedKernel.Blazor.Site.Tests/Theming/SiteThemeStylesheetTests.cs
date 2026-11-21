@@ -138,6 +138,22 @@ public sealed class SiteThemeStylesheetTests
     }
 
     [Fact]
+    public void The_versioned_render_returns_the_existing_CSS_and_hash_together()
+    {
+        // Arrange
+        var theme = SiteTheme.Default;
+        var expectedCss = SiteThemeStylesheet.Render(theme);
+        var expectedVersion = Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(expectedCss)))[..16];
+
+        // Act
+        var (css, version) = SiteThemeStylesheet.RenderVersioned(theme);
+
+        // Assert
+        css.ShouldBe(expectedCss);
+        version.ShouldBe(expectedVersion);
+    }
+
+    [Fact]
     public void Output_contains_no_markup_and_no_comment_or_rule_breakers_from_values()
     {
         // Arrange

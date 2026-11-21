@@ -145,6 +145,14 @@ which would replace the field's attribute. The field re-renders when the validat
 `EditForm` and `FormField` both name their child content's parameter `context`, so name one of them (`Context="form"` above);
 otherwise Razor reports RZ9999.
 
+## Named validation fields
+
+Use `NamedFormField` when validation identifies the field by a key such as `en.sections[0].heading`.
+Pass `editContext.Field(key)`, the input ID, a label, and child content that spreads the supplied ARIA
+attributes. Set `Help` for an inline description or `Inline` for a label that follows a checkbox.
+Leave `InputId` unset to render just the messages for a group. `EditContextErrorSummary.Build` accepts
+an ordered sequence of field identifiers and focus target IDs for use with `ErrorSummary`.
+
 ## Notes
 
 - Link targets in `ErrorSummary` are fragment links on the current page; browsers move focus to a focusable target of a fragment navigation.

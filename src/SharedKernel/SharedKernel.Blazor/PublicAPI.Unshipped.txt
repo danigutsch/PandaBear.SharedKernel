@@ -202,3 +202,22 @@ static PandaBear.Blazor.ServerValidationIssue.operator !=(PandaBear.Blazor.Serve
 static PandaBear.Blazor.ServerValidationIssue.operator ==(PandaBear.Blazor.ServerValidationIssue? left, PandaBear.Blazor.ServerValidationIssue? right) -> bool
 static PandaBear.Blazor.ServerValidationOptions.operator !=(PandaBear.Blazor.ServerValidationOptions? left, PandaBear.Blazor.ServerValidationOptions? right) -> bool
 static PandaBear.Blazor.ServerValidationOptions.operator ==(PandaBear.Blazor.ServerValidationOptions? left, PandaBear.Blazor.ServerValidationOptions? right) -> bool
+PandaBear.Blazor.EditContextErrorSummary
+PandaBear.Blazor.NamedFormField
+PandaBear.Blazor.NamedFormField.NamedFormField() -> void
+PandaBear.Blazor.NamedFormField.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment<System.Collections.Generic.IReadOnlyDictionary<string!, object!>!>?
+PandaBear.Blazor.NamedFormField.ChildContent.set -> void
+PandaBear.Blazor.NamedFormField.DescribedBy.get -> string?
+PandaBear.Blazor.NamedFormField.DescribedBy.set -> void
+PandaBear.Blazor.NamedFormField.Dispose() -> void
+PandaBear.Blazor.NamedFormField.Field.get -> Microsoft.AspNetCore.Components.Forms.FieldIdentifier
+PandaBear.Blazor.NamedFormField.Field.set -> void
+PandaBear.Blazor.NamedFormField.Help.get -> string?
+PandaBear.Blazor.NamedFormField.Help.set -> void
+PandaBear.Blazor.NamedFormField.Inline.get -> bool
+PandaBear.Blazor.NamedFormField.Inline.set -> void
+PandaBear.Blazor.NamedFormField.InputId.get -> string?
+PandaBear.Blazor.NamedFormField.InputId.set -> void
+PandaBear.Blazor.NamedFormField.Label.get -> string?
+PandaBear.Blazor.NamedFormField.Label.set -> void
+static PandaBear.Blazor.EditContextErrorSummary.Build(Microsoft.AspNetCore.Components.Forms.EditContext! context, System.Collections.Generic.IEnumerable<(Microsoft.AspNetCore.Components.Forms.FieldIdentifier Field, string! TargetId)>! fields) -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.ErrorSummaryItem!>!
