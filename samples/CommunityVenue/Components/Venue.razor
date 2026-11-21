@@ -1,0 +1,83 @@
+@page "/{Language}/{Slug}"
+@inject VenueSite Site
+
+@if (_page is { } venuePage)
+{
+    <PageHead Title="@venuePage.Title" Description="@venuePage.Intro" CanonicalUrl="@Site.Absolute(venuePage.Path)"
+              Alternates="@Site.Alternates(venuePage)" DefaultAlternateUrl="@Site.Absolute("/" + venuePage.Key)" />
+    <SkipLink>@(Portuguese ? "Saltar para o conteúdo" : "Skip to content")</SkipLink>
+    <SiteHeader Label="@(Portuguese ? "Principal" : "Main")" Items="@Site.Navigation(venuePage.Language)"
+                CurrentPath="@venuePage.Path" MenuLabel="Menu">
+        <Brand><a href="@Home">@(Portuguese ? "Casa da Margem" : "Riverbank Hall")</a></Brand>
+        <Actions>
+            <LanguageSwitcher Label="@(Portuguese ? "Idioma" : "Language")" Languages="@Site.Languages(venuePage)" />
+        </Actions>
+    </SiteHeader>
+    <main id="main-content" tabindex="-1">
+        <Band Tone="BandTone.Muted">
+            <Section Level="1" Title="@venuePage.Title" Intro="@venuePage.Intro" />
+        </Band>
+        <Section Title="@venuePage.Heading" HeadingId="welcome">
+            <Split MediaSide="SplitMediaSide.Start">
+                <ChildContent><p>@venuePage.Body</p></ChildContent>
+                <Media>
+                    <img class="venue-image" src="@Site.ImageAddress" width="1200" height="800"
+                         alt="@(Portuguese ? "Entrada verde e pátio da Casa da Margem" : "The green entrance and courtyard at Riverbank Hall")" />
+                </Media>
+            </Split>
+        </Section>
+        <Band Tone="BandTone.Muted">
+            <Section Title="@(Portuguese ? "Informações práticas" : "At a glance")" HeadingId="practical">
+                <FactGrid Cards="Facts" />
+                <ActionRow>
+                    <ButtonLink Href="@LinkTarget.FromString(PeerPage)">@(venuePage.Key == "visit"
+                        ? Portuguese ? "Ver oficinas" : "See workshops"
+                        : Portuguese ? "Planear a visita" : "Plan a visit")</ButtonLink>
+                    <a href="#welcome">@(Portuguese ? "Sobre a Casa" : "About the hall")</a>
+                </ActionRow>
+            </Section>
+        </Band>
+    </main>
+    <SiteFooter>
+        <p>@(Portuguese ? "Casa da Margem" : "Riverbank Hall")</p>
+        <p><a href="/editor">@(Portuguese ? "Editor de demonstração" : "Demo editor")</a></p>
+    </SiteFooter>
+}
+else
+{
+    <PageHead Title="Page not found" Robots="noindex" />
+    <main class="site-container"><h1>Page not found</h1><a href="/visit">Visit Riverbank Hall</a></main>
+}
+
+@code {
+    private VenuePage? _page;
+
+    /// <summary>Gets or sets the language path segment.</summary>
+    [Parameter]
+    public string Language { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the localized page slug.</summary>
+    [Parameter]
+    public string Slug { get; set; } = string.Empty;
+
+    [CascadingParameter]
+    private HttpContext? RequestContext { get; set; }
+
+    private bool Portuguese => Language == "pt";
+    private string Home => Site.PathFor("visit", Language);
+    private string PeerPage => Site.PathFor(_page?.Key == "visit" ? "workshops" : "visit", Language);
+
+    private IReadOnlyList<FactCard> Facts => Portuguese
+        ? [new("Horário", ["Terça a sábado", "10h–18h"]), new("Entrada", ["Gratuita"]), new("Acesso", ["Sem degraus"])]
+        : [new("Opening hours", ["Tuesday to Saturday", "10 a.m.–6 p.m."]), new("Admission", ["Free"]), new("Access", ["Step-free"])];
+
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        _page = Site.Find($"/{Language}/{Slug}");
+        if (_page is null && RequestContext is { } context)
+        {
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+        }
+    }
+}

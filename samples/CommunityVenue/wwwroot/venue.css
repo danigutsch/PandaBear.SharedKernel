@@ -1,0 +1,34 @@
+.venue-image {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    border-radius: .5rem;
+}
+
+.venue-editor {
+    padding-block: 2rem;
+}
+
+.venue-editor form {
+    max-inline-size: 38rem;
+}
+
+.venue-editor label,
+.venue-editor input {
+    display: block;
+}
+
+.venue-editor input {
+    font: inherit;
+    margin-block-start: .25rem;
+    inline-size: 100%;
+}
+
+.venue-editor button {
+    font: inherit;
+    margin-block-start: 1rem;
+}
+
+.venue-editor .validation-message {
+    color: var(--site-color-primary);
+}
