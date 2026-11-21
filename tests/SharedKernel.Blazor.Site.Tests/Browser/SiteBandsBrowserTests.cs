@@ -343,6 +343,32 @@ public sealed class SiteBandsBrowserTests(ChromiumFixture chromium) : IClassFixt
         scrollWidth.ShouldBeLessThanOrEqualTo(width);
     }
 
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(375)]
+    [InlineData(1280)]
+    public async Task A_section_eyebrow_sits_above_its_title_in_the_primary_colour_and_on_primary_in_a_primary_band(int width)
+    {
+        // Arrange & Act
+        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, width);
+
+        // Assert
+        const string muted = ".site-band--muted .site-section";
+        const string primary = ".site-band--primary .site-section";
+        var eyebrow = await page.Box(muted + " .site-section__eyebrow");
+        var title = await page.Box(muted + " .site-section__title");
+        eyebrow.Bottom.ShouldBeLessThanOrEqualTo(title.Y);
+        eyebrow.X.ShouldBe(title.X);
+        var eyebrowColor = await page.Style(muted + " .site-section__eyebrow", "color");
+        eyebrowColor.ShouldBe("rgb(29, 78, 216)");
+        var primaryEyebrow = await page.Box(primary + " .site-section__eyebrow");
+        var primaryTitle = await page.Box(primary + " .site-section__title");
+        primaryEyebrow.Bottom.ShouldBeLessThanOrEqualTo(primaryTitle.Y);
+        var primaryEyebrowColor = await page.Style(primary + " .site-section__eyebrow", "color");
+        primaryEyebrowColor.ShouldBe("rgb(255, 255, 255)");
+        var scrollWidth = await page.ScrollWidth();
+        scrollWidth.ShouldBeLessThanOrEqualTo(width);
+    }
+
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public async Task A_mosaic_flows_its_images_down_columns_without_cropping_them()
     {

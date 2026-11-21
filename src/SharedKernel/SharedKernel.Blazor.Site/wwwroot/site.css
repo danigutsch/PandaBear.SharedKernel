@@ -571,7 +571,7 @@ a {
     border-radius: 0;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) :is(h1, h2, h3, h4, h5, h6, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label) {
+:is(.site-band--primary, .site-band--image, .site-hero--cover) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label) {
     color: inherit;
 }
 
@@ -614,6 +614,19 @@ a {
 
 .site-section__header {
     margin-bottom: var(--site-space-4);
+}
+
+/* The eyebrow: a short label above the heading, small and spaced like the hero's, in the primary colour. */
+.site-section__heading {
+    margin: 0;
+}
+
+.site-section__eyebrow {
+    margin: 0 0 var(--site-space-1);
+    color: var(--site-color-primary);
+    font-size: var(--site-font-size-sm);
+    font-weight: 700;
+    letter-spacing: 0.05em;
 }
 
 .site-divider {

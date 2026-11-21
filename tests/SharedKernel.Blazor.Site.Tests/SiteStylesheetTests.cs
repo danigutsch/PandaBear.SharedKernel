@@ -362,6 +362,24 @@ public sealed partial class SiteStylesheetTests
         rule.Groups["body"].Value.ShouldContain("color: inherit", StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void A_section_eyebrow_is_small_spaced_text_in_the_primary_colour_and_on_primary_on_the_primary_colour_or_a_photo()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+        var eyebrow = SiteFiles.Rule(css, ".site-section__eyebrow");
+        var band = Regex.Match(css, @"^:is\(\.site-band--primary, \.site-band--image, \.site-hero--cover\) :is\(h1(?<list>[^{]*)\{(?<body>[^}]*)\}", RegexOptions.Multiline, TimeSpan.FromSeconds(1));
+
+        // Assert
+        eyebrow.ShouldContain("color: var(--site-color-primary)", StringComparison.Ordinal);
+        eyebrow.ShouldContain("font-size: var(--site-font-size-sm)", StringComparison.Ordinal);
+        eyebrow.ShouldContain("letter-spacing: 0.05em", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-section__heading").ShouldContain("margin: 0", StringComparison.Ordinal);
+        band.Success.ShouldBeTrue();
+        band.Groups["list"].Value.ShouldContain(".site-section__eyebrow", StringComparison.Ordinal);
+        band.Groups["body"].Value.ShouldContain("color: inherit", StringComparison.Ordinal);
+    }
+
     [GeneratedRegex(@"color-mix\(in srgb, var\(--site-color-[a-z-]+\) (?<amount>[^,]+), transparent\)")]
     private static partial Regex MixPattern();
 

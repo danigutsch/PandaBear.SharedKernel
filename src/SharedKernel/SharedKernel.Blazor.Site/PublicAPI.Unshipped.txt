@@ -192,6 +192,8 @@ PandaBear.Blazor.Site.Section.ChildContent.get -> Microsoft.AspNetCore.Component
 PandaBear.Blazor.Site.Section.ChildContent.set -> void
 PandaBear.Blazor.Site.Section.Divider.get -> bool
 PandaBear.Blazor.Site.Section.Divider.set -> void
+PandaBear.Blazor.Site.Section.Eyebrow.get -> string?
+PandaBear.Blazor.Site.Section.Eyebrow.set -> void
 PandaBear.Blazor.Site.Section.Intro.get -> string?
 PandaBear.Blazor.Site.Section.Intro.set -> void
 PandaBear.Blazor.Site.Section.Level.get -> int

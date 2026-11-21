@@ -5,8 +5,8 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// A public page for the band tests: a collapsible header with a logo over a cover hero whose photo is all white (the worst photo for white text),
-/// a primary band with a quote, an image band, a muted band with a split section and a mosaic, a byline, a video link, the footer and
-/// a floating link.
+/// a primary band with a section whose eyebrow tops a quote, an image band, a muted band with a split section with an eyebrow and a
+/// mosaic, a byline, a video link, the footer and a floating link.
 /// </summary>
 public sealed class BandsSample : ComponentBase
 {
@@ -89,12 +89,19 @@ public sealed class BandsSample : ComponentBase
     {
         builder.OpenComponent<Band>(0);
         builder.AddComponentParameter(1, nameof(Band.Tone), BandTone.Primary);
-        builder.AddComponentParameter(2, nameof(Band.ChildContent), (RenderFragment)(quote =>
+        builder.AddComponentParameter(2, nameof(Band.ChildContent), (RenderFragment)(section =>
         {
-            quote.OpenComponent<Quote>(0);
-            quote.AddComponentParameter(1, nameof(Quote.Cite), "Ana, Lisbon");
-            quote.AddComponentParameter(2, nameof(Quote.ChildContent), (RenderFragment)(text => text.AddContent(0, "Unforgettable.")));
-            quote.CloseComponent();
+            section.OpenComponent<Section>(0);
+            section.AddComponentParameter(1, nameof(Section.Eyebrow), "Travellers");
+            section.AddComponentParameter(2, nameof(Section.Title), "In their words");
+            section.AddComponentParameter(3, nameof(Section.ChildContent), (RenderFragment)(quote =>
+            {
+                quote.OpenComponent<Quote>(0);
+                quote.AddComponentParameter(1, nameof(Quote.Cite), "Ana, Lisbon");
+                quote.AddComponentParameter(2, nameof(Quote.ChildContent), (RenderFragment)(text => text.AddContent(0, "Unforgettable.")));
+                quote.CloseComponent();
+            }));
+            section.CloseComponent();
         }));
         builder.CloseComponent();
         builder.OpenComponent<Band>(3);
@@ -122,9 +129,10 @@ public sealed class BandsSample : ComponentBase
     private static void SplitSection(RenderTreeBuilder builder)
     {
         builder.OpenComponent<Section>(0);
-        builder.AddComponentParameter(1, nameof(Section.Title), "Past trips");
-        builder.AddComponentParameter(2, nameof(Section.ChildContent), (RenderFragment)(text => text.AddMarkupContent(0, "<p>Where we have been.</p>")));
-        builder.AddComponentParameter(3, nameof(Section.Media), (RenderFragment)(media =>
+        builder.AddComponentParameter(1, nameof(Section.Eyebrow), "Journal");
+        builder.AddComponentParameter(2, nameof(Section.Title), "Past trips");
+        builder.AddComponentParameter(3, nameof(Section.ChildContent), (RenderFragment)(text => text.AddMarkupContent(0, "<p>Where we have been.</p>")));
+        builder.AddComponentParameter(4, nameof(Section.Media), (RenderFragment)(media =>
         {
             media.OpenComponent<ImageGrid>(0);
             media.AddComponentParameter(1, nameof(ImageGrid.Layout), ImageGridLayout.Mosaic);
