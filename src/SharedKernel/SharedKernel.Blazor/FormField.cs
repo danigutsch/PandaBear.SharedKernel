@@ -91,43 +91,11 @@ public sealed class FormField<TValue> : ComponentBase, IDisposable
         ArgumentNullException.ThrowIfNull(builder);
 
         string[] messages = _subscribed is null ? [] : [.. _subscribed.GetValidationMessages(_field)];
-        builder.OpenElement(0, "label");
-        builder.AddAttribute(1, "for", InputId);
-        builder.AddContent(2, Label);
-        builder.CloseElement();
-        builder.AddContent(3, ChildContent, ControlAttributes(messages.Length));
-        for (var index = 0; index < messages.Length; index++)
-        {
-            builder.OpenElement(4, "div");
-            builder.AddAttribute(5, "id", MessageId(index));
-            builder.AddAttribute(6, "class", "validation-message");
-            builder.AddContent(7, messages[index]);
-            builder.CloseElement();
-        }
+        FormFieldMarkup.Render(builder, InputId, Label, DescribedBy, null, false, ChildContent, messages);
     }
 
     /// <inheritdoc />
     public void Dispose() => Unsubscribe();
-
-    private Dictionary<string, object> ControlAttributes(int messageCount)
-    {
-        var ids = Enumerable.Range(0, messageCount).Select(MessageId).Prepend(DescribedBy?.Trim() ?? string.Empty).Where(id => id.Length > 0);
-        var describedBy = string.Join(' ', ids);
-        var attributes = new Dictionary<string, object>(StringComparer.Ordinal);
-        if (describedBy.Length > 0)
-        {
-            attributes["aria-describedby"] = describedBy;
-        }
-
-        if (messageCount > 0)
-        {
-            attributes["aria-invalid"] = "true";
-        }
-
-        return attributes;
-    }
-
-    private string MessageId(int index) => index == 0 ? InputId + "-error" : $"{InputId}-error-{index + 1}";
 
     private void Refresh(object? sender, ValidationStateChangedEventArgs e) => StateHasChanged();
 
