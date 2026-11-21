@@ -9,7 +9,14 @@
                 }@card.Label</dt>
             @foreach (var value in card.Values)
             {
-                <dd class="site-fact-grid__value">@value</dd>
+                <dd class="site-fact-grid__value">@if (value.Link is null)
+                    {
+                        @value.Text
+                    }
+                    else
+                    {
+                        <a href="@value.Link.Value">@value.Text</a>
+                    }</dd>
             }
         </div>
     }

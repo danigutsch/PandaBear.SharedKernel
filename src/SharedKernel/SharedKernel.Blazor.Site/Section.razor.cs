@@ -3,12 +3,21 @@ using Microsoft.AspNetCore.Components;
 namespace PandaBear.Blazor.Site;
 
 /// <summary>
-/// A page section with a heading, an optional intro and a decorative divider. With <see cref="HeadingId" /> the heading gets that id
-/// and the section is labelled by it (<c>aria-labelledby</c>), which makes it a named region landmark; without it no id is generated,
-/// so the markup is the same during prerendering and in the interactive circuit.
+/// A page section with a heading, an optional eyebrow above it, an optional intro and a decorative divider. With
+/// <see cref="HeadingId" /> the heading gets that id and the section is labelled by it (<c>aria-labelledby</c>), which makes it a named
+/// region landmark; without it no id is generated, so the markup is the same during prerendering and in the interactive circuit. With
+/// an <see cref="Eyebrow" /> the heading is an <c>hgroup</c> of the eyebrow <c>p</c> and the heading, in reading order; without one it
+/// is the heading alone.
 /// </summary>
 public sealed partial class Section
 {
+    /// <summary>
+    /// Gets or sets the short label above the heading, such as a tour's category. It is a <c>p</c>, not a heading, so it stays out of
+    /// the document outline and the section's name; null or blank renders nothing.
+    /// </summary>
+    [Parameter]
+    public string? Eyebrow { get; set; }
+
     /// <summary>Gets or sets the heading text.</summary>
     [Parameter]
     [EditorRequired]
@@ -43,6 +52,8 @@ public sealed partial class Section
     /// <summary>Gets or sets the section body.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+
+    private bool HasEyebrow => !string.IsNullOrWhiteSpace(Eyebrow);
 
     /// <inheritdoc />
     protected override void OnParametersSet()

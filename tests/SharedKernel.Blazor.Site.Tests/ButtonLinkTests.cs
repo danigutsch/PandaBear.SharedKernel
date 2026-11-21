@@ -55,6 +55,20 @@ public sealed class ButtonLinkTests : BunitContext
     }
 
     [Fact]
+    public void The_new_tab_hint_is_separated_from_the_link_text_by_a_space_in_the_accessible_name()
+    {
+        // Arrange & Act
+        var cut = Render<ButtonLink>(parameters => parameters
+            .Add(component => component.Href, LinkTarget.FromString("https://example.org"))
+            .Add(component => component.NewTab, true)
+            .Add(component => component.NewTabHint, "(abre em uma nova aba)")
+            .AddChildContent("Inscreva-se"));
+
+        // Assert
+        cut.Find("a").TextContent.ShouldBe("Inscreva-se (abre em uma nova aba)");
+    }
+
+    [Fact]
     public void Extra_attributes_and_class_are_passed_to_the_link_and_cannot_replace_rel()
     {
         // Arrange & Act

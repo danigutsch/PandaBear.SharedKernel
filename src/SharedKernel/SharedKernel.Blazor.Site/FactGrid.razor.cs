@@ -4,7 +4,7 @@ namespace PandaBear.Blazor.Site;
 
 /// <summary>
 /// A grid of fact cards, such as a tour's basic information: a <c>dl</c> whose cards are <c>div</c> groups of the <c>dt</c> label, with
-/// the optional decorative icon inside it, and one <c>dd</c> per value. The cards are centred and bordered like the cells of a table.
+/// the optional decorative icon inside it, and one <c>dd</c> per value, holding a link when the value has one. The cards are centred and bordered like the cells of a table.
 /// Below the <c>48rem</c> breakpoint they fill columns at least 11rem wide; from it on the grid has the balanced column count of
 /// <c>site-fact-grid--columns-1</c> to <c>site-fact-grid--columns-4</c>: as many columns as cards up to four, then the fewest rows of
 /// at most four cards with the cards spread as evenly as possible over them.
@@ -22,7 +22,9 @@ public sealed partial class FactGrid
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException"><see cref="Cards" /> is null.</exception>
-    /// <exception cref="ArgumentException">A card is null, has a blank label, or has no values or a blank value.</exception>
+    /// <exception cref="ArgumentException">
+    /// A card is null, has a blank label, or has no values, a null value or a value with blank text.
+    /// </exception>
     protected override void OnParametersSet()
     {
         ArgumentNullException.ThrowIfNull(Cards);
@@ -43,9 +45,9 @@ public sealed partial class FactGrid
                 throw new ArgumentException($"The fact card '{card.Label}' needs at least one value.", nameof(Cards));
             }
 
-            if (card.Values.Any(string.IsNullOrWhiteSpace))
+            if (card.Values.Any(value => value is null || string.IsNullOrWhiteSpace(value.Text)))
             {
-                throw new ArgumentException($"The fact card '{card.Label}' has a blank value.", nameof(Cards));
+                throw new ArgumentException($"The fact card '{card.Label}' has a missing or blank value.", nameof(Cards));
             }
         }
     }

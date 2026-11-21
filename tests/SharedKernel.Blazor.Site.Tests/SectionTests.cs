@@ -3,6 +3,12 @@ namespace PandaBear.Blazor.Site.Tests;
 /// <summary>Tests the section with its heading, intro and divider.</summary>
 public sealed class SectionTests : BunitContext
 {
+    private const string MarkupWithoutEyebrow =
+        "<section class=\"site-section\" aria-labelledby=\"tours-heading\">\n        "
+        + "<div class=\"site-section__header\"><h2 id=\"tours-heading\" class=\"site-section__title\">Tours</h2>"
+        + "<div class=\"site-divider\" aria-hidden=\"true\"></div><p class=\"site-section__intro\">Pick one.</p></div>\n        "
+        + "<div class=\"site-section__body\"><p>Body</p></div>\n    </section>";
+
     [Fact]
     public void Section_has_a_level_two_heading_intro_and_body_and_no_generated_ID()
     {
@@ -30,6 +36,81 @@ public sealed class SectionTests : BunitContext
 
         // Assert
         second.Markup.ShouldBe(first.Markup);
+    }
+
+    [Fact]
+    public void Without_an_eyebrow_the_heading_is_the_first_child_of_the_header()
+    {
+        // Arrange & Act
+        var cut = Render<Section>(parameters => parameters
+            .Add(component => component.Title, "Tours")
+            .Add(component => component.HeadingId, "tours-heading")
+            .Add(component => component.Intro, "Pick one.")
+            .AddChildContent("<p>Body</p>"));
+
+        // Assert
+        cut.Markup.ShouldBe(MarkupWithoutEyebrow);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\t\n")]
+    public void A_missing_or_blank_eyebrow_leaves_the_markup_unchanged(string? eyebrow)
+    {
+        // Arrange & Act
+        var cut = Render<Section>(parameters => parameters
+            .Add(component => component.Eyebrow, eyebrow)
+            .Add(component => component.Title, "Tours")
+            .Add(component => component.HeadingId, "tours-heading")
+            .Add(component => component.Intro, "Pick one.")
+            .AddChildContent("<p>Body</p>"));
+
+        // Assert
+        cut.Markup.ShouldBe(MarkupWithoutEyebrow);
+        cut.FindAll("hgroup").ShouldBeEmpty();
+        cut.FindAll(".site-section__eyebrow").ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(2)]
+    [InlineData(3)]
+    public void An_eyebrow_comes_before_the_heading_in_an_hgroup_that_opens_the_header(int level)
+    {
+        // Arrange & Act
+        var cut = Render<Section>(parameters => parameters
+            .Add(component => component.Eyebrow, "Adventure")
+            .Add(component => component.Title, "By Vespa through Italy")
+            .Add(component => component.HeadingId, "italy-heading")
+            .Add(component => component.Level, level)
+            .Add(component => component.Intro, "Ten days."));
+
+        // Assert
+        var header = cut.Find("section > .site-section__header");
+        header.Children.Select(child => child.ClassName).ShouldBe(["site-section__heading", "site-divider", "site-section__intro"]);
+        var heading = header.Children[0];
+        heading.TagName.ShouldBe("HGROUP");
+        heading.Children.Select(child => child.TagName).ShouldBe(["P", $"H{level}"]);
+        heading.Children[0].ClassName.ShouldBe("site-section__eyebrow");
+        heading.Children[0].TextContent.ShouldBe("Adventure");
+        heading.Children[1].ClassName.ShouldBe("site-section__title");
+        heading.Children[1].Id.ShouldBe("italy-heading");
+        heading.Children[1].TextContent.ShouldBe("By Vespa through Italy");
+        cut.Find("section").GetAttribute("aria-labelledby").ShouldBe("italy-heading");
+    }
+
+    [Fact]
+    public void Eyebrow_text_is_encoded()
+    {
+        // Arrange & Act
+        var cut = Render<Section>(parameters => parameters
+            .Add(component => component.Eyebrow, "<b>New</b> & safe")
+            .Add(component => component.Title, "Tours"));
+
+        // Assert
+        cut.FindAll("b").ShouldBeEmpty();
+        cut.Find(".site-section__eyebrow").TextContent.ShouldBe("<b>New</b> & safe");
     }
 
     [Fact]
@@ -152,5 +233,23 @@ public sealed class SectionTests : BunitContext
         cut.Find(".site-split__main #more").ShouldNotBeNull();
         cut.Find(".site-split__media #photo").ShouldNotBeNull();
         cut.FindAll("aside").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void An_eyebrow_in_a_split_section_stays_in_the_header_of_the_text_column()
+    {
+        // Arrange & Act
+        var cut = Render<Section>(parameters => parameters
+            .Add(component => component.Eyebrow, "Journal")
+            .Add(component => component.Title, "Past trips")
+            .Add(component => component.Media, "<img id=\"photo\" src=\"/p.jpg\" alt=\"\">"));
+
+        // Assert
+        var main = cut.Find("section > .site-split > .site-split__main");
+        main.Children.Select(child => child.ClassName).ShouldBe(["site-section__header", "site-section__body"]);
+        var heading = main.Children[0].Children[0];
+        heading.TagName.ShouldBe("HGROUP");
+        heading.Children.Select(child => child.ClassName).ShouldBe(["site-section__eyebrow", "site-section__title"]);
+        cut.FindAll(".site-split__media hgroup").ShouldBeEmpty();
     }
 }
