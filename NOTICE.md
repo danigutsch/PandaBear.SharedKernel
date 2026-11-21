@@ -20,6 +20,7 @@ NuGet dependencies retain their own licenses and notices. Package and dependency
   (Copyright (c) 2026 Zachary Rice, MIT License), rewritten in .NET regular expression syntax. Each rule records its
   upstream rule ID.
 
-The ASP.NET Core implicit form binding deadline bridge and HTTP request body test helpers are
-adapted from ViajantesTurismo at revision `ff95d826ea`, Copyright (c) 2025 ViajantesTurismo contributors.
-The complete [original MIT notice](LICENSE.ViajantesTurismo.txt) accompanies the source and packages.
+The ASP.NET Core implicit form binding deadline bridge, HTTP test body helpers, and reviewed
+artifact verification in `SharedKernel.IO` are adapted from ViajantesTurismo at revision
+`ff95d826ea`, Copyright (c) 2025 ViajantesTurismo contributors. The complete
+[original MIT notice](LICENSE.ViajantesTurismo.txt) accompanies the source and packages.

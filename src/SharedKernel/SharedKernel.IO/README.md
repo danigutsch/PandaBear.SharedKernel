@@ -91,3 +91,12 @@ streams (`SKIO001`) and hand-rolled copy loops into a `MemoryStream` (`SKIO002`)
 
 See [stream intake policy](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/stream-intake.md)
 for ownership, limits, memory-map decisions, benchmark evidence, and application adoption boundaries.
+
+## Reviewed manifests and artifacts
+
+`ArtifactManifest.Read` deserializes a bounded manifest using caller-supplied `JsonTypeInfo` and
+returns the SHA-256 of the exact file bytes. Select strict JSON options and validate the parsed model
+in the consumer. `VerifiedArtifact.Read` returns bounded bytes that matched an expected SHA-256.
+`VerifiedArtifact.Verify` checks a digest without retaining the file contents. Keep the artifact bundle
+in a caller-controlled directory. The consumer owns migration phases, release policy, SQL validation,
+and execution.
