@@ -233,16 +233,21 @@ candidate's package hashes, then:
    a candidate whose `libraryDirty` is not `false`, the result is `pending` and nothing runs;
 2. clones the repository with `git clone --no-checkout --shared` into a scratch directory under the system
    temporary directory and checks out the recorded revision detached;
-3. in the clone, requires every `PandaBear.SharedKernel.*` `PackageVersion` in `Directory.Packages.props`, every
-   such entry in the `packages.lock.json` of each project of `--solution` (default: the only `.slnx` in the
-   repository root), and every such tool in `.config/dotnet-tools.json` to have the candidate version, comparing IDs
-   and versions case-insensitively; a project or lock entry that references SharedKernel source fails the check, and
-   so does a consumer that references no such package;
+3. in the clone, requires the candidate version on all `PandaBear.SharedKernel.*` central package versions, entries in
+   the selected projects' `packages.lock.json` files, and local tools, comparing IDs and versions case-insensitively.
+   The selected projects come from `--solution` (default: the only `.slnx` in the repository root). A project can omit
+   its lock file when it is listed under `lockExemptProjects` in `.config/sharedkernel-repo.json` and sets
+   `RestorePackagesWithLockFile` to `false` unconditionally in its project file. Explicit SharedKernel package versions
+   and overrides in exempt project files must also match the candidate. A project or lock entry that references
+   SharedKernel source fails the check, as does a consumer that references no candidate package;
 4. requires the clone's `NuGet.Config` to clear `packageSources` and `fallbackPackageFolders` and to map
    `PandaBear.SharedKernel.*` to exactly one source, a repository-relative folder that holds no package, and copies
    the candidate's packages there;
 5. runs the command after `--`, with the clone as its working directory and `NUGET_PACKAGES` and
    `NUGET_HTTP_CACHE_PATH` in the scratch directory; the command's output streams to standard error.
+
+Use a locked restore and the consumer's [lock coverage checks](../../docs/package-development.md#lock-files) in
+the verification command to confirm that retained locks cover the resolved packages of every exempt project.
 
 `--output` (default `TestResults/consumer-compatibility.json` in `--repo-root`) receives the candidate manifest with
 `consumerRevision`, `consumerDirty`, `consumerCompatibility` (`passed`, `failed`, or `pending`), and, unless it

@@ -154,6 +154,7 @@ flowchart TB
     SharedKernel_Vault_Keeper[SharedKernel.Vault.Keeper] --> SharedKernel_Vault[SharedKernel.Vault]
     SharedKernel_Versioning[SharedKernel.Versioning] --> SharedKernel_IO[SharedKernel.IO]
     SharedKernel_Versioning[SharedKernel.Versioning] --> SharedKernel_Processes[SharedKernel.Processes]
+    SharedKernel_Versioning[SharedKernel.Versioning] --> SharedKernel_Repositories[SharedKernel.Repositories]
 ```
 <!-- generated:library-dependencies:end -->
 
