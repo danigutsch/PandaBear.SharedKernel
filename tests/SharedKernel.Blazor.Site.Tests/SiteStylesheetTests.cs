@@ -308,6 +308,35 @@ public sealed partial class SiteStylesheetTests
         rule.ShouldContain("color: var(--site-color-on-primary)", StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void A_start_split_moves_its_media_only_visually_and_only_from_the_breakpoint_on()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Assert
+        css.ShouldContain("""
+                .site-split--media-start > .site-split__media {
+                    order: -1;
+                }
+            """, StringComparison.Ordinal);
+        Regex.IsMatch(css, @"^\.site-split--media-start", RegexOptions.Multiline, TimeSpan.FromSeconds(1)).ShouldBeFalse();
+        css.ShouldNotContain("row-reverse", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void A_fact_label_takes_the_on_primary_colour_on_the_primary_colour_or_a_photo()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+        var rule = Regex.Match(css, @"^:is\(\.site-band--primary, \.site-band--image, \.site-hero--cover\) :is\(h1(?<list>[^{]*)\{(?<body>[^}]*)\}", RegexOptions.Multiline, TimeSpan.FromSeconds(1));
+
+        // Assert
+        rule.Success.ShouldBeTrue();
+        rule.Groups["list"].Value.ShouldContain(".site-fact-grid__label", StringComparison.Ordinal);
+        rule.Groups["body"].Value.ShouldContain("color: inherit", StringComparison.Ordinal);
+    }
+
     [GeneratedRegex(@"color-mix\(in srgb, var\(--site-color-[a-z-]+\) (?<amount>[^,]+), transparent\)")]
     private static partial Regex MixPattern();
 

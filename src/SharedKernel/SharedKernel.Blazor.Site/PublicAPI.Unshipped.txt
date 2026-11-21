@@ -666,3 +666,32 @@ PandaBear.Blazor.Site.Split.ChildContent.set -> void
 PandaBear.Blazor.Site.Split.Media.get -> Microsoft.AspNetCore.Components.RenderFragment?
 PandaBear.Blazor.Site.Split.Media.set -> void
 PandaBear.Blazor.Site.Split.Split() -> void
+PandaBear.Blazor.Site.Split.MediaSide.get -> PandaBear.Blazor.Site.SplitMediaSide
+PandaBear.Blazor.Site.Split.MediaSide.set -> void
+PandaBear.Blazor.Site.SplitMediaSide
+PandaBear.Blazor.Site.SplitMediaSide.End = 0 -> PandaBear.Blazor.Site.SplitMediaSide
+PandaBear.Blazor.Site.SplitMediaSide.Start = 1 -> PandaBear.Blazor.Site.SplitMediaSide
+PandaBear.Blazor.Site.FactCard
+PandaBear.Blazor.Site.FactCard.FactCard(string! Label, System.Collections.Generic.IReadOnlyList<string!>! Values, Microsoft.AspNetCore.Components.RenderFragment? Icon = null) -> void
+PandaBear.Blazor.Site.FactCard.Icon.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.FactCard.Icon.init -> void
+PandaBear.Blazor.Site.FactCard.Label.get -> string!
+PandaBear.Blazor.Site.FactCard.Label.init -> void
+PandaBear.Blazor.Site.FactCard.Values.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Blazor.Site.FactCard.Values.init -> void
+PandaBear.Blazor.Site.FactGrid
+PandaBear.Blazor.Site.FactGrid.Cards.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactCard!>!
+PandaBear.Blazor.Site.FactGrid.Cards.set -> void
+PandaBear.Blazor.Site.FactGrid.FactGrid() -> void
+PandaBear.Blazor.Site.ActionRow
+PandaBear.Blazor.Site.ActionRow.ActionRow() -> void
+PandaBear.Blazor.Site.ActionRow.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.ActionRow.ChildContent.set -> void
+PandaBear.Blazor.Site.FactCard.<Clone>$() -> PandaBear.Blazor.Site.FactCard!
+PandaBear.Blazor.Site.FactCard.Deconstruct(out string! Label, out System.Collections.Generic.IReadOnlyList<string!>! Values, out Microsoft.AspNetCore.Components.RenderFragment? Icon) -> void
+PandaBear.Blazor.Site.FactCard.Equals(PandaBear.Blazor.Site.FactCard? other) -> bool
+override PandaBear.Blazor.Site.FactCard.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.FactCard.GetHashCode() -> int
+override PandaBear.Blazor.Site.FactCard.ToString() -> string!
+static PandaBear.Blazor.Site.FactCard.operator !=(PandaBear.Blazor.Site.FactCard? left, PandaBear.Blazor.Site.FactCard? right) -> bool
+static PandaBear.Blazor.Site.FactCard.operator ==(PandaBear.Blazor.Site.FactCard? left, PandaBear.Blazor.Site.FactCard? right) -> bool
