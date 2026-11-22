@@ -147,6 +147,10 @@ public sealed class TypographyStyle : ValueObject
     /// <inheritdoc />
     public override string ToString() => $"{FontKey ?? Fallback?.ToString() ?? "inherit"} {Size} {Weight}";
 
+    /// <summary>Returns the face of this style: its font family, weight and style, without its size, spacing, transform or colour.</summary>
+    /// <returns>The face.</returns>
+    internal TypographyStyle Face() => new(FontKey, Fallback, null, Weight, null, null, null, Italic, null);
+
     /// <summary>Returns this style with every unset value taken from another style.</summary>
     /// <param name="fallbackStyle">The style that fills the gaps.</param>
     /// <returns>The merged style.</returns>

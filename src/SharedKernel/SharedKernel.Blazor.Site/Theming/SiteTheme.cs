@@ -173,7 +173,14 @@ public sealed class SiteTheme : ValueObject
     /// <summary>Gets the style of a role with every unset value taken from <see cref="Default" />.</summary>
     /// <param name="role">The role.</param>
     /// <returns>The effective style.</returns>
-    public TypographyStyle Effective(TypographyRole role) => Typography[role].Over(Default.Typography[role]);
+    /// <remarks>
+    /// A card title's unset font family, weight and style come from this theme's own level 3 heading before the default, so a theme
+    /// that gives its headings a display font keeps it on its card titles; its size, line height, spacing and transform stay the card
+    /// title's.
+    /// </remarks>
+    public TypographyStyle Effective(TypographyRole role) => role == TypographyRole.CardTitle
+        ? Typography[role].Over(Typography[TypographyRole.H3].Face()).Over(Default.Typography[role])
+        : Typography[role].Over(Default.Typography[role]);
 
     /// <summary>Gets the font a key references.</summary>
     /// <param name="key">The key.</param>

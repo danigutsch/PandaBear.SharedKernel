@@ -102,7 +102,7 @@ public sealed class SiteFooterBrowserTests(ChromiumFixture chromium) : IClassFix
         var primaryText = ComputedColor.ToHex(await page.Style("#footer-primary", "color"));
         var outlineText = ComputedColor.ToHex(await page.Style("#footer-outline", "color"));
         var outlineBorder = ComputedColor.ToHex(await page.Style("#footer-outline", "border-top-color"));
-        await page.Page.HoverAsync("#footer-primary");
+        await InvertedSample.MoveMouseTo(page, "#footer-primary");
         var hoverBackground = ComputedColor.ToHex(await page.Style("#footer-primary", "background-color"));
         var hoverText = ComputedColor.ToHex(await page.Style("#footer-primary", "color"));
 

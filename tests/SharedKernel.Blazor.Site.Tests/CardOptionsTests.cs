@@ -18,10 +18,24 @@ public sealed class CardOptionsTests : BunitContext
     public void A_plain_card_drops_its_box()
     {
         // Arrange & Act
-        var cut = this.RenderCard(parameters => parameters.Add(component => component.Style, CardStyle.Plain));
+        var cut = this.RenderCard(parameters => parameters.Add(component => component.CardStyle, CardStyle.Plain));
 
         // Assert
         BunitElementAssertions.HasClass(cut.Find("article").ClassList, "site-card--plain");
+    }
+
+    [Fact]
+    public void A_style_attribute_reaches_the_article_because_no_parameter_takes_its_name()
+    {
+        // Arrange & Act
+        var cut = this.RenderCard(parameters => parameters
+            .AddUnmatched("style", "view-transition-name: tour")
+            .Add(component => component.CardStyle, CardStyle.Plain));
+
+        // Assert
+        var article = cut.Find("article");
+        article.GetAttribute("style").ShouldBe("view-transition-name: tour");
+        BunitElementAssertions.HasClass(article.ClassList, "site-card--plain");
     }
 
     [Theory]
@@ -42,7 +56,7 @@ public sealed class CardOptionsTests : BunitContext
     {
         // Arrange & Act
         var cut = this.RenderCard(parameters => parameters
-            .Add(component => component.Style, CardStyle.Plain)
+            .Add(component => component.CardStyle, CardStyle.Plain)
             .Add(component => component.ImageShadow, CardImageShadow.Offset));
 
         // Assert
@@ -110,7 +124,7 @@ public sealed class CardOptionsTests : BunitContext
         var card = this.RenderCard(parameters => parameters
             .Add(component => component.MoreText, "More")
             .Add(component => component.MoreVariant, ButtonVariant.Primary)
-            .Add(component => component.ButtonSize, ButtonSize.Compact));
+            .Add(component => component.MoreSize, ButtonSize.Compact));
 
         // Act
         var button = Render<ButtonLink>(parameters => parameters
@@ -153,11 +167,11 @@ public sealed class CardOptionsTests : BunitContext
         // Arrange & Act
         Action[] renders =
         [
-            () => this.RenderCard(parameters => parameters.Add(component => component.Style, (CardStyle)9)),
+            () => this.RenderCard(parameters => parameters.Add(component => component.CardStyle, (CardStyle)9)),
             () => this.RenderCard(parameters => parameters.Add(component => component.ImageAspect, (CardImageAspect)9)),
             () => this.RenderCard(parameters => parameters.Add(component => component.ImageShadow, (CardImageShadow)9)),
             () => this.RenderCard(parameters => parameters.Add(component => component.TextAlignment, (SiteAlignment)9)),
-            () => this.RenderCard(parameters => parameters.Add(component => component.ButtonSize, (ButtonSize)9)),
+            () => this.RenderCard(parameters => parameters.Add(component => component.MoreSize, (ButtonSize)9)),
             () => this.RenderCard(parameters => parameters.Add(component => component.MoreVariant, (ButtonVariant)9)),
         ];
 

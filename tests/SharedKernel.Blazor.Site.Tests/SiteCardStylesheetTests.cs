@@ -87,15 +87,17 @@ public sealed class SiteCardStylesheetTests
         var grid = SiteFiles.Rule(css, ".site-card-grid");
 
         // Assert
-        grid.ShouldContain("grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--site-card-min-width)), var(--site-card-max-width)))", StringComparison.Ordinal);
+        grid.ShouldContain("grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--site-card-min-width)), 1fr))", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-card-grid > *").ShouldContain("max-inline-size: var(--site-card-max-width)", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-card-grid--items-center").ShouldContain("justify-items: center", StringComparison.Ordinal);
         grid.ShouldContain("gap: var(--site-card-gap)", StringComparison.Ordinal);
         SiteFiles.Rule(css, ".site-card-grid--min-medium").ShouldContain("--site-card-min-width: 22rem", StringComparison.Ordinal);
         SiteFiles.Rule(css, ".site-card-grid--min-wide").ShouldContain("--site-card-min-width: 32rem", StringComparison.Ordinal);
         SiteFiles.Rule(css, ".site-card-grid--max-narrow").ShouldContain("--site-card-max-width: 16rem", StringComparison.Ordinal);
         SiteFiles.Rule(css, ".site-card-grid--max-wide").ShouldContain("--site-card-max-width: 32rem", StringComparison.Ordinal);
         var bounded = SiteFiles.Rule(css, ":is(.site-card-grid--max-narrow, .site-card-grid--max-medium, .site-card-grid--max-wide)");
-        bounded.ShouldContain("repeat(auto-fit,", StringComparison.Ordinal);
-        bounded.ShouldContain("justify-content: center", StringComparison.Ordinal);
+        bounded.ShouldContain("grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--site-card-min-width)), 1fr))", StringComparison.Ordinal);
+        bounded.ShouldNotContain("justify-content", StringComparison.Ordinal);
         foreach (var step in Enumerable.Range(1, 6))
         {
             SiteFiles.Rule(css, $".site-card-grid--gap-{step}").ShouldContain($"--site-card-gap: var(--site-space-{step})", StringComparison.Ordinal);
@@ -114,5 +116,46 @@ public sealed class SiteCardStylesheetTests
         actions.ShouldContain("flex-direction: row", StringComparison.Ordinal);
         actions.ShouldContain("margin-top: auto", StringComparison.Ordinal);
         SiteFiles.Rule(File.ReadAllText(SiteFiles.StylesheetPath()), ".site-card--text-center .site-card__actions").ShouldContain("justify-content: center", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void A_card_starts_its_text_until_its_alignment_centres_it()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Assert
+        SiteFiles.Rule(css, ".site-card").ShouldContain("text-align: start", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-card--text-center").ShouldContain("text-align: center", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void The_offset_shadow_falls_towards_the_inline_end_in_a_right_to_left_page()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Assert
+        SiteFiles.Rule(css, ".site-card--image-shadow .site-card__media img:dir(rtl)")
+            .ShouldContain("box-shadow: calc(-1 * var(--site-space-2)) var(--site-space-2) 0 var(--site-color-border)", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void A_boxed_card_on_the_primary_colour_keeps_the_page_look_of_its_buttons_and_title()
+    {
+        // Arrange
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+        const string Boxed = ":is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:not(.site-card--plain)";
+
+        // Act
+        var primary = SiteFiles.Rule(css, Boxed + " .site-button--primary");
+        var outline = SiteFiles.Rule(css, Boxed + " .site-button--outline");
+
+        // Assert
+        primary.ShouldContain("background: var(--site-color-primary)", StringComparison.Ordinal);
+        primary.ShouldContain("color: var(--site-color-on-primary)", StringComparison.Ordinal);
+        outline.ShouldContain("border-color: var(--site-color-primary)", StringComparison.Ordinal);
+        outline.ShouldContain("color: var(--site-color-primary)", StringComparison.Ordinal);
+        SiteFiles.Rule(css, Boxed + " .site-card__title").ShouldContain("color: var(--site-card-title-color, inherit)", StringComparison.Ordinal);
     }
 }

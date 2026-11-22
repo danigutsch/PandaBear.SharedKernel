@@ -36,7 +36,7 @@ public sealed partial class AlbumIndex
     [Parameter]
     public int EagerCount { get; set; } = DefaultEagerCount;
 
-    /// <summary>Gets or sets the look of every album card (<see cref="Card.Style" />). The default is <see cref="CardStyle.Boxed" />.</summary>
+    /// <summary>Gets or sets the look of every album card (<see cref="Card.CardStyle" />). The default is <see cref="CardStyle.Boxed" />.</summary>
     [Parameter]
     public CardStyle CardStyle { get; set; }
 
@@ -60,9 +60,9 @@ public sealed partial class AlbumIndex
     [Parameter]
     public ButtonVariant MoreVariant { get; set; } = ButtonVariant.Outline;
 
-    /// <summary>Gets or sets the size of the more look (<see cref="Card.ButtonSize" />). The default is <see cref="ButtonSize.Regular" />.</summary>
+    /// <summary>Gets or sets the size of the more look (<see cref="Card.MoreSize" />). The default is <see cref="ButtonSize.Regular" />.</summary>
     [Parameter]
-    public ButtonSize ButtonSize { get; set; }
+    public ButtonSize MoreSize { get; set; }
 
     /// <summary>Gets or sets the smallest column width of the grid (<see cref="CardGrid.MinColumnWidth" />).</summary>
     [Parameter]
@@ -75,6 +75,10 @@ public sealed partial class AlbumIndex
     /// <summary>Gets or sets the space between the cards (<see cref="CardGrid.Gap" />). The default is <see cref="SiteSpace.Space4" />.</summary>
     [Parameter]
     public SiteSpace Gap { get; set; } = SiteSpace.Space4;
+
+    /// <summary>Gets or sets where capped cards lie in their columns (<see cref="CardGrid.ItemAlignment" />). The default is <see cref="SiteAlignment.Start" />.</summary>
+    [Parameter]
+    public SiteAlignment ItemAlignment { get; set; }
 
     /// <inheritdoc />
     protected override void OnParametersSet()

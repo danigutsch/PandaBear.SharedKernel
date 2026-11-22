@@ -32,12 +32,25 @@ public sealed class CardGridOptionsTests : BunitContext
     }
 
     [Fact]
-    public void A_maximum_below_the_minimum_is_refused()
+    public void Centred_items_add_their_modifier_class()
+    {
+        // Arrange & Act
+        var cut = Render<CardGrid>(parameters => parameters.Add(component => component.ItemAlignment, SiteAlignment.Center));
+
+        // Assert
+        cut.Find("div").ClassName.ShouldBe("site-card-grid site-card-grid--items-center");
+    }
+
+    [Theory]
+    [InlineData(CardColumnWidth.Wide, CardColumnWidth.Medium)]
+    [InlineData(CardColumnWidth.Medium, CardColumnWidth.Narrow)]
+    [InlineData(CardColumnWidth.Wide, CardColumnWidth.Narrow)]
+    public void A_maximum_below_the_minimum_is_refused(CardColumnWidth min, CardColumnWidth max)
     {
         // Arrange & Act
         var render = () => Render<CardGrid>(parameters => parameters
-            .Add(component => component.MinColumnWidth, CardColumnWidth.Wide)
-            .Add(component => component.MaxColumnWidth, CardColumnWidth.Medium));
+            .Add(component => component.MinColumnWidth, min)
+            .Add(component => component.MaxColumnWidth, max));
 
         // Assert
         render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(CardGrid.MaxColumnWidth));
@@ -52,6 +65,7 @@ public sealed class CardGridOptionsTests : BunitContext
             () => Render<CardGrid>(parameters => parameters.Add(component => component.MinColumnWidth, (CardColumnWidth)9)),
             () => Render<CardGrid>(parameters => parameters.Add(component => component.MaxColumnWidth, (CardColumnWidth)9)),
             () => Render<CardGrid>(parameters => parameters.Add(component => component.Gap, (SiteSpace)9)),
+            () => Render<CardGrid>(parameters => parameters.Add(component => component.ItemAlignment, (SiteAlignment)9)),
         ];
 
         // Assert

@@ -1,6 +1,4 @@
 #nullable enable
-PandaBear.Blazor.Site.AlbumIndex.ButtonSize.get -> PandaBear.Blazor.Site.ButtonSize
-PandaBear.Blazor.Site.AlbumIndex.ButtonSize.set -> void
 PandaBear.Blazor.Site.AlbumIndex.CardStyle.get -> PandaBear.Blazor.Site.CardStyle
 PandaBear.Blazor.Site.AlbumIndex.CardStyle.set -> void
 PandaBear.Blazor.Site.AlbumIndex.Gap.get -> PandaBear.Blazor.Site.SiteSpace
@@ -9,10 +7,14 @@ PandaBear.Blazor.Site.AlbumIndex.ImageAspect.get -> PandaBear.Blazor.Site.CardIm
 PandaBear.Blazor.Site.AlbumIndex.ImageAspect.set -> void
 PandaBear.Blazor.Site.AlbumIndex.ImageShadow.get -> PandaBear.Blazor.Site.CardImageShadow
 PandaBear.Blazor.Site.AlbumIndex.ImageShadow.set -> void
+PandaBear.Blazor.Site.AlbumIndex.ItemAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.AlbumIndex.ItemAlignment.set -> void
 PandaBear.Blazor.Site.AlbumIndex.MaxColumnWidth.get -> PandaBear.Blazor.Site.CardColumnWidth?
 PandaBear.Blazor.Site.AlbumIndex.MaxColumnWidth.set -> void
 PandaBear.Blazor.Site.AlbumIndex.MinColumnWidth.get -> PandaBear.Blazor.Site.CardColumnWidth
 PandaBear.Blazor.Site.AlbumIndex.MinColumnWidth.set -> void
+PandaBear.Blazor.Site.AlbumIndex.MoreSize.get -> PandaBear.Blazor.Site.ButtonSize
+PandaBear.Blazor.Site.AlbumIndex.MoreSize.set -> void
 PandaBear.Blazor.Site.AlbumIndex.MoreText.get -> string?
 PandaBear.Blazor.Site.AlbumIndex.MoreText.set -> void
 PandaBear.Blazor.Site.AlbumIndex.MoreVariant.get -> PandaBear.Blazor.Site.ButtonVariant
@@ -24,20 +26,20 @@ PandaBear.Blazor.Site.ButtonLink.Size.set -> void
 PandaBear.Blazor.Site.ButtonSize
 PandaBear.Blazor.Site.ButtonSize.Compact = 1 -> PandaBear.Blazor.Site.ButtonSize
 PandaBear.Blazor.Site.ButtonSize.Regular = 0 -> PandaBear.Blazor.Site.ButtonSize
-PandaBear.Blazor.Site.Card.ButtonSize.get -> PandaBear.Blazor.Site.ButtonSize
-PandaBear.Blazor.Site.Card.ButtonSize.set -> void
+PandaBear.Blazor.Site.Card.CardStyle.get -> PandaBear.Blazor.Site.CardStyle
+PandaBear.Blazor.Site.Card.CardStyle.set -> void
 PandaBear.Blazor.Site.Card.Eyebrow.get -> string?
 PandaBear.Blazor.Site.Card.Eyebrow.set -> void
 PandaBear.Blazor.Site.Card.ImageAspect.get -> PandaBear.Blazor.Site.CardImageAspect
 PandaBear.Blazor.Site.Card.ImageAspect.set -> void
 PandaBear.Blazor.Site.Card.ImageShadow.get -> PandaBear.Blazor.Site.CardImageShadow
 PandaBear.Blazor.Site.Card.ImageShadow.set -> void
+PandaBear.Blazor.Site.Card.MoreSize.get -> PandaBear.Blazor.Site.ButtonSize
+PandaBear.Blazor.Site.Card.MoreSize.set -> void
 PandaBear.Blazor.Site.Card.MoreText.get -> string?
 PandaBear.Blazor.Site.Card.MoreText.set -> void
 PandaBear.Blazor.Site.Card.MoreVariant.get -> PandaBear.Blazor.Site.ButtonVariant
 PandaBear.Blazor.Site.Card.MoreVariant.set -> void
-PandaBear.Blazor.Site.Card.Style.get -> PandaBear.Blazor.Site.CardStyle
-PandaBear.Blazor.Site.Card.Style.set -> void
 PandaBear.Blazor.Site.Card.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
 PandaBear.Blazor.Site.Card.TextAlignment.set -> void
 PandaBear.Blazor.Site.CardColumnWidth
@@ -46,6 +48,8 @@ PandaBear.Blazor.Site.CardColumnWidth.Narrow = 0 -> PandaBear.Blazor.Site.CardCo
 PandaBear.Blazor.Site.CardColumnWidth.Wide = 2 -> PandaBear.Blazor.Site.CardColumnWidth
 PandaBear.Blazor.Site.CardGrid.Gap.get -> PandaBear.Blazor.Site.SiteSpace
 PandaBear.Blazor.Site.CardGrid.Gap.set -> void
+PandaBear.Blazor.Site.CardGrid.ItemAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.CardGrid.ItemAlignment.set -> void
 PandaBear.Blazor.Site.CardGrid.MaxColumnWidth.get -> PandaBear.Blazor.Site.CardColumnWidth?
 PandaBear.Blazor.Site.CardGrid.MaxColumnWidth.set -> void
 PandaBear.Blazor.Site.CardGrid.MinColumnWidth.get -> PandaBear.Blazor.Site.CardColumnWidth

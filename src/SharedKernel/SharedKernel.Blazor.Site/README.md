@@ -68,7 +68,7 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | --- | --- |
 | `SkipLink` | The first link of the page; `TargetId` defaults to `main-content`. Extra attributes cannot replace its `href` or `class`. |
 | `SiteHeader` | `header` with a brand slot, a labelled `nav` (`Label` is required when there are items), and an actions slot (`site-header__actions`). An item has either an `Href` or one level of children; an item with children is a native `details` that starts closed and shows a chevron that turns when it opens. The item that matches `CurrentPath` gets `aria-current="page"`, and the summary of its group gets `aria-current="true"` and the current item's style, so the group stays closed and does not cover the page. Below the `48rem` breakpoint an open group stacks the navigation on a row of its own, the group's links under its summary; from the breakpoint on they drop down over the page. `MenuLabel` collapses the navigation and the actions behind a menu button below the breakpoint, and `Placement` lays the header over a cover hero; see [Menu](#menu) and [Bands and photos](#bands-and-photos). |
-| `SiteFooter` | `footer` with a content slot and an optional `Legal` line, its lines `--site-space-2` apart (a `p` directly in either slot has no margin, and an `address` is upright). `Tone` `Default` (the page background in the content width under a border, muted text) or `Primary` (`site-footer--primary`: a full-width band of the primary colour in the light scheme, on-primary text and links, an on-primary focus ring, and buttons inverted as in a `Primary` band, the content in the content width); `TextAlignment` `Center` (`site-footer--text-center`) centres its lines. Below the `48rem` breakpoint its links are at least 2.75rem (44px) tall tap targets. |
+| `SiteFooter` | `footer` with a content slot and an optional `Legal` line, its lines `--site-space-2` apart (a `p` directly in either slot has no margin, and an `address` is upright). `Tone` `Default` (the page background in the content width under a border, muted text) or `Primary` (`site-footer--primary`: a full-width band of the primary colour in the light scheme, on-primary text and links, an on-primary focus ring, and buttons inverted as in a `Primary` band, the content in the content width); `TextAlignment` `Center` (`site-footer--text-center`) centres its lines. Below the `48rem` breakpoint its links, except a `FloatingLink`, are at least 2.75rem (44px) tall tap targets. |
 | `SeparatedList`, `SeparatedListItem` | A `ul role="list"` (`site-separated-list`; the role keeps the list in Safari without bullets) of `li` items (`site-separated-list__item`) on one line, such as a footer's contact details or legal links, joined by a bar the stylesheet draws with empty alternative text (`content: "\|" / ""`), so assistive technology reads a list and never the bar. Each item is kept together (`inline-block`), so "Phone: +55 11 99999-0000" never breaks between its label and its number, and breaks inside only when it is wider than the whole line. An item outside a list throws `InvalidOperationException`. Put a list of links in your own labelled `nav`. |
 | `Hero` | `Layout` `Split` (the default: text and image side by side from the breakpoint on) or `Cover` (the text centred over the image; see [Bands and photos](#bands-and-photos)). A cover's `CoverHeight` is `Page` (the default: at least 20rem below the breakpoint, 34.375rem from it on) or `Landing` (`site-hero--landing`: at least 20rem below the breakpoint, from it on 85% of the small viewport height between 34.375rem and 52rem); content can make either taller, and `Landing` on a split hero throws `ArgumentException`. The page's one `h1`, an optional `Eyebrow` line above it and `Subtitle` line under it, an image loaded eagerly with `fetchpriority="high"`, and an actions slot. With an eyebrow or a subtitle the heading is an `hgroup` (`site-hero__heading`): the eyebrow `p` (`site-hero__eyebrow`), the `h1` (`site-hero__title`), then the subtitle `p` (`site-hero__subtitle`), so reading order matches visual order and neither line enters the outline; with neither it is the `h1` alone. |
 | `Section` | `section` with a heading (`Level`, default 2), a decorative divider and an intro. An optional `Eyebrow`, a short label such as a tour's category, goes above the heading: the heading is then an `hgroup` (`site-section__heading`) of the eyebrow `p` (`site-section__eyebrow`) and the heading (`site-section__title`), so the eyebrow is read first and stays out of the outline and the section's name; the divider and intro follow the `hgroup`. Without an eyebrow (null or blank) the heading stands alone. The eyebrow is small, bold, letter-spaced text in the primary colour, and the on-primary colour in a `Primary` or `Image` band. Set `HeadingId` to give the heading that id and label the section by it (`aria-labelledby`), which makes it a named region; without it no id is generated, so prerendered and interactive markup match. `Media` makes its content a `Split`: the heading, intro and body in `site-split__main`, then the media in `site-split__media`. `TitleLanguage`, a BCP 47 tag such as `en`, marks the heading alone with `lang` when the title is in another language than the page, so the intro and body keep the page's language (WCAG 3.1.2). |
@@ -85,7 +85,7 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `Disclosure` | Native `details` and `summary`; a tab substitute without script. |
 | `Quote` | `figure` with a `blockquote` and a `cite` caption. In a `Primary` or `Image` band it drops its background and takes the on-primary colour, its rule included. |
 | `ImageGrid` | `figure` per `GalleryImage` (a `ResponsiveImage` and an optional caption), lazy loading except the first `EagerCount`; `PrioritizeFirstImage` loads the first one eagerly with `fetchpriority="high"`. `Layout` `Grid` (the default) is rows of equal columns; `Mosaic` (`site-image-grid--mosaic`) is a collage of mixed aspect ratios: columns filled from top to bottom in document order, each image at its own aspect ratio, never cropped. In both, columns are at least 14rem wide and share the full width of the container, as many as there are images while they fit, so one image fills its container, in a section or in a `Split`'s media column. An image is at most 40rem or 80% of the viewport tall; a taller one is shown whole within that height (`object-fit: contain`). |
-| `AlbumIndex` | A `CardGrid` (`site-album-index`) of `Card`s, one per `AlbumSummary`: the title as the heading linked to the album's page, a cover (the first `EagerCount`, default 4, eager), the photo count as the application words it (`site-album-index__count`), and `lang` on the title alone when it is in another language; see [Photo albums](#photo-albums). It passes `CardStyle`, `ImageAspect`, `ImageShadow`, `TextAlignment`, `MoreText`, `MoreVariant` and `ButtonSize` to every card and `MinColumnWidth`, `MaxColumnWidth` and `Gap` to the grid. Nothing without albums. |
+| `AlbumIndex` | A `CardGrid` (`site-album-index`) of `Card`s, one per `AlbumSummary`: the title as the heading linked to the album's page, a cover (the first `EagerCount`, default 4, eager), the photo count as the application words it (`site-album-index__count`), and `lang` on the title alone when it is in another language; see [Photo albums](#photo-albums). It passes `CardStyle`, `ImageAspect`, `ImageShadow`, `TextAlignment`, `MoreText`, `MoreVariant` and `MoreSize` to every card and `MinColumnWidth`, `MaxColumnWidth`, `Gap` and `ItemAlignment` to the grid. Nothing without albums. |
 | `AlbumSection` | One page of an album: a `Section` whose heading id is `album-{slug}`, an `ImageGrid` of the page's photos (the first `EagerCount` eager: by default 4 in a grid, 1 in a mosaic), optional content, then the `Pager`; see [Photo albums](#photo-albums). |
 | `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links; no `address` when there are no lines and no channels. `PhoneText` shows the number as written (`+55 (11) 99999-0000`) while the link uses the digits; it must be the same number as `Phone`. The WhatsApp link shows `WhatsAppLabel`. |
 | `LanguageSwitcher` | Labelled `nav` of links with `hreflang`, `lang` and `aria-current="true"` on the current language, with the control radius; below the `48rem` breakpoint each link is at least 2.75rem (44px) wide and tall. |
@@ -107,24 +107,26 @@ localize them.
 
 A card's look comes from typed parameters, never from a stylesheet of the site:
 
-- `Style`: `Boxed` (the default: the alternative background, a border and `--site-radius`) or `Plain` (`site-card--plain`: no
+- `CardStyle`: `Boxed` (the default: the alternative background, a border and `--site-radius`) or `Plain` (`site-card--plain`: no
   background, no border, the colour of its surroundings, so a plain card in a `Primary` band takes the on-primary colour, and the image
-  with `--site-radius` corners of its own).
+  with `--site-radius` corners of its own). It is not named `Style`: Blazor matches parameter names regardless of case, so a `Style`
+  parameter would take the HTML `style` attribute, which instead reaches the `article` like any other attribute.
 - `ImageAspect`: `FourByThree` (the default), `SixteenByNine` (`site-card--aspect-16x9`), `Square` (`site-card--aspect-1x1`) or
   `Natural` (`site-card--aspect-natural`: the image's own ratio, never cropped).
 - `ImageShadow`: `None` (the default) or `Offset` (`site-card--image-shadow`): a hard block of `--site-color-border` offset
-  `--site-space-2` towards the end and the bottom, decorative and without a contrast need. It fits the design system as a token-built
+  `--site-space-2` towards the end and the bottom (the left in a right-to-left page, `:dir(rtl)`), decorative and without a contrast need. It fits the design system as a token-built
   decoration; a boxed card refuses it (`ArgumentException`), because its box would clip it.
-- `TextAlignment` (`SiteAlignment`): `Start` (the default) or `Center` (`site-card--text-center`), which centres the text, the heading
-  and the action row.
+- `TextAlignment` (`SiteAlignment`): `Start` (the default; a card sets `text-align: start` itself, so a centred section around it does
+  not centre it) or `Center` (`site-card--text-center`), which centres the text, the heading and the action row.
 - `Eyebrow`: a short label above the title; the heading is then an `hgroup` (`site-card__heading`) of the eyebrow `p`
   (`site-card__eyebrow`, small, bold, letter-spaced, in the primary colour) and the heading, as on `Section`.
-- `MoreText`, `MoreVariant` (default `Outline`) and `ButtonSize` (default `Regular`): the more look of a card whose whole surface is its
+- `MoreText`, `MoreVariant` (default `Outline`) and `MoreSize` (default `Regular`): the more look of a card whose whole surface is its
   link, such as "Learn more". It is a `span` with exactly the classes of a `ButtonLink` of that variant and size, plus
   `site-card__more`, and `aria-hidden="true"`, because the covering title link is the one control. A shared internal style gives both
   their classes, so the more look and a `ButtonLink` of the same variant, size and text are the same size to the pixel (a browser test
   measures them). It lets clicks through to the title link (`pointer-events: none`) and takes the button's hover look while the card is
-  hovered. It needs `Href` (`ArgumentException`).
+  hovered, the inverted hover look on the primary colour (see [Bands and photos](#bands-and-photos)). It needs `Href`
+  (`ArgumentException`).
 - The more look and the `Actions` are one `ActionRow` (`site-card__actions`) at the bottom of the card, so the actions of a row of
   cards line up whatever the length of their text. Only the actions take the pointer; a click between them reaches the title link.
 
@@ -132,16 +134,20 @@ The card title has a typography role of its own (`TypographyRole.CardTitle`, see
 case or a large size does not reach the cards. The card never widens its grid column (`min-width: 0`), and a word longer than the card,
 such as a long name in capitals, breaks inside it (`overflow-wrap: break-word`). An undefined option throws `ArgumentOutOfRangeException`.
 
-`CardGrid` takes `MinColumnWidth` (`CardColumnWidth.Narrow` 16rem, the default; `Medium` 22rem; `Wide` 32rem), `MaxColumnWidth`
-(`null`, the default: the columns share the row and empty columns are kept; a width caps the columns and centres them, dropping empty
-columns; it must be at least the minimum, `ArgumentException`) and `Gap` (`SiteSpace`, a step of the spacing scale; default `Space4`).
+`CardGrid` takes `MinColumnWidth` (`CardColumnWidth.Narrow` 16rem, the default; `Medium` 22rem; `Wide` 32rem), which sets the number
+of columns: as many columns at least that wide as fit, sharing the row. `MaxColumnWidth` (`null`, the default: each card fills its
+column and empty columns are kept, so a lone card has the width of one column) caps each card in its column and drops empty columns,
+without changing the number of columns; it must be at least the minimum in rem (`ArgumentException`). `ItemAlignment` (`SiteAlignment`)
+places a capped card at the start of its column (the default) or in its middle (`site-card-grid--items-center`). `Gap` (`SiteSpace`, a
+step of the spacing scale; default `Space4`) spaces the cards. At the default 72rem content width the minimum gives four (`Narrow`),
+three (`Medium`) or two (`Wide`) columns; a browser test measures every combination.
 They are modifier classes (`site-card-grid--min-medium`, `site-card-grid--max-wide`, `site-card-grid--gap-6`) that set the
 `--site-card-min-width`, `--site-card-max-width` and `--site-card-gap` tokens, so no style attribute is written and a strict
 Content-Security-Policy holds.
 
 ```razor
-<CardGrid MinColumnWidth="CardColumnWidth.Medium" MaxColumnWidth="CardColumnWidth.Wide" Gap="SiteSpace.Space6">
-    <Card Title="Alentejo" Href="@LinkTarget.FromString("/tours/alentejo")" Image="_cover" Style="CardStyle.Plain"
+<CardGrid MinColumnWidth="CardColumnWidth.Medium" MaxColumnWidth="CardColumnWidth.Wide" ItemAlignment="SiteAlignment.Center" Gap="SiteSpace.Space6">
+    <Card Title="Alentejo" Href="@LinkTarget.FromString("/tours/alentejo")" Image="_cover" CardStyle="CardStyle.Plain"
           ImageAspect="CardImageAspect.SixteenByNine" ImageShadow="CardImageShadow.Offset" TextAlignment="SiteAlignment.Center"
           MoreText="Learn more">
         <p>Eight days by bike.</p>
@@ -250,10 +256,13 @@ of a page.
 ### Bands and photos
 
 On the primary colour or a photo, text is the on-primary colour in the light scheme (`color-scheme: light`), whatever the visitor's
-scheme: a `Primary` or `Image` band and a `Cover` hero. Inside them headings, links, a section's eyebrow and intro, the hero's
+scheme: a `Primary` or `Image` band, a `Cover` hero and a `Primary` footer. Inside them headings (whatever their theme colour), the divider,
+a plain card's eyebrow, links, a section's eyebrow and intro, the hero's
 eyebrow and subtitle, a quote and a byline's job title take that colour, the focus ring is the on-primary colour, a primary button
-turns to the on-primary colour with primary text, and an outline button to an on-primary border and text. Cards and the contact card
-keep the text colour on their own background.
+turns to the on-primary colour with primary text, and an outline button to an on-primary border and text; on hover a primary button
+takes the primary-hover background, and the more look of a plain card follows its card's hover with the same inverted look. A boxed
+card and the contact card keep the look of the page on their own background: their text colour, the card title's colour and the page's
+buttons, more look included. A browser test measures these colours at rest and on hover.
 
 A photo lies behind the content, darkened by the theme's text colour at the computed scrim (see [Scrim](#scrim)), so the text is
 readable on any photo the owner uploads, an all-white one included:
@@ -384,7 +393,7 @@ dark surface too. `light-dark()` needs a 2024 or later browser (Chrome 123, Fire
 | `--site-divider-color` | `--site-color-accent` | Colour of the section divider and the hero rule on the page; the theme's shape |
 | `--site-content-width` | `72rem` | Maximum content width |
 | `--site-card-min-width` | `16rem` | Smallest card column of `CardGrid`; `MinColumnWidth` sets it |
-| `--site-card-max-width` | `1fr` | Largest card column of `CardGrid`; `MaxColumnWidth` sets it |
+| `--site-card-max-width` | `none` | Largest card width in a column of `CardGrid`; `MaxColumnWidth` sets it |
 | `--site-card-gap` | `--site-space-4` | Space between the cards of `CardGrid`; `Gap` sets it |
 | `--site-scrim` | `64%` | Darkening of a photo behind normal on-primary text (image bands, the video play mark); computed by the theme |
 | `--site-scrim-large` | `50%` | Darkening of a photo behind large on-primary text (cover hero); computed by the theme |
@@ -414,7 +423,8 @@ that `site.css` consumes. Without a theme nothing changes: every per-role variab
 - `TypographyStyle.Create(fontKey, fallback, size, weight, lineHeight, letterSpacing, transform, italic, color)` for each `TypographyRole`
   (h1 to h6, body, small, link, button, nav, card title). `CardTitle` styles every card heading (`.site-card__title`) whatever its
   level, so an uppercase or large section heading role does not reach the cards; by default it is a bold 1.125rem to 1.375rem heading
-  without a transform, and its field path is `typography.cardTitle`. `color` colours a heading role (h1 to h6 and the card title)
+  without a transform, and its field path is `typography.cardTitle`. Its unset font family, weight and style come from the theme's own
+  h3 before the default, so a stored theme that gives its headings a display font keeps it on card titles. `color` colours a heading role (h1 to h6 and the card title)
   with the text, primary or muted colour, whose contrast on both surfaces the theme already checks; another colour is an error on
   `color`, and a colour on another role is an error on `typography.{role}.color`, because the components colour that text. Every value is optional; an unset value keeps `SiteTheme.Default`, and links, buttons
   and navigation inherit from their surroundings when unset (so a link in small print stays small). `FontSize.Fixed(rem)` or

@@ -15,7 +15,7 @@ public sealed class AlbumIndexCardOptionsTests : BunitContext
             .Add(index => index.TextAlignment, SiteAlignment.Center)
             .Add(index => index.MoreText, "See the photos")
             .Add(index => index.MoreVariant, ButtonVariant.Primary)
-            .Add(index => index.ButtonSize, ButtonSize.Compact));
+            .Add(index => index.MoreSize, ButtonSize.Compact));
 
         // Assert
         var cards = cut.FindAll("article");
@@ -36,10 +36,11 @@ public sealed class AlbumIndexCardOptionsTests : BunitContext
             .Add(index => index.Albums, AlbumRendering.Summaries(1))
             .Add(index => index.MinColumnWidth, CardColumnWidth.Medium)
             .Add(index => index.MaxColumnWidth, CardColumnWidth.Wide)
-            .Add(index => index.Gap, SiteSpace.Space6));
+            .Add(index => index.Gap, SiteSpace.Space6)
+            .Add(index => index.ItemAlignment, SiteAlignment.Center));
 
         // Assert
-        cut.Find("div").ClassName.ShouldBe("site-card-grid site-card-grid--min-medium site-card-grid--max-wide site-card-grid--gap-6 site-album-index");
+        cut.Find("div").ClassName.ShouldBe("site-card-grid site-card-grid--min-medium site-card-grid--max-wide site-card-grid--gap-6 site-card-grid--items-center site-album-index");
     }
 
     [Fact]

@@ -54,8 +54,8 @@ public sealed class CardsSample : ComponentBase
         builder.AddComponentParameter(2, nameof(Card.Title), title);
         builder.AddComponentParameter(3, nameof(Card.Href), LinkTarget.FromString("/tours/" + id));
         builder.AddComponentParameter(4, nameof(Card.MoreText), MoreText);
-        builder.AddComponentParameter(5, nameof(Card.ButtonSize), Size);
-        builder.AddComponentParameter(6, nameof(Card.Style), Style);
+        builder.AddComponentParameter(5, nameof(Card.MoreSize), Size);
+        builder.AddComponentParameter(6, nameof(Card.CardStyle), Style);
         builder.AddComponentParameter(7, nameof(Card.ChildContent), (RenderFragment)(body => body.AddMarkupContent(0, text)));
         builder.AddComponentParameter(8, nameof(Card.Actions), (RenderFragment)(actions =>
         {

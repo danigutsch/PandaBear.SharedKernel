@@ -65,7 +65,7 @@ public sealed partial class Card
 
     /// <summary>
     /// Gets or sets the text of the more look, such as "Learn more": a <c>span</c> with exactly the classes of a <see cref="ButtonLink" />
-    /// of <see cref="MoreVariant" /> and <see cref="ButtonSize" /> plus <c>site-card__more</c>, first in the action row, with
+    /// of <see cref="MoreVariant" /> and <see cref="MoreSize" /> plus <c>site-card__more</c>, first in the action row, with
     /// <c>aria-hidden="true"</c>. It is not a control: the title link covers the card and is the one control, so a click on the look
     /// reaches that link and the look follows its hover. It needs <see cref="Href" />. Null or blank renders none.
     /// </summary>
@@ -81,11 +81,15 @@ public sealed partial class Card
     /// <see cref="ButtonSize.Regular" />.
     /// </summary>
     [Parameter]
-    public ButtonSize ButtonSize { get; set; }
+    public ButtonSize MoreSize { get; set; }
 
-    /// <summary>Gets or sets the look of the card. The default is <see cref="CardStyle.Boxed" />.</summary>
+    /// <summary>
+    /// Gets or sets the look of the card. The default is <see cref="CardStyle.Boxed" />. It is not named <c>Style</c>, because
+    /// Blazor matches parameter names regardless of case and would take the HTML <c>style</c> attribute, which reaches the
+    /// <c>article</c>.
+    /// </summary>
     [Parameter]
-    public CardStyle Style { get; set; }
+    public CardStyle CardStyle { get; set; }
 
     /// <summary>Gets or sets the aspect ratio of the image. The default is <see cref="CardImageAspect.FourByThree" />.</summary>
     [Parameter]
@@ -114,7 +118,7 @@ public sealed partial class Card
         get
         {
             var classes = "site-card";
-            classes += Style == CardStyle.Plain ? " site-card--plain" : string.Empty;
+            classes += CardStyle == CardStyle.Plain ? " site-card--plain" : string.Empty;
             classes += ImageAspect switch
             {
                 CardImageAspect.SixteenByNine => " site-card--aspect-16x9",
@@ -134,13 +138,13 @@ public sealed partial class Card
         ArgumentException.ThrowIfNullOrWhiteSpace(Title);
         Heading.RequireLevel(HeadingLevel, nameof(HeadingLevel));
         LanguageTag.Require(TitleLanguage, nameof(TitleLanguage));
-        RequireDefined(Style, nameof(Style));
+        RequireDefined(CardStyle, nameof(CardStyle));
         RequireDefined(ImageAspect, nameof(ImageAspect));
         RequireDefined(ImageShadow, nameof(ImageShadow));
         RequireDefined(TextAlignment, nameof(TextAlignment));
         RequireDefined(MoreVariant, nameof(MoreVariant));
-        ButtonStyle.RequireSize(ButtonSize, nameof(ButtonSize));
-        if (ImageShadow == CardImageShadow.Offset && Style != CardStyle.Plain)
+        ButtonStyle.RequireSize(MoreSize, nameof(MoreSize));
+        if (ImageShadow == CardImageShadow.Offset && CardStyle != CardStyle.Plain)
         {
             throw new ArgumentException("Only a plain card has an image shadow; a box would clip it. Set the style to Plain or leave the shadow out.", nameof(ImageShadow));
         }

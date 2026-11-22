@@ -244,7 +244,7 @@ public sealed partial class SiteStylesheetTests
         var css = File.ReadAllText(SiteFiles.StylesheetPath());
 
         // Assert
-        SiteFiles.Rule(css, ".site-card-grid").ShouldContain("grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--site-card-min-width)), var(--site-card-max-width)))", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-card-grid").ShouldContain("grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--site-card-min-width)), 1fr))", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -354,7 +354,7 @@ public sealed partial class SiteStylesheetTests
     {
         // Arrange & Act
         var css = File.ReadAllText(SiteFiles.StylesheetPath());
-        var rule = Regex.Match(css, @"^:is\(\.site-band--primary, \.site-band--image, \.site-hero--cover\) :is\(h1(?<list>[^{]*)\{(?<body>[^}]*)\}", RegexOptions.Multiline, TimeSpan.FromSeconds(1));
+        var rule = Regex.Match(css, @"^:is\(\.site-band--primary, \.site-band--image, \.site-hero--cover, \.site-footer--primary\) :is\(h1(?<list>[^{]*)\{(?<body>[^}]*)\}", RegexOptions.Multiline, TimeSpan.FromSeconds(1));
 
         // Assert
         rule.Success.ShouldBeTrue();
@@ -368,7 +368,7 @@ public sealed partial class SiteStylesheetTests
         // Arrange & Act
         var css = File.ReadAllText(SiteFiles.StylesheetPath());
         var eyebrow = SiteFiles.Rule(css, ".site-section__eyebrow");
-        var band = Regex.Match(css, @"^:is\(\.site-band--primary, \.site-band--image, \.site-hero--cover\) :is\(h1(?<list>[^{]*)\{(?<body>[^}]*)\}", RegexOptions.Multiline, TimeSpan.FromSeconds(1));
+        var band = Regex.Match(css, @"^:is\(\.site-band--primary, \.site-band--image, \.site-hero--cover, \.site-footer--primary\) :is\(h1(?<list>[^{]*)\{(?<body>[^}]*)\}", RegexOptions.Multiline, TimeSpan.FromSeconds(1));
 
         // Assert
         eyebrow.ShouldContain("color: var(--site-color-primary)", StringComparison.Ordinal);

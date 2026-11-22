@@ -17,8 +17,6 @@ public sealed class SiteFooterStylesheetTests
         rule.ShouldContain("border-top: 0", StringComparison.Ordinal);
         rule.ShouldContain("background: var(--site-color-primary)", StringComparison.Ordinal);
         rule.ShouldContain("color: var(--site-color-on-primary)", StringComparison.Ordinal);
-        SiteFiles.Rule(css, ".site-footer--primary a:not(.site-button)").ShouldContain("color: inherit", StringComparison.Ordinal);
-        SiteFiles.Rule(css, ".site-footer--primary :focus-visible").ShouldContain("outline-color: var(--site-color-on-primary)", StringComparison.Ordinal);
         SiteFiles.Rule(css, ".site-footer--text-center").ShouldContain("text-align: center", StringComparison.Ordinal);
     }
 
@@ -61,7 +59,7 @@ public sealed class SiteFooterStylesheetTests
         // Assert
         narrow.ShouldStartWith("""
             @media (width < 48rem) {
-                .site-footer a,
+                .site-footer a:not(.site-floating-link),
                 .site-language-switcher a {
                     display: inline-flex;
                     align-items: center;
@@ -78,20 +76,26 @@ public sealed class SiteFooterStylesheetTests
     }
 
     [Fact]
-    public void A_primary_footer_inverts_its_buttons_as_a_primary_band_does()
+    public void A_primary_footer_shares_every_inversion_of_the_primary_band()
     {
-        // Arrange & Act
+        // Arrange
         var css = File.ReadAllText(SiteFiles.StylesheetPath());
-        var primary = SiteFiles.Rule(css, ".site-footer--primary .site-button--primary");
-        var hover = SiteFiles.Rule(css, ".site-footer--primary .site-button--primary:hover");
-        var outline = SiteFiles.Rule(css, ".site-footer--primary :is(.site-button--outline, .site-button--outline:hover)");
-        var band = SiteFiles.Rule(css, ":is(.site-band--primary, .site-band--image, .site-hero--cover) .site-button--primary");
+        const string Inverted = ":is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary)";
+
+        // Act
+        var lists = System.Text.RegularExpressions.Regex.Matches(css, @"^:is\(\.site-band--primary[^)]*\)", System.Text.RegularExpressions.RegexOptions.Multiline, TimeSpan.FromSeconds(1))
+            .Select(match => match.Value)
+            .ToArray();
 
         // Assert
-        primary.ShouldBe(band);
-        hover.ShouldBe(SiteFiles.Rule(css, ":is(.site-band--primary, .site-band--image, .site-hero--cover) .site-button--primary:hover"));
-        outline.ShouldBe(SiteFiles.Rule(css, ":is(.site-band--primary, .site-band--image, .site-hero--cover) :is(.site-button--outline, .site-button--outline:hover)"));
-        primary.ShouldContain("background: var(--site-color-on-primary)", StringComparison.Ordinal);
-        primary.ShouldContain("color: var(--site-color-primary)", StringComparison.Ordinal);
+        lists.Length.ShouldBeGreaterThanOrEqualTo(10);
+        lists.ShouldAllSatisfy(list => list.ShouldBe(Inverted));
+        SiteFiles.Rule(css, Inverted + " :is(h1, h2, h3, h4, h5, h6").ShouldContain("color: inherit", StringComparison.Ordinal);
+        SiteFiles.Rule(css, Inverted + " a:not(.site-button)").ShouldContain("color: inherit", StringComparison.Ordinal);
+        SiteFiles.Rule(css, Inverted + " :focus-visible").ShouldContain("outline-color: var(--site-color-on-primary)", StringComparison.Ordinal);
+        SiteFiles.Rule(css, Inverted + " .site-divider").ShouldContain("background: currentColor", StringComparison.Ordinal);
+        SiteFiles.Rule(css, Inverted + " .site-button--primary").ShouldContain("background: var(--site-color-on-primary)", StringComparison.Ordinal);
+        SiteFiles.Rule(css, Inverted + " .site-card--plain .site-card__eyebrow").ShouldContain("color: inherit", StringComparison.Ordinal);
+        css.ShouldNotContain(".site-footer--primary .site-button--primary {", StringComparison.Ordinal);
     }
 }

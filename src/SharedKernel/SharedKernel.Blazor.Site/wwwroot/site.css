@@ -38,7 +38,7 @@
     --site-divider-color: var(--site-color-accent);
     --site-content-width: 72rem;
     --site-card-min-width: 16rem;
-    --site-card-max-width: 1fr;
+    --site-card-max-width: none;
     --site-card-gap: var(--site-space-4);
     --site-focus-ring: 3px solid var(--site-color-focus);
     /*
@@ -478,30 +478,6 @@ a {
     color: var(--site-color-on-primary);
 }
 
-.site-footer--primary a:not(.site-button) {
-    color: inherit;
-}
-
-.site-footer--primary :focus-visible {
-    outline-color: var(--site-color-on-primary);
-}
-
-/* Buttons in a primary footer invert as in a primary band: a primary button turns on-primary with primary text, an outline one on-primary. */
-.site-footer--primary .site-button--primary {
-    background: var(--site-color-on-primary);
-    color: var(--site-color-primary);
-}
-
-.site-footer--primary .site-button--primary:hover {
-    background: var(--site-color-primary-hover);
-    color: var(--site-color-on-primary);
-}
-
-.site-footer--primary :is(.site-button--outline, .site-button--outline:hover) {
-    border-color: currentColor;
-    color: var(--site-color-on-primary);
-}
-
 .site-footer--text-center {
     text-align: center;
 }
@@ -690,42 +666,80 @@ a {
     border-radius: 0;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label) {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label) {
     color: inherit;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) a:not(.site-button) {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) a:not(.site-button) {
     color: inherit;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) :focus-visible {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) :focus-visible {
     outline-color: var(--site-color-on-primary);
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-divider {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-divider {
     background: currentColor;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-button--primary {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-button--primary {
     background: var(--site-color-on-primary);
     color: var(--site-color-primary);
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-button--primary:hover {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-button--primary:hover {
     background: var(--site-color-primary-hover);
     color: var(--site-color-on-primary);
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) :is(.site-button--outline, .site-button--outline:hover) {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) :is(.site-button--outline, .site-button--outline:hover) {
     border-color: currentColor;
     color: var(--site-color-on-primary);
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-card--plain .site-card__eyebrow {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card--plain .site-card__eyebrow {
     color: inherit;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-quote {
+/*
+ * The more look of a plain card on the primary colour follows the card's hover with the inverted look, which outranks the hover of the
+ * page's look below.
+ */
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card--plain:has(.site-card__title a:hover) .site-card__more.site-button--primary {
+    background: var(--site-color-primary-hover);
+    color: var(--site-color-on-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card--plain:has(.site-card__title a:hover) .site-card__more.site-button--outline {
+    border-color: currentColor;
+    color: var(--site-color-on-primary);
+}
+
+/* A boxed card on the primary colour has its own background, so its title and buttons keep the look of the page. */
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:not(.site-card--plain) .site-card__title {
+    color: var(--site-card-title-color, inherit);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:not(.site-card--plain) .site-button--primary {
+    background: var(--site-color-primary);
+    color: var(--site-color-on-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:not(.site-card--plain) .site-button--primary:hover {
+    background: var(--site-color-primary-hover);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:not(.site-card--plain) .site-button--outline {
+    border-color: var(--site-color-primary);
+    color: var(--site-color-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:not(.site-card--plain) .site-button--outline:hover {
+    border-color: var(--site-color-primary-hover);
+    color: var(--site-color-primary-hover);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-quote {
     background: transparent;
     border-inline-start-color: currentColor;
 }
@@ -853,13 +867,23 @@ a {
 }
 
 /*
- * Cards: the grid keeps empty columns (auto-fill), so a lone card has the width of one column; with a largest column width the columns
- * are centred instead. The title link covers the card; links and controls in the body and the actions stay clickable above it.
+ * Cards: the smallest column width sets the number of columns. The grid keeps empty columns (auto-fill), so a lone card has the width of
+ * one column; with a largest card width it drops them and caps each card in its column, at the start or, centred, in the middle. The
+ * title link covers the card; links and controls in the body and the actions stay clickable above it.
  */
 .site-card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--site-card-min-width)), var(--site-card-max-width)));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--site-card-min-width)), 1fr));
     gap: var(--site-card-gap);
+}
+
+.site-card-grid > * {
+    inline-size: 100%;
+    max-inline-size: var(--site-card-max-width);
+}
+
+.site-card-grid--items-center {
+    justify-items: center;
 }
 
 .site-card-grid--min-medium {
@@ -883,8 +907,7 @@ a {
 }
 
 :is(.site-card-grid--max-narrow, .site-card-grid--max-medium, .site-card-grid--max-wide) {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--site-card-min-width)), var(--site-card-max-width)));
-    justify-content: center;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--site-card-min-width)), 1fr));
 }
 
 .site-card-grid--gap-0 {
@@ -919,6 +942,7 @@ a {
     position: relative;
     min-width: 0;
     color: var(--site-color-text);
+    text-align: start;
     display: flex;
     flex-direction: column;
     background: var(--site-color-surface-alt);
@@ -1049,6 +1073,10 @@ a {
 
 .site-card--image-shadow .site-card__media img {
     box-shadow: var(--site-space-2) var(--site-space-2) 0 var(--site-color-border);
+}
+
+.site-card--image-shadow .site-card__media img:dir(rtl) {
+    box-shadow: calc(-1 * var(--site-space-2)) var(--site-space-2) 0 var(--site-color-border);
 }
 
 .site-card--text-center {
@@ -1447,7 +1475,7 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
 
 /* Below the breakpoint, where a finger is the pointer, footer links and language links are at least 2.75rem (44px) tap targets. */
 @media (width < 48rem) {
-    .site-footer a,
+    .site-footer a:not(.site-floating-link),
     .site-language-switcher a {
         display: inline-flex;
         align-items: center;

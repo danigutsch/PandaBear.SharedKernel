@@ -98,4 +98,54 @@ public sealed class CardTitleRoleTests
         model.Typography[TypographyRole.CardTitle].SizeMin.ShouldBe(1.125m);
         model.Typography[TypographyRole.CardTitle].Weight.ShouldBe(700);
     }
+
+    [Fact]
+    public void A_stored_theme_with_a_display_font_on_its_headings_keeps_it_on_card_titles()
+    {
+        // Arrange
+        var heading = TypographyStyle.Create(fontKey: "display", fallback: GenericFontFamily.Serif, weight: 600, italic: true).ShouldBeSuccess();
+        var typography = SiteTypography.Create(new Dictionary<TypographyRole, TypographyStyle>
+        {
+            [TypographyRole.H1] = heading,
+            [TypographyRole.H2] = heading,
+            [TypographyRole.H3] = heading,
+            [TypographyRole.H4] = heading,
+            [TypographyRole.H5] = heading,
+            [TypographyRole.H6] = heading,
+        });
+        var theme = SiteTheme.Create(SiteTheme.Default.Colors, typography, [ThemeFixtures.Font("display", "Playfair Display")]).ShouldBeSuccess();
+
+        // Act
+        var title = theme.Effective(TypographyRole.CardTitle);
+        var css = SiteThemeStylesheet.Render(theme);
+
+        // Assert
+        title.FontKey.ShouldBe("display");
+        title.Fallback.ShouldBe(GenericFontFamily.Serif);
+        title.Weight.ShouldBe(600);
+        title.Italic.ShouldBe(true);
+        title.Size.ShouldBe(SiteTheme.Default.Effective(TypographyRole.CardTitle).Size);
+        title.Transform.ShouldBeNull();
+        css.ShouldContain("--site-card-title-font-family: \"Playfair Display\", Georgia, \"Times New Roman\", Times, serif;", StringComparison.Ordinal);
+        css.ShouldContain("--site-card-title-font-weight: 600;", StringComparison.Ordinal);
+        css.ShouldContain("--site-card-title-font-style: italic;", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void A_card_title_face_of_its_own_wins_over_the_h3_face()
+    {
+        // Arrange
+        var h3 = TypographyStyle.Create(fontKey: "display", weight: 600).ShouldBeSuccess();
+        var title = TypographyStyle.Create(fallback: GenericFontFamily.Monospace, weight: 800).ShouldBeSuccess();
+        var typography = SiteTheme.Default.Typography.With(TypographyRole.H3, h3).With(TypographyRole.CardTitle, title);
+        var theme = SiteTheme.Create(SiteTheme.Default.Colors, typography, [ThemeFixtures.Font("display", "Playfair Display")]).ShouldBeSuccess();
+
+        // Act
+        var effective = theme.Effective(TypographyRole.CardTitle);
+
+        // Assert
+        effective.FontKey.ShouldBeNull();
+        effective.Fallback.ShouldBe(GenericFontFamily.Monospace);
+        effective.Weight.ShouldBe(800);
+    }
 }

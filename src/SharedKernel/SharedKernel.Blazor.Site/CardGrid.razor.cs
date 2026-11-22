@@ -5,9 +5,9 @@ namespace PandaBear.Blazor.Site;
 
 /// <summary>
 /// An auto-fill grid for <see cref="Card" /> components: columns at least <see cref="MinColumnWidth" /> wide (or the whole width when that
-/// is less), as wide as the row allows or at most <see cref="MaxColumnWidth" />, <see cref="Gap" /> apart. The options are modifier classes
-/// that set the <c>--site-card-min-width</c>, <c>--site-card-max-width</c> and <c>--site-card-gap</c> tokens, so no style attribute is
-/// written.
+/// is less) that share the row, <see cref="Gap" /> apart, each card at most <see cref="MaxColumnWidth" /> wide and placed in its column by
+/// <see cref="ItemAlignment" />. The options are modifier classes that set the <c>--site-card-min-width</c>, <c>--site-card-max-width</c>
+/// and <c>--site-card-gap</c> tokens, so no style attribute is written.
 /// </summary>
 public sealed partial class CardGrid
 {
@@ -24,9 +24,10 @@ public sealed partial class CardGrid
     public CardColumnWidth MinColumnWidth { get; set; }
 
     /// <summary>
-    /// Gets or sets the largest column width, at least <see cref="MinColumnWidth" />. <see langword="null" />, the default, lets the
-    /// columns share the row, keeping empty columns so a lone card has the width of one column. A width (<c>site-card-grid--max-narrow</c>,
-    /// <c>--max-medium</c> or <c>--max-wide</c>) caps the columns and centres them in the row, dropping empty columns.
+    /// Gets or sets the largest card width, at least <see cref="MinColumnWidth" />. <see langword="null" />, the default, lets the cards
+    /// fill their columns and keeps empty columns, so a lone card has the width of one column. A width (<c>site-card-grid--max-narrow</c>,
+    /// <c>--max-medium</c> or <c>--max-wide</c>) caps each card in its column and drops empty columns; the number of columns still
+    /// follows <see cref="MinColumnWidth" />.
     /// </summary>
     [Parameter]
     public CardColumnWidth? MaxColumnWidth { get; set; }
@@ -38,6 +39,13 @@ public sealed partial class CardGrid
     [Parameter]
     public SiteSpace Gap { get; set; } = SiteSpace.Space4;
 
+    /// <summary>
+    /// Gets or sets where a card narrower than its column lies in it. The default is <see cref="SiteAlignment.Start" />;
+    /// <see cref="SiteAlignment.Center" /> adds <c>site-card-grid--items-center</c>.
+    /// </summary>
+    [Parameter]
+    public SiteAlignment ItemAlignment { get; set; }
+
     private string RootClass
     {
         get
@@ -46,6 +54,7 @@ public sealed partial class CardGrid
             classes += MinColumnWidth == CardColumnWidth.Narrow ? string.Empty : " site-card-grid--min-" + Name(MinColumnWidth);
             classes += MaxColumnWidth is { } max ? " site-card-grid--max-" + Name(max) : string.Empty;
             classes += Gap == SiteSpace.Space4 ? string.Empty : " site-card-grid--gap-" + ((int)Gap).ToString(CultureInfo.InvariantCulture);
+            classes += ItemAlignment == SiteAlignment.Center ? " site-card-grid--items-center" : string.Empty;
             return classes;
         }
     }
@@ -68,11 +77,23 @@ public sealed partial class CardGrid
             throw new ArgumentOutOfRangeException(nameof(Gap), Gap, "The spacing step is not defined.");
         }
 
-        if (MaxColumnWidth < MinColumnWidth)
+        if (!Enum.IsDefined(ItemAlignment))
+        {
+            throw new ArgumentOutOfRangeException(nameof(ItemAlignment), ItemAlignment, "The item alignment is not defined.");
+        }
+
+        if (MaxColumnWidth is { } cap && Rem(cap) < Rem(MinColumnWidth))
         {
             throw new ArgumentException("The largest column width must be at least the smallest.", nameof(MaxColumnWidth));
         }
     }
+
+    private static decimal Rem(CardColumnWidth width) => width switch
+    {
+        CardColumnWidth.Medium => 22m,
+        CardColumnWidth.Wide => 32m,
+        _ => 16m,
+    };
 
     private static string Name(CardColumnWidth width) => width switch
     {
