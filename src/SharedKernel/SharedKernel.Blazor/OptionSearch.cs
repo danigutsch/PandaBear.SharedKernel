@@ -263,6 +263,10 @@ public sealed class OptionSearch<TOption> : IDisposable
             if (delay > TimeSpan.Zero)
             {
                 await Task.Delay(delay, _timeProvider, source.Token).ConfigureAwait(true);
+                if (generation != _generation)
+                {
+                    return;
+                }
             }
 
             var slice = await _search(text, Limit, source.Token).ConfigureAwait(true)
