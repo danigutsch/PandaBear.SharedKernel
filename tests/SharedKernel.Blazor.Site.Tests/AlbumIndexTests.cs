@@ -8,7 +8,7 @@ public sealed class AlbumIndexTests : BunitContext
     private static readonly AlbumSummary[] Albums =
     [
         new("Patagônia", Link("/pt/galeria/patagonia"), Image("/c1.jpg", ImageAlternative.Decorative()), "12 fotos"),
-        new("Andes", Link("/pt/galeria/andes"), PhotoCountText: "1 foto", Culture: Culture("en")),
+        new("Andes", Link("/pt/galeria/andes"), Image("/c2.jpg", ImageAlternative.Describe("Picos nevados")), "1 foto", TitleLanguage: "en"),
     ];
 
     [Fact]
@@ -39,20 +39,23 @@ public sealed class AlbumIndexTests : BunitContext
         cover.GetAttribute("loading").ShouldBe("lazy");
         cover.GetAttribute("width").ShouldBe("400");
         cover.GetAttribute("height").ShouldBe("300");
-        cut.FindAll("img").Count.ShouldBe(1);
+        cut.FindAll("img").Count.ShouldBe(2);
         cut.FindAll(".site-album-index__count").Select(count => count.TextContent).ShouldBe(["12 fotos", "1 foto"]);
     }
 
     [Fact]
-    public void An_album_in_another_language_is_marked_with_lang()
+    public void Only_the_title_of_an_album_in_another_language_carries_lang()
     {
         // Arrange & Act
         var cut = Render<AlbumIndex>(parameters => parameters.Add(index => index.Albums, Albums));
 
         // Assert
-        var cards = cut.FindAll("article");
-        cards[0].HasAttribute("lang").ShouldBeFalse();
-        cards[1].GetAttribute("lang").ShouldBe("en");
+        var marked = cut.FindAll("[lang]");
+        marked.Count.ShouldBe(1);
+        marked[0].TagName.ShouldBe("H3");
+        marked[0].GetAttribute("lang").ShouldBe("en");
+        cut.FindAll("article").ShouldAllSatisfy(card => card.HasAttribute("lang").ShouldBeFalse());
+        cut.FindAll(".site-album-index__count, img").ShouldAllSatisfy(element => element.Closest("[lang]").ShouldBeNull());
     }
 
     [Fact]

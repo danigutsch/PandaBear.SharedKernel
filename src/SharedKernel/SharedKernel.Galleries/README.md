@@ -78,8 +78,8 @@ input; map the fields to your own copy when the editor speaks another language.
 
 `album.PublishedIn(requestedCulture, cultures)` builds the `AlbumView` a public page shows: the published translation of the requested
 culture, its neutral parent or another culture of its language, else that of the default culture, through `TranslationSet.TryResolve`.
-It returns `null` when no published translation applies (answer 404 Not Found). `view.Culture` tells which culture the text is in, so the
-page can mark text of another language with `lang`. The view carries `Title`, `Slug`, `SortOrder`, `RelatedId`, `PhotoIds`, `PhotoCount`
+It returns `null` when no published translation applies (answer 404 Not Found). `view.Culture` tells which culture the text is in; when
+it is not the page's, give its language tag to the display's `TitleLanguage`, which marks the title alone with `lang`. The view carries `Title`, `Slug`, `SortOrder`, `RelatedId`, `PhotoIds`, `PhotoCount`
 and the effective `CoverId`.
 
 `view.Page(requestedPage, pageSize)` slices one page of photos with `PageWindow` (see the BuildingBlocks README): pass the raw `page`

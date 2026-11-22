@@ -10,8 +10,8 @@ namespace PandaBear.Blazor.Site;
 /// <remarks>
 /// The heading's id is <c>album-</c> and the slug, so it stays the same on every page and in every render and can be linked to. The first
 /// <see cref="EagerCount" /> photos load eagerly and the rest lazily, each with its width and height so the layout does not shift. The
-/// pager renders plain links and nothing when there is one page. All text is caller-supplied. Extra attributes, such as <c>lang</c>, and
-/// <c>Class</c> go to the section.
+/// pager renders plain links and nothing when there is one page. All text is caller-supplied; when the album's title fell back to another
+/// language, give its tag in <see cref="TitleLanguage" />, which marks the heading alone. Extra attributes and <c>Class</c> go to the section.
 /// </remarks>
 public sealed partial class AlbumSection
 {
@@ -30,6 +30,13 @@ public sealed partial class AlbumSection
     [Parameter]
     [EditorRequired]
     public Slug? Slug { get; set; }
+
+    /// <summary>
+    /// Gets or sets the BCP 47 language tag of the title when it is in another language than the page; written as <c>lang</c> on the
+    /// heading alone, so the photos' text and the pager keep the page's language. <see langword="null"/> writes no <c>lang</c>.
+    /// </summary>
+    [Parameter]
+    public string? TitleLanguage { get; set; }
 
     /// <summary>Gets or sets the heading level, from 1 to 6. The default is 2; use 1 when the album is the page.</summary>
     [Parameter]

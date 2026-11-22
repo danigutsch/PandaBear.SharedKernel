@@ -767,12 +767,8 @@ PandaBear.Blazor.Site.AlbumSection.Window.get -> PandaBear.BuildingBlocks.PageWi
 PandaBear.Blazor.Site.AlbumSection.Window.set -> void
 PandaBear.Blazor.Site.AlbumSummary
 PandaBear.Blazor.Site.AlbumSummary.<Clone>$() -> PandaBear.Blazor.Site.AlbumSummary!
-PandaBear.Blazor.Site.AlbumSummary.AlbumSummary(string! Title, PandaBear.Blazor.Site.LinkTarget! Href, PandaBear.Blazor.Site.ResponsiveImage? Cover = null, string? PhotoCountText = null, PandaBear.BuildingBlocks.ContentCulture? Culture = null) -> void
 PandaBear.Blazor.Site.AlbumSummary.Cover.get -> PandaBear.Blazor.Site.ResponsiveImage?
 PandaBear.Blazor.Site.AlbumSummary.Cover.init -> void
-PandaBear.Blazor.Site.AlbumSummary.Culture.get -> PandaBear.BuildingBlocks.ContentCulture?
-PandaBear.Blazor.Site.AlbumSummary.Culture.init -> void
-PandaBear.Blazor.Site.AlbumSummary.Deconstruct(out string! Title, out PandaBear.Blazor.Site.LinkTarget! Href, out PandaBear.Blazor.Site.ResponsiveImage? Cover, out string? PhotoCountText, out PandaBear.BuildingBlocks.ContentCulture? Culture) -> void
 PandaBear.Blazor.Site.AlbumSummary.Equals(PandaBear.Blazor.Site.AlbumSummary? other) -> bool
 PandaBear.Blazor.Site.AlbumSummary.Href.get -> PandaBear.Blazor.Site.LinkTarget!
 PandaBear.Blazor.Site.AlbumSummary.Href.init -> void
@@ -786,3 +782,13 @@ override PandaBear.Blazor.Site.AlbumSummary.GetHashCode() -> int
 override PandaBear.Blazor.Site.AlbumSummary.ToString() -> string!
 static PandaBear.Blazor.Site.AlbumSummary.operator !=(PandaBear.Blazor.Site.AlbumSummary? left, PandaBear.Blazor.Site.AlbumSummary? right) -> bool
 static PandaBear.Blazor.Site.AlbumSummary.operator ==(PandaBear.Blazor.Site.AlbumSummary? left, PandaBear.Blazor.Site.AlbumSummary? right) -> bool
+PandaBear.Blazor.Site.AlbumSection.TitleLanguage.get -> string?
+PandaBear.Blazor.Site.AlbumSection.TitleLanguage.set -> void
+PandaBear.Blazor.Site.AlbumSummary.AlbumSummary(string! Title, PandaBear.Blazor.Site.LinkTarget! Href, PandaBear.Blazor.Site.ResponsiveImage? Cover = null, string? PhotoCountText = null, string? TitleLanguage = null) -> void
+PandaBear.Blazor.Site.AlbumSummary.Deconstruct(out string! Title, out PandaBear.Blazor.Site.LinkTarget! Href, out PandaBear.Blazor.Site.ResponsiveImage? Cover, out string? PhotoCountText, out string? TitleLanguage) -> void
+PandaBear.Blazor.Site.AlbumSummary.TitleLanguage.get -> string?
+PandaBear.Blazor.Site.AlbumSummary.TitleLanguage.init -> void
+PandaBear.Blazor.Site.Card.TitleLanguage.get -> string?
+PandaBear.Blazor.Site.Card.TitleLanguage.set -> void
+PandaBear.Blazor.Site.Section.TitleLanguage.get -> string?
+PandaBear.Blazor.Site.Section.TitleLanguage.set -> void

@@ -83,11 +83,11 @@ public sealed class AlbumSectionTests : BunitContext
             .Add(album => album.Intro, "Oito dias no fim do mundo.")
             .Add(album => album.ChildContent, "<p class=\"tour-link\">Ver a viagem</p>")
             .Add(album => album.Class, "album")
-            .AddUnmatched("lang", "en"));
+            .AddUnmatched("data-album", "patagonia"));
 
         // Assert
         var section = cut.Find("section");
-        section.GetAttribute("lang").ShouldBe("en");
+        section.GetAttribute("data-album").ShouldBe("patagonia");
         section.ClassList.ShouldContain("album");
         cut.Find("h1").Id.ShouldBe("album-patagonia");
         cut.Markup.ShouldContain("Oito dias no fim do mundo.", StringComparison.Ordinal);
@@ -114,5 +114,21 @@ public sealed class AlbumSectionTests : BunitContext
         noSlug.ShouldThrow<ArgumentNullException>();
         noPhotos.ShouldThrow<ArgumentNullException>();
         negative.ShouldThrow<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
+    public void Only_the_heading_of_an_album_in_another_language_carries_lang()
+    {
+        // Arrange & Act
+        var cut = this.RenderAlbum(PageWindow.Create(1, 2, 4), Images(2), parameters => parameters
+            .Add(album => album.TitleLanguage, "en")
+            .Add(album => album.ChildContent, "<p class=\"tour-link\">Ver a viagem</p>"));
+
+        // Assert
+        var marked = cut.FindAll("[lang]");
+        marked.Count.ShouldBe(1);
+        marked[0].TagName.ShouldBe("H2");
+        cut.Find("section").HasAttribute("lang").ShouldBeFalse();
+        cut.FindAll("nav.site-pager, img, figcaption, .tour-link").ShouldAllSatisfy(element => element.Closest("[lang]").ShouldBeNull());
     }
 }
