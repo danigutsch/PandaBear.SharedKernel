@@ -273,4 +273,6 @@
   <Project Path="tests/SharedKernel.Galleries.Tests/SharedKernel.Galleries.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Offerings/SharedKernel.Offerings.csproj" />
   <Project Path="tests/SharedKernel.Offerings.Tests/SharedKernel.Offerings.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.PageSections/SharedKernel.PageSections.csproj" />
+  <Project Path="tests/SharedKernel.PageSections.Tests/SharedKernel.PageSections.Tests.csproj" />
 </Solution>
