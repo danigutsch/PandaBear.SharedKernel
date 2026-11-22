@@ -269,4 +269,6 @@
   <Project Path="src/SharedKernel/SharedKernel.IO.Analyzers/SharedKernel.IO.Analyzers.csproj" />
   <Project Path="tests/SharedKernel.IO.Analyzers.Tests/SharedKernel.IO.Analyzers.Tests.csproj" />
   <Project Path="benchmarks/SharedKernel.IO.Benchmarks/SharedKernel.IO.Benchmarks.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Galleries/SharedKernel.Galleries.csproj" />
+  <Project Path="tests/SharedKernel.Galleries.Tests/SharedKernel.Galleries.Tests.csproj" />
 </Solution>
