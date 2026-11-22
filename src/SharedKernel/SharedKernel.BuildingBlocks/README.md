@@ -13,13 +13,13 @@ Source files are grouped by topic. The folders are organization only: every publ
 
 | Folder | Contents |
 | --- | --- |
-| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, `Slug`, `SearchKey`, `PublicationStatus`, `WebUrl`, text rules, option-to-result helpers |
+| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, `Slug`, `SearchKey`, `PublicationStatus`, `WebUrl`, `IImageEligibility`, text rules, option-to-result helpers |
 | `Localization` | `ContentCulture`, `SupportedCultures`, `CultureLanguageTags`, `TranslationSet` |
 | `Contact` | `EmailAddress`, `PhoneNumber`, `PersonName`, `PostalAddress` |
 | `Geography` | `CountryCode`, `CountryNames` |
-| `Finance` | `Money`, `Currency`, `CurrencyCodes`, `Iban`, `Bic` |
+| `Finance` | `Money`, `MoneyDisplayOptions`, `Currency`, `CurrencyCodes`, `Iban`, `Bic` |
 | `Brazil` | `Cpf`, `Cnpj`, `PixKey`, `PixKeyType`, check-digit helpers |
-| `Time` | `BirthDate`, `DateRange`, `DateOnlyRange`, `BusinessTimeProvider`, `TimeProvider` helpers |
+| `Time` | `BirthDate`, `DateRange`, `DateOnlyRange`, `DateRangePatterns`, `BusinessTimeProvider`, `TimeProvider` helpers |
 | `Failures` | concurrency and unique-constraint exceptions, cancellation helpers, `Compensation` |
 | `Http` | `HypermediaLink` |
 | `Paging` | `PageWindow` |
@@ -41,6 +41,13 @@ the hyphens at both ends and cuts a slug longer than `maxLength` without leaving
 person wrote, such as a download file name from a trip code (`ÁLPES/2027 ..\x` gives `alpes-2027-x`). It fails only when the text is
 blank (`{label} is required.`) or keeps no ASCII letter or digit (`中国` gives `{label} must contain a letter or a digit.`), so the caller
 can fall back to a fixed name. Unicode normalization comes from .NET; there is no transliteration table.
+
+## Image eligibility
+
+`IImageEligibility<TImageId>` is the application's knowledge of its image library that content rules read: `Exists(imageId)` and
+`IsEligible(imageId, culture)`, whether an image may be shown in content published in that culture (one application asks for alt text
+or a decorative mark there; another for a processed image with reviewed text). Albums (`IAlbumPhotoEligibility` in Galleries derives
+from it), offerings and page sections read the same interface, so an application implements it once.
 
 ## Page windows
 
@@ -300,9 +307,23 @@ currency (`CHF 1.234,56`), so the symbol never depends on the platform. `RegionI
 and separators do come from the culture data, which .NET reads from ICU on Linux and macOS: a host that sets `InvariantGlobalization`
 formats every culture like the invariant culture, and a container image without ICU must install it for pt-BR or pt-PT output.
 
+#### Display options
+
+`money.ToDisplayString(culture, options)` departs from the culture's format where a site's look asks for it.
+`MoneyDisplayOptions.SymbolPlacement` is `Culture` (the default), `Before` or `After`; `Before` and `After` keep whether the culture
+separates the symbol and the amount with a space, and put the minus sign first. `OmitZeroMinorUnits` shows a whole amount without
+its zero minor units, so a price list does not repeat `,00`:
+
+| Culture, EUR | `After` + `OmitZeroMinorUnits` | `Before` |
+| --- | --- | --- |
+| pt-BR, 2890 | `2.890 €` | `€ 2.890,00` |
+| pt-BR, 2890.50 | `2.890,50 €` | `€ 2.890,50` |
+| en-US, 2890 | `2,890€` | `€2,890.00` |
+
 ## Dates, codes and exact money
 
 - `DateOnlyRange.Create(start, end)`: a range of calendar days with both ends included (`Days`); a missing date (`default`) is reported as required on `startDate` or `endDate`, and an end before the start on `endDate`.
+- `range.ToDisplayString(patterns, culture)`: the range for people, with one of four composite formats in `DateRangePatterns` chosen by what the two days share: `SingleDay`, `SameMonth` (one month of one year), `SameYear` and `Other`. `{0}` is the first day and `{1}` the last, both `DateOnly`, so they take custom date formats. The words are the application's; in pt-BR, `{0:%d} a {1:d 'de' MMMM 'de' yyyy}` gives `20 a 29 de setembro de 2027`, and in English `{0:%d}–{1:d MMMM yyyy}` gives `20–29 September 2027`. Month names come from the culture data (ICU on Linux and macOS).
 - `BirthDate.Create(value, today, minAgeYears, maxAgeYears)`: required, not in the future, within the age limits; `AgeOn(day)` gives whole years. Leap-day births follow the 1 March convention: in a non-leap year the birthday is reached on 1 March (not 28 February), which is the stricter reading for minimum-age checks; in leap years it is 29 February.
 - `ReferenceCode.Create(value, maxLength, field, label)`: ASCII letters, digits, `-` and `_`, trimmed and upper-cased, so codes that differ only in case are equal.
 - `Money.CreateExact(amount, currency, field, label)`: like `Money.Create` but rejects an amount with more decimals than the currency's minor unit instead of rounding it.

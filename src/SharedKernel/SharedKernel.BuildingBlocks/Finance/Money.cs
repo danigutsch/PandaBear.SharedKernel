@@ -5,7 +5,7 @@ namespace PandaBear.BuildingBlocks;
 
 /// <summary>
 /// An amount of one <see cref="Currency"/>, rounded away from zero to the currency's minor unit. No currency conversion is performed.
-/// <see cref="ToString()"/> is the invariant <c>EUR 1.00</c> form for logs and storage; <see cref="ToDisplayString"/> and the <c>C</c>
+/// <see cref="ToString()"/> is the invariant <c>EUR 1.00</c> form for logs and storage; <see cref="ToDisplayString(IFormatProvider)"/> and the <c>C</c>
 /// format are for people.
 /// </summary>
 public sealed class Money : ValueObject, IFormattable
@@ -143,7 +143,51 @@ public sealed class Money : ValueObject, IFormattable
     }
 
     /// <summary>
-    /// Formats the money: <c>C</c> as <see cref="ToDisplayString"/> does, and <c>G</c>, an empty or a <see langword="null"/> format as the
+    /// Formats the money for people like <see cref="ToDisplayString(IFormatProvider)"/>, with the options' departures from the culture's
+    /// format: the symbol before or after the amount (keeping whether the culture puts a space between them), and a whole amount without
+    /// its zero minor units. In pt-BR, EUR 2890.00 with <see cref="MoneySymbolPlacement.After"/> and
+    /// <see cref="MoneyDisplayOptions.OmitZeroMinorUnits"/> gives <c>2.890 €</c>, and EUR 2890.50 gives <c>2.890,50 €</c>.
+    /// </summary>
+    /// <param name="provider">The culture, such as <see cref="CultureInfo.CurrentCulture"/>, or another format provider.</param>
+    /// <param name="options">The display options.</param>
+    /// <returns>The display text.</returns>
+    /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    public string ToDisplayString(IFormatProvider provider, MoneyDisplayOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(provider);
+        ArgumentNullException.ThrowIfNull(options);
+
+        var numberFormat = DisplayFormatOf(provider);
+        if (options.OmitZeroMinorUnits && Amount == decimal.Truncate(Amount))
+        {
+            numberFormat.CurrencyDecimalDigits = 0;
+        }
+
+        if (options.SymbolPlacement != MoneySymbolPlacement.Culture)
+        {
+            var spaced = numberFormat.CurrencyPositivePattern is 2 or 3;
+            var before = options.SymbolPlacement == MoneySymbolPlacement.Before;
+            numberFormat.CurrencyPositivePattern = (before, spaced) switch
+            {
+                (true, false) => 0,
+                (false, false) => 1,
+                (true, true) => 2,
+                _ => 3,
+            };
+            numberFormat.CurrencyNegativePattern = (before, spaced) switch
+            {
+                (true, false) => 1,
+                (false, false) => 5,
+                (true, true) => 9,
+                _ => 8,
+            };
+        }
+
+        return Amount.ToString(DisplayFormat, numberFormat);
+    }
+
+    /// <summary>
+    /// Formats the money: <c>C</c> as <see cref="ToDisplayString(IFormatProvider)"/> does, and <c>G</c>, an empty or a <see langword="null"/> format as the
     /// invariant <see cref="ToString()"/>, whatever the provider.
     /// </summary>
     /// <param name="format">The format: <c>C</c>, <c>G</c>, empty or <see langword="null"/>.</param>
@@ -162,10 +206,15 @@ public sealed class Money : ValueObject, IFormattable
             throw new FormatException($"The format '{format}' is not supported; use \"C\" for display or \"G\" for the invariant form.");
         }
 
-        var numberFormat = (NumberFormatInfo)NumberFormatInfo.GetInstance(formatProvider ?? CultureInfo.CurrentCulture).Clone();
+        return Amount.ToString(DisplayFormat, DisplayFormatOf(formatProvider ?? CultureInfo.CurrentCulture));
+    }
+
+    private NumberFormatInfo DisplayFormatOf(IFormatProvider provider)
+    {
+        var numberFormat = (NumberFormatInfo)NumberFormatInfo.GetInstance(provider).Clone();
         numberFormat.CurrencySymbol = Currency.Symbol;
         numberFormat.CurrencyDecimalDigits = Currency.MinorUnits;
-        return Amount.ToString(DisplayFormat, numberFormat);
+        return numberFormat;
     }
 
     /// <inheritdoc />

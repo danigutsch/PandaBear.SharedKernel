@@ -263,3 +263,31 @@ static PandaBear.BuildingBlocks.SearchKey.Of(string? text) -> string!
 PandaBear.BuildingBlocks.PublicationStatus
 PandaBear.BuildingBlocks.PublicationStatus.Draft = 0 -> PandaBear.BuildingBlocks.PublicationStatus
 PandaBear.BuildingBlocks.PublicationStatus.Published = 1 -> PandaBear.BuildingBlocks.PublicationStatus
+PandaBear.BuildingBlocks.DateOnlyRange.ToDisplayString(PandaBear.BuildingBlocks.DateRangePatterns! patterns, System.IFormatProvider! provider) -> string!
+PandaBear.BuildingBlocks.DateRangePatterns
+PandaBear.BuildingBlocks.DateRangePatterns.DateRangePatterns(string! singleDay, string! sameMonth, string! sameYear, string! other) -> void
+PandaBear.BuildingBlocks.DateRangePatterns.Other.get -> string!
+PandaBear.BuildingBlocks.DateRangePatterns.SameMonth.get -> string!
+PandaBear.BuildingBlocks.DateRangePatterns.SameYear.get -> string!
+PandaBear.BuildingBlocks.DateRangePatterns.SingleDay.get -> string!
+PandaBear.BuildingBlocks.IImageEligibility<TImageId>
+PandaBear.BuildingBlocks.IImageEligibility<TImageId>.Exists(TImageId imageId) -> bool
+PandaBear.BuildingBlocks.IImageEligibility<TImageId>.IsEligible(TImageId imageId, PandaBear.BuildingBlocks.ContentCulture! culture) -> bool
+PandaBear.BuildingBlocks.Money.ToDisplayString(System.IFormatProvider! provider, PandaBear.BuildingBlocks.MoneyDisplayOptions! options) -> string!
+PandaBear.BuildingBlocks.MoneyDisplayOptions
+PandaBear.BuildingBlocks.MoneyDisplayOptions.<Clone>$() -> PandaBear.BuildingBlocks.MoneyDisplayOptions!
+PandaBear.BuildingBlocks.MoneyDisplayOptions.Equals(PandaBear.BuildingBlocks.MoneyDisplayOptions? other) -> bool
+PandaBear.BuildingBlocks.MoneyDisplayOptions.MoneyDisplayOptions() -> void
+PandaBear.BuildingBlocks.MoneyDisplayOptions.OmitZeroMinorUnits.get -> bool
+PandaBear.BuildingBlocks.MoneyDisplayOptions.OmitZeroMinorUnits.init -> void
+PandaBear.BuildingBlocks.MoneyDisplayOptions.SymbolPlacement.get -> PandaBear.BuildingBlocks.MoneySymbolPlacement
+PandaBear.BuildingBlocks.MoneyDisplayOptions.SymbolPlacement.init -> void
+PandaBear.BuildingBlocks.MoneySymbolPlacement
+PandaBear.BuildingBlocks.MoneySymbolPlacement.After = 2 -> PandaBear.BuildingBlocks.MoneySymbolPlacement
+PandaBear.BuildingBlocks.MoneySymbolPlacement.Before = 1 -> PandaBear.BuildingBlocks.MoneySymbolPlacement
+PandaBear.BuildingBlocks.MoneySymbolPlacement.Culture = 0 -> PandaBear.BuildingBlocks.MoneySymbolPlacement
+override PandaBear.BuildingBlocks.MoneyDisplayOptions.Equals(object? obj) -> bool
+override PandaBear.BuildingBlocks.MoneyDisplayOptions.GetHashCode() -> int
+override PandaBear.BuildingBlocks.MoneyDisplayOptions.ToString() -> string!
+static PandaBear.BuildingBlocks.MoneyDisplayOptions.operator !=(PandaBear.BuildingBlocks.MoneyDisplayOptions? left, PandaBear.BuildingBlocks.MoneyDisplayOptions? right) -> bool
+static PandaBear.BuildingBlocks.MoneyDisplayOptions.operator ==(PandaBear.BuildingBlocks.MoneyDisplayOptions? left, PandaBear.BuildingBlocks.MoneyDisplayOptions? right) -> bool

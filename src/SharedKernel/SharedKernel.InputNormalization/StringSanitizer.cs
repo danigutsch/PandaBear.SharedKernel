@@ -57,6 +57,47 @@ public static partial class StringSanitizer
         return true;
     }
 
+    /// <summary>
+    /// Splits plain text into paragraphs on blank lines, for text a person typed into one box, such as a description. Each paragraph is
+    /// sanitized like <see cref="Sanitize"/>, so the line breaks inside it become single spaces, and empty paragraphs are dropped. Joining
+    /// the paragraphs with a blank line gives the same paragraphs again. Malformed text is reported as <see langword="false"/>, as
+    /// <see cref="TrySanitize"/> does.
+    /// </summary>
+    /// <param name="value">The text; a line feed, a carriage return and both together each end a line.</param>
+    /// <param name="paragraphs">The paragraphs in order; empty when the text is missing, blank or malformed.</param>
+    /// <returns><see langword="false"/> when <paramref name="value"/> is malformed; <see langword="true"/> otherwise.</returns>
+    public static bool TrySanitizeParagraphs(string? value, out IReadOnlyList<string> paragraphs)
+    {
+        paragraphs = [];
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return true;
+        }
+
+        if (!TryNormalize(value, out var normalized))
+        {
+            return false;
+        }
+
+        var found = new List<string>();
+        var current = new StringBuilder();
+        foreach (var line in normalized.ReplaceLineEndings("\n").Split('\n'))
+        {
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                AddParagraph(current, found);
+            }
+            else
+            {
+                current.Append(line).Append(' ');
+            }
+        }
+
+        AddParagraph(current, found);
+        paragraphs = found.AsReadOnly();
+        return true;
+    }
+
     /// <summary>Normalizes like <see cref="NormalizeKey"/>, but reports malformed text as <see langword="false"/> instead of throwing.</summary>
     /// <param name="value">The string to normalize.</param>
     /// <param name="key">The normalized key, or <see langword="null"/> when <paramref name="value"/> is malformed.</param>
@@ -187,6 +228,17 @@ public static partial class StringSanitizer
         {
             return false;
         }
+    }
+
+    private static void AddParagraph(StringBuilder current, List<string> paragraphs)
+    {
+        var paragraph = NormalizeWhitespace(RemoveControlCharacters(current.ToString()).Trim());
+        if (paragraph.Length > 0)
+        {
+            paragraphs.Add(paragraph);
+        }
+
+        current.Clear();
     }
 
     private static string RemoveControlCharacters(string value) => ControlCharacterRegex().Replace(value, string.Empty);
