@@ -76,4 +76,22 @@ public sealed class SiteFooterStylesheetTests
             """, StringComparison.Ordinal);
         SiteFiles.Rule(css, ".site-pager a").ShouldContain("min-block-size: 2.75rem", StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void A_primary_footer_inverts_its_buttons_as_a_primary_band_does()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+        var primary = SiteFiles.Rule(css, ".site-footer--primary .site-button--primary");
+        var hover = SiteFiles.Rule(css, ".site-footer--primary .site-button--primary:hover");
+        var outline = SiteFiles.Rule(css, ".site-footer--primary :is(.site-button--outline, .site-button--outline:hover)");
+        var band = SiteFiles.Rule(css, ":is(.site-band--primary, .site-band--image, .site-hero--cover) .site-button--primary");
+
+        // Assert
+        primary.ShouldBe(band);
+        hover.ShouldBe(SiteFiles.Rule(css, ":is(.site-band--primary, .site-band--image, .site-hero--cover) .site-button--primary:hover"));
+        outline.ShouldBe(SiteFiles.Rule(css, ":is(.site-band--primary, .site-band--image, .site-hero--cover) :is(.site-button--outline, .site-button--outline:hover)"));
+        primary.ShouldContain("background: var(--site-color-on-primary)", StringComparison.Ordinal);
+        primary.ShouldContain("color: var(--site-color-primary)", StringComparison.Ordinal);
+    }
 }

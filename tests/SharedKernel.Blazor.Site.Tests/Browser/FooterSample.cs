@@ -5,7 +5,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// A page for the footer tests: a language switcher, then a centred primary footer with a separated list of an address, a phone line and
-/// an e-mail line, and a separated list of three legal links.
+/// an e-mail line, and a separated list of three legal links; with <see cref="Buttons" />, a primary and an outline button link after them.
 /// </summary>
 public sealed class FooterSample : ComponentBase
 {
@@ -14,6 +14,10 @@ public sealed class FooterSample : ComponentBase
         new(SiteFixtures.Culture("pt-BR"), "Português", LinkTarget.FromString("/pt"), IsCurrent: true),
         new(SiteFixtures.Culture("en"), "English", LinkTarget.FromString("/en")),
     ];
+
+    /// <summary>Gets or sets a value indicating whether the footer ends with a primary and an outline button link.</summary>
+    [Parameter]
+    public bool Buttons { get; set; }
 
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -41,6 +45,11 @@ public sealed class FooterSample : ComponentBase
                 Item("<a href=\"/company\">Company details</a>"),
                 Item("<a href=\"/terms\">Terms and conditions</a>"),
                 Item("<a href=\"/payment\">Payment and cancellation policies</a>")));
+            if (Buttons)
+            {
+                content.AddContent(2, Button("footer-primary", ButtonVariant.Primary));
+                content.AddContent(3, Button("footer-outline", ButtonVariant.Outline));
+            }
         }));
         builder.AddComponentParameter(9, nameof(SiteFooter.Legal), (RenderFragment)(legal => legal.AddMarkupContent(0, "<p>© 2026 Example</p>")));
         builder.CloseComponent();
@@ -57,6 +66,16 @@ public sealed class FooterSample : ComponentBase
                 list.AddContent(0, item);
             }
         }));
+        builder.CloseComponent();
+    };
+
+    private static RenderFragment Button(string id, ButtonVariant variant) => builder =>
+    {
+        builder.OpenComponent<ButtonLink>(0);
+        builder.AddComponentParameter(1, "id", id);
+        builder.AddComponentParameter(2, nameof(ButtonLink.Href), LinkTarget.FromString("/" + id));
+        builder.AddComponentParameter(3, nameof(ButtonLink.Variant), variant);
+        builder.AddComponentParameter(4, nameof(ButtonLink.ChildContent), (RenderFragment)(label => label.AddContent(0, "Sign up")));
         builder.CloseComponent();
     };
 

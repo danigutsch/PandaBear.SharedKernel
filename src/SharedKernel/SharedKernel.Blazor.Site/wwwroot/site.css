@@ -486,6 +486,22 @@ a {
     outline-color: var(--site-color-on-primary);
 }
 
+/* Buttons in a primary footer invert as in a primary band: a primary button turns on-primary with primary text, an outline one on-primary. */
+.site-footer--primary .site-button--primary {
+    background: var(--site-color-on-primary);
+    color: var(--site-color-primary);
+}
+
+.site-footer--primary .site-button--primary:hover {
+    background: var(--site-color-primary-hover);
+    color: var(--site-color-on-primary);
+}
+
+.site-footer--primary :is(.site-button--outline, .site-button--outline:hover) {
+    border-color: currentColor;
+    color: var(--site-color-on-primary);
+}
+
 .site-footer--text-center {
     text-align: center;
 }

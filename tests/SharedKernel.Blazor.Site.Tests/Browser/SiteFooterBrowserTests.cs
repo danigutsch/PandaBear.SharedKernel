@@ -1,3 +1,5 @@
+using Microsoft.Playwright;
+
 namespace PandaBear.Blazor.Site.Tests.Browser;
 
 /// <summary>
@@ -85,5 +87,35 @@ public sealed class SiteFooterBrowserTests(ChromiumFixture chromium) : IClassFix
         background.ShouldBe("rgb(29, 78, 216)");
         link.ShouldBe("rgb(255, 255, 255)");
         align.ShouldBe("center");
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task Buttons_in_a_primary_footer_invert_as_in_a_primary_band_and_keep_4_5_to_1()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<FooterSample>(chromium.Browser, 1280, new Dictionary<string, object?> { [nameof(FooterSample.Buttons)] = true });
+        await page.Page.EmulateMediaAsync(new PageEmulateMediaOptions { ReducedMotion = ReducedMotion.Reduce });
+        var footer = ComputedColor.ToHex(await page.Style("footer", "background-color"));
+
+        // Act
+        var primaryBackground = ComputedColor.ToHex(await page.Style("#footer-primary", "background-color"));
+        var primaryText = ComputedColor.ToHex(await page.Style("#footer-primary", "color"));
+        var outlineText = ComputedColor.ToHex(await page.Style("#footer-outline", "color"));
+        var outlineBorder = ComputedColor.ToHex(await page.Style("#footer-outline", "border-top-color"));
+        await page.Page.HoverAsync("#footer-primary");
+        var hoverBackground = ComputedColor.ToHex(await page.Style("#footer-primary", "background-color"));
+        var hoverText = ComputedColor.ToHex(await page.Style("#footer-primary", "color"));
+
+        // Assert
+        footer.ShouldBe("#1d4ed8");
+        primaryBackground.ShouldBe("#ffffff");
+        primaryText.ShouldBe("#1d4ed8");
+        SiteFixtures.Contrast(primaryText, primaryBackground).ShouldBeGreaterThanOrEqualTo(4.5);
+        SiteFixtures.Contrast(primaryBackground, footer).ShouldBeGreaterThanOrEqualTo(3);
+        outlineText.ShouldBe("#ffffff");
+        outlineBorder.ShouldBe("#ffffff");
+        SiteFixtures.Contrast(outlineText, footer).ShouldBeGreaterThanOrEqualTo(4.5);
+        hoverBackground.ShouldBe("#1e40af");
+        SiteFixtures.Contrast(hoverText, hoverBackground).ShouldBeGreaterThanOrEqualTo(4.5);
     }
 }
