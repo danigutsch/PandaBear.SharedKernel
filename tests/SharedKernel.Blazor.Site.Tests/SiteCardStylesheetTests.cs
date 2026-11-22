@@ -180,4 +180,37 @@ public sealed class SiteCardStylesheetTests
         outline.ShouldContain("color: var(--site-color-primary)", StringComparison.Ordinal);
         SiteFiles.Rule(css, Boxed + " .site-card__title").ShouldContain("color: var(--site-card-title-color, inherit)", StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void On_the_primary_colour_a_card_ring_is_the_on_primary_colour_and_a_boxed_card_keeps_the_focus_colour_inside()
+    {
+        // Arrange
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+        const string Inverted = ":is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary)";
+
+        // Act
+        var card = SiteFiles.Rule(css, Inverted + " .site-card:has(:focus-visible)");
+        var inside = SiteFiles.Rule(css, Inverted + " .site-card:not(.site-card--plain) :focus-visible");
+
+        // Assert
+        card.ShouldContain("outline-color: var(--site-color-on-primary)", StringComparison.Ordinal);
+        inside.ShouldContain("outline-color: var(--site-color-focus)", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData(":focus-visible")]
+    [InlineData(".site-card:has(:focus-visible)")]
+    public void A_focus_ring_takes_its_colour_through_the_longhand(string selector)
+    {
+        // Arrange
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Act
+        var rule = SiteFiles.Rule(css, selector);
+
+        // Assert
+        rule.ShouldContain("outline: var(--site-focus-ring)", StringComparison.Ordinal);
+        rule.ShouldContain("outline-color: var(--site-color-focus)", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ":root").ShouldContain("--site-focus-ring: 3px solid;", StringComparison.Ordinal);
+    }
 }

@@ -267,7 +267,7 @@ of a page.
 On the primary colour or a photo, text is the on-primary colour in the light scheme (`color-scheme: light`), whatever the visitor's
 scheme: a `Primary` or `Image` band, a `Cover` hero and a `Primary` footer. Inside them headings (whatever their theme colour), the divider,
 a plain card's eyebrow, links, a section's eyebrow and intro, the hero's
-eyebrow and subtitle, a quote and a byline's job title take that colour, the focus ring is the on-primary colour, a primary button
+eyebrow and subtitle, a quote and a byline's job title take that colour, the focus ring is the on-primary colour (a card's ring included, while the rings inside a boxed card keep the focus colour on the card), a primary button
 turns to the on-primary colour with primary text, and an outline button to an on-primary border and text; on hover a primary button
 takes the primary-hover background, and the more look of a plain card follows its card's hover with the same inverted look. A boxed
 card and the contact card keep the look of the page on their own background: their text colour, the card title's colour and the page's
@@ -389,7 +389,7 @@ dark surface too. `light-dark()` needs a 2024 or later browser (Chrome 123, Fire
 | `--site-color-accent-hover` | `#92400e` / `#f59e0b` | Secondary buttons on hover |
 | `--site-color-on-accent` | `#ffffff` / `#111827` | Text on the accent colour |
 | `--site-color-focus` | `#1d4ed8` / `#93c5fd` | Focus ring colour |
-| `--site-focus-ring` | `3px solid` focus colour | `:focus-visible` outline |
+| `--site-focus-ring` | `3px solid` | Width and style of the `:focus-visible` outline and the card's ring; their colour is `--site-color-focus`, set through `outline-color`, because Chromium drops a `light-dark()` colour that reaches the `outline` shorthand through `var()` |
 | `--site-font-body` | system UI stack | Body font; no web font is loaded |
 | `--site-font-heading` | `--site-font-body` | Heading font |
 | `--site-font-size-sm` … `--site-font-size-3xl` | fluid `clamp()` scale | `--site-font-size-sm`, `--site-font-size-base`, `--site-font-size-lg`, `--site-font-size-xl`, `--site-font-size-2xl`, `--site-font-size-3xl` |

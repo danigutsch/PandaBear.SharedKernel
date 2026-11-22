@@ -99,4 +99,23 @@ public sealed class SiteCardsBrowserTests(ChromiumFixture chromium) : IClassFixt
         underMore.ShouldBe("/tours/one");
         underButton.ShouldBe("/sign-up/one");
     }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task A_card_focus_ring_on_the_page_is_the_focus_colour_and_reaches_3_to_1()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<CardsSample>(chromium.Browser, 1280, CardsSample.Parameters(ButtonSize.Regular, CardStyle.Boxed));
+
+        // Act
+        var focused = await InvertedSample.FocusWithKeyboard(page, "#one .site-card__title a");
+        var ring = await InvertedSample.Color(page, "#one", "outline-color");
+        var link = await InvertedSample.Color(page, "#one .site-card__title a", "outline-color");
+        var surface = await InvertedSample.Color(page, "body", "background-color");
+
+        // Assert
+        focused.ShouldBeTrue();
+        ring.ShouldBe("#1d4ed8");
+        link.ShouldBe("#1d4ed8");
+        SiteFixtures.Contrast(ring, surface).ShouldBeGreaterThanOrEqualTo(3);
+    }
 }

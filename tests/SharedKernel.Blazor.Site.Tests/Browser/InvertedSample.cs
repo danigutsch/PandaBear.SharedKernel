@@ -7,7 +7,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// A page for the tests of the primary colour's inversion: a primary band with a plain card (outline more look, primary button link) and
-/// a boxed card (primary more look, outline button link), then a primary footer with a level 2 heading and a divider.
+/// a boxed card (primary more look, outline button link), then a primary footer with a level 2 heading, a divider and a link.
 /// </summary>
 public sealed class InvertedSample : ComponentBase
 {
@@ -54,6 +54,27 @@ public sealed class InvertedSample : ComponentBase
         return ComputedColor.ToHex(await page.Style(selector, property));
     }
 
+    /// <summary>
+    /// Gives an element keyboard focus, as the Tab key does, so it matches <c>:focus-visible</c>.
+    /// </summary>
+    /// <param name="page">The page.</param>
+    /// <param name="selector">The CSS selector of the element.</param>
+    /// <returns><see langword="true" /> when the element has focus and matches <c>:focus-visible</c>.</returns>
+    internal static async Task<bool> FocusWithKeyboard(LayoutPage page, string selector)
+    {
+        ArgumentNullException.ThrowIfNull(page);
+        for (var press = 0; press < 12; press++)
+        {
+            await page.Page.Keyboard.PressAsync("Tab");
+            if (await page.Page.EvaluateAsync<bool>("(selector) => document.activeElement === document.querySelector(selector)", selector))
+            {
+                return await page.Page.EvaluateAsync<bool>("(selector) => document.querySelector(selector).matches(':focus-visible')", selector);
+            }
+        }
+
+        return false;
+    }
+
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -76,7 +97,7 @@ public sealed class InvertedSample : ComponentBase
         builder.OpenComponent<SiteFooter>(4);
         builder.AddComponentParameter(5, nameof(SiteFooter.Tone), FooterTone.Primary);
         builder.AddComponentParameter(6, nameof(SiteFooter.ChildContent), (RenderFragment)(footer =>
-            footer.AddMarkupContent(0, "<h2 id=\"footer-heading\">Contact</h2><div id=\"footer-divider\" class=\"site-divider\" aria-hidden=\"true\"></div>")));
+            footer.AddMarkupContent(0, "<h2 id=\"footer-heading\">Contact</h2><div id=\"footer-divider\" class=\"site-divider\" aria-hidden=\"true\"></div><p><a id=\"footer-link\" href=\"/contact\">Write to us</a></p>")));
         builder.CloseComponent();
     }
 

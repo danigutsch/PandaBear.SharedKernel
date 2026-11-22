@@ -89,4 +89,57 @@ public sealed class SiteInvertedBrowserTests(ChromiumFixture chromium) : IClassF
         SiteFixtures.Contrast(heading, footer).ShouldBeGreaterThanOrEqualTo(4.5);
         divider.ShouldBe(OnPrimary);
     }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData("plain")]
+    [InlineData("boxed")]
+    public async Task A_card_focus_ring_on_a_primary_band_reaches_3_to_1_against_the_band(string card)
+    {
+        // Arrange
+        await using var page = await InvertedSample.Open(chromium.Browser);
+
+        // Act
+        var focused = await InvertedSample.FocusWithKeyboard(page, $"#{card} .site-card__title a");
+        var ring = await InvertedSample.Color(page, "#" + card, "outline-color");
+        var ringStyle = await page.Style("#" + card, "outline-style");
+
+        // Assert
+        focused.ShouldBeTrue();
+        ringStyle.ShouldBe("solid");
+        ring.ShouldBe(OnPrimary);
+        SiteFixtures.Contrast(ring, Primary).ShouldBeGreaterThanOrEqualTo(3);
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task A_control_inside_a_boxed_card_on_a_primary_band_keeps_the_focus_colour_against_the_card()
+    {
+        // Arrange
+        await using var page = await InvertedSample.Open(chromium.Browser);
+
+        // Act
+        var focused = await InvertedSample.FocusWithKeyboard(page, "#boxed-action");
+        var ring = await InvertedSample.Color(page, "#boxed-action", "outline-color");
+        var card = await InvertedSample.Color(page, "#boxed", "background-color");
+
+        // Assert
+        focused.ShouldBeTrue();
+        ring.ShouldBe(Primary);
+        SiteFixtures.Contrast(ring, card).ShouldBeGreaterThanOrEqualTo(3);
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task A_link_focus_ring_in_a_primary_footer_reaches_3_to_1_against_the_footer()
+    {
+        // Arrange
+        await using var page = await InvertedSample.Open(chromium.Browser);
+
+        // Act
+        var focused = await InvertedSample.FocusWithKeyboard(page, "#footer-link");
+        var ring = await InvertedSample.Color(page, "#footer-link", "outline-color");
+        var footer = await InvertedSample.Color(page, "footer", "background-color");
+
+        // Assert
+        focused.ShouldBeTrue();
+        SiteFixtures.Contrast(ring, footer).ShouldBeGreaterThanOrEqualTo(3);
+    }
 }

@@ -40,7 +40,7 @@
     --site-card-min-width: 16rem;
     --site-card-max-width: none;
     --site-card-gap: var(--site-space-4);
-    --site-focus-ring: 3px solid var(--site-color-focus);
+    --site-focus-ring: 3px solid;
     /*
      * The photo scrim: the least opacity of the text colour over a photo at which on-primary text reaches 4.5:1 (normal text), 3:1
      * (large text), and the boost that brings the large-text scrim up to the normal-text one. A theme stylesheet computes them from
@@ -202,6 +202,7 @@ a {
 
 :focus-visible {
     outline: var(--site-focus-ring);
+    outline-color: var(--site-color-focus);
     outline-offset: 2px;
 }
 
@@ -746,7 +747,18 @@ a {
     color: var(--site-color-on-primary);
 }
 
-/* A boxed card on the primary colour has its own background, so its title and buttons keep the look of the page. */
+/*
+ * On the primary colour a card's focus ring, drawn on the band, takes the on-primary colour. A boxed card has its own background, so the
+ * focus rings inside it, its title and its buttons keep the look of the page.
+ */
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:has(:focus-visible) {
+    outline-color: var(--site-color-on-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:not(.site-card--plain) :focus-visible {
+    outline-color: var(--site-color-focus);
+}
+
 :is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:not(.site-card--plain) .site-card__title {
     color: var(--site-card-title-color, inherit);
 }
@@ -1100,6 +1112,7 @@ a {
 
 .site-card:has(:focus-visible) {
     outline: var(--site-focus-ring);
+    outline-color: var(--site-color-focus);
     outline-offset: 2px;
 }
 
