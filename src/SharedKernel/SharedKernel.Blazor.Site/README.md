@@ -84,6 +84,8 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `Disclosure` | Native `details` and `summary`; a tab substitute without script. |
 | `Quote` | `figure` with a `blockquote` and a `cite` caption. In a `Primary` or `Image` band it drops its background and takes the on-primary colour, its rule included. |
 | `ImageGrid` | `figure` per `GalleryImage` (a `ResponsiveImage` and an optional caption), lazy loading except the first `EagerCount`; `PrioritizeFirstImage` loads the first one eagerly with `fetchpriority="high"`. `Layout` `Grid` (the default) is rows of equal columns; `Mosaic` (`site-image-grid--mosaic`) is a collage of mixed aspect ratios: columns filled from top to bottom in document order, each image at its own aspect ratio, never cropped. In both, columns are at least 14rem wide and share the full width of the container, as many as there are images while they fit, so one image fills its container, in a section or in a `Split`'s media column. An image is at most 40rem or 80% of the viewport tall; a taller one is shown whole within that height (`object-fit: contain`). |
+| `AlbumIndex` | A `CardGrid` (`site-album-index`) of `Card`s, one per `AlbumSummary`: the title as the heading linked to the album's page, a lazy cover, the photo count as the application words it (`site-album-index__count`), and `lang` when the title is in another language; see [Photo albums](#photo-albums). Nothing without albums. |
+| `AlbumSection` | One page of an album: a `Section` whose heading id is `album-{slug}`, an `ImageGrid` of the page's photos (the first `EagerCount`, default 4, eager), optional content, then the `Pager`; see [Photo albums](#photo-albums). |
 | `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links; no `address` when there are no lines and no channels. `PhoneText` shows the number as written (`+55 (11) 99999-0000`) while the link uses the digits; it must be the same number as `Phone`. The WhatsApp link shows `WhatsAppLabel`. |
 | `LanguageSwitcher` | Labelled `nav` of links with `hreflang`, `lang` and `aria-current="true"` on the current language. |
 | `Pager` | A `nav` named by `Label` (`site-pager`) with plain links for a list paged through the URL, after the GOV.UK pagination component: previous (`rel="prev"`), the numbered pages and next (`rel="next"`); see [Pager](#pager). Nothing when there is one page. |
@@ -144,6 +146,43 @@ and the ellipsis is muted; each link is at least 2.75rem wide.
 <Pager Window="_window" Label="Photo pages" PreviousText="Previous" NextText="Next" PageLabelFormat="Page {0}"
        PageHref="@(page => LinkTarget.FromString(page == 1 ? "/fotos" : $"/fotos?page={page}"))" />
 ```
+
+### Photo albums
+
+`AlbumIndex` and `AlbumSection` show a site's photo albums, one album page at a time, without script. They take display data only
+(`AlbumSummary`, `GalleryImage`, `PageWindow`, `Slug`), so an application with AVIF, WebP and JPEG renditions and one with a single file
+both fit: choosing renditions and media routes stays with the application, and so does every word on the page.
+
+- `AlbumIndex` renders an `AlbumSummary(Title, Href, Cover, PhotoCountText, Culture)` per album as a card whose heading links to the
+  album's page. The cover is lazy (it is a thumbnail further down an index) and usually decorative, because the title names the card.
+  Word the count yourself, plural rules included (`"1 foto"`, `"12 fotos"`). Set `Culture` when the title fell back to another language,
+  so the card carries `lang`. `HeadingLevel` defaults to 3 under a section's `h2`.
+- `AlbumSection` renders one page of one album: a `Section` named by its heading, whose id is `album-` plus the slug, the same on every
+  page and render, so `#album-patagonia` can be linked to; the page's photos in an `ImageGrid`; optional `ChildContent`, such as a link
+  to the related tour; then the `Pager` (see [Pager](#pager)) with your `PagerLabel`, `PreviousText`, `NextText` and `PageLabelFormat`.
+  Use `Level="1"` when the album is the page.
+
+Images visible on the first screen load eagerly and the rest lazily, each with its width and height so the layout does not shift
+([web.dev: browser-level image lazy loading](https://web.dev/articles/lazy-loading-images)). `EagerCount` defaults to
+`AlbumSection.DefaultEagerCount`, 4: the first row of the grid at the default content width, where 72rem holds four 14rem columns with
+their gaps. Lower it when a hero or text comes before the album, or raise it for a wider content width.
+
+Each page of an album has its own address: page 1 without a page parameter and every other page with one, linked with plain `a href`
+links ([GOV.UK pagination](https://design-system.service.gov.uk/components/pagination/),
+[Google Search Central: pagination and incremental page loading](https://developers.google.com/search/docs/specialty/ecommerce/pagination-and-incremental-page-loading)).
+Give each page its own `PageHead.CanonicalUrl`, and answer a page past the end (`Window.IsOutOfRange`) with 404 Not Found.
+
+```razor
+<AlbumSection Title="@view.Title" Slug="@view.Slug" Level="1" lang="@Lang(view.Culture)"
+              Photos="@Renditions.Gallery(page.PhotoIds)" Window="@page.Window"
+              PageHref="@(p => LinkTarget.FromString(p == 1 ? $"/pt/galeria/{view.Slug}" : $"/pt/galeria/{view.Slug}?pagina={p}"))"
+              PagerLabel="Páginas do álbum" PreviousText="Anterior" NextText="Próxima" PageLabelFormat="Página {0}">
+    <p><a href="@TourHref">Ver a viagem</a></p>
+</AlbumSection>
+```
+
+`PandaBear.SharedKernel.Galleries` holds the album model behind these components; its `AlbumView.Page` gives the photos and the window
+of a page.
 
 ### Bands and photos
 

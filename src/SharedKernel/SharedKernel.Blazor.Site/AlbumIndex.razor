@@ -1,0 +1,15 @@
+@inherits SiteComponent
+@if (Albums.Count > 0)
+{
+    <CardGrid @attributes="AdditionalAttributes" Class="@CssClass("site-album-index")">
+        @foreach (var album in Albums)
+        {
+            <Card @key="album.Href.Value" Title="@album.Title" Href="@album.Href" Image="@album.Cover" HeadingLevel="@HeadingLevel" lang="@album.Culture?.Value">
+                @if (!string.IsNullOrWhiteSpace(album.PhotoCountText))
+                {
+                    <p class="site-album-index__count">@album.PhotoCountText</p>
+                }
+            </Card>
+        }
+    </CardGrid>
+}

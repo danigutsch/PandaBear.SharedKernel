@@ -729,3 +729,60 @@ PandaBear.Blazor.Site.Pager.SurroundingPages.get -> int
 PandaBear.Blazor.Site.Pager.SurroundingPages.set -> void
 PandaBear.Blazor.Site.Pager.Window.get -> PandaBear.BuildingBlocks.PageWindow
 PandaBear.Blazor.Site.Pager.Window.set -> void
+PandaBear.Blazor.Site.AlbumIndex
+PandaBear.Blazor.Site.AlbumIndex.AlbumIndex() -> void
+PandaBear.Blazor.Site.AlbumIndex.Albums.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.AlbumSummary!>!
+PandaBear.Blazor.Site.AlbumIndex.Albums.set -> void
+PandaBear.Blazor.Site.AlbumIndex.HeadingLevel.get -> int
+PandaBear.Blazor.Site.AlbumIndex.HeadingLevel.set -> void
+PandaBear.Blazor.Site.AlbumSection
+PandaBear.Blazor.Site.AlbumSection.AlbumSection() -> void
+PandaBear.Blazor.Site.AlbumSection.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.AlbumSection.ChildContent.set -> void
+PandaBear.Blazor.Site.AlbumSection.EagerCount.get -> int
+PandaBear.Blazor.Site.AlbumSection.EagerCount.set -> void
+PandaBear.Blazor.Site.AlbumSection.Intro.get -> string?
+PandaBear.Blazor.Site.AlbumSection.Intro.set -> void
+PandaBear.Blazor.Site.AlbumSection.Layout.get -> PandaBear.Blazor.Site.ImageGridLayout
+PandaBear.Blazor.Site.AlbumSection.Layout.set -> void
+PandaBear.Blazor.Site.AlbumSection.Level.get -> int
+PandaBear.Blazor.Site.AlbumSection.Level.set -> void
+PandaBear.Blazor.Site.AlbumSection.NextText.get -> string!
+PandaBear.Blazor.Site.AlbumSection.NextText.set -> void
+PandaBear.Blazor.Site.AlbumSection.PageHref.get -> System.Func<int, PandaBear.Blazor.Site.LinkTarget!>?
+PandaBear.Blazor.Site.AlbumSection.PageHref.set -> void
+PandaBear.Blazor.Site.AlbumSection.PageLabelFormat.get -> string?
+PandaBear.Blazor.Site.AlbumSection.PageLabelFormat.set -> void
+PandaBear.Blazor.Site.AlbumSection.PagerLabel.get -> string!
+PandaBear.Blazor.Site.AlbumSection.PagerLabel.set -> void
+PandaBear.Blazor.Site.AlbumSection.Photos.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.GalleryImage!>!
+PandaBear.Blazor.Site.AlbumSection.Photos.set -> void
+PandaBear.Blazor.Site.AlbumSection.PreviousText.get -> string!
+PandaBear.Blazor.Site.AlbumSection.PreviousText.set -> void
+PandaBear.Blazor.Site.AlbumSection.Slug.get -> PandaBear.BuildingBlocks.Slug?
+PandaBear.Blazor.Site.AlbumSection.Slug.set -> void
+PandaBear.Blazor.Site.AlbumSection.Title.get -> string!
+PandaBear.Blazor.Site.AlbumSection.Title.set -> void
+PandaBear.Blazor.Site.AlbumSection.Window.get -> PandaBear.BuildingBlocks.PageWindow
+PandaBear.Blazor.Site.AlbumSection.Window.set -> void
+PandaBear.Blazor.Site.AlbumSummary
+PandaBear.Blazor.Site.AlbumSummary.<Clone>$() -> PandaBear.Blazor.Site.AlbumSummary!
+PandaBear.Blazor.Site.AlbumSummary.AlbumSummary(string! Title, PandaBear.Blazor.Site.LinkTarget! Href, PandaBear.Blazor.Site.ResponsiveImage? Cover = null, string? PhotoCountText = null, PandaBear.BuildingBlocks.ContentCulture? Culture = null) -> void
+PandaBear.Blazor.Site.AlbumSummary.Cover.get -> PandaBear.Blazor.Site.ResponsiveImage?
+PandaBear.Blazor.Site.AlbumSummary.Cover.init -> void
+PandaBear.Blazor.Site.AlbumSummary.Culture.get -> PandaBear.BuildingBlocks.ContentCulture?
+PandaBear.Blazor.Site.AlbumSummary.Culture.init -> void
+PandaBear.Blazor.Site.AlbumSummary.Deconstruct(out string! Title, out PandaBear.Blazor.Site.LinkTarget! Href, out PandaBear.Blazor.Site.ResponsiveImage? Cover, out string? PhotoCountText, out PandaBear.BuildingBlocks.ContentCulture? Culture) -> void
+PandaBear.Blazor.Site.AlbumSummary.Equals(PandaBear.Blazor.Site.AlbumSummary? other) -> bool
+PandaBear.Blazor.Site.AlbumSummary.Href.get -> PandaBear.Blazor.Site.LinkTarget!
+PandaBear.Blazor.Site.AlbumSummary.Href.init -> void
+PandaBear.Blazor.Site.AlbumSummary.PhotoCountText.get -> string?
+PandaBear.Blazor.Site.AlbumSummary.PhotoCountText.init -> void
+PandaBear.Blazor.Site.AlbumSummary.Title.get -> string!
+PandaBear.Blazor.Site.AlbumSummary.Title.init -> void
+const PandaBear.Blazor.Site.AlbumSection.DefaultEagerCount = 4 -> int
+override PandaBear.Blazor.Site.AlbumSummary.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.AlbumSummary.GetHashCode() -> int
+override PandaBear.Blazor.Site.AlbumSummary.ToString() -> string!
+static PandaBear.Blazor.Site.AlbumSummary.operator !=(PandaBear.Blazor.Site.AlbumSummary? left, PandaBear.Blazor.Site.AlbumSummary? right) -> bool
+static PandaBear.Blazor.Site.AlbumSummary.operator ==(PandaBear.Blazor.Site.AlbumSummary? left, PandaBear.Blazor.Site.AlbumSummary? right) -> bool

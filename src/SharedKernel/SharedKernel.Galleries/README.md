@@ -78,8 +78,8 @@ page can mark text of another language with `lang`. The view carries `Title`, `S
 and the effective `CoverId`.
 
 `view.Page(requestedPage, pageSize)` slices one page of photos with `PageWindow` (see the BuildingBlocks README): pass the raw `page`
-query value, and answer 404 when `page.Window.IsOutOfRange`. `page.PhotoIds` are the photos to render with the application's renditions,
-and `page.Window` feeds a pager.
+query value, and answer 404 when `page.Window.IsOutOfRange`. `page.PhotoIds` are the photos to render; turn them into `GalleryImage`s
+with the application's renditions and give them, with `page.Window`, to `AlbumSection` in `PandaBear.SharedKernel.Blazor.Site`.
 
 ```csharp
 var rules = new AlbumRules(SiteCultures.Supported, maxPhotos: 200) { MaxTitleLength = 120 };

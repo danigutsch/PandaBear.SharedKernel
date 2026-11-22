@@ -1,0 +1,6 @@
+@inherits SiteComponent
+<Section @attributes="AdditionalAttributes" Class="@Class" Title="@Title" HeadingId="@HeadingId" Level="@Level" Intro="@Intro">
+    <ImageGrid Images="@Photos" Layout="@Layout" EagerCount="@EagerCount" />
+    @ChildContent
+    <Pager Window="@Window" PageHref="@PageHref" Label="@PagerLabel" PreviousText="@PreviousText" NextText="@NextText" PageLabelFormat="@PageLabelFormat" />
+</Section>
