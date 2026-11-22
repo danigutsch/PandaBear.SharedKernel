@@ -83,8 +83,7 @@ internal static class SecretsToolHarness
             () => input,
             () => new NonClosingStream(standardOutput),
             name => variables is not null && variables.TryGetValue(name, out var value) ? value : null,
-            () => isTerminal,
-            TimeSpan.FromMilliseconds(500));
+            () => isTerminal);
         var exitCode = await SecretsCommandLine
             .Create(environment)
             .Parse(arguments)
