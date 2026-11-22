@@ -26,6 +26,7 @@ Choose the packages your project needs. Each package has its own README with req
 | Decode Bech32 (age keys) and encode Base32 (TOTP secrets) | [Encodings](src/SharedKernel/SharedKernel.Encodings/README.md) |
 | Find credentials, keys, tokens, recovery codes, and seed phrases in text, and inspect and convert SSH private keys | [Secret scanning](src/SharedKernel/SharedKernel.SecretScanning/README.md) |
 | Model photo albums: per-culture titles, slugs and publication, an ordered photo sequence with a cover, publish rules, and paged public views | [Galleries](src/SharedKernel/SharedKernel.Galleries/README.md) |
+| Model sellable programmes such as tours: availability and dates, typed prices, conditions, app-defined metrics, steps, translated text with publish rules, public views, listing groups, display sentences and JSON-LD | [Offerings](src/SharedKernel/SharedKernel.Offerings/README.md) |
 | Parse simple comma-delimited rows and detect duplicates | [Tabular](src/SharedKernel/SharedKernel.Tabular/README.md) |
 | Model installed packages and plan what is missing, read-only | [Packages](src/SharedKernel/SharedKernel.Packages/README.md) |
 | Wire Aspire hosts: service defaults with private telemetry and health endpoints, AppHost secrets, origins, health checks and image pins | [Service defaults](src/SharedKernel/SharedKernel.ServiceDefaults/README.md) · [Aspire hosting](src/SharedKernel/SharedKernel.Aspire.Hosting/README.md) |
