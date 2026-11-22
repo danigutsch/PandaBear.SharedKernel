@@ -1019,6 +1019,10 @@ a {
 }
 
 .site-card {
+    --_site-centre-margin: initial;
+    --_site-centre-justify: initial;
+    --_site-image-position: initial;
+    --_site-quote-rule: initial;
     position: relative;
     min-width: 0;
     color: var(--site-color-text);
@@ -1100,17 +1104,12 @@ a {
 }
 
 /*
- * The action row lies above the covering title link and at the bottom of the card, so the rows of a grid line up. Only its actions take
- * the pointer: a click on the more look or between the actions reaches the title link.
+ * The action row lies above the covering title link and at the bottom of the card, so the rows of a grid line up; the card's alignment
+ * justifies it. Only its actions take the pointer: a click on the more look or between the actions reaches the title link.
  */
 .site-card .site-card__actions {
     position: relative;
     z-index: 1;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-start;
-    gap: var(--site-space-2);
     margin-top: auto;
     padding: 0 var(--site-space-3) var(--site-space-3);
     pointer-events: none;
@@ -1159,12 +1158,16 @@ a {
     box-shadow: calc(-1 * var(--site-space-2)) var(--site-space-2) 0 var(--site-color-border);
 }
 
+/*
+ * A card does not inherit the alignment of a section or band around it: it resets the private alignment properties and starts its text,
+ * and only its own centred alignment sets them, as a centred section does.
+ */
 .site-card--text-center {
+    --_site-centre-margin: auto;
+    --_site-centre-justify: center;
+    --_site-image-position: 50% 50%;
+    --_site-quote-rule: 0;
     text-align: center;
-}
-
-.site-card--text-center .site-card__actions {
-    justify-content: center;
 }
 
 /* Facts table. */

@@ -20,7 +20,7 @@
     </div>
     @if (HasMore || Actions is not null)
     {
-        <ActionRow Class="site-card__actions">
+        <ActionRow Class="site-card__actions" Justification="@(TextAlignment == SiteAlignment.Center ? ActionRowJustification.Center : ActionRowJustification.Start)">
             @if (HasMore)
             {
                 <span class="@(ButtonStyle.Classes(MoreVariant, MoreSize) + " site-card__more")" aria-hidden="true">@MoreText</span>

@@ -83,6 +83,20 @@ public sealed class CardOptionsTests : BunitContext
         BunitElementAssertions.HasClass(cut.Find("article").ClassList, "site-card--text-center");
     }
 
+    [Theory]
+    [InlineData(SiteAlignment.Start, "site-action-row site-card__actions")]
+    [InlineData(SiteAlignment.Center, "site-action-row site-action-row--center site-card__actions")]
+    public void The_action_row_is_justified_by_the_card_alignment(SiteAlignment alignment, string expected)
+    {
+        // Arrange & Act
+        var cut = this.RenderCard(parameters => parameters
+            .Add(component => component.TextAlignment, alignment)
+            .Add(component => component.MoreText, "More"));
+
+        // Assert
+        cut.Find(".site-card__actions").ClassName.ShouldBe(expected);
+    }
+
     [Fact]
     public void An_eyebrow_goes_above_the_title_in_one_heading_group()
     {

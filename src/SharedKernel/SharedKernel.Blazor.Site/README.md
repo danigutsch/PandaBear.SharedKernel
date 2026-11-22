@@ -116,8 +116,9 @@ A card's look comes from typed parameters, never from a stylesheet of the site:
 - `ImageShadow`: `None` (the default) or `Offset` (`site-card--image-shadow`): a hard block of `--site-color-border` offset
   `--site-space-2` towards the end and the bottom (the left in a right-to-left page, `:dir(rtl)`), decorative and without a contrast need. It fits the design system as a token-built
   decoration; a boxed card refuses it (`ArgumentException`), because its box would clip it.
-- `TextAlignment` (`SiteAlignment`): `Start` (the default; a card sets `text-align: start` itself, so a centred section around it does
-  not centre it) or `Center` (`site-card--text-center`), which centres the text, the heading and the action row.
+- `TextAlignment` (`SiteAlignment`): `Start` (the default) or `Center` (`site-card--text-center`), which centres the text, the heading,
+  a byline and the action row. A card does not inherit the alignment of a section or band around it: it resets the private alignment
+  properties those set, so a card in a centred band stays at the start unless its own alignment centres it (a browser test measures it).
 - `Eyebrow`: a short label above the title; the heading is then an `hgroup` (`site-card__heading`) of the eyebrow `p`
   (`site-card__eyebrow`, small, bold, letter-spaced, in the primary colour) and the heading, as on `Section`.
 - `MoreText`, `MoreVariant` (default `Outline`) and `MoreSize` (default `Regular`): the more look of a card whose whole surface is its
@@ -128,7 +129,8 @@ A card's look comes from typed parameters, never from a stylesheet of the site:
   hovered, the inverted hover look on the primary colour (see [Bands and photos](#bands-and-photos)). It needs `Href`
   (`ArgumentException`).
 - The more look and the `Actions` are one `ActionRow` (`site-card__actions`) at the bottom of the card, so the actions of a row of
-  cards line up whatever the length of their text. Only the actions take the pointer; a click between them reaches the title link.
+  cards line up whatever the length of their text. Its `Justification` is `Center` for a centred card and `Start` otherwise, so it is
+  stacked below the `48rem` breakpoint and one row from it on, like any action row. Only the actions take the pointer; a click between them reaches the title link.
 
 The card title has a typography role of its own (`TypographyRole.CardTitle`, see [Model](#model)), so a section heading role in upper
 case or a large size does not reach the cards. The card never widens its grid column (`min-width: 0`), and a word longer than the card,

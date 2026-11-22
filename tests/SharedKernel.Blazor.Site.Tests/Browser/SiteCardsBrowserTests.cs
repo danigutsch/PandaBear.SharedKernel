@@ -25,7 +25,15 @@ public sealed class SiteCardsBrowserTests(ChromiumFixture chromium) : IClassFixt
         // Assert
         more.Width.ShouldBe(button.Width);
         more.Height.ShouldBe(button.Height);
-        more.Y.ShouldBe(button.Y);
+        if (width < 768)
+        {
+            button.Y.ShouldBeGreaterThanOrEqualTo(more.Bottom);
+        }
+        else
+        {
+            more.Y.ShouldBe(button.Y);
+        }
+
         more.Height.ShouldBeGreaterThanOrEqualTo(TapTarget);
     }
 

@@ -107,15 +107,37 @@ public sealed class SiteCardStylesheetTests
     }
 
     [Fact]
-    public void Card_actions_are_one_row_at_the_bottom_of_the_card()
+    public void Card_actions_sit_at_the_bottom_and_leave_their_placement_to_the_action_row()
     {
         // Arrange & Act
         var actions = SiteFiles.Rule(File.ReadAllText(SiteFiles.StylesheetPath()), ".site-card .site-card__actions");
 
         // Assert
-        actions.ShouldContain("flex-direction: row", StringComparison.Ordinal);
         actions.ShouldContain("margin-top: auto", StringComparison.Ordinal);
-        SiteFiles.Rule(File.ReadAllText(SiteFiles.StylesheetPath()), ".site-card--text-center .site-card__actions").ShouldContain("justify-content: center", StringComparison.Ordinal);
+        actions.ShouldNotContain("flex-direction", StringComparison.Ordinal);
+        actions.ShouldNotContain("justify-content", StringComparison.Ordinal);
+        File.ReadAllText(SiteFiles.StylesheetPath()).ShouldNotContain(".site-card--text-center .site-card__actions", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void A_card_resets_the_inherited_alignment_and_a_centred_card_sets_it()
+    {
+        // Arrange
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Act
+        var card = SiteFiles.Rule(css, ".site-card");
+        var centred = SiteFiles.Rule(css, ".site-card--text-center");
+
+        // Assert
+        foreach (var variable in new[] { "--_site-centre-margin", "--_site-centre-justify", "--_site-image-position", "--_site-quote-rule" })
+        {
+            card.ShouldContain(variable + ": initial", StringComparison.Ordinal);
+            centred.ShouldContain(variable + ": ", StringComparison.Ordinal);
+            centred.ShouldNotContain(variable + ": initial", StringComparison.Ordinal);
+        }
+
+        centred.ShouldContain("--_site-centre-justify: center", StringComparison.Ordinal);
     }
 
     [Fact]
