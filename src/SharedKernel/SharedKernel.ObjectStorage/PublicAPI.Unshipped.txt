@@ -155,3 +155,7 @@ static PandaBear.ObjectStorage.ObjectWriteResult.operator !=(PandaBear.ObjectSto
 static PandaBear.ObjectStorage.ObjectWriteResult.operator ==(PandaBear.ObjectStorage.ObjectWriteResult? left, PandaBear.ObjectStorage.ObjectWriteResult? right) -> bool
 ~override PandaBear.ObjectStorage.ObjectStorageKey.Equals(object obj) -> bool
 ~override PandaBear.ObjectStorage.ObjectStoragePrefix.Equals(object obj) -> bool
+PandaBear.ObjectStorage.ObjectInventoryReport
+PandaBear.ObjectStorage.ObjectInventoryReport.MissingObjectKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.ObjectStorage.ObjectInventoryReport.OrphanObjects.get -> System.Collections.Generic.IReadOnlyList<PandaBear.ObjectStorage.ObjectInventoryItem!>!
+static PandaBear.ObjectStorage.ObjectInventoryReport.Compare(System.Collections.Generic.IEnumerable<PandaBear.ObjectStorage.ObjectInventoryItem!>! inventory, System.Collections.Generic.IEnumerable<string!>! referencedKeys) -> PandaBear.ObjectStorage.ObjectInventoryReport!

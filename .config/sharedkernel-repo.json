@@ -77,6 +77,7 @@
     "src/SharedKernel/SharedKernel.Messaging.Protobuf/SharedKernel.Messaging.Protobuf.csproj",
     "src/SharedKernel/SharedKernel.Messaging/SharedKernel.Messaging.csproj",
     "src/SharedKernel/SharedKernel.Npgsql/SharedKernel.Npgsql.csproj",
+    "src/SharedKernel/SharedKernel.ObjectStorage.FileSystem/SharedKernel.ObjectStorage.FileSystem.csproj",
     "src/SharedKernel/SharedKernel.ObjectStorage.S3/SharedKernel.ObjectStorage.S3.csproj",
     "src/SharedKernel/SharedKernel.ObjectStorage/SharedKernel.ObjectStorage.csproj",
     "src/SharedKernel/SharedKernel.Observability.Npgsql/SharedKernel.Observability.Npgsql.csproj",

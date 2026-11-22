@@ -9,8 +9,8 @@ Host-neutral object-storage contracts.
 `IObjectStore` writes, reads, lists, deletes, and signs direct uploads for application-owned, relative,
 slash-delimited object keys. It carries no application key policy, variants, or publishing rules.
 
-Provider implementations belong in separate packages. The S3-compatible provider is
-`SharedKernel.ObjectStorage.S3`.
+Provider implementations belong in separate packages. Use `SharedKernel.ObjectStorage.S3` for S3-compatible
+storage or `SharedKernel.ObjectStorage.FileSystem` for an application-owned local directory.
 
 ## Validated object identities
 
@@ -42,3 +42,11 @@ third-party dependency is introduced.
 Package ID: `PandaBear.SharedKernel.ObjectStorage`. C# namespace: `PandaBear.ObjectStorage`. Assembly/project identity: `SharedKernel.ObjectStorage`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+## Inventory reconciliation
+
+`ObjectInventoryReport.Compare` reports referenced keys missing from an observed inventory
+and unreferenced objects with their observed modification time. It compares exact ordinal keys,
+ignores blank references, and takes the first observation if the inventory repeats a key.
+Use matching inventory and reference scopes. Report generation reads the supplied snapshots. The application owns grace periods, current reference checks,
+and permissions for cleanup.

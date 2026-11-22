@@ -57,8 +57,18 @@ public static class SiteThemeStylesheet
     /// </summary>
     /// <param name="theme">The theme.</param>
     /// <returns>The hash.</returns>
-    public static string Hash(SiteTheme theme) =>
-        Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(Render(theme))).AsSpan(0, 8));
+    public static string Hash(SiteTheme theme) => RenderVersioned(theme).Version;
+
+    /// <summary>Renders the CSS once and computes its existing UTF-8 content hash.</summary>
+    /// <param name="theme">The theme.</param>
+    /// <returns>The CSS and its version, suitable for serving together.</returns>
+    /// <exception cref="ArgumentNullException">The theme is null.</exception>
+    public static (string Css, string Version) RenderVersioned(SiteTheme theme)
+    {
+        var css = Render(theme);
+        var version = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(css)).AsSpan(0, 8));
+        return (css, version);
+    }
 
     /// <summary>
     /// Renders the stylesheet of a theme scoped to one element (the preview): the custom properties on <c>#scopeId</c>, the colour

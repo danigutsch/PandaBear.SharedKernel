@@ -83,5 +83,21 @@
       }
     }
   ],
-  "defaultSlice": "library"
+  "defaultSlice": "library",
+  "coverage": {
+    "thresholdPercent": 90,
+    "include": [
+      "src/*.cs",
+      "tools/*.cs"
+    ],
+    "exclude": [
+      "*/obj/*",
+      "*.g.cs",
+      "*.generated.cs"
+    ],
+    "symbolDirectories": [
+      "src",
+      "tools"
+    ]
+  }
 }

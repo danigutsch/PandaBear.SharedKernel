@@ -571,7 +571,7 @@ a {
     border-radius: 0;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) :is(h1, h2, h3, h4, h5, h6, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title) {
+:is(.site-band--primary, .site-band--image, .site-hero--cover) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label) {
     color: inherit;
 }
 
@@ -616,6 +616,19 @@ a {
     margin-bottom: var(--site-space-4);
 }
 
+/* The eyebrow: a short label above the heading, small and spaced like the hero's, in the primary colour. */
+.site-section__heading {
+    margin: 0;
+}
+
+.site-section__eyebrow {
+    margin: 0 0 var(--site-space-1);
+    color: var(--site-color-primary);
+    font-size: var(--site-font-size-sm);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
 .site-divider {
     width: 4rem;
     height: 0.25rem;
@@ -632,7 +645,8 @@ a {
 
 /*
  * Split: text then media, with or without a section around them. Below the breakpoint the media follows the text; from it on they are
- * two equal columns and the media fills its column.
+ * two equal columns and the media fills its column, on the end side or, with site-split--media-start, on the start side. The start
+ * side only reorders the columns, so reading and focus order stay text first.
  */
 .site-split__main,
 .site-split__media {
@@ -686,6 +700,18 @@ a {
 .site-button--outline:hover {
     border-color: var(--site-color-primary-hover);
     color: var(--site-color-primary-hover);
+}
+
+/*
+ * Action row: below the breakpoint the actions are stacked and centred; from it on they are one wrapping row spread across the width.
+ * A plain link in it keeps the link style.
+ */
+.site-action-row {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--site-space-3);
 }
 
 /*
@@ -785,6 +811,57 @@ a {
     width: 40%;
     color: var(--site-color-muted);
     font-weight: 600;
+}
+
+/*
+ * Fact grid: centred cards in columns at least 11rem wide that share the full width, as many as there are cards while they fit; from the
+ * breakpoint on, the column count that the component computes for balanced rows (site-fact-grid--columns-1 to -4). The list draws the
+ * top and start borders and each card its end and bottom borders, so the cells share single rules like a table. The label and the icon
+ * take the primary colour; an svg icon without a fill attribute is filled with it. A value breaks anywhere when a word, such as a long
+ * e-mail address, is wider than its card.
+ */
+.site-fact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    margin: 0;
+    border-block-start: 1px solid var(--site-color-border);
+    border-inline-start: 1px solid var(--site-color-border);
+}
+
+.site-fact-grid__item {
+    min-width: 0;
+    padding: var(--site-space-4) var(--site-space-3);
+    border-block-end: 1px solid var(--site-color-border);
+    border-inline-end: 1px solid var(--site-color-border);
+    text-align: center;
+}
+
+.site-fact-grid__label {
+    color: var(--site-color-primary);
+    font-weight: 700;
+}
+
+.site-fact-grid__icon {
+    display: block;
+    margin-bottom: var(--site-space-2);
+    font-size: var(--site-font-size-2xl);
+    line-height: 1;
+}
+
+.site-fact-grid__icon > :is(svg, img) {
+    display: block;
+    width: 1em;
+    height: 1em;
+    margin-inline: auto;
+}
+
+.site-fact-grid__icon > svg:not([fill]) {
+    fill: currentColor;
+}
+
+.site-fact-grid__value {
+    margin: 0;
+    overflow-wrap: anywhere;
 }
 
 /* Disclosure. */
@@ -1069,6 +1146,31 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
 
     .site-split__media {
         margin-top: 0;
+    }
+
+    .site-split--media-start > .site-split__media {
+        order: -1;
+    }
+
+    .site-fact-grid--columns-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .site-fact-grid--columns-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .site-fact-grid--columns-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .site-fact-grid--columns-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .site-action-row {
+        flex-direction: row;
+        justify-content: space-between;
     }
 
     .site-hero--cover {

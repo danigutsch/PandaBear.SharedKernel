@@ -308,6 +308,78 @@ public sealed partial class SiteStylesheetTests
         rule.ShouldContain("color: var(--site-color-on-primary)", StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void A_start_split_moves_its_media_only_visually_and_only_from_the_breakpoint_on()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+
+        // Assert
+        css.ShouldContain("""
+                .site-split--media-start > .site-split__media {
+                    order: -1;
+                }
+            """, StringComparison.Ordinal);
+        Regex.IsMatch(css, @"^\.site-split--media-start", RegexOptions.Multiline, TimeSpan.FromSeconds(1)).ShouldBeFalse();
+        css.ShouldNotContain("row-reverse", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Fact_grid_column_modifiers_set_equal_columns_only_from_the_breakpoint_on()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+        var modifiers = Regex.Matches(css, @"site-fact-grid--columns-(\d+)", RegexOptions.None, TimeSpan.FromSeconds(1)).Select(match => match.Groups[1].Value).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+        var breakpoint = css.IndexOf("@media (min-width: 48rem) {", StringComparison.Ordinal);
+        var breakpointEnd = css.IndexOf("\n}", breakpoint, StringComparison.Ordinal);
+
+        // Assert
+        modifiers.ShouldBe(["1", "2", "3", "4"]);
+        foreach (var columns in modifiers)
+        {
+            css.ShouldContain($$"""
+                    .site-fact-grid--columns-{{columns}} {
+                        grid-template-columns: repeat({{columns}}, minmax(0, 1fr));
+                    }
+                """, StringComparison.Ordinal);
+        }
+
+        Regex.IsMatch(css, @"^\.site-fact-grid--columns", RegexOptions.Multiline, TimeSpan.FromSeconds(1)).ShouldBeFalse();
+        css.IndexOf(".site-fact-grid--columns-", StringComparison.Ordinal).ShouldBeGreaterThan(breakpoint);
+        css.LastIndexOf(".site-fact-grid--columns-", StringComparison.Ordinal).ShouldBeLessThan(breakpointEnd);
+    }
+
+    [Fact]
+    public void A_fact_label_takes_the_on_primary_colour_on_the_primary_colour_or_a_photo()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+        var rule = Regex.Match(css, @"^:is\(\.site-band--primary, \.site-band--image, \.site-hero--cover\) :is\(h1(?<list>[^{]*)\{(?<body>[^}]*)\}", RegexOptions.Multiline, TimeSpan.FromSeconds(1));
+
+        // Assert
+        rule.Success.ShouldBeTrue();
+        rule.Groups["list"].Value.ShouldContain(".site-fact-grid__label", StringComparison.Ordinal);
+        rule.Groups["body"].Value.ShouldContain("color: inherit", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void A_section_eyebrow_is_small_spaced_text_in_the_primary_colour_and_on_primary_on_the_primary_colour_or_a_photo()
+    {
+        // Arrange & Act
+        var css = File.ReadAllText(SiteFiles.StylesheetPath());
+        var eyebrow = SiteFiles.Rule(css, ".site-section__eyebrow");
+        var band = Regex.Match(css, @"^:is\(\.site-band--primary, \.site-band--image, \.site-hero--cover\) :is\(h1(?<list>[^{]*)\{(?<body>[^}]*)\}", RegexOptions.Multiline, TimeSpan.FromSeconds(1));
+
+        // Assert
+        eyebrow.ShouldContain("color: var(--site-color-primary)", StringComparison.Ordinal);
+        eyebrow.ShouldContain("font-size: var(--site-font-size-sm)", StringComparison.Ordinal);
+        eyebrow.ShouldContain("letter-spacing: 0.05em", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-section__heading").ShouldContain("margin: 0", StringComparison.Ordinal);
+        band.Success.ShouldBeTrue();
+        band.Groups["list"].Value.ShouldContain(".site-section__eyebrow", StringComparison.Ordinal);
+        band.Groups["body"].Value.ShouldContain("color: inherit", StringComparison.Ordinal);
+    }
+
     [GeneratedRegex(@"color-mix\(in srgb, var\(--site-color-[a-z-]+\) (?<amount>[^,]+), transparent\)")]
     private static partial Regex MixPattern();
 
