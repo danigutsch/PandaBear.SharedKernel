@@ -66,7 +66,7 @@ internal static class AlbumValidation
 
         return errors.HasErrors
             ? errors.ToResult<AlbumData<TPhotoId, TRelatedId>>()
-            : Result.Ok(new AlbumData<TPhotoId, TRelatedId>(definition.SortOrder, definition.RelatedId, [.. photoIds], definition.CoverId, translations));
+            : Result.Ok(new AlbumData<TPhotoId, TRelatedId>(definition.SortOrder, definition.RelatedId, [.. photoIds], definition.CoverId, [.. translations]));
     }
 
     private static ContentCulture? Culture(ValidationErrors errors, SupportedCultures cultures, string? value, HashSet<ContentCulture> seen)
@@ -96,15 +96,23 @@ internal static class AlbumValidation
         where TPhotoId : struct, IEquatable<TPhotoId>
     {
         var valid = true;
-        var title = StringSanitizer.Sanitize(definition.Title) ?? string.Empty;
         var titleField = AlbumFields.Of(culture, AlbumFields.Title);
-        if (title.Length == 0)
+        var title = string.Empty;
+        if (!StringSanitizer.TrySanitize(definition.Title, out var sanitized))
+        {
+            valid = Add(errors, titleField, "Title is not valid text.");
+        }
+        else if (string.IsNullOrEmpty(sanitized))
         {
             valid = Add(errors, titleField, "Title is required.");
         }
-        else if (title.Length > rules.MaxTitleLength)
+        else if (sanitized.Length > rules.MaxTitleLength)
         {
             valid = Add(errors, titleField, string.Create(CultureInfo.InvariantCulture, $"Title cannot exceed {rules.MaxTitleLength} characters."));
+        }
+        else
+        {
+            title = sanitized;
         }
 
         var slug = SlugOf(errors, rules, culture, definition.Slug, valid ? title : null);

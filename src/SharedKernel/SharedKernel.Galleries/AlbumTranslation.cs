@@ -25,18 +25,26 @@ public sealed class AlbumTranslation
     /// <summary>Gets whether the translation is published.</summary>
     public PublicationStatus Status { get; }
 
-    /// <summary>For persistence mappers: rebuilds a translation stored earlier; it performs no validation beyond null checks.</summary>
+    /// <summary>
+    /// For persistence mappers: rebuilds a translation stored earlier. It does not check the title or slug rules; it only refuses a missing
+    /// value or an undefined status.
+    /// </summary>
     /// <param name="culture">The culture.</param>
     /// <param name="title">The title.</param>
     /// <param name="slug">The slug.</param>
     /// <param name="status">The status.</param>
     /// <returns>The translation.</returns>
     /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="status"/> is not a defined <see cref="PublicationStatus"/>.</exception>
     public static AlbumTranslation Restore(ContentCulture culture, string title, Slug slug, PublicationStatus status)
     {
         ArgumentNullException.ThrowIfNull(culture);
         ArgumentNullException.ThrowIfNull(title);
         ArgumentNullException.ThrowIfNull(slug);
+        if (!Enum.IsDefined(status))
+        {
+            throw new ArgumentOutOfRangeException(nameof(status), status, "The publication status is not defined.");
+        }
 
         return new AlbumTranslation(culture, title, slug, status);
     }

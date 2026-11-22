@@ -55,7 +55,7 @@ public sealed class Album<TPhotoId, TRelatedId>
     /// <param name="photos">The application's photo knowledge.</param>
     /// <returns>
     /// Whether anything changed, so the application bumps its version only then; or every validation error, with the album unchanged.
-    /// Translations are compared culture by culture, whatever their order.
+    /// The order of the translations counts: it decides which translation of a language the public view falls back to.
     /// </returns>
     /// <exception cref="ArgumentNullException">An argument, or a translation in the definition, is <see langword="null"/>.</exception>
     public Result<bool> Revise(AlbumDefinition<TPhotoId, TRelatedId> definition, AlbumRules rules, IAlbumPhotoEligibility<TPhotoId> photos)

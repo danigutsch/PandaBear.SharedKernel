@@ -15,6 +15,11 @@ internal sealed class PhotoLibrary : IAlbumPhotoEligibility<Guid>
         return id;
     }
 
+    /// <summary>Withdraws a photo's eligibility in a culture, as when its alt text is removed.</summary>
+    /// <param name="photoId">The photo.</param>
+    /// <param name="culture">The culture.</param>
+    public void Withdraw(Guid photoId, ContentCulture culture) => _photos[photoId].Remove(culture);
+
     /// <inheritdoc />
     public bool Exists(Guid photoId) => _photos.ContainsKey(photoId);
 

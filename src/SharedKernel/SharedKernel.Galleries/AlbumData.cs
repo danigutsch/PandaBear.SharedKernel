@@ -17,7 +17,10 @@ internal sealed record AlbumData<TPhotoId, TRelatedId>(
     where TPhotoId : struct, IEquatable<TPhotoId>
     where TRelatedId : struct, IEquatable<TRelatedId>
 {
-    /// <summary>Determines whether other data is the same, translations compared culture by culture whatever their order.</summary>
+    /// <summary>
+    /// Determines whether other data is the same. Translations are compared in order, because the same-language fallback of
+    /// <see cref="PandaBear.BuildingBlocks.TranslationSet{T}"/> picks the first matching translation.
+    /// </summary>
     /// <param name="other">The other data.</param>
     /// <returns><see langword="true"/> when nothing differs.</returns>
     public bool SameAs(AlbumData<TPhotoId, TRelatedId> other) =>
@@ -26,5 +29,5 @@ internal sealed record AlbumData<TPhotoId, TRelatedId>(
         && Nullable.Equals(CoverId, other.CoverId)
         && PhotoIds.SequenceEqual(other.PhotoIds)
         && Translations.Count == other.Translations.Count
-        && other.Translations.All(translation => Translations.Any(existing => existing.SameAs(translation)));
+        && Translations.Zip(other.Translations).All(pair => pair.First.SameAs(pair.Second));
 }

@@ -36,9 +36,14 @@ required), `MaxPhotos`, and the optional `MaxTitleLength` (default 150) and `Max
 
 `Album.Create(definition, rules, photos)` validates an `AlbumDefinition` (the entered data, with `AlbumTranslationDefinition`s) and
 returns the album or every error at once. `album.Revise(definition, rules, photos)` validates the same way and returns `Result<bool>`:
-whether anything changed, so the application bumps its version only then; on failure the album is unchanged. Translations are compared
-culture by culture, whatever their order. `Album.Restore(...)` and `AlbumTranslation.Restore(...)` rebuild a stored album for a
-persistence mapper without validation; never use them for input.
+whether anything changed, so the application bumps its version only then; on failure the album is unchanged. The order of the
+translations counts as data: the public view's same-language fallback (`pt` finding `pt-BR` before `pt-PT`) takes the first one given,
+so reordering them is a change and is kept. `Translations` and `PhotoIds` are read-only copies.
+
+`Album.Restore(...)` and `AlbumTranslation.Restore(...)` rebuild a stored album for a persistence mapper. They do not run the album
+rules (lengths, the photo maximum, the publish rule), so never use them for input, but they refuse what later reads cannot handle: a
+missing value, two translations of one culture, a cover that is not one of the photos (`ArgumentException`), and an undefined status
+(`ArgumentOutOfRangeException`). A bad row then fails in the mapper, not on every page that lists the album.
 
 A blank slug is derived from the title with `Slug.CreateLenient` (`Viagem à Patagônia, 2027!` gives `viagem-a-patagonia-2027`); a given
 slug must pass `Slug.Create`. A title without an ASCII letter or digit (`東京`) needs an explicit slug. Slugs need not be unique across
@@ -64,7 +69,7 @@ input; map the fields to your own copy when the editor speaks another language.
 | `photoIds` | more than `MaxPhotos`; a photo that does not exist; a photo given twice |
 | `coverId` | the cover is not one of the photos |
 | `translations` | a culture outside `rules.Cultures`; a culture given twice; no translation in the default culture |
-| `{culture}.title` | missing; longer than `MaxTitleLength` (after sanitizing) |
+| `{culture}.title` | not valid text (malformed UTF-16); missing; longer than `MaxTitleLength` (after sanitizing) |
 | `{culture}.slug` | not a valid slug; longer than `MaxSlugLength`; blank with a title that gives no slug |
 | `{culture}.status` | not a defined `PublicationStatus` |
 | `{culture}.photos` | published without a photo; published with photos that are not eligible in the culture |

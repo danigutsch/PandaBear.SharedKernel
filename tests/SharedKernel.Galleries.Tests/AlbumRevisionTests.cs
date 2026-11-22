@@ -16,7 +16,7 @@ public sealed class AlbumRevisionTests
         var photo = _library.Add(Portuguese, English);
         var definition = Definition([photo], Translation("en", "Patagonia"), Translation("pt-BR", "Patagônia", PublicationStatus.Published));
         var album = Album.Create(definition, Rules, _library).ShouldBeSuccess();
-        var reordered = definition with { Translations = [Translation("pt-BR", " Patagônia ", PublicationStatus.Published, "patagonia"), Translation("en", "Patagonia")] };
+        var reordered = definition with { Translations = [Translation("en", "Patagonia"), Translation("pt-BR", " Patagônia ", PublicationStatus.Published, "patagonia")] };
 
         // Act
         var changed = album.Revise(reordered, Rules, _library).ShouldBeSuccess();

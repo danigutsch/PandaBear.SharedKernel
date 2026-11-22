@@ -27,7 +27,11 @@ public static class Album
             : validated.ConvertError<AlbumData<TPhotoId, TRelatedId>, Album<TPhotoId, TRelatedId>>();
     }
 
-    /// <summary>For persistence mappers: rebuilds an album stored earlier; it performs no validation beyond null checks, so never use it for input.</summary>
+    /// <summary>
+    /// For persistence mappers: rebuilds an album stored earlier. It does not run the album rules (lengths, the photo maximum, the
+    /// publish rule), so never use it for input; it only refuses data that later reads cannot handle: a missing value, two translations
+    /// of one culture, or a cover that is not one of the photos. A refused row fails in the mapper, not on every page that shows it.
+    /// </summary>
     /// <typeparam name="TPhotoId">The photo id type.</typeparam>
     /// <typeparam name="TRelatedId">The id type of the related item.</typeparam>
     /// <param name="sortOrder">The sort order.</param>
@@ -37,6 +41,7 @@ public static class Album
     /// <param name="translations">The translations.</param>
     /// <returns>The album.</returns>
     /// <exception cref="ArgumentNullException">A list, or a translation in it, is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Two translations share a culture, or the cover is not one of the photos.</exception>
     public static Album<TPhotoId, TRelatedId> Restore<TPhotoId, TRelatedId>(
         int sortOrder,
         TRelatedId? relatedId,
@@ -48,9 +53,19 @@ public static class Album
     {
         ArgumentNullException.ThrowIfNull(photoIds);
         ArgumentNullException.ThrowIfNull(translations);
+        var cultures = new HashSet<ContentCulture>();
         foreach (var translation in translations)
         {
             ArgumentNullException.ThrowIfNull(translation, nameof(translations));
+            if (!cultures.Add(translation.Culture))
+            {
+                throw new ArgumentException("Two translations share a culture.", nameof(translations));
+            }
+        }
+
+        if (coverId is { } cover && !photoIds.Contains(cover))
+        {
+            throw new ArgumentException("The cover is not one of the photos.", nameof(coverId));
         }
 
         return new Album<TPhotoId, TRelatedId>(new AlbumData<TPhotoId, TRelatedId>(sortOrder, relatedId, [.. photoIds], coverId, [.. translations]));
