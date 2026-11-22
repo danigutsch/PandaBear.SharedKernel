@@ -712,3 +712,20 @@ override PandaBear.Blazor.Site.FactValue.GetHashCode() -> int
 override PandaBear.Blazor.Site.FactValue.ToString() -> string!
 static PandaBear.Blazor.Site.FactValue.operator !=(PandaBear.Blazor.Site.FactValue? left, PandaBear.Blazor.Site.FactValue? right) -> bool
 static PandaBear.Blazor.Site.FactValue.operator ==(PandaBear.Blazor.Site.FactValue? left, PandaBear.Blazor.Site.FactValue? right) -> bool
+const PandaBear.Blazor.Site.Pager.MaxSurroundingPages = 10 -> int
+PandaBear.Blazor.Site.Pager
+PandaBear.Blazor.Site.Pager.Label.get -> string!
+PandaBear.Blazor.Site.Pager.Label.set -> void
+PandaBear.Blazor.Site.Pager.NextText.get -> string!
+PandaBear.Blazor.Site.Pager.NextText.set -> void
+PandaBear.Blazor.Site.Pager.PageHref.get -> System.Func<int, PandaBear.Blazor.Site.LinkTarget!>?
+PandaBear.Blazor.Site.Pager.PageHref.set -> void
+PandaBear.Blazor.Site.Pager.PageLabelFormat.get -> string?
+PandaBear.Blazor.Site.Pager.PageLabelFormat.set -> void
+PandaBear.Blazor.Site.Pager.Pager() -> void
+PandaBear.Blazor.Site.Pager.PreviousText.get -> string!
+PandaBear.Blazor.Site.Pager.PreviousText.set -> void
+PandaBear.Blazor.Site.Pager.SurroundingPages.get -> int
+PandaBear.Blazor.Site.Pager.SurroundingPages.set -> void
+PandaBear.Blazor.Site.Pager.Window.get -> PandaBear.BuildingBlocks.PageWindow
+PandaBear.Blazor.Site.Pager.Window.set -> void

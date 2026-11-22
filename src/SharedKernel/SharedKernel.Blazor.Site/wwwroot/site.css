@@ -1111,6 +1111,41 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
     margin-top: var(--site-space-1);
 }
 
+/* Pager. */
+.site-pager {
+    margin-block: var(--site-space-4);
+}
+
+.site-pager__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--site-space-1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.site-pager a {
+    display: inline-block;
+    min-inline-size: 2.75rem;
+    padding: var(--site-space-2) var(--site-space-3);
+    border-radius: var(--site-radius);
+    text-align: center;
+}
+
+.site-pager a[aria-current="page"] {
+    background: var(--site-color-primary);
+    color: var(--site-color-on-primary);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.site-pager__ellipsis {
+    padding-inline: var(--site-space-2);
+    color: var(--site-color-muted);
+}
+
 /* Language switcher. */
 .site-language-switcher ul {
     display: flex;

@@ -72,6 +72,7 @@ var page = await photos.OrderBy(photo => photo.SortOrder).ThenBy(photo => photo.
     .Skip(window.Skip).Take(window.Take).ToListAsync(cancellationToken);
 ```
 
+`Pager` in `PandaBear.SharedKernel.Blazor.Site` renders the links for a window.
 
 ## Web addresses
 
