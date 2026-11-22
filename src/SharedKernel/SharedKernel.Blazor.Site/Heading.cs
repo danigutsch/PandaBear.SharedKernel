@@ -23,13 +23,15 @@ internal static class Heading
     /// <param name="cssClass">The CSS class.</param>
     /// <param name="id">The element id, if any.</param>
     /// <param name="content">The heading content.</param>
+    /// <param name="language">The language tag of the heading text when it differs from the page's, written as <c>lang</c>; checked with <see cref="LanguageTag.Require" />.</param>
     /// <returns>The fragment.</returns>
-    public static RenderFragment Render(int level, string cssClass, string? id, RenderFragment content) => builder =>
+    public static RenderFragment Render(int level, string cssClass, string? id, RenderFragment content, string? language = null) => builder =>
     {
         builder.OpenElement(0, "h" + level.ToString(CultureInfo.InvariantCulture));
         builder.AddAttribute(1, "id", id);
         builder.AddAttribute(2, "class", cssClass);
-        builder.AddContent(3, content);
+        builder.AddAttribute(3, "lang", language);
+        builder.AddContent(4, content);
         builder.CloseElement();
     };
 }

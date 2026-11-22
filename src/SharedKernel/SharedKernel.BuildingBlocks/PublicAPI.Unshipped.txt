@@ -260,3 +260,6 @@ static PandaBear.BuildingBlocks.PageWindow.operator ==(PandaBear.BuildingBlocks.
 ~override PandaBear.BuildingBlocks.PageWindow.ToString() -> string
 PandaBear.BuildingBlocks.SearchKey
 static PandaBear.BuildingBlocks.SearchKey.Of(string? text) -> string!
+PandaBear.BuildingBlocks.PublicationStatus
+PandaBear.BuildingBlocks.PublicationStatus.Draft = 0 -> PandaBear.BuildingBlocks.PublicationStatus
+PandaBear.BuildingBlocks.PublicationStatus.Published = 1 -> PandaBear.BuildingBlocks.PublicationStatus

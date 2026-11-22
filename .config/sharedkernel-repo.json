@@ -49,6 +49,7 @@
     "src/SharedKernel/SharedKernel.EventSourcing.Npgsql/SharedKernel.EventSourcing.Npgsql.csproj",
     "src/SharedKernel/SharedKernel.EventSourcing/SharedKernel.EventSourcing.csproj",
     "src/SharedKernel/SharedKernel.Forgejo/SharedKernel.Forgejo.csproj",
+    "src/SharedKernel/SharedKernel.Galleries/SharedKernel.Galleries.csproj",
     "src/SharedKernel/SharedKernel.GitHub/SharedKernel.GitHub.csproj",
     "src/SharedKernel/SharedKernel.HttpCaching.AspNetCore/SharedKernel.HttpCaching.AspNetCore.csproj",
     "src/SharedKernel/SharedKernel.HttpClients/SharedKernel.HttpClients.csproj",

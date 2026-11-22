@@ -37,6 +37,14 @@ public sealed partial class Section
     [Parameter]
     public string? Intro { get; set; }
 
+    /// <summary>
+    /// Gets or sets the BCP 47 language tag of the title when it is in another language than the page. It is written as <c>lang</c> on
+    /// the heading alone, so the intro and the body keep the page's language (WCAG 3.1.2). <see langword="null"/>, the default, writes
+    /// no <c>lang</c>.
+    /// </summary>
+    [Parameter]
+    public string? TitleLanguage { get; set; }
+
     /// <summary>Gets or sets whether the decorative divider is shown. The default is <see langword="true" />.</summary>
     [Parameter]
     public bool Divider { get; set; } = true;
@@ -60,6 +68,7 @@ public sealed partial class Section
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(Title);
         Heading.RequireLevel(Level, nameof(Level));
+        LanguageTag.Require(TitleLanguage, nameof(TitleLanguage));
         if (HeadingId is not null && (HeadingId.Length == 0 || HeadingId.AsSpan().ContainsAnyWhiteSpace()))
         {
             throw new ArgumentException("A heading id must not be empty or contain white space.", nameof(HeadingId));

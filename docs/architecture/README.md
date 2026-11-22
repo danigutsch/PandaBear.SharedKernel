@@ -59,6 +59,7 @@ flowchart TB
     SharedKernel_EventSourcing_Npgsql[SharedKernel.EventSourcing.Npgsql] --> SharedKernel_EventSourcing[SharedKernel.EventSourcing]
     SharedKernel_EventSourcing_Npgsql[SharedKernel.EventSourcing.Npgsql] --> SharedKernel_Npgsql[SharedKernel.Npgsql]
     SharedKernel_Forgejo[SharedKernel.Forgejo] --> SharedKernel_Processes[SharedKernel.Processes]
+    SharedKernel_Galleries[SharedKernel.Galleries] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
     SharedKernel_GitHub[SharedKernel.GitHub] --> SharedKernel_Processes[SharedKernel.Processes]
     SharedKernel_HttpClients[SharedKernel.HttpClients] --> SharedKernel_Idempotency_Abstractions[SharedKernel.Idempotency.Abstractions]
     SharedKernel_Idempotency_AspNetCore[SharedKernel.Idempotency.AspNetCore] --> SharedKernel_Idempotency_Abstractions[SharedKernel.Idempotency.Abstractions]
