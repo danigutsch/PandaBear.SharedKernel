@@ -30,9 +30,11 @@ only when its boundary and current use are clear.
   avoided in this repository. What has no generic meaning stays in the application: V2's route cities, terrain note and extension flag.
 - **Each application extends the shared models through type parameters, not inheritance.**
   - `Offering<TImageId, TPriceKind, TMetric>` takes the application's enums, which are stored by name.
-  - `PageSection<TImageId, TLink, TExtra>` takes the application's link target and a struct extension whose `default` means none
-    (`NoExtra` for applications without one). An `IPageSectionContext` validates both, so V2's settings block and its
-    tour-information condition stay in V2.
+  - `PageSection<TImageId, TLink, TExtra>` takes the application's validated link target and a struct extension whose `default` means
+    none (`NoExtra` for applications without one). Definitions hold the raw link input instead (`TLinkInput`), and an
+    `IPageSectionContext<TImageId, TLinkInput, TLink, TExtra>` turns it into the target and validates the extension, so an opaque target
+    such as V2's `NavTarget`, V2's settings block and its tour-information condition stay in V2. The extension members have default
+    bodies, so an application without an extension writes only the link check and its image knowledge.
   - Both read BuildingBlocks' `IImageEligibility<TImageId>`, which Galleries' `IAlbumPhotoEligibility` now derives from, so one image
     index serves every content rule.
 - **Image primitives shared by both live in BuildingBlocks' `Media` folder**: `IImageEligibility` and, added with the owner's approval
