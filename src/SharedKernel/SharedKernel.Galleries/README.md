@@ -6,7 +6,7 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Photo albums for a public site: an ordered sequence of distinct photos with a cover, a sort order, an optional related item such as a
 tour, and a title, slug and publication status per culture, with a publish rule, change detection and a paged public view. It depends
-only on `PandaBear.SharedKernel.BuildingBlocks` (`ContentCulture`, `SupportedCultures`, `TranslationSet`, `Slug`, `PageWindow`) and
+only on `PandaBear.SharedKernel.BuildingBlocks` (`ContentCulture`, `SupportedCultures`, `TranslationSet`, `Slug`, `PageWindow`, `PublicationStatus`) and
 keeps no persistence, concurrency, events or authorization: the application's own entity owns those. Image storage, processing and
 renditions stay with the application too; the album holds photo ids only.
 
@@ -29,7 +29,7 @@ applications):
 | `RelatedId` | Optional related item, such as the tour the album shows |
 | `PhotoIds` | The photos in display order, each once, at most `AlbumRules.MaxPhotos` |
 | `CoverId`, `EffectiveCoverId` | The cover the editor chose, which must be one of the photos; without one the first photo is the cover |
-| `Translations` | One `AlbumTranslation` per culture: `Culture`, `Title`, `Slug`, `Status` (`PublicationStatus.Draft` or `Published`) |
+| `Translations` | One `AlbumTranslation` per culture: `Culture`, `Title`, `Slug`, `Status` (`PublicationStatus.Draft` or `Published`, from BuildingBlocks) |
 
 `AlbumRules` holds the application's choices: the `SupportedCultures` an album is written in (a translation in the default culture is
 required), `MaxPhotos`, and the optional `MaxTitleLength` (default 150) and `MaxSlugLength` (default `Slug.DefaultMaxLength`, 128).

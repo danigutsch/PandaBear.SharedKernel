@@ -1,3 +1,5 @@
+using PandaBear.BuildingBlocks;
+
 namespace PandaBear.Galleries;
 
 /// <summary>Unvalidated text of an album in one culture.</summary>

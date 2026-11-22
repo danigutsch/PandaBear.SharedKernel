@@ -13,7 +13,7 @@ Source files are grouped by topic. The folders are organization only: every publ
 
 | Folder | Contents |
 | --- | --- |
-| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, `Slug`, `SearchKey`, `WebUrl`, text rules, option-to-result helpers |
+| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, `Slug`, `SearchKey`, `PublicationStatus`, `WebUrl`, text rules, option-to-result helpers |
 | `Localization` | `ContentCulture`, `SupportedCultures`, `CultureLanguageTags`, `TranslationSet` |
 | `Contact` | `EmailAddress`, `PhoneNumber`, `PersonName`, `PostalAddress` |
 | `Geography` | `CountryCode`, `CountryNames` |

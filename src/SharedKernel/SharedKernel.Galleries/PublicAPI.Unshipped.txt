@@ -42,18 +42,18 @@ PandaBear.Galleries.AlbumRules.MaxTitleLength.init -> void
 PandaBear.Galleries.AlbumTranslation
 PandaBear.Galleries.AlbumTranslation.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
 PandaBear.Galleries.AlbumTranslation.Slug.get -> PandaBear.BuildingBlocks.Slug!
-PandaBear.Galleries.AlbumTranslation.Status.get -> PandaBear.Galleries.PublicationStatus
+PandaBear.Galleries.AlbumTranslation.Status.get -> PandaBear.BuildingBlocks.PublicationStatus
 PandaBear.Galleries.AlbumTranslation.Title.get -> string!
 PandaBear.Galleries.AlbumTranslationDefinition
 PandaBear.Galleries.AlbumTranslationDefinition.<Clone>$() -> PandaBear.Galleries.AlbumTranslationDefinition!
-PandaBear.Galleries.AlbumTranslationDefinition.AlbumTranslationDefinition(string? Culture, string? Title, string? Slug, PandaBear.Galleries.PublicationStatus Status) -> void
+PandaBear.Galleries.AlbumTranslationDefinition.AlbumTranslationDefinition(string? Culture, string? Title, string? Slug, PandaBear.BuildingBlocks.PublicationStatus Status) -> void
 PandaBear.Galleries.AlbumTranslationDefinition.Culture.get -> string?
 PandaBear.Galleries.AlbumTranslationDefinition.Culture.init -> void
-PandaBear.Galleries.AlbumTranslationDefinition.Deconstruct(out string? Culture, out string? Title, out string? Slug, out PandaBear.Galleries.PublicationStatus Status) -> void
+PandaBear.Galleries.AlbumTranslationDefinition.Deconstruct(out string? Culture, out string? Title, out string? Slug, out PandaBear.BuildingBlocks.PublicationStatus Status) -> void
 PandaBear.Galleries.AlbumTranslationDefinition.Equals(PandaBear.Galleries.AlbumTranslationDefinition? other) -> bool
 PandaBear.Galleries.AlbumTranslationDefinition.Slug.get -> string?
 PandaBear.Galleries.AlbumTranslationDefinition.Slug.init -> void
-PandaBear.Galleries.AlbumTranslationDefinition.Status.get -> PandaBear.Galleries.PublicationStatus
+PandaBear.Galleries.AlbumTranslationDefinition.Status.get -> PandaBear.BuildingBlocks.PublicationStatus
 PandaBear.Galleries.AlbumTranslationDefinition.Status.init -> void
 PandaBear.Galleries.AlbumTranslationDefinition.Title.get -> string?
 PandaBear.Galleries.AlbumTranslationDefinition.Title.init -> void
@@ -71,9 +71,6 @@ PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>.Title.get -> string!
 PandaBear.Galleries.IAlbumPhotoEligibility<TPhotoId>
 PandaBear.Galleries.IAlbumPhotoEligibility<TPhotoId>.Exists(TPhotoId photoId) -> bool
 PandaBear.Galleries.IAlbumPhotoEligibility<TPhotoId>.IsEligible(TPhotoId photoId, PandaBear.BuildingBlocks.ContentCulture! culture) -> bool
-PandaBear.Galleries.PublicationStatus
-PandaBear.Galleries.PublicationStatus.Draft = 0 -> PandaBear.Galleries.PublicationStatus
-PandaBear.Galleries.PublicationStatus.Published = 1 -> PandaBear.Galleries.PublicationStatus
 const PandaBear.Galleries.AlbumFields.CoverId = "coverId" -> string!
 const PandaBear.Galleries.AlbumFields.PhotoIds = "photoIds" -> string!
 const PandaBear.Galleries.AlbumFields.Photos = "photos" -> string!
@@ -95,6 +92,6 @@ static PandaBear.Galleries.AlbumDefinition<TPhotoId, TRelatedId>.operator ==(Pan
 static PandaBear.Galleries.AlbumFields.Of(PandaBear.BuildingBlocks.ContentCulture! culture, string! field) -> string!
 static PandaBear.Galleries.AlbumOrdering.InDisplayOrder<TAlbum, TAlbumId>(System.Collections.Generic.IEnumerable<TAlbum>! albums, System.Func<TAlbum, int>! sortOrder, System.Func<TAlbum, TAlbumId>! id) -> System.Linq.IOrderedEnumerable<TAlbum>!
 static PandaBear.Galleries.AlbumPublishing.FindIneligible<TPhotoId>(System.Collections.Generic.IEnumerable<TPhotoId>! photoIds, PandaBear.BuildingBlocks.ContentCulture! culture, PandaBear.Galleries.IAlbumPhotoEligibility<TPhotoId>! photos) -> System.Collections.Generic.IReadOnlyList<TPhotoId>!
-static PandaBear.Galleries.AlbumTranslation.Restore(PandaBear.BuildingBlocks.ContentCulture! culture, string! title, PandaBear.BuildingBlocks.Slug! slug, PandaBear.Galleries.PublicationStatus status) -> PandaBear.Galleries.AlbumTranslation!
+static PandaBear.Galleries.AlbumTranslation.Restore(PandaBear.BuildingBlocks.ContentCulture! culture, string! title, PandaBear.BuildingBlocks.Slug! slug, PandaBear.BuildingBlocks.PublicationStatus status) -> PandaBear.Galleries.AlbumTranslation!
 static PandaBear.Galleries.AlbumTranslationDefinition.operator !=(PandaBear.Galleries.AlbumTranslationDefinition? left, PandaBear.Galleries.AlbumTranslationDefinition? right) -> bool
 static PandaBear.Galleries.AlbumTranslationDefinition.operator ==(PandaBear.Galleries.AlbumTranslationDefinition? left, PandaBear.Galleries.AlbumTranslationDefinition? right) -> bool

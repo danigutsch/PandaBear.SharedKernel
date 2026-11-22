@@ -1,6 +1,6 @@
-namespace PandaBear.Galleries;
+namespace PandaBear.BuildingBlocks;
 
-/// <summary>Whether a translation of an album is shown publicly.</summary>
+/// <summary>Whether published content, such as an album, a page or a tour, or one of its translations, is shown publicly.</summary>
 public enum PublicationStatus
 {
     /// <summary>Being written; never shown publicly.</summary>
