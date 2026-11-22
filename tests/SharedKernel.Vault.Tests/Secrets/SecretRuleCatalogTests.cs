@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using PandaBear.Vault.Secrets;
 
 namespace PandaBear.Vault.Tests.Secrets;
@@ -14,7 +13,7 @@ public sealed class SecretRuleCatalogTests
         var sample = RuleSamples.All.ShouldHaveSingleItem(entry => entry.RuleId == ruleId);
 
         // Act
-        var findings = SecretScanner.Default.Scan(SecretTestItems.Note("Notes for the record\n" + sample.Positive + "\nend"));
+        var findings = ItemScanner.Default.Scan(SecretTestItems.Note("Notes for the record\n" + sample.Positive + "\nend"));
 
         // Assert
         findings.ShouldContain(finding => finding.RuleId == ruleId);
@@ -28,50 +27,10 @@ public sealed class SecretRuleCatalogTests
         var sample = RuleSamples.All.ShouldHaveSingleItem(entry => entry.RuleId == ruleId);
 
         // Act
-        var findings = SecretScanner.Default.Scan(SecretTestItems.Note("Notes for the record\n" + sample.Negative + "\nend"));
+        var findings = ItemScanner.Default.Scan(SecretTestItems.Note("Notes for the record\n" + sample.Negative + "\nend"));
 
         // Assert
         findings.ShouldNotContain(finding => finding.RuleId == ruleId);
-    }
-
-    [Fact]
-    public void Catalog_rules_all_have_samples_sources_and_keywords()
-    {
-        // Act
-        var ids = SecretRuleCatalog.All.Select(rule => rule.Id).ToList();
-
-        // Assert
-        ids.ShouldBe(ids.Distinct().ToList());
-        ids.Order(StringComparer.Ordinal).ShouldBe(RuleSamples.All.Select(sample => sample.RuleId).Order(StringComparer.Ordinal));
-        SecretRuleCatalog.All.ShouldAllSatisfy(rule =>
-        {
-            rule.Source.ShouldNotBeEmpty();
-            rule.Keywords.ShouldNotBeEmpty();
-            rule.Pattern.MatchTimeout.ShouldBe(TimeSpan.FromSeconds(1));
-        });
-    }
-
-    [Fact]
-    public void Patterns_used_outside_the_catalog_time_out_only_after_one_second()
-    {
-        // Act
-        Regex[] patterns =
-        [
-            SecretPatterns.AwsSecretCandidate(),
-            SecretPatterns.MaFileSharedSecret(),
-            SecretPatterns.MaFileRevocationCode(),
-            SecretPatterns.NotesLine(),
-            SecretPatterns.Uuid(),
-            SecretPatterns.DateOrTime(),
-            SecretPatterns.SemVer(),
-            SecretPatterns.Email(),
-            SecretPatterns.PlainUrl(),
-            SecretPatterns.FilePath(),
-            SecretPatterns.TemplatePlaceholder(),
-        ];
-
-        // Assert
-        patterns.ShouldAllSatisfy(pattern => pattern.MatchTimeout.ShouldBe(TimeSpan.FromSeconds(1)));
     }
 
     [Fact]
@@ -83,7 +42,7 @@ public sealed class SecretRuleCatalogTests
         string far = TestSecrets.FromAlphabet(TestSecrets.Base64, 40, 132);
 
         // Act
-        var findings = SecretScanner.Default.Scan(SecretTestItems.Note($"{keyId}\nline\n{secret}\n1\n2\n3\n4\n5\n6\n{far}"));
+        var findings = ItemScanner.Default.Scan(SecretTestItems.Note($"{keyId}\nline\n{secret}\n1\n2\n3\n4\n5\n6\n{far}"));
 
         // Assert
         findings.ShouldHaveSingleItem(finding => finding.RuleId == "aws-secret-access-key");

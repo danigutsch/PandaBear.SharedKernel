@@ -174,11 +174,24 @@
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.Encodings": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.InputNormalization": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.IO": {
         "type": "Project"
       },
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
+      },
+      "PandaBear.SharedKernel.SecretScanning": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Encodings": "[0.1.0-alpha.0, )"
+        }
       },
       "PandaBear.SharedKernel.Testing": {
         "type": "Project"
@@ -194,7 +207,10 @@
         "type": "Project",
         "dependencies": {
           "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Encodings": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.SecretScanning": "[0.1.0-alpha.0, )"
         }
       },
       "Microsoft.Extensions.DependencyInjection": {

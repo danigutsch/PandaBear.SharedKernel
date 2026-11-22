@@ -1,5 +1,5 @@
 using System.Security.Cryptography;
-using System.Text.RegularExpressions;
+using PandaBear.SecretScanning;
 using PandaBear.Vault.Model;
 using PandaBear.Vault.Secrets;
 
@@ -8,7 +8,7 @@ namespace PandaBear.Vault.Tests.Secrets;
 /// <summary>Tests the secret scanner: what it finds in item text, how confident it is, and where it proposes to place each finding.</summary>
 public sealed class SecretScannerTests
 {
-    private static readonly SecretScanner Scanner = SecretScanner.Default;
+    private static readonly ItemScanner Scanner = ItemScanner.Default;
 
     [Fact]
     public void Scan_github_recovery_codes_block_in_notes_proposes_hidden_recovery_codes_field()
@@ -112,7 +112,7 @@ public sealed class SecretScannerTests
 
         // Assert
         finding.Kind.ShouldBe(SecretKind.Totp);
-        finding.Location.FieldPath.ShouldBe(SecretLocation.LoginPassword);
+        finding.Location.FieldPath.ShouldBe(ItemFieldPaths.LoginPassword);
         finding.ProposedTarget.ShouldBe(PlacementTarget.LoginTotp);
         var login = placed.Item.Login.ShouldNotBeNull();
         login.Password.ShouldBeNull();
@@ -445,116 +445,6 @@ public sealed class SecretScannerTests
     }
 
     [Fact]
-    public void Scan_regex_timeout_produces_needs_review_finding()
-    {
-        // Arrange
-        var rule = new SecretRule
-        {
-            Id = "slow-rule",
-            DisplayName = "Slow rule",
-            Kind = SecretKind.ApiToken,
-            Keywords = ["aaaa"],
-            Pattern = SlowPatterns.Catastrophic(),
-            Source = "test",
-        };
-        var scanner = new SecretScanner([rule]);
-
-        // Act
-        var findings = scanner.Scan(SecretTestItems.Note(new string('a', 4000)));
-
-        // Assert
-        var finding = findings.ShouldHaveSingleItem(found => found.RuleId == "slow-rule");
-        finding.Kind.ShouldBe(SecretKind.NeedsReview);
-        finding.NeedsReview.ShouldBeTrue();
-        finding.ProposedTarget.Kind.ShouldBe(PlacementTargetKind.NotMoved);
-    }
-
-    [Fact]
-    public void Scan_regex_timeout_in_one_window_still_flags_the_later_windows_of_the_rule()
-    {
-        // Arrange
-        var rule = new SecretRule
-        {
-            Id = "slow-rule",
-            DisplayName = "Slow rule",
-            Kind = SecretKind.ApiToken,
-            Keywords = ["aaaa"],
-            Pattern = SlowPatterns.Catastrophic(),
-            Source = "test",
-        };
-        var scanner = new SecretScanner([rule]);
-        string run = new('a', 4000);
-        const int SecondRun = 24_000;
-        string notes = run + new string('x', SecondRun - run.Length) + run;
-
-        // Act
-        var findings = scanner.Scan(SecretTestItems.Note(notes));
-
-        // Assert
-        SecretFinding[] timeouts = [.. findings.Where(found => found.RuleId == "slow-rule")];
-        timeouts.ShouldAllSatisfy(found => found.Kind.ShouldBe(SecretKind.NeedsReview));
-        timeouts.ShouldContain(found => found.Location.Start == 0);
-        timeouts.ShouldContain(found => found.Location.Start < SecondRun && found.Location.Start + found.Location.Length >= notes.Length);
-    }
-
-    [Fact]
-    public void Scan_runs_a_window_whose_match_timed_out_once_again_and_reports_its_finding()
-    {
-        // Arrange
-        int checks = 0;
-        var rule = new SecretRule
-        {
-            Id = "paused-rule",
-            DisplayName = "Paused rule",
-            Kind = SecretKind.ApiToken,
-            Keywords = ["tok_"],
-            Pattern = TestPatterns.Token(),
-
-            // The first check times out, as a match does when a pause of the process outlasts the match timeout.
-            Validator = _ => ++checks == 1 ? throw new RegexMatchTimeoutException() : true,
-            Source = "test",
-        };
-        var scanner = new SecretScanner([rule]);
-
-        // Act
-        var findings = scanner.Scan(SecretTestItems.Note("deploy token tok_" + new string('k', 16)));
-
-        // Assert
-        var finding = findings.ShouldHaveSingleItem(found => found.RuleId == "paused-rule");
-        finding.Kind.ShouldBe(SecretKind.ApiToken);
-        finding.NeedsReview.ShouldBeFalse();
-        checks.ShouldBe(2);
-    }
-
-    [Fact]
-    public void Scan_flags_the_remaining_windows_of_a_rule_as_one_finding_once_three_of_its_windows_time_out()
-    {
-        // Arrange
-        // Runs of "a" 10,000 characters apart give the rule five separate windows: each run's window starts 1024 characters
-        // before it, and the last one ends with the text.
-        const int Spacing = 10_000;
-        string run = new('a', 4000);
-        string notes = string.Join(new string('x', Spacing - run.Length), Enumerable.Repeat(run, 5));
-        var scanner = new SecretScanner([SlowPatterns.Rule()]);
-
-        // Act
-        var findings = scanner.Scan(SecretTestItems.Note(notes));
-
-        // Assert
-        findings.ShouldAllSatisfy(found =>
-        {
-            found.RuleId.ShouldBe("slow-rule");
-            found.Kind.ShouldBe(SecretKind.NeedsReview);
-        });
-        int[] starts = [.. findings.Select(found => found.Location.Start)];
-        starts.ShouldBe([0, Spacing - 1024, (2 * Spacing) - 1024, (3 * Spacing) - 1024]);
-        var rest = findings[^1];
-        int restEnd = rest.Location.Start + rest.Location.Length;
-        restEnd.ShouldBe(notes.Length);
-        rest.Message.ShouldBe("Slow rule pattern timed out 3 times; review the rest of this text manually");
-    }
-
-    [Fact]
     public void Scan_bitwarden_account_recovery_code_is_flagged_not_moved()
     {
         // Arrange
@@ -648,7 +538,7 @@ public sealed class SecretScannerTests
         // Assert
         var finding = findings.ShouldHaveSingleItem();
         finding.Kind.ShouldBe(SecretKind.Pin);
-        finding.Location.FieldPath.ShouldBe(SecretLocation.LoginPassword);
+        finding.Location.FieldPath.ShouldBe(ItemFieldPaths.LoginPassword);
         finding.ProposedTarget.ShouldBe(PlacementTarget.Hidden("PIN"));
     }
 
@@ -659,8 +549,8 @@ public sealed class SecretScannerTests
         string codes = string.Join('\n', Enumerable.Range(0, 10).Select(index => TestSecrets.FromAlphabet("0123456789", 8, 300 + index)));
 
         // Act
-        var withName = Scanner.ScanText(codes, SecretLocation.Attachment("Backup-codes-alice.txt"), "Backup-codes-alice.txt");
-        var withoutName = Scanner.ScanText(codes, SecretLocation.Attachment("numbers.txt"), "numbers.txt");
+        var withName = Scanner.ScanText(codes, ItemFieldPaths.Attachment("Backup-codes-alice.txt"), "Backup-codes-alice.txt");
+        var withoutName = Scanner.ScanText(codes, ItemFieldPaths.Attachment("numbers.txt"), "numbers.txt");
 
         // Assert
         var finding = withName.ShouldHaveSingleItem();

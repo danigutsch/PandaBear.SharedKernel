@@ -1,8 +1,9 @@
 using System.Security.Cryptography;
 using System.Text.Json;
+using PandaBear.SecretScanning;
 using PandaBear.Testing;
-using PandaBear.Vault.Formats;
 using PandaBear.Vault.Bitwarden;
+using PandaBear.Vault.Formats;
 using PandaBear.Vault.Merge;
 using PandaBear.Vault.Model;
 using PandaBear.Vault.Pipeline;
@@ -283,7 +284,7 @@ public sealed class VaultPipelineTests : IDisposable
         var findings = result.Findings.ShouldHaveSingleItem();
         var finding = findings.Findings.ShouldHaveSingleItem();
         finding.Kind.ShouldBe(SecretKind.RecoveryCodes);
-        finding.Location.FieldPath.ShouldBe(SecretLocation.Attachment("github-recovery-codes.txt"));
+        finding.Location.FieldPath.ShouldBe(ItemFieldPaths.Attachment("github-recovery-codes.txt"));
         findings.AcceptedFindingIds.ShouldBe([finding.Id]);
         var item = result.Merged.Items.ShouldHaveSingleItem();
         var field = item.Fields.ShouldHaveSingleItem();

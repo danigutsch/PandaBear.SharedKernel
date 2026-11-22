@@ -52,6 +52,8 @@ addresses longer than `WebUrl.MaxLength` (2048) are rejected; the error names th
 input. `Value` keeps the path, query and fragment as supplied and lower-cases the scheme and host, so
 `HTTPS://Example.ORG/Tours` becomes `https://example.org/Tours` and addresses that differ only there are equal. The checks
 reuse `PandaBear.InputNormalization.WebAssetUriSanitizer`, with an `http` address checked through its `https` form.
+`WebUrl.CreateHttps` applies the same rules but accepts `https` only: an `http://` address is rejected like any other scheme
+(`{label} must be an absolute https address.`), for a link that must not downgrade, such as a video on another site.
 `WebUrl.Restore` rebuilds a stored value without validation.
 
 `ContentCulture` is a path-safe language tag in canonical casing (`pt`, `pt-BR`, `zh-Hant-TW`); cultures that differ only in

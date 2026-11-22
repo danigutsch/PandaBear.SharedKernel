@@ -1,4 +1,5 @@
 using System.Globalization;
+using PandaBear.SecretScanning;
 using PandaBear.Vault.Model;
 
 namespace PandaBear.Vault.Secrets;
@@ -105,13 +106,13 @@ internal sealed class PlacementState(VaultItem source, IReadOnlyDictionary<strin
     {
         text = fieldPath switch
         {
-            SecretLocation.Notes => Source.Notes,
-            SecretLocation.LoginPassword => Source.Login?.Password,
-            SecretLocation.LoginUsername => Source.Login?.Username,
-            SecretLocation.LoginTotp => Source.Login?.Totp,
-            SecretLocation.CardNumber => Source.Card?.Number,
-            _ when fieldPath.StartsWith(SecretLocation.AttachmentPrefix, StringComparison.Ordinal) => attachmentTexts?.GetValueOrDefault(fieldPath),
-            _ when SecretLocation.TryParseField(fieldPath, out int index, out bool isName) && index < Source.Fields.Count =>
+            ItemFieldPaths.Notes => Source.Notes,
+            ItemFieldPaths.LoginPassword => Source.Login?.Password,
+            ItemFieldPaths.LoginUsername => Source.Login?.Username,
+            ItemFieldPaths.LoginTotp => Source.Login?.Totp,
+            ItemFieldPaths.CardNumber => Source.Card?.Number,
+            _ when fieldPath.StartsWith(ItemFieldPaths.AttachmentPrefix, StringComparison.Ordinal) => attachmentTexts?.GetValueOrDefault(fieldPath),
+            _ when ItemFieldPaths.TryParseField(fieldPath, out int index, out bool isName) && index < Source.Fields.Count =>
                 isName ? Source.Fields[index].Name : Source.Fields[index].Value,
             _ => null,
         };
@@ -131,16 +132,16 @@ internal sealed class PlacementState(VaultItem source, IReadOnlyDictionary<strin
         {
             switch (group.Key)
             {
-                case SecretLocation.Notes:
+                case ItemFieldPaths.Notes:
                     notes = SourceTextEditor.Remove(notes ?? string.Empty, group);
                     break;
-                case SecretLocation.LoginPassword when password == Source.Login?.Password:
+                case ItemFieldPaths.LoginPassword when password == Source.Login?.Password:
                     password = SourceTextEditor.Remove(password ?? string.Empty, group);
                     break;
-                case SecretLocation.LoginUsername when username == Source.Login?.Username:
+                case ItemFieldPaths.LoginUsername when username == Source.Login?.Username:
                     username = SourceTextEditor.Remove(username ?? string.Empty, group);
                     break;
-                case SecretLocation.LoginTotp when totp == Source.Login?.Totp:
+                case ItemFieldPaths.LoginTotp when totp == Source.Login?.Totp:
                     totp = SourceTextEditor.Remove(totp ?? string.Empty, group);
                     break;
                 default:
@@ -151,7 +152,7 @@ internal sealed class PlacementState(VaultItem source, IReadOnlyDictionary<strin
         for (int index = 0; index < Source.Fields.Count; index++)
         {
             CustomField field = Source.Fields[index];
-            string path = SecretLocation.FieldValue(index);
+            string path = ItemFieldPaths.FieldValue(index);
             var removals = Removals.Where(location => location.FieldPath == path).ToList();
             if (removals.Count == 0)
             {

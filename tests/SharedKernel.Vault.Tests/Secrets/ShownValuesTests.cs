@@ -14,7 +14,7 @@ public sealed class ShownValuesTests
         var field = new CustomField("Plan", "Team", CustomFieldType.Text);
 
         // Act
-        var shown = ShownValues.IsShown(field, 0, [FindingSamples.At(SecretLocation.FieldValue(1))]);
+        var shown = ShownValues.IsShown(field, 0, [FindingSamples.At(ItemFieldPaths.FieldValue(1))]);
 
         // Assert
         shown.ShouldBeTrue();
@@ -43,8 +43,8 @@ public sealed class ShownValuesTests
         var field = new CustomField("Backup", "fixture value", CustomFieldType.Text);
 
         // Act
-        var shownWithValueFinding = ShownValues.IsShown(field, 2, [FindingSamples.At(SecretLocation.FieldValue(2))]);
-        var shownWithNameFinding = ShownValues.IsShown(field, 2, [FindingSamples.At(SecretLocation.FieldName(2))]);
+        var shownWithValueFinding = ShownValues.IsShown(field, 2, [FindingSamples.At(ItemFieldPaths.FieldValue(2))]);
+        var shownWithNameFinding = ShownValues.IsShown(field, 2, [FindingSamples.At(ItemFieldPaths.FieldName(2))]);
 
         // Assert
         shownWithValueFinding.ShouldBeFalse();
@@ -158,8 +158,8 @@ public sealed class ShownValuesTests
         };
 
         // Act
-        var withNotesFinding = ShownValues.Username(item, [FindingSamples.At(SecretLocation.Notes)]);
-        var withUsernameFinding = ShownValues.Username(item, [FindingSamples.At(SecretLocation.LoginUsername)]);
+        var withNotesFinding = ShownValues.Username(item, [FindingSamples.At(ItemFieldPaths.Notes)]);
+        var withUsernameFinding = ShownValues.Username(item, [FindingSamples.At(ItemFieldPaths.LoginUsername)]);
         var noteUsername = ShownValues.Username(note, []);
 
         // Assert

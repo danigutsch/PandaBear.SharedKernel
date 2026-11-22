@@ -11,7 +11,7 @@ public sealed class PlaywrightInputFileTests(ChromiumPageFixture chromium) : ICl
     // Stands in for Blazor's InputFile.init, which the server calls after the page is already interactive: 300 ms after load it marks the
     // element the way Blazor does and starts listening for changes, recording the names it is handed.
     private const string LateInputFile = """
-        <input type="file" id="upload">
+        <input type="file" id="upload" multiple>
         <script>
             window.received = [];
             setTimeout(() => {
@@ -35,6 +35,43 @@ public sealed class PlaywrightInputFileTests(ChromiumPageFixture chromium) : ICl
         // Assert
         var received = await page.EvaluateAsync<string[]>("() => window.received");
         received.ShouldBe(["site.json"]);
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task A_batch_keeps_its_file_order_after_the_listener_is_attached()
+    {
+        // Arrange
+        var page = await chromium.Show(LateInputFile);
+        FilePayload[] files =
+        [
+            new() { Name = "front.txt", MimeType = "text/plain", Buffer = "front"u8.ToArray() },
+            new() { Name = "back.txt", MimeType = "text/plain", Buffer = "back"u8.ToArray() },
+        ];
+
+        // Act
+        await page.Locator("#upload").SetBlazorInputFiles(files);
+
+        // Assert
+        var received = await page.EvaluateAsync<string[]>("() => window.received");
+        received.ShouldBe(["front.txt", "back.txt"]);
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task Waiting_for_the_listener_preserves_a_native_file_chooser_flow()
+    {
+        // Arrange
+        var page = await chromium.Show(LateInputFile);
+        var input = page.Locator("#upload");
+        var file = new FilePayload { Name = "inventory.csv", MimeType = "text/csv", Buffer = "room"u8.ToArray() };
+
+        // Act
+        await input.WaitForBlazorInputFile();
+        var chooser = await page.RunAndWaitForFileChooserAsync(() => input.ClickAsync());
+        await chooser.SetFilesAsync(file);
+
+        // Assert
+        var received = await page.EvaluateAsync<string[]>("() => window.received");
+        received.ShouldBe(["inventory.csv"]);
     }
 
     private const string ReplacedInputFile = """

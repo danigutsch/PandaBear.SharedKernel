@@ -34,6 +34,18 @@
     --site-content-width: 72rem;
     --site-card-min-width: 16rem;
     --site-focus-ring: 3px solid var(--site-color-focus);
+    /*
+     * The photo scrim: the least opacity of the text colour over a photo at which on-primary text reaches 4.5:1 (normal text), 3:1
+     * (large text), and the boost that brings the large-text scrim up to the normal-text one. A theme stylesheet computes them from
+     * its colours; these are the values of the default colours.
+     */
+    --site-scrim: 64%;
+    --site-scrim-large: 50%;
+    --site-scrim-boost: 28%;
+    /* The brand (logo) height of the theme and the header height computed from it; a theme stylesheet writes its own. */
+    --site-brand-height: 2.5rem;
+    --site-header-height: 4.5rem;
+    --site-floating-link-size: 3.5rem;
 }
 
 *,
@@ -204,6 +216,7 @@ a {
 .site-footer,
 .site-section,
 .site-hero,
+.site-band__inner,
 .site-container {
     width: min(100% - 2 * var(--site-space-3), var(--site-content-width));
     margin-inline: auto;
@@ -221,6 +234,15 @@ a {
     margin-inline-end: auto;
     font-weight: 700;
     font-size: var(--site-font-size-lg);
+}
+
+/* A logo in the brand slot takes the theme's brand height, which the header height of a header over a hero is computed from. */
+.site-header__brand img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: var(--site-brand-height);
+    object-fit: contain;
 }
 
 .site-nav__list,
@@ -311,6 +333,90 @@ a {
     padding: var(--site-space-2) var(--site-space-3);
 }
 
+/*
+ * The menu: a details element whose summary is the menu button. It generates no box, so its button and, when open, its content take
+ * part in the header's row; the content takes a row of its own under the brand and the button.
+ */
+.site-header__menu {
+    display: contents;
+}
+
+.site-header__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--site-space-2);
+    padding: var(--site-space-1) var(--site-space-3);
+    border: 2px solid currentColor;
+    border-radius: var(--site-radius);
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+}
+
+.site-header__toggle::-webkit-details-marker {
+    display: none;
+}
+
+.site-header__toggle::before {
+    content: "";
+    width: 1em;
+    height: 0.75em;
+    background:
+        linear-gradient(currentColor, currentColor) top / 100% 2px no-repeat,
+        linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat,
+        linear-gradient(currentColor, currentColor) bottom / 100% 2px no-repeat;
+}
+
+.site-header__menu:not([open])::details-content {
+    display: none;
+}
+
+.site-header__menu[open]::details-content {
+    flex-basis: 100%;
+}
+
+.site-header__menu .site-nav__list {
+    flex-direction: column;
+}
+
+.site-header__menu .site-header__actions {
+    margin-top: var(--site-space-3);
+}
+
+/*
+ * A header placed over the hero is a band of the primary colour wherever it does not lie over one: its brand, links, menu button
+ * and focus ring take the on-primary colour in the light scheme, and an open group drops down on the primary colour.
+ */
+.site-header--over-hero {
+    color-scheme: light;
+    background: var(--site-color-primary);
+    border-bottom: 0;
+    color: var(--site-color-on-primary);
+}
+
+.site-header--over-hero :is(a:not(.site-button), .site-nav summary) {
+    color: inherit;
+}
+
+.site-header--over-hero :is(.site-nav a, .site-nav summary):hover {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.site-header--over-hero .site-nav__group[open] > .site-nav__sublist {
+    background: var(--site-color-primary);
+    border-color: transparent;
+}
+
+.site-header--over-hero .site-language-switcher a[aria-current="true"] {
+    background: var(--site-color-on-primary);
+    color: var(--site-color-primary);
+}
+
+.site-header--over-hero :focus-visible {
+    outline-color: var(--site-color-on-primary);
+}
+
 /* Footer. */
 .site-footer {
     margin-top: var(--site-space-6);
@@ -332,6 +438,18 @@ a {
     padding-block: var(--site-space-5);
 }
 
+.site-hero__heading {
+    margin: 0;
+}
+
+.site-hero__eyebrow {
+    margin: 0 0 var(--site-space-2);
+    color: var(--site-color-muted);
+    font-size: var(--site-font-size-sm);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
 .site-hero__subtitle {
     margin: 0 0 var(--site-space-4);
     color: var(--site-color-muted);
@@ -350,6 +468,145 @@ a {
     border-radius: var(--site-radius);
 }
 
+/*
+ * Bands on the primary colour or a photo: the full width, the light scheme, and the on-primary colour for text, links, headings,
+ * secondary text and the focus ring. A photo lies behind the content, darkened by the scrim of its text: large text in a cover hero,
+ * normal text in an image band. A cover hero without a photo is a band of the primary colour.
+ */
+.site-hero--cover {
+    position: relative;
+    isolation: isolate;
+    color-scheme: light;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    width: 100%;
+    min-height: 20rem;
+    padding: var(--site-space-6) max(var(--site-space-3), (100% - var(--site-content-width)) / 2);
+    background: var(--site-color-primary);
+    color: var(--site-color-on-primary);
+    text-align: center;
+}
+
+.site-hero--cover .site-hero__text {
+    max-width: 60rem;
+    min-width: 0;
+}
+
+/* The eyebrow and the subtitle are large text, like the heading, because they sit on the large-text scrim. */
+.site-hero--cover :is(.site-hero__eyebrow, .site-hero__subtitle) {
+    font-size: max(1.5rem, var(--site-font-size-lg));
+    font-weight: 600;
+}
+
+.site-hero--cover .site-hero__title {
+    overflow-wrap: break-word;
+}
+
+.site-hero--cover .site-hero__actions {
+    justify-content: center;
+}
+
+/* Normal-size text without a filled background gets the boost behind it, so it reaches 4.5:1 over the large-text scrim. */
+.site-hero--cover .site-hero__actions :is(.site-button--outline, a:not(.site-button)) {
+    background: color-mix(in srgb, var(--site-color-text) var(--site-scrim-boost), transparent);
+}
+
+.site-band {
+    padding-block: var(--site-space-5);
+}
+
+.site-band--muted {
+    background: var(--site-color-surface-alt);
+}
+
+.site-band--primary,
+.site-band--image {
+    color-scheme: light;
+    background: var(--site-color-primary);
+    color: var(--site-color-on-primary);
+}
+
+.site-band--image {
+    position: relative;
+    isolation: isolate;
+}
+
+.site-band__inner > .site-section {
+    width: 100%;
+    padding-block: 0;
+}
+
+.site-hero--cover .site-hero__media,
+.site-band__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+}
+
+.site-hero--cover .site-hero__media::after,
+.site-band__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.site-hero--cover .site-hero__media::after {
+    background: color-mix(in srgb, var(--site-color-text) var(--site-scrim-large), transparent);
+}
+
+.site-band__media::after {
+    background: color-mix(in srgb, var(--site-color-text) var(--site-scrim), transparent);
+}
+
+.site-hero--cover .site-hero__media :is(picture, img),
+.site-band__media :is(picture, img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.site-hero--cover .site-hero__media img,
+.site-band__media img {
+    object-fit: cover;
+    border-radius: 0;
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label) {
+    color: inherit;
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) a:not(.site-button) {
+    color: inherit;
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) :focus-visible {
+    outline-color: var(--site-color-on-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-divider {
+    background: currentColor;
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-button--primary {
+    background: var(--site-color-on-primary);
+    color: var(--site-color-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-button--primary:hover {
+    background: var(--site-color-primary-hover);
+    color: var(--site-color-on-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) :is(.site-button--outline, .site-button--outline:hover) {
+    border-color: currentColor;
+    color: var(--site-color-on-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-quote {
+    background: transparent;
+    border-inline-start-color: currentColor;
+}
+
 /* Section. */
 .site-section {
     padding-block: var(--site-space-5);
@@ -357,6 +614,19 @@ a {
 
 .site-section__header {
     margin-bottom: var(--site-space-4);
+}
+
+/* The eyebrow: a short label above the heading, small and spaced like the hero's, in the primary colour. */
+.site-section__heading {
+    margin: 0;
+}
+
+.site-section__eyebrow {
+    margin: 0 0 var(--site-space-1);
+    color: var(--site-color-primary);
+    font-size: var(--site-font-size-sm);
+    font-weight: 700;
+    letter-spacing: 0.05em;
 }
 
 .site-divider {
@@ -371,6 +641,20 @@ a {
     margin: 0;
     color: var(--site-color-muted);
     max-width: 60ch;
+}
+
+/*
+ * Split: text then media, with or without a section around them. Below the breakpoint the media follows the text; from it on they are
+ * two equal columns and the media fills its column, on the end side or, with site-split--media-start, on the start side. The start
+ * side only reorders the columns, so reading and focus order stay text first.
+ */
+.site-split__main,
+.site-split__media {
+    min-width: 0;
+}
+
+.site-split__media {
+    margin-top: var(--site-space-4);
 }
 
 /* Buttons. */
@@ -419,6 +703,18 @@ a {
 }
 
 /*
+ * Action row: below the breakpoint the actions are stacked and centred; from it on they are one wrapping row spread across the width.
+ * A plain link in it keeps the link style.
+ */
+.site-action-row {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--site-space-3);
+}
+
+/*
  * Cards: the grid keeps empty columns (auto-fill), so a lone card has the width of one column. The title link covers the card;
  * links and controls in the body and the actions stay clickable above it.
  */
@@ -430,6 +726,7 @@ a {
 
 .site-card {
     position: relative;
+    color: var(--site-color-text);
     display: flex;
     flex-direction: column;
     background: var(--site-color-surface-alt);
@@ -516,6 +813,57 @@ a {
     font-weight: 600;
 }
 
+/*
+ * Fact grid: centred cards in columns at least 11rem wide that share the full width, as many as there are cards while they fit; from the
+ * breakpoint on, the column count that the component computes for balanced rows (site-fact-grid--columns-1 to -4). The list draws the
+ * top and start borders and each card its end and bottom borders, so the cells share single rules like a table. The label and the icon
+ * take the primary colour; an svg icon without a fill attribute is filled with it. A value breaks anywhere when a word, such as a long
+ * e-mail address, is wider than its card.
+ */
+.site-fact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    margin: 0;
+    border-block-start: 1px solid var(--site-color-border);
+    border-inline-start: 1px solid var(--site-color-border);
+}
+
+.site-fact-grid__item {
+    min-width: 0;
+    padding: var(--site-space-4) var(--site-space-3);
+    border-block-end: 1px solid var(--site-color-border);
+    border-inline-end: 1px solid var(--site-color-border);
+    text-align: center;
+}
+
+.site-fact-grid__label {
+    color: var(--site-color-primary);
+    font-weight: 700;
+}
+
+.site-fact-grid__icon {
+    display: block;
+    margin-bottom: var(--site-space-2);
+    font-size: var(--site-font-size-2xl);
+    line-height: 1;
+}
+
+.site-fact-grid__icon > :is(svg, img) {
+    display: block;
+    width: 1em;
+    height: 1em;
+    margin-inline: auto;
+}
+
+.site-fact-grid__icon > svg:not([fill]) {
+    fill: currentColor;
+}
+
+.site-fact-grid__value {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
 /* Disclosure. */
 .site-disclosure {
     border: 1px solid var(--site-color-border);
@@ -553,9 +901,13 @@ a {
 }
 
 /* Image grid. */
+/*
+ * Image grid: columns at least 14rem wide that share the full width, as many as there are images while they fit, so one image fills
+ * its container. An image is never taller than 40rem or 80% of the viewport; a taller one is shown whole inside that height.
+ */
 .site-image-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
     gap: var(--site-space-3);
 }
 
@@ -566,6 +918,8 @@ a {
 .site-image-grid__item img {
     display: block;
     width: 100%;
+    max-height: min(40rem, 80svh);
+    object-fit: contain;
     border-radius: var(--site-radius);
 }
 
@@ -575,8 +929,171 @@ a {
     font-size: var(--site-font-size-sm);
 }
 
+/*
+ * Mosaic: columns at least 14rem wide that the images fill from top to bottom, in document order, each at its own aspect ratio.
+ */
+.site-image-grid--mosaic {
+    display: block;
+    columns: 14rem;
+    column-gap: var(--site-space-3);
+}
+
+.site-image-grid--mosaic .site-image-grid__item {
+    break-inside: avoid;
+    margin-bottom: var(--site-space-3);
+}
+
+/* With fewer images than would fit, the mosaic has one column per image, so they share the full width. */
+.site-image-grid--mosaic:has(> :last-child:nth-child(1)) {
+    columns: 14rem 1;
+}
+
+.site-image-grid--mosaic:has(> :last-child:nth-child(2)) {
+    columns: 14rem 2;
+}
+
+.site-image-grid--mosaic:has(> :last-child:nth-child(3)) {
+    columns: 14rem 3;
+}
+
+.site-image-grid--mosaic:has(> :last-child:nth-child(4)) {
+    columns: 14rem 4;
+}
+
+/* Byline: a round photo beside the name and the job title. */
+.site-byline {
+    display: flex;
+    align-items: center;
+    gap: var(--site-space-3);
+}
+
+.site-byline__photo {
+    flex: none;
+}
+
+.site-byline__photo img {
+    display: block;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.site-byline__text p {
+    margin: 0;
+}
+
+.site-byline__name {
+    font-weight: 700;
+}
+
+.site-byline__job-title {
+    color: var(--site-color-muted);
+}
+
+/*
+ * Video link: the poster with the play mark centred on it, then the title. The mark is the on-primary colour on a circle of the
+ * normal-text scrim, so it keeps 4.5:1 on any poster.
+ */
+.site-video-link {
+    display: grid;
+    grid-template-areas: "media" "title";
+    color: var(--site-color-primary);
+    text-decoration: none;
+}
+
+.site-video-link__poster {
+    grid-area: media;
+}
+
+.site-video-link__poster img {
+    display: block;
+    width: 100%;
+    border-radius: var(--site-radius);
+}
+
+.site-video-link__play {
+    position: relative;
+    grid-area: media;
+    place-self: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    color-scheme: light;
+    background: color-mix(in srgb, var(--site-color-text) var(--site-scrim), transparent);
+}
+
+.site-video-link__play::before {
+    content: "";
+    position: absolute;
+    inset: 30% 26% 30% 38%;
+    background: var(--site-color-on-primary);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.site-video-link__title {
+    grid-area: title;
+    margin-top: var(--site-space-2);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.site-video-link:hover .site-video-link__title {
+    text-decoration-thickness: 2px;
+}
+
+/*
+ * Floating link: fixed in the bottom corner. While it is on the page, focused elements scroll clear of it and the footer, or the
+ * body without a footer, ends with room for it.
+ */
+.site-floating-link {
+    position: fixed;
+    inset-block-end: var(--site-space-3);
+    inset-inline-end: var(--site-space-3);
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    width: var(--site-floating-link-size);
+    height: var(--site-floating-link-size);
+    border-radius: 50%;
+    background: var(--site-color-primary);
+    color: var(--site-color-on-primary);
+    box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 0.25);
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.site-floating-link:hover {
+    background: var(--site-color-primary-hover);
+    transform: scale(1.05);
+}
+
+.site-floating-link__icon {
+    display: grid;
+    width: 50%;
+    height: 50%;
+}
+
+.site-floating-link__icon > svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+}
+
+:root:has(.site-floating-link) {
+    scroll-padding-block-end: calc(var(--site-floating-link-size) + 2 * var(--site-space-3));
+}
+
+body:has(.site-floating-link) .site-footer {
+    padding-block-end: calc(var(--site-space-4) + var(--site-floating-link-size) + var(--site-space-3));
+}
+
+body:has(.site-floating-link):not(:has(.site-footer)) {
+    padding-block-end: calc(var(--site-floating-link-size) + 2 * var(--site-space-3));
+}
+
 /* Contact card. */
 .site-contact-card {
+    color: var(--site-color-text);
     padding: var(--site-space-4);
     background: var(--site-color-surface-alt);
     border-radius: var(--site-radius);
@@ -616,6 +1133,54 @@ a {
         grid-template-columns: 1fr 1fr;
     }
 
+    .site-hero--cover {
+        grid-template-columns: 1fr;
+    }
+
+    .site-split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--site-space-5);
+        align-items: center;
+    }
+
+    .site-split__media {
+        margin-top: 0;
+    }
+
+    .site-split--media-start > .site-split__media {
+        order: -1;
+    }
+
+    .site-fact-grid--columns-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .site-fact-grid--columns-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .site-fact-grid--columns-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .site-fact-grid--columns-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .site-action-row {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .site-hero--cover {
+        min-height: 34.375rem;
+    }
+
+    .site-hero--landing {
+        min-height: clamp(34.375rem, 85svh, 52rem);
+    }
+
     .site-nav:has(.site-nav__group[open]) {
         flex-basis: auto;
     }
@@ -631,6 +1196,76 @@ a {
         background: var(--site-color-surface);
         border: 1px solid var(--site-color-border);
         border-radius: var(--site-radius);
+    }
+}
+
+/*
+ * The header breakpoint, 60rem: below it a header with a menu shows the menu button, and a header placed over the hero is the primary
+ * band above it. Between the 48rem layout breakpoint and it, the open menu keeps its column and an open group stays in it.
+ */
+@media (48rem <= width < 60rem) {
+    .site-header__menu .site-nav__list:has(> .site-nav__item > .site-nav__group[open]) {
+        flex-direction: column;
+    }
+
+    .site-header__menu .site-nav__group[open] > .site-nav__sublist {
+        position: static;
+        min-width: 0;
+        background: none;
+        border: 0;
+    }
+}
+
+@media (min-width: 60rem) {
+    .site-header__menu .site-nav__list {
+        flex-direction: row;
+    }
+
+    .site-header__menu .site-header__actions {
+        margin-top: 0;
+    }
+
+    /* A browser that can style the content of a details element shows the menu's content inline and hides its button. */
+    @supports selector(::details-content) {
+        .site-header__toggle {
+            display: none;
+        }
+
+        .site-header__menu:not([open])::details-content,
+        .site-header__menu[open]::details-content {
+            display: contents;
+            content-visibility: visible;
+        }
+    }
+
+    /*
+     * A header placed over the hero lies transparent over a cover hero that is the first child of the element right after it, and
+     * the hero leaves the header's height free. Over a photo the header adds the scrim boost, fading out below it, so its text keeps
+     * 4.5:1 while the hero's large text has the large-text scrim. On a page that does not open with a cover hero the header stays
+     * above the content as its primary band.
+     */
+    .site-header--over-hero:has(+ * > .site-hero--cover:first-child) {
+        position: absolute;
+        inset: 0 0 auto;
+        z-index: 10;
+        isolation: isolate;
+        background: transparent;
+    }
+
+    .site-header--over-hero:has(+ * > .site-hero--cover:first-child > .site-hero__media)::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 calc(-1 * var(--site-space-5));
+        z-index: -1;
+        background: linear-gradient(color-mix(in srgb, var(--site-color-text) var(--site-scrim-boost), transparent) calc(100% - var(--site-space-5)), transparent);
+    }
+
+    .site-header--over-hero:has(+ * > .site-hero--cover:first-child) .site-header__inner {
+        min-height: var(--site-header-height);
+    }
+
+    .site-header--over-hero + * > .site-hero--cover:first-child {
+        padding-top: calc(var(--site-header-height) + var(--site-space-5));
     }
 }
 

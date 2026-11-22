@@ -9,7 +9,7 @@ Classify findings by demonstrated impact and confidence. An actionable security,
 | Formatting/generated docs | Nonzero required formatting or generated-diagram checks fail repository quality validation. Preserve drift failures rather than accepting generated output without review. |
 | Tests | Failed tests, host crashes, missing expected execution, and corrupt results require resolution. Repeated reruns do not establish flaky-test acceptance. |
 | Package/API/platform evidence | Missing required API compatibility, package-consumption, hash, or platform evidence prevents the corresponding candidate claim. Keep unavailable evidence pending. |
-| Coverage | Existing local `coverlet.MTP` collection supplies evidence only for instrumented runs. There is no configured coverage percentage gate or hosted coverage service here. |
+| Coverage | Existing local `coverlet.MTP` collection supplies evidence only for instrumented runs. The `coverage-gate` job fails a pull request whose changed executable lines and conditions in `src` and `tools` are less than 90% covered, malformed evidence, or missing coverage or symbol evidence; there is no hosted coverage service here. |
 
 The standalone repository has no current Dependency Review or Secret Scan workflow. Do not describe application-owned checks, changed-code coverage thresholds, or hosted metrics as library enforcement. Review dependencies, secrets, and known unsafe behavior regardless of which automated services exist; never classify confirmed secrets or missing security analysis as ordinary cosmetic debt.
 

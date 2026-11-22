@@ -1,6 +1,6 @@
-using PandaBear.VaultManager.Tool.Formats;
+using PandaBear.InputNormalization;
 using PandaBear.Vault.Bitwarden;
-using PandaBear.Vault.IO;
+using PandaBear.VaultManager.Tool.Formats;
 
 namespace PandaBear.VaultManager.Tool.Cli;
 

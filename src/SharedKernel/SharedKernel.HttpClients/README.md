@@ -72,3 +72,11 @@ Capture immutable input snapshots in the callback, use server-enforced idempoten
 labels free of sensitive data. Retries are explicit; the helper never schedules background requests
 and does not persist pending state across restart. UI presentation and business approval remain
 consumer responsibilities.
+
+## Streamed response ownership
+
+Send the request with `HttpCompletionOption.ResponseHeadersRead` and pass the
+response to `HttpResponseBody.ReadOrNotFound`. A successful response supplies its
+stream and media type to the caller's owner factory. The caller disposes the returned
+owner when streaming ends. HTTP 404 returns null. Exceptions and missing responses
+release the upstream response, including failures when opening or accepting the body.

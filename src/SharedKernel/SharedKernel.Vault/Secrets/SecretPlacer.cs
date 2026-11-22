@@ -1,4 +1,6 @@
 using System.Globalization;
+using PandaBear.Encodings;
+using PandaBear.SecretScanning;
 using PandaBear.Vault.Formats;
 using PandaBear.Vault.Model;
 
@@ -53,7 +55,7 @@ public static class SecretPlacer
                 continue;
             }
 
-            if (Place(state, finding, value!) && !finding.Location.FieldPath.StartsWith(SecretLocation.AttachmentPrefix, StringComparison.Ordinal))
+            if (Place(state, finding, value!) && !finding.Location.FieldPath.StartsWith(ItemFieldPaths.AttachmentPrefix, StringComparison.Ordinal))
             {
                 state.Removals.Add(finding.Location);
             }
@@ -114,14 +116,14 @@ public static class SecretPlacer
             bool all = true;
             foreach (MigratedOtp entry in TotpUri.DecodeMigration(value))
             {
-                if (!entry.IsSupported || entry.Uri is null)
+                if (!entry.IsSupported || entry.Totp is null)
                 {
                     state.Problems.Add($"{finding.Id}: migration entry not placed ({entry.Problem})");
                     all = false;
                     continue;
                 }
 
-                all &= StoreTotp(state, finding, entry.Uri, preferLogin);
+                all &= StoreTotp(state, finding, entry.Totp, preferLogin);
             }
 
             return all;
@@ -188,9 +190,9 @@ public static class SecretPlacer
                 state.Password = parts.Password;
             }
 
-            if (parts.Uri is not null && value.Contains("://", StringComparison.Ordinal))
+            if (parts.Address is not null && value.Contains("://", StringComparison.Ordinal))
             {
-                state.AddUri(parts.Uri);
+                state.AddUri(parts.Address);
             }
         }
 
@@ -201,7 +203,7 @@ public static class SecretPlacer
     {
         state.TryReadWhole(finding.Location.FieldPath, out string? source);
         string? supplied = source?.Split('\n').Select(line => line.Trim()).FirstOrDefault(line => line.StartsWith("ssh-ed25519 ", StringComparison.Ordinal));
-        SshKeyConversion conversion = SshKeyConverter.Convert(value, supplied);
+        BitwardenSshKey conversion = BitwardenSshKeys.Convert(value, supplied);
         if (conversion.Key is null)
         {
             state.Problems.Add($"{finding.Id}: SSH key not converted ({conversion.Problem}); kept as a hidden field when it fits");
@@ -251,7 +253,7 @@ public static class SecretPlacer
         }
 
         int replaced = -1;
-        if (SecretLocation.TryParseField(finding.Location.FieldPath, out int index, out bool isName) && !isName
+        if (ItemFieldPaths.TryParseField(finding.Location.FieldPath, out int index, out bool isName) && !isName
             && index < state.Source.Fields.Count && (state.Source.Fields[index].Value ?? string.Empty).Trim().Length == finding.Location.Length)
         {
             replaced = index;

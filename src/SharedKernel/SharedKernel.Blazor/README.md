@@ -145,6 +145,26 @@ which would replace the field's attribute. The field re-renders when the validat
 `EditForm` and `FormField` both name their child content's parameter `context`, so name one of them (`Context="form"` above);
 otherwise Razor reports RZ9999.
 
+## Named validation fields
+
+Use `NamedFormField` when validation identifies the field by a key such as `en.sections[0].heading`.
+Pass `editContext.Field(key)`, the input ID, a label, and child content that spreads the supplied ARIA
+attributes. Set `Help` for an inline description or `Inline` for a label that follows a checkbox.
+Leave `InputId` unset to render just the messages for a group. `EditContextErrorSummary.Build` accepts
+an ordered sequence of field identifiers and focus target IDs for use with `ErrorSummary`.
+
+## Text input with a typed value
+
+Use `ParsedTextInputState<TValue>` to display edited text that may be temporarily invalid. Give it a value
+formatter and a parser that returns the typed value and an optional validation message. Bind it to the
+current `EditContext`, `FieldIdentifier` and value on each parameter update. Display its `Text` and send a
+changed value back to the model only when `TrySetText` returns true.
+
+The form's validation request rechecks the text and attaches the parser's message to the field. Rerenders
+with the same accepted value keep the text, even if the bound field moves. A different model value resets
+the text. Dispose the state with its owning component to detach validation and clear its messages. The
+caller supplies number styles, scale, optionality, messages and the rendered control.
+
 ## Notes
 
 - Link targets in `ErrorSummary` are fragment links on the current page; browsers move focus to a focusable target of a fragment navigation.

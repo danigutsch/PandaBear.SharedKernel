@@ -5,8 +5,8 @@ namespace PandaBear.Blazor.Site.Theming;
 
 /// <summary>
 /// Renders a <see cref="SiteTheme" /> as a stylesheet that <c>site.css</c> consumes: <c>@font-face</c> rules with
-/// <c>font-display: swap</c>, then <c>:root</c> custom properties, every colour as <c>light-dark()</c> and every set typography value
-/// as <c>--site-{role}-{property}</c>. The output depends only on the theme, in a fixed order, so <see cref="Hash" /> can version
+/// <c>font-display: swap</c>, then <c>:root</c> custom properties, every colour as <c>light-dark()</c>, the photo scrim of
+/// <see cref="SiteScrim" /> as percentages, the brand and header heights, and every set typography value as <c>--site-{role}-{property}</c>. The output depends only on the theme, in a fixed order, so <see cref="Hash" /> can version
 /// an immutable <c>/theme.css?v=…</c> address. Every value comes from a validated value object and strings are escaped as well.
 /// </summary>
 public static class SiteThemeStylesheet
@@ -20,6 +20,18 @@ public static class SiteThemeStylesheet
     /// <summary>Gets the colour custom properties, in render order, such as <c>--site-color-surface-alt</c>.</summary>
     public static IReadOnlyList<string> ColorVariables { get; } =
         [.. Enum.GetValues<ThemeColorRole>().Select(role => "--site-color-" + ThemeNames.Css(role))];
+
+    /// <summary>
+    /// Gets the scrim custom properties, in render order: the opacities of <see cref="SiteScrim.Text" />,
+    /// <see cref="SiteScrim.LargeText" /> and <see cref="SiteScrim.Boost" /> as percentages.
+    /// </summary>
+    public static IReadOnlyList<string> ScrimVariables { get; } = ["--site-scrim", "--site-scrim-large", "--site-scrim-boost"];
+
+    /// <summary>
+    /// Gets the header custom properties, in render order: <see cref="SiteTheme.BrandHeight" /> and
+    /// <see cref="SiteTheme.HeaderHeight" /> in rem.
+    /// </summary>
+    public static IReadOnlyList<string> HeaderVariables { get; } = ["--site-brand-height", "--site-header-height"];
 
     /// <summary>Gets the per-role custom properties, in render order, such as <c>--site-h1-font-size</c>.</summary>
     public static IReadOnlyList<string> RoleVariables { get; } =
@@ -45,8 +57,18 @@ public static class SiteThemeStylesheet
     /// </summary>
     /// <param name="theme">The theme.</param>
     /// <returns>The hash.</returns>
-    public static string Hash(SiteTheme theme) =>
-        Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(Render(theme))).AsSpan(0, 8));
+    public static string Hash(SiteTheme theme) => RenderVersioned(theme).Version;
+
+    /// <summary>Renders the CSS once and computes its existing UTF-8 content hash.</summary>
+    /// <param name="theme">The theme.</param>
+    /// <returns>The CSS and its version, suitable for serving together.</returns>
+    /// <exception cref="ArgumentNullException">The theme is null.</exception>
+    public static (string Css, string Version) RenderVersioned(SiteTheme theme)
+    {
+        var css = Render(theme);
+        var version = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(css)).AsSpan(0, 8));
+        return (css, version);
+    }
 
     /// <summary>
     /// Renders the stylesheet of a theme scoped to one element (the preview): the custom properties on <c>#scopeId</c>, the colour
@@ -84,6 +106,8 @@ public static class SiteThemeStylesheet
         AppendRule(css, sample + " a", TypographyRole.Link, "color: var(--site-color-primary);");
         css.Append(sample).Append(" :is(").AppendJoin(", ", headings).Append(") a {\n    font: inherit;\n    letter-spacing: inherit;\n    text-transform: inherit;\n}\n");
         AppendRule(css, sample + " .site-button", TypographyRole.Button, "display: inline-block; margin: 0 0.5rem 0.5rem 0; padding: 0.5rem 1.5rem; border-radius: 0.5rem; text-decoration: none;");
+        css.Append(sample).Append(" .site-nav {\n    display: flex;\n    align-items: center;\n    gap: 1rem;\n}\n");
+        css.Append(scope).Append(" .site-theme-preview__brand {\n    display: inline-flex;\n    align-items: center;\n    height: var(--site-brand-height);\n    padding: 0 0.5rem;\n    border: 1px dashed currentColor;\n}\n");
         AppendRule(css, sample + " .site-nav a", TypographyRole.Nav, "color: var(--site-color-text); text-decoration: none;");
         css.Append(sample).Append(" .site-button--primary {\n    background: var(--site-color-primary);\n    color: var(--site-color-on-primary);\n}\n");
         css.Append(sample).Append(" .site-button--secondary {\n    background: var(--site-color-accent);\n    color: var(--site-color-on-accent);\n}\n");
@@ -143,6 +167,17 @@ public static class SiteThemeStylesheet
             css.Append("    --site-color-").Append(ThemeNames.Css(role)).Append(": light-dark(")
                 .Append(color.Light.Value).Append(", ").Append(color.Dark.Value).Append(");\n");
         }
+
+        var scrim = SiteScrim.For(theme.Colors);
+        int[] percents = [scrim.Text, scrim.LargeText, scrim.Boost];
+        for (var index = 0; index < percents.Length; index++)
+        {
+            css.Append("    ").Append(ScrimVariables[index]).Append(": ")
+                .Append(percents[index].ToString(System.Globalization.CultureInfo.InvariantCulture)).Append("%;\n");
+        }
+
+        css.Append("    ").Append(HeaderVariables[0]).Append(": ").Append(CssText.Number(theme.BrandHeight)).Append("rem;\n");
+        css.Append("    ").Append(HeaderVariables[1]).Append(": ").Append(CssText.Number(theme.HeaderHeight)).Append("rem;\n");
 
         foreach (var role in Enum.GetValues<TypographyRole>())
         {

@@ -1,3 +1,4 @@
+using PandaBear.SecretScanning;
 using PandaBear.Vault.Analysis;
 using PandaBear.Vault.Matching;
 using PandaBear.Vault.Merge;
@@ -121,7 +122,7 @@ public static class BriefBuilder
     private static bool ChangesMatching(SecretFinding finding) =>
         finding.ProposedTarget.Kind is PlacementTargetKind.LoginUsername or PlacementTargetKind.LoginUris or PlacementTargetKind.LoginFromConnection
             or PlacementTargetKind.NewSshKeyItem or PlacementTargetKind.NewCardItem
-        || string.Equals(finding.Location.FieldPath, SecretLocation.LoginUsername, StringComparison.Ordinal);
+        || string.Equals(finding.Location.FieldPath, ItemFieldPaths.LoginUsername, StringComparison.Ordinal);
 
     // Lines are split on line feeds, as the scanner splits them.
     private static int? Line(ScannedItem? source, SecretLocation location)
@@ -135,17 +136,17 @@ public static class BriefBuilder
     private static string? TextOf(ScannedItem source, string fieldPath)
     {
         VaultItem item = source.Source.Item;
-        if (string.Equals(fieldPath, SecretLocation.Notes, StringComparison.Ordinal))
+        if (string.Equals(fieldPath, ItemFieldPaths.Notes, StringComparison.Ordinal))
         {
             return item.Notes;
         }
 
-        if (fieldPath.StartsWith(SecretLocation.AttachmentPrefix, StringComparison.Ordinal))
+        if (fieldPath.StartsWith(ItemFieldPaths.AttachmentPrefix, StringComparison.Ordinal))
         {
             return source.AttachmentTexts.GetValueOrDefault(fieldPath);
         }
 
-        if (SecretLocation.TryParseField(fieldPath, out int index, out bool isName))
+        if (ItemFieldPaths.TryParseField(fieldPath, out int index, out bool isName))
         {
             return index < item.Fields.Count ? (isName ? item.Fields[index].Name : item.Fields[index].Value) : null;
         }
@@ -333,7 +334,7 @@ public static class BriefBuilder
         public string? SharedNotes(string originKey) =>
             SourceOf(originKey)?.Source.Item.Notes is { } notes
             && decisions.SharesNotes(originKey, notes)
-            && !FindingsOf(originKey).Any(finding => string.Equals(finding.Location.FieldPath, SecretLocation.Notes, StringComparison.Ordinal))
+            && !FindingsOf(originKey).Any(finding => string.Equals(finding.Location.FieldPath, ItemFieldPaths.Notes, StringComparison.Ordinal))
                 ? notes
                 : null;
     }

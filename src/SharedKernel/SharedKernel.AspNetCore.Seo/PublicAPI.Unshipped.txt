@@ -27,3 +27,5 @@ PandaBear.AspNetCore.Seo.CanonicalOriginOptions.Origin.set -> void
 PandaBear.AspNetCore.Seo.CanonicalOriginOptions.Value.get -> System.Uri!
 PandaBear.AspNetCore.Seo.CanonicalOriginServiceCollectionExtensions
 static PandaBear.AspNetCore.Seo.CanonicalOriginServiceCollectionExtensions.AddCanonicalOrigin(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! configurationKey) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.AspNetCore.Seo.LocalizedSitemap
+static PandaBear.AspNetCore.Seo.LocalizedSitemap.Build(System.Collections.Generic.IEnumerable<(PandaBear.AspNetCore.Seo.SitemapAlternate! Link, System.DateTimeOffset? LastModified)>! translations, System.Uri? fallback = null) -> System.Collections.Generic.IReadOnlyList<PandaBear.AspNetCore.Seo.SitemapEntry!>!

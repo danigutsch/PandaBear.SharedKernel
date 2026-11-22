@@ -1,3 +1,4 @@
+using PandaBear.SecretScanning;
 using PandaBear.Vault.Attachments;
 using PandaBear.Vault.Secrets;
 
@@ -20,7 +21,7 @@ public sealed class LargeTextScanTests
         var (text, answers) = LargeTexts.Questions(TextExtractor.MaxBytes);
 
         // Act
-        var findings = await Task.Run(() => SecretScanner.Default.ScanText(text, FieldPath, "notes.txt"), TestContext.Current.CancellationToken);
+        var findings = await Task.Run(() => ItemScanner.Default.ScanText(text, FieldPath, "notes.txt"), TestContext.Current.CancellationToken);
 
         // Assert
         ScanCoverage.ShouldReportEverySecretOrFlagItForReview(findings, answers, SecretKind.SecurityQuestion);
@@ -33,7 +34,7 @@ public sealed class LargeTextScanTests
         var (text, keys) = LargeTexts.AccessKeyLog(TextExtractor.MaxBytes);
 
         // Act
-        var findings = await Task.Run(() => SecretScanner.Default.ScanText(text, FieldPath, "access.log"), TestContext.Current.CancellationToken);
+        var findings = await Task.Run(() => ItemScanner.Default.ScanText(text, FieldPath, "access.log"), TestContext.Current.CancellationToken);
 
         // Assert
         ScanCoverage.ShouldReportEverySecretOrFlagItForReview(findings, keys, SecretKind.AccessKeyId);
@@ -46,7 +47,7 @@ public sealed class LargeTextScanTests
         var (text, answers) = LargeTexts.QuestionsBetweenBlankLines(TextExtractor.MaxBytes, pairs: 20);
 
         // Act
-        var findings = await Task.Run(() => SecretScanner.Default.ScanText(text, FieldPath, "notes.txt"), TestContext.Current.CancellationToken);
+        var findings = await Task.Run(() => ItemScanner.Default.ScanText(text, FieldPath, "notes.txt"), TestContext.Current.CancellationToken);
 
         // Assert
         ScanCoverage.ShouldReportEverySecretOrFlagItForReview(findings, answers, SecretKind.SecurityQuestion);

@@ -1,10 +1,10 @@
 using System.Globalization;
 using System.Text.Json.Nodes;
+using PandaBear.SecretScanning;
 using PandaBear.Testing;
-using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.Vault.Merge;
+using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.VaultManager.Tool.Review;
-using PandaBear.Vault.Secrets;
 using PandaBear.VaultManager.Tool.Tests.Cli;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
 using PandaBear.VaultManager.Tool.Tests.Secrets;

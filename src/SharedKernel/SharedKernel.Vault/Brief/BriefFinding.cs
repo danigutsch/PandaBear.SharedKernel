@@ -1,4 +1,4 @@
-using PandaBear.Vault.Secrets;
+using PandaBear.SecretScanning;
 
 namespace PandaBear.Vault.Brief;
 

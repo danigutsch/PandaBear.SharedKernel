@@ -11,10 +11,10 @@ public sealed class CsvDocument
 {
     private readonly IReadOnlyList<CsvRow> _rows;
 
-    private CsvDocument(IEnumerable<string> headers, IEnumerable<CsvRow> rows)
+    private CsvDocument(IReadOnlyList<string> headers, IReadOnlyList<CsvRow> rows)
     {
-        Headers = [.. headers];
-        _rows = [.. rows];
+        Headers = headers;
+        _rows = rows;
     }
 
     /// <summary>Gets the header columns.</summary>
@@ -98,8 +98,13 @@ public sealed class CsvDocument
             return CsvErrors.HeaderCountMustMatchRowColumnCount(csvLineNumber).ConvertError<CsvDocument>();
         }
 
-        return Result.Ok(new CsvDocument(headers, rows));
+        return Result.Ok(new CsvDocument([.. headers], [.. rows]));
     }
+
+    /// <summary>Replaces one header per column while retaining the source rows.</summary>
+    /// <param name="headers">The replacement headers in column order.</param>
+    /// <returns>The document with the new headers.</returns>
+    internal CsvDocument WithHeaders(IReadOnlyList<string> headers) => new([.. headers], _rows);
 
     /// <summary>Checks the required headers and the column counts of parsed records.</summary>
     /// <param name="headerRow">The header record.</param>

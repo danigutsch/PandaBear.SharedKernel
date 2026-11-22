@@ -88,6 +88,8 @@ flowchart TB
     SharedKernel_Messaging_IntegrationEvents_EntityFrameworkCore[SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore] --> SharedKernel_Scheduling[SharedKernel.Scheduling]
     SharedKernel_Messaging_Protobuf[SharedKernel.Messaging.Protobuf] --> SharedKernel_Messaging_IntegrationEvents[SharedKernel.Messaging.IntegrationEvents]
     SharedKernel_ObjectStorage[SharedKernel.ObjectStorage] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
+    SharedKernel_ObjectStorage_FileSystem[SharedKernel.ObjectStorage.FileSystem] --> SharedKernel_IO[SharedKernel.IO]
+    SharedKernel_ObjectStorage_FileSystem[SharedKernel.ObjectStorage.FileSystem] --> SharedKernel_ObjectStorage[SharedKernel.ObjectStorage]
     SharedKernel_ObjectStorage_S3[SharedKernel.ObjectStorage.S3] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
     SharedKernel_ObjectStorage_S3[SharedKernel.ObjectStorage.S3] --> SharedKernel_ObjectStorage[SharedKernel.ObjectStorage]
     SharedKernel_OpenApi[SharedKernel.OpenApi] --> SharedKernel_ApiVersioning[SharedKernel.ApiVersioning]
@@ -115,8 +117,11 @@ flowchart TB
     SharedKernel_Sandbox[SharedKernel.Sandbox] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
     SharedKernel_Sandbox_ClaudeCode[SharedKernel.Sandbox.ClaudeCode] --> SharedKernel_IO[SharedKernel.IO]
     SharedKernel_Sandbox_ClaudeCode[SharedKernel.Sandbox.ClaudeCode] --> SharedKernel_Sandbox[SharedKernel.Sandbox]
+    SharedKernel_SecretScanning[SharedKernel.SecretScanning] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
+    SharedKernel_SecretScanning[SharedKernel.SecretScanning] --> SharedKernel_Encodings[SharedKernel.Encodings]
     SharedKernel_Secrets[SharedKernel.Secrets] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
     SharedKernel_Secrets[SharedKernel.Secrets] --> SharedKernel_ConfigurationFiles[SharedKernel.ConfigurationFiles]
+    SharedKernel_Secrets[SharedKernel.Secrets] --> SharedKernel_Encodings[SharedKernel.Encodings]
     SharedKernel_Secrets[SharedKernel.Secrets] --> SharedKernel_IO[SharedKernel.IO]
     SharedKernel_Secrets[SharedKernel.Secrets] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
     SharedKernel_Secrets[SharedKernel.Secrets] --> SharedKernel_Processes[SharedKernel.Processes]
@@ -140,10 +145,14 @@ flowchart TB
     SharedKernel_Testing_Messaging[SharedKernel.Testing.Messaging] --> SharedKernel_Messaging_IntegrationEvents[SharedKernel.Messaging.IntegrationEvents]
     SharedKernel_Testing_ObjectStorage[SharedKernel.Testing.ObjectStorage] --> SharedKernel_ObjectStorage[SharedKernel.ObjectStorage]
     SharedKernel_Testing_Playwright[SharedKernel.Testing.Playwright] --> SharedKernel_Testing_AspNetCore[SharedKernel.Testing.AspNetCore]
+    SharedKernel_Testing_Snapshots[SharedKernel.Testing.Snapshots] --> SharedKernel_IO[SharedKernel.IO]
     SharedKernel_Testing_Xunit[SharedKernel.Testing.Xunit] --> SharedKernel_Testing[SharedKernel.Testing]
     SharedKernel_UploadSanitizing[SharedKernel.UploadSanitizing] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_Vault[SharedKernel.Vault] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
+    SharedKernel_Vault[SharedKernel.Vault] --> SharedKernel_Encodings[SharedKernel.Encodings]
+    SharedKernel_Vault[SharedKernel.Vault] --> SharedKernel_IO[SharedKernel.IO]
     SharedKernel_Vault[SharedKernel.Vault] --> SharedKernel_InputNormalization[SharedKernel.InputNormalization]
+    SharedKernel_Vault[SharedKernel.Vault] --> SharedKernel_SecretScanning[SharedKernel.SecretScanning]
     SharedKernel_Vault_Bitwarden[SharedKernel.Vault.Bitwarden] --> SharedKernel_Vault[SharedKernel.Vault]
     SharedKernel_Vault_Keeper[SharedKernel.Vault.Keeper] --> SharedKernel_Vault[SharedKernel.Vault]
     SharedKernel_Versioning[SharedKernel.Versioning] --> SharedKernel_IO[SharedKernel.IO]
@@ -161,6 +170,7 @@ flowchart TB
     trigger[Pull request, main push, nightly, or manual run]
     selection[selection]
     validate[validate]
+    coverage_gate[coverage-gate]
     source_build[source-build]
     candidate[candidate]
     linux_package_consumption[linux-package-consumption]
@@ -170,6 +180,8 @@ flowchart TB
     validation_summary[validation-summary]
     trigger --> selection
     selection --> validate
+    selection --> coverage_gate
+    validate --> coverage_gate
     selection --> source_build
     selection --> candidate
     candidate --> linux_package_consumption

@@ -1,0 +1,55 @@
+@page "/editor"
+@rendermode InteractiveServer
+
+<PageTitle>Riverbank Hall demo editor</PageTitle>
+<main class="site-container venue-editor">
+    <h1>Riverbank Hall demo editor</h1>
+    <p>Preview a Portuguese heading for the fictional workshop page.</p>
+    <p><a href="/pt/oficinas">View the published workshop page</a></p>
+    <EditForm EditContext="_context" OnSubmit="Preview" Context="form" novalidate>
+        <ErrorSummary Title="Review the draft" Items="_summary" />
+        <NamedFormField Field="_headingField" InputId="workshop-heading" Label="Portuguese workshop heading"
+                        Help="Use at most 80 characters.">
+            <input id="workshop-heading" lang="pt" @bind="_heading" @attributes="context" />
+        </NamedFormField>
+        <button type="submit" disabled="@(!RendererInfo.IsInteractive)">Preview draft</button>
+    </EditForm>
+    @if (_preview is not null)
+    {
+        <section aria-label="Draft preview" role="status">
+            <h2 lang="pt">@_preview</h2>
+        </section>
+    }
+</main>
+
+@code {
+    private const string HeadingKey = "pt.sections[0].heading";
+    private EditContext _context = default!;
+    private FieldIdentifier _headingField;
+    private ValidationMessageStore _messages = default!;
+    private string _heading = string.Empty;
+    private string? _preview;
+    private IReadOnlyList<ErrorSummaryItem> _summary = [];
+
+    /// <inheritdoc />
+    protected override void OnInitialized()
+    {
+        _context = new EditContext(this);
+        _headingField = _context.Field(HeadingKey);
+        _messages = new ValidationMessageStore(_context);
+    }
+
+    private void Preview(EditContext context)
+    {
+        _messages.Clear();
+        var heading = _heading.Trim();
+        if (heading.Length is 0 or > 80)
+        {
+            _messages.Add(_headingField, "Enter a heading between 1 and 80 characters.");
+        }
+
+        _summary = EditContextErrorSummary.Build(context, [(_headingField, "workshop-heading")]);
+        _preview = _summary.Count == 0 ? heading : null;
+        context.NotifyValidationStateChanged();
+    }
+}
