@@ -64,3 +64,10 @@ virtual PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.Configurati
 virtual PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.InitializeAsync() -> System.Threading.Tasks.ValueTask
 virtual PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
 virtual PandaBear.Testing.Playwright.KestrelHostFixture<TEntryPoint>.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+PandaBear.Testing.Playwright.CspViolationRecorder
+PandaBear.Testing.Playwright.CspViolationRecorder.Dispose() -> void
+PandaBear.Testing.Playwright.CspViolationRecorder.StyleViolations() -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
+PandaBear.Testing.Playwright.CspViolationRecorder.Violations() -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
+static PandaBear.Testing.Playwright.CspViolationRecorder.Start(Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task<PandaBear.Testing.Playwright.CspViolationRecorder!>!
+static PandaBear.Testing.Playwright.PlaywrightLocatorExtensions.SetBlazorInputFiles(this Microsoft.Playwright.ILocator! input, System.Collections.Generic.IEnumerable<Microsoft.Playwright.FilePayload!>! files) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightLocatorExtensions.WaitForBlazorInputFile(this Microsoft.Playwright.ILocator! input) -> System.Threading.Tasks.Task!

@@ -45,3 +45,6 @@ static PandaBear.Tabular.CsvParseOptions.operator !=(PandaBear.Tabular.CsvParseO
 static PandaBear.Tabular.CsvParseOptions.operator ==(PandaBear.Tabular.CsvParseOptions? left, PandaBear.Tabular.CsvParseOptions? right) -> bool
 static PandaBear.Tabular.CsvWriteOptions.operator !=(PandaBear.Tabular.CsvWriteOptions? left, PandaBear.Tabular.CsvWriteOptions? right) -> bool
 static PandaBear.Tabular.CsvWriteOptions.operator ==(PandaBear.Tabular.CsvWriteOptions? left, PandaBear.Tabular.CsvWriteOptions? right) -> bool
+PandaBear.Tabular.CsvHeaderMapping
+static PandaBear.Tabular.CsvHeaderMapping.Match(System.Collections.Generic.IReadOnlyList<string!>! sourceHeaders, System.Collections.Generic.IReadOnlyList<string!>! targetHeaders, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? overrides = null, System.Collections.Generic.IEqualityComparer<string!>? comparer = null) -> System.Collections.Generic.IReadOnlyList<(string! TargetHeader, string? SourceHeader)>!
+static PandaBear.Tabular.CsvHeaderMapping.Remap(PandaBear.Tabular.CsvDocument! document, System.Collections.Generic.IReadOnlyList<(string! TargetHeader, string? SourceHeader)>! matches, System.Func<string!, string!>? renameUnselectedTarget = null, System.Collections.Generic.IEqualityComparer<string!>? comparer = null) -> PandaBear.Tabular.CsvDocument!

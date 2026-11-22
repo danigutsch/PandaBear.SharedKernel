@@ -141,3 +141,10 @@ The receiving service must independently configure its trusted proxy addresses/n
 forwarded-header middleware before rate limiting. This helper does not authenticate a service,
 trust arbitrary peers, set policy budgets, or change other HTTP clients. Keep visitor admission,
 aggregate capacity limits, and treatment of per-visitor quota responses in the consuming application.
+
+## Implicit form binding deadlines
+
+Call `app.UseFormBindingDeadline()` after routing and `app.UseRequestTimeouts()`. It forwards an
+active request cancellation token to body reads for endpoints with form options metadata, such
+as `RequestFormLimitsAttribute`. The host still registers request timeouts and sets the endpoint's
+deadline, request size limits, and timeout response. The body stream remains owned by the host.

@@ -11,6 +11,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.IO\SharedKernel.IO.csproj" />
+        <None Include="ViajantesTurismo.LICENSE.txt" Pack="true" PackagePath="\" />
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 

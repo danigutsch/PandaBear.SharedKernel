@@ -50,6 +50,10 @@ For the `configureTestServices` callback:
 Kestrel at `127.0.0.1` with an ephemeral port and returns a host with `BaseAddress` and `Services`; dispose it when done. Use it
 when the client is out of process, such as a browser; in-memory `WebApplicationFactory` servers cannot be reached over a socket.
 
+`KestrelTestHost.StartFromFactory(factory)` starts a derived factory when the test already has
+application-specific `WebApplicationFactory` overrides. Dispose the running host before the
+original factory.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Testing.AspNetCore`. C# namespace: `PandaBear.Testing.AspNetCore`. Assembly/project identity: `SharedKernel.Testing.AspNetCore`.

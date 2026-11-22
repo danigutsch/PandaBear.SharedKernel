@@ -11,6 +11,7 @@
 
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
+        <None Include="NOTICE.ViajantesTurismo.txt" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

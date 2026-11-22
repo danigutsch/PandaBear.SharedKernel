@@ -46,3 +46,10 @@ public static class Example
 Package ID: `PandaBear.SharedKernel.InputNormalization`. C# namespace: `PandaBear.InputNormalization`. Assembly/project identity: `SharedKernel.InputNormalization`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+## Raster rendition media types
+
+`RasterImageMediaType.Find` matches JPEG, PNG, WebP, and AVIF MIME types with
+ordinal case comparison and surrounding whitespace removal. The result pairs the canonical
+media type with its preferred file extension. Callers select the sizes, addresses, and
+display ordering for their renditions.

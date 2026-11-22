@@ -58,3 +58,5 @@ override PandaBear.AspNetCore.PermanentRedirect.GetHashCode() -> int
 override PandaBear.AspNetCore.PermanentRedirect.ToString() -> string!
 static PandaBear.AspNetCore.PermanentRedirect.operator !=(PandaBear.AspNetCore.PermanentRedirect? left, PandaBear.AspNetCore.PermanentRedirect? right) -> bool
 static PandaBear.AspNetCore.PermanentRedirect.operator ==(PandaBear.AspNetCore.PermanentRedirect? left, PandaBear.AspNetCore.PermanentRedirect? right) -> bool
+PandaBear.AspNetCore.FormBindingDeadlineExtensions
+static PandaBear.AspNetCore.FormBindingDeadlineExtensions.UseFormBindingDeadline(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!

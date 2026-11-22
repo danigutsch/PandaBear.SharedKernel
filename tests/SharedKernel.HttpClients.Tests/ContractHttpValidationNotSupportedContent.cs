@@ -15,6 +15,20 @@ internal sealed class ContractHttpValidationNotSupportedContent : HttpContent
     /// <summary>Gets a value indicating whether serialization or stream creation was attempted.</summary>
     public bool WasRead { get; private set; }
 
+    /// <summary>Gets a value indicating whether the content was disposed.</summary>
+    public bool IsDisposed { get; private set; }
+
+    /// <inheritdoc />
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            IsDisposed = true;
+        }
+
+        base.Dispose(disposing);
+    }
+
     protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)
     {
         WasRead = true;

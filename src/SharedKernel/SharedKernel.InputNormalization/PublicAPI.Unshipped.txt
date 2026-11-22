@@ -23,3 +23,7 @@ PandaBear.InputNormalization.WebAssetUriSanitizer
 static PandaBear.InputNormalization.WebAssetUriSanitizer.NormalizeRasterDataImage(string? value, int maxLength) -> string?
 static PandaBear.InputNormalization.WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(string? value, int maxLength) -> string?
 static PandaBear.InputNormalization.WebAssetUriSanitizer.ToRootRelativeOrHttpsUri(string? value, int maxLength) -> System.Uri?
+PandaBear.InputNormalization.RasterImageMediaType
+PandaBear.InputNormalization.RasterImageMediaType.FileExtension.get -> string!
+PandaBear.InputNormalization.RasterImageMediaType.MediaType.get -> string!
+static PandaBear.InputNormalization.RasterImageMediaType.Find(string? mediaType) -> PandaBear.InputNormalization.RasterImageMediaType?
