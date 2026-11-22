@@ -12,6 +12,13 @@ Compose the outbox/inbox registration extensions with the owning EF Core context
 
 Transport consumers retry a failing message without limit unless `IntegrationEventOutboxRelayOptions.MaxConsumeAttempts` is set. When a message reaches that limit it is poisoned: it stops being claimed, so later messages for the same consumer keep flowing. Use `IntegrationEventTransportPoison.CountPoisoned` to alert on poisoned messages and `IntegrationEventTransportPoison.ReleasePoisoned` to return one to delivery with a fresh attempt budget after the cause is fixed. Release from an audited operator workflow; the package does not record who released a message. Adding the poison column and index requires a migration in the context that owns the transport table. `LastConsumeError` holds only the exception type name, never its message, because messages can embed payload or personal data. Each failed attempt is logged through `ILogger` with the exception, consumer name, message id and attempt number; poisoning logs at error level. Read the exception text from logs, not the table.
 
+`IntegrationEventMessagingHealth.ReadOutbox` reports unpublished messages and publication retries.
+`ReadTransport` reports terminal failures and delivery retries for one selected consumer. Each
+method reads counts and oldest timestamps together from the supplied context's table mappings.
+Retries with timestamps at or before the specified cutoff are due, including ones with an active
+lease. The results contain counts and timestamps. Applications derive ages and evaluate their own
+threshold policies.
+
 ## Install and example
 
 The following placeholders are intentional: replace `<validated-candidate-version>` with a candidate that has actually been built and validated, and `<private-candidate-feed>` with its private local feed. The placeholders do not identify a published package version. The code requires the package's target runtime; integration examples assume application-owned host/provider configuration.
