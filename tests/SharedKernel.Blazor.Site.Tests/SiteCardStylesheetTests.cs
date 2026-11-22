@@ -200,7 +200,7 @@ public sealed class SiteCardStylesheetTests
     [Theory]
     [InlineData(":focus-visible")]
     [InlineData(".site-card:has(:focus-visible)")]
-    public void A_focus_ring_takes_its_colour_through_the_longhand(string selector)
+    public void A_focus_ring_draws_the_focus_colour_from_its_token(string selector)
     {
         // Arrange
         var css = File.ReadAllText(SiteFiles.StylesheetPath());
@@ -210,7 +210,6 @@ public sealed class SiteCardStylesheetTests
 
         // Assert
         rule.ShouldContain("outline: var(--site-focus-ring)", StringComparison.Ordinal);
-        rule.ShouldContain("outline-color: var(--site-color-focus)", StringComparison.Ordinal);
-        SiteFiles.Rule(css, ":root").ShouldContain("--site-focus-ring: 3px solid;", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ":root").ShouldContain("--site-focus-ring: 3px solid var(--site-color-focus);", StringComparison.Ordinal);
     }
 }

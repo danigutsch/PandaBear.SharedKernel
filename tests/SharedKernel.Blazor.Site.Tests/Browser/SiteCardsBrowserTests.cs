@@ -49,12 +49,36 @@ public sealed class SiteCardsBrowserTests(ChromiumFixture chromium) : IClassFixt
         var cards = await page.Boxes("article.site-card");
         var texts = await page.Boxes(".site-card__body > p");
         var actions = await page.Boxes(".site-card__actions");
+        var bottoms = await CardsSample.Bottoms(page, ".site-card__actions");
 
         // Assert
         cards.Select(card => card.Y).Distinct().Count().ShouldBe(1);
         texts[1].Height.ShouldBeGreaterThan(texts[0].Height);
         actions.Select(row => row.Y).Distinct().Count().ShouldBe(1);
-        actions.Select(row => row.Bottom).Distinct().Count().ShouldBe(1);
+        bottoms.Length.ShouldBe(3);
+        bottoms.Distinct().Count().ShouldBe(1);
+    }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(CardStyle.Boxed)]
+    [InlineData(CardStyle.Plain)]
+    public async Task An_action_row_that_wraps_grows_upwards_and_keeps_its_bottom_in_line_with_the_row_of_cards(CardStyle style)
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<CardsSample>(chromium.Browser, 1280, CardsSample.LongActionParameters(style));
+
+        // Act
+        var cards = await page.Boxes("article.site-card");
+        var actions = await page.Boxes(".site-card__actions");
+        var bottoms = await CardsSample.Bottoms(page, ".site-card__actions");
+        var wrapped = await page.Boxes("#two .site-card__actions > *");
+
+        // Assert
+        cards.Select(card => card.Y).Distinct().Count().ShouldBe(1);
+        wrapped[1].Y.ShouldBeGreaterThanOrEqualTo(wrapped[0].Bottom);
+        actions[1].Y.ShouldBeLessThan(actions[0].Y);
+        bottoms.Length.ShouldBe(3);
+        bottoms.Distinct().Count().ShouldBe(1);
     }
 
     [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]

@@ -59,7 +59,10 @@ public sealed class InvertedSample : ComponentBase
     /// </summary>
     /// <param name="page">The page.</param>
     /// <param name="selector">The CSS selector of the element.</param>
-    /// <returns><see langword="true" /> when the element has focus and matches <c>:focus-visible</c>.</returns>
+    /// <returns>
+    /// <see langword="true" /> when the element has focus and matches <c>:focus-visible</c>, after two frames have been drawn, so the styles
+    /// that depend on the focus, such as <c>:has(:focus-visible)</c>, have applied.
+    /// </returns>
     internal static async Task<bool> FocusWithKeyboard(LayoutPage page, string selector)
     {
         ArgumentNullException.ThrowIfNull(page);
@@ -68,6 +71,7 @@ public sealed class InvertedSample : ComponentBase
             await page.Page.Keyboard.PressAsync("Tab");
             if (await page.Page.EvaluateAsync<bool>("(selector) => document.activeElement === document.querySelector(selector)", selector))
             {
+                await page.Page.EvaluateAsync("() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done)))");
                 return await page.Page.EvaluateAsync<bool>("(selector) => document.querySelector(selector).matches(':focus-visible')", selector);
             }
         }

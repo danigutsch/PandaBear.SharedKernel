@@ -389,7 +389,7 @@ dark surface too. `light-dark()` needs a 2024 or later browser (Chrome 123, Fire
 | `--site-color-accent-hover` | `#92400e` / `#f59e0b` | Secondary buttons on hover |
 | `--site-color-on-accent` | `#ffffff` / `#111827` | Text on the accent colour |
 | `--site-color-focus` | `#1d4ed8` / `#93c5fd` | Focus ring colour |
-| `--site-focus-ring` | `3px solid` | Width and style of the `:focus-visible` outline and the card's ring; their colour is `--site-color-focus`, set through `outline-color`, because Chromium drops a `light-dark()` colour that reaches the `outline` shorthand through `var()` |
+| `--site-focus-ring` | `3px solid` focus colour | `:focus-visible` outline and a card's ring |
 | `--site-font-body` | system UI stack | Body font; no web font is loaded |
 | `--site-font-heading` | `--site-font-body` | Heading font |
 | `--site-font-size-sm` … `--site-font-size-3xl` | fluid `clamp()` scale | `--site-font-size-sm`, `--site-font-size-base`, `--site-font-size-lg`, `--site-font-size-xl`, `--site-font-size-2xl`, `--site-font-size-3xl` |
