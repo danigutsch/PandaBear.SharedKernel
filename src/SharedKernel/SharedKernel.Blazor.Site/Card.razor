@@ -1,16 +1,32 @@
 @inherits SiteComponent
-<article class="@CssClass("site-card")" @attributes="AdditionalAttributes">
+<article class="@CssClass(RootClass)" @attributes="AdditionalAttributes">
     @if (Image is not null)
     {
         <div class="site-card__media">@ResponsiveImageMarkup.Render(Image, eager: EagerImage, highPriority: false)</div>
     }
     <div class="site-card__body">
-        @Heading.Render(HeadingLevel, "site-card__title", null, TitleContent, TitleLanguage)
+        @if (HasEyebrow)
+        {
+            <hgroup class="site-card__heading">
+                <p class="site-card__eyebrow">@Eyebrow</p>
+                @Heading.Render(HeadingLevel, "site-card__title", null, TitleContent, TitleLanguage)
+            </hgroup>
+        }
+        else
+        {
+            @Heading.Render(HeadingLevel, "site-card__title", null, TitleContent, TitleLanguage)
+        }
         @ChildContent
     </div>
-    @if (Actions is not null)
+    @if (HasMore || Actions is not null)
     {
-        <div class="site-card__actions">@Actions</div>
+        <ActionRow Class="site-card__actions">
+            @if (HasMore)
+            {
+                <span class="@(ButtonStyle.Classes(MoreVariant, ButtonSize) + " site-card__more")" aria-hidden="true">@MoreText</span>
+            }
+            @Actions
+        </ActionRow>
     }
 </article>
 

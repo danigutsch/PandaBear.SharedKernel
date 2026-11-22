@@ -1,5 +1,5 @@
 @inherits SiteComponent
-<a @attributes="AdditionalAttributes" href="@Href?.Value" class="@CssClass(VariantClass)" target="@(NewTab ? "_blank" : null)" rel="@(NewTab ? "noopener noreferrer" : null)">@ChildContent@if (NewTab)
+<a @attributes="AdditionalAttributes" href="@Href?.Value" class="@CssClass(ButtonStyle.Classes(Variant, Size))" target="@(NewTab ? "_blank" : null)" rel="@(NewTab ? "noopener noreferrer" : null)">@ChildContent@if (NewTab)
 {
     <span class="site-visually-hidden">@(" " + NewTabHint)</span>
 }</a>

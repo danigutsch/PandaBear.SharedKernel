@@ -244,7 +244,7 @@ public sealed partial class SiteStylesheetTests
         var css = File.ReadAllText(SiteFiles.StylesheetPath());
 
         // Assert
-        SiteFiles.Rule(css, ".site-card-grid").ShouldContain("grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--site-card-min-width)), 1fr))", StringComparison.Ordinal);
+        SiteFiles.Rule(css, ".site-card-grid").ShouldContain("grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--site-card-min-width)), var(--site-card-max-width)))", StringComparison.Ordinal);
     }
 
     [Fact]

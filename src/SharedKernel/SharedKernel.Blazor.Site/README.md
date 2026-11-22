@@ -76,15 +76,15 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `Byline` | A person: a lazy round photo (`Photo`, usually decorative), the `Name` and the `JobTitle`, each a `p`. |
 | `VideoLink` | A link to a video on its own site instead of an embedded player: a lazy, decorative and self-hosted `Poster` (a described or remote poster throws `ArgumentException`), a play mark on the normal-text scrim, the visible `Title`, and a visually hidden `SiteHint` such as "(opens YouTube)"; the link's name is the title then the hint. `Href` must be an address that `WebUrl.CreateHttps` accepts (absolute `https`); the link carries `rel="noreferrer"`. No frame, no script, and no request to the video's site before the visitor's click. |
 | `FloatingLink` | A round link fixed in the bottom corner, such as a chat link: the icon in `ChildContent` is hidden from assistive technology and the required `Label` names the link in visually hidden text. While it is on the page, focused elements scroll clear of it (`scroll-padding`) and the footer, or the body without a footer, ends with room for it, so it never covers the end of the page. Its hover grows it with a transition that `prefers-reduced-motion` turns off. |
-| `ButtonLink` | A link styled as a button (`Primary`, `Secondary`, `Outline`). `NewTab` adds `target="_blank"`, `rel="noopener noreferrer"` and a visually hidden `NewTabHint` after a space, so the link's name reads "Partner (opens in a new tab)" and not "Partner(opens in a new tab)". |
+| `ButtonLink` | A link styled as a button (`Primary`, `Secondary`, `Outline`), `Size` `Regular` (the default) or `Compact` (`site-button--compact`); see [Shape](#shape) for its computed padding. `NewTab` adds `target="_blank"`, `rel="noopener noreferrer"` and a visually hidden `NewTabHint` after a space, so the link's name reads "Partner (opens in a new tab)" and not "Partner(opens in a new tab)". |
 | `ActionRow` | A plain `div` (`site-action-row`, never a landmark) around actions such as `ButtonLink`s and links, in reading order: stacked and centred below the `48rem` breakpoint, from it on one wrapping row spread across the width (`space-between`), with a gap. A plain link in it keeps the link style in the primary colour. |
-| `Card`, `CardGrid` | `article` with an optional lazy image, a heading (`HeadingLevel`, default 3) whose link covers the card, text and actions; an auto-fill grid whose columns are at least `--site-card-min-width` wide and that keeps empty columns, so a lone card has the width of one column instead of the whole row. Links, buttons, form controls, `summary` and `[tabindex]` elements in the body and the actions are raised above the covering link, so they stay clickable; any other interactive element you put in the body needs `position: relative; z-index: 1`. The focus ring is drawn on the card while a control in it has keyboard focus (`:has(:focus-visible)`). `TitleLanguage` marks the card's heading alone with `lang`, as on `Section`. `EagerImage` loads the image eagerly, for a card on the first screen. |
+| `Card`, `CardGrid` | `article` with an optional lazy image, a heading (`HeadingLevel`, default 3) whose link covers the card, text and actions; an auto-fill grid whose columns are at least `--site-card-min-width` wide and that keeps empty columns, so a lone card has the width of one column instead of the whole row. Links, buttons, form controls, `summary` and `[tabindex]` elements in the body and the actions are raised above the covering link, so they stay clickable; any other interactive element you put in the body needs `position: relative; z-index: 1`. The focus ring is drawn on the card while a control in it has keyboard focus (`:has(:focus-visible)`). `TitleLanguage` marks the card's heading alone with `lang`, as on `Section`. `EagerImage` loads the image eagerly, for a card on the first screen. Typed options set its look, the eyebrow, the more look and the grid's columns; see [Cards](#cards). |
 | `FactsTable` | `table` with a required `caption` and `th scope="row"` headers. |
 | `FactGrid` | A `dl` (`site-fact-grid`) of `FactCard`s, such as a tour's basic information: each card is a `div` (`site-fact-grid__item`) of the `dt` label (`site-fact-grid__label`) and one `dd` per value (`site-fact-grid__value`), for example "8 days" and "7 nights". A value is a `FactValue`: its `Text` and an optional `Link` (`LinkTarget`, so a relative, `http`/`https`, `mailto:` or `tel:` address), which makes the text a plain `a` in the same tab, for example `new("info@example.org", LinkTarget.FromString("mailto:info@example.org"))`; a value breaks anywhere when a word such as a long e-mail address is wider than its card. A card's optional `Icon` is rendered first inside the `dt`, in a `span` (`site-fact-grid__icon`) with `aria-hidden="true"`, because a `div` in a `dl` may hold only `dt` and `dd` elements; the label alone names the term. The cards are centred and bordered like table cells. Below the `48rem` breakpoint they fill columns at least 11rem wide that share the full width of the container; from it on the grid takes a column count computed from the number of cards for balanced rows, as the class `site-fact-grid--columns-1` to `site-fact-grid--columns-4` (no inline style): as many columns as cards up to four, otherwise `ceil(n / ceil(n / 4))`, so 5 and 6 cards make rows of 3, 7 and 8 rows of 4, and 9 rows of 3. An empty grid has no column class; the label is bold and, like the icon, in the primary colour (the on-primary colour in a `Primary` or `Image` band). An `svg` icon without a `fill` attribute is filled with the colour; one with `fill="none"` keeps its strokes, so draw them with `currentColor`. A null card, a blank label, no values, a null value or a value with blank text throws `ArgumentException`. |
 | `Disclosure` | Native `details` and `summary`; a tab substitute without script. |
 | `Quote` | `figure` with a `blockquote` and a `cite` caption. In a `Primary` or `Image` band it drops its background and takes the on-primary colour, its rule included. |
 | `ImageGrid` | `figure` per `GalleryImage` (a `ResponsiveImage` and an optional caption), lazy loading except the first `EagerCount`; `PrioritizeFirstImage` loads the first one eagerly with `fetchpriority="high"`. `Layout` `Grid` (the default) is rows of equal columns; `Mosaic` (`site-image-grid--mosaic`) is a collage of mixed aspect ratios: columns filled from top to bottom in document order, each image at its own aspect ratio, never cropped. In both, columns are at least 14rem wide and share the full width of the container, as many as there are images while they fit, so one image fills its container, in a section or in a `Split`'s media column. An image is at most 40rem or 80% of the viewport tall; a taller one is shown whole within that height (`object-fit: contain`). |
-| `AlbumIndex` | A `CardGrid` (`site-album-index`) of `Card`s, one per `AlbumSummary`: the title as the heading linked to the album's page, a cover (the first `EagerCount`, default 4, eager), the photo count as the application words it (`site-album-index__count`), and `lang` on the title alone when it is in another language; see [Photo albums](#photo-albums). Nothing without albums. |
+| `AlbumIndex` | A `CardGrid` (`site-album-index`) of `Card`s, one per `AlbumSummary`: the title as the heading linked to the album's page, a cover (the first `EagerCount`, default 4, eager), the photo count as the application words it (`site-album-index__count`), and `lang` on the title alone when it is in another language; see [Photo albums](#photo-albums). It passes `CardStyle`, `ImageAspect`, `ImageShadow`, `TextAlignment`, `MoreText`, `MoreVariant` and `ButtonSize` to every card and `MinColumnWidth`, `MaxColumnWidth` and `Gap` to the grid. Nothing without albums. |
 | `AlbumSection` | One page of an album: a `Section` whose heading id is `album-{slug}`, an `ImageGrid` of the page's photos (the first `EagerCount` eager: by default 4 in a grid, 1 in a mosaic), optional content, then the `Pager`; see [Photo albums](#photo-albums). |
 | `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links; no `address` when there are no lines and no channels. `PhoneText` shows the number as written (`+55 (11) 99999-0000`) while the link uses the digits; it must be the same number as `Phone`. The WhatsApp link shows `WhatsAppLabel`. |
 | `LanguageSwitcher` | Labelled `nav` of links with `hreflang`, `lang` and `aria-current="true"` on the current language. |
@@ -101,6 +101,53 @@ ordinal and ignores case. The empty path matches `/`. An item with an absolute a
 
 Texts that people read (labels, the menu button, the new-tab and video hints, the WhatsApp link text) are parameters so the caller can
 localize them.
+
+### Cards
+
+A card's look comes from typed parameters, never from a stylesheet of the site:
+
+- `Style`: `Boxed` (the default: the alternative background, a border and `--site-radius`) or `Plain` (`site-card--plain`: no
+  background, no border, the colour of its surroundings, so a plain card in a `Primary` band takes the on-primary colour, and the image
+  with `--site-radius` corners of its own).
+- `ImageAspect`: `FourByThree` (the default), `SixteenByNine` (`site-card--aspect-16x9`), `Square` (`site-card--aspect-1x1`) or
+  `Natural` (`site-card--aspect-natural`: the image's own ratio, never cropped).
+- `ImageShadow`: `None` (the default) or `Offset` (`site-card--image-shadow`): a hard block of `--site-color-border` offset
+  `--site-space-2` towards the end and the bottom, decorative and without a contrast need. It fits the design system as a token-built
+  decoration; a boxed card refuses it (`ArgumentException`), because its box would clip it.
+- `TextAlignment` (`SiteAlignment`): `Start` (the default) or `Center` (`site-card--text-center`), which centres the text, the heading
+  and the action row.
+- `Eyebrow`: a short label above the title; the heading is then an `hgroup` (`site-card__heading`) of the eyebrow `p`
+  (`site-card__eyebrow`, small, bold, letter-spaced, in the primary colour) and the heading, as on `Section`.
+- `MoreText`, `MoreVariant` (default `Outline`) and `ButtonSize` (default `Regular`): the more look of a card whose whole surface is its
+  link, such as "Learn more". It is a `span` with exactly the classes of a `ButtonLink` of that variant and size, plus
+  `site-card__more`, and `aria-hidden="true"`, because the covering title link is the one control. A shared internal style gives both
+  their classes, so the more look and a `ButtonLink` of the same variant, size and text are the same size to the pixel (a browser test
+  measures them). It lets clicks through to the title link (`pointer-events: none`) and takes the button's hover look while the card is
+  hovered. It needs `Href` (`ArgumentException`).
+- The more look and the `Actions` are one `ActionRow` (`site-card__actions`) at the bottom of the card, so the actions of a row of
+  cards line up whatever the length of their text. Only the actions take the pointer; a click between them reaches the title link.
+
+The card title has a typography role of its own (`TypographyRole.CardTitle`, see [Model](#model)), so a section heading role in upper
+case or a large size does not reach the cards. The card never widens its grid column (`min-width: 0`), and a word longer than the card,
+such as a long name in capitals, breaks inside it (`overflow-wrap: break-word`). An undefined option throws `ArgumentOutOfRangeException`.
+
+`CardGrid` takes `MinColumnWidth` (`CardColumnWidth.Narrow` 16rem, the default; `Medium` 22rem; `Wide` 32rem), `MaxColumnWidth`
+(`null`, the default: the columns share the row and empty columns are kept; a width caps the columns and centres them, dropping empty
+columns; it must be at least the minimum, `ArgumentException`) and `Gap` (`SiteSpace`, a step of the spacing scale; default `Space4`).
+They are modifier classes (`site-card-grid--min-medium`, `site-card-grid--max-wide`, `site-card-grid--gap-6`) that set the
+`--site-card-min-width`, `--site-card-max-width` and `--site-card-gap` tokens, so no style attribute is written and a strict
+Content-Security-Policy holds.
+
+```razor
+<CardGrid MinColumnWidth="CardColumnWidth.Medium" MaxColumnWidth="CardColumnWidth.Wide" Gap="SiteSpace.Space6">
+    <Card Title="Alentejo" Href="@LinkTarget.FromString("/tours/alentejo")" Image="_cover" Style="CardStyle.Plain"
+          ImageAspect="CardImageAspect.SixteenByNine" ImageShadow="CardImageShadow.Offset" TextAlignment="SiteAlignment.Center"
+          MoreText="Learn more">
+        <p>Eight days by bike.</p>
+        <Actions><ButtonLink Href="_signUp" Variant="ButtonVariant.Outline" NewTab="true">Sign up</ButtonLink></Actions>
+    </Card>
+</CardGrid>
+```
 
 ### Menu
 
@@ -335,7 +382,9 @@ dark surface too. `light-dark()` needs a 2024 or later browser (Chrome 123, Fire
 | `--site-divider-thickness` | `0.25rem` | Thickness of the section divider and the hero rule; the theme's shape |
 | `--site-divider-color` | `--site-color-accent` | Colour of the section divider and the hero rule on the page; the theme's shape |
 | `--site-content-width` | `72rem` | Maximum content width |
-| `--site-card-min-width` | `16rem` | Smallest card column of `CardGrid` |
+| `--site-card-min-width` | `16rem` | Smallest card column of `CardGrid`; `MinColumnWidth` sets it |
+| `--site-card-max-width` | `1fr` | Largest card column of `CardGrid`; `MaxColumnWidth` sets it |
+| `--site-card-gap` | `--site-space-4` | Space between the cards of `CardGrid`; `Gap` sets it |
 | `--site-scrim` | `64%` | Darkening of a photo behind normal on-primary text (image bands, the video play mark); computed by the theme |
 | `--site-scrim-large` | `50%` | Darkening of a photo behind large on-primary text (cover hero); computed by the theme |
 | `--site-scrim-boost` | `28%` | Second layer that brings `--site-scrim-large` up to `--site-scrim` (the header over a hero, outline buttons in a cover hero); computed by the theme |

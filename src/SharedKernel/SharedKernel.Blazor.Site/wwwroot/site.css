@@ -38,6 +38,8 @@
     --site-divider-color: var(--site-color-accent);
     --site-content-width: 72rem;
     --site-card-min-width: 16rem;
+    --site-card-max-width: 1fr;
+    --site-card-gap: var(--site-space-4);
     --site-focus-ring: 3px solid var(--site-color-focus);
     /*
      * The photo scrim: the least opacity of the text colour over a photo at which on-primary text reaches 4.5:1 (normal text), 3:1
@@ -645,6 +647,10 @@ a {
     color: var(--site-color-on-primary);
 }
 
+:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-card--plain .site-card__eyebrow {
+    color: inherit;
+}
+
 :is(.site-band--primary, .site-band--image, .site-hero--cover) .site-quote {
     background: transparent;
     border-inline-start-color: currentColor;
@@ -724,6 +730,11 @@ a {
     transition: background-color 0.15s ease, color 0.15s ease;
 }
 
+/* A compact button is 2.25 times its font size tall and keeps the 2.75rem tap target. */
+.site-button--compact {
+    padding: max(0.25em, (2.25em - 1lh) / 2) 1.125em;
+}
+
 .site-button--primary {
     background: var(--site-color-primary);
     color: var(--site-color-on-primary);
@@ -739,15 +750,18 @@ a {
     color: var(--site-color-primary);
 }
 
-.site-button--primary:hover {
+.site-button--primary:hover,
+.site-card:has(.site-card__title a:hover) .site-card__more.site-button--primary {
     background: var(--site-color-primary-hover);
 }
 
-.site-button--secondary:hover {
+.site-button--secondary:hover,
+.site-card:has(.site-card__title a:hover) .site-card__more.site-button--secondary {
     background: var(--site-color-accent-hover);
 }
 
-.site-button--outline:hover {
+.site-button--outline:hover,
+.site-card:has(.site-card__title a:hover) .site-card__more.site-button--outline {
     border-color: var(--site-color-primary-hover);
     color: var(--site-color-primary-hover);
 }
@@ -765,17 +779,71 @@ a {
 }
 
 /*
- * Cards: the grid keeps empty columns (auto-fill), so a lone card has the width of one column. The title link covers the card;
- * links and controls in the body and the actions stay clickable above it.
+ * Cards: the grid keeps empty columns (auto-fill), so a lone card has the width of one column; with a largest column width the columns
+ * are centred instead. The title link covers the card; links and controls in the body and the actions stay clickable above it.
  */
 .site-card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--site-card-min-width)), 1fr));
-    gap: var(--site-space-4);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--site-card-min-width)), var(--site-card-max-width)));
+    gap: var(--site-card-gap);
+}
+
+.site-card-grid--min-medium {
+    --site-card-min-width: 22rem;
+}
+
+.site-card-grid--min-wide {
+    --site-card-min-width: 32rem;
+}
+
+.site-card-grid--max-narrow {
+    --site-card-max-width: 16rem;
+}
+
+.site-card-grid--max-medium {
+    --site-card-max-width: 22rem;
+}
+
+.site-card-grid--max-wide {
+    --site-card-max-width: 32rem;
+}
+
+:is(.site-card-grid--max-narrow, .site-card-grid--max-medium, .site-card-grid--max-wide) {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--site-card-min-width)), var(--site-card-max-width)));
+    justify-content: center;
+}
+
+.site-card-grid--gap-0 {
+    --site-card-gap: 0;
+}
+
+.site-card-grid--gap-1 {
+    --site-card-gap: var(--site-space-1);
+}
+
+.site-card-grid--gap-2 {
+    --site-card-gap: var(--site-space-2);
+}
+
+.site-card-grid--gap-3 {
+    --site-card-gap: var(--site-space-3);
+}
+
+.site-card-grid--gap-4 {
+    --site-card-gap: var(--site-space-4);
+}
+
+.site-card-grid--gap-5 {
+    --site-card-gap: var(--site-space-5);
+}
+
+.site-card-grid--gap-6 {
+    --site-card-gap: var(--site-space-6);
 }
 
 .site-card {
     position: relative;
+    min-width: 0;
     color: var(--site-color-text);
     display: flex;
     flex-direction: column;
@@ -792,9 +860,34 @@ a {
     object-fit: cover;
 }
 
+.site-card--aspect-16x9 .site-card__media img {
+    aspect-ratio: 16 / 9;
+}
+
+.site-card--aspect-1x1 .site-card__media img {
+    aspect-ratio: 1 / 1;
+}
+
+.site-card--aspect-natural .site-card__media img {
+    aspect-ratio: auto;
+}
+
 .site-card__body {
     flex: 1;
     padding: var(--site-space-3);
+    overflow-wrap: break-word;
+}
+
+.site-card__heading {
+    margin: 0;
+}
+
+.site-card__eyebrow {
+    margin: 0 0 var(--site-space-1);
+    color: var(--site-color-primary);
+    font-size: var(--site-font-size-sm);
+    font-weight: 700;
+    letter-spacing: 0.05em;
 }
 
 .site-card__title a {
@@ -828,13 +921,68 @@ a {
     outline-offset: 2px;
 }
 
-.site-card__actions {
+/*
+ * The action row lies above the covering title link and at the bottom of the card, so the rows of a grid line up. Only its actions take
+ * the pointer: a click on the more look or between the actions reaches the title link.
+ */
+.site-card .site-card__actions {
     position: relative;
     z-index: 1;
-    display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
     gap: var(--site-space-2);
+    margin-top: auto;
     padding: 0 var(--site-space-3) var(--site-space-3);
+    pointer-events: none;
+}
+
+.site-card__actions > :not(.site-card__more) {
+    pointer-events: auto;
+}
+
+.site-card__more {
+    pointer-events: none;
+}
+
+/* A plain card: no box, the colour of its surroundings, and the image with its own corners. */
+.site-card--plain {
+    color: inherit;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+}
+
+.site-card--plain .site-card__media img {
+    border-radius: var(--site-radius);
+}
+
+.site-card--plain .site-card__body {
+    padding: var(--site-space-3) 0;
+}
+
+.site-card--plain .site-card__actions {
+    padding: 0;
+}
+
+/* The offset shadow: a hard block of the border colour, with room kept for it at the end and the bottom of the image. */
+.site-card--image-shadow .site-card__media {
+    margin-inline-end: var(--site-space-2);
+    margin-block-end: var(--site-space-2);
+}
+
+.site-card--image-shadow .site-card__media img {
+    box-shadow: var(--site-space-2) var(--site-space-2) 0 var(--site-color-border);
+}
+
+.site-card--text-center {
+    text-align: center;
+}
+
+.site-card--text-center .site-card__actions {
+    justify-content: center;
 }
 
 /* Facts table. */
