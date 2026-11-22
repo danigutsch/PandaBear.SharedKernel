@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Npgsql;
 using PandaBear.Npgsql;
 using PandaBear.Results;
+using PortableLockDeclaration = PandaBear.Mediator.Transactions.ITransactionLockDeclaration;
 
 namespace PandaBear.Mediator.EntityFrameworkCore;
 
@@ -21,7 +22,7 @@ namespace PandaBear.Mediator.EntityFrameworkCore;
 /// </para>
 /// <para>
 /// Each attempt, inside <c>CreateExecutionStrategy().ExecuteAsync</c>, clears the change tracker, begins a read committed transaction, takes
-/// the locks the request declares through <see cref="ITransactionLockDeclaration"/> at tier 0 with one new
+/// the locks the request declares through <see cref="PortableLockDeclaration"/> or <see cref="ITransactionLockDeclaration"/> at tier 0 with one new
 /// <c>PostgreSqlOrderedTransactionLocks</c>, runs the handler, then commits on success and rolls back otherwise (an invalid default result
 /// is not successful). Exceptions roll back and propagate so the strategy can retry transient failures.
 /// </para>
@@ -132,7 +133,9 @@ public partial class ResultTransactionBehavior<TRequest, TResponse> : IPipelineB
         TRequest request,
         CancellationToken ct)
     {
-        if (request is not ITransactionLockDeclaration declaration)
+        var portable = request as PortableLockDeclaration;
+        var legacy = request as ITransactionLockDeclaration;
+        if (portable is null && legacy is null)
         {
             return;
         }
@@ -143,8 +146,15 @@ public partial class ResultTransactionBehavior<TRequest, TResponse> : IPipelineB
             throw new InvalidOperationException("Declared transaction locks require the Npgsql provider.");
         }
 
+        IEnumerable<string> lockNames = (portable, legacy) switch
+        {
+            ({ } current, { } original) => original.TransactionLocks.Concat(current.TransactionLocks),
+            ({ } current, null) => current.TransactionLocks,
+            (null, { } original) => original.TransactionLocks,
+            _ => [],
+        };
         var locks = new PostgreSqlOrderedTransactionLocks(connection, npgsqlTransaction);
-        await locks.Acquire(declaration.TransactionLocks.Select(static name => new PostgreSqlTransactionLockRequest(0, name)), ct).ConfigureAwait(false);
+        await locks.Acquire(lockNames.Select(static name => new PostgreSqlTransactionLockRequest(0, name)), ct).ConfigureAwait(false);
     }
 
     [SuppressMessage(

@@ -2,8 +2,10 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml;
 using System.Xml.Linq;
+using PandaBear.ConfigurationFiles;
 using PandaBear.IO;
 using PandaBear.Processes;
+using PandaBear.Repositories;
 
 namespace PandaBear.Versioning;
 
@@ -80,7 +82,8 @@ public sealed class ConsumerVerifier(IProcessRunner processRunner, IExecutableRe
                 Directory.CreateDirectory(scratch);
                 await _commands.Run("git", ["clone", "--quiet", "--no-checkout", "--shared", "--", options.RepoRoot, clone], scratch, ct).ConfigureAwait(false);
                 await _commands.Run("git", ["checkout", "--quiet", "--detach", revision], clone, ct).ConfigureAwait(false);
-                ValidateConsumer(clone, Solution(clone, options), version);
+                var exemptProjects = await ReadExemptProjects(clone, ct).ConfigureAwait(false);
+                ValidateConsumer(clone, Solution(clone, options), version, exemptProjects);
                 await StagePackages(clone, options.Candidate, evidence["packageSha256"]!.AsObject(), ct).ConfigureAwait(false);
                 var environment = new Dictionary<string, string?>(StringComparer.Ordinal)
                 {
@@ -147,12 +150,7 @@ public sealed class ConsumerVerifier(IProcessRunner processRunner, IExecutableRe
             : throw new ArgumentException("--solution must name a .slnx file inside the repository: " + options.Solution + ".");
     }
 
-    /// <summary>
-    /// Requires every <c>PandaBear.SharedKernel.*</c> central package version, lock file entry, and local tool, compared
-    /// case-insensitively, to be the candidate version, and no project to reference SharedKernel sources.
-    /// </summary>
-    /// <exception cref="ArgumentException">A package, project, lock file entry, or local tool does not use the candidate version, a project is missing or outside the repository, or the consumer references no SharedKernel package.</exception>
-    internal static void ValidateConsumer(string clone, string solution, string version)
+    private static void ValidateConsumer(string clone, string solution, string version, HashSet<string> exemptProjects)
     {
         var references = 0;
         var central = Path.Combine(clone, "Directory.Packages.props");
@@ -161,7 +159,7 @@ public sealed class ConsumerVerifier(IProcessRunner processRunner, IExecutableRe
             foreach (var package in XDocument.Load(central).Descendants("PackageVersion").Where(static package => IsCandidatePackage((string?)package.Attribute("Include"))))
             {
                 var declared = (string?)package.Attribute("Version");
-                if (!SameVersion(declared, version) && !SameVersion(declared, "[" + version + "]"))
+                if (!MatchesDeclaredVersion(declared, version))
                 {
                     throw new ArgumentException($"Directory.Packages.props: {(string?)package.Attribute("Include")} has version {declared}, not the candidate version {version}.");
                 }
@@ -181,36 +179,21 @@ public sealed class ConsumerVerifier(IProcessRunner processRunner, IExecutableRe
                 throw new ArgumentException(Relative(clone, solution) + " lists a project outside the repository: " + name + ".");
             }
 
-            foreach (var reference in XDocument.Load(project).Descendants("ProjectReference"))
+            var document = XDocument.Load(project);
+            foreach (var reference in document.Descendants("ProjectReference"))
             {
                 RejectSource(Path.GetFileNameWithoutExtension(((string?)reference.Attribute("Include") ?? string.Empty).Replace('\\', '/')), name);
             }
 
             var lockFile = Path.Combine(Path.GetDirectoryName(project)!, "packages.lock.json");
             var lockName = Relative(clone, lockFile);
-            var frameworks = JsonNode.Parse(File.ReadAllText(lockFile))?["dependencies"]?.AsObject()
-                ?? throw new ArgumentException(lockName + " has no dependencies.");
-            foreach (var (framework, dependencies) in frameworks)
+            if (exemptProjects.Contains(name))
             {
-                foreach (var (id, value) in (dependencies?.AsObject() ?? throw new ArgumentException(lockName + " has no dependencies for " + framework + "."))
-                    .Where(static dependency => IsCandidatePackage(dependency.Key)))
-                {
-                    var dependency = value?.AsObject() ?? throw new ArgumentException(lockName + ": " + id + " has no entry.");
-                    var type = dependency["type"]?.GetValue<string>() ?? throw new ArgumentException(lockName + ": " + id + " has no type.");
-                    if (string.Equals(type, "Project", StringComparison.OrdinalIgnoreCase))
-                    {
-                        RejectSource(id, lockName);
-                    }
-
-                    var resolved = dependency["resolved"]?.GetValue<string>() ?? throw new ArgumentException(lockName + ": " + id + " has no resolved version.");
-                    if (!SameVersion(resolved, version))
-                    {
-                        throw new ArgumentException($"{lockName}: {id} resolves to {resolved}, not the candidate version {version}.");
-                    }
-
-                    references++;
-                }
+                ValidateExemption(document, name, lockFile, version);
+                continue;
             }
+
+            references += CountLockedCandidatePackages(lockFile, lockName, version);
         }
 
         var tools = Path.Combine(clone, ".config", "dotnet-tools.json");
@@ -233,6 +216,101 @@ public sealed class ConsumerVerifier(IProcessRunner processRunner, IExecutableRe
         {
             throw new ArgumentException("The consumer references no " + PackagePattern + " package.");
         }
+    }
+
+    private static async Task<HashSet<string>> ReadExemptProjects(string clone, CancellationToken ct)
+    {
+        var config = ConsumerConfigurationFile.RelativePath;
+        var path = RepositoryPath.Parse(config).ResolveUnder(clone);
+        try
+        {
+            var content = await BoundedReader.ReadFile(path, JsonConfigurationFile.MaxBytes, ct).ConfigureAwait(false)
+                ?? throw new ArgumentException(config + " exceeds the 1 MiB configuration size limit.");
+            return ConsumerConfigurationFile.ParseLockExemptProjects(content).ToHashSet(StringComparer.Ordinal);
+        }
+        catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
+        {
+            return new HashSet<string>(StringComparer.Ordinal);
+        }
+    }
+
+    private static void ValidateExemption(XDocument project, string name, string lockFile, string version)
+    {
+        var declarations = project.Root?.Elements("PropertyGroup")
+            .SelectMany(static group => group.Elements("RestorePackagesWithLockFile")).ToArray();
+        if (declarations is not [var setting]
+            || setting.Parent?.Attribute("Condition") is not null
+            || setting.Attribute("Condition") is not null
+            || !string.Equals(setting.Value.Trim(), "false", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(name + " is listed in lockExemptProjects and must set RestorePackagesWithLockFile to false unconditionally in its project file.");
+        }
+
+        if (File.Exists(lockFile))
+        {
+            throw new ArgumentException(name + " is listed in lockExemptProjects and must not keep a packages.lock.json.");
+        }
+
+        ValidateExemptPackageDeclarations(project, name, version);
+    }
+
+    private static void ValidateExemptPackageDeclarations(XDocument project, string name, string version)
+    {
+        foreach (var package in project.Descendants("PackageReference"))
+        {
+            var id = (string?)package.Attribute("Include") ?? (string?)package.Attribute("Update");
+            if (!IsCandidatePackage(id))
+            {
+                continue;
+            }
+
+            var versions = package.Attributes().Where(static attribute => attribute.Name.LocalName is "Version" or "VersionOverride")
+                .Select(static attribute => attribute.Value)
+                .Concat(package.Elements().Where(static element => element.Name.LocalName is "Version" or "VersionOverride")
+                    .Select(static element => element.Value));
+            foreach (var declared in versions)
+            {
+                if (!MatchesDeclaredVersion(declared, version))
+                {
+                    throw new ArgumentException($"{name}: {id} has version {declared}, not the candidate version {version}.");
+                }
+            }
+        }
+    }
+
+    private static int CountLockedCandidatePackages(string lockFile, string lockName, string version)
+    {
+        if (!File.Exists(lockFile))
+        {
+            throw new ArgumentException(lockName + " is required unless the project is declared in lockExemptProjects.");
+        }
+
+        var frameworks = JsonNode.Parse(File.ReadAllText(lockFile))?["dependencies"]?.AsObject()
+            ?? throw new ArgumentException(lockName + " has no dependencies.");
+        var references = 0;
+        foreach (var (framework, dependencies) in frameworks)
+        {
+            foreach (var (id, value) in (dependencies?.AsObject() ?? throw new ArgumentException(lockName + " has no dependencies for " + framework + "."))
+                .Where(static dependency => IsCandidatePackage(dependency.Key)))
+            {
+                var dependency = value?.AsObject() ?? throw new ArgumentException(lockName + ": " + id + " has no entry.");
+                var type = dependency["type"]?.GetValue<string>() ?? throw new ArgumentException(lockName + ": " + id + " has no type.");
+                if (string.Equals(type, "Project", StringComparison.OrdinalIgnoreCase))
+                {
+                    RejectSource(id, lockName);
+                }
+
+                var resolved = dependency["resolved"]?.GetValue<string>() ?? throw new ArgumentException(lockName + ": " + id + " has no resolved version.");
+                if (!SameVersion(resolved, version))
+                {
+                    throw new ArgumentException($"{lockName}: {id} resolves to {resolved}, not the candidate version {version}.");
+                }
+
+                references++;
+            }
+        }
+
+        return references;
     }
 
     /// <summary>
@@ -292,6 +370,9 @@ public sealed class ConsumerVerifier(IProcessRunner processRunner, IExecutableRe
         source.Elements("package").Select(static package => (string?)package.Attribute("pattern")).OfType<string>();
 
     private static bool IsCandidatePackage(string? id) => id?.StartsWith(PackagePrefix, StringComparison.OrdinalIgnoreCase) == true;
+
+    private static bool MatchesDeclaredVersion(string? declared, string version) =>
+        SameVersion(declared, version) || SameVersion(declared, "[" + version + "]");
 
     private static bool SameVersion(string? declared, string version) => string.Equals(declared, version, StringComparison.OrdinalIgnoreCase);
 

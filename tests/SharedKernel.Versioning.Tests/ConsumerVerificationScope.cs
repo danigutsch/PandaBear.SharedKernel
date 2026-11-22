@@ -39,6 +39,9 @@ internal sealed partial class ConsumerVerificationScope : IDisposable
         </configuration>
         """;
 
+    /// <summary>The solution path for the library without a lock file.</summary>
+    public const string LockFreeLibraryPath = "src/Library/Library.csproj";
+
     private readonly TemporaryGitRepository repository = new();
 
     /// <summary>
@@ -117,6 +120,32 @@ internal sealed partial class ConsumerVerificationScope : IDisposable
         var fullPath = Path.Combine(Root, path);
         Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
         File.WriteAllText(fullPath, content);
+    }
+
+    /// <summary>Adds the library project to the solution without giving it a lock file.</summary>
+    public void WriteLibraryWithoutLock(string project)
+    {
+        WriteFile(LockFreeLibraryPath, project);
+        WriteFile("Consumer.slnx", """
+            <Solution>
+              <Project Path="src/Library/Library.csproj" />
+              <Project Path="src/Consumer/Consumer.csproj" />
+            </Solution>
+            """);
+    }
+
+    /// <summary>Lists the added library as a lock-exempt project.</summary>
+    public void DeclareExemption() =>
+        WriteFile(".config/sharedkernel-repo.json", """{ "version": 1, "lockExemptProjects": ["src/Library/Library.csproj"] }""");
+
+    /// <summary>Asserts that preflight failed with <paramref name="diagnostic"/> before running the child command.</summary>
+    public void AssertRejected(CommandLineInvocation result, string diagnostic)
+    {
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain(diagnostic, StringComparison.Ordinal);
+        result.Error.ShouldNotContain("packages=", StringComparison.Ordinal);
+        Evidence["consumerCompatibility"]!.GetValue<string>().ShouldBe("failed");
+        Evidence["reason"]!.GetValue<string>().ShouldContain(diagnostic, StringComparison.Ordinal);
     }
 
     /// <summary>Writes the manifest, commits every file, and returns the commit.</summary>
