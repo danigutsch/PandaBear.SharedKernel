@@ -30,9 +30,16 @@
     --site-space-4: 1.5rem;
     --site-space-5: 2.5rem;
     --site-space-6: 4rem;
+    /* The corners and the divider of the theme's shape; a theme stylesheet writes its own. */
     --site-radius: 0.5rem;
+    --site-control-radius: 0.5rem;
+    --site-divider-width: 4rem;
+    --site-divider-thickness: 0.25rem;
+    --site-divider-color: var(--site-color-accent);
     --site-content-width: 72rem;
     --site-card-min-width: 16rem;
+    --site-card-max-width: none;
+    --site-card-gap: var(--site-space-4);
     --site-focus-ring: 3px solid var(--site-color-focus);
     /*
      * The photo scrim: the least opacity of the text colour over a photo at which on-primary text reaches 4.5:1 (normal text), 3:1
@@ -46,6 +53,11 @@
     --site-brand-height: 2.5rem;
     --site-header-height: 4.5rem;
     --site-floating-link-size: 3.5rem;
+    --site-floating-link-size-narrow: 3rem;
+    --site-text-width: 65ch;
+    --site-thumbnail-min-width: 6.5rem;
+    --site-thumbnail-aspect-ratio: 1;
+    --site-video-width: 40rem;
 }
 
 *,
@@ -55,8 +67,8 @@
 }
 
 /*
- * Typography roles: a theme stylesheet may set --site-{role}-{property} for the roles h1 to h6, body, small, link, button and
- * nav. Each fallback is the value used without a theme.
+ * Typography roles: a theme stylesheet may set --site-{role}-{property} for the roles h1 to h6, body, small, link, button, nav and
+ * card-title, and --site-{role}-color for h1 to h6 and card-title. Each fallback is the value used without a theme.
  */
 body {
     margin: 0;
@@ -83,6 +95,7 @@ h1 {
     letter-spacing: var(--site-h1-letter-spacing, normal);
     text-transform: var(--site-h1-text-transform, none);
     font-style: var(--site-h1-font-style, normal);
+    color: var(--site-h1-color, inherit);
 }
 
 h2 {
@@ -93,6 +106,7 @@ h2 {
     letter-spacing: var(--site-h2-letter-spacing, normal);
     text-transform: var(--site-h2-text-transform, none);
     font-style: var(--site-h2-font-style, normal);
+    color: var(--site-h2-color, inherit);
 }
 
 h3 {
@@ -103,6 +117,7 @@ h3 {
     letter-spacing: var(--site-h3-letter-spacing, normal);
     text-transform: var(--site-h3-text-transform, none);
     font-style: var(--site-h3-font-style, normal);
+    color: var(--site-h3-color, inherit);
 }
 
 h4 {
@@ -113,6 +128,7 @@ h4 {
     letter-spacing: var(--site-h4-letter-spacing, normal);
     text-transform: var(--site-h4-text-transform, none);
     font-style: var(--site-h4-font-style, normal);
+    color: var(--site-h4-color, inherit);
 }
 
 h5 {
@@ -123,6 +139,7 @@ h5 {
     letter-spacing: var(--site-h5-letter-spacing, normal);
     text-transform: var(--site-h5-text-transform, none);
     font-style: var(--site-h5-font-style, normal);
+    color: var(--site-h5-color, inherit);
 }
 
 h6 {
@@ -133,6 +150,18 @@ h6 {
     letter-spacing: var(--site-h6-letter-spacing, normal);
     text-transform: var(--site-h6-text-transform, none);
     font-style: var(--site-h6-font-style, normal);
+    color: var(--site-h6-color, inherit);
+}
+
+.site-card__title {
+    font-family: var(--site-card-title-font-family, var(--site-font-heading));
+    font-size: var(--site-card-title-font-size, var(--site-font-size-lg));
+    font-weight: var(--site-card-title-font-weight, 700);
+    line-height: var(--site-card-title-line-height, 1.2);
+    letter-spacing: var(--site-card-title-letter-spacing, normal);
+    text-transform: var(--site-card-title-text-transform, none);
+    font-style: var(--site-card-title-font-style, normal);
+    color: var(--site-card-title-color, inherit);
 }
 
 small,
@@ -230,7 +259,10 @@ a {
     padding-block: var(--site-space-3);
 }
 
+/* The brand slot lays its link out as a box around the logo, so the link's focus ring surrounds the logo. */
 .site-header__brand {
+    display: flex;
+    align-items: center;
     margin-inline-end: auto;
     font-weight: 700;
     font-size: var(--site-font-size-lg);
@@ -345,6 +377,7 @@ a {
     display: inline-flex;
     align-items: center;
     gap: var(--site-space-2);
+    min-height: 2.75rem;
     padding: var(--site-space-1) var(--site-space-3);
     border: 2px solid currentColor;
     border-radius: var(--site-radius);
@@ -381,6 +414,18 @@ a {
 
 .site-header__menu .site-header__actions {
     margin-top: var(--site-space-3);
+}
+
+/* The language switcher in the header takes the navigation's type, so its links sit on the line of the navigation links. */
+.site-header .site-language-switcher,
+.site-header .site-language-switcher a {
+    font-family: var(--site-nav-font-family, inherit);
+    font-size: var(--site-nav-font-size, inherit);
+    font-weight: var(--site-nav-font-weight, inherit);
+    line-height: var(--site-nav-line-height, inherit);
+    letter-spacing: var(--site-nav-letter-spacing, inherit);
+    text-transform: var(--site-nav-text-transform, inherit);
+    font-style: var(--site-nav-font-style, inherit);
 }
 
 /*
@@ -430,6 +475,56 @@ a {
     font-size: var(--site-font-size-sm);
 }
 
+.site-footer__content {
+    display: grid;
+    gap: var(--site-space-2);
+}
+
+:is(.site-footer__content, .site-footer__legal) > p {
+    margin: 0;
+}
+
+.site-footer address {
+    font-style: normal;
+}
+
+/* A primary footer: a full-width band of the primary colour in the light scheme, its content in the content width. */
+.site-footer--primary {
+    color-scheme: light;
+    width: 100%;
+    margin: var(--site-space-6) 0 0;
+    padding: var(--site-space-5) max(var(--site-space-3), (100% - var(--site-content-width)) / 2) var(--site-space-4);
+    border-top: 0;
+    background: var(--site-color-primary);
+    color: var(--site-color-on-primary);
+}
+
+.site-footer--text-center {
+    text-align: center;
+}
+
+/*
+ * Separated list: items on one line, each kept together, joined by a bar with empty alternative text, so assistive technology never
+ * reads it. An item wider than the whole line breaks inside.
+ */
+.site-separated-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-separated-list__item {
+    display: inline-block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.site-separated-list__item + .site-separated-list__item::before {
+    content: "|";
+    content: "|" / "";
+    margin-inline: 0.5em;
+}
+
 /* Hero. */
 .site-hero {
     display: grid;
@@ -469,6 +564,27 @@ a {
 }
 
 /*
+ * A divided hero: the theme's divider after the eyebrow and before the subtitle, drawn by pseudo-elements so the heading group keeps
+ * its content; on a cover hero it is centred and takes the text's colour.
+ */
+.site-hero--divided .site-hero__eyebrow::after,
+.site-hero--divided .site-hero__subtitle::before {
+    content: "";
+    display: block;
+    width: var(--site-divider-width);
+    height: var(--site-divider-thickness);
+    margin-block: var(--site-space-3);
+    background: var(--site-divider-color);
+    border-radius: var(--site-radius);
+}
+
+.site-hero--cover.site-hero--divided .site-hero__eyebrow::after,
+.site-hero--cover.site-hero--divided .site-hero__subtitle::before {
+    margin-inline: auto;
+    background: currentColor;
+}
+
+/*
  * Bands on the primary colour or a photo: the full width, the light scheme, and the on-primary colour for text, links, headings,
  * secondary text and the focus ring. A photo lies behind the content, darkened by the scrim of its text: large text in a cover hero,
  * normal text in an image band. A cover hero without a photo is a band of the primary colour.
@@ -480,11 +596,15 @@ a {
     grid-template-columns: 1fr;
     justify-items: center;
     width: 100%;
-    min-height: 20rem;
     padding: var(--site-space-6) max(var(--site-space-3), (100% - var(--site-content-width)) / 2);
     background: var(--site-color-primary);
     color: var(--site-color-on-primary);
     text-align: center;
+}
+
+/* Only a cover with a photo keeps a minimum height to show it; without one the primary band is as tall as its content. */
+.site-hero--cover:has(> .site-hero__media) {
+    min-height: 20rem;
 }
 
 .site-hero--cover .site-hero__text {
@@ -531,9 +651,15 @@ a {
     isolation: isolate;
 }
 
-.site-band__inner > .site-section {
+.site-band__inner > .site-section,
+.site-section .site-section {
     width: 100%;
     padding-block: 0;
+}
+
+/* A nested section, such as a day of an itinerary, is spaced from what comes before it like a group of paragraphs. */
+.site-section .site-section:not(:first-child) {
+    margin-block-start: var(--site-space-5);
 }
 
 .site-hero--cover .site-hero__media,
@@ -571,38 +697,91 @@ a {
     border-radius: 0;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label) {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label) {
     color: inherit;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) a:not(.site-button) {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) a:not(.site-button) {
     color: inherit;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) :focus-visible {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) :focus-visible {
     outline-color: var(--site-color-on-primary);
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-divider {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-divider {
     background: currentColor;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-button--primary {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-button--primary {
     background: var(--site-color-on-primary);
     color: var(--site-color-primary);
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-button--primary:hover {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-button--primary:hover {
     background: var(--site-color-primary-hover);
     color: var(--site-color-on-primary);
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) :is(.site-button--outline, .site-button--outline:hover) {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) :is(.site-button--outline, .site-button--outline:hover) {
     border-color: currentColor;
     color: var(--site-color-on-primary);
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover) .site-quote {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card--plain .site-card__eyebrow {
+    color: inherit;
+}
+
+/*
+ * The more look of a plain card on the primary colour follows the card's hover with the inverted look, which outranks the hover of the
+ * page's look below.
+ */
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card--plain:has(.site-card__title a:hover) .site-card__more.site-button--primary {
+    background: var(--site-color-primary-hover);
+    color: var(--site-color-on-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card--plain:has(.site-card__title a:hover) .site-card__more.site-button--outline {
+    border-color: currentColor;
+    color: var(--site-color-on-primary);
+}
+
+/*
+ * On the primary colour a card's focus ring, drawn on the band, takes the on-primary colour. A boxed card has its own background, so the
+ * focus rings inside it, its title and its buttons keep the look of the page.
+ */
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:has(:focus-visible) {
+    outline-color: var(--site-color-on-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:not(.site-card--plain) :focus-visible {
+    outline-color: var(--site-color-focus);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:not(.site-card--plain) .site-card__title {
+    color: var(--site-card-title-color, inherit);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:not(.site-card--plain) .site-button--primary {
+    background: var(--site-color-primary);
+    color: var(--site-color-on-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:not(.site-card--plain) .site-button--primary:hover {
+    background: var(--site-color-primary-hover);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:not(.site-card--plain) .site-button--outline {
+    border-color: var(--site-color-primary);
+    color: var(--site-color-primary);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-card:not(.site-card--plain) .site-button--outline:hover {
+    border-color: var(--site-color-primary-hover);
+    color: var(--site-color-primary-hover);
+}
+
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-quote {
     background: transparent;
     border-inline-start-color: currentColor;
 }
@@ -630,17 +809,56 @@ a {
 }
 
 .site-divider {
-    width: 4rem;
-    height: 0.25rem;
+    width: var(--site-divider-width);
+    height: var(--site-divider-thickness);
     margin-block: var(--site-space-2) var(--site-space-3);
-    background: var(--site-color-accent);
+    background: var(--site-divider-color);
     border-radius: var(--site-radius);
 }
 
 .site-section__intro {
-    margin: 0;
+    margin-block: 0;
     color: var(--site-color-muted);
-    max-width: 60ch;
+}
+
+/*
+ * Text alignment of a section or band. The alignment classes set private custom properties, which inherit, so the nearest section or
+ * band that sets an alignment wins: a start section inside a centred band is at the start again. Centred, the divider, the intro,
+ * paragraphs and lists, a video link, a byline, a default action row and an image narrower than its column are centred, a list's items
+ * stay at the start, and the quote drops its start rule.
+ */
+:is(.site-section--text-center, .site-band--text-center) {
+    --_site-centre-margin: auto;
+    --_site-centre-justify: center;
+    --_site-image-position: 50% 50%;
+    --_site-quote-rule: 0;
+    text-align: center;
+}
+
+:is(.site-section--text-start, .site-band--text-start) {
+    --_site-centre-margin: initial;
+    --_site-centre-justify: initial;
+    --_site-image-position: initial;
+    --_site-quote-rule: initial;
+    text-align: start;
+}
+
+/*
+ * The measure and the centring margins have no specificity (:where), so a consumer's rule, even on an element, overrides them. The intro
+ * and paragraphs and lists keep a readable measure instead of running the content width.
+ */
+:where(.site-section__intro),
+:where(.site-section__body, .site-split__main, .site-band__inner, .site-container) > :where(p, ul, ol) {
+    max-width: var(--site-text-width);
+}
+
+:where(.site-divider, .site-section__intro, .site-video-link),
+:where(.site-section__body, .site-split__main, .site-band__inner, .site-container) > :where(p, ul, ol) {
+    margin-inline: var(--_site-centre-margin, 0);
+}
+
+:where(.site-section__body, .site-split__main, .site-band__inner, .site-container) > :where(ul, ol) {
+    text-align: start;
 }
 
 /*
@@ -657,12 +875,19 @@ a {
     margin-top: var(--site-space-4);
 }
 
-/* Buttons. */
+/*
+ * Buttons: the padding follows the button's own font size and line height, so the button is 2.75 times its font size tall and its
+ * inline padding is half that height, and at least 2.75rem tall for a tap target.
+ */
 .site-button {
-    display: inline-block;
-    padding: var(--site-space-2) var(--site-space-4);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-block-size: 2.75rem;
+    padding: max(0.25em, (2.75em - 1lh) / 2) 1.375em;
     border: 2px solid transparent;
-    border-radius: var(--site-radius);
+    border-radius: var(--site-control-radius);
+    text-align: center;
     font-family: var(--site-button-font-family, inherit);
     font-size: var(--site-button-font-size, inherit);
     font-weight: var(--site-button-font-weight, 600);
@@ -672,6 +897,11 @@ a {
     font-style: var(--site-button-font-style, inherit);
     text-decoration: none;
     transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* A compact button is 2.25 times its font size tall and keeps the 2.75rem tap target. */
+.site-button--compact {
+    padding: max(0.25em, (2.25em - 1lh) / 2) 1.125em;
 }
 
 .site-button--primary {
@@ -689,44 +919,125 @@ a {
     color: var(--site-color-primary);
 }
 
-.site-button--primary:hover {
+.site-button--primary:hover,
+.site-card:has(.site-card__title a:hover) .site-card__more.site-button--primary {
     background: var(--site-color-primary-hover);
 }
 
-.site-button--secondary:hover {
+.site-button--secondary:hover,
+.site-card:has(.site-card__title a:hover) .site-card__more.site-button--secondary {
     background: var(--site-color-accent-hover);
 }
 
-.site-button--outline:hover {
+.site-button--outline:hover,
+.site-card:has(.site-card__title a:hover) .site-card__more.site-button--outline {
     border-color: var(--site-color-primary-hover);
     color: var(--site-color-primary-hover);
 }
 
 /*
- * Action row: below the breakpoint the actions are stacked and centred; from it on they are one wrapping row spread across the width.
- * A plain link in it keeps the link style.
+ * Action row: below the breakpoint the actions are stacked at the start, in the middle or at the end; from it on they are one wrapping
+ * row, together at the start, in the middle or at the end, or spread across the width. The default start follows centred text into the
+ * middle. A plain link in it keeps the link style.
  */
 .site-action-row {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: var(--_site-centre-justify, flex-start);
     gap: var(--site-space-3);
 }
 
+.site-action-row--center,
+.site-action-row--between {
+    align-items: center;
+}
+
+.site-action-row--end {
+    align-items: flex-end;
+}
+
 /*
- * Cards: the grid keeps empty columns (auto-fill), so a lone card has the width of one column. The title link covers the card;
- * links and controls in the body and the actions stay clickable above it.
+ * Cards: the smallest column width sets the number of columns. The grid keeps empty columns (auto-fill), so a lone card has the width of
+ * one column; with a largest card width it drops them and caps each card in its column, at the start or, centred, in the middle. The
+ * title link covers the card; links and controls in the body and the actions stay clickable above it.
  */
 .site-card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--site-card-min-width)), 1fr));
-    gap: var(--site-space-4);
+    gap: var(--site-card-gap);
+}
+
+.site-card-grid > * {
+    inline-size: 100%;
+    max-inline-size: var(--site-card-max-width);
+}
+
+.site-card-grid--items-center {
+    justify-items: center;
+}
+
+.site-card-grid--min-medium {
+    --site-card-min-width: 22rem;
+}
+
+.site-card-grid--min-wide {
+    --site-card-min-width: 32rem;
+}
+
+.site-card-grid--max-narrow {
+    --site-card-max-width: 16rem;
+}
+
+.site-card-grid--max-medium {
+    --site-card-max-width: 22rem;
+}
+
+.site-card-grid--max-wide {
+    --site-card-max-width: 32rem;
+}
+
+:is(.site-card-grid--max-narrow, .site-card-grid--max-medium, .site-card-grid--max-wide) {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--site-card-min-width)), 1fr));
+}
+
+.site-card-grid--gap-0 {
+    --site-card-gap: 0;
+}
+
+.site-card-grid--gap-1 {
+    --site-card-gap: var(--site-space-1);
+}
+
+.site-card-grid--gap-2 {
+    --site-card-gap: var(--site-space-2);
+}
+
+.site-card-grid--gap-3 {
+    --site-card-gap: var(--site-space-3);
+}
+
+.site-card-grid--gap-4 {
+    --site-card-gap: var(--site-space-4);
+}
+
+.site-card-grid--gap-5 {
+    --site-card-gap: var(--site-space-5);
+}
+
+.site-card-grid--gap-6 {
+    --site-card-gap: var(--site-space-6);
 }
 
 .site-card {
+    --_site-centre-margin: initial;
+    --_site-centre-justify: initial;
+    --_site-image-position: initial;
+    --_site-quote-rule: initial;
     position: relative;
+    min-width: 0;
     color: var(--site-color-text);
+    text-align: start;
     display: flex;
     flex-direction: column;
     background: var(--site-color-surface-alt);
@@ -742,9 +1053,34 @@ a {
     object-fit: cover;
 }
 
+.site-card--aspect-16x9 .site-card__media img {
+    aspect-ratio: 16 / 9;
+}
+
+.site-card--aspect-1x1 .site-card__media img {
+    aspect-ratio: 1 / 1;
+}
+
+.site-card--aspect-natural .site-card__media img {
+    aspect-ratio: auto;
+}
+
 .site-card__body {
     flex: 1;
     padding: var(--site-space-3);
+    overflow-wrap: break-word;
+}
+
+.site-card__heading {
+    margin: 0;
+}
+
+.site-card__eyebrow {
+    margin: 0 0 var(--site-space-1);
+    color: var(--site-color-primary);
+    font-size: var(--site-font-size-sm);
+    font-weight: 700;
+    letter-spacing: 0.05em;
 }
 
 .site-card__title a {
@@ -778,13 +1114,71 @@ a {
     outline-offset: 2px;
 }
 
-.site-card__actions {
+/*
+ * The action row lies above the covering title link and at the bottom of the card, so the rows of a grid line up; the card's alignment
+ * justifies it. Only its actions take the pointer: a click on the more look or between the actions reaches the title link.
+ */
+.site-card .site-card__actions {
     position: relative;
     z-index: 1;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--site-space-2);
+    margin-top: auto;
     padding: 0 var(--site-space-3) var(--site-space-3);
+    pointer-events: none;
+}
+
+.site-card__actions > :not(.site-card__more) {
+    pointer-events: auto;
+}
+
+.site-card__more {
+    pointer-events: none;
+}
+
+/* A plain card: no box, the colour of its surroundings, and the image with its own corners. */
+.site-card--plain {
+    color: inherit;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+}
+
+.site-card--plain .site-card__media img {
+    border-radius: var(--site-radius);
+}
+
+.site-card--plain .site-card__body {
+    padding: var(--site-space-3) 0;
+}
+
+.site-card--plain .site-card__actions {
+    padding: 0;
+}
+
+/* The offset shadow: a hard block of the border colour, with room kept for it at the end and the bottom of the image. */
+.site-card--image-shadow .site-card__media {
+    margin-inline-end: var(--site-space-2);
+    margin-block-end: var(--site-space-2);
+}
+
+.site-card--image-shadow .site-card__media img {
+    box-shadow: var(--site-space-2) var(--site-space-2) 0 var(--site-color-border);
+}
+
+.site-card--image-shadow .site-card__media img:dir(rtl) {
+    box-shadow: calc(-1 * var(--site-space-2)) var(--site-space-2) 0 var(--site-color-border);
+}
+
+/*
+ * A card does not inherit the alignment of a section or band around it: it resets the private alignment properties and starts its text,
+ * and only its own centred alignment sets them, as a centred section does.
+ */
+.site-card--text-center {
+    --_site-centre-margin: auto;
+    --_site-centre-justify: center;
+    --_site-image-position: 50% 50%;
+    --_site-quote-rule: 0;
+    text-align: center;
 }
 
 /* Facts table. */
@@ -814,21 +1208,23 @@ a {
 }
 
 /*
- * Fact grid: centred cards in columns at least 11rem wide that share the full width, as many as there are cards while they fit; from the
- * breakpoint on, the column count that the component computes for balanced rows (site-fact-grid--columns-1 to -4). The list draws the
- * top and start borders and each card its end and bottom borders, so the cells share single rules like a table. The label and the icon
- * take the primary colour; an svg icon without a fill attribute is filled with it. A value breaks anywhere when a word, such as a long
- * e-mail address, is wider than its card.
+ * Fact grid: centred cards at least 11rem wide in rows that share the full width, as many to a row as fit; from the breakpoint on, the
+ * row length that the component computes for balanced rows (site-fact-grid--columns-1 to -4). The cards of a shorter last row grow to
+ * fill it, so no row leaves a gap. The list draws the top and start borders and each card its end and bottom borders, so the cells share
+ * single rules like a table. The label and the icon take the primary colour; an svg icon without a fill attribute is filled with it. A
+ * value wraps between words, and an e-mail address before its @ and its dots (the component writes wbr there); only a part wider than
+ * its card breaks inside.
  */
 .site-fact-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    display: flex;
+    flex-wrap: wrap;
     margin: 0;
     border-block-start: 1px solid var(--site-color-border);
     border-inline-start: 1px solid var(--site-color-border);
 }
 
 .site-fact-grid__item {
+    flex: 1 1 11rem;
     min-width: 0;
     padding: var(--site-space-4) var(--site-space-3);
     border-block-end: 1px solid var(--site-color-border);
@@ -861,18 +1257,26 @@ a {
 
 .site-fact-grid__value {
     margin: 0;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
 }
 
-/* Disclosure. */
+/*
+ * Disclosure: a run of disclosures keeps its distance from the content before it, and the summary is rounded like its box, so the
+ * focus ring follows the box's corners.
+ */
 .site-disclosure {
     border: 1px solid var(--site-color-border);
     border-radius: var(--site-radius);
     margin-bottom: var(--site-space-2);
 }
 
+:not(.site-disclosure) + .site-disclosure {
+    margin-top: var(--site-space-4);
+}
+
 .site-disclosure > summary {
     padding: var(--site-space-3);
+    border-radius: var(--site-radius);
     font-weight: 600;
     cursor: pointer;
 }
@@ -886,7 +1290,7 @@ a {
     margin: 0;
     padding: var(--site-space-4);
     background: var(--site-color-surface-alt);
-    border-inline-start: 0.25rem solid var(--site-color-accent);
+    border-inline-start: var(--_site-quote-rule, 0.25rem) solid var(--site-color-accent);
     border-radius: var(--site-radius);
 }
 
@@ -903,7 +1307,8 @@ a {
 /* Image grid. */
 /*
  * Image grid: columns at least 14rem wide that share the full width, as many as there are images while they fit, so one image fills
- * its container. An image is never taller than 40rem or 80% of the viewport; a taller one is shown whole inside that height.
+ * its container. An image is never taller than 40rem or 80% of the viewport; a taller one is shown whole inside that height, at the
+ * start of its box, or in the middle in a section or band with centred text.
  */
 .site-image-grid {
     display: grid;
@@ -920,7 +1325,18 @@ a {
     width: 100%;
     max-height: min(40rem, 80svh);
     object-fit: contain;
+    object-position: var(--_site-image-position, 0% 50%);
     border-radius: var(--site-radius);
+}
+
+/* A linked image is a block tile, rounded like the image, so the focus ring surrounds the tile. */
+.site-image-grid__link {
+    display: block;
+    border-radius: var(--site-radius);
+}
+
+.site-image-grid__item img:dir(rtl) {
+    object-position: var(--_site-image-position, 100% 50%);
 }
 
 .site-image-grid__item figcaption {
@@ -960,10 +1376,27 @@ a {
     columns: 14rem 4;
 }
 
+/*
+ * Thumbnails: every image cropped to one aspect ratio, in columns at least --site-thumbnail-min-width wide and at least 15% of the
+ * width, so at most six to a row; empty columns are kept, so a short last row keeps the thumbnails' size.
+ */
+.site-image-grid--thumbnails {
+    grid-template-columns: repeat(auto-fill, minmax(max(min(100%, var(--site-thumbnail-min-width)), 15%), 1fr));
+    gap: var(--site-space-2);
+}
+
+.site-image-grid--thumbnails .site-image-grid__item img {
+    aspect-ratio: var(--site-thumbnail-aspect-ratio);
+    max-height: none;
+    object-fit: cover;
+    object-position: 50% 50%;
+}
+
 /* Byline: a round photo beside the name and the job title. */
 .site-byline {
     display: flex;
     align-items: center;
+    justify-content: var(--_site-centre-justify, flex-start);
     gap: var(--site-space-3);
 }
 
@@ -998,6 +1431,7 @@ a {
 .site-video-link {
     display: grid;
     grid-template-areas: "media" "title";
+    max-width: var(--site-video-width);
     color: var(--site-color-primary);
     text-decoration: none;
 }
@@ -1006,9 +1440,12 @@ a {
     grid-area: media;
 }
 
+/* The poster is cropped to 16:9, so the black bars of a 4:3 video thumbnail are cut away. */
 .site-video-link__poster img {
     display: block;
     width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
     border-radius: var(--site-radius);
 }
 
@@ -1043,18 +1480,18 @@ a {
 }
 
 /*
- * Floating link: fixed in the bottom corner. While it is on the page, focused elements scroll clear of it and the footer, or the
- * body without a footer, ends with room for it.
+ * Floating link: fixed in the bottom corner, smaller and nearer the corner below the breakpoint, where it lies over the text. While it
+ * is on the page, focused elements scroll clear of it and the footer, or the body without a footer, ends with room for it.
  */
 .site-floating-link {
     position: fixed;
-    inset-block-end: var(--site-space-3);
-    inset-inline-end: var(--site-space-3);
+    inset-block-end: var(--site-space-2);
+    inset-inline-end: var(--site-space-2);
     z-index: 50;
     display: grid;
     place-items: center;
-    width: var(--site-floating-link-size);
-    height: var(--site-floating-link-size);
+    width: var(--site-floating-link-size-narrow);
+    height: var(--site-floating-link-size-narrow);
     border-radius: 50%;
     background: var(--site-color-primary);
     color: var(--site-color-on-primary);
@@ -1134,10 +1571,13 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
 }
 
 .site-pager a {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-inline-size: 2.75rem;
+    min-block-size: 2.75rem;
     padding: var(--site-space-2) var(--site-space-3);
-    border-radius: var(--site-radius);
+    border-radius: var(--site-control-radius);
     text-align: center;
 }
 
@@ -1161,13 +1601,28 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
 
 .site-language-switcher a {
     padding: var(--site-space-1) var(--site-space-2);
-    border-radius: var(--site-radius);
+    border-radius: var(--site-control-radius);
     text-decoration: none;
 }
 
 .site-language-switcher a[aria-current="true"] {
     background: var(--site-color-primary);
     color: var(--site-color-on-primary);
+}
+
+/* Below the breakpoint, where a finger is the pointer, footer links and language links are at least 2.75rem (44px) tap targets. */
+@media (width < 48rem) {
+    .site-footer a:not(.site-floating-link),
+    .site-language-switcher a {
+        display: inline-flex;
+        align-items: center;
+        min-block-size: 2.75rem;
+    }
+
+    .site-language-switcher a {
+        justify-content: center;
+        min-inline-size: 2.75rem;
+    }
 }
 
 @media (min-width: 48rem) {
@@ -1183,6 +1638,10 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: var(--site-space-5);
+        align-items: start;
+    }
+
+    .site-split--align-center {
         align-items: center;
     }
 
@@ -1194,33 +1653,53 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
         order: -1;
     }
 
-    .site-fact-grid--columns-1 {
-        grid-template-columns: repeat(1, minmax(0, 1fr));
+    .site-fact-grid--columns-1 > .site-fact-grid__item {
+        flex-basis: calc(100% / 1 - 1px);
     }
 
-    .site-fact-grid--columns-2 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .site-fact-grid--columns-2 > .site-fact-grid__item {
+        flex-basis: calc(100% / 2 - 1px);
     }
 
-    .site-fact-grid--columns-3 {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+    .site-fact-grid--columns-3 > .site-fact-grid__item {
+        flex-basis: calc(100% / 3 - 1px);
     }
 
-    .site-fact-grid--columns-4 {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+    .site-fact-grid--columns-4 > .site-fact-grid__item {
+        flex-basis: calc(100% / 4 - 1px);
     }
 
     .site-action-row {
         flex-direction: row;
+        align-items: center;
+        justify-content: var(--_site-centre-justify, flex-start);
+    }
+
+    .site-action-row--center {
+        justify-content: center;
+    }
+
+    .site-action-row--end {
+        justify-content: flex-end;
+    }
+
+    .site-action-row--between {
         justify-content: space-between;
     }
 
-    .site-hero--cover {
+    .site-hero--cover:has(> .site-hero__media) {
         min-height: 34.375rem;
     }
 
-    .site-hero--landing {
+    .site-hero--landing:has(> .site-hero__media) {
         min-height: clamp(34.375rem, 85svh, 52rem);
+    }
+
+    .site-floating-link {
+        inset-block-end: var(--site-space-3);
+        inset-inline-end: var(--site-space-3);
+        width: var(--site-floating-link-size);
+        height: var(--site-floating-link-size);
     }
 
     .site-nav:has(.site-nav__group[open]) {
@@ -1238,6 +1717,15 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
         background: var(--site-color-surface);
         border: 1px solid var(--site-color-border);
         border-radius: var(--site-radius);
+    }
+}
+
+/* Below the header breakpoint the links and group summaries of the menu are 44px tap targets. */
+@media (width < 60rem) {
+    .site-header__menu :is(.site-nav a, .site-nav summary) {
+        display: flex;
+        align-items: center;
+        min-height: 2.75rem;
     }
 }
 

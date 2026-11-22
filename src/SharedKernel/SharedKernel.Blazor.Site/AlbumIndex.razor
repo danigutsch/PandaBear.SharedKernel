@@ -1,11 +1,12 @@
 @inherits SiteComponent
 @if (Albums.Count > 0)
 {
-    <CardGrid @attributes="AdditionalAttributes" Class="@CssClass("site-album-index")">
+    <CardGrid @attributes="AdditionalAttributes" Class="@CssClass("site-album-index")" MinColumnWidth="@MinColumnWidth" MaxColumnWidth="@MaxColumnWidth" Gap="@Gap" ItemAlignment="@ItemAlignment">
         @for (var index = 0; index < Albums.Count; index++)
         {
             var album = Albums[index];
-            <Card @key="album.Href.Value" Title="@album.Title" Href="@album.Href" Image="@album.Cover" EagerImage="@(index < EagerCount)" HeadingLevel="@HeadingLevel" TitleLanguage="@album.TitleLanguage">
+            <Card @key="album.Href.Value" Title="@album.Title" Href="@album.Href" Image="@album.Cover" EagerImage="@(index < EagerCount)" HeadingLevel="@HeadingLevel" TitleLanguage="@album.TitleLanguage"
+                  CardStyle="@CardStyle" ImageAspect="@ImageAspect" ImageShadow="@ImageShadow" TextAlignment="@TextAlignment" MoreText="@MoreText" MoreVariant="@MoreVariant" MoreSize="@MoreSize">
                 @if (!string.IsNullOrWhiteSpace(album.PhotoCountText))
                 {
                     <p class="site-album-index__count">@album.PhotoCountText</p>

@@ -35,4 +35,10 @@ public enum TypographyRole
 
     /// <summary>Header navigation items (<c>.site-nav a</c> and <c>.site-nav summary</c>).</summary>
     Nav = 10,
+
+    /// <summary>
+    /// Card headings (<c>.site-card__title</c>), whatever their level, so a card title does not take the size or the transform of the
+    /// section heading of its level.
+    /// </summary>
+    CardTitle = 11,
 }

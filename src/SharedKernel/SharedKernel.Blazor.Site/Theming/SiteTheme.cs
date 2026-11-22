@@ -4,8 +4,9 @@ using PandaBear.Results;
 namespace PandaBear.Blazor.Site.Theming;
 
 /// <summary>
-/// An owner-editable site theme: colour tokens with a light and a dark value, typography per role, self-hosted fonts, and the
-/// height of the brand image in the header, from which the header's own height follows.
+/// An owner-editable site theme: colour tokens with a light and a dark value, typography per role, self-hosted fonts, the
+/// height of the brand image in the header, from which the header's own height follows, and the <see cref="SiteShape" /> of
+/// controls, surfaces and dividers.
 /// <see cref="Create" /> enforces every rule (see <see cref="Review" />); <see cref="CreateDraft" /> only enforces what rendering
 /// needs (unique font keys and existing font references), so an editor can preview a theme that still breaks a rule.
 /// </summary>
@@ -19,9 +20,10 @@ public sealed class SiteTheme : ValueObject
     private const decimal FallbackNavigationSize = 1.125m;
     private const decimal FallbackLineHeight = 1.6m;
 
-    private SiteTheme(SiteColors colors, SiteTypography typography, IReadOnlyList<ThemeFont> fonts, bool allowsSmallText, decimal brandHeight)
+    private SiteTheme(SiteColors colors, SiteTypography typography, IReadOnlyList<ThemeFont> fonts, bool allowsSmallText, decimal brandHeight, SiteShape shape)
     {
         BrandHeight = brandHeight;
+        Shape = shape;
         Colors = colors;
         Typography = typography;
         Fonts = fonts;
@@ -39,6 +41,9 @@ public sealed class SiteTheme : ValueObject
 
     /// <summary>Gets the self-hosted fonts in key order.</summary>
     public IReadOnlyList<ThemeFont> Fonts { get; }
+
+    /// <summary>Gets the shape of controls, surfaces and dividers.</summary>
+    public SiteShape Shape { get; }
 
     /// <summary>Gets the height in rem of the brand image (the logo) in the header.</summary>
     public decimal BrandHeight { get; }
@@ -72,6 +77,7 @@ public sealed class SiteTheme : ValueObject
     /// <param name="allowSmallText">Whether body text below 1rem and other text below 0.875rem is allowed.</param>
     /// <param name="brandHeight">The height in rem of the brand image in the header, from 1.5rem to 8rem.</param>
     /// <param name="colorLabel">The names of the colour roles in contrast messages, as in <see cref="Review" />.</param>
+    /// <param name="shape">The shape of controls, surfaces and dividers; <see cref="SiteShape.Default" /> when <see langword="null" />.</param>
     /// <returns>The theme, or validation errors by field path, such as <c>colors.muted</c> or <c>typography.body.lineHeight</c>.</returns>
     public static Result<SiteTheme> Create(
         SiteColors colors,
@@ -79,9 +85,10 @@ public sealed class SiteTheme : ValueObject
         IEnumerable<ThemeFont>? fonts = null,
         bool allowSmallText = false,
         decimal brandHeight = DefaultBrandHeight,
-        Func<ThemeColorRole, string?>? colorLabel = null)
+        Func<ThemeColorRole, string?>? colorLabel = null,
+        SiteShape? shape = null)
     {
-        var draft = CreateDraft(colors, typography, fonts, allowSmallText, brandHeight);
+        var draft = CreateDraft(colors, typography, fonts, allowSmallText, brandHeight, shape);
         if (!draft.TryGetValue(out var theme))
         {
             return draft;
@@ -97,9 +104,11 @@ public sealed class SiteTheme : ValueObject
     /// <param name="fonts">The self-hosted fonts, if any.</param>
     /// <param name="allowSmallText">Whether body text below 1rem and other text below 0.875rem is allowed.</param>
     /// <param name="brandHeight">The height in rem of the brand image in the header; a draft only needs it positive.</param>
+    /// <param name="shape">The shape of controls, surfaces and dividers; <see cref="SiteShape.Default" /> when <see langword="null" />.</param>
     /// <returns>
-    /// The theme, or errors on <c>fonts[i].key</c> for a repeated key, <c>typography.{role}.fontKey</c> for a missing font and
-    /// <c>header.brandHeight</c> for a brand height that is not positive or has more than four decimals.
+    /// The theme, or errors on <c>fonts[i].key</c> for a repeated key, <c>typography.{role}.fontKey</c> for a missing font,
+    /// <c>typography.{role}.color</c> for a colour on a role that is not a heading, and <c>header.brandHeight</c> for a brand height
+    /// that is not positive or has more than four decimals.
     /// </returns>
     /// <exception cref="ArgumentNullException"><paramref name="colors" />, <paramref name="typography" /> or a font is <see langword="null" />.</exception>
     public static Result<SiteTheme> CreateDraft(
@@ -107,7 +116,8 @@ public sealed class SiteTheme : ValueObject
         SiteTypography typography,
         IEnumerable<ThemeFont>? fonts = null,
         bool allowSmallText = false,
-        decimal brandHeight = DefaultBrandHeight)
+        decimal brandHeight = DefaultBrandHeight,
+        SiteShape? shape = null)
     {
         ArgumentNullException.ThrowIfNull(colors);
         ArgumentNullException.ThrowIfNull(typography);
@@ -131,7 +141,12 @@ public sealed class SiteTheme : ValueObject
         {
             if (typography[role].FontKey is { } key && !keys.Contains(key))
             {
-                errors.Add($"typography.{ThemeNames.Css(role)}.fontKey", "No font has this key.");
+                errors.Add($"typography.{ThemeNames.Field(role)}.fontKey", "No font has this key.");
+            }
+
+            if (typography[role].Color is not null && !ThemeNames.IsHeading(role))
+            {
+                errors.Add($"typography.{ThemeNames.Field(role)}.color", "Only headings and card titles take a colour; the components colour this text.");
             }
         }
 
@@ -142,7 +157,7 @@ public sealed class SiteTheme : ValueObject
 
         return errors.HasErrors
             ? errors.ToResult<SiteTheme>("The site theme is incomplete.")
-            : Result.Ok(new SiteTheme(colors, typography, list.OrderBy(font => font.Key, StringComparer.Ordinal).ToArray(), allowSmallText, brandHeight));
+            : Result.Ok(new SiteTheme(colors, typography, list.OrderBy(font => font.Key, StringComparer.Ordinal).ToArray(), allowSmallText, brandHeight, shape ?? SiteShape.Default));
     }
 
     /// <summary>Checks the readability rules.</summary>
@@ -158,7 +173,14 @@ public sealed class SiteTheme : ValueObject
     /// <summary>Gets the style of a role with every unset value taken from <see cref="Default" />.</summary>
     /// <param name="role">The role.</param>
     /// <returns>The effective style.</returns>
-    public TypographyStyle Effective(TypographyRole role) => Typography[role].Over(Default.Typography[role]);
+    /// <remarks>
+    /// A card title's unset font family, weight and style come from this theme's own level 3 heading before the default, so a theme
+    /// that gives its headings a display font keeps it on its card titles; its size, line height, spacing and transform stay the card
+    /// title's.
+    /// </remarks>
+    public TypographyStyle Effective(TypographyRole role) => role == TypographyRole.CardTitle
+        ? Typography[role].Over(Typography[TypographyRole.H3].Face()).Over(Default.Typography[role])
+        : Typography[role].Over(Default.Typography[role]);
 
     /// <summary>Gets the font a key references.</summary>
     /// <param name="key">The key.</param>
@@ -175,6 +197,7 @@ public sealed class SiteTheme : ValueObject
         yield return Typography;
         yield return AllowsSmallText;
         yield return BrandHeight;
+        yield return Shape;
         yield return Fonts.Count;
         foreach (var font in Fonts)
         {
@@ -208,8 +231,9 @@ public sealed class SiteTheme : ValueObject
             [TypographyRole.Body] = TypographyStyle.Create(fallback: GenericFontFamily.SansSerif, size: Fluid(1m, 1.125m), weight: 400, lineHeight: 1.6m).Value,
             [TypographyRole.Small] = TypographyStyle.Create(size: Fluid(0.875m, 0.9375m)).Value,
             [TypographyRole.Button] = TypographyStyle.Create(weight: 600).Value,
+            [TypographyRole.CardTitle] = Heading(1.125m, 1.375m),
         });
-        return new SiteTheme(colors, typography, [], false, DefaultBrandHeight);
+        return new SiteTheme(colors, typography, [], false, DefaultBrandHeight, SiteShape.Default);
 
         static ThemeColor Pair(string light, string dark) => ThemeColor.Create(CssColor.FromString(light), CssColor.FromString(dark));
         static FontSize Fluid(decimal min, decimal max) => FontSize.Fluid(min, max).Value;

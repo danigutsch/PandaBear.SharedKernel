@@ -32,4 +32,35 @@ public sealed class ActionRowTests : BunitContext
         root.ClassName.ShouldBe("site-action-row extra");
         root.GetAttribute("data-test").ShouldBe("x");
     }
+
+    [Theory]
+    [InlineData(ActionRowJustification.Start, "site-action-row")]
+    [InlineData(ActionRowJustification.Center, "site-action-row site-action-row--center")]
+    [InlineData(ActionRowJustification.End, "site-action-row site-action-row--end")]
+    [InlineData(ActionRowJustification.Between, "site-action-row site-action-row--between")]
+    public void The_justification_sets_a_class_and_keeps_the_actions_in_order(ActionRowJustification justification, string classes)
+    {
+        // Arrange & Act
+        var cut = Render<ActionRow>(parameters => parameters
+            .Add(component => component.Justification, justification)
+            .Add(component => component.Class, "extra")
+            .AddChildContent("<a id=\"one\" href=\"/one\">One</a><a id=\"two\" href=\"/two\">Two</a>"));
+
+        // Assert
+        var root = cut.Find(".site-action-row");
+        root.ClassName.ShouldBe(classes + " extra");
+        root.Children.Select(child => child.Id).ShouldBe(["one", "two"]);
+    }
+
+    [Fact]
+    public void An_undefined_justification_is_rejected()
+    {
+        // Arrange & Act
+        var render = () => Render<ActionRow>(parameters => parameters
+            .Add(component => component.Justification, (ActionRowJustification)9)
+            .AddChildContent("<a href=\"/\">Home</a>"));
+
+        // Assert
+        render.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe(nameof(ActionRow.Justification));
+    }
 }

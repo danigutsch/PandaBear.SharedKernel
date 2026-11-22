@@ -126,4 +126,33 @@ public sealed class SiteLayoutBrowserTests(ChromiumFixture chromium) : IClassFix
         paddingTop.ShouldBe("0px");
         paddingBottom.ShouldBe("0px");
     }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData("")]
+    [InlineData(":root { --site-nav-font-size: 0.875rem; --site-nav-line-height: 1.7; --site-nav-letter-spacing: 0.05em; }")]
+    public async Task On_a_desktop_the_language_switcher_sits_on_the_line_of_the_navigation_links_in_their_type(string theme)
+    {
+        // Arrange
+        await using var page = await LayoutPage.Open(chromium.Browser, 1280, languages: true, theme: theme);
+
+        // Act
+        var lines = await page.Page.EvaluateAsync<double[]>(
+            """
+            () => [document.querySelector('.site-nav__item > a'), document.querySelector('.site-language-switcher a')].map(link => {
+                const range = document.createRange();
+                range.selectNodeContents(link);
+                return range.getBoundingClientRect().bottom;
+            })
+            """);
+
+        var navigationSize = await page.Style(".site-nav__item > a", "font-size");
+        var languageSize = await page.Style(".site-language-switcher a", "font-size");
+        var navigationSpacing = await page.Style(".site-nav__item > a", "letter-spacing");
+        var languageSpacing = await page.Style(".site-language-switcher a", "letter-spacing");
+
+        // Assert
+        Math.Abs(lines[0] - lines[1]).ShouldBeLessThanOrEqualTo(0.5);
+        languageSize.ShouldBe(navigationSize);
+        languageSpacing.ShouldBe(navigationSpacing);
+    }
 }

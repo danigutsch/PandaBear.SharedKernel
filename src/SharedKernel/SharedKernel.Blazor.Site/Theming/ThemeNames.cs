@@ -40,7 +40,7 @@ internal static class ThemeNames
         return char.ToLowerInvariant(name[0]) + name[1..];
     }
 
-    /// <summary>Gets the CSS and field-path name of a typography role, such as <c>h1</c> or <c>body</c>.</summary>
+    /// <summary>Gets the CSS name of a typography role, such as <c>h1</c>, <c>body</c> or <c>card-title</c>.</summary>
     /// <param name="role">The role.</param>
     /// <returns>The name.</returns>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="role" /> is not a defined role.</exception>
@@ -57,8 +57,20 @@ internal static class ThemeNames
         TypographyRole.Link => "link",
         TypographyRole.Button => "button",
         TypographyRole.Nav => "nav",
+        TypographyRole.CardTitle => "card-title",
         _ => throw new ArgumentOutOfRangeException(nameof(role), role, "The typography role is not defined."),
     };
+
+    /// <summary>Gets the field-path name of a typography role, such as <c>h1</c>, <c>body</c> or <c>cardTitle</c>.</summary>
+    /// <param name="role">The role.</param>
+    /// <returns>The name.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="role" /> is not a defined role.</exception>
+    public static string Field(TypographyRole role) => role == TypographyRole.CardTitle ? "cardTitle" : Css(role);
+
+    /// <summary>Gets a value indicating whether a typography role is a heading role that takes a colour: h1 to h6 and the card title.</summary>
+    /// <param name="role">The role.</param>
+    /// <returns><see langword="true" /> for a heading role.</returns>
+    public static bool IsHeading(TypographyRole role) => role is >= TypographyRole.H1 and <= TypographyRole.H6 or TypographyRole.CardTitle;
 
     /// <summary>Gets the name of a scheme, <c>light</c> or <c>dark</c>.</summary>
     /// <param name="scheme">The scheme.</param>

@@ -26,8 +26,8 @@ public sealed class ThemePreviewStrictPolicyTests(ChromiumFixture chromium) : IC
         typography.Select(style => style.Weight).ShouldBe(["700", "700", "700", "700", "400"]);
         typography[0].Size.ShouldBeGreaterThan(typography[1].Size);
         typography[1].Size.ShouldBeGreaterThan(typography[2].Size);
-        typography[3].Size.ShouldBe(typography[2].Size);
-        typography[2].Size.ShouldBeGreaterThan(typography[4].Size);
+        typography[2].Size.ShouldBeGreaterThan(typography[3].Size);
+        typography[3].Size.ShouldBeGreaterThan(typography[4].Size);
     }
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
