@@ -61,7 +61,7 @@ public sealed class PageSectionTests
         section.Video.PosterImageId.ShouldBe(poster);
         section.Video.Title.ShouldBe("Nosso filme");
         section.Link.ShouldNotBeNull().Text.ShouldBe("Fale conosco");
-        section.Link.Target.ShouldBe(new NavLink("contact", null));
+        section.Link.Target.PageKey.ShouldBe("contact");
         section.Link.Style.ShouldBe(LinkStyle.Outline);
         section.ImagesShown().ShouldBe([background, photo, first, second, poster]);
     }
@@ -219,6 +219,29 @@ public sealed class PageSectionTests
         error.ShouldHaveValidationError(Field + ".link.style", "The button style is not supported.");
         error.ShouldHaveValidationError(Field + ".link.pageKey", "The page does not exist.");
         Fields(external).ShouldBe([Field + ".link.externalLink"]);
+    }
+
+    [Fact]
+    public void A_button_without_a_target_is_a_validation_error_on_the_button()
+    {
+        // Act
+        var error = Refused(_context, new SiteSectionDefinition { Link = new("Ver", null) });
+
+        // Assert
+        Fields(error).ShouldBe([Field + ".link"]);
+        error.ShouldHaveValidationError(Field + ".link", "Choose where the button links.");
+    }
+
+    [Fact]
+    public void A_section_whose_only_content_is_an_invalid_button_reports_the_button()
+    {
+        // Act
+        var noText = Refused(_context, new SiteSectionDefinition { Link = new(" ", new NavLink("about", null)) });
+        var badTarget = Refused(_context, new SiteSectionDefinition { Link = new("Ver", new NavLink("unknown", null)) });
+
+        // Assert
+        Fields(noText).ShouldBe([Field + ".link.text"]);
+        Fields(badTarget).ShouldBe([Field + ".link.pageKey"]);
     }
 
     [Fact]

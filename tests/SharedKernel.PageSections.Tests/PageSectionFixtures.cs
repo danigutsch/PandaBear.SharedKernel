@@ -29,7 +29,12 @@ internal static class PageSectionFixtures
     /// <param name="definitions">The sections.</param>
     /// <returns>The result.</returns>
     public static Result<IReadOnlyList<SiteSection>> Create(SiteContext context, bool published, params SiteSectionDefinition[] definitions) =>
-        PageSectionList.Create(definitions, Rules, context, Portuguese, published, Prefix);
+        PageSectionList.Create(definitions, Rules, context, Scope(published));
+
+    /// <summary>Builds the scope of the Portuguese sections, with V2's images field.</summary>
+    /// <param name="published">Whether the translation is published.</param>
+    /// <returns>The scope.</returns>
+    public static PageSectionScope Scope(bool published) => new(Portuguese, published, Prefix, "pt.images");
 
     /// <summary>Validates one draft section that must be valid.</summary>
     /// <param name="context">The context.</param>
@@ -59,7 +64,7 @@ internal static class PageSectionFixtures
     /// <param name="definition">The stored definition.</param>
     public static void ShouldNotRestore(SiteSectionDefinition definition)
     {
-        Action act = () => PageSection.Restore(definition);
+        Action act = () => PageSection.Restore(definition, NavRoute.Restore);
         act.ShouldThrow<ArgumentException>();
     }
 }

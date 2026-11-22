@@ -6,7 +6,7 @@ namespace PandaBear.PageSections.Tests;
 /// A V2-shaped section context: an image library with alt text per culture, links to known pages or https addresses, a settings block
 /// that needs the bank settings to publish, and conditions allowed only on the tour-information page.
 /// </summary>
-internal sealed class SiteContext : IPageSectionContext<Guid, NavLink, SiteExtra>
+internal sealed class SiteContext : IPageSectionContext<Guid, NavLink, NavRoute, SiteExtra>
 {
     private readonly Dictionary<Guid, HashSet<ContentCulture>> _images = [];
 
@@ -33,19 +33,7 @@ internal sealed class SiteContext : IPageSectionContext<Guid, NavLink, SiteExtra
     public bool IsEligible(Guid imageId, ContentCulture culture) => _images.TryGetValue(imageId, out var cultures) && cultures.Contains(culture);
 
     /// <inheritdoc />
-    public Result<NavLink> ValidateLink(NavLink target, string field)
-    {
-        ArgumentNullException.ThrowIfNull(target);
-        if (target.PageKey is { } key)
-        {
-            return key is "about" or "contact"
-                ? Result.Ok(target)
-                : Result.Invalid<NavLink>(detail: "The page does not exist.", field: field + ".pageKey", message: "The page does not exist.");
-        }
-
-        var address = WebUrl.CreateHttps(target.ExternalLink, field + ".externalLink");
-        return address.IsSuccess ? Result.Ok(target with { ExternalLink = address.Value.Value }) : address.ConvertError<WebUrl, NavLink>();
-    }
+    public Result<NavRoute> ValidateLink(NavLink input, string field) => NavRoute.Create(input, field);
 
     /// <inheritdoc />
     public Result<SiteExtra> ValidateExtra(SiteExtra extra, bool published, string field)

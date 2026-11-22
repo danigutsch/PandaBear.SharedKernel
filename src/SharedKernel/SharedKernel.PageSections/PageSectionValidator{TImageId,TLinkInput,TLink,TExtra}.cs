@@ -7,18 +7,20 @@ namespace PandaBear.PageSections;
 
 /// <summary>Validates one section, ViajantesTurismo V2's rules. Messages never echo the input.</summary>
 /// <typeparam name="TImageId">The image id type.</typeparam>
-/// <typeparam name="TLink">The application's link target.</typeparam>
+/// <typeparam name="TLinkInput">The application's raw link target.</typeparam>
+/// <typeparam name="TLink">The application's validated link target.</typeparam>
 /// <typeparam name="TExtra">The application's extension.</typeparam>
 /// <param name="errors">Collects the errors.</param>
 /// <param name="rules">The limits.</param>
 /// <param name="context">The application's context.</param>
 /// <param name="published">Whether the translation is published.</param>
-internal sealed class PageSectionValidator<TImageId, TLink, TExtra>(
+internal sealed class PageSectionValidator<TImageId, TLinkInput, TLink, TExtra>(
     ValidationErrors errors,
     PageSectionRules rules,
-    IPageSectionContext<TImageId, TLink, TExtra> context,
+    IPageSectionContext<TImageId, TLinkInput, TLink, TExtra> context,
     bool published)
     where TImageId : struct, IEquatable<TImageId>
+    where TLinkInput : class
     where TLink : notnull
     where TExtra : struct, IEquatable<TExtra>
 {
@@ -29,7 +31,7 @@ internal sealed class PageSectionValidator<TImageId, TLink, TExtra>(
     /// <param name="field">The section's path.</param>
     /// <returns>The section; meaningful only when no error was added.</returns>
     /// <exception cref="ArgumentNullException">An entry of a list in the definition is <see langword="null"/>.</exception>
-    public PageSection<TImageId, TLink, TExtra> Validate(PageSectionDefinition<TImageId, TLink, TExtra> definition, string field)
+    public PageSection<TImageId, TLink, TExtra> Validate(PageSectionDefinition<TImageId, TLinkInput, TExtra> definition, string field)
     {
         var eyebrow = SectionText.Optional(errors, definition.Eyebrow, Part(field, PageSectionFields.Eyebrow), "Section eyebrow", rules.MaxLineLength);
         var heading = SectionText.Optional(errors, definition.Heading, Part(field, PageSectionFields.Heading), "Section heading", rules.MaxTitleLength);
@@ -208,7 +210,7 @@ internal sealed class PageSectionValidator<TImageId, TLink, TExtra>(
         return address.IsSuccess && definition.PosterImageId is { } id ? new PageVideo<TImageId>(address.Value, id, title) : null;
     }
 
-    private PageLink<TLink>? Link(PageLinkDefinition<TLink> definition, string field)
+    private PageLink<TLink>? Link(PageLinkDefinition<TLinkInput> definition, string field)
     {
         var text = SectionText.Required(errors, definition.Text, Part(field, PageSectionFields.LinkText), "Button text", rules.MaxTitleLength);
         if (!Enum.IsDefined(definition.Style))
@@ -216,12 +218,13 @@ internal sealed class PageSectionValidator<TImageId, TLink, TExtra>(
             SectionText.Add(errors, Part(field, PageSectionFields.Style), "The button style is not supported.");
         }
 
-        if (definition.Target is null)
+        if (definition.Target is not { } input)
         {
-            throw new ArgumentNullException(nameof(definition), "A button's target is null.");
+            SectionText.Add(errors, field, "Choose where the button links.");
+            return null;
         }
 
-        var target = context.ValidateLink(definition.Target, field);
+        var target = context.ValidateLink(input, field);
         errors.AddIfFailed(target);
         return target.IsSuccess ? new PageLink<TLink>(text, target.Value, definition.Style) : null;
     }

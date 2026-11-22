@@ -96,7 +96,7 @@ public static class PageSectionFields
         return string.Create(CultureInfo.InvariantCulture, $"{prefix}[{index}]");
     }
 
-    /// <summary>Builds the path of the publish rule of a translation's images, such as <c>pt.images</c>.</summary>
+    /// <summary>Builds V2's path of the publish rule of a translation's images, such as <c>pt.images</c>, for <see cref="PageSectionScope.ImagesField"/>.</summary>
     /// <param name="culture">The culture of the translation.</param>
     /// <returns>The path.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="culture"/> is <see langword="null"/>.</exception>

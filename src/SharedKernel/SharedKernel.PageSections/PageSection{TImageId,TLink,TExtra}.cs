@@ -3,11 +3,12 @@ namespace PandaBear.PageSections;
 /// <summary>
 /// A validated page section on the band of its tone. Its parts show in a fixed order: the eyebrow and heading, the paragraphs, the
 /// questions, the person line, the quotes, the application's extension, the video and the button; the images follow them as a mosaic or
-/// stand beside them. Two sections with the same data are equal. Create sections with <see cref="PageSectionList.Create{TImageId, TLink, TExtra}"/>,
-/// store one as <see cref="ToDefinition"/>, and rebuild a stored one with <see cref="PageSection.Restore{TImageId, TLink, TExtra}"/>.
+/// stand beside them. Two sections with the same data are equal. Create sections with
+/// <see cref="PageSectionList.Create{TImageId, TLinkInput, TLink, TExtra}"/>, store one as <see cref="ToDefinition{TLinkInput}"/>, and
+/// rebuild a stored one with <see cref="PageSection.Restore{TImageId, TLinkInput, TLink, TExtra}"/>.
 /// </summary>
 /// <typeparam name="TImageId">The image id type.</typeparam>
-/// <typeparam name="TLink">The application's link target.</typeparam>
+/// <typeparam name="TLink">The application's validated link target.</typeparam>
 /// <typeparam name="TExtra">The application's extension; <c>default</c> means none.</typeparam>
 public sealed class PageSection<TImageId, TLink, TExtra> : IEquatable<PageSection<TImageId, TLink, TExtra>>
     where TImageId : struct, IEquatable<TImageId>
@@ -89,25 +90,37 @@ public sealed class PageSection<TImageId, TLink, TExtra> : IEquatable<PageSectio
         }
     }
 
-    /// <summary>Gives the section as a definition that creates or restores the same section; paragraphs are joined with blank lines.</summary>
+    /// <summary>
+    /// Gives the section as a definition that creates or restores the same section, with each button target turned back into the
+    /// application's raw input; paragraphs are joined with blank lines. Store it, never the entered definition.
+    /// </summary>
+    /// <typeparam name="TLinkInput">The application's raw link target.</typeparam>
+    /// <param name="linkInput">Turns a validated target back into raw input, the inverse of the context's <c>ValidateLink</c>.</param>
     /// <returns>The definition.</returns>
-    public PageSectionDefinition<TImageId, TLink, TExtra> ToDefinition() => new()
+    /// <exception cref="ArgumentNullException"><paramref name="linkInput"/> is <see langword="null"/>.</exception>
+    public PageSectionDefinition<TImageId, TLinkInput, TExtra> ToDefinition<TLinkInput>(Func<TLink, TLinkInput> linkInput)
+        where TLinkInput : class
     {
-        Eyebrow = Eyebrow,
-        Heading = Heading,
-        Level = Level,
-        Text = Joined(Paragraphs),
-        Questions = [.. Questions.Select(question => new PageQuestionDefinition(question.Question, Joined(question.Answer)))],
-        Person = Person is { } person ? new PagePersonDefinition<TImageId>(person.ImageId, person.Name, person.Role) : null,
-        Quotes = [.. Quotes.Select(quote => new PageQuoteDefinition(quote.Text, quote.Cite))],
-        Extra = Extra,
-        Tone = Tone,
-        BackgroundImageId = BackgroundImageId,
-        ImageIds = ImageIds,
-        ImageLayout = ImageLayout,
-        Video = Video is { } video ? new PageVideoDefinition<TImageId>(video.Address.Value, video.PosterImageId, video.Title) : null,
-        Link = Link is { } link ? new PageLinkDefinition<TLink>(link.Text, link.Target, link.Style) : null,
-    };
+        ArgumentNullException.ThrowIfNull(linkInput);
+
+        return new PageSectionDefinition<TImageId, TLinkInput, TExtra>
+        {
+            Eyebrow = Eyebrow,
+            Heading = Heading,
+            Level = Level,
+            Text = Joined(Paragraphs),
+            Questions = [.. Questions.Select(question => new PageQuestionDefinition(question.Question, Joined(question.Answer)))],
+            Person = Person is { } person ? new PagePersonDefinition<TImageId>(person.ImageId, person.Name, person.Role) : null,
+            Quotes = [.. Quotes.Select(quote => new PageQuoteDefinition(quote.Text, quote.Cite))],
+            Extra = Extra,
+            Tone = Tone,
+            BackgroundImageId = BackgroundImageId,
+            ImageIds = ImageIds,
+            ImageLayout = ImageLayout,
+            Video = Video is { } video ? new PageVideoDefinition<TImageId>(video.Address.Value, video.PosterImageId, video.Title) : null,
+            Link = Link is { } link ? new PageLinkDefinition<TLinkInput>(link.Text, linkInput(link.Target), link.Style) : null,
+        };
+    }
 
     /// <inheritdoc />
     public bool Equals(PageSection<TImageId, TLink, TExtra>? other) =>

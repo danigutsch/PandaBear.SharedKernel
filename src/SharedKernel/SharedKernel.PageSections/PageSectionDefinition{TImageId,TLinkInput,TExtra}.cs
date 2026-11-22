@@ -1,15 +1,15 @@
 namespace PandaBear.PageSections;
 
 /// <summary>
-/// An unvalidated page section, and the round-trip form of a stored one (see <see cref="PageSection{TImageId, TLink, TExtra}.ToDefinition"/>).
+/// An unvalidated page section, and the round-trip form of a stored one (see <see cref="PageSection{TImageId, TLink, TExtra}.ToDefinition{TLinkInput}"/>).
 /// Every part is optional, but a section must show more than its heading. Lists that are <see langword="null"/> are empty.
 /// </summary>
 /// <typeparam name="TImageId">The image id type.</typeparam>
-/// <typeparam name="TLink">The application's link target.</typeparam>
+/// <typeparam name="TLinkInput">The application's raw link target, as an editor enters it or as it is stored.</typeparam>
 /// <typeparam name="TExtra">The application's extension; <c>default</c> means none (see <see cref="NoExtra"/>).</typeparam>
-public sealed record PageSectionDefinition<TImageId, TLink, TExtra>
+public sealed record PageSectionDefinition<TImageId, TLinkInput, TExtra>
     where TImageId : struct, IEquatable<TImageId>
-    where TLink : notnull
+    where TLinkInput : class
     where TExtra : struct, IEquatable<TExtra>
 {
     /// <summary>Gets the optional short line above the heading.</summary>
@@ -52,5 +52,5 @@ public sealed record PageSectionDefinition<TImageId, TLink, TExtra>
     public PageVideoDefinition<TImageId>? Video { get; init; }
 
     /// <summary>Gets the optional button.</summary>
-    public PageLinkDefinition<TLink>? Link { get; init; }
+    public PageLinkDefinition<TLinkInput>? Link { get; init; }
 }

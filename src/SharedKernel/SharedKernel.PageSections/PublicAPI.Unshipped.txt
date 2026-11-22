@@ -1,8 +1,4 @@
 #nullable enable
-PandaBear.PageSections.IPageSectionContext<TImageId, TLink, TExtra>
-PandaBear.PageSections.IPageSectionContext<TImageId, TLink, TExtra>.CountsAsContent(TExtra extra) -> bool
-PandaBear.PageSections.IPageSectionContext<TImageId, TLink, TExtra>.ValidateExtra(TExtra extra, bool published, string! field) -> PandaBear.Results.Result<TExtra>
-PandaBear.PageSections.IPageSectionContext<TImageId, TLink, TExtra>.ValidateLink(TLink target, string! field) -> PandaBear.Results.Result<TLink>
 PandaBear.PageSections.LinkStyle
 PandaBear.PageSections.LinkStyle.Outline = 2 -> PandaBear.PageSections.LinkStyle
 PandaBear.PageSections.LinkStyle.Primary = 0 -> PandaBear.PageSections.LinkStyle
@@ -16,17 +12,6 @@ PandaBear.PageSections.PageLink<TLink>.Equals(PandaBear.PageSections.PageLink<TL
 PandaBear.PageSections.PageLink<TLink>.Style.get -> PandaBear.PageSections.LinkStyle
 PandaBear.PageSections.PageLink<TLink>.Target.get -> TLink
 PandaBear.PageSections.PageLink<TLink>.Text.get -> string!
-PandaBear.PageSections.PageLinkDefinition<TLink>
-PandaBear.PageSections.PageLinkDefinition<TLink>.<Clone>$() -> PandaBear.PageSections.PageLinkDefinition<TLink>!
-PandaBear.PageSections.PageLinkDefinition<TLink>.Deconstruct(out string? Text, out TLink Target, out PandaBear.PageSections.LinkStyle Style) -> void
-PandaBear.PageSections.PageLinkDefinition<TLink>.Equals(PandaBear.PageSections.PageLinkDefinition<TLink>? other) -> bool
-PandaBear.PageSections.PageLinkDefinition<TLink>.PageLinkDefinition(string? Text, TLink Target, PandaBear.PageSections.LinkStyle Style = PandaBear.PageSections.LinkStyle.Primary) -> void
-PandaBear.PageSections.PageLinkDefinition<TLink>.Style.get -> PandaBear.PageSections.LinkStyle
-PandaBear.PageSections.PageLinkDefinition<TLink>.Style.init -> void
-PandaBear.PageSections.PageLinkDefinition<TLink>.Target.get -> TLink
-PandaBear.PageSections.PageLinkDefinition<TLink>.Target.init -> void
-PandaBear.PageSections.PageLinkDefinition<TLink>.Text.get -> string?
-PandaBear.PageSections.PageLinkDefinition<TLink>.Text.init -> void
 PandaBear.PageSections.PagePerson<TImageId>
 PandaBear.PageSections.PagePerson<TImageId>.<Clone>$() -> PandaBear.PageSections.PagePerson<TImageId>!
 PandaBear.PageSections.PagePerson<TImageId>.Equals(PandaBear.PageSections.PagePerson<TImageId>? other) -> bool
@@ -87,41 +72,8 @@ PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Paragraphs.get -> Sy
 PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Person.get -> PandaBear.PageSections.PagePerson<TImageId>?
 PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Questions.get -> System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageQuestion!>!
 PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Quotes.get -> System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageQuote!>!
-PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.ToDefinition() -> PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>!
 PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Tone.get -> PandaBear.PageSections.SectionTone
 PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Video.get -> PandaBear.PageSections.PageVideo<TImageId>?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.<Clone>$() -> PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>!
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.BackgroundImageId.get -> TImageId?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.BackgroundImageId.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Equals(PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>? other) -> bool
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Extra.get -> TExtra
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Extra.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Eyebrow.get -> string?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Eyebrow.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Heading.get -> string?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Heading.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.ImageIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.ImageIds.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.ImageLayout.get -> PandaBear.PageSections.SectionImageLayout
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.ImageLayout.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Level.get -> PandaBear.PageSections.SectionLevel
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Level.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Link.get -> PandaBear.PageSections.PageLinkDefinition<TLink>?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Link.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.PageSectionDefinition() -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Person.get -> PandaBear.PageSections.PagePersonDefinition<TImageId>?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Person.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Questions.get -> System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageQuestionDefinition!>?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Questions.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Quotes.get -> System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageQuoteDefinition!>?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Quotes.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Text.get -> string?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Text.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Tone.get -> PandaBear.PageSections.SectionTone
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Tone.init -> void
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Video.get -> PandaBear.PageSections.PageVideoDefinition<TImageId>?
-PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Video.init -> void
 PandaBear.PageSections.PageSectionFields
 PandaBear.PageSections.PageSectionList
 PandaBear.PageSections.PageSectionRules
@@ -201,9 +153,6 @@ override PandaBear.PageSections.NoExtra.GetHashCode() -> int
 override PandaBear.PageSections.PageLink<TLink>.Equals(object? obj) -> bool
 override PandaBear.PageSections.PageLink<TLink>.GetHashCode() -> int
 override PandaBear.PageSections.PageLink<TLink>.ToString() -> string!
-override PandaBear.PageSections.PageLinkDefinition<TLink>.Equals(object? obj) -> bool
-override PandaBear.PageSections.PageLinkDefinition<TLink>.GetHashCode() -> int
-override PandaBear.PageSections.PageLinkDefinition<TLink>.ToString() -> string!
 override PandaBear.PageSections.PagePerson<TImageId>.Equals(object? obj) -> bool
 override PandaBear.PageSections.PagePerson<TImageId>.GetHashCode() -> int
 override PandaBear.PageSections.PagePerson<TImageId>.ToString() -> string!
@@ -223,9 +172,6 @@ override PandaBear.PageSections.PageQuoteDefinition.GetHashCode() -> int
 override PandaBear.PageSections.PageQuoteDefinition.ToString() -> string!
 override PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.Equals(object? obj) -> bool
 override PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.GetHashCode() -> int
-override PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.Equals(object? obj) -> bool
-override PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.GetHashCode() -> int
-override PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.ToString() -> string!
 override PandaBear.PageSections.PageVideo<TImageId>.Equals(object? obj) -> bool
 override PandaBear.PageSections.PageVideo<TImageId>.GetHashCode() -> int
 override PandaBear.PageSections.PageVideo<TImageId>.ToString() -> string!
@@ -236,8 +182,6 @@ static PandaBear.PageSections.NoExtra.operator !=(PandaBear.PageSections.NoExtra
 static PandaBear.PageSections.NoExtra.operator ==(PandaBear.PageSections.NoExtra left, PandaBear.PageSections.NoExtra right) -> bool
 static PandaBear.PageSections.PageLink<TLink>.operator !=(PandaBear.PageSections.PageLink<TLink>? left, PandaBear.PageSections.PageLink<TLink>? right) -> bool
 static PandaBear.PageSections.PageLink<TLink>.operator ==(PandaBear.PageSections.PageLink<TLink>? left, PandaBear.PageSections.PageLink<TLink>? right) -> bool
-static PandaBear.PageSections.PageLinkDefinition<TLink>.operator !=(PandaBear.PageSections.PageLinkDefinition<TLink>? left, PandaBear.PageSections.PageLinkDefinition<TLink>? right) -> bool
-static PandaBear.PageSections.PageLinkDefinition<TLink>.operator ==(PandaBear.PageSections.PageLinkDefinition<TLink>? left, PandaBear.PageSections.PageLinkDefinition<TLink>? right) -> bool
 static PandaBear.PageSections.PagePerson<TImageId>.operator !=(PandaBear.PageSections.PagePerson<TImageId>? left, PandaBear.PageSections.PagePerson<TImageId>? right) -> bool
 static PandaBear.PageSections.PagePerson<TImageId>.operator ==(PandaBear.PageSections.PagePerson<TImageId>? left, PandaBear.PageSections.PagePerson<TImageId>? right) -> bool
 static PandaBear.PageSections.PagePersonDefinition<TImageId>.operator !=(PandaBear.PageSections.PagePersonDefinition<TImageId>? left, PandaBear.PageSections.PagePersonDefinition<TImageId>? right) -> bool
@@ -248,12 +192,8 @@ static PandaBear.PageSections.PageQuote.operator !=(PandaBear.PageSections.PageQ
 static PandaBear.PageSections.PageQuote.operator ==(PandaBear.PageSections.PageQuote? left, PandaBear.PageSections.PageQuote? right) -> bool
 static PandaBear.PageSections.PageQuoteDefinition.operator !=(PandaBear.PageSections.PageQuoteDefinition? left, PandaBear.PageSections.PageQuoteDefinition? right) -> bool
 static PandaBear.PageSections.PageQuoteDefinition.operator ==(PandaBear.PageSections.PageQuoteDefinition? left, PandaBear.PageSections.PageQuoteDefinition? right) -> bool
-static PandaBear.PageSections.PageSection.Restore<TImageId, TLink, TExtra>(PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>! definition) -> PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>!
-static PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.operator !=(PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>? left, PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>? right) -> bool
-static PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>.operator ==(PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>? left, PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>? right) -> bool
 static PandaBear.PageSections.PageSectionFields.Images(PandaBear.BuildingBlocks.ContentCulture! culture) -> string!
 static PandaBear.PageSections.PageSectionFields.Section(string! prefix, int index) -> string!
-static PandaBear.PageSections.PageSectionList.Create<TImageId, TLink, TExtra>(System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageSectionDefinition<TImageId, TLink, TExtra>!>? definitions, PandaBear.PageSections.PageSectionRules! rules, PandaBear.PageSections.IPageSectionContext<TImageId, TLink, TExtra>! context, PandaBear.BuildingBlocks.ContentCulture! culture, bool published, string! fieldPrefix) -> PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>!>!>
 static PandaBear.PageSections.PageSectionList.FindIneligible<TImageId, TLink, TExtra>(System.Collections.Generic.IEnumerable<PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>!>! sections, PandaBear.BuildingBlocks.ContentCulture! culture, PandaBear.BuildingBlocks.IImageEligibility<TImageId>! images) -> System.Collections.Generic.IReadOnlyList<TImageId>!
 static PandaBear.PageSections.PageSectionList.ImagesShown<TImageId, TLink, TExtra>(System.Collections.Generic.IEnumerable<PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>!>! sections) -> System.Collections.Generic.IReadOnlyList<TImageId>!
 static PandaBear.PageSections.PageVideo<TImageId>.operator !=(PandaBear.PageSections.PageVideo<TImageId>? left, PandaBear.PageSections.PageVideo<TImageId>? right) -> bool
@@ -262,3 +202,80 @@ static PandaBear.PageSections.PageVideoDefinition<TImageId>.operator !=(PandaBea
 static PandaBear.PageSections.PageVideoDefinition<TImageId>.operator ==(PandaBear.PageSections.PageVideoDefinition<TImageId>? left, PandaBear.PageSections.PageVideoDefinition<TImageId>? right) -> bool
 ~override PandaBear.PageSections.NoExtra.Equals(object obj) -> bool
 ~override PandaBear.PageSections.NoExtra.ToString() -> string
+PandaBear.PageSections.IPageSectionContext<TImageId, TLinkInput, TLink, TExtra>
+PandaBear.PageSections.IPageSectionContext<TImageId, TLinkInput, TLink, TExtra>.CountsAsContent(TExtra extra) -> bool
+PandaBear.PageSections.IPageSectionContext<TImageId, TLinkInput, TLink, TExtra>.ValidateExtra(TExtra extra, bool published, string! field) -> PandaBear.Results.Result<TExtra>
+PandaBear.PageSections.IPageSectionContext<TImageId, TLinkInput, TLink, TExtra>.ValidateLink(TLinkInput! input, string! field) -> PandaBear.Results.Result<TLink>
+PandaBear.PageSections.PageLinkDefinition<TLinkInput>
+PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Deconstruct(out string? Text, out TLinkInput? Target, out PandaBear.PageSections.LinkStyle Style) -> void
+PandaBear.PageSections.PageLinkDefinition<TLinkInput>.PageLinkDefinition(string? Text, TLinkInput? Target, PandaBear.PageSections.LinkStyle Style = PandaBear.PageSections.LinkStyle.Primary) -> void
+PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Style.get -> PandaBear.PageSections.LinkStyle
+PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Style.init -> void
+PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Target.get -> TLinkInput?
+PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Target.init -> void
+PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Text.get -> string?
+PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Text.init -> void
+PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>.ToDefinition<TLinkInput>(System.Func<TLink, TLinkInput!>! linkInput) -> PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput!, TExtra>!
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.BackgroundImageId.get -> TImageId?
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.BackgroundImageId.init -> void
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Extra.get -> TExtra
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Extra.init -> void
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Eyebrow.get -> string?
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Eyebrow.init -> void
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Heading.get -> string?
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Heading.init -> void
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ImageIds.get -> System.Collections.Generic.IReadOnlyList<TImageId>?
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ImageIds.init -> void
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ImageLayout.get -> PandaBear.PageSections.SectionImageLayout
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ImageLayout.init -> void
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Level.get -> PandaBear.PageSections.SectionLevel
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Level.init -> void
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Link.get -> PandaBear.PageSections.PageLinkDefinition<TLinkInput!>?
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Link.init -> void
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.PageSectionDefinition() -> void
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Person.get -> PandaBear.PageSections.PagePersonDefinition<TImageId>?
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Person.init -> void
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Questions.get -> System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageQuestionDefinition!>?
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Questions.init -> void
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Quotes.get -> System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageQuoteDefinition!>?
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Quotes.init -> void
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Text.get -> string?
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Text.init -> void
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Tone.get -> PandaBear.PageSections.SectionTone
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Tone.init -> void
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Video.get -> PandaBear.PageSections.PageVideoDefinition<TImageId>?
+PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Video.init -> void
+PandaBear.PageSections.PageSectionScope
+PandaBear.PageSections.PageSectionScope.<Clone>$() -> PandaBear.PageSections.PageSectionScope!
+PandaBear.PageSections.PageSectionScope.CheckImageEligibility.get -> bool
+PandaBear.PageSections.PageSectionScope.CheckImageEligibility.init -> void
+PandaBear.PageSections.PageSectionScope.Culture.get -> PandaBear.BuildingBlocks.ContentCulture!
+PandaBear.PageSections.PageSectionScope.Deconstruct(out PandaBear.BuildingBlocks.ContentCulture! Culture, out bool Published, out string! FieldPrefix, out string! ImagesField) -> void
+PandaBear.PageSections.PageSectionScope.Equals(PandaBear.PageSections.PageSectionScope? other) -> bool
+PandaBear.PageSections.PageSectionScope.FieldPrefix.get -> string!
+PandaBear.PageSections.PageSectionScope.ImagesField.get -> string!
+PandaBear.PageSections.PageSectionScope.PageSectionScope(PandaBear.BuildingBlocks.ContentCulture! Culture, bool Published, string! FieldPrefix, string! ImagesField) -> void
+PandaBear.PageSections.PageSectionScope.Published.get -> bool
+PandaBear.PageSections.PageSectionScope.Published.init -> void
+override PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Equals(object? obj) -> bool
+override PandaBear.PageSections.PageLinkDefinition<TLinkInput>.GetHashCode() -> int
+override PandaBear.PageSections.PageLinkDefinition<TLinkInput>.ToString() -> string!
+override PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Equals(object? obj) -> bool
+override PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.GetHashCode() -> int
+override PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.ToString() -> string!
+override PandaBear.PageSections.PageSectionScope.Equals(object? obj) -> bool
+override PandaBear.PageSections.PageSectionScope.GetHashCode() -> int
+override PandaBear.PageSections.PageSectionScope.ToString() -> string!
+static PandaBear.PageSections.PageSection.Restore<TImageId, TLinkInput, TLink, TExtra>(PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput!, TExtra>! definition, System.Func<TLinkInput!, TLink>! restoreLink) -> PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>!
+static PandaBear.PageSections.PageSectionList.Create<TImageId, TLinkInput, TLink, TExtra>(System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput!, TExtra>!>? definitions, PandaBear.PageSections.PageSectionRules! rules, PandaBear.PageSections.IPageSectionContext<TImageId, TLinkInput!, TLink, TExtra>! context, PandaBear.PageSections.PageSectionScope! scope) -> PandaBear.Results.Result<System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>!>!>
+static PandaBear.PageSections.PageSectionScope.operator !=(PandaBear.PageSections.PageSectionScope? left, PandaBear.PageSections.PageSectionScope? right) -> bool
+static PandaBear.PageSections.PageSectionScope.operator ==(PandaBear.PageSections.PageSectionScope? left, PandaBear.PageSections.PageSectionScope? right) -> bool
+~PandaBear.PageSections.PageLinkDefinition<TLinkInput>.<Clone>$() -> PandaBear.PageSections.PageLinkDefinition<TLinkInput>!
+~PandaBear.PageSections.PageLinkDefinition<TLinkInput>.Equals(PandaBear.PageSections.PageLinkDefinition<TLinkInput>? other) -> bool
+~PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.<Clone>$() -> PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>!
+~PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.Equals(PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? other) -> bool
+~static PandaBear.PageSections.PageLinkDefinition<TLinkInput>.operator !=(PandaBear.PageSections.PageLinkDefinition<TLinkInput>? left, PandaBear.PageSections.PageLinkDefinition<TLinkInput>? right) -> bool
+~static PandaBear.PageSections.PageLinkDefinition<TLinkInput>.operator ==(PandaBear.PageSections.PageLinkDefinition<TLinkInput>? left, PandaBear.PageSections.PageLinkDefinition<TLinkInput>? right) -> bool
+~static PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.operator !=(PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? left, PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? right) -> bool
+~static PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>.operator ==(PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? left, PandaBear.PageSections.PageSectionDefinition<TImageId, TLinkInput, TExtra>? right) -> bool

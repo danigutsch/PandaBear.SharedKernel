@@ -63,9 +63,26 @@ public sealed class PageSectionListTests
         var ineligible = PageSectionList.FindIneligible(draft.ShouldBeSuccess(), Portuguese, _context);
 
         // Assert
-        Fields(published.ErrorDetails).ShouldBe([PageSectionFields.Images(Portuguese)]);
+        Fields(published.ErrorDetails).ShouldBe(["pt.images"]);
         published.ErrorDetails.ShouldHaveValidationError("pt.images", "Every image must be eligible in this language before publishing; 1 are not.");
         ineligible.ShouldBe([englishOnly]);
+    }
+
+    [Fact]
+    public void The_application_names_the_images_field_and_may_check_eligibility_itself()
+    {
+        // Arrange
+        var englishOnly = _context.Add(English);
+        var section = Text() with { ImageIds = [englishOnly] };
+
+        // Act
+        var ownField = PageSectionList.Create([section], Rules, _context, new PageSectionScope(Portuguese, true, Prefix, "pt.media"));
+        var skipped = PageSectionList.Create([section], Rules, _context, Scope(true) with { CheckImageEligibility = false });
+
+        // Assert
+        Fields(ownField.ErrorDetails).ShouldBe(["pt.media"]);
+        var sections = skipped.ShouldBeSuccess();
+        PageSectionList.FindIneligible(sections, Portuguese, _context).ShouldBe([englishOnly]);
     }
 
     [Fact]
@@ -85,7 +102,7 @@ public sealed class PageSectionListTests
     public void Errors_are_placed_under_the_given_prefix()
     {
         // Act
-        var result = PageSectionList.Create([Text(), Text(heading: null, text: null)], Rules, _context, English, published: false, "en.sections");
+        var result = PageSectionList.Create([Text(), Text(heading: null, text: null)], Rules, _context, new PageSectionScope(English, false, "en.sections", "en.images"));
 
         // Assert
         Fields(result.ErrorDetails).ShouldBe(["en.sections[1]"]);
@@ -110,18 +127,22 @@ public sealed class PageSectionListTests
     public void Missing_arguments_are_refused()
     {
         // Act
-        Action noRules = () => PageSectionList.Create([], null!, _context, Portuguese, false, Prefix);
-        Action noContext = () => PageSectionList.Create<Guid, NavLink, SiteExtra>([], Rules, null!, Portuguese, false, Prefix);
-        Action noCulture = () => PageSectionList.Create([], Rules, _context, null!, false, Prefix);
-        Action noPrefix = () => PageSectionList.Create([], Rules, _context, Portuguese, false, null!);
-        Action nullSection = () => PageSectionList.Create([null!], Rules, _context, Portuguese, false, Prefix);
+        Action noRules = () => PageSectionList.Create([], null!, _context, Scope(false));
+        Action noContext = () => PageSectionList.Create<Guid, NavLink, NavRoute, SiteExtra>([], Rules, null!, Scope(false));
+        Action noScope = () => PageSectionList.Create([], Rules, _context, null!);
+        Action noCulture = () => _ = new PageSectionScope(null!, false, Prefix, "pt.images");
+        Action noPrefix = () => _ = new PageSectionScope(Portuguese, false, " ", "pt.images");
+        Action noImagesField = () => _ = new PageSectionScope(Portuguese, false, Prefix, null!);
+        Action nullSection = () => PageSectionList.Create([null!], Rules, _context, Scope(false));
         Action noSections = () => PageSectionList.ImagesShown<Guid, NavLink, SiteExtra>(null!);
 
         // Assert
         noRules.ShouldThrow<ArgumentNullException>();
         noContext.ShouldThrow<ArgumentNullException>();
+        noScope.ShouldThrow<ArgumentNullException>();
         noCulture.ShouldThrow<ArgumentNullException>();
-        noPrefix.ShouldThrow<ArgumentNullException>();
+        noPrefix.ShouldThrow<ArgumentException>();
+        noImagesField.ShouldThrow<ArgumentNullException>();
         nullSection.ShouldThrow<ArgumentNullException>();
         noSections.ShouldThrow<ArgumentNullException>();
     }
@@ -130,7 +151,7 @@ public sealed class PageSectionListTests
     public void A_missing_list_has_no_sections()
     {
         // Act
-        var result = PageSectionList.Create(null, Rules, _context, Portuguese, false, Prefix);
+        var result = PageSectionList.Create(null, Rules, _context, Scope(false));
 
         // Assert
         result.ShouldBeSuccess().ShouldBeEmpty();
@@ -143,8 +164,8 @@ public sealed class PageSectionListTests
         var context = new PlainContext();
 
         // Act
-        var result = PageSectionList.Create([new PageSectionDefinition<Guid, string, NoExtra> { Text = "Texto.", Link = new("Ver", "/sobre") }], Rules, context, Portuguese, false, Prefix);
-        var empty = PageSectionList.Create([new PageSectionDefinition<Guid, string, NoExtra> { Heading = "Só título" }], Rules, context, Portuguese, false, Prefix);
+        var result = PageSectionList.Create([new PageSectionDefinition<Guid, string, NoExtra> { Text = "Texto.", Link = new("Ver", "/sobre") }], Rules, context, Scope(false));
+        var empty = PageSectionList.Create([new PageSectionDefinition<Guid, string, NoExtra> { Heading = "Só título" }], Rules, context, Scope(true));
 
         // Assert
         var section = result.ShouldBeSuccess().ShouldHaveSingleItem();
