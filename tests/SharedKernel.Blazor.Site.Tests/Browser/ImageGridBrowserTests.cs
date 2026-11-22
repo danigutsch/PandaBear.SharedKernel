@@ -126,4 +126,65 @@ public sealed class ImageGridBrowserTests(ChromiumFixture chromium) : IClassFixt
 
         tree.Count(node => node.Role is "region" or "complementary").ShouldBe(0);
     }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(375, 3, false)]
+    [InlineData(390, 3, true)]
+    [InlineData(1280, 6, false)]
+    [InlineData(1280, 6, true)]
+    public async Task Thumbnails_crop_every_photo_to_one_square_in_small_columns_so_a_page_of_photos_stays_short(int width, int columns, bool tall)
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<GallerySample>(chromium.Browser, width, new Dictionary<string, object?>
+        {
+            [nameof(GallerySample.Layout)] = ImageGridLayout.Thumbnails,
+            [nameof(GallerySample.Count)] = 24,
+            [nameof(GallerySample.Tall)] = tall,
+        });
+        const string grid = ".site-section .site-image-grid";
+        await page.ShowLoaded(grid);
+
+        // Act
+        var box = await page.Box(grid);
+        var images = await page.Boxes(grid + " img");
+        var fit = await page.Style(grid + " img", "object-fit");
+        var scrollWidth = await page.ScrollWidth();
+
+        // Assert
+        fit.ShouldBe("cover");
+        images.Select(image => image.X).Distinct().Count().ShouldBe(columns);
+        images.ShouldAllSatisfy(image => Math.Abs(image.Height - image.Width).ShouldBeLessThanOrEqualTo(1));
+        images.ShouldAllSatisfy(image => Math.Abs(image.Width - images[0].Width).ShouldBeLessThanOrEqualTo(1));
+        images[0].X.ShouldBe(box.X);
+        var rowEnd = images[columns - 1].X + images[columns - 1].Width;
+        Math.Abs(rowEnd - (box.X + box.Width)).ShouldBeLessThanOrEqualTo(1);
+        box.Height.ShouldBeLessThan(width < 768 ? 1100 : 900);
+        scrollWidth.ShouldBeLessThanOrEqualTo(width);
+    }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(nameof(ImageGridLayout.Grid), nameof(SiteAlignment.Start), "0% 50%")]
+    [InlineData(nameof(ImageGridLayout.Mosaic), nameof(SiteAlignment.Start), "0% 50%")]
+    [InlineData(nameof(ImageGridLayout.Grid), nameof(SiteAlignment.Center), "50% 50%")]
+    [InlineData(nameof(ImageGridLayout.Mosaic), nameof(SiteAlignment.Center), "50% 50%")]
+    public async Task A_capped_photo_narrower_than_its_column_lines_up_with_the_text_of_its_section(string layout, string alignment, string position)
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<GallerySample>(chromium.Browser, 1280, new Dictionary<string, object?>
+        {
+            [nameof(GallerySample.Layout)] = Enum.Parse<ImageGridLayout>(layout),
+            [nameof(GallerySample.Tall)] = true,
+            [nameof(GallerySample.TextAlignment)] = Enum.Parse<SiteAlignment>(alignment),
+        });
+        const string grid = ".site-section .site-image-grid";
+        await page.ShowLoaded(grid);
+
+        // Act
+        var objectPosition = await page.Style(grid + " img", "object-position");
+        var headless = await page.Style("#headless .site-image-grid img", "object-position");
+
+        // Assert
+        objectPosition.ShouldBe(position);
+        headless.ShouldBe("0% 50%");
+    }
 }

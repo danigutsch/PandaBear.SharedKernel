@@ -160,4 +160,19 @@ public sealed class ImageGridTests : BunitContext
         // Assert
         render.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe(nameof(ImageGrid.Layout));
     }
+
+    [Fact]
+    public void The_thumbnail_layout_keeps_every_figure_in_order_with_its_size()
+    {
+        // Arrange & Act
+        var cut = Render<ImageGrid>(parameters => parameters
+            .Add(component => component.Images, Images(3))
+            .Add(component => component.Layout, ImageGridLayout.Thumbnails));
+
+        // Assert
+        cut.Find("div").ClassName.ShouldBe("site-image-grid site-image-grid--thumbnails");
+        cut.FindAll("figure img").Select(image => image.GetAttribute("src")).ShouldBe(["/img1.jpg", "/img2.jpg", "/img3.jpg"]);
+        cut.FindAll("img").ShouldAllSatisfy(image => image.HasAttribute("width").ShouldBeTrue());
+        cut.FindAll("img").ShouldAllSatisfy(image => image.HasAttribute("height").ShouldBeTrue());
+    }
 }

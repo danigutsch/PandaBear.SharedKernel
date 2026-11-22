@@ -1,5 +1,5 @@
 @inherits SiteComponent
-<div class="@CssClass(Layout == ImageGridLayout.Mosaic ? "site-image-grid site-image-grid--mosaic" : "site-image-grid")" @attributes="AdditionalAttributes">
+<div class="@CssClass(RootClass)" @attributes="AdditionalAttributes">
     @for (var index = 0; index < Images.Count; index++)
     {
         var image = Images[index];

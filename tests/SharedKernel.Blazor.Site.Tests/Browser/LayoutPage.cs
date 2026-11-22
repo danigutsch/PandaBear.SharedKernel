@@ -20,11 +20,13 @@ internal sealed class LayoutPage : IAsyncDisposable
     /// <param name="browser">The browser.</param>
     /// <param name="width">The viewport width in CSS pixels.</param>
     /// <param name="cards">The number of cards in the grid.</param>
+    /// <param name="languages">Whether the header holds a language switcher.</param>
+    /// <param name="theme">Rules written after the stylesheet, as a theme stylesheet is.</param>
     /// <returns>The open page.</returns>
-    public static async Task<LayoutPage> Open(IBrowser browser, int width, int cards = 1)
+    public static async Task<LayoutPage> Open(IBrowser browser, int width, int cards = 1, bool languages = false, string theme = "")
     {
-        var css = await File.ReadAllTextAsync(SiteFiles.StylesheetPath());
-        var body = await Render(cards);
+        var css = await File.ReadAllTextAsync(SiteFiles.StylesheetPath()) + theme;
+        var body = await Render(cards, languages);
         var page = await browser.NewPageAsync(new BrowserNewPageOptions { ViewportSize = new ViewportSize { Width = width, Height = 900 }, ColorScheme = ColorScheme.Light });
         await page.SetContentAsync($"<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Layout</title><style>{css}</style></head><body>{body}</body></html>");
         return new LayoutPage(page);
@@ -207,13 +209,13 @@ internal sealed class LayoutPage : IAsyncDisposable
         });
     }
 
-    private static async Task<string> Render(int cards)
+    private static async Task<string> Render(int cards, bool languages)
     {
         await using var services = new ServiceCollection().BuildServiceProvider();
         await using var renderer = new HtmlRenderer(services, NullLoggerFactory.Instance);
         return await renderer.Dispatcher.InvokeAsync(async () =>
         {
-            var parameters = ParameterView.FromDictionary(new Dictionary<string, object?> { [nameof(LayoutSample.Cards)] = cards });
+            var parameters = ParameterView.FromDictionary(new Dictionary<string, object?> { [nameof(LayoutSample.Cards)] = cards, [nameof(LayoutSample.Languages)] = languages });
             var output = await renderer.RenderComponentAsync<LayoutSample>(parameters);
             return output.ToHtmlString();
         });

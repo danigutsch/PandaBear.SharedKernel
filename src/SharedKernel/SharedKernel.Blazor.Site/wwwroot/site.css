@@ -46,6 +46,11 @@
     --site-brand-height: 2.5rem;
     --site-header-height: 4.5rem;
     --site-floating-link-size: 3.5rem;
+    --site-floating-link-size-narrow: 3rem;
+    --site-text-width: 65ch;
+    --site-thumbnail-min-width: 6.5rem;
+    --site-thumbnail-aspect-ratio: 1;
+    --site-video-width: 40rem;
 }
 
 *,
@@ -230,7 +235,10 @@ a {
     padding-block: var(--site-space-3);
 }
 
+/* The brand slot lays its link out as a box around the logo, so the link's focus ring surrounds the logo. */
 .site-header__brand {
+    display: flex;
+    align-items: center;
     margin-inline-end: auto;
     font-weight: 700;
     font-size: var(--site-font-size-lg);
@@ -345,6 +353,7 @@ a {
     display: inline-flex;
     align-items: center;
     gap: var(--site-space-2);
+    min-height: 2.75rem;
     padding: var(--site-space-1) var(--site-space-3);
     border: 2px solid currentColor;
     border-radius: var(--site-radius);
@@ -381,6 +390,18 @@ a {
 
 .site-header__menu .site-header__actions {
     margin-top: var(--site-space-3);
+}
+
+/* The language switcher in the header takes the navigation's type, so its links sit on the line of the navigation links. */
+.site-header .site-language-switcher,
+.site-header .site-language-switcher a {
+    font-family: var(--site-nav-font-family, inherit);
+    font-size: var(--site-nav-font-size, inherit);
+    font-weight: var(--site-nav-font-weight, inherit);
+    line-height: var(--site-nav-line-height, inherit);
+    letter-spacing: var(--site-nav-letter-spacing, inherit);
+    text-transform: var(--site-nav-text-transform, inherit);
+    font-style: var(--site-nav-font-style, inherit);
 }
 
 /*
@@ -480,11 +501,15 @@ a {
     grid-template-columns: 1fr;
     justify-items: center;
     width: 100%;
-    min-height: 20rem;
     padding: var(--site-space-6) max(var(--site-space-3), (100% - var(--site-content-width)) / 2);
     background: var(--site-color-primary);
     color: var(--site-color-on-primary);
     text-align: center;
+}
+
+/* Only a cover with a photo keeps a minimum height to show it; without one the primary band is as tall as its content. */
+.site-hero--cover:has(> .site-hero__media) {
+    min-height: 20rem;
 }
 
 .site-hero--cover .site-hero__text {
@@ -531,9 +556,15 @@ a {
     isolation: isolate;
 }
 
-.site-band__inner > .site-section {
+.site-band__inner > .site-section,
+.site-section .site-section {
     width: 100%;
     padding-block: 0;
+}
+
+/* A nested section, such as a day of an itinerary, is spaced from what comes before it like a group of paragraphs. */
+.site-section .site-section:not(:first-child) {
+    margin-block-start: var(--site-space-5);
 }
 
 .site-hero--cover .site-hero__media,
@@ -640,7 +671,33 @@ a {
 .site-section__intro {
     margin: 0;
     color: var(--site-color-muted);
-    max-width: 60ch;
+    max-width: var(--site-text-width);
+}
+
+/* Paragraphs and lists keep a readable measure instead of running the content width. */
+:is(.site-section__body, .site-split__main, .site-band__inner, .site-container) > :is(p, ul, ol) {
+    max-width: var(--site-text-width);
+}
+
+/*
+ * Centred text: a section or band with the centred text alignment centres its heading, divider, intro, paragraphs, byline, video link
+ * and an image narrower than its column, and drops the quote's start rule.
+ */
+:is(.site-section--text-center, .site-band--text-center) {
+    text-align: center;
+}
+
+:is(.site-section--text-center, .site-band--text-center) :is(.site-divider, .site-section__intro, .site-video-link),
+:is(.site-section--text-center, .site-band--text-center) :is(.site-section__body, .site-split__main, .site-band__inner, .site-container) > :is(p, ul, ol) {
+    margin-inline: auto;
+}
+
+:is(.site-section--text-center, .site-band--text-center) .site-byline {
+    justify-content: center;
+}
+
+:is(.site-section--text-center, .site-band--text-center) .site-quote {
+    border-inline-start: 0;
 }
 
 /*
@@ -703,15 +760,24 @@ a {
 }
 
 /*
- * Action row: below the breakpoint the actions are stacked and centred; from it on they are one wrapping row spread across the width.
- * A plain link in it keeps the link style.
+ * Action row: below the breakpoint the actions are stacked at the start, in the middle or at the end; from it on they are one wrapping
+ * row, together at the start, in the middle or at the end, or spread across the width. A plain link in it keeps the link style.
  */
 .site-action-row {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--site-space-3);
+}
+
+.site-action-row--center,
+.site-action-row--between {
+    align-items: center;
+}
+
+.site-action-row--end {
+    align-items: flex-end;
 }
 
 /*
@@ -814,21 +880,23 @@ a {
 }
 
 /*
- * Fact grid: centred cards in columns at least 11rem wide that share the full width, as many as there are cards while they fit; from the
- * breakpoint on, the column count that the component computes for balanced rows (site-fact-grid--columns-1 to -4). The list draws the
- * top and start borders and each card its end and bottom borders, so the cells share single rules like a table. The label and the icon
- * take the primary colour; an svg icon without a fill attribute is filled with it. A value breaks anywhere when a word, such as a long
- * e-mail address, is wider than its card.
+ * Fact grid: centred cards at least 11rem wide in rows that share the full width, as many to a row as fit; from the breakpoint on, the
+ * row length that the component computes for balanced rows (site-fact-grid--columns-1 to -4). The cards of a shorter last row grow to
+ * fill it, so no row leaves a gap. The list draws the top and start borders and each card its end and bottom borders, so the cells share
+ * single rules like a table. The label and the icon take the primary colour; an svg icon without a fill attribute is filled with it. A
+ * value wraps between words, and an e-mail address before its @ and its dots (the component writes wbr there); only a part wider than
+ * its card breaks inside.
  */
 .site-fact-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    display: flex;
+    flex-wrap: wrap;
     margin: 0;
     border-block-start: 1px solid var(--site-color-border);
     border-inline-start: 1px solid var(--site-color-border);
 }
 
 .site-fact-grid__item {
+    flex: 1 1 11rem;
     min-width: 0;
     padding: var(--site-space-4) var(--site-space-3);
     border-block-end: 1px solid var(--site-color-border);
@@ -861,18 +929,26 @@ a {
 
 .site-fact-grid__value {
     margin: 0;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
 }
 
-/* Disclosure. */
+/*
+ * Disclosure: a run of disclosures keeps its distance from the content before it, and the summary is rounded like its box, so the
+ * focus ring follows the box's corners.
+ */
 .site-disclosure {
     border: 1px solid var(--site-color-border);
     border-radius: var(--site-radius);
     margin-bottom: var(--site-space-2);
 }
 
+:not(.site-disclosure) + .site-disclosure {
+    margin-top: var(--site-space-4);
+}
+
 .site-disclosure > summary {
     padding: var(--site-space-3);
+    border-radius: var(--site-radius);
     font-weight: 600;
     cursor: pointer;
 }
@@ -903,7 +979,8 @@ a {
 /* Image grid. */
 /*
  * Image grid: columns at least 14rem wide that share the full width, as many as there are images while they fit, so one image fills
- * its container. An image is never taller than 40rem or 80% of the viewport; a taller one is shown whole inside that height.
+ * its container. An image is never taller than 40rem or 80% of the viewport; a taller one is shown whole inside that height, at the
+ * start of its box, or in the middle in a section or band with centred text.
  */
 .site-image-grid {
     display: grid;
@@ -920,7 +997,16 @@ a {
     width: 100%;
     max-height: min(40rem, 80svh);
     object-fit: contain;
+    object-position: 0% 50%;
     border-radius: var(--site-radius);
+}
+
+.site-image-grid__item img:dir(rtl) {
+    object-position: 100% 50%;
+}
+
+:is(.site-section--text-center, .site-band--text-center) .site-image-grid__item img {
+    object-position: 50% 50%;
 }
 
 .site-image-grid__item figcaption {
@@ -958,6 +1044,22 @@ a {
 
 .site-image-grid--mosaic:has(> :last-child:nth-child(4)) {
     columns: 14rem 4;
+}
+
+/*
+ * Thumbnails: every image cropped to one aspect ratio, in columns at least --site-thumbnail-min-width wide and at least 15% of the
+ * width, so at most six to a row; empty columns are kept, so a short last row keeps the thumbnails' size.
+ */
+.site-image-grid--thumbnails {
+    grid-template-columns: repeat(auto-fill, minmax(max(min(100%, var(--site-thumbnail-min-width)), 15%), 1fr));
+    gap: var(--site-space-2);
+}
+
+.site-image-grid--thumbnails .site-image-grid__item img {
+    aspect-ratio: var(--site-thumbnail-aspect-ratio);
+    max-height: none;
+    object-fit: cover;
+    object-position: 50% 50%;
 }
 
 /* Byline: a round photo beside the name and the job title. */
@@ -998,6 +1100,7 @@ a {
 .site-video-link {
     display: grid;
     grid-template-areas: "media" "title";
+    max-width: var(--site-video-width);
     color: var(--site-color-primary);
     text-decoration: none;
 }
@@ -1006,9 +1109,12 @@ a {
     grid-area: media;
 }
 
+/* The poster is cropped to 16:9, so the black bars of a 4:3 video thumbnail are cut away. */
 .site-video-link__poster img {
     display: block;
     width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
     border-radius: var(--site-radius);
 }
 
@@ -1043,18 +1149,18 @@ a {
 }
 
 /*
- * Floating link: fixed in the bottom corner. While it is on the page, focused elements scroll clear of it and the footer, or the
- * body without a footer, ends with room for it.
+ * Floating link: fixed in the bottom corner, smaller and nearer the corner below the breakpoint, where it lies over the text. While it
+ * is on the page, focused elements scroll clear of it and the footer, or the body without a footer, ends with room for it.
  */
 .site-floating-link {
     position: fixed;
-    inset-block-end: var(--site-space-3);
-    inset-inline-end: var(--site-space-3);
+    inset-block-end: var(--site-space-2);
+    inset-inline-end: var(--site-space-2);
     z-index: 50;
     display: grid;
     place-items: center;
-    width: var(--site-floating-link-size);
-    height: var(--site-floating-link-size);
+    width: var(--site-floating-link-size-narrow);
+    height: var(--site-floating-link-size-narrow);
     border-radius: 50%;
     background: var(--site-color-primary);
     color: var(--site-color-on-primary);
@@ -1183,6 +1289,10 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: var(--site-space-5);
+        align-items: start;
+    }
+
+    .site-split--align-center {
         align-items: center;
     }
 
@@ -1194,33 +1304,52 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
         order: -1;
     }
 
-    .site-fact-grid--columns-1 {
-        grid-template-columns: repeat(1, minmax(0, 1fr));
+    .site-fact-grid--columns-1 > .site-fact-grid__item {
+        flex-basis: calc(100% / 1 - 1px);
     }
 
-    .site-fact-grid--columns-2 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .site-fact-grid--columns-2 > .site-fact-grid__item {
+        flex-basis: calc(100% / 2 - 1px);
     }
 
-    .site-fact-grid--columns-3 {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+    .site-fact-grid--columns-3 > .site-fact-grid__item {
+        flex-basis: calc(100% / 3 - 1px);
     }
 
-    .site-fact-grid--columns-4 {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+    .site-fact-grid--columns-4 > .site-fact-grid__item {
+        flex-basis: calc(100% / 4 - 1px);
     }
 
     .site-action-row {
         flex-direction: row;
+        align-items: center;
+    }
+
+    .site-action-row--center {
+        justify-content: center;
+    }
+
+    .site-action-row--end {
+        justify-content: flex-end;
+    }
+
+    .site-action-row--between {
         justify-content: space-between;
     }
 
-    .site-hero--cover {
+    .site-hero--cover:has(> .site-hero__media) {
         min-height: 34.375rem;
     }
 
-    .site-hero--landing {
+    .site-hero--landing:has(> .site-hero__media) {
         min-height: clamp(34.375rem, 85svh, 52rem);
+    }
+
+    .site-floating-link {
+        inset-block-end: var(--site-space-3);
+        inset-inline-end: var(--site-space-3);
+        width: var(--site-floating-link-size);
+        height: var(--site-floating-link-size);
     }
 
     .site-nav:has(.site-nav__group[open]) {
@@ -1238,6 +1367,15 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
         background: var(--site-color-surface);
         border: 1px solid var(--site-color-border);
         border-radius: var(--site-radius);
+    }
+}
+
+/* Below the header breakpoint the links and group summaries of the menu are 44px tap targets. */
+@media (width < 60rem) {
+    .site-header__menu :is(.site-nav a, .site-nav summary) {
+        display: flex;
+        align-items: center;
+        min-height: 2.75rem;
     }
 }
 

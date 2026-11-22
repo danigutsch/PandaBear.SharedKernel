@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 namespace PandaBear.Blazor.Site;
 
 /// <summary>
-/// A grid or a mosaic of images, each a <c>figure</c> with an optional caption. Images load lazily except the first <see cref="EagerCount" />,
+/// A grid, a mosaic or thumbnails of images, each a <c>figure</c> with an optional caption. Images load lazily except the first <see cref="EagerCount" />,
 /// and every image carries its width and height so the layout does not shift while it loads.
 /// </summary>
 public sealed partial class ImageGrid
@@ -27,6 +27,13 @@ public sealed partial class ImageGrid
     /// </summary>
     [Parameter]
     public bool PrioritizeFirstImage { get; set; }
+
+    private string RootClass => Layout switch
+    {
+        ImageGridLayout.Mosaic => "site-image-grid site-image-grid--mosaic",
+        ImageGridLayout.Thumbnails => "site-image-grid site-image-grid--thumbnails",
+        _ => "site-image-grid",
+    };
 
     /// <inheritdoc />
     protected override void OnParametersSet()

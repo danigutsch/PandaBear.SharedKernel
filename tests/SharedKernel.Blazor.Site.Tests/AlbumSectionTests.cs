@@ -21,16 +21,29 @@ public sealed class AlbumSectionTests : BunitContext
     }
 
     [Fact]
-    public void The_photos_of_the_first_row_load_eagerly_and_the_rest_lazily_with_their_size()
+    public void The_photos_are_thumbnails_whose_first_row_loads_eagerly_and_the_rest_lazily_with_their_size()
     {
         // Arrange & Act
-        var cut = this.RenderAlbum(PageWindow.Create(1, 6, 6), Images(6));
+        var cut = this.RenderAlbum(PageWindow.Create(1, 8, 8), Images(8));
 
         // Assert
+        cut.Find(".site-image-grid").ClassName.ShouldBe("site-image-grid site-image-grid--thumbnails");
         var images = cut.FindAll(".site-image-grid img");
-        images.Select(image => image.GetAttribute("loading")).ShouldBe(["eager", "eager", "eager", "eager", "lazy", "lazy"]);
+        images.Select(image => image.GetAttribute("loading")).ShouldBe(["eager", "eager", "eager", "eager", "eager", "eager", "lazy", "lazy"]);
         images.ShouldAllSatisfy(image => image.GetAttribute("width").ShouldBe("400"));
         images.ShouldAllSatisfy(image => image.GetAttribute("height").ShouldBe("300"));
+        AlbumSection.DefaultThumbnailEagerCount.ShouldBe(6);
+    }
+
+    [Fact]
+    public void A_grid_of_whole_photos_loads_its_first_row_of_four_eagerly()
+    {
+        // Arrange & Act
+        var cut = this.RenderAlbum(PageWindow.Create(1, 6, 6), Images(6), parameters => parameters.Add(album => album.Layout, ImageGridLayout.Grid));
+
+        // Assert
+        cut.Find(".site-image-grid").ClassName.ShouldBe("site-image-grid");
+        cut.FindAll(".site-image-grid img").Select(image => image.GetAttribute("loading")).ShouldBe(["eager", "eager", "eager", "eager", "lazy", "lazy"]);
         AlbumSection.DefaultEagerCount.ShouldBe(4);
     }
 

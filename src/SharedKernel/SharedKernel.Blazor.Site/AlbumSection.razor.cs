@@ -23,6 +23,12 @@ public sealed partial class AlbumSection
     public const int DefaultEagerCount = 4;
 
     /// <summary>
+    /// The default <see cref="EagerCount" /> of the <see cref="ImageGridLayout.Thumbnails" /> layout, the default of an album: its first
+    /// row at the default content width, which holds six thumbnails, and the first two rows of three on a phone.
+    /// </summary>
+    public const int DefaultThumbnailEagerCount = 6;
+
+    /// <summary>
     /// The default <see cref="EagerCount" /> of the <see cref="ImageGridLayout.Mosaic" /> layout. A mosaic's columns run down the page in
     /// document order, so the next photos are below the first one in its first column, and which photos open the other columns depends on
     /// the photos' heights and the viewport; only the first photo is surely in the first row.
@@ -90,8 +96,8 @@ public sealed partial class AlbumSection
 
     /// <summary>
     /// Gets or sets how many leading photos, in document order, load eagerly; in a mosaic that counts down the first column.
-    /// <see langword="null" />, the default, picks <see cref="DefaultEagerCount" /> for a grid and <see cref="DefaultMosaicEagerCount" />
-    /// for a mosaic.
+    /// <see langword="null" />, the default, picks <see cref="DefaultThumbnailEagerCount" /> for thumbnails, <see cref="DefaultEagerCount" />
+    /// for a grid and <see cref="DefaultMosaicEagerCount" /> for a mosaic.
     /// </summary>
     [Parameter]
     public int? EagerCount { get; set; }
@@ -107,9 +113,13 @@ public sealed partial class AlbumSection
     [Parameter]
     public int SurroundingPages { get; set; } = 1;
 
-    /// <summary>Gets or sets how the photos are arranged. The default is <see cref="ImageGridLayout.Grid" />.</summary>
+    /// <summary>
+    /// Gets or sets how the photos are arranged. The default is <see cref="ImageGridLayout.Thumbnails" />: one cropped aspect ratio and
+    /// small columns, so a page of many photos stays short on a phone. <see cref="ImageGridLayout.Grid" /> and
+    /// <see cref="ImageGridLayout.Mosaic" /> show each photo whole.
+    /// </summary>
     [Parameter]
-    public ImageGridLayout Layout { get; set; }
+    public ImageGridLayout Layout { get; set; } = ImageGridLayout.Thumbnails;
 
     /// <summary>Gets or sets optional content after the photos and before the pager, such as a link to the related tour.</summary>
     [Parameter]
@@ -117,7 +127,12 @@ public sealed partial class AlbumSection
 
     private string HeadingId => "album-" + Slug!.Value;
 
-    private int EffectiveEagerCount => EagerCount ?? (Layout == ImageGridLayout.Mosaic ? DefaultMosaicEagerCount : DefaultEagerCount);
+    private int EffectiveEagerCount => EagerCount ?? Layout switch
+    {
+        ImageGridLayout.Thumbnails => DefaultThumbnailEagerCount,
+        ImageGridLayout.Mosaic => DefaultMosaicEagerCount,
+        _ => DefaultEagerCount,
+    };
 
     /// <inheritdoc />
     protected override void OnParametersSet()

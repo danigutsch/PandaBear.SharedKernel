@@ -61,7 +61,7 @@ public sealed class FactGridTests : BunitContext
         var values = cut.FindAll("dd.site-fact-grid__value");
         values.Select(value => value.InnerHtml).ShouldBe(
         [
-            "<a href=\"mailto:info@example.org\">info@example.org</a>",
+            "<a href=\"mailto:info@example.org\">info<wbr>@example<wbr>.org</a>",
             "<a href=\"tel:+5511999990000\">+55 (11) 99999-0000</a>",
             "<a href=\"https://wa.me/5511999990000\">Chat with us</a>",
         ]);
@@ -209,5 +209,39 @@ public sealed class FactGridTests : BunitContext
         var list = cut.Find("dl");
         list.ClassName.ShouldBe("site-fact-grid site-fact-grid--columns-1 extra");
         list.GetAttribute("aria-label").ShouldBe("Basic information");
+    }
+
+    [Fact]
+    public void An_e_mail_value_may_break_only_before_its_at_sign_and_its_dots()
+    {
+        // Arrange & Act
+        var cut = Render<FactGrid>(parameters => parameters.Add(component => component.Cards,
+        [
+            new FactCard("E-mail", [new("info.desk@example.org", LinkTarget.FromString("mailto:info.desk@example.org")), new("Write to a.b@c.org")]),
+        ]));
+
+        // Assert
+        var values = cut.FindAll("dd.site-fact-grid__value");
+        values.Select(value => value.InnerHtml).ShouldBe(
+        [
+            "<a href=\"mailto:info.desk@example.org\">info<wbr>.desk<wbr>@example<wbr>.org</a>",
+            "Write to a<wbr>.b<wbr>@c<wbr>.org",
+        ]);
+        values.Select(value => value.TextContent).ShouldBe(["info.desk@example.org", "Write to a.b@c.org"]);
+    }
+
+    [Fact]
+    public void A_value_without_an_at_sign_keeps_its_dots_unbroken_and_its_text_encoded()
+    {
+        // Arrange & Act
+        var cut = Render<FactGrid>(parameters => parameters.Add(component => component.Cards,
+        [
+            new FactCard("Distance", [new("8.5 km a day. <b>Flat</b>"), new("<i>x</i>@y.z")]),
+        ]));
+
+        // Assert
+        var values = cut.FindAll("dd.site-fact-grid__value");
+        values[0].InnerHtml.ShouldBe("8.5 km a day. &lt;b&gt;Flat&lt;/b&gt;");
+        values[1].InnerHtml.ShouldBe("&lt;i&gt;x&lt;/i&gt;<wbr>@y<wbr>.z");
     }
 }

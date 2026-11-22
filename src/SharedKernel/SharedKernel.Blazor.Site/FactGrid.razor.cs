@@ -5,9 +5,10 @@ namespace PandaBear.Blazor.Site;
 /// <summary>
 /// A grid of fact cards, such as a tour's basic information: a <c>dl</c> whose cards are <c>div</c> groups of the <c>dt</c> label, with
 /// the optional decorative icon inside it, and one <c>dd</c> per value, holding a link when the value has one. The cards are centred and bordered like the cells of a table.
-/// Below the <c>48rem</c> breakpoint they fill columns at least 11rem wide; from it on the grid has the balanced column count of
-/// <c>site-fact-grid--columns-1</c> to <c>site-fact-grid--columns-4</c>: as many columns as cards up to four, then the fewest rows of
-/// at most four cards with the cards spread as evenly as possible over them.
+/// Below the <c>48rem</c> breakpoint as many cards at least 11rem wide share a row as fit; from it on the rows have the balanced length of
+/// <c>site-fact-grid--columns-1</c> to <c>site-fact-grid--columns-4</c>: as many cards as there are up to four, then the fewest rows of
+/// at most four cards with the cards spread as evenly as possible over them. The cards of a shorter last row grow to fill it. In a value
+/// with an <c>@</c>, such as an e-mail address, a <c>wbr</c> before the <c>@</c> and each dot lets it wrap between its parts.
 /// </summary>
 public sealed partial class FactGrid
 {

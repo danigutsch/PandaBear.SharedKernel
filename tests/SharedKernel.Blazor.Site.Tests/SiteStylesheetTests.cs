@@ -325,7 +325,7 @@ public sealed partial class SiteStylesheetTests
     }
 
     [Fact]
-    public void Fact_grid_column_modifiers_set_equal_columns_only_from_the_breakpoint_on()
+    public void Fact_grid_column_modifiers_set_the_row_length_only_from_the_breakpoint_on()
     {
         // Arrange & Act
         var css = File.ReadAllText(SiteFiles.StylesheetPath());
@@ -338,8 +338,8 @@ public sealed partial class SiteStylesheetTests
         foreach (var columns in modifiers)
         {
             css.ShouldContain($$"""
-                    .site-fact-grid--columns-{{columns}} {
-                        grid-template-columns: repeat({{columns}}, minmax(0, 1fr));
+                    .site-fact-grid--columns-{{columns}} > .site-fact-grid__item {
+                        flex-basis: calc(100% / {{columns}} - 1px);
                     }
                 """, StringComparison.Ordinal);
         }

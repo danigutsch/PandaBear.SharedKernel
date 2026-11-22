@@ -802,3 +802,21 @@ PandaBear.Blazor.Site.AlbumSection.SurroundingPages.get -> int
 PandaBear.Blazor.Site.AlbumSection.SurroundingPages.set -> void
 PandaBear.Blazor.Site.Card.EagerImage.get -> bool
 PandaBear.Blazor.Site.Card.EagerImage.set -> void
+const PandaBear.Blazor.Site.AlbumSection.DefaultThumbnailEagerCount = 6 -> int
+PandaBear.Blazor.Site.ActionRow.Justification.get -> PandaBear.Blazor.Site.ActionRowJustification
+PandaBear.Blazor.Site.ActionRow.Justification.set -> void
+PandaBear.Blazor.Site.ActionRowJustification
+PandaBear.Blazor.Site.ActionRowJustification.Between = 3 -> PandaBear.Blazor.Site.ActionRowJustification
+PandaBear.Blazor.Site.ActionRowJustification.Center = 1 -> PandaBear.Blazor.Site.ActionRowJustification
+PandaBear.Blazor.Site.ActionRowJustification.End = 2 -> PandaBear.Blazor.Site.ActionRowJustification
+PandaBear.Blazor.Site.ActionRowJustification.Start = 0 -> PandaBear.Blazor.Site.ActionRowJustification
+PandaBear.Blazor.Site.Band.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.Band.TextAlignment.set -> void
+PandaBear.Blazor.Site.ImageGridLayout.Thumbnails = 2 -> PandaBear.Blazor.Site.ImageGridLayout
+PandaBear.Blazor.Site.Section.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.Section.TextAlignment.set -> void
+PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.SiteAlignment.Center = 1 -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.SiteAlignment.Start = 0 -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.Split.Alignment.get -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.Split.Alignment.set -> void
