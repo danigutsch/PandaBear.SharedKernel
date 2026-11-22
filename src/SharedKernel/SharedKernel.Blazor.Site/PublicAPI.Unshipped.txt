@@ -820,3 +820,10 @@ PandaBear.Blazor.Site.SiteAlignment.Center = 1 -> PandaBear.Blazor.Site.SiteAlig
 PandaBear.Blazor.Site.SiteAlignment.Start = 0 -> PandaBear.Blazor.Site.SiteAlignment
 PandaBear.Blazor.Site.Split.Alignment.get -> PandaBear.Blazor.Site.SiteAlignment
 PandaBear.Blazor.Site.Split.Alignment.set -> void
+const PandaBear.Blazor.Site.ImageGrid.ThumbnailSizes = "(min-width: 74rem) 12rem, (min-width: 48rem) 16vw, 9.5rem" -> string!
+PandaBear.Blazor.Site.AlbumSection.Sizes.get -> string?
+PandaBear.Blazor.Site.AlbumSection.Sizes.set -> void
+PandaBear.Blazor.Site.GalleryImage.Href.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.GalleryImage.Href.init -> void
+PandaBear.Blazor.Site.ImageGrid.Sizes.get -> string?
+PandaBear.Blazor.Site.ImageGrid.Sizes.set -> void

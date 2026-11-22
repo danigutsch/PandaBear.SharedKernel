@@ -1001,6 +1001,12 @@ a {
     border-radius: var(--site-radius);
 }
 
+/* A linked image is a block tile, rounded like the image, so the focus ring surrounds the tile. */
+.site-image-grid__link {
+    display: block;
+    border-radius: var(--site-radius);
+}
+
 .site-image-grid__item img:dir(rtl) {
     object-position: 100% 50%;
 }

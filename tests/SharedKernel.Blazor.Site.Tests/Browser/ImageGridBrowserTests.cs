@@ -187,4 +187,41 @@ public sealed class ImageGridBrowserTests(ChromiumFixture chromium) : IClassFixt
         objectPosition.ShouldBe(position);
         headless.ShouldBe("0% 50%");
     }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(375)]
+    [InlineData(1280)]
+    public async Task A_linked_thumbnail_is_a_tile_link_named_by_its_photo_with_a_focus_ring_around_the_tile(int width)
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<GallerySample>(chromium.Browser, width, new Dictionary<string, object?>
+        {
+            [nameof(GallerySample.Layout)] = ImageGridLayout.Thumbnails,
+            [nameof(GallerySample.Count)] = 6,
+            [nameof(GallerySample.Linked)] = true,
+        });
+        const string grid = ".site-section .site-image-grid";
+        await page.ShowLoaded(grid);
+
+        // Act
+        await page.Page.Keyboard.PressAsync("Tab");
+
+        // Assert
+        var focused = await page.Page.EvaluateAsync<string>("() => document.activeElement.getAttribute('href')");
+        focused.ShouldBe("/full/1.jpg");
+        var link = await page.Box(grid + " .site-image-grid__link");
+        var image = await page.Box(grid + " img");
+        link.ShouldBe(image);
+        var middle = image.Y + (image.Height / 2);
+        string[] ring =
+        [
+            await page.Pixel(image.X - 3.5, middle),
+            await page.Pixel(image.X + image.Width + 3.5, middle),
+            await page.Pixel(image.X + (image.Width / 2), image.Y - 3.5),
+            await page.Pixel(image.X + (image.Width / 2), image.Bottom + 3.5),
+        ];
+        ring.ShouldAllSatisfy(pixel => pixel.ShouldBe("#1d4ed8"));
+        var tree = await page.AccessibilityTree();
+        tree.ShouldContain(node => node.Role == "link" && node.Name == "Photo 1");
+    }
 }

@@ -144,4 +144,24 @@ public sealed class AlbumSectionTests : BunitContext
         cut.Find("section").HasAttribute("lang").ShouldBeFalse();
         cut.FindAll("nav.site-pager, img, figcaption, .tour-link").ShouldAllSatisfy(element => element.Closest("[lang]").ShouldBeNull());
     }
+
+    [Fact]
+    public void Linked_photos_and_the_sizes_pass_through_to_the_grid()
+    {
+        // Arrange
+        GalleryImage[] photos =
+        [
+            new(PictureImage()) { Href = LinkTarget.FromString("/media/lake-2400.jpg") },
+            new(PictureImage()),
+        ];
+
+        // Act
+        var defaults = this.RenderAlbum(PageWindow.Create(1, 2, 2), photos);
+        var chosen = this.RenderAlbum(PageWindow.Create(1, 2, 2), photos, parameters => parameters.Add(album => album.Sizes, "8rem"));
+
+        // Assert
+        defaults.FindAll(".site-image-grid__link").Select(link => link.GetAttribute("href")).ShouldBe(["/media/lake-2400.jpg"]);
+        defaults.FindAll("img").ShouldAllSatisfy(image => image.GetAttribute("sizes").ShouldBe(ImageGrid.ThumbnailSizes));
+        chosen.FindAll("img").ShouldAllSatisfy(image => image.GetAttribute("sizes").ShouldBe("8rem"));
+    }
 }

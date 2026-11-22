@@ -121,6 +121,14 @@ public sealed partial class AlbumSection
     [Parameter]
     public ImageGridLayout Layout { get; set; } = ImageGridLayout.Thumbnails;
 
+    /// <summary>
+    /// Gets or sets the <c>sizes</c> of the photos; see <see cref="ImageGrid.Sizes" />. <see langword="null" />, the default, writes
+    /// <see cref="ImageGrid.ThumbnailSizes" /> for thumbnails and each photo's own sizes otherwise. A photo with a
+    /// <see cref="GalleryImage.Href" /> links to it, for example to the full photo that a thumbnail crops.
+    /// </summary>
+    [Parameter]
+    public string? Sizes { get; set; }
+
     /// <summary>Gets or sets optional content after the photos and before the pager, such as a link to the related tour.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
