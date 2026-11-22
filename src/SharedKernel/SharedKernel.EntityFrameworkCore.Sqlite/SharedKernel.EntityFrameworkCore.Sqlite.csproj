@@ -3,13 +3,14 @@
     <PropertyGroup>
         <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
         <PackageId>PandaBear.SharedKernel.EntityFrameworkCore.Sqlite</PackageId>
-        <Description>SQLite support for shared-kernel Entity Framework Core primitives, starting with unique-violation recognition.</Description>
+        <Description>SQLite support for shared-kernel Entity Framework Core primitives: unique-violation recognition and accent- and case-insensitive text search.</Description>
         <RootNamespace>PandaBear.EntityFrameworkCore.Sqlite</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>entity-framework-core;sqlite;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.BuildingBlocks\SharedKernel.BuildingBlocks.csproj" />
         <ProjectReference Include="..\SharedKernel.EntityFrameworkCore\SharedKernel.EntityFrameworkCore.csproj" />
     </ItemGroup>
 

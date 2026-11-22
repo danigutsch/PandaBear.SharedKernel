@@ -1,0 +1,27 @@
+@inherits SiteComponent
+@if (Window.HasMultiplePages)
+{
+    <nav @attributes="AdditionalAttributes" class="@CssClass("site-pager")" aria-label="@Label">
+        <ul class="site-pager__list">
+            @if (Window.PreviousPage is { } previous)
+            {
+                <li class="site-pager__item site-pager__item--previous"><a href="@HrefOf(previous)" rel="prev">@PreviousText</a></li>
+            }
+            @foreach (var page in PageNumbers(Window.Page, Window.PageCount, SurroundingPages))
+            {
+                if (page is { } number)
+                {
+                    <li class="site-pager__item"><a href="@HrefOf(number)" aria-current="@(number == Window.Page ? "page" : null)" aria-label="@PageLabel(number)">@PageText(number)</a></li>
+                }
+                else
+                {
+                    <li class="site-pager__item site-pager__ellipsis" aria-hidden="true">&hellip;</li>
+                }
+            }
+            @if (Window.NextPage is { } next)
+            {
+                <li class="site-pager__item site-pager__item--next"><a href="@HrefOf(next)" rel="next">@NextText</a></li>
+            }
+        </ul>
+    </nav>
+}

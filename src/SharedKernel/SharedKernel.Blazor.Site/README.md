@@ -86,6 +86,7 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `ImageGrid` | `figure` per `GalleryImage` (a `ResponsiveImage` and an optional caption), lazy loading except the first `EagerCount`; `PrioritizeFirstImage` loads the first one eagerly with `fetchpriority="high"`. `Layout` `Grid` (the default) is rows of equal columns; `Mosaic` (`site-image-grid--mosaic`) is a collage of mixed aspect ratios: columns filled from top to bottom in document order, each image at its own aspect ratio, never cropped. In both, columns are at least 14rem wide and share the full width of the container, as many as there are images while they fit, so one image fills its container, in a section or in a `Split`'s media column. An image is at most 40rem or 80% of the viewport tall; a taller one is shown whole within that height (`object-fit: contain`). |
 | `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links; no `address` when there are no lines and no channels. `PhoneText` shows the number as written (`+55 (11) 99999-0000`) while the link uses the digits; it must be the same number as `Phone`. The WhatsApp link shows `WhatsAppLabel`. |
 | `LanguageSwitcher` | Labelled `nav` of links with `hreflang`, `lang` and `aria-current="true"` on the current language. |
+| `Pager` | A `nav` named by `Label` (`site-pager`) with plain links for a list paged through the URL, after the GOV.UK pagination component: previous (`rel="prev"`), the numbered pages and next (`rel="next"`); see [Pager](#pager). Nothing when there is one page. |
 | `PageHead` | Title, description, canonical link, OpenGraph basics and `hreflang` alternates including `x-default`; each optional tag is left out when its parameter is unset. `Robots` writes `<meta name="robots">` (`noindex`, `noindex, nofollow`). An error or not-found page sets `Robots="noindex"` and no `CanonicalUrl`, `Alternates` or `DefaultAlternateUrl`, so it has no canonical, `og:url` or `hreflang` link. |
 
 Content without a heading, such as a page's opening text or a contact block, goes in `<div class="site-container">`: the
@@ -116,6 +117,33 @@ links wraps to two rows at 800px, and the consumer's earlier site switched to it
 round step above that, with room for labels that are longer in another language. One breakpoint serves the menu and the header over
 the hero, so between 48rem and 60rem the header is the primary band with its menu button above the hero, and an open group stays in
 the menu's column. A site's header that needs more room breaks to two rows above it; keep the navigation short.
+
+### Pager
+
+`Pager` follows the [GOV.UK Design System pagination component](https://design-system.service.gov.uk/components/pagination/) for
+a list paged through the URL. It takes a `PageWindow` (`PandaBear.SharedKernel.BuildingBlocks`; see its README) and renders a `nav`
+named by `Label` with a list of plain `a href` links, so crawlers follow them
+([Google Search Central: pagination and incremental page loading](https://developers.google.com/search/docs/specialty/ecommerce/pagination-and-incremental-page-loading)),
+it works in static server rendering, and an interactive page renders the same markup:
+
+- previous (`rel="prev"`, absent on the first page) and next (`rel="next"`, absent on the last page), with `PreviousText` and
+  `NextText` as their text;
+- the numbered pages, bounded to the first, the last and `SurroundingPages` (default 1, at most 10) on each side of the current page;
+  a larger gap is an ellipsis `li` (`site-pager__ellipsis`) with `aria-hidden="true"`, never a link, and a gap of one page shows
+  that page;
+- `aria-current="page"` on the current page, and with `PageLabelFormat` (for example `"Page {0}"`) an accessible name for every
+  numbered link, the current one included;
+- nothing at all when there is one page.
+
+`PageHref` builds each page's `LinkTarget` from its number. Give page 1 the address without a page parameter, so the first page has
+one canonical URL, and every other page its own URL, which `PageHead.CanonicalUrl` should repeat. Answer a request whose window
+`IsOutOfRange` with 404 Not Found. Labels and link texts are your copy. The current page is the primary colour with on-primary text,
+and the ellipsis is muted; each link is at least 2.75rem wide.
+
+```razor
+<Pager Window="_window" Label="Photo pages" PreviousText="Previous" NextText="Next" PageLabelFormat="Page {0}"
+       PageHref="@(page => LinkTarget.FromString(page == 1 ? "/fotos" : $"/fotos?page={page}"))" />
+```
 
 ### Bands and photos
 

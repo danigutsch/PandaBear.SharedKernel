@@ -93,3 +93,12 @@ PandaBear.Testing.AspNetCore.StreamFormFile.Name.get -> string!
 PandaBear.Testing.AspNetCore.StreamFormFile.OpenReadStream() -> System.IO.Stream!
 PandaBear.Testing.AspNetCore.StreamFormFile.StreamFormFile(System.IO.Stream! content, long length, string! fileName, string! contentType = "application/octet-stream", string! name = "file") -> void
 static PandaBear.Testing.AspNetCore.KestrelTestHost.StartFromFactory<TEntryPoint>(Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>! factory) -> PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint!>!
+const PandaBear.Testing.AspNetCore.PrerenderedComponentState.GuidanceUrl = "https://learn.microsoft.com/aspnet/core/blazor/fundamentals/signalr?view=aspnetcore-11.0#prerendered-state-size-and-signalr-message-size-limit" -> string!
+const PandaBear.Testing.AspNetCore.PrerenderedComponentState.ServerStateMarker = "<!--Blazor-Server-Component-State:" -> string!
+const PandaBear.Testing.AspNetCore.PrerenderedComponentState.WebAssemblyStateMarker = "<!--Blazor-WebAssembly-Component-State:" -> string!
+PandaBear.Testing.AspNetCore.PrerenderedComponentState
+static PandaBear.Testing.AspNetCore.PrerenderedComponentState.DefaultMaximumReceiveMessageSize.get -> long
+static PandaBear.Testing.AspNetCore.PrerenderedComponentState.ServerStateSize(string! html) -> int
+static PandaBear.Testing.AspNetCore.PrerenderedComponentState.ShouldKeepServerStateBelow(string! html) -> void
+static PandaBear.Testing.AspNetCore.PrerenderedComponentState.ShouldKeepServerStateBelow(string! html, long limit) -> void
+static PandaBear.Testing.AspNetCore.PrerenderedComponentState.WebAssemblyStateSize(string! html) -> int

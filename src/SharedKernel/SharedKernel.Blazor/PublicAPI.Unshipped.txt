@@ -227,3 +227,31 @@ PandaBear.Blazor.ParsedTextInputState<TValue>.Dispose() -> void
 PandaBear.Blazor.ParsedTextInputState<TValue>.ParsedTextInputState(System.Func<TValue, string?>! format, System.Func<string!, (TValue Value, string? Error)>! parse) -> void
 PandaBear.Blazor.ParsedTextInputState<TValue>.Text.get -> string!
 PandaBear.Blazor.ParsedTextInputState<TValue>.TrySetText(string! text, out TValue value) -> bool
+const PandaBear.Blazor.OptionSearch<TOption>.MaxQueryLength = 200 -> int
+PandaBear.Blazor.ListSlice<TItem>
+PandaBear.Blazor.ListSlice<TItem>.Items.get -> System.Collections.Generic.IReadOnlyList<TItem>!
+PandaBear.Blazor.ListSlice<TItem>.ListSlice(System.Collections.Generic.IReadOnlyList<TItem>! items, int total) -> void
+PandaBear.Blazor.ListSlice<TItem>.Total.get -> int
+PandaBear.Blazor.OptionSearch<TOption>
+PandaBear.Blazor.OptionSearch<TOption>.Dispose() -> void
+PandaBear.Blazor.OptionSearch<TOption>.HasResults.get -> bool
+PandaBear.Blazor.OptionSearch<TOption>.IsSearching.get -> bool
+PandaBear.Blazor.OptionSearch<TOption>.IsTruncated.get -> bool
+PandaBear.Blazor.OptionSearch<TOption>.Limit.get -> int
+PandaBear.Blazor.OptionSearch<TOption>.OptionSearch(System.Func<string!, int, System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.Blazor.ListSlice<TOption>!>!>! search, int limit) -> void
+PandaBear.Blazor.OptionSearch<TOption>.Query.get -> string!
+PandaBear.Blazor.OptionSearch<TOption>.Results.get -> System.Collections.Generic.IReadOnlyList<TOption>!
+PandaBear.Blazor.OptionSearch<TOption>.Search(string? query, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+PandaBear.Blazor.OptionSearch<TOption>.Status(string! shownFormat, string! noMatchesFormat) -> string?
+PandaBear.Blazor.OptionSearch<TOption>.Total.get -> int
+PandaBear.Blazor.OptionSearch<TOption>.AnnouncementKey.get -> int
+PandaBear.Blazor.OptionSearch<TOption>.Debounce.get -> System.TimeSpan
+PandaBear.Blazor.OptionSearch<TOption>.Debounce.init -> void
+PandaBear.Blazor.OptionSearch<TOption>.IsQueryTooShort.get -> bool
+PandaBear.Blazor.OptionSearch<TOption>.IsStarted.get -> bool
+PandaBear.Blazor.OptionSearch<TOption>.MinQueryLength.get -> int
+PandaBear.Blazor.OptionSearch<TOption>.MinQueryLength.init -> void
+PandaBear.Blazor.OptionSearch<TOption>.Start(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+PandaBear.Blazor.OptionSearch<TOption>.TimeProvider.get -> System.TimeProvider!
+PandaBear.Blazor.OptionSearch<TOption>.TimeProvider.init -> void
+const PandaBear.Blazor.OptionSearch<TOption>.DefaultDebounceMilliseconds = 300 -> int

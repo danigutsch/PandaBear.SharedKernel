@@ -4,7 +4,7 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Accessible Blazor helpers for HTTP outcome messages, server validation, error summaries, handled-failure reporting, and upload status. The components are plain C# classes with no CSS or JavaScript requirement; style them with the `class` attribute they pass through.
+Accessible Blazor helpers for HTTP outcome messages, server validation, error summaries, handled-failure reporting, upload status, and bounded option search. The components are plain C# classes with no CSS or JavaScript requirement; style them with the `class` attribute they pass through.
 
 ## HTTP failures and server validation
 
@@ -164,6 +164,107 @@ The form's validation request rechecks the text and attaches the parser's messag
 with the same accepted value keep the text, even if the bound field moves. A different model value resets
 the text. Dispose the state with its owning component to detach validation and clear its messages. The
 caller supplies number styles, scale, optionality, messages and the rendered control.
+
+## Bounded lists
+
+An Interactive Server page must not render or hold an unbounded list: every row costs server memory for the whole circuit,
+and rows loaded with `[PersistentState]` are also written into the prerendered page and sent back in the message that starts
+the circuit. SignalR rejects an incoming message above `HubOptions.MaximumReceiveMessageSize` (32 KB by default); the
+connection then closes ("Server returned an error on close") and the page never becomes interactive. Microsoft's guidance
+is to reduce the prerendered state rather than raise the limit, which increases the risk of denial of service
+([Prerendered state size and SignalR message size limit](https://learn.microsoft.com/aspnet/core/blazor/fundamentals/signalr?view=aspnetcore-11.0#prerendered-state-size-and-signalr-message-size-limit)),
+and to paginate, show only the first N items and require search criteria for the rest, or virtualize
+([Resource exhaustion](https://learn.microsoft.com/aspnet/core/blazor/security/interactive-server-side-rendering?view=aspnetcore-11.0#resource-exhaustion)).
+Choose by the kind of list:
+
+- A list page (a table of records): page it through the URL
+  ([State management using the URL](https://learn.microsoft.com/aspnet/core/blazor/state-management/?view=aspnetcore-11.0#state-management-using-the-url))
+  with `PageWindow` (`PandaBear.SharedKernel.BuildingBlocks`) and the `Pager` component (`PandaBear.SharedKernel.Blazor.Site`), which
+  renders plain links and works in static and interactive pages alike. One page of rows is bounded by the page size, so it may go
+  into `[PersistentState]` (`ListSlice<TItem>` serializes with System.Text.Json); the whole list never may.
+- A picker over a large option set (an image library, a customer lookup): search with `OptionSearch<TOption>`, which shows the
+  first `Limit` matches and asks for search text for the rest.
+- A small, fixed list (countries, statuses): neither; render it whole.
+
+Both read a `ListSlice<TItem>`: at most the items asked for plus the total number of matches. The application's query does the
+`Skip`/`Take` and the count, ordered by a unique key; the page keeps only the slice. To check a page's prerendered state in tests,
+see `PrerenderedComponentState` in `PandaBear.SharedKernel.Testing.AspNetCore`.
+
+### Searching a large option set
+
+`OptionSearch<TOption>` holds a picker's search: the trimmed `Query` (cut to `MaxQueryLength`, 200), at most `Limit` `Results`,
+the `Total` number of matches, `IsTruncated` (more match than shown), `IsSearching`, `HasResults` (the results belong to the
+current query) and `IsQueryTooShort`. Give it the application's search, `(query, take, cancellationToken) => Task<ListSlice<TOption>>`,
+which receives the trimmed text (empty when the user typed nothing, so the application decides which options to offer first, such
+as the newest) and `take` equal to `Limit`. A result with more than `Limit` items is cut to `Limit`. Set with `init`:
+
+- `Debounce` (default 300 ms, `DefaultDebounceMilliseconds`): `Search` waits this long and a newer `Search` during the wait replaces
+  it, so a burst of keystrokes, each a round trip on Interactive Server, sends one query. `TimeSpan.Zero` searches at once.
+  `TimeProvider` sets the clock of the wait, for tests.
+- `MinQueryLength` (default 0): a shorter query fetches nothing and empties the results; `IsQueryTooShort` tells the page to ask
+  for more text. With the default, the empty query asks for the first options.
+
+Nothing is fetched while prerendering: until `Start()` a `Search` only records the query. Call `Start()` from
+`OnAfterRenderAsync` when `firstRender` is true, which never runs while prerendering; it searches the current query at once. So the
+prerendered page carries no options and nothing is fetched twice; render the selected value from the record itself.
+
+Only the latest search applies: a new `Search` cancels the previous search's token, and a superseded result is dropped even
+when it arrives later. A failure is not swallowed: like `ListDelete.Run`, `Search` and `Start` let the exception propagate (handle
+it, or let `RecoveryErrorBoundary` report it), and the results of the failed query are emptied. Only the cancellation of a
+superseded search completes quietly; a cancellation through the caller's token propagates. `Dispose` cancels the running search;
+dispose the state with the component.
+
+`Status(shownFormat, noMatchesFormat)` builds the announcement from your copy for one polite live region, `role="status"` with
+`aria-atomic="true"`, never around the results list, which a screen reader would read as one flattened string
+([Scott O'Hara, "dynamic results"](https://www.scottohara.me/blog/2022/02/05/dynamic-results.html)). `shownFormat` is a composite
+format with `{0}` the number shown, `{1}` the total (current culture) and `{2}` the query; `noMatchesFormat` has `{0}` the query.
+It returns `null` until a search for the current query has completed. Screen readers stay silent when a live region's text does
+not change, so the text of consecutive searches always differs by a trailing no-break space that is not read; a search that gives
+the same counts is announced again. `AnnouncementKey` changes with every completed search, for content you want to re-render (as
+an `@key`). Render the region always, empty at first, so the first announcement is read.
+
+```razor
+@implements IDisposable
+
+<label for="image-search">Search images</label>
+<input id="image-search" type="search" value="@_images.Query" disabled="@(!RendererInfo.IsInteractive)"
+       @oninput="e => _images.Search(e.Value?.ToString())" />
+<p role="status" aria-atomic="true">@_images.Status("{0} of {1} images for ‘{2}’", "No images for ‘{0}’")</p>
+@foreach (var image in _images.Results)
+{
+    <label><input type="radio" name="image" value="@image.Id" checked="@(image.Id == SelectedId)"
+                  @onchange="() => Select(image.Id)" /> @image.Name</label>
+}
+@if (_images.IsQueryTooShort)
+{
+    <p>Type at least two letters.</p>
+}
+else if (_images.IsTruncated)
+{
+    <p>Type more of the name to find other images.</p>
+}
+
+@code {
+    private OptionSearch<ImageOption> _images = default!;
+
+    protected override void OnInitialized() =>
+        _images = new OptionSearch<ImageOption>((query, take, token) => Images.Search(query, take, token), limit: 20) { MinQueryLength = 2 };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _images.Start();
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose() => _images.Dispose();
+}
+```
+
+Call `Search` and `Start` on the renderer's synchronization context (an event handler or a lifecycle method), as with
+`ListDelete`. `OnAfterRenderAsync` does not render again by itself, hence the `StateHasChanged()` after `Start`.
 
 ## Notes
 

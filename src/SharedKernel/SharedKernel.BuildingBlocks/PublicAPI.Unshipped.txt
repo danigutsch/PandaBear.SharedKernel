@@ -238,3 +238,25 @@ override PandaBear.BuildingBlocks.HypermediaLink.GetHashCode() -> int
 override PandaBear.BuildingBlocks.HypermediaLink.ToString() -> string!
 static PandaBear.BuildingBlocks.HypermediaLink.operator !=(PandaBear.BuildingBlocks.HypermediaLink? left, PandaBear.BuildingBlocks.HypermediaLink? right) -> bool
 static PandaBear.BuildingBlocks.HypermediaLink.operator ==(PandaBear.BuildingBlocks.HypermediaLink? left, PandaBear.BuildingBlocks.HypermediaLink? right) -> bool
+PandaBear.BuildingBlocks.PageWindow
+PandaBear.BuildingBlocks.PageWindow.Equals(PandaBear.BuildingBlocks.PageWindow other) -> bool
+PandaBear.BuildingBlocks.PageWindow.HasMultiplePages.get -> bool
+PandaBear.BuildingBlocks.PageWindow.IsOutOfRange.get -> bool
+PandaBear.BuildingBlocks.PageWindow.NextPage.get -> int?
+PandaBear.BuildingBlocks.PageWindow.Page.get -> int
+PandaBear.BuildingBlocks.PageWindow.PageCount.get -> int
+PandaBear.BuildingBlocks.PageWindow.PageSize.get -> int
+PandaBear.BuildingBlocks.PageWindow.PageWindow() -> void
+PandaBear.BuildingBlocks.PageWindow.PreviousPage.get -> int?
+PandaBear.BuildingBlocks.PageWindow.Skip.get -> int
+PandaBear.BuildingBlocks.PageWindow.Take.get -> int
+PandaBear.BuildingBlocks.PageWindow.Total.get -> int
+override PandaBear.BuildingBlocks.PageWindow.GetHashCode() -> int
+static PandaBear.BuildingBlocks.PageWindow.Create(int? requestedPage, int pageSize, int total) -> PandaBear.BuildingBlocks.PageWindow
+static PandaBear.BuildingBlocks.PageWindow.Create(string? requestedPage, int pageSize, int total) -> PandaBear.BuildingBlocks.PageWindow
+static PandaBear.BuildingBlocks.PageWindow.operator !=(PandaBear.BuildingBlocks.PageWindow left, PandaBear.BuildingBlocks.PageWindow right) -> bool
+static PandaBear.BuildingBlocks.PageWindow.operator ==(PandaBear.BuildingBlocks.PageWindow left, PandaBear.BuildingBlocks.PageWindow right) -> bool
+~override PandaBear.BuildingBlocks.PageWindow.Equals(object obj) -> bool
+~override PandaBear.BuildingBlocks.PageWindow.ToString() -> string
+PandaBear.BuildingBlocks.SearchKey
+static PandaBear.BuildingBlocks.SearchKey.Of(string? text) -> string!
