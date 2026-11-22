@@ -22,6 +22,7 @@ Source files are grouped by topic. The folders are organization only: every publ
 | `Time` | `BirthDate`, `DateRange`, `DateOnlyRange`, `BusinessTimeProvider`, `TimeProvider` helpers |
 | `Failures` | concurrency and unique-constraint exceptions, cancellation helpers, `Compensation` |
 | `Http` | `HypermediaLink` |
+| `Paging` | `PageWindow` |
 
 The test project mirrors these folders; shared test helpers live next to the types they exercise, and
 `RestoreTests` (which spans several types) stays at the root.
@@ -40,6 +41,37 @@ the hyphens at both ends and cuts a slug longer than `maxLength` without leaving
 person wrote, such as a download file name from a trip code (`ÁLPES/2027 ..\x` gives `alpes-2027-x`). It fails only when the text is
 blank (`{label} is required.`) or keeps no ASCII letter or digit (`中国` gives `{label} must contain a letter or a digit.`), so the caller
 can fall back to a fixed name. Unicode normalization comes from .NET; there is no transliteration table.
+
+## Page windows
+
+`PageWindow.Create(requestedPage, pageSize, total)` computes the page a request shows from the page number in the URL, as Microsoft's
+Blazor guidance recommends for the current page of a paged list
+([State management using the URL](https://learn.microsoft.com/aspnet/core/blazor/state-management/?view=aspnetcore-11.0#state-management-using-the-url)).
+The requested page is clamped like `QuickGrid`'s URL paging: missing, malformed, zero or negative shows the first page, beyond the
+end the last page, and an empty list has one page. The `string` overload takes the raw query value (only ASCII digits are a number;
+digits beyond `int` mean beyond the end); the `int?` overload takes a value already parsed. The window gives `Page` (1-based),
+`PageCount`, `Skip`, `Take` (the page size), `PreviousPage` and `NextPage` (`null` at either end) and `HasMultiplePages`.
+
+`IsOutOfRange` is `true` when the request named a page that does not exist (below 1, beyond the end, or text that is not a page
+number) and `false` when it named none. A public site answers such a request with 404 Not Found, so crawlers do not index endless
+copies of the last page; an admin page may show the clamped page instead.
+
+This is offset paging, which numbered pages need ([GitLab pagination guidelines](https://docs.gitlab.com/development/database/pagination_guidelines/)
+compare it with keyset paging). Order the query by a unique, immutable key, for example the sort column and then the id, or rows
+move between pages from one request to the next. Count first, then read the page:
+
+```csharp
+var total = await photos.CountAsync(cancellationToken);
+var window = PageWindow.Create(requestedPage, pageSize: 24, total);
+if (window.IsOutOfRange)
+{
+    return TypedResults.NotFound();
+}
+
+var page = await photos.OrderBy(photo => photo.SortOrder).ThenBy(photo => photo.Id)
+    .Skip(window.Skip).Take(window.Take).ToListAsync(cancellationToken);
+```
+
 
 ## Web addresses
 
