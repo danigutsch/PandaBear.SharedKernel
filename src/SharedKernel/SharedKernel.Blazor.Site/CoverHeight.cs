@@ -1,6 +1,9 @@
 namespace PandaBear.Blazor.Site;
 
-/// <summary>How tall a <see cref="HeroLayout.Cover" /> hero is at least; its content can make it taller.</summary>
+/// <summary>
+/// How tall a <see cref="HeroLayout.Cover" /> hero with an image is at least; its content can make it taller. A cover without an image is
+/// as tall as its content, because the minimum height exists to show the photo.
+/// </summary>
 public enum CoverHeight
 {
     /// <summary>The cover of an ordinary page: 20rem below the <c>48rem</c> breakpoint and 34.375rem (550px) from it on.</summary>

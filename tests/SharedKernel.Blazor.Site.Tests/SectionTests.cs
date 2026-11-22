@@ -252,4 +252,32 @@ public sealed class SectionTests : BunitContext
         heading.Children.Select(child => child.ClassName).ShouldBe(["site-section__eyebrow", "site-section__title"]);
         cut.FindAll(".site-split__media hgroup").ShouldBeEmpty();
     }
+
+    [Theory]
+    [InlineData(null, "site-section extra")]
+    [InlineData(SiteAlignment.Start, "site-section site-section--text-start extra")]
+    [InlineData(SiteAlignment.Center, "site-section site-section--text-center extra")]
+    public void The_text_alignment_inherits_by_default_and_otherwise_sets_a_class_before_the_extra_class(SiteAlignment? alignment, string classes)
+    {
+        // Arrange & Act
+        var cut = Render<Section>(parameters => parameters
+            .Add(component => component.Title, "Tours")
+            .Add(component => component.TextAlignment, alignment)
+            .Add(component => component.Class, "extra"));
+
+        // Assert
+        cut.Find("section").ClassName.ShouldBe(classes);
+    }
+
+    [Fact]
+    public void An_undefined_text_alignment_is_rejected()
+    {
+        // Arrange & Act
+        var render = () => Render<Section>(parameters => parameters
+            .Add(component => component.Title, "Tours")
+            .Add(component => component.TextAlignment, (SiteAlignment)5));
+
+        // Assert
+        render.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe(nameof(Section.TextAlignment));
+    }
 }

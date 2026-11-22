@@ -11,11 +11,11 @@
             {
                 <dd class="site-fact-grid__value">@if (value.Link is null)
                     {
-                        @value.Text
+                        @AddressBreaks.Render(value.Text)
                     }
                     else
                     {
-                        <a href="@value.Link.Value">@value.Text</a>
+                        <a href="@value.Link.Value" aria-label="@(AddressBreaks.HasBreaks(value.Text) ? value.Text : null)">@AddressBreaks.Render(value.Text)</a>
                     }</dd>
             }
         </div>

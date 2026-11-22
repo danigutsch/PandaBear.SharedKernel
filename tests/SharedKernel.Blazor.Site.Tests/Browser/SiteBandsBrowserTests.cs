@@ -429,4 +429,93 @@ public sealed class SiteBandsBrowserTests(ChromiumFixture chromium) : IClassFixt
         Math.Abs(play.X + (play.Width / 2) - (poster.X + (poster.Width / 2))).ShouldBeLessThanOrEqualTo(1);
         SiteFixtures.OnPrimaryContrast(await page.Pixel(play.X + 4, play.Y + (play.Height / 2))).ShouldBeGreaterThanOrEqualTo(SiteScrim.TextMinimum);
     }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(375, nameof(CoverHeight.Page))]
+    [InlineData(1280, nameof(CoverHeight.Page))]
+    [InlineData(1280, nameof(CoverHeight.Landing))]
+    public async Task A_cover_hero_without_a_photo_is_only_as_tall_as_its_content(int width, string height)
+    {
+        // Arrange & Act
+        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, width, new Dictionary<string, object?>
+        {
+            [nameof(BandsSample.HeroImage)] = false,
+            [nameof(BandsSample.CoverHeight)] = Enum.Parse<CoverHeight>(height),
+        });
+
+        // Assert
+        var hero = await page.Box(".site-hero");
+        var text = await page.Box(".site-hero__text");
+        var paddingBottom = double.Parse((await page.Style(".site-hero", "padding-bottom")).Replace("px", string.Empty, StringComparison.Ordinal), System.Globalization.CultureInfo.InvariantCulture);
+        Math.Abs(hero.Bottom - (text.Bottom + paddingBottom)).ShouldBeLessThanOrEqualTo(1);
+        if (width >= 768)
+        {
+            hero.Height.ShouldBeLessThan(550);
+        }
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task The_brand_link_around_a_logo_shows_its_focus_ring_around_the_logo()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, 1280, new Dictionary<string, object?> { [nameof(BandsSample.Placement)] = HeaderPlacement.Above });
+        await page.ShowLoaded(".site-header__brand");
+
+        // Act
+        await page.Page.Keyboard.PressAsync("Tab");
+
+        // Assert
+        var focused = await page.Page.EvaluateAsync<string>("() => document.activeElement.id");
+        focused.ShouldBe("brand");
+        var link = await page.Box("#brand");
+        var logo = await page.Box("#brand img");
+        link.ShouldBe(logo);
+        var middle = logo.Y + (logo.Height / 2);
+        string[] ring =
+        [
+            await page.Pixel(logo.X - 3.5, middle),
+            await page.Pixel(logo.X + logo.Width + 3.5, middle),
+            await page.Pixel(logo.X + (logo.Width / 2), logo.Y - 3.5),
+            await page.Pixel(logo.X + (logo.Width / 2), logo.Bottom + 3.5),
+        ];
+        ring.ShouldAllSatisfy(pixel => pixel.ShouldBe("#1d4ed8"));
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task On_a_phone_the_menu_button_and_the_open_menu_s_links_are_44_pixel_tap_targets()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, 375);
+        var toggle = await page.Box(".site-header__toggle");
+
+        // Act
+        await page.Page.ClickAsync(".site-header__toggle");
+
+        // Assert
+        var targets = await page.Boxes(".site-nav__list > .site-nav__item > a, .site-nav__group > summary");
+        toggle.Height.ShouldBeGreaterThanOrEqualTo(44);
+        targets.Count.ShouldBe(4);
+        targets.ShouldAllSatisfy(target => target.Height.ShouldBeGreaterThanOrEqualTo(44));
+        await page.Page.ClickAsync(".site-nav__group > summary");
+        var children = await page.Boxes(".site-nav__sublist a");
+        children.ShouldAllSatisfy(target => target.Height.ShouldBeGreaterThanOrEqualTo(44));
+    }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(375, 48, 8)]
+    [InlineData(1280, 56, 16)]
+    public async Task The_floating_link_is_smaller_and_nearer_the_corner_on_a_phone(int width, double size, double inset)
+    {
+        // Arrange & Act
+        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, width);
+
+        // Assert
+        var link = await page.Box(".site-floating-link");
+        link.Width.ShouldBe(size);
+        link.Height.ShouldBe(size);
+        var right = width - (link.X + link.Width);
+        var bottom = 900 - link.Bottom;
+        right.ShouldBe(inset);
+        bottom.ShouldBe(inset);
+    }
 }

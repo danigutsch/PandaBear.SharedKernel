@@ -21,17 +21,30 @@ public sealed class AlbumSectionTests : BunitContext
     }
 
     [Fact]
-    public void The_photos_of_the_first_row_load_eagerly_and_the_rest_lazily_with_their_size()
+    public void The_photos_are_a_grid_whose_first_row_of_four_loads_eagerly_and_the_rest_lazily_with_their_size()
     {
         // Arrange & Act
         var cut = this.RenderAlbum(PageWindow.Create(1, 6, 6), Images(6));
 
         // Assert
+        cut.Find(".site-image-grid").ClassName.ShouldBe("site-image-grid");
         var images = cut.FindAll(".site-image-grid img");
         images.Select(image => image.GetAttribute("loading")).ShouldBe(["eager", "eager", "eager", "eager", "lazy", "lazy"]);
         images.ShouldAllSatisfy(image => image.GetAttribute("width").ShouldBe("400"));
         images.ShouldAllSatisfy(image => image.GetAttribute("height").ShouldBe("300"));
         AlbumSection.DefaultEagerCount.ShouldBe(4);
+    }
+
+    [Fact]
+    public void Thumbnails_are_opted_into_and_load_their_first_row_of_six_eagerly()
+    {
+        // Arrange & Act
+        var cut = this.RenderAlbum(PageWindow.Create(1, 8, 8), Images(8), parameters => parameters.Add(album => album.Layout, ImageGridLayout.Thumbnails));
+
+        // Assert
+        cut.Find(".site-image-grid").ClassName.ShouldBe("site-image-grid site-image-grid--thumbnails");
+        cut.FindAll(".site-image-grid img").Select(image => image.GetAttribute("loading")).ShouldBe(["eager", "eager", "eager", "eager", "eager", "eager", "lazy", "lazy"]);
+        AlbumSection.DefaultThumbnailEagerCount.ShouldBe(6);
     }
 
     [Fact]
@@ -130,5 +143,25 @@ public sealed class AlbumSectionTests : BunitContext
         marked[0].TagName.ShouldBe("H2");
         cut.Find("section").HasAttribute("lang").ShouldBeFalse();
         cut.FindAll("nav.site-pager, img, figcaption, .tour-link").ShouldAllSatisfy(element => element.Closest("[lang]").ShouldBeNull());
+    }
+
+    [Fact]
+    public void Linked_photos_and_the_sizes_pass_through_to_the_grid()
+    {
+        // Arrange
+        GalleryImage[] photos =
+        [
+            new(PictureImage()) { Href = LinkTarget.FromString("/media/lake-2400.jpg") },
+            new(PictureImage()),
+        ];
+
+        // Act
+        var defaults = this.RenderAlbum(PageWindow.Create(1, 2, 2), photos, parameters => parameters.Add(album => album.Layout, ImageGridLayout.Thumbnails));
+        var chosen = this.RenderAlbum(PageWindow.Create(1, 2, 2), photos, parameters => parameters.Add(album => album.Sizes, "8rem"));
+
+        // Assert
+        defaults.FindAll(".site-image-grid__link").Select(link => link.GetAttribute("href")).ShouldBe(["/media/lake-2400.jpg"]);
+        defaults.FindAll("img").ShouldAllSatisfy(image => image.GetAttribute("sizes").ShouldBe(ImageGrid.ThumbnailSizes));
+        chosen.FindAll("img").ShouldAllSatisfy(image => image.GetAttribute("sizes").ShouldBe("8rem"));
     }
 }
