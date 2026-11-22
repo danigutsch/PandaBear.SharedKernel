@@ -454,6 +454,64 @@ a {
     font-size: var(--site-font-size-sm);
 }
 
+.site-footer__content {
+    display: grid;
+    gap: var(--site-space-2);
+}
+
+:is(.site-footer__content, .site-footer__legal) > p {
+    margin: 0;
+}
+
+.site-footer address {
+    font-style: normal;
+}
+
+/* A primary footer: a full-width band of the primary colour in the light scheme, its content in the content width. */
+.site-footer--primary {
+    color-scheme: light;
+    width: 100%;
+    margin: var(--site-space-6) 0 0;
+    padding: var(--site-space-5) max(var(--site-space-3), (100% - var(--site-content-width)) / 2) var(--site-space-4);
+    border-top: 0;
+    background: var(--site-color-primary);
+    color: var(--site-color-on-primary);
+}
+
+.site-footer--primary a:not(.site-button) {
+    color: inherit;
+}
+
+.site-footer--primary :focus-visible {
+    outline-color: var(--site-color-on-primary);
+}
+
+.site-footer--text-center {
+    text-align: center;
+}
+
+/*
+ * Separated list: items on one line, each kept together, joined by a bar with empty alternative text, so assistive technology never
+ * reads it. An item wider than the whole line breaks inside.
+ */
+.site-separated-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-separated-list__item {
+    display: inline-block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.site-separated-list__item + .site-separated-list__item::before {
+    content: "|";
+    content: "|" / "";
+    margin-inline: 0.5em;
+}
+
 /* Hero. */
 .site-hero {
     display: grid;
@@ -1332,8 +1390,11 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
 }
 
 .site-pager a {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-inline-size: 2.75rem;
+    min-block-size: 2.75rem;
     padding: var(--site-space-2) var(--site-space-3);
     border-radius: var(--site-control-radius);
     text-align: center;
@@ -1366,6 +1427,21 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
 .site-language-switcher a[aria-current="true"] {
     background: var(--site-color-primary);
     color: var(--site-color-on-primary);
+}
+
+/* Below the breakpoint, where a finger is the pointer, footer links and language links are at least 2.75rem (44px) tap targets. */
+@media (width < 48rem) {
+    .site-footer a,
+    .site-language-switcher a {
+        display: inline-flex;
+        align-items: center;
+        min-block-size: 2.75rem;
+    }
+
+    .site-language-switcher a {
+        justify-content: center;
+        min-inline-size: 2.75rem;
+    }
 }
 
 @media (min-width: 48rem) {

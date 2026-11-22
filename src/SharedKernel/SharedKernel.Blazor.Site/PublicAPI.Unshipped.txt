@@ -61,11 +61,26 @@ PandaBear.Blazor.Site.CardImageShadow.Offset = 1 -> PandaBear.Blazor.Site.CardIm
 PandaBear.Blazor.Site.CardStyle
 PandaBear.Blazor.Site.CardStyle.Boxed = 0 -> PandaBear.Blazor.Site.CardStyle
 PandaBear.Blazor.Site.CardStyle.Plain = 1 -> PandaBear.Blazor.Site.CardStyle
+PandaBear.Blazor.Site.FooterTone
+PandaBear.Blazor.Site.FooterTone.Default = 0 -> PandaBear.Blazor.Site.FooterTone
+PandaBear.Blazor.Site.FooterTone.Primary = 1 -> PandaBear.Blazor.Site.FooterTone
 PandaBear.Blazor.Site.Hero.Divider.get -> bool
 PandaBear.Blazor.Site.Hero.Divider.set -> void
+PandaBear.Blazor.Site.SeparatedList
+PandaBear.Blazor.Site.SeparatedList.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.SeparatedList.ChildContent.set -> void
+PandaBear.Blazor.Site.SeparatedList.SeparatedList() -> void
+PandaBear.Blazor.Site.SeparatedListItem
+PandaBear.Blazor.Site.SeparatedListItem.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.SeparatedListItem.ChildContent.set -> void
+PandaBear.Blazor.Site.SeparatedListItem.SeparatedListItem() -> void
 PandaBear.Blazor.Site.SiteAlignment
 PandaBear.Blazor.Site.SiteAlignment.Center = 1 -> PandaBear.Blazor.Site.SiteAlignment
 PandaBear.Blazor.Site.SiteAlignment.Start = 0 -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.SiteFooter.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.SiteFooter.TextAlignment.set -> void
+PandaBear.Blazor.Site.SiteFooter.Tone.get -> PandaBear.Blazor.Site.FooterTone
+PandaBear.Blazor.Site.SiteFooter.Tone.set -> void
 PandaBear.Blazor.Site.SiteSpace
 PandaBear.Blazor.Site.SiteSpace.None = 0 -> PandaBear.Blazor.Site.SiteSpace
 PandaBear.Blazor.Site.SiteSpace.Space1 = 1 -> PandaBear.Blazor.Site.SiteSpace
