@@ -50,3 +50,46 @@ PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutbox
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportPoison
 static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportPoison.CountPoisoned<TContext>(TContext! dbContext, string! consumerName, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
 static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportPoison.ReleasePoisoned<TContext>(TContext! dbContext, string! consumerName, string! eventId, System.DateTimeOffset releasedAt, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventMessagingHealth
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.Deconstruct(out long PendingCount, out System.DateTimeOffset? OldestEnqueuedAt, out long RetryCount, out System.DateTimeOffset? OldestRetryEnqueuedAt, out long DueRetryCount) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.DueRetryCount.get -> long
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.DueRetryCount.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.Equals(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth other) -> bool
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.IntegrationEventOutboxHealth() -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.IntegrationEventOutboxHealth(long PendingCount, System.DateTimeOffset? OldestEnqueuedAt, long RetryCount, System.DateTimeOffset? OldestRetryEnqueuedAt, long DueRetryCount) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.OldestEnqueuedAt.get -> System.DateTimeOffset?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.OldestEnqueuedAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.OldestRetryEnqueuedAt.get -> System.DateTimeOffset?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.OldestRetryEnqueuedAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.PendingCount.get -> long
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.PendingCount.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.RetryCount.get -> long
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.RetryCount.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.Deconstruct(out long TerminalCount, out System.DateTimeOffset? OldestPoisonedAt, out long RetryCount, out System.DateTimeOffset? OldestRetryReceivedAt, out long DueRetryCount) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.DueRetryCount.get -> long
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.DueRetryCount.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.Equals(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth other) -> bool
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.IntegrationEventTransportHealth() -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.IntegrationEventTransportHealth(long TerminalCount, System.DateTimeOffset? OldestPoisonedAt, long RetryCount, System.DateTimeOffset? OldestRetryReceivedAt, long DueRetryCount) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.OldestPoisonedAt.get -> System.DateTimeOffset?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.OldestPoisonedAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.OldestRetryReceivedAt.get -> System.DateTimeOffset?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.OldestRetryReceivedAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.RetryCount.get -> long
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.RetryCount.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.TerminalCount.get -> long
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.TerminalCount.init -> void
+override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.GetHashCode() -> int
+override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.GetHashCode() -> int
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventMessagingHealth.ReadOutbox(Microsoft.EntityFrameworkCore.DbContext! dbContext, System.DateTimeOffset cutoff, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth>!
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventMessagingHealth.ReadTransport(Microsoft.EntityFrameworkCore.DbContext! dbContext, string! consumerName, System.DateTimeOffset cutoff, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth>!
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.operator !=(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.operator ==(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.operator !=(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.operator ==(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth right) -> bool
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.Equals(object obj) -> bool
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.ToString() -> string
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.Equals(object obj) -> bool
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.ToString() -> string
