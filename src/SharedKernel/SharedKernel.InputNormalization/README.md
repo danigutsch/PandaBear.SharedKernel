@@ -20,7 +20,9 @@ surrogate from a truncated or hostile form field, because Unicode normalization 
 `TrySanitizeNotes` and `TryNormalizeKey`: they return `false` for such text, and otherwise exactly what the throwing methods return, so
 the caller can answer a validation error instead of a server error.
 
-`TrySanitizeParagraphs` splits text typed into one box, such as a description, into paragraphs on blank lines: each paragraph is
+`TrySanitizeParagraphs` splits text typed into one box, such as a description, into paragraphs on blank lines. Every Unicode line
+terminator ends a line: line feed, carriage return, both together, next line (U+0085), form feed (U+000C), line separator (U+2028) and
+paragraph separator (U+2029), so text pasted from a word processor splits the same way. Each paragraph is
 sanitized like `Sanitize` (its line breaks become single spaces), empty ones are dropped, and malformed text returns `false`. Joining the
 paragraphs with a blank line gives the same paragraphs again, so a stored list round-trips through an editor's text box.
 

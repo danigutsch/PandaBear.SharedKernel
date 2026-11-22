@@ -10,8 +10,8 @@ public sealed class ImageCreditTests
     private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
 
     private static readonly ImageCreditFormats Portuguese = new(
-        WithTitle: "“{0}”, de {1}, licença {2}",
-        WithoutTitle: "Foto de {1}, licença {2}",
+        WithTitle: "“{2}”, de {0}, licença {1}",
+        WithoutTitle: "Foto de {0}, licença {1}",
         Modified: "{0} (adaptada)");
 
     [Fact]
@@ -76,18 +76,18 @@ public sealed class ImageCreditTests
     }
 
     [Fact]
-    public void The_short_text_fills_the_application_format_with_the_author_licence_and_title()
+    public void The_short_text_fills_the_application_format_with_the_author_licence_title_and_source()
     {
         // Arrange
-        var credit = ImageCredit.Create("Ana Silva", "Castelo", null, "CC BY-SA 4.0", null, false).ShouldBeSuccess();
+        var credit = ImageCredit.Create("Ana Silva", "Castelo", "https://example.org/p/1", "CC BY-SA 4.0", null, false).ShouldBeSuccess();
 
         // Act
         var portuguese = credit.ToShortText("Foto: {0}, {1}", PtBr);
-        var english = credit.ToShortText("Photo: {0} ({1}), “{2}”", CultureInfo.InvariantCulture);
+        var english = credit.ToShortText("Photo: {0} ({1}), “{2}”, {3}", CultureInfo.InvariantCulture);
 
         // Assert
         portuguese.ShouldBe("Foto: Ana Silva, CC BY-SA 4.0");
-        english.ShouldBe("Photo: Ana Silva (CC BY-SA 4.0), “Castelo”");
+        english.ShouldBe("Photo: Ana Silva (CC BY-SA 4.0), “Castelo”, https://example.org/p/1");
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public sealed class ImageCreditTests
     {
         // Arrange
         var credit = ImageCredit.Create("Ana", null, "https://example.org/p/1", "Pixabay", null, false).ShouldBeSuccess();
-        var formats = new ImageCreditFormats("{0} by {1}, {2} ({3})", "{1}, {2} ({3})", "{0}, modified");
+        var formats = new ImageCreditFormats("{2} by {0}, {1} ({3})", "{0}, {1} ({3})", "{0}, modified");
 
         // Act
         var text = credit.ToFullText(formats, CultureInfo.InvariantCulture);
@@ -127,6 +127,8 @@ public sealed class ImageCreditTests
     [InlineData("CC BY-NC-SA 2.5", "https://creativecommons.org/licenses/by-nc-sa/2.5/")]
     [InlineData("CC0 1.0", "https://creativecommons.org/publicdomain/zero/1.0/")]
     [InlineData("Public Domain Mark 1.0", "https://creativecommons.org/publicdomain/mark/1.0/")]
+    [InlineData("PDM 1.0", "https://creativecommons.org/publicdomain/mark/1.0/")]
+    [InlineData("pdm 1.0", "https://creativecommons.org/publicdomain/mark/1.0/")]
     public void Common_creative_commons_codes_have_a_known_licence_link(string code, string expected)
     {
         // Act

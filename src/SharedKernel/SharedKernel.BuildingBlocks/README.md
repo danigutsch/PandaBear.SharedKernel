@@ -57,18 +57,18 @@ source and the licence, and noting a change: `Author` (required, at most 200 cha
 `SourceUrl` (an https `WebUrl`), `Licence` and `Modified` (cropped, resized or otherwise changed). `ImageLicence` holds a `Code` as
 people read it (`CC BY 2.0`, `CC BY-SA 4.0`, `CC0 1.0`, `Pixabay` or the application's own, at most 60 characters) and an optional https
 `Url`. `ImageLicence.KnownUrl(code)` gives the link of the common Creative Commons codes (`CC BY`, `BY-SA`, `BY-ND`, `BY-NC`,
-`BY-NC-SA`, `BY-NC-ND` in 2.0, 2.5, 3.0 and 4.0, `CC0 1.0` and `Public Domain Mark 1.0`), so an editor can fill it in; any other code has
+`BY-NC-SA`, `BY-NC-ND` in 2.0, 2.5, 3.0 and 4.0, `CC0 1.0` and `Public Domain Mark 1.0` or `PDM 1.0`), so an editor can fill it in; any other code has
 none.
 
 `ImageCredit.Create(author, title, source, licenceCode, licenceLink, modified, fieldPrefix)` returns every error at once on `author`,
 `title`, `sourceUrl`, `licence.code` and `licence.url`, under `fieldPrefix` when given (`credit.author`); messages never echo the
-input. `Restore` rebuilds a stored credit without rules. All copy is the application's:
+input. `Restore` rebuilds a stored credit without rules. All copy is the application's, and every format takes the same placeholders:
+`{0}` the author, `{1}` the licence code, `{2}` the title and `{3}` the source address, the last two empty when absent.
 
-- `credit.ToShortText("Foto: {0}, {1}", culture)` gives the caption, `Foto: Ana Silva, CC BY 2.0` (`{0}` author, `{1}` licence code,
-  `{2}` title);
+- `credit.ToShortText("Foto: {0}, {1}", culture)` gives the caption, `Foto: Ana Silva, CC BY 2.0`;
 - `credit.ToFullText(new ImageCreditFormats(withTitle, withoutTitle, modified), culture)` gives a credits page's line: the title
-  format when there is a title, else the untitled one (`{0}` title, `{1}` author, `{2}` licence code, `{3}` source address), then the
-  change note (`{0} (adaptada)`). Linking the source and the licence is the display's job.
+  format when there is a title (`“{2}”, de {0}, licença {1}`), else the untitled one (`Foto de {0}, licença {1}`), then the change
+  note, whose `{0}` is the text so far (`{0} (adaptada)`). Linking the source and the licence is the display's job.
 
 
 `PageWindow.Create(requestedPage, pageSize, total)` computes the page a request shows from the page number in the URL, as Microsoft's

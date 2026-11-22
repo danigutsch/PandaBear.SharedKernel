@@ -2,12 +2,13 @@ namespace PandaBear.BuildingBlocks;
 
 /// <summary>
 /// The application's composite formats for the full credit of an image, as a credits page lists it (see
-/// <see cref="ImageCredit.ToFullText"/>). In <paramref name="WithTitle"/> and <paramref name="WithoutTitle"/>, <c>{0}</c> is the title,
-/// <c>{1}</c> the author, <c>{2}</c> the licence code and <c>{3}</c> the source address (empty without one). In
+/// <see cref="ImageCredit.ToFullText"/>). <paramref name="WithTitle"/> and <paramref name="WithoutTitle"/> take the placeholders of
+/// <see cref="ImageCredit.ToShortText"/>: <c>{0}</c> the author, <c>{1}</c> the licence code, <c>{2}</c> the title and <c>{3}</c> the
+/// source address (empty without one). In
 /// <paramref name="Modified"/>, <c>{0}</c> is the text so far, such as <c>{0} (adaptada)</c>.
 /// </summary>
-/// <param name="WithTitle">The format of a credit with a title, such as <c>“{0}”, de {1}, licença {2}</c>.</param>
-/// <param name="WithoutTitle">The format of a credit without a title, such as <c>Foto de {1}, licença {2}</c>.</param>
+/// <param name="WithTitle">The format of a credit with a title, such as <c>“{2}”, de {0}, licença {1}</c>.</param>
+/// <param name="WithoutTitle">The format of a credit without a title, such as <c>Foto de {0}, licença {1}</c>.</param>
 /// <param name="Modified">The format that notes that the image was changed, such as cropped or resized.</param>
 public sealed record ImageCreditFormats(string WithTitle, string WithoutTitle, string Modified)
 {

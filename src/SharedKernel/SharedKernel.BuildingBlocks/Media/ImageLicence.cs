@@ -55,7 +55,7 @@ public sealed class ImageLicence : ValueObject
     /// <summary>
     /// Gives the link of a common Creative Commons code: <c>CC BY</c>, <c>CC BY-SA</c>, <c>CC BY-ND</c>, <c>CC BY-NC</c>,
     /// <c>CC BY-NC-SA</c> and <c>CC BY-NC-ND</c> in versions 2.0, 2.5, 3.0 and 4.0 (<c>https://creativecommons.org/licenses/by-sa/4.0/</c>),
-    /// <c>CC0 1.0</c> and <c>Public Domain Mark 1.0</c>. Case and repeated spaces are ignored.
+    /// <c>CC0 1.0</c> and <c>Public Domain Mark 1.0</c> (also written <c>PDM 1.0</c>). Case and repeated spaces are ignored.
     /// </summary>
     /// <param name="code">The code.</param>
     /// <returns>The link, or <see langword="null"/> for any other code.</returns>
@@ -73,7 +73,7 @@ public sealed class ImageLicence : ValueObject
             return WebUrl.Restore("https://creativecommons.org/publicdomain/zero/1.0/");
         }
 
-        if (normalized == "PUBLIC DOMAIN MARK 1.0")
+        if (normalized is "PUBLIC DOMAIN MARK 1.0" or "PDM 1.0")
         {
             return WebUrl.Restore("https://creativecommons.org/publicdomain/mark/1.0/");
         }

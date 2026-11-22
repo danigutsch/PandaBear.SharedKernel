@@ -5,7 +5,9 @@ namespace PandaBear.BuildingBlocks;
 /// <summary>
 /// The attribution of a third-party image, following the Creative Commons practice of naming the title, the author, the source and the
 /// licence, and noting when the image was changed: <see cref="Author"/>, <see cref="Title"/>, <see cref="SourceUrl"/>,
-/// <see cref="Licence"/> and <see cref="Modified"/>. All copy, such as <c>Foto: {0}, {1}</c>, is the application's.
+/// <see cref="Licence"/> and <see cref="Modified"/>. All copy, such as <c>Foto: {0}, {1}</c>, is the application's, and every format
+/// takes the same placeholders: <c>{0}</c> the author, <c>{1}</c> the licence code, <c>{2}</c> the title and <c>{3}</c> the source
+/// address, the last two empty when absent.
 /// </summary>
 public sealed class ImageCredit : ValueObject
 {
@@ -94,7 +96,7 @@ public sealed class ImageCredit : ValueObject
     }
 
     /// <summary>Builds the short credit shown with the image, such as <c>Foto: Ana Silva, CC BY 2.0</c>.</summary>
-    /// <param name="format">The application's format: <c>{0}</c> the author, <c>{1}</c> the licence code, <c>{2}</c> the title (empty without one).</param>
+    /// <param name="format">The application's format: <c>{0}</c> the author, <c>{1}</c> the licence code, <c>{2}</c> the title and <c>{3}</c> the source address, each empty when absent.</param>
     /// <param name="provider">The culture.</param>
     /// <returns>The text.</returns>
     /// <exception cref="ArgumentException"><paramref name="format"/> is <see langword="null"/>, empty or blank.</exception>
@@ -104,7 +106,7 @@ public sealed class ImageCredit : ValueObject
         ArgumentException.ThrowIfNullOrWhiteSpace(format);
         ArgumentNullException.ThrowIfNull(provider);
 
-        return string.Format(provider, format, Author, Licence.Code, Title ?? string.Empty);
+        return string.Format(provider, format, Author, Licence.Code, Title ?? string.Empty, SourceUrl?.Value ?? string.Empty);
     }
 
     /// <summary>
@@ -120,7 +122,7 @@ public sealed class ImageCredit : ValueObject
         ArgumentNullException.ThrowIfNull(formats);
         ArgumentNullException.ThrowIfNull(provider);
 
-        var text = string.Format(provider, Title is null ? formats.WithoutTitle : formats.WithTitle, Title ?? string.Empty, Author, Licence.Code, SourceUrl?.Value ?? string.Empty);
+        var text = string.Format(provider, Title is null ? formats.WithoutTitle : formats.WithTitle, Author, Licence.Code, Title ?? string.Empty, SourceUrl?.Value ?? string.Empty);
         return Modified ? string.Format(provider, formats.Modified, text) : text;
     }
 

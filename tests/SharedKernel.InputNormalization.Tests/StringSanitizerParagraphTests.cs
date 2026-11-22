@@ -42,6 +42,24 @@ public sealed class StringSanitizerParagraphTests
         paragraphs.ShouldBe(["One Two", "Three"]);
     }
 
+    [Theory]
+    [InlineData("\u0085")]
+    [InlineData("\u2028")]
+    [InlineData("\u2029")]
+    [InlineData("\u000C")]
+    public void Every_unicode_line_terminator_ends_a_line(string terminator)
+    {
+        // Arrange
+        var text = "One" + terminator + "two" + terminator + terminator + "Three";
+
+        // Act
+        var valid = StringSanitizer.TrySanitizeParagraphs(text, out var paragraphs);
+
+        // Assert
+        valid.ShouldBeTrue();
+        paragraphs.ShouldBe(["One two", "Three"]);
+    }
+
     [Fact]
     public void Joining_the_paragraphs_with_a_blank_line_gives_the_same_paragraphs()
     {

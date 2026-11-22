@@ -63,7 +63,10 @@ public static partial class StringSanitizer
     /// the paragraphs with a blank line gives the same paragraphs again. Malformed text is reported as <see langword="false"/>, as
     /// <see cref="TrySanitize"/> does.
     /// </summary>
-    /// <param name="value">The text; a line feed, a carriage return and both together each end a line.</param>
+    /// <param name="value">
+    /// The text. Each Unicode line terminator ends a line: a line feed, a carriage return, both together, a next line (U+0085), a form
+    /// feed (U+000C), a line separator (U+2028) and a paragraph separator (U+2029). A blank line between two lines ends a paragraph.
+    /// </param>
     /// <param name="paragraphs">The paragraphs in order; empty when the text is missing, blank or malformed.</param>
     /// <returns><see langword="false"/> when <paramref name="value"/> is malformed; <see langword="true"/> otherwise.</returns>
     public static bool TrySanitizeParagraphs(string? value, out IReadOnlyList<string> paragraphs)
