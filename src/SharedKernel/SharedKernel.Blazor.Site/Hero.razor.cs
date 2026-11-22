@@ -44,6 +44,15 @@ public sealed partial class Hero
     [Parameter]
     public CoverHeight CoverHeight { get; set; }
 
+    /// <summary>
+    /// Gets or sets whether a short decorative rule sets the title apart from the eyebrow and the subtitle: one after the eyebrow and
+    /// one before the subtitle, of the theme's divider width, thickness and colour (<c>site-hero--divided</c>), the colour of the text
+    /// on a cover hero. The rules are drawn by the stylesheet, not elements, so the heading group keeps its content and assistive
+    /// technology reads nothing. A hero with neither an eyebrow nor a subtitle has no rule. The default is <see langword="false" />.
+    /// </summary>
+    [Parameter]
+    public bool Divider { get; set; }
+
     /// <summary>Gets or sets the buttons or links under the subtitle.</summary>
     [Parameter]
     public RenderFragment? Actions { get; set; }
@@ -54,6 +63,8 @@ public sealed partial class Hero
         (HeroLayout.Cover, _) => "site-hero site-hero--cover",
         _ => "site-hero",
     };
+
+    private string DividerClass => Divider ? " site-hero--divided" : string.Empty;
 
     private bool HasEyebrow => !string.IsNullOrWhiteSpace(Eyebrow);
 

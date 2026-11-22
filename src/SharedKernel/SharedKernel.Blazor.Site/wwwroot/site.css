@@ -30,7 +30,12 @@
     --site-space-4: 1.5rem;
     --site-space-5: 2.5rem;
     --site-space-6: 4rem;
+    /* The corners and the divider of the theme's shape; a theme stylesheet writes its own. */
     --site-radius: 0.5rem;
+    --site-control-radius: 0.5rem;
+    --site-divider-width: 4rem;
+    --site-divider-thickness: 0.25rem;
+    --site-divider-color: var(--site-color-accent);
     --site-content-width: 72rem;
     --site-card-min-width: 16rem;
     --site-focus-ring: 3px solid var(--site-color-focus);
@@ -55,8 +60,8 @@
 }
 
 /*
- * Typography roles: a theme stylesheet may set --site-{role}-{property} for the roles h1 to h6, body, small, link, button and
- * nav. Each fallback is the value used without a theme.
+ * Typography roles: a theme stylesheet may set --site-{role}-{property} for the roles h1 to h6, body, small, link, button, nav and
+ * card-title, and --site-{role}-color for h1 to h6 and card-title. Each fallback is the value used without a theme.
  */
 body {
     margin: 0;
@@ -83,6 +88,7 @@ h1 {
     letter-spacing: var(--site-h1-letter-spacing, normal);
     text-transform: var(--site-h1-text-transform, none);
     font-style: var(--site-h1-font-style, normal);
+    color: var(--site-h1-color, inherit);
 }
 
 h2 {
@@ -93,6 +99,7 @@ h2 {
     letter-spacing: var(--site-h2-letter-spacing, normal);
     text-transform: var(--site-h2-text-transform, none);
     font-style: var(--site-h2-font-style, normal);
+    color: var(--site-h2-color, inherit);
 }
 
 h3 {
@@ -103,6 +110,7 @@ h3 {
     letter-spacing: var(--site-h3-letter-spacing, normal);
     text-transform: var(--site-h3-text-transform, none);
     font-style: var(--site-h3-font-style, normal);
+    color: var(--site-h3-color, inherit);
 }
 
 h4 {
@@ -113,6 +121,7 @@ h4 {
     letter-spacing: var(--site-h4-letter-spacing, normal);
     text-transform: var(--site-h4-text-transform, none);
     font-style: var(--site-h4-font-style, normal);
+    color: var(--site-h4-color, inherit);
 }
 
 h5 {
@@ -123,6 +132,7 @@ h5 {
     letter-spacing: var(--site-h5-letter-spacing, normal);
     text-transform: var(--site-h5-text-transform, none);
     font-style: var(--site-h5-font-style, normal);
+    color: var(--site-h5-color, inherit);
 }
 
 h6 {
@@ -133,6 +143,18 @@ h6 {
     letter-spacing: var(--site-h6-letter-spacing, normal);
     text-transform: var(--site-h6-text-transform, none);
     font-style: var(--site-h6-font-style, normal);
+    color: var(--site-h6-color, inherit);
+}
+
+.site-card__title {
+    font-family: var(--site-card-title-font-family, var(--site-font-heading));
+    font-size: var(--site-card-title-font-size, var(--site-font-size-lg));
+    font-weight: var(--site-card-title-font-weight, 700);
+    line-height: var(--site-card-title-line-height, 1.2);
+    letter-spacing: var(--site-card-title-letter-spacing, normal);
+    text-transform: var(--site-card-title-text-transform, none);
+    font-style: var(--site-card-title-font-style, normal);
+    color: var(--site-card-title-color, inherit);
 }
 
 small,
@@ -469,6 +491,27 @@ a {
 }
 
 /*
+ * A divided hero: the theme's divider after the eyebrow and before the subtitle, drawn by pseudo-elements so the heading group keeps
+ * its content; on a cover hero it is centred and takes the text's colour.
+ */
+.site-hero--divided .site-hero__eyebrow::after,
+.site-hero--divided .site-hero__subtitle::before {
+    content: "";
+    display: block;
+    width: var(--site-divider-width);
+    height: var(--site-divider-thickness);
+    margin-block: var(--site-space-3);
+    background: var(--site-divider-color);
+    border-radius: var(--site-radius);
+}
+
+.site-hero--cover.site-hero--divided .site-hero__eyebrow::after,
+.site-hero--cover.site-hero--divided .site-hero__subtitle::before {
+    margin-inline: auto;
+    background: currentColor;
+}
+
+/*
  * Bands on the primary colour or a photo: the full width, the light scheme, and the on-primary colour for text, links, headings,
  * secondary text and the focus ring. A photo lies behind the content, darkened by the scrim of its text: large text in a cover hero,
  * normal text in an image band. A cover hero without a photo is a band of the primary colour.
@@ -630,10 +673,10 @@ a {
 }
 
 .site-divider {
-    width: 4rem;
-    height: 0.25rem;
+    width: var(--site-divider-width);
+    height: var(--site-divider-thickness);
     margin-block: var(--site-space-2) var(--site-space-3);
-    background: var(--site-color-accent);
+    background: var(--site-divider-color);
     border-radius: var(--site-radius);
 }
 
@@ -657,12 +700,19 @@ a {
     margin-top: var(--site-space-4);
 }
 
-/* Buttons. */
+/*
+ * Buttons: the padding follows the button's own font size and line height, so the button is 2.75 times its font size tall and its
+ * inline padding is half that height, and at least 2.75rem tall for a tap target.
+ */
 .site-button {
-    display: inline-block;
-    padding: var(--site-space-2) var(--site-space-4);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-block-size: 2.75rem;
+    padding: max(0.25em, (2.75em - 1lh) / 2) 1.375em;
     border: 2px solid transparent;
-    border-radius: var(--site-radius);
+    border-radius: var(--site-control-radius);
+    text-align: center;
     font-family: var(--site-button-font-family, inherit);
     font-size: var(--site-button-font-size, inherit);
     font-weight: var(--site-button-font-weight, 600);
@@ -1137,7 +1187,7 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
     display: inline-block;
     min-inline-size: 2.75rem;
     padding: var(--site-space-2) var(--site-space-3);
-    border-radius: var(--site-radius);
+    border-radius: var(--site-control-radius);
     text-align: center;
 }
 
@@ -1161,7 +1211,7 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
 
 .site-language-switcher a {
     padding: var(--site-space-1) var(--site-space-2);
-    border-radius: var(--site-radius);
+    border-radius: var(--site-control-radius);
     text-decoration: none;
 }
 

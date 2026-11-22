@@ -329,7 +329,11 @@ dark surface too. `light-dark()` needs a 2024 or later browser (Chrome 123, Fire
 | `--site-font-size-sm` … `--site-font-size-3xl` | fluid `clamp()` scale | `--site-font-size-sm`, `--site-font-size-base`, `--site-font-size-lg`, `--site-font-size-xl`, `--site-font-size-2xl`, `--site-font-size-3xl` |
 | `--site-line-height` | `1.6` | Body line height |
 | `--site-space-1` … `--site-space-6` | `0.25rem` to `4rem` | `--site-space-1`, `--site-space-2`, `--site-space-3`, `--site-space-4`, `--site-space-5`, `--site-space-6` |
-| `--site-radius` | `0.5rem` | Corner radius |
+| `--site-radius` | `0.5rem` | Corner radius of surfaces: cards, disclosures, images, quotes; the theme's shape (see [Shape](#shape)) |
+| `--site-control-radius` | `0.5rem` | Corner radius of controls: buttons, pager links, language links; the theme's shape |
+| `--site-divider-width` | `4rem` | Width of the section divider and the hero rule; the theme's shape |
+| `--site-divider-thickness` | `0.25rem` | Thickness of the section divider and the hero rule; the theme's shape |
+| `--site-divider-color` | `--site-color-accent` | Colour of the section divider and the hero rule on the page; the theme's shape |
 | `--site-content-width` | `72rem` | Maximum content width |
 | `--site-card-min-width` | `16rem` | Smallest card column of `CardGrid` |
 | `--site-scrim` | `64%` | Darkening of a photo behind normal on-primary text (image bands, the video play mark); computed by the theme |
@@ -357,8 +361,12 @@ that `site.css` consumes. Without a theme nothing changes: every per-role variab
   (WCAG 2.2 formula, unrounded). `ThemeColor.Create(light, dark)` is one token for both schemes.
 - `SiteColors.Create(primary, onPrimary, accent, onAccent, text, muted, surface, surfaceAlt, border, focus, primaryHover?, accentHover?)`.
   A hover colour that is not given is derived: its base mixed with 20% of the text colour per scheme (`IsDerived(role)`).
-- `TypographyStyle.Create(fontKey, fallback, size, weight, lineHeight, letterSpacing, transform, italic)` for each `TypographyRole`
-  (h1 to h6, body, small, link, button, nav). Every value is optional; an unset value keeps `SiteTheme.Default`, and links, buttons
+- `TypographyStyle.Create(fontKey, fallback, size, weight, lineHeight, letterSpacing, transform, italic, color)` for each `TypographyRole`
+  (h1 to h6, body, small, link, button, nav, card title). `CardTitle` styles every card heading (`.site-card__title`) whatever its
+  level, so an uppercase or large section heading role does not reach the cards; by default it is a bold 1.125rem to 1.375rem heading
+  without a transform, and its field path is `typography.cardTitle`. `color` colours a heading role (h1 to h6 and the card title)
+  with the text, primary or muted colour, whose contrast on both surfaces the theme already checks; another colour is an error on
+  `color`, and a colour on another role is an error on `typography.{role}.color`, because the components colour that text. Every value is optional; an unset value keeps `SiteTheme.Default`, and links, buttons
   and navigation inherit from their surroundings when unset (so a link in small print stays small). `FontSize.Fixed(rem)` or
   `FontSize.Fluid(minRem, maxRem)` (0.5 to 10rem); a fluid size grows linearly from a 20rem (320px) to an 80rem (1280px) viewport as
   `clamp(min, a rem + b vw, max)`. Weight: 100 to 900 in steps of 100. Line height: 0.8 to 3. Letter spacing: -0.1em to 0.5em.
@@ -367,7 +375,7 @@ that `site.css` consumes. Without a theme nothing changes: every per-role variab
   `LinkTarget` that is root-relative or https and names a `.woff2` file, without `" ' ( ) < >` or a fragment. The family name allows
   letters, digits, single inner spaces, hyphens and underscores (at most 64 characters); the key is a lower-case slug. A role's
   `fallback` (`SansSerif`, `Serif`, `Monospace`) is the system stack written after the uploaded family.
-- `SiteTheme.Create(colors, typography, fonts?, allowSmallText, brandHeight, colorLabel?)` enforces every rule;
+- `SiteTheme.Create(colors, typography, fonts?, allowSmallText, brandHeight, colorLabel?, shape?)` enforces every rule;
   `SiteTheme.CreateDraft(...)` only requires unique font keys, existing font references and a positive brand height with at most four
   decimals, so a preview can show a theme that still breaks a rule. `brandHeight` defaults to `SiteTheme.DefaultBrandHeight` (2.5rem).
   `theme.Review(colorLabel?)` returns the errors, the warnings and every `ContrastCheck`. `SiteTheme.Default` is `site.css` as a
@@ -377,6 +385,31 @@ that `site.css` consumes. Without a theme nothing changes: every per-role variab
   editor shows other names passes `colorLabel`, a `Func<ThemeColorRole, string?>` such as `role => role switch { ThemeColorRole.SurfaceAlt
   => "Card background", … }`, to `Review`, `Create`, `ThemeEditorModel.ToTheme` and `ThemePreview.ColorLabel`; the message then reads
   `Muted text on Card background is …`. A role it returns `null` or white space for keeps its CSS name; field paths do not change.
+
+### Shape
+
+`SiteShape.Create(control, dividerWidth, dividerThickness, dividerColor)` is the theme's shape; `SiteShape.Default` (rounded, a 4rem
+accent divider 0.25rem thick) is `site.css` without a theme. `ControlShape` sets two radii, so every component follows one choice:
+
+| `ControlShape` | `--site-control-radius` (buttons, the more look of a card, pager links, language links) | `--site-radius` (cards, disclosures, images, quotes, the contact card) |
+| --- | --- | --- |
+| `Rounded` (default) | `0.5rem` | `0.5rem` |
+| `Square` | `0` | `0` |
+| `Pill` | `999rem`: fully round ends | `0.5rem`: a card or a disclosure has no ends to round |
+
+The divider is one rule in two places: `Section`'s divider under its heading and, with `Hero.Divider`, the hero's rule after the
+eyebrow and before the subtitle (`site-hero--divided`; drawn by pseudo-elements, so the `hgroup` keeps only its `p` and `h1` and
+assistive technology reads nothing; a hero with neither line has no rule). Both are `--site-divider-width` wide,
+`--site-divider-thickness` thick and `--site-divider-color` on the page; on the primary colour or a photo they take the text's colour.
+The divider colour is the primary, accent, text, muted or border colour (an error on `dividerColor` otherwise); it is decorative, so no
+contrast applies. Width and thickness are positive rem values with at most four decimals (`dividerWidth`, `dividerThickness`), and the
+rules below keep them in a layout range. `ThemeEditorModel` has `ControlShape`, `DividerWidth`, `DividerThickness` and `DividerColor`
+(empty means the default) and reports errors on `shape.{field}`.
+
+A button's padding is computed from its own typography, not picked: `max(0.25em, (2.75em - 1lh) / 2) 1.375em`
+(`SiteThemeStylesheet.ButtonPadding` in the preview), so a button is 2.75 times its font size tall whatever its line height, its
+inline padding is half that height and a pill's round end never reaches the text, and it is at least 2.75rem (44px) tall as a tap
+target. `lh` needs a 2023 or later browser (Chrome 109, Firefox 120, Safari 16.4).
 
 ### Scrim
 
@@ -409,11 +442,14 @@ links' block padding (2 × 0.25rem, `--site-space-1`), rounded up to four decima
 | Every other role with a size | at least 0.875rem unless `allowSmallText` | Error | readability policy |
 | Body line height | 1.3 to 2 | Error | readability policy |
 | Brand height | 1.5rem to 8rem | Error on `header.brandHeight` | layout policy: a smaller logo is hard to read, a taller header takes too much of a cover hero |
+| Divider width | 1rem to 16rem | Error on `shape.dividerWidth` | layout policy: a shorter rule reads as a dot, a longer one as a border |
+| Divider thickness | 0.0625rem (1px) to 1rem | Error on `shape.dividerThickness` | layout policy: a thicker rule reads as a bar |
+| Heading colour | text, primary or muted, on h1 to h6 and the card title only | Error on `typography.{role}.color` | WCAG 2.2 SC 1.4.3: only colours whose 4.5:1 on both surfaces the theme checks |
 | Fluid size | maximum at most 2.5 times the minimum | Error | WCAG 2.2 SC 1.4.4 (zoom must still double the text) |
 | Heading order: each level not larger than the level above, minimum and maximum compared | — | Warning on the smaller level's `size` | design guidance |
 | Font references and keys | key exists, keys unique | Error, also for drafts | rendering |
 
-Headings use the text colour, which already needs 4.5:1, so the 3:1 large-text allowance of SC 1.4.3 never lowers a check. Borders
+Headings use the text colour or a heading colour (text, primary or muted), each of which already needs 4.5:1, so the 3:1 large-text allowance of SC 1.4.3 never lowers a check. Borders
 are not checked: the components never rely on a border alone to identify a control (SC 1.4.11 applies to the focus indicator here),
 and the default `#d1d5db` on white is a decorative 1.5:1. Heading order is a warning, not an error: WCAG conveys structure through
 heading markup (SC 1.3.1), not size, and a design can mark a level with weight, case or spacing instead.
@@ -422,9 +458,11 @@ heading markup (SC 1.3.1), not size, and a design can mark a level with weight, 
 
 `SiteThemeStylesheet.Render(theme)` writes `@font-face` rules (`font-display: swap`, key then weight order), then `:root` with the 12
 colour tokens as `light-dark(light, dark)`, the three scrim tokens as percentages (`SiteThemeStylesheet.ScrimVariables`), the brand and header heights in rem
-(`SiteThemeStylesheet.HeaderVariables`: `--site-brand-height`, `--site-header-height`) and the set
+(`SiteThemeStylesheet.HeaderVariables`: `--site-brand-height`, `--site-header-height`), the shape (`SiteThemeStylesheet.ShapeVariables`:
+`--site-radius`, `--site-control-radius`, `--site-divider-width`, `--site-divider-thickness`, `--site-divider-color`), the set
 typography values as `--site-{role}-{property}`, where role is `h1` … `h6`,
-`body`, `small`, `link`, `button` or `nav`, and property is `font-family`, `font-size`, `font-weight`, `line-height`,
+`body`, `small`, `link`, `button`, `nav` or `card-title`, and the colour of a heading role that sets one as `--site-{role}-color`
+(`SiteThemeStylesheet.HeadingColorVariables`, such as `--site-h2-color: var(--site-color-primary)`), and property is `font-family`, `font-size`, `font-weight`, `line-height`,
 `letter-spacing`, `text-transform` or `font-style` (`SiteThemeStylesheet.RoleVariables`). The output is deterministic; every value
 comes from a validated value object, and strings are escaped again. `SiteThemeStylesheet.Hash(theme)` is the first 16 hex digits of
 the SHA-256 of the UTF-8 output. A host serves it with immutable caching, after `site.css`:
@@ -449,7 +487,7 @@ file intake and store only their addresses in the theme.
 ### Preview
 
 `ThemePreview` shows a small sample (navigation strip that starts with a brand box of the brand height, labelled `Texts.Brand`, h1 to h3, a paragraph with a link, small print, a primary and a secondary
-button, a card) styled by a `style` element scoped to `ScopeId`, then a contrast table for the shown scheme (pair, ratio rounded
+button, a card whose title has the card title role; the buttons and the card take the theme's shape and the site's button padding) styled by a `style` element scoped to `ScopeId`, then a contrast table for the shown scheme (pair, ratio rounded
 down, minimum, `Pass` or `Fail` in text) and the errors and warnings by field path. The sample's headings are `div` elements styled
 with the h1 to h3 roles (classes `site-theme-preview__h1` to `__h3`), not heading elements, so the page's outline and heading
 navigation keep only the host's own headings. The sample is `inert`, so its links stay out of the tab order; the contrast table and

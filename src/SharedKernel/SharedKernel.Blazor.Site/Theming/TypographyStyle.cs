@@ -30,7 +30,8 @@ public sealed class TypographyStyle : ValueObject
         decimal? lineHeight,
         decimal? letterSpacing,
         ThemeTextTransform? transform,
-        bool? italic)
+        bool? italic,
+        ThemeColorRole? color)
     {
         FontKey = fontKey;
         Fallback = fallback;
@@ -40,10 +41,11 @@ public sealed class TypographyStyle : ValueObject
         LetterSpacing = letterSpacing;
         Transform = transform;
         Italic = italic;
+        Color = color;
     }
 
     /// <summary>Gets the style that sets nothing.</summary>
-    public static TypographyStyle Inherit { get; } = new(null, null, null, null, null, null, null, null);
+    public static TypographyStyle Inherit { get; } = new(null, null, null, null, null, null, null, null, null);
 
     /// <summary>Gets the key of the self-hosted <see cref="ThemeFont" />, or <see langword="null" /> for the system stack.</summary>
     public string? FontKey { get; }
@@ -69,6 +71,12 @@ public sealed class TypographyStyle : ValueObject
     /// <summary>Gets a value indicating whether the text is italic.</summary>
     public bool? Italic { get; }
 
+    /// <summary>
+    /// Gets the colour of a heading role (h1 to h6 and the card title): the text, primary or muted colour, whose contrast on the
+    /// surfaces the theme checks. <see langword="null" /> keeps the colour of the surroundings.
+    /// </summary>
+    public ThemeColorRole? Color { get; }
+
     /// <summary>Gets a value indicating whether the style sets a font family (a font key or a fallback).</summary>
     public bool SetsFamily => FontKey is not null || Fallback is not null;
 
@@ -81,8 +89,9 @@ public sealed class TypographyStyle : ValueObject
     /// <param name="letterSpacing">The letter spacing in em, from -0.1 to 0.5.</param>
     /// <param name="transform">The text transform.</param>
     /// <param name="italic">Whether the text is italic.</param>
+    /// <param name="color">The colour of a heading role: <see cref="ThemeColorRole.Text" />, <see cref="ThemeColorRole.Primary" /> or <see cref="ThemeColorRole.Muted" />.</param>
     /// <returns>The style, or validation errors on the fields <c>fontKey</c>, <c>fallback</c>, <c>weight</c>, <c>lineHeight</c>,
-    /// <c>letterSpacing</c> and <c>transform</c>.</returns>
+    /// <c>letterSpacing</c>, <c>transform</c> and <c>color</c>.</returns>
     public static Result<TypographyStyle> Create(
         string? fontKey = null,
         GenericFontFamily? fallback = null,
@@ -91,7 +100,8 @@ public sealed class TypographyStyle : ValueObject
         decimal? lineHeight = null,
         decimal? letterSpacing = null,
         ThemeTextTransform? transform = null,
-        bool? italic = null)
+        bool? italic = null,
+        ThemeColorRole? color = null)
     {
         var errors = new ThemeErrors();
         if (fontKey is not null && !ThemeFont.IsKey(fontKey))
@@ -124,9 +134,14 @@ public sealed class TypographyStyle : ValueObject
             errors.Add("transform", "The text transform must be none, uppercase or capitalize.");
         }
 
+        if (color is { } role && role is not (ThemeColorRole.Text or ThemeColorRole.Primary or ThemeColorRole.Muted))
+        {
+            errors.Add("color", "The colour must be the text, primary or muted colour, whose contrast the theme checks.");
+        }
+
         return errors.HasErrors
             ? errors.ToResult<TypographyStyle>("The typography style is invalid.")
-            : Result.Ok(new TypographyStyle(fontKey, fallback, size, weight, lineHeight is null ? null : CssText.Round(lineHeight.Value), letterSpacing is null ? null : CssText.Round(letterSpacing.Value), transform, italic));
+            : Result.Ok(new TypographyStyle(fontKey, fallback, size, weight, lineHeight is null ? null : CssText.Round(lineHeight.Value), letterSpacing is null ? null : CssText.Round(letterSpacing.Value), transform, italic, color));
     }
 
     /// <inheritdoc />
@@ -143,7 +158,8 @@ public sealed class TypographyStyle : ValueObject
         LineHeight ?? fallbackStyle.LineHeight,
         LetterSpacing ?? fallbackStyle.LetterSpacing,
         Transform ?? fallbackStyle.Transform,
-        Italic ?? fallbackStyle.Italic);
+        Italic ?? fallbackStyle.Italic,
+        Color ?? fallbackStyle.Color);
 
     /// <inheritdoc />
     protected override IEnumerable<object?> GetEqualityComponents()
@@ -156,5 +172,6 @@ public sealed class TypographyStyle : ValueObject
         yield return LetterSpacing;
         yield return Transform;
         yield return Italic;
+        yield return Color;
     }
 }

@@ -29,4 +29,7 @@ public sealed class TypographyFields
 
     /// <summary>Gets or sets whether the text is italic.</summary>
     public bool? Italic { get; set; }
+
+    /// <summary>Gets or sets the colour of a heading role: the text, primary or muted colour.</summary>
+    public ThemeColorRole? Color { get; set; }
 }

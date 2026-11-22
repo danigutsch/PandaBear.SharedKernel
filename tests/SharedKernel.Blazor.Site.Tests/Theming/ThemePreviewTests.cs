@@ -38,7 +38,7 @@ public sealed class ThemePreviewTests : BunitContext
         sample.QuerySelector("small").ShouldNotBeNull();
         sample.QuerySelector(".site-button--primary").ShouldNotBeNull();
         sample.QuerySelector(".site-button--secondary").ShouldNotBeNull();
-        sample.QuerySelector(".site-card .site-card__title.site-theme-preview__h3")!.TextContent.ShouldBe("Card");
+        sample.QuerySelector(".site-card .site-card__title.site-theme-preview__card-title")!.TextContent.ShouldBe("Card");
         sample.QuerySelector("nav.site-nav a[aria-current=\"page\"]").ShouldNotBeNull();
     }
 
@@ -50,7 +50,7 @@ public sealed class ThemePreviewTests : BunitContext
 
         // Assert
         cut.FindAll("h1, h2, h3, h4, h5, h6, [role=\"heading\"]").ShouldBeEmpty();
-        cut.Find(".site-theme-preview__sample").QuerySelectorAll(".site-theme-preview__h1, .site-theme-preview__h2, .site-theme-preview__h3").Length.ShouldBe(4);
+        cut.Find(".site-theme-preview__sample").QuerySelectorAll(".site-theme-preview__h1, .site-theme-preview__h2, .site-theme-preview__h3, .site-theme-preview__card-title").Length.ShouldBe(4);
     }
 
     [Fact]

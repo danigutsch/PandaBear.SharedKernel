@@ -31,6 +31,18 @@ internal static class SiteThemeRules
     /// <summary>The largest brand height in rem: 128px, above which the header takes too much of a cover hero.</summary>
     public const decimal MaxBrandHeight = 8m;
 
+    /// <summary>The smallest divider width in rem: 16px, below which the rule reads as a dot.</summary>
+    public const decimal MinDividerWidth = 1m;
+
+    /// <summary>The largest divider width in rem: 256px, beyond which the short rule becomes a full-width border.</summary>
+    public const decimal MaxDividerWidth = 16m;
+
+    /// <summary>The smallest divider thickness in rem: one CSS pixel.</summary>
+    public const decimal MinDividerThickness = 0.0625m;
+
+    /// <summary>The largest divider thickness in rem: 16px, beyond which the rule becomes a bar.</summary>
+    public const decimal MaxDividerThickness = 1m;
+
     /// <summary>The smallest page heading size in rem that is large text at any weight: 18pt.</summary>
     public const decimal LargeTextSize = 1.5m;
 
@@ -94,6 +106,7 @@ internal static class SiteThemeRules
         CheckSizes(theme, errors);
         CheckPageHeading(theme, errors);
         CheckBrandHeight(theme, errors);
+        CheckShape(theme, errors);
         CheckBodyLineHeight(theme, errors);
         CheckHeadingOrder(theme, warnings);
         return new SiteThemeReview(errors, warnings, contrast);
@@ -150,6 +163,23 @@ internal static class SiteThemeRules
         }
     }
 
+    private static void CheckShape(SiteTheme theme, List<ThemeIssue> errors)
+    {
+        if (theme.Shape.DividerWidth is < MinDividerWidth or > MaxDividerWidth)
+        {
+            errors.Add(new ThemeIssue(
+                "shape.dividerWidth",
+                $"The divider width must be from {CssText.Number(MinDividerWidth)}rem to {CssText.Number(MaxDividerWidth)}rem."));
+        }
+
+        if (theme.Shape.DividerThickness is < MinDividerThickness or > MaxDividerThickness)
+        {
+            errors.Add(new ThemeIssue(
+                "shape.dividerThickness",
+                $"The divider thickness must be from {CssText.Number(MinDividerThickness)}rem to {CssText.Number(MaxDividerThickness)}rem."));
+        }
+    }
+
     private static void CheckPageHeading(SiteTheme theme, List<ThemeIssue> errors)
     {
         var heading = theme.Effective(TypographyRole.H1);
@@ -176,7 +206,7 @@ internal static class SiteThemeRules
                 continue;
             }
 
-            var field = "typography." + ThemeNames.Css(role) + ".size";
+            var field = "typography." + ThemeNames.Field(role) + ".size";
             var floor = role == TypographyRole.Body ? MinBodySize : MinOtherSize;
             if (!theme.AllowsSmallText && size.Min < floor)
             {
