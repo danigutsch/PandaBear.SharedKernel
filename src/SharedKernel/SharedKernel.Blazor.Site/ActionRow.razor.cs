@@ -17,7 +17,8 @@ public sealed partial class ActionRow
 
     /// <summary>
     /// Gets or sets how the actions are placed in their row. The default is <see cref="ActionRowJustification.Start" />: the actions stay
-    /// together where reading starts, in line with the text above them, so the eye finds them as one group;
+    /// together where reading starts, in line with the text above them, so the eye finds them as one group, and in the middle inside a
+    /// section or band with centred text;
     /// <see cref="ActionRowJustification.Center" />, <see cref="ActionRowJustification.End" /> and
     /// <see cref="ActionRowJustification.Between" /> add <c>site-action-row--center</c>, <c>site-action-row--end</c> and
     /// <c>site-action-row--between</c>.

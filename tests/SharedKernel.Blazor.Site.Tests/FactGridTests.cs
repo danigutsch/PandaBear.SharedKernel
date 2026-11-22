@@ -61,7 +61,7 @@ public sealed class FactGridTests : BunitContext
         var values = cut.FindAll("dd.site-fact-grid__value");
         values.Select(value => value.InnerHtml).ShouldBe(
         [
-            "<a href=\"mailto:info@example.org\">info<wbr>@example<wbr>.org</a>",
+            "<a href=\"mailto:info@example.org\" aria-label=\"info@example.org\">info<wbr>@example<wbr>.org</a>",
             "<a href=\"tel:+5511999990000\">+55 (11) 99999-0000</a>",
             "<a href=\"https://wa.me/5511999990000\">Chat with us</a>",
         ]);
@@ -224,7 +224,7 @@ public sealed class FactGridTests : BunitContext
         var values = cut.FindAll("dd.site-fact-grid__value");
         values.Select(value => value.InnerHtml).ShouldBe(
         [
-            "<a href=\"mailto:info.desk@example.org\">info<wbr>.desk<wbr>@example<wbr>.org</a>",
+            "<a href=\"mailto:info.desk@example.org\" aria-label=\"info.desk@example.org\">info<wbr>.desk<wbr>@example<wbr>.org</a>",
             "Write to a<wbr>.b<wbr>@c<wbr>.org",
         ]);
         values.Select(value => value.TextContent).ShouldBe(["info.desk@example.org", "Write to a.b@c.org"]);
@@ -243,5 +243,23 @@ public sealed class FactGridTests : BunitContext
         var values = cut.FindAll("dd.site-fact-grid__value");
         values[0].InnerHtml.ShouldBe("8.5 km a day. &lt;b&gt;Flat&lt;/b&gt;");
         values[1].InnerHtml.ShouldBe("&lt;i&gt;x&lt;/i&gt;<wbr>@y<wbr>.z");
+    }
+
+    [Fact]
+    public void A_dot_that_ends_an_address_or_comes_before_closing_punctuation_gets_no_break()
+    {
+        // Arrange & Act
+        var cut = Render<FactGrid>(parameters => parameters.Add(component => component.Cards,
+        [
+            new FactCard("E-mail", [new("Write to a.b@c.org."), new("(x@y.org.)"), new("x@y.org...")]),
+        ]));
+
+        // Assert
+        cut.FindAll("dd.site-fact-grid__value").Select(value => value.InnerHtml).ShouldBe(
+        [
+            "Write to a<wbr>.b<wbr>@c<wbr>.org.",
+            "(x<wbr>@y<wbr>.org.)",
+            "x<wbr>@y<wbr>.org...",
+        ]);
     }
 }

@@ -669,35 +669,48 @@ a {
 }
 
 .site-section__intro {
-    margin: 0;
+    margin-block: 0;
     color: var(--site-color-muted);
-    max-width: var(--site-text-width);
-}
-
-/* Paragraphs and lists keep a readable measure instead of running the content width. */
-:is(.site-section__body, .site-split__main, .site-band__inner, .site-container) > :is(p, ul, ol) {
-    max-width: var(--site-text-width);
 }
 
 /*
- * Centred text: a section or band with the centred text alignment centres its heading, divider, intro, paragraphs, byline, video link
- * and an image narrower than its column, and drops the quote's start rule.
+ * Text alignment of a section or band. The alignment classes set private custom properties, which inherit, so the nearest section or
+ * band that sets an alignment wins: a start section inside a centred band is at the start again. Centred, the divider, the intro,
+ * paragraphs and lists, a video link, a byline, a default action row and an image narrower than its column are centred, a list's items
+ * stay at the start, and the quote drops its start rule.
  */
 :is(.site-section--text-center, .site-band--text-center) {
+    --_site-centre-margin: auto;
+    --_site-centre-justify: center;
+    --_site-image-position: 50% 50%;
+    --_site-quote-rule: 0;
     text-align: center;
 }
 
-:is(.site-section--text-center, .site-band--text-center) :is(.site-divider, .site-section__intro, .site-video-link),
-:is(.site-section--text-center, .site-band--text-center) :is(.site-section__body, .site-split__main, .site-band__inner, .site-container) > :is(p, ul, ol) {
-    margin-inline: auto;
+:is(.site-section--text-start, .site-band--text-start) {
+    --_site-centre-margin: initial;
+    --_site-centre-justify: initial;
+    --_site-image-position: initial;
+    --_site-quote-rule: initial;
+    text-align: start;
 }
 
-:is(.site-section--text-center, .site-band--text-center) .site-byline {
-    justify-content: center;
+/*
+ * The measure and the centring margins have no specificity (:where), so a consumer's rule, even on an element, overrides them. The intro
+ * and paragraphs and lists keep a readable measure instead of running the content width.
+ */
+:where(.site-section__intro),
+:where(.site-section__body, .site-split__main, .site-band__inner, .site-container) > :where(p, ul, ol) {
+    max-width: var(--site-text-width);
 }
 
-:is(.site-section--text-center, .site-band--text-center) .site-quote {
-    border-inline-start: 0;
+:where(.site-divider, .site-section__intro, .site-video-link),
+:where(.site-section__body, .site-split__main, .site-band__inner, .site-container) > :where(p, ul, ol) {
+    margin-inline: var(--_site-centre-margin, 0);
+}
+
+:where(.site-section__body, .site-split__main, .site-band__inner, .site-container) > :where(ul, ol) {
+    text-align: start;
 }
 
 /*
@@ -761,13 +774,14 @@ a {
 
 /*
  * Action row: below the breakpoint the actions are stacked at the start, in the middle or at the end; from it on they are one wrapping
- * row, together at the start, in the middle or at the end, or spread across the width. A plain link in it keeps the link style.
+ * row, together at the start, in the middle or at the end, or spread across the width. The default start follows centred text into the
+ * middle. A plain link in it keeps the link style.
  */
 .site-action-row {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: var(--_site-centre-justify, flex-start);
     gap: var(--site-space-3);
 }
 
@@ -962,7 +976,7 @@ a {
     margin: 0;
     padding: var(--site-space-4);
     background: var(--site-color-surface-alt);
-    border-inline-start: 0.25rem solid var(--site-color-accent);
+    border-inline-start: var(--_site-quote-rule, 0.25rem) solid var(--site-color-accent);
     border-radius: var(--site-radius);
 }
 
@@ -997,7 +1011,7 @@ a {
     width: 100%;
     max-height: min(40rem, 80svh);
     object-fit: contain;
-    object-position: 0% 50%;
+    object-position: var(--_site-image-position, 0% 50%);
     border-radius: var(--site-radius);
 }
 
@@ -1008,11 +1022,7 @@ a {
 }
 
 .site-image-grid__item img:dir(rtl) {
-    object-position: 100% 50%;
-}
-
-:is(.site-section--text-center, .site-band--text-center) .site-image-grid__item img {
-    object-position: 50% 50%;
+    object-position: var(--_site-image-position, 100% 50%);
 }
 
 .site-image-grid__item figcaption {
@@ -1072,6 +1082,7 @@ a {
 .site-byline {
     display: flex;
     align-items: center;
+    justify-content: var(--_site-centre-justify, flex-start);
     gap: var(--site-space-3);
 }
 
@@ -1329,6 +1340,7 @@ body:has(.site-floating-link):not(:has(.site-footer)) {
     .site-action-row {
         flex-direction: row;
         align-items: center;
+        justify-content: var(--_site-centre-justify, flex-start);
     }
 
     .site-action-row--center {

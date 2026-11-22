@@ -227,7 +227,7 @@ public sealed class ImageGridTests : BunitContext
         // Assert
         cut.FindAll("source").ShouldAllSatisfy(source => source.GetAttribute("sizes").ShouldBe(ImageGrid.ThumbnailSizes));
         cut.Find("img").GetAttribute("sizes").ShouldBe(ImageGrid.ThumbnailSizes);
-        ImageGrid.ThumbnailSizes.ShouldBe("(min-width: 74rem) 12rem, (min-width: 48rem) 16vw, 9.5rem");
+        ImageGrid.ThumbnailSizes.ShouldBe("(min-width: 74rem) 12rem, (min-width: 48rem) 16vw, (min-width: 30rem) 23vw, (min-width: 22.5rem) 31vw, 45vw");
     }
 
     [Theory]

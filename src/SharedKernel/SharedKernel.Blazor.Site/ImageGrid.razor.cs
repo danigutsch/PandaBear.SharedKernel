@@ -10,11 +10,13 @@ namespace PandaBear.Blazor.Site;
 public sealed partial class ImageGrid
 {
     /// <summary>
-    /// The <c>sizes</c> of the <see cref="ImageGridLayout.Thumbnails" /> layout at the default tokens: a tile is at most 12rem wide from a
-    /// 74rem viewport on (six columns of the 72rem content width), about a sixth of the viewport from the <c>48rem</c> breakpoint on, and
-    /// at most 9.5rem below it (two to six columns at least 6.5rem wide), so the browser fetches a rendition of the tile's size.
+    /// The <c>sizes</c> of the <see cref="ImageGridLayout.Thumbnails" /> layout at the default tokens, so the browser fetches a rendition
+    /// of the tile's size. It follows the column count of a grid of the content width with a 1rem gutter on each side: from a 74rem
+    /// viewport on six columns of the 72rem content width (a tile under 12rem); from the <c>48rem</c> breakpoint six columns (under 16vw);
+    /// from 30rem four to six (under 23vw); from 22.5rem three or four (under 31vw); and below that two (under 45vw). Every value is at
+    /// least the tile's width and at most about one and a half times it.
     /// </summary>
-    public const string ThumbnailSizes = "(min-width: 74rem) 12rem, (min-width: 48rem) 16vw, 9.5rem";
+    public const string ThumbnailSizes = "(min-width: 74rem) 12rem, (min-width: 48rem) 16vw, (min-width: 30rem) 23vw, (min-width: 22.5rem) 31vw, 45vw";
 
     private const int MaxSizesLength = 1024;
 

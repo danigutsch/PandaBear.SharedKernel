@@ -353,4 +353,20 @@ public sealed class SitePartsBrowserTests(ChromiumFixture chromium) : IClassFixt
         color.ShouldBe(Primary);
         decoration.ShouldBe("underline");
     }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task The_break_opportunities_leave_the_e_mail_link_s_name_and_text_unchanged()
+    {
+        // Arrange
+        const string address = "reservations.and.small.groups@travel.example.org";
+        await using var page = await LayoutPage.Serve<PartsSample>(chromium.Browser, 375);
+
+        // Act
+        var text = await page.Page.EvaluateAsync<string>("() => document.querySelector('.site-fact-grid__value a').textContent");
+        var tree = await page.AccessibilityTree();
+
+        // Assert
+        text.ShouldBe(address);
+        tree.Where(node => node.Role == "link").Select(node => node.Name).ShouldContain(address);
+    }
 }

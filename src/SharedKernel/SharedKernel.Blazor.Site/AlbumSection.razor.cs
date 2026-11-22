@@ -23,8 +23,8 @@ public sealed partial class AlbumSection
     public const int DefaultEagerCount = 4;
 
     /// <summary>
-    /// The default <see cref="EagerCount" /> of the <see cref="ImageGridLayout.Thumbnails" /> layout, the default of an album: its first
-    /// row at the default content width, which holds six thumbnails, and the first two rows of three on a phone.
+    /// The default <see cref="EagerCount" /> of the <see cref="ImageGridLayout.Thumbnails" /> layout: its first row at the default content
+    /// width, which holds six thumbnails, and the first two rows of three on a phone.
     /// </summary>
     public const int DefaultThumbnailEagerCount = 6;
 
@@ -114,12 +114,12 @@ public sealed partial class AlbumSection
     public int SurroundingPages { get; set; } = 1;
 
     /// <summary>
-    /// Gets or sets how the photos are arranged. The default is <see cref="ImageGridLayout.Thumbnails" />: one cropped aspect ratio and
-    /// small columns, so a page of many photos stays short on a phone. <see cref="ImageGridLayout.Grid" /> and
-    /// <see cref="ImageGridLayout.Mosaic" /> show each photo whole.
+    /// Gets or sets how the photos are arranged. The default is <see cref="ImageGridLayout.Grid" />, each photo whole.
+    /// <see cref="ImageGridLayout.Thumbnails" /> crops the photos to one aspect ratio in small columns, so a page of many photos stays
+    /// short on a phone; link each photo to its whole image with <see cref="GalleryImage.Href" />.
     /// </summary>
     [Parameter]
-    public ImageGridLayout Layout { get; set; } = ImageGridLayout.Thumbnails;
+    public ImageGridLayout Layout { get; set; }
 
     /// <summary>
     /// Gets or sets the <c>sizes</c> of the photos; see <see cref="ImageGrid.Sizes" />. <see langword="null" />, the default, writes

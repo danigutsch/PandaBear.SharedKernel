@@ -121,9 +121,10 @@ public sealed class BandTests : BunitContext
     }
 
     [Theory]
-    [InlineData(SiteAlignment.Start, "site-band site-band--muted extra")]
+    [InlineData(null, "site-band site-band--muted extra")]
+    [InlineData(SiteAlignment.Start, "site-band site-band--muted site-band--text-start extra")]
     [InlineData(SiteAlignment.Center, "site-band site-band--muted site-band--text-center extra")]
-    public void The_text_alignment_sets_a_class_after_the_tone(SiteAlignment alignment, string classes)
+    public void The_text_alignment_inherits_by_default_and_otherwise_sets_a_class_after_the_tone(SiteAlignment? alignment, string classes)
     {
         // Arrange & Act
         var cut = Render<Band>(parameters => parameters

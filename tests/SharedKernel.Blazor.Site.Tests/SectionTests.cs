@@ -254,9 +254,10 @@ public sealed class SectionTests : BunitContext
     }
 
     [Theory]
-    [InlineData(SiteAlignment.Start, "site-section extra")]
+    [InlineData(null, "site-section extra")]
+    [InlineData(SiteAlignment.Start, "site-section site-section--text-start extra")]
     [InlineData(SiteAlignment.Center, "site-section site-section--text-center extra")]
-    public void The_text_alignment_sets_a_class_before_the_extra_class(SiteAlignment alignment, string classes)
+    public void The_text_alignment_inherits_by_default_and_otherwise_sets_a_class_before_the_extra_class(SiteAlignment? alignment, string classes)
     {
         // Arrange & Act
         var cut = Render<Section>(parameters => parameters

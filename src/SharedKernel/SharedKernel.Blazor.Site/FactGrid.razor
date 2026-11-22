@@ -15,7 +15,7 @@
                     }
                     else
                     {
-                        <a href="@value.Link.Value">@AddressBreaks.Render(value.Text)</a>
+                        <a href="@value.Link.Value" aria-label="@(AddressBreaks.HasBreaks(value.Text) ? value.Text : null)">@AddressBreaks.Render(value.Text)</a>
                     }</dd>
             }
         </div>

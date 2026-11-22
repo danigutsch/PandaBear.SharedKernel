@@ -224,4 +224,49 @@ public sealed class ImageGridBrowserTests(ChromiumFixture chromium) : IClassFixt
         var tree = await page.AccessibilityTree();
         tree.ShouldContain(node => node.Role == "link" && node.Name == "Photo 1");
     }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task The_thumbnail_sizes_cover_the_real_tile_width_without_overshooting_it_from_phone_to_desktop()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<GallerySample>(chromium.Browser, 1280, new Dictionary<string, object?>
+        {
+            [nameof(GallerySample.Layout)] = ImageGridLayout.Thumbnails,
+            [nameof(GallerySample.Count)] = 24,
+        });
+        int[] widths = [320, 359, 360, 375, 414, 471, 472, 479, 480, 551, 583, 584, 600, 695, 696, 767, 768, 1000, 1183, 1184, 1280, 1600];
+        var measured = new List<(int Width, double Tile, double Slot)>();
+
+        // Act
+        foreach (var width in widths)
+        {
+            await page.Page.SetViewportSizeAsync(width, 900);
+            var tile = (await page.Box(".site-section .site-image-grid img")).Width;
+            var slot = await page.Page.EvaluateAsync<double>(
+                """
+                (sizes) => {
+                    for (const entry of sizes.split(',')) {
+                        const match = entry.trim().match(/^(\(.*\))\s+(\S+)$/);
+                        const [condition, length] = match ? [match[1], match[2]] : [null, entry.trim()];
+                        if (condition === null || matchMedia(condition).matches) {
+                            const probe = document.createElement('div');
+                            probe.style.width = length;
+                            document.body.append(probe);
+                            const result = probe.getBoundingClientRect().width;
+                            probe.remove();
+                            return result;
+                        }
+                    }
+
+                    return 0;
+                }
+                """,
+                ImageGrid.ThumbnailSizes);
+            measured.Add((width, tile, slot));
+        }
+
+        // Assert
+        measured.ShouldAllSatisfy(entry => entry.Slot.ShouldBeGreaterThanOrEqualTo(entry.Tile - 0.5, $"at {entry.Width}px"));
+        measured.ShouldAllSatisfy(entry => entry.Slot.ShouldBeLessThanOrEqualTo(entry.Tile * 1.6, $"at {entry.Width}px"));
+    }
 }

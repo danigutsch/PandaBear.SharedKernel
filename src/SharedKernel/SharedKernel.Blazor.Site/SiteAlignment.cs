@@ -2,7 +2,8 @@ namespace PandaBear.Blazor.Site;
 
 /// <summary>
 /// Where content lies along one axis of its box: the block axis for <see cref="Split.Alignment" /> (top or middle) and the inline axis
-/// for <see cref="Section.TextAlignment" /> and <see cref="Band.TextAlignment" /> (the reading start or the middle).
+/// for <see cref="Section.TextAlignment" /> and <see cref="Band.TextAlignment" /> (the reading start or the middle). On a section or band
+/// the alignment is nullable: <see langword="null" /> inherits the nearest aligned ancestor, and an explicit value overrides it.
 /// </summary>
 public enum SiteAlignment
 {

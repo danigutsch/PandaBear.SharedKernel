@@ -42,11 +42,12 @@ internal sealed class LayoutPage : IAsyncDisposable
     /// <param name="browser">The browser.</param>
     /// <param name="width">The viewport width in CSS pixels.</param>
     /// <param name="parameters">The component parameters.</param>
+    /// <param name="theme">Rules written after the stylesheet, as a consumer's stylesheet is.</param>
     /// <returns>The open page, with every image of the first viewport loaded.</returns>
-    public static async Task<LayoutPage> Serve<TComponent>(IBrowser browser, int width, IDictionary<string, object?>? parameters = null)
+    public static async Task<LayoutPage> Serve<TComponent>(IBrowser browser, int width, IDictionary<string, object?>? parameters = null, string theme = "")
         where TComponent : IComponent
     {
-        var css = await File.ReadAllTextAsync(SiteFiles.StylesheetPath());
+        var css = await File.ReadAllTextAsync(SiteFiles.StylesheetPath()) + theme;
         var body = await Render<TComponent>(parameters ?? new Dictionary<string, object?>());
         var html = $"<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Bands</title><style>{css}</style></head><body>{body}</body></html>";
         var page = await browser.NewPageAsync(new BrowserNewPageOptions { ViewportSize = new ViewportSize { Width = width, Height = 900 }, ColorScheme = ColorScheme.Light });
