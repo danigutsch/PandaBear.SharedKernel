@@ -739,7 +739,7 @@ PandaBear.Blazor.Site.AlbumSection
 PandaBear.Blazor.Site.AlbumSection.AlbumSection() -> void
 PandaBear.Blazor.Site.AlbumSection.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
 PandaBear.Blazor.Site.AlbumSection.ChildContent.set -> void
-PandaBear.Blazor.Site.AlbumSection.EagerCount.get -> int
+PandaBear.Blazor.Site.AlbumSection.EagerCount.get -> int?
 PandaBear.Blazor.Site.AlbumSection.EagerCount.set -> void
 PandaBear.Blazor.Site.AlbumSection.Intro.get -> string?
 PandaBear.Blazor.Site.AlbumSection.Intro.set -> void
@@ -792,3 +792,13 @@ PandaBear.Blazor.Site.Card.TitleLanguage.get -> string?
 PandaBear.Blazor.Site.Card.TitleLanguage.set -> void
 PandaBear.Blazor.Site.Section.TitleLanguage.get -> string?
 PandaBear.Blazor.Site.Section.TitleLanguage.set -> void
+const PandaBear.Blazor.Site.AlbumIndex.DefaultEagerCount = 4 -> int
+const PandaBear.Blazor.Site.AlbumSection.DefaultMosaicEagerCount = 1 -> int
+PandaBear.Blazor.Site.AlbumIndex.EagerCount.get -> int
+PandaBear.Blazor.Site.AlbumIndex.EagerCount.set -> void
+PandaBear.Blazor.Site.AlbumSection.PrioritizeFirstImage.get -> bool
+PandaBear.Blazor.Site.AlbumSection.PrioritizeFirstImage.set -> void
+PandaBear.Blazor.Site.AlbumSection.SurroundingPages.get -> int
+PandaBear.Blazor.Site.AlbumSection.SurroundingPages.set -> void
+PandaBear.Blazor.Site.Card.EagerImage.get -> bool
+PandaBear.Blazor.Site.Card.EagerImage.set -> void

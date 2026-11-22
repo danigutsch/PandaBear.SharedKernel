@@ -27,4 +27,10 @@ internal static class AlbumRendering
                 .Add(album => album.NextText, "Próxima");
             configure?.Invoke(parameters);
         });
+
+    /// <summary>Creates album summaries <c>Album 1</c> to <c>Album N</c> with decorative covers.</summary>
+    /// <param name="count">The number of albums.</param>
+    /// <returns>The summaries.</returns>
+    public static AlbumSummary[] Summaries(int count) =>
+        [.. Enumerable.Range(1, count).Select(index => new AlbumSummary($"Album {index}", Link($"/a{index}"), Image($"/c{index}.jpg", ImageAlternative.Decorative())))];
 }

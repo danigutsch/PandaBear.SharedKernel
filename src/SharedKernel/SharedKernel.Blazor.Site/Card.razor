@@ -2,7 +2,7 @@
 <article class="@CssClass("site-card")" @attributes="AdditionalAttributes">
     @if (Image is not null)
     {
-        <div class="site-card__media">@ResponsiveImageMarkup.Render(Image, eager: false, highPriority: false)</div>
+        <div class="site-card__media">@ResponsiveImageMarkup.Render(Image, eager: EagerImage, highPriority: false)</div>
     }
     <div class="site-card__body">
         @Heading.Render(HeadingLevel, "site-card__title", null, TitleContent, TitleLanguage)

@@ -33,6 +33,13 @@ public sealed partial class Card
     [Parameter]
     public ResponsiveImage? Image { get; set; }
 
+    /// <summary>
+    /// Gets or sets whether the image loads eagerly, for a card on the first screen; by default it loads lazily. The default is
+    /// <see langword="false" />.
+    /// </summary>
+    [Parameter]
+    public bool EagerImage { get; set; }
+
     /// <summary>Gets or sets the card text.</summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }

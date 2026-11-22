@@ -2,9 +2,10 @@
 @if (Albums.Count > 0)
 {
     <CardGrid @attributes="AdditionalAttributes" Class="@CssClass("site-album-index")">
-        @foreach (var album in Albums)
+        @for (var index = 0; index < Albums.Count; index++)
         {
-            <Card @key="album.Href.Value" Title="@album.Title" Href="@album.Href" Image="@album.Cover" HeadingLevel="@HeadingLevel" TitleLanguage="@album.TitleLanguage">
+            var album = Albums[index];
+            <Card @key="album.Href.Value" Title="@album.Title" Href="@album.Href" Image="@album.Cover" EagerImage="@(index < EagerCount)" HeadingLevel="@HeadingLevel" TitleLanguage="@album.TitleLanguage">
                 @if (!string.IsNullOrWhiteSpace(album.PhotoCountText))
                 {
                     <p class="site-album-index__count">@album.PhotoCountText</p>

@@ -29,14 +29,13 @@ public sealed class AlbumIndexTests : BunitContext
     }
 
     [Fact]
-    public void A_cover_loads_lazily_with_its_size_and_the_count_text_is_the_application_copy()
+    public void A_cover_carries_its_size_and_the_count_text_is_the_application_copy()
     {
         // Arrange & Act
         var cut = Render<AlbumIndex>(parameters => parameters.Add(index => index.Albums, Albums));
 
         // Assert
         var cover = cut.Find("article img");
-        cover.GetAttribute("loading").ShouldBe("lazy");
         cover.GetAttribute("width").ShouldBe("400");
         cover.GetAttribute("height").ShouldBe("300");
         cut.FindAll("img").Count.ShouldBe(2);
