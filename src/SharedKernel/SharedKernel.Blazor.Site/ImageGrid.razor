@@ -1,11 +1,19 @@
 @inherits SiteComponent
-<div class="@CssClass(Layout == ImageGridLayout.Mosaic ? "site-image-grid site-image-grid--mosaic" : "site-image-grid")" @attributes="AdditionalAttributes">
+<div class="@CssClass(RootClass)" @attributes="AdditionalAttributes">
     @for (var index = 0; index < Images.Count; index++)
     {
         var image = Images[index];
         var priority = PrioritizeFirstImage && index == 0;
+        var picture = ResponsiveImageMarkup.Render(image.Image, eager: priority || index < EagerCount, highPriority: priority, sizes: EffectiveSizes);
         <figure class="site-image-grid__item">
-            @ResponsiveImageMarkup.Render(image.Image, eager: priority || index < EagerCount, highPriority: priority)
+            @if (image.Href is null)
+            {
+                @picture
+            }
+            else
+            {
+                <a class="site-image-grid__link" href="@image.Href.Value">@picture</a>
+            }
             @if (!string.IsNullOrWhiteSpace(image.Caption))
             {
                 <figcaption>@image.Caption</figcaption>

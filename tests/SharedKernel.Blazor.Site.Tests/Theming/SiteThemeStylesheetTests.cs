@@ -57,7 +57,7 @@ public sealed class SiteThemeStylesheetTests
             "--site-nav-letter-spacing: 0.05em;",
             "--site-nav-text-transform: uppercase;",
             "--site-nav-font-style: italic;");
-        SiteThemeStylesheet.RoleVariables.Count.ShouldBe(11 * 7);
+        SiteThemeStylesheet.RoleVariables.Count.ShouldBe(12 * 7);
         SiteThemeStylesheet.RoleVariables.ShouldContain("--site-nav-font-style");
     }
 

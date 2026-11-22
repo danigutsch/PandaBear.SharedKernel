@@ -1,11 +1,137 @@
 #nullable enable
+PandaBear.Blazor.Site.AlbumIndex.CardStyle.get -> PandaBear.Blazor.Site.CardStyle
+PandaBear.Blazor.Site.AlbumIndex.CardStyle.set -> void
+PandaBear.Blazor.Site.AlbumIndex.Gap.get -> PandaBear.Blazor.Site.SiteSpace
+PandaBear.Blazor.Site.AlbumIndex.Gap.set -> void
+PandaBear.Blazor.Site.AlbumIndex.ImageAspect.get -> PandaBear.Blazor.Site.CardImageAspect
+PandaBear.Blazor.Site.AlbumIndex.ImageAspect.set -> void
+PandaBear.Blazor.Site.AlbumIndex.ImageShadow.get -> PandaBear.Blazor.Site.CardImageShadow
+PandaBear.Blazor.Site.AlbumIndex.ImageShadow.set -> void
+PandaBear.Blazor.Site.AlbumIndex.ItemAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.AlbumIndex.ItemAlignment.set -> void
+PandaBear.Blazor.Site.AlbumIndex.MaxColumnWidth.get -> PandaBear.Blazor.Site.CardColumnWidth?
+PandaBear.Blazor.Site.AlbumIndex.MaxColumnWidth.set -> void
+PandaBear.Blazor.Site.AlbumIndex.MinColumnWidth.get -> PandaBear.Blazor.Site.CardColumnWidth
+PandaBear.Blazor.Site.AlbumIndex.MinColumnWidth.set -> void
+PandaBear.Blazor.Site.AlbumIndex.MoreSize.get -> PandaBear.Blazor.Site.ButtonSize
+PandaBear.Blazor.Site.AlbumIndex.MoreSize.set -> void
+PandaBear.Blazor.Site.AlbumIndex.MoreText.get -> string?
+PandaBear.Blazor.Site.AlbumIndex.MoreText.set -> void
+PandaBear.Blazor.Site.AlbumIndex.MoreVariant.get -> PandaBear.Blazor.Site.ButtonVariant
+PandaBear.Blazor.Site.AlbumIndex.MoreVariant.set -> void
+PandaBear.Blazor.Site.AlbumIndex.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.AlbumIndex.TextAlignment.set -> void
+PandaBear.Blazor.Site.ButtonLink.Size.get -> PandaBear.Blazor.Site.ButtonSize
+PandaBear.Blazor.Site.ButtonLink.Size.set -> void
+PandaBear.Blazor.Site.ButtonSize
+PandaBear.Blazor.Site.ButtonSize.Compact = 1 -> PandaBear.Blazor.Site.ButtonSize
+PandaBear.Blazor.Site.ButtonSize.Regular = 0 -> PandaBear.Blazor.Site.ButtonSize
+PandaBear.Blazor.Site.Card.CardStyle.get -> PandaBear.Blazor.Site.CardStyle
+PandaBear.Blazor.Site.Card.CardStyle.set -> void
+PandaBear.Blazor.Site.Card.Eyebrow.get -> string?
+PandaBear.Blazor.Site.Card.Eyebrow.set -> void
+PandaBear.Blazor.Site.Card.ImageAspect.get -> PandaBear.Blazor.Site.CardImageAspect
+PandaBear.Blazor.Site.Card.ImageAspect.set -> void
+PandaBear.Blazor.Site.Card.ImageShadow.get -> PandaBear.Blazor.Site.CardImageShadow
+PandaBear.Blazor.Site.Card.ImageShadow.set -> void
+PandaBear.Blazor.Site.Card.MoreSize.get -> PandaBear.Blazor.Site.ButtonSize
+PandaBear.Blazor.Site.Card.MoreSize.set -> void
+PandaBear.Blazor.Site.Card.MoreText.get -> string?
+PandaBear.Blazor.Site.Card.MoreText.set -> void
+PandaBear.Blazor.Site.Card.MoreVariant.get -> PandaBear.Blazor.Site.ButtonVariant
+PandaBear.Blazor.Site.Card.MoreVariant.set -> void
+PandaBear.Blazor.Site.Card.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.Card.TextAlignment.set -> void
+PandaBear.Blazor.Site.CardColumnWidth
+PandaBear.Blazor.Site.CardColumnWidth.Medium = 1 -> PandaBear.Blazor.Site.CardColumnWidth
+PandaBear.Blazor.Site.CardColumnWidth.Narrow = 0 -> PandaBear.Blazor.Site.CardColumnWidth
+PandaBear.Blazor.Site.CardColumnWidth.Wide = 2 -> PandaBear.Blazor.Site.CardColumnWidth
+PandaBear.Blazor.Site.CardGrid.Gap.get -> PandaBear.Blazor.Site.SiteSpace
+PandaBear.Blazor.Site.CardGrid.Gap.set -> void
+PandaBear.Blazor.Site.CardGrid.ItemAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.CardGrid.ItemAlignment.set -> void
+PandaBear.Blazor.Site.CardGrid.MaxColumnWidth.get -> PandaBear.Blazor.Site.CardColumnWidth?
+PandaBear.Blazor.Site.CardGrid.MaxColumnWidth.set -> void
+PandaBear.Blazor.Site.CardGrid.MinColumnWidth.get -> PandaBear.Blazor.Site.CardColumnWidth
+PandaBear.Blazor.Site.CardGrid.MinColumnWidth.set -> void
+PandaBear.Blazor.Site.CardImageAspect
+PandaBear.Blazor.Site.CardImageAspect.FourByThree = 0 -> PandaBear.Blazor.Site.CardImageAspect
+PandaBear.Blazor.Site.CardImageAspect.Natural = 3 -> PandaBear.Blazor.Site.CardImageAspect
+PandaBear.Blazor.Site.CardImageAspect.SixteenByNine = 1 -> PandaBear.Blazor.Site.CardImageAspect
+PandaBear.Blazor.Site.CardImageAspect.Square = 2 -> PandaBear.Blazor.Site.CardImageAspect
+PandaBear.Blazor.Site.CardImageShadow
+PandaBear.Blazor.Site.CardImageShadow.None = 0 -> PandaBear.Blazor.Site.CardImageShadow
+PandaBear.Blazor.Site.CardImageShadow.Offset = 1 -> PandaBear.Blazor.Site.CardImageShadow
+PandaBear.Blazor.Site.CardStyle
+PandaBear.Blazor.Site.CardStyle.Boxed = 0 -> PandaBear.Blazor.Site.CardStyle
+PandaBear.Blazor.Site.CardStyle.Plain = 1 -> PandaBear.Blazor.Site.CardStyle
+PandaBear.Blazor.Site.FooterTone
+PandaBear.Blazor.Site.FooterTone.Default = 0 -> PandaBear.Blazor.Site.FooterTone
+PandaBear.Blazor.Site.FooterTone.Primary = 1 -> PandaBear.Blazor.Site.FooterTone
+PandaBear.Blazor.Site.Hero.Divider.get -> bool
+PandaBear.Blazor.Site.Hero.Divider.set -> void
+PandaBear.Blazor.Site.SeparatedList
+PandaBear.Blazor.Site.SeparatedList.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.SeparatedList.ChildContent.set -> void
+PandaBear.Blazor.Site.SeparatedList.SeparatedList() -> void
+PandaBear.Blazor.Site.SeparatedListItem
+PandaBear.Blazor.Site.SeparatedListItem.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.SeparatedListItem.ChildContent.set -> void
+PandaBear.Blazor.Site.SeparatedListItem.SeparatedListItem() -> void
+PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.SiteAlignment.Center = 1 -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.SiteAlignment.Start = 0 -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.SiteFooter.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.SiteFooter.TextAlignment.set -> void
+PandaBear.Blazor.Site.SiteFooter.Tone.get -> PandaBear.Blazor.Site.FooterTone
+PandaBear.Blazor.Site.SiteFooter.Tone.set -> void
+PandaBear.Blazor.Site.SiteSpace
+PandaBear.Blazor.Site.SiteSpace.None = 0 -> PandaBear.Blazor.Site.SiteSpace
+PandaBear.Blazor.Site.SiteSpace.Space1 = 1 -> PandaBear.Blazor.Site.SiteSpace
+PandaBear.Blazor.Site.SiteSpace.Space2 = 2 -> PandaBear.Blazor.Site.SiteSpace
+PandaBear.Blazor.Site.SiteSpace.Space3 = 3 -> PandaBear.Blazor.Site.SiteSpace
+PandaBear.Blazor.Site.SiteSpace.Space4 = 4 -> PandaBear.Blazor.Site.SiteSpace
+PandaBear.Blazor.Site.SiteSpace.Space5 = 5 -> PandaBear.Blazor.Site.SiteSpace
+PandaBear.Blazor.Site.SiteSpace.Space6 = 6 -> PandaBear.Blazor.Site.SiteSpace
+PandaBear.Blazor.Site.Theming.ControlShape
+PandaBear.Blazor.Site.Theming.ControlShape.Pill = 2 -> PandaBear.Blazor.Site.Theming.ControlShape
+PandaBear.Blazor.Site.Theming.ControlShape.Rounded = 0 -> PandaBear.Blazor.Site.Theming.ControlShape
+PandaBear.Blazor.Site.Theming.ControlShape.Square = 1 -> PandaBear.Blazor.Site.Theming.ControlShape
 const PandaBear.Blazor.Site.Theming.FontSize.FluidFromWidth = 20 -> decimal
 const PandaBear.Blazor.Site.Theming.FontSize.FluidToWidth = 80 -> decimal
 const PandaBear.Blazor.Site.Theming.FontSize.Largest = 10 -> decimal
 const PandaBear.Blazor.Site.Theming.FontSize.Smallest = 0.5 -> decimal
 const PandaBear.Blazor.Site.Theming.SiteColors.DerivedHoverWeight = 0.2 -> double
+PandaBear.Blazor.Site.Theming.SiteShape
+PandaBear.Blazor.Site.Theming.SiteShape.Control.get -> PandaBear.Blazor.Site.Theming.ControlShape
+static PandaBear.Blazor.Site.Theming.SiteShape.Create(PandaBear.Blazor.Site.Theming.ControlShape control = PandaBear.Blazor.Site.Theming.ControlShape.Rounded, decimal dividerWidth = 4, decimal dividerThickness = 0.25, PandaBear.Blazor.Site.Theming.ThemeColorRole dividerColor = PandaBear.Blazor.Site.Theming.ThemeColorRole.Accent) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteShape!>
+static PandaBear.Blazor.Site.Theming.SiteShape.Default.get -> PandaBear.Blazor.Site.Theming.SiteShape!
+const PandaBear.Blazor.Site.Theming.SiteShape.DefaultDividerThickness = 0.25 -> decimal
+const PandaBear.Blazor.Site.Theming.SiteShape.DefaultDividerWidth = 4 -> decimal
+PandaBear.Blazor.Site.Theming.SiteShape.DividerColor.get -> PandaBear.Blazor.Site.Theming.ThemeColorRole
+PandaBear.Blazor.Site.Theming.SiteShape.DividerThickness.get -> decimal
+PandaBear.Blazor.Site.Theming.SiteShape.DividerWidth.get -> decimal
+override PandaBear.Blazor.Site.Theming.SiteShape.ToString() -> string!
+static PandaBear.Blazor.Site.Theming.SiteTheme.Create(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, decimal brandHeight = 2.5, System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null, PandaBear.Blazor.Site.Theming.SiteShape? shape = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
+static PandaBear.Blazor.Site.Theming.SiteTheme.CreateDraft(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, decimal brandHeight = 2.5, PandaBear.Blazor.Site.Theming.SiteShape? shape = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
+PandaBear.Blazor.Site.Theming.SiteTheme.Shape.get -> PandaBear.Blazor.Site.Theming.SiteShape!
+static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.HeadingColorVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.ShapeVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.ControlShape.get -> PandaBear.Blazor.Site.Theming.ControlShape?
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.ControlShape.set -> void
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.DividerColor.get -> PandaBear.Blazor.Site.Theming.ThemeColorRole?
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.DividerColor.set -> void
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.DividerThickness.get -> decimal?
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.DividerThickness.set -> void
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.DividerWidth.get -> decimal?
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.DividerWidth.set -> void
 const PandaBear.Blazor.Site.Theming.ThemeFont.MaxFamilyLength = 64 -> int
 const PandaBear.Blazor.Site.Theming.ThemeFont.MaxKeyLength = 32 -> int
+PandaBear.Blazor.Site.Theming.TypographyFields.Color.get -> PandaBear.Blazor.Site.Theming.ThemeColorRole?
+PandaBear.Blazor.Site.Theming.TypographyFields.Color.set -> void
+PandaBear.Blazor.Site.Theming.TypographyRole.CardTitle = 11 -> PandaBear.Blazor.Site.Theming.TypographyRole
+PandaBear.Blazor.Site.Theming.TypographyStyle.Color.get -> PandaBear.Blazor.Site.Theming.ThemeColorRole?
+static PandaBear.Blazor.Site.Theming.TypographyStyle.Create(string? fontKey = null, PandaBear.Blazor.Site.Theming.GenericFontFamily? fallback = null, PandaBear.Blazor.Site.Theming.FontSize? size = null, int? weight = null, decimal? lineHeight = null, decimal? letterSpacing = null, PandaBear.Blazor.Site.Theming.ThemeTextTransform? transform = null, bool? italic = null, PandaBear.Blazor.Site.Theming.ThemeColorRole? color = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.TypographyStyle!>
 const PandaBear.Blazor.Site.Theming.TypographyStyle.MaxLetterSpacing = 0.5 -> decimal
 const PandaBear.Blazor.Site.Theming.TypographyStyle.MaxLineHeight = 3 -> decimal
 const PandaBear.Blazor.Site.Theming.TypographyStyle.MinLetterSpacing = -0.1 -> decimal
@@ -519,7 +645,6 @@ static PandaBear.Blazor.Site.Theming.ThemeColor.Create(PandaBear.Blazor.Site.The
 static PandaBear.Blazor.Site.Theming.ThemeEditorModel.FromTheme(PandaBear.Blazor.Site.Theming.SiteTheme! theme) -> PandaBear.Blazor.Site.Theming.ThemeEditorModel!
 static PandaBear.Blazor.Site.Theming.ThemeFont.Create(string? key, string? family, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFontFace!>! faces) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.ThemeFont!>
 static PandaBear.Blazor.Site.Theming.ThemeFontFace.Create(int weight, PandaBear.Blazor.Site.Theming.ThemeFontStyle style, PandaBear.Blazor.Site.LinkTarget! src) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.ThemeFontFace!>
-static PandaBear.Blazor.Site.Theming.TypographyStyle.Create(string? fontKey = null, PandaBear.Blazor.Site.Theming.GenericFontFamily? fallback = null, PandaBear.Blazor.Site.Theming.FontSize? size = null, int? weight = null, decimal? lineHeight = null, decimal? letterSpacing = null, PandaBear.Blazor.Site.Theming.ThemeTextTransform? transform = null, bool? italic = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.TypographyStyle!>
 static PandaBear.Blazor.Site.Theming.TypographyStyle.Inherit.get -> PandaBear.Blazor.Site.Theming.TypographyStyle!
 override PandaBear.Blazor.Site.SiteComponent.SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView parameters) -> System.Threading.Tasks.Task!
 PandaBear.Blazor.Site.AlternateLink.<Clone>$() -> PandaBear.Blazor.Site.AlternateLink!
@@ -659,8 +784,6 @@ PandaBear.Blazor.Site.Theming.ThemeEditorModel.BrandHeight.set -> void
 PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Brand.get -> string!
 PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Brand.init -> void
 const PandaBear.Blazor.Site.Theming.SiteTheme.DefaultBrandHeight = 2.5 -> decimal
-static PandaBear.Blazor.Site.Theming.SiteTheme.Create(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, decimal brandHeight = 2.5, System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
-static PandaBear.Blazor.Site.Theming.SiteTheme.CreateDraft(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, decimal brandHeight = 2.5) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
 static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.HeaderVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
 PandaBear.Blazor.Site.Split
 PandaBear.Blazor.Site.Split.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
@@ -802,3 +925,25 @@ PandaBear.Blazor.Site.AlbumSection.SurroundingPages.get -> int
 PandaBear.Blazor.Site.AlbumSection.SurroundingPages.set -> void
 PandaBear.Blazor.Site.Card.EagerImage.get -> bool
 PandaBear.Blazor.Site.Card.EagerImage.set -> void
+const PandaBear.Blazor.Site.AlbumSection.DefaultThumbnailEagerCount = 6 -> int
+PandaBear.Blazor.Site.ActionRow.Justification.get -> PandaBear.Blazor.Site.ActionRowJustification
+PandaBear.Blazor.Site.ActionRow.Justification.set -> void
+PandaBear.Blazor.Site.ActionRowJustification
+PandaBear.Blazor.Site.ActionRowJustification.Between = 3 -> PandaBear.Blazor.Site.ActionRowJustification
+PandaBear.Blazor.Site.ActionRowJustification.Center = 1 -> PandaBear.Blazor.Site.ActionRowJustification
+PandaBear.Blazor.Site.ActionRowJustification.End = 2 -> PandaBear.Blazor.Site.ActionRowJustification
+PandaBear.Blazor.Site.ActionRowJustification.Start = 0 -> PandaBear.Blazor.Site.ActionRowJustification
+PandaBear.Blazor.Site.Band.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment?
+PandaBear.Blazor.Site.Band.TextAlignment.set -> void
+PandaBear.Blazor.Site.ImageGridLayout.Thumbnails = 2 -> PandaBear.Blazor.Site.ImageGridLayout
+PandaBear.Blazor.Site.Section.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment?
+PandaBear.Blazor.Site.Section.TextAlignment.set -> void
+PandaBear.Blazor.Site.Split.Alignment.get -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.Blazor.Site.Split.Alignment.set -> void
+const PandaBear.Blazor.Site.ImageGrid.ThumbnailSizes = "(min-width: 74rem) 12rem, (min-width: 48rem) 16vw, (min-width: 30rem) 23vw, (min-width: 22.5rem) 31vw, 45vw" -> string!
+PandaBear.Blazor.Site.AlbumSection.Sizes.get -> string?
+PandaBear.Blazor.Site.AlbumSection.Sizes.set -> void
+PandaBear.Blazor.Site.GalleryImage.Href.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.GalleryImage.Href.init -> void
+PandaBear.Blazor.Site.ImageGrid.Sizes.get -> string?
+PandaBear.Blazor.Site.ImageGrid.Sizes.set -> void

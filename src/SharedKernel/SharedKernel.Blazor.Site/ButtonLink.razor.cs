@@ -18,6 +18,13 @@ public sealed partial class ButtonLink
     [Parameter]
     public ButtonVariant Variant { get; set; }
 
+    /// <summary>
+    /// Gets or sets the size. The default is <see cref="ButtonSize.Regular" />; <see cref="ButtonSize.Compact" /> adds
+    /// <c>site-button--compact</c>. A card's more look of the same variant and size is identical.
+    /// </summary>
+    [Parameter]
+    public ButtonSize Size { get; set; }
+
     /// <summary>Gets or sets whether the link opens in a new tab.</summary>
     [Parameter]
     public bool NewTab { get; set; }
@@ -32,12 +39,9 @@ public sealed partial class ButtonLink
     public RenderFragment? ChildContent { get; set; }
 
     /// <inheritdoc />
-    protected override void OnParametersSet() => ArgumentNullException.ThrowIfNull(Href);
-
-    private string VariantClass => Variant switch
+    protected override void OnParametersSet()
     {
-        ButtonVariant.Secondary => "site-button site-button--secondary",
-        ButtonVariant.Outline => "site-button site-button--outline",
-        _ => "site-button site-button--primary",
-    };
+        ArgumentNullException.ThrowIfNull(Href);
+        ButtonStyle.RequireSize(Size, nameof(Size));
+    }
 }

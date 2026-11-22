@@ -29,6 +29,18 @@ public sealed class ThemeEditorModel
     /// <summary>Gets or sets the brand height in rem; empty means <see cref="SiteTheme.DefaultBrandHeight" />.</summary>
     public decimal? BrandHeight { get; set; }
 
+    /// <summary>Gets or sets the corner shape; empty means <see cref="SiteShape.Default" />'s.</summary>
+    public ControlShape? ControlShape { get; set; }
+
+    /// <summary>Gets or sets the divider width in rem; empty means <see cref="SiteShape.DefaultDividerWidth" />.</summary>
+    public decimal? DividerWidth { get; set; }
+
+    /// <summary>Gets or sets the divider thickness in rem; empty means <see cref="SiteShape.DefaultDividerThickness" />.</summary>
+    public decimal? DividerThickness { get; set; }
+
+    /// <summary>Gets or sets the divider colour; empty means <see cref="SiteShape.Default" />'s.</summary>
+    public ThemeColorRole? DividerColor { get; set; }
+
     /// <summary>Gets or sets whether body text below 1rem and other text below 0.875rem is allowed.</summary>
     public bool AllowSmallText { get; set; }
 
@@ -39,7 +51,15 @@ public sealed class ThemeEditorModel
     public static ThemeEditorModel FromTheme(SiteTheme theme)
     {
         ArgumentNullException.ThrowIfNull(theme);
-        var model = new ThemeEditorModel { AllowSmallText = theme.AllowsSmallText, BrandHeight = theme.BrandHeight };
+        var model = new ThemeEditorModel
+        {
+            AllowSmallText = theme.AllowsSmallText,
+            BrandHeight = theme.BrandHeight,
+            ControlShape = theme.Shape.Control,
+            DividerWidth = theme.Shape.DividerWidth,
+            DividerThickness = theme.Shape.DividerThickness,
+            DividerColor = theme.Shape.DividerColor,
+        };
         foreach (var (role, fields) in model.Colors)
         {
             if (!theme.Colors.IsDerived(role))
@@ -61,6 +81,7 @@ public sealed class ThemeEditorModel
             fields.LetterSpacing = style.LetterSpacing;
             fields.Transform = style.Transform;
             fields.Italic = style.Italic;
+            fields.Color = style.Color;
         }
 
         foreach (var font in theme.Fonts)
@@ -79,25 +100,32 @@ public sealed class ThemeEditorModel
 
     /// <summary>Builds a draft for <see cref="ThemePreview" />: the fields must be well formed, the readability rules are not enforced.</summary>
     /// <returns>The draft, or every field error at once.</returns>
-    public Result<SiteTheme> ToDraft() => Build(SiteTheme.CreateDraft);
+    public Result<SiteTheme> ToDraft() =>
+        Build((colors, typography, fonts, allowSmallText, brandHeight, shape) => SiteTheme.CreateDraft(colors, typography, fonts, allowSmallText, brandHeight, shape));
 
     /// <summary>Builds a theme that meets every rule, ready to store.</summary>
     /// <param name="colorLabel">The names of the colour roles in contrast messages, as in <see cref="SiteTheme.Review" />.</param>
     /// <returns>The theme, or every field and rule error at once.</returns>
     public Result<SiteTheme> ToTheme(Func<ThemeColorRole, string?>? colorLabel = null) =>
-        Build((colors, typography, fonts, allowSmallText, brandHeight) => SiteTheme.Create(colors, typography, fonts, allowSmallText, brandHeight, colorLabel));
+        Build((colors, typography, fonts, allowSmallText, brandHeight, shape) => SiteTheme.Create(colors, typography, fonts, allowSmallText, brandHeight, colorLabel, shape));
 
     private static string? Blank(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
 
-    private Result<SiteTheme> Build(Func<SiteColors, SiteTypography, IEnumerable<ThemeFont>, bool, decimal, Result<SiteTheme>> create)
+    private Result<SiteTheme> Build(Func<SiteColors, SiteTypography, IEnumerable<ThemeFont>, bool, decimal, SiteShape, Result<SiteTheme>> create)
     {
         var errors = new ThemeErrors();
         var colors = BuildColors(errors);
         var typography = BuildTypography(errors);
         var fonts = BuildFonts(errors);
+        var shape = SiteShape.Create(
+            ControlShape ?? SiteShape.Default.Control,
+            DividerWidth ?? SiteShape.DefaultDividerWidth,
+            DividerThickness ?? SiteShape.DefaultDividerThickness,
+            DividerColor ?? SiteShape.Default.DividerColor);
+        errors.Merge("shape", shape.WithoutValue());
         return errors.HasErrors || colors is null
             ? errors.ToResult<SiteTheme>("The site theme has invalid fields.")
-            : create(colors, typography, fonts, AllowSmallText, BrandHeight ?? SiteTheme.DefaultBrandHeight);
+            : create(colors, typography, fonts, AllowSmallText, BrandHeight ?? SiteTheme.DefaultBrandHeight, shape.Value);
     }
 
     private SiteColors? BuildColors(ThemeErrors errors)
@@ -156,7 +184,7 @@ public sealed class ThemeEditorModel
         var styles = new Dictionary<TypographyRole, TypographyStyle>();
         foreach (var (role, fields) in Typography)
         {
-            var path = "typography." + ThemeNames.Css(role);
+            var path = "typography." + ThemeNames.Field(role);
             FontSize? size = null;
             if (fields.SizeMin is { } min)
             {
@@ -177,7 +205,8 @@ public sealed class ThemeEditorModel
                 fields.LineHeight,
                 fields.LetterSpacing,
                 fields.Transform,
-                fields.Italic);
+                fields.Italic,
+                fields.Color);
             errors.Merge(path, style.WithoutValue());
             styles[role] = style.IsSuccess ? style.Value : TypographyStyle.Inherit;
         }

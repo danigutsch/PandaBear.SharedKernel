@@ -106,4 +106,35 @@ public sealed class SplitTests : BunitContext
         // Assert
         cut.Find(".site-split").ClassName.ShouldBe("site-split site-split--media-start extra");
     }
+
+    [Theory]
+    [InlineData(SplitMediaSide.End, SiteAlignment.Start, "site-split")]
+    [InlineData(SplitMediaSide.End, SiteAlignment.Center, "site-split site-split--align-center")]
+    [InlineData(SplitMediaSide.Start, SiteAlignment.Start, "site-split site-split--media-start")]
+    [InlineData(SplitMediaSide.Start, SiteAlignment.Center, "site-split site-split--media-start site-split--align-center")]
+    public void The_columns_start_at_the_top_unless_centred(SplitMediaSide side, SiteAlignment alignment, string classes)
+    {
+        // Arrange & Act
+        var cut = Render<Split>(parameters => parameters
+            .Add(component => component.MediaSide, side)
+            .Add(component => component.Alignment, alignment)
+            .AddChildContent("<p>Day 1</p>")
+            .Add(component => component.Media, "<img src=\"/p.jpg\" alt=\"\">"));
+
+        // Assert
+        cut.Find(".site-split").ClassName.ShouldBe(classes);
+    }
+
+    [Fact]
+    public void An_undefined_alignment_is_rejected()
+    {
+        // Arrange & Act
+        var render = () => Render<Split>(parameters => parameters
+            .Add(component => component.Alignment, (SiteAlignment)7)
+            .AddChildContent("<p>Text</p>")
+            .Add(component => component.Media, "<img src=\"/p.jpg\" alt=\"\">"));
+
+        // Assert
+        render.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe(nameof(Split.Alignment));
+    }
 }

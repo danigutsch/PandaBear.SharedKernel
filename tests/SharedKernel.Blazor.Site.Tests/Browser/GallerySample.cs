@@ -28,6 +28,14 @@ public sealed class GallerySample : ComponentBase
     [Parameter]
     public bool Tall { get; set; }
 
+    /// <summary>Gets or sets a value indicating whether each photo is described and links to its full image.</summary>
+    [Parameter]
+    public bool Linked { get; set; }
+
+    /// <summary>Gets or sets the text alignment of the section.</summary>
+    [Parameter]
+    public SiteAlignment TextAlignment { get; set; }
+
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -35,6 +43,7 @@ public sealed class GallerySample : ComponentBase
         builder.OpenElement(0, "main");
         builder.OpenComponent<Section>(1);
         builder.AddComponentParameter(2, nameof(Section.Title), "Gallery");
+        builder.AddComponentParameter(26, nameof(Section.TextAlignment), TextAlignment);
         if (InMedia)
         {
             builder.AddComponentParameter(3, nameof(Section.ChildContent), (RenderFragment)(text => text.AddMarkupContent(0, "<p>Where we have been.</p>")));
@@ -65,11 +74,16 @@ public sealed class GallerySample : ComponentBase
         builder.OpenComponent<ImageGrid>(0);
         builder.AddComponentParameter(1, nameof(ImageGrid.Layout), Layout);
         builder.AddComponentParameter(2, nameof(ImageGrid.EagerCount), Count);
-        builder.AddComponentParameter(3, nameof(ImageGrid.Images), Enumerable.Range(0, Count)
-            .Select(_ => new GalleryImage(Tall
-                ? ResponsiveImage.Create(LinkTarget.FromString(TallPhoto), 900, 1600, ImageAlternative.Decorative())
-                : ResponsiveImage.Create(LinkTarget.FromString(BandsSample.WhitePhoto), 1600, 900, ImageAlternative.Decorative())))
-            .ToArray());
+        builder.AddComponentParameter(3, nameof(ImageGrid.Images), Enumerable.Range(1, Count).Select(Photo).ToArray());
         builder.CloseComponent();
+    }
+
+    private GalleryImage Photo(int number)
+    {
+        var alt = Linked ? ImageAlternative.Describe($"Photo {number}") : ImageAlternative.Decorative();
+        var image = Tall
+            ? ResponsiveImage.Create(LinkTarget.FromString(TallPhoto), 900, 1600, alt)
+            : ResponsiveImage.Create(LinkTarget.FromString(BandsSample.WhitePhoto), 1600, 900, alt);
+        return new GalleryImage(image) { Href = Linked ? LinkTarget.FromString($"/full/{number}.jpg") : null };
     }
 }

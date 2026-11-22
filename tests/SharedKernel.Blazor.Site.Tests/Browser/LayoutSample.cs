@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Components.Rendering;
 namespace PandaBear.Blazor.Site.Tests.Browser;
 
 /// <summary>
-/// A public page for the layout tests: the header on a page inside the "Trips" group (followed by "Gallery" and "Contact"), a section of
-/// cards, and text in the gutter container without a heading.
+/// A public page for the layout tests: the header on a page inside the "Trips" group (followed by "Gallery" and "Contact"), optionally
+/// with a language switcher, a section of cards, and text in the gutter container without a heading.
 /// </summary>
 public sealed class LayoutSample : ComponentBase
 {
@@ -22,6 +22,10 @@ public sealed class LayoutSample : ComponentBase
     [Parameter]
     public int Cards { get; set; } = 1;
 
+    /// <summary>Gets or sets a value indicating whether the header's actions hold a language switcher.</summary>
+    [Parameter]
+    public bool Languages { get; set; }
+
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -31,6 +35,11 @@ public sealed class LayoutSample : ComponentBase
         builder.AddComponentParameter(2, nameof(SiteHeader.Items), Navigation);
         builder.AddComponentParameter(3, nameof(SiteHeader.CurrentPath), "/trips/atacama");
         builder.AddComponentParameter(4, nameof(SiteHeader.Brand), (RenderFragment)(brand => brand.AddMarkupContent(0, "<a href=\"/\">Brand</a>")));
+        if (Languages)
+        {
+            builder.AddComponentParameter(12, nameof(SiteHeader.Actions), (RenderFragment)Switcher);
+        }
+
         builder.CloseComponent();
         builder.OpenElement(5, "main");
         builder.OpenComponent<Section>(6);
@@ -42,6 +51,18 @@ public sealed class LayoutSample : ComponentBase
         builder.AddMarkupContent(11, "<p id=\"gutter-text\">Write to us; we answer in Portuguese and English.</p>");
         builder.CloseElement();
         builder.CloseElement();
+    }
+
+    private static void Switcher(RenderTreeBuilder builder)
+    {
+        builder.OpenComponent<LanguageSwitcher>(0);
+        builder.AddComponentParameter(1, nameof(LanguageSwitcher.Label), "Language");
+        builder.AddComponentParameter(2, nameof(LanguageSwitcher.Languages), new LanguageLink[]
+        {
+            new(BuildingBlocks.ContentCulture.Create("pt-BR").Value, "Português", LinkTarget.FromString("/pt"), IsCurrent: true),
+            new(BuildingBlocks.ContentCulture.Create("en").Value, "English", LinkTarget.FromString("/en")),
+        });
+        builder.CloseComponent();
     }
 
     private void Grid(RenderTreeBuilder builder)

@@ -119,4 +119,33 @@ public sealed class BandTests : BunitContext
         BunitElementAssertions.HasClass(root.ClassList, "extra");
         root.GetAttribute("lang").ShouldBe("pt-BR");
     }
+
+    [Theory]
+    [InlineData(null, "site-band site-band--muted extra")]
+    [InlineData(SiteAlignment.Start, "site-band site-band--muted site-band--text-start extra")]
+    [InlineData(SiteAlignment.Center, "site-band site-band--muted site-band--text-center extra")]
+    public void The_text_alignment_inherits_by_default_and_otherwise_sets_a_class_after_the_tone(SiteAlignment? alignment, string classes)
+    {
+        // Arrange & Act
+        var cut = Render<Band>(parameters => parameters
+            .Add(component => component.Tone, BandTone.Muted)
+            .Add(component => component.TextAlignment, alignment)
+            .Add(component => component.Class, "extra")
+            .AddChildContent("<p>Travel with feeling.</p>"));
+
+        // Assert
+        cut.Find(".site-band").ClassName.ShouldBe(classes);
+    }
+
+    [Fact]
+    public void An_undefined_text_alignment_is_rejected()
+    {
+        // Arrange & Act
+        var render = () => Render<Band>(parameters => parameters
+            .Add(component => component.TextAlignment, (SiteAlignment)5)
+            .AddChildContent("x"));
+
+        // Assert
+        render.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe(nameof(Band.TextAlignment));
+    }
 }

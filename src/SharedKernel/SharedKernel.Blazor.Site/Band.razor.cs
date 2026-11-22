@@ -24,6 +24,22 @@ public sealed partial class Band
     [EditorRequired]
     public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>
+    /// Gets or sets the alignment of the band's text. <see langword="null" />, the default, inherits the nearest aligned ancestor, or the
+    /// start. <see cref="SiteAlignment.Center" /> adds <c>site-band--text-center</c>, which centres the text of the band and of a section
+    /// in it that does not set its own, as <see cref="Section.TextAlignment" /> does, for content without a heading such as a tagline and
+    /// a <see cref="Byline" />. <see cref="SiteAlignment.Start" /> adds <c>site-band--text-start</c>.
+    /// </summary>
+    [Parameter]
+    public SiteAlignment? TextAlignment { get; set; }
+
+    private string RootClass => TextAlignment switch
+    {
+        SiteAlignment.Center => ToneClass + " site-band--text-center",
+        SiteAlignment.Start => ToneClass + " site-band--text-start",
+        _ => ToneClass,
+    };
+
     private string ToneClass => Tone switch
     {
         BandTone.Muted => "site-band site-band--muted",
@@ -38,6 +54,11 @@ public sealed partial class Band
         if (!Enum.IsDefined(Tone))
         {
             throw new ArgumentOutOfRangeException(nameof(Tone), Tone, "The band tone is not defined.");
+        }
+
+        if (TextAlignment is { } alignment && !Enum.IsDefined(alignment))
+        {
+            throw new ArgumentOutOfRangeException(nameof(TextAlignment), alignment, "The text alignment is not defined.");
         }
 
         if (Tone == BandTone.Image && Image is null)

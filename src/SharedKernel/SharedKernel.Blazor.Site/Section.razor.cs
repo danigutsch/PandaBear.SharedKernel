@@ -61,6 +61,23 @@ public sealed partial class Section
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>
+    /// Gets or sets the alignment of the heading, the divider, the intro and the body's text. <see langword="null" />, the default,
+    /// inherits the nearest section or band that sets one, or the start. <see cref="SiteAlignment.Center" /> adds
+    /// <c>site-section--text-center</c>, which centres them, a byline, a video link, a default <see cref="ActionRow" /> and an image that
+    /// is narrower than its column, for a section such as a list of tours, and keeps a list's items at the start inside a centred box.
+    /// <see cref="SiteAlignment.Start" /> adds <c>site-section--text-start</c>, which returns them to the start inside a centred ancestor.
+    /// </summary>
+    [Parameter]
+    public SiteAlignment? TextAlignment { get; set; }
+
+    private string RootClass => TextAlignment switch
+    {
+        SiteAlignment.Center => "site-section site-section--text-center",
+        SiteAlignment.Start => "site-section site-section--text-start",
+        _ => "site-section",
+    };
+
     private bool HasEyebrow => !string.IsNullOrWhiteSpace(Eyebrow);
 
     /// <inheritdoc />
@@ -69,6 +86,11 @@ public sealed partial class Section
         ArgumentException.ThrowIfNullOrWhiteSpace(Title);
         Heading.RequireLevel(Level, nameof(Level));
         LanguageTag.Require(TitleLanguage, nameof(TitleLanguage));
+        if (TextAlignment is { } alignment && !Enum.IsDefined(alignment))
+        {
+            throw new ArgumentOutOfRangeException(nameof(TextAlignment), alignment, "The text alignment is not defined.");
+        }
+
         if (HeadingId is not null && (HeadingId.Length == 0 || HeadingId.AsSpan().ContainsAnyWhiteSpace()))
         {
             throw new ArgumentException("A heading id must not be empty or contain white space.", nameof(HeadingId));
