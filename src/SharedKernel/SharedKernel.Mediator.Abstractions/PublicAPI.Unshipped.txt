@@ -1,4 +1,6 @@
 #nullable enable
+PandaBear.Mediator.Transactions.ITransactionLockDeclaration
+PandaBear.Mediator.Transactions.ITransactionLockDeclaration.TransactionLocks.get -> System.Collections.Generic.IReadOnlyList<string!>!
 PandaBear.Mediator.IDuplexStreamCommand<TRequestItem, TResponse>
 PandaBear.Mediator.IDuplexStreamCommand<TRequestItem, TResponse>.Items.get -> System.Collections.Generic.IAsyncEnumerable<TRequestItem>!
 PandaBear.Mediator.IDuplexStreamQuery<TRequestItem, TResponse>

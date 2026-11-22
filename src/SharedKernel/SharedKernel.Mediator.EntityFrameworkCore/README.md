@@ -24,7 +24,11 @@ public sealed class TransactionBehavior<TRequest, TResponse>(DbContext dbContext
     where TResponse : struct, IResultLike<TResponse>;
 ```
 
-- **Locks.** A command implements `ITransactionLockDeclaration` and exposes its advisory lock names as `TransactionLocks`; the declaration holds no persistence type, so the application layer needs no EF Core reference. After the transaction begins, the behavior takes them at tier 0 through one new `PostgreSqlOrderedTransactionLocks` per attempt, so retries never reuse an instance.
+- **Locks.** A command implements `PandaBear.Mediator.Transactions.ITransactionLockDeclaration` from
+  Mediator.Abstractions and exposes its advisory lock names through `TransactionLocks`. The behavior also
+  accepts the existing `PandaBear.Mediator.EntityFrameworkCore.ITransactionLockDeclaration` and combines the
+  lists when a command implements both. After beginning the transaction, it acquires the names at tier 0 through
+  one new `PostgreSqlOrderedTransactionLocks` per attempt.
 - **Hooks.** `IAfterRollback<TRequest, TResponse>` runs once after the last attempt when the result was not successful (not for exceptions); `IAfterCommit<TRequest, TResponse>` runs once after a commit. Both resolve from a fresh scope outside the transaction. A hook failure is logged and never changes the response. Put records that must outlive a rollback, such as rejection audits, in an after-rollback hook.
 - **Joining.** When a transaction is already active, the behavior joins it, takes no locks and runs no hooks. It throws `InvalidOperationException` if that transaction runs at repeatable read, serializable or snapshot isolation, because checks that read state after taking locks need a fresh snapshot per statement.
 - **Non-relational providers** run the handler directly.
