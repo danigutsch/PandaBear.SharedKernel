@@ -193,9 +193,11 @@ public sealed class OptionSearchTests
         time.Advance(TimeSpan.FromMilliseconds(299));
         var second = search.Search("es", Token);
         var third = search.Search("esl", Token);
+        await Task.WhenAll(first, second);
+        await time.WaitForPendingTimers(1, Token);
         var waitingBeforeDebounce = search.IsSearching;
         time.Advance(TimeSpan.FromMilliseconds(OptionSearch<string>.DefaultDebounceMilliseconds));
-        await Task.WhenAll(first, second, third);
+        await third;
 
         // Assert
         search.Debounce.ShouldBe(TimeSpan.FromMilliseconds(300));

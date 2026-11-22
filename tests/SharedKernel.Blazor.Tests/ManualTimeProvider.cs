@@ -18,6 +18,18 @@ internal sealed class ManualTimeProvider : TimeProvider
         }
     }
 
+    /// <summary>Waits until the given number of timers wait to fire, for code that creates its timer after an asynchronous step.</summary>
+    /// <param name="count">The number of pending timers.</param>
+    /// <param name="cancellationToken">Stops waiting.</param>
+    /// <returns>A task that completes when the timers exist.</returns>
+    public async Task WaitForPendingTimers(int count, CancellationToken cancellationToken)
+    {
+        while (PendingTimers < count)
+        {
+            await Task.Delay(1, cancellationToken);
+        }
+    }
+
     /// <inheritdoc />
     public override DateTimeOffset GetUtcNow() => _now;
 
