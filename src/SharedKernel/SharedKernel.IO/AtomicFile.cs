@@ -88,32 +88,30 @@ public static class AtomicFile
             }
 
             ct.ThrowIfCancellationRequested();
-            if (overwrite)
-            {
-                MoveReplacement(temporary, destination, ct);
-                created = false;
-                return true;
-            }
-
             try
             {
-                if (OperatingSystem.IsWindows())
+                if (overwrite)
                 {
-                    File.Move(temporary, destination);
-                    created = false;
+                    MoveReplacement(temporary, destination, ct);
                 }
-                else
+                else if (!OperatingSystem.IsWindows())
                 {
                     // Unix File.Move can race between its existence check and rename.
                     File.CreateHardLink(destination, temporary);
+                    return true;
                 }
-
-                return true;
+                else
+                {
+                    File.Move(temporary, destination);
+                }
             }
-            catch (IOException) when (File.Exists(destination))
+            catch (IOException) when (!overwrite && File.Exists(destination))
             {
                 return false;
             }
+
+            created = false;
+            return true;
         }
         finally
         {
