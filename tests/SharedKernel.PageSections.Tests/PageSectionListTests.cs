@@ -110,11 +110,11 @@ public sealed class PageSectionListTests
     public void Missing_arguments_are_refused()
     {
         // Act
-        Action noRules = () => PageSectionList.Create<Guid, NavLink, SiteExtra>([], null!, _context, Portuguese, false, Prefix);
+        Action noRules = () => PageSectionList.Create([], null!, _context, Portuguese, false, Prefix);
         Action noContext = () => PageSectionList.Create<Guid, NavLink, SiteExtra>([], Rules, null!, Portuguese, false, Prefix);
-        Action noCulture = () => PageSectionList.Create<Guid, NavLink, SiteExtra>([], Rules, _context, null!, false, Prefix);
-        Action noPrefix = () => PageSectionList.Create<Guid, NavLink, SiteExtra>([], Rules, _context, Portuguese, false, null!);
-        Action nullSection = () => PageSectionList.Create<Guid, NavLink, SiteExtra>([null!], Rules, _context, Portuguese, false, Prefix);
+        Action noCulture = () => PageSectionList.Create([], Rules, _context, null!, false, Prefix);
+        Action noPrefix = () => PageSectionList.Create([], Rules, _context, Portuguese, false, null!);
+        Action nullSection = () => PageSectionList.Create([null!], Rules, _context, Portuguese, false, Prefix);
         Action noSections = () => PageSectionList.ImagesShown<Guid, NavLink, SiteExtra>(null!);
 
         // Assert
@@ -130,7 +130,7 @@ public sealed class PageSectionListTests
     public void A_missing_list_has_no_sections()
     {
         // Act
-        var result = PageSectionList.Create<Guid, NavLink, SiteExtra>(null, Rules, _context, Portuguese, false, Prefix);
+        var result = PageSectionList.Create(null, Rules, _context, Portuguese, false, Prefix);
 
         // Assert
         result.ShouldBeSuccess().ShouldBeEmpty();
