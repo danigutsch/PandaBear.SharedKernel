@@ -82,6 +82,7 @@ enclosing marks are dropped, the rest is lowercased with the invariant culture, 
 either end, and the result is composed again (NFC). Unlike a slug it keeps every letter and digit of every script (`Москва` →
 `москва`, `東京` and `ß` unchanged) and keeps punctuation, so it is a comparison key, not an identifier. .NET has no full Unicode case
 folding, so `ß` does not match `ss`; the key follows the Unicode data of the running .NET, so rebuild stored keys when it changes.
+`PandaBear.SharedKernel.EntityFrameworkCore.Sqlite` maps it into SQLite queries (`SearchFold`).
 
 ## Web addresses
 
