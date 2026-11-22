@@ -19,6 +19,8 @@ abstractions that the runtime, generator, analyzers, and tests build on.
   stream command/query markers, plus notification ordering/dispatch metadata
 - Pipeline contracts and ordering metadata, including dedicated stream pipeline behaviors for
   stream-producing requests
+- `PandaBear.Mediator.Transactions.ITransactionLockDeclaration` for commands that declare their lock names
+  to a transaction behavior. The behavior owns acquisition, ordering, and release.
 - Mediator-facing contracts: `ISender`, `IPublisher`, `IMediator`, including generated request and
   response-stream dispatch via `Send(...)`
 - Stream semantics follow the command/query families used by unary requests:
@@ -48,6 +50,7 @@ None.
 
 ## Package identity and availability
 
-Package ID: `PandaBear.SharedKernel.Mediator.Abstractions`. C# namespace: `PandaBear.Mediator`. Assembly/project identity: `SharedKernel.Mediator.Abstractions`.
+Package ID: `PandaBear.SharedKernel.Mediator.Abstractions`. C# namespaces: `PandaBear.Mediator` and
+`PandaBear.Mediator.Transactions`. Assembly/project identity: `SharedKernel.Mediator.Abstractions`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
