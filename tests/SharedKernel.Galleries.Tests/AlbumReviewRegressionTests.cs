@@ -115,7 +115,7 @@ public sealed class AlbumReviewRegressionTests
     public void Finding_ineligible_photos_rejects_missing_arguments()
     {
         // Arrange
-        Action noPhotos = () => AlbumPublishing.FindIneligible<Guid>(null!, Portuguese, _library);
+        Action noPhotos = () => AlbumPublishing.FindIneligible(null!, Portuguese, _library);
         Action noCulture = () => AlbumPublishing.FindIneligible([Guid.CreateVersion7()], null!, _library);
         Action noLibrary = () => AlbumPublishing.FindIneligible([Guid.CreateVersion7()], Portuguese, null!);
 
