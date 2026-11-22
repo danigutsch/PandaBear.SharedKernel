@@ -26,7 +26,8 @@ public static class UserTokenManagementServiceCollectionExtensions
     /// <remarks>
     /// The application registers the <see cref="Microsoft.Extensions.Caching.Distributed.IDistributedCache" />, persists and
     /// shares Data Protection keys across instances, and configures the OpenID Connect scheme with its client identifier and
-    /// secret. Neither scheme may set <c>EventsType</c>; assign an events instance to <c>Events</c> instead.
+    /// secret. Register an <see cref="IUserTokenCacheConcurrency" /> singleton for atomic conditional token mutations.
+    /// Neither scheme may set <c>EventsType</c>; assign an events instance to <c>Events</c> instead.
     /// </remarks>
     public static IServiceCollection AddUserTokenManagement(
         this IServiceCollection services,

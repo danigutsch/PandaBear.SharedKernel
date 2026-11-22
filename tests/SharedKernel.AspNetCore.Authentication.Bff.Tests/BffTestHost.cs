@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using PandaBear.Testing.Http;
@@ -23,16 +24,23 @@ internal sealed class BffTestHost : IDisposable
     /// <param name="configure">Configures token management.</param>
     /// <param name="revocationEndpoint">Whether discovery names a revocation endpoint.</param>
     /// <param name="services">Adds further services.</param>
+    /// <param name="useConditionalWrites">Registers the optional cache concurrency adapter.</param>
     internal BffTestHost(
         Action<UserTokenManagementOptions>? configure = null,
         bool revocationEndpoint = true,
-        Action<IServiceCollection>? services = null)
+        Action<IServiceCollection>? services = null,
+        bool useConditionalWrites = false)
     {
         Cache = new RecordingDistributedCache(Time);
         var collection = new ServiceCollection();
         collection.AddLogging(logging => logging.AddProvider(Logs).SetMinimumLevel(LogLevel.Trace));
         collection.AddSingleton<TimeProvider>(Time);
         collection.AddSingleton<IDistributedCache>(Cache);
+        ConditionalWrites = new RecordingUserTokenCacheConcurrency(Cache, Time);
+        if (useConditionalWrites)
+        {
+            collection.AddSingleton<IUserTokenCacheConcurrency>(ConditionalWrites);
+        }
         collection.AddDataProtection().UseEphemeralDataProtectionProvider();
         collection.AddAuthentication()
             .AddCookie()
@@ -58,6 +66,9 @@ internal sealed class BffTestHost : IDisposable
 
     /// <summary>The recording cache; it refuses an absolute expiration in the past.</summary>
     internal RecordingDistributedCache Cache { get; }
+
+    /// <summary>The cache concurrency adapter used when the host registers it.</summary>
+    internal RecordingUserTokenCacheConcurrency ConditionalWrites { get; }
 
     /// <summary>The fake identity provider.</summary>
     internal FakeIdentityProvider IdentityProvider { get; } = new();
@@ -89,6 +100,18 @@ internal sealed class BffTestHost : IDisposable
             scope: "openid profile");
         await Manager.StartSession(principal, tokens, CancellationToken.None);
         return principal;
+    }
+
+    /// <summary>Creates protected replacement bytes for a session without writing to the host cache.</summary>
+    internal async Task<byte[]> ProtectReplacementTokens(ClaimsPrincipal principal, UserTokenSet tokens, CancellationToken ct)
+    {
+        var session = UserSession.From(principal).ShouldNotBeNull();
+        var scratchCache = new RecordingDistributedCache(Time);
+        var options = _services.GetRequiredService<IOptions<UserTokenManagementOptions>>().Value;
+        var protection = _services.GetRequiredService<IDataProtectionProvider>();
+        var store = new ProtectedTokenCache(scratchCache, protection, options.CacheKeyPrefix);
+        await store.SetUserTokens(session, tokens, ct);
+        return scratchCache.Entries.Values.ShouldHaveSingleItem();
     }
 
     /// <summary>Creates the services of one request scope; the host disposes it.</summary>
