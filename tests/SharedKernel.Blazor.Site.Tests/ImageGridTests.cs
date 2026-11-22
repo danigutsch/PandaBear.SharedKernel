@@ -122,4 +122,42 @@ public sealed class ImageGridTests : BunitContext
         BunitElementAssertions.HasClass(grid.ClassList, "extra");
         grid.GetAttribute("data-test").ShouldBe("x");
     }
+
+    [Fact]
+    public void The_default_layout_is_the_grid()
+    {
+        // Arrange & Act
+        var cut = Render<ImageGrid>(parameters => parameters.Add(component => component.Images, Images(2)));
+
+        // Assert
+        cut.Find("div").ClassName.ShouldBe("site-image-grid");
+    }
+
+    [Fact]
+    public void The_mosaic_layout_keeps_every_figure_lazy_and_in_order()
+    {
+        // Arrange & Act
+        var cut = Render<ImageGrid>(parameters => parameters
+            .Add(component => component.Images, Images(3))
+            .Add(component => component.Layout, ImageGridLayout.Mosaic));
+
+        // Assert
+        var grid = cut.Find("div");
+        BunitElementAssertions.HasClass(grid.ClassList, "site-image-grid");
+        BunitElementAssertions.HasClass(grid.ClassList, "site-image-grid--mosaic");
+        cut.FindAll("figure img").Select(image => image.GetAttribute("src")).ShouldBe(["/img1.jpg", "/img2.jpg", "/img3.jpg"]);
+        cut.FindAll("img").ShouldAllSatisfy(image => image.GetAttribute("loading").ShouldBe("lazy"));
+    }
+
+    [Fact]
+    public void An_undefined_layout_is_rejected()
+    {
+        // Arrange & Act
+        var render = () => Render<ImageGrid>(parameters => parameters
+            .Add(component => component.Images, Images(1))
+            .Add(component => component.Layout, (ImageGridLayout)9));
+
+        // Assert
+        render.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe(nameof(ImageGrid.Layout));
+    }
 }

@@ -55,6 +55,33 @@ and the line breaks inside quoted fields. Consumers own accepted headers, normal
 `ParseUtf8` finds fields on the bytes and decodes each field on its own, without decoding the whole content or each line: every
 structural character is ASCII, and no byte of a multibyte UTF-8 sequence is. Invalid UTF-8 is replaced per field as the decoder does.
 
+## Mapping source headers
+
+Pass a target schema in display order to `CsvHeaderMapping.Match`. Matching uses ordinal case-insensitive comparison by
+default and returns the original spelling of each selected source. Pass a comparer to both operations to change how names
+are matched. Supply target-to-source overrides to confirm alternate inputs by name. A null override clears a match.
+
+```csharp
+var parsed = CsvDocument.Parse("Sala,Capacity,Notes\nAurora,24,South window");
+if (parsed.IsSuccess)
+{
+    var document = parsed.Value;
+    var choices = new Dictionary<string, string?>(StringComparer.Ordinal) { ["Room"] = "Sala" };
+    var matches = CsvHeaderMapping.Match(document.Headers, ["Room", "Capacity"], choices);
+    var mapped = CsvHeaderMapping.Remap(document, matches);
+    // Headers are Room, Capacity, Notes. The row still points to physical line 2 in the source.
+
+    var exact = CsvWriter.Write(mapped.Headers, mapped.Rows, new CsvWriteOptions { GuardFormulas = false });
+    var forSpreadsheet = CsvWriter.Write(mapped.Headers, mapped.Rows);
+}
+```
+
+Remapping keeps source column order and all row values, including columns outside the target schema. Supply a rename policy
+when a declined or superseded source header still uses a canonical name and should be relabeled. By default it stays as
+written. Renaming retains the parsed rows and their physical line numbers, including skipped blank lines and line breaks
+inside quoted fields. If a later step serializes and reparses the data, those new physical line numbers refer to the new file.
+Keep the mapped document or carry its row locations separately wherever diagnostics must refer to the original file.
+
 ## Writing
 
 `CsvWriter.Write(headers, rows, options)` returns the text, and an overload writes to a `TextWriter`; rows may be any lists of strings,

@@ -23,7 +23,7 @@ dotnet test --project tests/SharedKernel.HttpClients.Tests/SharedKernel.HttpClie
 `tests/testconfig.json` defines the coverage filters and is copied beside test executables. It excludes test assemblies, migrations, intermediate and
 generated source files, and explicitly marked generated/excluded code. Compiler-generated async and iterator code remains measurable. Coverlet
 measures instrumented managed modules in the test process; separate application/container processes are not covered automatically. Selected-project
-reports are evidence for those projects, not whole-repository coverage trends. This repository does not currently enforce a coverage percentage.
+reports are evidence for those projects, not whole-repository coverage trends. Pull requests must cover at least 90% of their changed executable lines and conditions in `src` and `tools`; this is not a whole-repository threshold. `sharedkernel-ci coverage verify` enforces it in the `coverage-gate` job of `ci.yml` from the `coverage` section of `.config/sharedkernel-ci.json`.
 
 Build gates retain SDK analyzers (`AnalysisMode=All`), SharedKernel analyzers, warnings as errors, public API checks, dependency vulnerability auditing,
 and package-consumption checks. No remote analysis upload or proprietary coverage collector is required.

@@ -192,6 +192,8 @@ PandaBear.Blazor.Site.Section.ChildContent.get -> Microsoft.AspNetCore.Component
 PandaBear.Blazor.Site.Section.ChildContent.set -> void
 PandaBear.Blazor.Site.Section.Divider.get -> bool
 PandaBear.Blazor.Site.Section.Divider.set -> void
+PandaBear.Blazor.Site.Section.Eyebrow.get -> string?
+PandaBear.Blazor.Site.Section.Eyebrow.set -> void
 PandaBear.Blazor.Site.Section.Intro.get -> string?
 PandaBear.Blazor.Site.Section.Intro.set -> void
 PandaBear.Blazor.Site.Section.Level.get -> int
@@ -506,8 +508,6 @@ static PandaBear.Blazor.Site.Theming.CssColor.FromString(string! value) -> Panda
 static PandaBear.Blazor.Site.Theming.FontSize.Fixed(decimal rem) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.FontSize!>
 static PandaBear.Blazor.Site.Theming.FontSize.Fluid(decimal minRem, decimal maxRem) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.FontSize!>
 static PandaBear.Blazor.Site.Theming.SiteColors.Create(PandaBear.Blazor.Site.Theming.ThemeColor! primary, PandaBear.Blazor.Site.Theming.ThemeColor! onPrimary, PandaBear.Blazor.Site.Theming.ThemeColor! accent, PandaBear.Blazor.Site.Theming.ThemeColor! onAccent, PandaBear.Blazor.Site.Theming.ThemeColor! text, PandaBear.Blazor.Site.Theming.ThemeColor! muted, PandaBear.Blazor.Site.Theming.ThemeColor! surface, PandaBear.Blazor.Site.Theming.ThemeColor! surfaceAlt, PandaBear.Blazor.Site.Theming.ThemeColor! border, PandaBear.Blazor.Site.Theming.ThemeColor! focus, PandaBear.Blazor.Site.Theming.ThemeColor? primaryHover = null, PandaBear.Blazor.Site.Theming.ThemeColor? accentHover = null) -> PandaBear.Blazor.Site.Theming.SiteColors!
-static PandaBear.Blazor.Site.Theming.SiteTheme.Create(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
-static PandaBear.Blazor.Site.Theming.SiteTheme.CreateDraft(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
 static PandaBear.Blazor.Site.Theming.SiteTheme.Default.get -> PandaBear.Blazor.Site.Theming.SiteTheme!
 static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.ColorVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
 static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.Hash(PandaBear.Blazor.Site.Theming.SiteTheme! theme) -> string!
@@ -578,3 +578,137 @@ static PandaBear.Blazor.Site.Theming.ContrastCheck.operator !=(PandaBear.Blazor.
 static PandaBear.Blazor.Site.Theming.ContrastCheck.operator ==(PandaBear.Blazor.Site.Theming.ContrastCheck? left, PandaBear.Blazor.Site.Theming.ContrastCheck? right) -> bool
 static PandaBear.Blazor.Site.Theming.ThemeIssue.operator !=(PandaBear.Blazor.Site.Theming.ThemeIssue? left, PandaBear.Blazor.Site.Theming.ThemeIssue? right) -> bool
 static PandaBear.Blazor.Site.Theming.ThemeIssue.operator ==(PandaBear.Blazor.Site.Theming.ThemeIssue? left, PandaBear.Blazor.Site.Theming.ThemeIssue? right) -> bool
+PandaBear.Blazor.Site.Theming.SiteScrim
+PandaBear.Blazor.Site.Theming.SiteScrim.Boost.get -> int
+PandaBear.Blazor.Site.Theming.SiteScrim.IsReachable.get -> bool
+PandaBear.Blazor.Site.Theming.SiteScrim.LargeText.get -> int
+PandaBear.Blazor.Site.Theming.SiteScrim.Text.get -> int
+const PandaBear.Blazor.Site.Theming.SiteScrim.LargeTextMinimum = 3 -> double
+const PandaBear.Blazor.Site.Theming.SiteScrim.TextMinimum = 4.5 -> double
+static PandaBear.Blazor.Site.Theming.SiteScrim.For(PandaBear.Blazor.Site.Theming.SiteColors! colors) -> PandaBear.Blazor.Site.Theming.SiteScrim!
+static PandaBear.Blazor.Site.Theming.SiteScrim.MinimumPercent(PandaBear.Blazor.Site.Theming.CssColor! foreground, PandaBear.Blazor.Site.Theming.CssColor! scrim, double minimum) -> int?
+static PandaBear.Blazor.Site.Theming.SiteScrim.WorstRatio(PandaBear.Blazor.Site.Theming.CssColor! foreground, PandaBear.Blazor.Site.Theming.CssColor! scrim, int percent) -> double
+static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.ScrimVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Blazor.Site.Band
+PandaBear.Blazor.Site.Band.Band() -> void
+PandaBear.Blazor.Site.Band.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.Band.ChildContent.set -> void
+PandaBear.Blazor.Site.Band.Image.get -> PandaBear.Blazor.Site.ResponsiveImage?
+PandaBear.Blazor.Site.Band.Image.set -> void
+PandaBear.Blazor.Site.Band.Tone.get -> PandaBear.Blazor.Site.BandTone
+PandaBear.Blazor.Site.Band.Tone.set -> void
+PandaBear.Blazor.Site.BandTone
+PandaBear.Blazor.Site.BandTone.Default = 0 -> PandaBear.Blazor.Site.BandTone
+PandaBear.Blazor.Site.BandTone.Image = 3 -> PandaBear.Blazor.Site.BandTone
+PandaBear.Blazor.Site.BandTone.Muted = 1 -> PandaBear.Blazor.Site.BandTone
+PandaBear.Blazor.Site.BandTone.Primary = 2 -> PandaBear.Blazor.Site.BandTone
+PandaBear.Blazor.Site.Byline
+PandaBear.Blazor.Site.Byline.Byline() -> void
+PandaBear.Blazor.Site.Byline.JobTitle.get -> string?
+PandaBear.Blazor.Site.Byline.JobTitle.set -> void
+PandaBear.Blazor.Site.Byline.Name.get -> string!
+PandaBear.Blazor.Site.Byline.Name.set -> void
+PandaBear.Blazor.Site.Byline.Photo.get -> PandaBear.Blazor.Site.ResponsiveImage?
+PandaBear.Blazor.Site.Byline.Photo.set -> void
+PandaBear.Blazor.Site.FloatingLink
+PandaBear.Blazor.Site.FloatingLink.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.FloatingLink.ChildContent.set -> void
+PandaBear.Blazor.Site.FloatingLink.FloatingLink() -> void
+PandaBear.Blazor.Site.FloatingLink.Href.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.FloatingLink.Href.set -> void
+PandaBear.Blazor.Site.FloatingLink.Label.get -> string!
+PandaBear.Blazor.Site.FloatingLink.Label.set -> void
+PandaBear.Blazor.Site.HeaderPlacement
+PandaBear.Blazor.Site.HeaderPlacement.Above = 0 -> PandaBear.Blazor.Site.HeaderPlacement
+PandaBear.Blazor.Site.HeaderPlacement.OverHero = 1 -> PandaBear.Blazor.Site.HeaderPlacement
+PandaBear.Blazor.Site.Hero.Layout.get -> PandaBear.Blazor.Site.HeroLayout
+PandaBear.Blazor.Site.Hero.Layout.set -> void
+PandaBear.Blazor.Site.HeroLayout
+PandaBear.Blazor.Site.HeroLayout.Cover = 1 -> PandaBear.Blazor.Site.HeroLayout
+PandaBear.Blazor.Site.HeroLayout.Split = 0 -> PandaBear.Blazor.Site.HeroLayout
+PandaBear.Blazor.Site.ImageGrid.Layout.get -> PandaBear.Blazor.Site.ImageGridLayout
+PandaBear.Blazor.Site.ImageGrid.Layout.set -> void
+PandaBear.Blazor.Site.ImageGridLayout
+PandaBear.Blazor.Site.ImageGridLayout.Grid = 0 -> PandaBear.Blazor.Site.ImageGridLayout
+PandaBear.Blazor.Site.ImageGridLayout.Mosaic = 1 -> PandaBear.Blazor.Site.ImageGridLayout
+PandaBear.Blazor.Site.Section.Media.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.Section.Media.set -> void
+PandaBear.Blazor.Site.SiteHeader.MenuLabel.get -> string?
+PandaBear.Blazor.Site.SiteHeader.MenuLabel.set -> void
+PandaBear.Blazor.Site.SiteHeader.Placement.get -> PandaBear.Blazor.Site.HeaderPlacement
+PandaBear.Blazor.Site.SiteHeader.Placement.set -> void
+PandaBear.Blazor.Site.VideoLink
+PandaBear.Blazor.Site.VideoLink.Href.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.VideoLink.Href.set -> void
+PandaBear.Blazor.Site.VideoLink.Poster.get -> PandaBear.Blazor.Site.ResponsiveImage?
+PandaBear.Blazor.Site.VideoLink.Poster.set -> void
+PandaBear.Blazor.Site.VideoLink.SiteHint.get -> string!
+PandaBear.Blazor.Site.VideoLink.SiteHint.set -> void
+PandaBear.Blazor.Site.VideoLink.Title.get -> string!
+PandaBear.Blazor.Site.VideoLink.Title.set -> void
+PandaBear.Blazor.Site.VideoLink.VideoLink() -> void
+PandaBear.Blazor.Site.CoverHeight
+PandaBear.Blazor.Site.CoverHeight.Landing = 1 -> PandaBear.Blazor.Site.CoverHeight
+PandaBear.Blazor.Site.CoverHeight.Page = 0 -> PandaBear.Blazor.Site.CoverHeight
+PandaBear.Blazor.Site.Hero.CoverHeight.get -> PandaBear.Blazor.Site.CoverHeight
+PandaBear.Blazor.Site.Hero.CoverHeight.set -> void
+PandaBear.Blazor.Site.Theming.SiteTheme.BrandHeight.get -> decimal
+PandaBear.Blazor.Site.Theming.SiteTheme.HeaderHeight.get -> decimal
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.BrandHeight.get -> decimal?
+PandaBear.Blazor.Site.Theming.ThemeEditorModel.BrandHeight.set -> void
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Brand.get -> string!
+PandaBear.Blazor.Site.Theming.ThemePreviewTexts.Brand.init -> void
+const PandaBear.Blazor.Site.Theming.SiteTheme.DefaultBrandHeight = 2.5 -> decimal
+static PandaBear.Blazor.Site.Theming.SiteTheme.Create(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, decimal brandHeight = 2.5, System.Func<PandaBear.Blazor.Site.Theming.ThemeColorRole, string?>? colorLabel = null) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
+static PandaBear.Blazor.Site.Theming.SiteTheme.CreateDraft(PandaBear.Blazor.Site.Theming.SiteColors! colors, PandaBear.Blazor.Site.Theming.SiteTypography! typography, System.Collections.Generic.IEnumerable<PandaBear.Blazor.Site.Theming.ThemeFont!>? fonts = null, bool allowSmallText = false, decimal brandHeight = 2.5) -> PandaBear.Results.Result<PandaBear.Blazor.Site.Theming.SiteTheme!>
+static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.HeaderVariables.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Blazor.Site.Split
+PandaBear.Blazor.Site.Split.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.Split.ChildContent.set -> void
+PandaBear.Blazor.Site.Split.Media.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.Split.Media.set -> void
+PandaBear.Blazor.Site.Split.Split() -> void
+PandaBear.Blazor.Site.Split.MediaSide.get -> PandaBear.Blazor.Site.SplitMediaSide
+PandaBear.Blazor.Site.Split.MediaSide.set -> void
+PandaBear.Blazor.Site.SplitMediaSide
+PandaBear.Blazor.Site.SplitMediaSide.End = 0 -> PandaBear.Blazor.Site.SplitMediaSide
+PandaBear.Blazor.Site.SplitMediaSide.Start = 1 -> PandaBear.Blazor.Site.SplitMediaSide
+PandaBear.Blazor.Site.FactCard
+PandaBear.Blazor.Site.FactCard.FactCard(string! Label, System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactValue!>! Values, Microsoft.AspNetCore.Components.RenderFragment? Icon = null) -> void
+PandaBear.Blazor.Site.FactCard.Icon.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.FactCard.Icon.init -> void
+PandaBear.Blazor.Site.FactCard.Label.get -> string!
+PandaBear.Blazor.Site.FactCard.Label.init -> void
+PandaBear.Blazor.Site.FactCard.Values.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactValue!>!
+PandaBear.Blazor.Site.FactCard.Values.init -> void
+PandaBear.Blazor.Site.FactGrid
+PandaBear.Blazor.Site.FactGrid.Cards.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactCard!>!
+PandaBear.Blazor.Site.FactGrid.Cards.set -> void
+PandaBear.Blazor.Site.FactGrid.FactGrid() -> void
+PandaBear.Blazor.Site.ActionRow
+PandaBear.Blazor.Site.ActionRow.ActionRow() -> void
+PandaBear.Blazor.Site.ActionRow.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.ActionRow.ChildContent.set -> void
+PandaBear.Blazor.Site.FactCard.<Clone>$() -> PandaBear.Blazor.Site.FactCard!
+PandaBear.Blazor.Site.FactCard.Deconstruct(out string! Label, out System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactValue!>! Values, out Microsoft.AspNetCore.Components.RenderFragment? Icon) -> void
+PandaBear.Blazor.Site.FactCard.Equals(PandaBear.Blazor.Site.FactCard? other) -> bool
+override PandaBear.Blazor.Site.FactCard.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.FactCard.GetHashCode() -> int
+override PandaBear.Blazor.Site.FactCard.ToString() -> string!
+static PandaBear.Blazor.Site.FactCard.operator !=(PandaBear.Blazor.Site.FactCard? left, PandaBear.Blazor.Site.FactCard? right) -> bool
+static PandaBear.Blazor.Site.FactCard.operator ==(PandaBear.Blazor.Site.FactCard? left, PandaBear.Blazor.Site.FactCard? right) -> bool
+static PandaBear.Blazor.Site.Theming.SiteThemeStylesheet.RenderVersioned(PandaBear.Blazor.Site.Theming.SiteTheme! theme) -> (string! Css, string! Version)
+PandaBear.Blazor.Site.FactValue
+PandaBear.Blazor.Site.FactValue.<Clone>$() -> PandaBear.Blazor.Site.FactValue!
+PandaBear.Blazor.Site.FactValue.Deconstruct(out string! Text, out PandaBear.Blazor.Site.LinkTarget? Link) -> void
+PandaBear.Blazor.Site.FactValue.Equals(PandaBear.Blazor.Site.FactValue? other) -> bool
+PandaBear.Blazor.Site.FactValue.FactValue(string! Text, PandaBear.Blazor.Site.LinkTarget? Link = null) -> void
+PandaBear.Blazor.Site.FactValue.Link.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.FactValue.Link.init -> void
+PandaBear.Blazor.Site.FactValue.Text.get -> string!
+PandaBear.Blazor.Site.FactValue.Text.init -> void
+override PandaBear.Blazor.Site.FactValue.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.FactValue.GetHashCode() -> int
+override PandaBear.Blazor.Site.FactValue.ToString() -> string!
+static PandaBear.Blazor.Site.FactValue.operator !=(PandaBear.Blazor.Site.FactValue? left, PandaBear.Blazor.Site.FactValue? right) -> bool
+static PandaBear.Blazor.Site.FactValue.operator ==(PandaBear.Blazor.Site.FactValue? left, PandaBear.Blazor.Site.FactValue? right) -> bool

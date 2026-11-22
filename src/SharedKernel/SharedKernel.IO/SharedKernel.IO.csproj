@@ -8,5 +8,6 @@
     </PropertyGroup>
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
+        <None Include="../../../LICENSE.ViajantesTurismo.txt" Pack="true" PackagePath="licenses/" />
     </ItemGroup>
 </Project>

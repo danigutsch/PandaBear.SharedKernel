@@ -1,0 +1,23 @@
+@inherits SiteComponent
+<dl class="@CssClass(RootClass)" @attributes="AdditionalAttributes">
+    @foreach (var card in Cards)
+    {
+        <div class="site-fact-grid__item">
+            <dt class="site-fact-grid__label">@if (card.Icon is not null)
+                {
+                    <span class="site-fact-grid__icon" aria-hidden="true">@card.Icon</span>
+                }@card.Label</dt>
+            @foreach (var value in card.Values)
+            {
+                <dd class="site-fact-grid__value">@if (value.Link is null)
+                    {
+                        @value.Text
+                    }
+                    else
+                    {
+                        <a href="@value.Link.Value">@value.Text</a>
+                    }</dd>
+            }
+        </div>
+    }
+</dl>

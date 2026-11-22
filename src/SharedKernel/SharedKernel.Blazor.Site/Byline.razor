@@ -1,0 +1,14 @@
+@inherits SiteComponent
+<div class="@CssClass("site-byline")" @attributes="AdditionalAttributes">
+    @if (Photo is not null)
+    {
+        <div class="site-byline__photo">@ResponsiveImageMarkup.Render(Photo, eager: false, highPriority: false)</div>
+    }
+    <div class="site-byline__text">
+        <p class="site-byline__name">@Name</p>
+        @if (!string.IsNullOrWhiteSpace(JobTitle))
+        {
+            <p class="site-byline__job-title">@JobTitle</p>
+        }
+    </div>
+</div>

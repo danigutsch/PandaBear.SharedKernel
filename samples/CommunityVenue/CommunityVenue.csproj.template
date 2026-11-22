@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+    <PropertyGroup>
+        <TargetFramework>net11.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="PandaBear.SharedKernel.AspNetCore" Version="$(CandidateVersion)" />
+        <PackageReference Include="PandaBear.SharedKernel.AspNetCore.Seo" Version="$(CandidateVersion)" />
+        <PackageReference Include="PandaBear.SharedKernel.Blazor" Version="$(CandidateVersion)" />
+        <PackageReference Include="PandaBear.SharedKernel.Blazor.Site" Version="$(CandidateVersion)" />
+        <PackageReference Include="PandaBear.SharedKernel.HttpCaching.AspNetCore" Version="$(CandidateVersion)" />
+        <PackageReference Include="PandaBear.SharedKernel.IO" Version="$(CandidateVersion)" />
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="Fixtures/hall.webp" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+        <Content Update="Fixtures/pages.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
+</Project>

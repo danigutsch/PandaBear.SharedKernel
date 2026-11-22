@@ -88,8 +88,31 @@ public sealed class WorkflowContractTests
         validate.ShouldContain("    if: needs.selection.outputs.build_required == 'true' && needs.selection.outputs.matrix != '[]'\n", StringComparison.Ordinal);
         validate.ShouldContain("        slice: ${{ fromJSON(needs.selection.outputs.matrix) }}\n", StringComparison.Ordinal);
         validate.ShouldContain("          SLICE: ${{ matrix.slice }}\n", StringComparison.Ordinal);
-        validate.ShouldContain("-- run --slice \"$SLICE\" --install-playwright --playwright-dependencies --github-summary \"$GITHUB_STEP_SUMMARY\"\n", StringComparison.Ordinal);
+        validate.ShouldContain("-- run --slice \"$SLICE\" --coverage --install-playwright --playwright-dependencies --github-summary \"$GITHUB_STEP_SUMMARY\"\n", StringComparison.Ordinal);
         validate.ShouldContain("          name: validation-${{ matrix.slice }}-evidence\n          path: TestResults/selection/execution-${{ matrix.slice }}/**\n", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Coverage_gate_verifies_the_changed_code_of_pull_requests_and_the_summary_requires_it()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
+
+        // Act
+        var gate = WorkflowJobs.Read(workflow, "coverage-gate");
+        var summary = WorkflowJobs.Read(workflow, "validation-summary");
+
+        // Assert
+        gate.ShouldContain("    needs:\n      - selection\n      - validate\n    if: ${{ github.event_name == 'pull_request' && needs.validate.result == 'success' }}\n", StringComparison.Ordinal);
+        gate.ShouldContain("-- coverage record-symbols\n", StringComparison.Ordinal);
+        gate.ShouldContain("-- coverage verify --report artifacts --base \"$BASE_SHA\" --symbols TestResults/symbol-evidence.json\n", StringComparison.Ordinal);
+        gate.ShouldContain("          pattern: validation-*-evidence\n", StringComparison.Ordinal);
+        summary.ShouldContain("          COVERAGE_RESULT: ${{ needs.coverage-gate.result }}\n", StringComparison.Ordinal);
+        summary.ShouldContain(
+            "if [[ \"$EVENT_NAME\" == pull_request && \"$MATRIX\" != '[]' ]]; then\n"
+                + "              test \"$COVERAGE_RESULT\" = success || exit 1\n",
+            StringComparison.Ordinal);
     }
 
     [Fact]

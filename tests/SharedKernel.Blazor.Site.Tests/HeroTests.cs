@@ -135,4 +135,99 @@ public sealed class HeroTests : BunitContext
         BunitElementAssertions.HasClass(root.ClassList, "extra");
         root.GetAttribute("data-test").ShouldBe("x");
     }
+
+    [Fact]
+    public void The_default_layout_is_split_and_adds_no_layout_class()
+    {
+        // Arrange & Act
+        var cut = Render<Hero>(parameters => parameters.Add(component => component.Title, "Discover"));
+
+        // Assert
+        cut.Find(".site-hero").ClassName.ShouldBe("site-hero");
+    }
+
+    [Fact]
+    public void A_cover_hero_lays_its_text_over_the_eager_image_that_follows_it()
+    {
+        // Arrange & Act
+        var cut = Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Discover")
+            .Add(component => component.Layout, HeroLayout.Cover)
+            .Add(component => component.Image, ResponsiveImage.Create(LinkTarget.FromString("/hero.jpg"), 1600, 900, ImageAlternative.Decorative())));
+
+        // Assert
+        var root = cut.Find("section.site-hero");
+        BunitElementAssertions.HasClass(root.ClassList, "site-hero--cover");
+        root.Children.Select(child => child.ClassName).ShouldBe(["site-hero__text", "site-hero__media"]);
+        var image = cut.Find(".site-hero__media img");
+        image.GetAttribute("loading").ShouldBe("eager");
+        image.GetAttribute("fetchpriority").ShouldBe("high");
+    }
+
+    [Fact]
+    public void A_cover_hero_without_an_image_is_a_band_without_media()
+    {
+        // Arrange & Act
+        var cut = Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Discover")
+            .Add(component => component.Layout, HeroLayout.Cover));
+
+        // Assert
+        BunitElementAssertions.HasClass(cut.Find(".site-hero").ClassList, "site-hero--cover");
+        cut.FindAll(".site-hero__media").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void An_undefined_layout_is_rejected()
+    {
+        // Arrange & Act
+        var render = () => Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Discover")
+            .Add(component => component.Layout, (HeroLayout)7));
+
+        // Assert
+        render.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe(nameof(Hero.Layout));
+    }
+
+    [Fact]
+    public void A_cover_hero_is_a_page_cover_by_default_and_a_landing_cover_on_request()
+    {
+        // Arrange & Act
+        var page = Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Tours")
+            .Add(component => component.Layout, HeroLayout.Cover));
+        var landing = Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Travel with feeling")
+            .Add(component => component.Layout, HeroLayout.Cover)
+            .Add(component => component.CoverHeight, CoverHeight.Landing));
+
+        // Assert
+        page.Find(".site-hero").ClassName.ShouldBe("site-hero site-hero--cover");
+        landing.Find(".site-hero").ClassName.ShouldBe("site-hero site-hero--cover site-hero--landing");
+    }
+
+    [Fact]
+    public void A_landing_height_on_a_split_hero_is_rejected_instead_of_ignored()
+    {
+        // Arrange & Act
+        var render = () => Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Tours")
+            .Add(component => component.CoverHeight, CoverHeight.Landing));
+
+        // Assert
+        render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(Hero.CoverHeight));
+    }
+
+    [Fact]
+    public void An_undefined_cover_height_is_rejected()
+    {
+        // Arrange & Act
+        var render = () => Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Tours")
+            .Add(component => component.Layout, HeroLayout.Cover)
+            .Add(component => component.CoverHeight, (CoverHeight)4));
+
+        // Assert
+        render.ShouldThrow<ArgumentOutOfRangeException>().ParamName.ShouldBe(nameof(Hero.CoverHeight));
+    }
 }

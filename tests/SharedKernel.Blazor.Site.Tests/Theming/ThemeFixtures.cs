@@ -69,4 +69,9 @@ internal static class ThemeFixtures
     /// <returns>The draft.</returns>
     public static SiteTheme PaleMutedDraft() =>
         SiteTheme.CreateDraft(DefaultColorsWith(ThemeColorRole.Muted, Pair("#d1d5db", "#9ca3af")), SiteTheme.Default.Typography).ShouldBeSuccess();
+
+    /// <summary>Parses a size in rem written as invariant text, so a test datum such as <c>1.1667</c> keeps its exact decimal value.</summary>
+    /// <param name="value">The size.</param>
+    /// <returns>The decimal.</returns>
+    public static decimal Rem(string value) => decimal.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
 }

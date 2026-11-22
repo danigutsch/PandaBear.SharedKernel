@@ -144,3 +144,13 @@ control characters flattened to spaces, and only the size of a binary body, so a
 a whole payload. Values of credential headers (`Authorization`, `Cookie`, `Set-Cookie`, and similar)
 are never quoted. Every assertion has a `userMessage` overload, and the asynchronous ones leave the
 response body readable afterwards.
+
+## Request bodies over loopback HTTP
+
+`GatedChunkContent` sends a caller-supplied body one released chunk at a time. Set
+`declareLength: false` to let HTTP/1.1 use chunked transfer. Cancel a pending send before
+disposing the content.
+
+`LoopbackHttpBodyRequest` sends an HTTP/1.1 request with a declared length and a possibly
+incomplete body to a loopback server. Use `ReadStatusLine` to observe the response to a stalled
+body, or `Abort` to exercise a mid-body disconnect. Callers supply paths, headers, and form data.
