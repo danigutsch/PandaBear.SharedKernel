@@ -54,6 +54,40 @@ when the client is out of process, such as a browser; in-memory `WebApplicationF
 application-specific `WebApplicationFactory` overrides. Dispose the running host before the
 original factory.
 
+## Prerendered Blazor state
+
+A prerendered Interactive Server page writes the state of its `[PersistentState]` properties into the HTML, and the browser sends
+it back in the message that starts the circuit. SignalR closes a connection whose incoming message exceeds
+`HubOptions.MaximumReceiveMessageSize` (32 KB by default), so a page whose state outgrows the limit never becomes interactive; the
+browser only logs "Server returned an error on close". Microsoft's guidance is to put less data into the prerendered state rather
+than raise the limit ([Prerendered state size and SignalR message size limit](https://learn.microsoft.com/aspnet/core/blazor/fundamentals/signalr?view=aspnetcore-11.0#prerendered-state-size-and-signalr-message-size-limit));
+page or search large lists instead (`PageWindow` in `PandaBear.SharedKernel.BuildingBlocks`, `Pager` in
+`PandaBear.SharedKernel.Blazor.Site`, `OptionSearch<TOption>` in `PandaBear.SharedKernel.Blazor`).
+
+`PrerenderedComponentState` turns that into a test. Fetch a page with data that resembles production, the way a browser would, and
+check its state:
+
+```csharp
+await using var host = KestrelTestHost.Start<Program>();
+using var client = new HttpClient { BaseAddress = host.BaseAddress };
+var html = await client.GetStringAsync(new Uri("/images", UriKind.Relative), cancellationToken);
+
+PrerenderedComponentState.ShouldKeepServerStateBelow(html);
+```
+
+- `ServerStateSize(html)` and `WebAssemblyStateSize(html)` return the UTF-8 bytes inside the `<!--Blazor-Server-Component-State:…-->`
+  and `<!--Blazor-WebAssembly-Component-State:…-->` comments (`ServerStateMarker`, `WebAssemblyStateMarker`; the markers that .NET 11
+  writes), added up over every comment of that kind, and 0 for a page without state. An unclosed comment throws `FormatException`.
+- `ShouldKeepServerStateBelow(html)` throws `InvalidOperationException` unless the server state is below
+  `DefaultMaximumReceiveMessageSize`, which reads SignalR's own default (32,768 bytes) from the framework's `HubOptionsSetup` instead of
+  copying the number. The message names the size, the limit and `GuidanceUrl`. A page without state passes. Pass a `limit` when the
+  application configures another `MaximumReceiveMessageSize`, or a lower one for headroom: the start message also carries the
+  component descriptors.
+- Only the server state counts against the circuit; the WebAssembly state is measured for reporting but not checked.
+
+Read the HTML as the server sent it (`HttpClient`, or a Playwright response's `TextAsync`), not `IPage.ContentAsync` after the
+Blazor script has run.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Testing.AspNetCore`. C# namespace: `PandaBear.Testing.AspNetCore`. Assembly/project identity: `SharedKernel.Testing.AspNetCore`.

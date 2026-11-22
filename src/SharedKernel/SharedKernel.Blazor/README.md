@@ -187,7 +187,8 @@ Choose by the kind of list:
 - A small, fixed list (countries, statuses): neither; render it whole.
 
 Both read a `ListSlice<TItem>`: at most the items asked for plus the total number of matches. The application's query does the
-`Skip`/`Take` and the count, ordered by a unique key; the page keeps only the slice.
+`Skip`/`Take` and the count, ordered by a unique key; the page keeps only the slice. To check a page's prerendered state in tests,
+see `PrerenderedComponentState` in `PandaBear.SharedKernel.Testing.AspNetCore`.
 
 ### Searching a large option set
 
