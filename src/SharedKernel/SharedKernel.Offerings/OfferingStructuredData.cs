@@ -1,11 +1,13 @@
 using System.Text.Json.Nodes;
+using PandaBear.BuildingBlocks;
 
 namespace PandaBear.Offerings;
 
 /// <summary>
 /// Builds schema.org JSON-LD for an offering's public page with <see cref="System.Text.Json.Nodes"/>, without reflection, so it works
 /// under trimming and NativeAOT. Render it in a <c>&lt;script type="application/ld+json"&gt;</c> serialized with an encoder that escapes
-/// <c>&lt;</c>, such as <c>JavaScriptEncoder.Default</c>, so the data cannot close the script.
+/// <c>&lt;</c>, such as <c>JavaScriptEncoder.Default</c>, so the data cannot close the script. Text comes from the view's translation, so
+/// the script carries the language of <see cref="OfferingView{TImageId, TPriceKind, TMetric}.Culture"/>.
 /// </summary>
 public static class OfferingStructuredData
 {
@@ -127,11 +129,11 @@ public static class OfferingStructuredData
             offer["url"] = url.AbsoluteUri;
         }
 
-        offer["priceSpecification"] = new JsonArray([.. view.Prices.Select(price => (JsonNode?)Specification(price, currency, options))]);
+        offer["priceSpecification"] = new JsonArray([.. view.Prices.Select(price => (JsonNode?)Specification(price, currency, view.Culture, options))]);
         return offer;
     }
 
-    private static JsonObject Specification<TPriceKind>(PriceView<TPriceKind> price, string currency, OfferingStructuredDataOptions<TPriceKind> options)
+    private static JsonObject Specification<TPriceKind>(PriceView<TPriceKind> price, string currency, ContentCulture culture, OfferingStructuredDataOptions<TPriceKind> options)
         where TPriceKind : struct, Enum
     {
         var specification = new JsonObject
@@ -140,7 +142,7 @@ public static class OfferingStructuredData
             ["price"] = price.Amount.Amount,
             ["priceCurrency"] = currency,
         };
-        if ((price.Label ?? options.PriceLabel?.Invoke(price.Kind)) is { } name)
+        if ((price.Label ?? options.PriceLabel?.Invoke(price.Kind, culture)) is { } name)
         {
             specification["name"] = name;
         }
@@ -153,6 +155,7 @@ public static class OfferingStructuredData
         OfferingAvailability.SoldOut => "SoldOut",
         OfferingAvailability.DatesToBeConfirmed => "PreOrder",
         OfferingAvailability.OnRequest => "MadeToOrder",
-        _ => "InStock",
+        OfferingAvailability.Scheduled => "InStock",
+        _ => throw new ArgumentOutOfRangeException(nameof(availability), availability, "The availability is not defined."),
     };
 }

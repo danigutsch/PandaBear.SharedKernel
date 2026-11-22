@@ -86,7 +86,8 @@ public sealed class Offering<TImageId, TPriceKind, TMetric>
     /// <param name="images">The application's image knowledge.</param>
     /// <returns>
     /// Whether the data changed, so the application bumps its version only then; or every validation error, with the offering unchanged.
-    /// New price-kind flags of the rules are taken even when the data did not change.
+    /// New price-kind flags of the rules are taken even when the data did not change. Store <see cref="ToDefinition"/> afterwards, never
+    /// the entered definition.
     /// </returns>
     /// <exception cref="ArgumentNullException">An argument, the schedule, or an entry of a list in the definition is <see langword="null"/>.</exception>
     public Result<bool> Revise(OfferingDefinition<TImageId, TPriceKind, TMetric> definition, OfferingRules<TPriceKind, TMetric> rules, IImageEligibility<TImageId> images)
@@ -124,8 +125,10 @@ public sealed class Offering<TImageId, TPriceKind, TMetric>
     }
 
     /// <summary>
-    /// Gives the offering's data as a definition that creates or restores the same offering: the form to store in an event or a document.
-    /// A dated offering's year is left out (it comes from the dates), and text with paragraphs is joined with blank lines.
+    /// Gives the offering's data as a definition that creates or restores the same offering: the only form to store in an event or a
+    /// document, after <see cref="Offering.Create{TImageId, TPriceKind, TMetric}"/> or <see cref="Revise"/>; the entered definition is
+    /// not sanitized, sorted or completed. A dated offering's year is left out (it comes from the dates), text with paragraphs is joined
+    /// with blank lines, and a missing price label is <see langword="null"/>.
     /// </summary>
     /// <returns>The definition.</returns>
     public OfferingDefinition<TImageId, TPriceKind, TMetric> ToDefinition() => new()

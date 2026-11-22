@@ -4,7 +4,9 @@ namespace PandaBear.Offerings;
 
 /// <summary>
 /// The display sentences of an offering, with the application's formats: every word is the application's copy, and the numbers, dates and
-/// money follow the given culture. Plurals have two forms, one and other (see <see cref="PluralFormat"/>).
+/// money follow the given culture. Plurals have two forms, one and other (see <see cref="PluralFormat"/>). For a public view, pass the
+/// culture of <see cref="OfferingView{TImageId, TPriceKind, TMetric}.Culture"/> with the formats of that language, so the sentences match
+/// the text shown when the view fell back to another language.
 /// </summary>
 public static class OfferingText
 {
@@ -106,23 +108,28 @@ public static class OfferingText
     }
 
     /// <summary>
-    /// Builds the group condition sentence: <c>{0}</c> is the minimum participants, <c>{1}</c> the surcharge per missing participant as
-    /// money for people, and <c>{2}</c> the due days.
+    /// Builds the group condition sentence from the application's formats: the minimum participants and the due days in their one and
+    /// other forms (<c>1 dia</c>, <c>45 dias</c>), and the surcharge per missing participant as money for people.
     /// </summary>
     /// <param name="condition">The condition.</param>
-    /// <param name="format">The application's sentence.</param>
+    /// <param name="formats">The application's sentence and forms.</param>
     /// <param name="money">How the surcharge is displayed.</param>
     /// <param name="provider">The culture.</param>
     /// <returns>The sentence.</returns>
     /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
-    public static string GroupCondition(GroupCondition condition, string format, MoneyDisplayOptions money, IFormatProvider provider)
+    public static string GroupCondition(GroupCondition condition, GroupConditionFormats formats, MoneyDisplayOptions money, IFormatProvider provider)
     {
         ArgumentNullException.ThrowIfNull(condition);
-        ArgumentNullException.ThrowIfNull(format);
+        ArgumentNullException.ThrowIfNull(formats);
         ArgumentNullException.ThrowIfNull(money);
         ArgumentNullException.ThrowIfNull(provider);
 
-        return string.Format(provider, format, condition.MinimumParticipants, condition.SurchargePerMissing.ToDisplayString(provider, money), condition.DueDays);
+        return string.Format(
+            provider,
+            formats.Sentence,
+            formats.Minimum.Format(condition.MinimumParticipants, provider),
+            condition.SurchargePerMissing.ToDisplayString(provider, money),
+            formats.DueDays.Format(condition.DueDays, provider));
     }
 
     /// <summary>Builds one sentence per given payment term, in the order deposit, instalments, balance.</summary>

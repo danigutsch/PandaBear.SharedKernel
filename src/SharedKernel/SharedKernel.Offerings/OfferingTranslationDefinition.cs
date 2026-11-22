@@ -50,7 +50,10 @@ public sealed record OfferingTranslationDefinition
     /// <summary>Gets the practical information.</summary>
     public IReadOnlyList<string?>? PracticalInfo { get; init; }
 
-    /// <summary>Gets one label per price whose kind needs one, in price order; required to publish.</summary>
+    /// <summary>
+    /// Gets one label per price whose kind needs one, in the order those prices are entered; blank is a missing label. They move with their
+    /// prices when the prices are sorted into the kind order. Every label is required to publish.
+    /// </summary>
     public IReadOnlyList<string?>? PriceLabels { get; init; }
 
     /// <summary>Gets the text of each step, in step order; one per step is required to publish.</summary>

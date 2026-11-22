@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using PandaBear.BuildingBlocks;
+using PandaBear.InputNormalization;
 using PandaBear.Results;
 
 namespace PandaBear.Offerings;
@@ -30,11 +31,11 @@ internal sealed class OfferingTranslationValidator<TImageId, TPriceKind, TMetric
     /// <summary>Validates a translation.</summary>
     /// <param name="definition">The entered text.</param>
     /// <param name="dated">Whether the offering has dates.</param>
-    /// <param name="labelled">How many prices need a label.</param>
+    /// <param name="labelOrder">For each labelled price in the sorted order, its position among the labelled prices as entered.</param>
     /// <param name="stepCount">How many steps the offering has.</param>
     /// <param name="imageIds">Every image the offering shows.</param>
     /// <returns>The translation, or <see langword="null"/> when its title or slug is refused.</returns>
-    public OfferingTranslation? Validate(OfferingTranslationDefinition definition, bool dated, int labelled, int stepCount, IReadOnlyList<TImageId> imageIds)
+    public OfferingTranslation? Validate(OfferingTranslationDefinition definition, bool dated, IReadOnlyList<int> labelOrder, int stepCount, IReadOnlyList<TImageId> imageIds)
     {
         var title = TextInput.Required(_errors, definition.Title, Field(OfferingFields.Title), "Title", _rules.MaxTitleLength);
         var slug = SlugOf(definition.Slug, title);
@@ -58,16 +59,12 @@ internal sealed class OfferingTranslationValidator<TImageId, TPriceKind, TMetric
             Add(OfferingFields.Highlights, Invariant($"Give no highlights, or between {range.Min} and {range.Max}."));
         }
 
-        var labels = TextInput.Lines(_errors, definition.PriceLabels, Field(OfferingFields.PriceLabels), "Price labels", _rules.MaxPrices, _rules.MaxTitleLength);
-        if (labels.Count > labelled)
-        {
-            Add(OfferingFields.PriceLabels, "There are more price labels than prices that need one.");
-        }
+        var labels = Labels(definition.PriceLabels, labelOrder);
 
         var stepTexts = StepTexts(definition.StepTexts ?? [], stepCount);
         if (definition.Status == PublicationStatus.Published)
         {
-            PublishRule(summary, description, labels.Count == labelled, stepTexts.Count == stepCount, imageIds);
+            PublishRule(summary, description, labels.Count == labelOrder.Count && labels.All(label => label is not null), stepTexts.Count == stepCount, imageIds);
         }
 
         return title is null || slug is null
@@ -103,6 +100,46 @@ internal sealed class OfferingTranslationValidator<TImageId, TPriceKind, TMetric
             : Slug.Create(value, _rules.MaxSlugLength, field);
         _errors.AddIfFailed(slug);
         return slug.IsSuccess ? slug.Value : null;
+    }
+
+    /// <summary>
+    /// Validates the labels, entered in the entered order of the labelled prices with blank for a missing one, and reorders them with
+    /// their prices. Missing labels stay as <see langword="null"/> in their place; trailing ones are left out.
+    /// </summary>
+    private ReadOnlyCollection<string?> Labels(IReadOnlyList<string?>? values, IReadOnlyList<int> labelOrder)
+    {
+        var field = Field(OfferingFields.PriceLabels);
+        var entered = new List<string?>();
+        foreach (var value in values ?? [])
+        {
+            if (!StringSanitizer.TrySanitize(value, out var sanitized))
+            {
+                Add(OfferingFields.PriceLabels, "Price labels is not valid text.");
+                return ReadOnlyCollection<string?>.Empty;
+            }
+
+            if (sanitized?.Length > _rules.MaxTitleLength)
+            {
+                Add(OfferingFields.PriceLabels, Invariant($"Price labels: each label must be at most {_rules.MaxTitleLength} characters."));
+                return ReadOnlyCollection<string?>.Empty;
+            }
+
+            entered.Add(string.IsNullOrEmpty(sanitized) ? null : sanitized);
+        }
+
+        if (entered.Count > labelOrder.Count)
+        {
+            Add(OfferingFields.PriceLabels, "There are more price labels than prices that need one.");
+            return ReadOnlyCollection<string?>.Empty;
+        }
+
+        var sorted = labelOrder.Select(position => position < entered.Count ? entered[position] : null).ToList();
+        while (sorted.Count > 0 && sorted[^1] is null)
+        {
+            sorted.RemoveAt(sorted.Count - 1);
+        }
+
+        return sorted.AsReadOnly();
     }
 
     private IReadOnlyList<string> Lines(IReadOnlyList<string?>? values, string field, string label) =>

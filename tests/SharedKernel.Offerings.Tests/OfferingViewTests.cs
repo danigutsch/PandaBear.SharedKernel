@@ -151,6 +151,18 @@ public sealed class OfferingViewTests
     }
 
     [Fact]
+    public void The_call_to_action_has_no_default_value()
+    {
+        // Act
+        var defined = Enum.IsDefined(default(OfferingCallToAction));
+        var values = Enum.GetValues<OfferingCallToAction>().Select(value => (int)value);
+
+        // Assert
+        defined.ShouldBeFalse();
+        values.ShouldBe([1, 2]);
+    }
+
+    [Fact]
     public void An_offering_on_request_asks_for_contact_and_shows_its_note()
     {
         // Arrange

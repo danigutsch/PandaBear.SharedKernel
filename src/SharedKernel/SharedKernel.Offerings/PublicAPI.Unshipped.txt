@@ -98,8 +98,6 @@ PandaBear.Offerings.OfferingAvailability.OnRequest = 4 -> PandaBear.Offerings.Of
 PandaBear.Offerings.OfferingAvailability.Scheduled = 1 -> PandaBear.Offerings.OfferingAvailability
 PandaBear.Offerings.OfferingAvailability.SoldOut = 2 -> PandaBear.Offerings.OfferingAvailability
 PandaBear.Offerings.OfferingCallToAction
-PandaBear.Offerings.OfferingCallToAction.Contact = 1 -> PandaBear.Offerings.OfferingCallToAction
-PandaBear.Offerings.OfferingCallToAction.SignUp = 0 -> PandaBear.Offerings.OfferingCallToAction
 PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>
 PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.<Clone>$() -> PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>!
 PandaBear.Offerings.OfferingDefinition<TImageId, TPriceKind, TMetric>.CoverId.get -> TImageId?
@@ -231,7 +229,6 @@ PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.CanonicalUrl.init 
 PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.ImageUrls.get -> System.Collections.Generic.IReadOnlyList<System.Uri!>!
 PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.ImageUrls.init -> void
 PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.OfferingStructuredDataOptions() -> void
-PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.PriceLabel.get -> System.Func<TPriceKind, string?>?
 PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.PriceLabel.init -> void
 PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.Provider.get -> PandaBear.Offerings.StructuredDataOrganization?
 PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.Provider.init -> void
@@ -250,7 +247,6 @@ PandaBear.Offerings.OfferingTranslation.Highlights.get -> System.Collections.Gen
 PandaBear.Offerings.OfferingTranslation.Included.get -> System.Collections.Generic.IReadOnlyList<string!>!
 PandaBear.Offerings.OfferingTranslation.NotIncluded.get -> System.Collections.Generic.IReadOnlyList<string!>!
 PandaBear.Offerings.OfferingTranslation.PracticalInfo.get -> System.Collections.Generic.IReadOnlyList<string!>!
-PandaBear.Offerings.OfferingTranslation.PriceLabels.get -> System.Collections.Generic.IReadOnlyList<string!>!
 PandaBear.Offerings.OfferingTranslation.SeoDescription.get -> string?
 PandaBear.Offerings.OfferingTranslation.SeoTitle.get -> string?
 PandaBear.Offerings.OfferingTranslation.Slug.get -> PandaBear.BuildingBlocks.Slug!
@@ -609,7 +605,6 @@ static PandaBear.Offerings.OfferingStructuredData.Build<TImageId, TPriceKind, TM
 static PandaBear.Offerings.OfferingText.DateLine(PandaBear.Offerings.OfferingSchedule! schedule, string? dateNote, PandaBear.BuildingBlocks.DateRangePatterns! patterns, string! toBeConfirmedFormat, System.IFormatProvider! provider) -> string?
 static PandaBear.Offerings.OfferingText.DateLine<TImageId, TPriceKind, TMetric>(PandaBear.Offerings.OfferingView<TImageId, TPriceKind, TMetric>! view, PandaBear.BuildingBlocks.DateRangePatterns! patterns, string! toBeConfirmedFormat, System.IFormatProvider! provider) -> string?
 static PandaBear.Offerings.OfferingText.Duration(PandaBear.Offerings.OfferingSchedule! schedule, PandaBear.Offerings.PluralFormat! days, PandaBear.Offerings.PluralFormat! nights, System.IFormatProvider! provider) -> System.Collections.Generic.IReadOnlyList<string!>!
-static PandaBear.Offerings.OfferingText.GroupCondition(PandaBear.Offerings.GroupCondition! condition, string! format, PandaBear.BuildingBlocks.MoneyDisplayOptions! money, System.IFormatProvider! provider) -> string!
 static PandaBear.Offerings.OfferingText.Metric<TMetric>(PandaBear.Offerings.Metric<TMetric>! metric, PandaBear.Offerings.MetricFormat! format, System.IFormatProvider! provider) -> string!
 static PandaBear.Offerings.OfferingText.Participants(PandaBear.Offerings.ParticipantRange? range, PandaBear.Offerings.ParticipantFormats! formats, System.IFormatProvider! provider) -> string?
 static PandaBear.Offerings.OfferingText.PaymentTerms(PandaBear.Offerings.PaymentTerms! terms, PandaBear.Offerings.PaymentTermsFormats! formats, System.IFormatProvider! provider) -> System.Collections.Generic.IReadOnlyList<string!>!
@@ -639,3 +634,21 @@ static PandaBear.Offerings.ProgramStepTextDefinition.operator !=(PandaBear.Offer
 static PandaBear.Offerings.ProgramStepTextDefinition.operator ==(PandaBear.Offerings.ProgramStepTextDefinition? left, PandaBear.Offerings.ProgramStepTextDefinition? right) -> bool
 static PandaBear.Offerings.StructuredDataOrganization.operator !=(PandaBear.Offerings.StructuredDataOrganization? left, PandaBear.Offerings.StructuredDataOrganization? right) -> bool
 static PandaBear.Offerings.StructuredDataOrganization.operator ==(PandaBear.Offerings.StructuredDataOrganization? left, PandaBear.Offerings.StructuredDataOrganization? right) -> bool
+PandaBear.Offerings.GroupConditionFormats
+PandaBear.Offerings.GroupConditionFormats.<Clone>$() -> PandaBear.Offerings.GroupConditionFormats!
+PandaBear.Offerings.GroupConditionFormats.Deconstruct(out string! Sentence, out PandaBear.Offerings.PluralFormat! Minimum, out PandaBear.Offerings.PluralFormat! DueDays) -> void
+PandaBear.Offerings.GroupConditionFormats.DueDays.get -> PandaBear.Offerings.PluralFormat!
+PandaBear.Offerings.GroupConditionFormats.Equals(PandaBear.Offerings.GroupConditionFormats? other) -> bool
+PandaBear.Offerings.GroupConditionFormats.GroupConditionFormats(string! Sentence, PandaBear.Offerings.PluralFormat! Minimum, PandaBear.Offerings.PluralFormat! DueDays) -> void
+PandaBear.Offerings.GroupConditionFormats.Minimum.get -> PandaBear.Offerings.PluralFormat!
+PandaBear.Offerings.GroupConditionFormats.Sentence.get -> string!
+PandaBear.Offerings.OfferingCallToAction.Contact = 2 -> PandaBear.Offerings.OfferingCallToAction
+PandaBear.Offerings.OfferingCallToAction.SignUp = 1 -> PandaBear.Offerings.OfferingCallToAction
+PandaBear.Offerings.OfferingStructuredDataOptions<TPriceKind>.PriceLabel.get -> System.Func<TPriceKind, PandaBear.BuildingBlocks.ContentCulture!, string?>?
+PandaBear.Offerings.OfferingTranslation.PriceLabels.get -> System.Collections.Generic.IReadOnlyList<string?>!
+override PandaBear.Offerings.GroupConditionFormats.Equals(object? obj) -> bool
+override PandaBear.Offerings.GroupConditionFormats.GetHashCode() -> int
+override PandaBear.Offerings.GroupConditionFormats.ToString() -> string!
+static PandaBear.Offerings.GroupConditionFormats.operator !=(PandaBear.Offerings.GroupConditionFormats? left, PandaBear.Offerings.GroupConditionFormats? right) -> bool
+static PandaBear.Offerings.GroupConditionFormats.operator ==(PandaBear.Offerings.GroupConditionFormats? left, PandaBear.Offerings.GroupConditionFormats? right) -> bool
+static PandaBear.Offerings.OfferingText.GroupCondition(PandaBear.Offerings.GroupCondition! condition, PandaBear.Offerings.GroupConditionFormats! formats, PandaBear.BuildingBlocks.MoneyDisplayOptions! money, System.IFormatProvider! provider) -> string!

@@ -70,6 +70,16 @@ internal static class OfferingRestoration
             dates = range.Value;
         }
 
+        if (dates is null && schedule.Availability is OfferingAvailability.Scheduled or OfferingAvailability.SoldOut)
+        {
+            throw Refused("A scheduled or sold-out offering has no dates.");
+        }
+
+        if (dates is null && schedule.Availability == OfferingAvailability.DatesToBeConfirmed && schedule.Year is null)
+        {
+            throw Refused("An undated offering whose dates are to be confirmed has no year.");
+        }
+
         return schedule.DurationDays is { } days && days >= 1
             ? new OfferingSchedule(schedule.Availability, dates, dates?.StartDate.Year ?? schedule.Year, days)
             : throw Refused("The duration is missing or not positive.");
@@ -173,7 +183,7 @@ internal static class OfferingRestoration
             Included = Lines(definition.Included),
             NotIncluded = Lines(definition.NotIncluded),
             PracticalInfo = Lines(definition.PracticalInfo),
-            PriceLabels = Lines(definition.PriceLabels),
+            PriceLabels = Labels(definition.PriceLabels),
             StepTexts = [.. (definition.StepTexts ?? []).Select(StepText)],
         };
     }
@@ -190,6 +200,17 @@ internal static class OfferingRestoration
     private static string? Optional(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
 
     private static IReadOnlyList<string> Lines(IReadOnlyList<string?>? values) => [.. (values ?? []).Select(Required)];
+
+    private static ReadOnlyCollection<string?> Labels(IReadOnlyList<string?>? values)
+    {
+        var labels = (values ?? []).Select(Optional).ToList();
+        while (labels.Count > 0 && labels[^1] is null)
+        {
+            labels.RemoveAt(labels.Count - 1);
+        }
+
+        return labels.AsReadOnly();
+    }
 
     private static IReadOnlyList<string> Paragraphs(string? text) =>
         StringSanitizer.TrySanitizeParagraphs(text, out var paragraphs) ? paragraphs : throw Refused("A text is not valid UTF-16.");

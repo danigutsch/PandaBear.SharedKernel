@@ -181,17 +181,72 @@ public sealed class OfferingPriceTests
     }
 
     [Fact]
-    public void A_blank_or_long_label_is_refused()
+    public void Labels_stay_with_their_prices_when_two_labelled_kinds_are_entered_in_reverse()
+    {
+        // Arrange
+        var images = new ImageLibrary();
+        var rules = new TourRules(
+            Cultures,
+            [new(TourPriceKind.PerPersonDoubleRoom, IsBase: true), new(TourPriceKind.BikeRental, NeedsLabel: true), new(TourPriceKind.Other, Repeatable: true, NeedsLabel: true)],
+            Metrics);
+        var definition = Tour(Translation(status: PublicationStatus.Published) with { PriceLabels = ["Barco", "Jantar"], StepTexts = null }) with
+        {
+            Prices = [new(TourPriceKind.Other, 90m), new(TourPriceKind.PerPersonDoubleRoom, 2890m), new(TourPriceKind.BikeRental, 50m)],
+            Steps = [],
+        };
+        (TourPriceKind, string?)[] expected = [(TourPriceKind.PerPersonDoubleRoom, null), (TourPriceKind.BikeRental, "Jantar"), (TourPriceKind.Other, "Barco")];
+
+        // Act
+        var offering = Offering.Create(definition, rules, images).ShouldBeSuccess();
+        var stored = offering.ToDefinition();
+        var restored = Offering.Restore(stored, rules);
+        var recreated = Offering.Create(stored, rules, images).ShouldBeSuccess();
+
+        // Assert
+        offering.Translations[0].PriceLabels.ShouldBe(["Jantar", "Barco"]);
+        offering.PublishedIn(Portuguese, Cultures).ShouldNotBeNull().Prices.Select(price => (price.Kind, price.Label)).ShouldBe(expected);
+        stored.Prices.ShouldNotBeNull().Select(price => price.Kind).ShouldBe([TourPriceKind.PerPersonDoubleRoom, TourPriceKind.BikeRental, TourPriceKind.Other]);
+        stored.Translations.ShouldNotBeNull()[0].PriceLabels.ShouldBe(["Jantar", "Barco"]);
+        restored.PublishedIn(Portuguese, Cultures).ShouldNotBeNull().Prices.Select(price => (price.Kind, price.Label)).ShouldBe(expected);
+        recreated.PublishedIn(Portuguese, Cultures).ShouldNotBeNull().Prices.Select(price => (price.Kind, price.Label)).ShouldBe(expected);
+        offering.Revise(stored, rules, images).ShouldBeSuccess().ShouldBeFalse();
+    }
+
+    [Fact]
+    public void A_missing_label_keeps_its_place_after_sorting_and_blocks_publishing()
+    {
+        // Arrange
+        var rules = new TourRules(
+            Cultures,
+            [new(TourPriceKind.PerPersonDoubleRoom, IsBase: true), new(TourPriceKind.BikeRental, NeedsLabel: true), new(TourPriceKind.Other, Repeatable: true, NeedsLabel: true)],
+            Metrics);
+        var prices = new PriceLineDefinition<TourPriceKind>[] { new(TourPriceKind.Other, 90m), new(TourPriceKind.BikeRental, 50m) };
+        var draft = Tour(Translation() with { PriceLabels = ["Barco"] }) with { Prices = prices, Steps = [], Translations = [Translation() with { PriceLabels = ["Barco"], StepTexts = null }] };
+
+        // Act
+        var offering = Offering.Create(draft, rules, new ImageLibrary()).ShouldBeSuccess();
+        var stored = offering.ToDefinition();
+        var published = Offering.Create(draft with { Translations = [draft.Translations![0] with { Status = PublicationStatus.Published }] }, rules, new ImageLibrary());
+
+        // Assert
+        offering.Translations[0].PriceLabels.ShouldBe([null, "Barco"]);
+        Offering.Create(stored, rules, new ImageLibrary()).ShouldBeSuccess().Translations[0].PriceLabels.ShouldBe([null, "Barco"]);
+        published.ErrorDetails.ShouldHaveValidationError(
+            OfferingFields.Of(Portuguese, OfferingFields.PriceLabels), "Every price of a kind that needs a label needs one in this language before publishing.");
+    }
+
+    [Fact]
+    public void A_blank_label_is_missing_and_a_long_one_is_refused()
     {
         // Arrange
         var prices = new PriceLineDefinition<TourPriceKind>[] { new(TourPriceKind.Other, 90m), new(TourPriceKind.Other, 40m) };
 
         // Act
-        var blank = Refused(Tour(Translation() with { PriceLabels = ["Barco", " "] }) with { Prices = prices });
+        var blank = Valid(Tour(Translation() with { PriceLabels = [" ", "Museu"] }) with { Prices = prices });
         var tooLong = Refused(Tour(Translation() with { PriceLabels = [new string('x', 41)] }) with { Prices = prices });
 
         // Assert
-        blank.ShouldHaveValidationError(OfferingFields.Of(Portuguese, OfferingFields.PriceLabels), "Price labels cannot have an empty item.");
-        tooLong.ShouldHaveValidationError(OfferingFields.Of(Portuguese, OfferingFields.PriceLabels), "Price labels: each item must be at most 40 characters.");
+        blank.Translations[0].PriceLabels.ShouldBe([null, "Museu"]);
+        tooLong.ShouldHaveValidationError(OfferingFields.Of(Portuguese, OfferingFields.PriceLabels), "Price labels: each label must be at most 40 characters.");
     }
 }

@@ -42,7 +42,8 @@ using TourOffering = PandaBear.Offerings.Offering<System.Guid, TourPriceKind, To
 A translation holds `Culture`, `Status` (`PublicationStatus`), `Slug`, `Title`, `Subtitle` (a tagline only), `Eyebrow` (a short line
 above the title, such as a tour's countries), `Summary`, `Description` (paragraphs), `DateNote`, `SeoTitle`, `SeoDescription`, four
 one-line-per-item lists (`Highlights`, `Included`, `NotIncluded`, `PracticalInfo`), `PriceLabels` (one per price of a kind that
-`NeedsLabel`, in price order) and `StepTexts` (`ProgramStepText(Title, Paragraphs, Note)`, the note being free text such as "+ barco").
+`NeedsLabel`: entered in the order those prices are entered, blank for a missing one, and moved with their prices when the prices are
+sorted into the kind order; `null` marks a missing label) and `StepTexts` (`ProgramStepText(Title, Paragraphs, Note)`, the note being free text such as "+ barco").
 
 `OfferingRules<TPriceKind, TMetric>` is the application's policy: the `SupportedCultures` (a translation in the default culture is
 required), the `PriceKindRule(Kind, Repeatable, NeedsLabel, IsBase)`s and `MetricRule(Kind, Scope, Min, Max, Decimals, AllowsRange,
@@ -86,14 +87,16 @@ var rules = new OfferingRules<TourPriceKind, TourMetric>(SiteCultures.Supported,
 the same way and returns `Result<bool>`: whether the data changed, so the application bumps its version only then; on failure the
 offering is unchanged. `images` is the application's `IImageEligibility<TImageId>` from BuildingBlocks, the same one albums read.
 
-`offering.ToDefinition()` gives the data back as a definition that creates or restores the same offering: the form an event-sourced
-application stores in its event. A dated offering's year is left out (it comes from the dates), and paragraphs are joined with blank
-lines.
+`offering.ToDefinition()` gives the data back as a definition that creates or restores the same offering. It is the only form to
+store, in an event or a row, after `Create` or `Revise`: never store the entered definition, which is not sanitized, sorted or
+completed (labels follow their sorted prices, slugs are derived). A dated offering's year is left out (it comes from the dates), and
+paragraphs are joined with blank lines.
 
 `Offering.Restore(definition, rules)` rebuilds a stored offering for a persistence mapper or event replay. It is structural only: it
 refuses what later reads cannot handle (`ArgumentException`: an undefined availability, price kind, metric kind or status, two
-translations of one culture, a malformed culture, currency code or slug, dates that are not a range, a duration below one day, prices or a
-group condition without a currency, an incomplete group condition, a missing title) and runs no lengths, limits or publish rules, so
+translations of one culture, a malformed culture, currency code or slug, dates that are not a range, an undated scheduled or sold-out
+offering, an undated offering to be confirmed without a year, a duration below one day, prices or a group condition without a currency,
+an incomplete group condition, a missing title) and runs no lengths, limits or publish rules, so
 never use it for input. From the rules it reads only the price-kind flags `IsBase` and `NeedsLabel`. The offering keeps those flags, so
 on replay the from price and the labelled prices follow the current rules; a stored culture that the rules no longer list is kept.
 
@@ -159,7 +162,7 @@ Errors are `Result`/`ValidationErrors` at the paths of `OfferingFields`; a trans
 `TranslationSet.TryResolve`: the exact culture, its neutral parent or another culture of its language, else the default culture. It
 never mixes the fields of two translations, and `view.Culture` tells which one it is so the page can mark it with `lang`. The view carries
 the text (`SeoTitle` falls back to the title and `SeoDescription` to the summary), the schedule fields, `CallToAction` (`SignUp` only for
-a scheduled offering with a link, else `Contact`) and `SignUpLink` (only with `SignUp`), the prices as `PriceView(Kind, Amount, Label,
+a scheduled offering with a link, else `Contact`; zero is not defined) and `SignUpLink` (only with `SignUp`), the prices as `PriceView(Kind, Amount, Label,
 IsBase)` with this culture's labels, `FromPrice`, the conditions, the metrics, the steps as `ProgramStepView(Number, Title, Paragraphs,
 Note, ImageId, Metrics)`, the lists and the images. It returns `null` when no published translation applies.
 
@@ -170,14 +173,16 @@ overload groups the application's own items through a sort-order and a schedule 
 ## Display sentences
 
 `OfferingText` builds sentences from the application's formats; every word is the application's copy and plurals have two forms
-(`PluralFormat(One, Other)`):
+(`PluralFormat(One, Other)`). For a public view, pass the culture of `view.Culture` (the text shown, which differs from the requested
+one after a fallback) with that language's formats, so the sentences match the text:
 
 - `DateLine(schedule, dateNote, patterns, toBeConfirmedFormat, culture)`: the dates through `DateOnlyRange.ToDisplayString` (one format
   for the card and the page, `20 a 29 de setembro de 2027`); else the note; else `Datas a confirmar, 2028` for an undated offering to
   be confirmed; else `null` for one on request, whose badge says it;
 - `Duration(schedule, days, nights, culture)`: `["8 dias", "7 noites"]`; a one-day offering has no nights part;
-- `Participants(range, ParticipantFormats, culture)`, `GroupCondition(condition, format, MoneyDisplayOptions, culture)` (`{0}` minimum,
-  `{1}` surcharge as money for people, `{2}` due days) and `PaymentTerms(terms, PaymentTermsFormats, culture)`;
+- `Participants(range, ParticipantFormats, culture)`, `GroupCondition(condition, GroupConditionFormats(Sentence, Minimum, DueDays),
+  MoneyDisplayOptions, culture)` (`{0}` the minimum in its plural form, `{1}` the surcharge as money for people, `{2}` the due days in
+  their plural form, `1 dia`/`45 dias`) and `PaymentTerms(terms, PaymentTermsFormats, culture)`;
 - `Metric(metric, MetricFormat(Pattern, ApproximatePattern, Decimals), culture)`: `aprox. 320,5 km`, a range with an en dash (`2–3`).
 
 ## Structured data
@@ -185,9 +190,10 @@ overload groups the application's own items through a sort-order and a schedule 
 `OfferingStructuredData.Build(view, options)` returns a `JsonObject` built with `System.Text.Json.Nodes`, without reflection, so it works
 under trimming and NativeAOT. It marks up only what the page shows: a `TouristTrip` (or `Product`) with the name, description, `url`
 (`CanonicalUrl`), `image` (`ImageUrls`), a tourist trip's `provider` (`StructuredDataOrganization`), an `Offer` at the from price with
-the availability and one `UnitPriceSpecification` per price, named by the price's own label or `PriceLabel(kind)` (an `AggregateOffer`
+the availability and one `UnitPriceSpecification` per price, named by the price's own label or `PriceLabel(kind, culture)`, called with
+`view.Culture` (an `AggregateOffer`
 with `lowPrice`, `highPrice` and `offerCount` when several prices are of a base kind), and a tourist trip's `itinerary` as an
-`ItemList` of its steps. Without a from price there is no offer. `Availability` overrides the offering's own. Departure and arrival times
+`ItemList` of its steps. Without a from price there is no offer. `Availability` overrides the offering's own; an undefined value is refused. Departure and arrival times
 are left out, since an offering has days, not times. Render it in a `<script type="application/ld+json">` with an encoder that escapes
 `<`, such as `JavaScriptEncoder.Default`.
 

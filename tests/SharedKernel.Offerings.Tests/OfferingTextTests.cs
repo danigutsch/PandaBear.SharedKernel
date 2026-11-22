@@ -130,14 +130,25 @@ public sealed class OfferingTextTests
     {
         // Arrange
         var condition = new GroupCondition(8, Money.Restore(150m, Currency.Eur), 45);
+        var single = new GroupCondition(1, Money.Restore(150m, Currency.Eur), 1);
+        var portugueseFormats = new GroupConditionFormats(
+            "Valores para no mínimo {0}; com menos, {1} por pessoa a menos, confirmado {2} antes.",
+            new PluralFormat("{0} participante", "{0} participantes"),
+            new PluralFormat("{0} dia", "{0} dias"));
+        var englishFormats = new GroupConditionFormats(
+            "Prices for at least {0}; {1} more per missing person, confirmed {2} before.",
+            new PluralFormat("{0} person", "{0} people"),
+            new PluralFormat("{0} day", "{0} days"));
 
         // Act
-        var portuguese = OfferingText.GroupCondition(condition, "Valores para no mínimo {0} participantes; com menos, {1} por pessoa a menos, confirmado {2} dias antes.", Euros, PtBr);
-        var english = OfferingText.GroupCondition(condition, "Prices for at least {0}; {1} more per missing person, confirmed {2} days before.", new MoneyDisplayOptions(), CultureInfo.GetCultureInfo("en-US"));
+        var portuguese = OfferingText.GroupCondition(condition, portugueseFormats, Euros, PtBr);
+        var one = OfferingText.GroupCondition(single, portugueseFormats, Euros, PtBr);
+        var english = OfferingText.GroupCondition(condition, englishFormats, new MoneyDisplayOptions(), CultureInfo.GetCultureInfo("en-US"));
 
         // Assert
         portuguese.ShouldBe("Valores para no mínimo 8 participantes; com menos, 150 € por pessoa a menos, confirmado 45 dias antes.");
-        english.ShouldBe("Prices for at least 8; €150.00 more per missing person, confirmed 45 days before.");
+        one.ShouldBe("Valores para no mínimo 1 participante; com menos, 150 € por pessoa a menos, confirmado 1 dia antes.");
+        english.ShouldBe("Prices for at least 8 people; €150.00 more per missing person, confirmed 45 days before.");
     }
 
     [Fact]
@@ -199,10 +210,12 @@ public sealed class OfferingTextTests
         Action plural = () => _ = new PluralFormat(" ", "{0}");
         Action metric = () => _ = new MetricFormat("{0}", "{0}", Decimals: -1);
         Action participants = () => _ = new ParticipantFormats(null!, new("{0}", "{0}"), new("{0}", "{0}"), new("{0}", "{0}"));
+        Action group = () => _ = new GroupConditionFormats("{0}", null!, new("{0}", "{0}"));
 
         // Assert
         plural.ShouldThrow<ArgumentException>();
         metric.ShouldThrow<ArgumentOutOfRangeException>();
         participants.ShouldThrow<ArgumentNullException>();
+        group.ShouldThrow<ArgumentNullException>();
     }
 }

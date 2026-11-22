@@ -20,7 +20,9 @@ public sealed class OfferingStructuredDataTests
             CanonicalUrl = Page,
             ImageUrls = [new Uri("https://www.example.org/media/cover.jpg")],
             Provider = new StructuredDataOrganization("Viajantes Turismo", new Uri("https://www.example.org/")),
-            PriceLabel = kind => kind == TourPriceKind.PerPersonDoubleRoom ? "Por pessoa em quarto duplo" : "Suplemento quarto individual",
+            PriceLabel = (kind, culture) => culture == Portuguese
+                ? kind == TourPriceKind.PerPersonDoubleRoom ? "Por pessoa em quarto duplo" : "Suplemento quarto individual"
+                : "wrong culture",
         };
 
         // Act
@@ -106,7 +108,7 @@ public sealed class OfferingStructuredDataTests
             .ShouldBeSuccess().PublishedIn(Portuguese, Cultures).ShouldNotBeNull();
 
         // Act
-        var json = OfferingStructuredData.Build(view, new OfferingStructuredDataOptions<TourPriceKind> { PriceLabel = _ => "Kind label" });
+        var json = OfferingStructuredData.Build(view, new OfferingStructuredDataOptions<TourPriceKind> { PriceLabel = (_, _) => "Kind label" });
 
         // Assert
         var offers = json["offers"]!;
@@ -117,6 +119,38 @@ public sealed class OfferingStructuredDataTests
         offers["price"].ShouldBeNull();
         offers["priceSpecification"]!.AsArray().Select(spec => spec!["name"]!.GetValue<string>()).ShouldBe(["Kind label", "Quarto triplo"]);
         json["itinerary"].ShouldBeNull();
+    }
+
+    [Fact]
+    public void Price_names_are_asked_in_the_culture_of_the_text_shown()
+    {
+        // Arrange
+        var view = Valid(Tour(Translation(status: PublicationStatus.Published))).PublishedIn(English, Cultures).ShouldNotBeNull();
+        var asked = new List<ContentCulture>();
+
+        // Act
+        OfferingStructuredData.Build(view, new OfferingStructuredDataOptions<TourPriceKind>
+        {
+            PriceLabel = (_, culture) =>
+            {
+                asked.Add(culture);
+                return null;
+            },
+        });
+
+        // Assert
+        view.Culture.ShouldBe(Portuguese);
+        asked.Distinct().ShouldBe([Portuguese]);
+    }
+
+    [Fact]
+    public void An_undefined_availability_override_is_refused()
+    {
+        // Act
+        Action act = () => _ = new OfferingStructuredDataOptions<TourPriceKind> { Availability = (OfferingAvailability)0 };
+
+        // Assert
+        act.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]

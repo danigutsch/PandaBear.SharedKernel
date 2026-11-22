@@ -63,8 +63,11 @@ public sealed class OfferingTranslation
     /// <summary>Gets the practical information.</summary>
     public IReadOnlyList<string> PracticalInfo { get; internal init; } = [];
 
-    /// <summary>Gets one label per price whose kind needs one, in price order; fewer while a draft is incomplete.</summary>
-    public IReadOnlyList<string> PriceLabels { get; internal init; } = [];
+    /// <summary>
+    /// Gets one label per price whose kind needs one, in the offering's price order; <see langword="null"/> marks a missing label, and
+    /// trailing missing ones are left out, so a draft may have fewer.
+    /// </summary>
+    public IReadOnlyList<string?> PriceLabels { get; internal init; } = [];
 
     /// <summary>Gets the text of each step, in step order; fewer than the steps while a draft is incomplete.</summary>
     public IReadOnlyList<ProgramStepText> StepTexts { get; internal init; } = [];

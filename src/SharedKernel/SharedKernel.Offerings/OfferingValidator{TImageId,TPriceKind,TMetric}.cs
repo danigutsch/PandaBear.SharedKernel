@@ -38,7 +38,7 @@ internal sealed class OfferingValidator<TImageId, TPriceKind, TMetric>(OfferingR
         var groupGiven = definition.GroupCondition is { } group
             && (group.MinimumParticipants is not null || group.SurchargePerMissing is not null || group.DueDays is not null);
         var currency = CurrencyOf(definition.Currency, prices.Count > 0 || groupGiven);
-        var lines = Prices(prices, currency);
+        var lines = Prices(prices, currency, out var labelOrder);
         var participants = Participants(definition.Participants);
         var groupCondition = groupGiven ? GroupConditionOf(definition.GroupCondition!, definition.Participants, currency) : null;
         var paymentTerms = PaymentTermsOf(definition.PaymentTerms);
@@ -46,8 +46,7 @@ internal sealed class OfferingValidator<TImageId, TPriceKind, TMetric>(OfferingR
         var steps = Steps(definition.Steps ?? [], definition.Schedule.DurationDays);
         var galleryIds = Images(definition.CoverId, definition.GalleryIds ?? []);
         var imageIds = AllImages(definition.CoverId, galleryIds, steps);
-        var labelled = lines.Count(line => _rules.PriceKindOf(line.Kind, out _)?.NeedsLabel == true);
-        var translations = Translations(definition.Translations ?? [], dated, labelled, steps.Count, imageIds);
+        var translations = Translations(definition.Translations ?? [], dated, labelOrder, steps.Count, imageIds);
 
         if (_errors.HasErrors)
         {
@@ -205,16 +204,23 @@ internal sealed class OfferingValidator<TImageId, TPriceKind, TMetric>(OfferingR
         return currency.IsSuccess ? currency.Value : null;
     }
 
-    private IReadOnlyList<PriceLine<TPriceKind>> Prices(IReadOnlyList<PriceLineDefinition<TPriceKind>> definitions, Currency? currency)
+    /// <summary>
+    /// Validates the prices and sorts them into the kind order. A translation's labels are entered in the entered order of the labelled
+    /// prices, so <paramref name="labelOrder"/> gives, for each labelled price in the sorted order, its position among the labelled prices
+    /// as entered; the labels are reordered with it.
+    /// </summary>
+    private IReadOnlyList<PriceLine<TPriceKind>> Prices(IReadOnlyList<PriceLineDefinition<TPriceKind>> definitions, Currency? currency, out IReadOnlyList<int> labelOrder)
     {
+        labelOrder = [];
         if (definitions.Count > _rules.MaxPrices)
         {
             Add(OfferingFields.Prices, Invariant($"There cannot be more than {_rules.MaxPrices} prices."));
             return [];
         }
 
-        var lines = new List<(int Order, PriceLine<TPriceKind> Line)>();
+        var lines = new List<(int Order, PriceLine<TPriceKind> Line, int? Label)>();
         var seen = new HashSet<TPriceKind>();
+        var labelled = 0;
         for (var index = 0; index < definitions.Count; index++)
         {
             var definition = definitions[index] ?? throw new ArgumentNullException(nameof(definitions), "A price is null.");
@@ -228,13 +234,16 @@ internal sealed class OfferingValidator<TImageId, TPriceKind, TMetric>(OfferingR
                 Add(OfferingFields.PriceKind(index), "This price kind can appear only once.");
             }
 
+            int? label = rule?.NeedsLabel == true ? labelled++ : null;
             if (Amount(definition.Amount, currency, OfferingFields.PriceAmount(index), "Price") is { } amount && rule is not null)
             {
-                lines.Add((order, new PriceLine<TPriceKind>(definition.Kind, amount)));
+                lines.Add((order, new PriceLine<TPriceKind>(definition.Kind, amount), label));
             }
         }
 
-        return [.. lines.OrderBy(line => line.Order).Select(line => line.Line)];
+        var sorted = lines.OrderBy(line => line.Order).ToList();
+        labelOrder = [.. sorted.Where(line => line.Label.HasValue).Select(line => line.Label!.Value)];
+        return [.. sorted.Select(line => line.Line)];
     }
 
     private Money? Amount(decimal value, Currency? currency, string field, string label)
@@ -486,7 +495,7 @@ internal sealed class OfferingValidator<TImageId, TPriceKind, TMetric>(OfferingR
     private ReadOnlyCollection<OfferingTranslation> Translations(
         IReadOnlyList<OfferingTranslationDefinition> definitions,
         bool dated,
-        int labelled,
+        IReadOnlyList<int> labelOrder,
         int stepCount,
         IReadOnlyList<TImageId> imageIds)
     {
@@ -504,7 +513,7 @@ internal sealed class OfferingValidator<TImageId, TPriceKind, TMetric>(OfferingR
                 Add(OfferingFields.Translations, "Each language can have only one translation.");
             }
             else if (new OfferingTranslationValidator<TImageId, TPriceKind, TMetric>(_errors, _rules, _images, culture)
-                .Validate(definition, dated, labelled, stepCount, imageIds) is { } translation)
+                .Validate(definition, dated, labelOrder, stepCount, imageIds) is { } translation)
             {
                 translations.Add(translation);
             }

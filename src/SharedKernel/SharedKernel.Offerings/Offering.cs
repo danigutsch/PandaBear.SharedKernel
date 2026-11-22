@@ -13,7 +13,11 @@ public static class Offering
     /// <param name="definition">The entered data.</param>
     /// <param name="rules">The application's offering rules.</param>
     /// <param name="images">The application's image knowledge.</param>
-    /// <returns>The offering, or every validation error with its field path (see <see cref="OfferingFields"/>).</returns>
+    /// <returns>
+    /// The offering, or every validation error with its field path (see <see cref="OfferingFields"/>). To store it, in an event or a
+    /// row, store <see cref="Offering{TImageId, TPriceKind, TMetric}.ToDefinition"/> of the result, never the entered definition: the
+    /// result is sanitized, its prices and labels are sorted, and its slugs are derived.
+    /// </returns>
     /// <exception cref="ArgumentNullException">An argument, the schedule, or an entry of a list in the definition is <see langword="null"/>.</exception>
     public static Result<Offering<TImageId, TPriceKind, TMetric>> Create<TImageId, TPriceKind, TMetric>(
         OfferingDefinition<TImageId, TPriceKind, TMetric> definition,

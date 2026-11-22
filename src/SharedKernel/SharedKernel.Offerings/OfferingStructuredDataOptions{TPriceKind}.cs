@@ -1,3 +1,5 @@
+using PandaBear.BuildingBlocks;
+
 namespace PandaBear.Offerings;
 
 /// <summary>What <see cref="OfferingStructuredData.Build{TImageId, TPriceKind, TMetric}"/> adds to the view's own data. Mark up only what the page shows.</summary>
@@ -7,6 +9,7 @@ public sealed class OfferingStructuredDataOptions<TPriceKind>
 {
     private readonly Uri? _canonicalUrl;
     private readonly IReadOnlyList<Uri> _imageUrls = [];
+    private readonly OfferingAvailability? _availability;
 
     /// <summary>Gets the schema.org type. The default is <see cref="OfferingStructuredDataType.TouristTrip"/>.</summary>
     public OfferingStructuredDataType Type { get; init; }
@@ -31,9 +34,20 @@ public sealed class OfferingStructuredDataOptions<TPriceKind>
     /// <summary>Gets the organization that provides the offering; a tourist trip's <c>provider</c>.</summary>
     public StructuredDataOrganization? Provider { get; init; }
 
-    /// <summary>Gets the site-wide name of a price kind, for a price without its own label; a price's own label wins.</summary>
-    public Func<TPriceKind, string?>? PriceLabel { get; init; }
+    /// <summary>
+    /// Gets the site-wide name of a price kind in a culture, for a price without its own label; a price's own label wins. It is called with
+    /// the view's <see cref="OfferingView{TImageId, TPriceKind, TMetric}.Culture"/>, the language of the text shown, which differs from the
+    /// requested one when the view fell back.
+    /// </summary>
+    public Func<TPriceKind, ContentCulture, string?>? PriceLabel { get; init; }
 
     /// <summary>Gets an availability that replaces the offering's own in the offer, such as one derived from bookings.</summary>
-    public OfferingAvailability? Availability { get; init; }
+    /// <exception cref="ArgumentOutOfRangeException">The value is not a defined <see cref="OfferingAvailability"/>.</exception>
+    public OfferingAvailability? Availability
+    {
+        get => _availability;
+        init => _availability = value is not { } availability || Enum.IsDefined(availability)
+            ? value
+            : throw new ArgumentOutOfRangeException(nameof(value), value, "The availability is not defined.");
+    }
 }

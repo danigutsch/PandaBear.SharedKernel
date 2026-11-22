@@ -192,6 +192,24 @@ public sealed class OfferingLifecycleTests
         ShouldNotRestore(stored with { Metrics = [new((TourMetric)42, 1m)] });
         ShouldNotRestore(stored with { Steps = [new TourStep(null, [new((TourMetric)42, 1m)])] });
         ShouldNotRestore(stored with { GroupCondition = new GroupConditionDefinition(8, null, 45) });
+        ShouldNotRestore(stored with { Schedule = stored.Schedule with { StartDate = null, EndDate = null } });
+        ShouldNotRestore(stored with { Schedule = new OfferingScheduleDefinition(OfferingAvailability.SoldOut, DurationDays: 3) });
+        ShouldNotRestore(stored with { Schedule = new OfferingScheduleDefinition(OfferingAvailability.DatesToBeConfirmed, DurationDays: 3) });
+    }
+
+    [Fact]
+    public void Restoring_keeps_the_undated_schedules_reads_can_handle()
+    {
+        // Arrange
+        var stored = Valid(FullTour(null), _images).ToDefinition();
+
+        // Act
+        var toBeConfirmed = Offering.Restore(stored with { Schedule = new OfferingScheduleDefinition(OfferingAvailability.DatesToBeConfirmed, Year: 2028, DurationDays: 3) }, Rules);
+        var onRequest = Offering.Restore(stored with { Schedule = new OfferingScheduleDefinition(OfferingAvailability.OnRequest, DurationDays: 3) }, Rules);
+
+        // Assert
+        toBeConfirmed.Schedule.Year.ShouldBe(2028);
+        onRequest.Schedule.Dates.ShouldBeNull();
     }
 
     [Fact]
