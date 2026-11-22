@@ -1,3 +1,5 @@
+using PandaBear.BuildingBlocks;
+
 namespace PandaBear.Galleries;
 
 /// <summary>The validated data of an album.</summary>
@@ -19,7 +21,7 @@ internal sealed record AlbumData<TPhotoId, TRelatedId>(
 {
     /// <summary>
     /// Determines whether other data is the same. Translations are compared in order, because the same-language fallback of
-    /// <see cref="PandaBear.BuildingBlocks.TranslationSet{T}"/> picks the first matching translation.
+    /// <see cref="TranslationSet{T}"/> picks the first matching translation.
     /// </summary>
     /// <param name="other">The other data.</param>
     /// <returns><see langword="true"/> when nothing differs.</returns>
