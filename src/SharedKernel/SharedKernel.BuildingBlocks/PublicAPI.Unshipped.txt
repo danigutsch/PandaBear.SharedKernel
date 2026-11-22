@@ -258,3 +258,5 @@ static PandaBear.BuildingBlocks.PageWindow.operator !=(PandaBear.BuildingBlocks.
 static PandaBear.BuildingBlocks.PageWindow.operator ==(PandaBear.BuildingBlocks.PageWindow left, PandaBear.BuildingBlocks.PageWindow right) -> bool
 ~override PandaBear.BuildingBlocks.PageWindow.Equals(object obj) -> bool
 ~override PandaBear.BuildingBlocks.PageWindow.ToString() -> string
+PandaBear.BuildingBlocks.SearchKey
+static PandaBear.BuildingBlocks.SearchKey.Of(string? text) -> string!
