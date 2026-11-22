@@ -90,6 +90,21 @@ public sealed class CssColor : ValueObject
         MixChannel(Green, other.Green, weight),
         MixChannel(Blue, other.Blue, weight));
 
+    /// <summary>
+    /// Lays this colour at an opacity over a photo of one plain colour, as <c>color-mix(in srgb, this p%, transparent)</c> composited
+    /// in sRGB. Each channel is rounded towards the photo, up over white and down over black, so a browser's own rounding never
+    /// gives a lower contrast than the result.
+    /// </summary>
+    /// <param name="percent">The opacity, from 0 to 100.</param>
+    /// <param name="overWhite">Whether the photo is white; otherwise it is black.</param>
+    /// <returns>The composited colour.</returns>
+    internal CssColor Over(int percent, bool overWhite)
+    {
+        var weight = percent / 100.0;
+        var photo = overWhite ? 255.0 : 0.0;
+        return FromChannels(Composite(Red, weight, photo, overWhite), Composite(Green, weight, photo, overWhite), Composite(Blue, weight, photo, overWhite));
+    }
+
     /// <inheritdoc />
     protected override IEnumerable<object?> GetEqualityComponents()
     {
@@ -101,6 +116,12 @@ public sealed class CssColor : ValueObject
 
     private static byte MixChannel(byte from, byte to, double weight) =>
         (byte)Math.Round(from + ((to - from) * weight), MidpointRounding.AwayFromZero);
+
+    private static byte Composite(byte channel, double weight, double photo, bool roundUp)
+    {
+        var value = Math.Round((channel * weight) + (photo * (1 - weight)), 9);
+        return (byte)(roundUp ? Math.Ceiling(value) : Math.Floor(value));
+    }
 
     // WCAG 2.2 relative luminance (https://www.w3.org/TR/WCAG22/#dfn-relative-luminance) with the sRGB threshold 0.04045;
     // the older 0.03928 gives the same result for every 8-bit channel value.

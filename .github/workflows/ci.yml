@@ -71,13 +71,50 @@ jobs:
           DOTNET_CLI_CONTEXT_VERBOSE: 'true'
           SLICE: ${{ matrix.slice }}
           SHAREDKERNEL_REQUIRE_BROWSER: 'true'
-        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- run --slice "$SLICE" --install-playwright --playwright-dependencies --github-summary "$GITHUB_STEP_SUMMARY"
+        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- run --slice "$SLICE" --coverage --install-playwright --playwright-dependencies --github-summary "$GITHUB_STEP_SUMMARY"
       - name: Retain validation evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: validation-${{ matrix.slice }}-evidence
           path: TestResults/selection/execution-${{ matrix.slice }}/**
+          if-no-files-found: ignore
+
+  coverage-gate:
+    needs:
+      - selection
+      - validate
+    if: ${{ github.event_name == 'pull_request' && needs.validate.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: ./.github/actions/setup-dotnet-tool
+        with:
+          project: tools/SharedKernel.CI.Tool
+      - name: Build the solution in Release for symbol evidence
+        run: |
+          dotnet restore SharedKernel.slnx --locked-mode
+          dotnet build SharedKernel.slnx -c Release --no-restore
+      - name: Record revision and symbol hashes
+        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- coverage record-symbols
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: validation-*-evidence
+          path: artifacts
+      - name: Enforce changed-code coverage
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- coverage verify --report artifacts --base "$BASE_SHA" --symbols TestResults/symbol-evidence.json
+      - name: Retain coverage evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-gate-evidence
+          path: TestResults/coverage-gate.json
           if-no-files-found: ignore
 
   source-build:
@@ -333,7 +370,7 @@ jobs:
 
   validation-summary:
     name: ${{ github.event.action == 'labeled' && github.event.label.name != 'ci:rerun' && 'Ignored label event' || 'SharedKernel Validation' }}
-    needs: [selection, validate, source-build, candidate, linux-package-consumption, windows-package-consumption, repository-quality, published-candidate-consumption]
+    needs: [selection, validate, coverage-gate, source-build, candidate, linux-package-consumption, windows-package-consumption, repository-quality, published-candidate-consumption]
     if: ${{ always() && (github.event.action != 'labeled' || github.event.label.name == 'ci:rerun') }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -347,6 +384,8 @@ jobs:
           BUILD_REQUIRED: ${{ needs.selection.outputs.build_required }}
           MATRIX: ${{ needs.selection.outputs.matrix }}
           VALIDATE_RESULT: ${{ needs.validate.result }}
+          COVERAGE_RESULT: ${{ needs.coverage-gate.result }}
+          EVENT_NAME: ${{ github.event_name }}
           SOURCE_BUILD_RESULT: ${{ needs.source-build.result }}
           CANDIDATE_RESULT: ${{ needs.candidate.result }}
           LINUX_RESULT: ${{ needs.linux-package-consumption.result }}
@@ -367,6 +406,9 @@ jobs:
             for result in "$SOURCE_BUILD_RESULT" "$CANDIDATE_RESULT" "$LINUX_RESULT" "$WINDOWS_RESULT"; do
               test "$result" = success || exit 1
             done
+            if [[ "$EVENT_NAME" == pull_request && "$MATRIX" != '[]' ]]; then
+              test "$COVERAGE_RESULT" = success || exit 1
+            fi
           elif [[ "$BUILD_REQUIRED" != false ]]; then
             echo "Missing selection evidence." >&2
             exit 1

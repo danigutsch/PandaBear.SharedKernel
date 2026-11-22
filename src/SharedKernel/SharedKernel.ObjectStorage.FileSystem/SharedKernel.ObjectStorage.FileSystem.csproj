@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.ObjectStorage.FileSystem</PackageId>
+        <Description>Filesystem provider for SharedKernel object-storage contracts.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>object-storage;filesystem;storage;shared-kernel</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../SharedKernel.IO/SharedKernel.IO.csproj" />
+        <ProjectReference Include="../SharedKernel.ObjectStorage/SharedKernel.ObjectStorage.csproj" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
+        <None Include="NOTICE.ViajantesTurismo.txt" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

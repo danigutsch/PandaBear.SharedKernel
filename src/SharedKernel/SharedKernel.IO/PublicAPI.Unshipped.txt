@@ -27,3 +27,12 @@ PandaBear.IO.SeekableContent.Content.get -> System.IO.Stream!
 static PandaBear.IO.SeekableContent.Create(System.IO.Stream! source, long maxLength, int memoryThreshold, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.IO.SeekableContent!>
 PandaBear.IO.SeekableContent.Dispose() -> void
 PandaBear.IO.SeekableContent.DisposeAsync() -> System.Threading.Tasks.ValueTask
+PandaBear.IO.AtomicFile
+static PandaBear.IO.AtomicFile.CreateIfAbsent(string! path, System.Func<System.IO.Stream!, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! write, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<bool>
+static PandaBear.IO.AtomicFile.Replace(string! path, System.Func<System.IO.Stream!, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! write, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+static PandaBear.IO.AtomicFile.Replace(string! path, string! temporaryFilePrefix, System.Func<System.IO.Stream!, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! write, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.IO.ArtifactManifest
+PandaBear.IO.VerifiedArtifact
+static PandaBear.IO.ArtifactManifest.Read<T>(string! path, int maxBytes, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T!>! typeInfo, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<(T! Manifest, string! Directory, string! Digest)>!
+static PandaBear.IO.VerifiedArtifact.Read(string! directory, string! path, string! sha256, int maxBytes, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<System.ReadOnlyMemory<byte>>!
+static PandaBear.IO.VerifiedArtifact.Verify(string! directory, string! path, string! sha256, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!

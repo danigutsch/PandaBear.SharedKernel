@@ -95,6 +95,21 @@ Playwright launches Chromium with `--no-sandbox` by default; Chromium's own sand
 yourself, and on Ubuntu 23.10+ AppArmor denies it to unprofiled binaries anyway. Install the browser binaries once with
 `sharedkernel-ci install-playwright`; nothing here downloads them.
 
+## File inputs and policy observation
+
+`locator.SetBlazorInputFile(file)` and `locator.SetBlazorInputFiles(files)` wait for Blazor to attach its change
+listener before selecting files. They work with a rendered `InputFile`, including when interactivity is already visible
+and the listener is still being installed. For a test that exercises the native chooser, await
+`locator.WaitForBlazorInputFile()` before `page.RunAndWaitForFileChooserAsync` and keep the chooser action in the test.
+
+Start `CspViolationRecorder.Start(page)` before navigation. `Violations()` returns policy events in the current document
+followed by policy messages recorded on the page console since the recorder started. `StyleViolations()` selects
+entries mentioning `style-src`. Dispose the recorder to detach its console observer. The document observer
+follows the page lifetime.
+
+The CSP recorder adapts a browser test fixture from ViajantesTurismo, copyright (c) 2025 ViajantesTurismo contributors,
+under the MIT License.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Testing.Playwright`. C# namespace: `PandaBear.Testing.Playwright`. Assembly/project identity: `SharedKernel.Testing.Playwright`.

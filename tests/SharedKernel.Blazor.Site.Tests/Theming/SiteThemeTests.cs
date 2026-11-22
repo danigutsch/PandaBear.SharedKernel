@@ -45,14 +45,16 @@ public sealed class SiteThemeTests
     }
 
     [Fact]
-    public void The_review_checks_fourteen_pairs_in_each_scheme()
+    public void The_review_checks_fourteen_pairs_in_each_scheme_and_the_photo_scrim_in_the_light_scheme()
     {
         // Arrange & Act
         var contrast = SiteTheme.Default.Review().Contrast;
 
         // Assert
-        contrast.Count.ShouldBe(28);
+        contrast.Count.ShouldBe(29);
         contrast.Count(check => check.Scheme == ColorScheme.Dark).ShouldBe(14);
+        contrast.Select(check => check.Scheme).ShouldBe([.. Enumerable.Repeat(ColorScheme.Light, 15), .. Enumerable.Repeat(ColorScheme.Dark, 14)]);
+        contrast.ShouldContain(check => check.Foreground == ThemeColorRole.OnPrimary && check.Background == ThemeColorRole.Text && check.Scheme == ColorScheme.Light);
         contrast.ShouldContain(check => check.Foreground == ThemeColorRole.Muted && check.Background == ThemeColorRole.SurfaceAlt && check.Minimum == 4.5 && check.Criterion == "1.4.3");
         contrast.ShouldContain(check => check.Foreground == ThemeColorRole.OnPrimary && check.Background == ThemeColorRole.PrimaryHover);
         contrast.ShouldContain(check => check.Foreground == ThemeColorRole.OnAccent && check.Background == ThemeColorRole.AccentHover);
@@ -236,6 +238,47 @@ public sealed class SiteThemeTests
         allowed.FieldErrors().Keys.ShouldNotContain(field);
     }
 
+    [Theory]
+    [InlineData("1.25", 400, false)]
+    [InlineData("1.25", 600, false)]
+    [InlineData("1.1", 700, false)]
+    [InlineData("1.1667", 700, true)]
+    [InlineData("1.5", 400, true)]
+    public void The_page_heading_must_be_large_text_because_it_sits_on_the_large_text_scrim(string size, int weight, bool valid)
+    {
+        // Arrange
+        var rem = decimal.Parse(size, System.Globalization.CultureInfo.InvariantCulture);
+        var style = TypographyStyle.Create(size: FontSize.Fixed(rem).ShouldBeSuccess(), weight: weight).ShouldBeSuccess();
+        var typography = ThemeFixtures.DefaultTypographyWith(TypographyRole.H1, style);
+
+        // Act
+        var result = SiteTheme.Create(SiteTheme.Default.Colors, typography, allowSmallText: true);
+
+        // Assert
+        if (valid)
+        {
+            result.ShouldBeSuccess();
+        }
+        else
+        {
+            result.FieldErrors()["typography.h1.size"].ShouldBe(
+                ["The page heading sits on a photo darkened for large text, so it must be at least 1.5rem, or 1.1667rem (14pt) at weight 700 (WCAG 2.2 SC 1.4.3)."]);
+        }
+    }
+
+    [Fact]
+    public void A_page_heading_size_without_a_weight_takes_the_default_bold_weight()
+    {
+        // Arrange
+        var typography = ThemeFixtures.DefaultTypographyWith(TypographyRole.H1, ThemeFixtures.Sized(1.25m));
+
+        // Act
+        var result = SiteTheme.Create(SiteTheme.Default.Colors, typography);
+
+        // Assert
+        result.ShouldBeSuccess();
+    }
+
     [Fact]
     public void Small_text_at_exactly_0_875rem_and_body_at_exactly_1rem_are_allowed()
     {
@@ -354,8 +397,8 @@ public sealed class SiteThemeTests
 
         // Assert
         review.HasErrors.ShouldBeTrue();
-        review.Errors.ShouldAllSatisfy(error => error.Field.ShouldBe("colors.text"));
-        review.ToValidationErrors().Keys.ShouldBe(["colors.text"]);
+        review.Errors.ShouldAllSatisfy(error => error.Field.ShouldBeOneOf("colors.text", "colors.onPrimary"));
+        review.ToValidationErrors().Keys.ShouldBe(["colors.text", "colors.onPrimary"]);
     }
 
     [Fact]

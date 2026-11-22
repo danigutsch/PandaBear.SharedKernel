@@ -30,6 +30,35 @@ public static class DocumentationGenerator
         return new DocumentationGenerationResult(updater.Update(checkOnly, replacements));
     }
 
+    /// <summary>Updates one generated Mermaid data ownership block or reports drift without writing.</summary>
+    /// <param name="rootPath">The repository root.</param>
+    /// <param name="docsPath">The repository-relative documentation folder.</param>
+    /// <param name="generatorName">The name written in the generated marker's attribution.</param>
+    /// <param name="blockName">The name in the existing generated-block markers.</param>
+    /// <param name="targetPath">The existing Markdown document relative to the documentation folder.</param>
+    /// <param name="diagram">The caller-owned trust boundary, node, and access facts.</param>
+    /// <param name="checkOnly">Whether to report drift without changing the file.</param>
+    /// <returns>The target document's relative path when it changed or was stale.</returns>
+    /// <exception cref="ArgumentNullException">A required argument, diagram collection, or diagram item is null.</exception>
+    /// <exception cref="ArgumentException">A required path or name is blank, or the diagram is invalid.</exception>
+    /// <exception cref="InvalidOperationException">The configured path or generated-block markers are invalid.</exception>
+    public static DocumentationGenerationResult RunDataOwnership(
+        string rootPath, string docsPath, string generatorName, string blockName, string targetPath,
+        DataOwnershipDiagram diagram, bool checkOnly)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(docsPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(generatorName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(blockName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(targetPath);
+
+        ArgumentNullException.ThrowIfNull(diagram);
+
+        var replacement = DataOwnershipMermaidDiagram.Build(diagram);
+        var updater = new GeneratedMarkdownUpdater(Path.GetFullPath(rootPath), docsPath, generatorName);
+        return new DocumentationGenerationResult(updater.Update(checkOnly, [(blockName, targetPath, replacement)]));
+    }
+
     private static void ValidateConfig(DocumentationGeneratorConfig config, string configPath)
     {
         if (string.IsNullOrWhiteSpace(config.DocsPath))

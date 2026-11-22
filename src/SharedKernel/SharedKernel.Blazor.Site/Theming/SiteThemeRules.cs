@@ -4,7 +4,9 @@ namespace PandaBear.Blazor.Site.Theming;
 
 /// <summary>
 /// The readability rules of a theme. Contrast follows WCAG 2.2: 4.5:1 for text (SC 1.4.3 Contrast (Minimum)) and 3:1 for the focus
-/// indicator (SC 1.4.11 Non-text Contrast), in both schemes.
+/// indicator (SC 1.4.11 Non-text Contrast), in both schemes. On-primary text over a photo must reach 4.5:1 with some
+/// <see cref="SiteScrim" />, checked in the light scheme that photo bands use; the page heading, which sits on the large-text scrim
+/// of a cover hero, must be large text.
 /// </summary>
 internal static class SiteThemeRules
 {
@@ -22,6 +24,21 @@ internal static class SiteThemeRules
 
     /// <summary>The largest ratio of a fluid size's maximum to its minimum, so 200% zoom still doubles the text (SC 1.4.4).</summary>
     public const decimal MaxFluidRatio = 2.5m;
+
+    /// <summary>The smallest brand height in rem: 24px, below which a logo is hard to read.</summary>
+    public const decimal MinBrandHeight = 1.5m;
+
+    /// <summary>The largest brand height in rem: 128px, above which the header takes too much of a cover hero.</summary>
+    public const decimal MaxBrandHeight = 8m;
+
+    /// <summary>The smallest page heading size in rem that is large text at any weight: 18pt.</summary>
+    public const decimal LargeTextSize = 1.5m;
+
+    /// <summary>The smallest page heading size in rem that is large text when bold: 14pt, rounded up.</summary>
+    public const decimal LargeBoldTextSize = 1.1667m;
+
+    /// <summary>The smallest weight that WCAG counts as bold.</summary>
+    public const int BoldWeight = 700;
 
     private const double TextMinimum = 4.5;
     private const double NonTextMinimum = 3.0;
@@ -56,6 +73,16 @@ internal static class SiteThemeRules
         var contrast = CheckContrast(theme.Colors);
         foreach (var check in contrast.Where(check => !check.Passes))
         {
+            if (IsScrimCheck(check))
+            {
+                errors.Add(new ThemeIssue(
+                    "colors." + ThemeNames.Field(check.Foreground),
+                    string.Create(
+                        CultureInfo.InvariantCulture,
+                        $"{ThemeNames.Label(check.Foreground, colorLabel)} over a photo darkened with {ThemeNames.Label(check.Background, colorLabel)} reaches at most {FormatRatio(check.Ratio)}, with an opaque scrim in the {ThemeNames.Css(check.Scheme)} scheme of photo bands; text needs at least {FormatMinimum(check.Minimum)} (WCAG 2.2 SC {check.Criterion}).")));
+                continue;
+            }
+
             var kind = check.Criterion == "1.4.11" ? "a focus indicator" : "text";
             errors.Add(new ThemeIssue(
                 "colors." + ThemeNames.Field(check.Foreground),
@@ -65,6 +92,8 @@ internal static class SiteThemeRules
         }
 
         CheckSizes(theme, errors);
+        CheckPageHeading(theme, errors);
+        CheckBrandHeight(theme, errors);
         CheckBodyLineHeight(theme, errors);
         CheckHeadingOrder(theme, warnings);
         return new SiteThemeReview(errors, warnings, contrast);
@@ -81,16 +110,62 @@ internal static class SiteThemeRules
     /// <returns>Text such as <c>4.5:1</c> or <c>3:1</c>.</returns>
     public static string FormatMinimum(double minimum) => minimum.ToString("0.#", CultureInfo.InvariantCulture) + ":1";
 
-    private static ContrastCheck[] CheckContrast(SiteColors colors) =>
-        [.. from scheme in Enum.GetValues<ColorScheme>()
-            from pair in Pairs
-            select new ContrastCheck(
+    private static List<ContrastCheck> CheckContrast(SiteColors colors)
+    {
+        var checks = new List<ContrastCheck>();
+        foreach (var scheme in Enum.GetValues<ColorScheme>())
+        {
+            checks.AddRange(Pairs.Select(pair => new ContrastCheck(
                 pair.Foreground,
                 pair.Background,
                 scheme,
                 colors[pair.Foreground].For(scheme).ContrastRatio(colors[pair.Background].For(scheme)),
                 pair.Minimum,
-                pair.Criterion)];
+                pair.Criterion)));
+            if (scheme == ColorScheme.Light)
+            {
+                checks.Add(new ContrastCheck(
+                    ThemeColorRole.OnPrimary,
+                    ThemeColorRole.Text,
+                    scheme,
+                    SiteScrim.WorstRatio(colors.OnPrimary.Light, colors.Text.Light, 100),
+                    SiteScrim.TextMinimum,
+                    "1.4.3"));
+            }
+        }
+
+        return checks;
+    }
+
+    private static bool IsScrimCheck(ContrastCheck check) =>
+        check.Foreground == ThemeColorRole.OnPrimary && check.Background == ThemeColorRole.Text;
+
+    private static void CheckBrandHeight(SiteTheme theme, List<ThemeIssue> errors)
+    {
+        if (theme.BrandHeight is < MinBrandHeight or > MaxBrandHeight)
+        {
+            errors.Add(new ThemeIssue(
+                "header.brandHeight",
+                $"The brand height must be from {CssText.Number(MinBrandHeight)}rem to {CssText.Number(MaxBrandHeight)}rem."));
+        }
+    }
+
+    private static void CheckPageHeading(SiteTheme theme, List<ThemeIssue> errors)
+    {
+        var heading = theme.Effective(TypographyRole.H1);
+        if (heading.Size is not { } size)
+        {
+            return;
+        }
+
+        var bold = (heading.Weight ?? BoldWeight) >= BoldWeight;
+        if (size.Min < LargeTextSize && !(bold && size.Min >= LargeBoldTextSize))
+        {
+            errors.Add(new ThemeIssue(
+                "typography.h1.size",
+                $"The page heading sits on a photo darkened for large text, so it must be at least {CssText.Number(LargeTextSize)}rem, or {CssText.Number(LargeBoldTextSize)}rem (14pt) at weight {BoldWeight} (WCAG 2.2 SC 1.4.3)."));
+        }
+    }
 
     private static void CheckSizes(SiteTheme theme, List<ThemeIssue> errors)
     {

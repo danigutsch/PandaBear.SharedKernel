@@ -27,6 +27,17 @@ NativeAOT analyzers are enabled; packed NativeAOT and Windows execution are not 
 To hand bytes you already hold to a `Stream` API without copying, use .NET's `System.IO.ReadOnlyMemoryStream`, which
 replaced this package's type of the same name in .NET 11.
 
+## Atomic streaming writes
+
+`AtomicFile.CreateIfAbsent` publishes a new file and returns whether this call won publication.
+`AtomicFile.Replace` publishes over any previous contents. Both take a callback that can stream and
+verify content before publication. Create the destination directory before calling either method.
+On Unix, create-if-absent publication requires a filesystem that supports hard links.
+If an existing file inventory reserves a temporary name prefix, pass that prefix to the
+`Replace` overload. Temporary names consist of the prefix, a 32-digit hexadecimal identifier,
+and `.tmp`.
+For text files containing secrets, use `SecureFile.WriteAllText` for owner-only Unix permissions.
+
 ## Secret files and path identity
 
 `SecureFile.WriteAllText` writes text that should stay private, such as a decrypted export: on Unix the file is readable and
@@ -80,3 +91,12 @@ streams (`SKIO001`) and hand-rolled copy loops into a `MemoryStream` (`SKIO002`)
 
 See [stream intake policy](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/stream-intake.md)
 for ownership, limits, memory-map decisions, benchmark evidence, and application adoption boundaries.
+
+## Reviewed manifests and artifacts
+
+`ArtifactManifest.Read` deserializes a bounded manifest using caller-supplied `JsonTypeInfo` and
+returns the SHA-256 of the exact file bytes. Select strict JSON options and validate the parsed model
+in the consumer. `VerifiedArtifact.Read` returns bounded bytes that matched an expected SHA-256.
+`VerifiedArtifact.Verify` checks a digest without retaining the file contents. Keep the artifact bundle
+in a caller-controlled directory. The consumer owns migration phases, release policy, SQL validation,
+and execution.

@@ -1,0 +1,28 @@
+@inject NavigationManager Navigation
+@inject VenueSite Site
+
+<!DOCTYPE html>
+<html lang="@(Page?.Language ?? "en")">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="/" />
+    <link rel="stylesheet" href="/_content/PandaBear.SharedKernel.Blazor.Site/site.css" />
+    <link rel="stylesheet" href="@Site.ThemeAddress" />
+    <link rel="stylesheet" href="/venue.css" />
+    <HeadOutlet />
+</head>
+<body>
+    <Routes />
+    @if (Editor)
+    {
+        <script src="/_framework/blazor.web.js"></script>
+    }
+</body>
+</html>
+
+@code {
+    private VenuePage? Page => Site.Find(new Uri(Navigation.Uri).AbsolutePath.TrimEnd('/'));
+
+    private bool Editor => string.Equals(new Uri(Navigation.Uri).AbsolutePath.TrimEnd('/'), "/editor", StringComparison.OrdinalIgnoreCase);
+}

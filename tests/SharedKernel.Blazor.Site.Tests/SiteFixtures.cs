@@ -85,6 +85,24 @@ internal static class SiteFixtures
         .Add(component => component.Label, "Main")
         .Add(component => component.Items, items));
 
+    /// <summary>Renders a video link to a YouTube address with a decorative self-hosted poster unless another value is given.</summary>
+    /// <param name="context">The bUnit context.</param>
+    /// <param name="href">The video address.</param>
+    /// <param name="title">The title.</param>
+    /// <param name="hint">The site hint.</param>
+    /// <param name="poster">The poster; a decorative <c>/poster.jpg</c> when omitted.</param>
+    /// <returns>The rendered link.</returns>
+    public static IRenderedComponent<VideoLink> RenderVideoLink(
+        this BunitContext context,
+        string href = "https://www.youtube.com/watch?v=abc123",
+        string title = "Patagonia in winter",
+        string hint = "(opens YouTube)",
+        ResponsiveImage? poster = null) => context.Render<VideoLink>(parameters => parameters
+        .Add(component => component.Href, Link(href))
+        .Add(component => component.Title, title)
+        .Add(component => component.SiteHint, hint)
+        .Add(component => component.Poster, poster ?? Image("/poster.jpg", ImageAlternative.Decorative())));
+
     /// <summary>Renders a head outlet, then a <see cref="PageHead" /> that writes into it.</summary>
     /// <param name="context">The bUnit context.</param>
     /// <param name="configure">The page head parameters.</param>
@@ -104,4 +122,9 @@ internal static class SiteFixtures
     /// <returns>The ratio, from 1 to 21.</returns>
     public static double Contrast(string foreground, string background) =>
         CssColor.FromString(foreground).ContrastRatio(CssColor.FromString(background));
+
+    /// <summary>Computes the contrast of the default theme's light on-primary colour, white, on a background.</summary>
+    /// <param name="background">The background as <c>#rrggbb</c>.</param>
+    /// <returns>The ratio, from 1 to 21.</returns>
+    public static double OnPrimaryContrast(string background) => Contrast("#ffffff", background);
 }

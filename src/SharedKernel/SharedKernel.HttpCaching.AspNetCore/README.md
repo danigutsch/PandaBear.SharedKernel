@@ -48,6 +48,12 @@ registered in either order.
 content, such as a content-hashed logo or upload. It sets no other header; serve such files with `X-Content-Type-Options: nosniff`
 as any other upload (`MapImmutableFiles` in `PandaBear.SharedKernel.AspNetCore` does both).
 
+## Versioned CSS
+
+`MapVersionedStylesheet` serves GET and HEAD at an application-owned path. The callback supplies
+the CSS and its version together. A single, exact `v` query value matching that version receives
+immutable caching. All other requests keep the host's cache headers and receive the current snapshot.
+
 ## If-Match preconditions
 
 `IfMatchCondition` is the RFC 9110 `If-Match` condition for a write guarded by an opaque entity tag: `*` or a list of entity tags,

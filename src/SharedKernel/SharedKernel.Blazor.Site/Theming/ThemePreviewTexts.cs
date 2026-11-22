@@ -36,6 +36,9 @@ public sealed class ThemePreviewTexts
     /// <summary>Gets the sample card text, shown in the muted colour.</summary>
     public string CardText { get; init; } = "Secondary text in a card.";
 
+    /// <summary>Gets the text of the brand box at the start of the sample navigation, as tall as the theme's brand height.</summary>
+    public string Brand { get; init; } = "Logo";
+
     /// <summary>Gets the sample navigation label.</summary>
     public string NavigationLabel { get; init; } = "Sample navigation";
 

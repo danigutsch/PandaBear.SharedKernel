@@ -76,6 +76,34 @@ public static class PlaywrightLocatorExtensions
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(file);
 
+        await input.WaitForBlazorInputFile().ConfigureAwait(false);
+        await input.SetInputFilesAsync(file).ConfigureAwait(false);
+    }
+
+    /// <summary>Chooses a batch of files after the Blazor input is ready to receive them.</summary>
+    /// <param name="input">The file input that an <c>InputFile</c> component rendered.</param>
+    /// <param name="files">The files to choose, in selection order.</param>
+    /// <returns>A task that completes when the input has been handed the files.</returns>
+    /// <exception cref="ArgumentNullException">The input or files are null.</exception>
+    /// <exception cref="TimeoutException">Blazor did not set up the input within 30 seconds.</exception>
+    public static async Task SetBlazorInputFiles(this ILocator input, IEnumerable<FilePayload> files)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+        ArgumentNullException.ThrowIfNull(files);
+
+        await input.WaitForBlazorInputFile().ConfigureAwait(false);
+        await input.SetInputFilesAsync(files).ConfigureAwait(false);
+    }
+
+    /// <summary>Waits for Blazor to attach its input change listener before a caller opens a native file chooser.</summary>
+    /// <param name="input">The file input that an <c>InputFile</c> component rendered.</param>
+    /// <returns>A task that completes when the listener is ready.</returns>
+    /// <exception cref="ArgumentNullException">The input is null.</exception>
+    /// <exception cref="TimeoutException">Blazor did not set up the input within 30 seconds.</exception>
+    public static async Task WaitForBlazorInputFile(this ILocator input)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+
         var waited = Stopwatch.StartNew();
         while (!await input.EvaluateAsync<bool>(BlazorInputFileReadyScript).ConfigureAwait(false))
         {
@@ -86,8 +114,6 @@ public static class PlaywrightLocatorExtensions
 
             await Task.Delay(InputFileReadyPollInterval).ConfigureAwait(false);
         }
-
-        await input.SetInputFilesAsync(file).ConfigureAwait(false);
     }
 
     private static bool UsesNativeValueSetter(string? inputType) =>

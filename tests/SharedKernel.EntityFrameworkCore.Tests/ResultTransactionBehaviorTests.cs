@@ -213,6 +213,64 @@ public sealed class ResultTransactionBehaviorTests(PostgreSqlFixture fixture) : 
     }
 
     [Fact]
+    public async Task Holds_portable_command_locks_through_handler_execution_and_releases_them_on_failure()
+    {
+        // Arrange
+        const string lockName = "result-transaction:portable-rollback";
+        await using var scenario = new ResultTransactionTestScenario(DataSource);
+        var (behavior, context, scope) = scenario.CreateBehavior<PortableTransactionLockTestCommand>();
+        using var scopeLease = scope;
+        bool? lockFreeWhileRunning = null;
+
+        // Act
+        var result = await behavior.Handle(
+            new PortableTransactionLockTestCommand([lockName]),
+            async () =>
+            {
+                lockFreeWhileRunning = await H.TryTakeLock(DataSource, lockName);
+                return await H.AddAndSave(context, "portable-rejected", Result.Conflict("rejected"));
+            },
+            TestContext.Current.CancellationToken);
+        var lockFreeAfterRollback = await H.TryTakeLock(DataSource, lockName);
+        var persisted = await H.CountNamed(DataSource, "portable-rejected");
+
+        // Assert
+        result.IsFailure.ShouldBeTrue();
+        lockFreeWhileRunning.ShouldBe(false);
+        lockFreeAfterRollback.ShouldBeTrue();
+        persisted.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Holds_locks_from_both_explicit_declarations_if_a_command_implements_both()
+    {
+        // Arrange
+        const string portable = "result-transaction:dual-portable";
+        const string legacy = "result-transaction:dual-legacy";
+        const string shared = "result-transaction:dual-shared";
+        await using var scenario = new ResultTransactionTestScenario(DataSource);
+        var (behavior, _, scope) = scenario.CreateBehavior<DualTransactionLockTestCommand>();
+        using var scopeLease = scope;
+        var locksFreeWhileRunning = new List<bool>();
+
+        // Act
+        var result = await behavior.Handle(
+            new DualTransactionLockTestCommand([portable, shared], [legacy, shared]),
+            async () =>
+            {
+                locksFreeWhileRunning.Add(await H.TryTakeLock(DataSource, portable));
+                locksFreeWhileRunning.Add(await H.TryTakeLock(DataSource, legacy));
+                locksFreeWhileRunning.Add(await H.TryTakeLock(DataSource, shared));
+                return Result.Ok();
+            },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        locksFreeWhileRunning.ShouldBe([false, false, false]);
+    }
+
+    [Fact]
     public async Task Collapses_duplicate_declared_locks_so_the_command_does_not_wait_on_itself()
     {
         // Arrange

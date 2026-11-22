@@ -148,6 +148,52 @@ public sealed class WebUrlTests
         upper.ShouldNotBe(otherPath);
     }
 
+    [Theory]
+    [InlineData("https://www.youtube.com/watch?v=abc123", "https://www.youtube.com/watch?v=abc123")]
+    [InlineData("HTTPS://Vimeo.COM/1", "https://vimeo.com/1")]
+    public void An_https_only_address_accepts_https_with_the_same_canonical_form(string input, string expected)
+    {
+        // Act
+        var url = WebUrl.CreateHttps(input).ShouldBeSuccess();
+
+        // Assert
+        url.Value.ShouldBe(expected);
+        url.ShouldBe(WebUrl.Create(input).ShouldBeSuccess());
+    }
+
+    [Theory]
+    [InlineData("http://www.youtube.com/watch?v=abc123")]
+    [InlineData("HTTP://example.org")]
+    [InlineData("javascript:alert(1)")]
+    [InlineData("ftp://example.org")]
+    [InlineData("//example.org")]
+    [InlineData("/videos/1")]
+    public void An_https_only_address_rejects_HTTP_and_every_other_scheme_without_echoing_it(string input)
+    {
+        // Act
+        var result = WebUrl.CreateHttps(input, "videoUrl", "Video address");
+
+        // Assert
+        result.Status.ShouldBe(ResultStatus.Invalid);
+        var message = result.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull()["videoUrl"].ShouldHaveSingleItem();
+        message.ShouldBe("Video address must be an absolute https address.");
+        result.ErrorDetails.Detail.ShouldBe(message);
+    }
+
+    [Theory]
+    [InlineData(null, "Link is required.")]
+    [InlineData("https://user@example.org/", "Link must be an absolute https address with a host and no user information.")]
+    [InlineData("https://exa mple.org", "Link cannot contain white space, control characters or backslashes.")]
+    public void An_https_only_address_applies_every_other_rule_of_a_web_address(string? input, string expected)
+    {
+        // Act
+        var result = WebUrl.CreateHttps(input);
+
+        // Assert
+        result.Status.ShouldBe(ResultStatus.Invalid);
+        result.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull()["url"].ShouldBe([expected]);
+    }
+
     [Fact]
     public void Restore_rebuilds_a_stored_address()
     {
