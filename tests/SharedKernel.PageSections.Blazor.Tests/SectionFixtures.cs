@@ -25,6 +25,23 @@ internal static partial class SectionFixtures
         ? null
         : ResponsiveImage.Create(LinkTarget.FromString($"/media/{id}.webp"), 800, 600, ImageAlternative.Describe($"Photo {id}"));
 
+    /// <summary>Resolves an image id to its caption, "Legenda {id}".</summary>
+    /// <param name="id">The image id.</param>
+    /// <returns>The caption.</returns>
+    public static string? Caption(int id) => $"Legenda {id}";
+
+    /// <summary>Resolves an image id to its credit, "Foto: Autor {id}" under CC BY 4.0, linked to the licence.</summary>
+    /// <param name="id">The image id.</param>
+    /// <returns>The credit.</returns>
+    public static ImageCreditLine? Credit(int id) =>
+        new($"Foto: Autor {id}", "CC BY 4.0", LinkTarget.FromString("https://creativecommons.org/licenses/by/4.0/"));
+
+    /// <summary>The figcaption that <see cref="Caption" /> and <see cref="Credit" /> give an image, as compact markup.</summary>
+    /// <param name="id">The image id.</param>
+    /// <returns>The inner markup of the figcaption.</returns>
+    public static string CaptionMarkup(int id) =>
+        $"Legenda {id}<small class=\"site-image-credit\">Foto: Autor {id} <a href=\"https://creativecommons.org/licenses/by/4.0/\" rel=\"license\">CC BY 4.0</a></small>";
+
     /// <summary>Resolves a link target to <c>/pt/{target}</c>, or nothing for <see cref="LostTarget" />.</summary>
     /// <param name="target">The target.</param>
     /// <returns>The address, or <see langword="null" />.</returns>

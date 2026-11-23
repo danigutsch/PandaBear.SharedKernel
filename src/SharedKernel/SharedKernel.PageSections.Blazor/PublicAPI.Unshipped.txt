@@ -6,6 +6,10 @@ PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.HeadingI
 PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.HeadingIdFormat.set -> void
 PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.Image.get -> System.Func<TImageId, PandaBear.Blazor.Site.ResponsiveImage?>!
 PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.Image.set -> void
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.ImageCaption.get -> System.Func<TImageId, string?>?
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.ImageCaption.set -> void
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.ImageCredit.get -> System.Func<TImageId, PandaBear.Blazor.Site.ImageCreditLine?>?
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.ImageCredit.set -> void
 PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.IsShown.get -> System.Func<PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>!, bool>?
 PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.IsShown.set -> void
 PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.Link.get -> System.Func<TLink, PandaBear.Blazor.Site.LinkTarget?>!

@@ -9,7 +9,8 @@ namespace PandaBear.PageSections.Blazor;
 /// Renders the sections of a page with the site components, each on the <see cref="Band" /> of its tone and its parts in the model's
 /// fixed order: the heading (an <c>hgroup</c> with the eyebrow), the paragraphs, the questions (each a closed
 /// <see cref="Disclosure" />), the person (<see cref="Byline" />), the quotes, the application's <see cref="Extra" />, the
-/// <see cref="VideoLink" /> and the <see cref="ButtonLink" />, then the images as a mosaic or beside the parts in a <see cref="Split" />.
+/// <see cref="VideoLink" /> and the <see cref="ButtonLink" />, then the images as a mosaic or beside the parts in a <see cref="Split" />,
+/// each with the caption and credit that the application gives it.
 /// A section with a heading is a <see cref="Section" /> named by it, a subsection one with a level-three heading and no divider; one
 /// without a heading is its parts alone on the band. A part the application cannot resolve, such as a deleted image or a link target
 /// that no longer exists, is left out, and a section with nothing left to show renders nothing.
@@ -44,6 +45,25 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
     [Parameter]
     [EditorRequired]
     public Func<TImageId, ResponsiveImage?> Image { get; set; } = null!;
+
+    /// <summary>
+    /// Gets or sets the caption of an image of a section, shown in the image's <c>figcaption</c> in the mosaic and beside the text alike
+    /// (<see cref="GalleryImage.Caption" />). <see langword="null" /> or blank shows none. Only a section's images take a caption: the
+    /// background, the person's photo and the decorative video poster never show one. <see langword="null" />, the default, shows no
+    /// captions.
+    /// </summary>
+    [Parameter]
+    public Func<TImageId, string?>? ImageCaption { get; set; }
+
+    /// <summary>
+    /// Gets or sets the short credit of an image of a section, such as its author and licence, shown as <see cref="ImageGrid" /> shows a
+    /// <see cref="GalleryImage.Credit" />: an <see cref="ImageCreditCaption" /> in the image's <c>figcaption</c>, after the caption.
+    /// <see langword="null" /> shows none. Only a section's images take a credit, as with <see cref="ImageCaption" />.
+    /// <see langword="null" />, the default, shows no credits. A credit with a blank text, or with a licence address and no licence text,
+    /// throws <see cref="ArgumentException" /> when the section renders, as <see cref="ImageGrid" /> refuses it.
+    /// </summary>
+    [Parameter]
+    public Func<TImageId, ImageCreditLine?>? ImageCredit { get; set; }
 
     /// <summary>
     /// Gets or sets how a section's link target becomes an address, such as the path of a page in the current language.
@@ -198,7 +218,7 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
         {
             if (Image(id) is { } image)
             {
-                images.Add(new GalleryImage(image));
+                images.Add(new GalleryImage(image, ImageCaption?.Invoke(id)) { Credit = ImageCredit?.Invoke(id) });
             }
         }
 

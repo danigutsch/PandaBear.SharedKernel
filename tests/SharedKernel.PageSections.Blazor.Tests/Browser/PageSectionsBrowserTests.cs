@@ -69,6 +69,37 @@ public sealed class PageSectionsBrowserTests(ChromiumFixture chromium) : IClassF
         }
     }
 
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
+    [InlineData(375)]
+    [InlineData(1280)]
+    public async Task The_caption_and_credit_of_an_image_beside_the_text_lie_under_it_in_its_column_and_the_image_keeps_its_name(int width)
+    {
+        // Arrange
+        PageSection<int, string, NoExtra>[] sections =
+        [
+            Plain(new() { Heading = "Quem somos", Text = "Somos uma agência.", ImageIds = [Photo], ImageLayout = SectionImageLayout.BesideText }),
+        ];
+
+        // Act
+        await using var page = await SectionsPage.Open(chromium.Browser, width, sections, captioned: true);
+
+        // Assert
+        var media = await page.Box(".site-split__media");
+        var image = await page.Box(".site-split__media img");
+        var caption = await page.Box(".site-split__media figcaption");
+        caption.Y.ShouldBeGreaterThanOrEqualTo(image.Y + image.Height);
+        caption.X.ShouldBeGreaterThanOrEqualTo(media.X);
+        var captionEnd = caption.X + caption.Width;
+        captionEnd.ShouldBeLessThanOrEqualTo(media.X + media.Width + 0.5f);
+        var text = await page.Page.Locator(".site-split__media figcaption").InnerTextAsync();
+        text.ShouldContain("Legenda 1", StringComparison.Ordinal);
+        text.ShouldContain("Foto: Autor 1 CC BY 4.0", StringComparison.Ordinal);
+        var images = await page.Page.GetByRole(AriaRole.Img, new PageGetByRoleOptions { Name = "Photo 1", Exact = true }).CountAsync();
+        images.ShouldBeGreaterThanOrEqualTo(1);
+        var license = await page.Page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { Name = "CC BY 4.0", Exact = true }).GetAttributeAsync("rel");
+        license.ShouldBe("license");
+    }
+
     [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Centred_bands_centre_the_heading_the_text_and_the_button()
     {

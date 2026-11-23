@@ -89,6 +89,82 @@ public sealed class PageSectionsViewTests : BunitContext
         end.ShouldBeGreaterThan(second);
     }
 
+    [Theory]
+    [InlineData("Fotos", SectionImageLayout.Mosaic, "section > .site-section__body > .site-image-grid")]
+    [InlineData("Fotos", SectionImageLayout.BesideText, "section > .site-split > .site-split__media > .site-image-grid")]
+    [InlineData(null, SectionImageLayout.Mosaic, ".site-band__inner > .site-image-grid")]
+    [InlineData(null, SectionImageLayout.BesideText, ".site-band__inner > .site-split > .site-split__media > .site-image-grid")]
+    public void Every_image_of_a_section_shows_its_caption_and_credit_under_it_in_each_layout(string? heading, SectionImageLayout layout, string grid)
+    {
+        // Arrange
+        var section = Plain(new() { Heading = heading, Text = "Algumas fotos.", ImageIds = [Photo, 2], ImageLayout = layout });
+
+        // Act
+        var cut = this.RenderSections([section], parameters => parameters
+            .Add(view => view.ImageCaption, Caption)
+            .Add(view => view.ImageCredit, Credit));
+
+        // Assert
+        cut.FindAll($"{grid} > figure.site-image-grid__item > figcaption").Select(caption => Compact(caption.InnerHtml))
+            .ShouldBe([CaptionMarkup(Photo), CaptionMarkup(2)]);
+        cut.FindAll($"{grid} > figure > figcaption a").Select(link => link.GetAttribute("rel")).ShouldBe(["license", "license"]);
+    }
+
+    [Fact]
+    public void The_background_the_photo_and_the_decorative_poster_stay_without_a_caption_or_credit()
+    {
+        // Arrange & Act
+        var cut = this.RenderSections([Rich()], parameters => parameters
+            .Add(view => view.ImageCaption, Caption)
+            .Add(view => view.ImageCredit, Credit));
+
+        // Assert
+        var main = Html(cut);
+        main.Split("Legenda 1", StringSplitOptions.None).Length.ShouldBe(2);
+        main.Split("Foto: Autor 1", StringSplitOptions.None).Length.ShouldBe(2);
+        Compact(cut.Find(".site-split__media figcaption").InnerHtml).ShouldBe(CaptionMarkup(Photo));
+        cut.Find(".site-video-link").TextContent.ShouldNotContain("Legenda", StringComparison.Ordinal);
+        cut.Find(".site-video-link img").GetAttribute("alt").ShouldBe(string.Empty);
+        cut.FindAll(".site-band__media figcaption, .site-band__media .site-image-credit").ShouldBeEmpty();
+        cut.Find(".site-byline").TextContent.ShouldNotContain("Legenda", StringComparison.Ordinal);
+        cut.FindAll(".site-byline .site-image-credit").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void An_image_shows_only_what_resolves_and_without_resolvers_no_image_has_a_caption()
+    {
+        // Arrange
+        var section = Plain(new() { ImageIds = [Photo, 2, 3] });
+
+        // Act
+        var resolved = this.RenderSections([section], parameters => parameters
+            .Add(view => view.ImageCaption, id => id switch { Photo => "Só legenda", 2 => " ", _ => null })
+            .Add(view => view.ImageCredit, id => id == 3 ? new ImageCreditLine("Foto: Ana Lima") : null));
+        var plain = this.RenderSections([section]);
+
+        // Assert
+        resolved.FindAll(".site-image-grid figure").Select(figure => figure.QuerySelector("figcaption")?.InnerHtml).ShouldBe(
+        [
+            "Só legenda",
+            null,
+            "<small class=\"site-image-credit\">Foto: Ana Lima</small>",
+        ]);
+        plain.FindAll(".site-image-grid figure").Count.ShouldBe(3);
+        plain.FindAll(".site-image-grid figcaption").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void A_credit_without_its_text_is_refused()
+    {
+        // Arrange & Act
+        var render = () => this.RenderSections(
+            [Plain(new() { ImageIds = [Photo] })],
+            parameters => parameters.Add(view => view.ImageCredit, _ => new ImageCreditLine(" ")));
+
+        // Assert
+        render.ShouldThrow<ArgumentException>().Message.ShouldStartWith("An image credit needs its text.", StringComparison.Ordinal);
+    }
+
     [Fact]
     public void A_section_without_a_heading_sits_on_its_band_without_a_landmark_and_a_plain_tone_is_a_default_band()
     {
