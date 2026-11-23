@@ -38,7 +38,8 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
     /// Gets or sets how an image id becomes an image: the background of an image band, a person's photo, an image of the mosaic and the
     /// video's poster. <see langword="null" /> leaves that image out: an image band without its background becomes a primary band, a
     /// byline shows no photo, and a video without its poster is left out. The poster is shown as decoration, because the video's title
-    /// names its link, and must be self-hosted at root-relative addresses (<see cref="VideoLink.Poster" />).
+    /// names its link, and must be self-hosted at root-relative addresses (<see cref="VideoLink.Poster" />). A video whose stored address
+    /// is not a valid link is left out too.
     /// </summary>
     [Parameter]
     [EditorRequired]
@@ -69,7 +70,8 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
 
     /// <summary>
     /// Gets or sets the composite format of a heading's id, with <c>{0}</c> the section's position on the page from 1. The default is
-    /// <see cref="DefaultHeadingIdFormat" />; set another one when two lists of sections share a page. The id must not hold white space.
+    /// <see cref="DefaultHeadingIdFormat" />; set another one when two lists of sections share a page. The id must not hold white space,
+    /// and the format must use the position, so every heading has its own id.
     /// </summary>
     [Parameter]
     public string HeadingIdFormat { get; set; } = DefaultHeadingIdFormat;
@@ -107,7 +109,10 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException"><see cref="Sections" />, a section, <see cref="Image" /> or <see cref="Link" /> is null.</exception>
-    /// <exception cref="ArgumentException"><see cref="VideoSiteHintFormat" /> is blank, or <see cref="HeadingIdFormat" /> is blank or gives an id with white space.</exception>
+    /// <exception cref="ArgumentException">
+    /// <see cref="VideoSiteHintFormat" /> is blank, or <see cref="HeadingIdFormat" /> is blank, gives an id with white space or gives
+    /// every section the same id.
+    /// </exception>
     /// <exception cref="ArgumentOutOfRangeException"><see cref="TextAlignment" /> or <see cref="SplitAlignment" /> is not defined.</exception>
     /// <exception cref="FormatException">A format is not a valid composite format.</exception>
     protected override void OnParametersSet()
@@ -127,6 +132,11 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
             throw new ArgumentException("A heading id must not contain white space.", nameof(HeadingIdFormat));
         }
 
+        if (string.Equals(HeadingId(0), HeadingId(1), StringComparison.Ordinal))
+        {
+            throw new ArgumentException("The heading id format must give every section its own id; put the position, {0}, in it.", nameof(HeadingIdFormat));
+        }
+
         _ = string.Format(CultureInfo.InvariantCulture, VideoSiteHintFormat, string.Empty);
         if (TextAlignment is { } alignment && !Enum.IsDefined(alignment))
         {
@@ -139,9 +149,9 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
         }
     }
 
-    private static string SiteName(WebUrl address)
+    private static string SiteName(Uri address)
     {
-        var host = new Uri(address.Value).Host;
+        var host = address.Host;
         return host.StartsWith("www.", StringComparison.OrdinalIgnoreCase) ? host[4..] : host;
     }
 
@@ -166,7 +176,20 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
 
     private string HeadingId(int index) => string.Format(CultureInfo.InvariantCulture, HeadingIdFormat, index + 1);
 
-    private string VideoHint(WebUrl address) => string.Format(CultureInfo.InvariantCulture, VideoSiteHintFormat, SiteName(address));
+    private string VideoHint(Uri address) => string.Format(CultureInfo.InvariantCulture, VideoSiteHintFormat, SiteName(address));
+
+    private VideoView? ResolveVideo(PageVideo<TImageId>? video)
+    {
+        if (video is null
+            || !LinkTarget.Create(video.Address.Value).TryGetValue(out var address)
+            || !Uri.TryCreate(address.Value, UriKind.Absolute, out var uri)
+            || Image(video.PosterImageId) is not { } poster)
+        {
+            return null;
+        }
+
+        return new VideoView(address, video.Title, Decorative(poster), VideoHint(uri));
+    }
 
     private SectionView View(PageSection<TImageId, TLink, TExtra> section)
     {
@@ -180,7 +203,7 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
         }
 
         var background = section.Tone == SectionTone.Image && section.BackgroundImageId is { } backgroundId ? Image(backgroundId) : null;
-        var poster = section.Video is { } video && Image(video.PosterImageId) is { } posterImage ? Decorative(posterImage) : null;
+        var video = ResolveVideo(section.Video);
         var button = section.Link is { } link ? Link(link.Target) : null;
         var photo = section.Person?.ImageId is { } photoId ? Image(photoId) : null;
         var extra = Extra is not null && !section.Extra.Equals(default);
@@ -189,9 +212,9 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
             || section.Person is not null
             || section.Quotes.Count > 0
             || extra
-            || poster is not null
+            || video is not null
             || button is not null;
-        return new SectionView(images, background, poster, button, photo, extra, hasParts);
+        return new SectionView(images, background, video, button, photo, extra, hasParts);
     }
 
     private static BandTone Tone(PageSection<TImageId, TLink, TExtra> section, SectionView view) => section.Tone switch
@@ -211,7 +234,7 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
     /// <summary>The parts of a section that the application resolved.</summary>
     /// <param name="Images">The images that resolved, in order.</param>
     /// <param name="Background">The background of an image band, or <see langword="null" />.</param>
-    /// <param name="Poster">The decorative poster of the video, or <see langword="null" /> when the video is left out.</param>
+    /// <param name="Video">The video, or <see langword="null" /> when its address or poster does not resolve.</param>
     /// <param name="Button">The button's address, or <see langword="null" /> when the button is left out.</param>
     /// <param name="Photo">The person's photo, or <see langword="null" />.</param>
     /// <param name="ShowsExtra">Whether the extension renders.</param>
@@ -219,7 +242,7 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
     private sealed record SectionView(
         IReadOnlyList<GalleryImage> Images,
         ResponsiveImage? Background,
-        ResponsiveImage? Poster,
+        VideoView? Video,
         LinkTarget? Button,
         ResponsiveImage? Photo,
         bool ShowsExtra,
@@ -228,4 +251,11 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
         /// <summary>Gets whether the section shows anything.</summary>
         public bool HasContent => HasParts || Images.Count > 0;
     }
+
+    /// <summary>A video whose address and poster resolved.</summary>
+    /// <param name="Address">The address of the video.</param>
+    /// <param name="Title">The title, which names the link.</param>
+    /// <param name="Poster">The decorative poster.</param>
+    /// <param name="Hint">The visually hidden hint that names the video's site.</param>
+    private sealed record VideoView(LinkTarget Address, string Title, ResponsiveImage Poster, string Hint);
 }

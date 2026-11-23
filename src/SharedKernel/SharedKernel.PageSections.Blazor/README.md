@@ -39,7 +39,7 @@ Reference the site stylesheet as `PandaBear.SharedKernel.Blazor.Site` describes;
 | `Link` | `Func<TLink, LinkTarget?>`: a validated link target as an address, such as a page's path in the current language. `null` leaves the button out. Required. |
 | `Extra` | `RenderFragment<TExtra>`: the application's part, for a section whose `Extra` is not `default`. Without it, extensions render nothing and do not count as content. |
 | `IsShown` | `Func<PageSection<…>, bool>`: which sections are shown, for example by a display condition in the extension. Unset shows every section. |
-| `HeadingIdFormat` | The composite format of a heading's id, `{0}` the section's position on the page from 1; `section-{0}` by default (`DefaultHeadingIdFormat`). A hidden section keeps its position, so the other ids never move. |
+| `HeadingIdFormat` | The composite format of a heading's id, `{0}` the section's position on the page from 1; `section-{0}` by default (`DefaultHeadingIdFormat`). A hidden section keeps its position, so the other ids never move. A format that gives every section the same id (no `{0}`, or an escaped `{{0}}`) or an id with white space throws `ArgumentException`. |
 | `VideoSiteHintFormat` | The visually hidden hint after a video's title, `{0}` the video's host without `www.`: `"(opens {0})"` reads "(opens youtube.com)". Required, in the language of the text. |
 | `TextLanguage` | A `ContentCulture` written as `lang` on the element around the sections when their text is not in the page's language, such as a fallback translation (WCAG 3.1.2). |
 | `TextAlignment` | `Band.TextAlignment` of every band: `null` inherits, `Center` centres the headings, text, byline, video link and button. |
@@ -59,7 +59,7 @@ The sections are inside one `div` (with `lang` when `TextLanguage` is set). For 
 6. the quotes, each a `Quote`;
 7. the application's `Extra`;
 8. the video, a `VideoLink` to its https address with the poster shown as decoration (the title names the link); it is left out when the
-   poster does not resolve. The poster must be self-hosted at root-relative addresses, as `VideoLink` requires;
+   poster does not resolve or the stored address is not a valid link. The poster must be self-hosted at root-relative addresses, as `VideoLink` requires;
 9. the button, a `ButtonLink` in a `p`, its `LinkStyle` (`Primary`, `Secondary`, `Outline`) as the `ButtonVariant` of the same name; it
    is left out when the target does not resolve;
 10. the images that resolve, an `ImageGrid` in the `Mosaic` layout, after the parts; with `BesideText` they stand beside the parts in

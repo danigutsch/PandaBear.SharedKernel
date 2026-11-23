@@ -331,13 +331,32 @@ public sealed class PageSectionsViewTests : BunitContext
     [Theory]
     [InlineData(" ")]
     [InlineData("section {0}")]
-    public void A_heading_ID_format_that_is_blank_or_gives_white_space_is_refused(string format)
+    [InlineData("intro")]
+    [InlineData("section-{{0}}")]
+    public void A_heading_ID_format_that_is_blank_gives_white_space_or_one_ID_for_every_section_is_refused(string format)
     {
         // Arrange & Act
         var render = () => this.RenderSections([Rich()], parameters => parameters.Add(view => view.HeadingIdFormat, format));
 
         // Assert
         render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(PageSectionsView<int, string, NoExtra>.HeadingIdFormat));
+    }
+
+    [Fact]
+    public void A_video_whose_stored_address_is_no_valid_link_is_left_out()
+    {
+        // Arrange
+        PageSection<int, string, NoExtra>[] sections =
+        [
+            Plain(new() { Video = new PageVideoDefinition<int>("https://www.youtube.com/watch?v=a b", Photo, "Só o vídeo") }),
+            Plain(new() { Text = "Texto.", Video = new PageVideoDefinition<int>("https://www.youtube.com/watch?v=a b", Photo, "Vídeo quebrado") }),
+        ];
+
+        // Act
+        var main = Html(this.RenderSections(sections));
+
+        // Assert
+        main.ShouldBe("<div><div class=\"site-band site-band--default\"><div class=\"site-band__inner\"><p>Texto.</p></div></div></div>");
     }
 
     [Fact]

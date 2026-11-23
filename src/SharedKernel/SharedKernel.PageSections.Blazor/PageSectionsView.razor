@@ -70,9 +70,9 @@
         {
             @Extra!(section.Extra)
         }
-        @if (section.Video is { } video && view.Poster is { } poster)
+        @if (view.Video is { } video)
         {
-            <VideoLink Href="@LinkTarget.FromString(video.Address.Value)" Title="@video.Title" Poster="@poster" SiteHint="@VideoHint(video.Address)" />
+            <VideoLink Href="@video.Address" Title="@video.Title" Poster="@video.Poster" SiteHint="@video.Hint" />
         }
         @if (section.Link is { } link && view.Button is { } button)
         {
