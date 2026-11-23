@@ -1,6 +1,6 @@
 # Action and container pin review
 
-Pin external Actions to immutable full commit SHAs listed in `.github/action-pins.json`, with the release as a trailing comment; `sharedkernel-repo verify-action-pins` fails on any disagreement (see [reusable workflows](reusable-workflows.md#pinned-third-party-actions)). Change a pin by editing the manifest and every reference together. Pin container resources to readable tags plus verified digests. Source declarations are authoritative; copied version inventories become stale. This is a manual review workflow, not a new updater or write-capable service.
+Pin external Actions to immutable full commit SHAs listed in `.github/action-pins.json`, with the release as a trailing comment; `dotnet repo verify-action-pins` fails on any disagreement (see [reusable workflows](reusable-workflows.md#pinned-third-party-actions)). Change a pin by editing the manifest and every reference together. Pin container resources to readable tags plus verified digests. Source declarations are authoritative; copied version inventories become stale. This is a manual review workflow, not a new updater or write-capable service.
 
 ## Standalone ownership
 

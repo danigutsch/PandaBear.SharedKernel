@@ -4,7 +4,7 @@ Date: 2026-11-08. Status: accepted.
 
 A machine's packages come from several package managers, and the same program is often available from more than one of
 them (`ripgrep` from apt and from cargo). Two managers that both own a package leave the machine in a state that
-neither can explain. `sharedkernel-packages plan` compares what a repository declares with what is installed and refuses
+neither can explain. `dotnet syspackages plan` compares what a repository declares with what is installed and refuses
 a declaration in which a package has more than one owner. It is the first step of a convergence tool: it reads and
 reports, and it changes nothing.
 

@@ -5,7 +5,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// <summary>Tests in Chromium that the JSON-LD script of a statically rendered page stays one script; they skip when the browser is not installed.</summary>
 public sealed class JsonLdBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
+    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public async Task Data_that_holds_a_closing_script_tag_stays_inside_one_script_that_the_browser_parses_back()

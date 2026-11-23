@@ -21,7 +21,7 @@ tools, written as .NET file-based (single-file) apps.
   defines the seams (interfaces and settings) for the parts that do. Each provider implementation is a separate
   library, `SharedKernel.<Capability>.<Provider>`, such as `.GitHub`, `.Forgejo`, `.K6`, or `.Bitwarden`, so a consumer
   references only the providers it uses and a new provider adds a library instead of changing the core. The capability
-  names the engine, not the tool: `sharedkernel-k6` can be a wrapper over a load-testing core and its k6 provider. A
+  names the engine, not the tool: `dotnet loadtest` can be a wrapper over a load-testing core and its k6 provider. A
   provider library exists only for an implementation verified against the provider's current documentation and
   covered by tests; an empty or speculative provider library is not created.
 - **Platform base libraries hold the low-level access that several providers share.** `SharedKernel.GitHub` holds the
@@ -100,7 +100,7 @@ capability libraries, each with its own tests, so the engines start from one imp
 An engine change consumes these libraries and does not extend them; logic that a second tool comes to need moves to
 the library that owns its concept in a change of its own.
 
-`sharedkernel-ci` and `sharedkernel-repo` build from a checkout of the revision before a candidate exists. A sparse
+`dotnet ci` and `dotnet repo` build from a checkout of the revision before a candidate exists. A sparse
 cone listing `tools/<tool>` and each referenced `src/SharedKernel/<library>` had to grow with every engine, here and in
 each consumer. The checkout is now the fixed cone `src` and `tools` at depth 1 (plus `.github` where a job uses the
 repository's actions or action pin manifest), which holds every library and tool, whatever they reference. Measured
@@ -139,7 +139,7 @@ future SDK lets a solution or a test project include one.
 
 - A tool package carries the assemblies of the libraries it references, as it already carried System.CommandLine.
   Each library is also its own preview package.
-- Workflows and consumers that build `sharedkernel-ci` or `sharedkernel-repo` from source check out the fixed cone
+- Workflows and consumers that build `dotnet ci` or `dotnet repo` from source check out the fixed cone
   `src` and `tools` instead of a per-library cone, so a new engine reference changes no workflow or consumer.
 - `PandaBear.SharedKernel.Packages` changes its public API: `IProcessRunner`, `ProcessOutput`, and `SystemProcessRunner`
   move to `PandaBear.Processes`, and the bounded runner is `BoundedProcessRunner`. Packages are preview, so this is

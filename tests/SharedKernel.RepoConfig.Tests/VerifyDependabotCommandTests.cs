@@ -141,6 +141,6 @@ public sealed class VerifyDependabotCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: The root has no .github/dependabot.yml or .github/dependabot.yaml file.\n");
+        result.StandardError.ShouldBe("repo: The root has no .github/dependabot.yml or .github/dependabot.yaml file.\n");
     }
 }

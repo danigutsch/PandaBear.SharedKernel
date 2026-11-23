@@ -4,7 +4,7 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-The forge-neutral CI engine behind `sharedkernel-ci`: it selects the test projects a change affects, runs them in
+The forge-neutral CI engine behind `dotnet ci`: it selects the test projects a change affects, runs them in
 slices with their services and evidence, checks changed projects without sockets, gates changed-code coverage,
 classifies and summarizes warnings, stages pinned package candidates, prunes old prereleases, runs Stryker.NET, builds
 OpenAPI documents, and verifies Conventional Commit messages. The consuming repository supplies its policy in

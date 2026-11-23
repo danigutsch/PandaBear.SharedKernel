@@ -9,7 +9,7 @@ using PandaBear.Repositories.GitHub;
 namespace PandaBear.RepoConfig.Tool;
 
 /// <summary>
-/// Builds the <c>sharedkernel-repo</c> command tree.
+/// Builds the <c>repo</c> command tree.
 /// </summary>
 internal static class RepoConfigCommandLine
 {

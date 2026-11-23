@@ -7,7 +7,7 @@ internal static partial class SocketRefusal
 {
     /// <summary>The explanation that replaces the raw output of a child process whose socket was refused.</summary>
     public const string Message =
-        "The sandbox blocks Unix domain sockets, which this step needs. Run `sharedkernel-sandbox doctor` to see what the sandbox allows.";
+        "The sandbox blocks Unix domain sockets, which this step needs. Run `dotnet sandbox doctor` to see what the sandbox allows.";
 
     /// <summary>
     /// Reports whether <paramref name="output"/> shows a refused socket: a <c>SocketException</c> with errno 13 (EACCES) or 1 (EPERM), or

@@ -474,7 +474,7 @@ public sealed class GitHubRoadmapIntakeTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe("sharedkernel-repo: GitHub import found an issue with conflicting type labels.\n");
+        error.ToString().ShouldBe("repo: GitHub import found an issue with conflicting type labels.\n");
         stateAfter.ShouldBe(stateBefore);
     }
 

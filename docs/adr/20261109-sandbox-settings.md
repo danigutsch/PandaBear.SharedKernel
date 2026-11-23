@@ -3,7 +3,7 @@
 Date: 2026-11-09. Status: accepted.
 
 A coding agent's sandbox is configured in its settings file, and a config manager once overwrote `sandbox.filesystem.allowWrite`
-wholesale, dropping entries that people had added by hand. `sharedkernel-sandbox settings plan|apply|verify` generates the
+wholesale, dropping entries that people had added by hand. `dotnet sandbox settings plan|apply|verify` generates the
 `sandbox` section from a profile plus the consumer's `.config/sharedkernel-sandbox.json`, and merges it into the existing file
 without taking anything away.
 

@@ -6,7 +6,7 @@ Coding agents run commands in a sandbox: on Linux a bubblewrap mount namespace, 
 proxy. Several .NET tools fail there with errors that do not say why. `dotnet format` in project mode and `dotnet test`
 crash with `SocketException (13): Permission denied`, because a .NET named pipe is a Unix domain socket on Linux and macOS
 and the sandbox runtime installs a rule that refuses to create any `AF_UNIX` socket. People lose time guessing at paths.
-`sharedkernel-sandbox doctor` tries the operations and reports what it found.
+`dotnet sandbox doctor` tries the operations and reports what it found.
 
 ## Decision
 

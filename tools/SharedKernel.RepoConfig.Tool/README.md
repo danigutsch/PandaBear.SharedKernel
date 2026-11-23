@@ -4,7 +4,7 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-`sharedkernel-repo` maintains repository roadmap configuration, its optional GitHub projection, dependency
+`dotnet repo` maintains repository roadmap configuration, its optional GitHub projection, dependency
 snapshots, and repository checks. It is a command-line wrapper over generic engines: the forge-neutral
 `PandaBear.SharedKernel.Repositories` library, its GitHub provider `PandaBear.SharedKernel.Repositories.GitHub`, its
 Forgejo provider `PandaBear.SharedKernel.Repositories.Forgejo` for label sync, and `PandaBear.SharedKernel.DevContainers`
@@ -24,14 +24,14 @@ The tool targets the repository's .NET version (`SharedKernelTargetFramework`) a
 ## Installation
 
 Install a validated candidate as a local tool from the feed that holds it, such as the folder that
-`sharedkernel-ci stage-candidate` stages a candidate in. Add the feed to `NuGet.Config` and map
+`dotnet ci stage-candidate` stages a candidate in. Add the feed to `NuGet.Config` and map
 `PandaBear.SharedKernel.*` to it. Map every other package, for example `*`, to the existing source, because
 a package without a mapping does not restore once source mapping is enabled. With the SDK pinned in
 `global.json`, `dotnet tool install` rejects `--add-source` when package source mapping is enabled.
 
 ```text
 dotnet tool install PandaBear.SharedKernel.RepoConfig.Tool --version <validated-candidate-version>
-dotnet tool run sharedkernel-repo -- <command>
+dotnet tool run repo -- <command>
 ```
 
 .NET tools run in full trust. Install only from trusted manifests and package sources.
@@ -43,39 +43,39 @@ deferred, and nothing here implies availability on nuget.org.
 ## Usage
 
 ```bash
-sharedkernel-repo init
-sharedkernel-repo verify --root path/to/repository
-sharedkernel-repo set github.repository owner/repository
-sharedkernel-repo get next-work --limit 5
-sharedkernel-repo get by-label "area: tooling"
-sharedkernel-repo github reconcile
-sharedkernel-repo github reconcile --force
-sharedkernel-repo github link-subissue --repository owner/repository --parent 10 --child 20
-sharedkernel-repo github link-subissue --repository owner/repository --parent 10 --child 20 --force
-sharedkernel-repo github sync-labels --repository owner/repository
-sharedkernel-repo github sync-labels --repository owner/repository --force
-sharedkernel-repo github sync-labels --repository owner/repository --forgejo https://codeberg.org --force
-sharedkernel-repo baseline verify
-sharedkernel-repo baseline apply
-sharedkernel-repo baseline apply --force
-sharedkernel-repo new --root ./example-repo --language dotnet
-sharedkernel-repo new --root ./example-repo --language dotnet --feature readme --feature signed-commits --force
-sharedkernel-repo automation publish-result --force
-sharedkernel-repo verify-podman-dns --verbosity quiet
-sharedkernel-repo verify-json
-sharedkernel-repo verify-line-endings
-sharedkernel-repo verify-links
-sharedkernel-repo verify-links roadmap/README.md
-sharedkernel-repo verify-gherkin
-sharedkernel-repo verify-gherkin tests/Features/booking.feature tests/Features/Tours
-sharedkernel-repo verify-action-pins
-sharedkernel-repo verify-action-pins --manifest .github/action-pins.json
-sharedkernel-repo verify-dependabot
-sharedkernel-repo verify-target-frameworks
-sharedkernel-repo verify-target-frameworks --root path/to/repository
-sharedkernel-repo dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository
-sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_OUTPUT"
-sharedkernel-repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
+dotnet repo init
+dotnet repo verify --root path/to/repository
+dotnet repo set github.repository owner/repository
+dotnet repo get next-work --limit 5
+dotnet repo get by-label "area: tooling"
+dotnet repo github reconcile
+dotnet repo github reconcile --force
+dotnet repo github link-subissue --repository owner/repository --parent 10 --child 20
+dotnet repo github link-subissue --repository owner/repository --parent 10 --child 20 --force
+dotnet repo github sync-labels --repository owner/repository
+dotnet repo github sync-labels --repository owner/repository --force
+dotnet repo github sync-labels --repository owner/repository --forgejo https://codeberg.org --force
+dotnet repo baseline verify
+dotnet repo baseline apply
+dotnet repo baseline apply --force
+dotnet repo new --root ./example-repo --language dotnet
+dotnet repo new --root ./example-repo --language dotnet --feature readme --feature signed-commits --force
+dotnet repo automation publish-result --force
+dotnet repo verify-podman-dns --verbosity quiet
+dotnet repo verify-json
+dotnet repo verify-line-endings
+dotnet repo verify-links
+dotnet repo verify-links roadmap/README.md
+dotnet repo verify-gherkin
+dotnet repo verify-gherkin tests/Features/booking.feature tests/Features/Tours
+dotnet repo verify-action-pins
+dotnet repo verify-action-pins --manifest .github/action-pins.json
+dotnet repo verify-dependabot
+dotnet repo verify-target-frameworks
+dotnet repo verify-target-frameworks --root path/to/repository
+dotnet repo dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository
+dotnet repo dependency verify-license-exceptions --github-output "$GITHUB_OUTPUT"
+dotnet repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 ```
 
 | Command | Purpose |
@@ -112,11 +112,11 @@ sharedkernel-repo verify-devcontainer --exec "dotnet --version" --exec "git --ve
 preview names the repository, base SHA, branch, and changed paths; the `dependency submit` preview names
 the snapshot, its size, and the endpoint. Every command except `verify-podman-dns` and `github link-subissue` takes `--root <path>`,
 which defaults to the current directory; relative `--snapshot`, `--github-output`, `--log-directory`,
-`--devcontainer-cli`, and `verify-links` paths resolve against it. Run `sharedkernel-repo <command> --help` for the
+`--devcontainer-cli`, and `verify-links` paths resolve against it. Run `dotnet repo <command> --help` for the
 options of each command.
 
 `[diagram]` before a command line prints how the tool parses it without running it, and exits 1 when the
-command line does not parse, as in `sharedkernel-repo [diagram] verify-json --root .`.
+command line does not parse, as in `dotnet repo [diagram] verify-json --root .`.
 
 ## Configuration
 
@@ -626,7 +626,7 @@ default-branch commit moved while it was read.
    `--keep-container` is given. A failed removal is reported and does not change the exit code.
 
 ```bash
-sharedkernel-repo verify-devcontainer --devcontainer-cli /usr/local/bin/devcontainer --keep-container --root .
+dotnet repo verify-devcontainer --devcontainer-cli /usr/local/bin/devcontainer --keep-container --root .
 ```
 
 ## Security commands
@@ -641,7 +641,7 @@ Generate a GitHub dependency-submission snapshot from the exact clean reviewed c
 loading, or downloading its packages:
 
 ```sh
-sharedkernel-repo dependency snapshot --root /path/to/reviewed-checkout --sha <commit-sha> --ref refs/heads/main --job <run-id> --correlator solution-nuget --output TestResults/dependency-snapshot.json
+dotnet repo dependency snapshot --root /path/to/reviewed-checkout --sha <commit-sha> --ref refs/heads/main --job <run-id> --correlator solution-nuget --output TestResults/dependency-snapshot.json
 ```
 
 The command reads the committed Git tree and blobs at the reviewed SHA, rather than trusting working-tree
@@ -668,7 +668,7 @@ still require the current candidate's artifacts.
 `dependency submit` sends the snapshot to GitHub's dependency submission API:
 
 ```sh
-sharedkernel-repo dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository --force
+dotnet repo dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository --force
 ```
 
 The snapshot must be a JSON object, and `--repository` must name `owner/name`. With `--force`, the command

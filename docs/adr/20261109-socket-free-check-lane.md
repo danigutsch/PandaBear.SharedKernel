@@ -10,7 +10,7 @@ directly.
 
 ## Decision
 
-- **A new command, `sharedkernel-ci local-check`.** The alternatives were `run --socket-free` and a tool of its own.
+- **A new command, `dotnet ci local-check`.** The alternatives were `run --socket-free` and a tool of its own.
   `run` reads a plan that `select` wrote for another job, builds one solution filter, starts services, collects coverage,
   and writes evidence for CI; its core is `dotnet test`, so a flag would change almost every phase and make the common
   path harder to read. A new tool would copy selection, the process runner, and the configuration. A command reuses
@@ -31,7 +31,7 @@ directly.
   them into a failure for CI. A change that selects no project, a checkout that is not a Git work tree, and a `--base`
   that is not a commit fail, so the command cannot pass having checked nothing.
 - **A refused socket is a failure with a pointer.** Output with a `SocketException`, or `Permission denied` next to a
-  socket or pipe, is reported as a sandbox that blocks sockets, with `sharedkernel-sandbox doctor` as the next step. It
+  socket or pipe, is reported as a sandbox that blocks sockets, with `dotnet sandbox doctor` as the next step. It
   is a failure, not a skip: the lane ran and did not finish. The CI tool does not depend on the sandbox tool project; the
   command name in the message is text.
 - **Same process rules.** Child processes start through the tool's runner: no shell, an absolute-path executable, the

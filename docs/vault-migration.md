@@ -2,7 +2,7 @@
 
 This guide is for you if you started moving from Keeper to Bitwarden, kept using both vaults, and want one
 complete vault on a self-hosted [Vaultwarden](https://github.com/dani-garcia/vaultwarden) server. You export both
-vaults, merge the exports offline with `sharedkernel-vault`, and import the result into an empty Vaultwarden
+vaults, merge the exports offline with `dotnet vault`, and import the result into an empty Vaultwarden
 vault.
 
 The tool is under development. Read the status in the
@@ -83,12 +83,12 @@ Anything marked unverified could not be confirmed in those sources.
    cd ~/src/PandaBear.SharedKernel
    dotnet build tools/SharedKernel.VaultManager.Tool/SharedKernel.VaultManager.Tool.csproj -c Release
    bin=~/src/PandaBear.SharedKernel/tools/SharedKernel.VaultManager.Tool/bin/Release/net10.0
-   alias sharedkernel-vault="$bin/SharedKernel.VaultManager.Tool"
+   alias dotnet vault="$bin/SharedKernel.VaultManager.Tool"
    cd ~/vault-merge
-   sharedkernel-vault --help
+   dotnet vault --help
    ```
 
-   If you installed the tool package instead, `sharedkernel-vault` is on your path and you skip the alias. In
+   If you installed the tool package instead, `dotnet vault` is on your path and you skip the alias. In
    every new shell, define the alias again and run `ulimit -c 0`.
 
 ## 2. Export Keeper with Commander
@@ -216,7 +216,7 @@ this merge. If you exported a zip, write `bitwarden.zip` wherever this guide wri
 2. Inspect the exports:
 
    ```bash
-   sharedkernel-vault inspect keeper.zip bitwarden.json
+   dotnet vault inspect keeper.zip bitwarden.json
    ```
 
    For a password-protected export, the tool asks for its password. For each input it prints the detected
@@ -247,7 +247,7 @@ this merge. If you exported a zip, write `bitwarden.zip` wherever this guide wri
    reused passwords, run:
 
    ```bash
-   sharedkernel-vault scan keeper.zip bitwarden.json --report scan-report.md
+   dotnet vault scan keeper.zip bitwarden.json --report scan-report.md
    ```
 
    It prints a summary and writes the full report to `scan-report.md`. A password shorter than 12 characters, of
@@ -279,7 +279,7 @@ unzip -l bitwarden.zip
 1. Run merge with a decisions file and a report:
 
    ```bash
-   sharedkernel-vault merge keeper.zip bitwarden.json \
+   dotnet vault merge keeper.zip bitwarden.json \
      --output merged.json --decisions decisions.json --report merge-report.md
    ```
 
@@ -476,7 +476,7 @@ front of it needs a matching body size limit, such as `client_max_body_size 525M
    as in step 3, save it as `check.json` in the working folder, and run:
 
    ```bash
-   sharedkernel-vault inspect merged.json check.json
+   dotnet vault inspect merged.json check.json
    ```
 
    Both files show the same item counts per type and the same folders.
@@ -600,7 +600,7 @@ writes the vaults.
    the brief is written.
 
    ```bash
-   sharedkernel-vault merge keeper.zip bitwarden.json \
+   dotnet vault merge keeper.zip bitwarden.json \
      --output merged.json --decisions decisions.json --report merge-report.md --brief brief.json
    ```
 
@@ -617,7 +617,7 @@ writes the vaults.
 3. Merge with the agent's decisions:
 
    ```bash
-   sharedkernel-vault merge keeper.zip bitwarden.json \
+   dotnet vault merge keeper.zip bitwarden.json \
      --output merged.json --decisions decisions.json --report merge-report.md \
      --brief brief.json --agent-decisions agent.json
    ```
@@ -641,7 +641,7 @@ that holds no secret value; you run the two commands that read and write the vau
 1. Write the catalog of the merged vault. It asks for the password of `merged.json`:
 
    ```bash
-   sharedkernel-vault catalog merged.json --output catalog.json --decisions notes.json
+   dotnet vault catalog merged.json --output catalog.json --decisions notes.json
    ```
 
    The catalog holds names, folders, favorites, website addresses with their user info, query, and fragment masked, text
@@ -653,7 +653,7 @@ that holds no secret value; you run the two commands that read and write the vau
    show every note without a finding, then save with `Ctrl+S`:
 
    ```bash
-   sharedkernel-vault review merged.json --decisions notes.json
+   dotnet vault review merged.json --decisions notes.json
    ```
 
    Or replace `"decision": "Pending"` in `notes.json` with `"Share"`, `"Private"`, or `"Hidden"`. The scanner can
@@ -667,7 +667,7 @@ that holds no secret value; you run the two commands that read and write the vau
 4. Preview what the edited catalog changes. It asks for the password of `merged.json` and writes nothing:
 
    ```bash
-   sharedkernel-vault apply merged.json --catalog catalog.json --decisions notes.json --dry-run
+   dotnet vault apply merged.json --catalog catalog.json --decisions notes.json --dry-run
    ```
 
    Each line names an item by its key and name and says what changes, such as a new name, another folder, or a website
@@ -678,7 +678,7 @@ that holds no secret value; you run the two commands that read and write the vau
 5. Apply the catalog. It asks for the password of `merged.json` and for a new password for `organized.json`:
 
    ```bash
-   sharedkernel-vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
+   dotnet vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
    ```
 
    `apply` refuses a catalog made from another file or from `merged.json` before a later merge, and writes nothing
@@ -809,7 +809,7 @@ seed that you deleted in one vault:
   press Ctrl+C.
 
   ```bash
-  sharedkernel-vault merge keeper.zip bitwarden.json \
+  dotnet vault merge keeper.zip bitwarden.json \
     --output unused.json --decisions all-conflicts.json --policy ask
   ```
 
@@ -823,12 +823,12 @@ seed that you deleted in one vault:
 
 ## The review UI
 
-`sharedkernel-vault review` is the interactive alternative to editing the decisions file: a full-screen terminal UI
+`dotnet vault review` is the interactive alternative to editing the decisions file: a full-screen terminal UI
 that shows each group of matched items side by side, with its findings, and saves your choices to the same decisions
 file. Run it in a terminal with the inputs of your merge:
 
 ```bash
-sharedkernel-vault review keeper.zip bitwarden.json --decisions decisions.json --output merged.json
+dotnet vault review keeper.zip bitwarden.json --decisions decisions.json --output merged.json
 ```
 
 Before the UI opens, the review checks the files as merge does and asks for the password of each password-protected

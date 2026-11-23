@@ -6,7 +6,7 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Writes the entries that [PandaBear.SharedKernel.Sandbox](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Sandbox/README.md) plans into a
 [Claude Code settings file](https://code.claude.com/docs/en/settings), by default the shared project file
-`.claude/settings.json`. The `sharedkernel-sandbox settings` commands are a command-line wrapper over this package.
+`.claude/settings.json`. The `dotnet sandbox settings` commands are a command-line wrapper over this package.
 
 ## Usage
 

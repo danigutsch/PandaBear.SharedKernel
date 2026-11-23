@@ -3,7 +3,7 @@ using PandaBear.Processes;
 namespace PandaBear.Versioning.Tests;
 
 /// <summary>
-/// Tests the restore check of pack-sharedkernel, which restores the packed packages and installs the packed tools from the new folder.
+/// Tests the restore check of pack, which restores the packed packages and installs the packed tools from the new folder.
 /// </summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class PackRestoreCheckTests

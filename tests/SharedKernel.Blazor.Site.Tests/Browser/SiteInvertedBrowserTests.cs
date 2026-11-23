@@ -7,7 +7,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// </summary>
 public sealed class SiteInvertedBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
+    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
     private const string Primary = "#1d4ed8";
     private const string PrimaryHover = "#1e40af";
     private const string OnPrimary = "#ffffff";

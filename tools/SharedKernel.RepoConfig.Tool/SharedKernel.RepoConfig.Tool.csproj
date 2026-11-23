@@ -4,7 +4,7 @@
         <IsPackable>true</IsPackable>
         <RootNamespace>PandaBear.RepoConfig.Tool</RootNamespace>
         <PackAsTool>true</PackAsTool>
-        <ToolCommandName>sharedkernel-repo</ToolCommandName>
+        <ToolCommandName>repo</ToolCommandName>
         <PackageId>PandaBear.SharedKernel.RepoConfig.Tool</PackageId>
         <Description>Repository structure, roadmap, and project configuration verification.</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>

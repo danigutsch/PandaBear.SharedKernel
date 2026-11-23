@@ -5,7 +5,7 @@
         <OutputType>Exe</OutputType>
         <RootNamespace>PandaBear.Documentation.Tool</RootNamespace>
         <PackAsTool>true</PackAsTool>
-        <ToolCommandName>sharedkernel-docs</ToolCommandName>
+        <ToolCommandName>docs</ToolCommandName>
         <PackageId>PandaBear.SharedKernel.Documentation.Tool</PackageId>
         <Description>Reusable generated Markdown and diagram automation for repositories.</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -12,7 +12,7 @@ using PandaBear.Repositories.GitHub;
 namespace PandaBear.RepoConfig.Tool;
 
 /// <summary>
-/// Implements the <c>sharedkernel-repo</c> commands and maps their failures to exit codes.
+/// Implements the <c>repo</c> commands and maps their failures to exit codes.
 /// </summary>
 internal static class RepoConfigToolApplication
 {
@@ -45,7 +45,7 @@ internal static class RepoConfigToolApplication
         catch (HttpRequestException)
         {
             // The transport message can carry request details, so it is never echoed.
-            await error.WriteLineAsync("sharedkernel-repo: GitHub sync request failed.".AsMemory(), ct).ConfigureAwait(false);
+            await error.WriteLineAsync("repo: GitHub sync request failed.".AsMemory(), ct).ConfigureAwait(false);
             return 1;
         }
         catch (Exception exception) when (exception is ArgumentException
@@ -615,7 +615,7 @@ internal static class RepoConfigToolApplication
     }
 
     private static Task WriteError(TextWriter error, string message, CancellationToken ct) =>
-        error.WriteLineAsync($"sharedkernel-repo: {ControlCharacters.Escape(message)}".AsMemory(), ct);
+        error.WriteLineAsync($"repo: {ControlCharacters.Escape(message)}".AsMemory(), ct);
 
     private static async Task WriteMessages(TextWriter output, IEnumerable<string> messages, CancellationToken ct)
     {

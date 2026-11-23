@@ -62,7 +62,7 @@ matching surrounding prose. A conformance config can compare a fact block with:
 - filtered registrations from configured top-level statements or methods
 
 Registration checks can also require exact runtime invocation counts and arguments. Diagnostics name
-the configured document or source path. Run the checks with `sharedkernel-docs check --config <path>`;
+the configured document or source path. Run the checks with `dotnet docs check --config <path>`;
 shell wrappers should only invoke that command.
 
 Checks can also associate facts with governed content blocks:

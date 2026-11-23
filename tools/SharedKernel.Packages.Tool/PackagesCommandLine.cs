@@ -4,7 +4,7 @@ using PandaBear.Processes;
 
 namespace PandaBear.Packages.Tool;
 
-/// <summary>Builds the <c>sharedkernel-packages</c> command tree.</summary>
+/// <summary>Builds the <c>syspackages</c> command tree.</summary>
 internal static class PackagesCommandLine
 {
     /// <summary>Creates the root command.</summary>

@@ -118,7 +118,7 @@ public sealed class VerifyGherkinCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: " + expectedMessage + "\n");
+        result.StandardError.ShouldBe("repo: " + expectedMessage + "\n");
     }
 
     [Fact]
@@ -204,7 +204,7 @@ public sealed class VerifyGherkinCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no gherkin section.\n");
+        result.StandardError.ShouldBe("repo: .config/sharedkernel-repo.json has no gherkin section.\n");
     }
 
     [Theory]
@@ -235,7 +235,7 @@ public sealed class VerifyGherkinCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldStartWith("sharedkernel-repo: .config/sharedkernel-repo.json" + expectedMessage, StringComparison.Ordinal);
+        result.StandardError.ShouldStartWith("repo: .config/sharedkernel-repo.json" + expectedMessage, StringComparison.Ordinal);
         result.StandardError.ShouldEndWith("\n", StringComparison.Ordinal);
     }
 }

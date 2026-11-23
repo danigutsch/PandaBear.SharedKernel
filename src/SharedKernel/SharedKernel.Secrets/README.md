@@ -2,7 +2,7 @@
 
 An engine for secrets that live in git as [age](https://age-encryption.org) and [SOPS](https://getsops.io) files:
 validated public recipients, references to identity files (never keys), creation rules, a SOPS metadata reader that fails
-closed, repository verification, and `SecretsRepository`, which runs the operations of `sharedkernel-secrets` over two seams,
+closed, repository verification, and `SecretsRepository`, which runs the operations of `dotnet secrets` over two seams,
 `IAgeTool` and `ISopsTool`. The providers that run the local programs are separate packages:
 [PandaBear.SharedKernel.Secrets.Age](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Secrets.Age/README.md)
 and [PandaBear.SharedKernel.Secrets.Sops](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Secrets.Sops/README.md).

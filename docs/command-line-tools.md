@@ -29,7 +29,7 @@ the consuming repository supplies them, as [Consumer configuration](#consumer-co
   use allow-listed absolute URLs.
 - Installation maps the candidate feed in `NuGet.Config`: with the SDK pinned in `global.json`, `dotnet tool
   install` rejects `--add-source` when package source mapping is enabled. Local-tool examples put `--` before the
-  tool's arguments, as in `dotnet tool run sharedkernel-docs -- --help`, because `dotnet tool run` answers
+  tool's arguments, as in `dotnet tool run docs -- --help`, because `dotnet tool run` answers
   `--help` itself.
 
 ## Commands and parsing
@@ -94,9 +94,9 @@ non-interactive commands and to how they start a UI.
 
 - A tool that applies consumer policy reads `<root>/.config/<tool-command>.json`, such as
   `.config/sharedkernel-repo.json`, where `--root` defaults to the current directory. No option names another
-  configuration file. The exceptions are `sharedkernel-docs`, which reads the file that `--config` names;
-  `sharedkernel-repo`, whose `security` commands read `.config/security-baseline.json` and whose roadmap commands
-  read `roadmap/config.json`; and `sharedkernel-playwright-mcp`, which reads `PLAYWRIGHT_MCP_*` environment
+  configuration file. The exceptions are `dotnet docs`, which reads the file that `--config` names;
+  `dotnet repo`, whose `security` commands read `.config/security-baseline.json` and whose roadmap commands
+  read `roadmap/config.json`; and `dotnet browsermcp`, which reads `PLAYWRIGHT_MCP_*` environment
   variables.
 - The file is strict JSON of at most 1 MiB with `"version": 1`. Property names are camelCase and match exactly;
   comments, trailing commas, and unknown or repeated properties are errors. Read it with
@@ -104,25 +104,25 @@ non-interactive commands and to how they start a UI.
   `UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow` and `AllowDuplicateProperties = false`. Errors name the
   file and the JSON path of the problem. A leading UTF-8 byte order mark is ignored.
 - A command fails when the file lacks the section it needs.
-- `sharedkernel-ci select`, `run`, `local-check`, `openapi`, `coverage`, and `run-mutation-tests` read `.config/sharedkernel-ci.json`:
+- `dotnet ci select`, `run`, `local-check`, `openapi`, `coverage`, and `run-mutation-tests` read `.config/sharedkernel-ci.json`:
   the solution, the full-validation and documentation path patterns, the always-selected test projects, whether changed
   projects need covering tests, the test slices with their OpenAPI targets, Playwright browsers, and services, the OpenAPI
   targets, the changed-code coverage threshold, source patterns, and symbol directories, and the `dotnet-stryker`
   version and Stryker config files. The
   [CI tool README](../tools/SharedKernel.CI.Tool/README.md#configuration) describes the format and the selection rules.
-- `sharedkernel-repo verify-links`, `verify-gherkin`, `dependency verify-license-exceptions`, `github sync-labels`, and
+- `dotnet repo verify-links`, `verify-gherkin`, `dependency verify-license-exceptions`, `github sync-labels`, and
   `baseline verify` and `apply` read `.config/sharedkernel-repo.json`: the documentation files to scan for links, the
   Gherkin rules, the license exceptions, the repository labels, and the repository baseline files, Git settings, and hooks. Tool engines stay generic: the
-  baseline names no forge, owner, or host, and only allowlisted Git settings are accepted. `sharedkernel-repo new` writes that file for a new repository. The
+  baseline names no forge, owner, or host, and only allowlisted Git settings are accepted. `dotnet repo new` writes that file for a new repository. The
   [repo tool README](../tools/SharedKernel.RepoConfig.Tool/README.md#configuration) describes the format.
-- `sharedkernel-k6 run` reads `.config/sharedkernel-k6.json`: the script and results directories, the container engine
+- `dotnet loadtest run` reads `.config/sharedkernel-k6.json`: the script and results directories, the container engine
   and digest-pinned image, and the scenarios with their script, base URL variable, forwarded environment variables,
   and optional host process. The [k6 tool README](../tools/SharedKernel.K6.Tool/README.md#configuration) describes
   the format.
-- `sharedkernel-sandbox doctor` optionally reads `.config/sharedkernel-sandbox.json`: the paths that the sandbox must
+- `dotnet sandbox doctor` optionally reads `.config/sharedkernel-sandbox.json`: the paths that the sandbox must
   not let a command read. Without the file it skips that check. The
   [sandbox tool README](../tools/SharedKernel.Sandbox.Tool/README.md#configuration) describes the format.
-  `sharedkernel-sandbox settings plan`, `apply`, and `verify` also read its optional `settings` section: the profile, the
+  `dotnet sandbox settings plan`, `apply`, and `verify` also read its optional `settings` section: the profile, the
   target settings file, and the entries to merge into the `sandbox` section of an agent settings file. They only add
   entries, preview unless `apply --force`, replace the file atomically, and refuse widening requests unless a flag whose
   name states the risk is passed. The
@@ -130,19 +130,19 @@ non-interactive commands and to how they start a UI.
   [ADR](adr/20261109-sandbox-settings.md) describe them. The probes, the configuration, and the format-independent
   plan live in the `SharedKernel.Sandbox` engine; the Claude Code settings file format and its atomic file store live
   in `SharedKernel.Sandbox.ClaudeCode`.
-- `sharedkernel-packages plan` reads `.config/sharedkernel-packages.json`: the packages that should be installed, per
+- `dotnet syspackages plan` reads `.config/sharedkernel-packages.json`: the packages that should be installed, per
   package manager. A package may have only one owner, so a name under two managers is an error. The
   [packages tool README](../tools/SharedKernel.Packages.Tool/README.md#configuration) describes the format. The optional
-  `minimumReleaseAgeDays` (0 to 3650) is the default age for `sharedkernel-packages updates`, which makes no network
+  `minimumReleaseAgeDays` (0 to 3650) is the default age for `dotnet syspackages updates`, which makes no network
   request unless `--allow-network` is given.
-- `sharedkernel-secrets` reads `.config/sharedkernel-secrets.json`: the creation rules, each with a path expression, the exact
+- `dotnet secrets` reads `.config/sharedkernel-secrets.json`: the creation rules, each with a path expression, the exact
   recipients, and the least number of recipients. The tool hard-codes no policy, so the minimum is the consumer's. It
   previews by default and changes files only with `--force` (`edit` instead needs a terminal), never overwrites a file it
   creates, replaces an encrypted file only through a checked, atomic rename, and takes plaintext only on standard input.
   The [secrets tool README](../tools/SharedKernel.Secrets.Tool/README.md#configuration) describes the format.
 - Paths in the file are relative to the root and use `/`. They are never rooted, have no empty, `.`, or `..`
   segments, and resolve under the root without following symbolic links.
-  The one exception is `deniedReadPaths` of `sharedkernel-sandbox`: it names places outside the repository, so each entry is
+  The one exception is `deniedReadPaths` of `dotnet sandbox`: it names places outside the repository, so each entry is
   absolute or starts with `~/`, and the tool only probes it and never writes there.
 - Path patterns match with `FileSystemName.MatchesSimpleExpression(pattern, path, ignoreCase: false)`. Regular
   expressions from configuration compile with `RegexOptions.NonBacktracking` and a match timeout.
@@ -150,7 +150,7 @@ non-interactive commands and to how they start a UI.
 ## GitHub Actions
 
 - Commands write GitHub Actions outputs and step summaries only to the files that `--github-output <path>` and
-  `--github-summary <path>` name. Except for the `sharedkernel-repo automation` steps, they do not read
+  `--github-summary <path>` name. Except for the `dotnet repo automation` steps, they do not read
   `GITHUB_OUTPUT` or `GITHUB_STEP_SUMMARY`.
 - Workflows hand values to `run:` scripts through `env:`, never through `${{ }}` expressions inside the script.
   Pull request text reaches a command only through `--event "$GITHUB_EVENT_PATH"`.
@@ -160,7 +160,7 @@ non-interactive commands and to how they start a UI.
 ## Running before a candidate is staged
 
 A consumer job that runs before its pinned candidate is staged, such as the job that stages it, builds
-`sharedkernel-ci` or `sharedkernel-repo` from SharedKernel source at the pin's `libraryRevision`:
+`dotnet ci` or `dotnet repo` from SharedKernel source at the pin's `libraryRevision`:
 
 1. Check out that revision of `danigutsch/PandaBear.SharedKernel` at depth 1 into a directory of its own, with a cone
    sparse checkout of `src` and `tools` (add `.github` when the job also uses the repository's actions or action pin
@@ -173,7 +173,7 @@ A consumer job that runs before its pinned candidate is staged, such as the job 
 3. Run `dotnet run --project <checkout>/tools/<project> -c Release --no-build -- <command>`.
 
 The consumer and SharedKernel pin the same SDK version and roll-forward policy in `global.json`;
-`sharedkernel-ci stage-candidate` refuses to stage a candidate when they differ. Jobs that run after staging install
+`dotnet ci stage-candidate` refuses to stage a candidate when they differ. Jobs that run after staging install
 the candidate's tools from that local feed and run them with `dotnet tool run`.
 
 ## Engines and wrappers

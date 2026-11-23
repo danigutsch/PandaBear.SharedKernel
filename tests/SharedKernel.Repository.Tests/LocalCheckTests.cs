@@ -216,7 +216,7 @@ public sealed class LocalCheckTests
         // Assert
         result.ExitCode.ShouldBe(2);
         LocalCheckReport.Lane(result.Output, "build").ShouldContain("The sandbox blocks Unix domain sockets", StringComparison.Ordinal);
-        LocalCheckReport.Lane(result.Output, "build").ShouldContain("sharedkernel-sandbox doctor", StringComparison.Ordinal);
+        LocalCheckReport.Lane(result.Output, "build").ShouldContain("dotnet sandbox doctor", StringComparison.Ordinal);
         result.Output.ShouldNotContain("Socket.Bind", StringComparison.Ordinal);
         LocalCheckReport.Lane(result.Output, "tests").ShouldContain("SKIPPED", StringComparison.Ordinal);
         LocalCheckReport.Lane(result.Output, "tests").ShouldContain("build lane did not pass", StringComparison.Ordinal);

@@ -54,7 +54,7 @@ internal sealed partial class ConsumerVerificationScope : IDisposable
         WriteFile("src/Consumer/Consumer.csproj", "<Project />");
         WriteFile("src/Consumer/packages.lock.json", Lock("Direct", Version));
         WriteFile("Directory.Packages.props", """<Project><PackageVersion Include="PandaBear.SharedKernel.Results" Version="1.0.0-alpha.1" /></Project>""");
-        WriteFile(".config/dotnet-tools.json", """{ "version": 1, "isRoot": true, "tools": { "pandabear.sharedkernel.ci.tool": { "version": "1.0.0-alpha.1", "commands": ["sharedkernel-ci"] } } }""");
+        WriteFile(".config/dotnet-tools.json", """{ "version": 1, "isRoot": true, "tools": { "pandabear.sharedkernel.ci.tool": { "version": "1.0.0-alpha.1", "commands": ["ci"] } } }""");
         WriteFile("NuGet.Config", NuGetConfig);
         Directory.CreateDirectory(CandidateDirectory);
         File.WriteAllText(Path.Combine(CandidateDirectory, Package), "candidate package bytes");

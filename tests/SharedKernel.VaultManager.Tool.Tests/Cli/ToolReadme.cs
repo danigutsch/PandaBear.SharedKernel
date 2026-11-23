@@ -3,10 +3,10 @@ namespace PandaBear.VaultManager.Tool.Tests.Cli;
 /// <summary>Reads the tool README from the repository the tests were built from.</summary>
 internal static class ToolReadme
 {
-    private const string Invocation = "sharedkernel-vault ";
+    private const string Invocation = "dotnet vault ";
 
     /// <summary>
-    /// Returns the arguments of every <c>sharedkernel-vault</c> command line in the README, in file order. A command line
+    /// Returns the arguments of every <c>dotnet vault</c> command line in the README, in file order. A command line
     /// ends at the end of its line or of its inline code span.
     /// </summary>
     public static IReadOnlyList<string[]> CommandLines()

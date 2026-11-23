@@ -103,7 +103,7 @@ public sealed class ConsumerVerificationTests
     [InlineData("src/Consumer/packages.lock.json", "project-lock", "src/Consumer/packages.lock.json references SharedKernel source PandaBear.SharedKernel.Results instead of the candidate's package.")]
     [InlineData("src/Consumer/packages.lock.json", "{}", "src/Consumer/packages.lock.json has no dependencies.")]
     [InlineData("src/Consumer/Consumer.csproj", """<Project><ItemGroup><ProjectReference Include="..\..\lib\SharedKernel.Results\SharedKernel.Results.csproj" /></ItemGroup></Project>""", "src/Consumer/Consumer.csproj references SharedKernel source SharedKernel.Results instead of the candidate's package.")]
-    [InlineData(".config/dotnet-tools.json", """{ "version": 1, "isRoot": true, "tools": { "PANDABEAR.SHAREDKERNEL.CI.TOOL": { "version": "0.9.0", "commands": ["sharedkernel-ci"] } } }""", ".config/dotnet-tools.json: PANDABEAR.SHAREDKERNEL.CI.TOOL has version 0.9.0, not the candidate version 1.0.0-alpha.1.")]
+    [InlineData(".config/dotnet-tools.json", """{ "version": 1, "isRoot": true, "tools": { "PANDABEAR.SHAREDKERNEL.CI.TOOL": { "version": "0.9.0", "commands": ["ci"] } } }""", ".config/dotnet-tools.json: PANDABEAR.SHAREDKERNEL.CI.TOOL has version 0.9.0, not the candidate version 1.0.0-alpha.1.")]
     [InlineData("Consumer.slnx", """<Solution><Project Path="../Outside/Outside.csproj" /></Solution>""", "Consumer.slnx lists a project outside the repository: ../Outside/Outside.csproj.")]
     [InlineData("Second.slnx", "<Solution />", "The repository root has 2 .slnx files; name one with --solution.")]
     [InlineData("NuGet.Config", "no-source-clear", "NuGet.Config must clear packageSources and fallbackPackageFolders")]

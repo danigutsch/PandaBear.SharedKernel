@@ -34,7 +34,7 @@ from a local or private feed:
 dotnet tool install --global PandaBear.SharedKernel.VaultManager.Tool --prerelease --add-source <feed>
 ```
 
-The command is `sharedkernel-vault`. Run it in a terminal: passwords are typed at a prompt.
+The command is `dotnet vault`. Run it in a terminal: passwords are typed at a prompt.
 
 ## Usage
 
@@ -47,20 +47,20 @@ and exits with code 3.
 1. Check what each export holds:
 
    ```sh
-   sharedkernel-vault inspect keeper.zip bitwarden.json
+   dotnet vault inspect keeper.zip bitwarden.json
    ```
 
 2. Review the secrets found outside their fields and the weak or reused passwords:
 
    ```sh
-   sharedkernel-vault scan keeper.zip bitwarden.json --report scan.md
+   dotnet vault scan keeper.zip bitwarden.json --report scan.md
    ```
 
 3. Merge. When fields or findings need a decision, the merge writes no vault, adds pending entries to the
    decisions file, and exits with code 2:
 
    ```sh
-   sharedkernel-vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json --report merge.md
+   dotnet vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json --report merge.md
    ```
 
 4. Decide each pending entry and run the same merge again. Repeat until it exits with code 0. Replace the pending
@@ -68,16 +68,16 @@ and exits with code 3.
    the same file with `Ctrl+S`:
 
    ```sh
-   sharedkernel-vault review keeper.zip bitwarden.json --decisions decisions.json
+   dotnet vault review keeper.zip bitwarden.json --decisions decisions.json
    ```
 
 5. Optionally, organize the merged vault with a person or an agent who must not see its secrets: write a catalog,
    decide which notes it may show, let them edit only the catalog, and apply it:
 
    ```sh
-   sharedkernel-vault catalog merged.json --output catalog.json --decisions notes.json
-   sharedkernel-vault apply merged.json --catalog catalog.json --decisions notes.json --dry-run
-   sharedkernel-vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
+   dotnet vault catalog merged.json --output catalog.json --decisions notes.json
+   dotnet vault apply merged.json --catalog catalog.json --decisions notes.json --dry-run
+   dotnet vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
    ```
 
 6. Import the merged or organized vault into an empty Bitwarden or Vaultwarden vault with its file password, then
@@ -130,8 +130,8 @@ decision, or while it holds a value that Bitwarden would reject.
 These merges take values from the newer input or from the Keeper export:
 
 ```sh
-sharedkernel-vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json
-sharedkernel-vault merge keeper.zip bitwarden.json -o merged.json --decisions decisions.json --policy prefer:keeper.zip
+dotnet vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json
+dotnet vault merge keeper.zip bitwarden.json -o merged.json --decisions decisions.json --policy prefer:keeper.zip
 ```
 
 ### `review <inputs>... [options]`
@@ -147,7 +147,7 @@ Opens a full-screen terminal UI for the decisions that `merge` leaves to the dec
 | `--force` | Allows replacing an existing output file. Needs `--output`. |
 
 ```sh
-sharedkernel-vault review keeper.zip bitwarden.json --decisions decisions.json --output merged.json
+dotnet vault review keeper.zip bitwarden.json --decisions decisions.json --output merged.json
 ```
 
 The review needs a terminal. When standard input or standard output is redirected, it exits with code 3 before it
@@ -237,7 +237,7 @@ password-protected input asks for its password at the terminal.
 | `--force` | Allows replacing an existing catalog file. |
 
 ```sh
-sharedkernel-vault catalog merged.json --output catalog.json --decisions notes.json
+dotnet vault catalog merged.json --output catalog.json --decisions notes.json
 ```
 
 Each catalog item has a `key`, its origin key, which may not change, and these parts, which may be edited:
@@ -279,8 +279,8 @@ unless `--plaintext` is given.
 | `--allow-removals` | Applies a catalog that removes website addresses, shown text fields, shared notes, or declared folders. |
 
 ```sh
-sharedkernel-vault apply merged.json --catalog catalog.json --decisions notes.json --dry-run
-sharedkernel-vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
+dotnet vault apply merged.json --catalog catalog.json --decisions notes.json --dry-run
+dotnet vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
 ```
 
 The catalog applies only to the exact file it was made from: a different file name or any change to the file, which
@@ -547,7 +547,7 @@ that reads or writes a vault.
 2. Merge with a brief:
 
    ```sh
-   sharedkernel-vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json --report merge-report.md --brief brief.json
+   dotnet vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json --report merge-report.md --brief brief.json
    ```
 
 3. Give the agent a copy of `brief.json` to read, the format and limits under [Agent decisions](#agent-decisions), and
@@ -556,7 +556,7 @@ that reads or writes a vault.
 4. Merge with the agent's decisions:
 
    ```sh
-   sharedkernel-vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json --report merge-report.md --brief brief.json --agent-decisions agent.json
+   dotnet vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json --report merge-report.md --brief brief.json --agent-decisions agent.json
    ```
 
 5. When it exits with code 2, decide the pending entries in `decisions.json` and run the same command again. Before the
@@ -575,13 +575,13 @@ catalog, and you apply it:
    covers more sites, because Bitwarden offers a login's password on the sites its addresses match:
 
    ```sh
-   sharedkernel-vault apply merged.json --catalog catalog.json --decisions notes.json --dry-run
+   dotnet vault apply merged.json --catalog catalog.json --decisions notes.json --dry-run
    ```
 
 4. Apply it. Add `--allow-removals` only when you agree with every removal the dry run lists:
 
    ```sh
-   sharedkernel-vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
+   dotnet vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
    ```
 
 ## Exit codes
@@ -674,7 +674,7 @@ that System.CommandLine repeats cannot send escape sequences either.
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.VaultManager.Tool`. C# namespace: `PandaBear.VaultManager.Tool`.
-Assembly and project identity: `SharedKernel.VaultManager.Tool`. Command: `sharedkernel-vault`.
+Assembly and project identity: `SharedKernel.VaultManager.Tool`. Command: `dotnet vault`.
 
 The tool is a command-line wrapper over the vault engine: `SharedKernel.Vault` (matching, merging, secret scanning,
 reports, and the pipeline), `SharedKernel.Vault.Bitwarden`, and `SharedKernel.Vault.Keeper`. The tool keeps the

@@ -272,7 +272,7 @@ public sealed class RepositoryValidationTests
         using var manifest = JsonDocument.Parse(await File.ReadAllTextAsync(Path.Combine(selection, "execution-library", "manifest.json"), ct));
         manifest.RootElement.GetProperty("status").GetString().ShouldBe("passed");
         var summary = await File.ReadAllTextAsync(Path.Combine(scope.Root, "summary.md"), ct);
-        summary.ShouldStartWith("previous\n## sharedkernel-ci run library: passed\n\n| Phase | Status | Seconds |\n| --- | --- | --- |\n| load | passed | ", StringComparison.Ordinal);
+        summary.ShouldStartWith("previous\n## ci run library: passed\n\n| Phase | Status | Seconds |\n| --- | --- | --- |\n| load | passed | ", StringComparison.Ordinal);
         summary.ShouldContain("| test | passed | ", StringComparison.Ordinal);
     }
 

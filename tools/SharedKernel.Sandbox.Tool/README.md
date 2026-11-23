@@ -26,17 +26,17 @@ Install a validated candidate as a local tool from a trusted feed. Add the feed 
 dotnet tool install PandaBear.SharedKernel.Sandbox.Tool --version <validated-candidate-version>
 ```
 
-A local tool runs as `dotnet tool run sharedkernel-sandbox -- doctor`.
+A local tool runs as `dotnet tool run sandbox -- doctor`.
 
 ## Usage
 
 ```text
-sharedkernel-sandbox doctor
-sharedkernel-sandbox doctor --root ../app
-sharedkernel-sandbox settings plan
-sharedkernel-sandbox settings apply --force
-sharedkernel-sandbox settings verify
-sharedkernel-sandbox --help
+dotnet sandbox doctor
+dotnet sandbox doctor --root ../app
+dotnet sandbox settings plan
+dotnet sandbox settings apply --force
+dotnet sandbox settings verify
+dotnet sandbox --help
 ```
 
 `doctor` takes `--root <path>`, the repository root that holds the optional configuration file, and defaults to the
@@ -146,8 +146,8 @@ that the file lacks and exits 1 on drift; entries it does not manage are never r
 successful one has nothing to change.
 
 ```text
-sharedkernel-sandbox settings apply --force --root ../app
-sharedkernel-sandbox settings plan --accept-risk-excluded-commands
+dotnet sandbox settings apply --force --root ../app
+dotnet sandbox settings plan --accept-risk-excluded-commands
 ```
 
 Limits: the file is read as strict JSON of at most 1 MiB (no comments, trailing commas, or repeated properties) and is

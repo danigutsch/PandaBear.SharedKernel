@@ -109,7 +109,7 @@ public sealed class ForgejoLabelSyncCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe(string.Empty);
-        error.ShouldBe("sharedkernel-repo: Set FORGEJO_TOKEN to a token that may write the labels of owner/repository; --force sent no request.\n");
+        error.ShouldBe("repo: Set FORGEJO_TOKEN to a token that may write the labels of owner/repository; --force sent no request.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -129,7 +129,7 @@ public sealed class ForgejoLabelSyncCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe(string.Empty);
-        error.ShouldBe("sharedkernel-repo: --repository must name a Forgejo repository as owner/name.\n");
+        error.ShouldBe("repo: --repository must name a Forgejo repository as owner/name.\n");
         handler.Requests.ShouldBeEmpty();
     }
 

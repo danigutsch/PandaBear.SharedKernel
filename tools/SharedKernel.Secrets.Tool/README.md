@@ -25,7 +25,7 @@ Install a validated candidate as a local tool from a trusted feed. Add the feed 
 dotnet tool install PandaBear.SharedKernel.Secrets.Tool --version <validated-candidate-version>
 ```
 
-A local tool runs as `dotnet tool run sharedkernel-secrets -- verify`.
+A local tool runs as `dotnet tool run secrets -- verify`.
 
 ## Usage
 
@@ -33,27 +33,27 @@ Changes are previewed unless `--force` is given. `--root <path>` is the reposito
 file arguments are relative to it.
 
 ```text
-sharedkernel-secrets keygen --output ~/.config/age/work.txt
-sharedkernel-secrets keygen --output ~/.config/age/work.txt --force
-sharedkernel-secrets encrypt secrets/app.sops.yaml
-sharedkernel-secrets encrypt secrets/app.sops.yaml --force
-sharedkernel-secrets decrypt secrets/app.sops.yaml --identity ~/.config/age/work.txt
-sharedkernel-secrets decrypt secrets/app.sops.yaml#db.password --identity ~/.config/age/work.txt
-sharedkernel-secrets decrypt secrets/app.sops.yaml --identity ~/.config/age/work.txt --output plain.yaml --force
-sharedkernel-secrets recipients list secrets/app.sops.yaml
-sharedkernel-secrets recipients check secrets/app.sops.yaml
-sharedkernel-secrets recipients check secrets/app.sops.yaml --prove-with-identity ~/.config/age/work.txt
-sharedkernel-secrets recipients check secrets/app.sops.yaml --prove-with-identity ~/.config/age/work.txt --prove-absent-identity ~/.config/age/revoked.txt
-sharedkernel-secrets recipients update secrets/app.sops.yaml
-sharedkernel-secrets recipients update secrets/app.sops.yaml --identity ~/.config/age/work.txt --force
-sharedkernel-secrets rotate secrets/app.sops.yaml
-sharedkernel-secrets rotate secrets/app.sops.yaml --identity ~/.config/age/work.txt --force
-sharedkernel-secrets edit secrets/app.sops.yaml --identity ~/.config/age/work.txt
-sharedkernel-secrets verify
-sharedkernel-secrets verify --base origin/main
-sharedkernel-secrets verify --base origin/main --allow-changed-recipients
-sharedkernel-secrets verify --allow-unverified-files
-sharedkernel-secrets --help
+dotnet secrets keygen --output ~/.config/age/work.txt
+dotnet secrets keygen --output ~/.config/age/work.txt --force
+dotnet secrets encrypt secrets/app.sops.yaml
+dotnet secrets encrypt secrets/app.sops.yaml --force
+dotnet secrets decrypt secrets/app.sops.yaml --identity ~/.config/age/work.txt
+dotnet secrets decrypt secrets/app.sops.yaml#db.password --identity ~/.config/age/work.txt
+dotnet secrets decrypt secrets/app.sops.yaml --identity ~/.config/age/work.txt --output plain.yaml --force
+dotnet secrets recipients list secrets/app.sops.yaml
+dotnet secrets recipients check secrets/app.sops.yaml
+dotnet secrets recipients check secrets/app.sops.yaml --prove-with-identity ~/.config/age/work.txt
+dotnet secrets recipients check secrets/app.sops.yaml --prove-with-identity ~/.config/age/work.txt --prove-absent-identity ~/.config/age/revoked.txt
+dotnet secrets recipients update secrets/app.sops.yaml
+dotnet secrets recipients update secrets/app.sops.yaml --identity ~/.config/age/work.txt --force
+dotnet secrets rotate secrets/app.sops.yaml
+dotnet secrets rotate secrets/app.sops.yaml --identity ~/.config/age/work.txt --force
+dotnet secrets edit secrets/app.sops.yaml --identity ~/.config/age/work.txt
+dotnet secrets verify
+dotnet secrets verify --base origin/main
+dotnet secrets verify --base origin/main --allow-changed-recipients
+dotnet secrets verify --allow-unverified-files
+dotnet secrets --help
 ```
 
 - `keygen` runs `age-keygen`, which writes the identity file with mode 0600, and prints only the public recipient. It never
@@ -61,7 +61,7 @@ sharedkernel-secrets --help
 - `encrypt` finds the first creation rule that matches the new file, reads the plaintext from standard input (up to 16 MiB),
   encrypts it with `sops` to exactly that rule's recipients, creates the file, and reads it back to check the recipients. It never
   overwrites a file; without `--force` it reads nothing and writes nothing. For example
-  `printf 'db:\n  password: ...\n' | sharedkernel-secrets encrypt secrets/app.sops.yaml --force`, with the value coming from a
+  `printf 'db:\n  password: ...\n' | dotnet secrets encrypt secrets/app.sops.yaml --force`, with the value coming from a
   file or a password manager rather than your shell history.
 - `decrypt` writes the plaintext to standard output exactly as it is, unescaped, with no added newline. `file#key.path` decrypts
   one value (`servers[0].token` indexes a list). The identity is `--identity <path>` or the path in `SOPS_AGE_KEY_FILE`, never the

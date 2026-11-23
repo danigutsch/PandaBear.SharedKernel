@@ -6,7 +6,7 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Forge-neutral repository governance. It reads the consumer configuration in `.config/sharedkernel-repo.json`,
 plans and applies the managed baseline files and Git settings, starts new repositories, keeps the roadmap model under
-`roadmap/`, and verifies repository content. The `sharedkernel-repo` tool is a command-line wrapper over this
+`roadmap/`, and verifies repository content. The `dotnet repo` tool is a command-line wrapper over this
 package and its providers; its
 [README](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.RepoConfig.Tool/README.md)
 documents the configuration format and every check.

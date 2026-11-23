@@ -55,7 +55,7 @@ public sealed class RoadmapAutomationCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe("sharedkernel-repo: Roadmap automation requires GITHUB_REPOSITORY.\n");
+        error.ToString().ShouldBe("repo: Roadmap automation requires GITHUB_REPOSITORY.\n");
     }
 
     [Fact]
@@ -217,7 +217,7 @@ public sealed class RoadmapAutomationCommandTests
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
         error.ToString().ShouldBe(
-            "sharedkernel-repo: Roadmap automation result seal is invalid or was tampered with.\n");
+            "repo: Roadmap automation result seal is invalid or was tampered with.\n");
         previewHandler.Requests.ShouldAllSatisfy(request =>
         {
             request.PathAndQuery.ShouldBe("/graphql");

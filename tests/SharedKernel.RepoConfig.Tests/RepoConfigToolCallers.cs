@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace PandaBear.RepoConfig.Tests;
 
-/// <summary>Finds <c>sharedkernel-repo</c> command lines in the repository workflows.</summary>
+/// <summary>Finds <c>repo</c> command lines in the repository workflows.</summary>
 internal static partial class RepoConfigToolCallers
 {
     /// <summary>Returns every tool invocation found in the <c>.github/workflows</c> YAML files under <paramref name="root"/>, with its arguments split into tokens.</summary>
@@ -26,6 +26,6 @@ internal static partial class RepoConfigToolCallers
     }
 
     // A source-built run passes the arguments after "--"; an installed tool takes them after its command name.
-    [GeneratedRegex(@"(?:tools/SharedKernel\.RepoConfig\.Tool[^\n`]*? --|(?<![\w.-])sharedkernel-repo(?: --)?) (?<arguments>[^\n`]*)", RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"(?:tools/SharedKernel\.RepoConfig\.Tool[^\n`]*? --|(?:dotnet tool run |dotnet )repo(?: --)?) (?<arguments>[^\n`]*)", RegexOptions.CultureInvariant)]
     private static partial Regex Invocation();
 }

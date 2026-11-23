@@ -5,7 +5,7 @@ using PandaBear.LoadTesting;
 
 namespace PandaBear.K6.Tool;
 
-/// <summary>Builds the <c>sharedkernel-k6</c> command tree.</summary>
+/// <summary>Builds the <c>loadtest</c> command tree.</summary>
 internal static class K6CommandLine
 {
     /// <summary>Exit code for invalid configuration, a rejected argument or target, or a failed host or runner start.</summary>

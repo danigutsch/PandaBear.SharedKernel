@@ -5,7 +5,7 @@
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
 Reusable SemVer and Conventional Commit release-impact primitives, and the release engine of the SharedKernel
-repository, which `sharedkernel-version` (`tools/SharedKernel.Versioning.Tool`) wraps.
+repository, which `dotnet release` (`tools/SharedKernel.Versioning.Tool`) wraps.
 
 The version policy types (`SemanticVersion`, `ConventionalCommitParser`, `VersionCalculation`,
 `ReleaseVersionCalculator`) are pure and independent from CI, release workflows, and application hosts. The release

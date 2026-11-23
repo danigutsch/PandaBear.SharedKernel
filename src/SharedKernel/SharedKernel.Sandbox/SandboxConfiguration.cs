@@ -6,5 +6,5 @@ namespace PandaBear.Sandbox;
 /// Paths that the sandbox must not let a command read, such as credential folders. Each is absolute or starts with
 /// <c>~/</c>. The tool embeds no path of its own.
 /// </param>
-/// <param name="Settings">Optional: what <c>sharedkernel-sandbox settings</c> manages in an agent settings file.</param>
+/// <param name="Settings">Optional: what <c>dotnet sandbox settings</c> manages in an agent settings file.</param>
 public sealed record SandboxConfiguration(int Version, IReadOnlyList<string> DeniedReadPaths, SettingsConfiguration? Settings = null);

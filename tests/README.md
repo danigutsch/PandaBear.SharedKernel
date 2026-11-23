@@ -13,7 +13,7 @@ Coverage uses the existing `coverlet.MTP` extension; collection and its limits a
 then borrow it or start one of their own (see `SharedKernel.Npgsql.Testing/README.md` and
 `SharedKernel.Aspire.Hosting.Umami.Testing/README.md`). The assemblies stay separate and run in parallel.
 
-- CI runs them together in the `services` slice (`sharedkernel-ci run --slice services`). The tool starts the host
+- CI runs them together in the `services` slice (`dotnet ci run --slice services`). The tool starts the host
   `SharedKernel.TestServices.Host` once, waits for its ready file, runs the tests with the PostgreSQL server connection string in
   `SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING` and the Umami website connection string in
   `SHAREDKERNEL_TESTING_UMAMI_CONNECTION_STRING`, and stops the host afterwards, so a complete run creates one PostgreSQL container

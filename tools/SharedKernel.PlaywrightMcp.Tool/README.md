@@ -21,20 +21,20 @@ SDK pinned in `global.json`, `dotnet tool install` rejects `--add-source` when p
 dotnet tool install PandaBear.SharedKernel.PlaywrightMcp.Tool --version <validated-candidate-version>
 ```
 
-A local tool runs as `dotnet tool run sharedkernel-playwright-mcp -- <command>`.
+A local tool runs as `dotnet tool run browsermcp -- <command>`.
 
 ## Usage
 
 ```text
-sharedkernel-playwright-mcp prepare    # pull the pinned image
-sharedkernel-playwright-mcp serve      # run the stdio MCP server
-sharedkernel-playwright-mcp clean      # remove the pinned image
-sharedkernel-playwright-mcp --help
-sharedkernel-playwright-mcp --version
+dotnet browsermcp prepare    # pull the pinned image
+dotnet browsermcp serve      # run the stdio MCP server
+dotnet browsermcp clean      # remove the pinned image
+dotnet browsermcp --help
+dotnet browsermcp --version
 ```
 
 Run `prepare` first; `serve` starts the image with `--pull=never`. Configure the MCP client to start
-`sharedkernel-playwright-mcp serve`. `serve` writes only the MCP protocol to standard output and diagnostics to
+`dotnet browsermcp serve`. `serve` writes only the MCP protocol to standard output and diagnostics to
 standard error. `prepare` and `clean` write nothing to standard output; each line of the container engine's output
 and errors goes to standard error as the engine writes it. `clean` removes the image from the local engine cache;
 check other local uses before running it. A command line that starts with `[diagram]` prints how it parses instead of

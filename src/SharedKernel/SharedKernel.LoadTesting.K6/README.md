@@ -5,7 +5,7 @@
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
 Runs [k6](https://grafana.com/docs/k6/latest/) as the load generator of `PandaBear.SharedKernel.LoadTesting`. The
-`sharedkernel-k6` tool is a command-line wrapper over both packages; its
+`dotnet loadtest` tool is a command-line wrapper over both packages; its
 [README](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.K6.Tool/README.md)
 describes the run and its security checks.
 

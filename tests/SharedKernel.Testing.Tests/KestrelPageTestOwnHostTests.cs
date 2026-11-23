@@ -5,7 +5,7 @@ namespace PandaBear.Testing.Tests;
 /// <summary>Tests that a browser test starts an application of its own by default and exposes the application's services.</summary>
 public sealed class KestrelPageTestOwnHostTests : OwnHostPageTest
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
+    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public void Services_belong_to_the_application_started_for_this_test()

@@ -3,7 +3,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <PackAsTool>true</PackAsTool>
-        <ToolCommandName>sharedkernel-packages</ToolCommandName>
+        <ToolCommandName>syspackages</ToolCommandName>
         <PackageId>PandaBear.SharedKernel.Packages.Tool</PackageId>
         <Description>Compares the packages that .config/sharedkernel-packages.json declares per package manager with the installed packages, read-only, and refuses a declaration in which a package has more than one owner.</Description>
         <RootNamespace>PandaBear.Packages.Tool</RootNamespace>

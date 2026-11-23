@@ -26,7 +26,7 @@ public static class CommandRunnerResolutionTests
         // Act
         var result = await VersioningToolProcess.Run(
             directory.Path,
-            ["calculate-release", "--run-number", "1", "--repo-root", directory.Path],
+            ["calculate", "--run-number", "1", "--repo-root", directory.Path],
             path,
             TestContext.Current.CancellationToken);
 

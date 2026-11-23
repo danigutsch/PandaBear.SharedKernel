@@ -4,7 +4,7 @@ using PandaBear.Secrets.Sops;
 
 namespace PandaBear.Secrets.Tool;
 
-/// <summary>Builds the <c>sharedkernel-secrets</c> command tree.</summary>
+/// <summary>Builds the <c>secrets</c> command tree.</summary>
 internal static class SecretsCommandLine
 {
     private const string IdentityVariable = "SOPS_AGE_KEY_FILE";

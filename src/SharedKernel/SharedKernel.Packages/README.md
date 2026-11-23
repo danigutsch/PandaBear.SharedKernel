@@ -1,6 +1,6 @@
 # PandaBear.SharedKernel.Packages
 
-A small model of the packages on a machine and the read-only engine behind `sharedkernel-packages`: validated names and
+A small model of the packages on a machine and the read-only engine behind `dotnet syspackages`: validated names and
 versions, the `.config/sharedkernel-packages.json` declaration, readers for installed packages, a comparison with what
 should be installed, and update decisions against advisories and a minimum release age. Targets .NET 10. It installs,
 removes, and updates nothing.

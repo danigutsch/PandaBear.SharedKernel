@@ -134,7 +134,7 @@ public sealed class VerifyActionPinsCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldStartWith("sharedkernel-repo: ", StringComparison.Ordinal);
+        result.StandardError.ShouldStartWith("repo: ", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -149,7 +149,7 @@ public sealed class VerifyActionPinsCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: The action pin manifest does not exist.\n");
+        result.StandardError.ShouldBe("repo: The action pin manifest does not exist.\n");
     }
 
     [Fact]
@@ -219,6 +219,6 @@ public sealed class VerifyActionPinsCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: The root has no .github/workflows directory, so no action pin was checked.\n");
+        result.StandardError.ShouldBe("repo: The root has no .github/workflows directory, so no action pin was checked.\n");
     }
 }

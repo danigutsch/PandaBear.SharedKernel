@@ -188,7 +188,7 @@ public sealed class WorkflowContractTests
     [InlineData("tools/SharedKernel.CI.Tool", "select")]
     [InlineData("tools/SharedKernel.CI.Tool", "run")]
     [InlineData("tools/SharedKernel.CI.Tool", "stage-candidate")]
-    [InlineData("tools/SharedKernel.Versioning.Tool", "calculate-release")]
+    [InlineData("tools/SharedKernel.Versioning.Tool", "calculate")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "create-candidate")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "consume-candidate")]
     [InlineData("tools/SharedKernel.Documentation.Tool", "verify")]

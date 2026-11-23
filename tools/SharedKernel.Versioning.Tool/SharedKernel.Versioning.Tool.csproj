@@ -4,7 +4,7 @@
         <OutputType>Exe</OutputType>
         <RootNamespace>PandaBear.Versioning.Tool</RootNamespace>
         <PackAsTool>true</PackAsTool>
-        <ToolCommandName>sharedkernel-version</ToolCommandName>
+        <ToolCommandName>release</ToolCommandName>
         <PackageId>PandaBear.SharedKernel.Versioning.Tool</PackageId>
         <Description>Local and CI versioning automation for SharedKernel release flows.</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>

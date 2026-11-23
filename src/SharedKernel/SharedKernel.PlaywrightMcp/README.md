@@ -5,7 +5,7 @@
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
 Runs the digest-pinned [Playwright MCP](https://github.com/microsoft/playwright-mcp) container image as a stdio MCP
-server on a local Docker engine or rootless Podman, and pulls or removes that image. The `sharedkernel-playwright-mcp`
+server on a local Docker engine or rootless Podman, and pulls or removes that image. The `dotnet browsermcp`
 tool is a command-line wrapper over this package; its
 [README](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.PlaywrightMcp.Tool/README.md)
 lists the container limits and security checks, which this package applies to any host.

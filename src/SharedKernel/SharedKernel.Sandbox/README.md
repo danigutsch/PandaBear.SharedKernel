@@ -6,7 +6,7 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Probes what a sandboxed environment allows for .NET tools, reads the consumer policy in
 `.config/sharedkernel-sandbox.json`, and plans the sandbox entries an agent settings file needs, independent of the
-agent's file format. The `sharedkernel-sandbox` tool is a command-line wrapper over this package and
+agent's file format. The `dotnet sandbox` tool is a command-line wrapper over this package and
 [PandaBear.SharedKernel.Sandbox.ClaudeCode](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Sandbox.ClaudeCode/README.md); its
 [README](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.Sandbox.Tool/README.md)
 describes the configuration format, the probes, and the risk flags.
