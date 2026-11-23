@@ -35,7 +35,8 @@ verify content before publication. Create the destination directory before calli
 On Unix, create-if-absent publication requires a filesystem that supports hard links.
 If an existing file inventory reserves a temporary name prefix, pass that prefix to the
 `Replace` overload. Temporary names consist of the prefix, a 32-digit hexadecimal identifier,
-and `.tmp`.
+and `.tmp`. `AtomicFile.Replace(path, bytes)` publishes content already in memory synchronously, for a caller that
+cannot await, such as a synchronous save.
 For text files containing secrets, use `SecureFile.WriteAllText` for owner-only Unix permissions.
 
 ## Secret files and path identity

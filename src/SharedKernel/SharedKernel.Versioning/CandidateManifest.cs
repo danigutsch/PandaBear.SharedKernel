@@ -1,6 +1,8 @@
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using PandaBear.IO;
 
 namespace PandaBear.Versioning;
 
@@ -96,15 +98,6 @@ public sealed class CandidateManifest
     {
         var fullPath = Path.GetFullPath(path);
         Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
-        var temporary = fullPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
-        try
-        {
-            File.WriteAllText(temporary, Evidence.ToJsonString(WriteOptions) + Environment.NewLine);
-            File.Move(temporary, fullPath, overwrite: true);
-        }
-        finally
-        {
-            File.Delete(temporary);
-        }
+        AtomicFile.Replace(fullPath, Encoding.UTF8.GetBytes(Evidence.ToJsonString(WriteOptions) + Environment.NewLine));
     }
 }

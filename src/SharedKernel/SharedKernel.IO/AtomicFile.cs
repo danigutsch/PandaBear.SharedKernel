@@ -29,6 +29,41 @@ public static class AtomicFile
     public static ValueTask Replace(string path, Func<Stream, CancellationToken, ValueTask> write, CancellationToken ct)
         => Replace(path, DefaultTemporaryFilePrefix, write, ct);
 
+    /// <summary>
+    /// Publishes a file, replacing any previous contents, from bytes already in memory; for a caller that cannot await, such
+    /// as a synchronous save.
+    /// </summary>
+    /// <param name="path">Destination in an existing directory.</param>
+    /// <param name="content">The complete content.</param>
+    /// <exception cref="ArgumentException">The path is invalid.</exception>
+    /// <exception cref="IOException">The file cannot be written or the temporary file cannot be removed.</exception>
+    /// <exception cref="UnauthorizedAccessException">The destination or its directory cannot be written.</exception>
+    public static void Replace(string path, ReadOnlySpan<byte> content)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(path);
+        var destination = Path.GetFullPath(path);
+        var temporary = TemporaryPath(destination, DefaultTemporaryFilePrefix);
+        var created = false;
+        try
+        {
+            using (var stream = OpenTemporary(temporary, FileOptions.None))
+            {
+                created = true;
+                stream.Write(content);
+            }
+
+            MoveReplacement(temporary, destination, CancellationToken.None);
+            created = false;
+        }
+        finally
+        {
+            if (created)
+            {
+                File.Delete(temporary);
+            }
+        }
+    }
+
     /// <summary>Publishes a replacement using a temporary name that callers can exclude from file inventory.</summary>
     /// <param name="path">Destination in an existing directory.</param>
     /// <param name="temporaryFilePrefix">
@@ -69,17 +104,11 @@ public static class AtomicFile
             return false;
         }
 
-        var temporary = Path.Combine(Path.GetDirectoryName(destination)!, $"{temporaryFilePrefix}{Guid.NewGuid():N}.tmp");
+        var temporary = TemporaryPath(destination, temporaryFilePrefix);
         var created = false;
         try
         {
-            var stream = new FileStream(temporary, new FileStreamOptions
-            {
-                Mode = FileMode.CreateNew,
-                Access = FileAccess.Write,
-                Share = FileShare.None,
-                Options = FileOptions.Asynchronous,
-            });
+            var stream = OpenTemporary(temporary, FileOptions.Asynchronous);
             created = true;
             await using (stream.ConfigureAwait(false))
             {
@@ -121,6 +150,17 @@ public static class AtomicFile
             }
         }
     }
+
+    private static string TemporaryPath(string destination, string temporaryFilePrefix) =>
+        Path.Combine(Path.GetDirectoryName(destination)!, $"{temporaryFilePrefix}{Guid.NewGuid():N}.tmp");
+
+    private static FileStream OpenTemporary(string temporary, FileOptions options) => new(temporary, new FileStreamOptions
+    {
+        Mode = FileMode.CreateNew,
+        Access = FileAccess.Write,
+        Share = FileShare.None,
+        Options = options,
+    });
 
     private static void MoveReplacement(string temporary, string destination, CancellationToken ct)
     {

@@ -120,6 +120,38 @@ public sealed class AtomicFileTests : IDisposable
         Directory.GetFileSystemEntries(temporaryDirectory.Path).ShouldBeEmpty();
     }
 
+    [Fact]
+    public void Synchronous_replace_publishes_the_bytes_and_leaves_no_temporary_file()
+    {
+        // Arrange
+        var path = Path.Combine(temporaryDirectory.Path, "candidate.json");
+        File.WriteAllText(path, "old");
+
+        // Act
+        AtomicFile.Replace(path, "new"u8);
+        AtomicFile.Replace(Path.Combine(temporaryDirectory.Path, "fresh.json"), "fresh"u8);
+
+        // Assert
+        File.ReadAllText(path).ShouldBe("new");
+        File.ReadAllText(Path.Combine(temporaryDirectory.Path, "fresh.json")).ShouldBe("fresh");
+        Directory.GetFiles(temporaryDirectory.Path).Select(Path.GetFileName).Order(StringComparer.Ordinal).ToArray().ShouldBe(["candidate.json", "fresh.json"]);
+    }
+
+    [Fact]
+    public void Synchronous_replace_over_a_directory_fails_and_removes_the_temporary_file()
+    {
+        // Arrange
+        var path = Path.Combine(temporaryDirectory.Path, "taken");
+        Directory.CreateDirectory(path);
+
+        // Act
+        var failure = Record.Exception(() => AtomicFile.Replace(path, "x"u8));
+
+        // Assert
+        failure.ShouldNotBeNull();
+        Directory.GetFiles(temporaryDirectory.Path).ShouldBeEmpty();
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("../other/file")]
