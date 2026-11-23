@@ -146,7 +146,7 @@ public sealed class SiteTheme : ValueObject
 
             if (typography[role].Color is not null && !ThemeNames.IsHeading(role))
             {
-                errors.Add($"typography.{ThemeNames.Field(role)}.color", "Only headings and card titles take a colour; the components colour this text.");
+                errors.Add($"typography.{ThemeNames.Field(role)}.color", "Only headings, card titles and the brand take a colour; the components colour this text.");
             }
         }
 
@@ -176,11 +176,14 @@ public sealed class SiteTheme : ValueObject
     /// <remarks>
     /// A card title's unset font family, weight and style come from this theme's own level 3 heading before the default, so a theme
     /// that gives its headings a display font keeps it on its card titles; its size, line height, spacing and transform stay the card
-    /// title's.
+    /// title's. A text brand's come from the level 1 heading the same way.
     /// </remarks>
-    public TypographyStyle Effective(TypographyRole role) => role == TypographyRole.CardTitle
-        ? Typography[role].Over(Typography[TypographyRole.H3].Face()).Over(Default.Typography[role])
-        : Typography[role].Over(Default.Typography[role]);
+    public TypographyStyle Effective(TypographyRole role) => role switch
+    {
+        TypographyRole.CardTitle => Typography[role].Over(Typography[TypographyRole.H3].Face()).Over(Default.Typography[role]),
+        TypographyRole.Brand => Typography[role].Over(Typography[TypographyRole.H1].Face()).Over(Default.Typography[role]),
+        _ => Typography[role].Over(Default.Typography[role]),
+    };
 
     /// <summary>Gets the font a key references.</summary>
     /// <param name="key">The key.</param>
@@ -232,6 +235,7 @@ public sealed class SiteTheme : ValueObject
             [TypographyRole.Small] = TypographyStyle.Create(size: Fluid(0.875m, 0.9375m)).Value,
             [TypographyRole.Button] = TypographyStyle.Create(weight: 600).Value,
             [TypographyRole.CardTitle] = Heading(1.125m, 1.375m),
+            [TypographyRole.Brand] = TypographyStyle.Create(size: Fluid(1.125m, 1.375m), lineHeight: 1.2m).Value,
         });
         return new SiteTheme(colors, typography, [], false, DefaultBrandHeight, SiteShape.Default);
 

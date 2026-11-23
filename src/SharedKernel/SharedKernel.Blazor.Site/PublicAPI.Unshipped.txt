@@ -1107,3 +1107,4 @@ PandaBear.Blazor.Site.Hero.TitleScale.set -> void
 PandaBear.Blazor.Site.HeroTitleScale
 PandaBear.Blazor.Site.HeroTitleScale.Large = 1 -> PandaBear.Blazor.Site.HeroTitleScale
 PandaBear.Blazor.Site.HeroTitleScale.Regular = 0 -> PandaBear.Blazor.Site.HeroTitleScale
+PandaBear.Blazor.Site.Theming.TypographyRole.Brand = 12 -> PandaBear.Blazor.Site.Theming.TypographyRole

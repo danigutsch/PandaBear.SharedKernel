@@ -136,6 +136,7 @@ public static class SiteThemeStylesheet
         AppendRule(css, sample + " .site-button", TypographyRole.Button, "display: inline-flex; align-items: center; justify-content: center; min-block-size: 2.75rem; margin: 0 0.5rem 0.5rem 0; padding: " + ButtonPadding + "; border: 2px solid transparent; border-radius: var(--site-control-radius); text-decoration: none;");
         css.Append(sample).Append(" .site-nav {\n    display: flex;\n    align-items: center;\n    gap: 1rem;\n}\n");
         css.Append(scope).Append(" .site-theme-preview__brand {\n    display: inline-flex;\n    align-items: center;\n    height: var(--site-brand-height);\n    padding: 0 0.5rem;\n    border: 1px dashed currentColor;\n}\n");
+        AppendRule(css, sample + " .site-theme-preview__brand", TypographyRole.Brand, string.Empty);
         AppendRule(css, sample + " .site-nav a", TypographyRole.Nav, "color: var(--site-color-text); text-decoration: none;");
         css.Append(sample).Append(" .site-button--primary {\n    background: var(--site-color-primary);\n    color: var(--site-color-on-primary);\n}\n");
         css.Append(sample).Append(" .site-button--secondary {\n    background: var(--site-color-accent);\n    color: var(--site-color-on-accent);\n}\n");

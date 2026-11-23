@@ -79,8 +79,8 @@
 }
 
 /*
- * Typography roles: a theme stylesheet may set --site-{role}-{property} for the roles h1 to h6, body, small, link, button, nav and
- * card-title, and --site-{role}-color for h1 to h6 and card-title. Each fallback is the value used without a theme.
+ * Typography roles: a theme stylesheet may set --site-{role}-{property} for the roles h1 to h6, body, small, link, button, nav,
+ * card-title and brand, and --site-{role}-color for h1 to h6, card-title and brand. Each fallback is the value used without a theme.
  */
 body {
     margin: 0;
@@ -278,6 +278,26 @@ a {
     margin-inline-end: auto;
     font-weight: 700;
     font-size: var(--site-font-size-lg);
+}
+
+/*
+ * A brand link, such as the site's name as text, takes the brand role: a heading face, bold and large, in the primary colour like any
+ * link, without the link underline, which comes back on hover. Its focus ring is the page's; over a hero the header's rules give it the on-primary colour.
+ */
+.site-header__brand a {
+    font-family: var(--site-brand-font-family, var(--site-font-heading));
+    font-size: var(--site-brand-font-size, var(--site-font-size-lg));
+    font-weight: var(--site-brand-font-weight, 700);
+    line-height: var(--site-brand-line-height, 1.2);
+    letter-spacing: var(--site-brand-letter-spacing, normal);
+    text-transform: var(--site-brand-text-transform, none);
+    font-style: var(--site-brand-font-style, normal);
+    color: var(--site-brand-color, var(--site-color-primary));
+    text-decoration: none;
+}
+
+.site-header__brand a:hover {
+    text-decoration: underline;
 }
 
 /* A logo in the brand slot takes the theme's brand height, which the header height of a header over a hero is computed from. */

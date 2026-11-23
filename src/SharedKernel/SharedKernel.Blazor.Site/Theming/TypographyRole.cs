@@ -41,4 +41,10 @@ public enum TypographyRole
     /// section heading of its level.
     /// </summary>
     CardTitle = 11,
+
+    /// <summary>
+    /// The site's name as text in the header's brand slot (<c>.site-header__brand a</c>), when there is no logo, so it takes a heading
+    /// face instead of the link role and no underline.
+    /// </summary>
+    Brand = 12,
 }
