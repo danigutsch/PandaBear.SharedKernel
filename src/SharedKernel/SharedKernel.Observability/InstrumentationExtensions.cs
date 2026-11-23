@@ -9,7 +9,11 @@ namespace PandaBear.Observability;
 /// without naming them and without referencing the packages it does not use. A package that is not loaded creates no meter or source, so
 /// nothing extra is exported.
 /// </summary>
-public static class SharedKernelInstrumentationExtensions
+/// <remarks>
+/// <c>AddInstrumentation()</c> takes no type argument, so it never competes with OpenTelemetry's generic <c>AddInstrumentation&lt;T&gt;</c>
+/// overloads on the same builders.
+/// </remarks>
+public static class InstrumentationExtensions
 {
     /// <summary>Gets the name patterns of SharedKernel meters and activity sources: <c>PandaBear.*</c> and <c>SharedKernel.*</c>.</summary>
     public static IReadOnlyList<string> NamePatterns { get; } = ["PandaBear.*", "SharedKernel.*"];
@@ -18,7 +22,7 @@ public static class SharedKernelInstrumentationExtensions
     /// <param name="metrics">The meter provider builder.</param>
     /// <returns>The same builder.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="metrics"/> is <see langword="null"/>.</exception>
-    public static MeterProviderBuilder AddSharedKernelInstrumentation(this MeterProviderBuilder metrics)
+    public static MeterProviderBuilder AddInstrumentation(this MeterProviderBuilder metrics)
     {
         ArgumentNullException.ThrowIfNull(metrics);
 
@@ -29,7 +33,7 @@ public static class SharedKernelInstrumentationExtensions
     /// <param name="tracing">The tracer provider builder.</param>
     /// <returns>The same builder.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="tracing"/> is <see langword="null"/>.</exception>
-    public static TracerProviderBuilder AddSharedKernelInstrumentation(this TracerProviderBuilder tracing)
+    public static TracerProviderBuilder AddInstrumentation(this TracerProviderBuilder tracing)
     {
         ArgumentNullException.ThrowIfNull(tracing);
 

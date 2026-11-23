@@ -128,7 +128,7 @@ HTTP client defaults apply; with `PandaBear.SharedKernel.ServiceDefaults` that i
 a `POST`, so a page view is not counted twice. Nothing a target does can fail or change a page.
 
 A page view is dropped for one target, counted on the counter `web_analytics_page_views_dropped_total` of the meter
-`PandaBear.AspNetCore.WebAnalytics` (registered by `AddSharedKernelInstrumentation`) with the tags `target` (the target's name) and
+`PandaBear.AspNetCore.WebAnalytics` (registered by `AddInstrumentation`) with the tags `target` (the target's name) and
 `reason`, when:
 
 | `reason` | When | Logged |

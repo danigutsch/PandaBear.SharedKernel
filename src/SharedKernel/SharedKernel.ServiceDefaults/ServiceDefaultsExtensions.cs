@@ -16,7 +16,10 @@ namespace PandaBear.ServiceDefaults;
 /// <summary>
 /// Aspire service defaults for SharedKernel hosts. They follow the Aspire service-defaults contract (OpenTelemetry, health checks, service
 /// discovery and HTTP resilience from one <c>AddServiceDefaults</c> call, and <c>/health</c> plus <c>/alive</c> from one
-/// <c>MapDefaultEndpoints</c> call) and route telemetry through the SharedKernel privacy baseline.
+/// <c>MapDefaultEndpoints</c> call) and route telemetry through the SharedKernel privacy baseline. The methods are named
+/// <see cref="AddApplicationDefaults{TBuilder}"/> and <see cref="MapHealthEndpoints"/> because the template declares <c>AddServiceDefaults</c>
+/// and <c>MapDefaultEndpoints</c> in <c>Microsoft.Extensions.Hosting</c>: a host that keeps a template project would otherwise get an
+/// ambiguous call or bind to the template.
 /// </summary>
 public static class ServiceDefaultsExtensions
 {
@@ -30,7 +33,7 @@ public static class ServiceDefaultsExtensions
     /// Adds the service defaults: for every <see cref="HttpClient"/> the standard resilience handler, changed by
     /// <see cref="ServiceDefaultsOptions.ConfigureResilience"/> and never retrying unsafe HTTP methods, unless
     /// <see cref="ServiceDefaultsOptions.AddResilience"/> is off, then one service discovery handler inside it; OpenTelemetry logs, metrics
-    /// and traces through <see cref="ObservabilityBuilderExtensions.ConfigureOpenTelemetry{TBuilder}"/> (privacy processors included) and
+    /// and traces through <see cref="ObservabilityBuilderExtensions.AddObservability{TBuilder}"/> (privacy processors included) and
     /// every SharedKernel meter and activity source (the <c>SharedKernel.HttpClients</c> outcome source among them), an OTLP exporter only
     /// when <c>OTEL_EXPORTER_OTLP_ENDPOINT</c> is set, and a liveness check named <c>self</c> tagged <see cref="LiveTag"/>. Requests to
     /// the health and liveness paths are not traced.
@@ -46,7 +49,7 @@ public static class ServiceDefaultsExtensions
     /// their messages can carry personal data. These are the HttpClient defaults of the host: do not add a second resilience or service
     /// discovery handler to every client, which would nest the pipelines.
     /// </remarks>
-    public static TBuilder AddSharedKernelServiceDefaults<TBuilder>(this TBuilder builder, Action<ServiceDefaultsOptions>? configure = null)
+    public static TBuilder AddApplicationDefaults<TBuilder>(this TBuilder builder, Action<ServiceDefaultsOptions>? configure = null)
         where TBuilder : IHostApplicationBuilder
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -75,19 +78,19 @@ public static class ServiceDefaultsExtensions
             http.AddServiceDiscovery();
         });
 
-        builder.ConfigureOpenTelemetry();
+        builder.AddObservability();
         var sensitive = options.SensitiveTelemetryAttributes.ToHashSet(StringComparer.OrdinalIgnoreCase);
         builder.AddTelemetryPrivacy(sensitive.Count == 0 ? null : sensitive.Contains);
         builder.Services.AddOpenTelemetry()
             .WithMetrics(metrics => metrics
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
-                .AddSharedKernelInstrumentation())
+                .AddInstrumentation())
             .WithTracing(tracing => tracing
                 .AddSource(builder.Environment.ApplicationName)
                 .AddAspNetCoreInstrumentation(instrumentation => instrumentation.Filter = context => !IsHealthRequest(context, options))
                 .AddHttpClientInstrumentation()
-                .AddSharedKernelInstrumentation());
+                .AddInstrumentation());
         builder.Services.PostConfigureAll<AspNetCoreTraceInstrumentationOptions>(static instrumentation => instrumentation.RecordException = false);
 
         if (!string.IsNullOrWhiteSpace(builder.Configuration[OtlpEndpointVariable]))
@@ -108,17 +111,17 @@ public static class ServiceDefaultsExtensions
     /// <param name="app">The application.</param>
     /// <returns>The same application.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="app"/> is <see langword="null"/>.</exception>
-    /// <exception cref="InvalidOperationException"><see cref="AddSharedKernelServiceDefaults{TBuilder}"/> was not called.</exception>
+    /// <exception cref="InvalidOperationException"><see cref="AddApplicationDefaults{TBuilder}"/> was not called.</exception>
     /// <remarks>
     /// The default exposure is <see cref="HealthEndpointExposure.Always"/>: an Aspire AppHost's <c>WithHttpHealthCheck("/health")</c> and
     /// <c>WaitFor</c> need the endpoint in whatever environment the project runs, and container orchestrators probe production hosts.
     /// </remarks>
-    public static WebApplication MapSharedKernelDefaultEndpoints(this WebApplication app)
+    public static WebApplication MapHealthEndpoints(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
 
         var options = app.Services.GetService<ServiceDefaultsOptions>()
-            ?? throw new InvalidOperationException($"Call {nameof(AddSharedKernelServiceDefaults)} on the builder before mapping the default endpoints.");
+            ?? throw new InvalidOperationException($"Call {nameof(AddApplicationDefaults)} on the builder before mapping the health endpoints.");
         if (options.Exposure == HealthEndpointExposure.DevelopmentOnly && !app.Environment.IsDevelopment())
         {
             return app;

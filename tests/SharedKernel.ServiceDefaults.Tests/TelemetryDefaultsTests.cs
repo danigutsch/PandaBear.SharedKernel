@@ -62,7 +62,7 @@ public sealed class TelemetryDefaultsTests
         var otlpAssembly = typeof(OtlpExporterOptions).Assembly;
 
         // Act
-        builder.AddSharedKernelServiceDefaults();
+        builder.AddApplicationDefaults();
 
         // Assert
         builder.Services.SelectMany(RegisteredTypes.Of).Any(type => type.Assembly == otlpAssembly).ShouldBe(expected);

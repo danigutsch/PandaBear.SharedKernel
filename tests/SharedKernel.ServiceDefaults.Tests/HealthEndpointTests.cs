@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace PandaBear.ServiceDefaults.Tests;
 
-/// <summary>Tests the health endpoints that MapSharedKernelDefaultEndpoints maps.</summary>
+/// <summary>Tests the health endpoints that MapHealthEndpoints maps.</summary>
 public sealed class HealthEndpointTests
 {
     [Fact]
@@ -144,10 +144,10 @@ public sealed class HealthEndpointTests
         await using var app = builder.Build();
 
         // Act
-        Action map = () => app.MapSharedKernelDefaultEndpoints();
+        Action map = () => app.MapHealthEndpoints();
 
         // Assert
-        map.ShouldThrow<InvalidOperationException>().Message.ShouldContain(nameof(ServiceDefaultsExtensions.AddSharedKernelServiceDefaults), StringComparison.Ordinal);
+        map.ShouldThrow<InvalidOperationException>().Message.ShouldContain(nameof(ServiceDefaultsExtensions.AddApplicationDefaults), StringComparison.Ordinal);
     }
 
     [Theory]
@@ -162,7 +162,7 @@ public sealed class HealthEndpointTests
         var builder = WebApplication.CreateBuilder();
 
         // Act
-        Action add = () => builder.AddSharedKernelServiceDefaults(options =>
+        Action add = () => builder.AddApplicationDefaults(options =>
         {
             options.HealthPath = healthPath;
             options.AlivePath = alivePath;

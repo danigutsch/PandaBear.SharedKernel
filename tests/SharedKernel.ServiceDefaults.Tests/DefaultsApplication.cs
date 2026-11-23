@@ -21,7 +21,7 @@ internal static class DefaultsApplication
         Action<WebApplicationBuilder>? arrange = null)
     {
         var app = Build(environment, configure, arrange);
-        app.MapSharedKernelDefaultEndpoints();
+        app.MapHealthEndpoints();
         app.MapGet("/ping", () =>
         {
             var activity = Activity.Current;
@@ -49,7 +49,7 @@ internal static class DefaultsApplication
 
         // An OTLP endpoint in the test process's environment must not decide what the tests see.
         builder.Configuration[OtlpEndpointKey] = string.Empty;
-        builder.AddSharedKernelServiceDefaults(configure);
+        builder.AddApplicationDefaults(configure);
 
         // After the defaults, as a host adds its own exporters, so the privacy processors run first.
         arrange?.Invoke(builder);

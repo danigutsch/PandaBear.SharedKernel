@@ -20,7 +20,7 @@ internal static class DependencyInjectionEmitter
         GeneratedXmlDocumentationEmitter.AppendSummary(
             writer,
             "Provides the generated dependency injection registrations for mediator services.");
-        writer.Line("public static partial class SharedKernelMediatorServiceCollectionExtensions");
+        writer.Line("public static partial class MediatorServiceCollectionExtensions");
         writer.Line("{");
         writer.Indent();
         GeneratedXmlDocumentationEmitter.AppendSummary(
@@ -28,7 +28,7 @@ internal static class DependencyInjectionEmitter
             "Adds the generated mediator registrations to the service collection.");
         GeneratedXmlDocumentationEmitter.AppendParam(writer, "services", "The service collection to populate.");
         GeneratedXmlDocumentationEmitter.AppendReturns(writer, "The same service collection so calls can be chained.");
-        writer.Line("public static IServiceCollection AddSharedKernelMediator(this IServiceCollection services)");
+        writer.Line("public static IServiceCollection AddMediator(this IServiceCollection services)");
         writer.Line("{");
         writer.Indent();
         writer.Line("global::System.ArgumentNullException.ThrowIfNull(services);");
@@ -196,7 +196,7 @@ internal static class DependencyInjectionEmitter
             "Adds generated EF Core command transaction registrations for discovered commands.");
         GeneratedXmlDocumentationEmitter.AppendParam(writer, "services", "The service collection to populate.");
         GeneratedXmlDocumentationEmitter.AppendReturns(writer, "The same service collection so calls can be chained.");
-        writer.Line("public static global::Microsoft.Extensions.DependencyInjection.IServiceCollection AddSharedKernelMediatorEfCoreCommandTransactions<TContext>(this global::Microsoft.Extensions.DependencyInjection.IServiceCollection services)");
+        writer.Line("public static global::Microsoft.Extensions.DependencyInjection.IServiceCollection AddMediatorTransactions<TContext>(this global::Microsoft.Extensions.DependencyInjection.IServiceCollection services)");
         writer.Line("    where TContext : global::Microsoft.EntityFrameworkCore.DbContext");
         writer.Line("{");
         writer.Indent();

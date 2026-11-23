@@ -37,7 +37,7 @@ public sealed class GeneratorDependencyInjectionTests
             GeneratedHintNames.DependencyInjection);
 
         // Assert
-        generatedSource.ShouldNotContain("AddSharedKernelMediatorEfCoreCommandTransactions", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("AddMediatorTransactions", StringComparison.Ordinal);
         generatedSource.ShouldNotContain("AddEfCoreCommandTransaction", StringComparison.Ordinal);
     }
 
@@ -58,7 +58,7 @@ public sealed class GeneratorDependencyInjectionTests
 
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedSource);
-        generatedSource.ShouldContain("public static partial class SharedKernelMediatorServiceCollectionExtensions", StringComparison.Ordinal);
+        generatedSource.ShouldContain("public static partial class MediatorServiceCollectionExtensions", StringComparison.Ordinal);
         generatedSource.ShouldContain("services.AddScoped<AppMediator>();", StringComparison.Ordinal);
         generatedSource.ShouldContain("services.AddScoped<ISender>(static sp => sp.GetRequiredService<AppMediator>());", StringComparison.Ordinal);
         generatedSource.ShouldContain("services.AddScoped<IPublisher>(static sp => sp.GetRequiredService<AppMediator>());", StringComparison.Ordinal);
@@ -159,7 +159,7 @@ public sealed class GeneratorDependencyInjectionTests
 
         // Assert
         generatedSource.ShouldContain(
-            "public static global::Microsoft.Extensions.DependencyInjection.IServiceCollection AddSharedKernelMediatorEfCoreCommandTransactions<TContext>",
+            "public static global::Microsoft.Extensions.DependencyInjection.IServiceCollection AddMediatorTransactions<TContext>",
             StringComparison.Ordinal);
         generatedSource.ShouldContain(
             "where TContext : global::Microsoft.EntityFrameworkCore.DbContext",

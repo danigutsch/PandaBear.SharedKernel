@@ -9,9 +9,9 @@ using OpenTelemetry.Trace;
 
 namespace PandaBear.Observability.Tests;
 
-/// <summary>Tests that <see cref="ObservabilityBuilderExtensions.ConfigureOpenTelemetry{TBuilder}"/> applies the privacy baseline without a separate opt-in call.</summary>
+/// <summary>Tests that <see cref="ObservabilityBuilderExtensions.AddObservability{TBuilder}"/> applies the privacy baseline without a separate opt-in call.</summary>
 [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
-public sealed class ConfigureOpenTelemetryPrivacyDefaultTests
+public sealed class AddObservabilityPrivacyDefaultTests
 {
     [Fact]
     public void Configure_opentelemetry_alone_strips_log_messages_scopes_exceptions_and_sensitive_attributes()
@@ -20,11 +20,11 @@ public sealed class ConfigureOpenTelemetryPrivacyDefaultTests
         var records = new ConcurrentQueue<CapturedPrivacyLogRecord>();
         var builder = Host.CreateApplicationBuilder();
         builder.Logging.ClearProviders();
-        builder.ConfigureOpenTelemetry();
+        builder.AddObservability();
         builder.Logging.AddOpenTelemetry(logging =>
             logging.AddProcessor(_ => new SimpleLogRecordExportProcessor(new PrivacyLogExporter(records))));
         using var host = builder.Build();
-        var logger = host.Services.GetRequiredService<ILogger<ConfigureOpenTelemetryPrivacyDefaultTests>>();
+        var logger = host.Services.GetRequiredService<ILogger<AddObservabilityPrivacyDefaultTests>>();
         using var logScope = logger.BeginScope(new Dictionary<string, object?> { ["scoped"] = "private@example.test" });
         var log = LoggerMessage.Define<string, string>(LogLevel.Error, new EventId(1),
             "Operation for {Email} ended with {Outcome}");
@@ -48,7 +48,7 @@ public sealed class ConfigureOpenTelemetryPrivacyDefaultTests
         var exported = new ConcurrentQueue<Activity>();
         using var source = new ActivitySource($"privacy-default-{Guid.NewGuid():N}");
         var builder = Host.CreateApplicationBuilder();
-        builder.ConfigureOpenTelemetry();
+        builder.AddObservability();
         builder.Services.AddOpenTelemetry().WithTracing(tracing => tracing
             .AddSource(source.Name)
             .AddProcessor(new SimpleActivityExportProcessor(new PrivacyActivityExporter(exported))));
@@ -79,17 +79,17 @@ public sealed class ConfigureOpenTelemetryPrivacyDefaultTests
         builder.Logging.ClearProviders();
         if (configureFirst)
         {
-            builder.ConfigureOpenTelemetry().AddTelemetryPrivacy(static name => name == "HostPrivate");
+            builder.AddObservability().AddTelemetryPrivacy(static name => name == "HostPrivate");
         }
         else
         {
-            builder.AddTelemetryPrivacy(static name => name == "HostPrivate").ConfigureOpenTelemetry();
+            builder.AddTelemetryPrivacy(static name => name == "HostPrivate").AddObservability();
         }
 
         builder.Logging.AddOpenTelemetry(logging =>
             logging.AddProcessor(_ => new SimpleLogRecordExportProcessor(new PrivacyLogExporter(records))));
         using var host = builder.Build();
-        var logger = host.Services.GetRequiredService<ILogger<ConfigureOpenTelemetryPrivacyDefaultTests>>();
+        var logger = host.Services.GetRequiredService<ILogger<AddObservabilityPrivacyDefaultTests>>();
         var log = LoggerMessage.Define<string, string>(LogLevel.Information, new EventId(2),
             "Operation for {HostPrivate} ended with {Outcome}");
 

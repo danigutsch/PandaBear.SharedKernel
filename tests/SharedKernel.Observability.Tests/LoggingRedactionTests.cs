@@ -14,7 +14,7 @@ public sealed class LoggingRedactionTests
         // Arrange
         var provider = new CapturingLoggerProvider();
         var builder = new HostApplicationBuilder();
-        builder.ConfigureOpenTelemetry();
+        builder.AddObservability();
         builder.Logging.AddProvider(provider);
 
         using var host = builder.Build();

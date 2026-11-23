@@ -5,24 +5,29 @@ repository. It follows the Aspire service-defaults contract: one call adds OpenT
 resilience, and one call maps `/health` and `/alive`. Telemetry goes through the
 [SharedKernel.Observability](../SharedKernel.Observability/README.md) privacy baseline.
 
+The methods are named `AddApplicationDefaults` and `MapHealthEndpoints`, not the template's `AddServiceDefaults` and
+`MapDefaultEndpoints`, and the telemetry step is `AddObservability`, not `ConfigureOpenTelemetry`. The template declares its methods in
+`Microsoft.Extensions.Hosting`, so a host that keeps a template project, or imports that namespace, would otherwise get an ambiguous call
+or bind to the template's method.
+
 ```csharp
 using PandaBear.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddSharedKernelServiceDefaults(options => options.SensitiveTelemetryAttributes.Add("customer.document"));
+builder.AddApplicationDefaults(options => options.SensitiveTelemetryAttributes.Add("customer.document"));
 
 var app = builder.Build();
-app.MapSharedKernelDefaultEndpoints();
+app.MapHealthEndpoints();
 app.Run();
 ```
 
-## What `AddSharedKernelServiceDefaults` adds
+## What `AddApplicationDefaults` adds
 
 | Concern | What |
 | --- | --- |
 | Service discovery | `AddServiceDiscovery()`, and service discovery on every `HttpClient` |
 | HTTP resilience | `AddStandardResilienceHandler()` on every `HttpClient`, outside the discovery handler so each retry resolves again; unsafe methods are never retried; off with `AddResilience = false` |
-| OpenTelemetry | `ConfigureOpenTelemetry()` (runtime metrics, service identity, log and span privacy processors), ASP.NET Core and `HttpClient` instrumentation, the application's own activity source, and every SharedKernel meter and source (`AddSharedKernelInstrumentation`) |
+| OpenTelemetry | `AddObservability()` (runtime metrics, service identity, log and span privacy processors), ASP.NET Core and `HttpClient` instrumentation, the application's own activity source, and every SharedKernel meter and source (`AddInstrumentation`) |
 | Privacy | The shared baseline, plus the attribute names in `SensitiveTelemetryAttributes`; exceptions are not recorded on request spans |
 | Export | The OTLP exporter, only when `OTEL_EXPORTER_OTLP_ENDPOINT` is set (Aspire sets it for every resource) |
 | Health | A liveness check named `self`, tagged `ServiceDefaultsExtensions.LiveTag` (`live`) |
@@ -33,7 +38,7 @@ this call for the same reason.
 
 ## Health endpoints
 
-`MapSharedKernelDefaultEndpoints` maps `HealthPath` (`/health`, every check: readiness) and `AlivePath` (`/alive`, only checks tagged
+`MapHealthEndpoints` maps `HealthPath` (`/health`, every check: readiness) and `AlivePath` (`/alive`, only checks tagged
 `live`: liveness). Both allow anonymous requests, set `Cache-Control: no-store`, and answer only the overall status as `text/plain`
 (`Healthy`, `Degraded` or `Unhealthy`). They never show a check name, an exception or a dependency detail.
 
@@ -43,7 +48,7 @@ container orchestrator probes a production host. Use `HealthEndpointExposure.Dev
 production, and then add the AppHost health check only in Development too (see `WithHttpHealthCheckInAppHostEnvironment` in
 [SharedKernel.Aspire.Hosting](../SharedKernel.Aspire.Hosting/README.md)).
 
-Calling `MapSharedKernelDefaultEndpoints` without `AddSharedKernelServiceDefaults` throws `InvalidOperationException`. Paths that do not
+Calling `MapHealthEndpoints` without `AddApplicationDefaults` throws `InvalidOperationException`. Paths that do not
 start with `/`, or the same path for both endpoints, throw `ArgumentException`.
 
 ## Options

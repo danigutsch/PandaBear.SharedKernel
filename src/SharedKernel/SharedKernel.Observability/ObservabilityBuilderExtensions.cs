@@ -24,7 +24,11 @@ public static class ObservabilityBuilderExtensions
     /// <param name="builder">The host application builder to configure.</param>
     /// <returns>The updated builder instance for chaining.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> is <see langword="null"/>.</exception>
-    public static TBuilder ConfigureOpenTelemetry<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
+    /// <remarks>
+    /// It is not named <c>ConfigureOpenTelemetry</c> because the Aspire service-defaults template declares a method of that name and
+    /// signature in <c>Microsoft.Extensions.Hosting</c>, and a host that imports both namespaces would get an ambiguous call.
+    /// </remarks>
+    public static TBuilder AddObservability<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
         ArgumentNullException.ThrowIfNull(builder);
 
@@ -49,7 +53,7 @@ public static class ObservabilityBuilderExtensions
     }
 
     /// <summary>
-    /// Adds host-owned private attribute names to the privacy baseline that <see cref="ConfigureOpenTelemetry{TBuilder}"/>
+    /// Adds host-owned private attribute names to the privacy baseline that <see cref="AddObservability{TBuilder}"/>
     /// already applies. When called on its own it applies the baseline too, and the baseline is registered once however
     /// the two methods are combined. Call before adding exporters so the processors run first.
     /// </summary>

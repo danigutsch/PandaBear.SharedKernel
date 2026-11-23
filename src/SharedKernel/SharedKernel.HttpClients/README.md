@@ -9,7 +9,7 @@ Reusable HTTP client helpers, validation responses, defaults, and telemetry.
 ## Usage
 
 HttpClient defaults (standard resilience without retries of unsafe methods, then service discovery, and telemetry) come from
-`AddSharedKernelServiceDefaults` in `PandaBear.SharedKernel.ServiceDefaults`. Use `HttpOutcomeMapper.Send` to map bounded HTTP responses into `HttpOutcome` or `HttpOutcome<T>`; `ContractHttpValidation` supports validation-error exceptions when that calling convention is required. `ProgressStreamContent` reports transferred bytes, while `UploadOperationState` tracks operation identity and terminal state. Keep credentials, endpoint configuration, and application retry policy in the consumer; propagate cancellation and retain response-size limits.
+`AddApplicationDefaults` in `PandaBear.SharedKernel.ServiceDefaults`. Use `HttpOutcomeMapper.Send` to map bounded HTTP responses into `HttpOutcome` or `HttpOutcome<T>`; `ContractHttpValidation` supports validation-error exceptions when that calling convention is required. `ProgressStreamContent` reports transferred bytes, while `UploadOperationState` tracks operation identity and terminal state. Keep credentials, endpoint configuration, and application retry policy in the consumer; propagate cancellation and retain response-size limits.
 
 ## Standard resilience customization
 

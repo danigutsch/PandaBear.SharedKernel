@@ -1,7 +1,7 @@
 namespace PandaBear.Repository.Tests.Conventions;
 
 /// <summary>
-/// Guards the prefixes that <c>AddSharedKernelInstrumentation</c> registers: every meter and activity source name a library declares
+/// Guards the prefixes that <c>AddInstrumentation</c> registers: every meter and activity source name a library declares
 /// starts with <c>PandaBear.</c> or <c>SharedKernel.</c>, so a host that calls it exports the telemetry of every package it uses.
 /// </summary>
 public sealed class TelemetryNameConventionTests

@@ -17,5 +17,5 @@ PandaBear.ServiceDefaults.ServiceDefaultsOptions.HealthPath.get -> string!
 PandaBear.ServiceDefaults.ServiceDefaultsOptions.HealthPath.set -> void
 PandaBear.ServiceDefaults.ServiceDefaultsOptions.SensitiveTelemetryAttributes.get -> System.Collections.Generic.ISet<string!>!
 PandaBear.ServiceDefaults.ServiceDefaultsOptions.ServiceDefaultsOptions() -> void
-static PandaBear.ServiceDefaults.ServiceDefaultsExtensions.AddSharedKernelServiceDefaults<TBuilder>(this TBuilder builder, System.Action<PandaBear.ServiceDefaults.ServiceDefaultsOptions!>? configure = null) -> TBuilder
-static PandaBear.ServiceDefaults.ServiceDefaultsExtensions.MapSharedKernelDefaultEndpoints(this Microsoft.AspNetCore.Builder.WebApplication! app) -> Microsoft.AspNetCore.Builder.WebApplication!
+static PandaBear.ServiceDefaults.ServiceDefaultsExtensions.AddApplicationDefaults<TBuilder>(this TBuilder builder, System.Action<PandaBear.ServiceDefaults.ServiceDefaultsOptions!>? configure = null) -> TBuilder
+static PandaBear.ServiceDefaults.ServiceDefaultsExtensions.MapHealthEndpoints(this Microsoft.AspNetCore.Builder.WebApplication! app) -> Microsoft.AspNetCore.Builder.WebApplication!

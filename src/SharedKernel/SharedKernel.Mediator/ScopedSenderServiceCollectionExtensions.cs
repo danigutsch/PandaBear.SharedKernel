@@ -12,7 +12,7 @@ public static class ScopedSenderServiceCollectionExtensions
     /// Registers <see cref="ScopedSender"/> with a scoped lifetime, so each instance holds the provider of the scope it is resolved in
     /// (for a Blazor component, the circuit scope). It is idempotent: if <see cref="ScopedSender"/> is already registered, with or without
     /// an initializer, it changes nothing. It does not register <see cref="ISender"/>; use
-    /// <c>AddSharedKernelMediator</c> for that.
+    /// <c>AddMediator</c> for that.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
     /// <returns>The configured service collection.</returns>

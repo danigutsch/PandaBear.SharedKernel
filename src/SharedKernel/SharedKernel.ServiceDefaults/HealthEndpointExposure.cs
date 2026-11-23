@@ -1,6 +1,6 @@
 namespace PandaBear.ServiceDefaults;
 
-/// <summary>When <see cref="ServiceDefaultsExtensions.MapSharedKernelDefaultEndpoints"/> maps the health endpoints.</summary>
+/// <summary>When <see cref="ServiceDefaultsExtensions.MapHealthEndpoints"/> maps the health endpoints.</summary>
 public enum HealthEndpointExposure
 {
     /// <summary>

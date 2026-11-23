@@ -13,7 +13,7 @@ PandaBear.Observability.PrivacyDataClassifications
 PandaBear.Observability.SensitiveDataAttribute
 PandaBear.Observability.SensitiveDataAttribute.SensitiveDataAttribute() -> void
 static PandaBear.Observability.ObservabilityBuilderExtensions.AddApplicationVersionLogging<TBuilder>(this TBuilder builder, string? applicationVersion = null) -> TBuilder
-static PandaBear.Observability.ObservabilityBuilderExtensions.ConfigureOpenTelemetry<TBuilder>(this TBuilder builder) -> TBuilder
+static PandaBear.Observability.ObservabilityBuilderExtensions.AddObservability<TBuilder>(this TBuilder builder) -> TBuilder
 static PandaBear.Observability.PrivacyDataClassifications.Credential.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
 static PandaBear.Observability.PrivacyDataClassifications.Financial.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
 static PandaBear.Observability.PrivacyDataClassifications.Personal.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
@@ -25,7 +25,7 @@ static PandaBear.Observability.ObservabilityBuilderExtensions.AddTelemetryPrivac
 PandaBear.Observability.LogRecordPrivacyProcessor
 PandaBear.Observability.LogRecordPrivacyProcessor.LogRecordPrivacyProcessor(System.Func<string!, bool>? additionalSensitiveAttribute = null) -> void
 override PandaBear.Observability.LogRecordPrivacyProcessor.OnEnd(OpenTelemetry.Logs.LogRecord! data) -> void
-PandaBear.Observability.SharedKernelInstrumentationExtensions
-static PandaBear.Observability.SharedKernelInstrumentationExtensions.AddSharedKernelInstrumentation(this OpenTelemetry.Metrics.MeterProviderBuilder! metrics) -> OpenTelemetry.Metrics.MeterProviderBuilder!
-static PandaBear.Observability.SharedKernelInstrumentationExtensions.AddSharedKernelInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! tracing) -> OpenTelemetry.Trace.TracerProviderBuilder!
-static PandaBear.Observability.SharedKernelInstrumentationExtensions.NamePatterns.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Observability.InstrumentationExtensions
+static PandaBear.Observability.InstrumentationExtensions.AddInstrumentation(this OpenTelemetry.Metrics.MeterProviderBuilder! metrics) -> OpenTelemetry.Metrics.MeterProviderBuilder!
+static PandaBear.Observability.InstrumentationExtensions.AddInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! tracing) -> OpenTelemetry.Trace.TracerProviderBuilder!
+static PandaBear.Observability.InstrumentationExtensions.NamePatterns.get -> System.Collections.Generic.IReadOnlyList<string!>!
