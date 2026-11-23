@@ -2,7 +2,7 @@
 
 All packages remain preview (prerelease) until stable artifacts are separately authorized. Source is public. Preview candidates are the hashed `candidate-packages` CI artifacts; verify their revision and SHA-256 identities before consumption. Candidates do not authorize NuGet registry publication, GitHub releases, stable packages, stable tags, or stable releases.
 
-Consuming repositories take a candidate from its GitHub prerelease, `v<packageVersion>`, which holds the candidate's packages and manifest, `candidate.json`, unchanged. Each such publication is separately authorized. A consumer pins that manifest and stages the packages with `dotnet ci stage-candidate --repository`.
+Consuming repositories take a candidate from its GitHub prerelease, `v<packageVersion>`, which holds the candidate's packages and manifest, `candidate.json`, unchanged. Each such publication is separately authorized. A consumer pins that manifest and stages the packages with `dotnet ci stage-candidate --repository`. The [prerelease agent skill](../.agents/skills/prerelease/SKILL.md) gives the steps in order, from merging to recording consumption evidence.
 
 ## Prerelease retention
 

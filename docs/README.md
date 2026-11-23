@@ -16,6 +16,7 @@
 - [.NET versions and target frameworks](dotnet-multi-targeting.md)
 - [Rich domain model agent skill](../.agents/skills/ddd-rich-domain-model/SKILL.md)
 - [Multi-targeting agent skill](../.agents/skills/dotnet-multi-targeting/SKILL.md)
+- [Prerelease agent skill](../.agents/skills/prerelease/SKILL.md)
 - [ASP.NET Core error and security telemetry](aspnetcore-error-and-security-telemetry.md)
 - [Warning policy](ci/warning-policy.md)
 - [Action and image pin review](ci/pin-update-review.md)
