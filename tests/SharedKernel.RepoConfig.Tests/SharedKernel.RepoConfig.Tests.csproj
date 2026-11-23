@@ -13,6 +13,7 @@
         <Using Include="PandaBear.RepoConfig.Tool" />
         <Using Include="PandaBear.Repositories" />
         <Using Include="PandaBear.Repositories.GitHub" />
+        <Using Include="PandaBear.Repository.Tests" />
         <Using Include="Xunit" />
     </ItemGroup>
 
@@ -30,6 +31,10 @@
         <ProjectReference Include="../../src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj" />
         <ProjectReference Include="../../src/SharedKernel/SharedKernel.Testing.Xunit/SharedKernel.Testing.Xunit.csproj" />
         <ProjectReference Include="..\..\tools\SharedKernel.RepoConfig.Tool\SharedKernel.RepoConfig.Tool.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\SharedKernel.Repository.Tests\ChildProcessId.cs" Link="Fixtures\ChildProcessId.cs" />
     </ItemGroup>
 
 </Project>

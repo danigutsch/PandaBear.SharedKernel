@@ -5,7 +5,6 @@ using PandaBear.Vault.Brief;
 using PandaBear.Vault.Merge;
 using PandaBear.Vault.Model;
 using PandaBear.Vault.Secrets;
-using PandaBear.VaultManager.Tool.Tests.Pipeline;
 using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Brief;

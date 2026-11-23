@@ -15,7 +15,7 @@ public sealed class BitwardenJsonWriterTests
     public void Write_then_read_round_trips_every_item_type()
     {
         // Arrange
-        var original = Fixture.ReadBitwardenFull();
+        var original = BitwardenFixture.ReadFull();
 
         // Act
         var result = BitwardenJsonWriter.Write(original);

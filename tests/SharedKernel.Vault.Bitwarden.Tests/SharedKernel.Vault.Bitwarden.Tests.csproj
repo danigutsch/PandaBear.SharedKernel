@@ -7,6 +7,8 @@
 
     <ItemGroup>
         <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="PandaBear.SecretScanning.Tests" />
+        <Using Include="PandaBear.Vault.Tests" />
         <Using Include="Xunit" />
     </ItemGroup>
 
@@ -22,6 +24,11 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Vault\SharedKernel.Vault.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\SharedKernel.SecretScanning.Tests\Fixture.cs" Link="SecretScanning\Fixture.cs" />
+        <Compile Include="..\SharedKernel.Vault.Tests\TestZip.cs" Link="Vault\TestZip.cs" />
     </ItemGroup>
 
     <ItemGroup>

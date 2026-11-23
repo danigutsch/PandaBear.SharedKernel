@@ -8,6 +8,7 @@
     <ItemGroup>
         <Using Include="PandaBear.DevContainers" />
         <Using Include="PandaBear.RepoConfig.Tests" />
+        <Using Include="PandaBear.Repository.Tests" />
         <Using Include="PandaBear.Testing" />
         <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="PandaBear.Testing.Http" />
@@ -32,7 +33,7 @@
 
     <!-- Fixtures shared with the command-line tests of the repo tool. -->
     <ItemGroup>
-        <Compile Include="..\SharedKernel.RepoConfig.Tests\ChildProcessId.cs" Link="Shared\ChildProcessId.cs" />
+        <Compile Include="..\SharedKernel.Repository.Tests\ChildProcessId.cs" Link="Shared\ChildProcessId.cs" />
         <Compile Include="..\SharedKernel.RepoConfig.Tests\DevcontainerCliArchive.cs" Link="Shared\DevcontainerCliArchive.cs" />
         <Compile Include="..\SharedKernel.RepoConfig.Tests\DevcontainerCliArchiveEntry.cs" Link="Shared\DevcontainerCliArchiveEntry.cs" />
         <Compile Include="..\SharedKernel.RepoConfig.Tests\LinuxProcessIdentity.cs" Link="Shared\LinuxProcessIdentity.cs" />

@@ -10,6 +10,7 @@
         <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="PandaBear.Sandbox" />
         <Using Include="PandaBear.Sandbox.Tool" />
+        <Using Include="PandaBear.Sandbox.Tests" />
         <Using Include="Xunit" />
     </ItemGroup>
 
@@ -24,6 +25,13 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
         <ProjectReference Include="..\..\tools\SharedKernel.Sandbox.Tool\SharedKernel.Sandbox.Tool.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\SharedKernel.Sandbox.Tests\EnvironmentCollection.cs" Link="Sandbox\EnvironmentCollection.cs" />
+        <Compile Include="..\SharedKernel.Sandbox.Tests\FakeSandboxEnvironment.cs" Link="Sandbox\FakeSandboxEnvironment.cs" />
+        <Compile Include="..\SharedKernel.Sandbox.Tests\PermissionsProbe.cs" Link="Sandbox\PermissionsProbe.cs" />
+        <Compile Include="..\SharedKernel.Sandbox.Tests\RestrictedPermissions.cs" Link="Sandbox\RestrictedPermissions.cs" />
     </ItemGroup>
 
 </Project>
