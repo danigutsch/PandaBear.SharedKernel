@@ -11,7 +11,7 @@ public sealed class UiFailureReporterTests
     public void Report_logs_only_type_operation_and_trace_ID_and_increments_the_counter()
     {
         // Arrange
-        var logger = new CapturingLogger<UiFailureReporter>();
+        var logger = new RecordingLogger<UiFailureReporter>();
         using var meters = new MeterCollector(UiFailureReporter.MeterName);
         var reporter = new UiFailureReporter(logger, meters);
         using var activity = new Activity("test");
@@ -22,7 +22,7 @@ public sealed class UiFailureReporterTests
         reporter.Report(exception, "customers.import");
 
         // Assert
-        var entry = logger.Entries.ShouldHaveSingleItem();
+        var entry = logger.Records.ShouldHaveSingleItem();
         entry.EventId.Id.ShouldBe(UiFailureReporter.HandledFailureEventId);
         entry.EventId.Name.ShouldBe("HandledUiFailure");
         entry.Level.ShouldBe(LogLevel.Error);
@@ -32,7 +32,7 @@ public sealed class UiFailureReporterTests
         entry.Message.ShouldContain(activity.TraceId.ToString(), StringComparison.Ordinal);
         entry.Message.ShouldNotContain("secret", StringComparison.Ordinal);
         entry.Message.ShouldNotContain("Orders.cs", StringComparison.Ordinal);
-        entry.Values.Values.Any(value => value is not null && value.Contains("secret", StringComparison.Ordinal)).ShouldBeFalse();
+        entry.State.Any(pair => pair.Value?.ToString() is { } value && value.Contains("secret", StringComparison.Ordinal)).ShouldBeFalse();
         var measurement = meters.Measurements.ShouldHaveSingleItem();
         measurement.Instrument.ShouldBe(UiFailureReporter.HandledFailuresCounterName);
         measurement.Value.ShouldBe(1);
@@ -45,7 +45,7 @@ public sealed class UiFailureReporterTests
     public void Report_works_without_an_ambient_activity()
     {
         // Arrange
-        var logger = new CapturingLogger<UiFailureReporter>();
+        var logger = new RecordingLogger<UiFailureReporter>();
         using var meters = new MeterCollector(UiFailureReporter.MeterName);
         var reporter = new UiFailureReporter(logger, meters);
 
@@ -53,9 +53,9 @@ public sealed class UiFailureReporterTests
         reporter.Report(new TimeoutException("never logged"), "customers.import");
 
         // Assert
-        var entry = logger.Entries.ShouldHaveSingleItem();
+        var entry = logger.Records.ShouldHaveSingleItem();
         entry.Message.ShouldNotContain("never logged", StringComparison.Ordinal);
-        entry.Values["TraceId"].ShouldBe(UiFailureReporter.UnknownTraceId);
+        entry.State.Where(pair => pair.Key == "TraceId").ShouldHaveSingleItem().Value.ShouldBeOfType<string>().ShouldBe(UiFailureReporter.UnknownTraceId);
     }
 
     [Theory]
@@ -66,7 +66,7 @@ public sealed class UiFailureReporterTests
     public void Unsafe_operation_names_are_replaced_by_a_constant(string operation)
     {
         // Arrange
-        var logger = new CapturingLogger<UiFailureReporter>();
+        var logger = new RecordingLogger<UiFailureReporter>();
         using var meters = new MeterCollector(UiFailureReporter.MeterName);
         var reporter = new UiFailureReporter(logger, meters);
 
@@ -74,14 +74,14 @@ public sealed class UiFailureReporterTests
         reporter.Report(new InvalidOperationException(), operation);
 
         // Assert
-        logger.Entries.ShouldHaveSingleItem().Values["Operation"].ShouldBe(UiFailureReporter.UnknownOperation);
+        logger.Records.ShouldHaveSingleItem().State.Where(pair => pair.Key == "Operation").ShouldHaveSingleItem().Value.ShouldBeOfType<string>().ShouldBe(UiFailureReporter.UnknownOperation);
     }
 
     [Fact]
     public void Overlong_operation_names_are_replaced_by_a_constant()
     {
         // Arrange
-        var logger = new CapturingLogger<UiFailureReporter>();
+        var logger = new RecordingLogger<UiFailureReporter>();
         using var meters = new MeterCollector(UiFailureReporter.MeterName);
         var reporter = new UiFailureReporter(logger, meters);
 
@@ -89,7 +89,7 @@ public sealed class UiFailureReporterTests
         reporter.Report(new InvalidOperationException(), HostileText.VeryLong(10_000));
 
         // Assert
-        logger.Entries.ShouldHaveSingleItem().Values["Operation"].ShouldBe(UiFailureReporter.UnknownOperation);
+        logger.Records.ShouldHaveSingleItem().State.Where(pair => pair.Key == "Operation").ShouldHaveSingleItem().Value.ShouldBeOfType<string>().ShouldBe(UiFailureReporter.UnknownOperation);
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public sealed class UiFailureReporterTests
     {
         // Arrange
         using var meters = new MeterCollector(UiFailureReporter.MeterName);
-        var reporter = new UiFailureReporter(new CapturingLogger<UiFailureReporter>(), meters);
+        var reporter = new UiFailureReporter(new RecordingLogger<UiFailureReporter>(), meters);
 
         // Act
         var report = () => reporter.Report(null!, "operation");
@@ -111,7 +111,7 @@ public sealed class UiFailureReporterTests
     {
         // Arrange
         using var meters = new MeterCollector(UiFailureReporter.MeterName);
-        var reporter = new UiFailureReporter(new CapturingLogger<UiFailureReporter>(), meters);
+        var reporter = new UiFailureReporter(new RecordingLogger<UiFailureReporter>(), meters);
 
         // Act
         reporter.Report(new InvalidOperationException(), HostileText.Markup);
@@ -125,7 +125,7 @@ public sealed class UiFailureReporterTests
     {
         // Arrange
         using var meters = new MeterCollector(UiFailureReporter.MeterName);
-        var reporter = new UiFailureReporter(new CapturingLogger<UiFailureReporter>(), meters);
+        var reporter = new UiFailureReporter(new RecordingLogger<UiFailureReporter>(), meters);
 
         // Act
         reporter.Report(new AggregateException(new TimeoutException(HostileText.StackTrace)), "op");
@@ -139,7 +139,7 @@ public sealed class UiFailureReporterTests
     {
         // Arrange
         using var meters = new MeterCollector(UiFailureReporter.MeterName);
-        var reporter = new UiFailureReporter(new CapturingLogger<UiFailureReporter>(), meters);
+        var reporter = new UiFailureReporter(new RecordingLogger<UiFailureReporter>(), meters);
 
         // Act
         reporter.Report(new TargetInvocationException(new FormatException()), "op");
@@ -152,7 +152,7 @@ public sealed class UiFailureReporterTests
     public void Throwing_meter_factory_cannot_break_reporting_and_the_log_is_still_written()
     {
         // Arrange
-        var logger = new CapturingLogger<UiFailureReporter>();
+        var logger = new RecordingLogger<UiFailureReporter>();
         using var meters = new ThrowingMeterFactory();
         var reporter = new UiFailureReporter(logger, meters);
 
@@ -161,14 +161,14 @@ public sealed class UiFailureReporterTests
 
         // Assert
         failure.ShouldBeNull();
-        logger.Entries.ShouldHaveSingleItem().EventId.Id.ShouldBe(UiFailureReporter.HandledFailureEventId);
+        logger.Records.ShouldHaveSingleItem().EventId.Id.ShouldBe(UiFailureReporter.HandledFailureEventId);
     }
 
     [Fact]
     public void Throwing_listener_cannot_break_reporting_and_the_log_is_still_written()
     {
         // Arrange
-        var logger = new CapturingLogger<UiFailureReporter>();
+        var logger = new RecordingLogger<UiFailureReporter>();
         using var meters = new MeterCollector(UiFailureReporter.MeterName) { ThrowOnMeasurement = true };
         var reporter = new UiFailureReporter(logger, meters);
 
@@ -177,7 +177,7 @@ public sealed class UiFailureReporterTests
 
         // Assert
         failure.ShouldBeNull();
-        logger.Entries.ShouldHaveSingleItem().EventId.Id.ShouldBe(UiFailureReporter.HandledFailureEventId);
+        logger.Records.ShouldHaveSingleItem().EventId.Id.ShouldBe(UiFailureReporter.HandledFailureEventId);
     }
 
     [Fact]
@@ -188,7 +188,7 @@ public sealed class UiFailureReporterTests
 
         // Act
         var nullLogger = () => new UiFailureReporter(null!, meters);
-        var nullFactory = () => new UiFailureReporter(new CapturingLogger<UiFailureReporter>(), null!);
+        var nullFactory = () => new UiFailureReporter(new RecordingLogger<UiFailureReporter>(), null!);
 
         // Assert
         nullLogger.ShouldThrow<ArgumentNullException>();

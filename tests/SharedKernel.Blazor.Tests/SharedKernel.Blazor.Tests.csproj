@@ -12,6 +12,7 @@
         <Using Include="PandaBear.Blazor" />
         <Using Include="PandaBear.HttpClients" />
         <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="PandaBear.Testing.Logging" />
         <Using Include="PandaBear.Testing.Metrics" />
         <Using Include="PandaBear.Testing.Playwright" />
         <Using Include="Xunit" />
@@ -22,6 +23,7 @@
         <PackageReference Include="coverlet.MTP">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
         <PackageReference Include="xunit.v3.mtp-v2" />
     </ItemGroup>
 
@@ -30,6 +32,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.AspNetCore\SharedKernel.Testing.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Logging\SharedKernel.Testing.Logging.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Playwright\SharedKernel.Testing.Playwright.csproj" />
     </ItemGroup>
 
