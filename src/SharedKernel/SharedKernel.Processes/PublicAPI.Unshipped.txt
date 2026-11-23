@@ -39,3 +39,4 @@ PandaBear.Processes.GitStartInfo
 static PandaBear.Processes.GitStartInfo.Create(string! workingDirectory, System.Collections.Generic.IEnumerable<string!>! arguments) -> System.Diagnostics.ProcessStartInfo!
 static PandaBear.Processes.GitStartInfo.Create(string! workingDirectory, System.Collections.Generic.IEnumerable<string!>! arguments, PandaBear.Processes.IExecutableResolver! resolver) -> System.Diagnostics.ProcessStartInfo!
 static PandaBear.Processes.GitStartInfo.Timeout.get -> System.TimeSpan
+static PandaBear.Processes.GitStartInfo.ApplyEnvironment(System.Diagnostics.ProcessStartInfo! startInfo) -> void

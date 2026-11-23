@@ -599,7 +599,8 @@ public sealed class RepositoryValidationTests
         // Assert
         result.ExitCode.ShouldBe(1);
         result.Error.ShouldBe(string.Empty);
-        processes.Calls.ShouldAllSatisfy(call => call.Token.IsCancellationRequested.ShouldBeTrue());
+        processes.Calls.Where(static call => call.FileName != "git").ShouldAllSatisfy(static call => call.Token.IsCancellationRequested.ShouldBeTrue());
+        processes.Calls.Where(static call => call.FileName == "git").ShouldAllSatisfy(static call => call.Token.CanBeCanceled.ShouldBeTrue("Git gets a time-limited token linked to the run's."));
         processes.Commands.Any(static command => command.StartsWith("dotnet test", StringComparison.Ordinal)).ShouldBeFalse();
         using var manifest = JsonDocument.Parse(await File.ReadAllTextAsync(Path.Combine(selection, "execution-library", "manifest.json"), ct));
         manifest.RootElement.GetProperty("status").GetString().ShouldBe("failed");

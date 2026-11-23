@@ -39,7 +39,9 @@ Use `SerialTestJustificationAttribute` on xUnit collection definitions that disa
 - Metrics: `MeterCollector` is an `IMeterFactory` that records the long measurements of its meters (pass a meter
   name to restrict it); `ThrowingMeterFactory` fails every `Create` call.
 - Processes and Git: `TestProcess.Run` runs a process and captures its output; `TestGit` runs Git without the user's
-  configuration and commits a directory (`CommitAll`, `Commit`); `TemporaryGitRepository` owns an isolated repository
+  configuration and commits a directory (`CommitAll`, `Commit`). It starts Git from an absolute `PATH` directory as
+  `GitStartInfo` of `PandaBear.SharedKernel.Processes` describes it, without a prompt or the host's tokens and inherited
+  `GIT_*` variables (pass a variable a test needs in `environment`), with bounded output, and stops it after 30 seconds; `TemporaryGitRepository` owns an isolated repository
   with `Initialize`, `Commit`, `Tag` and `RunGit`.
 - Time: `CountingTimeProvider` wraps a `TimeProvider` (the system clock by default) and counts how often the current UTC time is
   read (`Reads`, `Reset`), to prove that an operation reads the clock once. For a fixed or movable clock use
