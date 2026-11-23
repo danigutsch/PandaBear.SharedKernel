@@ -7,10 +7,9 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// </summary>
 public sealed class ImageGridBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
     private const double Gap = 16;
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(nameof(ImageGridLayout.Grid), 1, false)]
     [InlineData(nameof(ImageGridLayout.Grid), 2, false)]
     [InlineData(nameof(ImageGridLayout.Grid), 3, false)]
@@ -46,7 +45,7 @@ public sealed class ImageGridBrowserTests(ChromiumFixture chromium) : IClassFixt
         figures[0].X.ShouldBe(box.X);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(nameof(ImageGridLayout.Grid))]
     [InlineData(nameof(ImageGridLayout.Mosaic))]
     public async Task On_a_phone_two_photos_stack_at_the_full_width(string layout)
@@ -71,7 +70,7 @@ public sealed class ImageGridBrowserTests(ChromiumFixture chromium) : IClassFixt
         scrollWidth.ShouldBeLessThanOrEqualTo(375);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(nameof(ImageGridLayout.Grid))]
     [InlineData(nameof(ImageGridLayout.Mosaic))]
     public async Task A_lone_tall_photo_is_capped_in_height_and_shown_whole(string layout)
@@ -95,7 +94,7 @@ public sealed class ImageGridBrowserTests(ChromiumFixture chromium) : IClassFixt
         fit.ShouldBe("contain");
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(375)]
     [InlineData(1280)]
     public async Task Heading_less_text_and_photos_split_like_a_section_without_a_landmark(int width)
@@ -127,7 +126,7 @@ public sealed class ImageGridBrowserTests(ChromiumFixture chromium) : IClassFixt
         tree.Count(node => node.Role is "region" or "complementary").ShouldBe(0);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(375, 3, false)]
     [InlineData(390, 3, true)]
     [InlineData(1280, 6, false)]
@@ -162,7 +161,7 @@ public sealed class ImageGridBrowserTests(ChromiumFixture chromium) : IClassFixt
         scrollWidth.ShouldBeLessThanOrEqualTo(width);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(nameof(ImageGridLayout.Grid), nameof(SiteAlignment.Start), "0% 50%")]
     [InlineData(nameof(ImageGridLayout.Mosaic), nameof(SiteAlignment.Start), "0% 50%")]
     [InlineData(nameof(ImageGridLayout.Grid), nameof(SiteAlignment.Center), "50% 50%")]
@@ -188,7 +187,7 @@ public sealed class ImageGridBrowserTests(ChromiumFixture chromium) : IClassFixt
         headless.ShouldBe("0% 50%");
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(375)]
     [InlineData(1280)]
     public async Task A_linked_thumbnail_is_a_tile_link_named_by_its_photo_with_a_focus_ring_around_the_tile(int width)
@@ -225,7 +224,7 @@ public sealed class ImageGridBrowserTests(ChromiumFixture chromium) : IClassFixt
         tree.ShouldContain(node => node.Role == "link" && node.Name == "Photo 1");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task The_thumbnail_sizes_cover_the_real_tile_width_without_overshooting_it_from_phone_to_desktop()
     {
         // Arrange

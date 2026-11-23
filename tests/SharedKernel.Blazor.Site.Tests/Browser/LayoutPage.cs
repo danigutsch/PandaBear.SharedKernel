@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Playwright;
 
 namespace PandaBear.Blazor.Site.Tests.Browser;
@@ -26,7 +24,7 @@ internal sealed class LayoutPage : IAsyncDisposable
     public static async Task<LayoutPage> Open(IBrowser browser, int width, int cards = 1, bool languages = false, string theme = "")
     {
         var css = await File.ReadAllTextAsync(SiteFiles.StylesheetPath()) + theme;
-        var body = await Render(cards, languages);
+        var body = await ComponentHtml.Render<LayoutSample>(new Dictionary<string, object?> { [nameof(LayoutSample.Cards)] = cards, [nameof(LayoutSample.Languages)] = languages });
         var page = await browser.NewPageAsync(new BrowserNewPageOptions { ViewportSize = new ViewportSize { Width = width, Height = 900 }, ColorScheme = ColorScheme.Light });
         await page.SetContentAsync($"<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Layout</title><style>{css}</style></head><body>{body}</body></html>");
         return new LayoutPage(page);
@@ -48,7 +46,7 @@ internal sealed class LayoutPage : IAsyncDisposable
         where TComponent : IComponent
     {
         var css = await File.ReadAllTextAsync(SiteFiles.StylesheetPath()) + theme;
-        var body = await Render<TComponent>(parameters ?? new Dictionary<string, object?>());
+        var body = await ComponentHtml.Render<TComponent>(parameters);
         var html = $"<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Bands</title><style>{css}</style></head><body>{body}</body></html>";
         var page = await browser.NewPageAsync(new BrowserNewPageOptions { ViewportSize = new ViewportSize { Width = width, Height = 900 }, ColorScheme = ColorScheme.Light });
         await page.RouteAsync("**/*", route => route.Request.Url == "http://site.test/"
@@ -197,28 +195,4 @@ internal sealed class LayoutPage : IAsyncDisposable
 
     private static string WhiteSvg(int width, int height) =>
         $"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{width}\" height=\"{height}\"><rect width=\"{width}\" height=\"{height}\" fill=\"#ffffff\"/></svg>";
-
-    private static async Task<string> Render<TComponent>(IDictionary<string, object?> parameters)
-        where TComponent : IComponent
-    {
-        await using var services = new ServiceCollection().BuildServiceProvider();
-        await using var renderer = new HtmlRenderer(services, NullLoggerFactory.Instance);
-        return await renderer.Dispatcher.InvokeAsync(async () =>
-        {
-            var output = await renderer.RenderComponentAsync<TComponent>(ParameterView.FromDictionary(parameters));
-            return output.ToHtmlString();
-        });
-    }
-
-    private static async Task<string> Render(int cards, bool languages)
-    {
-        await using var services = new ServiceCollection().BuildServiceProvider();
-        await using var renderer = new HtmlRenderer(services, NullLoggerFactory.Instance);
-        return await renderer.Dispatcher.InvokeAsync(async () =>
-        {
-            var parameters = ParameterView.FromDictionary(new Dictionary<string, object?> { [nameof(LayoutSample.Cards)] = cards, [nameof(LayoutSample.Languages)] = languages });
-            var output = await renderer.RenderComponentAsync<LayoutSample>(parameters);
-            return output.ToHtmlString();
-        });
-    }
 }

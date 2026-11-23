@@ -1,13 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
+using PandaBear.Testing.Playwright;
 
 namespace PandaBear.Testing.Tests;
 
 /// <summary>Tests that a browser test starts an application of its own by default and exposes the application's services.</summary>
 public sealed class KestrelPageTestOwnHostTests : OwnHostPageTest
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public void Services_belong_to_the_application_started_for_this_test()
     {
         // Act
@@ -17,7 +16,7 @@ public sealed class KestrelPageTestOwnHostTests : OwnHostPageTest
         registered.ShouldBeSameAs(Owner);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task The_page_reaches_the_application_started_for_this_test()
     {
         // Act

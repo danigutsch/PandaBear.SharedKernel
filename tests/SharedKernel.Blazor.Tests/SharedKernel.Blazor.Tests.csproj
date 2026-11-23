@@ -13,6 +13,7 @@
         <Using Include="PandaBear.HttpClients" />
         <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="PandaBear.Testing.Metrics" />
+        <Using Include="PandaBear.Testing.Playwright" />
         <Using Include="Xunit" />
     </ItemGroup>
 

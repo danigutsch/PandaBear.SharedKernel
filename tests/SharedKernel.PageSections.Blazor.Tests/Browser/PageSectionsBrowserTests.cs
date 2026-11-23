@@ -9,9 +9,7 @@ namespace PandaBear.PageSections.Blazor.Tests.Browser;
 /// </summary>
 public sealed class PageSectionsBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_section_is_a_region_named_by_its_heading_its_questions_open_on_demand_and_its_links_are_named()
     {
         // Arrange
@@ -38,7 +36,7 @@ public sealed class PageSectionsBrowserTests(ChromiumFixture chromium) : IClassF
         poster.ShouldBe(string.Empty);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(375, false)]
     [InlineData(1280, true)]
     public async Task Images_beside_the_text_stand_beside_it_on_a_wide_screen_and_follow_it_on_a_phone(int width, bool beside)
@@ -71,7 +69,7 @@ public sealed class PageSectionsBrowserTests(ChromiumFixture chromium) : IClassF
         }
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Centred_bands_centre_the_heading_the_text_and_the_button()
     {
         // Arrange

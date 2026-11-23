@@ -7,13 +7,12 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// </summary>
 public sealed class SiteInvertedBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
     private const string Primary = "#1d4ed8";
     private const string PrimaryHover = "#1e40af";
     private const string OnPrimary = "#ffffff";
     private const string SurfaceAlt = "#f3f4f6";
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_plain_card_in_a_primary_band_inverts_its_more_look_and_button_at_rest_and_on_hover()
     {
         // Arrange
@@ -40,7 +39,7 @@ public sealed class SiteInvertedBrowserTests(ChromiumFixture chromium) : IClassF
         SiteFixtures.Contrast(hoveredText, Primary).ShouldBeGreaterThanOrEqualTo(4.5);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_boxed_card_in_a_primary_band_keeps_the_page_look_of_its_more_look_and_button_at_rest_and_on_hover()
     {
         // Arrange
@@ -72,7 +71,7 @@ public sealed class SiteInvertedBrowserTests(ChromiumFixture chromium) : IClassF
         SiteFixtures.Contrast(hoveredAction, card).ShouldBeGreaterThanOrEqualTo(4.5);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_heading_with_the_primary_colour_and_the_divider_take_the_on_primary_colour_in_a_primary_footer()
     {
         // Arrange
@@ -90,7 +89,7 @@ public sealed class SiteInvertedBrowserTests(ChromiumFixture chromium) : IClassF
         divider.ShouldBe(OnPrimary);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData("plain")]
     [InlineData("boxed")]
     public async Task A_card_focus_ring_on_a_primary_band_reaches_3_to_1_against_the_band(string card)
@@ -110,7 +109,7 @@ public sealed class SiteInvertedBrowserTests(ChromiumFixture chromium) : IClassF
         SiteFixtures.Contrast(ring, Primary).ShouldBeGreaterThanOrEqualTo(3);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_control_inside_a_boxed_card_on_a_primary_band_keeps_the_focus_colour_against_the_card()
     {
         // Arrange
@@ -127,7 +126,7 @@ public sealed class SiteInvertedBrowserTests(ChromiumFixture chromium) : IClassF
         SiteFixtures.Contrast(ring, card).ShouldBeGreaterThanOrEqualTo(3);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_link_focus_ring_in_a_primary_footer_reaches_3_to_1_against_the_footer()
     {
         // Arrange

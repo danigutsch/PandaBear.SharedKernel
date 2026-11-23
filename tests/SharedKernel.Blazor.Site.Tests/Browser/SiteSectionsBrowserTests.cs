@@ -6,9 +6,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// </summary>
 public sealed class SiteSectionsBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData("#plain-text")]
     [InlineData("#plain .site-section__intro")]
     [InlineData("#centred-text")]
@@ -31,7 +29,7 @@ public sealed class SiteSectionsBrowserTests(ChromiumFixture chromium) : IClassF
         characters.ShouldBeGreaterThanOrEqualTo(64.5);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(375)]
     [InlineData(1280)]
     public async Task A_centred_section_centres_its_heading_divider_text_byline_and_video_link(int width)
@@ -60,7 +58,7 @@ public sealed class SiteSectionsBrowserTests(ChromiumFixture chromium) : IClassF
         boxes.ShouldAllSatisfy(box => Math.Abs(box.X + (box.Width / 2) - centre).ShouldBeLessThanOrEqualTo(1));
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_centred_band_centres_its_text()
     {
         // Arrange
@@ -76,7 +74,7 @@ public sealed class SiteSectionsBrowserTests(ChromiumFixture chromium) : IClassF
         Math.Abs(text.X + (text.Width / 2) - (band.X + (band.Width / 2))).ShouldBeLessThanOrEqualTo(1);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(375)]
     [InlineData(1280)]
     public async Task Nested_sections_take_the_width_of_the_outer_body_and_space_like_paragraph_groups(int width)
@@ -103,7 +101,7 @@ public sealed class SiteSectionsBrowserTests(ChromiumFixture chromium) : IClassF
         Math.Abs(underOuterHeading - 24).ShouldBeLessThanOrEqualTo(0.2);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(375)]
     [InlineData(1280)]
     public async Task A_video_poster_is_cropped_to_16_by_9_and_kept_to_the_video_width(int width)
@@ -123,7 +121,7 @@ public sealed class SiteSectionsBrowserTests(ChromiumFixture chromium) : IClassF
         poster.Width.ShouldBe(Math.Min(640, section.Width));
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(375)]
     [InlineData(1280)]
     public async Task A_list_in_centred_text_is_a_centred_box_whose_items_stay_at_the_start(int width)
@@ -144,7 +142,7 @@ public sealed class SiteSectionsBrowserTests(ChromiumFixture chromium) : IClassF
         Math.Abs(list.X + (list.Width / 2) - (section.X + (section.Width / 2))).ShouldBeLessThanOrEqualTo(1);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData("#nest-start", "start", "0% 50%", false)]
     [InlineData("#nest-inherit", "center", "50% 50%", true)]
     [InlineData("#nest-center", "center", "50% 50%", true)]
@@ -179,7 +177,7 @@ public sealed class SiteSectionsBrowserTests(ChromiumFixture chromium) : IClassF
         }
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(375)]
     [InlineData(1280)]
     public async Task A_default_action_row_follows_centred_text_and_an_end_row_keeps_its_end(int width)
@@ -207,7 +205,7 @@ public sealed class SiteSectionsBrowserTests(ChromiumFixture chromium) : IClassF
         }
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_consumer_single_class_rule_overrides_the_measure_and_the_centring_margins()
     {
         // Arrange

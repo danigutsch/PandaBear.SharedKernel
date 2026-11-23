@@ -6,9 +6,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// </summary>
 public sealed class SiteLayoutBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(375)]
     [InlineData(1280)]
     public async Task On_a_page_inside_a_group_the_group_stays_closed_and_shows_a_disclosure_marker(int width)
@@ -30,7 +28,7 @@ public sealed class SiteLayoutBrowserTests(ChromiumFixture chromium) : IClassFix
         current.ShouldBe("true");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task On_a_phone_an_open_group_stacks_the_navigation_without_sideways_scrolling()
     {
         // Arrange
@@ -55,7 +53,7 @@ public sealed class SiteLayoutBrowserTests(ChromiumFixture chromium) : IClassFix
         scrollWidth.ShouldBeLessThanOrEqualTo(375);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task On_a_desktop_an_open_group_drops_down_over_the_page_without_moving_the_navigation()
     {
         // Arrange
@@ -77,7 +75,7 @@ public sealed class SiteLayoutBrowserTests(ChromiumFixture chromium) : IClassFix
         sublist.Y.ShouldBeGreaterThanOrEqualTo(summary.Bottom);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(375)]
     [InlineData(1280)]
     public async Task A_lone_card_has_the_width_of_one_column_of_a_full_grid(int width)
@@ -103,7 +101,7 @@ public sealed class SiteLayoutBrowserTests(ChromiumFixture chromium) : IClassFix
         }
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(375)]
     [InlineData(1280)]
     public async Task Text_in_the_gutter_container_lines_up_with_the_section_without_its_vertical_padding(int width)
@@ -127,7 +125,7 @@ public sealed class SiteLayoutBrowserTests(ChromiumFixture chromium) : IClassFix
         paddingBottom.ShouldBe("0px");
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData("")]
     [InlineData(":root { --site-nav-font-size: 0.875rem; --site-nav-line-height: 1.7; --site-nav-letter-spacing: 0.05em; }")]
     public async Task On_a_desktop_the_language_switcher_sits_on_the_line_of_the_navigation_links_in_their_type(string theme)

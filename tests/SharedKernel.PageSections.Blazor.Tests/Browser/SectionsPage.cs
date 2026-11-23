@@ -1,7 +1,3 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Playwright;
 
 namespace PandaBear.PageSections.Blazor.Tests.Browser;
@@ -29,7 +25,7 @@ internal sealed class SectionsPage : IAsyncDisposable
     public static async Task<SectionsPage> Open(IBrowser browser, int width, IReadOnlyList<PageSection<int, string, NoExtra>> sections, SiteAlignment? textAlignment = null)
     {
         var css = await File.ReadAllTextAsync(StylesheetPath());
-        var body = await Render(new Dictionary<string, object?>
+        var body = await ComponentHtml.Render<PageSectionsView<int, string, NoExtra>>(new Dictionary<string, object?>
         {
             [nameof(PageSectionsView<int, string, NoExtra>.Sections)] = sections,
             [nameof(PageSectionsView<int, string, NoExtra>.Image)] = (Func<int, ResponsiveImage?>)SectionFixtures.Image,
@@ -68,27 +64,6 @@ internal sealed class SectionsPage : IAsyncDisposable
 
     private const string WhiteSvg = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"9\"><rect width=\"16\" height=\"9\" fill=\"#ffffff\"/></svg>";
 
-    private static string StylesheetPath()
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "SharedKernel.slnx")))
-        {
-            directory = directory.Parent;
-        }
-
-        return directory is null
-            ? throw new InvalidOperationException("The repository root was not found.")
-            : Path.Combine(directory.FullName, "src", "SharedKernel", "SharedKernel.Blazor.Site", "wwwroot", "site.css");
-    }
-
-    private static async Task<string> Render(IDictionary<string, object?> parameters)
-    {
-        await using var services = new ServiceCollection().BuildServiceProvider();
-        await using var renderer = new HtmlRenderer(services, NullLoggerFactory.Instance);
-        return await renderer.Dispatcher.InvokeAsync(async () =>
-        {
-            var output = await renderer.RenderComponentAsync<PageSectionsView<int, string, NoExtra>>(ParameterView.FromDictionary(parameters));
-            return output.ToHtmlString();
-        });
-    }
+    private static string StylesheetPath() =>
+        Path.Combine(Testing.RepositoryRoot.Locate("SharedKernel.slnx"), "src", "SharedKernel", "SharedKernel.Blazor.Site", "wwwroot", "site.css");
 }

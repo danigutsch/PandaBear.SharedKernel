@@ -1,5 +1,4 @@
 using System.Reflection;
-using PandaBear.Testing.Playwright;
 
 namespace PandaBear.Blazor.Tests;
 

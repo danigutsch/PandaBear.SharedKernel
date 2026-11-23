@@ -8,9 +8,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// </summary>
 public sealed class ThemePreviewStrictPolicyTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task The_sample_headings_keep_the_heading_typography_without_a_heading_role()
     {
         // Arrange
@@ -30,7 +28,7 @@ public sealed class ThemePreviewStrictPolicyTests(ChromiumFixture chromium) : IC
         typography[3].Size.ShouldBeGreaterThan(typography[4].Size);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task The_preview_with_the_response_nonce_is_applied_without_a_violation()
     {
         // Arrange
@@ -48,7 +46,7 @@ public sealed class ThemePreviewStrictPolicyTests(ChromiumFixture chromium) : IC
         violations.ShouldBeEmpty();
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task An_interactive_change_edits_the_allowed_style_element_and_still_applies()
     {
         // Arrange
@@ -68,7 +66,7 @@ public sealed class ThemePreviewStrictPolicyTests(ChromiumFixture chromium) : IC
         violations.ShouldBeEmpty();
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_replaced_style_element_carries_the_nonce_again_and_still_applies()
     {
         // Arrange
@@ -91,7 +89,7 @@ public sealed class ThemePreviewStrictPolicyTests(ChromiumFixture chromium) : IC
         violations.ShouldBeEmpty();
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_style_element_without_the_response_nonce_is_blocked_and_reported()
     {
         // Arrange

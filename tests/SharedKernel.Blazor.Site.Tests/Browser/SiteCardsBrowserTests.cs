@@ -6,10 +6,9 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// </summary>
 public sealed class SiteCardsBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
     private const double TapTarget = 44;
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(375, ButtonSize.Regular, CardStyle.Boxed)]
     [InlineData(1280, ButtonSize.Regular, CardStyle.Plain)]
     [InlineData(1280, ButtonSize.Compact, CardStyle.Boxed)]
@@ -37,7 +36,7 @@ public sealed class SiteCardsBrowserTests(ChromiumFixture chromium) : IClassFixt
         more.Height.ShouldBeGreaterThanOrEqualTo(TapTarget);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(CardStyle.Boxed)]
     [InlineData(CardStyle.Plain)]
     public async Task Card_actions_line_up_at_the_bottom_of_a_row_of_cards_of_different_heights(CardStyle style)
@@ -59,7 +58,7 @@ public sealed class SiteCardsBrowserTests(ChromiumFixture chromium) : IClassFixt
         bottoms.Distinct().Count().ShouldBe(1);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(CardStyle.Boxed)]
     [InlineData(CardStyle.Plain)]
     public async Task An_action_row_that_wraps_grows_upwards_and_keeps_its_bottom_in_line_with_the_row_of_cards(CardStyle style)
@@ -81,7 +80,7 @@ public sealed class SiteCardsBrowserTests(ChromiumFixture chromium) : IClassFixt
         bottoms.Distinct().Count().ShouldBe(1);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(375)]
     [InlineData(1280)]
     public async Task A_long_word_in_a_title_wraps_inside_its_card(int width)
@@ -107,7 +106,7 @@ public sealed class SiteCardsBrowserTests(ChromiumFixture chromium) : IClassFixt
         scrollWidth.ShouldBeLessThanOrEqualTo(width);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_click_on_the_more_look_reaches_the_card_link_and_a_click_on_the_button_link_reaches_it()
     {
         // Arrange
@@ -124,7 +123,7 @@ public sealed class SiteCardsBrowserTests(ChromiumFixture chromium) : IClassFixt
         underButton.ShouldBe("/sign-up/one");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_card_focus_ring_on_the_page_is_the_focus_colour_and_reaches_3_to_1()
     {
         // Arrange

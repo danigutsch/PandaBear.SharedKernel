@@ -10,9 +10,7 @@ namespace PandaBear.Testing.Tests;
 /// <param name="host">The shared application.</param>
 public sealed class KestrelPageTestSharedHostTests(PingHostFixture host) : KestrelPageTest<Program>(host), IClassFixture<PingHostFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public void Services_and_address_come_from_the_shared_application()
     {
         // Act
@@ -24,7 +22,7 @@ public sealed class KestrelPageTestSharedHostTests(PingHostFixture host) : Kestr
         host.Starts.ShouldBe(1);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task The_page_reaches_the_shared_application()
     {
         // Act

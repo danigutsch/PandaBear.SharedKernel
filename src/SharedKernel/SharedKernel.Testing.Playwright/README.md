@@ -110,6 +110,31 @@ follows the page lifetime.
 The CSP recorder adapts a browser test fixture from ViajantesTurismo, copyright (c) 2025 ViajantesTurismo contributors,
 under the MIT License.
 
+## Chromium for component tests
+
+Tests that render components without an application host share one Chromium per class through `ChromiumFixture`, an xUnit class
+fixture, and skip when the browser is not installed:
+
+```csharp
+public sealed class CardBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
+{
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
+    public async Task Card_is_one_column_on_a_phone()
+    {
+        // Arrange
+        var html = await ComponentHtml.Render<Card>(new Dictionary<string, object?> { [nameof(Card.Title)] = "Tour" });
+        var page = await chromium.Browser.NewPageAsync();
+        // ... set the content, act and assert ...
+    }
+}
+```
+
+`Chromium.IsInstalled` launches the browser once per test run to find out. When the environment variable
+`REQUIRE_BROWSER_TESTS` (`Chromium.RequiredVariable`) is `true`, as in a CI run that installed Chromium on purpose, a failed
+launch throws instead of skipping, so a missing or broken browser fails the run. `Chromium.Launch()` starts Playwright and a
+headless Chromium without its own sandbox for a fixture of your own; the caller disposes both. `ComponentHtml.Render<TComponent>`
+renders a component with its parameters as static server-side rendering does, with an empty service provider.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Testing.Playwright`. C# namespace: `PandaBear.Testing.Playwright`. Assembly/project identity: `SharedKernel.Testing.Playwright`.

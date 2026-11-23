@@ -5,9 +5,7 @@ namespace PandaBear.Testing.Tests;
 /// <summary>Tests the exact-name role locators against real pages in Chromium; the tests skip when the browser is not installed.</summary>
 public sealed class PlaywrightRoleLocatorTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task GetButton_matches_the_whole_name_and_not_a_longer_one()
     {
         // Arrange
@@ -22,7 +20,7 @@ public sealed class PlaywrightRoleLocatorTests(ChromiumPageFixture chromium) : I
         text.ShouldBe("Save");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task GetLink_matches_the_whole_name_and_not_a_longer_one()
     {
         // Arrange
@@ -35,7 +33,7 @@ public sealed class PlaywrightRoleLocatorTests(ChromiumPageFixture chromium) : I
         href.ShouldBe("/tours");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task GetHeading_matches_the_whole_name_and_optionally_the_level()
     {
         // Arrange
@@ -50,7 +48,7 @@ public sealed class PlaywrightRoleLocatorTests(ChromiumPageFixture chromium) : I
         second.ShouldBe("H2");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task GetHeading_by_level_alone_finds_every_heading_of_that_level_whatever_its_name()
     {
         // Arrange

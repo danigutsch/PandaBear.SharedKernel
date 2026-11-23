@@ -6,11 +6,9 @@ namespace PandaBear.Testing.Tests;
 /// <summary>Tests the polling address wait against routed pages in Chromium; the browser tests skip when the browser is not installed.</summary>
 public sealed class PlaywrightExpectPathTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
     private static readonly Uri Origin = new("http://expect-path.test/");
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_navigation_that_completed_before_the_call_is_accepted()
     {
         // Arrange
@@ -25,7 +23,7 @@ public sealed class PlaywrightExpectPathTests(ChromiumPageFixture chromium) : IC
         page.Url.ShouldBe(new Uri(Origin, "b").ToString());
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_navigation_the_page_starts_itself_right_after_loading_is_seen()
     {
         // Arrange
@@ -39,7 +37,7 @@ public sealed class PlaywrightExpectPathTests(ChromiumPageFixture chromium) : IC
         page.Url.ShouldBe(new Uri(Origin, "b").ToString());
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_navigation_that_lands_after_the_call_is_awaited()
     {
         // Arrange
@@ -53,7 +51,7 @@ public sealed class PlaywrightExpectPathTests(ChromiumPageFixture chromium) : IC
         page.Url.ShouldBe(new Uri(Origin, "b").ToString());
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_relative_path_is_resolved_against_the_base_address()
     {
         // Arrange
@@ -67,7 +65,7 @@ public sealed class PlaywrightExpectPathTests(ChromiumPageFixture chromium) : IC
         page.Url.ShouldBe(new Uri(Origin, "b").ToString());
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_non_ascii_path_is_compared_in_its_percent_encoded_form()
     {
         // Arrange
@@ -81,7 +79,7 @@ public sealed class PlaywrightExpectPathTests(ChromiumPageFixture chromium) : IC
         page.Url.ShouldBe(new Uri(Origin, "caf%C3%A9").AbsoluteUri);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_page_that_stays_elsewhere_fails_and_names_the_expected_address()
     {
         // Arrange
