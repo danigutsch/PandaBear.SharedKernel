@@ -77,7 +77,7 @@ public sealed class HeadingColorTests
         var result = SiteTheme.CreateDraft(SiteTheme.Default.Colors, ThemeFixtures.DefaultTypographyWith(role, style));
 
         // Assert
-        result.FieldErrors()[field].ShouldBe(["Only headings and card titles take a colour; the components colour this text."]);
+        result.FieldErrors()[field].ShouldBe(["Only headings, card titles and the brand take a colour; the components colour this text."]);
     }
 
     [Fact]

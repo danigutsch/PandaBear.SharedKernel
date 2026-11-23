@@ -1,0 +1,223 @@
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
+
+namespace PandaBear.Blazor.Site.Tests.Browser;
+
+/// <summary>
+/// A page for the tests of the offering display atoms: a status badge of every tone on the page, in a primary band, in an image band over
+/// an all-white photo, in a cover hero without a photo and in a primary footer, and a grid of tour cards three to a row (<c>#tours</c>) whose first card
+/// (<c>#tour</c>) holds an inline fact grid of three facts with icons and a from price, then a section "Prices" (<c>#prices</c>) whose
+/// price list (<c>#price-list</c>) is a group named by it, and the same list in the primary band (<c>#band-prices</c>), then an
+/// itinerary (<c>#itinerary</c>) of three days, the first two with a photo, and a one-day itinerary in the primary band
+/// (<c>#band-itinerary</c>), then a linked, credited photo (<c>#gallery</c>), the same in the primary band (<c>#band-gallery</c>), and a
+/// credits list (<c>#credits</c>) with a long unbroken source title.
+/// </summary>
+public sealed class OfferingSample : ComponentBase
+{
+    /// <summary>Gets the status tones, in declaration order.</summary>
+    public static IReadOnlyList<StatusTone> Tones { get; } = Enum.GetValues<StatusTone>();
+
+    /// <summary>Gets every place a badge is shown with every tone: <c>page</c>, <c>hero</c>, <c>primary</c>, <c>image</c> and <c>footer</c>.</summary>
+    public static TheoryData<string, StatusTone> BadgeCases { get; } = Cases();
+
+    private static readonly RenderFragment Icon = builder => builder.AddMarkupContent(0, "<svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" /></svg>");
+
+    private static readonly FactCard[] CardFacts =
+    [
+        new("Days", [new("8")], Icon),
+        new("Distance", [new("320 km")], Icon),
+        new("Level", [new("Moderate")], Icon),
+    ];
+
+    /// <inheritdoc />
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        builder.OpenElement(0, "main");
+        builder.OpenComponent<Hero>(1);
+        builder.AddComponentParameter(2, nameof(Hero.Layout), HeroLayout.Cover);
+        builder.AddComponentParameter(3, nameof(Hero.Title), "Atacama");
+        builder.AddComponentParameter(4, nameof(Hero.Actions), Badges("hero"));
+        builder.CloseComponent();
+        builder.OpenElement(5, "div");
+        builder.AddAttribute(6, "class", "site-container");
+        builder.AddContent(7, PageContent);
+        builder.CloseElement();
+        builder.OpenComponent<Band>(9);
+        builder.AddComponentParameter(10, nameof(Band.Tone), BandTone.Primary);
+        builder.AddComponentParameter(11, nameof(Band.ChildContent), (RenderFragment)(band =>
+        {
+            band.AddContent(0, Badges("primary"));
+            band.AddContent(1, Prices("band-prices"));
+            band.AddContent(2, Itinerary("band-itinerary", 1));
+            band.AddContent(3, Gallery("band-gallery"));
+        }));
+        builder.CloseComponent();
+        builder.OpenComponent<Band>(12);
+        builder.AddComponentParameter(13, nameof(Band.Tone), BandTone.Image);
+        builder.AddComponentParameter(14, nameof(Band.Image), ResponsiveImage.Create(LinkTarget.FromString("/white.svg"), 1600, 900, ImageAlternative.Decorative()));
+        builder.AddComponentParameter(15, nameof(Band.ChildContent), Badges("image"));
+        builder.CloseComponent();
+        builder.CloseElement();
+        builder.OpenComponent<SiteFooter>(16);
+        builder.AddComponentParameter(17, nameof(SiteFooter.Tone), FooterTone.Primary);
+        builder.AddComponentParameter(18, nameof(SiteFooter.ChildContent), Badges("footer"));
+        builder.CloseComponent();
+    }
+
+    /// <summary>Gets the name of a tone as its class and tokens write it.</summary>
+    /// <param name="tone">The tone.</param>
+    /// <returns>The lower-case name, such as <c>warning</c>.</returns>
+    public static string Name(StatusTone tone) => tone switch
+    {
+        StatusTone.Info => "info",
+        StatusTone.Success => "success",
+        StatusTone.Warning => "warning",
+        StatusTone.Danger => "danger",
+        _ => "neutral",
+    };
+
+    private static void PageContent(RenderTreeBuilder builder)
+    {
+        builder.AddContent(0, Badges("page"));
+        builder.AddContent(1, Tours);
+        builder.AddContent(2, PriceSection);
+        builder.AddContent(3, Itinerary("itinerary", 3));
+        builder.AddContent(4, Gallery("gallery"));
+        builder.AddContent(5, Credits);
+    }
+
+    private static TheoryData<string, StatusTone> Cases()
+    {
+        var data = new TheoryData<string, StatusTone>();
+        foreach (var context in new[] { "page", "hero", "primary", "image", "footer" })
+        {
+            foreach (var tone in Tones)
+            {
+                data.Add(context, tone);
+            }
+        }
+
+        return data;
+    }
+
+    private static RenderFragment Badges(string context) => builder =>
+    {
+        builder.OpenElement(0, "p");
+        foreach (var tone in Tones)
+        {
+            builder.OpenComponent<StatusBadge>(1);
+            builder.SetKey(tone);
+            builder.AddComponentParameter(2, "id", $"{context}-{Name(tone)}");
+            builder.AddComponentParameter(3, nameof(StatusBadge.Text), tone.ToString());
+            builder.AddComponentParameter(4, nameof(StatusBadge.Tone), tone);
+            builder.AddComponentParameter(5, nameof(StatusBadge.Label), "Status:");
+            builder.CloseComponent();
+        }
+
+        builder.CloseElement();
+    };
+
+    private static void Tours(RenderTreeBuilder builder)
+    {
+        builder.OpenComponent<CardGrid>(0);
+        builder.AddComponentParameter(1, "id", "tours");
+        builder.AddComponentParameter(2, nameof(CardGrid.MinColumnWidth), CardColumnWidth.Medium);
+        builder.AddComponentParameter(3, nameof(CardGrid.ChildContent), (RenderFragment)(grid =>
+        {
+            for (var index = 0; index < 4; index++)
+            {
+                grid.OpenComponent<Card>(0);
+                grid.SetKey(index);
+                grid.AddComponentParameter(1, "id", index == 0 ? "tour" : $"tour-{index}");
+                grid.AddComponentParameter(2, nameof(Card.Title), "Atacama");
+                grid.AddComponentParameter(3, nameof(Card.Href), LinkTarget.FromString("/tours/atacama"));
+                grid.AddComponentParameter(4, nameof(Card.ChildContent), (RenderFragment)(body =>
+                {
+                    body.OpenComponent<FactGrid>(0);
+                    body.AddComponentParameter(1, nameof(FactGrid.Layout), FactGridLayout.Inline);
+                    body.AddComponentParameter(2, nameof(FactGrid.Cards), CardFacts);
+                    body.CloseComponent();
+                    body.OpenComponent<FromPrice>(3);
+                    body.AddComponentParameter(4, nameof(FromPrice.Format), "from {0}");
+                    body.AddComponentParameter(5, nameof(FromPrice.AmountText), "1.234,50 €");
+                    body.AddComponentParameter(6, nameof(FromPrice.Value), 1234.50m);
+                    body.CloseComponent();
+                }));
+                grid.CloseComponent();
+            }
+        }));
+        builder.CloseComponent();
+    }
+
+    private static void PriceSection(RenderTreeBuilder builder)
+    {
+        builder.OpenComponent<Section>(0);
+        builder.AddComponentParameter(1, nameof(Section.Title), "Prices");
+        builder.AddComponentParameter(2, nameof(Section.HeadingId), "prices");
+        builder.AddComponentParameter(3, nameof(Section.ChildContent), Prices("price-list"));
+        builder.CloseComponent();
+    }
+
+    private static RenderFragment Prices(string id) => builder =>
+    {
+        builder.OpenComponent<PriceList>(0);
+        builder.AddComponentParameter(1, "id", id);
+        builder.AddComponentParameter(2, nameof(PriceList.HeadingId), id == "price-list" ? "prices" : null);
+        builder.AddComponentParameter(3, nameof(PriceList.Items), new PriceItem[]
+        {
+            new("Double room in the lodge with a view of the salt flats", "12.345,50 €", 12345.50m, "per person"),
+            new("Single supplement", "300 €", 300m),
+        });
+        builder.AddComponentParameter(4, nameof(PriceList.Conditions), (RenderFragment)(text => text.AddMarkupContent(0, "<p>A deposit secures the place.</p>")));
+        builder.CloseComponent();
+    };
+
+    private static RenderFragment Itinerary(string id, int days) => builder =>
+    {
+        builder.OpenComponent<StepList>(0);
+        builder.AddComponentParameter(1, "id", id);
+        builder.AddComponentParameter(2, nameof(StepList.NumberFormat), "Day {0}");
+        builder.AddComponentParameter(3, nameof(StepList.HeadingIdFormat), id + "-day-{0}");
+        builder.AddComponentParameter(4, nameof(StepList.Steps), Enumerable.Range(1, days).Select(day => new StepItem(
+            "Valley of the Moon",
+            ["We leave early for the salt flats.", "Dinner together at the lodge."],
+            "Long drive",
+            day < 3 ? new GalleryImage(ResponsiveImage.Create(LinkTarget.FromString($"/day-{day}.svg"), 1600, 900, ImageAlternative.Describe("Salt flats"))) : null,
+            CardFacts)).ToArray());
+        builder.CloseComponent();
+    };
+
+    private static RenderFragment Gallery(string id) => builder =>
+    {
+        builder.OpenComponent<ImageGrid>(0);
+        builder.AddComponentParameter(1, "id", id);
+        builder.AddComponentParameter(2, nameof(ImageGrid.Images), new GalleryImage[]
+        {
+            new(ResponsiveImage.Create(LinkTarget.FromString("/gallery.svg"), 1600, 900, ImageAlternative.Describe("Salt flats at dusk")), "The salt flats")
+            {
+                Href = LinkTarget.FromString("/gallery-large.svg"),
+                Credit = new ImageCreditLine("Photo: Ana Lima", "CC BY 4.0", LinkTarget.FromString("https://creativecommons.org/licenses/by/4.0/"), LinkTarget.FromString("/credits")),
+            },
+        });
+        builder.CloseComponent();
+    };
+
+    private static void Credits(RenderTreeBuilder builder)
+    {
+        builder.OpenComponent<CreditsList>(0);
+        builder.AddComponentParameter(1, "id", "credits");
+        builder.AddComponentParameter(2, nameof(CreditsList.Items), new CreditItem[]
+        {
+            new("Ana Lima", "CC BY-SA 4.0")
+            {
+                Thumbnail = ResponsiveImage.Create(LinkTarget.FromString("/thumb.svg"), 160, 160, ImageAlternative.Decorative()),
+                Title = "Salar_de_Atacama_at_dusk_from_the_road_to_San_Pedro_de_Atacama.jpg",
+                SourceHref = LinkTarget.FromString("https://commons.wikimedia.org/wiki/File:Salar.jpg"),
+                LicenseHref = LinkTarget.FromString("https://creativecommons.org/licenses/by-sa/4.0/"),
+                ChangesText = "Cropped",
+            },
+        });
+        builder.CloseComponent();
+    }
+}

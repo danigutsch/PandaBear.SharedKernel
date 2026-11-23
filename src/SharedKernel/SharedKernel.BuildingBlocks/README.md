@@ -17,7 +17,7 @@ Source files are grouped by topic. The folders are organization only: every publ
 | `Localization` | `ContentCulture`, `SupportedCultures`, `CultureLanguageTags`, `TranslationSet` |
 | `Contact` | `EmailAddress`, `PhoneNumber`, `PersonName`, `PostalAddress` |
 | `Geography` | `CountryCode`, `CountryNames` |
-| `Media` | `IImageEligibility`, `ImageCredit`, `ImageLicence`, `ImageCreditFormats` |
+| `Media` | `IImageEligibility`, `ImageCredit`, `ImageLicense`, `ImageCreditFormats` |
 | `Finance` | `Money`, `MoneyDisplayOptions`, `Currency`, `CurrencyCodes`, `Iban`, `Bic` |
 | `Brazil` | `Cpf`, `Cnpj`, `PixKey`, `PixKeyType`, check-digit helpers |
 | `Time` | `BirthDate`, `DateRange`, `DateOnlyRange`, `DateRangePatterns`, `BusinessTimeProvider`, `TimeProvider` helpers |
@@ -54,14 +54,14 @@ from it), offerings and page sections read the same interface, so an application
 
 `ImageCredit` is the attribution of a third-party image, following the Creative Commons practice of naming the title, the author, the
 source and the licence, and noting a change: `Author` (required, at most 200 characters), `Title` (optional, at most 200),
-`SourceUrl` (an https `WebUrl`), `Licence` and `Modified` (cropped, resized or otherwise changed). `ImageLicence` holds a `Code` as
+`SourceUrl` (an https `WebUrl`), `License` and `Modified` (cropped, resized or otherwise changed). `ImageLicense` holds a `Code` as
 people read it (`CC BY 2.0`, `CC BY-SA 4.0`, `CC0 1.0`, `Pixabay` or the application's own, at most 60 characters) and an optional https
-`Url`. `ImageLicence.KnownUrl(code)` gives the link of the common Creative Commons codes (`CC BY`, `BY-SA`, `BY-ND`, `BY-NC`,
+`Url`. `ImageLicense.KnownUrl(code)` gives the link of the common Creative Commons codes (`CC BY`, `BY-SA`, `BY-ND`, `BY-NC`,
 `BY-NC-SA`, `BY-NC-ND` in 2.0, 2.5, 3.0 and 4.0, `CC0 1.0` and `Public Domain Mark 1.0` or `PDM 1.0`), so an editor can fill it in; any other code has
 none.
 
-`ImageCredit.Create(author, title, source, licenceCode, licenceLink, modified, fieldPrefix)` returns every error at once on `author`,
-`title`, `sourceUrl`, `licence.code` and `licence.url`, under `fieldPrefix` when given (`credit.author`); messages never echo the
+`ImageCredit.Create(author, title, source, licenseCode, licenseLink, modified, fieldPrefix)` returns every error at once on `author`,
+`title`, `sourceUrl`, `license.code` and `license.url`, under `fieldPrefix` when given (`credit.author`); messages never echo the
 input. `Restore` rebuilds a stored credit without rules. All copy is the application's, and every format takes the same placeholders:
 `{0}` the author, `{1}` the licence code, `{2}` the title and `{3}` the source address, the last two empty when absent.
 

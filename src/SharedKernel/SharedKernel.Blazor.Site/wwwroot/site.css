@@ -15,6 +15,17 @@
     --site-color-accent-hover: light-dark(#92400e, #f59e0b);
     --site-color-on-accent: light-dark(#ffffff, #111827);
     --site-color-focus: light-dark(#1d4ed8, #93c5fd);
+    /* The status badge: a background and the text on it per tone, each pair at least 4.5:1 in both schemes. */
+    --site-color-status-neutral: light-dark(#e5e7eb, #374151);
+    --site-color-on-status-neutral: light-dark(#1f2937, #f3f4f6);
+    --site-color-status-info: light-dark(#dbeafe, #1e3a8a);
+    --site-color-on-status-info: light-dark(#1e3a8a, #dbeafe);
+    --site-color-status-success: light-dark(#dcfce7, #14532d);
+    --site-color-on-status-success: light-dark(#14532d, #dcfce7);
+    --site-color-status-warning: light-dark(#fef3c7, #78350f);
+    --site-color-on-status-warning: light-dark(#78350f, #fef3c7);
+    --site-color-status-danger: light-dark(#fee2e2, #7f1d1d);
+    --site-color-on-status-danger: light-dark(#7f1d1d, #fee2e2);
     --site-font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --site-font-heading: var(--site-font-body);
     --site-font-size-sm: clamp(0.875rem, 0.85rem + 0.1vw, 0.9375rem);
@@ -58,6 +69,7 @@
     --site-thumbnail-min-width: 6.5rem;
     --site-thumbnail-aspect-ratio: 1;
     --site-video-width: 40rem;
+    --site-hero-title-scale-large: 1.25;
 }
 
 *,
@@ -67,8 +79,8 @@
 }
 
 /*
- * Typography roles: a theme stylesheet may set --site-{role}-{property} for the roles h1 to h6, body, small, link, button, nav and
- * card-title, and --site-{role}-color for h1 to h6 and card-title. Each fallback is the value used without a theme.
+ * Typography roles: a theme stylesheet may set --site-{role}-{property} for the roles h1 to h6, body, small, link, button, nav,
+ * card-title and brand, and --site-{role}-color for h1 to h6, card-title and brand. Each fallback is the value used without a theme.
  */
 body {
     margin: 0;
@@ -266,6 +278,26 @@ a {
     margin-inline-end: auto;
     font-weight: 700;
     font-size: var(--site-font-size-lg);
+}
+
+/*
+ * A brand link, such as the site's name as text, takes the brand role: a heading face, bold and large, in the primary colour like any
+ * link, without the link underline, which comes back on hover. Its focus ring is the page's; over a hero the header's rules give it the on-primary colour.
+ */
+.site-header__brand a {
+    font-family: var(--site-brand-font-family, var(--site-font-heading));
+    font-size: var(--site-brand-font-size, var(--site-font-size-lg));
+    font-weight: var(--site-brand-font-weight, 700);
+    line-height: var(--site-brand-line-height, 1.2);
+    letter-spacing: var(--site-brand-letter-spacing, normal);
+    text-transform: var(--site-brand-text-transform, none);
+    font-style: var(--site-brand-font-style, normal);
+    color: var(--site-brand-color, var(--site-color-primary));
+    text-decoration: none;
+}
+
+.site-header__brand a:hover {
+    text-decoration: underline;
 }
 
 /* A logo in the brand slot takes the theme's brand height, which the header height of a header over a hero is computed from. */
@@ -551,10 +583,15 @@ a {
     font-size: var(--site-font-size-lg);
 }
 
+/*
+ * The actions keep --site-space-4 from the heading above them; the margin collapses with the title's or the subtitle's own, so the
+ * space is the same with or without a subtitle.
+ */
 .site-hero__actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--site-space-3);
+    margin-block-start: var(--site-space-4);
 }
 
 .site-hero__media img {
@@ -616,6 +653,11 @@ a {
 .site-hero--cover :is(.site-hero__eyebrow, .site-hero__subtitle) {
     font-size: max(1.5rem, var(--site-font-size-lg));
     font-weight: 600;
+}
+
+/* A large hero title: the level 1 heading's size, the theme's included, times the large scale. */
+.site-hero--title-large .site-hero__title {
+    font-size: calc(var(--site-h1-font-size, var(--site-font-size-3xl)) * var(--site-hero-title-scale-large));
 }
 
 .site-hero--cover .site-hero__title {
@@ -697,7 +739,7 @@ a {
     border-radius: 0;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label) {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label, .site-price-list__note, .site-step-list__number, .site-image-grid__item figcaption, .site-image-credit, .site-credits-list__changes) {
     color: inherit;
 }
 
@@ -784,6 +826,47 @@ a {
 :is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-quote {
     background: transparent;
     border-inline-start-color: currentColor;
+}
+
+/*
+ * Status badge: bold small text on the tone's background, which the badge carries everywhere, on the primary colour of a band or a
+ * footer too, so its contrast never depends on its surroundings. The transparent outline draws its edge in forced colours.
+ */
+.site-status {
+    display: inline-block;
+    max-width: 100%;
+    padding: 0.125rem var(--site-space-2);
+    outline: 1px solid transparent;
+    border-radius: var(--site-control-radius);
+    font-size: var(--site-font-size-sm);
+    font-weight: 700;
+    line-height: 1.4;
+    overflow-wrap: break-word;
+}
+
+.site-status--neutral {
+    background: var(--site-color-status-neutral);
+    color: var(--site-color-on-status-neutral);
+}
+
+.site-status--info {
+    background: var(--site-color-status-info);
+    color: var(--site-color-on-status-info);
+}
+
+.site-status--success {
+    background: var(--site-color-status-success);
+    color: var(--site-color-on-status-success);
+}
+
+.site-status--warning {
+    background: var(--site-color-status-warning);
+    color: var(--site-color-on-status-warning);
+}
+
+.site-status--danger {
+    background: var(--site-color-status-danger);
+    color: var(--site-color-on-status-danger);
 }
 
 /* Section. */
@@ -1261,6 +1344,133 @@ a {
 }
 
 /*
+ * Inline fact grid: one row of compact facts for a card, without borders, each its icon and label on one line above its value. The row
+ * starts where the text starts, or in the middle under centred text, and wraps only when it is too narrow.
+ */
+.site-fact-grid--inline {
+    gap: var(--site-space-2) var(--site-space-4);
+    justify-content: var(--_site-centre-justify, flex-start);
+    border: 0;
+}
+
+.site-fact-grid--inline > .site-fact-grid__item {
+    flex: 0 1 auto;
+    padding: 0;
+    border: 0;
+    text-align: inherit;
+}
+
+.site-fact-grid--inline .site-fact-grid__label {
+    font-size: var(--site-font-size-sm);
+}
+
+.site-fact-grid--inline .site-fact-grid__icon {
+    display: inline-block;
+    margin: 0;
+    margin-inline-end: var(--site-space-1);
+    font-size: 1.25em;
+    vertical-align: -0.25em;
+}
+
+.site-fact-grid--inline .site-fact-grid__icon > :is(svg, img) {
+    margin-inline: 0;
+}
+
+/*
+ * Price list, after the GOV.UK summary list: rows under a rule, the label at the start and the bold amount at the end of one line, the
+ * note under them in muted small text. The amount never wraps, because its text holds a space before the currency sign.
+ */
+.site-price-list__items {
+    margin: 0 0 var(--site-space-4);
+    border-block-start: 1px solid var(--site-color-border);
+}
+
+.site-price-list__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--site-space-3);
+    padding-block: var(--site-space-2);
+    border-block-end: 1px solid var(--site-color-border);
+}
+
+.site-price-list__label {
+    flex: 1 1 12rem;
+    min-width: 0;
+}
+
+.site-price-list__amount {
+    margin: 0;
+    margin-inline-start: auto;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.site-price-list__note {
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--site-color-muted);
+    font-size: var(--site-font-size-sm);
+}
+
+.site-price-list__conditions > :first-child {
+    margin-top: 0;
+}
+
+/*
+ * Step list: the steps of an itinerary without list markers (the role="list" keeps the list in Safari), each spaced from the one before,
+ * its number a small bold letter-spaced eyebrow in the primary colour above its title, then its facts in one row and its note.
+ */
+.site-step-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-step-list__item + .site-step-list__item {
+    margin-top: var(--site-space-5);
+}
+
+.site-step-list__heading {
+    margin: 0 0 var(--site-space-3);
+}
+
+.site-step-list__heading > .site-step-list__title {
+    margin: 0;
+}
+
+.site-step-list__number {
+    margin: 0 0 var(--site-space-1);
+    color: var(--site-color-primary);
+    font-size: var(--site-font-size-sm);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.site-step-list__facts {
+    margin-bottom: var(--site-space-3);
+}
+
+.site-step-list__note {
+    font-weight: 600;
+}
+
+/* Text list: a plain list of lines, kept with its bullets or numbers, its lines a little apart. */
+.site-text-list > li + li {
+    margin-top: var(--site-space-1);
+}
+
+/* The from price: a line whose amount is bold and never wraps. */
+.site-from-price {
+    margin: 0 0 var(--site-space-3);
+}
+
+.site-from-price__amount {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/*
  * Disclosure: a run of disclosures keeps its distance from the content before it, and the summary is rounded like its box, so the
  * focus ring follows the box's corners.
  */
@@ -1341,6 +1551,66 @@ a {
 
 .site-image-grid__item figcaption {
     margin-top: var(--site-space-1);
+    color: var(--site-color-muted);
+    font-size: var(--site-font-size-sm);
+}
+
+/*
+ * Image credit: a muted line of small text (the small typography role) under an image, on a line of its own after the caption, its links underlined in its colour.
+ * On the primary colour it takes the on-primary colour, like the caption.
+ */
+.site-image-credit {
+    display: block;
+    color: var(--site-color-muted);
+}
+
+.site-image-credit a {
+    color: inherit;
+}
+
+/*
+ * Credits list: one credit to a row, without markers (the role="list" keeps the list in Safari), a square thumbnail beside its lines.
+ */
+.site-credits-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-credits-list__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--site-space-3);
+    padding-block: var(--site-space-3);
+    border-block-end: 1px solid var(--site-color-border);
+}
+
+.site-credits-list__thumbnail {
+    flex: none;
+}
+
+.site-credits-list__thumbnail img {
+    display: block;
+    width: 5rem;
+    height: 5rem;
+    object-fit: cover;
+    border-radius: var(--site-radius);
+}
+
+.site-credits-list__text {
+    min-width: 0;
+    overflow-wrap: break-word;
+}
+
+.site-credits-list__text p {
+    margin: 0;
+}
+
+.site-credits-list__title {
+    font-weight: 700;
+}
+
+.site-credits-list__changes {
     color: var(--site-color-muted);
     font-size: var(--site-font-size-sm);
 }

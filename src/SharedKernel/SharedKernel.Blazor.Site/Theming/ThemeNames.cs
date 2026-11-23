@@ -58,6 +58,7 @@ internal static class ThemeNames
         TypographyRole.Button => "button",
         TypographyRole.Nav => "nav",
         TypographyRole.CardTitle => "card-title",
+        TypographyRole.Brand => "brand",
         _ => throw new ArgumentOutOfRangeException(nameof(role), role, "The typography role is not defined."),
     };
 
@@ -67,10 +68,23 @@ internal static class ThemeNames
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="role" /> is not a defined role.</exception>
     public static string Field(TypographyRole role) => role == TypographyRole.CardTitle ? "cardTitle" : Css(role);
 
-    /// <summary>Gets a value indicating whether a typography role is a heading role that takes a colour: h1 to h6 and the card title.</summary>
+    /// <summary>Gets a value indicating whether a typography role is a heading role: h1 to h6 and the card title.</summary>
     /// <param name="role">The role.</param>
     /// <returns><see langword="true" /> for a heading role.</returns>
     public static bool IsHeading(TypographyRole role) => role is >= TypographyRole.H1 and <= TypographyRole.H6 or TypographyRole.CardTitle;
+
+    /// <summary>Gets a value indicating whether a typography role takes a colour: the heading roles and the brand.</summary>
+    /// <param name="role">The role.</param>
+    /// <returns><see langword="true" /> for a role that takes a colour.</returns>
+    public static bool TakesColor(TypographyRole role) => IsHeading(role) || role == TypographyRole.Brand;
+
+    /// <summary>
+    /// Gets the colour a role that takes one keeps when the theme sets none: the brand is a link and keeps the primary colour; a heading
+    /// keeps the colour of its surroundings.
+    /// </summary>
+    /// <param name="role">The role.</param>
+    /// <returns>The CSS fallback, such as <c>inherit</c>.</returns>
+    public static string ColorFallback(TypographyRole role) => role == TypographyRole.Brand ? "var(--site-color-primary)" : "inherit";
 
     /// <summary>Gets the name of a scheme, <c>light</c> or <c>dark</c>.</summary>
     /// <param name="scheme">The scheme.</param>

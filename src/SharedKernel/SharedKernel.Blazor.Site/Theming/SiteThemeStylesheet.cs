@@ -55,7 +55,8 @@ public static class SiteThemeStylesheet
 
     /// <summary>
     /// Gets the colour custom properties of the heading roles (h1 to h6 and the card title), in render order, such as
-    /// <c>--site-h2-color</c>; one is rendered only when its role sets a <see cref="TypographyStyle.Color" />.
+    /// <c>--site-h2-color</c>; one is rendered only when its role sets a <see cref="TypographyStyle.Color" />. The brand takes a colour
+    /// too, <c>--site-brand-color</c>, but it is not a heading, keeps the primary colour without one, and is not listed here.
     /// </summary>
     public static IReadOnlyList<string> HeadingColorVariables { get; } = [.. HeadingRoles.Select(role => Variable(role, "color"))];
 
@@ -136,6 +137,7 @@ public static class SiteThemeStylesheet
         AppendRule(css, sample + " .site-button", TypographyRole.Button, "display: inline-flex; align-items: center; justify-content: center; min-block-size: 2.75rem; margin: 0 0.5rem 0.5rem 0; padding: " + ButtonPadding + "; border: 2px solid transparent; border-radius: var(--site-control-radius); text-decoration: none;");
         css.Append(sample).Append(" .site-nav {\n    display: flex;\n    align-items: center;\n    gap: 1rem;\n}\n");
         css.Append(scope).Append(" .site-theme-preview__brand {\n    display: inline-flex;\n    align-items: center;\n    height: var(--site-brand-height);\n    padding: 0 0.5rem;\n    border: 1px dashed currentColor;\n}\n");
+        AppendRule(css, sample + " .site-theme-preview__brand", TypographyRole.Brand, string.Empty);
         AppendRule(css, sample + " .site-nav a", TypographyRole.Nav, "color: var(--site-color-text); text-decoration: none;");
         css.Append(sample).Append(" .site-button--primary {\n    background: var(--site-color-primary);\n    color: var(--site-color-on-primary);\n}\n");
         css.Append(sample).Append(" .site-button--secondary {\n    background: var(--site-color-accent);\n    color: var(--site-color-on-accent);\n}\n");
@@ -229,7 +231,7 @@ public static class SiteThemeStylesheet
                 css.Append("    ").Append(Variable(role, property)).Append(": ").Append(value).Append(";\n");
             }
 
-            if (ThemeNames.IsHeading(role) && style.Color is { } color)
+            if (ThemeNames.TakesColor(role) && style.Color is { } color)
             {
                 css.Append("    ").Append(Variable(role, "color")).Append(": var(--site-color-").Append(ThemeNames.Css(color)).Append(");\n");
             }
@@ -294,9 +296,9 @@ public static class SiteThemeStylesheet
             css.Append("    ").Append(property).Append(": var(").Append(Variable(role, property)).Append(", inherit);\n");
         }
 
-        if (ThemeNames.IsHeading(role))
+        if (ThemeNames.TakesColor(role))
         {
-            css.Append("    color: var(").Append(Variable(role, "color")).Append(", inherit);\n");
+            css.Append("    color: var(").Append(Variable(role, "color")).Append(", ").Append(ThemeNames.ColorFallback(role)).Append(");\n");
         }
 
         foreach (var declaration in extra.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))

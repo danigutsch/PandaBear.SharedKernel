@@ -72,8 +72,9 @@ public sealed class TypographyStyle : ValueObject
     public bool? Italic { get; }
 
     /// <summary>
-    /// Gets the colour of a heading role (h1 to h6 and the card title): the text, primary or muted colour, whose contrast on the
-    /// surfaces the theme checks. <see langword="null" /> keeps the colour of the surroundings.
+    /// Gets the colour of a role that takes one (h1 to h6, the card title and the brand): the text, primary or muted colour, whose
+    /// contrast on the surfaces the theme checks. <see langword="null" /> keeps the colour of the surroundings, or the primary colour
+    /// for the brand, which is a link.
     /// </summary>
     public ThemeColorRole? Color { get; }
 

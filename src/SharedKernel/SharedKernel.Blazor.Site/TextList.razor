@@ -1,0 +1,22 @@
+@inherits SiteComponent
+@if (Items.Count > 0)
+{
+    @if (Ordered)
+    {
+        <ol class="@CssClass("site-text-list")" @attributes="AdditionalAttributes">
+            @foreach (var item in Items)
+            {
+                <li>@item</li>
+            }
+        </ol>
+    }
+    else
+    {
+        <ul class="@CssClass("site-text-list")" @attributes="AdditionalAttributes">
+            @foreach (var item in Items)
+            {
+                <li>@item</li>
+            }
+        </ul>
+    }
+}

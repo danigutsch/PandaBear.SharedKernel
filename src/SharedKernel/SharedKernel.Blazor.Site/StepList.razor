@@ -1,0 +1,51 @@
+@inherits SiteComponent
+<ol role="list" class="@CssClass("site-step-list")" @attributes="AdditionalAttributes">
+    @{
+        var imageIndex = 0;
+    }
+    @for (var index = 0; index < Steps.Count; index++)
+    {
+        var step = Steps[index];
+        var position = index + 1;
+        <li class="site-step-list__item">
+            @if (step.Image is null)
+            {
+                @StepText(step, position)
+            }
+            else
+            {
+                var side = Alternate && imageIndex % 2 == 1 ? SplitMediaSide.Start : SplitMediaSide.End;
+                var eager = imageIndex < EagerCount;
+                GalleryImage[] images = [step.Image];
+                imageIndex++;
+                <Split MediaSide="side" Alignment="SiteAlignment.Start">
+                    <ChildContent>@StepText(step, position)</ChildContent>
+                    <Media><ImageGrid Images="images" EagerCount="@(eager ? 1 : 0)" /></Media>
+                </Split>
+            }
+        </li>
+    }
+</ol>
+
+@code {
+    private RenderFragment StepText(StepItem step, int position) => @<text>
+        <hgroup class="site-step-list__heading">
+            <p class="site-step-list__number">@NumberText(position)</p>
+            @Heading.Render(HeadingLevel, "site-step-list__title", HeadingId(position), TitleText(step.Title))
+        </hgroup>
+        @if (step.Facts.Count > 0)
+        {
+            <FactGrid Cards="step.Facts" Layout="FactGridLayout.Inline" Class="site-step-list__facts" />
+        }
+        @if (!string.IsNullOrWhiteSpace(step.Note))
+        {
+            <p class="site-step-list__note">@step.Note</p>
+        }
+        @foreach (var paragraph in step.Paragraphs)
+        {
+            <p>@paragraph</p>
+        }
+    </text>;
+
+    private static RenderFragment TitleText(string title) => builder => builder.AddContent(0, title);
+}

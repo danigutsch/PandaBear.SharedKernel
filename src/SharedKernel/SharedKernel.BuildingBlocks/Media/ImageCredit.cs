@@ -5,7 +5,7 @@ namespace PandaBear.BuildingBlocks;
 /// <summary>
 /// The attribution of a third-party image, following the Creative Commons practice of naming the title, the author, the source and the
 /// licence, and noting when the image was changed: <see cref="Author"/>, <see cref="Title"/>, <see cref="SourceUrl"/>,
-/// <see cref="Licence"/> and <see cref="Modified"/>. All copy, such as <c>Foto: {0}, {1}</c>, is the application's, and every format
+/// <see cref="License"/> and <see cref="Modified"/>. All copy, such as <c>Foto: {0}, {1}</c>, is the application's, and every format
 /// takes the same placeholders: <c>{0}</c> the author, <c>{1}</c> the licence code, <c>{2}</c> the title and <c>{3}</c> the source
 /// address, the last two empty when absent.
 /// </summary>
@@ -17,12 +17,12 @@ public sealed class ImageCredit : ValueObject
     /// <summary>The longest title.</summary>
     public const int MaxTitleLength = 200;
 
-    private ImageCredit(string author, string? title, WebUrl? sourceUrl, ImageLicence licence, bool modified)
+    private ImageCredit(string author, string? title, WebUrl? sourceUrl, ImageLicense license, bool modified)
     {
         Author = author;
         Title = title;
         SourceUrl = sourceUrl;
-        Licence = licence;
+        License = license;
         Modified = modified;
     }
 
@@ -36,7 +36,7 @@ public sealed class ImageCredit : ValueObject
     public WebUrl? SourceUrl { get; }
 
     /// <summary>Gets the licence.</summary>
-    public ImageLicence Licence { get; }
+    public ImageLicense License { get; }
 
     /// <summary>Gets a value indicating whether the image was changed, such as cropped or resized.</summary>
     public bool Modified { get; }
@@ -45,18 +45,18 @@ public sealed class ImageCredit : ValueObject
     /// <param name="author">The author; required, at most <see cref="MaxAuthorLength"/> characters after sanitizing.</param>
     /// <param name="title">The optional title, at most <see cref="MaxTitleLength"/> characters.</param>
     /// <param name="source">The optional https address of the page the image comes from.</param>
-    /// <param name="licenceCode">The licence code; required (see <see cref="ImageLicence"/>).</param>
-    /// <param name="licenceLink">The optional https link to the licence; <see cref="ImageLicence.KnownUrl"/> gives the common ones.</param>
+    /// <param name="licenseCode">The licence code; required (see <see cref="ImageLicense"/>).</param>
+    /// <param name="licenseLink">The optional https link to the licence; <see cref="ImageLicense.KnownUrl"/> gives the common ones.</param>
     /// <param name="modified">Whether the image was changed.</param>
     /// <param name="fieldPrefix">The path of the credit, such as <c>credit</c>; empty puts the errors on <c>author</c>, <c>title</c>,
-    /// <c>sourceUrl</c>, <c>licence.code</c> and <c>licence.url</c> directly.</param>
+    /// <c>sourceUrl</c>, <c>license.code</c> and <c>license.url</c> directly.</param>
     /// <returns>The credit, or every validation error; messages never echo the input.</returns>
     public static Result<ImageCredit> Create(
         string? author,
         string? title,
         string? source,
-        string? licenceCode,
-        string? licenceLink,
+        string? licenseCode,
+        string? licenseLink,
         bool modified,
         string fieldPrefix = "")
     {
@@ -66,32 +66,32 @@ public sealed class ImageCredit : ValueObject
         var validAuthor = CreditText.Required(errors, author, Field("author"), "Author", MaxAuthorLength);
         var validTitle = CreditText.Optional(errors, title, Field("title"), "Title", MaxTitleLength);
         var validSource = CreditText.HttpsUrl(errors, source, Field("sourceUrl"), "Source link");
-        var licence = ImageLicence.Create(licenceCode, licenceLink, Field("licence"));
-        errors.AddIfFailed(licence);
+        var license = ImageLicense.Create(licenseCode, licenseLink, Field("license"));
+        errors.AddIfFailed(license);
         return errors.HasErrors
             ? errors.ToResult<ImageCredit>()
-            : Result.Ok(new ImageCredit(validAuthor!, validTitle, validSource, licence.Value, modified));
+            : Result.Ok(new ImageCredit(validAuthor!, validTitle, validSource, license.Value, modified));
     }
 
     /// <summary>For persistence mappers: rebuilds a credit stored earlier; it performs NO validation beyond required values, so never use it for input.</summary>
     /// <param name="author">The stored author.</param>
     /// <param name="title">The stored title.</param>
     /// <param name="source">The stored source address.</param>
-    /// <param name="licence">The stored licence, from <see cref="ImageLicence.Restore"/>.</param>
+    /// <param name="license">The stored licence, from <see cref="ImageLicense.Restore"/>.</param>
     /// <param name="modified">Whether the image was changed.</param>
     /// <returns>The credit.</returns>
     /// <exception cref="ArgumentException"><paramref name="author"/> is <see langword="null"/>, empty or blank.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="licence"/> is <see langword="null"/>.</exception>
-    public static ImageCredit Restore(string author, string? title, string? source, ImageLicence licence, bool modified)
+    /// <exception cref="ArgumentNullException"><paramref name="license"/> is <see langword="null"/>.</exception>
+    public static ImageCredit Restore(string author, string? title, string? source, ImageLicense license, bool modified)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(author);
-        ArgumentNullException.ThrowIfNull(licence);
+        ArgumentNullException.ThrowIfNull(license);
 
         return new ImageCredit(
             author,
             string.IsNullOrWhiteSpace(title) ? null : title,
             string.IsNullOrWhiteSpace(source) ? null : WebUrl.Restore(source),
-            licence,
+            license,
             modified);
     }
 
@@ -106,12 +106,12 @@ public sealed class ImageCredit : ValueObject
         ArgumentException.ThrowIfNullOrWhiteSpace(format);
         ArgumentNullException.ThrowIfNull(provider);
 
-        return string.Format(provider, format, Author, Licence.Code, Title ?? string.Empty, SourceUrl?.Value ?? string.Empty);
+        return string.Format(provider, format, Author, License.Code, Title ?? string.Empty, SourceUrl?.Value ?? string.Empty);
     }
 
     /// <summary>
     /// Builds the full credit for a credits page: the title format when the credit has a title, else the untitled one, then the change
-    /// note when the image was changed. Links are the display's: it can link <see cref="SourceUrl"/> and <see cref="ImageLicence.Url"/>.
+    /// note when the image was changed. Links are the display's: it can link <see cref="SourceUrl"/> and <see cref="ImageLicense.Url"/>.
     /// </summary>
     /// <param name="formats">The application's formats.</param>
     /// <param name="provider">The culture.</param>
@@ -122,7 +122,7 @@ public sealed class ImageCredit : ValueObject
         ArgumentNullException.ThrowIfNull(formats);
         ArgumentNullException.ThrowIfNull(provider);
 
-        var text = string.Format(provider, Title is null ? formats.WithoutTitle : formats.WithTitle, Author, Licence.Code, Title ?? string.Empty, SourceUrl?.Value ?? string.Empty);
+        var text = string.Format(provider, Title is null ? formats.WithoutTitle : formats.WithTitle, Author, License.Code, Title ?? string.Empty, SourceUrl?.Value ?? string.Empty);
         return Modified ? string.Format(provider, formats.Modified, text) : text;
     }
 
@@ -135,7 +135,7 @@ public sealed class ImageCredit : ValueObject
         yield return Author;
         yield return Title;
         yield return SourceUrl;
-        yield return Licence;
+        yield return License;
         yield return Modified;
     }
 }

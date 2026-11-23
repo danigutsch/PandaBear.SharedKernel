@@ -9,4 +9,7 @@ internal sealed record ElementBox(double X, double Y, double Width, double Heigh
 {
     /// <summary>Gets the bottom edge.</summary>
     public double Bottom => Math.Round(Y + Height, 1);
+
+    /// <summary>Gets the right edge.</summary>
+    public double Right => Math.Round(X + Width, 1);
 }

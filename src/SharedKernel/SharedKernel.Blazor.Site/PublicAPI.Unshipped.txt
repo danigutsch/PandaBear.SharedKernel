@@ -947,3 +947,162 @@ PandaBear.Blazor.Site.GalleryImage.Href.get -> PandaBear.Blazor.Site.LinkTarget?
 PandaBear.Blazor.Site.GalleryImage.Href.init -> void
 PandaBear.Blazor.Site.ImageGrid.Sizes.get -> string?
 PandaBear.Blazor.Site.ImageGrid.Sizes.set -> void
+PandaBear.Blazor.Site.FactGrid.Layout.get -> PandaBear.Blazor.Site.FactGridLayout
+PandaBear.Blazor.Site.FactGrid.Layout.set -> void
+PandaBear.Blazor.Site.FactGridLayout
+PandaBear.Blazor.Site.FactGridLayout.Grid = 0 -> PandaBear.Blazor.Site.FactGridLayout
+PandaBear.Blazor.Site.FactGridLayout.Inline = 1 -> PandaBear.Blazor.Site.FactGridLayout
+PandaBear.Blazor.Site.StatusBadge
+PandaBear.Blazor.Site.StatusBadge.Label.get -> string?
+PandaBear.Blazor.Site.StatusBadge.Label.set -> void
+PandaBear.Blazor.Site.StatusBadge.StatusBadge() -> void
+PandaBear.Blazor.Site.StatusBadge.Text.get -> string!
+PandaBear.Blazor.Site.StatusBadge.Text.set -> void
+PandaBear.Blazor.Site.StatusBadge.Tone.get -> PandaBear.Blazor.Site.StatusTone
+PandaBear.Blazor.Site.StatusBadge.Tone.set -> void
+PandaBear.Blazor.Site.StatusTone
+PandaBear.Blazor.Site.StatusTone.Danger = 4 -> PandaBear.Blazor.Site.StatusTone
+PandaBear.Blazor.Site.StatusTone.Info = 1 -> PandaBear.Blazor.Site.StatusTone
+PandaBear.Blazor.Site.StatusTone.Neutral = 0 -> PandaBear.Blazor.Site.StatusTone
+PandaBear.Blazor.Site.StatusTone.Success = 2 -> PandaBear.Blazor.Site.StatusTone
+PandaBear.Blazor.Site.StatusTone.Warning = 3 -> PandaBear.Blazor.Site.StatusTone
+PandaBear.Blazor.Site.FromPrice
+PandaBear.Blazor.Site.FromPrice.AmountText.get -> string!
+PandaBear.Blazor.Site.FromPrice.AmountText.set -> void
+PandaBear.Blazor.Site.FromPrice.Format.get -> string!
+PandaBear.Blazor.Site.FromPrice.Format.set -> void
+PandaBear.Blazor.Site.FromPrice.FromPrice() -> void
+PandaBear.Blazor.Site.FromPrice.Value.get -> decimal
+PandaBear.Blazor.Site.FromPrice.Value.set -> void
+PandaBear.Blazor.Site.PriceItem
+PandaBear.Blazor.Site.PriceItem.<Clone>$() -> PandaBear.Blazor.Site.PriceItem!
+PandaBear.Blazor.Site.PriceItem.AmountText.get -> string!
+PandaBear.Blazor.Site.PriceItem.AmountText.init -> void
+PandaBear.Blazor.Site.PriceItem.Deconstruct(out string! Label, out string! AmountText, out decimal? Value, out string? Note) -> void
+PandaBear.Blazor.Site.PriceItem.Equals(PandaBear.Blazor.Site.PriceItem? other) -> bool
+PandaBear.Blazor.Site.PriceItem.Label.get -> string!
+PandaBear.Blazor.Site.PriceItem.Label.init -> void
+PandaBear.Blazor.Site.PriceItem.Note.get -> string?
+PandaBear.Blazor.Site.PriceItem.Note.init -> void
+PandaBear.Blazor.Site.PriceItem.PriceItem(string! Label, string! AmountText, decimal? Value, string? Note = null) -> void
+PandaBear.Blazor.Site.PriceItem.Value.get -> decimal?
+PandaBear.Blazor.Site.PriceItem.Value.init -> void
+PandaBear.Blazor.Site.PriceList
+PandaBear.Blazor.Site.PriceList.Conditions.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.PriceList.Conditions.set -> void
+PandaBear.Blazor.Site.PriceList.HeadingId.get -> string?
+PandaBear.Blazor.Site.PriceList.HeadingId.set -> void
+PandaBear.Blazor.Site.PriceList.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.PriceItem!>!
+PandaBear.Blazor.Site.PriceList.Items.set -> void
+PandaBear.Blazor.Site.PriceList.PriceList() -> void
+override PandaBear.Blazor.Site.PriceItem.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.PriceItem.GetHashCode() -> int
+override PandaBear.Blazor.Site.PriceItem.ToString() -> string!
+static PandaBear.Blazor.Site.PriceItem.operator !=(PandaBear.Blazor.Site.PriceItem? left, PandaBear.Blazor.Site.PriceItem? right) -> bool
+static PandaBear.Blazor.Site.PriceItem.operator ==(PandaBear.Blazor.Site.PriceItem? left, PandaBear.Blazor.Site.PriceItem? right) -> bool
+PandaBear.Blazor.Site.StepItem
+PandaBear.Blazor.Site.StepItem.<Clone>$() -> PandaBear.Blazor.Site.StepItem!
+PandaBear.Blazor.Site.StepItem.Deconstruct(out string! Title, out System.Collections.Generic.IReadOnlyList<string!>! Paragraphs, out string? Note, out PandaBear.Blazor.Site.GalleryImage? Image, out System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactCard!>! Facts) -> void
+PandaBear.Blazor.Site.StepItem.Equals(PandaBear.Blazor.Site.StepItem? other) -> bool
+PandaBear.Blazor.Site.StepItem.Facts.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactCard!>!
+PandaBear.Blazor.Site.StepItem.Facts.init -> void
+PandaBear.Blazor.Site.StepItem.Image.get -> PandaBear.Blazor.Site.GalleryImage?
+PandaBear.Blazor.Site.StepItem.Image.init -> void
+PandaBear.Blazor.Site.StepItem.Note.get -> string?
+PandaBear.Blazor.Site.StepItem.Note.init -> void
+PandaBear.Blazor.Site.StepItem.Paragraphs.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Blazor.Site.StepItem.Paragraphs.init -> void
+PandaBear.Blazor.Site.StepItem.StepItem(string! Title, System.Collections.Generic.IReadOnlyList<string!>! Paragraphs, string? Note, PandaBear.Blazor.Site.GalleryImage? Image, System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactCard!>! Facts) -> void
+PandaBear.Blazor.Site.StepItem.Title.get -> string!
+PandaBear.Blazor.Site.StepItem.Title.init -> void
+PandaBear.Blazor.Site.StepList
+PandaBear.Blazor.Site.StepList.Alternate.get -> bool
+PandaBear.Blazor.Site.StepList.Alternate.set -> void
+PandaBear.Blazor.Site.StepList.EagerCount.get -> int
+PandaBear.Blazor.Site.StepList.EagerCount.set -> void
+PandaBear.Blazor.Site.StepList.HeadingIdFormat.get -> string?
+PandaBear.Blazor.Site.StepList.HeadingIdFormat.set -> void
+PandaBear.Blazor.Site.StepList.HeadingLevel.get -> int
+PandaBear.Blazor.Site.StepList.HeadingLevel.set -> void
+PandaBear.Blazor.Site.StepList.NumberFormat.get -> string!
+PandaBear.Blazor.Site.StepList.NumberFormat.set -> void
+PandaBear.Blazor.Site.StepList.StepList() -> void
+PandaBear.Blazor.Site.StepList.Steps.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.StepItem!>!
+PandaBear.Blazor.Site.StepList.Steps.set -> void
+PandaBear.Blazor.Site.TextList
+PandaBear.Blazor.Site.TextList.Items.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Blazor.Site.TextList.Items.set -> void
+PandaBear.Blazor.Site.TextList.Ordered.get -> bool
+PandaBear.Blazor.Site.TextList.Ordered.set -> void
+PandaBear.Blazor.Site.TextList.TextList() -> void
+override PandaBear.Blazor.Site.StepItem.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.StepItem.GetHashCode() -> int
+override PandaBear.Blazor.Site.StepItem.ToString() -> string!
+static PandaBear.Blazor.Site.StepItem.operator !=(PandaBear.Blazor.Site.StepItem? left, PandaBear.Blazor.Site.StepItem? right) -> bool
+static PandaBear.Blazor.Site.StepItem.operator ==(PandaBear.Blazor.Site.StepItem? left, PandaBear.Blazor.Site.StepItem? right) -> bool
+PandaBear.Blazor.Site.JsonLd
+PandaBear.Blazor.Site.JsonLd.Data.get -> System.Text.Json.Nodes.JsonNode?
+PandaBear.Blazor.Site.JsonLd.Data.set -> void
+PandaBear.Blazor.Site.JsonLd.JsonLd() -> void
+PandaBear.Blazor.Site.CreditsList
+PandaBear.Blazor.Site.CreditsList.CreditsList() -> void
+PandaBear.Blazor.Site.CreditsList.Items.set -> void
+PandaBear.Blazor.Site.GalleryImage.Credit.init -> void
+PandaBear.Blazor.Site.Hero.TitleScale.get -> PandaBear.Blazor.Site.HeroTitleScale
+PandaBear.Blazor.Site.Hero.TitleScale.set -> void
+PandaBear.Blazor.Site.HeroTitleScale
+PandaBear.Blazor.Site.HeroTitleScale.Large = 1 -> PandaBear.Blazor.Site.HeroTitleScale
+PandaBear.Blazor.Site.HeroTitleScale.Regular = 0 -> PandaBear.Blazor.Site.HeroTitleScale
+PandaBear.Blazor.Site.Theming.TypographyRole.Brand = 12 -> PandaBear.Blazor.Site.Theming.TypographyRole
+PandaBear.Blazor.Site.CreditItem
+PandaBear.Blazor.Site.CreditItem.<Clone>$() -> PandaBear.Blazor.Site.CreditItem!
+PandaBear.Blazor.Site.CreditItem.Author.get -> string!
+PandaBear.Blazor.Site.CreditItem.Author.init -> void
+PandaBear.Blazor.Site.CreditItem.AuthorHref.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.CreditItem.AuthorHref.init -> void
+PandaBear.Blazor.Site.CreditItem.ChangesText.get -> string?
+PandaBear.Blazor.Site.CreditItem.ChangesText.init -> void
+PandaBear.Blazor.Site.CreditItem.CreditItem(string! Author, string! LicenseText) -> void
+PandaBear.Blazor.Site.CreditItem.Deconstruct(out string! Author, out string! LicenseText) -> void
+PandaBear.Blazor.Site.CreditItem.Equals(PandaBear.Blazor.Site.CreditItem? other) -> bool
+PandaBear.Blazor.Site.CreditItem.LicenseHref.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.CreditItem.LicenseHref.init -> void
+PandaBear.Blazor.Site.CreditItem.LicenseText.get -> string!
+PandaBear.Blazor.Site.CreditItem.LicenseText.init -> void
+PandaBear.Blazor.Site.CreditItem.SourceHref.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.CreditItem.SourceHref.init -> void
+PandaBear.Blazor.Site.CreditItem.Thumbnail.get -> PandaBear.Blazor.Site.ResponsiveImage?
+PandaBear.Blazor.Site.CreditItem.Thumbnail.init -> void
+PandaBear.Blazor.Site.CreditItem.Title.get -> string?
+PandaBear.Blazor.Site.CreditItem.Title.init -> void
+PandaBear.Blazor.Site.CreditsList.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.CreditItem!>!
+PandaBear.Blazor.Site.GalleryImage.Credit.get -> PandaBear.Blazor.Site.ImageCreditLine?
+PandaBear.Blazor.Site.ImageCreditCaption
+PandaBear.Blazor.Site.ImageCreditCaption.Credit.get -> PandaBear.Blazor.Site.ImageCreditLine?
+PandaBear.Blazor.Site.ImageCreditCaption.Credit.set -> void
+PandaBear.Blazor.Site.ImageCreditCaption.ImageCreditCaption() -> void
+PandaBear.Blazor.Site.ImageCreditLine
+PandaBear.Blazor.Site.ImageCreditLine.<Clone>$() -> PandaBear.Blazor.Site.ImageCreditLine!
+PandaBear.Blazor.Site.ImageCreditLine.CreditsHref.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.ImageCreditLine.CreditsHref.init -> void
+PandaBear.Blazor.Site.ImageCreditLine.Deconstruct(out string! Text, out string? LicenseText, out PandaBear.Blazor.Site.LinkTarget? LicenseHref, out PandaBear.Blazor.Site.LinkTarget? CreditsHref) -> void
+PandaBear.Blazor.Site.ImageCreditLine.Equals(PandaBear.Blazor.Site.ImageCreditLine? other) -> bool
+PandaBear.Blazor.Site.ImageCreditLine.ImageCreditLine(string! Text, string? LicenseText = null, PandaBear.Blazor.Site.LinkTarget? LicenseHref = null, PandaBear.Blazor.Site.LinkTarget? CreditsHref = null) -> void
+PandaBear.Blazor.Site.ImageCreditLine.LicenseHref.get -> PandaBear.Blazor.Site.LinkTarget?
+PandaBear.Blazor.Site.ImageCreditLine.LicenseHref.init -> void
+PandaBear.Blazor.Site.ImageCreditLine.LicenseText.get -> string?
+PandaBear.Blazor.Site.ImageCreditLine.LicenseText.init -> void
+PandaBear.Blazor.Site.ImageCreditLine.Text.get -> string!
+PandaBear.Blazor.Site.ImageCreditLine.Text.init -> void
+override PandaBear.Blazor.Site.CreditItem.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.CreditItem.GetHashCode() -> int
+override PandaBear.Blazor.Site.CreditItem.ToString() -> string!
+override PandaBear.Blazor.Site.ImageCreditLine.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.ImageCreditLine.GetHashCode() -> int
+override PandaBear.Blazor.Site.ImageCreditLine.ToString() -> string!
+static PandaBear.Blazor.Site.CreditItem.FromCredit(PandaBear.BuildingBlocks.ImageCredit! credit, string? changesText) -> PandaBear.Blazor.Site.CreditItem!
+static PandaBear.Blazor.Site.CreditItem.operator !=(PandaBear.Blazor.Site.CreditItem? left, PandaBear.Blazor.Site.CreditItem? right) -> bool
+static PandaBear.Blazor.Site.CreditItem.operator ==(PandaBear.Blazor.Site.CreditItem? left, PandaBear.Blazor.Site.CreditItem? right) -> bool
+static PandaBear.Blazor.Site.ImageCreditLine.FromCredit(PandaBear.BuildingBlocks.ImageCredit! credit, string! format, System.IFormatProvider! provider, PandaBear.Blazor.Site.LinkTarget? creditsHref = null) -> PandaBear.Blazor.Site.ImageCreditLine!
+static PandaBear.Blazor.Site.ImageCreditLine.operator !=(PandaBear.Blazor.Site.ImageCreditLine? left, PandaBear.Blazor.Site.ImageCreditLine? right) -> bool
+static PandaBear.Blazor.Site.ImageCreditLine.operator ==(PandaBear.Blazor.Site.ImageCreditLine? left, PandaBear.Blazor.Site.ImageCreditLine? right) -> bool

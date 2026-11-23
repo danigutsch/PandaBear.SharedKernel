@@ -26,13 +26,13 @@ public sealed class ImageCreditTests
         credit.Author.ShouldBe("Ana Silva");
         credit.Title.ShouldBe("Castelo de Neuschwanstein");
         credit.SourceUrl.ShouldBe(WebUrl.Restore("https://www.flickr.com/photos/ana/123"));
-        credit.Licence.Code.ShouldBe("CC BY 2.0");
-        credit.Licence.Url.ShouldBe(WebUrl.Restore("https://creativecommons.org/licenses/by/2.0/"));
+        credit.License.Code.ShouldBe("CC BY 2.0");
+        credit.License.Url.ShouldBe(WebUrl.Restore("https://creativecommons.org/licenses/by/2.0/"));
         credit.Modified.ShouldBeTrue();
     }
 
     [Fact]
-    public void Only_the_author_and_the_licence_are_required()
+    public void Only_the_author_and_the_license_are_required()
     {
         // Act
         var credit = ImageCredit.Create("Pixabay user", null, " ", "Pixabay", null, modified: false).ShouldBeSuccess();
@@ -40,7 +40,7 @@ public sealed class ImageCreditTests
         // Assert
         credit.Title.ShouldBeNull();
         credit.SourceUrl.ShouldBeNull();
-        credit.Licence.Url.ShouldBeNull();
+        credit.License.Url.ShouldBeNull();
         credit.Modified.ShouldBeFalse();
     }
 
@@ -54,12 +54,12 @@ public sealed class ImageCreditTests
 
         // Assert
         missing.ErrorDetails.ShouldHaveValidationError("author", "Author is required.");
-        missing.ErrorDetails.ShouldHaveValidationError("licence.code", "Licence is required.");
+        missing.ErrorDetails.ShouldHaveValidationError("license.code", "License is required.");
         tooLong.ErrorDetails.ShouldHaveValidationError("author", "Author cannot exceed 200 characters.");
         tooLong.ErrorDetails.ShouldHaveValidationError("title", "Title cannot exceed 200 characters.");
         tooLong.ErrorDetails.ShouldHaveValidationError("sourceUrl", "Source link must be an absolute https address.");
-        tooLong.ErrorDetails.ShouldHaveValidationError("licence.code", "Licence cannot exceed 60 characters.");
-        tooLong.ErrorDetails.ShouldHaveValidationError("licence.url", "Licence link must be an absolute https address.");
+        tooLong.ErrorDetails.ShouldHaveValidationError("license.code", "License cannot exceed 60 characters.");
+        tooLong.ErrorDetails.ShouldHaveValidationError("license.url", "License link must be an absolute https address.");
         malformed.ErrorDetails.ShouldHaveValidationError("author", "Author is not valid text.");
         malformed.ErrorDetails.ShouldHaveValidationError("title", "Title is not valid text.");
     }
@@ -72,11 +72,11 @@ public sealed class ImageCreditTests
 
         // Assert
         result.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull().Keys.Order(StringComparer.Ordinal).ToArray()
-            .ShouldBe(["credit.author", "credit.licence.code"]);
+            .ShouldBe(["credit.author", "credit.license.code"]);
     }
 
     [Fact]
-    public void The_short_text_fills_the_application_format_with_the_author_licence_title_and_source()
+    public void The_short_text_fills_the_application_format_with_the_author_license_title_and_source()
     {
         // Arrange
         var credit = ImageCredit.Create("Ana Silva", "Castelo", "https://example.org/p/1", "CC BY-SA 4.0", null, false).ShouldBeSuccess();
@@ -129,10 +129,10 @@ public sealed class ImageCreditTests
     [InlineData("Public Domain Mark 1.0", "https://creativecommons.org/publicdomain/mark/1.0/")]
     [InlineData("PDM 1.0", "https://creativecommons.org/publicdomain/mark/1.0/")]
     [InlineData("pdm 1.0", "https://creativecommons.org/publicdomain/mark/1.0/")]
-    public void Common_creative_commons_codes_have_a_known_licence_link(string code, string expected)
+    public void Common_creative_commons_codes_have_a_known_license_link(string code, string expected)
     {
         // Act
-        var url = ImageLicence.KnownUrl(code);
+        var url = ImageLicense.KnownUrl(code);
 
         // Assert
         url.ShouldBe(WebUrl.Restore(expected));
@@ -148,24 +148,24 @@ public sealed class ImageCreditTests
     public void Other_codes_have_no_known_link(string? code)
     {
         // Act
-        var url = ImageLicence.KnownUrl(code);
+        var url = ImageLicense.KnownUrl(code);
 
         // Assert
         url.ShouldBeNull();
     }
 
     [Fact]
-    public void A_licence_is_created_and_restored_on_its_own()
+    public void A_license_is_created_and_restored_on_its_own()
     {
         // Act
-        var created = ImageLicence.Create(" CC BY 4.0 ", "https://creativecommons.org/licenses/by/4.0/").ShouldBeSuccess();
-        var restored = ImageLicence.Restore("CC BY 4.0", "https://creativecommons.org/licenses/by/4.0/");
-        var refused = ImageLicence.Create(null, null, field: "photo.licence");
+        var created = ImageLicense.Create(" CC BY 4.0 ", "https://creativecommons.org/licenses/by/4.0/").ShouldBeSuccess();
+        var restored = ImageLicense.Restore("CC BY 4.0", "https://creativecommons.org/licenses/by/4.0/");
+        var refused = ImageLicense.Create(null, null, field: "photo.license");
 
         // Assert
         created.ShouldBe(restored);
         created.ToString().ShouldBe("CC BY 4.0");
-        refused.ErrorDetails.ShouldHaveValidationError("photo.licence.code", "Licence is required.");
+        refused.ErrorDetails.ShouldHaveValidationError("photo.license.code", "License is required.");
     }
 
     [Fact]
@@ -175,8 +175,8 @@ public sealed class ImageCreditTests
         var created = ImageCredit.Create("Ana", "Castelo", "https://example.org/p", "CC BY 2.0", null, true).ShouldBeSuccess();
 
         // Act
-        var restored = ImageCredit.Restore("Ana", "Castelo", "https://example.org/p", ImageLicence.Restore("CC BY 2.0", null), true);
-        var other = ImageCredit.Restore("Ana", "Castelo", "https://example.org/p", ImageLicence.Restore("CC BY 2.0", null), false);
+        var restored = ImageCredit.Restore("Ana", "Castelo", "https://example.org/p", ImageLicense.Restore("CC BY 2.0", null), true);
+        var other = ImageCredit.Restore("Ana", "Castelo", "https://example.org/p", ImageLicense.Restore("CC BY 2.0", null), false);
 
         // Assert
         restored.ShouldBe(created);
@@ -194,9 +194,9 @@ public sealed class ImageCreditTests
         Action noProvider = () => credit.ToShortText("{0}", null!);
         Action noFormats = () => credit.ToFullText(null!, PtBr);
         Action blankFormat = () => _ = new ImageCreditFormats("{0}", " ", "{0}");
-        Action noAuthor = () => ImageCredit.Restore(" ", null, null, ImageLicence.Restore("CC0 1.0", null), false);
-        Action noLicence = () => ImageCredit.Restore("Ana", null, null, null!, false);
-        Action noCode = () => ImageLicence.Restore(" ", null);
+        Action noAuthor = () => ImageCredit.Restore(" ", null, null, ImageLicense.Restore("CC0 1.0", null), false);
+        Action noLicense = () => ImageCredit.Restore("Ana", null, null, null!, false);
+        Action noCode = () => ImageLicense.Restore(" ", null);
 
         // Assert
         noFormat.ShouldThrow<ArgumentException>();
@@ -204,7 +204,7 @@ public sealed class ImageCreditTests
         noFormats.ShouldThrow<ArgumentNullException>();
         blankFormat.ShouldThrow<ArgumentException>();
         noAuthor.ShouldThrow<ArgumentException>();
-        noLicence.ShouldThrow<ArgumentNullException>();
+        noLicense.ShouldThrow<ArgumentNullException>();
         noCode.ShouldThrow<ArgumentException>();
     }
 }

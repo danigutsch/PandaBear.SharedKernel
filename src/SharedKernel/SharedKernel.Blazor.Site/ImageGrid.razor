@@ -14,9 +14,12 @@
             {
                 <a class="site-image-grid__link" href="@image.Href.Value">@picture</a>
             }
-            @if (!string.IsNullOrWhiteSpace(image.Caption))
+            @if (!string.IsNullOrWhiteSpace(image.Caption) || image.Credit is not null)
             {
-                <figcaption>@image.Caption</figcaption>
+                <figcaption>@image.Caption@if (image.Credit is { } credit)
+                    {
+                        <ImageCreditCaption Credit="credit" />
+                    }</figcaption>
             }
         </figure>
     }

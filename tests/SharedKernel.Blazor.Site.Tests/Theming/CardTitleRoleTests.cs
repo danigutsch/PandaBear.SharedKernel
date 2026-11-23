@@ -16,7 +16,7 @@ public sealed class CardTitleRoleTests
         css.ShouldContain("--site-card-title-font-weight: 700;", StringComparison.Ordinal);
         css.ShouldContain("--site-card-title-line-height: 1.2;", StringComparison.Ordinal);
         css.ShouldNotContain("--site-card-title-text-transform", StringComparison.Ordinal);
-        SiteThemeStylesheet.RoleVariables.Count.ShouldBe(12 * 7);
+        SiteThemeStylesheet.RoleVariables.Count.ShouldBe(13 * 7);
     }
 
     [Fact]

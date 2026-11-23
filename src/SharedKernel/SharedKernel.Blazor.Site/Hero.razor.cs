@@ -53,6 +53,13 @@ public sealed partial class Hero
     [Parameter]
     public bool Divider { get; set; }
 
+    /// <summary>
+    /// Gets or sets the size of the title relative to the theme's level 1 heading, in any layout. The default is
+    /// <see cref="HeroTitleScale.Regular" />; <see cref="HeroTitleScale.Large" /> adds <c>site-hero--title-large</c>.
+    /// </summary>
+    [Parameter]
+    public HeroTitleScale TitleScale { get; set; }
+
     /// <summary>Gets or sets the buttons or links under the subtitle.</summary>
     [Parameter]
     public RenderFragment? Actions { get; set; }
@@ -66,6 +73,8 @@ public sealed partial class Hero
 
     private string DividerClass => Divider ? " site-hero--divided" : string.Empty;
 
+    private string TitleScaleClass => TitleScale == HeroTitleScale.Large ? " site-hero--title-large" : string.Empty;
+
     private bool HasEyebrow => !string.IsNullOrWhiteSpace(Eyebrow);
 
     private bool HasSubtitle => !string.IsNullOrWhiteSpace(Subtitle);
@@ -77,6 +86,11 @@ public sealed partial class Hero
         if (!Enum.IsDefined(Layout))
         {
             throw new ArgumentOutOfRangeException(nameof(Layout), Layout, "The hero layout is not defined.");
+        }
+
+        if (!Enum.IsDefined(TitleScale))
+        {
+            throw new ArgumentOutOfRangeException(nameof(TitleScale), TitleScale, "The hero title scale is not defined.");
         }
 
         if (!Enum.IsDefined(CoverHeight))

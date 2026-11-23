@@ -1,0 +1,5 @@
+@inherits SiteComponent
+<strong class="@CssClass(RootClass)" @attributes="AdditionalAttributes">@if (HasLabel)
+{
+    <span class="site-visually-hidden">@(Label + " ")</span>
+}@Text</strong>

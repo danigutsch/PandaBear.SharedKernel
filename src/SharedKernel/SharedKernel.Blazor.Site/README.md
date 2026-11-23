@@ -6,7 +6,7 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Brand-neutral, accessible Razor components for a public website, plus one stylesheet of design tokens. The components use semantic
 landmarks, need no JavaScript and no interactive render mode, and work with static server-side rendering. Every component except
-`PageHead` takes a `class` and passes any other unmatched attribute to its root element. An unmatched name that starts with an
+`PageHead` and `JsonLd` takes a `class` and passes any other unmatched attribute to its root element. An unmatched name that starts with an
 upper-case letter, names a removed parameter in any case (`ImageSrc`, `ImageAlt`, `ImageWidth`, `ImageHeight`: use `Image`), or
 holds a character an HTML attribute name cannot hold throws `InvalidOperationException` naming it, so a misspelled or removed
 parameter fails instead of silently becoming an attribute. Write pass-through HTML attributes in lower case.
@@ -67,10 +67,10 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | Component | Renders |
 | --- | --- |
 | `SkipLink` | The first link of the page; `TargetId` defaults to `main-content`. Extra attributes cannot replace its `href` or `class`. |
-| `SiteHeader` | `header` with a brand slot, a labelled `nav` (`Label` is required when there are items), and an actions slot (`site-header__actions`). An item has either an `Href` or one level of children; an item with children is a native `details` that starts closed and shows a chevron that turns when it opens. The item that matches `CurrentPath` gets `aria-current="page"`, and the summary of its group gets `aria-current="true"` and the current item's style, so the group stays closed and does not cover the page. Below the `48rem` breakpoint an open group stacks the navigation on a row of its own, the group's links under its summary; from the breakpoint on they drop down over the page. `MenuLabel` collapses the navigation and the actions behind a menu button below the breakpoint, and `Placement` lays the header over a cover hero; see [Menu](#menu) and [Bands and photos](#bands-and-photos). The brand slot lays its link out as a box around the logo (`display: flex`), so the link's focus ring surrounds the logo. A `LanguageSwitcher` in the actions takes the navigation role's type (`--site-nav-*`), so its links sit on the line of the navigation links. |
+| `SiteHeader` | `header` with a brand slot, a labelled `nav` (`Label` is required when there are items), and an actions slot (`site-header__actions`). An item has either an `Href` or one level of children; an item with children is a native `details` that starts closed and shows a chevron that turns when it opens. The item that matches `CurrentPath` gets `aria-current="page"`, and the summary of its group gets `aria-current="true"` and the current item's style, so the group stays closed and does not cover the page. Below the `48rem` breakpoint an open group stacks the navigation on a row of its own, the group's links under its summary; from the breakpoint on they drop down over the page. `MenuLabel` collapses the navigation and the actions behind a menu button below the breakpoint, and `Placement` lays the header over a cover hero; see [Menu](#menu) and [Bands and photos](#bands-and-photos). The brand slot lays its link out as a box around the logo (`display: flex`), so the link's focus ring surrounds the logo; a link of text, such as the site's name without a logo, takes the `Brand` typography role (a heading face, bold, no underline; see [Model](#model)). A `LanguageSwitcher` in the actions takes the navigation role's type (`--site-nav-*`), so its links sit on the line of the navigation links. |
 | `SiteFooter` | `footer` with a content slot and an optional `Legal` line, its lines `--site-space-2` apart (a `p` directly in either slot has no margin, and an `address` is upright). `Tone` `Default` (the page background in the content width under a border, muted text) or `Primary` (`site-footer--primary`: a full-width band of the primary colour in the light scheme, on-primary text and links, an on-primary focus ring, and buttons inverted as in a `Primary` band, the content in the content width); `TextAlignment` `Center` (`site-footer--text-center`) centres its lines. Below the `48rem` breakpoint its links, except a `FloatingLink`, are at least 2.75rem (44px) tall tap targets. |
 | `SeparatedList`, `SeparatedListItem` | A `ul role="list"` (`site-separated-list`; the role keeps the list in Safari without bullets) of `li` items (`site-separated-list__item`) on one line, such as a footer's contact details or legal links, joined by a bar the stylesheet draws with empty alternative text (`content: "\|" / ""`), so assistive technology reads a list and never the bar. Each item is kept together (`inline-block`), so "Phone: +55 11 99999-0000" never breaks between its label and its number, and breaks inside only when it is wider than the whole line. An item outside a list throws `InvalidOperationException`. Put a list of links in your own labelled `nav`. |
-| `Hero` | `Layout` `Split` (the default: text and image side by side from the breakpoint on) or `Cover` (the text centred over the image; see [Bands and photos](#bands-and-photos)). A cover's `CoverHeight` is `Page` (the default: at least 20rem below the breakpoint, 34.375rem from it on) or `Landing` (`site-hero--landing`: at least 20rem below the breakpoint, from it on 85% of the small viewport height between 34.375rem and 52rem); content can make either taller, and `Landing` on a split hero throws `ArgumentException`. Only a cover with an `Image` keeps that minimum height, which exists to show the photo; without one the primary band is as tall as its content and padding, so a not-found or error page gets a compact band instead of an empty block. The page's one `h1`, an optional `Eyebrow` line above it and `Subtitle` line under it, an image loaded eagerly with `fetchpriority="high"`, and an actions slot. With an eyebrow or a subtitle the heading is an `hgroup` (`site-hero__heading`): the eyebrow `p` (`site-hero__eyebrow`), the `h1` (`site-hero__title`), then the subtitle `p` (`site-hero__subtitle`), so reading order matches visual order and neither line enters the outline; with neither it is the `h1` alone. |
+| `Hero` | `Layout` `Split` (the default: text and image side by side from the breakpoint on) or `Cover` (the text centred over the image; see [Bands and photos](#bands-and-photos)). A cover's `CoverHeight` is `Page` (the default: at least 20rem below the breakpoint, 34.375rem from it on) or `Landing` (`site-hero--landing`: at least 20rem below the breakpoint, from it on 85% of the small viewport height between 34.375rem and 52rem); content can make either taller, and `Landing` on a split hero throws `ArgumentException`. Only a cover with an `Image` keeps that minimum height, which exists to show the photo; without one the primary band is as tall as its content and padding, so a not-found or error page gets a compact band instead of an empty block. The page's one `h1`, an optional `Eyebrow` line above it and `Subtitle` line under it, an image loaded eagerly with `fetchpriority="high"`, and an actions slot. With an eyebrow or a subtitle the heading is an `hgroup` (`site-hero__heading`): the eyebrow `p` (`site-hero__eyebrow`), the `h1` (`site-hero__title`), then the subtitle `p` (`site-hero__subtitle`), so reading order matches visual order and neither line enters the outline; with neither it is the `h1` alone. `TitleScale` `Large` (`HeroTitleScale`; `site-hero--title-large`) makes the title the level 1 heading's size, the theme's included, times `--site-hero-title-scale-large` (1.25), in any layout, such as for a landing page; a browser test measures the ratio, and an undefined scale throws `ArgumentOutOfRangeException`. The actions (`site-hero__actions`) keep `--site-space-4` (1.5rem) from the title or the subtitle above them in every layout; a browser test measures it. |
 | `Section` | `section` with a heading (`Level`, default 2), a decorative divider and an intro. An optional `Eyebrow`, a short label such as a tour's category, goes above the heading: the heading is then an `hgroup` (`site-section__heading`) of the eyebrow `p` (`site-section__eyebrow`) and the heading (`site-section__title`), so the eyebrow is read first and stays out of the outline and the section's name; the divider and intro follow the `hgroup`. Without an eyebrow (null or blank) the heading stands alone. The eyebrow is small, bold, letter-spaced text in the primary colour, and the on-primary colour in a `Primary` or `Image` band. Set `HeadingId` to give the heading that id and label the section by it (`aria-labelledby`), which makes it a named region; without it no id is generated, so prerendered and interactive markup match. `Media` makes its content a `Split`: the heading, intro and body in `site-split__main`, then the media in `site-split__media`. `TitleLanguage`, a BCP 47 tag such as `en`, marks the heading alone with `lang` when the title is in another language than the page, so the intro and body keep the page's language (WCAG 3.1.2). `TextAlignment` aligns the heading, divider, intro and body text: `null` (the default) inherits the nearest section or band that sets one, or the start; `Center` (`site-section--text-center`) centres them, the divider, paragraphs, a byline, a video link, a default `ActionRow` and an image narrower than its column, keeps a list a centred box whose items stay at the start, and drops a quote's start rule; `Start` (`site-section--text-start`) returns all of that to the start inside a centred ancestor. The alignment classes set inherited private custom properties, so the nearest one wins at any depth. The intro and the paragraphs and lists directly in the body keep a readable measure of `--site-text-width` (65ch) instead of running the content width. The measure and the centring margins are in `:where(...)` rules without specificity, so any rule of yours, even on an element, overrides them. A section inside a section, such as a day of an itinerary, takes the full width of the outer body without vertical padding and is spaced from what comes before it by `--site-space-5`, so the spacing of nested sections does not add up. An undefined alignment throws `ArgumentOutOfRangeException`. |
 | `Split` | Text (`ChildContent`) beside media (`Media`, required: `ArgumentNullException` without it), without a heading of its own: a plain `div`, never a landmark, so a heading-less band can put text and photos side by side. The text is in `site-split__main` and the media in `site-split__media`, two equal columns from the `48rem` breakpoint on and the media after the text below it, so reading order matches visual order; the media fills its column. `MediaSide` `End` (the default) puts the media column on the inline-end side; `Start` (`site-split--media-start`) puts it on the inline-start side from the breakpoint on, by grid order only, so the text stays first in reading and focus order and below the breakpoint the media still follows the text; alternate it to zigzag a day-by-day itinerary. `Alignment` `Start` (the default) starts both columns at the top, so a photo stays beside the heading and first paragraph it illustrates instead of floating halfway down a long text; `Center` (`site-split--align-center`) centres the columns on each other, for a short tagline beside a photo. Start is the default because the usual split is text-heavy: a tour description or an itinerary day beside one or a few photos. An undefined side or alignment throws `ArgumentOutOfRangeException`. `Section.Media` uses it with the default alignment, so both are one layout. |
 | `Band` | A full-width `div` (never a landmark) around content of the content width: a `Section`, or content without a heading such as a tagline and a `Byline`. `Tone` is `Default`, `Muted` (surface-alt), `Primary` (primary background, on-primary text) or `Image` (a lazy photo darkened by the normal-text scrim, on-primary text), which requires `Image`; an `Image` on another tone throws `ArgumentException`. A section inside a band loses its own vertical padding and keeps its semantics. `TextAlignment` (`null` inherits, `Center` adds `site-band--text-center`, `Start` adds `site-band--text-start`) aligns the band's text and a section in it that sets none, as `Section.TextAlignment` does; paragraphs directly in the band keep the `--site-text-width` measure. |
@@ -80,16 +80,24 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `ButtonLink` | A link styled as a button (`Primary`, `Secondary`, `Outline`), `Size` `Regular` (the default) or `Compact` (`site-button--compact`); see [Shape](#shape) for its computed padding. `NewTab` adds `target="_blank"`, `rel="noopener noreferrer"` and a visually hidden `NewTabHint` after a space, so the link's name reads "Partner (opens in a new tab)" and not "Partner(opens in a new tab)". |
 | `ActionRow` | A plain `div` (`site-action-row`, never a landmark) around actions such as `ButtonLink`s and links, in reading order, with a gap. `Justification` places them from the `48rem` breakpoint on in one wrapping row: `Start` (the default) together where reading starts, in line with the text above, so they read as one group, and in the middle inside a section or band with centred text; `Center` (`site-action-row--center`) together in the middle; `End` (`site-action-row--end`) together at the end; `Between` (`site-action-row--between`) spread across the width, for two actions on opposite sides such as previous and next. Below the breakpoint they are stacked at the start (in the middle under centred text), in the middle (`Center` and `Between`) or at the end. An undefined justification throws `ArgumentOutOfRangeException`. A plain link in it keeps the link style in the primary colour. |
 | `Card`, `CardGrid` | `article` with an optional lazy image, a heading (`HeadingLevel`, default 3) whose link covers the card, text and actions; an auto-fill grid whose columns are at least `--site-card-min-width` wide and that keeps empty columns, so a lone card has the width of one column instead of the whole row. Links, buttons, form controls, `summary` and `[tabindex]` elements in the body and the actions are raised above the covering link, so they stay clickable; any other interactive element you put in the body needs `position: relative; z-index: 1`. The focus ring is drawn on the card while a control in it has keyboard focus (`:has(:focus-visible)`). `TitleLanguage` marks the card's heading alone with `lang`, as on `Section`. `EagerImage` loads the image eagerly, for a card on the first screen. Typed options set its look, the eyebrow, the more look and the grid's columns; see [Cards](#cards). |
+| `StatusBadge` | A short status after the GOV.UK tag: `<strong class="site-status site-status--{tone}">` with the `Text`, a `Tone` (`StatusTone`: `Neutral`, the default, `Info`, `Success`, `Warning`, `Danger`) and an optional visually hidden `Label` prefix; see [Offerings](#offerings). |
+| `PriceList` | An offering's prices after the GOV.UK summary list: a `dl` of `PriceItem` rows (label, amount in `<data value>`, optional note) and optional `Conditions`; `HeadingId` makes it a group named by that heading; see [Offerings](#offerings). |
+| `FromPrice` | A line such as "a partir de 1.234,50 €": `<p class="site-from-price">` of the `Format` split at its `{0}`, the amount in `<data value>`; see [Offerings](#offerings). |
+| `StepList` | Numbered steps, such as the days of an itinerary: `<ol role="list" class="site-step-list">` of `StepItem`s, each an `hgroup` of its number from the position (`NumberFormat`) and its title, inline facts, note and paragraphs, beside its image in a zigzag `Split`; see [Offerings](#offerings). |
+| `TextList` | A plain `ul`, or an `ol` when `Ordered`, of lines (`Items`), such as what a tour includes; nothing when empty. |
 | `FactsTable` | `table` with a required `caption` and `th scope="row"` headers. |
-| `FactGrid` | A `dl` (`site-fact-grid`) of `FactCard`s, such as a tour's basic information: each card is a `div` (`site-fact-grid__item`) of the `dt` label (`site-fact-grid__label`) and one `dd` per value (`site-fact-grid__value`), for example "8 days" and "7 nights". A value is a `FactValue`: its `Text` and an optional `Link` (`LinkTarget`, so a relative, `http`/`https`, `mailto:` or `tel:` address), which makes the text a plain `a` in the same tab, for example `new("info@example.org", LinkTarget.FromString("mailto:info@example.org"))`. A value wraps between words; in a word that holds an `@`, such as an e-mail address, the component writes a `wbr` before the `@` and every dot, so the address wraps between its parts (`info` / `.desk` / `@example` / `.org`) and never inside one; a dot that ends the word or comes before closing punctuation only (`org.`, `org.)`) gets none, and other words, such as `8.5`, keep their dots unbroken. Chromium computes a link's name from its content with a space at every `wbr`, so a linked value that gets breaks carries its text as `aria-label`: the link's name and `textContent` stay the address. Only a part wider than its card breaks inside, so nothing scrolls sideways. A card's optional `Icon` is rendered first inside the `dt`, in a `span` (`site-fact-grid__icon`) with `aria-hidden="true"`, because a `div` in a `dl` may hold only `dt` and `dd` elements; the label alone names the term. The cards are centred and bordered like table cells, in wrapping rows (flex) that share the full width of the container. Below the `48rem` breakpoint as many cards at least 11rem wide fit a row as the width allows; from it on the row length is computed from the number of cards for balanced rows, as the class `site-fact-grid--columns-1` to `site-fact-grid--columns-4` (no inline style): as many as cards up to four, otherwise `ceil(n / ceil(n / 4))`, so 5 and 6 cards make rows of 3, 7 and 8 rows of 4, and 9 rows of 3. The cards of a shorter last row grow to fill it, so 7 cards are a row of 4 and a row of 3 wider cards, and a lone last card on a phone takes the whole row: no row leaves a notch. An empty grid has no column class; the label is bold and, like the icon, in the primary colour (the on-primary colour in a `Primary` or `Image` band). An `svg` icon without a `fill` attribute is filled with the colour; one with `fill="none"` keeps its strokes, so draw them with `currentColor`. A null card, a blank label, no values, a null value or a value with blank text throws `ArgumentException`. |
+| `FactGrid` | A `dl` (`site-fact-grid`) of `FactCard`s, such as a tour's basic information: each card is a `div` (`site-fact-grid__item`) of the `dt` label (`site-fact-grid__label`) and one `dd` per value (`site-fact-grid__value`), for example "8 days" and "7 nights". A value is a `FactValue`: its `Text` and an optional `Link` (`LinkTarget`, so a relative, `http`/`https`, `mailto:` or `tel:` address), which makes the text a plain `a` in the same tab, for example `new("info@example.org", LinkTarget.FromString("mailto:info@example.org"))`. A value wraps between words; in a word that holds an `@`, such as an e-mail address, the component writes a `wbr` before the `@` and every dot, so the address wraps between its parts (`info` / `.desk` / `@example` / `.org`) and never inside one; a dot that ends the word or comes before closing punctuation only (`org.`, `org.)`) gets none, and other words, such as `8.5`, keep their dots unbroken. Chromium computes a link's name from its content with a space at every `wbr`, so a linked value that gets breaks carries its text as `aria-label`: the link's name and `textContent` stay the address. Only a part wider than its card breaks inside, so nothing scrolls sideways. A card's optional `Icon` is rendered first inside the `dt`, in a `span` (`site-fact-grid__icon`) with `aria-hidden="true"`, because a `div` in a `dl` may hold only `dt` and `dd` elements; the label alone names the term. The cards are centred and bordered like table cells, in wrapping rows (flex) that share the full width of the container. Below the `48rem` breakpoint as many cards at least 11rem wide fit a row as the width allows; from it on the row length is computed from the number of cards for balanced rows, as the class `site-fact-grid--columns-1` to `site-fact-grid--columns-4` (no inline style): as many as cards up to four, otherwise `ceil(n / ceil(n / 4))`, so 5 and 6 cards make rows of 3, 7 and 8 rows of 4, and 9 rows of 3. The cards of a shorter last row grow to fill it, so 7 cards are a row of 4 and a row of 3 wider cards, and a lone last card on a phone takes the whole row: no row leaves a notch. An empty grid has no column class; the label is bold and, like the icon, in the primary colour (the on-primary colour in a `Primary` or `Image` band). An `svg` icon without a `fill` attribute is filled with the colour; one with `fill="none"` keeps its strokes, so draw them with `currentColor`. `Layout` `Inline` (`FactGridLayout`; `site-fact-grid--inline`, no column class) renders the same list as one compact row for a card, such as days, distance and difficulty: no borders, each fact its icon and label on one line above its value, at the start (in the middle under centred text), wrapping only when the card is too narrow (a browser test measures one row of three short facts in a card of three to a row at 1280px and no sideways scroll at 320px). A null card, a blank label, no values, a null value or a value with blank text throws `ArgumentException`, and an undefined layout `ArgumentOutOfRangeException`. |
 | `Disclosure` | Native `details` and `summary`; a tab substitute without script. A disclosure after other content, such as a `FactGrid`, keeps `--site-space-4` from it, and stacked disclosures keep `--site-space-2` between them. The summary is rounded like its box, so its focus ring follows the box's corners. |
 | `Quote` | `figure` with a `blockquote` and a `cite` caption. In a `Primary` or `Image` band it drops its background and takes the on-primary colour, its rule included. |
-| `ImageGrid` | `figure` per `GalleryImage` (a `ResponsiveImage` and an optional caption), lazy loading except the first `EagerCount`; `PrioritizeFirstImage` loads the first one eagerly with `fetchpriority="high"`. `Layout` `Grid` (the default) is rows of equal columns; `Mosaic` (`site-image-grid--mosaic`) is a collage of mixed aspect ratios: columns filled from top to bottom in document order, each image at its own aspect ratio, never cropped. In both, columns are at least 14rem wide and share the full width of the container, as many as there are images while they fit, so one image fills its container, in a section or in a `Split`'s media column. An image is at most 40rem or 80% of the viewport tall; a taller one is shown whole within that height (`object-fit: contain`), at the start of its box, in line with the text, or in the middle in a section or band with centred text. `Thumbnails` (`site-image-grid--thumbnails`) crops every image to one aspect ratio, `--site-thumbnail-aspect-ratio` (square by default, which crops portrait and landscape photos alike), in columns at least `--site-thumbnail-min-width` (6.5rem) and 15% of the width, so a phone shows two or three to a row and a desktop at most six; empty columns are kept, so a short last row keeps the thumbnails' size. Thumbnails show part of each photo: use them where the visitor browses many photos, and `Grid` or `Mosaic` where each photo must be seen whole. A `GalleryImage` with an `Href` (`new GalleryImage(image) { Href = … }`, for example its full-size file) is wrapped in a plain `a href` (`site-image-grid__link`), so it works in static rendering without script. The link is a block tile, rounded like the image, so its focus ring surrounds the tile, and the caption stays outside it. The link is named by the image's alternative text, so a linked image must be described: a linked decorative image throws `ArgumentException`. `Sizes` replaces the `sizes` of every image with width descriptors; left unset, `Thumbnails` writes `ImageGrid.ThumbnailSizes` (`(min-width: 74rem) 12rem, (min-width: 48rem) 16vw, (min-width: 30rem) 23vw, (min-width: 22.5rem) 31vw, 45vw`), which follows the two to six columns at the default tokens and is at least the tile width and at most about one and a half times it from 320px to 1600px, so the browser fetches a small rendition for a small tile, and the other layouts keep each image's own `sizes`. A blank or multi-line `Sizes` throws `ArgumentException`. |
+| `ImageGrid` | `figure` per `GalleryImage` (a `ResponsiveImage` and an optional caption), lazy loading except the first `EagerCount`; `PrioritizeFirstImage` loads the first one eagerly with `fetchpriority="high"`. `Layout` `Grid` (the default) is rows of equal columns; `Mosaic` (`site-image-grid--mosaic`) is a collage of mixed aspect ratios: columns filled from top to bottom in document order, each image at its own aspect ratio, never cropped. In both, columns are at least 14rem wide and share the full width of the container, as many as there are images while they fit, so one image fills its container, in a section or in a `Split`'s media column. An image is at most 40rem or 80% of the viewport tall; a taller one is shown whole within that height (`object-fit: contain`), at the start of its box, in line with the text, or in the middle in a section or band with centred text. `Thumbnails` (`site-image-grid--thumbnails`) crops every image to one aspect ratio, `--site-thumbnail-aspect-ratio` (square by default, which crops portrait and landscape photos alike), in columns at least `--site-thumbnail-min-width` (6.5rem) and 15% of the width, so a phone shows two or three to a row and a desktop at most six; empty columns are kept, so a short last row keeps the thumbnails' size. Thumbnails show part of each photo: use them where the visitor browses many photos, and `Grid` or `Mosaic` where each photo must be seen whole. A `GalleryImage` with an `Href` (`new GalleryImage(image) { Href = … }`, for example its full-size file) is wrapped in a plain `a href` (`site-image-grid__link`), so it works in static rendering without script. The link is a block tile, rounded like the image, so its focus ring surrounds the tile, and the caption stays outside it. The link is named by the image's alternative text, so a linked image must be described: a linked decorative image throws `ArgumentException`. A `GalleryImage` with a `Credit` (`ImageCreditLine`) shows it in the `figcaption` after the caption; see [Image credits](#image-credits). `Sizes` replaces the `sizes` of every image with width descriptors; left unset, `Thumbnails` writes `ImageGrid.ThumbnailSizes` (`(min-width: 74rem) 12rem, (min-width: 48rem) 16vw, (min-width: 30rem) 23vw, (min-width: 22.5rem) 31vw, 45vw`), which follows the two to six columns at the default tokens and is at least the tile width and at most about one and a half times it from 320px to 1600px, so the browser fetches a small rendition for a small tile, and the other layouts keep each image's own `sizes`. A blank or multi-line `Sizes` throws `ArgumentException`. |
+| `ImageCreditCaption` | The short credit under an image: `<small class="site-image-credit">` of one `Credit` (an `ImageCreditLine`): its `Text` (linked to `CreditsHref`) and `LicenseText` (linked to `LicenseHref` with `rel="license"`); `GalleryImage.Credit` renders one in the image's `figcaption`; see [Image credits](#image-credits). |
+| `CreditsList` | A `ul role="list"` (`site-credits-list`) of `CreditItem`s: a lazy thumbnail beside the title linked to the source, the author linked to their page, the licence linked to its deed and the changes; see [Image credits](#image-credits). |
 | `AlbumIndex` | A `CardGrid` (`site-album-index`) of `Card`s, one per `AlbumSummary`: the title as the heading linked to the album's page, a cover (the first `EagerCount`, default 4, eager), the photo count as the application words it (`site-album-index__count`), and `lang` on the title alone when it is in another language; see [Photo albums](#photo-albums). It passes `CardStyle`, `ImageAspect`, `ImageShadow`, `TextAlignment`, `MoreText`, `MoreVariant` and `MoreSize` to every card and `MinColumnWidth`, `MaxColumnWidth`, `Gap` and `ItemAlignment` to the grid. Nothing without albums. |
 | `AlbumSection` | One page of an album: a `Section` whose heading id is `album-{slug}`, an `ImageGrid` of the page's photos in the `Layout` `Grid` by default (opt into `Thumbnails`), with its `Sizes` and each photo's `Href` passed through (the first `EagerCount` eager: by default 4 in a grid, 6 as thumbnails, 1 in a mosaic), optional content, then the `Pager`; see [Photo albums](#photo-albums). |
 | `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links; no `address` when there are no lines and no channels. `PhoneText` shows the number as written (`+55 (11) 99999-0000`) while the link uses the digits; it must be the same number as `Phone`. The WhatsApp link shows `WhatsAppLabel`. |
 | `LanguageSwitcher` | Labelled `nav` of links with `hreflang`, `lang` and `aria-current="true"` on the current language, with the control radius; below the `48rem` breakpoint each link is at least 2.75rem (44px) wide and tall. |
 | `Pager` | A `nav` named by `Label` (`site-pager`) with plain links for a list paged through the URL, after the GOV.UK pagination component: previous (`rel="prev"`), the numbered pages and next (`rel="next"`); see [Pager](#pager). Nothing when there is one page. |
+| `JsonLd` | Structured data: `<script type="application/ld+json">` of a `JsonNode` (`Data`, an object or an array), escaped with `JavaScriptEncoder.Default` so the data cannot close the script; see [Offerings](#offerings). |
 | `PageHead` | Title, description, canonical link, OpenGraph basics and `hreflang` alternates including `x-default`; each optional tag is left out when its parameter is unset. `Robots` writes `<meta name="robots">` (`noindex`, `noindex, nofollow`). An error or not-found page sets `Robots="noindex"` and no `CanonicalUrl`, `Alternates` or `DefaultAlternateUrl`, so it has no canonical, `og:url` or `hreflang` link. |
 
 Content without a heading, such as a page's opening text or a contact block, goes in `<div class="site-container">`: the
@@ -262,6 +270,155 @@ Give each page its own `PageHead.CanonicalUrl`, and answer a page past the end (
 `PandaBear.SharedKernel.Galleries` holds the album model behind these components; its `AlbumView.Page` gives the photos and the window
 of a page.
 
+### Offerings
+
+Display atoms for a page that offers something, such as a tour: they take display records and text only, so the model, its
+formatting and every word stay in the application.
+
+`StatusBadge` shows a status, such as "Open" or "Sold out", after the
+[GOV.UK Design System tag](https://design-system.service.gov.uk/components/tag/):
+
+- a `strong` element (`site-status site-status--{tone}`), never a link or a control, with bold small text on the tone's background;
+- `Tone` picks the colour pair; the badge's `Text` always says the status, so the colour is never the only cue (WCAG 1.4.1), and a
+  transparent outline draws its edge in forced colours;
+- `Label`, such as "Status:", is a visually hidden prefix followed by a space, for a badge whose meaning the page does not otherwise
+  give; null or blank renders none;
+- each tone is a pair of tokens, `--site-color-status-{tone}` behind `--site-color-on-status-{tone}`, at least 4.5:1 in both schemes
+  (a test computes every pair). The badge carries its own background everywhere, so on the primary colour of a band, a cover hero
+  or a footer it keeps the light pair of the page; a browser test measures it in each of them.
+
+A blank text throws `ArgumentException` and an undefined tone `ArgumentOutOfRangeException`.
+
+```razor
+<StatusBadge Text="Esgotado" Tone="StatusTone.Danger" Label="Situação:" />
+```
+
+`PriceList` shows the prices of an offering after the
+[GOV.UK Design System summary list](https://design-system.service.gov.uk/components/summary-list/):
+
+- `Items` are `PriceItem(Label, AmountText, Value, Note)` records: `AmountText` is the amount as the page shows it ("1.234,50 €"),
+  formatted by the application, and `Value` (`decimal?`) the number, written with the invariant culture into `<data value="1234.50">`
+  so machines read it whatever the page's culture; `null`, for an amount such as "On request", writes the text without `data`;
+- the markup is `div.site-price-list` > `dl.site-price-list__items` > a `div.site-price-list__row` per item of the `dt` label
+  (`site-price-list__label`), the `dd` amount (`site-price-list__amount`, bold) and an optional `dd` note (`site-price-list__note`,
+  muted small text, the on-primary colour on the primary colour of a band); rows sit under a rule, the label at the start and the amount
+  at the end of one line, wrapping below each other when the label is long;
+- the amount has `white-space: nowrap`: its text holds a normal space before "€", which would otherwise break "1.234,50" from its
+  currency at the end of a line (a browser test measures it at 320px);
+- `Conditions` (a `RenderFragment`), such as the deposit and the payment terms, follow in `site-price-list__conditions`;
+- `HeadingId`, the id of the heading above the prices, makes the root `role="group"` with `aria-labelledby`, so the lines and the
+  conditions are one group named "Prices" (a browser test reads Chromium's accessibility tree);
+- no items render no `dl`. A null item, a blank label or amount, or an empty or spaced `HeadingId` throws `ArgumentException`.
+
+`FromPrice` is the lowest price in a line of text, such as on a card: `Format` holds exactly one `{0}` ("a partir de {0}"), and the
+component writes the text before it, the amount in `<data class="site-from-price__amount" value="...">` (bold, `nowrap`), then the
+text after it, in `<p class="site-from-price">`. The text around the placeholder is written as it is, never formatted, so other braces
+are plain text. A format without exactly one `{0}`, with the placeholder escaped as in `string.Format` (`{{0}}`), or a blank
+`AmountText` throws `ArgumentException`.
+
+```razor
+<Section Title="Valores" HeadingId="valores">
+    <PriceList HeadingId="valores" Items="_prices">
+        <Conditions><p>Reserva com sinal de 30%.</p></Conditions>
+    </PriceList>
+</Section>
+<FromPrice Format="a partir de {0}" AmountText="1.234,50 €" Value="1234.50m" />
+
+@code {
+    private readonly PriceItem[] _prices =
+    [
+        new("Quarto duplo", "1.234,50 €", 1234.50m, "por pessoa"),
+        new("Suplemento individual", "300 €", 300m),
+    ];
+}
+```
+
+`StepList` shows numbered steps, such as the days of an itinerary:
+
+- `Steps` are `StepItem(Title, Paragraphs, Note, Image, Facts)` records. A step's number comes from its position, never from the data,
+  formatted with the application's `NumberFormat` ("Dia {0}", "Day {0}") and the current culture;
+- the markup is `<ol role="list" class="site-step-list">`. The list has no markers, and Safari drops the list semantics of a list
+  styled `list-style: none`, so the explicit role keeps it a list of its steps;
+- each `li` (`site-step-list__item`) opens with an `hgroup` (`site-step-list__heading`) of the number `p` (`site-step-list__number`,
+  small bold text in the primary colour, the on-primary colour in a `Primary` or `Image` band) and the title heading
+  (`site-step-list__title`, `HeadingLevel`, default 3), so the number is read first and stays out of the outline; then the `Facts` as an
+  inline `FactGrid` (`site-step-list__facts`), the `Note` (`site-step-list__note`), and a `p` per paragraph;
+- a step with an `Image` (a `GalleryImage`, with its caption and credit) puts that text beside a one-image `ImageGrid` in a `Split`
+  with `Alignment` `Start`, so the photo starts beside the title. With `Alternate` (the default) the image side alternates from image
+  to image, end then start, so the photos zigzag, counting only steps with an image; below the `48rem` breakpoint every photo follows
+  its text. `EagerCount` (default 0) loads the first images eagerly, in document order;
+- `HeadingIdFormat`, such as "dia-{0}", gives each title an id from its position so `#dia-2` links to a step; `null`, the default,
+  writes none, because two lists on a page would repeat a fixed default.
+
+A missing step, a blank title or paragraph, a missing paragraph or fact list or fact, a number format that reads the same for positions 1 and 2 (no `{0}`, or an escaped `{{0}}`), a heading id
+format that does not give positions 1 and 2 different results (so an escaped `{{0}}` is refused) or that gives white space, or a negative `EagerCount` throws `ArgumentException` (`ArgumentOutOfRangeException`
+for the count and a heading level outside 1 to 6).
+
+`TextList` is a plain list of lines, such as what a tour includes or the practical information: a `ul`, or an `ol` when `Ordered`, with
+the class `site-text-list`, one `li` per line and the browser's bullets or numbers. An empty list renders nothing; a null or blank line
+throws `ArgumentException`.
+
+```razor
+<Section Title="Roteiro" HeadingId="roteiro">
+    <StepList Steps="_days" NumberFormat="Dia {0}" HeadingIdFormat="dia-{0}" EagerCount="1" />
+</Section>
+<Disclosure Summary="Incluído"><TextList Items="_included" /></Disclosure>
+```
+
+`JsonLd` writes structured data, such as a schema.org `TouristTrip`, as `<script type="application/ld+json">`. `Data` is a `JsonNode`
+(a `JsonObject`, or a `JsonArray` of objects; a bare value throws `ArgumentException`, null `ArgumentNullException`), written with a
+`Utf8JsonWriter` and `JavaScriptEncoder.Default`, without reflection, so it suits NativeAOT. The encoder escapes `<`, `>`, `&` and
+quotes in every name and value (`\u003C/script\u003E`), so a tour name that holds `</script>` or `<!--` can neither close the script nor
+open a comment; a browser test parses it back. The JSON is written as raw markup, because HTML entities are not decoded inside a
+script. Put it beside `PageHead`; it takes no class or attribute. Mark up only what the page shows.
+
+```razor
+<PageHead Title="@tour.Title" CanonicalUrl="@canonical" />
+<JsonLd Data="@(new JsonObject { ["@context"] = "https://schema.org", ["@type"] = "TouristTrip", ["name"] = tour.Title })" />
+```
+
+### Image credits
+
+An image under a licence such as Creative Commons must credit its author and licence. The components take display records, so the
+application words every credit and chooses the links:
+
+- `ImageCreditLine(Text, LicenseText, LicenseHref, CreditsHref)` is the short credit of one image, such as "Foto: Ana Lima" and
+  "CC BY 4.0". Give it to a `GalleryImage` as `Credit` (`new GalleryImage(image, caption) { Credit = … }`): `ImageGrid`, and with it
+  `AlbumSection` and a `StepList` step, renders it in the image's `figcaption`, after the caption (a `figcaption` is created for a
+  credit alone) and outside the image's link, so the link keeps the alternative text as its name.
+- `ImageCreditCaption` renders that line anywhere else, such as under a hero, from its one required `Credit`:
+  `<small class="site-image-credit">`, a muted line of small text (the small typography role) on a line of its own. `CreditsHref`,
+  such as the credits page, links the `Text`; the `LicenseText` follows after a space, linked to `LicenseHref` with `rel="license"`.
+  Its links are underlined in its colour. On the primary colour of a band, a cover hero or a footer the credit and the image caption
+  take the on-primary colour; a browser test measures 4.5:1 on the page and on a primary band.
+- The record checks itself where a component receives it, so the caption and the grid refuse the same lines: a blank `Text`, or a
+  `LicenseHref` without `LicenseText`, throws `ArgumentException` naming the caller's parameter (`Credit` on the caption, `Images` on
+  the grid); a missing `Credit` throws `ArgumentNullException`.
+- `ImageCreditLine.FromCredit(credit, format, provider, creditsHref)` builds the line of a shared `ImageCredit`
+  (`PandaBear.SharedKernel.BuildingBlocks`; see its README): the text from your format with the placeholders of
+  `ImageCredit.ToShortText` (`{0}` the author, as in "Foto: {0}"; leave the licence out, because it follows), then the licence's
+  `Code` linked to its `Url`.
+- `CreditsList` renders the full attributions, such as on a credits page, after the
+  [Creative Commons recommended practices for attribution](https://wiki.creativecommons.org/wiki/Recommended_practices_for_attribution)
+  (title, author, source, licence): a `ul role="list"` (`site-credits-list`; the role keeps the list in Safari without markers) of
+  `CreditItem(Author, LicenseText)` entries, both required, with the optional `Thumbnail`, `Title`, `AuthorHref`, `SourceHref`,
+  `LicenseHref` and `ChangesText` set as `init` properties. Each is an `li` of an optional lazy 5rem square thumbnail beside its lines,
+  each a `p`: the `Title` linked to the `SourceHref`, the `Author` linked to the `AuthorHref` (or, without a title, to the
+  `SourceHref`), the `LicenseText` linked to the licence's deed with `rel="license"` (`site-credits-list__license`), and the
+  `ChangesText`, such as "Cropped". A long title breaks inside the line instead of scrolling. An empty list renders nothing; a null
+  entry, a blank author or licence text, or an entry without a title that sets both `AuthorHref` and `SourceHref` (its one name cannot
+  carry two links) throws `ArgumentException`. `CreditItem.FromCredit(credit, changesText)` builds an entry from a shared
+  `ImageCredit`, with `changesText` only when the image was modified; add the thumbnail and the author's page with `with`.
+
+```razor
+<ImageGrid Images="@([new GalleryImage(photo, "O salar ao entardecer")
+{
+    Credit = ImageCreditLine.FromCredit(photoCredit, "Foto: {0}", CultureInfo.GetCultureInfo("pt-BR"),
+        LinkTarget.FromString("/pt/creditos")),
+}])" />
+<CreditsList Items="_credits" />
+```
+
 ### Bands and photos
 
 On the primary colour or a photo, text is the on-primary colour in the light scheme (`color-scheme: light`), whatever the visitor's
@@ -358,6 +515,9 @@ var cover = ResponsiveImage.Create(
   `width` and `height`. `TourImageRenditions` stays in the application: choosing renditions and building media routes is
   application policy. `Loading="eager"` with `FetchPriority="high"` is what `Hero` renders; `TourGallery` maps to `ImageGrid`
   with `PrioritizeFirstImage`, and its `sizes` (`(min-width: 48rem) 50vw, 100vw`) goes into each image.
+- A text brand changed look: a link of text in `SiteHeader`'s brand slot no longer takes the `Link` role (the body font, underlined);
+  it takes the `Brand` typography role, with the h1 face, bold, without the underline. A theme that wants another look sets
+  `typography.brand`; a logo link is not affected.
 
 ## Design tokens
 
@@ -389,6 +549,11 @@ dark surface too. `light-dark()` needs a 2024 or later browser (Chrome 123, Fire
 | `--site-color-accent-hover` | `#92400e` / `#f59e0b` | Secondary buttons on hover |
 | `--site-color-on-accent` | `#ffffff` / `#111827` | Text on the accent colour |
 | `--site-color-focus` | `#1d4ed8` / `#93c5fd` | Focus ring colour |
+| `--site-color-status-neutral`, `--site-color-on-status-neutral` | `#e5e7eb`, `#1f2937` / `#374151`, `#f3f4f6` | `StatusBadge` `Neutral`: background, text |
+| `--site-color-status-info`, `--site-color-on-status-info` | `#dbeafe`, `#1e3a8a` / `#1e3a8a`, `#dbeafe` | `StatusBadge` `Info`: background, text |
+| `--site-color-status-success`, `--site-color-on-status-success` | `#dcfce7`, `#14532d` / `#14532d`, `#dcfce7` | `StatusBadge` `Success`: background, text |
+| `--site-color-status-warning`, `--site-color-on-status-warning` | `#fef3c7`, `#78350f` / `#78350f`, `#fef3c7` | `StatusBadge` `Warning`: background, text |
+| `--site-color-status-danger`, `--site-color-on-status-danger` | `#fee2e2`, `#7f1d1d` / `#7f1d1d`, `#fee2e2` | `StatusBadge` `Danger`: background, text |
 | `--site-focus-ring` | `3px solid` focus colour | `:focus-visible` outline and a card's ring |
 | `--site-font-body` | system UI stack | Body font; no web font is loaded |
 | `--site-font-heading` | `--site-font-body` | Heading font |
@@ -415,6 +580,7 @@ dark surface too. `light-dark()` needs a 2024 or later browser (Chrome 123, Fire
 | `--site-thumbnail-min-width` | `6.5rem` | Smallest column of `ImageGrid`'s `Thumbnails` layout |
 | `--site-thumbnail-aspect-ratio` | `1` | Aspect ratio every thumbnail is cropped to |
 | `--site-video-width` | `40rem` | Largest width of `VideoLink` |
+| `--site-hero-title-scale-large` | `1.25` | Factor of the level 1 heading size for a `Hero` with `TitleScale` `Large` |
 
 Every default text pair reaches a WCAG contrast ratio of at least 4.5:1 in both schemes (text, muted and primary on surface and
 surface-alt, accent on surface, on-primary on primary and on primary-hover, on-accent on accent and on accent-hover, primary-hover on
@@ -435,10 +601,17 @@ that `site.css` consumes. Without a theme nothing changes: every per-role variab
 - `SiteColors.Create(primary, onPrimary, accent, onAccent, text, muted, surface, surfaceAlt, border, focus, primaryHover?, accentHover?)`.
   A hover colour that is not given is derived: its base mixed with 20% of the text colour per scheme (`IsDerived(role)`).
 - `TypographyStyle.Create(fontKey, fallback, size, weight, lineHeight, letterSpacing, transform, italic, color)` for each `TypographyRole`
-  (h1 to h6, body, small, link, button, nav, card title). `CardTitle` styles every card heading (`.site-card__title`) whatever its
+  (h1 to h6, body, small, link, button, nav, card title, brand). `CardTitle` styles every card heading (`.site-card__title`) whatever its
   level, so an uppercase or large section heading role does not reach the cards; by default it is a bold 1.125rem to 1.375rem heading
   without a transform, and its field path is `typography.cardTitle`. Its unset font family, weight and style come from the theme's own
-  h3 before the default, so a stored theme that gives its headings a display font keeps it on card titles. `color` colours a heading role (h1 to h6 and the card title)
+  h3 before the default, so a stored theme that gives its headings a display font keeps it on card titles. `Brand` styles a link in the
+  header's brand slot (`.site-header__brand a`), such as the site's name as text when there is no logo: by default it is a 1.125rem to
+  1.375rem bold heading face in the primary colour without the link underline (which comes back on hover), its field path is
+  `typography.brand`, and its unset font family, weight and style come from the theme's own h1, so the name takes the title's face; a
+  browser test measures it and its focus ring. `Brand` is not a heading role, but it takes a colour like one; without a colour it
+  keeps the primary colour (`color: var(--site-brand-color, var(--site-color-primary))`, in the site stylesheet and the theme
+  preview alike), and over a hero the header gives it the on-primary colour whatever the theme sets. `color` colours a heading role
+  (h1 to h6 and the card title) or the brand
   with the text, primary or muted colour, whose contrast on both surfaces the theme already checks; another colour is an error on
   `color`, and a colour on another role is an error on `typography.{role}.color`, because the components colour that text. Every value is optional; an unset value keeps `SiteTheme.Default`, and links, buttons
   and navigation inherit from their surroundings when unset (so a link in small print stays small). `FontSize.Fixed(rem)` or
@@ -518,7 +691,7 @@ links' block padding (2 × 0.25rem, `--site-space-1`), rounded up to four decima
 | Brand height | 1.5rem to 8rem | Error on `header.brandHeight` | layout policy: a smaller logo is hard to read, a taller header takes too much of a cover hero |
 | Divider width | 1rem to 16rem | Error on `shape.dividerWidth` | layout policy: a shorter rule reads as a dot, a longer one as a border |
 | Divider thickness | 0.0625rem (1px) to 1rem | Error on `shape.dividerThickness` | layout policy: a thicker rule reads as a bar |
-| Heading colour | text, primary or muted, on h1 to h6 and the card title only | Error on `typography.{role}.color` | WCAG 2.2 SC 1.4.3: only colours whose 4.5:1 on both surfaces the theme checks |
+| Heading colour | text, primary or muted, on h1 to h6, the card title and the brand only | Error on `typography.{role}.color` | WCAG 2.2 SC 1.4.3: only colours whose 4.5:1 on both surfaces the theme checks |
 | Fluid size | maximum at most 2.5 times the minimum | Error | WCAG 2.2 SC 1.4.4 (zoom must still double the text) |
 | Heading order: each level not larger than the level above, minimum and maximum compared | — | Warning on the smaller level's `size` | design guidance |
 | Font references and keys | key exists, keys unique | Error, also for drafts | rendering |
@@ -535,7 +708,7 @@ colour tokens as `light-dark(light, dark)`, the three scrim tokens as percentage
 (`SiteThemeStylesheet.HeaderVariables`: `--site-brand-height`, `--site-header-height`), the shape (`SiteThemeStylesheet.ShapeVariables`:
 `--site-radius`, `--site-control-radius`, `--site-divider-width`, `--site-divider-thickness`, `--site-divider-color`), the set
 typography values as `--site-{role}-{property}`, where role is `h1` … `h6`,
-`body`, `small`, `link`, `button`, `nav` or `card-title`, and the colour of a heading role that sets one as `--site-{role}-color`
+`body`, `small`, `link`, `button`, `nav`, `card-title` or `brand`, and the colour of a heading role that sets one as `--site-{role}-color`
 (`SiteThemeStylesheet.HeadingColorVariables`, such as `--site-h2-color: var(--site-color-primary)`), and property is `font-family`, `font-size`, `font-weight`, `line-height`,
 `letter-spacing`, `text-transform` or `font-style` (`SiteThemeStylesheet.RoleVariables`). The output is deterministic; every value
 comes from a validated value object, and strings are escaped again. `SiteThemeStylesheet.Hash(theme)` is the first 16 hex digits of
