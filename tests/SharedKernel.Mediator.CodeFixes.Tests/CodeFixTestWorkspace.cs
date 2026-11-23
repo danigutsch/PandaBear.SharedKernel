@@ -1,18 +1,16 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Text;
 using PandaBear.Mediator.SourceGenerator;
+using PandaBear.Testing.Roslyn;
 
 namespace PandaBear.Mediator.CodeFixes.Tests;
 
-/// <summary>
-/// Creates and mutates an in-memory workspace for mediator code-fix tests.
-/// </summary>
-internal sealed class CodeFixTestWorkspace
+/// <summary>Creates the code fix workspaces of the mediator code fix tests and runs the mediator generator over them.</summary>
+internal static class CodeFixTestWorkspace
 {
+    private const string DynamicAssemblyName = "SharedKernel.Mediator.CodeFixes.Tests.Dynamic";
+
     private const string DefaultUsings = """
         using System;
         using System.Collections.Generic;
@@ -21,375 +19,87 @@ internal sealed class CodeFixTestWorkspace
 
         """;
 
-    private CodeFixTestWorkspace(AdhocWorkspace workspace, ProjectId projectId, DocumentId documentId)
+    private static readonly MetadataReference Abstractions = MetadataReference.CreateFromFile(typeof(IRequest<>).Assembly.Location);
+
+    /// <summary>Returns the options of a mediator test project with the given assembly name and nullable context.</summary>
+    /// <param name="assemblyName">The project and assembly name.</param>
+    /// <param name="nullable">The project-wide nullable context.</param>
+    private static CodeFixWorkspaceOptions Options(string assemblyName, NullableContextOptions nullable = NullableContextOptions.Disable) => new()
     {
-        Workspace = workspace;
-        ProjectId = projectId;
-        DocumentId = documentId;
-    }
+        AssemblyName = assemblyName,
+        DefaultUsings = DefaultUsings,
+        AdditionalReferences = [Abstractions],
+        NullableContextOptions = nullable,
+    };
 
-    /// <summary>
-    /// Gets the mutable Roslyn workspace.
-    /// </summary>
-    public AdhocWorkspace Workspace { get; }
-
-    private ProjectId ProjectId { get; }
-
-    private DocumentId DocumentId { get; }
-
-    private Project Project => Workspace.CurrentSolution.GetProject(ProjectId)!;
-
-    private Document Document => Workspace.CurrentSolution.GetDocument(DocumentId)!;
-
-    /// <summary>
-    /// Creates a new workspace containing a single C# document.
-    /// </summary>
+    /// <summary>Creates a workspace containing a single C# document.</summary>
     /// <param name="source">The source to place in the primary document.</param>
     /// <param name="assemblyName">The dynamic assembly name.</param>
     /// <returns>The initialized test workspace.</returns>
-    public static CodeFixTestWorkspace Create(
-        string source,
-        string assemblyName = "SharedKernel.Mediator.CodeFixes.Tests.Dynamic")
-    {
-        var workspace = new AdhocWorkspace();
-        var projectId = ProjectId.CreateNewId(assemblyName);
-        var versionStamp = VersionStamp.Create();
-        var documentId = DocumentId.CreateNewId(projectId, "Test0.cs");
-        var parseOptions = new CSharpParseOptions(LanguageVersion.Preview);
-        var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
-        var projectInfo = ProjectInfo.Create(
-            projectId,
-            versionStamp,
-            name: assemblyName,
-            assemblyName: assemblyName,
-            language: LanguageNames.CSharp,
-            filePath: $"/{assemblyName}.csproj",
-            outputFilePath: $"/{assemblyName}.dll",
-            compilationOptions: compilationOptions,
-            parseOptions: parseOptions,
-            metadataReferences: GetMetadataReferences());
+    public static CodeFixWorkspace Create(string source, string assemblyName = DynamicAssemblyName) =>
+        CodeFixWorkspace.Create(source, Options(assemblyName));
 
-        workspace.AddProject(projectInfo);
-        workspace.AddDocument(
-            DocumentInfo.Create(
-                documentId,
-                "Test0.cs",
-                loader: TextLoader.From(TextAndVersion.Create(SourceText.From(DefaultUsings + source), versionStamp)),
-                filePath: "/Test0.cs"));
-
-        return new CodeFixTestWorkspace(workspace, projectId, documentId);
-    }
-
-    /// <summary>
-    /// Creates a new workspace whose primary document relies on a companion <c>GlobalUsings.cs</c> file.
-    /// </summary>
+    /// <summary>Creates a workspace whose primary document relies on a companion <c>GlobalUsings.cs</c> file.</summary>
     /// <param name="source">The source to place in the primary document.</param>
     /// <param name="globalUsingsSource">The source to place in the global-usings document.</param>
     /// <param name="assemblyName">The dynamic assembly name.</param>
     /// <returns>The initialized test workspace.</returns>
-    public static CodeFixTestWorkspace CreateWithGlobalUsings(
-        string source,
-        string globalUsingsSource,
-        string assemblyName = "SharedKernel.Mediator.CodeFixes.Tests.Dynamic")
-    {
-        var workspace = new AdhocWorkspace();
-        var projectId = ProjectId.CreateNewId(assemblyName);
-        var versionStamp = VersionStamp.Create();
-        var documentId = DocumentId.CreateNewId(projectId, "Test0.cs");
-        var parseOptions = new CSharpParseOptions(LanguageVersion.Preview);
-        var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
-        var projectInfo = ProjectInfo.Create(
-            projectId,
-            versionStamp,
-            name: assemblyName,
-            assemblyName: assemblyName,
-            language: LanguageNames.CSharp,
-            filePath: $"/{assemblyName}.csproj",
-            outputFilePath: $"/{assemblyName}.dll",
-            compilationOptions: compilationOptions,
-            parseOptions: parseOptions,
-            metadataReferences: GetMetadataReferences());
+    public static CodeFixWorkspace CreateWithGlobalUsings(string source, string globalUsingsSource, string assemblyName = DynamicAssemblyName) =>
+        CodeFixWorkspace.CreateWithGlobalUsings(source, globalUsingsSource, Options(assemblyName));
 
-        workspace.AddProject(projectInfo);
-        workspace.AddDocument(
-            DocumentInfo.Create(
-                DocumentId.CreateNewId(projectId, "GlobalUsings.cs"),
-                "GlobalUsings.cs",
-                loader: TextLoader.From(TextAndVersion.Create(SourceText.From(globalUsingsSource), versionStamp)),
-                filePath: "/GlobalUsings.cs"));
-        workspace.AddDocument(
-            DocumentInfo.Create(
-                documentId,
-                "Test0.cs",
-                loader: TextLoader.From(TextAndVersion.Create(SourceText.From(source), versionStamp)),
-                filePath: "/Test0.cs"));
-
-        return new CodeFixTestWorkspace(workspace, projectId, documentId);
-    }
-
-    /// <summary>
-    /// Creates a new workspace with nullable reference types enabled at the project level.
-    /// </summary>
+    /// <summary>Creates a workspace with nullable reference types enabled at the project level.</summary>
     /// <param name="source">The source to place in the primary document.</param>
     /// <param name="assemblyName">The dynamic assembly name.</param>
     /// <returns>The initialized test workspace.</returns>
-    public static CodeFixTestWorkspace CreateWithNullableEnabled(
-        string source,
-        string assemblyName = "SharedKernel.Mediator.CodeFixes.Tests.Dynamic")
-    {
-        var workspace = new AdhocWorkspace();
-        var projectId = ProjectId.CreateNewId(assemblyName);
-        var versionStamp = VersionStamp.Create();
-        var documentId = DocumentId.CreateNewId(projectId, "Test0.cs");
-        var parseOptions = new CSharpParseOptions(LanguageVersion.Preview);
-        var compilationOptions = new CSharpCompilationOptions(
-            OutputKind.DynamicallyLinkedLibrary,
-            nullableContextOptions: NullableContextOptions.Enable);
-        var projectInfo = ProjectInfo.Create(
-            projectId,
-            versionStamp,
-            name: assemblyName,
-            assemblyName: assemblyName,
-            language: LanguageNames.CSharp,
-            filePath: $"/{assemblyName}.csproj",
-            outputFilePath: $"/{assemblyName}.dll",
-            compilationOptions: compilationOptions,
-            parseOptions: parseOptions,
-            metadataReferences: GetMetadataReferences());
+    public static CodeFixWorkspace CreateWithNullableEnabled(string source, string assemblyName = DynamicAssemblyName) =>
+        CodeFixWorkspace.Create(source, Options(assemblyName, NullableContextOptions.Enable));
 
-        workspace.AddProject(projectInfo);
-        workspace.AddDocument(
-            DocumentInfo.Create(
-                documentId,
-                "Test0.cs",
-                loader: TextLoader.From(TextAndVersion.Create(SourceText.From(DefaultUsings + source), versionStamp)),
-                filePath: "/Test0.cs"));
-
-        return new CodeFixTestWorkspace(workspace, projectId, documentId);
-    }
-
-    /// <summary>
-    /// Creates a two-project workspace with the primary project referencing a module project.
-    /// </summary>
+    /// <summary>Creates a two-project workspace with the primary project referencing a module project.</summary>
     /// <param name="primarySource">The source placed in the primary project.</param>
     /// <param name="moduleSource">The source placed in the referenced module project.</param>
     /// <param name="primaryAssemblyName">The dynamic primary assembly name.</param>
     /// <param name="moduleAssemblyName">The dynamic module assembly name.</param>
     /// <returns>The initialized multi-project workspace.</returns>
-    public static CodeFixTestWorkspace CreateWithProjectReference(
+    public static CodeFixWorkspace CreateWithProjectReference(
         string primarySource,
         string moduleSource,
         string primaryAssemblyName = "SharedKernel.Mediator.CodeFixes.Tests.Primary",
-        string moduleAssemblyName = "SharedKernel.Mediator.CodeFixes.Tests.Module")
-    {
-        var workspace = new AdhocWorkspace();
-        var versionStamp = VersionStamp.Create();
-        var parseOptions = new CSharpParseOptions(LanguageVersion.Preview);
-        var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
-        var metadataReferences = GetMetadataReferences().ToList();
+        string moduleAssemblyName = "SharedKernel.Mediator.CodeFixes.Tests.Module") =>
+        CodeFixWorkspace.CreateWithProjectReference(primarySource, moduleSource, moduleAssemblyName, Options(primaryAssemblyName));
 
-        var moduleProjectId = ProjectId.CreateNewId(moduleAssemblyName);
-        var moduleDocumentId = DocumentId.CreateNewId(moduleProjectId, "Module.cs");
-        var primaryProjectId = ProjectId.CreateNewId(primaryAssemblyName);
-        var primaryDocumentId = DocumentId.CreateNewId(primaryProjectId, "Primary.cs");
-
-        var solution = workspace.CurrentSolution
-            .AddProject(
-                ProjectInfo.Create(
-                    moduleProjectId,
-                    versionStamp,
-                    name: moduleAssemblyName,
-                    assemblyName: moduleAssemblyName,
-                    language: LanguageNames.CSharp,
-                    filePath: $"/{moduleAssemblyName}.csproj",
-                    outputFilePath: $"/{moduleAssemblyName}.dll",
-                    compilationOptions: compilationOptions,
-                    parseOptions: parseOptions,
-                    metadataReferences: metadataReferences))
-            .AddDocument(
-                DocumentInfo.Create(
-                    moduleDocumentId,
-                    "Module.cs",
-                    loader: TextLoader.From(TextAndVersion.Create(SourceText.From(DefaultUsings + moduleSource), versionStamp)),
-                    filePath: "/Module.cs"))
-            .AddProject(
-                ProjectInfo.Create(
-                    primaryProjectId,
-                    versionStamp,
-                    name: primaryAssemblyName,
-                    assemblyName: primaryAssemblyName,
-                    language: LanguageNames.CSharp,
-                    filePath: $"/{primaryAssemblyName}.csproj",
-                    outputFilePath: $"/{primaryAssemblyName}.dll",
-                    compilationOptions: compilationOptions,
-                    parseOptions: parseOptions,
-                    metadataReferences: metadataReferences))
-            .AddDocument(
-                DocumentInfo.Create(
-                    primaryDocumentId,
-                    "Primary.cs",
-                    loader: TextLoader.From(TextAndVersion.Create(SourceText.From(DefaultUsings + primarySource), versionStamp)),
-                    filePath: "/Primary.cs"))
-            .AddProjectReference(primaryProjectId, new ProjectReference(moduleProjectId));
-        workspace.TryApplyChanges(solution);
-
-        return new CodeFixTestWorkspace(workspace, primaryProjectId, primaryDocumentId);
-    }
-
-    /// <summary>
-    /// Gets all generator diagnostics for the current workspace state.
-    /// </summary>
+    /// <summary>Gets all mediator generator diagnostics for the current state of the primary project.</summary>
+    /// <param name="workspace">The workspace whose primary project the generator runs over.</param>
     /// <returns>The diagnostics emitted by the mediator source generator.</returns>
-    public async Task<ImmutableArray<Diagnostic>> GetGeneratorDiagnostics()
-    {
-        var compilation = (CSharpCompilation?)await Project.GetCompilationAsync().ConfigureAwait(false);
-        _ = compilation.ShouldNotBeNull();
+    public static async Task<ImmutableArray<Diagnostic>> GetGeneratorDiagnostics(this CodeFixWorkspace workspace) =>
+        (await RunGenerator(workspace).ConfigureAwait(false)).Diagnostics;
 
-        var generator = new SharedKernelMediatorGenerator();
-        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
-        driver = driver.RunGenerators(compilation);
-
-        return driver.GetRunResult().Results.Single().Diagnostics;
-    }
-
-    /// <summary>
-    /// Gets the first generator diagnostic with the requested identifier.
-    /// </summary>
+    /// <summary>Gets the single mediator generator diagnostic with the requested identifier.</summary>
+    /// <param name="workspace">The workspace whose primary project the generator runs over.</param>
     /// <param name="diagnosticId">The diagnostic identifier to locate.</param>
     /// <returns>The matching diagnostic.</returns>
-    public async Task<Diagnostic> GetSingleGeneratorDiagnostic(string diagnosticId)
+    public static async Task<Diagnostic> GetSingleGeneratorDiagnostic(this CodeFixWorkspace workspace, string diagnosticId)
     {
-        var diagnostics = await GetGeneratorDiagnostics().ConfigureAwait(false);
+        var diagnostics = await workspace.GetGeneratorDiagnostics().ConfigureAwait(false);
         return diagnostics.ShouldHaveSingleItem(diagnostic => diagnostic.Id == diagnosticId);
     }
 
-    /// <summary>
-    /// Creates a synthetic diagnostic on the named document for code-fix testing.
-    /// </summary>
-    /// <param name="diagnosticId">The diagnostic identifier to create.</param>
-    /// <param name="documentName">The document name hosting the diagnostic.</param>
-    /// <param name="markerText">The text to locate for the diagnostic span.</param>
-    /// <param name="properties">Optional diagnostic properties.</param>
-    /// <returns>The created diagnostic.</returns>
-    public async Task<Diagnostic> CreateDocumentDiagnostic(
-        string diagnosticId,
-        string documentName,
-        string markerText,
-        ImmutableDictionary<string, string?>? properties = null)
-    {
-        var document = Workspace.CurrentSolution.Projects.SelectMany(static project => project.Documents).ShouldHaveSingleItem(candidate => string.Equals(candidate.Name, documentName, StringComparison.Ordinal));
-        var text = await document.GetTextAsync().ConfigureAwait(false);
-        var source = text.ToString();
-        var start = source.IndexOf(markerText, StringComparison.Ordinal);
-        (start >= 0).ShouldBeTrue($"Could not find marker text '{markerText}' in document '{documentName}'.");
-        var syntaxTree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
-        _ = syntaxTree.ShouldNotBeNull();
-        var span = new TextSpan(start, markerText.Length);
-        var descriptor = new DiagnosticDescriptor(
-            diagnosticId,
-            title: diagnosticId,
-            messageFormat: diagnosticId,
-            category: "Usage",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true);
-
-        return Diagnostic.Create(descriptor, Location.Create(syntaxTree, span), properties);
-    }
-
-    /// <summary>
-    /// Gets the current primary document text.
-    /// </summary>
-    /// <returns>The latest source text from the primary document.</returns>
-    public async Task<string> GetDocumentText()
-    {
-        return (await Document.GetTextAsync().ConfigureAwait(false)).ToString();
-    }
-
-    /// <summary>
-    /// Gets a document text by file name across all projects in the workspace.
-    /// </summary>
-    /// <param name="documentName">The document name to locate.</param>
-    /// <returns>The text from the requested document.</returns>
-    public async Task<string> GetDocumentText(string documentName)
-    {
-        var document = Workspace.CurrentSolution.Projects.SelectMany(static project => project.Documents).ShouldHaveSingleItem(candidate => string.Equals(candidate.Name, documentName, StringComparison.Ordinal));
-        return (await document.GetTextAsync().ConfigureAwait(false)).ToString();
-    }
-
-    /// <summary>
-    /// Gets a generated document text by file name.
-    /// </summary>
-    /// <param name="documentName">The document name to locate.</param>
-    /// <returns>The text from the requested document.</returns>
-    public async Task<string> GetAdditionalDocumentText(string documentName)
-    {
-        return await GetDocumentText(documentName).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    /// Gets a generated source by hint name from the current primary project compilation.
-    /// </summary>
+    /// <summary>Gets a source that the mediator generator generates for the primary project, by hint name.</summary>
+    /// <param name="workspace">The workspace whose primary project the generator runs over.</param>
     /// <param name="hintName">The generated source hint name.</param>
     /// <returns>The generated source text.</returns>
-    public async Task<string> GetGeneratedSource(string hintName)
+    public static async Task<string> GetGeneratedSource(this CodeFixWorkspace workspace, string hintName)
     {
-        var compilation = (CSharpCompilation?)await Project.GetCompilationAsync().ConfigureAwait(false);
-        _ = compilation.ShouldNotBeNull();
-
-        var generator = new SharedKernelMediatorGenerator();
-        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
-        driver = driver.RunGenerators(compilation);
-        var runResult = driver.GetRunResult();
-        var generatedSource = runResult.Results.Single().GeneratedSources.ShouldHaveSingleItem(candidate => string.Equals(candidate.HintName, hintName, StringComparison.Ordinal));
+        var result = await RunGenerator(workspace).ConfigureAwait(false);
+        var generatedSource = result.GeneratedSources.ShouldHaveSingleItem(candidate => string.Equals(candidate.HintName, hintName, StringComparison.Ordinal));
         return generatedSource.SourceText.ToString();
     }
 
-    /// <summary>
-    /// Registers code actions for the provided diagnostic.
-    /// </summary>
-    /// <param name="provider">The provider under test.</param>
-    /// <param name="diagnostic">The diagnostic to fix.</param>
-    /// <returns>The registered code actions.</returns>
-    public async Task<IReadOnlyList<CodeAction>> GetCodeActions(CodeFixProvider provider, Diagnostic diagnostic)
+    private static async Task<GeneratorRunResult> RunGenerator(CodeFixWorkspace workspace)
     {
-        var actions = new List<CodeAction>();
-        var document = diagnostic.Location.SourceTree is null
-            ? Document
-            : Workspace.CurrentSolution.GetDocument(diagnostic.Location.SourceTree) ?? Document;
-        var codeFixContext = new CodeFixContext(
-            document,
-            diagnostic,
-            (action, _) => actions.Add(action),
-            CancellationToken.None);
-
-        await provider.RegisterCodeFixesAsync(codeFixContext).ConfigureAwait(false);
-        return actions;
-    }
-
-    /// <summary>
-    /// Applies the selected code action to the current workspace state.
-    /// </summary>
-    /// <param name="action">The action to apply.</param>
-    public async Task ApplyCodeAction(CodeAction action)
-    {
-        var operations = await action.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
-
-        foreach (var operation in operations)
-        {
-            operation.Apply(Workspace, CancellationToken.None);
-        }
-    }
-
-    private static IEnumerable<MetadataReference> GetMetadataReferences()
-    {
-        var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-        ArgumentException.ThrowIfNullOrEmpty(trustedPlatformAssemblies);
-
-        foreach (var path in trustedPlatformAssemblies.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
-        {
-            yield return MetadataReference.CreateFromFile(path);
-        }
-
-        yield return MetadataReference.CreateFromFile(typeof(IRequest<>).Assembly.Location);
+        var compilation = (CSharpCompilation?)await workspace.Project.GetCompilationAsync().ConfigureAwait(false);
+        _ = compilation.ShouldNotBeNull();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(new SharedKernelMediatorGenerator());
+        driver = driver.RunGenerators(compilation);
+        return driver.GetRunResult().Results.Single();
     }
 }

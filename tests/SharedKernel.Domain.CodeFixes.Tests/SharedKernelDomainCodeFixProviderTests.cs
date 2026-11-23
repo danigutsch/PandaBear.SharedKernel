@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using PandaBear.CodeFixes.Testing;
+using PandaBear.Testing.Roslyn;
 using PandaBear.Domain.Analyzers;
 
 namespace PandaBear.Domain.CodeFixes.Tests;
@@ -23,7 +23,7 @@ public sealed class SharedKernelDomainCodeFixProviderTests
                 {{propertyDeclaration}}
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelDomainCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DomainDiagnosticIds.NonPrivateSetter, marker);
 
@@ -65,7 +65,7 @@ public sealed class SharedKernelDomainCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         workspace.AddDocument(
             """
             namespace Demo;
@@ -109,7 +109,7 @@ public sealed class SharedKernelDomainCodeFixProviderTests
                 public static int Read(Tour tour) => tour.Count;
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelDomainCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DomainDiagnosticIds.NonPrivateSetter, "set;");
 
@@ -151,7 +151,7 @@ public sealed class SharedKernelDomainCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelDomainCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DomainDiagnosticIds.NonPrivateSetter, "set;");
 
@@ -174,7 +174,7 @@ public sealed class SharedKernelDomainCodeFixProviderTests
                 public int Count { get; set; }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         workspace.AddDocument(
             """
             namespace Demo;
@@ -210,7 +210,7 @@ public sealed class SharedKernelDomainCodeFixProviderTests
 
             {{declarations}}
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelDomainCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DomainDiagnosticIds.NonPrivateSetter, "set;");
 
@@ -233,7 +233,7 @@ public sealed class SharedKernelDomainCodeFixProviderTests
                 public int Count { get; set; }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelDomainCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DomainDiagnosticIds.NonPrivateSetter, "get;");
 

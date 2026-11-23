@@ -10,7 +10,7 @@ public sealed class CurrentTimeCodeFixTests
     public async Task Fix_uses_the_unique_in_scope_provider(string expression, string parameter, string replacement)
     {
         // Arrange
-        var workspace = CodeFixTestWorkspace.Create($$"""
+        var workspace = CodeFixWorkspace.Create($$"""
             public class Reader { public object Read({{parameter}}) => {{expression}}; }
             """);
         var diagnostic = await workspace.CreateDocumentDiagnostic("SKSTYLE014", expression);
@@ -34,7 +34,7 @@ public sealed class CurrentTimeCodeFixTests
     public async Task Fix_declines_missing_ambiguous_or_wall_clock_conversions(string parameters, string expression)
     {
         // Arrange
-        var workspace = CodeFixTestWorkspace.Create($$"""
+        var workspace = CodeFixWorkspace.Create($$"""
             public class Reader { public object Read({{parameters}}) => {{expression}}; }
             """);
         var diagnostic = await workspace.CreateDocumentDiagnostic("SKSTYLE014", expression);
@@ -54,7 +54,7 @@ public sealed class CurrentTimeCodeFixTests
     [InlineData("private TimeProvider _clock = TimeProvider.System;", "", "", false, true)]
     public async Task Provider_selection_respects_members_nullability_and_static_context(string member, string local, string replacement, bool expected, bool isStatic = false)
     {
-        var workspace = CodeFixTestWorkspace.Create($$"""
+        var workspace = CodeFixWorkspace.Create($$"""
             #nullable enable
             public class Reader
             {

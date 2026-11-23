@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 using PandaBear.Blazor.Analyzers;
-using PandaBear.CodeFixes.Testing;
+using PandaBear.Testing.Roslyn;
 
 namespace PandaBear.Blazor.CodeFixes.Tests;
 
@@ -35,7 +35,7 @@ public sealed class BlazorCodeFixTests
     public async Task The_busy_flag_fix_moves_the_reset_into_a_finally_block()
     {
         // Arrange
-        var workspace = CodeFixTestWorkspace.Create(FlagSource);
+        var workspace = CodeFixWorkspace.Create(FlagSource);
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.UnguardedBusyFlag, "_saving = true");
 
         // Act
@@ -61,7 +61,7 @@ public sealed class BlazorCodeFixTests
                 "private Task<(int, int)> Pair()",
                 "private async System.Collections.Generic.IAsyncEnumerable<(int, int)> Pairs() { await Task.CompletedTask; yield return (1, 2); }\n    private Task<(int, int)> Pair()",
                 StringComparison.Ordinal);
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.UnguardedBusyFlag, "_saving = true");
 
         // Act
@@ -82,7 +82,7 @@ public sealed class BlazorCodeFixTests
             "var value = await Load();\n        _saving = false;\n        Use(value);",
             StringComparison.Ordinal);
         source.ShouldContain("Use(value);", StringComparison.Ordinal);
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.UnguardedBusyFlag, "_saving = true");
 
         // Act
@@ -104,7 +104,7 @@ public sealed class BlazorCodeFixTests
             $"{guarded}\n        _saving = false;\n        {after}",
             StringComparison.Ordinal);
         source.ShouldContain(after, StringComparison.Ordinal);
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.UnguardedBusyFlag, "_saving = true");
 
         // Act
@@ -119,7 +119,7 @@ public sealed class BlazorCodeFixTests
     {
         // Arrange
         var source = FlagSource.Replace("await Save();", "await TryGet(out var item);\n        Use(item);", StringComparison.Ordinal);
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.UnguardedBusyFlag, "_saving = true");
 
         // Act
@@ -148,7 +148,7 @@ public sealed class BlazorCodeFixTests
                 public ISender Sender { get; set; } = default!;
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.LongLivedScopeService, "ISender");
 
         // Act
@@ -173,7 +173,7 @@ public sealed class BlazorCodeFixTests
     public async Task The_sender_fix_is_not_offered_when_the_component_uses_the_sender_beyond_plain_requests(string use, string reason)
     {
         // Arrange
-        var workspace = CodeFixTestWorkspace.Create(SenderSources.Component(use));
+        var workspace = CodeFixWorkspace.Create(SenderSources.Component(use));
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.LongLivedScopeService, "ISender");
 
         // Act
@@ -191,7 +191,7 @@ public sealed class BlazorCodeFixTests
     public async Task The_sender_fix_is_offered_and_compiles_when_the_component_sends_only_plain_requests(string use)
     {
         // Arrange
-        var workspace = CodeFixTestWorkspace.Create(SenderSources.Component(use));
+        var workspace = CodeFixWorkspace.Create(SenderSources.Component(use));
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.LongLivedScopeService, "ISender");
 
         // Act
@@ -220,7 +220,7 @@ public sealed class BlazorCodeFixTests
                 private ShopDb Db { get; set; } = default!;
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.LongLivedScopeService, "ShopDb Db");
 
         // Act

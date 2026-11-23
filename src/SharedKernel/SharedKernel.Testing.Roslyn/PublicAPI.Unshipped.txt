@@ -19,3 +19,38 @@ static PandaBear.Testing.Roslyn.GeneratorTestHarness.GetDiagnostics(Microsoft.Co
 static PandaBear.Testing.Roslyn.GeneratorTestHarness.GetGeneratedSource(Microsoft.CodeAnalysis.GeneratorDriverRunResult! runResult, string! hintName) -> string!
 static PandaBear.Testing.Roslyn.GeneratorTestHarness.Run(Microsoft.CodeAnalysis.IIncrementalGenerator! generator, Microsoft.CodeAnalysis.CSharp.CSharpCompilation! compilation, System.Collections.Immutable.ImmutableDictionary<string!, string!>? globalOptions = null) -> Microsoft.CodeAnalysis.GeneratorDriverRunResult!
 static PandaBear.Testing.Roslyn.GeneratorTestHarness.RunAndUpdate(System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.IIncrementalGenerator!>! generators, Microsoft.CodeAnalysis.CSharp.CSharpCompilation! compilation, out Microsoft.CodeAnalysis.CSharp.CSharpCompilation! outputCompilation, out System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Diagnostic!> diagnostics) -> Microsoft.CodeAnalysis.GeneratorDriverRunResult!
+PandaBear.Testing.Roslyn.AnalyzerRun
+static PandaBear.Testing.Roslyn.AnalyzerRun.GetDiagnostics(Microsoft.CodeAnalysis.Compilation! compilation, Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer! analyzer, System.Collections.Immutable.ImmutableDictionary<string!, string!>? globalOptions = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Diagnostic!>>!
+static PandaBear.Testing.Roslyn.AnalyzerRun.GetDiagnostics(Microsoft.CodeAnalysis.Compilation! compilation, Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer! analyzer, Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider! optionsProvider, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Diagnostic!>>!
+PandaBear.Testing.Roslyn.CodeFixWorkspace
+PandaBear.Testing.Roslyn.CodeFixWorkspace.AddDocument(string! source, string! name) -> Microsoft.CodeAnalysis.DocumentId!
+PandaBear.Testing.Roslyn.CodeFixWorkspace.ApplyCodeAction(Microsoft.CodeAnalysis.CodeActions.CodeAction! action) -> System.Threading.Tasks.Task!
+PandaBear.Testing.Roslyn.CodeFixWorkspace.CreateDocumentDiagnostic(string! diagnosticId, string! documentName, string! markerText, System.Collections.Immutable.ImmutableDictionary<string!, string?>? properties = null) -> System.Threading.Tasks.Task<Microsoft.CodeAnalysis.Diagnostic!>!
+PandaBear.Testing.Roslyn.CodeFixWorkspace.CreateDocumentDiagnostic(string! diagnosticId, string! markerText, System.Collections.Immutable.ImmutableDictionary<string!, string?>? properties = null) -> System.Threading.Tasks.Task<Microsoft.CodeAnalysis.Diagnostic!>!
+PandaBear.Testing.Roslyn.CodeFixWorkspace.Document.get -> Microsoft.CodeAnalysis.Document!
+PandaBear.Testing.Roslyn.CodeFixWorkspace.GetAnalyzerDiagnostics(Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer! analyzer, string? enabledDiagnosticId = null) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Microsoft.CodeAnalysis.Diagnostic!>!>!
+PandaBear.Testing.Roslyn.CodeFixWorkspace.GetCodeActions(Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider! provider, Microsoft.CodeAnalysis.Diagnostic! diagnostic) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Microsoft.CodeAnalysis.CodeActions.CodeAction!>!>!
+PandaBear.Testing.Roslyn.CodeFixWorkspace.GetCompilationDiagnostics() -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Microsoft.CodeAnalysis.Diagnostic!>!>!
+PandaBear.Testing.Roslyn.CodeFixWorkspace.GetDocumentText() -> System.Threading.Tasks.Task<string!>!
+PandaBear.Testing.Roslyn.CodeFixWorkspace.GetDocumentText(Microsoft.CodeAnalysis.DocumentId! documentId) -> System.Threading.Tasks.Task<string!>!
+PandaBear.Testing.Roslyn.CodeFixWorkspace.GetDocumentText(string! documentName) -> System.Threading.Tasks.Task<string!>!
+PandaBear.Testing.Roslyn.CodeFixWorkspace.Project.get -> Microsoft.CodeAnalysis.Project!
+PandaBear.Testing.Roslyn.CodeFixWorkspace.Workspace.get -> Microsoft.CodeAnalysis.AdhocWorkspace!
+static PandaBear.Testing.Roslyn.CodeFixWorkspace.Create(string! source, PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions? options = null) -> PandaBear.Testing.Roslyn.CodeFixWorkspace!
+static PandaBear.Testing.Roslyn.CodeFixWorkspace.CreateWithGlobalUsings(string! source, string! globalUsingsSource, PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions? options = null) -> PandaBear.Testing.Roslyn.CodeFixWorkspace!
+static PandaBear.Testing.Roslyn.CodeFixWorkspace.CreateWithProjectReference(string! primarySource, string! moduleSource, string! moduleAssemblyName, PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions? options = null) -> PandaBear.Testing.Roslyn.CodeFixWorkspace!
+const PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions.CommonUsings = "using System;\nusing System.Collections.Generic;\nusing System.IO;\nusing System.Threading;\nusing System.Threading.Tasks;\n" -> string!
+PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions
+PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions.AdditionalReferences.get -> System.Collections.Generic.IReadOnlyList<Microsoft.CodeAnalysis.MetadataReference!>!
+PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions.AdditionalReferences.init -> void
+PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions.AssemblyName.get -> string!
+PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions.AssemblyName.init -> void
+PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions.CodeFixWorkspaceOptions() -> void
+PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions.DefaultUsings.get -> string!
+PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions.DefaultUsings.init -> void
+PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions.DocumentationMode.get -> Microsoft.CodeAnalysis.DocumentationMode
+PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions.DocumentationMode.init -> void
+PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions.DocumentPath.get -> string!
+PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions.DocumentPath.init -> void
+PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions.NullableContextOptions.get -> Microsoft.CodeAnalysis.NullableContextOptions
+PandaBear.Testing.Roslyn.CodeFixWorkspaceOptions.NullableContextOptions.init -> void

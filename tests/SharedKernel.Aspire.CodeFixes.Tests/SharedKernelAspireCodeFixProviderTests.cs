@@ -1,5 +1,5 @@
 using PandaBear.Aspire.Analyzers;
-using PandaBear.CodeFixes.Testing;
+using PandaBear.Testing.Roslyn;
 
 namespace PandaBear.Aspire.CodeFixes.Tests;
 
@@ -23,7 +23,7 @@ public sealed class SharedKernelAspireCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelAspireCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             AspireDiagnosticIds.ImageTagAndDigest,
@@ -56,7 +56,7 @@ public sealed class SharedKernelAspireCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelAspireCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             AspireDiagnosticIds.ImageTagAndDigest,
@@ -90,7 +90,7 @@ public sealed class SharedKernelAspireCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelAspireCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             AspireDiagnosticIds.ImageTagAndDigest,
@@ -123,7 +123,7 @@ public sealed class SharedKernelAspireCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelAspireCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             AspireDiagnosticIds.ImageTagAndDigest,
@@ -182,7 +182,7 @@ public sealed class SharedKernelAspireCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelAspireCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             AspireDiagnosticIds.ImageTagAndDigest,
@@ -213,7 +213,7 @@ public sealed class SharedKernelAspireCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelAspireCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             AspireDiagnosticIds.ImageTagAndDigest,

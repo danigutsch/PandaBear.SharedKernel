@@ -21,7 +21,7 @@ public sealed class UnboundedIoCodeFixTests
                 public object Execute(string path, StreamReader reader, CancellationToken ct) => {{expression}};
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, expression);
         var provider = new SharedKernelStyleCodeFixProvider();
 

@@ -221,7 +221,6 @@ public static class SharedKernelPackagingConventionTests
             "benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj",
             "samples/Mediator/Mediator.Sample/Mediator.Sample.csproj",
             "samples/Results/BasicResults.Sample/BasicResults.Sample.csproj",
-            "tests/SharedKernel.CodeFixes.Testing/SharedKernel.CodeFixes.Testing.csproj",
             "tests/SharedKernel.Testing.Integration/SharedKernel.Testing.Integration.csproj",
             "tests/SharedKernel.Testing.Packaging/SharedKernel.Testing.Packaging.csproj",
             "tests/SharedKernel.Testing.Scenarios/SharedKernel.Testing.Scenarios.csproj",

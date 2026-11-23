@@ -21,6 +21,40 @@ Use `AnalyzerTestHarness.CreateCompilation` to build in-memory C# compilations w
 
 Keep default usings, referenced assemblies, wrapper methods named after the generator, and every assertion on generated output in the generator's own test project.
 
+## Analyzer runs
+
+`AnalyzerRun.GetDiagnostics(compilation, analyzer, globalOptions)` runs one analyzer over a compilation and returns what it
+reports, without the compiler's own diagnostics. `globalOptions` are the `.editorconfig` options the analyzer reads; pass an
+`AnalyzerConfigOptionsProvider` instead for per-file options. Wrap it in the test project with the analyzer under test and the
+default usings of the suite.
+
+## Code fix tests
+
+`CodeFixWorkspace` is an in-memory Roslyn workspace with a C# project and a main document `Test0.cs`, for code fix providers:
+
+```csharp
+var workspace = CodeFixWorkspace.Create(source);
+var diagnostic = await workspace.CreateDocumentDiagnostic("MY001", "markerText");
+var action = (await workspace.GetCodeActions(new MyCodeFixProvider(), diagnostic)).Single();
+await workspace.ApplyCodeAction(action);
+var fixedText = await workspace.GetDocumentText();
+```
+
+- `Create(source, options)` builds the project from `CodeFixWorkspaceOptions`: `AssemblyName`, `DefaultUsings` (put before every
+  document; `CommonUsings` by default, empty for none), `AdditionalReferences` besides the trusted platform assemblies,
+  `DocumentPath`, `DocumentationMode`, and `NullableContextOptions`.
+- `CreateWithGlobalUsings(source, globalUsingsSource, options)` adds a `GlobalUsings.cs` and takes both sources as they are;
+  `CreateWithProjectReference(primarySource, moduleSource, moduleAssemblyName, options)` builds a main project that references a
+  module project.
+- `AddDocument(source, name)` adds a document; `CreateDocumentDiagnostic(id, markerText)` places a warning on the first
+  occurrence of the marker in the main document, or in a named document of any project, with optional properties.
+- `GetCodeActions` collects what a provider registers for the diagnostic's document; `ApplyCodeAction` applies an action that
+  must change the solution exactly once; `GetAnalyzerDiagnostics(analyzer, enabledDiagnosticId)` runs an analyzer through
+  `AnalyzerRun`, switching on a rule that is off by default; `GetCompilationDiagnostics` returns the compiler's diagnostics.
+- `GetDocumentText()` reads the main document, and the overloads read a document by identifier or by unique file name.
+
+The package depends on `Microsoft.CodeAnalysis.CSharp.Workspaces`, at the same version as `Microsoft.CodeAnalysis.CSharp`.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Testing.Roslyn`. C# namespace: `PandaBear.Testing.Roslyn`. Assembly/project identity: `SharedKernel.Testing.Roslyn`.

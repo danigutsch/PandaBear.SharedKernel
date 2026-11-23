@@ -25,7 +25,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(diagnosticId, "Execute()");
 
@@ -101,7 +101,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(analyzer);
@@ -158,7 +158,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(analyzer);
@@ -235,7 +235,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(analyzer);
@@ -281,7 +281,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod, "Complete()");
 
@@ -327,7 +327,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(targetSource);
+        var workspace = CodeFixWorkspace.Create(targetSource);
         var callerDocumentId = workspace.AddDocument(callerSource, "Workflow.Caller.cs");
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod, "Complete()");
@@ -371,7 +371,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod, "Complete()");
 
@@ -419,7 +419,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod, "Complete()");
 
@@ -461,7 +461,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(analyzer);
@@ -505,7 +505,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(analyzer);
@@ -548,7 +548,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(analyzer);
@@ -589,7 +589,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(analyzer);
@@ -630,7 +630,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(analyzer);
@@ -675,7 +675,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(analyzer);
@@ -737,7 +737,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(analyzer);
@@ -793,7 +793,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod, "Complete()");
 
@@ -825,7 +825,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
@@ -862,7 +862,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
@@ -897,7 +897,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
@@ -934,7 +934,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
@@ -991,7 +991,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
@@ -1050,7 +1050,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
@@ -1098,7 +1098,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "ReadLineAsync");
 
@@ -1124,7 +1124,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "DisposeAsync");
 
@@ -1151,7 +1151,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
@@ -1182,7 +1182,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default");
 
@@ -1212,7 +1212,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default(CancellationToken)");
 
@@ -1239,7 +1239,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 Task<string> Load(CancellationToken ct = default);
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default");
 
@@ -1269,7 +1269,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct /* preserved */ = default");
 
@@ -1296,7 +1296,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 Task<string> Load(string? route = null, CancellationToken ct = default);
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default");
 
@@ -1323,7 +1323,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
@@ -1351,7 +1351,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
@@ -1385,7 +1385,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
@@ -1413,7 +1413,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
@@ -1446,7 +1446,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
@@ -1482,7 +1482,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "cancellationToken");
 
@@ -1517,7 +1517,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
@@ -1550,7 +1550,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
@@ -1605,7 +1605,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 public ResultOfT<string> Load() => new ResultOfT<string>();
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix, "ResultOfT<T>");
 
@@ -1636,7 +1636,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             {
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix, "ResultGeneric<T>");
 
@@ -1661,7 +1661,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix, "ResultOfT<T>");
 
@@ -1686,7 +1686,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 public ResultHandlerOfT<string> Handler { get; } = static _ => { };
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix, "ResultHandlerOfT<T>");
 
@@ -1721,7 +1721,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 public TourCreated Create() => new(System.Guid.NewGuid());
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer());
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = analyzerDiagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.DomainEventSuffix);
@@ -1751,7 +1751,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
 
             public sealed record TourCreatedDomainEvent(System.Guid TourId);
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.DomainEventSuffix, "TourCreated(System.Guid TourId)");
 
@@ -2130,7 +2130,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
@@ -2170,7 +2170,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
@@ -2207,7 +2207,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 }
             }
             """;
-        var workspace = CodeFixTestWorkspace.Create(source);
+        var workspace = CodeFixWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,

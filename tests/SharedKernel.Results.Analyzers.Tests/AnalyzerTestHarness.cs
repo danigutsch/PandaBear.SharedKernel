@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
 using PandaBear.Testing.Roslyn;
 
 namespace PandaBear.Results.Analyzers.Tests;
@@ -47,18 +46,7 @@ internal static class AnalyzerTestHarness
 
     private static async Task<ImmutableArray<Diagnostic>> Analyze(CSharpCompilation compilation)
     {
-        var optionsProvider = new TestAnalyzerConfigOptionsProvider(null);
-        var compilationOptions = new CompilationWithAnalyzersOptions(
-            new AnalyzerOptions([]),
-            onAnalyzerException: null,
-            concurrentAnalysis: true,
-            logAnalyzerExecutionTime: false,
-            reportSuppressedDiagnostics: false,
-            analyzerExceptionFilter: null,
-            _ => optionsProvider);
-        var compilationWithAnalyzers = compilation.WithAnalyzers([new SharedKernelResultsAnalyzer()], compilationOptions);
-
-        return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
+        return await AnalyzerRun.GetDiagnostics(compilation, new SharedKernelResultsAnalyzer()).ConfigureAwait(false);
     }
 
     private static CSharpCompilation CreateCompilation(string source, bool withResultsReference)
