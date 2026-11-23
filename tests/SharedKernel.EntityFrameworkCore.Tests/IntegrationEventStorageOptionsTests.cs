@@ -144,6 +144,26 @@ public sealed class IntegrationEventStorageOptionsTests
     }
 
     [Fact]
+    public void Storage_options_accept_63_byte_names_and_refuse_64_byte_names_that_the_server_would_truncate()
+    {
+        // Arrange
+        var longest = new string('a', 63);
+        var tooLong = new string('a', 64);
+
+        // Act
+        var integrationEventLongest = new IntegrationEventStorageOptionsValidator().Validate(null, new IntegrationEventStorageOptions { Schema = longest, OutboxTableName = longest });
+        var integrationEventTooLong = new IntegrationEventStorageOptionsValidator().Validate(null, new IntegrationEventStorageOptions { TransportTableName = tooLong });
+        var idempotencyLongest = new IdempotencyStorageOptionsValidator().Validate(null, new IdempotencyStorageOptions { Schema = longest, TableName = longest });
+        var idempotencyTooLong = new IdempotencyStorageOptionsValidator().Validate(null, new IdempotencyStorageOptions { Schema = tooLong });
+
+        // Assert
+        integrationEventLongest.Succeeded.ShouldBeTrue();
+        integrationEventTooLong.FailureMessage.ShouldBe("Integration event storage schema and table names must be valid PostgreSQL unquoted identifiers.");
+        idempotencyLongest.Succeeded.ShouldBeTrue();
+        idempotencyTooLong.FailureMessage.ShouldBe("Idempotency storage schema and table name must be valid PostgreSQL unquoted identifiers.");
+    }
+
+    [Fact]
     public async Task Custom_storage_mappings_are_context_specific()
     {
         // Arrange

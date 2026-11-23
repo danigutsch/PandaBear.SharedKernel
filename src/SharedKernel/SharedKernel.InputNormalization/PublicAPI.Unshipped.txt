@@ -28,3 +28,5 @@ PandaBear.InputNormalization.RasterImageMediaType.FileExtension.get -> string!
 PandaBear.InputNormalization.RasterImageMediaType.MediaType.get -> string!
 static PandaBear.InputNormalization.RasterImageMediaType.Find(string? mediaType) -> PandaBear.InputNormalization.RasterImageMediaType?
 static PandaBear.InputNormalization.StringSanitizer.TrySanitizeParagraphs(string? value, out System.Collections.Generic.IReadOnlyList<string!>! paragraphs) -> bool
+PandaBear.InputNormalization.PostgreSqlIdentifier
+static PandaBear.InputNormalization.PostgreSqlIdentifier.IsUnquoted(string? value) -> bool
