@@ -86,6 +86,7 @@
     "src/SharedKernel/SharedKernel.Offerings/SharedKernel.Offerings.csproj",
     "src/SharedKernel/SharedKernel.OpenApi/SharedKernel.OpenApi.csproj",
     "src/SharedKernel/SharedKernel.Packages/SharedKernel.Packages.csproj",
+    "src/SharedKernel/SharedKernel.PageSections.Blazor/SharedKernel.PageSections.Blazor.csproj",
     "src/SharedKernel/SharedKernel.PageSections/SharedKernel.PageSections.csproj",
     "src/SharedKernel/SharedKernel.PlaywrightMcp/SharedKernel.PlaywrightMcp.csproj",
     "src/SharedKernel/SharedKernel.Processes/SharedKernel.Processes.csproj",

@@ -7,7 +7,8 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 Typed page sections for a public site: each section is composed from typed parts instead of styled by hand, sits on the band of its tone
 and shows its parts in a fixed order. It holds the section model and its validation, with an extension point for the application's own
 part. It depends only on `PandaBear.SharedKernel.BuildingBlocks`. The page itself (its key, slug, status, review and SEO fields) stays in
-the application, and so does rendering: a renderer maps the sections to display components.
+the application. `PandaBear.SharedKernel.PageSections.Blazor` renders the sections with the accessible site components
+([README](../SharedKernel.PageSections.Blazor/README.md)); the model needs no display package.
 
 ## Install
 

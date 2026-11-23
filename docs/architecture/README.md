@@ -101,6 +101,8 @@ flowchart TB
     SharedKernel_Packages[SharedKernel.Packages] --> SharedKernel_Processes[SharedKernel.Processes]
     SharedKernel_Packages[SharedKernel.Packages] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_PageSections[SharedKernel.PageSections] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
+    SharedKernel_PageSections_Blazor[SharedKernel.PageSections.Blazor] --> SharedKernel_Blazor_Site[SharedKernel.Blazor.Site]
+    SharedKernel_PageSections_Blazor[SharedKernel.PageSections.Blazor] --> SharedKernel_PageSections[SharedKernel.PageSections]
     SharedKernel_PlaywrightMcp[SharedKernel.PlaywrightMcp] --> SharedKernel_Processes[SharedKernel.Processes]
     SharedKernel_Repositories[SharedKernel.Repositories] --> SharedKernel_ConfigurationFiles[SharedKernel.ConfigurationFiles]
     SharedKernel_Repositories[SharedKernel.Repositories] --> SharedKernel_IO[SharedKernel.IO]

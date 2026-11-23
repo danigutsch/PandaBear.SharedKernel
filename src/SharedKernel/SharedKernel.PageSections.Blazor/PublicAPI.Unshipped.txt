@@ -1,0 +1,24 @@
+#nullable enable
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.Extra.get -> Microsoft.AspNetCore.Components.RenderFragment<TExtra>?
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.Extra.set -> void
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.HeadingIdFormat.get -> string!
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.HeadingIdFormat.set -> void
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.Image.get -> System.Func<TImageId, PandaBear.Blazor.Site.ResponsiveImage?>!
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.Image.set -> void
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.IsShown.get -> System.Func<PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>!, bool>?
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.IsShown.set -> void
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.Link.get -> System.Func<TLink, PandaBear.Blazor.Site.LinkTarget?>!
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.Link.set -> void
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.PageSectionsView() -> void
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.Sections.get -> System.Collections.Generic.IReadOnlyList<PandaBear.PageSections.PageSection<TImageId, TLink, TExtra>!>!
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.Sections.set -> void
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.SplitAlignment.get -> PandaBear.Blazor.Site.SiteAlignment
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.SplitAlignment.set -> void
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.TextAlignment.get -> PandaBear.Blazor.Site.SiteAlignment?
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.TextAlignment.set -> void
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.TextLanguage.get -> PandaBear.BuildingBlocks.ContentCulture?
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.TextLanguage.set -> void
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.VideoSiteHintFormat.get -> string!
+PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.VideoSiteHintFormat.set -> void
+const PandaBear.PageSections.Blazor.PageSectionsView<TImageId, TLink, TExtra>.DefaultHeadingIdFormat = "section-{0}" -> string!
