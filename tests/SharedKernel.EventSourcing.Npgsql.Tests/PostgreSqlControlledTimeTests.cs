@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Time.Testing;
+
 namespace PandaBear.EventSourcing.Npgsql.Tests;
 
 /// <summary>Tests that the event store and checkpoint store take their timestamps from the configured time provider.</summary>
@@ -9,7 +11,8 @@ public sealed class PostgreSqlControlledTimeTests(PostgreSqlTestServerFixture fi
     {
         // Arrange
         var first = new DateTimeOffset(2026, 1, 2, 3, 4, 5, TimeSpan.Zero);
-        var clock = new AdvancingTimeProvider(first);
+        var time = new FakeTimeProvider(first) { AutoAdvanceAmount = TimeSpan.FromSeconds(1) };
+        var clock = new CountingTimeProvider(time);
         var options = PostgreSqlEventStoreTestsHelpers.CreateOptions();
         options.TimeProvider = clock;
         await using var store = new PostgreSqlEventStore(ConnectionString, new TestEventSerializer(), options);
@@ -32,7 +35,7 @@ public sealed class PostgreSqlControlledTimeTests(PostgreSqlTestServerFixture fi
         }
 
         var next = first.AddHours(1);
-        clock.Instant = next.AddSeconds(-1);
+        time.SetUtcNow(next);
         var appended = await store.Append(id, ExpectedStreamRevision.Any,
             [new TestEvent("third")], TestContext.Current.CancellationToken);
         var readsAfterSecondAppend = clock.Reads;
@@ -61,7 +64,7 @@ public sealed class PostgreSqlControlledTimeTests(PostgreSqlTestServerFixture fi
         // Arrange
         var instant = new DateTimeOffset(2026, 1, 2, 3, 4, 5, TimeSpan.Zero);
         var options = PostgreSqlEventStoreTestsHelpers.CreateOptions();
-        options.TimeProvider = new AdvancingTimeProvider(instant);
+        options.TimeProvider = new FakeTimeProvider(instant);
         await using var store = new PostgreSqlProjectionCheckpointStore(ConnectionString, options);
         await store.Initialize(TestContext.Current.CancellationToken);
 

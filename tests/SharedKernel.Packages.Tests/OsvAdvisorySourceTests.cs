@@ -1,4 +1,5 @@
 using System.Net;
+using Microsoft.Extensions.Time.Testing;
 using PandaBear.Results;
 using static PandaBear.Packages.Tests.PackageFactory;
 
@@ -483,7 +484,7 @@ public sealed class OsvAdvisorySourceTests
     public async Task A_cached_answer_expires_after_its_lifetime()
     {
         // Arrange
-        var time = new TestTimeProvider(OsvFake.Start);
+        var time = new FakeTimeProvider(OsvFake.Start);
         using var handler = OsvFake.Handler((_, _) => null, []);
         using var client = new HttpClient(handler, disposeHandler: false);
         var source = OsvFake.Source(client, time, lifetime: TimeSpan.FromMinutes(10));

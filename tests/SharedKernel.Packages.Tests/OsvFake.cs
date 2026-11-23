@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using Microsoft.Extensions.Time.Testing;
 
 namespace PandaBear.Packages.Tests;
 
@@ -38,5 +39,5 @@ internal static class OsvFake
 
     /// <summary>Creates the source over <paramref name="client"/>.</summary>
     public static OsvAdvisorySource Source(HttpClient client, TimeProvider? time = null, string? apt = null, TimeSpan? lifetime = null, TimeSpan? timeout = null) =>
-        new(client, time ?? new TestTimeProvider(Start), apt, lifetime, timeout);
+        new(client, time ?? new FakeTimeProvider(Start), apt, lifetime, timeout);
 }

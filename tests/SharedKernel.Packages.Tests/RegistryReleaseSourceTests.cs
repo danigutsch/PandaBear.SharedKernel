@@ -1,4 +1,5 @@
 using System.Net;
+using Microsoft.Extensions.Time.Testing;
 using PandaBear.Results;
 using static PandaBear.Packages.Tests.PackageFactory;
 
@@ -230,7 +231,7 @@ public sealed class RegistryReleaseSourceTests
     public async Task Answers_are_cached_until_they_expire_and_failures_are_not_cached()
     {
         // Arrange
-        var time = new TestTimeProvider(OsvFake.Start);
+        var time = new FakeTimeProvider(OsvFake.Start);
         var fail = true;
         using var handler = new RecordingHttpMessageHandler(_ => fail ? HttpResponseFactory.Json("x", HttpStatusCode.BadGateway) : HttpResponseFactory.Json(Crate));
         using var client = new HttpClient(handler, disposeHandler: false);

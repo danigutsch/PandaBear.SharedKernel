@@ -11,7 +11,7 @@ public sealed class CountingTimeProviderTests
     public static void Counting_time_provider_counts_each_read_and_reports_the_inner_time()
     {
         // Arrange
-        var provider = new CountingTimeProvider(new FixedClock(Instant));
+        var provider = new CountingTimeProvider(new FakeTimeProvider(Instant));
 
         // Act
         var first = provider.GetUtcNow();
@@ -28,7 +28,9 @@ public sealed class CountingTimeProviderTests
     {
         // Arrange
         var zone = TimeZoneInfo.CreateCustomTimeZone("plus-three", TimeSpan.FromHours(3), "plus-three", "plus-three");
-        var provider = new CountingTimeProvider(new FixedClock(Instant, zone));
+        var clock = new FakeTimeProvider(Instant);
+        clock.SetLocalTimeZone(zone);
+        var provider = new CountingTimeProvider(clock);
 
         // Act
         var local = provider.GetLocalNow();
@@ -44,7 +46,7 @@ public sealed class CountingTimeProviderTests
     public static void Reset_sets_the_read_count_back_to_zero()
     {
         // Arrange
-        var provider = new CountingTimeProvider(new FixedClock(Instant));
+        var provider = new CountingTimeProvider(new FakeTimeProvider(Instant));
         provider.GetUtcNow();
 
         // Act
@@ -73,7 +75,7 @@ public sealed class CountingTimeProviderTests
     public static async Task Counting_time_provider_counts_concurrent_reads_without_losing_any()
     {
         // Arrange
-        var provider = new CountingTimeProvider(new FixedClock(Instant));
+        var provider = new CountingTimeProvider(new FakeTimeProvider(Instant));
 
         // Act
         await Task.WhenAll(Enumerable.Range(0, 8).Select(_ => Task.Run(() =>

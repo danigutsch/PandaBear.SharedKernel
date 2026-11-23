@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.Extensions.Time.Testing;
 using PandaBear.Processes;
 
 namespace PandaBear.CI.Tests;
@@ -106,13 +107,13 @@ public sealed class CiMachineTests
         var (fileName, arguments) = TestShell.Command(
             $"echo $$ > '{bashPath}'; exec sleep 60",
             $"Set-Content -LiteralPath '{powerShellPath}' -Value $PID; Start-Sleep -Seconds 60");
-        var timeProvider = new ManualTimeProvider();
+        var timeProvider = new FakeTimeProvider();
         var running = new CiMachine(new SystemProcessRunner(), PathExecutableResolver.Default, timeProvider).Run(fileName, arguments, Path.GetTempPath(), TimeSpan.FromMinutes(10), static _ => { }, null, TestContext.Current.CancellationToken);
         var processId = await ChildProcessId.Read(processIdPath, running, TestContext.Current.CancellationToken);
 
         // Act
         // The timeout fires only after the child has reported its process ID, however long its shell took to start.
-        timeProvider.Fire();
+        timeProvider.Advance(TimeSpan.FromMinutes(10));
         var action = () => running.WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
         var exception = await action.ShouldThrow<TimeoutException>();
 
