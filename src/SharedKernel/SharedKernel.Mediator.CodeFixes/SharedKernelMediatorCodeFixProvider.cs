@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using PandaBear.CodeFixes;
 
 namespace PandaBear.Mediator.CodeFixes;
 
@@ -12,6 +13,16 @@ public sealed class SharedKernelMediatorCodeFixProvider : CodeFixProvider
 {
     private const string MissingArgumentDiagnosticId = "CS7036";
     private const string InvalidRequestArgumentDiagnosticId = "CS1503";
+
+    private static readonly AllowListedFixAll FixAll = new(
+    [
+        MissingArgumentDiagnosticId,
+        InvalidRequestArgumentDiagnosticId,
+        MediatorDiagnosticIds.MissingHandler,
+        MediatorDiagnosticIds.MissingCancellationToken,
+        MediatorDiagnosticIds.MissingEnumeratorCancellation,
+        MediatorDiagnosticIds.MissingModuleMarker
+    ]);
 
     /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds =>
@@ -30,7 +41,7 @@ public sealed class SharedKernelMediatorCodeFixProvider : CodeFixProvider
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
     {
-        return SafeMediatorFixAllProvider.Instance;
+        return FixAll;
     }
 
     /// <inheritdoc />

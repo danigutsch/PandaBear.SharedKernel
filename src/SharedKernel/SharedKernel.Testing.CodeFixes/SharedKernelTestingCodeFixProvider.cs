@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Rename;
 using Microsoft.CodeAnalysis.Text;
+using PandaBear.CodeFixes;
 using PandaBear.Testing.Analyzers;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -20,6 +21,8 @@ namespace PandaBear.Testing.CodeFixes;
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SharedKernelTestingCodeFixProvider))]
 public sealed partial class SharedKernelTestingCodeFixProvider : CodeFixProvider
 {
+    private static readonly AllowListedFixAll FixAll = new([]);
+
     private const string ContainsAssertionName = "Contains";
     private const string EqualAssertionName = "Equal";
     private const string SingleAssertionName = "Single";
@@ -33,7 +36,7 @@ public sealed partial class SharedKernelTestingCodeFixProvider : CodeFixProvider
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
     {
-        return SafeTestingFixAllProvider.Instance;
+        return FixAll;
     }
 
     /// <inheritdoc />

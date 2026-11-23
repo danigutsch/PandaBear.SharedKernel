@@ -20,6 +20,7 @@
 
     <ItemGroup>
         <Compile Include="..\SharedKernel.Aspire.Analyzers\AspireDiagnosticIds.cs" Link="AspireDiagnosticIds.cs" />
+        <Compile Include="..\SharedKernel.Aspire.Analyzers\InvocationChain.cs" Link="InvocationChain.cs" />
     </ItemGroup>
 
     <ItemGroup>

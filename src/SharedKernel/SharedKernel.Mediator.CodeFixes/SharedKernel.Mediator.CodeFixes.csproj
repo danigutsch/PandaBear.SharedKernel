@@ -20,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="..\SharedKernel.Style.CodeFixes\AllowListedFixAll.cs" Link="AllowListedFixAll.cs" />
         <Compile Include="..\SharedKernel.Mediator.SourceGenerator\MediatorDiagnosticIds.cs" Link="MediatorDiagnosticIds.cs" />
         <Compile Include="..\SharedKernel.Mediator.SourceGenerator\MediatorDiagnosticDescriptors.cs" Link="MediatorDiagnosticDescriptors.cs" />
         <Compile Include="..\SharedKernel.Mediator.SourceGenerator\MetadataNames.cs" Link="MetadataNames.cs" />

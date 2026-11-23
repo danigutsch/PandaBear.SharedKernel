@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using PandaBear.CodeFixes;
 using PandaBear.Style.Analyzers;
 
 namespace PandaBear.Style.CodeFixes;
@@ -11,6 +12,8 @@ namespace PandaBear.Style.CodeFixes;
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SharedKernelStyleCodeFixProvider))]
 public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
 {
+    private static readonly AllowListedFixAll FixAll = new([StyleDiagnosticIds.AsyncSuffix]);
+
     /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds =>
         [
@@ -29,7 +32,7 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
     {
-        return SafeStyleFixAllProvider.Instance;
+        return FixAll;
     }
 
     /// <inheritdoc />

@@ -50,7 +50,7 @@ public sealed class SharedKernelAspireAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        var methodName = GetInvocationName(invocation);
+        var methodName = InvocationChain.MethodName(invocation);
         if (!IsImagePinMethod(methodName))
         {
             return;
@@ -73,11 +73,11 @@ public sealed class SharedKernelAspireAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        var chain = GetImageInvocationChain(GetOutermostInvocation(invocation)).ToArray();
+        var chain = InvocationChain.Links(InvocationChain.Outermost(invocation)).ToArray();
         var hasImageTag = chain.Any(static candidate =>
-            string.Equals(GetInvocationName(candidate), WithImageTagMethodName, StringComparison.Ordinal));
+            string.Equals(InvocationChain.MethodName(candidate), WithImageTagMethodName, StringComparison.Ordinal));
         var hasImageSha256 = chain.Any(static candidate =>
-            string.Equals(GetInvocationName(candidate), WithImageSha256MethodName, StringComparison.Ordinal));
+            string.Equals(InvocationChain.MethodName(candidate), WithImageSha256MethodName, StringComparison.Ordinal));
 
         if (hasImageTag && hasImageSha256)
         {
@@ -130,7 +130,7 @@ public sealed class SharedKernelAspireAnalyzer : DiagnosticAnalyzer
                 && anonymousFunction.Parent is ArgumentSyntax argument
                 && argument.Parent is ArgumentListSyntax argumentList
                 && argumentList.Parent is InvocationExpressionSyntax parentInvocation
-                && string.Equals(GetInvocationName(parentInvocation), PublishAsDockerFileMethodName, StringComparison.Ordinal)
+                && string.Equals(InvocationChain.MethodName(parentInvocation), PublishAsDockerFileMethodName, StringComparison.Ordinal)
                 && IsInvokedOnLambdaParameter(invocation, anonymousFunction))
             {
                 return true;
@@ -168,44 +168,6 @@ public sealed class SharedKernelAspireAnalyzer : DiagnosticAnalyzer
             IdentifierNameSyntax identifierName => string.Equals(identifierName.Identifier.ValueText, identifier, StringComparison.Ordinal),
             InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax memberAccess } => IsRootedAtIdentifier(memberAccess.Expression, identifier),
             _ => false
-        };
-    }
-
-    private static InvocationExpressionSyntax GetOutermostInvocation(InvocationExpressionSyntax invocation)
-    {
-        var current = invocation;
-        while (current.Parent is MemberAccessExpressionSyntax memberAccess
-            && ReferenceEquals(memberAccess.Expression, current)
-            && memberAccess.Parent is InvocationExpressionSyntax parentInvocation)
-        {
-            current = parentInvocation;
-        }
-
-        return current;
-    }
-
-    private static IEnumerable<InvocationExpressionSyntax> GetImageInvocationChain(InvocationExpressionSyntax invocation)
-    {
-        if (invocation.Expression is MemberAccessExpressionSyntax memberAccess
-            && memberAccess.Expression is InvocationExpressionSyntax receiverInvocation)
-        {
-            foreach (var candidate in GetImageInvocationChain(receiverInvocation))
-            {
-                yield return candidate;
-            }
-        }
-
-        yield return invocation;
-    }
-
-    private static string? GetInvocationName(InvocationExpressionSyntax invocation)
-    {
-        return invocation.Expression switch
-        {
-            MemberAccessExpressionSyntax memberAccess => memberAccess.Name.Identifier.ValueText,
-            MemberBindingExpressionSyntax memberBinding => memberBinding.Name.Identifier.ValueText,
-            IdentifierNameSyntax identifierName => identifierName.Identifier.ValueText,
-            _ => null
         };
     }
 }
