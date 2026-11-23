@@ -18,6 +18,7 @@
         <Compile Include="..\SharedKernel.Repository.Tests\ChildProcessId.cs" Link="Fixtures\ChildProcessId.cs" />
         <Compile Include="..\SharedKernel.Repository.Tests\LocalCheckReport.cs" Link="Fixtures\LocalCheckReport.cs" />
         <Compile Include="..\SharedKernel.Repository.Tests\LocalCheckScript.cs" Link="Fixtures\LocalCheckScript.cs" />
+        <Compile Include="..\SharedKernel.Repository.Tests\PosixFactAttribute.cs" Link="Fixtures\PosixFactAttribute.cs" />
         <Compile Include="..\SharedKernel.Repository.Tests\ProcessCall.cs" Link="Fixtures\ProcessCall.cs" />
         <Compile Include="..\SharedKernel.Repository.Tests\ProcessLog.cs" Link="Fixtures\ProcessLog.cs" />
         <Compile Include="..\SharedKernel.Repository.Tests\RepositoryTestScope.cs" Link="Fixtures\RepositoryTestScope.cs" />
