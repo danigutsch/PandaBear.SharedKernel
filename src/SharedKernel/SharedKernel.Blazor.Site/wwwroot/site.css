@@ -708,7 +708,7 @@ a {
     border-radius: 0;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label) {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label, .site-price-list__note) {
     color: inherit;
 }
 
@@ -1343,6 +1343,57 @@ a {
 
 .site-fact-grid--inline .site-fact-grid__icon > :is(svg, img) {
     margin-inline: 0;
+}
+
+/*
+ * Price list, after the GOV.UK summary list: rows under a rule, the label at the start and the bold amount at the end of one line, the
+ * note under them in muted small text. The amount never wraps, because its text holds a space before the currency sign.
+ */
+.site-price-list__items {
+    margin: 0 0 var(--site-space-4);
+    border-block-start: 1px solid var(--site-color-border);
+}
+
+.site-price-list__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--site-space-3);
+    padding-block: var(--site-space-2);
+    border-block-end: 1px solid var(--site-color-border);
+}
+
+.site-price-list__label {
+    flex: 1 1 12rem;
+    min-width: 0;
+}
+
+.site-price-list__amount {
+    margin: 0;
+    margin-inline-start: auto;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.site-price-list__note {
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--site-color-muted);
+    font-size: var(--site-font-size-sm);
+}
+
+.site-price-list__conditions > :first-child {
+    margin-top: 0;
+}
+
+/* The from price: a line whose amount is bold and never wraps. */
+.site-from-price {
+    margin: 0 0 var(--site-space-3);
+}
+
+.site-from-price__amount {
+    font-weight: 700;
+    white-space: nowrap;
 }
 
 /*

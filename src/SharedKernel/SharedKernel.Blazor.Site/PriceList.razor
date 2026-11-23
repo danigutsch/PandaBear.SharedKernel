@@ -1,0 +1,31 @@
+@inherits SiteComponent
+@using System.Globalization
+<div class="@CssClass("site-price-list")" role="@(HeadingId is null ? null : "group")" aria-labelledby="@HeadingId" @attributes="AdditionalAttributes">
+    @if (Items.Count > 0)
+    {
+        <dl class="site-price-list__items">
+            @foreach (var item in Items)
+            {
+                <div class="site-price-list__row">
+                    <dt class="site-price-list__label">@item.Label</dt>
+                    <dd class="site-price-list__amount">@if (item.Value is { } value)
+                        {
+                            <data value="@value.ToString(CultureInfo.InvariantCulture)">@item.AmountText</data>
+                        }
+                        else
+                        {
+                            @item.AmountText
+                        }</dd>
+                    @if (!string.IsNullOrWhiteSpace(item.Note))
+                    {
+                        <dd class="site-price-list__note">@item.Note</dd>
+                    }
+                </div>
+            }
+        </dl>
+    }
+    @if (Conditions is not null)
+    {
+        <div class="site-price-list__conditions">@Conditions</div>
+    }
+</div>

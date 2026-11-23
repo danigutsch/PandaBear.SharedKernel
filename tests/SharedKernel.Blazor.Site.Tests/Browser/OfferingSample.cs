@@ -6,7 +6,8 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// <summary>
 /// A page for the tests of the offering display atoms: a status badge of every tone on the page, in a primary band, in an image band over
 /// an all-white photo, in a cover hero without a photo and in a primary footer, and a grid of tour cards three to a row (<c>#tours</c>) whose first card
-/// (<c>#tour</c>) holds an inline fact grid of three facts with icons.
+/// (<c>#tour</c>) holds an inline fact grid of three facts with icons and a from price, then a section "Prices" (<c>#prices</c>) whose
+/// price list (<c>#price-list</c>) is a group named by it, and the same list in the primary band (<c>#band-prices</c>).
 /// </summary>
 public sealed class OfferingSample : ComponentBase
 {
@@ -37,12 +38,15 @@ public sealed class OfferingSample : ComponentBase
         builder.CloseComponent();
         builder.OpenElement(5, "div");
         builder.AddAttribute(6, "class", "site-container");
-        builder.AddContent(7, Badges("page"));
-        builder.AddContent(8, Tours);
+        builder.AddContent(7, PageContent);
         builder.CloseElement();
         builder.OpenComponent<Band>(9);
         builder.AddComponentParameter(10, nameof(Band.Tone), BandTone.Primary);
-        builder.AddComponentParameter(11, nameof(Band.ChildContent), Badges("primary"));
+        builder.AddComponentParameter(11, nameof(Band.ChildContent), (RenderFragment)(band =>
+        {
+            band.AddContent(0, Badges("primary"));
+            band.AddContent(1, Prices("band-prices"));
+        }));
         builder.CloseComponent();
         builder.OpenComponent<Band>(12);
         builder.AddComponentParameter(13, nameof(Band.Tone), BandTone.Image);
@@ -67,6 +71,13 @@ public sealed class OfferingSample : ComponentBase
         StatusTone.Danger => "danger",
         _ => "neutral",
     };
+
+    private static void PageContent(RenderTreeBuilder builder)
+    {
+        builder.AddContent(0, Badges("page"));
+        builder.AddContent(1, Tours);
+        builder.AddContent(2, PriceSection);
+    }
 
     private static TheoryData<string, StatusTone> Cases()
     {
@@ -119,10 +130,38 @@ public sealed class OfferingSample : ComponentBase
                     body.AddComponentParameter(1, nameof(FactGrid.Layout), FactGridLayout.Inline);
                     body.AddComponentParameter(2, nameof(FactGrid.Cards), CardFacts);
                     body.CloseComponent();
+                    body.OpenComponent<FromPrice>(3);
+                    body.AddComponentParameter(4, nameof(FromPrice.Format), "from {0}");
+                    body.AddComponentParameter(5, nameof(FromPrice.AmountText), "1.234,50 €");
+                    body.AddComponentParameter(6, nameof(FromPrice.Value), 1234.50m);
+                    body.CloseComponent();
                 }));
                 grid.CloseComponent();
             }
         }));
         builder.CloseComponent();
     }
+
+    private static void PriceSection(RenderTreeBuilder builder)
+    {
+        builder.OpenComponent<Section>(0);
+        builder.AddComponentParameter(1, nameof(Section.Title), "Prices");
+        builder.AddComponentParameter(2, nameof(Section.HeadingId), "prices");
+        builder.AddComponentParameter(3, nameof(Section.ChildContent), Prices("price-list"));
+        builder.CloseComponent();
+    }
+
+    private static RenderFragment Prices(string id) => builder =>
+    {
+        builder.OpenComponent<PriceList>(0);
+        builder.AddComponentParameter(1, "id", id);
+        builder.AddComponentParameter(2, nameof(PriceList.HeadingId), id == "price-list" ? "prices" : null);
+        builder.AddComponentParameter(3, nameof(PriceList.Items), new PriceItem[]
+        {
+            new("Double room in the lodge with a view of the salt flats", "12.345,50 €", 12345.50m, "per person"),
+            new("Single supplement", "300 €", 300m),
+        });
+        builder.AddComponentParameter(4, nameof(PriceList.Conditions), (RenderFragment)(text => text.AddMarkupContent(0, "<p>A deposit secures the place.</p>")));
+        builder.CloseComponent();
+    };
 }

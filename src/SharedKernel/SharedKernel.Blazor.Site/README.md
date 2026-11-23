@@ -81,6 +81,8 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `ActionRow` | A plain `div` (`site-action-row`, never a landmark) around actions such as `ButtonLink`s and links, in reading order, with a gap. `Justification` places them from the `48rem` breakpoint on in one wrapping row: `Start` (the default) together where reading starts, in line with the text above, so they read as one group, and in the middle inside a section or band with centred text; `Center` (`site-action-row--center`) together in the middle; `End` (`site-action-row--end`) together at the end; `Between` (`site-action-row--between`) spread across the width, for two actions on opposite sides such as previous and next. Below the breakpoint they are stacked at the start (in the middle under centred text), in the middle (`Center` and `Between`) or at the end. An undefined justification throws `ArgumentOutOfRangeException`. A plain link in it keeps the link style in the primary colour. |
 | `Card`, `CardGrid` | `article` with an optional lazy image, a heading (`HeadingLevel`, default 3) whose link covers the card, text and actions; an auto-fill grid whose columns are at least `--site-card-min-width` wide and that keeps empty columns, so a lone card has the width of one column instead of the whole row. Links, buttons, form controls, `summary` and `[tabindex]` elements in the body and the actions are raised above the covering link, so they stay clickable; any other interactive element you put in the body needs `position: relative; z-index: 1`. The focus ring is drawn on the card while a control in it has keyboard focus (`:has(:focus-visible)`). `TitleLanguage` marks the card's heading alone with `lang`, as on `Section`. `EagerImage` loads the image eagerly, for a card on the first screen. Typed options set its look, the eyebrow, the more look and the grid's columns; see [Cards](#cards). |
 | `StatusBadge` | A short status after the GOV.UK tag: `<strong class="site-status site-status--{tone}">` with the `Text`, a `Tone` (`StatusTone`: `Neutral`, the default, `Info`, `Success`, `Warning`, `Danger`) and an optional visually hidden `Label` prefix; see [Offerings](#offerings). |
+| `PriceList` | An offering's prices after the GOV.UK summary list: a `dl` of `PriceItem` rows (label, amount in `<data value>`, optional note) and optional `Conditions`; `HeadingId` makes it a group named by that heading; see [Offerings](#offerings). |
+| `FromPrice` | A line such as "a partir de 1.234,50 €": `<p class="site-from-price">` of the `Format` split at its `{0}`, the amount in `<data value>`; see [Offerings](#offerings). |
 | `FactsTable` | `table` with a required `caption` and `th scope="row"` headers. |
 | `FactGrid` | A `dl` (`site-fact-grid`) of `FactCard`s, such as a tour's basic information: each card is a `div` (`site-fact-grid__item`) of the `dt` label (`site-fact-grid__label`) and one `dd` per value (`site-fact-grid__value`), for example "8 days" and "7 nights". A value is a `FactValue`: its `Text` and an optional `Link` (`LinkTarget`, so a relative, `http`/`https`, `mailto:` or `tel:` address), which makes the text a plain `a` in the same tab, for example `new("info@example.org", LinkTarget.FromString("mailto:info@example.org"))`. A value wraps between words; in a word that holds an `@`, such as an e-mail address, the component writes a `wbr` before the `@` and every dot, so the address wraps between its parts (`info` / `.desk` / `@example` / `.org`) and never inside one; a dot that ends the word or comes before closing punctuation only (`org.`, `org.)`) gets none, and other words, such as `8.5`, keep their dots unbroken. Chromium computes a link's name from its content with a space at every `wbr`, so a linked value that gets breaks carries its text as `aria-label`: the link's name and `textContent` stay the address. Only a part wider than its card breaks inside, so nothing scrolls sideways. A card's optional `Icon` is rendered first inside the `dt`, in a `span` (`site-fact-grid__icon`) with `aria-hidden="true"`, because a `div` in a `dl` may hold only `dt` and `dd` elements; the label alone names the term. The cards are centred and bordered like table cells, in wrapping rows (flex) that share the full width of the container. Below the `48rem` breakpoint as many cards at least 11rem wide fit a row as the width allows; from it on the row length is computed from the number of cards for balanced rows, as the class `site-fact-grid--columns-1` to `site-fact-grid--columns-4` (no inline style): as many as cards up to four, otherwise `ceil(n / ceil(n / 4))`, so 5 and 6 cards make rows of 3, 7 and 8 rows of 4, and 9 rows of 3. The cards of a shorter last row grow to fill it, so 7 cards are a row of 4 and a row of 3 wider cards, and a lone last card on a phone takes the whole row: no row leaves a notch. An empty grid has no column class; the label is bold and, like the icon, in the primary colour (the on-primary colour in a `Primary` or `Image` band). An `svg` icon without a `fill` attribute is filled with the colour; one with `fill="none"` keeps its strokes, so draw them with `currentColor`. `Layout` `Inline` (`FactGridLayout`; `site-fact-grid--inline`, no column class) renders the same list as one compact row for a card, such as days, distance and difficulty: no borders, each fact its icon and label on one line above its value, at the start (in the middle under centred text), wrapping only when the card is too narrow (a browser test measures one row of three short facts in a card of three to a row at 1280px and no sideways scroll at 320px). A null card, a blank label, no values, a null value or a value with blank text throws `ArgumentException`, and an undefined layout `ArgumentOutOfRangeException`. |
 | `Disclosure` | Native `details` and `summary`; a tab substitute without script. A disclosure after other content, such as a `FactGrid`, keeps `--site-space-4` from it, and stacked disclosures keep `--site-space-2` between them. The summary is rounded like its box, so its focus ring follows the box's corners. |
@@ -284,6 +286,45 @@ A blank text throws `ArgumentException` and an undefined tone `ArgumentOutOfRang
 
 ```razor
 <StatusBadge Text="Esgotado" Tone="StatusTone.Danger" Label="Situação:" />
+```
+
+`PriceList` shows the prices of an offering after the
+[GOV.UK Design System summary list](https://design-system.service.gov.uk/components/summary-list/):
+
+- `Items` are `PriceItem(Label, AmountText, Value, Note)` records: `AmountText` is the amount as the page shows it ("1.234,50 €"),
+  formatted by the application, and `Value` (`decimal?`) the number, written with the invariant culture into `<data value="1234.50">`
+  so machines read it whatever the page's culture; `null`, for an amount such as "On request", writes the text without `data`;
+- the markup is `div.site-price-list` > `dl.site-price-list__items` > a `div.site-price-list__row` per item of the `dt` label
+  (`site-price-list__label`), the `dd` amount (`site-price-list__amount`, bold) and an optional `dd` note (`site-price-list__note`,
+  muted small text, the on-primary colour on the primary colour of a band); rows sit under a rule, the label at the start and the amount
+  at the end of one line, wrapping below each other when the label is long;
+- the amount has `white-space: nowrap`: its text holds a normal space before "€", which would otherwise break "1.234,50" from its
+  currency at the end of a line (a browser test measures it at 320px);
+- `Conditions` (a `RenderFragment`), such as the deposit and the payment terms, follow in `site-price-list__conditions`;
+- `HeadingId`, the id of the heading above the prices, makes the root `role="group"` with `aria-labelledby`, so the lines and the
+  conditions are one group named "Prices" (a browser test reads Chromium's accessibility tree);
+- no items render no `dl`. A null item, a blank label or amount, or an empty or spaced `HeadingId` throws `ArgumentException`.
+
+`FromPrice` is the lowest price in a line of text, such as on a card: `Format` holds exactly one `{0}` ("a partir de {0}"), and the
+component writes the text before it, the amount in `<data class="site-from-price__amount" value="...">` (bold, `nowrap`), then the
+text after it, in `<p class="site-from-price">`. The text around the placeholder is written as it is, never formatted, so other braces
+are plain text. A format without exactly one `{0}` or a blank `AmountText` throws `ArgumentException`.
+
+```razor
+<Section Title="Valores" HeadingId="valores">
+    <PriceList HeadingId="valores" Items="_prices">
+        <Conditions><p>Reserva com sinal de 30%.</p></Conditions>
+    </PriceList>
+</Section>
+<FromPrice Format="a partir de {0}" AmountText="1.234,50 €" Value="1234.50m" />
+
+@code {
+    private readonly PriceItem[] _prices =
+    [
+        new("Quarto duplo", "1.234,50 €", 1234.50m, "por pessoa"),
+        new("Suplemento individual", "300 €", 300m),
+    ];
+}
 ```
 
 ### Bands and photos

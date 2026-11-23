@@ -966,3 +966,37 @@ PandaBear.Blazor.Site.StatusTone.Info = 1 -> PandaBear.Blazor.Site.StatusTone
 PandaBear.Blazor.Site.StatusTone.Neutral = 0 -> PandaBear.Blazor.Site.StatusTone
 PandaBear.Blazor.Site.StatusTone.Success = 2 -> PandaBear.Blazor.Site.StatusTone
 PandaBear.Blazor.Site.StatusTone.Warning = 3 -> PandaBear.Blazor.Site.StatusTone
+PandaBear.Blazor.Site.FromPrice
+PandaBear.Blazor.Site.FromPrice.AmountText.get -> string!
+PandaBear.Blazor.Site.FromPrice.AmountText.set -> void
+PandaBear.Blazor.Site.FromPrice.Format.get -> string!
+PandaBear.Blazor.Site.FromPrice.Format.set -> void
+PandaBear.Blazor.Site.FromPrice.FromPrice() -> void
+PandaBear.Blazor.Site.FromPrice.Value.get -> decimal
+PandaBear.Blazor.Site.FromPrice.Value.set -> void
+PandaBear.Blazor.Site.PriceItem
+PandaBear.Blazor.Site.PriceItem.<Clone>$() -> PandaBear.Blazor.Site.PriceItem!
+PandaBear.Blazor.Site.PriceItem.AmountText.get -> string!
+PandaBear.Blazor.Site.PriceItem.AmountText.init -> void
+PandaBear.Blazor.Site.PriceItem.Deconstruct(out string! Label, out string! AmountText, out decimal? Value, out string? Note) -> void
+PandaBear.Blazor.Site.PriceItem.Equals(PandaBear.Blazor.Site.PriceItem? other) -> bool
+PandaBear.Blazor.Site.PriceItem.Label.get -> string!
+PandaBear.Blazor.Site.PriceItem.Label.init -> void
+PandaBear.Blazor.Site.PriceItem.Note.get -> string?
+PandaBear.Blazor.Site.PriceItem.Note.init -> void
+PandaBear.Blazor.Site.PriceItem.PriceItem(string! Label, string! AmountText, decimal? Value, string? Note = null) -> void
+PandaBear.Blazor.Site.PriceItem.Value.get -> decimal?
+PandaBear.Blazor.Site.PriceItem.Value.init -> void
+PandaBear.Blazor.Site.PriceList
+PandaBear.Blazor.Site.PriceList.Conditions.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.Site.PriceList.Conditions.set -> void
+PandaBear.Blazor.Site.PriceList.HeadingId.get -> string?
+PandaBear.Blazor.Site.PriceList.HeadingId.set -> void
+PandaBear.Blazor.Site.PriceList.Items.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.PriceItem!>!
+PandaBear.Blazor.Site.PriceList.Items.set -> void
+PandaBear.Blazor.Site.PriceList.PriceList() -> void
+override PandaBear.Blazor.Site.PriceItem.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.PriceItem.GetHashCode() -> int
+override PandaBear.Blazor.Site.PriceItem.ToString() -> string!
+static PandaBear.Blazor.Site.PriceItem.operator !=(PandaBear.Blazor.Site.PriceItem? left, PandaBear.Blazor.Site.PriceItem? right) -> bool
+static PandaBear.Blazor.Site.PriceItem.operator ==(PandaBear.Blazor.Site.PriceItem? left, PandaBear.Blazor.Site.PriceItem? right) -> bool

@@ -63,4 +63,71 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         items.ShouldAllSatisfy(item => item.Right.ShouldBeLessThanOrEqualTo(card.Right));
         scrollWidth.ShouldBeLessThanOrEqualTo(320);
     }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(320)]
+    [InlineData(1280)]
+    public async Task A_price_amount_stays_on_one_line_inside_its_list_beside_a_long_label(int width)
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<OfferingSample>(chromium.Browser, width);
+
+        // Act
+        var amount = await page.Box("#price-list .site-price-list__amount data");
+        var line = await page.Box("#price-list .site-price-list__note");
+        var list = await page.Box("#price-list");
+        var scrollWidth = await page.ScrollWidth();
+
+        // Assert
+        amount.Height.ShouldBeLessThan(line.Height * 2);
+        amount.Right.ShouldBeLessThanOrEqualTo(list.Right);
+        scrollWidth.ShouldBeLessThanOrEqualTo(width);
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task A_price_list_with_a_heading_ID_is_a_group_named_by_its_heading()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<OfferingSample>(chromium.Browser, 1280);
+
+        // Act
+        var tree = await page.AccessibilityTree();
+
+        // Assert
+        tree.ShouldContain(new AccessibleNode("group", "Prices", null));
+    }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData("#price-list", "#ffffff")]
+    [InlineData("#band-prices", "#1d4ed8")]
+    public async Task A_price_note_reaches_4_5_to_1_on_the_page_and_on_the_primary_colour(string list, string background)
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<OfferingSample>(chromium.Browser, 1280);
+
+        // Act
+        var note = ComputedColor.ToHex(await page.Style(list + " .site-price-list__note", "color"));
+        var amount = ComputedColor.ToHex(await page.Style(list + " .site-price-list__amount", "color"));
+
+        // Assert
+        SiteFixtures.Contrast(note, background).ShouldBeGreaterThanOrEqualTo(4.5);
+        SiteFixtures.Contrast(amount, background).ShouldBeGreaterThanOrEqualTo(4.5);
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task A_from_price_keeps_its_amount_on_one_line_in_a_card()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<OfferingSample>(chromium.Browser, 320);
+
+        // Act
+        var amount = await page.Box("#tour .site-from-price__amount");
+        var weight = await page.Style("#tour .site-from-price__amount", "font-weight");
+        var whiteSpace = await page.Style("#tour .site-from-price__amount", "white-space");
+
+        // Assert
+        amount.Height.ShouldBeLessThan(40);
+        weight.ShouldBe("700");
+        whiteSpace.ShouldBe("nowrap");
+    }
 }

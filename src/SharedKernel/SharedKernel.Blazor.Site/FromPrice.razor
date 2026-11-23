@@ -1,0 +1,3 @@
+@inherits SiteComponent
+@using System.Globalization
+<p class="@CssClass("site-from-price")" @attributes="AdditionalAttributes">@_before<data class="site-from-price__amount" value="@Value.ToString(CultureInfo.InvariantCulture)">@AmountText</data>@_after</p>
