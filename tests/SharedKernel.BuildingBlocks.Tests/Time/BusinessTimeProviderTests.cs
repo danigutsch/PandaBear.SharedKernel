@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Time.Testing;
+
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests the time provider that reports a business time zone as local time.</summary>
@@ -11,7 +13,7 @@ public sealed class BusinessTimeProviderTests
     public void The_local_date_follows_the_business_zone()
     {
         // Arrange
-        var provider = new BusinessTimeProvider(BusinessTimeZones.SaoPaulo(), new FixedTimeProvider(Instant));
+        var provider = new BusinessTimeProvider(BusinessTimeZones.SaoPaulo(), new FakeTimeProvider(Instant));
 
         // Act
         var today = provider.Today();
@@ -26,7 +28,7 @@ public sealed class BusinessTimeProviderTests
     public void A_UTC_business_zone_keeps_the_UTC_date()
     {
         // Arrange
-        var provider = new BusinessTimeProvider(TimeZoneInfo.Utc, new FixedTimeProvider(Instant));
+        var provider = new BusinessTimeProvider(TimeZoneInfo.Utc, new FakeTimeProvider(Instant));
 
         // Act
         var today = provider.Today();

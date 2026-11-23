@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Time.Testing;
 using PandaBear.Results;
 
 namespace PandaBear.Packages.Tests;
@@ -33,7 +34,7 @@ internal sealed class CountingSources(IAdvisorySource advisories, FakeRegistrySo
     public UpdateSources Create()
     {
         Created++;
-        return new UpdateSources(advisories, registry, registry, new TestTimeProvider(PlannerFake.Now), this);
+        return new UpdateSources(advisories, registry, registry, new FakeTimeProvider(PlannerFake.Now), this);
     }
 
     /// <inheritdoc />

@@ -12,7 +12,9 @@ public sealed class GitHubReleaseStoreTests
     public async Task Listing_reads_pages_of_100_until_a_short_page_with_the_API_headers_and_token()
     {
         // Arrange
-        using var handler = new ScriptedHandler().Respond(HttpStatusCode.OK, Releases.Page(1, 100)).Respond(HttpStatusCode.OK, Releases.Page(101, 2));
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.OK, Releases.Page(1, 100));
+        handler.EnqueueJson(HttpStatusCode.OK, Releases.Page(101, 2));
         using var store = new GitHubReleaseStore(handler, "owner/name", UserAgent, "secret");
 
         // Act
@@ -21,20 +23,21 @@ public sealed class GitHubReleaseStoreTests
         // Assert
         releases.Count.ShouldBe(102);
         releases[0].ShouldBe(new RepositoryRelease(1, "v1.0.0-alpha.1", false, true, new DateTimeOffset(2026, 1, 2, 3, 4, 5, TimeSpan.Zero)));
-        handler.Requests.Select(static request => request.RequestUri!.ToString()).ShouldBe(
+        handler.Requests.Select(static request => request.Message.RequestUri!.ToString()).ShouldBe(
         [
             "https://api.github.com/repos/owner/name/releases?per_page=100&page=1",
             "https://api.github.com/repos/owner/name/releases?per_page=100&page=2",
         ]);
-        handler.Requests[0].Headers.Authorization.ShouldBe(new AuthenticationHeaderValue("Bearer", "secret"));
-        handler.Requests[0].Headers.UserAgent.ToString().ShouldBe("sharedkernel-test/1.0");
+        handler.Requests[0].Message.Headers.Authorization.ShouldBe(new AuthenticationHeaderValue("Bearer", "secret"));
+        handler.Requests[0].Message.Headers.UserAgent.ToString().ShouldBe("sharedkernel-test/1.0");
     }
 
     [Fact]
     public async Task A_refused_listing_names_the_request_and_the_status()
     {
         // Arrange
-        using var handler = new ScriptedHandler().Respond(HttpStatusCode.Forbidden);
+        using var handler = new TestHttpMessageHandler();
+        handler.Enqueue(new HttpResponseMessage(HttpStatusCode.Forbidden));
 
         using var store = new GitHubReleaseStore(handler, "owner/name", UserAgent, null);
 
@@ -54,7 +57,8 @@ public sealed class GitHubReleaseStoreTests
     public async Task A_release_list_that_is_not_valid_is_refused(string json, string detail)
     {
         // Arrange
-        using var handler = new ScriptedHandler().Respond(HttpStatusCode.OK, json);
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.OK, json);
 
         using var store = new GitHubReleaseStore(handler, "owner/name", UserAgent, null);
 
@@ -72,7 +76,9 @@ public sealed class GitHubReleaseStoreTests
     public async Task Deleting_a_release_by_its_ID_accepts_only_no_content()
     {
         // Arrange
-        using var handler = new ScriptedHandler().Respond(HttpStatusCode.NoContent).Respond(HttpStatusCode.NotFound);
+        using var handler = new TestHttpMessageHandler();
+        handler.Enqueue(new HttpResponseMessage(HttpStatusCode.NoContent));
+        handler.Enqueue(new HttpResponseMessage(HttpStatusCode.NotFound));
         using var store = new GitHubReleaseStore(handler, "owner/name", UserAgent, "secret");
         var release = new RepositoryRelease(42, "v1.0.0-alpha.1", false, true, DateTimeOffset.UnixEpoch);
 
@@ -86,7 +92,7 @@ public sealed class GitHubReleaseStoreTests
         handler.Requests.ShouldAllSatisfy(static request =>
         {
             request.Method.ShouldBe(HttpMethod.Delete);
-            request.RequestUri!.ToString().ShouldBe("https://api.github.com/repos/owner/name/releases/42");
+            request.Message.RequestUri!.ToString().ShouldBe("https://api.github.com/repos/owner/name/releases/42");
         });
         exception.Message.ShouldBe("DELETE https://api.github.com/repos/owner/name/releases/42 returned 404 NotFound.");
         exception.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -96,7 +102,7 @@ public sealed class GitHubReleaseStoreTests
     public async Task A_lost_connection_while_deleting_names_the_request()
     {
         // Arrange
-        using var handler = new ScriptedHandler().Respond(static (_, _) => throw new HttpRequestException("connection reset"));
+        using var handler = TestHttpMessageHandler.FromException(new HttpRequestException("connection reset"));
         using var store = new GitHubReleaseStore(handler, "owner/name", UserAgent, "secret");
         Func<Task> delete = () => store.Delete(new RepositoryRelease(7, "v1", false, true, DateTimeOffset.UnixEpoch), TestContext.Current.CancellationToken);
 
@@ -116,7 +122,7 @@ public sealed class GitHubReleaseStoreTests
     public void A_repository_that_is_not_owner_and_name_is_refused(string repository)
     {
         // Arrange
-        using var handler = new ScriptedHandler();
+        using var handler = new TestHttpMessageHandler();
 
         // Act
         var create = () => new GitHubReleaseStore(handler, repository, UserAgent, null);

@@ -8,7 +8,6 @@ using PandaBear.Vault.Merge;
 using PandaBear.Vault.Model;
 using PandaBear.Vault.Pipeline;
 using PandaBear.Vault.Secrets;
-using PandaBear.VaultManager.Tool.Tests.Secrets;
 using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Pipeline;

@@ -188,7 +188,7 @@ public sealed class MagickImageProcessorProbeTests
     {
         // Arrange
         using var image = TestImages.CreateImage(32, 32, MagickFormat.Png);
-        using var content = new NonSeekableStream(image.ToArray());
+        using var content = new UnsizedStream(image.ToArray());
 
         // Act
         Action act = () => MagickImageProcessor.Probe(content, ImageProcessingLimits.WebDefault);

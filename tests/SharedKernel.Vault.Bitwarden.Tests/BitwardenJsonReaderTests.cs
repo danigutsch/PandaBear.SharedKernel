@@ -10,7 +10,7 @@ public sealed class BitwardenJsonReaderTests
     public void Read_maps_login_fields_folder_history_and_passkeys()
     {
         // Act
-        var items = Fixture.ReadBitwardenFull().Items;
+        var items = BitwardenFixture.ReadFull().Items;
 
         // Assert
         var login = items.ShouldHaveSingleItem(item => item.Name == "Example login");
@@ -35,7 +35,7 @@ public sealed class BitwardenJsonReaderTests
     public void Read_maps_note_card_identity_and_ssh_key_items()
     {
         // Act
-        var export = Fixture.ReadBitwardenFull();
+        var export = BitwardenFixture.ReadFull();
 
         // Assert
         export.Items.ShouldHaveSingleItem(item => item.Name == "Plain note").Notes.ShouldBe("note body");
@@ -50,7 +50,7 @@ public sealed class BitwardenJsonReaderTests
     public void Read_skips_deleted_items()
     {
         // Act
-        var items = Fixture.ReadBitwardenFull().Items;
+        var items = BitwardenFixture.ReadFull().Items;
 
         // Assert
         items.ShouldNotContain(item => item.Name == "Deleted note");
@@ -60,7 +60,7 @@ public sealed class BitwardenJsonReaderTests
     public void Read_unknown_item_type_becomes_secure_note_with_hidden_fields_and_note()
     {
         // Act
-        var items = Fixture.ReadBitwardenFull().Items;
+        var items = BitwardenFixture.ReadFull().Items;
 
         // Assert
         var bank = items.ShouldHaveSingleItem(item => item.Name == "Fixture bank account");

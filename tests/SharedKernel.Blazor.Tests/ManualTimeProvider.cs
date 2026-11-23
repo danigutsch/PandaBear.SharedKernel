@@ -1,24 +1,26 @@
+using Microsoft.Extensions.Time.Testing;
+
 namespace PandaBear.Blazor.Tests;
 
-/// <summary>A time provider whose timers fire only when the test advances the time.</summary>
-internal sealed class ManualTimeProvider : TimeProvider
+/// <summary>A <see cref="FakeTimeProvider"/> that also counts the timers still waiting to fire, for code that creates its timer after an asynchronous step.</summary>
+internal sealed class ManualTimeProvider() : FakeTimeProvider(new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero))
 {
-    private readonly List<ManualTimer> _timers = [];
-    private DateTimeOffset _now = new(2026, 1, 1, 0, 0, 0, TimeSpan.Zero);
+    private readonly Lock _gate = new();
+    private readonly List<PendingTimer> _timers = [];
 
-    /// <summary>Gets the number of timers that wait to fire.</summary>
+    /// <summary>Gets the number of timers that have neither fired nor been disposed.</summary>
     public int PendingTimers
     {
         get
         {
-            lock (_timers)
+            lock (_gate)
             {
-                return _timers.Count(timer => !timer.IsDisposed);
+                return _timers.Count(timer => timer.IsPending);
             }
         }
     }
 
-    /// <summary>Waits until the given number of timers wait to fire, for code that creates its timer after an asynchronous step.</summary>
+    /// <summary>Waits until the given number of timers wait to fire.</summary>
     /// <param name="count">The number of pending timers.</param>
     /// <param name="cancellationToken">Stops waiting.</param>
     /// <returns>A task that completes when the timers exist.</returns>
@@ -31,35 +33,23 @@ internal sealed class ManualTimeProvider : TimeProvider
     }
 
     /// <inheritdoc />
-    public override DateTimeOffset GetUtcNow() => _now;
-
-    /// <inheritdoc />
     public override ITimer CreateTimer(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period)
     {
-        var timer = new ManualTimer(callback, state, _now + dueTime);
-        lock (_timers)
+        var timer = new PendingTimer();
+        timer.Inner = base.CreateTimer(
+            value =>
+            {
+                timer.MarkFired();
+                callback(value);
+            },
+            state,
+            dueTime,
+            period);
+        lock (_gate)
         {
             _timers.Add(timer);
         }
 
         return timer;
-    }
-
-    /// <summary>Moves the time forward and fires the timers that are due.</summary>
-    /// <param name="by">How far to move.</param>
-    public void Advance(TimeSpan by)
-    {
-        _now += by;
-        List<ManualTimer> due;
-        lock (_timers)
-        {
-            due = [.. _timers.Where(timer => !timer.IsDisposed && timer.Due <= _now)];
-            _timers.RemoveAll(due.Contains);
-        }
-
-        foreach (var timer in due)
-        {
-            timer.Fire();
-        }
     }
 }

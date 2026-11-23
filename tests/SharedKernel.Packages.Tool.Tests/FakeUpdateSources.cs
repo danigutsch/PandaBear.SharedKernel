@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Time.Testing;
 using PandaBear.Results;
 
 namespace PandaBear.Packages.Tool.Tests;
@@ -14,7 +15,7 @@ internal sealed class FakeUpdateSources(
     public int Lookups { get; private set; }
 
     /// <summary>Creates the sources that the command receives.</summary>
-    public UpdateSources ToSources() => new(this, this, this, new FixedTime(now));
+    public UpdateSources ToSources() => new(this, this, this, new FakeTimeProvider(now));
 
     /// <inheritdoc />
     public Task<Result<IReadOnlyList<Advisory>>> Query(PackageManagerKind manager, IReadOnlyCollection<InstalledPackage> packages, NetworkAccess access, CancellationToken cancellationToken)

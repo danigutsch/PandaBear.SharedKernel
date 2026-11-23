@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using Microsoft.Extensions.Time.Testing;
 
 namespace PandaBear.Packages.Tests;
 
@@ -10,16 +11,16 @@ internal static class OsvFake
     public static readonly DateTimeOffset Start = new(2026, 11, 9, 12, 0, 0, TimeSpan.Zero);
 
     /// <summary>Answers each query of a batch with the IDs that <paramref name="idsFor"/> returns for its package and version, and each record from <paramref name="records"/>.</summary>
-    public static FakeHttpHandler Handler(Func<string, string, string[]?> idsFor, Dictionary<string, string> records) =>
-        FakeHttpHandler.Answering(request =>
+    public static RecordingHttpMessageHandler Handler(Func<string, string, string[]?> idsFor, Dictionary<string, string> records) =>
+        new RecordingHttpMessageHandler(request =>
         {
-            if (request.Method == HttpMethod.Post && request.Uri.AbsolutePath == "/v1/querybatch")
+            if (request.Method == HttpMethod.Post && request.Message.RequestUri!.AbsolutePath == "/v1/querybatch")
             {
-                return FakeHttpHandler.Json(OsvAnswers.Batch([.. Queries(request.Body).Select(q => idsFor(q.Name, q.Version))]));
+                return HttpResponseFactory.Json(OsvAnswers.Batch([.. Queries(request.Body!).Select(q => idsFor(q.Name, q.Version))]));
             }
 
-            var id = Uri.UnescapeDataString(request.Uri.AbsolutePath["/v1/vulns/".Length..]);
-            return records.TryGetValue(id, out var record) ? FakeHttpHandler.Json(record) : FakeHttpHandler.Json("{\"code\":5}", HttpStatusCode.NotFound);
+            var id = Uri.UnescapeDataString(request.Message.RequestUri!.AbsolutePath["/v1/vulns/".Length..]);
+            return records.TryGetValue(id, out var record) ? HttpResponseFactory.Json(record) : HttpResponseFactory.Json("{\"code\":5}", HttpStatusCode.NotFound);
         });
 
     /// <summary>Parses the queries of a batch request body.</summary>
@@ -36,7 +37,7 @@ internal static class OsvFake
         ];
     }
 
-    /// <summary>Creates the source over <paramref name="handler"/>.</summary>
-    public static OsvAdvisorySource Source(FakeHttpHandler handler, TimeProvider? time = null, string? apt = null, TimeSpan? lifetime = null, TimeSpan? timeout = null) =>
-        new(handler.Client, time ?? new TestTimeProvider(Start), apt, lifetime, timeout);
+    /// <summary>Creates the source over <paramref name="client"/>.</summary>
+    public static OsvAdvisorySource Source(HttpClient client, TimeProvider? time = null, string? apt = null, TimeSpan? lifetime = null, TimeSpan? timeout = null) =>
+        new(client, time ?? new FakeTimeProvider(Start), apt, lifetime, timeout);
 }

@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Time.Testing;
+
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests the expiring in-memory cache.</summary>
@@ -8,7 +10,7 @@ public sealed class ExpiringCacheTests
     public void An_entry_is_returned_until_its_lifetime_has_passed()
     {
         // Arrange
-        var time = new TestTimeProvider(OsvFake.Start);
+        var time = new FakeTimeProvider(OsvFake.Start);
         var cache = new ExpiringCache<string>(time, TimeSpan.FromMinutes(5));
         cache.Set("k", "v");
 
@@ -28,7 +30,7 @@ public sealed class ExpiringCacheTests
     public void A_full_cache_drops_expired_entries_and_otherwise_stores_nothing_new()
     {
         // Arrange
-        var time = new TestTimeProvider(OsvFake.Start);
+        var time = new FakeTimeProvider(OsvFake.Start);
         var cache = new ExpiringCache<int>(time, TimeSpan.FromMinutes(5));
         for (var i = 0; i < ExpiringCache<int>.MaxEntries; i++)
         {

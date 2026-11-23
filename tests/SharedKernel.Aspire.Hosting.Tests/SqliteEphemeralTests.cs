@@ -128,7 +128,7 @@ public sealed class SqliteEphemeralTests
 
         // Assert
         existedAfterStart.ShouldBeFalse();
-        Directory.Exists(temp.Path).ShouldBeFalse();
+        Directory.EnumerateFileSystemEntries(temp.Path).ShouldBeEmpty();
     }
 
     /// <summary>Verifies that the connection string points at the database file in the temporary directory.</summary>

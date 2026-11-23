@@ -449,7 +449,7 @@ public sealed class ImageAnimationDetectorTests
     public void Detect_rejects_non_seekable_streams()
     {
         // Arrange
-        using var content = new NonSeekableStream(TestImages.EncodeImage(16, 8, MagickFormat.Png));
+        using var content = new UnsizedStream(TestImages.EncodeImage(16, 8, MagickFormat.Png));
 
         // Act
         Action act = () => ImageAnimationDetector.Detect(content);

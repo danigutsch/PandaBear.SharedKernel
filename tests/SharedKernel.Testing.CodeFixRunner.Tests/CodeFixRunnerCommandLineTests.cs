@@ -5,7 +5,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
 {
     private const string ProjectToken = "{project}";
 
-    private readonly TemporaryProjectDirectory projectDirectory = TemporaryProjectDirectory.Create();
+    private readonly TemporaryDirectory projectDirectory = new();
 
     [Theory]
     [InlineData("--help")]

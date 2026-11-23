@@ -1,4 +1,5 @@
 using System.Net;
+using Microsoft.Extensions.Time.Testing;
 using PandaBear.Results;
 using static PandaBear.Packages.Tests.PackageFactory;
 
@@ -17,37 +18,40 @@ public sealed class RegistryReleaseSourceTests
     public async Task Cargo_latest_is_the_max_stable_version_from_crates_io()
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(static _ => FakeHttpHandler.Json(Crate));
+        using var handler = new RecordingHttpMessageHandler(static _ => HttpResponseFactory.Json(Crate));
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await RegistryFake.Source(handler).GetLatest(PackageManagerKind.Cargo, Name("ripgrep"), NetworkAccess.Allowed, Cancel);
+        var result = await RegistryFake.Source(client).GetLatest(PackageManagerKind.Cargo, Name("ripgrep"), NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeSuccess().Value.ShouldBe("15.2.0");
-        handler.Requests.ShouldHaveSingleItem().Uri.AbsoluteUri.ShouldBe("https://crates.io/api/v1/crates/ripgrep");
-        handler.Requests[0].UserAgent.ShouldStartWith("sharedkernel-packages/", StringComparison.Ordinal);
+        handler.Requests.ShouldHaveSingleItem().Message.RequestUri!.AbsoluteUri.ShouldBe("https://crates.io/api/v1/crates/ripgrep");
+        handler.Requests[0].Message.Headers.UserAgent.ToString().ShouldStartWith("sharedkernel-packages/", StringComparison.Ordinal);
     }
 
     [Fact]
     public async Task Cargo_release_date_comes_from_the_version_endpoint()
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(static _ => FakeHttpHandler.Json(CrateVersion));
+        using var handler = new RecordingHttpMessageHandler(static _ => HttpResponseFactory.Json(CrateVersion));
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await RegistryFake.Source(handler).GetReleaseDate(PackageManagerKind.Cargo, Name("ripgrep"), Version("14.1.0"), NetworkAccess.Allowed, Cancel);
+        var result = await RegistryFake.Source(client).GetReleaseDate(PackageManagerKind.Cargo, Name("ripgrep"), Version("14.1.0"), NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeSuccess().ShouldBe(new DateTimeOffset(2024, 1, 6, 19, 41, 25, TimeSpan.Zero).AddTicks(7358780));
-        handler.Requests.ShouldHaveSingleItem().Uri.AbsoluteUri.ShouldBe("https://crates.io/api/v1/crates/ripgrep/14.1.0");
+        handler.Requests.ShouldHaveSingleItem().Message.RequestUri!.AbsoluteUri.ShouldBe("https://crates.io/api/v1/crates/ripgrep/14.1.0");
     }
 
     [Fact]
     public async Task Npm_latest_and_release_date_come_from_one_cached_request()
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(static _ => FakeHttpHandler.Json(Npm));
-        var source = RegistryFake.Source(handler);
+        using var handler = new RecordingHttpMessageHandler(static _ => HttpResponseFactory.Json(Npm));
+        using var client = new HttpClient(handler, disposeHandler: false);
+        var source = RegistryFake.Source(client);
 
         // Act
         var latest = await source.GetLatest(PackageManagerKind.Npm, Name("lodash"), NetworkAccess.Allowed, Cancel);
@@ -56,20 +60,21 @@ public sealed class RegistryReleaseSourceTests
         // Assert
         latest.ShouldBeSuccess().Value.ShouldBe("4.18.1");
         date.ShouldBeSuccess().ShouldBe(new DateTimeOffset(2026, 10, 1, 8, 30, 0, TimeSpan.Zero));
-        handler.Requests.ShouldHaveSingleItem().Uri.AbsoluteUri.ShouldBe("https://registry.npmjs.org/lodash");
+        handler.Requests.ShouldHaveSingleItem().Message.RequestUri!.AbsoluteUri.ShouldBe("https://registry.npmjs.org/lodash");
     }
 
     [Fact]
     public async Task A_scoped_npm_name_is_escaped_into_one_path_segment()
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(static _ => FakeHttpHandler.Json(Npm));
+        using var handler = new RecordingHttpMessageHandler(static _ => HttpResponseFactory.Json(Npm));
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        await RegistryFake.Source(handler).GetLatest(PackageManagerKind.Npm, Name("@types/node"), NetworkAccess.Allowed, Cancel);
+        await RegistryFake.Source(client).GetLatest(PackageManagerKind.Npm, Name("@types/node"), NetworkAccess.Allowed, Cancel);
 
         // Assert
-        handler.Requests.ShouldHaveSingleItem().Uri.AbsoluteUri.ShouldBe("https://registry.npmjs.org/%40types%2Fnode");
+        handler.Requests.ShouldHaveSingleItem().Message.RequestUri!.AbsoluteUri.ShouldBe("https://registry.npmjs.org/%40types%2Fnode");
     }
 
     [Theory]
@@ -79,8 +84,9 @@ public sealed class RegistryReleaseSourceTests
     public async Task A_manager_without_a_registry_is_an_explicit_unsupported_error(PackageManagerKind manager)
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(static _ => FakeHttpHandler.Json("{}"));
-        var source = RegistryFake.Source(handler);
+        using var handler = new RecordingHttpMessageHandler(static _ => HttpResponseFactory.Json("{}"));
+        using var client = new HttpClient(handler, disposeHandler: false);
+        var source = RegistryFake.Source(client);
 
         // Act
         var latest = await source.GetLatest(manager, Name("a"), NetworkAccess.Allowed, Cancel);
@@ -96,8 +102,9 @@ public sealed class RegistryReleaseSourceTests
     public async Task A_denied_network_is_refused_without_a_request()
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(static _ => FakeHttpHandler.Json(Npm));
-        var source = RegistryFake.Source(handler);
+        using var handler = new RecordingHttpMessageHandler(static _ => HttpResponseFactory.Json(Npm));
+        using var client = new HttpClient(handler, disposeHandler: false);
+        var source = RegistryFake.Source(client);
 
         // Act
         var latest = await source.GetLatest(PackageManagerKind.Npm, Name("lodash"), NetworkAccess.Denied, Cancel);
@@ -120,10 +127,11 @@ public sealed class RegistryReleaseSourceTests
     public async Task An_answer_without_a_latest_version_is_a_failure(PackageManagerKind manager, string body, ResultStatus expected)
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(_ => FakeHttpHandler.Json(body));
+        using var handler = new RecordingHttpMessageHandler(_ => HttpResponseFactory.Json(body));
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await RegistryFake.Source(handler).GetLatest(manager, Name("a"), NetworkAccess.Allowed, Cancel);
+        var result = await RegistryFake.Source(client).GetLatest(manager, Name("a"), NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.Status.ShouldBe(expected);
@@ -139,10 +147,11 @@ public sealed class RegistryReleaseSourceTests
     public async Task A_missing_or_unreadable_release_time_is_a_failure(PackageManagerKind manager, string body)
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(_ => FakeHttpHandler.Json(body));
+        using var handler = new RecordingHttpMessageHandler(_ => HttpResponseFactory.Json(body));
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await RegistryFake.Source(handler).GetReleaseDate(manager, Name("a"), Version("1.0.0"), NetworkAccess.Allowed, Cancel);
+        var result = await RegistryFake.Source(client).GetReleaseDate(manager, Name("a"), Version("1.0.0"), NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.IsFailure.ShouldBeTrue();
@@ -156,10 +165,11 @@ public sealed class RegistryReleaseSourceTests
     public async Task An_HTTP_error_is_a_failure_with_a_matching_status(HttpStatusCode code, ResultStatus expected)
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(_ => FakeHttpHandler.Json("secret-body", code));
+        using var handler = new RecordingHttpMessageHandler(_ => HttpResponseFactory.Json("secret-body", code));
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await RegistryFake.Source(handler).GetLatest(PackageManagerKind.Cargo, Name("a"), NetworkAccess.Allowed, Cancel);
+        var result = await RegistryFake.Source(client).GetLatest(PackageManagerKind.Cargo, Name("a"), NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.Status.ShouldBe(expected);
@@ -170,15 +180,16 @@ public sealed class RegistryReleaseSourceTests
     public async Task A_response_that_came_from_another_host_is_refused()
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(static request =>
+        using var handler = new RecordingHttpMessageHandler(static request =>
         {
-            var response = FakeHttpHandler.Json(Npm);
+            var response = HttpResponseFactory.Json(Npm);
             response.RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://evil.example/lodash");
             return response;
         });
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await RegistryFake.Source(handler).GetLatest(PackageManagerKind.Npm, Name("lodash"), NetworkAccess.Allowed, Cancel);
+        var result = await RegistryFake.Source(client).GetLatest(PackageManagerKind.Npm, Name("lodash"), NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeFailure(ResultStatus.Unavailable, "unavailable").Detail.ShouldContain("another host", StringComparison.Ordinal);
@@ -188,10 +199,11 @@ public sealed class RegistryReleaseSourceTests
     public async Task An_oversized_response_is_refused()
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(static _ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new StreamContent(new UnsizedStream(new byte[RegistryReleaseSource.MaxResponseBytes + 1])) });
+        using var handler = new RecordingHttpMessageHandler(static _ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new StreamContent(new UnsizedStream(new byte[RegistryReleaseSource.MaxResponseBytes + 1])) });
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await RegistryFake.Source(handler).GetLatest(PackageManagerKind.Npm, Name("lodash"), NetworkAccess.Allowed, Cancel);
+        var result = await RegistryFake.Source(client).GetLatest(PackageManagerKind.Npm, Name("lodash"), NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeFailure(ResultStatus.Unavailable, "unavailable").Detail.ShouldContain("larger than", StringComparison.Ordinal);
@@ -201,14 +213,15 @@ public sealed class RegistryReleaseSourceTests
     public async Task A_registry_that_does_not_answer_in_time_is_a_failure()
     {
         // Arrange
-        using var handler = new FakeHttpHandler(static async (_, cancellationToken) =>
+        using var handler = new DelegateHttpMessageHandler(static async (_, cancellationToken) =>
         {
             await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
             return new HttpResponseMessage();
         });
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await RegistryFake.Source(handler, timeout: TimeSpan.FromMilliseconds(50)).GetLatest(PackageManagerKind.Npm, Name("lodash"), NetworkAccess.Allowed, Cancel);
+        var result = await RegistryFake.Source(client, timeout: TimeSpan.FromMilliseconds(50)).GetLatest(PackageManagerKind.Npm, Name("lodash"), NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeFailure(ResultStatus.Unavailable, "unavailable").Detail.ShouldContain("no answer within", StringComparison.Ordinal);
@@ -218,10 +231,11 @@ public sealed class RegistryReleaseSourceTests
     public async Task Answers_are_cached_until_they_expire_and_failures_are_not_cached()
     {
         // Arrange
-        var time = new TestTimeProvider(OsvFake.Start);
+        var time = new FakeTimeProvider(OsvFake.Start);
         var fail = true;
-        using var handler = FakeHttpHandler.Answering(_ => fail ? FakeHttpHandler.Json("x", HttpStatusCode.BadGateway) : FakeHttpHandler.Json(Crate));
-        var source = RegistryFake.Source(handler, time, TimeSpan.FromMinutes(10));
+        using var handler = new RecordingHttpMessageHandler(_ => fail ? HttpResponseFactory.Json("x", HttpStatusCode.BadGateway) : HttpResponseFactory.Json(Crate));
+        using var client = new HttpClient(handler, disposeHandler: false);
+        var source = RegistryFake.Source(client, time, TimeSpan.FromMinutes(10));
         var failed = await source.GetLatest(PackageManagerKind.Cargo, Name("a"), NetworkAccess.Allowed, Cancel);
         fail = false;
 
@@ -244,8 +258,9 @@ public sealed class RegistryReleaseSourceTests
     public async Task A_release_date_is_cached_per_version()
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(static _ => FakeHttpHandler.Json(CrateVersion));
-        var source = RegistryFake.Source(handler);
+        using var handler = new RecordingHttpMessageHandler(static _ => HttpResponseFactory.Json(CrateVersion));
+        using var client = new HttpClient(handler, disposeHandler: false);
+        var source = RegistryFake.Source(client);
 
         // Act
         await source.GetReleaseDate(PackageManagerKind.Cargo, Name("a"), Version("1.0.0"), NetworkAccess.Allowed, Cancel);

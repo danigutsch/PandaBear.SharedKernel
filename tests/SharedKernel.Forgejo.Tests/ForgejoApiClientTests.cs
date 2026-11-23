@@ -11,14 +11,14 @@ public sealed class ForgejoApiClientTests
     public async Task Requests_go_to_the_API_endpoint_with_the_headers_and_the_token()
     {
         // Arrange
-        var handler = new RecordingHandler();
+        var handler = new RecordingHttpMessageHandler();
         using var client = ForgejoApiClient.Create(handler, new Uri("https://codeberg.org"), UserAgent, "secret");
 
         // Act
         using var response = await client.GetAsync(new Uri("repos/o/r/releases", UriKind.Relative), TestContext.Current.CancellationToken);
 
         // Assert
-        var request = handler.Request.ShouldNotBeNull();
+        var request = handler.LastRequest.ShouldNotBeNull().Message;
         request.RequestUri!.ToString().ShouldBe("https://codeberg.org/api/v1/repos/o/r/releases");
         request.Headers.UserAgent.ToString().ShouldBe("sharedkernel-test/1.0");
         request.Headers.Accept.ToString().ShouldBe("application/json");
@@ -29,14 +29,14 @@ public sealed class ForgejoApiClientTests
     public async Task Anonymous_requests_carry_no_authorization()
     {
         // Arrange
-        var handler = new RecordingHandler();
+        var handler = new RecordingHttpMessageHandler();
         using var client = ForgejoApiClient.Create(handler, new Uri("https://codeberg.org/"), UserAgent, token: null);
 
         // Act
         using var response = await client.GetAsync(new Uri("version", UriKind.Relative), TestContext.Current.CancellationToken);
 
         // Assert
-        handler.Request.ShouldNotBeNull().Headers.Authorization.ShouldBeNull();
+        handler.LastRequest.ShouldNotBeNull().Message.Headers.Authorization.ShouldBeNull();
     }
 
     [Theory]
@@ -54,7 +54,7 @@ public sealed class ForgejoApiClientTests
     public void A_server_that_is_not_a_plain_secure_address_is_refused(string server)
     {
         // Act
-        var create = () => ForgejoApiClient.Create(new RecordingHandler(), new Uri(server), UserAgent, null);
+        var create = () => ForgejoApiClient.Create(new RecordingHttpMessageHandler(), new Uri(server), UserAgent, null);
 
         // Assert
         create.ShouldThrow<ArgumentException>().ParamName.ShouldBe("server");
@@ -64,7 +64,7 @@ public sealed class ForgejoApiClientTests
     public void A_blank_token_is_refused()
     {
         // Act
-        var create = () => ForgejoApiClient.Create(new RecordingHandler(), new Uri("https://forge.example"), UserAgent, " ");
+        var create = () => ForgejoApiClient.Create(new RecordingHttpMessageHandler(), new Uri("https://forge.example"), UserAgent, " ");
 
         // Assert
         create.ShouldThrow<ArgumentException>();

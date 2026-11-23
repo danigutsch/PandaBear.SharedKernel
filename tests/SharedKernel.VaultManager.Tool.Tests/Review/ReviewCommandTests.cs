@@ -7,7 +7,6 @@ using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.VaultManager.Tool.Review;
 using PandaBear.VaultManager.Tool.Tests.Cli;
 using PandaBear.VaultManager.Tool.Tests.Pipeline;
-using PandaBear.VaultManager.Tool.Tests.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Review;
 
