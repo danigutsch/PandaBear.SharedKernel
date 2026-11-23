@@ -1,24 +1,24 @@
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.Text;
 using PandaBear.Processes;
 
 namespace PandaBear.Repositories;
 
-/// <summary>Reads git state through bounded, time-limited git processes.</summary>
+/// <summary>
+/// Reads git state through bounded, time-limited git processes: no prompt, no credentials, no inherited <c>GIT_*</c>
+/// variables, 8 MiB of standard output, 64 KiB of standard error, and 30 seconds per call.
+/// </summary>
 public sealed class RoadmapGitRepository
 {
-    private const int MaxErrorBytes = 16 * 1024;
     private const int MaxOutputBytes = 8 * 1024 * 1024;
-    private static readonly TimeSpan CommandTimeout = TimeSpan.FromSeconds(15);
-    private static readonly TimeSpan TerminationTimeout = TimeSpan.FromSeconds(2);
     private static readonly UTF8Encoding StrictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+    private readonly GitProcess _git;
     private readonly Func<ProcessStartInfo, CancellationToken, Task<RoadmapGitCommandResult>> _run;
 
     /// <summary>Creates a repository reader that runs the real git executable.</summary>
     public RoadmapGitRepository()
-        : this(RunProcess)
+        : this(GitProcess.Default)
     {
     }
 
@@ -28,7 +28,15 @@ public sealed class RoadmapGitRepository
         Func<ProcessStartInfo, CancellationToken, Task<RoadmapGitCommandResult>> run)
     {
         ArgumentNullException.ThrowIfNull(run);
+        _git = GitProcess.Default;
         _run = run;
+    }
+
+    /// <summary>Creates a repository reader that finds and runs git through <paramref name="git"/>.</summary>
+    internal RoadmapGitRepository(GitProcess git)
+    {
+        _git = git;
+        _run = (startInfo, cancellationToken) => RunProcess(git, startInfo, cancellationToken);
     }
 
     /// <summary>Returns the commit SHA of HEAD in <paramref name="rootPath"/>.</summary>
@@ -123,131 +131,37 @@ public sealed class RoadmapGitRepository
         return result;
     }
 
-    private static ProcessStartInfo CreateStartInfo(string rootPath, IEnumerable<string> arguments)
-    {
-        var git = PathExecutableResolver.Default.Find("git")
-            ?? throw new InvalidOperationException("Could not resolve git to an absolute executable path.");
-        var startInfo = new ProcessStartInfo(git)
-        {
-            CreateNoWindow = true,
-            RedirectStandardError = true,
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            WorkingDirectory = Path.GetFullPath(rootPath)
-        };
-        foreach (var argument in arguments)
-        {
-            startInfo.ArgumentList.Add(argument);
-        }
-
-        startInfo.Environment["GIT_TERMINAL_PROMPT"] = "0";
-        startInfo.Environment.Remove("GIT_ASKPASS");
-        startInfo.Environment.Remove("SSH_ASKPASS");
-        ProcessEnvironment.RemoveForgeTokens(startInfo);
-        return startInfo;
-    }
+    private ProcessStartInfo CreateStartInfo(string rootPath, IEnumerable<string> arguments) =>
+        _git.CreateStartInfo(rootPath, arguments);
 
     private static async Task<RoadmapGitCommandResult> RunProcess(
+        GitProcess git,
         ProcessStartInfo startInfo,
         CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-        using var timeout = new CancellationTokenSource(CommandTimeout);
-        using var executionCancellation = CancellationTokenSource.CreateLinkedTokenSource(
-            cancellationToken,
-            timeout.Token);
-        using var process = new Process { StartInfo = startInfo };
+        CapturedProcessOutput result;
         try
         {
-            if (!process.Start())
-            {
-                throw new InvalidOperationException("Roadmap automation could not start Git inspection.");
-            }
+            result = await git.Run(startInfo, MaxOutputBytes, ReadOnlyMemory<byte>.Empty, cancellationToken).ConfigureAwait(false);
         }
-        catch (Exception exception) when (exception is Win32Exception
-            or InvalidOperationException
-            or NotSupportedException)
+        catch (TimeoutException exception)
         {
-            throw new InvalidOperationException("Roadmap automation could not start Git inspection.");
+            throw new TimeoutException($"Roadmap automation Git inspection timed out after {git.TimeoutSeconds} seconds.", exception);
+        }
+        catch (InvalidOperationException exception) when (exception.InnerException is Win32Exception)
+        {
+            throw new InvalidOperationException("Roadmap automation could not start Git inspection.", exception);
+        }
+        catch (InvalidOperationException exception)
+        {
+            throw new InvalidOperationException("Roadmap automation Git inspection failed.", exception);
         }
 
-        var output = ReadBounded(process.StandardOutput.BaseStream, MaxOutputBytes);
-        var error = ReadBounded(process.StandardError.BaseStream, MaxErrorBytes);
-        try
-        {
-            await process.WaitForExitAsync(executionCancellation.Token).ConfigureAwait(false);
-            var standardOutput = await output.ConfigureAwait(false);
-            var standardError = await error.ConfigureAwait(false);
-            return new RoadmapGitCommandResult(
-                process.ExitCode,
-                standardOutput.Content,
-                Encoding.UTF8.GetString(standardError.Content),
-                standardOutput.LimitExceeded,
-                standardError.LimitExceeded);
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            await Terminate(process, output, error).ConfigureAwait(false);
-            throw new OperationCanceledException(cancellationToken);
-        }
-        catch (OperationCanceledException) when (timeout.IsCancellationRequested)
-        {
-            await Terminate(process, output, error).ConfigureAwait(false);
-            throw new TimeoutException($"Roadmap automation Git inspection timed out after {CommandTimeout.TotalSeconds.ToString("0", CultureInfo.InvariantCulture)} seconds.");
-        }
-        catch
-        {
-            await Terminate(process, output, error).ConfigureAwait(false);
-            throw;
-        }
-    }
-
-    private static async Task<(byte[] Content, bool LimitExceeded)> ReadBounded(Stream stream, int limit)
-    {
-        using var content = new MemoryStream();
-        var buffer = new byte[8192];
-        var limitExceeded = false;
-        while (true)
-        {
-            var read = await stream.ReadAsync(buffer, CancellationToken.None).ConfigureAwait(false);
-            if (read == 0)
-            {
-                return (content.ToArray(), limitExceeded);
-            }
-
-            var remaining = limit - (int)content.Length;
-            if (remaining > 0)
-            {
-                await content.WriteAsync(
-                    buffer.AsMemory(0, Math.Min(remaining, read)),
-                    CancellationToken.None).ConfigureAwait(false);
-            }
-
-            limitExceeded |= read > remaining;
-        }
-    }
-
-    private static async Task Terminate(
-        Process process,
-        Task<(byte[] Content, bool LimitExceeded)> output,
-        Task<(byte[] Content, bool LimitExceeded)> error)
-    {
-        await ProcessTree.Terminate(process, TerminationTimeout).ConfigureAwait(false);
-
-        var drain = Task.WhenAll(output, error);
-        try
-        {
-            await drain.WaitAsync(TerminationTimeout, CancellationToken.None).ConfigureAwait(false);
-        }
-        catch (Exception exception) when (exception is TimeoutException
-            or IOException
-            or InvalidOperationException)
-        {
-            _ = drain.ContinueWith(
-                static completed => _ = completed.Exception,
-                CancellationToken.None,
-                TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
-                TaskScheduler.Default);
-        }
+        return new RoadmapGitCommandResult(
+            result.ExitCode,
+            result.StandardOutput,
+            result.StandardError,
+            OutputLimitExceeded: false,
+            ErrorLimitExceeded: false);
     }
 }

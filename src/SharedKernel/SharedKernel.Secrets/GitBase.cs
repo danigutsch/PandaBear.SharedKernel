@@ -1,8 +1,14 @@
+using System.Globalization;
+using PandaBear.Processes;
+
 namespace PandaBear.Secrets;
 
 /// <summary>
 /// Reads files as they were at a base revision, through git: an absolute git path, arguments one by one, no shell, an environment with no user
-/// configuration, and a revision that cannot be an option, a path, or anything but a plain revision name.
+/// configuration, and a revision that cannot be an option, a path, or anything but a plain revision name. The runner gives git only
+/// <c>LC_ALL=C</c> and the variables this class sets, among them <c>GIT_TERMINAL_PROMPT=0</c>, so no askpass program, forge token, or
+/// inherited <c>GIT_*</c> variable reaches it, and each call ends after <see cref="GitStartInfo.Timeout"/>, the limit of every other git call
+/// in these libraries.
 /// </summary>
 internal sealed class GitBase
 {
@@ -20,25 +26,32 @@ internal sealed class GitBase
     private readonly string _git;
     private readonly string _root;
     private readonly string _revision;
+    private readonly TimeSpan _timeout;
 
-    private GitBase(IToolRunner runner, string git, string root, string revision)
+    private GitBase(IToolRunner runner, string git, string root, string revision, TimeSpan timeout)
     {
         _runner = runner;
         _git = git;
         _root = root;
         _revision = revision;
+        _timeout = timeout;
     }
 
     /// <summary>Checks the revision's spelling, finds git, and confirms that the revision names a commit.</summary>
     /// <exception cref="InvalidOperationException">The revision is not a plain revision name, git is missing, or the revision is not a commit.</exception>
-    public static async Task<GitBase> Open(SecretsPrograms programs, string root, string revision, CancellationToken cancellationToken)
+    public static Task<GitBase> Open(SecretsPrograms programs, string root, string revision, CancellationToken cancellationToken) =>
+        Open(programs, root, revision, GitStartInfo.Timeout, cancellationToken);
+
+    /// <summary>Opens the base revision as <see cref="Open(SecretsPrograms, string, string, CancellationToken)"/> does, ending each git call after <paramref name="timeout"/>.</summary>
+    /// <exception cref="InvalidOperationException">The revision is not a plain revision name, git is missing, git does not finish in time, or the revision is not a commit.</exception>
+    internal static async Task<GitBase> Open(SecretsPrograms programs, string root, string revision, TimeSpan timeout, CancellationToken cancellationToken)
     {
         if (revision.Length is 0 or > MaxRevisionLength || revision[0] == '-' || !revision.All(static c => char.IsAsciiLetterOrDigit(c) || c is '.' or '_' or '/' or '@' or '^' or '~' or '{' or '}' or '+' or ',' or '-'))
         {
             throw new InvalidOperationException("--base must be a plain revision name such as main, origin/main, HEAD~1, or a commit hash; it cannot start with '-' or contain ':', spaces, or control characters.");
         }
 
-        var git = new GitBase(programs.Runner, programs.ExecutableResolver.Find("git") ?? throw new InvalidOperationException("git was not found on PATH."), root, revision);
+        var git = new GitBase(programs.Runner, programs.ExecutableResolver.Find("git") ?? throw new InvalidOperationException("git was not found on PATH."), root, revision, timeout);
         await git.Run(["rev-parse", "--verify", "--quiet", revision + "^{commit}"], cancellationToken).ConfigureAwait(false);
         return git;
     }
@@ -69,9 +82,17 @@ internal sealed class GitBase
     private async Task<string> Run(string[] arguments, CancellationToken cancellationToken)
     {
         ToolResult result;
+        using var limit = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        limit.CancelAfter(_timeout);
         try
         {
-            result = await _runner.Run(new ToolRequest(_git, ["-C", _root, .. arguments], GitEnvironment, default, _root), cancellationToken).ConfigureAwait(false);
+            result = await _runner.Run(new ToolRequest(_git, ["-C", _root, .. arguments], GitEnvironment, default, _root), limit.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException exception) when (!cancellationToken.IsCancellationRequested)
+        {
+            throw new InvalidOperationException(
+                string.Create(CultureInfo.InvariantCulture, $"git could not run: git did not finish within {_timeout.TotalSeconds} seconds."),
+                exception);
         }
         catch (Exception exception) when (exception is InvalidOperationException or TimeoutException)
         {

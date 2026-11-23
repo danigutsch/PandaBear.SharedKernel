@@ -16,14 +16,23 @@ public static class TextEncodingVerifier
     private static readonly TimeSpan ProcessExitTimeout = TimeSpan.FromSeconds(2);
     private static readonly UTF8Encoding StrictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
-    /// <summary>Returns the encoding issues found in the repository at <paramref name="rootPath"/>, or a single issue when git inspection fails.</summary>
+    /// <summary>
+    /// Returns the encoding issues found in the repository at <paramref name="rootPath"/>, or a single issue when git
+    /// inspection fails. Every git call gets no prompt, no credentials, bounded output, and 30 seconds; the blob reader
+    /// gets 30 seconds for each blob.
+    /// </summary>
     /// <exception cref="ArgumentException">Thrown when <paramref name="rootPath"/> is <see langword="null"/>, empty, or white-space.</exception>
-    public static async Task<IReadOnlyList<VerificationIssue>> Verify(string rootPath, CancellationToken cancellationToken)
+    public static Task<IReadOnlyList<VerificationIssue>> Verify(string rootPath, CancellationToken cancellationToken) =>
+        Verify(GitProcess.Default, rootPath, cancellationToken);
+
+    /// <summary>Returns the encoding issues found in the repository at <paramref name="rootPath"/>, running git through <paramref name="git"/>.</summary>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="rootPath"/> is <see langword="null"/>, empty, or white-space.</exception>
+    internal static async Task<IReadOnlyList<VerificationIssue>> Verify(GitProcess git, string rootPath, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
         var canonicalRoot = Path.GetFullPath(rootPath);
 
-        var discovery = GitInvocation.CreateDiscovery(canonicalRoot);
+        var discovery = GitInvocation.CreateDiscovery(canonicalRoot, git);
         var discoveryResult = await DiscoverRepository(discovery, cancellationToken).ConfigureAwait(false);
         var sourceRepository = discoveryResult.Repository;
         if (sourceRepository is null)
@@ -204,6 +213,7 @@ public static class TextEncodingVerifier
         await WriteEmptyPrivateFile(infoAttributesPath, cancellationToken).ConfigureAwait(false);
 
         return new GitInvocation(
+            discovery.Git,
             discovery.RootPath,
             globalAttributesPath,
             globalConfigPath,
@@ -502,21 +512,24 @@ public static class TextEncodingVerifier
 
         Task errorDrain = Task.CompletedTask;
         Task processExit = Task.CompletedTask;
+        using var timeout = new CancellationTokenSource();
+        using var execution = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeout.Token);
         try
         {
-            errorDrain = process.StandardError.BaseStream.CopyToAsync(Stream.Null, cancellationToken);
-            processExit = process.WaitForExitAsync(cancellationToken);
+            errorDrain = process.StandardError.BaseStream.CopyToAsync(Stream.Null, execution.Token);
+            processExit = process.WaitForExitAsync(execution.Token);
             var byteBuffer = new byte[BufferSize];
             var charBuffer = new char[StrictUtf8.GetMaxCharCount(BufferSize)];
             List<VerificationIssue> issues = [];
             foreach (var entry in entries)
             {
+                timeout.CancelAfter(isolated.Git.Timeout);
                 var result = await VerifyBlob(
                     process,
                     entry,
                     byteBuffer,
                     charBuffer,
-                    cancellationToken).ConfigureAwait(false);
+                    execution.Token).ConfigureAwait(false);
                 if (!result.Success)
                 {
                     return [new VerificationIssue(".", "Git blob inspection failed.")];
@@ -536,7 +549,7 @@ public static class TextEncodingVerifier
             await CloseStandardInput(process).ConfigureAwait(false);
             if (!await WaitForCompletion(
                 Task.WhenAll(processExit, errorDrain),
-                cancellationToken).ConfigureAwait(false))
+                execution.Token).ConfigureAwait(false))
             {
                 return [new VerificationIssue(".", "Git blob inspection failed.")];
             }
@@ -545,9 +558,13 @@ public static class TextEncodingVerifier
                 ? issues
                 : [new VerificationIssue(".", "Git blob inspection failed.")];
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             throw;
+        }
+        catch (OperationCanceledException)
+        {
+            return [new VerificationIssue(".", "Git blob inspection failed.")];
         }
         catch (Exception exception) when (exception is IOException
             or InvalidOperationException
@@ -752,113 +769,40 @@ public static class TextEncodingVerifier
         int maximumOutputBytes,
         CancellationToken cancellationToken)
     {
-        Process process;
         try
         {
-            process = StartGit(invocation, arguments);
+            var result = await invocation.Git.Run(
+                CreateGitStartInfo(invocation, arguments),
+                maximumOutputBytes,
+                standardInput,
+                cancellationToken).ConfigureAwait(false);
+            return result.ExitCode == 0
+                ? result.StandardOutput.ToArray()
+                : null;
         }
-        catch (Exception exception) when (exception is IOException
-            or InvalidOperationException
+        catch (Exception exception) when (exception is InvalidOperationException
+            or TimeoutException
+            or IOException
             or Win32Exception
             or NotSupportedException
             or UnauthorizedAccessException)
         {
             return null;
         }
-
-        var inputWriter = WriteStandardInput(process.StandardInput.BaseStream, standardInput, cancellationToken);
-        var outputReader = ReadBounded(process.StandardOutput.BaseStream, maximumOutputBytes, cancellationToken);
-        var errorDrain = process.StandardError.BaseStream.CopyToAsync(Stream.Null, cancellationToken);
-        var processExit = process.WaitForExitAsync(cancellationToken);
-        var completedNormally = false;
-        try
-        {
-            var firstCompleted = await Task.WhenAny(inputWriter, outputReader).ConfigureAwait(false);
-            if (ReferenceEquals(firstCompleted, inputWriter))
-            {
-                await inputWriter.ConfigureAwait(false);
-            }
-
-            var capturedOutput = await outputReader.ConfigureAwait(false);
-            if (capturedOutput is null)
-            {
-                return null;
-            }
-
-            await inputWriter.ConfigureAwait(false);
-            if (!await WaitForCompletion(
-                Task.WhenAll(processExit, errorDrain),
-                cancellationToken).ConfigureAwait(false))
-            {
-                return null;
-            }
-
-            completedNormally = true;
-            return process.ExitCode == 0
-                ? capturedOutput
-                : null;
-        }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch (Exception exception) when (exception is IOException
-            or InvalidOperationException
-            or Win32Exception
-            or NotSupportedException
-            or UnauthorizedAccessException
-            or AggregateException)
-        {
-            return null;
-        }
-        finally
-        {
-            if (!completedNormally)
-            {
-                await ProcessTree.Terminate(process, ProcessExitTimeout).ConfigureAwait(false);
-            }
-
-            await ObserveCleanup(
-                Task.WhenAll(inputWriter, outputReader, errorDrain, processExit),
-                ProcessExitTimeout).ConfigureAwait(false);
-
-            process.Dispose();
-        }
-    }
-
-    private static async Task WriteStandardInput(
-        Stream standardInput,
-        byte[]? content,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            if (content is not null)
-            {
-                await standardInput.WriteAsync(content, cancellationToken).ConfigureAwait(false);
-            }
-        }
-        finally
-        {
-            await standardInput.DisposeAsync().ConfigureAwait(false);
-        }
     }
 
     private static Process StartGit(GitInvocation invocation, IReadOnlyList<string> arguments)
     {
-        var gitExecutable = PathExecutableResolver.Default.Find("git")
-            ?? throw new InvalidOperationException("Could not resolve git to an absolute executable path.");
-        ProcessStartInfo startInfo = new(gitExecutable)
-        {
-            WorkingDirectory = invocation.RootPath,
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false
-        };
-        ProcessEnvironment.RemoveGitVariables(startInfo);
+        var startInfo = CreateGitStartInfo(invocation, arguments);
+        startInfo.RedirectStandardInput = true;
+        return ProcessTree.Start(startInfo);
+    }
 
-        ProcessEnvironment.RemoveForgeTokens(startInfo);
+    private static ProcessStartInfo CreateGitStartInfo(GitInvocation invocation, IReadOnlyList<string> arguments)
+    {
+        var startInfo = invocation.Git.CreateStartInfo(
+            invocation.RootPath,
+            ["--no-replace-objects", "-c", $"core.attributesFile={invocation.AttributesFile}", "-C", invocation.RootPath, .. arguments]);
         startInfo.Environment["GIT_ATTR_NOSYSTEM"] = "1";
         startInfo.Environment["GIT_CONFIG_GLOBAL"] = invocation.GlobalConfigFile;
         startInfo.Environment["GIT_CONFIG_NOSYSTEM"] = "1";
@@ -870,38 +814,7 @@ public static class TextEncodingVerifier
             startInfo.Environment["GIT_OBJECT_DIRECTORY"] = invocation.ObjectDirectory;
         }
 
-        startInfo.ArgumentList.Add("--no-replace-objects");
-        startInfo.ArgumentList.Add("-c");
-        startInfo.ArgumentList.Add($"core.attributesFile={invocation.AttributesFile}");
-        startInfo.ArgumentList.Add("-C");
-        startInfo.ArgumentList.Add(invocation.RootPath);
-        foreach (var argument in arguments)
-        {
-            startInfo.ArgumentList.Add(argument);
-        }
-
-        return Process.Start(startInfo) ?? throw new InvalidOperationException("Git process did not start.");
-    }
-
-    private static async Task<byte[]?> ReadBounded(Stream stream, int maximumBytes, CancellationToken cancellationToken)
-    {
-        using MemoryStream output = new();
-        var buffer = new byte[BufferSize];
-        while (true)
-        {
-            var read = await stream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
-            if (read == 0)
-            {
-                return output.ToArray();
-            }
-
-            if (output.Length + read > maximumBytes)
-            {
-                return null;
-            }
-
-            await output.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
-        }
+        return startInfo;
     }
 
     private static async Task<bool> WaitForCompletion(Task completion, CancellationToken cancellationToken)
@@ -961,6 +874,7 @@ public static class TextEncodingVerifier
         value.Length is 40 or 64 && value.All(character => char.IsAsciiHexDigit(character));
 
     private sealed record GitInvocation(
+        GitProcess Git,
         string RootPath,
         string AttributesFile,
         string GlobalConfigFile,
@@ -968,10 +882,11 @@ public static class TextEncodingVerifier
         string? IndexFile,
         string? ObjectDirectory)
     {
-        public static GitInvocation CreateDiscovery(string rootPath)
+        public static GitInvocation CreateDiscovery(string rootPath, GitProcess git)
         {
             var emptyConfiguration = OperatingSystem.IsWindows() ? "NUL" : "/dev/null";
             return new GitInvocation(
+                git,
                 rootPath,
                 emptyConfiguration,
                 emptyConfiguration,

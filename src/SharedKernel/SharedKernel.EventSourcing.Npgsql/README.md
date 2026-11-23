@@ -9,6 +9,10 @@ Raw Npgsql adapter for the storage-neutral `SharedKernel.EventSourcing` abstract
 This package owns reusable event-stream and projection-checkpoint persistence. Bounded contexts still
 own composition, schema naming, migrations/initialization policy, and context-specific read models.
 
+The schema in `PostgreSqlEventSourcingOptions.Schema` must pass `PostgreSqlIdentifier.IsUnquoted` from
+`PandaBear.SharedKernel.InputNormalization`: ASCII letters, digits, and `_`, not starting with a digit, at most 63 bytes. A
+longer name, which PostgreSQL would silently truncate, is refused with `ArgumentException` like any other invalid name.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.EventSourcing.Npgsql`. C# namespace: `PandaBear.EventSourcing.Npgsql`. Assembly/project identity: `SharedKernel.EventSourcing.Npgsql`.

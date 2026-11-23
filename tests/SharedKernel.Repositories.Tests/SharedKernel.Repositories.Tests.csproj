@@ -37,4 +37,12 @@
         <Compile Include="..\SharedKernel.RepoConfig.Tests\TestTraits.cs" Link="Shared\TestTraits.cs" />
     </ItemGroup>
 
+    <!-- Git environment and process helpers shared with the process tests. -->
+    <ItemGroup>
+        <Compile Include="..\SharedKernel.Processes.Tests\GitEnvironmentGroup.cs" Link="Shared\GitEnvironmentGroup.cs" />
+        <Compile Include="..\SharedKernel.Processes.Tests\HostileGitEnvironment.cs" Link="Shared\HostileGitEnvironment.cs" />
+        <Compile Include="..\SharedKernel.Processes.Tests\LinuxProcessState.cs" Link="Shared\LinuxProcessState.cs" />
+        <Compile Include="..\SharedKernel.Processes.Tests\ProcessIdFile.cs" Link="Shared\ProcessIdFile.cs" />
+    </ItemGroup>
+
 </Project>

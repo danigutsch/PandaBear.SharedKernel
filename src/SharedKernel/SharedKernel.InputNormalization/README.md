@@ -26,6 +26,11 @@ paragraph separator (U+2029), so text pasted from a word processor splits the sa
 sanitized like `Sanitize` (its line breaks become single spaces), empty ones are dropped, and malformed text returns `false`. Joining the
 paragraphs with a blank line gives the same paragraphs again, so a stored list round-trips through an editor's text box.
 
+`PostgreSqlIdentifier.IsUnquoted` checks a name that a library writes into SQL text, such as a configured schema or table name:
+an ASCII letter or `_`, then ASCII letters, digits, or `_`, at most 63 bytes. PostgreSQL silently truncates a longer name to
+NAMEDATALEN-1 (63) bytes, so two long names could select the same object. Only ASCII is accepted, so the character count is the
+byte count. The idempotency, integration event, and disposition hold storage options and the event-sourcing schema use it.
+
 ## Install and example
 
 The following placeholders are intentional: replace `<validated-candidate-version>` with a candidate that has actually been built and validated, and `<private-candidate-feed>` with its private local feed. The placeholders do not identify a published package version. The code requires the package's target runtime; integration examples assume application-owned host/provider configuration.

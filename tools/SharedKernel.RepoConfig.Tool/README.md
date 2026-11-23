@@ -586,6 +586,8 @@ default-branch commit moved while it was read.
   `FORGEJO_TOKEN`, `GH_ENTERPRISE_TOKEN`, and `GITHUB_ENTERPRISE_TOKEN`.
 - Git and Docker start from the first absolute `PATH` entry that holds them, never from the current directory
   or a relative or empty `PATH` entry.
+- The verifiers, `baseline`, `new`, and the roadmap and `dependency` commands start Git with `GIT_TERMINAL_PROMPT=0`,
+  without `SSH_ASKPASS` or any inherited `GIT_*` variable, with bounded output, and with 30 seconds for each call.
 - `verify-devcontainer` checks each downloaded archive against the hash pinned in the tool before reading it,
   and extracts only regular files to fixed paths: `bin/node` and the entries under `package/`. Links and
   entries with empty, `.`, or `..` segments fail the bootstrap.
