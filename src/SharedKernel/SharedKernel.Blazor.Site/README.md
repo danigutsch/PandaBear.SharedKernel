@@ -80,6 +80,7 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `ButtonLink` | A link styled as a button (`Primary`, `Secondary`, `Outline`), `Size` `Regular` (the default) or `Compact` (`site-button--compact`); see [Shape](#shape) for its computed padding. `NewTab` adds `target="_blank"`, `rel="noopener noreferrer"` and a visually hidden `NewTabHint` after a space, so the link's name reads "Partner (opens in a new tab)" and not "Partner(opens in a new tab)". |
 | `ActionRow` | A plain `div` (`site-action-row`, never a landmark) around actions such as `ButtonLink`s and links, in reading order, with a gap. `Justification` places them from the `48rem` breakpoint on in one wrapping row: `Start` (the default) together where reading starts, in line with the text above, so they read as one group, and in the middle inside a section or band with centred text; `Center` (`site-action-row--center`) together in the middle; `End` (`site-action-row--end`) together at the end; `Between` (`site-action-row--between`) spread across the width, for two actions on opposite sides such as previous and next. Below the breakpoint they are stacked at the start (in the middle under centred text), in the middle (`Center` and `Between`) or at the end. An undefined justification throws `ArgumentOutOfRangeException`. A plain link in it keeps the link style in the primary colour. |
 | `Card`, `CardGrid` | `article` with an optional lazy image, a heading (`HeadingLevel`, default 3) whose link covers the card, text and actions; an auto-fill grid whose columns are at least `--site-card-min-width` wide and that keeps empty columns, so a lone card has the width of one column instead of the whole row. Links, buttons, form controls, `summary` and `[tabindex]` elements in the body and the actions are raised above the covering link, so they stay clickable; any other interactive element you put in the body needs `position: relative; z-index: 1`. The focus ring is drawn on the card while a control in it has keyboard focus (`:has(:focus-visible)`). `TitleLanguage` marks the card's heading alone with `lang`, as on `Section`. `EagerImage` loads the image eagerly, for a card on the first screen. Typed options set its look, the eyebrow, the more look and the grid's columns; see [Cards](#cards). |
+| `StatusBadge` | A short status after the GOV.UK tag: `<strong class="site-status site-status--{tone}">` with the `Text`, a `Tone` (`StatusTone`: `Neutral`, the default, `Info`, `Success`, `Warning`, `Danger`) and an optional visually hidden `Label` prefix; see [Offerings](#offerings). |
 | `FactsTable` | `table` with a required `caption` and `th scope="row"` headers. |
 | `FactGrid` | A `dl` (`site-fact-grid`) of `FactCard`s, such as a tour's basic information: each card is a `div` (`site-fact-grid__item`) of the `dt` label (`site-fact-grid__label`) and one `dd` per value (`site-fact-grid__value`), for example "8 days" and "7 nights". A value is a `FactValue`: its `Text` and an optional `Link` (`LinkTarget`, so a relative, `http`/`https`, `mailto:` or `tel:` address), which makes the text a plain `a` in the same tab, for example `new("info@example.org", LinkTarget.FromString("mailto:info@example.org"))`. A value wraps between words; in a word that holds an `@`, such as an e-mail address, the component writes a `wbr` before the `@` and every dot, so the address wraps between its parts (`info` / `.desk` / `@example` / `.org`) and never inside one; a dot that ends the word or comes before closing punctuation only (`org.`, `org.)`) gets none, and other words, such as `8.5`, keep their dots unbroken. Chromium computes a link's name from its content with a space at every `wbr`, so a linked value that gets breaks carries its text as `aria-label`: the link's name and `textContent` stay the address. Only a part wider than its card breaks inside, so nothing scrolls sideways. A card's optional `Icon` is rendered first inside the `dt`, in a `span` (`site-fact-grid__icon`) with `aria-hidden="true"`, because a `div` in a `dl` may hold only `dt` and `dd` elements; the label alone names the term. The cards are centred and bordered like table cells, in wrapping rows (flex) that share the full width of the container. Below the `48rem` breakpoint as many cards at least 11rem wide fit a row as the width allows; from it on the row length is computed from the number of cards for balanced rows, as the class `site-fact-grid--columns-1` to `site-fact-grid--columns-4` (no inline style): as many as cards up to four, otherwise `ceil(n / ceil(n / 4))`, so 5 and 6 cards make rows of 3, 7 and 8 rows of 4, and 9 rows of 3. The cards of a shorter last row grow to fill it, so 7 cards are a row of 4 and a row of 3 wider cards, and a lone last card on a phone takes the whole row: no row leaves a notch. An empty grid has no column class; the label is bold and, like the icon, in the primary colour (the on-primary colour in a `Primary` or `Image` band). An `svg` icon without a `fill` attribute is filled with the colour; one with `fill="none"` keeps its strokes, so draw them with `currentColor`. A null card, a blank label, no values, a null value or a value with blank text throws `ArgumentException`. |
 | `Disclosure` | Native `details` and `summary`; a tab substitute without script. A disclosure after other content, such as a `FactGrid`, keeps `--site-space-4` from it, and stacked disclosures keep `--site-space-2` between them. The summary is rounded like its box, so its focus ring follows the box's corners. |
@@ -262,6 +263,29 @@ Give each page its own `PageHead.CanonicalUrl`, and answer a page past the end (
 `PandaBear.SharedKernel.Galleries` holds the album model behind these components; its `AlbumView.Page` gives the photos and the window
 of a page.
 
+### Offerings
+
+Display atoms for a page that offers something, such as a tour: they take display records and text only, so the model, its
+formatting and every word stay in the application.
+
+`StatusBadge` shows a status, such as "Open" or "Sold out", after the
+[GOV.UK Design System tag](https://design-system.service.gov.uk/components/tag/):
+
+- a `strong` element (`site-status site-status--{tone}`), never a link or a control, with bold small text on the tone's background;
+- `Tone` picks the colour pair; the badge's `Text` always says the status, so the colour is never the only cue (WCAG 1.4.1), and a
+  transparent outline draws its edge in forced colours;
+- `Label`, such as "Status:", is a visually hidden prefix followed by a space, for a badge whose meaning the page does not otherwise
+  give; null or blank renders none;
+- each tone is a pair of tokens, `--site-color-status-{tone}` behind `--site-color-on-status-{tone}`, at least 4.5:1 in both schemes
+  (a test computes every pair). The badge carries its own background everywhere, so on the primary colour of a band, a cover hero
+  or a footer it keeps the light pair of the page; a browser test measures it in each of them.
+
+A blank text throws `ArgumentException` and an undefined tone `ArgumentOutOfRangeException`.
+
+```razor
+<StatusBadge Text="Esgotado" Tone="StatusTone.Danger" Label="Situação:" />
+```
+
 ### Bands and photos
 
 On the primary colour or a photo, text is the on-primary colour in the light scheme (`color-scheme: light`), whatever the visitor's
@@ -389,6 +413,11 @@ dark surface too. `light-dark()` needs a 2024 or later browser (Chrome 123, Fire
 | `--site-color-accent-hover` | `#92400e` / `#f59e0b` | Secondary buttons on hover |
 | `--site-color-on-accent` | `#ffffff` / `#111827` | Text on the accent colour |
 | `--site-color-focus` | `#1d4ed8` / `#93c5fd` | Focus ring colour |
+| `--site-color-status-neutral`, `--site-color-on-status-neutral` | `#e5e7eb`, `#1f2937` / `#374151`, `#f3f4f6` | `StatusBadge` `Neutral`: background, text |
+| `--site-color-status-info`, `--site-color-on-status-info` | `#dbeafe`, `#1e3a8a` / `#1e3a8a`, `#dbeafe` | `StatusBadge` `Info`: background, text |
+| `--site-color-status-success`, `--site-color-on-status-success` | `#dcfce7`, `#14532d` / `#14532d`, `#dcfce7` | `StatusBadge` `Success`: background, text |
+| `--site-color-status-warning`, `--site-color-on-status-warning` | `#fef3c7`, `#78350f` / `#78350f`, `#fef3c7` | `StatusBadge` `Warning`: background, text |
+| `--site-color-status-danger`, `--site-color-on-status-danger` | `#fee2e2`, `#7f1d1d` / `#7f1d1d`, `#fee2e2` | `StatusBadge` `Danger`: background, text |
 | `--site-focus-ring` | `3px solid` focus colour | `:focus-visible` outline and a card's ring |
 | `--site-font-body` | system UI stack | Body font; no web font is loaded |
 | `--site-font-heading` | `--site-font-body` | Heading font |

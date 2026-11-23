@@ -947,3 +947,17 @@ PandaBear.Blazor.Site.GalleryImage.Href.get -> PandaBear.Blazor.Site.LinkTarget?
 PandaBear.Blazor.Site.GalleryImage.Href.init -> void
 PandaBear.Blazor.Site.ImageGrid.Sizes.get -> string?
 PandaBear.Blazor.Site.ImageGrid.Sizes.set -> void
+PandaBear.Blazor.Site.StatusBadge
+PandaBear.Blazor.Site.StatusBadge.Label.get -> string?
+PandaBear.Blazor.Site.StatusBadge.Label.set -> void
+PandaBear.Blazor.Site.StatusBadge.StatusBadge() -> void
+PandaBear.Blazor.Site.StatusBadge.Text.get -> string!
+PandaBear.Blazor.Site.StatusBadge.Text.set -> void
+PandaBear.Blazor.Site.StatusBadge.Tone.get -> PandaBear.Blazor.Site.StatusTone
+PandaBear.Blazor.Site.StatusBadge.Tone.set -> void
+PandaBear.Blazor.Site.StatusTone
+PandaBear.Blazor.Site.StatusTone.Danger = 4 -> PandaBear.Blazor.Site.StatusTone
+PandaBear.Blazor.Site.StatusTone.Info = 1 -> PandaBear.Blazor.Site.StatusTone
+PandaBear.Blazor.Site.StatusTone.Neutral = 0 -> PandaBear.Blazor.Site.StatusTone
+PandaBear.Blazor.Site.StatusTone.Success = 2 -> PandaBear.Blazor.Site.StatusTone
+PandaBear.Blazor.Site.StatusTone.Warning = 3 -> PandaBear.Blazor.Site.StatusTone

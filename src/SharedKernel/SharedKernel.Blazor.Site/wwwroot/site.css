@@ -15,6 +15,17 @@
     --site-color-accent-hover: light-dark(#92400e, #f59e0b);
     --site-color-on-accent: light-dark(#ffffff, #111827);
     --site-color-focus: light-dark(#1d4ed8, #93c5fd);
+    /* The status badge: a background and the text on it per tone, each pair at least 4.5:1 in both schemes. */
+    --site-color-status-neutral: light-dark(#e5e7eb, #374151);
+    --site-color-on-status-neutral: light-dark(#1f2937, #f3f4f6);
+    --site-color-status-info: light-dark(#dbeafe, #1e3a8a);
+    --site-color-on-status-info: light-dark(#1e3a8a, #dbeafe);
+    --site-color-status-success: light-dark(#dcfce7, #14532d);
+    --site-color-on-status-success: light-dark(#14532d, #dcfce7);
+    --site-color-status-warning: light-dark(#fef3c7, #78350f);
+    --site-color-on-status-warning: light-dark(#78350f, #fef3c7);
+    --site-color-status-danger: light-dark(#fee2e2, #7f1d1d);
+    --site-color-on-status-danger: light-dark(#7f1d1d, #fee2e2);
     --site-font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --site-font-heading: var(--site-font-body);
     --site-font-size-sm: clamp(0.875rem, 0.85rem + 0.1vw, 0.9375rem);
@@ -784,6 +795,47 @@ a {
 :is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) .site-quote {
     background: transparent;
     border-inline-start-color: currentColor;
+}
+
+/*
+ * Status badge: bold small text on the tone's background, which the badge carries everywhere, on the primary colour of a band or a
+ * footer too, so its contrast never depends on its surroundings. The transparent outline draws its edge in forced colours.
+ */
+.site-status {
+    display: inline-block;
+    max-width: 100%;
+    padding: 0.125rem var(--site-space-2);
+    outline: 1px solid transparent;
+    border-radius: var(--site-control-radius);
+    font-size: var(--site-font-size-sm);
+    font-weight: 700;
+    line-height: 1.4;
+    overflow-wrap: break-word;
+}
+
+.site-status--neutral {
+    background: var(--site-color-status-neutral);
+    color: var(--site-color-on-status-neutral);
+}
+
+.site-status--info {
+    background: var(--site-color-status-info);
+    color: var(--site-color-on-status-info);
+}
+
+.site-status--success {
+    background: var(--site-color-status-success);
+    color: var(--site-color-on-status-success);
+}
+
+.site-status--warning {
+    background: var(--site-color-status-warning);
+    color: var(--site-color-on-status-warning);
+}
+
+.site-status--danger {
+    background: var(--site-color-status-danger);
+    color: var(--site-color-on-status-danger);
 }
 
 /* Section. */
