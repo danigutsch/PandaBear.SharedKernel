@@ -18,7 +18,8 @@ public sealed class ForgejoReleaseAssetsTests
     public async Task Attachments_are_located_by_name_from_one_anonymous_lookup_of_the_tag()
     {
         // Arrange
-        using var handler = new ScriptedHandler().Respond(HttpStatusCode.OK, Release);
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.OK, Release);
         using var assets = new ForgejoReleaseAssets(handler, new Uri("https://forge.example"), "owner/name", UserAgent);
         var ct = TestContext.Current.CancellationToken;
 
@@ -29,15 +30,17 @@ public sealed class ForgejoReleaseAssetsTests
         // Assert
         manifest.ToString().ShouldBe("https://forge.example/owner/name/releases/download/v1.0.0-alpha.1/candidate.json");
         package.ToString().ShouldBe("https://forge.example/owner/name/releases/download/v1.0.0-alpha.1/A.1.0.0-alpha.1.nupkg");
-        handler.Requests.ShouldHaveSingleItem().RequestUri!.ToString().ShouldBe("https://forge.example/api/v1/repos/owner/name/releases/tags/v1.0.0-alpha.1");
-        handler.Requests[0].Headers.Authorization.ShouldBeNull();
+        handler.Requests.ShouldHaveSingleItem().Message.RequestUri!.ToString().ShouldBe("https://forge.example/api/v1/repos/owner/name/releases/tags/v1.0.0-alpha.1");
+        handler.Requests[0].Message.Headers.Authorization.ShouldBeNull();
     }
 
     [Fact]
     public async Task A_missing_attachment_or_release_is_refused()
     {
         // Arrange
-        using var handler = new ScriptedHandler().Respond(HttpStatusCode.OK, Release).Respond(HttpStatusCode.NotFound);
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.OK, Release);
+        handler.Enqueue(new HttpResponseMessage(HttpStatusCode.NotFound));
         using var assets = new ForgejoReleaseAssets(handler, new Uri("https://forge.example"), "owner/name", UserAgent);
         Func<Task> attachment = () => assets.Locate("v1.0.0-alpha.1", "B.nupkg", TestContext.Current.CancellationToken);
         Func<Task> release = () => assets.Locate("v2.0.0", "candidate.json", TestContext.Current.CancellationToken);
@@ -55,7 +58,7 @@ public sealed class ForgejoReleaseAssetsTests
     public void A_repository_that_is_not_owner_slash_name_is_rejected()
     {
         // Arrange
-        using var handler = new ScriptedHandler();
+        using var handler = new TestHttpMessageHandler();
 
         // Act
         Action create = () => new ForgejoReleaseAssets(handler, new Uri("https://forge.example"), "owner/name/extra", UserAgent).Dispose();

@@ -18,7 +18,8 @@ public sealed class OsvAdvisorySourceTests
         {
             ["GHSA-aaaa-bbbb-cccc"] = OsvAnswers.RangeOnly("GHSA-aaaa-bbbb-cccc", "lodash")
         });
-        var source = OsvFake.Source(handler);
+        using var client = new HttpClient(handler, disposeHandler: false);
+        var source = OsvFake.Source(client);
 
         // Act
         var result = await source.Query(PackageManagerKind.Npm, [Installed("lodash", "4.17.15")], NetworkAccess.Allowed, Cancel);
@@ -29,7 +30,7 @@ public sealed class OsvAdvisorySourceTests
         advisory.Package.ShouldBe(Name("lodash"));
         advisory.Severity.ShouldBe(AdvisorySeverity.High);
         advisory.AffectedVersions.ShouldBe([Version("4.17.15")]);
-        OsvFake.Queries(handler.Requests[0].Body).ShouldBe([("lodash", "npm", "4.17.15", null)]);
+        OsvFake.Queries(handler.Requests[0].Body!).ShouldBe([("lodash", "npm", "4.17.15", null)]);
     }
 
     [Fact]
@@ -40,9 +41,10 @@ public sealed class OsvAdvisorySourceTests
         {
             ["GHSA-1"] = OsvAnswers.WithVersions("GHSA-1", "lodash", ["4.17.0", "4.17.15"])
         });
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("lodash", "4.17.15")], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("lodash", "4.17.15")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         var advisory = result.ShouldBeSuccess().ShouldHaveSingleItem();
@@ -58,15 +60,16 @@ public sealed class OsvAdvisorySourceTests
         {
             ["GHSA-1"] = OsvAnswers.RangeOnly("GHSA-1", "lodash")
         });
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("lodash", "4.17.15"), Installed("lodash", "4.18.1")], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("lodash", "4.17.15"), Installed("lodash", "4.18.1")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         var advisory = result.ShouldBeSuccess().ShouldHaveSingleItem();
         advisory.Affects(Version("4.17.15")).ShouldBeTrue();
         advisory.Affects(Version("4.18.1")).ShouldBeFalse();
-        OsvFake.Queries(handler.Requests[0].Body).Length.ShouldBe(2);
+        OsvFake.Queries(handler.Requests[0].Body!).Length.ShouldBe(2);
     }
 
     [Fact]
@@ -74,9 +77,10 @@ public sealed class OsvAdvisorySourceTests
     {
         // Arrange
         using var handler = OsvFake.Handler((_, _) => null, []);
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Cargo, [Installed("bat", "0.26.1")], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Cargo, [Installed("bat", "0.26.1")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeSuccess().ShouldBeEmpty();
@@ -92,9 +96,10 @@ public sealed class OsvAdvisorySourceTests
         {
             ["GHSA-1"] = withdrawn
         });
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("lodash", "1.0.0")], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("lodash", "1.0.0")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeSuccess().ShouldBeEmpty();
@@ -108,9 +113,10 @@ public sealed class OsvAdvisorySourceTests
         {
             ["GHSA-1"] = OsvAnswers.RangeOnly("GHSA-1", "lodash", databaseSeverity: null)
         });
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("lodash", "1.0.0")], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("lodash", "1.0.0")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeSuccess().ShouldHaveSingleItem().Severity.ShouldBe(AdvisorySeverity.High);
@@ -124,13 +130,14 @@ public sealed class OsvAdvisorySourceTests
         {
             ["GHSA-1"] = OsvAnswers.RangeOnly("GHSA-1", "a")
         });
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0"), Installed("b", "1.0.0")], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0"), Installed("b", "1.0.0")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeSuccess().Select(static a => a.Package.Value).ShouldBe(["a", "b"]);
-        handler.Requests.Count(static r => r.Uri.AbsolutePath.StartsWith("/v1/vulns/", StringComparison.Ordinal)).ShouldBe(1);
+        handler.Requests.Count(static r => r.Message.RequestUri!.AbsolutePath.StartsWith("/v1/vulns/", StringComparison.Ordinal)).ShouldBe(1);
     }
 
     [Fact]
@@ -138,9 +145,10 @@ public sealed class OsvAdvisorySourceTests
     {
         // Arrange
         using var handler = OsvFake.Handler((_, _) => null, []);
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("a", "1")], NetworkAccess.Denied, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("a", "1")], NetworkAccess.Denied, Cancel);
 
         // Assert
         result.ShouldBeFailure(ResultStatus.Forbidden, "forbidden");
@@ -154,9 +162,10 @@ public sealed class OsvAdvisorySourceTests
     {
         // Arrange
         using var handler = OsvFake.Handler((_, _) => null, []);
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(manager, [Installed("a", "1")], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(manager, [Installed("a", "1")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeFailure(ResultStatus.Invalid, "invalid");
@@ -168,15 +177,16 @@ public sealed class OsvAdvisorySourceTests
     {
         // Arrange
         using var handler = OsvFake.Handler((_, _) => null, []);
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var without = await OsvFake.Source(handler).Query(PackageManagerKind.Apt, [Installed("openssl", "3.0")], NetworkAccess.Allowed, Cancel);
-        var with = await OsvFake.Source(handler, apt: "Debian:12").Query(PackageManagerKind.Apt, [Installed("openssl", "3.0")], NetworkAccess.Allowed, Cancel);
+        var without = await OsvFake.Source(client).Query(PackageManagerKind.Apt, [Installed("openssl", "3.0")], NetworkAccess.Allowed, Cancel);
+        var with = await OsvFake.Source(client, apt: "Debian:12").Query(PackageManagerKind.Apt, [Installed("openssl", "3.0")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         without.ShouldBeFailure(ResultStatus.Invalid, "invalid");
         with.ShouldBeSuccess().ShouldBeEmpty();
-        OsvFake.Queries(handler.Requests.ShouldHaveSingleItem().Body).ShouldHaveSingleItem().Ecosystem.ShouldBe("Debian:12");
+        OsvFake.Queries(handler.Requests.ShouldHaveSingleItem().Body!).ShouldHaveSingleItem().Ecosystem.ShouldBe("Debian:12");
     }
 
     [Fact]
@@ -184,9 +194,10 @@ public sealed class OsvAdvisorySourceTests
     {
         // Arrange
         using var handler = OsvFake.Handler((_, _) => null, []);
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [], NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeSuccess().ShouldBeEmpty();
@@ -198,14 +209,15 @@ public sealed class OsvAdvisorySourceTests
     {
         // Arrange
         using var handler = OsvFake.Handler((_, _) => null, []);
+        using var client = new HttpClient(handler, disposeHandler: false);
         var packages = Enumerable.Range(0, 250).Select(static i => Installed($"pkg{i:000}", "1.0.0")).ToArray();
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, packages, NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, packages, NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeSuccess().ShouldBeEmpty();
-        handler.Requests.Select(static r => OsvFake.Queries(r.Body).Length).ShouldBe([100, 100, 50]);
+        handler.Requests.Select(static r => OsvFake.Queries(r.Body!).Length).ShouldBe([100, 100, 50]);
     }
 
     [Fact]
@@ -213,22 +225,23 @@ public sealed class OsvAdvisorySourceTests
     {
         // Arrange
         var batches = 0;
-        using var handler = FakeHttpHandler.Answering(request =>
+        using var handler = new RecordingHttpMessageHandler(request =>
         {
-            if (request.Uri.AbsolutePath == "/v1/querybatch")
+            if (request.Message.RequestUri!.AbsolutePath == "/v1/querybatch")
             {
-                var queries = OsvFake.Queries(request.Body);
+                var queries = OsvFake.Queries(request.Body!);
                 return ++batches == 1
-                    ? FakeHttpHandler.Json(OsvAnswers.Batch([.. queries.Select(static _ => (string[]?)["GHSA-1"])]))
-                    : FakeHttpHandler.Json("{}", HttpStatusCode.InternalServerError);
+                    ? HttpResponseFactory.Json(OsvAnswers.Batch([.. queries.Select(static _ => (string[]?)["GHSA-1"])]))
+                    : HttpResponseFactory.Json("{}", HttpStatusCode.InternalServerError);
             }
 
-            return FakeHttpHandler.Json(OsvAnswers.RangeOnly("GHSA-1", "pkg000"));
+            return HttpResponseFactory.Json(OsvAnswers.RangeOnly("GHSA-1", "pkg000"));
         });
+        using var client = new HttpClient(handler, disposeHandler: false);
         var packages = Enumerable.Range(0, 101).Select(static i => Installed($"pkg{i:000}", "1.0.0")).ToArray();
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, packages, NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, packages, NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeFailure(ResultStatus.Unavailable, "unavailable");
@@ -238,26 +251,27 @@ public sealed class OsvAdvisorySourceTests
     public async Task A_result_with_a_next_page_token_is_followed_with_only_that_query()
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(request =>
+        using var handler = new RecordingHttpMessageHandler(request =>
         {
-            if (request.Uri.AbsolutePath != "/v1/querybatch")
+            if (request.Message.RequestUri!.AbsolutePath != "/v1/querybatch")
             {
-                var id = Uri.UnescapeDataString(request.Uri.AbsolutePath["/v1/vulns/".Length..]);
-                return FakeHttpHandler.Json(OsvAnswers.RangeOnly(id, "a"));
+                var id = Uri.UnescapeDataString(request.Message.RequestUri!.AbsolutePath["/v1/vulns/".Length..]);
+                return HttpResponseFactory.Json(OsvAnswers.RangeOnly(id, "a"));
             }
 
-            var queries = OsvFake.Queries(request.Body);
+            var queries = OsvFake.Queries(request.Body!);
             return queries[0].PageToken is null
-                ? FakeHttpHandler.Json(OsvAnswers.BatchPaged([(["GHSA-1"], "next"), (["GHSA-9"], null)]))
-                : FakeHttpHandler.Json(OsvAnswers.BatchPaged([(["GHSA-2"], null)]));
+                ? HttpResponseFactory.Json(OsvAnswers.BatchPaged([(["GHSA-1"], "next"), (["GHSA-9"], null)]))
+                : HttpResponseFactory.Json(OsvAnswers.BatchPaged([(["GHSA-2"], null)]));
         });
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0"), Installed("b", "1.0.0")], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0"), Installed("b", "1.0.0")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeSuccess().Select(static x => $"{x.Id}/{x.Package}").ShouldBe(["GHSA-1/a", "GHSA-2/a", "GHSA-9/b"]);
-        var second = OsvFake.Queries(handler.Requests[1].Body);
+        var second = OsvFake.Queries(handler.Requests[1].Body!);
         second.ShouldBe([("a", "npm", "1.0.0", "next")]);
     }
 
@@ -265,10 +279,11 @@ public sealed class OsvAdvisorySourceTests
     public async Task Endless_paging_fails_instead_of_returning_a_cut_short_answer()
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(static _ => FakeHttpHandler.Json(OsvAnswers.BatchPaged([(["GHSA-1"], "again")])));
+        using var handler = new RecordingHttpMessageHandler(static _ => HttpResponseFactory.Json(OsvAnswers.BatchPaged([(["GHSA-1"], "again")])));
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeFailure(ResultStatus.Unavailable, "unavailable");
@@ -281,9 +296,10 @@ public sealed class OsvAdvisorySourceTests
         // Arrange
         var ids = Enumerable.Range(0, OsvAdvisorySource.MaxVulnerabilities + 1).Select(static i => $"GHSA-{i}").ToArray();
         using var handler = OsvFake.Handler((_, _) => ids, []);
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeFailure(ResultStatus.Unavailable, "unavailable");
@@ -308,10 +324,11 @@ public sealed class OsvAdvisorySourceTests
     public async Task A_failed_or_partial_lookup_is_a_failure_never_an_empty_success(string scenario)
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(request => OsvFailures.Respond(scenario, request));
+        using var handler = new RecordingHttpMessageHandler(request => OsvFailures.Respond(scenario, request));
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.IsFailure.ShouldBeTrue();
@@ -322,10 +339,11 @@ public sealed class OsvAdvisorySourceTests
     public async Task A_response_that_declares_more_than_the_limit_is_refused()
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(static _ => FakeHttpHandler.Json("{\"results\":[{}]}" + new string(' ', OsvAdvisorySource.MaxResponseBytes)));
+        using var handler = new RecordingHttpMessageHandler(static _ => HttpResponseFactory.Json("{\"results\":[{}]}" + new string(' ', OsvAdvisorySource.MaxResponseBytes)));
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeFailure(ResultStatus.Unavailable, "unavailable").Detail.ShouldContain("larger than", StringComparison.Ordinal);
@@ -335,10 +353,11 @@ public sealed class OsvAdvisorySourceTests
     public async Task A_response_without_a_length_that_grows_past_the_limit_is_refused()
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(static _ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new StreamContent(new UnsizedStream(new byte[OsvAdvisorySource.MaxResponseBytes + 1])) });
+        using var handler = new RecordingHttpMessageHandler(static _ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new StreamContent(new UnsizedStream(new byte[OsvAdvisorySource.MaxResponseBytes + 1])) });
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         result.ShouldBeFailure(ResultStatus.Unavailable, "unavailable").Detail.ShouldContain("larger than", StringComparison.Ordinal);
@@ -350,10 +369,11 @@ public sealed class OsvAdvisorySourceTests
     public async Task A_body_that_fails_while_it_is_read_is_a_failure_not_an_exception(string kind)
     {
         // Arrange
-        using var handler = FakeHttpHandler.Answering(_ => kind == "reset" ? FaultyBodies.ConnectionReset() : FaultyBodies.CorruptGzip());
+        using var handler = new RecordingHttpMessageHandler(_ => kind == "reset" ? FaultyBodies.ConnectionReset() : FaultyBodies.CorruptGzip());
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        var result = await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
+        var result = await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         var error = result.ShouldBeFailure(ResultStatus.Unavailable, "unavailable");
@@ -365,12 +385,13 @@ public sealed class OsvAdvisorySourceTests
     public async Task A_service_that_does_not_answer_in_time_is_a_failure()
     {
         // Arrange
-        using var handler = new FakeHttpHandler(static async (_, cancellationToken) =>
+        using var handler = new DelegateHttpMessageHandler(static async (_, cancellationToken) =>
         {
             await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
             return new HttpResponseMessage();
         });
-        var source = OsvFake.Source(handler, timeout: TimeSpan.FromMilliseconds(50));
+        using var client = new HttpClient(handler, disposeHandler: false);
+        var source = OsvFake.Source(client, timeout: TimeSpan.FromMilliseconds(50));
 
         // Act
         var result = await source.Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
@@ -383,15 +404,16 @@ public sealed class OsvAdvisorySourceTests
     public async Task Cancelling_the_call_throws_instead_of_returning_a_failure()
     {
         // Arrange
-        using var handler = new FakeHttpHandler(static async (_, cancellationToken) =>
+        using var handler = new DelegateHttpMessageHandler(static async (_, cancellationToken) =>
         {
             await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
             return new HttpResponseMessage();
         });
+        using var client = new HttpClient(handler, disposeHandler: false);
         using var cancellation = new CancellationTokenSource(TimeSpan.FromMilliseconds(50));
 
         // Act
-        Func<Task> call = () => OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, cancellation.Token);
+        Func<Task> call = () => OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, cancellation.Token);
 
         // Assert
         await call.ShouldThrowAssignableTo<OperationCanceledException>();
@@ -405,17 +427,18 @@ public sealed class OsvAdvisorySourceTests
         {
             ["GHSA-1:x"] = OsvAnswers.RangeOnly("GHSA-1:x", "a")
         });
+        using var client = new HttpClient(handler, disposeHandler: false);
 
         // Act
-        await OsvFake.Source(handler).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
+        await OsvFake.Source(client).Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
 
         // Assert
         handler.Requests.ShouldAllSatisfy(static r =>
         {
-            r.Uri.Scheme.ShouldBe("https");
-            r.Uri.Host.ShouldBe("api.osv.dev");
-            r.UserAgent.ShouldStartWith("sharedkernel-packages/", StringComparison.Ordinal);
-            r.UserAgent.ShouldNotContain("@", StringComparison.Ordinal);
+            r.Message.RequestUri!.Scheme.ShouldBe("https");
+            r.Message.RequestUri!.Host.ShouldBe("api.osv.dev");
+            r.Message.Headers.UserAgent.ToString().ShouldStartWith("sharedkernel-packages/", StringComparison.Ordinal);
+            r.Message.Headers.UserAgent.ToString().ShouldNotContain("@", StringComparison.Ordinal);
         });
     }
 
@@ -427,7 +450,8 @@ public sealed class OsvAdvisorySourceTests
         {
             ["GHSA-1"] = OsvAnswers.RangeOnly("GHSA-1", "a")
         });
-        var source = OsvFake.Source(handler);
+        using var client = new HttpClient(handler, disposeHandler: false);
+        var source = OsvFake.Source(client);
         await source.Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
         var before = handler.Requests.Count;
 
@@ -444,7 +468,8 @@ public sealed class OsvAdvisorySourceTests
     {
         // Arrange
         using var handler = OsvFake.Handler((_, _) => null, []);
-        var source = OsvFake.Source(handler);
+        using var client = new HttpClient(handler, disposeHandler: false);
+        var source = OsvFake.Source(client);
         await source.Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
 
         // Act
@@ -460,7 +485,8 @@ public sealed class OsvAdvisorySourceTests
         // Arrange
         var time = new TestTimeProvider(OsvFake.Start);
         using var handler = OsvFake.Handler((_, _) => null, []);
-        var source = OsvFake.Source(handler, time, lifetime: TimeSpan.FromMinutes(10));
+        using var client = new HttpClient(handler, disposeHandler: false);
+        var source = OsvFake.Source(client, time, lifetime: TimeSpan.FromMinutes(10));
         await source.Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
         time.Advance(TimeSpan.FromMinutes(9));
         await source.Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
@@ -480,9 +506,10 @@ public sealed class OsvAdvisorySourceTests
     {
         // Arrange
         var fail = true;
-        using var handler = FakeHttpHandler.Answering(_ =>
-            fail ? FakeHttpHandler.Json("{}", HttpStatusCode.ServiceUnavailable) : FakeHttpHandler.Json(OsvAnswers.Batch([null])));
-        var source = OsvFake.Source(handler);
+        using var handler = new RecordingHttpMessageHandler(_ =>
+            fail ? HttpResponseFactory.Json("{}", HttpStatusCode.ServiceUnavailable) : HttpResponseFactory.Json(OsvAnswers.Batch([null])));
+        using var client = new HttpClient(handler, disposeHandler: false);
+        var source = OsvFake.Source(client);
         var first = await source.Query(PackageManagerKind.Npm, [Installed("a", "1.0.0")], NetworkAccess.Allowed, Cancel);
         fail = false;
 
