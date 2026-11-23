@@ -37,22 +37,22 @@ internal sealed class OfferingTranslationValidator<TImageId, TPriceKind, TMetric
     /// <returns>The translation, or <see langword="null"/> when its title or slug is refused.</returns>
     public OfferingTranslation? Validate(OfferingTranslationDefinition definition, bool dated, IReadOnlyList<int> labelOrder, int stepCount, IReadOnlyList<TImageId> imageIds)
     {
-        var title = TextInput.Required(_errors, definition.Title, Field(OfferingFields.Title), "Title", _rules.MaxTitleLength);
+        var title = SanitizedText.Required(_errors, definition.Title, Field(OfferingFields.Title), "Title", _rules.MaxTitleLength);
         var slug = SlugOf(definition.Slug, title);
         if (!Enum.IsDefined(definition.Status))
         {
             Add(OfferingFields.Status, "The publication status is not valid.");
         }
 
-        var dateNote = TextInput.Optional(_errors, definition.DateNote, Field(OfferingFields.DateNote), "Date note", _rules.MaxDateNoteLength);
+        var dateNote = SanitizedText.Optional(_errors, definition.DateNote, Field(OfferingFields.DateNote), "Date note", _rules.MaxDateNoteLength);
         if (dateNote is not null && dated)
         {
             Add(OfferingFields.DateNote, "A date note is allowed only when the offering has no dates.");
         }
 
-        var summary = TextInput.Optional(_errors, definition.Summary, Field(OfferingFields.Summary), "Summary", _rules.MaxSummaryLength);
-        var description = TextInput.Paragraphs(
-            _errors, definition.Description, Field(OfferingFields.Description), "Description", _rules.MaxParagraphs, _rules.MaxParagraphLength);
+        var summary = SanitizedText.Optional(_errors, definition.Summary, Field(OfferingFields.Summary), "Summary", _rules.MaxSummaryLength, out var hasSummary);
+        var description = SanitizedText.Paragraphs(
+            _errors, definition.Description, Field(OfferingFields.Description), "Description", _rules.MaxParagraphs, _rules.MaxParagraphLength, out var hasDescription);
         var highlights = Lines(definition.Highlights, OfferingFields.Highlights, "Highlights");
         if (_rules.HighlightsCount is { } range && highlights.Count > 0 && (highlights.Count < range.Min || highlights.Count > range.Max))
         {
@@ -64,20 +64,20 @@ internal sealed class OfferingTranslationValidator<TImageId, TPriceKind, TMetric
         var stepTexts = StepTexts(definition.StepTexts ?? [], stepCount);
         if (definition.Status == PublicationStatus.Published)
         {
-            PublishRule(summary, description, labels.Count == labelOrder.Count && labels.All(label => label is not null), stepTexts.Count == stepCount, imageIds);
+            PublishRule(hasSummary, hasDescription, labels.Count == labelOrder.Count && labels.All(label => label is not null), stepTexts.Count == stepCount, imageIds);
         }
 
         return title is null || slug is null
             ? null
             : new OfferingTranslation(_culture, definition.Status, slug, title)
             {
-                Subtitle = TextInput.Optional(_errors, definition.Subtitle, Field(OfferingFields.Subtitle), "Subtitle", _rules.MaxLineLength),
-                Eyebrow = TextInput.Optional(_errors, definition.Eyebrow, Field(OfferingFields.Eyebrow), "Eyebrow", _rules.MaxLineLength),
+                Subtitle = SanitizedText.Optional(_errors, definition.Subtitle, Field(OfferingFields.Subtitle), "Subtitle", _rules.MaxLineLength),
+                Eyebrow = SanitizedText.Optional(_errors, definition.Eyebrow, Field(OfferingFields.Eyebrow), "Eyebrow", _rules.MaxLineLength),
                 Summary = summary,
                 Description = description,
                 DateNote = dateNote,
-                SeoTitle = TextInput.Optional(_errors, definition.SeoTitle, Field(OfferingFields.SeoTitle), "SEO title", _rules.MaxTitleLength),
-                SeoDescription = TextInput.Optional(_errors, definition.SeoDescription, Field(OfferingFields.SeoDescription), "SEO description", _rules.MaxSummaryLength),
+                SeoTitle = SanitizedText.Optional(_errors, definition.SeoTitle, Field(OfferingFields.SeoTitle), "SEO title", _rules.MaxTitleLength),
+                SeoDescription = SanitizedText.Optional(_errors, definition.SeoDescription, Field(OfferingFields.SeoDescription), "SEO description", _rules.MaxSummaryLength),
                 Highlights = highlights,
                 Included = Lines(definition.Included, OfferingFields.Included, "Included"),
                 NotIncluded = Lines(definition.NotIncluded, OfferingFields.NotIncluded, "Not included"),
@@ -143,7 +143,7 @@ internal sealed class OfferingTranslationValidator<TImageId, TPriceKind, TMetric
     }
 
     private IReadOnlyList<string> Lines(IReadOnlyList<string?>? values, string field, string label) =>
-        TextInput.Lines(_errors, values, Field(field), label, _rules.MaxListItems, _rules.MaxLineLength);
+        SanitizedText.Lines(_errors, values, Field(field), label, _rules.MaxListItems, _rules.MaxLineLength);
 
     private ReadOnlyCollection<ProgramStepText> StepTexts(IReadOnlyList<ProgramStepTextDefinition> definitions, int stepCount)
     {
@@ -157,15 +157,15 @@ internal sealed class OfferingTranslationValidator<TImageId, TPriceKind, TMetric
         {
             var definition = definitions[index] ?? throw new ArgumentNullException(nameof(definitions), "A step text is null.");
             var number = index + 1;
-            var title = TextInput.Required(_errors, definition.Title, Field(OfferingFields.StepTitle(index)), Invariant($"Step {number} title"), _rules.MaxTitleLength);
+            var title = SanitizedText.Required(_errors, definition.Title, Field(OfferingFields.StepTitle(index)), Invariant($"Step {number} title"), _rules.MaxTitleLength);
             if (title is not null && _rules.ForbiddenStepTitlePrefixes.Any(prefix => StartsWithNumbered(title, prefix)))
             {
                 Add(OfferingFields.StepTitle(index), Invariant($"Step {number} title must not start with a day number; the number comes from its position."));
             }
 
-            var paragraphs = TextInput.Paragraphs(
+            var paragraphs = SanitizedText.Paragraphs(
                 _errors, definition.Text, Field(OfferingFields.StepText(index)), Invariant($"Step {number} text"), _rules.MaxParagraphs, _rules.MaxParagraphLength);
-            var note = TextInput.Optional(_errors, definition.Note, Field(OfferingFields.StepNote(index)), Invariant($"Step {number} note"), _rules.MaxLineLength);
+            var note = SanitizedText.Optional(_errors, definition.Note, Field(OfferingFields.StepNote(index)), Invariant($"Step {number} note"), _rules.MaxLineLength);
             texts.Add(new ProgramStepText(title ?? string.Empty, paragraphs, note));
         }
 
@@ -183,14 +183,14 @@ internal sealed class OfferingTranslationValidator<TImageId, TPriceKind, TMetric
         return rest.Length > 0 && char.IsAsciiDigit(rest[0]);
     }
 
-    private void PublishRule(string? summary, IReadOnlyList<string> description, bool labelsComplete, bool stepsComplete, IReadOnlyList<TImageId> imageIds)
+    private void PublishRule(bool hasSummary, bool hasDescription, bool labelsComplete, bool stepsComplete, IReadOnlyList<TImageId> imageIds)
     {
-        if (summary is null)
+        if (!hasSummary)
         {
             Add(OfferingFields.Summary, "A summary is required before publishing.");
         }
 
-        if (description.Count == 0)
+        if (!hasDescription)
         {
             Add(OfferingFields.Description, "A description is required before publishing.");
         }
@@ -214,7 +214,11 @@ internal sealed class OfferingTranslationValidator<TImageId, TPriceKind, TMetric
 
     private string Field(string field) => OfferingFields.Of(_culture, field);
 
-    private void Add(string field, string message) => TextInput.Add(_errors, Field(field), message);
+    private void Add(string field, string message)
+    {
+        var path = Field(field);
+        _errors.Add(Result.Invalid(detail: message, field: path, message: message));
+    }
 
     private static string Invariant(FormattableString text) => text.ToString(CultureInfo.InvariantCulture);
 }

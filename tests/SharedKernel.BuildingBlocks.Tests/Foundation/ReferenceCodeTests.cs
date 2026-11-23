@@ -53,4 +53,14 @@ public sealed class ReferenceCodeTests
         // Assert
         result.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull()["identifier"].ShouldBe(["Identifier cannot exceed 10 characters."]);
     }
+
+    [Fact]
+    public void Malformed_text_is_an_invalid_code_rather_than_an_exception()
+    {
+        // Act
+        var result = ReferenceCode.Create("a\uD800", 10, field: "identifier", label: "Identifier");
+
+        // Assert
+        result.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull()["identifier"].ShouldBe(["Identifier is not valid text."]);
+    }
 }

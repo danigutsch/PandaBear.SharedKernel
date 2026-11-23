@@ -175,4 +175,14 @@ public sealed class ContactValueObjectTests
         // Assert
         first.ShouldBe(second);
     }
+
+    [Fact]
+    public void Person_name_reports_malformed_text_rather_than_throwing()
+    {
+        // Act
+        var result = PersonName.Create("Ana\uD800", "Silva");
+
+        // Assert
+        result.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull()["firstName"].ShouldBe(["First name is not valid text."]);
+    }
 }

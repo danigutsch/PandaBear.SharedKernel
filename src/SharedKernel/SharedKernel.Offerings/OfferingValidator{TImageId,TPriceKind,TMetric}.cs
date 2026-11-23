@@ -509,37 +509,24 @@ internal sealed class OfferingValidator<TImageId, TPriceKind, TMetric>(OfferingR
         int stepCount,
         IReadOnlyList<TImageId> imageIds)
     {
-        var translations = new List<OfferingTranslation>();
-        var seen = new HashSet<ContentCulture>();
-        foreach (var definition in definitions)
-        {
-            ArgumentNullException.ThrowIfNull(definition, nameof(definitions));
-            if (!_rules.Cultures.TryGet(definition.Culture, out var culture))
-            {
-                Add(OfferingFields.Translations, $"Each translation must use one of the offering languages: {_rules.Cultures}.");
-            }
-            else if (!seen.Add(culture))
-            {
-                Add(OfferingFields.Translations, "Each language can have only one translation.");
-            }
-            else if (new OfferingTranslationValidator<TImageId, TPriceKind, TMetric>(_errors, _rules, _images, culture)
-                .Validate(definition, dated, labelOrder, stepCount, imageIds) is { } translation)
-            {
-                translations.Add(translation);
-            }
-        }
+        var translations = new TranslationListRules(_rules.Cultures, OfferingFields.Translations, "offering").Validate(
+            _errors,
+            definitions,
+            static definition => definition.Culture,
+            (culture, definition) => new OfferingTranslationValidator<TImageId, TPriceKind, TMetric>(_errors, _rules, _images, culture)
+                .Validate(definition, dated, labelOrder, stepCount, imageIds),
+            nameof(definitions));
 
-        if (!seen.Contains(_rules.Cultures.Default))
-        {
-            Add(OfferingFields.Translations, $"A translation in the default language ({_rules.Cultures.Default}) is required.");
-        }
-
-        return translations.AsReadOnly();
+        return new ReadOnlyCollection<OfferingTranslation>([.. translations]);
     }
 
     private bool InYears(int year) => year >= _rules.MinYear && year <= _rules.MaxYear;
 
-    private bool Add(string field, string message) => TextInput.Add(_errors, field, message);
+    private bool Add(string field, string message)
+    {
+        _errors.Add(Result.Invalid(detail: message, field: field, message: message));
+        return false;
+    }
 
     private static string Invariant(FormattableString text) => text.ToString(CultureInfo.InvariantCulture);
 }

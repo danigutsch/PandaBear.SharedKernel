@@ -1,6 +1,5 @@
 using System.Globalization;
 using PandaBear.BuildingBlocks;
-using PandaBear.InputNormalization;
 using PandaBear.Results;
 
 namespace PandaBear.Galleries;
@@ -47,43 +46,16 @@ internal static class AlbumValidation
             Add(errors, AlbumFields.CoverId, "The cover must be one of the album's photos.");
         }
 
-        var translations = new List<AlbumTranslation>();
-        var seen = new HashSet<ContentCulture>();
-        foreach (var translation in definition.Translations ?? [])
-        {
-            ArgumentNullException.ThrowIfNull(translation, nameof(definition));
-            if (Culture(errors, rules.Cultures, translation.Culture, seen) is { } culture
-                && Translation(errors, rules, culture, translation, photoIds, photos) is { } validated)
-            {
-                translations.Add(validated);
-            }
-        }
-
-        if (!seen.Contains(rules.Cultures.Default))
-        {
-            Add(errors, AlbumFields.Translations, $"A translation in the default language ({rules.Cultures.Default}) is required.");
-        }
+        var translations = new TranslationListRules(rules.Cultures, AlbumFields.Translations, "album").Validate(
+            errors,
+            definition.Translations,
+            static translation => translation.Culture,
+            (culture, translation) => Translation(errors, rules, culture, translation, photoIds, photos),
+            nameof(definition));
 
         return errors.HasErrors
             ? errors.ToResult<AlbumData<TPhotoId, TRelatedId>>()
             : Result.Ok(new AlbumData<TPhotoId, TRelatedId>(definition.SortOrder, definition.RelatedId, [.. photoIds], definition.CoverId, [.. translations]));
-    }
-
-    private static ContentCulture? Culture(ValidationErrors errors, SupportedCultures cultures, string? value, HashSet<ContentCulture> seen)
-    {
-        if (!cultures.TryGet(value, out var culture))
-        {
-            Add(errors, AlbumFields.Translations, $"Each translation must use one of the album languages: {cultures}.");
-            return null;
-        }
-
-        if (!seen.Add(culture))
-        {
-            Add(errors, AlbumFields.Translations, "Each language can have only one translation.");
-            return null;
-        }
-
-        return culture;
     }
 
     private static AlbumTranslation? Translation<TPhotoId>(
@@ -95,27 +67,9 @@ internal static class AlbumValidation
         IAlbumPhotoEligibility<TPhotoId> photos)
         where TPhotoId : struct, IEquatable<TPhotoId>
     {
-        var valid = true;
-        var titleField = AlbumFields.Of(culture, AlbumFields.Title);
-        var title = string.Empty;
-        if (!StringSanitizer.TrySanitize(definition.Title, out var sanitized))
-        {
-            valid = Add(errors, titleField, "Title is not valid text.");
-        }
-        else if (string.IsNullOrEmpty(sanitized))
-        {
-            valid = Add(errors, titleField, "Title is required.");
-        }
-        else if (sanitized.Length > rules.MaxTitleLength)
-        {
-            valid = Add(errors, titleField, string.Create(CultureInfo.InvariantCulture, $"Title cannot exceed {rules.MaxTitleLength} characters."));
-        }
-        else
-        {
-            title = sanitized;
-        }
-
-        var slug = SlugOf(errors, rules, culture, definition.Slug, valid ? title : null);
+        var title = SanitizedText.Required(errors, definition.Title, AlbumFields.Of(culture, AlbumFields.Title), "Title", rules.MaxTitleLength);
+        var valid = title is not null;
+        var slug = SlugOf(errors, rules, culture, definition.Slug, title);
         valid &= slug is not null;
 
         if (!Enum.IsDefined(definition.Status))
@@ -127,7 +81,7 @@ internal static class AlbumValidation
             valid &= PublishRule(errors, culture, photoIds, photos);
         }
 
-        return valid ? AlbumTranslation.Restore(culture, title, slug!, definition.Status) : null;
+        return valid ? AlbumTranslation.Restore(culture, title!, slug!, definition.Status) : null;
     }
 
     private static Slug? SlugOf(ValidationErrors errors, AlbumRules rules, ContentCulture culture, string? value, string? title)

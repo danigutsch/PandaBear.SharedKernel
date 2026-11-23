@@ -115,4 +115,16 @@ public sealed class PostalAddressTests
         // Assert
         first.ShouldBe(second);
     }
+
+    [Fact]
+    public void Malformed_text_is_an_invalid_part_rather_than_an_exception()
+    {
+        // Act
+        var result = PostalAddress.Create("Rua \uD800", "\uDC00", null, "01000", "Sao Paulo", null, "BR");
+
+        // Assert
+        var errors = result.ErrorDetails.ShouldNotBeNull().ValidationErrors.ShouldNotBeNull();
+        errors["street"].ShouldBe(["Street is not valid text."]);
+        errors["complement"].ShouldBe(["Complement is not valid text."]);
+    }
 }

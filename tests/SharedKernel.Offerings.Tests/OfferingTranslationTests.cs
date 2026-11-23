@@ -182,6 +182,22 @@ public sealed class OfferingTranslationTests
     }
 
     [Fact]
+    public void An_over_long_summary_or_description_reports_only_its_cap_when_publishing()
+    {
+        // Arrange
+        var summary = new string('s', Rules.MaxSummaryLength + 1);
+        var description = new string('d', Rules.MaxParagraphLength + 1);
+
+        // Act
+        var error = Refused(Tour(Translation(status: PublicationStatus.Published) with { Summary = summary, Description = description }));
+
+        // Assert
+        Fields(error).ShouldBe(["pt.description", "pt.summary"]);
+        error.ShouldHaveValidationError("pt.summary", $"Summary cannot exceed {Rules.MaxSummaryLength} characters.");
+        error.ShouldHaveValidationError("pt.description", $"Description: each paragraph must be at most {Rules.MaxParagraphLength} characters.");
+    }
+
+    [Fact]
     public void A_draft_may_be_incomplete()
     {
         // Act

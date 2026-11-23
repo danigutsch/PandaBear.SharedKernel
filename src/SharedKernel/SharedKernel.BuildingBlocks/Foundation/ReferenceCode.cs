@@ -19,14 +19,14 @@ public sealed class ReferenceCode : ValueObject
     public static Result<ReferenceCode> Create(string? value, int maxLength, string field = "code", string label = "Code")
     {
         var errors = new ValidationErrors();
-        var sanitized = TextRules.Required(errors, value, field, label, maxLength);
-        if (!errors.HasErrors && !sanitized.All(static character => char.IsAsciiLetterOrDigit(character) || character is '-' or '_'))
+        var sanitized = SanitizedText.Required(errors, value, field, label, maxLength);
+        if (sanitized is not null && !sanitized.All(static character => char.IsAsciiLetterOrDigit(character) || character is '-' or '_'))
         {
             var message = $"{label} can only contain letters, digits, '-' and '_'.";
             errors.Add(Result.Invalid(detail: message, field: field, message: message));
         }
 
-        return errors.HasErrors ? errors.ToResult<ReferenceCode>() : Result.Ok(new ReferenceCode(sanitized.ToUpperInvariant()));
+        return errors.HasErrors ? errors.ToResult<ReferenceCode>() : Result.Ok(new ReferenceCode(sanitized!.ToUpperInvariant()));
     }
 
     /// <inheritdoc />

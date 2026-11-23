@@ -113,6 +113,37 @@ public sealed class PageSectionTests
     }
 
     [Fact]
+    public void Over_long_text_reports_only_its_cap_and_still_counts_as_given()
+    {
+        // Act
+        var heading = Create(_context, false, Text(), Text(heading: new string('h', 201)) with { Level = SectionLevel.Subsection });
+        var text = Refused(_context, Text(heading: null, text: new string('x', 4001)));
+        var answer = Refused(_context, Text() with { Questions = [new("Q?", new string('a', 4001))] });
+
+        // Assert
+        Fields(heading.ErrorDetails).ShouldBe(["pt.sections[1].heading"]);
+        heading.ErrorDetails.ShouldHaveValidationError("pt.sections[1].heading", "Section heading cannot exceed 200 characters.");
+        Fields(text).ShouldBe([Field + ".text"]);
+        text.ShouldHaveValidationError(Field + ".text", "Section text: each paragraph must be at most 4000 characters.");
+        Fields(answer).ShouldBe([Field + ".questions[0].answer"]);
+        answer.ShouldHaveValidationError(Field + ".questions[0].answer", "Question 1 answer: each paragraph must be at most 4000 characters.");
+    }
+
+    [Fact]
+    public void Malformed_text_reports_only_that_it_is_not_valid_text()
+    {
+        // Act
+        var heading = Create(_context, false, Text(), Text(heading: "Broken \uD800") with { Level = SectionLevel.Subsection });
+        var text = Refused(_context, Text(heading: null, text: "Broken \uD800"));
+
+        // Assert
+        Fields(heading.ErrorDetails).ShouldBe(["pt.sections[1].heading"]);
+        heading.ErrorDetails.ShouldHaveValidationError("pt.sections[1].heading", "Section heading is not valid text.");
+        Fields(text).ShouldBe([Field + ".text"]);
+        text.ShouldHaveValidationError(Field + ".text", "Section text is not valid text.");
+    }
+
+    [Fact]
     public void Questions_are_bounded_and_each_needs_a_question_and_an_answer()
     {
         // Act

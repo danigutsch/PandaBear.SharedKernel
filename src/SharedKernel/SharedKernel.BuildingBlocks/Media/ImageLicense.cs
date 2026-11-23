@@ -36,7 +36,7 @@ public sealed class ImageLicense : ValueObject
     public static Result<ImageLicense> Create(string? code, string? link, string field = "license")
     {
         var errors = new ValidationErrors();
-        var sanitized = CreditText.Required(errors, code, field + ".code", "License", MaxCodeLength);
+        var sanitized = SanitizedText.Required(errors, code, field + ".code", "License", MaxCodeLength);
         var validLink = CreditText.HttpsUrl(errors, link, field + ".url", "License link");
         return errors.HasErrors ? errors.ToResult<ImageLicense>() : Result.Ok(new ImageLicense(sanitized!, validLink));
     }

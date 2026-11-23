@@ -69,12 +69,12 @@ public sealed class PostalAddress : ValueObject
     {
         labels ??= PostalAddressLabels.Default;
         var errors = new ValidationErrors();
-        var validStreet = TextRules.Required(errors, street, "street", labels.Street, MaxPartLength);
-        var validComplement = TextRules.Optional(errors, complement, "complement", labels.Complement, MaxPartLength);
-        var validNeighborhood = TextRules.Optional(errors, neighborhood, "neighborhood", labels.Neighborhood, MaxPartLength);
-        var validPostalCode = TextRules.Required(errors, postalCode, "postalCode", labels.PostalCode, MaxPostalCodeLength);
-        var validCity = TextRules.Required(errors, city, "city", labels.City, MaxPartLength);
-        var validState = TextRules.Optional(errors, state, "state", labels.State, MaxPartLength);
+        var validStreet = SanitizedText.Required(errors, street, "street", labels.Street, MaxPartLength);
+        var validComplement = SanitizedText.Optional(errors, complement, "complement", labels.Complement, MaxPartLength);
+        var validNeighborhood = SanitizedText.Optional(errors, neighborhood, "neighborhood", labels.Neighborhood, MaxPartLength);
+        var validPostalCode = SanitizedText.Required(errors, postalCode, "postalCode", labels.PostalCode, MaxPostalCodeLength);
+        var validCity = SanitizedText.Required(errors, city, "city", labels.City, MaxPartLength);
+        var validState = SanitizedText.Optional(errors, state, "state", labels.State, MaxPartLength);
         var countryResult = CountryCode.Create(country);
         if (countryResult.IsFailure)
         {
@@ -86,7 +86,7 @@ public sealed class PostalAddress : ValueObject
 
         return errors.HasErrors
             ? errors.ToResult<PostalAddress>()
-            : Result.Ok(new PostalAddress(validStreet, validComplement, validNeighborhood, validPostalCode, validCity, validState, countryResult.Value));
+            : Result.Ok(new PostalAddress(validStreet!, validComplement, validNeighborhood, validPostalCode!, validCity!, validState, countryResult.Value));
     }
 
     /// <summary>For persistence mappers: rebuilds an address from parts that were produced by this type earlier; it performs NO validation beyond null/blank checks of the required parts and the same sanitizing as <see cref="Create"/>, so length limits are not enforced and a stored value that a newer rule would reject can still be loaded; never use it for user input.</summary>
