@@ -56,6 +56,14 @@ The owner approved the proposal (2026-11-22) and these corrections, found while 
 - A section's button style is `LinkStyle` (Primary, Secondary, Outline; default Primary) in PageSections, not Blazor.Site's
   `ButtonVariant`, which a BuildingBlocks-only model cannot reference. The renderer maps one to the other.
 
+## Enum zero values
+
+`OfferingAvailability` and `OfferingCallToAction` have an explicit `Unspecified = 0` ("not set") and explicit values for every member,
+following the .NET enum design guidelines and CA1008 (a simple enum has a zero value; the rule is not suppressed) and Google's AIP-126 and
+AIP-216 (the zero of a state enum is "unspecified", accepted on input and never a valid state). Validation, Restore, the structured-data
+option, the text helpers and the listing refuse it, every switch over these enums ends in a throwing arm, and a view's call to action is
+never `Unspecified`. Applications serialize them by name, with `JsonStringEnumConverter<TEnum>` and `allowIntegerValues: false`.
+
 ## Consequences
 
 - Two more preview packages with public API baselines. No new NuGet dependency: JSON-LD is built with `System.Text.Json.Nodes`, without

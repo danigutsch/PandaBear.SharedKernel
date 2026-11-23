@@ -75,10 +75,10 @@ internal sealed class OfferingValidator<TImageId, TPriceKind, TMetric>(OfferingR
     private OfferingSchedule? Schedule(OfferingScheduleDefinition definition, bool dated)
     {
         var availability = definition.Availability;
-        var defined = Enum.IsDefined(availability);
+        var defined = availability != OfferingAvailability.Unspecified && Enum.IsDefined(availability);
         if (!defined)
         {
-            Add(OfferingFields.Availability, availability == default ? "Availability is required." : "The availability is not supported.");
+            Add(OfferingFields.Availability, availability == OfferingAvailability.Unspecified ? "Availability is required." : "The availability is not supported.");
         }
 
         var dates = Dates(definition);
@@ -138,8 +138,12 @@ internal sealed class OfferingValidator<TImageId, TPriceKind, TMetric>(OfferingR
     {
         switch (availability)
         {
-            case OfferingAvailability.Scheduled or OfferingAvailability.SoldOut when !dated:
-                Add(OfferingFields.StartDate, "A scheduled or sold-out offering needs its dates.");
+            case OfferingAvailability.Scheduled or OfferingAvailability.SoldOut:
+                if (!dated)
+                {
+                    Add(OfferingFields.StartDate, "A scheduled or sold-out offering needs its dates.");
+                }
+
                 break;
             case OfferingAvailability.OnRequest:
                 if (dated)
@@ -153,9 +157,15 @@ internal sealed class OfferingValidator<TImageId, TPriceKind, TMetric>(OfferingR
                 }
 
                 break;
-            case OfferingAvailability.DatesToBeConfirmed when !dated && year is null:
-                Add(OfferingFields.Year, "An offering whose dates are to be confirmed needs a year until it has dates.");
+            case OfferingAvailability.DatesToBeConfirmed:
+                if (!dated && year is null)
+                {
+                    Add(OfferingFields.Year, "An offering whose dates are to be confirmed needs a year until it has dates.");
+                }
+
                 break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(availability), availability, "Only a valid availability has date rules.");
         }
     }
 

@@ -150,16 +150,30 @@ public sealed class OfferingViewTests
         offering.SignUpLink.ShouldBe(link ? WebUrl.Restore("https://forms.example.org/romantic-road") : null);
     }
 
-    [Fact]
-    public void The_call_to_action_has_no_default_value()
+    [Theory]
+    [InlineData(OfferingAvailability.Scheduled, true)]
+    [InlineData(OfferingAvailability.Scheduled, false)]
+    [InlineData(OfferingAvailability.SoldOut, true)]
+    [InlineData(OfferingAvailability.DatesToBeConfirmed, false)]
+    [InlineData(OfferingAvailability.OnRequest, true)]
+    public void The_call_to_action_of_a_view_is_never_unspecified(OfferingAvailability availability, bool link)
     {
+        // Arrange
+        var schedule = availability == OfferingAvailability.OnRequest
+            ? Schedule(availability)
+            : Schedule(availability, new DateOnly(2027, 9, 20), new DateOnly(2027, 9, 22));
+        var offering = Valid(Tour(Translation(status: PublicationStatus.Published)) with
+        {
+            Schedule = schedule,
+            SignUpLink = link ? "https://forms.example.org/romantic-road" : null,
+        });
+
         // Act
-        var defined = Enum.IsDefined(default(OfferingCallToAction));
-        var values = Enum.GetValues<OfferingCallToAction>().Select(value => (int)value);
+        var view = offering.PublishedIn(Portuguese, Cultures).ShouldNotBeNull();
 
         // Assert
-        defined.ShouldBeFalse();
-        values.ShouldBe([1, 2]);
+        view.CallToAction.ShouldNotBe(OfferingCallToAction.Unspecified);
+        default(OfferingCallToAction).ShouldBe(OfferingCallToAction.Unspecified);
     }
 
     [Fact]

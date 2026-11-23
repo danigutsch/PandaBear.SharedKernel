@@ -54,9 +54,9 @@ internal static class OfferingRestoration
 
     private static OfferingSchedule Schedule(OfferingScheduleDefinition schedule)
     {
-        if (!Enum.IsDefined(schedule.Availability))
+        if (!OfferingSchedules.IsValid(schedule.Availability))
         {
-            throw Refused("The availability is not defined.");
+            throw Refused("The availability is not set or not defined.");
         }
 
         DateOnlyRange? dates = null;

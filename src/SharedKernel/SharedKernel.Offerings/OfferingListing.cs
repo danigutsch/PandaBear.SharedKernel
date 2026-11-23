@@ -30,6 +30,7 @@ public static class OfferingListing
     /// <param name="schedule">Reads an item's schedule.</param>
     /// <returns>The groups; a group without items is left out.</returns>
     /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">A schedule's availability is <see cref="OfferingAvailability.Unspecified"/> or not defined.</exception>
     public static IReadOnlyList<OfferingGroup<TItem>> Group<TItem>(IEnumerable<TItem> items, Func<TItem, int> sortOrder, Func<TItem, OfferingSchedule> schedule)
     {
         ArgumentNullException.ThrowIfNull(items);
@@ -37,7 +38,7 @@ public static class OfferingListing
         ArgumentNullException.ThrowIfNull(schedule);
 
         var ordered = items
-            .Select(item => (Item: item, Schedule: schedule(item)))
+            .Select(item => (Item: item, Schedule: Checked(schedule(item))))
             .OrderBy(entry => sortOrder(entry.Item))
             .ThenBy(entry => entry.Schedule.Dates is null)
             .ThenBy(entry => entry.Schedule.Dates?.StartDate)
@@ -52,5 +53,12 @@ public static class OfferingListing
         return onRequest.Count == 0
             ? [.. years]
             : [.. years, new OfferingGroup<TItem>(OfferingGroupKind.OnRequest, null, onRequest.AsReadOnly())];
+    }
+
+    private static OfferingSchedule Checked(OfferingSchedule schedule)
+    {
+        ArgumentNullException.ThrowIfNull(schedule, nameof(schedule));
+        OfferingSchedules.Check(schedule, nameof(schedule));
+        return schedule;
     }
 }

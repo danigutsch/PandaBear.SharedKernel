@@ -1,14 +1,17 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace PandaBear.Offerings;
 
 /// <summary>
-/// Whether an offering can be booked and on what dates. It is required: the default value is not defined, so a missing availability is a
-/// validation error and never means <see cref="Scheduled"/>. Store it by name.
+/// Whether an offering can be booked and on what dates. It is required: the default value, <see cref="Unspecified"/>, means "not set", so a
+/// missing availability is a validation error and never means <see cref="Scheduled"/>. Store it by name.
 /// </summary>
-[SuppressMessage("Design", "CA1008:Enums should have zero value", Justification = "Zero is deliberately undefined, so a missing availability is refused and never read as Scheduled.")]
 public enum OfferingAvailability
 {
+    /// <summary>
+    /// Not set. It is never a valid state of an offering: validation, restore and every reader refuse it. It is the zero value so that an
+    /// unset field or an empty payload is never read as a real availability.
+    /// </summary>
+    Unspecified = 0,
+
     /// <summary>Fixed dates with places left; the call to action is signing up.</summary>
     Scheduled = 1,
 

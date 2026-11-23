@@ -22,12 +22,14 @@ public static class OfferingText
     /// <param name="provider">The culture.</param>
     /// <returns>The line, or <see langword="null"/>.</returns>
     /// <exception cref="ArgumentNullException">A required argument is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">The schedule's availability is <see cref="OfferingAvailability.Unspecified"/> or not defined.</exception>
     public static string? DateLine(OfferingSchedule schedule, string? dateNote, DateRangePatterns patterns, string toBeConfirmedFormat, IFormatProvider provider)
     {
         ArgumentNullException.ThrowIfNull(schedule);
         ArgumentNullException.ThrowIfNull(patterns);
         ArgumentNullException.ThrowIfNull(toBeConfirmedFormat);
         ArgumentNullException.ThrowIfNull(provider);
+        OfferingSchedules.Check(schedule, nameof(schedule));
 
         if (schedule.Dates is { } dates)
         {
@@ -74,12 +76,14 @@ public static class OfferingText
     /// <param name="provider">The culture.</param>
     /// <returns>The parts.</returns>
     /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">The schedule's availability is <see cref="OfferingAvailability.Unspecified"/> or not defined.</exception>
     public static IReadOnlyList<string> Duration(OfferingSchedule schedule, PluralFormat days, PluralFormat nights, IFormatProvider provider)
     {
         ArgumentNullException.ThrowIfNull(schedule);
         ArgumentNullException.ThrowIfNull(days);
         ArgumentNullException.ThrowIfNull(nights);
         ArgumentNullException.ThrowIfNull(provider);
+        OfferingSchedules.Check(schedule, nameof(schedule));
 
         return schedule.Nights > 0
             ? [days.Format(schedule.DurationDays, provider), nights.Format(schedule.Nights, provider)]

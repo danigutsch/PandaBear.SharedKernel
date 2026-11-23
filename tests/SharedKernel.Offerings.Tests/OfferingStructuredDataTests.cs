@@ -144,13 +144,15 @@ public sealed class OfferingStructuredDataTests
     }
 
     [Fact]
-    public void An_undefined_availability_override_is_refused()
+    public void An_unspecified_or_undefined_availability_override_is_refused()
     {
         // Act
-        Action act = () => _ = new OfferingStructuredDataOptions<TourPriceKind> { Availability = (OfferingAvailability)0 };
+        Action unspecified = () => _ = new OfferingStructuredDataOptions<TourPriceKind> { Availability = OfferingAvailability.Unspecified };
+        Action undefined = () => _ = new OfferingStructuredDataOptions<TourPriceKind> { Availability = (OfferingAvailability)99 };
 
         // Assert
-        act.ShouldThrow<ArgumentOutOfRangeException>();
+        unspecified.ShouldThrow<ArgumentOutOfRangeException>();
+        undefined.ShouldThrow<ArgumentOutOfRangeException>();
     }
 
     [Fact]

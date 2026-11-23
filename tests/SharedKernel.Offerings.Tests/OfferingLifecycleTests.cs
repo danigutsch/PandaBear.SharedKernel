@@ -182,7 +182,8 @@ public sealed class OfferingLifecycleTests
         ShouldNotRestore(stored with { Translations = [portuguese with { Slug = "Not Canonical" }] });
         ShouldNotRestore(stored with { Translations = [portuguese with { Title = " " }] });
         ShouldNotRestore(stored with { Translations = [portuguese with { Description = "Broken \uD800" }] });
-        ShouldNotRestore(stored with { Schedule = stored.Schedule with { Availability = 0 } });
+        ShouldNotRestore(stored with { Schedule = stored.Schedule with { Availability = OfferingAvailability.Unspecified } });
+        ShouldNotRestore(stored with { Schedule = stored.Schedule with { Availability = (OfferingAvailability)99 } });
         ShouldNotRestore(stored with { Schedule = stored.Schedule with { EndDate = null } });
         ShouldNotRestore(stored with { Schedule = stored.Schedule with { EndDate = new DateOnly(2027, 9, 1) } });
         ShouldNotRestore(stored with { Schedule = stored.Schedule with { DurationDays = 0 } });

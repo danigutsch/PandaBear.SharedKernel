@@ -102,7 +102,8 @@ on replay the from price and the labelled prices follow the current rules; a sto
 
 ### Availability
 
-`OfferingAvailability` is required. Its zero value is not defined, so a missing availability is an error and never means `Scheduled`.
+`OfferingAvailability` is required. Its zero value is `Unspecified` ("not set", see [Enums](#enums)), so a missing availability is an
+error and never means `Scheduled`.
 
 | Availability | Dates | Year | Date note | Call to action | schema.org |
 | --- | --- | --- | --- | --- | --- |
@@ -156,13 +157,25 @@ Errors are `Result`/`ValidationErrors` at the paths of `OfferingFields`; a trans
 | `{culture}.steps`, `.steps[i].title`, `.steps[i].text`, `.steps[i].note` | more texts than steps, or missing to publish; the title prefix and text rules |
 | `{culture}.images` | images not eligible in the culture, to publish |
 
+## Enums
+
+`OfferingAvailability` and `OfferingCallToAction` give every member an explicit value, because applications persist and serialize
+them, and their zero is `Unspecified`, which means "not set":
+
+- inputs (a definition, a stored row, an event) may carry `Unspecified`, but a validated `Offering` never does: `Create` refuses it with
+  `Availability is required.` on `availability`, `Restore` refuses it with an `ArgumentException`, and the structured-data option, the
+  text helpers and the listing refuse it as invalid input; a view's call to action is always `SignUp` or `Contact`;
+- serialize them by name, with System.Text.Json's `JsonStringEnumConverter<TEnum>` (trimming- and NativeAOT-safe) and
+  `allowIntegerValues: false`, so a numeric payload such as `0` is refused instead of read;
+- persistence stores the names, or the explicit numbers, never positions.
+
 ## Public view and listing
 
 `offering.PublishedIn(requestedCulture, cultures)` builds the `OfferingView` of one whole published translation through
 `TranslationSet.TryResolve`: the exact culture, its neutral parent or another culture of its language, else the default culture. It
 never mixes the fields of two translations, and `view.Culture` tells which one it is so the page can mark it with `lang`. The view carries
 the text (`SeoTitle` falls back to the title and `SeoDescription` to the summary), the schedule fields, `CallToAction` (`SignUp` only for
-a scheduled offering with a link, else `Contact`; zero is not defined) and `SignUpLink` (only with `SignUp`), the prices as `PriceView(Kind, Amount, Label,
+a scheduled offering with a link, else `Contact`; never `Unspecified`) and `SignUpLink` (only with `SignUp`), the prices as `PriceView(Kind, Amount, Label,
 IsBase)` with this culture's labels, `FromPrice`, the conditions, the metrics, the steps as `ProgramStepView(Number, Title, Paragraphs,
 Note, ImageId, Metrics)`, the lists and the images. It returns `null` when no published translation applies.
 

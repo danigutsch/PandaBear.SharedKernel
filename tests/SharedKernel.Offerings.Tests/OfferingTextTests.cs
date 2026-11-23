@@ -190,6 +190,21 @@ public sealed class OfferingTextTests
     }
 
     [Fact]
+    public void An_unspecified_availability_is_invalid_input_for_the_sentences()
+    {
+        // Arrange
+        var schedule = new OfferingSchedule(OfferingAvailability.Unspecified, null, 2028, 3);
+
+        // Act
+        Action dateLine = () => OfferingText.DateLine(schedule, null, PortugueseDates, "Datas a confirmar, {0}", PtBr);
+        Action duration = () => OfferingText.Duration(schedule, new PluralFormat("{0} dia", "{0} dias"), new PluralFormat("{0} noite", "{0} noites"), PtBr);
+
+        // Assert
+        dateLine.ShouldThrow<ArgumentException>();
+        duration.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact]
     public void A_plural_format_picks_one_for_one_and_other_for_every_other_count()
     {
         // Arrange

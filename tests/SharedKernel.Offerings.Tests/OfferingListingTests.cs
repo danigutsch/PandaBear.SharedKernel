@@ -63,6 +63,19 @@ public sealed class OfferingListingTests
     }
 
     [Fact]
+    public void An_unspecified_availability_is_invalid_input_for_the_listing()
+    {
+        // Arrange
+        var items = new[] { new OfferingSchedule(OfferingAvailability.Unspecified, null, 2028, 3) };
+
+        // Act
+        Action act = () => OfferingListing.Group(items, _ => 0, schedule => schedule);
+
+        // Assert
+        act.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact]
     public void Grouping_refuses_missing_arguments()
     {
         // Act

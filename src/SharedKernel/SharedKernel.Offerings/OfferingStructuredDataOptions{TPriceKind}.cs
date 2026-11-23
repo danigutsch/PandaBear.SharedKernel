@@ -42,12 +42,12 @@ public sealed class OfferingStructuredDataOptions<TPriceKind>
     public Func<TPriceKind, ContentCulture, string?>? PriceLabel { get; init; }
 
     /// <summary>Gets an availability that replaces the offering's own in the offer, such as one derived from bookings.</summary>
-    /// <exception cref="ArgumentOutOfRangeException">The value is not a defined <see cref="OfferingAvailability"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The value is <see cref="OfferingAvailability.Unspecified"/> or not defined.</exception>
     public OfferingAvailability? Availability
     {
         get => _availability;
-        init => _availability = value is not { } availability || Enum.IsDefined(availability)
+        init => _availability = value is not { } availability || OfferingSchedules.IsValid(availability)
             ? value
-            : throw new ArgumentOutOfRangeException(nameof(value), value, "The availability is not defined.");
+            : throw new ArgumentOutOfRangeException(nameof(value), value, "The availability is not set or not defined.");
     }
 }

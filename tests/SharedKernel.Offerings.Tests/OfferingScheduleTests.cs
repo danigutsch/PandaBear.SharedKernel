@@ -45,7 +45,7 @@ public sealed class OfferingScheduleTests
     }
 
     [Theory]
-    [InlineData(0, "Availability is required.")]
+    [InlineData((int)OfferingAvailability.Unspecified, "Availability is required.")]
     [InlineData(99, "The availability is not supported.")]
     public void A_missing_or_unknown_availability_is_refused_and_never_means_scheduled(int availability, string message)
     {
@@ -54,6 +54,18 @@ public sealed class OfferingScheduleTests
 
         // Assert
         error.ShouldHaveValidationError(OfferingFields.Availability, message);
+    }
+
+    [Fact]
+    public void An_unspecified_availability_is_refused_whatever_the_dates()
+    {
+        // Act
+        var dated = Refused(Tour() with { Schedule = Schedule(OfferingAvailability.Unspecified, Start, End) });
+        var undated = Refused(Tour() with { Schedule = Schedule(OfferingAvailability.Unspecified, year: 2027) });
+
+        // Assert
+        dated.ShouldHaveValidationError(OfferingFields.Availability, "Availability is required.");
+        undated.ShouldHaveValidationError(OfferingFields.Availability, "Availability is required.");
     }
 
     [Theory]

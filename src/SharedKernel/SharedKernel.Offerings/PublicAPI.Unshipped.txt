@@ -652,3 +652,5 @@ override PandaBear.Offerings.GroupConditionFormats.ToString() -> string!
 static PandaBear.Offerings.GroupConditionFormats.operator !=(PandaBear.Offerings.GroupConditionFormats? left, PandaBear.Offerings.GroupConditionFormats? right) -> bool
 static PandaBear.Offerings.GroupConditionFormats.operator ==(PandaBear.Offerings.GroupConditionFormats? left, PandaBear.Offerings.GroupConditionFormats? right) -> bool
 static PandaBear.Offerings.OfferingText.GroupCondition(PandaBear.Offerings.GroupCondition! condition, PandaBear.Offerings.GroupConditionFormats! formats, PandaBear.BuildingBlocks.MoneyDisplayOptions! money, System.IFormatProvider! provider) -> string!
+PandaBear.Offerings.OfferingAvailability.Unspecified = 0 -> PandaBear.Offerings.OfferingAvailability
+PandaBear.Offerings.OfferingCallToAction.Unspecified = 0 -> PandaBear.Offerings.OfferingCallToAction
