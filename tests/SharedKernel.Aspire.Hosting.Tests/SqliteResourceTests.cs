@@ -55,7 +55,7 @@ public sealed class SqliteResourceTests
         builder.AddSqlite("db").WithDataBindMount(Path.Combine(temp.Path, "nested"));
 
         // Assert
-        Directory.Exists(temp.Path).ShouldBeFalse();
+        Directory.EnumerateFileSystemEntries(temp.Path).ShouldBeEmpty();
     }
 
     /// <summary>Verifies that the before-start event creates the folder but not the database file, and the temporary folder is never created.</summary>
@@ -206,7 +206,6 @@ public sealed class SqliteResourceTests
     {
         // Arrange
         using var temp = new TemporaryDirectory();
-        Directory.CreateDirectory(temp.Path);
         var builder = DistributedApplication.CreateBuilder([]);
         builder.AddSqlite("db").WithDataBindMount(temp.Path);
 
@@ -223,7 +222,6 @@ public sealed class SqliteResourceTests
     {
         // Arrange
         using var temp = new TemporaryDirectory();
-        Directory.CreateDirectory(temp.Path);
         var builder = DistributedApplication.CreateBuilder([]);
         var sqlite = builder.AddSqlite("db").WithDataBindMount(temp.Path);
         await File.WriteAllTextAsync(sqlite.Resource.DatabasePath, "x", TestContext.Current.CancellationToken);
@@ -241,7 +239,6 @@ public sealed class SqliteResourceTests
     {
         // Arrange
         using var temp = new TemporaryDirectory();
-        Directory.CreateDirectory(temp.Path);
         var builder = DistributedApplication.CreateBuilder([]);
         var sqlite = builder.AddSqlite("db").WithDataBindMount(temp.Path);
         await File.WriteAllTextAsync(sqlite.Resource.DatabasePath, "x", TestContext.Current.CancellationToken);
@@ -262,7 +259,6 @@ public sealed class SqliteResourceTests
     {
         // Arrange
         using var temp = new TemporaryDirectory();
-        Directory.CreateDirectory(temp.Path);
         var builder = DistributedApplication.CreateBuilder([]);
         builder.AddSqlite("db").WithDataBindMount(temp.Path);
         using var readOnly = new ReadOnlyDirectory(temp.Path);

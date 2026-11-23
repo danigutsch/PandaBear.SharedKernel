@@ -4,7 +4,7 @@ namespace PandaBear.Testing.CodeFixRunner.Tests;
 /// <summary>Tests that <c>CodeFixRunEngine.Run</c> applies, skips and reports code fixes against temporary project files.</summary>
 public sealed class CodeFixRunEngineTests : IDisposable
 {
-    private readonly TemporaryProjectDirectory projectDirectory = TemporaryProjectDirectory.Create();
+    private readonly TemporaryDirectory projectDirectory = new();
 
     [Fact]
     public async Task Run_applies_SKTEST006_code_fix_to_project_file()

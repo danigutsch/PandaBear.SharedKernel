@@ -256,15 +256,6 @@ internal static class CodeFixRunnerTestProject
         }
         """;
 
-    /// <summary>Creates an empty directory named <c>sk-codefix-runner-</c> plus a new GUID under the system temp path.</summary>
-    /// <returns>The full path of the created directory.</returns>
-    public static string CreateTemporaryProject()
-    {
-        var projectDirectory = Path.Combine(Path.GetTempPath(), "sk-codefix-runner-" + Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture));
-        Directory.CreateDirectory(projectDirectory);
-        return projectDirectory;
-    }
-
     // The unrestored project gets framework references only from a targeting pack that the selected SDK ships. The
     // repository's pinned SDK ships one; a newer installed SDK can need a downloaded pack and then loads no references.
     /// <summary>Copies the repository <c>global.json</c> into the directory so the sample project loads with the pinned SDK.</summary>

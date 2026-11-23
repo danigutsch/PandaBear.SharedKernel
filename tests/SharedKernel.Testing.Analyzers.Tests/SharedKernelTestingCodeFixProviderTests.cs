@@ -769,7 +769,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             }
             """;
 
-        using var tempDirectory = TemporaryCodeFixDirectory.Create();
+        using var tempDirectory = new TemporaryDirectory();
         var sourcePath = Path.Combine(tempDirectory.Path, "TourLoaderTests.cs");
         var helperFilePath = Path.Combine(tempDirectory.Path, "TourLoaderTestsHelpers.cs");
         await File.WriteAllTextAsync(helperFilePath, string.Empty, TestContext.Current.CancellationToken);

@@ -187,7 +187,7 @@ public sealed class MagickImageProcessorTests
     {
         // Arrange
         using var image = TestImages.CreateJpegWithProfile(32, 32);
-        using var content = new NonSeekableStream(image.ToArray());
+        using var content = new UnsizedStream(image.ToArray());
         var request = new ImageProcessingRequest(
             content,
             [new ImageVariantRequest("thumb", ImageOutputFormat.Jpeg, 16, 85)],

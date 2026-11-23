@@ -129,12 +129,12 @@ public sealed class SystemSandboxEnvironmentTests
     {
         // Arrange
         var absolute = Path.Combine(Path.GetTempPath(), "nuget-packages-for-test");
-        using var variable = new TemporaryEnvironmentVariable("NUGET_PACKAGES", absolute);
+        using var configuredVariable = new EnvironmentVariableScope("NUGET_PACKAGES", absolute);
         var environment = new SystemSandboxEnvironment();
 
         // Act
         var configured = environment.NuGetPackagesDirectory;
-        variable.Set("relative/folder");
+        using var relativeVariable = new EnvironmentVariableScope("NUGET_PACKAGES", "relative/folder");
         var relative = environment.NuGetPackagesDirectory;
 
         // Assert
