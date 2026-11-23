@@ -10,7 +10,7 @@ namespace PandaBear.Observability.Tests;
 /// Tests that one call registers the meters and activity sources of every SharedKernel package by their name prefix, so a host exports
 /// them without naming each package or referencing it, and leaves other telemetry alone.
 /// </summary>
-public sealed class SharedKernelInstrumentationTests
+public sealed class InstrumentationTests
 {
     [Theory]
     [InlineData("PandaBear.AspNetCore")]
@@ -24,7 +24,7 @@ public sealed class SharedKernelInstrumentationTests
         using var exporter = new DiscardingMetricExporter();
         using var reader = new BaseExportingMetricReader(exporter);
         using var provider = Sdk.CreateMeterProviderBuilder()
-            .AddSharedKernelInstrumentation()
+            .AddInstrumentation()
             .AddReader(reader)
             .Build();
         using var meter = new Meter(meterName);
@@ -43,7 +43,7 @@ public sealed class SharedKernelInstrumentationTests
     public void A_shared_kernel_activity_source_is_traced(string sourceName)
     {
         // Arrange
-        using var provider = Sdk.CreateTracerProviderBuilder().AddSharedKernelInstrumentation().Build();
+        using var provider = Sdk.CreateTracerProviderBuilder().AddInstrumentation().Build();
         using var source = new ActivitySource(sourceName);
 
         // Act
@@ -60,10 +60,10 @@ public sealed class SharedKernelInstrumentationTests
         using var exporter = new DiscardingMetricExporter();
         using var reader = new BaseExportingMetricReader(exporter);
         using var meterProvider = Sdk.CreateMeterProviderBuilder()
-            .AddSharedKernelInstrumentation()
+            .AddInstrumentation()
             .AddReader(reader)
             .Build();
-        using var tracerProvider = Sdk.CreateTracerProviderBuilder().AddSharedKernelInstrumentation().Build();
+        using var tracerProvider = Sdk.CreateTracerProviderBuilder().AddInstrumentation().Build();
         using var meter = new Meter("Contoso.Orders");
         using var source = new ActivitySource("Contoso.Orders");
 
@@ -79,7 +79,7 @@ public sealed class SharedKernelInstrumentationTests
     public void The_name_patterns_cover_both_prefixes()
     {
         // Act
-        var patterns = SharedKernelInstrumentationExtensions.NamePatterns;
+        var patterns = InstrumentationExtensions.NamePatterns;
 
         // Assert
         patterns.ShouldBe(["PandaBear.*", "SharedKernel.*"]);

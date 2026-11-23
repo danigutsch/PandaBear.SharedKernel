@@ -33,7 +33,7 @@ public sealed class TelemetryPrivacyRegistrationTests
         var records = new ConcurrentQueue<CapturedPrivacyLogRecord>();
         var builder = Host.CreateApplicationBuilder();
         builder.Logging.ClearProviders();
-        builder.ConfigureOpenTelemetry().AddTelemetryPrivacy(static name => name == "HostPrivate");
+        builder.AddObservability().AddTelemetryPrivacy(static name => name == "HostPrivate");
         builder.Logging.AddOpenTelemetry(logging =>
             logging.AddProcessor(_ => new SimpleLogRecordExportProcessor(new PrivacyLogExporter(records))));
         using var host = builder.Build();

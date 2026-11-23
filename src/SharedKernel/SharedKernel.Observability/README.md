@@ -17,7 +17,7 @@ This project provides:
 
 ## Usage
 
-Reference this package from any project needing OpenTelemetry basics. Add `.ConfigureOpenTelemetry()`
+Reference this package from any project needing OpenTelemetry basics. Add `.AddObservability()`
 extension in your application startup and supply any required parameters for service identification.
 
 ## Current Contents
@@ -26,23 +26,23 @@ extension in your application startup and supply any required parameters for ser
 - `ObservabilityBuilderExtensions` — Extension(s) for standardized, DRY OpenTelemetry builder setup
 - `AddTelemetryPrivacy` — Log and trace privacy processors with formatted messages and scopes excluded
 - `PrivacyDataClassifications` — Technical personal, sensitive, credential, and financial classifications for source-generated logging parameters
-- `AddSharedKernelInstrumentation()` — On `MeterProviderBuilder` and `TracerProviderBuilder`: collects the meters and traces the
+- `AddInstrumentation()` — On `MeterProviderBuilder` and `TracerProviderBuilder`: collects the meters and traces the
   activity sources of every SharedKernel package by name prefix (`PandaBear.*` and `SharedKernel.*`, see `NamePatterns`)
 
 ```csharp
-builder.ConfigureOpenTelemetry();
+builder.AddObservability();
 builder.Services.AddOpenTelemetry()
-    .WithMetrics(metrics => metrics.AddSharedKernelInstrumentation())
-    .WithTracing(tracing => tracing.AddSharedKernelInstrumentation());
+    .WithMetrics(metrics => metrics.AddInstrumentation())
+    .WithTracing(tracing => tracing.AddInstrumentation());
 ```
 
 The prefixes replace one hard-coded name per package (`PandaBear.AspNetCore`, `PandaBear.Blazor`, `SharedKernel.Mediator`,
 `SharedKernel.EventSourcing.Npgsql`, ...) and need no reference to those packages: a package that is not loaded creates no meter or
 source, so nothing extra is exported. A repository convention test keeps every declared telemetry name under the two prefixes. Each
 package still exposes its own name constant (for example `AspNetCoreTelemetry.MeterName`) for hosts that register names one by one.
-The call is opt-in rather than part of `ConfigureOpenTelemetry()`, so existing hosts export nothing new until they ask for it.
+The call is opt-in rather than part of `AddObservability()`, so existing hosts export nothing new until they ask for it.
 
-`ConfigureOpenTelemetry()` enables classified logging redaction with the default erasing fallback.
+`AddObservability()` enables classified logging redaction with the default erasing fallback.
 Applications remain responsible for export-bound trace and exception sanitization because those
 controls depend on the telemetry fields emitted by each application.
 
@@ -60,7 +60,7 @@ Both accept an optional `Func<string, bool>` for additional application-sensitiv
 The shared baseline always applies; the callback cannot permit attributes rejected by the baseline.
 Application identifiers and business-specific redaction policy stay with the host.
 
-`ConfigureOpenTelemetry()` already excludes formatted messages and scopes from OpenTelemetry logs and
+`AddObservability()` already excludes formatted messages and scopes from OpenTelemetry logs and
 registers both processors, so the generic baseline applies by default. `AddTelemetryPrivacy()` adds one
 host-owned attribute policy on top; on its own it applies the baseline too, and the baseline is registered
 once however the two are combined. Call both before adding exporters. This example opts into
@@ -73,7 +73,7 @@ using PandaBear.Observability;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Logging.ClearProviders();
-builder.ConfigureOpenTelemetry();
+builder.AddObservability();
 
 static bool IsPrivateAttribute(string name) =>
     string.Equals(name, "private.identifier", StringComparison.OrdinalIgnoreCase);
@@ -83,7 +83,7 @@ builder.AddTelemetryPrivacy(IsPrivateAttribute);
 // Add the host's exporters after the privacy processors.
 ```
 
-`ConfigureOpenTelemetry()` also enables classified logging redaction with the default erasing fallback.
+`AddObservability()` also enables classified logging redaction with the default erasing fallback.
 The host selects additional private attributes, logging providers, instrumentation, and exporters.
 The shared baseline removes sensitive HTTP, database, AWS/S3, object-storage, and messaging attributes
 while retaining operational fields such as route templates, methods, status codes, and operation names.

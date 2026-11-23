@@ -17,7 +17,7 @@ internal sealed class PrivacyLogTestScope : IDisposable
     {
         var builder = Host.CreateApplicationBuilder();
         builder.Logging.ClearProviders();
-        builder.ConfigureOpenTelemetry();
+        builder.AddObservability();
         builder.Logging.AddOpenTelemetry(logging =>
         {
             logging.IncludeFormattedMessage = false;

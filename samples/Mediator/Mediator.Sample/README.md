@@ -12,7 +12,7 @@ the package set:
 - a notification publish and handler
 - a streamed query and handler
 - generated `AppMediator` dispatch
-- generated `AddSharedKernelMediator()` DI registration
+- generated `AddMediator()` DI registration
 
 ## Run
 

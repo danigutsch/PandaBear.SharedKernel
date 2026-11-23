@@ -113,7 +113,7 @@ internal static class GeneratedMediatorPackageConsumerProjects
             Console.WriteLine(FormattableString.Invariant($"steady-state-dispatch-ms={steadyStateStopwatch.Elapsed.TotalMilliseconds / steadyStateIterations:F4}"));
 
             var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
-            services.AddSharedKernelMediator();
+            services.AddMediator();
             using var provider = services.BuildServiceProvider();
             using var firstScope = provider.CreateScope();
             var firstHandler = firstScope.ServiceProvider.GetRequiredService<LookupTourHandler>();

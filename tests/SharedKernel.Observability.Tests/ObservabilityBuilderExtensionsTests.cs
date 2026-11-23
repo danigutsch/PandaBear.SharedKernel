@@ -13,7 +13,7 @@ public sealed class ObservabilityBuilderExtensionsTests
         var builder = new HostApplicationBuilder();
 
         // Act
-        var result = builder.ConfigureOpenTelemetry();
+        var result = builder.AddObservability();
 
         // Assert
         result.ShouldBeSameAs(builder);

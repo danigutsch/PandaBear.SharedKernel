@@ -138,11 +138,11 @@ Source is public; registry publication remains deferred. Consume a validated can
 
 `ScopedSender` sends each request in its own service scope, disposed afterwards. Use it from components that live as long as a
 connection (Blazor Server circuits) so a scoped `DbContext` is never shared between operations. It is not registered by
-`AddSharedKernelMediator()`; register it with `AddScopedSender()` next to the mediator. It has a scoped lifetime (idempotent), so the
+`AddMediator()`; register it with `AddScopedSender()` next to the mediator. It has a scoped lifetime (idempotent), so the
 instance a component receives holds the provider of the scope it was resolved in, which for a Blazor component is the circuit scope:
 
 ```csharp
-services.AddSharedKernelMediator();
+services.AddMediator();
 services.AddScopedSender();
 ```
 

@@ -2,7 +2,7 @@ using Microsoft.Extensions.Http.Resilience;
 
 namespace PandaBear.ServiceDefaults;
 
-/// <summary>Settings of <see cref="ServiceDefaultsExtensions.AddSharedKernelServiceDefaults{TBuilder}"/>.</summary>
+/// <summary>Settings of <see cref="ServiceDefaultsExtensions.AddApplicationDefaults{TBuilder}"/>.</summary>
 public sealed class ServiceDefaultsOptions
 {
     /// <summary>Gets or sets the path of the readiness endpoint, which runs every health check. The default is <c>/health</c>.</summary>

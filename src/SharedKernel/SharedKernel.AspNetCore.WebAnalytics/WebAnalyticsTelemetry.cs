@@ -6,7 +6,7 @@ namespace PandaBear.AspNetCore.WebAnalytics;
 /// </summary>
 public static class WebAnalyticsTelemetry
 {
-    /// <summary>The name of the meter, registered by <c>AddSharedKernelInstrumentation</c> through its <c>PandaBear.*</c> pattern.</summary>
+    /// <summary>The name of the meter, registered by <c>AddInstrumentation</c> through its <c>PandaBear.*</c> pattern.</summary>
     public const string MeterName = "PandaBear.AspNetCore.WebAnalytics";
 
     /// <summary>The counter of page views that were not delivered to a target, tagged with <see cref="TargetTag"/> and <see cref="ReasonTag"/>.</summary>

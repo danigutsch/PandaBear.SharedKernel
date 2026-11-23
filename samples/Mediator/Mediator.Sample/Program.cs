@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PandaBear.Mediator;
 
 var services = new ServiceCollection();
-services.AddSharedKernelMediator();
+services.AddMediator();
 
 using var provider = services.BuildServiceProvider();
 using var scope = provider.CreateScope();
