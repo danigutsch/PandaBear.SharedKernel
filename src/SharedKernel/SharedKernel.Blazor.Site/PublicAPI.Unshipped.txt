@@ -1040,3 +1040,7 @@ override PandaBear.Blazor.Site.StepItem.GetHashCode() -> int
 override PandaBear.Blazor.Site.StepItem.ToString() -> string!
 static PandaBear.Blazor.Site.StepItem.operator !=(PandaBear.Blazor.Site.StepItem? left, PandaBear.Blazor.Site.StepItem? right) -> bool
 static PandaBear.Blazor.Site.StepItem.operator ==(PandaBear.Blazor.Site.StepItem? left, PandaBear.Blazor.Site.StepItem? right) -> bool
+PandaBear.Blazor.Site.JsonLd
+PandaBear.Blazor.Site.JsonLd.Data.get -> System.Text.Json.Nodes.JsonNode?
+PandaBear.Blazor.Site.JsonLd.Data.set -> void
+PandaBear.Blazor.Site.JsonLd.JsonLd() -> void

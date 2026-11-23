@@ -6,7 +6,7 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Brand-neutral, accessible Razor components for a public website, plus one stylesheet of design tokens. The components use semantic
 landmarks, need no JavaScript and no interactive render mode, and work with static server-side rendering. Every component except
-`PageHead` takes a `class` and passes any other unmatched attribute to its root element. An unmatched name that starts with an
+`PageHead` and `JsonLd` takes a `class` and passes any other unmatched attribute to its root element. An unmatched name that starts with an
 upper-case letter, names a removed parameter in any case (`ImageSrc`, `ImageAlt`, `ImageWidth`, `ImageHeight`: use `Image`), or
 holds a character an HTML attribute name cannot hold throws `InvalidOperationException` naming it, so a misspelled or removed
 parameter fails instead of silently becoming an attribute. Write pass-through HTML attributes in lower case.
@@ -95,6 +95,7 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links; no `address` when there are no lines and no channels. `PhoneText` shows the number as written (`+55 (11) 99999-0000`) while the link uses the digits; it must be the same number as `Phone`. The WhatsApp link shows `WhatsAppLabel`. |
 | `LanguageSwitcher` | Labelled `nav` of links with `hreflang`, `lang` and `aria-current="true"` on the current language, with the control radius; below the `48rem` breakpoint each link is at least 2.75rem (44px) wide and tall. |
 | `Pager` | A `nav` named by `Label` (`site-pager`) with plain links for a list paged through the URL, after the GOV.UK pagination component: previous (`rel="prev"`), the numbered pages and next (`rel="next"`); see [Pager](#pager). Nothing when there is one page. |
+| `JsonLd` | Structured data: `<script type="application/ld+json">` of a `JsonNode` (`Data`, an object or an array), escaped with `JavaScriptEncoder.Default` so the data cannot close the script; see [Offerings](#offerings). |
 | `PageHead` | Title, description, canonical link, OpenGraph basics and `hreflang` alternates including `x-default`; each optional tag is left out when its parameter is unset. `Robots` writes `<meta name="robots">` (`noindex`, `noindex, nofollow`). An error or not-found page sets `Robots="noindex"` and no `CanonicalUrl`, `Alternates` or `DefaultAlternateUrl`, so it has no canonical, `og:url` or `hreflang` link. |
 
 Content without a heading, such as a page's opening text or a contact block, goes in `<div class="site-container">`: the
@@ -359,6 +360,18 @@ throws `ArgumentException`.
     <StepList Steps="_days" NumberFormat="Dia {0}" HeadingIdFormat="dia-{0}" EagerCount="1" />
 </Section>
 <Disclosure Summary="Incluído"><TextList Items="_included" /></Disclosure>
+```
+
+`JsonLd` writes structured data, such as a schema.org `TouristTrip`, as `<script type="application/ld+json">`. `Data` is a `JsonNode`
+(a `JsonObject`, or a `JsonArray` of objects; a bare value throws `ArgumentException`, null `ArgumentNullException`), written with a
+`Utf8JsonWriter` and `JavaScriptEncoder.Default`, without reflection, so it suits NativeAOT. The encoder escapes `<`, `>`, `&` and
+quotes in every name and value (`\u003C/script\u003E`), so a tour name that holds `</script>` or `<!--` can neither close the script nor
+open a comment; a browser test parses it back. The JSON is written as raw markup, because HTML entities are not decoded inside a
+script. Put it beside `PageHead`; it takes no class or attribute. Mark up only what the page shows.
+
+```razor
+<PageHead Title="@tour.Title" CanonicalUrl="@canonical" />
+<JsonLd Data="@(new JsonObject { ["@context"] = "https://schema.org", ["@type"] = "TouristTrip", ["name"] = tour.Title })" />
 ```
 
 ### Bands and photos
