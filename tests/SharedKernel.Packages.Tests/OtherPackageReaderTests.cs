@@ -12,7 +12,7 @@ public sealed class OtherPackageReaderTests
     public async Task Cargo_lists_each_crate_with_its_version_and_ignores_the_binary_lines()
     {
         // Arrange
-        var runner = new FakeProcessRunner(new ProcessOutput(0, "ripgrep v14.1.0:\n    rg\nbat v0.24.0:\n    bat\nfj v0.4.0 (https://example.test/fj#abc123):\n    fj\n"));
+        var runner = ScriptedProcessRunner.Returning(new ProcessOutput(0, "ripgrep v14.1.0:\n    rg\nbat v0.24.0:\n    bat\nfj v0.4.0 (https://example.test/fj#abc123):\n    fj\n"));
         var reader = new CargoPackageReader(runner, Cargo);
 
         // Act
@@ -21,8 +21,8 @@ public sealed class OtherPackageReaderTests
 
         // Assert
         packages.Select(static p => p.ToString()).ShouldBe(["bat=0.24.0", "fj=0.4.0", "ripgrep=14.1.0"]);
-        runner.Executable.ShouldBe(Cargo);
-        runner.Arguments.ShouldBe(["install", "--list"]);
+        runner.Runs[^1].FileName.ShouldBe(Cargo);
+        runner.Runs[^1].Arguments.ShouldBe(["install", "--list"]);
     }
 
     [Theory]
@@ -32,7 +32,7 @@ public sealed class OtherPackageReaderTests
     public async Task Cargo_reports_an_unreadable_crate_line_by_number(string output)
     {
         // Arrange
-        var reader = new CargoPackageReader(new FakeProcessRunner(new ProcessOutput(0, output)), Cargo);
+        var reader = new CargoPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, output)), Cargo);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -47,7 +47,7 @@ public sealed class OtherPackageReaderTests
     {
         // Arrange
         const string json = """{"name":"lib","dependencies":{"@anthropic-ai/claude-code":{"version":"2.1.319"},"corepack":{"version":"0.35.0"}}}""";
-        var runner = new FakeProcessRunner(new ProcessOutput(0, json));
+        var runner = ScriptedProcessRunner.Returning(new ProcessOutput(0, json));
         var reader = new NpmPackageReader(runner, Npm);
 
         // Act
@@ -56,14 +56,14 @@ public sealed class OtherPackageReaderTests
 
         // Assert
         packages.Select(static p => p.ToString()).ShouldBe(["@anthropic-ai/claude-code=2.1.319", "corepack=0.35.0"]);
-        runner.Arguments.ShouldBe(["ls", "--global", "--depth=0", "--json"]);
+        runner.Runs[^1].Arguments.ShouldBe(["ls", "--global", "--depth=0", "--json"]);
     }
 
     [Fact]
     public async Task Npm_with_no_dependencies_is_an_empty_list()
     {
         // Arrange
-        var reader = new NpmPackageReader(new FakeProcessRunner(new ProcessOutput(0, """{"name":"lib"}""")), Npm);
+        var reader = new NpmPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, """{"name":"lib"}""")), Npm);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -82,7 +82,7 @@ public sealed class OtherPackageReaderTests
     public async Task Npm_reports_unexpected_output_as_an_error(string json)
     {
         // Arrange
-        var reader = new NpmPackageReader(new FakeProcessRunner(new ProcessOutput(0, json)), Npm);
+        var reader = new NpmPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, json)), Npm);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -95,7 +95,7 @@ public sealed class OtherPackageReaderTests
     public async Task Flatpak_lists_applications_and_uses_the_branch_when_there_is_no_version()
     {
         // Arrange
-        var runner = new FakeProcessRunner(new ProcessOutput(0, "org.telegram.desktop\t6.1.4\tstable\nio.podman_desktop.PodmanDesktop\t\tstable\n"));
+        var runner = ScriptedProcessRunner.Returning(new ProcessOutput(0, "org.telegram.desktop\t6.1.4\tstable\nio.podman_desktop.PodmanDesktop\t\tstable\n"));
         var reader = new FlatpakPackageReader(runner, Flatpak);
 
         // Act
@@ -104,7 +104,7 @@ public sealed class OtherPackageReaderTests
 
         // Assert
         packages.Select(static p => p.ToString()).ShouldBe(["io.podman_desktop.PodmanDesktop=stable", "org.telegram.desktop=6.1.4"]);
-        runner.Arguments.ShouldBe(["list", "--app", "--columns=application,version,branch"]);
+        runner.Runs[^1].Arguments.ShouldBe(["list", "--app", "--columns=application,version,branch"]);
     }
 
     [Theory]
@@ -114,7 +114,7 @@ public sealed class OtherPackageReaderTests
     public async Task Flatpak_reports_an_unreadable_line_by_number(string output)
     {
         // Arrange
-        var reader = new FlatpakPackageReader(new FakeProcessRunner(new ProcessOutput(0, output)), Flatpak);
+        var reader = new FlatpakPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, output)), Flatpak);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -128,7 +128,7 @@ public sealed class OtherPackageReaderTests
     public async Task Flatpak_listing_the_same_application_in_two_installations_is_an_error()
     {
         // Arrange
-        var reader = new FlatpakPackageReader(new FakeProcessRunner(new ProcessOutput(0, "org.telegram.desktop\t7.0.9\tstable\norg.telegram.desktop\t7.0.9\tstable\n")), Flatpak);
+        var reader = new FlatpakPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, "org.telegram.desktop\t7.0.9\tstable\norg.telegram.desktop\t7.0.9\tstable\n")), Flatpak);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -142,7 +142,7 @@ public sealed class OtherPackageReaderTests
     public async Task Npm_output_with_an_error_property_is_an_error_not_an_empty_list()
     {
         // Arrange
-        var reader = new NpmPackageReader(new FakeProcessRunner(new ProcessOutput(0, """{"error":{"code":"ELSPROBLEMS"}}""")), Npm);
+        var reader = new NpmPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, """{"error":{"code":"ELSPROBLEMS"}}""")), Npm);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -155,7 +155,7 @@ public sealed class OtherPackageReaderTests
     public async Task A_tool_that_cannot_run_is_an_error_result_for_every_reader()
     {
         // Arrange
-        var missing = new ThrowingProcessRunner(new InvalidOperationException("Could not start the process."));
+        var missing = ScriptedProcessRunner.Throwing(new InvalidOperationException("Could not start the process."));
         IPackageReader[] readers = [new CargoPackageReader(missing, Cargo), new NpmPackageReader(missing, Npm), new FlatpakPackageReader(missing, Flatpak)];
 
         // Act
@@ -176,9 +176,9 @@ public sealed class OtherPackageReaderTests
         // Arrange
         IPackageReader[] readers =
         [
-            new CargoPackageReader(new FakeProcessRunner(new ProcessOutput(101, string.Empty)), Cargo),
-            new NpmPackageReader(new FakeProcessRunner(new ProcessOutput(1, "{}")), Npm),
-            new FlatpakPackageReader(new FakeProcessRunner(new ProcessOutput(1, string.Empty)), Flatpak),
+            new CargoPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(101, string.Empty)), Cargo),
+            new NpmPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(1, "{}")), Npm),
+            new FlatpakPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(1, string.Empty)), Flatpak),
         ];
 
         // Act
@@ -197,7 +197,7 @@ public sealed class OtherPackageReaderTests
     public void A_relative_tool_path_is_rejected_by_every_reader()
     {
         // Arrange
-        var runner = new FakeProcessRunner(new ProcessOutput(0, string.Empty));
+        var runner = ScriptedProcessRunner.Returning(new ProcessOutput(0, string.Empty));
 
         // Act
         Action[] constructions =

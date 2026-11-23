@@ -11,13 +11,13 @@ public sealed class PackageInventoryTests
 
     private static readonly CancellationToken Cancel = TestContext.Current.CancellationToken;
 
-    private static readonly FakeExecutables All = new(static command => "/fake/" + command);
+    private static readonly ExecutableMap All = new(static command => "/fake/" + command);
 
     [Fact]
     public async Task Plan_runs_each_managers_program_and_returns_the_changes_per_manager()
     {
         // Arrange
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput>
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput>
         {
             ["/fake/dpkg-query"] = new(0, "git\t1:2.43\tii \n"),
             ["/fake/cargo"] = new(0, "ripgrep v13.0.0:\n    rg\n"),
@@ -35,15 +35,15 @@ public sealed class PackageInventoryTests
         report.Managers[1].Changes.ShouldHaveSingleItem().Kind.ShouldBe(PackageChangeKind.ChangeVersion);
         report.DeclaredCount.ShouldBe(3);
         report.ChangeCount.ShouldBe(2);
-        runner.Calls.ShouldBe(["/fake/dpkg-query", "/fake/cargo"]);
+        runner.Runs.Select(static run => run.FileName).ShouldBe(["/fake/dpkg-query", "/fake/cargo"]);
     }
 
     [Fact]
     public async Task Plan_runs_nothing_when_a_program_is_missing_and_names_every_missing_one()
     {
         // Arrange
-        var runner = new RoutingProcessRunner([]);
-        var inventory = new PackageInventory(runner, new FakeExecutables(static command => command == "flatpak" ? "/fake/flatpak" : null));
+        var runner = ScriptedProcessRunner.ByFileName([]);
+        var inventory = new PackageInventory(runner, new ExecutableMap(static command => command == "flatpak" ? "/fake/flatpak" : null));
 
         // Act
         var report = await inventory.Plan(Declared((PackageManagerKind.Apt, ["git"]), (PackageManagerKind.Flatpak, ["org.x.App"]), (PackageManagerKind.Brew, ["wget"])), Cancel);
@@ -52,14 +52,14 @@ public sealed class PackageInventoryTests
         report.IsComplete.ShouldBeFalse();
         report.Managers.ShouldBeEmpty();
         report.MissingTools.Select(static t => (t.Manager, t.Executable)).ShouldBe([(PackageManagerKind.Apt, "dpkg-query"), (PackageManagerKind.Brew, "brew")]);
-        runner.Calls.ShouldBeEmpty();
+        runner.Runs.ShouldBeEmpty();
     }
 
     [Fact]
     public async Task Plan_reports_an_unreadable_manager_and_still_plans_the_others()
     {
         // Arrange
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput>
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput>
         {
             ["/fake/brew"] = new(0, "wget 1.24.0 1.25.0\n"),
             ["/fake/snap"] = new(0, "Name Version Rev Tracking Publisher Notes\n"),
@@ -83,7 +83,7 @@ public sealed class PackageInventoryTests
     {
         // Arrange
         using var sources = CountingSources.Default();
-        var inventory = new PackageInventory(new RoutingProcessRunner(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, CargoList) }), All);
+        var inventory = new PackageInventory(ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, CargoList) }), All);
 
         // Act
         var report = await inventory.CheckUpdates(Declared((PackageManagerKind.Cargo, ["bat", "fd-find", "ripgrep=14.1.0"])), Age(7), NetworkAccess.Allowed, sources.Create, Cancel);
@@ -104,7 +104,7 @@ public sealed class PackageInventoryTests
     {
         // Arrange
         using var sources = CountingSources.Default();
-        var runner = new RoutingProcessRunner([]);
+        var runner = ScriptedProcessRunner.ByFileName([]);
         var inventory = new PackageInventory(runner, All);
 
         // Act
@@ -116,7 +116,7 @@ public sealed class PackageInventoryTests
         report.HasSkipped.ShouldBeTrue();
         report.HasFailure.ShouldBeFalse();
         sources.Created.ShouldBe(0);
-        runner.Calls.ShouldBeEmpty();
+        runner.Runs.ShouldBeEmpty();
     }
 
     [Fact]
@@ -124,8 +124,8 @@ public sealed class PackageInventoryTests
     {
         // Arrange
         using var sources = CountingSources.Default();
-        var runner = new RoutingProcessRunner([]);
-        var inventory = new PackageInventory(runner, new FakeExecutables(static _ => null));
+        var runner = ScriptedProcessRunner.ByFileName([]);
+        var inventory = new PackageInventory(runner, new ExecutableMap(static _ => null));
 
         // Act
         var report = await inventory.CheckUpdates(Declared((PackageManagerKind.Npm, ["corepack"])), Age(7), NetworkAccess.Allowed, sources.Create, Cancel);
@@ -134,7 +134,7 @@ public sealed class PackageInventoryTests
         report.HasFailure.ShouldBeTrue();
         report.MissingTools.Select(static t => t.Executable).ShouldBe(["npm"]);
         sources.Created.ShouldBe(0);
-        runner.Calls.ShouldBeEmpty();
+        runner.Runs.ShouldBeEmpty();
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public sealed class PackageInventoryTests
     {
         // Arrange
         using var sources = CountingSources.Default(notFound: ["fd-find"]);
-        var inventory = new PackageInventory(new RoutingProcessRunner(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, CargoList) }), All);
+        var inventory = new PackageInventory(ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, CargoList) }), All);
 
         // Act
         var report = await inventory.CheckUpdates(Declared((PackageManagerKind.Cargo, ["bat", "fd-find"])), Age(7), NetworkAccess.Allowed, sources.Create, Cancel);
@@ -159,7 +159,7 @@ public sealed class PackageInventoryTests
     {
         // Arrange
         using var sources = CountingSources.Default(Result.Unavailable<IReadOnlyList<Advisory>>("OSV is down"));
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput>
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput>
         {
             ["/fake/cargo"] = new(0, CargoList),
             ["/fake/npm"] = new(1, string.Empty, "npm ERR! broken"),
@@ -183,7 +183,7 @@ public sealed class PackageInventoryTests
     {
         // Arrange
         using var sources = CountingSources.Default();
-        var inventory = new PackageInventory(new RoutingProcessRunner(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, CargoList) }), All);
+        var inventory = new PackageInventory(ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, CargoList) }), All);
 
         // Act
         var report = await inventory.CheckUpdates(Declared((PackageManagerKind.Cargo, ["bat"])), Age(7), NetworkAccess.Denied, sources.Create, Cancel);
@@ -198,7 +198,7 @@ public sealed class PackageInventoryTests
     {
         // Arrange
         Action noRunner = static () => _ = new PackageInventory(null!, All);
-        Action noExecutables = static () => _ = new PackageInventory(new RoutingProcessRunner([]), null!);
+        Action noExecutables = static () => _ = new PackageInventory(ScriptedProcessRunner.ByFileName([]), null!);
 
         // Act and assert
         noRunner.ShouldThrow<ArgumentNullException>();

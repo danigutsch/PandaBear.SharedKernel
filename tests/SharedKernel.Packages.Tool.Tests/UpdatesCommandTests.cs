@@ -31,7 +31,7 @@ public sealed class UpdatesCommandTests
         error.ShouldContain("--allow-network", StringComparison.Ordinal);
         error.ShouldContain("Nothing was contacted", StringComparison.Ordinal);
         created.ShouldBeFalse();
-        runner.Calls.ShouldBeEmpty();
+        runner.Runs.ShouldBeEmpty();
     }
 
     [Fact]
@@ -173,7 +173,7 @@ public sealed class UpdatesCommandTests
     {
         // Arrange
         using var repository = CreateRepository("""{"version":1,"packages":{"cargo":["bat","gitcrate"]},"minimumReleaseAgeDays":7}""");
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, "bat v0.24.0:\n    bat\ngitcrate v1.0.0 (https://example.test/g#abc):\n    g\n") });
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, "bat v0.24.0:\n    bat\ngitcrate v1.0.0 (https://example.test/g#abc):\n    g\n") });
         var sources = new FakeUpdateSources(new()
         {
             ["bat"] = "0.26.1"
@@ -198,7 +198,7 @@ public sealed class UpdatesCommandTests
     {
         // Arrange
         using var repository = CreateRepository("""{"version":1,"packages":{"cargo":["bat","gitcrate","zzz"]},"minimumReleaseAgeDays":7}""");
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, "bat v0.24.0:\n    bat\ngitcrate v1.0.0:\n    g\nzzz v1.0.0:\n    z\n") });
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, "bat v0.24.0:\n    bat\ngitcrate v1.0.0:\n    g\nzzz v1.0.0:\n    z\n") });
         var sources = new FakeUpdateSources(new()
         {
             ["bat"] = "0.26.1"
@@ -221,7 +221,7 @@ public sealed class UpdatesCommandTests
     {
         // Arrange
         using var repository = CreateRepository("""{"version":1,"packages":{"cargo":["bat","unknown-crate"]},"minimumReleaseAgeDays":7}""");
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, "bat v0.24.0:\n    bat\nunknown-crate v1.0.0:\n    x\n") });
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, "bat v0.24.0:\n    bat\nunknown-crate v1.0.0:\n    x\n") });
 
         // Act
         var (exitCode, _, error) = await Run(repository.Path, runner, ResolveAll, () => Sources().ToSources(), "--allow-network");
@@ -313,7 +313,7 @@ public sealed class UpdatesCommandTests
     {
         // Arrange
         using var repository = CreateRepository(Config);
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(1, string.Empty) });
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(1, string.Empty) });
 
         // Act
         var (exitCode, output, error) = await Run(repository.Path, runner, ResolveAll, () => Sources().ToSources(), "--allow-network");
@@ -329,7 +329,7 @@ public sealed class UpdatesCommandTests
     {
         // Arrange
         using var repository = CreateRepository("""{"version":1,"packages":{"cargo":["bat"]},"minimumReleaseAgeDays":7}""");
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, "bat v0.24.0:\n    bat\n") });
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, "bat v0.24.0:\n    bat\n") });
 
         // Act
         var (exitCode, output, _) = await Run(repository.Path, runner, ResolveAll);

@@ -231,7 +231,7 @@ public sealed class RealSopsTests
         File.SetUnixFileMode(editor, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
         var session = new SopsEditSession
         {
-            Editor = EditorCommand.Create(editor, new NoExecutables()).ShouldBeSuccess(),
+            Editor = EditorCommand.Create(editor, new ExecutableMap()).ShouldBeSuccess(),
             PrivateDirectory = privateDirectory.Path,
         };
 

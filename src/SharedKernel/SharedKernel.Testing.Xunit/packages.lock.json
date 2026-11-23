@@ -30,8 +30,14 @@
           "Microsoft.Bcl.AsyncInterfaces": "6.0.0"
         }
       },
-      "PandaBear.SharedKernel.Testing": {
+      "PandaBear.SharedKernel.Processes": {
         "type": "Project"
+      },
+      "PandaBear.SharedKernel.Testing": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
+        }
       }
     }
   }

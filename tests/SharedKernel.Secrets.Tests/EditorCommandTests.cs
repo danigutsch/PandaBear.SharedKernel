@@ -8,7 +8,7 @@ public sealed class EditorCommandTests
     public void A_command_name_resolves_through_the_resolver_and_keeps_its_arguments()
     {
         // Arrange
-        var resolver = new FixedExecutableResolver(new Dictionary<string, string> { ["code"] = "/usr/bin/code" });
+        var resolver = new ExecutableMap(new Dictionary<string, string> { ["code"] = "/usr/bin/code" });
 
         // Act
         var editor = EditorCommand.Create("code  --wait\t--new-window", resolver).ShouldBeSuccess();
@@ -28,7 +28,7 @@ public sealed class EditorCommandTests
         File.WriteAllText(path, string.Empty);
 
         // Act
-        var editor = EditorCommand.Create(path, new FixedExecutableResolver(new Dictionary<string, string>())).ShouldBeSuccess();
+        var editor = EditorCommand.Create(path, new ExecutableMap(new Dictionary<string, string>())).ShouldBeSuccess();
 
         // Assert
         editor.Executable.ShouldBe(path);
@@ -48,7 +48,7 @@ public sealed class EditorCommandTests
     public void An_editor_that_is_missing_unresolvable_relative_or_quoted_is_refused(string? commandLine)
     {
         // Act
-        var result = EditorCommand.Create(commandLine, new FixedExecutableResolver(new Dictionary<string, string>()));
+        var result = EditorCommand.Create(commandLine, new ExecutableMap(new Dictionary<string, string>()));
 
         // Assert
         result.IsFailure.ShouldBeTrue();
@@ -58,7 +58,7 @@ public sealed class EditorCommandTests
     public void The_text_never_reaches_the_refusal_message()
     {
         // Act
-        var result = EditorCommand.Create("not-installed-editor --flag", new FixedExecutableResolver(new Dictionary<string, string>()));
+        var result = EditorCommand.Create("not-installed-editor --flag", new ExecutableMap(new Dictionary<string, string>()));
 
         // Assert
         result.ErrorDetails.ShouldNotBeNull().Detail.ShouldNotContain("not-installed-editor", StringComparison.Ordinal);
@@ -72,7 +72,7 @@ public sealed class EditorCommandTests
         var quoted = Directory.CreateDirectory(Path.Combine(directory.Path, "o'brien")).FullName;
         var path = Path.Combine(quoted, "vim");
         File.WriteAllText(path, string.Empty);
-        var resolver = new FixedExecutableResolver(new Dictionary<string, string> { ["vim"] = path });
+        var resolver = new ExecutableMap(new Dictionary<string, string> { ["vim"] = path });
 
         // Act
         var absolute = EditorCommand.Create(path, resolver);

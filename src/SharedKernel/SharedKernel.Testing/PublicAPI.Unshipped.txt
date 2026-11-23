@@ -392,3 +392,24 @@ static PandaBear.Testing.RepositoryRoot.TryLocate(string! marker) -> string?
 static PandaBear.Testing.RepositoryRoot.TryLocate(string! marker, string! startDirectory) -> string?
 PandaBear.Testing.ReadmeCommandLines
 static PandaBear.Testing.ReadmeCommandLines.Find(string! markdown, string! invocation) -> string![]!
+PandaBear.Testing.ExecutableMap
+PandaBear.Testing.ExecutableMap.ExecutableMap() -> void
+PandaBear.Testing.ExecutableMap.ExecutableMap(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string!>>! executables) -> void
+PandaBear.Testing.ExecutableMap.ExecutableMap(System.Func<string!, string?>! fallback) -> void
+PandaBear.Testing.ExecutableMap.Find(string! command) -> string?
+PandaBear.Testing.ExecutableMap.Set(string! command, string? path) -> void
+PandaBear.Testing.RecordedProcessRun
+PandaBear.Testing.RecordedProcessRun.Arguments.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Testing.RecordedProcessRun.FileName.get -> string!
+PandaBear.Testing.RecordedProcessRun.Forward.get -> System.IO.TextWriter?
+PandaBear.Testing.RecordedProcessRun.StartInfo.get -> System.Diagnostics.ProcessStartInfo!
+PandaBear.Testing.ScriptedProcessRunner
+PandaBear.Testing.ScriptedProcessRunner.Run(System.Diagnostics.ProcessStartInfo! startInfo, System.IO.TextWriter? forward, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Processes.ProcessOutput!>!
+PandaBear.Testing.ScriptedProcessRunner.Runs.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Testing.RecordedProcessRun!>!
+PandaBear.Testing.ScriptedProcessRunner.ScriptedProcessRunner(System.Func<System.Diagnostics.ProcessStartInfo!, System.IO.TextWriter?, System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.Processes.ProcessOutput!>!>! respond) -> void
+static PandaBear.Testing.ScriptedProcessRunner.Answering(System.Func<PandaBear.Testing.RecordedProcessRun!, PandaBear.Processes.ProcessOutput!>! answer) -> PandaBear.Testing.ScriptedProcessRunner!
+static PandaBear.Testing.ScriptedProcessRunner.AnswersInOrder(params System.Func<System.Diagnostics.ProcessStartInfo!, System.Threading.CancellationToken, PandaBear.Processes.ProcessOutput!>![]! answers) -> PandaBear.Testing.ScriptedProcessRunner!
+static PandaBear.Testing.ScriptedProcessRunner.ByFileName(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, PandaBear.Processes.ProcessOutput!>>! outputs) -> PandaBear.Testing.ScriptedProcessRunner!
+static PandaBear.Testing.ScriptedProcessRunner.InOrder(params PandaBear.Processes.ProcessOutput![]! outputs) -> PandaBear.Testing.ScriptedProcessRunner!
+static PandaBear.Testing.ScriptedProcessRunner.Returning(PandaBear.Processes.ProcessOutput! output) -> PandaBear.Testing.ScriptedProcessRunner!
+static PandaBear.Testing.ScriptedProcessRunner.Throwing(System.Exception! exception) -> PandaBear.Testing.ScriptedProcessRunner!

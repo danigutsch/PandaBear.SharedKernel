@@ -30,7 +30,7 @@ internal sealed class K6TestRepository : IDisposable
 
     private readonly TemporaryDirectory _directory = new();
     private readonly Dictionary<string, string?> _environment = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, string> _executables = new(StringComparer.Ordinal);
+    private readonly ExecutableMap _executables = new();
     private readonly SocketsHttpHandler _healthCheckHandler = new() { UseProxy = false, AllowAutoRedirect = false };
 
     /// <summary>Creates the repository layout with a smoke script and writes <c>configuration</c> as the configuration file.</summary>
@@ -62,13 +62,13 @@ internal sealed class K6TestRepository : IDisposable
     public void SetEnvironment(string name, string? value) => _environment[name] = value;
 
     /// <summary>Maps an executable name to the path the command line resolves it to.</summary>
-    public void SetExecutable(string name, string path) => _executables[name] = path;
+    public void SetExecutable(string name, string path) => _executables.Set(name, path);
 
     /// <summary>Adds a POSIX shell script that records its arguments and environment and exits with a code.</summary>
     public RecordingFakeExecutable AddFake(string name, int exitCode = 0, string body = "")
     {
         var fake = new RecordingFakeExecutable(Path.Combine(Root, "fakes"), name, exitCode, body);
-        _executables[name] = fake.Path;
+        _executables.Set(name, fake.Path);
         return fake;
     }
 
@@ -106,7 +106,7 @@ internal sealed class K6TestRepository : IDisposable
         K6CommandLine.Create(
             Root,
             _environment.Where(static variable => variable.Value is not null).ToDictionary(static variable => variable.Key, static variable => variable.Value!, StringComparer.Ordinal),
-            new LoadTestRunner(new K6LoadGenerator(new SystemProcessRunner()), new MappedExecutableResolver(_executables), _healthCheckHandler));
+            new LoadTestRunner(new K6LoadGenerator(new SystemProcessRunner()), _executables, _healthCheckHandler));
 
     /// <summary>Deletes the temporary repository.</summary>
     public void Dispose()

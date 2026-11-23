@@ -16,7 +16,7 @@ public sealed class SnapPackageReaderTests
             + "core24    20260824   2124  latest/stable  canonical** base\n"
             + "snapd     2.77.1     28254 latest/stable  canonical** snapd\n"
             + "firefox   158.0-2    9057  latest/stable  mozilla**   -\n";
-        var runner = new FakeProcessRunner(new ProcessOutput(0, output));
+        var runner = ScriptedProcessRunner.Returning(new ProcessOutput(0, output));
         var reader = new SnapPackageReader(runner, Snap);
 
         // Act
@@ -25,8 +25,8 @@ public sealed class SnapPackageReaderTests
 
         // Assert
         packages.Select(static p => p.ToString()).ShouldBe(["bare=1.0", "core24=20260824", "firefox=158.0-2", "snapd=2.77.1"]);
-        runner.Executable.ShouldBe(Snap);
-        runner.Arguments.ShouldBe(["list"]);
+        runner.Runs[^1].FileName.ShouldBe(Snap);
+        runner.Runs[^1].Arguments.ShouldBe(["list"]);
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public sealed class SnapPackageReaderTests
             + "bitwarden 2026.10.3  179   latest/stable  bitwarden** -\n"
             + "tool      1.0-beta   12    1/stable/…    someone     classic,disabled\n"
             + "tool_dev  2025.3     13    latest/edge    someone     -\n";
-        var reader = new SnapPackageReader(new FakeProcessRunner(new ProcessOutput(0, output)), Snap);
+        var reader = new SnapPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, output)), Snap);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -53,8 +53,8 @@ public sealed class SnapPackageReaderTests
         // Arrange
         IPackageReader[] readers =
         [
-            new SnapPackageReader(new FakeProcessRunner(new ProcessOutput(0, HeaderLine)), Snap),
-            new SnapPackageReader(new FakeProcessRunner(new ProcessOutput(0, string.Empty, "No snaps are installed yet.")), Snap),
+            new SnapPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, HeaderLine)), Snap),
+            new SnapPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, string.Empty, "No snaps are installed yet.")), Snap),
         ];
 
         // Act
@@ -77,7 +77,7 @@ public sealed class SnapPackageReaderTests
     public async Task Snap_reports_a_malformed_line_by_number_and_never_skips_it(string output)
     {
         // Arrange
-        var reader = new SnapPackageReader(new FakeProcessRunner(new ProcessOutput(0, output)), Snap);
+        var reader = new SnapPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, output)), Snap);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -93,7 +93,7 @@ public sealed class SnapPackageReaderTests
     public async Task Snap_without_the_expected_header_is_an_error_instead_of_reading_the_first_line_as_a_snap(string output)
     {
         // Arrange
-        var reader = new SnapPackageReader(new FakeProcessRunner(new ProcessOutput(0, output)), Snap);
+        var reader = new SnapPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, output)), Snap);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -108,7 +108,7 @@ public sealed class SnapPackageReaderTests
     {
         // Arrange
         const string output = HeaderLine + "tool 1 1 latest/stable x -\ntool 2 2 latest/stable x -\n";
-        var reader = new SnapPackageReader(new FakeProcessRunner(new ProcessOutput(0, output)), Snap);
+        var reader = new SnapPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, output)), Snap);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -123,8 +123,8 @@ public sealed class SnapPackageReaderTests
         // Arrange
         IPackageReader[] readers =
         [
-            new SnapPackageReader(new FakeProcessRunner(new ProcessOutput(1, HeaderLine + "tool 1 1 latest/stable x -\n", "error: cannot communicate with server")), Snap),
-            new SnapPackageReader(new ThrowingProcessRunner(new InvalidOperationException("Could not start the process.")), Snap),
+            new SnapPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(1, HeaderLine + "tool 1 1 latest/stable x -\n", "error: cannot communicate with server")), Snap),
+            new SnapPackageReader(ScriptedProcessRunner.Throwing(new InvalidOperationException("Could not start the process.")), Snap),
         ];
 
         // Act
@@ -143,7 +143,7 @@ public sealed class SnapPackageReaderTests
     public void A_relative_snap_path_is_rejected_and_a_null_runner_throws()
     {
         // Act
-        Action relative = () => _ = new SnapPackageReader(new FakeProcessRunner(new ProcessOutput(0, string.Empty)), "snap");
+        Action relative = () => _ = new SnapPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, string.Empty)), "snap");
         Action noRunner = () => _ = new SnapPackageReader(null!, Snap);
 
         // Assert

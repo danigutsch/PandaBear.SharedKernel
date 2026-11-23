@@ -15,7 +15,7 @@ public sealed class ProcessSopsToolEditTests
     {
         // Arrange
         using var private_ = new TemporaryDirectory();
-        var editor = EditorCommand.Create(Environment.ProcessPath + " -n", new NoExecutables()).ShouldBeSuccess();
+        var editor = EditorCommand.Create(Environment.ProcessPath + " -n", new ExecutableMap()).ShouldBeSuccess();
         var session = new SopsEditSession
         {
             Editor = editor,

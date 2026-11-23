@@ -725,11 +725,17 @@
           "xunit.v3.extensibility.core": "[4.0.3, )"
         }
       },
+      "PandaBear.SharedKernel.Processes": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
       "PandaBear.SharedKernel.Testing": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
+        }
       },
       "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",

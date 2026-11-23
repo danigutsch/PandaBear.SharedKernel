@@ -23,7 +23,7 @@ internal static class UpdatesToolHarness
         using var output = new InvariantStringWriter();
         using var error = new InvariantStringWriter();
         var exitCode = await PackagesCommandLine
-            .Create(root, new FakeExecutables(resolve), runner, createSources)
+            .Create(root, new ExecutableMap(resolve), runner, createSources)
             .Parse(["updates", "--root", root, .. arguments])
             .InvokeAsync(new InvocationConfiguration { Output = output, Error = error, ProcessTerminationTimeout = null }, TestContext.Current.CancellationToken);
         return (exitCode, output.ToString(), error.ToString());
@@ -50,7 +50,7 @@ internal static class UpdatesToolHarness
         Now);
 
     /// <summary>A runner that answers cargo and npm.</summary>
-    public static RoutingProcessRunner Runner() => new(new Dictionary<string, ProcessOutput>
+    public static ScriptedProcessRunner Runner() => ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput>
     {
         ["/fake/cargo"] = new(0, CargoList),
         ["/fake/npm"] = new(0, """{"dependencies":{"corepack":{"version":"0.35.0"}}}"""),

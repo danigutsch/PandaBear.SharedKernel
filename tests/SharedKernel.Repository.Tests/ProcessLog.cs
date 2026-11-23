@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using PandaBear.Processes;
 
 namespace PandaBear.Repository.Tests;
 
@@ -39,7 +40,7 @@ internal sealed class ProcessLog(Func<string, string[], CancellationToken, Task<
     /// <summary>Creates a machine whose processes this log answers, with bare command names, and the clock and service start given.</summary>
     public CiMachine Machine(TimeProvider? timeProvider = null, Func<ProcessStartInfo, Process>? startService = null)
     {
-        var machine = new CiMachine(new DelegateProcessRunner(Run), BareNameResolver.Instance, timeProvider ?? TimeProvider.System);
+        var machine = new CiMachine(new ScriptedProcessRunner(async (startInfo, _, ct) => new ProcessOutput(0, await Run(startInfo, ct))), new ExecutableMap(static command => command), timeProvider ?? TimeProvider.System);
         return startService is null ? machine : new CiMachine(machine.ProcessRunner, machine.ExecutableResolver, machine.TimeProvider) { StartService = startService };
     }
 }

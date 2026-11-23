@@ -37,7 +37,7 @@ internal static class PackagesToolHarness
         using var output = new InvariantStringWriter();
         using var error = new InvariantStringWriter();
         var exitCode = await PackagesCommandLine
-            .Create(root, new FakeExecutables(resolve), runner)
+            .Create(root, new ExecutableMap(resolve), runner)
             .Parse(["plan", "--root", root, .. arguments])
             .InvokeAsync(new InvocationConfiguration { Output = output, Error = error, ProcessTerminationTimeout = null }, TestContext.Current.CancellationToken);
         return (exitCode, output.ToString(), error.ToString());
@@ -53,7 +53,7 @@ internal static class PackagesToolHarness
         using var output = new InvariantStringWriter();
         using var error = new InvariantStringWriter();
         var exitCode = await PackagesCommandLine
-            .Create(workingDirectory, new FakeExecutables(resolve), runner)
+            .Create(workingDirectory, new ExecutableMap(resolve), runner)
             .Parse(arguments)
             .InvokeAsync(new InvocationConfiguration { Output = output, Error = error, ProcessTerminationTimeout = null }, TestContext.Current.CancellationToken);
         return (exitCode, output.ToString(), error.ToString());
