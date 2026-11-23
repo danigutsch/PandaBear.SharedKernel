@@ -275,4 +275,6 @@
   <Project Path="tests/SharedKernel.Offerings.Tests/SharedKernel.Offerings.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.PageSections/SharedKernel.PageSections.csproj" />
   <Project Path="tests/SharedKernel.PageSections.Tests/SharedKernel.PageSections.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.PageSections.Blazor/SharedKernel.PageSections.Blazor.csproj" />
+  <Project Path="tests/SharedKernel.PageSections.Blazor.Tests/SharedKernel.PageSections.Blazor.Tests.csproj" />
 </Solution>

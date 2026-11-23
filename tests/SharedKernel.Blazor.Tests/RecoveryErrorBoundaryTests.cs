@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
 using static PandaBear.Blazor.Tests.ComponentFixtures;
 
 namespace PandaBear.Blazor.Tests;

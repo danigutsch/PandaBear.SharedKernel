@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Logging;
-
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Captures log entries, including the structured state and the exception argument.</summary>

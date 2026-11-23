@@ -255,3 +255,131 @@ PandaBear.Blazor.OptionSearch<TOption>.Start(System.Threading.CancellationToken 
 PandaBear.Blazor.OptionSearch<TOption>.TimeProvider.get -> System.TimeProvider!
 PandaBear.Blazor.OptionSearch<TOption>.TimeProvider.init -> void
 const PandaBear.Blazor.OptionSearch<TOption>.DefaultDebounceMilliseconds = 300 -> int
+PandaBear.Blazor.ImagePicker
+PandaBear.Blazor.ImagePicker<TKey, TOption>
+PandaBear.Blazor.ImagePicker<TKey, TOption>.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>?
+PandaBear.Blazor.ImagePicker<TKey, TOption>.AdditionalAttributes.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Catalog.get -> PandaBear.Blazor.PickerCatalog<TKey, TOption!>!
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Catalog.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.ChosenPageSize.get -> int
+PandaBear.Blazor.ImagePicker<TKey, TOption>.ChosenPageSize.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Debounce.get -> System.TimeSpan
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Debounce.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Dispose() -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.EmptyLibrary.get -> Microsoft.AspNetCore.Components.RenderFragment?
+PandaBear.Blazor.ImagePicker<TKey, TOption>.EmptyLibrary.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Help.get -> string?
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Help.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Id.get -> string!
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Id.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.ImagePicker() -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Label.get -> string!
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Label.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.LabelOf.get -> System.Func<TOption!, string!>!
+PandaBear.Blazor.ImagePicker<TKey, TOption>.LabelOf.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Lookup.get -> System.Func<System.Collections.Generic.IReadOnlyList<TKey>!, System.Threading.CancellationToken, System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<TOption!>!>!>?
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Lookup.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.MaxCount.get -> int?
+PandaBear.Blazor.ImagePicker<TKey, TOption>.MaxCount.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Messages.get -> System.Collections.Generic.IReadOnlyList<string!>?
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Messages.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.MinQueryLength.get -> int
+PandaBear.Blazor.ImagePicker<TKey, TOption>.MinQueryLength.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Reorderable.get -> bool
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Reorderable.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Search.get -> System.Func<string!, int, System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.Blazor.ListSlice<TOption!>!>!>!
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Search.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.SearchLimit.get -> int
+PandaBear.Blazor.ImagePicker<TKey, TOption>.SearchLimit.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Texts.get -> PandaBear.Blazor.ImagePickerTexts!
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Texts.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.ThumbnailOf.get -> System.Func<TOption!, string?>?
+PandaBear.Blazor.ImagePicker<TKey, TOption>.ThumbnailOf.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Value.get -> TKey?
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Value.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<TKey?>
+PandaBear.Blazor.ImagePicker<TKey, TOption>.ValueChanged.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Values.get -> System.Collections.Generic.IReadOnlyList<TKey>?
+PandaBear.Blazor.ImagePicker<TKey, TOption>.Values.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.ValuesChanged.get -> Microsoft.AspNetCore.Components.EventCallback<System.Collections.Generic.IReadOnlyList<TKey>!>
+PandaBear.Blazor.ImagePicker<TKey, TOption>.ValuesChanged.set -> void
+PandaBear.Blazor.ImagePickerTexts
+PandaBear.Blazor.ImagePickerTexts.<Clone>$() -> PandaBear.Blazor.ImagePickerTexts!
+PandaBear.Blazor.ImagePickerTexts.Add.get -> string!
+PandaBear.Blazor.ImagePickerTexts.Add.init -> void
+PandaBear.Blazor.ImagePickerTexts.AddFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.AddFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.Choose.get -> string!
+PandaBear.Blazor.ImagePickerTexts.Choose.init -> void
+PandaBear.Blazor.ImagePickerTexts.ChooseFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.ChooseFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.Chosen.get -> string!
+PandaBear.Blazor.ImagePickerTexts.Chosen.init -> void
+PandaBear.Blazor.ImagePickerTexts.ChosenFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.ChosenFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.ChosenRangeFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.ChosenRangeFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.Close.get -> string!
+PandaBear.Blazor.ImagePickerTexts.Close.init -> void
+PandaBear.Blazor.ImagePickerTexts.Empty.get -> string!
+PandaBear.Blazor.ImagePickerTexts.Empty.init -> void
+PandaBear.Blazor.ImagePickerTexts.Equals(PandaBear.Blazor.ImagePickerTexts? other) -> bool
+PandaBear.Blazor.ImagePickerTexts.Find.get -> string!
+PandaBear.Blazor.ImagePickerTexts.Find.init -> void
+PandaBear.Blazor.ImagePickerTexts.FirstOptionsFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.FirstOptionsFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.FullFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.FullFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.ImagePickerTexts() -> void
+PandaBear.Blazor.ImagePickerTexts.MatchesFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.MatchesFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.Missing.get -> string!
+PandaBear.Blazor.ImagePickerTexts.Missing.init -> void
+PandaBear.Blazor.ImagePickerTexts.MoveEarlier.get -> string!
+PandaBear.Blazor.ImagePickerTexts.MoveEarlier.init -> void
+PandaBear.Blazor.ImagePickerTexts.MoveEarlierFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.MoveEarlierFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.MoveLater.get -> string!
+PandaBear.Blazor.ImagePickerTexts.MoveLater.init -> void
+PandaBear.Blazor.ImagePickerTexts.MoveLaterFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.MoveLaterFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.MovedFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.MovedFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.Next.get -> string!
+PandaBear.Blazor.ImagePickerTexts.Next.init -> void
+PandaBear.Blazor.ImagePickerTexts.NoMatchesFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.NoMatchesFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.NoOptions.get -> string!
+PandaBear.Blazor.ImagePickerTexts.NoOptions.init -> void
+PandaBear.Blazor.ImagePickerTexts.PageFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.PageFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.Previous.get -> string!
+PandaBear.Blazor.ImagePickerTexts.Previous.init -> void
+PandaBear.Blazor.ImagePickerTexts.QueryTooShortFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.QueryTooShortFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.Remove.get -> string!
+PandaBear.Blazor.ImagePickerTexts.Remove.init -> void
+PandaBear.Blazor.ImagePickerTexts.RemoveFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.RemoveFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.SearchHelp.get -> string?
+PandaBear.Blazor.ImagePickerTexts.SearchHelp.init -> void
+PandaBear.Blazor.ImagePickerTexts.SearchLabel.get -> string!
+PandaBear.Blazor.ImagePickerTexts.SearchLabel.init -> void
+PandaBear.Blazor.ImagePickerTexts.ToggleFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.ToggleFormat.init -> void
+PandaBear.Blazor.ImagePickerTexts.TruncatedFormat.get -> string!
+PandaBear.Blazor.ImagePickerTexts.TruncatedFormat.init -> void
+PandaBear.Blazor.PickerCatalog<TKey, TOption>
+PandaBear.Blazor.PickerCatalog<TKey, TOption>.Find(TKey key) -> TOption?
+PandaBear.Blazor.PickerCatalog<TKey, TOption>.KeyOf(TOption! option) -> TKey
+PandaBear.Blazor.PickerCatalog<TKey, TOption>.Known.get -> System.Collections.Generic.IReadOnlyList<TOption!>!
+PandaBear.Blazor.PickerCatalog<TKey, TOption>.PickerCatalog(System.Func<TOption!, TKey>! keyOf, System.Collections.Generic.IEnumerable<TOption!>! options) -> void
+PandaBear.Blazor.PickerCatalog<TKey, TOption>.Remember(TOption! option) -> void
+const PandaBear.Blazor.ImagePicker.DefaultChosenPageSize = 24 -> int
+const PandaBear.Blazor.ImagePicker.DefaultSearchLimit = 24 -> int
+override PandaBear.Blazor.ImagePickerTexts.Equals(object? obj) -> bool
+override PandaBear.Blazor.ImagePickerTexts.GetHashCode() -> int
+override PandaBear.Blazor.ImagePickerTexts.ToString() -> string!
+static PandaBear.Blazor.ImagePicker.FirstChosenPage<TKey>(System.Collections.Generic.IEnumerable<TKey>! chosen, int pageSize = 24) -> System.Collections.Generic.IReadOnlyList<TKey>!
+static PandaBear.Blazor.ImagePickerTexts.operator !=(PandaBear.Blazor.ImagePickerTexts? left, PandaBear.Blazor.ImagePickerTexts? right) -> bool
+static PandaBear.Blazor.ImagePickerTexts.operator ==(PandaBear.Blazor.ImagePickerTexts? left, PandaBear.Blazor.ImagePickerTexts? right) -> bool

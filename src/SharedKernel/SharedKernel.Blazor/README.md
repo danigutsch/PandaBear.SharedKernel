@@ -4,7 +4,7 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Accessible Blazor helpers for HTTP outcome messages, server validation, error summaries, handled-failure reporting, upload status, and bounded option search. The components are plain C# classes with no CSS or JavaScript requirement; style them with the `class` attribute they pass through.
+Accessible Blazor helpers for HTTP outcome messages, server validation, error summaries, handled-failure reporting, upload status, bounded option search, and an image picker over a large library. The components are plain C# classes with no CSS or JavaScript requirement; style them with the `class` attribute they pass through.
 
 ## HTTP failures and server validation
 
@@ -183,7 +183,7 @@ Choose by the kind of list:
   renders plain links and works in static and interactive pages alike. One page of rows is bounded by the page size, so it may go
   into `[PersistentState]` (`ListSlice<TItem>` serializes with System.Text.Json); the whole list never may.
 - A picker over a large option set (an image library, a customer lookup): search with `OptionSearch<TOption>`, which shows the
-  first `Limit` matches and asks for search text for the rest.
+  first `Limit` matches and asks for search text for the rest; for images, `ImagePicker<TKey, TOption>` builds the whole picker on it.
 - A small, fixed list (countries, statuses): neither; render it whole.
 
 Both read a `ListSlice<TItem>`: at most the items asked for plus the total number of matches. The application's query does the
@@ -266,10 +266,85 @@ else if (_images.IsTruncated)
 Call `Search` and `Start` on the renderer's synchronization context (an event handler or a lifecycle method), as with
 `ListDelete`. `OnAfterRenderAsync` does not render again by itself, hence the `StateHasChanged()` after `Start`.
 
+### Picking images from a large library
+
+`ImagePicker<TKey, TOption>` picks one image (single mode: `Value` and `ValueChanged`, or `@bind-Value`) or an ordered list (multiple
+mode: `Values` and `ValuesChanged`, or `@bind-Values`) from a library too large to render or hold. Setting a parameter of each mode
+throws `InvalidOperationException`; so do `MaxCount` and `Reorderable` in single mode. The picker never changes `Values`: it raises
+`ValuesChanged` with a new list. `TKey` is a struct key such as a `Guid`; `TOption` is a small class with the key, a label and a
+thumbnail address, never the image itself.
+
+| Parameter | Meaning |
+| --- | --- |
+| `Id`, `Label` | The `fieldset`'s id (no white space; its controls' ids start with it, so an error summary can link to it) and its `legend`. Required. |
+| `Help`, `Messages` | A help text and the field's validation messages, under the legend and tied to the group with `aria-describedby` (`{Id}-help`, `{Id}-error`, `{Id}-error-2`, …). |
+| `Texts` | `ImagePickerTexts`, every word of the picker, English by default; replace any of it (`Texts="_texts with { Find = "Encontrar" }"`). Formats are composite formats; each property names its placeholders. |
+| `EmptyLibrary` | What the search panel shows when the library is empty, such as a link to upload an image. |
+| `Search` | `(query, take, cancellationToken) => Task<ListSlice<TOption>>`, as for `OptionSearch`. Required. |
+| `Lookup` | `(keys, cancellationToken) => Task<IReadOnlyList<TOption>>`: the options of chosen keys the catalog does not know, for a page other than the persisted first one. Each key is asked for once. |
+| `Catalog` | `PickerCatalog<TKey, TOption>`: the options shown as chosen (`Known`, `Find`, `Remember`, `KeyOf`). Required. |
+| `LabelOf`, `ThumbnailOf` | The label of an option (required), and its thumbnail address: only a root-relative (`/site-media/…`) or an `https` address is shown (`WebAssetUriSanitizer`), anything else shows no thumbnail. When adopting, note that a base-relative address such as `site-media/…`, which a page with `<base href="/">` would resolve, is dropped: give the picker the address with its leading `/`. |
+| `MaxCount`, `Reorderable` | Multiple mode: the most images, and move-earlier and move-later buttons on every chosen image. |
+| `SearchLimit`, `ChosenPageSize` | 24 each (`ImagePicker.DefaultSearchLimit`, `ImagePicker.DefaultChosenPageSize`). |
+| `MinQueryLength`, `Debounce` | 0 and 300 ms, as on `OptionSearch`. The bounds and the debounce are read when the search first opens. |
+
+The state stays small: the picker never holds the library, searches nothing until the find button opened the search on the
+interactive page, and lists the chosen images `ChosenPageSize` at a time; other pages are looked up when they are shown. Persist only
+the options of the first chosen page in the page's prerendered state, and build the catalog from them:
+
+```razor
+<ImagePicker TKey="Guid" TOption="ImageOption" Id="gallery-photos" Label="Photos" @bind-Values="_form.PhotoIds" Reorderable="true"
+             Search="Images.Search" Lookup="Images.Of" Catalog="_catalog" LabelOf="image => image.Label"
+             ThumbnailOf="image => image.ThumbnailUrl" Messages="_errors.For(nameof(_form.PhotoIds))" Texts="_pickerTexts" />
+
+@code {
+    [PersistentState]
+    public List<ImageOption>? KnownImages { get; set; }
+
+    private PickerCatalog<Guid, ImageOption> _catalog = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _form = await Albums.Edit(Id);
+        KnownImages ??= [.. await Images.Of(ImagePicker.FirstChosenPage(_form.PhotoIds), CancellationToken.None)];
+        _catalog = new PickerCatalog<Guid, ImageOption>(image => image.Id, KnownImages);
+    }
+}
+```
+
+A test of this package prerenders a page with 1000 chosen images and checks with `PrerenderedComponentState` that it persists
+exactly as much state as a page with 24.
+
+Accessibility:
+
+- a `fieldset` named by its `legend`, with the help and the messages tied by `aria-describedby`;
+- one polite, atomic status region (`{Id}-status`, `role="status"`, `aria-atomic="true"`), rendered from the start, that announces the
+  search results (through `OptionSearch.Status`), a full list, a move ("Photo 3 moved to position 1 of 2.") and the range of a newly
+  shown page; the range of the page shown is also visible in `{Id}-range`, outside the live region;
+- the find button (`{Id}-find`) has `aria-expanded` and `aria-controls` (`{Id}-panel`), and is named "{text}, {Label}";
+- a result's button is named "Add {label}" ("Choose {label}" in single mode), or "{label}, chosen" with `aria-disabled` when it is chosen
+  already; when `MaxCount` is reached every add button has `aria-disabled` and a click announces why;
+- every chosen image has a "Remove {label}" button and, when reorderable, "Move {label} earlier" and "Move {label} later" (with
+  `aria-disabled` at either end, so they keep focus);
+- thumbnails are decorative (`alt=""`), lazy and 64 by 48 pixels;
+- every control is `disabled` until the page is interactive, because a click on a prerendered page is lost;
+- focus moves to the find button after a single choice and after the last image is removed, otherwise to the nearest remove button;
+  after a move it stays on the moved image's button;
+- the chosen list is an `ol` whose `start` numbers a later page, with previous and next buttons named "{text}, {Label}".
+
+Every change applies to the latest list. A removal or a move that waits for the options of the page it will show reads the list again
+when they arrive, so a change made meanwhile (another removal, an added image) is kept, and the picker shows the list it raised until
+the parent passes a new one. Only the latest search of an open panel is announced: a search that a newer one or a close replaced ends
+silently. Disposing the picker cancels the search and the lookup it waits for.
+
+A chosen key without an option (an image deleted since) is listed as `ImagePickerTexts.Missing`. The picker uses the stable classes
+`image-picker`, `image-picker__empty`, `image-picker__chosen`, `image-picker__pages`, `image-picker__panel` and
+`image-picker__results`, and passes other attributes, such as `class`, to the `fieldset`.
+
 ## Notes
 
 - Link targets in `ErrorSummary` are fragment links on the current page; browsers move focus to a focusable target of a fragment navigation.
-- Depends on the `Microsoft.AspNetCore.Components.Web` package and `PandaBear.SharedKernel.HttpClients`, not on the ASP.NET Core shared framework; see the [package decision](../../../docs/adr/20261027-blazor-helpers-package.md).
+- Depends on the `Microsoft.AspNetCore.Components.Web` package, `PandaBear.SharedKernel.HttpClients` and, for the image picker's `PageWindow` and thumbnail check, `PandaBear.SharedKernel.BuildingBlocks`, not on the ASP.NET Core shared framework; see the [package decision](../../../docs/adr/20261027-blazor-helpers-package.md).
 
 ## Package identity and availability
 

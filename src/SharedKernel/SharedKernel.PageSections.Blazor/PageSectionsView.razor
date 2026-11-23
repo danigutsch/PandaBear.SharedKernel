@@ -1,0 +1,85 @@
+@using PandaBear.Blazor.Site
+@typeparam TImageId where TImageId : struct, IEquatable<TImageId>
+@typeparam TLink where TLink : notnull
+@typeparam TExtra where TExtra : struct, IEquatable<TExtra>
+<div lang="@TextLanguage?.Value">
+    @foreach (var (index, section) in Sections.Index())
+    {
+        if (IsShown is not null && !IsShown(section))
+        {
+            continue;
+        }
+
+        var view = View(section);
+        if (!view.HasContent)
+        {
+            continue;
+        }
+
+        <Band @key="index" Tone="@Tone(section, view)" Image="@view.Background" TextAlignment="@TextAlignment">
+            @if (string.IsNullOrWhiteSpace(section.Heading) && Beside(section, view) && view.HasParts)
+            {
+                <Split Media="@Mosaic(view)" Alignment="@SplitAlignment">@Parts(section, view)</Split>
+            }
+            else if (string.IsNullOrWhiteSpace(section.Heading))
+            {
+                @Parts(section, view)
+                @Mosaic(view)
+            }
+            else if (Beside(section, view))
+            {
+                <Section Title="@section.Heading" Eyebrow="@section.Eyebrow" HeadingId="@HeadingId(index)" Level="@Level(section)"
+                         Divider="@(section.Level != SectionLevel.Subsection)" Media="@Mosaic(view)">@Parts(section, view)</Section>
+            }
+            else
+            {
+                <Section Title="@section.Heading" Eyebrow="@section.Eyebrow" HeadingId="@HeadingId(index)" Level="@Level(section)"
+                         Divider="@(section.Level != SectionLevel.Subsection)">
+                    @Parts(section, view)
+                    @Mosaic(view)
+                </Section>
+            }
+        </Band>
+    }
+</div>
+
+@code {
+    private RenderFragment Parts(PageSection<TImageId, TLink, TExtra> section, SectionView view) => @<text>
+        @foreach (var paragraph in section.Paragraphs)
+        {
+            <p>@paragraph</p>
+        }
+        @foreach (var (number, question) in section.Questions.Index())
+        {
+            <Disclosure @key="number" Summary="@question.Question">
+                @foreach (var paragraph in question.Answer)
+                {
+                    <p>@paragraph</p>
+                }
+            </Disclosure>
+        }
+        @if (section.Person is { } person)
+        {
+            <Byline Name="@person.Name" JobTitle="@person.Role" Photo="@view.Photo" />
+        }
+        @foreach (var (number, quote) in section.Quotes.Index())
+        {
+            <Quote @key="number" Cite="@quote.Cite">@quote.Text</Quote>
+        }
+        @if (view.ShowsExtra)
+        {
+            @Extra!(section.Extra)
+        }
+        @if (view.Video is { } video)
+        {
+            <VideoLink Href="@video.Address" Title="@video.Title" Poster="@video.Poster" SiteHint="@video.Hint" />
+        }
+        @if (section.Link is { } link && view.Button is { } button)
+        {
+            <p><ButtonLink Href="@button" Variant="@Variant(link.Style)">@link.Text</ButtonLink></p>
+        }
+    </text>;
+
+    private static RenderFragment? Mosaic(SectionView view) =>
+        view.Images.Count == 0 ? null : @<ImageGrid Images="@view.Images" Layout="ImageGridLayout.Mosaic" />;
+}
