@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace PandaBear.Blazor.Tests;
 
@@ -35,6 +36,78 @@ public sealed class BoundedTextTests
     }
 
     [Theory]
+    [InlineData(HostileText.StackTrace)]
+    [InlineData("   at Contoso.Program.Main()")]
+    [InlineData("at Contoso.Orders`1.<Save>b__0_0(Order order)")]
+    [InlineData("Failed\tat Contoso.Orders.Save$1(")]
+    [InlineData("See Program.cs:line  7 for details")]
+    [InlineData("System.ArgumentException")]
+    [InlineData("Error: InvalidOperationException.")]
+    public void Real_stack_trace_fragments_are_rejected(string text)
+    {
+        // Arrange & Act
+        var message = BoundedText.ToSingleLineMessage(text, 300);
+
+        // Assert
+        message.ShouldBeNull();
+    }
+
+    [Fact]
+    public void Stack_trace_screening_has_no_match_timeout_so_a_busy_machine_cannot_change_its_result()
+    {
+        // Arrange
+        var screening = BoundedText.StackTraceLike();
+
+        // Act
+        var timeout = screening.MatchTimeout;
+
+        // Assert
+        timeout.ShouldBe(Regex.InfiniteMatchTimeout);
+    }
+
+    [Fact]
+    public void Stack_trace_screening_uses_the_linear_time_non_backtracking_engine()
+    {
+        // Arrange
+        var screening = BoundedText.StackTraceLike();
+
+        // Act
+        var engine = screening.Options & RegexOptions.NonBacktracking;
+
+        // Assert
+        engine.ShouldBe(RegexOptions.NonBacktracking);
+    }
+
+    [Fact]
+    public void Stack_trace_screening_matches_exactly_what_the_backtracking_engine_matches()
+    {
+        // Arrange
+        var screening = BoundedText.StackTraceLike();
+        var reference = new Regex(screening.ToString(), screening.Options & ~RegexOptions.NonBacktracking, Regex.InfiniteMatchTimeout);
+        string[] pieces =
+        [
+            "at", "At", " ", "  ", "\t", " ", ".", "..", "(", ")", "<", ">", "`", "$", "+", ":", ":line", ":Line", "line",
+            "Exception", "exception", "Foo", "bar", "_", "x", "7", "42", "é", "日本", "-", "/", ",", "Name",
+        ];
+        var random = new Random(500);
+        var texts = Enumerable.Range(0, 20_000)
+            .Select(_ => string.Concat(Enumerable.Range(0, random.Next(1, 13)).Select(_ => pieces[random.Next(pieces.Length)])))
+            .ToList();
+
+        // Act
+        var outcomes = texts.Select(text => (Text: text, Actual: screening.IsMatch(text), Expected: reference.IsMatch(text))).ToList();
+
+        // Assert
+        outcomes.Where(outcome => outcome.Actual != outcome.Expected).Select(outcome => outcome.Text).ShouldBeEmpty();
+        outcomes.Count(outcome => outcome.Expected).ShouldBeGreaterThan(1_000);
+        outcomes.Count(outcome => !outcome.Expected).ShouldBeGreaterThan(1_000);
+    }
+
+    [Theory]
+    [InlineData("Name is required.")]
+    [InlineData("at Foo(bar) is not allowed.")]
+    [InlineData("Line 42 is invalid.")]
+    [InlineData("ExceptionList must not be empty.")]
     [InlineData("Look at Foo(bar) before saving.")]
     [InlineData("The exception list is empty.")]
     [InlineData("Name must be at least 3 characters.")]

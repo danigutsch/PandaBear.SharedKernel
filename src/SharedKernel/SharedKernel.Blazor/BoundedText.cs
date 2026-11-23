@@ -74,23 +74,16 @@ internal static partial class BoundedText
             return null;
         }
 
-        try
-        {
-            if (StackTraceLike().IsMatch(cleaned))
-            {
-                return null;
-            }
-        }
-        catch (RegexMatchTimeoutException)
-        {
-            return null;
-        }
-
-        return Truncate(cleaned.Trim(), maxLength);
+        return StackTraceLike().IsMatch(cleaned) ? null : Truncate(cleaned.Trim(), maxLength);
     }
 
     private static bool IsFormat(char character) => char.GetUnicodeCategory(character) == UnicodeCategory.Format;
 
-    [GeneratedRegex(@"(^|\s)at\s+[\w<>`$+]+(\.[\w<>`$+]+)+\(|\.\w+:line\s+\d+|\b\w+Exception\b", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 250)]
-    private static partial Regex StackTraceLike();
+    /// <summary>Matches text that looks like part of a stack trace: a frame, a source line, or an exception type name.</summary>
+    /// <remarks>
+    /// The non-backtracking engine matches in time linear in the input, so the screening needs no match timeout and
+    /// its result never depends on how busy the machine is.
+    /// </remarks>
+    [GeneratedRegex(@"(^|\s)at\s+[\w<>`$+]+(\.[\w<>`$+]+)+\(|\.\w+:line\s+\d+|\b\w+Exception\b", RegexOptions.CultureInvariant | RegexOptions.NonBacktracking, matchTimeoutMilliseconds: Timeout.Infinite)]
+    internal static partial Regex StackTraceLike();
 }
