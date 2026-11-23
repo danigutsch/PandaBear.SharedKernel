@@ -229,6 +229,68 @@ public sealed class ProjectSelectorTests : IDisposable
         SliceTests.Of(unrelatedChange, "library").ShouldBe([CoreTests]);
     }
 
+    [Theory]
+    [InlineData("", "None", "../Core.Tests/Fixtures/sample.json")]
+    [InlineData("", "None", "..\\Core.Tests\\Fixtures\\sample.json")]
+    [InlineData("", "Content", "../Core.Tests/Fixtures/sample.json")]
+    [InlineData("", "EmbeddedResource", "../Core.Tests/Fixtures/sample.json")]
+    [InlineData("", "AdditionalFiles", "../Core.Tests/Fixtures/sample.json")]
+    [InlineData("http://schemas.microsoft.com/developer/msbuild/2003", "None", "../Core.Tests/Fixtures/sample.json")]
+    public async Task Linked_data_file_changes_select_the_owner_and_exact_consumers(string xmlNamespace, string itemType, string include)
+    {
+        // Arrange
+        scope.AddProject("tests/Linked.Tests/Linked.Tests.csproj", $"""
+            <Project xmlns="{xmlNamespace}">
+              <PackageReference Include="xunit.v3.mtp-v2" />
+              <{itemType} Include="{include}" Link="Fixtures/sample.json" CopyToOutputDirectory="PreserveNewest" />
+            </Project>
+            """);
+
+        // Act
+        var linkedChange = await scope.Select(["tests/Core.Tests/Fixtures/sample.json"]);
+        var unrelatedChange = await scope.Select(["tests/Core.Tests/Fixtures/other.json"]);
+
+        // Assert
+        linkedChange.FullValidation.ShouldBeFalse();
+        SliceTests.Of(linkedChange, "library").ShouldBe([CoreTests, "tests/Linked.Tests/Linked.Tests.csproj"]);
+        SliceTests.Of(unrelatedChange, "library").ShouldBe([CoreTests]);
+    }
+
+    [Theory]
+    [InlineData("""<None Include="Fixtures\**" CopyToOutputDirectory="PreserveNewest" />""")]
+    [InlineData("""<None Include="Snapshots/**/*.verified.*" />""")]
+    [InlineData("""<None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" />""")]
+    [InlineData("""<EmbeddedResource Include="Scripts\*.js" />""")]
+    public async Task Data_items_that_need_evaluation_inside_the_project_directory_keep_the_selection_exact(string item)
+    {
+        // Arrange
+        scope.WriteFile("src/Core/Core.csproj", $"""<Project>{item}</Project>""");
+
+        // Act
+        var selection = await scope.Select(["src/Core/Changed.cs"]);
+
+        // Assert
+        selection.FullValidation.ShouldBeFalse();
+        SliceTests.Of(selection, "library").ShouldBe([CoreTests]);
+    }
+
+    [Theory]
+    [InlineData("""<None Include="../Core.Tests/Fixtures/**" />""")]
+    [InlineData("""<Content Include="..\Core.Tests\Fixtures\*.json" />""")]
+    [InlineData("""<None Include="../Core.Tests/First.json;../Core.Tests/Second.json" />""")]
+    public async Task A_data_item_pattern_outside_the_project_directory_selects_every_test_project(string item)
+    {
+        // Arrange
+        scope.WriteFile("src/Core/Core.csproj", $"""<Project>{item}</Project>""");
+
+        // Act
+        var selection = await scope.Select(["src/Dependent/Changed.cs"]);
+
+        // Assert
+        selection.FullValidation.ShouldBeTrue();
+        selection.Reasons.ShouldHaveSingleItem().ShouldContain("src/Core/Core.csproj", StringComparison.Ordinal);
+    }
+
     [Fact]
     public async Task A_linked_file_outside_every_project_directory_is_owned_by_the_projects_that_compile_it()
     {

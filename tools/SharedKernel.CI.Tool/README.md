@@ -196,13 +196,17 @@ Each changed path is classified in order:
    Otherwise the path is classified as any other path.
 3. A path that matches a `testPaths` pattern selects the test projects of the first matching rule, even when a solution
    project directory contains it, and no other project.
-4. Any other path is owned by the projects that compile it through an explicit `Compile` path and by the solution
-   project whose directory most closely contains it. A path without an owner selects every test project.
+4. Any other path is owned by the projects that compile it through an explicit `Compile` path or include it through an
+   explicit `None`, `Content`, `EmbeddedResource`, or `AdditionalFiles` path (a linked fixture or data file), and by the
+   solution project whose directory most closely contains it. A path without an owner selects every test project.
 
-Selection reads `ProjectReference` and `Compile` items from project files without evaluating MSBuild. A project file that
-cannot be read, imports anything other than `Sdk.props` or `Sdk.targets` of `Microsoft.NET.Sdk`, or has a reference or
-compile item with a property, an item, a metadata reference, a wildcard, or a list, or that resolves outside the
-solution, makes the references uncertain, and a change that needs them selects every test project.
+Selection reads `ProjectReference`, `Compile`, and those data items from project files without evaluating MSBuild. A
+project file that cannot be read, imports anything other than `Sdk.props` or `Sdk.targets` of `Microsoft.NET.Sdk`, or has
+a reference or compile item with a property, an item, a metadata reference, a wildcard, or a list, or that resolves
+outside the solution, makes the references uncertain, and a change that needs them selects every test project. A data
+item with a wildcard or a list is uncertain only when it reaches outside its project directory, whose own files that
+project already owns; a data item with a property, an item, or a metadata reference, such as a packed build output, is
+not followed.
 
 The selected test projects are the test projects among the owning projects and the projects that reference them
 directly or transitively, plus `alwaysSelected`. With `requireCoveringTests`, a changed project that no selected test
