@@ -84,7 +84,8 @@ as configuration files, reports, and API responses, whole into a `byte[]`, and r
 more than `maxBytes` bytes, also when a file grows while it is read. The caller words the size error. A seekable stream
 whose remaining length is already over the limit is refused without reading. `ReadFile` lets other processes write,
 rename, or delete the file during the read and lets `FileNotFoundException`, `DirectoryNotFoundException`, and other
-I/O errors propagate.
+I/O errors propagate. `BoundedReader.ReadContent(content, maxBytes, ct)` reads an `HttpContent`, such as a response body,
+the same way: a declared `Content-Length` over the limit is refused without reading.
 
 The optional `PandaBear.SharedKernel.IO.Analyzers` package flags unbounded buffering of request and upload
 streams (`SKIO001`) and hand-rolled copy loops into a `MemoryStream` (`SKIO002`) and points to this API.

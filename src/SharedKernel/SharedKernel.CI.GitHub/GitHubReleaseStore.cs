@@ -98,20 +98,9 @@ public sealed class GitHubReleaseStore : IReleaseStore, IDisposable
     private static string Refused(string method, Uri uri, HttpStatusCode status) =>
         string.Create(CultureInfo.InvariantCulture, $"{method} {uri} returned {(int)status} {status}.");
 
-    private static async Task<byte[]> ReadBody(HttpContent content, Uri uri, CancellationToken ct)
-    {
-        if (content.Headers.ContentLength > MaxPageBytes)
-        {
-            throw new InvalidDataException($"GET {uri} returned more than {MaxPageBytes} bytes.");
-        }
-
-        var source = await content.ReadAsStreamAsync(ct).ConfigureAwait(false);
-        await using (source.ConfigureAwait(false))
-        {
-            return await BoundedReader.ReadToEnd(source, MaxPageBytes, ct).ConfigureAwait(false)
-                ?? throw new InvalidDataException($"GET {uri} returned more than {MaxPageBytes} bytes.");
-        }
-    }
+    private static async Task<byte[]> ReadBody(HttpContent content, Uri uri, CancellationToken ct) =>
+        await BoundedReader.ReadContent(content, MaxPageBytes, ct).ConfigureAwait(false)
+            ?? throw new InvalidDataException($"GET {uri} returned more than {MaxPageBytes} bytes.");
 
     private async Task<GitHubRelease[]> ReadPage(Uri uri, CancellationToken ct)
     {

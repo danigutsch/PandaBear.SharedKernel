@@ -24,16 +24,7 @@ internal static class BoundedHttpContentReader
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxBytes);
         ArgumentException.ThrowIfNullOrWhiteSpace(limitMessage);
 
-        if (content.Headers.ContentLength > maxBytes)
-        {
-            throw new InvalidOperationException(limitMessage);
-        }
-
-        var source = await content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        await using (source.ConfigureAwait(false))
-        {
-            return await BoundedReader.ReadToEnd(source, maxBytes, cancellationToken).ConfigureAwait(false)
-                ?? throw new InvalidOperationException(limitMessage);
-        }
+        return await BoundedReader.ReadContent(content, maxBytes, cancellationToken).ConfigureAwait(false)
+            ?? throw new InvalidOperationException(limitMessage);
     }
 }
