@@ -97,7 +97,7 @@ public sealed class RoadmapAutomationCommandTests
         var workflowSummary = await File.ReadAllTextAsync(githubSummaryPath, TestContext.Current.CancellationToken);
         var plan = RoadmapAutomationPlan.Load(
             RoadmapAutomationService.GetPlanPath(workspace.RootPath),
-            workflowOutputs.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+            workflowOutputs.Split('\n', StringSplitOptions.RemoveEmptyEntries)
                 .ShouldHaveSingleItem(line => line.StartsWith("plan_digest=", StringComparison.Ordinal))["plan_digest=".Length..]);
 
         // Assert

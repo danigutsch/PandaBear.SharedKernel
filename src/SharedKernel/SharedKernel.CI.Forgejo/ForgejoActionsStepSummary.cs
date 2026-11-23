@@ -6,30 +6,13 @@ namespace PandaBear.CI.Forgejo;
 /// <see href="https://forgejo.org/docs/latest/user/actions/advanced-features/">the job summaries</see> describe. Forgejo
 /// truncates what a step appends beyond 1 MiB.
 /// </summary>
-public sealed class ForgejoActionsStepSummary : IStepSummary
+/// <param name="path">The absolute path of the file, such as the value of <c>FORGEJO_STEP_SUMMARY</c>.</param>
+/// <remarks>The constructor throws <see cref="ArgumentNullException"/> when <paramref name="path"/> is <see langword="null"/>, and <see cref="ArgumentException"/> when it is not fully qualified.</remarks>
+public sealed class ForgejoActionsStepSummary(string path) : IStepSummary
 {
-    private readonly string _path;
-
-    /// <summary>Creates the writer of the summary file at <paramref name="path"/>.</summary>
-    /// <param name="path">The absolute path of the file, such as the value of <c>FORGEJO_STEP_SUMMARY</c>.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="path"/> is not fully qualified.</exception>
-    public ForgejoActionsStepSummary(string path)
-    {
-        ArgumentNullException.ThrowIfNull(path);
-        if (!Path.IsPathFullyQualified(path))
-        {
-            throw new ArgumentException("The summary file must be a fully qualified path.", nameof(path));
-        }
-
-        _path = path;
-    }
+    private readonly MarkdownSummaryFile _file = new(path);
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException"><paramref name="markdown"/> is <see langword="null"/>.</exception>
-    public Task Append(string markdown, CancellationToken ct)
-    {
-        ArgumentNullException.ThrowIfNull(markdown);
-        return File.AppendAllTextAsync(_path, markdown, ct);
-    }
+    public Task Append(string markdown, CancellationToken ct) => _file.Append(markdown, ct);
 }

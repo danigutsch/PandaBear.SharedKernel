@@ -5,30 +5,13 @@ namespace PandaBear.CI.Forgejo;
 /// <see href="https://forgejo.org/docs/latest/user/actions/reference/">the
 /// Actions reference</see> describes for step and job outputs.
 /// </summary>
-public sealed class ForgejoActionsOutputs : IRunOutputs
+/// <param name="path">The absolute path of the file, such as the value of <c>FORGEJO_OUTPUT</c>.</param>
+/// <remarks>The constructor throws <see cref="ArgumentNullException"/> when <paramref name="path"/> is <see langword="null"/>, and <see cref="ArgumentException"/> when it is not fully qualified.</remarks>
+public sealed class ForgejoActionsOutputs(string path) : IRunOutputs
 {
-    private readonly string _path;
-
-    /// <summary>Creates the writer of the output file at <paramref name="path"/>.</summary>
-    /// <param name="path">The absolute path of the file, such as the value of <c>FORGEJO_OUTPUT</c>.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException"><paramref name="path"/> is not fully qualified.</exception>
-    public ForgejoActionsOutputs(string path)
-    {
-        ArgumentNullException.ThrowIfNull(path);
-        if (!Path.IsPathFullyQualified(path))
-        {
-            throw new ArgumentException("The output file must be a fully qualified path.", nameof(path));
-        }
-
-        _path = path;
-    }
+    private readonly KeyValueOutputFile _file = new(path);
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException"><paramref name="outputs"/> is <see langword="null"/>.</exception>
-    public Task Write(IReadOnlyList<KeyValuePair<string, string>> outputs, CancellationToken ct)
-    {
-        ArgumentNullException.ThrowIfNull(outputs);
-        return File.AppendAllTextAsync(_path, OutputLines.Format(outputs), ct);
-    }
+    public Task Write(IReadOnlyList<KeyValuePair<string, string>> outputs, CancellationToken ct) => _file.Write(outputs, ct);
 }

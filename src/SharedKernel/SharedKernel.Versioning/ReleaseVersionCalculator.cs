@@ -50,29 +50,37 @@ public static class ReleaseVersionCalculator
             versionOutput);
     }
 
-    /// <summary>
-    /// Creates GitHub Actions output lines for a release version result.
-    /// </summary>
+    /// <summary>Creates the run outputs of a release version result, as names and values in order.</summary>
     /// <param name="result">The calculation result.</param>
-    /// <returns>The GitHub output lines.</returns>
+    /// <returns>The outputs: <c>base_version</c>, <c>source_tag</c>, <c>version_json</c>, <c>sem_ver</c>, <c>release_impact</c>,
+    /// <c>package_version</c>, <c>assembly_version</c>, <c>file_version</c> and <c>informational_version</c>.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="result"/> is <see langword="null"/>.</exception>
-    public static string[] CreateGitHubOutputs(ReleaseVersionCalculationResult result)
+    public static IReadOnlyList<KeyValuePair<string, string>> CreateOutputs(ReleaseVersionCalculationResult result)
     {
         ArgumentNullException.ThrowIfNull(result);
 
         return
         [
-            "base_version=" + result.BaseVersion,
-            "source_tag=" + result.SourceTag,
-            "version_json=" + result.VersionJson,
-            "sem_ver=" + result.VersionOutput.SemVer,
-            "release_impact=" + ReleaseImpactText.ToOutputValue(result.VersionOutput.ReleaseImpact),
-            "package_version=" + result.VersionOutput.PackageVersion,
-            "assembly_version=" + result.VersionOutput.AssemblyVersion,
-            "file_version=" + result.VersionOutput.FileVersion,
-            "informational_version=" + result.VersionOutput.InformationalVersion,
+            new("base_version", result.BaseVersion),
+            new("source_tag", result.SourceTag),
+            new("version_json", result.VersionJson),
+            new("sem_ver", result.VersionOutput.SemVer),
+            new("release_impact", ReleaseImpactText.ToOutputValue(result.VersionOutput.ReleaseImpact)),
+            new("package_version", result.VersionOutput.PackageVersion),
+            new("assembly_version", result.VersionOutput.AssemblyVersion),
+            new("file_version", result.VersionOutput.FileVersion),
+            new("informational_version", result.VersionOutput.InformationalVersion),
         ];
     }
+
+    /// <summary>
+    /// Creates GitHub Actions output lines for a release version result, <c>name=value</c> for each of <see cref="CreateOutputs"/>.
+    /// </summary>
+    /// <param name="result">The calculation result.</param>
+    /// <returns>The GitHub output lines.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="result"/> is <see langword="null"/>.</exception>
+    public static string[] CreateGitHubOutputs(ReleaseVersionCalculationResult result) =>
+        [.. CreateOutputs(result).Select(static output => output.Key + "=" + output.Value)];
 
     /// <summary>
     /// Creates GitHub step summary lines for a release version result.

@@ -425,3 +425,9 @@ static PandaBear.CI.TestPathRule.operator ==(PandaBear.CI.TestPathRule? left, Pa
 static PandaBear.CI.WarningReports.Summarize(System.Collections.Generic.IReadOnlyList<string!>! reportPaths, PandaBear.CI.IStepSummary? summary, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
 static PandaBear.CI.WarningReports.VerifyRestore(string! logPath, PandaBear.CI.IStepSummary? summary, string? reportPath, string? exceptionsPath, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
 static PandaBear.CI.WarningReports.Write(string! tool, string! outcome, int advisory, string! reportPath, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.CI.KeyValueOutputFile
+PandaBear.CI.KeyValueOutputFile.KeyValueOutputFile(string! path) -> void
+PandaBear.CI.KeyValueOutputFile.Write(System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string!>>! outputs, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.CI.MarkdownSummaryFile
+PandaBear.CI.MarkdownSummaryFile.Append(string! markdown, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.CI.MarkdownSummaryFile.MarkdownSummaryFile(string! path) -> void

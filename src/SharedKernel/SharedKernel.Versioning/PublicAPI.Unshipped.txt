@@ -421,3 +421,4 @@ PandaBear.Versioning.PackageConsumptionOptions.Frameworks.init -> void
 static PandaBear.Versioning.ConsumerFrameworks.IsValid(string? value) -> bool
 PandaBear.Versioning.RepositoryFrameworks
 static PandaBear.Versioning.RepositoryFrameworks.Read(string! repoRoot) -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.Versioning.ReleaseVersionCalculator.CreateOutputs(PandaBear.Versioning.ReleaseVersionCalculationResult! result) -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string!, string!>>!
