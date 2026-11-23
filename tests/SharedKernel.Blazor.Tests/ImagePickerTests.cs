@@ -156,6 +156,7 @@ public sealed class ImagePickerTests : BunitContext
         var cut = this.RenderPicker(_library, parameters => parameters
             .Add(picker => picker.Catalog, PickerLibrary.Catalog())
             .Add(picker => picker.ValueChanged, value => chosen = value));
+        var find = cut.Find($"#{Id}-find").ReferenceId();
         await cut.Find($"#{Id}-find").ClickAsync();
         cut.Find($"#{Id}-result-3").GetAttribute("aria-label").ShouldBe("Choose Photo 0003");
 
@@ -166,7 +167,7 @@ public sealed class ImagePickerTests : BunitContext
         chosen.ShouldBe(3);
         cut.Find($"#{Id}-find").GetAttribute("aria-expanded").ShouldBe("false");
         cut.FindAll($"#{Id}-panel").ShouldBeEmpty();
-        JSInterop.VerifyFocusAsyncInvoke();
+        JSInterop.FocusedLast().ShouldBe(find);
     }
 
     [Fact]
@@ -178,6 +179,7 @@ public sealed class ImagePickerTests : BunitContext
             .Add(picker => picker.Catalog, PickerLibrary.Catalog(1, 2, 3))
             .Add(picker => picker.Values, values)
             .Add(picker => picker.ValuesChanged, changed => values = changed));
+        var nearest = cut.Find($"#{Id}-remove-3").ReferenceId();
 
         // Act
         await cut.Find($"#{Id}-remove-2").ClickAsync();
@@ -186,7 +188,7 @@ public sealed class ImagePickerTests : BunitContext
         // Assert
         values.ShouldBe([1, 3]);
         cut.FindAll($"#{Id} ol li span").Select(label => label.TextContent).ShouldBe(["Photo 0001", "Photo 0003"]);
-        JSInterop.VerifyFocusAsyncInvoke();
+        JSInterop.FocusedLast().ShouldBe(nearest);
         cut.Find($"#{Id}-remove-2").GetAttribute("aria-label").ShouldBe("Remove Photo 0003");
     }
 
@@ -199,6 +201,7 @@ public sealed class ImagePickerTests : BunitContext
             .Add(picker => picker.Catalog, PickerLibrary.Catalog(1))
             .Add(picker => picker.Values, values)
             .Add(picker => picker.ValuesChanged, changed => values = changed));
+        var find = cut.Find($"#{Id}-find").ReferenceId();
 
         // Act
         await cut.Find($"#{Id}-remove-1").ClickAsync();
@@ -207,7 +210,7 @@ public sealed class ImagePickerTests : BunitContext
         // Assert
         values.ShouldBeEmpty();
         cut.Find(".image-picker__empty").TextContent.ShouldBe("No image chosen.");
-        JSInterop.VerifyFocusAsyncInvoke();
+        JSInterop.FocusedLast().ShouldBe(find);
     }
 
     [Fact]
@@ -219,13 +222,14 @@ public sealed class ImagePickerTests : BunitContext
             .Add(picker => picker.Catalog, PickerLibrary.Catalog(4))
             .Add(picker => picker.Value, value)
             .Add(picker => picker.ValueChanged, changed => value = changed));
+        var find = cut.Find($"#{Id}-find").ReferenceId();
 
         // Act
         await cut.Find($"#{Id}-remove-1").ClickAsync();
 
         // Assert
         value.ShouldBeNull();
-        JSInterop.VerifyFocusAsyncInvoke();
+        JSInterop.FocusedLast().ShouldBe(find);
     }
 
     [Fact]
@@ -272,6 +276,7 @@ public sealed class ImagePickerTests : BunitContext
 
         // Act
         await cut.Find($"#{Id}-remove-25").ClickAsync();
+        var last = cut.Find($"#{Id}-remove-24").ReferenceId();
         cut.Render(parameters => parameters.Add(picker => picker.Values, values));
 
         // Assert
@@ -279,7 +284,7 @@ public sealed class ImagePickerTests : BunitContext
         cut.FindAll($"#{Id} ol li").Count.ShouldBe(ImagePicker.DefaultChosenPageSize);
         cut.FindAll($"#{Id}-range").ShouldBeEmpty();
         cut.Find($"#{Id} ol li:last-child span").TextContent.ShouldBe("Photo 0024");
-        JSInterop.VerifyFocusAsyncInvoke();
+        JSInterop.FocusedLast().ShouldBe(last);
     }
 
     [Fact]
@@ -331,6 +336,7 @@ public sealed class ImagePickerTests : BunitContext
         cut.Find($"#{Id}-earlier-1").GetAttribute("aria-disabled").ShouldBe("true");
         cut.Find($"#{Id}-later-3").GetAttribute("aria-disabled").ShouldBe("true");
         cut.Find($"#{Id}-earlier-3").GetAttribute("aria-label").ShouldBe("Move Photo 0003 earlier");
+        var moved = cut.Find($"#{Id}-earlier-3").ReferenceId();
 
         // Act
         await cut.Find($"#{Id}-earlier-3").ClickAsync();
@@ -340,7 +346,7 @@ public sealed class ImagePickerTests : BunitContext
         values.ShouldBe([1, 3, 2]);
         cut.FindAll($"#{Id} ol li span").Select(label => label.TextContent).ShouldBe(["Photo 0001", "Photo 0003", "Photo 0002"]);
         cut.Find($"#{Id}-status").TextContent.Trim().ShouldBe("Photo 0003 moved to position 2 of 3.");
-        JSInterop.VerifyFocusAsyncInvoke();
+        JSInterop.FocusedLast().ShouldBe(moved);
     }
 
     [Fact]

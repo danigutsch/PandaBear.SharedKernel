@@ -283,7 +283,7 @@ thumbnail address, never the image itself.
 | `Search` | `(query, take, cancellationToken) => Task<ListSlice<TOption>>`, as for `OptionSearch`. Required. |
 | `Lookup` | `(keys, cancellationToken) => Task<IReadOnlyList<TOption>>`: the options of chosen keys the catalog does not know, for a page other than the persisted first one. Each key is asked for once. |
 | `Catalog` | `PickerCatalog<TKey, TOption>`: the options shown as chosen (`Known`, `Find`, `Remember`, `KeyOf`). Required. |
-| `LabelOf`, `ThumbnailOf` | The label of an option (required), and its thumbnail address: only a root-relative or an `https` address is shown (`WebAssetUriSanitizer`), anything else shows no thumbnail. |
+| `LabelOf`, `ThumbnailOf` | The label of an option (required), and its thumbnail address: only a root-relative (`/site-media/…`) or an `https` address is shown (`WebAssetUriSanitizer`), anything else shows no thumbnail. When adopting, note that a base-relative address such as `site-media/…`, which a page with `<base href="/">` would resolve, is dropped: give the picker the address with its leading `/`. |
 | `MaxCount`, `Reorderable` | Multiple mode: the most images, and move-earlier and move-later buttons on every chosen image. |
 | `SearchLimit`, `ChosenPageSize` | 24 each (`ImagePicker.DefaultSearchLimit`, `ImagePicker.DefaultChosenPageSize`). |
 | `MinQueryLength`, `Debounce` | 0 and 300 ms, as on `OptionSearch`. The bounds and the debounce are read when the search first opens. |
@@ -331,6 +331,11 @@ Accessibility:
 - focus moves to the find button after a single choice and after the last image is removed, otherwise to the nearest remove button;
   after a move it stays on the moved image's button;
 - the chosen list is an `ol` whose `start` numbers a later page, with previous and next buttons named "{text}, {Label}".
+
+Every change applies to the latest list. A removal or a move that waits for the options of the page it will show reads the list again
+when they arrive, so a change made meanwhile (another removal, an added image) is kept, and the picker shows the list it raised until
+the parent passes a new one. Only the latest search of an open panel is announced: a search that a newer one or a close replaced ends
+silently. Disposing the picker cancels the search and the lookup it waits for.
 
 A chosen key without an option (an image deleted since) is listed as `ImagePickerTexts.Missing`. The picker uses the stable classes
 `image-picker`, `image-picker__empty`, `image-picker__chosen`, `image-picker__pages`, `image-picker__panel` and

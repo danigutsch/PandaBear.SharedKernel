@@ -58,6 +58,9 @@ public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
     private FocusTarget _focus;
     private TKey _focusKey;
     private bool _disposed;
+    private IReadOnlyList<TKey>? _receivedValues;
+    private IReadOnlyList<TKey>? _raisedValues;
+    private int _searchGeneration;
 
     private enum FocusTarget
     {
@@ -179,7 +182,7 @@ public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
 
     private bool IsMultiple => Values is not null || ValuesChanged.HasDelegate;
 
-    private IReadOnlyList<TKey> Chosen => Values ?? (Value is { } value ? [value] : []);
+    private IReadOnlyList<TKey> Chosen => _raisedValues ?? Values ?? (Value is { } value ? [value] : []);
 
     private PageWindow ChosenWindow => PageWindow.Create(_chosenPage, ChosenPageSize, Chosen.Count);
 
@@ -240,6 +243,12 @@ public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
         if (Values is { } values && values.Distinct().Count() != values.Count)
         {
             throw new ArgumentException("The chosen keys must not repeat.", nameof(Values));
+        }
+
+        if (!ReferenceEquals(_receivedValues, Values))
+        {
+            _receivedValues = Values;
+            _raisedValues = null;
         }
 
         if (!ReferenceEquals(_catalog, Catalog))
@@ -574,6 +583,7 @@ public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
     private async Task Toggle()
     {
         _open = !_open;
+        var generation = ++_searchGeneration;
         if (!_open || _search is not null)
         {
             return;
@@ -581,7 +591,7 @@ public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
 
         _search = new OptionSearch<TOption>(Search, SearchLimit) { Debounce = Debounce, MinQueryLength = MinQueryLength };
         await _search.Start(_disposal.Token).ConfigureAwait(true);
-        AnnounceSearch(_search);
+        AnnounceSearch(_search, generation);
     }
 
     private async Task SearchFor(ChangeEventArgs args)
@@ -591,12 +601,18 @@ public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
             return;
         }
 
+        var generation = ++_searchGeneration;
         await search.Search(args.Value?.ToString(), _disposal.Token).ConfigureAwait(true);
-        AnnounceSearch(search);
+        AnnounceSearch(search, generation);
     }
 
-    private void AnnounceSearch(OptionSearch<TOption> search)
+    private void AnnounceSearch(OptionSearch<TOption> search, int generation)
     {
+        if (generation != _searchGeneration || !_open)
+        {
+            return;
+        }
+
         if (search.IsQueryTooShort)
         {
             Announce(Format(Texts.QueryTooShortFormat, MinQueryLength));
@@ -637,7 +653,7 @@ public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
         }
 
         Catalog.Remember(option);
-        await ValuesChanged.InvokeAsync([.. chosen, key]).ConfigureAwait(true);
+        await RaiseValues([.. chosen, key]).ConfigureAwait(true);
     }
 
     private async Task Remove(TKey key)
@@ -652,55 +668,66 @@ public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
             return;
         }
 
-        var chosen = Chosen;
-        var index = IndexOf(chosen, key);
-        if (index < 0)
+        while (true)
         {
+            var chosen = Chosen;
+            var index = IndexOf(chosen, key);
+            if (index < 0)
+            {
+                return;
+            }
+
+            TKey[] remaining = [.. chosen.Where(item => !item.Equals(key))];
+            var window = PageWindow.Create(_chosenPage, ChosenPageSize, remaining.Length);
+            if (await LoadOptions(remaining.Skip(window.Skip).Take(window.Take)).ConfigureAwait(true))
+            {
+                continue;
+            }
+
+            _chosenPage = window.Page;
+            if (remaining.Length == 0)
+            {
+                _focus = FocusTarget.Toggle;
+            }
+            else
+            {
+                _focus = FocusTarget.Remove;
+                _focusKey = remaining[Math.Min(index, remaining.Length - 1)];
+            }
+
+            await RaiseValues(remaining).ConfigureAwait(true);
             return;
         }
-
-        TKey[] remaining = [.. chosen.Where(item => !item.Equals(key))];
-        var window = PageWindow.Create(_chosenPage, ChosenPageSize, remaining.Length);
-        await LoadOptions(remaining.Skip(window.Skip).Take(window.Take)).ConfigureAwait(true);
-        _chosenPage = window.Page;
-        if (remaining.Length == 0)
-        {
-            _focus = FocusTarget.Toggle;
-        }
-        else
-        {
-            _focus = FocusTarget.Remove;
-            _focusKey = remaining[Math.Min(index, remaining.Length - 1)];
-        }
-
-        await ValuesChanged.InvokeAsync(remaining).ConfigureAwait(true);
     }
 
     private async Task Move(TKey key, int offset)
     {
-        var chosen = Chosen;
-        var index = IndexOf(chosen, key);
-        var target = index + offset;
-        if (index < 0 || target < 0 || target >= chosen.Count)
+        while (true)
         {
+            var chosen = Chosen;
+            var index = IndexOf(chosen, key);
+            var target = index + offset;
+            if (index < 0 || target < 0 || target >= chosen.Count)
+            {
+                return;
+            }
+
+            var moved = chosen.ToList();
+            moved.RemoveAt(index);
+            moved.Insert(target, key);
+            var window = PageWindow.Create((target / ChosenPageSize) + 1, ChosenPageSize, moved.Count);
+            if (await LoadOptions(moved.Skip(window.Skip).Take(window.Take)).ConfigureAwait(true))
+            {
+                continue;
+            }
+
+            _chosenPage = window.Page;
+            _focus = offset < 0 ? FocusTarget.Earlier : FocusTarget.Later;
+            _focusKey = key;
+            Announce(Format(Texts.MovedFormat, LabelFor(Catalog.Find(key)), target + 1, moved.Count));
+            await RaiseValues(moved).ConfigureAwait(true);
             return;
         }
-
-        var moved = chosen.ToList();
-        moved.RemoveAt(index);
-        moved.Insert(target, key);
-        var page = (target / ChosenPageSize) + 1;
-        if (page != _chosenPage)
-        {
-            var window = PageWindow.Create(page, ChosenPageSize, moved.Count);
-            await LoadOptions(moved.Skip(window.Skip).Take(window.Take)).ConfigureAwait(true);
-            _chosenPage = window.Page;
-        }
-
-        _focus = offset < 0 ? FocusTarget.Earlier : FocusTarget.Later;
-        _focusKey = key;
-        Announce(Format(Texts.MovedFormat, LabelFor(Catalog.Find(key)), target + 1, moved.Count));
-        await ValuesChanged.InvokeAsync(moved).ConfigureAwait(true);
     }
 
     private async Task ShowChosenPage(int? page)
@@ -710,23 +737,37 @@ public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
             return;
         }
 
-        var window = PageWindow.Create(number, ChosenPageSize, Chosen.Count);
-        await LoadOptions(Chosen.Skip(window.Skip).Take(window.Take)).ConfigureAwait(true);
-        _chosenPage = window.Page;
-        Announce(RangeText(window));
+        while (true)
+        {
+            var window = PageWindow.Create(number, ChosenPageSize, Chosen.Count);
+            if (await LoadOptions(Chosen.Skip(window.Skip).Take(window.Take)).ConfigureAwait(true))
+            {
+                continue;
+            }
+
+            _chosenPage = window.Page;
+            Announce(RangeText(window));
+            return;
+        }
     }
 
-    private async Task LoadOptions(IEnumerable<TKey> keys)
+    private async Task RaiseValues(IReadOnlyList<TKey> values)
+    {
+        _raisedValues = values;
+        await ValuesChanged.InvokeAsync(values).ConfigureAwait(true);
+    }
+
+    private async Task<bool> LoadOptions(IEnumerable<TKey> keys)
     {
         if (Lookup is null)
         {
-            return;
+            return false;
         }
 
         TKey[] missing = [.. keys.Where(key => Catalog.Find(key) is null && _requested.Add(key))];
         if (missing.Length == 0)
         {
-            return;
+            return false;
         }
 
         var options = await Lookup(missing, _disposal.Token).ConfigureAwait(true)
@@ -735,6 +776,8 @@ public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
         {
             Catalog.Remember(option);
         }
+
+        return true;
     }
 
     private static int IndexOf(IReadOnlyList<TKey> keys, TKey key)
