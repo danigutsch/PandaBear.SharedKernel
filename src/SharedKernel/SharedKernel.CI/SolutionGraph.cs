@@ -6,11 +6,13 @@ namespace PandaBear.CI;
 
 /// <summary>
 /// The projects of a solution and the edges that selection reads from their project files without evaluating MSBuild:
-/// <c>ProjectReference</c> items and <c>Compile</c> items with an explicit path. Paths are repository-relative with
-/// <c>/</c> separators.
+/// <c>ProjectReference</c> items, and <c>Compile</c> and data items (<c>None</c>, <c>Content</c>, <c>EmbeddedResource</c>,
+/// <c>AdditionalFiles</c>) with an explicit path. Paths are repository-relative with <c>/</c> separators.
 /// </summary>
 public sealed class SolutionGraph
 {
+    private static readonly HashSet<string> DataItemTypes = new(["None", "Content", "EmbeddedResource", "AdditionalFiles"], StringComparer.Ordinal);
+
     private readonly Dictionary<string, string[]> references;
     private readonly Dictionary<string, List<string>> compileInputs;
 
@@ -128,12 +130,31 @@ public sealed class SolutionGraph
                     continue;
                 }
 
-                if (!compileInputs.TryGetValue(path, out var owners))
+                AddInput(compileInputs, path, project);
+            }
+
+            foreach (var input in elements.Where(static element => DataItemTypes.Contains(element.Name.LocalName) && element.Attribute("Include") is not null))
+            {
+                var include = (string)input.Attribute("Include")!;
+                if (include.IndexOfAny(['$', '@', '%']) >= 0)
                 {
-                    compileInputs[path] = owners = [];
+                    continue;
                 }
 
-                owners.Add(project);
+                if (include.IndexOfAny(['*', '?', ';']) < 0)
+                {
+                    if (Resolve(root, projectDirectory, include) is { } path)
+                    {
+                        AddInput(compileInputs, path, project);
+                    }
+
+                    continue;
+                }
+
+                if (include.Split(';').Any(part => !StaysInside(projectDirectory, part)))
+                {
+                    uncertainty ??= project + " has a data item pattern that selection cannot resolve outside its project directory.";
+                }
             }
         }
 
@@ -141,8 +162,8 @@ public sealed class SolutionGraph
     }
 
     /// <summary>
-    /// Returns the projects that own <paramref name="path"/>: the projects that compile it by an explicit path and the
-    /// project whose directory most closely contains it.
+    /// Returns the projects that own <paramref name="path"/>: the projects that compile or include it as a data item by an
+    /// explicit path and the project whose directory most closely contains it.
     /// </summary>
     internal string[] Owners(string path)
     {
@@ -196,6 +217,26 @@ public sealed class SolutionGraph
         }
 
         return closure;
+    }
+
+    private static void AddInput(Dictionary<string, List<string>> inputs, string path, string project)
+    {
+        if (!inputs.TryGetValue(path, out var owners))
+        {
+            inputs[path] = owners = [];
+        }
+
+        owners.Add(project);
+    }
+
+    private static bool StaysInside(string projectDirectory, string pattern)
+    {
+        var literal = pattern.Replace('\\', '/');
+        var wildcard = literal.IndexOfAny(['*', '?']);
+        var directory = wildcard < 0 ? Path.GetDirectoryName(literal) ?? string.Empty : literal[..(literal[..wildcard].LastIndexOf('/', StringComparison.Ordinal) + 1)];
+        var full = Path.GetFullPath(Path.Combine(projectDirectory, directory));
+        var inside = Path.GetFullPath(projectDirectory);
+        return full == inside || full.StartsWith(inside + Path.DirectorySeparatorChar, StringComparison.Ordinal);
     }
 
     private static bool IsSdkImport(XElement import) =>
