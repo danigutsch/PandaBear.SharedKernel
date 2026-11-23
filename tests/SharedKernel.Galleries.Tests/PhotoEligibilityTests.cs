@@ -1,0 +1,26 @@
+using static PandaBear.Galleries.Tests.AlbumFixtures;
+
+namespace PandaBear.Galleries.Tests;
+
+/// <summary>Tests that the album photo knowledge is the shared image eligibility of BuildingBlocks.</summary>
+[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Trait("Capability", "Albums")]
+public sealed class PhotoEligibilityTests
+{
+    [Fact]
+    public void Album_photo_knowledge_answers_as_image_eligibility()
+    {
+        // Arrange
+        var library = new PhotoLibrary();
+        var photo = library.Add(Portuguese);
+        object knowledge = library;
+
+        // Act
+        var images = knowledge.ShouldBeAssignableTo<IImageEligibility<Guid>>();
+
+        // Assert
+        images.Exists(photo).ShouldBeTrue();
+        images.IsEligible(photo, Portuguese).ShouldBeTrue();
+        images.IsEligible(photo, English).ShouldBeFalse();
+    }
+}

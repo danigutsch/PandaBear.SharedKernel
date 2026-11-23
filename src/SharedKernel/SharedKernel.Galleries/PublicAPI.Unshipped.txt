@@ -69,8 +69,6 @@ PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>.Slug.get -> PandaBear.Buildi
 PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>.SortOrder.get -> int
 PandaBear.Galleries.AlbumView<TPhotoId, TRelatedId>.Title.get -> string!
 PandaBear.Galleries.IAlbumPhotoEligibility<TPhotoId>
-PandaBear.Galleries.IAlbumPhotoEligibility<TPhotoId>.Exists(TPhotoId photoId) -> bool
-PandaBear.Galleries.IAlbumPhotoEligibility<TPhotoId>.IsEligible(TPhotoId photoId, PandaBear.BuildingBlocks.ContentCulture! culture) -> bool
 const PandaBear.Galleries.AlbumFields.CoverId = "coverId" -> string!
 const PandaBear.Galleries.AlbumFields.PhotoIds = "photoIds" -> string!
 const PandaBear.Galleries.AlbumFields.Photos = "photos" -> string!
