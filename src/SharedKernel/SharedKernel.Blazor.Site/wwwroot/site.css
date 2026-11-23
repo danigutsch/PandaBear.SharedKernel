@@ -69,6 +69,7 @@
     --site-thumbnail-min-width: 6.5rem;
     --site-thumbnail-aspect-ratio: 1;
     --site-video-width: 40rem;
+    --site-hero-title-scale-large: 1.25;
 }
 
 *,
@@ -632,6 +633,11 @@ a {
 .site-hero--cover :is(.site-hero__eyebrow, .site-hero__subtitle) {
     font-size: max(1.5rem, var(--site-font-size-lg));
     font-weight: 600;
+}
+
+/* A large hero title: the level 1 heading's size, the theme's included, times the large scale. */
+.site-hero--title-large .site-hero__title {
+    font-size: calc(var(--site-h1-font-size, var(--site-font-size-3xl)) * var(--site-hero-title-scale-large));
 }
 
 .site-hero--cover .site-hero__title {

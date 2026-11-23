@@ -1102,3 +1102,8 @@ static PandaBear.Blazor.Site.CreditItem.operator !=(PandaBear.Blazor.Site.Credit
 static PandaBear.Blazor.Site.CreditItem.operator ==(PandaBear.Blazor.Site.CreditItem? left, PandaBear.Blazor.Site.CreditItem? right) -> bool
 static PandaBear.Blazor.Site.ImageCreditLine.operator !=(PandaBear.Blazor.Site.ImageCreditLine? left, PandaBear.Blazor.Site.ImageCreditLine? right) -> bool
 static PandaBear.Blazor.Site.ImageCreditLine.operator ==(PandaBear.Blazor.Site.ImageCreditLine? left, PandaBear.Blazor.Site.ImageCreditLine? right) -> bool
+PandaBear.Blazor.Site.Hero.TitleScale.get -> PandaBear.Blazor.Site.HeroTitleScale
+PandaBear.Blazor.Site.Hero.TitleScale.set -> void
+PandaBear.Blazor.Site.HeroTitleScale
+PandaBear.Blazor.Site.HeroTitleScale.Large = 1 -> PandaBear.Blazor.Site.HeroTitleScale
+PandaBear.Blazor.Site.HeroTitleScale.Regular = 0 -> PandaBear.Blazor.Site.HeroTitleScale

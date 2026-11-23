@@ -10,6 +10,10 @@ public sealed class HeroSample : ComponentBase
     [Parameter]
     public HeroLayout Layout { get; set; }
 
+    /// <summary>Gets or sets the scale of the hero's title.</summary>
+    [Parameter]
+    public HeroTitleScale TitleScale { get; set; }
+
     /// <summary>Gets or sets a value indicating whether the hero has a subtitle.</summary>
     [Parameter]
     public bool Subtitle { get; set; }
@@ -34,6 +38,7 @@ public sealed class HeroSample : ComponentBase
             actions.AddComponentParameter(3, nameof(ButtonLink.ChildContent), (RenderFragment)(text => text.AddContent(0, "See the trips")));
             actions.CloseComponent();
         }));
+        builder.AddComponentParameter(8, nameof(Hero.TitleScale), TitleScale);
         builder.CloseComponent();
         builder.CloseElement();
     }

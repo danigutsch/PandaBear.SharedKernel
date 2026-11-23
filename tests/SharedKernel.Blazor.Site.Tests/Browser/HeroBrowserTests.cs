@@ -27,4 +27,28 @@ public sealed class HeroBrowserTests(ChromiumFixture chromium) : IClassFixture<C
         // Assert
         Math.Abs(actions.Y - heading.Bottom - 24).ShouldBeLessThanOrEqualTo(1);
     }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(HeroLayout.Cover, 375)]
+    [InlineData(HeroLayout.Cover, 1280)]
+    [InlineData(HeroLayout.Split, 1280)]
+    public async Task A_large_title_is_a_quarter_larger_than_the_level_one_heading(HeroLayout layout, int width)
+    {
+        // Arrange
+        await using var regular = await LayoutPage.Serve<HeroSample>(chromium.Browser, width, new Dictionary<string, object?> { [nameof(HeroSample.Layout)] = layout });
+        await using var large = await LayoutPage.Serve<HeroSample>(chromium.Browser, width, new Dictionary<string, object?>
+        {
+            [nameof(HeroSample.Layout)] = layout,
+            [nameof(HeroSample.TitleScale)] = HeroTitleScale.Large,
+        });
+
+        // Act
+        var regularSize = CssLength.Pixels(await regular.Style(".site-hero__title", "font-size"));
+        var largeSize = CssLength.Pixels(await large.Style(".site-hero__title", "font-size"));
+        var scrollWidth = await large.ScrollWidth();
+
+        // Assert
+        Math.Abs(largeSize - (regularSize * 1.25)).ShouldBeLessThanOrEqualTo(0.1);
+        scrollWidth.ShouldBeLessThanOrEqualTo(width);
+    }
 }
