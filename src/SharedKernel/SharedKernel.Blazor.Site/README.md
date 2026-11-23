@@ -83,6 +83,8 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `StatusBadge` | A short status after the GOV.UK tag: `<strong class="site-status site-status--{tone}">` with the `Text`, a `Tone` (`StatusTone`: `Neutral`, the default, `Info`, `Success`, `Warning`, `Danger`) and an optional visually hidden `Label` prefix; see [Offerings](#offerings). |
 | `PriceList` | An offering's prices after the GOV.UK summary list: a `dl` of `PriceItem` rows (label, amount in `<data value>`, optional note) and optional `Conditions`; `HeadingId` makes it a group named by that heading; see [Offerings](#offerings). |
 | `FromPrice` | A line such as "a partir de 1.234,50 €": `<p class="site-from-price">` of the `Format` split at its `{0}`, the amount in `<data value>`; see [Offerings](#offerings). |
+| `StepList` | Numbered steps, such as the days of an itinerary: `<ol role="list" class="site-step-list">` of `StepItem`s, each an `hgroup` of its number from the position (`NumberFormat`) and its title, inline facts, note and paragraphs, beside its image in a zigzag `Split`; see [Offerings](#offerings). |
+| `TextList` | A plain `ul`, or an `ol` when `Ordered`, of lines (`Items`), such as what a tour includes; nothing when empty. |
 | `FactsTable` | `table` with a required `caption` and `th scope="row"` headers. |
 | `FactGrid` | A `dl` (`site-fact-grid`) of `FactCard`s, such as a tour's basic information: each card is a `div` (`site-fact-grid__item`) of the `dt` label (`site-fact-grid__label`) and one `dd` per value (`site-fact-grid__value`), for example "8 days" and "7 nights". A value is a `FactValue`: its `Text` and an optional `Link` (`LinkTarget`, so a relative, `http`/`https`, `mailto:` or `tel:` address), which makes the text a plain `a` in the same tab, for example `new("info@example.org", LinkTarget.FromString("mailto:info@example.org"))`. A value wraps between words; in a word that holds an `@`, such as an e-mail address, the component writes a `wbr` before the `@` and every dot, so the address wraps between its parts (`info` / `.desk` / `@example` / `.org`) and never inside one; a dot that ends the word or comes before closing punctuation only (`org.`, `org.)`) gets none, and other words, such as `8.5`, keep their dots unbroken. Chromium computes a link's name from its content with a space at every `wbr`, so a linked value that gets breaks carries its text as `aria-label`: the link's name and `textContent` stay the address. Only a part wider than its card breaks inside, so nothing scrolls sideways. A card's optional `Icon` is rendered first inside the `dt`, in a `span` (`site-fact-grid__icon`) with `aria-hidden="true"`, because a `div` in a `dl` may hold only `dt` and `dd` elements; the label alone names the term. The cards are centred and bordered like table cells, in wrapping rows (flex) that share the full width of the container. Below the `48rem` breakpoint as many cards at least 11rem wide fit a row as the width allows; from it on the row length is computed from the number of cards for balanced rows, as the class `site-fact-grid--columns-1` to `site-fact-grid--columns-4` (no inline style): as many as cards up to four, otherwise `ceil(n / ceil(n / 4))`, so 5 and 6 cards make rows of 3, 7 and 8 rows of 4, and 9 rows of 3. The cards of a shorter last row grow to fill it, so 7 cards are a row of 4 and a row of 3 wider cards, and a lone last card on a phone takes the whole row: no row leaves a notch. An empty grid has no column class; the label is bold and, like the icon, in the primary colour (the on-primary colour in a `Primary` or `Image` band). An `svg` icon without a `fill` attribute is filled with the colour; one with `fill="none"` keeps its strokes, so draw them with `currentColor`. `Layout` `Inline` (`FactGridLayout`; `site-fact-grid--inline`, no column class) renders the same list as one compact row for a card, such as days, distance and difficulty: no borders, each fact its icon and label on one line above its value, at the start (in the middle under centred text), wrapping only when the card is too narrow (a browser test measures one row of three short facts in a card of three to a row at 1280px and no sideways scroll at 320px). A null card, a blank label, no values, a null value or a value with blank text throws `ArgumentException`, and an undefined layout `ArgumentOutOfRangeException`. |
 | `Disclosure` | Native `details` and `summary`; a tab substitute without script. A disclosure after other content, such as a `FactGrid`, keeps `--site-space-4` from it, and stacked disclosures keep `--site-space-2` between them. The summary is rounded like its box, so its focus ring follows the box's corners. |
@@ -325,6 +327,38 @@ are plain text. A format without exactly one `{0}` or a blank `AmountText` throw
         new("Suplemento individual", "300 €", 300m),
     ];
 }
+```
+
+`StepList` shows numbered steps, such as the days of an itinerary:
+
+- `Steps` are `StepItem(Title, Paragraphs, Note, Image, Facts)` records. A step's number comes from its position, never from the data,
+  formatted with the application's `NumberFormat` ("Dia {0}", "Day {0}") and the current culture;
+- the markup is `<ol role="list" class="site-step-list">`. The list has no markers, and Safari drops the list semantics of a list
+  styled `list-style: none`, so the explicit role keeps it a list of its steps;
+- each `li` (`site-step-list__item`) opens with an `hgroup` (`site-step-list__heading`) of the number `p` (`site-step-list__number`,
+  small bold text in the primary colour, the on-primary colour in a `Primary` or `Image` band) and the title heading
+  (`site-step-list__title`, `HeadingLevel`, default 3), so the number is read first and stays out of the outline; then the `Facts` as an
+  inline `FactGrid` (`site-step-list__facts`), the `Note` (`site-step-list__note`), and a `p` per paragraph;
+- a step with an `Image` (a `GalleryImage`, with its caption and credit) puts that text beside a one-image `ImageGrid` in a `Split`
+  with `Alignment` `Start`, so the photo starts beside the title. With `Alternate` (the default) the image side alternates from image
+  to image, end then start, so the photos zigzag, counting only steps with an image; below the `48rem` breakpoint every photo follows
+  its text. `EagerCount` (default 0) loads the first images eagerly, in document order;
+- `HeadingIdFormat`, such as "dia-{0}", gives each title an id from its position so `#dia-2` links to a step; `null`, the default,
+  writes none, because two lists on a page would repeat a fixed default.
+
+A missing step, a blank title or paragraph, a missing paragraph or fact list or fact, a number format without `{0}`, a heading id
+format without `{0}` or that gives white space, or a negative `EagerCount` throws `ArgumentException` (`ArgumentOutOfRangeException`
+for the count and a heading level outside 1 to 6).
+
+`TextList` is a plain list of lines, such as what a tour includes or the practical information: a `ul`, or an `ol` when `Ordered`, with
+the class `site-text-list`, one `li` per line and the browser's bullets or numbers. An empty list renders nothing; a null or blank line
+throws `ArgumentException`.
+
+```razor
+<Section Title="Roteiro" HeadingId="roteiro">
+    <StepList Steps="_days" NumberFormat="Dia {0}" HeadingIdFormat="dia-{0}" EagerCount="1" />
+</Section>
+<Disclosure Summary="Incluído"><TextList Items="_included" /></Disclosure>
 ```
 
 ### Bands and photos

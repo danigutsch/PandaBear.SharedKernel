@@ -130,4 +130,73 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         weight.ShouldBe("700");
         whiteSpace.ShouldBe("nowrap");
     }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task A_step_list_is_a_list_of_its_steps_with_a_heading_each()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<OfferingSample>(chromium.Browser, 1280);
+
+        // Act
+        var listStyle = await page.Style("#itinerary", "list-style-type");
+        var items = await page.Page.Locator("#itinerary > li").CountAsync();
+        var headings = await page.Page.Locator("#itinerary").GetByRole(Microsoft.Playwright.AriaRole.Heading, new() { Level = 3 }).AllTextContentsAsync();
+        var lists = await page.Page.GetByRole(Microsoft.Playwright.AriaRole.List).CountAsync();
+
+        // Assert
+        listStyle.ShouldBe("none");
+        items.ShouldBe(3);
+        headings.ShouldBe(["Valley of the Moon", "Valley of the Moon", "Valley of the Moon"]);
+        lists.ShouldBeGreaterThanOrEqualTo(2);
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task From_the_breakpoint_the_photos_of_an_itinerary_zigzag_and_start_beside_the_title()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<OfferingSample>(chromium.Browser, 1280);
+
+        // Act
+        var firstText = await page.Box("#itinerary > li:nth-child(1) .site-split__main");
+        var firstMedia = await page.Box("#itinerary > li:nth-child(1) .site-split__media");
+        var secondText = await page.Box("#itinerary > li:nth-child(2) .site-split__main");
+        var secondMedia = await page.Box("#itinerary > li:nth-child(2) .site-split__media");
+
+        // Assert
+        firstMedia.X.ShouldBeGreaterThan(firstText.X);
+        secondMedia.X.ShouldBeLessThan(secondText.X);
+        firstMedia.Y.ShouldBe(firstText.Y);
+        secondMedia.Y.ShouldBe(secondText.Y);
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task On_a_phone_every_photo_of_an_itinerary_follows_its_text()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<OfferingSample>(chromium.Browser, 375);
+
+        // Act
+        var secondText = await page.Box("#itinerary > li:nth-child(2) .site-split__main");
+        var secondMedia = await page.Box("#itinerary > li:nth-child(2) .site-split__media");
+        var scrollWidth = await page.ScrollWidth();
+
+        // Assert
+        secondMedia.Y.ShouldBeGreaterThanOrEqualTo(secondText.Bottom);
+        scrollWidth.ShouldBeLessThanOrEqualTo(375);
+    }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData("#itinerary", "#ffffff")]
+    [InlineData("#band-itinerary", "#1d4ed8")]
+    public async Task A_step_number_reaches_4_5_to_1_on_the_page_and_on_the_primary_colour(string list, string background)
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<OfferingSample>(chromium.Browser, 1280);
+
+        // Act
+        var number = ComputedColor.ToHex(await page.Style(list + " .site-step-list__number", "color"));
+
+        // Assert
+        SiteFixtures.Contrast(number, background).ShouldBeGreaterThanOrEqualTo(4.5);
+    }
 }

@@ -708,7 +708,7 @@ a {
     border-radius: 0;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label, .site-price-list__note) {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label, .site-price-list__note, .site-step-list__number) {
     color: inherit;
 }
 
@@ -1384,6 +1384,49 @@ a {
 
 .site-price-list__conditions > :first-child {
     margin-top: 0;
+}
+
+/*
+ * Step list: the steps of an itinerary without list markers (the role="list" keeps the list in Safari), each spaced from the one before,
+ * its number a small bold letter-spaced eyebrow in the primary colour above its title, then its facts in one row and its note.
+ */
+.site-step-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-step-list__item + .site-step-list__item {
+    margin-top: var(--site-space-5);
+}
+
+.site-step-list__heading {
+    margin: 0 0 var(--site-space-3);
+}
+
+.site-step-list__heading > .site-step-list__title {
+    margin: 0;
+}
+
+.site-step-list__number {
+    margin: 0 0 var(--site-space-1);
+    color: var(--site-color-primary);
+    font-size: var(--site-font-size-sm);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.site-step-list__facts {
+    margin-bottom: var(--site-space-3);
+}
+
+.site-step-list__note {
+    font-weight: 600;
+}
+
+/* Text list: a plain list of lines, kept with its bullets or numbers, its lines a little apart. */
+.site-text-list > li + li {
+    margin-top: var(--site-space-1);
 }
 
 /* The from price: a line whose amount is bold and never wraps. */

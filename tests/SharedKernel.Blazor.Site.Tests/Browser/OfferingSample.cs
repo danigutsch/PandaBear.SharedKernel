@@ -7,7 +7,9 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// A page for the tests of the offering display atoms: a status badge of every tone on the page, in a primary band, in an image band over
 /// an all-white photo, in a cover hero without a photo and in a primary footer, and a grid of tour cards three to a row (<c>#tours</c>) whose first card
 /// (<c>#tour</c>) holds an inline fact grid of three facts with icons and a from price, then a section "Prices" (<c>#prices</c>) whose
-/// price list (<c>#price-list</c>) is a group named by it, and the same list in the primary band (<c>#band-prices</c>).
+/// price list (<c>#price-list</c>) is a group named by it, and the same list in the primary band (<c>#band-prices</c>), then an
+/// itinerary (<c>#itinerary</c>) of three days, the first two with a photo, and a one-day itinerary in the primary band
+/// (<c>#band-itinerary</c>).
 /// </summary>
 public sealed class OfferingSample : ComponentBase
 {
@@ -46,6 +48,7 @@ public sealed class OfferingSample : ComponentBase
         {
             band.AddContent(0, Badges("primary"));
             band.AddContent(1, Prices("band-prices"));
+            band.AddContent(2, Itinerary("band-itinerary", 1));
         }));
         builder.CloseComponent();
         builder.OpenComponent<Band>(12);
@@ -77,6 +80,7 @@ public sealed class OfferingSample : ComponentBase
         builder.AddContent(0, Badges("page"));
         builder.AddContent(1, Tours);
         builder.AddContent(2, PriceSection);
+        builder.AddContent(3, Itinerary("itinerary", 3));
     }
 
     private static TheoryData<string, StatusTone> Cases()
@@ -162,6 +166,21 @@ public sealed class OfferingSample : ComponentBase
             new("Single supplement", "300 €", 300m),
         });
         builder.AddComponentParameter(4, nameof(PriceList.Conditions), (RenderFragment)(text => text.AddMarkupContent(0, "<p>A deposit secures the place.</p>")));
+        builder.CloseComponent();
+    };
+
+    private static RenderFragment Itinerary(string id, int days) => builder =>
+    {
+        builder.OpenComponent<StepList>(0);
+        builder.AddComponentParameter(1, "id", id);
+        builder.AddComponentParameter(2, nameof(StepList.NumberFormat), "Day {0}");
+        builder.AddComponentParameter(3, nameof(StepList.HeadingIdFormat), id + "-day-{0}");
+        builder.AddComponentParameter(4, nameof(StepList.Steps), Enumerable.Range(1, days).Select(day => new StepItem(
+            "Valley of the Moon",
+            ["We leave early for the salt flats.", "Dinner together at the lodge."],
+            "Long drive",
+            day < 3 ? new GalleryImage(ResponsiveImage.Create(LinkTarget.FromString($"/day-{day}.svg"), 1600, 900, ImageAlternative.Describe("Salt flats"))) : null,
+            CardFacts)).ToArray());
         builder.CloseComponent();
     };
 }

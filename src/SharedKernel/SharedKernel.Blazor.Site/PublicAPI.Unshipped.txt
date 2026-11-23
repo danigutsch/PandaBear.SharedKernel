@@ -1000,3 +1000,43 @@ override PandaBear.Blazor.Site.PriceItem.GetHashCode() -> int
 override PandaBear.Blazor.Site.PriceItem.ToString() -> string!
 static PandaBear.Blazor.Site.PriceItem.operator !=(PandaBear.Blazor.Site.PriceItem? left, PandaBear.Blazor.Site.PriceItem? right) -> bool
 static PandaBear.Blazor.Site.PriceItem.operator ==(PandaBear.Blazor.Site.PriceItem? left, PandaBear.Blazor.Site.PriceItem? right) -> bool
+PandaBear.Blazor.Site.StepItem
+PandaBear.Blazor.Site.StepItem.<Clone>$() -> PandaBear.Blazor.Site.StepItem!
+PandaBear.Blazor.Site.StepItem.Deconstruct(out string! Title, out System.Collections.Generic.IReadOnlyList<string!>! Paragraphs, out string? Note, out PandaBear.Blazor.Site.GalleryImage? Image, out System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactCard!>! Facts) -> void
+PandaBear.Blazor.Site.StepItem.Equals(PandaBear.Blazor.Site.StepItem? other) -> bool
+PandaBear.Blazor.Site.StepItem.Facts.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactCard!>!
+PandaBear.Blazor.Site.StepItem.Facts.init -> void
+PandaBear.Blazor.Site.StepItem.Image.get -> PandaBear.Blazor.Site.GalleryImage?
+PandaBear.Blazor.Site.StepItem.Image.init -> void
+PandaBear.Blazor.Site.StepItem.Note.get -> string?
+PandaBear.Blazor.Site.StepItem.Note.init -> void
+PandaBear.Blazor.Site.StepItem.Paragraphs.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Blazor.Site.StepItem.Paragraphs.init -> void
+PandaBear.Blazor.Site.StepItem.StepItem(string! Title, System.Collections.Generic.IReadOnlyList<string!>! Paragraphs, string? Note, PandaBear.Blazor.Site.GalleryImage? Image, System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.FactCard!>! Facts) -> void
+PandaBear.Blazor.Site.StepItem.Title.get -> string!
+PandaBear.Blazor.Site.StepItem.Title.init -> void
+PandaBear.Blazor.Site.StepList
+PandaBear.Blazor.Site.StepList.Alternate.get -> bool
+PandaBear.Blazor.Site.StepList.Alternate.set -> void
+PandaBear.Blazor.Site.StepList.EagerCount.get -> int
+PandaBear.Blazor.Site.StepList.EagerCount.set -> void
+PandaBear.Blazor.Site.StepList.HeadingIdFormat.get -> string?
+PandaBear.Blazor.Site.StepList.HeadingIdFormat.set -> void
+PandaBear.Blazor.Site.StepList.HeadingLevel.get -> int
+PandaBear.Blazor.Site.StepList.HeadingLevel.set -> void
+PandaBear.Blazor.Site.StepList.NumberFormat.get -> string!
+PandaBear.Blazor.Site.StepList.NumberFormat.set -> void
+PandaBear.Blazor.Site.StepList.StepList() -> void
+PandaBear.Blazor.Site.StepList.Steps.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Blazor.Site.StepItem!>!
+PandaBear.Blazor.Site.StepList.Steps.set -> void
+PandaBear.Blazor.Site.TextList
+PandaBear.Blazor.Site.TextList.Items.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Blazor.Site.TextList.Items.set -> void
+PandaBear.Blazor.Site.TextList.Ordered.get -> bool
+PandaBear.Blazor.Site.TextList.Ordered.set -> void
+PandaBear.Blazor.Site.TextList.TextList() -> void
+override PandaBear.Blazor.Site.StepItem.Equals(object? obj) -> bool
+override PandaBear.Blazor.Site.StepItem.GetHashCode() -> int
+override PandaBear.Blazor.Site.StepItem.ToString() -> string!
+static PandaBear.Blazor.Site.StepItem.operator !=(PandaBear.Blazor.Site.StepItem? left, PandaBear.Blazor.Site.StepItem? right) -> bool
+static PandaBear.Blazor.Site.StepItem.operator ==(PandaBear.Blazor.Site.StepItem? left, PandaBear.Blazor.Site.StepItem? right) -> bool
