@@ -188,7 +188,7 @@ public sealed class RepoConfigCommandLineTests
     {
         // Arrange
         var rootCommand = RepoConfigCommandLine.Create(new RepoConfigToolEnvironment(Path.GetTempPath()));
-        var args = DocumentedCommandLines.Arguments("dotnet repo " + commandLine);
+        var args = DocumentedCommandLines.Arguments(commandLine);
 
         // Act
         var parseResult = rootCommand.Parse(args);

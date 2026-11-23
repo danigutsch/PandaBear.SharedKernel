@@ -211,3 +211,10 @@ instead. Both take an optional start directory.
 ```csharp
 var readme = File.ReadAllText(Path.Combine(RepositoryRoot.Locate("MyRepository.slnx"), "tools", "My.Tool", "README.md"));
 ```
+
+`ReadmeCommandLines.Find(markdown, invocation)` returns the documented command lines of one invocation, such as `dotnet repo`:
+the argument text of every trimmed line and inline code span that starts with the invocation and a space, without a trailing
+`# comment` and after any leading `NAME=value` assignments. A bare `repo verify` in prose, `dotnet repository`, and the invocation
+without arguments do not match. Pass `dotnet tool run repo --` to find the local-tool form. Split each result with the
+command-line parser the tool uses, for example `CommandLineParser.SplitCommandLine` of System.CommandLine, and parse it against
+the real command tree, so a renamed command or option fails the test.

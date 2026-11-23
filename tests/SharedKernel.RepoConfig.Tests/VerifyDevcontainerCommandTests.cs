@@ -380,7 +380,7 @@ public sealed class VerifyDevcontainerCommandTests
         var rootCommand = RepoConfigCommandLine.Create(new RepoConfigToolEnvironment(Path.GetTempPath()));
 
         // Act
-        var parseResult = rootCommand.Parse(DocumentedCommandLines.Arguments("dotnet repo " + commandLine));
+        var parseResult = rootCommand.Parse(DocumentedCommandLines.Arguments(commandLine));
 
         // Assert
         parseResult.Errors.ShouldBeEmpty();

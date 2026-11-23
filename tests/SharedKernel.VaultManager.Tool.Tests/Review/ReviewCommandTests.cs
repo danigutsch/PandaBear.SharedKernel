@@ -96,7 +96,7 @@ public sealed class ReviewCommandTests : IDisposable
     public void Tool_readme_lists_every_review_key()
     {
         // Act
-        string readme = ReviewReadme.Text();
+        string readme = ToolReadme.Text();
 
         // Assert
         ReviewKeys.All.ShouldAllSatisfy(key => readme.ShouldContain("`" + key.Key + "`", StringComparison.Ordinal));

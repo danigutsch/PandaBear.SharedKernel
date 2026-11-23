@@ -390,3 +390,5 @@ static PandaBear.Testing.RepositoryRoot.Locate(string! marker) -> string!
 static PandaBear.Testing.RepositoryRoot.Locate(string! marker, string! startDirectory) -> string!
 static PandaBear.Testing.RepositoryRoot.TryLocate(string! marker) -> string?
 static PandaBear.Testing.RepositoryRoot.TryLocate(string! marker, string! startDirectory) -> string?
+PandaBear.Testing.ReadmeCommandLines
+static PandaBear.Testing.ReadmeCommandLines.Find(string! markdown, string! invocation) -> string![]!
