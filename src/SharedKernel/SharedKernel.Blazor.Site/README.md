@@ -90,8 +90,8 @@ The stylesheet is a static web asset. Its path is `_content/` plus the package i
 | `Disclosure` | Native `details` and `summary`; a tab substitute without script. A disclosure after other content, such as a `FactGrid`, keeps `--site-space-4` from it, and stacked disclosures keep `--site-space-2` between them. The summary is rounded like its box, so its focus ring follows the box's corners. |
 | `Quote` | `figure` with a `blockquote` and a `cite` caption. In a `Primary` or `Image` band it drops its background and takes the on-primary colour, its rule included. |
 | `ImageGrid` | `figure` per `GalleryImage` (a `ResponsiveImage` and an optional caption), lazy loading except the first `EagerCount`; `PrioritizeFirstImage` loads the first one eagerly with `fetchpriority="high"`. `Layout` `Grid` (the default) is rows of equal columns; `Mosaic` (`site-image-grid--mosaic`) is a collage of mixed aspect ratios: columns filled from top to bottom in document order, each image at its own aspect ratio, never cropped. In both, columns are at least 14rem wide and share the full width of the container, as many as there are images while they fit, so one image fills its container, in a section or in a `Split`'s media column. An image is at most 40rem or 80% of the viewport tall; a taller one is shown whole within that height (`object-fit: contain`), at the start of its box, in line with the text, or in the middle in a section or band with centred text. `Thumbnails` (`site-image-grid--thumbnails`) crops every image to one aspect ratio, `--site-thumbnail-aspect-ratio` (square by default, which crops portrait and landscape photos alike), in columns at least `--site-thumbnail-min-width` (6.5rem) and 15% of the width, so a phone shows two or three to a row and a desktop at most six; empty columns are kept, so a short last row keeps the thumbnails' size. Thumbnails show part of each photo: use them where the visitor browses many photos, and `Grid` or `Mosaic` where each photo must be seen whole. A `GalleryImage` with an `Href` (`new GalleryImage(image) { Href = … }`, for example its full-size file) is wrapped in a plain `a href` (`site-image-grid__link`), so it works in static rendering without script. The link is a block tile, rounded like the image, so its focus ring surrounds the tile, and the caption stays outside it. The link is named by the image's alternative text, so a linked image must be described: a linked decorative image throws `ArgumentException`. A `GalleryImage` with a `Credit` (`ImageCreditLine`) shows it in the `figcaption` after the caption; see [Image credits](#image-credits). `Sizes` replaces the `sizes` of every image with width descriptors; left unset, `Thumbnails` writes `ImageGrid.ThumbnailSizes` (`(min-width: 74rem) 12rem, (min-width: 48rem) 16vw, (min-width: 30rem) 23vw, (min-width: 22.5rem) 31vw, 45vw`), which follows the two to six columns at the default tokens and is at least the tile width and at most about one and a half times it from 320px to 1600px, so the browser fetches a small rendition for a small tile, and the other layouts keep each image's own `sizes`. A blank or multi-line `Sizes` throws `ArgumentException`. |
-| `ImageCreditCaption` | The short credit under an image: `<small class="site-image-credit">` of `Text` (linked to `CreditsHref`) and `LicenceText` (linked to `LicenceHref` with `rel="license"`); `GalleryImage.Credit` renders one in the image's `figcaption`; see [Image credits](#image-credits). |
-| `CreditsList` | A `ul role="list"` (`site-credits-list`) of `CreditItem`s: a lazy thumbnail beside the title linked to the source, the author, the licence linked to its deed and the changes; see [Image credits](#image-credits). |
+| `ImageCreditCaption` | The short credit under an image: `<small class="site-image-credit">` of one `Credit` (an `ImageCreditLine`): its `Text` (linked to `CreditsHref`) and `LicenseText` (linked to `LicenseHref` with `rel="license"`); `GalleryImage.Credit` renders one in the image's `figcaption`; see [Image credits](#image-credits). |
+| `CreditsList` | A `ul role="list"` (`site-credits-list`) of `CreditItem`s: a lazy thumbnail beside the title linked to the source, the author linked to their page, the licence linked to its deed and the changes; see [Image credits](#image-credits). |
 | `AlbumIndex` | A `CardGrid` (`site-album-index`) of `Card`s, one per `AlbumSummary`: the title as the heading linked to the album's page, a cover (the first `EagerCount`, default 4, eager), the photo count as the application words it (`site-album-index__count`), and `lang` on the title alone when it is in another language; see [Photo albums](#photo-albums). It passes `CardStyle`, `ImageAspect`, `ImageShadow`, `TextAlignment`, `MoreText`, `MoreVariant` and `MoreSize` to every card and `MinColumnWidth`, `MaxColumnWidth`, `Gap` and `ItemAlignment` to the grid. Nothing without albums. |
 | `AlbumSection` | One page of an album: a `Section` whose heading id is `album-{slug}`, an `ImageGrid` of the page's photos in the `Layout` `Grid` by default (opt into `Thumbnails`), with its `Sizes` and each photo's `Href` passed through (the first `EagerCount` eager: by default 4 in a grid, 6 as thumbnails, 1 in a mosaic), optional content, then the `Pager`; see [Photo albums](#photo-albums). |
 | `ContactCard` | `address` with postal lines and `tel:`, `mailto:` and `https://wa.me/` links; no `address` when there are no lines and no channels. `PhoneText` shows the number as written (`+55 (11) 99999-0000`) while the link uses the digits; it must be the same number as `Phone`. The WhatsApp link shows `WhatsAppLabel`. |
@@ -382,30 +382,39 @@ script. Put it beside `PageHead`; it takes no class or attribute. Mark up only w
 An image under a licence such as Creative Commons must credit its author and licence. The components take display records, so the
 application words every credit and chooses the links:
 
-- `ImageCreditLine(Text, LicenceText, LicenceHref, CreditsHref)` is the short credit of one image, such as "Foto: Ana Lima" and
+- `ImageCreditLine(Text, LicenseText, LicenseHref, CreditsHref)` is the short credit of one image, such as "Foto: Ana Lima" and
   "CC BY 4.0". Give it to a `GalleryImage` as `Credit` (`new GalleryImage(image, caption) { Credit = … }`): `ImageGrid`, and with it
   `AlbumSection` and a `StepList` step, renders it in the image's `figcaption`, after the caption (a `figcaption` is created for a
-  credit alone) and outside the image's link, so the link keeps the alternative text as its name. A credit with a blank text throws
-  `ArgumentException`.
-- `ImageCreditCaption` renders that line anywhere else, such as under a hero: `<small class="site-image-credit">`, a muted line of
-  small text (the small typography role) on a line of its own. `CreditsHref`, such as the credits page, links the `Text`; the
-  `LicenceText` follows after a space, linked to `LicenceHref` with `rel="license"`. Its links are underlined in its colour. On the
-  primary colour of a band, a cover hero or a footer the credit and the image caption take the on-primary colour; a browser test
-  measures 4.5:1 on the page and on a primary band. A blank text, or a `LicenceHref` without `LicenceText`, throws `ArgumentException`.
+  credit alone) and outside the image's link, so the link keeps the alternative text as its name.
+- `ImageCreditCaption` renders that line anywhere else, such as under a hero, from its one required `Credit`:
+  `<small class="site-image-credit">`, a muted line of small text (the small typography role) on a line of its own. `CreditsHref`,
+  such as the credits page, links the `Text`; the `LicenseText` follows after a space, linked to `LicenseHref` with `rel="license"`.
+  Its links are underlined in its colour. On the primary colour of a band, a cover hero or a footer the credit and the image caption
+  take the on-primary colour; a browser test measures 4.5:1 on the page and on a primary band.
+- The record checks itself where a component receives it, so the caption and the grid refuse the same lines: a blank `Text`, or a
+  `LicenseHref` without `LicenseText`, throws `ArgumentException` naming the caller's parameter (`Credit` on the caption, `Images` on
+  the grid); a missing `Credit` throws `ArgumentNullException`.
+- `ImageCreditLine.FromCredit(credit, format, provider, creditsHref)` builds the line of a shared `ImageCredit`
+  (`PandaBear.SharedKernel.BuildingBlocks`; see its README): the text from your format with the placeholders of
+  `ImageCredit.ToShortText` (`{0}` the author, as in "Foto: {0}"; leave the licence out, because it follows), then the licence's
+  `Code` linked to its `Url`.
 - `CreditsList` renders the full attributions, such as on a credits page, after the
   [Creative Commons recommended practices for attribution](https://wiki.creativecommons.org/wiki/Recommended_practices_for_attribution)
   (title, author, source, licence): a `ul role="list"` (`site-credits-list`; the role keeps the list in Safari without markers) of
-  `CreditItem(Thumbnail, Title, Author, SourceHref, LicenceText, LicenceHref, ChangesText)` entries, each an `li` of an optional lazy
-  5rem square thumbnail beside its lines: the `Title` linked to the `SourceHref` (the `Author` takes the link when there is no title),
-  the `Author`, the `LicenceText` linked to the licence's deed with `rel="license"`, and the `ChangesText`, such as "Cropped", each a
-  `p`. A long title breaks inside the line instead of scrolling. An empty list renders nothing; a null entry or a blank author or
-  licence text throws `ArgumentException`.
+  `CreditItem(Author, LicenseText)` entries, both required, with the optional `Thumbnail`, `Title`, `AuthorHref`, `SourceHref`,
+  `LicenseHref` and `ChangesText` set as `init` properties. Each is an `li` of an optional lazy 5rem square thumbnail beside its lines,
+  each a `p`: the `Title` linked to the `SourceHref`, the `Author` linked to the `AuthorHref` (or, without a title, to the
+  `SourceHref`), the `LicenseText` linked to the licence's deed with `rel="license"` (`site-credits-list__license`), and the
+  `ChangesText`, such as "Cropped". A long title breaks inside the line instead of scrolling. An empty list renders nothing; a null
+  entry, a blank author or licence text, or an entry without a title that sets both `AuthorHref` and `SourceHref` (its one name cannot
+  carry two links) throws `ArgumentException`. `CreditItem.FromCredit(credit, changesText)` builds an entry from a shared
+  `ImageCredit`, with `changesText` only when the image was modified; add the thumbnail and the author's page with `with`.
 
 ```razor
 <ImageGrid Images="@([new GalleryImage(photo, "O salar ao entardecer")
 {
-    Credit = new ImageCreditLine("Foto: Ana Lima", "CC BY 4.0",
-        LinkTarget.FromString("https://creativecommons.org/licenses/by/4.0/"), LinkTarget.FromString("/pt/creditos")),
+    Credit = ImageCreditLine.FromCredit(photoCredit, "Foto: {0}", CultureInfo.GetCultureInfo("pt-BR"),
+        LinkTarget.FromString("/pt/creditos")),
 }])" />
 <CreditsList Items="_credits" />
 ```

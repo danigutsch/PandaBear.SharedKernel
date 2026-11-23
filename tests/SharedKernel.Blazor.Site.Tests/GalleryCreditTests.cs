@@ -63,11 +63,14 @@ public sealed class GalleryCreditTests : BunitContext
         cut.FindAll("figcaption").ShouldBeEmpty();
     }
 
-    [Fact]
-    public void A_credit_with_a_blank_text_is_refused()
+    [Theory]
+    [InlineData(" ", false)]
+    [InlineData("Photo: Ana Lima", true)]
+    public void An_invalid_credit_is_refused_on_the_images_parameter(string text, bool licenseAddressWithoutText)
     {
         // Arrange
-        var image = new GalleryImage(SiteFixtures.Image("/a.jpg")) { Credit = new ImageCreditLine(" ") };
+        var licenseHref = licenseAddressWithoutText ? SiteFixtures.Link("https://creativecommons.org/licenses/by/4.0/") : null;
+        var image = new GalleryImage(SiteFixtures.Image("/a.jpg")) { Credit = new ImageCreditLine(text, null, licenseHref) };
 
         // Act
         var render = () => Render<ImageGrid>(parameters => parameters.Add(component => component.Images, [image]));

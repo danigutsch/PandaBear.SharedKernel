@@ -209,14 +209,14 @@ public sealed class OfferingSample : ComponentBase
         builder.AddComponentParameter(1, "id", "credits");
         builder.AddComponentParameter(2, nameof(CreditsList.Items), new CreditItem[]
         {
-            new(
-                ResponsiveImage.Create(LinkTarget.FromString("/thumb.svg"), 160, 160, ImageAlternative.Decorative()),
-                "Salar_de_Atacama_at_dusk_from_the_road_to_San_Pedro_de_Atacama.jpg",
-                "Ana Lima",
-                LinkTarget.FromString("https://commons.wikimedia.org/wiki/File:Salar.jpg"),
-                "CC BY-SA 4.0",
-                LinkTarget.FromString("https://creativecommons.org/licenses/by-sa/4.0/"),
-                "Cropped"),
+            new("Ana Lima", "CC BY-SA 4.0")
+            {
+                Thumbnail = ResponsiveImage.Create(LinkTarget.FromString("/thumb.svg"), 160, 160, ImageAlternative.Decorative()),
+                Title = "Salar_de_Atacama_at_dusk_from_the_road_to_San_Pedro_de_Atacama.jpg",
+                SourceHref = LinkTarget.FromString("https://commons.wikimedia.org/wiki/File:Salar.jpg"),
+                LicenseHref = LinkTarget.FromString("https://creativecommons.org/licenses/by-sa/4.0/"),
+                ChangesText = "Cropped",
+            },
         });
         builder.CloseComponent();
     }

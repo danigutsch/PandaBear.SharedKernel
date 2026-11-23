@@ -1,20 +1,20 @@
 @inherits SiteComponent
-<small class="@CssClass("site-image-credit")" @attributes="AdditionalAttributes">@if (CreditsHref is null)
+<small class="@CssClass("site-image-credit")" @attributes="AdditionalAttributes">@if (Credit!.CreditsHref is null)
 {
-    @Text
+    @Credit.Text
 }
 else
 {
-    <a href="@CreditsHref.Value">@Text</a>
-}@if (HasLicence)
+    <a href="@Credit.CreditsHref.Value">@Credit.Text</a>
+}@if (!string.IsNullOrWhiteSpace(Credit.LicenseText))
 {
     @(" ")
-    @if (LicenceHref is null)
+    @if (Credit.LicenseHref is null)
     {
-        @LicenceText
+        @Credit.LicenseText
     }
     else
     {
-        <a href="@LicenceHref.Value" rel="license">@LicenceText</a>
+        <a href="@Credit.LicenseHref.Value" rel="license">@Credit.LicenseText</a>
     }
 }</small>

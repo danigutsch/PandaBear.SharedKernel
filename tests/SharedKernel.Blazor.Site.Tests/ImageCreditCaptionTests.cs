@@ -1,13 +1,26 @@
+using System.Globalization;
+using PandaBear.BuildingBlocks;
+
 namespace PandaBear.Blazor.Site.Tests;
 
-/// <summary>Tests the short credit under an image.</summary>
+/// <summary>Tests the short credit under an image and its record.</summary>
 public sealed class ImageCreditCaptionTests : BunitContext
 {
+    private static readonly LinkTarget CcBy = SiteFixtures.Link("https://creativecommons.org/licenses/by/4.0/");
+
+    /// <summary>Gets credit lines with a blank text, or a license address without the license text it links.</summary>
+    public static TheoryData<ImageCreditLine> InvalidLines { get; } = new()
+    {
+        new ImageCreditLine(" "),
+        new ImageCreditLine("Photo: Ana Lima", null, CcBy),
+        new ImageCreditLine("Photo: Ana Lima", " ", CcBy),
+    };
+
     [Fact]
     public void A_credit_is_small_text()
     {
         // Arrange & Act
-        var cut = Render<ImageCreditCaption>(parameters => parameters.Add(component => component.Text, "Photo: Ana Lima"));
+        var cut = Render<ImageCreditCaption>(parameters => parameters.Add(component => component.Credit, new ImageCreditLine("Photo: Ana Lima")));
 
         // Assert
         var credit = cut.Find("small");
@@ -17,14 +30,13 @@ public sealed class ImageCreditCaptionTests : BunitContext
     }
 
     [Fact]
-    public void The_credits_address_links_the_text_and_the_licence_address_links_the_licence()
+    public void The_credits_address_links_the_text_and_the_license_address_links_the_license()
     {
-        // Arrange & Act
-        var cut = Render<ImageCreditCaption>(parameters => parameters
-            .Add(component => component.Text, "Photo: Ana Lima")
-            .Add(component => component.CreditsHref, SiteFixtures.Link("/credits#atacama"))
-            .Add(component => component.LicenceText, "CC BY 4.0")
-            .Add(component => component.LicenceHref, SiteFixtures.Link("https://creativecommons.org/licenses/by/4.0/")));
+        // Arrange
+        var line = new ImageCreditLine("Photo: Ana Lima", "CC BY 4.0", CcBy, SiteFixtures.Link("/credits#atacama"));
+
+        // Act
+        var cut = Render<ImageCreditCaption>(parameters => parameters.Add(component => component.Credit, line));
 
         // Assert
         cut.Find("small").InnerHtml.ShouldBe(
@@ -32,12 +44,10 @@ public sealed class ImageCreditCaptionTests : BunitContext
     }
 
     [Fact]
-    public void A_licence_without_an_address_is_plain_text_after_the_credit()
+    public void A_license_without_an_address_is_plain_text_after_the_credit()
     {
         // Arrange & Act
-        var cut = Render<ImageCreditCaption>(parameters => parameters
-            .Add(component => component.Text, "Photo: Ana Lima")
-            .Add(component => component.LicenceText, "All rights reserved"));
+        var cut = Render<ImageCreditCaption>(parameters => parameters.Add(component => component.Credit, new ImageCreditLine("Photo: Ana Lima", "All rights reserved")));
 
         // Assert
         var credit = cut.Find("small");
@@ -46,28 +56,11 @@ public sealed class ImageCreditCaptionTests : BunitContext
     }
 
     [Fact]
-    public void A_record_gives_the_same_credit()
-    {
-        // Arrange
-        var line = new ImageCreditLine("Photo: Ana Lima", "CC BY 4.0", SiteFixtures.Link("https://creativecommons.org/licenses/by/4.0/"), SiteFixtures.Link("/credits"));
-
-        // Act
-        var cut = Render<ImageCreditCaption>(parameters => parameters
-            .Add(component => component.Text, line.Text)
-            .Add(component => component.LicenceText, line.LicenceText)
-            .Add(component => component.LicenceHref, line.LicenceHref)
-            .Add(component => component.CreditsHref, line.CreditsHref));
-
-        // Assert
-        cut.FindAll("a").Select(link => link.TextContent).ShouldBe(["Photo: Ana Lima", "CC BY 4.0"]);
-    }
-
-    [Fact]
     public void Class_and_attributes_reach_the_credit()
     {
         // Arrange & Act
         var cut = Render<ImageCreditCaption>(parameters => parameters
-            .Add(component => component.Text, "Photo: Ana Lima")
+            .Add(component => component.Credit, new ImageCreditLine("Photo: Ana Lima"))
             .Add(component => component.Class, "hero-credit")
             .AddUnmatched("lang", "pt"));
 
@@ -77,27 +70,50 @@ public sealed class ImageCreditCaptionTests : BunitContext
         credit.GetAttribute("lang").ShouldBe("pt");
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData(" ")]
-    public void A_blank_text_is_refused(string text)
+    [Fact]
+    public void A_missing_credit_is_refused()
     {
         // Arrange & Act
-        var render = () => Render<ImageCreditCaption>(parameters => parameters.Add(component => component.Text, text));
+        var render = () => Render<ImageCreditCaption>(parameters => parameters.Add(component => component.Credit, null));
 
         // Assert
-        render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(ImageCreditCaption.Text));
+        render.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe(nameof(ImageCreditCaption.Credit));
+    }
+
+    [Theory]
+    [MemberData(nameof(InvalidLines))]
+    public void An_invalid_credit_is_refused_on_the_credit_parameter(ImageCreditLine line)
+    {
+        // Arrange & Act
+        var render = () => Render<ImageCreditCaption>(parameters => parameters.Add(component => component.Credit, line));
+
+        // Assert
+        render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(ImageCreditCaption.Credit));
     }
 
     [Fact]
-    public void A_licence_address_without_its_text_is_refused()
+    public void A_shared_credit_maps_to_a_line_of_the_application_format_and_its_linked_license()
     {
-        // Arrange & Act
-        var render = () => Render<ImageCreditCaption>(parameters => parameters
-            .Add(component => component.Text, "Photo: Ana Lima")
-            .Add(component => component.LicenceHref, SiteFixtures.Link("https://creativecommons.org/licenses/by/4.0/")));
+        // Arrange
+        var credit = ImageCredit.Create("Ana Lima", "Salar", "https://example.org/salar", "CC BY 4.0", "https://creativecommons.org/licenses/by/4.0/", modified: false).ShouldBeSuccess();
+
+        // Act
+        var line = ImageCreditLine.FromCredit(credit, "Foto: {0}", CultureInfo.GetCultureInfo("pt-BR"), SiteFixtures.Link("/pt/creditos"));
 
         // Assert
-        render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(ImageCreditCaption.LicenceText));
+        line.ShouldBe(new ImageCreditLine("Foto: Ana Lima", "CC BY 4.0", CcBy, SiteFixtures.Link("/pt/creditos")));
+    }
+
+    [Fact]
+    public void A_shared_credit_without_a_license_link_maps_to_a_plain_license()
+    {
+        // Arrange
+        var credit = ImageCredit.Create("Ana Lima", null, null, "Pixabay", null, modified: true).ShouldBeSuccess();
+
+        // Act
+        var line = ImageCreditLine.FromCredit(credit, "Foto: {0}", CultureInfo.InvariantCulture);
+
+        // Assert
+        line.ShouldBe(new ImageCreditLine("Foto: Ana Lima", "Pixabay"));
     }
 }

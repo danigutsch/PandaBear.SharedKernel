@@ -62,7 +62,8 @@ public sealed partial class ImageGrid
     /// <exception cref="ArgumentNullException"><see cref="Images" /> or an image is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><see cref="EagerCount" /> is negative or <see cref="Layout" /> is not defined.</exception>
     /// <exception cref="ArgumentException">
-    /// <see cref="Sizes" /> is blank, too long or not one line, a linked image is decorative, or an image's credit has a blank text.
+    /// <see cref="Sizes" /> is blank, too long or not one line, a linked image is decorative, or an image's credit has a blank text or a
+    /// licence address without its text.
     /// </exception>
     protected override void OnParametersSet()
     {
@@ -82,9 +83,9 @@ public sealed partial class ImageGrid
                 throw new ArgumentException("A linked image needs alternative text, which names its link; describe the image instead of marking it decorative.", nameof(Images));
             }
 
-            if (image.Credit is not null && string.IsNullOrWhiteSpace(image.Credit.Text))
+            if (image.Credit is not null)
             {
-                throw new ArgumentException("An image credit needs its text.", nameof(Images));
+                ImageCreditLine.Require(image.Credit, nameof(Images));
             }
         }
 

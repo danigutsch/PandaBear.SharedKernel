@@ -15,14 +15,14 @@
                     {
                         <p class="site-credits-list__title">@Linked(item.Title!, item.SourceHref)</p>
                     }
-                    <p class="site-credits-list__author">@Linked(item.Author, hasTitle ? null : item.SourceHref)</p>
-                    <p class="site-credits-list__licence">@if (item.LicenceHref is null)
+                    <p class="site-credits-list__author">@Linked(item.Author, item.AuthorHref ?? (hasTitle ? null : item.SourceHref))</p>
+                    <p class="site-credits-list__license">@if (item.LicenseHref is null)
                         {
-                            @item.LicenceText
+                            @item.LicenseText
                         }
                         else
                         {
-                            <a href="@item.LicenceHref.Value" rel="license">@item.LicenceText</a>
+                            <a href="@item.LicenseHref.Value" rel="license">@item.LicenseText</a>
                         }</p>
                     @if (!string.IsNullOrWhiteSpace(item.ChangesText))
                     {
