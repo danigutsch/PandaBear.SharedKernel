@@ -7,7 +7,7 @@ internal static class FakeGitPrograms
     public static SecretsPrograms Create(string git) => new()
     {
         Runner = new SystemToolRunner(),
-        ExecutableResolver = new FixedExecutableResolver(new Dictionary<string, string> { ["git"] = git }),
+        ExecutableResolver = new ExecutableMap(new Dictionary<string, string> { ["git"] = git }),
         Age = static () => throw new InvalidOperationException("age is not used."),
         Sops = static () => throw new InvalidOperationException("sops is not used."),
     };
