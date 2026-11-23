@@ -21,8 +21,14 @@ internal sealed class SectionsPage : IAsyncDisposable
     /// <param name="width">The viewport width in CSS pixels.</param>
     /// <param name="sections">The sections.</param>
     /// <param name="textAlignment">The alignment of the bands' text, or <see langword="null" /> to inherit.</param>
+    /// <param name="captioned">Whether every image of a section has the fixtures' caption and credit.</param>
     /// <returns>The open page, with every image of the first viewport loaded.</returns>
-    public static async Task<SectionsPage> Open(IBrowser browser, int width, IReadOnlyList<PageSection<int, string, NoExtra>> sections, SiteAlignment? textAlignment = null)
+    public static async Task<SectionsPage> Open(
+        IBrowser browser,
+        int width,
+        IReadOnlyList<PageSection<int, string, NoExtra>> sections,
+        SiteAlignment? textAlignment = null,
+        bool captioned = false)
     {
         var css = await File.ReadAllTextAsync(StylesheetPath());
         var body = await ComponentHtml.Render<PageSectionsView<int, string, NoExtra>>(new Dictionary<string, object?>
@@ -32,6 +38,8 @@ internal sealed class SectionsPage : IAsyncDisposable
             [nameof(PageSectionsView<int, string, NoExtra>.Link)] = (Func<string, LinkTarget?>)SectionFixtures.Link,
             [nameof(PageSectionsView<int, string, NoExtra>.VideoSiteHintFormat)] = SectionFixtures.HintFormat,
             [nameof(PageSectionsView<int, string, NoExtra>.TextAlignment)] = textAlignment,
+            [nameof(PageSectionsView<int, string, NoExtra>.ImageCaption)] = captioned ? (Func<int, string?>)SectionFixtures.Caption : null,
+            [nameof(PageSectionsView<int, string, NoExtra>.ImageCredit)] = captioned ? (Func<int, ImageCreditLine?>)SectionFixtures.Credit : null,
         });
         var html = $"<!DOCTYPE html><html lang=\"pt-BR\"><head><meta charset=\"utf-8\"><title>Sections</title><style>{css}</style></head><body><main>{body}</main></body></html>";
         var page = await browser.NewPageAsync(new BrowserNewPageOptions { ViewportSize = new ViewportSize { Width = width, Height = 900 }, ColorScheme = ColorScheme.Light });
