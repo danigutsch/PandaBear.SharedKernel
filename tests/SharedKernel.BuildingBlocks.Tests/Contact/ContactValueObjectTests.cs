@@ -3,7 +3,7 @@ using PandaBear.Results;
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests creation and validation of email, phone and person-name value objects.</summary>
-[Trait("Scope", "Unit")]
+[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 [Trait("Capability", "ContactValueObjects")]
 public sealed class ContactValueObjectTests
 {

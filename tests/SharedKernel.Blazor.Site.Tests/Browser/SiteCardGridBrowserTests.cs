@@ -6,9 +6,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// </summary>
 public sealed class SiteCardGridBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(CardColumnWidth.Narrow, null, 4, 270)]
     [InlineData(CardColumnWidth.Narrow, CardColumnWidth.Narrow, 4, 256)]
     [InlineData(CardColumnWidth.Narrow, CardColumnWidth.Medium, 4, 270)]
@@ -35,7 +33,7 @@ public sealed class SiteCardGridBrowserTests(ChromiumFixture chromium) : IClassF
         cards[0].X.ShouldBe(grid.X);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Capped_cards_lie_in_the_middle_of_their_columns_when_the_grid_centres_them()
     {
         // Arrange

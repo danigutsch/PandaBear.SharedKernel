@@ -12,7 +12,7 @@ public sealed class K6LoadGeneratorTests
     {
         // Arrange
         using var workspace = new K6RunWorkspace();
-        var runner = new ScriptedProcessRunner(ScriptedProcessRunner.Exit(99));
+        var runner = ScriptedProcessRunner.AnswersInOrder(ProcessAnswers.Exit(99));
         var run = workspace.Run(environment: new Dictionary<string, string>(StringComparer.Ordinal) { ["PATHEXT"] = ".EXE", ["GH_TOKEN"] = "secret", ["FORGEJO_TOKEN"] = "secret", ["HOME"] = "/home/user" });
 
         // Act
@@ -20,7 +20,7 @@ public sealed class K6LoadGeneratorTests
 
         // Assert
         exitCode.ShouldBe(99);
-        var startInfo = runner.Runs.ShouldHaveSingleItem();
+        var startInfo = runner.Runs.ShouldHaveSingleItem().StartInfo;
         startInfo.FileName.ShouldBe("/usr/bin/k6");
         startInfo.WorkingDirectory.ShouldBe(workspace.Root);
         startInfo.ArgumentList.ShouldBe(
@@ -47,7 +47,7 @@ public sealed class K6LoadGeneratorTests
     {
         // Arrange
         using var workspace = new K6RunWorkspace();
-        var runner = new ScriptedProcessRunner(K6RunWorkspace.WritesSummary(0));
+        var runner = ScriptedProcessRunner.AnswersInOrder(K6RunWorkspace.WritesSummary(0));
         var run = workspace.Run(new LoadTestContainer(engine, Image), "/usr/bin/" + engine);
 
         // Act
@@ -55,7 +55,7 @@ public sealed class K6LoadGeneratorTests
 
         // Assert
         exitCode.ShouldBe(0);
-        var arguments = runner.Runs.ShouldHaveSingleItem().ArgumentList.ToArray();
+        var arguments = runner.Runs.ShouldHaveSingleItem().StartInfo.ArgumentList.ToArray();
         arguments[4].ShouldMatch(@"\Asharedkernel-k6-[0-9a-f]{32}\z");
         arguments.ShouldBe(
         [
@@ -84,9 +84,9 @@ public sealed class K6LoadGeneratorTests
             "2",
             "/k6/scenarios/smoke.js",
         ]);
-        runner.Runs[0].Environment.ContainsKey("GH_TOKEN").ShouldBeFalse();
-        runner.Runs[0].Environment.ContainsKey("GITHUB_TOKEN").ShouldBeFalse();
-        runner.Runs[0].Environment.ContainsKey("FORGEJO_TOKEN").ShouldBeFalse();
+        runner.Runs[0].StartInfo.Environment.ContainsKey("GH_TOKEN").ShouldBeFalse();
+        runner.Runs[0].StartInfo.Environment.ContainsKey("GITHUB_TOKEN").ShouldBeFalse();
+        runner.Runs[0].StartInfo.Environment.ContainsKey("FORGEJO_TOKEN").ShouldBeFalse();
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public sealed class K6LoadGeneratorTests
     {
         // Arrange
         using var workspace = new K6RunWorkspace();
-        var runner = new ScriptedProcessRunner(ScriptedProcessRunner.Exit(0));
+        var runner = ScriptedProcessRunner.AnswersInOrder(ProcessAnswers.Exit(0));
 
         // Act
         var exception = await Record.ExceptionAsync(() => new K6LoadGenerator(runner).Run(workspace.Run(new LoadTestContainer("podman", Image), "/usr/bin/podman"), TestContext.Current.CancellationToken));
@@ -109,7 +109,7 @@ public sealed class K6LoadGeneratorTests
     {
         // Arrange
         using var workspace = new K6RunWorkspace();
-        var runner = new ScriptedProcessRunner(ScriptedProcessRunner.Exit(7));
+        var runner = ScriptedProcessRunner.AnswersInOrder(ProcessAnswers.Exit(7));
 
         // Act
         var exitCode = await new K6LoadGenerator(runner).Run(workspace.Run(new LoadTestContainer("podman", Image), "/usr/bin/podman"), TestContext.Current.CancellationToken);
@@ -123,9 +123,9 @@ public sealed class K6LoadGeneratorTests
     {
         // Arrange
         using var workspace = new K6RunWorkspace();
-        var runner = new ScriptedProcessRunner(
-            ScriptedProcessRunner.Throw(new OperationCanceledException()),
-            ScriptedProcessRunner.Exit(0));
+        var runner = ScriptedProcessRunner.AnswersInOrder(
+            ProcessAnswers.Throw(new OperationCanceledException()),
+            ProcessAnswers.Exit(0));
 
         // Act
         var exception = await Record.ExceptionAsync(() => new K6LoadGenerator(runner).Run(workspace.Run(new LoadTestContainer("docker", Image), "/usr/bin/docker"), TestContext.Current.CancellationToken));
@@ -133,11 +133,11 @@ public sealed class K6LoadGeneratorTests
         // Assert
         exception.ShouldBeOfType<OperationCanceledException>();
         runner.Runs.Count.ShouldBe(2);
-        var name = runner.Runs[0].ArgumentList[4];
-        runner.Runs[1].FileName.ShouldBe("/usr/bin/docker");
-        runner.Runs[1].ArgumentList.ShouldBe(["rm", "--force", name]);
-        runner.Runs[1].RedirectStandardOutput.ShouldBeTrue();
-        runner.Runs[1].RedirectStandardError.ShouldBeTrue();
+        var name = runner.Runs[0].StartInfo.ArgumentList[4];
+        runner.Runs[1].StartInfo.FileName.ShouldBe("/usr/bin/docker");
+        runner.Runs[1].StartInfo.ArgumentList.ShouldBe(["rm", "--force", name]);
+        runner.Runs[1].StartInfo.RedirectStandardOutput.ShouldBeTrue();
+        runner.Runs[1].StartInfo.RedirectStandardError.ShouldBeTrue();
         workspace.Error.ToString().ShouldBe(string.Empty);
     }
 
@@ -146,15 +146,15 @@ public sealed class K6LoadGeneratorTests
     {
         // Arrange
         using var workspace = new K6RunWorkspace();
-        var runner = new ScriptedProcessRunner(
-            ScriptedProcessRunner.Throw(new OperationCanceledException()),
-            ScriptedProcessRunner.Throw(new Win32Exception("gone")));
+        var runner = ScriptedProcessRunner.AnswersInOrder(
+            ProcessAnswers.Throw(new OperationCanceledException()),
+            ProcessAnswers.Throw(new Win32Exception("gone")));
 
         // Act
         await Record.ExceptionAsync(() => new K6LoadGenerator(runner).Run(workspace.Run(new LoadTestContainer("podman", Image), "/usr/bin/podman"), TestContext.Current.CancellationToken));
 
         // Assert
-        var name = runner.Runs[0].ArgumentList[4];
+        var name = runner.Runs[0].StartInfo.ArgumentList[4];
         workspace.Error.ToString().ShouldBe($"Container {name} may still be running. Remove it with: podman rm --force {name}\n");
     }
 
@@ -179,7 +179,7 @@ public sealed class K6LoadGeneratorTests
     {
         // Arrange
         using var workspace = new K6RunWorkspace();
-        var generator = new K6LoadGenerator(new ScriptedProcessRunner());
+        var generator = new K6LoadGenerator(ScriptedProcessRunner.AnswersInOrder());
         var settings = new LoadTestSettings { Root = workspace.Root, ConfigurationPath = ".config/sharedkernel-k6.json", Scenario = "smoke", AllowHttpDebug = true };
 
         // Act

@@ -3,7 +3,7 @@ using System.Globalization;
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests displaying money with options: the symbol before or after the amount, and whole amounts without zero cents.</summary>
-[Trait("Scope", "Unit")]
+[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 [Trait("Capability", "ContactValueObjects")]
 public sealed class MoneyDisplayOptionsTests
 {

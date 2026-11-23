@@ -8,6 +8,8 @@ namespace PandaBear.Versioning.Tests;
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class PackRestoreCheckTests
 {
+    private static readonly ExecutableMap UsrBin = new(static command => "/usr/bin/" + command);
+
     [Fact]
     public static async Task Restore_check_audits_the_packages_that_a_tool_carries_before_it_installs_the_tool()
     {
@@ -18,8 +20,9 @@ public static class PackRestoreCheckTests
         await File.WriteAllTextAsync(project, "<Project />", TestContext.Current.CancellationToken);
         var options = new SharedKernelPackageOptions("1.0.0", Path.Combine(temporary.Root, "packages-out"), temporary.Root);
         var packageDirectory = SharedKernelPackagePlanner.ResolvePackageDirectory(options);
-        var runner = new ScriptedProcessRunner(arguments =>
+        var runner = ScriptedProcessRunner.Answering(run =>
         {
+            var arguments = run.Arguments;
             if (arguments[0] == "pack")
             {
                 NuGetPackageBuilder.WritePackage(packageDirectory, "PandaBear.SharedKernel.Probe", "1.0.0");
@@ -39,10 +42,10 @@ public static class PackRestoreCheckTests
         });
 
         // Act
-        await SharedKernelPack.Run(new ExternalCommands(runner, runner), options, verifyRestore: true, baselineVersion: null, TextWriter.Null, TestContext.Current.CancellationToken);
+        await SharedKernelPack.Run(new ExternalCommands(runner, UsrBin), options, verifyRestore: true, baselineVersion: null, TextWriter.Null, TestContext.Current.CancellationToken);
 
         // Assert
-        var started = runner.Started.Select(static process => process.ArgumentList.ToArray()).ToArray();
+        var started = runner.Runs.Select(static run => run.Arguments.ToArray()).ToArray();
         started.Select(static arguments => arguments[0]).ShouldBe(
             ["pack", "restore", "restore", "tool"],
             "The packages restore, then the packages that the tool carries are audited before the tool installs.");

@@ -14,7 +14,7 @@ public sealed class PlaywrightMcpServerTests
         var machine = new FakeMachine();
         var docker = FakeMachine.GetExecutablePath("docker");
         machine.SetExecutable("docker", docker);
-        var runner = new ScriptedProcessRunner(
+        var runner = ScriptedProcessRunner.InOrder(
             new ProcessOutput(0, "default"),
             new ProcessOutput(0, LocalDockerEndpoint),
             new ProcessOutput(0, string.Empty));
@@ -37,7 +37,7 @@ public sealed class PlaywrightMcpServerTests
         // Arrange
         var machine = new FakeMachine();
         machine.SetExecutable("docker", FakeMachine.GetExecutablePath("docker"));
-        var runner = new ScriptedProcessRunner(
+        var runner = ScriptedProcessRunner.InOrder(
             new ProcessOutput(0, "default"),
             new ProcessOutput(0, LocalDockerEndpoint),
             new ProcessOutput(5, string.Empty));
@@ -57,7 +57,7 @@ public sealed class PlaywrightMcpServerTests
         // Arrange
         var machine = new FakeMachine();
         machine.SetExecutable("podman", FakeMachine.GetExecutablePath("podman"));
-        var runner = new ScriptedProcessRunner(
+        var runner = ScriptedProcessRunner.InOrder(
             new ProcessOutput(0, "true"),
             new ProcessOutput(0, string.Empty),
             new ProcessOutput(0, string.Empty));
@@ -84,7 +84,7 @@ public sealed class PlaywrightMcpServerTests
         var machine = new FakeMachine();
         machine.SetExecutable("docker", FakeMachine.GetExecutablePath("docker"));
         machine.SetEnvironmentVariable("DOCKER_HOST", "tcp://remote:2375");
-        var runner = new ScriptedProcessRunner();
+        var runner = ScriptedProcessRunner.InOrder();
         using var diagnostics = new InvariantStringWriter();
 
         // Act
@@ -102,7 +102,7 @@ public sealed class PlaywrightMcpServerTests
         // Arrange
         var machine = new FakeMachine();
         machine.SetExecutable("docker", FakeMachine.GetExecutablePath("docker"));
-        var runner = new ScriptedProcessRunner(
+        var runner = ScriptedProcessRunner.InOrder(
             new ProcessOutput(0, "remote-builder"),
             new ProcessOutput(0, "tcp://builder.example:2376"));
         using var diagnostics = new InvariantStringWriter();
@@ -121,7 +121,7 @@ public sealed class PlaywrightMcpServerTests
     {
         // Act
         Action withoutRunner = () => _ = new PlaywrightMcpServer(null!, new FakeMachine());
-        Action withoutResolver = () => _ = new PlaywrightMcpServer(new ScriptedProcessRunner(), null!);
+        Action withoutResolver = () => _ = new PlaywrightMcpServer(ScriptedProcessRunner.InOrder(), null!);
 
         // Assert
         withoutRunner.ShouldThrow<ArgumentNullException>();

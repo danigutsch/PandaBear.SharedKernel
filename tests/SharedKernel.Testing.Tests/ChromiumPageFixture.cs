@@ -1,4 +1,5 @@
 using Microsoft.Playwright;
+using PandaBear.Testing.Playwright;
 
 namespace PandaBear.Testing.Tests;
 
@@ -11,9 +12,9 @@ public sealed class ChromiumPageFixture : IAsyncLifetime
     /// <inheritdoc />
     public async ValueTask InitializeAsync()
     {
-        if (ChromiumHost.IsInstalled)
+        if (Chromium.IsInstalled)
         {
-            (playwright, browser) = await ChromiumHost.Launch();
+            (playwright, browser) = await Chromium.Launch();
         }
     }
 

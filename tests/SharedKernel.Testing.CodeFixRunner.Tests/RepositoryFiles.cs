@@ -1,27 +1,8 @@
 namespace PandaBear.Testing.CodeFixRunner.Tests;
 
-/// <summary>Locates the repository root and the tool command lines that repository files document.</summary>
+/// <summary>Finds the tool command lines that repository files document.</summary>
 internal static class RepositoryFiles
 {
-    /// <summary>Walks up from the test assembly directory to the first directory containing <c>SharedKernel.slnx</c>.</summary>
-    /// <returns>The full path of the repository root.</returns>
-    /// <exception cref="InvalidOperationException">No parent directory contains <c>SharedKernel.slnx</c>.</exception>
-    public static string GetRootPath()
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory is not null)
-        {
-            if (File.Exists(Path.Combine(directory.FullName, "SharedKernel.slnx")))
-            {
-                return directory.FullName;
-            }
-
-            directory = directory.Parent;
-        }
-
-        throw new InvalidOperationException("Could not locate the repository root.");
-    }
-
     private const string LocalToolRun = "dotnet tool run ";
 
     /// <summary>
@@ -33,7 +14,7 @@ internal static class RepositoryFiles
     {
         ArgumentException.ThrowIfNullOrEmpty(invocation);
 
-        var text = File.ReadAllText(Path.Combine(GetRootPath(), relativePath));
+        var text = File.ReadAllText(Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), relativePath));
         var arguments = new List<string>();
         var index = text.IndexOf(invocation, StringComparison.Ordinal);
         while (index >= 0)

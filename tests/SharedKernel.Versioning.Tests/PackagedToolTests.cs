@@ -15,7 +15,7 @@ public static class PackagedToolTests
     public static void Candidates_pack_every_dotnet_tool_project_except_the_vault_manager()
     {
         // Arrange
-        var root = RepositoryRoot.Find();
+        var root = RepositoryRoot.Locate("SharedKernel.slnx");
         var toolProjects = Directory.GetFiles(Path.Combine(root, "tools"), "*.csproj", SearchOption.AllDirectories)
             .Where(static project => XDocument.Load(project).Descendants()
                 .Any(static element => element.Name.LocalName == "PackAsTool" && element.Value.Trim() == "true"))
@@ -38,7 +38,7 @@ public static class PackagedToolTests
     public static void Candidates_include_every_packable_consumer_test_support_project()
     {
         // Arrange
-        var root = RepositoryRoot.Find();
+        var root = RepositoryRoot.Locate("SharedKernel.slnx");
         var supportProjects = Directory.GetFiles(Path.Combine(root, "tests"), "*.csproj", SearchOption.AllDirectories)
             .Where(static project => XDocument.Load(project).Descendants("PackageId")
                 .Any(static element => element.Value.StartsWith("PandaBear.SharedKernel.", StringComparison.Ordinal)))

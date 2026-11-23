@@ -9,7 +9,7 @@ public sealed class CodeFixRunnerToolTests
     {
         // Arrange
         var projectPath = Path.Combine(
-            RepositoryFiles.GetRootPath(),
+            RepositoryRoot.Locate("SharedKernel.slnx"),
             "tools",
             "SharedKernel.Testing.CodeFixRunner",
             "SharedKernel.Testing.CodeFixRunner.csproj");

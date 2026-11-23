@@ -138,7 +138,7 @@ public sealed class StepListTests : BunitContext
     public void The_number_is_formatted_with_the_current_culture()
     {
         // Arrange & Act
-        var numbers = CultureOverride.Run(CultureInfo.GetCultureInfo("ar-SA"), () =>
+        var numbers = Testing.CultureScope.Run(CultureInfo.GetCultureInfo("ar-SA"), () =>
             this.RenderSteps([StepRendering.Step("Arrival")], numberFormat: "{0:N0}")
                 .FindAll(".site-step-list__number").Select(number => number.TextContent).ToArray());
 

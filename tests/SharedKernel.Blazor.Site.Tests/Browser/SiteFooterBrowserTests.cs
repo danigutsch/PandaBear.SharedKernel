@@ -8,10 +8,9 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// </summary>
 public sealed class SiteFooterBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
     private const double TapTarget = 44;
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task On_a_phone_footer_and_language_links_are_at_least_44px_tap_targets()
     {
         // Arrange
@@ -30,7 +29,7 @@ public sealed class SiteFooterBrowserTests(ChromiumFixture chromium) : IClassFix
         scrollWidth.ShouldBeLessThanOrEqualTo(390);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(390)]
     [InlineData(1280)]
     public async Task A_label_and_its_number_stay_on_one_line(int width)
@@ -51,7 +50,7 @@ public sealed class SiteFooterBrowserTests(ChromiumFixture chromium) : IClassFix
         (await page.Box("#contact")).Width.ShouldBeGreaterThanOrEqualTo(item.Width);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task The_bars_are_drawn_but_not_exposed_to_assistive_technology()
     {
         // Arrange
@@ -69,7 +68,7 @@ public sealed class SiteFooterBrowserTests(ChromiumFixture chromium) : IClassFix
         nodes.Count(node => node.Role == "listitem").ShouldBe(6 + 2);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_primary_footer_is_a_full_width_centred_band_with_on_primary_text()
     {
         // Arrange
@@ -89,7 +88,7 @@ public sealed class SiteFooterBrowserTests(ChromiumFixture chromium) : IClassFix
         align.ShouldBe("center");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Buttons_in_a_primary_footer_invert_as_in_a_primary_band_and_keep_4_5_to_1()
     {
         // Arrange

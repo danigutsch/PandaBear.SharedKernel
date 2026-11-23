@@ -27,7 +27,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Blazor.CodeFixes\SharedKernel.Blazor.CodeFixes.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator\SharedKernel.Mediator.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
-        <ProjectReference Include="..\SharedKernel.CodeFixes.Testing\SharedKernel.CodeFixes.Testing.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Roslyn\SharedKernel.Testing.Roslyn.csproj" />
     </ItemGroup>
 
 </Project>

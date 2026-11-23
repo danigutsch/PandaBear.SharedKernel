@@ -7,7 +7,7 @@ public sealed class RenameFileCodeFixTests
     public async Task File_name_fix_renames_file_to_type_name()
     {
         // Arrange
-        var workspace = CodeFixTestWorkspace.Create("namespace Demo;\n\npublic sealed class Tour\n{\n}\n");
+        var workspace = CodeFixWorkspace.Create("namespace Demo;\n\npublic sealed class Tour\n{\n}\n");
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.FileNameMismatch, "public sealed class Tour");
 
         // Act
@@ -25,7 +25,7 @@ public sealed class RenameFileCodeFixTests
     public async Task File_name_fix_uses_type_parameters_when_plain_name_is_taken()
     {
         // Arrange
-        var workspace = CodeFixTestWorkspace.Create("namespace Demo;\n\npublic sealed class Box<T>\n{\n}\n");
+        var workspace = CodeFixWorkspace.Create("namespace Demo;\n\npublic sealed class Box<T>\n{\n}\n");
         workspace.AddDocument("namespace Demo;\n\npublic sealed class Box\n{\n}\n", "Box.cs");
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.FileNameMismatch, "public sealed class Box<T>");
 
@@ -43,7 +43,7 @@ public sealed class RenameFileCodeFixTests
     public async Task File_name_fix_is_not_offered_when_every_target_name_exists()
     {
         // Arrange
-        var workspace = CodeFixTestWorkspace.Create("namespace Demo;\n\npublic sealed class Tour\n{\n}\n");
+        var workspace = CodeFixWorkspace.Create("namespace Demo;\n\npublic sealed class Tour\n{\n}\n");
         workspace.AddDocument("namespace Demo;\n\npublic sealed class Other\n{\n}\n", "Tour.cs");
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.FileNameMismatch, "public sealed class Tour");
 

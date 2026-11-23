@@ -12,6 +12,7 @@
         <Using Include="PandaBear.Blazor.Site" />
         <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="PandaBear.Testing.Web" />
+        <Using Include="PandaBear.Testing.Playwright" />
         <Using Include="Xunit" />
     </ItemGroup>
 
@@ -28,6 +29,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.AspNetCore\SharedKernel.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Blazor.Site\SharedKernel.Blazor.Site.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Playwright\SharedKernel.Testing.Playwright.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Web\SharedKernel.Testing.Web.csproj" />
     </ItemGroup>

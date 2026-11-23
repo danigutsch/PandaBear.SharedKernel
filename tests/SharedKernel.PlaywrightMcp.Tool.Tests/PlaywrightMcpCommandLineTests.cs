@@ -105,7 +105,7 @@ public sealed class PlaywrightMcpCommandLineTests
         var environment = new PlaywrightMcpTestEnvironment();
         var rootCommand = PlaywrightMcpCommandLine.Create(
             new PlaywrightMcpServer(
-                new DelegateProcessRunner(static (_, _, _) => Task.FromResult(new ProcessOutput(0, string.Empty, string.Empty))),
+                new ScriptedProcessRunner(static (_, _, _) => Task.FromResult(new ProcessOutput(0, string.Empty, string.Empty))),
                 environment),
             environment.GetEnvironmentVariable);
         var commandLines = DocumentedCommandLines.Find(DocumentedCommandLines.ReadToolReadme());

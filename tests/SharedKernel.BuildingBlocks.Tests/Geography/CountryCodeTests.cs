@@ -4,7 +4,7 @@ using PandaBear.Results;
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests creation and validation of ISO 3166-1 country codes.</summary>
-[Trait("Scope", "Unit")]
+[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 [Trait("Capability", "ContactValueObjects")]
 public sealed class CountryCodeTests
 {
@@ -87,7 +87,7 @@ public sealed class CountryCodeTests
         var expected = CountryCode.All.Select(country => country.EnglishName).ToArray();
 
         // Act
-        var names = CultureOverride.Run(
+        var names = Testing.CultureScope.Run(
             CultureInfo.GetCultureInfo(cultureName),
             () => CountryCode.All.Select(country => country.EnglishName).ToArray());
 

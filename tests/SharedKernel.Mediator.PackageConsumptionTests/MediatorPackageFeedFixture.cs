@@ -37,7 +37,7 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
     /// <inheritdoc />
     public async ValueTask InitializeAsync()
     {
-        RepositoryRoot = FindRepositoryRoot();
+        RepositoryRoot = Testing.RepositoryRoot.Locate("SharedKernel.slnx");
         DependencyInjectionPackageVersion = ReadCentralPackageVersion("Microsoft.Extensions.DependencyInjection");
 
         FeedPath = Path.Combine(RootPath, "feed");
@@ -56,6 +56,7 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
         await Pack("src/SharedKernel/SharedKernel.Messaging/SharedKernel.Messaging.csproj").ConfigureAwait(false);
         await Pack("src/SharedKernel/SharedKernel.Messaging.IntegrationEvents/SharedKernel.Messaging.IntegrationEvents.csproj").ConfigureAwait(false);
         await Pack("src/SharedKernel/SharedKernel.Messaging.IntegrationEvents.SourceGenerator/SharedKernel.Messaging.IntegrationEvents.SourceGenerator.csproj").ConfigureAwait(false);
+        await Pack("src/SharedKernel/SharedKernel.Processes/SharedKernel.Processes.csproj").ConfigureAwait(false);
         await Pack("src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj").ConfigureAwait(false);
     }
 
@@ -88,22 +89,5 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
         }
 
         return packageVersion;
-    }
-
-    private static string FindRepositoryRoot()
-    {
-        var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
-
-        while (currentDirectory is not null)
-        {
-            if (File.Exists(Path.Combine(currentDirectory.FullName, "SharedKernel.slnx")))
-            {
-                return currentDirectory.FullName;
-            }
-
-            currentDirectory = currentDirectory.Parent;
-        }
-
-        throw new InvalidOperationException("Could not locate the repository root from the test output directory.");
     }
 }

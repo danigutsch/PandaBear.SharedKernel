@@ -5,25 +5,18 @@ namespace PandaBear.RepoConfig.Tests;
 /// <summary>Reads the command lines that the tool README documents.</summary>
 internal static class DocumentedCommandLines
 {
-    private const string Invocation = "dotnet repo ";
-
     /// <summary>Returns the text of the tool README in the repository.</summary>
     public static string ReadToolReadme() =>
         File.ReadAllText(Path.Combine(
-            CiTestSelectionTestProcess.GetRepositoryRoot(),
+            RepositoryRoot.Locate("SharedKernel.slnx"),
             "tools",
             "SharedKernel.RepoConfig.Tool",
             "README.md"));
 
-    /// <summary>Returns each trimmed line of the Markdown that starts with the tool invocation, <c>dotnet repo</c>.</summary>
-    public static IReadOnlyList<string> Find(string markdown) =>
-        markdown
-            .Split('\n')
-            .Select(line => line.Trim())
-            .Where(line => line.StartsWith(Invocation, StringComparison.Ordinal))
-            .ToArray();
+    /// <summary>Returns the arguments of every line and inline code span of the Markdown that starts with the tool invocation, <c>dotnet repo</c>.</summary>
+    public static IReadOnlyList<string> Find(string markdown) => ReadmeCommandLines.Find(markdown, "dotnet repo");
 
-    /// <summary>Splits a documented command line into arguments, dropping <c>dotnet</c> and the tool name.</summary>
+    /// <summary>Splits a documented command line into arguments.</summary>
     public static IReadOnlyList<string> Arguments(string commandLine) =>
-        CommandLineParser.SplitCommandLine(commandLine).Skip(2).ToArray();
+        CommandLineParser.SplitCommandLine(commandLine).ToArray();
 }

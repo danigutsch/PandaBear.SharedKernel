@@ -312,7 +312,7 @@ public static class VersioningCommandLineTests
     public static void Workflow_versioning_command_lines_dispatch_to_a_command()
     {
         // Arrange
-        var workflow = Path.Combine(RepositoryRoot.Find(), ".github", "workflows", "ci.yml");
+        var workflow = Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), ".github", "workflows", "ci.yml");
         var commandLines = CallerCommandLine.ReadWorkflowCommandLines(workflow);
 
         // Act
@@ -334,7 +334,7 @@ public static class VersioningCommandLineTests
     public static void Readme_command_lines_dispatch_to_their_command()
     {
         // Arrange
-        var readme = Path.Combine(RepositoryRoot.Find(), "tools", "SharedKernel.Versioning.Tool", "README.md");
+        var readme = Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), "tools", "SharedKernel.Versioning.Tool", "README.md");
         var commandLines = CallerCommandLine.ReadReadmeCommandLines(readme);
 
         // Act
@@ -357,7 +357,7 @@ public static class VersioningCommandLineTests
     public static void Readme_usage_synopsis_names_every_command_with_options_it_accepts()
     {
         // Arrange
-        var readme = Path.Combine(RepositoryRoot.Find(), "tools", "SharedKernel.Versioning.Tool", "README.md");
+        var readme = Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), "tools", "SharedKernel.Versioning.Tool", "README.md");
         var rootCommand = VersioningCommandLineRunner.Create();
 
         // Act

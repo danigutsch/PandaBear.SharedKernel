@@ -71,3 +71,15 @@ PandaBear.Testing.Playwright.CspViolationRecorder.Violations() -> System.Threadi
 static PandaBear.Testing.Playwright.CspViolationRecorder.Start(Microsoft.Playwright.IPage! page) -> System.Threading.Tasks.Task<PandaBear.Testing.Playwright.CspViolationRecorder!>!
 static PandaBear.Testing.Playwright.PlaywrightLocatorExtensions.SetBlazorInputFiles(this Microsoft.Playwright.ILocator! input, System.Collections.Generic.IEnumerable<Microsoft.Playwright.FilePayload!>! files) -> System.Threading.Tasks.Task!
 static PandaBear.Testing.Playwright.PlaywrightLocatorExtensions.WaitForBlazorInputFile(this Microsoft.Playwright.ILocator! input) -> System.Threading.Tasks.Task!
+const PandaBear.Testing.Playwright.Chromium.NotInstalledReason = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright." -> string!
+const PandaBear.Testing.Playwright.Chromium.RequiredVariable = "REQUIRE_BROWSER_TESTS" -> string!
+PandaBear.Testing.Playwright.Chromium
+static PandaBear.Testing.Playwright.Chromium.IsInstalled.get -> bool
+static PandaBear.Testing.Playwright.Chromium.Launch() -> System.Threading.Tasks.Task<(Microsoft.Playwright.IPlaywright! Playwright, Microsoft.Playwright.IBrowser! Browser)>!
+PandaBear.Testing.Playwright.ChromiumFixture
+PandaBear.Testing.Playwright.ChromiumFixture.Browser.get -> Microsoft.Playwright.IBrowser!
+PandaBear.Testing.Playwright.ChromiumFixture.ChromiumFixture() -> void
+PandaBear.Testing.Playwright.ChromiumFixture.DisposeAsync() -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Playwright.ChromiumFixture.InitializeAsync() -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.Playwright.ComponentHtml
+static PandaBear.Testing.Playwright.ComponentHtml.Render<TComponent>(System.Collections.Generic.IDictionary<string!, object?>? parameters = null) -> System.Threading.Tasks.Task<string!>!

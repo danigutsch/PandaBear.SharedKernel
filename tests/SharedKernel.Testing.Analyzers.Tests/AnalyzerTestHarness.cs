@@ -68,18 +68,7 @@ internal static class AnalyzerTestHarness
         AnalyzerConfigOptionsProvider optionsProvider)
     {
         var analyzer = new SharedKernelTestingAnalyzer();
-        var options = new AnalyzerOptions([]);
-        var compilationOptions = new CompilationWithAnalyzersOptions(
-            options,
-            onAnalyzerException: null,
-            concurrentAnalysis: true,
-            logAnalyzerExecutionTime: false,
-            reportSuppressedDiagnostics: false,
-            analyzerExceptionFilter: null,
-            _ => optionsProvider);
-        var compilationWithAnalyzers = compilation.WithAnalyzers([analyzer], compilationOptions);
-
-        return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
+        return await AnalyzerRun.GetDiagnostics(compilation, analyzer, optionsProvider).ConfigureAwait(false);
     }
 
     /// <summary>Runs SharedKernelTestingAnalyzer over the source and returns only the diagnostics with the given id.</summary>

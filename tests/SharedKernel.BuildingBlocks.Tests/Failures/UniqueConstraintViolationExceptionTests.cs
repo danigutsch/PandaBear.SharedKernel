@@ -1,7 +1,7 @@
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests the persistence-neutral unique-rule exception.</summary>
-[Trait("Scope", "Unit")]
+[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 [Trait("Capability", "UniqueViolations")]
 public sealed class UniqueConstraintViolationExceptionTests
 {

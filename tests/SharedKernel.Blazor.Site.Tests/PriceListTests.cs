@@ -37,7 +37,7 @@ public sealed class PriceListTests : BunitContext
     public void The_machine_value_is_written_with_the_invariant_culture_whatever_the_current_culture()
     {
         // Arrange & Act
-        var value = CultureOverride.Run(CultureInfo.GetCultureInfo("pt-BR"), () =>
+        var value = Testing.CultureScope.Run(CultureInfo.GetCultureInfo("pt-BR"), () =>
             Render<PriceList>(parameters => parameters.Add(component => component.Items, [new PriceItem("Base", "R$ 1.234,56", 1234.56m)])).Find("data").GetAttribute("value"));
 
         // Assert

@@ -2,6 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Help;
 using System.Diagnostics;
 using PandaBear.CI.Tool;
+using PandaBear.Processes;
 
 namespace PandaBear.Repository.Tests;
 
@@ -26,11 +27,11 @@ internal static class RepositoryToolInvocation
     {
         // Only stage-candidate reaches the staging Git; OpenAPI generation reaches the same recorder, and its environment is tested on its own.
         var git = args is ["stage-candidate", ..] ? staging.Git : null;
-        var runner = new DelegateProcessRunner((startInfo, token) => git is not null && startInfo.FileName == "git"
+        var runner = new ScriptedProcessRunner(async (startInfo, _, token) => new ProcessOutput(0, await (git is not null && startInfo.FileName == "git"
             ? git([.. startInfo.ArgumentList], startInfo.WorkingDirectory, token)
-            : run(startInfo.FileName, [.. startInfo.ArgumentList], startInfo.WorkingDirectory, token));
+            : run(startInfo.FileName, [.. startInfo.ArgumentList], startInfo.WorkingDirectory, token))));
         var services = new CiToolServices(
-            new CiMachine(runner, BareNameResolver.Instance, TimeProvider.System),
+            new CiMachine(runner, new ExecutableMap(static command => command), TimeProvider.System),
             staging.CreateHttpHandler,
             staging.Limits,
             static () => throw new InvalidOperationException("Only prune-prereleases calls the API."),
@@ -55,8 +56,8 @@ internal static class RepositoryToolInvocation
     public static Task<RepositoryToolResult> RunPruning(IReadOnlyList<string> args, PrereleasePruningServices pruning, CancellationToken ct)
     {
         var machine = new CiMachine(
-            new DelegateProcessRunner(static (_, _) => throw new InvalidOperationException("prune-prereleases starts no process.")),
-            BareNameResolver.Instance,
+            new ScriptedProcessRunner(static (_, _, _) => Task.FromException<ProcessOutput>(new InvalidOperationException("prune-prereleases starts no process."))),
+            new ExecutableMap(static command => command),
             TimeProvider.System);
         return Invoke(RepositoryCommandLine.Create(Environment.CurrentDirectory, Services(machine) with
         {

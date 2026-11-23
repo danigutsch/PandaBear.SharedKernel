@@ -3,7 +3,7 @@ using System.Globalization;
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests the attribution of a third-party image: author, title, source, licence and whether it was changed.</summary>
-[Trait("Scope", "Unit")]
+[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 [Trait("Capability", "ValueObjects")]
 public sealed class ImageCreditTests
 {

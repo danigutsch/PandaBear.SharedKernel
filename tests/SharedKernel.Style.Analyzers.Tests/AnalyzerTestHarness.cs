@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
 using PandaBear.Testing.Roslyn;
 
 namespace PandaBear.Style.Analyzers.Tests;
@@ -62,19 +61,7 @@ internal static class AnalyzerTestHarness
     {
         var compilation = CreateCompilation(source, assemblyName, path);
         var analyzer = new SharedKernelStyleAnalyzer();
-        var optionsProvider = new TestAnalyzerConfigOptionsProvider(globalOptions);
-        var analyzerOptions = new AnalyzerOptions([]);
-        var compilationOptions = new CompilationWithAnalyzersOptions(
-            analyzerOptions,
-            onAnalyzerException: null,
-            concurrentAnalysis: true,
-            logAnalyzerExecutionTime: false,
-            reportSuppressedDiagnostics: false,
-            analyzerExceptionFilter: null,
-            _ => optionsProvider);
-        var compilationWithAnalyzers = compilation.WithAnalyzers([analyzer], compilationOptions);
-
-        return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
+        return await AnalyzerRun.GetDiagnostics(compilation, analyzer, globalOptions).ConfigureAwait(false);
     }
 
 }

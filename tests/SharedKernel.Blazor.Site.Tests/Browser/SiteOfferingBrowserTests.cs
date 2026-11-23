@@ -3,12 +3,10 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// <summary>Tests the offering display atoms in Chromium at 1280px; they skip when the browser is not installed.</summary>
 public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
     /// <summary>Gets every place a badge is shown with every tone.</summary>
     public static TheoryData<string, StatusTone> ContextsAndTones => OfferingSample.BadgeCases;
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [MemberData(nameof(ContextsAndTones))]
     public async Task A_status_badge_keeps_its_own_colours_at_4_5_to_1_on_the_page_and_on_the_primary_colour(string context, StatusTone tone)
     {
@@ -28,7 +26,7 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         SiteFixtures.Contrast(text, background).ShouldBeGreaterThanOrEqualTo(4.5);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task An_inline_fact_grid_is_one_row_without_borders_in_a_card_of_three_to_a_row()
     {
         // Arrange
@@ -48,7 +46,7 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         itemBorder.ShouldBe("0px");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task An_inline_fact_grid_wraps_inside_its_card_on_a_narrow_phone_instead_of_scrolling()
     {
         // Arrange
@@ -64,7 +62,7 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         scrollWidth.ShouldBeLessThanOrEqualTo(320);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(320)]
     [InlineData(1280)]
     public async Task A_price_amount_stays_on_one_line_inside_its_list_beside_a_long_label(int width)
@@ -84,7 +82,7 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         scrollWidth.ShouldBeLessThanOrEqualTo(width);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_price_list_with_a_heading_ID_is_a_group_named_by_its_heading()
     {
         // Arrange
@@ -97,7 +95,7 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         tree.ShouldContain(new AccessibleNode("group", "Prices", null));
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData("#price-list", "#ffffff")]
     [InlineData("#band-prices", "#1d4ed8")]
     public async Task A_price_note_reaches_4_5_to_1_on_the_page_and_on_the_primary_colour(string list, string background)
@@ -114,7 +112,7 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         SiteFixtures.Contrast(amount, background).ShouldBeGreaterThanOrEqualTo(4.5);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_from_price_keeps_its_amount_on_one_line_in_a_card()
     {
         // Arrange
@@ -131,7 +129,7 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         whiteSpace.ShouldBe("nowrap");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_step_list_is_a_list_of_its_steps_with_a_heading_each()
     {
         // Arrange
@@ -150,7 +148,7 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         lists.ShouldBeGreaterThanOrEqualTo(2);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task From_the_breakpoint_the_photos_of_an_itinerary_zigzag_and_start_beside_the_title()
     {
         // Arrange
@@ -169,7 +167,7 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         secondMedia.Y.ShouldBe(secondText.Y);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task On_a_phone_every_photo_of_an_itinerary_follows_its_text()
     {
         // Arrange
@@ -185,7 +183,7 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         scrollWidth.ShouldBeLessThanOrEqualTo(375);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData("#itinerary", "#ffffff")]
     [InlineData("#band-itinerary", "#1d4ed8")]
     public async Task A_step_number_reaches_4_5_to_1_on_the_page_and_on_the_primary_colour(string list, string background)
@@ -200,7 +198,7 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         SiteFixtures.Contrast(number, background).ShouldBeGreaterThanOrEqualTo(4.5);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData("#gallery", "#ffffff")]
     [InlineData("#band-gallery", "#1d4ed8")]
     public async Task An_image_credit_and_its_caption_reach_4_5_to_1_on_the_page_and_on_the_primary_colour(string gallery, string background)
@@ -221,7 +219,7 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         underline.ShouldBe("underline");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_credited_image_link_keeps_its_alternative_text_as_its_name_and_the_credit_sits_under_the_caption()
     {
         // Arrange
@@ -239,7 +237,7 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         credit.Y.ShouldBeGreaterThan(image.Bottom);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(320)]
     [InlineData(1280)]
     public async Task A_credit_keeps_its_thumbnail_beside_its_lines_and_breaks_a_long_title_instead_of_scrolling(int width)

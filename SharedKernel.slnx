@@ -123,7 +123,6 @@
   <Project Path="tests/SharedKernel.Branding.Tests/SharedKernel.Branding.Tests.csproj" />
   <Project Path="tests/SharedKernel.BuildingBlocks.Tests/SharedKernel.BuildingBlocks.Tests.csproj" />
   <Project Path="tests/SharedKernel.Caching.Tests/SharedKernel.Caching.Tests.csproj" />
-  <Project Path="tests/SharedKernel.CodeFixes.Testing/SharedKernel.CodeFixes.Testing.csproj" />
   <Project Path="tests/SharedKernel.DocumentRendering.Tests/SharedKernel.DocumentRendering.Tests.csproj" />
   <Project Path="tests/SharedKernel.Domain.Analyzers.Tests/SharedKernel.Domain.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.Domain.CodeFixes.Tests/SharedKernel.Domain.CodeFixes.Tests.csproj" />

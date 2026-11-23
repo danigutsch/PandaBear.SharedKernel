@@ -271,7 +271,7 @@ internal static class CodeFixRunnerTestProject
     /// <param name="directory">The directory that receives the copy.</param>
     public static void PinRepositorySdk(string directory)
     {
-        File.Copy(Path.Combine(RepositoryFiles.GetRootPath(), "global.json"), Path.Combine(directory, "global.json"));
+        File.Copy(Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), "global.json"), Path.Combine(directory, "global.json"));
     }
 
     /// <summary>Writes <see cref="ProjectFile"/> as <c>Sample.Tests.csproj</c> and the given source as <c>SampleTests.cs</c> into the directory.</summary>

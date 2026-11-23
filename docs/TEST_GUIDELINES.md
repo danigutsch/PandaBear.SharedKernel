@@ -108,13 +108,13 @@ already owns its kind; add a package only when a new kind needs a dependency tha
 | `SharedKernel.Testing.Messaging` | Event envelope publisher and integration event handler fakes | `SharedKernel.Messaging`, `SharedKernel.Messaging.IntegrationEvents` |
 | `SharedKernel.Testing.ObjectStorage` | In-memory object store with call recording and failure injection | `SharedKernel.ObjectStorage` |
 | `SharedKernel.Testing.Data` and `SharedKernel.Testing.Snapshots` | Deterministic data and snapshot text helpers | No SharedKernel package |
-| `SharedKernel.Testing.Roslyn` | Compilation, analyzer, and generator test harnesses | Roslyn |
+| `SharedKernel.Testing.Roslyn` | Compilation, analyzer, generator, and code fix test harnesses | Roslyn, Roslyn Workspaces |
 | `SharedKernel.Testing.Analyzers` and `SharedKernel.Testing.CodeFixes` | Analyzers and code fixes for test conventions | Roslyn; code fixes depend on the analyzers |
 | `SharedKernel.IntegrationTesting` | Aspire and PostgreSQL integration-test helpers | Aspire testing, `SharedKernel.Testing.Xunit` |
 | `SharedKernel.Npgsql.Testing` | PostgreSQL database leases and xUnit fixtures | `SharedKernel.IntegrationTesting` |
 | `SharedKernel.Testing.Contracts` | Contract test marker and trait contracts | No SharedKernel package |
 
-Projects under `tests/` that are not packable (`SharedKernel.Testing.Packaging`, `SharedKernel.CodeFixes.Testing`,
+Projects under `tests/` that are not packable (`SharedKernel.Testing.Packaging`,
 `SharedKernel.Testing.Integration`, `SharedKernel.Testing.Scenarios`, `SharedKernel.Testing.System`,
 `SharedKernel.Aspire.Hosting.Umami.Testing`, and `SharedKernel.TestServices.Host`) serve this repository's own suites and are not part of the public surface. Assertion
 packages never depend on a browser, web, or database package, so a consumer takes only the assertions it uses.

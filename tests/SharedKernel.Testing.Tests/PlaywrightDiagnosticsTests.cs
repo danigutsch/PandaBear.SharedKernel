@@ -6,9 +6,7 @@ namespace PandaBear.Testing.Tests;
 /// <summary>Tests the browser diagnostics, the diagnosing interactive wait, the retrying fill and the failure artifacts in Chromium; they skip when the browser is not installed.</summary>
 public sealed class PlaywrightDiagnosticsTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Diagnostics_describe_the_address_the_console_and_the_HTML()
     {
         // Arrange
@@ -25,7 +23,7 @@ public sealed class PlaywrightDiagnosticsTests(ChromiumPageFixture chromium) : I
         report.ShouldContain("<p id=\"text\">Hello</p>", StringComparison.Ordinal);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task An_interactive_wait_that_times_out_reports_the_browser_diagnostics()
     {
         // Arrange
@@ -42,7 +40,7 @@ public sealed class PlaywrightDiagnosticsTests(ChromiumPageFixture chromium) : I
         timeout.Message.ShouldContain("console.error: websocket refused", StringComparison.Ordinal);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task An_interactive_wait_on_the_developer_exception_page_says_so()
     {
         // Arrange
@@ -56,7 +54,7 @@ public sealed class PlaywrightDiagnosticsTests(ChromiumPageFixture chromium) : I
         failure.Message.ShouldContain("developer exception page", StringComparison.Ordinal);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task An_interactive_page_passes_the_diagnosing_wait()
     {
         // Arrange
@@ -69,7 +67,7 @@ public sealed class PlaywrightDiagnosticsTests(ChromiumPageFixture chromium) : I
         await Microsoft.Playwright.Assertions.Expect(page.Locator(PlaywrightPageExtensions.InteractiveReadySelector)).ToHaveCountAsync(1);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_field_that_a_late_render_clears_is_filled_again_until_it_keeps_the_value()
     {
         // Arrange
@@ -88,7 +86,7 @@ public sealed class PlaywrightDiagnosticsTests(ChromiumPageFixture chromium) : I
         await Microsoft.Playwright.Assertions.Expect(page.Locator("#name")).ToHaveValueAsync("Ana");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Failure_artifacts_are_a_full_page_screenshot_and_the_trace()
     {
         // Arrange
@@ -105,7 +103,7 @@ public sealed class PlaywrightDiagnosticsTests(ChromiumPageFixture chromium) : I
         Directory.Delete(folder, recursive: true);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Artifact_names_are_capped_and_kept_apart_by_a_hash_of_the_full_name()
     {
         // Arrange

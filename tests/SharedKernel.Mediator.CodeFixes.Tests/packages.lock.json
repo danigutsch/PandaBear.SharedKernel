@@ -256,17 +256,30 @@
       "PandaBear.SharedKernel.Mediator.SourceGenerator": {
         "type": "Project"
       },
+      "PandaBear.SharedKernel.Processes": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
       "PandaBear.SharedKernel.Testing": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
+        }
       },
       "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )",
           "xunit.v3.assert": "[4.0.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Testing.Roslyn": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.CSharp": "[5.12.0, )",
+          "Microsoft.CodeAnalysis.CSharp.Workspaces": "[5.12.0, )"
         }
       },
       "Microsoft.CodeAnalysis.Analyzers": {

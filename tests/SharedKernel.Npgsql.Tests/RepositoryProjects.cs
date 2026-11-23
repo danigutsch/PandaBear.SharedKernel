@@ -4,18 +4,5 @@ namespace PandaBear.Npgsql.Tests;
 internal static class RepositoryProjects
 {
     /// <summary>Gets the full path of a small ASP.NET Core test application's project file.</summary>
-    internal static string TestApp => Path.Combine(Root(), "tests", "SharedKernel.Testing.AspNetCore.TestApp", "SharedKernel.Testing.AspNetCore.TestApp.csproj");
-
-    private static string Root()
-    {
-        for (var directory = new DirectoryInfo(AppContext.BaseDirectory); directory is not null; directory = directory.Parent)
-        {
-            if (File.Exists(Path.Combine(directory.FullName, "SharedKernel.slnx")))
-            {
-                return directory.FullName;
-            }
-        }
-
-        throw new InvalidOperationException("The repository root (SharedKernel.slnx) was not found above the test output.");
-    }
+    internal static string TestApp => Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), "tests", "SharedKernel.Testing.AspNetCore.TestApp", "SharedKernel.Testing.AspNetCore.TestApp.csproj");
 }

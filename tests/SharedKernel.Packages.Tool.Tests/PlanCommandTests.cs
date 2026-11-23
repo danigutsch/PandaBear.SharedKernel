@@ -13,7 +13,7 @@ public sealed class PlanCommandTests
     {
         // Arrange
         using var repository = CreateRepository("""{"version":1,"packages":{"apt":["git","libreoffice"],"cargo":["ripgrep=14.1.0","bat"]}}""");
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput>
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput>
         {
             ["/fake/dpkg-query"] = new(0, "git\t1:2.43\t" + Dpkg),
             ["/fake/cargo"] = new(0, "bat v0.26.1:\n    bat\nripgrep v13.0.0:\n    rg\n"),
@@ -33,7 +33,7 @@ public sealed class PlanCommandTests
     {
         // Arrange
         using var repository = CreateRepository("""{"version":1,"packages":{"apt":["git"],"flatpak":["org.telegram.desktop"]}}""");
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput>
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput>
         {
             ["/fake/dpkg-query"] = new(0, "git\t1:2.43\t" + Dpkg),
             ["/fake/flatpak"] = new(0, "org.telegram.desktop\t7.0.9\tstable\n"),
@@ -53,7 +53,7 @@ public sealed class PlanCommandTests
     {
         // Arrange
         using var repository = CreateRepository("""{"version":1,"packages":{"snap":["firefox=158.0-2","core24"],"brew":["ripgrep","wget=1.25.0"]}}""");
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput>
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput>
         {
             ["/fake/snap"] = new(0, "Name Version Rev Tracking Publisher Notes\nfirefox 157.0 9057 latest/stable mozilla** -\ncore24 1 2 latest/stable canonical** base\n"),
             ["/fake/brew"] = new(0, "wget 1.25.0\n"),
@@ -73,7 +73,7 @@ public sealed class PlanCommandTests
     {
         // Arrange
         using var repository = CreateRepository("""{"version":1,"packages":{"brew":["wget"]}}""");
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput> { ["/fake/brew"] = new(0, "wget 1.24.0 1.25.0\n") });
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/brew"] = new(0, "wget 1.24.0 1.25.0\n") });
 
         // Act
         var (exitCode, _, error) = await Run(repository.Path, runner, ResolveAll);
@@ -88,7 +88,7 @@ public sealed class PlanCommandTests
     {
         // Arrange
         using var repository = CreateRepository("""{"version":1,"packages":{"apt":["ripgrep","git"],"cargo":["ripgrep"]}}""");
-        var runner = new RoutingProcessRunner([]);
+        var runner = ScriptedProcessRunner.ByFileName([]);
 
         // Act
         var (exitCode, output, error) = await Run(repository.Path, runner, ResolveAll);
@@ -97,7 +97,7 @@ public sealed class PlanCommandTests
         exitCode.ShouldBe(2);
         output.ShouldBe(string.Empty);
         error.ShouldContain("ripgrep is declared for more than one package manager: apt, cargo.", StringComparison.Ordinal);
-        runner.Calls.ShouldBeEmpty("Nothing is run before the declaration is valid.");
+        runner.Runs.ShouldBeEmpty("Nothing is run before the declaration is valid.");
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public sealed class PlanCommandTests
     {
         // Arrange
         using var repository = CreateRepository("""{"version":1,"packages":{"apt":["git"],"cargo":["bat"]}}""");
-        var runner = new RoutingProcessRunner([]);
+        var runner = ScriptedProcessRunner.ByFileName([]);
 
         // Act
         var (exitCode, _, error) = await Run(repository.Path, runner, ResolveWithoutCargo);
@@ -113,7 +113,7 @@ public sealed class PlanCommandTests
         // Assert
         exitCode.ShouldBe(2);
         error.ShouldContain("cargo was not found on PATH", StringComparison.Ordinal);
-        runner.Calls.ShouldBeEmpty();
+        runner.Runs.ShouldBeEmpty();
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public sealed class PlanCommandTests
     {
         // Arrange
         using var repository = CreateRepository("""{"version":1,"packages":{"apt":["git"],"cargo":[]}}""");
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput> { ["/fake/dpkg-query"] = new(0, "git\t1\t" + Dpkg) });
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/dpkg-query"] = new(0, "git\t1\t" + Dpkg) });
 
         // Act
         var (exitCode, _, error) = await Run(repository.Path, runner, ResolveWithoutCargo);
@@ -136,7 +136,7 @@ public sealed class PlanCommandTests
     {
         // Arrange
         using var repository = CreateRepository("""{"version":1,"packages":{"apt":["libreoffice"],"npm":["corepack"]}}""");
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput>
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput>
         {
             ["/fake/dpkg-query"] = new(0, string.Empty),
             ["/fake/npm"] = new(1, string.Empty, "npm ERR! something broke\x1b[0m\nsecond line"),
@@ -161,7 +161,7 @@ public sealed class PlanCommandTests
         using var repository = CreateRepository(null);
 
         // Act
-        var (exitCode, _, error) = await Run(repository.Path, new RoutingProcessRunner([]), ResolveAll);
+        var (exitCode, _, error) = await Run(repository.Path, ScriptedProcessRunner.ByFileName([]), ResolveAll);
 
         // Assert
         exitCode.ShouldBe(2);
@@ -173,7 +173,7 @@ public sealed class PlanCommandTests
     {
         // Arrange
         using var repository = CreateRepository("""{"version":1,"packages":{"apt":["git"],"cargo":["bat"]}}""");
-        var runner = new RoutingProcessRunner([]);
+        var runner = ScriptedProcessRunner.ByFileName([]);
 
         // Act
         var (exitCode, _, error) = await Run(repository.Path, runner, ResolveNone);
@@ -182,7 +182,7 @@ public sealed class PlanCommandTests
         exitCode.ShouldBe(2);
         error.ShouldContain("dpkg-query was not found on PATH", StringComparison.Ordinal);
         error.ShouldContain("cargo was not found on PATH", StringComparison.Ordinal);
-        runner.Calls.ShouldBeEmpty();
+        runner.Runs.ShouldBeEmpty();
     }
 
     [Fact]
@@ -190,7 +190,7 @@ public sealed class PlanCommandTests
     {
         // Arrange
         using var repository = CreateRepository("""{"version":1,"packages":{"apt":["git"]}}""");
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput> { ["/fake/dpkg-query"] = new(0, "git\t1\t" + Dpkg) });
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/dpkg-query"] = new(0, "git\t1\t" + Dpkg) });
 
         // Act
         var (exitCode, output, _) = await RunWithArguments(repository.Path, runner, ResolveAll, "plan");
@@ -208,7 +208,7 @@ public sealed class PlanCommandTests
         var nested = Path.Combine(repository.Path, "nested", ".config");
         Directory.CreateDirectory(nested);
         await File.WriteAllTextAsync(Path.Combine(nested, "sharedkernel-packages.json"), """{"version":1,"packages":{"apt":["git"]}}""", TestContext.Current.CancellationToken);
-        var runner = new RoutingProcessRunner(new Dictionary<string, ProcessOutput> { ["/fake/dpkg-query"] = new(0, "git\t1\t" + Dpkg) });
+        var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/dpkg-query"] = new(0, "git\t1\t" + Dpkg) });
 
         // Act
         var (exitCode, _, error) = await RunWithArguments(repository.Path, runner, ResolveAll, "plan", "--root", "nested");
@@ -225,7 +225,7 @@ public sealed class PlanCommandTests
         using var repository = CreateRepository("""{"version":1,"packages":{"\u001b[2Jpip":[]}}""");
 
         // Act
-        var (exitCode, _, error) = await Run(repository.Path, new RoutingProcessRunner([]), ResolveAll);
+        var (exitCode, _, error) = await Run(repository.Path, ScriptedProcessRunner.ByFileName([]), ResolveAll);
 
         // Assert
         exitCode.ShouldBe(2);
@@ -242,8 +242,8 @@ public sealed class PlanCommandTests
         using var over = CreateRepository(Json + new string(' ', (1024 * 1024) - Json.Length + 1));
 
         // Act
-        var accepted = await Run(atLimit.Path, new RoutingProcessRunner([]), ResolveAll);
-        var rejected = await Run(over.Path, new RoutingProcessRunner([]), ResolveAll);
+        var accepted = await Run(atLimit.Path, ScriptedProcessRunner.ByFileName([]), ResolveAll);
+        var rejected = await Run(over.Path, ScriptedProcessRunner.ByFileName([]), ResolveAll);
 
         // Assert
         accepted.ExitCode.ShouldBe(0);
@@ -259,7 +259,7 @@ public sealed class PlanCommandTests
         Directory.CreateDirectory(Path.Combine(repository.Path, ".config", "sharedkernel-packages.json"));
 
         // Act
-        var (exitCode, output, error) = await Run(repository.Path, new RoutingProcessRunner([]), ResolveAll);
+        var (exitCode, output, error) = await Run(repository.Path, ScriptedProcessRunner.ByFileName([]), ResolveAll);
 
         // Assert
         exitCode.ShouldBe(2);
@@ -282,7 +282,7 @@ public sealed class PlanCommandTests
     {
         // Arrange
         using var repository = CreateRepository(configuration);
-        var runner = new RoutingProcessRunner([]);
+        var runner = ScriptedProcessRunner.ByFileName([]);
 
         // Act
         var (exitCode, output, error) = await Run(repository.Path, runner, ResolveAll);
@@ -291,6 +291,6 @@ public sealed class PlanCommandTests
         exitCode.ShouldBe(2);
         output.ShouldBe(string.Empty);
         error.ShouldContain(expected, StringComparison.Ordinal);
-        runner.Calls.ShouldBeEmpty();
+        runner.Runs.ShouldBeEmpty();
     }
 }

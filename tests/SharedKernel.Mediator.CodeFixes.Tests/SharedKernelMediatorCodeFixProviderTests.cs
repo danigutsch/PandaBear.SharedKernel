@@ -62,7 +62,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
         var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
-        var generatedHandlerSource = await workspace.GetAdditionalDocumentText("MissingTourHandler.cs");
+        var generatedHandlerSource = await workspace.GetDocumentText("MissingTourHandler.cs");
         var diagnosticsAfterFix = await workspace.GetGeneratorDiagnostics();
 
         // Assert
@@ -420,7 +420,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
         var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
-        var generatedHandlerSource = await workspace.GetAdditionalDocumentText("MissingTourHandler.cs");
+        var generatedHandlerSource = await workspace.GetDocumentText("MissingTourHandler.cs");
 
         // Assert
         generatedHandlerSource.ShouldContain("namespace Demo;", StringComparison.Ordinal);
@@ -449,7 +449,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
         var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
-        var generatedHandlerSource = await workspace.GetAdditionalDocumentText("MissingTourHandler.cs");
+        var generatedHandlerSource = await workspace.GetDocumentText("MissingTourHandler.cs");
 
         // Assert
         generatedHandlerSource.ShouldContain("namespace Demo;", StringComparison.Ordinal);
@@ -475,7 +475,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
         var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
-        var generatedHandlerSource = await workspace.GetAdditionalDocumentText("MissingTourHandler.cs");
+        var generatedHandlerSource = await workspace.GetDocumentText("MissingTourHandler.cs");
 
         // Assert
         generatedHandlerSource.ShouldContain("IQueryHandler<global::Demo.MissingTour, string?>", StringComparison.Ordinal);
@@ -501,7 +501,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
         var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
-        var generatedHandlerSource = await workspace.GetAdditionalDocumentText("LookupTourHandler.cs");
+        var generatedHandlerSource = await workspace.GetDocumentText("LookupTourHandler.cs");
 
         // Assert
         generatedHandlerSource.ShouldContain("public sealed class LookupTourHandler : global::PandaBear.Mediator.IRequestHandler<global::Demo.LookupTour, string>", StringComparison.Ordinal);
@@ -527,7 +527,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
         var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
-        var generatedHandlerSource = await workspace.GetAdditionalDocumentText("CreateTourHandler.cs");
+        var generatedHandlerSource = await workspace.GetDocumentText("CreateTourHandler.cs");
 
         // Assert
         generatedHandlerSource.ShouldContain("public sealed class CreateTourHandler : global::PandaBear.Mediator.ICommandHandler<global::Demo.CreateTour, int>", StringComparison.Ordinal);
@@ -553,7 +553,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
         var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
-        var generatedHandlerSource = await workspace.GetAdditionalDocumentText("ArchiveTourHandler.cs");
+        var generatedHandlerSource = await workspace.GetDocumentText("ArchiveTourHandler.cs");
 
         // Assert
         generatedHandlerSource.ShouldContain("public sealed class ArchiveTourHandler : global::PandaBear.Mediator.ICommandHandler<global::Demo.ArchiveTour>", StringComparison.Ordinal);

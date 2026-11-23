@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
   <ItemGroup>
-    <Compile Include="../SharedKernel.RepoConfig.Tests/CiTestSelectionTestProcess.cs" Link="CiTestSelectionTestProcess.cs" />
     <Using Include="Xunit" />
     <Using Include="PandaBear.CI" />
     <Using Include="PandaBear.Testing" />

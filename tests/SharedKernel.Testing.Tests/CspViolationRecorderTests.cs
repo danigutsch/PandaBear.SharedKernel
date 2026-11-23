@@ -6,9 +6,7 @@ namespace PandaBear.Testing.Tests;
 /// <summary>Exercises CSP observation against an enforced policy in Chromium.</summary>
 public sealed class CspViolationRecorderTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task The_recorder_observes_document_violations_and_policy_console_messages()
     {
         // Arrange

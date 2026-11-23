@@ -18,21 +18,7 @@ public static class VersioningToolTests
     public static void Tool_project_is_packaged_as_dotnet_tool()
     {
         // Arrange
-        var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
-        string? repositoryRoot = null;
-        while (currentDirectory is not null)
-        {
-            var solutionPath = Path.Combine(currentDirectory.FullName, "SharedKernel.slnx");
-            if (File.Exists(solutionPath))
-            {
-                repositoryRoot = currentDirectory.FullName;
-                break;
-            }
-
-            currentDirectory = currentDirectory.Parent;
-        }
-
-        var root = repositoryRoot.ShouldNotBeNull();
+        var root = RepositoryRoot.Locate("SharedKernel.slnx");
         var projectPath = Path.Combine(
             root,
             "tools",
@@ -59,21 +45,7 @@ public static class VersioningToolTests
     public static void SharedKernel_testing_helpers_are_packable_source_projects()
     {
         // Arrange
-        var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
-        string? repositoryRoot = null;
-        while (currentDirectory is not null)
-        {
-            var solutionPath = Path.Combine(currentDirectory.FullName, "SharedKernel.slnx");
-            if (File.Exists(solutionPath))
-            {
-                repositoryRoot = currentDirectory.FullName;
-                break;
-            }
-
-            currentDirectory = currentDirectory.Parent;
-        }
-
-        var root = repositoryRoot.ShouldNotBeNull();
+        var root = RepositoryRoot.Locate("SharedKernel.slnx");
         string[] packageIds =
         [
             "PandaBear.SharedKernel.Testing",
@@ -202,21 +174,7 @@ public static class VersioningToolTests
     public static void SharedKernel_analyzer_condition_uses_project_name()
     {
         // Arrange
-        var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
-        string? repositoryRoot = null;
-        while (currentDirectory is not null)
-        {
-            var propsPath = Path.Combine(currentDirectory.FullName, "src", "Directory.Build.props");
-            if (File.Exists(propsPath))
-            {
-                repositoryRoot = currentDirectory.FullName;
-                break;
-            }
-
-            currentDirectory = currentDirectory.Parent;
-        }
-
-        var root = repositoryRoot.ShouldNotBeNull();
+        var root = RepositoryRoot.Locate(Path.Combine("src", "Directory.Build.props"));
         var props = File.ReadAllText(Path.Combine(root, "src", "Directory.Build.props"));
 
         // Act

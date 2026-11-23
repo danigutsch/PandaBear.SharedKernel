@@ -369,17 +369,8 @@ internal static class SharedKernelBoundaryFiles
 
         return [.. offenses];
     }
-    /// <summary>Walks up from the test binary directory to the first directory that contains <c>SharedKernel.slnx</c> and returns it.</summary>
-    public static string GetRepositoryRoot()
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "SharedKernel.slnx")))
-        {
-            directory = directory.Parent;
-        }
-
-        return directory?.FullName ?? throw new InvalidOperationException("Could not locate repository root.");
-    }
+    /// <summary>Returns the repository root, the nearest directory above the test binaries that contains <c>SharedKernel.slnx</c>.</summary>
+    public static string GetRepositoryRoot() => RepositoryRoot.Locate("SharedKernel.slnx");
 
     /// <summary>Returns whether <paramref name="path"/> lies under a bin, obj, or Snapshots directory or ends with <c>.feature.cs</c>.</summary>
     public static bool IsGeneratedTestPath(string path)

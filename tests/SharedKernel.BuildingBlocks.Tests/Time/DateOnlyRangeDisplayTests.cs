@@ -3,7 +3,7 @@ using System.Globalization;
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests the culture-aware display of a range of days with patterns chosen by the shared month and year.</summary>
-[Trait("Scope", "Unit")]
+[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 [Trait("Capability", "ValueObjects")]
 public sealed class DateOnlyRangeDisplayTests
 {

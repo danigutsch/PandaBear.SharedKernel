@@ -5,9 +5,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// <summary>Tests the hero and the header brand in Chromium; they skip when the browser is not installed.</summary>
 public sealed class HeroBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(HeroLayout.Split, false, 375)]
     [InlineData(HeroLayout.Split, true, 1280)]
     [InlineData(HeroLayout.Cover, false, 375)]
@@ -30,7 +28,7 @@ public sealed class HeroBrowserTests(ChromiumFixture chromium) : IClassFixture<C
         Math.Abs(actions.Y - heading.Bottom - 24).ShouldBeLessThanOrEqualTo(1);
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData(HeroLayout.Cover, 375)]
     [InlineData(HeroLayout.Cover, 1280)]
     [InlineData(HeroLayout.Split, 1280)]
@@ -54,7 +52,7 @@ public sealed class HeroBrowserTests(ChromiumFixture chromium) : IClassFixture<C
         scrollWidth.ShouldBeLessThanOrEqualTo(width);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_text_brand_takes_the_heading_face_without_an_underline_in_the_primary_colour()
     {
         // Arrange
@@ -75,7 +73,7 @@ public sealed class HeroBrowserTests(ChromiumFixture chromium) : IClassFixture<C
         SiteFixtures.Contrast(color, "#ffffff").ShouldBeGreaterThanOrEqualTo(4.5);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_text_brand_shows_the_focus_ring_when_reached_with_the_keyboard()
     {
         // Arrange
@@ -94,7 +92,7 @@ public sealed class HeroBrowserTests(ChromiumFixture chromium) : IClassFixture<C
         SiteFixtures.Contrast(ring, "#ffffff").ShouldBeGreaterThanOrEqualTo(3);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_theme_that_gives_the_title_a_serif_face_gives_it_to_the_text_brand()
     {
         // Arrange
@@ -112,7 +110,7 @@ public sealed class HeroBrowserTests(ChromiumFixture chromium) : IClassFixture<C
         family.ShouldNotContain("sans-serif", StringComparison.Ordinal);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_theme_brand_colour_colours_the_text_brand_on_the_page()
     {
         // Arrange

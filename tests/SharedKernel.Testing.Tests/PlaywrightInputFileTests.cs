@@ -6,8 +6,6 @@ namespace PandaBear.Testing.Tests;
 /// <summary>Tests choosing a file in a Blazor InputFile whose change listener is attached late, in Chromium; the browser tests skip when the browser is not installed.</summary>
 public sealed class PlaywrightInputFileTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
     // Stands in for Blazor's InputFile.init, which the server calls after the page is already interactive: 300 ms after load it marks the
     // element the way Blazor does and starts listening for changes, recording the names it is handed.
     private const string LateInputFile = """
@@ -22,7 +20,7 @@ public sealed class PlaywrightInputFileTests(ChromiumPageFixture chromium) : ICl
         </script>
         """;
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_file_chosen_before_the_listener_is_attached_still_reaches_it()
     {
         // Arrange
@@ -37,7 +35,7 @@ public sealed class PlaywrightInputFileTests(ChromiumPageFixture chromium) : ICl
         received.ShouldBe(["site.json"]);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_batch_keeps_its_file_order_after_the_listener_is_attached()
     {
         // Arrange
@@ -56,7 +54,7 @@ public sealed class PlaywrightInputFileTests(ChromiumPageFixture chromium) : ICl
         received.ShouldBe(["front.txt", "back.txt"]);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Waiting_for_the_listener_preserves_a_native_file_chooser_flow()
     {
         // Arrange
@@ -92,7 +90,7 @@ public sealed class PlaywrightInputFileTests(ChromiumPageFixture chromium) : ICl
         </script>
         """;
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task An_input_replaced_before_it_is_set_up_is_found_again()
     {
         // Arrange
@@ -108,7 +106,7 @@ public sealed class PlaywrightInputFileTests(ChromiumPageFixture chromium) : ICl
         received.ShouldBe(["site.json"]);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Missing_arguments_are_refused()
     {
         // Arrange

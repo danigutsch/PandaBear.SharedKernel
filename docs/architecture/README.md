@@ -140,6 +140,7 @@ flowchart TB
     SharedKernel_ServiceDefaults[SharedKernel.ServiceDefaults] --> SharedKernel_Observability[SharedKernel.Observability]
     SharedKernel_Style_CodeFixes[SharedKernel.Style.CodeFixes] --> SharedKernel_Style_Analyzers[SharedKernel.Style.Analyzers]
     SharedKernel_Tabular[SharedKernel.Tabular] --> SharedKernel_Results[SharedKernel.Results]
+    SharedKernel_Testing[SharedKernel.Testing] --> SharedKernel_Processes[SharedKernel.Processes]
     SharedKernel_Testing[SharedKernel.Testing] --> SharedKernel_Testing_SourceGenerator[SharedKernel.Testing.SourceGenerator]
     SharedKernel_Testing_AspNetCore[SharedKernel.Testing.AspNetCore] --> SharedKernel_Testing_Xunit[SharedKernel.Testing.Xunit]
     SharedKernel_Testing_Assertions[SharedKernel.Testing.Assertions] --> SharedKernel_Results[SharedKernel.Results]

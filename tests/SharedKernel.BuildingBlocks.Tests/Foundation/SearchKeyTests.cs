@@ -1,7 +1,7 @@
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests the accent- and case-insensitive search key of a text.</summary>
-[Trait("Scope", "Unit")]
+[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 [Trait("Capability", "SearchKey")]
 public sealed class SearchKeyTests
 {

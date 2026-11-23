@@ -14,7 +14,7 @@ public sealed class CaseInsensitiveJsonContextCodeFixTests
     public async Task Fix_adds_or_updates_the_option_and_preserves_other_options(string existing, string expected)
     {
         // Arrange
-        var workspace = CodeFixTestWorkspace.Create($$"""
+        var workspace = CodeFixWorkspace.Create($$"""
             using System.Text.Json;
             using System.Text.Json.Serialization;
             public sealed record Payload(string Name);

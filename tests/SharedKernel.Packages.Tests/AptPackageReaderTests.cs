@@ -10,7 +10,7 @@ public sealed class AptPackageReaderTests
     public async Task Installed_packages_including_held_ones_are_listed_ordered_by_name_and_removed_ones_are_not()
     {
         // Arrange
-        var runner = new FakeProcessRunner(new ProcessOutput(0, "zsh\t5.9-6\tii \ngit\t1:2.43.0-1\tii \ndocker-ce\t5:27.3.1-1\thi \nold\t1.0\trc \ngone\t1.0\tun \n"));
+        var runner = ScriptedProcessRunner.Returning(new ProcessOutput(0, "zsh\t5.9-6\tii \ngit\t1:2.43.0-1\tii \ndocker-ce\t5:27.3.1-1\thi \nold\t1.0\trc \ngone\t1.0\tun \n"));
         var reader = new AptPackageReader(runner, DpkgQuery);
 
         // Act
@@ -25,7 +25,7 @@ public sealed class AptPackageReaderTests
     public async Task The_command_runs_from_the_absolute_path_with_one_format_argument_and_no_shell_text()
     {
         // Arrange
-        var runner = new FakeProcessRunner(new ProcessOutput(0, string.Empty));
+        var runner = ScriptedProcessRunner.Returning(new ProcessOutput(0, string.Empty));
         var reader = new AptPackageReader(runner, DpkgQuery);
 
         // Act
@@ -34,15 +34,15 @@ public sealed class AptPackageReaderTests
 
         // Assert
         packages.ShouldBeEmpty();
-        runner.Executable.ShouldBe(DpkgQuery);
-        runner.Arguments.ShouldBe(["-W", "-f=${binary:Package}\\t${Version}\\t${db:Status-Abbrev}\\n"]);
+        runner.Runs[^1].FileName.ShouldBe(DpkgQuery);
+        runner.Runs[^1].Arguments.ShouldBe(["-W", "-f=${binary:Package}\\t${Version}\\t${db:Status-Abbrev}\\n"]);
     }
 
     [Fact]
     public async Task A_failing_command_is_an_error_not_an_empty_list()
     {
         // Arrange
-        var reader = new AptPackageReader(new FakeProcessRunner(new ProcessOutput(2, string.Empty)), DpkgQuery);
+        var reader = new AptPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(2, string.Empty)), DpkgQuery);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -60,7 +60,7 @@ public sealed class AptPackageReaderTests
     public async Task An_unexpected_line_is_an_error_that_names_the_line_number(string output)
     {
         // Arrange
-        var reader = new AptPackageReader(new FakeProcessRunner(new ProcessOutput(0, output)), DpkgQuery);
+        var reader = new AptPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, output)), DpkgQuery);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -79,7 +79,7 @@ public sealed class AptPackageReaderTests
     public async Task A_partly_installed_package_is_an_error_not_a_missing_package(string line)
     {
         // Arrange
-        var reader = new AptPackageReader(new FakeProcessRunner(new ProcessOutput(0, line + "\n")), DpkgQuery);
+        var reader = new AptPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, line + "\n")), DpkgQuery);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -93,7 +93,7 @@ public sealed class AptPackageReaderTests
     public async Task A_package_listed_twice_is_an_error()
     {
         // Arrange
-        var reader = new AptPackageReader(new FakeProcessRunner(new ProcessOutput(0, "git\t1\tii \ngit\t2\tii \n")), DpkgQuery);
+        var reader = new AptPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, "git\t1\tii \ngit\t2\tii \n")), DpkgQuery);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -107,7 +107,7 @@ public sealed class AptPackageReaderTests
     public async Task A_tool_that_runs_too_long_is_an_error_result_not_an_exception()
     {
         // Arrange
-        var reader = new AptPackageReader(new ThrowingProcessRunner(new TimeoutException("The process did not finish within two minutes.")), DpkgQuery);
+        var reader = new AptPackageReader(ScriptedProcessRunner.Throwing(new TimeoutException("The process did not finish within two minutes.")), DpkgQuery);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -121,7 +121,7 @@ public sealed class AptPackageReaderTests
     public async Task Only_the_first_two_hundred_characters_of_the_tools_error_line_are_kept()
     {
         // Arrange
-        var reader = new AptPackageReader(new FakeProcessRunner(new ProcessOutput(2, string.Empty, new string('x', 201))), DpkgQuery);
+        var reader = new AptPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(2, string.Empty, new string('x', 201))), DpkgQuery);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -134,7 +134,7 @@ public sealed class AptPackageReaderTests
     public async Task A_tool_that_cannot_run_is_an_error_result_not_an_exception()
     {
         // Arrange
-        var reader = new AptPackageReader(new ThrowingProcessRunner(new InvalidOperationException("Could not start the process.")), DpkgQuery);
+        var reader = new AptPackageReader(ScriptedProcessRunner.Throwing(new InvalidOperationException("Could not start the process.")), DpkgQuery);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -148,7 +148,7 @@ public sealed class AptPackageReaderTests
     public async Task A_failure_message_carries_the_first_line_of_the_tools_error_output()
     {
         // Arrange
-        var reader = new AptPackageReader(new FakeProcessRunner(new ProcessOutput(2, string.Empty, "\n  dpkg-query: error: database locked\x1b[0m\nsecond line\n")), DpkgQuery);
+        var reader = new AptPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(2, string.Empty, "\n  dpkg-query: error: database locked\x1b[0m\nsecond line\n")), DpkgQuery);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -164,7 +164,7 @@ public sealed class AptPackageReaderTests
     public async Task A_canceled_read_still_throws_so_the_caller_can_stop()
     {
         // Arrange
-        var reader = new AptPackageReader(new ThrowingProcessRunner(new OperationCanceledException()), DpkgQuery);
+        var reader = new AptPackageReader(ScriptedProcessRunner.Throwing(new OperationCanceledException()), DpkgQuery);
 
         // Act
         Func<Task> act = () => reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -177,7 +177,7 @@ public sealed class AptPackageReaderTests
     public void A_relative_dpkg_query_path_is_rejected()
     {
         // Act
-        var act = () => new AptPackageReader(new FakeProcessRunner(new ProcessOutput(0, string.Empty)), "dpkg-query");
+        var act = () => new AptPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, string.Empty)), "dpkg-query");
 
         // Assert
         act.ShouldThrow<ArgumentException>();

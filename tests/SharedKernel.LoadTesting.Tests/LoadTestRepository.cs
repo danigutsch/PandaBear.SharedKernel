@@ -47,7 +47,7 @@ internal sealed class LoadTestRepository : IDisposable
     public string ResultsDirectory => Path.Combine(Root, "perf", "results");
 
     /// <summary>Gets the executables that the runner resolves.</summary>
-    public MappedExecutableResolver Executables { get; } = new();
+    public ExecutableMap Executables { get; } = new();
 
     /// <summary>Gets what the runner writes to its diagnostics.</summary>
     public StringWriter Error { get; } = new InvariantStringWriter();

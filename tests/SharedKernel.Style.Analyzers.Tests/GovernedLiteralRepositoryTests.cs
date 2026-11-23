@@ -11,13 +11,7 @@ public sealed class GovernedLiteralRepositoryTests
     public void Library_catalog_has_exact_canonical_owners_and_no_unapproved_aliases()
     {
         // Arrange
-        var root = new DirectoryInfo(AppContext.BaseDirectory);
-        while (root is not null && !File.Exists(Path.Combine(root.FullName, "SharedKernel.slnx")))
-        {
-            root = root.Parent;
-        }
-
-        var repository = root.ShouldNotBeNull().FullName;
+        var repository = Testing.RepositoryRoot.Locate("SharedKernel.slnx");
         var projects = XDocument.Load(Path.Combine(repository, "SharedKernel.slnx")).Descendants("Project")
             .Select(project => Path.Combine(repository, project.Attribute("Path")!.Value.Replace('\\', '/')))
             .Where(project => XDocument.Load(project).Descendants("GovernedLiteralProject").Any(value => value.Value == "true")

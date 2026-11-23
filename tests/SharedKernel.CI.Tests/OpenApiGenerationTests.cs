@@ -11,7 +11,7 @@ public sealed class OpenApiGenerationTests : IDisposable
     public void The_generation_environment_names_the_host_environment_that_the_OpenApi_library_recognizes()
     {
         // Arrange
-        var root = RepositoryRoot.Find();
+        var root = RepositoryRoot.Locate("SharedKernel.slnx");
         var publicApi = Directory.EnumerateFiles(Path.Combine(root, "src", "SharedKernel", "SharedKernel.OpenApi"), "PublicAPI.*.txt")
             .SelectMany(File.ReadLines)
             .ShouldHaveSingleItem(static line => line.StartsWith("const PandaBear.OpenApi.OpenApiGenerationMode.HostEnvironmentName = ", StringComparison.Ordinal));

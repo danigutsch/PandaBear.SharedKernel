@@ -70,7 +70,7 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
     {
         var projectDirectory = Path.Combine(Root, "tool-projects", packageId);
         Directory.CreateDirectory(projectDirectory);
-        File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(projectDirectory, "global.json"));
+        File.Copy(Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), "global.json"), Path.Combine(projectDirectory, "global.json"));
         foreach (var name in new[] { "Directory.Build.props", "Directory.Build.targets", "Directory.Packages.props" })
         {
             await File.WriteAllTextAsync(Path.Combine(projectDirectory, name), "<Project />", ct);
@@ -101,7 +101,7 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
     /// </summary>
     public async Task WriteConsumptionSamples(string sampleOutput, CancellationToken ct)
     {
-        File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(Root, "global.json"));
+        File.Copy(Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), "global.json"), Path.Combine(Root, "global.json"));
         await File.WriteAllTextAsync(Path.Combine(Root, "Directory.Packages.props"), "<Project />", ct);
         foreach (var sample in new[] { "samples/Results/BasicResults.Sample", "samples/Mediator/Mediator.Sample", "samples/HttpRequests/HttpRequests.Sample" })
         {

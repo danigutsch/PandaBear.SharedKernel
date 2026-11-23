@@ -66,7 +66,7 @@ internal sealed class PlaywrightMcpTestEnvironment : IExecutableResolver
             ProcessTerminationTimeout = null
         };
         var server = new PlaywrightMcpServer(
-            new DelegateProcessRunner((startInfo, forward, token) => Forward(runProcess(startInfo, token), forward)),
+            new ScriptedProcessRunner((startInfo, forward, token) => Forward(runProcess(startInfo, token), forward)),
             this);
         return PlaywrightMcpCommandLine.Create(server, GetEnvironmentVariable)
             .Parse(args)

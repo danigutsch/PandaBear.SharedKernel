@@ -7,18 +7,8 @@ internal static partial class SiteFiles
 {
     /// <summary>Gets the directory of the package project.</summary>
     /// <returns>The absolute directory.</returns>
-    public static string ProjectDirectory()
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "SharedKernel.slnx")))
-        {
-            directory = directory.Parent;
-        }
-
-        return directory is null
-            ? throw new InvalidOperationException("The repository root was not found.")
-            : Path.Combine(directory.FullName, "src", "SharedKernel", "SharedKernel.Blazor.Site");
-    }
+    public static string ProjectDirectory() =>
+        Path.Combine(Testing.RepositoryRoot.Locate("SharedKernel.slnx"), "src", "SharedKernel", "SharedKernel.Blazor.Site");
 
     /// <summary>Gets the stylesheet path.</summary>
     /// <returns>The absolute path.</returns>

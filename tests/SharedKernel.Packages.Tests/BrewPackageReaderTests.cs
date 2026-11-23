@@ -10,7 +10,7 @@ public sealed class BrewPackageReaderTests
     public async Task Brew_lists_each_formula_with_its_version_ordered_by_name()
     {
         // Arrange
-        var runner = new FakeProcessRunner(new ProcessOutput(0, "wget 1.25.0\nopenssl@3 3.4.1\nripgrep 14.1.1_1\nopenssl@1.1 1.1.1w\n"));
+        var runner = ScriptedProcessRunner.Returning(new ProcessOutput(0, "wget 1.25.0\nopenssl@3 3.4.1\nripgrep 14.1.1_1\nopenssl@1.1 1.1.1w\n"));
         var reader = new BrewPackageReader(runner, Brew);
 
         // Act
@@ -19,15 +19,15 @@ public sealed class BrewPackageReaderTests
 
         // Assert
         packages.Select(static p => p.ToString()).ShouldBe(["openssl@1.1=1.1.1w", "openssl@3=3.4.1", "ripgrep=14.1.1_1", "wget=1.25.0"]);
-        runner.Executable.ShouldBe(Brew);
-        runner.Arguments.ShouldBe(["list", "--versions"]);
+        runner.Runs[^1].FileName.ShouldBe(Brew);
+        runner.Runs[^1].Arguments.ShouldBe(["list", "--versions"]);
     }
 
     [Fact]
     public async Task Brew_with_more_than_one_installed_version_is_an_error_not_a_pick()
     {
         // Arrange
-        var reader = new BrewPackageReader(new FakeProcessRunner(new ProcessOutput(0, "wget 1.25.0\nripgrep 13.0.0 14.1.1\n")), Brew);
+        var reader = new BrewPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, "wget 1.25.0\nripgrep 13.0.0 14.1.1\n")), Brew);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -43,7 +43,7 @@ public sealed class BrewPackageReaderTests
     public async Task Brew_printing_nothing_is_an_empty_list()
     {
         // Arrange
-        var reader = new BrewPackageReader(new FakeProcessRunner(new ProcessOutput(0, string.Empty)), Brew);
+        var reader = new BrewPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, string.Empty)), Brew);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -61,7 +61,7 @@ public sealed class BrewPackageReaderTests
     public async Task Brew_reports_a_malformed_line_by_number(string output)
     {
         // Arrange
-        var reader = new BrewPackageReader(new FakeProcessRunner(new ProcessOutput(0, output)), Brew);
+        var reader = new BrewPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, output)), Brew);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -75,7 +75,7 @@ public sealed class BrewPackageReaderTests
     public async Task Brew_listing_a_name_twice_is_an_error()
     {
         // Arrange
-        var reader = new BrewPackageReader(new FakeProcessRunner(new ProcessOutput(0, "wget 1.0\nwget 1.0\n")), Brew);
+        var reader = new BrewPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, "wget 1.0\nwget 1.0\n")), Brew);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -88,7 +88,7 @@ public sealed class BrewPackageReaderTests
     public async Task Brew_listing_a_formula_and_a_cask_with_one_name_says_so()
     {
         // Arrange
-        var reader = new BrewPackageReader(new FakeProcessRunner(new ProcessOutput(0, "docker 1.0\ndocker 4.0\n")), Brew);
+        var reader = new BrewPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, "docker 1.0\ndocker 4.0\n")), Brew);
 
         // Act
         var result = await reader.ListInstalled(TestContext.Current.CancellationToken);
@@ -103,8 +103,8 @@ public sealed class BrewPackageReaderTests
         // Arrange
         IPackageReader[] readers =
         [
-            new BrewPackageReader(new FakeProcessRunner(new ProcessOutput(1, "wget 1.0\n", "Error: broken")), Brew),
-            new BrewPackageReader(new ThrowingProcessRunner(new InvalidOperationException("Could not start the process.")), Brew),
+            new BrewPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(1, "wget 1.0\n", "Error: broken")), Brew),
+            new BrewPackageReader(ScriptedProcessRunner.Throwing(new InvalidOperationException("Could not start the process.")), Brew),
         ];
 
         // Act
@@ -123,7 +123,7 @@ public sealed class BrewPackageReaderTests
     public void A_relative_brew_path_is_rejected_and_a_null_runner_throws()
     {
         // Act
-        Action relative = () => _ = new BrewPackageReader(new FakeProcessRunner(new ProcessOutput(0, string.Empty)), "brew");
+        Action relative = () => _ = new BrewPackageReader(ScriptedProcessRunner.Returning(new ProcessOutput(0, string.Empty)), "brew");
         Action noRunner = () => _ = new BrewPackageReader(null!, Brew);
 
         // Assert

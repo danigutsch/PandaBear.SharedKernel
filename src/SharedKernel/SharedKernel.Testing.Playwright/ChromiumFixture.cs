@@ -1,8 +1,12 @@
 using Microsoft.Playwright;
+using Xunit;
 
-namespace PandaBear.Blazor.Tests.Browser;
+namespace PandaBear.Testing.Playwright;
 
-/// <summary>Owns one Chromium browser for the tests of a class, when Chromium is installed.</summary>
+/// <summary>
+/// Owns one Chromium browser for the tests of a class, when <see cref="Chromium.IsInstalled"/> is <see langword="true"/>. Use it as
+/// an xUnit class fixture and skip the tests with <see cref="Chromium.NotInstalledReason"/> when Chromium is not installed.
+/// </summary>
 public sealed class ChromiumFixture : IAsyncLifetime
 {
     private IPlaywright? _playwright;
@@ -15,9 +19,9 @@ public sealed class ChromiumFixture : IAsyncLifetime
     /// <inheritdoc />
     public async ValueTask InitializeAsync()
     {
-        if (ChromiumHost.IsInstalled)
+        if (Chromium.IsInstalled)
         {
-            (_playwright, _browser) = await ChromiumHost.Launch();
+            (_playwright, _browser) = await Chromium.Launch().ConfigureAwait(false);
         }
     }
 
@@ -26,7 +30,7 @@ public sealed class ChromiumFixture : IAsyncLifetime
     {
         if (_browser is not null)
         {
-            await _browser.DisposeAsync();
+            await _browser.DisposeAsync().ConfigureAwait(false);
         }
 
         _playwright?.Dispose();

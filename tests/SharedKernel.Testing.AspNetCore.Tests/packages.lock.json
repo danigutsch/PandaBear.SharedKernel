@@ -319,11 +319,17 @@
           "xunit.v3.runner.common": "[4.0.3]"
         }
       },
+      "PandaBear.SharedKernel.Processes": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
       "PandaBear.SharedKernel.Testing": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
+        }
       },
       "PandaBear.SharedKernel.Testing.AspNetCore": {
         "type": "Project",

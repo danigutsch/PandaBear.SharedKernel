@@ -9,9 +9,7 @@ namespace PandaBear.Blazor.Tests.Browser;
 [Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class ImagePickerBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Removing_and_moving_keep_focus_on_the_nearest_control_of_the_list()
     {
         // Arrange
@@ -39,7 +37,7 @@ public sealed class ImagePickerBrowserTests(ChromiumFixture chromium) : IClassFi
         await page.CloseAsync();
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Choosing_a_single_image_closes_the_search_and_returns_focus_to_the_find_button()
     {
         // Arrange

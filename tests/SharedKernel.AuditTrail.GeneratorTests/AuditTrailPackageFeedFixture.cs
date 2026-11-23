@@ -46,7 +46,7 @@ public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
     /// <inheritdoc />
     public async ValueTask InitializeAsync()
     {
-        RepositoryRoot = FindRepositoryRoot();
+        RepositoryRoot = Testing.RepositoryRoot.Locate("SharedKernel.slnx");
         FeedPath = Path.Combine(RootPath, "feed");
         Directory.CreateDirectory(FeedPath);
 
@@ -62,21 +62,5 @@ public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
     {
         _directory.Dispose();
         return ValueTask.CompletedTask;
-    }
-
-    private static string FindRepositoryRoot()
-    {
-        var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (currentDirectory is not null)
-        {
-            if (File.Exists(Path.Combine(currentDirectory.FullName, "SharedKernel.slnx")))
-            {
-                return currentDirectory.FullName;
-            }
-
-            currentDirectory = currentDirectory.Parent;
-        }
-
-        throw new InvalidOperationException("Could not locate the repository root from the test output directory.");
     }
 }

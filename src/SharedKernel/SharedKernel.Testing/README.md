@@ -4,7 +4,7 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Reusable test traits, environment scopes, temporary-directory lifetimes, and source-generated call proxies.
+Reusable test traits, environment and culture scopes, temporary-directory lifetimes, repository-file lookup, process fakes, and source-generated call proxies.
 
 ## Trait taxonomy
 
@@ -200,3 +200,54 @@ A hook shared by several interfaces, such as a `Func<CallInfo, Task>` that reads
 it needs (`Delete(string table, Guid id)`) and a lambda per interface that passes them. A runtime `ArgumentException` or
 `InvalidOperationException` for an unknown name, a `Returns` on a method without a result, or a replacement of the wrong type is now a
 compile error.
+
+## Repository files
+
+`RepositoryRoot.Locate(marker)` walks up from the test's base directory to the nearest directory that holds `marker`, a file
+name such as `MyRepository.slnx` or a relative path such as `src/Directory.Build.props`, and returns its full path. It throws
+`DirectoryNotFoundException` naming the marker and the start directory when no directory holds it; `TryLocate` returns `null`
+instead. Both take an optional start directory.
+
+```csharp
+var readme = File.ReadAllText(Path.Combine(RepositoryRoot.Locate("MyRepository.slnx"), "tools", "My.Tool", "README.md"));
+```
+
+`ReadmeCommandLines.Find(markdown, invocation)` returns the documented command lines of one invocation, such as `dotnet repo`:
+the argument text of every trimmed line and inline code span that starts with the invocation and a space, without a trailing
+`# comment` and after any leading `NAME=value` assignments. A bare `repo verify` in prose, `dotnet repository`, and the invocation
+without arguments do not match. Pass `dotnet tool run repo --` to find the local-tool form. Split each result with the
+command-line parser the tool uses, for example `CommandLineParser.SplitCommandLine` of System.CommandLine, and parse it against
+the real command tree, so a renamed command or option fails the test.
+
+## Process fakes
+
+`ScriptedProcessRunner` is an `IProcessRunner` of `SharedKernel.Processes` that answers runs from a script instead of starting
+processes, and records each run in `Runs` (`StartInfo`, `Forward`, `FileName`, and the `Arguments` as they were at the start):
+
+| Factory | Answers |
+| --- | --- |
+| `Returning(output)` | every run with the same output |
+| `Throwing(exception)` | every run by throwing synchronously, as a runner that cannot start the process does |
+| `InOrder(outputs)` | the first run with the first output, and so on; a run beyond the script throws `InvalidOperationException` |
+| `AnswersInOrder(answers)` | the first run with the first delegate of the start information and token, and so on |
+| `ByFileName(outputs)` | by executable path; an executable without an output throws `KeyNotFoundException` |
+| `Answering(answer)` | with what a delegate returns for the recorded run, for example by its first argument |
+| `new ScriptedProcessRunner(respond)` | with an asynchronous delegate of the start information, the forward writer, and the token |
+
+`ExecutableMap` is an `IExecutableResolver` over a dictionary: `new ExecutableMap()` finds nothing until `Set(command, path)`,
+`new ExecutableMap(pairs)` finds the given commands, and `new ExecutableMap(fallback)` answers every command that is not set
+with a delegate, such as `command => "/usr/bin/" + command`. `Set(command, null)` makes a command not found, fallback included.
+Keep a test-local fake when it encodes a scenario, such as a runner that reads the configuration file a command was given.
+
+```csharp
+var runner = ScriptedProcessRunner.ByFileName(new Dictionary<string, ProcessOutput> { ["/fake/cargo"] = new(0, "ripgrep v14.1.0:\n") });
+var inventory = new PackageInventory(runner, new ExecutableMap(static command => "/fake/" + command));
+// ... act ...
+runner.Runs.Select(static run => run.FileName).ShouldBe(["/fake/cargo"]);
+```
+
+## Culture
+
+`CultureScope` sets the current culture and UI culture (both to one culture, or each to its own) and restores the previous
+ones on disposal; `CultureScope.Run(culture, action)` returns the result of a function run under one culture. The cultures flow
+with the asynchronous context, so code awaited inside the scope sees them.

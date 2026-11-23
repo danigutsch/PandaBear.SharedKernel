@@ -6,9 +6,7 @@ namespace PandaBear.Testing.Tests;
 /// <summary>Tests the structural accessibility assertions against real pages in Chromium; the tests skip when the browser is not installed.</summary>
 public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
-
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Controls_named_by_a_label_an_aria_label_or_aria_labelledby_pass_and_hidden_and_button_inputs_are_ignored()
     {
         // Arrange
@@ -23,7 +21,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         await page.ShouldHaveNoUnlabelledControls();
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Unlabelled_controls_are_listed_with_their_tag_and_ID_or_name()
     {
         // Arrange
@@ -37,7 +35,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         exception.Message.ShouldBe("Expected every form control to have an accessible name, but these have none: input#email; select#country; textarea#?; input#?");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Links_and_buttons_with_text_a_title_or_an_aria_label_pass_and_anchors_without_href_are_ignored()
     {
         // Arrange
@@ -49,7 +47,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         await page.ShouldHaveNoUnnamedLinksOrButtons();
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Hidden_controls_links_and_buttons_are_ignored()
     {
         // Arrange
@@ -64,7 +62,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         await page.ShouldHaveNoUnnamedLinksOrButtons();
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Inputs_named_by_a_title_and_image_and_reset_inputs_pass()
     {
         // Arrange
@@ -74,7 +72,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         await page.ShouldHaveNoUnlabelledControls();
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Links_and_buttons_named_by_an_image_alt_an_svg_title_or_a_nested_aria_label_pass()
     {
         // Arrange
@@ -88,7 +86,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         await page.ShouldHaveNoUnnamedLinksOrButtons();
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Links_and_buttons_with_only_an_empty_alt_or_title_are_still_reported()
     {
         // Arrange
@@ -103,7 +101,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         exception.Message.ShouldContain("<button>", StringComparison.Ordinal);
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Unnamed_links_and_buttons_are_listed_with_the_start_of_their_markup()
     {
         // Arrange
@@ -117,7 +115,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         exception.Message.ShouldBe("""Expected every link and button to have an accessible name, but these have none: <a href="/x"> </a>; <button class="icon"></button>""");
     }
 
-    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     [InlineData("", 0)]
     [InlineData("<h1>A</h1><h1>B</h1>", 2)]
     public async Task A_page_without_exactly_one_level_one_heading_fails_and_reports_the_count(string body, int count)
@@ -133,7 +131,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         exception.Message.ShouldBe($"Expected exactly one first-level heading (h1), but found {count}.");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_page_with_one_level_one_heading_passes()
     {
         // Arrange
@@ -143,7 +141,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         await page.ShouldHaveSingleLevelOneHeading();
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task The_document_language_is_compared_ignoring_case_and_a_difference_is_reported()
     {
         // Arrange
@@ -158,7 +156,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         exception.Message.ShouldBe("Expected the document language to be 'en', but it is 'pt-BR'.");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Horizontal_scroll_is_reported_at_a_narrow_viewport_and_passes_at_a_wide_one()
     {
         // Arrange
@@ -175,7 +173,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         exception.Message.ShouldBe("Expected the page not to scroll horizontally, but its content is wider than the viewport.");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Focus_inside_a_container_passes_and_focus_elsewhere_names_the_focused_element()
     {
         // Arrange
@@ -192,7 +190,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         exception.Message.ShouldBe("""Expected keyboard focus inside '[role='alert']', but it is on: <input id="out" aria-label="Out">""");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_well_structured_page_has_an_accessible_structure()
     {
         // Arrange
@@ -202,7 +200,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         await page.ShouldHaveAccessibleStructure();
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_page_with_an_inert_live_preview_has_an_accessible_structure()
     {
         // Arrange
@@ -217,7 +215,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         await page.ShouldHaveAccessibleStructure();
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task Controls_links_and_buttons_inside_inert_content_are_ignored()
     {
         // Arrange
@@ -228,7 +226,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         await page.ShouldHaveNoUnnamedLinksOrButtons();
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_heading_inside_inert_or_aria_hidden_content_is_not_the_pages_heading()
     {
         // Arrange
@@ -242,7 +240,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
         exception.Message.ShouldBe("Expected exactly one first-level heading (h1), but found 0.");
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task The_accessible_structure_check_reports_every_problem_in_one_failure()
     {
         // Arrange
@@ -260,7 +258,7 @@ public sealed class PlaywrightAccessibilityTests(ChromiumPageFixture chromium) :
             "Expected exactly one first-level heading (h1), but found 0."));
     }
 
-    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]
     public async Task A_message_overload_states_the_reason_before_the_failure()
     {
         // Arrange
