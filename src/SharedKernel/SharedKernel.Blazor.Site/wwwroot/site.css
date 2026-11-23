@@ -562,10 +562,15 @@ a {
     font-size: var(--site-font-size-lg);
 }
 
+/*
+ * The actions keep --site-space-4 from the heading above them; the margin collapses with the title's or the subtitle's own, so the
+ * space is the same with or without a subtitle.
+ */
 .site-hero__actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--site-space-3);
+    margin-block-start: var(--site-space-4);
 }
 
 .site-hero__media img {

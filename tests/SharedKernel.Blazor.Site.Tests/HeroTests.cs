@@ -20,6 +20,23 @@ public sealed class HeroTests : BunitContext
         cut.FindAll("img").ShouldBeEmpty();
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("Small groups")]
+    public void The_actions_directly_follow_the_heading_so_their_margin_meets_the_heading_margin(string? subtitle)
+    {
+        // Arrange & Act
+        var cut = Render<Hero>(parameters => parameters
+            .Add(component => component.Title, "Discover")
+            .Add(component => component.Subtitle, subtitle)
+            .Add(component => component.Actions, "<a href=\"/tours\">Tours</a>"));
+
+        // Assert
+        var text = cut.Find(".site-hero__text");
+        text.Children.Select(child => child.TagName).ShouldBe([subtitle is null ? "H1" : "HGROUP", "DIV"]);
+        text.LastElementChild!.ClassName.ShouldBe("site-hero__actions");
+    }
+
     [Fact]
     public void Eyebrow_comes_before_the_heading_and_subtitle_after_it_in_one_hgroup()
     {
