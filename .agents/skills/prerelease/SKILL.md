@@ -15,9 +15,10 @@ owner's go-ahead for that step: approval of one prerelease does not cover the ne
 - The PR title becomes the squash commit header, so it must be a Conventional Commit header of at most 100 characters.
   PR Metadata fails otherwise.
 - Open the PR ready for review, not as a draft. Marking a draft ready starts CI again.
-- The owner merges. When several PRs are waiting, merge one, then rebase each next one onto the new `main` and wait for
-  its CI before merging it. Two PRs that are green on their own can still break `main` together: one renames a type
-  the other uses. An admin merge skips the up-to-date rule, so nothing else catches this.
+- The owner merges with `gh pr merge <n> --squash`, without `--admin`. `main` requires `SharedKernel Validation` and an
+  up-to-date branch. When another PR merged first, bring the branch up to date (`gh pr update-branch <n>`) and wait
+  for its CI again. Two PRs that are green on their own can still break `main` together, for example when one renames
+  a type the other uses. An `--admin` merge skips both rules, so keep it for emergencies.
 
 ## 2. Take the candidate
 
