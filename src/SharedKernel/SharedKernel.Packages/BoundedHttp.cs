@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Headers;
+using PandaBear.IO;
 using PandaBear.Results;
 
 namespace PandaBear.Packages;
@@ -10,8 +11,6 @@ namespace PandaBear.Packages;
 /// </summary>
 internal static class BoundedHttp
 {
-    private const int BufferSize = 16 * 1024;
-
     /// <summary>Sends <paramref name="request"/> and returns the body of a successful response.</summary>
     /// <param name="client">The client; its handler is the only network seam.</param>
     /// <param name="request">The request; its address must be HTTPS on <paramref name="host"/>.</param>
@@ -82,28 +81,9 @@ internal static class BoundedHttp
             return Result.Unavailable<byte[]>($"{what}: the answer came from another host or over plain HTTP, which is refused.");
         }
 
-        if (response.Content.Headers.ContentLength > maxBytes)
-        {
-            return Result.Unavailable<byte[]>($"{what}: the response is larger than {maxBytes} bytes.");
-        }
-
-        var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        await using (stream.ConfigureAwait(false))
-        {
-            using var body = new MemoryStream();
-            var buffer = new byte[BufferSize];
-            int read;
-            while ((read = await stream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false)) > 0)
-            {
-                if (body.Length + read > maxBytes)
-                {
-                    return Result.Unavailable<byte[]>($"{what}: the response is larger than {maxBytes} bytes.");
-                }
-
-                await body.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
-            }
-
-            return Result.Ok(body.ToArray());
-        }
+        var body = await BoundedReader.ReadContent(response.Content, maxBytes, cancellationToken).ConfigureAwait(false);
+        return body is null
+            ? Result.Unavailable<byte[]>($"{what}: the response is larger than {maxBytes} bytes.")
+            : Result.Ok(body);
     }
 }

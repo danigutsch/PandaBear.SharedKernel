@@ -138,11 +138,11 @@ public sealed partial class Card
         ArgumentException.ThrowIfNullOrWhiteSpace(Title);
         Heading.RequireLevel(HeadingLevel, nameof(HeadingLevel));
         LanguageTag.Require(TitleLanguage, nameof(TitleLanguage));
-        RequireDefined(CardStyle, nameof(CardStyle));
-        RequireDefined(ImageAspect, nameof(ImageAspect));
-        RequireDefined(ImageShadow, nameof(ImageShadow));
-        RequireDefined(TextAlignment, nameof(TextAlignment));
-        RequireDefined(MoreVariant, nameof(MoreVariant));
+        EnumParameter.RequireDefined(CardStyle, nameof(CardStyle), "The value is not defined.");
+        EnumParameter.RequireDefined(ImageAspect, nameof(ImageAspect), "The value is not defined.");
+        EnumParameter.RequireDefined(ImageShadow, nameof(ImageShadow), "The value is not defined.");
+        EnumParameter.RequireDefined(TextAlignment, nameof(TextAlignment), "The value is not defined.");
+        EnumParameter.RequireDefined(MoreVariant, nameof(MoreVariant), "The value is not defined.");
         ButtonStyle.RequireSize(MoreSize, nameof(MoreSize));
         if (ImageShadow == CardImageShadow.Offset && CardStyle != CardStyle.Plain)
         {
@@ -152,15 +152,6 @@ public sealed partial class Card
         if (HasMore && Href is null)
         {
             throw new ArgumentException("The more look stands for the title link; give the card an address or leave the more text out.", nameof(MoreText));
-        }
-    }
-
-    private static void RequireDefined<TEnum>(TEnum value, string parameterName)
-        where TEnum : struct, Enum
-    {
-        if (!Enum.IsDefined(value))
-        {
-            throw new ArgumentOutOfRangeException(parameterName, value, "The value is not defined.");
         }
     }
 }

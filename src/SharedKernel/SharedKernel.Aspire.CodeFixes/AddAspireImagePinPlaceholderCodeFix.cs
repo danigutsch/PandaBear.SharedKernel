@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
+using PandaBear.Aspire.Analyzers;
 
 namespace PandaBear.Aspire.CodeFixes;
 
@@ -46,12 +47,12 @@ internal static class AddAspireImagePinPlaceholderCodeFix
                 diagnostic);
         }
 
-        var outermostInvocation = GetOutermostInvocation(invocation);
-        var chain = GetInvocationChain(outermostInvocation).ToArray();
+        var outermostInvocation = InvocationChain.Outermost(invocation);
+        var chain = InvocationChain.Links(outermostInvocation).ToArray();
         var hasImageTag = chain.Any(static candidate =>
-            string.Equals(GetInvocationName(candidate), WithImageTagMethodName, StringComparison.Ordinal));
+            string.Equals(InvocationChain.MethodName(candidate), WithImageTagMethodName, StringComparison.Ordinal));
         var hasImageSha256 = chain.Any(static candidate =>
-            string.Equals(GetInvocationName(candidate), WithImageSha256MethodName, StringComparison.Ordinal));
+            string.Equals(InvocationChain.MethodName(candidate), WithImageSha256MethodName, StringComparison.Ordinal));
 
         if (!hasImageTag)
         {
@@ -129,47 +130,9 @@ internal static class AddAspireImagePinPlaceholderCodeFix
 
     private static bool IsWithPrefixedDigest(InvocationExpressionSyntax invocation)
     {
-        return string.Equals(GetInvocationName(invocation), WithImageSha256MethodName, StringComparison.Ordinal)
+        return string.Equals(InvocationChain.MethodName(invocation), WithImageSha256MethodName, StringComparison.Ordinal)
             && invocation.ArgumentList.Arguments.FirstOrDefault()?.Expression is LiteralExpressionSyntax literal
             && literal.IsKind(SyntaxKind.StringLiteralExpression)
             && literal.Token.ValueText.StartsWith(Sha256Prefix, StringComparison.Ordinal);
-    }
-
-    private static InvocationExpressionSyntax GetOutermostInvocation(InvocationExpressionSyntax invocation)
-    {
-        var current = invocation;
-        while (current.Parent is MemberAccessExpressionSyntax memberAccess
-            && ReferenceEquals(memberAccess.Expression, current)
-            && memberAccess.Parent is InvocationExpressionSyntax parentInvocation)
-        {
-            current = parentInvocation;
-        }
-
-        return current;
-    }
-
-    private static IEnumerable<InvocationExpressionSyntax> GetInvocationChain(InvocationExpressionSyntax invocation)
-    {
-        if (invocation.Expression is MemberAccessExpressionSyntax memberAccess
-            && memberAccess.Expression is InvocationExpressionSyntax receiverInvocation)
-        {
-            foreach (var candidate in GetInvocationChain(receiverInvocation))
-            {
-                yield return candidate;
-            }
-        }
-
-        yield return invocation;
-    }
-
-    private static string? GetInvocationName(InvocationExpressionSyntax invocation)
-    {
-        return invocation.Expression switch
-        {
-            MemberAccessExpressionSyntax memberAccess => memberAccess.Name.Identifier.ValueText,
-            MemberBindingExpressionSyntax memberBinding => memberBinding.Name.Identifier.ValueText,
-            IdentifierNameSyntax identifierName => identifierName.Identifier.ValueText,
-            _ => null
-        };
     }
 }

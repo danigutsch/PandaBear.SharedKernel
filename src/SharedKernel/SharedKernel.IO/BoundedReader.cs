@@ -1,7 +1,7 @@
 namespace PandaBear.IO;
 
 /// <summary>
-/// Reads a whole file or stream into memory only when it holds no more than a limit, for small inputs such as
+/// Reads a whole file, stream or HTTP content into memory only when it holds no more than a limit, for small inputs such as
 /// configuration files, reports, and API responses.
 /// </summary>
 public static class BoundedReader
@@ -38,6 +38,36 @@ public static class BoundedReader
         await using (stream.ConfigureAwait(false))
         {
             return await ReadToEnd(stream, maxBytes, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    /// Reads HTTP content, such as an API response body, or returns <see langword="null"/> when it has more than
+    /// <paramref name="maxBytes"/> bytes: a declared <c>Content-Length</c> over the limit is refused without reading, and
+    /// content that passes the limit while it is read is refused then, as <see cref="ReadToEnd"/> does.
+    /// </summary>
+    /// <param name="content">The content to read. It stays owned by the caller.</param>
+    /// <param name="maxBytes">The largest number of bytes accepted.</param>
+    /// <param name="cancellationToken">Cancels the read.</param>
+    /// <returns>The content, or <see langword="null"/> when it holds more than <paramref name="maxBytes"/> bytes.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="content"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxBytes"/> is negative.</exception>
+    /// <exception cref="HttpRequestException">The content cannot be read from the connection.</exception>
+    /// <exception cref="IOException">The content cannot be read.</exception>
+    /// <exception cref="OperationCanceledException"><paramref name="cancellationToken"/> was canceled.</exception>
+    public static async Task<byte[]?> ReadContent(HttpContent content, int maxBytes, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(content);
+        ArgumentOutOfRangeException.ThrowIfNegative(maxBytes);
+        if (content.Headers.ContentLength > maxBytes)
+        {
+            return null;
+        }
+
+        var source = await content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        await using (source.ConfigureAwait(false))
+        {
+            return await ReadToEnd(source, maxBytes, cancellationToken).ConfigureAwait(false);
         }
     }
 

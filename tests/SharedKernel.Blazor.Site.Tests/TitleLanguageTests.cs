@@ -57,6 +57,11 @@ public sealed class TitleLanguageTests : BunitContext
     [InlineData("pt_BR")]
     [InlineData("-pt")]
     [InlineData("en\"x")]
+    [InlineData("x-klingon")]
+    [InlineData("en-a-b")]
+    [InlineData("en-x")]
+    [InlineData(" pt")]
+    [InlineData("en-abcdefgh-abcdefgh-abcdefgh-abcdefgh")]
     public void A_title_language_that_is_not_a_language_tag_is_rejected(string tag)
     {
         // Arrange

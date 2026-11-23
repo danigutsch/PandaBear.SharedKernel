@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using PandaBear.CI;
 using PandaBear.Forgejo;
 using PandaBear.InputNormalization;
 using PandaBear.Repositories;
@@ -460,7 +461,7 @@ internal static class RepoConfigToolApplication
         var packages = string.Join(',', packageUrls);
         if (githubOutput is not null)
         {
-            await File.AppendAllTextAsync(Path.GetFullPath(githubOutput, rootPath), "packages=" + packages + Environment.NewLine, ct).ConfigureAwait(false);
+            await new KeyValueOutputFile(Path.GetFullPath(githubOutput, rootPath)).Write([new("packages", packages)], ct).ConfigureAwait(false);
         }
 
         await output.WriteLineAsync($"License exceptions are current: {packages}".AsMemory(), ct).ConfigureAwait(false);
@@ -698,10 +699,9 @@ internal static class RepoConfigToolApplication
         CancellationToken ct)
     {
         var path = RequireEnvironmentVariable("GITHUB_OUTPUT");
-        var content = string.Join(
-            Environment.NewLine,
-            values.Select(value => $"{value.Name}={value.Value}")) + Environment.NewLine;
-        await File.AppendAllTextAsync(path, content, Encoding.UTF8, ct).ConfigureAwait(false);
+        await new KeyValueOutputFile(Path.GetFullPath(path))
+            .Write([.. values.Select(static value => new KeyValuePair<string, string>(value.Name, value.Value))], ct)
+            .ConfigureAwait(false);
     }
 
     private static async Task AppendWorkflowSummary(
@@ -719,7 +719,7 @@ internal static class RepoConfigToolApplication
         }
 
         content.AppendLine();
-        await File.AppendAllTextAsync(path, content.ToString(), Encoding.UTF8, ct).ConfigureAwait(false);
+        await new MarkdownSummaryFile(Path.GetFullPath(path)).Append(content.ToString(), ct).ConfigureAwait(false);
     }
 
     private static string FormatBoolean(bool value) => value ? "true" : "false";

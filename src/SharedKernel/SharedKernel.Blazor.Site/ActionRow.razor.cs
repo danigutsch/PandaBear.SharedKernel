@@ -37,9 +37,6 @@ public sealed partial class ActionRow
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        if (!Enum.IsDefined(Justification))
-        {
-            throw new ArgumentOutOfRangeException(nameof(Justification), Justification, "The action row justification is not defined.");
-        }
+        EnumParameter.RequireDefined(Justification, nameof(Justification), "The action row justification is not defined.");
     }
 }

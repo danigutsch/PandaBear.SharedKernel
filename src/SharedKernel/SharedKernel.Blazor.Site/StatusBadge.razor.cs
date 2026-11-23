@@ -42,9 +42,6 @@ public sealed partial class StatusBadge
     protected override void OnParametersSet()
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(Text);
-        if (!Enum.IsDefined(Tone))
-        {
-            throw new ArgumentOutOfRangeException(nameof(Tone), Tone, "The status tone is not defined.");
-        }
+        EnumParameter.RequireDefined(Tone, nameof(Tone), "The status tone is not defined.");
     }
 }

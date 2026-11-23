@@ -226,19 +226,9 @@ public sealed class ForgejoLabelStore : IRepositoryLabelStore, IDisposable
                     : string.Create(CultureInfo.InvariantCulture, $"Forgejo label sync failed with HTTP {(int)response.StatusCode} for label {labelName}. Rerun the sync after fixing the cause."));
             }
 
-            if (response.Content.Headers.ContentLength > MaxResponseBytes)
-            {
-                throw new InvalidOperationException("Forgejo label sync response exceeded the allowed size.");
-            }
-
-            var source = await response.Content.ReadAsStreamAsync(requestCancellation.Token).ConfigureAwait(false);
-            byte[]? content;
-            await using (source.ConfigureAwait(false))
-            {
-                content = await BoundedReader.ReadToEnd(source, MaxResponseBytes, requestCancellation.Token).ConfigureAwait(false);
-            }
-
-            return (content ?? throw new InvalidOperationException("Forgejo label sync response exceeded the allowed size."), response.Headers);
+            var content = await BoundedReader.ReadContent(response.Content, MaxResponseBytes, requestCancellation.Token).ConfigureAwait(false)
+                ?? throw new InvalidOperationException("Forgejo label sync response exceeded the allowed size.");
+            return (content, response.Headers);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

@@ -60,10 +60,7 @@ public sealed partial class SiteHeader
     protected override void OnParametersSet()
     {
         ArgumentNullException.ThrowIfNull(Items);
-        if (!Enum.IsDefined(Placement))
-        {
-            throw new ArgumentOutOfRangeException(nameof(Placement), Placement, "The header placement is not defined.");
-        }
+        EnumParameter.RequireDefined(Placement, nameof(Placement), "The header placement is not defined.");
 
         if (Items.Count > 0)
         {

@@ -42,6 +42,10 @@ var plan = await new TestSelector(machine).Select(
   summary Markdown), `IReleaseStore` (list and delete releases), and `IReleaseAssets` (public download addresses of
   release assets). `PandaBear.SharedKernel.CI.GitHub` implements them for GitHub and GitHub Actions. The engine emits
   no workflow annotations, so it defines no annotation seam.
+- `KeyValueOutputFile` (an `IRunOutputs`) appends `name=value` lines to an output file, the format GitHub Actions and Forgejo
+  Actions share; it refuses an empty name, a name with `=` or a line break, and a value with a line break before writing
+  anything, so a value cannot add an output of its own. `MarkdownSummaryFile` (an `IStepSummary`) appends Markdown to a step
+  summary file as UTF-8 without a byte order mark. The GitHub and Forgejo writers wrap them.
 - The engine reads no environment variable and writes to no console. Service processes never receive a forge token (`GH_TOKEN`,
   `GITHUB_TOKEN`, `FORGEJO_TOKEN`, `GH_ENTERPRISE_TOKEN`, or `GITHUB_ENTERPRISE_TOKEN`); `PandaBear.SharedKernel.Processes`
   removes them, and a service variable cannot be named after one.

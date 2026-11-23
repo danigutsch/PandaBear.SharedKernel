@@ -68,18 +68,7 @@ internal static class ForgejoResponses
     public static string Refused(string method, Uri uri, HttpStatusCode status) =>
         string.Create(CultureInfo.InvariantCulture, $"{method} {uri} returned {(int)status} {status}.");
 
-    private static async Task<byte[]> ReadBody(HttpContent content, Uri uri, CancellationToken ct)
-    {
-        if (content.Headers.ContentLength > MaxBodyBytes)
-        {
-            throw new InvalidDataException($"GET {uri} returned more than {MaxBodyBytes} bytes.");
-        }
-
-        var source = await content.ReadAsStreamAsync(ct).ConfigureAwait(false);
-        await using (source.ConfigureAwait(false))
-        {
-            return await BoundedReader.ReadToEnd(source, MaxBodyBytes, ct).ConfigureAwait(false)
-                ?? throw new InvalidDataException($"GET {uri} returned more than {MaxBodyBytes} bytes.");
-        }
-    }
+    private static async Task<byte[]> ReadBody(HttpContent content, Uri uri, CancellationToken ct) =>
+        await BoundedReader.ReadContent(content, MaxBodyBytes, ct).ConfigureAwait(false)
+            ?? throw new InvalidDataException($"GET {uri} returned more than {MaxBodyBytes} bytes.");
 }

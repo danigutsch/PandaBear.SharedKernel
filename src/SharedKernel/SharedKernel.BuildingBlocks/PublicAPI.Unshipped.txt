@@ -325,3 +325,17 @@ static PandaBear.BuildingBlocks.ImageCredit.Create(string? author, string? title
 static PandaBear.BuildingBlocks.ImageCredit.Restore(string! author, string? title, string? source, PandaBear.BuildingBlocks.ImageLicense! license, bool modified) -> PandaBear.BuildingBlocks.ImageCredit!
 static PandaBear.BuildingBlocks.ImageLicense.Create(string? code, string? link, string! field = "license") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.ImageLicense!>
 static PandaBear.BuildingBlocks.ImageLicense.Restore(string! code, string? link) -> PandaBear.BuildingBlocks.ImageLicense!
+PandaBear.BuildingBlocks.SanitizedText
+static PandaBear.BuildingBlocks.SanitizedText.Lines(PandaBear.Results.ValidationErrors! errors, System.Collections.Generic.IReadOnlyList<string?>? values, string! field, string! label, int maxItems, int maxLength) -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.BuildingBlocks.SanitizedText.Optional(PandaBear.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxLength) -> string?
+static PandaBear.BuildingBlocks.SanitizedText.Paragraphs(PandaBear.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxParagraphs, int maxLength) -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.BuildingBlocks.SanitizedText.Required(PandaBear.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxLength) -> string?
+PandaBear.BuildingBlocks.TranslationListRules
+PandaBear.BuildingBlocks.TranslationListRules.Cultures.get -> PandaBear.BuildingBlocks.SupportedCultures!
+PandaBear.BuildingBlocks.TranslationListRules.Field.get -> string!
+PandaBear.BuildingBlocks.TranslationListRules.TranslationListRules(PandaBear.BuildingBlocks.SupportedCultures! cultures, string! field, string! subject) -> void
+PandaBear.BuildingBlocks.TranslationListRules.Validate<TDefinition, T>(PandaBear.Results.ValidationErrors! errors, System.Collections.Generic.IEnumerable<TDefinition?>? definitions, System.Func<TDefinition!, string?>! cultureOf, System.Func<PandaBear.BuildingBlocks.ContentCulture!, TDefinition!, T?>! build, string! parameterName) -> System.Collections.Generic.IReadOnlyList<T!>!
+static PandaBear.BuildingBlocks.TranslationListRules.Merge<T>(System.Collections.Generic.ICollection<T>! current, System.Collections.Generic.IReadOnlyList<T>! replacement, System.Func<T, PandaBear.BuildingBlocks.ContentCulture!>! culture, System.Action<T, T>! apply) -> void
+static PandaBear.BuildingBlocks.TranslationListRules.Same<T>(System.Collections.Generic.IReadOnlyList<T>! current, System.Collections.Generic.IReadOnlyList<T>! replacement, System.Func<T, PandaBear.BuildingBlocks.ContentCulture!>! culture, System.Func<T, T, bool>! same) -> bool
+static PandaBear.BuildingBlocks.SanitizedText.Optional(PandaBear.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxLength, out bool entered) -> string?
+static PandaBear.BuildingBlocks.SanitizedText.Paragraphs(PandaBear.Results.ValidationErrors! errors, string? value, string! field, string! label, int maxParagraphs, int maxLength, out bool entered) -> System.Collections.Generic.IReadOnlyList<string!>!

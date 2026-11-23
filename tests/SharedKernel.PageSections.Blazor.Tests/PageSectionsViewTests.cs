@@ -418,6 +418,46 @@ public sealed class PageSectionsViewTests : BunitContext
         render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(PageSectionsView<int, string, NoExtra>.HeadingIdFormat));
     }
 
+    [Theory]
+    [InlineData("section-{1}")]
+    [InlineData("section-{0")]
+    public void A_heading_ID_format_that_is_not_a_composite_format_is_an_argument_error_rather_than_a_format_error(string format)
+    {
+        // Arrange & Act
+        var render = () => this.RenderSections([Rich()], parameters => parameters.Add(view => view.HeadingIdFormat, format));
+
+        // Assert
+        var exception = render.ShouldThrow<ArgumentException>();
+        exception.ParamName.ShouldBe(nameof(PageSectionsView<int, string, NoExtra>.HeadingIdFormat));
+        exception.InnerException.ShouldBeOfType<FormatException>();
+    }
+
+    [Fact]
+    public void A_missing_heading_ID_format_is_a_null_argument()
+    {
+        // Arrange & Act
+        var render = () => this.RenderSections([Rich()], parameters => parameters.Add(view => view.HeadingIdFormat, null!));
+
+        // Assert
+        render.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe(nameof(PageSectionsView<int, string, NoExtra>.HeadingIdFormat));
+    }
+
+    [Fact]
+    public void A_video_hint_format_that_is_not_a_composite_format_is_an_argument_error_rather_than_a_format_error()
+    {
+        // Arrange & Act
+        var render = () => Render<PageSectionsView<int, string, NoExtra>>(parameters => parameters
+            .Add(view => view.Sections, [Rich()])
+            .Add(view => view.Image, Image)
+            .Add(view => view.Link, Link)
+            .Add(view => view.VideoSiteHintFormat, "(opens {1})"));
+
+        // Assert
+        var exception = render.ShouldThrow<ArgumentException>();
+        exception.ParamName.ShouldBe(nameof(PageSectionsView<int, string, NoExtra>.VideoSiteHintFormat));
+        exception.InnerException.ShouldBeOfType<FormatException>();
+    }
+
     [Fact]
     public void A_video_whose_stored_address_is_no_valid_link_is_left_out()
     {

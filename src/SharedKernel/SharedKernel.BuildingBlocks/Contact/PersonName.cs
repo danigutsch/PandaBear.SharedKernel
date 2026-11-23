@@ -31,10 +31,10 @@ public sealed class PersonName : ValueObject
     public static Result<PersonName> Create(string? firstName, string? lastName)
     {
         var errors = new ValidationErrors();
-        var first = TextRules.Required(errors, firstName, "firstName", "First name", MaxPartLength);
-        var last = TextRules.Required(errors, lastName, "lastName", "Last name", MaxPartLength);
+        var first = SanitizedText.Required(errors, firstName, "firstName", "First name", MaxPartLength);
+        var last = SanitizedText.Required(errors, lastName, "lastName", "Last name", MaxPartLength);
 
-        return errors.HasErrors ? errors.ToResult<PersonName>() : Result.Ok(new PersonName(first, last));
+        return errors.HasErrors ? errors.ToResult<PersonName>() : Result.Ok(new PersonName(first!, last!));
     }
 
     /// <summary> Length limits are not enforced.</summary>

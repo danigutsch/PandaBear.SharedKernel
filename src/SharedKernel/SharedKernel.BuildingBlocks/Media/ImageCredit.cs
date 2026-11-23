@@ -63,8 +63,8 @@ public sealed class ImageCredit : ValueObject
         string Field(string name) => string.IsNullOrEmpty(fieldPrefix) ? name : fieldPrefix + "." + name;
 
         var errors = new ValidationErrors();
-        var validAuthor = CreditText.Required(errors, author, Field("author"), "Author", MaxAuthorLength);
-        var validTitle = CreditText.Optional(errors, title, Field("title"), "Title", MaxTitleLength);
+        var validAuthor = SanitizedText.Required(errors, author, Field("author"), "Author", MaxAuthorLength);
+        var validTitle = SanitizedText.Optional(errors, title, Field("title"), "Title", MaxTitleLength);
         var validSource = CreditText.HttpsUrl(errors, source, Field("sourceUrl"), "Source link");
         var license = ImageLicense.Create(licenseCode, licenseLink, Field("license"));
         errors.AddIfFailed(license);

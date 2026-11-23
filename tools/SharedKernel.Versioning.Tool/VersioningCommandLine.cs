@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.Globalization;
+using PandaBear.CI;
 using PandaBear.Processes;
 
 namespace PandaBear.Versioning.Tool;
@@ -146,12 +147,12 @@ internal static class VersioningCommandLine
                 ct).ConfigureAwait(false);
             if (parseResult.GetValue(gitHubOutput) is { } outputFile && !string.IsNullOrWhiteSpace(outputFile))
             {
-                await File.AppendAllLinesAsync(outputFile, ReleaseVersionCalculator.CreateGitHubOutputs(result), ct).ConfigureAwait(false);
+                await new KeyValueOutputFile(Path.GetFullPath(outputFile)).Write(ReleaseVersionCalculator.CreateOutputs(result), ct).ConfigureAwait(false);
             }
 
             if (parseResult.GetValue(gitHubSummary) is { } summaryFile && !string.IsNullOrWhiteSpace(summaryFile))
             {
-                await File.AppendAllLinesAsync(summaryFile, ReleaseVersionCalculator.CreateSummary(result), ct).ConfigureAwait(false);
+                await new MarkdownSummaryFile(Path.GetFullPath(summaryFile)).Append(string.Join(Environment.NewLine, ReleaseVersionCalculator.CreateSummary(result)) + Environment.NewLine, ct).ConfigureAwait(false);
             }
 
             await output.WriteLineAsync(result.VersionJson.AsMemory(), CancellationToken.None).ConfigureAwait(false);

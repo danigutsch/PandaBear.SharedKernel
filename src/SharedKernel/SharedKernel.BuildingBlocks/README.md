@@ -13,8 +13,8 @@ Source files are grouped by topic. The folders are organization only: every publ
 
 | Folder | Contents |
 | --- | --- |
-| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, `Slug`, `SearchKey`, `PublicationStatus`, `WebUrl`, text rules, option-to-result helpers |
-| `Localization` | `ContentCulture`, `SupportedCultures`, `CultureLanguageTags`, `TranslationSet` |
+| `Foundation` | `ValueObject`, `IIdentified`, `ReferenceCode`, `Slug`, `SearchKey`, `PublicationStatus`, `WebUrl`, `SanitizedText`, option-to-result helpers |
+| `Localization` | `ContentCulture`, `SupportedCultures`, `CultureLanguageTags`, `TranslationSet`, `TranslationListRules` |
 | `Contact` | `EmailAddress`, `PhoneNumber`, `PersonName`, `PostalAddress` |
 | `Geography` | `CountryCode`, `CountryNames` |
 | `Media` | `IImageEligibility`, `ImageCredit`, `ImageLicense`, `ImageCreditFormats` |
@@ -42,6 +42,25 @@ the hyphens at both ends and cuts a slug longer than `maxLength` without leaving
 person wrote, such as a download file name from a trip code (`ÁLPES/2027 ..\x` gives `alpes-2027-x`). It fails only when the text is
 blank (`{label} is required.`) or keeps no ASCII letter or digit (`中国` gives `{label} must contain a letter or a digit.`), so the caller
 can fall back to a fixed name. Unicode normalization comes from .NET; there is no transliteration table.
+
+## Entered text and translation lists
+
+`SanitizedText` validates plain text a person entered, as the value objects here and the content models of Offerings, PageSections
+and Galleries do. `Required`, `Optional`, `Paragraphs` and `Lines` sanitize with `StringSanitizer.TrySanitize` (or
+`TrySanitizeParagraphs`), refuse malformed UTF-16 (`{label} is not valid text.`) and cap the length (`{label} cannot exceed {max}
+characters.`, `{label} cannot have more than {max} paragraphs.`, `{label}: each paragraph must be at most {max} characters.`,
+`{label} cannot have more than {max} items.`, `{label} cannot have an empty item.`, `{label}: each item must be at most {max}
+characters.`). Each records its errors on the field it is given and returns nothing, `null` or an empty list, when it records one, so
+a refused value never reaches a result; messages never echo the input. The overloads of `Optional` and `Paragraphs` with an `entered`
+flag tell whether any text was given, malformed or too long included, so a rule that needs the text ("a subsection needs a heading",
+"a summary is required before publishing") reports only text that is really missing.
+
+`TranslationListRules` holds the rules of a list of per-culture translations over `SupportedCultures`: `Validate` builds each
+translation of a supported culture in entered order, refuses an unsupported culture (`Each translation must use one of the {subject}
+languages: {cultures}.`) and a repeated one (`Each language can have only one translation.`), and then requires the default culture
+(`A translation in the default language ({default}) is required.`), all on one field. `Merge` replaces stored translations in place,
+keeping the instance of a culture that stays so a persistence layer updates its row, and `Same` tells whether a replacement would
+change nothing.
 
 ## Image eligibility
 

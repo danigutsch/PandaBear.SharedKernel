@@ -14,6 +14,16 @@
         "resolved": "3.0.0",
         "contentHash": "swNpSTl0iYJeBuvYYfaY+VxzZ5YC8wklwkqDCNOq2aTQqJzjauJfh/O3Zw93nwxspWrxvZTjT45f8VPR0ParEA=="
       },
+      "PandaBear.SharedKernel.CI": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.ConfigurationFiles": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Versioning": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.ConfigurationFiles": {
         "type": "Project",
         "dependencies": {
@@ -71,6 +81,14 @@
           "PandaBear.SharedKernel.GitHub": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Repositories": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Versioning": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.IO": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Repositories": "[0.1.0-alpha.0, )"
         }

@@ -128,44 +128,42 @@ public sealed partial class PageSectionsView<TImageId, TLink, TExtra>
     public SiteAlignment SplitAlignment { get; set; }
 
     /// <inheritdoc />
-    /// <exception cref="ArgumentNullException"><see cref="Sections" />, a section, <see cref="Image" /> or <see cref="Link" /> is null.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// <see cref="Sections" />, a section, <see cref="Image" />, <see cref="Link" />, <see cref="HeadingIdFormat" /> or
+    /// <see cref="VideoSiteHintFormat" /> is null.
+    /// </exception>
     /// <exception cref="ArgumentException">
-    /// <see cref="VideoSiteHintFormat" /> is blank, or <see cref="HeadingIdFormat" /> is blank, gives an id with white space or gives
-    /// every section the same id.
+    /// <see cref="VideoSiteHintFormat" /> is blank or not a valid composite format, or <see cref="HeadingIdFormat" /> is blank, is not a
+    /// valid composite format (the <see cref="FormatException" /> is the inner exception), gives an id with white space or gives every
+    /// section the same id.
     /// </exception>
     /// <exception cref="ArgumentOutOfRangeException"><see cref="TextAlignment" /> or <see cref="SplitAlignment" /> is not defined.</exception>
-    /// <exception cref="FormatException">A format is not a valid composite format.</exception>
     protected override void OnParametersSet()
     {
         ArgumentNullException.ThrowIfNull(Sections);
         ArgumentNullException.ThrowIfNull(Image);
         ArgumentNullException.ThrowIfNull(Link);
-        ArgumentException.ThrowIfNullOrWhiteSpace(VideoSiteHintFormat);
-        ArgumentException.ThrowIfNullOrWhiteSpace(HeadingIdFormat);
+        RequireHintFormat(VideoSiteHintFormat, nameof(VideoSiteHintFormat));
+        ElementId.Require(PositionFormat.Require(HeadingIdFormat, nameof(HeadingIdFormat), CultureInfo.InvariantCulture), nameof(HeadingIdFormat));
         foreach (var section in Sections)
         {
             ArgumentNullException.ThrowIfNull(section, nameof(Sections));
         }
 
-        if (HeadingId(0).AsSpan().ContainsAnyWhiteSpace())
-        {
-            throw new ArgumentException("A heading id must not contain white space.", nameof(HeadingIdFormat));
-        }
+        EnumParameter.RequireDefined(TextAlignment, nameof(TextAlignment), "The text alignment is not defined.");
+        EnumParameter.RequireDefined(SplitAlignment, nameof(SplitAlignment), "The split alignment is not defined.");
+    }
 
-        if (string.Equals(HeadingId(0), HeadingId(1), StringComparison.Ordinal))
+    private static void RequireHintFormat(string format, string parameterName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(format, parameterName);
+        try
         {
-            throw new ArgumentException("The heading id format must give every section its own id; put the position, {0}, in it.", nameof(HeadingIdFormat));
+            _ = string.Format(CultureInfo.InvariantCulture, format, string.Empty);
         }
-
-        _ = string.Format(CultureInfo.InvariantCulture, VideoSiteHintFormat, string.Empty);
-        if (TextAlignment is { } alignment && !Enum.IsDefined(alignment))
+        catch (FormatException exception)
         {
-            throw new ArgumentOutOfRangeException(nameof(TextAlignment), alignment, "The text alignment is not defined.");
-        }
-
-        if (!Enum.IsDefined(SplitAlignment))
-        {
-            throw new ArgumentOutOfRangeException(nameof(SplitAlignment), SplitAlignment, "The split alignment is not defined.");
+            throw new ArgumentException("The format must format the site as {0} alone.", parameterName, exception);
         }
     }
 

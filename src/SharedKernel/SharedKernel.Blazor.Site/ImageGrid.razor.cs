@@ -69,10 +69,7 @@ public sealed partial class ImageGrid
     {
         ArgumentNullException.ThrowIfNull(Images);
         ArgumentOutOfRangeException.ThrowIfNegative(EagerCount);
-        if (!Enum.IsDefined(Layout))
-        {
-            throw new ArgumentOutOfRangeException(nameof(Layout), Layout, "The image grid layout is not defined.");
-        }
+        EnumParameter.RequireDefined(Layout, nameof(Layout), "The image grid layout is not defined.");
 
         foreach (var image in Images)
         {

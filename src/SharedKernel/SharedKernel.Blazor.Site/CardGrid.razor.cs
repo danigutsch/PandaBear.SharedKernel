@@ -62,25 +62,10 @@ public sealed partial class CardGrid
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        if (!Enum.IsDefined(MinColumnWidth))
-        {
-            throw new ArgumentOutOfRangeException(nameof(MinColumnWidth), MinColumnWidth, "The column width is not defined.");
-        }
-
-        if (MaxColumnWidth is { } max && !Enum.IsDefined(max))
-        {
-            throw new ArgumentOutOfRangeException(nameof(MaxColumnWidth), max, "The column width is not defined.");
-        }
-
-        if (!Enum.IsDefined(Gap))
-        {
-            throw new ArgumentOutOfRangeException(nameof(Gap), Gap, "The spacing step is not defined.");
-        }
-
-        if (!Enum.IsDefined(ItemAlignment))
-        {
-            throw new ArgumentOutOfRangeException(nameof(ItemAlignment), ItemAlignment, "The item alignment is not defined.");
-        }
+        EnumParameter.RequireDefined(MinColumnWidth, nameof(MinColumnWidth), "The column width is not defined.");
+        EnumParameter.RequireDefined(MaxColumnWidth, nameof(MaxColumnWidth), "The column width is not defined.");
+        EnumParameter.RequireDefined(Gap, nameof(Gap), "The spacing step is not defined.");
+        EnumParameter.RequireDefined(ItemAlignment, nameof(ItemAlignment), "The item alignment is not defined.");
 
         if (MaxColumnWidth is { } cap && Rem(cap) < Rem(MinColumnWidth))
         {

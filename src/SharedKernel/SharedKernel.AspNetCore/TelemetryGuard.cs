@@ -1,17 +1,18 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace PandaBear.AspNetCore;
+namespace PandaBear;
 
 /// <summary>
-/// Keeps telemetry from breaking the host: a failing logger, meter or listener is surfaced on standard error (and to a
-/// debugger) with only the exception type name, and the caller continues.
+/// Keeps telemetry from breaking the host or its failure handling: a failing logger, meter factory or listener is surfaced on
+/// standard error (and to a debugger) with only the exception type name, and the caller continues. This source file is linked into
+/// each package that uses it; each package names itself in <see cref="Source"/>.
 /// </summary>
-internal static class TelemetryGuard
+internal static partial class TelemetryGuard
 {
     /// <summary>Runs a telemetry action and contains any non-fatal failure.</summary>
     /// <param name="action">The telemetry action.</param>
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Telemetry must never break the request flow; the failure is surfaced, not swallowed.")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Telemetry must never break the host or its failure handling; the failure is surfaced, not swallowed.")]
     public static void Run(Action action)
     {
         try
@@ -27,7 +28,7 @@ internal static class TelemetryGuard
     /// <summary>Writes the failure to standard error and a debugger; a closed standard error is ignored because nothing is left to report to.</summary>
     private static void Surface(string exceptionType)
     {
-        var line = $"PandaBear.AspNetCore telemetry failure: {exceptionType}";
+        var line = $"{Source} telemetry failure: {exceptionType}";
         try
         {
             Console.Error.WriteLine(line);

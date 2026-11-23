@@ -33,10 +33,10 @@ internal sealed class PageSectionValidator<TImageId, TLinkInput, TLink, TExtra>(
     /// <exception cref="ArgumentNullException">An entry of a list in the definition is <see langword="null"/>.</exception>
     public PageSection<TImageId, TLink, TExtra> Validate(PageSectionDefinition<TImageId, TLinkInput, TExtra> definition, string field)
     {
-        var eyebrow = SectionText.Optional(errors, definition.Eyebrow, Part(field, PageSectionFields.Eyebrow), "Section eyebrow", rules.MaxLineLength);
-        var heading = SectionText.Optional(errors, definition.Heading, Part(field, PageSectionFields.Heading), "Section heading", rules.MaxTitleLength);
-        Level(definition.Level, heading, field);
-        var paragraphs = SectionText.Paragraphs(errors, definition.Text, Part(field, PageSectionFields.Text), "Section text", rules);
+        var eyebrow = SanitizedText.Optional(errors, definition.Eyebrow, Part(field, PageSectionFields.Eyebrow), "Section eyebrow", rules.MaxLineLength);
+        var heading = SanitizedText.Optional(errors, definition.Heading, Part(field, PageSectionFields.Heading), "Section heading", rules.MaxTitleLength, out var hasHeading);
+        Level(definition.Level, hasHeading, field);
+        var paragraphs = SanitizedText.Paragraphs(errors, definition.Text, Part(field, PageSectionFields.Text), "Section text", rules.MaxParagraphs, rules.MaxParagraphLength, out var hasText);
         var questions = Questions(definition.Questions ?? [], Part(field, PageSectionFields.Questions));
         var extra = context.ValidateExtra(definition.Extra, published, field);
         errors.AddIfFailed(extra);
@@ -52,7 +52,7 @@ internal sealed class PageSectionValidator<TImageId, TLinkInput, TLink, TExtra>(
 
         var video = definition.Video is { } enteredVideo ? Video(enteredVideo, Part(field, PageSectionFields.Video)) : null;
         var link = definition.Link is { } enteredLink ? Link(enteredLink, Part(field, PageSectionFields.Link)) : null;
-        if (paragraphs.Count == 0 && (definition.Questions ?? []).Count == 0 && !context.CountsAsContent(definition.Extra) && definition.Person is null
+        if (!hasText && (definition.Questions ?? []).Count == 0 && !context.CountsAsContent(definition.Extra) && definition.Person is null
             && quotes.Count == 0 && imageIds.Count == 0 && definition.Video is null && definition.Link is null)
         {
             SectionText.Add(errors, field, Content);
@@ -83,13 +83,13 @@ internal sealed class PageSectionValidator<TImageId, TLinkInput, TLink, TExtra>(
 
     private static string Invariant(FormattableString text) => text.ToString(CultureInfo.InvariantCulture);
 
-    private void Level(SectionLevel level, string? heading, string field)
+    private void Level(SectionLevel level, bool hasHeading, string field)
     {
         if (!Enum.IsDefined(level))
         {
             SectionText.Add(errors, Part(field, PageSectionFields.Level), "The heading level is not supported.");
         }
-        else if (level == SectionLevel.Subsection && heading is null)
+        else if (level == SectionLevel.Subsection && !hasHeading)
         {
             SectionText.Add(errors, Part(field, PageSectionFields.Heading), "A subsection needs a heading.");
         }
@@ -108,10 +108,10 @@ internal sealed class PageSectionValidator<TImageId, TLinkInput, TLink, TExtra>(
         {
             var definition = definitions[index] ?? throw new ArgumentNullException(nameof(definitions), "A question is null.");
             var number = index + 1;
-            var question = SectionText.Required(errors, definition.Question, Indexed(field, index, PageSectionFields.Question), Invariant($"Question {number}"), rules.MaxLineLength);
+            var question = SanitizedText.Required(errors, definition.Question, Indexed(field, index, PageSectionFields.Question), Invariant($"Question {number}"), rules.MaxLineLength) ?? string.Empty;
             var answerField = Indexed(field, index, PageSectionFields.Answer);
-            var answer = SectionText.Paragraphs(errors, definition.Answer, answerField, Invariant($"Question {number} answer"), rules);
-            if (answer.Count == 0)
+            var answer = SanitizedText.Paragraphs(errors, definition.Answer, answerField, Invariant($"Question {number} answer"), rules.MaxParagraphs, rules.MaxParagraphLength, out var hasAnswer);
+            if (!hasAnswer)
             {
                 SectionText.Add(errors, answerField, Invariant($"Question {number} answer is required."));
             }
@@ -145,8 +145,8 @@ internal sealed class PageSectionValidator<TImageId, TLinkInput, TLink, TExtra>(
 
     private PagePerson<TImageId> Person(PagePersonDefinition<TImageId> definition, string field)
     {
-        var name = SectionText.Required(errors, definition.Name, Part(field, PageSectionFields.Name), "Person name", rules.MaxTitleLength);
-        var role = SectionText.Optional(errors, definition.Role, Part(field, PageSectionFields.Role), "Person role", rules.MaxTitleLength);
+        var name = SanitizedText.Required(errors, definition.Name, Part(field, PageSectionFields.Name), "Person name", rules.MaxTitleLength) ?? string.Empty;
+        var role = SanitizedText.Optional(errors, definition.Role, Part(field, PageSectionFields.Role), "Person role", rules.MaxTitleLength);
         if (definition.ImageId is { } photo && !context.Exists(photo))
         {
             SectionText.Add(errors, Part(field, PageSectionFields.ImageId), "The person's photo does not exist.");
@@ -168,8 +168,8 @@ internal sealed class PageSectionValidator<TImageId, TLinkInput, TLink, TExtra>(
         {
             var definition = definitions[index] ?? throw new ArgumentNullException(nameof(definitions), "A quote is null.");
             var number = index + 1;
-            var text = SectionText.Required(errors, definition.Text, Indexed(field, index, PageSectionFields.QuoteText), Invariant($"Quote {number} text"), rules.MaxQuoteLength);
-            var cite = SectionText.Optional(errors, definition.Cite, Indexed(field, index, PageSectionFields.Cite), Invariant($"Quote {number} source"), rules.MaxTitleLength);
+            var text = SanitizedText.Required(errors, definition.Text, Indexed(field, index, PageSectionFields.QuoteText), Invariant($"Quote {number} text"), rules.MaxQuoteLength) ?? string.Empty;
+            var cite = SanitizedText.Optional(errors, definition.Cite, Indexed(field, index, PageSectionFields.Cite), Invariant($"Quote {number} source"), rules.MaxTitleLength);
             quotes.Add(new PageQuote(text, cite));
         }
 
@@ -206,13 +206,13 @@ internal sealed class PageSectionValidator<TImageId, TLinkInput, TLink, TExtra>(
             SectionText.Add(errors, posterField, "The poster image does not exist.");
         }
 
-        var title = SectionText.Required(errors, definition.Title, Part(field, PageSectionFields.Title), "Video title", rules.MaxTitleLength);
+        var title = SanitizedText.Required(errors, definition.Title, Part(field, PageSectionFields.Title), "Video title", rules.MaxTitleLength) ?? string.Empty;
         return address.IsSuccess && definition.PosterImageId is { } id ? new PageVideo<TImageId>(address.Value, id, title) : null;
     }
 
     private PageLink<TLink>? Link(PageLinkDefinition<TLinkInput> definition, string field)
     {
-        var text = SectionText.Required(errors, definition.Text, Part(field, PageSectionFields.LinkText), "Button text", rules.MaxTitleLength);
+        var text = SanitizedText.Required(errors, definition.Text, Part(field, PageSectionFields.LinkText), "Button text", rules.MaxTitleLength) ?? string.Empty;
         if (!Enum.IsDefined(definition.Style))
         {
             SectionText.Add(errors, Part(field, PageSectionFields.Style), "The button style is not supported.");
