@@ -6,12 +6,16 @@ namespace PandaBear.Blazor.Tests;
 
 /// <summary>
 /// Tests the image picker's search: it waits for the debounce, asks for a longer query below the shortest length, and announces only
-/// the latest search of an open panel, never one that a newer search or a close replaced.
+/// the latest search of an open panel, never one that a newer search or a close replaced. The debounce waits on a manual clock, so
+/// whether typing falls within it never depends on how fast the test runs.
 /// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class ImagePickerSearchTests : BunitContext
 {
+    private static readonly TimeSpan Millisecond = TimeSpan.FromMilliseconds(1);
+
     private readonly PickerLibrary _library = new(40);
+    private readonly ManualTimeProvider _time = new();
 
     /// <summary>Renders as the interactive circuit does.</summary>
     public ImagePickerSearchTests() => SetRendererInfo(new RendererInfo("Server", isInteractive: true));
@@ -20,19 +24,28 @@ public sealed class ImagePickerSearchTests : BunitContext
     public async Task Typing_waits_for_the_debounce_and_searches_only_the_last_query()
     {
         // Arrange
+        var debounce = TimeSpan.FromMilliseconds(100);
         var cut = this.RenderPicker(_library, parameters => parameters
             .Add(picker => picker.Catalog, PickerLibrary.Catalog())
             .Add(picker => picker.Values, []),
-            TimeSpan.FromMilliseconds(100));
-        await cut.Find($"#{Id}-find").ClickAsync(new MouseEventArgs());
+            debounce,
+            _time);
+        await cut.Find($"#{Id}-find").ClickAsync(new MouseEventArgs()).Guarded();
 
         // Act
-        var first = cut.Find($"#{Id}-search").InputAsync(new ChangeEventArgs { Value = "0" });
-        var second = cut.Find($"#{Id}-search").InputAsync(new ChangeEventArgs { Value = "00" });
-        await cut.Find($"#{Id}-search").InputAsync(new ChangeEventArgs { Value = "0012" });
-        await Task.WhenAll(first, second);
+        var first = await cut.TypeWhileDebouncing(_time, "0", debounce);
+        _time.Advance(Millisecond);
+        var second = await cut.TypeWhileDebouncing(_time, "00", debounce);
+        _time.Advance(Millisecond);
+        var last = await cut.TypeWhileDebouncing(_time, "0012", debounce);
+        await Task.WhenAll(first, second).Guarded();
+        _time.Advance(debounce - Millisecond);
+        string[] searchedBeforeDebounce = [.. _library.Queries];
+        _time.Advance(Millisecond);
+        await last.Guarded();
 
         // Assert
+        searchedBeforeDebounce.ShouldBe([string.Empty]);
         _library.Queries.ShouldBe([string.Empty, "0012"]);
         cut.Find($"#{Id}-status").TextContent.Trim().ShouldBe("Showing 1 of 1 images that match ‘0012’.");
     }
@@ -47,11 +60,11 @@ public sealed class ImagePickerSearchTests : BunitContext
             .Add(picker => picker.MinQueryLength, 3));
 
         // Act
-        await cut.Find($"#{Id}-find").ClickAsync(new MouseEventArgs());
+        await cut.Find($"#{Id}-find").ClickAsync(new MouseEventArgs()).Guarded();
         var opened = cut.Find($"#{Id}-status").TextContent.Trim();
-        await cut.Find($"#{Id}-search").InputAsync(new ChangeEventArgs { Value = "00" });
+        await cut.Find($"#{Id}-search").InputAsync(new ChangeEventArgs { Value = "00" }).Guarded();
         var shortQuery = cut.Find($"#{Id}-panel .help").TextContent;
-        await cut.Find($"#{Id}-search").InputAsync(new ChangeEventArgs { Value = "0012" });
+        await cut.Find($"#{Id}-search").InputAsync(new ChangeEventArgs { Value = "0012" }).Guarded();
 
         // Assert
         opened.ShouldBe("Type at least 3 characters.");
@@ -74,16 +87,16 @@ public sealed class ImagePickerSearchTests : BunitContext
             _ => Task.CompletedTask,
         };
         var cut = this.RenderPicker(_library, parameters => parameters.Add(picker => picker.Catalog, PickerLibrary.Catalog()).Add(picker => picker.Values, []));
-        await cut.Find($"#{Id}-find").ClickAsync(new MouseEventArgs());
+        await cut.Find($"#{Id}-find").ClickAsync(new MouseEventArgs()).Guarded();
         var replaced = cut.Find($"#{Id}-search").InputAsync(new ChangeEventArgs { Value = "0001" });
         var latest = cut.Find($"#{Id}-search").InputAsync(new ChangeEventArgs { Value = "0002" });
         newer.SetResult();
-        await latest;
+        await latest.Guarded();
         var announced = cut.Find($"#{Id}-status").TextContent;
 
         // Act
         older.SetResult();
-        await replaced;
+        await replaced.Guarded();
 
         // Assert
         announced.Trim().ShouldBe("Showing 1 of 1 images that match ‘0002’.");
@@ -95,18 +108,21 @@ public sealed class ImagePickerSearchTests : BunitContext
     public async Task A_debouncing_search_replaced_by_a_query_below_the_shortest_length_announces_nothing_when_it_ends()
     {
         // Arrange
+        var debounce = TimeSpan.FromMilliseconds(200);
         var cut = this.RenderPicker(_library, parameters => parameters
             .Add(picker => picker.Catalog, PickerLibrary.Catalog())
             .Add(picker => picker.Values, [])
             .Add(picker => picker.MinQueryLength, 3),
-            TimeSpan.FromMilliseconds(200));
-        await cut.Find($"#{Id}-find").ClickAsync(new MouseEventArgs());
-        var debouncing = cut.Find($"#{Id}-search").InputAsync(new ChangeEventArgs { Value = "0012" });
-        await cut.Find($"#{Id}-search").InputAsync(new ChangeEventArgs { Value = "ab" });
+            debounce,
+            _time);
+        await cut.Find($"#{Id}-find").ClickAsync(new MouseEventArgs()).Guarded();
+        var debouncing = await cut.TypeWhileDebouncing(_time, "0012", debounce);
+        await cut.Find($"#{Id}-search").InputAsync(new ChangeEventArgs { Value = "ab" }).Guarded();
         var announced = cut.Find($"#{Id}-status").TextContent;
 
         // Act
-        await debouncing;
+        _time.Advance(debounce);
+        await debouncing.Guarded();
 
         // Assert
         announced.Trim().ShouldBe("Type at least 3 characters.");
@@ -122,11 +138,11 @@ public sealed class ImagePickerSearchTests : BunitContext
         _library.SearchGate = (_, _) => start.Task;
         var cut = this.RenderPicker(_library, parameters => parameters.Add(picker => picker.Catalog, PickerLibrary.Catalog()).Add(picker => picker.Values, []));
         var opening = cut.Find($"#{Id}-find").ClickAsync(new MouseEventArgs());
-        await cut.Find($"#{Id}-find").ClickAsync(new MouseEventArgs());
+        await cut.Find($"#{Id}-find").ClickAsync(new MouseEventArgs()).Guarded();
 
         // Act
         start.SetResult();
-        await opening;
+        await opening.Guarded();
 
         // Assert
         cut.Find($"#{Id}-status").TextContent.ShouldBeEmpty();

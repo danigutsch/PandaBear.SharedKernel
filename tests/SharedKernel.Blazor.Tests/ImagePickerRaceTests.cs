@@ -30,9 +30,9 @@ public sealed class ImagePickerRaceTests : BunitContext
         var first = host.Find($"#{Id}-remove-1").ClickAsync(new MouseEventArgs());
 
         // Act
-        await host.Find($"#{Id}-remove-2").ClickAsync(new MouseEventArgs());
+        await host.Find($"#{Id}-remove-2").ClickAsync(new MouseEventArgs()).Guarded();
         _lookup.SetResult();
-        await first;
+        await first.Guarded();
 
         // Assert
         host.Instance.Values.ShouldBe([3, 4]);
@@ -46,12 +46,12 @@ public sealed class ImagePickerRaceTests : BunitContext
         _library.LookupGate = _ => _lookup.Task;
         var host = this.RenderBinding(_library, [1, 2, 3, 4], PickerLibrary.Catalog(1, 2));
         var removal = host.Find($"#{Id}-remove-1").ClickAsync(new MouseEventArgs());
-        await host.Find($"#{Id}-find").ClickAsync(new MouseEventArgs());
+        await host.Find($"#{Id}-find").ClickAsync(new MouseEventArgs()).Guarded();
 
         // Act
-        await host.Find($"#{Id}-result-5").ClickAsync(new MouseEventArgs());
+        await host.Find($"#{Id}-result-5").ClickAsync(new MouseEventArgs()).Guarded();
         _lookup.SetResult();
-        await removal;
+        await removal.Guarded();
 
         // Assert
         host.Instance.Values.ShouldBe([2, 3, 4, 5]);
@@ -66,9 +66,9 @@ public sealed class ImagePickerRaceTests : BunitContext
         var move = host.Find($"#{Id}-later-2").ClickAsync(new MouseEventArgs());
 
         // Act
-        await host.Find($"#{Id}-remove-1").ClickAsync(new MouseEventArgs());
+        await host.Find($"#{Id}-remove-1").ClickAsync(new MouseEventArgs()).Guarded();
         _lookup.SetResult();
-        await move;
+        await move.Guarded();
 
         // Assert
         host.Instance.Values.ShouldBe([3, 2, 4]);
@@ -89,7 +89,7 @@ public sealed class ImagePickerRaceTests : BunitContext
         var moved = cut.Find($"#{Id}-later-2").ReferenceId();
 
         // Act
-        await cut.Find($"#{Id}-later-2").ClickAsync(new MouseEventArgs());
+        await cut.Find($"#{Id}-later-2").ClickAsync(new MouseEventArgs()).Guarded();
 
         // Assert
         cut.Find($"#{Id}-later-3").GetAttribute("aria-label").ShouldBe("Move Photo 0002 later");
@@ -110,7 +110,7 @@ public sealed class ImagePickerRaceTests : BunitContext
         var waiting = _library.LookupToken.IsCancellationRequested;
 
         // Act
-        await DisposeComponentsAsync();
+        await DisposeComponentsAsync().Guarded();
 
         // Assert
         waiting.ShouldBeFalse();
@@ -127,7 +127,7 @@ public sealed class ImagePickerRaceTests : BunitContext
         var waiting = _library.SearchToken.IsCancellationRequested;
 
         // Act
-        await DisposeComponentsAsync();
+        await DisposeComponentsAsync().Guarded();
 
         // Assert
         waiting.ShouldBeFalse();

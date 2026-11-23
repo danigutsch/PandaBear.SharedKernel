@@ -1,10 +1,13 @@
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>A timer of <see cref="ManualTimeProvider"/> that remembers whether it fired or was disposed.</summary>
-internal sealed class PendingTimer : ITimer
+internal sealed class PendingTimer(DateTimeOffset due) : ITimer
 {
     private int _fired;
     private int _disposed;
+
+    /// <summary>Gets when the timer fires, as it was created: the time then plus its due time.</summary>
+    public DateTimeOffset Due { get; } = due;
 
     /// <summary>Gets or sets the <see cref="Microsoft.Extensions.Time.Testing.FakeTimeProvider"/> timer that does the work.</summary>
     public ITimer? Inner { get; set; }

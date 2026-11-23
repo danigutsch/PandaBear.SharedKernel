@@ -4,7 +4,9 @@ namespace PandaBear.Blazor.Tests.Browser;
 
 /// <summary>
 /// Tests the image picker on an Interactive Server page in Chromium: the controls work once the circuit starts, and focus lands where a
-/// keyboard user expects it after a removal, a move and a single choice. They skip when the browser is not installed.
+/// keyboard user expects it after a removal, a move and a single choice. They skip when the browser is not installed. The picker
+/// moves focus from <c>OnAfterRenderAsync</c>, a round trip after the browser applied the render, so the tests wait for the focus the
+/// way they wait for the markup, instead of reading it once the markup changed.
 /// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class ImagePickerBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
@@ -16,24 +18,18 @@ public sealed class ImagePickerBrowserTests(ChromiumFixture chromium) : IClassFi
         await using var host = await PickerHost.Start();
         var page = await chromium.Browser.OpenPicker(host, chosen: 3);
 
-        // Act
+        // Act & Assert
         await page.PickerButton("photos", "Remove Photo 0002").ClickAsync();
         await Assertions.Expect(page.Locator("#photos ol li")).ToHaveCountAsync(2);
-        var afterRemoval = await page.FocusedName();
+        await Assertions.Expect(page.PickerButton("photos", "Remove Photo 0003")).ToBeFocusedAsync();
         await page.PickerButton("photos", "Move Photo 0003 earlier").ClickAsync();
         await Assertions.Expect(page.Locator("#photos ol li span").First).ToHaveTextAsync("Photo 0003");
-        var afterMove = await page.FocusedName();
-        var announced = await page.Locator("#photos-status").TextContentAsync();
+        await Assertions.Expect(page.PickerButton("photos", "Move Photo 0003 earlier")).ToBeFocusedAsync();
+        await Assertions.Expect(page.Locator("#photos-status")).ToHaveTextAsync("Photo 0003 moved to position 1 of 2.");
         await page.PickerButton("photos", "Remove Photo 0003").ClickAsync();
         await page.PickerButton("photos", "Remove Photo 0001").ClickAsync();
         await Assertions.Expect(page.Locator("#photos .image-picker__empty")).ToHaveCountAsync(1);
-
-        // Assert
-        afterRemoval.ShouldBe("Remove Photo 0003");
-        afterMove.ShouldBe("Move Photo 0003 earlier");
-        announced!.Trim().ShouldBe("Photo 0003 moved to position 1 of 2.");
-        var afterLast = await page.FocusedName();
-        afterLast.ShouldBe("Find an image, Photos");
+        await Assertions.Expect(page.PickerButton("photos", "Find an image, Photos")).ToBeFocusedAsync();
         await page.CloseAsync();
     }
 
@@ -54,10 +50,8 @@ public sealed class ImagePickerBrowserTests(ChromiumFixture chromium) : IClassFi
         // Assert
         await Assertions.Expect(page.Locator("#cover ol li span")).ToHaveTextAsync("Photo 0500");
         await Assertions.Expect(page.Locator("#cover-panel")).ToHaveCountAsync(0);
-        var expanded = await page.Locator("#cover-find").GetAttributeAsync("aria-expanded");
-        expanded.ShouldBe("false");
-        var focused = await page.FocusedName();
-        focused.ShouldBe("Find an image, Cover");
+        await Assertions.Expect(page.Locator("#cover-find")).ToHaveAttributeAsync("aria-expanded", "false");
+        await Assertions.Expect(page.PickerButton("cover", "Find an image, Cover")).ToBeFocusedAsync();
         await page.CloseAsync();
     }
 }

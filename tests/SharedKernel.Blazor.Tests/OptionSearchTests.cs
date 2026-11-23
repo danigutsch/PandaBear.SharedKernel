@@ -193,11 +193,11 @@ public sealed class OptionSearchTests
         time.Advance(TimeSpan.FromMilliseconds(299));
         var second = search.Search("es", Token);
         var third = search.Search("esl", Token);
-        await Task.WhenAll(first, second);
-        await time.WaitForPendingTimers(1, Token);
+        await Task.WhenAll(first, second).Guarded();
+        await time.WaitForPendingTimers(1, Token).Guarded();
         var waitingBeforeDebounce = search.IsSearching;
         time.Advance(TimeSpan.FromMilliseconds(OptionSearch<string>.DefaultDebounceMilliseconds));
-        await third;
+        await third.Guarded();
 
         // Assert
         search.Debounce.ShouldBe(TimeSpan.FromMilliseconds(300));
@@ -225,7 +225,7 @@ public sealed class OptionSearchTests
         search.HasResults.ShouldBeFalse();
         search.Status(Shown, NoMatches).ShouldBeNull();
         gate.SetResult(new ListSlice<string>(["new"], 1));
-        await running;
+        await running.Guarded();
         search.IsSearching.ShouldBeFalse();
         search.Results.ShouldBe(["new"]);
     }
@@ -251,7 +251,7 @@ public sealed class OptionSearchTests
         // Act
         await search.Search("ab", Token);
         older.SetResult(new ListSlice<string>(["stale"], 7));
-        await first;
+        await first.Guarded();
 
         // Assert
         olderToken.IsCancellationRequested.ShouldBeTrue();
@@ -278,13 +278,13 @@ public sealed class OptionSearchTests
 
         // Act
         older.SetResult(new ListSlice<string>(["stale"], 1));
-        await first;
+        await first.Guarded();
 
         // Assert
         search.Results.ShouldBeEmpty();
         search.IsSearching.ShouldBeTrue();
         newer.SetResult(new ListSlice<string>(["fresh"], 1));
-        await second;
+        await second.Guarded();
         search.Results.ShouldBe(["fresh"]);
         search.IsSearching.ShouldBeFalse();
     }
@@ -306,7 +306,7 @@ public sealed class OptionSearchTests
 
         // Act
         await search.Search("ab", Token);
-        await first;
+        await first.Guarded();
 
         // Assert
         first.IsCompletedSuccessfully.ShouldBeTrue();
@@ -454,7 +454,7 @@ public sealed class OptionSearchTests
         // Act
         search.Dispose();
         gate.SetResult(new ListSlice<string>(["late"], 1));
-        await running;
+        await running.Guarded();
 
         // Assert
         token.IsCancellationRequested.ShouldBeTrue();
