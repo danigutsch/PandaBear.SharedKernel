@@ -52,8 +52,8 @@ public sealed partial class StepList
     /// <exception cref="ArgumentNullException"><see cref="Steps" /> is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><see cref="HeadingLevel" /> is not from 1 to 6, or <see cref="EagerCount" /> is negative.</exception>
     /// <exception cref="ArgumentException">
-    /// A step is invalid, <see cref="NumberFormat" /> does not format the position, or <see cref="HeadingIdFormat" /> does not give a
-    /// unique id without white space.
+    /// A step is invalid, <see cref="NumberFormat" /> does not format the position (positions 1 and 2 must read differently, so an
+    /// escaped <c>{{0}}</c> is refused), or <see cref="HeadingIdFormat" /> does not give a unique id without white space.
     /// </exception>
     protected override void OnParametersSet()
     {
@@ -83,19 +83,29 @@ public sealed partial class StepList
 
     private static string RequirePositionFormat(string format, string parameterName, CultureInfo culture)
     {
-        if (string.IsNullOrWhiteSpace(format) || !format.Contains("{0", StringComparison.Ordinal))
+        if (string.IsNullOrWhiteSpace(format))
         {
             throw new ArgumentException("The format must hold {0} for the position.", parameterName);
         }
 
+        string first;
+        string second;
         try
         {
-            return string.Format(culture, format, 1);
+            first = string.Format(culture, format, 1);
+            second = string.Format(culture, format, 2);
         }
         catch (FormatException exception)
         {
             throw new ArgumentException("The format must format the position as {0} alone.", parameterName, exception);
         }
+
+        if (string.Equals(first, second, StringComparison.Ordinal))
+        {
+            throw new ArgumentException("The format must hold {0} for the position, so each step reads differently.", parameterName);
+        }
+
+        return first;
     }
 
     private static void RequireStep(StepItem step, string parameterName)

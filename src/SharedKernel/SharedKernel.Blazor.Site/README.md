@@ -313,7 +313,8 @@ A blank text throws `ArgumentException` and an undefined tone `ArgumentOutOfRang
 `FromPrice` is the lowest price in a line of text, such as on a card: `Format` holds exactly one `{0}` ("a partir de {0}"), and the
 component writes the text before it, the amount in `<data class="site-from-price__amount" value="...">` (bold, `nowrap`), then the
 text after it, in `<p class="site-from-price">`. The text around the placeholder is written as it is, never formatted, so other braces
-are plain text. A format without exactly one `{0}` or a blank `AmountText` throws `ArgumentException`.
+are plain text. A format without exactly one `{0}`, with the placeholder escaped as in `string.Format` (`{{0}}`), or a blank
+`AmountText` throws `ArgumentException`.
 
 ```razor
 <Section Title="Valores" HeadingId="valores">
@@ -349,8 +350,8 @@ are plain text. A format without exactly one `{0}` or a blank `AmountText` throw
 - `HeadingIdFormat`, such as "dia-{0}", gives each title an id from its position so `#dia-2` links to a step; `null`, the default,
   writes none, because two lists on a page would repeat a fixed default.
 
-A missing step, a blank title or paragraph, a missing paragraph or fact list or fact, a number format without `{0}`, a heading id
-format without `{0}` or that gives white space, or a negative `EagerCount` throws `ArgumentException` (`ArgumentOutOfRangeException`
+A missing step, a blank title or paragraph, a missing paragraph or fact list or fact, a number format that reads the same for positions 1 and 2 (no `{0}`, or an escaped `{{0}}`), a heading id
+format that does not give positions 1 and 2 different results (so an escaped `{{0}}` is refused) or that gives white space, or a negative `EagerCount` throws `ArgumentException` (`ArgumentOutOfRangeException`
 for the count and a heading level outside 1 to 6).
 
 `TextList` is a plain list of lines, such as what a tour includes or the practical information: a `ul`, or an `ol` when `Ordered`, with

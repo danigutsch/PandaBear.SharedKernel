@@ -164,6 +164,7 @@ public sealed class StepListTests : BunitContext
     [InlineData("")]
     [InlineData("Day")]
     [InlineData("Day {1}")]
+    [InlineData("Day {{0}}")]
     public void A_number_format_without_the_position_is_refused(string format)
     {
         // Arrange & Act
@@ -178,6 +179,7 @@ public sealed class StepListTests : BunitContext
     [InlineData("day")]
     [InlineData("day {0}")]
     [InlineData("day-{1}")]
+    [InlineData("day-{{0}}")]
     public void A_heading_ID_format_that_gives_no_unique_ID_without_white_space_is_refused(string format)
     {
         // Arrange & Act

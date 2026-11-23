@@ -72,6 +72,9 @@ public sealed class FromPriceTests : BunitContext
     [InlineData("")]
     [InlineData("from")]
     [InlineData("from {0} to {0}")]
+    [InlineData("from {{0}}")]
+    [InlineData("from {{0}")]
+    [InlineData("from {0}}")]
     public void A_format_without_exactly_one_placeholder_is_refused(string format)
     {
         // Arrange & Act

@@ -35,19 +35,24 @@ public sealed partial class FromPrice
 
     /// <inheritdoc />
     /// <exception cref="ArgumentException">
-    /// <see cref="Format" /> does not hold exactly one <c>{0}</c>, or <see cref="AmountText" /> is blank.
+    /// <see cref="Format" /> does not hold exactly one <c>{0}</c>, or holds it escaped (<c>{{0}}</c>), or <see cref="AmountText" /> is
+    /// blank.
     /// </exception>
     protected override void OnParametersSet()
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(Format);
         ArgumentException.ThrowIfNullOrWhiteSpace(AmountText);
         var index = Format.IndexOf(Placeholder, StringComparison.Ordinal);
-        if (index < 0 || Format.IndexOf(Placeholder, index + Placeholder.Length, StringComparison.Ordinal) >= 0)
+        var end = index + Placeholder.Length;
+        if (index < 0
+            || Format.IndexOf(Placeholder, end, StringComparison.Ordinal) >= 0
+            || (index > 0 && Format[index - 1] == '{')
+            || (end < Format.Length && Format[end] == '}'))
         {
-            throw new ArgumentException("The format must hold exactly one {0} where the amount goes.", nameof(Format));
+            throw new ArgumentException("The format must hold exactly one {0}, not escaped as {{0}}, where the amount goes.", nameof(Format));
         }
 
         _before = Format[..index];
-        _after = Format[(index + Placeholder.Length)..];
+        _after = Format[end..];
     }
 }
