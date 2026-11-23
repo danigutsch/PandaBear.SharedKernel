@@ -52,16 +52,32 @@ public sealed class ServiceHostProcessTests
 
                 return await File.ReadAllBytesAsync(path, token);
             });
-        Func<Task> stop = host.Stop;
+        IReadOnlyList<(string Variable, string Value)> values;
+        InvalidOperationException? stopFailure = null;
 
         // Act
-        var values = await host.WaitUntilReady(ct);
-        var exception = await stop.ShouldThrow<InvalidOperationException>();
+        try
+        {
+            values = await host.WaitUntilReady(ct);
+        }
+        finally
+        {
+            try
+            {
+                await host.Stop();
+            }
+            catch (InvalidOperationException exception)
+            {
+                stopFailure = exception;
+            }
+        }
 
         // Assert
         values.ShouldBe(
             [("APP_DATABASE", "secret-one"), ("APP_ANALYTICS", "secret-two")],
             "The service wrote its values before it exited, so an exit that a poll sees after its read found nothing must not hide them.");
-        exception.Message.ShouldStartWith("The service of slice database exited with code 5 before it was stopped.", StringComparison.Ordinal);
+        stopFailure.ShouldNotBeNull().Message.ShouldStartWith(
+            "The service of slice database exited with code 5 before it was stopped.",
+            StringComparison.Ordinal);
     }
 }
