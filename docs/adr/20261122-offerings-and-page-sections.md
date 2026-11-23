@@ -38,7 +38,7 @@ only when its boundary and current use are clear.
   - Both read BuildingBlocks' `IImageEligibility<TImageId>`, which Galleries' `IAlbumPhotoEligibility` now derives from, so one image
     index serves every content rule.
 - **Image primitives shared by both live in BuildingBlocks' `Media` folder**: `IImageEligibility` and, added with the owner's approval
-  during the build, `ImageCredit` with `ImageLicence`, the attribution of a third-party image (title, author, source, licence and a
+  during the build, `ImageCredit` with `ImageLicense`, the attribution of a third-party image (title, author, source, licence and a
   change note, the Creative Commons practice). The credit is a value an application keeps on its image library, not a part of an
   offering or a section; its caption and credits-list components come with the display atoms.
 - **The models own rules and views, never storage.** Like Galleries, there is no id, version, persistence, events or authorization.

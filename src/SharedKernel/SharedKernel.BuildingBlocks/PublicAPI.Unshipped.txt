@@ -293,7 +293,7 @@ static PandaBear.BuildingBlocks.MoneyDisplayOptions.operator !=(PandaBear.Buildi
 static PandaBear.BuildingBlocks.MoneyDisplayOptions.operator ==(PandaBear.BuildingBlocks.MoneyDisplayOptions? left, PandaBear.BuildingBlocks.MoneyDisplayOptions? right) -> bool
 PandaBear.BuildingBlocks.ImageCredit
 PandaBear.BuildingBlocks.ImageCredit.Author.get -> string!
-PandaBear.BuildingBlocks.ImageCredit.Licence.get -> PandaBear.BuildingBlocks.ImageLicence!
+PandaBear.BuildingBlocks.ImageCredit.License.get -> PandaBear.BuildingBlocks.ImageLicense!
 PandaBear.BuildingBlocks.ImageCredit.Modified.get -> bool
 PandaBear.BuildingBlocks.ImageCredit.SourceUrl.get -> PandaBear.BuildingBlocks.WebUrl?
 PandaBear.BuildingBlocks.ImageCredit.Title.get -> string?
@@ -307,21 +307,21 @@ PandaBear.BuildingBlocks.ImageCreditFormats.ImageCreditFormats(string! WithTitle
 PandaBear.BuildingBlocks.ImageCreditFormats.Modified.get -> string!
 PandaBear.BuildingBlocks.ImageCreditFormats.WithTitle.get -> string!
 PandaBear.BuildingBlocks.ImageCreditFormats.WithoutTitle.get -> string!
-PandaBear.BuildingBlocks.ImageLicence
-PandaBear.BuildingBlocks.ImageLicence.Code.get -> string!
-PandaBear.BuildingBlocks.ImageLicence.Url.get -> PandaBear.BuildingBlocks.WebUrl?
+PandaBear.BuildingBlocks.ImageLicense
+PandaBear.BuildingBlocks.ImageLicense.Code.get -> string!
+PandaBear.BuildingBlocks.ImageLicense.Url.get -> PandaBear.BuildingBlocks.WebUrl?
 const PandaBear.BuildingBlocks.ImageCredit.MaxAuthorLength = 200 -> int
 const PandaBear.BuildingBlocks.ImageCredit.MaxTitleLength = 200 -> int
-const PandaBear.BuildingBlocks.ImageLicence.MaxCodeLength = 60 -> int
+const PandaBear.BuildingBlocks.ImageLicense.MaxCodeLength = 60 -> int
 override PandaBear.BuildingBlocks.ImageCredit.ToString() -> string!
 override PandaBear.BuildingBlocks.ImageCreditFormats.Equals(object? obj) -> bool
 override PandaBear.BuildingBlocks.ImageCreditFormats.GetHashCode() -> int
 override PandaBear.BuildingBlocks.ImageCreditFormats.ToString() -> string!
-override PandaBear.BuildingBlocks.ImageLicence.ToString() -> string!
+override PandaBear.BuildingBlocks.ImageLicense.ToString() -> string!
 static PandaBear.BuildingBlocks.ImageCreditFormats.operator !=(PandaBear.BuildingBlocks.ImageCreditFormats? left, PandaBear.BuildingBlocks.ImageCreditFormats? right) -> bool
 static PandaBear.BuildingBlocks.ImageCreditFormats.operator ==(PandaBear.BuildingBlocks.ImageCreditFormats? left, PandaBear.BuildingBlocks.ImageCreditFormats? right) -> bool
-static PandaBear.BuildingBlocks.ImageLicence.KnownUrl(string? code) -> PandaBear.BuildingBlocks.WebUrl?
-static PandaBear.BuildingBlocks.ImageCredit.Create(string? author, string? title, string? source, string? licenceCode, string? licenceLink, bool modified, string! fieldPrefix = "") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.ImageCredit!>
-static PandaBear.BuildingBlocks.ImageCredit.Restore(string! author, string? title, string? source, PandaBear.BuildingBlocks.ImageLicence! licence, bool modified) -> PandaBear.BuildingBlocks.ImageCredit!
-static PandaBear.BuildingBlocks.ImageLicence.Create(string? code, string? link, string! field = "licence") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.ImageLicence!>
-static PandaBear.BuildingBlocks.ImageLicence.Restore(string! code, string? link) -> PandaBear.BuildingBlocks.ImageLicence!
+static PandaBear.BuildingBlocks.ImageLicense.KnownUrl(string? code) -> PandaBear.BuildingBlocks.WebUrl?
+static PandaBear.BuildingBlocks.ImageCredit.Create(string? author, string? title, string? source, string? licenseCode, string? licenseLink, bool modified, string! fieldPrefix = "") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.ImageCredit!>
+static PandaBear.BuildingBlocks.ImageCredit.Restore(string! author, string? title, string? source, PandaBear.BuildingBlocks.ImageLicense! license, bool modified) -> PandaBear.BuildingBlocks.ImageCredit!
+static PandaBear.BuildingBlocks.ImageLicense.Create(string? code, string? link, string! field = "license") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.ImageLicense!>
+static PandaBear.BuildingBlocks.ImageLicense.Restore(string! code, string? link) -> PandaBear.BuildingBlocks.ImageLicense!

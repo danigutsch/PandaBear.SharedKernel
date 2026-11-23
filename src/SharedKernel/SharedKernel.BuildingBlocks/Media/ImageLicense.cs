@@ -8,7 +8,7 @@ namespace PandaBear.BuildingBlocks;
 /// <c>Pixabay</c> or an application's own, and an optional https link to its text. <see cref="KnownUrl"/> gives the link of the common
 /// Creative Commons codes.
 /// </summary>
-public sealed class ImageLicence : ValueObject
+public sealed class ImageLicense : ValueObject
 {
     /// <summary>The longest code.</summary>
     public const int MaxCodeLength = 60;
@@ -16,7 +16,7 @@ public sealed class ImageLicence : ValueObject
     private static readonly string[] CreativeCommonsElements = ["by", "by-sa", "by-nd", "by-nc", "by-nc-sa", "by-nc-nd"];
     private static readonly string[] CreativeCommonsVersions = ["2.0", "2.5", "3.0", "4.0"];
 
-    private ImageLicence(string code, WebUrl? url)
+    private ImageLicense(string code, WebUrl? url)
     {
         Code = code;
         Url = url;
@@ -33,12 +33,12 @@ public sealed class ImageLicence : ValueObject
     /// <param name="link">The optional https link to the licence's text.</param>
     /// <param name="field">The field of the licence; errors are on its <c>code</c> and <c>url</c>.</param>
     /// <returns>The licence, or validation errors that never echo the input.</returns>
-    public static Result<ImageLicence> Create(string? code, string? link, string field = "licence")
+    public static Result<ImageLicense> Create(string? code, string? link, string field = "license")
     {
         var errors = new ValidationErrors();
-        var sanitized = CreditText.Required(errors, code, field + ".code", "Licence", MaxCodeLength);
-        var validLink = CreditText.HttpsUrl(errors, link, field + ".url", "Licence link");
-        return errors.HasErrors ? errors.ToResult<ImageLicence>() : Result.Ok(new ImageLicence(sanitized!, validLink));
+        var sanitized = CreditText.Required(errors, code, field + ".code", "License", MaxCodeLength);
+        var validLink = CreditText.HttpsUrl(errors, link, field + ".url", "License link");
+        return errors.HasErrors ? errors.ToResult<ImageLicense>() : Result.Ok(new ImageLicense(sanitized!, validLink));
     }
 
     /// <summary>For persistence mappers: rebuilds a licence stored earlier; it performs NO validation beyond required values, so never use it for input.</summary>
@@ -46,10 +46,10 @@ public sealed class ImageLicence : ValueObject
     /// <param name="link">The stored link, or <see langword="null"/>.</param>
     /// <returns>The licence.</returns>
     /// <exception cref="ArgumentException"><paramref name="code"/> is <see langword="null"/>, empty or blank.</exception>
-    public static ImageLicence Restore(string code, string? link)
+    public static ImageLicense Restore(string code, string? link)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(code);
-        return new ImageLicence(code, string.IsNullOrWhiteSpace(link) ? null : WebUrl.Restore(link));
+        return new ImageLicense(code, string.IsNullOrWhiteSpace(link) ? null : WebUrl.Restore(link));
     }
 
     /// <summary>
