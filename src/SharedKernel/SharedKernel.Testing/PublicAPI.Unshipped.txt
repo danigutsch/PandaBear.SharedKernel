@@ -385,3 +385,8 @@ static PandaBear.Testing.TestProcessResult.operator !=(PandaBear.Testing.TestPro
 static PandaBear.Testing.TestProcessResult.operator ==(PandaBear.Testing.TestProcessResult left, PandaBear.Testing.TestProcessResult right) -> bool
 ~override PandaBear.Testing.TestProcessResult.Equals(object obj) -> bool
 ~override PandaBear.Testing.TestProcessResult.ToString() -> string
+PandaBear.Testing.RepositoryRoot
+static PandaBear.Testing.RepositoryRoot.Locate(string! marker) -> string!
+static PandaBear.Testing.RepositoryRoot.Locate(string! marker, string! startDirectory) -> string!
+static PandaBear.Testing.RepositoryRoot.TryLocate(string! marker) -> string?
+static PandaBear.Testing.RepositoryRoot.TryLocate(string! marker, string! startDirectory) -> string?

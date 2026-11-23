@@ -8,7 +8,7 @@ public sealed class RepoConfigToolCallerTests
     public void Every_workflow_command_line_parses_to_a_command()
     {
         // Arrange
-        var root = CiTestSelectionTestProcess.GetRepositoryRoot();
+        var root = RepositoryRoot.Locate("SharedKernel.slnx");
         var rootCommand = RepoConfigCommandLine.Create(new RepoConfigToolEnvironment(root));
 
         // Act
@@ -33,7 +33,7 @@ public sealed class RepoConfigToolCallerTests
     public void Workflows_invoke_the_repo_config_tool_command(string file, string commandName)
     {
         // Arrange
-        var root = CiTestSelectionTestProcess.GetRepositoryRoot();
+        var root = RepositoryRoot.Locate("SharedKernel.slnx");
         var rootCommand = RepoConfigCommandLine.Create(new RepoConfigToolEnvironment(root));
 
         // Act

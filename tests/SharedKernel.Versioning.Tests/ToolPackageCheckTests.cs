@@ -148,7 +148,7 @@ public static class ToolPackageCheckTests
     {
         // Arrange
         using var temporary = new TemporaryReleasePrepDirectory();
-        File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(temporary.Root, "global.json"));
+        File.Copy(Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), "global.json"), Path.Combine(temporary.Root, "global.json"));
         var library = NuGetPackageBuilder.WritePackage(temporary.PackageDirectory, "PandaBear.SharedKernel.Probe", "1.0.0");
         var tool = NuGetPackageBuilder.WriteToolPackage(
             temporary.PackageDirectory,
@@ -195,7 +195,7 @@ public static class ToolPackageCheckTests
     {
         // Arrange
         using var temporary = new TemporaryReleasePrepDirectory();
-        File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(temporary.Root, "global.json"));
+        File.Copy(Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), "global.json"), Path.Combine(temporary.Root, "global.json"));
         var tool = NuGetPackageBuilder.WriteToolPackage(
             temporary.PackageDirectory,
             "PandaBear.SharedKernel.Probe.Tool",
@@ -220,7 +220,7 @@ public static class ToolPackageCheckTests
     {
         // Arrange
         using var temporary = new TemporaryReleasePrepDirectory();
-        File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(temporary.Root, "global.json"));
+        File.Copy(Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), "global.json"), Path.Combine(temporary.Root, "global.json"));
         var tool = NuGetPackageBuilder.WriteToolPackage(
             temporary.PackageDirectory,
             "PandaBear.SharedKernel.Probe.Tool",
@@ -248,7 +248,7 @@ public static class ToolPackageCheckTests
     {
         // Arrange
         using var temporary = new TemporaryReleasePrepDirectory();
-        File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(temporary.Root, "global.json"));
+        File.Copy(Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), "global.json"), Path.Combine(temporary.Root, "global.json"));
         var tool = NuGetPackageBuilder.WriteToolPackage(
             temporary.PackageDirectory,
             "PandaBear.SharedKernel.Probe.Tool",
@@ -282,7 +282,7 @@ public static class ToolPackageCheckTests
     {
         // Arrange
         using var temporary = new TemporaryReleasePrepDirectory();
-        File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(temporary.Root, "global.json"));
+        File.Copy(Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), "global.json"), Path.Combine(temporary.Root, "global.json"));
         var tool = NuGetPackageBuilder.WriteToolPackage(
             temporary.PackageDirectory,
             "PandaBear.SharedKernel.Probe.Tool",
@@ -308,7 +308,7 @@ public static class ToolPackageCheckTests
     {
         // Arrange
         using var temporary = new TemporaryReleasePrepDirectory();
-        File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(temporary.Root, "global.json"));
+        File.Copy(Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), "global.json"), Path.Combine(temporary.Root, "global.json"));
         var library = NuGetPackageBuilder.WritePackage(temporary.PackageDirectory, "PandaBear.SharedKernel.Probe", "1.0.0");
         var tool = NuGetPackageBuilder.WriteToolPackage(
             temporary.PackageDirectory,
@@ -335,7 +335,7 @@ public static class ToolPackageCheckTests
     {
         // Arrange
         using var temporary = new TemporaryReleasePrepDirectory();
-        File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(temporary.Root, "global.json"));
+        File.Copy(Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), "global.json"), Path.Combine(temporary.Root, "global.json"));
         var library = NuGetPackageBuilder.WritePackage(temporary.PackageDirectory, "PandaBear.SharedKernel.Probe", "1.0.0");
         var tool = NuGetPackageBuilder.WriteToolPackage(
             temporary.PackageDirectory,

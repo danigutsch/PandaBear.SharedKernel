@@ -200,3 +200,14 @@ A hook shared by several interfaces, such as a `Func<CallInfo, Task>` that reads
 it needs (`Delete(string table, Guid id)`) and a lambda per interface that passes them. A runtime `ArgumentException` or
 `InvalidOperationException` for an unknown name, a `Returns` on a method without a result, or a replacement of the wrong type is now a
 compile error.
+
+## Repository files
+
+`RepositoryRoot.Locate(marker)` walks up from the test's base directory to the nearest directory that holds `marker`, a file
+name such as `MyRepository.slnx` or a relative path such as `src/Directory.Build.props`, and returns its full path. It throws
+`DirectoryNotFoundException` naming the marker and the start directory when no directory holds it; `TryLocate` returns `null`
+instead. Both take an optional start directory.
+
+```csharp
+var readme = File.ReadAllText(Path.Combine(RepositoryRoot.Locate("MyRepository.slnx"), "tools", "My.Tool", "README.md"));
+```

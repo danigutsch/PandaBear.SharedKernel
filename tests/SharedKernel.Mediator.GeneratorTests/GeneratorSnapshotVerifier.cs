@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using PandaBear.Testing;
 using Xunit.Sdk;
 
 namespace PandaBear.Mediator.GeneratorTests;
@@ -52,29 +53,10 @@ internal static class GeneratorSnapshotVerifier
 
     private static string GetSnapshotDirectory(string filePath)
     {
-        var fileName = Path.GetFileName(filePath);
-        var projectDirectory = FindRepositoryDirectoryContaining(
-            Path.Combine("tests", "SharedKernel.Mediator.GeneratorTests", fileName));
+        var projectDirectory = Path.Combine("tests", "SharedKernel.Mediator.GeneratorTests");
+        var root = RepositoryRoot.Locate(Path.Combine(projectDirectory, Path.GetFileName(filePath)));
 
-        return Path.Combine(projectDirectory, "Snapshots");
-    }
-
-    private static string FindRepositoryDirectoryContaining(string relativePath)
-    {
-        var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
-
-        while (currentDirectory is not null)
-        {
-            var candidatePath = Path.Combine(currentDirectory.FullName, relativePath);
-            if (File.Exists(candidatePath))
-            {
-                return Path.GetDirectoryName(candidatePath)!;
-            }
-
-            currentDirectory = currentDirectory.Parent;
-        }
-
-        throw new XunitException($"Could not locate repository path for '{relativePath}'.");
+        return Path.Combine(root, projectDirectory, "Snapshots");
     }
 
     /// <summary>

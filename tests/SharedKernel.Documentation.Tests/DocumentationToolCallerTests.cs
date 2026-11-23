@@ -31,7 +31,7 @@ public sealed class DocumentationToolCallerTests
     public void Repository_callers_invoke_command_lines_that_parse(string callerPath, string invocation, params string[] expectedArguments)
     {
         // Arrange
-        var rootCommand = DocumentationCommandLine.Create(RepositoryFiles.GetRootPath());
+        var rootCommand = DocumentationCommandLine.Create(Testing.RepositoryRoot.Locate("SharedKernel.slnx"));
 
         // Act
         var callerArguments = RepositoryFiles.FindToolArguments(callerPath, invocation);

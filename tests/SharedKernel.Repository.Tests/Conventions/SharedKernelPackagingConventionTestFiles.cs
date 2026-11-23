@@ -6,22 +6,8 @@ namespace PandaBear.Repository.Tests.Conventions;
 /// <summary>Reads project files and YAML lists for the packaging convention tests.</summary>
 internal static partial class SharedKernelPackagingConventionTestFiles
 {
-    /// <summary>Walks up from the test binary directory to the first directory that contains <c>SharedKernel.slnx</c> and returns it.</summary>
-    public static string GetRepositoryRoot()
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory is not null)
-        {
-            if (File.Exists(Path.Combine(directory.FullName, "SharedKernel.slnx")))
-            {
-                return directory.FullName;
-            }
-
-            directory = directory.Parent;
-        }
-
-        throw new InvalidOperationException("Could not locate repository root.");
-    }
+    /// <summary>Returns the repository root, the nearest directory above the test binaries that contains <c>SharedKernel.slnx</c>.</summary>
+    public static string GetRepositoryRoot() => RepositoryRoot.Locate("SharedKernel.slnx");
 
     /// <summary>Returns a message for each <c>HintName</c> assignment or <c>AddSource</c> call in <paramref name="text"/> whose string literal does not end in <c>.g.cs</c>.</summary>
     public static IEnumerable<string> GetHintNameLiteralViolations(string path, string text) =>

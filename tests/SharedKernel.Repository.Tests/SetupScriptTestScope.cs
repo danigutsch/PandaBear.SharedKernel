@@ -1,5 +1,4 @@
 using System.Globalization;
-using PandaBear.RepoConfig.Tests;
 
 namespace PandaBear.Repository.Tests;
 
@@ -22,7 +21,7 @@ internal sealed class SetupScriptTestScope : IDisposable
         LogPath = Path.Combine(Root, "dotnet-calls.txt");
         var scriptName = OperatingSystem.IsWindows() ? "setup-dev.ps1" : "setup-dev.sh";
         script = Path.Combine(Root, scriptName);
-        File.Copy(Path.Combine(CiTestSelectionTestProcess.GetRepositoryRoot(), scriptName), script);
+        File.Copy(Path.Combine(RepositoryRoot.Locate("SharedKernel.slnx"), scriptName), script);
 
         if (OperatingSystem.IsWindows())
         {

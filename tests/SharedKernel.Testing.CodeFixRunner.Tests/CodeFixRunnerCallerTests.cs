@@ -21,7 +21,7 @@ public sealed class CodeFixRunnerCallerTests
     {
         // Arrange
         var rootCommand = CodeFixRunnerCommandLine.Create(
-            RepositoryFiles.GetRootPath(),
+            RepositoryRoot.Locate("SharedKernel.slnx"),
             static (_, _, _) => Task.FromResult<int?>(0));
 
         // Act
@@ -58,7 +58,7 @@ public sealed class CodeFixRunnerCallerTests
     {
         // Arrange
         var rootCommand = CodeFixRunnerCommandLine.Create(
-            RepositoryFiles.GetRootPath(),
+            RepositoryRoot.Locate("SharedKernel.slnx"),
             static (_, _, _) => Task.FromResult<int?>(0));
 
         // Act
