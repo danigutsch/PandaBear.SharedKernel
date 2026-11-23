@@ -3,7 +3,7 @@ using System.Globalization;
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests the culture-independent English-name ordering of country codes.</summary>
-[Trait("Scope", "Unit")]
+[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 [Trait("Capability", "ContactValueObjects")]
 public sealed class CountryCodeOrderTests
 {
@@ -86,7 +86,7 @@ public sealed class CountryCodeOrderTests
         var baseline = CountryCode.AllByEnglishName.Select(country => country.Value).ToArray();
 
         // Act
-        var underCulture = CultureOverride.Run(
+        var underCulture = Testing.CultureScope.Run(
             CultureInfo.GetCultureInfo(cultureName),
             () => CountryCode.All.OrderBy(country => CountryNameAlphabet.ExpectedKey(country.EnglishName), StringComparer.Ordinal)
                 .ThenBy(country => country.Value, StringComparer.Ordinal)

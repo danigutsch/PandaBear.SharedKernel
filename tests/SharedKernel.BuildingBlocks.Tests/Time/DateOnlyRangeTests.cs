@@ -1,7 +1,7 @@
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests the validated range of calendar days.</summary>
-[Trait("Scope", "Unit")]
+[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 [Trait("Capability", "ValueObjects")]
 public sealed class DateOnlyRangeTests
 {

@@ -1,7 +1,7 @@
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests the time provider that reports a business time zone as local time.</summary>
-[Trait("Scope", "Unit")]
+[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 [Trait("Capability", "Time")]
 public sealed class BusinessTimeProviderTests
 {

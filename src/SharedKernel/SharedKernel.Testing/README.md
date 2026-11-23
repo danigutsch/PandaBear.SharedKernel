@@ -4,7 +4,7 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Reusable test traits, environment scopes, temporary-directory lifetimes, and source-generated call proxies.
+Reusable test traits, environment and culture scopes, temporary-directory lifetimes, repository-file lookup, process fakes, and source-generated call proxies.
 
 ## Trait taxonomy
 
@@ -245,3 +245,9 @@ var inventory = new PackageInventory(runner, new ExecutableMap(static command =>
 // ... act ...
 runner.Runs.Select(static run => run.FileName).ShouldBe(["/fake/cargo"]);
 ```
+
+## Culture
+
+`CultureScope` sets the current culture and UI culture (both to one culture, or each to its own) and restores the previous
+ones on disposal; `CultureScope.Run(culture, action)` returns the result of a function run under one culture. The cultures flow
+with the asynchronous context, so code awaited inside the scope sees them.

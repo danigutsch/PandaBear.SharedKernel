@@ -413,3 +413,8 @@ static PandaBear.Testing.ScriptedProcessRunner.ByFileName(System.Collections.Gen
 static PandaBear.Testing.ScriptedProcessRunner.InOrder(params PandaBear.Processes.ProcessOutput![]! outputs) -> PandaBear.Testing.ScriptedProcessRunner!
 static PandaBear.Testing.ScriptedProcessRunner.Returning(PandaBear.Processes.ProcessOutput! output) -> PandaBear.Testing.ScriptedProcessRunner!
 static PandaBear.Testing.ScriptedProcessRunner.Throwing(System.Exception! exception) -> PandaBear.Testing.ScriptedProcessRunner!
+PandaBear.Testing.CultureScope
+PandaBear.Testing.CultureScope.CultureScope(System.Globalization.CultureInfo! culture) -> void
+PandaBear.Testing.CultureScope.CultureScope(System.Globalization.CultureInfo! culture, System.Globalization.CultureInfo! uiCulture) -> void
+PandaBear.Testing.CultureScope.Dispose() -> void
+static PandaBear.Testing.CultureScope.Run<T>(System.Globalization.CultureInfo! culture, System.Func<T>! action) -> T

@@ -5,7 +5,7 @@ namespace PandaBear.BuildingBlocks.Tests;
 /// <summary>
 /// Tests creation and validation of Iban values.
 /// </summary>
-[Trait("Scope", "Unit")]
+[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 [Trait("Capability", "PaymentIdentifiers")]
 public sealed class IbanTests
 {

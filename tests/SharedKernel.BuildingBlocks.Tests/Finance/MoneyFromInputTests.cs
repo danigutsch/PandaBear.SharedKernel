@@ -8,7 +8,7 @@ namespace PandaBear.BuildingBlocks.Tests;
 /// Tests creating money from an amount a person typed, whose written decimal places, trailing zeros included, must fit the currency's
 /// minor unit.
 /// </summary>
-[Trait("Scope", "Unit")]
+[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 [Trait("Capability", "ValueObjects")]
 public sealed class MoneyFromInputTests
 {

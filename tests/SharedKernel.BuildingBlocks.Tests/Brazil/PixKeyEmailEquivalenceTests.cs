@@ -3,7 +3,7 @@ namespace PandaBear.BuildingBlocks.Tests;
 /// <summary>
 /// Tests that Pix email keys accept exactly the values of the DICT email pattern.
 /// </summary>
-[Trait("Scope", "Unit")]
+[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 [Trait("Capability", "PaymentIdentifiers")]
 public sealed class PixKeyEmailEquivalenceTests
 {
