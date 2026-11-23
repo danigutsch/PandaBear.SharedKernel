@@ -81,22 +81,21 @@ public sealed class HeadingColorTests
     }
 
     [Fact]
-    public void The_stylesheet_colours_each_heading_the_card_title_and_the_brand_by_its_role_with_a_fallback()
+    public void The_stylesheet_colours_each_heading_and_the_card_title_by_its_role_with_a_fallback()
     {
         // Arrange
         var css = File.ReadAllText(SiteFiles.StylesheetPath());
 
         // Act
         var missing = SiteThemeStylesheet.HeadingColorVariables
-            .Where(variable => !css.Contains("color: var(" + variable + ", ", StringComparison.Ordinal))
+            .Where(variable => !css.Contains("color: var(" + variable + ", inherit)", StringComparison.Ordinal))
             .ToArray();
 
         // Assert
-        SiteThemeStylesheet.HeadingColorVariables.ShouldBe(["--site-h1-color", "--site-h2-color", "--site-h3-color", "--site-h4-color", "--site-h5-color", "--site-h6-color", "--site-card-title-color", "--site-brand-color"]);
+        SiteThemeStylesheet.HeadingColorVariables.ShouldBe(["--site-h1-color", "--site-h2-color", "--site-h3-color", "--site-h4-color", "--site-h5-color", "--site-h6-color", "--site-card-title-color"]);
         missing.ShouldBe([]);
         SiteFiles.Rule(css, "h2").ShouldContain("color: var(--site-h2-color, inherit)", StringComparison.Ordinal);
         SiteFiles.Rule(css, ".site-card__title").ShouldContain("color: var(--site-card-title-color, inherit)", StringComparison.Ordinal);
-        SiteFiles.Rule(css, ".site-header__brand a").ShouldContain("color: var(--site-brand-color, var(--site-color-primary))", StringComparison.Ordinal);
     }
 
     [Fact]

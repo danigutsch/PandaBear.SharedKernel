@@ -19,18 +19,64 @@ public sealed class BrandRoleTests
     }
 
     [Fact]
-    public void The_brand_role_is_named_brand_and_takes_a_colour_like_a_heading()
+    public void The_brand_role_is_named_brand_and_takes_a_colour_without_being_a_heading()
     {
         // Arrange & Act
         var css = ThemeNames.Css(TypographyRole.Brand);
         var field = ThemeNames.Field(TypographyRole.Brand);
         var heading = ThemeNames.IsHeading(TypographyRole.Brand);
+        var takesColor = ThemeNames.TakesColor(TypographyRole.Brand);
 
         // Assert
         css.ShouldBe("brand");
         field.ShouldBe("brand");
-        heading.ShouldBeTrue();
-        SiteThemeStylesheet.HeadingColorVariables.ShouldContain("--site-brand-color");
+        heading.ShouldBeFalse();
+        takesColor.ShouldBeTrue();
+        SiteThemeStylesheet.HeadingColorVariables.ShouldNotContain("--site-brand-color");
+    }
+
+    [Theory]
+    [InlineData(TypographyRole.H1, true)]
+    [InlineData(TypographyRole.CardTitle, true)]
+    [InlineData(TypographyRole.Brand, true)]
+    [InlineData(TypographyRole.Body, false)]
+    [InlineData(TypographyRole.Link, false)]
+    [InlineData(TypographyRole.Nav, false)]
+    public void Headings_card_titles_and_the_brand_take_a_colour(TypographyRole role, bool expected)
+    {
+        // Arrange & Act
+        var takesColor = ThemeNames.TakesColor(role);
+
+        // Assert
+        takesColor.ShouldBe(expected);
+    }
+
+    [Fact]
+    public void A_theme_brand_colour_renders_the_brand_colour_variable()
+    {
+        // Arrange
+        var brand = TypographyStyle.Create(color: ThemeColorRole.Text).ShouldBeSuccess();
+        var theme = SiteTheme.Create(SiteTheme.Default.Colors, ThemeFixtures.DefaultTypographyWith(TypographyRole.Brand, brand)).ShouldBeSuccess();
+
+        // Act
+        var css = SiteThemeStylesheet.Render(theme);
+
+        // Assert
+        css.ShouldContain("--site-brand-color: var(--site-color-text);", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void The_preview_brand_falls_back_to_the_primary_colour_like_the_site_stylesheet()
+    {
+        // Arrange & Act
+        var css = SiteThemeStylesheet.RenderScoped(SiteTheme.Default, "preview-1");
+
+        // Assert
+        var rule = SiteFiles.Rule(css, "#preview-1 .site-theme-preview__sample .site-theme-preview__brand");
+        rule.ShouldContain("color: var(--site-brand-color, var(--site-color-primary));", StringComparison.Ordinal);
+        rule.ShouldNotContain("--site-brand-color, inherit", StringComparison.Ordinal);
+        SiteFiles.Rule(css, "#preview-1 .site-theme-preview__sample .site-theme-preview__card-title")
+            .ShouldContain("color: var(--site-card-title-color, inherit);", StringComparison.Ordinal);
     }
 
     [Fact]

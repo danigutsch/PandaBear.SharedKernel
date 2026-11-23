@@ -505,6 +505,9 @@ var cover = ResponsiveImage.Create(
   `width` and `height`. `TourImageRenditions` stays in the application: choosing renditions and building media routes is
   application policy. `Loading="eager"` with `FetchPriority="high"` is what `Hero` renders; `TourGallery` maps to `ImageGrid`
   with `PrioritizeFirstImage`, and its `sizes` (`(min-width: 48rem) 50vw, 100vw`) goes into each image.
+- A text brand changed look: a link of text in `SiteHeader`'s brand slot no longer takes the `Link` role (the body font, underlined);
+  it takes the `Brand` typography role, with the h1 face, bold, without the underline. A theme that wants another look sets
+  `typography.brand`; a logo link is not affected.
 
 ## Design tokens
 
@@ -595,7 +598,10 @@ that `site.css` consumes. Without a theme nothing changes: every per-role variab
   header's brand slot (`.site-header__brand a`), such as the site's name as text when there is no logo: by default it is a 1.125rem to
   1.375rem bold heading face in the primary colour without the link underline (which comes back on hover), its field path is
   `typography.brand`, and its unset font family, weight and style come from the theme's own h1, so the name takes the title's face; a
-  browser test measures it and its focus ring. `color` colours a heading role (h1 to h6, the card title and the brand)
+  browser test measures it and its focus ring. `Brand` is not a heading role, but it takes a colour like one; without a colour it
+  keeps the primary colour (`color: var(--site-brand-color, var(--site-color-primary))`, in the site stylesheet and the theme
+  preview alike), and over a hero the header gives it the on-primary colour whatever the theme sets. `color` colours a heading role
+  (h1 to h6 and the card title) or the brand
   with the text, primary or muted colour, whose contrast on both surfaces the theme already checks; another colour is an error on
   `color`, and a colour on another role is an error on `typography.{role}.color`, because the components colour that text. Every value is optional; an unset value keeps `SiteTheme.Default`, and links, buttons
   and navigation inherit from their surroundings when unset (so a link in small print stays small). `FontSize.Fixed(rem)` or

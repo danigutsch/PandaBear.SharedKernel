@@ -55,7 +55,8 @@ public static class SiteThemeStylesheet
 
     /// <summary>
     /// Gets the colour custom properties of the heading roles (h1 to h6 and the card title), in render order, such as
-    /// <c>--site-h2-color</c>; one is rendered only when its role sets a <see cref="TypographyStyle.Color" />.
+    /// <c>--site-h2-color</c>; one is rendered only when its role sets a <see cref="TypographyStyle.Color" />. The brand takes a colour
+    /// too, <c>--site-brand-color</c>, but it is not a heading, keeps the primary colour without one, and is not listed here.
     /// </summary>
     public static IReadOnlyList<string> HeadingColorVariables { get; } = [.. HeadingRoles.Select(role => Variable(role, "color"))];
 
@@ -230,7 +231,7 @@ public static class SiteThemeStylesheet
                 css.Append("    ").Append(Variable(role, property)).Append(": ").Append(value).Append(";\n");
             }
 
-            if (ThemeNames.IsHeading(role) && style.Color is { } color)
+            if (ThemeNames.TakesColor(role) && style.Color is { } color)
             {
                 css.Append("    ").Append(Variable(role, "color")).Append(": var(--site-color-").Append(ThemeNames.Css(color)).Append(");\n");
             }
@@ -295,9 +296,9 @@ public static class SiteThemeStylesheet
             css.Append("    ").Append(property).Append(": var(").Append(Variable(role, property)).Append(", inherit);\n");
         }
 
-        if (ThemeNames.IsHeading(role))
+        if (ThemeNames.TakesColor(role))
         {
-            css.Append("    color: var(").Append(Variable(role, "color")).Append(", inherit);\n");
+            css.Append("    color: var(").Append(Variable(role, "color")).Append(", ").Append(ThemeNames.ColorFallback(role)).Append(");\n");
         }
 
         foreach (var declaration in extra.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))

@@ -144,7 +144,7 @@ public sealed class SiteTheme : ValueObject
                 errors.Add($"typography.{ThemeNames.Field(role)}.fontKey", "No font has this key.");
             }
 
-            if (typography[role].Color is not null && !ThemeNames.IsHeading(role))
+            if (typography[role].Color is not null && !ThemeNames.TakesColor(role))
             {
                 errors.Add($"typography.{ThemeNames.Field(role)}.color", "Only headings, card titles and the brand take a colour; the components colour this text.");
             }

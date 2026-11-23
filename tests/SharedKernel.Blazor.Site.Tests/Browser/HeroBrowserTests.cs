@@ -111,4 +111,19 @@ public sealed class HeroBrowserTests(ChromiumFixture chromium) : IClassFixture<C
         family.ShouldEndWith("serif", StringComparison.Ordinal);
         family.ShouldNotContain("sans-serif", StringComparison.Ordinal);
     }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task A_theme_brand_colour_colours_the_text_brand_on_the_page()
+    {
+        // Arrange
+        var brand = TypographyStyle.Create(color: ThemeColorRole.Text).ShouldBeSuccess();
+        var theme = SiteTheme.Create(SiteTheme.Default.Colors, SiteTheme.Default.Typography.With(TypographyRole.Brand, brand)).ShouldBeSuccess();
+        await using var page = await LayoutPage.Serve<HeroSample>(chromium.Browser, 1280, theme: SiteThemeStylesheet.Render(theme));
+
+        // Act
+        var color = ComputedColor.ToHex(await page.Style("#brand", "color"));
+
+        // Assert
+        color.ShouldBe("#1f2937");
+    }
 }

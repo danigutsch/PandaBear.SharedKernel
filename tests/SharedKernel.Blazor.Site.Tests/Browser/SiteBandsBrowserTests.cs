@@ -518,4 +518,19 @@ public sealed class SiteBandsBrowserTests(ChromiumFixture chromium) : IClassFixt
         right.ShouldBe(inset);
         bottom.ShouldBe(inset);
     }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task A_header_over_the_hero_keeps_the_brand_on_primary_when_the_theme_colours_the_brand()
+    {
+        // Arrange
+        var brand = TypographyStyle.Create(color: ThemeColorRole.Text).ShouldBeSuccess();
+        var theme = SiteTheme.Create(SiteTheme.Default.Colors, SiteTheme.Default.Typography.With(TypographyRole.Brand, brand)).ShouldBeSuccess();
+        await using var page = await LayoutPage.Serve<BandsSample>(chromium.Browser, 1280, theme: SiteThemeStylesheet.Render(theme));
+
+        // Act
+        var color = ComputedColor.ToHex(await page.Style("#brand", "color"));
+
+        // Assert
+        color.ShouldBe("#ffffff");
+    }
 }
