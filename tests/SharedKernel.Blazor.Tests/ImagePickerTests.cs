@@ -435,6 +435,22 @@ public sealed class ImagePickerTests : BunitContext
     }
 
     [Fact]
+    public void A_missing_clock_is_refused()
+    {
+        // Arrange & Act
+        var render = () => Render<ImagePicker<int, PickerImage>>(parameters => parameters
+            .Add(picker => picker.Id, Id)
+            .Add(picker => picker.Label, "Photos")
+            .Add(picker => picker.Search, _library.Search)
+            .Add(picker => picker.Catalog, PickerLibrary.Catalog())
+            .Add(picker => picker.LabelOf, image => image.Label)
+            .Add(picker => picker.TimeProvider, null!));
+
+        // Assert
+        render.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe(nameof(ImagePicker<int, PickerImage>.TimeProvider));
+    }
+
+    [Fact]
     public void The_first_chosen_page_holds_at_most_one_page_of_keys()
     {
         // Arrange

@@ -2,7 +2,7 @@ using Microsoft.Playwright;
 
 namespace PandaBear.Blazor.Tests.Browser;
 
-/// <summary>Opens the picker page in Chromium and finds its controls and the focused one.</summary>
+/// <summary>Opens the picker page in Chromium and finds its controls.</summary>
 internal static class PickerBrowser
 {
     /// <summary>Finds a button of one picker by its exact accessible name.</summary>
@@ -12,12 +12,6 @@ internal static class PickerBrowser
     /// <returns>The locator.</returns>
     public static ILocator PickerButton(this IPage page, string picker, string name) =>
         page.Locator("#" + picker).GetByRole(AriaRole.Button, new LocatorGetByRoleOptions { Name = name, Exact = true });
-
-    /// <summary>Gets the accessible name given by <c>aria-label</c> of the focused element.</summary>
-    /// <param name="page">The page.</param>
-    /// <returns>The name, or <see langword="null"/> when the focused element has none.</returns>
-    public static Task<string?> FocusedName(this IPage page) =>
-        page.EvaluateAsync<string?>("() => document.activeElement && document.activeElement.getAttribute('aria-label')");
 
     /// <summary>Opens the picker page with the first images chosen and waits until it is interactive.</summary>
     /// <param name="browser">The browser.</param>

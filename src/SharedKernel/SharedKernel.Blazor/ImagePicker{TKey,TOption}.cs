@@ -29,8 +29,8 @@ namespace PandaBear.Blazor;
 /// <para>
 /// The picker never holds the library. Nothing is searched while prerendering. Persist only the options of
 /// <see cref="ImagePicker.FirstChosenPage{TKey}"/> in the page's prerendered state and build the <see cref="Catalog"/> from them; the
-/// options of another page are read with <see cref="Lookup"/> when it is shown. The bounds and the debounce are read when the search
-/// first opens.
+/// options of another page are read with <see cref="Lookup"/> when it is shown. The bounds, the debounce and its clock are read when the
+/// search first opens.
 /// </para>
 /// </remarks>
 public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
@@ -176,6 +176,13 @@ public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
     [Parameter]
     public TimeSpan Debounce { get; set; } = TimeSpan.FromMilliseconds(OptionSearch<TOption>.DefaultDebounceMilliseconds);
 
+    /// <summary>
+    /// Gets or sets the clock of the <see cref="Debounce"/> wait, as <see cref="OptionSearch{TOption}.TimeProvider"/>;
+    /// <see cref="TimeProvider.System"/> by default.
+    /// </summary>
+    [Parameter]
+    public TimeProvider TimeProvider { get; set; } = TimeProvider.System;
+
     /// <summary>Gets or sets additional attributes applied to the <c>fieldset</c>, such as <c>class</c>.</summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -204,7 +211,7 @@ public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
 
     /// <inheritdoc />
     /// <exception cref="ArgumentException"><see cref="Id"/> is blank or holds white space, <see cref="Label"/> is blank, or <see cref="Values"/> repeats a key.</exception>
-    /// <exception cref="ArgumentNullException"><see cref="Search"/>, <see cref="Catalog"/>, <see cref="LabelOf"/> or <see cref="Texts"/> is null.</exception>
+    /// <exception cref="ArgumentNullException"><see cref="Search"/>, <see cref="Catalog"/>, <see cref="LabelOf"/>, <see cref="Texts"/> or <see cref="TimeProvider"/> is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">A bound is zero or negative, or <see cref="MinQueryLength"/> or <see cref="Debounce"/> is out of range.</exception>
     /// <exception cref="InvalidOperationException">Single-mode and multiple-mode parameters are both set, or <see cref="MaxCount"/> or <see cref="Reorderable"/> is set in single mode.</exception>
     protected override Task OnParametersSetAsync()
@@ -220,6 +227,7 @@ public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
         ArgumentNullException.ThrowIfNull(Catalog);
         ArgumentNullException.ThrowIfNull(LabelOf);
         ArgumentNullException.ThrowIfNull(Texts);
+        ArgumentNullException.ThrowIfNull(TimeProvider);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(SearchLimit);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(ChosenPageSize);
         ArgumentOutOfRangeException.ThrowIfNegative(MinQueryLength);
@@ -589,7 +597,12 @@ public sealed class ImagePicker<TKey, TOption> : ComponentBase, IDisposable
             return;
         }
 
-        _search = new OptionSearch<TOption>(Search, SearchLimit) { Debounce = Debounce, MinQueryLength = MinQueryLength };
+        _search = new OptionSearch<TOption>(Search, SearchLimit)
+        {
+            Debounce = Debounce,
+            MinQueryLength = MinQueryLength,
+            TimeProvider = TimeProvider,
+        };
         await _search.Start(_disposal.Token).ConfigureAwait(true);
         AnnounceSearch(_search, generation);
     }

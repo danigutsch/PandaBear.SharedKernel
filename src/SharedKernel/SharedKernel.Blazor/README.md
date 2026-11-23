@@ -286,7 +286,7 @@ thumbnail address, never the image itself.
 | `LabelOf`, `ThumbnailOf` | The label of an option (required), and its thumbnail address: only a root-relative (`/site-media/…`) or an `https` address is shown (`WebAssetUriSanitizer`), anything else shows no thumbnail. When adopting, note that a base-relative address such as `site-media/…`, which a page with `<base href="/">` would resolve, is dropped: give the picker the address with its leading `/`. |
 | `MaxCount`, `Reorderable` | Multiple mode: the most images, and move-earlier and move-later buttons on every chosen image. |
 | `SearchLimit`, `ChosenPageSize` | 24 each (`ImagePicker.DefaultSearchLimit`, `ImagePicker.DefaultChosenPageSize`). |
-| `MinQueryLength`, `Debounce` | 0 and 300 ms, as on `OptionSearch`. The bounds and the debounce are read when the search first opens. |
+| `MinQueryLength`, `Debounce`, `TimeProvider` | 0, 300 ms and `TimeProvider.System`, as on `OptionSearch`; `TimeProvider` is the clock of the debounce, for tests. The bounds, the debounce and its clock are read when the search first opens. |
 
 The state stays small: the picker never holds the library, searches nothing until the find button opened the search on the
 interactive page, and lists the chosen images `ChosenPageSize` at a time; other pages are looked up when they are shown. Persist only
