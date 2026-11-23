@@ -71,7 +71,7 @@ internal static class RunEvidence
         }
 
         // Failure messages carry process output, so each line is escaped.
-        var diagnostics = new StringBuilder("sharedkernel-ci run diagnostics\n\n")
+        var diagnostics = new StringBuilder("ci run diagnostics\n\n")
             .Append("Revision: ").Append(revision).Append('\n')
             .Append("Slices: ").Append(string.Join(", ", slices)).Append('\n')
             .Append("Status: ").Append(status).Append('\n')
@@ -104,7 +104,7 @@ internal static class RunEvidence
 
         if (summary is not null)
         {
-            var table = new StringBuilder("## sharedkernel-ci run ").Append(name).Append(": ").Append(status).Append("\n\n| Phase | Status | Seconds |\n| --- | --- | --- |\n");
+            var table = new StringBuilder("## ci run ").Append(name).Append(": ").Append(status).Append("\n\n| Phase | Status | Seconds |\n| --- | --- | --- |\n");
             foreach (var phase in phases)
             {
                 table.Append("| ").Append(phase.Name).Append(" | ").Append(phase.Status).Append(" | ").Append(phase.Duration.TotalSeconds.ToString("F1", CultureInfo.InvariantCulture)).Append(" |\n");

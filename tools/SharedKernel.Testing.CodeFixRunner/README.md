@@ -6,14 +6,14 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Local code-fix runner for SharedKernel testing analyzer migrations.
 
-This package is a .NET tool. The command name is `sharedkernel-codefix`.
+This package is a .NET tool. The command name is `dotnet codefix`.
 
 ## Synopsis
 
 ```text
-sharedkernel-codefix <project-or-solution> [--diagnostic <id>]
-sharedkernel-codefix --help
-sharedkernel-codefix --version
+dotnet codefix <project-or-solution> [--diagnostic <id>]
+dotnet codefix --help
+dotnet codefix --version
 ```
 
 ## Prerequisites
@@ -31,7 +31,7 @@ the .NET SDK that `dotnet` selects for a directory, honoring `global.json`:
 A `global.json` that applies to either directory must resolve to an installed SDK:
 
 - For the current directory, commands that start the tool through the .NET SDK (`dotnet tool run`,
-  `dotnet sharedkernel-codefix`, `dotnet run`) fail before the tool starts. The host reports that no compatible
+  `dotnet codefix`, `dotnet run`) fail before the tool starts. The host reports that no compatible
   .NET SDK was found, or prints the `errorMessage` set in `global.json`, and exits 155 on Linux and macOS.
   Started directly, for example from a `--tool-path` install, the tool exits 2.
 - For the target's directory, the run fails with exit code 1.
@@ -39,14 +39,14 @@ A `global.json` that applies to either directory must resolve to an installed SD
 ## Installation
 
 Install a validated candidate as a local tool from the feed that holds it, such as the folder that
-`sharedkernel-ci stage-candidate` stages a candidate in. Add the feed to `NuGet.Config` and map
+`dotnet ci stage-candidate` stages a candidate in. Add the feed to `NuGet.Config` and map
 `PandaBear.SharedKernel.*` to it. Map every other package, for example `*`, to the existing source, because
 a package without a mapping does not restore once source mapping is enabled. With the SDK pinned in
 `global.json`, `dotnet tool install` rejects `--add-source` when package source mapping is enabled.
 
 ```text
 dotnet tool install PandaBear.SharedKernel.Testing.CodeFixRunner --version <validated-candidate-version>
-dotnet tool run sharedkernel-codefix -- <project-or-solution>
+dotnet tool run codefix -- <project-or-solution>
 ```
 
 In this repository, run the project without installing it:
@@ -62,7 +62,7 @@ dotnet run --project tools/SharedKernel.Testing.CodeFixRunner -c Release -- <pro
 Fix the default diagnostic, `SKTEST004`, in a project or solution:
 
 ```text
-sharedkernel-codefix tests/SharedKernel.Versioning.Tests/SharedKernel.Versioning.Tests.csproj
+dotnet codefix tests/SharedKernel.Versioning.Tests/SharedKernel.Versioning.Tests.csproj
 ```
 
 The `SKTEST004` fix moves static helper methods without test-instance state to a dedicated helper
@@ -72,7 +72,7 @@ helpers for manual review.
 Fix another diagnostic:
 
 ```text
-sharedkernel-codefix SharedKernel.slnx --diagnostic SKTEST006
+dotnet codefix SharedKernel.slnx --diagnostic SKTEST006
 ```
 
 - `<project-or-solution>` is an existing `.csproj`, `.sln`, or `.slnx` file.
@@ -99,7 +99,7 @@ sharedkernel-codefix SharedKernel.slnx --diagnostic SKTEST006
 ## Packaging notes
 
 - `PackAsTool=true` packages the console application as a .NET tool.
-- `ToolCommandName=sharedkernel-codefix` controls the command used after install.
+- `ToolCommandName=codefix` controls the command used after install.
 - `PackageReadmeFile=README.md` includes this usage guide in the NuGet package.
 
 ## Package identity and availability

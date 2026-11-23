@@ -12,13 +12,13 @@ public sealed class DocumentationToolCallerTests
         "verify --config docs/architecture/generated-diagrams.json")]
     [InlineData(
         "tools/SharedKernel.Documentation.Tool/README.md",
-        "sharedkernel-docs ",
+        "dotnet docs ",
         "generate --config <path>",
         "verify --config <path>",
         "check --config <path>")]
     [InlineData(
         "tools/SharedKernel.Documentation.Tool/README.md",
-        "dotnet tool run sharedkernel-docs -- ",
+        "dotnet tool run docs -- ",
         "verify --config <path>")]
     [InlineData(
         "tools/SharedKernel.Documentation.Tool/README.md",
@@ -26,7 +26,7 @@ public sealed class DocumentationToolCallerTests
         "verify --config docs/architecture/generated-diagrams.json")]
     [InlineData(
         "src/SharedKernel/SharedKernel.Documentation/README.md",
-        "sharedkernel-docs ",
+        "dotnet docs ",
         "check --config <path>")]
     public void Repository_callers_invoke_command_lines_that_parse(string callerPath, string invocation, params string[] expectedArguments)
     {

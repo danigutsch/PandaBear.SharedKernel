@@ -6,7 +6,7 @@ namespace PandaBear.Testing.Tests;
 /// <summary>Tests the polling address wait against routed pages in Chromium; the browser tests skip when the browser is not installed.</summary>
 public sealed class PlaywrightExpectPathTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
+    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
 
     private static readonly Uri Origin = new("http://expect-path.test/");
 

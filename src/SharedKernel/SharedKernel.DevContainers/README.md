@@ -6,7 +6,7 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Development container host checks. `DevcontainerVerification` starts a repository's dev container with a pinned,
 integrity-checked [Dev Container CLI](https://github.com/devcontainers/cli), runs commands inside it, and removes it.
-`PodmanDnsPreflight` inspects rootless Podman aardvark-dns state without changing it. The `sharedkernel-repo` tool
+`PodmanDnsPreflight` inspects rootless Podman aardvark-dns state without changing it. The `dotnet repo` tool
 exposes them as `verify-devcontainer` and `verify-podman-dns`; its
 [README](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.RepoConfig.Tool/README.md)
 describes the checks and their output.

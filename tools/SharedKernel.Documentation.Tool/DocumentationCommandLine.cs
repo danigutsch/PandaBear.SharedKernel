@@ -4,7 +4,7 @@ using System.Text.Json;
 namespace PandaBear.Documentation.Tool;
 
 /// <summary>
-/// Builds the <c>sharedkernel-docs</c> command tree.
+/// Builds the <c>docs</c> command tree.
 /// </summary>
 internal static class DocumentationCommandLine
 {

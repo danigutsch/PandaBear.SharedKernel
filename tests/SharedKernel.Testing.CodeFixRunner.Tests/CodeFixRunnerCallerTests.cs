@@ -25,9 +25,9 @@ public sealed class CodeFixRunnerCallerTests
             static (_, _, _) => Task.FromResult<int?>(0));
 
         // Act
-        var commandLines = RepositoryFiles.FindToolArguments(ReadmePath, "sharedkernel-codefix ");
+        var commandLines = RepositoryFiles.FindToolArguments(ReadmePath, "dotnet codefix ");
         var projectRunCommandLines = RepositoryFiles.FindToolArguments(ReadmePath, ProjectRun);
-        var localToolCommandLines = RepositoryFiles.FindToolArguments(ReadmePath, "dotnet tool run sharedkernel-codefix -- ");
+        var localToolCommandLines = RepositoryFiles.FindToolArguments(ReadmePath, "dotnet tool run codefix -- ");
         var parseErrors = commandLines
             .Concat(projectRunCommandLines)
             .Concat(localToolCommandLines)

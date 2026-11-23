@@ -117,7 +117,7 @@ internal static class VersioningCommandLine
         var gitHubOutput = new Option<string>("--github-output") { Description = "GitHub Actions output file to append version values to.", HelpName = "path" };
         var gitHubSummary = new Option<string>("--github-summary") { Description = "GitHub Actions step summary file to append to.", HelpName = "path" };
         var repoRoot = RepoRootOption();
-        var command = new Command("calculate-release", "Calculates the version from Git history since the latest v* tag and prints version JSON.")
+        var command = new Command("calculate", "Calculates the version from Git history since the latest v* tag and prints version JSON.")
         {
             versionKind,
             runNumber,
@@ -277,7 +277,7 @@ internal static class VersioningCommandLine
         };
         var skipRestoreCheck = new Option<bool>("--skip-restore-check") { Description = "Skips restoring the packages from the local feed." };
         var repoRoot = RepoRootOption();
-        var command = new Command("pack-sharedkernel", "Packs SharedKernel packages and verifies that they restore from the local feed.")
+        var command = new Command("pack", "Packs SharedKernel packages and verifies that they restore from the local feed.")
         {
             version,
             assemblyVersion,

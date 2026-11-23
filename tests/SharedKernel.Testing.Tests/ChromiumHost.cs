@@ -7,7 +7,7 @@ internal static class ChromiumHost
 {
     private static readonly Lazy<bool> Available = new(Probe);
 
-    /// <summary>Gets a value indicating whether Chromium can be launched. Install it with <c>sharedkernel-ci install-playwright</c>. When the <c>SHAREDKERNEL_REQUIRE_BROWSER</c> environment variable is <c>true</c> a failed launch throws instead.</summary>
+    /// <summary>Gets a value indicating whether Chromium can be launched. Install it with <c>dotnet ci install-playwright</c>. When the <c>SHAREDKERNEL_REQUIRE_BROWSER</c> environment variable is <c>true</c> a failed launch throws instead.</summary>
     public static bool IsInstalled => Available.Value;
 
     /// <summary>Starts Playwright and a headless Chromium without its own sandbox, which an application started by the test does not need.</summary>

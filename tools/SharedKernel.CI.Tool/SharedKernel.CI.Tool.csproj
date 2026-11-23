@@ -4,7 +4,7 @@
         <IsPackable>true</IsPackable>
         <OutputType>Exe</OutputType>
         <PackAsTool>true</PackAsTool>
-        <ToolCommandName>sharedkernel-ci</ToolCommandName>
+        <ToolCommandName>ci</ToolCommandName>
         <PackageId>PandaBear.SharedKernel.CI.Tool</PackageId>
         <Description>CI automation that selects, builds, and tests affected SharedKernel projects, stages package candidates, and verifies commit messages.</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>

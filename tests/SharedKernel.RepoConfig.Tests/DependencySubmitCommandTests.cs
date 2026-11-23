@@ -122,7 +122,7 @@ public sealed class DependencySubmitCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe("sharedkernel-repo: Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub dependency submission.\n");
+        error.ToString().ShouldBe("repo: Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub dependency submission.\n");
     }
 
     [Theory]
@@ -155,14 +155,14 @@ public sealed class DependencySubmitCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ToString().ShouldBe("sharedkernel-repo: --repository must name a GitHub repository as owner/name.\n");
+        error.ToString().ShouldBe("repo: --repository must name a GitHub repository as owner/name.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
     [Theory]
-    [InlineData("[]", "sharedkernel-repo: TestResults/dependency-snapshot.json must contain a JSON object.")]
-    [InlineData("{", "sharedkernel-repo: TestResults/dependency-snapshot.json: Invalid JSON at line 1, byte 2: Expected depth to be zero at the end of the JSON payload.")]
-    [InlineData("{} // comment", "sharedkernel-repo: TestResults/dependency-snapshot.json: Invalid JSON at line 1, byte 4:")]
+    [InlineData("[]", "repo: TestResults/dependency-snapshot.json must contain a JSON object.")]
+    [InlineData("{", "repo: TestResults/dependency-snapshot.json: Invalid JSON at line 1, byte 2: Expected depth to be zero at the end of the JSON payload.")]
+    [InlineData("{} // comment", "repo: TestResults/dependency-snapshot.json: Invalid JSON at line 1, byte 4:")]
     public async Task Submit_requires_a_JSON_object_snapshot_before_any_request(string snapshot, string expectedError)
     {
         // Arrange
@@ -209,7 +209,7 @@ public sealed class DependencySubmitCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ToString().ShouldBe($"sharedkernel-repo: {SnapshotPath} does not exist.\n");
+        error.ToString().ShouldBe($"repo: {SnapshotPath} does not exist.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -240,7 +240,7 @@ public sealed class DependencySubmitCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ToString().ShouldBe($"sharedkernel-repo: {SnapshotPath} exceeds the 32 MiB snapshot size limit.\n");
+        error.ToString().ShouldBe($"repo: {SnapshotPath} exceeds the 32 MiB snapshot size limit.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -271,7 +271,7 @@ public sealed class DependencySubmitCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe($"sharedkernel-repo: GitHub dependency submission failed with HTTP {((int)statusCode).ToString(CultureInfo.InvariantCulture)}.\n");
+        error.ToString().ShouldBe($"repo: GitHub dependency submission failed with HTTP {((int)statusCode).ToString(CultureInfo.InvariantCulture)}.\n");
     }
 
     [Fact]
@@ -298,7 +298,7 @@ public sealed class DependencySubmitCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe("sharedkernel-repo: GitHub reported the dependency snapshot as invalid.\n");
+        error.ToString().ShouldBe("repo: GitHub reported the dependency snapshot as invalid.\n");
     }
 
     [Fact]
@@ -323,7 +323,7 @@ public sealed class DependencySubmitCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ToString().ShouldBe("sharedkernel-repo: GitHub dependency submission request failed.\n");
+        error.ToString().ShouldBe("repo: GitHub dependency submission request failed.\n");
     }
 
     [Fact]
@@ -352,7 +352,7 @@ public sealed class DependencySubmitCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ToString().ShouldBe("sharedkernel-repo: GitHub dependency submission response exceeded the allowed size.\n");
+        error.ToString().ShouldBe("repo: GitHub dependency submission response exceeded the allowed size.\n");
     }
 
     [Theory]

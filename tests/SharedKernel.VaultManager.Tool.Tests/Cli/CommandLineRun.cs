@@ -10,7 +10,7 @@ namespace PandaBear.VaultManager.Tool.Tests.Cli;
 /// <param name="Error">Standard error.</param>
 internal sealed record CommandLineRun(int ExitCode, string Output, string Error)
 {
-    /// <summary>Parses and invokes a command line on the real <c>sharedkernel-vault</c> command tree with every output captured.</summary>
+    /// <summary>Parses and invokes a command line on the real <c>vault</c> command tree with every output captured.</summary>
     public static Task<CommandLineRun> Invoke(VaultCommandEnvironment environment, IReadOnlyList<string> args, CancellationToken ct) =>
         Invoke(VaultCommandLine.Create(environment), args, ct);
 

@@ -93,7 +93,7 @@ fills, blurs and checks the value, filling again (at most three times) when an i
 
 Playwright launches Chromium with `--no-sandbox` by default; Chromium's own sandbox is not needed for an application you start
 yourself, and on Ubuntu 23.10+ AppArmor denies it to unprofiled binaries anyway. Install the browser binaries once with
-`sharedkernel-ci install-playwright`; nothing here downloads them.
+`dotnet ci install-playwright`; nothing here downloads them.
 
 ## File inputs and policy observation
 

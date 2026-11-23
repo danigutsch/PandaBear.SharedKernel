@@ -10,12 +10,12 @@ public static class VersioningCommandLineTests
     [
         "classify-commit",
         "compute",
-        "calculate-release",
+        "calculate",
         "check-public-api-baselines",
         "validate-package-metadata",
         "has-breaking-change-marker",
         "check-api-compatibility",
-        "pack-sharedkernel",
+        "pack",
         "pack-dev",
         "prepare-release",
         "verify-lock-coverage",
@@ -46,12 +46,12 @@ public static class VersioningCommandLineTests
     [Theory]
     [InlineData("classify-commit", "<message>...")]
     [InlineData("compute", "--base <version> (REQUIRED)", "--prerelease <label>", "--sha <sha>")]
-    [InlineData("calculate-release", "--version-kind <prerelease|stable>", "--run-number <number>", "--sha <sha>", "--github-output <path>", "--github-summary <path>", "--repo-root <path>")]
+    [InlineData("calculate", "--version-kind <prerelease|stable>", "--run-number <number>", "--sha <sha>", "--github-output <path>", "--github-summary <path>", "--repo-root <path>")]
     [InlineData("check-public-api-baselines", "--repo-root <path>")]
     [InlineData("validate-package-metadata", "--repo-root <path>")]
     [InlineData("has-breaking-change-marker", "<git-range>", "--repo-root <path>")]
     [InlineData("check-api-compatibility", "--version <version>", "--release-phase <alpha|beta|rc|stable>", "--baseline-version <version>", "--breaking-marker", "--output-root <path>", "--repo-root <path>")]
-    [InlineData("pack-sharedkernel", "--version <version>", "--assembly-version <version>", "--file-version <version>", "--informational-version <version>", "--output-root <path>", "--skip-restore-check", "--repo-root <path>")]
+    [InlineData("pack", "--version <version>", "--assembly-version <version>", "--file-version <version>", "--informational-version <version>", "--output-root <path>", "--skip-restore-check", "--repo-root <path>")]
     [InlineData("pack-dev", "<project>", "--feed <path> (REQUIRED)", "--version <version>", "--repo-root <path>")]
     [InlineData("prepare-release", "--version <version> (REQUIRED)", "--package-dir <path> (REQUIRED)", "--output-dir <path>", "--source-tag <tag>", "--release-impact <impact>", "--sha <sha>", "--repo-root <path>")]
     [InlineData("verify-lock-coverage", "--repo-root <path>")]
@@ -106,9 +106,9 @@ public static class VersioningCommandLineTests
     [InlineData("Option '--version' is required.", "prepare-release", "--package-dir", "packages")]
     [InlineData("Option '--package-dir' is required.", "prepare-release", "--version", "1.2.3")]
     [InlineData("Option '--feed' is required.", "consume-packages", "--version", "1.2.3")]
-    [InlineData("Argument 'beta' not recognized.", "calculate-release", "--version-kind", "beta")]
-    [InlineData("Argument 'production' not recognized.", "calculate-release", "--version-kind", "production")]
-    [InlineData("Option '--run-number' is required when '--version-kind' is prerelease.", "calculate-release")]
+    [InlineData("Argument 'beta' not recognized.", "calculate", "--version-kind", "beta")]
+    [InlineData("Argument 'production' not recognized.", "calculate", "--version-kind", "production")]
+    [InlineData("Option '--run-number' is required when '--version-kind' is prerelease.", "calculate")]
     [InlineData("Argument 'gamma' not recognized.", "check-api-compatibility", "--release-phase", "gamma")]
     [InlineData("Option '--base' expects a semantic version, but got 'not-a-version'.", "compute", "--base", "not-a-version")]
     [InlineData("Option '--version' expects a semantic version, but got '1.2'.", "create-candidate", "--version", "1.2")]
@@ -131,12 +131,12 @@ public static class VersioningCommandLineTests
     [Theory]
     [InlineData("classify-commit", "classify-commit", "feat(api)!:", "remove", "route")]
     [InlineData("compute", "compute", "--base", "0.1.0", "--prerelease", "alpha.1", "--sha", "abc123")]
-    [InlineData("calculate-release", "calculate-release", "--repo-root", "/repo", "--version-kind", "stable", "--run-number", "42.1", "--sha", "abc123", "--github-output", "output.txt", "--github-summary", "summary.md")]
+    [InlineData("calculate", "calculate", "--repo-root", "/repo", "--version-kind", "stable", "--run-number", "42.1", "--sha", "abc123", "--github-output", "output.txt", "--github-summary", "summary.md")]
     [InlineData("check-public-api-baselines", "check-public-api-baselines", "--repo-root", "/repo")]
     [InlineData("validate-package-metadata", "validate-package-metadata", "--repo-root", "/repo")]
     [InlineData("has-breaking-change-marker", "has-breaking-change-marker", "origin/main..HEAD", "--repo-root", "/repo")]
     [InlineData("check-api-compatibility", "check-api-compatibility", "--version", "1.2.3", "--release-phase", "stable", "--baseline-version", "1.2.2", "--breaking-marker", "--output-root", "artifacts/api", "--repo-root", "/repo")]
-    [InlineData("pack-sharedkernel", "pack-sharedkernel", "--version", "1.2.3", "--assembly-version", "1.0.0.0", "--file-version", "1.2.3.0", "--informational-version", "1.2.3+sha.abc123", "--output-root", "artifacts", "--repo-root", "/repo", "--skip-restore-check")]
+    [InlineData("pack", "pack", "--version", "1.2.3", "--assembly-version", "1.0.0.0", "--file-version", "1.2.3.0", "--informational-version", "1.2.3+sha.abc123", "--output-root", "artifacts", "--repo-root", "/repo", "--skip-restore-check")]
     [InlineData("pack-dev", "pack-dev", "--feed", "feed", "--version", "0.1.0-dev.local", "--repo-root", "/repo", "SharedKernel.Results", "SharedKernel.Domain")]
     [InlineData("prepare-release", "prepare-release", "--version", "1.2.3", "--package-dir", "packages", "--output-dir", "release", "--repo-root", "/repo", "--source-tag", "v1.2.2", "--release-impact", "minor", "--sha", "abc123")]
     [InlineData("verify-lock-coverage", "verify-lock-coverage", "--repo-root", "/repo")]
@@ -159,15 +159,15 @@ public static class VersioningCommandLineTests
     }
 
     [Theory]
-    [InlineData("--version-kind", "prerelease", "calculate-release", "--run-number", "7")]
-    [InlineData("--version-kind", "stable", "calculate-release", "--version-kind", "stable")]
-    [InlineData("--run-number", "7.1", "calculate-release", "--run-number", "7.1")]
-    [InlineData("--sha", "abc123", "calculate-release", "--run-number", "7", "--sha", "abc123")]
+    [InlineData("--version-kind", "prerelease", "calculate", "--run-number", "7")]
+    [InlineData("--version-kind", "stable", "calculate", "--version-kind", "stable")]
+    [InlineData("--run-number", "7.1", "calculate", "--run-number", "7.1")]
+    [InlineData("--sha", "abc123", "calculate", "--run-number", "7", "--sha", "abc123")]
     [InlineData("--sha", "abc123", "compute", "--base", "0.1.0", "--sha", "abc123")]
-    [InlineData("--repo-root", ".", "calculate-release", "--run-number", "7")]
+    [InlineData("--repo-root", ".", "calculate", "--run-number", "7")]
     [InlineData("--release-phase", "alpha", "check-api-compatibility")]
     [InlineData("--output-root", "artifacts/api-compat", "check-api-compatibility")]
-    [InlineData("--output-root", "artifacts/packages/local", "pack-sharedkernel")]
+    [InlineData("--output-root", "artifacts/packages/local", "pack")]
     [InlineData("--output-dir", "artifacts/release-prep", "prepare-release", "--version", "1.2.3", "--package-dir", "packages")]
     public static void String_options_bind_values_and_defaults(string option, string expected, params string[] args)
     {
@@ -319,7 +319,7 @@ public static class VersioningCommandLineTests
         var parseResults = commandLines.Select(static line => VersioningCommandLineRunner.Parse(CallerCommandLine.Split(line))).ToArray();
 
         // Assert
-        commandLines.ShouldContain(static line => line.StartsWith("calculate-release ", StringComparison.Ordinal));
+        commandLines.ShouldContain(static line => line.StartsWith("calculate ", StringComparison.Ordinal));
         commandLines.ShouldContain(static line => line.StartsWith("create-candidate ", StringComparison.Ordinal));
         commandLines.ShouldContain(static line => line.StartsWith("consume-candidate ", StringComparison.Ordinal));
         foreach (var parseResult in parseResults)
@@ -378,10 +378,10 @@ public static class VersioningCommandLineTests
         await File.WriteAllLinesAsync(
             readme,
             [
-                "sharedkernel-version compute --base <version> [--prerelease <label>] [--missing <value>] < messages",
-                "sharedkernel-version consume-candidate (--candidate <path> | --candidate-directory <path>) [--aot]",
-                "sharedkernel-version unknown-command [--sha <sha>]",
-                "`sharedkernel-version <command> --help` describes each option.",
+                "dotnet release compute --base <version> [--prerelease <label>] [--missing <value>] < messages",
+                "dotnet release consume-candidate (--candidate <path> | --candidate-directory <path>) [--aot]",
+                "dotnet release unknown-command [--sha <sha>]",
+                "`dotnet release <command> --help` describes each option.",
             ],
             TestContext.Current.CancellationToken);
         var rootCommand = VersioningCommandLineRunner.Create();
@@ -404,10 +404,10 @@ public static class VersioningCommandLineTests
         await File.WriteAllLinesAsync(
             readme,
             [
-                "Run `sharedkernel-version check-public-api-baselines` before packing.",
-                "dotnet tool run sharedkernel-version validate-package-metadata",
-                "dotnet tool run sharedkernel-version -- --help",
-                "`sharedkernel-version <command> --help` describes each option.",
+                "Run `dotnet release check-public-api-baselines` before packing.",
+                "dotnet tool run release validate-package-metadata",
+                "dotnet tool run release -- --help",
+                "`dotnet release <command> --help` describes each option.",
             ],
             TestContext.Current.CancellationToken);
 
@@ -419,10 +419,10 @@ public static class VersioningCommandLineTests
     }
 
     [Theory]
-    [InlineData("Install sharedkernel-version before packing.")]
-    [InlineData("Run `echo sharedkernel-version check-public-api-baselines` before packing.")]
-    [InlineData("dotnet tool run sharedkernel-version --help")]
-    [InlineData("dotnet tool run sharedkernel-version classify-commit -h")]
+    [InlineData("Install dotnet release before packing.")]
+    [InlineData("Run `echo dotnet release check-public-api-baselines` before packing.")]
+    [InlineData("dotnet tool run release --help")]
+    [InlineData("dotnet tool run release classify-commit -h")]
     [InlineData("dotnet run --project tools/SharedKernel.Versioning.Tool -c Release")]
     public static async Task Readme_scan_rejects_tool_text_that_is_not_a_runnable_command_line(string line)
     {

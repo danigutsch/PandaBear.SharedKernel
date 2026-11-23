@@ -8,7 +8,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// </summary>
 public sealed class ThemePreviewStrictPolicyTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
+    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public async Task The_sample_headings_keep_the_heading_typography_without_a_heading_role()

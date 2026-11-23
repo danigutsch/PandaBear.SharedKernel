@@ -17,14 +17,14 @@ relative paths inside the current directory.
 ## Installation
 
 Install a validated candidate as a local tool from the feed that holds it, such as the folder that
-`sharedkernel-ci stage-candidate` stages a candidate in. Add the feed to `NuGet.Config` and map
+`dotnet ci stage-candidate` stages a candidate in. Add the feed to `NuGet.Config` and map
 `PandaBear.SharedKernel.*` to it. Map every other package, for example `*`, to the existing source, because
 a package without a mapping does not restore once source mapping is enabled. With the SDK pinned in
 `global.json`, `dotnet tool install` rejects `--add-source` when package source mapping is enabled.
 
 ```text
 dotnet tool install PandaBear.SharedKernel.Documentation.Tool --version <validated-candidate-version>
-dotnet tool run sharedkernel-docs -- verify --config <path>
+dotnet tool run docs -- verify --config <path>
 ```
 
 In this repository, run the project without installing it:
@@ -38,9 +38,9 @@ dotnet run --project tools/SharedKernel.Documentation.Tool -c Release -- verify 
 ## Usage
 
 ```text
-sharedkernel-docs generate --config <path>
-sharedkernel-docs verify --config <path>
-sharedkernel-docs check --config <path>
+dotnet docs generate --config <path>
+dotnet docs verify --config <path>
+dotnet docs check --config <path>
 ```
 
 | Command | Behavior |

@@ -6,7 +6,7 @@ namespace PandaBear.Testing.Tests;
 /// <summary>Tests the browser diagnostics, the diagnosing interactive wait, the retrying fill and the failure artifacts in Chromium; they skip when the browser is not installed.</summary>
 public sealed class PlaywrightDiagnosticsTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
+    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public async Task Diagnostics_describe_the_address_the_console_and_the_HTML()

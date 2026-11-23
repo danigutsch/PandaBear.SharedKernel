@@ -1,7 +1,7 @@
 namespace PandaBear.VaultManager.Tool.Cli;
 
 /// <summary>
-/// Exit codes of the <c>sharedkernel-vault</c> commands. System.CommandLine also exits with
+/// Exit codes of the <c>vault</c> commands. System.CommandLine also exits with
 /// <see cref="UnexpectedError"/> for an invalid command line and for a canceled command.
 /// </summary>
 internal static class ExitCodes

@@ -168,7 +168,7 @@ jobs:
         id: version
         env:
           VERSION_RUN: ${{ github.run_number }}.${{ github.run_attempt }}
-        run: dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- calculate-release --version-kind prerelease --run-number "$VERSION_RUN" --github-output "$GITHUB_OUTPUT" --github-summary "$GITHUB_STEP_SUMMARY"
+        run: dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- calculate --version-kind prerelease --run-number "$VERSION_RUN" --github-output "$GITHUB_OUTPUT" --github-summary "$GITHUB_STEP_SUMMARY"
       - name: Create immutable package candidate
         env:
           PACKAGE_VERSION: ${{ steps.version.outputs.package_version }}

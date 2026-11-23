@@ -754,7 +754,7 @@ internal sealed class ReviewWindow : Window
         string state = pending.IsEmpty
             ? "nothing needs a decision"
             : string.Create(CultureInfo.InvariantCulture, $"{pending.Fields.Count} field(s) and {pending.FindingCount} finding(s) need a decision");
-        return "sharedkernel-vault review: " + state + (session.IsDirty ? ", decisions not saved" : string.Empty);
+        return "vault review: " + state + (session.IsDirty ? ", decisions not saved" : string.Empty);
     }
 
     private static string Describe(ReviewGroup group)

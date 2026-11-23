@@ -22,14 +22,14 @@ Install a validated candidate as a local tool from a trusted feed. Add the feed 
 dotnet tool install PandaBear.SharedKernel.Packages.Tool --version <validated-candidate-version>
 ```
 
-A local tool runs as `dotnet tool run sharedkernel-packages -- plan`.
+A local tool runs as `dotnet tool run syspackages -- plan`.
 
 ## Usage
 
 ```text
-sharedkernel-packages plan
-sharedkernel-packages plan --root ../machine-config
-sharedkernel-packages --help
+dotnet syspackages plan
+dotnet syspackages plan --root ../machine-config
+dotnet syspackages --help
 ```
 
 `updates` judges each declared, installed, unpinned cargo and npm package against its registry's newest stable version,
@@ -37,9 +37,9 @@ advisories from [osv.dev](https://osv.dev), and a minimum release age. It is the
 only with `--allow-network`:
 
 ```text
-sharedkernel-packages updates --allow-network
-sharedkernel-packages updates --allow-network --minimum-release-age-days 14
-sharedkernel-packages updates --allow-network --root ../machine-config
+dotnet syspackages updates --allow-network
+dotnet syspackages updates --allow-network --minimum-release-age-days 14
+dotnet syspackages updates --allow-network --root ../machine-config
 ```
 
 It sends the package names and versions to `api.osv.dev`, `crates.io` and `registry.npmjs.org` over HTTPS. Without

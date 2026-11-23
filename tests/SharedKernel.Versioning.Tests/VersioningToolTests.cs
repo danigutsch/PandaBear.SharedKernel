@@ -49,7 +49,7 @@ public static class VersioningToolTests
 
         // Assert
         properties["PackAsTool"].ShouldBe("true");
-        properties["ToolCommandName"].ShouldBe("sharedkernel-version");
+        properties["ToolCommandName"].ShouldBe("release");
         properties["PackageId"].ShouldBe("PandaBear.SharedKernel.Versioning.Tool");
         properties["PackageReadmeFile"].ShouldBe("README.md");
         readmeItem.ShouldNotBeNull();
@@ -557,7 +557,7 @@ public static class VersioningToolTests
 
         string[] args =
         [
-            "pack-sharedkernel",
+            "pack",
             "--repo-root",
             temporaryDirectory.Root,
             "--version",
@@ -580,14 +580,14 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static async Task Pack_sharedkernel_passes_version_options_to_dotnet_pack()
+    public static async Task Pack_passes_version_options_to_dotnet_pack()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         await temporaryDirectory.WriteUnpackableSharedKernelProject(TestContext.Current.CancellationToken);
         string[] args =
         [
-            "pack-sharedkernel",
+            "pack",
             "--repo-root",
             temporaryDirectory.Root,
             "--version",
@@ -678,7 +678,7 @@ public static class VersioningToolTests
     [InlineData("refactor(api)!: rename package", "prerelease", "2.0.0-alpha.7", "major")]
     [InlineData("fix: correct behavior", "prerelease", "1.2.4-alpha.7", "patch")]
     [InlineData("feat: add public capability", "stable", "1.3.0", "minor")]
-    public static async Task Runs_calculate_release_command_from_git_history(
+    public static async Task Runs_calculate_command_from_git_history(
         string message,
         string versionKind,
         string expectedVersion,
@@ -697,7 +697,7 @@ public static class VersioningToolTests
         Directory.CreateDirectory(temporaryDirectory.OutputDirectory);
         string[] args =
         [
-            "calculate-release",
+            "calculate",
             "--repo-root",
             repository.RootPath,
             "--version-kind",
@@ -748,7 +748,7 @@ public static class VersioningToolTests
 
         string[] args =
         [
-            "calculate-release",
+            "calculate",
             "--repo-root",
             repository.RootPath,
             "--version-kind",
@@ -780,7 +780,7 @@ public static class VersioningToolTests
         await repository.Commit("file.txt", "base", "feat!: initial capability", TestContext.Current.CancellationToken);
         string[] args =
         [
-            "calculate-release",
+            "calculate",
             "--repo-root",
             repository.RootPath,
             "--version-kind",
@@ -804,7 +804,7 @@ public static class VersioningToolTests
     {
         // Act
         var result = await VersioningCommandLineRunner.Invoke(
-            ["calculate-release", "--version-kind", "prerelease"],
+            ["calculate", "--version-kind", "prerelease"],
             TestContext.Current.CancellationToken);
 
         // Assert

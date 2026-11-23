@@ -2,12 +2,12 @@
 
 [![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
 
-Packages remain `<target>-alpha.<run>.<attempt>` previews; stable packages, tags, and releases require separate authorization. `calculate-release --version-kind prerelease` requires `--run-number`. Without a reachable `v*` tag the target is `0.1.0`. When the latest reachable `v*` tag is a prerelease, its version core is the fixed target and only the prerelease identifier advances; after a stable tag, the Conventional Commit impact selects the next target on each run until a prerelease tag fixes it. `--version-kind stable` releases the same target core. Commit impact is always reported. The generic `compute` command applies normal SemVer bumps.
+Packages remain `<target>-alpha.<run>.<attempt>` previews; stable packages, tags, and releases require separate authorization. `calculate --version-kind prerelease` requires `--run-number`. Without a reachable `v*` tag the target is `0.1.0`. When the latest reachable `v*` tag is a prerelease, its version core is the fixed target and only the prerelease identifier advances; after a stable tag, the Conventional Commit impact selects the next target on each run until a prerelease tag fixes it. `--version-kind stable` releases the same target core. Commit impact is always reported. The generic `compute` command applies normal SemVer bumps.
 
-`sharedkernel-version` calculates SharedKernel versions from Conventional Commits, checks package APIs and
+`dotnet release` calculates SharedKernel versions from Conventional Commits, checks package APIs and
 metadata, packs SharedKernel, creates and consumes hashed package candidates, and verifies a consumer repository
 against a candidate. A consumer stages a pinned candidate
-in its local feed with `sharedkernel-ci stage-candidate` from the
+in its local feed with `dotnet ci stage-candidate` from the
 [CI tool](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.CI.Tool/README.md).
 The tool is a thin command line over the release engine in
 [`PandaBear.SharedKernel.Versioning`](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Versioning/README.md),
@@ -54,46 +54,46 @@ before tool options, because `dotnet tool run` answers `--help` itself:
 
 ```text
 dotnet tool install PandaBear.SharedKernel.Versioning.Tool --version <validated-candidate-version>
-dotnet tool run sharedkernel-version -- --help
+dotnet tool run release -- --help
 ```
 
 ## Usage
 
 ```text
-sharedkernel-version classify-commit <message>...
-sharedkernel-version compute --base <version> [--prerelease <label>] [--sha <sha>] < messages
-sharedkernel-version calculate-release [--version-kind prerelease|stable] [--run-number <number>] [--sha <sha>] [--github-output <path>] [--github-summary <path>]
-sharedkernel-version check-public-api-baselines
-sharedkernel-version validate-package-metadata
-sharedkernel-version verify-lock-coverage
-sharedkernel-version has-breaking-change-marker <git-range>
-sharedkernel-version check-api-compatibility [--version <version>] [--release-phase alpha|beta|rc|stable] [--baseline-version <version>] [--breaking-marker] [--output-root <path>]
-sharedkernel-version pack-sharedkernel [--version <version>] [--assembly-version <version>] [--file-version <version>] [--informational-version <version>] [--output-root <path>] [--skip-restore-check]
-sharedkernel-version pack-dev --feed <path> [--version <version>] [--repo-root <path>] [<project>...]
-sharedkernel-version prepare-release --version <version> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes
-sharedkernel-version create-candidate [--version <version>] [--baseline-version <version>]
-sharedkernel-version validate-candidate [--version <version>] [--baseline-version <version>] [--aot] [--framework <tfm>]...
-sharedkernel-version consume-candidate (--candidate <path> | --candidate-directory <path>) [--output <path>] [--aot] [--framework <tfm>]...
-sharedkernel-version consume-packages --feed <path> --version <version> [--aot]
-sharedkernel-version merge-evidence --candidate <path> --evidence <path>... [--output <path>]
-sharedkernel-version verify-consumer --candidate <file> [--solution <file>] [--output <file>] -- <command>...
+dotnet release classify-commit <message>...
+dotnet release compute --base <version> [--prerelease <label>] [--sha <sha>] < messages
+dotnet release calculate [--version-kind prerelease|stable] [--run-number <number>] [--sha <sha>] [--github-output <path>] [--github-summary <path>]
+dotnet release check-public-api-baselines
+dotnet release validate-package-metadata
+dotnet release verify-lock-coverage
+dotnet release has-breaking-change-marker <git-range>
+dotnet release check-api-compatibility [--version <version>] [--release-phase alpha|beta|rc|stable] [--baseline-version <version>] [--breaking-marker] [--output-root <path>]
+dotnet release pack [--version <version>] [--assembly-version <version>] [--file-version <version>] [--informational-version <version>] [--output-root <path>] [--skip-restore-check]
+dotnet release pack-dev --feed <path> [--version <version>] [--repo-root <path>] [<project>...]
+dotnet release prepare-release --version <version> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes
+dotnet release create-candidate [--version <version>] [--baseline-version <version>]
+dotnet release validate-candidate [--version <version>] [--baseline-version <version>] [--aot] [--framework <tfm>]...
+dotnet release consume-candidate (--candidate <path> | --candidate-directory <path>) [--output <path>] [--aot] [--framework <tfm>]...
+dotnet release consume-packages --feed <path> --version <version> [--aot]
+dotnet release merge-evidence --candidate <path> --evidence <path>... [--output <path>]
+dotnet release verify-consumer --candidate <file> [--solution <file>] [--output <file>] -- <command>...
 ```
 
 Every command except `classify-commit` and `compute` accepts `--repo-root <path>`, which defaults to the current
-directory. `sharedkernel-version <command> --help` describes each option. A command line that starts with
+directory. `dotnet release <command> --help` describes each option. A command line that starts with
 `[diagram]` prints how it parses without running the command, and exits 1 when it does not parse.
 
 ### Versions
 
 ```text
-sharedkernel-version classify-commit "feat(versioning): emit JSON output"
-git log --format=%B%x00 v0.1.0..HEAD | sharedkernel-version compute --base 0.1.0 --prerelease alpha.1 --sha abc123
-sharedkernel-version calculate-release --version-kind stable --sha abc123
+dotnet release classify-commit "feat(versioning): emit JSON output"
+git log --format=%B%x00 v0.1.0..HEAD | dotnet release compute --base 0.1.0 --prerelease alpha.1 --sha abc123
+dotnet release calculate --version-kind stable --sha abc123
 ```
 
 `classify-commit` prints `major`, `minor`, `patch`, or `none`. `compute` reads null- or newline-separated commit
 messages from standard input; use null separators for raw `git log` output so multiline bodies stay together.
-Messages that are not Conventional Commits, such as merge commits, are ignored. `calculate-release` reads the
+Messages that are not Conventional Commits, such as merge commits, are ignored. `calculate` reads the
 messages since the latest `v*` tag, or uses base `0.1.0` without one, and labels prerelease versions `alpha.<run-number>`
 when `--run-number` is set.
 
@@ -105,11 +105,11 @@ and `informationalVersion`. `--github-output` appends `base_version`, `source_ta
 ### Checks
 
 ```text
-sharedkernel-version check-public-api-baselines
-sharedkernel-version validate-package-metadata
-sharedkernel-version verify-lock-coverage
-sharedkernel-version has-breaking-change-marker origin/main..HEAD
-sharedkernel-version check-api-compatibility --version 0.2.0-beta.1 --release-phase beta --breaking-marker --baseline-version 0.1.0
+dotnet release check-public-api-baselines
+dotnet release validate-package-metadata
+dotnet release verify-lock-coverage
+dotnet release has-breaking-change-marker origin/main..HEAD
+dotnet release check-api-compatibility --version 0.2.0-beta.1 --release-phase beta --breaking-marker --baseline-version 0.1.0
 ```
 
 `verify-lock-coverage` is the lock coverage drift guard. The dependency snapshot reads committed `packages.lock.json` files only,
@@ -133,11 +133,11 @@ version is `0.1.0-alpha.local.<UTC timestamp>`.
 ### Packages and releases
 
 ```text
-sharedkernel-version pack-sharedkernel --version 0.2.0-alpha.1
-sharedkernel-version prepare-release --version 0.2.0 --package-dir artifacts/packages/local/0.2.0 < changes.txt
+dotnet release pack --version 0.2.0-alpha.1
+dotnet release prepare-release --version 0.2.0 --package-dir artifacts/packages/local/0.2.0 < changes.txt
 ```
 
-`pack-sharedkernel` packs the `src/SharedKernel` projects, the consumer-support test projects, and the packaged
+`pack` packs the `src/SharedKernel` projects, the consumer-support test projects, and the packaged
 tools into `<output-root>/<version>`, which defaults to `artifacts/packages/local/<version>`. It refuses an existing
 version and, unless `--skip-restore-check` is set, restores the packages and installs the tools from that folder. That
 restore treats warnings as errors and audits like the sample projects of `consume-candidate`, and the packages that the
@@ -154,7 +154,7 @@ a project resolves a package version that no committed lock file resolves, becau
 ### Local development packs
 
 ```text
-sharedkernel-version pack-dev --feed ../app/.local/sharedkernel-feed SharedKernel.Results
+dotnet release pack-dev --feed ../app/.local/sharedkernel-feed SharedKernel.Results
 ```
 
 `pack-dev` is the fast loop for a consumer that develops against uncommitted library changes. It packs the named projects
@@ -169,10 +169,10 @@ checks and records no manifest, so its output is never a candidate; use `create-
 ### Candidates
 
 ```text
-sharedkernel-version validate-candidate --aot
-sharedkernel-version consume-candidate --candidate-directory artifacts/candidate --aot
-sharedkernel-version consume-candidate --candidate-directory artifacts/candidate --framework net10.0 --framework net11.0
-sharedkernel-version consume-packages --feed artifacts/api-compat/packages/0.2.0-alpha.1 --version 0.2.0-alpha.1
+dotnet release validate-candidate --aot
+dotnet release consume-candidate --candidate-directory artifacts/candidate --aot
+dotnet release consume-candidate --candidate-directory artifacts/candidate --framework net10.0 --framework net11.0
+dotnet release consume-packages --feed artifacts/api-compat/packages/0.2.0-alpha.1 --version 0.2.0-alpha.1
 ```
 
 `create-candidate` requires a clean committed checkout. It runs `check-api-compatibility` in the `beta` phase and
@@ -223,7 +223,7 @@ consumer's committed pin. Each evidence file must carry the candidate's `library
 fields stay as they are, and it never lowers a recorded result.
 
 ```text
-sharedkernel-version verify-consumer --candidate artifacts/candidate/candidate.json -- dotnet test --solution App.slnx -c Release
+dotnet release verify-consumer --candidate artifacts/candidate/candidate.json -- dotnet test --solution App.slnx -c Release
 ```
 
 `verify-consumer` runs in a consumer repository. Relative paths resolve from the current directory. It verifies the
@@ -291,7 +291,7 @@ has observed Ctrl+C or SIGTERM counts as the cancellation.
 
 ## Packaging and AOT
 
-`PackAsTool=true`, `ToolCommandName=sharedkernel-version`, and `PackageReadmeFile=README.md` define the tool package.
+`PackAsTool=true`, `ToolCommandName=release`, and `PackageReadmeFile=README.md` define the tool package.
 The tool is analyzer-clean with `IsAotCompatible=true` and ships as a framework-dependent tool, not a RID-specific
 native binary. Repository check for a native Linux x64 binary:
 

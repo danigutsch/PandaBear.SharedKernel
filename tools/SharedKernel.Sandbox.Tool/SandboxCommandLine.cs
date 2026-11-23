@@ -3,7 +3,7 @@ using PandaBear.InputNormalization;
 
 namespace PandaBear.Sandbox.Tool;
 
-/// <summary>Builds the <c>sharedkernel-sandbox</c> command tree.</summary>
+/// <summary>Builds the <c>sandbox</c> command tree.</summary>
 internal static class SandboxCommandLine
 {
     private const int FailureExitCode = 2;

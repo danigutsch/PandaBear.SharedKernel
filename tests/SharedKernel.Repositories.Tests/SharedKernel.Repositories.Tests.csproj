@@ -30,7 +30,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
     </ItemGroup>
 
-    <!-- Fixtures shared with the command-line tests of sharedkernel-repo. -->
+    <!-- Fixtures shared with the command-line tests of the repo tool. -->
     <ItemGroup>
         <Compile Include="..\SharedKernel.RepoConfig.Tests\TemporaryRepoConfigWorkspace.cs" Link="Shared\TemporaryRepoConfigWorkspace.cs" />
         <Compile Include="..\SharedKernel.RepoConfig.Tests\TemporaryRepositoryDirectory.cs" Link="Shared\TemporaryRepositoryDirectory.cs" />

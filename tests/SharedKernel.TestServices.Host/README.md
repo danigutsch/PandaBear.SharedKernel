@@ -2,7 +2,7 @@
 
 The one process that runs every service the test assemblies of this repository share, once per CI run; not a package.
 
-`sharedkernel-ci run --slice services` starts it as the slice's `service` (see `.config/sharedkernel-ci.json`). It composes each
+`dotnet ci run --slice services` starts it as the slice's `service` (see `.config/sharedkernel-ci.json`). It composes each
 service with the helper that the borrowing fixtures use, so the host and the fixtures cannot drift apart:
 
 - the PostgreSQL server `postgres`, from `SharedKernel.Npgsql.Testing`;

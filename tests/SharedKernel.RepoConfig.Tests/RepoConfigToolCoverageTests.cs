@@ -180,7 +180,7 @@ public sealed class RepoConfigToolCoverageTests
         errorText.ShouldContain("--limit must be a positive whole number: none", StringComparison.Ordinal);
         errorText.ShouldContain("--limit must be a positive whole number: 0", StringComparison.Ordinal);
         errorText.ShouldContain("get next-priority does not take a value; found '--unknown'.", StringComparison.Ordinal);
-        errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
+        errorText.ShouldNotContain("repo:", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -266,7 +266,7 @@ public sealed class RepoConfigToolCoverageTests
         // Assert
         exitCode.ShouldBe(1);
         outputText.ShouldBe(string.Empty);
-        errorText.ShouldBe("sharedkernel-repo: GitHub sync request failed.\n");
+        errorText.ShouldBe("repo: GitHub sync request failed.\n");
         errorText.ShouldNotContain("ghp_transport_token", StringComparison.Ordinal);
     }
 
@@ -295,7 +295,7 @@ public sealed class RepoConfigToolCoverageTests
         // Assert
         exitCode.ShouldBe(1);
         outputText.ShouldBe(string.Empty);
-        errorText.ShouldBe("sharedkernel-repo: GitHub sync timed out after 30 seconds.\n");
+        errorText.ShouldBe("repo: GitHub sync timed out after 30 seconds.\n");
     }
 
     [Fact]

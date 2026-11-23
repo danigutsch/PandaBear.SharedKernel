@@ -21,13 +21,13 @@ SDK like the rest of the repository (root `Directory.Build.targets`). Tools keep
 `RollForward` `Major` (`LatestMajor` for the code-fix runner, which loads the SDK's MSBuild), so they also run where only
 a later runtime is installed.
 
-The setting is the only place that names a .NET framework. `sharedkernel-repo verify-target-frameworks` enforces it:
+The setting is the only place that names a .NET framework. `dotnet repo verify-target-frameworks` enforces it:
 
 - The `targetFrameworks` policy in `.config/sharedkernel-repo.json` names `"frameworkProperties": "Directory.Build.props"`, and its rules say
   `"frameworks": ["$(SharedKernelTargetFramework)"]` instead of a moniker.
 - It reports a .NET framework name anywhere else in a tracked project, props, targets, nuspec, workflow, action, or
   script file, or in the policy file.
-- `sharedkernel-version` consumes packed candidates as the repository's framework unless `--framework` is given.
+- `dotnet release` consumes packed candidates as the repository's framework unless `--framework` is given.
 - CI installs the SDK from `global.json`. The shared `setup-dotnet-tool` action adds the runtime of the setting's
   framework only when it is older than the SDK.
 - The generator package's `lib/` folder and dependency group come from the setting, and tests that describe this
@@ -40,7 +40,7 @@ The setting is the only place that names a .NET framework. `sharedkernel-repo ve
 3. Move the packages that ship one line per .NET version to the new line, except those blocked by a dependency (see
    Packages).
 4. Run `dotnet restore SharedKernel.slnx --force-evaluate` to regenerate the lock files, then build, test, and run
-   `sharedkernel-version validate-candidate --aot`.
+   `dotnet release validate-candidate --aot`.
 5. Fix what the new analyzers and runtime report (see What .NET 11 changed).
 6. Mark the change as breaking (`!` in the title and a `BREAKING CHANGE:` footer). Applications on the old version
    cannot take the new packages.
@@ -87,9 +87,9 @@ it build two versions again:
 
 | Tool | Multi-framework support |
 | --- | --- |
-| `sharedkernel-repo verify-target-frameworks` | Rules list several monikers or name a property with a `;` list (unique, ascending); checks lock files per framework, a `TargetFramework` that overrides `TargetFrameworks`, `RollForward`, the SDK, and `dotnet run --project` calls that need `--framework` |
-| `sharedkernel-version` | A repeated `--framework` consumes the packages once per framework, each with the central package versions of that framework, and records `<platform>PackageConsumptionFrameworks` and `<platform>NativeAotFrameworks` |
-| `sharedkernel-ci install-playwright` | Uses the installer of the first framework folder of a multi-framework test project |
+| `dotnet repo verify-target-frameworks` | Rules list several monikers or name a property with a `;` list (unique, ascending); checks lock files per framework, a `TargetFramework` that overrides `TargetFrameworks`, `RollForward`, the SDK, and `dotnet run --project` calls that need `--framework` |
+| `dotnet release` | A repeated `--framework` consumes the packages once per framework, each with the central package versions of that framework, and records `<platform>PackageConsumptionFrameworks` and `<platform>NativeAotFrameworks` |
+| `dotnet ci install-playwright` | Uses the installer of the first framework folder of a multi-framework test project |
 | Governed-literal guard | Checks each framework's compiler-input manifest separately |
 
 A repository that builds several frameworks needs these patterns (*verified locally* in PR #396, which built
@@ -102,7 +102,7 @@ A repository that builds several frameworks needs these patterns (*verified loca
 - **Package versions:** the items in `Directory.Packages.props` hold the oldest framework's versions. Each newer
   framework gets
   `<ItemGroup Condition="'$(TargetFramework)' == '<tfm>'">` with `PackageVersion Update=` items for the packages that
-  ship one line per .NET version. `sharedkernel-version` reads only that condition shape.
+  ship one line per .NET version. `dotnet release` reads only that condition shape.
 - **Package validation:** set `EnablePackageValidation` for packages with several frameworks; without a baseline it runs
   the compatible-framework check (CP0002).
 - **Lock files:** one section per framework; changing frameworks needs a restore without `--locked-mode` (NU1004).

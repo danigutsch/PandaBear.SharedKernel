@@ -52,7 +52,7 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe("sharedkernel-repo: GitHub import is disabled in roadmap/config.json.\n");
+        error.ToString().ShouldBe("repo: GitHub import is disabled in roadmap/config.json.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -112,7 +112,7 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe("sharedkernel-repo: roadmap/config.json must define integrations.github.intake before GitHub import.\n");
+        error.ToString().ShouldBe("repo: roadmap/config.json must define integrations.github.intake before GitHub import.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -144,7 +144,7 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe($"sharedkernel-repo: {expectedError}\n");
+        error.ToString().ShouldBe($"repo: {expectedError}\n");
         handler.Requests.ShouldBeEmpty();
     }
 

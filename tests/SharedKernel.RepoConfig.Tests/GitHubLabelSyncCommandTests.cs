@@ -136,7 +136,7 @@ public sealed class GitHubLabelSyncCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe(string.Empty);
-        error.ShouldBe("sharedkernel-repo: --repository must name a GitHub repository as owner/name.\n");
+        error.ShouldBe("repo: --repository must name a GitHub repository as owner/name.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -152,7 +152,7 @@ public sealed class GitHubLabelSyncCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no labels section.\n");
+        error.ShouldBe("repo: .config/sharedkernel-repo.json has no labels section.\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -178,7 +178,7 @@ public sealed class GitHubLabelSyncCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ShouldBe($"sharedkernel-repo: .config/sharedkernel-repo.json: {expectedMessage}\n");
+        error.ShouldBe($"repo: .config/sharedkernel-repo.json: {expectedMessage}\n");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -194,7 +194,7 @@ public sealed class GitHubLabelSyncCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json: $.labels[0].description must be at most 100 characters without control characters.\n");
+        error.ShouldBe("repo: .config/sharedkernel-repo.json: $.labels[0].description must be at most 100 characters without control characters.\n");
     }
 
     [Theory]
@@ -212,7 +212,7 @@ public sealed class GitHubLabelSyncCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ShouldStartWith($"sharedkernel-repo: .config/sharedkernel-repo.json is not valid at {expectedPath} (line 1).", StringComparison.Ordinal);
+        error.ShouldStartWith($"repo: .config/sharedkernel-repo.json is not valid at {expectedPath} (line 1).", StringComparison.Ordinal);
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -236,7 +236,7 @@ public sealed class GitHubLabelSyncCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ToString().ShouldBe("sharedkernel-repo: Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub label sync.\n");
+        error.ToString().ShouldBe("repo: Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub label sync.\n");
     }
 
     [Theory]
@@ -257,7 +257,7 @@ public sealed class GitHubLabelSyncCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe(string.Empty);
-        error.ShouldBe($"sharedkernel-repo: {expectedMessage}\n");
+        error.ShouldBe($"repo: {expectedMessage}\n");
         handler.Requests.ShouldHaveSingleItem();
     }
 
@@ -277,7 +277,7 @@ public sealed class GitHubLabelSyncCommandTests
         // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe("Updated label type: epic.\n");
-        error.ShouldBe("sharedkernel-repo: GitHub label sync failed with HTTP 422 for label area: api. Rerun the sync after fixing the cause.\n");
+        error.ShouldBe("repo: GitHub label sync failed with HTTP 422 for label area: api. Rerun the sync after fixing the cause.\n");
     }
 
     [Fact]
@@ -296,6 +296,6 @@ public sealed class GitHubLabelSyncCommandTests
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ShouldBe("sharedkernel-repo: GitHub label sync response exceeded the allowed size.\n");
+        error.ShouldBe("repo: GitHub label sync response exceeded the allowed size.\n");
     }
 }

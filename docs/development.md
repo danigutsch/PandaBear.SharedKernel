@@ -38,7 +38,7 @@ The assemblies stay separate. Each fixture starts nothing until a test needs its
 
 CI shares one instance of each instead. `.config/sharedkernel-ci.json` lists the four projects in the `services` slice and
 gives it a `service`: the project `tests/SharedKernel.TestServices.Host`, which composes every service with its helper.
-`sharedkernel-ci run --slice services` starts that host after the build. The host starts the PostgreSQL server, then Umami
+`dotnet ci run --slice services` starts that host after the build. The host starts the PostgreSQL server, then Umami
 with its database on that server and the website `site`, which the website resource sets up in Umami through `AddWebsite`.
 It writes the file that `SHAREDKERNEL_TESTING_SERVICES_READY_FILE` names, one `NAME=value` line for each variable that the
 service's `valueVariables` lists, and the tool hands each value to the test run alone through its variable. After the
@@ -129,8 +129,8 @@ Ordinary PR title/body edits run only the independent metadata workflow. Add `ci
 restart source validation; remove and reapply for another attempt using a human or authorized app
 account. Unrelated labels use separate concurrency groups and cannot cancel validation.
 
-The source workflow selects test projects once with `sharedkernel-ci select`, as `.config/sharedkernel-ci.json`
-configures, then overlaps one `validate` job per test slice with selected test projects, which runs `sharedkernel-ci run
+The source workflow selects test projects once with `dotnet ci select`, as `.config/sharedkernel-ci.json`
+configures, then overlaps one `validate` job per test slice with selected test projects, which runs `dotnet ci run
 --slice <name>`, source builds of the CI and RepoConfig tools from a `src` and `tools` cone checkout on Linux and Windows, and candidate
 creation. A change to a project selects the test projects that depend on it; a change to a repository-wide build input
 (`.config`, `.github`, `*.props`, `*.targets`, `*.slnx`, analyzer configuration, `global.json`, `NuGet.Config`, the

@@ -112,6 +112,6 @@ public sealed class VerifyLineEndingsCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: Git index inspection failed.\n");
+        result.StandardError.ShouldBe("repo: Git index inspection failed.\n");
     }
 }

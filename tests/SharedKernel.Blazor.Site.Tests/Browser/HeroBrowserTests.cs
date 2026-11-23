@@ -5,7 +5,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// <summary>Tests the hero and the header brand in Chromium; they skip when the browser is not installed.</summary>
 public sealed class HeroBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
+    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
 
     [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     [InlineData(HeroLayout.Split, false, 375)]

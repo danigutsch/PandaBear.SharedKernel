@@ -188,7 +188,7 @@ public sealed class RepoConfigCommandLineTests
     {
         // Arrange
         var rootCommand = RepoConfigCommandLine.Create(new RepoConfigToolEnvironment(Path.GetTempPath()));
-        var args = DocumentedCommandLines.Arguments("sharedkernel-repo " + commandLine);
+        var args = DocumentedCommandLines.Arguments("dotnet repo " + commandLine);
 
         // Act
         var parseResult = rootCommand.Parse(args);
@@ -338,7 +338,7 @@ public sealed class RepoConfigCommandLineTests
         // Assert
         exitCode.ShouldBe(1);
         errorText.ShouldContain("Argument 'bogus' not recognized.", StringComparison.Ordinal);
-        errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
+        errorText.ShouldNotContain("repo:", StringComparison.Ordinal);
     }
 
     [Theory]
@@ -362,7 +362,7 @@ public sealed class RepoConfigCommandLineTests
         // Assert
         exitCode.ShouldBe(1);
         errorText.ShouldContain(expectedError, StringComparison.Ordinal);
-        errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
+        errorText.ShouldNotContain("repo:", StringComparison.Ordinal);
     }
 
     [Fact]

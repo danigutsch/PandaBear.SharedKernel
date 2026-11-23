@@ -2,7 +2,7 @@
 
 Date: 2026-10-28. Status: accepted.
 
-Repositories on GitHub and on self-hosted forges need the same baseline files: `.gitattributes`, `.editorconfig`, `.gitignore`, a README skeleton, `CODEOWNERS`, issue and pull request templates, and CI workflow wrappers. `sharedkernel-repo baseline verify` reports drift from the configured baseline and `baseline apply` previews or writes it. The engine stays generic: the consuming repository supplies every policy value through `.config/sharedkernel-repo.json`.
+Repositories on GitHub and on self-hosted forges need the same baseline files: `.gitattributes`, `.editorconfig`, `.gitignore`, a README skeleton, `CODEOWNERS`, issue and pull request templates, and CI workflow wrappers. `dotnet repo baseline verify` reports drift from the configured baseline and `baseline apply` previews or writes it. The engine stays generic: the consuming repository supplies every policy value through `.config/sharedkernel-repo.json`.
 
 ## Where the content comes from
 

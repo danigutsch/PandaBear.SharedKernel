@@ -1,6 +1,6 @@
 ---
 name: dotnet-multi-targeting
-description: Use when moving the repository to another .NET version, changing the global.json SDK or SharedKernelTargetFramework, when verify-target-frameworks reports a framework name outside Directory.Build.props, when a consuming repository must build more than one .NET version (TargetFrameworks, per-framework package versions, sharedkernel-version --framework), or for NETSDK1045, NU1004, NU1510, CP0002, CA1307 on char overloads, or "Your project targets multiple frameworks" errors.
+description: Use when moving the repository to another .NET version, changing the global.json SDK or SharedKernelTargetFramework, when verify-target-frameworks reports a framework name outside Directory.Build.props, when a consuming repository must build more than one .NET version (TargetFrameworks, per-framework package versions, dotnet release --framework), or for NETSDK1045, NU1004, NU1510, CP0002, CA1307 on char overloads, or "Your project targets multiple frameworks" errors.
 license: See repository LICENSE.txt
 ---
 
@@ -32,9 +32,9 @@ A change that moves the version contains each of these, or says why one does not
 7. **Release**: `!` in the title and a `BREAKING CHANGE:` footer; applications on the old version cannot take the
    packages.
 8. **Evidence**:
-   - `sharedkernel-repo verify-target-frameworks`
+   - `dotnet repo verify-target-frameworks`
    - restore `--locked-mode`, build, and `dotnet test --solution SharedKernel.slnx`
-   - `sharedkernel-version validate-candidate --aot`, which consumes the repository's framework by default
+   - `dotnet release validate-candidate --aot`, which consumes the repository's framework by default
 
    Report what ran on which runtime.
 
@@ -50,7 +50,7 @@ Use the tools' multi-framework support rather than new scripts:
 - **Package versions**: items hold the oldest framework's versions; each newer framework gets
   `<ItemGroup Condition="'$(TargetFramework)' == '<tfm>'">` with `PackageVersion Update=` items.
 - **Package validation**: `EnablePackageValidation`, whose compatible-framework check (CP0002) needs no baseline.
-- **Consumption**: `sharedkernel-version … --framework <a> --framework <b>`, one consumption per framework.
+- **Consumption**: `dotnet release … --framework <a> --framework <b>`, one consumption per framework.
 - **CI**: install the older runtimes beside the SDK. Every `dotnet run --project` of a multi-framework executable
   passes `--framework`.
 

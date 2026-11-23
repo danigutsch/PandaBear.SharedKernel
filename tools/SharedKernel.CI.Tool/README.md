@@ -4,7 +4,7 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-`sharedkernel-ci` selects the test projects affected by a change, as the repository's `.config/sharedkernel-ci.json`
+`dotnet ci` selects the test projects affected by a change, as the repository's `.config/sharedkernel-ci.json`
 configures, writes a solution filter for each CI test slice, runs the selected test projects of one or more slices
 through one solution filter with the slices' services running around the tests, checks the changed projects without a Unix
 domain socket for a sandbox that refuses them, generates OpenAPI documents, installs
@@ -36,14 +36,14 @@ source, as the root's `NuGet.Config` names it, that serves the `dotnet-stryker` 
 ## Installation
 
 Install a validated candidate as a local tool from the feed that holds it, such as the folder that
-`sharedkernel-ci stage-candidate` stages a candidate in. Add the feed to `NuGet.Config` and map
+`dotnet ci stage-candidate` stages a candidate in. Add the feed to `NuGet.Config` and map
 `PandaBear.SharedKernel.*` to it. Map every other package, for example `*`, to the existing source, because
 a package without a mapping does not restore once source mapping is enabled. With the SDK pinned in
 `global.json`, `dotnet tool install` rejects `--add-source` when package source mapping is enabled.
 
 ```text
 dotnet tool install PandaBear.SharedKernel.CI.Tool --version <validated-candidate-version>
-dotnet tool run sharedkernel-ci -- verify-commit-message --file <commit-message-file>
+dotnet tool run ci -- verify-commit-message --file <commit-message-file>
 ```
 
 .NET tools run in full trust. Install only from trusted manifests and package sources.
@@ -237,7 +237,7 @@ are deleted. Selection reasons go to standard output.
 ### run
 
 ```text
-dotnet tool run sharedkernel-ci -- run --slice <name> --coverage --install-playwright --playwright-dependencies --github-summary "$GITHUB_STEP_SUMMARY"
+dotnet tool run ci -- run --slice <name> --coverage --install-playwright --playwright-dependencies --github-summary "$GITHUB_STEP_SUMMARY"
 ```
 
 Runs the selected test projects of the plan in `--selection` (default `TestResults/selection`). Each `--slice` names a
@@ -327,8 +327,8 @@ A slice without a `service` runs as before.
 ### local-check
 
 ```text
-dotnet tool run sharedkernel-ci -- local-check --base origin/main
-dotnet tool run sharedkernel-ci -- local-check --base origin/main --strict -- --filter-not-trait Category=Slow
+dotnet tool run ci -- local-check --base origin/main
+dotnet tool run ci -- local-check --base origin/main --strict -- --filter-not-trait Category=Slow
 ```
 
 A check for a sandbox that refuses to create Unix domain sockets, where `dotnet test` and project-mode `dotnet format`
@@ -359,7 +359,7 @@ The lanes run in order, each reported as `passed`, `FAILED`, or `SKIPPED` with i
 
 `--configuration` defaults to `Debug`. `--timeout-minutes` (default 30, 1 to 1440) bounds each child process: past it the
 process tree is killed and the lane fails with `timed out`. A child process that prints `SocketException (13)` or `(1)`, or
-`Permission denied` on a line with the word socket or pipe, is reported as `The sandbox blocks Unix domain sockets` with a pointer to `sharedkernel-sandbox doctor`,
+`Permission denied` on a line with the word socket or pipe, is reported as `The sandbox blocks Unix domain sockets` with a pointer to `dotnet sandbox doctor`,
 and is a failure, not a skip. A child process that cannot start, such as a missing `dotnet`, skips its lane with the
 reason. Child process output in the report is the last 20 lines, shortened and escaped.
 
@@ -375,8 +375,8 @@ commit, and when the change selects no project, so it cannot pass having checked
 ### openapi
 
 ```text
-sharedkernel-ci openapi generate [--target <name>]... [--root <path>]
-sharedkernel-ci openapi refresh [--target <name>]... [--root <path>]
+dotnet ci openapi generate [--target <name>]... [--root <path>]
+dotnet ci openapi refresh [--target <name>]... [--root <path>]
 ```
 
 Builds the `openApi` targets of the configuration, each named `--target` in order, or every target in configuration
@@ -392,7 +392,7 @@ not reach the build. Restore the projects first. A configuration without `openAp
 ### install-playwright
 
 ```text
-sharedkernel-ci install-playwright --project <path> [--browser <name>]... [--with-dependencies] [--only-shell] [--configuration <name>] [--root <path>]
+dotnet ci install-playwright --project <path> [--browser <name>]... [--with-dependencies] [--only-shell] [--configuration <name>] [--root <path>]
 ```
 
 Evaluates the project's `OutputPath` with `dotnet msbuild <project> -getProperty:OutputPath`, with
@@ -405,8 +405,8 @@ when the output has no `playwright.ps1`.
 ### coverage
 
 ```text
-dotnet tool run sharedkernel-ci -- coverage record-symbols
-dotnet tool run sharedkernel-ci -- coverage verify --report artifacts --base "$BASE_SHA" --symbols TestResults/symbol-evidence.json
+dotnet tool run ci -- coverage record-symbols
+dotnet tool run ci -- coverage verify --report artifacts --base "$BASE_SHA" --symbols TestResults/symbol-evidence.json
 ```
 
 `coverage record-symbols` runs after a Release build. It writes `HEAD` and the SHA-256 hash of every `*.pdb` in a
@@ -443,8 +443,8 @@ checkout), `base`, `configurationSha256` (the hash of `.config/sharedkernel-ci.j
 ### stage-candidate
 
 ```text
-dotnet tool run sharedkernel-ci -- stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed --repository danigutsch/PandaBear.SharedKernel
-dotnet tool run sharedkernel-ci -- stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed --feed <packages>
+dotnet tool run ci -- stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed --repository danigutsch/PandaBear.SharedKernel
+dotnet tool run ci -- stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed --feed <packages>
 ```
 
 Stages the packages of a pinned candidate in a local feed. `--pin` names the candidate manifest that the consumer
@@ -484,8 +484,8 @@ the command. Standard output reports how many packages were added and how many w
 ### prune-prereleases
 
 ```text
-dotnet tool run sharedkernel-ci -- prune-prereleases --repository danigutsch/PandaBear.SharedKernel --keep 3 --protect 0.1.0-alpha.530.1
-dotnet tool run sharedkernel-ci -- prune-prereleases --repository danigutsch/PandaBear.SharedKernel --keep 3 --protect 0.1.0-alpha.530.1 --force
+dotnet tool run ci -- prune-prereleases --repository danigutsch/PandaBear.SharedKernel --keep 3 --protect 0.1.0-alpha.530.1
+dotnet tool run ci -- prune-prereleases --repository danigutsch/PandaBear.SharedKernel --keep 3 --protect 0.1.0-alpha.530.1 --force
 ```
 
 Keeps the newest prereleases of a GitHub repository, or with `--forgejo <url>` of a repository on that Forgejo
@@ -520,7 +520,7 @@ Classifies the NuGet warnings in the saved output of a `dotnet restore` run:
 
 ```sh
 dotnet restore App.slnx --locked-mode 2>&1 | tee restore.log
-dotnet tool run sharedkernel-ci -- verify-restore-warnings --log restore.log --report restore-warnings.json
+dotnet tool run ci -- verify-restore-warnings --log restore.log --report restore-warnings.json
 ```
 
 - Vulnerability advisories of every severity block: `NU1901` (low), `NU1902` (moderate), `NU1903` (high), and
@@ -559,7 +559,7 @@ Renders the warning reports of several CI tools as one table of blocking, adviso
 the blocking findings. Run it after the verification steps, whatever their result, so a failed step still appears:
 
 ```sh
-dotnet tool run sharedkernel-ci -- warning-summary --report restore-warnings.json --report lint-warnings.json --summary "$GITHUB_STEP_SUMMARY"
+dotnet tool run ci -- warning-summary --report restore-warnings.json --report lint-warnings.json --summary "$GITHUB_STEP_SUMMARY"
 ```
 
 A report is one JSON object that any step can write; `verify-restore-warnings --report` writes the first producer:
@@ -584,7 +584,7 @@ Writes the warning report of a step that has no log to classify, such as a linte
 pass the step outcome (`steps.<id>.outcome`) through an environment variable:
 
 ```sh
-dotnet tool run sharedkernel-ci -- warning-report --tool "Markdown lint" --outcome "$MARKDOWN_OUTCOME" --report markdown-warnings.json
+dotnet tool run ci -- warning-report --tool "Markdown lint" --outcome "$MARKDOWN_OUTCOME" --report markdown-warnings.json
 ```
 
 - `--outcome success` reports `--advisory <count>` advisory findings (default 0); `--outcome failure` also reports one
@@ -637,13 +637,13 @@ from the top of the working tree, where `dotnet tool run` finds the tool manifes
 
 ```sh
 #!/bin/sh
-exec dotnet tool run sharedkernel-ci -- verify-commit-message --file "$1"
+exec dotnet tool run ci -- verify-commit-message --file "$1"
 ```
 
 ### run-mutation-tests
 
 ```text
-dotnet tool run sharedkernel-ci -- run-mutation-tests
+dotnet tool run ci -- run-mutation-tests
 ```
 
 Runs Stryker.NET with each `mutation.configFiles` entry, in order, and stops at the first run that fails. Every config

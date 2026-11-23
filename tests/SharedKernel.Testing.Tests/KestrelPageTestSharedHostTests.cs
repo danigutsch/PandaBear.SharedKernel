@@ -10,7 +10,7 @@ namespace PandaBear.Testing.Tests;
 /// <param name="host">The shared application.</param>
 public sealed class KestrelPageTestSharedHostTests(PingHostFixture host) : KestrelPageTest<Program>(host), IClassFixture<PingHostFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
+    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public void Services_and_address_come_from_the_shared_application()

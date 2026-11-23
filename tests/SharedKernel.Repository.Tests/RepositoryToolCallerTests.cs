@@ -82,7 +82,7 @@ public sealed class RepositoryToolCallerTests
                 "verify-commit-message --file $1",
                 "run-mutation-tests",
             ],
-            "Installation and the commit-msg hook run the installed sharedkernel-ci, and this repository runs the project.");
+            "Installation and the commit-msg hook run the installed ci tool, and this repository runs the project.");
     }
 
     [Theory]

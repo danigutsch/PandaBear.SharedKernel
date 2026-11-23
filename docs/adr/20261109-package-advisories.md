@@ -54,7 +54,7 @@ get `Allow`. This decision adds the sources and makes a failed lookup impossible
   still searched, so one unknown package does not hide advisories for the rest. It is a per-package "not checked", never an
   allow, and the tool exits 2 whenever anything was not checked (such a package or an unsupported manager). Any other failure
   (network, 5xx, malformed answer, a body that breaks off or is corrupt) still fails the whole call.
-- **Tool scope.** `sharedkernel-packages updates` supports cargo and npm. Other declared managers are reported as
+- **Tool scope.** `dotnet syspackages updates` supports cargo and npm. Other declared managers are reported as
   unsupported and skipped. `minimumReleaseAgeDays` is an optional, strict, additive field of version 1, so existing files
   stay valid; the age must come from the flag or the file, with no built-in default.
 

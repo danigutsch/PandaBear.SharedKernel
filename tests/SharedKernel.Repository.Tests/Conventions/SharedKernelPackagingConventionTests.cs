@@ -154,7 +154,7 @@ public static class SharedKernelPackagingConventionTests
     }
 
     [Fact]
-    public static void Ci_tool_is_packaged_as_the_sharedkernel_ci_dotnet_tool()
+    public static void Ci_tool_is_packaged_as_the_ci_dotnet_tool()
     {
         // Arrange
         var projectPath = Path.Combine(
@@ -175,9 +175,39 @@ public static class SharedKernelPackagingConventionTests
         violations.ShouldBe([]);
         isPackable.ShouldBe("true");
         packAsTool.ShouldBe("true");
-        commandName.ShouldBe("sharedkernel-ci", "Tool command names start with sharedkernel- and name the tool.");
+        commandName.ShouldBe("ci", "Tool command names name the tool without a repository prefix.");
         description.ShouldNotBe(string.Empty);
         aotCompatible.ShouldBe("true");
+    }
+
+    [Fact]
+    public static void Tool_command_names_are_unique_unprefixed_and_not_dotnet_sdk_commands()
+    {
+        // Arrange
+        var toolsDirectory = Path.Combine(SharedKernelPackagingConventionTestFiles.GetRepositoryRoot(), "tools");
+        string[] sdkCommands =
+        [
+            "add", "build", "build-server", "clean", "dev-certs", "dnx", "exec", "format", "fsi", "help", "list", "msbuild", "new",
+            "nuget", "pack", "package", "project", "publish", "reference", "remove", "restore", "run", "sdk", "sln", "solution",
+            "store", "test", "tool", "user-jwts", "user-secrets", "vstest", "watch", "workload",
+        ];
+
+        // Act
+        var commandNames = Directory.GetFiles(toolsDirectory, "*.csproj", SearchOption.AllDirectories)
+            .Where(static projectPath => SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "PackAsTool") == "true")
+            .Select(static projectPath => SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "ToolCommandName"))
+            .ToArray();
+        var violations = commandNames
+            .Where(name => name.Length == 0
+                || name.Contains("sharedkernel", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("pandabear", StringComparison.OrdinalIgnoreCase)
+                || sdkCommands.Contains(name, StringComparer.OrdinalIgnoreCase))
+            .ToArray();
+
+        // Assert
+        commandNames.ShouldNotBeEmpty();
+        violations.ShouldBe([]);
+        commandNames.Distinct(StringComparer.OrdinalIgnoreCase).Count().ShouldBe(commandNames.Length, "Two tools cannot share a command.");
     }
 
     [Fact]

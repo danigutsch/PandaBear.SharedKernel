@@ -89,7 +89,7 @@ repositories, such as this one, that need a full SHA but no manifest entry or ve
 
 Every external `uses:` reference in `.github/workflows` and `.github/actions` pins that SHA and repeats the version as
 its trailing comment (`uses: actions/checkout@<sha> # v6.0.2`). Tags and branches fail, whatever they name.
-`sharedkernel-repo verify-action-pins` checks this and runs in the repository quality job of the validation workflow:
+`dotnet repo verify-action-pins` checks this and runs in the repository quality job of the validation workflow:
 
 ```sh
 dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release -- verify-action-pins

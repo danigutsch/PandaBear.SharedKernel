@@ -18,7 +18,7 @@ public static class RoadmapTemplates
         Run the repo config tool to verify the structure:
 
         ```bash
-        sharedkernel-repo verify
+        dotnet repo verify
         ```
         """;
 

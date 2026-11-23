@@ -90,7 +90,7 @@ public sealed class RepoConfigToolApplicationTests
 
         // Assert
         exitCode.ShouldBe(0);
-        readmeText.ShouldContain("sharedkernel-repo verify", StringComparison.Ordinal);
+        readmeText.ShouldContain("dotnet repo verify", StringComparison.Ordinal);
         readmeText.ShouldNotContain("dotnet run --project", StringComparison.Ordinal);
     }
 
@@ -507,7 +507,7 @@ public sealed class RepoConfigToolApplicationTests
         // Assert
         exitCode.ShouldBe(1);
         errorText.ShouldContain("Duplicate roadmap item id: RM-001.", StringComparison.Ordinal);
-        errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
+        errorText.ShouldNotContain("repo:", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1180,7 +1180,7 @@ public sealed class RepoConfigToolApplicationTests
         // Assert
         exitCode.ShouldBe(1);
         outputText.ShouldBe(string.Empty);
-        errorText.ShouldBe("sharedkernel-repo: Unknown roadmap item id: RM-999\n");
+        errorText.ShouldBe("repo: Unknown roadmap item id: RM-999\n");
     }
 
     [Fact]
@@ -1204,7 +1204,7 @@ public sealed class RepoConfigToolApplicationTests
 
         // Assert
         exitCode.ShouldBe(1);
-        errorText.ShouldContain("sharedkernel-repo: The operation was canceled.", StringComparison.Ordinal);
+        errorText.ShouldContain("repo: The operation was canceled.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1453,7 +1453,7 @@ public sealed class RepoConfigToolApplicationTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldBe("sharedkernel-repo: Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub import.\n");
+        error.ToString().ShouldBe("repo: Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub import.\n");
     }
 
     [Fact]
@@ -1645,7 +1645,7 @@ public sealed class RepoConfigToolApplicationTests
 
         // Assert
         exitCode.ShouldBe(1);
-        errorText.ShouldContain("sharedkernel-repo: GitHub sync request failed.", StringComparison.Ordinal);
+        errorText.ShouldContain("repo: GitHub sync request failed.", StringComparison.Ordinal);
         errorText.ShouldNotContain("ghp_test_token", StringComparison.Ordinal);
     }
 
@@ -1920,7 +1920,7 @@ public sealed class RepoConfigToolApplicationTests
         // Assert
         exitCode.ShouldBe(1);
         errorText.ShouldContain("order.json root must be a JSON object.", StringComparison.Ordinal);
-        errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
+        errorText.ShouldNotContain("repo:", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1949,7 +1949,7 @@ public sealed class RepoConfigToolApplicationTests
         errorText.ShouldContain("roadmap/items/RM-001-roadmap-gitops.json: Invalid JSON:", StringComparison.Ordinal);
         errorText.ShouldContain("roadmap/themes/repo-operations.json: Invalid JSON:", StringComparison.Ordinal);
         errorText.ShouldContain("roadmap/order.json: Invalid JSON:", StringComparison.Ordinal);
-        errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
+        errorText.ShouldNotContain("repo:", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -3315,7 +3315,7 @@ public sealed class RepoConfigToolApplicationTests
         // Assert
         exitCode.ShouldBe(1);
         errorText.ShouldContain("Unrecognized command or argument 'tooling'.", StringComparison.Ordinal);
-        errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
+        errorText.ShouldNotContain("repo:", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -3332,6 +3332,6 @@ public sealed class RepoConfigToolApplicationTests
 
         // Assert
         exitCode.ShouldBe(1);
-        errorText.ShouldContain("sharedkernel-repo: Roadmap config is invalid.", StringComparison.Ordinal);
+        errorText.ShouldContain("repo: Roadmap config is invalid.", StringComparison.Ordinal);
     }
 }

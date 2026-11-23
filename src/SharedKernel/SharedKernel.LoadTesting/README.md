@@ -7,7 +7,7 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 Runs the load-test scenarios that a repository configures in a strict JSON file through a pluggable load generator.
 The runner reads and validates the configuration, keeps the target on a loopback host, creates a directory of its own
 for each run's results, and can start, wait for, and stop the process that serves the target. The load generator, such
-as k6 from `PandaBear.SharedKernel.LoadTesting.K6`, checks its own arguments and runs. The `sharedkernel-k6` tool is a
+as k6 from `PandaBear.SharedKernel.LoadTesting.K6`, checks its own arguments and runs. The `dotnet loadtest` tool is a
 command-line wrapper over this package and the k6 provider; its
 [README](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.K6.Tool/README.md)
 describes the configuration format, the run layout, and the security checks, which this package applies to any host.

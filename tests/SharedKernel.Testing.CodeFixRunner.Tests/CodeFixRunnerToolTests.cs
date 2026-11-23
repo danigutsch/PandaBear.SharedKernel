@@ -24,7 +24,7 @@ public sealed class CodeFixRunnerToolTests
 
         // Assert
         properties["PackAsTool"].ShouldBe("true");
-        properties["ToolCommandName"].ShouldBe("sharedkernel-codefix");
+        properties["ToolCommandName"].ShouldBe("codefix");
         properties["PackageId"].ShouldBe("PandaBear.SharedKernel.Testing.CodeFixRunner");
         properties["PackageReadmeFile"].ShouldBe("README.md");
         readmeItem.ShouldNotBeNull();

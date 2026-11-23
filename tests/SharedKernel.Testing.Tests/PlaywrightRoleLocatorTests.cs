@@ -5,7 +5,7 @@ namespace PandaBear.Testing.Tests;
 /// <summary>Tests the exact-name role locators against real pages in Chromium; the tests skip when the browser is not installed.</summary>
 public sealed class PlaywrightRoleLocatorTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
+    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public async Task GetButton_matches_the_whole_name_and_not_a_longer_one()

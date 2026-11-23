@@ -380,7 +380,7 @@ public sealed class VerifyDevcontainerCommandTests
         var rootCommand = RepoConfigCommandLine.Create(new RepoConfigToolEnvironment(Path.GetTempPath()));
 
         // Act
-        var parseResult = rootCommand.Parse(DocumentedCommandLines.Arguments("sharedkernel-repo " + commandLine));
+        var parseResult = rootCommand.Parse(DocumentedCommandLines.Arguments("dotnet repo " + commandLine));
 
         // Assert
         parseResult.Errors.ShouldBeEmpty();

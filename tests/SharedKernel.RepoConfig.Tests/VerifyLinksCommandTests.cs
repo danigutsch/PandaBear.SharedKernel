@@ -183,7 +183,7 @@ public sealed class VerifyLinksCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldBe("sharedkernel-repo: .config/sharedkernel-repo.json has no links section.\n");
+        result.StandardError.ShouldBe("repo: .config/sharedkernel-repo.json has no links section.\n");
     }
 
     [Theory]
@@ -203,6 +203,6 @@ public sealed class VerifyLinksCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
-        result.StandardError.ShouldStartWith("sharedkernel-repo: " + expectedError, StringComparison.Ordinal);
+        result.StandardError.ShouldStartWith("repo: " + expectedError, StringComparison.Ordinal);
     }
 }

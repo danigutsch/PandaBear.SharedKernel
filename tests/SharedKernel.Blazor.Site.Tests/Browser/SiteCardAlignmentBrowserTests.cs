@@ -6,7 +6,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// </summary>
 public sealed class SiteCardAlignmentBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
+    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
     private const double Padding = 16;
 
     [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]

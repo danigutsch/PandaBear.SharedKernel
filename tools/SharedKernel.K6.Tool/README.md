@@ -28,17 +28,17 @@ SDK pinned in `global.json`, `dotnet tool install` rejects `--add-source` when p
 dotnet tool install PandaBear.SharedKernel.K6.Tool --version <validated-candidate-version>
 ```
 
-A local tool runs as `dotnet tool run sharedkernel-k6 -- run --scenario admin-smoke`; the `--` keeps `dotnet tool run`
+A local tool runs as `dotnet tool run loadtest -- run --scenario admin-smoke`; the `--` keeps `dotnet tool run`
 from reading the tool options.
 
 ## Usage
 
 ```text
-sharedkernel-k6 run --scenario admin-smoke                        # local k6
-sharedkernel-k6 run --scenario admin-smoke --container            # configured engine and image
-sharedkernel-k6 run --scenario admin-smoke -- --vus 2 --duration 10s
-sharedkernel-k6 run --scenario upload-scan --root ../app --allow-external-target
-sharedkernel-k6 --help
+dotnet loadtest run --scenario admin-smoke                        # local k6
+dotnet loadtest run --scenario admin-smoke --container            # configured engine and image
+dotnet loadtest run --scenario admin-smoke -- --vus 2 --duration 10s
+dotnet loadtest run --scenario upload-scan --root ../app --allow-external-target
+dotnet loadtest --help
 ```
 
 `run` takes `--scenario <name>` and optionally `--container`, `--image <ref@sha256:digest>` (requires

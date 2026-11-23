@@ -6,7 +6,7 @@ namespace PandaBear.Sandbox.Tool.Tests;
 /// <summary>Finds the tool command lines that the tool README documents.</summary>
 internal static partial class DocumentedCommandLines
 {
-    private const string ToolCommandName = "sharedkernel-sandbox";
+    private const string ToolCommandName = "sandbox";
 
     /// <summary>Reads the tool README from the repository that contains the test output directory.</summary>
     public static string ReadToolReadme()
@@ -43,7 +43,7 @@ internal static partial class DocumentedCommandLines
     [GeneratedRegex("`(?<code>[^`]+)`", RegexOptions.CultureInvariant)]
     private static partial Regex InlineCode();
 
-    [GeneratedRegex(@"\A(?:[A-Z_]+=\S+\s+)*(?:dotnet tool run " + ToolCommandName + " -- |" + ToolCommandName + " )(?<arguments>.+)" + @"\z", RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"\A(?:[A-Z_]+=\S+\s+)*(?:dotnet tool run " + ToolCommandName + " -- |dotnet " + ToolCommandName + " )(?<arguments>.+)" + @"\z", RegexOptions.CultureInvariant)]
     private static partial Regex Prefix();
 
     [GeneratedRegex(@"\s+#.*$", RegexOptions.CultureInvariant)]

@@ -4,7 +4,7 @@
         <IsPackable>true</IsPackable>
         <OutputType>Exe</OutputType>
         <PackAsTool>true</PackAsTool>
-        <ToolCommandName>sharedkernel-vault</ToolCommandName>
+        <ToolCommandName>vault</ToolCommandName>
         <PackageId>PandaBear.SharedKernel.VaultManager.Tool</PackageId>
         <RootNamespace>PandaBear.VaultManager.Tool</RootNamespace>
         <Description>Offline review, secret detection, deduplication, and merging of Keeper and Bitwarden vault exports for Bitwarden or Vaultwarden import.</Description>

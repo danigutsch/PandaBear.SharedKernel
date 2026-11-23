@@ -64,10 +64,10 @@ public sealed class RepoConfigToolCallerTests
                       project: tools/SharedKernel.RepoConfig.Tool
                   - run: dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release --no-build -- verify-json --root .
                   - run: |
-                      dotnet tool run sharedkernel-repo -- dependency verify-license-exceptions \
+                      dotnet tool run repo -- dependency verify-license-exceptions \
                         --github-output "$GITHUB_OUTPUT"
-                  - run: sharedkernel-repo verify --root .
-                  - run: echo "sharedkernel-repo: is an error prefix" && dotnet test --project tests/SharedKernel.RepoConfig.Tests
+                  - run: dotnet repo verify --root .
+                  - run: echo "repo: is an error prefix" && dotnet test --project tests/SharedKernel.RepoConfig.Tests
             """,
             TestContext.Current.CancellationToken);
 

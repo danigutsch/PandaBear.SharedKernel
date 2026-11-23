@@ -6,7 +6,7 @@ Repositories that keep secrets in git encrypt them with [age](https://age-encryp
 Three questions recur and are easy to get wrong: is this recipient a public key or a private identity, does this file
 open for exactly the people the rule names, and did a secret ever reach an argument, an environment variable, or a log.
 `SharedKernel.Secrets` answers them as types, a metadata reader, and the operations of a repository's secrets;
-`SharedKernel.Secrets.Age` and `SharedKernel.Secrets.Sops` run the programs; and `sharedkernel-secrets` is a thin command line
+`SharedKernel.Secrets.Age` and `SharedKernel.Secrets.Sops` run the programs; and `dotnet secrets` is a thin command line
 over them, as the [tool engines ADR](20261115-tool-engines-and-thin-wrappers.md) lays out. The infrastructure inventory checks (issues 265 and 266) validate recipient sets of their own; they build on the
 primitives here (`AgeRecipientSet`, `RecipientVerification`) instead of repeating them.
 
@@ -83,7 +83,7 @@ primitives here (`AgeRecipientSet`, `RecipientVerification`) instead of repeatin
 
 ## Command line
 
-`sharedkernel-secrets` reads `.config/sharedkernel-secrets.json` (`creationRules`), finds `age`, `age-keygen`, and `sops` on
+`dotnet secrets` reads `.config/sharedkernel-secrets.json` (`creationRules`), finds `age`, `age-keygen`, and `sops` on
 `PATH` with the shared resolver (absolute `PATH` directories only), and is preview-by-default: `keygen`, `encrypt`,
 `decrypt --output`, `recipients update`, and `rotate` change nothing without `--force`; `keygen`, `encrypt`, and `decrypt --output`
 never overwrite a file; and `recipients update`, `rotate`, and `edit` replace a file only through the checked, atomic replacement

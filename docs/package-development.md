@@ -13,7 +13,7 @@ dotnet build SharedKernel.slnx -c Release --no-restore
 dotnet test --solution SharedKernel.slnx -c Release --no-build --no-restore
 ```
 
-Coverage uses the MIT-licensed `coverlet.MTP` extension, which every test project references, so `sharedkernel-ci run
+Coverage uses the MIT-licensed `coverlet.MTP` extension, which every test project references, so `dotnet ci run
 --coverage` gets a Cobertura report from each selected test project. To collect Cobertura for a project, run:
 
 ```sh
@@ -23,12 +23,12 @@ dotnet test --project tests/SharedKernel.HttpClients.Tests/SharedKernel.HttpClie
 `tests/testconfig.json` defines the coverage filters and is copied beside test executables. It excludes test assemblies, migrations, intermediate and
 generated source files, and explicitly marked generated/excluded code. Compiler-generated async and iterator code remains measurable. Coverlet
 measures instrumented managed modules in the test process; separate application/container processes are not covered automatically. Selected-project
-reports are evidence for those projects, not whole-repository coverage trends. Pull requests must cover at least 90% of their changed executable lines and conditions in `src` and `tools`; this is not a whole-repository threshold. `sharedkernel-ci coverage verify` enforces it in the `coverage-gate` job of `ci.yml` from the `coverage` section of `.config/sharedkernel-ci.json`.
+reports are evidence for those projects, not whole-repository coverage trends. Pull requests must cover at least 90% of their changed executable lines and conditions in `src` and `tools`; this is not a whole-repository threshold. `dotnet ci coverage verify` enforces it in the `coverage-gate` job of `ci.yml` from the `coverage` section of `.config/sharedkernel-ci.json`.
 
 Build gates retain SDK analyzers (`AnalysisMode=All`), SharedKernel analyzers, warnings as errors, public API checks, dependency vulnerability auditing,
 and package-consumption checks. No remote analysis upload or proprietary coverage collector is required.
 
-`SharedKernel.CI.Tool` packs as the `sharedkernel-ci` tool and also builds from a cone sparse checkout of `src` and
+`SharedKernel.CI.Tool` packs as the `dotnet ci` tool and also builds from a cone sparse checkout of `src` and
 `tools`, before a candidate exists. Selection follows `.config/sharedkernel-ci.json`: it selects the test projects that depend on the
 changed projects, writes one solution filter per test slice, and selects every test project when history, a path, or a
 reference is uncertain. A library or tool change selects only the test projects that depend on it, and still runs the
@@ -53,7 +53,7 @@ dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- consume-ca
 
 Candidate packages and their manifest can be copied together to another machine; consumption regenerates configuration for the current feed location.
 A consumer repository records its compatibility with a candidate by running its own build and tests on a clean clone of its committed revision
-with `sharedkernel-version verify-consumer --candidate <candidate.json> -- <command>...`; the
+with `dotnet release verify-consumer --candidate <candidate.json> -- <command>...`; the
 [Versioning tool README](../tools/SharedKernel.Versioning.Tool/README.md#candidates) describes the checks and the evidence.
 Linux and Windows consume the same hashed artifacts before stable promotion. Repository and Source Link metadata target the public repository; candidate validation records source and symbol evidence separately.
 
@@ -78,13 +78,13 @@ committed lock resolves.
 To change the policy after a dependency update, restore with locks for every project to see each library's pairs
 (`dotnet restore SharedKernel.slnx --force-evaluate -p:RestorePackagesWithLockFile=true`, then discard the locks of the exempt libraries),
 apply the rule above, then update the list, the property, and the lock files together. The dependency snapshot then writes no manifest for
-an exempt library and still lists its packages through the retained locks. `sharedkernel-version prepare-release` reads the restored
+an exempt library and still lists its packages through the retained locks. `dotnet release prepare-release` reads the restored
 `obj/project.assets.json` of an exempt library for the SBOM and fails, naming the project and package, when it resolves a package version
 that no committed lock file resolves; the remedy is to remove the project from the list, delete the property, and restore to create its lock
 file. Run it after a restore of the solution.
 
 The `repository-quality` job of the validation workflow enforces the same rule on every pull request that builds: after `setup-dev.sh`
-restores and builds the whole solution, `sharedkernel-version verify-lock-coverage` reads the restored assets of every lock-free library and
+restores and builds the whole solution, `dotnet release verify-lock-coverage` reads the restored assets of every lock-free library and
 fails, naming `project: package@version`, for a pair that no committed lock resolves, or when a lock-free library has no restored assets.
 
 ### Package requirements

@@ -6,7 +6,7 @@ namespace PandaBear.Testing.Tests;
 /// <summary>Tests choosing a file in a Blazor InputFile whose change listener is attached late, in Chromium; the browser tests skip when the browser is not installed.</summary>
 public sealed class PlaywrightInputFileTests(ChromiumPageFixture chromium) : IClassFixture<ChromiumPageFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
+    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
 
     // Stands in for Blazor's InputFile.init, which the server calls after the page is already interactive: 300 ms after load it marks the
     // element the way Blazor does and starts listening for changes, recording the names it is handed.

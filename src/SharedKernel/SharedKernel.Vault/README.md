@@ -6,7 +6,7 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Offline engine for password vault exports: provider-neutral vault items, duplicate matching, field-by-field merging
 with a decisions file, secret scanning and placement, briefs and catalogs, password health, and value-free reports.
-The `sharedkernel-vault` tool is a command-line wrapper over this library and its providers; its
+The `dotnet vault` tool is a command-line wrapper over this library and its providers; its
 [README](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.VaultManager.Tool/README.md)
 describes the merge rules, limits, and security notes that this library applies to any host.
 

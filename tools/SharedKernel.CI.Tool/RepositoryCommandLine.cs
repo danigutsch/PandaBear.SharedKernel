@@ -12,7 +12,7 @@ using PandaBear.InputNormalization;
 
 namespace PandaBear.CI.Tool;
 
-/// <summary>Builds the <c>sharedkernel-ci</c> command tree.</summary>
+/// <summary>Builds the <c>ci</c> command tree.</summary>
 internal static partial class RepositoryCommandLine
 {
     /// <summary>Exit code for a failed selection, run, generation, installation, coverage check, staging, commit message check, or mutation run.</summary>

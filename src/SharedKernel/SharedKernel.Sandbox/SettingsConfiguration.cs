@@ -1,6 +1,6 @@
 namespace PandaBear.Sandbox;
 
-/// <summary>The optional <c>settings</c> section of <c>.config/sharedkernel-sandbox.json</c>: what <c>sharedkernel-sandbox settings</c> manages in an agent settings file.</summary>
+/// <summary>The optional <c>settings</c> section of <c>.config/sharedkernel-sandbox.json</c>: what <c>dotnet sandbox settings</c> manages in an agent settings file.</summary>
 /// <param name="Profile">Name of a built-in profile; only <c>dotnet</c> exists. Without it nothing but the lists below is managed.</param>
 /// <param name="Target">Settings file relative to the root; defaults to the agent format's own file, <c>.claude/settings.json</c> for Claude Code.</param>
 /// <param name="AllowWrite">Entries for <c>sandbox.filesystem.allowWrite</c>.</param>

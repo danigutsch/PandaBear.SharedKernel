@@ -12,11 +12,11 @@ internal static partial class CallerCommandLine
 {
     private const string VersioningProject = "--project tools/SharedKernel.Versioning.Tool ";
     private const string ProjectArgumentSeparator = " -- ";
-    private const string ToolCommand = "sharedkernel-version ";
-    private const string LocalToolRun = "dotnet tool run " + ToolCommand;
+    private const string ToolCommand = "dotnet release ";
+    private const string LocalToolRun = "dotnet tool run release ";
     private const string LocalToolRunSeparator = "-- ";
 
-    private static readonly string[] ToolCommands = [ToolCommand, "./.tools/" + ToolCommand];
+    private static readonly string[] ToolCommands = [ToolCommand, "./.tools/release "];
 
     // dotnet tool run answers its own help options unless they follow "--"; it passes every other argument to the tool.
     private static readonly string[] LocalToolRunHelpOptions = ["--help", "-h", "-?", "/h", "/?"];

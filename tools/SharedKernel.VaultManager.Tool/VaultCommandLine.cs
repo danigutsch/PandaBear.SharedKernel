@@ -4,7 +4,7 @@ using PandaBear.VaultManager.Tool.Cli;
 
 namespace PandaBear.VaultManager.Tool;
 
-/// <summary>Builds and parses the <c>sharedkernel-vault</c> command tree.</summary>
+/// <summary>Builds and parses the <c>vault</c> command tree.</summary>
 internal static class VaultCommandLine
 {
     /// <summary>
