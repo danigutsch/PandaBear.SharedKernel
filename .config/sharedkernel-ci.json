@@ -58,6 +58,7 @@
       "name": "browser",
       "projects": [
         "tests/SharedKernel.Blazor.Site.Tests/SharedKernel.Blazor.Site.Tests.csproj",
+        "tests/SharedKernel.Blazor.Tests/SharedKernel.Blazor.Tests.csproj",
         "tests/SharedKernel.PageSections.Blazor.Tests/SharedKernel.PageSections.Blazor.Tests.csproj",
         "tests/SharedKernel.Testing.Tests/SharedKernel.Testing.Tests.csproj"
       ],

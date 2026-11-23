@@ -23,6 +23,7 @@ flowchart TB
     SharedKernel_AspNetCore_WebAnalytics[SharedKernel.AspNetCore.WebAnalytics] --> SharedKernel_AspNetCore[SharedKernel.AspNetCore]
     SharedKernel_Aspire_Hosting[SharedKernel.Aspire.Hosting] --> SharedKernel_AspNetCore[SharedKernel.AspNetCore]
     SharedKernel_Aspire_Hosting_Umami[SharedKernel.Aspire.Hosting.Umami] --> SharedKernel_Aspire_Hosting[SharedKernel.Aspire.Hosting]
+    SharedKernel_Blazor[SharedKernel.Blazor] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]
     SharedKernel_Blazor[SharedKernel.Blazor] --> SharedKernel_HttpClients[SharedKernel.HttpClients]
     SharedKernel_Blazor[SharedKernel.Blazor] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_Blazor_Site[SharedKernel.Blazor.Site] --> SharedKernel_BuildingBlocks[SharedKernel.BuildingBlocks]

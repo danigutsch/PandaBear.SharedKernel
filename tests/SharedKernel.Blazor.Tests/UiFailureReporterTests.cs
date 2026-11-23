@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
 
 namespace PandaBear.Blazor.Tests;
 

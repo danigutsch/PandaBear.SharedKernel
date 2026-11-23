@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Logging;
-
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>One captured log entry.</summary>

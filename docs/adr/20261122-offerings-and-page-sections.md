@@ -55,6 +55,13 @@ The owner approved the proposal (2026-11-22) and these corrections, found while 
   follow the current rules.
 - A section's button style is `LinkStyle` (Primary, Secondary, Outline; default Primary) in PageSections, not Blazor.Site's
   `ButtonVariant`, which a BuildingBlocks-only model cannot reference. The renderer maps one to the other.
+- The renderer is `PageSectionsView<TImageId, TLink, TExtra>` in `SharedKernel.PageSections.Blazor`, not `PageSections`: a type of that
+  name clashes with the `PandaBear.PageSections` namespace (CA1724), which the build treats as an error and this repository does not
+  suppress.
+- `ImagePicker<TKey, TOption>` in `SharedKernel.Blazor` takes the option's key from its `PickerCatalog` (built with the key function),
+  so there is no separate `KeyOf` parameter that could disagree with the catalog. `SharedKernel.Blazor` references BuildingBlocks for
+  `PageWindow` and the thumbnail check, as planned; its test project moves to the Web SDK to host an Interactive Server page for the
+  picker's browser and prerendered-state tests, and runs in the browser slice.
 
 ## Enum zero values
 
