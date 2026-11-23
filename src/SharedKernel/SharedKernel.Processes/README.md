@@ -29,9 +29,18 @@ var output = await runner.Run(startInfo, forward: null, cancellationToken);
   cancellation. A process that cannot start, such as a missing executable, is reported as `ProcessTree.Start` reports
   it: `InvalidOperationException` (`Failed to start <file>: <reason>`) with the operating system's error inside.
 - `BoundedProcessRunner` is for quick queries, such as a package manager listing: it redirects and captures both output
-  streams, closes a redirected standard input, ends the process after two minutes or above 8 Mi characters on either
-  stream, and reports a process that leaves its output open after it exits. It reports a start failure as
-  `SystemProcessRunner` does.
+  streams, closes a redirected standard input, ends the process after its time limit (two minutes by default, or the
+  `TimeSpan` it is created with) or above 8 Mi characters on either stream, and reports a process that leaves its output
+  open after it exits. It reports a start failure as `SystemProcessRunner` does. `Capture` returns a
+  `CapturedProcessOutput` with the exact standard output bytes, such as NUL-separated paths or invalid UTF-8, and the
+  standard error text. It writes the given bytes to standard input and closes it, takes a byte limit for each output
+  stream, and ends the process tree above a limit, after the time limit, or on cancellation, which it rethrows with the
+  caller's token.
+- `GitStartInfo.Create(workingDirectory, arguments)` describes a `git` run: `git` from an absolute `PATH` directory (or
+  the `IExecutableResolver` given), the arguments one by one without a shell, both output streams redirected,
+  `GIT_TERMINAL_PROMPT=0`, and none of the host's forge tokens, `SSH_ASKPASS`, `SSH_ASKPASS_REQUIRE`, or `GIT_*` variables,
+  `GIT_ASKPASS` and `GIT_DIR` among them. A caller adds its own `GIT_*` variables afterwards. `GitStartInfo.Timeout` (30
+  seconds) is the limit that every git call of these libraries gets.
 - `IExecutableResolver` finds the executable that a command name starts. `PathExecutableResolver` looks only in the
   absolute directories of `PATH`, never in the application directory, the working directory, or a relative `PATH`
   entry, so a checkout cannot supply the executable. On Unix a file needs an execute bit; on Windows `<command>.exe` is

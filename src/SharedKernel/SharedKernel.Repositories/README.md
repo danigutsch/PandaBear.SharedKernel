@@ -38,6 +38,12 @@ foreach (var issue in links.Issues)
   `RoadmapInitializer` creates the missing files from `RoadmapTemplates`, and `RoadmapConfigSetter` sets a value.
   `RollbackFileWriteBatch` and `AtomicFileWrite` write several files atomically under a lock, and
   `RoadmapGitRepository` reads Git state through bounded, time-limited processes that never receive a forge token.
+- **Git:** every Git call of the package (the baseline's `git config`, the tracked-file listings of the verifiers,
+  `RoadmapGitRepository`, and `TextEncodingVerifier`) starts Git from `GitStartInfo` of
+  `PandaBear.SharedKernel.Processes` and runs it through `BoundedProcessRunner.Capture`: no prompt, no askpass program,
+  forge token, or inherited `GIT_*` variable, at most 64 KiB of standard error and a per-command standard output limit,
+  and 30 seconds per call. `TextEncodingVerifier` reads blobs through one `git cat-file --batch` session, which gets 30
+  seconds for each blob.
 - **Forge seams:** `IRepositoryLabelStore` is a repository's labels on a forge, and `RepositoryLabelSync` creates and
   updates the configured labels through it and never deletes one. A provider package,
   `PandaBear.SharedKernel.Repositories.GitHub` or `PandaBear.SharedKernel.Repositories.Forgejo`, implements the seam

@@ -28,3 +28,14 @@ static PandaBear.Processes.ProcessTree.Terminate(System.Diagnostics.Process! pro
 static PandaBear.Processes.ProcessEnvironment.ForgeTokenVariableNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
 static PandaBear.Processes.ProcessEnvironment.IsForgeTokenVariable(string! name) -> bool
 static PandaBear.Processes.ProcessEnvironment.RemoveForgeTokens(System.Diagnostics.ProcessStartInfo! startInfo) -> void
+PandaBear.Processes.BoundedProcessRunner.BoundedProcessRunner(System.TimeSpan timeout) -> void
+PandaBear.Processes.BoundedProcessRunner.Capture(System.Diagnostics.ProcessStartInfo! startInfo, System.ReadOnlyMemory<byte> standardInput, int maxOutputBytes, int maxErrorBytes, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<PandaBear.Processes.CapturedProcessOutput!>!
+PandaBear.Processes.CapturedProcessOutput
+PandaBear.Processes.CapturedProcessOutput.CapturedProcessOutput(int exitCode, System.ReadOnlyMemory<byte> standardOutput, string! standardError) -> void
+PandaBear.Processes.CapturedProcessOutput.ExitCode.get -> int
+PandaBear.Processes.CapturedProcessOutput.StandardError.get -> string!
+PandaBear.Processes.CapturedProcessOutput.StandardOutput.get -> System.ReadOnlyMemory<byte>
+PandaBear.Processes.GitStartInfo
+static PandaBear.Processes.GitStartInfo.Create(string! workingDirectory, System.Collections.Generic.IEnumerable<string!>! arguments) -> System.Diagnostics.ProcessStartInfo!
+static PandaBear.Processes.GitStartInfo.Create(string! workingDirectory, System.Collections.Generic.IEnumerable<string!>! arguments, PandaBear.Processes.IExecutableResolver! resolver) -> System.Diagnostics.ProcessStartInfo!
+static PandaBear.Processes.GitStartInfo.Timeout.get -> System.TimeSpan
