@@ -25,7 +25,7 @@ public sealed class CaseInsensitiveJsonContextCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "GitHubJsonContext");
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelStyleCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new StyleCodeFixProvider(), diagnostic);
         await workspace.ApplyCodeAction(actions.ShouldHaveSingleItem());
         var changed = await workspace.GetDocumentText();
 

@@ -15,7 +15,7 @@ public sealed class AssertionUserMessageOverloadAnalyzerTests
     {
         // Arrange
         var source = AssertionUserMessageOverloadTestSource.Create("public static void ShouldBeReady(this int actual) { }");
-        var analyzer = new SharedKernelTestingAnalyzer();
+        var analyzer = new TestingAnalyzer();
 
         // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
@@ -48,7 +48,7 @@ public sealed class AssertionUserMessageOverloadAnalyzerTests
         // Act
         var compilationErrors = compilation.GetDiagnostics(TestContext.Current.CancellationToken)
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelTestingAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new TestingAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
 
         // Assert
@@ -94,7 +94,7 @@ public sealed class AssertionUserMessageOverloadAnalyzerTests
         // Act
         var compilationErrors = compilation.GetDiagnostics(TestContext.Current.CancellationToken)
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelTestingAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new TestingAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
 
         // Assert
@@ -126,7 +126,7 @@ public sealed class AssertionUserMessageOverloadAnalyzerTests
         // Act
         var compilationErrors = compilation.GetDiagnostics(TestContext.Current.CancellationToken)
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelTestingAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new TestingAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
 
         // Assert
@@ -157,7 +157,7 @@ public sealed class AssertionUserMessageOverloadAnalyzerTests
         // Act
         var compilationErrors = compilation.GetDiagnostics(TestContext.Current.CancellationToken)
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelTestingAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new TestingAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
 
         // Assert
@@ -189,7 +189,7 @@ public sealed class AssertionUserMessageOverloadAnalyzerTests
         // Act
         var compilationErrors = compilation.GetDiagnostics(TestContext.Current.CancellationToken)
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelTestingAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new TestingAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
 
         // Assert
@@ -224,7 +224,7 @@ public sealed class AssertionUserMessageOverloadAnalyzerTests
         // Act
         var compilationErrors = compilation.GetDiagnostics(TestContext.Current.CancellationToken)
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelTestingAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new TestingAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
 
         // Assert
@@ -430,7 +430,7 @@ public sealed class AssertionUserMessageOverloadAnalyzerTests
         // Act
         var compilationErrors = compilation.GetDiagnostics(TestContext.Current.CancellationToken)
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelTestingAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new TestingAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
 
         // Assert

@@ -1,10 +1,10 @@
 #nullable enable
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestScope = "SKTEST018" -> string!
-PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider
-PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.SharedKernelTestingCodeFixProvider() -> void
-override PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
-override PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
-override PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
+PandaBear.Testing.CodeFixes.TestingCodeFixProvider
+PandaBear.Testing.CodeFixes.TestingCodeFixProvider.TestingCodeFixProvider() -> void
+override PandaBear.Testing.CodeFixes.TestingCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+override PandaBear.Testing.CodeFixes.TestingCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
+override PandaBear.Testing.CodeFixes.TestingCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
 PandaBear.Testing.Analyzers.TestingDiagnosticIds
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitArrangeActAssertMarkers = "SKTEST007" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitAssertionWrapper = "SKTEST006" -> string!

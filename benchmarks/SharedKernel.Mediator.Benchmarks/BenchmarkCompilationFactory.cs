@@ -73,7 +73,7 @@ internal static class BenchmarkCompilationFactory
     /// <returns>The generator driver used by the benchmark scenarios.</returns>
     public static GeneratorDriver CreateGeneratorDriver()
     {
-        return CSharpGeneratorDriver.Create(new SharedKernelMediatorGenerator());
+        return CSharpGeneratorDriver.Create(new MediatorGenerator());
     }
 
     /// <summary>

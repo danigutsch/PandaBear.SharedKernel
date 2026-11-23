@@ -1043,7 +1043,7 @@ public sealed class IntegrationEventMappingGeneratorTests
         var runResult = GeneratorTestHarness.RunGeneratorDriver(
             compilation,
             new IntegrationEventMappingGenerator(),
-            new SharedKernelMediatorGenerator());
+            new MediatorGenerator());
         var dispatcherRegistrations = runResult.Results
             .SelectMany(static result => result.GeneratedSources)
             .SelectMany(static generatedSource => generatedSource.SourceText.Lines)

@@ -18,11 +18,11 @@ internal static class AnalyzerTestHarness
 
         """;
 
-    /// <summary>Compiles the source as the given file path and returns the diagnostics reported by SharedKernelDomainAnalyzer, throwing when the source has compile errors.</summary>
+    /// <summary>Compiles the source as the given file path and returns the diagnostics reported by DomainAnalyzer, throwing when the source has compile errors.</summary>
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(string source, string path = "TestSource.cs")
     {
         var compilation = CreateCompilation(source, path);
-        var analyzer = new SharedKernelDomainAnalyzer();
+        var analyzer = new DomainAnalyzer();
         return await AnalyzerRun.GetDiagnostics(compilation, analyzer).ConfigureAwait(false);
     }
 

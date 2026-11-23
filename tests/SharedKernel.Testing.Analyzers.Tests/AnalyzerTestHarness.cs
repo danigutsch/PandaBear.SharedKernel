@@ -6,7 +6,7 @@ using PandaBear.Testing.Roslyn;
 
 namespace PandaBear.Testing.Analyzers.Tests;
 
-/// <summary>Test helper that compiles source with the standard usings and xunit reference and runs SharedKernelTestingAnalyzer over it.</summary>
+/// <summary>Test helper that compiles source with the standard usings and xunit reference and runs TestingAnalyzer over it.</summary>
 internal static class AnalyzerTestHarness
 {
     private const string DefaultUsings = """
@@ -36,7 +36,7 @@ internal static class AnalyzerTestHarness
             path);
     }
 
-    /// <summary>Compiles the source, runs SharedKernelTestingAnalyzer with the supplied analyzer config options, and returns the diagnostics it reports.</summary>
+    /// <summary>Compiles the source, runs TestingAnalyzer with the supplied analyzer config options, and returns the diagnostics it reports.</summary>
     /// <param name="source">C# source to analyze.</param>
     /// <param name="assemblyName">Assembly name of the compilation.</param>
     /// <param name="analyzerOptions">Analyzer config key/value options, or null for none.</param>
@@ -60,18 +60,18 @@ internal static class AnalyzerTestHarness
             new TestAnalyzerConfigOptionsProvider(analyzerOptions ?? ImmutableDictionary<string, string>.Empty)).ConfigureAwait(false);
     }
 
-    /// <summary>Runs SharedKernelTestingAnalyzer over a compilation with the given options provider and returns its diagnostics.</summary>
+    /// <summary>Runs TestingAnalyzer over a compilation with the given options provider and returns its diagnostics.</summary>
     /// <param name="compilation">Compilation to analyze.</param>
     /// <param name="optionsProvider">Analyzer config options, for example per-file options.</param>
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
         CSharpCompilation compilation,
         AnalyzerConfigOptionsProvider optionsProvider)
     {
-        var analyzer = new SharedKernelTestingAnalyzer();
+        var analyzer = new TestingAnalyzer();
         return await AnalyzerRun.GetDiagnostics(compilation, analyzer, optionsProvider).ConfigureAwait(false);
     }
 
-    /// <summary>Runs SharedKernelTestingAnalyzer over the source and returns only the diagnostics with the given id.</summary>
+    /// <summary>Runs TestingAnalyzer over the source and returns only the diagnostics with the given id.</summary>
     /// <param name="diagnosticId">Diagnostic id to keep.</param>
     /// <param name="source">C# source to analyze.</param>
     /// <param name="analyzerOptions">Analyzer config key/value options, or null for none.</param>

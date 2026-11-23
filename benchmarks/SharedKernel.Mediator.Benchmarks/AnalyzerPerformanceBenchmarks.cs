@@ -48,7 +48,7 @@ public class AnalyzerPerformanceBenchmarks
         var compilation = BenchmarkCompilationFactory.CreateCompilation(
             source,
             $"PandaBear.Mediator.Benchmarks.Analyzers.{RequestCount}.{DiagnosticsMode}.{StrictArchitectureRules}.{CancellationScan}");
-        var analyzer = new SharedKernelMediatorAnalyzer();
+        var analyzer = new MediatorAnalyzer();
         var optionsProvider = new BenchmarkAnalyzerConfigOptionsProvider(
             ImmutableDictionary<string, string>.Empty
                 .Add("sharedkernel_mediator_cqrs_strict", StrictArchitectureRules.ToString())

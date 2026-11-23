@@ -77,7 +77,7 @@ public sealed class TestScopeTraitLiteralTests
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
         var properties = ImmutableDictionary<string, string?>.Empty
             .Add("Replacement", TypedReplacement)
             .Add("Kind", "TestScope");

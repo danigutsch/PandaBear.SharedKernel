@@ -47,7 +47,7 @@ public sealed class AssertionDelegateInliningTests
         var diagnostic = diagnostics.Where(static d => d.Id == DiagnosticId).ShouldHaveSingleItem();
         var workspace = CodeFixTestWorkspace.Create(source);
         var documentDiagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, $"action.{assertionMethod}<InvalidOperationException>()");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
         var offeredActions = await workspace.GetCodeActions(provider, documentDiagnostic);
         var action = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(action);
@@ -116,7 +116,7 @@ public sealed class AssertionDelegateInliningTests
             ? "action?.ShouldThrow<Exception>()"
             : "action.ShouldThrow<Exception>()";
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, marker);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
         var actions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
@@ -143,7 +143,7 @@ public sealed class AssertionDelegateInliningTests
         AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>(userMessage: \"value\", action: action)");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var assertionDiagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
@@ -185,7 +185,7 @@ public sealed class AssertionDelegateInliningTests
         }
 
         // Act
-        var diagnostics = await compilation.WithAnalyzers([new SharedKernelTestingAnalyzer()])
+        var diagnostics = await compilation.WithAnalyzers([new TestingAnalyzer()])
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
 
         // Assert
@@ -215,7 +215,7 @@ public sealed class AssertionDelegateInliningTests
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "action.ShouldThrow<Exception>()");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
@@ -246,7 +246,7 @@ public sealed class AssertionDelegateInliningTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "action.ShouldThrow<Exception>()");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var assertionDiagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
@@ -286,7 +286,7 @@ public sealed class AssertionDelegateInliningTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, assertion.TrimEnd(';'));
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
@@ -318,7 +318,7 @@ public sealed class AssertionDelegateInliningTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "action.ShouldThrow<Exception>()");
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
 
         // Act
         var compilerDiagnostics = AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken);

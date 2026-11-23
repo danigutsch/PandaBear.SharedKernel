@@ -39,7 +39,7 @@ public sealed class BlazorCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.UnguardedBusyFlag, "_saving = true");
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelBlazorCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new BlazorCodeFixProvider(), diagnostic);
         var action = actions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(action);
         var text = await workspace.GetDocumentText();
@@ -65,7 +65,7 @@ public sealed class BlazorCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.UnguardedBusyFlag, "_saving = true");
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelBlazorCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new BlazorCodeFixProvider(), diagnostic);
         await workspace.ApplyCodeAction(actions.ShouldHaveSingleItem());
         var text = await workspace.GetDocumentText();
 
@@ -86,7 +86,7 @@ public sealed class BlazorCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.UnguardedBusyFlag, "_saving = true");
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelBlazorCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new BlazorCodeFixProvider(), diagnostic);
 
         // Assert
         actions.ShouldBeEmpty();
@@ -108,7 +108,7 @@ public sealed class BlazorCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.UnguardedBusyFlag, "_saving = true");
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelBlazorCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new BlazorCodeFixProvider(), diagnostic);
 
         // Assert
         actions.ShouldBeEmpty();
@@ -123,7 +123,7 @@ public sealed class BlazorCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.UnguardedBusyFlag, "_saving = true");
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelBlazorCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new BlazorCodeFixProvider(), diagnostic);
         var action = actions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(action);
         var errors = (await workspace.GetCompilationDiagnostics()).Where(static candidate => candidate.Severity == DiagnosticSeverity.Error).ToArray();
@@ -152,7 +152,7 @@ public sealed class BlazorCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.LongLivedScopeService, "ISender");
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelBlazorCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new BlazorCodeFixProvider(), diagnostic);
         var action = actions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(action);
         var text = await workspace.GetDocumentText();
@@ -177,7 +177,7 @@ public sealed class BlazorCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.LongLivedScopeService, "ISender");
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelBlazorCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new BlazorCodeFixProvider(), diagnostic);
 
         // Assert
         actions.ShouldBeEmpty(reason);
@@ -195,7 +195,7 @@ public sealed class BlazorCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.LongLivedScopeService, "ISender");
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelBlazorCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new BlazorCodeFixProvider(), diagnostic);
         await workspace.ApplyCodeAction(actions.ShouldHaveSingleItem());
         var errors = (await workspace.GetCompilationDiagnostics()).Where(static candidate => candidate.Severity == DiagnosticSeverity.Error).ToArray();
 
@@ -224,7 +224,7 @@ public sealed class BlazorCodeFixTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(BlazorDiagnosticIds.LongLivedScopeService, "ShopDb Db");
 
         // Act
-        var actions = await workspace.GetCodeActions(new SharedKernelBlazorCodeFixProvider(), diagnostic);
+        var actions = await workspace.GetCodeActions(new BlazorCodeFixProvider(), diagnostic);
 
         // Assert
         actions.ShouldBeEmpty();

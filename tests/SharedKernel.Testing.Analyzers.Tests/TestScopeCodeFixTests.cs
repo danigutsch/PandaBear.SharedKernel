@@ -25,7 +25,7 @@ public sealed class TestScopeCodeFixTests
     {
         // Arrange
         var workspace = CodeFixTestWorkspace.Create(Source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "Creates_a_tour()", TestScopeDiagnosticProperties.Create("missing", AllScopes, typed: true));
 
         // Act
@@ -50,7 +50,7 @@ public sealed class TestScopeCodeFixTests
     {
         // Arrange
         var workspace = CodeFixTestWorkspace.Create(Source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "Creates_a_tour()", TestScopeDiagnosticProperties.Create("missing", AllScopes, typed: true));
         var actions = await workspace.GetCodeActions(provider, diagnostic);
 
@@ -69,7 +69,7 @@ public sealed class TestScopeCodeFixTests
     {
         // Arrange
         var workspace = CodeFixTestWorkspace.Create(Source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "Creates_a_tour()", TestScopeDiagnosticProperties.Create("missing", "unit;integration", typed: false));
         var actions = await workspace.GetCodeActions(provider, diagnostic);
 
@@ -89,7 +89,7 @@ public sealed class TestScopeCodeFixTests
     {
         // Arrange
         var workspace = CodeFixTestWorkspace.Create(Source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "Creates_a_tour()", TestScopeDiagnosticProperties.Create(reason, AllScopes, typed: true));
 
         // Act
@@ -118,7 +118,7 @@ public sealed class TestScopeCodeFixTests
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.TestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "Creates_a_tour()", TestScopeDiagnosticProperties.Create("missing", "unit", typed: true));
         var actions = await workspace.GetCodeActions(provider, diagnostic);
 

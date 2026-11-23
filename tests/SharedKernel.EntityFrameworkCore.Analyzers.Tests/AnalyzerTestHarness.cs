@@ -18,7 +18,7 @@ internal static class AnalyzerTestHarness
 
     private const string SharedKernelUsing = "using PandaBear.EntityFrameworkCore;\n";
 
-    /// <summary>Compiles the source and returns the diagnostics reported by SharedKernelEntityFrameworkCoreAnalyzer, throwing when the source has compile errors.</summary>
+    /// <summary>Compiles the source and returns the diagnostics reported by EntityFrameworkCoreAnalyzer, throwing when the source has compile errors.</summary>
     public static Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(string source) =>
         GetAnalyzerDiagnostics(source, withSharedKernel: true);
 
@@ -26,7 +26,7 @@ internal static class AnalyzerTestHarness
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(string source, bool withSharedKernel)
     {
         var compilation = CreateCompilation(source, withSharedKernel);
-        return await AnalyzerRun.GetDiagnostics(compilation, new SharedKernelEntityFrameworkCoreAnalyzer()).ConfigureAwait(false);
+        return await AnalyzerRun.GetDiagnostics(compilation, new EntityFrameworkCoreAnalyzer()).ConfigureAwait(false);
     }
 
     /// <summary>Returns the full source line on which the diagnostic starts, throwing when the diagnostic has no source location.</summary>

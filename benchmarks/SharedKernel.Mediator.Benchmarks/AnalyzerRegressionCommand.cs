@@ -34,10 +34,10 @@ internal static class AnalyzerRegressionCommand
 
         var suites = new (DiagnosticAnalyzer Analyzer, string Source)[]
         {
-            (new SharedKernelMediatorAnalyzer(), AnalyzerBenchmarkSourceFactory.CreateSource(SourceCount, AnalyzerBenchmarkSourceFactory.ManyDiagnostics)),
-            (new SharedKernelStyleAnalyzer(), string.Join(Environment.NewLine, Enumerable.Range(0, SourceCount).Select(static i => $"public class Clock{i.ToString(CultureInfo.InvariantCulture)} {{ public object ReadAsync() => DateTimeOffset.UtcNow; }}"))),
-            (new SharedKernelTestingAnalyzer(), "namespace Xunit { public class FactAttribute : Attribute {} } namespace Cases {" + string.Join(Environment.NewLine, Enumerable.Range(0, SourceCount).Select(static i => $"public class Case{i.ToString(CultureInfo.InvariantCulture)} {{ [Xunit.Fact] public void BadName() {{ var sut = new object(); }} }}")) + "}"),
-            (new SharedKernelAspireAnalyzer(), "public class Resource { public Resource WithImageTag(string tag) => this; } public class Host { public void Build(Resource resource) {" + string.Concat(Enumerable.Repeat("resource.WithImageTag(\"latest\");", SourceCount)) + "} }"),
+            (new MediatorAnalyzer(), AnalyzerBenchmarkSourceFactory.CreateSource(SourceCount, AnalyzerBenchmarkSourceFactory.ManyDiagnostics)),
+            (new StyleAnalyzer(), string.Join(Environment.NewLine, Enumerable.Range(0, SourceCount).Select(static i => $"public class Clock{i.ToString(CultureInfo.InvariantCulture)} {{ public object ReadAsync() => DateTimeOffset.UtcNow; }}"))),
+            (new TestingAnalyzer(), "namespace Xunit { public class FactAttribute : Attribute {} } namespace Cases {" + string.Join(Environment.NewLine, Enumerable.Range(0, SourceCount).Select(static i => $"public class Case{i.ToString(CultureInfo.InvariantCulture)} {{ [Xunit.Fact] public void BadName() {{ var sut = new object(); }} }}")) + "}"),
+            (new AspireAnalyzer(), "public class Resource { public Resource WithImageTag(string tag) => this; } public class Host { public void Build(Resource resource) {" + string.Concat(Enumerable.Repeat("resource.WithImageTag(\"latest\");", SourceCount)) + "} }"),
         };
         var measurements = new List<AnalyzerRegressionMeasurement>();
         foreach (var (analyzer, source) in suites)

@@ -8,7 +8,7 @@ public sealed class RawResultEndpointTests
     public void Supported_diagnostics_match_descriptor_contract()
     {
         // Arrange
-        var analyzer = new SharedKernelResultsAnalyzer();
+        var analyzer = new ResultsAnalyzer();
 
         // Act
         var diagnosticIds = analyzer.SupportedDiagnostics.Select(static descriptor => descriptor.Id).ToArray();

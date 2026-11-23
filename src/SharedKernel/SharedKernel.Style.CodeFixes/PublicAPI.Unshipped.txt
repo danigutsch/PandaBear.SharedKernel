@@ -1,11 +1,11 @@
 #nullable enable
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod = "SKSTYLE009" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.OptionalResultMethod = "SKSTYLE010" -> string!
-PandaBear.Style.CodeFixes.SharedKernelStyleCodeFixProvider
-PandaBear.Style.CodeFixes.SharedKernelStyleCodeFixProvider.SharedKernelStyleCodeFixProvider() -> void
-override PandaBear.Style.CodeFixes.SharedKernelStyleCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
-override PandaBear.Style.CodeFixes.SharedKernelStyleCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
-override PandaBear.Style.CodeFixes.SharedKernelStyleCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
+PandaBear.Style.CodeFixes.StyleCodeFixProvider
+PandaBear.Style.CodeFixes.StyleCodeFixProvider.StyleCodeFixProvider() -> void
+override PandaBear.Style.CodeFixes.StyleCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+override PandaBear.Style.CodeFixes.StyleCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
+override PandaBear.Style.CodeFixes.StyleCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
 PandaBear.Style.Analyzers.StyleDiagnosticIds
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix = "SKSTYLE001" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter = "SKSTYLE006" -> string!

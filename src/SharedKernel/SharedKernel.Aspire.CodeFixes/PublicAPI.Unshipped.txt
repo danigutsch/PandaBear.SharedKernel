@@ -1,8 +1,8 @@
 #nullable enable
-PandaBear.Aspire.CodeFixes.SharedKernelAspireCodeFixProvider
-PandaBear.Aspire.CodeFixes.SharedKernelAspireCodeFixProvider.SharedKernelAspireCodeFixProvider() -> void
-override PandaBear.Aspire.CodeFixes.SharedKernelAspireCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
-override PandaBear.Aspire.CodeFixes.SharedKernelAspireCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider?
-override PandaBear.Aspire.CodeFixes.SharedKernelAspireCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
+PandaBear.Aspire.CodeFixes.AspireCodeFixProvider
+PandaBear.Aspire.CodeFixes.AspireCodeFixProvider.AspireCodeFixProvider() -> void
+override PandaBear.Aspire.CodeFixes.AspireCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+override PandaBear.Aspire.CodeFixes.AspireCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider?
+override PandaBear.Aspire.CodeFixes.AspireCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
 const PandaBear.Aspire.Analyzers.AspireDiagnosticIds.ImageTagAndDigest = "SKASPIRE001" -> string!
 PandaBear.Aspire.Analyzers.AspireDiagnosticIds

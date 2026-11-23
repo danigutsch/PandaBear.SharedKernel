@@ -6,7 +6,7 @@ using PandaBear.Testing.Roslyn;
 namespace PandaBear.Aspire.Analyzers.Tests;
 
 /// <summary>
-/// Builds in-memory compilations and runs SharedKernelAspireAnalyzer over them for the Aspire analyzer tests.
+/// Builds in-memory compilations and runs AspireAnalyzer over them for the Aspire analyzer tests.
 /// </summary>
 internal static class AnalyzerTestHarness
 {
@@ -37,7 +37,7 @@ internal static class AnalyzerTestHarness
     }
 
     /// <summary>
-    /// Compiles the given source and returns the diagnostics reported by SharedKernelAspireAnalyzer.
+    /// Compiles the given source and returns the diagnostics reported by AspireAnalyzer.
     /// </summary>
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
         string source,
@@ -45,7 +45,7 @@ internal static class AnalyzerTestHarness
         string path = "TestSource.cs")
     {
         var compilation = CreateCompilation(source, assemblyName, path);
-        var analyzer = new SharedKernelAspireAnalyzer();
+        var analyzer = new AspireAnalyzer();
         return await AnalyzerRun.GetDiagnostics(compilation, analyzer).ConfigureAwait(false);
     }
 

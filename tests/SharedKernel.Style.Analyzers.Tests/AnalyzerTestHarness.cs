@@ -60,7 +60,7 @@ internal static class AnalyzerTestHarness
         string path = "TestSource.cs")
     {
         var compilation = CreateCompilation(source, assemblyName, path);
-        var analyzer = new SharedKernelStyleAnalyzer();
+        var analyzer = new StyleAnalyzer();
         return await AnalyzerRun.GetDiagnostics(compilation, analyzer, globalOptions).ConfigureAwait(false);
     }
 

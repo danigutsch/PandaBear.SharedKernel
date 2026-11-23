@@ -20,7 +20,7 @@ internal static class GovernedLiteralTestHarness
         var compilation = AnalyzerTestHarness.CreateCompilation(source, assemblyName: "Production")
             .RemoveAllSyntaxTrees().AddSyntaxTrees(CSharpSyntaxTree.ParseText(source, path: "Consumer.cs"));
         var options = new AnalyzerOptions(catalog is null ? [] : [new CatalogText(catalog)]);
-        return await compilation.WithAnalyzers([new SharedKernelStyleAnalyzer()], options)
+        return await compilation.WithAnalyzers([new StyleAnalyzer()], options)
             .GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken);
     }
 
