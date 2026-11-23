@@ -11,7 +11,10 @@ The version policy types (`SemanticVersion`, `ConventionalCommitParser`, `Versio
 `ReleaseVersionCalculator`) are pure and independent from CI, release workflows, and application hosts. The release
 engine runs `git`, `dotnet`, and packed tools through `IProcessRunner` and finds them through `IExecutableResolver`
 from `PandaBear.SharedKernel.Processes`, so a host passes `SystemProcessRunner` and `PathExecutableResolver.Default`
-and a test passes fakes. Each operation takes an options record and writes its result lines to a `TextWriter` that the
+and a test passes fakes. Every `git` run gets the environment of `GitStartInfo.ApplyEnvironment` (no prompt, askpass
+program, forge token, or inherited `GIT_*` variable) and 30 seconds, after which it is stopped and reported as a failed
+command; when the runner is `SystemProcessRunner`, which has no output limit, `git` runs through `BoundedProcessRunner`.
+Each operation takes an options record and writes its result lines to a `TextWriter` that the
 host passes; the engine reads no environment variable and no console.
 
 ```csharp

@@ -680,8 +680,9 @@ directory, or, for OpenAPI generation, the dotnet host that runs the tool, or th
 of the solution project that the configuration names, started without a GitHub token in its environment. Slice,
 target, browser, configuration, and MSBuild property values are restricted to names, so none can become an option or
 another property. `select` and `coverage verify` pass `--base` to Git only when it is a hexadecimal object ID, so Git
-cannot read it as an option, and escapes control characters in the changed paths that its reasons repeat. `verify-commit-message` starts no process. No command but `prune-prereleases` uses credentials. `stage-candidate` runs
-Git without the inherited `GIT_*` variables, which could point it at another repository, and stops Git after a minute.
+cannot read it as an option, and escapes control characters in the changed paths that its reasons repeat. `verify-commit-message` starts no process. No command but `prune-prereleases` uses credentials. Every command
+runs Git without a prompt, an askpass program, a forge token, or the inherited `GIT_*` variables, which could point it
+at another repository, with bounded output, and stops Git after 30 seconds.
 
 A service's values can be credentials, such as a connection string with a password. The service writes them to a ready file in
 a temporary directory that only the current user can enter and that lies outside the execution directory. The tool

@@ -43,6 +43,27 @@ public sealed class GitStartInfoTests
     }
 
     [Fact]
+    public void Start_information_a_caller_built_gets_the_same_environment_rules()
+    {
+        // Arrange
+        var startInfo = new System.Diagnostics.ProcessStartInfo("git");
+        startInfo.Environment.Clear();
+        startInfo.Environment["GH_TOKEN"] = "credential-marker";
+        startInfo.Environment["GIT_ASKPASS"] = "/nonexistent/askpass";
+        startInfo.Environment["SSH_ASKPASS"] = "/nonexistent/askpass";
+        startInfo.Environment["git_dir"] = "/elsewhere";
+        startInfo.Environment["GIT_TERMINAL_PROMPT"] = "1";
+        startInfo.Environment["HOME"] = "/home/user";
+
+        // Act
+        GitStartInfo.ApplyEnvironment(startInfo);
+
+        // Assert
+        startInfo.Environment.Keys.Order(StringComparer.Ordinal).ToArray().ShouldBe(["GIT_TERMINAL_PROMPT", "HOME"]);
+        startInfo.Environment["GIT_TERMINAL_PROMPT"].ShouldBe("0");
+    }
+
+    [Fact]
     public async Task A_git_started_from_the_description_receives_none_of_the_hosts_tokens_askpass_programs_or_git_variables()
     {
         // Arrange
@@ -72,7 +93,7 @@ public sealed class GitStartInfoTests
     public void No_git_or_a_git_that_is_not_fully_qualified_is_refused(string? found)
     {
         // Arrange
-        var resolver = new SingleAnswerResolver(found);
+        var resolver = new ExecutableMap(_ => found);
 
         Func<object?> create = () => GitStartInfo.Create("/tmp", ["status"], resolver);
 

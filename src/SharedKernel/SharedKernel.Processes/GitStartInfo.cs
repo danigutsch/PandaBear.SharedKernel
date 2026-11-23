@@ -58,10 +58,24 @@ public static class GitStartInfo
             startInfo.ArgumentList.Add(argument);
         }
 
+        ApplyEnvironment(startInfo);
+        return startInfo;
+    }
+
+    /// <summary>
+    /// Applies the environment rules of <see cref="Create(string, IEnumerable{string}, IExecutableResolver)"/> to start
+    /// information that a caller built itself, such as one whose executable a host's resolver chose: it removes every
+    /// inherited <c>GIT_*</c> variable, forge token, <c>SSH_ASKPASS</c>, and <c>SSH_ASKPASS_REQUIRE</c>, and sets
+    /// <c>GIT_TERMINAL_PROMPT=0</c>. Variables the caller needs, such as its own <c>GIT_DIR</c>, are set afterwards.
+    /// </summary>
+    /// <param name="startInfo">The start information of a <c>git</c> process.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="startInfo"/> is <see langword="null"/>.</exception>
+    public static void ApplyEnvironment(ProcessStartInfo startInfo)
+    {
+        ArgumentNullException.ThrowIfNull(startInfo);
         ProcessEnvironment.RemoveGitVariables(startInfo);
         ProcessEnvironment.RemoveForgeTokens(startInfo);
         ProcessEnvironment.Remove(startInfo, AskPassVariableNames);
         startInfo.Environment["GIT_TERMINAL_PROMPT"] = "0";
-        return startInfo;
     }
 }

@@ -24,6 +24,7 @@ public static partial class DevcontainerVerification
     /// exits with 0.
     /// </summary>
     /// <exception cref="InvalidOperationException">A prerequisite is missing, or <c>up</c> or a command fails.</exception>
+    /// <exception cref="TimeoutException">The <c>git</c> that finds the common directory of a linked worktree does not finish within 30 seconds.</exception>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/>, <paramref name="host"/> or <paramref name="output"/> is <see langword="null"/>.</exception>
     public static async Task<int> Run(DevcontainerVerificationOptions options, DevcontainerHost host, TextWriter output, CancellationToken ct)
     {
@@ -130,27 +131,27 @@ public static partial class DevcontainerVerification
     }
 
     // A linked worktree's .git file points into the main repository, which the container needs for Git to work.
-    private static async Task<string?> FindGitCommonDirectory(string root, CancellationToken ct)
+    private static Task<string?> FindGitCommonDirectory(string root, CancellationToken ct) =>
+        FindGitCommonDirectory(root, PathExecutableResolver.Default, GitStartInfo.Timeout, ct);
+
+    /// <summary>
+    /// Returns the common Git directory of the linked worktree at <paramref name="root"/>, or <see langword="null"/> when
+    /// <paramref name="root"/> is not one, no <c>git</c> is found, or <c>git</c> fails. Git runs as <see cref="GitStartInfo"/>
+    /// describes it, through a <see cref="BoundedProcessRunner"/> that stops it after <paramref name="timeout"/>.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Git cannot start or writes more output than the limit.</exception>
+    /// <exception cref="TimeoutException">Git does not finish within <paramref name="timeout"/>; it has been stopped.</exception>
+    internal static async Task<string?> FindGitCommonDirectory(string root, IExecutableResolver resolver, TimeSpan timeout, CancellationToken ct)
     {
-        var git = PathExecutableResolver.Default.Find("git");
-        if (!File.Exists(Path.Combine(root, ".git")) || git is null)
+        if (!File.Exists(Path.Combine(root, ".git")) || resolver.Find("git") is null)
         {
             return null;
         }
 
-        ProcessStartInfo startInfo = new(git)
-        {
-            WorkingDirectory = root
-        };
-        foreach (var argument in new[] { "-C", root, "rev-parse", "--git-common-dir" })
-        {
-            startInfo.ArgumentList.Add(argument);
-        }
-
-        using StringWriter standardOutput = new(CultureInfo.InvariantCulture);
-        var exitCode = await DevcontainerProcess.Run(startInfo, standardOutput, TextWriter.Null, null, null, ct).ConfigureAwait(false);
-        var commonDirectory = standardOutput.ToString().Trim();
-        return exitCode == 0 && commonDirectory.Length > 0 ? Path.GetFullPath(commonDirectory, root) : null;
+        var startInfo = GitStartInfo.Create(root, ["-C", root, "rev-parse", "--git-common-dir"], resolver);
+        var result = await new BoundedProcessRunner(timeout).Run(startInfo, forward: null, ct).ConfigureAwait(false);
+        var commonDirectory = result.StandardOutput.Trim();
+        return result.ExitCode == 0 && commonDirectory.Length > 0 ? Path.GetFullPath(commonDirectory, root) : null;
     }
 
     private static Task<int> RunCli(

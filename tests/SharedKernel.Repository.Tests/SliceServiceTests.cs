@@ -438,7 +438,8 @@ public sealed class SliceServiceTests
             "dotnet build " + Path.Combine(execution, "tests.slnf") + " -c Release --no-restore",
             "dotnet test --solution " + Path.Combine(execution, "tests.slnf") + " -c Release --no-build --no-restore --results-directory " + Path.Combine(execution, "results"),
         ]);
-        run.Processes.Calls.ShouldAllSatisfy(static call => call.Environment.ShouldBeNull("Without a service, no process is configured."));
+        run.Processes.Calls.Where(static call => call.FileName != "git").ShouldAllSatisfy(static call => call.Environment.ShouldBeNull("Without a service, no process is configured."));
+        run.Processes.Calls.Where(static call => call.FileName == "git").ShouldAllSatisfy(static call => call.Environment.ShouldNotBeNull()["GIT_TERMINAL_PROMPT"].ShouldBe("0", "Git always runs without a prompt."));
         (await ServiceRunScope.Phases(execution, ct)).ShouldBe(["load passed", "restore passed", "build passed", "test passed", "total passed"]);
     }
 

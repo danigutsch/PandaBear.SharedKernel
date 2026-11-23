@@ -39,8 +39,9 @@ var output = await runner.Run(startInfo, forward: null, cancellationToken);
 - `GitStartInfo.Create(workingDirectory, arguments)` describes a `git` run: `git` from an absolute `PATH` directory (or
   the `IExecutableResolver` given), the arguments one by one without a shell, both output streams redirected,
   `GIT_TERMINAL_PROMPT=0`, and none of the host's forge tokens, `SSH_ASKPASS`, `SSH_ASKPASS_REQUIRE`, or `GIT_*` variables,
-  `GIT_ASKPASS` and `GIT_DIR` among them. A caller adds its own `GIT_*` variables afterwards. `GitStartInfo.Timeout` (30
-  seconds) is the limit that every git call of these libraries gets.
+  `GIT_ASKPASS` and `GIT_DIR` among them. A caller adds its own `GIT_*` variables afterwards. `ApplyEnvironment(startInfo)`
+  applies the same environment rules to start information that a caller built itself, such as one whose `git` a host's
+  resolver chose. `GitStartInfo.Timeout` (30 seconds) is the limit that every git call of these libraries gets.
 - `IExecutableResolver` finds the executable that a command name starts. `PathExecutableResolver` looks only in the
   absolute directories of `PATH`, never in the application directory, the working directory, or a relative `PATH`
   entry, so a checkout cannot supply the executable. On Unix a file needs an execute bit; on Windows `<command>.exe` is

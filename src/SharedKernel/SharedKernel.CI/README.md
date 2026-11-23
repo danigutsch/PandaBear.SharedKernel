@@ -28,7 +28,9 @@ var plan = await new TestSelector(machine).Select(
 
 - `CiMachine` holds the side effects: the `IProcessRunner` and `IExecutableResolver` of
   `PandaBear.SharedKernel.Processes` that run Git, dotnet, PowerShell, and Stryker, the start of a slice's service
-  process, and the `TimeProvider`. Tests pass fakes and start nothing.
+  process, and the `TimeProvider`. Tests pass fakes and start nothing. Every Git run gets the environment of
+  `GitStartInfo.ApplyEnvironment` (no prompt, askpass program, forge token, or inherited `GIT_*` variable) and 30
+  seconds; when the runner is `SystemProcessRunner`, which has no output limit, Git runs through `BoundedProcessRunner`.
 - The operations are `TestSelector`, `SliceRunner`, `LocalCheckRunner`, `OpenApiGenerator`, `PlaywrightInstaller`,
   `CoverageVerifier`, `MutationTestRunner`, `CandidateStager`, `PrereleasePruner`, `CommitMessageVerifier`, and
   `WarningReports`. Each takes the repository root and a settings record where it needs one, writes results and
