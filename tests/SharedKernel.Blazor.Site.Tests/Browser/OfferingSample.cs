@@ -5,7 +5,8 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 
 /// <summary>
 /// A page for the tests of the offering display atoms: a status badge of every tone on the page, in a primary band, in an image band over
-/// an all-white photo, in a cover hero without a photo and in a primary footer.
+/// an all-white photo, in a cover hero without a photo and in a primary footer, and a grid of tour cards three to a row (<c>#tours</c>) whose first card
+/// (<c>#tour</c>) holds an inline fact grid of three facts with icons.
 /// </summary>
 public sealed class OfferingSample : ComponentBase
 {
@@ -15,6 +16,14 @@ public sealed class OfferingSample : ComponentBase
     /// <summary>Gets every place a badge is shown with every tone: <c>page</c>, <c>hero</c>, <c>primary</c>, <c>image</c> and <c>footer</c>.</summary>
     public static TheoryData<string, StatusTone> BadgeCases { get; } = Cases();
 
+    private static readonly RenderFragment Icon = builder => builder.AddMarkupContent(0, "<svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" /></svg>");
+
+    private static readonly FactCard[] CardFacts =
+    [
+        new("Days", [new("8")], Icon),
+        new("Distance", [new("320 km")], Icon),
+        new("Level", [new("Moderate")], Icon),
+    ];
 
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -29,6 +38,7 @@ public sealed class OfferingSample : ComponentBase
         builder.OpenElement(5, "div");
         builder.AddAttribute(6, "class", "site-container");
         builder.AddContent(7, Badges("page"));
+        builder.AddContent(8, Tours);
         builder.CloseElement();
         builder.OpenComponent<Band>(9);
         builder.AddComponentParameter(10, nameof(Band.Tone), BandTone.Primary);
@@ -88,4 +98,31 @@ public sealed class OfferingSample : ComponentBase
 
         builder.CloseElement();
     };
+
+    private static void Tours(RenderTreeBuilder builder)
+    {
+        builder.OpenComponent<CardGrid>(0);
+        builder.AddComponentParameter(1, "id", "tours");
+        builder.AddComponentParameter(2, nameof(CardGrid.MinColumnWidth), CardColumnWidth.Medium);
+        builder.AddComponentParameter(3, nameof(CardGrid.ChildContent), (RenderFragment)(grid =>
+        {
+            for (var index = 0; index < 4; index++)
+            {
+                grid.OpenComponent<Card>(0);
+                grid.SetKey(index);
+                grid.AddComponentParameter(1, "id", index == 0 ? "tour" : $"tour-{index}");
+                grid.AddComponentParameter(2, nameof(Card.Title), "Atacama");
+                grid.AddComponentParameter(3, nameof(Card.Href), LinkTarget.FromString("/tours/atacama"));
+                grid.AddComponentParameter(4, nameof(Card.ChildContent), (RenderFragment)(body =>
+                {
+                    body.OpenComponent<FactGrid>(0);
+                    body.AddComponentParameter(1, nameof(FactGrid.Layout), FactGridLayout.Inline);
+                    body.AddComponentParameter(2, nameof(FactGrid.Cards), CardFacts);
+                    body.CloseComponent();
+                }));
+                grid.CloseComponent();
+            }
+        }));
+        builder.CloseComponent();
+    }
 }

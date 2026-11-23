@@ -1313,6 +1313,39 @@ a {
 }
 
 /*
+ * Inline fact grid: one row of compact facts for a card, without borders, each its icon and label on one line above its value. The row
+ * starts where the text starts, or in the middle under centred text, and wraps only when it is too narrow.
+ */
+.site-fact-grid--inline {
+    gap: var(--site-space-2) var(--site-space-4);
+    justify-content: var(--_site-centre-justify, flex-start);
+    border: 0;
+}
+
+.site-fact-grid--inline > .site-fact-grid__item {
+    flex: 0 1 auto;
+    padding: 0;
+    border: 0;
+    text-align: inherit;
+}
+
+.site-fact-grid--inline .site-fact-grid__label {
+    font-size: var(--site-font-size-sm);
+}
+
+.site-fact-grid--inline .site-fact-grid__icon {
+    display: inline-block;
+    margin: 0;
+    margin-inline-end: var(--site-space-1);
+    font-size: 1.25em;
+    vertical-align: -0.25em;
+}
+
+.site-fact-grid--inline .site-fact-grid__icon > :is(svg, img) {
+    margin-inline: 0;
+}
+
+/*
  * Disclosure: a run of disclosures keeps its distance from the content before it, and the summary is rounded like its box, so the
  * focus ring follows the box's corners.
  */

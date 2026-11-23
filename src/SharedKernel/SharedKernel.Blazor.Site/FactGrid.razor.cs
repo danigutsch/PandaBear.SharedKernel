@@ -10,6 +10,7 @@ namespace PandaBear.Blazor.Site;
 /// at most four cards with the cards spread as evenly as possible over them. The cards of a shorter last row grow to fill it. In a value
 /// with an <c>@</c>, such as an e-mail address, a <c>wbr</c> before the <c>@</c> and each dot lets it wrap between its parts; a linked
 /// value with such breaks carries its text as <c>aria-label</c>, because Chromium names a link from content with a space at each break.
+/// The <see cref="FactGridLayout.Inline" /> <see cref="Layout" /> renders the same list as one compact row, for a card.
 /// </summary>
 public sealed partial class FactGrid
 {
@@ -20,16 +21,31 @@ public sealed partial class FactGrid
     [EditorRequired]
     public IReadOnlyList<FactCard> Cards { get; set; } = [];
 
-    private string RootClass => Cards.Count == 0 ? "site-fact-grid" : $"site-fact-grid site-fact-grid--columns-{Columns(Cards.Count)}";
+    /// <summary>
+    /// Gets or sets the layout. The default is <see cref="FactGridLayout.Grid" />; <see cref="FactGridLayout.Inline" /> adds
+    /// <c>site-fact-grid--inline</c> instead of a column class, for a one-row list of facts on a card.
+    /// </summary>
+    [Parameter]
+    public FactGridLayout Layout { get; set; }
+
+    private string RootClass => Layout == FactGridLayout.Inline
+        ? "site-fact-grid site-fact-grid--inline"
+        : Cards.Count == 0 ? "site-fact-grid" : $"site-fact-grid site-fact-grid--columns-{Columns(Cards.Count)}";
 
     /// <inheritdoc />
     /// <exception cref="ArgumentNullException"><see cref="Cards" /> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><see cref="Layout" /> is not defined.</exception>
     /// <exception cref="ArgumentException">
     /// A card is null, has a blank label, or has no values, a null value or a value with blank text.
     /// </exception>
     protected override void OnParametersSet()
     {
         ArgumentNullException.ThrowIfNull(Cards);
+        if (!Enum.IsDefined(Layout))
+        {
+            throw new ArgumentOutOfRangeException(nameof(Layout), Layout, "The fact grid layout is not defined.");
+        }
+
         foreach (var card in Cards)
         {
             if (card is null)

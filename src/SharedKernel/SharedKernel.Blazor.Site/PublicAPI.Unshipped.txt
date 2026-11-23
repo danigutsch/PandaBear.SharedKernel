@@ -947,6 +947,11 @@ PandaBear.Blazor.Site.GalleryImage.Href.get -> PandaBear.Blazor.Site.LinkTarget?
 PandaBear.Blazor.Site.GalleryImage.Href.init -> void
 PandaBear.Blazor.Site.ImageGrid.Sizes.get -> string?
 PandaBear.Blazor.Site.ImageGrid.Sizes.set -> void
+PandaBear.Blazor.Site.FactGrid.Layout.get -> PandaBear.Blazor.Site.FactGridLayout
+PandaBear.Blazor.Site.FactGrid.Layout.set -> void
+PandaBear.Blazor.Site.FactGridLayout
+PandaBear.Blazor.Site.FactGridLayout.Grid = 0 -> PandaBear.Blazor.Site.FactGridLayout
+PandaBear.Blazor.Site.FactGridLayout.Inline = 1 -> PandaBear.Blazor.Site.FactGridLayout
 PandaBear.Blazor.Site.StatusBadge
 PandaBear.Blazor.Site.StatusBadge.Label.get -> string?
 PandaBear.Blazor.Site.StatusBadge.Label.set -> void

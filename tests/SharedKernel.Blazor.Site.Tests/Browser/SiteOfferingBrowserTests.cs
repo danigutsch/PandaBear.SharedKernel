@@ -28,4 +28,39 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         SiteFixtures.Contrast(text, background).ShouldBeGreaterThanOrEqualTo(4.5);
     }
 
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task An_inline_fact_grid_is_one_row_without_borders_in_a_card_of_three_to_a_row()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<OfferingSample>(chromium.Browser, 1280);
+
+        // Act
+        var items = await page.Boxes("#tour .site-fact-grid__item");
+        var card = await page.Box("#tour");
+        var border = await page.Style("#tour .site-fact-grid--inline", "border-top-width");
+        var itemBorder = await page.Style("#tour .site-fact-grid__item", "border-bottom-width");
+
+        // Assert
+        items.Count.ShouldBe(3);
+        items.Select(item => item.Y).Distinct().Count().ShouldBe(1);
+        items.ShouldAllSatisfy(item => item.Right.ShouldBeLessThanOrEqualTo(card.Right));
+        border.ShouldBe("0px");
+        itemBorder.ShouldBe("0px");
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task An_inline_fact_grid_wraps_inside_its_card_on_a_narrow_phone_instead_of_scrolling()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<OfferingSample>(chromium.Browser, 320);
+
+        // Act
+        var items = await page.Boxes("#tour .site-fact-grid__item");
+        var card = await page.Box("#tour");
+        var scrollWidth = await page.ScrollWidth();
+
+        // Assert
+        items.ShouldAllSatisfy(item => item.Right.ShouldBeLessThanOrEqualTo(card.Right));
+        scrollWidth.ShouldBeLessThanOrEqualTo(320);
+    }
 }
