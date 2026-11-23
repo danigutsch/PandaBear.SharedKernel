@@ -29,10 +29,19 @@ internal sealed class ServiceHost
     private readonly ServiceConfiguration _configuration;
     private readonly DirectoryInfo _directory;
     private readonly string _readyFile;
+    private readonly Func<string, CancellationToken, Task<byte[]>> _readReadyFile;
     private readonly string _logHint;
     private bool _exitReported;
 
-    private ServiceHost(string slice, Process process, Task logs, ServiceConfiguration configuration, DirectoryInfo directory, string readyFile, string logHint)
+    private ServiceHost(
+        string slice,
+        Process process,
+        Task logs,
+        ServiceConfiguration configuration,
+        DirectoryInfo directory,
+        string readyFile,
+        Func<string, CancellationToken, Task<byte[]>> readReadyFile,
+        string logHint)
     {
         Slice = slice;
         _process = process;
@@ -40,6 +49,7 @@ internal sealed class ServiceHost
         _configuration = configuration;
         _directory = directory;
         _readyFile = readyFile;
+        _readReadyFile = readReadyFile;
         _logHint = logHint;
     }
 
@@ -63,6 +73,10 @@ internal sealed class ServiceHost
     /// <param name="root">The repository root.</param>
     /// <param name="execution">The absolute execution directory, which receives the logs.</param>
     /// <param name="start">Starts the process from its start information.</param>
+    /// <param name="readReadyFile">
+    /// Reads the ready file at the path it is given, or throws <see cref="FileNotFoundException"/> when the file is not there yet; by default
+    /// a bounded read that refuses a file larger than 4 KiB. A test passes its own to decide when the service's writes happen.
+    /// </param>
     /// <exception cref="InvalidOperationException">The process could not start.</exception>
     public static ServiceHost Start(
         string slice,
@@ -70,7 +84,8 @@ internal sealed class ServiceHost
         string buildConfiguration,
         string root,
         string execution,
-        Func<ProcessStartInfo, Process> start)
+        Func<ProcessStartInfo, Process> start,
+        Func<string, CancellationToken, Task<byte[]>>? readReadyFile = null)
     {
         // The directory is created before the process, so the process never finds its ready file's directory missing.
         var directory = Directory.CreateTempSubdirectory(TempPrefix);
@@ -92,6 +107,7 @@ internal sealed class ServiceHost
                 configuration,
                 directory,
                 readyFile,
+                readReadyFile ?? ((path, ct) => BoundedFile.Read(path, MaxValueBytes, $"The ready file of the service of slice {slice}", ct)),
                 $"See {relative}/{name}.stdout.log and {relative}/{name}.stderr.log.");
         }
         finally
@@ -196,7 +212,11 @@ internal sealed class ServiceHost
     public string ReadyMessage() =>
         $"The service of slice {Slice} is ready: {_configuration.Project}{Environment.NewLine}Output: {StandardOutputLog}, {StandardErrorLog}{Environment.NewLine}";
 
-    /// <summary>Waits for the service to write its values to the ready file.</summary>
+    /// <summary>
+    /// Waits for the service to write its values to the ready file. Each poll notes whether the service has exited before it reads the
+    /// file, so a service that wrote its values and then exited is ready, and an exit fails the wait only when the read that followed it
+    /// found no values.
+    /// </summary>
     /// <param name="ct">Cancels the wait.</param>
     /// <returns>The value variables with their values, in the order of the configuration; a value is never part of a message.</returns>
     /// <exception cref="InvalidOperationException">The service exited, or did not write its values in time.</exception>
@@ -207,13 +227,14 @@ internal sealed class ServiceHost
         var timeout = TimeSpan.FromSeconds(_configuration.ReadyTimeoutSeconds);
         while (true)
         {
+            var exited = _process.HasExited;
             if (await ReadValues(ct).ConfigureAwait(false) is { } values)
             {
                 DeleteReadyFile();
                 return values;
             }
 
-            if (_process.HasExited)
+            if (exited)
             {
                 _exitReported = true;
                 throw new InvalidOperationException(string.Create(
@@ -295,7 +316,7 @@ internal sealed class ServiceHost
         byte[] content;
         try
         {
-            content = await BoundedFile.Read(_readyFile, MaxValueBytes, $"The ready file of the service of slice {Slice}", ct).ConfigureAwait(false);
+            content = await _readReadyFile(_readyFile, ct).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
         {
