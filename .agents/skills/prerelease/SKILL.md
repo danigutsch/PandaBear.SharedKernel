@@ -22,8 +22,9 @@ owner's go-ahead for that step: approval of one prerelease does not cover the ne
 ## 2. Take the candidate
 
 1. Wait for the `SharedKernel validation` run of the push to `main` to succeed. It builds the candidate
-   `<target>-alpha.<run>.<attempt>`.
+   `<target>-alpha.<run>.<attempt>`. A push that only changes documentation skips packing and has no candidate.
 2. Download it: `gh run download <run> -n candidate-packages -D <dir>`. The files are in `<dir>/<version>/`.
+   The artifact is kept for 14 days.
 3. Check `candidate.json`:
    - `libraryRevision` is the merge commit;
    - `libraryDirty` is `false`;
@@ -52,7 +53,8 @@ In the consuming repository, on its own branch:
 
 1. Copy `candidate.json` unedited over `.config/sharedkernel-candidate.json`.
 2. Move the version in `Directory.Packages.props` and `.config/dotnet-tools.json`.
-3. `global.json` must name the same SDK as this repository at `libraryRevision`; `stage-candidate` checks it.
+3. `global.json` must have the same `sdk.version` and `sdk.rollForward` as this repository at `libraryRevision`, and
+   the library checkout that `stage-candidate` uses must be clean at that revision; it checks both.
 4. Stage the packages with `dotnet ci stage-candidate` through the consumer's bootstrap. It checks the pin, the SDK, the
    revision and every SHA-256 again.
 5. Build and run every test suite. Adapt to the breaking changes in the notes.
@@ -60,8 +62,8 @@ In the consuming repository, on its own branch:
 
 ## 5. Record consumption evidence
 
-1. `gh workflow run ci.yml -f candidate_version=<version>` stages the published prerelease. It consumes it on Linux and
-   Windows, including NativeAOT.
+1. In this repository, `gh workflow run ci.yml -f candidate_version=<version>` stages the published prerelease.
+   It consumes it on Linux and Windows, including NativeAOT.
 2. When the run succeeds, download its `published-candidate-*` artifacts.
 3. In the consumer, run
    `dotnet release merge-evidence --candidate .config/sharedkernel-candidate.json --evidence <each consumption.json>`.
