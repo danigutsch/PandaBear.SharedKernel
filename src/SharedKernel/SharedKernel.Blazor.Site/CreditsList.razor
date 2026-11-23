@@ -1,0 +1,39 @@
+@inherits SiteComponent
+@if (Items.Count > 0)
+{
+    <ul role="list" class="@CssClass("site-credits-list")" @attributes="AdditionalAttributes">
+        @foreach (var item in Items)
+        {
+            var hasTitle = !string.IsNullOrWhiteSpace(item.Title);
+            <li class="site-credits-list__item">
+                @if (item.Thumbnail is not null)
+                {
+                    <div class="site-credits-list__thumbnail">@ResponsiveImageMarkup.Render(item.Thumbnail, eager: false, highPriority: false)</div>
+                }
+                <div class="site-credits-list__text">
+                    @if (hasTitle)
+                    {
+                        <p class="site-credits-list__title">@Linked(item.Title!, item.SourceHref)</p>
+                    }
+                    <p class="site-credits-list__author">@Linked(item.Author, hasTitle ? null : item.SourceHref)</p>
+                    <p class="site-credits-list__licence">@if (item.LicenceHref is null)
+                        {
+                            @item.LicenceText
+                        }
+                        else
+                        {
+                            <a href="@item.LicenceHref.Value" rel="license">@item.LicenceText</a>
+                        }</p>
+                    @if (!string.IsNullOrWhiteSpace(item.ChangesText))
+                    {
+                        <p class="site-credits-list__changes">@item.ChangesText</p>
+                    }
+                </div>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private static RenderFragment Linked(string text, LinkTarget? href) => href is null ? @<text>@text</text> : @<a href="@href.Value">@text</a>;
+}

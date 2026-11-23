@@ -199,4 +199,65 @@ public sealed class SiteOfferingBrowserTests(ChromiumFixture chromium) : IClassF
         // Assert
         SiteFixtures.Contrast(number, background).ShouldBeGreaterThanOrEqualTo(4.5);
     }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData("#gallery", "#ffffff")]
+    [InlineData("#band-gallery", "#1d4ed8")]
+    public async Task An_image_credit_and_its_caption_reach_4_5_to_1_on_the_page_and_on_the_primary_colour(string gallery, string background)
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<OfferingSample>(chromium.Browser, 1280);
+
+        // Act
+        var credit = ComputedColor.ToHex(await page.Style(gallery + " .site-image-credit", "color"));
+        var link = ComputedColor.ToHex(await page.Style(gallery + " .site-image-credit a", "color"));
+        var caption = ComputedColor.ToHex(await page.Style(gallery + " figcaption", "color"));
+        var underline = await page.Style(gallery + " .site-image-credit a", "text-decoration-line");
+
+        // Assert
+        SiteFixtures.Contrast(credit, background).ShouldBeGreaterThanOrEqualTo(4.5);
+        SiteFixtures.Contrast(link, background).ShouldBeGreaterThanOrEqualTo(4.5);
+        SiteFixtures.Contrast(caption, background).ShouldBeGreaterThanOrEqualTo(4.5);
+        underline.ShouldBe("underline");
+    }
+
+    [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    public async Task A_credited_image_link_keeps_its_alternative_text_as_its_name_and_the_credit_sits_under_the_caption()
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<OfferingSample>(chromium.Browser, 1280);
+
+        // Act
+        var tree = await page.AccessibilityTree();
+        var image = await page.Box("#gallery img");
+        var credit = await page.Box("#gallery .site-image-credit");
+
+        // Assert
+        tree.ShouldContain(new AccessibleNode("link", "Salt flats at dusk", null));
+        tree.ShouldContain(new AccessibleNode("link", "CC BY 4.0", null));
+        tree.ShouldContain(new AccessibleNode("link", "Photo: Ana Lima", null));
+        credit.Y.ShouldBeGreaterThan(image.Bottom);
+    }
+
+    [Theory(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
+    [InlineData(320)]
+    [InlineData(1280)]
+    public async Task A_credit_keeps_its_thumbnail_beside_its_lines_and_breaks_a_long_title_instead_of_scrolling(int width)
+    {
+        // Arrange
+        await using var page = await LayoutPage.Serve<OfferingSample>(chromium.Browser, width);
+
+        // Act
+        var thumbnail = await page.Box("#credits .site-credits-list__thumbnail img");
+        var text = await page.Box("#credits .site-credits-list__text");
+        var list = await page.Box("#credits");
+        var scrollWidth = await page.ScrollWidth();
+
+        // Assert
+        thumbnail.Width.ShouldBe(80);
+        text.X.ShouldBeGreaterThan(thumbnail.X + thumbnail.Width);
+        text.Y.ShouldBe(thumbnail.Y);
+        text.Right.ShouldBeLessThanOrEqualTo(list.Right);
+        scrollWidth.ShouldBeLessThanOrEqualTo(width);
+    }
 }

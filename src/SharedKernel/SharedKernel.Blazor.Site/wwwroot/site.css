@@ -708,7 +708,7 @@ a {
     border-radius: 0;
 }
 
-:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label, .site-price-list__note, .site-step-list__number) {
+:is(.site-band--primary, .site-band--image, .site-hero--cover, .site-footer--primary) :is(h1, h2, h3, h4, h5, h6, .site-section__eyebrow, .site-section__intro, .site-hero__eyebrow, .site-hero__subtitle, .site-quote, .site-quote figcaption, .site-byline__job-title, .site-fact-grid__label, .site-price-list__note, .site-step-list__number, .site-image-grid__item figcaption, .site-image-credit, .site-credits-list__changes) {
     color: inherit;
 }
 
@@ -1520,6 +1520,66 @@ a {
 
 .site-image-grid__item figcaption {
     margin-top: var(--site-space-1);
+    color: var(--site-color-muted);
+    font-size: var(--site-font-size-sm);
+}
+
+/*
+ * Image credit: a muted line of small text (the small typography role) under an image, on a line of its own after the caption, its links underlined in its colour.
+ * On the primary colour it takes the on-primary colour, like the caption.
+ */
+.site-image-credit {
+    display: block;
+    color: var(--site-color-muted);
+}
+
+.site-image-credit a {
+    color: inherit;
+}
+
+/*
+ * Credits list: one credit to a row, without markers (the role="list" keeps the list in Safari), a square thumbnail beside its lines.
+ */
+.site-credits-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-credits-list__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--site-space-3);
+    padding-block: var(--site-space-3);
+    border-block-end: 1px solid var(--site-color-border);
+}
+
+.site-credits-list__thumbnail {
+    flex: none;
+}
+
+.site-credits-list__thumbnail img {
+    display: block;
+    width: 5rem;
+    height: 5rem;
+    object-fit: cover;
+    border-radius: var(--site-radius);
+}
+
+.site-credits-list__text {
+    min-width: 0;
+    overflow-wrap: break-word;
+}
+
+.site-credits-list__text p {
+    margin: 0;
+}
+
+.site-credits-list__title {
+    font-weight: 700;
+}
+
+.site-credits-list__changes {
     color: var(--site-color-muted);
     font-size: var(--site-font-size-sm);
 }

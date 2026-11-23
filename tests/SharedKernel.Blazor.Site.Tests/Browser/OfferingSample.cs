@@ -9,7 +9,8 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// (<c>#tour</c>) holds an inline fact grid of three facts with icons and a from price, then a section "Prices" (<c>#prices</c>) whose
 /// price list (<c>#price-list</c>) is a group named by it, and the same list in the primary band (<c>#band-prices</c>), then an
 /// itinerary (<c>#itinerary</c>) of three days, the first two with a photo, and a one-day itinerary in the primary band
-/// (<c>#band-itinerary</c>).
+/// (<c>#band-itinerary</c>), then a linked, credited photo (<c>#gallery</c>), the same in the primary band (<c>#band-gallery</c>), and a
+/// credits list (<c>#credits</c>) with a long unbroken source title.
 /// </summary>
 public sealed class OfferingSample : ComponentBase
 {
@@ -49,6 +50,7 @@ public sealed class OfferingSample : ComponentBase
             band.AddContent(0, Badges("primary"));
             band.AddContent(1, Prices("band-prices"));
             band.AddContent(2, Itinerary("band-itinerary", 1));
+            band.AddContent(3, Gallery("band-gallery"));
         }));
         builder.CloseComponent();
         builder.OpenComponent<Band>(12);
@@ -81,6 +83,8 @@ public sealed class OfferingSample : ComponentBase
         builder.AddContent(1, Tours);
         builder.AddContent(2, PriceSection);
         builder.AddContent(3, Itinerary("itinerary", 3));
+        builder.AddContent(4, Gallery("gallery"));
+        builder.AddContent(5, Credits);
     }
 
     private static TheoryData<string, StatusTone> Cases()
@@ -183,4 +187,37 @@ public sealed class OfferingSample : ComponentBase
             CardFacts)).ToArray());
         builder.CloseComponent();
     };
+
+    private static RenderFragment Gallery(string id) => builder =>
+    {
+        builder.OpenComponent<ImageGrid>(0);
+        builder.AddComponentParameter(1, "id", id);
+        builder.AddComponentParameter(2, nameof(ImageGrid.Images), new GalleryImage[]
+        {
+            new(ResponsiveImage.Create(LinkTarget.FromString("/gallery.svg"), 1600, 900, ImageAlternative.Describe("Salt flats at dusk")), "The salt flats")
+            {
+                Href = LinkTarget.FromString("/gallery-large.svg"),
+                Credit = new ImageCreditLine("Photo: Ana Lima", "CC BY 4.0", LinkTarget.FromString("https://creativecommons.org/licenses/by/4.0/"), LinkTarget.FromString("/credits")),
+            },
+        });
+        builder.CloseComponent();
+    };
+
+    private static void Credits(RenderTreeBuilder builder)
+    {
+        builder.OpenComponent<CreditsList>(0);
+        builder.AddComponentParameter(1, "id", "credits");
+        builder.AddComponentParameter(2, nameof(CreditsList.Items), new CreditItem[]
+        {
+            new(
+                ResponsiveImage.Create(LinkTarget.FromString("/thumb.svg"), 160, 160, ImageAlternative.Decorative()),
+                "Salar_de_Atacama_at_dusk_from_the_road_to_San_Pedro_de_Atacama.jpg",
+                "Ana Lima",
+                LinkTarget.FromString("https://commons.wikimedia.org/wiki/File:Salar.jpg"),
+                "CC BY-SA 4.0",
+                LinkTarget.FromString("https://creativecommons.org/licenses/by-sa/4.0/"),
+                "Cropped"),
+        });
+        builder.CloseComponent();
+    }
 }

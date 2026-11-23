@@ -11,4 +11,11 @@ public sealed record GalleryImage(ResponsiveImage Image, string? Caption = null)
     /// a linked decorative image. <see langword="null" />, the default, renders the image without a link.
     /// </summary>
     public LinkTarget? Href { get; init; }
+
+    /// <summary>
+    /// Gets the optional short credit of the image, such as its author and licence. The grid renders it as an
+    /// <see cref="ImageCreditCaption" /> in the image's <c>figcaption</c>, after the caption and outside the image's link, so the link
+    /// keeps the alternative text as its name. <see langword="null" />, the default, renders none.
+    /// </summary>
+    public ImageCreditLine? Credit { get; init; }
 }
