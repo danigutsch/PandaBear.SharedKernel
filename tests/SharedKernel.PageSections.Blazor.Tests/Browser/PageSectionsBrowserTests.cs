@@ -9,7 +9,7 @@ namespace PandaBear.PageSections.Blazor.Tests.Browser;
 /// </summary>
 public sealed class PageSectionsBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
+    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public async Task A_section_is_a_region_named_by_its_heading_its_questions_open_on_demand_and_its_links_are_named()

@@ -9,7 +9,7 @@ namespace PandaBear.Blazor.Tests.Browser;
 [Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class ImagePickerBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
-    private const string Skip = "The Playwright Chromium browser is not installed; run sharedkernel-ci install-playwright.";
+    private const string Skip = "The Playwright Chromium browser is not installed; run dotnet ci install-playwright.";
 
     [Fact(SkipType = typeof(ChromiumHost), SkipUnless = nameof(ChromiumHost.IsInstalled), Skip = Skip)]
     public async Task Removing_and_moving_keep_focus_on_the_nearest_control_of_the_list()
