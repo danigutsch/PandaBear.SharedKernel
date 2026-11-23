@@ -41,7 +41,9 @@ Use `SerialTestJustificationAttribute` on xUnit collection definitions that disa
 - Processes and Git: `TestProcess.Run` runs a process and captures its output; `TestGit` runs Git without the user's
   configuration and commits a directory (`CommitAll`, `Commit`). It starts Git from an absolute `PATH` directory as
   `GitStartInfo` of `PandaBear.SharedKernel.Processes` describes it, without a prompt or the host's tokens and inherited
-  `GIT_*` variables (pass a variable a test needs in `environment`), with bounded output, and stops it after 30 seconds; `TemporaryGitRepository` owns an isolated repository
+  `GIT_*` variables (pass a variable a test needs in `environment`), with bounded output, and stops it after 30 seconds.
+  It turns automatic maintenance off (`maintenance.auto=false`, `gc.auto=0`), so no detached `git maintenance` keeps
+  writing to `.git` after a commit returned while the test reads or deletes the repository; `TemporaryGitRepository` owns an isolated repository
   with `Initialize`, `Commit`, `Tag` and `RunGit`.
 - Time: `CountingTimeProvider` wraps a `TimeProvider` (the system clock by default) and counts how often the current UTC time is
   read (`Reads`, `Reset`), to prove that an operation reads the clock once. For a fixed or movable clock use

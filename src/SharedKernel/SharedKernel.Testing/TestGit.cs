@@ -8,12 +8,23 @@ public static class TestGit
     private const string Identity = "Test Author";
     private const string IdentityEmail = "test-author@example.invalid";
 
-    /// <summary>Gets the environment variables that cut Git off from the user's global and system configuration.</summary>
+    /// <summary>
+    /// Gets the environment variables that cut Git off from the user's global and system configuration and turn off
+    /// automatic maintenance (<c>maintenance.auto=false</c> and <c>gc.auto=0</c>, set through <c>GIT_CONFIG_COUNT</c>,
+    /// which overrides the repository's configuration). Otherwise a command such as <c>commit</c> leaves a detached
+    /// <c>git maintenance</c> running that keeps writing to <c>.git</c> after the command returned, while the test reads or
+    /// deletes the repository. A caller that sets <c>GIT_CONFIG_COUNT</c> itself replaces these two settings.
+    /// </summary>
     public static IReadOnlyDictionary<string, string?> Environment { get; } = new Dictionary<string, string?>(StringComparer.Ordinal)
     {
         ["GIT_ATTR_NOSYSTEM"] = "1",
         ["GIT_CONFIG_GLOBAL"] = OperatingSystem.IsWindows() ? "NUL" : "/dev/null",
         ["GIT_CONFIG_NOSYSTEM"] = "1",
+        ["GIT_CONFIG_COUNT"] = "2",
+        ["GIT_CONFIG_KEY_0"] = "maintenance.auto",
+        ["GIT_CONFIG_VALUE_0"] = "false",
+        ["GIT_CONFIG_KEY_1"] = "gc.auto",
+        ["GIT_CONFIG_VALUE_1"] = "0",
     };
 
     /// <summary>
