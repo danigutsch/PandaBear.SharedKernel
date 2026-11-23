@@ -263,3 +263,65 @@ static PandaBear.BuildingBlocks.SearchKey.Of(string? text) -> string!
 PandaBear.BuildingBlocks.PublicationStatus
 PandaBear.BuildingBlocks.PublicationStatus.Draft = 0 -> PandaBear.BuildingBlocks.PublicationStatus
 PandaBear.BuildingBlocks.PublicationStatus.Published = 1 -> PandaBear.BuildingBlocks.PublicationStatus
+PandaBear.BuildingBlocks.DateOnlyRange.ToDisplayString(PandaBear.BuildingBlocks.DateRangePatterns! patterns, System.IFormatProvider! provider) -> string!
+PandaBear.BuildingBlocks.DateRangePatterns
+PandaBear.BuildingBlocks.DateRangePatterns.DateRangePatterns(string! singleDay, string! sameMonth, string! sameYear, string! other) -> void
+PandaBear.BuildingBlocks.DateRangePatterns.Other.get -> string!
+PandaBear.BuildingBlocks.DateRangePatterns.SameMonth.get -> string!
+PandaBear.BuildingBlocks.DateRangePatterns.SameYear.get -> string!
+PandaBear.BuildingBlocks.DateRangePatterns.SingleDay.get -> string!
+PandaBear.BuildingBlocks.IImageEligibility<TImageId>
+PandaBear.BuildingBlocks.IImageEligibility<TImageId>.Exists(TImageId imageId) -> bool
+PandaBear.BuildingBlocks.IImageEligibility<TImageId>.IsEligible(TImageId imageId, PandaBear.BuildingBlocks.ContentCulture! culture) -> bool
+PandaBear.BuildingBlocks.Money.ToDisplayString(System.IFormatProvider! provider, PandaBear.BuildingBlocks.MoneyDisplayOptions! options) -> string!
+PandaBear.BuildingBlocks.MoneyDisplayOptions
+PandaBear.BuildingBlocks.MoneyDisplayOptions.<Clone>$() -> PandaBear.BuildingBlocks.MoneyDisplayOptions!
+PandaBear.BuildingBlocks.MoneyDisplayOptions.Equals(PandaBear.BuildingBlocks.MoneyDisplayOptions? other) -> bool
+PandaBear.BuildingBlocks.MoneyDisplayOptions.MoneyDisplayOptions() -> void
+PandaBear.BuildingBlocks.MoneyDisplayOptions.OmitZeroMinorUnits.get -> bool
+PandaBear.BuildingBlocks.MoneyDisplayOptions.OmitZeroMinorUnits.init -> void
+PandaBear.BuildingBlocks.MoneyDisplayOptions.SymbolPlacement.get -> PandaBear.BuildingBlocks.MoneySymbolPlacement
+PandaBear.BuildingBlocks.MoneyDisplayOptions.SymbolPlacement.init -> void
+PandaBear.BuildingBlocks.MoneySymbolPlacement
+PandaBear.BuildingBlocks.MoneySymbolPlacement.After = 2 -> PandaBear.BuildingBlocks.MoneySymbolPlacement
+PandaBear.BuildingBlocks.MoneySymbolPlacement.Before = 1 -> PandaBear.BuildingBlocks.MoneySymbolPlacement
+PandaBear.BuildingBlocks.MoneySymbolPlacement.Culture = 0 -> PandaBear.BuildingBlocks.MoneySymbolPlacement
+override PandaBear.BuildingBlocks.MoneyDisplayOptions.Equals(object? obj) -> bool
+override PandaBear.BuildingBlocks.MoneyDisplayOptions.GetHashCode() -> int
+override PandaBear.BuildingBlocks.MoneyDisplayOptions.ToString() -> string!
+static PandaBear.BuildingBlocks.MoneyDisplayOptions.operator !=(PandaBear.BuildingBlocks.MoneyDisplayOptions? left, PandaBear.BuildingBlocks.MoneyDisplayOptions? right) -> bool
+static PandaBear.BuildingBlocks.MoneyDisplayOptions.operator ==(PandaBear.BuildingBlocks.MoneyDisplayOptions? left, PandaBear.BuildingBlocks.MoneyDisplayOptions? right) -> bool
+PandaBear.BuildingBlocks.ImageCredit
+PandaBear.BuildingBlocks.ImageCredit.Author.get -> string!
+PandaBear.BuildingBlocks.ImageCredit.Licence.get -> PandaBear.BuildingBlocks.ImageLicence!
+PandaBear.BuildingBlocks.ImageCredit.Modified.get -> bool
+PandaBear.BuildingBlocks.ImageCredit.SourceUrl.get -> PandaBear.BuildingBlocks.WebUrl?
+PandaBear.BuildingBlocks.ImageCredit.Title.get -> string?
+PandaBear.BuildingBlocks.ImageCredit.ToFullText(PandaBear.BuildingBlocks.ImageCreditFormats! formats, System.IFormatProvider! provider) -> string!
+PandaBear.BuildingBlocks.ImageCredit.ToShortText(string! format, System.IFormatProvider! provider) -> string!
+PandaBear.BuildingBlocks.ImageCreditFormats
+PandaBear.BuildingBlocks.ImageCreditFormats.<Clone>$() -> PandaBear.BuildingBlocks.ImageCreditFormats!
+PandaBear.BuildingBlocks.ImageCreditFormats.Deconstruct(out string! WithTitle, out string! WithoutTitle, out string! Modified) -> void
+PandaBear.BuildingBlocks.ImageCreditFormats.Equals(PandaBear.BuildingBlocks.ImageCreditFormats? other) -> bool
+PandaBear.BuildingBlocks.ImageCreditFormats.ImageCreditFormats(string! WithTitle, string! WithoutTitle, string! Modified) -> void
+PandaBear.BuildingBlocks.ImageCreditFormats.Modified.get -> string!
+PandaBear.BuildingBlocks.ImageCreditFormats.WithTitle.get -> string!
+PandaBear.BuildingBlocks.ImageCreditFormats.WithoutTitle.get -> string!
+PandaBear.BuildingBlocks.ImageLicence
+PandaBear.BuildingBlocks.ImageLicence.Code.get -> string!
+PandaBear.BuildingBlocks.ImageLicence.Url.get -> PandaBear.BuildingBlocks.WebUrl?
+const PandaBear.BuildingBlocks.ImageCredit.MaxAuthorLength = 200 -> int
+const PandaBear.BuildingBlocks.ImageCredit.MaxTitleLength = 200 -> int
+const PandaBear.BuildingBlocks.ImageLicence.MaxCodeLength = 60 -> int
+override PandaBear.BuildingBlocks.ImageCredit.ToString() -> string!
+override PandaBear.BuildingBlocks.ImageCreditFormats.Equals(object? obj) -> bool
+override PandaBear.BuildingBlocks.ImageCreditFormats.GetHashCode() -> int
+override PandaBear.BuildingBlocks.ImageCreditFormats.ToString() -> string!
+override PandaBear.BuildingBlocks.ImageLicence.ToString() -> string!
+static PandaBear.BuildingBlocks.ImageCreditFormats.operator !=(PandaBear.BuildingBlocks.ImageCreditFormats? left, PandaBear.BuildingBlocks.ImageCreditFormats? right) -> bool
+static PandaBear.BuildingBlocks.ImageCreditFormats.operator ==(PandaBear.BuildingBlocks.ImageCreditFormats? left, PandaBear.BuildingBlocks.ImageCreditFormats? right) -> bool
+static PandaBear.BuildingBlocks.ImageLicence.KnownUrl(string? code) -> PandaBear.BuildingBlocks.WebUrl?
+static PandaBear.BuildingBlocks.ImageCredit.Create(string? author, string? title, string? source, string? licenceCode, string? licenceLink, bool modified, string! fieldPrefix = "") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.ImageCredit!>
+static PandaBear.BuildingBlocks.ImageCredit.Restore(string! author, string? title, string? source, PandaBear.BuildingBlocks.ImageLicence! licence, bool modified) -> PandaBear.BuildingBlocks.ImageCredit!
+static PandaBear.BuildingBlocks.ImageLicence.Create(string? code, string? link, string! field = "licence") -> PandaBear.Results.Result<PandaBear.BuildingBlocks.ImageLicence!>
+static PandaBear.BuildingBlocks.ImageLicence.Restore(string! code, string? link) -> PandaBear.BuildingBlocks.ImageLicence!

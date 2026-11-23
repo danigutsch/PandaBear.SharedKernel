@@ -47,3 +47,4 @@ Module README files beside source own consumer usage and examples. Samples and b
 - [Socket-free check lane](adr/20261109-socket-free-check-lane.md)
 - [Secrets engine and tool](adr/20261109-secrets-engine.md)
 - [Tool engines and thin wrappers](adr/20261115-tool-engines-and-thin-wrappers.md)
+- [Offerings and page sections](adr/20261122-offerings-and-page-sections.md)

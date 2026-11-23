@@ -1,3 +1,4 @@
+using System.Globalization;
 using PandaBear.Results;
 
 namespace PandaBear.BuildingBlocks;
@@ -42,6 +43,29 @@ public sealed class DateOnlyRange : ValueObject
         }
 
         return errors.HasErrors ? errors.ToResult<DateOnlyRange>() : Result.Ok(new DateOnlyRange(startDate, endDate));
+    }
+
+    /// <summary>
+    /// Formats the range for people with the pattern its days call for: <see cref="DateRangePatterns.SingleDay"/> for one day,
+    /// <see cref="DateRangePatterns.SameMonth"/> within one month of one year, <see cref="DateRangePatterns.SameYear"/> across months of one
+    /// year, and <see cref="DateRangePatterns.Other"/> across years. Month names and digits come from the provider's culture data (ICU on
+    /// Linux and macOS).
+    /// </summary>
+    /// <param name="patterns">The application's patterns, with <c>{0}</c> the first day and <c>{1}</c> the last.</param>
+    /// <param name="provider">The culture, such as <see cref="CultureInfo.CurrentCulture"/>.</param>
+    /// <returns>The display text, such as <c>20 a 29 de setembro de 2027</c>.</returns>
+    /// <exception cref="ArgumentNullException">An argument is <see langword="null"/>.</exception>
+    /// <exception cref="FormatException">A pattern is not a valid composite format.</exception>
+    public string ToDisplayString(DateRangePatterns patterns, IFormatProvider provider)
+    {
+        ArgumentNullException.ThrowIfNull(patterns);
+        ArgumentNullException.ThrowIfNull(provider);
+
+        var pattern = StartDate == EndDate ? patterns.SingleDay
+            : StartDate.Year != EndDate.Year ? patterns.Other
+            : StartDate.Month == EndDate.Month ? patterns.SameMonth
+            : patterns.SameYear;
+        return string.Format(provider, pattern, StartDate, EndDate);
     }
 
     /// <inheritdoc />

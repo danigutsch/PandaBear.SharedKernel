@@ -52,7 +52,7 @@ the cultures of one album; uniqueness across albums is a database concern of the
 ### Publish rule
 
 A translation can be `Published` only when the album has at least one photo and every photo is eligible in its culture. The application
-decides eligibility through `IAlbumPhotoEligibility<TPhotoId>`: `Exists(photoId)` and `IsEligible(photoId, culture)`. One application asks
+decides eligibility through `IAlbumPhotoEligibility<TPhotoId>`, which is BuildingBlocks' `IImageEligibility<TPhotoId>`: `Exists(photoId)` and `IsEligible(photoId, culture)`. One application asks
 for alt text, or a decorative mark, in that culture; another asks that the photo is processed and its text reviewed. The rule runs on
 every `Create` and `Revise`, so editing photos cannot leave a published translation with an ineligible photo. The validation error only
 counts the blocking photos; `AlbumPublishing.FindIneligible(photoIds, culture, photos)` lists them, in album order, so an editor can
