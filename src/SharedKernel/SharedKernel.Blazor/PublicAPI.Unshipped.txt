@@ -295,6 +295,8 @@ PandaBear.Blazor.ImagePicker<TKey, TOption>.Texts.get -> PandaBear.Blazor.ImageP
 PandaBear.Blazor.ImagePicker<TKey, TOption>.Texts.set -> void
 PandaBear.Blazor.ImagePicker<TKey, TOption>.ThumbnailOf.get -> System.Func<TOption!, string?>?
 PandaBear.Blazor.ImagePicker<TKey, TOption>.ThumbnailOf.set -> void
+PandaBear.Blazor.ImagePicker<TKey, TOption>.TimeProvider.get -> System.TimeProvider!
+PandaBear.Blazor.ImagePicker<TKey, TOption>.TimeProvider.set -> void
 PandaBear.Blazor.ImagePicker<TKey, TOption>.Value.get -> TKey?
 PandaBear.Blazor.ImagePicker<TKey, TOption>.Value.set -> void
 PandaBear.Blazor.ImagePicker<TKey, TOption>.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<TKey?>
