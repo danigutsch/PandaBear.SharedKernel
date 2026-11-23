@@ -48,9 +48,6 @@ public sealed partial class PriceList
             }
         }
 
-        if (HeadingId is not null && (HeadingId.Length == 0 || HeadingId.AsSpan().ContainsAnyWhiteSpace()))
-        {
-            throw new ArgumentException("A heading id must not be empty or contain white space.", nameof(HeadingId));
-        }
+        ElementId.Require(HeadingId, nameof(HeadingId));
     }
 }

@@ -41,10 +41,7 @@ public sealed partial class FactGrid
     protected override void OnParametersSet()
     {
         ArgumentNullException.ThrowIfNull(Cards);
-        if (!Enum.IsDefined(Layout))
-        {
-            throw new ArgumentOutOfRangeException(nameof(Layout), Layout, "The fact grid layout is not defined.");
-        }
+        EnumParameter.RequireDefined(Layout, nameof(Layout), "The fact grid layout is not defined.");
 
         foreach (var card in Cards)
         {

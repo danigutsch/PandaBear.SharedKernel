@@ -83,20 +83,9 @@ public sealed partial class Hero
     protected override void OnParametersSet()
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(Title);
-        if (!Enum.IsDefined(Layout))
-        {
-            throw new ArgumentOutOfRangeException(nameof(Layout), Layout, "The hero layout is not defined.");
-        }
-
-        if (!Enum.IsDefined(TitleScale))
-        {
-            throw new ArgumentOutOfRangeException(nameof(TitleScale), TitleScale, "The hero title scale is not defined.");
-        }
-
-        if (!Enum.IsDefined(CoverHeight))
-        {
-            throw new ArgumentOutOfRangeException(nameof(CoverHeight), CoverHeight, "The cover height is not defined.");
-        }
+        EnumParameter.RequireDefined(Layout, nameof(Layout), "The hero layout is not defined.");
+        EnumParameter.RequireDefined(TitleScale, nameof(TitleScale), "The hero title scale is not defined.");
+        EnumParameter.RequireDefined(CoverHeight, nameof(CoverHeight), "The cover height is not defined.");
 
         if (CoverHeight != CoverHeight.Page && Layout != HeroLayout.Cover)
         {

@@ -1106,3 +1106,10 @@ static PandaBear.Blazor.Site.CreditItem.operator ==(PandaBear.Blazor.Site.Credit
 static PandaBear.Blazor.Site.ImageCreditLine.FromCredit(PandaBear.BuildingBlocks.ImageCredit! credit, string! format, System.IFormatProvider! provider, PandaBear.Blazor.Site.LinkTarget? creditsHref = null) -> PandaBear.Blazor.Site.ImageCreditLine!
 static PandaBear.Blazor.Site.ImageCreditLine.operator !=(PandaBear.Blazor.Site.ImageCreditLine? left, PandaBear.Blazor.Site.ImageCreditLine? right) -> bool
 static PandaBear.Blazor.Site.ImageCreditLine.operator ==(PandaBear.Blazor.Site.ImageCreditLine? left, PandaBear.Blazor.Site.ImageCreditLine? right) -> bool
+PandaBear.Blazor.Site.EnumParameter
+PandaBear.Blazor.Site.ElementId
+PandaBear.Blazor.Site.PositionFormat
+static PandaBear.Blazor.Site.EnumParameter.RequireDefined<TEnum>(TEnum value, string! parameterName, string! message) -> void
+static PandaBear.Blazor.Site.EnumParameter.RequireDefined<TEnum>(TEnum? value, string! parameterName, string! message) -> void
+static PandaBear.Blazor.Site.ElementId.Require(string? id, string! parameterName) -> void
+static PandaBear.Blazor.Site.PositionFormat.Require(string? format, string! parameterName, System.Globalization.CultureInfo! culture) -> string!

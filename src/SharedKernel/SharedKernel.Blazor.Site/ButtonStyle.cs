@@ -24,9 +24,6 @@ internal static class ButtonStyle
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="size" /> is not defined.</exception>
     public static void RequireSize(ButtonSize size, string parameterName)
     {
-        if (!Enum.IsDefined(size))
-        {
-            throw new ArgumentOutOfRangeException(parameterName, size, "The button size is not defined.");
-        }
+        EnumParameter.RequireDefined(size, parameterName, "The button size is not defined.");
     }
 }

@@ -519,6 +519,18 @@ var cover = ResponsiveImage.Create(
   it takes the `Brand` typography role, with the h1 face, bold, without the underline. A theme that wants another look sets
   `typography.brand`; a logo link is not affected.
 
+## Parameter guards
+
+The components check their parameters with three public guards, which a component of an application or another package can use for
+the same rules and messages:
+
+- `ElementId.Require(id, parameterName)` refuses an id that is empty or holds white space; `null` means no id.
+- `PositionFormat.Require(format, parameterName, culture)` refuses a missing format (`ArgumentNullException`), a blank one, one that `string.Format` refuses (an
+  `ArgumentException` with the `FormatException` inside) and one that writes positions 1 and 2 the same, such as `Day` or `Day {{0}}`;
+  it returns the format applied to position 1. `StepList` checks `NumberFormat` and `HeadingIdFormat` with it.
+- `EnumParameter.RequireDefined(value, parameterName, message)` refuses a value its enum does not declare, such as `(HeroLayout)9`,
+  with an `ArgumentOutOfRangeException` that carries the message; the nullable overload accepts `null`.
+
 ## Design tokens
 
 Override any token on `:root` in your own stylesheet. Each colour token is defined once with `light-dark(light, dark)`, and `:root`

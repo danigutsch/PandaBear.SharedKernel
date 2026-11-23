@@ -60,14 +60,10 @@ public sealed partial class StepList
         ArgumentNullException.ThrowIfNull(Steps);
         Heading.RequireLevel(HeadingLevel, nameof(HeadingLevel));
         ArgumentOutOfRangeException.ThrowIfNegative(EagerCount);
-        RequirePositionFormat(NumberFormat, nameof(NumberFormat), CultureInfo.CurrentCulture);
+        PositionFormat.Require(NumberFormat, nameof(NumberFormat), CultureInfo.CurrentCulture);
         if (HeadingIdFormat is not null)
         {
-            var id = RequirePositionFormat(HeadingIdFormat, nameof(HeadingIdFormat), CultureInfo.InvariantCulture);
-            if (id.Length == 0 || id.AsSpan().ContainsAnyWhiteSpace())
-            {
-                throw new ArgumentException("A heading id must not be empty or contain white space.", nameof(HeadingIdFormat));
-            }
+            ElementId.Require(PositionFormat.Require(HeadingIdFormat, nameof(HeadingIdFormat), CultureInfo.InvariantCulture), nameof(HeadingIdFormat));
         }
 
         foreach (var step in Steps)
@@ -80,33 +76,6 @@ public sealed partial class StepList
 
     private string? HeadingId(int position) =>
         HeadingIdFormat is null ? null : string.Format(CultureInfo.InvariantCulture, HeadingIdFormat, position);
-
-    private static string RequirePositionFormat(string format, string parameterName, CultureInfo culture)
-    {
-        if (string.IsNullOrWhiteSpace(format))
-        {
-            throw new ArgumentException("The format must hold {0} for the position.", parameterName);
-        }
-
-        string first;
-        string second;
-        try
-        {
-            first = string.Format(culture, format, 1);
-            second = string.Format(culture, format, 2);
-        }
-        catch (FormatException exception)
-        {
-            throw new ArgumentException("The format must format the position as {0} alone.", parameterName, exception);
-        }
-
-        if (string.Equals(first, second, StringComparison.Ordinal))
-        {
-            throw new ArgumentException("The format must hold {0} for the position, so each step reads differently.", parameterName);
-        }
-
-        return first;
-    }
 
     private static void RequireStep(StepItem step, string parameterName)
     {

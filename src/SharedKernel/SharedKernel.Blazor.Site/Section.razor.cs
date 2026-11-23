@@ -86,14 +86,8 @@ public sealed partial class Section
         ArgumentException.ThrowIfNullOrWhiteSpace(Title);
         Heading.RequireLevel(Level, nameof(Level));
         LanguageTag.Require(TitleLanguage, nameof(TitleLanguage));
-        if (TextAlignment is { } alignment && !Enum.IsDefined(alignment))
-        {
-            throw new ArgumentOutOfRangeException(nameof(TextAlignment), alignment, "The text alignment is not defined.");
-        }
+        EnumParameter.RequireDefined(TextAlignment, nameof(TextAlignment), "The text alignment is not defined.");
 
-        if (HeadingId is not null && (HeadingId.Length == 0 || HeadingId.AsSpan().ContainsAnyWhiteSpace()))
-        {
-            throw new ArgumentException("A heading id must not be empty or contain white space.", nameof(HeadingId));
-        }
+        ElementId.Require(HeadingId, nameof(HeadingId));
     }
 }

@@ -36,14 +36,7 @@ public sealed partial class SiteFooter
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        if (!Enum.IsDefined(Tone))
-        {
-            throw new ArgumentOutOfRangeException(nameof(Tone), Tone, "The footer tone is not defined.");
-        }
-
-        if (!Enum.IsDefined(TextAlignment))
-        {
-            throw new ArgumentOutOfRangeException(nameof(TextAlignment), TextAlignment, "The text alignment is not defined.");
-        }
+        EnumParameter.RequireDefined(Tone, nameof(Tone), "The footer tone is not defined.");
+        EnumParameter.RequireDefined(TextAlignment, nameof(TextAlignment), "The text alignment is not defined.");
     }
 }

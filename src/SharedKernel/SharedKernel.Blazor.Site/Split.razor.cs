@@ -50,14 +50,7 @@ public sealed partial class Split
     protected override void OnParametersSet()
     {
         ArgumentNullException.ThrowIfNull(Media);
-        if (!Enum.IsDefined(MediaSide))
-        {
-            throw new ArgumentOutOfRangeException(nameof(MediaSide), MediaSide, "The split media side is not defined.");
-        }
-
-        if (!Enum.IsDefined(Alignment))
-        {
-            throw new ArgumentOutOfRangeException(nameof(Alignment), Alignment, "The split alignment is not defined.");
-        }
+        EnumParameter.RequireDefined(MediaSide, nameof(MediaSide), "The split media side is not defined.");
+        EnumParameter.RequireDefined(Alignment, nameof(Alignment), "The split alignment is not defined.");
     }
 }

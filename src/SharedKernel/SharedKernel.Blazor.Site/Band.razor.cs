@@ -51,15 +51,8 @@ public sealed partial class Band
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        if (!Enum.IsDefined(Tone))
-        {
-            throw new ArgumentOutOfRangeException(nameof(Tone), Tone, "The band tone is not defined.");
-        }
-
-        if (TextAlignment is { } alignment && !Enum.IsDefined(alignment))
-        {
-            throw new ArgumentOutOfRangeException(nameof(TextAlignment), alignment, "The text alignment is not defined.");
-        }
+        EnumParameter.RequireDefined(Tone, nameof(Tone), "The band tone is not defined.");
+        EnumParameter.RequireDefined(TextAlignment, nameof(TextAlignment), "The text alignment is not defined.");
 
         if (Tone == BandTone.Image && Image is null)
         {
