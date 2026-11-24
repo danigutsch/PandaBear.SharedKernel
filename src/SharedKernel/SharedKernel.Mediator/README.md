@@ -21,7 +21,7 @@ available while source generation owns mediator composition and request dispatch
 
 The package now also exposes an optional activity-based observability behavior:
 
-- `SharedKernelMediatorActivitySource` defines the stable `ActivitySource` name
+- `MediatorActivitySource` defines the stable `ActivitySource` name
   `SharedKernel.Mediator`.
 - `ActivityBehavior<TRequest, TResponse>` adds an internal request activity around mediator pipeline
   execution.

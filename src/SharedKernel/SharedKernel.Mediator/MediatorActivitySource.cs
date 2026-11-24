@@ -5,7 +5,7 @@ namespace PandaBear.Mediator;
 /// <summary>
 /// Exposes the shared activity source used by optional mediator observability components.
 /// </summary>
-public static class SharedKernelMediatorActivitySource
+public static class MediatorActivitySource
 {
     /// <summary>
     /// The stable activity source name for mediator request dispatch.

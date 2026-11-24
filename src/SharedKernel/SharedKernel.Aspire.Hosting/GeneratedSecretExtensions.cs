@@ -2,8 +2,8 @@ using Aspire.Hosting.ApplicationModel;
 
 namespace Aspire.Hosting;
 
-/// <summary>AppHost builder helpers that are not tied to one container.</summary>
-public static class SharedKernelAppHostExtensions
+/// <summary>Adds AppHost secret parameters whose value is generated when configuration does not supply one.</summary>
+public static class GeneratedSecretExtensions
 {
     /// <summary>The shortest generated secret <see cref="AddGeneratedSecret"/> accepts.</summary>
     private const int MinimumSecretLength = 16;

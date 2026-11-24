@@ -16,7 +16,7 @@ internal sealed class IntegrationEventTransportMessageConfiguration : IEntityTyp
     /// <summary>Creates a configuration that maps to the default schema and transport table.</summary>
     public IntegrationEventTransportMessageConfiguration()
         : this(
-            SharedKernelSchemas.Messaging,
+            DatabaseSchemas.Messaging,
             IntegrationEventStorageOptions.DefaultTransportTableName,
             excludeFromMigrations: false)
     {
