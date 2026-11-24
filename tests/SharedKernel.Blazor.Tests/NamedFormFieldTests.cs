@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components.Forms;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests server-named fields, group messages and links to the controls.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class NamedFormFieldTests : BunitContext
 {
     [Fact]

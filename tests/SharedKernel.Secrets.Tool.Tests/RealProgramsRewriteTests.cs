@@ -5,7 +5,7 @@ using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
 namespace PandaBear.Secrets.Tool.Tests;
 
 /// <summary>Runs <c>recipients update</c>, <c>rotate</c>, and <c>edit</c> against the real age, age-keygen, and sops with throwaway keys.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class RealProgramsRewriteTests
 {
     private const string File = "secrets/app.sops.yaml";

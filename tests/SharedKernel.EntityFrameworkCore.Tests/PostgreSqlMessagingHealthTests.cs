@@ -1,8 +1,8 @@
 namespace PandaBear.EntityFrameworkCore.Tests;
 
 /// <summary>Verifies messaging health aggregates against context-specific PostgreSQL mappings.</summary>
-[Trait(SharedKernelTestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
+[Trait(TestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
+[Trait(TestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
 public sealed class PostgreSqlMessagingHealthTests(PostgreSqlFixture fixture)
 {
     private static readonly DateTimeOffset Cutoff = new(2026, 11, 20, 10, 0, 0, TimeSpan.Zero);

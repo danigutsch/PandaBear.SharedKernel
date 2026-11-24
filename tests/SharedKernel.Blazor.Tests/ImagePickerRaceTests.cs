@@ -8,7 +8,7 @@ namespace PandaBear.Blazor.Tests;
 /// Tests the image picker when a change waits for the options of the page it shows: a second change made meanwhile is kept, a change
 /// that crosses a page reads that page's options, and disposing the picker cancels what it waits for.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ImagePickerRaceTests : BunitContext
 {
     private readonly PickerLibrary _library = new(40);

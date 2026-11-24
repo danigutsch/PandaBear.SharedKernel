@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the size of a hero's title.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class HeroTitleScaleTests : BunitContext
 {
     [Fact]

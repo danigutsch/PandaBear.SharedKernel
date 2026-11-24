@@ -4,7 +4,7 @@ using static PandaBear.Packages.Tests.PackageFactory;
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests that the inventory runs the right readers, plans, and judges updates without printing anything.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class PackageInventoryTests
 {
     private const string CargoList = "bat v0.24.0:\n    bat\nripgrep v14.1.0:\n    rg\nfd-find v9.0.0:\n    fd\n";

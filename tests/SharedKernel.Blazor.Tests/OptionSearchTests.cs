@@ -1,7 +1,7 @@
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the bounded search state of a picker over a large option set.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class OptionSearchTests
 {
     private const string Shown = "{0} of {1} images for ‘{2}’";

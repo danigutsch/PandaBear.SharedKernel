@@ -4,7 +4,7 @@ using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
 namespace PandaBear.Secrets.Tool.Tests;
 
 /// <summary>Tests <c>verify --base</c>, which compares each label's enc with a base revision read through git.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class BaseRevisionTests
 {
     private static readonly string Config = TestRecipients.Config(2, TestRecipients.First, TestRecipients.Second);

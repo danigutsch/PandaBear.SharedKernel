@@ -11,10 +11,10 @@ Unit tests for `SharedKernel.Mediator.Abstractions`.
 
 ## Current Traits
 
-- `TestScope=Unit`
-- `TestComponent=SharedKernel.Mediator.Abstractions`
-- `TestCapability=Contracts`
-- `TestCapability=ReferenceDispatcher`
+- `Scope=unit`
+- `Area=SharedKernel.Mediator.Abstractions`
+- `Capability=Contracts`
+- `Capability=ReferenceDispatcher`
 
 ## See Also
 

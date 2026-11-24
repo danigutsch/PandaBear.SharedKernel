@@ -5,8 +5,8 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// <summary>
 /// Tests that EfIdempotencyStore records and returns the retention owner and that the retention store validates its input.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IdempotencyCapability)]
+[Trait(TestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.IdempotencyCapability)]
 public sealed class EfIdempotencyStoreRetentionOwnerTests
 {
     private static readonly DateTimeOffset StartedAt = new(2026, 10, 31, 12, 0, 0, TimeSpan.Zero);

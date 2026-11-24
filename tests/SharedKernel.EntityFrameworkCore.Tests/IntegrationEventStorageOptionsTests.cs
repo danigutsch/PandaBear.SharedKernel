@@ -6,8 +6,8 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// <summary>
 /// Tests the validation, default values and per-context application of the integration event and idempotency storage options.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.ProviderGuardCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
+[Trait(TestTraitNames.CategoryName, TestTraits.ProviderGuardCategory)]
+[Trait(TestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
 public sealed class IntegrationEventStorageOptionsTests
 {
     [Fact]

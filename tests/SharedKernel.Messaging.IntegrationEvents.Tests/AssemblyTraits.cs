@@ -1,2 +1,2 @@
-[assembly: Trait(PandaBear.Testing.SharedKernelTestTraitNames.ScopeName, PandaBear.Testing.SharedKernelTestTraitNames.UnitScope)]
-[assembly: Trait(PandaBear.Testing.SharedKernelTestTraitNames.ComponentName, "SharedKernel.Messaging.IntegrationEvents")]
+[assembly: Trait(PandaBear.Testing.TestTraitNames.ScopeName, "unit")]
+[assembly: Trait(PandaBear.Testing.TestTraitNames.AreaName, "SharedKernel.Messaging.IntegrationEvents")]

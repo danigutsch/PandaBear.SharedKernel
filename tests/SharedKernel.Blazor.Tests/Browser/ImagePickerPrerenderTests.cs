@@ -6,7 +6,7 @@ namespace PandaBear.Blazor.Tests.Browser;
 /// Tests what a prerendered edit page with image pickers sends: the first chosen page only, in the markup and in the persisted state,
 /// however many images are chosen, with every control disabled until the circuit starts.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Integration)]
 public sealed class ImagePickerPrerenderTests
 {
     [Fact]

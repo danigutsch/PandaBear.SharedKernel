@@ -1,7 +1,7 @@
 namespace PandaBear.Secrets.Tests;
 
 /// <summary>Tests that an SSH recipient is one exact, canonical key and nothing else.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class AgeRecipientSshTests
 {
     [Fact]

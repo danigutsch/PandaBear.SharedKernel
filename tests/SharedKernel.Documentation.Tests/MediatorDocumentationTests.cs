@@ -1,8 +1,8 @@
 namespace PandaBear.Documentation.Tests;
 
 /// <summary>Exercises the generated mediator topology through the documentation generator.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class MediatorDocumentationTests
 {
     private const string ConfigurationPath = "docs/architecture/generated-diagrams.json";

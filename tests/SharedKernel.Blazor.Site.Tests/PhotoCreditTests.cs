@@ -5,6 +5,7 @@ using static PandaBear.Blazor.Site.Tests.PhotoCreditFixture;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests reusable compact photo credits and the standalone photo credits page.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class PhotoCreditTests : BunitContext
 {
     [Theory]

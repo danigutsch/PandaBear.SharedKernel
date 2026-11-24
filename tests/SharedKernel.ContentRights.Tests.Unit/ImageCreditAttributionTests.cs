@@ -1,8 +1,8 @@
 namespace PandaBear.ContentRights.Tests;
 
 /// <summary>Checks conversion from the published image credit contract to a reviewed public credit.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "ContentRights")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "ContentRights")]
 public sealed class ImageCreditAttributionTests
 {
     [Fact]

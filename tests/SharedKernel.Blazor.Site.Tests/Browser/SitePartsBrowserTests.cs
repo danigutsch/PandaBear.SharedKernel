@@ -4,6 +4,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// Tests in Chromium, on a phone (375px) and a desktop (1280px) viewport, a split with its media on the start side, the grid of fact
 /// cards and the row of actions; they skip when the browser is not installed.
 /// </summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class SitePartsBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     private const string Primary = "rgb(29, 78, 216)";

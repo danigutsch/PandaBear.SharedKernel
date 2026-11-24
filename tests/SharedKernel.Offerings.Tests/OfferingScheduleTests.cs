@@ -3,8 +3,8 @@ using static PandaBear.Offerings.Tests.OfferingFixtures;
 namespace PandaBear.Offerings.Tests;
 
 /// <summary>Tests the availability table: which dates, year and date note each availability takes, and the duration.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "Offerings")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "Offerings")]
 public sealed class OfferingScheduleTests
 {
     private static readonly DateOnly Start = new(2027, 9, 20);

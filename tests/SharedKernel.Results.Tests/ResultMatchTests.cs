@@ -3,9 +3,9 @@ namespace PandaBear.Results.Tests;
 /// <summary>
 /// Tests Match on generic and non-generic results, including the guard against uninitialized results.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
-[Trait(Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.MatchSemanticsTheory)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ResultCapability)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.CompositionCategory)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.MatchSemanticsTheory)]
 public sealed class ResultMatchTests
 {
     [Fact]

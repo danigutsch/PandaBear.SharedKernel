@@ -5,7 +5,7 @@ namespace PandaBear.Mediator.PackageConsumptionTests;
 /// <summary>Packs the Mediator packages into a local feed and verifies that a fresh project can consume them.</summary>
 /// <param name="packageFeed">The fixture that supplies the local package feed shared by these tests.</param>
 [Collection(MediatorPackageFeedSharing.Name)]
-[Trait(SharedKernelTestTraitNames.CategoryName, "PackageConsumption")]
+[Trait(TestTraitNames.CategoryName, "PackageConsumption")]
 public sealed class MediatorPackageConsumptionTests(MediatorPackageFeedFixture packageFeed)
 {
     private const string GeneratedAsyncScopeCreation =

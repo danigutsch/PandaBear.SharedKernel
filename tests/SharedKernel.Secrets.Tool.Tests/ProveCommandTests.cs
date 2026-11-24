@@ -3,7 +3,7 @@ using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
 namespace PandaBear.Secrets.Tool.Tests;
 
 /// <summary>Tests <c>recipients check --prove-with-identity</c> and <c>--prove-absent-identity</c> with a fake sops and real identity files.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class ProveCommandTests
 {
     private static readonly string Config = TestRecipients.Config(2, TestRecipients.First, TestRecipients.Second);

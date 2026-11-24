@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests that the album index passes the card and grid options to its cards and grid.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class AlbumIndexCardOptionsTests : BunitContext
 {
     [Fact]

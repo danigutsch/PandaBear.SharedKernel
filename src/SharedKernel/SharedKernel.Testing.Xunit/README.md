@@ -32,10 +32,11 @@ All attributes emit plain traits, so existing filters keep working. Only `Scope`
 | `TestFocusAttribute(TestFocus)` | `Focus` | `core-behavior`, `domain-rule`, `edge-case`, `regression`, `security`, `drift-guard`, `migration` |
 | `TestPriorityAttribute(TestPriority)` | `Priority` | `smoke`, `critical` |
 | `TestAreaAttribute(string)` | `Area` | repository-specific |
+| `TestCapabilityAttribute(string)` | `Capability` | repository-specific |
 | `TestSurfaceAttribute(string)` | `Surface` | repository-specific |
 
 Enum values are the kebab-case member names. `TestFocus` and `TestPriority` apply to classes and methods only;
-the others also apply to assemblies. Define repository-specific `Area` and `Surface` values once as constants.
+the others also apply to assemblies. Define repository-specific `Area`, `Capability` and `Surface` values once as constants.
 
 ## Logging to the test output
 

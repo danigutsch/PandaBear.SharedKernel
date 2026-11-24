@@ -6,8 +6,8 @@ namespace PandaBear.BuildingBlocks.Tests;
 /// Tests the culture-aware display of money: the currency's symbol, the culture's separators and symbol position, and the currency's minor
 /// unit, next to the invariant <c>EUR 1.00</c> form that stays for logs and storage.
 /// </summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "ContactValueObjects")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "ContactValueObjects")]
 public sealed class MoneyDisplayFormatTests
 {
     [Theory]

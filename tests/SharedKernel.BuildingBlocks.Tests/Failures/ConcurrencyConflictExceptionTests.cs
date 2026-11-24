@@ -1,8 +1,8 @@
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests the persistence-neutral concurrency conflict exception.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "ConcurrencyConflicts")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "ConcurrencyConflicts")]
 public sealed class ConcurrencyConflictExceptionTests
 {
     [Fact]

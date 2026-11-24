@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.SignalR;
 namespace PandaBear.Testing.AspNetCore.Tests;
 
 /// <summary>Tests reading and bounding the component state of a prerendered Blazor page.</summary>
-[Trait(SharedKernelTestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "PrerenderedComponentState")]
+[TestScope(TestScope.Unit)]
+[Trait(TestTraitNames.CapabilityName, "PrerenderedComponentState")]
 public sealed class PrerenderedComponentStateTests
 {
     [Fact]

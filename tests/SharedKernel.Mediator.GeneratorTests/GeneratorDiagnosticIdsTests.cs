@@ -1,7 +1,7 @@
 namespace PandaBear.Mediator.GeneratorTests;
 
 /// <summary>Tests that the mediator diagnostic ids stay stable and match the analyzer release tracking file.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DiscoveryCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DiscoveryCapability)]
 public sealed class GeneratorDiagnosticIdsTests
 {
     [Fact]

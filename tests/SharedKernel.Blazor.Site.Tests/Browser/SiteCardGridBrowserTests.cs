@@ -4,6 +4,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// Tests in Chromium, at 1280px where the content is 72rem (1152px) wide, that the smallest column width sets the number of columns
 /// whatever the largest card width, and that the largest width caps each card in its column; they skip when the browser is not installed.
 /// </summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class SiteCardGridBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]

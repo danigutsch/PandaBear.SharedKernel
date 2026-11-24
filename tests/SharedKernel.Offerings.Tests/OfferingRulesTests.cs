@@ -3,8 +3,8 @@ using static PandaBear.Offerings.Tests.OfferingFixtures;
 namespace PandaBear.Offerings.Tests;
 
 /// <summary>Tests the application's offering rules and the field paths of errors.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "Offerings")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "Offerings")]
 public sealed class OfferingRulesTests
 {
     [Fact]

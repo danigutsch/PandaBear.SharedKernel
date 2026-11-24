@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the JSON-LD script.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class JsonLdTests : BunitContext
 {
     private const string Hostile = "</script><script>alert(1)</script><!--";

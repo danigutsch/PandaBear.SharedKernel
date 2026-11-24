@@ -4,7 +4,7 @@ using PandaBear.Testing;
 namespace PandaBear.AI.Tests;
 
 /// <summary>Tests that the LiteLLM image text generator enforces its maximum image size while reading the input stream and never disposes the caller's stream.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.ImageTextGenerationCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.ImageTextGenerationCapability)]
 public sealed class ImageInputLimitTests
 {
     [Theory]

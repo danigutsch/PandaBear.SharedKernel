@@ -3,6 +3,7 @@ using PandaBear.Blazor.Site.Theming;
 namespace PandaBear.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests the brand typography role, which a text brand in the header takes instead of the link role.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class BrandRoleTests
 {
     [Fact]

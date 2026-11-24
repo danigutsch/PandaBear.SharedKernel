@@ -3,7 +3,7 @@ using PandaBear.Testing;
 namespace PandaBear.InputNormalization.Tests;
 
 /// <summary>Tests the PostgreSQL unquoted identifier rule that storage options and SQL names share.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.InputNormalizationCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.InputNormalizationCapability)]
 public sealed class PostgreSqlIdentifierTests
 {
     [Theory]

@@ -3,7 +3,7 @@ namespace PandaBear.Versioning.Tests;
 /// <summary>
 /// Tests how the versioning tool resolves the git executable.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class CommandRunnerResolutionTests
 {
     [Theory]

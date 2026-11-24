@@ -4,6 +4,7 @@ using PandaBear.Results;
 namespace PandaBear.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests the theme rules: contrast in both schemes, readable sizes, heading order and font references.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class SiteThemeTests
 {
     [Fact]

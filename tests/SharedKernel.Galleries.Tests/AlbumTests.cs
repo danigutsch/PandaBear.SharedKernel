@@ -3,8 +3,8 @@ using static PandaBear.Galleries.Tests.AlbumFixtures;
 namespace PandaBear.Galleries.Tests;
 
 /// <summary>Tests creating and validating an album.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "Albums")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "Albums")]
 public sealed class AlbumTests
 {
     private readonly PhotoLibrary _library = new();

@@ -5,8 +5,8 @@ namespace PandaBear.BuildingBlocks.Tests;
 /// <summary>
 /// Tests creation and validation of Iban values.
 /// </summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "PaymentIdentifiers")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "PaymentIdentifiers")]
 public sealed class IbanTests
 {
     // SWIFT IBAN Registry release 103: one electronic-format example per registered country.

@@ -3,7 +3,7 @@ using static PandaBear.Packages.Tool.Tests.PackagesToolHarness;
 namespace PandaBear.Packages.Tool.Tests;
 
 /// <summary>Tests the <c>plan</c> command.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class PlanCommandTests
 {
     private const string Dpkg = "ii \n";

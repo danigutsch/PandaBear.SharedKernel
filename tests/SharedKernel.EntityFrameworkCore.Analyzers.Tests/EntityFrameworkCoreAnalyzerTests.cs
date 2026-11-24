@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 namespace PandaBear.EntityFrameworkCore.Analyzers.Tests;
 
 /// <summary>Tests that the Entity Framework Core analyzer reports unique indexes without a rule (SKEF001) only where intended.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.UniqueIndexRuleCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.UniqueIndexRuleCapability)]
 public sealed class EntityFrameworkCoreAnalyzerTests
 {
     [Fact]

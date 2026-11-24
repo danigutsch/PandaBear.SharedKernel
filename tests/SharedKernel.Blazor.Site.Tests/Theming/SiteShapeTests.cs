@@ -4,6 +4,7 @@ using PandaBear.Results;
 namespace PandaBear.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests the shape of a theme: the control shape and the divider, their rules and their custom properties.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class SiteShapeTests
 {
     [Fact]

@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the column widths and the gap of a card grid.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class CardGridOptionsTests : BunitContext
 {
     [Fact]

@@ -5,6 +5,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// column and beside heading-less text, and that a lone tall photo stays within a sensible height. They skip when the browser is not
 /// installed.
 /// </summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class ImageGridBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     private const double Gap = 16;

@@ -1,8 +1,8 @@
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests creation and validation of postal addresses.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "ContactValueObjects")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "ContactValueObjects")]
 public sealed class PostalAddressTests
 {
     [Fact]

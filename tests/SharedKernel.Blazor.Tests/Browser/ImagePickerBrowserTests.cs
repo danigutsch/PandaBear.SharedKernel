@@ -8,7 +8,7 @@ namespace PandaBear.Blazor.Tests.Browser;
 /// moves focus from <c>OnAfterRenderAsync</c>, a round trip after the browser applied the render, so the tests wait for the focus the
 /// way they wait for the markup, instead of reading it once the markup changed.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class ImagePickerBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]

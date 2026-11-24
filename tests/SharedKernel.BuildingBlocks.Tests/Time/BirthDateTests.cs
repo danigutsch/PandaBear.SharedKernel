@@ -1,8 +1,8 @@
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests the validated date of birth.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "ValueObjects")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "ValueObjects")]
 public sealed class BirthDateTests
 {
     private static readonly DateOnly Today = new(2026, 11, 5);

@@ -3,7 +3,7 @@ using static PandaBear.Packages.Tests.PackageFactory;
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests how the small package values print and compare.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class PackageValueDisplayTests
 {
     private static readonly DateTimeOffset Released = new(2026, 11, 1, 0, 0, 0, TimeSpan.Zero);

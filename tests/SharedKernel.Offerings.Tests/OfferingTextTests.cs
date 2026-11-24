@@ -4,8 +4,8 @@ using static PandaBear.Offerings.Tests.OfferingFixtures;
 namespace PandaBear.Offerings.Tests;
 
 /// <summary>Tests the display sentences of an offering, in Brazilian Portuguese and English, with the application's formats.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "Offerings")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "Offerings")]
 public sealed class OfferingTextTests
 {
     private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");

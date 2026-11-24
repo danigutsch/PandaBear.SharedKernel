@@ -3,8 +3,8 @@ using static PandaBear.Galleries.Tests.AlbumFixtures;
 namespace PandaBear.Galleries.Tests;
 
 /// <summary>Regression tests for the album model review: malformed input, restored data and exposed collections.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "Albums")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "Albums")]
 public sealed class AlbumReviewRegressionTests
 {
     private readonly PhotoLibrary _library = new();

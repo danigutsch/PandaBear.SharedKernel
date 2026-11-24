@@ -2,7 +2,7 @@ namespace PandaBear.PlaywrightMcp.Tests;
 
 /// <summary>Tests the container engine command lines built for Docker and Podman.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
-[Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[Trait(TestTraitNames.ScopeName, "unit")]
 public sealed class PlaywrightMcpContainerArgumentsTests
 {
     private const string LocalDockerEndpoint = "unix:///var/run/docker.sock";

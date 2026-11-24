@@ -4,6 +4,7 @@ using PandaBear.Results;
 namespace PandaBear.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests the colour of the heading roles and the card title role.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class HeadingColorTests
 {
     [Theory]

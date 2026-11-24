@@ -3,7 +3,7 @@ using System.Globalization;
 namespace PandaBear.Mediator.GeneratorTests;
 
 /// <summary>Tests the dependency injection registration source that the mediator generator emits and the diagnostics it raises for unregistrable handlers.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DependencyInjectionCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DependencyInjectionCapability)]
 public sealed class GeneratorDependencyInjectionTests
 {
     [Fact]

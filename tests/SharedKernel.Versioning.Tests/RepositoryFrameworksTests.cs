@@ -1,7 +1,7 @@
 namespace PandaBear.Versioning.Tests;
 
 /// <summary>Tests reading the target frameworks of a repository from its root Directory.Build.props.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class RepositoryFrameworksTests
 {
     [Fact]

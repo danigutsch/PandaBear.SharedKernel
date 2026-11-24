@@ -6,8 +6,8 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// PostgreSQL tests of the idempotency retention owner and the retention purge.
 /// </summary>
 /// <param name="fixture">Shared PostgreSQL fixture that supplies the isolated database.</param>
-[Trait(SharedKernelTestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IdempotencyCapability)]
+[Trait(TestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.IdempotencyCapability)]
 public sealed class PostgreSqlIdempotencyRetentionTests(PostgreSqlFixture fixture) : IAsyncLifetime
 {
     private const string TrackedScope = "documents.integration-event.signed.v1";

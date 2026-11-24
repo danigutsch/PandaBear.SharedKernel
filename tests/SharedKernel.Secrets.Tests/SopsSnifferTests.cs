@@ -3,7 +3,7 @@ using System.Text;
 namespace PandaBear.Secrets.Tests;
 
 /// <summary>Tests the conservative rule: a file is NotSops only when it positively cannot be SOPS.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class SopsSnifferTests
 {
     [Theory]

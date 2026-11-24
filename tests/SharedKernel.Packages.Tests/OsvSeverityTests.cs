@@ -1,7 +1,7 @@
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests the mapping of OSV severity data to <see cref="AdvisorySeverity"/>.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class OsvSeverityTests
 {
     [Theory]

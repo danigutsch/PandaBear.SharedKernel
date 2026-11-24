@@ -3,6 +3,7 @@ using PandaBear.BuildingBlocks;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the credit of an image in an image grid.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class GalleryCreditTests : BunitContext
 {
     private static readonly ImageCreditLine Credit = new("Photo: Ana Lima", "CC BY 4.0", SiteFixtures.Link("https://creativecommons.org/licenses/by/4.0/"), SiteFixtures.Link("/credits"));

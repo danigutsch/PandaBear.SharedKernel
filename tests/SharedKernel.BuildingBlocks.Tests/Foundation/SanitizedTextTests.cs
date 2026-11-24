@@ -3,8 +3,8 @@ using PandaBear.Results;
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests the shared validation of plain text a person entered.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "ValueObjects")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "ValueObjects")]
 public sealed class SanitizedTextTests
 {
     private const string Field = "title";

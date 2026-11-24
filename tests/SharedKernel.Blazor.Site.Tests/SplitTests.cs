@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the text-beside-media layout without a heading.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class SplitTests : BunitContext
 {
     [Fact]

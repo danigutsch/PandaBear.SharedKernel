@@ -4,7 +4,7 @@ using PandaBear.Testing;
 namespace PandaBear.DocumentRendering.Tests;
 
 /// <summary>Runs the optional qualification against caller-provisioned synthetic Chromium fixtures and qpdf.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
 public sealed class QualifiedQpdfTests
 {
     [Theory(Explicit = true)]

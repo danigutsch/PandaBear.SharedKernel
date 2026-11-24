@@ -5,7 +5,7 @@ using PandaBear.Versioning.Tool;
 namespace PandaBear.Versioning.Tests;
 
 /// <summary>Verifies evidence generated when comparing two packaged candidates.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class CandidateApiComparisonTests
 {
     private const string BaselineRevision = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";

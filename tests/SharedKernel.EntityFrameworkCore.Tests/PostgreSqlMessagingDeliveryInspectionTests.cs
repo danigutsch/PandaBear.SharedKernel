@@ -3,8 +3,8 @@ using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 namespace PandaBear.EntityFrameworkCore.Tests;
 
 /// <summary>Verifies bounded, metadata-only delivery inspection over real relational mappings.</summary>
-[Trait(SharedKernelTestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
+[Trait(TestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
+[Trait(TestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
 public sealed class PostgreSqlMessagingDeliveryInspectionTests(PostgreSqlFixture fixture)
 {
     private static readonly DateTimeOffset Cutoff = new(2026, 11, 22, 8, 0, 0, TimeSpan.Zero);

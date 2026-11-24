@@ -3,6 +3,7 @@ using System.Globalization;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the numbered list of steps, such as the days of an itinerary.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class StepListTests : BunitContext
 {
     private static readonly FactCard[] Facts = [new("Distance", [new("42 km")])];

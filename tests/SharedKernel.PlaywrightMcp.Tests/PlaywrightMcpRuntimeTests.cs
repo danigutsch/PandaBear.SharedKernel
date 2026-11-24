@@ -2,7 +2,7 @@ namespace PandaBear.PlaywrightMcp.Tests;
 
 /// <summary>Tests how the settings resolve to a container engine and the security options.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
-[Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[Trait(TestTraitNames.ScopeName, "unit")]
 public sealed class PlaywrightMcpRuntimeTests
 {
     [Fact]

@@ -1,8 +1,8 @@
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests literal SQL LIKE patterns before they are passed to a provider.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "SqlLikePattern")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "SqlLikePattern")]
 public sealed class SqlLikePatternTests
 {
     [Theory]

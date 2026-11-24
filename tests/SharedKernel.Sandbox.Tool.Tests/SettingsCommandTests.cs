@@ -3,7 +3,7 @@ using static PandaBear.Sandbox.Tool.Tests.SettingsToolHarness;
 namespace PandaBear.Sandbox.Tool.Tests;
 
 /// <summary>Tests the <c>settings plan</c>, <c>apply</c>, and <c>verify</c> commands.</summary>
-[Trait("Capability", "Sandbox")]
+[Trait(TestTraitNames.CapabilityName, "Sandbox")]
 public sealed class SettingsCommandTests
 {
     private const string Dotnet = """{ "profile": "dotnet" }""";

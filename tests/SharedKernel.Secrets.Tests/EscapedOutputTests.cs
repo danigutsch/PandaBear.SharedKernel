@@ -1,7 +1,7 @@
 namespace PandaBear.Secrets.Tests;
 
 /// <summary>Tests that output escapes control characters.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class EscapedOutputTests
 {
     [Fact]

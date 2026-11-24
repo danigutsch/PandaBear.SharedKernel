@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the grid of fact cards.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class FactGridTests : BunitContext
 {
     private static readonly RenderFragment ClockIcon = builder => builder.AddMarkupContent(0, "<svg id=\"clock\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" /></svg>");

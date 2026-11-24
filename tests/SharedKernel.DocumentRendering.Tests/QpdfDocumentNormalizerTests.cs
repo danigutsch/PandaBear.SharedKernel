@@ -8,7 +8,7 @@ using PandaBear.Testing;
 namespace PandaBear.DocumentRendering.Tests;
 
 /// <summary>Verifies the bounded metadata rewrite for renderer-owned tagged documents.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
 public sealed class QpdfDocumentNormalizerTests
 {
     private const string ChromiumMetadata = """

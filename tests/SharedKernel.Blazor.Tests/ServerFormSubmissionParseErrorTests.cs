@@ -5,7 +5,7 @@ using PandaBear.Results;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests that a value the input component cannot parse blocks the save and is reported in the summary.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ServerFormSubmissionParseErrorTests : BunitContext
 {
     [Fact]

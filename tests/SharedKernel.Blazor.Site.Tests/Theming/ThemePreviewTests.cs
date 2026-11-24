@@ -3,6 +3,7 @@ using PandaBear.Blazor.Site.Theming;
 namespace PandaBear.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests the small live theme preview.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ThemePreviewTests : BunitContext
 {
     [Fact]

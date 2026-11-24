@@ -6,6 +6,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// Tests the primary footer, its separated lists and the tap targets in Chromium, on a phone (390px) and a desktop (1280px) viewport;
 /// they skip when the browser is not installed. The page's lists are the footer's six separated items and the switcher's two languages.
 /// </summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class SiteFooterBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     private const double TapTarget = 44;

@@ -1,7 +1,7 @@
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests the Homebrew reader against canned <c>brew list --versions</c> output.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class BrewPackageReaderTests
 {
     private const string Brew = "/home/linuxbrew/.linuxbrew/bin/brew";

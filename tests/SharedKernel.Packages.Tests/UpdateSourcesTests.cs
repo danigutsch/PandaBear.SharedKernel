@@ -3,7 +3,7 @@ using PandaBear.Results;
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests the source bundle that <see cref="PackageInventory.CheckUpdates"/> uses.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class UpdateSourcesTests
 {
     [Fact]

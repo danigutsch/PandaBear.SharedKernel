@@ -7,7 +7,7 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// Tests that the start-up migration helpers skip a context on a non-relational provider, such as the in-memory provider of a test host,
 /// instead of failing on relational-only calls.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(TestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class NonRelationalMigrationTests
 {
     [Fact]

@@ -3,7 +3,7 @@ namespace PandaBear.HttpClients.Tests;
 /// <summary>
 /// Unit tests for UploadOperationState progress reporting, cancellation, retry, and screen-reader announcements.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
 public sealed class UploadOperationStateTests
 {
     [Fact]

@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the site footer.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class SiteFooterTests : BunitContext
 {
     [Fact]

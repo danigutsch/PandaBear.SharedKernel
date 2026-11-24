@@ -3,6 +3,7 @@ using static PandaBear.Blazor.Site.Tests.SiteFixtures;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the image grid.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ImageGridTests : BunitContext
 {
     [Fact]

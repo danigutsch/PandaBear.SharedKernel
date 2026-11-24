@@ -3,7 +3,7 @@ using Microsoft.Extensions.Time.Testing;
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests the expiring in-memory cache.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class ExpiringCacheTests
 {
     [Fact]

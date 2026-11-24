@@ -3,6 +3,7 @@ using static PandaBear.Blazor.Site.Tests.SiteFixtures;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the language switcher.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class LanguageSwitcherTests : BunitContext
 {
     private static readonly LanguageLink[] Languages =

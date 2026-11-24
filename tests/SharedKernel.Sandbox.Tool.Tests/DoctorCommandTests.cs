@@ -3,7 +3,7 @@ using static PandaBear.Sandbox.Tool.Tests.SandboxToolHarness;
 namespace PandaBear.Sandbox.Tool.Tests;
 
 /// <summary>Tests the <c>doctor</c> command.</summary>
-[Trait("Capability", "Sandbox")]
+[Trait(TestTraitNames.CapabilityName, "Sandbox")]
 [Collection(EnvironmentCollection.Name)]
 public sealed class DoctorCommandTests
 {

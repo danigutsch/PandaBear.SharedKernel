@@ -3,6 +3,7 @@ using System.Globalization;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the public guards that components use for ids, position formats and enum parameters.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ParameterGuardTests
 {
     [Theory]

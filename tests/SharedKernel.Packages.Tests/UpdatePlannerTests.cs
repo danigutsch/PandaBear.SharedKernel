@@ -4,7 +4,7 @@ using static PandaBear.Packages.Tests.PackageFactory;
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests that the planner joins the sources to the policy and fails when any source fails.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class UpdatePlannerTests
 {
     private static readonly DateTimeOffset Now = PlannerFake.Now;

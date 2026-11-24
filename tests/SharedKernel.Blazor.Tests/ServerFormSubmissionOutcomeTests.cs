@@ -4,7 +4,7 @@ using PandaBear.Results;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests which fixed message a form shows for each kind of failed save and for client messages it cannot list.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ServerFormSubmissionOutcomeTests
 {
     private const string FailureMessage = "We could not save. Try again later.";

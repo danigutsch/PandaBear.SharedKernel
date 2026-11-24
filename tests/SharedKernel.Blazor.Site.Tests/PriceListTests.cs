@@ -3,6 +3,7 @@ using System.Globalization;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the list of prices.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class PriceListTests : BunitContext
 {
     private static readonly PriceItem[] Prices =

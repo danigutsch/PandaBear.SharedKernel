@@ -1,7 +1,7 @@
 namespace PandaBear.Sandbox.Tests;
 
 /// <summary>Tests the format-independent merge against an in-memory document.</summary>
-[Trait("Capability", "Sandbox")]
+[Trait(TestTraitNames.CapabilityName, "Sandbox")]
 public sealed class SettingsMergerTests
 {
     [Fact]

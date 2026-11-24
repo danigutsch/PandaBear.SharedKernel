@@ -1,7 +1,7 @@
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the "are you sure" state of a list where at most one row waits for confirmation.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ConfirmationStateTests
 {
     [Fact]

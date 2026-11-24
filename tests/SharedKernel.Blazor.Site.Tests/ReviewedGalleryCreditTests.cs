@@ -6,6 +6,7 @@ using static PandaBear.Blazor.Site.Tests.SiteFixtures;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the optional photo credit on images through the gallery and album entry points.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ReviewedGalleryCreditTests : BunitContext
 {
     [Fact]

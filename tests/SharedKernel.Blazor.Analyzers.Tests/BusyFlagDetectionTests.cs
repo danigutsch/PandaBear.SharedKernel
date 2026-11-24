@@ -1,7 +1,7 @@
 namespace PandaBear.Blazor.Analyzers.Tests;
 
 /// <summary>Tests which awaits and catch-all shapes the busy-flag analyzer (SKBLZ001) counts as unprotected awaits.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ComponentStateCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ComponentStateCapability)]
 public sealed class BusyFlagDetectionTests
 {
     [Theory]

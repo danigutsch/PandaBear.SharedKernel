@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 namespace PandaBear.Mediator.GeneratorTests;
 
 /// <summary>Tests that the mediator generator's incremental pipeline reuses cached steps for irrelevant edits and reruns them for relevant ones.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
 public sealed class GeneratorIncrementalBehaviorTests
 {
     [Fact]

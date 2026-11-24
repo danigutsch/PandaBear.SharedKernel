@@ -4,7 +4,7 @@ using static PandaBear.Blazor.Tests.ComponentFixtures;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the logging error boundary.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class RecoveryErrorBoundaryTests : BunitContext
 {
     private readonly RecordingFailureReporter _reporter = new();

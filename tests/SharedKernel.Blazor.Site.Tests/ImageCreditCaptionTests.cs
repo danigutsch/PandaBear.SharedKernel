@@ -4,6 +4,7 @@ using PandaBear.BuildingBlocks;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the short credit under an image and its record.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ImageCreditCaptionTests : BunitContext
 {
     private static readonly LinkTarget CcBy = SiteFixtures.Link("https://creativecommons.org/licenses/by/4.0/");

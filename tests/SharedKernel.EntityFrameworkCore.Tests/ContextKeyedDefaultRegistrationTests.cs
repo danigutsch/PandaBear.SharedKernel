@@ -3,8 +3,8 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// <summary>
 /// Tests that the unkeyed outbox and idempotency store need an explicit default when several messaging contexts share one host.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
+[Trait(TestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(TestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
 public sealed class ContextKeyedDefaultRegistrationTests
 {
     [Fact]

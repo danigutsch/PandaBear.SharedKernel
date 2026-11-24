@@ -1,7 +1,7 @@
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests the snap reader against canned and real <c>snap list</c> output.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class SnapPackageReaderTests
 {
     private const string Snap = "/usr/bin/snap";

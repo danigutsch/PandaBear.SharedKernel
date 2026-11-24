@@ -1,7 +1,7 @@
 namespace PandaBear.Encodings.Tests;
 
 /// <summary>Tests Bech32 against the BIP-173 vectors. age uses Bech32, not Bech32m, and applies no length limit.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.EncodingsCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.EncodingsCapability)]
 public sealed class Bech32Tests
 {
     [Theory]

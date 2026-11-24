@@ -8,11 +8,11 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// Tests that the parameterless storage configurations, which <c>ApplyConfigurationsFromAssembly</c> can create, map to the default
 /// <c>messaging</c> schema and table names.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(TestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class DefaultStorageMappingTests
 {
     [Fact]
-    [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IdempotencyCapability)]
+    [Trait(TestTraitNames.CapabilityName, TestTraits.IdempotencyCapability)]
     public void The_default_idempotency_configuration_maps_to_the_messaging_schema()
     {
         // Arrange
@@ -28,7 +28,7 @@ public sealed class DefaultStorageMappingTests
     }
 
     [Fact]
-    [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
+    [Trait(TestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
     public void The_default_outbox_configuration_maps_to_the_messaging_schema()
     {
         // Arrange
@@ -44,7 +44,7 @@ public sealed class DefaultStorageMappingTests
     }
 
     [Fact]
-    [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
+    [Trait(TestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
     public void The_default_transport_configuration_maps_to_the_messaging_schema_and_takes_part_in_migrations()
     {
         // Arrange

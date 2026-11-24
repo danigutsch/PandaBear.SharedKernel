@@ -3,8 +3,8 @@ using static PandaBear.Offerings.Tests.OfferingFixtures;
 namespace PandaBear.Offerings.Tests;
 
 /// <summary>Tests revising an offering, its round trip through a definition, and restoring a stored one.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "Offerings")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "Offerings")]
 public sealed class OfferingLifecycleTests
 {
     private readonly ImageLibrary _images = new();

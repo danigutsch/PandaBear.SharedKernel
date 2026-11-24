@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the colour tokens and rules of the status badge in the stylesheet.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class StatusStylesheetTests
 {
     private static readonly string[] ToneNames = ["neutral", "info", "success", "warning", "danger"];

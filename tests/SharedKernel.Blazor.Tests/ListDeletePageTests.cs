@@ -3,7 +3,7 @@ using PandaBear.Results;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the keyboard focus of a list page whose inline delete confirmation opens, closes and deletes.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ListDeletePageTests : BunitContext
 {
     private const string ReferenceAttribute = "blazor:elementreference";

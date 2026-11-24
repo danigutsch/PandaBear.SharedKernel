@@ -9,7 +9,7 @@ namespace PandaBear.Versioning.Tests;
 /// <summary>
 /// Tests the versioning tool library: release calculation, API compatibility, packing, release preparation, package metadata validation, and process handling.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VersioningToolTests
 {
     private static readonly Packager SystemPackager = new(new SystemProcessRunner(), PathExecutableResolver.Default);

@@ -1,7 +1,7 @@
 namespace PandaBear.Secrets.Tests;
 
 /// <summary>Tests the editor command that sops edit starts.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class EditorCommandTests
 {
     [Fact]

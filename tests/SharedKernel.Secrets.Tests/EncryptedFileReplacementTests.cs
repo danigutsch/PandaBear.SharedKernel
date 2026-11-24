@@ -4,7 +4,7 @@ using System.Text;
 namespace PandaBear.Secrets.Tests;
 
 /// <summary>Tests that a new version replaces an encrypted file atomically and only when the file is unchanged.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class EncryptedFileReplacementTests
 {
     [Fact]

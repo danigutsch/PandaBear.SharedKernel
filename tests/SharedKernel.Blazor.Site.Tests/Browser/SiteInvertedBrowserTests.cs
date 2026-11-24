@@ -5,6 +5,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// keep their contrast on the primary colour of a band and a footer, and that a boxed card there keeps the look of the page; they skip
 /// when the browser is not installed.
 /// </summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class SiteInvertedBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     private const string Primary = "#1d4ed8";

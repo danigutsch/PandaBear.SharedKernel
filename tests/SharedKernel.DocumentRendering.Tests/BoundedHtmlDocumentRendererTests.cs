@@ -4,7 +4,7 @@ using PandaBear.Testing;
 namespace PandaBear.DocumentRendering.Tests;
 
 /// <summary>Verifies the UTF-8 output budget and cancellation of bounded HTML.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
 public sealed class BoundedHtmlDocumentRendererTests
 {
     [Fact]

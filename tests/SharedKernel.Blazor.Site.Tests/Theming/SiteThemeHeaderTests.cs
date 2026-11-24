@@ -3,6 +3,7 @@ using PandaBear.Blazor.Site.Theming;
 namespace PandaBear.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests the brand height of a theme and the header height computed from it.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class SiteThemeHeaderTests
 {
     [Fact]

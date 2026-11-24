@@ -1,7 +1,7 @@
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests where focus goes when an inline confirmation opens, is cancelled or is closed.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ConfirmationStateFocusTests : BunitContext
 {
     private readonly ConfirmationState<int> _state = new();

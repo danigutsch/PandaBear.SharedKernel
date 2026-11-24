@@ -6,6 +6,7 @@ namespace PandaBear.Blazor.Site.Tests;
 /// Tests that a title in another language than the page is marked on the title alone (WCAG 3.1.2, language of parts), so the rest of a
 /// card or section keeps the page's language.
 /// </summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class TitleLanguageTests : BunitContext
 {
     [Fact]

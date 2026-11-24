@@ -3,8 +3,8 @@ using PandaBear.DispositionHold.EntityFrameworkCore;
 namespace PandaBear.EntityFrameworkCore.Tests;
 
 /// <summary>Tests the validation of the disposition hold storage options, whose names are written into SQL text.</summary>
-[Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.ProviderGuardCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DispositionHoldCapability)]
+[Trait(TestTraitNames.CategoryName, TestTraits.ProviderGuardCategory)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.DispositionHoldCapability)]
 public sealed class DispositionHoldStorageOptionsTests
 {
     private const string Failure = "Disposition hold storage schema and table name must be valid PostgreSQL unquoted identifiers.";

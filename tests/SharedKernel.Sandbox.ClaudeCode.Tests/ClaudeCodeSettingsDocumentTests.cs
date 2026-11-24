@@ -1,7 +1,7 @@
 namespace PandaBear.Sandbox.ClaudeCode.Tests;
 
 /// <summary>Tests the mapping of the managed settings to Claude Code's JSON keys and the layout of the rewritten text.</summary>
-[Trait("Capability", "Sandbox")]
+[Trait(TestTraitNames.CapabilityName, "Sandbox")]
 public sealed class ClaudeCodeSettingsDocumentTests
 {
     // The keys of the Claude Code settings reference: https://code.claude.com/docs/en/settings-reference

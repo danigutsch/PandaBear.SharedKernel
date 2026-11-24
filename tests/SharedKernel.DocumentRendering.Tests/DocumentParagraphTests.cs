@@ -5,7 +5,7 @@ namespace PandaBear.DocumentRendering.Tests;
 /// <summary>
 /// Tests the prose paragraphs of a document section and the compatibility of sections without paragraphs.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
 public sealed class DocumentParagraphTests
 {
     private const string ExistingStyle = "@media print{header{break-inside:avoid}section{break-inside:avoid}}body{font-family:var(--document-body-font,system-ui,sans-serif);background:var(--document-background-color,#fff);color:var(--document-text-color,#111);line-height:1.5;margin:2rem}h1,h2{font-family:var(--document-heading-font,var(--document-body-font,system-ui,sans-serif));color:var(--document-primary-color,currentColor)}header{border-bottom:.25rem solid var(--document-accent-color,currentColor);margin-bottom:1rem;padding-bottom:.5rem}footer{border-top:1px solid var(--document-accent-color,currentColor);margin-top:2rem;padding-top:.5rem}dl{display:grid;grid-template-columns:max-content 1fr;gap:.25rem 1rem}dt{font-weight:700}";

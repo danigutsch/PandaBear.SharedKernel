@@ -1,7 +1,7 @@
 namespace PandaBear.Secrets.Tests;
 
 /// <summary>Tests the second security review: setting spellings, unknown properties, comments, and malformed ciphertext values.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class SopsMetadataSecondReviewTests
 {
     private static readonly string[] Both = [TestRecipients.First, TestRecipients.Second];

@@ -3,8 +3,8 @@ namespace PandaBear.Results.Tests;
 /// <summary>
 /// Tests converting failed results between the non-generic and generic forms and rejecting malformed results.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ResultCapability)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.CompositionCategory)]
 public sealed class ResultConvertErrorTests
 {
     [Fact]

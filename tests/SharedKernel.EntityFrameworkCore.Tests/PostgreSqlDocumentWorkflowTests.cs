@@ -6,7 +6,7 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 
 /// <summary>Proves document workflow persistence against PostgreSQL.</summary>
 /// <param name="fixture">The shared PostgreSQL test fixture.</param>
-[Trait(SharedKernelTestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
+[Trait(TestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
 public sealed class PostgreSqlDocumentWorkflowTests(PostgreSqlFixture fixture)
 {
     private static readonly Guid Lineage = new("d77b34e8-4449-4f64-991c-aa36a28cdd65");

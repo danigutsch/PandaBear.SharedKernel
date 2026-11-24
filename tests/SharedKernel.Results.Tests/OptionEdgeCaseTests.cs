@@ -3,8 +3,8 @@ namespace PandaBear.Results.Tests;
 /// <summary>
 /// Tests argument validation and string formatting edge cases of Option.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.EdgeCaseCategory)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.OptionCapability)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.EdgeCaseCategory)]
 public sealed class OptionEdgeCaseTests
 {
     [Fact]

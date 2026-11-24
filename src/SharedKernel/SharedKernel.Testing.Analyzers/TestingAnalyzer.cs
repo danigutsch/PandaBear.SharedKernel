@@ -290,7 +290,6 @@ public sealed partial class TestingAnalyzer : DiagnosticAnalyzer
 
         var replacements = ImmutableArray.CreateBuilder<string>();
         AddConstantsFromType(context.Compilation.GetTypeByMetadataName("PandaBear.Testing.TestTraitNames"), literalValue, replacements);
-        AddConstantsFromType(context.Compilation.GetTypeByMetadataName("PandaBear.Testing.SharedKernelTestTraitNames"), literalValue, replacements);
 
         if (includeTraitValues)
         {

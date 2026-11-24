@@ -3,8 +3,8 @@ using System.Globalization;
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests the culture-independent English-name ordering of country codes.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "ContactValueObjects")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "ContactValueObjects")]
 public sealed class CountryCodeOrderTests
 {
     [Fact]

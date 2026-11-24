@@ -3,7 +3,7 @@ using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
 namespace PandaBear.Secrets.Tool.Tests;
 
 /// <summary>Tests <c>edit</c> with a fake sops: a terminal, an editor, and a memory-backed private directory that is removed afterwards.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class EditCommandTests
 {
     private const string File = "secrets/app.sops.yaml";

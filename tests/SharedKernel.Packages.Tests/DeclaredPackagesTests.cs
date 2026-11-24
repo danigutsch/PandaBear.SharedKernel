@@ -3,7 +3,7 @@ using static PandaBear.Packages.Tests.PackageFactory;
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests that a declaration gives every package one owner.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class DeclaredPackagesTests
 {
     [Fact]

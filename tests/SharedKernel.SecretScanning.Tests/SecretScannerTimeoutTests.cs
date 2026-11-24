@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 namespace PandaBear.SecretScanning.Tests;
 
 /// <summary>Tests that a pattern that times out flags the text it ran on for review instead of hiding it.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.SecretScanningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.SecretScanningCapability)]
 public sealed class SecretScannerTimeoutTests
 {
     [Fact]

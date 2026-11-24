@@ -1,7 +1,7 @@
 namespace PandaBear.Blazor.Analyzers.Tests;
 
 /// <summary>Tests that the analyzer reports a component flag that is not reset in a finally block (SKBLZ001) only where intended.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ComponentStateCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ComponentStateCapability)]
 public sealed class BusyFlagAnalyzerTests
 {
     [Fact]

@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the hero.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class HeroTests : BunitContext
 {
     [Fact]

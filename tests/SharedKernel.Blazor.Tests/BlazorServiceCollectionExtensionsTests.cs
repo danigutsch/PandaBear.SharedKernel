@@ -3,7 +3,7 @@ using System.Diagnostics.Metrics;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the registration of the UI failure reporter.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class BlazorServiceCollectionExtensionsTests
 {
     [Fact]

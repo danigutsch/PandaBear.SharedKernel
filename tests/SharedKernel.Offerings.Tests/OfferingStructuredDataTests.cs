@@ -4,8 +4,8 @@ using static PandaBear.Offerings.Tests.OfferingFixtures;
 namespace PandaBear.Offerings.Tests;
 
 /// <summary>Tests the schema.org JSON-LD of an offering's public view.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "Offerings")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "Offerings")]
 public sealed class OfferingStructuredDataTests
 {
     private static readonly Uri Page = new("https://www.example.org/pt/viagens/rota-romantica");

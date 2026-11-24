@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the spacing of a hero's actions in the stylesheet.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class HeroActionsStylesheetTests
 {
     [Fact]

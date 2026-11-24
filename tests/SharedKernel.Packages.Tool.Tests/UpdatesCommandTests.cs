@@ -5,7 +5,7 @@ using static PandaBear.Packages.Tool.Tests.UpdatesToolHarness;
 namespace PandaBear.Packages.Tool.Tests;
 
 /// <summary>Tests the <c>updates</c> command.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class UpdatesCommandTests
 {
     private const string Config = """{"version":1,"packages":{"cargo":["bat","fd-find","ripgrep=14.1.0"]},"minimumReleaseAgeDays":7}""";

@@ -3,8 +3,8 @@ using static PandaBear.PageSections.Tests.PageSectionFixtures;
 namespace PandaBear.PageSections.Tests;
 
 /// <summary>Tests the rules of a translation's list of sections: the count, the heading levels and publishing.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "PageSections")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "PageSections")]
 public sealed class PageSectionListTests
 {
     private readonly SiteContext _context = new();

@@ -39,13 +39,8 @@ const PandaBear.Mediator.Tests.TestTraits.ContractsCapability = "Contracts" -> s
 const PandaBear.Mediator.Tests.TestTraits.ReferenceDispatcherCapability = "ReferenceDispatcher" -> string!
 const PandaBear.Testing.Metrics.MeterCollector.ListenerFailureMessage = "listener-secret" -> string!
 const PandaBear.Testing.Metrics.ThrowingMeterFactory.FailureMessage = "factory-secret" -> string!
-const PandaBear.Testing.SharedKernelTestTraitNames.CapabilityName = "TestCapability" -> string!
-const PandaBear.Testing.SharedKernelTestTraitNames.CategoryName = "TestCategory" -> string!
-const PandaBear.Testing.SharedKernelTestTraitNames.ComponentName = "TestComponent" -> string!
-const PandaBear.Testing.SharedKernelTestTraitNames.ScopeName = "TestScope" -> string!
-const PandaBear.Testing.SharedKernelTestTraitNames.TheoryName = "TestTheory" -> string!
-const PandaBear.Testing.SharedKernelTestTraitNames.UnitScope = "Unit" -> string!
 const PandaBear.Testing.TestTraitNames.AreaName = "Area" -> string!
+const PandaBear.Testing.TestTraitNames.CapabilityName = "Capability" -> string!
 const PandaBear.Testing.TestTraitNames.CategoryName = "Category" -> string!
 const PandaBear.Testing.TestTraitNames.HostName = "Host" -> string!
 const PandaBear.Testing.TestTraitNames.ScopeName = "Scope" -> string!
@@ -178,7 +173,6 @@ PandaBear.Testing.RecordingWriteStream.WriteSizes.get -> System.Collections.Gene
 PandaBear.Testing.SerialTestJustificationAttribute
 PandaBear.Testing.SerialTestJustificationAttribute.Reason.get -> string!
 PandaBear.Testing.SerialTestJustificationAttribute.SerialTestJustificationAttribute(string! reason) -> void
-PandaBear.Testing.SharedKernelTestTraitNames
 PandaBear.Testing.TemporaryGitRepository
 PandaBear.Testing.TemporaryGitRepository.Commit(string! fileName, string! content, string! message, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
 PandaBear.Testing.TemporaryGitRepository.Dispose() -> void

@@ -2,7 +2,7 @@ namespace PandaBear.Processes.Tests;
 
 /// <summary>Tests the description of a git run that cannot prompt and receives no credentials.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
-[Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[Trait(TestTraitNames.ScopeName, "unit")]
 [Collection(GitEnvironmentGroup.Name)]
 public sealed class GitStartInfoTests
 {

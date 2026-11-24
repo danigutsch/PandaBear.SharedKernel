@@ -3,8 +3,8 @@ namespace PandaBear.Results.Tests;
 /// <summary>
 /// Tests that Result and Result&lt;T&gt; satisfy the shared <see cref="IResultLike{TSelf}"/> contract generically.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ResultCapability)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class ResultContractTests
 {
     [Fact]

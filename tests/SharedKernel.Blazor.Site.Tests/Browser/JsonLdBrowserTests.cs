@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 namespace PandaBear.Blazor.Site.Tests.Browser;
 
 /// <summary>Tests in Chromium that the JSON-LD script of a statically rendered page stays one script; they skip when the browser is not installed.</summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class JsonLdBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]

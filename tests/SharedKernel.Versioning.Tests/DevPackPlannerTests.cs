@@ -1,7 +1,7 @@
 namespace PandaBear.Versioning.Tests;
 
 /// <summary>Tests which projects the incremental local pack rebuilds, in which order, and the cache eviction guard.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class DevPackPlannerTests
 {
     private const string Version = "0.1.0-dev.local";

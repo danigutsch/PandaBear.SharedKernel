@@ -3,7 +3,7 @@ using static PandaBear.Secrets.Tool.Tests.SecretsToolHarness;
 namespace PandaBear.Secrets.Tool.Tests;
 
 /// <summary>Tests <c>verify</c>, which checks every covered file and starts no process.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class VerifyCommandTests
 {
     private static readonly string Config = TestRecipients.Config(2, TestRecipients.First, TestRecipients.Second);

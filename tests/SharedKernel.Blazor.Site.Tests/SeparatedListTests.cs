@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the list whose items a visual bar separates.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class SeparatedListTests : BunitContext
 {
     [Fact]

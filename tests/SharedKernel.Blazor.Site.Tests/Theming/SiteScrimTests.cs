@@ -3,6 +3,7 @@ using PandaBear.Blazor.Site.Theming;
 namespace PandaBear.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests the scrim: the least darkening of a photo that keeps the on-primary colour readable on any photo.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class SiteScrimTests
 {
     [Theory]

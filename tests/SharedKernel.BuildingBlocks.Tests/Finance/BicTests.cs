@@ -5,8 +5,8 @@ namespace PandaBear.BuildingBlocks.Tests;
 /// <summary>
 /// Tests creation and validation of Bic business identifier codes.
 /// </summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "PaymentIdentifiers")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "PaymentIdentifiers")]
 public sealed class BicTests
 {
     [Theory]

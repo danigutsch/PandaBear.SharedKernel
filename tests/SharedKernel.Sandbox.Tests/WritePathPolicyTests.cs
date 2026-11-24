@@ -1,7 +1,7 @@
 namespace PandaBear.Sandbox.Tests;
 
 /// <summary>Tests how <c>allowWrite</c> entries are classified.</summary>
-[Trait("Capability", "Sandbox")]
+[Trait(TestTraitNames.CapabilityName, "Sandbox")]
 public sealed class WritePathPolicyTests
 {
     private static readonly string[] Homes = ["/home/user"];

@@ -1,7 +1,7 @@
 namespace PandaBear.Versioning.Tests;
 
 /// <summary>Guards consumer verification of projects covered by the repository's lock exemption policy.</summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public sealed class ConsumerLockExemptionTests
 {
     private const string LibraryProject = """

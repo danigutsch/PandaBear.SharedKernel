@@ -8,7 +8,7 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 
 /// <summary>Proves transaction, audit and durable replay for a neutral release document.</summary>
 /// <param name="fixture">The shared PostgreSQL fixture.</param>
-[Trait(SharedKernelTestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
+[Trait(TestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
 public sealed class PostgreSqlDocumentFinalizationCommandTests(PostgreSqlFixture fixture)
 {
     [Fact]

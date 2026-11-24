@@ -3,8 +3,8 @@ using PandaBear.Results;
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests the content culture value object.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "Localization")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "Localization")]
 public sealed class ContentCultureTests
 {
     [Theory]

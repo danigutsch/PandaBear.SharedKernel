@@ -1,8 +1,8 @@
 namespace PandaBear.ContentRights.Tests;
 
 /// <summary>Checks the bounded public credit projection and provenance preservation.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "ContentRights")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "ContentRights")]
 public sealed class ContentAttributionTests
 {
     [Fact]

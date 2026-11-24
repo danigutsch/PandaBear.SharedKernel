@@ -4,7 +4,7 @@ namespace PandaBear.Secrets.Sops.Tests;
 /// Runs the adapter against the real sops program with throwaway keys from the real age-keygen, in temporary directories.
 /// They skip when a program is not installed.
 /// </summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class RealSopsTests
 {
     private const string AllSkip = "age, age-keygen, and sops are not all installed.";

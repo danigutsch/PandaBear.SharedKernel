@@ -3,7 +3,7 @@ using System.Text.Json;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the bounded slice of a list that a search or a page returns.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ListSliceTests
 {
     [Fact]

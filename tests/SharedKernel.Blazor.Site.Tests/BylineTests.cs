@@ -3,6 +3,7 @@ using static PandaBear.Blazor.Site.Tests.SiteFixtures;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the byline of a person.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class BylineTests : BunitContext
 {
     [Fact]

@@ -5,7 +5,7 @@ namespace PandaBear.Versioning.Tests;
 /// <summary>
 /// Tests which projects the package planner packs as candidates.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class PackagedToolTests
 {
     // Shipping the vault manager is a separate decision, so candidates do not pack it.

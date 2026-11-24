@@ -3,8 +3,8 @@ using Fixture = PandaBear.Documentation.Tests.OpenApiEndpointAuthorizationFixtur
 namespace PandaBear.Documentation.Tests;
 
 /// <summary>Verifies fixed-host OpenAPI authorization evidence in generated endpoint tables.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
+[Trait(Testing.TestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class OpenApiEndpointAuthorizationTests
 {
     [Fact]

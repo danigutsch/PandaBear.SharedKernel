@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the size of a link styled as a button.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ButtonSizeTests : BunitContext
 {
     [Fact]

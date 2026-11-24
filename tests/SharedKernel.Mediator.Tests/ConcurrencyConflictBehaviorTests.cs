@@ -4,7 +4,6 @@ using PandaBear.Testing.Mediator;
 namespace PandaBear.Mediator.Tests;
 
 /// <summary>Tests that the concurrency conflict behavior turns only a concurrency conflict into a failed result.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
 public sealed class ConcurrencyConflictBehaviorTests
 {
     private const string ExpectedMessage = "The data was changed or removed by someone else. Reload it and try again.";

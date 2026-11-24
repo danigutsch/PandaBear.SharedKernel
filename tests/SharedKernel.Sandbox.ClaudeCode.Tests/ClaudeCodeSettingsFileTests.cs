@@ -1,7 +1,7 @@
 namespace PandaBear.Sandbox.ClaudeCode.Tests;
 
 /// <summary>Tests planning and writing a Claude Code settings file under a repository root.</summary>
-[Trait("Capability", "Sandbox")]
+[Trait(TestTraitNames.CapabilityName, "Sandbox")]
 public sealed class ClaudeCodeSettingsFileTests
 {
     private static readonly DesiredSettings Desired = new(null, ["./out"], [], ["~/.ssh"], [], [], [], false, new Dictionary<string, string>(), []);

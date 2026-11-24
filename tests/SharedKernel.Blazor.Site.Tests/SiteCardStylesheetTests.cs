@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the stylesheet rules of the card options, the card grid widths and gap, and the button sizes.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class SiteCardStylesheetTests
 {
     [Fact]

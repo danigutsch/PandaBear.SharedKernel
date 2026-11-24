@@ -6,7 +6,7 @@ using static PandaBear.Packages.Tests.PackageFactory;
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests the crates.io and npm release source against fake HTTP answers.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class RegistryReleaseSourceTests
 {
     private const string Crate = """{"crate":{"max_stable_version":"15.2.0","max_version":"16.0.0-rc.1"},"versions":[{"num":"15.2.0"}]}""";

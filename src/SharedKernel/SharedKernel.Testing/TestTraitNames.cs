@@ -16,6 +16,11 @@ public static class TestTraitNames
     public const string AreaName = "Area";
 
     /// <summary>
+    /// Trait name for a behavior or capability a test exercises.
+    /// </summary>
+    public const string CapabilityName = "Capability";
+
+    /// <summary>
     /// Trait name for test category.
     /// </summary>
     public const string CategoryName = "Category";

@@ -3,8 +3,8 @@ using PandaBear.Results;
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests currency codes and money values.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "ContactValueObjects")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "ContactValueObjects")]
 public sealed class MoneyTests
 {
     [Theory]

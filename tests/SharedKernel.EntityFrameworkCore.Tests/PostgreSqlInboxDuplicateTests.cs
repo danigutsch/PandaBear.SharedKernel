@@ -5,8 +5,8 @@ using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 namespace PandaBear.EntityFrameworkCore.Tests;
 
 /// <summary>Exercises completed integration event inbox observations in PostgreSQL.</summary>
-[Trait(SharedKernelTestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
+[Trait(TestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
+[Trait(TestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
 public sealed class PostgreSqlInboxDuplicateTests(PostgreSqlFixture fixture)
 {
     private static readonly DateTimeOffset CompletedAt = new(2026, 11, 23, 10, 0, 0, TimeSpan.Zero);

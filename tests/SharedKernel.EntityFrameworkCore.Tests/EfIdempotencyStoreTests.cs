@@ -6,8 +6,8 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// <summary>
 /// Tests EfIdempotencyStore and IdempotencyEntryEntity against an in-memory context.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IdempotencyCapability)]
+[Trait(TestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.IdempotencyCapability)]
 public sealed class EfIdempotencyStoreTests
 {
     [Fact]

@@ -1,7 +1,7 @@
 namespace PandaBear.Secrets.Tests;
 
 /// <summary>Tests the recipient set and its order-insensitive equality.</summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 public sealed class AgeRecipientSetTests
 {
     [Fact]

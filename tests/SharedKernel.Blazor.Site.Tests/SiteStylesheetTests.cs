@@ -4,6 +4,7 @@ using PandaBear.Blazor.Site.Theming;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the static web asset stylesheet and the documented design tokens.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed partial class SiteStylesheetTests
 {
     [Fact]

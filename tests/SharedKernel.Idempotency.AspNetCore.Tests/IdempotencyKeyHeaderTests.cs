@@ -4,7 +4,7 @@ using PandaBear.Testing;
 namespace PandaBear.Idempotency.AspNetCore.Tests;
 
 /// <summary>Tests creation and validation of the <c>Idempotency-Key</c> header value object.</summary>
-[Trait(SharedKernelTestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[Trait(TestTraitNames.ScopeName, "unit")]
 public sealed class IdempotencyKeyHeaderTests
 {
     [Theory]

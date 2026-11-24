@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests that a misspelled or removed parameter fails loudly instead of falling into the pass-through attributes.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class SiteComponentAttributeTests : BunitContext
 {
     [Theory]

@@ -6,8 +6,8 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// Tests that the PostgreSQL fixture hands out isolated, cancellable and force-cleaned databases.
 /// </summary>
 /// <param name="fixture">Shared PostgreSQL fixture under test.</param>
-[Trait(SharedKernelTestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.PostgreSqlFixtureCapability)]
+[Trait(TestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.PostgreSqlFixtureCapability)]
 public sealed class PostgreSqlFixtureTests(PostgreSqlFixture fixture)
 {
     [Fact]

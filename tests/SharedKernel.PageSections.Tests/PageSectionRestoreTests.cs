@@ -3,8 +3,8 @@ using static PandaBear.PageSections.Tests.PageSectionFixtures;
 namespace PandaBear.PageSections.Tests;
 
 /// <summary>Tests storing a section as a definition and restoring it.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "PageSections")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "PageSections")]
 public sealed class PageSectionRestoreTests
 {
     private readonly SiteContext _context = new();

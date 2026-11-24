@@ -1,7 +1,7 @@
 namespace PandaBear.Blazor.Analyzers.Tests;
 
 /// <summary>Tests that the analyzer reports components that inject services that go stale in a circuit scope (SKBLZ002) only where intended.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ComponentStateCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.ComponentStateCapability)]
 public sealed class LongLivedScopeAnalyzerTests
 {
     [Fact]

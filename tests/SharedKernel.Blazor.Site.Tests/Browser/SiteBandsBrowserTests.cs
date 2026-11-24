@@ -7,6 +7,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// desktop (1280px) viewport. The photos are all white, the worst photo for the white on-primary text, and the contrast is measured
 /// on the rendered pixels. They skip when the browser is not installed.
 /// </summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class SiteBandsBrowserTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     [Theory(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 namespace PandaBear.Blazor.Tests;
 
 /// <summary>Tests the hidden marker that tells browser tests when a page is interactive.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class InteractiveMarkerTests : BunitContext
 {
     /// <summary>Declares an interactive renderer, as the Blazor Server circuit does.</summary>

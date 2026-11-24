@@ -10,7 +10,7 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// PostgreSQL parser reports a tagged unique index by its rule and lets every other failure through unchanged.
 /// </summary>
 /// <param name="fixture">Shared PostgreSQL fixture that supplies the isolated database.</param>
-[Trait(SharedKernelTestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
+[Trait(TestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
 public sealed class PostgreSqlUniqueViolationTranslationTests(PostgreSqlFixture fixture) : IAsyncLifetime
 {
     private static readonly NpgsqlUniqueViolationParser Parser = new();

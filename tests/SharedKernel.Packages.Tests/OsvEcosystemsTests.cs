@@ -3,7 +3,7 @@ using PandaBear.Results;
 namespace PandaBear.Packages.Tests;
 
 /// <summary>Tests the mapping from package managers to OSV ecosystems.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class OsvEcosystemsTests
 {
     [Theory]

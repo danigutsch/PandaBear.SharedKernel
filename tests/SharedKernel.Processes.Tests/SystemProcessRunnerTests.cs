@@ -5,7 +5,7 @@ namespace PandaBear.Processes.Tests;
 
 /// <summary>Tests the unbounded runner with real child processes.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
-[Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[Trait(TestTraitNames.ScopeName, "unit")]
 public sealed class SystemProcessRunnerTests
 {
     [Fact]

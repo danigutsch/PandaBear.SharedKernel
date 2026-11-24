@@ -5,7 +5,7 @@ using System.Text.Json;
 namespace PandaBear.Mediator.GeneratorTests;
 
 /// <summary>Tests the generated discovery report and the diagnostics the generator raises while discovering requests, handlers, pipelines and notifications.</summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DiscoveryCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.DiscoveryCapability)]
 public sealed class GeneratorDiscoveryReportTests
 {
     [Fact]

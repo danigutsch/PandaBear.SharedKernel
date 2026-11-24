@@ -3,7 +3,7 @@ using System.CommandLine.Help;
 namespace PandaBear.Packages.Tool.Tests;
 
 /// <summary>Tests that the tool README documents only command lines that the tool accepts.</summary>
-[Trait("Capability", "Packages")]
+[Trait(TestTraitNames.CapabilityName, "Packages")]
 public sealed class DocumentedCommandLinesTests
 {
     [Fact]

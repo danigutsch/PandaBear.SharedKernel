@@ -6,7 +6,7 @@ namespace PandaBear.Secrets.Tests;
 /// Tests that the base-revision reader runs git as every other git caller does: no prompt and none of the host's tokens or
 /// Git variables, bounded output, and a time limit that stops the process.
 /// </summary>
-[Trait("Capability", "Secrets")]
+[Trait(TestTraitNames.CapabilityName, "Secrets")]
 [Collection(GitEnvironmentGroup.Name)]
 public sealed class GitBaseTests
 {

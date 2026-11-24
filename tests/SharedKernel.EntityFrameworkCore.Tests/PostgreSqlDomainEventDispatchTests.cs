@@ -4,8 +4,8 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// PostgreSQL tests of domain-event dispatch while saving aggregates.
 /// </summary>
 /// <param name="fixture">Shared PostgreSQL fixture that supplies the isolated database.</param>
-[Trait(SharedKernelTestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DomainEventDispatchCapability)]
+[Trait(TestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.DomainEventDispatchCapability)]
 public sealed class PostgreSqlDomainEventDispatchTests(PostgreSqlFixture fixture)
 {
     [Fact]

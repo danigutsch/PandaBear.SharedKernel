@@ -3,6 +3,7 @@ using static PandaBear.Blazor.Site.Tests.SiteFixtures;
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the album index, a card grid of albums.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class AlbumIndexTests : BunitContext
 {
     private static readonly AlbumSummary[] Albums =

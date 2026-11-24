@@ -3,7 +3,7 @@ namespace PandaBear.Aspire.Analyzers.Tests;
 /// <summary>
 /// Tests that AspireAnalyzer reports the image tag and digest diagnostic for incomplete or malformed Aspire image pin chains.
 /// </summary>
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.AspireImagePinningCapability)]
+[Trait(Testing.TestTraitNames.CapabilityName, TestTraits.AspireImagePinningCapability)]
 public sealed class AspireAnalyzerTests
 {
     [Fact]

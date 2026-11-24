@@ -6,6 +6,7 @@ namespace PandaBear.Blazor.Site.Tests.Browser;
 /// Tests the theme preview in Chromium on an Interactive Server page whose policy is <c>style-src 'self' 'nonce-…'</c>, without
 /// <c>'unsafe-inline'</c>; they skip when the browser is not installed.
 /// </summary>
+[Testing.TestScope(Testing.TestScope.System)]
 public sealed class ThemePreviewStrictPolicyTests(ChromiumFixture chromium) : IClassFixture<ChromiumFixture>
 {
     [Fact(SkipType = typeof(Chromium), SkipUnless = nameof(Chromium.IsInstalled), Skip = Chromium.NotInstalledReason)]

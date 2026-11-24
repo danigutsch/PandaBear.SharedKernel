@@ -5,7 +5,7 @@ namespace PandaBear.Branding.Tests;
 /// <summary>
 /// Tests validation and normalization performed by BrandingSettings.Create.
 /// </summary>
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.ValidationCapability)]
+[Trait(TestTraitNames.CapabilityName, TestTraits.ValidationCapability)]
 public sealed class BrandingSettingsTests
 {
     [Fact]

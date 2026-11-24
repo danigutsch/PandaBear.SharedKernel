@@ -3,8 +3,8 @@ using PandaBear.Results;
 namespace PandaBear.BuildingBlocks.Tests;
 
 /// <summary>Tests creating money that must already have the currency's precision.</summary>
-[Trait(Testing.TestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-[Trait("Capability", "ValueObjects")]
+[Trait(Testing.TestTraitNames.ScopeName, "unit")]
+[Trait(Testing.TestTraitNames.CapabilityName, "ValueObjects")]
 public sealed class MoneyExactTests
 {
     [Theory]

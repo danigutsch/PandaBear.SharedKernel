@@ -4,6 +4,7 @@ using PandaBear.Results;
 namespace PandaBear.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests the shape rules of font sizes and typography styles.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class TypographyValueTests
 {
     [Fact]

@@ -4,6 +4,7 @@ using PandaBear.Results;
 namespace PandaBear.Blazor.Site.Tests.Theming;
 
 /// <summary>Tests the form model that maps editor fields to the theme value objects with field-path errors.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class ThemeEditorModelTests
 {
     [Fact]

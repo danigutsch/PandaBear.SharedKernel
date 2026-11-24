@@ -1,6 +1,7 @@
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the "from" price line.</summary>
+[Testing.TestScope(Testing.TestScope.Unit)]
 public sealed class FromPriceTests : BunitContext
 {
     [Fact]
