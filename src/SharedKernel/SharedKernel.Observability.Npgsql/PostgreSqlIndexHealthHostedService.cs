@@ -13,7 +13,10 @@ internal sealed class PostgreSqlIndexHealthHostedService(
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var dataSources = registration.ConnectionStrings
-            .Select(connectionString => new NpgsqlDataSourceBuilder(connectionString).Build())
+            .Select(static (connectionString, index) => new NpgsqlDataSourceBuilder(connectionString)
+            {
+                Name = FormattableString.Invariant($"postgresql-index-health-{index + 1}"),
+            }.Build())
             .ToArray();
 
         try

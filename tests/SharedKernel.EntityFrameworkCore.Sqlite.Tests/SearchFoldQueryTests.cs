@@ -62,6 +62,27 @@ public sealed class SearchFoldQueryTests
     }
 
     [Fact]
+    public async Task A_folded_name_matches_literal_metacharacters()
+    {
+        // Arrange
+        using var database = new PlaceDatabase([
+            new() { Id = 1, Name = @"Viagem em 山 Á_B%\", Code = new PlaceCode("BR-1") },
+            new() { Id = 2, Name = @"Viagem em 山 ÁxBz\", Code = new PlaceCode("BR-2") },
+        ]);
+        await using var context = database.CreateContext();
+        var pattern = SearchFold.ContainsPattern(@"  山 A_B%\  ");
+
+        // Act
+        var found = await context.Places
+            .Where(place => EF.Functions.Like(SearchFold.Of(place.Name), pattern, SearchFold.EscapeCharacter))
+            .Select(place => place.Id)
+            .ToListAsync(TestContext.Current.CancellationToken);
+
+        // Assert
+        found.ShouldBe([1]);
+    }
+
+    [Fact]
     public async Task A_null_column_matches_nothing_and_does_not_fail()
     {
         // Arrange

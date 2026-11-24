@@ -253,8 +253,10 @@ public sealed class IntegrationEventOutboxMessageTests
         message.ClaimedUntil.ShouldBeNull();
     }
 
-    [Fact]
-    public async Task Relay_records_retry_state_when_publish_fails()
+    [Theory]
+    [InlineData(false, "transport unavailable")]
+    [InlineData(true, "System.InvalidOperationException")]
+    public async Task Relay_records_retry_state_with_configured_error_detail(bool storeExceptionTypeOnly, string expectedError)
     {
         // Arrange
         var publisher = new RecordingEventEnvelopePublisher
@@ -262,7 +264,8 @@ public sealed class IntegrationEventOutboxMessageTests
             Failure = new InvalidOperationException("transport unavailable")
         };
         var timeProvider = new FakeTimeProvider(new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero));
-        await using var provider = ConsumerMessagingTestServices.CreateOutboxRelayProvider(publisher, timeProvider);
+        await using var provider = ConsumerMessagingTestServices.CreateOutboxRelayProvider(
+            publisher, timeProvider, options => options.StorePublishExceptionTypeOnly = storeExceptionTypeOnly);
         await ConsumerMessagingTestServices.EnqueueConsumerTestIntegrationEvent(provider, "andes-retry-2026");
 
         // Act
@@ -274,7 +277,9 @@ public sealed class IntegrationEventOutboxMessageTests
         var message = ConsumerMessagingTestServices.GetSingleOutboxMessage(provider);
         message.PublishedAt.ShouldBeNull();
         message.PublishAttempts.ShouldBe(1);
-        message.LastPublishError.ShouldContain("transport unavailable", StringComparison.Ordinal);
+        message.LastPublishError.ShouldBe(expectedError);
+        message.LastPublishAttemptAt.ShouldBe(timeProvider.GetUtcNow());
+        message.NextPublishAttemptAt.ShouldBe(timeProvider.GetUtcNow().AddSeconds(1));
         message.ClaimedBy.ShouldBeNull();
         message.ClaimedUntil.ShouldBeNull();
         ((IRetryableMessage)message).Attempts.ShouldBe(1);

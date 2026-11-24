@@ -110,6 +110,56 @@ public sealed class ActivityPrivacyExportTests
     }
 
     [Theory]
+    [InlineData("db.system", "synthetic_admin_database", "postgresql")]
+    [InlineData("db.system.name", "CALL synthetic_procedure", "postgresql")]
+    [InlineData("db.system.name", "CONNECT synthetic_admin_database", "CONNECT")]
+    public void Trace_export_uses_bounded_postgresql_names_and_removes_connection_identity(
+        string databaseSystemTag,
+        string incomingName,
+        string expectedName)
+    {
+        // Arrange
+        var exported = new ConcurrentQueue<Activity>();
+        using var source = new ActivitySource($"privacy-test-{Guid.NewGuid():N}");
+        using var exporter = new PrivacyActivityExporter(exported);
+        using var provider = Sdk.CreateTracerProviderBuilder()
+            .AddSource(source.Name)
+            .AddProcessor(new ActivityPrivacyProcessor())
+            .AddProcessor(new SimpleActivityExportProcessor(exporter))
+            .Build();
+        string[] privateTags =
+        [
+            "db.name", "db.namespace", "db.user", "db.collection.name", "db.stored_procedure.name",
+            "server.address", "server.port", "net.peer.name", "net.peer.port", "net.peer.ip",
+        ];
+
+        // Act
+        using (var activity = source.StartActivity(incomingName, ActivityKind.Client).ShouldNotBeNull())
+        {
+            activity.SetTag(databaseSystemTag, "postgresql");
+            foreach (var tag in privateTags)
+            {
+                activity.SetTag(tag, "synthetic_private_value");
+            }
+
+            activity.SetTag("db.response.status_code", "22P02");
+            activity.SetStatus(ActivityStatusCode.Error);
+        }
+
+        provider.ForceFlush();
+
+        // Assert
+        var result = exported.ShouldHaveSingleItem();
+        var remainingPrivateTags = result.TagObjects.Select(static attribute => attribute.Key)
+            .Intersect(privateTags, StringComparer.Ordinal);
+        remainingPrivateTags.ShouldBeEmpty();
+        result.DisplayName.ShouldBe(expectedName);
+        result.GetTagItem(databaseSystemTag).ShouldBe("postgresql");
+        result.GetTagItem("db.response.status_code").ShouldBe("22P02");
+        result.Status.ShouldBe(ActivityStatusCode.Error);
+    }
+
+    [Theory]
     [InlineData(false)]
     [InlineData(true)]
     public void Trace_export_redacts_urls_without_requiring_aws_or_bucket_attributes(bool awsAttributes)

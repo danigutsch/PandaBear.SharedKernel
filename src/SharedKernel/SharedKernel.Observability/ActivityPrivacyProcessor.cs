@@ -7,6 +7,8 @@ namespace PandaBear.Observability;
 /// <param name="additionalSensitiveAttribute">Additional application attributes to remove.</param>
 public sealed class ActivityPrivacyProcessor(Func<string, bool>? additionalSensitiveAttribute = null) : BaseProcessor<Activity>
 {
+    private const string PostgreSqlSystemName = "postgresql";
+
     private readonly Func<string, bool> isSensitive = name => TelemetryPrivacyAttributeClassifier.IsSensitive(name)
         || additionalSensitiveAttribute?.Invoke(name) == true;
 
@@ -20,8 +22,12 @@ public sealed class ActivityPrivacyProcessor(Func<string, bool>? additionalSensi
             return;
         }
 
+        var isPostgreSql = data.Kind == ActivityKind.Client
+            && (Equals(data.GetTagItem("db.system.name"), PostgreSqlSystemName)
+                || Equals(data.GetTagItem("db.system"), PostgreSqlSystemName));
         var sensitiveAttributeNames = data.TagObjects
             .Where(attribute => isSensitive(attribute.Key)
+                || (isPostgreSql && TelemetryPrivacyAttributeClassifier.IsPostgreSqlIdentity(attribute.Key))
                 || attribute.Value is Exception)
             .Select(static attribute => attribute.Key)
             .ToArray();
@@ -29,6 +35,11 @@ public sealed class ActivityPrivacyProcessor(Func<string, bool>? additionalSensi
         foreach (var attributeName in sensitiveAttributeNames)
         {
             data.SetTag(attributeName, null);
+        }
+
+        if (isPostgreSql)
+        {
+            data.DisplayName = data.DisplayName.StartsWith("CONNECT ", StringComparison.Ordinal) ? "CONNECT" : PostgreSqlSystemName;
         }
 
         if (data.StatusDescription is not null)

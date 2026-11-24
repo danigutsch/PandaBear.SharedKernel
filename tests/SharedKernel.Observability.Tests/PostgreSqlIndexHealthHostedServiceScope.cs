@@ -16,7 +16,10 @@ internal sealed class PostgreSqlIndexHealthHostedServiceScope : IAsyncDisposable
     private PostgreSqlIndexHealthHostedServiceScope()
     {
         var registration = new PostgreSqlIndexHealthMonitoringRegistration(
-            ["Host=127.0.0.1;Port=1;Database=monitor;Username=monitor;Password=test-only;Timeout=1"],
+            [
+                "Host=127.0.0.1;Port=1;Database=synthetic_monitor_admin;Username=monitor;Password=test-only;Timeout=1",
+                "Host=127.0.0.1;Port=1;Database=synthetic_monitor_catalog;Username=monitor;Password=test-only;Timeout=1",
+            ],
             new PostgreSqlIndexHealthMonitoringOptions
             {
                 PollingInterval = TimeSpan.FromMinutes(1),
@@ -43,6 +46,33 @@ internal sealed class PostgreSqlIndexHealthHostedServiceScope : IAsyncDisposable
     public Task<bool> WaitForUnavailableCollection(CancellationToken ct)
     {
         return unavailableCollectionObserved.Task.WaitAsync(TimeSpan.FromSeconds(10), ct);
+    }
+
+    /// <summary>Reads the native Npgsql pool dimension for the monitor pools while the worker is running.</summary>
+    public static IReadOnlySet<string> ReadPoolNames()
+    {
+        var poolNames = new HashSet<string>(StringComparer.Ordinal);
+        using var listener = new MeterListener();
+        listener.InstrumentPublished = static (instrument, activeListener) =>
+        {
+            if (instrument.Meter.Name == "Npgsql" && instrument.Name == "db.client.connection.count")
+            {
+                activeListener.EnableMeasurementEvents(instrument);
+            }
+        };
+        listener.SetMeasurementEventCallback<int>((_, _, tags, _) =>
+        {
+            foreach (var tag in tags)
+            {
+                if (tag is { Key: "db.client.connection.pool.name", Value: string value })
+                {
+                    poolNames.Add(value);
+                }
+            }
+        });
+        listener.Start();
+        listener.RecordObservableInstruments();
+        return poolNames;
     }
 
     /// <inheritdoc />

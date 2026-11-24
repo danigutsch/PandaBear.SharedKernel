@@ -150,6 +150,14 @@ Activity source `SharedKernel.ObjectStorage.S3` (`S3ObjectStoreTelemetry.Name`).
 | --- | --- | --- |
 | `object_storage.{operation}`: `put`, `open_read`, `exists`, `list`, `create_upload_url`, `delete`, `health` | Client | `sharedkernel.object_storage.operation` |
 
+### SharedKernel.AspNetCore.Authentication.Bff
+
+Meter `SharedKernel.AspNetCore.Authentication.Bff` (`BffTelemetry.Name`). No activity source.
+
+| Instrument | Kind | Unit | Description | Attributes |
+| --- | --- | --- | --- | --- |
+| `sharedkernel.bff.session_ticket.failures` | Counter | `{failure}` | Server-side session ticket operations that failed. | `sharedkernel.bff.session_ticket.operation` (`protect`, `unprotect`, `cache_get`, `cache_set`, `cache_remove`) |
+
 ### SharedKernel.Observability.Npgsql
 
 Meter `SharedKernel.Observability.Npgsql` (`PostgreSqlIndexHealthTelemetry.MeterName`). No activity source. Every measurement
@@ -167,6 +175,7 @@ Meter and activity source `SharedKernel.Scheduling` (`SchedulingTelemetry.Name`)
 | Instrument | Kind | Unit | Description | Attributes |
 | --- | --- | --- | --- | --- |
 | `sharedkernel.scheduling.polling.cycle.duration` | Histogram | `s` | Duration of one polling drain cycle. | `sharedkernel.scheduling.service.name`, `sharedkernel.scheduling.outcome` |
+| `sharedkernel.scheduling.polling.batch.active.duration` | Observable gauge | `s` | Elapsed duration of the longest active batch for each running polling service. | `sharedkernel.scheduling.service.name` |
 | `sharedkernel.scheduling.polling.batches` | Counter | `{batch}` | Completed polling batches. | `sharedkernel.scheduling.service.name` |
 | `sharedkernel.scheduling.polling.items` | Counter | `{item}` | Processed polling work items. | `sharedkernel.scheduling.service.name` |
 | `sharedkernel.scheduling.polling.failures` | Counter | `{failure}` | Non-fatal polling failures. | `sharedkernel.scheduling.service.name`, `error.type` |

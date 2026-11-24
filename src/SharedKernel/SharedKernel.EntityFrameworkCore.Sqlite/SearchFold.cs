@@ -22,7 +22,7 @@ public static class SearchFold
     public const string FunctionName = "sharedkernel_search_fold";
 
     /// <summary>The escape character of the patterns <see cref="ContainsPattern"/> builds; pass it to <c>EF.Functions.Like</c>.</summary>
-    public const string EscapeCharacter = "\\";
+    public const string EscapeCharacter = SqlLikePattern.EscapeCharacter;
 
     /// <summary>
     /// Computes the search key of a text, <see cref="SearchKey.Of"/>. In an Entity Framework Core query mapped with
@@ -51,18 +51,7 @@ public static class SearchFold
             return null;
         }
 
-        var builder = new StringBuilder(key.Length + 8).Append('%');
-        foreach (var character in key)
-        {
-            if (character is '%' or '_' or '\\')
-            {
-                builder.Append('\\');
-            }
-
-            builder.Append(character);
-        }
-
-        return builder.Append('%').ToString();
+        return SqlLikePattern.ContainsLiteral(key);
     }
 
     /// <summary>

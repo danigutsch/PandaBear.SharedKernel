@@ -7,6 +7,8 @@ PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutbox
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxRelayOptions.IntegrationEventOutboxRelayOptions() -> void
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxRelayOptions.PollInterval.get -> System.TimeSpan
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxRelayOptions.PollInterval.set -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxRelayOptions.StorePublishExceptionTypeOnly.get -> bool
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxRelayOptions.StorePublishExceptionTypeOnly.set -> void
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxServiceCollectionExtensions
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventRegistration<TContext>
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventRegistration<TContext>.WithHostedConsumer() -> PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventRegistration<TContext!>!
@@ -19,6 +21,8 @@ PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventRegist
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventStorageOptions
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventStorageOptions.ExcludeTransportFromMigrations.get -> bool
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventStorageOptions.ExcludeTransportFromMigrations.set -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventStorageOptions.ExcludeOutboxFromMigrations.get -> bool
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventStorageOptions.ExcludeOutboxFromMigrations.set -> void
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventStorageOptions.IntegrationEventStorageOptions() -> void
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventStorageOptions.OutboxSchema.get -> string?
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventStorageOptions.OutboxSchema.set -> void
@@ -36,6 +40,7 @@ static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEven
 static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxServiceCollectionExtensions.AddIntegrationEventOutbox<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventStorageOptions!>! configureStorage) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxServiceCollectionExtensions.AddIntegrationEventOutboxRelay<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxRelayOptions!>? configureOptions = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxServiceCollectionExtensions.AddIntegrationEventTransportStorage<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxServiceCollectionExtensions.AddIntegrationEventOutboxStorage<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxServiceCollectionExtensions.AddIntegrationEvents<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventRegistration<TContext!>!
 static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxServiceCollectionExtensions.AddPostgreSqlIntegrationEventOutboxRelayAtomicClaims<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxServiceCollectionExtensions.AddPostgreSqlIntegrationEventTransportConsumer<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! consumerName, System.Action<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxRelayOptions!>? configureOptions = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
@@ -93,3 +98,156 @@ static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEven
 ~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxHealth.ToString() -> string
 ~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.Equals(object obj) -> bool
 ~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportHealth.ToString() -> string
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor.Deconstruct(out System.DateTimeOffset RecordedAt, out System.Guid StorageId) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor.Equals(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor other) -> bool
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor.IntegrationEventDeliveryCursor() -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor.IntegrationEventDeliveryCursor(System.DateTimeOffset RecordedAt, System.Guid StorageId) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor.RecordedAt.get -> System.DateTimeOffset
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor.RecordedAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor.StorageId.get -> System.Guid
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor.StorageId.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.Attempts.get -> int
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.Attempts.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.EventId.get -> string!
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.EventId.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.EventType.get -> string!
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.EventType.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.IntegrationEventDeliveryEntry() -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.LastAttemptAt.get -> System.DateTimeOffset?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.LastAttemptAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.NextAttemptAt.get -> System.DateTimeOffset?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.NextAttemptAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.RecordedAt.get -> System.DateTimeOffset
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.RecordedAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.StorageId.get -> System.Guid
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.StorageId.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.TerminalAt.get -> System.DateTimeOffset?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry.TerminalAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.Deconstruct(out string? EventId, out string? EventType, out System.DateTimeOffset? RecordedSince) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.Equals(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter other) -> bool
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.EventId.get -> string?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.EventId.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.EventType.get -> string?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.EventType.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.IntegrationEventDeliveryFilter() -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.IntegrationEventDeliveryFilter(string? EventId, string? EventType, System.DateTimeOffset? RecordedSince) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.RecordedSince.get -> System.DateTimeOffset?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.RecordedSince.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryInspection
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage.<Clone>$() -> PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage!
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage.Deconstruct(out System.Collections.Generic.IReadOnlyList<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry!>! Entries, out PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor? NextCursor) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage.Entries.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry!>!
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage.Entries.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage.Equals(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage? other) -> bool
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage.IntegrationEventDeliveryPage(System.Collections.Generic.IReadOnlyList<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryEntry!>! Entries, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor? NextCursor) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage.NextCursor.get -> PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage.NextCursor.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.EventId.get -> string!
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.EventId.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.EventType.get -> string!
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.EventType.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.FailedAttempts.get -> int
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.FailedAttempts.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.IntegrationEventOutboxDelivery() -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.LastAttemptAt.get -> System.DateTimeOffset?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.LastAttemptAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.NextAttemptAt.get -> System.DateTimeOffset?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.NextAttemptAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.PublishedAt.get -> System.DateTimeOffset?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.PublishedAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.RecordedAt.get -> System.DateTimeOffset
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.RecordedAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.StorageId.get -> System.Guid
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery.StorageId.init -> void
+override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor.GetHashCode() -> int
+override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.GetHashCode() -> int
+override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage.Equals(object? obj) -> bool
+override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage.GetHashCode() -> int
+override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage.ToString() -> string!
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor.operator !=(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor.operator ==(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.operator !=(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.operator ==(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryInspection.ReadMatchingOutbox(Microsoft.EntityFrameworkCore.DbContext! dbContext, System.Linq.IQueryable<string!>! matchingEventIds, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter filter, int limit, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor? cursor, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage!>!
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryInspection.ReadMatchingTransport(Microsoft.EntityFrameworkCore.DbContext! dbContext, string! consumerName, System.Linq.IQueryable<string!>! matchingEventIds, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter filter, int limit, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor? cursor, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage!>!
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryInspection.ReadOutbox(Microsoft.EntityFrameworkCore.DbContext! dbContext, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter filter, int limit, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor? cursor, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage!>!
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryInspection.ReadRetainedOutbox(Microsoft.EntityFrameworkCore.DbContext! dbContext, string! eventId, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxDelivery?>!
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryInspection.ReadTransport(Microsoft.EntityFrameworkCore.DbContext! dbContext, string! consumerName, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter filter, int limit, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor? cursor, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage!>!
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage.operator !=(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage? left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage? right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage.operator ==(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage? left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryPage? right) -> bool
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor.Equals(object obj) -> bool
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryCursor.ToString() -> string
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.Equals(object obj) -> bool
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventDeliveryFilter.ToString() -> string
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor.Deconstruct(out System.DateTimeOffset LastObservedAt, out System.Guid EventId) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor.Equals(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor other) -> bool
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor.EventId.get -> System.Guid
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor.EventId.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor.IntegrationEventInboxDuplicateCursor() -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor.IntegrationEventInboxDuplicateCursor(System.DateTimeOffset LastObservedAt, System.Guid EventId) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor.LastObservedAt.get -> System.DateTimeOffset
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor.LastObservedAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.Deconstruct(out long EntriesWithDuplicates, out long DuplicateCount, out System.DateTimeOffset? LastObservedAt) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.DuplicateCount.get -> long
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.DuplicateCount.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.EntriesWithDuplicates.get -> long
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.EntriesWithDuplicates.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.Equals(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth other) -> bool
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.IntegrationEventInboxDuplicateHealth() -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.IntegrationEventInboxDuplicateHealth(long EntriesWithDuplicates, long DuplicateCount, System.DateTimeOffset? LastObservedAt) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.LastObservedAt.get -> System.DateTimeOffset?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.LastObservedAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage.Deconstruct(out System.Collections.Generic.IReadOnlyList<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow>! Rows, out PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor? Next) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage.Equals(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage other) -> bool
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage.IntegrationEventInboxDuplicatePage() -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage.IntegrationEventInboxDuplicatePage(System.Collections.Generic.IReadOnlyList<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow>! Rows, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor? Next) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage.Next.get -> PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage.Next.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage.Rows.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow>!
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage.Rows.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.Deconstruct(out System.Guid EventId, out int DuplicateCount, out System.DateTimeOffset LastObservedAt) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.DuplicateCount.get -> int
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.DuplicateCount.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.Equals(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow other) -> bool
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.EventId.get -> System.Guid
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.EventId.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.IntegrationEventInboxDuplicateRow() -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.IntegrationEventInboxDuplicateRow(System.Guid EventId, int DuplicateCount, System.DateTimeOffset LastObservedAt) -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.LastObservedAt.get -> System.DateTimeOffset
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.LastObservedAt.init -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicates
+override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor.GetHashCode() -> int
+override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.GetHashCode() -> int
+override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage.GetHashCode() -> int
+override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.GetHashCode() -> int
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor.operator !=(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor.operator ==(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.operator !=(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.operator ==(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage.operator !=(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage.operator ==(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.operator !=(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.operator ==(PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow left, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow right) -> bool
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicates.ReadHealth(Microsoft.EntityFrameworkCore.DbContext! dbContext, string! consumerName, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth>!
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicates.ReadPage(Microsoft.EntityFrameworkCore.DbContext! dbContext, string! consumerName, System.Guid? eventId, System.DateTimeOffset? observedSince, int limit, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor? cursor, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage>!
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicates.ReadPage(Microsoft.EntityFrameworkCore.DbContext! dbContext, string! consumerName, System.Guid? eventId, int limit, PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor? cursor, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage>!
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor.Equals(object obj) -> bool
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateCursor.ToString() -> string
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.Equals(object obj) -> bool
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateHealth.ToString() -> string
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage.Equals(object obj) -> bool
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicatePage.ToString() -> string
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.Equals(object obj) -> bool
+~override PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRow.ToString() -> string
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRecorder<TContext>
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventInboxDuplicateRecorder<TContext>.Record(PandaBear.Idempotency.IdempotencyScope inboxScope, System.Guid eventId, System.DateTimeOffset observedAt, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxServiceCollectionExtensions.AddPostgreSqlIntegrationEventInboxDuplicates<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! consumerName, string! inboxScopePrefix, string! tableName = "integration_event_inbox_duplicates") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

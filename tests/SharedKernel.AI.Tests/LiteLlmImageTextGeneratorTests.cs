@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -7,6 +8,58 @@ namespace PandaBear.AI.Tests;
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ImageTextGenerationCapability)]
 public sealed class LiteLlmImageTextGeneratorTests
 {
+    [Theory]
+    [InlineData("""{"prompt_tokens":12,"completion_tokens":7}""", "4.5e-3", 12L, 7L, "0.0045")]
+    [InlineData("""{"prompt_tokens":0,"completion_tokens":"unknown"}""", "invalid", 0L, null, null)]
+    [InlineData("""{"completion_tokens":9}""", null, null, 9L, null)]
+    [InlineData("""{"prompt_tokens":-1,"completion_tokens":2.5}""", "-1.5", null, null, null)]
+    [InlineData("[]", "0.003", null, null, "0.003")]
+    [InlineData(null, null, null, null, null)]
+    [InlineData("""{"completion_tokens":9223372036854775808}""", "0.004|0.005", null, null, null)]
+    public async Task Generate_image_text_exposes_only_reported_usage(
+        string? bodyUsage, string? costHeader, long? inputTokens, long? outputTokens, string? costUsd)
+    {
+        // Arrange
+        var usageJson = bodyUsage is null ? string.Empty : ",\"usage\":" + bodyUsage;
+        using var response = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent($$$"""
+                {"choices":[{"message":{"content":"{\"altText\":\"Draft text\"}"}}]{{{usageJson}}}
+                }
+                """)
+        };
+        if (costHeader is not null)
+        {
+            response.Headers.Add("x-litellm-response-cost", costHeader.Split('|'));
+        }
+
+        using var handler = new TestHttpMessageHandler(response);
+        using var httpClient = new HttpClient(handler, disposeHandler: false);
+        var generator = new LiteLlmImageTextGenerator(
+            httpClient,
+            new LiteLlmImageTextGeneratorOptions
+            {
+                Endpoint = new Uri("https://litellm.example"),
+                Model = "local/vision"
+            });
+
+        // Act
+        var result = await generator.GenerateImageText(
+            new ImageTextGenerationRequest { Image = Stream.Null, ContentType = "image/jpeg", Language = "en-US" },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.AltText.ShouldBe("Draft text");
+        var expectedCost = costUsd is not null ? decimal.Parse(costUsd, CultureInfo.InvariantCulture) : (decimal?)null;
+        if (inputTokens is null && outputTokens is null && expectedCost is null)
+        {
+            result.Usage.ShouldBeNull();
+            return;
+        }
+
+        result.Usage.ShouldNotBeNull().ShouldBe(new ImageTextGenerationUsage(inputTokens, outputTokens, expectedCost));
+    }
+
     [Fact]
     public async Task Generate_image_text_sends_openai_compatible_image_request()
     {

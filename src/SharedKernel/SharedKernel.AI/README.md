@@ -10,6 +10,11 @@ Reusable AI-assisted image text generation contracts and LiteLLM client.
 
 Construct `LiteLlmImageTextGenerator` with an application-configured `HttpClient` and `LiteLlmImageTextGeneratorOptions`, then call `IImageTextGenerator.GenerateImageText` with an image request and cancellation token. The result contains alt text and an optional caption. The host owns endpoint/API credentials, model selection, consent, sensitive-image policy, and telemetry; do not commit credentials or image captures.
 
+`ImageTextGenerationResult.Usage` contains available input and output token counts and the reported
+US dollar cost. The LiteLLM adapter reads counts from the completion response and cost from the
+[per-response cost header](https://docs.litellm.ai/docs/proxy/response_headers). Missing or invalid
+values stay unset. The reported cost describes this response and can differ from invoice totals.
+
 Images are read from the caller stream’s current position and limited by `LiteLlmImageTextGeneratorOptions.MaxImageBytes` before base64 encoding or HTTP dispatch. The default is 5 MiB; hosts can configure another positive finite byte budget. The source remains open on success, cancellation, or rejection. Oversized images raise `ImageTextGenerationException`. This transport budget does not replace host-owned image validation or privacy policy.
 
 ## Install and example
@@ -35,6 +40,11 @@ public static class Example
         }, ct);
 }
 ```
+
+## Request failures
+
+An HTTP deadline set through `HttpClient.Timeout` raises `ImageTextGenerationException`. Canceling
+the caller's token propagates `OperationCanceledException` so the host can handle cancellation.
 
 ## Package identity and availability
 

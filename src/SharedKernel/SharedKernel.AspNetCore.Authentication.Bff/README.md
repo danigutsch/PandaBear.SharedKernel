@@ -108,6 +108,17 @@ builder.Services.AddHttpClient<IProfileClient, ProfileClient>(client => client.B
 Neither scheme may set `EventsType`: the registration wraps the `Events` instance, and an `EventsType` would bypass it, so
 startup fails with an `InvalidOperationException`. Assign an events instance to `Events` instead; its handlers still run.
 
+## Ticket store failure metrics
+
+SharedKernel service defaults already collect the `SharedKernel.AspNetCore.Authentication.Bff` meter. A host with
+custom OpenTelemetry configuration can subscribe with `AddMeter("SharedKernel.AspNetCore.Authentication.Bff")`.
+The `sharedkernel.bff.session_ticket.failures` counter has one dimension named
+`sharedkernel.bff.session_ticket.operation` with the values `protect`, `unprotect`, `cache_get`, `cache_set`, and `cache_remove`.
+
+An unreadable cached ticket counts as an `unprotect` failure. A failed cleanup counts separately as
+`cache_remove`. Successful operations, normal misses, expired tickets, and cancellation do not increment
+the counter.
+
 ## Migrating the ViajantesTurismo Management BFF off Duende
 
 The old Management web project (`src/ViajantesTurismo.Management.Web`) is the behaviour reference. Each class maps to this

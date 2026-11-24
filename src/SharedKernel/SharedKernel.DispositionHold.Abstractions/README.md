@@ -14,3 +14,7 @@ same transaction as the disposition and refuses to proceed on a held decision or
 
 Provider modules, such as `PandaBear.SharedKernel.DispositionHold.EntityFrameworkCore`, supply storage and the
 atomic guard.
+
+For a scoped advisory read, compose `WhereRestrainingAt(at)` with the caller's hold query. The effective time is
+inclusive and expiry is exclusive. The extension leaves scope, projection, materialization and authorization to the
+caller. Use the transaction-scoped guard for a purge.

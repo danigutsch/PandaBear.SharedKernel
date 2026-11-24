@@ -11,10 +11,11 @@ internal sealed class IntegrationEventOutboxMessageConfiguration : IEntityTypeCo
 {
     private readonly string schema;
     private readonly string tableName;
+    private readonly bool excludeFromMigrations;
 
     /// <summary>Creates a configuration that maps to the default schema and outbox table.</summary>
     public IntegrationEventOutboxMessageConfiguration()
-        : this(DatabaseSchemas.Messaging, IntegrationEventStorageOptions.DefaultOutboxTableName)
+        : this(DatabaseSchemas.Messaging, IntegrationEventStorageOptions.DefaultOutboxTableName, excludeFromMigrations: false)
     {
     }
 
@@ -23,14 +24,16 @@ internal sealed class IntegrationEventOutboxMessageConfiguration : IEntityTypeCo
     /// </summary>
     /// <param name="schema">Schema that holds the table.</param>
     /// <param name="tableName">Name of the outbox table.</param>
+    /// <param name="excludeFromMigrations">Whether EF migrations skip a table owned by another context.</param>
     /// <exception cref="ArgumentException">Thrown when <paramref name="schema"/> or <paramref name="tableName"/> is <see langword="null"/>, empty, or white-space.</exception>
-    public IntegrationEventOutboxMessageConfiguration(string schema, string tableName)
+    public IntegrationEventOutboxMessageConfiguration(string schema, string tableName, bool excludeFromMigrations)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(schema);
         ArgumentException.ThrowIfNullOrWhiteSpace(tableName);
 
         this.schema = schema;
         this.tableName = tableName;
+        this.excludeFromMigrations = excludeFromMigrations;
     }
 
     /// <inheritdoc />
@@ -38,7 +41,15 @@ internal sealed class IntegrationEventOutboxMessageConfiguration : IEntityTypeCo
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        builder.ToTable(tableName, schema);
+        if (excludeFromMigrations)
+        {
+            builder.ToTable(tableName, schema, table => table.ExcludeFromMigrations());
+        }
+        else
+        {
+            builder.ToTable(tableName, schema);
+        }
+
         builder.HasKey(message => message.Id);
         builder.Property(message => message.Id).ValueGeneratedNever();
         builder.HasIndex(message => new { message.PublishedAt, message.EnqueuedAt });

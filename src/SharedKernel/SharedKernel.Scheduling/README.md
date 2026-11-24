@@ -19,10 +19,16 @@ persistence, locking, idempotency, retries, and business-specific state.
 
 ## Telemetry
 
+An override of `ExecuteDrainCycle` can wrap the entire cycle with a caller-owned observation.
+Await the base implementation once to preserve batch draining and its telemetry. A returned cycle
+ends with an empty batch. A thrown exception or host cancellation remains visible to the wrapper.
+The polling delay starts after the wrapper returns or the polling loop handles its failure.
+
 The polling loop emits:
 
 - Activity name: `scheduling.poll`
 - Duration metric: `sharedkernel.scheduling.polling.cycle.duration`, unit `s`, with the shared duration buckets
+- Active batch duration gauge: `sharedkernel.scheduling.polling.batch.active.duration`, unit `s`
 - Batch counter: `sharedkernel.scheduling.polling.batches`
 - Item counter: `sharedkernel.scheduling.polling.items`
 - Failure counter: `sharedkernel.scheduling.polling.failures`
@@ -30,6 +36,13 @@ The polling loop emits:
 Attributes: `sharedkernel.scheduling.service.name`, `sharedkernel.scheduling.outcome` (`success`, `cancelled`, `error`),
 `sharedkernel.scheduling.item_count` and `error.type` (the full exception type name). See the
 [telemetry standard](../../../docs/telemetry.md).
+
+The active batch gauge measures elapsed time from the start of the current batch, including the
+first one. It reports zero while the running worker waits for work and omits workers that have
+never started or are stopping. Workers with the same service name report one series with the
+longest active batch. Use a stable, code-chosen `sharedkernel.scheduling.service.name` and tune alert thresholds
+to the expected batch length. When an exporter caches its last observation, require fresh
+and increasing measurements before alerting on a long-running batch.
 
 ## Package identity and availability
 

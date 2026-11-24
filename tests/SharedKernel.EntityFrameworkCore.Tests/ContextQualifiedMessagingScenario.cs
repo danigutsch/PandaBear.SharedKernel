@@ -69,6 +69,38 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return Create(firstPublisher: null, addTransportProducers: false);
     }
 
+    /// <summary>Inspects the outbox registrations and ownership of a writer and a separate reader context.</summary>
+    public static async ValueTask<(Type DefaultWriter, bool ReaderHasWriter, bool ReaderExcluded, bool WriterExcluded,
+        string? ReaderSchema, string? WriterSchema, string? ReaderTable, string? WriterTable)> InspectOutboxReader()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IIntegrationEventSerializer, ComposedMessagingTestIntegrationEventSerializer>();
+        services.AddIntegrationEventOutbox<FirstMessagingDbContext>();
+        services.AddIntegrationEventOutboxStorage<OutboxHealthReadDbContext>();
+        services.ConfigureIntegrationEventStorage<OutboxHealthReadDbContext>(options => options.ExcludeOutboxFromMigrations = true);
+        services.AddDbContext<FirstMessagingDbContext>(options => options.UseInMemoryDatabase("outbox-writer")
+            .EnableServiceProviderCaching(false));
+        services.AddDbContext<OutboxHealthReadDbContext>(options => options.UseInMemoryDatabase("outbox-reader")
+            .EnableServiceProviderCaching(false));
+
+        await using var provider = services.BuildServiceProvider(new ServiceProviderOptions
+        {
+            ValidateOnBuild = true,
+            ValidateScopes = true,
+        });
+        await using var scope = provider.CreateAsyncScope();
+        var defaultWriter = scope.ServiceProvider.GetRequiredService<IIntegrationEventOutbox>();
+        var readerWriter = scope.ServiceProvider.GetKeyedService<IIntegrationEventOutbox>(typeof(OutboxHealthReadDbContext));
+        var writer = scope.ServiceProvider.GetRequiredService<FirstMessagingDbContext>()
+            .GetService<IDesignTimeModel>().Model.FindEntityType(typeof(IntegrationEventOutboxMessage)).ShouldNotBeNull();
+        var reader = scope.ServiceProvider.GetRequiredService<OutboxHealthReadDbContext>()
+            .GetService<IDesignTimeModel>().Model.FindEntityType(typeof(IntegrationEventOutboxMessage)).ShouldNotBeNull();
+
+        return (defaultWriter.GetType().GetGenericArguments().ShouldHaveSingleItem(), readerWriter is not null,
+            reader.IsTableExcludedFromMigrations(), writer.IsTableExcludedFromMigrations(), reader.GetSchema(),
+            writer.GetSchema(), reader.GetTableName(), writer.GetTableName());
+    }
+
     private static ContextQualifiedMessagingScenario Create(
         IEventEnvelopePublisher? firstPublisher,
         bool addTransportProducers,

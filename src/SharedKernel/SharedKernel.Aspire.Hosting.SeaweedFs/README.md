@@ -26,6 +26,9 @@ every endpoint internal.
 
 The resource waits on the master (`/cluster/healthz`) and the S3 gateway (`/healthz`). `WithAccessKey` and `WithSecretKey` replace the generated credentials with parameters. `AddBucket(name, bucketName)` adds a child bucket resource whose connection string carries the S3 endpoint and bucket name, never the credentials; the container creates every bucket at startup through `S3_BUCKET` and skips existing ones.
 
+The container sets its internal admin HTTP port to `12646` so the derived worker gRPC port `22646` stays below Linux's
+default ephemeral range. [SeaweedFS startup issue](https://github.com/seaweedfs/seaweedfs/issues/10838).
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Aspire.Hosting.SeaweedFs`. C# namespace: `PandaBear.Aspire.Hosting.SeaweedFs`. Assembly/project identity: `SharedKernel.Aspire.Hosting.SeaweedFs`.

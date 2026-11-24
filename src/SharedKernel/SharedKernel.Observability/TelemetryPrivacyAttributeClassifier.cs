@@ -64,6 +64,24 @@ internal static class TelemetryPrivacyAttributeClassifier
         "messaging.message.id"
     };
 
+    /// <summary>PostgreSQL attributes that can contain connection or database-object identity.</summary>
+    private static HashSet<string> PostgreSqlIdentityAttributes { get; } = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "db.collection.name",
+        "db.name",
+        "db.namespace",
+        "db.stored_procedure.name",
+        "db.user",
+        "net.peer.ip",
+        "net.peer.name",
+        "net.peer.port",
+        "server.address",
+        "server.port",
+    };
+
+    /// <summary>Returns whether a PostgreSQL attribute can contain connection or database-object identity.</summary>
+    public static bool IsPostgreSqlIdentity(string name) => PostgreSqlIdentityAttributes.Contains(name);
+
     /// <summary>Returns whether the attribute name is a known sensitive name or a database query parameter.</summary>
     public static bool IsSensitive(string name)
     {

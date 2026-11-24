@@ -24,6 +24,24 @@ PandaBear.AI.ImageTextGenerationResult.AltText.init -> void
 PandaBear.AI.ImageTextGenerationResult.Caption.get -> string?
 PandaBear.AI.ImageTextGenerationResult.Caption.init -> void
 PandaBear.AI.ImageTextGenerationResult.ImageTextGenerationResult(string! AltText, string? Caption) -> void
+PandaBear.AI.ImageTextGenerationResult.Usage.get -> PandaBear.AI.ImageTextGenerationUsage?
+PandaBear.AI.ImageTextGenerationResult.Usage.init -> void
+PandaBear.AI.ImageTextGenerationUsage
+PandaBear.AI.ImageTextGenerationUsage.<Clone>$() -> PandaBear.AI.ImageTextGenerationUsage!
+PandaBear.AI.ImageTextGenerationUsage.CostUsd.get -> decimal?
+PandaBear.AI.ImageTextGenerationUsage.CostUsd.init -> void
+PandaBear.AI.ImageTextGenerationUsage.Deconstruct(out long? InputTokens, out long? OutputTokens, out decimal? CostUsd) -> void
+PandaBear.AI.ImageTextGenerationUsage.Equals(PandaBear.AI.ImageTextGenerationUsage? other) -> bool
+PandaBear.AI.ImageTextGenerationUsage.ImageTextGenerationUsage(long? InputTokens, long? OutputTokens, decimal? CostUsd) -> void
+PandaBear.AI.ImageTextGenerationUsage.InputTokens.get -> long?
+PandaBear.AI.ImageTextGenerationUsage.InputTokens.init -> void
+PandaBear.AI.ImageTextGenerationUsage.OutputTokens.get -> long?
+PandaBear.AI.ImageTextGenerationUsage.OutputTokens.init -> void
+override PandaBear.AI.ImageTextGenerationUsage.Equals(object? obj) -> bool
+override PandaBear.AI.ImageTextGenerationUsage.GetHashCode() -> int
+override PandaBear.AI.ImageTextGenerationUsage.ToString() -> string!
+static PandaBear.AI.ImageTextGenerationUsage.operator !=(PandaBear.AI.ImageTextGenerationUsage? left, PandaBear.AI.ImageTextGenerationUsage? right) -> bool
+static PandaBear.AI.ImageTextGenerationUsage.operator ==(PandaBear.AI.ImageTextGenerationUsage? left, PandaBear.AI.ImageTextGenerationUsage? right) -> bool
 PandaBear.AI.LiteLlmImageTextGenerator
 PandaBear.AI.LiteLlmImageTextGenerator.GenerateImageText(PandaBear.AI.ImageTextGenerationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.AI.ImageTextGenerationResult!>
 PandaBear.AI.LiteLlmImageTextGenerator.LiteLlmImageTextGenerator(System.Net.Http.HttpClient! httpClient, PandaBear.AI.LiteLlmImageTextGeneratorOptions! options) -> void

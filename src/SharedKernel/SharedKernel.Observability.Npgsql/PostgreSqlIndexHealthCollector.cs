@@ -7,6 +7,8 @@ public sealed class PostgreSqlIndexHealthCollector
 {
     private const string InsufficientPrivilegeSqlState = "42501";
     private const string FeatureNotSupportedSqlState = "0A000";
+    private const int MinimumSupportedMajorVersion = 16;
+    private const int MaximumSupportedMajorVersion = 18;
     private const int DefaultCommandTimeoutSeconds = 30;
     private const int MaximumCommandTimeoutSeconds = 300;
     private const string StatisticsWindowCommandText = """
@@ -103,6 +105,11 @@ public sealed class PostgreSqlIndexHealthCollector
             var connection = await _dataSource.OpenConnectionAsync(ct).ConfigureAwait(false);
             await using (connection)
             {
+                if (connection.PostgreSqlVersion.Major is < MinimumSupportedMajorVersion or > MaximumSupportedMajorVersion)
+                {
+                    return CreateUnavailableResult(PostgreSqlIndexHealthCollectionOutcome.Unsupported);
+                }
+
                 var statisticsWindow = await GetStatisticsWindow(connection, ct).ConfigureAwait(false);
                 var assessments = new List<PostgreSqlIndexHealthAssessment>();
 

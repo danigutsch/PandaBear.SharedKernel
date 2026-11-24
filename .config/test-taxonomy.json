@@ -444,6 +444,7 @@
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.EntityFrameworkCore/SharedKernel.EntityFrameworkCore.csproj","type":"Unit","dependency":"in-process","capabilities":["CommandLogProjection","ContextKeyedDefaultRegistration"],"lane":"services"},
         {"sut":"src/SharedKernel/SharedKernel.EntityFrameworkCore/SharedKernel.EntityFrameworkCore.csproj","type":"Integration","dependency":"postgresql","capabilities":["CommandLogProjection","ContextKeyedDefaultRegistration"],"lane":"services"},
+        {"sut":"src/SharedKernel/SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore/SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.csproj","type":"Integration","dependency":"postgresql","capabilities":["IntegrationEventInboxDuplicates"],"lane":"services"},
         {"sut":"src/SharedKernel/SharedKernel.IntegrationTesting/SharedKernel.IntegrationTesting.csproj","type":"Unit","dependency":"in-process","capabilities":["database-integration-trait-identity"],"lane":"services"}
       ]
     },

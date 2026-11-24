@@ -3,8 +3,8 @@ using Microsoft.Extensions.Logging;
 namespace PandaBear.Scheduling.Tests;
 
 /// <summary>
-/// A polling service whose batches follow a script: each entry is a processed count, an exception to throw, or a
-/// <see cref="TimeSpan" /> to wait before processing nothing, which gives a cycle a known minimum duration.
+/// A polling service whose batches follow a script of processed counts, exceptions, delays, and controlled operations.
+/// A <see cref="TimeSpan" /> delay returns zero after the wait, giving the cycle a known minimum duration.
 /// </summary>
 internal sealed class ScriptedPollingService(
     ILogger logger,
@@ -44,8 +44,10 @@ internal sealed class ScriptedPollingService(
                 return processed;
             case Exception exception:
                 throw exception;
+            case Func<CancellationToken, ValueTask<int>> execute:
+                return await execute(stoppingToken);
             default:
-                throw new InvalidOperationException("Script entries are int, TimeSpan or Exception.");
+                throw new InvalidOperationException("Script entries must be counts, exceptions, delays, or batch operations.");
         }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using static PandaBear.AspNetCore.Authentication.Bff.TicketStoreMetrics;
 
 namespace PandaBear.AspNetCore.Authentication.Bff;
 
@@ -129,16 +130,31 @@ public sealed partial class ServerSideTicketStore : ITicketStore
         var expiresAt = GetExpiry(ticket);
         if (expiresAt <= _timeProvider.GetUtcNow())
         {
-            await _cache.RemoveAsync(key, cancellationToken).ConfigureAwait(false);
+            await RemoveFromCache(key, cancellationToken).ConfigureAwait(false);
             return;
         }
 
-        var protectedTicket = _protector.CreateProtector(key).Protect(TicketSerializer.Default.Serialize(ticket));
-        await _cache.SetAsync(
-            key,
-            protectedTicket,
-            new DistributedCacheEntryOptions { AbsoluteExpiration = expiresAt, SlidingExpiration = _options.SlidingExpiration },
-            cancellationToken).ConfigureAwait(false);
+        byte[] protectedTicket;
+        try
+        {
+            protectedTicket = _protector.CreateProtector(key).Protect(TicketSerializer.Default.Serialize(ticket));
+        }
+        catch (Exception exception) when (CanRecord(exception))
+        {
+            RecordFailure(Operation.Protect);
+            throw;
+        }
+
+        var cacheOptions = new DistributedCacheEntryOptions { AbsoluteExpiration = expiresAt, SlidingExpiration = _options.SlidingExpiration };
+        try
+        {
+            await _cache.SetAsync(key, protectedTicket, cacheOptions, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception exception) when (CanRecord(exception))
+        {
+            RecordFailure(Operation.CacheSet);
+            throw;
+        }
     }
 
     /// <inheritdoc />
@@ -158,7 +174,17 @@ public sealed partial class ServerSideTicketStore : ITicketStore
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
 
-        var protectedTicket = await _cache.GetAsync(key, cancellationToken).ConfigureAwait(false);
+        byte[]? protectedTicket;
+        try
+        {
+            protectedTicket = await _cache.GetAsync(key, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception exception) when (CanRecord(exception))
+        {
+            RecordFailure(Operation.CacheGet);
+            throw;
+        }
+
         if (protectedTicket is null)
         {
             return null;
@@ -175,10 +201,20 @@ public sealed partial class ServerSideTicketStore : ITicketStore
             LogUnreadableTicket(_logger, exception.GetType().FullName ?? exception.GetType().Name);
             ticket = null;
         }
+        catch (Exception exception) when (CanRecord(exception))
+        {
+            RecordFailure(Operation.Unprotect);
+            throw;
+        }
 
         if (ticket is null || GetExpiry(ticket) <= _timeProvider.GetUtcNow())
         {
-            await _cache.RemoveAsync(key, cancellationToken).ConfigureAwait(false);
+            if (ticket is null)
+            {
+                RecordFailure(Operation.Unprotect);
+            }
+
+            await RemoveFromCache(key, cancellationToken).ConfigureAwait(false);
             return null;
         }
 
@@ -202,7 +238,36 @@ public sealed partial class ServerSideTicketStore : ITicketStore
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
 
-        return _cache.RemoveAsync(key, cancellationToken);
+        return RemoveFromCache(key, cancellationToken);
+    }
+
+    private Task RemoveFromCache(string key, CancellationToken cancellationToken)
+    {
+        Task removal;
+        try
+        {
+            removal = _cache.RemoveAsync(key, cancellationToken);
+        }
+        catch (Exception exception) when (CanRecord(exception))
+        {
+            RecordFailure(Operation.CacheRemove);
+            throw;
+        }
+
+        return removal.IsCompletedSuccessfully || removal.IsCanceled ? removal : ObserveCacheRemoval(removal);
+    }
+
+    private static async Task ObserveCacheRemoval(Task removal)
+    {
+        try
+        {
+            await removal.ConfigureAwait(false);
+        }
+        catch (Exception exception) when (CanRecord(exception))
+        {
+            RecordFailure(Operation.CacheRemove);
+            throw;
+        }
     }
 
     /// <summary>

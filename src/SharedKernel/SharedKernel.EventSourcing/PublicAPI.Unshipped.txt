@@ -1,5 +1,7 @@
 #nullable enable
 PandaBear.EventSourcing.EventEnvelope
+PandaBear.EventSourcing.EventEnvelope.CausationEventId.get -> System.Guid?
+PandaBear.EventSourcing.EventEnvelope.CausationEventId.init -> void
 PandaBear.EventSourcing.EventEnvelope.Data.get -> object!
 PandaBear.EventSourcing.EventEnvelope.Data.init -> void
 PandaBear.EventSourcing.EventEnvelope.EventEnvelope(PandaBear.EventSourcing.StreamId StreamId, long Position, PandaBear.EventSourcing.StreamRevision Revision, System.Guid EventId, string! EventType, object! Data, System.DateTimeOffset RecordedAt) -> void
@@ -42,6 +44,7 @@ PandaBear.EventSourcing.IEventSerializer.GetEventType(object! eventData) -> stri
 PandaBear.EventSourcing.IEventSerializer.Serialize(object! eventData) -> string!
 PandaBear.EventSourcing.IEventStore
 PandaBear.EventSourcing.IEventStore.Append(PandaBear.EventSourcing.StreamId streamId, PandaBear.EventSourcing.ExpectedStreamRevision expectedRevision, System.Collections.Generic.IReadOnlyCollection<object!>! events, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<PandaBear.EventSourcing.EventEnvelope!>!>
+PandaBear.EventSourcing.IEventStore.Append(PandaBear.EventSourcing.StreamId streamId, PandaBear.EventSourcing.ExpectedStreamRevision expectedRevision, System.Collections.Generic.IReadOnlyCollection<object!>! events, System.Guid causationEventId, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<PandaBear.EventSourcing.EventEnvelope!>!>
 PandaBear.EventSourcing.IEventStore.Load(PandaBear.EventSourcing.StreamId streamId, PandaBear.EventSourcing.StreamRevision? afterRevision, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<PandaBear.EventSourcing.EventEnvelope!>!>
 PandaBear.EventSourcing.IEventStore.LoadAfter(long position, int maxCount, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<PandaBear.EventSourcing.EventEnvelope!>!>
 PandaBear.EventSourcing.IProjection

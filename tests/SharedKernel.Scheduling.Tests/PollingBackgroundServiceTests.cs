@@ -11,6 +11,71 @@ public sealed class PollingBackgroundServiceTests
     private static readonly TimeSpan ShortInterval = TimeSpan.FromMilliseconds(10);
 
     [Fact]
+    public async Task Wraps_all_batches_in_one_drain_cycle()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var service = new DrainCycleProbe(NullLogger.Instance, (batch, _) => ValueTask.FromResult(batch < 3 ? 1 : 0));
+
+        // Act
+        await service.StartAsync(ct);
+        var outcome = await service.Completion.WaitAsync(TimeSpan.FromSeconds(30), ct);
+        await service.StopAsync(ct);
+
+        // Assert
+        outcome.ShouldBeNull();
+        service.CycleCalls.ShouldBe(1);
+        service.BatchCalls.ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task Exposes_the_batch_failure_to_the_drain_cycle_wrapper()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var logger = new RecordingLogger();
+        var failure = new InvalidOperationException("private batch error");
+        using var service = new DrainCycleProbe(logger, (batch, _) => batch == 1 ? ValueTask.FromResult(1) : throw failure);
+
+        // Act
+        await service.StartAsync(ct);
+        var outcome = await service.Completion.WaitAsync(TimeSpan.FromSeconds(30), ct);
+        await service.StopAsync(ct);
+
+        // Assert
+        outcome.ShouldBe(failure);
+        service.CycleCalls.ShouldBe(1);
+        service.BatchCalls.ShouldBe(2);
+        var record = logger.Records.ShouldHaveSingleItem(entry => entry.Level == LogLevel.Error);
+        record.Message.ShouldNotContain(failure.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Exposes_host_shutdown_to_the_drain_cycle_wrapper()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var batchRelease = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var service = new DrainCycleProbe(NullLogger.Instance, (_, stoppingToken) =>
+        {
+            entered.SetResult();
+            return new ValueTask<int>(batchRelease.Task.WaitAsync(stoppingToken));
+        });
+        await service.StartAsync(ct);
+        await entered.Task.WaitAsync(TimeSpan.FromSeconds(30), ct);
+
+        // Act
+        await service.StopAsync(ct);
+        var outcome = await service.Completion.WaitAsync(TimeSpan.FromSeconds(30), ct);
+
+        // Assert
+        outcome.ShouldBeAssignableTo<OperationCanceledException>();
+        service.CycleCalls.ShouldBe(1);
+        service.BatchCalls.ShouldBe(1);
+    }
+
+    [Fact]
     public async Task Drains_batches_until_one_processes_nothing_then_polls_again_after_the_interval()
     {
         // Arrange

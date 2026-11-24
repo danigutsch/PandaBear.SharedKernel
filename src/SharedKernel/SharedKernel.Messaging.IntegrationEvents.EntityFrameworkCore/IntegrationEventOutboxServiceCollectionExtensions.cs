@@ -4,7 +4,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PandaBear.EntityFrameworkCore;
+using PandaBear.Idempotency;
 using PandaBear.Idempotency.EntityFrameworkCore;
+using PandaBear.InputNormalization;
 
 namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
@@ -60,6 +62,23 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
         return AddIntegrationEventOutboxCore<TContext>(services, configureStorage);
     }
 
+    /// <summary>Adds the integration-event outbox model to a context without registering a writer or relay.</summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <typeparam name="TContext">The DbContext type that maps the outbox table.</typeparam>
+    /// <returns>The configured service collection.</returns>
+    /// <remarks>Configure <see cref="IntegrationEventStorageOptions.ExcludeOutboxFromMigrations"/> when another context owns the table.</remarks>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="services"/> is <see langword="null"/>.</exception>
+    public static IServiceCollection AddIntegrationEventOutboxStorage<TContext>(this IServiceCollection services)
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        AddIntegrationEventStorageOptions<TContext>(services, configureStorage: null);
+        AddIntegrationEventOutboxStorageCore<TContext>(services);
+
+        return services;
+    }
+
     /// <summary>
     /// Chooses the context whose outbox is resolved without a context key when several contexts register one. Without a
     /// choice, resolving the unkeyed outbox fails rather than binding whichever registered first.
@@ -96,9 +115,14 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
             (serviceProvider, _) => serviceProvider.GetRequiredService<EfIntegrationEventOutbox<TContext>>());
         ContextKeyedDefault<IIntegrationEventOutbox>.Register(services, typeof(TContext), nameof(UseDefaultIntegrationEventOutbox));
         services.TryAddScoped<IDomainEventIntegrationEventOutbox, EfDomainEventIntegrationEventOutbox>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IntegrationEventOutboxDbContextConfiguration<TContext>>());
+        AddIntegrationEventOutboxStorageCore<TContext>(services);
 
         return services;
+    }
+
+    private static void AddIntegrationEventOutboxStorageCore<TContext>(IServiceCollection services) where TContext : DbContext
+    {
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IntegrationEventOutboxDbContextConfiguration<TContext>>());
     }
 
     /// <summary>
@@ -184,6 +208,45 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(configureStorage);
 
         return services.AddIdempotencyStore<TContext>(configureStorage);
+    }
+
+    /// <summary>Opts a consumer's PostgreSQL inbox scope into retaining completed duplicate observations.</summary>
+    /// <typeparam name="TContext">The context that owns the inbox mapping and its retention.</typeparam>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="consumerName">The stable consumer name used by inspection.</param>
+    /// <param name="inboxScopePrefix">The exclusive prefix of the inbox operation scopes owned by the consumer.</param>
+    /// <param name="tableName">The observation table name in the inbox schema.</param>
+    /// <returns>The configured service collection.</returns>
+    /// <remarks>
+    /// Keep the binding stable across deployments and use a single table name for the context. Distinct bindings cannot
+    /// overlap. Apply a migration for the observation table before explicitly recording completed skips.
+    /// </remarks>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="services"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when a consumer, scope prefix or table name is invalid.</exception>
+    public static IServiceCollection AddPostgreSqlIntegrationEventInboxDuplicates<TContext>(
+        this IServiceCollection services, string consumerName, string inboxScopePrefix,
+        string tableName = "integration_event_inbox_duplicates")
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        IntegrationEventInboxDuplicates.ValidateConsumer(consumerName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(inboxScopePrefix);
+        if (!PostgreSqlIdentifier.IsUnquoted(tableName))
+        {
+            throw new ArgumentException("The observation table name must be an unquoted PostgreSQL identifier.", nameof(tableName));
+        }
+
+        var scopePrefix = IdempotencyScope.From(inboxScopePrefix).Value;
+        services.AddIntegrationEventInbox<TContext>();
+        services.AddOptions<IntegrationEventInboxDuplicateOptions<TContext>>()
+            .Configure(options => options.Bind(consumerName, scopePrefix, tableName))
+            .ValidateOnStart();
+        services.TryAddScoped(provider => new IntegrationEventInboxDuplicateRecorder<TContext>(
+            provider.GetRequiredService<TContext>(),
+            provider.GetRequiredService<IOptions<IntegrationEventInboxDuplicateOptions<TContext>>>().Value));
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>,
+            IntegrationEventInboxDuplicateDbContextConfiguration<TContext>>());
+        return services;
     }
 
     /// <summary>

@@ -17,12 +17,13 @@ public abstract partial class PollingBackgroundService : BackgroundService
     private readonly ILogger logger;
     private readonly string serviceName;
     private readonly TimeSpan pollInterval;
+    private long batchStartedAt;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PollingBackgroundService" /> class.
     /// </summary>
     /// <param name="logger">The logger used for polling failures.</param>
-    /// <param name="serviceName">The stable name of the polling service.</param>
+    /// <param name="serviceName">The stable, low-cardinality name used for the polling service's telemetry.</param>
     /// <param name="pollInterval">The delay after all currently available work has been drained.</param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="logger" /> is <see langword="null" />.
@@ -51,31 +52,53 @@ public abstract partial class PollingBackgroundService : BackgroundService
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        SchedulingTelemetry.RegisterPollingService(this, serviceName, stoppingToken);
+        try
         {
-            try
+            while (!stoppingToken.IsCancellationRequested)
             {
-                await ExecuteDrainCycle(stoppingToken).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
-            {
-                throw;
-            }
-            catch (Exception exception) when (ShouldContinueAfterFailure(exception))
-            {
-                SchedulingTelemetry.PollingFailures.Add(
-                    1,
-                    new KeyValuePair<string, object?>(SchedulingTelemetry.TagServiceName, serviceName),
-                    new KeyValuePair<string, object?>(SchedulingTelemetry.TagErrorType, exception.GetType().FullName));
-                LogPollingFailure(logger, serviceName, exception.GetType().FullName ?? exception.GetType().Name);
-            }
+                try
+                {
+                    await ExecuteDrainCycle(stoppingToken).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                {
+                    throw;
+                }
+                catch (Exception exception) when (ShouldContinueAfterFailure(exception))
+                {
+                    var errorType = exception.GetType();
+                    SchedulingTelemetry.PollingFailures.Add(
+                        1,
+                        new KeyValuePair<string, object?>(SchedulingTelemetry.TagServiceName, serviceName),
+                        new KeyValuePair<string, object?>(SchedulingTelemetry.TagErrorType, errorType.FullName));
+                    LogPollingFailure(logger, serviceName, errorType.FullName ?? errorType.Name);
+                }
 
-            using var timer = new PeriodicTimer(pollInterval);
-            _ = await timer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false);
+                using var timer = new PeriodicTimer(pollInterval);
+                _ = await timer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false);
+            }
+        }
+        finally
+        {
+            SchedulingTelemetry.UnregisterPollingService(this);
         }
     }
 
-    private async ValueTask ExecuteDrainCycle(CancellationToken stoppingToken)
+    /// <summary>Gets the active batch's age in seconds, or zero between batches.</summary>
+    internal double GetActiveBatchDurationSeconds()
+    {
+        var startedAt = Volatile.Read(ref batchStartedAt);
+        return startedAt == 0 ? 0 : Stopwatch.GetElapsedTime(startedAt).TotalSeconds;
+    }
+
+    /// <summary>Runs one complete drain cycle, including its final empty batch.</summary>
+    /// <remarks>
+    /// Overrides can observe the cycle's start and outcome by awaiting this implementation once.
+    /// The polling loop handles exceptions from the override and applies the configured delay when polling continues.
+    /// </remarks>
+    /// <param name="stoppingToken">The token signaled when the host is shutting down.</param>
+    protected virtual async ValueTask ExecuteDrainCycle(CancellationToken stoppingToken)
     {
         using var activity = SchedulingTelemetry.ActivitySource.StartActivity(
             SchedulingTelemetry.ActivityPollingCycle,
@@ -90,7 +113,7 @@ public abstract partial class PollingBackgroundService : BackgroundService
             int processed;
             do
             {
-                processed = await ExecuteBatch(stoppingToken).ConfigureAwait(false);
+                processed = await ExecuteTrackedBatch(stoppingToken).ConfigureAwait(false);
                 SchedulingTelemetry.PollingBatches.Add(1, new KeyValuePair<string, object?>(SchedulingTelemetry.TagServiceName, serviceName));
                 if (processed > 0)
                 {
@@ -132,6 +155,19 @@ public abstract partial class PollingBackgroundService : BackgroundService
     /// <param name="stoppingToken">The token signaled when the host is shutting down.</param>
     /// <returns>The number of work items processed by the batch.</returns>
     protected abstract ValueTask<int> ExecuteBatch(CancellationToken stoppingToken);
+
+    private async ValueTask<int> ExecuteTrackedBatch(CancellationToken stoppingToken)
+    {
+        Volatile.Write(ref batchStartedAt, Stopwatch.GetTimestamp());
+        try
+        {
+            return await ExecuteBatch(stoppingToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            Volatile.Write(ref batchStartedAt, 0);
+        }
+    }
 
     private static bool ShouldContinueAfterFailure(Exception exception)
     {
