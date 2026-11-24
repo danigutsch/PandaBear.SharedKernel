@@ -168,12 +168,12 @@ internal sealed partial class IdentityProviderClient
         }
         catch (InvalidOperationException exception)
         {
-            LogDiscoveryFailed(_logger, operation, exception.GetType().Name);
+            LogDiscoveryFailed(_logger, operation, exception.GetType().FullName ?? exception.GetType().Name);
             return (null, null);
         }
         catch (HttpRequestException exception)
         {
-            LogDiscoveryFailed(_logger, operation, exception.GetType().Name);
+            LogDiscoveryFailed(_logger, operation, exception.GetType().FullName ?? exception.GetType().Name);
             return (null, null);
         }
     }
@@ -231,12 +231,12 @@ internal sealed partial class IdentityProviderClient
         }
         catch (HttpRequestException exception)
         {
-            LogUnavailable(_logger, operation, exception.GetType().Name);
+            LogUnavailable(_logger, operation, exception.GetType().FullName ?? exception.GetType().Name);
             return TokenEndpointOutcome.Unavailable();
         }
         catch (TaskCanceledException exception) when (!ct.IsCancellationRequested)
         {
-            LogUnavailable(_logger, operation, exception.InnerException is TimeoutException ? "Timeout" : exception.GetType().Name);
+            LogUnavailable(_logger, operation, ((Exception?)(exception.InnerException as TimeoutException) ?? exception).GetType().FullName ?? exception.GetType().Name);
             return TokenEndpointOutcome.Unavailable();
         }
     }
@@ -315,21 +315,21 @@ internal sealed partial class IdentityProviderClient
         }
     }
 
-    [LoggerMessage(LogLevel.Warning, "Identity provider {Operation} call was rejected. Status: {StatusCode}. Error: {Error}.")]
-    private static partial void LogRejected(ILogger logger, string operation, int statusCode, string error);
+    [LoggerMessage(4308, LogLevel.Warning, "Identity provider {Operation} call was rejected. Status: {StatusCode}. Error code: {ErrorCode}.", EventName = "IdentityProviderCallRejected")]
+    private static partial void LogRejected(ILogger logger, string operation, int statusCode, string errorCode);
 
-    [LoggerMessage(LogLevel.Warning, "Identity provider {Operation} call failed. Failure type: {FailureType}.")]
-    private static partial void LogUnavailable(ILogger logger, string operation, string failureType);
+    [LoggerMessage(4309, LogLevel.Warning, "Identity provider {Operation} call failed. Error type: {ErrorType}.", EventName = "IdentityProviderCallFailed")]
+    private static partial void LogUnavailable(ILogger logger, string operation, string errorType);
 
-    [LoggerMessage(LogLevel.Warning, "Identity provider {Operation} answer could not be read.")]
+    [LoggerMessage(4310, LogLevel.Warning, "Identity provider {Operation} answer could not be read.", EventName = "IdentityProviderAnswerUnreadable")]
     private static partial void LogUnreadable(ILogger logger, string operation);
 
-    [LoggerMessage(LogLevel.Error, "Identity provider {Operation} endpoint is missing or not an allowed absolute URI.")]
+    [LoggerMessage(4311, LogLevel.Error, "Identity provider {Operation} endpoint is missing or not an allowed absolute URI.", EventName = "IdentityProviderEndpointInvalid")]
     private static partial void LogEndpointInvalid(ILogger logger, string operation);
 
-    [LoggerMessage(LogLevel.Error, "Identity provider {Operation} call has no client identifier configured.")]
+    [LoggerMessage(4312, LogLevel.Error, "Identity provider {Operation} call has no client identifier configured.", EventName = "IdentityProviderClientMissing")]
     private static partial void LogClientMissing(ILogger logger, string operation);
 
-    [LoggerMessage(LogLevel.Warning, "Identity provider discovery for {Operation} failed. Failure type: {FailureType}.")]
-    private static partial void LogDiscoveryFailed(ILogger logger, string operation, string failureType);
+    [LoggerMessage(4313, LogLevel.Warning, "Identity provider discovery for {Operation} failed. Error type: {ErrorType}.", EventName = "IdentityProviderDiscoveryFailed")]
+    private static partial void LogDiscoveryFailed(ILogger logger, string operation, string errorType);
 }

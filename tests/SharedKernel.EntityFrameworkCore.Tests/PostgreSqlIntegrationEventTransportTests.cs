@@ -132,6 +132,8 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
         message.LastConsumeError.ShouldBe(typeof(InvalidOperationException).FullName);
         var log = Scenario.LogRecords.ShouldHaveSingleItem();
         log.Level.ShouldBe(LogLevel.Warning);
+        log.EventId.Id.ShouldBe(2101);
+        log.EventId.Name.ShouldBe("MessageHandlingFailed");
         log.Exception.ShouldBeSameAs(publisher.Failure);
         log.State.ShouldContain(new KeyValuePair<string, object?>("MessageId", message.Id));
         log.State.ShouldContain(new KeyValuePair<string, object?>("Attempt", 1));
@@ -195,6 +197,8 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
         message.PoisonedAt.ShouldNotBeNull();
         message.LastConsumeError.ShouldBe(typeof(InvalidOperationException).FullName);
         Scenario.LogRecords.Select(record => record.Level).ShouldBe([LogLevel.Warning, LogLevel.Error]);
+        Scenario.LogRecords.Select(record => record.EventId.Name).ShouldBe(["MessageHandlingFailed", "MessagePoisoned"]);
+        Scenario.LogRecords.Select(record => record.EventId.Id).ShouldBe([2101, 2102]);
         message.ProcessedAt.ShouldBeNull();
         message.NextConsumeAttemptAt.ShouldBeNull();
         message.ClaimedBy.ShouldBeNull();

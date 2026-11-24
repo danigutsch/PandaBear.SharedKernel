@@ -4,7 +4,7 @@ namespace PandaBear.AspNetCore.Tests;
 public sealed class AspNetCoreTelemetryNameTests
 {
     [Fact]
-    public void Meter_instruments_and_attributes_use_the_standard_names()
+    public void Meter_instruments_attributes_and_event_IDs_use_the_standard_names()
     {
         // Act, Assert
         AspNetCoreTelemetry.MeterName.ShouldBe("SharedKernel.AspNetCore");
@@ -18,5 +18,8 @@ public sealed class AspNetCoreTelemetryNameTests
         AspNetCoreTelemetry.ReasonTag.ShouldBe("sharedkernel.aspnetcore.authentication.reason");
         AspNetCoreTelemetry.SchemeTag.ShouldBe("sharedkernel.aspnetcore.authentication.scheme");
         AspNetCoreTelemetry.PolicyTag.ShouldBe("sharedkernel.aspnetcore.rate_limit.policy");
+        AspNetCoreTelemetry.UnhandledExceptionEventId.ShouldBe(4001);
+        AspNetCoreTelemetry.AuthenticationEventId.ShouldBe(4002);
+        AspNetCoreTelemetry.RateLimitRejectionEventId.ShouldBe(4003);
     }
 }

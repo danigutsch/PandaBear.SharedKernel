@@ -103,7 +103,7 @@ internal sealed class PageViewDispatcher(
         catch (Exception exception) when (exception is not (OutOfMemoryException or AccessViolationException))
         {
             metrics.Dropped(queue.Name, WebAnalyticsTelemetry.SendFailedReason);
-            PageViewLog.SendFailed(logger, queue.Name, exception.GetType().Name);
+            PageViewLog.SendFailed(logger, queue.Name, exception.GetType().FullName ?? exception.GetType().Name);
         }
     }
 }

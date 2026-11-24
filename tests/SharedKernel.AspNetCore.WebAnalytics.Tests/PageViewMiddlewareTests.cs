@@ -229,7 +229,8 @@ public sealed class PageViewMiddlewareTests
         failures.ShouldAllSatisfy(failure =>
         {
             failure.Message.ShouldContain("broken", StringComparison.Ordinal);
-            failure.Message.ShouldContain(nameof(InvalidOperationException), StringComparison.Ordinal);
+            failure.Message.ShouldContain(typeof(InvalidOperationException).FullName!, StringComparison.Ordinal);
+            failure.EventId.Name.ShouldBe("PageViewSendFailed");
             failure.Message.ShouldNotContain(FailingPageViewTarget.FailureMessage, StringComparison.Ordinal);
             failure.Exception.ShouldBeNull();
         });

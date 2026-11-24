@@ -32,8 +32,7 @@ source names equal the creating package's assembly name, instrument names start 
 duration histograms use unit `s`, pass the shared advice and never record milliseconds, and attribute keys start with
 `sharedkernel.` unless they are on the semantic-convention allow-list above.
 
-Out of scope: log categories and `EventId` values, which keep their names, and the overlap with the metrics ASP.NET Core emits
-itself.
+Out of scope: the overlap with the metrics ASP.NET Core emits itself. Logs follow the [log rules](#logs) below.
 
 ## Packages
 
@@ -175,3 +174,79 @@ Meter and activity source `SharedKernel.Scheduling` (`SchedulingTelemetry.Name`)
 | Span | Attributes |
 | --- | --- |
 | `scheduling.poll` | `sharedkernel.scheduling.service.name`, `sharedkernel.scheduling.outcome` (`success`, `cancelled`, `error`), `sharedkernel.scheduling.item_count`, `error.type` |
+
+## Logs
+
+Every SharedKernel log message is a source-generated `[LoggerMessage]`. Hosts log several packages into one process, so event ids are
+unique across all of SharedKernel, not only within an assembly as SYSLIB1006 requires.
+
+1. **Event id and name.** Every `[LoggerMessage]` sets an explicit `EventId` and an `EventName`. The name is PascalCase, a short
+   past-tense or noun phrase such as `UnhandledException` or `PollingCycleFailed`, and unique within the package.
+2. **Event id blocks.** Each package that logs owns a block of 100 ids, listed below, and numbers its events from the block's first id
+   plus one. A new package takes the next free block; an id that was renumbered is not reused.
+3. **Placeholders** are PascalCase and keep one name per meaning across packages. An exception type logged as a property is
+   `{ErrorType}` with the value `exception.GetType().FullName`, mirroring the `error.type` attribute. An exception object is never a
+   property; where a message passes the exception, the logger attaches it to the record.
+4. **Categories** stay the `ILogger<T>` type names, in the `PandaBear.*` namespaces.
+
+`LogMessageConventionTests` in `tests/SharedKernel.Repository.Tests` enforces these rules on the library sources: an id and a
+PascalCase name on every message, each id inside its package's block and unique across `src/`, PascalCase placeholders, and one row
+below for every event.
+
+### Event id blocks
+
+| Package | Event ids |
+| --- | --- |
+| `SharedKernel.Observability` | 1000-1099 |
+| `SharedKernel.Mediator.EntityFrameworkCore` | 2000-2099 |
+| `SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore` | 2100-2199 |
+| `SharedKernel.Scheduling` | 3000-3099 |
+| `SharedKernel.AspNetCore` | 4000-4099 |
+| `SharedKernel.AspNetCore.WebAnalytics` | 4200-4299 |
+| `SharedKernel.AspNetCore.Authentication.Bff` | 4300-4399 |
+| `SharedKernel.Blazor` | 7000-7099 |
+| `SharedKernel.Aspire.Hosting.Sqlite` | 9000-9099 |
+| `SharedKernel.Aspire.Hosting.Umami` | 9100-9199 |
+
+The block 4100-4199 is retired: `SharedKernel.AspNetCore` used 4101 for `AuthenticationEvent` and 4102 for `RateLimitRejection`
+before they moved into its own block as 4002 and 4003.
+
+### Events
+
+| Package | EventId | EventName | Level | Properties |
+| --- | --- | --- | --- | --- |
+| `SharedKernel.Observability` | 1001 | `ApplicationVersion` | Information | `ApplicationName`, `ApplicationVersion` |
+| `SharedKernel.Mediator.EntityFrameworkCore` | 2001 | `OutcomeHookFailed` | Error | `RequestName`, `HookKind`, `HookType`, `ErrorType` |
+| `SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore` | 2101 | `MessageHandlingFailed` | Warning | `ConsumerName`, `MessageId`, `Attempt`; the exception is attached |
+| `SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore` | 2102 | `MessagePoisoned` | Error | `ConsumerName`, `MessageId`, `Attempt`; the exception is attached |
+| `SharedKernel.Scheduling` | 3001 | `PollingCycleFailed` | Error | `ServiceName`, `ErrorType` |
+| `SharedKernel.AspNetCore` | 4001 | `UnhandledException` | Error | `ErrorType`, `RouteTemplate`, `StatusCode`, `TraceId` |
+| `SharedKernel.AspNetCore` | 4002 | `AuthenticationEvent` | Warning; Information for a `challenge` with `missing_token` | `SecurityEvent`, `Reason`, `Scheme`, `RouteTemplate`, `TraceId` |
+| `SharedKernel.AspNetCore` | 4003 | `RateLimitRejection` | Warning | `Policy`, `StatusCode`, `RouteTemplate`, `TraceId` |
+| `SharedKernel.AspNetCore` | 4004 | `UnsafeRedirectTargetIgnored` | Warning | none |
+| `SharedKernel.AspNetCore.WebAnalytics` | 4201 | `PageViewSendRejected` | Warning | `Target`, `StatusCode` |
+| `SharedKernel.AspNetCore.WebAnalytics` | 4202 | `PageViewSendFailed` | Warning | `Target`, `ErrorType` |
+| `SharedKernel.AspNetCore.WebAnalytics` | 4204 | `PageViewsUnsentAtShutdown` | Warning | `Count`, `Target` |
+| `SharedKernel.AspNetCore.WebAnalytics` | 4205 | `PageViewsOff` | Information | none |
+| `SharedKernel.AspNetCore.Authentication.Bff` | 4301 | `RefreshTokenRejected` | Warning | none |
+| `SharedKernel.AspNetCore.Authentication.Bff` | 4302 | `TokenSessionExpired` | Information | none |
+| `SharedKernel.AspNetCore.Authentication.Bff` | 4303 | `UnusableTokenAnswer` | Warning | `Operation` |
+| `SharedKernel.AspNetCore.Authentication.Bff` | 4304 | `IdentityTokenMismatch` | Warning | none |
+| `SharedKernel.AspNetCore.Authentication.Bff` | 4305 | `TokenExchangeRejected` | Warning | `Audience` |
+| `SharedKernel.AspNetCore.Authentication.Bff` | 4306 | `RefreshTokenRevocationFailed` | Warning | none |
+| `SharedKernel.AspNetCore.Authentication.Bff` | 4307 | `UnreadableTicketRemoved` | Warning | `ErrorType` |
+| `SharedKernel.AspNetCore.Authentication.Bff` | 4308 | `IdentityProviderCallRejected` | Warning | `Operation`, `StatusCode`, `ErrorCode` |
+| `SharedKernel.AspNetCore.Authentication.Bff` | 4309 | `IdentityProviderCallFailed` | Warning | `Operation`, `ErrorType` |
+| `SharedKernel.AspNetCore.Authentication.Bff` | 4310 | `IdentityProviderAnswerUnreadable` | Warning | `Operation` |
+| `SharedKernel.AspNetCore.Authentication.Bff` | 4311 | `IdentityProviderEndpointInvalid` | Error | `Operation` |
+| `SharedKernel.AspNetCore.Authentication.Bff` | 4312 | `IdentityProviderClientMissing` | Error | `Operation` |
+| `SharedKernel.AspNetCore.Authentication.Bff` | 4313 | `IdentityProviderDiscoveryFailed` | Warning | `Operation`, `ErrorType` |
+| `SharedKernel.Blazor` | 7001 | `HandledUiFailure` | Error | `Operation`, `ErrorType`, `TraceId` |
+| `SharedKernel.Aspire.Hosting.Sqlite` | 9001 | `EphemeralDirectoryNotDeleted` | Warning | `Directory`; the exception is attached |
+| `SharedKernel.Aspire.Hosting.Umami` | 9101 | `WebsiteSetupStarted` | Information | `Endpoint`, `Username` |
+| `SharedKernel.Aspire.Hosting.Umami` | 9102 | `WebsiteCreated` | Information | `Website`, `Domain`, `WebsiteId` |
+| `SharedKernel.Aspire.Hosting.Umami` | 9103 | `WebsiteAlreadyExists` | Information | `Website`, `WebsiteId` |
+| `SharedKernel.Aspire.Hosting.Umami` | 9104 | `WebsiteSetupRefused` | Error | `Step`, `StatusCode` |
+| `SharedKernel.Aspire.Hosting.Umami` | 9105 | `WebsiteSetupFailed` | Error | `Step`, `Reason` |
+| `SharedKernel.Aspire.Hosting.Umami` | 9106 | `AdminPasswordRefused` | Error | none |
+| `SharedKernel.Aspire.Hosting.Umami` | 9107 | `WebsiteSetupFailedUnexpectedly` | Error | `ErrorType` |

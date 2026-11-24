@@ -105,9 +105,9 @@ internal sealed partial class PostgreSqlIntegrationEventTransportConsumer<TConte
         return exception.GetType().FullName ?? exception.GetType().Name;
     }
 
-    [LoggerMessage(1, LogLevel.Warning, "Transport consumer {ConsumerName} failed to handle message {MessageId} on attempt {Attempt}; it will be retried")]
+    [LoggerMessage(2101, LogLevel.Warning, "Transport consumer {ConsumerName} failed to handle message {MessageId} on attempt {Attempt}; it will be retried", EventName = "MessageHandlingFailed")]
     private partial void LogConsumeFailed(Exception exception, string consumerName, Guid messageId, int attempt);
 
-    [LoggerMessage(2, LogLevel.Error, "Transport consumer {ConsumerName} poisoned message {MessageId} after attempt {Attempt}")]
+    [LoggerMessage(2102, LogLevel.Error, "Transport consumer {ConsumerName} poisoned message {MessageId} after attempt {Attempt}", EventName = "MessagePoisoned")]
     private partial void LogMessagePoisoned(Exception exception, string consumerName, Guid messageId, int attempt);
 }

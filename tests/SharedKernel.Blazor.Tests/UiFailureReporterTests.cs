@@ -28,6 +28,7 @@ public sealed class UiFailureReporterTests
         entry.Level.ShouldBe(LogLevel.Error);
         entry.Exception.ShouldBeNull();
         entry.Message.ShouldContain(typeof(InvalidOperationException).FullName!, StringComparison.Ordinal);
+        entry.State.ShouldContain(new KeyValuePair<string, object?>("ErrorType", typeof(InvalidOperationException).FullName));
         entry.Message.ShouldContain("customers.import", StringComparison.Ordinal);
         entry.Message.ShouldContain(activity.TraceId.ToString(), StringComparison.Ordinal);
         entry.Message.ShouldNotContain("secret", StringComparison.Ordinal);

@@ -471,21 +471,21 @@ public sealed partial class UserTokenManager
         return UserTokenResult.Success(answer.AccessToken, expiresAt);
     }
 
-    [LoggerMessage(LogLevel.Warning, "The identity provider rejected the refresh token; the token session ended.")]
+    [LoggerMessage(4301, LogLevel.Warning, "The identity provider rejected the refresh token; the token session ended.", EventName = "RefreshTokenRejected")]
     private static partial void LogRefreshRejected(ILogger logger);
 
-    [LoggerMessage(LogLevel.Information, "The access token expired and there is no refresh token; the token session ended.")]
+    [LoggerMessage(4302, LogLevel.Information, "The access token expired and there is no refresh token; the token session ended.", EventName = "TokenSessionExpired")]
     private static partial void LogExpiredWithoutRefreshToken(ILogger logger);
 
-    [LoggerMessage(LogLevel.Warning, "The identity provider {Operation} answer has no usable access token.")]
+    [LoggerMessage(4303, LogLevel.Warning, "The identity provider {Operation} answer has no usable access token.", EventName = "UnusableTokenAnswer")]
     private static partial void LogUnusableAnswer(ILogger logger, string operation);
 
-    [LoggerMessage(LogLevel.Warning, "The refreshed ID token names another issuer or subject than the login; the refresh answer was discarded.")]
+    [LoggerMessage(4304, LogLevel.Warning, "The refreshed ID token names another issuer or subject than the login; the refresh answer was discarded.", EventName = "IdentityTokenMismatch")]
     private static partial void LogIdentityTokenMismatch(ILogger logger);
 
-    [LoggerMessage(LogLevel.Warning, "The identity provider rejected the token exchange for audience {Audience}.")]
+    [LoggerMessage(4305, LogLevel.Warning, "The identity provider rejected the token exchange for audience {Audience}.", EventName = "TokenExchangeRejected")]
     private static partial void LogExchangeRejected(ILogger logger, string audience);
 
-    [LoggerMessage(LogLevel.Warning, "The refresh token could not be revoked at sign-out; the stored tokens were removed.")]
+    [LoggerMessage(4306, LogLevel.Warning, "The refresh token could not be revoked at sign-out; the stored tokens were removed.", EventName = "RefreshTokenRevocationFailed")]
     private static partial void LogRevocationFailed(ILogger logger);
 }

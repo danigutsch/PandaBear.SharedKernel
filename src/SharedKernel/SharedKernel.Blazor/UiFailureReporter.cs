@@ -69,8 +69,8 @@ public sealed class UiFailureReporter : IUiFailureReporter
 
         var traceId = Activity.Current?.TraceId.ToString() ?? UnknownTraceId;
         var operationName = SafeOperation(operation);
-        UiFailureLog.HandledFailure(_logger, operationName, exception.GetType().FullName ?? exception.GetType().Name, traceId);
         var errorType = ErrorType(exception);
+        UiFailureLog.HandledFailure(_logger, operationName, errorType, traceId);
         TelemetryGuard.Run(() => _counter?.Add(
             1,
             new KeyValuePair<string, object?>(ErrorTypeTag, errorType),

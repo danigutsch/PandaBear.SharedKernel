@@ -176,7 +176,7 @@ public partial class ResultTransactionBehavior<TRequest, TResponse> : IPipelineB
                 }
                 catch (Exception ex)
                 {
-                    LogHookFailure(logger, typeof(TRequest).Name, hook.GetType().Name, nameof(IAfterCommit<,>), ex.GetType().Name);
+                    LogHookFailure(logger, typeof(TRequest).Name, nameof(IAfterCommit<,>), hook.GetType().Name, ex.GetType().FullName ?? ex.GetType().Name);
                 }
             }
 
@@ -191,11 +191,11 @@ public partial class ResultTransactionBehavior<TRequest, TResponse> : IPipelineB
             }
             catch (Exception ex)
             {
-                LogHookFailure(logger, typeof(TRequest).Name, hook.GetType().Name, nameof(IAfterRollback<,>), ex.GetType().Name);
+                LogHookFailure(logger, typeof(TRequest).Name, nameof(IAfterRollback<,>), hook.GetType().Name, ex.GetType().FullName ?? ex.GetType().Name);
             }
         }
     }
 
-    [LoggerMessage(1, LogLevel.Error, "Command {Request}: {HookKind} hook {HookType} failed and was ignored. Failure type: {FailureType}.")]
-    private static partial void LogHookFailure(ILogger logger, string request, string hookKind, string hookType, string failureType);
+    [LoggerMessage(2001, LogLevel.Error, "Command {RequestName}: {HookKind} hook {HookType} failed and was ignored. Error type: {ErrorType}.", EventName = "OutcomeHookFailed")]
+    private static partial void LogHookFailure(ILogger logger, string requestName, string hookKind, string hookType, string errorType);
 }

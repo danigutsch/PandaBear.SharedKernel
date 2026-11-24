@@ -75,7 +75,7 @@ public sealed partial class UnhandledExceptionReporter
         var route = RouteTemplateNormalizer.Normalize(routeTemplate);
         var trace = traceId ?? string.Empty;
 
-        TelemetryGuard.Run(() => LogUnhandledException(_logger, exceptionType.Name, route, statusCode, trace));
+        TelemetryGuard.Run(() => LogUnhandledException(_logger, errorType, route, statusCode, trace));
         TelemetryGuard.Run(() => _counter?.Add(
             1,
             new KeyValuePair<string, object?>(AspNetCoreTelemetry.ErrorTypeTag, errorType),

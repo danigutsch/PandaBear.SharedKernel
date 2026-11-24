@@ -101,7 +101,7 @@ builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = 
 
 | Signal | Name | Values |
 | --- | --- | --- |
-| Log event | `EventId` 4001 `UnhandledException`, Error | `ErrorType`, `RouteTemplate`, `StatusCode`, `TraceId`; no exception object |
+| Log event | `EventId` 4001 `UnhandledException`, Error | `ErrorType` (full exception type name), `RouteTemplate`, `StatusCode`, `TraceId`; no exception object |
 | Counter | `sharedkernel.aspnetcore.unhandled_exceptions` | `error.type` (full exception type name, with `AggregateException` and `TargetInvocationException` unwrapped to their first inner exception), `http.route` (matched pattern or `unmatched`), `sharedkernel.aspnetcore.handled` (bool) |
 
 Another component can report with the same series. Resolve `UnhandledExceptionReporter` and call
@@ -114,9 +114,9 @@ characters is reported as `unmatched`, so a caller mistake cannot leak a path, t
 
 | Signal | Name | Values |
 | --- | --- | --- |
-| Log event | `EventId` 4101 `AuthenticationEvent`, Warning (Information for a `challenge` with `missing_token`, which is routine anonymous traffic) | `SecurityEvent`, `Reason`, `Scheme`, `RouteTemplate`, `TraceId` |
+| Log event | `EventId` 4002 `AuthenticationEvent`, Warning (Information for a `challenge` with `missing_token`, which is routine anonymous traffic) | `SecurityEvent`, `Reason`, `Scheme`, `RouteTemplate`, `TraceId` |
 | Counter | `sharedkernel.aspnetcore.authentication.events` | `sharedkernel.aspnetcore.authentication.event` = `authentication_failed`, `challenge`, `forbidden`; `sharedkernel.aspnetcore.authentication.reason`; `sharedkernel.aspnetcore.authentication.scheme` |
-| Log event | `EventId` 4102 `RateLimitRejection`, Warning | `Policy`, `StatusCode`, `RouteTemplate`, `TraceId` |
+| Log event | `EventId` 4003 `RateLimitRejection`, Warning | `Policy`, `StatusCode`, `RouteTemplate`, `TraceId` |
 | Counter | `sharedkernel.aspnetcore.rate_limit.rejections` | `sharedkernel.aspnetcore.rate_limit.policy` (the endpoint's `EnableRateLimiting` name, else `none`) |
 
 The `sharedkernel.aspnetcore.rate_limit.policy` label comes from the matched endpoint's metadata. A rejection by a global limiter (`GlobalLimiter`) has no

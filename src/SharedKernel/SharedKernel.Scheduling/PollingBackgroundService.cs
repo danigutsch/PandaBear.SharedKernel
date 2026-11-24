@@ -67,7 +67,7 @@ public abstract partial class PollingBackgroundService : BackgroundService
                     1,
                     new KeyValuePair<string, object?>(SchedulingTelemetry.TagServiceName, serviceName),
                     new KeyValuePair<string, object?>(SchedulingTelemetry.TagErrorType, exception.GetType().FullName));
-                LogPollingFailure(logger, serviceName, exception.GetType().Name);
+                LogPollingFailure(logger, serviceName, exception.GetType().FullName ?? exception.GetType().Name);
             }
 
             using var timer = new PeriodicTimer(pollInterval);
@@ -140,6 +140,6 @@ public abstract partial class PollingBackgroundService : BackgroundService
             and not ThreadAbortException;
     }
 
-    [LoggerMessage(1, LogLevel.Error, "Polling service {ServiceName} failed while processing background work. Failure type: {FailureType}.")]
-    private static partial void LogPollingFailure(ILogger logger, string serviceName, string failureType);
+    [LoggerMessage(3001, LogLevel.Error, "Polling service {ServiceName} failed while processing background work. Error type: {ErrorType}.", EventName = "PollingCycleFailed")]
+    private static partial void LogPollingFailure(ILogger logger, string serviceName, string errorType);
 }

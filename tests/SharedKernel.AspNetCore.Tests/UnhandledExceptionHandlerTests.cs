@@ -53,7 +53,7 @@ public sealed class UnhandledExceptionHandlerTests
         record.Message.ShouldNotContain("/orders/42", "the raw path must not reach the log");
         var keys = record.State.Select(static pair => pair.Key).Where(static key => key != "{OriginalFormat}");
         keys.ShouldBeEquivalentTo("ErrorType", "RouteTemplate", "StatusCode", "TraceId");
-        record.State.ShouldContain(new KeyValuePair<string, object?>("ErrorType", nameof(InvalidOperationException)));
+        record.State.ShouldContain(new KeyValuePair<string, object?>("ErrorType", typeof(InvalidOperationException).FullName));
         record.State.ShouldContain(new KeyValuePair<string, object?>("RouteTemplate", "/orders/{id}"));
         record.State.ShouldContain(new KeyValuePair<string, object?>("StatusCode", 500));
     }

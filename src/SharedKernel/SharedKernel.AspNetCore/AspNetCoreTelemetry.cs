@@ -49,8 +49,8 @@ public static class AspNetCoreTelemetry
     public const int UnhandledExceptionEventId = 4001;
 
     /// <summary>The stable log event identifier of an authentication event.</summary>
-    public const int AuthenticationEventId = 4101;
+    public const int AuthenticationEventId = 4002;
 
     /// <summary>The stable log event identifier of a rate-limit rejection.</summary>
-    public const int RateLimitRejectionEventId = 4102;
+    public const int RateLimitRejectionEventId = 4003;
 }

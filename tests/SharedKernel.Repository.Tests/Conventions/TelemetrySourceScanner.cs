@@ -181,7 +181,11 @@ internal sealed partial class TelemetrySourceScanner
             : null;
     }
 
-    private static List<string> SplitArguments(string text, int start)
+    /// <summary>Splits the arguments of the call whose opening parenthesis ends just before <paramref name="start"/>, respecting nesting and strings.</summary>
+    /// <param name="text">The source text.</param>
+    /// <param name="start">The index just after the opening parenthesis.</param>
+    /// <returns>The trimmed top-level arguments.</returns>
+    internal static List<string> SplitArguments(string text, int start)
     {
         List<string> arguments = [];
         var depth = 0;
