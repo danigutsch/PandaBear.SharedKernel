@@ -382,7 +382,6 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
         }
 
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagSchema, schemaName);
-
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagDbSystemName, PostgreSqlEventSourcingTelemetry.DbSystemNamePostgreSql);
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagOperation, "append");
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagEventCount, eventCount);
@@ -407,7 +406,6 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
         }
 
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagSchema, schemaName);
-
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagDbSystemName, PostgreSqlEventSourcingTelemetry.DbSystemNamePostgreSql);
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagOperation, operation);
         return activity;

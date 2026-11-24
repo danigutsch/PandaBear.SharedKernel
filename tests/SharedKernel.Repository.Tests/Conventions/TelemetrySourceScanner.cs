@@ -5,7 +5,7 @@ namespace PandaBear.Repository.Tests.Conventions;
 /// <summary>
 /// Reads the telemetry a library declares from its source: the meters and activity sources it creates, the instruments it creates
 /// with their arguments, the attribute keys it sets and the durations it records. Names that are not literals are resolved through
-/// the <c>const string</c> and <c>static string</c> members of the library sources, keyed by the declaring file name, which is the
+/// the <c>const string</c>, <c>static string</c> and <c>static readonly string</c> members of the library sources, keyed by the declaring file name, which is the
 /// type name because every file holds one top-level type.
 /// </summary>
 internal sealed partial class TelemetrySourceScanner
@@ -91,15 +91,18 @@ internal sealed partial class TelemetrySourceScanner
     }
 
     /// <summary>Finds the attribute keys the libraries set on spans and measurements, and the values of the tag-name members of telemetry files.</summary>
-    /// <returns>Each resolved key with the file that sets or declares it.</returns>
-    internal List<(string File, string Key)> AttributeKeys()
+    /// <returns>Each key expression with the file that sets or declares it and its resolved value, or <see langword="null"/> when it is not a constant.</returns>
+    internal List<(string File, string Expression, string? Key)> AttributeKeys()
     {
-        List<(string File, string Key)> keys = [];
+        List<(string File, string Expression, string? Key)> keys = [];
         foreach (var (_, type, file, text) in _files)
         {
             var usages = SetTagRegex().Matches(text)
                 .Concat(KeyValuePairRegex().Matches(text))
-                .Concat(TagListAddRegex().Matches(text));
+                .Concat(TagListVariableRegex().Matches(text)
+                    .Select(static variable => variable.Groups["name"].Value)
+                    .Distinct(StringComparer.Ordinal)
+                    .SelectMany(name => Regex.Matches(text, $"""\b{Regex.Escape(name)}\.Add\(\s*(?<arg>"[^"]*"|[\w.:]+)\s*,""")));
             if (text.Contains("TagList", StringComparison.Ordinal))
             {
                 usages = usages.Concat(InitializerItemRegex().Matches(text));
@@ -107,10 +110,8 @@ internal sealed partial class TelemetrySourceScanner
 
             foreach (var match in usages)
             {
-                if (Resolve(match.Groups["arg"].Value, type) is { } key)
-                {
-                    keys.Add((file, key));
-                }
+                var expression = match.Groups["arg"].Value;
+                keys.Add((file, expression, Resolve(expression, type)));
             }
 
             if (!type.EndsWith("Telemetry", StringComparison.Ordinal) && !TelemetryMarkerRegex().IsMatch(text))
@@ -120,9 +121,9 @@ internal sealed partial class TelemetrySourceScanner
 
             foreach (Match match in DeclarationRegex().Matches(text))
             {
-                if (TagMemberRegex().IsMatch(match.Groups["member"].Value) && Resolve(match.Groups["value"].Value, type) is { } key)
+                if (TagMemberRegex().IsMatch(match.Groups["member"].Value))
                 {
-                    keys.Add((file, key));
+                    keys.Add((file, match.Groups["member"].Value, Resolve(match.Groups["value"].Value, type)));
                 }
             }
         }
@@ -130,10 +131,35 @@ internal sealed partial class TelemetrySourceScanner
         return keys;
     }
 
-    /// <summary>Finds the files that record a measurement in milliseconds.</summary>
-    /// <returns>The relative paths of the files whose <c>Record</c> call passes <c>TotalMilliseconds</c>.</returns>
+    /// <summary>Finds the files that create or record into a histogram and also use a milliseconds value.</summary>
+    /// <returns>The relative paths of the files that use <c>Milliseconds</c>, <c>TotalMilliseconds</c> or <c>ElapsedMilliseconds</c> next to a histogram.</returns>
     internal List<string> MillisecondRecordings() =>
-        [.. _files.Where(static source => MillisecondRecordRegex().IsMatch(source.Text)).Select(static source => source.File)];
+        [.. _files.Where(static source => HistogramUseRegex().IsMatch(source.Text) && MillisecondsRegex().IsMatch(source.Text)).Select(static source => source.File)];
+
+    /// <summary>Finds the public string constants and properties that name a meter or activity source a package creates.</summary>
+    /// <returns>The packages that create a meter or activity source, each with the public members, in public types, whose value is its name.</returns>
+    internal Dictionary<string, List<string>> PublicNameMembers()
+    {
+        var packages = CreatedTelemetryNames().Select(static entry => entry.Package).ToHashSet(StringComparer.Ordinal);
+        var members = packages.ToDictionary(static package => package, static _ => new List<string>(), StringComparer.Ordinal);
+        foreach (var (_, type, _, text) in _files)
+        {
+            if (!Regex.IsMatch(text, $"""\bpublic\s+(?:static\s+|sealed\s+|abstract\s+|partial\s+)*class\s+{Regex.Escape(type)}\b"""))
+            {
+                continue;
+            }
+
+            foreach (Match match in PublicDeclarationRegex().Matches(text))
+            {
+                if (Resolve(match.Groups["value"].Value, type) is { } value && members.TryGetValue(value, out var found))
+                {
+                    found.Add($"{type}.{match.Groups["member"].Value}");
+                }
+            }
+        }
+
+        return members;
+    }
 
     private string? Resolve(string expression, string contextType, int depth = 0)
     {
@@ -219,7 +245,7 @@ internal sealed partial class TelemetrySourceScanner
         return named;
     }
 
-    [GeneratedRegex("""(?:const\s+string|static\s+string)\s+(?<member>\w+)\s*(?:=>|=)\s*(?<value>"[^"]*"|[A-Za-z_][\w.]*)\s*;""")]
+    [GeneratedRegex("""(?:const\s+string|static\s+readonly\s+string|static\s+string)\s+(?<member>\w+)\s*(?:=>|=)\s*(?<value>"[^"]*"|[A-Za-z_][\w.]*)\s*;""")]
     private static partial Regex DeclarationRegex();
 
     [GeneratedRegex("""\b(?:Meter|ActivitySource)\s+\w+\s*(?:\{\s*get;\s*\}\s*)?=\s*new\s*\(\s*(?<arg>[^()]+?)\s*\)""")]
@@ -240,8 +266,11 @@ internal sealed partial class TelemetrySourceScanner
     [GeneratedRegex("""KeyValuePair<string,\s*object\?>\(\s*(?<arg>"[^"]*"|[\w.:]+)\s*,""")]
     private static partial Regex KeyValuePairRegex();
 
-    [GeneratedRegex("""\btags\.Add\(\s*(?<arg>"[^"]*"|[\w.:]+)\s*,""")]
-    private static partial Regex TagListAddRegex();
+    [GeneratedRegex("""\bpublic\s+(?:const\s+string|static\s+readonly\s+string|static\s+string)\s+(?<member>\w+)\s*(?:=>|=)\s*(?<value>"[^"]*"|[A-Za-z_][\w.]*)\s*;""")]
+    private static partial Regex PublicDeclarationRegex();
+
+    [GeneratedRegex("""\bTagList\s+(?<name>\w+)\s*(?:=|;)|\bvar\s+(?<name>\w+)\s*=\s*new\s+TagList\b""")]
+    private static partial Regex TagListVariableRegex();
 
     [GeneratedRegex("""\{\s*(?<arg>"[^"]*"|[\w.:]+)\s*,""")]
     private static partial Regex InitializerItemRegex();
@@ -252,8 +281,11 @@ internal sealed partial class TelemetrySourceScanner
     [GeneratedRegex("""^(?:Tag[A-Z]\w*|\w+Tag)$""")]
     private static partial Regex TagMemberRegex();
 
-    [GeneratedRegex("""\.Record\([^;]*?TotalMilliseconds""")]
-    private static partial Regex MillisecondRecordRegex();
+    [GeneratedRegex("""CreateHistogram|Histogram<|\.Record\(""")]
+    private static partial Regex HistogramUseRegex();
+
+    [GeneratedRegex("""\b(?:Total|Elapsed)?Milliseconds\b""")]
+    private static partial Regex MillisecondsRegex();
 
     [GeneratedRegex("""^[A-Za-z_][\w]*(?:\.[A-Za-z_][\w]*)*$""")]
     private static partial Regex IdentifierRegex();

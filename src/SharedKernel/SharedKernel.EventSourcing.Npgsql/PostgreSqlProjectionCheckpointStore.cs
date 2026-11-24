@@ -179,7 +179,6 @@ public sealed class PostgreSqlProjectionCheckpointStore : IProjectionCheckpointS
         }
 
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagSchema, schemaName);
-
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagDbSystemName, PostgreSqlEventSourcingTelemetry.DbSystemNamePostgreSql);
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagOperation, operation);
         activity.SetTag(PostgreSqlEventSourcingTelemetry.TagProjectionName, projectionName);

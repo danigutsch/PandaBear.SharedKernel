@@ -101,7 +101,8 @@ Activity source `SharedKernel.HttpClients` (`HttpOutcomeMapper.ActivitySourceNam
 
 ### SharedKernel.MalwareScanning.ClamAv
 
-Meter and activity source `SharedKernel.MalwareScanning.ClamAv`. Every measurement and the span carry
+Meter and activity source `SharedKernel.MalwareScanning.ClamAv` (`ClamAvMalwareScannerTelemetry.Name`). The scanner registration does
+not export them: call `AddInstrumentation()`, or `AddMeter` and `AddSource` with that constant. Every measurement and the span carry
 `sharedkernel.malware_scan.engine` (`clamav`), `sharedkernel.malware_scan.transport` (`tcp`), `sharedkernel.malware_scan.mode`
 (`instream`), `sharedkernel.malware_scan.outcome` (`clean`, `infected`, `error`) and, on a failure, `error.type` with a domain
 error code: `timeout`, `scanner_unavailable`, `scanner_protocol_error` or `content_length_mismatch`.

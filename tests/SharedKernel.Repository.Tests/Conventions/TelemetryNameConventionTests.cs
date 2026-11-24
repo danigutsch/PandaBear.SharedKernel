@@ -6,11 +6,20 @@ namespace PandaBear.Repository.Tests.Conventions;
 /// Guards the telemetry standard in <c>docs/telemetry.md</c>: meters and activity sources are named after the package that creates
 /// them, so the <c>SharedKernel.*</c> pattern that <c>AddInstrumentation</c> registers exports every package; instrument names start
 /// with <c>sharedkernel.</c> and carry a description; durations are seconds with the shared bucket advice; and attribute keys are
-/// semantic-convention names or start with <c>sharedkernel.</c>.
+/// semantic-convention names or start with <c>sharedkernel.</c>, and every package exposes its meter or source name as a public
+/// constant.
 /// </summary>
 public sealed partial class TelemetryNameConventionTests
 {
     private static string SourceRoot => Path.Combine(PackagingConventionTestFiles.GetRepositoryRoot(), "src", "SharedKernel");
+
+    /// <summary>The attribute keys that are not constants because the privacy processors clear or rewrite an attribute the span or log already carries.</summary>
+    private static readonly HashSet<string> PassThroughAttributeKeys = new(StringComparer.Ordinal)
+    {
+        "SharedKernel.Observability/ActivityPrivacyProcessor.cs: attributeName",
+        "SharedKernel.Observability/ActivityPrivacyProcessor.cs: attributeToUpdate.Name",
+        "SharedKernel.Observability/LogRecordPrivacyProcessor.cs: attribute.Key",
+    };
 
     [Fact]
     public void Every_declared_meter_and_activity_source_name_has_the_registered_prefix()
@@ -91,13 +100,45 @@ public sealed partial class TelemetryNameConventionTests
         var keys = scanner.AttributeKeys();
 
         // Assert
-        keys.Select(static entry => entry.Key).Distinct(StringComparer.Ordinal).Count()
+        keys.Where(static entry => entry.Key is not null).Select(static entry => entry.Key).Distinct(StringComparer.Ordinal).Count()
             .ShouldBeGreaterThanOrEqualTo(40, "the scan must find the attribute keys it guards");
-        keys.Where(static entry => !TelemetrySourceScanner.SemanticConventionAttributes.Contains(entry.Key)
-                && !SharedKernelNameRegex().IsMatch(entry.Key))
+        keys.Where(static entry => entry.Key is { } key
+                && !TelemetrySourceScanner.SemanticConventionAttributes.Contains(key)
+                && !SharedKernelNameRegex().IsMatch(key))
             .Select(static entry => $"{entry.File}: {entry.Key}")
             .Distinct(StringComparer.Ordinal)
             .ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Every_attribute_key_resolves_to_a_constant_unless_it_passes_an_existing_attribute_through()
+    {
+        // Arrange
+        var scanner = new TelemetrySourceScanner(SourceRoot);
+
+        // Act
+        var unresolved = scanner.AttributeKeys()
+            .Where(static entry => entry.Key is null)
+            .Select(static entry => $"{entry.File.Replace(Path.DirectorySeparatorChar, '/')}: {entry.Expression}")
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
+
+        // Assert
+        unresolved.Where(static entry => !PassThroughAttributeKeys.Contains(entry)).ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Every_package_that_creates_telemetry_exposes_its_name_as_a_public_constant()
+    {
+        // Arrange
+        var scanner = new TelemetrySourceScanner(SourceRoot);
+
+        // Act
+        var members = scanner.PublicNameMembers();
+
+        // Assert
+        members.Count.ShouldBeGreaterThanOrEqualTo(10, "the scan must find the packages that create telemetry");
+        members.Where(static package => package.Value.Count == 0).Select(static package => package.Key).ShouldBeEmpty();
     }
 
     [GeneratedRegex("""^sharedkernel(?:\.[a-z0-9]+(?:_[a-z0-9]+)*)+$""")]

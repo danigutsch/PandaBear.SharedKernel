@@ -50,7 +50,7 @@ public sealed class SchedulingTelemetryTests
         var ct = TestContext.Current.CancellationToken;
         const string serviceName = "telemetry-drain";
         using var capture = new SchedulingTelemetryCapture(serviceName);
-        using var service = new ScriptedPollingService(NullLogger.Instance, serviceName, TimeSpan.FromHours(1), 2, 0);
+        using var service = new ScriptedPollingService(NullLogger.Instance, serviceName, TimeSpan.FromHours(1), 2, TimeSpan.FromMilliseconds(100));
 
         // Act
         await service.StartAsync(ct);
@@ -64,7 +64,8 @@ public sealed class SchedulingTelemetryTests
         span.GetTagItem("sharedkernel.scheduling.item_count").ShouldBe(2);
         var duration = capture.Measurements.ShouldHaveSingleItem(static measurement => measurement.Instrument == "sharedkernel.scheduling.polling.cycle.duration");
         duration.Tags.GetValueOrDefault("sharedkernel.scheduling.outcome").ShouldBe("success");
-        duration.Value.ShouldBeLessThan(30, "the duration is recorded in seconds");
+        duration.Value.ShouldBeGreaterThanOrEqualTo(0.05, "the cycle waited at least 100 ms, so a seconds value is at least 0.05");
+        duration.Value.ShouldBeLessThan(5, "a milliseconds value of a cycle that waited 100 ms would be at least 100");
         capture.Measurements.Count(static measurement => measurement.Instrument == "sharedkernel.scheduling.polling.batches").ShouldBe(2);
         capture.Measurements.ShouldHaveSingleItem(static measurement => measurement.Instrument == "sharedkernel.scheduling.polling.items").Value.ShouldBe(2);
     }
