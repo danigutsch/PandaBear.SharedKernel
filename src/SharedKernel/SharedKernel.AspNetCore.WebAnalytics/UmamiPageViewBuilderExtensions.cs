@@ -14,7 +14,7 @@ public static class UmamiPageViewBuilderExtensions
     /// The name of the <c>HttpClient</c> that sends page views to Umami. It gets the host's HTTP client defaults, such as the resilience
     /// and telemetry of the service defaults; configure it further with <c>services.AddHttpClient(HttpClientName)</c>.
     /// </summary>
-    public const string HttpClientName = "PandaBear.AspNetCore.WebAnalytics.Umami";
+    public const string HttpClientName = "SharedKernel.AspNetCore.WebAnalytics.Umami";
 
     /// <summary>
     /// Adds a self-hosted Umami as a page-view target when the connection string <c>ConnectionStrings:{connectionName}</c> is present, in

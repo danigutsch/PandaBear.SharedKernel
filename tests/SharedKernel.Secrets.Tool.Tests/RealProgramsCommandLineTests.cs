@@ -112,7 +112,7 @@ public sealed class RealProgramsCommandLineTests
         using var repository = CreateRepository(null);
         var token = TestContext.Current.CancellationToken;
         var runner = new SystemToolRunner();
-        var keys = Path.Combine(Path.GetTempPath(), "pandabear-keys-" + Guid.NewGuid().ToString("N"));
+        var keys = Path.Combine(Path.GetTempPath(), "sharedkernel-keys-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(keys);
         var recipients = new List<string>();
         foreach (var name in KeyNames)
@@ -157,7 +157,7 @@ public sealed class RealProgramsCommandLineTests
         var runner = new SystemToolRunner();
         var root = Path.Combine(outer.Path, "sub");
         Directory.CreateDirectory(Path.Combine(root, ".config"));
-        var keys = Path.Combine(Path.GetTempPath(), "pandabear-keys-" + Guid.NewGuid().ToString("N"));
+        var keys = Path.Combine(Path.GetTempPath(), "sharedkernel-keys-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(keys);
         var recipients = new List<string>();
         foreach (var name in KeyNames)
@@ -202,7 +202,7 @@ public sealed class RealProgramsCommandLineTests
         using var repository = CreateRepository(null);
         var token = TestContext.Current.CancellationToken;
         var runner = new SystemToolRunner();
-        var keys = Path.Combine(Path.GetTempPath(), "pandabear-keys-" + Guid.NewGuid().ToString("N"));
+        var keys = Path.Combine(Path.GetTempPath(), "sharedkernel-keys-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(keys);
         var recipients = new List<string>();
         foreach (var name in KeyNames)

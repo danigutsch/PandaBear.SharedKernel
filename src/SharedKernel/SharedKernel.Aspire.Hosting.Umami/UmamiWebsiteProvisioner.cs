@@ -16,7 +16,7 @@ namespace Aspire.Hosting;
 internal sealed class UmamiWebsiteProvisioner(ResourceNotificationService notifications, ResourceLoggerService loggers, IHttpClientFactory clients)
 {
     /// <summary>The name of the HTTP client that talks to Umami, whose logged header values are redacted.</summary>
-    public const string HttpClientName = "PandaBear.Aspire.Hosting.Umami";
+    public const string HttpClientName = "SharedKernel.Aspire.Hosting.Umami";
 
     /// <summary>The password Umami gives its <c>admin</c> user on its first start.</summary>
     public const string DefaultAdminPassword = "umami";

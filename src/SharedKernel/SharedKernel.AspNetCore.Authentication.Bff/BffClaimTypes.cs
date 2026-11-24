@@ -10,8 +10,8 @@ namespace PandaBear.AspNetCore.Authentication.Bff;
 public static class BffClaimTypes
 {
     /// <summary>The opaque identifier of the token session.</summary>
-    public const string SessionId = "urn:pandabear:bff:session-id";
+    public const string SessionId = "urn:sharedkernel:bff:session-id";
 
     /// <summary>The absolute end of the token session, as a round-trip (ISO 8601) timestamp.</summary>
-    public const string SessionExpiresAt = "urn:pandabear:bff:session-expires-at";
+    public const string SessionExpiresAt = "urn:sharedkernel:bff:session-expires-at";
 }

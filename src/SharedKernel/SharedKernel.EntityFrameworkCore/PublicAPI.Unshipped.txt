@@ -1,6 +1,6 @@
 #nullable enable
 const PandaBear.EntityFrameworkCore.DatabaseSchemas.Messaging = "messaging" -> string!
-const PandaBear.EntityFrameworkCore.UniqueRuleIndexBuilderExtensions.AnnotationName = "PandaBear:UniqueRule" -> string!
+const PandaBear.EntityFrameworkCore.UniqueRuleIndexBuilderExtensions.AnnotationName = "SharedKernel:UniqueRule" -> string!
 PandaBear.EntityFrameworkCore.CurrentSaveChangesDbContext
 PandaBear.EntityFrameworkCore.DbContextConfigurationServiceCollectionExtensions
 PandaBear.EntityFrameworkCore.DbContextUniqueViolationExtensions

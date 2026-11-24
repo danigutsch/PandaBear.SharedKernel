@@ -1,7 +1,7 @@
 #nullable enable
-const PandaBear.AspNetCore.Authentication.Bff.BffClaimTypes.SessionExpiresAt = "urn:pandabear:bff:session-expires-at" -> string!
-const PandaBear.AspNetCore.Authentication.Bff.BffClaimTypes.SessionId = "urn:pandabear:bff:session-id" -> string!
-const PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementDefaults.IdentityProviderHttpClientName = "PandaBear.Bff.IdentityProvider" -> string!
+const PandaBear.AspNetCore.Authentication.Bff.BffClaimTypes.SessionExpiresAt = "urn:sharedkernel:bff:session-expires-at" -> string!
+const PandaBear.AspNetCore.Authentication.Bff.BffClaimTypes.SessionId = "urn:sharedkernel:bff:session-id" -> string!
+const PandaBear.AspNetCore.Authentication.Bff.UserTokenManagementDefaults.IdentityProviderHttpClientName = "SharedKernel.AspNetCore.Authentication.Bff.IdentityProvider" -> string!
 override PandaBear.AspNetCore.Authentication.Bff.UserTokenResult.ToString() -> string!
 override PandaBear.AspNetCore.Authentication.Bff.UserTokenSet.ToString() -> string!
 PandaBear.AspNetCore.Authentication.Bff.BffClaimTypes

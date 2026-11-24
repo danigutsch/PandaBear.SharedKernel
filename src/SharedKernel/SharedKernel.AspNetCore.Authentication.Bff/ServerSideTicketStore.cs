@@ -28,7 +28,7 @@ namespace PandaBear.AspNetCore.Authentication.Bff;
 public sealed partial class ServerSideTicketStore : ITicketStore
 {
     private const string ProtectorPurpose = "PandaBear.AspNetCore.Authentication.Bff.ServerSideTicketStore.v1";
-    private const string SessionStartedItem = ".pandabear.bff.session-started";
+    private const string SessionStartedItem = ".sharedkernel.bff.session-started";
 
     private readonly IDistributedCache _cache;
     private readonly IDataProtector _protector;
