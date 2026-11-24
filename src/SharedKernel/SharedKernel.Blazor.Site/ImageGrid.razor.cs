@@ -56,14 +56,20 @@ public sealed partial class ImageGrid
     [Parameter]
     public string? Sizes { get; set; }
 
+    /// <summary>Gets or sets the localized labels required when rendering a reviewed photo credit.</summary>
+    [Parameter]
+    public PhotoCreditLabels? CreditLabels { get; set; }
+
     private string? EffectiveSizes => Sizes ?? (Layout == ImageGridLayout.Thumbnails ? ThumbnailSizes : null);
 
     /// <inheritdoc />
-    /// <exception cref="ArgumentNullException"><see cref="Images" /> or an image is null.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// <see cref="Images" /> or an image is null, or a reviewed credit needs <see cref="CreditLabels" />.
+    /// </exception>
     /// <exception cref="ArgumentOutOfRangeException"><see cref="EagerCount" /> is negative or <see cref="Layout" /> is not defined.</exception>
     /// <exception cref="ArgumentException">
-    /// <see cref="Sizes" /> is blank, too long or not one line, a linked image is decorative, or an image's credit has a blank text or a
-    /// licence address without its text.
+    /// <see cref="Sizes" /> is blank, too long or not one line, a linked image is decorative, an image supplies both credit shapes,
+    /// or an image language tag, credit or label is invalid.
     /// </exception>
     protected override void OnParametersSet()
     {
@@ -71,10 +77,12 @@ public sealed partial class ImageGrid
         ArgumentOutOfRangeException.ThrowIfNegative(EagerCount);
         EnumParameter.RequireDefined(Layout, nameof(Layout), "The image grid layout is not defined.");
 
+        var usesReviewedCredit = false;
         foreach (var image in Images)
         {
             ArgumentNullException.ThrowIfNull(image, nameof(Images));
             ArgumentNullException.ThrowIfNull(image.Image, nameof(Images));
+            LanguageTag.Require(image.TextLanguage, nameof(Images));
             if (image.Href is not null && image.Image.Alt.IsDecorative)
             {
                 throw new ArgumentException("A linked image needs alternative text, which names its link; describe the image instead of marking it decorative.", nameof(Images));
@@ -82,8 +90,25 @@ public sealed partial class ImageGrid
 
             if (image.Credit is not null)
             {
+                if (image.ReviewedCredit is not null)
+                {
+                    throw new ArgumentException("An image can supply only one credit.", nameof(Images));
+                }
+
                 ImageCreditLine.Require(image.Credit, nameof(Images));
             }
+
+            if (image.ReviewedCredit is { } reviewed)
+            {
+                reviewed.Require(nameof(Images));
+                usesReviewedCredit |= PhotoCredit.HasCompactCredit(reviewed);
+            }
+        }
+
+        if (usesReviewedCredit)
+        {
+            ArgumentNullException.ThrowIfNull(CreditLabels, nameof(CreditLabels));
+            CreditLabels.Require(nameof(CreditLabels));
         }
 
         if (Sizes is not null && (string.IsNullOrWhiteSpace(Sizes) || Sizes.Length > MaxSizesLength || Sizes.Any(char.IsControl)))

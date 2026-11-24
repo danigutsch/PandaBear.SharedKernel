@@ -35,6 +35,7 @@
     {"path":"src/SharedKernel/SharedKernel.CI/SharedKernel.CI.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
     {"path":"src/SharedKernel/SharedKernel.Caching/SharedKernel.Caching.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.ConfigurationFiles/SharedKernel.ConfigurationFiles.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.ContentRights/SharedKernel.ContentRights.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.DevContainers/SharedKernel.DevContainers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.DispositionHold.Abstractions/SharedKernel.DispositionHold.Abstractions.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
     {"path":"src/SharedKernel/SharedKernel.DispositionHold.EntityFrameworkCore/SharedKernel.DispositionHold.EntityFrameworkCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
@@ -343,6 +344,13 @@
       "register": "tests/README.md",
       "seams": [
         {"sut":"src/SharedKernel/SharedKernel.ConfigurationFiles/SharedKernel.ConfigurationFiles.csproj","type":"Unit","dependency":"in-process","capabilities":["JsonConfigurationFile"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.ContentRights.Tests.Unit/SharedKernel.ContentRights.Tests.Unit.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.ContentRights/SharedKernel.ContentRights.csproj","type":"Unit","dependency":"in-process","capabilities":["ContentLicense","ContentAttribution","ImageCreditAttribution"],"lane":"library"}
       ]
     },
     {

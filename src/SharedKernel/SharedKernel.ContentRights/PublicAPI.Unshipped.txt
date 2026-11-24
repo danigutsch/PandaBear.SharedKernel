@@ -1,0 +1,83 @@
+#nullable enable
+PandaBear.ContentRights.ContentAttribution
+PandaBear.ContentRights.ContentAttribution.DeclaredOriginalSourceUrl.get -> string?
+PandaBear.ContentRights.ContentAttribution.ToPublicCredit() -> PandaBear.ContentRights.PublicContentCredit!
+PandaBear.ContentRights.ContentAttributionDefinition
+PandaBear.ContentRights.ContentAttributionDefinition.ContentAttributionDefinition() -> void
+PandaBear.ContentRights.ContentAttributionDefinition.CopyrightNotice.get -> string?
+PandaBear.ContentRights.ContentAttributionDefinition.CopyrightNotice.init -> void
+PandaBear.ContentRights.ContentAttributionDefinition.CreditLine.get -> string?
+PandaBear.ContentRights.ContentAttributionDefinition.CreditLine.init -> void
+PandaBear.ContentRights.ContentAttributionDefinition.License.get -> PandaBear.ContentRights.ContentLicense?
+PandaBear.ContentRights.ContentAttributionDefinition.License.init -> void
+PandaBear.ContentRights.ContentAttributionDefinition.ModificationNotice.get -> string?
+PandaBear.ContentRights.ContentAttributionDefinition.ModificationNotice.init -> void
+PandaBear.ContentRights.ContentAttributionDefinition.OriginalSourceUrl.get -> string?
+PandaBear.ContentRights.ContentAttributionDefinition.OriginalSourceUrl.init -> void
+PandaBear.ContentRights.ContentAttributionDefinition.Parties.get -> System.Collections.Generic.IReadOnlyList<PandaBear.ContentRights.ContentCreditParty!>?
+PandaBear.ContentRights.ContentAttributionDefinition.Parties.init -> void
+PandaBear.ContentRights.ContentAttributionDefinition.PreviousModificationNotices.get -> System.Collections.Generic.IReadOnlyList<string!>?
+PandaBear.ContentRights.ContentAttributionDefinition.PreviousModificationNotices.init -> void
+PandaBear.ContentRights.ContentAttributionDefinition.Title.get -> string?
+PandaBear.ContentRights.ContentAttributionDefinition.Title.init -> void
+PandaBear.ContentRights.ContentCreditEntityKind
+PandaBear.ContentRights.ContentCreditEntityKind.Organization = 2 -> PandaBear.ContentRights.ContentCreditEntityKind
+PandaBear.ContentRights.ContentCreditEntityKind.Person = 1 -> PandaBear.ContentRights.ContentCreditEntityKind
+PandaBear.ContentRights.ContentCreditEntityKind.Unknown = 0 -> PandaBear.ContentRights.ContentCreditEntityKind
+PandaBear.ContentRights.ContentCreditParty
+PandaBear.ContentRights.ContentCreditParty.<Clone>$() -> PandaBear.ContentRights.ContentCreditParty!
+PandaBear.ContentRights.ContentCreditParty.ContentCreditParty(string! Name, PandaBear.ContentRights.ContentCreditRole Role, PandaBear.ContentRights.ContentCreditEntityKind EntityKind = PandaBear.ContentRights.ContentCreditEntityKind.Unknown) -> void
+PandaBear.ContentRights.ContentCreditParty.Deconstruct(out string! Name, out PandaBear.ContentRights.ContentCreditRole Role, out PandaBear.ContentRights.ContentCreditEntityKind EntityKind) -> void
+PandaBear.ContentRights.ContentCreditParty.EntityKind.get -> PandaBear.ContentRights.ContentCreditEntityKind
+PandaBear.ContentRights.ContentCreditParty.EntityKind.init -> void
+PandaBear.ContentRights.ContentCreditParty.Equals(PandaBear.ContentRights.ContentCreditParty? other) -> bool
+PandaBear.ContentRights.ContentCreditParty.Name.get -> string!
+PandaBear.ContentRights.ContentCreditParty.Name.init -> void
+PandaBear.ContentRights.ContentCreditParty.Role.get -> PandaBear.ContentRights.ContentCreditRole
+PandaBear.ContentRights.ContentCreditParty.Role.init -> void
+PandaBear.ContentRights.ContentCreditRole
+PandaBear.ContentRights.ContentCreditRole.CopyrightOwner = 1 -> PandaBear.ContentRights.ContentCreditRole
+PandaBear.ContentRights.ContentCreditRole.Creator = 0 -> PandaBear.ContentRights.ContentCreditRole
+PandaBear.ContentRights.ContentCreditRole.Designated = 3 -> PandaBear.ContentRights.ContentCreditRole
+PandaBear.ContentRights.ContentCreditRole.Licensor = 2 -> PandaBear.ContentRights.ContentCreditRole
+PandaBear.ContentRights.ContentLicense
+PandaBear.ContentRights.ContentLicense.CanonicalTermsUrl.get -> PandaBear.BuildingBlocks.WebUrl?
+PandaBear.ContentRights.ContentLicense.DeclaredTerms.get -> string?
+PandaBear.ContentRights.ContentLicense.DeclaredTermsUrl.get -> string?
+PandaBear.ContentRights.ContentLicense.Jurisdiction.get -> string?
+PandaBear.ContentRights.ContentLicense.Kind.get -> PandaBear.ContentRights.ContentLicenseKind
+PandaBear.ContentRights.ContentLicense.TermsUrl.get -> PandaBear.BuildingBlocks.WebUrl?
+PandaBear.ContentRights.ContentLicense.Version.get -> string?
+PandaBear.ContentRights.ContentLicenseKind
+PandaBear.ContentRights.ContentLicenseKind.Cc0 = 10 -> PandaBear.ContentRights.ContentLicenseKind
+PandaBear.ContentRights.ContentLicenseKind.CcBy = 4 -> PandaBear.ContentRights.ContentLicenseKind
+PandaBear.ContentRights.ContentLicenseKind.CcByNc = 7 -> PandaBear.ContentRights.ContentLicenseKind
+PandaBear.ContentRights.ContentLicenseKind.CcByNcNd = 9 -> PandaBear.ContentRights.ContentLicenseKind
+PandaBear.ContentRights.ContentLicenseKind.CcByNcSa = 8 -> PandaBear.ContentRights.ContentLicenseKind
+PandaBear.ContentRights.ContentLicenseKind.CcByNd = 6 -> PandaBear.ContentRights.ContentLicenseKind
+PandaBear.ContentRights.ContentLicenseKind.CcBySa = 5 -> PandaBear.ContentRights.ContentLicenseKind
+PandaBear.ContentRights.ContentLicenseKind.CustomTerms = 2 -> PandaBear.ContentRights.ContentLicenseKind
+PandaBear.ContentRights.ContentLicenseKind.Permission = 3 -> PandaBear.ContentRights.ContentLicenseKind
+PandaBear.ContentRights.ContentLicenseKind.PublicDomainMark = 11 -> PandaBear.ContentRights.ContentLicenseKind
+PandaBear.ContentRights.ContentLicenseKind.ReservedRights = 1 -> PandaBear.ContentRights.ContentLicenseKind
+PandaBear.ContentRights.ContentLicenseKind.Unknown = 0 -> PandaBear.ContentRights.ContentLicenseKind
+PandaBear.ContentRights.PublicContentCredit
+PandaBear.ContentRights.PublicContentCredit.CopyrightNotice.get -> string?
+PandaBear.ContentRights.PublicContentCredit.CreditLine.get -> string?
+PandaBear.ContentRights.PublicContentCredit.License.get -> PandaBear.ContentRights.ContentLicense!
+PandaBear.ContentRights.PublicContentCredit.ModificationNotice.get -> string?
+PandaBear.ContentRights.PublicContentCredit.OriginalSourceUrl.get -> PandaBear.BuildingBlocks.WebUrl?
+PandaBear.ContentRights.PublicContentCredit.Parties.get -> System.Collections.Generic.IReadOnlyList<PandaBear.ContentRights.ContentCreditParty!>!
+PandaBear.ContentRights.PublicContentCredit.PreviousModificationNotices.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.ContentRights.PublicContentCredit.Title.get -> string?
+const PandaBear.ContentRights.ContentAttribution.MaxCreditParties = 20 -> int
+const PandaBear.ContentRights.ContentAttribution.MaxPreviousModificationNotices = 20 -> int
+const PandaBear.ContentRights.ContentAttribution.MaxTextLength = 1024 -> int
+override PandaBear.ContentRights.ContentCreditParty.Equals(object? obj) -> bool
+override PandaBear.ContentRights.ContentCreditParty.GetHashCode() -> int
+override PandaBear.ContentRights.ContentCreditParty.ToString() -> string!
+static PandaBear.ContentRights.ContentAttribution.Create(PandaBear.ContentRights.ContentAttributionDefinition! definition) -> PandaBear.Results.Result<PandaBear.ContentRights.ContentAttribution!>
+static PandaBear.ContentRights.ContentAttribution.FromImageCredit(PandaBear.BuildingBlocks.ImageCredit! imageCredit, PandaBear.ContentRights.ContentLicenseKind reviewedKind, string? modificationNotice = null, PandaBear.ContentRights.ContentCreditEntityKind creatorKind = PandaBear.ContentRights.ContentCreditEntityKind.Unknown) -> PandaBear.Results.Result<PandaBear.ContentRights.ContentAttribution!>
+static PandaBear.ContentRights.ContentCreditParty.operator !=(PandaBear.ContentRights.ContentCreditParty? left, PandaBear.ContentRights.ContentCreditParty? right) -> bool
+static PandaBear.ContentRights.ContentCreditParty.operator ==(PandaBear.ContentRights.ContentCreditParty? left, PandaBear.ContentRights.ContentCreditParty? right) -> bool
+static PandaBear.ContentRights.ContentLicense.Create(PandaBear.ContentRights.ContentLicenseKind kind, string? declaredTerms = null, string? termsUrl = null) -> PandaBear.Results.Result<PandaBear.ContentRights.ContentLicense!>

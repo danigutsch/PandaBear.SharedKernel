@@ -18,4 +18,17 @@ public sealed record GalleryImage(ResponsiveImage Image, string? Caption = null)
     /// keeps the alternative text as its name. <see langword="null" />, the default, renders none.
     /// </summary>
     public ImageCreditLine? Credit { get; init; }
+
+    /// <summary>
+    /// Gets the optional reviewed credit. The grid uses it to show attribution and access to the full details next to the photo.
+    /// Use this property when the UI and metadata share a reviewed rights record. Set only one of this property and <see cref="Credit" />.
+    /// </summary>
+    public PhotoCreditItem? ReviewedCredit { get; init; }
+
+    /// <summary>
+    /// Gets the optional BCP 47 tag of the alternative text and caption. The image and its link, if present, carry the tag so
+    /// assistive technology can determine the language of their accessible names. Credit text keeps its surrounding language.
+    /// <see langword="null" /> lets the text inherit the surrounding language.
+    /// </summary>
+    public string? TextLanguage { get; init; }
 }

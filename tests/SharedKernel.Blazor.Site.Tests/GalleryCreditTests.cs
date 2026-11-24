@@ -1,3 +1,5 @@
+using PandaBear.BuildingBlocks;
+
 namespace PandaBear.Blazor.Site.Tests;
 
 /// <summary>Tests the credit of an image in an image grid.</summary>
@@ -61,6 +63,67 @@ public sealed class GalleryCreditTests : BunitContext
 
         // Assert
         cut.FindAll("figcaption").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Photo_language_applies_to_the_link_image_and_caption_while_credit_and_other_photos_inherit()
+    {
+        // Arrange
+        var fallback = new GalleryImage(SiteFixtures.Image("/a.jpg", ImageAlternative.Describe("Montanhas ao amanhecer")), "Serra ao amanhecer")
+        {
+            Href = SiteFixtures.Link("/a-large.jpg"),
+            Credit = Credit,
+            TextLanguage = "pt-BR",
+        };
+        var translated = new GalleryImage(SiteFixtures.Image("/b.jpg", ImageAlternative.Describe("Valley")), "Valley");
+
+        // Act
+        var cut = this.RenderAlbum(PageWindow.Create(1, 2, 4), [fallback, translated]);
+
+        // Assert
+        var figures = cut.FindAll("figure");
+        figures.Count.ShouldBe(2);
+        figures[0].HasAttribute("lang").ShouldBeFalse();
+        var link = figures[0].QuerySelector("a.site-image-grid__link").ShouldNotBeNull();
+        link.GetAttribute("lang").ShouldBe("pt-BR");
+        var image = link.QuerySelector("img").ShouldNotBeNull();
+        image.GetAttribute("lang").ShouldBe("pt-BR");
+        image.GetAttribute("alt").ShouldBe("Montanhas ao amanhecer");
+        var caption = figures[0].QuerySelector("figcaption span[lang='pt-BR']").ShouldNotBeNull();
+        caption.TextContent.ShouldBe("Serra ao amanhecer");
+        var credit = figures[0].QuerySelector("figcaption > .site-image-credit").ShouldNotBeNull();
+        credit.Closest("[lang]").ShouldBeNull();
+        figures[1].QuerySelector("[lang]").ShouldBeNull();
+        cut.Find("nav.site-pager").Closest("[lang]").ShouldBeNull();
+    }
+
+    [Fact]
+    public void An_unlinked_photo_can_mark_the_language_of_its_alternative_without_a_caption()
+    {
+        // Arrange
+        var image = new GalleryImage(SiteFixtures.Image("/a.jpg", ImageAlternative.Describe("Montanhas"))) { TextLanguage = "pt" };
+
+        // Act
+        var cut = Render<ImageGrid>(parameters => parameters.Add(component => component.Images, [image]));
+
+        // Assert
+        cut.Find("img").GetAttribute("lang").ShouldBe("pt");
+        cut.FindAll("figcaption").ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("pt_BR")]
+    public void An_invalid_photo_language_is_refused_on_the_images_parameter(string language)
+    {
+        // Arrange
+        var image = new GalleryImage(SiteFixtures.Image("/a.jpg")) { TextLanguage = language };
+
+        // Act
+        var render = () => Render<ImageGrid>(parameters => parameters.Add(component => component.Images, [image]));
+
+        // Assert
+        render.ShouldThrow<ArgumentException>().ParamName.ShouldBe(nameof(ImageGrid.Images));
     }
 
     [Theory]

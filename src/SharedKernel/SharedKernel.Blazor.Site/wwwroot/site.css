@@ -1615,6 +1615,70 @@ a {
     font-size: var(--site-font-size-sm);
 }
 
+/* Photo credits allow long names and localized terms to wrap beside narrow images and on credits pages. */
+.site-photo-credit,
+.site-photo-credits__item {
+    overflow-wrap: anywhere;
+}
+
+.site-photo-credit__summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--site-space-1) var(--site-space-2);
+}
+
+.site-photo-credit__disclosure {
+    margin-block-start: var(--site-space-1);
+}
+
+.site-photo-credit__disclosure > summary {
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.site-photo-credit a {
+    text-decoration: underline;
+}
+
+.site-photo-credit__notice,
+.site-photo-credit__properties {
+    margin-block: var(--site-space-1) 0;
+}
+
+.site-photo-credit__properties dt {
+    font-weight: 600;
+}
+
+.site-photo-credit__properties dd {
+    margin: 0 0 var(--site-space-1);
+}
+
+.site-photo-credit__properties dd ul {
+    margin-block: 0;
+    padding-inline-start: var(--site-space-3);
+}
+
+.site-photo-credit__properties dd > span {
+    display: block;
+}
+
+.site-photo-credits__items {
+    display: grid;
+    gap: var(--site-space-4);
+    padding: 0;
+    list-style: none;
+}
+
+.site-photo-credits__item {
+    min-inline-size: 0;
+    scroll-margin-block-start: var(--site-space-3);
+}
+
+.site-photo-credits__title {
+    margin-block: 0 var(--site-space-1);
+}
+
 /*
  * Mosaic: columns at least 14rem wide that the images fill from top to bottom, in document order, each at its own aspect ratio.
  */

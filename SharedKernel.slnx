@@ -271,6 +271,8 @@
   <Project Path="benchmarks/SharedKernel.IO.Benchmarks/SharedKernel.IO.Benchmarks.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Galleries/SharedKernel.Galleries.csproj" />
   <Project Path="tests/SharedKernel.Galleries.Tests/SharedKernel.Galleries.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.ContentRights/SharedKernel.ContentRights.csproj" />
+  <Project Path="tests/SharedKernel.ContentRights.Tests.Unit/SharedKernel.ContentRights.Tests.Unit.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Offerings/SharedKernel.Offerings.csproj" />
   <Project Path="tests/SharedKernel.Offerings.Tests/SharedKernel.Offerings.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.PageSections/SharedKernel.PageSections.csproj" />

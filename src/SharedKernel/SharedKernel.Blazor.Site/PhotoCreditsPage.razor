@@ -1,0 +1,16 @@
+@inherits SiteComponent
+<Section @attributes="AdditionalAttributes" Class="@CssClass("site-photo-credits")"
+         Title="@Title" HeadingId="@HeadingId" Level="@Level" Intro="@Intro">
+    @if (Items.Count > 0)
+    {
+        <ul class="site-photo-credits__items" role="list">
+            @foreach (var item in Items)
+            {
+                <li class="site-photo-credits__item" id="@item.Id" tabindex="-1">
+                    @Heading.Render(Level + 1, "site-photo-credits__title", null, builder => builder.AddContent(0, item.Title))
+                    <PhotoCredit Item="@item" Labels="@Labels" />
+                </li>
+            }
+        </ul>
+    }
+</Section>
