@@ -77,6 +77,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Style.Analyzers/SharedKernel.Style.Analyzers.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Style.CodeFixes/SharedKernel.Style.CodeFixes.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Testing.AI/SharedKernel.Testing.AI.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Analyzers/SharedKernel.Testing.Analyzers.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.AspNetCore/SharedKernel.Testing.AspNetCore.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Testing.Assertions/SharedKernel.Testing.Assertions.csproj" />

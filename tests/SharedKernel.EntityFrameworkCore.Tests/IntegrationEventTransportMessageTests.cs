@@ -7,7 +7,7 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// Tests the construction and consume-state transitions of IntegrationEventTransportMessage.
 /// </summary>
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IntegrationEventTransportCapability)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
 public sealed class IntegrationEventTransportMessageTests
 {
     [Fact]

@@ -1,6 +1,12 @@
 using Microsoft.AspNetCore.DataProtection;
 using PandaBear.Testing.AspNetCore.TestApp;
 
+if (args is ["--worker-fixture", .. var workerArguments])
+{
+    await WorkerFixture.Run(workerArguments);
+    return;
+}
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton(new Greeter("hello from the app"));
 builder.Services.AddDataProtection().UseEphemeralDataProtectionProvider();

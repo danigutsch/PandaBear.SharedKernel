@@ -96,7 +96,7 @@ internal static partial class CoberturaReport
 
                     var branches = 0;
                     var coveredBranches = 0;
-                    if (line.Attribute("branch")?.Value == "true")
+                    if (string.Equals(line.Attribute("branch")?.Value, "true", StringComparison.OrdinalIgnoreCase))
                     {
                         var match = Condition().Match(line.Attribute("condition-coverage")?.Value ?? string.Empty);
                         if (!match.Success

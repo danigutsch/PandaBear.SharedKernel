@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+        <PackageId>PandaBear.SharedKernel.Testing.AI</PackageId>
+        <Description>Deterministic test doubles for SharedKernel AI contracts.</Description>
+        <RootNamespace>PandaBear.Testing.AI</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>testing;ai;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+        <ProjectReference Include="../SharedKernel.AI/SharedKernel.AI.csproj" />
+    </ItemGroup>
+
+</Project>

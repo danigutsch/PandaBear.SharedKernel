@@ -11,6 +11,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="../SharedKernel.Style.Analyzers/GovernedLiteral.cs" Link="GovernedLiteral.cs" />
+        <Compile Include="../SharedKernel.Style.Analyzers/GovernedLiteralCatalog.cs" Link="GovernedLiteralCatalog.cs" />
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 

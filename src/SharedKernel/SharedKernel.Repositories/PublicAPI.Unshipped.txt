@@ -264,6 +264,7 @@ PandaBear.Repositories.RollbackFileWriteBatch
 PandaBear.Repositories.SecurityScanner
 PandaBear.Repositories.TextEncodingVerifier
 PandaBear.Repositories.VerificationIssue
+PandaBear.Repositories.TestTaxonomyVerifier
 PandaBear.Repositories.VerificationIssue.<Clone>$() -> PandaBear.Repositories.VerificationIssue!
 PandaBear.Repositories.VerificationIssue.Deconstruct(out string! Path, out string! Message) -> void
 PandaBear.Repositories.VerificationIssue.Equals(PandaBear.Repositories.VerificationIssue? other) -> bool
@@ -273,6 +274,7 @@ PandaBear.Repositories.VerificationIssue.Path.get -> string!
 PandaBear.Repositories.VerificationIssue.Path.init -> void
 PandaBear.Repositories.VerificationIssue.VerificationIssue(string! Path, string! Message) -> void
 static PandaBear.Repositories.ActionPinVerifier.Verify(string! rootPath, string? manifestPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!>!
+static PandaBear.Repositories.TestTaxonomyVerifier.Verify(string! rootPath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<PandaBear.Repositories.VerificationIssue!>!>!
 static PandaBear.Repositories.AtomicFileWrite.operator !=(PandaBear.Repositories.AtomicFileWrite? left, PandaBear.Repositories.AtomicFileWrite? right) -> bool
 static PandaBear.Repositories.AtomicFileWrite.operator ==(PandaBear.Repositories.AtomicFileWrite? left, PandaBear.Repositories.AtomicFileWrite? right) -> bool
 static PandaBear.Repositories.ConsumerConfigurationFile.ParseLockExemptProjects(byte[]! content) -> System.Collections.Generic.IReadOnlyList<string!>!

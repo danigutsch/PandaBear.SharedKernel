@@ -13,7 +13,7 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// Tests the integration event outbox message, relay options validation, relay publishing and claiming, PostgreSQL claim SQL and transport storage.
 /// </summary>
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
-[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IntegrationEventTransportCapability)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraitValues.IntegrationEventTransport)]
 public sealed class IntegrationEventOutboxMessageTests
 {
     private const string JsonContentType = "application/json";

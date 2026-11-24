@@ -1,4 +1,5 @@
 using System.Xml.Linq;
+using PandaBear.Testing.Roslyn;
 
 namespace PandaBear.Style.Analyzers.Tests;
 

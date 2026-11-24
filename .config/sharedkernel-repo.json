@@ -108,6 +108,7 @@
     "src/SharedKernel/SharedKernel.Style.Analyzers/SharedKernel.Style.Analyzers.csproj",
     "src/SharedKernel/SharedKernel.Style.CodeFixes/SharedKernel.Style.CodeFixes.csproj",
     "src/SharedKernel/SharedKernel.Tabular/SharedKernel.Tabular.csproj",
+    "src/SharedKernel/SharedKernel.Testing.AI/SharedKernel.Testing.AI.csproj",
     "src/SharedKernel/SharedKernel.Testing.Analyzers/SharedKernel.Testing.Analyzers.csproj",
     "src/SharedKernel/SharedKernel.Testing.AspNetCore/SharedKernel.Testing.AspNetCore.csproj",
     "src/SharedKernel/SharedKernel.Testing.CodeFixes/SharedKernel.Testing.CodeFixes.csproj",

@@ -1,0 +1,993 @@
+{
+  "version": 1,
+  "sutRoots": ["src", "tools"],
+  "testRoots": ["tests"],
+  "suts": [
+    {"path":"src/SharedKernel/SharedKernel.AI/SharedKernel.AI.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.ApiVersioning.AspNetCore/SharedKernel.ApiVersioning.AspNetCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
+    {"path":"src/SharedKernel/SharedKernel.ApiVersioning/SharedKernel.ApiVersioning.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.AspNetCore.Authentication.Bff/SharedKernel.AspNetCore.Authentication.Bff.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.AspNetCore.Authentication/SharedKernel.AspNetCore.Authentication.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
+    {"path":"src/SharedKernel/SharedKernel.AspNetCore.Localization/SharedKernel.AspNetCore.Localization.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration"]},
+    {"path":"src/SharedKernel/SharedKernel.AspNetCore.RateLimiting/SharedKernel.AspNetCore.RateLimiting.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
+    {"path":"src/SharedKernel/SharedKernel.AspNetCore.Seo/SharedKernel.AspNetCore.Seo.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration"]},
+    {"path":"src/SharedKernel/SharedKernel.AspNetCore.WebAnalytics/SharedKernel.AspNetCore.WebAnalytics.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration"]},
+    {"path":"src/SharedKernel/SharedKernel.AspNetCore/SharedKernel.AspNetCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Aspire.Analyzers/SharedKernel.Aspire.Analyzers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Aspire.CodeFixes/SharedKernel.Aspire.CodeFixes.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Aspire.Hosting.ClamAv/SharedKernel.Aspire.Hosting.ClamAv.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Aspire.Hosting.Grafana/SharedKernel.Aspire.Hosting.Grafana.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Aspire.Hosting.K6/SharedKernel.Aspire.Hosting.K6.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
+    {"path":"src/SharedKernel/SharedKernel.Aspire.Hosting.SeaweedFs/SharedKernel.Aspire.Hosting.SeaweedFs.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Aspire.Hosting.Sqlite/SharedKernel.Aspire.Hosting.Sqlite.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Aspire.Hosting.Umami/SharedKernel.Aspire.Hosting.Umami.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration"]},
+    {"path":"src/SharedKernel/SharedKernel.Aspire.Hosting/SharedKernel.Aspire.Hosting.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
+    {"path":"src/SharedKernel/SharedKernel.AuditTrail.SourceGenerator/SharedKernel.AuditTrail.SourceGenerator.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.AuditTrail/SharedKernel.AuditTrail.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Blazor.Analyzers/SharedKernel.Blazor.Analyzers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Blazor.CodeFixes/SharedKernel.Blazor.CodeFixes.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Blazor.Site/SharedKernel.Blazor.Site.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["System","Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Blazor/SharedKernel.Blazor.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["System","Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Branding/SharedKernel.Branding.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.CI.Forgejo/SharedKernel.CI.Forgejo.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.CI.GitHub/SharedKernel.CI.GitHub.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.CI/SharedKernel.CI.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
+    {"path":"src/SharedKernel/SharedKernel.Caching/SharedKernel.Caching.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.ConfigurationFiles/SharedKernel.ConfigurationFiles.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.DevContainers/SharedKernel.DevContainers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.DispositionHold.Abstractions/SharedKernel.DispositionHold.Abstractions.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.DispositionHold.EntityFrameworkCore/SharedKernel.DispositionHold.EntityFrameworkCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.DocumentRendering/SharedKernel.DocumentRendering.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Documentation/SharedKernel.Documentation.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Domain.Analyzers/SharedKernel.Domain.Analyzers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Domain.CodeFixes/SharedKernel.Domain.CodeFixes.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Domain.EntityFrameworkCore/SharedKernel.Domain.EntityFrameworkCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
+    {"path":"src/SharedKernel/SharedKernel.Domain.SourceGenerator/SharedKernel.Domain.SourceGenerator.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Domain/SharedKernel.Domain.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Encodings/SharedKernel.Encodings.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.EntityFrameworkCore.Analyzers/SharedKernel.EntityFrameworkCore.Analyzers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.EntityFrameworkCore.Npgsql/SharedKernel.EntityFrameworkCore.Npgsql.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.EntityFrameworkCore.Sqlite/SharedKernel.EntityFrameworkCore.Sqlite.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration"]},
+    {"path":"src/SharedKernel/SharedKernel.EntityFrameworkCore/SharedKernel.EntityFrameworkCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration","Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.EventSourcing.Npgsql/SharedKernel.EventSourcing.Npgsql.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration"]},
+    {"path":"src/SharedKernel/SharedKernel.EventSourcing/SharedKernel.EventSourcing.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Forgejo/SharedKernel.Forgejo.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Galleries/SharedKernel.Galleries.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.GitHub/SharedKernel.GitHub.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.HttpCaching.AspNetCore/SharedKernel.HttpCaching.AspNetCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.HttpClients/SharedKernel.HttpClients.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.IO.Analyzers/SharedKernel.IO.Analyzers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.IO/SharedKernel.IO.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Idempotency.Abstractions/SharedKernel.Idempotency.Abstractions.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Idempotency.AspNetCore/SharedKernel.Idempotency.AspNetCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Idempotency.EntityFrameworkCore/SharedKernel.Idempotency.EntityFrameworkCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.ImageProcessing/SharedKernel.ImageProcessing.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
+    {"path":"src/SharedKernel/SharedKernel.InputNormalization/SharedKernel.InputNormalization.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.IntegrationTesting/SharedKernel.IntegrationTesting.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.LoadTesting.K6/SharedKernel.LoadTesting.K6.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.LoadTesting/SharedKernel.LoadTesting.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.MalwareScanning.ClamAv/SharedKernel.MalwareScanning.ClamAv.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration"]},
+    {"path":"src/SharedKernel/SharedKernel.MalwareScanning/SharedKernel.MalwareScanning.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Mediator.Abstractions/SharedKernel.Mediator.Abstractions.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Mediator.Analyzers/SharedKernel.Mediator.Analyzers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Mediator.CodeFixes/SharedKernel.Mediator.CodeFixes.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Mediator.EntityFrameworkCore/SharedKernel.Mediator.EntityFrameworkCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
+    {"path":"src/SharedKernel/SharedKernel.Mediator.SourceGenerator/SharedKernel.Mediator.SourceGenerator.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Mediator/SharedKernel.Mediator.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Contract","Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Messaging.IntegrationEvents.CloudEvents/SharedKernel.Messaging.IntegrationEvents.CloudEvents.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore/SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Messaging.IntegrationEvents.SourceGenerator/SharedKernel.Messaging.IntegrationEvents.SourceGenerator.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Messaging.IntegrationEvents/SharedKernel.Messaging.IntegrationEvents.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Messaging.Protobuf/SharedKernel.Messaging.Protobuf.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Messaging/SharedKernel.Messaging.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Npgsql/SharedKernel.Npgsql.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration","Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.ObjectStorage.FileSystem/SharedKernel.ObjectStorage.FileSystem.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration"]},
+    {"path":"src/SharedKernel/SharedKernel.ObjectStorage.S3/SharedKernel.ObjectStorage.S3.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.ObjectStorage/SharedKernel.ObjectStorage.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Observability.Npgsql/SharedKernel.Observability.Npgsql.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Observability/SharedKernel.Observability.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration","Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Offerings/SharedKernel.Offerings.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.OpenApi/SharedKernel.OpenApi.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
+    {"path":"src/SharedKernel/SharedKernel.Packages/SharedKernel.Packages.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.PageSections.Blazor/SharedKernel.PageSections.Blazor.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["System","Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.PageSections/SharedKernel.PageSections.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.PlaywrightMcp/SharedKernel.PlaywrightMcp.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Processes/SharedKernel.Processes.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Repositories.Forgejo/SharedKernel.Repositories.Forgejo.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Repositories.GitHub/SharedKernel.Repositories.GitHub.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Repositories/SharedKernel.Repositories.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Results.Analyzers/SharedKernel.Results.Analyzers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Results.AspNet/SharedKernel.Results.AspNet.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
+    {"path":"src/SharedKernel/SharedKernel.Results.SourceGenerator/SharedKernel.Results.SourceGenerator.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Sandbox.ClaudeCode/SharedKernel.Sandbox.ClaudeCode.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Sandbox/SharedKernel.Sandbox.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Scheduling/SharedKernel.Scheduling.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.SecretScanning/SharedKernel.SecretScanning.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Secrets.Age/SharedKernel.Secrets.Age.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Secrets.Sops/SharedKernel.Secrets.Sops.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Secrets/SharedKernel.Secrets.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.ServiceDefaults/SharedKernel.ServiceDefaults.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration"]},
+    {"path":"src/SharedKernel/SharedKernel.Style.Analyzers/SharedKernel.Style.Analyzers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Style.CodeFixes/SharedKernel.Style.CodeFixes.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Tabular/SharedKernel.Tabular.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.AI/SharedKernel.Testing.AI.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.Analyzers/SharedKernel.Testing.Analyzers.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.AspNetCore/SharedKernel.Testing.AspNetCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration"]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.Assertions/SharedKernel.Testing.Assertions.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.CodeFixes/SharedKernel.Testing.CodeFixes.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.Data/SharedKernel.Testing.Data.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.Domain/SharedKernel.Testing.Domain.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.EntityFrameworkCore/SharedKernel.Testing.EntityFrameworkCore.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.Http/SharedKernel.Testing.Http.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.Logging/SharedKernel.Testing.Logging.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.MalwareScanning/SharedKernel.Testing.MalwareScanning.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.Mediator/SharedKernel.Testing.Mediator.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.Messaging/SharedKernel.Testing.Messaging.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.ObjectStorage/SharedKernel.Testing.ObjectStorage.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.Playwright/SharedKernel.Testing.Playwright.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.Roslyn/SharedKernel.Testing.Roslyn.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.Snapshots/SharedKernel.Testing.Snapshots.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.SourceGenerator/SharedKernel.Testing.SourceGenerator.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.Sqlite/SharedKernel.Testing.Sqlite.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.Web/SharedKernel.Testing.Web.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing.Xunit/SharedKernel.Testing.Xunit.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration","System","Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.UploadSanitizing/SharedKernel.UploadSanitizing.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Vault.Bitwarden/SharedKernel.Vault.Bitwarden.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Vault.Keeper/SharedKernel.Vault.Keeper.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Vault/SharedKernel.Vault.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"src/SharedKernel/SharedKernel.Versioning/SharedKernel.Versioning.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
+    {"path":"tools/SharedKernel.CI.Tool/SharedKernel.CI.Tool.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Architecture","Component"]},
+    {"path":"tools/SharedKernel.Documentation.Tool/SharedKernel.Documentation.Tool.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]},
+    {"path":"tools/SharedKernel.K6.Tool/SharedKernel.K6.Tool.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Integration","Unit"]},
+    {"path":"tools/SharedKernel.Packages.Tool/SharedKernel.Packages.Tool.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"tools/SharedKernel.PlaywrightMcp.Tool/SharedKernel.PlaywrightMcp.Tool.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"tools/SharedKernel.RepoConfig.Tool/SharedKernel.RepoConfig.Tool.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Component"]},
+    {"path":"tools/SharedKernel.Sandbox.Tool/SharedKernel.Sandbox.Tool.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"tools/SharedKernel.Secrets.Tool/SharedKernel.Secrets.Tool.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"tools/SharedKernel.VaultManager.Tool/SharedKernel.VaultManager.Tool.csproj","directOwner":"SharedKernel maintainers","requiredTypes":["Unit"]},
+    {"path":"tools/SharedKernel.Versioning.Tool/SharedKernel.Versioning.Tool.csproj","directOwner":"SharedKernel maintainers","requiredTypes":[]}
+  ],
+  "suites": [
+    {
+      "path": "tests/SharedKernel.AI.Tests/SharedKernel.AI.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.AI/SharedKernel.AI.csproj","type":"Unit","dependency":"in-process","capabilities":["ImageInputLimit","LiteLlmImageTextGenerator"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.ApiVersioning.AspNetCore.Tests/SharedKernel.ApiVersioning.AspNetCore.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.ApiVersioning.AspNetCore/SharedKernel.ApiVersioning.AspNetCore.csproj","type":"Component","dependency":"in-process-aspnet","capabilities":["ApiVersionRouteGroupExtensions"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.ApiVersioning.Tests/SharedKernel.ApiVersioning.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.ApiVersioning/SharedKernel.ApiVersioning.csproj","type":"Unit","dependency":"in-process","capabilities":["ApiDeprecationPolicyExtensions","ApiVersionCatalog"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.AspNetCore.Authentication.Bff.Tests/SharedKernel.AspNetCore.Authentication.Bff.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.AspNetCore.Authentication.Bff/SharedKernel.AspNetCore.Authentication.Bff.csproj","type":"Unit","dependency":"in-process","capabilities":["AuthenticationEvent","CurrentUserAccessor"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.AspNetCore.Authentication.Tests/SharedKernel.AspNetCore.Authentication.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.AspNetCore.Authentication/SharedKernel.AspNetCore.Authentication.csproj","type":"Component","dependency":"in-process-aspnet","capabilities":["AntiforgerySignOutEndpointRouteBuilderExtensions","ApiAuthenticationServiceCollectionExtensions"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.AspNetCore.Localization.Tests/SharedKernel.AspNetCore.Localization.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.AspNetCore.Localization/SharedKernel.AspNetCore.Localization.csproj","type":"Integration","dependency":"test-server","capabilities":["CulturePathRedirect","CulturePath"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.AspNetCore.RateLimiting.Tests/SharedKernel.AspNetCore.RateLimiting.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.AspNetCore.RateLimiting/SharedKernel.AspNetCore.RateLimiting.csproj","type":"Component","dependency":"in-process-aspnet","capabilities":["RateLimitEventPipeline","RateLimitEventTelemetry"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.AspNetCore.Seo.Tests/SharedKernel.AspNetCore.Seo.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.AspNetCore.Seo/SharedKernel.AspNetCore.Seo.csproj","type":"Integration","dependency":"test-server","capabilities":["CanonicalOrigin","RobotsTxtEndpoint"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.AspNetCore.Tests/SharedKernel.AspNetCore.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.AspNetCore/SharedKernel.AspNetCore.csproj","type":"Unit","dependency":"in-process","capabilities":["DefaultPublicCaching","ForwardedClientIp"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.AspNetCore.WebAnalytics.Tests/SharedKernel.AspNetCore.WebAnalytics.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.AspNetCore.WebAnalytics/SharedKernel.AspNetCore.WebAnalytics.csproj","type":"Integration","dependency":"test-server","capabilities":["PageViewCapture","PageViewDispatcher"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Aspire.Analyzers.Tests/SharedKernel.Aspire.Analyzers.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Aspire.Analyzers/SharedKernel.Aspire.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["AspireAnalyzer"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Aspire.CodeFixes.Tests/SharedKernel.Aspire.CodeFixes.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Aspire.CodeFixes/SharedKernel.Aspire.CodeFixes.csproj","type":"Unit","dependency":"in-process","capabilities":["AspireCodeFixProvider"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Aspire.Hosting.K6.Tests/SharedKernel.Aspire.Hosting.K6.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Aspire.Hosting.K6/SharedKernel.Aspire.Hosting.K6.csproj","type":"Component","dependency":"in-process-aspire-model","capabilities":["K6ScenarioResourceExtensions"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Aspire.Hosting.Tests/SharedKernel.Aspire.Hosting.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Aspire.Hosting/SharedKernel.Aspire.Hosting.csproj","type":"Component","dependency":"in-process-aspire-model","capabilities":["AppHostEnvironmentHealthCheck","ClamAvResource"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Aspire.Hosting.Umami.Tests/SharedKernel.Aspire.Hosting.Umami.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Aspire.Hosting.Umami/SharedKernel.Aspire.Hosting.Umami.csproj","type":"Integration","dependency":"umami-and-postgresql","capabilities":["UmamiPageViewEndToEnd","UmamiTestWebsiteBorrow"],"lane":"services"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.AuditTrail.GeneratorTests/SharedKernel.AuditTrail.GeneratorTests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.AuditTrail/SharedKernel.AuditTrail.csproj","type":"Unit","dependency":"in-process","capabilities":["AuditTrailMappingGenerator","AuditTrailPackageConsumption"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Blazor.Analyzers.Tests/SharedKernel.Blazor.Analyzers.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Blazor.Analyzers/SharedKernel.Blazor.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["BusyFlagAnalyzer","BusyFlagDetection"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Blazor.CodeFixes.Tests/SharedKernel.Blazor.CodeFixes.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Blazor.CodeFixes/SharedKernel.Blazor.CodeFixes.csproj","type":"Unit","dependency":"in-process","capabilities":["BlazorCodeFix"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Blazor.Site.Tests/SharedKernel.Blazor.Site.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The current executable has multiple explicit testing seams.",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Blazor.Site/SharedKernel.Blazor.Site.csproj","type":"Unit","dependency":"in-process","capabilities":["SiteLayoutBrowser","ThemePreviewStrictPolicy"],"lane":"browser"},
+        {"sut":"src/SharedKernel/SharedKernel.Blazor.Site/SharedKernel.Blazor.Site.csproj","type":"System","dependency":"playwright","capabilities":["SiteLayoutBrowser","ThemePreviewStrictPolicy"],"lane":"browser"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Blazor.Tests/SharedKernel.Blazor.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The merged suite runs both in-process component tests and interactive browser tests.",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Blazor/SharedKernel.Blazor.csproj","type":"Unit","dependency":"in-process","capabilities":["BlazorServiceCollectionExtensions","BoundedText","ImagePicker"],"lane":"library"},
+        {"sut":"src/SharedKernel/SharedKernel.Blazor/SharedKernel.Blazor.csproj","type":"System","dependency":"playwright","capabilities":["ImagePickerKeyboard"],"lane":"browser"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Branding.Tests/SharedKernel.Branding.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Branding/SharedKernel.Branding.csproj","type":"Unit","dependency":"in-process","capabilities":["BrandingApiClient","BrandingSettings"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.BuildingBlocks.Tests/SharedKernel.BuildingBlocks.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj","type":"Unit","dependency":"in-process","capabilities":["Cnpj","Cpf"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.CI.Forgejo.Tests/SharedKernel.CI.Forgejo.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.CI.Forgejo/SharedKernel.CI.Forgejo.csproj","type":"Unit","dependency":"in-process","capabilities":["ForgejoActionsFiles","ForgejoReleaseAssets"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.CI.GitHub.Tests/SharedKernel.CI.GitHub.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.CI.GitHub/SharedKernel.CI.GitHub.csproj","type":"Unit","dependency":"in-process","capabilities":["GitHubActionsFiles","GitHubReleaseStore"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.CI.Tests/SharedKernel.CI.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.CI/SharedKernel.CI.csproj","type":"Component","dependency":"temporary-repositories","capabilities":["BuildFileInertness","CiConfigurationFile"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Caching.Tests/SharedKernel.Caching.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Caching/SharedKernel.Caching.csproj","type":"Unit","dependency":"in-process","capabilities":["RevisionCache"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.ConfigurationFiles.Tests/SharedKernel.ConfigurationFiles.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.ConfigurationFiles/SharedKernel.ConfigurationFiles.csproj","type":"Unit","dependency":"in-process","capabilities":["JsonConfigurationFile"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.DevContainers.Tests/SharedKernel.DevContainers.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.DevContainers/SharedKernel.DevContainers.csproj","type":"Unit","dependency":"in-process","capabilities":["DevcontainerCliArchive","PodmanDnsPreflight"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.DispositionHold.Abstractions.Tests/SharedKernel.DispositionHold.Abstractions.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.DispositionHold.Abstractions/SharedKernel.DispositionHold.Abstractions.csproj","type":"Unit","dependency":"in-process","capabilities":["DispositionHoldDecision","DispositionScope"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.DocumentRendering.Tests/SharedKernel.DocumentRendering.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.DocumentRendering/SharedKernel.DocumentRendering.csproj","type":"Unit","dependency":"in-process","capabilities":["DocumentBlock","DocumentList"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Documentation.Tests/SharedKernel.Documentation.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Documentation/SharedKernel.Documentation.csproj","type":"Unit","dependency":"in-process","capabilities":["DocumentationCommandLine","DocumentationConformanceChecker"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Domain.Analyzers.Tests/SharedKernel.Domain.Analyzers.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Domain.Analyzers/SharedKernel.Domain.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["AmbientClockAnalyzer","DomainAnalyzer"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Domain.CodeFixes.Tests/SharedKernel.Domain.CodeFixes.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Domain.CodeFixes/SharedKernel.Domain.CodeFixes.csproj","type":"Unit","dependency":"in-process","capabilities":["DomainCodeFixProvider"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Domain.EntityFrameworkCore.Tests/SharedKernel.Domain.EntityFrameworkCore.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Domain.EntityFrameworkCore/SharedKernel.Domain.EntityFrameworkCore.csproj","type":"Component","dependency":"entity-framework-core","capabilities":["DomainEventDispatch"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Domain.GeneratorTests/SharedKernel.Domain.GeneratorTests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Domain/SharedKernel.Domain.csproj","type":"Unit","dependency":"in-process","capabilities":["ModelIdentityGenerator","ValueObjectGenerator"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Domain.Tests/SharedKernel.Domain.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Domain/SharedKernel.Domain.csproj","type":"Unit","dependency":"in-process","capabilities":["CompositeDomainEventDispatcher","DomainEventDispatch"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Encodings.Tests/SharedKernel.Encodings.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Encodings/SharedKernel.Encodings.csproj","type":"Unit","dependency":"in-process","capabilities":["base32","bech32"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.EntityFrameworkCore.Analyzers.Tests/SharedKernel.EntityFrameworkCore.Analyzers.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.EntityFrameworkCore.Analyzers/SharedKernel.EntityFrameworkCore.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["EntityFrameworkCoreAnalyzer"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.EntityFrameworkCore.Sqlite.Tests/SharedKernel.EntityFrameworkCore.Sqlite.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.EntityFrameworkCore.Sqlite/SharedKernel.EntityFrameworkCore.Sqlite.csproj","type":"Integration","dependency":"sqlite","capabilities":["ApplyMigrations","EnsureMigrationsApplied"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The current executable has multiple explicit testing seams.",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.EntityFrameworkCore/SharedKernel.EntityFrameworkCore.csproj","type":"Unit","dependency":"in-process","capabilities":["CommandLogProjection","ContextKeyedDefaultRegistration"],"lane":"services"},
+        {"sut":"src/SharedKernel/SharedKernel.EntityFrameworkCore/SharedKernel.EntityFrameworkCore.csproj","type":"Integration","dependency":"postgresql","capabilities":["CommandLogProjection","ContextKeyedDefaultRegistration"],"lane":"services"},
+        {"sut":"src/SharedKernel/SharedKernel.IntegrationTesting/SharedKernel.IntegrationTesting.csproj","type":"Unit","dependency":"in-process","capabilities":["database-integration-trait-identity"],"lane":"services"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.EventSourcing.Npgsql/SharedKernel.EventSourcing.Npgsql.csproj","type":"Integration","dependency":"postgresql","capabilities":["PostgreSqlControlledTime","PostgreSqlEventSourcingTelemetry"],"lane":"services"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.EventSourcing.Tests/SharedKernel.EventSourcing.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.EventSourcing/SharedKernel.EventSourcing.csproj","type":"Unit","dependency":"in-process","capabilities":["EventSourcedAggregateRoot","EventSourcingValue"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Forgejo.Tests/SharedKernel.Forgejo.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Forgejo/SharedKernel.Forgejo.csproj","type":"Unit","dependency":"in-process","capabilities":["ForgejoApiClient","ForgejoPager"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Galleries.Tests/SharedKernel.Galleries.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The merged gallery test executable retains its existing name during the taxonomy migration.",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Galleries/SharedKernel.Galleries.csproj","type":"Unit","dependency":"in-process","capabilities":["Album","AlbumRevision","AlbumView"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.GitHub.Tests/SharedKernel.GitHub.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.GitHub/SharedKernel.GitHub.csproj","type":"Unit","dependency":"in-process","capabilities":["GitHubApiClient","GitHubToken"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.HttpClients.Tests/SharedKernel.HttpClients.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.HttpClients/SharedKernel.HttpClients.csproj","type":"Unit","dependency":"in-process","capabilities":["ContractHttpValidation","HttpOutcomeMapper"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.IO.Analyzers.Tests/SharedKernel.IO.Analyzers.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.IO.Analyzers/SharedKernel.IO.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["RequestSizeLimitAnalyzer","IOAnalyzer"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.IO.Tests/SharedKernel.IO.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.IO/SharedKernel.IO.csproj","type":"Unit","dependency":"temporary-files-and-in-process","capabilities":["BoundedReaderFile","BoundedReaderStream"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Idempotency.Abstractions.Tests/SharedKernel.Idempotency.Abstractions.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Idempotency.Abstractions/SharedKernel.Idempotency.Abstractions.csproj","type":"Unit","dependency":"in-process","capabilities":["IIdempotencyStoreRetentionOwner","IIdempotencyStore"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Idempotency.AspNetCore.Tests/SharedKernel.Idempotency.AspNetCore.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Idempotency.AspNetCore/SharedKernel.Idempotency.AspNetCore.csproj","type":"Unit","dependency":"in-process","capabilities":["IdempotencyKeyHeader","KeyBoundDataProtector"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.ImageProcessing.Tests/SharedKernel.ImageProcessing.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.ImageProcessing/SharedKernel.ImageProcessing.csproj","type":"Component","dependency":"magick-image-processor","capabilities":["ImageAnimationDetector","MagickImageProcessorPngOutput"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.InputNormalization.Tests/SharedKernel.InputNormalization.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.InputNormalization/SharedKernel.InputNormalization.csproj","type":"Unit","dependency":"in-process","capabilities":["ControlCharacters","NumericSanitizer"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.K6.Tool.Tests/SharedKernel.K6.Tool.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The current executable has multiple explicit testing seams.",
+      "seams": [
+        {"sut":"tools/SharedKernel.K6.Tool/SharedKernel.K6.Tool.csproj","type":"Unit","dependency":"in-process","capabilities":["K6CommandLine","K6ConfigurationFile"],"lane":"library"},
+        {"sut":"tools/SharedKernel.K6.Tool/SharedKernel.K6.Tool.csproj","type":"Integration","dependency":"loopback","capabilities":["K6CommandLine","K6ConfigurationFile"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.LoadTesting.K6.Tests/SharedKernel.LoadTesting.K6.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.LoadTesting.K6/SharedKernel.LoadTesting.K6.csproj","type":"Unit","dependency":"in-process","capabilities":["K6ArgumentPolicy","K6LoadGenerator"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.LoadTesting.Tests/SharedKernel.LoadTesting.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.LoadTesting/SharedKernel.LoadTesting.csproj","type":"Unit","dependency":"in-process","capabilities":["LoadTestContainer","LoadTestRunner"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.MalwareScanning.ClamAv.Tests/SharedKernel.MalwareScanning.ClamAv.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.MalwareScanning.ClamAv/SharedKernel.MalwareScanning.ClamAv.csproj","type":"Integration","dependency":"clamav-and-loopback","capabilities":["ClamAvHealthCheck","ClamAvMalwareScanner"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Mediator.Analyzers.Tests/SharedKernel.Mediator.Analyzers.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Mediator.Analyzers/SharedKernel.Mediator.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["MediatorAnalyzer"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Mediator.CodeFixes.Tests/SharedKernel.Mediator.CodeFixes.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Mediator.CodeFixes/SharedKernel.Mediator.CodeFixes.csproj","type":"Unit","dependency":"in-process","capabilities":["MediatorCodeFixProvider"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Mediator.EntityFrameworkCore.Tests/SharedKernel.Mediator.EntityFrameworkCore.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Mediator.EntityFrameworkCore/SharedKernel.Mediator.EntityFrameworkCore.csproj","type":"Component","dependency":"entity-framework-core","capabilities":["EfCoreCommandTransactionBehavior","ResultTransactionBehavior"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Mediator.GeneratorTests/SharedKernel.Mediator.GeneratorTests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Mediator/SharedKernel.Mediator.csproj","type":"Unit","dependency":"in-process","capabilities":["GeneratorDependencyInjection","GeneratorDeterminism"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Mediator.PackageConsumptionTests/SharedKernel.Mediator.PackageConsumptionTests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Mediator/SharedKernel.Mediator.csproj","type":"Contract","dependency":"packed-immutable-artifacts","capabilities":["SharedKernelGeneratorPackageConsumption","SharedKernelMediatorPackageConsumption"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Mediator.Tests/SharedKernel.Mediator.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Mediator/SharedKernel.Mediator.csproj","type":"Unit","dependency":"in-process","capabilities":["ActivityBehavior","ConcurrencyConflictBehavior"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests/SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Messaging.IntegrationEvents.CloudEvents/SharedKernel.Messaging.IntegrationEvents.CloudEvents.csproj","type":"Unit","dependency":"in-process","capabilities":["CloudEventMapper"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Messaging.IntegrationEvents.GeneratorTests/SharedKernel.Messaging.IntegrationEvents.GeneratorTests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Messaging.IntegrationEvents/SharedKernel.Messaging.IntegrationEvents.csproj","type":"Unit","dependency":"in-process","capabilities":["IntegrationEventMappingGeneratorProtobufConsumer","IntegrationEventMappingGeneratorProtobuf"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Messaging.IntegrationEvents.Tests/SharedKernel.Messaging.IntegrationEvents.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Messaging.IntegrationEvents/SharedKernel.Messaging.IntegrationEvents.csproj","type":"Unit","dependency":"in-process","capabilities":["GeneratedIntegrationEventDispatch","GeneratedIntegrationEventProtobufDelivery"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Messaging.Protobuf.Tests/SharedKernel.Messaging.Protobuf.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Messaging.Protobuf/SharedKernel.Messaging.Protobuf.csproj","type":"Unit","dependency":"in-process","capabilities":["ProtobufEventEnvelopeFormat","ProtobufIntegrationEventConsumer"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Messaging.Tests/SharedKernel.Messaging.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Messaging/SharedKernel.Messaging.csproj","type":"Unit","dependency":"in-process","capabilities":["EventEnvelope"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Npgsql.Tests/SharedKernel.Npgsql.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The current executable has multiple explicit testing seams.",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Npgsql/SharedKernel.Npgsql.csproj","type":"Unit","dependency":"in-process","capabilities":["AppHostModel","AspireReadiness"],"lane":"services"},
+        {"sut":"src/SharedKernel/SharedKernel.Npgsql/SharedKernel.Npgsql.csproj","type":"Integration","dependency":"postgresql","capabilities":["AppHostModel","AspireReadiness"],"lane":"services"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.ObjectStorage.FileSystem.Tests/SharedKernel.ObjectStorage.FileSystem.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.ObjectStorage.FileSystem/SharedKernel.ObjectStorage.FileSystem.csproj","type":"Integration","dependency":"temporary-filesystem","capabilities":["object-store","atomic-publication"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.ObjectStorage.S3.Tests/SharedKernel.ObjectStorage.S3.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.ObjectStorage.S3/SharedKernel.ObjectStorage.S3.csproj","type":"Unit","dependency":"in-process","capabilities":["ObjectStorageKey","S3ObjectStoreHealthCheck"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Observability.Tests/SharedKernel.Observability.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The current executable has multiple explicit testing seams.",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Observability/SharedKernel.Observability.csproj","type":"Unit","dependency":"in-process","capabilities":["ActivityPrivacyExport","ActivityPrivacyProcessor"],"lane":"library"},
+        {"sut":"src/SharedKernel/SharedKernel.Observability/SharedKernel.Observability.csproj","type":"Integration","dependency":"loopback","capabilities":["ActivityPrivacyExport","ActivityPrivacyProcessor"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Offerings.Tests/SharedKernel.Offerings.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The merged offerings test executable retains its existing name during the taxonomy migration.",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Offerings/SharedKernel.Offerings.csproj","type":"Unit","dependency":"in-process","capabilities":["Offering","OfferingSchedule","OfferingStructuredData","OfferingView"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.OpenApi.Tests/SharedKernel.OpenApi.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.OpenApi/SharedKernel.OpenApi.csproj","type":"Component","dependency":"in-process-aspnet","capabilities":["ConditionalRequestEndpointExtensions","MultipartFormRequestBodyDocumentTransformer"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Packages.Tests/SharedKernel.Packages.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Packages/SharedKernel.Packages.csproj","type":"Unit","dependency":"in-process","capabilities":["AptPackageReader","BrewPackageReader"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Packages.Tool.Tests/SharedKernel.Packages.Tool.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"tools/SharedKernel.Packages.Tool/SharedKernel.Packages.Tool.csproj","type":"Unit","dependency":"in-process","capabilities":["DocumentedCommandLines","PlanCommand"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.PageSections.Blazor.Tests/SharedKernel.PageSections.Blazor.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The merged suite runs both in-process renderer tests and browser layout tests.",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.PageSections.Blazor/SharedKernel.PageSections.Blazor.csproj","type":"Unit","dependency":"in-process","capabilities":["PageSectionsView"],"lane":"library"},
+        {"sut":"src/SharedKernel/SharedKernel.PageSections.Blazor/SharedKernel.PageSections.Blazor.csproj","type":"System","dependency":"playwright","capabilities":["PageSectionsResponsiveLayout"],"lane":"browser"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.PageSections.Tests/SharedKernel.PageSections.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The merged page sections test executable retains its existing name during the taxonomy migration.",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.PageSections/SharedKernel.PageSections.csproj","type":"Unit","dependency":"in-process","capabilities":["PageSection","PageSectionList","PageSectionRules"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.PlaywrightMcp.Tests/SharedKernel.PlaywrightMcp.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.PlaywrightMcp/SharedKernel.PlaywrightMcp.csproj","type":"Unit","dependency":"in-process","capabilities":["PlaywrightMcpContainerArguments","PlaywrightMcpRuntime"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.PlaywrightMcp.Tool.Tests/SharedKernel.PlaywrightMcp.Tool.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"tools/SharedKernel.PlaywrightMcp.Tool/SharedKernel.PlaywrightMcp.Tool.csproj","type":"Unit","dependency":"in-process","capabilities":["PlaywrightMcpCommandLine","PlaywrightMcpTermination"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Processes.Tests/SharedKernel.Processes.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Processes/SharedKernel.Processes.csproj","type":"Unit","dependency":"in-process","capabilities":["BoundedProcessRunner","CancellableChildProcess"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.RepoConfig.Tests/SharedKernel.RepoConfig.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"tools/SharedKernel.RepoConfig.Tool/SharedKernel.RepoConfig.Tool.csproj","type":"Component","dependency":"temporary-git-repositories-and-fake-http","capabilities":["BaselineCommand","BaselineGit"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Repositories.Forgejo.Tests/SharedKernel.Repositories.Forgejo.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Repositories.Forgejo/SharedKernel.Repositories.Forgejo.csproj","type":"Unit","dependency":"in-process","capabilities":["ForgejoIssueReader","ForgejoLabelStore"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Repositories.GitHub.Tests/SharedKernel.Repositories.GitHub.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Repositories.GitHub/SharedKernel.Repositories.GitHub.csproj","type":"Unit","dependency":"in-process","capabilities":["GitHubDependencySubmission","GitHubForgeIssueReader"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Repositories.Tests/SharedKernel.Repositories.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Repositories/SharedKernel.Repositories.csproj","type":"Unit","dependency":"in-process","capabilities":["JsonVerifierInvalidUtf8","MarkdownLinkRulesAnchor"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The current executable has multiple explicit testing seams.",
+      "seams": [
+        {"sut":"tools/SharedKernel.CI.Tool/SharedKernel.CI.Tool.csproj","type":"Architecture","dependency":"tracked-repository-and-compiled-assemblies","capabilities":["CandidateStagingCheck","CandidateStagingFeed"],"lane":"library"},
+        {"sut":"tools/SharedKernel.CI.Tool/SharedKernel.CI.Tool.csproj","type":"Component","dependency":"temporary-git-repositories","capabilities":["CandidateStagingCheck","CandidateStagingFeed"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Results.Analyzers.Tests/SharedKernel.Results.Analyzers.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Results.Analyzers/SharedKernel.Results.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["DiscardedResult","RawResultEndpoint"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Results.AspNet.Tests/SharedKernel.Results.AspNet.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Results.AspNet/SharedKernel.Results.AspNet.csproj","type":"Component","dependency":"in-process-aspnet","capabilities":["ConcurrencyHeaders","ResultHttpExtensions"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Results.GeneratorTests/SharedKernel.Results.GeneratorTests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj","type":"Unit","dependency":"in-process","capabilities":["GeneratorImplementation","ResultErrorCatalogGenerator"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Results.Tests/SharedKernel.Results.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj","type":"Unit","dependency":"in-process","capabilities":["OptionAsyncComposition","OptionComposition"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Sandbox.ClaudeCode.Tests/SharedKernel.Sandbox.ClaudeCode.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Sandbox.ClaudeCode/SharedKernel.Sandbox.ClaudeCode.csproj","type":"Unit","dependency":"in-process","capabilities":["ClaudeCodeSettingsDocument","ClaudeCodeSettingsFile"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Sandbox.Tests/SharedKernel.Sandbox.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Sandbox/SharedKernel.Sandbox.csproj","type":"Unit","dependency":"in-process","capabilities":["DesiredSettings","SandboxConfigurationFile"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Sandbox.Tool.Tests/SharedKernel.Sandbox.Tool.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"tools/SharedKernel.Sandbox.Tool/SharedKernel.Sandbox.Tool.csproj","type":"Unit","dependency":"in-process","capabilities":["DoctorCommand","DoctorProcess"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Scheduling.Tests/SharedKernel.Scheduling.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Scheduling/SharedKernel.Scheduling.csproj","type":"Unit","dependency":"in-process","capabilities":["PollingBackgroundService"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.SecretScanning.Tests/SharedKernel.SecretScanning.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.SecretScanning/SharedKernel.SecretScanning.csproj","type":"Unit","dependency":"in-process","capabilities":["secret-detection","rule-validation"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Secrets.Age.Tests/SharedKernel.Secrets.Age.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Secrets.Age/SharedKernel.Secrets.Age.csproj","type":"Unit","dependency":"in-process","capabilities":["ProcessAgeTool","RealAge"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Secrets.Sops.Tests/SharedKernel.Secrets.Sops.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Secrets.Sops/SharedKernel.Secrets.Sops.csproj","type":"Unit","dependency":"in-process","capabilities":["ProcessSopsToolEdit","ProcessSopsToolRewrite"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Secrets.Tests/SharedKernel.Secrets.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Secrets/SharedKernel.Secrets.csproj","type":"Unit","dependency":"in-process","capabilities":["AgeIdentityRef","AgeRecipientSet"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Secrets.Tool.Tests/SharedKernel.Secrets.Tool.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"tools/SharedKernel.Secrets.Tool/SharedKernel.Secrets.Tool.csproj","type":"Unit","dependency":"in-process","capabilities":["BaseRevision","Configuration"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.ServiceDefaults.Tests/SharedKernel.ServiceDefaults.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.ServiceDefaults/SharedKernel.ServiceDefaults.csproj","type":"Integration","dependency":"test-server","capabilities":["HealthEndpoint","HttpClientDefaults"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The analyzer suite also exercises governed constants across compilation boundaries.",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Style.Analyzers/SharedKernel.Style.Analyzers.csproj","type":"Unit","dependency":"in-process","capabilities":["CaseInsensitiveJsonContextAnalyzer","CurrentTimeAnalyzer"],"lane":"library"},
+        {"sut":"src/SharedKernel/SharedKernel.Testing.Roslyn/SharedKernel.Testing.Roslyn.csproj","type":"Unit","dependency":"roslyn-in-process","capabilities":["governed-constant-ownership"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Style.CodeFixes.Tests/SharedKernel.Style.CodeFixes.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Style.CodeFixes/SharedKernel.Style.CodeFixes.csproj","type":"Unit","dependency":"in-process","capabilities":["CaseInsensitiveJsonContextCodeFix","CurrentTimeCodeFix"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Tabular.Tests/SharedKernel.Tabular.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Tabular/SharedKernel.Tabular.csproj","type":"Unit","dependency":"in-process","capabilities":["CsvDocument","CsvDocumentUtf8Parsing"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Testing.Analyzers.Tests/SharedKernel.Testing.Analyzers.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Testing.Analyzers/SharedKernel.Testing.Analyzers.csproj","type":"Unit","dependency":"roslyn-in-process","capabilities":["AssertionDelegateInlining","AssertionDiagnostics"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Testing.AspNetCore.Tests/SharedKernel.Testing.AspNetCore.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Testing.AspNetCore/SharedKernel.Testing.AspNetCore.csproj","type":"Integration","dependency":"test-server-and-loopback-kestrel","capabilities":["ConfigurationReload","KestrelTestHost"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Testing.CodeFixRunner.Tests/SharedKernel.Testing.CodeFixRunner.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj","type":"Unit","dependency":"in-process","capabilities":["CodeFixRunEngine","CodeFixRunnerCaller"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Testing.GeneratorTests/SharedKernel.Testing.GeneratorTests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj","type":"Unit","dependency":"in-process","capabilities":["CallProxyGeneratorDiagnostic","CallProxyGeneratorOutput"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Testing.ObjectStorage.Tests/SharedKernel.Testing.ObjectStorage.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Testing.ObjectStorage/SharedKernel.Testing.ObjectStorage.csproj","type":"Unit","dependency":"in-process","capabilities":["InMemoryObjectStoreDiscard","InMemoryObjectStoreFailure"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Testing.Tests/SharedKernel.Testing.Tests.csproj",
+      "register": "tests/README.md",
+      "migrationException": "The current executable has multiple explicit testing seams.",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj","type":"Unit","dependency":"in-process","capabilities":["AnalyzerTestHarness","BlockingReadStream","ReadObservingStream","test-trait-identity"],"lane":"browser"},
+        {"sut":"src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj","type":"Integration","dependency":"temporary-git-repositories-and-loopback","capabilities":["AnalyzerTestHarness","BlockingReadStream"],"lane":"browser"},
+        {"sut":"src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj","type":"System","dependency":"playwright","capabilities":["AnalyzerTestHarness","BlockingReadStream"],"lane":"browser"},
+        {"sut":"src/SharedKernel/SharedKernel.Testing.AI/SharedKernel.Testing.AI.csproj","type":"Unit","dependency":"in-process","capabilities":["image-text-generation-double"],"lane":"browser"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.UploadSanitizing.Tests/SharedKernel.UploadSanitizing.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.UploadSanitizing/SharedKernel.UploadSanitizing.csproj","type":"Unit","dependency":"in-process","capabilities":["FontSanitizerOptions","FontSanitizerRobustness"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Vault.Bitwarden.Tests/SharedKernel.Vault.Bitwarden.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Vault.Bitwarden/SharedKernel.Vault.Bitwarden.csproj","type":"Unit","dependency":"in-process","capabilities":["BitwardenCsvReader","BitwardenJsonReader"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Vault.Keeper.Tests/SharedKernel.Vault.Keeper.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Vault.Keeper/SharedKernel.Vault.Keeper.csproj","type":"Unit","dependency":"in-process","capabilities":["KeeperCsvReader","KeeperJsonReader"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Vault.Tests/SharedKernel.Vault.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Vault/SharedKernel.Vault.csproj","type":"Unit","dependency":"in-process","capabilities":["PasswordHealthReport","AttachmentClassifier"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.VaultManager.Tool.Tests/SharedKernel.VaultManager.Tool.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"tools/SharedKernel.VaultManager.Tool/SharedKernel.VaultManager.Tool.csproj","type":"Unit","dependency":"in-process","capabilities":["BriefBuilder","ApplyPreviewCommand"],"lane":"library"}
+      ]
+    },
+    {
+      "path": "tests/SharedKernel.Versioning.Tests/SharedKernel.Versioning.Tests.csproj",
+      "register": "tests/README.md",
+      "seams": [
+        {"sut":"src/SharedKernel/SharedKernel.Versioning/SharedKernel.Versioning.csproj","type":"Component","dependency":"temporary-git-repositories","capabilities":["CandidateDefaultVersion","CandidateEvidenceMerge"],"lane":"library"}
+      ]
+    }
+  ],
+  "supportProjects": [
+    "tests/SharedKernel.Aspire.Hosting.Umami.Testing/SharedKernel.Aspire.Hosting.Umami.Testing.csproj",
+    "tests/SharedKernel.MalwareScanning.ClamAv.Testing/SharedKernel.MalwareScanning.ClamAv.Testing.csproj",
+    "tests/SharedKernel.Messaging.Protobuf.TestContracts/SharedKernel.Messaging.Protobuf.TestContracts.csproj",
+    "tests/SharedKernel.Npgsql.Testing/SharedKernel.Npgsql.Testing.csproj",
+    "tests/SharedKernel.TestServices.Host/SharedKernel.TestServices.Host.csproj",
+    "tests/SharedKernel.Testing.AspNetCore.TestApp/SharedKernel.Testing.AspNetCore.TestApp.csproj",
+    "tests/SharedKernel.Testing.Contracts/SharedKernel.Testing.Contracts.csproj",
+    "tests/SharedKernel.Testing.Integration/SharedKernel.Testing.Integration.csproj",
+    "tests/SharedKernel.Testing.Packaging/SharedKernel.Testing.Packaging.csproj",
+    "tests/SharedKernel.Testing.Scenarios/SharedKernel.Testing.Scenarios.csproj",
+    "tests/SharedKernel.Testing.System/SharedKernel.Testing.System.csproj"
+  ]
+}

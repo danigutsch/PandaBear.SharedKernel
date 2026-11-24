@@ -93,4 +93,10 @@ public static class TestingDiagnosticIds
     /// Diagnostic emitted when a test creates a <c>StringWriter</c> whose captured text would end lines with the platform line ending.
     /// </summary>
     public const string StringWriterNewLine = "SKTEST022";
+
+    /// <summary>Diagnostic for direct dependency injection operations inside an xUnit test body.</summary>
+    public const string DirectDependencyInjection = "SKTEST023";
+
+    /// <summary>Diagnostic for a fixed delay on a Playwright page or frame.</summary>
+    public const string PlaywrightFixedDelay = "SKTEST024";
 }

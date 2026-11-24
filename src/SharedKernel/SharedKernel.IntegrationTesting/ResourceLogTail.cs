@@ -37,6 +37,29 @@ internal sealed class ResourceLogTail : IAsyncDisposable
     /// <returns>The lines, oldest first; empty for a resource that is not watched.</returns>
     internal IReadOnlyList<string> Lines(string resourceName) => _lines.TryGetValue(resourceName, out var lines) ? [.. lines] : [];
 
+    /// <summary>Gets the latest published lines, including any the background watcher has yet to consume.</summary>
+    /// <param name="logs">The application's resource logger service.</param>
+    /// <param name="resource">The resource whose backlog to read.</param>
+    /// <returns>At most 50 lines in publication order.</returns>
+    internal static async Task<IReadOnlyList<string>> ReadAvailable(ResourceLoggerService logs, IResource resource)
+    {
+        var lines = new Queue<string>(Kept);
+        await foreach (var batch in logs.GetAllAsync(resource).ConfigureAwait(false))
+        {
+            foreach (var line in batch)
+            {
+                if (lines.Count == Kept)
+                {
+                    _ = lines.Dequeue();
+                }
+
+                lines.Enqueue(FormatLine(line));
+            }
+        }
+
+        return [.. lines];
+    }
+
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
@@ -60,7 +83,7 @@ internal sealed class ResourceLogTail : IAsyncDisposable
         {
             foreach (var line in batch)
             {
-                lines.Enqueue((line.IsErrorMessage ? "err: " : string.Empty) + line.Content);
+                lines.Enqueue(FormatLine(line));
                 while (lines.Count > Kept)
                 {
                     _ = lines.TryDequeue(out _);
@@ -68,4 +91,6 @@ internal sealed class ResourceLogTail : IAsyncDisposable
             }
         }
     }
+
+    private static string FormatLine(LogLine line) => (line.IsErrorMessage ? "err: " : string.Empty) + line.Content;
 }

@@ -16,6 +16,7 @@ SharedKernel seed and should stay reusable outside this repository.
 - Resource health and state waits with explicit timeouts and cancellation, and resource lookups on the running application model.
 - A two-minute host shutdown budget aligned with DCP resource cleanup, with cleanup failures preserved.
 - PostgreSQL public-schema resets for known-baseline tests.
+- `IntegrationTestTraitValues.DatabaseIntegrationCategory` for tests that use a real database.
 - Start-on-first-demand sharing of an expensive test resource with `OnDemandResource<T>`.
 
 ## Boundaries
@@ -83,8 +84,10 @@ public sealed class SystemFixture : AspireAppHostFixture<Projects.MyApp_AppHost>
   state (an import, a reset) away from tests that share one application. `AspireSystemFixture` is the base for applications that are not
   an AppHost project: implement `Start(profile, folder, ct)` and build the builder there, in the test assembly.
 - `AspireTestApplication` follows every resource's log lines from the start. A health wait that runs out of time (`Start`,
-  `WaitForHealthy`, `StartResource`) throws `TimeoutException` naming each pending resource with its state, health and last log lines;
-  `GetResourceLogs(name)` returns them for a failure message.
+  `WaitForHealthy`, `StartResource`) throws `TimeoutException` with the requested resource diagnostics. Early resource failure throws
+  `DistributedApplicationException` with the original Aspire failure as its inner exception. The diagnostics include state, health,
+  any reported exit code, and up to 50 available log lines per requested resource. `GetResourceLogs(name)` reads the tail for a
+  running application.
 - `StartResource(name, timeout, ct)` starts a resource added with `WithExplicitStart()` and waits for it: with `OnDemandResources<T>`,
   an infrastructure application can start each container on the first test that needs it.
 - `Eventually.Succeeds(assertion, timeout, ct)` retries an assertion (every 250 ms by default) until it passes; on timeout the last

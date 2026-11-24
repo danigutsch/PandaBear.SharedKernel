@@ -4,19 +4,25 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace PandaBear.Style.Analyzers;
 
+/// <summary>Parses the catalog shared by the literal analyzer and the constant guard.</summary>
 internal static class GovernedLiteralCatalog
 {
+    /// <summary>Reads canonical declaration and compatibility exception rows.</summary>
+    /// <param name="text">The catalog text.</param>
+    /// <returns>The parsed catalog rows.</returns>
+    /// <exception cref="FormatException">A row or the set of owners and exceptions is invalid.</exception>
     public static ImmutableArray<GovernedLiteral> Parse(string text)
     {
         var entries = ImmutableArray.CreateBuilder<GovernedLiteral>();
         foreach (var line in text.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries))
         {
-            if (line.TrimStart().StartsWith("#", StringComparison.Ordinal) || string.IsNullOrWhiteSpace(line))
+            var row = line.Trim();
+            if (row.Length == 0 || row[0] == '#')
             {
                 continue;
             }
 
-            var cells = line.Split('|').Select(static cell => cell.Trim()).ToArray();
+            var cells = row.Split('|').Select(static cell => cell.Trim()).ToArray();
             if (cells.Length is not (3 or 4) || cells.Any(string.IsNullOrWhiteSpace)
                 || !cells[2].Split('.').All(SyntaxFacts.IsValidIdentifier))
             {
@@ -37,6 +43,10 @@ internal static class GovernedLiteralCatalog
         return result;
     }
 
+    /// <summary>Tests whether the declared field matches the catalogued assembly and fully qualified name.</summary>
+    /// <param name="entry">The catalog row.</param>
+    /// <param name="field">The declared field.</param>
+    /// <returns>True when the declaration matches the catalog row.</returns>
     public static bool Matches(GovernedLiteral entry, IFieldSymbol field) =>
         string.Equals(entry.Assembly, field.ContainingAssembly.Name, StringComparison.Ordinal)
         && string.Equals(entry.Symbol, field.ToDisplayString(), StringComparison.Ordinal);

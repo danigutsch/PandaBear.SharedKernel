@@ -54,6 +54,22 @@ when the client is out of process, such as a browser; in-memory `WebApplicationF
 application-specific `WebApplicationFactory` overrides. Dispose the running host before the
 original factory.
 
+## Worker entry-point registration
+
+`WorkerTestHost.Build` invokes a managed executable entry point and returns the Generic Host before it
+starts. Use it to verify the registrations in a worker or command-line app's actual composition.
+Pass the executable assembly and its arguments. The caller owns the returned host.
+
+```csharp
+using var host = WorkerTestHost.Build(typeof(WorkerMarker).Assembly, "--environment=Production");
+var registration = host.Services.GetRequiredService<WorkerRegistration>();
+```
+
+Capture uses the Generic Host diagnostic event in the entry point's execution context. It expects a
+trusted test executable that reaches host construction or exits. If startup fails after a host was
+captured, the helper disposes that host and preserves the startup failure. A simultaneous cleanup
+failure is reported alongside it.
+
 ## Prerendered Blazor state
 
 A prerendered Interactive Server page writes the state of its `[PersistentState]` properties into the HTML, and the browser sends

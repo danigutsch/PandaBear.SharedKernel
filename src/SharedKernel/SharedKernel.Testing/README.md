@@ -14,6 +14,9 @@ Reusable test traits, environment and culture scopes, temporary-directory lifeti
   traits come from `TestScope` and `TestHost` (the `[TestScope]` and `[TestHost]` attributes, also valid on an assembly);
   test projects keep only their own component and capability values in a local `TestTraits`.
 - `SharedKernelTestTraitNames` owns SharedKernel package-test names and the neutral `Unit` scope.
+- Existing filters keep their keys when adopting `TestTraitValues`. For example, `Category=contract`
+  and `Scope=contract` select different traits. `IntegrationEventTransport` can label either a
+  category or a capability without requiring a reference to hosted test infrastructure.
 - `TestScope` enumerates the test seams (`Unit`, `Behavior`, `Component`, `Contract`, `UiIntegration`,
   `Integration`, `System`, `Architecture`) and `ToTraitValue()` maps each to its `Scope` trait value.
   `TestHost`, `TestFocus` and `TestPriority` do the same for `Host`, `Focus` and `Priority`.
@@ -69,6 +72,7 @@ failure guard.
 | `GatedCountingReadStream(content)` | Seekable; holds reads until a single `Release()`. | `ReadStarted`, `BytesRead` |
 | `ThrowingReadStream(prefix, exception)` | Serves `prefix`, then every read throws `exception` (asynchronous reads return a faulted task). | `ReadCount`, `BytesRead`, `IsDisposed` |
 | `TrackingReadStream(content, seekable)` | Serves `content`, at most `MaxBytesPerRead` bytes per read. | `ReadCount`, `BytesRead`, `IsDisposed` |
+| `ReadObservingStream(inner.ReadAsync, observeRead)` | Delegates asynchronous reads to a borrowed stream and leaves it open on disposal. | The requested and returned size of each successful read. |
 | `DisposalTrackingStream(inner)` | Delegates to `inner` and disposes it the same way (synchronously or asynchronously). | `IsDisposed`, `Disposed`, `DisposeCount`, `AsyncDisposeCount`, `InnerStream` |
 
 Asynchronous reads honour their cancellation token while held. Synchronous reads cannot be cancelled: they wait until a release or

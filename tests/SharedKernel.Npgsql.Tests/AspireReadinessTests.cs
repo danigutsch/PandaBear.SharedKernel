@@ -27,6 +27,55 @@ public sealed class AspireReadinessTests
     }
 
     [Fact]
+    public async Task An_early_startup_failure_keeps_the_typed_cause_and_the_bounded_resource_diagnostics()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var stopped = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var builder = AspireTestApplication.CreateBuilder();
+        TalkingProcess.ModelStartupFailure(builder, stopped);
+        Func<Task> start = () => AspireTestApplication.Start(builder, ["modeled-failure"], TimeSpan.FromMinutes(1), ct);
+
+        // Act
+        var failure = await start.ShouldThrow<DistributedApplicationException>();
+
+        // Assert
+        failure.Message.ShouldContain("modeled-failure: FailedToStart", StringComparison.Ordinal);
+        failure.Message.ShouldContain("exit code 17", StringComparison.Ordinal);
+        var diagnosticLines = failure.Message.Split('\n');
+        diagnosticLines.ShouldContain(line =>
+            line.TrimStart().StartsWith("err: ", StringComparison.Ordinal)
+            && line.Contains("final-startup-diagnostic", StringComparison.Ordinal));
+        var earlierLines = diagnosticLines.Count(line => line.Contains("earlier-startup-progress", StringComparison.Ordinal));
+        earlierLines.ShouldBe(49, "the latest 50 lines include the final diagnostic");
+        failure.Message.ShouldNotContain("evicted-startup-diagnostic", StringComparison.Ordinal);
+        failure.Message.ShouldNotContain("unrelated-resource-diagnostic", StringComparison.Ordinal);
+        failure.InnerException.ShouldBeOfType<DistributedApplicationException>()
+            .Message.ShouldContain("failed to start", StringComparison.Ordinal);
+        stopped.Task.IsCompletedSuccessfully.ShouldBeTrue("the failed application is stopped before startup returns");
+    }
+
+    [Fact]
+    public async Task Cancelling_the_caller_cancels_the_health_wait()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var builder = AspireTestApplication.CreateBuilder();
+        _ = TalkingProcess.Add(builder, "pending-resource", "not-started", healthy: false).WithExplicitStart();
+        await using var application = await AspireTestApplication.Start(builder, [], TimeSpan.FromMinutes(1), ct);
+        using var caller = CancellationTokenSource.CreateLinkedTokenSource(ct);
+
+        // Act
+        var waiting = application.WaitForHealthy(["pending-resource"], TimeSpan.FromMinutes(1), caller.Token);
+        await caller.CancelAsync();
+        Func<Task> wait = () => waiting;
+        var cancellation = await wait.ShouldThrowAssignableTo<OperationCanceledException>();
+
+        // Assert
+        cancellation.CancellationToken.IsCancellationRequested.ShouldBeTrue("caller cancellation stays cancellation");
+    }
+
+    [Fact]
     public async Task An_explicitly_started_resource_starts_on_demand_and_its_logs_can_be_read()
     {
         // Arrange

@@ -24,11 +24,15 @@ public sealed class CoverageGateTests
         File.Exists(Path.Combine(scope.Root, "TestResults/coverage-gate.json")).ShouldBeTrue();
     }
 
-    [Fact]
-    public async Task Uncovered_conditions_count_towards_the_changed_code_threshold()
+    [Theory]
+    [InlineData("true")]
+    [InlineData("True")]
+    public async Task Uncovered_conditions_count_towards_the_changed_code_threshold(string branchFlag)
     {
         // Arrange
         using var scope = new CoverageTestScope(4, conditions: "50% (1/2)");
+        scope.WriteFile("coverage.xml", scope.ReadFile("coverage.xml").Replace(
+            "branch=\"true\"", $"branch=\"{branchFlag}\"", StringComparison.Ordinal));
 
         // Act
         var result = await scope.RecordAndVerify();

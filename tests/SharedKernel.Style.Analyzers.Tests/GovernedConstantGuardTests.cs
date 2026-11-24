@@ -1,4 +1,6 @@
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using PandaBear.Testing.Roslyn;
 
 namespace PandaBear.Style.Analyzers.Tests;
 
@@ -76,6 +78,69 @@ public sealed class GovernedConstantGuardTests
 
         // Assert
         errors.ShouldContain(error => error.Contains("Consumer:Redirect.Value", StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData("registered", false)]
+    [InlineData("changed", false)]
+    [InlineData("registered", true)]
+    public void Referenced_canonical_owner_is_checked_once_across_consumers(string value, bool declareAlias)
+    {
+        // Arrange
+        var owner = AnalyzerTestHarness.CreateCompilation(
+            $$"""
+            namespace Demo;
+            public static class Outer
+            {
+                public static class Keys { public const string Value = "{{value}}"; }
+            }
+            """, assemblyName: "Owner");
+        using var image = new MemoryStream();
+        var emit = owner.Emit(image, cancellationToken: TestContext.Current.CancellationToken);
+        emit.Success.ShouldBeTrue();
+        var reference = MetadataReference.CreateFromImage(image.ToArray());
+        var source = declareAlias
+            ? "public static class Consumer { public const string Alias = Demo.Outer.Keys.Value; }"
+            : "public static class Consumer { public static string Read() => Demo.Outer.Keys.Value; }";
+        var consumer = AnalyzerTestHarness.CreateCompilation(source, assemblyName: "Consumer").AddReferences(reference);
+        var secondConsumer = AnalyzerTestHarness.CreateCompilation(source, assemblyName: "SecondConsumer").AddReferences(reference);
+
+        // Act
+        var errors = GovernedConstantGuard.Validate([consumer, secondConsumer], "registered|Owner|Demo.Outer.Keys.Value");
+
+        // Assert
+        if (value == "changed")
+        {
+            errors.ShouldHaveSingleItem(error => error.StartsWith("Expected exactly one", StringComparison.Ordinal));
+        }
+        else if (declareAlias)
+        {
+            errors.Count.ShouldBe(2);
+            errors.ShouldContain(error => error.Contains("Consumer:Consumer.Alias", StringComparison.Ordinal));
+            errors.ShouldContain(error => error.Contains("SecondConsumer:Consumer.Alias", StringComparison.Ordinal));
+        }
+        else
+        {
+            errors.ShouldBeEmpty();
+        }
+    }
+
+    [Theory]
+    [InlineData("public static readonly string Value = \"registered\";")]
+    [InlineData("public const int Value = 4;")]
+    public void Referenced_owner_must_be_a_string_constant(string declaration)
+    {
+        // Arrange
+        var owner = AnalyzerTestHarness.CreateCompilation(
+            $"namespace Demo; public static class Keys {{ {declaration} }}", assemblyName: "Owner");
+        var consumer = AnalyzerTestHarness.CreateCompilation("", assemblyName: "Consumer")
+            .AddReferences(owner.ToMetadataReference());
+
+        // Act
+        var errors = GovernedConstantGuard.Validate([consumer], "registered|Owner|Demo.Keys.Value");
+
+        // Assert
+        errors.ShouldHaveSingleItem(error => error.StartsWith("Expected exactly one", StringComparison.Ordinal));
     }
 
     [Fact]

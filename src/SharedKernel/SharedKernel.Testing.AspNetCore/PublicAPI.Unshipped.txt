@@ -21,6 +21,7 @@ PandaBear.Testing.AspNetCore.FakeFormFile.Length.get -> long
 PandaBear.Testing.AspNetCore.FakeFormFile.Name.get -> string!
 PandaBear.Testing.AspNetCore.FakeFormFile.OpenReadStream() -> System.IO.Stream!
 PandaBear.Testing.AspNetCore.KestrelTestHost
+PandaBear.Testing.AspNetCore.WorkerTestHost
 PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint>
 PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint>.BaseAddress.get -> System.Uri!
 PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint>.DisposeAsync() -> System.Threading.Tasks.ValueTask
@@ -61,6 +62,7 @@ static PandaBear.Testing.AspNetCore.ApiTestAuthentication.ConfigureClient(System
 static PandaBear.Testing.AspNetCore.ApiTestAuthentication.ConfigureJwtBearer(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! audience) -> void
 static PandaBear.Testing.AspNetCore.KestrelTestHost.Start<TEntryPoint>(string? environment = null, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? configuration = null, System.Action<Microsoft.Extensions.DependencyInjection.IServiceCollection!>? configureTestServices = null) -> PandaBear.Testing.AspNetCore.KestrelTestHost<TEntryPoint!>!
 static PandaBear.Testing.AspNetCore.WebApplicationTestHost.Create<TEntryPoint>(string? environment = null, System.Action<Microsoft.Extensions.DependencyInjection.IServiceCollection!>? configureTestServices = null, System.Action<System.Net.Http.HttpClient!>? configureClient = null, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? configuration = null) -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
+static PandaBear.Testing.AspNetCore.WorkerTestHost.Build(System.Reflection.Assembly! assembly, params string![]! args) -> Microsoft.Extensions.Hosting.IHost!
 PandaBear.Testing.AspNetCore.TestRequestBindingServiceCollectionExtensions
 static PandaBear.Testing.AspNetCore.TestRequestBindingServiceCollectionExtensions.AddTestRequestBindingDefaults(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 const PandaBear.Testing.AspNetCore.FakeBrowserFile.DefaultMaxAllowedSize = 512000 -> long

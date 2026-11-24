@@ -11,16 +11,6 @@ internal static class TestTraits
     public const string CoreBehaviorCategory = "core-behavior";
 
     /// <summary>
-    /// Category value for tests that need a real database such as the PostgreSQL fixture.
-    /// </summary>
-    public const string DatabaseIntegrationCategory = "database-integration";
-
-    /// <summary>
-    /// Capability value for tests of the integration event transport.
-    /// </summary>
-    public const string IntegrationEventTransportCapability = "integration-event-transport";
-
-    /// <summary>
     /// Capability value for tests of the idempotency store.
     /// </summary>
     public const string IdempotencyCapability = "idempotency";

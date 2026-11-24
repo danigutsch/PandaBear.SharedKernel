@@ -428,6 +428,9 @@
           "xunit.v3.runner.common": "[4.0.3]"
         }
       },
+      "PandaBear.SharedKernel.AI": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.IO": {
         "type": "Project"
       },
@@ -453,6 +456,12 @@
         "type": "Project",
         "dependencies": {
           "PandaBear.SharedKernel.Processes": "[0.1.0-alpha.0, )"
+        }
+      },
+      "PandaBear.SharedKernel.Testing.AI": {
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.AI": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Testing.AspNetCore": {

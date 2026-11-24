@@ -1,4 +1,6 @@
 #nullable enable
+PandaBear.IntegrationTesting.IntegrationTestTraitValues
+const PandaBear.IntegrationTesting.IntegrationTestTraitValues.DatabaseIntegrationCategory = "database-integration" -> string!
 PandaBear.IntegrationTesting.AspireTestApplication
 PandaBear.IntegrationTesting.ConcurrentAspireTestApplications
 static PandaBear.IntegrationTesting.AspireTestApplication.CreateBuilder(params string![]! args) -> Aspire.Hosting.Testing.IDistributedApplicationTestingBuilder!

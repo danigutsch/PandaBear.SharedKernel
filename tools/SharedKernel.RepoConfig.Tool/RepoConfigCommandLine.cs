@@ -60,6 +60,7 @@ internal static class RepoConfigCommandLine
             CreateVerifyGherkinCommand(environment, root),
             CreateVerifyActionPinsCommand(environment, root),
             CreateVerifyDependabotCommand(environment, root),
+            CreateVerifyTestTaxonomyCommand(environment, root),
             CreateVerifyTargetFrameworksCommand(environment, root),
             CreateVerifyPodmanDnsCommand(environment),
             CreateSecurityCommand(environment, root),
@@ -488,6 +489,15 @@ internal static class RepoConfigCommandLine
         Command command = new("verify-dependabot", "Verify that every Dependabot ignore entry names update-types, so ignored dependencies still receive security updates.") { root };
         SetGuardedAction(command, (parseResult, output, error, ct) =>
             RepoConfigToolApplication.VerifyDependabot(ResolveRoot(parseResult, root, environment), output, error, ct));
+        return command;
+    }
+
+    private static Command CreateVerifyTestTaxonomyCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Option<bool> report = new("--report") { Description = "Report taxonomy findings without failing the command." };
+        Command command = new("verify-test-taxonomy", "Verify the declared SUTs, test types, names, and seam registers of tracked projects.") { report, root };
+        SetGuardedAction(command, (parseResult, output, error, ct) => RepoConfigToolApplication.VerifyTestTaxonomy(
+            ResolveRoot(parseResult, root, environment), parseResult.GetValue(report), output, error, ct));
         return command;
     }
 

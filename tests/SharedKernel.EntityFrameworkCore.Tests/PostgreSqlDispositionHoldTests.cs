@@ -9,7 +9,7 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 /// PostgreSQL tests of the disposition hold store and guard: fail-closed behavior, decisions and lock ordering.
 /// </summary>
 /// <param name="fixture">Shared PostgreSQL fixture that supplies the isolated database.</param>
-[Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.DatabaseIntegrationCategory)]
+[Trait(SharedKernelTestTraitNames.CategoryName, IntegrationTestTraitValues.DatabaseIntegrationCategory)]
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DispositionHoldCapability)]
 public sealed class PostgreSqlDispositionHoldTests(PostgreSqlFixture fixture) : IAsyncLifetime
 {

@@ -10,6 +10,20 @@ Reusable Roslyn test helpers for SharedKernel analyzer and generator test suites
 
 Use `AnalyzerTestHarness.CreateCompilation` to build in-memory C# compilations with explicit references. `TestAnalyzerConfigOptionsProvider` supplies editorconfig inputs and `DiagnosticLocationKey.Create` gives stable diagnostic location keys. Test source and expected diagnostics remain caller-owned.
 
+## Governed constants
+
+Pass the production compilations and the same catalog text used by SKSTYLE012 to
+`GovernedConstantGuard.Validate(compilations, catalogText)`. Assert that it returns no errors. The guard checks that
+each catalogued constant has its intended value and that other non-generated C# declarations do not duplicate or
+redirect it. Owners whose source assembly is outside the supplied compilations can be resolved from references.
+The [catalog format](../SharedKernel.Style.Analyzers/README.md#skstyle012) also supports documented compatibility
+exceptions. Check one set of target-framework compilations at a time.
+
+`GovernedLiteralManifest.Compile(path)` reconstructs a semantic compilation from a build's captured inputs. Write a
+manifest per project and target framework with one `assembly|name` row, one `defines|comma,separated,symbols` row,
+and a `source|absolute-path` or `reference|absolute-path` row for each compiler input. The build configuration and
+list of projects to check belong to the consumer.
+
 ## Generator tests
 
 `GeneratorTestHarness` holds the mechanical setup of an incremental generator test suite. Parse the test sources in the test project, then:

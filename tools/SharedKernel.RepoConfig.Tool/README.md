@@ -102,6 +102,7 @@ dotnet repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 | `verify-action-pins [--manifest <path>]` | Fails when an external `uses:` reference in `.github/workflows` or `.github/actions` is not pinned to a full 40-character commit SHA, is absent from the manifest (default `.github/action-pins.json`), pins another SHA than the manifest, or lacks the manifest version as its trailing comment. Local `./` references are skipped, `docker://` references fail, and `firstParty` repositories need only the full SHA. See [reusable workflows](../../docs/ci/reusable-workflows.md#pinned-third-party-actions). |
 | `verify-dependabot` | Fails when an `ignore` entry in `.github/dependabot.yml` has no `update-types`. GitHub applies such an entry to security updates as well, so the dependency would never receive a security pull request; list the `version-update:semver-*` types instead. The check is line based and expects block-style YAML. |
 | `verify-target-frameworks` | Checks the target frameworks, roll-forward, lock files, pinned SDK, and `dotnet run --project` lines of the tracked project files against the configured policy; see [Target frameworks](#target-frameworks). |
+| `verify-test-taxonomy` | Checks declared production and test ownership, test types, project names, and seam registers; see [Test taxonomy](#test-taxonomy). |
 | `dependency snapshot` | Generates a dependency snapshot from committed lock files; see [Offline dependency snapshots](#offline-dependency-snapshots). |
 | `dependency submit` | Submits a dependency snapshot to the GitHub dependency graph. |
 | `dependency verify-license-exceptions` | Verifies the configured license exceptions; see [License exceptions](#license-exceptions). |
@@ -277,6 +278,27 @@ first `#` in any other line is ignored, also inside a name. A keyword counts onl
 before a colon, or alone, which leaves its name empty. `Example:`, `Scenario Template:`, and `Scenarios:` are not
 keywords, so a file whose scenarios all use `Example:` has no scenario. A UTF-8 byte order mark stays part of the
 first line, which is then neither a keyword, a tag, nor a comment.
+
+### Test taxonomy
+
+`repo verify-test-taxonomy --root .` validates the tracked `.config/test-taxonomy.json`. The version
+1 inventory contains these lists.
+
+| Field | Contents |
+| --- | --- |
+| `sutRoots`, `testRoots` | Separate root-relative directories containing production projects and test projects. |
+| `suts` | Each tracked production project `path`, its `directOwner`, and the `requiredTypes` the inventory expects it to retain. |
+| `suites` | Each runnable test project `path`, its tracked Markdown `register`, and its `seams`. |
+| `supportProjects` | Paths of test-only helpers, hosts, and contracts that do not themselves run tests. |
+
+Each seam declares a registered `sut`, its `type`, the `dependency` boundary, one or more `capabilities`, and its
+CI `lane`. Allowed types are `Unit`, `Component`, `Api`, `Contract`, `Integration`, `System`, `Architecture`,
+and `Performance`. Names use `<SUT>.Tests.<Type>`. A mixed or legacy suite can record the reason in
+`migrationException`. Inventory paths use `/` separators.
+
+The command checks the Git index against the declared project paths, using the working copy for inventory content.
+Stage new files before verification. Run with `--report` for advisory diagnostics during migration. Invalid or
+unreadable inventory files and Git failures still return an error.
 
 ### Target frameworks
 

@@ -426,6 +426,20 @@ internal static class RepoConfigToolApplication
         return 1;
     }
 
+    /// <summary>Checks the test taxonomy, with optional advisory reporting during project migration.</summary>
+    public static async Task<int> VerifyTestTaxonomy(string rootPath, bool report, TextWriter output, TextWriter error, CancellationToken ct)
+    {
+        var issues = await TestTaxonomyVerifier.Verify(rootPath, ct).ConfigureAwait(false);
+        if (issues.Count == 0)
+        {
+            await output.WriteLineAsync("Test taxonomy is valid.".AsMemory(), ct).ConfigureAwait(false);
+            return 0;
+        }
+
+        WriteIssues(error, "Test taxonomy findings:", issues);
+        return report ? 0 : 1;
+    }
+
     /// <summary>
     /// Verifies the target frameworks of the tracked project files against the <c>targetFrameworks</c> section of the
     /// consumer configuration.

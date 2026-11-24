@@ -33,6 +33,8 @@ public sealed class TestingAnalyzerTests
             TestingDiagnosticIds.PlaywrightUrlWait,
             TestingDiagnosticIds.InvalidAdditionalAllowedSegment,
             TestingDiagnosticIds.StringWriterNewLine,
+            TestingDiagnosticIds.DirectDependencyInjection,
+            TestingDiagnosticIds.PlaywrightFixedDelay,
         ];
 
         // Act

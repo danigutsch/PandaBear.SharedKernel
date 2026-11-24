@@ -1,4 +1,8 @@
 #nullable enable
+PandaBear.Testing.Roslyn.GovernedConstantGuard
+PandaBear.Testing.Roslyn.GovernedLiteralManifest
+static PandaBear.Testing.Roslyn.GovernedConstantGuard.Validate(System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.Compilation!>! compilations, string! catalogText) -> System.Collections.Generic.IReadOnlyList<string!>!
+static PandaBear.Testing.Roslyn.GovernedLiteralManifest.Compile(string! manifest) -> Microsoft.CodeAnalysis.CSharp.CSharpCompilation!
 PandaBear.Testing.Roslyn.AnalyzerTestHarness
 override PandaBear.Testing.Roslyn.TestAnalyzerConfigOptions.TryGetValue(string! key, out string! value) -> bool
 override PandaBear.Testing.Roslyn.TestAnalyzerConfigOptionsProvider.GetOptions(Microsoft.CodeAnalysis.AdditionalText! textFile) -> Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions!
