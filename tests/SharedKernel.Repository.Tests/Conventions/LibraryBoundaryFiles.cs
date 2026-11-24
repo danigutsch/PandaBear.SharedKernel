@@ -3,7 +3,7 @@ using System.Xml.Linq;
 namespace PandaBear.Repository.Tests.Conventions;
 
 /// <summary>Scans the SharedKernel project files and sources for dependency and naming rules that the boundary tests enforce.</summary>
-internal static class SharedKernelBoundaryFiles
+internal static class LibraryBoundaryFiles
 {
     private static readonly string[] OptionalSubmoduleSegmentNames =
     [

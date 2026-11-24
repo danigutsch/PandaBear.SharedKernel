@@ -4,7 +4,7 @@ using System.Xml.Linq;
 namespace PandaBear.Repository.Tests.Conventions;
 
 /// <summary>Reads project files and YAML lists for the packaging convention tests.</summary>
-internal static partial class SharedKernelPackagingConventionTestFiles
+internal static partial class PackagingConventionTestFiles
 {
     /// <summary>Returns the repository root, the nearest directory above the test binaries that contains <c>SharedKernel.slnx</c>.</summary>
     public static string GetRepositoryRoot() => RepositoryRoot.Locate("SharedKernel.slnx");

@@ -2,7 +2,7 @@ namespace PandaBear.Versioning.Tests;
 
 /// <summary>Tests which projects the incremental local pack rebuilds, in which order, and the cache eviction guard.</summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
-public static class SharedKernelDevPackPlannerTests
+public static class DevPackPlannerTests
 {
     private const string Version = "0.1.0-dev.local";
 
@@ -14,7 +14,7 @@ public static class SharedKernelDevPackPlannerTests
         repository.AddProject("SharedKernel.Results");
 
         // Act
-        Action act = () => SharedKernelDevPackPlanner.Plan(repository.Root, ["SharedKernel.Nope"], repository.Feed, Version);
+        Action act = () => DevPackPlanner.Plan(repository.Root, ["SharedKernel.Nope"], repository.Feed, Version);
 
         // Assert
         act.ShouldThrow<ArgumentException>().Message.ShouldContain("SharedKernel.Nope", StringComparison.Ordinal);
@@ -29,7 +29,7 @@ public static class SharedKernelDevPackPlannerTests
         repository.AddProject("SharedKernel.Domain", "PandaBear.SharedKernel.Domain", "SharedKernel.Results");
 
         // Act
-        var steps = SharedKernelDevPackPlanner.Plan(repository.Root, ["SharedKernel.Domain"], repository.Feed, Version);
+        var steps = DevPackPlanner.Plan(repository.Root, ["SharedKernel.Domain"], repository.Feed, Version);
 
         // Assert
         steps.Select(step => step.Name).ShouldBe(["SharedKernel.Results", "SharedKernel.Domain"]);
@@ -46,7 +46,7 @@ public static class SharedKernelDevPackPlannerTests
         repository.AddFeedPackage("PandaBear.SharedKernel.Results", Version);
 
         // Act
-        var steps = SharedKernelDevPackPlanner.Plan(repository.Root, ["SharedKernel.Domain"], repository.Feed, Version);
+        var steps = DevPackPlanner.Plan(repository.Root, ["SharedKernel.Domain"], repository.Feed, Version);
 
         // Assert
         steps.Where(step => step.Name == "SharedKernel.Results").ToList().ShouldHaveSingleItem().Rebuild.ShouldBeFalse();
@@ -62,7 +62,7 @@ public static class SharedKernelDevPackPlannerTests
         repository.AddFeedPackage("PandaBear.SharedKernel.Results", Version);
 
         // Act
-        var steps = SharedKernelDevPackPlanner.Plan(repository.Root, ["sharedkernel.results"], repository.Feed, Version);
+        var steps = DevPackPlanner.Plan(repository.Root, ["sharedkernel.results"], repository.Feed, Version);
 
         // Assert
         steps.ShouldHaveSingleItem().Rebuild.ShouldBeTrue();
@@ -78,7 +78,7 @@ public static class SharedKernelDevPackPlannerTests
         repository.AddFeedPackage("SharedKernel.B", Version);
 
         // Act
-        var steps = SharedKernelDevPackPlanner.Plan(repository.Root, [], repository.Feed, Version);
+        var steps = DevPackPlanner.Plan(repository.Root, [], repository.Feed, Version);
 
         // Assert
         steps.Select(step => step.Name).ShouldBe(["SharedKernel.B", "SharedKernel.A"]);
@@ -94,7 +94,7 @@ public static class SharedKernelDevPackPlannerTests
         repository.AddProject("SharedKernel.Plain");
 
         // Act
-        var steps = SharedKernelDevPackPlanner.Plan(repository.Root, [], repository.Feed, Version);
+        var steps = DevPackPlanner.Plan(repository.Root, [], repository.Feed, Version);
 
         // Assert
         steps.Select(step => step.PackageId).ShouldBe(["SharedKernel.Plain", "PandaBear.SharedKernel.Results"]);
@@ -109,7 +109,7 @@ public static class SharedKernelDevPackPlannerTests
         repository.AddExternalReference("SharedKernel.Results");
 
         // Act
-        var steps = SharedKernelDevPackPlanner.Plan(repository.Root, ["SharedKernel.Results"], repository.Feed, Version);
+        var steps = DevPackPlanner.Plan(repository.Root, ["SharedKernel.Results"], repository.Feed, Version);
 
         // Assert
         steps.ShouldHaveSingleItem().Name.ShouldBe("SharedKernel.Results");
@@ -124,7 +124,7 @@ public static class SharedKernelDevPackPlannerTests
         repository.AddProject("SharedKernel.B", null, "SharedKernel.A");
 
         // Act
-        var steps = SharedKernelDevPackPlanner.Plan(repository.Root, ["SharedKernel.A"], repository.Feed, Version);
+        var steps = DevPackPlanner.Plan(repository.Root, ["SharedKernel.A"], repository.Feed, Version);
 
         // Assert
         steps.Count.ShouldBe(2);
@@ -134,8 +134,8 @@ public static class SharedKernelDevPackPlannerTests
     public static void Planning_requires_arguments()
     {
         // Arrange
-        Action blankRoot = () => SharedKernelDevPackPlanner.Plan(" ", [], "feed", Version);
-        Action noRequest = () => SharedKernelDevPackPlanner.Plan("root", null!, "feed", Version);
+        Action blankRoot = () => DevPackPlanner.Plan(" ", [], "feed", Version);
+        Action noRequest = () => DevPackPlanner.Plan("root", null!, "feed", Version);
 
         // Act & Assert
         blankRoot.ShouldThrow<ArgumentException>();
@@ -152,8 +152,8 @@ public static class SharedKernelDevPackPlannerTests
         var otherVersion = Directory.CreateDirectory(Path.Combine(cache, "pandabear.sharedkernel.results", "0.1.0-alpha.1"));
 
         // Act
-        var removed = SharedKernelDevPackPlanner.EvictFromGlobalPackages("PandaBear.SharedKernel.Results", Version, cache);
-        var removedAgain = SharedKernelDevPackPlanner.EvictFromGlobalPackages("PandaBear.SharedKernel.Results", Version, cache);
+        var removed = DevPackPlanner.EvictFromGlobalPackages("PandaBear.SharedKernel.Results", Version, cache);
+        var removedAgain = DevPackPlanner.EvictFromGlobalPackages("PandaBear.SharedKernel.Results", Version, cache);
 
         // Assert
         removed.ShouldBeTrue();
@@ -173,7 +173,7 @@ public static class SharedKernelDevPackPlannerTests
     public static void Eviction_rejects_anything_but_a_single_path_segment(string packageId, string version)
     {
         // Arrange
-        Action act = () => SharedKernelDevPackPlanner.EvictFromGlobalPackages(packageId, version, Path.GetTempPath());
+        Action act = () => DevPackPlanner.EvictFromGlobalPackages(packageId, version, Path.GetTempPath());
 
         // Act & Assert
         act.ShouldThrow<ArgumentException>();
@@ -188,7 +188,7 @@ public static class SharedKernelDevPackPlannerTests
         var explicitDirectory = Path.GetFullPath("explicit");
 
         // Act
-        var folder = await SharedKernelDevPackPlanner.ResolveGlobalPackagesDirectory(
+        var folder = await DevPackPlanner.ResolveGlobalPackagesDirectory(
             consumer, explicitDirectory, Path.GetFullPath("env"), GlobalPackagesFakes.Reporting(Path.GetFullPath("config")), TestContext.Current.CancellationToken);
 
         // Assert
@@ -203,7 +203,7 @@ public static class SharedKernelDevPackPlannerTests
         var environment = Path.GetFullPath("env");
 
         // Act
-        var folder = await SharedKernelDevPackPlanner.ResolveGlobalPackagesDirectory(
+        var folder = await DevPackPlanner.ResolveGlobalPackagesDirectory(
             Path.GetFullPath("consumer"), null, environment, GlobalPackagesFakes.Reporting(Path.GetFullPath("config")), TestContext.Current.CancellationToken);
 
         // Assert
@@ -221,7 +221,7 @@ public static class SharedKernelDevPackPlannerTests
         var configured = Path.GetFullPath("config");
 
         // Act
-        var folder = await SharedKernelDevPackPlanner.ResolveGlobalPackagesDirectory(
+        var folder = await DevPackPlanner.ResolveGlobalPackagesDirectory(
             Path.GetFullPath("consumer"), null, environment, GlobalPackagesFakes.Reporting(configured), TestContext.Current.CancellationToken);
 
         // Assert
@@ -239,7 +239,7 @@ public static class SharedKernelDevPackPlannerTests
         Func<CancellationToken, Task<string?>>? query = queryReturnsNothing ? static _ => Task.FromResult<string?>(null) : null;
 
         // Act
-        var folder = await SharedKernelDevPackPlanner.ResolveGlobalPackagesDirectory(
+        var folder = await DevPackPlanner.ResolveGlobalPackagesDirectory(
             Path.GetFullPath("consumer"), null, "", query, TestContext.Current.CancellationToken);
 
         // Assert
@@ -254,7 +254,7 @@ public static class SharedKernelDevPackPlannerTests
         var consumer = Path.GetFullPath("consumer");
 
         // Act
-        var folder = await SharedKernelDevPackPlanner.ResolveGlobalPackagesDirectory(
+        var folder = await DevPackPlanner.ResolveGlobalPackagesDirectory(
             consumer, null, null, GlobalPackagesFakes.Reporting(Path.Combine("..", "shared", "packages")), TestContext.Current.CancellationToken);
 
         // Assert
@@ -271,7 +271,7 @@ public static class SharedKernelDevPackPlannerTests
     public static void The_listing_parser_finds_the_global_packages_line(string output, string? expected)
     {
         // Arrange & Act
-        var folder = SharedKernelDevPackPlanner.ParseGlobalPackagesListing(output);
+        var folder = DevPackPlanner.ParseGlobalPackagesListing(output);
 
         // Assert
         folder.ShouldBe(expected);
@@ -299,7 +299,7 @@ public static class SharedKernelDevPackPlannerTests
         repository.SetFeedPackageTime("PandaBear.SharedKernel.Results", Version, Packed);
 
         // Act
-        var steps = SharedKernelDevPackPlanner.Plan(repository.Root, ["SharedKernel.Domain"], repository.Feed, Version);
+        var steps = DevPackPlanner.Plan(repository.Root, ["SharedKernel.Domain"], repository.Feed, Version);
 
         // Assert
         var results = steps.Where(step => step.Name == "SharedKernel.Results").ToList().ShouldHaveSingleItem();
@@ -319,7 +319,7 @@ public static class SharedKernelDevPackPlannerTests
         repository.AddProjectFile("SharedKernel.Domain", "Newer.cs", Packed);
 
         // Act
-        var steps = SharedKernelDevPackPlanner.Plan(repository.Root, ["SharedKernel.Domain"], repository.Feed, Version);
+        var steps = DevPackPlanner.Plan(repository.Root, ["SharedKernel.Domain"], repository.Feed, Version);
 
         // Assert
         steps.All(step => step.Rebuild).ShouldBeTrue();

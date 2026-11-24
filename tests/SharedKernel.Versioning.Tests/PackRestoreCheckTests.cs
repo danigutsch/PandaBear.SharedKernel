@@ -18,8 +18,8 @@ public static class PackRestoreCheckTests
         var project = Path.Combine(temporary.Root, "src", "SharedKernel", "SharedKernel.Probe", "SharedKernel.Probe.csproj");
         Directory.CreateDirectory(Path.GetDirectoryName(project)!);
         await File.WriteAllTextAsync(project, "<Project />", TestContext.Current.CancellationToken);
-        var options = new SharedKernelPackageOptions("1.0.0", Path.Combine(temporary.Root, "packages-out"), temporary.Root);
-        var packageDirectory = SharedKernelPackagePlanner.ResolvePackageDirectory(options);
+        var options = new PackOptions("1.0.0", Path.Combine(temporary.Root, "packages-out"), temporary.Root);
+        var packageDirectory = PackPlanner.ResolvePackageDirectory(options);
         var runner = ScriptedProcessRunner.Answering(run =>
         {
             var arguments = run.Arguments;
@@ -42,7 +42,7 @@ public static class PackRestoreCheckTests
         });
 
         // Act
-        await SharedKernelPack.Run(new ExternalCommands(runner, UsrBin), options, verifyRestore: true, baselineVersion: null, TextWriter.Null, TestContext.Current.CancellationToken);
+        await ReleasePack.Run(new ExternalCommands(runner, UsrBin), options, verifyRestore: true, baselineVersion: null, TextWriter.Null, TestContext.Current.CancellationToken);
 
         // Assert
         var started = runner.Runs.Select(static run => run.Arguments.ToArray()).ToArray();

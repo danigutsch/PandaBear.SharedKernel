@@ -14,7 +14,7 @@ public sealed class CiConfigurationConventionTests
     public async Task Every_packable_project_change_requires_a_build_and_so_the_candidate_job()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
         var graph = SolutionGraph.Load(root, configuration.Solution);
 
@@ -38,7 +38,7 @@ public sealed class CiConfigurationConventionTests
     public async Task Full_validation_covers_the_style_analyzer_tests()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
 
         // Act
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
@@ -53,7 +53,7 @@ public sealed class CiConfigurationConventionTests
     public async Task Every_variable_that_a_slice_service_hands_over_is_read_by_a_helper_that_is_neither_a_test_nor_a_service()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
         var graph = SolutionGraph.Load(root, configuration.Solution);
 
@@ -73,7 +73,7 @@ public sealed class CiConfigurationConventionTests
     public async Task Every_test_project_that_borrows_a_shared_service_runs_in_the_slice_whose_service_supplies_it()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
         var graph = SolutionGraph.Load(root, configuration.Solution);
         var helpers = SharedServiceHelpers.Find(root, configuration, graph);
@@ -101,7 +101,7 @@ public sealed class CiConfigurationConventionTests
     public async Task Every_hosted_test_project_runs_in_a_slice_with_a_service_and_borrows_from_it()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
         var graph = SolutionGraph.Load(root, configuration.Solution);
         var helpers = SharedServiceHelpers.Find(root, configuration, graph);
@@ -127,7 +127,7 @@ public sealed class CiConfigurationConventionTests
     public async Task Every_slice_service_is_a_project_that_is_not_a_test_project_and_hands_over_a_valid_distinct_variable()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
         var graph = SolutionGraph.Load(root, configuration.Solution);
 
@@ -155,7 +155,7 @@ public sealed class CiConfigurationConventionTests
     public async Task The_services_slice_shares_one_instance_of_each_service_through_the_variables_that_the_test_assemblies_and_the_host_read()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
 
         // Act
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
@@ -188,7 +188,7 @@ public sealed class CiConfigurationConventionTests
     public async Task A_change_to_a_slice_service_or_to_the_tool_code_that_runs_it_selects_every_test_project_of_its_slice()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
         var graph = SolutionGraph.Load(root, configuration.Solution);
         var served = configuration.Slices.Where(static slice => slice.Service is not null).ToArray();
@@ -220,7 +220,7 @@ public sealed class CiConfigurationConventionTests
     public async Task A_change_to_the_service_protocol_of_the_tool_still_selects_the_tests_of_the_tool()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
         var graph = SolutionGraph.Load(root, configuration.Solution);
         const string toolTests = "tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj";
@@ -241,7 +241,7 @@ public sealed class CiConfigurationConventionTests
     public async Task Every_test_project_collects_coverage_for_run_coverage()
     {
         // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var root = PackagingConventionTestFiles.GetRepositoryRoot();
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
         var graph = SolutionGraph.Load(root, configuration.Solution);
 

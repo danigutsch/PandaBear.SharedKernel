@@ -9,7 +9,7 @@ internal static class LockFilePolicyFiles
     private static readonly string[] GeneratedDirectories = ["bin", "obj", ".git", ".worktrees", "artifacts", "node_modules"];
 
     /// <summary>Gets the repository root.</summary>
-    public static string Root => SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+    public static string Root => PackagingConventionTestFiles.GetRepositoryRoot();
 
     /// <summary>Gets the repository-relative project paths that <c>lockExemptProjects</c> lists, in file order.</summary>
     public static string[] ReadExemptProjects()

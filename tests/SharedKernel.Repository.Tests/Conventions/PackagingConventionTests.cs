@@ -4,13 +4,13 @@ using System.Xml.Linq;
 namespace PandaBear.Repository.Tests.Conventions;
 
 /// <summary>Guards the package metadata, analyzer layout, source generator, and non-packable project conventions of the repository.</summary>
-public static class SharedKernelPackagingConventionTests
+public static class PackagingConventionTests
 {
     [Fact]
     public static void SharedKernel_source_projects_follow_package_metadata_conventions()
     {
         // Arrange
-        var repositoryRoot = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var repositoryRoot = PackagingConventionTestFiles.GetRepositoryRoot();
         var projectFiles = Directory.GetFiles(
             Path.Combine(repositoryRoot, "src", "SharedKernel"),
             "*.csproj",
@@ -19,10 +19,10 @@ public static class SharedKernelPackagingConventionTests
         // Act
         var violations = projectFiles
             .Where(project => !string.Equals(
-                SharedKernelPackagingConventionTestFiles.GetProperty(project, "IsPackable"),
+                PackagingConventionTestFiles.GetProperty(project, "IsPackable"),
                 "false",
                 StringComparison.OrdinalIgnoreCase))
-            .SelectMany(SharedKernelPackagingConventionTestFiles.GetPackageMetadataViolations)
+            .SelectMany(PackagingConventionTestFiles.GetPackageMetadataViolations)
             .Order(StringComparer.Ordinal)
             .ToArray();
 
@@ -34,7 +34,7 @@ public static class SharedKernelPackagingConventionTests
     public static void SharedKernel_roslyn_packages_use_analyzer_only_layout()
     {
         // Arrange
-        var repositoryRoot = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var repositoryRoot = PackagingConventionTestFiles.GetRepositoryRoot();
         (string ProjectPath, string[] AnalyzerDllNames)[] packages =
         [
             (
@@ -71,7 +71,7 @@ public static class SharedKernelPackagingConventionTests
 
         // Act
         var violations = packages
-            .SelectMany(package => SharedKernelPackagingConventionTestFiles.GetAnalyzerPackageLayoutViolations(package.ProjectPath, package.AnalyzerDllNames))
+            .SelectMany(package => PackagingConventionTestFiles.GetAnalyzerPackageLayoutViolations(package.ProjectPath, package.AnalyzerDllNames))
             .ToArray();
 
         // Assert
@@ -82,16 +82,16 @@ public static class SharedKernelPackagingConventionTests
     public static void Shared_build_files_supply_license_repository_source_link_and_symbol_metadata()
     {
         // Arrange
-        var repositoryRoot = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var repositoryRoot = PackagingConventionTestFiles.GetRepositoryRoot();
         var props = XDocument.Load(Path.Combine(repositoryRoot, "Directory.Build.props"));
         var targets = XDocument.Load(Path.Combine(repositoryRoot, "src", "Directory.Build.targets"));
 
         // Act
-        var license = SharedKernelPackagingConventionTestFiles.GetProperty(props, "PackageLicenseExpression");
-        var repositoryUrl = SharedKernelPackagingConventionTestFiles.GetProperty(props, "RepositoryUrl");
-        var publishRepositoryUrl = SharedKernelPackagingConventionTestFiles.GetProperty(props, "PublishRepositoryUrl");
-        var includeSymbols = SharedKernelPackagingConventionTestFiles.GetProperty(targets, "IncludeSymbols");
-        var symbolFormat = SharedKernelPackagingConventionTestFiles.GetProperty(targets, "SymbolPackageFormat");
+        var license = PackagingConventionTestFiles.GetProperty(props, "PackageLicenseExpression");
+        var repositoryUrl = PackagingConventionTestFiles.GetProperty(props, "RepositoryUrl");
+        var publishRepositoryUrl = PackagingConventionTestFiles.GetProperty(props, "PublishRepositoryUrl");
+        var includeSymbols = PackagingConventionTestFiles.GetProperty(targets, "IncludeSymbols");
+        var symbolFormat = PackagingConventionTestFiles.GetProperty(targets, "SymbolPackageFormat");
 
         // Assert
         license.ShouldBe("MIT");
@@ -106,7 +106,7 @@ public static class SharedKernelPackagingConventionTests
     {
         // Arrange
         var generatorDirectories = Directory.GetDirectories(
-            Path.Combine(SharedKernelPackagingConventionTestFiles.GetRepositoryRoot(), "src", "SharedKernel"),
+            Path.Combine(PackagingConventionTestFiles.GetRepositoryRoot(), "src", "SharedKernel"),
             "SharedKernel.*.SourceGenerator");
 
         // Act
@@ -137,14 +137,14 @@ public static class SharedKernelPackagingConventionTests
     {
         // Arrange
         var generatorDirectories = Directory.GetDirectories(
-            Path.Combine(SharedKernelPackagingConventionTestFiles.GetRepositoryRoot(), "src", "SharedKernel"),
+            Path.Combine(PackagingConventionTestFiles.GetRepositoryRoot(), "src", "SharedKernel"),
             "SharedKernel.*.SourceGenerator");
 
         // Act
         var violations = generatorDirectories
             .SelectMany(directory => Directory.GetFiles(directory, "*.cs", SearchOption.AllDirectories)
                 .Where(path => !path.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal))
-                .SelectMany(path => SharedKernelPackagingConventionTestFiles.GetHintNameLiteralViolations(path, File.ReadAllText(path))))
+                .SelectMany(path => PackagingConventionTestFiles.GetHintNameLiteralViolations(path, File.ReadAllText(path))))
             .Order(StringComparer.Ordinal)
             .ToArray();
 
@@ -158,18 +158,18 @@ public static class SharedKernelPackagingConventionTests
     {
         // Arrange
         var projectPath = Path.Combine(
-            SharedKernelPackagingConventionTestFiles.GetRepositoryRoot(),
+            PackagingConventionTestFiles.GetRepositoryRoot(),
             "tools",
             "SharedKernel.CI.Tool",
             "SharedKernel.CI.Tool.csproj");
 
         // Act
-        var violations = SharedKernelPackagingConventionTestFiles.GetPackageMetadataViolations(projectPath).ToArray();
-        var isPackable = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "IsPackable");
-        var packAsTool = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "PackAsTool");
-        var commandName = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "ToolCommandName");
-        var description = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "Description");
-        var aotCompatible = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "IsAotCompatible");
+        var violations = PackagingConventionTestFiles.GetPackageMetadataViolations(projectPath).ToArray();
+        var isPackable = PackagingConventionTestFiles.GetProperty(projectPath, "IsPackable");
+        var packAsTool = PackagingConventionTestFiles.GetProperty(projectPath, "PackAsTool");
+        var commandName = PackagingConventionTestFiles.GetProperty(projectPath, "ToolCommandName");
+        var description = PackagingConventionTestFiles.GetProperty(projectPath, "Description");
+        var aotCompatible = PackagingConventionTestFiles.GetProperty(projectPath, "IsAotCompatible");
 
         // Assert
         violations.ShouldBe([]);
@@ -184,7 +184,7 @@ public static class SharedKernelPackagingConventionTests
     public static void Tool_command_names_are_unique_unprefixed_and_not_dotnet_sdk_commands()
     {
         // Arrange
-        var toolsDirectory = Path.Combine(SharedKernelPackagingConventionTestFiles.GetRepositoryRoot(), "tools");
+        var toolsDirectory = Path.Combine(PackagingConventionTestFiles.GetRepositoryRoot(), "tools");
         string[] sdkCommands =
         [
             "add", "build", "build-server", "clean", "dev-certs", "dnx", "exec", "format", "fsi", "help", "list", "msbuild", "new",
@@ -194,8 +194,8 @@ public static class SharedKernelPackagingConventionTests
 
         // Act
         var commandNames = Directory.GetFiles(toolsDirectory, "*.csproj", SearchOption.AllDirectories)
-            .Where(static projectPath => SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "PackAsTool") == "true")
-            .Select(static projectPath => SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "ToolCommandName"))
+            .Where(static projectPath => PackagingConventionTestFiles.GetProperty(projectPath, "PackAsTool") == "true")
+            .Select(static projectPath => PackagingConventionTestFiles.GetProperty(projectPath, "ToolCommandName"))
             .ToArray();
         var violations = commandNames
             .Where(name => name.Length == 0
@@ -214,7 +214,7 @@ public static class SharedKernelPackagingConventionTests
     public static void Samples_benchmarks_and_repository_only_helpers_are_non_packable()
     {
         // Arrange
-        var repositoryRoot = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var repositoryRoot = PackagingConventionTestFiles.GetRepositoryRoot();
         string[] projectPaths =
         [
             "benchmarks/SharedKernel.Results.Benchmarks/SharedKernel.Results.Benchmarks.csproj",
@@ -230,7 +230,7 @@ public static class SharedKernelPackagingConventionTests
         // Act
         var packableProjects = projectPaths
             .Where(path => !string.Equals(
-                SharedKernelPackagingConventionTestFiles.GetProperty(Path.Combine(repositoryRoot, path), "IsPackable"),
+                PackagingConventionTestFiles.GetProperty(Path.Combine(repositoryRoot, path), "IsPackable"),
                 "false",
                 StringComparison.OrdinalIgnoreCase))
             .ToArray();

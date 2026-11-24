@@ -16,10 +16,10 @@ public static class AssertionLibraryAnalyzerTests
     {
         // Arrange
         var projectDirectory = Path.Combine(
-            SharedKernelPackagingConventionTestFiles.GetRepositoryRoot(), "src", "SharedKernel", projectName);
+            PackagingConventionTestFiles.GetRepositoryRoot(), "src", "SharedKernel", projectName);
 
         // Act
-        var enablesTestingAnalyzers = SharedKernelPackagingConventionTestFiles.GetProperty(
+        var enablesTestingAnalyzers = PackagingConventionTestFiles.GetProperty(
             Path.Combine(projectDirectory, projectName + ".csproj"), "EnableSharedKernelTestingAnalyzers");
         var editorConfigLines = File.ReadAllLines(Path.Combine(projectDirectory, ".editorconfig"));
 
@@ -37,7 +37,7 @@ public static class AssertionLibraryAnalyzerTests
     public static void Source_props_reference_the_testing_analyzers_when_a_project_opts_in(string analyzerProjectName)
     {
         // Arrange
-        var sourceDirectory = Path.Combine(SharedKernelPackagingConventionTestFiles.GetRepositoryRoot(), "src");
+        var sourceDirectory = Path.Combine(PackagingConventionTestFiles.GetRepositoryRoot(), "src");
         var analyzerProjectPath = Path.GetFullPath(
             Path.Combine(sourceDirectory, "SharedKernel", analyzerProjectName, analyzerProjectName + ".csproj"));
         var props = XDocument.Load(Path.Combine(sourceDirectory, "Directory.Build.props"));

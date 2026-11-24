@@ -33,7 +33,7 @@ var manifest = await candidates.Validate(new CandidateOptions(repoRoot, NativeAo
 
 - `ReleaseHistory` calculates the next version from the commits since the latest `v*` tag (`CalculateVersion`) and
   finds Conventional Commit breaking-change markers in a revision range (`HasBreakingChangeMarker`).
-- `SharedKernelPackager` packs every SharedKernel project (`Pack`), packs with package validation and writes the API
+- `Packager` packs every SharedKernel project (`Pack`), packs with package validation and writes the API
   compatibility report (`CheckApiCompatibility`), packs working-tree changes into a dev feed and evicts them from the
   NuGet cache (`PackDev`), and audits the packages that the tool packages of a feed carry, installs the tools, and
   builds and runs the samples against the feed (`ConsumePackages`).

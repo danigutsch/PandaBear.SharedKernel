@@ -123,23 +123,23 @@ PandaBear.Versioning.SemanticVersion.Prerelease.get -> string?
 PandaBear.Versioning.SemanticVersion.Prerelease.init -> void
 PandaBear.Versioning.SemanticVersion.SemanticVersion(int Major, int Minor, int Patch, string? Prerelease = null, string? BuildMetadata = null) -> void
 PandaBear.Versioning.SemanticVersion.StableCore.get -> PandaBear.Versioning.SemanticVersion!
-PandaBear.Versioning.SharedKernelDevPackPlanner
-PandaBear.Versioning.SharedKernelLocalFeed
-PandaBear.Versioning.SharedKernelPackageOptions
-PandaBear.Versioning.SharedKernelPackageOptions.AssemblyVersion.get -> string?
-PandaBear.Versioning.SharedKernelPackageOptions.AssemblyVersion.init -> void
-PandaBear.Versioning.SharedKernelPackageOptions.FileVersion.get -> string?
-PandaBear.Versioning.SharedKernelPackageOptions.FileVersion.init -> void
-PandaBear.Versioning.SharedKernelPackageOptions.InformationalVersion.get -> string?
-PandaBear.Versioning.SharedKernelPackageOptions.InformationalVersion.init -> void
-PandaBear.Versioning.SharedKernelPackageOptions.OutputRoot.get -> string!
-PandaBear.Versioning.SharedKernelPackageOptions.OutputRoot.init -> void
-PandaBear.Versioning.SharedKernelPackageOptions.RepoRoot.get -> string!
-PandaBear.Versioning.SharedKernelPackageOptions.RepoRoot.init -> void
-PandaBear.Versioning.SharedKernelPackageOptions.SharedKernelPackageOptions(string! Version, string! OutputRoot, string! RepoRoot, string? AssemblyVersion = null, string? FileVersion = null, string? InformationalVersion = null) -> void
-PandaBear.Versioning.SharedKernelPackageOptions.Version.get -> string!
-PandaBear.Versioning.SharedKernelPackageOptions.Version.init -> void
-PandaBear.Versioning.SharedKernelPackagePlanner
+PandaBear.Versioning.DevPackPlanner
+PandaBear.Versioning.LocalFeed
+PandaBear.Versioning.PackOptions
+PandaBear.Versioning.PackOptions.AssemblyVersion.get -> string?
+PandaBear.Versioning.PackOptions.AssemblyVersion.init -> void
+PandaBear.Versioning.PackOptions.FileVersion.get -> string?
+PandaBear.Versioning.PackOptions.FileVersion.init -> void
+PandaBear.Versioning.PackOptions.InformationalVersion.get -> string?
+PandaBear.Versioning.PackOptions.InformationalVersion.init -> void
+PandaBear.Versioning.PackOptions.OutputRoot.get -> string!
+PandaBear.Versioning.PackOptions.OutputRoot.init -> void
+PandaBear.Versioning.PackOptions.RepoRoot.get -> string!
+PandaBear.Versioning.PackOptions.RepoRoot.init -> void
+PandaBear.Versioning.PackOptions.PackOptions(string! Version, string! OutputRoot, string! RepoRoot, string? AssemblyVersion = null, string? FileVersion = null, string? InformationalVersion = null) -> void
+PandaBear.Versioning.PackOptions.Version.get -> string!
+PandaBear.Versioning.PackOptions.Version.init -> void
+PandaBear.Versioning.PackPlanner
 PandaBear.Versioning.VersionCalculation
 PandaBear.Versioning.VersionOutput
 PandaBear.Versioning.VersionOutput.AssemblyVersion.get -> string!
@@ -182,21 +182,21 @@ static PandaBear.Versioning.ReleaseVersionCalculator.CreateGitHubOutputs(PandaBe
 static PandaBear.Versioning.ReleaseVersionCalculator.CreateSummary(PandaBear.Versioning.ReleaseVersionCalculationResult! result) -> string![]!
 static PandaBear.Versioning.ReleaseVersionCalculator.GetCommitRange(string! sourceTag) -> string!
 static PandaBear.Versioning.SemanticVersion.Parse(string! value) -> PandaBear.Versioning.SemanticVersion!
-static PandaBear.Versioning.SharedKernelDevPackPlanner.EvictFromGlobalPackages(string! packageId, string! version, string? globalPackagesDirectory = null) -> bool
-static PandaBear.Versioning.SharedKernelDevPackPlanner.Plan(string! repoRoot, System.Collections.Generic.IReadOnlyCollection<string!>! requested, string! feedDirectory, string! version) -> System.Collections.Generic.IReadOnlyList<PandaBear.Versioning.DevPackStep!>!
-static PandaBear.Versioning.SharedKernelLocalFeed.PackageWasRestored(string! packageCache, string! packageId, string! version) -> bool
-static PandaBear.Versioning.SharedKernelLocalFeed.ReadPackageIds(string![]! packages, string! version) -> string![]!
-static PandaBear.Versioning.SharedKernelLocalFeed.WriteNuGetConfig(string! restoreDirectory, string! packageDirectory, string![]! packageIds, System.Uri! nugetSourceUrl) -> System.Threading.Tasks.Task!
-static PandaBear.Versioning.SharedKernelLocalFeed.WriteRestoreProject(string! restoreDirectory, string![]! packageIds, string! version, System.Collections.Generic.IReadOnlyList<string!>! frameworks) -> System.Threading.Tasks.Task!
-static PandaBear.Versioning.SharedKernelPackagePlanner.CreatePackArguments(string! project, PandaBear.Versioning.SharedKernelPackageOptions! options, string! packageDirectory, string? enablePackageValidation = null, string? baselineVersion = null) -> string![]!
-static PandaBear.Versioning.SharedKernelPackagePlanner.EnsurePackageVersionDoesNotExist(string! packageDirectory, string! version) -> void
-static PandaBear.Versioning.SharedKernelPackagePlanner.FindProjects(string! repoRoot) -> string![]!
-static PandaBear.Versioning.SharedKernelPackagePlanner.ResolvePackageDirectory(PandaBear.Versioning.SharedKernelPackageOptions! options) -> string!
+static PandaBear.Versioning.DevPackPlanner.EvictFromGlobalPackages(string! packageId, string! version, string? globalPackagesDirectory = null) -> bool
+static PandaBear.Versioning.DevPackPlanner.Plan(string! repoRoot, System.Collections.Generic.IReadOnlyCollection<string!>! requested, string! feedDirectory, string! version) -> System.Collections.Generic.IReadOnlyList<PandaBear.Versioning.DevPackStep!>!
+static PandaBear.Versioning.LocalFeed.PackageWasRestored(string! packageCache, string! packageId, string! version) -> bool
+static PandaBear.Versioning.LocalFeed.ReadPackageIds(string![]! packages, string! version) -> string![]!
+static PandaBear.Versioning.LocalFeed.WriteNuGetConfig(string! restoreDirectory, string! packageDirectory, string![]! packageIds, System.Uri! nugetSourceUrl) -> System.Threading.Tasks.Task!
+static PandaBear.Versioning.LocalFeed.WriteRestoreProject(string! restoreDirectory, string![]! packageIds, string! version, System.Collections.Generic.IReadOnlyList<string!>! frameworks) -> System.Threading.Tasks.Task!
+static PandaBear.Versioning.PackPlanner.CreatePackArguments(string! project, PandaBear.Versioning.PackOptions! options, string! packageDirectory, string? enablePackageValidation = null, string? baselineVersion = null) -> string![]!
+static PandaBear.Versioning.PackPlanner.EnsurePackageVersionDoesNotExist(string! packageDirectory, string! version) -> void
+static PandaBear.Versioning.PackPlanner.FindProjects(string! repoRoot) -> string![]!
+static PandaBear.Versioning.PackPlanner.ResolvePackageDirectory(PandaBear.Versioning.PackOptions! options) -> string!
 static PandaBear.Versioning.VersionCalculation.Calculate(PandaBear.Versioning.SemanticVersion! baseVersion, System.Collections.Generic.IEnumerable<string!>! commitMessages, string? prerelease = null, string? sha = null) -> PandaBear.Versioning.VersionOutput!
 static PandaBear.Versioning.VersionOutput.Create(PandaBear.Versioning.SemanticVersion! version, PandaBear.Versioning.ReleaseImpact impact, string? sha = null) -> PandaBear.Versioning.VersionOutput!
 static PandaBear.Versioning.VersionOutputJson.Serialize(PandaBear.Versioning.VersionOutput! output) -> string!
-static PandaBear.Versioning.SharedKernelDevPackPlanner.ParseGlobalPackagesListing(string! output) -> string?
-static PandaBear.Versioning.SharedKernelDevPackPlanner.ResolveGlobalPackagesDirectory(string! consumerDirectory, string? explicitDirectory, string? environmentValue, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<string?>!>? queryDotnet, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+static PandaBear.Versioning.DevPackPlanner.ParseGlobalPackagesListing(string! output) -> string?
+static PandaBear.Versioning.DevPackPlanner.ResolveGlobalPackagesDirectory(string! consumerDirectory, string? explicitDirectory, string? environmentValue, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<string?>!>? queryDotnet, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
 PandaBear.Versioning.ApiCompatibilityReportOptions.<Clone>$() -> PandaBear.Versioning.ApiCompatibilityReportOptions!
 PandaBear.Versioning.ApiCompatibilityReportOptions.Deconstruct(out string! Version, out string! OutputRoot, out string! ReleasePhase, out string! RepoRoot, out string? BaselineVersion, out bool BreakingMarker) -> void
 PandaBear.Versioning.ApiCompatibilityReportOptions.Equals(PandaBear.Versioning.ApiCompatibilityReportOptions? other) -> bool
@@ -221,9 +221,9 @@ PandaBear.Versioning.ResolvedNuGetPackage.Equals(PandaBear.Versioning.ResolvedNu
 PandaBear.Versioning.SemanticVersion.<Clone>$() -> PandaBear.Versioning.SemanticVersion!
 PandaBear.Versioning.SemanticVersion.Deconstruct(out int Major, out int Minor, out int Patch, out string? Prerelease, out string? BuildMetadata) -> void
 PandaBear.Versioning.SemanticVersion.Equals(PandaBear.Versioning.SemanticVersion? other) -> bool
-PandaBear.Versioning.SharedKernelPackageOptions.<Clone>$() -> PandaBear.Versioning.SharedKernelPackageOptions!
-PandaBear.Versioning.SharedKernelPackageOptions.Deconstruct(out string! Version, out string! OutputRoot, out string! RepoRoot, out string? AssemblyVersion, out string? FileVersion, out string? InformationalVersion) -> void
-PandaBear.Versioning.SharedKernelPackageOptions.Equals(PandaBear.Versioning.SharedKernelPackageOptions? other) -> bool
+PandaBear.Versioning.PackOptions.<Clone>$() -> PandaBear.Versioning.PackOptions!
+PandaBear.Versioning.PackOptions.Deconstruct(out string! Version, out string! OutputRoot, out string! RepoRoot, out string? AssemblyVersion, out string? FileVersion, out string? InformationalVersion) -> void
+PandaBear.Versioning.PackOptions.Equals(PandaBear.Versioning.PackOptions? other) -> bool
 PandaBear.Versioning.VersionOutput.<Clone>$() -> PandaBear.Versioning.VersionOutput!
 PandaBear.Versioning.VersionOutput.Deconstruct(out string! SemVer, out PandaBear.Versioning.ReleaseImpact ReleaseImpact, out string! PackageVersion, out string! AssemblyVersion, out string! FileVersion, out string! InformationalVersion) -> void
 PandaBear.Versioning.VersionOutput.Equals(PandaBear.Versioning.VersionOutput? other) -> bool
@@ -250,9 +250,9 @@ override PandaBear.Versioning.ResolvedNuGetPackage.GetHashCode() -> int
 override PandaBear.Versioning.ResolvedNuGetPackage.ToString() -> string!
 override PandaBear.Versioning.SemanticVersion.Equals(object? obj) -> bool
 override PandaBear.Versioning.SemanticVersion.GetHashCode() -> int
-override PandaBear.Versioning.SharedKernelPackageOptions.Equals(object? obj) -> bool
-override PandaBear.Versioning.SharedKernelPackageOptions.GetHashCode() -> int
-override PandaBear.Versioning.SharedKernelPackageOptions.ToString() -> string!
+override PandaBear.Versioning.PackOptions.Equals(object? obj) -> bool
+override PandaBear.Versioning.PackOptions.GetHashCode() -> int
+override PandaBear.Versioning.PackOptions.ToString() -> string!
 override PandaBear.Versioning.VersionOutput.Equals(object? obj) -> bool
 override PandaBear.Versioning.VersionOutput.GetHashCode() -> int
 override PandaBear.Versioning.VersionOutput.ToString() -> string!
@@ -272,8 +272,8 @@ static PandaBear.Versioning.ResolvedNuGetPackage.operator !=(PandaBear.Versionin
 static PandaBear.Versioning.ResolvedNuGetPackage.operator ==(PandaBear.Versioning.ResolvedNuGetPackage? left, PandaBear.Versioning.ResolvedNuGetPackage? right) -> bool
 static PandaBear.Versioning.SemanticVersion.operator !=(PandaBear.Versioning.SemanticVersion? left, PandaBear.Versioning.SemanticVersion? right) -> bool
 static PandaBear.Versioning.SemanticVersion.operator ==(PandaBear.Versioning.SemanticVersion? left, PandaBear.Versioning.SemanticVersion? right) -> bool
-static PandaBear.Versioning.SharedKernelPackageOptions.operator !=(PandaBear.Versioning.SharedKernelPackageOptions? left, PandaBear.Versioning.SharedKernelPackageOptions? right) -> bool
-static PandaBear.Versioning.SharedKernelPackageOptions.operator ==(PandaBear.Versioning.SharedKernelPackageOptions? left, PandaBear.Versioning.SharedKernelPackageOptions? right) -> bool
+static PandaBear.Versioning.PackOptions.operator !=(PandaBear.Versioning.PackOptions? left, PandaBear.Versioning.PackOptions? right) -> bool
+static PandaBear.Versioning.PackOptions.operator ==(PandaBear.Versioning.PackOptions? left, PandaBear.Versioning.PackOptions? right) -> bool
 static PandaBear.Versioning.VersionOutput.operator !=(PandaBear.Versioning.VersionOutput? left, PandaBear.Versioning.VersionOutput? right) -> bool
 static PandaBear.Versioning.VersionOutput.operator ==(PandaBear.Versioning.VersionOutput? left, PandaBear.Versioning.VersionOutput? right) -> bool
 PandaBear.Versioning.CandidateConsumptionOptions
@@ -372,12 +372,12 @@ PandaBear.Versioning.ReleaseVersionOptions.Sha.get -> string?
 PandaBear.Versioning.ReleaseVersionOptions.Sha.init -> void
 PandaBear.Versioning.ReleaseVersionOptions.VersionKind.get -> string!
 PandaBear.Versioning.ReleaseVersionOptions.VersionKind.init -> void
-PandaBear.Versioning.SharedKernelPackager
-PandaBear.Versioning.SharedKernelPackager.CheckApiCompatibility(PandaBear.Versioning.ApiCompatibilityReportOptions! options, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.Versioning.SharedKernelPackager.ConsumePackages(PandaBear.Versioning.PackageConsumptionOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-PandaBear.Versioning.SharedKernelPackager.Pack(PandaBear.Versioning.SharedKernelPackageOptions! options, bool verifyRestore, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
-PandaBear.Versioning.SharedKernelPackager.PackDev(PandaBear.Versioning.DevPackOptions! options, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
-PandaBear.Versioning.SharedKernelPackager.SharedKernelPackager(PandaBear.Processes.IProcessRunner! processRunner, PandaBear.Processes.IExecutableResolver! executableResolver) -> void
+PandaBear.Versioning.Packager
+PandaBear.Versioning.Packager.CheckApiCompatibility(PandaBear.Versioning.ApiCompatibilityReportOptions! options, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.Versioning.Packager.ConsumePackages(PandaBear.Versioning.PackageConsumptionOptions! options, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.Versioning.Packager.Pack(PandaBear.Versioning.PackOptions! options, bool verifyRestore, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+PandaBear.Versioning.Packager.PackDev(PandaBear.Versioning.DevPackOptions! options, System.IO.TextWriter! output, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+PandaBear.Versioning.Packager.Packager(PandaBear.Processes.IProcessRunner! processRunner, PandaBear.Processes.IExecutableResolver! executableResolver) -> void
 const PandaBear.Versioning.ConsumerVerifier.DefaultOutput = "TestResults/consumer-compatibility.json" -> string!
 const PandaBear.Versioning.DevPackOptions.DefaultVersion = "0.1.0-dev.local" -> string!
 override PandaBear.Versioning.CandidateConsumptionOptions.Equals(object? obj) -> bool

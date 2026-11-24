@@ -25,14 +25,14 @@ public static class PackagedToolTests
             .ToArray();
 
         // Act
-        var packedProjects = SharedKernelPackagePlanner.FindProjects(root)
+        var packedProjects = PackPlanner.FindProjects(root)
             .Select(project => Path.GetRelativePath(root, project).Replace('\\', '/'))
             .ToHashSet(StringComparer.Ordinal);
         var unpackedTools = toolProjects.Where(project => !packedProjects.Contains(project)).ToArray();
 
         // Assert
         toolProjects.ShouldNotBeEmpty();
-        unpackedTools.ShouldBe([], "SharedKernelPackagePlanner.PackagedTools must name every tool package, because FindProjects skips a name that has no project.");
+        unpackedTools.ShouldBe([], "PackPlanner.PackagedTools must name every tool package, because FindProjects skips a name that has no project.");
     }
     [Fact]
     public static void Candidates_include_every_packable_consumer_test_support_project()
@@ -47,7 +47,7 @@ public static class PackagedToolTests
             .ToArray();
 
         // Act
-        var packed = SharedKernelPackagePlanner.FindProjects(root).ToHashSet(StringComparer.Ordinal);
+        var packed = PackPlanner.FindProjects(root).ToHashSet(StringComparer.Ordinal);
         var missing = supportProjects.Where(project => !packed.Contains(project)).ToArray();
 
         // Assert

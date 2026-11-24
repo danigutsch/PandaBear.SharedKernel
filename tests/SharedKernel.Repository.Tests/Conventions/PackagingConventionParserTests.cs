@@ -1,7 +1,7 @@
 namespace PandaBear.Repository.Tests.Conventions;
 
 /// <summary>Guards the YAML path parser that the packaging conventions use.</summary>
-public sealed class SharedKernelPackagingConventionParserTests
+public sealed class PackagingConventionParserTests
 {
     [Theory]
     [InlineData("\n")]
@@ -12,7 +12,7 @@ public sealed class SharedKernelPackagingConventionParserTests
         var content = string.Join(newline, "paths:", "  - src/SharedKernel/**", "  - Directory.Build.props");
 
         // Act
-        var entries = SharedKernelPackagingConventionTestFiles.GetYamlPathEntries(content);
+        var entries = PackagingConventionTestFiles.GetYamlPathEntries(content);
 
         // Assert
         entries.Count.ShouldBe(2);

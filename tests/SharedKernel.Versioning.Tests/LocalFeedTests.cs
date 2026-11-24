@@ -6,7 +6,7 @@ namespace PandaBear.Versioning.Tests;
 /// Tests generation and validation of the local SharedKernel package feed configuration.
 /// </summary>
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
-public static class SharedKernelLocalFeedTests
+public static class LocalFeedTests
 {
     [Fact]
     public static async Task Missing_internal_packages_cannot_fall_back_to_public_feed()
@@ -16,7 +16,7 @@ public static class SharedKernelLocalFeedTests
         Directory.CreateDirectory(temporaryDirectory.OutputDirectory);
 
         // Act
-        await SharedKernelLocalFeed.WriteNuGetConfig(
+        await LocalFeed.WriteNuGetConfig(
             temporaryDirectory.OutputDirectory,
             temporaryDirectory.PackageDirectory,
             ["PandaBear.SharedKernel.Results"],
@@ -36,7 +36,7 @@ public static class SharedKernelLocalFeedTests
         var source = new Uri("https://example.test/v3/index.json");
 
         // Act
-        await SharedKernelLocalFeed.WriteNuGetConfig(
+        await LocalFeed.WriteNuGetConfig(
             temporaryDirectory.OutputDirectory,
             temporaryDirectory.PackageDirectory,
             ["PandaBear.SharedKernel.Results"],
@@ -59,7 +59,7 @@ public static class SharedKernelLocalFeedTests
         Directory.CreateDirectory(temporaryDirectory.OutputDirectory);
 
         // Act
-        await SharedKernelLocalFeed.WriteRestoreProject(temporaryDirectory.OutputDirectory, ["PandaBear.SharedKernel.Results"], "1.2.3", ["net11.0"]);
+        await LocalFeed.WriteRestoreProject(temporaryDirectory.OutputDirectory, ["PandaBear.SharedKernel.Results"], "1.2.3", ["net11.0"]);
         var project = await File.ReadAllTextAsync(
             Path.Combine(temporaryDirectory.OutputDirectory, "SharedKernel.LocalFeedRestore.csproj"),
             TestContext.Current.CancellationToken);
@@ -87,7 +87,7 @@ public static class SharedKernelLocalFeedTests
             "1.2.3");
 
         // Act
-        var packageIds = SharedKernelLocalFeed.ReadPackageIds([firstPackage, secondPackage], "1.2.3");
+        var packageIds = LocalFeed.ReadPackageIds([firstPackage, secondPackage], "1.2.3");
 
         // Assert
         packageIds.ShouldBe(["PandaBear.SharedKernel.Functional", "PandaBear.SharedKernel.Results"]);
@@ -103,7 +103,7 @@ public static class SharedKernelLocalFeedTests
             "PandaBear.SharedKernel.Results.1.2.3.nupkg");
 
         // Act
-        Action action = () => SharedKernelLocalFeed.ReadPackageIds([package], "1.2.3");
+        Action action = () => LocalFeed.ReadPackageIds([package], "1.2.3");
 
         // Assert
         action.ShouldThrow<ArgumentException>().Message.ShouldContain("expected one .nuspec", StringComparison.Ordinal);
@@ -120,7 +120,7 @@ public static class SharedKernelLocalFeedTests
             "1.2.2");
 
         // Act
-        Action action = () => SharedKernelLocalFeed.ReadPackageIds([package], "1.2.3");
+        Action action = () => LocalFeed.ReadPackageIds([package], "1.2.3");
 
         // Assert
         action.ShouldThrow<ArgumentException>().Message.ShouldContain("expected version 1.2.3", StringComparison.Ordinal);
@@ -138,7 +138,7 @@ public static class SharedKernelLocalFeedTests
             ("PandaBear.SharedKernel.Functional", "1.2.2"));
 
         // Act
-        Action action = () => SharedKernelLocalFeed.ReadPackageIds([package], "1.2.3");
+        Action action = () => LocalFeed.ReadPackageIds([package], "1.2.3");
 
         // Assert
         action.ShouldThrow<ArgumentException>().Message.ShouldContain("dependency version 1.2.3", StringComparison.Ordinal);
@@ -159,7 +159,7 @@ public static class SharedKernelLocalFeedTests
             "1.2.3");
 
         // Act
-        Action action = () => SharedKernelLocalFeed.ReadPackageIds([firstPackage, secondPackage], "1.2.3");
+        Action action = () => LocalFeed.ReadPackageIds([firstPackage, secondPackage], "1.2.3");
 
         // Assert
         action.ShouldThrow<ArgumentException>().Message.ShouldContain("duplicate packages", StringComparison.Ordinal);
@@ -174,7 +174,7 @@ public static class SharedKernelLocalFeedTests
         Directory.CreateDirectory(Path.Combine(packageCache, "pandabear.sharedkernel.results", "1.2.3"));
 
         // Act
-        var restored = SharedKernelLocalFeed.PackageWasRestored(packageCache, "PandaBear.SharedKernel.Results", "1.2.3");
+        var restored = LocalFeed.PackageWasRestored(packageCache, "PandaBear.SharedKernel.Results", "1.2.3");
 
         // Assert
         restored.ShouldBeTrue();
@@ -188,7 +188,7 @@ public static class SharedKernelLocalFeedTests
         var relativeUri = new Uri("v3/index.json", UriKind.Relative);
 
         // Act
-        Func<Task> action = () => SharedKernelLocalFeed.WriteNuGetConfig(
+        Func<Task> action = () => LocalFeed.WriteNuGetConfig(
             temporaryDirectory.OutputDirectory,
             temporaryDirectory.PackageDirectory,
             ["PandaBear.SharedKernel.Results"],
@@ -207,12 +207,12 @@ public static class SharedKernelLocalFeedTests
         Directory.CreateDirectory(temporaryDirectory.OutputDirectory);
 
         // Act
-        await SharedKernelLocalFeed.WriteRestoreProject(
+        await LocalFeed.WriteRestoreProject(
             temporaryDirectory.OutputDirectory,
             ["PandaBear.SharedKernel.Results"],
             "1.2.3",
             ["net11.0", "net12.0"]);
-        await SharedKernelLocalFeed.WriteNuGetConfig(
+        await LocalFeed.WriteNuGetConfig(
             temporaryDirectory.OutputDirectory,
             temporaryDirectory.PackageDirectory,
             ["PandaBear.SharedKernel.Results"],
